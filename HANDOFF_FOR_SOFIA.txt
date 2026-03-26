@@ -1,0 +1,1 @@
+Use this package as the single final upload. It includes the elite homepage, full demo, photos, and verified delivery logic. Root page is index.html, demo route is dashboard.html.

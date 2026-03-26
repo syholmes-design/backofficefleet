@@ -1,0 +1,105 @@
+{
+  "summary": {
+    "activeLoads": 26,
+    "complianceAlerts": 5,
+    "incidentsThisWeek": 3,
+    "revenueAtRisk": 18200,
+    "mtdSavings": 8700,
+    "weeklySavings": 2150,
+    "annualSavings": 104400
+  },
+  "drivers": [
+    {
+      "driverId": "DRV-001",
+      "name": "John Carter",
+      "photo": "/drivers/DRV-001.jpg"
+    },
+    {
+      "driverId": "DRV-002",
+      "name": "Maria Lopez",
+      "photo": "/drivers/DRV-002.jpg"
+    },
+    {
+      "driverId": "DRV-003",
+      "name": "Alex Kim",
+      "photo": "/drivers/DRV-003.jpg"
+    },
+    {
+      "driverId": "DRV-004",
+      "name": "Priya Patel",
+      "photo": "/drivers/DRV-004.jpg"
+    },
+    {
+      "driverId": "DRV-005",
+      "name": "Kenji Tanaka",
+      "photo": "/drivers/DRV-005.jpg"
+    },
+    {
+      "driverId": "DRV-006",
+      "name": "Marcus Chen",
+      "photo": "/drivers/DRV-006.jpg"
+    },
+    {
+      "driverId": "DRV-007",
+      "name": "Sofia Gomez",
+      "photo": "/drivers/DRV-007.jpg"
+    },
+    {
+      "driverId": "DRV-008",
+      "name": "Liam Smith",
+      "photo": "/drivers/DRV-008.jpg"
+    },
+    {
+      "driverId": "DRV-009",
+      "name": "Noah Wilson",
+      "photo": "/drivers/DRV-009.jpg"
+    },
+    {
+      "driverId": "DRV-010",
+      "name": "Emma Brown",
+      "photo": "/drivers/DRV-010.jpg"
+    },
+    {
+      "driverId": "DRV-011",
+      "name": "Olivia Lee",
+      "photo": "/drivers/DRV-011.jpg"
+    },
+    {
+      "driverId": "DRV-012",
+      "name": "Robert Johnson",
+      "photo": "/drivers/DRV-012.jpg"
+    }
+  ],
+  "loads": [
+    {
+      "loadId": "L1024",
+      "driver": "Maria Lopez",
+      "status": "Seal Broken",
+      "riskExposure": 5200,
+      "netOutcome": 4850,
+      "savings": 150,
+      "verifiedDelivery": "Needs Review",
+      "deliveryWindow": "Outside Delivery Zone"
+    },
+    {
+      "loadId": "L1027",
+      "driver": "John Carter",
+      "status": "Missing POD",
+      "riskExposure": 3800,
+      "netOutcome": 2400,
+      "savings": 90,
+      "verifiedDelivery": "Needs Review",
+      "deliveryWindow": "Pending Proof"
+    },
+    {
+      "loadId": "L1030",
+      "driver": "Olivia Lee",
+      "status": "Delivered",
+      "riskExposure": 0,
+      "netOutcome": 1200,
+      "savings": 45,
+      "verifiedDelivery": "Verified Delivery",
+      "deliveryWindow": "Within Authorized Radius"
+    }
+  ]
+}

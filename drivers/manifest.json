@@ -1,0 +1,76 @@
+{
+  "drivers": [
+    {
+      "id": "DRV-001",
+      "source_file": "john_carter.jpg",
+      "file": "DRV-001.jpg",
+      "embedded": true
+    },
+    {
+      "id": "DRV-002",
+      "source_file": "maria_lopez.jpg",
+      "file": "DRV-002.jpg",
+      "embedded": true
+    },
+    {
+      "id": "DRV-003",
+      "source_file": "alex_kim.jpg",
+      "file": "DRV-003.jpg",
+      "embedded": true
+    },
+    {
+      "id": "DRV-004",
+      "source_file": "priya_patel.jpg",
+      "file": "DRV-004.jpg",
+      "embedded": true
+    },
+    {
+      "id": "DRV-005",
+      "source_file": "kenji_tanaka.jpg",
+      "file": "DRV-005.jpg",
+      "embedded": true
+    },
+    {
+      "id": "DRV-006",
+      "source_file": "marcus_chen.jpg",
+      "file": "DRV-006.jpg",
+      "embedded": true
+    },
+    {
+      "id": "DRV-007",
+      "source_file": "sofia_gomez.jpg",
+      "file": "DRV-007.jpg",
+      "embedded": true
+    },
+    {
+      "id": "DRV-008",
+      "source_file": "liam_smith.jpg",
+      "file": "DRV-008.jpg",
+      "embedded": true
+    },
+    {
+      "id": "DRV-009",
+      "source_file": "noah_wilson.jpg",
+      "file": "DRV-009.jpg",
+      "embedded": true
+    },
+    {
+      "id": "DRV-010",
+      "source_file": "emma_brown.jpg",
+      "file": "DRV-010.jpg",
+      "embedded": true
+    },
+    {
+      "id": "DRV-011",
+      "source_file": "olivia_lee.jpg",
+      "file": "DRV-011.jpg",
+      "embedded": true
+    },
+    {
+      "id": "DRV-012",
+      "source_file": "robert_johnson.jpg",
+      "file": "DRV-012.jpg",
+      "embedded": true
+    }
+  ]
+}

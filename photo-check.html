@@ -1,0 +1,16 @@
+<!DOCTYPE html><html><head><meta charset="utf-8"><title>Photo Check</title>
+<style>body{font-family:Arial;padding:20px}.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}img{width:140px;height:140px;object-fit:cover;border-radius:12px;border:2px solid #ddd}.bad{border-color:red}</style>
+</head><body><h1>Driver Photo Check</h1><div class="grid" id="grid"></div>
+<script>
+const drivers = Array.from({length:12},(_,i)=>String(i+1).padStart(3,'0'));
+const grid = document.getElementById('grid');
+drivers.forEach(id=>{
+ const wrap=document.createElement('div');
+ const img=document.createElement('img');
+ img.src=`/drivers/DRV-${id}.jpg`;
+ img.onerror=()=>img.classList.add('bad');
+ wrap.innerHTML=`<div><strong>DRV-${id}</strong></div>`;
+ wrap.appendChild(img);
+ grid.appendChild(wrap);
+});
+</script></body></html>
