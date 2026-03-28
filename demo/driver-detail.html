@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Driver Profile | BackOfficeFleet</title>
+    <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/layout.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/dashboard.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <style>
+        /* =============================================
+           LAYOUT & RESPONSIVE PADDING
+           ============================================= */
+        .profile-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            box-sizing: border-box;
+        }
+
+        /* Ajuste de márgenes para Desktop */
+        .dashboard-view {
+            padding: 40px 24px;
+        }
+
+        @media (max-width: 1024px) {
+            .dashboard-outer {
+                margin-left: 0;
+                padding: 0;
+            }
+            /* Aplicando el padding que pediste para móvil/ipad */
+            .dashboard-view {
+                padding: 50px 16px;
+            }
+        }
+
+        /* Banner de Alerta */
+        .alert-banner {
+            background-color: #FEF3F2;
+            border: 1px solid #FECDCA;
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 24px;
+            display: none; 
+        }
+        .alert-banner.visible { display: block; }
+        .alert-title { color: #B42318; display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+        .alert-list { list-style: disc; color: #B42318; font-size: 14px; padding-left: 24px; }
+
+        /* Cards */
+        .profile-card {
+            background: var(--bg-white);
+            border: 1px solid var(--gray-200);
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 24px;
+        }
+
+        .section-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 24px;
+            margin-top: 16px;
+        }
+
+        @media (max-width: 600px) {
+            .section-grid { grid-template-columns: 1fr; gap: 16px; }
+            .profile-header-main { flex-direction: column; align-items: stretch !important; gap: 16px; }
+            .profile-card { padding: 16px; }
+        }
+
+        .data-item { display: flex; flex-direction: column; gap: 4px; }
+        .data-label { color: var(--gray-500); font-size: 12px; font-weight: 500; }
+        .data-value { color: var(--gray-900); font-size: 14px; font-weight: 600; }
+
+        /* Documentos */
+        .doc-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--gray-100);
+        }
+        .status-icon { width: 20px; height: 20px; }
+
+        /* Status Badges */
+        .status-badge.active {
+            background: var(--success-50) !important;
+            color: var(--success-700) !important;
+            font-size: 13px; padding: 2px 12px; border-radius: 12px; display: inline-flex; align-items: center;
+        }
+        .status-badge.incomplete {
+            background: var(--error-50) !important;
+            color: var(--error-700) !important;
+            font-size: 13px; padding: 2px 12px; border-radius: 12px; display: inline-flex; align-items: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="main-container">
+        <div id="sidebar-container"></div>
+        
+        <main class="dashboard-outer">
+            <div class="dashboard-view">
+                <header class="content-header" style="margin-bottom: 32px;">
+                    <div class="header-left">
+                        <button id="sidebar-toggle" class="sidebar-toggle-btn custom-green-toggle">
+                            <i class="bi bi-list"></i>
+                        </button>
+                        <div class="header-text">
+                            <a href="drivers.html" class="body-m-semibold" style="color: var(--brand-accent-700); text-decoration: none; display: flex; align-items: center; gap: 4px; margin-top: 24px;">
+                                <img src="assets/icons/Chevron Left.svg" alt="Back" style="width: 16px; height: 16px;"> Back to drivers
+                            </a>
+                        </div>
+                    </div>
+                </header>
+
+                <div class="profile-container">
+                    <div class="profile-header-main" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; gap:30px;">
+                        <div style="display: flex; flex-direction: column; gap: 2px;">
+                            <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
+                                <h1 class="heading-2" id="driver-name">Loading...</h1>
+                                <span class="status-badge active" id="driver-status">
+                                    <span style="font-size:12px;vertical-align:middle;margin-right:6px;">●</span>Active
+                                </span>
+                            </div>
+                            <span class="body-m-medium" id="driver-email" style="color: var(--gray-700);">email@example.com</span>
+                        </div>
+                        <button class="btn-primary" onclick="window.location.href='add-loads.html'">
+                            <img src="assets/icons/icon (3).svg" alt="" style="width: 18px; height: 18px; margin-right: 8px;">
+                            Assign to Available Load
+                        </button>
+                    </div>
+
+                    <div class="alert-banner" id="compliance-alert">
+                        <div class="alert-title body-m-bold"><i class="bi bi-exclamation-triangle-fill"></i> Driver Not Eligible</div>
+                        <ul class="alert-list"></ul>
+                    </div>
+
+                    <section class="profile-card">
+                        <h2 class="heading-4">Basic Information</h2>
+                        <div class="section-grid">
+                            <div class="data-item"><span class="data-label">Phone</span><span class="data-value" id="val-phone"></span></div>
+                            <div class="data-item"><span class="data-label">Email</span><span class="data-value" id="val-email"></span></div>
+                            <div class="data-item"><span class="data-label">CDL Number</span><span class="data-value" id="val-cdl"></span></div>
+                            <div class="data-item"><span class="data-label">Equipment Type</span><span class="data-value" id="val-equipment">Dry Van</span></div>
+                        </div>
+                    </section>
+
+                    <section class="profile-card">
+                        <h2 class="heading-4">Compliance Status</h2>
+                        <div class="section-grid">
+                            <div class="data-item"><span class="data-label">CDL Expiration</span><span class="data-value" id="val-cdl-exp"></span></div>
+                            <div class="data-item"><span class="data-label">Medical Card Expiration</span><span class="data-value" id="val-med-exp"></span></div>
+                        </div>
+                    </section>
+
+                    <section class="profile-card">
+                        <h2 class="heading-4">Documents</h2>
+                        <div style="margin-top: 16px;">
+                            <div class="doc-row">
+                                <span class="body-m-medium">CDL <small style="color:var(--gray-400)">Required</small></span>
+                                <img src="assets/icons/indicator.svg" class="status-icon" id="doc-cdl">
+                            </div>
+                            <div class="doc-row">
+                                <span class="body-m-medium">Medical Card <small style="color:var(--gray-400)">Required</small></span>
+                                <img src="assets/icons/indicator.svg" class="status-icon" id="doc-med">
+                            </div>
+                            <div class="doc-row">
+                                <span class="body-m-medium">W-9</span>
+                                <img src="assets/icons/indicator.svg" class="status-icon" id="doc-w9">
+                            </div>
+                            <div class="doc-row">
+                                <span class="body-m-medium">Voided Check</span>
+                                <img src="assets/icons/indicator.svg" class="status-icon" id="doc-voided">
+                            </div>
+                        </div>
+                    </section>
+
+                    <section class="profile-card">
+                        <h2 class="heading-4">Settlement Details</h2>
+                        <div class="section-grid">
+                            <div class="data-item"><span class="data-label">Bank Name</span><span class="data-value">Chase Bank</span></div>
+                            <div class="data-item"><span class="data-label">Account Number</span><span class="data-value">*****5678</span></div>
+                            <div class="data-item"><span class="data-label">Routing Number</span><span class="data-value">021000021</span></div>
+                        </div>
+                    </section>
+                </div> </div> </main>
+    </div>
+
+    <script src="js/app.js"></script>
+    <script>
+        fetch('sidebar.html').then(res => res.text()).then(html => {
+            document.getElementById('sidebar-container').innerHTML = html;
+            if (typeof setupSidebarToggle === 'function') setupSidebarToggle();
+            if (typeof setActiveSidebarLink === 'function') setActiveSidebarLink();
+        });
+
+        const params = new URLSearchParams(window.location.search);
+        const driverId = params.get('id');
+
+        fetch('data/demo-data.json').then(res => res.json()).then(data => {
+            const driver = data.drivers.find(d => d.id === driverId);
+            if (!driver) return;
+
+            document.getElementById('driver-name').textContent = driver.name;
+            document.getElementById('driver-email').textContent = driver.email;
+            document.getElementById('val-phone').textContent = driver.phone || '(—)';
+            document.getElementById('val-email').textContent = driver.email || '(—)';
+            document.getElementById('val-cdl').textContent = driver.cdlNumber || '(—)';
+            document.getElementById('val-equipment').textContent = driver.equipmentType || 'Dry Van';
+            document.getElementById('val-cdl-exp').textContent = driver.cldExpiration || '(—)';
+            document.getElementById('val-med-exp').textContent = driver.medCardExpiration || '(—)';
+
+            let alerts = [];
+            const today = new Date();
+            if (driver.cldExpiration && new Date(driver.cldExpiration) < today) {
+                alerts.push(`CDL has expired (${driver.cldExpiration})`);
+                document.getElementById('doc-cdl').src = 'assets/icons/Alert.svg';
+            }
+            if (driver.medCardExpiration && new Date(driver.medCardExpiration) < today) {
+                alerts.push(`Medical Card has expired (${driver.medCardExpiration})`);
+                document.getElementById('doc-med').src = 'assets/icons/Alert.svg';
+            }
+
+            if (alerts.length > 0) {
+                const banner = document.getElementById('compliance-alert');
+                banner.classList.add('visible');
+                banner.querySelector('.alert-list').innerHTML = alerts.map(a => `<li>${a}</li>`).join('');
+                document.getElementById('driver-status').className = 'status-badge incomplete';
+                document.getElementById('driver-status').innerHTML = '<span style="font-size:12px;vertical-align:middle;margin-right:6px;">●</span>Inactive';
+            }
+        });
+    </script>
+</body>
+</html>

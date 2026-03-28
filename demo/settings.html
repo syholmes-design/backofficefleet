@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Settings - BackOfficeFleet</title>
+    <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/layout.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/dashboard.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <style>
+        /* Specific styles for Settings based on Figma */
+        .settings-container {
+            margin: 24px 236px 236px 24px;
+            padding: 24px;
+        }
+
+        .settings-card {
+            background: var(--bg-white);
+            border: 1px solid var(--gray-200);
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 24px;
+        }
+
+        .settings-section-header {
+            margin-bottom: 20px;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .form-group.full-width {
+            grid-column: span 2;
+        }
+
+        .form-control {
+            padding: 10px 14px;
+            border: 1px solid var(--gray-300);
+            border-radius: 8px;
+            font-family: 'Inter', sans-serif;
+            font-size: 14px;
+            color: var(--gray-900);
+        }
+
+        /* User List Structure (exact Figma) */
+        .user-list-item {
+            padding: 16px 0;
+            border-bottom: 1px solid var(--gray-100);
+        }
+        .user-list-item:last-child {
+            border-bottom: none;
+        }
+        .user-row-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 2px;
+        }
+        .user-info-main {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .user-email-sub {
+            font-size: 14px;
+            color: var(--gray-500);
+            padding-left: 0;
+        }
+
+        /* Role Badges */
+        .role-badge {
+            font-size: 12px;
+            line-height: 1;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-weight: 500;
+        }
+        .role-admin { background: #FDF2FA; color: #C11574; }
+        .role-manager { background: #F4F3FF; color: #5925DC; }
+        .role-dispatcher { background: var(--blue-50); color: var(--blue-700); }
+
+        /* Edit Button (Figma Style) */
+        .edit-link {
+            color: var(--brand-accent-700);
+            font-size: 14px;
+            font-weight: 600;
+            text-decoration: none;
+            padding: 8px 12px;
+            border: 1px solid var(--gray-200);
+            border-radius: 8px;
+            transition: all 0.2s;
+        }
+        .edit-link:hover {
+            background: var(--gray-50);
+            border-color: var(--gray-300);
+        }
+
+        /* Toggles */
+        .preference-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 0;
+            border-bottom: 1px solid var(--gray-100);
+        }
+        .preference-item:last-child { border-bottom: none; }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 44px;
+            height: 24px;
+        }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-color: var(--gray-200);
+            transition: .3s;
+            border-radius: 34px;
+        }
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px; width: 18px;
+            left: 3px; bottom: 3px;
+            background-color: white;
+            transition: .3s;
+            border-radius: 50%;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        input:checked + .slider { background-color: var(--brand-accent-700); }
+        input:checked + .slider:before { transform: translateX(20px); }
+
+        /* Modal Unsaved Styles */
+        .modal-unsaved {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(16, 24, 40, 0.4);
+            display: none; align-items: center; justify-content: center; z-index: 1000;
+        }
+        .modal-content {
+            background: white; padding: 24px; border-radius: 12px; width: 100%; max-width: 400px; text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="main-container">
+        <div id="sidebar-container"></div>
+           <button id="sidebar-toggle" class="sidebar-toggle-btn custom-green-toggle" aria-label="Open menu"></button>
+    <i class="bi bi-list"></i>
+</button>
+
+        <main class="dashboard-outer">
+            <div class="dashboard-view">
+                <div class="settings-container">
+                    <header class="settings-section-header">
+                        <h1 class="heading-2">Settings</h1>
+                        <p class="body-m-medium">Manage your account and preferences</p>
+                    </header>
+
+                    <section class="settings-card">
+                        <h2 class="heading-5" style="margin-bottom: 20px;">Company Information</h2>
+                        <form class="form-grid">
+                            <div class="form-group full-width">
+                                <label class="body-s-semibold">Company Name</label>
+                                <input type="text" class="form-control" value="BackOfficeFleet Inc.">
+                            </div>
+                            <div class="form-group">
+                                <label class="body-s-semibold">Email</label>
+                                <input type="email" class="form-control" value="admin@backofficefleet.com">
+                            </div>
+                            <div class="form-group">
+                                <label class="body-s-semibold">Phone</label>
+                                <input type="text" class="form-control" placeholder="Type your Phone Number">
+                            </div>
+                            <div class="form-group full-width">
+                                <label class="body-s-semibold">Address</label>
+                                <input type="text" class="form-control" value="123 Fleet Street, Transport City, TC 12345">
+                            </div>
+                            <div style="margin-top: 12px;">
+                                <button type="submit" class="btn-primary">Save Changes</button>
+                            </div>
+                        </form>
+                    </section>
+
+                    <section class="settings-card">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+                            <h2 class="heading-5">Users and Roles</h2>
+                            <button class="btn-primary" style="padding: 8px 14px;">Add User</button>
+                        </div>
+
+                        <div class="user-list">
+                            <div class="user-list-item">
+                                <div class="user-row-top">
+                                    <div class="user-info-main">
+                                        <span class="body-m-semibold">Alice Coordinator</span>
+                                        <span class="role-badge role-admin">Admin</span>
+                                    </div>
+                                    <a href="#" class="edit-link">Edit</a>
+                                </div>
+                                <div class="user-email-sub">alice@backofficefleet.com</div>
+                            </div>
+
+                            <div class="user-list-item">
+                                <div class="user-row-top">
+                                    <div class="user-info-main">
+                                        <span class="body-m-semibold">Bob Dispatcher</span>
+                                        <span class="role-badge role-manager">Manager</span>
+                                    </div>
+                                    <a href="#" class="edit-link">Edit</a>
+                                </div>
+                                <div class="user-email-sub">bob@backofficefleet.com</div>
+                            </div>
+
+                            <div class="user-list-item">
+                                <div class="user-row-top">
+                                    <div class="user-info-main">
+                                        <span class="body-m-semibold">Carol Accountant</span>
+                                        <span class="role-badge role-dispatcher">Dispatcher</span>
+                                    </div>
+                                    <a href="#" class="edit-link">Edit</a>
+                                </div>
+                                <div class="user-email-sub">carol@backofficefleet.com</div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section class="settings-card">
+                        <h2 class="heading-5" style="margin-bottom: 8px;">Preferences</h2>
+                        <div class="preference-item">
+                            <div>
+                                <div class="body-m-semibold">Email Notifications</div>
+                                <div class="body-s">Receive email alerts for compliance issues</div>
+                            </div>
+                            <label class="switch">
+                                <input type="checkbox" checked>
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                        <div class="preference-item">
+                            <div>
+                                <div class="body-m-semibold">Auto-Approve Settlements</div>
+                                <div class="body-s">Automatically approve settlements under $1000</div>
+                            </div>
+                            <label class="switch">
+                                <input type="checkbox">
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                        <div class="preference-item">
+                            <div>
+                                <div class="body-m-semibold">Compliance Reminders</div>
+                                <div class="body-s">Send reminders 30 days before expiration</div>
+                            </div>
+                            <label class="switch">
+                                <input type="checkbox" checked>
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                    </section>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="js/app.js"></script>
+    <script>
+   fetch('sidebar.html')
+    .then(res => res.text())
+    .then(html => {
+        document.getElementById('sidebar-container').innerHTML = html;
+        
+        // ¡ESTO ES LO IMPORTANTE! 
+        // Ejecutar la activación de links DESPUÉS de insertar el HTML
+        if (typeof setActiveSidebarLink === 'function') {
+            setActiveSidebarLink();
+        }
+        
+        // El resto de tus funciones...
+        if (typeof setupSidebarToggle === 'function') setupSidebarToggle();
+        
+        const logoutBtn = document.getElementById('logout-btn');
+        if (logoutBtn) {
+            logoutBtn.addEventListener('click', function() {
+                window.location.href = 'login.html';
+            });
+        }
+    });
+    </script>
+</body>
+</html>

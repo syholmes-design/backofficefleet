@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Documents</title>
+    <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/layout.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/dashboard.css">
+    <link rel="stylesheet" href="css/drivers.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <style>
+                        .filter-badge {
+                            display: inline-flex;
+                            align-items: center;
+                            background: var(--brand-accent-100);
+                            color: var(--brand-accent-700);
+                            font-size: 12px;
+                            line-height: 18px;
+                            font-weight: 600;
+                            border-radius: 6px;
+                            padding: 2px 10px 2px 12px;
+                            margin-left: 10px;
+                            cursor: pointer;
+                            gap: 4px;
+                        }
+                        .filter-badge .filter-badge-x {
+                            font-size: 14px;
+                            font-weight: 700;
+                            margin-left: 4px;
+                            color: var(--brand-accent-700);
+                            cursor: pointer;
+                            display: inline-block;
+                            line-height: 1;
+                        }
+                .status-dot-doc {
+                    display: inline-block;
+                    width: 8px;
+                    height: 8px;
+                    border-radius: 50%;
+                    margin-right: 6px;
+                    vertical-align: middle;
+                }
+                .dot-valid { background: var(--success-500); }
+                .dot-expiring { background: var(--warning-500); }
+                .dot-missing { background: var(--gray-400); }
+        .icon-document-blue { background-color: var(--blue-50); color: var(--blue-600); }
+        .icon-check-green { background-color: var(--success-50); color: var(--success-600); }
+        .icon-clock-orange { background-color: var(--warning-50); color: var(--warning-600); }
+        .icon-alert-red { background-color: var(--error-50); color: var(--error-600); }
+
+        .status-badge-doc {
+            display: inline-block;
+            font-size: 12px;
+            line-height: 18px;
+            font-weight: 600;
+            border-radius: 6px;
+            padding: 2px 12px;
+            letter-spacing: 0.01em;
+            vertical-align: middle;
+        }
+        .status-badge-valid {
+            background: var(--success-50);
+            color: var(--success-700);
+        }
+        .status-badge-expiring {
+            background: var(--warning-50);
+            color: var(--warning-700);
+        }
+        .status-badge-missing {
+            background: var(--gray-50);
+            color: var(--gray-700);
+        }
+        /* =============================================
+   PAGINACIÓN RESPONSIVE
+   ============================================= */
+.table-pagination {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px;
+    gap: 8px;
+}
+
+.pagination-numbers {
+    display: flex;
+    gap: 4px;
+}
+
+.page-num {
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: all 0.2s;
+}
+
+.page-num.active {
+    background: var(--brand-accent-700);
+    color: white;
+}
+
+@media (max-width: 600px) {
+    .pagination-arrow span {
+        font-size: 0; /* Oculta el texto 'Previous/Next' */
+    }
+    
+    .pagination-arrow img {
+        margin: 0 !important; /* Centra la flecha */
+        width: 20px;
+        height: 20px;
+    }
+
+    .pagination-arrow {
+        padding: 8px 12px;
+        min-width: 44px;
+        display: flex;
+        justify-content: center;
+    }
+
+    .page-num {
+        width: 32px;
+        height: 32px;
+        font-size: 13px;
+    }
+
+    .pagination-numbers {
+        gap: 2px;
+    }
+}
+
+@media (max-width: 600px) {
+  .table-wrapper {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  .drivers-table {
+    min-width: 600px;
+  }
+}
+    </style>
+</head>
+<body>
+    <div class="main-container">
+        <div id="sidebar-container"></div>
+        <main class="dashboard-outer">
+            <div class="dashboard-view">
+                        <div class="dashboard-view">
+                <header class="content-header">
+                  <button id="sidebar-toggle" class="sidebar-toggle-btn custom-green-toggle" aria-label="Open menu">
+    <i class="bi bi-list"></i>
+</button>
+                    <div class="header-text">
+                        <h1 class="heading-2">Documents</h1>
+                        <p class="body-m-medium">Centralized view of all driver compliance and expiring documents</p>
+                    </div>
+                </header>
+
+                <section class="metrics-grid">
+                    <div class="metric-card">
+                        <div class="metric-left">
+                            <div class="icon-circle icon-document-blue">
+                                <img src="assets/icons/Document (1).svg" width="20">
+                            </div>
+                            <div class="metric-info">
+                                <span class="metric-label body-l-semibold">Total<br>Documents</span>
+                            </div>
+                        </div>
+                        <span class="metric-number">5</span>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-left">
+                            <div class="icon-circle icon-check-green">
+                                <img src="assets/icons/Document (2).svg" width="20">
+                            </div>
+                            <div class="metric-info">
+                                <span class="metric-label body-l-semibold">Valid</span>
+                            </div>
+                        </div>
+                        <span class="metric-number">2</span>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-left">
+                            <div class="icon-circle icon-clock-orange">
+                                <img src="assets/icons/Document (3).svg" width="20">
+                            </div>
+                            <div class="metric-info">
+                                <span class="metric-label body-l-semibold">Expiring<br>Soon</span>
+                            </div>
+                        </div>
+                        <span class="metric-number">2</span>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-left">
+                            <div class="icon-circle icon-alert-red">
+                                <img src="assets/icons/Document (4).svg" width="20">
+                            </div>
+                            <div class="metric-info">
+                                <span class="metric-label body-l-semibold">Missing</span>
+                            </div>
+                        </div>
+                        <span class="metric-number">1</span>
+                    </div>
+                </section>
+
+                <div class="table-wrapper" style="margin-top: 24px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin: 16px;">
+                        <h3 class="heading-4">All Documents</h3>
+                        <div class="filter-container" style="position: relative; display: flex; align-items: center;">
+                            <span id="filter-badge" style="display:none;"></span>
+                            <button id="filter-btn" style="background: none; border: none; padding: 0; cursor: pointer; display: flex; align-items: center; margin-left: 8px;">
+                                <img src="assets/icons/Filter.svg" alt="Filter" style="width: 22px; height: 22px; vertical-align: middle;">
+                            </button>
+                            <div id="filter-menu" style="display: none; position: absolute; right: 0; top: 32px; background: #fff; border: 1px solid var(--gray-200); border-radius: 8px; box-shadow: 0 4px 16px rgba(0,0,0,0.08); min-width: 160px; z-index: 10;">
+                                <div class="filter-option body-s-medium" data-value="all" style="padding: 10px 18px; cursor: pointer;">All Documents</div>
+                                <div class="filter-option body-s-medium" data-value="cdl" style="padding: 10px 18px; cursor: pointer;">CDL</div>
+                                <div class="filter-option body-s-medium" data-value="med" style="padding: 10px 18px; cursor: pointer;">Medical Card</div>
+                            </div>
+                        </div>
+                    </div>
+                    <table class="drivers-table">
+                        <thead>
+                            <tr>
+                                <th class="body-s-semibold">Driver</th>
+                                <th class="body-s-semibold">Document type</th>
+                                <th class="body-s-semibold">Status</th>
+                                <th class="body-s-semibold">Upload date</th>
+                                <th class="body-s-semibold">Expiration date</th>
+                            </tr>
+                        </thead>
+                        <tbody id="documents-tbody">
+                            </tbody>
+                    </table>
+                    <div class="table-pagination" id="documents-pagination"></div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="js/app.js"></script>
+    <script>
+fetch('sidebar.html')
+    .then(res => res.text())
+    .then(html => {
+        document.getElementById('sidebar-container').innerHTML = html;
+        
+        // ¡ESTO ES LO IMPORTANTE! 
+        // Ejecutar la activación de links DESPUÉS de insertar el HTML
+        if (typeof setActiveSidebarLink === 'function') {
+            setActiveSidebarLink();
+        }
+        
+        // El resto de tus funciones...
+        if (typeof setupSidebarToggle === 'function') setupSidebarToggle();
+        
+        const logoutBtn = document.getElementById('logout-btn');
+        if (logoutBtn) {
+            logoutBtn.addEventListener('click', function() {
+                window.location.href = 'login.html';
+            });
+        }
+    });
+    let documentsData = [];
+    const ROWS_PER_PAGE = 8;
+    let currentPage = 1;
+    let currentFilter = 'all';
+
+    function renderDocumentsTable(page = 1, filter = 'all') {
+        const tbody = document.getElementById('documents-tbody');
+        tbody.innerHTML = '';
+        let filtered = documentsData;
+        if (filter === 'cdl') filtered = documentsData.filter(doc => doc.type === 'CDL');
+        if (filter === 'med') filtered = documentsData.filter(doc => doc.type === 'Medical Card');
+        const start = (page - 1) * ROWS_PER_PAGE;
+        const end = start + ROWS_PER_PAGE;
+        const pageDocs = filtered.slice(start, end);
+        pageDocs.forEach(doc => {
+            let badgeClass = '', badgeText = doc.status, dotClass = '';
+            if (doc.status === "Valid") {
+                badgeClass = 'status-badge-doc status-badge-valid';
+                dotClass = 'status-dot-doc dot-valid';
+            } else if (doc.status === "Expiring Soon") {
+                badgeClass = 'status-badge-doc status-badge-expiring';
+                dotClass = 'status-dot-doc dot-expiring';
+            } else {
+                badgeClass = 'status-badge-doc status-badge-missing';
+                dotClass = 'status-dot-doc dot-missing';
+            }
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td class="body-m-semibold">${doc.driver}</td>
+                <td class="body-m">${doc.type}</td>
+                <td class="body-m">
+                    <span class="${badgeClass}"><span class="${dotClass}"></span>${badgeText}</span>
+                </td>
+                <td class="body-m">${doc.uploadDate || doc.upload || '-'} </td>
+                <td class="body-m">${doc.expirationDate || doc.expiry || '-'} </td>
+            `;
+            tbody.appendChild(tr);
+        });
+    }
+
+    function renderPagination() {
+        let filtered = documentsData;
+        if (currentFilter === 'cdl') filtered = documentsData.filter(doc => doc.type === 'CDL');
+        if (currentFilter === 'med') filtered = documentsData.filter(doc => doc.type === 'Medical Card');
+        const totalPages = Math.ceil(filtered.length / ROWS_PER_PAGE);
+        const pagDiv = document.getElementById('documents-pagination');
+        pagDiv.innerHTML = '';
+        if (totalPages <= 1) return;
+        const prevBtn = document.createElement('button');
+        prevBtn.className = 'pagination-arrow body-m-semibold';
+        prevBtn.innerHTML = `
+            <span style="display: inline-flex; align-items: center;">
+                <img src='assets/icons/Chevron Left.svg' alt='' style='width: 14px; height: 14px; margin-right: 6px;'>
+                <span>Previous</span>
+            </span>`;
+        prevBtn.disabled = currentPage === 1;
+        prevBtn.onclick = () => { if (currentPage > 1) { currentPage--; updateTable(); } };
+        pagDiv.appendChild(prevBtn);
+        const numsDiv = document.createElement('div');
+        numsDiv.className = 'pagination-numbers';
+        for (let i = 1; i <= totalPages; i++) {
+            const span = document.createElement('span');
+            span.className = 'page-num' + (i === currentPage ? ' active' : '');
+            span.textContent = i;
+            span.onclick = () => { currentPage = i; updateTable(); };
+            numsDiv.appendChild(span);
+        }
+        pagDiv.appendChild(numsDiv);
+        const nextBtn = document.createElement('button');
+        nextBtn.className = 'pagination-arrow body-m-semibold';
+        nextBtn.innerHTML = `
+            <span style="display: inline-flex; align-items: center;">
+                <span>Next</span>
+                <img src='assets/icons/Chevron Right.svg' alt='' style='width: 14px; height: 14px; margin-left: 6px;'>
+            </span>`;
+        nextBtn.disabled = currentPage === totalPages;
+        nextBtn.onclick = () => { if (currentPage < totalPages) { currentPage++; updateTable(); } };
+        pagDiv.appendChild(nextBtn);
+    }
+
+    function updateTable() {
+        renderDocumentsTable(currentPage, currentFilter);
+        renderPagination();
+    }
+
+    // Dropdown filter logic
+    let filterMenuOpen = false;
+    const filterBtn = document.getElementById('filter-btn');
+    const filterMenu = document.getElementById('filter-menu');
+    const filterBadge = document.getElementById('filter-badge');
+    const filterLabels = { all: 'All Documents', cdl: 'CDL', med: 'Medical Card' };
+    function updateFilterBadge() {
+        if (currentFilter === 'all') {
+            filterBadge.style.display = 'none';
+            filterBadge.innerHTML = '';
+        } else {
+            filterBadge.style.display = 'inline-flex';
+            filterBadge.innerHTML = `<span class="filter-badge">${filterLabels[currentFilter]}<span class="filter-badge-x" title="Clear">×</span></span>`;
+        }
+    }
+    filterBtn.addEventListener('click', function(e) {
+        e.stopPropagation();
+        filterMenu.style.display = filterMenuOpen ? 'none' : 'block';
+        filterMenuOpen = !filterMenuOpen;
+    });
+    document.addEventListener('click', function() {
+        if (filterMenuOpen) {
+            filterMenu.style.display = 'none';
+            filterMenuOpen = false;
+        }
+    });
+    filterMenu.querySelectorAll('.filter-option').forEach(opt => {
+        opt.addEventListener('click', function(e) {
+            currentFilter = this.getAttribute('data-value');
+            currentPage = 1;
+            updateTable();
+            updateFilterBadge();
+            filterMenu.style.display = 'none';
+            filterMenuOpen = false;
+        });
+    });
+    filterBadge.addEventListener('click', function(e) {
+        if (e.target.classList.contains('filter-badge-x')) {
+            currentFilter = 'all';
+            currentPage = 1;
+            updateTable();
+            updateFilterBadge();
+        }
+    });
+
+    fetch('data/demo-data.json')
+        .then(res => res.json())
+        .then(data => {
+            documentsData = (data.documents || []).map(doc => ({
+                driver: doc.driver,
+                type: doc.type,
+                status: doc.status,
+                uploadDate: doc.uploadDate,
+                expirationDate: doc.expirationDate
+            }));
+            updateTable();
+            updateFilterBadge();
+        });
+    </script>
+</body>
+</html>

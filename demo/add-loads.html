@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Assign Load | BackOfficeFleet</title>
+    <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/layout.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/dashboard.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+    <style>
+        .dashboard-view {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 40px 24px;
+        }
+
+        /* Load summary card */
+        .load-summary-card {
+            background: white;
+            border: 1px solid var(--gray-200);
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 28px;
+        }
+        .load-summary-card h3 {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--gray-500);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 16px;
+        }
+        .load-summary-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 0;
+            border: 1px solid var(--gray-200);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        .load-summary-cell {
+            padding: 14px 16px;
+            border-right: 1px solid var(--gray-100);
+        }
+        .load-summary-cell:last-child { border-right: none; }
+        .load-summary-cell .label {
+            display: block;
+            font-size: 11px;
+            color: var(--gray-500);
+            margin-bottom: 4px;
+            font-weight: 500;
+        }
+        .load-summary-cell .value {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--gray-900);
+        }
+        .status-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 3px 10px;
+            border-radius: 99px;
+            font-size: 12px;
+            font-weight: 600;
+            background: var(--warning-50);
+            color: var(--warning-700);
+        }
+        .status-pill::before {
+            content: "●";
+            font-size: 8px;
+        }
+
+        @media (max-width: 700px) {
+            .load-summary-grid { grid-template-columns: 1fr 1fr; }
+            .load-summary-cell:nth-child(2) { border-right: none; }
+        }
+
+        /* Driver selection section */
+        .driver-section {
+            background: white;
+            border: 1px solid var(--gray-200);
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 28px;
+        }
+        .driver-section h3 {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--gray-900);
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-group label {
+            display: block;
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--gray-700);
+            margin-bottom: 8px;
+        }
+        .driver-select {
+            width: 100%;
+            padding: 10px 14px;
+            border: 1px solid var(--gray-300);
+            border-radius: 8px;
+            font-size: 14px;
+            color: var(--gray-900);
+            background: white;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            cursor: pointer;
+            outline: none;
+            transition: border-color 0.15s;
+        }
+        .driver-select:focus {
+            border-color: var(--brand-accent-700);
+            box-shadow: 0 0 0 3px rgba(0, 161, 154, 0.1);
+        }
+
+        /* CDL status indicator */
+        .cdl-indicator {
+            display: none;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 16px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            margin-top: 12px;
+        }
+        .cdl-indicator.eligible {
+            display: flex;
+            background: #F6FEF9;
+            border: 1px solid #A9EFC5;
+            color: #027A48;
+        }
+        .cdl-indicator.expired {
+            display: flex;
+            background: #FFF1F3;
+            border: 1px solid #FFC5CE;
+            color: #C01048;
+        }
+        .cdl-indicator i {
+            font-size: 18px;
+            flex-shrink: 0;
+        }
+
+        /* Assign button */
+        .assign-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+            padding-top: 24px;
+            border-top: 1px solid var(--gray-200);
+        }
+        .btn-primary:disabled {
+            opacity: 0.45;
+            cursor: not-allowed;
+            pointer-events: none;
+        }
+
+        @media (max-width: 600px) {
+            .assign-footer { flex-direction: column-reverse; }
+            .btn-primary, .btn-secondary { width: 100%; text-align: center; }
+        }
+    </style>
+</head>
+<body>
+    <div class="main-container">
+        <div id="sidebar-container"></div>
+        <main class="dashboard-outer">
+            <div class="dashboard-view">
+
+                <header class="content-header" style="margin-bottom: 28px;">
+                    <div class="header-left" style="gap: 20px; align-items: center;">
+                        <button id="sidebar-toggle" class="sidebar-toggle-btn custom-green-toggle">
+                            <i class="bi bi-list"></i>
+                        </button>
+                        <div class="header-text">
+                            <a href="loads.html" class="body-m-semibold" style="color: var(--brand-accent-700); text-decoration: none; display: inline-flex; align-items: center; gap: 4px; margin-bottom: 4px;">
+                                <i class="bi bi-arrow-left"></i> Back to Loads
+                            </a>
+                            <h1 class="heading-2">Assign Load</h1>
+                        </div>
+                    </div>
+                </header>
+
+                <!-- Load Summary -->
+                <div class="load-summary-card">
+                    <h3>Load Summary</h3>
+                    <div class="load-summary-grid">
+                        <div class="load-summary-cell">
+                            <span class="label">Load ID</span>
+                            <span class="value">78421</span>
+                        </div>
+                        <div class="load-summary-cell">
+                            <span class="label">Pickup</span>
+                            <span class="value">Cleveland, OH</span>
+                        </div>
+                        <div class="load-summary-cell">
+                            <span class="label">Dropoff</span>
+                            <span class="value">Chicago, IL</span>
+                        </div>
+                        <div class="load-summary-cell">
+                            <span class="label">Rate</span>
+                            <span class="value">$1,850</span>
+                        </div>
+                        <div class="load-summary-cell">
+                            <span class="label">Status</span>
+                            <span class="value"><span class="status-pill">Pending Assignment</span></span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Driver Selection -->
+                <div class="driver-section">
+                    <h3>Select Driver</h3>
+
+                    <div class="form-group">
+                        <label for="driver-select">Driver</label>
+                        <select class="driver-select" id="driver-select" onchange="handleDriverSelect()">
+                            <option value="">— Select a driver —</option>
+                            <option value="john-carter" data-expiry="2026-04-12">John Carter (CDL: 2026-04-12)</option>
+                            <option value="marcus-hill" data-expiry="2024-11-01">Marcus Hill (CDL: 2024-11-01)</option>
+                            <option value="david-ramirez" data-expiry="2025-09-30">David Ramirez (CDL: 2025-09-30)</option>
+                            <option value="anthony-brooks" data-expiry="2023-12-15">Anthony Brooks (CDL: 2023-12-15)</option>
+                            <option value="samuel-price" data-expiry="2026-01-20">Samuel Price (CDL: 2026-01-20)</option>
+                        </select>
+
+                        <div class="cdl-indicator eligible" id="cdl-eligible">
+                            <i class="bi bi-check-circle-fill"></i>
+                            <span>Eligible — CDL is valid and up to date.</span>
+                        </div>
+                        <div class="cdl-indicator expired" id="cdl-expired">
+                            <i class="bi bi-x-circle-fill"></i>
+                            <span id="cdl-expired-msg">CDL Expired — This driver cannot be assigned.</span>
+                        </div>
+                    </div>
+
+                    <div class="assign-footer">
+                        <a href="loads.html" class="btn-secondary">Cancel</a>
+                        <button class="btn-primary" id="assign-btn" disabled onclick="assignLoad()">Assign Driver</button>
+                    </div>
+                </div>
+
+            </div>
+        </main>
+    </div>
+
+    <script src="js/app.js"></script>
+    <script>
+        fetch('sidebar.html').then(res => res.text()).then(html => {
+            document.getElementById('sidebar-container').innerHTML = html;
+            if (typeof setupSidebarToggle === 'function') setupSidebarToggle();
+            if (typeof setActiveSidebarLink === 'function') setActiveSidebarLink();
+        });
+
+        function handleDriverSelect() {
+            const select = document.getElementById('driver-select');
+            const selectedOption = select.options[select.selectedIndex];
+            const expiry = selectedOption.getAttribute('data-expiry');
+            const eligibleEl = document.getElementById('cdl-eligible');
+            const expiredEl = document.getElementById('cdl-expired');
+            const assignBtn = document.getElementById('assign-btn');
+
+            // Reset
+            eligibleEl.style.display = 'none';
+            expiredEl.style.display = 'none';
+            assignBtn.disabled = true;
+
+            if (!expiry) return;
+
+            const today = new Date().toISOString().split('T')[0];
+            const isExpired = expiry < today;
+
+            if (isExpired) {
+                expiredEl.style.display = 'flex';
+                document.getElementById('cdl-expired-msg').textContent =
+                    `CDL Expired (${expiry}) — This driver cannot be assigned.`;
+            } else {
+                eligibleEl.style.display = 'flex';
+                assignBtn.disabled = false;
+            }
+        }
+
+        function assignLoad() {
+            window.location.href = 'loads.html';
+        }
+    </script>
+</body>
+</html>

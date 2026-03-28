@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Load Details | BackOfficeFleet</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/layout.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/dashboard.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <style>
+        /* =============================================
+           LAYOUT & RESPONSIVE PADDING
+           ============================================= */
+        .dashboard-view {
+            padding: 40px 24px;
+        }
+
+        @media (max-width: 1024px) {
+            .dashboard-outer { margin-left: 0; padding: 0; }
+            /* Smart Padding para iPad y Móvil */
+            .dashboard-view { padding: 50px 16px; }
+        }
+
+        .detail-card {
+            background: #fff;
+            border: 1px solid var(--gray-200);
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 24px;
+        }
+
+        .detail-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 24px;
+            margin-bottom: 24px;
+        }
+
+        .section-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 16px;
+            color: var(--gray-950);
+            border-bottom: 1px solid var(--gray-100);
+            padding-bottom: 8px;
+        }
+
+        .timeline {
+            border-left: 3px solid var(--brand-accent-700);
+            margin-left: 12px;
+            padding-left: 24px;
+        }
+
+        .timeline-event { margin-bottom: 18px; position: relative; }
+        .timeline-event::before {
+            content: '';
+            position: absolute;
+            left: -31px;
+            top: 5px;
+            width: 12px;
+            height: 12px;
+            background: var(--brand-accent-700);
+            border-radius: 50%;
+        }
+
+        .documents-list { list-style: none; padding: 0; }
+        .documents-list li {
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .actions-bar {
+            display: flex;
+            gap: 16px;
+            margin-top: 8px;
+            flex-wrap: wrap;
+        }
+
+        @media (max-width: 768px) {
+            .detail-grid { grid-template-columns: 1fr; gap: 16px; }
+            .actions-bar button { width: 100%; }
+        }
+    </style>
+</head>
+<body>
+    <div class="main-container">
+        <div id="sidebar-container"></div>
+        <main class="dashboard-outer">
+            <div class="dashboard-view">
+                <header class="content-header">
+                    <div class="header-left" style="gap: 20px; align-items: center;">
+                        <button id="sidebar-toggle" class="sidebar-toggle-btn custom-green-toggle">
+                            <i class="bi bi-list"></i>
+                        </button>
+                        <div class="header-text">
+                            <a href="loads.html" class="body-m-semibold" style="color: var(--brand-accent-700); text-decoration: none; display: flex; align-items: center; gap: 4px; margin-top: 24px;">
+                                <img src="assets/icons/Chevron Left.svg" alt="Back" style="width: 16px; height: 16px;"> Back to Loads
+                            </a>
+                            <div style="display: flex; align-items: center; gap: 12px; margin-top: 12px; flex-wrap: wrap;">
+                                <h1 class="heading-2" id="load-title">Loading...</h1>
+                                <span id="status-badge" class="status-badge">Status</span>
+                            </div>
+                            <p class="body-m-medium" id="load-meta" style="color: var(--gray-600);"></p>
+                        </div>
+                    </div>
+                </header>
+
+                <div class="detail-card">
+                    <div class="section-title">Load Summary</div>
+                    <div class="detail-grid" id="load-summary"></div>
+                </div>
+
+                <div class="detail-grid">
+                    <div class="detail-card">
+                        <div class="section-title">Timeline</div>
+                        <div id="timeline" class="timeline"></div>
+                    </div>
+
+                    <div class="detail-card">
+                        <div class="section-title">Documents</div>
+                        <ul id="documents-list" class="documents-list"></ul>
+                    </div>
+                </div>
+
+                <div class="actions-bar">
+                    <button type="button" class="btn-secondary" id="download-docs-btn"><i class="bi bi-download"></i> Download All</button>
+                    <button type="button" class="btn-primary" id="mark-delivered-btn"><i class="bi bi-check2-circle"></i> Mark as Delivered</button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="js/app.js"></script>
+    <script>
+    // Carga de Sidebar
+    fetch('sidebar.html').then(res => res.text()).then(html => {
+        document.getElementById('sidebar-container').innerHTML = html;
+        if (typeof setActiveSidebarLink === 'function') setActiveSidebarLink();
+        if (typeof setupSidebarToggle === 'function') setupSidebarToggle();
+        
+        document.getElementById('logout-btn')?.addEventListener('click', () => {
+            window.location.href = 'login.html';
+        });
+    });
+
+    // Lógica de Carga de Datos
+    const params = new URLSearchParams(window.location.search);
+    const loadId = params.get('id');
+
+    fetch('data/demo-data.json').then(res => res.json()).then(data => {
+        const load = data.loads.find(l => l.id === loadId);
+        if (!load) {
+            document.getElementById('load-title').textContent = 'Load Not Found';
+            return;
+        }
+        renderLoadData(load);
+    });
+
+    function renderLoadData(load) {
+        // Header
+        document.getElementById('load-title').textContent = `Load ${load.number || load.id}`;
+        const badge = document.getElementById('status-badge');
+        badge.textContent = load.status;
+        badge.className = `status-badge ${getStatusClass(load.status)}`;
+        // Meta color
+        const meta = document.getElementById('load-meta');
+        let driverColor = (load.driverName || load.assignedDriver) ? 'var(--success-700)' : 'var(--gray-500)';
+        let dateColor = 'var(--blue-700)';
+        if (load.status === 'Delivered') dateColor = 'var(--success-700)';
+        if (load.status === 'Unassigned') dateColor = 'var(--gray-400)';
+        meta.innerHTML = `<span style="color:${driverColor}; font-weight:600;">${load.driverName || 'Unassigned'}</span> <span style="color:var(--gray-400);">•</span> <span style="color:${dateColor}; font-weight:600;">${load.pickupDate || '-'}</span>`;
+
+        // Summary
+        document.getElementById('load-summary').innerHTML = `
+            <div><label class="data-label">Origin</label><div class="data-value">${load.pickup || load.origin}</div></div>
+            <div><label class="data-label">Destination</label><div class="data-value">${load.dropoff || load.destination}</div></div>
+            <div><label class="data-label">Rate</label><div class="data-value">$${load.rate}</div></div>
+            <div><label class="data-label">Driver</label><div class="data-value">${load.driverName || 'Unassigned'}</div></div>
+        `;
+
+        // Timeline (Hardcoded para demo)
+        document.getElementById('timeline').innerHTML = `
+            <div class="timeline-event">
+                <div class="body-m-semibold" style="color: var(--blue-700);">Pickup</div>
+                <div class="body-s" style="color: var(--blue-700);">${load.pickupDate || '-'}</div>
+            </div>
+            <div class="timeline-event">
+                <div class="body-m-semibold">In Transit</div>
+                <span class="status-badge ${getStatusClass('In Transit')}">In Transit</span>
+            </div>
+            <div class="timeline-event">
+                <div class="body-m-semibold" style="color: var(--success-700);">Delivery</div>
+                <span class="status-badge ${getStatusClass('Delivered')}">Delivered</span>
+                <div class="body-s" style="color: var(--success-700); margin-top: 2px;">${load.deliveryDate || '-'}</div>
+            </div>
+        `;
+
+        // Documents
+        const docList = document.getElementById('documents-list');
+        const docs = ["Rate Confirmation.pdf", "Bill of Lading.pdf", "Lumper Receipt.jpg"];
+        docList.innerHTML = docs.map(d => `<li><i class="bi bi-file-earmark-pdf" style="color:var(--error-600)"></i> <span class="body-m">${d}</span></li>`).join('');
+    }
+
+    function getStatusClass(status) {
+        if (status === 'In Transit') return 'active';
+        if (status === 'Delivered') return 'success';
+        if (status === 'Unassigned') return 'gray';
+        if (status === 'Assigned') return 'assigned';
+        return 'pending';
+    }
+
+    document.getElementById('mark-delivered-btn').onclick = () => alert('Demo: Load marked as delivered');
+    document.getElementById('download-docs-btn').onclick = () => alert('Demo: Downloading all documentation');
+    </script>
+</body>
+</html>

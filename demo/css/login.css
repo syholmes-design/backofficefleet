@@ -1,0 +1,119 @@
+/* =============================================
+   LOGIN - Estructura Base Responsiva
+   ============================================= */
+#sidebar { display: none !important; }
+#view-container { margin-left: 0 !important; }
+
+.login-container {
+    min-height: 100vh;
+    width: 100%;
+    background: var(--bg-main);
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    /* Usamos un padding superior que se adapte */
+    padding: 64px 16px; 
+    box-sizing: border-box;
+}
+
+.login-box {
+    background: #FFFFFF;
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05), 0 1px 2px rgba(0, 0, 0, 0.1);
+    /* Aumentamos el padding inferior a 48px para que el botón no toque el borde */
+    padding: 48px 40px 48px 40px; 
+    width: 100%;
+    max-width: 440px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    box-sizing: border-box;
+        height: auto;
+}
+
+.login-logo-img {
+    height: auto; /* Para que mantenga proporción */
+    width: 150px;
+    max-width: 100%;
+    margin-bottom: 24px;
+}
+
+.login-form {
+    width: 100%;
+}
+
+.input-group {
+    margin-bottom: 20px;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.input-group label {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--gray-700);
+}
+
+.login-form input[type="email"],
+.login-form input[type="password"] {
+    width: 100%; /* Asegura que ocupen todo el ancho de la caja */
+    padding: 12px;
+    border-radius: 8px;
+    font-family: 'Inter', sans-serif;
+    font-size: 16px; /* 16px evita el zoom automático en iPhone al hacer focus */
+    background: var(--bg-white);
+    border: 1px solid var(--brand-neutral-200);
+    color: var(--gray-950);
+    outline: none;
+    box-sizing: border-box;
+    transition: border 0.2s, box-shadow 0.2s;
+}
+
+.login-form input:focus {
+    border-color: var(--brand-700);
+    box-shadow: 0 0 0 4px var(--brand-100);
+}
+
+.btn-signin {
+    width: 100%;
+    padding: 14px;
+    border-radius: 8px;
+    background: #00A3A3;
+    color: #FFFFFF;
+    font-size: 16px;
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
+    margin-top: 12px;
+    /* Agregamos un margen extra por seguridad si la caja se achica */
+    margin-bottom: 8px; 
+    transition: background 0.2s ease;
+}
+
+.btn-signin:hover {
+    background: #008282;
+    transform: translateY(-1px); /* Un pequeño efecto de elevación al pasar el mouse */
+}
+
+/* =============================================
+   MEDIA QUERIES - Ajustes finos
+   ============================================= */
+@media (max-width: 480px) {
+    .login-container {
+        padding-top: 40px;
+    }
+    
+    .login-box {
+        padding: 32px 20px; /* Reducimos padding interno para ganar espacio */
+        border-radius: 12px;
+        box-shadow: none; /* Opcional: diseño más flat en móviles */
+        border: 1px solid var(--brand-neutral-200);
+    }
+
+    .login-logo-img {
+        width: 130px;
+        margin-bottom: 20px;
+    }
+}

@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/layout.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/login.css">
+</head>
+<body>
+<section class="login-container">
+    <div class="login-box">
+        <img src="assets/logos/logo.svg" alt="BackOfficeFleet" class="login-logo-img">
+        <h1 class="title-signin heading-2">Sign in to your account</h1>
+        <form id="login-form" class="login-form">
+            <div class="input-group">
+                <label class="label body-m-medium" for="email">Email</label>
+                <input id="email" type="email" class="body-m" placeholder="Type your email" required style="color: var(--gray-950); background: var(--bg-white); border: 1px solid var(--brand-neutral-200);">
+            </div>
+            <div class="input-group">
+                <label class="label body-m-medium" for="password">Password</label>
+                <input id="password" type="password" class="body-m" placeholder="Type your password" required style="color: var(--gray-950); background: var(--bg-white); border: 1px solid var(--brand-neutral-200);">
+            </div>
+            <button type="submit" class="btn-primary" style="width:100%">Sign In</button>
+        </form>
+    </div>
+</section>
+<script>
+document.getElementById('login-form').addEventListener('submit', function(e) {
+    e.preventDefault();
+    const email = document.getElementById('email').value.trim();
+    const password = document.getElementById('password').value.trim();
+    let valid = true;
+    let message = '';
+   
+    if (!email || !/^\S+@\S+\.\S+$/.test(email)) {
+        valid = false;
+        message = 'Please enter a valid email address.';
+    } else if (!password || password.length < 6) {
+        valid = false;
+        message = 'Password must be at least 6 characters.';
+    }
+    if (!valid) {
+        alert(message);
+        return;
+    }
+    window.location.href = 'dashboard.html';
+});
+</script>
+</body>
+</html>
+

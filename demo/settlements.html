@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Settlements</title>
+    <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/layout.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/dashboard.css">
+    <link rel="stylesheet" href="css/drivers.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+</head>
+<style>
+/* Alternating row colors for settlements table */
+.drivers-table tbody tr:nth-child(odd) {
+    background: #fff;
+}
+.drivers-table tbody tr:nth-child(even) {
+    background: #f6f7f9; /* gray/50 */
+}
+/* =============================================
+   PAGINACIÓN RESPONSIVE
+   ============================================= */
+.table-pagination {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px;
+    gap: 8px;
+}
+
+.pagination-numbers {
+    display: flex;
+    gap: 4px;
+}
+
+.page-num {
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: all 0.2s;
+}
+
+.page-num.active {
+    background: var(--brand-accent-700);
+    color: white;
+}
+
+@media (max-width: 600px) {
+    .pagination-arrow span {
+        font-size: 0; /* Oculta el texto 'Previous/Next' */
+    }
+    
+    .pagination-arrow img {
+        margin: 0 !important; /* Centra la flecha */
+        width: 20px;
+        height: 20px;
+    }
+
+    .pagination-arrow {
+        padding: 8px 12px;
+        min-width: 44px;
+        display: flex;
+        justify-content: center;
+    }
+
+    .page-num {
+        width: 32px;
+        height: 32px;
+        font-size: 13px;
+    }
+
+    .pagination-numbers {
+        gap: 2px;
+    }
+}
+</style>
+</head>
+<body>
+    <div class="main-container">
+        <div id="sidebar-container"></div>
+        <main class="dashboard-outer">
+            <div class="dashboard-view">
+                <header class="content-header">
+                  <button id="sidebar-toggle" class="sidebar-toggle-btn custom-green-toggle" aria-label="Open menu">
+    <i class="bi bi-list"></i>
+</button>
+                    <div class="header-text">
+                        <h1 class="heading-2">Settlements</h1>
+                        <p class="body-m-medium">Manage driver settlements and payments</p>
+                    </div>
+                </header>
+                <div class="table-wrapper">
+                    <table class="drivers-table">
+                        <thead>
+                            <tr>
+                                <th class="body-s-semibold">Driver</th>
+                                <th class="body-s-semibold">Date</th>
+                                <th class="body-s-semibold">Gross pay</th>
+                                <th class="body-s-semibold">Deductions</th>
+                                <th class="body-s-semibold">Net pay</th>
+                                <th class="body-s-semibold">Status</th>
+                                <th class="body-s-semibold">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="settlements-tbody">
+                            <!-- Will be filled dynamically -->
+                        </tbody>
+                    </table>
+                    <div class="table-pagination" id="settlements-pagination">
+                        <!-- Dynamic pagination -->
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+    <script src="js/app.js"></script>
+    <script>
+  fetch('sidebar.html')
+    .then(res => res.text())
+    .then(html => {
+        document.getElementById('sidebar-container').innerHTML = html;
+        
+        // ¡ESTO ES LO IMPORTANTE! 
+        // Ejecutar la activación de links DESPUÉS de insertar el HTML
+        if (typeof setActiveSidebarLink === 'function') {
+            setActiveSidebarLink();
+        }
+        
+        // El resto de tus funciones...
+        if (typeof setupSidebarToggle === 'function') setupSidebarToggle();
+        
+        const logoutBtn = document.getElementById('logout-btn');
+        if (logoutBtn) {
+            logoutBtn.addEventListener('click', function() {
+                window.location.href = 'login.html';
+            });
+        }
+    });
+
+    // Load and render settlements from demo-data.json
+    let settlementsData = [];
+    const ROWS_PER_PAGE = 8;
+    let currentPage = 1;
+
+    function renderSettlementsTable(page = 1) {
+        const tbody = document.getElementById('settlements-tbody');
+        tbody.innerHTML = '';
+        const start = (page - 1) * ROWS_PER_PAGE;
+        const end = start + ROWS_PER_PAGE;
+        const pageSettlements = settlementsData.slice(start, end);
+        const driverPhotos = {
+            'John Carter': 'assets/images/image (1).png',
+            'Maria Lopez': 'assets/images/image (2).png',
+            'Alex Kim': 'assets/images/image (3).png',
+            'Priya Patel': 'assets/images/image (4).png',
+            'Kenji Tanaka': 'assets/images/image (5).png',
+            'Marcus Chen': 'assets/images/image (6).png',
+            'Sofia Gomez': 'assets/images/image (7).png',
+            'Liam Smith': 'assets/images/image (8).png',
+            'Emma Brown': 'assets/images/image (10).png',
+            'Noah Wilson': 'assets/images/image (9).png',
+            'Olivia Lee': 'assets/images/image (12).png'
+        };
+        pageSettlements.forEach(settlement => {
+            const photo = driverPhotos[settlement.driver] || 'assets/images/image (1).png';
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td>
+                    <div class="driver-info-cell">
+                        <img src="${photo}" alt="" class="table-avatar">
+                        <div class="driver-contact">
+                            <span class="body-m-semibold">${settlement.driver}</span>
+                        </div>
+                    </div>
+                </td>
+                <td class="body-m">${settlement.date}</td>
+                <td class="body-m">${settlement.grossPay}</td>
+                <td class="body-m" style="color: var(--error-600);">${settlement.deductions}</td>
+                <td class="body-m" style="color: var(--success-600);">${settlement.netPay}</td>
+                <td><span class="status-badge ${settlement.status === 'Paid' ? 'active' : 'pending'}">${settlement.status}</span></td>
+                <td>
+                    <button class="view-profile-link body-m-semibold" data-settlementid="${settlement.id}" title="View" style="background:none;border:none;padding:0;cursor:pointer;display:flex;align-items:center;">
+                        <img src="assets/icons/icon (1).svg" alt="View" style="width: 16px; height: 16px; vertical-align: middle; margin-right: 4px;">
+                        <span class="btn-text">View</span> </button>
+                    </button>
+                </td>
+            `;
+            tbody.appendChild(tr);
+        });
+    }
+
+    // Action for the View button (registered only once)
+    document.addEventListener('click', function(e) {
+        if (e.target.closest('.view-profile-link[data-settlementid]')) {
+            const btn = e.target.closest('.view-profile-link[data-settlementid]');
+            const settlementId = btn.getAttribute('data-settlementid');
+            if (settlementId) {
+                // Here you could redirect to a settlement detail view
+                window.location.href = 'settlement-' + settlementId.toLowerCase() + '.html';
+            }
+        }
+    });
+
+    function renderPagination() {
+        const totalPages = Math.ceil(settlementsData.length / ROWS_PER_PAGE);
+        const pagDiv = document.getElementById('settlements-pagination');
+        pagDiv.innerHTML = '';
+        if (totalPages <= 1) return;
+        const prevBtn = document.createElement('button');
+        prevBtn.className = 'pagination-arrow body-m-semibold';
+        prevBtn.innerHTML = `
+            <span style="display: inline-flex; align-items: center;">
+                <img src='assets/icons/Chevron Left.svg' alt='' style='width: 14px; height: 14px; margin-right: 6px;'>
+                <span>Previous</span>
+            </span>`;
+        prevBtn.disabled = currentPage === 1;
+        prevBtn.onclick = () => { if (currentPage > 1) { currentPage--; updateTable(); } };
+        pagDiv.appendChild(prevBtn);
+        const numsDiv = document.createElement('div');
+        numsDiv.className = 'pagination-numbers';
+        for (let i = 1; i <= totalPages; i++) {
+            const span = document.createElement('span');
+            span.className = 'page-num' + (i === currentPage ? ' active' : '');
+            span.textContent = i;
+            span.onclick = () => { currentPage = i; updateTable(); };
+            numsDiv.appendChild(span);
+        }
+        pagDiv.appendChild(numsDiv);
+        const nextBtn = document.createElement('button');
+        nextBtn.className = 'pagination-arrow body-m-semibold';
+        nextBtn.innerHTML = `
+            <span style="display: inline-flex; align-items: center;">
+                <span>Next</span>
+                <img src='assets/icons/Chevron Right.svg' alt='' style='width: 14px; height: 14px; margin-left: 6px;'>
+            </span>`;
+        nextBtn.disabled = currentPage === totalPages;
+        nextBtn.onclick = () => { if (currentPage < totalPages) { currentPage++; updateTable(); } };
+        pagDiv.appendChild(nextBtn);
+    }
+
+    function updateTable() {
+        renderSettlementsTable(currentPage);
+        renderPagination();
+    }
+
+    fetch('data/demo-data.json')
+        .then(res => res.json())
+        .then(data => {
+            settlementsData = data.settlements || [];
+            updateTable();
+        });
+    </script>
+</body>
+</html>

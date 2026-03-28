@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Drivers</title>
+    <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/layout.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/dashboard.css">
+    <link rel="stylesheet" href="css/drivers.css">
+      <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+</head>
+<body>
+    <div class="main-container">
+        <div id="sidebar-container"></div>
+        <main class="dashboard-outer">
+            <div class="dashboard-view">
+
+                  <header class="content-header">
+                  <button id="sidebar-toggle" class="sidebar-toggle-btn custom-green-toggle" aria-label="Open menu">
+    <i class="bi bi-list"></i>
+</button>
+                    <div class="header-text">
+                        <h1 class="heading-2">Drivers</h1>
+                        <p class="body-m-medium">Manage your driver roster.</p>
+                    </div>
+                     <div class="header-actions">
+                        <a href="add-driver.html" class="btn-primary">+ Add New Driver</a>
+                    </div>
+                </header>
+                <div class="table-wrapper">
+                    <table class="drivers-table">
+                        <thead>
+                            <tr>
+                                <th class="body-s-semibold">Driver name</th>
+                                <th class="body-s-semibold">Status</th>
+                                <th class="body-s-semibold">CLD expiration</th>
+                                <th class="body-s-semibold">Med card expiration</th>
+                                <th class="body-s-semibold">Last load</th>
+                                <th class="body-s-semibold">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="drivers-tbody">
+                            <!-- Will be filled dynamically -->
+                        </tbody>
+                    </table>
+                    <div class="table-pagination" id="drivers-pagination">
+                        <!-- Dynamic pagination -->
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+    <script src="js/app.js"></script>
+    <script>
+fetch('sidebar.html')
+    .then(res => res.text())
+    .then(html => {
+        document.getElementById('sidebar-container').innerHTML = html;
+        
+        // ¡ESTO ES LO IMPORTANTE! 
+        // Ejecutar la activación de links DESPUÉS de insertar el HTML
+        if (typeof setActiveSidebarLink === 'function') {
+            setActiveSidebarLink();
+        }
+        
+        // El resto de tus funciones...
+        if (typeof setupSidebarToggle === 'function') setupSidebarToggle();
+        
+        const logoutBtn = document.getElementById('logout-btn');
+        if (logoutBtn) {
+            logoutBtn.addEventListener('click', function() {
+                window.location.href = 'login.html';
+            });
+        }
+    });
+
+    // Load and render drivers from demo-data.json
+    let driversData = [];
+    let trucksData = [];
+    const ROWS_PER_PAGE = 8;
+    let currentPage = 1;
+
+    function renderDriversTable(page = 1) {
+        const tbody = document.getElementById('drivers-tbody');
+        tbody.innerHTML = '';
+        const start = (page - 1) * ROWS_PER_PAGE;
+        const end = start + ROWS_PER_PAGE;
+        const pageDrivers = driversData.slice(start, end);
+        pageDrivers.forEach(driver => {
+            const tierColor = driver.safetyTier === 'Elite' ? '#12B76A' : driver.safetyTier === 'At Risk' ? '#F04438' : '#F79009';
+            const tierDot = driver.safetyTier
+                ? `<span title="Safety: ${driver.safetyTier}${driver.safetyViolation ? ' — ' + driver.safetyViolation : ''}" style="display:inline-block;width:9px;height:9px;border-radius:50%;background:${tierColor};margin-left:6px;vertical-align:middle;cursor:help;"></span>`
+                : '';
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td>
+                    <div class="driver-info-cell">
+                        <img src="${driver.photo}" alt="${driver.name}" class="table-avatar">
+                        <div class="driver-contact">
+                            <span class="body-m-semibold">${driver.name}</span>
+                        </div>
+                    </div>
+                </td>
+                <td><span class="status-badge ${driver.status === 'On Duty' ? 'active' : (driver.status === 'Off Duty' ? 'incomplete' : 'pending')}">${driver.status}</span>${tierDot}</td>
+                <td class="body-m">${driver.cldExpiration || '-'}</td>
+                <td class="body-m">${driver.medCardExpiration || '-'}</td>
+                <td class="body-m">${driver.lastLoad || '-'}</td>
+             <td>
+    <button class="view-profile-link body-m-semibold" data-driverid="${driver.id}" title="View Profile" style="background:none;border:none;padding:0;cursor:pointer;display:flex;align-items:center;">
+        <img src="assets/icons/icon (1).svg" alt="View" style="width: 16px; height: 16px; vertical-align: middle; margin-right: 4px;">
+        <span class="btn-text">View Profile</span> </button>
+</td>
+            `;
+            tbody.appendChild(tr);
+        });
+    }
+
+    // Action for the View Profile button (registered only once)
+    document.addEventListener('click', function(e) {
+        if (e.target.closest('.view-profile-link[data-driverid]')) {
+            const btn = e.target.closest('.view-profile-link[data-driverid]');
+            const driverId = btn.getAttribute('data-driverid');
+            if (driverId) {
+                window.location.href = `driver-detail.html?id=${driverId}`;
+            }
+        }
+    });
+
+    function renderPagination() {
+        const totalPages = Math.ceil(driversData.length / ROWS_PER_PAGE);
+        const pagDiv = document.getElementById('drivers-pagination');
+        pagDiv.innerHTML = '';
+        if (totalPages <= 1) return;
+        const prevBtn = document.createElement('button');
+        prevBtn.className = 'pagination-arrow body-m-semibold';
+        prevBtn.innerHTML = `<span style="display: inline-flex; align-items: center;"><img src='assets/icons/Chevron Left.svg' alt='' style='width: 14px; height: 14px; margin-right: 6px;'>Previous</span>`;
+        prevBtn.disabled = currentPage === 1;
+        prevBtn.onclick = () => { if (currentPage > 1) { currentPage--; updateTable(); } };
+        pagDiv.appendChild(prevBtn);
+        const numsDiv = document.createElement('div');
+        numsDiv.className = 'pagination-numbers';
+        for (let i = 1; i <= totalPages; i++) {
+            const span = document.createElement('span');
+            span.className = 'page-num' + (i === currentPage ? ' active' : '');
+            span.textContent = i;
+            span.onclick = () => { currentPage = i; updateTable(); };
+            numsDiv.appendChild(span);
+        }
+        pagDiv.appendChild(numsDiv);
+        const nextBtn = document.createElement('button');
+        nextBtn.className = 'pagination-arrow body-m-semibold';
+        nextBtn.innerHTML = `<span style="display: inline-flex; align-items: center;">Next<img src='assets/icons/Chevron Right.svg' alt='' style='width: 14px; height: 14px; margin-left: 6px;'></span>`;
+        nextBtn.disabled = currentPage === totalPages;
+        nextBtn.onclick = () => { if (currentPage < totalPages) { currentPage++; updateTable(); } };
+        pagDiv.appendChild(nextBtn);
+    }
+
+    function updateTable() {
+        renderDriversTable(currentPage);
+        renderPagination();
+    }
+
+    fetch('data/demo-data.json')
+        .then(res => res.json())
+        .then(data => {
+            driversData = data.drivers;
+            trucksData = data.fleet;
+            updateTable();
+        });
+    </script>
+</body>
+</html>

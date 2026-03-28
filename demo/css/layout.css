@@ -1,0 +1,264 @@
+/* Disabled sidebar links */
+.sidebar-link.disabled-link {
+    color: #bdbdbd !important;
+    background: none !important;
+    cursor: not-allowed !important;
+    pointer-events: none;
+    opacity: 0.7;
+}
+.sidebar-link.disabled-link .nav-icon {
+    filter: grayscale(1) brightness(1.5);
+    opacity: 0.5;
+}
+.sidebar-link.disabled-link:hover {
+    background: none !important;
+    color: #bdbdbd !important;
+}
+/* RESET LISTS AND LINKS */
+#sidebar ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+#sidebar a {
+    text-decoration: none !important;
+}
+
+/* SIDEBAR MAIN CONTAINER */
+#sidebar {
+    width: 270px; 
+    height: 100vh;
+    background-color: var(--brand-neutral-50);
+    display: flex;
+    flex-direction: column;
+    padding: 32px 16px 24px 24px;
+    position: fixed;
+    left: 0;
+    top: 0;
+    box-sizing: border-box;
+    z-index: 100;
+}
+
+/* LOGO */
+.sidebar-logo {
+  margin-top: 32px;
+  margin-bottom: 24px;
+  margin-right: 24px;
+  margin-left: 16px;
+}
+
+.sidebar-logo img {
+    height: 45px;
+    object-fit: contain;
+}
+
+/* SEARCH BAR */
+.sidebar-search {
+    position: relative;
+    margin-bottom: 29px;
+}
+
+.search-icon {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 16px;
+    height: 16px;
+    opacity: 0.5;
+}
+
+.search-input {
+    width: 100%;
+    padding: 10px 12px 10px 36px;
+    border: none;
+    border-radius: 8px;
+    background: #fff;
+    border: 1px solid var(--brand-neutral-200);
+    color: var(--gray-500);
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    box-sizing: border-box;
+    outline: none;
+}
+
+.search-input::placeholder {
+    color: var(--gray-500);
+    opacity: 1;
+}
+
+/* NAVIGATION MENU */
+.nav-menu {
+    flex-grow: 1; /* Pushes user block to bottom */
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.sidebar-link {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 12px;
+    border-radius: 8px;
+    color: var(--gray-500);
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    transition: all 0.2s;
+}
+
+
+/* Sidebar link hover (solo activos) */
+.sidebar-link:not(.disabled-link):hover {
+    background-color: var(--brand-neutral-100);
+    color: var(--gray-950);
+    font-weight: 600;
+}
+
+/* ACTIVE STATE  */
+.nav-item.active .sidebar-link {
+    background-color: var(--brand-neutral-100);
+    color: var(--gray-950) !important;
+    font-weight: 600;
+}
+.nav-item.active .sidebar-link .nav-icon {
+    filter: brightness(0.6) saturate(1.2);
+    /* If SVG allows, use fill: var(--gray-950); */
+    fill: var(--gray-950);
+}
+
+.nav-icon {
+    width: 16px;
+    height: 16px;
+    object-fit: contain;
+    /* If SVG allows, use fill: var(--brand-accent-700); */
+}
+
+/* DIVIDER AND USER */
+.sidebar-divider {
+    border: none;
+    border-top: 1.5px solid var(--brand-neutral-200);
+    margin: 24px 0 0 0;
+}
+
+/* --- SIDEBAR USER BLOCK (Figma exact) --- */
+.sidebar-user {
+  margin-top: auto;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding-top: 24px;
+  padding-bottom: 24px;
+  border-top: 1px solid var(--border-light);
+  min-height: 72px;
+}
+.user-avatar {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+.user-info {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 0;
+  margin-right: 0;
+}
+.user-name {
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--gray-950);
+}
+.user-email {
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+  color: var(--gray-500);
+}
+.logout-icon {
+  width: 16px;
+  height: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+/* RIGHT CONTENT ADJUSTMENT */
+#view-container {
+    margin-left: 280px; 
+    padding: 16px;
+    min-height: 100vh;
+    background-color: var(--brand-neutral-50);
+    box-sizing: border-box;
+}
+
+@media (max-width: 1024px) {
+    #sidebar {
+        left: -270px; /* Escondido por defecto */
+        transition: left 0.3s ease-in-out;
+        box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+    }
+
+    #sidebar.sidebar-open {
+        left: 0; /* Se muestra cuando tiene la clase */
+    }
+
+    .sidebar-backdrop {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0,0,0,0.5);
+        z-index: 99; /* Justo debajo de la sidebar */
+    }
+
+    .sidebar-backdrop.active {
+        display: block;
+    }
+}
+
+/* Contenedor del logo y cerrar */
+.sidebar-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between; /* Esto empuja la X a la derecha del logo */
+    margin-bottom: 24px;
+    padding: 0 8px;
+}
+
+/* Estilo para ambos botones */
+.sidebar-toggle-btn, .sidebar-close-btn {
+    background: white;
+    border: 1px solid var(--brand-neutral-200);
+    border-radius: 8px;
+    padding: 8px 12px;
+    cursor: pointer;
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+}
+
+/* El botón de abrir flotante en móvil y tablet */
+@media (max-width: 1024px) {
+    #sidebar-toggle {
+        position: fixed;
+        top: 15px;
+        left: 15px;
+        z-index: 50; /* Visible siempre */
+    }
+
+    .sidebar-close-btn {
+        display: flex; /* Solo se ve en móvil/tablet */
+    }
+}
+
+/* En desktop, escondemos los botones de toggle si no usas sidebar colapsable */
+@media (min-width: 1025px) {
+    .sidebar-toggle-btn, .sidebar-close-btn {
+        display: none;
+    }
+}

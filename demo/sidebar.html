@@ -1,0 +1,120 @@
+<nav id="sidebar">
+  <div class="sidebar-header">
+      <div class="sidebar-logo">
+          <img src="assets/logos/logo.svg" alt="BackOfficeFleet">
+      </div>
+      <button id="sidebar-close" class="sidebar-close-btn" aria-label="Close menu">
+          <i class="bi bi-x-lg"></i>
+      </button>
+  </div>
+  <div class="sidebar-search">
+      <img src="assets/icons/Search.svg" alt="Search" class="search-icon">
+      <input type="text" placeholder="Search modules..." class="search-input" id="sidebar-search-input">
+  </div>
+
+<ul class="nav-menu" id="sidebar-menu">
+    <li class="nav-item">
+        <a href="dashboard.html" class="sidebar-link" data-route="dashboard">
+            <img src="assets/icons/Dashboard.svg" class="nav-icon">
+            <span>Dashboard</span>
+        </a>
+    </li>
+    <li class="nav-item">
+        <a href="drivers.html" class="sidebar-link" data-route="drivers">
+            <img src="assets/icons/Group of Users.svg" class="nav-icon">
+            <span>Drivers</span>
+        </a>
+    </li>
+    <li class="nav-item">
+        <a href="loads.html" class="sidebar-link" data-route="loads">
+            <img src="assets/icons/Truck.svg" class="nav-icon">
+            <span>Loads</span>
+        </a>
+    </li>
+    <li class="nav-item">
+        <a href="compliance.html" class="sidebar-link" data-route="compliance">
+            <img src="assets/icons/Alert Circle.svg" class="nav-icon">
+            <span>Compliance</span>
+        </a>
+    </li>
+    <li class="nav-item">
+        <a href="safety.html" class="sidebar-link" data-route="safety">
+            <img src="assets/icons/Alert Circle (2).svg" class="nav-icon">
+            <span>Safety</span>
+        </a>
+    </li>
+    <li class="nav-item">
+        <a href="settlements.html" class="sidebar-link" data-route="settlements">
+            <img src="assets/icons/Coins.svg" class="nav-icon">
+            <span>Settlements</span>
+        </a>
+    </li>
+    <li class="nav-item">
+        <a href="#" class="sidebar-link disabled-link" data-route="documents">
+            <img src="assets/icons/Document.svg" class="nav-icon">
+            <span>Documents</span>
+        </a>
+    </li>
+    <li class="nav-item">
+        <a href="settings.html" class="sidebar-link" data-route="settings">
+            <img src="assets/icons/Settings.svg" class="nav-icon">
+            <span>Settings</span>
+        </a>
+    </li>
+</ul>
+
+  <hr class="sidebar-divider">
+
+  <div class="sidebar-user">
+      <img src="assets/images/Avatar.png" class="user-avatar" alt="User">
+      <div class="user-info">
+          <span class="user-name">Evelyn Hayes</span>
+          <span class="user-email">evelyn@customer001.com</span>
+      </div>
+  </div>
+</nav>
+
+<script>
+/**
+ * Lógica del Buscador
+ */
+(function() {
+    const searchInput = document.getElementById('sidebar-search-input');
+    if (searchInput) {
+        searchInput.addEventListener('input', function(e) {
+            const searchTerm = e.target.value.toLowerCase();
+            const navItems = document.querySelectorAll('#sidebar-menu .nav-item');
+
+            navItems.forEach(item => {
+                const span = item.querySelector('span');
+                if (span) {
+                    const text = span.textContent.toLowerCase();
+                    item.style.display = text.includes(searchTerm) ? 'block' : 'none';
+                }
+            });
+        });
+    }
+
+    /**
+     * Lógica de Logout y Cierre en Móvil
+     */
+    const logoutBtn = document.getElementById('logout-btn');
+    if (logoutBtn) {
+        logoutBtn.onclick = () => {
+            window.location.href = 'login.html';
+        };
+    }
+
+    // Cerrar sidebar en móvil al hacer clic en un link activo
+    document.querySelectorAll('.sidebar-link:not(.disabled-link)').forEach(link => {
+        link.addEventListener('click', () => {
+            if (window.innerWidth <= 768) {
+                const sb = document.getElementById('sidebar');
+                const bd = document.getElementById('sidebar-backdrop');
+                if (sb) sb.classList.remove('sidebar-open');
+                if (bd) bd.classList.remove('active');
+            }
+        });
+    });
+})();
+</script>

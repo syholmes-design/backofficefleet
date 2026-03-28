@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Compliance</title>
+    <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/layout.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/dashboard.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <style>
+                        /* Responsive: en móviles, poner el enlace View Driver debajo del contenido */
+                        @media (max-width: 600px) {
+                            .data-row {
+                                flex-direction: column;
+                                align-items: stretch;
+                            }
+                            .view-driver-link {
+                                margin-left: 0;
+                                margin-top: 12px;
+                                align-self: flex-start;
+                            }
+                        }
+                /* Separar el enlace View Driver al extremo derecho de la tarjeta, manteniendo márgenes laterales */
+                .data-row {
+                    display: flex;
+                    justify-content: space-between;
+                        align-items: center;
+                    border-bottom: 1px solid var(--gray-100);
+                    gap: 16px;
+                }
+                .row-info {
+                    flex: 1 1 0;
+                    min-width: 0;
+                }
+                .view-driver-link {
+                    margin-left: 24px;
+                    flex-shrink: 0;
+                }
+        /* Estilos específicos para las tarjetas de métricas de Compliance */
+        .icon-circle.neutral-bg {
+            background-color: var(--blue-50);
+        }
+        
+        .badge-high {
+            background-color: var(--error-100);
+            color: var(--error-700);
+            border-radius: 16px;
+            padding: 2px 12px;
+            font-size: 12px;
+            font-weight: 600;
+            display: inline-block;
+        }
+        .badge-medium {
+            background-color: var(--warning-100);
+            color: var(--warning-700);
+            border-radius: 16px;
+            padding: 2px 12px;
+            font-size: 12px;
+            font-weight: 600;
+            display: inline-block;
+        }
+
+        /* Estilo para el link de acción en las filas */
+        .view-driver-link {
+            color: var(--brand-accent-700);
+            text-decoration: none;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        /* Ajuste para el espaciado de las alertas */
+        .alert-details {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+       
+                .metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+    margin-bottom: 24px;
+    flex-shrink: 0;
+}
+
+                /* Responsive: tarjetas en columna en móviles */
+                @media (max-width: 600px) {
+                    .metrics-grid {
+                        grid-template-columns: 1fr;
+                    }
+                }
+
+    </style>
+</head>
+<body class="compliance-page">
+    <div class="main-container">
+        <div id="sidebar-container"></div>
+        <main class="dashboard-outer">
+            <div class="dashboard-view">
+                <header class="content-header">
+                  <button id="sidebar-toggle" class="sidebar-toggle-btn custom-green-toggle" aria-label="Open menu">
+    <i class="bi bi-list"></i>
+</button>
+                    <div class="header-text">
+                        <h1 class="heading-2">Compliance</h1>
+                        <p class="body-m-medium">Monitor driver compliance and expiring documents.</p>
+                    </div>
+                </header>
+
+                <section class="metrics-grid">
+                    <div class="metric-card">
+                        <div class="metric-left">
+                            <div class="icon-circle neutral-bg">
+                                <img src="assets/icons/Alert Circle (2).svg" width="20">
+                            </div>
+                            <div class="metric-info">
+                                <span class="metric-label body-l-semibold">Total<br>Alerts</span>
+                            </div>
+                        </div>
+                        <span class="metric-number" id="metric-total">8</span>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-left">
+                            <div class="icon-circle warning-bg">
+                                <img src="assets/icons/Alert Circle (1).svg" width="20" style="filter: saturate(0.5);">
+                            </div>
+                            <div class="metric-info">
+                                <span class="metric-label body-l-semibold">Medium<br>Priority</span>
+                            </div>
+                        </div>
+                        <span class="metric-number" id="metric-medium">3</span>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-left">
+                            <div class="icon-circle error-bg">
+                                <img src="assets/icons/Alert Circle (1).svg" width="20">
+                            </div>
+                            <div class="metric-info">
+                                <span class="metric-label body-l-semibold">High<br>Priority</span>
+                            </div>
+                        </div>
+                        <span class="metric-number" id="metric-high">5</span>
+                    </div>
+                </section>
+
+                <div >
+                    <div class="table-container" style="width: 100%;">
+                        <div class="table-header-fixed">
+                           <h3 class="heading-4">All Compliance Alerts</h3>
+                        </div>
+                        <div class="data-list-box">
+                            <!-- Compliance alerts will be rendered dynamically -->
+                            <div id="compliance-alerts"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+   // Load sidebar.html into the container
+   fetch('sidebar.html')
+    .then(res => res.text())
+    .then(html => {
+        document.getElementById('sidebar-container').innerHTML = html;
+        
+        // ¡ESTO ES LO IMPORTANTE! 
+        // Ejecutar la activación de links DESPUÉS de insertar el HTML
+        if (typeof setActiveSidebarLink === 'function') {
+            setActiveSidebarLink();
+        }
+        
+        // El resto de tus funciones...
+        if (typeof setupSidebarToggle === 'function') setupSidebarToggle();
+        
+        const logoutBtn = document.getElementById('logout-btn');
+        if (logoutBtn) {
+            logoutBtn.addEventListener('click', function() {
+                window.location.href = 'login.html';
+            });
+        }
+    });
+        // Render compliance alerts dynamically from demo-data.json
+        fetch('data/demo-data.json')
+            .then(res => res.json())
+            .then(data => {
+                const drivers = data.drivers;
+                const documents = data.documents;
+                const alertsDiv = document.getElementById('compliance-alerts');
+                alertsDiv.innerHTML = '';
+                let alerts = [];
+
+                // Missing documents alert
+                drivers.forEach(driver => {
+                    // Find missing documents for this driver
+                    const missingDocs = documents.filter(doc => doc.driver === driver.name && doc.status === 'Missing');
+                    if (missingDocs.length > 0) {
+                        alerts.push({
+                            type: 'Missing Documents',
+                            priority: 'High',
+                            driver,
+                            description: 'Missing: ' + missingDocs.map(doc => doc.type).join(', ')
+                        });
+                    }
+                });
+
+                // Expiring soon alerts
+                documents.forEach(doc => {
+                    if (doc.status === 'Expiring Soon') {
+                        const driver = drivers.find(d => d.name === doc.driver);
+                        if (driver) {
+                            alerts.push({
+                                type: 'Expiring ' + doc.type,
+                                priority: 'Medium',
+                                driver,
+                                description: doc.type + ' expires soon',
+                                due: doc.expirationDate
+                            });
+                        }
+                    }
+                });
+
+                // Valid documents (no alert)
+                // Only show alerts for real data
+
+                // Update metric counts dynamically
+                const highCount = alerts.filter(a => a.priority === 'High').length;
+                const mediumCount = alerts.filter(a => a.priority === 'Medium').length;
+                const totalEl = document.getElementById('metric-total');
+                const highEl = document.getElementById('metric-high');
+                const mediumEl = document.getElementById('metric-medium');
+                if (totalEl) totalEl.textContent = alerts.length;
+                if (highEl) highEl.textContent = highCount;
+                if (mediumEl) mediumEl.textContent = mediumCount;
+
+                if (alerts.length === 0) {
+                    alertsDiv.innerHTML = '<div class="body-m-medium" style="padding: 16px; color: var(--gray-500);">No compliance alerts found in demo-data.json.</div>';
+                } else {
+                    alerts.forEach(alert => {
+                        const avatar = alert.driver.photo || 'assets/images/default-avatar.png';
+                        const driverId = alert.driver.id;
+                        const driverName = alert.driver.name;
+                        const badgeClass = alert.priority === 'High' ? 'badge-high' : 'badge-medium';
+                        const badgeText = alert.priority === 'High' ? '• High' : '• Medium';
+                        const dueText = alert.due ? `<small class="body-s-medium" style="color: var(--gray-500);">Due: ${alert.due}</small>` : '';
+                        alertsDiv.innerHTML += `
+                            <div class="data-row">
+                                <div class="row-info">
+                                    <div class="alert-details">
+                                        <div style="display: flex; align-items: center; gap: 8px;">
+                                            <img src="${avatar}" alt="${driverName}" class="table-avatar" style="width: 32px; height: 32px; border-radius: 50%; margin-right: 8px;">
+                                            <span class="body-s-semibold" style="color: var(--gray-500);">${alert.type}</span>
+                                            <span class="badge ${badgeClass}">${badgeText}</span>
+                                        </div>
+                                        <strong class="body-l-semibold">${driverName}</strong>
+                                        <p class="body-m-medium">${alert.description}</p>
+                                        ${dueText}
+                                    </div>
+                                </div>
+                                <a href="driver-detail.html?id=${driverId}" class="view-driver-link body-s-semibold">
+                                    <img src="assets/icons/icon (1).svg" width="14"> View Driver
+                                </a>
+                            </div>
+                        `;
+                    });
+                }
+            });
+    </script>
+    <script src="js/app.js"></script>
+</body>
+</html>

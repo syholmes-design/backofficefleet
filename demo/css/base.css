@@ -1,0 +1,414 @@
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap');
+
+:root {
+    /* Brand Colors (Accent) */
+    --brand-200: #e0f2f1;
+    --brand-300: #b2dfdb;
+    --brand-400: #80cbc4;
+    --brand-500: #4db6ac;
+    --brand-600: #26a69a;
+    --brand-700: #00a19a; /* Base color for Sign In button */
+    --brand-800: #00897b;
+    --brand-900: #00796b;
+    --brand-950: #004d40;
+
+    /* Backgrounds & Neutral Colors */
+    --bg-main: #f4f7f6;      /* Light gray background for dashboard */
+    --bg-white: #ffffff;     /* Background for cards and login box */
+    --bg-sidebar: #ffffff;   /* Sidebar appears white or very light gray */
+    
+    /* Text Colors */
+    --text-primary: #1a1c1e; /* Titles and strong text */
+    --text-secondary: #667085; /* Supporting text and placeholders */
+    --text-inverse: #ffffff;  /* Text on dark buttons */
+
+    /* Success Colors (Green) - For "Active Drivers" */
+    --success-50: #ECFDF3;
+    --success-100: #D1FADF;
+    --success-200: #A6F4C5;
+    --success-300: #6CE9A6;
+    --success-400: #32D583;
+    --success-500: #12B76A;
+    --success-600: #039855;
+    --success-700: #027A48;
+    --success-800: #05603A;
+    --success-900: #054F31;
+    --success-950: #053321;
+
+    /* Warning Colors (Orange/Yellow) - For "Active Loads" */
+    --warning-25: #FFFCF5;
+    --warning-50: #FFFAEB;
+    --warning-100: #FEF0C7;
+    --warning-200: #FEDF89;
+    --warning-300: #FEC84B;
+    --warning-400: #FDB022;
+    --warning-500: #F79009;
+    --warning-600: #DC6803;
+    --warning-700: #B54708;
+    --warning-800: #93370D;
+    --warning-900: #7A2E0E;
+    --warning-950: #4E1D09;
+
+    /* Error Colors (Red) - For "Compliance Alerts" */
+    --error-25: #FFFBFA;
+    --error-50: #FEF3F2;
+    --error-100: #FEE4E2;
+    --error-200: #FECDCA;
+    --error-300: #FDA29B;
+    --error-400: #F97066;
+    --error-500: #F04438;
+    --error-600: #D92D20;
+    --error-700: #B42318;
+    --error-800: #912018;
+    --error-900: #7A271A;
+    --error-950: #55160C;
+
+    /* Blue Colors - For "Pending Settlements" */
+    --blue-25: #F5FAFF;
+    --blue-50: #EFF8FF;
+    --blue-100: #D1E9FF;
+    --blue-200: #B2DDFF;
+    --blue-300: #84CAFF;
+    --blue-400: #53B1FD;
+    --blue-500: #2E90FA;
+    --blue-600: #1570EF;
+    --blue-700: #175CD3;
+    --blue-800: #1849A9;
+    --blue-900: #194185;
+    --blue-950: #102A56;
+
+    /* Gray Colors */
+    --gray-25: #FDFDFD;
+    --gray-50: #FAFAFA;
+    --gray-100: #F5F5F5;
+    --gray-200: #E9EAEB;
+    --gray-300: #D5D7DA;
+    --gray-400: #A4A7AE;
+    --gray-500: #717680;
+    --gray-600: #535862;
+    --gray-700: #414651;
+    --gray-800: #252B37;
+    --gray-900: #181D27;
+    --gray-950: #0A0D12;
+
+    /* Brand Neutral Colors */
+    --brand-neutral-25: #FBFCFE;
+    --brand-neutral-50: #F6F9FC;
+    --brand-neutral-100: #EBF2F7;
+    --brand-neutral-200: #E1EAF1;
+    --brand-neutral-300: #D7E3EC;
+    --brand-neutral-400: #CCDAE5;
+    --brand-neutral-500: #BCCEDC;
+    --brand-neutral-600: #A2BACD;
+    --brand-neutral-700: #89A2B5;
+    --brand-neutral-800: #7D96A9;
+    --brand-neutral-900: #52697A;
+    --brand-neutral-950: #1B2831;
+
+    /* Brand Accent Colors */
+    --brand-accent-25: #FAFEFE;
+    --brand-accent-50: #F2FBFB;
+    --brand-accent-100: #DEF7FA;
+    --brand-accent-200: #CAF2F5;
+    --brand-accent-300: #B5E9EE;
+    --brand-accent-400: #9EDDE3;
+    --brand-accent-500: #7FCDD4;
+    --brand-accent-600: #48B8C2;
+    --brand-accent-700: #01A2AD;
+    --brand-accent-800: #00959F;
+    --brand-accent-900: #007F8A;
+    --brand-accent-950: #0D3D41;
+}
+
+/* Reusable buttons */
+.btn-secondary {
+  border: 1.5px solid var(--gray-200);
+  background: var(--bg-white);
+  color: var(--brand-accent-700);
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  border-radius: 8px;
+  padding: 10px 20px;
+  cursor: pointer;
+  transition: border 0.2s, background 0.2s;
+}
+.btn-secondary:hover {
+  background: var(--gray-50);
+}
+
+.btn-primary {
+  background: var(--brand-accent-700);
+  color: #fff;
+  border: 1px solid var(--brand-accent-700);
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 14px;
+  padding: 8px 16px;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+}
+.btn-primary svg, .btn-primary i {
+  color: #fff;
+}
+.btn-primary:hover, .btn-secondary:hover {
+  filter: brightness(0.95);
+  box-shadow: 0 2px 8px rgba(1,162,173,0.08);
+  transform: translateY(-1px) scale(1.02);
+}
+.btn-primary, .btn-secondary {
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+body {
+  background: var(--brand-neutral-50);
+  min-height: 100vh;
+}
+/* Typography utility classes */
+.label {
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    font-size: 14px;
+}
+
+.title-signin {
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    font-size: 24px;
+    margin-bottom: 16px;
+}
+
+/* Headings */
+.heading-1 {
+  font-family: 'Inter', sans-serif;
+  font-size: 28px;
+  line-height: 36px;
+  font-weight: 600;
+  color: var(--gray-950);
+}
+.heading-2 {
+  font-family: 'Inter', sans-serif;
+  font-size: 24px;
+  line-height: 32px;
+  font-weight: 600;
+  color: var(--gray-950);
+}
+.heading-3 {
+  font-family: 'Inter', sans-serif;
+  font-size: 20px;
+  line-height: 24px;
+  font-weight: 600;
+  color: var(--gray-950);
+}
+.heading-4 {
+  font-family: 'Inter', sans-serif;
+  font-size: 18px;
+  line-height: 24px;
+  font-weight: 600;
+  color: var(--gray-950);
+}
+.heading-5 {
+  font-family: 'Inter', sans-serif;
+  font-size: 16px;
+  line-height: 24px;
+  font-weight: 600;
+  color: var(--gray-950);
+}
+.heading-6 {
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+  line-height: 20px;
+  font-weight: 600;
+  color: var(--gray-950);
+}
+
+/* Body L */
+.body-l {
+  font-family: 'Inter', sans-serif;
+  font-size: 16px;
+  line-height: 24px;
+  color: var(--gray-500);
+}
+.body-l-bold {
+  font-family: 'Inter', sans-serif;
+  font-size: 16px;
+  line-height: 24px;
+  font-weight: 700;
+  color: var(--gray-500);
+}
+.body-l-semibold {
+  font-family: 'Inter', sans-serif;
+  font-size: 16px;
+  line-height: 24px;
+  font-weight: 600;
+  color: var(--gray-950);
+}
+.body-l-medium {
+  font-family: 'Inter', sans-serif;
+  font-size: 16px;
+  line-height: 24px;
+  font-weight: 500;
+  color: var(--gray-500);
+}
+
+/* Body M */
+.body-m {
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+  line-height: 20px;
+  color: var(--gray-950);
+}
+.body-m-bold {
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+  line-height: 20px;
+  font-weight: 700;
+  color: var(--gray-950);
+}
+.body-m-semibold {
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+  line-height: 20px;
+  font-weight: 600;
+  color: var(--gray-950);
+}
+.body-m-medium {
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+  line-height: 20px;
+  font-weight: 500;
+  color: var(--gray-400);
+}
+
+/* Body S */
+.body-s {
+  font-family: 'Inter', sans-serif;
+  font-size: 12px;
+  line-height: 16px;
+  color: var(--gray-500);
+}
+.body-s-bold {
+  font-family: 'Inter', sans-serif;
+  font-size: 12px;
+  line-height: 16px;
+  font-weight: 700;
+  color: var(--gray-950);
+}
+.body-s-semibold {
+  font-family: 'Inter', sans-serif;
+  font-size: 12px;
+  line-height: 16px;
+  font-weight: 600;
+  color: var(--gray-500);
+}
+.body-s-medium {
+  font-family: 'Inter', sans-serif;
+  font-size: 12px;
+  line-height: 16px;
+  font-weight: 500;
+  color: var(--gray-500);
+}
+
+/* Body CTA */
+.body-cta-semibold {
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+  line-height: 20px;
+  font-weight: 600;
+  color: var(--gray-500);
+}
+.body-cta-medium {
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+  line-height: 20px;
+  font-weight: 500;
+  color: var(--gray-500);
+}
+
+/* =============================================
+  DASHBOARD OUTER — Contenedor Principal
+  ============================================= */
+.dashboard-outer {
+  margin-left: 270px; /* Espacio para sidebar en desktop */
+  min-height: 100vh;
+  background: var(--brand-neutral-50);
+  padding: 24px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  transition: margin-left 0.3s ease;
+  width: auto; /* Permite que el margen derecho funcione */
+}
+
+/* =============================================
+  DASHBOARD VIEW — Panel Blanco (Figma Exact)
+  ============================================= */
+.dashboard-view {
+  background: #fff;
+  border-radius: 20px;
+  padding: 32px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+  width: 100%;
+  max-width: 1150px;
+  margin: 0 auto;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+}
+
+/* =============================================
+  BOTÓN DE TOGGLE DE SIDEBAR - Verde degradado moderno
+  ============================================= */
+.sidebar-toggle-btn.custom-green-toggle {
+    background: var(--brand-accent-700);
+    border: 1.5px solid var(--brand-accent-700);
+    color: #fff;
+    box-shadow: 0 2px 8px rgba(1,162,173,0.08);
+    transition: background 0.2s, box-shadow 0.2s, transform 0.2s;
+}
+.sidebar-toggle-btn.custom-green-toggle:hover {
+    background: var(--brand-accent-800);
+    border-color: var(--brand-accent-800);
+    filter: brightness(1.05);
+    transform: scale(1.07);
+}
+.sidebar-toggle-btn.custom-green-toggle i {
+    color: #fff;
+    font-size: 1.5rem;
+}
+
+/* Botón Hamburguesa con estilo Figma */
+.sidebar-toggle-btn {
+    display: none; /* Escondido en Desktop */
+    background: white;
+    border: 1px solid var(--gray-200);
+    border-radius: 8px;
+    padding: 8px 12px;
+    cursor: pointer;
+    color: var(--gray-700);
+    transition: all 0.2s;
+}
+
+
+
+.sidebar-toggle-btn:hover {
+    background: var(--brand-neutral-50);
+}
+
+/* Móviles */
+@media (max-width: 768px) {
+
+  
+  .dashboard-view {
+    padding: 50px 16px;
+  }
+}
+@media (max-width: 1024px) {
+  .dashboard-outer {
+    margin-left: 0; /* Sidebar se oculta */
+    padding: 30px 16px;
+  }
+}

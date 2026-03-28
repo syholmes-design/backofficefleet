@@ -1,0 +1,258 @@
+/* =============================================
+  HEADER - Botón integrado sin flotar
+  ============================================= */
+.content-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+  gap: 16px;
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+/* Más separación para el botón hamburguesa en desktop/tablet */
+@media (min-width: 769px) {
+  .header-left .sidebar-toggle-btn {
+    margin-right: 32px;
+  }
+}
+@media (min-width: 1025px) {
+  .header-left .sidebar-toggle-btn {
+    margin-right: 48px;
+  }
+}
+
+
+.header-actions {
+  display: flex;
+  gap: 10px;
+}
+
+/* =============================================
+  METRICS GRID - 4 Columnas (Manteniendo fuentes)
+  ============================================= */
+.metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+/* Icono con fondo según tipo */
+.icon-circle {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  font-size: 20px;
+}
+.success-bg { background: var(--success-100) !important; }
+.warning-bg { background: var(--warning-100) !important; }
+.error-bg   { background: var(--error-100) !important; }
+.blue-bg    { background: var(--blue-100) !important; }
+
+.metric-card {
+  background: var(--brand-neutral-50);
+  border: 1px solid #E8EDF2;
+  border-radius: 14px;
+  padding: 16px 20px;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.metric-left {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.metric-label.body-l-semibold {
+  color: var(--gray-950);
+  margin-left: 0;
+}
+
+.metric-number {
+  font-size: 24px;
+  font-weight: 700;
+  color: #0F172A;
+  line-height: 1;
+  margin-left: auto;
+}
+
+/* =============================================
+  DASHBOARD TABLES — Con Scroll Interno
+  ============================================= */
+.dashboard-tables {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.table-container {
+  display: flex;
+  flex-direction: column;
+  background: #fff;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.data-list-box {
+  overflow-y: auto;
+  max-height: 420px; /* Mantiene tu scroll interno */
+  padding: 16px;
+}
+
+/* Estilo del Scrollbar */
+.data-list-box::-webkit-scrollbar { width: 6px; }
+.data-list-box::-webkit-scrollbar-track { background: transparent; }
+.data-list-box::-webkit-scrollbar-thumb { background: #E2E8F0; border-radius: 10px; }
+
+/* =============================================
+  DATA ROWS (Avatares e imágenes intactos)
+  ============================================= */
+.data-row {
+  display: flex;
+  align-items: center;
+  padding: 12px 16px;
+  gap: 14px;
+  border: 1px solid var(--gray-200);
+  border-radius: 14px;
+  margin-bottom: 12px;
+  background: #fff;
+}
+
+.row-avatar {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+/* =============================================
+  RESPONSIVE - Sin Scroll Lateral
+  ============================================= */
+
+/* Tablets */
+@media (max-width: 1024px) {
+
+
+  .sidebar-toggle-btn {
+    display: flex; /* Aparece el botón de menú */
+  }
+
+  .metrics-grid {
+    grid-template-columns: repeat(2, 1fr); /* 2x2 en tablets */
+  }
+
+  .dashboard-tables {
+    grid-template-columns: 1fr; /* Una tabla debajo de la otra en iPad */
+  }
+
+  .form-card {
+    padding: 16px;
+  }
+  .form-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+  .stepper {
+    flex-direction: column;
+    gap: 12px;
+    align-items: flex-start;
+  }
+  .header-left {
+    flex-direction: row;
+    gap: 16px !important;
+    align-items: center;
+    margin-bottom: 8px;
+  }
+  .header-text {
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+  .sidebar-toggle-btn {
+    margin-bottom: 0;
+    margin-right: 0;
+  }
+}
+
+/* Móviles */
+@media (max-width: 768px) {
+  .content-header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 16px;
+  }
+  .header-left {
+    flex-direction: row;
+    gap: 16px !important;
+    align-items: center;
+    margin-bottom: 8px;
+  }
+  .header-text {
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+  .sidebar-toggle-btn {
+    margin-bottom: 0;
+    margin-right: 0;
+  }
+
+  .header-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+
+  .dashboard-tables {
+    grid-template-columns: 1fr; /* Una tabla debajo de la otra */
+  }
+
+}
+
+/* Móviles muy pequeños */
+@media (max-width: 480px) {
+  .metrics-grid {
+    grid-template-columns: 1fr; /* Una métrica por fila */
+  }
+  
+  .header-actions {
+    grid-template-columns: 1fr; /* Un botón por fila */
+  }
+  
+  .metric-card {
+      padding: 12px;
+  }
+}
+
+@media (max-width: 600px) {
+ 
+  .form-card {
+    padding: 8px;
+  }
+  .stepper {
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+  .header-left {
+    gap: 10px !important;
+  }
+  .header-text h1 {
+    font-size: 20px;
+  }
+  .form-footer {
+    flex-direction: column;
+    gap: 12px;
+    align-items: stretch;
+  }
+}

@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add New Driver | BackOfficeFleet</title>
+    <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/layout.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/dashboard.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+    <style>
+        /* =============================================
+           STEPPER - Desktop vs iPad/Mobile Smart View
+           ============================================= */
+        .stepper {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0;
+            margin-bottom: 48px;
+            width: 100%;
+        }
+        .step {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--gray-400);
+            flex: 1;
+            justify-content: center;
+        }
+        .step-circle {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            background: var(--gray-100);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 14px;
+        }
+        .step.active .step-circle { background: var(--brand-accent-700); color: white; }
+        .step.completed .step-circle { background: var(--success-600); color: white; }
+        .step-connector {
+            flex: 1;
+            height: 2px;
+            background: var(--gray-200);
+            margin: 0 12px;
+            max-width: 120px;
+        }
+
+        /* Responsive Stepper (iPad y iPhone) */
+        @media (max-width: 1024px) {
+            /* Forzamos que solo se vea el ACTIVO */
+            .step:not(.active) { display: none !important; }
+            .step-connector { display: none !important; }
+            
+            .step.active {
+                width: 100%;
+                display: flex !important;
+                justify-content: center;
+            }
+            .step.active::before {
+                content: "Step " attr(data-step) " of 4: ";
+                font-weight: 600;
+                color: var(--gray-500);
+                margin-right: 6px;
+            }
+        }
+
+        /* =============================================
+           FORM CARD & GRID
+           ============================================= */
+        .form-card {
+            background: #fff;
+            border: 1px solid var(--gray-200);
+            border-radius: 8px;
+            padding: 24px;
+        }
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+            margin-top: 24px;
+        }
+        
+        @media (max-width: 768px) {
+            .form-grid {
+                grid-template-columns: 1fr !important;
+                gap: 16px;
+            }
+            .form-group[style*="grid-column: span 2"] {
+                grid-column: span 1 !important;
+            }
+        }
+
+        .form-group { display: flex; flex-direction: column; gap: 6px; }
+        .form-group label { color: var(--gray-700); font-weight: 600; font-size: 14px; }
+        .form-group input, .form-group select {
+            padding: 12px 14px;
+            border: 1px solid var(--gray-300);
+            border-radius: 8px;
+            font-size: 14px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .form-footer {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 32px;
+            padding-top: 24px;
+            border-top: 1px solid var(--gray-200);
+        }
+
+        @media (max-width: 600px) {
+            .form-footer { flex-direction: column-reverse; gap: 12px; }
+            .btn-primary, .btn-secondary { width: 100%; padding: 14px; }
+        }
+
+        .step-content { display: none; }
+        .step-content.active { display: block; }
+        
+        /* Success View */
+        .success-view { text-align: center; padding: 40px 0; }
+        .success-icon { width: 84px; height: 84px; margin: 0 auto 24px; position: relative; }
+        .success-icon-outer { width: 84px; height: 84px; background: var(--success-50); border-radius: 50%; position: absolute; left: 0; }
+        .success-icon-inner { width: 56px; height: 56px; background: var(--success-100); border-radius: 50%; position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); }
+        .success-icon-img { width: 28px; height: 28px; z-index: 2; position: relative; top: 28px; }
+    </style>
+</head>
+<body>
+    <div class="main-container">
+        <div id="sidebar-container"></div>
+        <main class="dashboard-outer">
+            <div class="dashboard-view">
+                <header class="content-header">
+                    <div class="header-left" style="gap: 28px; align-items: center;">
+                        <button id="sidebar-toggle" class="sidebar-toggle-btn custom-green-toggle"><i class="bi bi-list"></i></button>
+                        <div class="header-text">
+                            <a href="drivers.html" class="body-m-semibold" style="color: var(--brand-accent-700); text-decoration: none; display: flex; align-items: center; gap: 4px;">
+                                <img src="assets/icons/Chevron Left.svg" alt="Back" style="width: 16px; height: 16px;"> Back to drivers
+                            </a>
+                            <h1 class="heading-2">Add New Driver</h1>
+                        </div>
+                    </div>
+                </header>
+
+                <div class="stepper">
+                    <div class="step active" id="st-1" data-step="1">
+                        <div class="step-circle">1</div>
+                        <span class="body-m-medium">Personal Info</span>
+                    </div>
+                    <div class="step-connector"></div>
+                    <div class="step" id="st-2" data-step="2">
+                        <div class="step-circle">2</div>
+                        <span class="body-m-medium">CDL Details</span>
+                    </div>
+                    <div class="step-connector"></div>
+                    <div class="step" id="st-3" data-step="3">
+                        <div class="step-circle">3</div>
+                        <span class="body-m-medium">Medical Card</span>
+                    </div>
+                    <div class="step-connector"></div>
+                    <div class="step" id="st-4" data-step="4">
+                        <div class="step-circle">4</div>
+                        <span class="body-m-medium">Bank Info</span>
+                    </div>
+                </div>
+
+                <div class="form-card">
+                    <form id="multiStepForm">
+                        <div class="step-content active" id="step-1">
+                            <h3 class="heading-4">Personal Info</h3>
+                            <div class="form-grid">
+                                <div class="form-group"><label>First Name</label><input type="text" placeholder="First Name"></div>
+                                <div class="form-group"><label>Last Name</label><input type="text" placeholder="Last Name"></div>
+                                <div class="form-group"><label>Email</label><input type="email" placeholder="Email"></div>
+                                <div class="form-group"><label>Phone Number</label><input type="tel" placeholder="Phone Number"></div>
+                            </div>
+                        </div>
+
+                        <div class="step-content" id="step-2">
+                            <h3 class="heading-5">CDL Details</h3>
+                            <div class="form-grid">
+                                <div class="form-group"><label>CDL Number</label><input type="text" placeholder="CDL Number"></div>
+                                <div class="form-group"><label>Expiration Date</label><input type="date"></div>
+                                <div class="form-group" style="grid-column: span 2;"><label>Equipment Type</label><select><option>Dry Van</option><option>Reefer</option></select></div>
+                            </div>
+                        </div>
+
+                        <div class="step-content" id="step-3">
+                             <h3 class="heading-5">Medical Card</h3>
+                             <div class="form-grid">
+                                <div class="form-group"><label>Card Expiration Day</label><input type="date"></div>
+                                <div class="form-group"><label>Preferred Lanes</label><input type="text" placeholder="TX-CA, CA-FL"></div>
+                             </div>
+                        </div>
+
+                        <div class="step-content" id="step-4">
+                             <h3 class="heading-5">Bank Info</h3>
+                             <div class="form-grid">
+                                <div class="form-group" style="grid-column: span 2;"><label>Bank Name</label><input type="text" placeholder="JPMorgan Chase"></div>
+                                <div class="form-group"><label>Account Number</label><input type="text" placeholder="Account Number"></div>
+                                <div class="form-group"><label>Routing Number</label><input type="text" placeholder="Routing Number"></div>
+                             </div>
+                        </div>
+
+                        <div class="step-content" id="step-success">
+                            <div class="success-view">
+                                <div class="success-icon">
+                                    <div class="success-icon-outer"></div>
+                                    <div class="success-icon-inner"></div>
+                                    <img src="assets/icons/check-circle.svg" alt="Success" class="success-icon-img">
+                                </div>
+                                <h2 class="heading-3">Driver Successfully Added</h2>
+                                <p class="body-m" style="margin-bottom: 32px;">The driver has been added to your roster.</p>
+                                <button type="button" class="btn-primary" onclick="window.location.reload()">+ Add Another Driver</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="form-footer" id="form-nav">
+                    <button type="button" class="btn-secondary" id="backBtn" onclick="moveStep(-1)" style="visibility: hidden;">Back</button>
+                    <button type="button" class="btn-primary" id="nextBtn" onclick="moveStep(1)">Next</button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="js/app.js"></script>
+    <script>
+        fetch('sidebar.html').then(res => res.text()).then(html => {
+            document.getElementById('sidebar-container').innerHTML = html;
+            if (typeof setupSidebarToggle === 'function') setupSidebarToggle();
+            if (typeof setActiveSidebarLink === 'function') setActiveSidebarLink();
+        });
+
+        let currentStep = 1;
+        function moveStep(step) {
+            if (currentStep + step < 1 || currentStep + step > 5) return;
+            
+            // Ocultar actual
+            document.getElementById(`step-${currentStep}`).classList.remove('active');
+            
+            if (step > 0 && currentStep < 5) {
+                document.getElementById(`st-${currentStep}`).classList.add('completed');
+                document.getElementById(`st-${currentStep}`).classList.remove('active');
+            }
+            
+            currentStep += step;
+            
+            if (currentStep === 5) {
+                // Pantalla de ÉXITO
+                document.getElementById('step-success').classList.add('active');
+                document.getElementById('form-nav').style.display = 'none';
+                
+                // OCULTAR STEPPER AL TERMINAR (Para que no quede el amontonamiento de la foto)
+                document.querySelector('.stepper').style.display = 'none';
+            } else {
+                // Mostrar siguiente
+                document.getElementById(`step-${currentStep}`).classList.add('active');
+                document.getElementById(`st-${currentStep}`).classList.add('active');
+                document.getElementById('backBtn').style.visibility = currentStep === 1 ? 'hidden' : 'visible';
+                document.getElementById('nextBtn').textContent = currentStep === 4 ? 'Add Driver' : 'Next';
+            }
+        }
+    </script>
+</body>
+</html>
