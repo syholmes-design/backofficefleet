@@ -1,7 +1,7 @@
 # BackOfficeFleet Final Site Package
 
 This is the updated GitHub-ready package to send Sofia.
-
+ 
 ## Includes
 - landing page for `backofficefleet.com`
 - refined 15+ truck positioning
