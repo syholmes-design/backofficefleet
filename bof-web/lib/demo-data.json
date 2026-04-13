@@ -5,84 +5,120 @@
       "name": "John Carter",
       "address": "1240 W 6th St, Cleveland, OH 44113",
       "phone": "206-667-3424",
-      "email": "john.carter@boftransport.demo"
+      "email": "john.carter@boftransport.demo",
+      "emergencyContactName": "Elena Carter",
+      "emergencyContactRelationship": "Spouse",
+      "emergencyContactPhone": "440-582-9143"
     },
     {
       "id": "DRV-002",
       "name": "Maria Lopez",
       "address": "450 N Michigan Ave, Chicago, IL 60611",
       "phone": "707-773-6386",
-      "email": "maria.lopez@boftransport.demo"
+      "email": "maria.lopez@boftransport.demo",
+      "emergencyContactName": "Carlos Ruiz",
+      "emergencyContactRelationship": "Partner",
+      "emergencyContactPhone": "312-441-8820"
     },
     {
       "id": "DRV-003",
       "name": "Alex Kim",
       "address": "780 Peachtree St, Atlanta, GA 30308",
       "phone": "675-486-1335",
-      "email": "alex.kim@boftransport.demo"
+      "email": "alex.kim@boftransport.demo",
+      "emergencyContactName": "Min-Jae Kim",
+      "emergencyContactRelationship": "Parent",
+      "emergencyContactPhone": "404-228-6195"
     },
     {
       "id": "DRV-004",
       "name": "Priya Patel",
       "address": "2200 Superior Ave, Cleveland, OH 44114",
       "phone": "359-469-5960",
-      "email": "priya.patel@boftransport.demo"
+      "email": "priya.patel@boftransport.demo",
+      "emergencyContactName": "Raj Patel",
+      "emergencyContactRelationship": "Spouse",
+      "emergencyContactPhone": "216-903-7741"
     },
     {
       "id": "DRV-005",
       "name": "Kenji Tanaka",
       "address": "115 E Broad St, Columbus, OH 43215",
       "phone": "871-429-6220",
-      "email": "kenji.tanaka@boftransport.demo"
+      "email": "kenji.tanaka@boftransport.demo",
+      "emergencyContactName": "Yuki Tanaka",
+      "emergencyContactRelationship": "Spouse",
+      "emergencyContactPhone": "614-552-4088"
     },
     {
       "id": "DRV-006",
       "name": "Marcus Chen",
       "address": "500 Pacific Ave, Dallas, TX 75202",
       "phone": "283-876-4322",
-      "email": "marcus.chen@boftransport.demo"
+      "email": "marcus.chen@boftransport.demo",
+      "emergencyContactName": "Dana Chen",
+      "emergencyContactRelationship": "Sibling",
+      "emergencyContactPhone": "214-661-3390"
     },
     {
       "id": "DRV-007",
       "name": "Sofia Gomez",
       "address": "815 Prospect Ave, Cleveland, OH 44115",
       "phone": "896-828-7164",
-      "email": "sofia.gomez@boftransport.demo"
+      "email": "sofia.gomez@boftransport.demo",
+      "emergencyContactName": "Carmen Gomez",
+      "emergencyContactRelationship": "Parent",
+      "emergencyContactPhone": "440-719-2560"
     },
     {
       "id": "DRV-008",
       "name": "Liam Smith",
       "address": "240 Madison Ave, Toledo, OH 43604",
       "phone": "820-223-4829",
-      "email": "liam.smith@boftransport.demo"
+      "email": "liam.smith@boftransport.demo",
+      "emergencyContactName": "Ava Smith",
+      "emergencyContactRelationship": "Spouse",
+      "emergencyContactPhone": "419-338-9044"
     },
     {
       "id": "DRV-009",
       "name": "Emma Brown",
       "address": "330 Civic Center Dr, Columbus, OH 43215",
       "phone": "206-700-7666",
-      "email": "emma.brown@boftransport.demo"
+      "email": "emma.brown@boftransport.demo",
+      "emergencyContactName": "Linda Brown",
+      "emergencyContactRelationship": "Parent",
+      "emergencyContactPhone": "614-880-1256"
     },
     {
       "id": "DRV-010",
       "name": "Noah Wilson",
       "address": "110 W Adams St, Chicago, IL 60603",
       "phone": "582-987-2387",
-      "email": "noah.wilson@boftransport.demo"
+      "email": "noah.wilson@boftransport.demo",
+      "emergencyContactName": "David Wilson",
+      "emergencyContactRelationship": "Parent",
+      "emergencyContactPhone": "773-509-4412"
     },
     {
       "id": "DRV-011",
       "name": "Olivia Lee",
       "address": "600 Peachtree St, Atlanta, GA 30308",
       "phone": "337-857-3607",
-      "email": "olivia.lee@boftransport.demo"
+      "email": "olivia.lee@boftransport.demo",
+      "emergencyContactName": "Jordan Lee",
+      "emergencyContactRelationship": "Partner",
+      "emergencyContactPhone": "678-224-5091"
     },
     {
       "id": "DRV-012",
       "name": "Robert Johnson",
       "address": "88 S Main St, Akron, OH 44308",
       "phone": "618-623-9317",
-      "email": "robert.johnson@boftransport.demo"
+      "email": "robert.johnson@boftransport.demo",
+      "emergencyContactName": "Michelle Johnson",
+      "emergencyContactRelationship": "Spouse",
+      "emergencyContactPhone": "330-447-8829"
     }
   ],
   "documents": [
