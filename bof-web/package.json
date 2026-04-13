@@ -1,0 +1,37 @@
+{
+  "name": "bof-web",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "build:data": "node scripts/build-demo-data.mjs",
+    "merge:settlements": "node scripts/merge-payroll-settlements.mjs",
+    "patch:dispatch": "node scripts/patch-dispatch-clean-columns.mjs",
+    "build:loads": "node scripts/build-dispatch-loads.mjs",
+    "generate:docs": "node scripts/generate-bof-documents.mjs",
+    "generate:driver-docs": "node scripts/generate-driver-docs.mjs",
+    "deploy:full": "node scripts/generate-driver-docs.mjs && git add . && (git commit -m \"Auto deploy: regenerate docs + sync\" || node -e \"process.exit(0)\") && git push && vercel --prod --cwd ..",
+    "demo:reset": "node scripts/reset-demo.mjs",
+    "demo:reset:deploy": "npm run demo:reset && git add . && (git commit -m \"Demo reset\" || node -e \"process.exit(0)\") && git push && vercel --prod --cwd .."
+  },
+  "dependencies": {
+    "@types/leaflet": "^1.9.21",
+    "leaflet": "^1.9.4",
+    "next": "^15.1.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  },
+  "devDependencies": {
+    "@eslint/eslintrc": "^3.2.0",
+    "@types/node": "^22.10.0",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "eslint": "^9.16.0",
+    "eslint-config-next": "^15.1.0",
+    "typescript": "^5.7.0",
+    "xlsx": "^0.18.5"
+  }
+}
