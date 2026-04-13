@@ -1091,6 +1091,44 @@ body {
   color: var(--bof-muted);
 }
 
+/* Driver detail: smaller hover tooltip + scaled HTML preview (720px sheets fit width) */
+.bof-driver-doc-popover.bof-doc-popover {
+  max-width: 234px;
+  padding: 0.5rem 0.55rem;
+  font-size: 0.75rem;
+}
+
+.bof-driver-doc-popover .bof-doc-popover-title {
+  margin-bottom: 0.28rem;
+}
+
+.bof-driver-doc-popover .bof-doc-popover-iframe-host {
+  width: 100%;
+  height: 128px;
+  overflow: hidden;
+  border-radius: 6px;
+  background: #0f172a;
+  line-height: 0;
+}
+
+.bof-driver-doc-popover .bof-doc-popover-iframe {
+  width: 720px;
+  height: 420px;
+  border: 0;
+  border-radius: 6px;
+  background: #0f172a;
+  /* Inner ~216px at default font size → full 720px sheet width visible */
+  transform: scale(calc(216 / 720));
+  transform-origin: top left;
+}
+
+.bof-driver-doc-popover .bof-doc-popover-img {
+  max-height: 120px;
+  object-fit: contain;
+  object-position: top center;
+  background: rgba(15, 23, 42, 0.5);
+}
+
 /* Document Vault (/documents) */
 .bof-vault-toolbar {
   display: flex;

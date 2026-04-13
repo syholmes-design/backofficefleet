@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Proof of Delivery · Load 508 · BOF Demo</title>
+  <style>
+    body { margin: 0; padding: 20px; background: #e8eef4; font-family: system-ui, sans-serif; font-size: 13px; color: #0f172a; }
+    .doc { max-width: 700px; margin: 0 auto; background: #fff; border: 1px solid #cbd5e1; border-radius: 8px; padding: 24px; }
+    .hdr { display: flex; justify-content: space-between; border-bottom: 2px solid #1e40af; padding-bottom: 12px; }
+    h1 { font-size: 1.1rem; margin: 0; }
+    table { width: 100%; border-collapse: collapse; font-size: 12px; margin-top: 14px; }
+    th, td { border: 1px solid #e2e8f0; padding: 8px; text-align: left; }
+    th { background: #eff6ff; width: 30%; }
+    .ok { color: #166534; font-weight: 700; }
+    .foot { margin-top: 18px; font-size: 10px; color: #94a3b8; }
+    .sig { font-family: "Segoe Script", cursive; font-size: 22px; margin-top: 6px; }
+  </style>
+</head>
+<body>
+  <div class="doc">
+    <div class="hdr">
+      <div>
+        <h1>Proof of delivery</h1>
+        <p style="margin:4px 0 0;font-size:12px;color:#64748b;">POD-L008 · Verified in BOF demo</p>
+      </div>
+      <div style="text-align:right;font-size:11px;"><span class="ok">VERIFIED</span><br/><time datetime="2026-03-03">2026-03-03</time></div>
+    </div>
+    <table>
+      <tr><th>Load</th><td>L008 · PRO 508</td></tr>
+      <tr><th>Delivered to</th><td>Regional Grocery RDC — Columbus, OH</td></tr>
+      <tr><th>Arrival</th><td>2026-03-03 14:06 EST</td></tr>
+      <tr><th>Driver</th><td>Liam Smith (DRV-008)</td></tr>
+      <tr><th>Delivery seal</th><td>SEAL-18542 — match to BOL</td></tr>
+      <tr><th>Condition</th><td>Freight received; <strong>exception noted</strong>: corner crush 1 pallet (see damage set)</td></tr>
+      <tr><th>Consignee</th><td>M. Patel (receiving) — synthetic</td></tr>
+    </table>
+    <p style="margin-top:14px;font-size:12px;"><strong>Receiver signature</strong></p>
+    <div class="sig">M. Patel</div>
+    <div class="foot">Synthetic POD for L008. Tied to demo podStatus=verified on load record.</div>
+  </div>
+</body>
+</html>

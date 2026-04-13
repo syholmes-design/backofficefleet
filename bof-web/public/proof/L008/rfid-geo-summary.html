@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>RFID / Geo proof summary · Load 508 · BOF Demo</title>
+  <style>
+    body { margin: 0; padding: 20px; background: #0f172a; font-family: ui-monospace, monospace; font-size: 12px; color: #e2e8f0; }
+    .doc { max-width: 720px; margin: 0 auto; background: #1e293b; border: 1px solid #334155; border-radius: 8px; padding: 20px; }
+    h1 { font-size: 1rem; margin: 0 0 4px; letter-spacing: .04em; }
+    .sub { font-size: 10px; color: #94a3b8; margin-bottom: 14px; }
+    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .card { background: rgba(0,0,0,.25); border: 1px solid #475569; border-radius: 6px; padding: 12px; }
+    .card h2 { font-size: 10px; text-transform: uppercase; letter-spacing: .1em; color: #94a3b8; margin: 0 0 8px; }
+    .ok { color: #4ade80; }
+    table { width: 100%; font-size: 11px; margin-top: 12px; border-collapse: collapse; }
+    td { padding: 6px 8px; border-bottom: 1px solid #334155; }
+    td:first-child { color: #94a3b8; width: 42%; }
+    .foot { margin-top: 14px; font-size: 9px; color: #64748b; }
+  </style>
+</head>
+<body>
+  <div class="doc">
+    <h1>RFID / dock validation · geo proof summary</h1>
+    <p class="sub">Event bundle RFID-DOCK-L008-DEMO · Synthetic checkpoint log</p>
+    <div class="grid">
+      <div class="card">
+        <h2>Origin gate</h2>
+        <p class="ok">SCAN OK</p>
+        <p>Lane YS-OUT-3 · Tag T-110-RFID</p>
+        <p style="color:#94a3b8;">41.0998° N, 80.6495° W (demo)</p>
+        <p><time datetime="2026-03-02T08:40-05:00">2026-03-02 08:40 EST</time></p>
+      </div>
+      <div class="card">
+        <h2>Destination dock</h2>
+        <p class="ok">SCAN OK</p>
+        <p>Door B · CMH-RDC-12</p>
+        <p style="color:#94a3b8;">39.9833° N, 82.9833° W (demo)</p>
+        <p><time datetime="2026-03-03T14:02-05:00">2026-03-03 14:02 EST</time></p>
+      </div>
+    </div>
+    <table>
+      <tr><td>Load correlation</td><td>L008 ↔ asset T-110 ↔ DRV-008</td></tr>
+      <tr><td>Seal token</td><td>SEAL-18542 hashed match at both gates</td></tr>
+      <tr><td>Anomaly flags</td><td>None (demo nominal path)</td></tr>
+    </table>
+    <div class="foot">Demonstration only. Does not represent a real telematics or RFID provider feed.</div>
+  </div>
+</body>
+</html>

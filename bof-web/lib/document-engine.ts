@@ -71,6 +71,24 @@ function loadRecord(data: BofData, loadId: string) {
   return data.loads.find((l) => l.id === loadId) ?? null;
 }
 
+/** Per-load proof bundle URLs from demo JSON (takes precedence over generated SVG paths). */
+function bundleProofUrls(
+  data: BofData,
+  loadId: string,
+  proofType: string
+): { fileUrl: string; previewUrl: string } | null {
+  if (!("loadProofBundles" in data) || !data.loadProofBundles) return null;
+  const bundles = data.loadProofBundles as Record<
+    string,
+    { items?: Record<string, { fileUrl?: string; previewUrl?: string }> }
+  >;
+  const row = bundles[loadId]?.items?.[proofType];
+  const f = row?.fileUrl?.trim();
+  const p = row?.previewUrl?.trim();
+  if (!f && !p) return null;
+  return { fileUrl: f || p!, previewUrl: p || f! };
+}
+
 function driverRecord(data: BofData, driverId: string) {
   return data.drivers.find((d) => d.id === driverId) ?? null;
 }
@@ -105,6 +123,7 @@ function linksForDriver(driverId: string): EngineDocumentLinks {
 const PROOF_TYPE_TO_FILE: Partial<Record<string, string>> = {
   "Rate Confirmation": "rate-confirmation.svg",
   BOL: "bol.svg",
+  "Signed BOL": "bol-signed.svg",
   POD: "pod.svg",
   "Pickup Seal Photo": "pickup-seal-verification.svg",
   "Delivery Seal Photo": "delivery-seal-verification.svg",
@@ -113,6 +132,7 @@ const PROOF_TYPE_TO_FILE: Partial<Record<string, string>> = {
   "Lumper Receipt": "lumper-receipt.svg",
   "Fuel Receipt": "fuel-receipt.svg",
   "RFID / Dock Validation Record": "gps-geolocation-summary.svg",
+  "Cargo Damage Photos": "cargo-damage-photos.svg",
   "Claim Support Docs": "hos-status-summary.svg",
 };
 
@@ -783,6 +803,16 @@ export function listAutomationProofLinksForLoad(
   if (!load) return [];
   const out: { proofType: string; label: string; fileUrl: string; previewUrl: string }[] = [];
   for (const pt of LOAD_PROOF_TYPES) {
+    const fromBundle = bundleProofUrls(data, loadId, pt);
+    if (fromBundle) {
+      out.push({
+        proofType: pt,
+        label: `Auto: ${pt}`,
+        fileUrl: fromBundle.fileUrl,
+        previewUrl: fromBundle.previewUrl,
+      });
+      continue;
+    }
     const doc = generateProofDocument(data, loadId, pt);
     if (doc) {
       out.push({

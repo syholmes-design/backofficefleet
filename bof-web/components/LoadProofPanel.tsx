@@ -6,6 +6,7 @@ import {
   getLoadProofSummary,
   proofStatusDisplay,
 } from "@/lib/load-proof";
+import { isEmbedPreviewPath } from "@/lib/document-ui";
 
 function statusBadgeClass(s: string) {
   const u = s.toUpperCase();
@@ -22,10 +23,6 @@ function proofAssetUrl(doc: LoadProofItem) {
 
 function isImagePath(url: string) {
   return /\.(png|jpe?g|gif|webp|svg)(\?|$)/i.test(url);
-}
-
-function isPdfPath(url: string) {
-  return /\.pdf(\?|$)/i.test(url);
 }
 
 export function LoadProofPanel({
@@ -78,7 +75,7 @@ export function LoadProofPanel({
         <p className="bof-doc-popover-empty">Preview not available</p>
       );
     }
-    if (isPdfPath(url)) {
+    if (isEmbedPreviewPath(url)) {
       return (
         <>
           <div className="bof-doc-popover-title">Preview</div>
@@ -304,7 +301,7 @@ export function LoadProofPanel({
                     />
                   );
                 }
-                if (isPdfPath(u)) {
+                if (isEmbedPreviewPath(u)) {
                   return (
                     <iframe
                       src={u}

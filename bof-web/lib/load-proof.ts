@@ -3,6 +3,7 @@ import type { BofData } from "./load-bof-data";
 export const LOAD_PROOF_TYPES = [
   "Rate Confirmation",
   "BOL",
+  "Signed BOL",
   "POD",
   "Fuel Receipt",
   "Pickup Seal Photo",
@@ -11,6 +12,7 @@ export const LOAD_PROOF_TYPES = [
   "Delivery / Empty-Trailer Photo",
   "Lumper Receipt",
   "RFID / Dock Validation Record",
+  "Cargo Damage Photos",
   "Claim Support Docs",
 ] as const;
 
@@ -135,6 +137,20 @@ export function getLoadProofItems(data: BofData, loadId: string): LoadProofItem[
       riskNote: sealMismatch ? "Seal mismatch increases dispute risk on BOL" : undefined,
     },
     {
+      type: "Signed BOL",
+      status: pendingAssign
+        ? "Pending"
+        : delivered && sealMismatch
+          ? "Disputed"
+          : delivered || load.status === "En Route"
+            ? "Complete"
+            : "Pending",
+      blocksPayment: false,
+      disputeExposure: sealMismatch && delivered,
+      rfAction: sealMismatch ? "Obtain signed shipper BOL matching seal IDs" : undefined,
+      riskNote: undefined,
+    },
+    {
       type: "POD",
       status: podComplete
         ? "Complete"
@@ -220,6 +236,14 @@ export function getLoadProofItems(data: BofData, loadId: string): LoadProofItem[
       rfAction: "Confirm dock scan / RFID handoff where equipped",
       riskNote:
         "RFID verifies checkpoint / attribution — does not replace BOL, POD, or lumper receipt where required",
+    },
+    {
+      type: "Cargo Damage Photos",
+      status: showClaim ? "Pending" : "Not required",
+      blocksPayment: false,
+      disputeExposure: showClaim,
+      rfAction: showClaim ? "Archive timestamped damage set for carrier claim" : undefined,
+      riskNote: showClaim ? "Concealed / delivery damage — retain photo set" : undefined,
     },
     {
       type: "Claim Support Docs",

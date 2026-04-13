@@ -181,7 +181,8 @@
     {
       "driverId": "DRV-002",
       "type": "CDL",
-      "status": "MISSING",
+      "status": "VALID",
+      "expirationDate": "2028-11-20",
       "fileUrl": "/generated/drivers/DRV-002/cdl.html",
       "previewUrl": "/generated/drivers/DRV-002/cdl.html"
     },
@@ -230,7 +231,8 @@
     {
       "driverId": "DRV-003",
       "type": "CDL",
-      "status": "MISSING",
+      "status": "VALID",
+      "expirationDate": "2027-07-30",
       "fileUrl": "/generated/drivers/DRV-003/cdl.html",
       "previewUrl": "/generated/drivers/DRV-003/cdl.html"
     },
@@ -377,7 +379,8 @@
     {
       "driverId": "DRV-006",
       "type": "CDL",
-      "status": "MISSING",
+      "status": "VALID",
+      "expirationDate": "2029-05-06",
       "fileUrl": "/generated/drivers/DRV-006/cdl.html",
       "previewUrl": "/generated/drivers/DRV-006/cdl.html"
     },

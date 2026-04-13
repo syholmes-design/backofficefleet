@@ -85,16 +85,21 @@ export function DriverDocumentsPanel({
             </button>
 
             {hovered?.type === doc.type && (
-              <div className="bof-doc-popover" role="tooltip">
+              <div
+                className="bof-doc-popover bof-driver-doc-popover"
+                role="tooltip"
+              >
                 {previewAvailable(doc) ? (
                   <>
                     <div className="bof-doc-popover-title">Preview</div>
                     {isEmbedPreviewPath(doc.previewUrl || doc.fileUrl || "") ? (
-                      <iframe
-                        src={doc.previewUrl || doc.fileUrl}
-                        title=""
-                        className="bof-doc-popover-iframe"
-                      />
+                      <div className="bof-doc-popover-iframe-host">
+                        <iframe
+                          src={doc.previewUrl || doc.fileUrl}
+                          title=""
+                          className="bof-doc-popover-iframe"
+                        />
+                      </div>
                     ) : isImagePath(doc.previewUrl || doc.fileUrl || "") ? (
                       // eslint-disable-next-line @next/next/no-img-element
                       <img
