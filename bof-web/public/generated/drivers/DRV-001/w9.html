@@ -3,46 +3,51 @@
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>W-9 — John Carter</title>
+  <title>W-9 — John Carter · DRV-001</title>
   <style>
     * { box-sizing: border-box; }
     body { font-family: system-ui, Segoe UI, Roboto, Helvetica, Arial, sans-serif; margin: 0; padding: 24px; background: #f1f5f9; color: #0f172a; line-height: 1.45; font-size: 14px; }
     .sheet { max-width: 720px; margin: 0 auto; background: #fff; border: 1px solid #cbd5e1; border-radius: 8px; padding: 28px 32px; box-shadow: 0 1px 3px rgba(0,0,0,.06); }
-    h1 { font-size: 1.15rem; margin: 0 0 4px; color: #0f172a; }
-    .sub { font-size: 12px; color: #64748b; margin-bottom: 20px; }
-    h2 { font-size: 11px; text-transform: uppercase; letter-spacing: .06em; color: #64748b; margin: 20px 0 8px; border-bottom: 1px solid #e2e8f0; padding-bottom: 4px; }
-    dl { display: grid; grid-template-columns: 160px 1fr; gap: 6px 16px; margin: 0; }
+    .hdr { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 16px; }
+    h1 { font-size: 1.2rem; margin: 0; color: #0f172a; }
+    .sub { font-size: 12px; color: #64748b; margin: 4px 0 0; }
+    .pill { display: inline-block; padding: 4px 10px; border-radius: 999px; font-size: 11px; font-weight: 600; background: #dcfce7; color: #166534; }
+    h2 { font-size: 11px; text-transform: uppercase; letter-spacing: .06em; color: #64748b; margin: 22px 0 10px; border-bottom: 1px solid #e2e8f0; padding-bottom: 4px; }
+    dl { display: grid; grid-template-columns: 200px 1fr; gap: 8px 16px; margin: 0; }
     dt { color: #64748b; font-size: 12px; }
     dd { margin: 0; font-weight: 500; }
-    .muted { color: #64748b; font-weight: 400; }
-    .banner { background: #eff6ff; border: 1px solid #bfdbfe; color: #1e3a8a; padding: 10px 12px; border-radius: 6px; font-size: 13px; margin-top: 12px; }
-    .warn { background: #fffbeb; border-color: #fde68a; color: #78350f; }
+    .mono { font-family: ui-monospace, monospace; font-size: 13px; }
     footer { margin-top: 24px; font-size: 11px; color: #94a3b8; }
   </style>
 </head>
 <body>
   <div class="sheet">
-    
-    <h1>Form W-9 — Request for Taxpayer Identification</h1>
-    <p class="sub">Demo contractor / payee record</p>
-    <h2>Driver</h2>
-<dl>
-  <dt>Name</dt><dd>John Carter</dd>
-  <dt>Driver ID</dt><dd><code>DRV-001</code></dd>
-  <dt>Address</dt><dd>1240 W 6th St, Cleveland, OH 44113</dd>
-  <dt>Phone</dt><dd>206-667-3424</dd>
-  <dt>Email</dt><dd>john.carter@boftransport.demo</dd>
-</dl>
+    <div class="hdr">
+      <div>
+        <h1>Form W-9 — Request for Taxpayer Identification</h1>
+        <p class="sub">Contract driver · Demo tax profile</p>
+      </div>
+      <img src="/generated/drivers/DRV-001/bof-demo-mark.svg" width="140" height="36" alt=""/>
+    </div>
+    <span class="pill">Status: VALID</span>
+
     <h2>Taxpayer</h2>
     <dl>
-      <dt>Status (demo)</dt><dd>MISSING</dd>
       <dt>Name (as shown)</dt><dd>John Carter</dd>
-      <dt>Business name</dt><dd><span class="muted">Not on file</span></dd>
-      <dt>Tax classification</dt><dd>Individual / sole proprietor (demo)</dd>
-      <dt>TIN</dt><dd><span class="muted">Not on file</span></dd>
+      <dt>Business name</dt><dd>John Carter d/b/a Carter Line Haul (demo)</dd>
+      <dt>Driver ID</dt><dd class="mono">DRV-001</dd>
+      <dt>Federal tax classification</dt><dd>Individual / sole proprietor</dd>
+      <dt>Address</dt><dd>1240 W 6th St, Cleveland, OH 44113</dd>
     </dl>
-  
-    <footer>BackOfficeFleet · Demo generated credential shell · Not a legal document</footer>
+
+    <h2>Identification (demo — masked)</h2>
+    <dl>
+      <dt>SSN</dt><dd class="mono">***-**-4521</dd>
+      <dt>Certification signed</dt><dd><time datetime="2025-09-02">2025-09-02</time></dd>
+      <dt>W-9 version</dt><dd>October 2018 revision (demo label)</dd>
+    </dl>
+
+    <footer>BackOfficeFleet · Synthetic W-9 summary for DRV-001 · Not IRS Form W-9</footer>
   </div>
 </body>
 </html>

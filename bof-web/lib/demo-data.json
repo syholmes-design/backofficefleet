@@ -89,49 +89,56 @@
     {
       "driverId": "DRV-001",
       "type": "CDL",
-      "status": "MISSING",
+      "status": "VALID",
+      "expirationDate": "2027-08-14",
       "fileUrl": "/generated/drivers/DRV-001/cdl.html",
       "previewUrl": "/generated/drivers/DRV-001/cdl.html"
     },
     {
       "driverId": "DRV-001",
       "type": "Medical Card",
-      "status": "MISSING",
+      "status": "VALID",
+      "expirationDate": "2026-04-22",
       "fileUrl": "/generated/drivers/DRV-001/medical-card.html",
       "previewUrl": "/generated/drivers/DRV-001/medical-card.html"
     },
     {
       "driverId": "DRV-001",
       "type": "MVR",
-      "status": "MISSING",
+      "status": "VALID",
+      "expirationDate": "2026-11-18",
       "fileUrl": "/generated/drivers/DRV-001/mvr.html",
       "previewUrl": "/generated/drivers/DRV-001/mvr.html"
     },
     {
       "driverId": "DRV-001",
       "type": "I-9",
-      "status": "MISSING",
+      "status": "VALID",
+      "expirationDate": "2028-01-10",
       "fileUrl": "/generated/drivers/DRV-001/i9.html",
       "previewUrl": "/generated/drivers/DRV-001/i9.html"
     },
     {
       "driverId": "DRV-001",
       "type": "FMCSA",
-      "status": "MISSING",
+      "status": "VALID",
+      "expirationDate": "2026-10-01",
       "fileUrl": "/generated/drivers/DRV-001/fmcsa.html",
       "previewUrl": "/generated/drivers/DRV-001/fmcsa.html"
     },
     {
       "driverId": "DRV-001",
       "type": "W-9",
-      "status": "MISSING",
+      "status": "VALID",
+      "expirationDate": "2025-09-02",
       "fileUrl": "/generated/drivers/DRV-001/w9.html",
       "previewUrl": "/generated/drivers/DRV-001/w9.html"
     },
     {
       "driverId": "DRV-001",
       "type": "Bank Info",
-      "status": "MISSING",
+      "status": "VALID",
+      "expirationDate": "2026-12-31",
       "fileUrl": "/generated/drivers/DRV-001/bank-info.html",
       "previewUrl": "/generated/drivers/DRV-001/bank-info.html"
     },
