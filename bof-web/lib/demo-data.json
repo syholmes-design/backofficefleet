@@ -1221,6 +1221,115 @@
         }
       }
     },
+    "L008": {
+      "claimApplicable": true,
+      "items": {
+        "Rate Confirmation": {
+          "status": "Complete",
+          "fileUrl": "/proof/L008/rate-confirmation.html",
+          "previewUrl": "/proof/L008/rate-confirmation.html",
+          "blocksPayment": false,
+          "disputeExposure": false,
+          "notes": "Linehaul RC executed — demo HTML pack."
+        },
+        "BOL": {
+          "status": "Complete",
+          "fileUrl": "/proof/L008/bol.html",
+          "previewUrl": "/proof/L008/bol.html",
+          "blocksPayment": false,
+          "disputeExposure": false,
+          "notes": "Shipper draft BOL on file."
+        },
+        "Signed BOL": {
+          "status": "Complete",
+          "fileUrl": "/proof/L008/bol-signed.html",
+          "previewUrl": "/proof/L008/bol-signed.html",
+          "blocksPayment": false,
+          "disputeExposure": false,
+          "notes": "Executed pickup copy with shipper signature (synthetic)."
+        },
+        "POD": {
+          "status": "Complete",
+          "fileUrl": "/proof/L008/pod.html",
+          "previewUrl": "/proof/L008/pod.html",
+          "blocksPayment": false,
+          "disputeExposure": false,
+          "notes": "Verified POD — exception line for minor damage (demo)."
+        },
+        "Fuel Receipt": {
+          "status": "Complete",
+          "fileUrl": "/proof/L008/fuel-receipt.html",
+          "previewUrl": "/proof/L008/fuel-receipt.html",
+          "blocksPayment": false,
+          "disputeExposure": false,
+          "notes": "Linehaul fuel ticket — Hubbard, OH (synthetic)."
+        },
+        "Pickup Seal Photo": {
+          "status": "Complete",
+          "fileUrl": "/proof/L008/seal-pickup-record.html",
+          "previewUrl": "/proof/L008/seal-pickup-record.html",
+          "blocksPayment": false,
+          "disputeExposure": false,
+          "notes": "Seal pickup record + synthetic seal capture card."
+        },
+        "Delivery Seal Photo": {
+          "status": "Complete",
+          "fileUrl": "/proof/L008/seal-delivery-record.html",
+          "previewUrl": "/proof/L008/seal-delivery-record.html",
+          "blocksPayment": false,
+          "disputeExposure": false,
+          "notes": "Delivery seal record — ID matches BOL."
+        },
+        "Pre-Trip Cargo Photo": {
+          "status": "Complete",
+          "fileUrl": "/proof/L008/cargo-full.html",
+          "previewUrl": "/proof/L008/cargo-full.html",
+          "blocksPayment": false,
+          "disputeExposure": false,
+          "notes": "Full van / loaded cargo composition (synthetic)."
+        },
+        "Delivery / Empty-Trailer Photo": {
+          "status": "Complete",
+          "fileUrl": "/proof/L008/empty-trailer.html",
+          "previewUrl": "/proof/L008/empty-trailer.html",
+          "blocksPayment": false,
+          "disputeExposure": false,
+          "notes": "Post-unload empty trailer confirmation."
+        },
+        "Lumper Receipt": {
+          "status": "Complete",
+          "fileUrl": "/proof/L008/lumper-receipt.html",
+          "previewUrl": "/proof/L008/lumper-receipt.html",
+          "blocksPayment": false,
+          "disputeExposure": false,
+          "notes": "Unload lumper ticket — CMH RDC (demo)."
+        },
+        "RFID / Dock Validation Record": {
+          "status": "Complete",
+          "fileUrl": "/proof/L008/rfid-geo-summary.html",
+          "previewUrl": "/proof/L008/rfid-geo-summary.html",
+          "blocksPayment": false,
+          "disputeExposure": false,
+          "notes": "RFID + geo checkpoint summary — origin/destination scans OK."
+        },
+        "Cargo Damage Photos": {
+          "status": "Complete",
+          "fileUrl": "/proof/L008/damage-photos.html",
+          "previewUrl": "/proof/L008/damage-photos.html",
+          "blocksPayment": false,
+          "disputeExposure": true,
+          "notes": "Three-angle synthetic damage set for claim file."
+        },
+        "Claim Support Docs": {
+          "status": "Complete",
+          "fileUrl": "/proof/L008/insurance-claim-intake.html",
+          "previewUrl": "/proof/L008/insurance-claim-intake.html",
+          "blocksPayment": false,
+          "disputeExposure": true,
+          "notes": "Insurance / carrier claim intake worksheet (synthetic)."
+        }
+      }
+    },
     "L011": {
       "claimApplicable": false,
       "items": {
