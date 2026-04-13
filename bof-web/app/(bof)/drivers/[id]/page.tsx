@@ -99,17 +99,27 @@ export default async function DriverDetailPage({ params }: Props) {
             </dd>
           </dl>
         </div>
-        <div className="bof-info-block">
-          <h2 className="bof-h3">Emergency contact</h2>
-          <dl className="bof-dl">
-            <dt>Name</dt>
-            image.png
-              >
-                {driver.emergencyContactPhone}
-              </a>
-            </dd>
-          </dl>
-        </div>
+<div className="bof-info-block">
+  <h2 className="bof-h3">Emergency contact</h2>
+  <dl className="bof-dl">
+    <dt>Name</dt>
+    <dd>{("emergencyContactName" in driver && driver.emergencyContactName) || "Not on file"}</dd>
+
+    <dt>Relationship</dt>
+    <dd>{("emergencyContactRelationship" in driver && driver.emergencyContactRelationship) || "Not on file"}</dd>
+
+    <dt>Phone</dt>
+    <dd>
+      {("emergencyContactPhone" in driver && driver.emergencyContactPhone) ? (
+        <a href={`tel:${driver.emergencyContactPhone.replace(/\D/g, "")}`}>
+          {driver.emergencyContactPhone}
+        </a>
+      ) : (
+        "Not on file"
+      )}
+    </dd>
+  </dl>
+</div>
         <div className="bof-info-block">
           <h2 className="bof-h3">Assignment</h2>
           <dl className="bof-dl">
