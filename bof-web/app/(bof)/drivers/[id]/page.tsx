@@ -54,6 +54,12 @@ export default async function DriverDetailPage({ params }: Props) {
         ? trucks[0]
         : `${primary ?? trucks[0]} (${trucks.length} assets on record)`;
 
+  const emergency = driver as typeof driver & {
+    emergencyContactName?: string;
+    emergencyContactRelationship?: string;
+    emergencyContactPhone?: string;
+  };
+
   return (
     <div className="bof-page">
       <nav className="bof-breadcrumb" aria-label="Breadcrumb">
@@ -99,27 +105,27 @@ export default async function DriverDetailPage({ params }: Props) {
             </dd>
           </dl>
         </div>
-<div className="bof-info-block">
-  <h2 className="bof-h3">Emergency contact</h2>
-  <dl className="bof-dl">
-    <dt>Name</dt>
-    <dd>{("emergencyContactName" in driver && driver.emergencyContactName) || "Not on file"}</dd>
+        <div className="bof-info-block">
+          <h2 className="bof-h3">Emergency contact</h2>
+          <dl className="bof-dl">
+            <dt>Name</dt>
+            <dd>{emergency.emergencyContactName ?? "Not on file"}</dd>
 
-    <dt>Relationship</dt>
-    <dd>{("emergencyContactRelationship" in driver && driver.emergencyContactRelationship) || "Not on file"}</dd>
+            <dt>Relationship</dt>
+            <dd>{emergency.emergencyContactRelationship ?? "Not on file"}</dd>
 
-    <dt>Phone</dt>
-    <dd>
-      {("emergencyContactPhone" in driver && driver.emergencyContactPhone) ? (
-        <a href={`tel:${driver.emergencyContactPhone.replace(/\D/g, "")}`}>
-          {driver.emergencyContactPhone}
-        </a>
-      ) : (
-        "Not on file"
-      )}
-    </dd>
-  </dl>
-</div>
+            <dt>Phone</dt>
+            <dd>
+              {emergency.emergencyContactPhone ? (
+                <a href={`tel:${emergency.emergencyContactPhone.replace(/\D/g, "")}`}>
+                  {emergency.emergencyContactPhone}
+                </a>
+              ) : (
+                "Not on file"
+              )}
+            </dd>
+          </dl>
+        </div>
         <div className="bof-info-block">
           <h2 className="bof-h3">Assignment</h2>
           <dl className="bof-dl">
