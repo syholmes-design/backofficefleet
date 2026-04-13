@@ -1,4 +1,8 @@
-{
+{{
+  "framework": null,
+  "buildCommand": null,
+  "installCommand": null
+}
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "framework": "nextjs",
   "installCommand": "cd bof-web && npm install",
