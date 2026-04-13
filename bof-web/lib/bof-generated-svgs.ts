@@ -11,6 +11,12 @@ import {
   buildRfidMaintenanceRows,
 } from "./rfid-intelligence";
 
+type DriverWithEmergencyContact = BofData["drivers"][number] & {
+  emergencyContactName?: string;
+  emergencyContactRelationship?: string;
+  emergencyContactPhone?: string;
+};
+
 function escapeXml(s: string) {
   return String(s ?? "")
     .replace(/&/g, "&amp;")
@@ -325,7 +331,7 @@ export function buildDriverGeneratedSvg(
   driverId: string,
   file: string
 ): string | null {
-  const driver = driverRecord(data, driverId);
+  const driver = driverRecord(data, driverId) as DriverWithEmergencyContact | null;
   if (!driver) return null;
   if (file === "emergency-contact-sheet.svg") {
     return svgDocument(`Emergency Contact · ${driverId}`, [
@@ -334,9 +340,9 @@ export function buildDriverGeneratedSvg(
       `address: ${driver.address}`,
       `phone: ${driver.phone}`,
       `email: ${driver.email}`,
-      `emergencyContactName: ${driver.emergencyContactName}`,
-      `emergencyContactRelationship: ${driver.emergencyContactRelationship}`,
-      `emergencyContactPhone: ${driver.emergencyContactPhone}`,
+      `emergencyContactName: ${driver.emergencyContactName ?? "Not on file"}`,
+      `emergencyContactRelationship: ${driver.emergencyContactRelationship ?? "Not on file"}`,
+      `emergencyContactPhone: ${driver.emergencyContactPhone ?? "Not on file"}`,
     ]);
   }
   if (file === "credential-register.svg") {
