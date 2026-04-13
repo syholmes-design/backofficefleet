@@ -103,13 +103,7 @@ export default async function DriverDetailPage({ params }: Props) {
           <h2 className="bof-h3">Emergency contact</h2>
           <dl className="bof-dl">
             <dt>Name</dt>
-            <dd>{driver.emergencyContactName}</dd>
-            <dt>Relationship</dt>
-            <dd>{driver.emergencyContactRelationship}</dd>
-            <dt>Phone</dt>
-            <dd>
-              <a
-                href={`tel:${driver.emergencyContactPhone.replace(/\D/g, "")}`}
+            image.png
               >
                 {driver.emergencyContactPhone}
               </a>
