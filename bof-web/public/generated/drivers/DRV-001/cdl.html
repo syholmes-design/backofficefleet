@@ -3,61 +3,198 @@
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>CDL — John Carter · DRV-001</title>
+  <title>CDL - John Carter · Ohio · DRV-001</title>
   <style>
     * { box-sizing: border-box; }
-    body { font-family: system-ui, Segoe UI, Roboto, Helvetica, Arial, sans-serif; margin: 0; padding: 24px; background: #f1f5f9; color: #0f172a; line-height: 1.45; font-size: 14px; }
-    .sheet { max-width: 720px; margin: 0 auto; background: #fff; border: 1px solid #cbd5e1; border-radius: 8px; padding: 28px 32px; box-shadow: 0 1px 3px rgba(0,0,0,.06); }
-    .hdr { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 16px; }
-    .hdr-mark { flex-shrink: 0; min-width: 120px; padding: 0 14px; height: 36px; line-height: 36px; text-align: center; border-radius: 6px; background: #0f172a; color: #f8fafc; font-size: 12px; font-weight: 700; letter-spacing: .02em; user-select: none; }
-    h1 { font-size: 1.2rem; margin: 0; color: #0f172a; }
-    .sub { font-size: 12px; color: #64748b; margin: 4px 0 0; }
-    .pill { display: inline-block; padding: 4px 10px; border-radius: 999px; font-size: 11px; font-weight: 600; background: #dcfce7; color: #166534; }
-    h2 { font-size: 11px; text-transform: uppercase; letter-spacing: .06em; color: #64748b; margin: 22px 0 10px; border-bottom: 1px solid #e2e8f0; padding-bottom: 4px; }
-    dl { display: grid; grid-template-columns: 170px 1fr; gap: 8px 16px; margin: 0; }
-    dt { color: #64748b; font-size: 12px; }
-    dd { margin: 0; font-weight: 500; }
-    .mono { font-family: ui-monospace, monospace; font-size: 13px; }
-    footer { margin-top: 24px; font-size: 11px; color: #94a3b8; }
+    body { margin: 0; background: #e9edf3; font-family: Arial, Helvetica, sans-serif; }
+    .page { min-height: 100vh; display: grid; place-items: center; padding: 24px; }
+    .card {
+      width: 1180px;
+      height: 740px;
+      position: relative;
+      border-radius: 28px;
+      overflow: hidden;
+      background:
+        radial-gradient(circle at 52% 48%, rgba(74, 107, 171, 0.12), transparent 20%),
+        linear-gradient(135deg, #fbfcfe 0%, #f2f6fb 100%);
+      border: 4px solid #d7deea;
+      box-shadow: 0 12px 32px rgba(0,0,0,.16);
+      --state-blue: #0f3a78;
+      --state-red: #b91c1c;
+    }
+    .security-pattern {
+      position: absolute;
+      inset: 0;
+      opacity: .22;
+      background:
+        repeating-radial-gradient(circle at 20% 20%, #7f95b8 0 1px, transparent 1px 14px),
+        repeating-radial-gradient(circle at 80% 30%, #7f95b8 0 1px, transparent 1px 16px),
+        repeating-radial-gradient(circle at 50% 80%, #7f95b8 0 1px, transparent 1px 15px);
+      mix-blend-mode: multiply;
+    }
+    .header-state {
+      position: absolute;
+      top: 18px;
+      left: 0;
+      width: 100%;
+      text-align: center;
+      font-size: 92px;
+      font-weight: 900;
+      letter-spacing: 2px;
+      color: var(--state-blue);
+    }
+    .header-banner {
+      position: absolute;
+      top: 144px;
+      left: 88px;
+      width: calc(100% - 176px);
+      height: 56px;
+      background: linear-gradient(90deg, var(--state-red), #d53b3b);
+      color: #fff;
+      display: grid;
+      place-items: center;
+      font-size: 28px;
+      font-weight: 800;
+      letter-spacing: 1px;
+    }
+    .state-emblem {
+      position: absolute;
+      top: 38px;
+      width: 160px;
+      height: 74px;
+      display: grid;
+      place-items: center;
+      color: rgba(15,58,120,.68);
+      font-weight: 900;
+      font-size: 30px;
+      letter-spacing: .08em;
+    }
+    .state-emblem.left { left: 170px; }
+    .state-emblem.right { right: 170px; }
+    .photo-box {
+      position: absolute;
+      left: 86px;
+      top: 228px;
+      width: 280px;
+      height: 390px;
+      background: #dde3ed;
+      border: 3px solid rgba(36, 53, 90, 0.18);
+      overflow: hidden;
+    }
+    .photo-box img { width: 100%; height: 100%; object-fit: cover; }
+    .center-block { position: absolute; left: 400px; top: 244px; width: 360px; color: #151515; }
+    .right-block { position: absolute; left: 790px; top: 244px; width: 290px; color: #151515; }
+    .label { font-size: 26px; font-weight: 700; color: #2b2b2b; margin-bottom: 2px; }
+    .value-lg { font-size: 34px; font-weight: 900; line-height: 1.1; margin-bottom: 18px; }
+    .value-md { font-size: 28px; font-weight: 800; line-height: 1.15; margin-bottom: 10px; }
+    .value-sm { font-size: 25px; font-weight: 800; line-height: 1.2; margin-bottom: 12px; }
+    .signature-label { margin-top: 16px; padding-top: 8px; border-top: 2px solid rgba(28, 43, 77, 0.18); }
+    .signature { font-family: "Brush Script MT", "Segoe Script", cursive; font-size: 68px; line-height: 1; margin-top: 6px; }
+    .barcode {
+      position: absolute;
+      left: 88px;
+      bottom: 110px;
+      width: 690px;
+      height: 62px;
+      background: repeating-linear-gradient(to right, #111 0 5px, transparent 5px 8px, #111 8px 12px, transparent 12px 16px, #111 16px 19px, transparent 19px 24px);
+    }
+    .barcode-label {
+      position: absolute;
+      left: 470px;
+      bottom: 54px;
+      transform: translateX(-50%);
+      font-size: 28px;
+      font-weight: 700;
+      color: #222;
+      font-family: ui-monospace, monospace;
+    }
+    .qr-box {
+      position: absolute;
+      right: 86px;
+      bottom: 96px;
+      width: 150px;
+      height: 150px;
+      background:
+        linear-gradient(90deg,#111 12%,transparent 12% 24%,#111 24% 36%,transparent 36% 48%,#111 48% 60%,transparent 60% 72%,#111 72% 84%,transparent 84%),
+        linear-gradient(#111 12%,transparent 12% 24%,#111 24% 36%,transparent 36% 48%,#111 48% 60%,transparent 60% 72%,#111 72% 84%,transparent 84%);
+      border: 10px solid #fff;
+      box-shadow: 0 0 0 2px #111;
+    }
+    .qr-label { position: absolute; right: 46px; bottom: 44px; font-size: 22px; font-weight: 500; color: #333; }
+    .disclaimer { position: absolute; bottom: 12px; width: 100%; text-align: center; font-size: 22px; font-weight: 700; color: #1f1f1f; }
+    .watermark {
+      position: absolute;
+      left: 430px;
+      top: 238px;
+      width: 380px;
+      height: 380px;
+      border-radius: 50%;
+      border: 10px solid rgba(89, 111, 154, 0.12);
+      display: grid;
+      place-items: center;
+      color: rgba(89, 111, 154, 0.16);
+      font-size: 34px;
+      font-weight: 800;
+      text-align: center;
+      line-height: 1.15;
+    }
+    .demo-stamp { position: absolute; right: 24px; top: 18px; font-size: 14px; font-weight: 800; color: rgba(0,0,0,.4); letter-spacing: 1px; }
+    .meta-note { position: absolute; left: 88px; bottom: 188px; font-size: 12px; color: #334155; max-width: 690px; }
+    @media print {
+      body { background: #fff; }
+      .page { padding: 0; }
+      .card { box-shadow: none; }
+    }
   </style>
 </head>
 <body>
-  <div class="sheet">
-    <div class="hdr">
-      <div>
-        <h1>Commercial Driver&apos;s License — Record</h1>
-        <p class="sub">Ohio Class A · Demo credential packet for DRV-001</p>
+  <div class="page">
+    <div class="card">
+      <div class="security-pattern" aria-hidden="true"></div>
+      <div class="demo-stamp">SYNTHETIC CDL DEMO</div>
+      <div class="header-state">OHIO</div>
+      <div class="state-emblem left" aria-hidden="true">OH</div>
+      <div class="state-emblem right" aria-hidden="true">OH</div>
+      <div class="header-banner">COMMERCIAL DRIVER LICENSE</div>
+
+      <div class="photo-box">
+        <img src="/images/drivers/DRV-001.png" alt="Driver headshot"/>
       </div>
-      <div class="hdr-mark" role="img" aria-label="BackOfficeFleet demo">BOF &middot; DEMO</div>
+
+      <div class="watermark" aria-hidden="true">BACK OFFICE<br/>FLEET<br/>DEMO</div>
+
+      <div class="center-block">
+        <div class="label">Full Name</div>
+        <div class="value-lg">John Carter</div>
+        <div class="label">Address</div>
+        <div class="value-sm">1240 W 6th St</div>
+        <div class="value-sm">Cleveland, OH 44113</div>
+        <div class="label">Date of Issue</div>
+        <div class="value-md"><time datetime="2023-08-15">2023-08-15</time></div>
+        <div class="label">Expiration</div>
+        <div class="value-md"><time datetime="2027-08-14">2027-08-14</time></div>
+      </div>
+
+      <div class="right-block">
+        <div class="label">DL / CDL Number</div>
+        <div class="value-md">OH441134921</div>
+        <div class="label">Class</div>
+        <div class="value-md">Class A</div>
+        <div class="label">Endorsements</div>
+        <div class="value-sm">T, N</div>
+        <div class="label">Restrictions</div>
+        <div class="value-sm">None</div>
+        <div class="signature-label label">Signature</div>
+        <div class="signature">John Carter</div>
+      </div>
+
+      <div class="meta-note">Driver ID: DRV-001 · Phone: 206-667-3424 · Email: john.carter@boftransport.demo</div>
+      <div class="barcode" aria-hidden="true"></div>
+      <div class="barcode-label">OH441134921</div>
+      <div class="qr-box" aria-hidden="true"></div>
+      <div class="qr-label">DOC CODE</div>
+      <div class="disclaimer">BackOfficeFleet synthetic demo document - not a government-issued license</div>
     </div>
-    <span class="pill">Status: VALID</span>
-
-    <h2>Driver</h2>
-    <dl>
-      <dt>Legal name</dt><dd>John Carter</dd>
-      <dt>Driver ID</dt><dd class="mono">DRV-001</dd>
-      <dt>Address on file</dt><dd>1240 W 6th St, Cleveland, OH 44113</dd>
-      <dt>Phone</dt><dd><a href="tel:2066673424">206-667-3424</a></dd>
-      <dt>Email</dt><dd><a href="mailto:john.carter@boftransport.demo">john.carter@boftransport.demo</a></dd>
-    </dl>
-
-    <h2>License (demo values)</h2>
-    <dl>
-      <dt>Jurisdiction</dt><dd>Ohio (OH)</dd>
-      <dt>License class</dt><dd>Class A — Combination vehicles</dd>
-      <dt>CDL number</dt><dd class="mono">OH441134921</dd>
-      <dt>Expiration</dt><dd><time datetime="2027-08-14">2027-08-14</time></dd>
-      <dt>Endorsements</dt><dd>T (doubles/triplets), N (tank)</dd>
-      <dt>Restrictions</dt><dd>None on file</dd>
-      <dt>Self-certification</dt><dd>Non-excepted interstate</dd>
-    </dl>
-
-    <h2>Operational cross-check</h2>
-    <dl>
-      <dt>Primary load (demo)</dt><dd>L001 · Cleveland, OH → Chicago, IL · Asset T-102 · Delivered</dd>
-    </dl>
-
-    <footer>BackOfficeFleet · Synthetic demo CDL record for DRV-001 · Not a government-issued document</footer>
   </div>
 </body>
 </html>
