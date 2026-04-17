@@ -169,6 +169,47 @@ export default async function DriverDetailPage({ params }: Props) {
         documents={documents}
       />
 
+      {driver.id === "DRV-001" && (
+        <section
+          className="bof-doc-section"
+          aria-labelledby="drv001-static-assets-heading"
+        >
+          <h2 id="drv001-static-assets-heading" className="bof-h2">
+            John Carter — static attachments
+          </h2>
+          <p className="bof-doc-section-lead">
+            Signed MCSA-5876 (PDF) and profile dashboard (HTML). These also appear as
+            extra rows in the{" "}
+            <Link href="/documents" className="bof-link-secondary">
+              document vault
+            </Link>{" "}
+            for filtering and preview.
+          </p>
+          <ul className="bof-compliance-mini">
+            <li>
+              <a
+                href="/documents/drivers/DRV-001/john-carter-mcsa-5876-signed.pdf"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="bof-link-secondary"
+              >
+                Open signed MCSA-5876 (PDF)
+              </a>
+            </li>
+            <li>
+              <a
+                href="/documents/drivers/DRV-001/john-carter-profile-dashboard.html"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="bof-link-secondary"
+              >
+                Open profile dashboard (HTML)
+              </a>
+            </li>
+          </ul>
+        </section>
+      )}
+
       <DocumentEnginePanel
         title="Document automation engine — driver packet"
         lead="Credential shells and emergency contact sheet from drivers[] and documents[] only. Hover / click as on load detail."

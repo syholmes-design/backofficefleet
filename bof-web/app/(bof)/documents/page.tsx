@@ -8,7 +8,7 @@ export const metadata = {
   description: "Fleet-wide driver credentials and compliance documents",
 };
 
-const DEMO_DOCUMENT_TOTAL = 84;
+const DEMO_DOCUMENT_TOTAL = 86;
 
 export default function DocumentsPage() {
   const data = getBofData();
@@ -18,7 +18,8 @@ export default function DocumentsPage() {
     <div className="bof-page">
       <h1 className="bof-title">Document Vault</h1>
       <p className="bof-lead">
-        Full credential register — every driver × required document type. Filter by
+        Full credential register — every driver × required document type, plus two
+        supplemental John Carter attachments (MCSA-5876 PDF and profile HTML). Filter by
         driver, type, or status; hover proof for a quick preview when a file path
         exists, or open the driver profile for context.
       </p>

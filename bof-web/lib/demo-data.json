@@ -185,6 +185,21 @@
       "previewUrl": "/generated/drivers/DRV-001/bank-info.html"
     },
     {
+      "driverId": "DRV-001",
+      "type": "MCSA-5876 (signed PDF)",
+      "status": "VALID",
+      "expirationDate": "2027-08-14",
+      "fileUrl": "/documents/drivers/DRV-001/john-carter-mcsa-5876-signed.pdf",
+      "previewUrl": "/documents/drivers/DRV-001/john-carter-mcsa-5876-signed.pdf"
+    },
+    {
+      "driverId": "DRV-001",
+      "type": "Driver profile (HTML)",
+      "status": "VALID",
+      "fileUrl": "/documents/drivers/DRV-001/john-carter-profile-dashboard.html",
+      "previewUrl": "/documents/drivers/DRV-001/john-carter-profile-dashboard.html"
+    },
+    {
       "driverId": "DRV-002",
       "type": "CDL",
       "status": "VALID",
