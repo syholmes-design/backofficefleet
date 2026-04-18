@@ -170,6 +170,12 @@ body {
   width: 100%;
 }
 
+/* Dispatch module: full-width data surfaces inside standard shell */
+.bof-main:has(.bof-dispatch-page-wrap) {
+  max-width: none;
+  padding: 0;
+}
+
 .bof-page {
   padding-bottom: 3rem;
 }
@@ -5034,3 +5040,7 @@ body {
   font-size: 0.86rem;
   max-width: 48rem;
 }
+
+/* Tailwind — utilities + components only (no @tailwind base — avoids touching BOF globals). */
+@tailwind components;
+@tailwind utilities;
