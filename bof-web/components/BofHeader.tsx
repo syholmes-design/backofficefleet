@@ -17,6 +17,7 @@ const productNav = [
   { href: "/documents", label: "Documents" },
   { href: "/safety", label: "Safety" },
   { href: "/dispatch", label: "Dispatch" },
+  { href: "/load-requirements", label: "Load intake" },
   { href: "/loads", label: "Loads" },
   { href: "/rf-actions", label: "RF Actions" },
   { href: "/settlements", label: "Settlements" },
