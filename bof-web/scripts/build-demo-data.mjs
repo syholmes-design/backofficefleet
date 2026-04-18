@@ -12,6 +12,7 @@ import {
   patchDriversForJohnCarter,
   resolveDriverIdFromCdlColumn,
 } from "./lib/john-carter-stack.mjs";
+import { buildPayrollSettlementRowsFromWorkbook } from "./lib/payroll-settlements-from-sheet.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(__dirname, "..");
@@ -652,7 +653,17 @@ function main() {
     out.driverMedicalExpanded = driverMedicalExpanded;
   }
 
-  if (Array.isArray(prevFull?.settlements)) out.settlements = prevFull.settlements;
+  if (workbook.SheetNames.includes("Payroll_Clean")) {
+    const prevSettlements = Array.isArray(prevFull?.settlements)
+      ? prevFull.settlements
+      : [];
+    out.settlements = buildPayrollSettlementRowsFromWorkbook(
+      workbook,
+      prevSettlements
+    );
+  } else if (Array.isArray(prevFull?.settlements)) {
+    out.settlements = prevFull.settlements;
+  }
   if (prevFull?.loadProofBundles && typeof prevFull.loadProofBundles === "object") {
     out.loadProofBundles = prevFull.loadProofBundles;
   }
@@ -670,6 +681,7 @@ function main() {
     expectedBaseDocuments: expectedBase,
     totalComplianceIncidents: complianceIncidents.length,
     driverMedicalExpandedDrivers: Object.keys(driverMedicalExpanded).length,
+    settlementRows: Array.isArray(out.settlements) ? out.settlements.length : 0,
   };
   console.log(JSON.stringify({ validation }, null, 2));
 }

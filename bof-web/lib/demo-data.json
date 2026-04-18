@@ -165,541 +165,387 @@
     {
       "driverId": "DRV-002",
       "type": "CDL",
-      "status": "MISSING",
-      "fileUrl": "/generated/drivers/DRV-002/cdl.html",
-      "previewUrl": "/generated/drivers/DRV-002/cdl.html"
+      "status": "MISSING"
     },
     {
       "driverId": "DRV-002",
       "type": "Medical Card",
-      "status": "MISSING",
-      "fileUrl": "/generated/drivers/DRV-002/medical-card.html",
-      "previewUrl": "/generated/drivers/DRV-002/medical-card.html"
+      "status": "MISSING"
     },
     {
       "driverId": "DRV-002",
       "type": "MVR",
-      "status": "MISSING",
-      "fileUrl": "/generated/drivers/DRV-002/mvr.html",
-      "previewUrl": "/generated/drivers/DRV-002/mvr.html"
+      "status": "MISSING"
     },
     {
       "driverId": "DRV-002",
       "type": "I-9",
-      "status": "MISSING",
-      "fileUrl": "/generated/drivers/DRV-002/i9.html",
-      "previewUrl": "/generated/drivers/DRV-002/i9.html"
+      "status": "MISSING"
     },
     {
       "driverId": "DRV-002",
       "type": "FMCSA",
-      "status": "MISSING",
-      "fileUrl": "/generated/drivers/DRV-002/fmcsa.html",
-      "previewUrl": "/generated/drivers/DRV-002/fmcsa.html"
+      "status": "MISSING"
     },
     {
       "driverId": "DRV-002",
       "type": "W-9",
-      "status": "MISSING",
-      "fileUrl": "/generated/drivers/DRV-002/w9.html",
-      "previewUrl": "/generated/drivers/DRV-002/w9.html"
+      "status": "MISSING"
     },
     {
       "driverId": "DRV-002",
       "type": "Bank Info",
-      "status": "MISSING",
-      "fileUrl": "/generated/drivers/DRV-002/bank-info.html",
-      "previewUrl": "/generated/drivers/DRV-002/bank-info.html"
+      "status": "MISSING"
     },
     {
       "driverId": "DRV-003",
       "type": "CDL",
-      "status": "MISSING",
-      "fileUrl": "/generated/drivers/DRV-003/cdl.html",
-      "previewUrl": "/generated/drivers/DRV-003/cdl.html"
+      "status": "MISSING"
     },
     {
       "driverId": "DRV-003",
       "type": "Medical Card",
-      "status": "MISSING",
-      "fileUrl": "/generated/drivers/DRV-003/medical-card.html",
-      "previewUrl": "/generated/drivers/DRV-003/medical-card.html"
+      "status": "MISSING"
     },
     {
       "driverId": "DRV-003",
       "type": "MVR",
-      "status": "MISSING",
-      "fileUrl": "/generated/drivers/DRV-003/mvr.html",
-      "previewUrl": "/generated/drivers/DRV-003/mvr.html"
+      "status": "MISSING"
     },
     {
       "driverId": "DRV-003",
       "type": "I-9",
-      "status": "MISSING",
-      "fileUrl": "/generated/drivers/DRV-003/i9.html",
-      "previewUrl": "/generated/drivers/DRV-003/i9.html"
+      "status": "MISSING"
     },
     {
       "driverId": "DRV-003",
       "type": "FMCSA",
-      "status": "MISSING",
-      "fileUrl": "/generated/drivers/DRV-003/fmcsa.html",
-      "previewUrl": "/generated/drivers/DRV-003/fmcsa.html"
+      "status": "MISSING"
     },
     {
       "driverId": "DRV-003",
       "type": "W-9",
-      "status": "MISSING",
-      "fileUrl": "/generated/drivers/DRV-003/w9.html",
-      "previewUrl": "/generated/drivers/DRV-003/w9.html"
+      "status": "MISSING"
     },
     {
       "driverId": "DRV-003",
       "type": "Bank Info",
-      "status": "MISSING",
-      "fileUrl": "/generated/drivers/DRV-003/bank-info.html",
-      "previewUrl": "/generated/drivers/DRV-003/bank-info.html"
+      "status": "MISSING"
     },
     {
       "driverId": "DRV-004",
       "type": "CDL",
-      "status": "MISSING",
-      "fileUrl": "/generated/drivers/DRV-004/cdl.html",
-      "previewUrl": "/generated/drivers/DRV-004/cdl.html"
+      "status": "MISSING"
     },
     {
       "driverId": "DRV-004",
       "type": "Medical Card",
-      "status": "MISSING",
-      "fileUrl": "/generated/drivers/DRV-004/medical-card.html",
-      "previewUrl": "/generated/drivers/DRV-004/medical-card.html"
+      "status": "MISSING"
     },
     {
       "driverId": "DRV-004",
       "type": "MVR",
-      "status": "MISSING",
-      "fileUrl": "/generated/drivers/DRV-004/mvr.html",
-      "previewUrl": "/generated/drivers/DRV-004/mvr.html"
+      "status": "MISSING"
     },
     {
       "driverId": "DRV-004",
       "type": "I-9",
-      "status": "MISSING",
-      "fileUrl": "/generated/drivers/DRV-004/i9.html",
-      "previewUrl": "/generated/drivers/DRV-004/i9.html"
+      "status": "MISSING"
     },
     {
       "driverId": "DRV-004",
       "type": "FMCSA",
-      "status": "MISSING",
-      "fileUrl": "/generated/drivers/DRV-004/fmcsa.html",
-      "previewUrl": "/generated/drivers/DRV-004/fmcsa.html"
+      "status": "MISSING"
     },
     {
       "driverId": "DRV-004",
       "type": "W-9",
-      "status": "MISSING",
-      "fileUrl": "/generated/drivers/DRV-004/w9.html",
-      "previewUrl": "/generated/drivers/DRV-004/w9.html"
+      "status": "MISSING"
     },
     {
       "driverId": "DRV-004",
       "type": "Bank Info",
-      "status": "MISSING",
-      "fileUrl": "/generated/drivers/DRV-004/bank-info.html",
-      "previewUrl": "/generated/drivers/DRV-004/bank-info.html"
+      "status": "MISSING"
     },
     {
       "driverId": "DRV-005",
       "type": "CDL",
-      "status": "MISSING",
-      "fileUrl": "/generated/drivers/DRV-005/cdl.html",
-      "previewUrl": "/generated/drivers/DRV-005/cdl.html"
+      "status": "MISSING"
     },
     {
       "driverId": "DRV-005",
       "type": "Medical Card",
-      "status": "MISSING",
-      "fileUrl": "/generated/drivers/DRV-005/medical-card.html",
-      "previewUrl": "/generated/drivers/DRV-005/medical-card.html"
+      "status": "MISSING"
     },
     {
       "driverId": "DRV-005",
       "type": "MVR",
-      "status": "MISSING",
-      "fileUrl": "/generated/drivers/DRV-005/mvr.html",
-      "previewUrl": "/generated/drivers/DRV-005/mvr.html"
+      "status": "MISSING"
     },
     {
       "driverId": "DRV-005",
       "type": "I-9",
-      "status": "MISSING",
-      "fileUrl": "/generated/drivers/DRV-005/i9.html",
-      "previewUrl": "/generated/drivers/DRV-005/i9.html"
+      "status": "MISSING"
     },
     {
       "driverId": "DRV-005",
       "type": "FMCSA",
-      "status": "MISSING",
-      "fileUrl": "/generated/drivers/DRV-005/fmcsa.html",
-      "previewUrl": "/generated/drivers/DRV-005/fmcsa.html"
+      "status": "MISSING"
     },
     {
       "driverId": "DRV-005",
       "type": "W-9",
-      "status": "MISSING",
-      "fileUrl": "/generated/drivers/DRV-005/w9.html",
-      "previewUrl": "/generated/drivers/DRV-005/w9.html"
+      "status": "MISSING"
     },
     {
       "driverId": "DRV-005",
       "type": "Bank Info",
-      "status": "MISSING",
-      "fileUrl": "/generated/drivers/DRV-005/bank-info.html",
-      "previewUrl": "/generated/drivers/DRV-005/bank-info.html"
+      "status": "MISSING"
     },
     {
       "driverId": "DRV-006",
       "type": "CDL",
-      "status": "MISSING",
-      "fileUrl": "/generated/drivers/DRV-006/cdl.html",
-      "previewUrl": "/generated/drivers/DRV-006/cdl.html"
+      "status": "MISSING"
     },
     {
       "driverId": "DRV-006",
       "type": "Medical Card",
-      "status": "MISSING",
-      "fileUrl": "/generated/drivers/DRV-006/medical-card.html",
-      "previewUrl": "/generated/drivers/DRV-006/medical-card.html"
+      "status": "MISSING"
     },
     {
       "driverId": "DRV-006",
       "type": "MVR",
-      "status": "MISSING",
-      "fileUrl": "/generated/drivers/DRV-006/mvr.html",
-      "previewUrl": "/generated/drivers/DRV-006/mvr.html"
+      "status": "MISSING"
     },
     {
       "driverId": "DRV-006",
       "type": "I-9",
-      "status": "MISSING",
-      "fileUrl": "/generated/drivers/DRV-006/i9.html",
-      "previewUrl": "/generated/drivers/DRV-006/i9.html"
+      "status": "MISSING"
     },
     {
       "driverId": "DRV-006",
       "type": "FMCSA",
-      "status": "MISSING",
-      "fileUrl": "/generated/drivers/DRV-006/fmcsa.html",
-      "previewUrl": "/generated/drivers/DRV-006/fmcsa.html"
+      "status": "MISSING"
     },
     {
       "driverId": "DRV-006",
       "type": "W-9",
-      "status": "MISSING",
-      "fileUrl": "/generated/drivers/DRV-006/w9.html",
-      "previewUrl": "/generated/drivers/DRV-006/w9.html"
+      "status": "MISSING"
     },
     {
       "driverId": "DRV-006",
       "type": "Bank Info",
-      "status": "MISSING",
-      "fileUrl": "/generated/drivers/DRV-006/bank-info.html",
-      "previewUrl": "/generated/drivers/DRV-006/bank-info.html"
+      "status": "MISSING"
     },
     {
       "driverId": "DRV-007",
       "type": "CDL",
-      "status": "MISSING",
-      "fileUrl": "/generated/drivers/DRV-007/cdl.html",
-      "previewUrl": "/generated/drivers/DRV-007/cdl.html"
+      "status": "MISSING"
     },
     {
       "driverId": "DRV-007",
       "type": "Medical Card",
-      "status": "MISSING",
-      "fileUrl": "/generated/drivers/DRV-007/medical-card.html",
-      "previewUrl": "/generated/drivers/DRV-007/medical-card.html"
+      "status": "MISSING"
     },
     {
       "driverId": "DRV-007",
       "type": "MVR",
-      "status": "MISSING",
-      "fileUrl": "/generated/drivers/DRV-007/mvr.html",
-      "previewUrl": "/generated/drivers/DRV-007/mvr.html"
+      "status": "MISSING"
     },
     {
       "driverId": "DRV-007",
       "type": "I-9",
-      "status": "MISSING",
-      "fileUrl": "/generated/drivers/DRV-007/i9.html",
-      "previewUrl": "/generated/drivers/DRV-007/i9.html"
+      "status": "MISSING"
     },
     {
       "driverId": "DRV-007",
       "type": "FMCSA",
-      "status": "MISSING",
-      "fileUrl": "/generated/drivers/DRV-007/fmcsa.html",
-      "previewUrl": "/generated/drivers/DRV-007/fmcsa.html"
+      "status": "MISSING"
     },
     {
       "driverId": "DRV-007",
       "type": "W-9",
-      "status": "MISSING",
-      "fileUrl": "/generated/drivers/DRV-007/w9.html",
-      "previewUrl": "/generated/drivers/DRV-007/w9.html"
+      "status": "MISSING"
     },
     {
       "driverId": "DRV-007",
       "type": "Bank Info",
-      "status": "MISSING",
-      "fileUrl": "/generated/drivers/DRV-007/bank-info.html",
-      "previewUrl": "/generated/drivers/DRV-007/bank-info.html"
+      "status": "MISSING"
     },
     {
       "driverId": "DRV-008",
       "type": "CDL",
-      "status": "MISSING",
-      "fileUrl": "/generated/drivers/DRV-008/cdl.html",
-      "previewUrl": "/generated/drivers/DRV-008/cdl.html"
+      "status": "MISSING"
     },
     {
       "driverId": "DRV-008",
       "type": "Medical Card",
-      "status": "MISSING",
-      "fileUrl": "/generated/drivers/DRV-008/medical-card.html",
-      "previewUrl": "/generated/drivers/DRV-008/medical-card.html"
+      "status": "MISSING"
     },
     {
       "driverId": "DRV-008",
       "type": "MVR",
-      "status": "MISSING",
-      "fileUrl": "/generated/drivers/DRV-008/mvr.html",
-      "previewUrl": "/generated/drivers/DRV-008/mvr.html"
+      "status": "MISSING"
     },
     {
       "driverId": "DRV-008",
       "type": "I-9",
-      "status": "MISSING",
-      "fileUrl": "/generated/drivers/DRV-008/i9.html",
-      "previewUrl": "/generated/drivers/DRV-008/i9.html"
+      "status": "MISSING"
     },
     {
       "driverId": "DRV-008",
       "type": "FMCSA",
-      "status": "MISSING",
-      "fileUrl": "/generated/drivers/DRV-008/fmcsa.html",
-      "previewUrl": "/generated/drivers/DRV-008/fmcsa.html"
+      "status": "MISSING"
     },
     {
       "driverId": "DRV-008",
       "type": "W-9",
-      "status": "MISSING",
-      "fileUrl": "/generated/drivers/DRV-008/w9.html",
-      "previewUrl": "/generated/drivers/DRV-008/w9.html"
+      "status": "MISSING"
     },
     {
       "driverId": "DRV-008",
       "type": "Bank Info",
-      "status": "MISSING",
-      "fileUrl": "/generated/drivers/DRV-008/bank-info.html",
-      "previewUrl": "/generated/drivers/DRV-008/bank-info.html"
+      "status": "MISSING"
     },
     {
       "driverId": "DRV-009",
       "type": "CDL",
-      "status": "MISSING",
-      "fileUrl": "/generated/drivers/DRV-009/cdl.html",
-      "previewUrl": "/generated/drivers/DRV-009/cdl.html"
+      "status": "MISSING"
     },
     {
       "driverId": "DRV-009",
       "type": "Medical Card",
-      "status": "MISSING",
-      "fileUrl": "/generated/drivers/DRV-009/medical-card.html",
-      "previewUrl": "/generated/drivers/DRV-009/medical-card.html"
+      "status": "MISSING"
     },
     {
       "driverId": "DRV-009",
       "type": "MVR",
-      "status": "MISSING",
-      "fileUrl": "/generated/drivers/DRV-009/mvr.html",
-      "previewUrl": "/generated/drivers/DRV-009/mvr.html"
+      "status": "MISSING"
     },
     {
       "driverId": "DRV-009",
       "type": "I-9",
-      "status": "MISSING",
-      "fileUrl": "/generated/drivers/DRV-009/i9.html",
-      "previewUrl": "/generated/drivers/DRV-009/i9.html"
+      "status": "MISSING"
     },
     {
       "driverId": "DRV-009",
       "type": "FMCSA",
-      "status": "MISSING",
-      "fileUrl": "/generated/drivers/DRV-009/fmcsa.html",
-      "previewUrl": "/generated/drivers/DRV-009/fmcsa.html"
+      "status": "MISSING"
     },
     {
       "driverId": "DRV-009",
       "type": "W-9",
-      "status": "MISSING",
-      "fileUrl": "/generated/drivers/DRV-009/w9.html",
-      "previewUrl": "/generated/drivers/DRV-009/w9.html"
+      "status": "MISSING"
     },
     {
       "driverId": "DRV-009",
       "type": "Bank Info",
-      "status": "MISSING",
-      "fileUrl": "/generated/drivers/DRV-009/bank-info.html",
-      "previewUrl": "/generated/drivers/DRV-009/bank-info.html"
+      "status": "MISSING"
     },
     {
       "driverId": "DRV-010",
       "type": "CDL",
-      "status": "MISSING",
-      "fileUrl": "/generated/drivers/DRV-010/cdl.html",
-      "previewUrl": "/generated/drivers/DRV-010/cdl.html"
+      "status": "MISSING"
     },
     {
       "driverId": "DRV-010",
       "type": "Medical Card",
-      "status": "MISSING",
-      "fileUrl": "/generated/drivers/DRV-010/medical-card.html",
-      "previewUrl": "/generated/drivers/DRV-010/medical-card.html"
+      "status": "MISSING"
     },
     {
       "driverId": "DRV-010",
       "type": "MVR",
-      "status": "MISSING",
-      "fileUrl": "/generated/drivers/DRV-010/mvr.html",
-      "previewUrl": "/generated/drivers/DRV-010/mvr.html"
+      "status": "MISSING"
     },
     {
       "driverId": "DRV-010",
       "type": "I-9",
-      "status": "MISSING",
-      "fileUrl": "/generated/drivers/DRV-010/i9.html",
-      "previewUrl": "/generated/drivers/DRV-010/i9.html"
+      "status": "MISSING"
     },
     {
       "driverId": "DRV-010",
       "type": "FMCSA",
-      "status": "MISSING",
-      "fileUrl": "/generated/drivers/DRV-010/fmcsa.html",
-      "previewUrl": "/generated/drivers/DRV-010/fmcsa.html"
+      "status": "MISSING"
     },
     {
       "driverId": "DRV-010",
       "type": "W-9",
-      "status": "MISSING",
-      "fileUrl": "/generated/drivers/DRV-010/w9.html",
-      "previewUrl": "/generated/drivers/DRV-010/w9.html"
+      "status": "MISSING"
     },
     {
       "driverId": "DRV-010",
       "type": "Bank Info",
-      "status": "MISSING",
-      "fileUrl": "/generated/drivers/DRV-010/bank-info.html",
-      "previewUrl": "/generated/drivers/DRV-010/bank-info.html"
+      "status": "MISSING"
     },
     {
       "driverId": "DRV-011",
       "type": "CDL",
-      "status": "MISSING",
-      "fileUrl": "/generated/drivers/DRV-011/cdl.html",
-      "previewUrl": "/generated/drivers/DRV-011/cdl.html"
+      "status": "MISSING"
     },
     {
       "driverId": "DRV-011",
       "type": "Medical Card",
-      "status": "MISSING",
-      "fileUrl": "/generated/drivers/DRV-011/medical-card.html",
-      "previewUrl": "/generated/drivers/DRV-011/medical-card.html"
+      "status": "MISSING"
     },
     {
       "driverId": "DRV-011",
       "type": "MVR",
-      "status": "MISSING",
-      "fileUrl": "/generated/drivers/DRV-011/mvr.html",
-      "previewUrl": "/generated/drivers/DRV-011/mvr.html"
+      "status": "MISSING"
     },
     {
       "driverId": "DRV-011",
       "type": "I-9",
-      "status": "MISSING",
-      "fileUrl": "/generated/drivers/DRV-011/i9.html",
-      "previewUrl": "/generated/drivers/DRV-011/i9.html"
+      "status": "MISSING"
     },
     {
       "driverId": "DRV-011",
       "type": "FMCSA",
-      "status": "MISSING",
-      "fileUrl": "/generated/drivers/DRV-011/fmcsa.html",
-      "previewUrl": "/generated/drivers/DRV-011/fmcsa.html"
+      "status": "MISSING"
     },
     {
       "driverId": "DRV-011",
       "type": "W-9",
-      "status": "MISSING",
-      "fileUrl": "/generated/drivers/DRV-011/w9.html",
-      "previewUrl": "/generated/drivers/DRV-011/w9.html"
+      "status": "MISSING"
     },
     {
       "driverId": "DRV-011",
       "type": "Bank Info",
-      "status": "MISSING",
-      "fileUrl": "/generated/drivers/DRV-011/bank-info.html",
-      "previewUrl": "/generated/drivers/DRV-011/bank-info.html"
+      "status": "MISSING"
     },
     {
       "driverId": "DRV-012",
       "type": "CDL",
-      "status": "MISSING",
-      "fileUrl": "/generated/drivers/DRV-012/cdl.html",
-      "previewUrl": "/generated/drivers/DRV-012/cdl.html"
+      "status": "MISSING"
     },
     {
       "driverId": "DRV-012",
       "type": "Medical Card",
-      "status": "MISSING",
-      "fileUrl": "/generated/drivers/DRV-012/medical-card.html",
-      "previewUrl": "/generated/drivers/DRV-012/medical-card.html"
+      "status": "MISSING"
     },
     {
       "driverId": "DRV-012",
       "type": "MVR",
-      "status": "MISSING",
-      "fileUrl": "/generated/drivers/DRV-012/mvr.html",
-      "previewUrl": "/generated/drivers/DRV-012/mvr.html"
+      "status": "MISSING"
     },
     {
       "driverId": "DRV-012",
       "type": "I-9",
-      "status": "MISSING",
-      "fileUrl": "/generated/drivers/DRV-012/i9.html",
-      "previewUrl": "/generated/drivers/DRV-012/i9.html"
+      "status": "MISSING"
     },
     {
       "driverId": "DRV-012",
       "type": "FMCSA",
-      "status": "MISSING",
-      "fileUrl": "/generated/drivers/DRV-012/fmcsa.html",
-      "previewUrl": "/generated/drivers/DRV-012/fmcsa.html"
+      "status": "MISSING"
     },
     {
       "driverId": "DRV-012",
       "type": "W-9",
-      "status": "MISSING",
-      "fileUrl": "/generated/drivers/DRV-012/w9.html",
-      "previewUrl": "/generated/drivers/DRV-012/w9.html"
+      "status": "MISSING"
     },
     {
       "driverId": "DRV-012",
       "type": "Bank Info",
-      "status": "MISSING",
-      "fileUrl": "/generated/drivers/DRV-012/bank-info.html",
-      "previewUrl": "/generated/drivers/DRV-012/bank-info.html"
+      "status": "MISSING"
     },
     {
       "driverId": "DRV-001",
@@ -1467,7 +1313,7 @@
       "fuelReimbursement": 0,
       "netPay": 2137.06,
       "status": "Paid",
-      "pendingReason": "Payroll batch awaiting manager approval",
+      "pendingReason": "",
       "rate401k": "3%"
     },
     {
@@ -1554,7 +1400,7 @@
       "fuelReimbursement": 0,
       "netPay": 2067.07,
       "status": "Paid",
-      "pendingReason": "Settlement hold — customer claim under review",
+      "pendingReason": "",
       "rate401k": "0%"
     },
     {
@@ -1583,7 +1429,7 @@
       "fuelReimbursement": 0,
       "netPay": 1960.85,
       "status": "Paid",
-      "pendingReason": "Lumper receipt not uploaded",
+      "pendingReason": "",
       "rate401k": "2%"
     },
     {

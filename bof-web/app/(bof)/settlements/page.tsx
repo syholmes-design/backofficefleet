@@ -31,10 +31,13 @@ export default function SettlementsPage() {
     <div className="bof-page">
       <h1 className="bof-title">Settlements</h1>
       <p className="bof-lead">
-        Full payroll / settlement register from{" "}
-        <code className="bof-code">Payroll_Clean</code> in the BOF workbook —
-        gross, deductions, net, and line items. Scroll horizontally for all
-        columns.
+        Payroll / settlement rows come from the{" "}
+        <code className="bof-code">Payroll_Clean</code> sheet in{" "}
+        <code className="bof-code">data/main-source.xlsx</code>, merged into{" "}
+        <code className="bof-code">lib/demo-data.json</code> when you run{" "}
+        <code className="bof-code">npm run build:data</code> (or{" "}
+        <code className="bof-code">npm run merge:settlements</code> for settlements
+        only). This page reads that JSON. Scroll horizontally for all columns.
       </p>
 
       <section className="bof-kpi-grid" aria-label="Settlement totals">
