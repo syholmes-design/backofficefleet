@@ -25,12 +25,15 @@ export function DocumentEnginePanel({
   lead,
   documents,
   crossLinks,
+  variant = "default",
 }: {
   id?: string;
   title: string;
   lead: string;
   documents: EngineDocument[];
   crossLinks?: { label: string; href: string }[];
+  /** Supporting block on driver hub — quieter visual weight */
+  variant?: "default" | "supporting";
 }) {
   const [hovered, setHovered] = useState<EngineDocument | null>(null);
   const [modal, setModal] = useState<EngineDocument | null>(null);
@@ -94,13 +97,20 @@ export function DocumentEnginePanel({
   return (
     <section
       id={id}
-      className="bof-gen-doc-section"
+      className={`bof-gen-doc-section${variant === "supporting" ? " bof-gen-doc-section--supporting" : ""}`}
       aria-labelledby={`${id}-heading`}
     >
-      <h2 id={`${id}-heading`} className="bof-h2">
+      <h2
+        id={`${id}-heading`}
+        className={`bof-h2${variant === "supporting" ? " bof-h2-supporting" : ""}`}
+      >
         {title}
       </h2>
-      <p className="bof-doc-section-lead">{lead}</p>
+      <p
+        className={`bof-doc-section-lead${variant === "supporting" ? " bof-doc-section-lead-supporting" : ""}`}
+      >
+        {lead}
+      </p>
       {crossLinks && crossLinks.length > 0 && (
         <ul className="bof-gen-doc-cross">
           {crossLinks.map((l) => (

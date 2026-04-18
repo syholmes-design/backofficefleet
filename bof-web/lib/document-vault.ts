@@ -1,5 +1,9 @@
 import type { BofData } from "@/lib/load-bof-data";
-import type { DocumentRow } from "@/lib/driver-queries";
+import {
+  DRIVER_DOCUMENT_TYPES,
+  type DocumentRow,
+  type DriverDocType,
+} from "@/lib/driver-queries";
 import { normalizeDocStatus } from "@/lib/document-ui";
 
 export type VaultDocumentRow = DocumentRow & {
@@ -8,7 +12,16 @@ export type VaultDocumentRow = DocumentRow & {
   atRisk: boolean;
   /** Critical compliance on this credential and/or explicit blocksPayment on the row */
   blocking: boolean;
+  /** Core seven, primary extensions, or secondary / other (vault scanability) */
+  vaultGroup: "Core" | "Primary" | "Secondary" | "Other";
 };
+
+function vaultGroupLabel(doc: DocumentRow): VaultDocumentRow["vaultGroup"] {
+  if (doc.docTier === "secondary") return "Secondary";
+  if (doc.docTier === "primary") return "Primary";
+  if (DRIVER_DOCUMENT_TYPES.includes(doc.type as DriverDocType)) return "Core";
+  return "Other";
+}
 
 /** Map compliance incident labels to one of the seven driver document types. */
 export function mapIncidentTypeToDocType(incidentType: string): string | null {
@@ -60,6 +73,7 @@ export function buildVaultRows(data: BofData): VaultDocumentRow[] {
       driverName: nameById.get(doc.driverId) ?? doc.driverId,
       atRisk: flags.atRisk || statusNorm === "AT RISK" || statusNorm === "AT_RISK",
       blocking: flags.blocking || explicitBlock,
+      vaultGroup: vaultGroupLabel(doc),
     };
   });
 }

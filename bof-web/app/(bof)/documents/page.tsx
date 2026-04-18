@@ -20,10 +20,11 @@ export default function DocumentsPage() {
     <div className="bof-page">
       <h1 className="bof-title">Document Vault</h1>
       <p className="bof-lead">
-        Full credential register — every driver × seven required types, plus supplemental
-        rows ({previewLabel} / DRV-001 includes the full primary + secondary demo stack).
-        Filter by driver, type, or status; hover proof for a quick preview when a file
-        path exists, or open the driver profile for context.
+        Fleet-wide register — every driver × seven core types plus supplemental rows.
+        <strong> Group</strong> highlights core vs primary vs secondary files (see{" "}
+        {previewLabel} / DRV-001 in the driver hub for the reference layout). Filter by
+        driver, type, or status; hover proof for a quick preview or open the driver hub
+        for context.
       </p>
       <p className="bof-muted bof-small">
         BOF also builds{" "}

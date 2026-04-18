@@ -154,6 +154,9 @@ export function DocumentVaultClient({
               <th scope="col">Driver</th>
               <th scope="col">Driver ID</th>
               <th scope="col">Document type</th>
+              <th scope="col" className="bof-vault-group-col">
+                Group
+              </th>
               <th scope="col">Status</th>
               <th scope="col">Expiration</th>
               <th scope="col">Flags</th>
@@ -186,6 +189,13 @@ export function DocumentVaultClient({
                     <code className="bof-code">{r.driverId}</code>
                   </td>
                   <td>{r.type}</td>
+                  <td className="bof-vault-group-col">
+                    <span
+                      className={`bof-vault-group-tag bof-vault-group-tag--${r.vaultGroup.toLowerCase()}`}
+                    >
+                      {r.vaultGroup}
+                    </span>
+                  </td>
                   <td>
                     <span className={statusBadgeClass(r.status)}>{r.status}</span>
                   </td>
@@ -277,10 +287,10 @@ export function DocumentVaultClient({
       </div>
 
       <p className="bof-muted bof-small bof-vault-footnote">
-        Fleet register: {rows.length} credential rows ({totalExpected} expected in
-        demo). Proof links use demo paths under{" "}
-        <code className="bof-code">/public</code> when present; otherwise the cell
-        shows “Preview not available”.
+        Fleet register: <strong>{rows.length}</strong> rows. <strong>Group</strong>{" "}
+        reflects core credentials, primary extensions (e.g. exam report), and
+        secondary / workflow files. Proof uses paths under{" "}
+        <code className="bof-code">/public</code> when present.
       </p>
 
       {modalRow && (
@@ -318,6 +328,14 @@ export function DocumentVaultClient({
                     {modalRow.driverName}
                   </Link>{" "}
                   <code className="bof-code">{modalRow.driverId}</code>
+                </dd>
+                <dt>Group</dt>
+                <dd>
+                  <span
+                    className={`bof-vault-group-tag bof-vault-group-tag--${modalRow.vaultGroup.toLowerCase()}`}
+                  >
+                    {modalRow.vaultGroup}
+                  </span>
                 </dd>
                 <dt>Status</dt>
                 <dd>

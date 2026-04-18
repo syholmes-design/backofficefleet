@@ -4927,24 +4927,110 @@ body {
   font-size: 0.8rem;
 }
 
-/* John Carter reference driver — stacked primary / secondary documents */
-.bof-jc-doc-stacks .bof-doc-section + .bof-doc-section {
-  margin-top: 1.5rem;
+/* Driver hub (/drivers/[id]) — sectioned layout */
+.bof-driver-hub-section + .bof-driver-hub-section {
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--bof-border);
 }
 
-.bof-jc-id-banner {
-  padding: 0.65rem 0.85rem;
+.bof-driver-hub-section--profile {
+  margin-top: 0;
+  padding-top: 0;
+  border-top: 0;
+}
+
+.bof-driver-hub-section .bof-medical-expanded {
+  margin-top: 0;
+}
+
+.bof-driver-hub-h2 {
+  font-size: 1.05rem;
+  margin-bottom: 0.35rem;
+}
+
+.bof-driver-hub-lead {
+  margin-top: 0;
+  margin-bottom: 1rem;
+  max-width: 52rem;
+}
+
+.bof-driver-ref-strip {
+  margin: 0 0 1.25rem;
+  padding: 0.55rem 0.75rem;
   border-radius: var(--bof-radius);
   border: 1px solid var(--bof-border);
   background: rgba(20, 184, 166, 0.08);
-  margin-bottom: 0.25rem;
+  font-size: 0.84rem;
+  color: var(--bof-text);
+  max-width: 52rem;
 }
 
-.bof-jc-vault-note {
-  margin-top: 1rem;
+.bof-driver-doc-stacks .bof-doc-section {
+  margin-top: 1.25rem;
 }
 
-.bof-medical-id-map {
-  margin-top: 0.35rem;
-  margin-bottom: 0.75rem;
+.bof-driver-doc-stacks .bof-doc-section:first-child {
+  margin-top: 0;
+}
+
+.bof-driver-hub-supplemental {
+  margin-top: 1.25rem;
+  padding-top: 1rem;
+  border-top: 1px dashed var(--bof-border);
+}
+
+/* Document vault — row group (core / primary / secondary) */
+.bof-vault-group-col {
+  width: 5.75rem;
+  white-space: nowrap;
+}
+
+.bof-vault-group-tag {
+  display: inline-block;
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding: 0.15rem 0.45rem;
+  border-radius: 4px;
+  border: 1px solid var(--bof-border);
+}
+
+.bof-vault-group-tag--core {
+  color: #94a3b8;
+}
+
+.bof-vault-group-tag--primary {
+  color: #5eead4;
+  border-color: rgba(20, 184, 166, 0.35);
+  background: rgba(20, 184, 166, 0.1);
+}
+
+.bof-vault-group-tag--secondary {
+  color: #a5b4fc;
+  border-color: rgba(129, 140, 248, 0.35);
+  background: rgba(99, 102, 241, 0.08);
+}
+
+.bof-vault-group-tag--other {
+  color: var(--bof-muted);
+}
+
+/* Generated doc engine — supporting band on driver hub */
+.bof-gen-doc-section--supporting {
+  margin-top: 1.75rem;
+  padding-top: 1.5rem;
+  border-top: 1px dashed var(--bof-border);
+}
+
+.bof-h2-supporting {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--bof-muted);
+}
+
+.bof-doc-section-lead-supporting {
+  font-size: 0.86rem;
+  max-width: 48rem;
 }

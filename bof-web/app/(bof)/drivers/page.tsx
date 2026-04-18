@@ -16,8 +16,12 @@ export default function DriversIndexPage() {
     <div className="bof-page">
       <h1 className="bof-title">Drivers</h1>
       <p className="bof-lead">
-        Select a driver to view profile, compliance readiness, and required
-        documents.
+        Open a driver hub for profile, compliance, medical certificate, documents, and
+        automation previews. Fleet-wide register lives in the{" "}
+        <Link href="/documents" className="bof-link-secondary">
+          document vault
+        </Link>
+        .
       </p>
 
       <div className="bof-driver-list">
