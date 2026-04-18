@@ -220,6 +220,91 @@ function buildBank(driver, doc, data) {
   return wrapPage(`Bank Info — ${driver?.name ?? doc.driverId}`, inner);
 }
 
+const SUPPLEMENTAL_TYPE_TO_FILE = {
+  "MCSA-5875": "mcsa-5875.html",
+  "Emergency Contact": "emergency-contact.html",
+  "Driver Application": "driver-application.html",
+  "Safety Acknowledgment": "safety-acknowledgment.html",
+  "Qualification File": "qualification-file.html",
+  "Incident / Accident Report": "incident-report.html",
+  "BOF Medical Summary": "bof-medical-summary.html",
+  "MCSA-5876 (signed PDF)": "mcsa-5876-signed.html",
+  "Driver profile (HTML)": "driver-profile.html",
+};
+
+function buildSupplementalShell(title, driver, doc, extraHtml = "") {
+  const inner = `
+    <h1>${escapeHtml(title)}</h1>
+    <p class="sub">Demo workflow shell · Not a legal filing</p>
+    ${driverBlock(driver)}
+    <h2>Record</h2>
+    <dl>
+      <dt>Status (demo)</dt><dd>${escapeHtml(doc.status)}</dd>
+      <dt>Expiration</dt><dd>${doc.expirationDate ? escapeHtml(doc.expirationDate) : '<span class="muted">—</span>'}</dd>
+    </dl>
+    ${extraHtml}
+  `;
+  return wrapPage(`${title} — ${driver?.name ?? doc.driverId}`, inner);
+}
+
+function buildMcsa5875(driver, doc) {
+  return buildSupplementalShell(
+    "Medical Examination Report (MCSA-5875)",
+    driver,
+    doc,
+    `<div class="banner">Long-form exam data is merged from driver_templates_expanded.xlsx when present.</div>`
+  );
+}
+
+function buildEmergencyContact(driver, doc) {
+  return buildSupplementalShell("Emergency contact packet", driver, doc);
+}
+
+function buildDriverApplication(driver, doc) {
+  return buildSupplementalShell("Driver application", driver, doc);
+}
+
+function buildSafetyAck(driver, doc) {
+  return buildSupplementalShell("Safety acknowledgment", driver, doc);
+}
+
+function buildQualFile(driver, doc) {
+  return buildSupplementalShell("Qualification file status", driver, doc);
+}
+
+function buildIncident(driver, doc) {
+  return buildSupplementalShell("Incident / accident register", driver, doc);
+}
+
+function buildBofMedicalSummary(driver, doc) {
+  return buildSupplementalShell("BOF medical summary", driver, doc);
+}
+
+function buildMcsa5876Placeholder(driver, doc) {
+  return buildSupplementalShell(
+    "MCSA-5876 (demo HTML placeholder)",
+    driver,
+    doc,
+    `<div class="banner">Reference driver DRV-001 uses the signed PDF under /documents/drivers/DRV-001/.</div>`
+  );
+}
+
+function buildDriverProfilePlaceholder(driver, doc) {
+  return buildSupplementalShell("Driver profile (demo HTML)", driver, doc);
+}
+
+const SUPPLEMENTAL_BUILDERS = {
+  "MCSA-5875": buildMcsa5875,
+  "Emergency Contact": buildEmergencyContact,
+  "Driver Application": buildDriverApplication,
+  "Safety Acknowledgment": buildSafetyAck,
+  "Qualification File": buildQualFile,
+  "Incident / Accident Report": buildIncident,
+  "BOF Medical Summary": buildBofMedicalSummary,
+  "MCSA-5876 (signed PDF)": buildMcsa5876Placeholder,
+  "Driver profile (HTML)": buildDriverProfilePlaceholder,
+};
+
 const BUILDERS = {
   CDL: buildCdl,
   "Medical Card": buildMedical,
@@ -253,6 +338,27 @@ function main() {
 
     const driver = loadDriver(data, doc.driverId);
     const builder = BUILDERS[doc.type];
+    const html = builder(driver, doc, data);
+    const dir = path.join(OUT_BASE, doc.driverId);
+    ensureDir(dir);
+    fs.writeFileSync(path.join(dir, fileName), html, "utf8");
+    fileCount += 1;
+  }
+
+  for (const doc of data.documents) {
+    if (!doc.driverId) continue;
+    const fileName = SUPPLEMENTAL_TYPE_TO_FILE[doc.type];
+    if (!fileName) continue;
+    const fu = String(doc.fileUrl ?? "");
+    if (!fu.includes(`/generated/drivers/${doc.driverId}/`)) continue;
+
+    const publicPath = `/generated/drivers/${doc.driverId}/${fileName}`;
+    doc.fileUrl = publicPath;
+    doc.previewUrl = publicPath;
+    updated += 1;
+
+    const driver = loadDriver(data, doc.driverId);
+    const builder = SUPPLEMENTAL_BUILDERS[doc.type];
     const html = builder(driver, doc, data);
     const dir = path.join(OUT_BASE, doc.driverId);
     ensureDir(dir);

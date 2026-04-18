@@ -1,12 +1,14 @@
 /**
- * John Carter (DRV-001) gold-standard demo stack only.
- * CDL OH1668243 ↔ DRV-001 mapping for spreadsheet identity; app routes stay on DRV-001.
+ * Fleet-wide “gold stack” document wiring (John Carter / DRV-001 remains the curated
+ * reference: real MCSA-5876 PDF + profile HTML under /documents/drivers/DRV-001/).
+ * All other drivers get the same primary/secondary structure with generated HTML
+ * under /generated/drivers/{id}/.
  */
 export const JOHN_CARTER_DRIVER_ID = "DRV-001";
 export const JOHN_CARTER_CDL_NUMBER = "OH1668243";
 
-/** Supplemental rows fully defined here (avoid duplicates from prev merge). */
-export const JOHN_CARTER_MANAGED_SUPPLEMENTAL_TYPES = [
+/** Supplemental rows owned by this module (stripped before rebuild). */
+export const FLEET_MANAGED_SUPPLEMENTAL_TYPES = [
   "MCSA-5875",
   "Emergency Contact",
   "Driver Application",
@@ -18,18 +20,22 @@ export const JOHN_CARTER_MANAGED_SUPPLEMENTAL_TYPES = [
   "Driver profile (HTML)",
 ];
 
-const GEN = (name) => `/generated/drivers/${JOHN_CARTER_DRIVER_ID}/${name}`;
+/** @deprecated use FLEET_MANAGED_SUPPLEMENTAL_TYPES */
+export const JOHN_CARTER_MANAGED_SUPPLEMENTAL_TYPES = FLEET_MANAGED_SUPPLEMENTAL_TYPES;
 
-function stripManagedJohnCarterSupplementals(documents) {
-  const drop = new Set(JOHN_CARTER_MANAGED_SUPPLEMENTAL_TYPES);
+const genPath = (driverId, name) => `/generated/drivers/${driverId}/${name}`;
+
+function stripManagedFleetSupplementals(documents) {
+  const drop = new Set(FLEET_MANAGED_SUPPLEMENTAL_TYPES);
   return documents.filter(
-    (d) =>
-      !(
-        d.driverId === JOHN_CARTER_DRIVER_ID &&
-        d.type &&
-        drop.has(String(d.type))
-      )
+    (d) => !(d.driverId && d.type && drop.has(String(d.type)))
   );
+}
+
+function placeholderCdlNumber(driverId) {
+  const m = /^DRV-(\d+)$/i.exec(driverId);
+  const n = m ? parseInt(m[1], 10) : 1;
+  return `DLN-${String(n).padStart(5, "0")}`;
 }
 
 function docStatusFromExpiry(iso) {
@@ -41,75 +47,84 @@ function docStatusFromExpiry(iso) {
   return exp < today ? "EXPIRED" : "VALID";
 }
 
-function patchCoreSeven(documents, expanded) {
-  const ex = expanded?.[JOHN_CARTER_DRIVER_ID] ?? {};
+function cdlNumberFor(driverId, ex, driver) {
+  if (driverId === JOHN_CARTER_DRIVER_ID) return JOHN_CARTER_CDL_NUMBER;
+  const fromEx = String(ex?.cdlNumber ?? "").trim();
+  if (fromEx) return fromEx;
+  const fromDriver = String(driver?.referenceCdlNumber ?? "").trim();
+  if (fromDriver) return fromDriver;
+  return placeholderCdlNumber(driverId);
+}
+
+function patchCoreSevenForDriver(documents, driverId, ex, driver) {
   const medExp = ex.medicalExpirationDate || "2026-09-07";
   const medIssue = ex.medicalIssueDate || "2024-03-13";
   const genericExp = "2026-12-31";
+  const cdlNum = cdlNumberFor(driverId, ex, driver);
 
   const patchByType = {
     CDL: {
       status: "VALID",
       expirationDate: "2027-08-22",
       issueDate: "2022-08-26",
-      cdlNumber: JOHN_CARTER_CDL_NUMBER,
+      cdlNumber: cdlNum,
       licenseClass: "Class A",
       cdlIssueDate: "2022-08-26",
       cdlExpiration: "2027-08-22",
       cdlEndorsements: "T, N",
       cdlRestrictions: "None",
-      fileUrl: GEN("cdl.html"),
-      previewUrl: GEN("cdl.html"),
+      fileUrl: genPath(driverId, "cdl.html"),
+      previewUrl: genPath(driverId, "cdl.html"),
       docTier: "primary",
-      sourceLicenseNumber: JOHN_CARTER_CDL_NUMBER,
+      sourceLicenseNumber: cdlNum,
     },
     "Medical Card": {
       status: docStatusFromExpiry(medExp),
       expirationDate: medExp,
       issueDate: medIssue,
-      fileUrl: GEN("medical-card.html"),
-      previewUrl: GEN("medical-card.html"),
+      fileUrl: genPath(driverId, "medical-card.html"),
+      previewUrl: genPath(driverId, "medical-card.html"),
       docTier: "primary",
     },
     MVR: {
       status: "VALID",
       expirationDate: genericExp,
-      fileUrl: GEN("mvr.html"),
-      previewUrl: GEN("mvr.html"),
+      fileUrl: genPath(driverId, "mvr.html"),
+      previewUrl: genPath(driverId, "mvr.html"),
       docTier: "primary",
     },
     "I-9": {
       status: "VALID",
       expirationDate: genericExp,
-      fileUrl: GEN("i9.html"),
-      previewUrl: GEN("i9.html"),
+      fileUrl: genPath(driverId, "i9.html"),
+      previewUrl: genPath(driverId, "i9.html"),
       docTier: "primary",
     },
     FMCSA: {
       status: "VALID",
       expirationDate: genericExp,
-      fileUrl: GEN("fmcsa.html"),
-      previewUrl: GEN("fmcsa.html"),
+      fileUrl: genPath(driverId, "fmcsa.html"),
+      previewUrl: genPath(driverId, "fmcsa.html"),
       docTier: "primary",
     },
     "W-9": {
       status: "VALID",
       expirationDate: genericExp,
-      fileUrl: GEN("w9.html"),
-      previewUrl: GEN("w9.html"),
+      fileUrl: genPath(driverId, "w9.html"),
+      previewUrl: genPath(driverId, "w9.html"),
       docTier: "primary",
     },
     "Bank Info": {
       status: "VALID",
       expirationDate: genericExp,
-      fileUrl: GEN("bank-info.html"),
-      previewUrl: GEN("bank-info.html"),
+      fileUrl: genPath(driverId, "bank-info.html"),
+      previewUrl: genPath(driverId, "bank-info.html"),
       docTier: "primary",
     },
   };
 
   return documents.map((d) => {
-    if (d.driverId !== JOHN_CARTER_DRIVER_ID) return d;
+    if (d.driverId !== driverId) return d;
     const p = patchByType[d.type];
     if (!p) return d;
     return { ...d, ...p };
@@ -129,105 +144,131 @@ function bofSummaryStatus(s) {
   return "VALID";
 }
 
-function buildManagedSupplementalRows(expanded) {
-  const ex = expanded?.[JOHN_CARTER_DRIVER_ID] ?? {};
+function buildManagedSupplementalRows(driverId, ex, driver) {
   const medExp = ex.medicalExpirationDate || "2026-09-07";
   const genericExp = "2026-12-31";
-  const id = JOHN_CARTER_DRIVER_ID;
+
+  const mcsa5876 =
+    driverId === JOHN_CARTER_DRIVER_ID
+      ? {
+          driverId,
+          type: "MCSA-5876 (signed PDF)",
+          status: "VALID",
+          expirationDate: medExp,
+          fileUrl: "/documents/drivers/DRV-001/john-carter-mcsa-5876-signed.pdf",
+          previewUrl: "/documents/drivers/DRV-001/john-carter-mcsa-5876-signed.pdf",
+          docTier: "secondary",
+          demoPlaceholder: false,
+        }
+      : {
+          driverId,
+          type: "MCSA-5876 (signed PDF)",
+          status: "VALID",
+          expirationDate: medExp,
+          fileUrl: genPath(driverId, "mcsa-5876-signed.html"),
+          previewUrl: genPath(driverId, "mcsa-5876-signed.html"),
+          docTier: "secondary",
+          demoPlaceholder: true,
+        };
+
+  const profile =
+    driverId === JOHN_CARTER_DRIVER_ID
+      ? {
+          driverId,
+          type: "Driver profile (HTML)",
+          status: "VALID",
+          expirationDate: genericExp,
+          fileUrl: "/documents/drivers/DRV-001/john-carter-profile-dashboard.html",
+          previewUrl: "/documents/drivers/DRV-001/john-carter-profile-dashboard.html",
+          docTier: "secondary",
+          demoPlaceholder: false,
+        }
+      : {
+          driverId,
+          type: "Driver profile (HTML)",
+          status: "VALID",
+          expirationDate: genericExp,
+          fileUrl: genPath(driverId, "driver-profile.html"),
+          previewUrl: genPath(driverId, "driver-profile.html"),
+          docTier: "secondary",
+          demoPlaceholder: true,
+        };
 
   const rows = [
     {
-      driverId: id,
+      driverId,
       type: "MCSA-5875",
       status: "VALID",
       expirationDate: medExp,
-      fileUrl: GEN("mcsa-5875.html"),
-      previewUrl: GEN("mcsa-5875.html"),
+      fileUrl: genPath(driverId, "mcsa-5875.html"),
+      previewUrl: genPath(driverId, "mcsa-5875.html"),
       docTier: "primary",
       demoPlaceholder: true,
     },
     {
-      driverId: id,
+      driverId,
       type: "Emergency Contact",
       status: "VALID",
-      fileUrl: GEN("emergency-contact.html"),
-      previewUrl: GEN("emergency-contact.html"),
+      fileUrl: genPath(driverId, "emergency-contact.html"),
+      previewUrl: genPath(driverId, "emergency-contact.html"),
       docTier: "primary",
       demoPlaceholder: true,
     },
     {
-      driverId: id,
+      driverId,
       type: "Driver Application",
       status: /complete/i.test(String(ex.appStatus ?? "")) ? "VALID" : "PENDING REVIEW",
       expirationDate: ex.appSubmissionDate || "",
-      fileUrl: GEN("driver-application.html"),
-      previewUrl: GEN("driver-application.html"),
+      fileUrl: genPath(driverId, "driver-application.html"),
+      previewUrl: genPath(driverId, "driver-application.html"),
       docTier: "secondary",
       demoPlaceholder: true,
     },
     {
-      driverId: id,
+      driverId,
       type: "Safety Acknowledgment",
       status: /ack/i.test(String(ex.safetyAckStatus ?? "")) ? "VALID" : "PENDING REVIEW",
       expirationDate: ex.safetyAckDate || "",
-      fileUrl: GEN("safety-acknowledgment.html"),
-      previewUrl: GEN("safety-acknowledgment.html"),
+      fileUrl: genPath(driverId, "safety-acknowledgment.html"),
+      previewUrl: genPath(driverId, "safety-acknowledgment.html"),
       docTier: "secondary",
       demoPlaceholder: true,
     },
     {
-      driverId: id,
+      driverId,
       type: "Qualification File",
       status: /current/i.test(String(ex.qualFileStatus ?? "")) ? "VALID" : "PENDING REVIEW",
       expirationDate: "",
-      fileUrl: GEN("qualification-file.html"),
-      previewUrl: GEN("qualification-file.html"),
+      fileUrl: genPath(driverId, "qualification-file.html"),
+      previewUrl: genPath(driverId, "qualification-file.html"),
       docTier: "secondary",
       demoPlaceholder: true,
     },
     {
-      driverId: id,
+      driverId,
       type: "Incident / Accident Report",
       status: incidentDocStatus(ex.incidentReportCount),
       expirationDate: ex.lastIncidentDate || "",
-      fileUrl: GEN("incident-report.html"),
-      previewUrl: GEN("incident-report.html"),
+      fileUrl: genPath(driverId, "incident-report.html"),
+      previewUrl: genPath(driverId, "incident-report.html"),
       docTier: "secondary",
       demoPlaceholder: true,
     },
     {
-      driverId: id,
+      driverId,
       type: "BOF Medical Summary",
       status: bofSummaryStatus(ex.bofMedicalSummaryStatus),
       expirationDate: "",
-      fileUrl: GEN("bof-medical-summary.html"),
-      previewUrl: GEN("bof-medical-summary.html"),
+      fileUrl: genPath(driverId, "bof-medical-summary.html"),
+      previewUrl: genPath(driverId, "bof-medical-summary.html"),
       docTier: "secondary",
       demoPlaceholder: true,
     },
-    {
-      driverId: id,
-      type: "MCSA-5876 (signed PDF)",
-      status: "VALID",
-      expirationDate: medExp,
-      fileUrl: "/documents/drivers/DRV-001/john-carter-mcsa-5876-signed.pdf",
-      previewUrl: "/documents/drivers/DRV-001/john-carter-mcsa-5876-signed.pdf",
-      docTier: "secondary",
-      demoPlaceholder: false,
-    },
-    {
-      driverId: id,
-      type: "Driver profile (HTML)",
-      status: "VALID",
-      expirationDate: genericExp,
-      fileUrl: "/documents/drivers/DRV-001/john-carter-profile-dashboard.html",
-      previewUrl: "/documents/drivers/DRV-001/john-carter-profile-dashboard.html",
-      docTier: "secondary",
-      demoPlaceholder: false,
-    },
+    mcsa5876,
+    profile,
   ];
 
-  return rows.filter((r) => JOHN_CARTER_MANAGED_SUPPLEMENTAL_TYPES.includes(r.type));
+  return rows.filter((r) => FLEET_MANAGED_SUPPLEMENTAL_TYPES.includes(r.type));
 }
 
 /**
@@ -269,12 +310,41 @@ export function patchDriversForJohnCarter(drivers) {
 }
 
 /**
+ * Demo emergency + CDL display id for non-reference drivers (spreadsheet expanded
+ * row wins for referenceCdlNumber when CDL_Number is populated).
+ */
+export function augmentDriversWithFleetDemoFields(drivers, driverMedicalExpanded) {
+  return drivers.map((d) => {
+    if (d.id === JOHN_CARTER_DRIVER_ID) return d;
+    const ex = driverMedicalExpanded?.[d.id] ?? {};
+    const ref =
+      String(ex.cdlNumber ?? "").trim() ||
+      String(d.referenceCdlNumber ?? "").trim() ||
+      placeholderCdlNumber(d.id);
+    const first = String(d.name ?? "Driver").trim().split(/\s+/)[0] || "Driver";
+    const n = parseInt(String(d.id).replace(/\D/g, ""), 10) || 1;
+    return {
+      ...d,
+      referenceCdlNumber: ref,
+      emergencyContactName: `${first} — emergency contact (demo)`,
+      emergencyContactRelationship: "Family",
+      emergencyContactPhone: `555-01${String(n).padStart(2, "0")}`,
+    };
+  });
+}
+
+/**
  * @param {object[]} documents
+ * @param {object[]} drivers
  * @param {Record<string, object>} driverMedicalExpanded
  */
-export function applyJohnCarterGoldStack(documents, driverMedicalExpanded) {
-  let out = stripManagedJohnCarterSupplementals(documents);
-  out = patchCoreSeven(out, driverMedicalExpanded);
-  const extra = buildManagedSupplementalRows(driverMedicalExpanded);
-  return [...out, ...extra];
+export function applyFleetGoldStack(documents, drivers, driverMedicalExpanded) {
+  let out = stripManagedFleetSupplementals(documents);
+  const byId = new Map(drivers.map((d) => [d.id, d]));
+  for (const d of drivers) {
+    const ex = driverMedicalExpanded?.[d.id] ?? {};
+    out = patchCoreSevenForDriver(out, d.id, ex, byId.get(d.id));
+    out = [...out, ...buildManagedSupplementalRows(d.id, ex, byId.get(d.id))];
+  }
+  return out;
 }

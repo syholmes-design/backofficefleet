@@ -24,7 +24,7 @@ export type DriverMedicalExpanded = {
   medicalIssueDate: string;
   medicalExpirationDate: string;
   medicalExaminerName: string;
-  /** From spreadsheet CDL_Number — same driver as DRV-001 when OH1668243 */
+  /** From spreadsheet CDL_Number (merged per BOF driver id). */
   cdlNumber: string;
   /** MCSA-5876 examiner / driver detail (secondary view) */
   mcsaExaminerLicense: string;

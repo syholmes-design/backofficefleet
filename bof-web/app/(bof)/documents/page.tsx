@@ -20,9 +20,11 @@ export default function DocumentsPage() {
     <div className="bof-page">
       <h1 className="bof-title">Document Vault</h1>
       <p className="bof-lead">
-        Fleet-wide register — every driver × seven core types plus supplemental rows.
-        <strong> Group</strong> highlights core vs primary vs secondary files (see{" "}
-        {previewLabel} / DRV-001 in the driver hub for the reference layout). Filter by
+        Fleet-wide register — every driver × seven core types plus primary extensions
+        and secondary workflow rows.
+        <strong> Group</strong> highlights core vs primary vs secondary files (same
+        layered layout on every driver hub — John Carter / DRV-001 keeps the curated
+        PDF/HTML assets). Filter by
         driver, type, or status; hover proof for a quick preview or open the driver hub
         for context.
       </p>

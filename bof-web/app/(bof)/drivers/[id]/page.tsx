@@ -19,9 +19,8 @@ import {
 } from "@/lib/john-carter-reference";
 import { getSupplementalDocumentsForDriver } from "@/lib/supplemental-driver-docs";
 import { DriverMedicalExpandedPanel } from "@/components/DriverMedicalExpandedPanel";
-import { DriverJohnCarterDocumentStacks } from "@/components/DriverJohnCarterDocumentStacks";
+import { DriverFleetDocumentStacks } from "@/components/DriverFleetDocumentStacks";
 import { DriverAvatar } from "@/components/DriverAvatar";
-import { DriverDocumentsPanel } from "@/components/DriverDocumentsPanel";
 import { driverPhotoPath } from "@/lib/driver-photo";
 import { GENERATED_PUBLIC_PREFIX } from "@/lib/generated-public-prefix";
 import { listEngineDocumentsForDriver } from "@/lib/document-engine";
@@ -229,30 +228,24 @@ export default async function DriverDetailPage({ params }: Props) {
           Documents &amp; credentials
         </h2>
         <p className="bof-doc-section-lead bof-driver-hub-lead">
-          Primary slots are the seven fleet-required types{isRefDriver ? ", plus exam report and emergency packet for this reference driver" : ""}.
-          Secondary files (PDFs, dashboards, workflow) stay linked here and in the{" "}
+          Primary slots are the seven fleet-required types, plus MCSA-5875 and emergency
+          contact. Secondary files (MCSA-5876, profile, applications, internal summaries)
+          stay linked here and in the{" "}
           <Link href="/documents" className="bof-link-secondary">
             vault
           </Link>
           .
         </p>
 
-        {isRefDriver ? (
-          <DriverJohnCarterDocumentStacks
-            driverName={driver.name}
-            primaryCore={documents}
-            primaryExtra={primaryStackExtra}
-            secondary={secondaryStackOrdered}
-          />
-        ) : (
-          <DriverDocumentsPanel
-            driverId={driver.id}
-            driverName={driver.name}
-            documents={documents}
-          />
-        )}
+        <DriverFleetDocumentStacks
+          driverId={driver.id}
+          driverName={driver.name}
+          primaryCore={documents}
+          primaryExtra={primaryStackExtra}
+          secondary={secondaryStackOrdered}
+        />
 
-        {!isRefDriver && supplementalDocs.length > 0 && (
+        {supplementalDocs.length > 0 && (
           <div className="bof-driver-hub-supplemental">
             <h3 className="bof-h3">Additional attachments</h3>
             <ul className="bof-compliance-mini">

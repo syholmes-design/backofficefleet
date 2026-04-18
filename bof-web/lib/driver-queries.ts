@@ -2,7 +2,6 @@ import type { BofData } from "./load-bof-data";
 import type { DriverMedicalExpanded } from "./driver-medical-expanded";
 import {
   JOHN_CARTER_PRIMARY_EXTRA_TYPES,
-  JOHN_CARTER_REFERENCE_DRIVER_ID,
   JOHN_CARTER_SECONDARY_TYPE_ORDER,
 } from "./john-carter-reference";
 
@@ -32,7 +31,7 @@ export type DocumentRow = {
   fileUrl?: string;
   /** When true, payment/dispatch may be blocked until resolved */
   blocksPayment?: boolean;
-  /** Demo: primary vs secondary stack (John Carter reference driver). */
+  /** Demo: primary vs secondary stack (fleet document layout). */
   docTier?: DocumentTier;
   /** Synthetic demo shell — not a production scan */
   demoPlaceholder?: boolean;
@@ -124,12 +123,11 @@ export function getDriverMedicalExpanded(
   return raw ?? null;
 }
 
-/** John Carter only: MCSA-5875 + Emergency Contact rows. */
+/** MCSA-5875 + Emergency Contact (fleet-wide; same ordering as reference driver). */
 export function getPrimaryStackExtraDocuments(
   data: BofData,
   driverId: string
 ): DocumentRow[] {
-  if (driverId !== JOHN_CARTER_REFERENCE_DRIVER_ID) return [];
   const want = new Set<string>(JOHN_CARTER_PRIMARY_EXTRA_TYPES);
   const byType = new Map<string, DocumentRow>();
   for (const doc of data.documents) {
@@ -147,8 +145,8 @@ export function getPrimaryStackExtraDocuments(
 }
 
 /**
- * Supplemental rows not in the seven core types.
- * For the reference driver (DRV-001), returns secondary stack in a stable order.
+ * Supplemental rows not in the seven core types or primary extensions.
+ * Fleet-wide stable order (same as John Carter reference layout).
  */
 export function getSecondaryStackDocumentsOrdered(
   data: BofData,
@@ -156,14 +154,6 @@ export function getSecondaryStackDocumentsOrdered(
 ): DocumentRow[] {
   const core = new Set<string>(DRIVER_DOCUMENT_TYPES);
   const primaryExtra = new Set<string>(JOHN_CARTER_PRIMARY_EXTRA_TYPES);
-
-  if (driverId !== JOHN_CARTER_REFERENCE_DRIVER_ID) {
-    return data.documents.filter(
-      (d) =>
-        d.driverId === driverId &&
-        !core.has(d.type as (typeof DRIVER_DOCUMENT_TYPES)[number])
-    ) as DocumentRow[];
-  }
 
   const pool = data.documents.filter(
     (d) =>

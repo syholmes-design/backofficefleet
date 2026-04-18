@@ -8,7 +8,8 @@ import path from "path";
 import { fileURLToPath } from "url";
 import XLSX from "xlsx";
 import {
-  applyJohnCarterGoldStack,
+  applyFleetGoldStack,
+  augmentDriversWithFleetDemoFields,
   patchDriversForJohnCarter,
   resolveDriverIdFromCdlColumn,
 } from "./lib/john-carter-stack.mjs";
@@ -591,7 +592,7 @@ function main() {
   }
 
   const driverRows = readSheetRows(workbook, "Drivers_Clean");
-  const drivers = patchDriversForJohnCarter(buildDrivers(driverRows));
+  let drivers = patchDriversForJohnCarter(buildDrivers(driverRows));
 
   const byDoc = readDocumentsClean(workbook, drivers);
   const documents = materializeDocuments(drivers, byDoc);
@@ -639,14 +640,17 @@ function main() {
     };
   }
 
-  const documentsAfterJohnCarter = applyJohnCarterGoldStack(
+  drivers = augmentDriversWithFleetDemoFields(drivers, driverMedicalExpanded);
+
+  const documentsAfterFleet = applyFleetGoldStack(
     mergedDocuments,
+    drivers,
     driverMedicalExpanded
   );
 
   const out = {
     drivers,
-    documents: documentsAfterJohnCarter,
+    documents: documentsAfterFleet,
     complianceIncidents,
     loads: existingLoads,
   };
@@ -678,7 +682,7 @@ function main() {
 
   const validation = {
     totalDrivers: drivers.length,
-    totalDocuments: documentsAfterJohnCarter.length,
+    totalDocuments: documentsAfterFleet.length,
     expectedBaseDocuments: expectedBase,
     totalComplianceIncidents: complianceIncidents.length,
     driverMedicalExpandedDrivers: Object.keys(driverMedicalExpanded).length,

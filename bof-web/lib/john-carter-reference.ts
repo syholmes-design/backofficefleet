@@ -21,6 +21,12 @@ export const JOHN_CARTER_SECONDARY_TYPE_ORDER = [
   "BOF Medical Summary",
 ] as const;
 
+/** Primary extensions + secondary stack (vault + driver hub hide these from “ad hoc” supplementals). */
+export const FLEET_STRUCTURED_SUPPLEMENTAL_TYPE_SET = new Set<string>([
+  ...JOHN_CARTER_PRIMARY_EXTRA_TYPES,
+  ...JOHN_CARTER_SECONDARY_TYPE_ORDER,
+]);
+
 export function isJohnCarterReferenceDriver(driverId: string) {
   return driverId === JOHN_CARTER_REFERENCE_DRIVER_ID;
 }
