@@ -172,7 +172,8 @@ body {
 
 /* Dispatch & Safety modules: full-width data surfaces inside standard shell */
 .bof-main:has(.bof-dispatch-page-wrap),
-.bof-main:has(.bof-safety-page-wrap) {
+.bof-main:has(.bof-safety-page-wrap),
+.bof-main:has(.bof-settlements-payroll-wrap) {
   max-width: none;
   padding: 0;
 }
