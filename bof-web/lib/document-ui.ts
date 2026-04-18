@@ -1,5 +1,25 @@
 import type { DocumentRow } from "@/lib/driver-queries";
 
+/** Human-readable labels for vault and driver document cards (internal `type` keys unchanged). */
+const DOCUMENT_TYPE_LABELS: Record<string, string> = {
+  "Medical Card": "Medical examiner's certificate / Med card",
+  FMCSA: "FMCSA Compliance",
+  "Bank Info": "Bank info / Direct deposit",
+  "MCSA-5875": "Medical exam report (MCSA-5875)",
+  "Emergency Contact": "Emergency contact",
+  "MCSA-5876 (signed PDF)": "Signed medical exam (MCSA-5876)",
+  "Driver profile (HTML)": "Driver profile (HTML)",
+  "Driver Application": "Driver application",
+  "Safety Acknowledgment": "Safety acknowledgment",
+  "Qualification File": "Qualification file status",
+  "Incident / Accident Report": "Incident / accident report",
+  "BOF Medical Summary": "BOF medical summary",
+};
+
+export function documentTypeLabel(type: string): string {
+  return DOCUMENT_TYPE_LABELS[type] ?? type;
+}
+
 export function statusBadgeClass(status: string) {
   const s = status.toUpperCase();
   if (s === "VALID") return "bof-doc-badge bof-doc-badge-valid";

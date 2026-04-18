@@ -17,9 +17,9 @@ export type VaultDocumentRow = DocumentRow & {
 };
 
 function vaultGroupLabel(doc: DocumentRow): VaultDocumentRow["vaultGroup"] {
+  if (DRIVER_DOCUMENT_TYPES.includes(doc.type as DriverDocType)) return "Core";
   if (doc.docTier === "secondary") return "Secondary";
   if (doc.docTier === "primary") return "Primary";
-  if (DRIVER_DOCUMENT_TYPES.includes(doc.type as DriverDocType)) return "Core";
   return "Other";
 }
 

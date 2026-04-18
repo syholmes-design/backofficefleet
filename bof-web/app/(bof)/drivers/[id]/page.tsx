@@ -54,6 +54,8 @@ export default async function DriverDetailPage({ params }: Props) {
   const supplementalDocs = getSupplementalDocumentsForDriver(data, id);
   const primaryStackExtra = getPrimaryStackExtraDocuments(data, id);
   const secondaryStackOrdered = getSecondaryStackDocumentsOrdered(data, id);
+  const mcsa5876Signed =
+    secondaryStackOrdered.find((d) => d.type === "MCSA-5876 (signed PDF)") ?? null;
   const readiness = readinessFromDocuments(documents);
   const trucks = assignedTrucksForDriver(data, id);
   const primary = primaryAssignedTruck(data, id);
@@ -216,6 +218,7 @@ export default async function DriverDetailPage({ params }: Props) {
             driverName={driver.name}
             medicalDoc={medicalDoc}
             expanded={medicalExpanded}
+            mcsa5876Signed={mcsa5876Signed}
           />
         </section>
       )}

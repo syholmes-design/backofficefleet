@@ -22,9 +22,10 @@ export default function DocumentsPage() {
       <p className="bof-lead">
         Fleet-wide register — every driver × seven core types plus primary extensions
         and secondary workflow rows.
-        <strong> Group</strong> highlights core vs primary vs secondary files (same
-        layered layout on every driver hub — John Carter / DRV-001 keeps the curated
-        PDF/HTML assets). Filter by
+        <strong> Group</strong> tags the seven core credentials as Core, then primary
+        extensions (e.g. MCSA-5875) and secondary workflow files (same stacks as each
+        driver hub — John Carter / DRV-001 carries the full reference PDF/HTML set).
+        Filter by
         driver, type, or status; hover proof for a quick preview or open the driver hub
         for context.
       </p>

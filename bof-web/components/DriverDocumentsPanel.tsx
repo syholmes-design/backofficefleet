@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState } from "react";
 import type { DocumentRow } from "@/lib/driver-queries";
 import { DRIVER_DOCUMENT_TYPES } from "@/lib/driver-queries";
 import {
+  documentTypeLabel,
   isEmbedPreviewPath,
   isImagePath,
   previewAvailable,
@@ -56,7 +57,8 @@ export function DriverDocumentsPanel({
         <ol className="bof-doc-required-legend" aria-label="Document types in this group">
           {legendTypes.map((t, i) => (
             <li key={t}>
-              <span className="bof-doc-required-idx">{i + 1}.</span> {t}
+              <span className="bof-doc-required-idx">{i + 1}.</span>{" "}
+              {documentTypeLabel(t)}
             </li>
           ))}
         </ol>
@@ -76,7 +78,7 @@ export function DriverDocumentsPanel({
               onClick={() => setModalDoc(doc)}
             >
               <div className="bof-doc-card-top">
-                <span className="bof-doc-type">{doc.type}</span>
+                <span className="bof-doc-type">{documentTypeLabel(doc.type)}</span>
                 <span className={statusBadgeClass(doc.status)}>
                   {doc.status}
                 </span>
@@ -146,7 +148,7 @@ export function DriverDocumentsPanel({
             onClick={(e) => e.stopPropagation()}
           >
             <header className="bof-modal-head">
-              <h3 id="doc-modal-title">{modalDoc.type}</h3>
+              <h3 id="doc-modal-title">{documentTypeLabel(modalDoc.type)}</h3>
               <button
                 type="button"
                 className="bof-modal-close"
@@ -172,7 +174,10 @@ export function DriverDocumentsPanel({
                   <code className="bof-code">{driverId}</code>
                 </dd>
                 <dt>Document type</dt>
-                <dd>{modalDoc.type}</dd>
+                <dd>
+                  {documentTypeLabel(modalDoc.type)}{" "}
+                  <span className="bof-muted bof-small">({modalDoc.type})</span>
+                </dd>
                 {modalDoc.demoPlaceholder === true && (
                   <>
                     <dt>Demo</dt>

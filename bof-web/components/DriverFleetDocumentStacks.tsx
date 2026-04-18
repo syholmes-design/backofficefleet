@@ -35,7 +35,7 @@ export function DriverFleetDocumentStacks({
         documents={primaryCore}
         headingId={`fleet-docs-primary-core-${driverId}`}
         sectionTitle="Primary — required credentials"
-        sectionLead="Seven core types. Open each card for file paths and preview."
+        sectionLead="CDL, med card, MVR, I-9, FMCSA Compliance, W-9, and bank / direct deposit. Open each card for paths and preview."
         legendTypes={undefined}
       />
 
@@ -55,7 +55,7 @@ export function DriverFleetDocumentStacks({
         documents={secondary}
         headingId={`fleet-docs-secondary-${driverId}`}
         sectionTitle="Secondary — applications and internal workflow"
-        sectionLead="Signed MCSA-5876 (or demo HTML), profile, and spreadsheet-driven workflow shells."
+        sectionLead="Signed MCSA-5876, profile dashboard HTML, driver application, safety acknowledgment, qualification file, incidents, BOF medical summary, and related shells."
         legendTypes={[...JOHN_CARTER_SECONDARY_TYPE_ORDER]}
       />
     </div>

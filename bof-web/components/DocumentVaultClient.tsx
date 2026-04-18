@@ -5,6 +5,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { DriverAvatar } from "@/components/DriverAvatar";
 import { DriverLink } from "@/components/DriverLink";
 import {
+  documentTypeLabel,
   isEmbedPreviewPath,
   isImagePath,
   normalizeDocStatus,
@@ -110,7 +111,7 @@ export function DocumentVaultClient({
               <option value="">All types</option>
               {docTypeOptions.map((t) => (
                 <option key={t} value={t}>
-                  {t}
+                  {documentTypeLabel(t)}
                 </option>
               ))}
             </select>
@@ -307,7 +308,7 @@ export function DocumentVaultClient({
             onClick={(e) => e.stopPropagation()}
           >
             <header className="bof-modal-head">
-              <h3 id="vault-doc-title">{modalRow.type}</h3>
+              <h3 id="vault-doc-title">{documentTypeLabel(modalRow.type)}</h3>
               <button
                 type="button"
                 className="bof-modal-close"

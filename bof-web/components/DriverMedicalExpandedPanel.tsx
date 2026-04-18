@@ -4,7 +4,7 @@ import { useCallback, useEffect, useState } from "react";
 import type { DocumentRow } from "@/lib/driver-queries";
 import type { DriverMedicalExpanded } from "@/lib/driver-medical-expanded";
 import { EMPTY_DRIVER_MEDICAL_EXPANDED } from "@/lib/driver-medical-expanded";
-import { statusBadgeClass } from "@/lib/document-ui";
+import { proofHref, statusBadgeClass } from "@/lib/document-ui";
 
 function dlItem(label: string, value: string) {
   const v = value?.trim();
@@ -20,10 +20,13 @@ export function DriverMedicalExpandedPanel({
   driverName,
   medicalDoc,
   expanded,
+  mcsa5876Signed,
 }: {
   driverName: string;
   medicalDoc: DocumentRow;
   expanded: DriverMedicalExpanded | null;
+  /** Signed long-form exam (PDF/HTML); opens from the nested MCSA-5876 detail view. */
+  mcsa5876Signed?: Pick<DocumentRow, "fileUrl" | "previewUrl"> | null;
 }) {
   const [open, setOpen] = useState(false);
   const close = useCallback(() => setOpen(false), []);
@@ -161,6 +164,18 @@ export function DriverMedicalExpandedPanel({
                 <dt>Driver signature date</dt>
                 <dd>{x.driverSignatureDate || "—"}</dd>
               </dl>
+              {mcsa5876Signed && proofHref(mcsa5876Signed) ? (
+                <p className="bof-modal-note">
+                  <a
+                    href={proofHref(mcsa5876Signed)!}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="bof-link-secondary"
+                  >
+                    Open signed MCSA-5876 (file)
+                  </a>
+                </p>
+              ) : null}
             </div>
           </div>
         </div>
