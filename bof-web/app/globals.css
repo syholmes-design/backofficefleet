@@ -4926,3 +4926,25 @@ body {
 .bof-medical-support-block .bof-medical-dl {
   font-size: 0.8rem;
 }
+
+/* John Carter reference driver — stacked primary / secondary documents */
+.bof-jc-doc-stacks .bof-doc-section + .bof-doc-section {
+  margin-top: 1.5rem;
+}
+
+.bof-jc-id-banner {
+  padding: 0.65rem 0.85rem;
+  border-radius: var(--bof-radius);
+  border: 1px solid var(--bof-border);
+  background: rgba(20, 184, 166, 0.08);
+  margin-bottom: 0.25rem;
+}
+
+.bof-jc-vault-note {
+  margin-top: 1rem;
+}
+
+.bof-medical-id-map {
+  margin-top: 0.35rem;
+  margin-bottom: 0.75rem;
+}

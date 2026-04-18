@@ -4,6 +4,10 @@ import { useCallback, useEffect, useState } from "react";
 import type { DocumentRow } from "@/lib/driver-queries";
 import type { DriverMedicalExpanded } from "@/lib/driver-medical-expanded";
 import { EMPTY_DRIVER_MEDICAL_EXPANDED } from "@/lib/driver-medical-expanded";
+import {
+  isJohnCarterReferenceDriver,
+  JOHN_CARTER_CDL_NUMBER,
+} from "@/lib/john-carter-reference";
 import { statusBadgeClass } from "@/lib/document-ui";
 
 function dlItem(label: string, value: string) {
@@ -55,6 +59,15 @@ export function DriverMedicalExpandedPanel({
         Primary DOT medical card summary for {driverName}. Expanded MCSA-5876 line
         items open in a detail view.
       </p>
+      {isJohnCarterReferenceDriver(driverId) && (
+        <p className="bof-muted bof-small bof-medical-id-map">
+          Spreadsheet / CDL identifier:{" "}
+          <code className="bof-code">
+            {(expanded?.cdlNumber || JOHN_CARTER_CDL_NUMBER).trim() || JOHN_CARTER_CDL_NUMBER}
+          </code>{" "}
+          → BOF driver <code className="bof-code">{driverId}</code>.
+        </p>
+      )}
 
       <div className="bof-medical-primary bof-medical-card">
         <div className="bof-medical-primary-top">

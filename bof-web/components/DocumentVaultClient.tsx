@@ -14,7 +14,6 @@ import {
 } from "@/lib/document-ui";
 import type { VaultDocumentRow } from "@/lib/document-vault";
 import { driverPhotoPath } from "@/lib/driver-photo";
-import { DRIVER_DOCUMENT_TYPES } from "@/lib/driver-queries";
 
 type StatusFilter = "all" | "valid" | "expired" | "missing" | "at-risk";
 
@@ -52,6 +51,12 @@ export function DocumentVaultClient({
     return [...m.entries()]
       .sort(([a], [b]) => a.localeCompare(b))
       .map(([id, name]) => ({ id, name }));
+  }, [rows]);
+
+  const docTypeOptions = useMemo(() => {
+    const u = new Set<string>();
+    for (const r of rows) u.add(r.type);
+    return [...u].sort((a, b) => a.localeCompare(b));
   }, [rows]);
 
   const filtered = useMemo(() => {
@@ -103,7 +108,7 @@ export function DocumentVaultClient({
               onChange={(e) => setDocType(e.target.value)}
             >
               <option value="">All types</option>
-              {DRIVER_DOCUMENT_TYPES.map((t) => (
+              {docTypeOptions.map((t) => (
                 <option key={t} value={t}>
                   {t}
                 </option>

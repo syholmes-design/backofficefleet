@@ -44,7 +44,7 @@ function complianceFlagsForDoc(
 }
 
 /**
- * One row per record in `data.documents` (86 in demo: 12 drivers × 7 types + 2 supplemental for DRV-001).
+ * One row per record in `data.documents` (includes 12×7 core rows plus supplemental rows, e.g. John Carter reference stack).
  */
 export function buildVaultRows(data: BofData): VaultDocumentRow[] {
   const nameById = new Map(data.drivers.map((d) => [d.id, d.name]));

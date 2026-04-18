@@ -3,52 +3,47 @@
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>Bank Info — John Carter · DRV-001</title>
+  <title>Bank Info — John Carter</title>
   <style>
     * { box-sizing: border-box; }
     body { font-family: system-ui, Segoe UI, Roboto, Helvetica, Arial, sans-serif; margin: 0; padding: 24px; background: #f1f5f9; color: #0f172a; line-height: 1.45; font-size: 14px; }
     .sheet { max-width: 720px; margin: 0 auto; background: #fff; border: 1px solid #cbd5e1; border-radius: 8px; padding: 28px 32px; box-shadow: 0 1px 3px rgba(0,0,0,.06); }
-    .hdr { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 16px; }
-    .hdr-mark { flex-shrink: 0; min-width: 120px; padding: 0 14px; height: 36px; line-height: 36px; text-align: center; border-radius: 6px; background: #0f172a; color: #f8fafc; font-size: 12px; font-weight: 700; letter-spacing: .02em; user-select: none; }
-    h1 { font-size: 1.2rem; margin: 0; color: #0f172a; }
-    .sub { font-size: 12px; color: #64748b; margin: 4px 0 0; }
-    .pill { display: inline-block; padding: 4px 10px; border-radius: 999px; font-size: 11px; font-weight: 600; background: #dcfce7; color: #166534; }
-    h2 { font-size: 11px; text-transform: uppercase; letter-spacing: .06em; color: #64748b; margin: 22px 0 10px; border-bottom: 1px solid #e2e8f0; padding-bottom: 4px; }
-    dl { display: grid; grid-template-columns: 200px 1fr; gap: 8px 16px; margin: 0; }
+    h1 { font-size: 1.15rem; margin: 0 0 4px; color: #0f172a; }
+    .sub { font-size: 12px; color: #64748b; margin-bottom: 20px; }
+    h2 { font-size: 11px; text-transform: uppercase; letter-spacing: .06em; color: #64748b; margin: 20px 0 8px; border-bottom: 1px solid #e2e8f0; padding-bottom: 4px; }
+    dl { display: grid; grid-template-columns: 160px 1fr; gap: 6px 16px; margin: 0; }
     dt { color: #64748b; font-size: 12px; }
     dd { margin: 0; font-weight: 500; }
-    .mono { font-family: ui-monospace, monospace; font-size: 13px; }
+    .muted { color: #64748b; font-weight: 400; }
+    .banner { background: #eff6ff; border: 1px solid #bfdbfe; color: #1e3a8a; padding: 10px 12px; border-radius: 6px; font-size: 13px; margin-top: 12px; }
+    .warn { background: #fffbeb; border-color: #fde68a; color: #78350f; }
     footer { margin-top: 24px; font-size: 11px; color: #94a3b8; }
   </style>
 </head>
 <body>
   <div class="sheet">
-    <div class="hdr">
-      <div>
-        <h1>Direct deposit authorization</h1>
-        <p class="sub">ACH profile · Demo payroll</p>
-      </div>
-      <div class="hdr-mark" role="img" aria-label="BackOfficeFleet demo">BOF &middot; DEMO</div>
-    </div>
-    <span class="pill">Status: VALID</span>
-
-    <h2>Account holder</h2>
+    
+    <h1>Direct deposit — Bank information</h1>
+    <p class="sub">Demo payroll banking shell</p>
+    <h2>Driver</h2>
+<dl>
+  <dt>Name</dt><dd>John Carter</dd>
+  <dt>Driver ID</dt><dd><code>DRV-001</code></dd>
+  <dt>Address</dt><dd>1240 W 6th St, Cleveland, OH 44113</dd>
+  <dt>Phone</dt><dd>206-667-3424</dd>
+  <dt>Email</dt><dd>john.carter@boftransport.demo</dd>
+</dl>
+    <h2>Account</h2>
     <dl>
-      <dt>Name</dt><dd>John Carter</dd>
-      <dt>Driver ID</dt><dd class="mono">DRV-001</dd>
+      <dt>Status (demo)</dt><dd>VALID</dd>
+      <dt>Account holder</dt><dd>John Carter</dd>
+      <dt>Financial institution</dt><dd><span class="muted">Not on file</span></dd>
+      <dt>Routing number</dt><dd><span class="muted">Not on file</span></dd>
+      <dt>Account number (last 4)</dt><dd><span class="muted">Not on file</span></dd>
+      <dt>Account type</dt><dd><span class="muted">Pending</span></dd>
     </dl>
-
-    <h2>Financial institution (demo values)</h2>
-    <dl>
-      <dt>Bank name</dt><dd>Lakeside Community Bank (fictional)</dd>
-      <dt>Account type</dt><dd>Checking</dd>
-      <dt>Routing (ABA)</dt><dd class="mono">041000099</dd>
-      <dt>Account number</dt><dd class="mono">········7821</dd>
-      <dt>Authorization effective</dt><dd><time datetime="2024-06-15">2024-06-15</time></dd>
-      <dt>Payroll memo</dt><dd>Net settlement — weekly cycle (demo)</dd>
-    </dl>
-
-    <footer>BackOfficeFleet · Synthetic bank letter for DRV-001 · Do not use for real ACH</footer>
+  
+    <footer>BackOfficeFleet · Demo generated credential shell · Not a legal document</footer>
   </div>
 </body>
 </html>

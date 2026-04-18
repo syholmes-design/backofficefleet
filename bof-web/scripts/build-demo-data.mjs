@@ -7,6 +7,11 @@ import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
 import XLSX from "xlsx";
+import {
+  applyJohnCarterGoldStack,
+  patchDriversForJohnCarter,
+  resolveDriverIdFromCdlColumn,
+} from "./lib/john-carter-stack.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(__dirname, "..");
@@ -198,6 +203,9 @@ function buildNameToId(drivers) {
 }
 
 function resolveDriverIdForDocRow(rowObj, nameToId, validIds) {
+  const fromCdl = resolveDriverIdFromCdlColumn(rowObj, normHeader, validIds);
+  if (fromCdl) return fromCdl;
+
   const keys = Object.keys(rowObj);
   for (const k of keys) {
     const nk = normHeader(k);
@@ -527,6 +535,7 @@ function mapExpandedRow(rowObj) {
     driverLicenseState: pickExpandedCell(rowObj, "Driver_License_State"),
     driverLicenseNumber: pickExpandedCell(rowObj, "Driver_License_Number"),
     driverSignatureDate: pickExpandedCell(rowObj, "Driver_Signature_Date"),
+    cdlNumber: pickExpandedCell(rowObj, "CDL_Number", "CDL Number"),
   };
 }
 
@@ -580,7 +589,7 @@ function main() {
   }
 
   const driverRows = readSheetRows(workbook, "Drivers_Clean");
-  const drivers = buildDrivers(driverRows);
+  const drivers = patchDriversForJohnCarter(buildDrivers(driverRows));
 
   const byDoc = readDocumentsClean(workbook, drivers);
   const documents = materializeDocuments(drivers, byDoc);
@@ -628,9 +637,14 @@ function main() {
     };
   }
 
+  const documentsAfterJohnCarter = applyJohnCarterGoldStack(
+    mergedDocuments,
+    driverMedicalExpanded
+  );
+
   const out = {
     drivers,
-    documents: mergedDocuments,
+    documents: documentsAfterJohnCarter,
     complianceIncidents,
     loads: existingLoads,
   };
@@ -652,7 +666,7 @@ function main() {
 
   const validation = {
     totalDrivers: drivers.length,
-    totalDocuments: mergedDocuments.length,
+    totalDocuments: documentsAfterJohnCarter.length,
     expectedBaseDocuments: expectedBase,
     totalComplianceIncidents: complianceIncidents.length,
     driverMedicalExpandedDrivers: Object.keys(driverMedicalExpanded).length,

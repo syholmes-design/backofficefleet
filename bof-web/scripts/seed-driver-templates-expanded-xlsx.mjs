@@ -13,6 +13,7 @@ const OUT = path.join(ROOT, "public", "data", "driver_templates_expanded.xlsx");
 
 const HEADERS = [
   "Driver_ID",
+  "CDL_Number",
   "Medical_Issue_Date",
   "Medical_Expiration_Date",
   "Examiner_Name",
@@ -39,6 +40,7 @@ function rowForDriver(id, idx) {
   const n = idx + 1;
   return [
     id,
+    id === "DRV-001" ? "OH1668243" : `DLN-${String(n).padStart(5, "0")}`,
     "2024-01-15",
     "2026-04-22",
     id === "DRV-001" ? "Dr. Jordan Ellis, MD" : `Demo Examiner ${n}`,

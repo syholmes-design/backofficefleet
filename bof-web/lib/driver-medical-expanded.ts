@@ -24,6 +24,8 @@ export type DriverMedicalExpanded = {
   medicalIssueDate: string;
   medicalExpirationDate: string;
   medicalExaminerName: string;
+  /** From spreadsheet CDL_Number — same driver as DRV-001 when OH1668243 */
+  cdlNumber: string;
   /** MCSA-5876 examiner / driver detail (secondary view) */
   mcsaExaminerLicense: string;
   mcsaRegistryNumber: string;
@@ -48,6 +50,7 @@ export const EMPTY_DRIVER_MEDICAL_EXPANDED: DriverMedicalExpanded = {
   medicalIssueDate: "",
   medicalExpirationDate: "",
   medicalExaminerName: "",
+  cdlNumber: "",
   mcsaExaminerLicense: "",
   mcsaRegistryNumber: "",
   mcsaExaminerTelephone: "",

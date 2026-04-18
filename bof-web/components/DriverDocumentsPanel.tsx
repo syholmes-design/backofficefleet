@@ -15,10 +15,22 @@ export function DriverDocumentsPanel({
   driverId,
   driverName,
   documents,
+  sectionTitle = "Driver documents",
+  sectionLead = "Seven required credential types (all listed below). Hover for preview when a file path exists; click a card for full metadata and open-in-new-tab when a file URL is on file.",
+  legendTypes = DRIVER_DOCUMENT_TYPES,
+  headingId = "driver-docs-heading",
 }: {
   driverId: string;
   driverName: string;
   documents: DocumentRow[];
+  /** Override default “Driver documents” heading */
+  sectionTitle?: string;
+  /** Override intro paragraph */
+  sectionLead?: string;
+  /** Legend list; pass `false` to hide the numbered legend */
+  legendTypes?: readonly string[] | false;
+  /** Unique id when multiple panels on one page */
+  headingId?: string;
 }) {
   const [hovered, setHovered] = useState<DocumentRow | null>(null);
   const [modalDoc, setModalDoc] = useState<DocumentRow | null>(null);
@@ -35,22 +47,20 @@ export function DriverDocumentsPanel({
   }, [modalDoc, closeModal]);
 
   return (
-    <section className="bof-doc-section" aria-labelledby="driver-docs-heading">
-      <h2 id="driver-docs-heading" className="bof-h2">
-        Driver documents
+    <section className="bof-doc-section" aria-labelledby={headingId}>
+      <h2 id={headingId} className="bof-h2">
+        {sectionTitle}
       </h2>
-      <p className="bof-doc-section-lead">
-        Seven required credential types (all listed below). Hover for preview when
-        a file path exists; click a card for full metadata and open-in-new-tab when
-        a file URL is on file.
-      </p>
-      <ol className="bof-doc-required-legend" aria-label="Required document types">
-        {DRIVER_DOCUMENT_TYPES.map((t, i) => (
-          <li key={t}>
-            <span className="bof-doc-required-idx">{i + 1}.</span> {t}
-          </li>
-        ))}
-      </ol>
+      <p className="bof-doc-section-lead">{sectionLead}</p>
+      {legendTypes !== false && legendTypes.length > 0 && (
+        <ol className="bof-doc-required-legend" aria-label="Document types in this group">
+          {legendTypes.map((t, i) => (
+            <li key={t}>
+              <span className="bof-doc-required-idx">{i + 1}.</span> {t}
+            </li>
+          ))}
+        </ol>
+      )}
 
       <div className="bof-doc-grid">
         {documents.map((doc) => (
@@ -163,6 +173,12 @@ export function DriverDocumentsPanel({
                 </dd>
                 <dt>Document type</dt>
                 <dd>{modalDoc.type}</dd>
+                {modalDoc.demoPlaceholder === true && (
+                  <>
+                    <dt>Demo</dt>
+                    <dd>Synthetic placeholder shell (not a production scan).</dd>
+                  </>
+                )}
                 <dt>Preview URL</dt>
                 <dd>
                   {modalDoc.previewUrl ? (

@@ -1,5 +1,10 @@
 import type { BofData } from "./load-bof-data";
 import type { DriverMedicalExpanded } from "./driver-medical-expanded";
+import {
+  JOHN_CARTER_PRIMARY_EXTRA_TYPES,
+  JOHN_CARTER_REFERENCE_DRIVER_ID,
+  JOHN_CARTER_SECONDARY_TYPE_ORDER,
+} from "./john-carter-reference";
 
 export const DRIVER_DOCUMENT_TYPES = [
   "CDL",
@@ -13,6 +18,8 @@ export const DRIVER_DOCUMENT_TYPES = [
 
 export type DriverDocType = (typeof DRIVER_DOCUMENT_TYPES)[number];
 
+export type DocumentTier = "primary" | "secondary";
+
 /** Document row from JSON; optional fields supported when present without changing required shape. */
 export type DocumentRow = {
   driverId: string;
@@ -25,6 +32,18 @@ export type DocumentRow = {
   fileUrl?: string;
   /** When true, payment/dispatch may be blocked until resolved */
   blocksPayment?: boolean;
+  /** Demo: primary vs secondary stack (John Carter reference driver). */
+  docTier?: DocumentTier;
+  /** Synthetic demo shell — not a production scan */
+  demoPlaceholder?: boolean;
+  /** License / CDL identifier from spreadsheet (display) */
+  sourceLicenseNumber?: string;
+  cdlNumber?: string;
+  licenseClass?: string;
+  cdlIssueDate?: string;
+  cdlExpiration?: string;
+  cdlEndorsements?: string;
+  cdlRestrictions?: string;
 };
 
 export function getDriverById(data: BofData, id: string) {
@@ -103,4 +122,66 @@ export function getDriverMedicalExpanded(
     }
   ).driverMedicalExpanded?.[driverId];
   return raw ?? null;
+}
+
+/** John Carter only: MCSA-5875 + Emergency Contact rows. */
+export function getPrimaryStackExtraDocuments(
+  data: BofData,
+  driverId: string
+): DocumentRow[] {
+  if (driverId !== JOHN_CARTER_REFERENCE_DRIVER_ID) return [];
+  const want = new Set<string>(JOHN_CARTER_PRIMARY_EXTRA_TYPES);
+  const byType = new Map<string, DocumentRow>();
+  for (const doc of data.documents) {
+    if (doc.driverId !== driverId) continue;
+    if (want.has(doc.type)) byType.set(doc.type, doc as DocumentRow);
+  }
+  return JOHN_CARTER_PRIMARY_EXTRA_TYPES.map(
+    (t) =>
+      byType.get(t) ?? {
+        driverId,
+        type: t,
+        status: "MISSING",
+      }
+  );
+}
+
+/**
+ * Supplemental rows not in the seven core types.
+ * For the reference driver (DRV-001), returns secondary stack in a stable order.
+ */
+export function getSecondaryStackDocumentsOrdered(
+  data: BofData,
+  driverId: string
+): DocumentRow[] {
+  const core = new Set<string>(DRIVER_DOCUMENT_TYPES);
+  const primaryExtra = new Set<string>(JOHN_CARTER_PRIMARY_EXTRA_TYPES);
+
+  if (driverId !== JOHN_CARTER_REFERENCE_DRIVER_ID) {
+    return data.documents.filter(
+      (d) =>
+        d.driverId === driverId &&
+        !core.has(d.type as (typeof DRIVER_DOCUMENT_TYPES)[number])
+    ) as DocumentRow[];
+  }
+
+  const pool = data.documents.filter(
+    (d) =>
+      d.driverId === driverId &&
+      !core.has(d.type as (typeof DRIVER_DOCUMENT_TYPES)[number]) &&
+      !primaryExtra.has(d.type)
+  ) as DocumentRow[];
+
+  const order = new Map(
+    JOHN_CARTER_SECONDARY_TYPE_ORDER.map((t, i) => [t, i])
+  );
+  return [...pool].sort((a, b) => {
+    const ia = order.get(
+      a.type as (typeof JOHN_CARTER_SECONDARY_TYPE_ORDER)[number]
+    );
+    const ib = order.get(
+      b.type as (typeof JOHN_CARTER_SECONDARY_TYPE_ORDER)[number]
+    );
+    return (ia ?? 99) - (ib ?? 99) || a.type.localeCompare(b.type);
+  });
 }

@@ -26,18 +26,18 @@ function escapeHtml(s) {
     .replace(/"/g, "&quot;");
 }
 
-function formatDate(iso) {
-  const raw = String(iso ?? "").trim();
+function formatDate(rawIso) {
+  const raw = String(rawIso ?? "").trim();
   if (!raw) return { iso: "", display: "" };
   const d = new Date(`${raw}T12:00:00`);
   if (Number.isNaN(d.getTime())) return { iso: escapeHtml(raw), display: escapeHtml(raw) };
-  const iso = d.toISOString().slice(0, 10);
+  const isoOut = d.toISOString().slice(0, 10);
   const display = new Intl.DateTimeFormat("en-US", {
     month: "short",
     day: "numeric",
     year: "numeric",
   }).format(d);
-  return { iso: escapeHtml(iso), display: escapeHtml(display) };
+  return { iso: escapeHtml(isoOut), display: escapeHtml(display) };
 }
 
 function classLine(licenseClass) {

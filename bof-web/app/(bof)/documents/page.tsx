@@ -10,8 +10,6 @@ export const metadata = {
   description: "Fleet-wide driver credentials and compliance documents",
 };
 
-const DEMO_DOCUMENT_TOTAL = 86;
-
 export default function DocumentsPage() {
   const data = getBofData();
   const rows = buildVaultRows(data);
@@ -22,8 +20,8 @@ export default function DocumentsPage() {
     <div className="bof-page">
       <h1 className="bof-title">Document Vault</h1>
       <p className="bof-lead">
-        Full credential register — every driver × required document type, plus two
-        supplemental attachments for {previewLabel} (MCSA-5876 PDF and profile HTML).
+        Full credential register — every driver × seven required types, plus supplemental
+        rows ({previewLabel} / DRV-001 includes the full primary + secondary demo stack).
         Filter by driver, type, or status; hover proof for a quick preview when a file
         path exists, or open the driver profile for context.
       </p>
@@ -40,7 +38,7 @@ export default function DocumentsPage() {
         exception packets link from load detail, settlements, and money at risk.
       </p>
 
-      <DocumentVaultClient rows={rows} totalExpected={DEMO_DOCUMENT_TOTAL} />
+      <DocumentVaultClient rows={rows} totalExpected={rows.length} />
     </div>
   );
 }

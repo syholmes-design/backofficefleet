@@ -11,8 +11,14 @@ import {
   readinessFromDocuments,
 } from "@/lib/driver-queries";
 import { DEFAULT_PREVIEW_DRIVER_ID } from "@/lib/bof-defaults";
+import { isJohnCarterReferenceDriver } from "@/lib/john-carter-reference";
 import { getSupplementalDocumentsForDriver } from "@/lib/supplemental-driver-docs";
+import {
+  getPrimaryStackExtraDocuments,
+  getSecondaryStackDocumentsOrdered,
+} from "@/lib/driver-queries";
 import { DriverMedicalExpandedPanel } from "@/components/DriverMedicalExpandedPanel";
+import { DriverJohnCarterDocumentStacks } from "@/components/DriverJohnCarterDocumentStacks";
 import { DriverAvatar } from "@/components/DriverAvatar";
 import { DriverDocumentsPanel } from "@/components/DriverDocumentsPanel";
 import { driverPhotoPath } from "@/lib/driver-photo";
@@ -48,6 +54,8 @@ export default async function DriverDetailPage({ params }: Props) {
   const medicalDoc = documents.find((d) => d.type === "Medical Card");
   const medicalExpanded = getDriverMedicalExpanded(data, id);
   const supplementalDocs = getSupplementalDocumentsForDriver(data, id);
+  const primaryStackExtra = getPrimaryStackExtraDocuments(data, id);
+  const secondaryStackOrdered = getSecondaryStackDocumentsOrdered(data, id);
   const readiness = readinessFromDocuments(documents);
   const trucks = assignedTrucksForDriver(data, id);
   const primary = primaryAssignedTruck(data, id);
@@ -172,19 +180,29 @@ export default async function DriverDetailPage({ params }: Props) {
 
       {medicalDoc && (
         <DriverMedicalExpandedPanel
+          driverId={driver.id}
           driverName={driver.name}
           medicalDoc={medicalDoc}
           expanded={medicalExpanded}
         />
       )}
 
-      <DriverDocumentsPanel
-        driverId={driver.id}
-        driverName={driver.name}
-        documents={documents}
-      />
+      {isJohnCarterReferenceDriver(driver.id) ? (
+        <DriverJohnCarterDocumentStacks
+          driverName={driver.name}
+          primaryCore={documents}
+          primaryExtra={primaryStackExtra}
+          secondary={secondaryStackOrdered}
+        />
+      ) : (
+        <DriverDocumentsPanel
+          driverId={driver.id}
+          driverName={driver.name}
+          documents={documents}
+        />
+      )}
 
-      {supplementalDocs.length > 0 && (
+      {!isJohnCarterReferenceDriver(driver.id) && supplementalDocs.length > 0 && (
         <section
           className="bof-doc-section"
           aria-labelledby="supplemental-driver-docs-heading"
