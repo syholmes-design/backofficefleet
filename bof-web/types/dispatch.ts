@@ -83,6 +83,14 @@ export interface Load {
   seal_photo_url?: string;
   lumper_photo_url?: string;
 
+  /** When true, lumper / detention receipt is part of minimum shipper packet (BOF rule). */
+  lumper_receipt_required?: boolean;
+
+  /** Carrier / insurer claim intake (demo artifact URL). */
+  claim_form_url?: string;
+  damage_photo_url?: string;
+  supporting_attachment_url?: string;
+
   rfid_tag_id?: string;
 }
 

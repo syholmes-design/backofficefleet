@@ -2,7 +2,6 @@
 
 import {
   AlertTriangle,
-  Camera,
   FileStack,
   Link2,
   ShieldAlert,
@@ -18,25 +17,12 @@ import {
 import { formatMoney, proofChipClass, sealChipClass } from "./dispatch-ui";
 import { LoadStatusTimeline } from "./LoadStatusTimeline";
 import { LoadDocumentsLibrary } from "./LoadDocumentsLibrary";
+import { DocumentationReadinessPanel } from "./DocumentationReadinessPanel";
 
 type Props = {
   load: Load;
   onClose?: () => void;
 };
-
-type ProofLink = { label: string; url: string };
-
-function proofMediaLinks(load: Load): ProofLink[] {
-  const out: ProofLink[] = [];
-  if (load.pod_url) out.push({ label: "POD", url: load.pod_url });
-  if (load.pickup_photo_url)
-    out.push({ label: "Pickup photo", url: load.pickup_photo_url });
-  if (load.delivery_photo_url)
-    out.push({ label: "Delivery photo", url: load.delivery_photo_url });
-  if (load.lumper_photo_url)
-    out.push({ label: "Lumper receipt", url: load.lumper_photo_url });
-  return out;
-}
 
 export function LoadDetailContent({ load, onClose }: Props) {
   const drivers = useDispatchDashboardStore((s) => s.drivers);
@@ -51,8 +37,6 @@ export function LoadDetailContent({ load, onClose }: Props) {
   const clearExceptionFlag = useDispatchDashboardStore(
     (s) => s.clearExceptionFlag
   );
-
-  const proofLinks = proofMediaLinks(load);
 
   return (
     <div className="flex h-full flex-col">
@@ -83,6 +67,8 @@ export function LoadDetailContent({ load, onClose }: Props) {
 
       <div className="min-h-0 flex-1 space-y-4 overflow-y-auto px-5 py-4">
         <LoadStatusTimeline status={load.status} />
+
+        <DocumentationReadinessPanel load={load} />
 
         <section className="rounded-lg border border-slate-800 bg-slate-900/40 p-4">
           <h3 className="mb-2 flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-slate-500">
@@ -118,45 +104,13 @@ export function LoadDetailContent({ load, onClose }: Props) {
             Documents library
           </h3>
           <p className="mb-3 text-xs text-slate-500">
-            Demo files are served from{" "}
-            <span className="font-mono text-slate-400">/public/mocks/</span>{" "}
-            (URLs begin with <span className="font-mono">/mocks/</span>).
+            Linked artifacts use deploy-safe paths under{" "}
+            <span className="font-mono text-slate-400">/mocks/</span>,{" "}
+            <span className="font-mono text-slate-400">/actual_docs/</span>, or
+            other <span className="font-mono text-slate-400">/public</span>{" "}
+            folders — grouped for shipper packet, billing, and claim support.
           </p>
           <LoadDocumentsLibrary load={load} />
-        </section>
-
-        <section className="rounded-lg border border-slate-800 bg-slate-900/40 p-4">
-          <h3 className="mb-3 flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-slate-500">
-            <Camera className="h-3.5 w-3.5 text-teal-500" />
-            Proof &amp; media
-          </h3>
-          {proofLinks.length === 0 ? (
-            <p className="text-xs text-slate-500">
-              No POD or photo URLs on this load (proof status:{" "}
-              <span className="font-medium text-slate-300">
-                {load.proof_status}
-              </span>
-              ).
-            </p>
-          ) : (
-            <ul className="space-y-2">
-              {proofLinks.map((p) => (
-                <li key={p.label}>
-                  <a
-                    href={p.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center justify-between rounded border border-slate-800 bg-slate-950/60 px-3 py-2 text-sm text-teal-200 hover:border-teal-700/50 hover:bg-slate-900"
-                  >
-                    <span>{p.label}</span>
-                    <span className="font-mono text-[10px] text-slate-500">
-                      Open
-                    </span>
-                  </a>
-                </li>
-              ))}
-            </ul>
-          )}
         </section>
 
         <section className="rounded-lg border border-slate-800 bg-slate-900/40 p-4">

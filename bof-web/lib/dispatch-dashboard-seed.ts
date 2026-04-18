@@ -20,6 +20,28 @@ export const MOCK_DOC_URLS = {
   seal_photo: "/mocks/mock_seal.jpg",
 } as const;
 
+/**
+ * First three workbook loads (PRO 501–503 / ids L001–L003) use signed PDFs from
+ * `public/actual_docs/` — browser paths `/actual_docs/…` only.
+ */
+const ACTUAL_SIGNED_RATE_AND_BOL: Record<
+  string,
+  { rate_con_url: string; bol_url: string }
+> = {
+  L001: {
+    rate_con_url: "/actual_docs/Rate_Confirmation_L-501_Signed.pdf",
+    bol_url: "/actual_docs/BOL_L-501_Signed.pdf",
+  },
+  L002: {
+    rate_con_url: "/actual_docs/Rate_Confirmation_L-502_Signed.pdf",
+    bol_url: "/actual_docs/BOL_L-502_Signed.pdf",
+  },
+  L003: {
+    rate_con_url: "/actual_docs/Rate_Confirmation_L-503_Signed.pdf",
+    bol_url: "/actual_docs/BOL_L-503_Signed.pdf",
+  },
+};
+
 type DemoDriver = {
   id: string;
   name: string;
@@ -97,6 +119,45 @@ function homeTerminalFromAddress(addr: string): string | undefined {
   return `${city}, ${state}`;
 }
 
+/** Demo-only storyline: ready packet (L003), incomplete (L002), claim / exception (L001). */
+function applyDocumentationDemos(load: Load, l: DemoLoad): Load {
+  if (l.id === "L002") {
+    return {
+      ...load,
+      proof_status: "Incomplete",
+      pod_url: undefined,
+      delivery_photo_url: undefined,
+      cargo_photo_url: undefined,
+      seal_photo_url: undefined,
+      lumper_receipt_required: true,
+      lumper_photo_url: undefined,
+      settlement_hold: true,
+      settlement_hold_reason:
+        "Shipper packet incomplete — POD, seal documentation, and cargo proof outstanding.",
+    };
+  }
+  if (l.id === "L003") {
+    return {
+      ...load,
+      lumper_receipt_required: true,
+      lumper_photo_url: "/mocks/mock_seal.jpg",
+    };
+  }
+  if (l.id === "L001") {
+    return {
+      ...load,
+      lumper_receipt_required: false,
+      claim_form_url: "/mocks/mock_invoice.pdf",
+      damage_photo_url: "/mocks/mock_cargo.jpg",
+      supporting_attachment_url: "/mocks/mock_bol.pdf",
+    };
+  }
+  return {
+    ...load,
+    lumper_receipt_required: load.lumper_receipt_required ?? false,
+  };
+}
+
 function proofMediaUrls(
   proof: ProofStatus,
   idx: number
@@ -142,7 +203,10 @@ export function createSeedLoads(): Load[] {
     delivery.setDate(delivery.getDate() + 2);
 
     const st = mapDemoStatusToLoadStatus(l.status, Boolean(l.driverId));
-    const proof_status = mapProof(l.podStatus);
+    const signedDocs = ACTUAL_SIGNED_RATE_AND_BOL[l.id];
+    const proof_status: ProofStatus = signedDocs
+      ? "Complete"
+      : mapProof(l.podStatus);
     const settlement_hold =
       l.id === "L001" ||
       (l.podStatus === "pending" && l.status === "Delivered") ||
@@ -151,7 +215,7 @@ export function createSeedLoads(): Load[] {
     const tractor_id = l.assetId || null;
     const trailer_id = trailerIdForTractor(tractor_id);
 
-    return {
+    const row: Load = {
       load_id: l.id,
       customer_name: customerFromLane(l.origin),
       origin: l.origin,
@@ -184,8 +248,8 @@ export function createSeedLoads(): Load[] {
       pickup_seal_number: l.pickupSeal || undefined,
       delivery_seal_number: l.deliverySeal || undefined,
 
-      rate_con_url: MOCK_DOC_URLS.rate_con,
-      bol_url: MOCK_DOC_URLS.bol,
+      rate_con_url: signedDocs?.rate_con_url ?? MOCK_DOC_URLS.rate_con,
+      bol_url: signedDocs?.bol_url ?? MOCK_DOC_URLS.bol,
       invoice_url: MOCK_DOC_URLS.invoice,
       equipment_photo_url: MOCK_DOC_URLS.equipment_photo,
       cargo_photo_url: MOCK_DOC_URLS.cargo_photo,
@@ -195,6 +259,8 @@ export function createSeedLoads(): Load[] {
 
       rfid_tag_id: `RFID-${l.id}`,
     };
+
+    return applyDocumentationDemos(row, l);
   });
 }
 
