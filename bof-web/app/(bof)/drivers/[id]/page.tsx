@@ -5,10 +5,14 @@ import {
   assignedTrucksForDriver,
   complianceNotesForDriver,
   getDriverById,
+  getDriverMedicalExpanded,
   getOrderedDocumentsForDriver,
   primaryAssignedTruck,
   readinessFromDocuments,
 } from "@/lib/driver-queries";
+import { DEFAULT_PREVIEW_DRIVER_ID } from "@/lib/bof-defaults";
+import { getSupplementalDocumentsForDriver } from "@/lib/supplemental-driver-docs";
+import { DriverMedicalExpandedPanel } from "@/components/DriverMedicalExpandedPanel";
 import { DriverAvatar } from "@/components/DriverAvatar";
 import { DriverDocumentsPanel } from "@/components/DriverDocumentsPanel";
 import { driverPhotoPath } from "@/lib/driver-photo";
@@ -41,6 +45,9 @@ export default async function DriverDetailPage({ params }: Props) {
   if (!driver) notFound();
 
   const documents = getOrderedDocumentsForDriver(data, id);
+  const medicalDoc = documents.find((d) => d.type === "Medical Card");
+  const medicalExpanded = getDriverMedicalExpanded(data, id);
+  const supplementalDocs = getSupplementalDocumentsForDriver(data, id);
   const readiness = readinessFromDocuments(documents);
   const trucks = assignedTrucksForDriver(data, id);
   const primary = primaryAssignedTruck(data, id);
@@ -163,49 +170,52 @@ export default async function DriverDetailPage({ params }: Props) {
         )}
       </section>
 
+      {medicalDoc && (
+        <DriverMedicalExpandedPanel
+          driverName={driver.name}
+          medicalDoc={medicalDoc}
+          expanded={medicalExpanded}
+        />
+      )}
+
       <DriverDocumentsPanel
         driverId={driver.id}
         driverName={driver.name}
         documents={documents}
       />
 
-      {driver.id === "DRV-001" && (
+      {supplementalDocs.length > 0 && (
         <section
           className="bof-doc-section"
-          aria-labelledby="drv001-static-assets-heading"
+          aria-labelledby="supplemental-driver-docs-heading"
         >
-          <h2 id="drv001-static-assets-heading" className="bof-h2">
-            John Carter — static attachments
+          <h2 id="supplemental-driver-docs-heading" className="bof-h2">
+            {driver.id === DEFAULT_PREVIEW_DRIVER_ID
+              ? `${driver.name} — additional attachments`
+              : "Additional attachments"}
           </h2>
           <p className="bof-doc-section-lead">
-            Signed MCSA-5876 (PDF) and profile dashboard (HTML). These also appear as
-            extra rows in the{" "}
+            Extra credential or packet files beyond the seven core slots. Also listed in
+            the{" "}
             <Link href="/documents" className="bof-link-secondary">
               document vault
             </Link>{" "}
             for filtering and preview.
           </p>
           <ul className="bof-compliance-mini">
-            <li>
-              <a
-                href="/documents/drivers/DRV-001/john-carter-mcsa-5876-signed.pdf"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="bof-link-secondary"
-              >
-                Open signed MCSA-5876 (PDF)
-              </a>
-            </li>
-            <li>
-              <a
-                href="/documents/drivers/DRV-001/john-carter-profile-dashboard.html"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="bof-link-secondary"
-              >
-                Open profile dashboard (HTML)
-              </a>
-            </li>
+            {supplementalDocs.map((doc) => (
+              <li key={`${doc.driverId}-${doc.type}`}>
+                <a
+                  href={doc.fileUrl ?? doc.previewUrl ?? "#"}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="bof-link-secondary"
+                >
+                  {doc.type}
+                  {doc.status ? ` (${doc.status})` : ""}
+                </a>
+              </li>
+            ))}
           </ul>
         </section>
       )}

@@ -1,4 +1,5 @@
 import type { BofData } from "./load-bof-data";
+import type { DriverMedicalExpanded } from "./driver-medical-expanded";
 
 export const DRIVER_DOCUMENT_TYPES = [
   "CDL",
@@ -17,6 +18,8 @@ export type DocumentRow = {
   driverId: string;
   type: string;
   status: string;
+  /** When present on generated rows (e.g. medical card HTML metadata) */
+  issueDate?: string;
   expirationDate?: string;
   previewUrl?: string;
   fileUrl?: string;
@@ -87,4 +90,17 @@ export function readinessFromDocuments(docs: DocumentRow[]) {
 
 export function complianceNotesForDriver(data: BofData, driverId: string) {
   return data.complianceIncidents.filter((c) => c.driverId === driverId);
+}
+
+/** Expanded medical / MCSA fields from `driver_templates_expanded.xlsx` (merged into demo-data.json). */
+export function getDriverMedicalExpanded(
+  data: BofData,
+  driverId: string
+): DriverMedicalExpanded | null {
+  const raw = (
+    data as BofData & {
+      driverMedicalExpanded?: Record<string, DriverMedicalExpanded>;
+    }
+  ).driverMedicalExpanded?.[driverId];
+  return raw ?? null;
 }

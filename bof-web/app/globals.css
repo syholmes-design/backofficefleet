@@ -4829,3 +4829,100 @@ body {
   font-weight: 600;
   color: #99f6e4;
 }
+
+/* Driver medical expanded (MCSA + 5875 + compliance) */
+.bof-medical-expanded {
+  margin-top: 1.25rem;
+}
+
+.bof-medical-card {
+  border: 1px solid var(--bof-border);
+  border-radius: var(--bof-radius);
+  background: var(--bof-surface);
+  padding: 1rem 1.1rem;
+}
+
+.bof-medical-primary {
+  border-left: 4px solid var(--bof-teal);
+}
+
+.bof-medical-primary-top {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 0.75rem;
+}
+
+.bof-medical-label {
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: var(--bof-text);
+  letter-spacing: 0.02em;
+}
+
+.bof-medical-dl {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 0.55rem 1rem;
+  margin: 0;
+}
+
+.bof-medical-dl-primary {
+  margin-bottom: 0.15rem;
+}
+
+.bof-medical-dl dt {
+  margin: 0;
+  font-size: 0.7rem;
+  color: var(--bof-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.bof-medical-dl dd {
+  margin: 0.2rem 0 0;
+  font-weight: 600;
+  font-size: 0.84rem;
+  color: var(--bof-text);
+}
+
+.bof-medical-support-block {
+  margin-bottom: 0;
+}
+
+.bof-btn-medical-detail {
+  margin-top: 0.85rem;
+  padding: 0.45rem 0.9rem;
+  border-radius: 6px;
+  border: 1px solid var(--bof-teal-dim, rgba(45, 212, 191, 0.35));
+  background: linear-gradient(135deg, #0d9488 0%, #14b8a6 100%);
+  color: #fff;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.bof-btn-medical-detail:hover {
+  filter: brightness(1.06);
+}
+
+.bof-medical-support-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+
+.bof-medical-support-block h3 {
+  margin: 0 0 0.5rem;
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: var(--bof-text);
+}
+
+.bof-medical-support-block .bof-medical-dl {
+  font-size: 0.8rem;
+}

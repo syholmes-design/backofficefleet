@@ -8,6 +8,7 @@
     "start": "next start",
     "lint": "next lint",
     "build:data": "node scripts/build-demo-data.mjs",
+    "seed:driver-templates-expanded": "node scripts/seed-driver-templates-expanded-xlsx.mjs",
     "merge:settlements": "node scripts/merge-payroll-settlements.mjs",
     "patch:dispatch": "node scripts/patch-dispatch-clean-columns.mjs",
     "build:loads": "node scripts/build-dispatch-loads.mjs",

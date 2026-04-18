@@ -11,6 +11,12 @@ import XLSX from "xlsx";
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(__dirname, "..");
 const XLSX_PATH = path.join(ROOT, "data", "main-source.xlsx");
+const EXPANDED_TEMPLATES_XLSX = path.join(
+  ROOT,
+  "public",
+  "data",
+  "driver_templates_expanded.xlsx"
+);
 const OUT_PATH = path.join(ROOT, "lib", "demo-data.json");
 
 const DOC_TYPES = [
@@ -195,7 +201,12 @@ function resolveDriverIdForDocRow(rowObj, nameToId, validIds) {
   const keys = Object.keys(rowObj);
   for (const k of keys) {
     const nk = normHeader(k);
-    if (nk === "driverid" || nk === "driver id" || nk === "drv id") {
+    if (
+      nk === "driverid" ||
+      nk === "driver id" ||
+      nk === "driver_id" ||
+      nk === "drv id"
+    ) {
       const v = String(rowObj[k] ?? "").trim();
       const fixed = fixDriverIdCase(v, validIds);
       if (fixed) return fixed;
@@ -460,6 +471,100 @@ function readCompliance(workbook, validIds) {
   return incidents;
 }
 
+function normKeyAlias(s) {
+  return String(s ?? "")
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "");
+}
+
+function pickExpandedCell(rowObj, ...aliases) {
+  const keys = Object.keys(rowObj);
+  for (const al of aliases) {
+    const want = normKeyAlias(al);
+    for (const k of keys) {
+      if (normKeyAlias(k) === want) return cellToString(rowObj[k]);
+    }
+  }
+  for (const al of aliases) {
+    const want = normKeyAlias(al);
+    for (const k of keys) {
+      const nk = normKeyAlias(k);
+      if (nk.includes(want) || want.includes(nk)) {
+        if (nk.length > 2) return cellToString(rowObj[k]);
+      }
+    }
+  }
+  return "";
+}
+
+function mapExpandedRow(rowObj) {
+  return {
+    vision5875: pickExpandedCell(rowObj, "5875_Vision_Result", "5875 Vision Result"),
+    hearing5875: pickExpandedCell(rowObj, "5875_Hearing_Result"),
+    bloodPressure5875: pickExpandedCell(rowObj, "5875_Blood_Pressure"),
+    appSubmissionDate: pickExpandedCell(rowObj, "App_Submission_Date"),
+    appStatus: pickExpandedCell(rowObj, "App_Status"),
+    safetyAckDate: pickExpandedCell(rowObj, "Safety_Ack_Date"),
+    safetyAckStatus: pickExpandedCell(rowObj, "Safety_Ack_Status"),
+    incidentReportCount: pickExpandedCell(rowObj, "Incident_Report_Count"),
+    lastIncidentDate: pickExpandedCell(rowObj, "Last_Incident_Date"),
+    qualFileStatus: pickExpandedCell(rowObj, "Qual_File_Status"),
+    bofMedicalSummaryStatus: pickExpandedCell(
+      rowObj,
+      "BOF_Medical_Summary_Status"
+    ),
+    medicalIssueDate: pickExpandedCell(rowObj, "Medical_Issue_Date"),
+    medicalExpirationDate: pickExpandedCell(rowObj, "Medical_Expiration_Date"),
+    medicalExaminerName: pickExpandedCell(
+      rowObj,
+      "Examiner_Name",
+      "Medical Examiner Name"
+    ),
+    mcsaExaminerLicense: pickExpandedCell(rowObj, "MCSA_Examiner_License"),
+    mcsaRegistryNumber: pickExpandedCell(rowObj, "MCSA_Registry_Number"),
+    mcsaExaminerTelephone: pickExpandedCell(rowObj, "MCSA_Examiner_Telephone"),
+    driverLicenseState: pickExpandedCell(rowObj, "Driver_License_State"),
+    driverLicenseNumber: pickExpandedCell(rowObj, "Driver_License_Number"),
+    driverSignatureDate: pickExpandedCell(rowObj, "Driver_Signature_Date"),
+  };
+}
+
+function readDriverMedicalExpanded(xlsxPath, drivers) {
+  const wb = XLSX.readFile(xlsxPath, { cellDates: true, type: "file" });
+  const sheetName =
+    wb.SheetNames.find((n) => /expanded/i.test(n)) ?? wb.SheetNames[0];
+  const sheet = wb.Sheets[sheetName];
+  const jsonRows = XLSX.utils.sheet_to_json(sheet, {
+    raw: true,
+    defval: "",
+  });
+  const validIds = new Set(drivers.map((d) => d.id));
+  const nameToId = buildNameToId(drivers);
+  const out = {};
+  for (const rowObj of jsonRows) {
+    const driverId = resolveDriverIdForDocRow(rowObj, nameToId, validIds);
+    if (!driverId) continue;
+    out[driverId] = mapExpandedRow(rowObj);
+  }
+  return out;
+}
+
+function mergeSupplementalDocumentsFromPrev(prevDocs, baseDocs, drivers) {
+  if (!Array.isArray(prevDocs) || prevDocs.length === 0) return baseDocs;
+  const baseKeys = new Set(
+    drivers.flatMap((d) => DOC_TYPES.map((t) => `${d.id}::${t}`))
+  );
+  const extras = prevDocs.filter(
+    (doc) =>
+      doc &&
+      doc.driverId &&
+      doc.type &&
+      !baseKeys.has(`${doc.driverId}::${doc.type}`)
+  );
+  return [...baseDocs, ...extras];
+}
+
 function main() {
   if (!fs.existsSync(XLSX_PATH)) {
     console.error(`Missing workbook: ${XLSX_PATH}`);
@@ -485,31 +590,72 @@ function main() {
     ? readCompliance(workbook, validIds)
     : [];
 
-  if (documents.length !== drivers.length * DOC_TYPES.length) {
+  const expectedBase = drivers.length * DOC_TYPES.length;
+  if (documents.length < expectedBase) {
     throw new Error(
-      `Document count mismatch: got ${documents.length}, expected ${drivers.length * DOC_TYPES.length}`
+      `Document count mismatch: got ${documents.length}, expected at least ${expectedBase}`
     );
   }
 
-  let existingLoads = [];
+  let prevFull = null;
   if (fs.existsSync(OUT_PATH)) {
     try {
-      const prev = JSON.parse(fs.readFileSync(OUT_PATH, "utf8"));
-      if (Array.isArray(prev.loads)) existingLoads = prev.loads;
+      prevFull = JSON.parse(fs.readFileSync(OUT_PATH, "utf8"));
     } catch {
-      /* ignore */
+      prevFull = null;
     }
   }
 
-  const out = { drivers, documents, complianceIncidents, loads: existingLoads };
+  const existingLoads = Array.isArray(prevFull?.loads) ? prevFull.loads : [];
+
+  const mergedDocuments = mergeSupplementalDocumentsFromPrev(
+    prevFull?.documents,
+    documents,
+    drivers
+  );
+
+  let driverMedicalExpanded = {};
+  if (fs.existsSync(EXPANDED_TEMPLATES_XLSX)) {
+    driverMedicalExpanded = readDriverMedicalExpanded(
+      EXPANDED_TEMPLATES_XLSX,
+      drivers
+    );
+  }
+  if (prevFull?.driverMedicalExpanded && typeof prevFull.driverMedicalExpanded === "object") {
+    driverMedicalExpanded = {
+      ...prevFull.driverMedicalExpanded,
+      ...driverMedicalExpanded,
+    };
+  }
+
+  const out = {
+    drivers,
+    documents: mergedDocuments,
+    complianceIncidents,
+    loads: existingLoads,
+  };
+  if (Object.keys(driverMedicalExpanded).length > 0) {
+    out.driverMedicalExpanded = driverMedicalExpanded;
+  }
+
+  if (Array.isArray(prevFull?.settlements)) out.settlements = prevFull.settlements;
+  if (prevFull?.loadProofBundles && typeof prevFull.loadProofBundles === "object") {
+    out.loadProofBundles = prevFull.loadProofBundles;
+  }
+  if (prevFull?.moneyAtRiskSummary && typeof prevFull.moneyAtRiskSummary === "object") {
+    out.moneyAtRiskSummary = prevFull.moneyAtRiskSummary;
+  }
+  if (Array.isArray(prevFull?.moneyAtRisk)) out.moneyAtRisk = prevFull.moneyAtRisk;
+
   fs.mkdirSync(path.dirname(OUT_PATH), { recursive: true });
   fs.writeFileSync(OUT_PATH, JSON.stringify(out, null, 2), "utf8");
 
   const validation = {
     totalDrivers: drivers.length,
-    totalDocuments: documents.length,
-    expectedDocuments: drivers.length * DOC_TYPES.length,
+    totalDocuments: mergedDocuments.length,
+    expectedBaseDocuments: expectedBase,
     totalComplianceIncidents: complianceIncidents.length,
+    driverMedicalExpandedDrivers: Object.keys(driverMedicalExpanded).length,
   };
   console.log(JSON.stringify({ validation }, null, 2));
 }
