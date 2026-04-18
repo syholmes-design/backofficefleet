@@ -170,8 +170,9 @@ body {
   width: 100%;
 }
 
-/* Dispatch module: full-width data surfaces inside standard shell */
-.bof-main:has(.bof-dispatch-page-wrap) {
+/* Dispatch & Safety modules: full-width data surfaces inside standard shell */
+.bof-main:has(.bof-dispatch-page-wrap),
+.bof-main:has(.bof-safety-page-wrap) {
   max-width: none;
   padding: 0;
 }
