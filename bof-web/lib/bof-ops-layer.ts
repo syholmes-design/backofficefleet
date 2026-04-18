@@ -11,6 +11,33 @@ import {
   buildRfidMaintenanceRows,
 } from "./rfid-intelligence";
 
+const claimQueueRowsByData = new WeakMap<
+  BofData,
+  ReturnType<typeof buildClaimQueueRows>
+>();
+const fuelExceptionQueueByData = new WeakMap<
+  BofData,
+  ReturnType<typeof buildRfidFuelExceptionQueue>
+>();
+
+function memoizedClaimQueueRows(data: BofData) {
+  let rows = claimQueueRowsByData.get(data);
+  if (!rows) {
+    rows = buildClaimQueueRows(data, 100);
+    claimQueueRowsByData.set(data, rows);
+  }
+  return rows;
+}
+
+function memoizedFuelExceptionQueue(data: BofData) {
+  let rows = fuelExceptionQueueByData.get(data);
+  if (!rows) {
+    rows = buildRfidFuelExceptionQueue(data, 50);
+    fuelExceptionQueueByData.set(data, rows);
+  }
+  return rows;
+}
+
 export type FleetProofRiskSummary = {
   loadCount: number;
   loadsWithPaymentBlockers: number;
@@ -134,7 +161,7 @@ export function settlementOpsNote(
 ): string {
   const parts: string[] = [];
   const claimLoadIds = new Set(
-    buildClaimQueueRows(data, 100).map((r) => r.loadId)
+    memoizedClaimQueueRows(data).map((r) => r.loadId)
   );
   const claimLoad = data.loads.find(
     (l) => l.driverId === driverId && claimLoadIds.has(l.id)
@@ -142,7 +169,7 @@ export function settlementOpsNote(
   if (claimLoad) {
     parts.push(`Claim workspace: load ${claimLoad.id}`);
   }
-  const fuel = buildRfidFuelExceptionQueue(data, 50).find(
+  const fuel = memoizedFuelExceptionQueue(data).find(
     (f) => f.driverId === driverId
   );
   if (fuel) {

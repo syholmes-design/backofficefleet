@@ -6,9 +6,11 @@ import XLSX from "xlsx";
 import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
+import { resolveMainSourceXlsxPath } from "./lib/main-source-path.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const xlsxPath = path.join(__dirname, "..", "data", "main-source.xlsx");
+const ROOT = path.resolve(__dirname, "..");
+const xlsxPath = resolveMainSourceXlsxPath(ROOT);
 
 const ROUTES = [
   ["Cleveland, OH", "Chicago, IL", "pending"],

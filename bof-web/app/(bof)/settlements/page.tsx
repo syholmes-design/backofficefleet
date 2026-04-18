@@ -7,7 +7,7 @@ import { DriverLink } from "@/components/DriverLink";
 import { proofItemsForDriverLoads } from "@/lib/load-proof";
 import { settlementOpsNote } from "@/lib/bof-ops-layer";
 import { driverPhotoPath } from "@/lib/driver-photo";
-import { GENERATED_PUBLIC_PREFIX } from "@/lib/document-engine";
+import { GENERATED_PUBLIC_PREFIX } from "@/lib/generated-public-prefix";
 
 export const metadata = {
   title: "Settlements | BOF",
@@ -32,10 +32,12 @@ export default function SettlementsPage() {
       <h1 className="bof-title">Settlements</h1>
       <p className="bof-lead">
         Payroll / settlement rows come from the{" "}
-        <code className="bof-code">Payroll_Clean</code> sheet in{" "}
-        <code className="bof-code">data/main-source.xlsx</code>, merged into{" "}
-        <code className="bof-code">lib/demo-data.json</code> when you run{" "}
-        <code className="bof-code">npm run build:data</code> (or{" "}
+        <code className="bof-code">Payroll_Clean</code> sheet in the main Excel
+        workbook (default{" "}
+        <code className="bof-code">public/data/main-source_enhanced_bof_aligned.xlsx</code>
+        , or override with env <code className="bof-code">BOF_MAIN_SOURCE_XLSX</code>
+        ), merged into <code className="bof-code">lib/demo-data.json</code> when you
+        run <code className="bof-code">npm run build:data</code> (or{" "}
         <code className="bof-code">npm run merge:settlements</code> for settlements
         only). This page reads that JSON. Scroll horizontally for all columns.
       </p>

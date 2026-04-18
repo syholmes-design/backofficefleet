@@ -1,6 +1,6 @@
 /**
  * Build Step 1: normalize BOF data from Excel (single source of truth).
- * Reads: data/main-source.xlsx — sheets Drivers_Clean, Documents_Clean, Compliance_Events (optional).
+ * Reads: main workbook (see scripts/lib/main-source-path.mjs) — Drivers_Clean, Documents_Clean, Compliance_Events (optional).
  * Writes: lib/demo-data.json
  */
 import fs from "fs";
@@ -12,11 +12,12 @@ import {
   patchDriversForJohnCarter,
   resolveDriverIdFromCdlColumn,
 } from "./lib/john-carter-stack.mjs";
+import { resolveMainSourceXlsxPath } from "./lib/main-source-path.mjs";
 import { buildPayrollSettlementRowsFromWorkbook } from "./lib/payroll-settlements-from-sheet.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(__dirname, "..");
-const XLSX_PATH = path.join(ROOT, "data", "main-source.xlsx");
+const XLSX_PATH = resolveMainSourceXlsxPath(ROOT);
 const EXPANDED_TEMPLATES_XLSX = path.join(
   ROOT,
   "public",

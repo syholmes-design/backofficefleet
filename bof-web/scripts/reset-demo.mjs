@@ -3,7 +3,7 @@
  *
  * Order:
  * 1. Snapshot JSON keys not produced by build-demo-data (load proof, settlements, MAR).
- * 2. Patch workbook dispatch columns → rebuild demo-data from main-source.xlsx → merge snapshot.
+ * 2. Patch workbook dispatch columns → rebuild demo-data from main workbook → merge snapshot.
  * 3. Rebuild loads[] from Dispatch_Clean.
  * 4. Clear public/generated/drivers and public/generated/loads, recreate empty dirs.
  * 5. Regenerate driver credential HTML + fileUrl/previewUrl in demo-data.json.
@@ -182,7 +182,7 @@ function main() {
   );
 
   runNodeScript("scripts/patch-dispatch-clean-columns.mjs", "patch-dispatch (workbook)");
-  runNodeScript("scripts/build-demo-data.mjs", "build:data (main-source.xlsx → demo-data.json)");
+  runNodeScript("scripts/build-demo-data.mjs", "build:data (main workbook → demo-data.json)");
 
   let demo = readDemo();
   if (!demo) {

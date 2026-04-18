@@ -4,6 +4,7 @@
  * Served bytes are SVG via /api/bof-generated; public URLs use /generated/... (see next.config rewrites).
  */
 import type { BofData } from "./load-bof-data";
+import { GENERATED_PUBLIC_PREFIX } from "./generated-public-prefix";
 import {
   DRIVER_GENERATED_FILES,
   LOAD_GENERATED_FILES,
@@ -20,8 +21,7 @@ import {
   buildRfidMaintenanceRows,
 } from "./rfid-intelligence";
 
-/** Public canonical path; rewrites to /api/bof-generated/:path* */
-export const GENERATED_PUBLIC_PREFIX = "/generated";
+export { GENERATED_PUBLIC_PREFIX };
 
 export type EngineDocumentLinks = {
   driverProfile?: string;

@@ -3,7 +3,7 @@
  * Writes 7 files per driver under public/generated/drivers/{driverId}/ and sets
  * fileUrl / previewUrl on existing documents[] rows (does not recreate rows).
  *
- * Data: lib/demo-data.json (from build:data / main-source.xlsx pipeline).
+ * Data: lib/demo-data.json (from build:data / main workbook pipeline).
  *
  * Run: node scripts/generate-driver-docs.mjs
  * npm:  npm run generate:driver-docs

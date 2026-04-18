@@ -6,7 +6,7 @@ import { DriverLink } from "@/components/DriverLink";
 import { driverPhotoPath } from "@/lib/driver-photo";
 import { buildProofRiskRows } from "@/lib/load-proof";
 import { buildMoneyStoryRows } from "@/lib/bof-ops-layer";
-import { GENERATED_PUBLIC_PREFIX } from "@/lib/document-engine";
+import { GENERATED_PUBLIC_PREFIX } from "@/lib/generated-public-prefix";
 
 export const metadata = {
   title: "Money at Risk | BOF",

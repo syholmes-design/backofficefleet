@@ -1,5 +1,5 @@
 /**
- * Source of truth: `data/main-source.xlsx` → sheet `Payroll_Clean`.
+ * Source of truth: main workbook (see `main-source-path.mjs`) → sheet `Payroll_Clean`.
  *
  * Fallback logic (when Excel formula cells are not evaluated by xlsx and come through as null):
  * - Gross pay: use `Gross Pay` when > 0; otherwise `Base Earnings` + `Backhaul Pay`.

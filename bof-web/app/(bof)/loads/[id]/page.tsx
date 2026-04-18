@@ -11,8 +11,8 @@ import { LoadRfidSection } from "@/components/LoadRfidSection";
 import { LoadRouteMapClient } from "@/components/LoadRouteMapClient";
 import { formatUsdFull } from "@/lib/format-money";
 import { getGeneratedCrossLinksForLoad } from "@/lib/generated-documents";
+import { GENERATED_PUBLIC_PREFIX } from "@/lib/generated-public-prefix";
 import {
-  GENERATED_PUBLIC_PREFIX,
   listAutomationProofLinksForLoad,
   listEngineDocumentsForLoad,
 } from "@/lib/document-engine";

@@ -11,8 +11,8 @@ import {
   listEngineDocumentsForIncident,
   listEngineDocumentsForAllLoads,
   listEngineDocumentsForSpotlightLoads,
-  GENERATED_PUBLIC_PREFIX,
 } from "./document-engine";
+import { GENERATED_PUBLIC_PREFIX } from "./generated-public-prefix";
 
 export type GeneratedDocIds = {
   driverId?: string;

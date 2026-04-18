@@ -1,5 +1,5 @@
 /**
- * Merges Payroll_Clean from data/main-source.xlsx into lib/demo-data.json settlements[].
+ * Merges Payroll_Clean from the main workbook (see scripts/lib/main-source-path.mjs) into lib/demo-data.json settlements[].
  * Same row builder as build-demo-data (see scripts/lib/payroll-settlements-from-sheet.mjs).
  *
  * Run: npm run merge:settlements
@@ -8,11 +8,12 @@ import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
 import XLSX from "xlsx";
+import { resolveMainSourceXlsxPath } from "./lib/main-source-path.mjs";
 import { buildPayrollSettlementRowsFromWorkbook } from "./lib/payroll-settlements-from-sheet.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(__dirname, "..");
-const XLSX_PATH = path.join(ROOT, "data", "main-source.xlsx");
+const XLSX_PATH = resolveMainSourceXlsxPath(ROOT);
 const DEMO_PATH = path.join(ROOT, "lib", "demo-data.json");
 
 function main() {

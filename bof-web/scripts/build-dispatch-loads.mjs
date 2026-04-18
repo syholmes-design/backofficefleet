@@ -5,10 +5,11 @@ import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
 import XLSX from "xlsx";
+import { resolveMainSourceXlsxPath } from "./lib/main-source-path.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(__dirname, "..");
-const XLSX_PATH = path.join(ROOT, "data", "main-source.xlsx");
+const XLSX_PATH = resolveMainSourceXlsxPath(ROOT);
 const DEMO_PATH = path.join(ROOT, "lib", "demo-data.json");
 
 const STATUS_MAP = new Map([
@@ -108,10 +109,18 @@ function mapLoadStatus(raw) {
 }
 
 function normalizePodStatus(raw) {
-  const s = String(raw ?? "").trim().toLowerCase();
-  if (s === "verified" || s === "pending" || s === "missing") return s;
+  const s = String(raw ?? "")
+    .trim()
+    .toLowerCase()
+    .replace(/\s+/g, "_");
+  if (!s) return "pending";
+  if (s === "verified" || s === "received" || s === "complete" || s === "completed") {
+    return "verified";
+  }
+  if (s === "pending" || s === "in_review" || s === "review") return "pending";
+  if (s === "missing" || s === "none") return "missing";
   throw new Error(
-    `Invalid POD Status "${raw}" (expected verified, pending, or missing)`
+    `Invalid POD Status "${raw}" (expected verified, pending, missing, or aliases received/complete)`
   );
 }
 

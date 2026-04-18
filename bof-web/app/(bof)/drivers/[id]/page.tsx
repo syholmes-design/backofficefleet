@@ -23,10 +23,8 @@ import { DriverJohnCarterDocumentStacks } from "@/components/DriverJohnCarterDoc
 import { DriverAvatar } from "@/components/DriverAvatar";
 import { DriverDocumentsPanel } from "@/components/DriverDocumentsPanel";
 import { driverPhotoPath } from "@/lib/driver-photo";
-import {
-  GENERATED_PUBLIC_PREFIX,
-  listEngineDocumentsForDriver,
-} from "@/lib/document-engine";
+import { GENERATED_PUBLIC_PREFIX } from "@/lib/generated-public-prefix";
+import { listEngineDocumentsForDriver } from "@/lib/document-engine";
 import { DocumentEnginePanel } from "@/components/DocumentEnginePanel";
 
 type Props = { params: Promise<{ id: string }> };
