@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useState } from "react";
+import { BOF_SETTLEMENTS_PROFILE_DASHBOARD_HTML } from "@/lib/bof-demo-profile-dashboards";
 import { useSettlementsPayrollStore } from "@/lib/stores/settlements-payroll-store";
 import type { SettlementsPayrollNavId } from "@/types/settlements-payroll";
 import { SettlementsDashboardScreen } from "./SettlementsDashboardScreen";
@@ -41,12 +42,22 @@ export function SettlementsPayrollShell() {
             );
           })}
         </nav>
-        <Link
-          href="/settlements/workbook"
-          className="text-xs font-medium text-teal-400 hover:text-teal-300"
-        >
-          Workbook grid (legacy) →
-        </Link>
+        <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
+          <a
+            href={BOF_SETTLEMENTS_PROFILE_DASHBOARD_HTML}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-xs font-medium text-teal-400 hover:text-teal-300"
+          >
+            Profile dashboard (HTML) ↗
+          </a>
+          <Link
+            href="/settlements/workbook"
+            className="text-xs font-medium text-teal-400 hover:text-teal-300"
+          >
+            Workbook grid (legacy) →
+          </Link>
+        </div>
       </div>
       <div className="min-h-0 flex-1">
         {nav === "dashboard" && <SettlementsDashboardScreen />}

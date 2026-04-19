@@ -3,10 +3,12 @@
 import {
   AlertTriangle,
   CalendarClock,
+  ExternalLink,
   LayoutDashboard,
   Shield,
   UserCircle,
 } from "lucide-react";
+import { BOF_SAFETY_PROFILE_DASHBOARD_HTML } from "@/lib/bof-demo-profile-dashboards";
 import type { SafetyNavId } from "@/types/safety";
 
 const items: { id: SafetyNavId; label: string; icon: typeof LayoutDashboard }[] =
@@ -25,7 +27,7 @@ type Props = {
 export function SafetyNav({ active, onChange }: Props) {
   return (
     <nav
-      className="flex w-52 shrink-0 flex-col border-r border-slate-800 bg-slate-950/80 py-4"
+      className="flex h-full min-h-0 w-52 shrink-0 flex-col border-r border-slate-800 bg-slate-950/80 py-4"
       aria-label="Safety module"
     >
       <div className="mb-3 flex items-center gap-2 px-4 pb-2">
@@ -34,7 +36,7 @@ export function SafetyNav({ active, onChange }: Props) {
           Safety
         </span>
       </div>
-      <ul className="space-y-0.5 px-2">
+      <ul className="min-h-0 flex-1 space-y-0.5 overflow-y-auto px-2">
         {items.map((item) => {
           const Icon = item.icon;
           const sel = active === item.id;
@@ -57,6 +59,17 @@ export function SafetyNav({ active, onChange }: Props) {
           );
         })}
       </ul>
+      <div className="mt-auto border-t border-slate-800 px-3 pt-3">
+        <a
+          href={BOF_SAFETY_PROFILE_DASHBOARD_HTML}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="flex items-center gap-2 rounded-md px-2 py-2 text-xs font-medium text-teal-400 hover:bg-slate-900 hover:text-teal-300"
+        >
+          <ExternalLink className="h-3.5 w-3.5 shrink-0 opacity-80" aria-hidden />
+          Supporting profile dashboard
+        </a>
+      </div>
     </nav>
   );
 }
