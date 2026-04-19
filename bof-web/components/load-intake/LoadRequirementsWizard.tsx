@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import { useCallback, useMemo, useState } from "react";
 import {
   countWarnings,
@@ -8,6 +7,7 @@ import {
   runAutoChecks,
 } from "@/lib/load-requirements-intake-checks";
 import type { IntakeWizardState, LoadPacket } from "@/lib/load-requirements-intake-types";
+import { LoadIntakeStep4PacketReview } from "@/components/load-intake/LoadIntakeStep4PacketReview";
 
 const SHIP_ID = "SHIP-INTAKE-DRAFT";
 const FAC_ID = "FAC-INTAKE-DRAFT";
@@ -145,7 +145,6 @@ export function LoadRequirementsWizard() {
   );
 
   const blocking = hasBlockingChecks(checks);
-  const warnings = countWarnings(checks);
 
   const goStep = (n: number) => setStep(n);
 
@@ -155,7 +154,7 @@ export function LoadRequirementsWizard() {
       load_packet_id: `LP-${Date.now()}`,
       load_requirement_id: state.loadRequirement.load_requirement_id,
       packet_status: "Ready for dispatch board",
-      missing_items_count: warnings,
+      missing_items_count: countWarnings(checks),
     };
     setState((s) => ({ ...s, loadPacket: packet }));
   };
@@ -755,167 +754,13 @@ export function LoadRequirementsWizard() {
       )}
 
       {step === 4 && (
-        <>
-          <section className="bof-load-intake-card" aria-labelledby="intake-s4a">
-            <h2 id="intake-s4a">Step 4 — BOF auto-checks</h2>
-            <p className="bof-muted">
-              Rules engine preview against captured shipper, facility, load, and compliance rows.
-              Resolve <strong>blocking</strong> items before generating a dispatch packet.
-            </p>
-
-            {blocking && (
-              <div className="bof-load-intake-alert bof-load-intake-alert--block" role="alert">
-                <strong>Blocking</strong> — {checks.filter((c) => c.status === "Blocking").length}{" "}
-                check(s) must pass before packet generation. Use{" "}
-                <button type="button" className="bof-load-intake-jump" onClick={() => goStep(1)}>
-                  Step 1
-                </button>
-                ,{" "}
-                <button type="button" className="bof-load-intake-jump" onClick={() => goStep(2)}>
-                  Step 2
-                </button>
-                , or{" "}
-                <button type="button" className="bof-load-intake-jump" onClick={() => goStep(3)}>
-                  Step 3
-                </button>{" "}
-                to correct source fields.
-              </div>
-            )}
-
-            {warnings > 0 && (
-              <div className="bof-load-intake-alert bof-load-intake-alert--warn">
-                <strong>Warnings</strong> — {warnings} item(s) will not block the packet but should be
-                reviewed with operations before tender.
-              </div>
-            )}
-
-            <div style={{ maxHeight: "22rem", overflowY: "auto" }}>
-              {checks.map((c) => (
-                <div key={c.check_id} className="bof-load-intake-check">
-                  <span
-                    className={`bof-load-intake-badge ${
-                      c.status === "Passed"
-                        ? "bof-load-intake-badge--pass"
-                        : c.status === "Warning"
-                          ? "bof-load-intake-badge--warn"
-                          : "bof-load-intake-badge--block"
-                    }`}
-                  >
-                    {c.status}
-                  </span>
-                  <div>
-                    <div style={{ fontWeight: 700, marginBottom: "0.15rem" }}>{c.check_type}</div>
-                    <div className="bof-muted">{c.message}</div>
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            <div className="bof-load-intake-toolbar">
-              <button type="button" className="bof-load-intake-btn" onClick={() => goStep(3)}>
-                Back to compliance
-              </button>
-            </div>
-          </section>
-
-          <section className="bof-load-intake-card" aria-labelledby="intake-s4b">
-            <h2 id="intake-s4b">Load packet readiness</h2>
-            <p className="bof-muted">
-              Structured handoff summary. Overall state drives dispatch workflow eligibility.
-            </p>
-
-            <div
-              className={`bof-load-intake-status-pill ${
-                blocking ? "bof-load-intake-status-pill--bad" : "bof-load-intake-status-pill--ok"
-              }`}
-              role="status"
-            >
-              {blocking ? (
-                <>Incomplete — missing required items</>
-              ) : (
-                <>Ready to Generate Load Packet</>
-              )}
-            </div>
-
-            <dl className="bof-load-intake-summary-dl">
-              <dt>Shipper</dt>
-              <dd>{state.shipper.shipper_name || "—"}</dd>
-              <dt>Facility</dt>
-              <dd>
-                {state.facility.facility_name || "—"} — {state.facility.city}, {state.facility.state}
-              </dd>
-              <dt>Commodity / weight</dt>
-              <dd>
-                {state.loadRequirement.commodity || "—"} · {state.loadRequirement.weight || "—"} lb
-              </dd>
-              <dt>Equipment</dt>
-              <dd>{state.loadRequirement.equipment_type || "—"}</dd>
-              <dt>Temperature</dt>
-              <dd>
-                {state.loadRequirement.temperature_required
-                  ? `${state.loadRequirement.temperature_min ?? "—"}–${state.loadRequirement.temperature_max ?? "—"} °F`
-                  : "Not required"}
-              </dd>
-              <dt>Seals</dt>
-              <dd>
-                Required: {state.compliance.seal_required ? "Yes" : "No"} · Seal # before dispatch:{" "}
-                {state.compliance.seal_number_required ? "Yes" : "No"}
-              </dd>
-              <dt>Photos</dt>
-              <dd>
-                Pickup {state.compliance.pickup_photos_required ? "yes" : "no"} · Delivery{" "}
-                {state.compliance.delivery_photos_required ? "yes" : "no"} ·{" "}
-                <strong style={{ color: "#5eead4" }}>
-                  Cargo {state.compliance.cargo_photos_required ? "yes" : "no"}
-                </strong>
-              </dd>
-              <dt>BOL / POD</dt>
-              <dd>
-                BOL on file: {state.compliance.bol_instructions.trim() ? "Yes" : "No"} · POD on file:{" "}
-                {state.compliance.pod_requirements.trim() ? "Yes" : "No"}
-              </dd>
-              <dt>Appointment</dt>
-              <dd>
-                {state.compliance.appointment_window_start || "—"} → {state.compliance.appointment_window_end || "—"}
-              </dd>
-              <dt>Accessorials</dt>
-              <dd>{state.compliance.accessorial_rules.trim() ? "Captured" : "—"}</dd>
-              <dt>Auto-checks</dt>
-              <dd>
-                {checks.filter((x) => x.status === "Passed").length} passed ·{" "}
-                {checks.filter((x) => x.status === "Warning").length} warnings ·{" "}
-                {checks.filter((x) => x.status === "Blocking").length} blocking
-              </dd>
-            </dl>
-
-            <div className="bof-load-intake-toolbar">
-              <button
-                type="button"
-                className="bof-load-intake-btn bof-load-intake-btn--primary"
-                disabled={blocking}
-                onClick={generatePacket}
-              >
-                Generate load packet
-              </button>
-            </div>
-
-            {state.loadPacket && !blocking && (
-              <p className="bof-muted" style={{ marginTop: "1rem", fontSize: "0.85rem" }}>
-                Packet <code className="bof-code">{state.loadPacket.load_packet_id}</code> — status{" "}
-                <strong>{state.loadPacket.packet_status}</strong>, open warnings recorded as{" "}
-                {state.loadPacket.missing_items_count}. Continue to{" "}
-                <Link href="/dispatch" className="bof-link-secondary">
-                  Dispatch
-                </Link>{" "}
-                or{" "}
-                <Link href="/loads" className="bof-link-secondary">
-                  Loads
-                </Link>
-                .
-              </p>
-            )}
-          </section>
-        </>
+        <LoadIntakeStep4PacketReview
+          state={state}
+          setState={setState}
+          checks={checks}
+          goStep={goStep}
+          generatePacket={generatePacket}
+        />
       )}
     </div>
   );

@@ -5392,6 +5392,192 @@ body {
   color: #99f6e4;
 }
 
+.bof-load-intake-metrics {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem 1.25rem;
+  align-items: center;
+  margin-bottom: 1rem;
+  font-size: 0.82rem;
+  color: var(--bof-muted);
+}
+
+.bof-load-intake-metrics strong {
+  color: var(--bof-text);
+}
+
+.bof-load-intake-readiness-fixes {
+  border: 1px solid var(--bof-border);
+  border-radius: var(--bof-radius);
+  padding: 1rem 1.1rem;
+  margin-bottom: 1.25rem;
+  background: rgba(15, 20, 25, 0.35);
+}
+
+.bof-load-intake-readiness-fixes > summary {
+  cursor: pointer;
+  font-weight: 700;
+  font-size: 0.88rem;
+  color: #fca5a5;
+  list-style: none;
+}
+
+.bof-load-intake-readiness-fixes > summary::-webkit-details-marker {
+  display: none;
+}
+
+.bof-load-intake-readiness-fixes[open] > summary {
+  margin-bottom: 0.85rem;
+  padding-bottom: 0.65rem;
+  border-bottom: 1px solid var(--bof-border);
+}
+
+.bof-load-intake-inline-panel {
+  margin-top: 1rem;
+  padding-top: 0.85rem;
+  border-top: 1px dashed var(--bof-border);
+}
+
+.bof-load-intake-inline-panel h4 {
+  margin: 0 0 0.65rem;
+  font-size: 0.72rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #5eead4;
+}
+
+.bof-load-intake-doc-launch {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+}
+
+.bof-load-intake-fix-btn {
+  flex-shrink: 0;
+  padding: 0.35rem 0.65rem;
+  border-radius: 6px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  border: 1px solid rgba(239, 68, 68, 0.45);
+  background: rgba(239, 68, 68, 0.12);
+  color: #fecaca;
+  cursor: pointer;
+}
+
+.bof-load-intake-fix-btn:hover {
+  border-color: rgba(20, 184, 166, 0.55);
+  background: rgba(13, 148, 136, 0.15);
+  color: #5eead4;
+}
+
+.bof-load-intake-launch-btn {
+  padding: 0.4rem 0.75rem;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  border: 1px solid rgba(20, 184, 166, 0.45);
+  background: rgba(13, 148, 136, 0.12);
+  color: #5eead4;
+  cursor: pointer;
+}
+
+.bof-load-intake-launch-btn:hover {
+  background: rgba(13, 148, 136, 0.22);
+}
+
+.bof-load-intake-check-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+
+.bof-load-intake-check-body {
+  flex: 1;
+  min-width: 12rem;
+}
+
+.bof-load-intake-drawer-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  background: rgba(0, 0, 0, 0.55);
+  display: flex;
+  justify-content: flex-end;
+  align-items: stretch;
+}
+
+.bof-load-intake-drawer {
+  width: min(28rem, 100vw);
+  max-width: 100%;
+  background: var(--bof-surface);
+  border-left: 1px solid var(--bof-border);
+  box-shadow: -8px 0 24px rgba(0, 0, 0, 0.35);
+  display: flex;
+  flex-direction: column;
+  max-height: 100vh;
+  overflow: hidden;
+}
+
+.bof-load-intake-drawer-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.85rem 1rem;
+  border-bottom: 1px solid var(--bof-border);
+}
+
+.bof-load-intake-drawer-head h3 {
+  margin: 0;
+  font-size: 0.95rem;
+  font-weight: 700;
+}
+
+.bof-load-intake-drawer-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+  padding: 0.5rem 0.75rem;
+  border-bottom: 1px solid var(--bof-border);
+  background: rgba(15, 20, 25, 0.45);
+}
+
+.bof-load-intake-drawer-tab {
+  padding: 0.35rem 0.55rem;
+  border-radius: 4px;
+  font-size: 0.68rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--bof-muted);
+  cursor: pointer;
+}
+
+.bof-load-intake-drawer-tab[aria-selected="true"] {
+  border-color: rgba(20, 184, 166, 0.45);
+  color: #5eead4;
+  background: rgba(13, 148, 136, 0.12);
+}
+
+.bof-load-intake-drawer-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 1rem;
+}
+
+.bof-load-intake-drawer-foot {
+  padding: 0.75rem 1rem;
+  border-top: 1px solid var(--bof-border);
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+}
+
 /* Tailwind — utilities + components only (no @tailwind base — avoids touching BOF globals). */
 @tailwind components;
 @tailwind utilities;
