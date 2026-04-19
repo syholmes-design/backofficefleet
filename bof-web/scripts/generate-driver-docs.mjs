@@ -1,7 +1,8 @@
 /**
  * Canonical driver credential HTML generator.
- * Writes 7 files per driver under public/generated/drivers/{driverId}/ and sets
- * fileUrl / previewUrl on existing documents[] rows (does not recreate rows).
+ * Writes 6 credential HTML files per driver under public/generated/drivers/{driverId}/
+ * (CDL image proofs live under public/documents/drivers/{driverId}/cdl.png — not
+ * overwritten here) and sets fileUrl / previewUrl on existing documents[] rows.
  *
  * Data: lib/demo-data.json (from build:data / main workbook pipeline).
  *
@@ -11,7 +12,6 @@
 import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
-import { buildStateCdlHtml, cdlStateForDriverId } from "./lib/cdl-html.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(__dirname, "..");
@@ -19,7 +19,6 @@ const DATA_PATH = path.join(ROOT, "lib", "demo-data.json");
 const OUT_BASE = path.join(ROOT, "public", "generated", "drivers");
 
 const TYPE_TO_FILE = {
-  CDL: "cdl.html",
   "Medical Card": "medical-card.html",
   MVR: "mvr.html",
   "I-9": "i9.html",
@@ -94,11 +93,6 @@ function driverBlock(driver) {
   <dt>Phone</dt><dd>${escapeHtml(driver.phone)}</dd>
   <dt>Email</dt><dd>${escapeHtml(driver.email)}</dd>
 </dl>`;
-}
-
-function buildCdl(driver, doc) {
-  const state = cdlStateForDriverId(doc.driverId);
-  return buildStateCdlHtml(driver, doc, state);
 }
 
 function buildMedical(driver, doc, data) {
@@ -306,7 +300,6 @@ const SUPPLEMENTAL_BUILDERS = {
 };
 
 const BUILDERS = {
-  CDL: buildCdl,
   "Medical Card": buildMedical,
   MVR: buildMvr,
   "I-9": buildI9,

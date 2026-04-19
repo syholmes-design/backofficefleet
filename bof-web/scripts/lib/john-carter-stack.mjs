@@ -1,8 +1,9 @@
 /**
  * Fleet-wide “gold stack” document wiring (John Carter / DRV-001 remains the curated
  * reference: real MCSA-5876 PDF + profile HTML under /documents/drivers/DRV-001/).
- * All other drivers get the same primary/secondary structure with generated HTML
- * under /generated/drivers/{id}/.
+ * All drivers use CDL image proofs under /documents/drivers/{id}/cdl.png; other
+ * drivers get the same primary/secondary structure with generated HTML under
+ * /generated/drivers/{id}/.
  */
 export const JOHN_CARTER_DRIVER_ID = "DRV-001";
 export const JOHN_CARTER_CDL_NUMBER = "OH1668243";
@@ -24,6 +25,7 @@ export const FLEET_MANAGED_SUPPLEMENTAL_TYPES = [
 export const JOHN_CARTER_MANAGED_SUPPLEMENTAL_TYPES = FLEET_MANAGED_SUPPLEMENTAL_TYPES;
 
 const genPath = (driverId, name) => `/generated/drivers/${driverId}/${name}`;
+const cdlImagePath = (driverId) => `/documents/drivers/${driverId}/cdl.png`;
 
 function stripManagedFleetSupplementals(documents) {
   const drop = new Set(FLEET_MANAGED_SUPPLEMENTAL_TYPES);
@@ -73,8 +75,8 @@ function patchCoreSevenForDriver(documents, driverId, ex, driver) {
       cdlExpiration: "2027-08-22",
       cdlEndorsements: "T, N",
       cdlRestrictions: "None",
-      fileUrl: genPath(driverId, "cdl.html"),
-      previewUrl: genPath(driverId, "cdl.html"),
+      fileUrl: cdlImagePath(driverId),
+      previewUrl: cdlImagePath(driverId),
       docTier: "primary",
       sourceLicenseNumber: cdlNum,
     },
