@@ -20,7 +20,6 @@ import {
   IconCamera,
   IconDispatch,
   IconDispute,
-  IconDocWarning,
   IconLedger,
   IconLoadProof,
   IconShield,

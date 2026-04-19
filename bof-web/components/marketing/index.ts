@@ -4,6 +4,7 @@ export { MarketingContainer } from "./MarketingContainer";
 export { MarketingCtaPanel } from "./MarketingCtaPanel";
 export { MarketingFormShell } from "./MarketingFormShell";
 export { MarketingHeroProductSketch } from "./MarketingHeroProductSketch";
+export * from "./MarketingGovernmentIcons";
 export * as MarketingHomeIcons from "./MarketingHomeIcons";
 export { MarketingIconCardGrid, type MarketingIconCardItem } from "./MarketingIconCardGrid";
 export { MarketingPremiumHero } from "./MarketingPremiumHero";
@@ -12,4 +13,5 @@ export { MarketingSection, type MarketingSectionVariant } from "./MarketingSecti
 export { MarketingSectionHeader } from "./MarketingSectionHeader";
 export { MarketingStatBand, type MarketingStat } from "./MarketingStatBand";
 export { MarketingTrustStrip } from "./MarketingTrustStrip";
+export * from "./MarketingVaultIcons";
 export { MarketingValuePillars } from "./MarketingValuePillars";

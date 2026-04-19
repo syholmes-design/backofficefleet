@@ -161,6 +161,7 @@ export default function PrivateFleetsPage() {
       <MarketingPremiumHero
         titleId="bof-mkt-private-hero-heading"
         sectionAriaLabelledBy="bof-mkt-private-hero-heading"
+        trustAriaLabel="Private fleet highlights"
         eyebrow="Private fleets · enterprise operations"
         title={<>Enterprise Control for Captive Fleet Networks</>}
         subtitle="Standardize compliance, proof, and dispatch enforcement across yards, branches, and internal boards—without turning your operation into a patchwork of spreadsheets."
