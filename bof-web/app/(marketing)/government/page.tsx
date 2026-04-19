@@ -1,5 +1,31 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import {
+  MarketingCalculatorShell,
+  MarketingCommandCenterPreview,
+  type CcMockRow,
+  MarketingCtaPanel,
+  MarketingFormShell,
+  MarketingHeroProductSketch,
+  MarketingIconCardGrid,
+  MarketingPremiumHero,
+  MarketingProcessSteps,
+  MarketingSection,
+  MarketingSectionHeader,
+  MarketingStatBand,
+  MarketingTrustStrip,
+} from "@/components/marketing";
+import type { MarketingIconCardItem } from "@/components/marketing/MarketingIconCardGrid";
+import {
+  IconCitizenService,
+  IconContinuousAssurance,
+  IconEvidencePacket,
+  IconGavelRisk,
+  IconInteragencySync,
+  IconOversightTower,
+  IconPublicLedger,
+  IconSealChain,
+} from "@/components/marketing/MarketingGovernmentIcons";
 
 export const metadata: Metadata = {
   title: "Government | BackOfficeFleet",
@@ -7,59 +33,281 @@ export const metadata: Metadata = {
     "Audit-ready fleet operations with enforced compliance and documentation.",
 };
 
+const HERO_TRUST = [
+  "Defensible enforcement logs",
+  "Grant & policy alignment",
+  "Public accountability by design",
+  "Command-center oversight",
+] as const;
+
+const GOV_CC_ROWS: readonly CcMockRow[] = [
+  {
+    label: "Fleet eligibility",
+    title: "Vehicles cleared to operate",
+    meta: "Credential + inspection posture · exceptions routed",
+    val: "142",
+    valClass: "",
+  },
+  {
+    label: "Open findings",
+    title: "Audit remediation queue",
+    meta: "Verifier sign-off · document version gaps",
+    val: "11",
+    valClass: "bof-mkt-cc-mock-kpi-val--warn",
+  },
+  {
+    label: "Citizen-facing risk",
+    title: "Service-level exposure",
+    meta: "Late proof · chain-of-custody breaks",
+    val: "3",
+    valClass: "",
+  },
+  {
+    label: "Grants & programs",
+    title: "Compliance attestations",
+    meta: "Reporting period · evidence packet status",
+    val: "Due",
+    valClass: "",
+  },
+  {
+    label: "Taxpayer capital",
+    title: "Held procurement releases",
+    meta: "Incomplete proof packages on contracted moves",
+    val: "$210K",
+    valClass: "bof-mkt-cc-mock-kpi-val--risk",
+  },
+];
+
+const PRESSURE_ITEMS: MarketingIconCardItem[] = [
+  {
+    title: "Accountability without a single operational record",
+    description:
+      "Legislative and IG scrutiny intensifies while dispatch, safety, and finance still reconcile truth from inboxes and attachments.",
+    icon: <IconPublicLedger />,
+  },
+  {
+    title: "Proof scattered across systems of record",
+    description:
+      "Telematics, HRIS, and procurement tools each hold a fragment—none enforce whether a driver or asset was actually cleared to move.",
+    icon: <IconSealChain />,
+  },
+  {
+    title: "Oversight arrives after the mission already left the yard",
+    description:
+      "Supervisors need proactive blocks and escalations, not post-incident reconstructions when public trust is on the line.",
+    icon: <IconOversightTower />,
+  },
+  {
+    title: "Political and legal exposure from inconsistent enforcement",
+    description:
+      "When readiness rules differ by garage, bureau, or contractor, auditors hear a story your operators never intended to tell.",
+    icon: <IconGavelRisk />,
+  },
+];
+
+const CONTROL_ITEMS: MarketingIconCardItem[] = [
+  {
+    title: "Citizen-service grade readiness",
+    description:
+      "Treat every move like a regulated service: one readiness bar, one proof standard, and one escalation path leadership can defend.",
+    icon: <IconCitizenService />,
+  },
+  {
+    title: "Evidence packets, not folder dumps",
+    description:
+      "Structured credential, inspection, and load-proof records that survive FOIA, grant reporting, and continuity reviews.",
+    icon: <IconEvidencePacket />,
+  },
+  {
+    title: "Interagency and contractor alignment",
+    description:
+      "Give primes and subs the same enforcement language—BOF narrates severity, owners, and remediation without diluting policy.",
+    icon: <IconInteragencySync />,
+  },
+  {
+    title: "Continuous assurance, not annual theater",
+    description:
+      "Operate from a command center that stays current as rules, vehicles, and crews change—mirroring how BOF runs in elite fleet programs.",
+    icon: <IconContinuousAssurance />,
+  },
+];
+
+const PROCESS_STEPS = [
+  {
+    title: "Mobilize",
+    description:
+      "Inventory garages, contractors, and mission profiles where enforcement must be absolute—not advisory.",
+  },
+  {
+    title: "Align",
+    description:
+      "Map policy, procurement clauses, and safety mandates to a single BOF-ready documentation and dispatch standard.",
+  },
+  {
+    title: "Instrument",
+    description:
+      "Wire the command center so leadership sees the same queue operators clear before keys are issued.",
+  },
+  {
+    title: "Assure",
+    description:
+      "Run continuous oversight with audit-friendly logs, remediation owners, and severity-ranked narratives finance already trusts.",
+  },
+] as const;
+
 export default function GovernmentPage() {
   return (
-    <article className="bof-mkt-article">
-      <div className="bof-mkt-container bof-mkt-article-inner">
-        <h1 className="bof-mkt-page-title">
-          Audit-Ready Fleet Operations With Enforced Compliance
-        </h1>
-        <p className="bof-mkt-page-sub">
-          When public accountability matters, BOF aligns day-to-day fleet
-          operations with documentation, oversight, and risk mitigation — without
-          replacing your existing procurement or telematics choices.
-        </p>
+    <>
+      <MarketingPremiumHero
+        titleId="bof-mkt-gov-hero-heading"
+        sectionAriaLabelledBy="bof-mkt-gov-hero-heading"
+        eyebrow="Government & regulated fleets · public accountability"
+        title={<>Audit-Ready Fleet Operations With Enforced Compliance</>}
+        subtitle="When taxpayer trust is on the line, BOF aligns day-to-day fleet operations with documentation, oversight, and risk mitigation—without replacing your procurement stack or telematics investments."
+        support="The same premium enforcement posture BOF delivers to elite private fleets—expressed for agencies, authorities, and contractors who answer to the public."
+        trustItems={HERO_TRUST}
+        trustAriaLabel="Government program highlights"
+        ctas={
+          <>
+            <Link
+              href="/book-assessment"
+              className="bof-mkt-btn-enterprise bof-mkt-btn-enterprise-primary"
+            >
+              Book Fleet Assessment
+            </Link>
+            <Link href="/dashboard" className="bof-mkt-btn-enterprise bof-mkt-btn-enterprise-secondary">
+              Open Demo
+            </Link>
+          </>
+        }
+        visual={
+          <MarketingHeroProductSketch
+            windowTitle="Public-sector oversight console"
+            caption="Reserved for agency photography, continuity exercises, or a live capture from the BOF demo environment."
+          />
+        }
+      />
 
-        <div className="bof-mkt-pillar-grid">
-          <section className="bof-mkt-pillar">
-            <h2>Audit logs</h2>
-            <p>
-              A defensible trail of who was cleared to run, what proof was on
-              file, and which exceptions were escalated.
-            </p>
-          </section>
-          <section className="bof-mkt-pillar">
-            <h2>Documentation</h2>
-            <p>
-              Structured credential and load-proof records — not attachments
-              lost across shared drives.
-            </p>
-          </section>
-          <section className="bof-mkt-pillar">
-            <h2>Oversight</h2>
-            <p>
-              Command-center visibility into compliance incidents, holds, and
-              revenue risk in one narrative.
-            </p>
-          </section>
-          <section className="bof-mkt-pillar">
-            <h2>Risk mitigation</h2>
-            <p>
-              Enforcement before movement reduces exposure from unqualified
-              dispatch and incomplete proof packages.
-            </p>
-          </section>
+      <MarketingSection variant="light" ariaLabelledBy="bof-mkt-gov-stats-heading">
+        <div className="bof-mkt-container">
+          <MarketingSectionHeader
+            titleId="bof-mkt-gov-stats-heading"
+            aside={<span className="bof-mkt-badge-neutral">Illustrative posture model</span>}
+            title="Operational credibility for public-sector fleets"
+            lead="Numbers that mirror how BOF narrates risk in the demo—ready to be replaced with your agency’s own readiness and audit posture."
+          />
+          <MarketingStatBand
+            stats={[
+              {
+                label: "Policy alignment",
+                value: "100%",
+                hint: "Target posture when dispatch and compliance share one enforcement layer.",
+              },
+              {
+                label: "Evidence continuity",
+                value: "Live",
+                hint: "Versioned credentials and proof tied to each move—not reconstructed after the fact.",
+              },
+              {
+                label: "Oversight queue",
+                value: "Unified",
+                hint: "One severity-ranked narrative for safety, finance, and executive sponsors.",
+              },
+              {
+                label: "Public accountability",
+                value: "Traceable",
+                hint: "Time-stamped enforcement decisions your IG team can replay with confidence.",
+              },
+            ]}
+          />
         </div>
+      </MarketingSection>
 
-        <div className="bof-mkt-article-ctas">
-          <Link href="/book-assessment" className="bof-mkt-btn bof-mkt-btn-primary">
-            Book Fleet Assessment
-          </Link>
-          <Link href="/dashboard" className="bof-mkt-btn bof-mkt-btn-secondary">
-            Open Demo
-          </Link>
+      <MarketingSection variant="white" id="pressure" ariaLabelledBy="bof-mkt-gov-pressure-heading">
+        <div className="bof-mkt-container">
+          <MarketingSectionHeader
+            titleId="bof-mkt-gov-pressure-heading"
+            title="Where public-sector fleets feel the heat first"
+            lead="Citizens expect the same operational discipline behind the scenes that they see on the street. BOF exposes gaps before they become headlines."
+          />
+          <MarketingIconCardGrid items={PRESSURE_ITEMS} variant="pain" />
         </div>
-      </div>
-    </article>
+      </MarketingSection>
+
+      <MarketingSection variant="light" ariaLabelledBy="bof-mkt-gov-control-heading">
+        <div className="bof-mkt-container">
+          <MarketingSectionHeader
+            titleId="bof-mkt-gov-control-heading"
+            title="What BOF enforces for government programs"
+            lead="Structured enforcement, premium command-center polish, and documentation that holds up when oversight tightens."
+          />
+          <MarketingIconCardGrid items={CONTROL_ITEMS} variant="feature" />
+        </div>
+      </MarketingSection>
+
+      <MarketingSection variant="white" ariaLabelledBy="bof-mkt-gov-funnel-heading">
+        <div className="bof-mkt-container">
+          <MarketingSectionHeader
+            titleId="bof-mkt-gov-funnel-heading"
+            title="Assessment & savings outlook"
+            lead="Phase C will wire interactive flows here. These shells reserve enterprise layout—no behavior change in this release."
+          />
+          <div className="bof-mkt-split-2-col">
+            <MarketingCalculatorShell
+              title="Program economics outlook"
+              badge="Reserved"
+              body="Model avoided penalties, recovered revenue, and settlement acceleration using the same savings engine that powers the demo command center—once the public calculator ships."
+            />
+            <MarketingFormShell
+              title="Agency assessment intake"
+              lead="Structured capture for fleet size, contractor mix, and oversight mandates—mirroring how BOF onboards regulated programs."
+            />
+          </div>
+        </div>
+      </MarketingSection>
+
+      <MarketingSection variant="ink" ariaLabelledBy="bof-mkt-gov-process-heading">
+        <div className="bof-mkt-container">
+          <MarketingSectionHeader
+            titleId="bof-mkt-gov-process-heading"
+            title="How engagements run for government fleets"
+            lead="Procurement-friendly sequencing that respects IT security, union partnerships, and field realities—without slowing enforcement design."
+          />
+          <MarketingProcessSteps steps={PROCESS_STEPS} />
+          <MarketingTrustStrip
+            label="Built for"
+            items={[
+              "Municipal transit & utilities",
+              "State DOT & maintenance fleets",
+              "Defense-adjacent logistics",
+              "Human services & emergency response",
+            ]}
+          />
+        </div>
+      </MarketingSection>
+
+      <MarketingSection variant="alt" className="bof-mkt-cc" ariaLabelledBy="bof-mkt-gov-cc-heading">
+        <MarketingCommandCenterPreview
+          headingId="bof-mkt-gov-cc-heading"
+          rows={GOV_CC_ROWS}
+          title="What your oversight team would see on Monday"
+          lead="Swap illustrative metrics for your garages, contractors, and programs—BOF still tells one severity-ranked story across compliance, proof, and capital."
+          demoLabel="Open the demo command center →"
+        />
+      </MarketingSection>
+
+      <MarketingCtaPanel
+        id="bof-mkt-gov-final-cta"
+        title="Bring defensible fleet enforcement to your agency"
+        lead="Book a government fleet assessment. We map documentation gaps, contractor variance, and capital risk—then show how BOF would govern it under public scrutiny."
+      >
+        <Link href="/book-assessment" className="bof-mkt-btn-enterprise bof-mkt-btn-enterprise-primary">
+          Book Fleet Assessment
+        </Link>
+        <Link href="/dashboard" className="bof-mkt-btn-enterprise bof-mkt-btn-enterprise-secondary">
+          Open Demo
+        </Link>
+      </MarketingCtaPanel>
+    </>
   );
 }

@@ -14,6 +14,48 @@
   --bof-teal: #14b8a6;
   --bof-teal-bright: #5eead4;
   --bof-teal-dim: #0d9488;
+
+  /* BOF marketing design system (Phase A) — premium light-band + dark narrative */
+  --bof-mkt-font: var(--bof-font);
+  --bof-mkt-ink: #0f172a;
+  --bof-mkt-ink-secondary: #334155;
+  --bof-mkt-ink-muted: #64748b;
+  --bof-mkt-surface-hero: #f1f5f9;
+  --bof-mkt-surface-subtle: #f8fafc;
+  --bof-mkt-surface-card: #ffffff;
+  --bof-mkt-border-hairline: #e2e8f0;
+  --bof-mkt-border-strong: #cbd5e1;
+  --bof-mkt-brand: #0d9488;
+  --bof-mkt-brand-hover: #0f766e;
+  --bof-mkt-focus-ring: rgba(20, 184, 166, 0.35);
+
+  --bof-mkt-space-xs: 0.35rem;
+  --bof-mkt-space-sm: 0.65rem;
+  --bof-mkt-space-md: 1rem;
+  --bof-mkt-space-lg: 1.5rem;
+  --bof-mkt-space-xl: clamp(2.5rem, 5vw, 4rem);
+  --bof-mkt-space-section-y: clamp(3rem, 5vw, 4.25rem);
+  --bof-mkt-space-section-y-tight: clamp(2.25rem, 4vw, 3rem);
+
+  --bof-mkt-radius-sm: 6px;
+  --bof-mkt-radius-md: 10px;
+  --bof-mkt-radius-lg: 12px;
+  --bof-mkt-radius-xl: 14px;
+
+  --bof-mkt-shadow-card: 0 1px 2px rgba(15, 23, 42, 0.04),
+    0 12px 40px rgba(15, 23, 42, 0.08);
+  --bof-mkt-shadow-float: 0 4px 24px rgba(15, 23, 42, 0.12);
+  --bof-mkt-shadow-soft: 0 1px 3px rgba(15, 23, 42, 0.06);
+
+  --bof-mkt-type-eyebrow: 0.7rem;
+  --bof-mkt-type-lead: clamp(1.05rem, 2vw, 1.2rem);
+  --bof-mkt-type-h1: clamp(2rem, 4.2vw, 2.85rem);
+  --bof-mkt-type-h2: clamp(1.35rem, 2.5vw, 1.65rem);
+  --bof-mkt-type-h3: 1.05rem;
+  --bof-mkt-type-body: 0.875rem;
+  --bof-mkt-type-small: 0.78rem;
+
+  --bof-mkt-max-read: 52ch;
 }
 
 body {
@@ -3299,6 +3341,238 @@ body {
 .bof-mkt-cta-final .bof-mkt-hero-premium-ctas {
   justify-content: center;
   margin-bottom: 0;
+}
+
+/* Marketing — Phase A primitives (stat band, process, trust, shells) */
+.bof-mkt-stat-band {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 1rem 1.25rem;
+}
+
+.bof-mkt-stat {
+  background: var(--bof-mkt-surface-card);
+  border: 1px solid var(--bof-mkt-border-hairline);
+  border-radius: var(--bof-mkt-radius-lg);
+  padding: 1.15rem 1.25rem;
+  box-shadow: var(--bof-mkt-shadow-soft);
+}
+
+.bof-mkt-stat-value {
+  margin: 0 0 0.25rem;
+  font-size: clamp(1.35rem, 2.4vw, 1.75rem);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  color: var(--bof-mkt-brand);
+  line-height: 1.1;
+}
+
+.bof-mkt-stat-label {
+  margin: 0 0 0.35rem;
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--bof-mkt-ink-secondary);
+}
+
+.bof-mkt-stat-hint {
+  margin: 0;
+  font-size: 0.75rem;
+  line-height: 1.4;
+  color: var(--bof-mkt-ink-muted);
+}
+
+.bof-mkt-process {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem 1.5rem;
+  counter-reset: bof-mkt-step;
+}
+
+.bof-mkt-process-step {
+  position: relative;
+  padding: 1.15rem 1.2rem 1.15rem 2.85rem;
+  background: rgba(26, 35, 50, 0.65);
+  border: 1px solid var(--bof-border);
+  border-radius: var(--bof-mkt-radius-lg);
+  border-left: 3px solid var(--bof-teal-dim);
+}
+
+.bof-mkt-process-step::before {
+  counter-increment: bof-mkt-step;
+  content: counter(bof-mkt-step);
+  position: absolute;
+  left: 1rem;
+  top: 1.1rem;
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: 6px;
+  background: rgba(20, 184, 166, 0.15);
+  border: 1px solid rgba(20, 184, 166, 0.35);
+  color: var(--bof-teal-bright);
+  font-size: 0.75rem;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.bof-mkt-process-step h3 {
+  margin: 0 0 0.35rem;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--bof-text);
+}
+
+.bof-mkt-process-step p {
+  margin: 0;
+  font-size: 0.82rem;
+  color: var(--bof-muted);
+  line-height: 1.45;
+}
+
+.bof-mkt-trust-strip {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem 1.5rem;
+  padding: 1rem 0 0;
+  border-top: 1px solid var(--bof-mkt-border-hairline);
+  margin-top: 1.5rem;
+}
+
+.bof-mkt-trust-strip-label {
+  font-size: 0.68rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--bof-mkt-ink-muted);
+  width: 100%;
+}
+
+.bof-mkt-trust-pill {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--bof-mkt-ink-secondary);
+  padding: 0.35rem 0.65rem;
+  border-radius: 999px;
+  border: 1px solid var(--bof-mkt-border-hairline);
+  background: var(--bof-mkt-surface-subtle);
+}
+
+.bof-mkt-form-shell {
+  border-radius: var(--bof-mkt-radius-xl);
+  border: 1px dashed var(--bof-mkt-border-strong);
+  background: var(--bof-mkt-surface-subtle);
+  padding: clamp(1.5rem, 3vw, 2rem);
+  text-align: center;
+}
+
+.bof-mkt-form-shell-title {
+  margin: 0 0 0.5rem;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--bof-mkt-ink);
+}
+
+.bof-mkt-form-shell-lead {
+  margin: 0;
+  font-size: 0.85rem;
+  color: var(--bof-mkt-ink-muted);
+  line-height: 1.5;
+  max-width: 42ch;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.bof-mkt-calculator-shell {
+  border-radius: var(--bof-mkt-radius-xl);
+  border: 1px solid var(--bof-mkt-border-hairline);
+  background: linear-gradient(165deg, #ffffff 0%, #f8fafc 100%);
+  box-shadow: var(--bof-mkt-shadow-card);
+  padding: 1.35rem 1.5rem;
+}
+
+.bof-mkt-calculator-shell-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-bottom: 0.75rem;
+}
+
+.bof-mkt-calculator-shell-title {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: var(--bof-mkt-ink);
+}
+
+.bof-mkt-calculator-shell-badge {
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  padding: 0.3rem 0.55rem;
+  border-radius: 6px;
+  background: rgba(13, 148, 136, 0.12);
+  color: var(--bof-mkt-brand);
+  border: 1px solid rgba(13, 148, 136, 0.28);
+}
+
+.bof-mkt-calculator-shell-body {
+  margin: 0;
+  font-size: 0.84rem;
+  color: var(--bof-mkt-ink-muted);
+  line-height: 1.5;
+  max-width: 48ch;
+}
+
+.bof-mkt-badge-neutral {
+  display: inline-flex;
+  align-items: center;
+  font-size: 0.68rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  padding: 0.28rem 0.55rem;
+  border-radius: 6px;
+  background: rgba(148, 163, 184, 0.15);
+  color: #475569;
+  border: 1px solid rgba(148, 163, 184, 0.35);
+}
+
+.bof-mkt-premium-panel {
+  background: var(--bof-mkt-surface-card);
+  border: 1px solid var(--bof-mkt-border-hairline);
+  border-radius: var(--bof-mkt-radius-lg);
+  box-shadow: var(--bof-mkt-shadow-card);
+  padding: 1.35rem 1.45rem;
+}
+
+.bof-mkt-section-ink {
+  background: linear-gradient(180deg, rgba(15, 20, 25, 0.98) 0%, rgba(15, 20, 25, 0.92) 100%);
+  color: var(--bof-text);
+  border-top: 1px solid var(--bof-border);
+  border-bottom: 1px solid var(--bof-border);
+}
+
+.bof-mkt-section-ink .bof-mkt-section-title {
+  color: var(--bof-text);
+}
+
+.bof-mkt-section-ink .bof-mkt-section-lead {
+  color: var(--bof-muted);
+}
+
+.bof-mkt-split-2-col {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 1.25rem;
+  margin-top: 1.5rem;
 }
 
 /* Homepage sections — light bands that continue the premium hero palette */
