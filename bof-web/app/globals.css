@@ -5578,6 +5578,248 @@ body {
   gap: 0.5rem;
 }
 
+/* —— Source of Truth (demo admin) —— */
+.bof-sot-page {
+  max-width: 72rem;
+  margin: 0 auto;
+}
+
+.bof-sot-hero {
+  margin-bottom: 1.5rem;
+  padding: 1.25rem 1.5rem;
+  border-radius: var(--bof-radius);
+  border: 1px solid rgba(20, 184, 166, 0.22);
+  background: linear-gradient(
+    135deg,
+    rgba(13, 148, 136, 0.14) 0%,
+    rgba(26, 35, 50, 0.95) 55%,
+    rgba(15, 20, 25, 0.98) 100%
+  );
+  box-shadow: 0 1px 0 rgba(94, 234, 212, 0.08);
+}
+
+.bof-sot-lead {
+  max-width: 52rem;
+}
+
+.bof-sot-toast {
+  margin-bottom: 1rem;
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  border: 1px solid rgba(34, 197, 94, 0.35);
+  background: rgba(22, 163, 74, 0.12);
+  color: #bbf7d0;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.bof-sot-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem 1rem;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.bof-sot-search {
+  flex: 1;
+  min-width: 12rem;
+  max-width: 28rem;
+  padding: 0.55rem 0.85rem;
+  border-radius: 8px;
+  border: 1px solid var(--bof-border);
+  background: var(--bof-surface);
+  color: var(--bof-text);
+  font-size: 0.9rem;
+}
+
+.bof-sot-search:focus {
+  outline: none;
+  border-color: var(--bof-teal);
+  box-shadow: 0 0 0 2px rgba(20, 184, 166, 0.2);
+}
+
+.bof-sot-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  margin-bottom: 1.25rem;
+}
+
+.bof-sot-tab {
+  padding: 0.45rem 0.9rem;
+  border-radius: 8px;
+  border: 1px solid var(--bof-border);
+  background: rgba(26, 35, 50, 0.6);
+  color: var(--bof-muted);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.bof-sot-tab:hover {
+  color: var(--bof-text);
+  border-color: rgba(20, 184, 166, 0.35);
+}
+
+.bof-sot-tab--active {
+  color: #5eead4;
+  border-color: rgba(20, 184, 166, 0.5);
+  background: rgba(13, 148, 136, 0.15);
+}
+
+.bof-sot-layout {
+  display: grid;
+  grid-template-columns: minmax(14rem, 1fr) minmax(0, 2fr);
+  gap: 1.25rem;
+  align-items: start;
+}
+
+@media (max-width: 900px) {
+  .bof-sot-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+.bof-sot-panel {
+  border-radius: var(--bof-radius);
+  border: 1px solid var(--bof-border);
+  background: var(--bof-surface);
+  padding: 1rem 1.1rem;
+}
+
+.bof-sot-panel--list {
+  max-height: min(70vh, 36rem);
+  overflow: auto;
+}
+
+.bof-sot-panel--detail {
+  min-height: 12rem;
+}
+
+.bof-sot-detail-h2 {
+  margin-top: 0;
+  margin-bottom: 0.5rem;
+}
+
+.bof-sot-record-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.bof-sot-record {
+  width: 100%;
+  text-align: left;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.35rem 0.65rem;
+  padding: 0.65rem 0.75rem;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  background: rgba(15, 20, 25, 0.35);
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+}
+
+.bof-sot-record:hover {
+  border-color: rgba(20, 184, 166, 0.25);
+  background: rgba(13, 148, 136, 0.08);
+}
+
+.bof-sot-record--sel {
+  border-color: rgba(20, 184, 166, 0.55);
+  background: rgba(13, 148, 136, 0.12);
+}
+
+.bof-sot-record--static {
+  cursor: default;
+  opacity: 0.92;
+}
+
+.bof-sot-record-title {
+  font-weight: 600;
+  flex: 1 1 100%;
+}
+
+.bof-sot-record-meta {
+  font-size: 0.75rem;
+  color: var(--bof-muted);
+}
+
+.bof-sot-form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem 1rem;
+  margin-top: 1rem;
+}
+
+@media (max-width: 640px) {
+  .bof-sot-form-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.bof-sot-field--full {
+  grid-column: 1 / -1;
+}
+
+.bof-sot-field label {
+  display: block;
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--bof-muted);
+  margin-bottom: 0.25rem;
+}
+
+.bof-sot-field input:not([readonly]) {
+  width: 100%;
+  padding: 0.45rem 0.6rem;
+  border-radius: 6px;
+  border: 1px solid var(--bof-border);
+  background: rgba(15, 20, 25, 0.55);
+  color: var(--bof-text);
+  font-size: 0.875rem;
+}
+
+.bof-sot-field input:focus {
+  outline: none;
+  border-color: var(--bof-teal);
+}
+
+.bof-sot-input-readonly {
+  width: 100%;
+  padding: 0.45rem 0.6rem;
+  border-radius: 6px;
+  border: 1px dashed var(--bof-border);
+  background: rgba(15, 20, 25, 0.35);
+  color: var(--bof-muted);
+  font-size: 0.8125rem;
+}
+
+.bof-sot-subcard {
+  margin-top: 1.25rem;
+  padding: 1rem;
+  border-radius: 8px;
+  border: 1px solid rgba(20, 184, 166, 0.2);
+  background: rgba(13, 148, 136, 0.06);
+}
+
+.bof-sot-actions {
+  margin-top: 1.25rem;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem 1rem;
+}
+
 /* Tailwind — utilities + components only (no @tailwind base — avoids touching BOF globals). */
 @tailwind components;
 @tailwind utilities;
