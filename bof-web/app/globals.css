@@ -7500,6 +7500,353 @@ body {
   color: #5eead4;
 }
 
+/* Maintenance module */
+.maint-module {
+  max-width: 1200px;
+}
+
+.maint-teal {
+  color: #0d9488;
+}
+
+.maint-module-header {
+  margin-bottom: 0.75rem;
+}
+
+.maint-subnav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  margin-bottom: 1rem;
+  padding-bottom: 0.65rem;
+  border-bottom: 1px solid rgba(51, 65, 85, 0.65);
+}
+
+.maint-subnav-link {
+  font-size: 0.78rem;
+  font-weight: 600;
+  padding: 0.35rem 0.65rem;
+  border-radius: 6px;
+  color: var(--bof-muted);
+  text-decoration: none;
+}
+
+.maint-subnav-link:hover {
+  color: #5eead4;
+}
+
+.maint-subnav-link-active {
+  background: rgba(13, 148, 136, 0.18);
+  color: #5eead4;
+  border: 1px solid rgba(13, 148, 136, 0.4);
+}
+
+.maint-kpi-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 0.65rem;
+  margin-bottom: 1rem;
+}
+
+.maint-kpi {
+  border: 1px solid rgba(148, 163, 184, 0.22);
+  border-radius: 8px;
+  padding: 0.55rem 0.65rem;
+  background: rgba(15, 23, 42, 0.45);
+}
+
+.maint-kpi-label {
+  margin: 0;
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--bof-muted);
+}
+
+.maint-kpi-value {
+  margin: 0.2rem 0 0;
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: #e2e8f0;
+}
+
+.maint-kpi-hint {
+  margin: 0.15rem 0 0;
+  font-size: 0.65rem;
+  color: #64748b;
+}
+
+.maint-dashboard-grid {
+  display: grid;
+  gap: 1rem;
+}
+
+@media (min-width: 1024px) {
+  .maint-dashboard-grid {
+    grid-template-columns: minmax(0, 1fr) 280px;
+    align-items: start;
+  }
+}
+
+.maint-card {
+  border: 1px solid rgba(148, 163, 184, 0.22);
+  border-radius: 10px;
+  background: rgba(15, 23, 42, 0.45);
+  padding: 0.85rem 1rem;
+}
+
+.maint-card-wide {
+  grid-column: 1 / -1;
+}
+
+@media (min-width: 1024px) {
+  .maint-dashboard-grid .maint-card-wide {
+    grid-column: 1;
+  }
+}
+
+.maint-card-title {
+  margin: 0 0 0.5rem;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #0d9488;
+}
+
+.maint-table-wrap {
+  overflow-x: auto;
+}
+
+.maint-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.78rem;
+}
+
+.maint-table th {
+  text-align: left;
+  padding: 0.4rem 0.5rem;
+  color: var(--bof-muted);
+  font-weight: 600;
+  border-bottom: 1px solid rgba(51, 65, 85, 0.7);
+  white-space: nowrap;
+}
+
+.maint-table td {
+  padding: 0.4rem 0.5rem;
+  border-bottom: 1px solid rgba(30, 41, 59, 0.9);
+  color: #e2e8f0;
+  vertical-align: top;
+}
+
+.maint-table-compact td,
+.maint-table-compact th {
+  padding: 0.3rem 0.4rem;
+}
+
+.maint-table-row-click:hover td {
+  background: rgba(13, 148, 136, 0.06);
+}
+
+.maint-table-link {
+  color: #5eead4;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.maint-table-link:hover {
+  text-decoration: underline;
+}
+
+.maint-cell-muted {
+  color: #94a3b8;
+  font-size: 0.76rem;
+}
+
+.maint-badge {
+  display: inline-block;
+  font-size: 0.65rem;
+  font-weight: 700;
+  padding: 0.12rem 0.4rem;
+  border-radius: 999px;
+  letter-spacing: 0.02em;
+}
+
+.maint-badge-ready {
+  background: rgba(5, 150, 105, 0.2);
+  color: #6ee7b7;
+}
+
+.maint-badge-risk {
+  background: rgba(202, 138, 4, 0.2);
+  color: #fcd34d;
+}
+
+.maint-badge-blocked {
+  background: rgba(220, 38, 38, 0.2);
+  color: #fecaca;
+}
+
+.maint-badge-oos {
+  background: rgba(71, 85, 105, 0.5);
+  color: #cbd5e1;
+}
+
+.maint-attention-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.maint-attention-list li + li {
+  margin-top: 0.5rem;
+}
+
+.maint-attention-link {
+  display: block;
+  padding: 0.45rem 0.5rem;
+  border-radius: 6px;
+  border: 1px solid rgba(51, 65, 85, 0.6);
+  text-decoration: none;
+  color: inherit;
+}
+
+.maint-attention-link:hover {
+  border-color: rgba(13, 148, 136, 0.45);
+}
+
+.maint-attention-kind {
+  display: block;
+  font-size: 0.58rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #64748b;
+}
+
+.maint-attention-title {
+  display: block;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #e2e8f0;
+  margin-top: 0.15rem;
+}
+
+.maint-attention-detail {
+  display: block;
+  font-size: 0.72rem;
+  color: #94a3b8;
+  margin-top: 0.2rem;
+}
+
+.maint-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+  margin-bottom: 0.75rem;
+}
+
+.maint-filter {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  font-size: 0.65rem;
+  font-weight: 600;
+  color: var(--bof-muted);
+}
+
+.maint-filter input,
+.maint-filter select {
+  font-size: 0.78rem;
+  padding: 0.3rem 0.45rem;
+  border-radius: 6px;
+  border: 1px solid rgba(71, 85, 105, 0.8);
+  background: rgba(15, 23, 42, 0.8);
+  color: #e2e8f0;
+}
+
+.maint-detail-header {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.maint-readiness-banner {
+  margin-bottom: 1rem;
+}
+
+.maint-readiness-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.65rem;
+  margin: 0;
+}
+
+.maint-readiness-reason {
+  font-size: 0.85rem;
+  color: #cbd5e1;
+  flex: 1;
+  min-width: 200px;
+}
+
+.maint-detail-grid {
+  display: grid;
+  gap: 0.85rem;
+}
+
+@media (min-width: 900px) {
+  .maint-detail-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.maint-detail-grid .maint-card-wide {
+  grid-column: 1 / -1;
+}
+
+.maint-section-lead {
+  margin: 0 0 0.5rem;
+}
+
+.maint-dl {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 0.35rem 0.75rem;
+  font-size: 0.8rem;
+  margin: 0;
+}
+
+.maint-dl dt {
+  color: var(--bof-muted);
+  font-weight: 600;
+}
+
+.maint-dl dd {
+  margin: 0;
+  color: #e2e8f0;
+}
+
+.maint-impact-list {
+  margin: 0;
+  padding-left: 1.1rem;
+  color: #cbd5e1;
+  font-size: 0.82rem;
+}
+
+.maint-impact-list li + li {
+  margin-top: 0.45rem;
+}
+
+.maint-row-high {
+  background: rgba(220, 38, 38, 0.08);
+}
+
 /* Tailwind — utilities + components only (no @tailwind base — avoids touching BOF globals). */
 @tailwind components;
 @tailwind utilities;
