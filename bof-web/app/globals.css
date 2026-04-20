@@ -8026,6 +8026,85 @@ body {
   border-top: 1px solid rgba(51, 65, 85, 0.55);
 }
 
+/* BOF Advantage / Savings Insight — compact workflow callouts (teal + slate) */
+.bof-advantage-strip {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 0.75rem;
+  margin: 0 0 1rem;
+}
+
+.bof-advantage-card {
+  margin: 0;
+  padding: 0.65rem 0.75rem 0.7rem 0.85rem;
+  border-radius: var(--bof-radius);
+  border: 1px solid rgba(51, 65, 85, 0.85);
+  border-left: 3px solid var(--bof-teal-dim);
+  background: linear-gradient(135deg, rgba(26, 35, 50, 0.95), rgba(15, 20, 25, 0.98));
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.03) inset;
+}
+
+.bof-advantage-card--positive {
+  border-left-color: var(--bof-teal);
+}
+
+.bof-advantage-card--caution {
+  border-left-color: var(--bof-warn);
+}
+
+.bof-advantage-card--neutral {
+  border-left-color: #64748b;
+}
+
+.bof-advantage-eyebrow {
+  margin: 0 0 0.2rem;
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #5eead4;
+  opacity: 0.92;
+}
+
+.bof-advantage-title {
+  margin: 0 0 0.25rem;
+  font-size: 0.8125rem;
+  font-weight: 650;
+  line-height: 1.25;
+  color: #e2e8f0;
+}
+
+.bof-advantage-subtitle {
+  margin: 0 0 0.35rem;
+  font-size: 0.72rem;
+  color: #94a3b8;
+  line-height: 1.35;
+}
+
+.bof-advantage-value {
+  margin: 0 0 0.2rem;
+  font-size: 0.95rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: #f1f5f9;
+}
+
+.bof-advantage-delta {
+  margin: 0 0 0.25rem;
+  font-size: 0.7rem;
+  color: #cbd5e1;
+  line-height: 1.35;
+}
+
+.bof-advantage-explanation {
+  margin: 0.35rem 0 0;
+  padding-top: 0.35rem;
+  border-top: 1px solid rgba(51, 65, 85, 0.65);
+  font-size: 0.65rem;
+  line-height: 1.4;
+  color: #64748b;
+}
+
 /* Tailwind — utilities + components only (no @tailwind base — avoids touching BOF globals). */
 @tailwind components;
 @tailwind utilities;

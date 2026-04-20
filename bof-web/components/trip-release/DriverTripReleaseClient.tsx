@@ -11,6 +11,8 @@ import {
 } from "@/lib/trip-release";
 import type { EngineDocument } from "@/lib/document-engine";
 import { RouteSupportWidget } from "@/components/route-support/RouteSupportWidget";
+import { getLoadProofItems, getLoadProofSummary } from "@/lib/load-proof";
+import { BofAdvantageCard, BofAdvantageStrip } from "@/components/bof-advantage/BofAdvantageCard";
 
 function firstHref(...candidates: (string | undefined)[]): string | undefined {
   for (const c of candidates) {
@@ -61,6 +63,11 @@ export function DriverTripReleaseClient({ loadId }: { loadId: string }) {
 
   const ev = useMemo(() => buildTripReleaseEvaluation(data, loadId), [data, loadId]);
 
+  const proofSummary = useMemo(() => {
+    if (!data.loads.some((l) => l.id === loadId)) return null;
+    return getLoadProofSummary(getLoadProofItems(data, loadId));
+  }, [data, loadId]);
+
   const engineDocs = useMemo(() => {
     if (!ev) return [];
     return listTripReleaseEngineDocs(data, loadId);
@@ -110,6 +117,13 @@ export function DriverTripReleaseClient({ loadId }: { loadId: string }) {
 
   const blockers = ev.checks.filter((c) => c.severity === "blocking");
   const warns = ev.checks.filter((c) => c.severity === "warning");
+
+  const fuelDemoUsd = Math.max(
+    95,
+    Math.round(ev.dispatch_load.total_pay * 0.013 + loadId.charCodeAt(loadId.length - 1) * 12)
+  );
+  const fmtUsd = (n: number) =>
+    new Intl.NumberFormat(undefined, { style: "currency", currency: "USD", maximumFractionDigits: 0 }).format(n);
 
   return (
     <div className="bof-page trip-release-page">
@@ -162,6 +176,33 @@ export function DriverTripReleaseClient({ loadId }: { loadId: string }) {
       <div className="trip-release-layout">
         <div className="trip-release-main">
           <RouteSupportWidget loadId={loadId} variant="full" />
+
+          {proofSummary && (
+            <BofAdvantageStrip>
+              <BofAdvantageCard
+                eyebrow="Estimated BOF Savings"
+                title="Fuel-network lift on this trip"
+                subtitle="Demo estimate from dispatch pay reference (not live fuel desk)"
+                value={`~${fmtUsd(fuelDemoUsd)}`}
+                delta="Illustrative vs. unmanaged retail purchases on same lane class"
+                explanation="Tie to RF fuel / network tables when wired. Shown at trip release to align driver + dispatch on margin."
+                tone="positive"
+              />
+              <BofAdvantageCard
+                eyebrow="BOF Advantage"
+                title="Credentials & departure proof"
+                subtitle={ev.driver_dispatch_eligibility}
+                value={`${proofSummary.completeCount}/${proofSummary.applicableCount} proof lines complete (${proofSummary.completionPct}%)`}
+                delta={
+                  proofSummary.blockingCount === 0
+                    ? "Required proof path clear of payment blockers"
+                    : `${proofSummary.blockingCount} line(s) still block pay until resolved`
+                }
+                explanation="Counts from BOF load proof stack; credentials from dispatch + document engine rules on this evaluation."
+                tone={proofSummary.blockingCount > 0 ? "caution" : "positive"}
+              />
+            </BofAdvantageStrip>
+          )}
 
           <section className="trip-release-card" aria-labelledby="tr-overview">
             <h2 id="tr-overview" className="trip-release-card-title">

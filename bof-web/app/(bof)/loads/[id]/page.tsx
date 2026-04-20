@@ -18,6 +18,7 @@ import {
 } from "@/lib/document-engine";
 import { DocumentEnginePanel } from "@/components/DocumentEnginePanel";
 import { RouteSupportWidget } from "@/components/route-support/RouteSupportWidget";
+import { LoadBofAdvantagesIsland } from "@/components/bof-advantage/LoadBofAdvantagesIsland";
 
 type Props = { params: Promise<{ id: string }> };
 
@@ -123,6 +124,8 @@ export default async function LoadDetailPage({ params }: Props) {
       {routeMapModel && <LoadRouteMapClient model={routeMapModel} />}
 
       <RouteSupportWidget loadId={load.id} variant="compact" showCheaperFuelNote={false} />
+
+      <LoadBofAdvantagesIsland loadId={load.id} />
 
       <section className="bof-driver-info-grid" aria-label="Load summary">
         <div className="bof-info-block">

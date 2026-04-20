@@ -20,6 +20,7 @@ import {
 } from "@/lib/claim-packet";
 import { getGeneratedCrossLinksForLoad } from "@/lib/generated-documents";
 import type { Load } from "@/types/dispatch";
+import { BofAdvantageCard, BofAdvantageStrip } from "@/components/bof-advantage/BofAdvantageCard";
 
 function firstHref(...candidates: (string | undefined)[]): string | undefined {
   for (const c of candidates) {
@@ -320,6 +321,31 @@ export function ShipperLoadPortalClient({ loadId }: { loadId: string }) {
           {eligChip(elig.level)}
         </div>
       </header>
+
+      <BofAdvantageStrip>
+        <BofAdvantageCard
+          eyebrow="Admin Time Reduced"
+          title="Centralized proof packet vs. manual gathering"
+          subtitle="Indexed engine outputs + dispatch URLs on one load record"
+          value={`${engineDocs.length} BOF document links on file for this shipment`}
+          delta={
+            docReport.missingRequired.length
+              ? `${docReport.missingRequired.length} required packet line(s) still open in ops tools`
+              : "Required packet lines satisfied on this readiness snapshot"
+          }
+          explanation="Link count is BOF-backed from the document engine list. Time savings are a demo illustration until activity logging is wired."
+          tone={docReport.missingRequired.length ? "neutral" : "positive"}
+        />
+        <BofAdvantageCard
+          eyebrow="Claims Exposure Reduced"
+          title="Billing & dispute readiness"
+          subtitle={`Packet headline: ${packetLabel}`}
+          value={`${missingProofDedup.length} open proof / required gap label(s) in combined view`}
+          delta="Single shipper-facing surface reduces back-and-forth vs. scattered email threads"
+          explanation="Gap list merges documentation readiness + missing proof rows (deduped). Not a legal determination — operational visibility only."
+          tone={missingProofDedup.length >= 3 ? "caution" : "positive"}
+        />
+      </BofAdvantageStrip>
 
       <div className="shipper-portal-grid">
         <section className="shipper-portal-card" aria-labelledby="sp-pretrip-title">

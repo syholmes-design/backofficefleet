@@ -5,6 +5,7 @@ import { Filter } from "lucide-react";
 import { useSettlementsPayrollStore, countByStatus, sumNetPendingExport } from "@/lib/stores/settlements-payroll-store";
 import type { Settlement } from "@/types/settlements-payroll";
 import { formatPayrollCurrency, settlementStatusChipClass } from "./settlements-payroll-ui";
+import { BofAdvantageCard, BofAdvantageStrip } from "@/components/bof-advantage/BofAdvantageCard";
 
 export function SettlementsDashboardScreen() {
   const settlements = useSettlementsPayrollStore((s) => s.settlements);
@@ -57,6 +58,31 @@ export function SettlementsDashboardScreen() {
           deductions). Open a row for line detail and export rules.
         </p>
       </header>
+
+      <BofAdvantageStrip>
+        <BofAdvantageCard
+          eyebrow="Settlement acceleration"
+          title="Proof-linked readiness for export"
+          subtitle="Demo store — status counts from merged payroll rows"
+          value={`${kpis.ready} settlement(s) in Ready for Export`}
+          delta={
+            kpis.onHold
+              ? `${kpis.onHold} on hold — complete packets clear most demo holds faster`
+              : "No settlement holds flagged on this snapshot"
+          }
+          explanation="Ready / hold counts are BOF-backed from the settlements store. Acceleration hours are illustrative until proof-to-pay timestamps exist."
+          tone={kpis.onHold ? "caution" : "positive"}
+        />
+        <BofAdvantageCard
+          eyebrow="Admin Time Reduced"
+          title="Complete packet handling"
+          subtitle="Illustrative back-office minutes avoided per ready settlement"
+          value={`~${Math.max(15, Math.round(kpis.ready * 22 + kpis.draft * 6))} min demo equivalent / week`}
+          delta={`${kpis.draft} still in Draft — tighter proof linkage reduces rework loops`}
+          explanation="Minute estimate is a labeled demo placeholder; wire to export queue + document completion events for production."
+          tone="neutral"
+        />
+      </BofAdvantageStrip>
 
       <section className="grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
         <Kpi label="Draft" value={kpis.draft} />

@@ -8,6 +8,7 @@ import {
   computeMaintenanceKpis,
   listMaintenanceAssetSummaries,
 } from "@/lib/maintenance-data";
+import { BofAdvantageCard, BofAdvantageStrip } from "@/components/bof-advantage/BofAdvantageCard";
 
 function formatUsd(n: number) {
   return new Intl.NumberFormat(undefined, { style: "currency", currency: "USD", maximumFractionDigits: 0 }).format(
@@ -63,6 +64,27 @@ export function MaintenanceDashboardClient() {
           <p className="maint-kpi-value">{formatUsd(kpis.estimated_maintenance_spend)}</p>
         </div>
       </section>
+
+      <BofAdvantageStrip>
+        <BofAdvantageCard
+          eyebrow="Estimated BOF Savings"
+          title="Vendor pricing discipline on MAR exposure"
+          subtitle="Demo uplift vs. unmanaged spot quotes (not live vendor rates)"
+          value={`~${formatUsd(Math.max(400, Math.round(kpis.estimated_maintenance_spend * 0.07)))} illustrative reduction`}
+          delta={`Stacked against current MAR-derived estimate ${formatUsd(kpis.estimated_maintenance_spend)}`}
+          explanation="MAR spend total is BOF-backed from demo money-at-risk rows; percentage lift is a placeholder until contracted vendor tables land."
+          tone="positive"
+        />
+        <BofAdvantageCard
+          eyebrow="BOF Advantage"
+          title="Preventive signal density"
+          subtitle="PM due / overdue counts from MAR + equipment seed"
+          value={`${kpis.pm_due_soon} due soon · ${kpis.pm_overdue} overdue signal · ${kpis.oos_units} OOS units`}
+          delta="Earlier PM visibility reduces unplanned downtime exposure vs. reactive-only shops"
+          explanation="Counts come from maintenance KPI aggregation on this dataset; shop calendar integrations are not modeled in the demo."
+          tone={kpis.pm_overdue > 0 || kpis.oos_units > 0 ? "caution" : "neutral"}
+        />
+      </BofAdvantageStrip>
 
       <div className="maint-dashboard-grid">
         <section className="maint-card maint-card-wide" aria-labelledby="maint-table-title">
