@@ -91,6 +91,12 @@ export default async function LoadDetailPage({ params }: Props) {
         </div>
         <div className="bof-load-header-badges">
           <Link
+            href={`/shipper-portal/${load.id}`}
+            className="bof-load-pretrip-link bof-link-secondary bof-small"
+          >
+            Shipper portal
+          </Link>
+          <Link
             href={`/pretrip/${load.id}`}
             className="bof-load-pretrip-link bof-link-secondary bof-small"
           >

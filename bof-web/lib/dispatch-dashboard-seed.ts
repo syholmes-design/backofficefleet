@@ -9,6 +9,7 @@ import type {
   Trailer,
 } from "@/types/dispatch";
 import demoData from "@/lib/demo-data.json";
+import type { BofData } from "@/lib/load-bof-data";
 
 /** Static demo files from `public/mocks/` — served at `/mocks/…`. */
 export const MOCK_DOC_URLS = {
@@ -192,9 +193,11 @@ function proofMediaUrls(
   };
 }
 
-export function createSeedLoads(): Load[] {
-  const loads = (demoData.loads ?? []) as DemoLoad[];
-
+/**
+ * Build dispatch `Load[]` from demo-shaped load rows (same mapping as static seed).
+ * Used by the dispatch store and by the shipper portal so readiness stays aligned.
+ */
+export function buildDispatchLoadsFromDemoLoads(loads: DemoLoad[]): Load[] {
   return loads.map((l, idx) => {
     const base = new Date();
     base.setDate(base.getDate() + idx - 4);
@@ -262,6 +265,14 @@ export function createSeedLoads(): Load[] {
 
     return applyDocumentationDemos(row, l);
   });
+}
+
+export function buildDispatchLoadsFromBofData(data: BofData): Load[] {
+  return buildDispatchLoadsFromDemoLoads((data.loads ?? []) as DemoLoad[]);
+}
+
+export function createSeedLoads(): Load[] {
+  return buildDispatchLoadsFromDemoLoads((demoData.loads ?? []) as DemoLoad[]);
 }
 
 function complianceForDriverId(driverId: string): ComplianceStatus {
