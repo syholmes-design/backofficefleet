@@ -6,6 +6,7 @@ import {
   type CcMockRow,
   MarketingCtaPanel,
   MarketingFormShell,
+  MarketingFunnelEntryRow,
   MarketingHeroProductSketch,
   MarketingIconCardGrid,
   MarketingPremiumHero,
@@ -249,18 +250,21 @@ export default function ForHireCarriersPage() {
           <MarketingSectionHeader
             titleId="bof-mkt-forhire-funnel-heading"
             title="Assessment & savings outlook"
-            lead="Phase C will wire interactive flows here. Shells match Private Fleets, Government, and Vault for a cohesive premium funnel."
+            lead="Use the live calculator and assessment from any sector page—the same premium funnel as home. Drafts stay in-browser; forms are not sent to a server in this demo."
           />
           <div className="bof-mkt-split-2-col">
             <MarketingCalculatorShell
               title="Fleet savings outlook"
-              badge="Reserved"
-              body="Insurance, legal, recovered revenue, and cash-flow acceleration modeled in the demo command center—surfaced here for prospects without duplicating logic yet."
+              badge="Live"
+              body="Model directional monthly impact for for-hire networks—proof disputes, settlement drag, compliance variance, and admin chase—using the shared BOF savings engine."
             />
             <MarketingFormShell
               title="Carrier assessment intake"
-              lead="Structured capture for fleet size, shipper mix, and settlement pain—mirroring how BOF onboards elite carriers."
+              lead="Capture fleet scale, lanes, pain areas, and urgency so BOF strategists can treat the conversation as operational due diligence."
             />
+          </div>
+          <div className="bof-mkt-funnel-marketing-entry">
+            <MarketingFunnelEntryRow />
           </div>
         </div>
       </MarketingSection>

@@ -6,6 +6,7 @@ import {
   type CcMockRow,
   MarketingCtaPanel,
   MarketingFormShell,
+  MarketingFunnelEntryRow,
   MarketingHeroProductSketch,
   MarketingIconCardGrid,
   MarketingPremiumHero,
@@ -250,18 +251,21 @@ export default function GovernmentPage() {
           <MarketingSectionHeader
             titleId="bof-mkt-gov-funnel-heading"
             title="Assessment & savings outlook"
-            lead="Phase C will wire interactive flows here. These shells reserve enterprise layout—no behavior change in this release."
+            lead="Stress-test directional economics and capture regulated-fleet context before a strategy call. Experiences match the rest of the BOF marketing system."
           />
           <div className="bof-mkt-split-2-col">
             <MarketingCalculatorShell
               title="Program economics outlook"
-              badge="Reserved"
-              body="Model avoided penalties, recovered revenue, and settlement acceleration using the same savings engine that powers the demo command center—once the public calculator ships."
+              badge="Live"
+              body="Illustrative impact across risk, admin recovery, and operational leakage—useful when building internal business cases for command-center modernization."
             />
             <MarketingFormShell
               title="Agency assessment intake"
-              lead="Structured capture for fleet size, contractor mix, and oversight mandates—mirroring how BOF onboards regulated programs."
+              lead="Surface compliance documentation load, proof standards, and stakeholder readiness—aligned with how BOF scopes public-sector programs."
             />
+          </div>
+          <div className="bof-mkt-funnel-marketing-entry">
+            <MarketingFunnelEntryRow />
           </div>
         </div>
       </MarketingSection>

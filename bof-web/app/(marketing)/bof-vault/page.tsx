@@ -6,6 +6,7 @@ import {
   type CcMockRow,
   MarketingCtaPanel,
   MarketingFormShell,
+  MarketingFunnelEntryRow,
   MarketingHeroProductSketch,
   MarketingIconCardGrid,
   MarketingPremiumHero,
@@ -250,18 +251,21 @@ export default function BofVaultPage() {
           <MarketingSectionHeader
             titleId="bof-mkt-vault-funnel-heading"
             title="Assessment & savings outlook"
-            lead="Phase C will wire interactive flows here. For now, shells reserve the same enterprise layout used across BOF sector pages."
+            lead="Run the same live calculator and assessment as the rest of BOF marketing—then qualify for a strategy conversation when you are ready to talk integrations."
           />
           <div className="bof-mkt-split-2-col">
             <MarketingCalculatorShell
               title="Credential economics outlook"
-              badge="Reserved"
-              body="Quantify avoided downtime, dispute reduction, and settlement acceleration once credentials stay verified in one place—without duplicating demo math here yet."
+              badge="Live"
+              body="Directional savings narrative for high-assurance fleets: compliance variance, proof friction, and admin recovery—grounded in the shared BOF savings engine."
             />
             <MarketingFormShell
               title="Vault readiness intake"
-              lead="Structured questions for data residency, verifier roles, and integration targets—mirroring how BOF scopes enterprise vault programs."
+              lead="Use the structured assessment to capture verifier workflows, integration targets, and urgency alongside fleet scale."
             />
+          </div>
+          <div className="bof-mkt-funnel-marketing-entry">
+            <MarketingFunnelEntryRow />
           </div>
         </div>
       </MarketingSection>

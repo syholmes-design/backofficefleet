@@ -6094,6 +6094,720 @@ body {
   gap: 0.75rem 1rem;
 }
 
+/* Marketing funnel — assessment, application, savings calculator (Phase C) */
+.bof-mkt-funnel-page {
+  min-height: 100vh;
+  background: #f1f5f9;
+  color: #0f172a;
+}
+
+.bof-mkt-funnel-shell {
+  max-width: 920px;
+  margin: 0 auto;
+  padding: 2.5rem 1.5rem 4rem;
+}
+
+.bof-mkt-funnel-h1 {
+  margin: 0 0 0.5rem;
+  font-size: clamp(1.75rem, 3vw, 2.25rem);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: #0f172a;
+}
+
+.bof-mkt-funnel-lead {
+  margin: 0 0 1.75rem;
+  font-size: 1.0625rem;
+  line-height: 1.65;
+  color: #475569;
+  max-width: 52ch;
+}
+
+.bof-mkt-funnel-card {
+  border-radius: 16px;
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  background: #ffffff;
+  box-shadow: 0 4px 24px rgba(15, 23, 42, 0.06);
+  padding: 1.75rem 1.5rem 2rem;
+}
+
+@media (min-width: 640px) {
+  .bof-mkt-funnel-card {
+    padding: 2rem 2.25rem 2.25rem;
+  }
+}
+
+.bof-mkt-funnel-progress {
+  margin-bottom: 1.5rem;
+}
+
+.bof-mkt-funnel-progress-track {
+  height: 4px;
+  border-radius: 999px;
+  background: #e2e8f0;
+  overflow: hidden;
+}
+
+.bof-mkt-funnel-progress-fill {
+  height: 100%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #0d9488, #14b8a6);
+  transition: width 0.35s ease;
+}
+
+.bof-mkt-funnel-progress-meta {
+  margin-top: 0.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.8125rem;
+  color: #64748b;
+}
+
+.bof-mkt-funnel-step-label {
+  font-weight: 600;
+  color: #0f172a;
+}
+
+.bof-mkt-funnel-field {
+  margin-bottom: 1.25rem;
+}
+
+.bof-mkt-funnel-field:last-child {
+  margin-bottom: 0;
+}
+
+.bof-mkt-funnel-label {
+  display: block;
+  margin-bottom: 0.375rem;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: #334155;
+}
+
+.bof-mkt-funnel-hint {
+  margin: 0 0 0.5rem;
+  font-size: 0.8125rem;
+  line-height: 1.5;
+  color: #64748b;
+}
+
+.bof-mkt-funnel-error {
+  margin: 0.375rem 0 0;
+  font-size: 0.8125rem;
+  color: #b91c1c;
+}
+
+.bof-mkt-funnel-input,
+.bof-mkt-funnel-select,
+.bof-mkt-funnel-textarea {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 0.75rem 0.875rem;
+  font-size: 1rem;
+  line-height: 1.45;
+  color: #0f172a;
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
+  border-radius: 10px;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.bof-mkt-funnel-input:focus,
+.bof-mkt-funnel-select:focus,
+.bof-mkt-funnel-textarea:focus {
+  outline: none;
+  border-color: #0d9488;
+  box-shadow: 0 0 0 3px rgba(13, 148, 136, 0.15);
+}
+
+.bof-mkt-funnel-textarea {
+  min-height: 120px;
+  resize: vertical;
+}
+
+.bof-mkt-funnel-grid2 {
+  display: grid;
+  gap: 1rem;
+}
+
+@media (min-width: 640px) {
+  .bof-mkt-funnel-grid2 {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.bof-mkt-funnel-check-grid {
+  display: grid;
+  gap: 0.5rem 1rem;
+}
+
+@media (min-width: 640px) {
+  .bof-mkt-funnel-check-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.bof-mkt-funnel-check {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  font-size: 0.9375rem;
+  color: #334155;
+  cursor: pointer;
+}
+
+.bof-mkt-funnel-check input {
+  margin-top: 0.2rem;
+  accent-color: #0d9488;
+}
+
+.bof-mkt-funnel-actions {
+  margin-top: 1.75rem;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.bof-mkt-funnel-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.25rem;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  border-radius: 10px;
+  border: none;
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.bof-mkt-funnel-btn-primary {
+  background: linear-gradient(135deg, #0f766e, #0d9488);
+  color: #ffffff;
+  box-shadow: 0 2px 12px rgba(13, 148, 136, 0.35);
+}
+
+.bof-mkt-funnel-btn-primary:hover {
+  background: linear-gradient(135deg, #115e59, #0f766e);
+}
+
+.bof-mkt-funnel-btn-secondary {
+  background: #f1f5f9;
+  color: #334155;
+  border: 1px solid #cbd5e1;
+}
+
+.bof-mkt-funnel-btn-secondary:hover {
+  background: #e2e8f0;
+}
+
+.bof-mkt-funnel-btn-ghost {
+  background: transparent;
+  color: #64748b;
+  border: 1px solid transparent;
+}
+
+.bof-mkt-funnel-btn-ghost:hover {
+  color: #0f172a;
+  background: #f8fafc;
+}
+
+.bof-mkt-funnel-success {
+  text-align: center;
+  padding: 1rem 0 0.5rem;
+}
+
+.bof-mkt-funnel-success-icon {
+  width: 56px;
+  height: 56px;
+  margin: 0 auto 1.25rem;
+  border-radius: 50%;
+  background: linear-gradient(135deg, rgba(13, 148, 136, 0.15), rgba(20, 184, 166, 0.2));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  color: #0d9488;
+}
+
+.bof-mkt-funnel-cta-row {
+  margin-top: 1.5rem;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.75rem;
+}
+
+.bof-mkt-funnel-entry {
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid #e2e8f0;
+  text-align: center;
+}
+
+.bof-mkt-funnel-entry p {
+  margin: 0 0 0.75rem;
+  font-size: 0.875rem;
+  color: #64748b;
+}
+
+.bof-mkt-funnel-entry-links {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.5rem 1rem;
+}
+
+.bof-mkt-funnel-entry-links a {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #0d9488;
+  text-decoration: none;
+}
+
+.bof-mkt-funnel-entry-links a:hover {
+  text-decoration: underline;
+}
+
+.bof-mkt-funnel-marketing-entry {
+  margin-top: 2rem;
+  padding-top: 1.75rem;
+  border-top: 1px solid rgba(15, 23, 42, 0.08);
+}
+
+.bof-mkt-funnel-entry-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem 1rem;
+}
+
+.bof-mkt-funnel-entry-btn {
+  flex: 0 1 auto;
+}
+
+.bof-mkt-funnel-entry-text {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #0d9488;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.bof-mkt-funnel-entry-text:hover {
+  text-decoration: underline;
+}
+
+/* Wizard + calculator composition */
+.bof-mkt-funnel-wizard {
+  max-width: 880px;
+  margin: 0 auto;
+}
+
+.bof-mkt-funnel-breadcrumb {
+  margin-bottom: 1.5rem;
+  font-size: 0.8125rem;
+  color: #64748b;
+}
+
+.bof-mkt-funnel-bc-sep {
+  margin: 0 0.35rem;
+  opacity: 0.6;
+}
+
+.bof-mkt-funnel-wizard-head {
+  margin-bottom: 1.75rem;
+}
+
+.bof-mkt-funnel-progress-label {
+  margin: 0.5rem 0 0;
+  font-size: 0.8125rem;
+  color: #64748b;
+}
+
+.bof-mkt-funnel-panel {
+  border-radius: 16px;
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  background: #ffffff;
+  box-shadow: 0 4px 24px rgba(15, 23, 42, 0.06);
+  padding: 1.5rem 1.25rem 1.75rem;
+}
+
+@media (min-width: 640px) {
+  .bof-mkt-funnel-panel {
+    padding: 1.75rem 1.75rem 2rem;
+  }
+}
+
+.bof-mkt-funnel-panel--step {
+  margin-top: 0.5rem;
+}
+
+.bof-mkt-funnel-panel--results {
+  min-height: 280px;
+}
+
+.bof-mkt-funnel-h2 {
+  margin: 0 0 1.25rem;
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: #0f172a;
+  letter-spacing: -0.01em;
+}
+
+.bof-mkt-funnel-hint-block {
+  margin: 0 0 1rem;
+  font-size: 0.9375rem;
+  line-height: 1.55;
+  color: #64748b;
+}
+
+.bof-mkt-funnel-dl {
+  margin: 0;
+  display: grid;
+  gap: 0.75rem 1rem;
+}
+
+.bof-mkt-funnel-dl dt {
+  margin: 0;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #94a3b8;
+}
+
+.bof-mkt-funnel-dl dd {
+  margin: 0.15rem 0 0;
+  font-size: 0.9375rem;
+  color: #334155;
+  line-height: 1.5;
+}
+
+.bof-mkt-funnel-actions--stack {
+  flex-direction: column;
+  align-items: stretch;
+  max-width: 360px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.bof-mkt-funnel-actions--stack .bof-mkt-btn-enterprise {
+  justify-content: center;
+  text-align: center;
+}
+
+.bof-mkt-funnel-summary {
+  margin: 1.5rem auto 0;
+  padding: 0;
+  max-width: 42rem;
+  list-style: none;
+  text-align: left;
+}
+
+.bof-mkt-funnel-summary li {
+  margin-bottom: 0.75rem;
+  padding: 0.75rem 1rem;
+  border-radius: 10px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  font-size: 0.9375rem;
+  line-height: 1.5;
+  color: #475569;
+}
+
+.bof-mkt-funnel-calculator {
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.bof-mkt-funnel-calculator-head {
+  margin-bottom: 1.75rem;
+}
+
+.bof-mkt-funnel-calculator-grid {
+  display: grid;
+  gap: 1.25rem;
+}
+
+@media (min-width: 900px) {
+  .bof-mkt-funnel-calculator-grid {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    align-items: start;
+  }
+}
+
+.bof-mkt-funnel-placeholder {
+  padding: 2rem 1rem;
+  text-align: center;
+}
+
+.bof-mkt-funnel-placeholder-title {
+  margin: 0 0 0.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #334155;
+}
+
+.bof-mkt-funnel-placeholder-lead {
+  margin: 0;
+  font-size: 0.875rem;
+  line-height: 1.6;
+  color: #64748b;
+  max-width: 36ch;
+  margin-inline: auto;
+}
+
+.bof-mkt-funnel-hero-metric {
+  padding-bottom: 1.25rem;
+  border-bottom: 1px solid #e2e8f0;
+  margin-bottom: 1rem;
+}
+
+.bof-mkt-funnel-hero-metric-label {
+  margin: 0;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #64748b;
+}
+
+.bof-mkt-funnel-hero-metric-value {
+  margin: 0.35rem 0 0;
+  font-size: clamp(1.75rem, 3.5vw, 2.5rem);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  color: #0f172a;
+  line-height: 1.1;
+}
+
+.bof-mkt-funnel-hero-metric-sub {
+  margin: 0.5rem 0 0;
+  font-size: 0.8125rem;
+  line-height: 1.55;
+  color: #64748b;
+}
+
+.bof-mkt-funnel-result-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.bof-mkt-funnel-result-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+  padding: 0.85rem 0;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.bof-mkt-funnel-result-row:last-child {
+  border-bottom: none;
+}
+
+.bof-mkt-funnel-result-label {
+  margin: 0;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: #0f172a;
+}
+
+.bof-mkt-funnel-result-narrative {
+  margin: 0.25rem 0 0;
+  font-size: 0.75rem;
+  line-height: 1.45;
+  color: #64748b;
+}
+
+.bof-mkt-funnel-result-value {
+  margin: 0;
+  font-size: 0.9375rem;
+  font-weight: 700;
+  color: #0d9488;
+  white-space: nowrap;
+}
+
+.bof-mkt-funnel-metric-grid {
+  display: grid;
+  gap: 0.75rem;
+  margin-top: 1.25rem;
+}
+
+@media (min-width: 520px) {
+  .bof-mkt-funnel-metric-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.bof-mkt-funnel-mini-metric {
+  padding: 0.875rem 1rem;
+  border-radius: 10px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+}
+
+.bof-mkt-funnel-mini-label {
+  margin: 0;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #64748b;
+}
+
+.bof-mkt-funnel-mini-value {
+  margin: 0.35rem 0 0;
+  font-size: 1.375rem;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.bof-mkt-funnel-mini-hint {
+  margin: 0.35rem 0 0;
+  font-size: 0.6875rem;
+  line-height: 1.45;
+  color: #94a3b8;
+}
+
+.bof-mkt-funnel-disclaimer {
+  margin: 1.25rem 0 0;
+  padding: 1rem 1.125rem;
+  border-radius: 10px;
+  background: #fffbeb;
+  border: 1px solid #fde68a;
+  font-size: 0.75rem;
+  line-height: 1.5;
+  color: #92400e;
+}
+
+.bof-mkt-funnel-disclaimer li {
+  margin-bottom: 0.35rem;
+}
+
+.bof-mkt-funnel-disclaimer li:last-child {
+  margin-bottom: 0;
+}
+
+/* Calculator layout */
+.bof-mkt-calc-layout {
+  display: grid;
+  gap: 1.5rem;
+}
+
+@media (min-width: 900px) {
+  .bof-mkt-calc-layout {
+    grid-template-columns: 1fr 1fr;
+    align-items: start;
+  }
+}
+
+.bof-mkt-calc-hero-num {
+  font-size: clamp(2rem, 4vw, 2.75rem);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  color: #0f172a;
+  line-height: 1.1;
+}
+
+.bof-mkt-calc-hero-sub {
+  margin: 0.25rem 0 0;
+  font-size: 0.875rem;
+  color: #64748b;
+}
+
+.bof-mkt-calc-metrics {
+  display: grid;
+  gap: 0.75rem;
+  margin-top: 1.25rem;
+}
+
+@media (min-width: 480px) {
+  .bof-mkt-calc-metrics {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.bof-mkt-calc-metric {
+  padding: 0.875rem 1rem;
+  border-radius: 10px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+}
+
+.bof-mkt-calc-metric-label {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #64748b;
+}
+
+.bof-mkt-calc-metric-value {
+  margin-top: 0.25rem;
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.bof-mkt-calc-lines {
+  margin-top: 1.25rem;
+}
+
+.bof-mkt-calc-line {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 1rem;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid #f1f5f9;
+  font-size: 0.875rem;
+}
+
+.bof-mkt-calc-line:last-child {
+  border-bottom: none;
+}
+
+.bof-mkt-calc-line span:first-child {
+  color: #64748b;
+}
+
+.bof-mkt-calc-line strong {
+  color: #0f172a;
+  font-weight: 600;
+}
+
+.bof-mkt-calc-disclaimer {
+  margin-top: 1.25rem;
+  padding: 1rem;
+  border-radius: 10px;
+  background: #fffbeb;
+  border: 1px solid #fde68a;
+  font-size: 0.8125rem;
+  line-height: 1.55;
+  color: #92400e;
+}
+
+.bof-mkt-calc-cta {
+  margin-top: 1.5rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid #e2e8f0;
+}
+
+.bof-mkt-calc-cta p {
+  margin: 0 0 0.75rem;
+  font-size: 0.9375rem;
+  color: #475569;
+}
+
 /* Tailwind — utilities + components only (no @tailwind base — avoids touching BOF globals). */
 @tailwind components;
 @tailwind utilities;

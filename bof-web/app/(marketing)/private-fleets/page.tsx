@@ -6,6 +6,7 @@ import {
   type CcMockRow,
   MarketingCtaPanel,
   MarketingFormShell,
+  MarketingFunnelEntryRow,
   MarketingHeroProductSketch,
   MarketingIconCardGrid,
   MarketingPremiumHero,
@@ -250,18 +251,21 @@ export default function PrivateFleetsPage() {
           <MarketingSectionHeader
             titleId="bof-mkt-private-funnel-heading"
             title="Assessment & savings outlook"
-            lead="Phase C will wire interactive flows here. For now, these shells reserve premium layout and copy space—no behavior change."
+            lead="Quantify internal leakage and administrative drag, then run the same structured assessment used across BOF marketing—client-side drafts only in this demo."
           />
           <div className="bof-mkt-split-2-col">
             <MarketingCalculatorShell
               title="Fleet savings outlook"
-              badge="Reserved"
-              body="BOF already models insurance, legal exposure, recovered revenue, and cash-flow acceleration inside the demo command center. This card will host the public calculator experience without duplicating math."
+              badge="Live"
+              body="Private fleets still lose margin to proof gaps, branch variance, and settlement friction. The calculator translates pain levels into directional savings categories aligned with BOF."
             />
             <MarketingFormShell
               title="Fleet assessment intake"
-              lead="Structured qualification, scheduling, and context capture will live here—mirroring the enterprise assessment workflow."
+              lead="Document captive network context, compliance pressure, and handoff risk so the next conversation stays executive-grade."
             />
+          </div>
+          <div className="bof-mkt-funnel-marketing-entry">
+            <MarketingFunnelEntryRow />
           </div>
         </div>
       </MarketingSection>

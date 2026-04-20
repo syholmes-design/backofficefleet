@@ -1,3 +1,4 @@
+export { MarketingFunnelEntryRow } from "./funnel/MarketingFunnelEntryRow";
 export { MarketingCalculatorShell } from "./MarketingCalculatorShell";
 export { MarketingCommandCenterPreview, type CcMockRow } from "./MarketingCommandCenterPreview";
 export { MarketingContainer } from "./MarketingContainer";

@@ -97,10 +97,8 @@ export type ExplainableSavingsMetric = {
   detail: Record<string, number | string>;
 };
 
-export function computeInsuranceSavings(
-  data: BofData,
-  base: SavingsEngineBaseInputs
-): ExplainableSavingsMetric {
+/** Insurance savings from derived fleet ratios only (no per-load iteration). */
+export function computeInsuranceSavings(base: SavingsEngineBaseInputs): ExplainableSavingsMetric {
   const rawRate =
     0.05 * base.complianceScore +
     0.07 * base.rfCoverage -
@@ -188,6 +186,35 @@ export function computeRecoveredRevenue(
   };
 }
 
+/**
+ * Recovered-revenue estimate when only aggregate `SavingsEngineBaseInputs` are known
+ * (e.g. marketing calculator). Assumes uniform revenue per load — same recoveryRate
+ * path as {@link computeRecoveredRevenue}.
+ */
+export function computeRecoveredRevenueFromBase(base: SavingsEngineBaseInputs): ExplainableSavingsMetric {
+  const recoveryRate = 0.4 + base.rfCoverage * 0.3;
+  const avgLoadValue = base.totalLoads > 0 ? base.totalRevenue / base.totalLoads : 0;
+  const issueLoadCount = base.loadsWithIssues;
+  const value = Math.round(issueLoadCount * avgLoadValue * 0.25 * recoveryRate);
+
+  return {
+    value,
+    rate: recoveryRate,
+    inputs: base,
+    formulaLines: [
+      "issueLoadCount = loadsWithIssues",
+      "avgLoadValue = totalRevenue / totalLoads",
+      "recoveryRate = 0.4 + rfCoverage × 0.3",
+      "recoveredRevenue ≈ issueLoadCount × avgLoadValue × 0.25 × recoveryRate",
+    ],
+    detail: {
+      recoveryRate,
+      issueLoadCount,
+      atRiskFactor: 0.25,
+    },
+  };
+}
+
 export function computeCashFlowImpact(base: SavingsEngineBaseInputs): ExplainableSavingsMetric {
   const delayedLoads = base.totalLoads - base.loadsDeliveredVerified;
   const avgDelayDays = 7;
@@ -229,9 +256,20 @@ export function buildSavingsEngineScorecard(data: BofData): SavingsEngineScoreca
   const base = extractBaseMetrics(data);
   return {
     base,
-    insurance: computeInsuranceSavings(data, base),
+    insurance: computeInsuranceSavings(base),
     legal: computeLegalSavings(base),
     recovered: computeRecoveredRevenue(data, base),
+    cashFlow: computeCashFlowImpact(base),
+  };
+}
+
+/** Marketing / synthetic fleets: full scorecard without iterating demo loads for recovered revenue. */
+export function buildSavingsEngineScorecardFromBase(base: SavingsEngineBaseInputs): SavingsEngineScorecard {
+  return {
+    base,
+    insurance: computeInsuranceSavings(base),
+    legal: computeLegalSavings(base),
+    recovered: computeRecoveredRevenueFromBase(base),
     cashFlow: computeCashFlowImpact(base),
   };
 }

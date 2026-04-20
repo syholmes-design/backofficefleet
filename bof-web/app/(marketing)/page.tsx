@@ -5,6 +5,7 @@ import {
   MarketingCommandCenterPreview,
   MarketingCtaPanel,
   MarketingFormShell,
+  MarketingFunnelEntryRow,
   MarketingHeroProductSketch,
   MarketingIconCardGrid,
   MarketingPremiumHero,
@@ -230,18 +231,21 @@ export default function MarketingHomePage() {
           <MarketingSectionHeader
             titleId="bof-mkt-home-funnel-heading"
             title="Assessment & savings outlook"
-            lead="Phase C will wire interactive flows here. These shells mirror sector pages so the premium funnel stays visually consistent site-wide."
+            lead="Open the live savings model, run the structured fleet assessment, or apply for a curated strategy conversation. Drafts save in your browser; this demo does not transmit marketing forms to a server."
           />
           <div className="bof-mkt-split-2-col">
             <MarketingCalculatorShell
               title="Fleet savings outlook"
-              badge="Reserved"
-              body="BOF already models insurance, legal exposure, recovered revenue, and cash-flow acceleration inside the demo command center. This card will host the public calculator without duplicating math."
+              badge="Live"
+              body="Directional monthly and annual impact across insurance posture, legal exposure, recovered revenue, and cash-flow categories—using the same modular engine as the BOF demo, tuned for marketing storytelling."
             />
             <MarketingFormShell
               title="Fleet assessment intake"
-              lead="Structured qualification, scheduling, and context capture will live here—matching the enterprise assessment workflow across marketing."
+              lead="Eight-step consultative intake covering fleet scale, sector, equipment, pain areas, systems, urgency, and contact—then hand off to qualification or the calculator."
             />
+          </div>
+          <div className="bof-mkt-funnel-marketing-entry">
+            <MarketingFunnelEntryRow />
           </div>
         </div>
       </MarketingSection>
