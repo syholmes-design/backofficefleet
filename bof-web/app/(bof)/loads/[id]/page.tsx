@@ -97,6 +97,12 @@ export default async function LoadDetailPage({ params }: Props) {
             Shipper portal
           </Link>
           <Link
+            href={`/trip-release/${load.id}`}
+            className="bof-load-pretrip-link bof-link-secondary bof-small"
+          >
+            Trip release
+          </Link>
+          <Link
             href={`/pretrip/${load.id}`}
             className="bof-load-pretrip-link bof-link-secondary bof-small"
           >
