@@ -2,8 +2,9 @@
 
 /**
  * Internal demo admin: edits persist via BofDemoDataProvider → localStorage and flow
- * to drivers list, driver hub, document vault, and medical expanded panels that read
- * the same `data` object through useBofDemoData().
+ * to every client surface that reads `useBofDemoData()` — including dashboard & command
+ * center summaries, driver hub, document vault, medical expanded panels, money at risk,
+ * loads table, RF actions, and settlement drawer proof alignment.
  */
 
 import Link from "next/link";

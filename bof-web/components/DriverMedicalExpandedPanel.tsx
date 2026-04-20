@@ -4,7 +4,13 @@ import { useCallback, useEffect, useState } from "react";
 import type { DocumentRow } from "@/lib/driver-queries";
 import type { DriverMedicalExpanded } from "@/lib/driver-medical-expanded";
 import { EMPTY_DRIVER_MEDICAL_EXPANDED } from "@/lib/driver-medical-expanded";
-import { proofHref, statusBadgeClass } from "@/lib/document-ui";
+import {
+  documentSignal,
+  documentSignalClass,
+  documentSignalLabel,
+  proofHref,
+  statusBadgeClass,
+} from "@/lib/document-ui";
 
 function dlItem(label: string, value: string) {
   const v = value?.trim();
@@ -65,6 +71,11 @@ export function DriverMedicalExpandedPanel({
             {medicalDoc.status}
           </span>
         </div>
+        <p className="bof-doc-signal-line">
+          <span className={documentSignalClass(documentSignal(medicalDoc))}>
+            {documentSignalLabel(documentSignal(medicalDoc))}
+          </span>
+        </p>
         <dl className="bof-medical-dl bof-medical-dl-primary">
           {dlItem("Issue date", issue)}
           {dlItem("Expiration date", exp)}

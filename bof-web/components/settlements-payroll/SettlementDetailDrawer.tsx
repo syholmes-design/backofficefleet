@@ -2,7 +2,7 @@
 
 import { useMemo } from "react";
 import { X } from "lucide-react";
-import { getBofData } from "@/lib/load-bof-data";
+import { useBofDemoData } from "@/lib/bof-demo-data-context";
 import { settlementHasProofOrExceptionIssues } from "@/lib/settlements-payroll-bootstrap";
 import { useSettlementsPayrollStore } from "@/lib/stores/settlements-payroll-store";
 import {
@@ -17,7 +17,20 @@ type Props = {
   onClose: () => void;
 };
 
+function proofSignalLabel(
+  proofStatus: string,
+  settlementHold: boolean,
+  exceptionFlag: boolean
+) {
+  const status = proofStatus.toUpperCase();
+  if (settlementHold || status === "MISSING" || status === "FAILED") return "Blocking action";
+  if (exceptionFlag || status === "PENDING") return "At risk";
+  if (status === "VERIFIED" || status === "PASS") return "Resolved / clean";
+  return "At risk";
+}
+
 export function SettlementDetailDrawer({ settlementId, open, onClose }: Props) {
+  const { data } = useBofDemoData();
   const settlements = useSettlementsPayrollStore((s) => s.settlements);
   const lines = useSettlementsPayrollStore((s) => s.lines);
   const loads = useSettlementsPayrollStore((s) => s.loads);
@@ -39,7 +52,6 @@ export function SettlementDetailDrawer({ settlementId, open, onClose }: Props) {
     [lines, settlement]
   );
 
-  const data = getBofData();
   const proofReview = useMemo(() => {
     if (!settlement) return { recommendHold: false, messages: [] as string[] };
     return settlementHasProofOrExceptionIssues(
@@ -163,6 +175,22 @@ export function SettlementDetailDrawer({ settlementId, open, onClose }: Props) {
               )}
             </div>
           </section>
+          <section className="rounded-lg border border-slate-800 bg-slate-900/30 px-3 py-2">
+            <p className="text-[10px] font-semibold uppercase tracking-wide text-slate-500">
+              Readiness story
+            </p>
+            <div className="mt-2 flex flex-wrap gap-2">
+              <span className="bof-status-pill bof-status-pill-danger">
+                Blocking: proof missing / hold / failed checks
+              </span>
+              <span className="bof-status-pill bof-status-pill-info">
+                At risk: pending proof or active exception
+              </span>
+              <span className="bof-status-pill bof-status-pill-ok">
+                Resolved: verified proof and no hold
+              </span>
+            </div>
+          </section>
 
           {!netCheck && (
             <div className="rounded border border-red-900/50 bg-red-950/30 px-3 py-2 text-xs text-red-100">
@@ -256,6 +284,11 @@ export function SettlementDetailDrawer({ settlementId, open, onClose }: Props) {
               ).flatMap((lid) => {
                 const snap = loads.find((x) => x.load_id === lid);
                 if (!snap) return [];
+                const signal = proofSignalLabel(
+                  snap.proof_status,
+                  snap.settlement_hold,
+                  snap.exception_flag
+                );
                 return [
                   <div
                     key={lid}
@@ -283,6 +316,19 @@ export function SettlementDetailDrawer({ settlementId, open, onClose }: Props) {
                       <dt className="text-slate-500">Claim</dt>
                       <dd>{snap.insurance_claim_needed ? "Yes" : "No"}</dd>
                     </dl>
+                    <p className="mt-2">
+                      <span
+                        className={
+                          signal === "Blocking action"
+                            ? "bof-status-pill bof-status-pill-danger"
+                            : signal === "Resolved / clean"
+                              ? "bof-status-pill bof-status-pill-ok"
+                              : "bof-status-pill bof-status-pill-info"
+                        }
+                      >
+                        {signal}
+                      </span>
+                    </p>
                     {snap.settlement_hold_reason && (
                       <p className="mt-2 text-amber-200/90">{snap.settlement_hold_reason}</p>
                     )}

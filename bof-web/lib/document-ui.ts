@@ -56,3 +56,43 @@ export function isEmbedPreviewPath(url: string) {
 export function normalizeDocStatus(status: string) {
   return status.trim().toUpperCase().replace(/\s+/g, " ");
 }
+
+export type DocumentSignal = "blocking" | "expired" | "missing" | "at-risk" | "resolved";
+
+export function documentSignal(doc: Pick<DocumentRow, "status"> & { blocking?: boolean; atRisk?: boolean }): DocumentSignal {
+  const s = normalizeDocStatus(doc.status);
+  if (doc.blocking) return "blocking";
+  if (s === "EXPIRED") return "expired";
+  if (s === "MISSING") return "missing";
+  if (doc.atRisk || s === "AT RISK" || s === "AT_RISK" || s === "ATRISK") return "at-risk";
+  return "resolved";
+}
+
+export function documentSignalLabel(signal: DocumentSignal): string {
+  switch (signal) {
+    case "blocking":
+      return "Blocking action";
+    case "expired":
+      return "Expired";
+    case "missing":
+      return "Missing";
+    case "at-risk":
+      return "At risk";
+    default:
+      return "Resolved / clean";
+  }
+}
+
+export function documentSignalClass(signal: DocumentSignal): string {
+  switch (signal) {
+    case "blocking":
+      return "bof-status-pill bof-status-pill-danger";
+    case "expired":
+    case "missing":
+      return "bof-status-pill bof-status-pill-warn";
+    case "at-risk":
+      return "bof-status-pill bof-status-pill-info";
+    default:
+      return "bof-status-pill bof-status-pill-ok";
+  }
+}

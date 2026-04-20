@@ -9,7 +9,6 @@ import {
   DRIVER_GENERATED_FILES,
   LOAD_GENERATED_FILES,
   CLAIM_GENERATED_FILES,
-  EXCEPTION_GENERATED_FILES,
   SETTLEMENT_GENERATED_FILES,
 } from "./bof-generated-svgs";
 import { getOrderedDocumentsForDriver } from "./driver-queries";

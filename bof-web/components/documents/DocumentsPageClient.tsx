@@ -7,6 +7,7 @@ import { buildVaultRows } from "@/lib/document-vault";
 import { useBofDemoData } from "@/lib/bof-demo-data-context";
 import { DEFAULT_PREVIEW_DRIVER_ID } from "@/lib/bof-defaults";
 import { getDriverById } from "@/lib/driver-queries";
+import { OPS_COPY } from "@/lib/ops-copy";
 
 export function DocumentsPageClient() {
   const { data } = useBofDemoData();
@@ -18,20 +19,13 @@ export function DocumentsPageClient() {
     <div className="bof-page">
       <h1 className="bof-title">Document Vault</h1>
       <p className="bof-lead">
-        Fleet-wide register — every driver × seven core types plus primary extensions
-        and secondary workflow rows.
-        <strong> Group</strong> tags the seven core credentials as Core, then primary
-        extensions (e.g. MCSA-5875) and secondary workflow files (same stacks as each
-        driver hub — John Carter / DRV-001 carries the full reference PDF/HTML set).
-        Filter by
-        driver, type, or status; hover proof for a quick preview or open the driver hub
-        for context. Credential rows reflect edits from the{" "}
+        {OPS_COPY.documentsLead} {OPS_COPY.documentsStory} Credential rows reflect edits from the{" "}
         <Link href="/source-of-truth" className="bof-link-secondary">
           Source of Truth
         </Link>
         .
       </p>
-      <p className="bof-muted bof-small">
+      <p className="bof-muted bof-small bof-oper-sublead">
         BOF also builds{" "}
         <strong>generated credential SVGs</strong> from the same JSON on each{" "}
         <Link
@@ -50,7 +44,9 @@ export function DocumentsPageClient() {
         ) : null}
       </p>
 
-      <DocumentVaultClient rows={rows} totalExpected={rows.length} />
+      <section className="bof-oper-panel bof-oper-panel-tight" aria-label="Document table">
+        <DocumentVaultClient rows={rows} totalExpected={rows.length} />
+      </section>
     </div>
   );
 }

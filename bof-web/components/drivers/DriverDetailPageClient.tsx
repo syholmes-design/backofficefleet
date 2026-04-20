@@ -6,7 +6,7 @@
  */
 
 import Link from "next/link";
-import { useMemo } from "react";
+import { useEffect, useMemo } from "react";
 import { useBofDemoData } from "@/lib/bof-demo-data-context";
 import {
   assignedTrucksForDriver,
@@ -66,11 +66,33 @@ export function DriverDetailPageClient({ driverId }: { driverId: string }) {
   const trucks = useMemo(() => assignedTrucksForDriver(data, driverId), [data, driverId]);
   const primary = useMemo(() => primaryAssignedTruck(data, driverId), [data, driverId]);
   const compliance = useMemo(() => complianceNotesForDriver(data, driverId), [data, driverId]);
+  const complianceSummary = useMemo(() => {
+    let blocking = 0;
+    let atRisk = 0;
+    let resolved = 0;
+    for (const row of compliance) {
+      const status = row.status.toUpperCase();
+      const severity = row.severity.toUpperCase();
+      if (status === "CLOSED" || status === "RESOLVED") {
+        resolved += 1;
+      } else if (severity === "CRITICAL" || severity === "HIGH") {
+        blocking += 1;
+      } else {
+        atRisk += 1;
+      }
+    }
+    return { blocking, atRisk, resolved };
+  }, [compliance]);
   const engineDriverDocs = useMemo(
     () => listEngineDocumentsForDriver(data, driverId),
     [data, driverId]
   );
   const isRefDriver = isJohnCarterReferenceDriver(driverId);
+
+  useEffect(() => {
+    if (!driver) return;
+    document.title = `${driver.name} | Driver | BOF`;
+  }, [driver]);
 
   if (!driver) {
     return (
@@ -190,42 +212,83 @@ export function DriverDetailPageClient({ driverId }: { driverId: string }) {
         </div>
       </section>
 
-      {compliance.length > 0 && (
-        <section
-          className="bof-driver-hub-section"
-          aria-labelledby="driver-hub-compliance-heading"
-        >
-          <h2 id="driver-hub-compliance-heading" className="bof-h2 bof-driver-hub-h2">
-            Compliance
-          </h2>
-          <p className="bof-doc-section-lead bof-driver-hub-lead">
-            Open incidents for this driver. Credential-level risk still surfaces on
-            individual document cards and in the{" "}
-            <Link href="/documents" className="bof-link-secondary">
-              document vault
-            </Link>
-            .
-          </p>
+      <section
+        className="bof-driver-hub-section"
+        aria-labelledby="driver-hub-compliance-heading"
+      >
+        <h2 id="driver-hub-compliance-heading" className="bof-h2 bof-driver-hub-h2">
+          Compliance
+        </h2>
+        <p className="bof-doc-section-lead bof-driver-hub-lead">
+          Incident posture and generated packet links for this driver. Credential-level risk still surfaces on
+          individual document cards and in the{" "}
+          <Link href="/documents" className="bof-link-secondary">
+            document vault
+          </Link>
+          .
+        </p>
+        {compliance.length > 0 ? (
           <ul className="bof-compliance-mini">
-            {compliance.map((c) => (
-              <li key={c.incidentId}>
-                <span className="bof-badge bof-badge-warn">{c.severity}</span>{" "}
-                {c.type} — <span className="bof-muted">{c.status}</span>
-                <div className="bof-small">
-                  <a
-                    href={`${GENERATED_PUBLIC_PREFIX}/claims/${c.incidentId}/evidence-summary.svg`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="bof-link-secondary"
-                  >
-                    Generated compliance packet
-                  </a>
-                </div>
-              </li>
-            ))}
+            {compliance.map((c) => {
+              const status = c.status.toUpperCase();
+              const severity = c.severity.toUpperCase();
+              const resolved = status === "CLOSED" || status === "RESOLVED";
+              const blocking = !resolved && (severity === "CRITICAL" || severity === "HIGH");
+              return (
+                <li key={c.incidentId} className="bof-compliance-mini-row">
+                  <span className="bof-compliance-mini-head">
+                    <span
+                      className={
+                        resolved
+                          ? "bof-status-pill bof-status-pill-ok"
+                          : blocking
+                            ? "bof-status-pill bof-status-pill-danger"
+                            : "bof-status-pill bof-status-pill-info"
+                      }
+                    >
+                      {resolved
+                        ? "Resolved / clean"
+                        : blocking
+                          ? "Blocking action"
+                          : "At risk"}
+                    </span>
+                    <span className="bof-badge bof-badge-warn">{c.severity}</span>
+                  </span>
+                  <span className="bof-compliance-mini-title">
+                    {c.type} — <span className="bof-muted">{c.status}</span>
+                  </span>
+                  <div className="bof-small">
+                    <a
+                      href={`${GENERATED_PUBLIC_PREFIX}/claims/${c.incidentId}/evidence-summary.svg`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="bof-link-secondary"
+                    >
+                      Generated compliance packet
+                    </a>
+                  </div>
+                </li>
+              );
+            })}
           </ul>
-        </section>
-      )}
+        ) : (
+          <div className="bof-empty-state">
+            <h3 className="bof-h3">No incidents on this driver profile</h3>
+            <p className="bof-muted bof-small">Current shared data indicates a clean compliance lane.</p>
+          </div>
+        )}
+        <div className="bof-driver-compliance-summary">
+          <span className="bof-status-pill bof-status-pill-danger">
+            Blocking: {complianceSummary.blocking}
+          </span>
+          <span className="bof-status-pill bof-status-pill-info">
+            At risk: {complianceSummary.atRisk}
+          </span>
+          <span className="bof-status-pill bof-status-pill-ok">
+            Resolved: {complianceSummary.resolved}
+          </span>
+        </div>
+      </section>
 
       {medicalDoc && (
         <section

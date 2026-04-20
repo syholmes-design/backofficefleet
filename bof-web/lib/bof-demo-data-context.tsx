@@ -3,9 +3,12 @@
 /**
  * BOF demo "source of truth": in-memory clone of demo-data.json, hydrated from
  * localStorage after mount so edits from /source-of-truth propagate to client pages
- * that consume useBofDemoData() (drivers hub, document vault, driver detail).
+ * that consume useBofDemoData() — drivers list, driver hub, document vault, dashboard,
+ * command center, money at risk, loads/dispatch, RF actions, and settlement drawer proof
+ * checks against live JSON.
  *
- * Server-only pages still use getBofData() from load-bof-data.ts (seed file).
+ * Server-only code paths still use getBofData() (seed import): static params, prerender,
+ * `/api/bof-generated/*`, and any module-scope stores not yet re-hydrated from this provider.
  */
 
 import {

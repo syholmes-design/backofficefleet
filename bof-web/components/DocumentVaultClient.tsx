@@ -5,6 +5,9 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { DriverAvatar } from "@/components/DriverAvatar";
 import { DriverLink } from "@/components/DriverLink";
 import {
+  documentSignal,
+  documentSignalClass,
+  documentSignalLabel,
   documentTypeLabel,
   isEmbedPreviewPath,
   isImagePath,
@@ -81,6 +84,20 @@ export function DocumentVaultClient({
   }, [rows, driverId, docType, statusFilter]);
 
   const countOk = rows.length === totalExpected;
+  const signalTotals = useMemo(() => {
+    const totals: Record<"blocking" | "expired" | "missing" | "at-risk" | "resolved", number> = {
+      blocking: 0,
+      expired: 0,
+      missing: 0,
+      "at-risk": 0,
+      resolved: 0,
+    };
+    for (const row of rows) {
+      totals[documentSignal(row)] += 1;
+    }
+    return totals;
+  }, [rows]);
+  const hasRows = filtered.length > 0;
 
   return (
     <>
@@ -144,148 +161,162 @@ export function DocumentVaultClient({
           ) : null}
         </p>
       </div>
-
-      <div className="bof-table-wrap">
-        <table className="bof-table bof-table-compact bof-vault-table">
-          <thead>
-            <tr>
-              <th scope="col" className="bof-table-photo-col">
-                Photo
-              </th>
-              <th scope="col">Driver</th>
-              <th scope="col">Driver ID</th>
-              <th scope="col">Document type</th>
-              <th scope="col" className="bof-vault-group-col">
-                Group
-              </th>
-              <th scope="col">Status</th>
-              <th scope="col">Expiration</th>
-              <th scope="col">Flags</th>
-              <th scope="col">Proof</th>
-            </tr>
-          </thead>
-          <tbody>
-            {filtered.map((r) => {
-              const k = rowKey(r);
-              const href = proofHref(r);
-              const hasPreview = previewAvailable(r);
-              return (
-                <tr key={k}>
-                  <td className="bof-table-photo-cell">
-                    <DriverLink
-                      driverId={r.driverId}
-                      className="bof-table-driver-hit"
-                    >
-                      <DriverAvatar
-                        name={r.driverName}
-                        photoUrl={driverPhotoPath(r.driverId)}
-                        size={28}
-                      />
-                    </DriverLink>
-                  </td>
-                  <td>
-                    <DriverLink driverId={r.driverId}>{r.driverName}</DriverLink>
-                  </td>
-                  <td>
-                    <code className="bof-code">{r.driverId}</code>
-                  </td>
-                  <td>{r.type}</td>
-                  <td className="bof-vault-group-col">
-                    <span
-                      className={`bof-vault-group-tag bof-vault-group-tag--${r.vaultGroup.toLowerCase()}`}
-                    >
-                      {r.vaultGroup}
-                    </span>
-                  </td>
-                  <td>
-                    <span className={statusBadgeClass(r.status)}>{r.status}</span>
-                  </td>
-                  <td>
-                    {r.expirationDate ? (
-                      <time dateTime={r.expirationDate}>{r.expirationDate}</time>
-                    ) : (
-                      <span className="bof-muted">—</span>
-                    )}
-                  </td>
-                  <td className="bof-vault-flags">
-                    {r.atRisk ? (
-                      <span className="bof-doc-badge bof-doc-badge-warn">
-                        At risk
-                      </span>
-                    ) : null}
-                    {r.blocking ? (
-                      <span className="bof-vault-block-pill">Blocks dispatch</span>
-                    ) : null}
-                    {!r.atRisk && !r.blocking ? (
-                      <span className="bof-muted">—</span>
-                    ) : null}
-                  </td>
-                  <td className="bof-vault-proof-cell">
-                    <div
-                      className="bof-vault-proof-wrap"
-                      onMouseLeave={() => setHoveredKey(null)}
-                    >
-                      {hasPreview ? (
-                        <>
-                          <button
-                            type="button"
-                            className="bof-vault-proof-btn"
-                            onMouseEnter={() => setHoveredKey(k)}
-                            onClick={() => setModalRow(r)}
-                          >
-                            Preview
-                          </button>
-                          {href ? (
-                            <a
-                              href={href}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="bof-link-secondary bof-vault-open"
-                              onClick={(e) => e.stopPropagation()}
-                            >
-                              Open
-                            </a>
-                          ) : null}
-                          {hoveredKey === k && (
-                            <div
-                              className="bof-doc-popover bof-vault-popover"
-                              role="tooltip"
-                            >
-                              <div className="bof-doc-popover-title">Preview</div>
-                              {isEmbedPreviewPath(r.previewUrl || r.fileUrl || "") ? (
-                                <iframe
-                                  src={r.previewUrl || r.fileUrl}
-                                  title=""
-                                  className="bof-doc-popover-iframe"
-                                />
-                              ) : isImagePath(r.previewUrl || r.fileUrl || "") ? (
-                                // eslint-disable-next-line @next/next/no-img-element
-                                <img
-                                  src={r.previewUrl || r.fileUrl}
-                                  alt=""
-                                  className="bof-doc-popover-img"
-                                />
-                              ) : (
-                                <p className="bof-doc-popover-file">
-                                  File linked — click Preview for detail or use Open.
-                                </p>
-                              )}
-                            </div>
-                          )}
-                        </>
-                      ) : (
-                        <span className="bof-muted bof-vault-no-proof">
-                          Preview not available
-                        </span>
-                      )}
-                    </div>
-                  </td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
+      <div className="bof-vault-signal-row" aria-label="Document signal summary">
+        <span className="bof-status-pill bof-status-pill-danger">
+          Blocking: {signalTotals.blocking}
+        </span>
+        <span className="bof-status-pill bof-status-pill-warn">
+          Expired / missing: {signalTotals.expired + signalTotals.missing}
+        </span>
+        <span className="bof-status-pill bof-status-pill-info">
+          At risk: {signalTotals["at-risk"]}
+        </span>
+        <span className="bof-status-pill bof-status-pill-ok">
+          Clean: {signalTotals.resolved}
+        </span>
       </div>
+
+      {hasRows ? (
+        <div className="bof-table-wrap">
+          <table className="bof-table bof-table-compact bof-vault-table">
+            <thead>
+              <tr>
+                <th scope="col" className="bof-table-photo-col">
+                  Photo
+                </th>
+                <th scope="col">Driver</th>
+                <th scope="col">Driver ID</th>
+                <th scope="col">Document type</th>
+                <th scope="col" className="bof-vault-group-col">
+                  Group
+                </th>
+                <th scope="col">Status</th>
+                <th scope="col">Signal</th>
+                <th scope="col">Expiration</th>
+                <th scope="col">Proof</th>
+              </tr>
+            </thead>
+            <tbody>
+              {filtered.map((r) => {
+                const k = rowKey(r);
+                const href = proofHref(r);
+                const hasPreview = previewAvailable(r);
+                const signal = documentSignal(r);
+                return (
+                  <tr key={k}>
+                    <td className="bof-table-photo-cell">
+                      <DriverLink
+                        driverId={r.driverId}
+                        className="bof-table-driver-hit"
+                      >
+                        <DriverAvatar
+                          name={r.driverName}
+                          photoUrl={driverPhotoPath(r.driverId)}
+                          size={28}
+                        />
+                      </DriverLink>
+                    </td>
+                    <td>
+                      <DriverLink driverId={r.driverId}>{r.driverName}</DriverLink>
+                    </td>
+                    <td>
+                      <code className="bof-code">{r.driverId}</code>
+                    </td>
+                    <td>{documentTypeLabel(r.type)}</td>
+                    <td className="bof-vault-group-col">
+                      <span
+                        className={`bof-vault-group-tag bof-vault-group-tag--${r.vaultGroup.toLowerCase()}`}
+                      >
+                        {r.vaultGroup}
+                      </span>
+                    </td>
+                    <td>
+                      <span className={statusBadgeClass(r.status)}>{r.status}</span>
+                    </td>
+                    <td className="bof-vault-flags">
+                      <span className={documentSignalClass(signal)}>{documentSignalLabel(signal)}</span>
+                    </td>
+                    <td>
+                      {r.expirationDate ? (
+                        <time dateTime={r.expirationDate}>{r.expirationDate}</time>
+                      ) : (
+                        <span className="bof-muted">—</span>
+                      )}
+                    </td>
+                    <td className="bof-vault-proof-cell">
+                      <div
+                        className="bof-vault-proof-wrap"
+                        onMouseLeave={() => setHoveredKey(null)}
+                      >
+                        {hasPreview ? (
+                          <>
+                            <button
+                              type="button"
+                              className="bof-vault-proof-btn"
+                              onMouseEnter={() => setHoveredKey(k)}
+                              onClick={() => setModalRow(r)}
+                            >
+                              Preview
+                            </button>
+                            {href ? (
+                              <a
+                                href={href}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="bof-link-secondary bof-vault-open"
+                                onClick={(e) => e.stopPropagation()}
+                              >
+                                Open
+                              </a>
+                            ) : null}
+                            {hoveredKey === k && (
+                              <div
+                                className="bof-doc-popover bof-vault-popover"
+                                role="tooltip"
+                              >
+                                <div className="bof-doc-popover-title">Preview</div>
+                                {isEmbedPreviewPath(r.previewUrl || r.fileUrl || "") ? (
+                                  <iframe
+                                    src={r.previewUrl || r.fileUrl}
+                                    title=""
+                                    className="bof-doc-popover-iframe"
+                                  />
+                                ) : isImagePath(r.previewUrl || r.fileUrl || "") ? (
+                                  // eslint-disable-next-line @next/next/no-img-element
+                                  <img
+                                    src={r.previewUrl || r.fileUrl}
+                                    alt=""
+                                    className="bof-doc-popover-img"
+                                  />
+                                ) : (
+                                  <p className="bof-doc-popover-file">
+                                    File linked — click Preview for detail or use Open.
+                                  </p>
+                                )}
+                              </div>
+                            )}
+                          </>
+                        ) : (
+                          <span className="bof-muted bof-vault-no-proof">
+                            Preview not available
+                          </span>
+                        )}
+                      </div>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+      ) : (
+        <div className="bof-empty-state">
+          <h3 className="bof-h3">No documents match this filter set</h3>
+          <p className="bof-muted bof-small">
+            Broaden driver/type/status filters to restore rows.
+          </p>
+        </div>
+      )}
 
       <p className="bof-muted bof-small bof-vault-footnote">
         Fleet register: <strong>{rows.length}</strong> rows. <strong>Group</strong>{" "}
@@ -348,12 +379,9 @@ export function DocumentVaultClient({
                 <dd>{modalRow.expirationDate ?? "—"}</dd>
                 <dt>Flags</dt>
                 <dd>
-                  {[
-                    modalRow.atRisk ? "At risk" : null,
-                    modalRow.blocking ? "Blocks dispatch" : null,
-                  ]
-                    .filter(Boolean)
-                    .join(" · ") || "—"}
+                  <span className={documentSignalClass(documentSignal(modalRow))}>
+                    {documentSignalLabel(documentSignal(modalRow))}
+                  </span>
                 </dd>
                 <dt>Preview URL</dt>
                 <dd>

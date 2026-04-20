@@ -4,6 +4,9 @@ import { useCallback, useEffect, useState } from "react";
 import type { DocumentRow } from "@/lib/driver-queries";
 import { DRIVER_DOCUMENT_TYPES } from "@/lib/driver-queries";
 import {
+  documentSignal,
+  documentSignalClass,
+  documentSignalLabel,
   documentTypeLabel,
   isEmbedPreviewPath,
   isImagePath,
@@ -83,6 +86,11 @@ export function DriverDocumentsPanel({
                   {doc.status}
                 </span>
               </div>
+              <p className="bof-doc-signal-line">
+                <span className={documentSignalClass(documentSignal(doc))}>
+                  {documentSignalLabel(documentSignal(doc))}
+                </span>
+              </p>
               <div className="bof-doc-expiry">
                 {doc.expirationDate ? (
                   <>
@@ -164,6 +172,12 @@ export function DriverDocumentsPanel({
                 <dd>
                   <span className={statusBadgeClass(modalDoc.status)}>
                     {modalDoc.status}
+                  </span>
+                </dd>
+                <dt>Signal</dt>
+                <dd>
+                  <span className={documentSignalClass(documentSignal(modalDoc))}>
+                    {documentSignalLabel(documentSignal(modalDoc))}
                   </span>
                 </dd>
                 <dt>Expiration</dt>

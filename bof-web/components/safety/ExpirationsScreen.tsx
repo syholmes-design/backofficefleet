@@ -17,6 +17,11 @@ export function ExpirationsScreen() {
   const [statusF, setStatusF] = useState<"" | "Expired" | "Expiring soon">("");
 
   const rows = useMemo(() => buildExpirationRows(drivers), [drivers]);
+  const totals = useMemo(() => {
+    const expired = rows.filter((r) => r.status === "Expired").length;
+    const expiring = rows.filter((r) => r.status === "Expiring soon").length;
+    return { expired, expiring };
+  }, [rows]);
 
   const filtered = useMemo(() => {
     return rows.filter((r) => {
@@ -80,71 +85,85 @@ export function ExpirationsScreen() {
           </select>
         </label>
       </section>
-
-      <div className="overflow-x-auto rounded-lg border border-slate-800">
-        <table className="w-full min-w-[800px] border-collapse text-left text-sm">
-          <thead className="bg-slate-900/90 text-[10px] uppercase tracking-wide text-slate-500">
-            <tr>
-              <th className="border-b border-slate-800 px-3 py-2 font-medium">
-                Driver
-              </th>
-              <th className="border-b border-slate-800 px-3 py-2 font-medium">
-                Document
-              </th>
-              <th className="border-b border-slate-800 px-3 py-2 font-medium">
-                Expiration
-              </th>
-              <th className="border-b border-slate-800 px-3 py-2 font-medium">
-                Status
-              </th>
-              <th className="border-b border-slate-800 px-3 py-2 font-medium">
-                Terminal
-              </th>
-              <th className="border-b border-slate-800 px-3 py-2 font-medium">
-                Dispatch
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            {filtered.map((r) => {
-              const d = drivers.find((x) => x.driver_id === r.driver_id)!;
-              const expired = r.status === "Expired";
-              return (
-                <tr
-                  key={`${r.driver_id}-${r.document_type}`}
-                  className={[
-                    "border-b border-slate-800/80",
-                    expired ? "bg-red-950/25" : "hover:bg-slate-900/60",
-                  ].join(" ")}
-                >
-                  <td className="px-3 py-2 text-slate-100">{r.driver_name}</td>
-                  <td className="px-3 py-2 text-slate-300">{r.document_type}</td>
-                  <td className="px-3 py-2 font-mono text-xs text-slate-400">
-                    {r.expiration_date}
-                  </td>
-                  <td className="px-3 py-2">
-                    <span
-                      className={
-                        expired
-                          ? "text-sm font-semibold text-red-300"
-                          : "text-sm font-medium text-amber-200"
-                      }
-                    >
-                      {r.status}
-                    </span>
-                  </td>
-                  <td className="px-3 py-2 text-xs text-slate-400">
-                    {r.home_terminal}
-                  </td>
-                  <td className="px-3 py-2 text-xs text-slate-300">
-                    {dispatchEligibilityLabel(d, events)}
-                  </td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
+      <div className="flex flex-wrap gap-2">
+        <span className="bof-status-pill bof-status-pill-danger">Expired: {totals.expired}</span>
+        <span className="bof-status-pill bof-status-pill-warn">Expiring soon: {totals.expiring}</span>
+        <span className="bof-status-pill bof-status-pill-info">
+          Blocking / at risk language mirrors BOF document vault
+        </span>
       </div>
+
+      {filtered.length > 0 ? (
+        <div className="overflow-x-auto rounded-lg border border-slate-800">
+          <table className="w-full min-w-[800px] border-collapse text-left text-sm">
+            <thead className="bg-slate-900/90 text-[10px] uppercase tracking-wide text-slate-500">
+              <tr>
+                <th className="border-b border-slate-800 px-3 py-2 font-medium">
+                  Driver
+                </th>
+                <th className="border-b border-slate-800 px-3 py-2 font-medium">
+                  Document
+                </th>
+                <th className="border-b border-slate-800 px-3 py-2 font-medium">
+                  Expiration
+                </th>
+                <th className="border-b border-slate-800 px-3 py-2 font-medium">
+                  Signal
+                </th>
+                <th className="border-b border-slate-800 px-3 py-2 font-medium">
+                  Terminal
+                </th>
+                <th className="border-b border-slate-800 px-3 py-2 font-medium">
+                  Dispatch
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {filtered.map((r) => {
+                const d = drivers.find((x) => x.driver_id === r.driver_id)!;
+                const expired = r.status === "Expired";
+                return (
+                  <tr
+                    key={`${r.driver_id}-${r.document_type}`}
+                    className={[
+                      "border-b border-slate-800/80",
+                      expired ? "bg-red-950/25" : "hover:bg-slate-900/60",
+                    ].join(" ")}
+                  >
+                    <td className="px-3 py-2 text-slate-100">{r.driver_name}</td>
+                    <td className="px-3 py-2 text-slate-300">{r.document_type}</td>
+                    <td className="px-3 py-2 font-mono text-xs text-slate-400">
+                      {r.expiration_date}
+                    </td>
+                    <td className="px-3 py-2">
+                      <span
+                        className={
+                          expired
+                            ? "bof-status-pill bof-status-pill-danger"
+                            : "bof-status-pill bof-status-pill-warn"
+                        }
+                      >
+                        {expired ? "Blocking action" : "At risk"}
+                      </span>
+                    </td>
+                    <td className="px-3 py-2 text-xs text-slate-400">
+                      {r.home_terminal}
+                    </td>
+                    <td className="px-3 py-2 text-xs text-slate-300">
+                      {dispatchEligibilityLabel(d, events)}
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+      ) : (
+        <div className="bof-empty-state">
+          <h3 className="text-sm font-semibold text-slate-100">No expiration rows match</h3>
+          <p className="mt-1 text-xs text-slate-400">Adjust filters to view compliance risk rows.</p>
+        </div>
+      )}
     </div>
   );
 }

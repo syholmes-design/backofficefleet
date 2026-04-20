@@ -19,11 +19,9 @@ function whyNarrative(
   kind: "insurance" | "legal" | "recovered" | "cashFlow",
   m: ExplainableSavingsMetric
 ): string {
-  const b = m.inputs;
   switch (kind) {
     case "insurance": {
       const raw = m.detail.rawRate as number;
-      const clamped = m.detail.insuranceSavingsRate as number;
       const hitFloor = raw < 0;
       const hitCeil = raw > 0.25;
       let t = `Raw rate before clamp was ${pct(raw)}. `;
