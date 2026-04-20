@@ -17,6 +17,7 @@ import {
   listEngineDocumentsForLoad,
 } from "@/lib/document-engine";
 import { DocumentEnginePanel } from "@/components/DocumentEnginePanel";
+import { RouteSupportWidget } from "@/components/route-support/RouteSupportWidget";
 
 type Props = { params: Promise<{ id: string }> };
 
@@ -120,6 +121,8 @@ export default async function LoadDetailPage({ params }: Props) {
       </header>
 
       {routeMapModel && <LoadRouteMapClient model={routeMapModel} />}
+
+      <RouteSupportWidget loadId={load.id} variant="compact" showCheaperFuelNote={false} />
 
       <section className="bof-driver-info-grid" aria-label="Load summary">
         <div className="bof-info-block">

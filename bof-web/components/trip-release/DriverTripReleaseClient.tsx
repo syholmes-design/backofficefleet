@@ -10,6 +10,7 @@ import {
   type TripReleaseEvaluation,
 } from "@/lib/trip-release";
 import type { EngineDocument } from "@/lib/document-engine";
+import { RouteSupportWidget } from "@/components/route-support/RouteSupportWidget";
 
 function firstHref(...candidates: (string | undefined)[]): string | undefined {
   for (const c of candidates) {
@@ -160,6 +161,8 @@ export function DriverTripReleaseClient({ loadId }: { loadId: string }) {
 
       <div className="trip-release-layout">
         <div className="trip-release-main">
+          <RouteSupportWidget loadId={loadId} variant="full" />
+
           <section className="trip-release-card" aria-labelledby="tr-overview">
             <h2 id="tr-overview" className="trip-release-card-title">
               Driver trip release overview

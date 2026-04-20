@@ -32,6 +32,7 @@ import { driverPhotoPath } from "@/lib/driver-photo";
 import { GENERATED_PUBLIC_PREFIX } from "@/lib/generated-public-prefix";
 import { listEngineDocumentsForDriver } from "@/lib/document-engine";
 import { DocumentEnginePanel } from "@/components/DocumentEnginePanel";
+import { RouteSupportWidget } from "@/components/route-support/RouteSupportWidget";
 
 export function DriverDetailPageClient({ driverId }: { driverId: string }) {
   const { data } = useBofDemoData();
@@ -88,6 +89,13 @@ export function DriverDetailPageClient({ driverId }: { driverId: string }) {
     [data, driverId]
   );
   const isRefDriver = isJohnCarterReferenceDriver(driverId);
+
+  const activeLoadForRoute = useMemo(() => {
+    const mine = data.loads.filter((l) => l.driverId === driverId);
+    const en = mine.find((l) => l.status === "En Route");
+    if (en) return en;
+    return mine.find((l) => l.status === "Pending") ?? null;
+  }, [data.loads, driverId]);
 
   useEffect(() => {
     if (!driver) return;
@@ -210,6 +218,23 @@ export function DriverDetailPageClient({ driverId }: { driverId: string }) {
             )}
           </div>
         </div>
+
+        {activeLoadForRoute && (
+          <div className="bof-driver-route-support" aria-label="Route support for active trip">
+            <h3 className="bof-h3">Trip route support</h3>
+            <p className="bof-muted bof-small">
+              Next rest stop context for{" "}
+              <Link href={`/loads/${activeLoadForRoute.id}`} className="bof-link-secondary">
+                load {activeLoadForRoute.number}
+              </Link>{" "}
+              (<code className="bof-code">{activeLoadForRoute.id}</code>) ·{" "}
+              <Link href={`/trip-release/${activeLoadForRoute.id}`} className="bof-link-secondary">
+                Trip release
+              </Link>
+            </p>
+            <RouteSupportWidget loadId={activeLoadForRoute.id} variant="full" />
+          </div>
+        )}
       </section>
 
       <section
