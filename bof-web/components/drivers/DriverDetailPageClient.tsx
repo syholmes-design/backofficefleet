@@ -33,6 +33,7 @@ import { GENERATED_PUBLIC_PREFIX } from "@/lib/generated-public-prefix";
 import { listEngineDocumentsForDriver } from "@/lib/document-engine";
 import { DocumentEnginePanel } from "@/components/DocumentEnginePanel";
 import { RouteSupportWidget } from "@/components/route-support/RouteSupportWidget";
+import { DieselRouteInsightWidget } from "@/components/fuel/DieselRouteInsightWidget";
 
 export function DriverDetailPageClient({ driverId }: { driverId: string }) {
   const { data } = useBofDemoData();
@@ -233,6 +234,7 @@ export function DriverDetailPageClient({ driverId }: { driverId: string }) {
               </Link>
             </p>
             <RouteSupportWidget loadId={activeLoadForRoute.id} variant="full" />
+            <DieselRouteInsightWidget loadId={activeLoadForRoute.id} variant="full" />
           </div>
         )}
       </section>

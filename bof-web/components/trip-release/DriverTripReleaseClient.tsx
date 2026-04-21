@@ -11,6 +11,7 @@ import {
 } from "@/lib/trip-release";
 import type { EngineDocument } from "@/lib/document-engine";
 import { RouteSupportWidget } from "@/components/route-support/RouteSupportWidget";
+import { DieselRouteInsightWidget } from "@/components/fuel/DieselRouteInsightWidget";
 import { getLoadProofItems, getLoadProofSummary } from "@/lib/load-proof";
 import { BofAdvantageCard, BofAdvantageStrip } from "@/components/bof-advantage/BofAdvantageCard";
 
@@ -118,13 +119,6 @@ export function DriverTripReleaseClient({ loadId }: { loadId: string }) {
   const blockers = ev.checks.filter((c) => c.severity === "blocking");
   const warns = ev.checks.filter((c) => c.severity === "warning");
 
-  const fuelDemoUsd = Math.max(
-    95,
-    Math.round(ev.dispatch_load.total_pay * 0.013 + loadId.charCodeAt(loadId.length - 1) * 12)
-  );
-  const fmtUsd = (n: number) =>
-    new Intl.NumberFormat(undefined, { style: "currency", currency: "USD", maximumFractionDigits: 0 }).format(n);
-
   return (
     <div className="bof-page trip-release-page">
       <nav className="bof-breadcrumb" aria-label="Breadcrumb">
@@ -177,17 +171,10 @@ export function DriverTripReleaseClient({ loadId }: { loadId: string }) {
         <div className="trip-release-main">
           <RouteSupportWidget loadId={loadId} variant="full" />
 
+          <DieselRouteInsightWidget loadId={loadId} variant="full" />
+
           {proofSummary && (
             <BofAdvantageStrip>
-              <BofAdvantageCard
-                eyebrow="Estimated BOF Savings"
-                title="Fuel-network lift on this trip"
-                subtitle="Demo estimate from dispatch pay reference (not live fuel desk)"
-                value={`~${fmtUsd(fuelDemoUsd)}`}
-                delta="Illustrative vs. unmanaged retail purchases on same lane class"
-                explanation="Tie to RF fuel / network tables when wired. Shown at trip release to align driver + dispatch on margin."
-                tone="positive"
-              />
               <BofAdvantageCard
                 eyebrow="BOF Advantage"
                 title="Credentials & departure proof"

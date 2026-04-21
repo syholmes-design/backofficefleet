@@ -7,12 +7,6 @@ import { computeDocumentationReadiness } from "@/lib/documentation-readiness";
 import { getLoadProofItems, getLoadProofSummary } from "@/lib/load-proof";
 import { BofAdvantageCard, BofAdvantageStrip } from "./BofAdvantageCard";
 
-function formatUsd(n: number) {
-  return new Intl.NumberFormat(undefined, { style: "currency", currency: "USD", maximumFractionDigits: 0 }).format(
-    n
-  );
-}
-
 export function LoadBofAdvantagesIsland({ loadId }: { loadId: string }) {
   const { data } = useBofDemoData();
   const dispatchLoad = useMemo(
@@ -30,23 +24,11 @@ export function LoadBofAdvantagesIsland({ loadId }: { loadId: string }) {
 
   if (!dispatchLoad || !load || !docReport) return null;
 
-  const linehaulRef = load.revenue;
-  const fuelDemo = Math.max(120, Math.round(linehaulRef * 0.014 + (loadId.length % 7) * 35));
-
   const docTone =
     docReport.overall === "Ready" ? ("positive" as const) : docReport.missingRequired.length >= 3 ? ("caution" as const) : ("neutral" as const);
 
   return (
     <BofAdvantageStrip>
-      <BofAdvantageCard
-        eyebrow="Estimated BOF Savings"
-        title="Fuel-network pricing on this lane"
-        subtitle="Demo estimate from linehaul reference + BOF index (not live rack)"
-        value={`~${formatUsd(fuelDemo)} trip-level fuel`}
-        delta="Illustrative vs. unmanaged retail card"
-        explanation="Wire to fuel desk / network actuals when available. Shown on load detail to align dispatch with margin story."
-        tone="positive"
-      />
       <BofAdvantageCard
         eyebrow="BOF Advantage"
         title="Documentation readiness & proof stack"

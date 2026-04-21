@@ -21,6 +21,7 @@ import {
 import { getGeneratedCrossLinksForLoad } from "@/lib/generated-documents";
 import type { Load } from "@/types/dispatch";
 import { BofAdvantageCard, BofAdvantageStrip } from "@/components/bof-advantage/BofAdvantageCard";
+import { DieselRouteInsightWidget } from "@/components/fuel/DieselRouteInsightWidget";
 
 function firstHref(...candidates: (string | undefined)[]): string | undefined {
   for (const c of candidates) {
@@ -321,6 +322,8 @@ export function ShipperLoadPortalClient({ loadId }: { loadId: string }) {
           {eligChip(elig.level)}
         </div>
       </header>
+
+      <DieselRouteInsightWidget loadId={loadId} variant="shipper" />
 
       <BofAdvantageStrip>
         <BofAdvantageCard

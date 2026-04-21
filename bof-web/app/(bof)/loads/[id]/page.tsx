@@ -19,6 +19,7 @@ import {
 import { DocumentEnginePanel } from "@/components/DocumentEnginePanel";
 import { RouteSupportWidget } from "@/components/route-support/RouteSupportWidget";
 import { LoadBofAdvantagesIsland } from "@/components/bof-advantage/LoadBofAdvantagesIsland";
+import { DieselRouteInsightWidget } from "@/components/fuel/DieselRouteInsightWidget";
 
 type Props = { params: Promise<{ id: string }> };
 
@@ -124,6 +125,8 @@ export default async function LoadDetailPage({ params }: Props) {
       {routeMapModel && <LoadRouteMapClient model={routeMapModel} />}
 
       <RouteSupportWidget loadId={load.id} variant="compact" showCheaperFuelNote={false} />
+
+      <DieselRouteInsightWidget loadId={load.id} variant="compact" />
 
       <LoadBofAdvantagesIsland loadId={load.id} />
 

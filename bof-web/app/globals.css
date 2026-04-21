@@ -8105,6 +8105,342 @@ body {
   color: #64748b;
 }
 
+/* Diesel route insight — enterprise fuel card (teal + slate) */
+.diesel-insight {
+  margin: 0 0 1rem;
+  padding: 0.75rem 0.85rem 0.8rem;
+  border-radius: var(--bof-radius);
+  border: 1px solid rgba(51, 65, 85, 0.9);
+  background: linear-gradient(165deg, rgba(22, 32, 48, 0.98), rgba(15, 20, 28, 0.99));
+  border-left: 3px solid var(--bof-teal-dim);
+}
+
+.diesel-insight--compact {
+  padding: 0.6rem 0.7rem 0.65rem;
+}
+
+.diesel-insight--compact .diesel-insight-title {
+  font-size: 0.82rem;
+}
+
+.diesel-insight--shipper {
+  margin: 0 0 1rem;
+  padding: 0.55rem 0.65rem 0.6rem;
+  border-radius: var(--bof-radius);
+  border: 1px solid rgba(51, 65, 85, 0.75);
+  background: rgba(15, 23, 42, 0.45);
+  border-left: 2px solid rgba(20, 184, 166, 0.55);
+}
+
+.diesel-insight-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.35rem 0.75rem;
+  margin-bottom: 0.2rem;
+}
+
+.diesel-insight-title {
+  margin: 0;
+  font-size: 0.875rem;
+  font-weight: 650;
+  color: #e2e8f0;
+  letter-spacing: -0.01em;
+}
+
+.diesel-insight-title--sm {
+  font-size: 0.78rem;
+}
+
+.diesel-insight-eyebrow {
+  margin: 0;
+  font-size: 0.62rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: #5eead4;
+}
+
+.diesel-insight-teal {
+  color: #5eead4;
+  font-weight: 600;
+}
+
+.diesel-insight-lane {
+  margin: 0 0 0.65rem;
+  color: #94a3b8;
+}
+
+.diesel-insight-muted {
+  color: #64748b;
+  font-weight: 400;
+}
+
+.diesel-insight-savings {
+  margin: 0 0 0.75rem;
+  padding: 0.5rem 0.55rem;
+  border-radius: 6px;
+  background: rgba(13, 148, 136, 0.1);
+  border: 1px solid rgba(13, 148, 136, 0.28);
+}
+
+.diesel-insight-savings-label {
+  margin: 0 0 0.15rem;
+  font-size: 0.62rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #99f6e4;
+}
+
+.diesel-insight-savings-value {
+  margin: 0;
+  font-size: 1.15rem;
+  font-weight: 750;
+  font-variant-numeric: tabular-nums;
+  color: #f8fafc;
+}
+
+.diesel-insight-savings-delta {
+  margin: 0.2rem 0 0;
+  font-size: 0.72rem;
+  color: #cbd5e1;
+  line-height: 1.35;
+}
+
+.diesel-insight-hero {
+  margin: 0 0 0.75rem;
+  padding: 0.55rem 0.6rem;
+  border-radius: 6px;
+  border: 1px solid rgba(94, 234, 212, 0.35);
+  background: rgba(13, 148, 136, 0.07);
+}
+
+.diesel-insight-hero-name {
+  margin: 0.35rem 0 0.4rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #f1f5f9;
+  line-height: 1.3;
+}
+
+.diesel-insight-hero-metrics {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem 1.1rem;
+  margin: 0;
+}
+
+.diesel-insight-hero-metrics div {
+  margin: 0;
+}
+
+.diesel-insight-hero-metrics dt {
+  margin: 0;
+  font-size: 0.62rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #64748b;
+}
+
+.diesel-insight-hero-metrics dd {
+  margin: 0.1rem 0 0;
+  font-size: 0.8rem;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  color: #e2e8f0;
+}
+
+.diesel-insight-reason {
+  margin: 0.5rem 0 0;
+  padding-top: 0.45rem;
+  border-top: 1px solid rgba(51, 65, 85, 0.65);
+  color: #94a3b8;
+}
+
+.diesel-insight-badge {
+  display: inline-block;
+  font-size: 0.58rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 0.12rem 0.35rem;
+  border-radius: 4px;
+  border: 1px solid rgba(51, 65, 85, 0.85);
+}
+
+.diesel-insight-badge--bof {
+  color: #99f6e4;
+  border-color: rgba(20, 184, 166, 0.45);
+  background: rgba(13, 148, 136, 0.12);
+}
+
+.diesel-insight-badge--cheap {
+  color: #e2e8f0;
+  border-color: rgba(100, 116, 139, 0.65);
+  background: rgba(30, 41, 59, 0.5);
+}
+
+.diesel-insight-badge--rec {
+  color: #0f172a;
+  background: linear-gradient(135deg, #5eead4, #2dd4bf);
+  border-color: transparent;
+}
+
+.diesel-insight-pair {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 0.65rem;
+}
+
+.diesel-insight-pair--stack {
+  grid-template-columns: 1fr;
+}
+
+.diesel-insight-stop {
+  padding: 0.45rem 0.5rem;
+  border-radius: 6px;
+  border: 1px solid rgba(51, 65, 85, 0.75);
+  background: rgba(15, 23, 42, 0.35);
+}
+
+.diesel-insight-stop-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.35rem;
+  margin-bottom: 0.25rem;
+}
+
+.diesel-insight-stop-label {
+  font-size: 0.62rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #64748b;
+}
+
+.diesel-insight-stop-name {
+  margin: 0 0 0.35rem;
+  font-size: 0.75rem;
+  color: #cbd5e1;
+  line-height: 1.35;
+}
+
+.diesel-insight-dl {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1rem;
+  margin: 0;
+}
+
+.diesel-insight-dl div {
+  margin: 0;
+}
+
+.diesel-insight-dl dt {
+  margin: 0;
+  font-size: 0.58rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #64748b;
+}
+
+.diesel-insight-dl dd {
+  margin: 0.08rem 0 0;
+  font-size: 0.75rem;
+  font-variant-numeric: tabular-nums;
+  color: #e2e8f0;
+}
+
+.diesel-insight-subtitle {
+  margin: 0 0 0.35rem;
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #64748b;
+}
+
+.diesel-insight-alt-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.diesel-insight-alt-li {
+  display: flex;
+  flex-direction: column;
+  gap: 0.12rem;
+  padding: 0.35rem 0;
+  border-top: 1px solid rgba(51, 65, 85, 0.55);
+  font-size: 0.72rem;
+}
+
+.diesel-insight-alt-li:first-of-type {
+  border-top: none;
+  padding-top: 0;
+}
+
+.diesel-insight-alt-name {
+  color: #cbd5e1;
+  font-weight: 500;
+}
+
+.diesel-insight-alt-meta {
+  color: #64748b;
+  font-variant-numeric: tabular-nums;
+}
+
+.diesel-insight-foot {
+  margin: 0.55rem 0 0;
+  padding-top: 0.45rem;
+  border-top: 1px solid rgba(51, 65, 85, 0.55);
+}
+
+.diesel-insight-kicker {
+  margin: 0 0 0.15rem;
+  font-size: 0.58rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #64748b;
+}
+
+.diesel-insight-big {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 700;
+  color: #f8fafc;
+}
+
+.diesel-insight-subbig {
+  display: block;
+  margin-top: 0.2rem;
+  font-size: 0.72rem;
+  font-weight: 500;
+  color: #94a3b8;
+}
+
+.diesel-insight-shipper-row {
+  display: grid;
+  gap: 0.5rem;
+}
+
+@media (min-width: 720px) {
+  .diesel-insight-shipper-row {
+    grid-template-columns: 1fr 1.2fr;
+    align-items: start;
+  }
+}
+
+.diesel-insight-shipper-cols {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
 /* Tailwind — utilities + components only (no @tailwind base — avoids touching BOF globals). */
 @tailwind components;
 @tailwind utilities;
