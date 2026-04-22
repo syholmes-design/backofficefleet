@@ -137,6 +137,15 @@ export function DriverDetailPageClient({ driverId }: { driverId: string }) {
         <span aria-hidden> / </span>
         <span>{driver.name}</span>
       </nav>
+      <p className="bof-small" style={{ margin: "0 0 0.7rem" }}>
+        <Link href={`/drivers/${driver.id}/bank-info`} className="bof-link-secondary">
+          Bank Info
+        </Link>
+        {" · "}
+        <Link href="/emergency-contacts" className="bof-link-secondary">
+          Emergency Contacts
+        </Link>
+      </p>
 
       <section
         className="bof-driver-hub-section bof-driver-hub-section--profile"
