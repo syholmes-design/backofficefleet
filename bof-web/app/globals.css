@@ -8172,6 +8172,15 @@ body {
   color: #94a3b8;
 }
 
+.diesel-insight-live-unavailable {
+  margin: -0.25rem 0 0.55rem;
+  padding: 0.35rem 0.45rem;
+  border-radius: 6px;
+  border: 1px solid rgba(245, 158, 11, 0.28);
+  background: rgba(245, 158, 11, 0.08);
+  color: #fbbf24;
+}
+
 .diesel-insight-muted {
   color: #64748b;
   font-weight: 400;

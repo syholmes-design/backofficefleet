@@ -4,35 +4,16 @@ import { useEffect, useMemo, useState, type ReactNode } from "react";
 import { useBofDemoData } from "@/lib/bof-demo-data-context";
 import {
   buildDieselRouteInsight,
-  estimateDemoTripGallons,
   type DieselRouteInsight,
   type DieselStopInsight,
 } from "@/lib/diesel-route-insight";
+import type { TomTomFuelFeedResponse, TomTomFuelStationNormalized } from "@/lib/tomtom-fuel-types";
 
 export type DieselRouteInsightVariant = "full" | "compact" | "shipper";
 
 type Props = {
   loadId: string;
   variant?: DieselRouteInsightVariant;
-};
-
-type TomTomFuelStop = {
-  stationId: string;
-  fuelPriceId: string;
-  name: string;
-  distanceMiles: number;
-  etaMinutes: number;
-  dieselPricePerGal: number;
-  currency: string;
-  updatedAt?: string;
-  isBofNetwork: boolean;
-};
-
-type TomTomFuelResponse = {
-  live: boolean;
-  reason?: string;
-  fuelPriceIds: string[];
-  stops: TomTomFuelStop[];
 };
 
 function fmtUsd(n: number) {
@@ -100,7 +81,7 @@ function StopRow({
 
 export function DieselRouteInsightWidget({ loadId, variant = "full" }: Props) {
   const { data } = useBofDemoData();
-  const [liveFuel, setLiveFuel] = useState<TomTomFuelResponse | null>(null);
+  const [liveFuel, setLiveFuel] = useState<TomTomFuelFeedResponse | null>(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -110,7 +91,7 @@ export function DieselRouteInsightWidget({ loadId, variant = "full" }: Props) {
           cache: "no-store",
         });
         if (!res.ok) return;
-        const body = (await res.json()) as TomTomFuelResponse;
+        const body = (await res.json()) as TomTomFuelFeedResponse;
         if (!cancelled) setLiveFuel(body);
       } catch {
         // Keep demo fallback silent on API failure.
@@ -125,49 +106,54 @@ export function DieselRouteInsightWidget({ loadId, variant = "full" }: Props) {
   const demoInsight = useMemo(() => buildDieselRouteInsight(data, loadId), [data, loadId]);
   const insight = useMemo(() => {
     if (!demoInsight) return null;
-    if (!liveFuel?.live || !liveFuel.stops.length) return demoInsight;
+    if (!liveFuel?.live || !liveFuel.stations.length) return demoInsight;
 
-    const load = data.loads.find((l) => l.id === loadId);
-    const sorted = [...liveFuel.stops]
+    const sorted = [...liveFuel.stations]
       .filter((s) => Number.isFinite(s.dieselPricePerGal) && s.dieselPricePerGal > 0)
       .sort((a, b) => a.distanceMiles - b.distanceMiles);
     if (!sorted.length) return demoInsight;
 
-    const mk = (s: TomTomFuelStop, key: string, cheapest: number): DieselStopInsight => ({
+    const mk = (
+      s: TomTomFuelStationNormalized,
+      key: string,
+      cheapestPerGal: number
+    ): DieselStopInsight => ({
       key,
       name: s.name,
       distanceMiles: s.distanceMiles,
       etaMinutes: s.etaMinutes,
       dieselPricePerGal: s.dieselPricePerGal,
       isBofNetwork: s.isBofNetwork,
-      isCheapestInRadius: s.dieselPricePerGal === cheapest,
+      isCheapestInRadius: s.dieselPricePerGal === cheapestPerGal,
     });
 
-    const cheapestPrice = Math.min(...sorted.map((s) => s.dieselPricePerGal));
-    const cheapestRaw = sorted.reduce((a, b) =>
-      a.dieselPricePerGal <= b.dieselPricePerGal ? a : b
-    );
-    const bofRaw = sorted.find((s) => s.isBofNetwork) ?? sorted[0]!;
+    const nearest = sorted.find((s) => s.nearest) ?? sorted[0]!;
+    const cheapestRaw =
+      sorted.find((s) => s.cheapest) ??
+      sorted.reduce((a, b) => (a.dieselPricePerGal <= b.dieselPricePerGal ? a : b));
+    const bofRaw = sorted.find((s) => s.isBofNetwork && s.nearest) ?? sorted.find((s) => s.isBofNetwork) ?? nearest;
+    const recRaw = sorted.find((s) => s.recommended) ?? bofRaw;
+    const cheapestPrice = cheapestRaw.dieselPricePerGal;
+
     const baselineAveragePerGal =
-      Math.round(
-        (sorted.reduce((sum, s) => sum + s.dieselPricePerGal, 0) / sorted.length) * 1000
-      ) / 1000;
-    const estimatedTripGallons = estimateDemoTripGallons(loadId, load?.revenue ?? 0);
+      liveFuel.summary.baselineAveragePerGal ??
+      Math.round((sorted.reduce((sum, s) => sum + s.dieselPricePerGal, 0) / sorted.length) * 1000) /
+        1000;
+    const estimatedTripGallons = liveFuel.summary.estimatedTripGallons ?? demoInsight.estimatedTripGallons;
+    const estimatedTripSavingsUsdVsBaselineBof =
+      liveFuel.summary.estimatedTripSavingsUsd ?? demoInsight.estimatedTripSavingsUsdVsBaselineBof;
     const cheapestVsBofPerGal =
       Math.round((cheapestRaw.dieselPricePerGal - bofRaw.dieselPricePerGal) * 1000) / 1000;
-    const bofCloseEnough = cheapestVsBofPerGal >= -0.008;
-    const recRaw = bofCloseEnough ? bofRaw : cheapestRaw;
+    const bofSavingsCentsPerGalVsBaseline =
+      Math.round(((liveFuel.summary.savingsPerGalVsBaseline ?? baselineAveragePerGal - bofRaw.dieselPricePerGal) * 1000)) /
+      10;
+
     const recommended = {
       ...mk(recRaw, "live-recommended", cheapestPrice),
-      reason: bofCloseEnough
-        ? "Live TomTom diesel scan shows BOF partner stop within tolerance of route-low option."
-        : "Live TomTom diesel scan shows a lower off-network option within 50 miles.",
+      reason: recRaw.stationId === bofRaw.stationId
+        ? "Live TomTom diesel scan recommends the BOF-relevant nearest network stop for this route context."
+        : "Live TomTom diesel scan found a cheaper nearby diesel option within 50 miles.",
     };
-    const bofSavingsCentsPerGalVsBaseline =
-      Math.round((baselineAveragePerGal - bofRaw.dieselPricePerGal) * 1000) / 10;
-    const estimatedTripSavingsUsdVsBaselineBof = Math.round(
-      Math.max(0, baselineAveragePerGal - bofRaw.dieselPricePerGal) * estimatedTripGallons
-    );
 
     const nearbyAlternates = sorted
       .filter((s) => s.stationId !== recRaw.stationId)
@@ -175,7 +161,7 @@ export function DieselRouteInsightWidget({ loadId, variant = "full" }: Props) {
       .map((s, idx) => mk(s, `live-alt-${idx}`, cheapestPrice));
 
     const currencySet = Array.from(new Set(sorted.map((s) => s.currency).filter(Boolean)));
-    const updatedLine = sorted.find((s) => s.updatedAt)?.updatedAt;
+    const updatedLine = sorted.find((s) => s.sourceTimestamp)?.sourceTimestamp;
 
     const liveInsight: DieselRouteInsight = {
       ...demoInsight,
@@ -188,10 +174,10 @@ export function DieselRouteInsightWidget({ loadId, variant = "full" }: Props) {
       estimatedTripSavingsUsdVsBaselineBof,
       bofSavingsCentsPerGalVsBaseline,
       cheapestVsBofPerGal,
-      dataSourceNote: `Live diesel prices via TomTom nearbySearch + fuelPrice (${liveFuel.fuelPriceIds.length} station fuelPrice id(s)).${currencySet.length ? ` Currency: ${currencySet.join(", ")}.` : ""}${updatedLine ? ` Last update sample: ${updatedLine}.` : ""}`,
+      dataSourceNote: `Live diesel prices via TomTom nearbySearch + fuelPrice (${liveFuel.fuelPriceIds.length} fuelPrice id(s)).${currencySet.length ? ` Currency: ${currencySet.join(", ")}.` : ""}${updatedLine ? ` Last update sample: ${updatedLine}.` : ""}`,
     };
     return liveInsight;
-  }, [data.loads, demoInsight, liveFuel, loadId]);
+  }, [demoInsight, liveFuel]);
 
   if (!insight) return null;
 
@@ -208,6 +194,12 @@ export function DieselRouteInsightWidget({ loadId, variant = "full" }: Props) {
           {insight.laneLabel}
           {insight.hasRoutePolyline ? " · BOF polyline on file" : " · Demo geometry"}
         </p>
+        {liveFuel && !liveFuel.live && (
+          <p className="diesel-insight-live-unavailable bof-small">
+            Live diesel prices unavailable. Using BOF demo diesel values for this view.
+            {liveFuel.reason ? ` (${liveFuel.reason})` : ""}
+          </p>
+        )}
         <div className="diesel-insight-shipper-row">
           <div>
             <p className="diesel-insight-kicker">Estimated BOF savings (demo trip model)</p>
@@ -251,6 +243,12 @@ export function DieselRouteInsightWidget({ loadId, variant = "full" }: Props) {
           {insight.hasRoutePolyline ? " · Route polyline on file" : " · Straight-line demo route context"}
         </span>
       </p>
+      {liveFuel && !liveFuel.live && (
+        <p className="diesel-insight-live-unavailable bof-small">
+          Live diesel prices unavailable. Using BOF demo placeholder values for operational continuity.
+          {liveFuel.reason ? ` (${liveFuel.reason})` : ""}
+        </p>
+      )}
 
       <div className="diesel-insight-savings" role="status">
         <p className="diesel-insight-savings-label">Estimated BOF savings this trip</p>
