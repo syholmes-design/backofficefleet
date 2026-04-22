@@ -1,14 +1,38 @@
 "use client";
 
-import { useMemo, type ReactNode } from "react";
+import { useEffect, useMemo, useState, type ReactNode } from "react";
 import { useBofDemoData } from "@/lib/bof-demo-data-context";
-import { buildDieselRouteInsight, type DieselStopInsight } from "@/lib/diesel-route-insight";
+import {
+  buildDieselRouteInsight,
+  estimateDemoTripGallons,
+  type DieselRouteInsight,
+  type DieselStopInsight,
+} from "@/lib/diesel-route-insight";
 
 export type DieselRouteInsightVariant = "full" | "compact" | "shipper";
 
 type Props = {
   loadId: string;
   variant?: DieselRouteInsightVariant;
+};
+
+type TomTomFuelStop = {
+  stationId: string;
+  fuelPriceId: string;
+  name: string;
+  distanceMiles: number;
+  etaMinutes: number;
+  dieselPricePerGal: number;
+  currency: string;
+  updatedAt?: string;
+  isBofNetwork: boolean;
+};
+
+type TomTomFuelResponse = {
+  live: boolean;
+  reason?: string;
+  fuelPriceIds: string[];
+  stops: TomTomFuelStop[];
 };
 
 function fmtUsd(n: number) {
@@ -44,7 +68,7 @@ function StopRow({
 }: {
   label: string;
   s: DieselStopInsight;
-  badges: React.ReactNode;
+  badges: ReactNode;
 }) {
   return (
     <div className="diesel-insight-stop diesel-insight-stop--row">
@@ -76,7 +100,98 @@ function StopRow({
 
 export function DieselRouteInsightWidget({ loadId, variant = "full" }: Props) {
   const { data } = useBofDemoData();
-  const insight = useMemo(() => buildDieselRouteInsight(data, loadId), [data, loadId]);
+  const [liveFuel, setLiveFuel] = useState<TomTomFuelResponse | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    const run = async () => {
+      try {
+        const res = await fetch(`/api/fuel/tomtom?loadId=${encodeURIComponent(loadId)}`, {
+          cache: "no-store",
+        });
+        if (!res.ok) return;
+        const body = (await res.json()) as TomTomFuelResponse;
+        if (!cancelled) setLiveFuel(body);
+      } catch {
+        // Keep demo fallback silent on API failure.
+      }
+    };
+    run();
+    return () => {
+      cancelled = true;
+    };
+  }, [loadId]);
+
+  const demoInsight = useMemo(() => buildDieselRouteInsight(data, loadId), [data, loadId]);
+  const insight = useMemo(() => {
+    if (!demoInsight) return null;
+    if (!liveFuel?.live || !liveFuel.stops.length) return demoInsight;
+
+    const load = data.loads.find((l) => l.id === loadId);
+    const sorted = [...liveFuel.stops]
+      .filter((s) => Number.isFinite(s.dieselPricePerGal) && s.dieselPricePerGal > 0)
+      .sort((a, b) => a.distanceMiles - b.distanceMiles);
+    if (!sorted.length) return demoInsight;
+
+    const mk = (s: TomTomFuelStop, key: string, cheapest: number): DieselStopInsight => ({
+      key,
+      name: s.name,
+      distanceMiles: s.distanceMiles,
+      etaMinutes: s.etaMinutes,
+      dieselPricePerGal: s.dieselPricePerGal,
+      isBofNetwork: s.isBofNetwork,
+      isCheapestInRadius: s.dieselPricePerGal === cheapest,
+    });
+
+    const cheapestPrice = Math.min(...sorted.map((s) => s.dieselPricePerGal));
+    const cheapestRaw = sorted.reduce((a, b) =>
+      a.dieselPricePerGal <= b.dieselPricePerGal ? a : b
+    );
+    const bofRaw = sorted.find((s) => s.isBofNetwork) ?? sorted[0]!;
+    const baselineAveragePerGal =
+      Math.round(
+        (sorted.reduce((sum, s) => sum + s.dieselPricePerGal, 0) / sorted.length) * 1000
+      ) / 1000;
+    const estimatedTripGallons = estimateDemoTripGallons(loadId, load?.revenue ?? 0);
+    const cheapestVsBofPerGal =
+      Math.round((cheapestRaw.dieselPricePerGal - bofRaw.dieselPricePerGal) * 1000) / 1000;
+    const bofCloseEnough = cheapestVsBofPerGal >= -0.008;
+    const recRaw = bofCloseEnough ? bofRaw : cheapestRaw;
+    const recommended = {
+      ...mk(recRaw, "live-recommended", cheapestPrice),
+      reason: bofCloseEnough
+        ? "Live TomTom diesel scan shows BOF partner stop within tolerance of route-low option."
+        : "Live TomTom diesel scan shows a lower off-network option within 50 miles.",
+    };
+    const bofSavingsCentsPerGalVsBaseline =
+      Math.round((baselineAveragePerGal - bofRaw.dieselPricePerGal) * 1000) / 10;
+    const estimatedTripSavingsUsdVsBaselineBof = Math.round(
+      Math.max(0, baselineAveragePerGal - bofRaw.dieselPricePerGal) * estimatedTripGallons
+    );
+
+    const nearbyAlternates = sorted
+      .filter((s) => s.stationId !== recRaw.stationId)
+      .slice(0, 3)
+      .map((s, idx) => mk(s, `live-alt-${idx}`, cheapestPrice));
+
+    const currencySet = Array.from(new Set(sorted.map((s) => s.currency).filter(Boolean)));
+    const updatedLine = sorted.find((s) => s.updatedAt)?.updatedAt;
+
+    const liveInsight: DieselRouteInsight = {
+      ...demoInsight,
+      baselineAveragePerGal,
+      bofNetworkStop: mk(bofRaw, "live-bof", cheapestPrice),
+      cheapestIn50: mk(cheapestRaw, "live-cheapest", cheapestPrice),
+      recommended,
+      nearbyAlternates,
+      estimatedTripGallons,
+      estimatedTripSavingsUsdVsBaselineBof,
+      bofSavingsCentsPerGalVsBaseline,
+      cheapestVsBofPerGal,
+      dataSourceNote: `Live diesel prices via TomTom nearbySearch + fuelPrice (${liveFuel.fuelPriceIds.length} station fuelPrice id(s)).${currencySet.length ? ` Currency: ${currencySet.join(", ")}.` : ""}${updatedLine ? ` Last update sample: ${updatedLine}.` : ""}`,
+    };
+    return liveInsight;
+  }, [data.loads, demoInsight, liveFuel, loadId]);
 
   if (!insight) return null;
 
@@ -187,7 +302,9 @@ export function DieselRouteInsightWidget({ loadId, variant = "full" }: Props) {
 
       {!compact && insight.nearbyAlternates.length > 0 && (
         <div className="diesel-insight-alt">
-          <h3 className="diesel-insight-subtitle">Nearby options (demo)</h3>
+          <h3 className="diesel-insight-subtitle">
+            Nearby options {liveFuel?.live ? "(live)" : "(demo)"}
+          </h3>
           <ul className="diesel-insight-alt-list">
             {insight.nearbyAlternates.map((s) => (
               <li key={s.key} className="diesel-insight-alt-li">
