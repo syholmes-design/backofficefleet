@@ -8450,6 +8450,413 @@ body {
   gap: 0.35rem;
 }
 
+.bof-global-nav-icon-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.22rem;
+}
+
+/* Emergency Contact Cards */
+.ec-list-page {
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+}
+
+.ec-list-toolbar {
+  display: flex;
+  gap: 0.6rem;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
+
+.ec-search-wrap {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  border: 1px solid #d5d8dc;
+  border-radius: 8px;
+  background: #ffffff;
+  padding: 0.4rem 0.55rem;
+  min-width: 280px;
+}
+
+.ec-search-wrap input {
+  border: none;
+  outline: none;
+  font-size: 0.82rem;
+  width: min(54vw, 460px);
+  font-family: "Segoe UI", -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
+}
+
+.ec-print-btn {
+  border: 1px solid #1b2a4a;
+  background: #1b2a4a;
+  color: #ffffff;
+  border-radius: 8px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.45rem 0.7rem;
+  cursor: pointer;
+}
+
+.ec-list-scroll {
+  display: grid;
+  gap: 1rem;
+  max-height: calc(100vh - 230px);
+  overflow: auto;
+  padding-right: 0.15rem;
+}
+
+.ec-list-item-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 0 0 0.3rem;
+}
+
+.ec-list-id {
+  color: #7f8c8d;
+  font-size: 0.67rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.ec-focus-btn {
+  border: 1px solid #d5d8dc;
+  background: #ffffff;
+  color: #2c3e50;
+  border-radius: 999px;
+  padding: 0.22rem 0.5rem;
+  font-size: 0.66rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.ec-focus-btn-active {
+  border-color: #2f5496;
+  color: #2f5496;
+}
+
+.ec-card-shell {
+  width: 100%;
+  max-width: 780px;
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 4px 24px rgba(27, 42, 74, 0.12), 0 1px 4px rgba(27, 42, 74, 0.08);
+  overflow: hidden;
+  border: 1px solid #d5d8dc;
+  font-family: "Segoe UI", -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
+  color: #2c3e50;
+}
+
+.ec-top-bar {
+  background: #1b2a4a;
+  padding: 16px 28px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.ec-top-bar h2 {
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin: 0;
+}
+
+.ec-driver-badge {
+  background: #2f5496;
+  color: #ffffff;
+  font-size: 13px;
+  font-weight: 700;
+  padding: 5px 14px;
+  border-radius: 20px;
+  letter-spacing: 1px;
+}
+
+.ec-driver-section {
+  padding: 24px 28px 16px;
+  border-bottom: 1px solid #d5d8dc;
+}
+
+.ec-driver-header {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  margin-bottom: 18px;
+}
+
+.ec-avatar {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: #d6e4f0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  font-weight: 700;
+  color: #1b2a4a;
+  flex-shrink: 0;
+  border: 3px solid #2f5496;
+}
+
+.ec-driver-name {
+  font-size: 22px;
+  font-weight: 700;
+  color: #1b2a4a;
+  margin: 0;
+}
+
+.ec-driver-meta {
+  font-size: 13px;
+  color: #7f8c8d;
+  margin: 2px 0 0;
+}
+
+.ec-info-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px 32px;
+}
+
+.ec-info-row {
+  display: flex;
+  gap: 8px;
+  align-items: baseline;
+  padding: 4px 0;
+}
+
+.ec-info-label {
+  font-size: 11px;
+  font-weight: 700;
+  color: #7f8c8d;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  min-width: 70px;
+  flex-shrink: 0;
+}
+
+.ec-info-value {
+  font-size: 14px;
+  color: #2c3e50;
+  font-weight: 500;
+}
+
+.ec-physical-strip {
+  background: #f4f6f8;
+  padding: 12px 28px;
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+  border-bottom: 1px solid #d5d8dc;
+}
+
+.ec-phys-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+}
+
+.ec-phys-label {
+  font-weight: 700;
+  color: #7f8c8d;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-size: 10px;
+}
+
+.ec-phys-value {
+  font-weight: 600;
+  color: #2c3e50;
+}
+
+.ec-phys-divider {
+  color: #d5d8dc;
+  font-size: 14px;
+  user-select: none;
+}
+
+.ec-section {
+  padding: 20px 28px 24px;
+}
+
+.ec-section-title {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: #7f8c8d;
+  margin: 0 0 14px;
+}
+
+.ec-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.ec-contact-card {
+  border-radius: 10px;
+  padding: 18px 20px;
+  position: relative;
+  overflow: hidden;
+}
+
+.ec-contact-card::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 5px;
+}
+
+.ec-contact-card-primary {
+  background: #eafaf1;
+  border: 1px solid #a9dfbf;
+}
+
+.ec-contact-card-primary::before {
+  background: #27ae60;
+}
+
+.ec-contact-card-secondary {
+  background: #fef5e7;
+  border: 1px solid #f5cba7;
+}
+
+.ec-contact-card-secondary::before {
+  background: #e67e22;
+}
+
+.ec-tier-label {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  margin: 0 0 10px;
+}
+
+.ec-contact-card-primary .ec-tier-label {
+  color: #27ae60;
+}
+
+.ec-contact-card-secondary .ec-tier-label {
+  color: #e67e22;
+}
+
+.ec-contact-name {
+  font-size: 16px;
+  font-weight: 700;
+  color: #1b2a4a;
+}
+
+.ec-contact-rel {
+  font-size: 13px;
+  font-weight: 500;
+  color: #7f8c8d;
+  margin-left: 4px;
+}
+
+.ec-contact-phone {
+  font-size: 20px;
+  font-weight: 700;
+  color: #2c3e50;
+  margin: 10px 0 8px;
+  letter-spacing: 0.5px;
+}
+
+.ec-contact-detail {
+  font-size: 12px;
+  color: #7f8c8d;
+  line-height: 1.6;
+  margin: 0;
+}
+
+.ec-contact-detail a {
+  color: #2f5496;
+  text-decoration: none;
+}
+
+.ec-footer {
+  background: #f4f6f8;
+  padding: 10px 28px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-top: 1px solid #d5d8dc;
+  gap: 0.4rem;
+}
+
+.ec-footer span {
+  font-size: 10px;
+  color: #7f8c8d;
+  letter-spacing: 0.5px;
+}
+
+.ec-active-badge {
+  font-size: 10px;
+  font-weight: 700;
+  color: #27ae60;
+  background: #d5f5e3;
+  padding: 3px 10px;
+  border-radius: 10px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+@media (max-width: 640px) {
+  .ec-grid,
+  .ec-info-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .ec-physical-strip {
+    flex-direction: column;
+  }
+
+  .ec-phys-divider {
+    display: none;
+  }
+}
+
+@media print {
+  body {
+    background: #ffffff;
+    padding: 0;
+  }
+
+  .ec-list-toolbar,
+  .bof-global-header,
+  .bof-breadcrumb,
+  .bof-load-header,
+  .ec-list-item:not(.is-print-target) {
+    display: none !important;
+  }
+
+  .ec-list-scroll {
+    max-height: none;
+    overflow: visible;
+  }
+
+  .ec-card-shell {
+    box-shadow: none;
+    border: 2px solid #1b2a4a;
+    page-break-after: always;
+  }
+}
+
 /* Tailwind — utilities + components only (no @tailwind base — avoids touching BOF globals). */
 @tailwind components;
 @tailwind utilities;

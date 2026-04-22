@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { Shield, Phone } from "lucide-react";
 import { BofLogo } from "@/components/BofLogo";
 
 const marketingNav = [
@@ -14,6 +15,7 @@ const productNav = [
   { href: "/dashboard", label: "Dashboard" },
   { href: "/command-center", label: "Command Center" },
   { href: "/drivers", label: "Drivers" },
+  { href: "/emergency-contacts", label: "Emergency Contacts", icon: "phone-shield" as const },
   { href: "/source-of-truth", label: "Source of Truth" },
   { href: "/documents", label: "Documents" },
   { href: "/safety", label: "Safety" },
@@ -25,6 +27,23 @@ const productNav = [
   { href: "/settlements", label: "Settlements" },
   { href: "/money-at-risk", label: "Money at Risk" },
 ];
+
+function ProductNavLabel({
+  label,
+  icon,
+}: {
+  label: string;
+  icon?: "phone-shield";
+}) {
+  if (icon !== "phone-shield") return <>{label}</>;
+  return (
+    <span className="bof-global-nav-icon-label">
+      <Shield size={12} aria-hidden />
+      <Phone size={12} aria-hidden />
+      {label}
+    </span>
+  );
+}
 
 export function BofHeader() {
   return (
@@ -49,7 +68,7 @@ export function BofHeader() {
           <div className="bof-global-header-nav-group" aria-label="Product demo">
             {productNav.map((item) => (
               <Link key={item.href} href={item.href}>
-                {item.label}
+                <ProductNavLabel label={item.label} icon={item.icon} />
               </Link>
             ))}
           </div>
