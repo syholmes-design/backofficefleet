@@ -1,7 +1,8 @@
 /**
  * Fleet-wide “gold stack” document wiring (John Carter / DRV-001 remains the curated
  * reference: real MCSA-5876 PDF + profile HTML under /documents/drivers/DRV-001/).
- * All drivers use CDL image proofs under /documents/drivers/{id}/cdl.png; other
+ * All drivers use CDL image proofs under /documents/drivers/{id}/cdl.png and
+ * insurance card scans under /documents/drivers/{id}/insurance-card.png; other
  * drivers get the same primary/secondary structure with generated HTML under
  * /generated/drivers/{id}/.
  */
@@ -15,6 +16,7 @@ export const FLEET_MANAGED_SUPPLEMENTAL_TYPES = [
   "Driver Application",
   "Safety Acknowledgment",
   "Qualification File",
+  "Insurance Card",
   "Incident / Accident Report",
   "BOF Medical Summary",
   "MCSA-5876 (signed PDF)",
@@ -26,6 +28,8 @@ export const JOHN_CARTER_MANAGED_SUPPLEMENTAL_TYPES = FLEET_MANAGED_SUPPLEMENTAL
 
 const genPath = (driverId, name) => `/generated/drivers/${driverId}/${name}`;
 const cdlImagePath = (driverId) => `/documents/drivers/${driverId}/cdl.png`;
+const insuranceCardPath = (driverId) =>
+  `/documents/drivers/${driverId}/insurance-card.png`;
 
 function stripManagedFleetSupplementals(documents) {
   const drop = new Set(FLEET_MANAGED_SUPPLEMENTAL_TYPES);
@@ -245,6 +249,16 @@ function buildManagedSupplementalRows(driverId, ex, driver) {
       previewUrl: genPath(driverId, "qualification-file.html"),
       docTier: "secondary",
       demoPlaceholder: true,
+    },
+    {
+      driverId,
+      type: "Insurance Card",
+      status: "VALID",
+      expirationDate: "",
+      fileUrl: insuranceCardPath(driverId),
+      previewUrl: insuranceCardPath(driverId),
+      docTier: "secondary",
+      demoPlaceholder: false,
     },
     {
       driverId,

@@ -2067,6 +2067,126 @@
       "previewUrl": "/generated/drivers/DRV-012/driver-profile.html",
       "docTier": "secondary",
       "demoPlaceholder": true
+    },
+    {
+      "driverId": "DRV-001",
+      "type": "Insurance Card",
+      "status": "VALID",
+      "expirationDate": "",
+      "fileUrl": "/documents/drivers/DRV-001/insurance-card.png",
+      "previewUrl": "/documents/drivers/DRV-001/insurance-card.png",
+      "docTier": "secondary",
+      "demoPlaceholder": false
+    },
+    {
+      "driverId": "DRV-002",
+      "type": "Insurance Card",
+      "status": "VALID",
+      "expirationDate": "",
+      "fileUrl": "/documents/drivers/DRV-002/insurance-card.png",
+      "previewUrl": "/documents/drivers/DRV-002/insurance-card.png",
+      "docTier": "secondary",
+      "demoPlaceholder": false
+    },
+    {
+      "driverId": "DRV-003",
+      "type": "Insurance Card",
+      "status": "VALID",
+      "expirationDate": "",
+      "fileUrl": "/documents/drivers/DRV-003/insurance-card.png",
+      "previewUrl": "/documents/drivers/DRV-003/insurance-card.png",
+      "docTier": "secondary",
+      "demoPlaceholder": false
+    },
+    {
+      "driverId": "DRV-004",
+      "type": "Insurance Card",
+      "status": "VALID",
+      "expirationDate": "",
+      "fileUrl": "/documents/drivers/DRV-004/insurance-card.png",
+      "previewUrl": "/documents/drivers/DRV-004/insurance-card.png",
+      "docTier": "secondary",
+      "demoPlaceholder": false
+    },
+    {
+      "driverId": "DRV-005",
+      "type": "Insurance Card",
+      "status": "VALID",
+      "expirationDate": "",
+      "fileUrl": "/documents/drivers/DRV-005/insurance-card.png",
+      "previewUrl": "/documents/drivers/DRV-005/insurance-card.png",
+      "docTier": "secondary",
+      "demoPlaceholder": false
+    },
+    {
+      "driverId": "DRV-006",
+      "type": "Insurance Card",
+      "status": "VALID",
+      "expirationDate": "",
+      "fileUrl": "/documents/drivers/DRV-006/insurance-card.png",
+      "previewUrl": "/documents/drivers/DRV-006/insurance-card.png",
+      "docTier": "secondary",
+      "demoPlaceholder": false
+    },
+    {
+      "driverId": "DRV-007",
+      "type": "Insurance Card",
+      "status": "VALID",
+      "expirationDate": "",
+      "fileUrl": "/documents/drivers/DRV-007/insurance-card.png",
+      "previewUrl": "/documents/drivers/DRV-007/insurance-card.png",
+      "docTier": "secondary",
+      "demoPlaceholder": false
+    },
+    {
+      "driverId": "DRV-008",
+      "type": "Insurance Card",
+      "status": "VALID",
+      "expirationDate": "",
+      "fileUrl": "/documents/drivers/DRV-008/insurance-card.png",
+      "previewUrl": "/documents/drivers/DRV-008/insurance-card.png",
+      "docTier": "secondary",
+      "demoPlaceholder": false
+    },
+    {
+      "driverId": "DRV-009",
+      "type": "Insurance Card",
+      "status": "VALID",
+      "expirationDate": "",
+      "fileUrl": "/documents/drivers/DRV-009/insurance-card.png",
+      "previewUrl": "/documents/drivers/DRV-009/insurance-card.png",
+      "docTier": "secondary",
+      "demoPlaceholder": false
+    },
+    {
+      "driverId": "DRV-010",
+      "type": "Insurance Card",
+      "status": "VALID",
+      "expirationDate": "",
+      "fileUrl": "/documents/drivers/DRV-010/insurance-card.png",
+      "previewUrl": "/documents/drivers/DRV-010/insurance-card.png",
+      "docTier": "secondary",
+      "demoPlaceholder": false
+    },
+    {
+      "driverId": "DRV-011",
+      "type": "Insurance Card",
+      "status": "VALID",
+      "expirationDate": "",
+      "fileUrl": "/documents/drivers/DRV-011/insurance-card.png",
+      "previewUrl": "/documents/drivers/DRV-011/insurance-card.png",
+      "docTier": "secondary",
+      "demoPlaceholder": false
+    },
+    {
+      "driverId": "DRV-012",
+      "type": "Insurance Card",
+      "status": "VALID",
+      "expirationDate": "",
+      "fileUrl": "/documents/drivers/DRV-012/insurance-card.png",
+      "previewUrl": "/documents/drivers/DRV-012/insurance-card.png",
+      "docTier": "secondary",
+      "demoPlaceholder": false
     }
   ],
   "complianceIncidents": [

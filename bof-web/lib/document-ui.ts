@@ -12,6 +12,7 @@ const DOCUMENT_TYPE_LABELS: Record<string, string> = {
   "Driver Application": "Driver application",
   "Safety Acknowledgment": "Safety acknowledgment",
   "Qualification File": "Qualification file status",
+  "Insurance Card": "Insurance card",
   "Incident / Accident Report": "Incident / accident report",
   "BOF Medical Summary": "BOF medical summary",
 };

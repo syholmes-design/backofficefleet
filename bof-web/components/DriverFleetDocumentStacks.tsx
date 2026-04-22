@@ -55,7 +55,7 @@ export function DriverFleetDocumentStacks({
         documents={secondary}
         headingId={`fleet-docs-secondary-${driverId}`}
         sectionTitle="Secondary — applications and internal workflow"
-        sectionLead="Signed MCSA-5876, profile dashboard HTML, driver application, safety acknowledgment, qualification file, incidents, BOF medical summary, and related shells."
+        sectionLead="Signed MCSA-5876, profile dashboard HTML, driver application, safety acknowledgment, qualification file, insurance card on file, incidents, BOF medical summary, and related shells."
         legendTypes={[...JOHN_CARTER_SECONDARY_TYPE_ORDER]}
       />
     </div>

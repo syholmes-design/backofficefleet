@@ -17,6 +17,7 @@ export const JOHN_CARTER_SECONDARY_TYPE_ORDER = [
   "Driver Application",
   "Safety Acknowledgment",
   "Qualification File",
+  "Insurance Card",
   "Incident / Accident Report",
   "BOF Medical Summary",
 ] as const;
