@@ -174,6 +174,13 @@ export function buildLoadGeneratedSvg(
       `podStatus: ${load.podStatus}`,
       bundleLine(data, loadId, "POD", "POD"),
     ]),
+    "invoice.svg": svgDocument(`Invoice · ${loadId}`, [
+      ...header,
+      `linehaulRevenue (source): ${load.revenue}`,
+      `backhaulPay (source): ${load.backhaulPay}`,
+      `dispatchExceptionFlag: ${load.dispatchExceptionFlag}`,
+      "Invoice total in BOF demo is derived from source load revenue + backhaul pay.",
+    ]),
     "empty-trailer-confirmation.svg": svgDocument(
       `Empty Trailer Confirmation · ${loadId}`,
       [
@@ -501,6 +508,7 @@ export const LOAD_GENERATED_FILES = [
   "pickup-seal-verification.svg",
   "delivery-seal-verification.svg",
   "pod.svg",
+  "invoice.svg",
   "empty-trailer-confirmation.svg",
   "gps-geolocation-summary.svg",
   "weather-traffic-summary.svg",

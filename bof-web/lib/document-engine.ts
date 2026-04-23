@@ -138,6 +138,7 @@ const PROOF_TYPE_TO_FILE: Partial<Record<string, string>> = {
 const LOAD_DOC_TYPE_TO_FILE: Record<string, string> = {
   "Rate Confirmation": "rate-confirmation.svg",
   BOL: "bol.svg",
+  Invoice: "invoice.svg",
   "Dispatch Instructions": "dispatch-instructions.svg",
   "Pre-Trip Checklist": "pretrip-checklist.svg",
   "Cargo Photo Record": "cargo-photo-record.svg",
