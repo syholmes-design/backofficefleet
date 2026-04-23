@@ -9,6 +9,9 @@ export function ExportPayrollScreen() {
   const exportSelectedToPayroll = useSettlementsPayrollStore(
     (s) => s.exportSelectedToPayroll
   );
+  const generatedDocs = useSettlementsPayrollStore(
+    (s) => s.generatedDocsBySettlementId
+  );
 
   const ready = useMemo(
     () => settlements.filter((s) => s.status === "Ready for Export"),
@@ -92,13 +95,14 @@ export function ExportPayrollScreen() {
                 Net pay
               </th>
               <th className="border-b border-slate-800 px-3 py-2 font-medium">Status</th>
+              <th className="border-b border-slate-800 px-3 py-2 font-medium">Generated docs</th>
             </tr>
           </thead>
           <tbody>
             {ready.length === 0 ? (
               <tr>
                 <td
-                  colSpan={6}
+                  colSpan={7}
                   className="px-3 py-6 text-center text-sm text-slate-500"
                 >
                   No settlements ready for export. Mark rows as ready from the
@@ -135,6 +139,44 @@ export function ExportPayrollScreen() {
                     >
                       {s.status}
                     </span>
+                  </td>
+                  <td className="px-3 py-2 text-[11px]">
+                    {generatedDocs[s.settlement_id] ? (
+                      <div className="flex flex-wrap gap-2">
+                        {generatedDocs[s.settlement_id]?.summaryUrl && (
+                          <a
+                            href={generatedDocs[s.settlement_id]!.summaryUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="bof-link-secondary"
+                          >
+                            Summary
+                          </a>
+                        )}
+                        {generatedDocs[s.settlement_id]?.holdUrl && (
+                          <a
+                            href={generatedDocs[s.settlement_id]!.holdUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="bof-link-secondary"
+                          >
+                            Hold
+                          </a>
+                        )}
+                        {generatedDocs[s.settlement_id]?.insuranceUrl && (
+                          <a
+                            href={generatedDocs[s.settlement_id]!.insuranceUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="bof-link-secondary"
+                          >
+                            Insurance
+                          </a>
+                        )}
+                      </div>
+                    ) : (
+                      <span className="text-slate-600">—</span>
+                    )}
                   </td>
                 </tr>
               ))

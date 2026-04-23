@@ -87,7 +87,14 @@ export function ClaimPacketPanel({ ctx }: { ctx: ClaimPacketContext }) {
       });
       window.open(byKind[kind] || packetUrl, "_blank", "noopener,noreferrer");
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Unknown generation error");
+      const msg = err instanceof Error ? err.message : "Unknown generation error";
+      if (/unknown incidentid|missing or unknown incidentid/i.test(msg)) {
+        setError(
+          "No claim incident is currently linked to this load/driver in demo data. Use a load with an open claim/compliance incident or add one in Source of Truth."
+        );
+      } else {
+        setError(msg);
+      }
     } finally {
       setBusyKind(null);
     }

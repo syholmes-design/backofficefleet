@@ -289,10 +289,12 @@ export function DocumentationReadinessPanel({ load }: Props) {
                   window.open(claimUrl, "_blank", "noopener,noreferrer");
                   setNotice("Generated claims packet artifacts and linked them to this load.");
                 } catch (err) {
+                  const msg =
+                    err instanceof Error ? err.message : "Unknown error";
                   setNotice(
-                    `Could not generate claim packet: ${
-                      err instanceof Error ? err.message : "Unknown error"
-                    }`
+                    /unknown incidentid|missing or unknown incidentid/i.test(msg)
+                      ? "Could not generate claim packet: no claim incident is linked to this load/driver in current demo data."
+                      : `Could not generate claim packet: ${msg}`
                   );
                 } finally {
                   setBusy(null);
