@@ -12,6 +12,13 @@ const ACTIONS: { kind: ClaimDraftKind; label: string }[] = [
   { kind: "evidence", label: "Generate evidence summary" },
 ];
 
+function generatedDocLabel(kind: ClaimDraftKind): string {
+  if (kind === "packet") return "claim packet";
+  if (kind === "insurance") return "insurance notice";
+  if (kind === "dispute_letter") return "dispute letter";
+  return "evidence summary";
+}
+
 export function ClaimPacketPanel({ ctx }: { ctx: ClaimPacketContext }) {
   const [open, setOpen] = useState<ClaimDraftKind | null>(null);
   const [busyKind, setBusyKind] = useState<ClaimDraftKind | null>(null);
@@ -198,7 +205,7 @@ export function ClaimPacketPanel({ ctx }: { ctx: ClaimPacketContext }) {
                     rel="noopener noreferrer"
                     className="bof-link-secondary"
                   >
-                    Open generated {ACTIONS.find((x) => x.kind === open)?.label?.toLowerCase()}
+                    Open generated {generatedDocLabel(open)}
                   </a>
                 </p>
               )}

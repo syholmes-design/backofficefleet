@@ -29,6 +29,12 @@ function proofSignalLabel(
   return "At risk";
 }
 
+function settlementDocLabel(kind: "summary" | "hold" | "insurance"): string {
+  if (kind === "summary") return "settlement summary";
+  if (kind === "hold") return "hold letter";
+  return "insurance notice";
+}
+
 export function SettlementDetailDrawer({ settlementId, open, onClose }: Props) {
   const { data } = useBofDemoData();
   const settlements = useSettlementsPayrollStore((s) => s.settlements);
@@ -112,7 +118,7 @@ export function SettlementDetailDrawer({ settlementId, open, onClose }: Props) {
       }
       const url = data.publicUrl || data.generatedUrl;
       setGeneratedDocument(target.settlement_id, kind, url);
-      setDocNotice(`Generated ${kind} settlement document.`);
+      setDocNotice(`Generated ${settlementDocLabel(kind)}.`);
       window.open(url, "_blank", "noopener,noreferrer");
     } catch (err) {
       setDocNotice(
