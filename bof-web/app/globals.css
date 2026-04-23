@@ -6109,6 +6109,334 @@ body {
   gap: 0.5rem;
 }
 
+/* —— BOF Intake Engine (operations inbox) —— */
+.bof-intake-engine {
+  max-width: 76rem;
+  margin: 0 auto;
+}
+
+.bof-intake-engine-header {
+  margin-bottom: 1.25rem;
+}
+
+.bof-intake-engine-lead {
+  max-width: 44rem;
+}
+
+.bof-intake-engine-kpis {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.85rem;
+  margin-bottom: 1.35rem;
+}
+
+@media (max-width: 800px) {
+  .bof-intake-engine-kpis {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.bof-intake-engine-kpi {
+  border: 1px solid var(--bof-border);
+  border-radius: var(--bof-radius);
+  padding: 0.75rem 0.95rem;
+  background: var(--bof-surface);
+}
+
+.bof-intake-engine-kpi-label {
+  display: block;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--bof-muted);
+}
+
+.bof-intake-engine-kpi-value {
+  margin-top: 0.2rem;
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: var(--bof-text);
+}
+
+.bof-intake-engine-panel {
+  border: 1px solid var(--bof-border);
+  border-radius: var(--bof-radius);
+  background: var(--bof-surface);
+  padding: 1rem 1.1rem;
+}
+
+.bof-intake-engine-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  margin-bottom: 0.85rem;
+}
+
+.bof-intake-engine-tab {
+  padding: 0.35rem 0.7rem;
+  font-size: 0.76rem;
+  font-weight: 600;
+  border: 1px solid var(--bof-border);
+  border-radius: 6px;
+  background: rgba(15, 20, 25, 0.55);
+  color: var(--bof-muted);
+  cursor: pointer;
+}
+
+.bof-intake-engine-tab:hover {
+  border-color: rgba(20, 184, 166, 0.35);
+  color: var(--bof-text);
+}
+
+.bof-intake-engine-tab--active {
+  border-color: rgba(20, 184, 166, 0.55);
+  color: #5eead4;
+  background: rgba(13, 148, 136, 0.1);
+}
+
+.bof-intake-engine-table .bof-intake-engine-sub {
+  font-size: 0.74rem;
+  margin-top: 0.12rem;
+}
+
+.bof-intake-engine-cell-title {
+  font-weight: 600;
+  font-size: 0.84rem;
+}
+
+.bof-intake-engine-confidence {
+  text-transform: capitalize;
+  font-size: 0.8rem;
+}
+
+.bof-intake-engine-flag {
+  margin-left: 0.35rem;
+  font-size: 0.62rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #fcd34d;
+}
+
+.bof-intake-engine-nowrap {
+  white-space: nowrap;
+}
+
+.bof-intake-engine-detail-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+  margin-bottom: 1.15rem;
+}
+
+.bof-intake-engine-subject {
+  max-width: 48rem;
+  margin-top: 0.25rem;
+}
+
+.bof-intake-engine-detail-grid {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: 1fr 1fr;
+}
+
+@media (max-width: 960px) {
+  .bof-intake-engine-detail-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.bof-intake-engine-card {
+  border: 1px solid var(--bof-border);
+  border-radius: var(--bof-radius);
+  padding: 1rem 1.1rem;
+  background: var(--bof-surface);
+}
+
+.bof-intake-engine-card .bof-h2 {
+  margin: 0 0 0.75rem;
+  font-size: 0.88rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #94a3b8;
+}
+
+.bof-intake-engine-card--wide {
+  grid-column: 1 / -1;
+}
+
+.bof-intake-engine-dl {
+  display: grid;
+  grid-template-columns: 9.5rem 1fr;
+  gap: 0.35rem 1rem;
+  font-size: 0.84rem;
+  margin: 0;
+}
+
+.bof-intake-engine-dl dt {
+  margin: 0;
+  color: var(--bof-muted);
+}
+
+.bof-intake-engine-dl dd {
+  margin: 0;
+}
+
+.bof-intake-engine-attach-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.bof-intake-engine-attach-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.55rem 0;
+  border-bottom: 1px solid var(--bof-border);
+}
+
+.bof-intake-engine-attach-row:last-child {
+  border-bottom: none;
+}
+
+.bof-intake-engine-form-grid {
+  display: grid;
+  gap: 0.75rem 1rem;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+@media (max-width: 640px) {
+  .bof-intake-engine-form-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.bof-intake-engine-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.28rem;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: #94a3b8;
+}
+
+.bof-intake-engine-field--full {
+  grid-column: 1 / -1;
+}
+
+.bof-intake-engine-field input,
+.bof-intake-engine-field textarea {
+  text-transform: none;
+  font-weight: 400;
+  font-size: 0.86rem;
+  color: var(--bof-text);
+  padding: 0.5rem 0.55rem;
+  border-radius: 6px;
+  border: 1px solid var(--bof-border);
+  background: #0f1419;
+  font-family: inherit;
+}
+
+.bof-intake-engine-field textarea {
+  resize: vertical;
+}
+
+.bof-intake-engine-bullet {
+  margin: 0.25rem 0 0;
+  padding-left: 1.1rem;
+  font-size: 0.84rem;
+}
+
+.bof-intake-engine-flagbox {
+  margin-top: 0.75rem;
+  padding: 0.65rem 0.75rem;
+  border-radius: 6px;
+  border: 1px dashed rgba(245, 158, 11, 0.45);
+  background: rgba(245, 158, 11, 0.06);
+  font-size: 0.82rem;
+}
+
+.bof-intake-engine-warn {
+  margin-top: 0.65rem;
+  color: #fcd34d;
+  font-size: 0.84rem;
+}
+
+.bof-intake-engine-notice {
+  margin-bottom: 1rem;
+  padding: 0.65rem 0.85rem;
+  border-radius: 6px;
+  border: 1px solid rgba(20, 184, 166, 0.4);
+  background: rgba(13, 148, 136, 0.1);
+  font-size: 0.84rem;
+}
+
+.bof-intake-engine-actions {
+  margin-top: 1.5rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--bof-border);
+}
+
+.bof-intake-engine-actions-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  align-items: flex-end;
+  margin-bottom: 0.65rem;
+}
+
+.bof-intake-engine-match {
+  gap: 0.65rem;
+}
+
+.bof-intake-engine-match select {
+  min-width: 11rem;
+  margin-left: 0.35rem;
+  padding: 0.45rem 0.5rem;
+  border-radius: 6px;
+  border: 1px solid var(--bof-border);
+  background: #0f1419;
+  color: var(--bof-text);
+  font-size: 0.84rem;
+}
+
+.bof-intake-engine-btn {
+  padding: 0.48rem 0.95rem;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  border: 1px solid var(--bof-border);
+  background: rgba(15, 20, 25, 0.65);
+  color: var(--bof-text);
+}
+
+.bof-intake-engine-btn:hover:not(:disabled) {
+  border-color: rgba(20, 184, 166, 0.45);
+}
+
+.bof-intake-engine-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.bof-intake-engine-btn--primary {
+  border-color: #0f766e;
+  background: #14b8a6;
+  color: #042f2e;
+}
+
+.bof-intake-engine-btn--primary:hover:not(:disabled) {
+  filter: brightness(1.05);
+}
+
 /* —— Source of Truth (demo admin) —— */
 .bof-sot-page {
   max-width: 72rem;

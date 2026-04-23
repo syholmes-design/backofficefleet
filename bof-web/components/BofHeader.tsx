@@ -14,6 +14,7 @@ const marketingNav = [
 
 const productNav = [
   { href: "/dashboard", label: "Dashboard" },
+  { href: "/intake", label: "Intake Engine" },
   { href: "/command-center", label: "Command Center" },
   { href: "/drivers", label: "Drivers" },
   { href: "/emergency-contacts", label: "Emergency Contacts", icon: "phone-shield" as const },

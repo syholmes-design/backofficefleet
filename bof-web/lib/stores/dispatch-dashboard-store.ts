@@ -68,6 +68,8 @@ type DispatchDashboardState = {
       >
     >
   ) => void;
+  /** Append a draft load (e.g. from BOF Intake Engine finalize). */
+  appendLoad: (load: Load) => void;
 };
 
 function findDriver(drivers: Driver[], id: string) {
@@ -209,6 +211,11 @@ export const useDispatchDashboardStore = create<DispatchDashboardState>(
     setLoadDocumentUrls: (load_id, patch) =>
       set((s) => ({
         loads: s.loads.map((l) => (l.load_id === load_id ? { ...l, ...patch } : l)),
+      })),
+
+    appendLoad: (load) =>
+      set((s) => ({
+        loads: [...s.loads, load],
       })),
   })
 );

@@ -51,6 +51,12 @@ export function DashboardPageClient() {
       <section className="bof-section" aria-label="Modules">
         <h2 className="bof-h2">Modules</h2>
         <div className="bof-cards">
+          <Link href="/intake" className="bof-card">
+            <span className="bof-card-title">BOF Intake Engine</span>
+            <span className="bof-card-desc">
+              Email-to-intake queue — classify packets, clear gaps, finalize dispatch-ready loads
+            </span>
+          </Link>
           <Link href="/settlements" className="bof-card">
             <span className="bof-card-title">Settlements</span>
             <span className="bof-card-desc">
