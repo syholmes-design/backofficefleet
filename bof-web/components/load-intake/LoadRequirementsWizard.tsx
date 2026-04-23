@@ -8,6 +8,13 @@ import {
 } from "@/lib/load-requirements-intake-checks";
 import type { IntakeWizardState, LoadPacket } from "@/lib/load-requirements-intake-types";
 import { LoadIntakeStep4PacketReview } from "@/components/load-intake/LoadIntakeStep4PacketReview";
+import { useBofDemoData } from "@/lib/bof-demo-data-context";
+import {
+  applyFacilityMatch,
+  buildLoadIntakeIntelligence,
+  findFacilityByName,
+  routesForOriginFacility,
+} from "@/lib/load-intake-intelligence";
 
 const SHIP_ID = "SHIP-INTAKE-DRAFT";
 const FAC_ID = "FAC-INTAKE-DRAFT";
@@ -31,6 +38,7 @@ function createInitialState(): IntakeWizardState {
       address: "",
       city: "",
       state: "",
+      zip: "",
       facility_rules: "",
       appointment_required: false,
     },
@@ -44,6 +52,8 @@ function createInitialState(): IntakeWizardState {
       piece_count: 0,
       equipment_type: "",
       special_handling: "",
+      destination_facility_name: "",
+      route_memory_key: "",
       temperature_required: false,
       temperature_min: undefined,
       temperature_max: undefined,
@@ -56,6 +66,25 @@ function createInitialState(): IntakeWizardState {
       pickup_photos_required: false,
       delivery_photos_required: false,
       cargo_photos_required: false,
+      insuranceRequirementType: "Standard COI",
+      cargoCoverageLevel: "$250k",
+      certificateRequired: true,
+      additionalInsuredRequired: false,
+      facilityEndorsementRequired: false,
+      bolRequirementType: "Standard shipper BOL",
+      signedBolRequired: true,
+      palletCountRequired: true,
+      pieceCountRequired: true,
+      sealNotationRequired: false,
+      bolSpecialInstructions: "",
+      podRequirementType: "POD + photo evidence",
+      signedPodRequired: true,
+      receiverPrintedNameRequired: true,
+      deliveryPhotoRequired: true,
+      emptyTrailerPhotoRequired: false,
+      sealVerificationRequired: false,
+      gpsTimestampRequired: true,
+      podSpecialInstructions: "",
       insurance_requirements: "",
       appointment_window_start: "",
       appointment_window_end: "",
@@ -128,8 +157,15 @@ const STEPS = [
 ] as const;
 
 export function LoadRequirementsWizard() {
+  const { data } = useBofDemoData();
   const [step, setStep] = useState(1);
   const [state, setState] = useState<IntakeWizardState>(() => createInitialState());
+
+  const intelligence = useMemo(() => buildLoadIntakeIntelligence(data), [data]);
+  const suggestedRoutes = useMemo(
+    () => routesForOriginFacility(intelligence.routeMemories, state.facility.facility_name),
+    [intelligence.routeMemories, state.facility.facility_name]
+  );
 
   const touchDraft = useCallback(() => {
     setState((s) => ({
@@ -137,6 +173,45 @@ export function LoadRequirementsWizard() {
       lastDraftSavedAt: new Date().toISOString(),
     }));
   }, []);
+
+  const applyKnownFacility = useCallback(
+    (facilityName: string) => {
+      const match = findFacilityByName(intelligence.facilities, facilityName);
+      if (!match) return;
+      touchDraft();
+      setState((s) => ({
+        ...s,
+        shipper: match.shipperName
+          ? {
+              ...s.shipper,
+              shipper_name: s.shipper.shipper_name || match.shipperName,
+            }
+          : s.shipper,
+        facility: applyFacilityMatch(s.facility, match),
+      }));
+    },
+    [intelligence.facilities, touchDraft]
+  );
+
+  const applyRouteMemory = useCallback(
+    (routeKey: string) => {
+      const route = intelligence.routeMemories.find((r) => r.key === routeKey);
+      if (!route) return;
+      touchDraft();
+      setState((s) => ({
+        ...s,
+        loadRequirement: {
+          ...s.loadRequirement,
+          ...route.defaultLoadPatch,
+        },
+        compliance: {
+          ...s.compliance,
+          ...route.defaultCompliancePatch,
+        },
+      }));
+    },
+    [intelligence.routeMemories, touchDraft]
+  );
 
   const checks = useMemo(
     () =>
@@ -261,6 +336,7 @@ export function LoadRequirementsWizard() {
               <label htmlFor="facility_name">Facility name</label>
               <input
                 id="facility_name"
+                list="bof-known-facilities"
                 value={state.facility.facility_name}
                 onChange={(e) => {
                   touchDraft();
@@ -269,7 +345,15 @@ export function LoadRequirementsWizard() {
                     facility: { ...s.facility, facility_name: e.target.value },
                   }));
                 }}
+                onBlur={(e) => applyKnownFacility(e.target.value)}
               />
+              <datalist id="bof-known-facilities">
+                {intelligence.facilities.map((f) => (
+                  <option key={f.key} value={f.facilityName}>
+                    {f.city}, {f.state}
+                  </option>
+                ))}
+              </datalist>
             </div>
             <div className="bof-load-intake-field">
               <label htmlFor="facility_addr">Facility street address</label>
@@ -315,6 +399,21 @@ export function LoadRequirementsWizard() {
                 }}
               />
             </div>
+            <div className="bof-load-intake-field">
+              <label htmlFor="facility_zip">ZIP</label>
+              <input
+                id="facility_zip"
+                value={state.facility.zip ?? ""}
+                maxLength={10}
+                onChange={(e) => {
+                  touchDraft();
+                  setState((s) => ({
+                    ...s,
+                    facility: { ...s.facility, zip: e.target.value },
+                  }));
+                }}
+              />
+            </div>
             <div className="bof-load-intake-field" style={{ gridColumn: "1 / -1" }}>
               <label htmlFor="facility_rules">Facility rules</label>
               <textarea
@@ -329,6 +428,24 @@ export function LoadRequirementsWizard() {
                 }}
                 placeholder="Dock hours, PPE, check-in process, restrictions…"
               />
+            </div>
+            <div className="bof-load-intake-field" style={{ gridColumn: "1 / -1" }}>
+              <label htmlFor="route_memory">Prior route memory</label>
+              <select
+                id="route_memory"
+                value={state.loadRequirement.route_memory_key ?? ""}
+                onChange={(e) => applyRouteMemory(e.target.value)}
+              >
+                <option value="">Select prior route template (optional)…</option>
+                {suggestedRoutes.map((r) => (
+                  <option key={r.key} value={r.key}>
+                    {r.label}
+                  </option>
+                ))}
+              </select>
+              <p className="bof-muted" style={{ marginTop: "0.4rem", fontSize: "0.78rem" }}>
+                Selecting a prior route applies known destination and documentation defaults. You can edit any auto-filled value.
+              </p>
             </div>
             <YesNo
               idPrefix="appt-fac"
@@ -377,6 +494,23 @@ export function LoadRequirementsWizard() {
                     loadRequirement: { ...s.loadRequirement, commodity: e.target.value },
                   }))
                 }
+              />
+            </div>
+            <div className="bof-load-intake-field">
+              <label htmlFor="destination_facility_name">Delivery facility</label>
+              <input
+                id="destination_facility_name"
+                value={state.loadRequirement.destination_facility_name ?? ""}
+                onChange={(e) =>
+                  setState((s) => ({
+                    ...s,
+                    loadRequirement: {
+                      ...s.loadRequirement,
+                      destination_facility_name: e.target.value,
+                    },
+                  }))
+                }
+                placeholder="Consignee / delivery location"
               />
             </div>
             <div className="bof-load-intake-field">

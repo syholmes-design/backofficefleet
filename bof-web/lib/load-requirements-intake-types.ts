@@ -15,6 +15,7 @@ export interface Facility {
   address: string;
   city: string;
   state: string;
+  zip?: string;
   facility_rules: string;
   appointment_required: boolean;
 }
@@ -29,6 +30,8 @@ export interface LoadRequirement {
   piece_count: number;
   equipment_type: string;
   special_handling: string;
+  destination_facility_name?: string;
+  route_memory_key?: string;
   temperature_required: boolean;
   temperature_min?: number;
   temperature_max?: number;
@@ -42,6 +45,28 @@ export interface ComplianceRequirement {
   pickup_photos_required: boolean;
   delivery_photos_required: boolean;
   cargo_photos_required: boolean;
+  insuranceRequirementType: "Standard COI" | "Enhanced COI + waiver" | "Customer-specific";
+  cargoCoverageLevel: "$100k" | "$250k" | "$500k" | "$1M+";
+  certificateRequired: boolean;
+  additionalInsuredRequired: boolean;
+  facilityEndorsementRequired: boolean;
+  bolRequirementType: "Standard shipper BOL" | "Customer BOL template" | "Dual-signature BOL";
+  signedBolRequired: boolean;
+  palletCountRequired: boolean;
+  pieceCountRequired: boolean;
+  sealNotationRequired: boolean;
+  bolSpecialInstructions: string;
+  podRequirementType:
+    | "Standard POD"
+    | "POD + photo evidence"
+    | "Strict POD + GPS/receiver validation";
+  signedPodRequired: boolean;
+  receiverPrintedNameRequired: boolean;
+  deliveryPhotoRequired: boolean;
+  emptyTrailerPhotoRequired: boolean;
+  sealVerificationRequired: boolean;
+  gpsTimestampRequired: boolean;
+  podSpecialInstructions: string;
   insurance_requirements: string;
   appointment_window_start: string;
   appointment_window_end: string;
