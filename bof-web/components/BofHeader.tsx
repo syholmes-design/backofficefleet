@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { Shield, Phone } from "lucide-react";
 import { BofLogo } from "@/components/BofLogo";
 
@@ -46,6 +47,19 @@ function ProductNavLabel({
 }
 
 export function BofHeader() {
+  const pathname = usePathname();
+  const marketingOnlyPaths = new Set([
+    "/",
+    "/for-hire-carriers",
+    "/private-fleets",
+    "/government",
+    "/bof-vault",
+    "/book-assessment",
+    "/apply",
+    "/fleet-savings",
+  ]);
+  const marketingOnlyHeader = marketingOnlyPaths.has(pathname);
+
   return (
     <header className="bof-global-header">
       <div className="bof-global-header-inner">
@@ -64,14 +78,22 @@ export function BofHeader() {
               </Link>
             ))}
           </div>
-          <span className="bof-global-header-sep" aria-hidden="true" />
-          <div className="bof-global-header-nav-group" aria-label="Product demo">
-            {productNav.map((item) => (
-              <Link key={item.href} href={item.href}>
-                <ProductNavLabel label={item.label} icon={item.icon} />
-              </Link>
-            ))}
-          </div>
+          {marketingOnlyHeader ? (
+            <div className="bof-global-header-nav-group" aria-label="Demo">
+              <Link href="/dashboard">Product Demo</Link>
+            </div>
+          ) : (
+            <>
+              <span className="bof-global-header-sep" aria-hidden="true" />
+              <div className="bof-global-header-nav-group" aria-label="Product demo">
+                {productNav.map((item) => (
+                  <Link key={item.href} href={item.href}>
+                    <ProductNavLabel label={item.label} icon={item.icon} />
+                  </Link>
+                ))}
+              </div>
+            </>
+          )}
           <Link href="/book-assessment" className="bof-global-header-cta">
             Book Assessment
           </Link>
