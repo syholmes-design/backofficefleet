@@ -183,8 +183,7 @@ export default function ForHireCarriersPage() {
         visual={
           <MarketingHeroImagePanel
             windowTitle="Carrier command center"
-            imagePath="/mocks/mock_equipment.jpg"
-            fallbackImagePath="/assets/images/hero-regular-fleets.jpg"
+            imagePath="/assets/images/hero-regular-fleets.jpg"
             caption="Dispatch, proof, and compliance posture from one carrier command-center view."
           />
         }

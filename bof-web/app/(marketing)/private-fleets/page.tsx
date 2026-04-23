@@ -184,8 +184,7 @@ export default function PrivateFleetsPage() {
         visual={
           <MarketingHeroImagePanel
             windowTitle="Private fleet control plane"
-            imagePath="/mocks/mock_cargo.jpg"
-            fallbackImagePath="/assets/images/hero-private-fleets.jpg"
+            imagePath="/assets/images/hero-private-fleets.jpg"
             caption="Standardized private-fleet governance across yards, branches, and internal dispatch boards."
           />
         }

@@ -38,7 +38,12 @@ export function MarketingHeroImagePanel({
           <span className="bof-mkt-hero-visual-dot" />
           <span className="bof-mkt-hero-visual-title">{windowTitle}</span>
         </div>
-        <div className="bof-mkt-hero-image-surface" style={imageVars} />
+        <div
+          className="bof-mkt-hero-image-surface"
+          style={imageVars}
+          role="img"
+          aria-label={`${windowTitle} hero visual`}
+        />
       </div>
       <p className="bof-mkt-hero-visual-caption">{caption}</p>
     </div>
