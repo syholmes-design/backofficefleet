@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useState } from "react";
 import type { ClaimDraftKind, ClaimPacketContext } from "@/lib/claim-packet";
 import { buildClaimDraft } from "@/lib/claim-packet";
+import { useDispatchDashboardStore } from "@/lib/stores/dispatch-dashboard-store";
 
 const ACTIONS: { kind: ClaimDraftKind; label: string }[] = [
   { kind: "packet", label: "Generate claim packet" },
@@ -13,6 +14,12 @@ const ACTIONS: { kind: ClaimDraftKind; label: string }[] = [
 
 export function ClaimPacketPanel({ ctx }: { ctx: ClaimPacketContext }) {
   const [open, setOpen] = useState<ClaimDraftKind | null>(null);
+  const [busyKind, setBusyKind] = useState<ClaimDraftKind | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const [generatedByKind, setGeneratedByKind] = useState<
+    Partial<Record<ClaimDraftKind, string>>
+  >({});
+  const setLoadDocumentUrls = useDispatchDashboardStore((s) => s.setLoadDocumentUrls);
 
   const close = useCallback(() => setOpen(null), []);
 
@@ -24,6 +31,67 @@ export function ClaimPacketPanel({ ctx }: { ctx: ClaimPacketContext }) {
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
   }, [open, close]);
+
+  async function generateClaimAssets(kind: ClaimDraftKind) {
+    setBusyKind(kind);
+    setError(null);
+    try {
+      const res = await fetch("/api/generate/claims", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          loadId: ctx.loadId,
+          description: ctx.issueTypes.join("; ") || "Claim packet workspace",
+          claim_photos: [],
+        }),
+      });
+      const data = (await res.json()) as
+        | {
+            ok: true;
+            generatedUrl: string;
+            publicUrl?: string;
+            metadata?: {
+              relatedDocuments?: Array<{
+                type?: string;
+                generatedUrl?: string;
+                publicUrl?: string;
+              }>;
+            };
+          }
+        | { ok: false; error?: string };
+      if (!res.ok || !data.ok) {
+        throw new Error((data as { error?: string }).error || "Claims generation failed");
+      }
+      const related = data.metadata?.relatedDocuments ?? [];
+      const pick = (needle: string) =>
+        related.find((r) => String(r.type || "").toLowerCase().includes(needle));
+      const packetUrl = data.publicUrl || data.generatedUrl;
+      const evidenceUrl =
+        pick("evidence")?.publicUrl || pick("evidence")?.generatedUrl;
+      const damageUrl = pick("damage")?.publicUrl || pick("damage")?.generatedUrl;
+      const insuranceUrl =
+        pick("insurance")?.publicUrl || pick("insurance")?.generatedUrl;
+      const disputeUrl = pick("dispute")?.publicUrl || pick("dispute")?.generatedUrl;
+
+      const byKind: Partial<Record<ClaimDraftKind, string>> = {
+        packet: packetUrl,
+        insurance: insuranceUrl ?? packetUrl,
+        dispute_letter: disputeUrl ?? packetUrl,
+        evidence: evidenceUrl ?? packetUrl,
+      };
+      setGeneratedByKind((prev) => ({ ...prev, ...byKind }));
+      setLoadDocumentUrls(ctx.loadId, {
+        claim_form_url: packetUrl,
+        supporting_attachment_url: evidenceUrl,
+        damage_photo_url: damageUrl,
+      });
+      window.open(byKind[kind] || packetUrl, "_blank", "noopener,noreferrer");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Unknown generation error");
+    } finally {
+      setBusyKind(null);
+    }
+  }
 
   return (
     <section
@@ -72,12 +140,21 @@ export function ClaimPacketPanel({ ctx }: { ctx: ClaimPacketContext }) {
             key={a.kind}
             type="button"
             className="bof-cc-next-action-btn bof-claim-action-btn"
-            onClick={() => setOpen(a.kind)}
+            disabled={busyKind !== null}
+            onClick={() => {
+              setOpen(a.kind);
+              void generateClaimAssets(a.kind);
+            }}
           >
-            {a.label}
+            {busyKind === a.kind ? "Generating..." : a.label}
           </button>
         ))}
       </div>
+      {error && (
+        <p className="bof-small" style={{ color: "#fecaca", marginTop: "0.5rem" }}>
+          {error}
+        </p>
+      )}
 
       {open && (
         <div
@@ -106,6 +183,18 @@ export function ClaimPacketPanel({ ctx }: { ctx: ClaimPacketContext }) {
               </button>
             </header>
             <div className="bof-modal-body">
+              {generatedByKind[open] && (
+                <p className="bof-modal-note">
+                  <a
+                    href={generatedByKind[open]}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="bof-link-secondary"
+                  >
+                    Open generated {ACTIONS.find((x) => x.kind === open)?.label?.toLowerCase()}
+                  </a>
+                </p>
+              )}
               <pre className="bof-cc-draft-pre">
                 {buildClaimDraft(open, ctx)}
               </pre>

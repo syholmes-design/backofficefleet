@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { X } from "lucide-react";
 import { useBofDemoData } from "@/lib/bof-demo-data-context";
 import { settlementHasProofOrExceptionIssues } from "@/lib/settlements-payroll-bootstrap";
@@ -38,6 +38,14 @@ export function SettlementDetailDrawer({ settlementId, open, onClose }: Props) {
   const placeHold = useSettlementsPayrollStore((s) => s.placeHold);
   const clearHold = useSettlementsPayrollStore((s) => s.clearHold);
   const addLine = useSettlementsPayrollStore((s) => s.addLine);
+  const generatedDocs = useSettlementsPayrollStore(
+    (s) => s.generatedDocsBySettlementId
+  );
+  const setGeneratedDocument = useSettlementsPayrollStore(
+    (s) => s.setGeneratedDocument
+  );
+  const [docBusy, setDocBusy] = useState<"summary" | "hold" | "insurance" | null>(null);
+  const [docNotice, setDocNotice] = useState<string | null>(null);
 
   const settlement = useMemo(
     () => settlements.find((x) => x.settlement_id === settlementId) ?? null,
@@ -73,6 +81,49 @@ export function SettlementDetailDrawer({ settlementId, open, onClose }: Props) {
   const lineCount = myLines.length;
   const readyDisabled =
     settlement.settlement_hold || lineCount === 0 || settlement.status === "Exported";
+  const docs = generatedDocs[settlement.settlement_id];
+
+  async function generateSettlementDoc(
+    target: NonNullable<typeof settlement>,
+    kind: "summary" | "hold" | "insurance"
+  ) {
+    setDocBusy(kind);
+    setDocNotice(null);
+    try {
+      const res = await fetch("/api/generate/settlement", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          settlementId: target.settlement_id,
+          kind,
+          driver_name: target.driver_name,
+          gross: target.total_gross_pay,
+          deductions: target.total_deductions,
+          net: target.net_pay,
+          settlement_status: target.status,
+          settlement_hold_info: target.settlement_hold_reason,
+        }),
+      });
+      const data = (await res.json()) as
+        | { ok: true; generatedUrl: string; publicUrl?: string }
+        | { ok: false; error?: string };
+      if (!res.ok || !data.ok) {
+        throw new Error((data as { error?: string }).error || "Settlement generation failed");
+      }
+      const url = data.publicUrl || data.generatedUrl;
+      setGeneratedDocument(target.settlement_id, kind, url);
+      setDocNotice(`Generated ${kind} settlement document.`);
+      window.open(url, "_blank", "noopener,noreferrer");
+    } catch (err) {
+      setDocNotice(
+        `Could not generate settlement doc: ${
+          err instanceof Error ? err.message : "Unknown error"
+        }`
+      );
+    } finally {
+      setDocBusy(null);
+    }
+  }
 
   return (
     <div
@@ -385,7 +436,68 @@ export function SettlementDetailDrawer({ settlementId, open, onClose }: Props) {
             >
               Add line
             </button>
+            <button
+              type="button"
+              disabled={docBusy !== null}
+              onClick={() => void generateSettlementDoc(settlement, "summary")}
+              className="rounded border border-blue-700 bg-blue-950/35 px-3 py-1.5 text-xs font-medium text-blue-100 hover:bg-blue-900/45 disabled:opacity-50"
+            >
+              {docBusy === "summary" ? "Generating..." : "Generate settlement summary"}
+            </button>
+            <button
+              type="button"
+              disabled={docBusy !== null}
+              onClick={() => void generateSettlementDoc(settlement, "hold")}
+              className="rounded border border-blue-700 bg-blue-950/35 px-3 py-1.5 text-xs font-medium text-blue-100 hover:bg-blue-900/45 disabled:opacity-50"
+            >
+              {docBusy === "hold" ? "Generating..." : "Generate hold letter"}
+            </button>
+            <button
+              type="button"
+              disabled={docBusy !== null}
+              onClick={() => void generateSettlementDoc(settlement, "insurance")}
+              className="rounded border border-blue-700 bg-blue-950/35 px-3 py-1.5 text-xs font-medium text-blue-100 hover:bg-blue-900/45 disabled:opacity-50"
+            >
+              {docBusy === "insurance" ? "Generating..." : "Generate insurance notice"}
+            </button>
           </div>
+          {(docNotice || docs) && (
+            <div className="mt-2 rounded border border-slate-800 bg-slate-900/60 px-3 py-2 text-xs text-slate-300">
+              {docNotice && <p>{docNotice}</p>}
+              <div className="mt-1 flex flex-wrap gap-3">
+                {docs?.summaryUrl && (
+                  <a
+                    href={docs.summaryUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="bof-link-secondary"
+                  >
+                    Open summary
+                  </a>
+                )}
+                {docs?.holdUrl && (
+                  <a
+                    href={docs.holdUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="bof-link-secondary"
+                  >
+                    Open hold letter
+                  </a>
+                )}
+                {docs?.insuranceUrl && (
+                  <a
+                    href={docs.insuranceUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="bof-link-secondary"
+                  >
+                    Open insurance notice
+                  </a>
+                )}
+              </div>
+            </div>
+          )}
         </footer>
       </aside>
     </div>

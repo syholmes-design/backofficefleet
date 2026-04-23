@@ -54,6 +54,20 @@ type DispatchDashboardState = {
   flagException: (load_id: string, reason: string) => void;
   clearExceptionFlag: (load_id: string) => void;
   setSettlementHold: (load_id: string, hold: boolean, reason?: string) => void;
+  setLoadDocumentUrls: (
+    load_id: string,
+    patch: Partial<
+      Pick<
+        Load,
+        | "bol_url"
+        | "pod_url"
+        | "invoice_url"
+        | "claim_form_url"
+        | "damage_photo_url"
+        | "supporting_attachment_url"
+      >
+    >
+  ) => void;
 };
 
 function findDriver(drivers: Driver[], id: string) {
@@ -190,6 +204,11 @@ export const useDispatchDashboardStore = create<DispatchDashboardState>(
               }
             : l
         ),
+      })),
+
+    setLoadDocumentUrls: (load_id, patch) =>
+      set((s) => ({
+        loads: s.loads.map((l) => (l.load_id === load_id ? { ...l, ...patch } : l)),
       })),
   })
 );

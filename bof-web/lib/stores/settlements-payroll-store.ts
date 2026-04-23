@@ -30,6 +30,10 @@ type Store = {
   settlements: Settlement[];
   lines: SettlementLine[];
   loads: Load[];
+  generatedDocsBySettlementId: Record<
+    string,
+    { summaryUrl?: string; holdUrl?: string; insuranceUrl?: string }
+  >;
   exportBatchSeq: number;
   drawerSettlementId: string | null;
 
@@ -40,11 +44,17 @@ type Store = {
   placeHold: (settlement_id: string, reason?: string) => void;
   clearHold: (settlement_id: string) => void;
   addLine: (settlement_id: string) => void;
+  setGeneratedDocument: (
+    settlement_id: string,
+    kind: "summary" | "hold" | "insurance",
+    url: string
+  ) => void;
   exportSelectedToPayroll: (settlement_ids: string[]) => string;
 };
 
 export const useSettlementsPayrollStore = create<Store>((set, get) => ({
   ...initialState(),
+  generatedDocsBySettlementId: {},
   drawerSettlementId: null,
 
   openDrawer: (settlement_id) => set({ drawerSettlementId: settlement_id }),
@@ -128,6 +138,23 @@ export const useSettlementsPayrollStore = create<Store>((set, get) => ({
       };
     });
   },
+
+  setGeneratedDocument: (settlement_id, kind, url) =>
+    set((st) => {
+      const prev = st.generatedDocsBySettlementId[settlement_id] ?? {};
+      const next =
+        kind === "summary"
+          ? { ...prev, summaryUrl: url }
+          : kind === "hold"
+            ? { ...prev, holdUrl: url }
+            : { ...prev, insuranceUrl: url };
+      return {
+        generatedDocsBySettlementId: {
+          ...st.generatedDocsBySettlementId,
+          [settlement_id]: next,
+        },
+      };
+    }),
 
   exportSelectedToPayroll: (settlement_ids) => {
     const batch = `BATCH-${get().exportBatchSeq}`;

@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useBofDemoData } from "@/lib/bof-demo-data-context";
 import { buildPretripTabletModel, type PretripTabletModel } from "@/lib/pretrip-tablet";
 import { buildDispatchLoadsFromBofData } from "@/lib/dispatch-dashboard-seed";
+import { useDispatchDashboardStore } from "@/lib/stores/dispatch-dashboard-store";
 import { getLoadProofItems, type LoadProofItem } from "@/lib/load-proof";
 import {
   computeDocumentationReadiness,
@@ -173,6 +174,7 @@ function ActionLink({
 
 export function ShipperLoadPortalClient({ loadId }: { loadId: string }) {
   const { data } = useBofDemoData();
+  const storeLoads = useDispatchDashboardStore((s) => s.loads);
 
   const bofLoad = useMemo(
     () => data.loads.find((l) => l.id === loadId) ?? null,
@@ -180,8 +182,10 @@ export function ShipperLoadPortalClient({ loadId }: { loadId: string }) {
   );
 
   const dispatchLoad = useMemo(() => {
+    const fromStore = storeLoads.find((l) => l.load_id === loadId);
+    if (fromStore) return fromStore;
     return buildDispatchLoadsFromBofData(data).find((l) => l.load_id === loadId) ?? null;
-  }, [data, loadId]);
+  }, [storeLoads, data, loadId]);
 
   const pretrip = useMemo(() => {
     if (!bofLoad) return null;
@@ -254,12 +258,14 @@ export function ShipperLoadPortalClient({ loadId }: { loadId: string }) {
   const cargoRecordDoc = docByType(engineDocs, "Cargo Photo Record");
   const engineBol = docByType(engineDocs, "BOL");
   const enginePod = docByType(engineDocs, "POD");
+  const engineInvoice = docByType(engineDocs, "Invoice");
   const engineRate = docByType(engineDocs, "Rate Confirmation");
   const engineLumper = docByType(engineDocs, "Lumper Receipt");
 
   const hrefPretripTablet = `/pretrip/${loadId}`;
   const hrefBol = firstHref(dispatchLoad.bol_url, engineBol?.fileUrl);
   const hrefPod = firstHref(dispatchLoad.pod_url, enginePod?.fileUrl);
+  const hrefInvoice = firstHref(dispatchLoad.invoice_url, engineInvoice?.fileUrl);
   const hrefRate = firstHref(dispatchLoad.rate_con_url, engineRate?.fileUrl);
   const hrefLumper = firstHref(dispatchLoad.lumper_photo_url, engineLumper?.fileUrl);
   const hrefPretripInspectionReport = firstHref(
@@ -583,6 +589,7 @@ export function ShipperLoadPortalClient({ loadId }: { loadId: string }) {
             <ActionLink label="Pre-trip tablet (BOF)" href={hrefPretripTablet} newTab />
             <ActionLink label="BOL" href={hrefBol} newTab />
             <ActionLink label="POD" href={hrefPod} newTab />
+            <ActionLink label="Invoice" href={hrefInvoice} newTab />
             <ActionLink label="Rate confirmation" href={hrefRate} newTab />
             <ActionLink label="Lumper proof" href={hrefLumper} newTab />
             {showExceptionZone ? (

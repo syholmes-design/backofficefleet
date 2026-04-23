@@ -37,7 +37,27 @@ export function DocumentationReadinessPanel({ load }: Props) {
   const setSettlementHold = useDispatchDashboardStore(
     (s) => s.setSettlementHold
   );
+  const setLoadDocumentUrls = useDispatchDashboardStore(
+    (s) => s.setLoadDocumentUrls
+  );
   const [notice, setNotice] = useState<string | null>(null);
+  const [busy, setBusy] = useState<"shipper" | "billing" | "claim" | null>(null);
+
+  async function postGenerate<T extends Record<string, unknown>>(
+    path: string,
+    payload: Record<string, unknown>
+  ): Promise<T> {
+    const res = await fetch(path, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
+    const data = (await res.json()) as T & { ok?: boolean; error?: string };
+    if (!res.ok || data.ok === false) {
+      throw new Error(data.error || `Generation failed (${res.status})`);
+    }
+    return data as T;
+  }
 
   const showClaimZone = load.exception_flag || load.insurance_claim_needed;
 
@@ -134,21 +154,53 @@ export function DocumentationReadinessPanel({ load }: Props) {
       <div className="mt-4 flex flex-wrap gap-2 border-t border-slate-800 pt-4">
         <button
           type="button"
+          disabled={busy !== null}
           onClick={() => {
-            if (report.overall === "Ready") {
-              setNotice(
-                "Demo: BOF would compile a shipper packet index (PDF cover + TOC) from linked artifacts and e-sign queue."
-              );
-            } else {
-              setNotice(
-                `Demo: packet blocked (${report.overall}). Resolve: ${report.missingRequired.join(", ") || report.overallDetail}.`
-              );
-            }
+            setBusy("shipper");
+            void (async () => {
+              try {
+                const basePayload = {
+                  loadId: load.load_id,
+                };
+                const bol = await postGenerate<{
+                  generatedUrl: string;
+                  publicUrl?: string;
+                }>("/api/generate/bol", {
+                  ...basePayload,
+                  bol_date: load.pickup_datetime,
+                  shipper_name: load.origin,
+                  consignee_name: load.destination,
+                });
+                const pod = await postGenerate<{
+                  generatedUrl: string;
+                  publicUrl?: string;
+                }>("/api/generate/pod", {
+                  ...basePayload,
+                  delivery_date: load.delivery_datetime,
+                  delivery_location: load.destination,
+                });
+                setLoadDocumentUrls(load.load_id, {
+                  bol_url: bol.publicUrl || bol.generatedUrl,
+                  pod_url: pod.publicUrl || pod.generatedUrl,
+                });
+                setNotice(
+                  "Generated BOL + POD packet docs and linked them to this load."
+                );
+              } catch (err) {
+                setNotice(
+                  `Could not generate shipper packet docs: ${
+                    err instanceof Error ? err.message : "Unknown error"
+                  }`
+                );
+              } finally {
+                setBusy(null);
+              }
+            })();
           }}
-          className="inline-flex items-center gap-1.5 rounded border border-teal-600 bg-teal-900/30 px-3 py-1.5 text-xs font-medium text-teal-50 hover:bg-teal-900/50"
+          className="inline-flex items-center gap-1.5 rounded border border-teal-600 bg-teal-900/30 px-3 py-1.5 text-xs font-medium text-teal-50 hover:bg-teal-900/50 disabled:opacity-50"
         >
           <FileOutput className="h-3.5 w-3.5" aria-hidden />
-          Generate shipper packet
+          {busy === "shipper" ? "Generating shipper packet..." : "Generate shipper packet"}
         </button>
         <button
           type="button"
@@ -164,35 +216,93 @@ export function DocumentationReadinessPanel({ load }: Props) {
         </button>
         <button
           type="button"
+          disabled={busy !== null}
           onClick={() => {
-            if (load.invoice_url)
-              window.open(load.invoice_url, "_blank", "noopener,noreferrer");
-            else setNotice("Invoice not linked on this load.");
+            setBusy("billing");
+            void (async () => {
+              try {
+                const invoice = await postGenerate<{
+                  generatedUrl: string;
+                  publicUrl?: string;
+                }>("/api/generate/invoice", {
+                  loadId: load.load_id,
+                  rate: load.total_pay,
+                  total: load.total_pay,
+                });
+                const nextUrl = invoice.publicUrl || invoice.generatedUrl;
+                setLoadDocumentUrls(load.load_id, { invoice_url: nextUrl });
+                window.open(nextUrl, "_blank", "noopener,noreferrer");
+                setNotice("Generated invoice document and linked it to this load.");
+              } catch (err) {
+                setNotice(
+                  `Could not generate invoice: ${
+                    err instanceof Error ? err.message : "Unknown error"
+                  }`
+                );
+              } finally {
+                setBusy(null);
+              }
+            })();
           }}
-          className="inline-flex items-center gap-1.5 rounded border border-slate-600 bg-slate-800/80 px-3 py-1.5 text-xs font-medium text-slate-100 hover:bg-slate-800"
+          className="inline-flex items-center gap-1.5 rounded border border-slate-600 bg-slate-800/80 px-3 py-1.5 text-xs font-medium text-slate-100 hover:bg-slate-800 disabled:opacity-50"
         >
           <Scale className="h-3.5 w-3.5" aria-hidden />
-          Prepare billing packet
+          {busy === "billing" ? "Generating invoice..." : "Prepare billing packet"}
         </button>
         {showClaimZone && (
           <button
             type="button"
+            disabled={busy !== null}
             onClick={() => {
-              const u =
-                load.claim_form_url ||
-                load.damage_photo_url ||
-                load.supporting_attachment_url;
-              if (u) window.open(u, "_blank", "noopener,noreferrer");
-              setNotice(
-                report.claimPacketReady
-                  ? "Demo: claim packet artifacts linked — BOF would route to claims desk / insurer intake."
-                  : "Demo: claim packet incomplete — attach carrier claim form, damage photos, and supporting correspondence."
-              );
+              setBusy("claim");
+              void (async () => {
+                try {
+                  const claim = await postGenerate<{
+                    generatedUrl: string;
+                    publicUrl?: string;
+                    metadata?: {
+                      relatedDocuments?: Array<{
+                        type?: string;
+                        generatedUrl?: string;
+                        publicUrl?: string;
+                      }>;
+                    };
+                  }>("/api/generate/claims", {
+                    loadId: load.load_id,
+                    description: load.exception_reason || "Dispatch claim review",
+                  });
+                  const related = claim.metadata?.relatedDocuments ?? [];
+                  const evidence = related.find((r) =>
+                    String(r.type || "").toLowerCase().includes("evidence")
+                  );
+                  const damage = related.find((r) =>
+                    String(r.type || "").toLowerCase().includes("damage")
+                  );
+                  const claimUrl = claim.publicUrl || claim.generatedUrl;
+                  setLoadDocumentUrls(load.load_id, {
+                    claim_form_url: claimUrl,
+                    supporting_attachment_url:
+                      evidence?.publicUrl || evidence?.generatedUrl || load.supporting_attachment_url,
+                    damage_photo_url:
+                      damage?.publicUrl || damage?.generatedUrl || load.damage_photo_url,
+                  });
+                  window.open(claimUrl, "_blank", "noopener,noreferrer");
+                  setNotice("Generated claims packet artifacts and linked them to this load.");
+                } catch (err) {
+                  setNotice(
+                    `Could not generate claim packet: ${
+                      err instanceof Error ? err.message : "Unknown error"
+                    }`
+                  );
+                } finally {
+                  setBusy(null);
+                }
+              })();
             }}
-            className="inline-flex items-center gap-1.5 rounded border border-rose-800/60 bg-rose-950/35 px-3 py-1.5 text-xs font-medium text-rose-100 hover:bg-rose-950/55"
+            className="inline-flex items-center gap-1.5 rounded border border-rose-800/60 bg-rose-950/35 px-3 py-1.5 text-xs font-medium text-rose-100 hover:bg-rose-950/55 disabled:opacity-50"
           >
             <Package className="h-3.5 w-3.5" aria-hidden />
-            Prepare claim packet
+            {busy === "claim" ? "Generating claim packet..." : "Prepare claim packet"}
           </button>
         )}
       </div>
