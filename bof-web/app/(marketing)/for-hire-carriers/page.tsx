@@ -7,7 +7,7 @@ import {
   MarketingCtaPanel,
   MarketingFormShell,
   MarketingFunnelEntryRow,
-  MarketingHeroProductSketch,
+  MarketingHeroImagePanel,
   MarketingIconCardGrid,
   MarketingPremiumHero,
   MarketingProcessSteps,
@@ -181,9 +181,11 @@ export default function ForHireCarriersPage() {
           </>
         }
         visual={
-          <MarketingHeroProductSketch
+          <MarketingHeroImagePanel
             windowTitle="Carrier command center"
-            caption="Reserved for fleet photography, shipper scorecards, or a live capture from the BOF demo environment."
+            imagePath="/mocks/mock_equipment.jpg"
+            fallbackImagePath="/assets/images/hero-regular-fleets.jpg"
+            caption="Dispatch, proof, and compliance posture from one carrier command-center view."
           />
         }
       />

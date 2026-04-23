@@ -4,6 +4,7 @@ export { MarketingCommandCenterPreview, type CcMockRow } from "./MarketingComman
 export { MarketingContainer } from "./MarketingContainer";
 export { MarketingCtaPanel } from "./MarketingCtaPanel";
 export { MarketingFormShell } from "./MarketingFormShell";
+export { MarketingHeroImagePanel } from "./MarketingHeroImagePanel";
 export { MarketingHeroProductSketch } from "./MarketingHeroProductSketch";
 export * from "./MarketingGovernmentIcons";
 export * as MarketingHomeIcons from "./MarketingHomeIcons";

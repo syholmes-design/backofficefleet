@@ -3121,6 +3121,49 @@ body {
   opacity: 0.75;
 }
 
+.bof-mkt-hero-image-card .bof-mkt-hero-visual-frame {
+  margin-bottom: 0.75rem;
+}
+
+.bof-mkt-hero-image-surface {
+  aspect-ratio: 16 / 10;
+  min-height: 250px;
+  background-image:
+    linear-gradient(
+      170deg,
+      rgba(15, 23, 42, 0.52) 0%,
+      rgba(15, 23, 42, 0.28) 45%,
+      rgba(15, 23, 42, 0.6) 100%
+    ),
+    var(--bof-mkt-hero-image-url),
+    var(--bof-mkt-hero-image-fallback-url);
+  background-position:
+    center,
+    center,
+    center;
+  background-repeat:
+    no-repeat,
+    no-repeat,
+    no-repeat;
+  background-size:
+    cover,
+    cover,
+    cover;
+}
+
+@media (max-width: 900px) {
+  .bof-mkt-hero-image-surface {
+    min-height: 220px;
+  }
+}
+
+@media (max-width: 640px) {
+  .bof-mkt-hero-image-surface {
+    aspect-ratio: 4 / 3;
+    min-height: 200px;
+  }
+}
+
 .bof-mkt-hero-visual-caption {
   margin: 0;
   font-size: 0.72rem;
