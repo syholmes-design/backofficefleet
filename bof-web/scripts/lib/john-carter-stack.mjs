@@ -32,6 +32,8 @@ const insuranceCardPath = (driverId) =>
   `/documents/drivers/${driverId}/insurance-card.png`;
 const mvrCardPath = (driverId) =>
   `/documents/drivers/${driverId}/mvr-card.html`;
+const driverApplicationPath = (driverId) =>
+  `/documents/drivers/${driverId}/driver-application.html`;
 
 function stripManagedFleetSupplementals(documents) {
   const drop = new Set(FLEET_MANAGED_SUPPLEMENTAL_TYPES);
@@ -227,10 +229,10 @@ function buildManagedSupplementalRows(driverId, ex, driver) {
       type: "Driver Application",
       status: /complete/i.test(String(ex.appStatus ?? "")) ? "VALID" : "PENDING REVIEW",
       expirationDate: ex.appSubmissionDate || "",
-      fileUrl: genPath(driverId, "driver-application.html"),
-      previewUrl: genPath(driverId, "driver-application.html"),
+      fileUrl: driverApplicationPath(driverId),
+      previewUrl: driverApplicationPath(driverId),
       docTier: "secondary",
-      demoPlaceholder: true,
+      demoPlaceholder: false,
     },
     {
       driverId,
