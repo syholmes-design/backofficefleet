@@ -3,7 +3,6 @@ import type {
   ComplianceRequirement,
   Facility,
   LoadRequirement,
-  Shipper,
 } from "@/lib/load-requirements-intake-types";
 
 type FacilityAddressBookEntry = {
@@ -98,6 +97,8 @@ export type RouteMemory = {
 
 export type LoadIntakeIntelligence = {
   facilities: FacilityMatch[];
+  /** Destination endpoints seen in demo load history (for delivery autocomplete). */
+  destinationFacilities: FacilityMatch[];
   routeMemories: RouteMemory[];
 };
 
@@ -203,6 +204,7 @@ function routeDefaultsFromLoad(load: (BofData["loads"])[number]): RouteMemory["d
 
 export function buildLoadIntakeIntelligence(data: BofData): LoadIntakeIntelligence {
   const facilitiesByKey = new Map<string, FacilityMatch>();
+  const destinationsByKey = new Map<string, FacilityMatch>();
   const routes = new Map<string, RouteMemory>();
 
   for (const load of data.loads ?? []) {
@@ -226,9 +228,26 @@ export function buildLoadIntakeIntelligence(data: BofData): LoadIntakeIntelligen
       });
     }
 
+    const destKey = `${normalizeKey(destination.facilityName)}|${destination.city}|${destination.state}`;
+    if (!destinationsByKey.has(destKey)) {
+      const destBook = FACILITY_ADDRESS_BOOK[normalizeKey(destination.facilityName)];
+      destinationsByKey.set(destKey, {
+        key: destKey,
+        facilityName: destination.facilityName,
+        city: destination.city,
+        state: destination.state,
+        address: destBook?.address,
+        zip: destBook?.zip,
+        facilityRules: destBook?.facilityRules,
+        appointmentRequired: true,
+        shipperName: destination.facilityName,
+      });
+    }
+
     const routeKey = `${originKey}=>${normalizeKey(destination.facilityName)}|${destination.city}|${destination.state}`;
     if (!routes.has(routeKey)) {
       const compliancePatch = routeDefaultsFromLoad(load);
+      const destRow = destinationsByKey.get(destKey);
       routes.set(routeKey, {
         key: routeKey,
         label: `${origin.facilityName} (${origin.city}, ${origin.state}) → ${destination.facilityName} (${destination.city}, ${destination.state})`,
@@ -236,6 +255,10 @@ export function buildLoadIntakeIntelligence(data: BofData): LoadIntakeIntelligen
         destinationFacilityName: destination.facilityName,
         defaultLoadPatch: {
           destination_facility_name: destination.facilityName,
+          destination_address: destRow?.address ?? "",
+          destination_city: destination.city,
+          destination_state: destination.state,
+          destination_zip: destRow?.zip ?? "",
           route_memory_key: routeKey,
         },
         defaultCompliancePatch: compliancePatch,
@@ -245,6 +268,9 @@ export function buildLoadIntakeIntelligence(data: BofData): LoadIntakeIntelligen
 
   return {
     facilities: [...facilitiesByKey.values()].sort((a, b) =>
+      a.facilityName.localeCompare(b.facilityName)
+    ),
+    destinationFacilities: [...destinationsByKey.values()].sort((a, b) =>
       a.facilityName.localeCompare(b.facilityName)
     ),
     routeMemories: [...routes.values()].sort((a, b) => a.label.localeCompare(b.label)),
@@ -280,4 +306,28 @@ export function applyFacilityMatch(base: Facility, match: FacilityMatch): Facili
     facility_rules: match.facilityRules || base.facility_rules,
     appointment_required: match.appointmentRequired,
   };
+}
+
+/** Substring match across BOF-known facility rows (demo + address book). */
+export function searchBofLocationMatches(
+  query: string,
+  candidates: FacilityMatch[],
+  limit = 8
+): FacilityMatch[] {
+  const q = normalizeKey(query);
+  if (!q || q.length < 2) return [];
+  return candidates
+    .filter((c) => {
+      const hay = [
+        c.facilityName,
+        c.city,
+        c.state,
+        c.address ?? "",
+        c.zip ?? "",
+      ]
+        .join(" ")
+        .toLowerCase();
+      return hay.includes(q);
+    })
+    .slice(0, limit);
 }

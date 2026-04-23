@@ -5654,6 +5654,80 @@ body {
   color: #5eead4;
 }
 
+.bof-load-intake-ac-wrap {
+  position: relative;
+}
+
+.bof-load-intake-ac-menu {
+  position: absolute;
+  z-index: 30;
+  left: 0;
+  right: 0;
+  top: calc(100% + 2px);
+  max-height: 14rem;
+  overflow-y: auto;
+  margin: 0;
+  padding: 0.25rem 0;
+  list-style: none;
+  border: 1px solid var(--bof-border);
+  border-radius: 8px;
+  background: #0b1016;
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.45);
+}
+
+.bof-load-intake-ac-hdr {
+  padding: 0.35rem 0.65rem 0.2rem;
+  font-size: 0.62rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #64748b;
+}
+
+.bof-load-intake-ac-empty {
+  padding: 0.45rem 0.65rem;
+  font-size: 0.75rem;
+  color: var(--bof-muted);
+}
+
+.bof-load-intake-ac-opt {
+  display: block;
+  width: 100%;
+  text-align: left;
+  padding: 0.45rem 0.65rem;
+  border: none;
+  background: transparent;
+  color: var(--bof-text);
+  font-size: 0.8rem;
+  cursor: pointer;
+  border-left: 2px solid transparent;
+}
+
+.bof-load-intake-ac-opt--bof {
+  border-left-color: rgba(94, 234, 212, 0.65);
+}
+
+.bof-load-intake-ac-opt--gg {
+  border-left-color: rgba(100, 116, 139, 0.75);
+}
+
+.bof-load-intake-ac-opt--active,
+.bof-load-intake-ac-opt:hover {
+  background: rgba(13, 148, 136, 0.12);
+}
+
+.bof-load-intake-ac-opt-title {
+  display: block;
+  font-weight: 600;
+}
+
+.bof-load-intake-ac-opt-sub {
+  display: block;
+  margin-top: 0.12rem;
+  font-size: 0.72rem;
+  color: var(--bof-muted);
+}
+
 .bof-load-intake-yesno {
   display: inline-flex;
   border-radius: 6px;

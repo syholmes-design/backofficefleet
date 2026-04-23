@@ -8,6 +8,7 @@ import {
 } from "@/lib/load-requirements-intake-checks";
 import type { IntakeWizardState, LoadPacket } from "@/lib/load-requirements-intake-types";
 import { LoadIntakeStep4PacketReview } from "@/components/load-intake/LoadIntakeStep4PacketReview";
+import { LoadIntakeAddressCombo } from "@/components/load-intake/LoadIntakeAddressCombo";
 import { useBofDemoData } from "@/lib/bof-demo-data-context";
 import {
   applyFacilityMatch,
@@ -53,6 +54,10 @@ function createInitialState(): IntakeWizardState {
       equipment_type: "",
       special_handling: "",
       destination_facility_name: "",
+      destination_address: "",
+      destination_city: "",
+      destination_state: "",
+      destination_zip: "",
       route_memory_key: "",
       temperature_required: false,
       temperature_min: undefined,
@@ -162,6 +167,33 @@ export function LoadRequirementsWizard() {
   const [state, setState] = useState<IntakeWizardState>(() => createInitialState());
 
   const intelligence = useMemo(() => buildLoadIntakeIntelligence(data), [data]);
+  const placesSessionToken = useMemo(() => {
+    if (typeof globalThis !== "undefined" && globalThis.crypto && "randomUUID" in globalThis.crypto) {
+      return globalThis.crypto.randomUUID();
+    }
+    return `sess-${Date.now()}`;
+  }, []);
+
+  const pickupSyncSig = [
+    state.facility.facility_name,
+    state.facility.address,
+    state.facility.city,
+    state.facility.state,
+    state.facility.zip ?? "",
+  ].join("|");
+  const pickupDraftLine = [state.facility.facility_name, state.facility.address].filter(Boolean).join(" · ");
+
+  const deliverySyncSig = [
+    state.loadRequirement.destination_facility_name ?? "",
+    state.loadRequirement.destination_address ?? "",
+    state.loadRequirement.destination_city ?? "",
+    state.loadRequirement.destination_state ?? "",
+    state.loadRequirement.destination_zip ?? "",
+  ].join("|");
+  const deliveryDraftLine = [state.loadRequirement.destination_facility_name, state.loadRequirement.destination_address]
+    .filter(Boolean)
+    .join(" · ");
+
   const suggestedRoutes = useMemo(
     () => routesForOriginFacility(intelligence.routeMemories, state.facility.facility_name),
     [intelligence.routeMemories, state.facility.facility_name]
@@ -332,11 +364,54 @@ export function LoadRequirementsWizard() {
                 }}
               />
             </div>
+
+            <div
+              className="bof-load-intake-subsection"
+              style={{ marginTop: "0.5rem", paddingTop: "1rem", borderTop: "1px solid var(--bof-border)" }}
+            >
+              <h3>Pickup facility &amp; address</h3>
+              <LoadIntakeAddressCombo
+                variant="pickup"
+                label="Search pickup (facility or address)"
+                hint="BOF-known demo locations appear first; Google Places suggestions follow when configured."
+                sessionToken={placesSessionToken}
+                bofCandidates={intelligence.facilities}
+                syncSignature={pickupSyncSig}
+                draftFromFields={pickupDraftLine}
+                onSelectBof={(m) => {
+                  touchDraft();
+                  setState((s) => ({
+                    ...s,
+                    shipper: m.shipperName
+                      ? {
+                          ...s.shipper,
+                          shipper_name: s.shipper.shipper_name || m.shipperName,
+                        }
+                      : s.shipper,
+                    facility: applyFacilityMatch(s.facility, m),
+                  }));
+                }}
+                onSelectGoogle={(p) => {
+                  touchDraft();
+                  setState((s) => ({
+                    ...s,
+                    facility: {
+                      ...s.facility,
+                      facility_name: p.facilityName || s.facility.facility_name,
+                      address: p.address,
+                      city: p.city,
+                      state: (p.state || "").slice(0, 2).toUpperCase(),
+                      zip: p.zip,
+                    },
+                  }));
+                }}
+              />
+            </div>
+
             <div className="bof-load-intake-field">
               <label htmlFor="facility_name">Facility name</label>
               <input
                 id="facility_name"
-                list="bof-known-facilities"
                 value={state.facility.facility_name}
                 onChange={(e) => {
                   touchDraft();
@@ -347,13 +422,6 @@ export function LoadRequirementsWizard() {
                 }}
                 onBlur={(e) => applyKnownFacility(e.target.value)}
               />
-              <datalist id="bof-known-facilities">
-                {intelligence.facilities.map((f) => (
-                  <option key={f.key} value={f.facilityName}>
-                    {f.city}, {f.state}
-                  </option>
-                ))}
-              </datalist>
             </div>
             <div className="bof-load-intake-field">
               <label htmlFor="facility_addr">Facility street address</label>
@@ -429,6 +497,137 @@ export function LoadRequirementsWizard() {
                 placeholder="Dock hours, PPE, check-in process, restrictions…"
               />
             </div>
+
+            <div className="bof-load-intake-subsection">
+              <h3>Delivery facility &amp; address</h3>
+              <LoadIntakeAddressCombo
+                variant="delivery"
+                label="Search delivery (facility or address)"
+                hint="BOF-known destinations from demo load history appear first; Google Places follows when configured."
+                sessionToken={placesSessionToken}
+                bofCandidates={intelligence.destinationFacilities}
+                syncSignature={deliverySyncSig}
+                draftFromFields={deliveryDraftLine}
+                onSelectBof={(m) => {
+                  touchDraft();
+                  setState((s) => ({
+                    ...s,
+                    loadRequirement: {
+                      ...s.loadRequirement,
+                      destination_facility_name: m.facilityName,
+                      destination_address: m.address ?? "",
+                      destination_city: m.city,
+                      destination_state: m.state,
+                      destination_zip: m.zip ?? "",
+                    },
+                  }));
+                }}
+                onSelectGoogle={(p) => {
+                  touchDraft();
+                  setState((s) => ({
+                    ...s,
+                    loadRequirement: {
+                      ...s.loadRequirement,
+                      destination_facility_name: p.facilityName || s.loadRequirement.destination_facility_name,
+                      destination_address: p.address,
+                      destination_city: p.city,
+                      destination_state: (p.state || "").slice(0, 2).toUpperCase(),
+                      destination_zip: p.zip,
+                    },
+                  }));
+                }}
+              />
+              <div className="bof-load-intake-grid-2" style={{ marginTop: "1rem" }}>
+                <div className="bof-load-intake-field">
+                  <label htmlFor="destination_facility_name">Delivery facility name</label>
+                  <input
+                    id="destination_facility_name"
+                    value={state.loadRequirement.destination_facility_name ?? ""}
+                    onChange={(e) => {
+                      touchDraft();
+                      setState((s) => ({
+                        ...s,
+                        loadRequirement: {
+                          ...s.loadRequirement,
+                          destination_facility_name: e.target.value,
+                        },
+                      }));
+                    }}
+                  />
+                </div>
+                <div className="bof-load-intake-field">
+                  <label htmlFor="destination_address">Delivery street address</label>
+                  <input
+                    id="destination_address"
+                    value={state.loadRequirement.destination_address ?? ""}
+                    onChange={(e) => {
+                      touchDraft();
+                      setState((s) => ({
+                        ...s,
+                        loadRequirement: {
+                          ...s.loadRequirement,
+                          destination_address: e.target.value,
+                        },
+                      }));
+                    }}
+                  />
+                </div>
+                <div className="bof-load-intake-field">
+                  <label htmlFor="destination_city">Delivery city</label>
+                  <input
+                    id="destination_city"
+                    value={state.loadRequirement.destination_city ?? ""}
+                    onChange={(e) => {
+                      touchDraft();
+                      setState((s) => ({
+                        ...s,
+                        loadRequirement: {
+                          ...s.loadRequirement,
+                          destination_city: e.target.value,
+                        },
+                      }));
+                    }}
+                  />
+                </div>
+                <div className="bof-load-intake-field">
+                  <label htmlFor="destination_state">Delivery state</label>
+                  <input
+                    id="destination_state"
+                    value={state.loadRequirement.destination_state ?? ""}
+                    maxLength={2}
+                    onChange={(e) => {
+                      touchDraft();
+                      setState((s) => ({
+                        ...s,
+                        loadRequirement: {
+                          ...s.loadRequirement,
+                          destination_state: e.target.value.toUpperCase(),
+                        },
+                      }));
+                    }}
+                  />
+                </div>
+                <div className="bof-load-intake-field">
+                  <label htmlFor="destination_zip">Delivery ZIP</label>
+                  <input
+                    id="destination_zip"
+                    value={state.loadRequirement.destination_zip ?? ""}
+                    maxLength={10}
+                    onChange={(e) => {
+                      touchDraft();
+                      setState((s) => ({
+                        ...s,
+                        loadRequirement: {
+                          ...s.loadRequirement,
+                          destination_zip: e.target.value,
+                        },
+                      }));
+                    }}
+                  />
+                </div>
+              </div>
+            </div>
+
             <div className="bof-load-intake-field" style={{ gridColumn: "1 / -1" }}>
               <label htmlFor="route_memory">Prior route memory</label>
               <select
@@ -494,23 +693,6 @@ export function LoadRequirementsWizard() {
                     loadRequirement: { ...s.loadRequirement, commodity: e.target.value },
                   }))
                 }
-              />
-            </div>
-            <div className="bof-load-intake-field">
-              <label htmlFor="destination_facility_name">Delivery facility</label>
-              <input
-                id="destination_facility_name"
-                value={state.loadRequirement.destination_facility_name ?? ""}
-                onChange={(e) =>
-                  setState((s) => ({
-                    ...s,
-                    loadRequirement: {
-                      ...s.loadRequirement,
-                      destination_facility_name: e.target.value,
-                    },
-                  }))
-                }
-                placeholder="Consignee / delivery location"
               />
             </div>
             <div className="bof-load-intake-field">
@@ -799,10 +981,84 @@ export function LoadRequirementsWizard() {
           <div className="bof-load-intake-subsection">
             <h3>Documentation</h3>
             <div className="bof-load-intake-grid-2">
+              <div className="bof-load-intake-field">
+                <label htmlFor="ins-type">Insurance requirement type</label>
+                <select
+                  id="ins-type"
+                  value={state.compliance.insuranceRequirementType}
+                  onChange={(e) =>
+                    setState((s) => ({
+                      ...s,
+                      compliance: {
+                        ...s.compliance,
+                        insuranceRequirementType: e.target.value as typeof s.compliance.insuranceRequirementType,
+                      },
+                    }))
+                  }
+                >
+                  <option value="Standard COI">Standard COI</option>
+                  <option value="Enhanced COI + waiver">Enhanced COI + waiver</option>
+                  <option value="Customer-specific">Customer-specific</option>
+                </select>
+              </div>
+              <div className="bof-load-intake-field">
+                <label htmlFor="ins-cov">Cargo coverage level</label>
+                <select
+                  id="ins-cov"
+                  value={state.compliance.cargoCoverageLevel}
+                  onChange={(e) =>
+                    setState((s) => ({
+                      ...s,
+                      compliance: {
+                        ...s.compliance,
+                        cargoCoverageLevel: e.target.value as typeof s.compliance.cargoCoverageLevel,
+                      },
+                    }))
+                  }
+                >
+                  <option value="$100k">$100k</option>
+                  <option value="$250k">$250k</option>
+                  <option value="$500k">$500k</option>
+                  <option value="$1M+">$1M+</option>
+                </select>
+              </div>
+              <YesNo
+                idPrefix="ins-cert"
+                label="Certificate required?"
+                value={state.compliance.certificateRequired}
+                onChange={(v) =>
+                  setState((s) => ({
+                    ...s,
+                    compliance: { ...s.compliance, certificateRequired: v },
+                  }))
+                }
+              />
+              <YesNo
+                idPrefix="ins-additional"
+                label="Additional insured required?"
+                value={state.compliance.additionalInsuredRequired}
+                onChange={(v) =>
+                  setState((s) => ({
+                    ...s,
+                    compliance: { ...s.compliance, additionalInsuredRequired: v },
+                  }))
+                }
+              />
+              <YesNo
+                idPrefix="ins-endorse"
+                label="Facility endorsement required?"
+                value={state.compliance.facilityEndorsementRequired}
+                onChange={(v) =>
+                  setState((s) => ({
+                    ...s,
+                    compliance: { ...s.compliance, facilityEndorsementRequired: v },
+                  }))
+                }
+              />
               <div className="bof-load-intake-field" style={{ gridColumn: "1 / -1" }}>
-                <label htmlFor="ins">Insurance requirements</label>
+                <label htmlFor="ins-note">Insurance special instructions</label>
                 <textarea
-                  id="ins"
+                  id="ins-note"
                   value={state.compliance.insurance_requirements}
                   onChange={(e) =>
                     setState((s) => ({
@@ -813,29 +1069,205 @@ export function LoadRequirementsWizard() {
                   rows={2}
                 />
               </div>
-              <div className="bof-load-intake-field" style={{ gridColumn: "1 / -1" }}>
-                <label htmlFor="bol">BOL instructions</label>
-                <textarea
-                  id="bol"
-                  value={state.compliance.bol_instructions}
+            </div>
+          </div>
+
+          <div className="bof-load-intake-subsection">
+            <h3>BOL requirements</h3>
+            <div className="bof-load-intake-grid-2">
+              <div className="bof-load-intake-field">
+                <label htmlFor="bol-type">BOL requirement type</label>
+                <select
+                  id="bol-type"
+                  value={state.compliance.bolRequirementType}
                   onChange={(e) =>
                     setState((s) => ({
                       ...s,
-                      compliance: { ...s.compliance, bol_instructions: e.target.value },
+                      compliance: {
+                        ...s.compliance,
+                        bolRequirementType: e.target.value as typeof s.compliance.bolRequirementType,
+                      },
+                    }))
+                  }
+                >
+                  <option value="Standard shipper BOL">Standard shipper BOL</option>
+                  <option value="Customer BOL template">Customer BOL template</option>
+                  <option value="Dual-signature BOL">Dual-signature BOL</option>
+                </select>
+              </div>
+              <YesNo
+                idPrefix="bol-signed"
+                label="Signed BOL required?"
+                value={state.compliance.signedBolRequired}
+                onChange={(v) =>
+                  setState((s) => ({
+                    ...s,
+                    compliance: { ...s.compliance, signedBolRequired: v },
+                  }))
+                }
+              />
+              <YesNo
+                idPrefix="bol-pallet"
+                label="Pallet count required?"
+                value={state.compliance.palletCountRequired}
+                onChange={(v) =>
+                  setState((s) => ({
+                    ...s,
+                    compliance: { ...s.compliance, palletCountRequired: v },
+                  }))
+                }
+              />
+              <YesNo
+                idPrefix="bol-piece"
+                label="Piece count required?"
+                value={state.compliance.pieceCountRequired}
+                onChange={(v) =>
+                  setState((s) => ({
+                    ...s,
+                    compliance: { ...s.compliance, pieceCountRequired: v },
+                  }))
+                }
+              />
+              <YesNo
+                idPrefix="bol-seal"
+                label="Seal notation required?"
+                value={state.compliance.sealNotationRequired}
+                onChange={(v) =>
+                  setState((s) => ({
+                    ...s,
+                    compliance: { ...s.compliance, sealNotationRequired: v },
+                  }))
+                }
+              />
+              <div className="bof-load-intake-field" style={{ gridColumn: "1 / -1" }}>
+                <label htmlFor="bol">BOL special instructions</label>
+                <textarea
+                  id="bol"
+                  value={state.compliance.bolSpecialInstructions}
+                  onChange={(e) =>
+                    setState((s) => ({
+                      ...s,
+                      compliance: {
+                        ...s.compliance,
+                        bolSpecialInstructions: e.target.value,
+                        bol_instructions: e.target.value,
+                      },
                     }))
                   }
                   rows={3}
                 />
               </div>
-              <div className="bof-load-intake-field" style={{ gridColumn: "1 / -1" }}>
-                <label htmlFor="pod">POD requirements</label>
-                <textarea
-                  id="pod"
-                  value={state.compliance.pod_requirements}
+            </div>
+          </div>
+
+          <div className="bof-load-intake-subsection">
+            <h3>POD requirements</h3>
+            <div className="bof-load-intake-grid-2">
+              <div className="bof-load-intake-field">
+                <label htmlFor="pod-type">POD requirement type</label>
+                <select
+                  id="pod-type"
+                  value={state.compliance.podRequirementType}
                   onChange={(e) =>
                     setState((s) => ({
                       ...s,
-                      compliance: { ...s.compliance, pod_requirements: e.target.value },
+                      compliance: {
+                        ...s.compliance,
+                        podRequirementType: e.target.value as typeof s.compliance.podRequirementType,
+                      },
+                    }))
+                  }
+                >
+                  <option value="Standard POD">Standard POD</option>
+                  <option value="POD + photo evidence">POD + photo evidence</option>
+                  <option value="Strict POD + GPS/receiver validation">
+                    Strict POD + GPS/receiver validation
+                  </option>
+                </select>
+              </div>
+              <YesNo
+                idPrefix="pod-signed"
+                label="Signed POD required?"
+                value={state.compliance.signedPodRequired}
+                onChange={(v) =>
+                  setState((s) => ({
+                    ...s,
+                    compliance: { ...s.compliance, signedPodRequired: v },
+                  }))
+                }
+              />
+              <YesNo
+                idPrefix="pod-recv"
+                label="Receiver printed name required?"
+                value={state.compliance.receiverPrintedNameRequired}
+                onChange={(v) =>
+                  setState((s) => ({
+                    ...s,
+                    compliance: { ...s.compliance, receiverPrintedNameRequired: v },
+                  }))
+                }
+              />
+              <YesNo
+                idPrefix="pod-photo-del"
+                label="Delivery photo required?"
+                value={state.compliance.deliveryPhotoRequired}
+                onChange={(v) =>
+                  setState((s) => ({
+                    ...s,
+                    compliance: {
+                      ...s.compliance,
+                      deliveryPhotoRequired: v,
+                      delivery_photos_required: v,
+                    },
+                  }))
+                }
+              />
+              <YesNo
+                idPrefix="pod-photo-empty"
+                label="Empty trailer photo required?"
+                value={state.compliance.emptyTrailerPhotoRequired}
+                onChange={(v) =>
+                  setState((s) => ({
+                    ...s,
+                    compliance: { ...s.compliance, emptyTrailerPhotoRequired: v },
+                  }))
+                }
+              />
+              <YesNo
+                idPrefix="pod-seal-verify"
+                label="Seal verification required?"
+                value={state.compliance.sealVerificationRequired}
+                onChange={(v) =>
+                  setState((s) => ({
+                    ...s,
+                    compliance: { ...s.compliance, sealVerificationRequired: v },
+                  }))
+                }
+              />
+              <YesNo
+                idPrefix="pod-gps"
+                label="GPS timestamp required?"
+                value={state.compliance.gpsTimestampRequired}
+                onChange={(v) =>
+                  setState((s) => ({
+                    ...s,
+                    compliance: { ...s.compliance, gpsTimestampRequired: v },
+                  }))
+                }
+              />
+              <div className="bof-load-intake-field" style={{ gridColumn: "1 / -1" }}>
+                <label htmlFor="pod">POD special instructions</label>
+                <textarea
+                  id="pod"
+                  value={state.compliance.podSpecialInstructions}
+                  onChange={(e) =>
+                    setState((s) => ({
+                      ...s,
+                      compliance: {
+                        ...s.compliance,
+                        podSpecialInstructions: e.target.value,
+                        pod_requirements: e.target.value,
+                      },
                     }))
                   }
                   rows={3}

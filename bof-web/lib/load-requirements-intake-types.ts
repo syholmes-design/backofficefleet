@@ -31,6 +31,10 @@ export interface LoadRequirement {
   equipment_type: string;
   special_handling: string;
   destination_facility_name?: string;
+  destination_address?: string;
+  destination_city?: string;
+  destination_state?: string;
+  destination_zip?: string;
   route_memory_key?: string;
   temperature_required: boolean;
   temperature_min?: number;

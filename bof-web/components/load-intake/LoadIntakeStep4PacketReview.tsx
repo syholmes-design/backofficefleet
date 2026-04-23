@@ -647,7 +647,30 @@ export function LoadIntakeStep4PacketReview({
           <dd>{state.shipper.shipper_name || "—"}</dd>
           <dt>Facility</dt>
           <dd>
-            {state.facility.facility_name || "—"} — {state.facility.city}, {state.facility.state}
+            {state.facility.facility_name || "—"} — {state.facility.city}, {state.facility.state}{" "}
+            {state.facility.zip || ""}
+          </dd>
+          <dt>Route memory</dt>
+          <dd>
+            {state.loadRequirement.destination_facility_name
+              ? `${state.facility.facility_name || "Origin"} → ${state.loadRequirement.destination_facility_name}`
+              : "—"}
+          </dd>
+          <dt>Delivery address</dt>
+          <dd>
+            {state.loadRequirement.destination_address ||
+            state.loadRequirement.destination_city ||
+            state.loadRequirement.destination_state ? (
+              <>
+                {state.loadRequirement.destination_facility_name || "—"} ·{" "}
+                {state.loadRequirement.destination_address || "—"},{" "}
+                {state.loadRequirement.destination_city || "—"},{" "}
+                {state.loadRequirement.destination_state || "—"}{" "}
+                {state.loadRequirement.destination_zip || ""}
+              </>
+            ) : (
+              "—"
+            )}
           </dd>
           <dt>Commodity / weight</dt>
           <dd>
@@ -676,8 +699,11 @@ export function LoadIntakeStep4PacketReview({
           </dd>
           <dt>BOL / POD</dt>
           <dd>
-            BOL on file: {state.compliance.bol_instructions.trim() ? "Yes" : "No"} · POD on file:{" "}
-            {state.compliance.pod_requirements.trim() ? "Yes" : "No"}
+            {state.compliance.bolRequirementType} · {state.compliance.podRequirementType}
+          </dd>
+          <dt>Insurance profile</dt>
+          <dd>
+            {state.compliance.insuranceRequirementType} · Coverage {state.compliance.cargoCoverageLevel}
           </dd>
           <dt>Appointment</dt>
           <dd>
@@ -801,11 +827,15 @@ export function LoadIntakeStep4PacketReview({
                     <textarea
                       id="dr-bol"
                       rows={10}
-                      value={state.compliance.bol_instructions}
+                      value={state.compliance.bolSpecialInstructions}
                       onChange={(e) =>
                         setState((s) => ({
                           ...s,
-                          compliance: { ...s.compliance, bol_instructions: e.target.value },
+                          compliance: {
+                            ...s.compliance,
+                            bolSpecialInstructions: e.target.value,
+                            bol_instructions: e.target.value,
+                          },
                           loadPacket: null,
                         }))
                       }
@@ -837,11 +867,15 @@ export function LoadIntakeStep4PacketReview({
                   <textarea
                     id="dr-pod"
                     rows={14}
-                    value={state.compliance.pod_requirements}
+                    value={state.compliance.podSpecialInstructions}
                     onChange={(e) =>
                       setState((s) => ({
                         ...s,
-                        compliance: { ...s.compliance, pod_requirements: e.target.value },
+                        compliance: {
+                          ...s.compliance,
+                          podSpecialInstructions: e.target.value,
+                          pod_requirements: e.target.value,
+                        },
                         loadPacket: null,
                       }))
                     }

@@ -38,6 +38,41 @@ export function runAutoChecks(
   });
 
   const checks: AutoCheckResult[] = [];
+  const insuranceNarrative =
+    compliance.insurance_requirements?.trim() ||
+    [
+      compliance.insuranceRequirementType,
+      `Coverage ${compliance.cargoCoverageLevel}`,
+      compliance.certificateRequired ? "COI required" : "COI optional",
+      compliance.additionalInsuredRequired ? "Additional insured required" : "",
+      compliance.facilityEndorsementRequired ? "Facility endorsement required" : "",
+    ]
+      .filter(Boolean)
+      .join(" · ");
+  const bolNarrative =
+    compliance.bol_instructions?.trim() ||
+    [
+      compliance.bolRequirementType,
+      compliance.signedBolRequired ? "Signed BOL required" : "Unsigned BOL accepted",
+      compliance.palletCountRequired ? "Pallet count required" : "",
+      compliance.pieceCountRequired ? "Piece count required" : "",
+      compliance.sealNotationRequired ? "Seal notation required" : "",
+    ]
+      .filter(Boolean)
+      .join(" · ");
+  const podNarrative =
+    compliance.pod_requirements?.trim() ||
+    [
+      compliance.podRequirementType,
+      compliance.signedPodRequired ? "Signed POD required" : "Unsigned POD accepted",
+      compliance.receiverPrintedNameRequired ? "Receiver printed name required" : "",
+      compliance.deliveryPhotoRequired ? "Delivery photos required" : "",
+      compliance.emptyTrailerPhotoRequired ? "Empty trailer photos required" : "",
+      compliance.sealVerificationRequired ? "Seal verification required" : "",
+      compliance.gpsTimestampRequired ? "GPS timestamp required" : "",
+    ]
+      .filter(Boolean)
+      .join(" · ");
 
   if (isBlank(shipper.shipper_name)) {
     checks.push(mk("chk-ship-name", "Shipper identity", "Blocking", "Shipper name is required."));
@@ -138,7 +173,7 @@ export function runAutoChecks(
   }
 
   if (compliance.seal_required) {
-    if (isBlank(compliance.bol_instructions)) {
+    if (isBlank(bolNarrative)) {
       checks.push(
         mk(
           "chk-seal-rule",
@@ -214,7 +249,7 @@ export function runAutoChecks(
     );
   }
 
-  if (isBlank(compliance.insurance_requirements)) {
+  if (isBlank(insuranceNarrative)) {
     checks.push(
       mk("chk-insurance", "Insurance requirements", "Blocking", "Insurance requirements text is required.")
     );
@@ -222,20 +257,20 @@ export function runAutoChecks(
     checks.push(mk("chk-insurance", "Insurance requirements", "Passed", "Insurance requirements documented."));
   }
 
-  if (isBlank(compliance.bol_instructions)) {
+  if (isBlank(bolNarrative)) {
     checks.push(mk("chk-bol", "BOL instructions", "Blocking", "BOL instructions are required."));
   } else {
     checks.push(mk("chk-bol", "BOL instructions", "Passed", "BOL instructions on file."));
   }
 
-  if (isBlank(compliance.pod_requirements)) {
+  if (isBlank(podNarrative)) {
     checks.push(mk("chk-pod", "POD requirements", "Blocking", "POD requirements are required."));
   } else {
     checks.push(mk("chk-pod", "POD requirements", "Passed", "POD requirements on file."));
   }
 
   const photoDocMin = 12;
-  const podLen = compliance.pod_requirements.trim().length;
+  const podLen = podNarrative.trim().length;
 
   if (compliance.pickup_photos_required) {
     if (podLen < photoDocMin) {
@@ -295,7 +330,7 @@ export function runAutoChecks(
   }
 
   if (compliance.cargo_photos_required) {
-    if (podLen < photoDocMin || isBlank(compliance.bol_instructions)) {
+    if (podLen < photoDocMin || isBlank(bolNarrative)) {
       checks.push(
         mk(
           "chk-photo-cargo",
