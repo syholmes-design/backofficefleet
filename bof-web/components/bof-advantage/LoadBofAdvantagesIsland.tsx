@@ -2,20 +2,17 @@
 
 import { useMemo } from "react";
 import { useBofDemoData } from "@/lib/bof-demo-data-context";
-import { buildDispatchLoadsFromBofData } from "@/lib/dispatch-dashboard-seed";
 import { computeDocumentationReadiness } from "@/lib/documentation-readiness";
 import { getLoadProofItems, getLoadProofSummary } from "@/lib/load-proof";
 import { useDispatchDashboardStore } from "@/lib/stores/dispatch-dashboard-store";
+import { resolveDispatchLoadForUi } from "@/lib/dispatch-load-resolver";
 import { BofAdvantageCard, BofAdvantageStrip } from "./BofAdvantageCard";
 
 export function LoadBofAdvantagesIsland({ loadId }: { loadId: string }) {
   const { data } = useBofDemoData();
   const storeLoads = useDispatchDashboardStore((s) => s.loads);
   const dispatchLoad = useMemo(
-    () =>
-      storeLoads.find((l) => l.load_id === loadId) ??
-      buildDispatchLoadsFromBofData(data).find((l) => l.load_id === loadId) ??
-      null,
+    () => resolveDispatchLoadForUi({ loadId, data, storeLoads }),
     [storeLoads, data, loadId]
   );
   const proofItems = useMemo(() => getLoadProofItems(data, loadId), [data, loadId]);

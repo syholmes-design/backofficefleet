@@ -4,8 +4,8 @@ import { useMemo } from "react";
 import Link from "next/link";
 import { useBofDemoData } from "@/lib/bof-demo-data-context";
 import { buildPretripTabletModel, type PretripTabletModel } from "@/lib/pretrip-tablet";
-import { buildDispatchLoadsFromBofData } from "@/lib/dispatch-dashboard-seed";
 import { useDispatchDashboardStore } from "@/lib/stores/dispatch-dashboard-store";
+import { resolveDispatchLoadForUi } from "@/lib/dispatch-load-resolver";
 import { getLoadProofItems, type LoadProofItem } from "@/lib/load-proof";
 import {
   computeDocumentationReadiness,
@@ -182,9 +182,7 @@ export function ShipperLoadPortalClient({ loadId }: { loadId: string }) {
   );
 
   const dispatchLoad = useMemo(() => {
-    const fromStore = storeLoads.find((l) => l.load_id === loadId);
-    if (fromStore) return fromStore;
-    return buildDispatchLoadsFromBofData(data).find((l) => l.load_id === loadId) ?? null;
+    return resolveDispatchLoadForUi({ loadId, data, storeLoads });
   }, [storeLoads, data, loadId]);
 
   const pretrip = useMemo(() => {
