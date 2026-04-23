@@ -10,6 +10,9 @@ import { BofAdvantageCard, BofAdvantageStrip } from "@/components/bof-advantage/
 export function SettlementsDashboardScreen() {
   const settlements = useSettlementsPayrollStore((s) => s.settlements);
   const openDrawer = useSettlementsPayrollStore((s) => s.openDrawer);
+  const generatedDocs = useSettlementsPayrollStore(
+    (s) => s.generatedDocsBySettlementId
+  );
 
   const [dateFrom, setDateFrom] = useState("");
   const [dateTo, setDateTo] = useState("");
@@ -213,6 +216,43 @@ export function SettlementsDashboardScreen() {
                   >
                     {s.status}
                   </span>
+                  {generatedDocs[s.settlement_id] && (
+                    <div className="mt-1 flex flex-wrap gap-2 text-[10px]">
+                      {generatedDocs[s.settlement_id]?.summaryUrl && (
+                        <a
+                          href={generatedDocs[s.settlement_id]!.summaryUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="bof-link-secondary"
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          Summary
+                        </a>
+                      )}
+                      {generatedDocs[s.settlement_id]?.holdUrl && (
+                        <a
+                          href={generatedDocs[s.settlement_id]!.holdUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="bof-link-secondary"
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          Hold
+                        </a>
+                      )}
+                      {generatedDocs[s.settlement_id]?.insuranceUrl && (
+                        <a
+                          href={generatedDocs[s.settlement_id]!.insuranceUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="bof-link-secondary"
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          Insurance
+                        </a>
+                      )}
+                    </div>
+                  )}
                 </td>
                 <td className="px-3 py-2 text-xs">
                   {s.settlement_hold ? (
