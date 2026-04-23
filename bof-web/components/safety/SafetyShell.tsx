@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo } from "react";
+import { useEffect, useMemo } from "react";
 import { SafetyNav } from "./SafetyNav";
 import { SafetyDashboardScreen } from "./SafetyDashboardScreen";
 import { DriverSafetyProfileScreen } from "./DriverSafetyProfileScreen";
@@ -8,13 +8,20 @@ import { ExpirationsScreen } from "./ExpirationsScreen";
 import { RiskClaimsScreen } from "./RiskClaimsScreen";
 import { SafetyEventDetailDrawer } from "./SafetyEventDetailDrawer";
 import { useSafetyStore } from "@/lib/stores/safety-store";
+import { useBofDemoData } from "@/lib/bof-demo-data-context";
 
 export function SafetyShell() {
+  const { data } = useBofDemoData();
   const nav = useSafetyStore((s) => s.nav);
   const setNav = useSafetyStore((s) => s.setNav);
   const events = useSafetyStore((s) => s.events);
   const eventDrawerEventId = useSafetyStore((s) => s.eventDrawerEventId);
   const closeEventDrawer = useSafetyStore((s) => s.closeEventDrawer);
+  const hydrateFromBofData = useSafetyStore((s) => s.hydrateFromBofData);
+
+  useEffect(() => {
+    hydrateFromBofData(data);
+  }, [data, hydrateFromBofData]);
 
   const drawerEvent = useMemo(
     () => events.find((e) => e.event_id === eventDrawerEventId) ?? null,

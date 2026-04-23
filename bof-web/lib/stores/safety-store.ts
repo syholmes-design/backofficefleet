@@ -1,6 +1,8 @@
 "use client";
 
 import { create } from "zustand";
+import type { BofData } from "@/lib/load-bof-data";
+import { getBofData } from "@/lib/load-bof-data";
 import type { Driver, EventStatus, SafetyEvent, SafetyNavId } from "@/types/safety";
 import { createSafetySeedDrivers, createSafetySeedEvents } from "@/lib/safety-seed";
 import {
@@ -24,13 +26,18 @@ type SafetyState = {
   setEventStatus: (event_id: string, status: EventStatus) => boolean;
   setEventInternalNotes: (event_id: string, internal_notes: string) => void;
   setEventClaimNeeded: (event_id: string, needed: boolean) => void;
+  hydrateFromBofData: (data: BofData) => void;
 };
 
+const initialData = getBofData();
+const initialDrivers = createSafetySeedDrivers(initialData);
+const initialEvents = createSafetySeedEvents(initialDrivers);
+
 export const useSafetyStore = create<SafetyState>((set, get) => ({
-  drivers: createSafetySeedDrivers(),
-  events: createSafetySeedEvents(),
+  drivers: initialDrivers,
+  events: initialEvents,
   nav: "dashboard",
-  selectedDriverId: createSafetySeedDrivers()[0]?.driver_id ?? "",
+  selectedDriverId: initialDrivers[0]?.driver_id ?? "",
   eventDrawerEventId: null,
 
   setNav: (id) => set({ nav: id }),
@@ -75,6 +82,33 @@ export const useSafetyStore = create<SafetyState>((set, get) => ({
           : e
       ),
     })),
+
+  hydrateFromBofData: (data) =>
+    set((s) => {
+      const nextDrivers = createSafetySeedDrivers(data);
+      const nameByDriverId = new Map(nextDrivers.map((d) => [d.driver_id, d.name]));
+      const validDriverIds = new Set(nextDrivers.map((d) => d.driver_id));
+      const hasOnlyCanonicalEventDrivers =
+        s.events.length > 0 &&
+        s.events.every((e) => validDriverIds.has(e.driver_id));
+
+      const nextEvents = hasOnlyCanonicalEventDrivers
+        ? s.events.map((e) => ({
+            ...e,
+            driver_name: nameByDriverId.get(e.driver_id) ?? e.driver_name,
+          }))
+        : createSafetySeedEvents(nextDrivers);
+
+      const selectedDriverId = validDriverIds.has(s.selectedDriverId)
+        ? s.selectedDriverId
+        : nextDrivers[0]?.driver_id ?? "";
+
+      return {
+        drivers: nextDrivers,
+        events: nextEvents,
+        selectedDriverId,
+      };
+    }),
 }));
 
 export function countOpenEvents(events: SafetyEvent[]): number {
