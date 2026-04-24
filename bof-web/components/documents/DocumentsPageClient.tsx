@@ -43,6 +43,13 @@ export function DocumentsPageClient() {
           </>
         ) : null}
       </p>
+      <p className="bof-muted bof-small bof-oper-sublead">
+        Need guided per-driver document assembly? Open{" "}
+        <Link href="/documents/vault" className="bof-link-secondary">
+          BOF Vault Driver Workspace
+        </Link>{" "}
+        for category-level uploads, shared autofill fields, and generated BOF preview output.
+      </p>
 
       <section className="bof-oper-panel bof-oper-panel-tight" aria-label="Document table">
         <DocumentVaultClient rows={rows} totalExpected={rows.length} />

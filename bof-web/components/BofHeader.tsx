@@ -20,6 +20,7 @@ const productNav = [
   { href: "/emergency-contacts", label: "Emergency Contacts", icon: "phone-shield" as const },
   { href: "/source-of-truth", label: "Source of Truth" },
   { href: "/documents", label: "Documents" },
+  { href: "/documents/vault", label: "BOF Vault Workspace" },
   { href: "/safety", label: "Safety" },
   { href: "/dispatch", label: "Dispatch" },
   { href: "/maintenance", label: "Maintenance" },
