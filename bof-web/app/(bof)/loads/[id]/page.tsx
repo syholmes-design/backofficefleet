@@ -112,6 +112,12 @@ export default async function LoadDetailPage({ params }: Props) {
           >
             Pre-trip tablet
           </Link>
+          <Link
+            href={`/documents/template-packs?packId=driver-dispatch-readiness-v2&entityId=${load.id}`}
+            className="bof-load-pretrip-link bof-link-secondary bof-small"
+          >
+            Template packs
+          </Link>
           <span className="bof-badge bof-badge-neutral">{load.status}</span>
           <span className="bof-badge bof-badge-neutral">POD: {load.podStatus}</span>
           <span className="bof-badge bof-badge-neutral">Seals: {load.sealStatus}</span>

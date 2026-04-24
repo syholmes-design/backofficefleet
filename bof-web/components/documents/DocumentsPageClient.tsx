@@ -50,6 +50,14 @@ export function DocumentsPageClient() {
         </Link>{" "}
         for category-level uploads, shared autofill fields, and generated BOF preview output.
       </p>
+      <p className="bof-muted bof-small bof-oper-sublead">
+        Need unified cross-pack operations forms? Open{" "}
+        <Link href="/documents/template-packs" className="bof-link-secondary">
+          BOF Template Packs Workspace
+        </Link>{" "}
+        for standardized intake, field ops, billing/settlement, driver/dispatch readiness, and
+        insurance/claims templates with editable + generated artifact flow.
+      </p>
 
       <section className="bof-oper-panel bof-oper-panel-tight" aria-label="Document table">
         <DocumentVaultClient rows={rows} totalExpected={rows.length} />
