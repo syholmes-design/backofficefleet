@@ -11,6 +11,7 @@ import { buildPretripTabletModel, type PretripTabletModel } from "./pretrip-tabl
 import { getLoadProofItems, type LoadProofItem } from "./load-proof";
 import { getOrderedDocumentsForDriver, type DocumentRow } from "./driver-queries";
 import { listEngineDocumentsForLoad } from "./document-engine";
+import { buildBofLoadRfidReadiness, resolveTripDispatchRfidGate } from "./bof-rfid-readiness";
 
 export type TripReleaseSeverity = "blocking" | "warning";
 
@@ -486,6 +487,30 @@ export function buildTripReleaseEvaluation(data: BofData, loadId: string): TripR
       dispatchLoad.exception_reason ??
         "Load.dispatchExceptionFlag is true — exception review required.",
       { href: `/loads/${loadId}`, label: "Resolve on load" }
+    );
+  }
+
+  const rfidReadiness = buildBofLoadRfidReadiness(data, loadId);
+  const rfidDispatchGate = resolveTripDispatchRfidGate(rfidReadiness);
+  if (rfidDispatchGate.level === "hard_block") {
+    push(
+      checks,
+      "rfid-dispatch-release",
+      loadId,
+      "compliance",
+      "blocking",
+      rfidDispatchGate.reason,
+      { href: `/loads/${loadId}`, label: "RFID / proof on load" }
+    );
+  } else if (rfidDispatchGate.level === "soft_block") {
+    push(
+      checks,
+      "rfid-dispatch-release-w",
+      loadId,
+      "compliance",
+      "warning",
+      rfidDispatchGate.reason,
+      { href: `/loads/${loadId}`, label: "Review RFID posture" }
     );
   }
 

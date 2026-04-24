@@ -1,10 +1,13 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import type { ClaimDraftKind, ClaimPacketContext } from "@/lib/claim-packet";
 import { buildClaimDraft } from "@/lib/claim-packet";
 import { useDispatchDashboardStore } from "@/lib/stores/dispatch-dashboard-store";
 import { BofTemplateUsageSurface } from "@/components/documents/BofTemplateUsageSurface";
+import { useBofDemoData } from "@/lib/bof-demo-data-context";
+import { buildRfidReadinessSummaryForSurface } from "@/lib/template-usage-readiness";
+import { resolveRfidTemplateGate } from "@/lib/bof-rfid-readiness";
 
 const ACTIONS: { kind: ClaimDraftKind; label: string }[] = [
   { kind: "packet", label: "Generate claim packet" },
@@ -21,6 +24,7 @@ function generatedDocLabel(kind: ClaimDraftKind): string {
 }
 
 export function ClaimPacketPanel({ ctx }: { ctx: ClaimPacketContext }) {
+  const { data } = useBofDemoData();
   const [open, setOpen] = useState<ClaimDraftKind | null>(null);
   const [busyKind, setBusyKind] = useState<ClaimDraftKind | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -28,6 +32,11 @@ export function ClaimPacketPanel({ ctx }: { ctx: ClaimPacketContext }) {
     Partial<Record<ClaimDraftKind, string>>
   >({});
   const setLoadDocumentUrls = useDispatchDashboardStore((s) => s.setLoadDocumentUrls);
+
+  const claimSupportRfidGate = useMemo(() => {
+    const rfid = buildRfidReadinessSummaryForSurface(data, "claims_insurance", ctx.loadId);
+    return resolveRfidTemplateGate("claim-support-packet-cover", rfid);
+  }, [data, ctx.loadId]);
 
   const close = useCallback(() => setOpen(null), []);
 
@@ -155,7 +164,10 @@ export function ClaimPacketPanel({ ctx }: { ctx: ClaimPacketContext }) {
             key={a.kind}
             type="button"
             className="bof-cc-next-action-btn bof-claim-action-btn"
-            disabled={busyKind !== null}
+            disabled={busyKind !== null || claimSupportRfidGate.level === "hard_block"}
+            title={
+              claimSupportRfidGate.level === "hard_block" ? claimSupportRfidGate.reason : undefined
+            }
             onClick={() => {
               setOpen(a.kind);
               void generateClaimAssets(a.kind);

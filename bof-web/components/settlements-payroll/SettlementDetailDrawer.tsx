@@ -11,6 +11,8 @@ import {
   settlementStatusChipClass,
 } from "./settlements-payroll-ui";
 import { BofTemplateUsageSurface } from "@/components/documents/BofTemplateUsageSurface";
+import { buildRfidReadinessSummaryForSurface } from "@/lib/template-usage-readiness";
+import { resolveBillingPacketRfidGate } from "@/lib/bof-rfid-readiness";
 
 type Props = {
   settlementId: string | null;
@@ -77,6 +79,32 @@ export function SettlementDetailDrawer({ settlementId, open, onClose }: Props) {
     );
   }, [data, settlement, lines, loads]);
 
+  /** Earnings lines first, then other line load_ids — matches payroll anchor expectations. */
+  const linkedLoadIdsForTemplateUsage = useMemo(() => {
+    if (!settlementId) return [] as string[];
+    const mine = lines.filter((l) => l.settlement_id === settlementId);
+    const earnings = mine
+      .filter((l) => l.type === "Earnings" && l.load_id)
+      .map((l) => l.load_id as string);
+    const rest = mine
+      .filter((l) => l.type !== "Earnings" && l.load_id)
+      .map((l) => l.load_id as string);
+    return [...new Set([...earnings, ...rest])];
+  }, [settlementId, lines]);
+
+  const billingRfidGate = useMemo(() => {
+    if (!settlementId) {
+      return { level: "advisory" as const, label: "RFID advisory", reason: "" };
+    }
+    const summary = buildRfidReadinessSummaryForSurface(
+      data,
+      "settlement_billing",
+      settlementId,
+      linkedLoadIdsForTemplateUsage
+    );
+    return resolveBillingPacketRfidGate(summary);
+  }, [data, settlementId, linkedLoadIdsForTemplateUsage]);
+
   if (!open || !settlement) return null;
 
   const netCheck =
@@ -87,7 +115,10 @@ export function SettlementDetailDrawer({ settlementId, open, onClose }: Props) {
 
   const lineCount = myLines.length;
   const readyDisabled =
-    settlement.settlement_hold || lineCount === 0 || settlement.status === "Exported";
+    settlement.settlement_hold ||
+    lineCount === 0 ||
+    settlement.status === "Exported" ||
+    billingRfidGate.level === "hard_block";
   const docs = generatedDocs[settlement.settlement_id];
 
   async function generateSettlementDoc(
@@ -404,6 +435,7 @@ export function SettlementDetailDrawer({ settlementId, open, onClose }: Props) {
           <BofTemplateUsageSurface
             context="settlement_billing"
             entityId={settlement.settlement_id}
+            linkedLoadIds={linkedLoadIdsForTemplateUsage}
             title="BOF Template Usage — Billing / Settlement"
             subtitle="Billing packet, settlement hold, and linked proof templates for this settlement."
           />
@@ -413,10 +445,20 @@ export function SettlementDetailDrawer({ settlementId, open, onClose }: Props) {
           <p className="text-[10px] font-semibold uppercase tracking-wide text-slate-500">
             Actions
           </p>
+          {billingRfidGate.level === "hard_block" && (
+            <p className="text-xs text-amber-200/90">
+              Export held: {billingRfidGate.reason}
+            </p>
+          )}
           <div className="flex flex-wrap gap-2">
             <button
               type="button"
               disabled={readyDisabled}
+              title={
+                billingRfidGate.level === "hard_block"
+                  ? `${billingRfidGate.label}: ${billingRfidGate.reason}`
+                  : undefined
+              }
               onClick={() => {
                 const err = markReadyForExport(settlement.settlement_id);
                 if (err) window.alert(err);

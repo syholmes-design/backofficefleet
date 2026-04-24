@@ -12,6 +12,12 @@ import {
   type BofTemplatePackId,
 } from "@/lib/bof-template-system";
 import { useBofTemplateWorkspaceStore } from "@/lib/stores/bof-template-workspace-store";
+import {
+  computeTemplateRowReadiness,
+  primaryStateLabel,
+  resolveTemplateSurfaceBundle,
+} from "@/lib/template-usage-readiness";
+import { describeRfidSurfacePosture, rfidRelevantForTemplate } from "@/lib/bof-rfid-readiness";
 
 type SurfaceContext = "dispatch_load" | "settlement_billing" | "claims_insurance";
 
@@ -55,19 +61,18 @@ function filterTemplatesForContext<T extends BofTemplateDefinition>(
   );
 }
 
-function requirementLabel(templateId: string, context: SurfaceContext) {
-  if (context === "dispatch_load") {
-    if (templateId.includes("release") || templateId.includes("proof")) return "Required Before Release";
-    return "Workflow Document";
-  }
-  if (context === "settlement_billing") {
-    if (templateId.includes("invoice") || templateId.includes("billing") || templateId.includes("settlement")) return "Required Before Billing";
-    return "Linked Proof Support";
-  }
-  if (templateId.includes("claim") || templateId.includes("incident") || templateId.includes("damage")) {
-    return "Required for Claim Packet";
-  }
-  return "Linked Support";
+function primaryPillClass(primary: string) {
+  if (primary === "final_available") return "bof-status-pill bof-status-pill-ok";
+  if (primary === "draft_exists") return "bof-status-pill bof-status-pill-info";
+  if (primary === "missing_context") return "bof-status-pill bof-status-pill-warn";
+  if (primary === "context_inferred") return "bof-status-pill bof-status-pill-info";
+  return "bof-status-pill bof-status-pill-muted";
+}
+
+function rfidGateToneClass(level: string) {
+  if (level === "hard_block") return "#fca5a5";
+  if (level === "soft_block") return "#fdba74";
+  return "#94a3b8";
 }
 
 export function BofTemplateUsageSurface({
@@ -75,11 +80,14 @@ export function BofTemplateUsageSurface({
   entityId,
   title,
   subtitle,
+  linkedLoadIds,
 }: {
   context: SurfaceContext;
   entityId: string;
   title?: string;
   subtitle?: string;
+  /** Optional explicit load ids (e.g. from settlement lines) for RFID + proof chain. */
+  linkedLoadIds?: string[];
 }) {
   const { data } = useBofDemoData();
   const upsertDraft = useBofTemplateWorkspaceStore((s) => s.upsertDraft);
@@ -97,12 +105,27 @@ export function BofTemplateUsageSurface({
     return filterTemplatesForContext(context, templates);
   }, [context]);
 
+  const { resolved: resolvedEntity, rfid: rfidSummary } = useMemo(
+    () => resolveTemplateSurfaceBundle(data, context, entityId, linkedLoadIds),
+    [data, context, entityId, linkedLoadIds]
+  );
+
+  const rfidPostureLine = useMemo(
+    () => describeRfidSurfacePosture(rfidSummary),
+    [rfidSummary]
+  );
+
   return (
     <section className="bof-card" style={{ marginTop: 20 }}>
       <h2 className="bof-h2">{title ?? "BOF Template Usage"}</h2>
       <p className="bof-muted bof-small">
         {subtitle ?? "Context-aware BOF workflow documents for the current entity."}
       </p>
+      {rfidPostureLine && (
+        <p className="bof-muted bof-small" style={{ marginTop: 8 }}>
+          {rfidPostureLine}
+        </p>
+      )}
       <div className="bof-table-wrap">
         <table className="bof-table">
           <thead>
@@ -110,8 +133,7 @@ export function BofTemplateUsageSurface({
               <th>Template</th>
               <th>Pack</th>
               <th>Type</th>
-              <th>Status</th>
-              <th>Purpose</th>
+              <th>Readiness</th>
               <th>Actions</th>
             </tr>
           </thead>
@@ -124,6 +146,18 @@ export function BofTemplateUsageSurface({
               const hasDraft = Boolean(draft);
               const hasFinal = Boolean(artifact);
               const packId = row.packId;
+              const readiness = computeTemplateRowReadiness({
+                context,
+                resolved: resolvedEntity,
+                template: row,
+                hasDraft,
+                hasFinal,
+                rfid: rfidSummary,
+              });
+              const showRfid = Boolean(rfidSummary && rfidRelevantForTemplate(row.templateId));
+              const blockGenerate =
+                readiness.primary === "missing_context" ||
+                (readiness.rfidGate.level === "hard_block" && !hasFinal);
               return (
                 <tr key={`${row.templateId}:${entityId}`}>
                   <td>{row.templateName}</td>
@@ -134,18 +168,54 @@ export function BofTemplateUsageSurface({
                       : "Editable Template"}
                   </td>
                   <td>
-                    {hasFinal ? (
-                      <span className="bof-status-pill bof-status-pill-ok">Final Available</span>
-                    ) : hasDraft ? (
-                      <span className="bof-status-pill bof-status-pill-info">Draft Exists</span>
-                    ) : (
-                      <span className="bof-status-pill bof-status-pill-muted">Waiting on Draft</span>
-                    )}
-                  </td>
-                  <td>
-                    <span className="bof-status-pill bof-status-pill-warn">
-                      {requirementLabel(row.templateId, context)}
-                    </span>
+                    <div style={{ display: "flex", flexDirection: "column", gap: 6, maxWidth: 360 }}>
+                      <div style={{ display: "flex", flexWrap: "wrap", gap: 6, alignItems: "center" }}>
+                        <span className={primaryPillClass(readiness.primary)}>
+                          {primaryStateLabel(readiness.primary)}
+                        </span>
+                        <span
+                          className={
+                            readiness.workflowRole === "optional_reference"
+                              ? "bof-status-pill bof-status-pill-muted"
+                              : "bof-status-pill bof-status-pill-warn"
+                          }
+                        >
+                          {readiness.workflowLabel}
+                        </span>
+                      </div>
+                      <span className="bof-muted bof-small">{readiness.whyMatters}</span>
+                      {(readiness.missingContext.length > 0 || readiness.presentContext.length > 0) && (
+                        <span className="bof-small" style={{ color: "#94a3b8", lineHeight: 1.35 }}>
+                          {readiness.presentContext.length > 0 && (
+                            <>
+                              <span style={{ color: "#cbd5e1" }}>Present:</span>{" "}
+                              {readiness.presentContext.slice(0, 3).join(" · ")}
+                              <br />
+                            </>
+                          )}
+                          {readiness.missingContext.length > 0 && (
+                            <>
+                              <span style={{ color: "#fcd34d" }}>Missing:</span>{" "}
+                              {readiness.missingContext.join(" · ")}
+                            </>
+                          )}
+                        </span>
+                      )}
+                      {showRfid && readiness.rfidHints.length > 0 && (
+                        <span className="bof-small" style={{ color: "#a5b4fc", lineHeight: 1.35 }}>
+                          RFID: {readiness.rfidHints.join(" · ")}
+                        </span>
+                      )}
+                      {(readiness.rfidGate.level === "hard_block" ||
+                        readiness.rfidGate.level === "soft_block") && (
+                        <span
+                          className="bof-small"
+                          style={{ color: rfidGateToneClass(readiness.rfidGate.level), lineHeight: 1.35 }}
+                        >
+                          <strong>{readiness.rfidGate.label}:</strong> {readiness.rfidGate.reason}
+                        </span>
+                      )}
+                    </div>
                   </td>
                   <td>
                     <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
@@ -172,6 +242,14 @@ export function BofTemplateUsageSurface({
                         <button
                           type="button"
                           className="bof-intake-engine-btn"
+                          disabled={blockGenerate}
+                          title={
+                            blockGenerate
+                              ? readiness.primary === "missing_context"
+                                ? "Resolve missing BOF context before generating this artifact."
+                                : readiness.rfidGate.reason
+                              : undefined
+                          }
                           onClick={() => {
                             const body =
                               draft?.body ?? buildTemplateDefaultBody(data, row, entityId);

@@ -1,5 +1,6 @@
 import type { BofData } from "@/lib/load-bof-data";
 import { formatUsd } from "@/lib/format-money";
+import { buildBofLoadRfidReadiness, describeRfidSurfacePosture } from "@/lib/bof-rfid-readiness";
 import {
   buildRfidDockRowForLoad,
   buildRfidFuelRowForLoad,
@@ -14,13 +15,21 @@ export function LoadRfidSection({
 }) {
   const fuel = buildRfidFuelRowForLoad(data, loadId);
   const dock = buildRfidDockRowForLoad(data, loadId);
+  const readiness = buildBofLoadRfidReadiness(data, loadId);
   if (!fuel || !dock) return null;
+
+  const postureLine = readiness ? describeRfidSurfacePosture(readiness) : null;
 
   return (
     <section className="bof-rfid-section" aria-labelledby="rfid-heading">
       <h2 id="rfid-heading" className="bof-h2">
         RFID operations intelligence
       </h2>
+      {postureLine && (
+        <p className="bof-muted bof-small" style={{ marginBottom: 12 }}>
+          {postureLine} (same summary object as template usage + trip release gates).
+        </p>
+      )}
       <p className="bof-doc-section-lead">
         RFID is used for <strong>verification</strong>,{" "}
         <strong>attribution</strong>, <strong>checkpointing</strong>, and{" "}
