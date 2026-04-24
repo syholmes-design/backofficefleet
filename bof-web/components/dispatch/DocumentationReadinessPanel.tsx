@@ -74,6 +74,29 @@ export function DocumentationReadinessPanel({ load }: Props) {
             cargo proof, lumper (when required), and exception / claim file
             status. BOF drives packet rules; linked files are demo artifacts only.
           </p>
+          {(load.source_intake_id ||
+            load.intake_signed_bol_required ||
+            load.intake_signed_pod_required ||
+            load.intake_delivery_photos_required ||
+            load.intake_seal_verification_required) && (
+            <div className="mt-3 max-w-2xl rounded border border-amber-800/40 bg-amber-950/20 px-3 py-2 text-xs text-amber-100/90">
+              <p className="font-semibold text-amber-200/95">Intake Engine stamp</p>
+              <p className="mt-1 text-[11px] text-amber-100/75">
+                Source intake{" "}
+                <span className="font-mono text-amber-100">{load.source_intake_id ?? "—"}</span>
+                {" · "}
+                proof flags:{" "}
+                {[
+                  load.intake_signed_bol_required ? "signed BOL" : null,
+                  load.intake_signed_pod_required ? "signed POD" : null,
+                  load.intake_delivery_photos_required ? "delivery photos" : null,
+                  load.intake_seal_verification_required ? "seal check" : null,
+                ]
+                  .filter(Boolean)
+                  .join(", ") || "packet logged"}
+              </p>
+            </div>
+          )}
         </div>
         <div className="text-right">
           <p className="text-[10px] font-semibold uppercase tracking-wide text-slate-500">

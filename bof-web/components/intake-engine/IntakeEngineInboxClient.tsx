@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useMemo, useState } from "react";
 import type { IntakeFilterTab, IntakeRecord } from "@/lib/intake-engine-types";
+import { intakeTriggerSummary } from "@/lib/intake-engine-triggers";
 import { intakeKpis, useIntakeEngineStore } from "@/lib/stores/intake-engine-store";
 
 const TABS: { id: IntakeFilterTab; label: string }[] = [
@@ -175,6 +176,26 @@ export function IntakeEngineInboxClient() {
                   </td>
                   <td className="bof-muted">
                     {i.missing_items.length ? `${i.missing_items.length} item(s)` : "—"}
+                  </td>
+                  <td className="bof-intake-engine-trigger-cell">
+                    {(() => {
+                      const { count, chips } = intakeTriggerSummary(i);
+                      if (!count) return <span className="bof-muted">—</span>;
+                      return (
+                        <div className="bof-intake-engine-trigger-inbox">
+                          <span className="bof-intake-engine-trigger-count" title="Derived trigger rows">
+                            {count}
+                          </span>
+                          <div className="bof-intake-engine-trigger-chips">
+                            {chips.map((c) => (
+                              <span key={c} className="bof-intake-engine-trigger-chip">
+                                {c}
+                              </span>
+                            ))}
+                          </div>
+                        </div>
+                      );
+                    })()}
                   </td>
                   <td>
                     <span className={statusPillClass(i.status)}>{i.status.replace(/_/g, " ")}</span>

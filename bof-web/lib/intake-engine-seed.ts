@@ -380,6 +380,11 @@ export const INTAKE_ENGINE_SEED: IntakeRecord[] = [
       doc_type_label: "Lane tender",
     },
     proposed_trips: [],
+    intake_demo_flags: {
+      new_counterparty: true,
+      master_contract_missing: true,
+      sensitive_cargo: true,
+    },
   },
   {
     intake_id: "IN-009",

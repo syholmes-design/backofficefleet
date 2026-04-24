@@ -86,6 +86,13 @@ export interface Load {
   /** When true, lumper / detention receipt is part of minimum shipper packet (BOF rule). */
   lumper_receipt_required?: boolean;
 
+  /** Intake Engine source (demo) — dispatch row created or stamped from intake. */
+  source_intake_id?: string;
+  intake_signed_bol_required?: boolean;
+  intake_signed_pod_required?: boolean;
+  intake_delivery_photos_required?: boolean;
+  intake_seal_verification_required?: boolean;
+
   /** Carrier / insurer claim intake (demo artifact URL). */
   claim_form_url?: string;
   damage_photo_url?: string;

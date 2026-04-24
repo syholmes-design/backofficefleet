@@ -6,8 +6,10 @@ import {
   buildFleetScorecard,
   buildBofNetworkImpact,
   buildCommandCenterKpiStrip,
+  enrichCommandCenterItemList,
   enrichCommandCenterItems,
 } from "@/lib/command-center-system";
+import { useIntakeEngineStore } from "@/lib/stores/intake-engine-store";
 import { buildSavingsEngineScorecard } from "@/lib/bof-savings-engine";
 import { buildSavingsQualification, buildImmediateActionsRequired } from "@/lib/bof-savings-layer";
 import {
@@ -25,10 +27,17 @@ import { CommandCenterSupportingOps } from "@/components/CommandCenterSupporting
 
 export function CommandCenterPageClient() {
   const { data } = useBofDemoData();
+  const intakeCommandCenterItems = useIntakeEngineStore(
+    (s) => s.commandCenterIntakeItems
+  );
 
   const scorecard = useMemo(() => buildFleetScorecard(data), [data]);
   const networkImpact = useMemo(() => buildBofNetworkImpact(data), [data]);
-  const enrichedItems = useMemo(() => enrichCommandCenterItems(data), [data]);
+  const enrichedItems = useMemo(() => {
+    const fromIntake = enrichCommandCenterItemList(data, intakeCommandCenterItems);
+    const canonical = enrichCommandCenterItems(data);
+    return [...fromIntake, ...canonical];
+  }, [data, intakeCommandCenterItems]);
   const kpiStrip = useMemo(() => buildCommandCenterKpiStrip(data), [data]);
   const savingsEngine = useMemo(() => buildSavingsEngineScorecard(data), [data]);
   const savingsQualify = useMemo(() => buildSavingsQualification(data), [data]);

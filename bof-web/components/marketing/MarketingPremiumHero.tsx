@@ -14,6 +14,8 @@ export type MarketingPremiumHeroProps = {
   visual?: ReactNode;
   /** Accessible name for the hero trust bullet list. */
   trustAriaLabel?: string;
+  /** Optional brand block shown above eyebrow. */
+  brand?: ReactNode;
 };
 
 /**
@@ -31,6 +33,7 @@ export function MarketingPremiumHero({
   ctas,
   visual,
   trustAriaLabel = "Highlights",
+  brand,
 }: MarketingPremiumHeroProps) {
   return (
     <section
@@ -39,6 +42,7 @@ export function MarketingPremiumHero({
     >
       <div className="bof-mkt-container bof-mkt-hero-premium-grid">
         <div className="bof-mkt-hero-premium-copy">
+          {brand ? <div className="bof-mkt-hero-premium-brand">{brand}</div> : null}
           <p className="bof-mkt-hero-premium-eyebrow">{eyebrow}</p>
           <h1 id={titleId} className="bof-mkt-hero-premium-title">
             {title}

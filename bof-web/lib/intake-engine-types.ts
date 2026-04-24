@@ -38,6 +38,13 @@ export type MatchConfidence = "high" | "medium" | "low" | "none";
 
 export type ExtractionConfidence = "high" | "medium" | "low";
 
+/** Demo-only cues for Intake → trigger mapping (no separate contract system). */
+export type IntakeDemoFlags = {
+  new_counterparty?: boolean;
+  master_contract_missing?: boolean;
+  sensitive_cargo?: boolean;
+};
+
 export type IntakeAttachment = {
   attachment_id: string;
   file_name: string;
@@ -108,6 +115,7 @@ export type IntakeRecord = {
   derived_load_ids: string[];
   /** Readiness language for driver-doc intakes */
   readiness_impact?: "clears_block" | "expiring_soon" | "missing_review" | "neutral";
+  intake_demo_flags?: IntakeDemoFlags;
 };
 
 export type IntakeFilterTab =

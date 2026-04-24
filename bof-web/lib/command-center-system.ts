@@ -504,12 +504,12 @@ function buildDraftBody(
   }
 }
 
-/** Extends canonical Command Center rows with money, primary action, and draft copy. */
-export function enrichCommandCenterItems(
-  data: BofData
+/** Enrich any Command Center row shape (canonical data or Intake Engine injections). */
+export function enrichCommandCenterItemList(
+  data: BofData,
+  items: CommandCenterItem[]
 ): EnrichedCommandCenterItem[] {
-  const base = buildCommandCenterItems(data);
-  return base.map((item) => {
+  return items.map((item) => {
     const { actionLabel, draftKind } = pickActionAndDraft(data, item);
     let money = resolveMoneyUsd(data, item);
     const meta = moneyImpactMeta(item);
@@ -556,4 +556,11 @@ export function enrichCommandCenterItems(
       draftBody,
     };
   });
+}
+
+/** Extends canonical Command Center rows with money, primary action, and draft copy. */
+export function enrichCommandCenterItems(
+  data: BofData
+): EnrichedCommandCenterItem[] {
+  return enrichCommandCenterItemList(data, buildCommandCenterItems(data));
 }

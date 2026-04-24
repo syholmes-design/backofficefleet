@@ -34,9 +34,11 @@ import { listEngineDocumentsForDriver } from "@/lib/document-engine";
 import { DocumentEnginePanel } from "@/components/DocumentEnginePanel";
 import { RouteSupportWidget } from "@/components/route-support/RouteSupportWidget";
 import { DieselRouteInsightWidget } from "@/components/fuel/DieselRouteInsightWidget";
+import { useIntakeEngineStore } from "@/lib/stores/intake-engine-store";
 
 export function DriverDetailPageClient({ driverId }: { driverId: string }) {
   const { data } = useBofDemoData();
+  const intakeReadiness = useIntakeEngineStore((s) => s.driverReadinessLog);
 
   const driver = useMemo(() => getDriverById(data, driverId), [data, driverId]);
   const documents = useMemo(() => getOrderedDocumentsForDriver(data, driverId), [data, driverId]);
@@ -90,6 +92,11 @@ export function DriverDetailPageClient({ driverId }: { driverId: string }) {
     [data, driverId]
   );
   const isRefDriver = isJohnCarterReferenceDriver(driverId);
+
+  const intakeReadinessForDriver = useMemo(
+    () => intakeReadiness.filter((e) => e.driver_id === driverId),
+    [intakeReadiness, driverId]
+  );
 
   const activeLoadForRoute = useMemo(() => {
     const mine = data.loads.filter((l) => l.driverId === driverId);
@@ -177,6 +184,26 @@ export function DriverDetailPageClient({ driverId }: { driverId: string }) {
             routes and vault use {JOHN_CARTER_REFERENCE_DRIVER_ID}).
           </p>
         )}
+
+        {intakeReadinessForDriver.length > 0 ? (
+          <div className="bof-driver-intake-readiness" style={{ marginTop: "0.75rem" }}>
+            <h3 className="bof-h3">Intake Engine — driver readiness</h3>
+            <ul className="bof-intake-engine-bullet">
+              {intakeReadinessForDriver.map((e) => (
+                <li key={e.id}>
+                  <strong>{e.readiness_impact.replace(/_/g, " ")}</strong> · {e.detail}{" "}
+                  <Link href={`/intake/${e.intake_id}`} className="bof-link-secondary">
+                    {e.intake_id}
+                  </Link>
+                  <span className="bof-muted">
+                    {" "}
+                    · {new Date(e.created_at).toLocaleString()}
+                  </span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        ) : null}
 
         <div className="bof-driver-info-grid" aria-label="Contact and assignment">
           <div className="bof-info-block">

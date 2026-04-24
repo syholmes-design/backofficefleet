@@ -1,9 +1,15 @@
 "use client";
 
 import { create } from "zustand";
+import type { CommandCenterItem } from "@/lib/executive-layer";
 import { buildDraftLoadFromExtracted, buildDraftLoadFromTrip } from "@/lib/intake-engine-build-load";
 import { INTAKE_ENGINE_SEED } from "@/lib/intake-engine-seed";
 import type { ExtractedFields, IntakeRecord, IntakeStatus, ProposedTrip } from "@/lib/intake-engine-types";
+import {
+  dispatchLoadStampFromIntake,
+  runIntakeLifecycleSideEffects,
+  type DriverReadinessLogEntry,
+} from "@/lib/intake-engine-triggers";
 import { useDispatchDashboardStore } from "@/lib/stores/dispatch-dashboard-store";
 
 function nowIso() {
@@ -14,8 +20,29 @@ function todayPrefix() {
   return new Date().toISOString().slice(0, 10);
 }
 
+function seedIntakeCommandCenterQueue(): CommandCenterItem[] {
+  return [
+    {
+      id: "INTAKE-CC-IN-005",
+      severity: "high",
+      bucket: "Dispatch / proof",
+      title: "Intake Engine · handwritten gate note (IN-005)",
+      detail:
+        "Low extraction confidence on facility scan — correlate receiver note with L004 seal timeline.",
+      loadId: "L004",
+      nextAction: "Open intake IN-005 and confirm gate instructions.",
+      owner: "Operations",
+      status: "Needs review",
+    },
+  ];
+}
+
 type IntakeEngineState = {
   intakes: IntakeRecord[];
+  /** Intake-derived rows merged into Command Center (demo). */
+  commandCenterIntakeItems: CommandCenterItem[];
+  /** Driver doc finalizations (demo audit trail). */
+  driverReadinessLog: DriverReadinessLogEntry[];
 
   getIntake: (intake_id: string) => IntakeRecord | undefined;
   patchIntake: (intake_id: string, patch: Partial<IntakeRecord>) => void;
@@ -43,6 +70,8 @@ function clone<T>(x: T): T {
 
 export const useIntakeEngineStore = create<IntakeEngineState>((set, get) => ({
   intakes: INTAKE_ENGINE_SEED.map((r) => clone(r)),
+  commandCenterIntakeItems: seedIntakeCommandCenterQueue(),
+  driverReadinessLog: [],
 
   getIntake: (intake_id) => get().intakes.find((i) => i.intake_id === intake_id),
 
@@ -80,19 +109,47 @@ export const useIntakeEngineStore = create<IntakeEngineState>((set, get) => ({
       }),
     })),
 
-  holdIntake: (intake_id) =>
+  holdIntake: (intake_id) => {
     set((s) => ({
       intakes: s.intakes.map((i) =>
         i.intake_id === intake_id ? { ...i, status: "on_hold" as IntakeStatus } : i
       ),
-    })),
+    }));
+    const i = get().getIntake(intake_id);
+    if (i) {
+      runIntakeLifecycleSideEffects(i, "hold", {
+        pushCommandCenterIntake: (item) =>
+          set((st) => ({
+            commandCenterIntakeItems: [...st.commandCenterIntakeItems, item],
+          })),
+        pushDriverReadiness: (entry) =>
+          set((st) => ({
+            driverReadinessLog: [...st.driverReadinessLog, entry],
+          })),
+      });
+    }
+  },
 
-  requestInfo: (intake_id) =>
+  requestInfo: (intake_id) => {
     set((s) => ({
       intakes: s.intakes.map((i) =>
         i.intake_id === intake_id ? { ...i, status: "awaiting_info" as IntakeStatus } : i
       ),
-    })),
+    }));
+    const i = get().getIntake(intake_id);
+    if (i) {
+      runIntakeLifecycleSideEffects(i, "request_info", {
+        pushCommandCenterIntake: (item) =>
+          set((st) => ({
+            commandCenterIntakeItems: [...st.commandCenterIntakeItems, item],
+          })),
+        pushDriverReadiness: (entry) =>
+          set((st) => ({
+            driverReadinessLog: [...st.driverReadinessLog, entry],
+          })),
+      });
+    }
+  },
 
   matchToDriver: (intake_id, driver_id) =>
     set((s) => ({
@@ -170,6 +227,9 @@ export const useIntakeEngineStore = create<IntakeEngineState>((set, get) => ({
       finalized_at: null,
       derived_load_ids: [],
       review_notes: `Split from ${intake_id} · trip ${trip.trip_id}`,
+      intake_demo_flags: parent.intake_demo_flags
+        ? { ...parent.intake_demo_flags }
+        : undefined,
     }));
 
     set((s) => ({
@@ -198,11 +258,15 @@ export const useIntakeEngineStore = create<IntakeEngineState>((set, get) => ({
     const derived: string[] = [];
     const dispatch = useDispatchDashboardStore.getState();
     let nextTrips = intake.proposed_trips;
+    const stamp = dispatchLoadStampFromIntake(intake);
 
     if (intake.intake_kind === "single_trip") {
-      const load = buildDraftLoadFromExtracted(intake.extracted, {
-        dispatch_notes: `Intake ${intake.intake_id} · ${intake.subject_line}`,
-      });
+      const load = {
+        ...buildDraftLoadFromExtracted(intake.extracted, {
+          dispatch_notes: `Intake ${intake.intake_id} · ${intake.subject_line}`,
+        }),
+        ...stamp,
+      };
       dispatch.appendLoad(load);
       derived.push(load.load_id);
     } else if (intake.intake_kind === "multi_trip") {
@@ -211,11 +275,14 @@ export const useIntakeEngineStore = create<IntakeEngineState>((set, get) => ({
         return { ok: false, message: "Approve at least one trip row before finalize." };
       }
       for (const trip of approved) {
-        const load = buildDraftLoadFromTrip(
-          { ...trip, trip_status: "finalized" },
-          intake.extracted,
-          `Intake ${intake.intake_id}`
-        );
+        const load = {
+          ...buildDraftLoadFromTrip(
+            { ...trip, trip_status: "finalized" },
+            intake.extracted,
+            `Intake ${intake.intake_id}`
+          ),
+          ...stamp,
+        };
         dispatch.appendLoad(load);
         derived.push(load.load_id);
       }
@@ -238,6 +305,20 @@ export const useIntakeEngineStore = create<IntakeEngineState>((set, get) => ({
           : i
       ),
     }));
+
+    const finalizedIntake = get().getIntake(intake_id);
+    if (finalizedIntake) {
+      runIntakeLifecycleSideEffects(finalizedIntake, "finalize", {
+        pushCommandCenterIntake: (item) =>
+          set((st) => ({
+            commandCenterIntakeItems: [...st.commandCenterIntakeItems, item],
+          })),
+        pushDriverReadiness: (entry) =>
+          set((st) => ({
+            driverReadinessLog: [...st.driverReadinessLog, entry],
+          })),
+      });
+    }
 
     return {
       ok: true,

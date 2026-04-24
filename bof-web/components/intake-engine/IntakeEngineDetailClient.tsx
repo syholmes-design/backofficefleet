@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
 import type { DocClassification, IntakeRecord } from "@/lib/intake-engine-types";
+import { buildIntakeTriggerRows } from "@/lib/intake-engine-triggers";
 import { useBofDemoData } from "@/lib/bof-demo-data-context";
 import { useIntakeEngineStore } from "@/lib/stores/intake-engine-store";
 
@@ -61,6 +62,11 @@ export function IntakeEngineDetailClient() {
   const loads = data.loads;
 
   const multi = intake?.intake_kind === "multi_trip";
+
+  const triggerRows = useMemo(
+    () => (intake ? buildIntakeTriggerRows(intake) : []),
+    [intake]
+  );
 
   const canFinalize = useMemo(() => {
     if (!intake || intake.status === "finalized") return false;
@@ -322,6 +328,71 @@ export function IntakeEngineDetailClient() {
               Readiness impact: <strong>{intake.readiness_impact.replace(/_/g, " ")}</strong>
             </p>
           ) : null}
+        </section>
+
+        <section className="bof-intake-engine-card bof-intake-engine-card--wide" aria-labelledby="int-triggers">
+          <h2 id="int-triggers" className="bof-h2">
+            Triggered workflows
+          </h2>
+          <p className="bof-muted bof-intake-engine-trigger-lead">
+            BOF-native demo triggers — commercial, insurance, proof, finance, ops, and Command Center
+            visibility derived from this intake.
+          </p>
+          {triggerRows.length ? (
+            <div className="bof-table-wrap">
+              <table className="bof-table bof-intake-engine-trigger-table">
+                <thead>
+                  <tr>
+                    <th>Type</th>
+                    <th>Status</th>
+                    <th>Owner</th>
+                    <th>Severity</th>
+                    <th>Linked</th>
+                    <th>Summary</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {triggerRows.map((t) => (
+                    <tr key={t.trigger_id}>
+                      <td>
+                        <code className="bof-code">{t.trigger_type.replace(/_/g, " ")}</code>
+                      </td>
+                      <td>
+                        <span className="bof-status-pill bof-status-pill-muted">
+                          {t.trigger_status.replace(/_/g, " ")}
+                        </span>
+                      </td>
+                      <td>{t.owner_team}</td>
+                      <td>
+                        <span
+                          className={`bof-intake-engine-trigger-sev bof-intake-engine-trigger-sev--${t.severity}`}
+                        >
+                          {t.severity}
+                        </span>
+                      </td>
+                      <td className="bof-muted">
+                        {t.linked_entity_type}
+                        {t.linked_entity_id ? (
+                          <>
+                            {" "}
+                            <code className="bof-code">{t.linked_entity_id}</code>
+                          </>
+                        ) : (
+                          " —"
+                        )}
+                      </td>
+                      <td>
+                        <div className="bof-intake-engine-cell-title">{t.title}</div>
+                        <div className="bof-muted bof-intake-engine-trigger-desc">{t.description}</div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          ) : (
+            <p className="bof-muted">No triggers derived for this intake.</p>
+          )}
         </section>
 
         <section className="bof-intake-engine-card bof-intake-engine-card--wide" aria-labelledby="int-req">
