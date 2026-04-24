@@ -7,7 +7,7 @@ import {
   MarketingCtaPanel,
   MarketingFormShell,
   MarketingFunnelEntryRow,
-  MarketingHeroProductSketch,
+  MarketingHeroImagePanel,
   MarketingIconCardGrid,
   MarketingPremiumHero,
   MarketingProcessSteps,
@@ -182,9 +182,10 @@ export default function BofVaultPage() {
           </>
         }
         visual={
-          <MarketingHeroProductSketch
+          <MarketingHeroImagePanel
             windowTitle="BOF Vault · credential fabric"
-            caption="Reserved for product UI capture, security diagrams, or partner-ready vault photography."
+            imagePath="/assets/images/hero-bof-vault.png"
+            caption="Single file of record: upload once, verify against fleet rules, feed dispatch and settlements."
           />
         }
       />

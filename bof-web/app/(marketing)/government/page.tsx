@@ -7,7 +7,7 @@ import {
   MarketingCtaPanel,
   MarketingFormShell,
   MarketingFunnelEntryRow,
-  MarketingHeroProductSketch,
+  MarketingHeroImagePanel,
   MarketingIconCardGrid,
   MarketingPremiumHero,
   MarketingProcessSteps,
@@ -182,9 +182,10 @@ export default function GovernmentPage() {
           </>
         }
         visual={
-          <MarketingHeroProductSketch
+          <MarketingHeroImagePanel
             windowTitle="Public-sector oversight console"
-            caption="Reserved for agency photography, continuity exercises, or a live capture from the BOF demo environment."
+            imagePath="/assets/images/hero-government-fleets.png"
+            caption="Audit-ready enforcement posture: evidence packets, oversight queues, and traceable readiness for regulated fleets."
           />
         }
       />
