@@ -62,6 +62,7 @@ export type DriverVaultSourceUpload = {
 
 export type DriverVaultArtifact = {
   artifactUrl: string;
+  artifactStorageKey: string;
   artifactType: "html";
   artifactFileName: string;
   artifactGeneratedAt: string;

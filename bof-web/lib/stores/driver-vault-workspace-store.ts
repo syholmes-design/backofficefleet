@@ -12,6 +12,8 @@ import {
   type DriverVaultReviewState,
 } from "@/lib/driver-vault-workspace";
 
+const DRIVER_VAULT_FINAL_ARTIFACTS_KEY = "bof:driver-vault:final-artifacts:v1";
+
 type DriverVaultWorkspaceState = {
   initialized: boolean;
   drivers: DriverVaultDriverWorkspace[];
@@ -47,6 +49,46 @@ function toSections(fields: Record<string, string>) {
   }));
 }
 
+type PersistedVaultArtifact = {
+  artifact: DriverVaultArtifact;
+  html: string;
+};
+
+type PersistedVaultArtifactMap = Record<string, PersistedVaultArtifact>;
+
+function artifactMapKey(driverId: string, category: DriverVaultCategory) {
+  return `${driverId}::${category}`;
+}
+
+function storageKeyFor(driverId: string, category: DriverVaultCategory) {
+  return `${driverId}-${category.replace(/\W+/g, "_").toLowerCase()}`;
+}
+
+function safeReadPersistedArtifacts(): PersistedVaultArtifactMap {
+  if (typeof window === "undefined") return {};
+  try {
+    const raw = window.localStorage.getItem(DRIVER_VAULT_FINAL_ARTIFACTS_KEY);
+    if (!raw) return {};
+    const parsed = JSON.parse(raw) as PersistedVaultArtifactMap;
+    return parsed && typeof parsed === "object" ? parsed : {};
+  } catch {
+    return {};
+  }
+}
+
+function safeWritePersistedArtifacts(map: PersistedVaultArtifactMap) {
+  if (typeof window === "undefined") return;
+  try {
+    window.localStorage.setItem(DRIVER_VAULT_FINAL_ARTIFACTS_KEY, JSON.stringify(map));
+  } catch {
+    // Demo mode: ignore localStorage quota/write failures.
+  }
+}
+
+function stableArtifactUrl(driverId: string, category: DriverVaultCategory) {
+  return `/documents/vault/final?driverId=${encodeURIComponent(driverId)}&category=${encodeURIComponent(category)}`;
+}
+
 export const useDriverVaultWorkspaceStore = create<DriverVaultWorkspaceState>((set, get) => ({
   initialized: false,
   drivers: [],
@@ -56,10 +98,24 @@ export const useDriverVaultWorkspaceStore = create<DriverVaultWorkspaceState>((s
   initFromData: (data) => {
     if (get().initialized) return;
     const drivers = buildDriverVaultWorkspaces(data);
+    const persisted = safeReadPersistedArtifacts();
+    const hydratedDrivers = drivers.map((driver) => {
+      const categories = { ...driver.categories };
+      (Object.keys(categories) as DriverVaultCategory[]).forEach((category) => {
+        const persistedEntry = persisted[artifactMapKey(driver.driverId, category)];
+        if (persistedEntry?.artifact) {
+          categories[category] = {
+            ...categories[category],
+            finalArtifact: persistedEntry.artifact,
+          };
+        }
+      });
+      return { ...driver, categories };
+    });
     set({
       initialized: true,
-      drivers,
-      selectedDriverId: drivers[0]?.driverId ?? null,
+      drivers: hydratedDrivers,
+      selectedDriverId: hydratedDrivers[0]?.driverId ?? null,
       selectedCategory: "Driver Profile",
     });
   },
@@ -196,12 +252,15 @@ export const useDriverVaultWorkspaceStore = create<DriverVaultWorkspaceState>((s
     const match = get().drivers.find((d) => d.driverId === driverId);
     if (!match) return null;
     const current = match.categories[category];
+    const currentStableUrl = stableArtifactUrl(driverId, category);
     if (current.finalArtifact) {
-      window.open(current.finalArtifact.artifactUrl, "_blank", "noopener,noreferrer");
-      return current.finalArtifact;
+      const artifact = { ...current.finalArtifact, artifactUrl: currentStableUrl };
+      window.open(artifact.artifactUrl, "_blank", "noopener,noreferrer");
+      return artifact;
     }
 
     const generatedAt = nowIso();
+    const artifactStorageKey = storageKeyFor(driverId, category);
     const html = buildDriverVaultArtifactHtml({
       driverId: match.driverId,
       driverName: match.driverName,
@@ -210,16 +269,19 @@ export const useDriverVaultWorkspaceStore = create<DriverVaultWorkspaceState>((s
       templateFields: current.templateFields,
       generatedAt,
     });
-    const blob = new Blob([html], { type: "text/html;charset=utf-8" });
-    const artifactUrl = URL.createObjectURL(blob);
+    const artifactUrl = currentStableUrl;
     const artifact: DriverVaultArtifact = {
       artifactUrl,
+      artifactStorageKey,
       artifactType: "html",
       artifactFileName: `${driverId}_${category.replace(/\W+/g, "_").toLowerCase()}_final.html`,
       artifactGeneratedAt: generatedAt,
       sourceDriverId: driverId,
       sourceCategory: category,
     };
+    const persisted = safeReadPersistedArtifacts();
+    persisted[artifactMapKey(driverId, category)] = { artifact, html };
+    safeWritePersistedArtifacts(persisted);
 
     set((s) => ({
       drivers: s.drivers.map((d) =>
@@ -233,14 +295,17 @@ export const useDriverVaultWorkspaceStore = create<DriverVaultWorkspaceState>((s
                   ...d.categories[category],
                   finalArtifact: artifact,
                   lastUpdated: generatedAt,
-                  reviewState: d.categories[category].reviewState === "not_started" ? "in_review" : d.categories[category].reviewState,
+                  reviewState:
+                    d.categories[category].reviewState === "not_started"
+                      ? "in_review"
+                      : d.categories[category].reviewState,
                 },
               },
             }
       ),
     }));
 
-    window.open(artifactUrl, "_blank", "noopener,noreferrer");
+    window.open(currentStableUrl, "_blank", "noopener,noreferrer");
     return artifact;
   },
 }));
