@@ -2,7 +2,7 @@ import Link from "next/link";
 import {
   MarketingCommandCenterPreview,
   MarketingCtaPanel,
-  MarketingHeroProductSketch,
+  MarketingHeroImagePanel,
   MarketingIconCardGrid,
   MarketingPremiumHero,
   MarketingSection,
@@ -118,8 +118,9 @@ export default function MarketingHomeAccountable() {
           </>
         }
         visual={
-          <MarketingHeroProductSketch
+          <MarketingHeroImagePanel
             windowTitle="BOF operating layer"
+            imagePath="/assets/images/hero-landing-bof.png"
             caption="One operational fabric connecting management oversight, driver workflows, and customer communication."
           />
         }
