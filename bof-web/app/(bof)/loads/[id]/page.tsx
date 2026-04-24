@@ -21,6 +21,7 @@ import { RouteSupportWidget } from "@/components/route-support/RouteSupportWidge
 import { LoadBofAdvantagesIsland } from "@/components/bof-advantage/LoadBofAdvantagesIsland";
 import { DieselRouteInsightWidget } from "@/components/fuel/DieselRouteInsightWidget";
 import { LoadReadinessMessagingPanel } from "@/components/loads/LoadReadinessMessagingPanel";
+import { BofTemplateUsageSurface } from "@/components/documents/BofTemplateUsageSurface";
 
 type Props = { params: Promise<{ id: string }> };
 
@@ -193,6 +194,12 @@ export default async function LoadDetailPage({ params }: Props) {
       />
 
       <LoadReadinessMessagingPanel loadId={load.id} />
+      <BofTemplateUsageSurface
+        context="dispatch_load"
+        entityId={load.id}
+        title="BOF Workflow Documents"
+        subtitle="Dispatch, intake, and field-operations templates for this load."
+      />
 
       {claimCtx && <ClaimPacketPanel ctx={claimCtx} />}
 

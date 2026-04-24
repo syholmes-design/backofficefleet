@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useBofDemoData } from "@/lib/bof-demo-data-context";
 import {
@@ -14,16 +14,18 @@ import { useBofTemplateWorkspaceStore } from "@/lib/stores/bof-template-workspac
 export function BofTemplatePacksWorkspaceClient({
   initialPackId,
   initialEntityId,
+  initialTemplateId,
 }: {
   initialPackId?: BofTemplatePackId;
   initialEntityId?: string;
+  initialTemplateId?: string;
 }) {
   const { data } = useBofDemoData();
   const [packId, setPackId] = useState<BofTemplatePackId>(
     initialPackId ?? BOF_TEMPLATE_PACKS[0].packId
   );
   const [entityId, setEntityId] = useState(initialEntityId ?? data.loads[0]?.id ?? "L001");
-  const [selectedTemplateId, setSelectedTemplateId] = useState<string | null>(null);
+  const [selectedTemplateId, setSelectedTemplateId] = useState<string | null>(initialTemplateId ?? null);
   const [editor, setEditor] = useState("");
   const upsertDraft = useBofTemplateWorkspaceStore((s) => s.upsertDraft);
   const getDraft = useBofTemplateWorkspaceStore((s) => s.getDraft);
@@ -38,7 +40,7 @@ export function BofTemplatePacksWorkspaceClient({
   const activeDraft = getDraft(draftKey);
   const activeArtifact = getArtifact(artifactKey);
 
-  useMemo(() => {
+  useEffect(() => {
     const next = activeDraft?.body ?? buildTemplateDefaultBody(data, selectedTemplate, entityId);
     setEditor(next);
   }, [activeDraft?.body, data, entityId, selectedTemplate]);

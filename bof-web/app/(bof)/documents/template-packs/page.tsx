@@ -2,11 +2,17 @@ import { BofTemplatePacksWorkspaceClient } from "@/components/documents/BofTempl
 import type { BofTemplatePackId } from "@/lib/bof-template-system";
 
 type Props = {
-  searchParams: Promise<{ packId?: string; entityId?: string }>;
+  searchParams: Promise<{ packId?: string; entityId?: string; templateId?: string }>;
 };
 
 export default async function BofTemplatePacksPage({ searchParams }: Props) {
   const params = await searchParams;
   const packId = params.packId as BofTemplatePackId | undefined;
-  return <BofTemplatePacksWorkspaceClient initialPackId={packId} initialEntityId={params.entityId} />;
+  return (
+    <BofTemplatePacksWorkspaceClient
+      initialPackId={packId}
+      initialEntityId={params.entityId}
+      initialTemplateId={params.templateId}
+    />
+  );
 }

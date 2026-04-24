@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState } from "react";
 import type { ClaimDraftKind, ClaimPacketContext } from "@/lib/claim-packet";
 import { buildClaimDraft } from "@/lib/claim-packet";
 import { useDispatchDashboardStore } from "@/lib/stores/dispatch-dashboard-store";
+import { BofTemplateUsageSurface } from "@/components/documents/BofTemplateUsageSurface";
 
 const ACTIONS: { kind: ClaimDraftKind; label: string }[] = [
   { kind: "packet", label: "Generate claim packet" },
@@ -169,6 +170,13 @@ export function ClaimPacketPanel({ ctx }: { ctx: ClaimPacketContext }) {
           {error}
         </p>
       )}
+
+      <BofTemplateUsageSurface
+        context="claims_insurance"
+        entityId={ctx.loadId}
+        title="BOF Template Usage — Claims / Insurance"
+        subtitle="Claim, insurance, linked proof, and settlement-impact templates for this load claim workflow."
+      />
 
       {open && (
         <div

@@ -10,6 +10,7 @@ import {
   proofChipClass,
   settlementStatusChipClass,
 } from "./settlements-payroll-ui";
+import { BofTemplateUsageSurface } from "@/components/documents/BofTemplateUsageSurface";
 
 type Props = {
   settlementId: string | null;
@@ -399,6 +400,13 @@ export function SettlementDetailDrawer({ settlementId, open, onClose }: Props) {
               )}
             </div>
           </section>
+
+          <BofTemplateUsageSurface
+            context="settlement_billing"
+            entityId={settlement.settlement_id}
+            title="BOF Template Usage — Billing / Settlement"
+            subtitle="Billing packet, settlement hold, and linked proof templates for this settlement."
+          />
         </div>
 
         <footer className="shrink-0 space-y-2 border-t border-slate-800 bg-slate-950/95 px-4 py-3">
