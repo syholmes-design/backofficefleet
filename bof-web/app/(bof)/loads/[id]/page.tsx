@@ -20,6 +20,7 @@ import { DocumentEnginePanel } from "@/components/DocumentEnginePanel";
 import { RouteSupportWidget } from "@/components/route-support/RouteSupportWidget";
 import { LoadBofAdvantagesIsland } from "@/components/bof-advantage/LoadBofAdvantagesIsland";
 import { DieselRouteInsightWidget } from "@/components/fuel/DieselRouteInsightWidget";
+import { LoadReadinessMessagingPanel } from "@/components/loads/LoadReadinessMessagingPanel";
 
 type Props = { params: Promise<{ id: string }> };
 
@@ -184,6 +185,8 @@ export default async function LoadDetailPage({ params }: Props) {
         documents={engineLoadDocs}
         crossLinks={genCrossLinks}
       />
+
+      <LoadReadinessMessagingPanel loadId={load.id} />
 
       {claimCtx && <ClaimPacketPanel ctx={claimCtx} />}
 
