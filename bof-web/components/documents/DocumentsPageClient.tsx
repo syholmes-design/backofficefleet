@@ -56,7 +56,11 @@ export function DocumentsPageClient() {
           BOF Template Packs Workspace
         </Link>{" "}
         for standardized intake, field ops, billing/settlement, driver/dispatch readiness, and
-        insurance/claims templates with editable + generated artifact flow.
+        insurance/claims templates with editable + generated artifact flow. Use the{" "}
+        <Link href="/documents/template-packs/view" className="bof-link-secondary">
+          BOF document viewer
+        </Link>{" "}
+        (open from any template row) for save, review, final generation, and stakeholder routing.
       </p>
 
       <section className="bof-oper-panel bof-oper-panel-tight" aria-label="Document table">

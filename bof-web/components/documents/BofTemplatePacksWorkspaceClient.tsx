@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useBofDemoData } from "@/lib/bof-demo-data-context";
+import { buildBofDocumentViewerHref } from "@/lib/bof-document-viewer-href";
 import {
   BOF_TEMPLATE_PACKS,
   buildTemplateArtifactHtml,
@@ -130,6 +131,18 @@ export function BofTemplatePacksWorkspaceClient({
             style={{ width: "100%", minHeight: 360 }}
           />
           <div className="bof-driver-vault-actions">
+            <Link
+              href={buildBofDocumentViewerHref({
+                templateId: selectedTemplate.templateId,
+                entityId,
+                packId,
+                returnTo: "/documents/template-packs",
+              })}
+              className="bof-link-secondary"
+              style={{ alignSelf: "center" }}
+            >
+              Open in document viewer
+            </Link>
             <button
               type="button"
               className="bof-intake-engine-btn"

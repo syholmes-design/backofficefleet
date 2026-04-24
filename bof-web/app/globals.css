@@ -10250,6 +10250,129 @@ body {
   }
 }
 
+/* BOF operational document viewer (template packs + usage surfaces) */
+.bof-doc-viewer-head {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--bof-border, #2b3440);
+}
+
+.bof-doc-viewer-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 12px;
+}
+
+.bof-doc-viewer-tab {
+  border: 1px solid var(--bof-border, #2b3440);
+  background: #121a23;
+  color: #94a3b8;
+  padding: 8px 14px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.bof-doc-viewer-tab.is-active {
+  border-color: #2dd4bf;
+  color: #ecfeff;
+  background: rgba(45, 212, 191, 0.12);
+}
+
+.bof-doc-viewer-body {
+  min-height: 420px;
+}
+
+.bof-doc-viewer-panel {
+  background: #0f1419;
+  border: 1px solid var(--bof-border, #2b3440);
+  border-radius: 12px;
+  padding: 16px;
+}
+
+.bof-doc-viewer-editor {
+  width: 100%;
+  min-height: min(70vh, 560px);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 12px;
+  line-height: 1.45;
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid #2b3440;
+  background: #0b0f14;
+  color: #e2e8f0;
+}
+
+.bof-doc-viewer-iframe {
+  width: 100%;
+  min-height: min(72vh, 640px);
+  border: 1px solid var(--bof-border, #2b3440);
+  border-radius: 10px;
+  background: #0f1419;
+}
+
+.bof-doc-viewer-list {
+  margin: 0 0 12px;
+  padding-left: 1.1rem;
+  color: #cbd5e1;
+  font-size: 13px;
+}
+
+.bof-doc-viewer-chip-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.bof-doc-viewer-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
+  border-radius: 8px;
+  border: 1px solid #334155;
+  background: #111827;
+  font-size: 12px;
+  color: #e2e8f0;
+  cursor: pointer;
+}
+
+.bof-doc-viewer-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+  margin-top: 16px;
+  padding-top: 14px;
+  border-top: 1px solid var(--bof-border, #2b3440);
+}
+
+.bof-doc-viewer-reviewer {
+  min-width: 200px;
+  padding: 6px 10px;
+  border-radius: 6px;
+  border: 1px solid #334155;
+  background: #0b0f14;
+  color: #e2e8f0;
+  font-size: 12px;
+}
+
+@media (max-width: 900px) {
+  .bof-doc-viewer-editor {
+    min-height: 360px;
+  }
+  .bof-doc-viewer-iframe {
+    min-height: 50vh;
+  }
+}
+
 /* Tailwind — utilities + components only (no @tailwind base — avoids touching BOF globals). */
 @tailwind components;
 @tailwind utilities;

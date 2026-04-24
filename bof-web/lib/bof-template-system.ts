@@ -185,6 +185,14 @@ export function listAllBofTemplates() {
   return BOF_TEMPLATE_PACKS.flatMap((p) => p.templates);
 }
 
+export function findBofTemplateById(templateId: string): BofTemplateDefinition | null {
+  return listAllBofTemplates().find((t) => t.templateId === templateId) ?? null;
+}
+
+export function findPackForTemplate(templateId: string): BofTemplatePack | null {
+  return BOF_TEMPLATE_PACKS.find((p) => p.templates.some((t) => t.templateId === templateId)) ?? null;
+}
+
 export function templatesForContext(contextType: BofTemplateContextType) {
   return listAllBofTemplates().filter((t) => t.contextType === contextType);
 }

@@ -2,6 +2,7 @@
 
 import { useMemo } from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useBofDemoData } from "@/lib/bof-demo-data-context";
 import {
   BOF_TEMPLATE_PACKS,
@@ -18,6 +19,7 @@ import {
   resolveTemplateSurfaceBundle,
 } from "@/lib/template-usage-readiness";
 import { describeRfidSurfacePosture, rfidRelevantForTemplate } from "@/lib/bof-rfid-readiness";
+import { buildBofDocumentViewerHref } from "@/lib/bof-document-viewer-href";
 
 type SurfaceContext = "dispatch_load" | "settlement_billing" | "claims_insurance";
 
@@ -89,6 +91,7 @@ export function BofTemplateUsageSurface({
   /** Optional explicit load ids (e.g. from settlement lines) for RFID + proof chain. */
   linkedLoadIds?: string[];
 }) {
+  const pathname = usePathname();
   const { data } = useBofDemoData();
   const upsertDraft = useBofTemplateWorkspaceStore((s) => s.upsertDraft);
   const getDraft = useBofTemplateWorkspaceStore((s) => s.getDraft);
@@ -228,6 +231,17 @@ export function BofTemplateUsageSurface({
                         className="bof-link-secondary"
                       >
                         Open Draft
+                      </Link>
+                      <Link
+                        href={buildBofDocumentViewerHref({
+                          templateId: row.templateId,
+                          entityId,
+                          packId,
+                          returnTo: pathname || undefined,
+                        })}
+                        className="bof-link-secondary"
+                      >
+                        Document viewer
                       </Link>
                       {hasFinal ? (
                         <a
