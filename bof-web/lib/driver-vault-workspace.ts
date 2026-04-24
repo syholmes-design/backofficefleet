@@ -60,6 +60,15 @@ export type DriverVaultSourceUpload = {
   uploaded_at: string;
 };
 
+export type DriverVaultArtifact = {
+  artifactUrl: string;
+  artifactType: "html";
+  artifactFileName: string;
+  artifactGeneratedAt: string;
+  sourceDriverId: string;
+  sourceCategory: DriverVaultCategory;
+};
+
 export type DriverVaultCategoryWorkspace = {
   category: DriverVaultCategory;
   sourceUploads: DriverVaultSourceUpload[];
@@ -73,6 +82,7 @@ export type DriverVaultCategoryWorkspace = {
   extractedFieldConfidence: "high" | "medium" | "low";
   lastUpdated: string;
   reviewState: DriverVaultReviewState;
+  finalArtifact: DriverVaultArtifact | null;
 };
 
 export type DriverVaultDriverWorkspace = {
@@ -293,6 +303,7 @@ export function buildDriverVaultWorkspaces(data: BofData): DriverVaultDriverWork
         extractedFieldConfidence: confidenceFromStatus(documentStatus),
         lastUpdated: nowIso(),
         reviewState: reviewStateFromStatus(documentStatus),
+        finalArtifact: null,
       };
     }
 
@@ -315,4 +326,88 @@ export function applySharedFieldAutofill(
     ...baseline,
     ...currentTemplateFields,
   };
+}
+
+const CATEGORY_TITLES: Record<DriverVaultCategory, string> = {
+  "Driver Profile": "Driver Profile Summary",
+  CDL: "Commercial Driver License Profile",
+  "Medical Certification": "Medical Certification Record",
+  MVR: "Motor Vehicle Record Summary",
+  "Employment / I-9": "Employment Eligibility / I-9 Packet",
+  "FMCSA / Compliance": "FMCSA Compliance Summary",
+  "W-9": "W-9 Driver Tax Profile",
+  "Bank Information": "Driver Bank Information Sheet",
+  "Emergency Contact": "Emergency Contact Sheet",
+  "Secondary Contact": "Secondary Contact Sheet",
+  "Other / Supporting Docs": "Supporting Driver Document",
+};
+
+export function buildDriverVaultArtifactHtml(args: {
+  driverId: string;
+  driverName: string;
+  category: DriverVaultCategory;
+  sharedFields: DriverVaultSharedProfile;
+  templateFields: Record<string, string>;
+  generatedAt: string;
+}) {
+  const { driverId, driverName, category, sharedFields, templateFields, generatedAt } = args;
+  const rows = Object.entries(templateFields)
+    .map(
+      ([k, v]) =>
+        `<tr><th>${k.replace(/_/g, " ")}</th><td>${(v || "—").replace(/</g, "&lt;")}</td></tr>`
+    )
+    .join("");
+
+  return `<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>${category} · ${driverName} · BOF Vault</title>
+  <style>
+    body { font-family: Inter, Segoe UI, Arial, sans-serif; margin: 0; padding: 24px; background: #0f1419; color: #dbe7f3; }
+    .card { max-width: 980px; margin: 0 auto; border: 1px solid #223041; border-radius: 10px; background: #121a23; overflow: hidden; }
+    .head { padding: 18px 20px; background: #101822; border-bottom: 1px solid #223041; }
+    .eyebrow { color: #5eead4; font-size: 11px; letter-spacing: .08em; text-transform: uppercase; font-weight: 700; }
+    h1 { margin: 8px 0 4px; font-size: 24px; color: #f5fbff; }
+    .sub { margin: 0; font-size: 13px; color: #93a8bd; }
+    .meta { display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); gap: 8px; padding: 14px 20px; border-bottom: 1px solid #223041; background: #0f1821; }
+    .meta div { font-size: 12px; color: #8fa5bc; }
+    .meta strong { display:block; color: #dce8f5; margin-top: 3px; font-size: 13px; }
+    .body { padding: 16px 20px 20px; }
+    table { width: 100%; border-collapse: collapse; }
+    th, td { border-bottom: 1px solid #223041; text-align: left; padding: 10px 8px; vertical-align: top; }
+    th { width: 34%; color: #8fa5bc; font-size: 12px; text-transform: capitalize; font-weight: 600; }
+    td { color: #e3edf7; font-size: 13px; }
+    .footer { padding: 12px 20px 16px; color: #7f96ad; font-size: 11px; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="head">
+      <div class="eyebrow">BOF Vault Final Artifact</div>
+      <h1>${CATEGORY_TITLES[category]}</h1>
+      <p class="sub">${driverName} (${driverId})</p>
+    </div>
+    <div class="meta">
+      <div>Driver Name<strong>${driverName}</strong></div>
+      <div>Driver ID<strong>${driverId}</strong></div>
+      <div>Category<strong>${category}</strong></div>
+      <div>Generated<strong>${new Date(generatedAt).toLocaleString()}</strong></div>
+    </div>
+    <div class="body">
+      <table>
+        <tr><th>full name</th><td>${sharedFields.full_name}</td></tr>
+        <tr><th>phone</th><td>${sharedFields.phone}</td></tr>
+        <tr><th>email</th><td>${sharedFields.email}</td></tr>
+        <tr><th>address</th><td>${sharedFields.address_line_1}, ${sharedFields.city}, ${sharedFields.state} ${sharedFields.zip}</td></tr>
+        <tr><th>masked ssn</th><td>${sharedFields.masked_ssn}</td></tr>
+        ${rows}
+      </table>
+    </div>
+    <div class="footer">
+      BOF demo artifact: generated from Driver Vault shared + template fields (no external OCR/storage).
+    </div>
+  </div>
+</body>
+</html>`;
 }

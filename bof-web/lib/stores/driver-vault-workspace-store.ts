@@ -4,7 +4,9 @@ import { create } from "zustand";
 import type { BofData } from "@/lib/load-bof-data";
 import {
   applySharedFieldAutofill,
+  buildDriverVaultArtifactHtml,
   buildDriverVaultWorkspaces,
+  type DriverVaultArtifact,
   type DriverVaultCategory,
   type DriverVaultDriverWorkspace,
   type DriverVaultReviewState,
@@ -28,6 +30,10 @@ type DriverVaultWorkspaceState = {
   regeneratePreview: (driverId: string, category: DriverVaultCategory) => void;
   markReviewed: (driverId: string, category: DriverVaultCategory) => void;
   replaceUpload: (driverId: string, category: DriverVaultCategory) => void;
+  openFinalArtifact: (
+    driverId: string,
+    category: DriverVaultCategory
+  ) => DriverVaultArtifact | null;
 };
 
 function nowIso() {
@@ -185,4 +191,56 @@ export const useDriverVaultWorkspaceStore = create<DriverVaultWorkspaceState>((s
         };
       }),
     })),
+
+  openFinalArtifact: (driverId, category) => {
+    const match = get().drivers.find((d) => d.driverId === driverId);
+    if (!match) return null;
+    const current = match.categories[category];
+    if (current.finalArtifact) {
+      window.open(current.finalArtifact.artifactUrl, "_blank", "noopener,noreferrer");
+      return current.finalArtifact;
+    }
+
+    const generatedAt = nowIso();
+    const html = buildDriverVaultArtifactHtml({
+      driverId: match.driverId,
+      driverName: match.driverName,
+      category,
+      sharedFields: match.sharedProfileFields,
+      templateFields: current.templateFields,
+      generatedAt,
+    });
+    const blob = new Blob([html], { type: "text/html;charset=utf-8" });
+    const artifactUrl = URL.createObjectURL(blob);
+    const artifact: DriverVaultArtifact = {
+      artifactUrl,
+      artifactType: "html",
+      artifactFileName: `${driverId}_${category.replace(/\W+/g, "_").toLowerCase()}_final.html`,
+      artifactGeneratedAt: generatedAt,
+      sourceDriverId: driverId,
+      sourceCategory: category,
+    };
+
+    set((s) => ({
+      drivers: s.drivers.map((d) =>
+        d.driverId !== driverId
+          ? d
+          : {
+              ...d,
+              categories: {
+                ...d.categories,
+                [category]: {
+                  ...d.categories[category],
+                  finalArtifact: artifact,
+                  lastUpdated: generatedAt,
+                  reviewState: d.categories[category].reviewState === "not_started" ? "in_review" : d.categories[category].reviewState,
+                },
+              },
+            }
+      ),
+    }));
+
+    window.open(artifactUrl, "_blank", "noopener,noreferrer");
+    return artifact;
+  },
 }));

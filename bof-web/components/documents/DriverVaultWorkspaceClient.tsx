@@ -36,6 +36,7 @@ export function DriverVaultWorkspaceClient() {
   const regeneratePreview = useDriverVaultWorkspaceStore((s) => s.regeneratePreview);
   const markReviewed = useDriverVaultWorkspaceStore((s) => s.markReviewed);
   const replaceUpload = useDriverVaultWorkspaceStore((s) => s.replaceUpload);
+  const openFinalArtifact = useDriverVaultWorkspaceStore((s) => s.openFinalArtifact);
 
   if (!initialized) {
     initFromData(data);
@@ -255,7 +256,11 @@ export function DriverVaultWorkspaceClient() {
                 <button type="button" className="bof-intake-engine-btn">
                   Save
                 </button>
-                <button type="button" className="bof-intake-engine-btn bof-intake-engine-btn--primary">
+                <button
+                  type="button"
+                  className="bof-intake-engine-btn bof-intake-engine-btn--primary"
+                  onClick={() => openFinalArtifact(selectedDriver.driverId, activeCategory)}
+                >
                   Open Final
                 </button>
               </div>
@@ -267,6 +272,14 @@ export function DriverVaultWorkspaceClient() {
                 · Review: {activeWorkspace.reviewState.replace(/_/g, " ")} · Confidence:{" "}
                 {activeWorkspace.extractedFieldConfidence}
               </p>
+              {activeWorkspace.finalArtifact ? (
+                <p className="bof-muted bof-small">
+                  Final artifact:{" "}
+                  <code className="bof-code">{activeWorkspace.finalArtifact.artifactFileName}</code>
+                  {" · "}
+                  {new Date(activeWorkspace.finalArtifact.artifactGeneratedAt).toLocaleString()}
+                </p>
+              ) : null}
             </article>
           </section>
         </main>
