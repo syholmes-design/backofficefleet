@@ -50,11 +50,21 @@ export function EmergencyContactList() {
           Print visible card
         </button>
       </header>
-      {(audit.missingPrimary.length > 0 || audit.missingSecondary.length > 0) && (
+      {(audit.missingPrimary.length > 0 ||
+        audit.missingSecondary.length > 0 ||
+        audit.missingEmergencySeed.length > 0 ||
+        audit.invalidPrimaryPhone.length > 0 ||
+        audit.invalidSecondaryPhone.length > 0) && (
         <p className="bof-muted bof-small" style={{ marginBottom: 8 }}>
-          Missing contact data — primary:{" "}
-          {audit.missingPrimary.length > 0 ? audit.missingPrimary.join(", ") : "none"} · secondary:{" "}
-          {audit.missingSecondary.length > 0 ? audit.missingSecondary.join(", ") : "none"}.
+          Contact integrity — missing primary:{" "}
+          {audit.missingPrimary.length > 0 ? audit.missingPrimary.join(", ") : "none"} · missing
+          secondary: {audit.missingSecondary.length > 0 ? audit.missingSecondary.join(", ") : "none"}
+          {" · "}missing emergency seed row:{" "}
+          {audit.missingEmergencySeed.length > 0 ? audit.missingEmergencySeed.join(", ") : "none"}
+          {" · "}invalid primary phone:{" "}
+          {audit.invalidPrimaryPhone.length > 0 ? audit.invalidPrimaryPhone.join(", ") : "none"}
+          {" · "}invalid secondary phone:{" "}
+          {audit.invalidSecondaryPhone.length > 0 ? audit.invalidSecondaryPhone.join(", ") : "none"}.
         </p>
       )}
 

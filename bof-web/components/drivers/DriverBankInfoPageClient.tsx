@@ -4,7 +4,10 @@ import Link from "next/link";
 import { useMemo } from "react";
 import { BankInfoCard } from "@/components/drivers/BankInfoCard";
 import { useBofDemoData } from "@/lib/bof-demo-data-context";
-import { getDriverOperationalProfile } from "@/lib/driver-operational-profile";
+import {
+  auditDriverOperationalProfiles,
+  getDriverOperationalProfile,
+} from "@/lib/driver-operational-profile";
 
 export function DriverBankInfoPageClient({ driverId }: { driverId: string }) {
   const { data } = useBofDemoData();
@@ -12,6 +15,7 @@ export function DriverBankInfoPageClient({ driverId }: { driverId: string }) {
     () => getDriverOperationalProfile(data, driverId),
     [data, driverId]
   );
+  const audit = useMemo(() => auditDriverOperationalProfiles(data), [data]);
 
   if (!profile) {
     return (
@@ -48,6 +52,11 @@ export function DriverBankInfoPageClient({ driverId }: { driverId: string }) {
       {profile.hasMissingBank ? (
         <p className="bof-muted bof-small">Bank row is missing or incomplete for this driver.</p>
       ) : null}
+      {(audit.invalidBankRouting.includes(driverId) || audit.invalidBankLast4.includes(driverId)) && (
+        <p className="bof-muted bof-small">
+          Bank integrity check warning: routing/account format looks invalid for this driver.
+        </p>
+      )}
       <BankInfoCard
         data={{
           driverId: profile.driverId,
@@ -60,7 +69,7 @@ export function DriverBankInfoPageClient({ driverId }: { driverId: string }) {
           email: profile.email || "Not on file",
           bankName: profile.bankName || "Not on file",
           routingNumber: profile.bankRoutingNumber || "Not on file",
-          accountNumber: `••••••${(profile.bankAccountLast4 || "").padStart(4, "0")}`,
+          accountNumber: profile.bankAccountLast4 ? `••••••${profile.bankAccountLast4}` : "Not on file",
           accountType:
             profile.bankAccountType.toLowerCase().includes("sav")
               ? "Savings"

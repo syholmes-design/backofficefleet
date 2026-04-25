@@ -44,6 +44,19 @@ function str(v: unknown, fallback = ""): string {
   return typeof v === "string" ? v : fallback;
 }
 
+function normalizeDigits(v: string): string {
+  return v.replace(/\D/g, "");
+}
+
+function looksLikePhone(v: string): boolean {
+  const digits = normalizeDigits(v);
+  return digits.length >= 10 && digits.length <= 11;
+}
+
+function looksLikeRouting(v: string): boolean {
+  return /^\d{9}$/.test(normalizeDigits(v));
+}
+
 type MutableDriver = BofData["drivers"][number] & Record<string, unknown>;
 
 export function getDriverOperationalProfile(
@@ -143,12 +156,36 @@ export function auditDriverOperationalProfiles(data: BofData) {
   const missingPrimary = profiles.filter((p) => p.hasMissingEmergencyPrimary).map((p) => p.driverId);
   const missingSecondary = profiles.filter((p) => p.hasMissingEmergencySecondary).map((p) => p.driverId);
   const missingBank = profiles.filter((p) => p.hasMissingBank).map((p) => p.driverId);
+  const missingEmergencySeed = data.drivers
+    .filter((d) => !fallbackEmergencyById(d.id))
+    .map((d) => d.id);
+  const missingBankSeed = data.drivers
+    .filter((d) => !bankInfoByDriverId.get(d.id))
+    .map((d) => d.id);
+  const invalidPrimaryPhone = profiles
+    .filter((p) => p.primaryEmergencyPhone && !looksLikePhone(p.primaryEmergencyPhone))
+    .map((p) => p.driverId);
+  const invalidSecondaryPhone = profiles
+    .filter((p) => p.secondaryEmergencyPhone && !looksLikePhone(p.secondaryEmergencyPhone))
+    .map((p) => p.driverId);
+  const invalidBankRouting = profiles
+    .filter((p) => p.bankRoutingNumber && !looksLikeRouting(p.bankRoutingNumber))
+    .map((p) => p.driverId);
+  const invalidBankLast4 = profiles
+    .filter((p) => p.bankAccountLast4 && normalizeDigits(p.bankAccountLast4).length !== 4)
+    .map((p) => p.driverId);
   return {
     totalDrivers: data.drivers.length,
     profileCount: profiles.length,
     missingPrimary,
     missingSecondary,
     missingBank,
+    missingEmergencySeed,
+    missingBankSeed,
+    invalidPrimaryPhone,
+    invalidSecondaryPhone,
+    invalidBankRouting,
+    invalidBankLast4,
   };
 }
 

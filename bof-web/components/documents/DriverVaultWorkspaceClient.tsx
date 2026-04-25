@@ -12,6 +12,7 @@ import { BofWorkflowFormShortcuts } from "@/components/documents/BofWorkflowForm
 import { BofTemplateUsageSurface } from "@/components/documents/BofTemplateUsageSurface";
 import { mapDriverVaultCategoryToOwnership } from "@/lib/bof-vault-ownership-adapter";
 import { BofVaultReferencesPanel } from "@/components/documents/BofVaultReferencesPanel";
+import { getDriverOperationalProfile } from "@/lib/driver-operational-profile";
 
 function statusClass(status: string) {
   if (status === "valid") return "bof-status-pill bof-status-pill-ok";
@@ -56,6 +57,13 @@ export function DriverVaultWorkspaceClient() {
   const selectedDriver = useMemo(
     () => drivers.find((d) => d.driverId === selectedDriverId) ?? drivers[0],
     [drivers, selectedDriverId]
+  );
+  const operationalProfile = useMemo(
+    () =>
+      selectedDriver
+        ? getDriverOperationalProfile(data, selectedDriver.driverId)
+        : null,
+    [data, selectedDriver]
   );
   const activeCategory = (selectedCategory ?? "Driver Profile") as DriverVaultCategory;
   const activeWorkspace = selectedDriver?.categories[activeCategory];
@@ -129,6 +137,49 @@ export function DriverVaultWorkspaceClient() {
         }}
         title="Driver-linked workflow references"
       />
+      {operationalProfile ? (
+        <section className="bof-driver-vault-panel" style={{ marginTop: 12 }}>
+          <h2 className="bof-h2">Driver operational profile link integrity</h2>
+          <p className="bof-muted bof-small">
+            BOF uses driver ID keyed records for emergency/secondary contacts and bank information.
+          </p>
+          <div className="bof-driver-vault-form">
+            <label>
+              <span>Primary emergency contact</span>
+              <input value={operationalProfile.primaryEmergencyName || "Not on file"} readOnly />
+            </label>
+            <label>
+              <span>Secondary emergency contact</span>
+              <input value={operationalProfile.secondaryEmergencyName || "Not on file"} readOnly />
+            </label>
+            <label>
+              <span>Bank name</span>
+              <input value={operationalProfile.bankName || "Not on file"} readOnly />
+            </label>
+            <label>
+              <span>Routing / account</span>
+              <input
+                value={
+                  operationalProfile.bankRoutingNumber && operationalProfile.bankAccountLast4
+                    ? `${operationalProfile.bankRoutingNumber} / ${operationalProfile.bankAccountLast4}`
+                    : "Not on file"
+                }
+                readOnly
+              />
+            </label>
+          </div>
+          {(operationalProfile.hasMissingEmergencyPrimary ||
+            operationalProfile.hasMissingEmergencySecondary ||
+            operationalProfile.hasMissingBank) && (
+            <p className="bof-muted bof-small" style={{ marginTop: 8 }}>
+              Missing fields — primary emergency:{" "}
+              {operationalProfile.hasMissingEmergencyPrimary ? "yes" : "no"} · secondary emergency:{" "}
+              {operationalProfile.hasMissingEmergencySecondary ? "yes" : "no"} · bank:{" "}
+              {operationalProfile.hasMissingBank ? "yes" : "no"}.
+            </p>
+          )}
+        </section>
+      ) : null}
 
       <section className="bof-driver-vault-grid">
         <aside className="bof-driver-vault-panel">
