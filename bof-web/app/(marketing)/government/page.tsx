@@ -7,9 +7,8 @@ import {
   MarketingCtaPanel,
   MarketingFormShell,
   MarketingFunnelEntryRow,
-  MarketingHeroImagePanel,
+  MarketingGovernmentIntegratedHero,
   MarketingIconCardGrid,
-  MarketingPremiumHero,
   MarketingProcessSteps,
   MarketingSection,
   MarketingSectionHeader,
@@ -159,16 +158,18 @@ const PROCESS_STEPS = [
 export default function GovernmentPage() {
   return (
     <>
-      <MarketingPremiumHero
+      <MarketingGovernmentIntegratedHero
         titleId="bof-mkt-gov-hero-heading"
         sectionAriaLabelledBy="bof-mkt-gov-hero-heading"
-        heroLayout="photo"
         eyebrow="Government & regulated fleets · public accountability"
         title={<>Audit-Ready Fleet Operations With Enforced Compliance</>}
         subtitle="When taxpayer trust is on the line, BOF aligns day-to-day fleet operations with documentation, oversight, and risk mitigation—without replacing your procurement stack or telematics investments."
         support="The same premium enforcement posture BOF delivers to elite private fleets—expressed for agencies, authorities, and contractors who answer to the public."
         trustItems={HERO_TRUST}
         trustAriaLabel="Government program highlights"
+        imageSrc="/assets/images/hero-government-fleets.png"
+        imageAlt="Government and regulated fleet field and command operations at a glance"
+        imageCaption="Audit-ready posture: evidence packets, oversight queues, and traceable readiness—one band, not a separate product mock."
         ctas={
           <>
             <Link
@@ -181,13 +182,6 @@ export default function GovernmentPage() {
               Open Demo
             </Link>
           </>
-        }
-        visual={
-          <MarketingHeroImagePanel
-            windowTitle="Public-sector oversight console"
-            imagePath="/assets/images/hero-government-fleets.png"
-            caption="Audit-ready enforcement posture: evidence packets, oversight queues, and traceable readiness for regulated fleets."
-          />
         }
       />
 

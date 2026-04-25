@@ -2900,6 +2900,181 @@ body {
   padding-right: 1.5rem;
 }
 
+/* Government marketing — one integrated hero (copy + photo, no browser mockup) */
+.bof-mkt-gov-hero-integrated {
+  position: relative;
+  background: #070d18;
+  border-bottom: 1px solid rgba(100, 116, 139, 0.28);
+}
+
+.bof-mkt-gov-hero-integrated__grid {
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+  display: grid;
+  grid-template-columns: 1fr;
+  align-items: stretch;
+  min-height: 0;
+}
+
+.bof-mkt-gov-hero-integrated__copy {
+  min-width: 0;
+  order: 1;
+  padding: clamp(1.75rem, 4.5vw, 2.75rem) 0 clamp(1.5rem, 3vw, 2.25rem);
+  background: linear-gradient(150deg, #0a1628 0%, #0f172a 45%, #122032 100%);
+  border-bottom: 1px solid rgba(71, 85, 105, 0.4);
+  box-shadow: 0 24px 50px -28px rgba(0, 0, 0, 0.5);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.bof-mkt-gov-hero-integrated__eyebrow {
+  margin: 0 0 0.85rem;
+  font-size: 0.68rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  color: #5eead4;
+}
+
+.bof-mkt-gov-hero-integrated__title {
+  margin: 0 0 0.9rem;
+  font-size: clamp(1.65rem, 4.5vw, 2.65rem);
+  font-weight: 800;
+  line-height: 1.1;
+  letter-spacing: -0.03em;
+  color: #f8fafc;
+  max-width: 22ch;
+}
+
+.bof-mkt-gov-hero-integrated__sub {
+  margin: 0 0 0.7rem;
+  font-size: clamp(0.98rem, 2.1vw, 1.14rem);
+  line-height: 1.5;
+  color: #cbd5e1;
+  max-width: 50ch;
+}
+
+.bof-mkt-gov-hero-integrated__support {
+  margin: 0 0 1.35rem;
+  font-size: 0.9rem;
+  line-height: 1.55;
+  color: #94a3b8;
+  max-width: 50ch;
+}
+
+.bof-mkt-gov-hero-integrated__ctas {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem 0.9rem;
+  margin-bottom: 1.4rem;
+}
+
+.bof-mkt-gov-hero-integrated__trust {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1.2rem;
+}
+
+.bof-mkt-gov-hero-integrated__trust li {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-size: 0.74rem;
+  font-weight: 600;
+  color: #e2e8f0;
+  letter-spacing: 0.02em;
+  max-width: 22rem;
+  line-height: 1.35;
+}
+
+.bof-mkt-gov-hero-integrated__trust-mark {
+  width: 3px;
+  height: 0.95rem;
+  border-radius: 2px;
+  background: #14b8a6;
+  flex-shrink: 0;
+  align-self: flex-start;
+  margin-top: 0.2em;
+}
+
+.bof-mkt-gov-hero-integrated__visual {
+  order: 2;
+  position: relative;
+  min-width: 0;
+  min-height: 0;
+}
+
+.bof-mkt-gov-hero-integrated__image-wrap {
+  position: relative;
+  width: 100%;
+  min-height: min(48vw, 300px);
+  height: 100%;
+  overflow: hidden;
+  border-radius: 0 0 10px 10px;
+  background: #0f172a;
+}
+
+.bof-mkt-gov-hero-integrated__image {
+  object-fit: cover;
+  object-position: center 42%;
+}
+
+.bof-mkt-gov-hero-integrated__image-figcaption {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  margin: 0;
+  padding: 0.5rem 0.75rem 0.6rem;
+  font-size: 0.7rem;
+  line-height: 1.4;
+  color: #e2e8f0;
+  background: linear-gradient(0deg, rgba(15, 23, 42, 0.95) 0%, rgba(15, 23, 42, 0.45) 55%, transparent 100%);
+  max-width: none;
+}
+
+@media (min-width: 600px) {
+  .bof-mkt-gov-hero-integrated__visual,
+  .bof-mkt-gov-hero-integrated__image-wrap {
+    min-height: 340px;
+  }
+}
+
+@media (min-width: 900px) {
+  .bof-mkt-gov-hero-integrated__grid {
+    grid-template-columns: minmax(0, 1.02fr) minmax(0, 1.1fr);
+    min-height: min(560px, 82vh);
+  }
+
+  .bof-mkt-gov-hero-integrated__copy {
+    order: 0;
+    border-bottom: none;
+    padding: clamp(2.25rem, 3.2vw, 3.25rem) clamp(0.5rem, 1.2vw, 1rem) clamp(2.25rem, 3.2vw, 3.25rem) 0;
+    background: linear-gradient(118deg, #0a1929 0%, #0f172a 52%, #0d2137 100%);
+    box-shadow: 18px 0 50px -30px rgba(0, 0, 0, 0.55);
+  }
+
+  .bof-mkt-gov-hero-integrated__visual,
+  .bof-mkt-gov-hero-integrated__image-wrap {
+    order: 0;
+  }
+
+  .bof-mkt-gov-hero-integrated__visual {
+    min-height: 0;
+  }
+
+  .bof-mkt-gov-hero-integrated__image-wrap {
+    height: 100%;
+    min-height: 100%;
+    border-radius: 0;
+  }
+}
+
 /* Homepage hero — light band, navy type, teal accent (for-hire positioning) */
 .bof-mkt-hero-premium {
   background: #f1f5f9;
