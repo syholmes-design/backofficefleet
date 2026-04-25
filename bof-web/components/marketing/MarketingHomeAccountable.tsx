@@ -2,10 +2,8 @@ import Link from "next/link";
 import {
   MarketingCommandCenterPreview,
   MarketingCtaPanel,
-  MarketingGovernmentIntegratedHero,
-  MarketingHeroImagePanel,
+  MarketingHomeIntegratedHero,
   MarketingIconCardGrid,
-  MarketingPremiumHero,
   MarketingSection,
   MarketingSectionHeader,
 } from "@/components/marketing";
@@ -98,10 +96,11 @@ const STAKEHOLDER_PAIN = [
 export default function MarketingHomeAccountable() {
   return (
     <>
-      <MarketingGovernmentIntegratedHero
+      <MarketingHomeIntegratedHero
         titleId="bof-mkt-hero-heading"
         sectionAriaLabelledBy="bof-mkt-hero-heading"
         eyebrow="Back office, built for the driver, accountable to the fleet"
+        brand={<BofLogo variant="dark" className="bof-mkt-home-hero-logo" priority />}
         title={<>The Front Office Has to Be Built for Drivers to Win—Signal to Signal, Mile to Mile.</>}
         subtitle="If dispatch, customers, and proof are telling different stories, the line misses as a system—and your drivers feel it first. BOF is the connective layer that makes front-office decisions match the reality in the cab and on the yard."
         support="We are a road dog, not a watchdog. BOF rewards the pre-trip checks, the careful documentation, and the quiet professionalism that too often get skipped in reporting—and turns them into the proof you need for billing, settlement, and claims when it counts."
@@ -109,7 +108,6 @@ export default function MarketingHomeAccountable() {
         trustAriaLabel="BOF capability highlights"
         imageSrc="/assets/images/hero-landing-bof.png"
         imageAlt="BOF operational layer connecting management oversight, driver workflows, and customer communication"
-        imageCaption="One operational fabric: management oversight, driver workflows, and customer communication unified in a single command center."
         ctas={
           <>
             <Link href="/book-assessment" className="bof-mkt-btn-enterprise bof-mkt-btn-enterprise-primary">
