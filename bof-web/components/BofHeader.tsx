@@ -77,7 +77,7 @@ export function BofHeader() {
               </Link>
             )}
             <Link href="/book-assessment" className="bof-global-header-cta bof-global-header-cta--secondary">
-              {marketingOnlyHeader ? "Assess Your Business" : "Book Assessment"}
+              {marketingOnlyHeader ? "Assess Your Fleet" : "Book Assessment"}
             </Link>
           </div>
         </nav>

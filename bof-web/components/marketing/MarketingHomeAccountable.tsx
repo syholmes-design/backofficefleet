@@ -111,10 +111,10 @@ export default function MarketingHomeAccountable() {
         ctas={
           <>
             <Link href="/book-assessment" className="bof-mkt-btn-enterprise bof-mkt-btn-enterprise-primary">
-              Book Fleet Assessment
+              Take The Assessment
             </Link>
             <Link href="/dashboard" className="bof-mkt-btn-enterprise bof-mkt-btn-enterprise-secondary">
-              Open Demo
+              See The Demo
             </Link>
           </>
         }
@@ -236,10 +236,10 @@ export default function MarketingHomeAccountable() {
         lead="Book a fleet assessment. We walk the signal path—intake, dispatch, proof, settlement, and claims—and show what it looks like when those layers stop arguing with each other."
       >
         <Link href="/book-assessment" className="bof-mkt-btn-enterprise bof-mkt-btn-enterprise-primary">
-          Book Fleet Assessment
+          Take The Assessment
         </Link>
         <Link href="/dashboard" className="bof-mkt-btn-enterprise bof-mkt-btn-enterprise-secondary">
-          Open Demo
+          See The Demo
         </Link>
       </MarketingCtaPanel>
     </>

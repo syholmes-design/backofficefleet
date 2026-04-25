@@ -176,10 +176,10 @@ export default function PrivateFleetsPage() {
               href="/book-assessment"
               className="bof-mkt-btn-enterprise bof-mkt-btn-enterprise-primary"
             >
-              Book Fleet Assessment
+              Take The Assessment
             </Link>
             <Link href="/dashboard" className="bof-mkt-btn-enterprise bof-mkt-btn-enterprise-secondary">
-              Open Demo
+              See The Demo
             </Link>
           </>
         }
@@ -302,10 +302,10 @@ export default function PrivateFleetsPage() {
         lead="Book a private fleet assessment. We map branch variance, readiness gaps, and settlement pressure—then show how BOF would govern it in production."
       >
         <Link href="/book-assessment" className="bof-mkt-btn-enterprise bof-mkt-btn-enterprise-primary">
-          Book Fleet Assessment
+          Take The Assessment
         </Link>
         <Link href="/dashboard" className="bof-mkt-btn-enterprise bof-mkt-btn-enterprise-secondary">
-          Open Demo
+          See The Demo
         </Link>
       </MarketingCtaPanel>
     </>

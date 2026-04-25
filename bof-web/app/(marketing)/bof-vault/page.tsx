@@ -176,10 +176,10 @@ export default function BofVaultPage() {
               href="/book-assessment"
               className="bof-mkt-btn-enterprise bof-mkt-btn-enterprise-primary"
             >
-              Book Fleet Assessment
+              Take The Assessment
             </Link>
             <Link href="/documents" className="bof-mkt-btn-enterprise bof-mkt-btn-enterprise-secondary">
-              Explore document vault demo
+              See The Demo
             </Link>
           </>
         }
@@ -302,10 +302,10 @@ export default function BofVaultPage() {
         lead="Book a vault + command center assessment. We map upload chaos, verifier gaps, and integration debt—then show how BOF ties it together."
       >
         <Link href="/book-assessment" className="bof-mkt-btn-enterprise bof-mkt-btn-enterprise-primary">
-          Book Fleet Assessment
+          Take The Assessment
         </Link>
         <Link href="/drivers" className="bof-mkt-btn-enterprise bof-mkt-btn-enterprise-secondary">
-          See driver readiness in demo
+          See The Demo
         </Link>
       </MarketingCtaPanel>
     </>

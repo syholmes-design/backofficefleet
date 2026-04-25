@@ -173,10 +173,10 @@ export default function ForHireCarriersPage() {
               href="/book-assessment"
               className="bof-mkt-btn-enterprise bof-mkt-btn-enterprise-primary"
             >
-              Book Fleet Assessment
+              Take The Assessment
             </Link>
             <Link href="/dashboard" className="bof-mkt-btn-enterprise bof-mkt-btn-enterprise-secondary">
-              Open Demo
+              See The Demo
             </Link>
           </>
         }
@@ -306,10 +306,10 @@ export default function ForHireCarriersPage() {
         lead="Book a fleet assessment. We map dispatch risk, credential drift, and settlement pressure—then show how BOF would govern it in production."
       >
         <Link href="/book-assessment" className="bof-mkt-btn-enterprise bof-mkt-btn-enterprise-primary">
-          Book Fleet Assessment
+          Take The Assessment
         </Link>
         <Link href="/dashboard" className="bof-mkt-btn-enterprise bof-mkt-btn-enterprise-secondary">
-          Open Demo
+          See The Demo
         </Link>
       </MarketingCtaPanel>
     </>

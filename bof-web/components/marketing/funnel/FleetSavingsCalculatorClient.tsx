@@ -299,7 +299,7 @@ export function FleetSavingsCalculatorClient() {
               </ul>
               <div className="bof-mkt-funnel-actions bof-mkt-funnel-actions--stack">
                 <Link href="/book-assessment" className="bof-mkt-btn-enterprise bof-mkt-btn-enterprise-primary">
-                  Book fleet assessment
+                  Take The Assessment
                 </Link>
                 <Link href="/apply" className="bof-mkt-btn-enterprise bof-mkt-btn-enterprise-secondary">
                   Apply for qualification call

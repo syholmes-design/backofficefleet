@@ -176,10 +176,10 @@ export default function GovernmentPage() {
               href="/book-assessment"
               className="bof-mkt-btn-enterprise bof-mkt-btn-enterprise-primary"
             >
-              Book Fleet Assessment
+              Take The Assessment
             </Link>
             <Link href="/dashboard" className="bof-mkt-btn-enterprise bof-mkt-btn-enterprise-secondary">
-              Open Demo
+              See The Demo
             </Link>
           </>
         }
@@ -302,10 +302,10 @@ export default function GovernmentPage() {
         lead="Book a government fleet assessment. We map documentation gaps, contractor variance, and capital risk—then show how BOF would govern it under public scrutiny."
       >
         <Link href="/book-assessment" className="bof-mkt-btn-enterprise bof-mkt-btn-enterprise-primary">
-          Book Fleet Assessment
+          Take The Assessment
         </Link>
         <Link href="/dashboard" className="bof-mkt-btn-enterprise bof-mkt-btn-enterprise-secondary">
-          Open Demo
+          See The Demo
         </Link>
       </MarketingCtaPanel>
     </>
