@@ -7,6 +7,7 @@ import {
   MarketingCtaPanel,
   MarketingFormShell,
   MarketingFunnelEntryRow,
+  MarketingGovernmentIntegratedHero,
   MarketingHeroImagePanel,
   MarketingIconCardGrid,
   MarketingPremiumHero,
@@ -167,6 +168,7 @@ export default function BofVaultPage() {
         subtitle="Upload once, verify instantly, and maintain compliance across your entire fleet. BOF Vault connects directly to dispatch, settlements, and audit systems."
         support="Vault is the secure substrate beneath BOF enforcement: it feeds dispatch gates, settlement intelligence, and audit defense while command center stays operator's home screen."
         trustItems={HERO_TRUST}
+        trustAriaLabel="BOF Vault capability highlights"
         imageSrc="/assets/images/hero-bof-vault.png"
         imageAlt="Secure BOF Vault document management and verification system"
         imageCaption="Enterprise-grade credential vault with real-time verification, audit trails, and integration with dispatch and settlement systems."

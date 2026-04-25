@@ -1,14 +1,15 @@
 import { EmergencyContactCard } from "@/components/emergency-contacts/EmergencyContactCard";
 import { getDriverOperationalProfile } from "@/lib/driver-operational-profile";
 import { useBofDemoData } from "@/lib/bof-demo-data-context";
-import { notFound } from "next/navigation";
 import Link from "next/link";
 
 export const metadata = {
   title: "Emergency Contact | BOF",
 };
 
-export default function EmergencyContactPage({ params }: { params: { driverId: string } }) {
+export default async function EmergencyContactPage({ params }: { params: Promise<{ driverId: string }> }) {
+  const { driverId } = await params;
+  
   return (
     <div className="bof-page">
       <nav className="bof-breadcrumb" aria-label="Breadcrumb">
@@ -22,11 +23,11 @@ export default function EmergencyContactPage({ params }: { params: { driverId: s
         <div>
           <h1 className="bof-title bof-title-tight">Emergency Contact</h1>
           <p className="bof-muted bof-small">
-            Emergency contact information for driver {params.driverId}.
+            Emergency contact information for driver {driverId}.
           </p>
         </div>
       </header>
-      <EmergencyContactPageClient driverId={params.driverId} />
+      <EmergencyContactPageClient driverId={driverId} />
     </div>
   );
 }
