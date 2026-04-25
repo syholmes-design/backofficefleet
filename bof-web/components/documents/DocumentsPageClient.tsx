@@ -53,6 +53,11 @@ export function DocumentsPageClient() {
         for category-level uploads, shared autofill fields, and generated BOF preview output.
       </p>
       <p className="bof-muted bof-small bof-oper-sublead">
+        Vault view order: <strong>Vault-owned driver core</strong> first, then{" "}
+        <strong>dispatch references</strong>, then <strong>workflow references</strong> (load / billing /
+        claims owned).
+      </p>
+      <p className="bof-muted bof-small bof-oper-sublead">
         Need unified cross-pack operations forms? Open{" "}
         <Link href="/documents/template-packs" className="bof-link-secondary">
           BOF Template Packs Workspace

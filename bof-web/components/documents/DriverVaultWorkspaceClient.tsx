@@ -10,6 +10,7 @@ import {
 import { useDriverVaultWorkspaceStore } from "@/lib/stores/driver-vault-workspace-store";
 import { BofWorkflowFormShortcuts } from "@/components/documents/BofWorkflowFormShortcuts";
 import { BofTemplateUsageSurface } from "@/components/documents/BofTemplateUsageSurface";
+import { mapDriverVaultCategoryToOwnership } from "@/lib/bof-vault-ownership-adapter";
 
 function statusClass(status: string) {
   if (status === "valid") return "bof-status-pill bof-status-pill-ok";
@@ -142,6 +143,7 @@ export function DriverVaultWorkspaceClient() {
             <div className="bof-driver-vault-categories">
               {DRIVER_VAULT_CATEGORIES.map((category) => {
                 const cat = selectedDriver.categories[category];
+                const ownership = mapDriverVaultCategoryToOwnership(category);
                 return (
                   <button
                     key={category}
@@ -150,6 +152,7 @@ export function DriverVaultWorkspaceClient() {
                     onClick={() => selectCategory(category)}
                   >
                     <span>{category}</span>
+                    <span className="bof-muted bof-small">{ownership.ownershipLabel}</span>
                     <span className={statusClass(cat.documentStatus)}>
                       {cat.documentStatus.replace(/_/g, " ")}
                     </span>

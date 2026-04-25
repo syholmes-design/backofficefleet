@@ -190,6 +190,7 @@ export function DocumentVaultClient({
                 <th scope="col" className="bof-vault-group-col">
                   Group
                 </th>
+                <th scope="col">Ownership</th>
                 <th scope="col">Status</th>
                 <th scope="col">Signal</th>
                 <th scope="col">Expiration</th>
@@ -229,6 +230,9 @@ export function DocumentVaultClient({
                       >
                         {r.vaultGroup}
                       </span>
+                    </td>
+                    <td>
+                      <span className="bof-muted bof-small">{r.vaultOwnershipLabel}</span>
                     </td>
                     <td>
                       <span className={statusBadgeClass(r.status)}>{r.status}</span>

@@ -5,6 +5,10 @@ import {
   type DriverDocType,
 } from "@/lib/driver-queries";
 import { normalizeDocStatus } from "@/lib/document-ui";
+import {
+  inferDriverVaultCategoryFromDocumentType,
+  mapDriverVaultCategoryToOwnership,
+} from "@/lib/bof-vault-ownership-adapter";
 
 export type VaultDocumentRow = DocumentRow & {
   driverName: string;
@@ -14,6 +18,9 @@ export type VaultDocumentRow = DocumentRow & {
   blocking: boolean;
   /** Core seven, primary extensions, or secondary / other (vault scanability) */
   vaultGroup: "Core" | "Primary" | "Secondary" | "Other";
+  vaultOwnershipLabel: string;
+  vaultPrimaryOwner: "vault" | "dispatch" | "billing" | "claims" | "load";
+  vaultSortOrder: number;
 };
 
 function vaultGroupLabel(doc: DocumentRow): VaultDocumentRow["vaultGroup"] {
@@ -62,11 +69,13 @@ function complianceFlagsForDoc(
 export function buildVaultRows(data: BofData): VaultDocumentRow[] {
   const nameById = new Map(data.drivers.map((d) => [d.id, d.name]));
 
-  return data.documents.map((raw) => {
+  const rows = data.documents.map((raw) => {
     const doc = raw as DocumentRow & { blocksPayment?: boolean };
     const flags = complianceFlagsForDoc(data, doc.driverId, doc.type);
     const statusNorm = normalizeDocStatus(doc.status);
     const explicitBlock = doc.blocksPayment === true;
+    const category = inferDriverVaultCategoryFromDocumentType(doc.type);
+    const ownership = mapDriverVaultCategoryToOwnership(category);
 
     return {
       ...doc,
@@ -74,6 +83,20 @@ export function buildVaultRows(data: BofData): VaultDocumentRow[] {
       atRisk: flags.atRisk || statusNorm === "AT RISK" || statusNorm === "AT_RISK",
       blocking: flags.blocking || explicitBlock,
       vaultGroup: vaultGroupLabel(doc),
+      vaultOwnershipLabel: ownership.ownershipLabel,
+      vaultPrimaryOwner: ownership.vaultPrimaryOwner,
+      vaultSortOrder: ownership.vaultSortOrder,
     };
+  });
+
+  return rows.sort((a, b) => {
+    const ownerOrder = (x: VaultDocumentRow) =>
+      x.vaultPrimaryOwner === "vault" ? 0 : x.vaultPrimaryOwner === "dispatch" ? 1 : 2;
+    const ao = ownerOrder(a);
+    const bo = ownerOrder(b);
+    if (ao !== bo) return ao - bo;
+    if (a.vaultSortOrder !== b.vaultSortOrder) return a.vaultSortOrder - b.vaultSortOrder;
+    if (a.driverId !== b.driverId) return a.driverId.localeCompare(b.driverId);
+    return a.type.localeCompare(b.type);
   });
 }
