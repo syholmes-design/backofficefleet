@@ -31,7 +31,7 @@ export type DriverOperationalProfile = {
   bankStatus: string;
   taxClassification: string;
   tinType: string;
-+  hasMissingEmergencyPrimary: boolean;
+  hasMissingEmergencyPrimary: boolean;
   hasMissingEmergencySecondary: boolean;
   hasMissingBank: boolean;
 };

@@ -8,7 +8,7 @@ export function EmergencyContactCard({ driver }: { driver: DriverOperationalProf
     <article className="ec-card-shell" aria-label={`Emergency contact card for ${driver.fullName}`}>
       <div className="ec-top-bar">
         <h2>Emergency Contact Card</h2>
-        <span className="ec-driver-badge">{driver.id}</span>
+        <span className="ec-driver-badge">{driver.driverId}</span>
       </div>
 
       <section className="ec-driver-section">

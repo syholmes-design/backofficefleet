@@ -89,6 +89,13 @@ export function SourceOfTruthApp() {
       emergencyContactName: String(selectedDriver.emergencyContactName ?? ""),
       emergencyContactRelationship: String(selectedDriver.emergencyContactRelationship ?? ""),
       emergencyContactPhone: String(selectedDriver.emergencyContactPhone ?? ""),
+      secondaryContactName: String(d.secondaryContactName ?? ""),
+      secondaryContactRelationship: String(d.secondaryContactRelationship ?? ""),
+      secondaryContactPhone: String(d.secondaryContactPhone ?? ""),
+      bankName: String(d.bankName ?? ""),
+      bankAccountType: String(d.bankAccountType ?? ""),
+      bankRoutingNumber: String(d.bankRoutingNumber ?? ""),
+      bankAccountLast4: String(d.bankAccountLast4 ?? ""),
     });
   }, [selectedDriver]);
 
@@ -144,6 +151,13 @@ export function SourceOfTruthApp() {
       emergencyContactName: driverDraft.emergencyContactName || undefined,
       emergencyContactRelationship: driverDraft.emergencyContactRelationship || undefined,
       emergencyContactPhone: driverDraft.emergencyContactPhone || undefined,
+      secondaryContactName: driverDraft.secondaryContactName || undefined,
+      secondaryContactRelationship: driverDraft.secondaryContactRelationship || undefined,
+      secondaryContactPhone: driverDraft.secondaryContactPhone || undefined,
+      bankName: driverDraft.bankName || undefined,
+      bankAccountType: driverDraft.bankAccountType || undefined,
+      bankRoutingNumber: driverDraft.bankRoutingNumber || undefined,
+      bankAccountLast4: driverDraft.bankAccountLast4 || undefined,
     };
     if (driverDraft.dateOfBirth.trim()) patch.dateOfBirth = driverDraft.dateOfBirth.trim();
     if (driverDraft.complianceStatus.trim()) patch.complianceStatus = driverDraft.complianceStatus.trim();
@@ -439,6 +453,79 @@ export function SourceOfTruthApp() {
                     value={driverDraft.emergencyContactPhone}
                     onChange={(e) =>
                       setDriverDraft((x) => ({ ...x, emergencyContactPhone: e.target.value }))
+                    }
+                  />
+                </div>
+                <div className="bof-sot-field">
+                  <label htmlFor="sot-scn">Secondary contact name</label>
+                  <input
+                    id="sot-scn"
+                    value={driverDraft.secondaryContactName}
+                    onChange={(e) =>
+                      setDriverDraft((x) => ({ ...x, secondaryContactName: e.target.value }))
+                    }
+                  />
+                </div>
+                <div className="bof-sot-field">
+                  <label htmlFor="sot-scr">Secondary relationship</label>
+                  <input
+                    id="sot-scr"
+                    value={driverDraft.secondaryContactRelationship}
+                    onChange={(e) =>
+                      setDriverDraft((x) => ({
+                        ...x,
+                        secondaryContactRelationship: e.target.value,
+                      }))
+                    }
+                  />
+                </div>
+                <div className="bof-sot-field">
+                  <label htmlFor="sot-scp">Secondary phone</label>
+                  <input
+                    id="sot-scp"
+                    value={driverDraft.secondaryContactPhone}
+                    onChange={(e) =>
+                      setDriverDraft((x) => ({ ...x, secondaryContactPhone: e.target.value }))
+                    }
+                  />
+                </div>
+                <div className="bof-sot-field">
+                  <label htmlFor="sot-bank-name">Bank name</label>
+                  <input
+                    id="sot-bank-name"
+                    value={driverDraft.bankName}
+                    onChange={(e) =>
+                      setDriverDraft((x) => ({ ...x, bankName: e.target.value }))
+                    }
+                  />
+                </div>
+                <div className="bof-sot-field">
+                  <label htmlFor="sot-bank-type">Bank account type</label>
+                  <input
+                    id="sot-bank-type"
+                    value={driverDraft.bankAccountType}
+                    onChange={(e) =>
+                      setDriverDraft((x) => ({ ...x, bankAccountType: e.target.value }))
+                    }
+                  />
+                </div>
+                <div className="bof-sot-field">
+                  <label htmlFor="sot-bank-routing">Bank routing number</label>
+                  <input
+                    id="sot-bank-routing"
+                    value={driverDraft.bankRoutingNumber}
+                    onChange={(e) =>
+                      setDriverDraft((x) => ({ ...x, bankRoutingNumber: e.target.value }))
+                    }
+                  />
+                </div>
+                <div className="bof-sot-field">
+                  <label htmlFor="sot-bank-last4">Bank account last 4</label>
+                  <input
+                    id="sot-bank-last4"
+                    value={driverDraft.bankAccountLast4}
+                    onChange={(e) =>
+                      setDriverDraft((x) => ({ ...x, bankAccountLast4: e.target.value }))
                     }
                   />
                 </div>
