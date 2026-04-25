@@ -36,8 +36,8 @@ export function BofIntakeFormPrimaryPanel({ entityId, compact }: Props) {
           </h2>
           <p className="bof-intake-form-primary-lead">
             {compact
-              ? "BOF document viewer: edit the commercial intake, then generate rate confirmation and trip schedule from the same load context."
-              : "The primary BOF load intake is the load tender. Open it here, write into the fields, save a draft, and generate a final. What you capture flows to contract clarity, customer expectation (rate con), and lane timing (trip schedule) — then dispatch readiness, proof, billing, and claims work off the same load story."}
+              ? "BOF document viewer: edit the commercial intake, then generate rate confirmation and trip schedule from the same intake context before load creation."
+              : "The primary BOF load intake is the load tender. Open it here, write into the fields, save a draft, and generate a final. What you capture flows to contract clarity, customer expectation (rate con), and lane timing (trip schedule) — then dispatch readiness, proof, billing, and claims inherit this intake story downstream."}
           </p>
           <ol className="bof-intake-form-primary-steps" aria-label="What happens next in BOF">
             <li>Contract / tender baseline and shipper terms</li>

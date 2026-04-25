@@ -10,10 +10,10 @@ import type { IntakeWizardState, LoadPacket } from "@/lib/load-requirements-inta
 import { LoadIntakeStep4PacketReview } from "@/components/load-intake/LoadIntakeStep4PacketReview";
 import { LoadIntakeAddressCombo } from "@/components/load-intake/LoadIntakeAddressCombo";
 import { useBofDemoData } from "@/lib/bof-demo-data-context";
-import { DEFAULT_WORKFLOW_LOAD_ID } from "@/lib/bof-defaults";
 import { BofIntakeFormPrimaryPanel } from "@/components/documents/BofIntakeFormPrimaryPanel";
 import { BofWorkflowFormShortcuts } from "@/components/documents/BofWorkflowFormShortcuts";
 import { BofTemplateUsageSurface } from "@/components/documents/BofTemplateUsageSurface";
+import { toBofIntakeEntityId } from "@/lib/bof-intake-entity";
 import {
   applyFacilityMatch,
   buildLoadIntakeIntelligence,
@@ -167,9 +167,9 @@ const STEPS = [
 
 export function LoadRequirementsWizard() {
   const { data } = useBofDemoData();
-  const formEntityId = data.loads[0]?.id ?? DEFAULT_WORKFLOW_LOAD_ID;
   const [step, setStep] = useState(1);
   const [state, setState] = useState<IntakeWizardState>(() => createInitialState());
+  const formEntityId = toBofIntakeEntityId(state.loadRequirement.load_requirement_id);
 
   const intelligence = useMemo(() => buildLoadIntakeIntelligence(data), [data]);
   const placesSessionToken = useMemo(() => {

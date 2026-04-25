@@ -51,6 +51,7 @@ export type BofTemplateUsageSurface =
   | "vault_documents";
 
 export type BofRequiredEntityKey =
+  | "intakeId"
   | "loadId"
   | "driverId"
   | "facilityId"
@@ -204,7 +205,7 @@ export const BOF_TEMPLATE_PACKS: BofTemplatePack[] = [
         primaryModule: "intake",
         secondaryModules: ["dispatch", "billing"],
         primarySurface: "load_intake",
-        requiredEntityKeys: ["loadId"],
+        requiredEntityKeys: ["intakeId"],
         appearsInIntake: true,
         appearsInDispatch: true,
         appearsInFieldOps: false,
@@ -219,7 +220,7 @@ export const BOF_TEMPLATE_PACKS: BofTemplatePack[] = [
         primaryModule: "intake",
         secondaryModules: ["billing", "customer"],
         primarySurface: "load_intake",
-        requiredEntityKeys: ["loadId", "customerId"],
+        requiredEntityKeys: ["intakeId"],
         appearsInIntake: true,
         appearsInDispatch: true,
         appearsInFieldOps: false,
@@ -234,7 +235,7 @@ export const BOF_TEMPLATE_PACKS: BofTemplatePack[] = [
         primaryModule: "intake",
         secondaryModules: ["dispatch", "field_ops"],
         primarySurface: "load_intake",
-        requiredEntityKeys: ["loadId", "facilityId"],
+        requiredEntityKeys: ["intakeId"],
         appearsInIntake: true,
         appearsInDispatch: true,
         appearsInFieldOps: true,
@@ -249,7 +250,7 @@ export const BOF_TEMPLATE_PACKS: BofTemplatePack[] = [
         primaryModule: "intake",
         secondaryModules: ["dispatch"],
         primarySurface: "load_intake",
-        requiredEntityKeys: ["loadId"],
+        requiredEntityKeys: ["intakeId"],
         appearsInIntake: true,
         appearsInDispatch: true,
         appearsInFieldOps: false,
@@ -264,7 +265,7 @@ export const BOF_TEMPLATE_PACKS: BofTemplatePack[] = [
         primaryModule: "intake",
         secondaryModules: ["field_ops", "dispatch"],
         primarySurface: "load_intake",
-        requiredEntityKeys: ["loadId", "facilityId"],
+        requiredEntityKeys: ["intakeId"],
         appearsInIntake: true,
         appearsInDispatch: true,
         appearsInFieldOps: true,
@@ -279,7 +280,7 @@ export const BOF_TEMPLATE_PACKS: BofTemplatePack[] = [
         primaryModule: "customer",
         secondaryModules: ["intake", "billing"],
         primarySurface: "customer_setup",
-        requiredEntityKeys: ["customerId"],
+        requiredEntityKeys: ["intakeId"],
         appearsInIntake: true,
         appearsInDispatch: false,
         appearsInFieldOps: false,
@@ -294,7 +295,7 @@ export const BOF_TEMPLATE_PACKS: BofTemplatePack[] = [
         primaryModule: "intake",
         secondaryModules: ["customer", "dispatch"],
         primarySurface: "load_intake",
-        requiredEntityKeys: ["loadId", "customerId"],
+        requiredEntityKeys: ["intakeId"],
         appearsInIntake: true,
         appearsInDispatch: true,
         appearsInFieldOps: false,

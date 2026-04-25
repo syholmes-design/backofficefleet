@@ -39,6 +39,7 @@ export type TemplateWorkflowRole =
   | "optional_reference";
 
 export type ResolvedTemplateEntityContext = {
+  intakeId: string | null;
   loadId: string | null;
   driverId: string | null;
   settlementId: string | null;
@@ -81,6 +82,7 @@ function resolveLoadScopedContext(
   if (!load) {
     missing.push("No load row for this entityId in BOF demo data");
     return {
+      intakeId: null,
       loadId: null,
       driverId: null,
       settlementId: null,
@@ -112,6 +114,7 @@ function resolveLoadScopedContext(
   if (facilityId) present.push(`Facility ${facilityId}`);
 
   return {
+    intakeId: null,
     loadId: load.id,
     driverId: load.driverId ?? null,
     settlementId: null,
@@ -127,13 +130,39 @@ function resolveLoadScopedContext(
   };
 }
 
+function resolveIntakeScopedContext(entityId: string): ResolvedTemplateEntityContext {
+  const present: string[] = [];
+  const missing: string[] = [];
+  const intakeId = entityId.startsWith("intake:") ? entityId : `intake:${entityId}`;
+  present.push(`Intake ${intakeId.replace(/^intake:/, "")}`);
+  return {
+    intakeId,
+    loadId: null,
+    driverId: null,
+    settlementId: null,
+    claimId: null,
+    customerId: null,
+    facilityId: null,
+    billingPacketId: null,
+    linkedLoadIds: [],
+    settlementLoadLinkage: "not_applicable",
+    settlementLinkageNote: null,
+    missingContext: missing,
+    presentContext: present,
+  };
+}
+
 export function resolveTemplateEntityContext(
   data: BofData,
   context: TemplateUsageSurfaceContext,
   entityId: string,
   linkedLoadIdsFromParent?: string[]
 ): ResolvedTemplateEntityContext {
-  if (context === "dispatch_load" || context === "claims_insurance" || context === "load_intake") {
+  if (context === "load_intake") {
+    return resolveIntakeScopedContext(entityId);
+  }
+
+  if (context === "dispatch_load" || context === "claims_insurance") {
     return resolveLoadScopedContext(data, entityId, context);
   }
 
@@ -144,6 +173,7 @@ export function resolveTemplateEntityContext(
     if (drv) present.push(`Driver ${drv.id}`);
     else missing.push("No driver row for this entityId in BOF demo data");
     return {
+      intakeId: null,
       loadId: null,
       driverId: drv?.id ?? null,
       settlementId: null,
@@ -216,6 +246,7 @@ export function resolveTemplateEntityContext(
   if (holdLine) present.push("At least one driver load shows proof blockers (payroll posture)");
 
   return {
+    intakeId: null,
     loadId: linkedLoadIds[0] ?? null,
     driverId,
     settlementId,
@@ -276,6 +307,7 @@ function contextValueForKey(
   key: BofRequiredEntityKey,
   resolved: ResolvedTemplateEntityContext
 ): string | null {
+  if (key === "intakeId") return resolved.intakeId;
   if (key === "loadId") return resolved.loadId;
   if (key === "driverId") return resolved.driverId;
   if (key === "facilityId") return resolved.facilityId;

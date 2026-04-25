@@ -5,11 +5,10 @@ import { useMemo, useState } from "react";
 import type { IntakeFilterTab, IntakeRecord } from "@/lib/intake-engine-types";
 import { intakeTriggerSummary } from "@/lib/intake-engine-triggers";
 import { intakeKpis, useIntakeEngineStore } from "@/lib/stores/intake-engine-store";
-import { useBofDemoData } from "@/lib/bof-demo-data-context";
-import { DEFAULT_WORKFLOW_LOAD_ID } from "@/lib/bof-defaults";
 import { BofIntakeFormPrimaryPanel } from "@/components/documents/BofIntakeFormPrimaryPanel";
 import { BofWorkflowFormShortcuts } from "@/components/documents/BofWorkflowFormShortcuts";
 import { BofTemplateUsageSurface } from "@/components/documents/BofTemplateUsageSurface";
+import { toBofIntakeEntityId } from "@/lib/bof-intake-entity";
 
 const TABS: { id: IntakeFilterTab; label: string }[] = [
   { id: "all", label: "All" },
@@ -76,12 +75,11 @@ function statusPillClass(status: IntakeRecord["status"]): string {
 }
 
 export function IntakeEngineInboxClient() {
-  const { data } = useBofDemoData();
-  const formEntityId = data.loads[0]?.id ?? DEFAULT_WORKFLOW_LOAD_ID;
   const intakes = useIntakeEngineStore((s) => s.intakes);
   const [tab, setTab] = useState<IntakeFilterTab>("all");
   const kpis = useMemo(() => intakeKpis(intakes), [intakes]);
   const rows = useMemo(() => filterIntakes(tab, intakes), [tab, intakes]);
+  const intakeEntityId = toBofIntakeEntityId(rows[0]?.intake_id ?? "IN-INTAKE-INBOX");
 
   return (
     <div className="bof-page bof-intake-engine">
@@ -103,17 +101,17 @@ export function IntakeEngineInboxClient() {
         </div>
       </header>
 
-      <BofIntakeFormPrimaryPanel entityId={formEntityId} />
+      <BofIntakeFormPrimaryPanel entityId={intakeEntityId} />
       <BofWorkflowFormShortcuts
         context="intake"
-        entityId={formEntityId}
+        entityId={intakeEntityId}
         title="From this screen — open BOF forms & packets"
       />
       <BofTemplateUsageSurface
         context="load_intake"
-        entityId={formEntityId}
+        entityId={intakeEntityId}
         title="BOF Intake Template Mapping"
-        subtitle="Registry-driven intake forms and downstream handoff docs for this load intake context."
+        subtitle="Registry-driven intake forms and downstream handoff docs for this intake-owned context."
       />
 
       <section className="bof-intake-engine-kpis" aria-label="Intake summary">
