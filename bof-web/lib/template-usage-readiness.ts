@@ -16,6 +16,19 @@ import {
 
 export type TemplateUsageSurfaceContext = BofTemplateUsageSurface;
 
+export type BofIntakeSurfaceContextPayload = {
+  intakeId: string;
+  customerId?: string;
+  customerLabel?: string;
+  facilityId?: string;
+  facilityLabel?: string;
+  destinationFacilityId?: string;
+  destinationFacilityLabel?: string;
+  routeMemoryKey?: string;
+  appointmentRequired?: boolean;
+  contractSelection?: string;
+};
+
 export type SettlementLoadLinkage =
   | "not_applicable"
   | "none"
@@ -47,6 +60,10 @@ export type ResolvedTemplateEntityContext = {
   customerId: string | null;
   facilityId: string | null;
   billingPacketId: string | null;
+  routeMemoryKey: string | null;
+  appointmentRequired: boolean | null;
+  destinationFacilityId: string | null;
+  contractSelection: string | null;
   linkedLoadIds: string[];
   settlementLoadLinkage: SettlementLoadLinkage;
   settlementLinkageNote: string | null;
@@ -90,6 +107,10 @@ function resolveLoadScopedContext(
       customerId: null,
       facilityId: null,
       billingPacketId: null,
+      routeMemoryKey: null,
+      appointmentRequired: null,
+      destinationFacilityId: null,
+      contractSelection: null,
       linkedLoadIds: [],
       settlementLoadLinkage: "not_applicable",
       settlementLinkageNote: null,
@@ -122,6 +143,10 @@ function resolveLoadScopedContext(
     customerId,
     facilityId,
     billingPacketId: context === "settlement_billing" ? entityId : null,
+    routeMemoryKey: null,
+    appointmentRequired: null,
+    destinationFacilityId: null,
+    contractSelection: null,
     linkedLoadIds: [load.id],
     settlementLoadLinkage: "not_applicable",
     settlementLinkageNote: null,
@@ -130,20 +155,45 @@ function resolveLoadScopedContext(
   };
 }
 
-function resolveIntakeScopedContext(entityId: string): ResolvedTemplateEntityContext {
+function resolveIntakeScopedContext(
+  entityId: string,
+  intakePayload?: BofIntakeSurfaceContextPayload
+): ResolvedTemplateEntityContext {
   const present: string[] = [];
   const missing: string[] = [];
-  const intakeId = entityId.startsWith("intake:") ? entityId : `intake:${entityId}`;
+  const intakeId = intakePayload?.intakeId || (entityId.startsWith("intake:") ? entityId : `intake:${entityId}`);
   present.push(`Intake ${intakeId.replace(/^intake:/, "")}`);
+  if (intakePayload?.customerId) present.push(`Customer ${intakePayload.customerLabel ?? intakePayload.customerId}`);
+  else missing.push("Waiting on customer setup");
+  if (intakePayload?.facilityId) present.push(`Facility ${intakePayload.facilityLabel ?? intakePayload.facilityId}`);
+  else missing.push("Waiting on facility details");
+  if (intakePayload?.destinationFacilityId) {
+    present.push(`Destination ${intakePayload.destinationFacilityLabel ?? intakePayload.destinationFacilityId}`);
+  } else {
+    missing.push("Destination facility missing");
+  }
+  if (intakePayload?.routeMemoryKey) present.push("Route memory applied");
+  if (typeof intakePayload?.appointmentRequired === "boolean") {
+    present.push(
+      intakePayload.appointmentRequired ? "Appointment requirement set" : "No appointment required"
+    );
+  } else {
+    missing.push("Appointment requirement not set");
+  }
+  if (intakePayload?.contractSelection) present.push("Contract profile selected");
   return {
     intakeId,
     loadId: null,
     driverId: null,
     settlementId: null,
     claimId: null,
-    customerId: null,
-    facilityId: null,
+    customerId: intakePayload?.customerId ?? null,
+    facilityId: intakePayload?.facilityId ?? null,
     billingPacketId: null,
+    routeMemoryKey: intakePayload?.routeMemoryKey ?? null,
+    appointmentRequired: intakePayload?.appointmentRequired ?? null,
+    destinationFacilityId: intakePayload?.destinationFacilityId ?? null,
+    contractSelection: intakePayload?.contractSelection ?? null,
     linkedLoadIds: [],
     settlementLoadLinkage: "not_applicable",
     settlementLinkageNote: null,
@@ -156,10 +206,11 @@ export function resolveTemplateEntityContext(
   data: BofData,
   context: TemplateUsageSurfaceContext,
   entityId: string,
-  linkedLoadIdsFromParent?: string[]
+  linkedLoadIdsFromParent?: string[],
+  intakePayload?: BofIntakeSurfaceContextPayload
 ): ResolvedTemplateEntityContext {
   if (context === "load_intake") {
-    return resolveIntakeScopedContext(entityId);
+    return resolveIntakeScopedContext(entityId, intakePayload);
   }
 
   if (context === "dispatch_load" || context === "claims_insurance") {
@@ -181,6 +232,10 @@ export function resolveTemplateEntityContext(
       customerId: null,
       facilityId: null,
       billingPacketId: null,
+      routeMemoryKey: null,
+      appointmentRequired: null,
+      destinationFacilityId: null,
+      contractSelection: null,
       linkedLoadIds: [],
       settlementLoadLinkage: "not_applicable",
       settlementLinkageNote: null,
@@ -254,6 +309,10 @@ export function resolveTemplateEntityContext(
     customerId,
     facilityId,
     billingPacketId: settlementId,
+    routeMemoryKey: null,
+    appointmentRequired: null,
+    destinationFacilityId: null,
+    contractSelection: null,
     linkedLoadIds,
     settlementLoadLinkage,
     settlementLinkageNote,
@@ -313,6 +372,11 @@ function contextValueForKey(
   if (key === "facilityId") return resolved.facilityId;
   if (key === "claimId") return resolved.claimId;
   if (key === "billingPacketId") return resolved.billingPacketId;
+  if (key === "routeMemoryKey") return resolved.routeMemoryKey;
+  if (key === "appointmentRequired")
+    return resolved.appointmentRequired === null ? null : String(resolved.appointmentRequired);
+  if (key === "destinationFacility") return resolved.destinationFacilityId;
+  if (key === "contractSelection") return resolved.contractSelection;
   if (key === "customerId") return resolved.customerId;
   return resolved.settlementId;
 }
@@ -324,7 +388,18 @@ function rowMissingForTemplate(
 ): string[] {
   const out = [...resolved.missingContext];
   for (const key of template.requiredEntityKeys) {
-    if (!contextValueForKey(key, resolved)) out.push(`Missing required ${key}`);
+    if (!contextValueForKey(key, resolved)) {
+      if (context === "load_intake" && key === "customerId") out.push("Waiting on customer setup");
+      else if (context === "load_intake" && key === "facilityId") out.push("Waiting on facility details");
+      else if (context === "load_intake" && key === "routeMemoryKey") out.push("Route memory not selected");
+      else if (context === "load_intake" && key === "appointmentRequired")
+        out.push("Appointment requirement not set");
+      else if (context === "load_intake" && key === "destinationFacility")
+        out.push("Destination facility missing");
+      else if (context === "load_intake" && key === "contractSelection")
+        out.push("Contract profile not selected");
+      else out.push(`Missing required ${key}`);
+    }
   }
   if (
     context === "settlement_billing" &&
@@ -436,9 +511,10 @@ export function buildRfidReadinessSummaryForSurface(
   data: BofData,
   context: TemplateUsageSurfaceContext,
   entityId: string,
-  linkedLoadIds?: string[]
+  linkedLoadIds?: string[],
+  intakePayload?: BofIntakeSurfaceContextPayload
 ): BofLoadRfidReadiness | null {
-  const resolved = resolveTemplateEntityContext(data, context, entityId, linkedLoadIds);
+  const resolved = resolveTemplateEntityContext(data, context, entityId, linkedLoadIds, intakePayload);
   return resolveRfidForSurface(data, context, resolved);
 }
 
@@ -446,9 +522,10 @@ export function resolveTemplateSurfaceBundle(
   data: BofData,
   context: TemplateUsageSurfaceContext,
   entityId: string,
-  linkedLoadIds?: string[]
+  linkedLoadIds?: string[],
+  intakePayload?: BofIntakeSurfaceContextPayload
 ): { resolved: ResolvedTemplateEntityContext; rfid: BofLoadRfidReadiness | null } {
-  const resolved = resolveTemplateEntityContext(data, context, entityId, linkedLoadIds);
+  const resolved = resolveTemplateEntityContext(data, context, entityId, linkedLoadIds, intakePayload);
   const rfid = resolveRfidForSurface(data, context, resolved);
   return { resolved, rfid };
 }

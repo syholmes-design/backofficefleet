@@ -55,6 +55,10 @@ export type BofRequiredEntityKey =
   | "loadId"
   | "driverId"
   | "facilityId"
+  | "destinationFacility"
+  | "routeMemoryKey"
+  | "appointmentRequired"
+  | "contractSelection"
   | "claimId"
   | "billingPacketId"
   | "customerId"
@@ -235,7 +239,7 @@ export const BOF_TEMPLATE_PACKS: BofTemplatePack[] = [
         primaryModule: "intake",
         secondaryModules: ["dispatch", "field_ops"],
         primarySurface: "load_intake",
-        requiredEntityKeys: ["intakeId"],
+        requiredEntityKeys: ["intakeId", "facilityId", "destinationFacility", "routeMemoryKey"],
         appearsInIntake: true,
         appearsInDispatch: true,
         appearsInFieldOps: true,
@@ -265,7 +269,7 @@ export const BOF_TEMPLATE_PACKS: BofTemplatePack[] = [
         primaryModule: "intake",
         secondaryModules: ["field_ops", "dispatch"],
         primarySurface: "load_intake",
-        requiredEntityKeys: ["intakeId"],
+        requiredEntityKeys: ["intakeId", "facilityId", "appointmentRequired"],
         appearsInIntake: true,
         appearsInDispatch: true,
         appearsInFieldOps: true,
@@ -280,7 +284,7 @@ export const BOF_TEMPLATE_PACKS: BofTemplatePack[] = [
         primaryModule: "customer",
         secondaryModules: ["intake", "billing"],
         primarySurface: "customer_setup",
-        requiredEntityKeys: ["intakeId"],
+        requiredEntityKeys: ["intakeId", "customerId"],
         appearsInIntake: true,
         appearsInDispatch: false,
         appearsInFieldOps: false,
@@ -295,7 +299,7 @@ export const BOF_TEMPLATE_PACKS: BofTemplatePack[] = [
         primaryModule: "intake",
         secondaryModules: ["customer", "dispatch"],
         primarySurface: "load_intake",
-        requiredEntityKeys: ["intakeId"],
+        requiredEntityKeys: ["intakeId", "customerId", "contractSelection"],
         appearsInIntake: true,
         appearsInDispatch: true,
         appearsInFieldOps: false,
@@ -425,7 +429,7 @@ export const BOF_TEMPLATE_PACKS: BofTemplatePack[] = [
         primaryModule: "dispatch",
         secondaryModules: ["field_ops", "customer"],
         primarySurface: "dispatch_release",
-        requiredEntityKeys: ["loadId", "facilityId"],
+        requiredEntityKeys: ["facilityId", "appointmentRequired"],
         appearsInIntake: true,
         appearsInDispatch: true,
         appearsInFieldOps: true,
@@ -639,7 +643,7 @@ export const BOF_TEMPLATE_PACKS: BofTemplatePack[] = [
         primaryModule: "dispatch",
         secondaryModules: ["field_ops"],
         primarySurface: "dispatch_release",
-        requiredEntityKeys: ["loadId", "facilityId"],
+        requiredEntityKeys: ["facilityId"],
         appearsInIntake: true,
         appearsInDispatch: true,
         appearsInFieldOps: false,

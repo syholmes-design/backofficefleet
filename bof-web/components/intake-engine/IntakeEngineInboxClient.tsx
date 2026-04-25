@@ -8,7 +8,11 @@ import { intakeKpis, useIntakeEngineStore } from "@/lib/stores/intake-engine-sto
 import { BofIntakeFormPrimaryPanel } from "@/components/documents/BofIntakeFormPrimaryPanel";
 import { BofWorkflowFormShortcuts } from "@/components/documents/BofWorkflowFormShortcuts";
 import { BofTemplateUsageSurface } from "@/components/documents/BofTemplateUsageSurface";
-import { toBofIntakeEntityId } from "@/lib/bof-intake-entity";
+import {
+  intakeScopedSyntheticKey,
+  toBofIntakeEntityId,
+} from "@/lib/bof-intake-entity";
+import type { BofIntakeSurfaceContextPayload } from "@/lib/template-usage-readiness";
 
 const TABS: { id: IntakeFilterTab; label: string }[] = [
   { id: "all", label: "All" },
@@ -79,7 +83,33 @@ export function IntakeEngineInboxClient() {
   const [tab, setTab] = useState<IntakeFilterTab>("all");
   const kpis = useMemo(() => intakeKpis(intakes), [intakes]);
   const rows = useMemo(() => filterIntakes(tab, intakes), [tab, intakes]);
-  const intakeEntityId = toBofIntakeEntityId(rows[0]?.intake_id ?? "IN-INTAKE-INBOX");
+  const activeIntake = rows[0] ?? intakes[0] ?? null;
+  const intakeEntityId = toBofIntakeEntityId(activeIntake?.intake_id ?? "IN-INTAKE-INBOX");
+  const intakeSurfaceContext = useMemo<BofIntakeSurfaceContextPayload>(() => {
+    const src = activeIntake;
+    if (!src) return { intakeId: intakeEntityId };
+    const customerLabel = src.extracted.customer_or_broker?.trim() || undefined;
+    const facilityLabel = src.extracted.pickup_facility?.trim() || undefined;
+    const destinationLabel = src.extracted.delivery_facility?.trim() || undefined;
+    return {
+      intakeId: intakeEntityId,
+      customerId: customerLabel
+        ? intakeScopedSyntheticKey("customer", intakeEntityId, customerLabel)
+        : undefined,
+      customerLabel,
+      facilityId: facilityLabel
+        ? intakeScopedSyntheticKey("facility", intakeEntityId, facilityLabel)
+        : undefined,
+      facilityLabel,
+      destinationFacilityId: destinationLabel
+        ? intakeScopedSyntheticKey("destination", intakeEntityId, destinationLabel)
+        : undefined,
+      destinationFacilityLabel: destinationLabel,
+      appointmentRequired: undefined,
+      routeMemoryKey: undefined,
+      contractSelection: src.pricing_summary || undefined,
+    };
+  }, [activeIntake, intakeEntityId]);
 
   return (
     <div className="bof-page bof-intake-engine">
@@ -110,8 +140,9 @@ export function IntakeEngineInboxClient() {
       <BofTemplateUsageSurface
         context="load_intake"
         entityId={intakeEntityId}
+        intakeContextPayload={intakeSurfaceContext}
         title="BOF Intake Template Mapping"
-        subtitle="Registry-driven intake forms and downstream handoff docs for this intake-owned context."
+        subtitle="Registry-driven intake forms using active inbox context (customer/facility/destination) before load creation."
       />
 
       <section className="bof-intake-engine-kpis" aria-label="Intake summary">

@@ -16,6 +16,7 @@ import {
   computeTemplateRowReadiness,
   primaryStateLabel,
   resolveTemplateSurfaceBundle,
+  type BofIntakeSurfaceContextPayload,
 } from "@/lib/template-usage-readiness";
 import { describeRfidSurfacePosture, rfidRelevantForTemplate } from "@/lib/bof-rfid-readiness";
 import { buildBofDocumentViewerHref } from "@/lib/bof-document-viewer-href";
@@ -47,6 +48,7 @@ export function BofTemplateUsageSurface({
   title,
   subtitle,
   linkedLoadIds,
+  intakeContextPayload,
 }: {
   context: SurfaceContext;
   entityId: string;
@@ -54,6 +56,8 @@ export function BofTemplateUsageSurface({
   subtitle?: string;
   /** Optional explicit load ids (e.g. from settlement lines) for RFID + proof chain. */
   linkedLoadIds?: string[];
+  /** Optional intake-owned context fields used by load_intake readiness. */
+  intakeContextPayload?: BofIntakeSurfaceContextPayload;
 }) {
   const pathname = usePathname();
   const { data } = useBofDemoData();
@@ -71,8 +75,8 @@ export function BofTemplateUsageSurface({
   }, [context]);
 
   const { resolved: resolvedEntity, rfid: rfidSummary } = useMemo(
-    () => resolveTemplateSurfaceBundle(data, context, entityId, linkedLoadIds),
-    [data, context, entityId, linkedLoadIds]
+    () => resolveTemplateSurfaceBundle(data, context, entityId, linkedLoadIds, intakeContextPayload),
+    [data, context, entityId, linkedLoadIds, intakeContextPayload]
   );
 
   const rfidPostureLine = useMemo(
