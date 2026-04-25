@@ -13,8 +13,8 @@ import { useBofDemoData } from "@/lib/bof-demo-data-context";
 import { BofIntakeFormPrimaryPanel } from "@/components/documents/BofIntakeFormPrimaryPanel";
 import { BofWorkflowFormShortcuts } from "@/components/documents/BofWorkflowFormShortcuts";
 import { BofTemplateUsageSurface } from "@/components/documents/BofTemplateUsageSurface";
-import { intakeScopedSyntheticKey, toBofIntakeEntityId } from "@/lib/bof-intake-entity";
-import type { BofIntakeSurfaceContextPayload } from "@/lib/template-usage-readiness";
+import { toBofIntakeEntityId } from "@/lib/bof-intake-entity";
+import { buildBofIntakeSurfaceContextFromWizard } from "@/lib/bof-intake-surface-context";
 import {
   applyFacilityMatch,
   buildLoadIntakeIntelligence,
@@ -171,40 +171,10 @@ export function LoadRequirementsWizard() {
   const [step, setStep] = useState(1);
   const [state, setState] = useState<IntakeWizardState>(() => createInitialState());
   const formEntityId = toBofIntakeEntityId(state.loadRequirement.load_requirement_id);
-  const intakeSurfaceContext = useMemo<BofIntakeSurfaceContextPayload>(() => {
-    const customerId =
-      state.shipper.shipper_id?.trim() ||
-      (state.shipper.shipper_name
-        ? intakeScopedSyntheticKey("customer", formEntityId, state.shipper.shipper_name)
-        : undefined);
-    const facilityId =
-      state.facility.facility_id?.trim() ||
-      (state.facility.facility_name
-        ? intakeScopedSyntheticKey("facility", formEntityId, state.facility.facility_name)
-        : undefined);
-    const destinationFacilityId =
-      state.loadRequirement.destination_facility_name?.trim() ||
-      (state.loadRequirement.destination_address
-        ? intakeScopedSyntheticKey(
-            "destination",
-            formEntityId,
-            `${state.loadRequirement.destination_facility_name ?? ""}-${state.loadRequirement.destination_address}`
-          )
-        : undefined);
-
-    return {
-      intakeId: formEntityId,
-      customerId,
-      customerLabel: state.shipper.shipper_name || undefined,
-      facilityId,
-      facilityLabel: state.facility.facility_name || undefined,
-      destinationFacilityId,
-      destinationFacilityLabel: state.loadRequirement.destination_facility_name || undefined,
-      routeMemoryKey: state.loadRequirement.route_memory_key || undefined,
-      appointmentRequired: state.facility.appointment_required,
-      contractSelection: `${state.compliance.insuranceRequirementType} · ${state.compliance.bolRequirementType}`,
-    };
-  }, [formEntityId, state]);
+  const intakeSurfaceContext = useMemo(
+    () => buildBofIntakeSurfaceContextFromWizard(formEntityId, state),
+    [formEntityId, state]
+  );
 
   const intelligence = useMemo(() => buildLoadIntakeIntelligence(data), [data]);
   const placesSessionToken = useMemo(() => {

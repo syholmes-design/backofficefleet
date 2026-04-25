@@ -153,6 +153,12 @@ export function BofTemplateUsageSurface({
                         </span>
                       </div>
                       <span className="bof-muted bof-small">{readiness.whyMatters}</span>
+                      {context === "vault_documents" && (row.vaultPrimaryOwner || row.vaultCategory) && (
+                        <span className="bof-small" style={{ color: "#94a3b8", lineHeight: 1.35 }}>
+                          Vault ownership: {row.vaultPrimaryOwner ?? "reference"} ·{" "}
+                          {row.vaultCategory?.replace(/_/g, " ") ?? "uncategorized"}
+                        </span>
+                      )}
                       {(readiness.missingContext.length > 0 || readiness.presentContext.length > 0) && (
                         <span className="bof-small" style={{ color: "#94a3b8", lineHeight: 1.35 }}>
                           {readiness.presentContext.length > 0 && (

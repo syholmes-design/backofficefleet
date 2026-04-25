@@ -94,6 +94,12 @@ export type BofTemplateDefinition = {
   requiredBeforeRelease: boolean;
   requiredBeforeBilling: boolean;
   requiredForClaimPacket: boolean;
+  /** Vault alignment hints (optional, gradual rollout). */
+  vaultCategory?: "driver_core" | "dispatch_reference" | "workflow_reference";
+  vaultPrimaryOwner?: "vault" | "dispatch" | "billing" | "claims" | "load";
+  vaultSortOrder?: number;
+  vaultVisible?: boolean;
+  vaultSecondaryVisible?: boolean;
 };
 
 export type BofTemplatePack = {
@@ -183,7 +189,9 @@ function inSurface(template: BofTemplateDefinition, surface: BofTemplateUsageSur
   if (surface === "dispatch_load") return template.appearsInDispatch || template.appearsInFieldOps;
   if (surface === "settlement_billing") return template.appearsInSettlements || template.requiredBeforeBilling;
   if (surface === "claims_insurance") return template.appearsInClaims || template.requiredForClaimPacket;
-  return template.appearsInVault;
+  if (template.vaultVisible === true) return true;
+  if (template.vaultVisible === false) return false;
+  return template.appearsInVault || Boolean(template.vaultSecondaryVisible);
 }
 
 function isPrimaryOnSurface(template: BofTemplateDefinition, surface: BofTemplateUsageSurface): boolean {
@@ -334,6 +342,11 @@ export const BOF_TEMPLATE_PACKS: BofTemplatePack[] = [
         requiredBeforeRelease: true,
         requiredBeforeBilling: true,
         requiredForClaimPacket: true,
+      }, {
+        vaultCategory: "workflow_reference",
+        vaultPrimaryOwner: "load",
+        vaultSortOrder: 320,
+        vaultSecondaryVisible: true,
       }),
       t("pod", "field-operations-v3", "Proof of Delivery (POD)", "load", "generated_autofill_output", ["Settlement release control and dispute defense evidence."], {
         primaryModule: "field_ops",
@@ -349,6 +362,11 @@ export const BOF_TEMPLATE_PACKS: BofTemplatePack[] = [
         requiredBeforeRelease: false,
         requiredBeforeBilling: true,
         requiredForClaimPacket: true,
+      }, {
+        vaultCategory: "workflow_reference",
+        vaultPrimaryOwner: "load",
+        vaultSortOrder: 330,
+        vaultSecondaryVisible: true,
       }),
       t("seal-verification", "field-operations-v3", "Seal Verification Form", "load", "editable_template", ["Updates seal acknowledgment readiness and exception logic."], {
         primaryModule: "field_ops",
@@ -608,6 +626,11 @@ export const BOF_TEMPLATE_PACKS: BofTemplatePack[] = [
         requiredBeforeRelease: true,
         requiredBeforeBilling: false,
         requiredForClaimPacket: false,
+      }, {
+        vaultCategory: "dispatch_reference",
+        vaultPrimaryOwner: "dispatch",
+        vaultSortOrder: 210,
+        vaultSecondaryVisible: true,
       }),
       t("pretrip-readiness-summary", "driver-dispatch-readiness-v2", "Pre-Trip Readiness Summary", "dispatch_packet", "generated_autofill_output", ["Readiness rollup gate to Ready / At Risk / Blocked."], {
         primaryModule: "dispatch",
@@ -623,6 +646,11 @@ export const BOF_TEMPLATE_PACKS: BofTemplatePack[] = [
         requiredBeforeRelease: true,
         requiredBeforeBilling: false,
         requiredForClaimPacket: false,
+      }, {
+        vaultCategory: "dispatch_reference",
+        vaultPrimaryOwner: "dispatch",
+        vaultSortOrder: 220,
+        vaultSecondaryVisible: true,
       }),
       t("load-instruction-sheet", "driver-dispatch-readiness-v2", "Load-Specific Instruction Sheet", "dispatch_packet", "generated_autofill_output", ["Dispatch instructions acknowledgment requirement."], {
         primaryModule: "dispatch",
@@ -668,6 +696,11 @@ export const BOF_TEMPLATE_PACKS: BofTemplatePack[] = [
         requiredBeforeRelease: true,
         requiredBeforeBilling: true,
         requiredForClaimPacket: true,
+      }, {
+        vaultCategory: "dispatch_reference",
+        vaultPrimaryOwner: "dispatch",
+        vaultSortOrder: 230,
+        vaultSecondaryVisible: true,
       }),
       t("dispatch-release-checklist", "driver-dispatch-readiness-v2", "Dispatch Release Checklist", "dispatch_packet", "editable_template", ["Final release authorization control."], {
         primaryModule: "dispatch",
@@ -683,6 +716,11 @@ export const BOF_TEMPLATE_PACKS: BofTemplatePack[] = [
         requiredBeforeRelease: true,
         requiredBeforeBilling: false,
         requiredForClaimPacket: false,
+      }, {
+        vaultCategory: "dispatch_reference",
+        vaultPrimaryOwner: "dispatch",
+        vaultSortOrder: 240,
+        vaultSecondaryVisible: true,
       }),
       t("compliance-missing-doc-notice", "driver-dispatch-readiness-v2", "Compliance Reminder / Missing Doc Notice", "driver", "editable_template", ["Creates waiting-on response loop for driver compliance updates."], {
         primaryModule: "vault",
@@ -698,6 +736,11 @@ export const BOF_TEMPLATE_PACKS: BofTemplatePack[] = [
         requiredBeforeRelease: true,
         requiredBeforeBilling: false,
         requiredForClaimPacket: false,
+      }, {
+        vaultCategory: "driver_core",
+        vaultPrimaryOwner: "vault",
+        vaultSortOrder: 10,
+        vaultVisible: true,
       }),
     ],
   },
@@ -874,6 +917,14 @@ export function templatesForContext(contextType: BofTemplateContextType) {
 export function listTemplatesForUsageSurface(surface: BofTemplateUsageSurface) {
   const rows = listAllBofTemplates().filter((x) => inSurface(x, surface));
   return rows.sort((a, b) => {
+    if (surface === "vault_documents") {
+      const ap = a.vaultPrimaryOwner === "vault" ? 0 : 1;
+      const bp = b.vaultPrimaryOwner === "vault" ? 0 : 1;
+      if (ap !== bp) return ap - bp;
+      const as = a.vaultSortOrder ?? 999;
+      const bs = b.vaultSortOrder ?? 999;
+      if (as !== bs) return as - bs;
+    }
     const ap = isPrimaryOnSurface(a, surface) ? 0 : 1;
     const bp = isPrimaryOnSurface(b, surface) ? 0 : 1;
     if (ap !== bp) return ap - bp;
