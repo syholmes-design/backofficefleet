@@ -242,7 +242,7 @@ export function DriverDetailPageClient({ driverId }: { driverId: string }) {
           Bank Info
         </Link>
         {" · "}
-        <Link href="/emergency-contacts" className="bof-link-secondary">
+        <Link href={`/emergency-contacts/${driverId}`} className="bof-link-secondary">
           Emergency Contacts
         </Link>
       </p>

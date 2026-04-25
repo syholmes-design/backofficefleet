@@ -45,7 +45,7 @@ export function DriverBankInfoPageClient({ driverId }: { driverId: string }) {
           Driver profile
         </Link>
         {" · "}
-        <Link href="/emergency-contacts" className="bof-link-secondary">
+        <Link href={`/emergency-contacts/${driverId}`} className="bof-link-secondary">
           Emergency contacts
         </Link>
       </p>

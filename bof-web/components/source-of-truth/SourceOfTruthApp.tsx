@@ -89,13 +89,24 @@ export function SourceOfTruthApp() {
       emergencyContactName: String(selectedDriver.emergencyContactName ?? ""),
       emergencyContactRelationship: String(selectedDriver.emergencyContactRelationship ?? ""),
       emergencyContactPhone: String(selectedDriver.emergencyContactPhone ?? ""),
+      emergencyContactEmail: String(selectedDriver.emergencyContactEmail ?? ""),
+      emergencyContactAddress: String(selectedDriver.emergencyContactAddress ?? ""),
       secondaryContactName: String(d.secondaryContactName ?? ""),
       secondaryContactRelationship: String(d.secondaryContactRelationship ?? ""),
       secondaryContactPhone: String(d.secondaryContactPhone ?? ""),
+      secondaryContactEmail: String(d.secondaryContactEmail ?? ""),
+      secondaryContactAddress: String(d.secondaryContactAddress ?? ""),
       bankName: String(d.bankName ?? ""),
       bankAccountType: String(d.bankAccountType ?? ""),
       bankRoutingNumber: String(d.bankRoutingNumber ?? ""),
       bankAccountLast4: String(d.bankAccountLast4 ?? ""),
+      paymentPreference: String(d.paymentPreference ?? ""),
+      bankSubmissionDate: String(d.bankSubmissionDate ?? ""),
+      bankInfoStatus: String(d.bankInfoStatus ?? ""),
+      taxClassification: String(d.taxClassification ?? ""),
+      tinType: String(d.tinType ?? ""),
+      licenseClass: String(d.licenseClass ?? ""),
+      licenseState: String(d.licenseState ?? ""),
     });
   }, [selectedDriver]);
 
@@ -151,13 +162,24 @@ export function SourceOfTruthApp() {
       emergencyContactName: driverDraft.emergencyContactName || undefined,
       emergencyContactRelationship: driverDraft.emergencyContactRelationship || undefined,
       emergencyContactPhone: driverDraft.emergencyContactPhone || undefined,
+      emergencyContactEmail: driverDraft.emergencyContactEmail || undefined,
+      emergencyContactAddress: driverDraft.emergencyContactAddress || undefined,
       secondaryContactName: driverDraft.secondaryContactName || undefined,
       secondaryContactRelationship: driverDraft.secondaryContactRelationship || undefined,
       secondaryContactPhone: driverDraft.secondaryContactPhone || undefined,
+      secondaryContactEmail: driverDraft.secondaryContactEmail || undefined,
+      secondaryContactAddress: driverDraft.secondaryContactAddress || undefined,
       bankName: driverDraft.bankName || undefined,
       bankAccountType: driverDraft.bankAccountType || undefined,
       bankRoutingNumber: driverDraft.bankRoutingNumber || undefined,
       bankAccountLast4: driverDraft.bankAccountLast4 || undefined,
+      paymentPreference: driverDraft.paymentPreference || undefined,
+      bankSubmissionDate: driverDraft.bankSubmissionDate || undefined,
+      bankInfoStatus: driverDraft.bankInfoStatus || undefined,
+      taxClassification: driverDraft.taxClassification || undefined,
+      tinType: driverDraft.tinType || undefined,
+      licenseClass: driverDraft.licenseClass || undefined,
+      licenseState: driverDraft.licenseState || undefined,
     };
     if (driverDraft.dateOfBirth.trim()) patch.dateOfBirth = driverDraft.dateOfBirth.trim();
     if (driverDraft.complianceStatus.trim()) patch.complianceStatus = driverDraft.complianceStatus.trim();
@@ -457,6 +479,26 @@ export function SourceOfTruthApp() {
                   />
                 </div>
                 <div className="bof-sot-field">
+                  <label htmlFor="sot-ece">Emergency email</label>
+                  <input
+                    id="sot-ece"
+                    value={driverDraft.emergencyContactEmail}
+                    onChange={(e) =>
+                      setDriverDraft((x) => ({ ...x, emergencyContactEmail: e.target.value }))
+                    }
+                  />
+                </div>
+                <div className="bof-sot-field bof-sot-field--full">
+                  <label htmlFor="sot-eca">Emergency address</label>
+                  <input
+                    id="sot-eca"
+                    value={driverDraft.emergencyContactAddress}
+                    onChange={(e) =>
+                      setDriverDraft((x) => ({ ...x, emergencyContactAddress: e.target.value }))
+                    }
+                  />
+                </div>
+                <div className="bof-sot-field">
                   <label htmlFor="sot-scn">Secondary contact name</label>
                   <input
                     id="sot-scn"
@@ -486,6 +528,26 @@ export function SourceOfTruthApp() {
                     value={driverDraft.secondaryContactPhone}
                     onChange={(e) =>
                       setDriverDraft((x) => ({ ...x, secondaryContactPhone: e.target.value }))
+                    }
+                  />
+                </div>
+                <div className="bof-sot-field">
+                  <label htmlFor="sot-sce">Secondary email</label>
+                  <input
+                    id="sot-sce"
+                    value={driverDraft.secondaryContactEmail}
+                    onChange={(e) =>
+                      setDriverDraft((x) => ({ ...x, secondaryContactEmail: e.target.value }))
+                    }
+                  />
+                </div>
+                <div className="bof-sot-field bof-sot-field--full">
+                  <label htmlFor="sot-sca">Secondary address</label>
+                  <input
+                    id="sot-sca"
+                    value={driverDraft.secondaryContactAddress}
+                    onChange={(e) =>
+                      setDriverDraft((x) => ({ ...x, secondaryContactAddress: e.target.value }))
                     }
                   />
                 </div>
@@ -526,6 +588,76 @@ export function SourceOfTruthApp() {
                     value={driverDraft.bankAccountLast4}
                     onChange={(e) =>
                       setDriverDraft((x) => ({ ...x, bankAccountLast4: e.target.value }))
+                    }
+                  />
+                </div>
+                <div className="bof-sot-field">
+                  <label htmlFor="sot-bank-pref">Payment preference</label>
+                  <input
+                    id="sot-bank-pref"
+                    value={driverDraft.paymentPreference}
+                    onChange={(e) =>
+                      setDriverDraft((x) => ({ ...x, paymentPreference: e.target.value }))
+                    }
+                  />
+                </div>
+                <div className="bof-sot-field">
+                  <label htmlFor="sot-bank-sub">Bank submission date</label>
+                  <input
+                    id="sot-bank-sub"
+                    value={driverDraft.bankSubmissionDate}
+                    onChange={(e) =>
+                      setDriverDraft((x) => ({ ...x, bankSubmissionDate: e.target.value }))
+                    }
+                  />
+                </div>
+                <div className="bof-sot-field">
+                  <label htmlFor="sot-bank-status">Bank info status</label>
+                  <input
+                    id="sot-bank-status"
+                    value={driverDraft.bankInfoStatus}
+                    onChange={(e) =>
+                      setDriverDraft((x) => ({ ...x, bankInfoStatus: e.target.value }))
+                    }
+                  />
+                </div>
+                <div className="bof-sot-field">
+                  <label htmlFor="sot-tax-class">Tax classification</label>
+                  <input
+                    id="sot-tax-class"
+                    value={driverDraft.taxClassification}
+                    onChange={(e) =>
+                      setDriverDraft((x) => ({ ...x, taxClassification: e.target.value }))
+                    }
+                  />
+                </div>
+                <div className="bof-sot-field">
+                  <label htmlFor="sot-tin-type">TIN type</label>
+                  <input
+                    id="sot-tin-type"
+                    value={driverDraft.tinType}
+                    onChange={(e) =>
+                      setDriverDraft((x) => ({ ...x, tinType: e.target.value }))
+                    }
+                  />
+                </div>
+                <div className="bof-sot-field">
+                  <label htmlFor="sot-license-class">License class</label>
+                  <input
+                    id="sot-license-class"
+                    value={driverDraft.licenseClass}
+                    onChange={(e) =>
+                      setDriverDraft((x) => ({ ...x, licenseClass: e.target.value }))
+                    }
+                  />
+                </div>
+                <div className="bof-sot-field">
+                  <label htmlFor="sot-license-state">License state</label>
+                  <input
+                    id="sot-license-state"
+                    value={driverDraft.licenseState}
+                    onChange={(e) =>
+                      setDriverDraft((x) => ({ ...x, licenseState: e.target.value }))
                     }
                   />
                 </div>
