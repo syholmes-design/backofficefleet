@@ -4,12 +4,16 @@ import {
   type BofTemplateDefinition,
 } from "@/lib/bof-template-system";
 import { mapTemplateToVaultOwnership, type BofVaultOwnershipMeta } from "@/lib/bof-vault-ownership-adapter";
+import { buildOwnerWorkflowHref, type BofOwnerWorkflowLink } from "@/lib/bof-owner-workflow-links";
 
 export type BofVaultReferenceContext = {
   intakeId?: string | null;
   driverId?: string | null;
   loadId?: string | null;
   settlementId?: string | null;
+  claimId?: string | null;
+  customerId?: string | null;
+  facilityId?: string | null;
 };
 
 export type BofVaultReferenceRow = {
@@ -18,15 +22,8 @@ export type BofVaultReferenceRow = {
   appearsReason: string;
   missingKeys: BofRequiredEntityKey[];
   entityIdForLinks: string | null;
-  ownerWorkflowHref: string;
+  ownerWorkflow: BofOwnerWorkflowLink;
 };
-
-function ownerHref(owner: BofVaultOwnershipMeta["vaultPrimaryOwner"]): string {
-  if (owner === "dispatch") return "/dispatch";
-  if (owner === "billing") return "/settlements";
-  if (owner === "claims") return "/money-at-risk";
-  return "/loads";
-}
 
 function keyValue(key: BofRequiredEntityKey, c: BofVaultReferenceContext): string | null {
   if (key === "intakeId") return c.intakeId ?? null;
@@ -34,18 +31,21 @@ function keyValue(key: BofRequiredEntityKey, c: BofVaultReferenceContext): strin
   if (key === "loadId") return c.loadId ?? null;
   if (key === "settlementId") return c.settlementId ?? null;
   if (key === "billingPacketId") return c.settlementId ?? null;
-  if (key === "claimId") return c.loadId ?? null;
+  if (key === "claimId") return c.claimId ?? null;
+  if (key === "customerId") return c.customerId ?? null;
+  if (key === "facilityId") return c.facilityId ?? null;
   return null;
 }
 
 function linkEntityId(template: BofTemplateDefinition, c: BofVaultReferenceContext): string | null {
+  if (template.requiredEntityKeys.includes("claimId")) return c.claimId ?? null;
   if (template.requiredEntityKeys.includes("loadId")) return c.loadId ?? null;
   if (template.requiredEntityKeys.includes("driverId")) return c.driverId ?? null;
   if (template.requiredEntityKeys.includes("settlementId") || template.requiredEntityKeys.includes("billingPacketId")) {
     return c.settlementId ?? null;
   }
   if (template.requiredEntityKeys.includes("intakeId")) return c.intakeId ?? null;
-  return c.loadId ?? c.driverId ?? c.settlementId ?? c.intakeId ?? null;
+  return c.claimId ?? c.loadId ?? c.driverId ?? c.settlementId ?? c.intakeId ?? null;
 }
 
 export function buildVaultReferenceRows(context: BofVaultReferenceContext): BofVaultReferenceRow[] {
@@ -72,7 +72,15 @@ export function buildVaultReferenceRows(context: BofVaultReferenceContext): BofV
       appearsReason,
       missingKeys,
       entityIdForLinks,
-      ownerWorkflowHref: ownerHref(ownership.vaultPrimaryOwner),
+      ownerWorkflow: buildOwnerWorkflowHref({
+        owner: ownership.vaultPrimaryOwner,
+        primarySurface: template.primarySurface,
+        context: {
+          loadId: context.loadId,
+          settlementId: context.settlementId,
+          claimId: context.claimId,
+        },
+      }),
     };
   });
 

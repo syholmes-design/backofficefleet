@@ -105,8 +105,8 @@ export function BofVaultReferencesPanel({
                                   ) : null}
                                 </>
                               ) : null}
-                              <Link href={row.ownerWorkflowHref} className="bof-link-secondary">
-                                Open owner workflow
+                              <Link href={row.ownerWorkflow.href} className="bof-link-secondary">
+                                {row.ownerWorkflow.label}
                               </Link>
                             </div>
                           </td>

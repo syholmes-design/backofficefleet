@@ -82,6 +82,10 @@ export function DriverVaultWorkspaceClient() {
 
   const workflowEntityId = selectedDriver.driverId;
   const driverLoadId = data.loads.find((l) => l.driverId === selectedDriver.driverId)?.id ?? null;
+  const driverSettlementId =
+    data.settlements?.find((s) => s.driverId === selectedDriver.driverId)?.settlementId ?? null;
+  const driverClaimId =
+    data.complianceIncidents?.find((c) => c.driverId === selectedDriver.driverId)?.incidentId ?? null;
 
   return (
     <div className="bof-page bof-driver-vault">
@@ -110,7 +114,12 @@ export function DriverVaultWorkspaceClient() {
         subtitle="Vault-owned driver records first; dispatch/load/billing/claim docs appear as secondary references."
       />
       <BofVaultReferencesPanel
-        context={{ driverId: selectedDriver.driverId, loadId: driverLoadId }}
+        context={{
+          driverId: selectedDriver.driverId,
+          loadId: driverLoadId,
+          settlementId: driverSettlementId,
+          claimId: driverClaimId,
+        }}
         title="Driver-linked workflow references"
       />
 

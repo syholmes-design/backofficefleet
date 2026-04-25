@@ -17,6 +17,10 @@ export function DocumentsPageClient() {
 
   const rows = useMemo(() => buildVaultRows(data), [data]);
   const previewDriver = getDriverById(data, DEFAULT_PREVIEW_DRIVER_ID);
+  const previewSettlementId =
+    data.settlements?.find((s) => s.driverId === DEFAULT_PREVIEW_DRIVER_ID)?.settlementId ?? null;
+  const previewClaimId =
+    data.complianceIncidents?.find((c) => c.driverId === DEFAULT_PREVIEW_DRIVER_ID)?.incidentId ?? null;
 
   return (
     <div className="bof-page">
@@ -81,7 +85,12 @@ export function DocumentsPageClient() {
         <DocumentVaultClient rows={rows} totalExpected={rows.length} />
       </section>
       <BofVaultReferencesPanel
-        context={{ loadId: workflowEntityId, driverId: previewDriver?.id ?? null }}
+        context={{
+          loadId: workflowEntityId,
+          driverId: previewDriver?.id ?? null,
+          settlementId: previewSettlementId,
+          claimId: previewClaimId,
+        }}
         title="Vault secondary references (registry-driven)"
       />
     </div>
