@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { getBofData } from "@/lib/load-bof-data";
 import { buildTomTomDieselFeedForLoad, CACHE_SECONDS } from "@/lib/server/tomtom-fuel";
+import { getTomTomApiKey } from "@/lib/server/tomtom-env";
 import type { TomTomFuelFeedResponse } from "@/lib/tomtom-fuel-types";
 
 export async function GET(req: Request) {
@@ -10,11 +11,12 @@ export async function GET(req: Request) {
     return NextResponse.json({ error: "Missing loadId" }, { status: 400 });
   }
 
-  const key = process.env.TOMTOM_API_KEY;
+  const key = getTomTomApiKey();
   if (!key) {
     const noKey: TomTomFuelFeedResponse = {
       live: false,
-      reason: "TOMTOM_API_KEY is not configured",
+      reason:
+        "No TomTom key: set TOMTOM_API_KEY in the server environment (Vercel). Optional legacy: TOMTOM_MAPS_API_KEY or TT_API_KEY.",
       loadId,
       fuelPriceIds: [],
       routeContext: {
@@ -26,7 +28,7 @@ export async function GET(req: Request) {
       },
       stations: [],
       summary: { usedDemoBaseline: true },
-      note: "TomTom key missing; BOF diesel widget should use demo fallback",
+      note: "Server-only secret. Primary: TOMTOM_API_KEY. TomTom Search + fuelPrice are never called from the browser.",
     };
     return NextResponse.json(noKey, {
       headers: { "Cache-Control": "private, no-store" },

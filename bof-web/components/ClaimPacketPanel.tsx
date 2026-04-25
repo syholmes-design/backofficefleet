@@ -5,6 +5,7 @@ import type { ClaimDraftKind, ClaimPacketContext } from "@/lib/claim-packet";
 import { buildClaimDraft } from "@/lib/claim-packet";
 import { useDispatchDashboardStore } from "@/lib/stores/dispatch-dashboard-store";
 import { BofTemplateUsageSurface } from "@/components/documents/BofTemplateUsageSurface";
+import { BofWorkflowFormShortcuts } from "@/components/documents/BofWorkflowFormShortcuts";
 import { useBofDemoData } from "@/lib/bof-demo-data-context";
 import { buildRfidReadinessSummaryForSurface } from "@/lib/template-usage-readiness";
 import { resolveRfidTemplateGate } from "@/lib/bof-rfid-readiness";
@@ -182,6 +183,12 @@ export function ClaimPacketPanel({ ctx }: { ctx: ClaimPacketContext }) {
           {error}
         </p>
       )}
+
+      <BofWorkflowFormShortcuts
+        context="claims"
+        entityId={ctx.loadId}
+        title="Claims & insurance — BOF form shortcuts"
+      />
 
       <BofTemplateUsageSurface
         context="claims_insurance"

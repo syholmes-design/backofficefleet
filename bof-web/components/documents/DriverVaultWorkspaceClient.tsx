@@ -8,6 +8,8 @@ import {
   type DriverVaultCategory,
 } from "@/lib/driver-vault-workspace";
 import { useDriverVaultWorkspaceStore } from "@/lib/stores/driver-vault-workspace-store";
+import { DEFAULT_WORKFLOW_LOAD_ID } from "@/lib/bof-defaults";
+import { BofWorkflowFormShortcuts } from "@/components/documents/BofWorkflowFormShortcuts";
 
 function statusClass(status: string) {
   if (status === "valid") return "bof-status-pill bof-status-pill-ok";
@@ -76,6 +78,8 @@ export function DriverVaultWorkspaceClient() {
     );
   }
 
+  const workflowEntityId = data.loads[0]?.id ?? DEFAULT_WORKFLOW_LOAD_ID;
+
   return (
     <div className="bof-page bof-driver-vault">
       <nav className="bof-breadcrumb" aria-label="Breadcrumb">
@@ -90,6 +94,12 @@ export function DriverVaultWorkspaceClient() {
         Upload once. Reuse everywhere. Manage all 12 BOF drivers by category with shared autofill,
         template editing, and generated BOF-style preview.
       </p>
+
+      <BofWorkflowFormShortcuts
+        context="vault"
+        entityId={workflowEntityId}
+        title="From BOF Vault — open compliance packets & linked forms"
+      />
 
       <section className="bof-driver-vault-grid">
         <aside className="bof-driver-vault-panel">

@@ -162,6 +162,7 @@ export default function BofVaultPage() {
       <MarketingPremiumHero
         titleId="bof-mkt-vault-hero-heading"
         sectionAriaLabelledBy="bof-mkt-vault-hero-heading"
+        heroLayout="photo"
         eyebrow="BOF ecosystem · credential intelligence"
         title={<>Have Your Documents Ready When Opportunity Knocks</>}
         subtitle="Drivers upload once. Fleets verify instantly. Compliance stays current—without turning BOF Vault into yet another passive file dump."

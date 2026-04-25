@@ -5,6 +5,10 @@ import { useMemo, useState } from "react";
 import type { IntakeFilterTab, IntakeRecord } from "@/lib/intake-engine-types";
 import { intakeTriggerSummary } from "@/lib/intake-engine-triggers";
 import { intakeKpis, useIntakeEngineStore } from "@/lib/stores/intake-engine-store";
+import { useBofDemoData } from "@/lib/bof-demo-data-context";
+import { DEFAULT_WORKFLOW_LOAD_ID } from "@/lib/bof-defaults";
+import { BofIntakeFormPrimaryPanel } from "@/components/documents/BofIntakeFormPrimaryPanel";
+import { BofWorkflowFormShortcuts } from "@/components/documents/BofWorkflowFormShortcuts";
 
 const TABS: { id: IntakeFilterTab; label: string }[] = [
   { id: "all", label: "All" },
@@ -71,6 +75,8 @@ function statusPillClass(status: IntakeRecord["status"]): string {
 }
 
 export function IntakeEngineInboxClient() {
+  const { data } = useBofDemoData();
+  const formEntityId = data.loads[0]?.id ?? DEFAULT_WORKFLOW_LOAD_ID;
   const intakes = useIntakeEngineStore((s) => s.intakes);
   const [tab, setTab] = useState<IntakeFilterTab>("all");
   const kpis = useMemo(() => intakeKpis(intakes), [intakes]);
@@ -95,6 +101,13 @@ export function IntakeEngineInboxClient() {
           </p>
         </div>
       </header>
+
+      <BofIntakeFormPrimaryPanel entityId={formEntityId} />
+      <BofWorkflowFormShortcuts
+        context="intake"
+        entityId={formEntityId}
+        title="From this screen — open BOF forms & packets"
+      />
 
       <section className="bof-intake-engine-kpis" aria-label="Intake summary">
         <div className="bof-intake-engine-kpi">

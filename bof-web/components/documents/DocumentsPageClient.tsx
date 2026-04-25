@@ -5,12 +5,14 @@ import { useMemo } from "react";
 import { DocumentVaultClient } from "@/components/DocumentVaultClient";
 import { buildVaultRows } from "@/lib/document-vault";
 import { useBofDemoData } from "@/lib/bof-demo-data-context";
-import { DEFAULT_PREVIEW_DRIVER_ID } from "@/lib/bof-defaults";
+import { DEFAULT_PREVIEW_DRIVER_ID, DEFAULT_WORKFLOW_LOAD_ID } from "@/lib/bof-defaults";
+import { BofWorkflowFormShortcuts } from "@/components/documents/BofWorkflowFormShortcuts";
 import { getDriverById } from "@/lib/driver-queries";
 import { OPS_COPY } from "@/lib/ops-copy";
 
 export function DocumentsPageClient() {
   const { data } = useBofDemoData();
+  const workflowEntityId = data.loads[0]?.id ?? DEFAULT_WORKFLOW_LOAD_ID;
 
   const rows = useMemo(() => buildVaultRows(data), [data]);
   const previewDriver = getDriverById(data, DEFAULT_PREVIEW_DRIVER_ID);
@@ -62,6 +64,12 @@ export function DocumentsPageClient() {
         </Link>{" "}
         (open from any template row) for save, review, final generation, and stakeholder routing.
       </p>
+
+      <BofWorkflowFormShortcuts
+        context="documents"
+        entityId={workflowEntityId}
+        title="Open BOF forms from the document hub (not only via /template-packs)"
+      />
 
       <section className="bof-oper-panel bof-oper-panel-tight" aria-label="Document table">
         <DocumentVaultClient rows={rows} totalExpected={rows.length} />

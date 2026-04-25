@@ -162,6 +162,7 @@ export default function GovernmentPage() {
       <MarketingPremiumHero
         titleId="bof-mkt-gov-hero-heading"
         sectionAriaLabelledBy="bof-mkt-gov-hero-heading"
+        heroLayout="photo"
         eyebrow="Government & regulated fleets · public accountability"
         title={<>Audit-Ready Fleet Operations With Enforced Compliance</>}
         subtitle="When taxpayer trust is on the line, BOF aligns day-to-day fleet operations with documentation, oversight, and risk mitigation—without replacing your procurement stack or telematics investments."

@@ -11,6 +11,7 @@ import {
   settlementStatusChipClass,
 } from "./settlements-payroll-ui";
 import { BofTemplateUsageSurface } from "@/components/documents/BofTemplateUsageSurface";
+import { BofWorkflowFormShortcuts } from "@/components/documents/BofWorkflowFormShortcuts";
 import { buildRfidReadinessSummaryForSurface } from "@/lib/template-usage-readiness";
 import { resolveBillingPacketRfidGate } from "@/lib/bof-rfid-readiness";
 
@@ -432,6 +433,12 @@ export function SettlementDetailDrawer({ settlementId, open, onClose }: Props) {
             </div>
           </section>
 
+          <BofWorkflowFormShortcuts
+            context="settlement"
+            entityId={settlement.settlement_id}
+            settlementId={settlement.settlement_id}
+            title="Settlement & billing — open forms here"
+          />
           <BofTemplateUsageSurface
             context="settlement_billing"
             entityId={settlement.settlement_id}

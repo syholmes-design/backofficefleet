@@ -14,33 +14,33 @@ import type { MarketingIconCardItem } from "@/components/marketing/MarketingIcon
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "BackOfficeFleet | Accountable Operations Command Layer",
+  title: "BackOfficeFleet | Front office built so drivers can win",
   description:
-    "BOF is more than software: one accountable operating layer connecting management, drivers, and customers across intake, compliance, proof, settlements, and communication.",
+    "When dispatch, proof, and billing signals disagree, the whole operation misses. BOF aligns the front office with what drivers need—pretrip discipline, clean documentation, and truth that holds through settlement and claims.",
 };
 
 const HERO_TRUST = [
-  "Accountability over excuses",
-  "Automation across intake to settlement",
-  "Connected management, driver, and customer views",
-  "BOF-native operational control",
+  "Ground truth that survives dispatch and billing",
+  "Pretrip, proof, and packet discipline as advantage",
+  "From driver cab to owner desk—one accountable cadence",
+  "A road dog, not a watchdog: reward the work that usually goes unseen",
 ] as const;
 
 const DIFFERENTIATOR_POINTS = [
   {
-    title: "Most vendors stop at software",
+    title: "Drivers already know the gap",
     description:
-      "Typical software implementations fail, then execution risk is pushed back onto your team and process.",
+      "They know what they are missing, what the shipper promised, and when the plan quietly changed. The failure mode is a front office that is not built to make them successful.",
   },
   {
-    title: "BOF takes operational accountability",
+    title: "The front office has to earn alignment",
     description:
-      "If intake, compliance, proof, settlements, or customer updates are slipping, BOF treats it as an operating failure to solve.",
+      "When contract, customer expectation, and dispatch direction drift apart, the driver pays first—then the fleet pays in lost miles, late paperwork, and fights at settlement. BOF keeps those signals intentionally tied together.",
   },
   {
-    title: "Work actually gets done",
+    title: "BOF is operational, not performative",
     description:
-      "Automation, workflow discipline, and BOF-native visibility keep critical actions from being lost in handoffs.",
+      "We turn pre-trip rigor, proof capture, and documentation into leverage—cleaner handoffs, faster answers, and fewer surprises when money and risk are on the line.",
   },
 ] as const;
 
@@ -101,11 +101,12 @@ export default function MarketingHomeAccountable() {
         titleId="bof-mkt-hero-heading"
         sectionAriaLabelledBy="bof-mkt-hero-heading"
         trustAriaLabel="BOF capability highlights"
+        heroLayout="photo"
         brand={<BofLogo variant="dark" className="bof-mkt-home-hero-logo" priority />}
-        eyebrow="Operations accountability platform for fleets"
-        title={<>Back-office control for fleets that cannot afford excuses.</>}
-        subtitle="We do not just sell software. BOF combines automation, operational discipline, and accountable execution across intake, compliance, proof, settlements, and customer communication."
-        support="When something is not getting done, BOF does not hide behind a people problem. BOF is the operating layer that keeps management, drivers, and customers aligned."
+        eyebrow="Back office, built for the driver, accountable to the fleet"
+        title={<>The front office has to be built for drivers to win—signal to signal, mile to mile.</>}
+        subtitle="If dispatch, customers, and proof are telling different stories, the line misses as a system—and your drivers feel it first. BOF is the connective layer that makes front-office decisions match the reality in the cab and on the yard."
+        support="We are a road dog, not a watchdog. BOF rewards the pre-trip checks, the careful documentation, and the quiet professionalism that too often get skipped in reporting—and turns them into the proof you need for billing, settlement, and claims when it counts."
         trustItems={HERO_TRUST}
         ctas={
           <>
@@ -131,7 +132,7 @@ export default function MarketingHomeAccountable() {
           <MarketingSectionHeader
             titleId="bof-mkt-different-heading"
             title="Why BOF is different"
-            lead="Software alone is no longer enough. BOF combines platform capability with operational accountability so outcomes improve in the real world."
+            lead="Trucking does not break because nobody cares—it breaks when what the business thinks is true is not what the driver can execute. BOF is built to close that gap, not to decorate it."
           />
           <div className="bof-mkt-differentiator-grid">
             {DIFFERENTIATOR_POINTS.map((item) => (
@@ -148,8 +149,8 @@ export default function MarketingHomeAccountable() {
         <div className="bof-mkt-container">
           <MarketingSectionHeader
             titleId="bof-mkt-auto-heading"
-            title="Automation is taking over this industry"
-            lead="Winning fleets automate intake, compliance, proof, billing, settlements, and customer communication. Teams that do not automate these workflows will fall behind."
+            title="Where winning fleets put the work"
+            lead="The advantage is not a prettier dashboard. It is disciplined intake, ironclad pretrip and proof habits, and packet quality that still makes sense at settlement. BOF encodes that discipline so it scales past your best shift lead."
           />
           <MarketingIconCardGrid items={AUTOMATION_ITEMS} variant="feature" />
         </div>
@@ -159,8 +160,8 @@ export default function MarketingHomeAccountable() {
         <div className="bof-mkt-container">
           <MarketingSectionHeader
             titleId="bof-mkt-stakeholder-heading"
-            title="Pain relief by stakeholder"
-            lead="BOF reduces operational pain for leadership, drivers, and customers with one connected operating model."
+            title="What changes for each part of the line"
+            lead="From the first dispatch note to the last dollar released, everyone has to be looking at the same load story. BOF makes that feel operational, not aspirational."
           />
           <div className="bof-mkt-stakeholder-grid">
             {STAKEHOLDER_PAIN.map((group) => (
@@ -238,8 +239,8 @@ export default function MarketingHomeAccountable() {
 
       <MarketingCtaPanel
         id="bof-mkt-final-cta-heading"
-        title="See BOF operate your workflow, not just your software stack"
-        lead="Book a fleet assessment and see how BOF improves accountability, automation, and operational execution from start to finish."
+        title="Make the front office as serious as the miles you run"
+        lead="Book a fleet assessment. We walk the signal path—intake, dispatch, proof, settlement, and claims—and show what it looks like when those layers stop arguing with each other."
       >
         <Link href="/book-assessment" className="bof-mkt-btn-enterprise bof-mkt-btn-enterprise-primary">
           Book Fleet Assessment

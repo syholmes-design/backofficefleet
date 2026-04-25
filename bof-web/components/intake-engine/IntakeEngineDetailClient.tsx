@@ -7,6 +7,9 @@ import type { DocClassification, IntakeRecord } from "@/lib/intake-engine-types"
 import { buildIntakeTriggerRows } from "@/lib/intake-engine-triggers";
 import { useBofDemoData } from "@/lib/bof-demo-data-context";
 import { useIntakeEngineStore } from "@/lib/stores/intake-engine-store";
+import { DEFAULT_WORKFLOW_LOAD_ID } from "@/lib/bof-defaults";
+import { BofIntakeFormPrimaryPanel } from "@/components/documents/BofIntakeFormPrimaryPanel";
+import { BofWorkflowFormShortcuts } from "@/components/documents/BofWorkflowFormShortcuts";
 
 function docLabel(c: DocClassification): string {
   const m: Record<DocClassification, string> = {
@@ -88,6 +91,7 @@ export function IntakeEngineDetailClient() {
   }
 
   const ex = intake.extracted;
+  const formEntityId = intake.linked_load_id ?? data.loads[0]?.id ?? DEFAULT_WORKFLOW_LOAD_ID;
 
   return (
     <div className="bof-page bof-intake-engine">
@@ -112,6 +116,13 @@ export function IntakeEngineDetailClient() {
           {notice}
         </div>
       ) : null}
+
+      <BofIntakeFormPrimaryPanel entityId={formEntityId} compact />
+      <BofWorkflowFormShortcuts
+        context="intake"
+        entityId={formEntityId}
+        title="BOF forms for this intake context"
+      />
 
       <div className="bof-intake-engine-detail-grid">
         <section className="bof-intake-engine-card" aria-labelledby="int-sum">

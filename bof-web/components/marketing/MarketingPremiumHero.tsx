@@ -16,6 +16,8 @@ export type MarketingPremiumHeroProps = {
   trustAriaLabel?: string;
   /** Optional brand block shown above eyebrow. */
   brand?: ReactNode;
+  /** `photo` — split layout tuned for real hero photography (integrated column, not a floating slab). */
+  heroLayout?: "default" | "photo";
 };
 
 /**
@@ -34,13 +36,19 @@ export function MarketingPremiumHero({
   visual,
   trustAriaLabel = "Highlights",
   brand,
+  heroLayout = "default",
 }: MarketingPremiumHeroProps) {
+  const layoutClass = heroLayout === "photo" ? "bof-mkt-hero-premium bof-mkt-hero-premium--photo" : "bof-mkt-hero-premium";
+  const gridClass =
+    heroLayout === "photo"
+      ? "bof-mkt-container bof-mkt-hero-premium-grid bof-mkt-hero-premium-grid--photo"
+      : "bof-mkt-container bof-mkt-hero-premium-grid";
   return (
     <section
-      className="bof-mkt-hero-premium"
+      className={layoutClass}
       aria-labelledby={sectionAriaLabelledBy ?? titleId}
     >
-      <div className="bof-mkt-container bof-mkt-hero-premium-grid">
+      <div className={gridClass}>
         <div className="bof-mkt-hero-premium-copy">
           {brand ? <div className="bof-mkt-hero-premium-brand">{brand}</div> : null}
           <p className="bof-mkt-hero-premium-eyebrow">{eyebrow}</p>

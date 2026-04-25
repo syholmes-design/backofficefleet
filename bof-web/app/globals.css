@@ -2908,6 +2908,113 @@ body {
   border-bottom: 1px solid #e2e8f0;
 }
 
+/* Real photography: integrated column, generous vertical rhythm, no floating “card on slab” */
+.bof-mkt-hero-premium--photo {
+  background: linear-gradient(180deg, #f8fafc 0%, #eef2f7 100%);
+  padding: clamp(2.25rem, 4.5vw, 3.25rem) 0 clamp(2.75rem, 5.5vw, 4.25rem);
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.bof-mkt-hero-premium--photo .bof-mkt-hero-premium-title {
+  max-width: 22ch;
+}
+
+@media (min-width: 900px) {
+  .bof-mkt-hero-premium--photo .bof-mkt-hero-premium-title {
+    max-width: 18ch;
+  }
+}
+
+.bof-mkt-hero-premium--photo .bof-mkt-hero-premium-sub {
+  max-width: 46ch;
+}
+
+.bof-mkt-hero-premium--photo .bof-mkt-hero-premium-support {
+  max-width: 48ch;
+}
+
+.bof-mkt-hero-premium--photo .bof-mkt-hero-premium-visual {
+  display: flex;
+  align-items: stretch;
+  min-height: 0;
+}
+
+.bof-mkt-hero-premium--photo .bof-mkt-hero-image-surface {
+  aspect-ratio: 3 / 2;
+  min-height: clamp(220px, 32vh, 380px);
+  border-radius: 14px;
+  background-color: #0f172a;
+  background-image: linear-gradient(
+      100deg,
+      rgba(15, 23, 42, 0.58) 0%,
+      rgba(15, 23, 42, 0.22) 45%,
+      rgba(15, 23, 42, 0.08) 100%
+    ),
+    var(--bof-mkt-hero-image-url),
+    var(--bof-mkt-hero-image-fallback-url);
+  background-position: center, center, center;
+  background-size: cover, cover, cover;
+  background-repeat: no-repeat, no-repeat, no-repeat;
+  box-shadow:
+    0 1px 0 rgba(15, 23, 42, 0.06) inset,
+    0 18px 50px -24px rgba(15, 23, 42, 0.32);
+}
+
+.bof-mkt-hero-premium--photo .bof-mkt-hero-visual-card {
+  height: 100%;
+  min-height: clamp(240px, 34vh, 400px);
+  box-shadow: none;
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  background: rgba(255, 255, 255, 0.4);
+  backdrop-filter: blur(4px);
+}
+
+.bof-mkt-hero-premium--photo .bof-mkt-hero-visual-body {
+  flex: 1;
+  min-height: 0;
+  padding: 0;
+  border-radius: 0 0 10px 10px;
+  overflow: hidden;
+}
+
+.bof-mkt-hero-premium--photo .bof-mkt-hero-visual-header {
+  border-bottom: 1px solid rgba(15, 23, 42, 0.1);
+  background: rgba(255, 255, 255, 0.65);
+}
+
+.bof-mkt-hero-premium--photo .bof-mkt-hero-visual-frame {
+  border: none;
+  display: flex;
+  flex-direction: column;
+  border-radius: 12px;
+  background: #fff;
+  height: 100%;
+  min-height: clamp(240px, 34vh, 400px);
+  overflow: hidden;
+}
+
+.bof-mkt-hero-premium--photo .bof-mkt-hero-visual-caption {
+  color: #475569;
+  border-top: 1px solid rgba(15, 23, 42, 0.08);
+  background: #fff;
+  padding: 0.6rem 0.85rem;
+}
+
+.bof-mkt-hero-premium--photo .bof-mkt-hero-trust {
+  color: #334155;
+}
+
+.bof-mkt-hero-premium-grid--photo {
+  align-items: stretch;
+}
+
+@media (min-width: 900px) {
+  .bof-mkt-hero-premium-grid--photo {
+    grid-template-columns: minmax(0, 1.05fr) minmax(300px, 0.95fr);
+    column-gap: clamp(2rem, 4vw, 3.5rem);
+  }
+}
+
 .bof-mkt-hero-premium-grid {
   display: grid;
   grid-template-columns: 1fr;
@@ -6403,6 +6510,242 @@ body {
 
 .bof-intake-engine-nowrap {
   white-space: nowrap;
+}
+
+/* BOF load intake (document viewer) — primary workflow surface */
+.bof-intake-form-primary {
+  margin: 0 0 1.75rem;
+  border-radius: var(--bof-radius, 8px);
+  border: 1px solid #0d9488;
+  background: linear-gradient(120deg, rgba(13, 148, 136, 0.1) 0%, rgba(15, 23, 42, 0.4) 100%),
+    var(--bof-surface, #0b1220);
+  padding: 1.15rem 1.25rem;
+  box-shadow: 0 12px 32px -20px rgba(0, 0, 0, 0.55);
+}
+
+.bof-intake-form-primary-inner {
+  display: grid;
+  gap: 1.15rem 1.5rem;
+  align-items: start;
+}
+
+@media (min-width: 880px) {
+  .bof-intake-form-primary-inner {
+    grid-template-columns: 1.35fr minmax(200px, 0.85fr);
+  }
+}
+
+.bof-intake-form-primary-title {
+  margin: 0 0 0.45rem;
+  font-size: 1.1rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: #e2e8f0;
+}
+
+.bof-intake-form-primary-lead {
+  margin: 0 0 0.65rem;
+  font-size: 0.88rem;
+  line-height: 1.55;
+  color: #cbd5e1;
+}
+
+.bof-intake-form-primary-steps {
+  margin: 0;
+  padding-left: 1.1rem;
+  color: #94a3b8;
+  font-size: 0.8rem;
+  line-height: 1.5;
+  max-width: 50ch;
+}
+
+.bof-intake-form-primary-steps li {
+  margin: 0.2rem 0;
+}
+
+.bof-intake-form-primary-cta {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: center;
+  gap: 0.45rem;
+}
+
+.bof-intake-form-primary-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 0.7rem 1.1rem;
+  border-radius: 8px;
+  font-size: 0.92rem;
+  font-weight: 700;
+  text-decoration: none;
+  color: #042f2e;
+  background: linear-gradient(180deg, #5eead4, #2dd4bf 55%, #14b8a6);
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.35) inset;
+  border: 1px solid #0d9488;
+  transition: filter 0.15s ease, transform 0.1s ease;
+}
+.bof-intake-form-primary-btn:hover {
+  filter: brightness(1.06);
+}
+
+.bof-intake-form-primary-hint {
+  margin: 0;
+  max-width: 28ch;
+  align-self: center;
+  text-align: center;
+}
+
+/* Workflow form shortcuts (operator-facing; light BOF app) */
+.bof-wf-sh {
+  margin: 1.5rem 0;
+  padding: 1.1rem 1.15rem;
+  border-radius: var(--bof-radius, 8px);
+  border: 1px solid var(--bof-border, #1e293b);
+  background: var(--bof-elev, #0c1424);
+}
+.bof-wf-sh-head {
+  margin-bottom: 0.85rem;
+}
+.bof-wf-sh-title {
+  margin: 0 0 0.4rem;
+  font-size: 0.95rem;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  color: #e2e8f0;
+}
+.bof-wf-sh-lead {
+  margin: 0;
+  font-size: 0.78rem;
+  line-height: 1.5;
+  color: #94a3b8;
+  max-width: 62ch;
+}
+.bof-wf-sh-lead code {
+  font-size: 0.72em;
+  background: #0b1220;
+  padding: 0.1em 0.3em;
+  border-radius: 3px;
+}
+.bof-wf-sh-grid {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.5rem;
+  grid-template-columns: 1fr;
+}
+@media (min-width: 720px) {
+  .bof-wf-sh-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+@media (min-width: 1100px) {
+  .bof-wf-sh-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+.bof-wf-sh-card {
+  margin: 0;
+  min-width: 0;
+}
+.bof-wf-sh-link {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  min-height: 5.2rem;
+  height: 100%;
+  border-radius: 6px;
+  border: 1px solid #1e3a3a;
+  background: #0a1528;
+  padding: 0.6rem 0.65rem;
+  text-decoration: none;
+  color: #e2e8f0;
+  font-size: 0.8rem;
+  line-height: 1.3;
+  transition: border-color 0.12s, background 0.12s;
+}
+.bof-wf-sh-link:hover {
+  border-color: #0d9488;
+  background: #0d2136;
+}
+.bof-wf-sh-top {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.3rem 0.5rem;
+  margin-bottom: 0.15rem;
+}
+.bof-wf-sh-pill {
+  display: inline-block;
+  font-size: 0.6rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 0.1rem 0.35rem;
+  border-radius: 3px;
+  border: 1px solid #334155;
+  color: #cbd5e1;
+  background: #0f172a;
+}
+.bof-wf-sh-pill--gen {
+  border-color: #2563eb;
+  color: #bfdbfe;
+}
+.bof-wf-sh-pill--ws {
+  border-color: #64748b;
+  color: #cbd5e1;
+}
+.bof-wf-sh-pill--edit {
+  border-color: #0d9488;
+  color: #99f6e4;
+}
+.bof-wf-sh-gate {
+  font-size: 0.62rem;
+  color: #a78bfa;
+  line-height: 1.2;
+  text-align: right;
+  max-width: 14ch;
+}
+.bof-wf-sh-label {
+  font-size: 0.84rem;
+  font-weight: 700;
+  color: #f1f5f9;
+  line-height: 1.2;
+}
+.bof-wf-sh-sub {
+  font-size: 0.72rem;
+  color: #94a3b8;
+  line-height: 1.35;
+}
+
+/* Dispatch board drawer — same shortcuts, higher contrast for slate UI */
+.bof-wf-sh--dispatch {
+  margin: 0.75rem 0 0;
+  padding: 0.75rem 0.85rem;
+  border: 1px solid #1e3a3a;
+  background: #020617;
+  border-radius: 8px;
+}
+.bof-wf-sh--dispatch .bof-wf-sh-title {
+  font-size: 0.8rem;
+}
+.bof-wf-sh--dispatch .bof-wf-sh-lead {
+  color: #a1a1aa;
+  font-size: 0.72rem;
+  margin-bottom: 0.35rem;
+}
+.bof-wf-sh--dispatch .bof-wf-sh-link {
+  background: #0f172a;
+  min-height: 4.4rem;
+}
+.bof-wf-sh--dispatch .bof-wf-sh-pill--edit {
+  color: #5eead4;
+  border-color: #115e59;
+  background: #042f2e;
 }
 
 .bof-intake-engine-detail-head {

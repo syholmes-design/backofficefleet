@@ -196,8 +196,10 @@ export function DieselRouteInsightWidget({ loadId, variant = "full" }: Props) {
         </p>
         {liveFuel && !liveFuel.live && (
           <p className="diesel-insight-live-unavailable bof-small">
-            Live diesel prices unavailable. Using BOF demo diesel values for this view.
-            {liveFuel.reason ? ` (${liveFuel.reason})` : ""}
+            This view is using BOF&apos;s <strong>demo</strong> diesel numbers until the server is configured
+            for live TomTom prices. <strong>Fix:</strong> add environment variable <code className="bof-code">TOMTOM_API_KEY</code>{" "}
+            in your deployment (Vercel → Project → Settings → Environment Variables) and redeploy.{" "}
+            {liveFuel.reason ? <span>Detail: {liveFuel.reason}</span> : null}
           </p>
         )}
         <div className="diesel-insight-shipper-row">
@@ -245,8 +247,9 @@ export function DieselRouteInsightWidget({ loadId, variant = "full" }: Props) {
       </p>
       {liveFuel && !liveFuel.live && (
         <p className="diesel-insight-live-unavailable bof-small">
-          Live diesel prices unavailable. Using BOF demo placeholder values for operational continuity.
-          {liveFuel.reason ? ` (${liveFuel.reason})` : ""}
+          <strong>Demo mode:</strong> live TomTom diesel is off. Set server env{" "}
+          <code className="bof-code">TOMTOM_API_KEY</code> (Vercel) to enable the live scan.{" "}
+          {liveFuel.reason ? <span>Detail: {liveFuel.reason}</span> : null}
         </p>
       )}
 

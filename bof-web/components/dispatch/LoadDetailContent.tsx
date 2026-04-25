@@ -18,6 +18,7 @@ import { formatMoney, proofChipClass, sealChipClass } from "./dispatch-ui";
 import { LoadStatusTimeline } from "./LoadStatusTimeline";
 import { LoadDocumentsLibrary } from "./LoadDocumentsLibrary";
 import { DocumentationReadinessPanel } from "./DocumentationReadinessPanel";
+import { BofWorkflowFormShortcuts } from "@/components/documents/BofWorkflowFormShortcuts";
 
 type Props = {
   load: Load;
@@ -69,6 +70,13 @@ export function LoadDetailContent({ load, onClose }: Props) {
         <LoadStatusTimeline status={load.status} />
 
         <DocumentationReadinessPanel load={load} />
+
+        <BofWorkflowFormShortcuts
+          context="load"
+          entityId={load.load_id}
+          variant="dispatch"
+          title="This load in BOF — open intake, driver packet, claim forms"
+        />
 
         <section className="rounded-lg border border-slate-800 bg-slate-900/40 p-4">
           <h3 className="mb-2 flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-slate-500">

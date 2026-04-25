@@ -22,6 +22,8 @@ import { LoadBofAdvantagesIsland } from "@/components/bof-advantage/LoadBofAdvan
 import { DieselRouteInsightWidget } from "@/components/fuel/DieselRouteInsightWidget";
 import { LoadReadinessMessagingPanel } from "@/components/loads/LoadReadinessMessagingPanel";
 import { BofTemplateUsageSurface } from "@/components/documents/BofTemplateUsageSurface";
+import { BofIntakeFormPrimaryPanel } from "@/components/documents/BofIntakeFormPrimaryPanel";
+import { BofWorkflowFormShortcuts } from "@/components/documents/BofWorkflowFormShortcuts";
 
 type Props = { params: Promise<{ id: string }> };
 
@@ -129,6 +131,13 @@ export default async function LoadDetailPage({ params }: Props) {
           )}
         </div>
       </header>
+
+      <BofIntakeFormPrimaryPanel entityId={load.id} compact />
+      <BofWorkflowFormShortcuts
+        context="load"
+        entityId={load.id}
+        title="This load — forms, packets, and contract options"
+      />
 
       {routeMapModel && <LoadRouteMapClient model={routeMapModel} />}
 
