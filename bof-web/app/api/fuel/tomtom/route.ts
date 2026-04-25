@@ -13,10 +13,16 @@ export async function GET(req: Request) {
 
   const key = getTomTomApiKey();
   if (!key) {
+    const envDebug = {
+      hasTomTom: !!process.env.TOMTOM_API_KEY,
+      hasTomTomMaps: !!process.env.TOMTOM_MAPS_API_KEY,
+      hasTT: !!process.env.TT_API_KEY,
+      nodeEnv: process.env.NODE_ENV,
+    };
+    
     const noKey: TomTomFuelFeedResponse = {
       live: false,
-      reason:
-        "No TomTom key: set TOMTOM_API_KEY in the server environment (Vercel). Optional legacy: TOMTOM_MAPS_API_KEY or TT_API_KEY.",
+      reason: `No TomTom key configured. Expected TOMTOM_API_KEY. Debug: ${JSON.stringify(envDebug)}`,
       loadId,
       fuelPriceIds: [],
       routeContext: {

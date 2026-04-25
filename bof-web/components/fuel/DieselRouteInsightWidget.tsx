@@ -90,11 +90,15 @@ export function DieselRouteInsightWidget({ loadId, variant = "full" }: Props) {
         const res = await fetch(`/api/fuel/tomtom?loadId=${encodeURIComponent(loadId)}`, {
           cache: "no-store",
         });
-        if (!res.ok) return;
+        if (!res.ok) {
+          console.error("TomTom API response not ok:", res.status, res.statusText);
+          return;
+        }
         const body = (await res.json()) as TomTomFuelFeedResponse;
         if (!cancelled) setLiveFuel(body);
-      } catch {
-        // Keep demo fallback silent on API failure.
+      } catch (err) {
+        // Log API failure for debugging
+        console.error("TomTom fuel API call failed:", err);
       }
     };
     run();

@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Shield, Phone } from "lucide-react";
 import { BofLogo } from "@/components/BofLogo";
 
 const marketingNav = [
