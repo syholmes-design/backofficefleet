@@ -6,7 +6,7 @@
  */
 
 import Link from "next/link";
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useBofDemoData } from "@/lib/bof-demo-data-context";
 import {
   assignedTrucksForDriver,
@@ -35,9 +35,13 @@ import { DocumentEnginePanel } from "@/components/DocumentEnginePanel";
 import { RouteSupportWidget } from "@/components/route-support/RouteSupportWidget";
 import { DieselRouteInsightWidget } from "@/components/fuel/DieselRouteInsightWidget";
 import { useIntakeEngineStore } from "@/lib/stores/intake-engine-store";
+import {
+  deriveComplianceStatusFromDates,
+  deriveDocStatusFromExpiration,
+} from "@/lib/driver-operational-edit";
 
 export function DriverDetailPageClient({ driverId }: { driverId: string }) {
-  const { data } = useBofDemoData();
+  const { data, updateDriver, updateDocument } = useBofDemoData();
   const intakeReadiness = useIntakeEngineStore((s) => s.driverReadinessLog);
 
   const driver = useMemo(() => getDriverById(data, driverId), [data, driverId]);
@@ -110,6 +114,101 @@ export function DriverDetailPageClient({ driverId }: { driverId: string }) {
     document.title = `${driver.name} | Driver | BOF`;
   }, [driver]);
 
+  type DriverOperational = {
+    emergencyContactName?: string;
+    emergencyContactRelationship?: string;
+    emergencyContactPhone?: string;
+    secondaryContactName?: string;
+    secondaryContactRelationship?: string;
+    secondaryContactPhone?: string;
+    bankName?: string;
+    bankAccountType?: string;
+    bankRoutingNumber?: string;
+    bankAccountLast4?: string;
+    cdl_expiration_date?: string;
+    med_card_expiration_date?: string;
+    mvr_expiration_date?: string;
+    fmcsa_review_date?: string;
+  };
+  const emergency = (driver ?? {}) as DriverOperational;
+
+  const [editingOperational, setEditingOperational] = useState(false);
+  const [operationalDraft, setOperationalDraft] = useState({
+    cdl_expiration_date: emergency.cdl_expiration_date ?? "",
+    med_card_expiration_date: emergency.med_card_expiration_date ?? "",
+    mvr_expiration_date: emergency.mvr_expiration_date ?? "",
+    fmcsa_review_date: emergency.fmcsa_review_date ?? "",
+    emergencyContactName: emergency.emergencyContactName ?? "",
+    emergencyContactRelationship: emergency.emergencyContactRelationship ?? "",
+    emergencyContactPhone: emergency.emergencyContactPhone ?? "",
+    secondaryContactName: emergency.secondaryContactName ?? "",
+    secondaryContactRelationship: emergency.secondaryContactRelationship ?? "",
+    secondaryContactPhone: emergency.secondaryContactPhone ?? "",
+    bankName: emergency.bankName ?? "",
+    bankAccountType: emergency.bankAccountType ?? "",
+    bankRoutingNumber: emergency.bankRoutingNumber ?? "",
+    bankAccountLast4: emergency.bankAccountLast4 ?? "",
+  });
+
+  useEffect(() => {
+    setOperationalDraft({
+      cdl_expiration_date: emergency.cdl_expiration_date ?? "",
+      med_card_expiration_date: emergency.med_card_expiration_date ?? "",
+      mvr_expiration_date: emergency.mvr_expiration_date ?? "",
+      fmcsa_review_date: emergency.fmcsa_review_date ?? "",
+      emergencyContactName: emergency.emergencyContactName ?? "",
+      emergencyContactRelationship: emergency.emergencyContactRelationship ?? "",
+      emergencyContactPhone: emergency.emergencyContactPhone ?? "",
+      secondaryContactName: emergency.secondaryContactName ?? "",
+      secondaryContactRelationship: emergency.secondaryContactRelationship ?? "",
+      secondaryContactPhone: emergency.secondaryContactPhone ?? "",
+      bankName: emergency.bankName ?? "",
+      bankAccountType: emergency.bankAccountType ?? "",
+      bankRoutingNumber: emergency.bankRoutingNumber ?? "",
+      bankAccountLast4: emergency.bankAccountLast4 ?? "",
+    });
+  }, [
+    emergency.bankAccountLast4,
+    emergency.bankAccountType,
+    emergency.bankName,
+    emergency.bankRoutingNumber,
+    emergency.cdl_expiration_date,
+    emergency.emergencyContactName,
+    emergency.emergencyContactPhone,
+    emergency.emergencyContactRelationship,
+    emergency.fmcsa_review_date,
+    emergency.med_card_expiration_date,
+    emergency.mvr_expiration_date,
+    emergency.secondaryContactName,
+    emergency.secondaryContactPhone,
+    emergency.secondaryContactRelationship,
+  ]);
+
+  function saveOperationalEdits() {
+    if (!driver) return;
+    const nextCompliance = deriveComplianceStatusFromDates({
+      cdlExpirationDate: operationalDraft.cdl_expiration_date,
+      medCardExpirationDate: operationalDraft.med_card_expiration_date,
+    });
+    updateDriver(driver.id, {
+      ...operationalDraft,
+      compliance_status: nextCompliance,
+    });
+    updateDocument(driver.id, "CDL", {
+      expirationDate: operationalDraft.cdl_expiration_date || null,
+      status: deriveDocStatusFromExpiration(operationalDraft.cdl_expiration_date),
+    });
+    updateDocument(driver.id, "Medical Card", {
+      expirationDate: operationalDraft.med_card_expiration_date || null,
+      status: deriveDocStatusFromExpiration(operationalDraft.med_card_expiration_date),
+    });
+    updateDocument(driver.id, "MVR", {
+      expirationDate: operationalDraft.mvr_expiration_date || null,
+      status: deriveDocStatusFromExpiration(operationalDraft.mvr_expiration_date),
+    });
+    setEditingOperational(false);
+  }
+
   if (!driver) {
     return (
       <div className="bof-page">
@@ -127,12 +226,6 @@ export function DriverDetailPageClient({ driverId }: { driverId: string }) {
       : trucks.length === 1
         ? trucks[0]
         : `${primary ?? trucks[0]} (${trucks.length} assets on record)`;
-
-  const emergency = driver as typeof driver & {
-    emergencyContactName?: string;
-    emergencyContactRelationship?: string;
-    emergencyContactPhone?: string;
-  };
 
   const driverPhoto =
     (driver as { photoUrl?: string | undefined }).photoUrl?.trim() || driverPhotoPath(driver.id);
@@ -207,6 +300,176 @@ export function DriverDetailPageClient({ driverId }: { driverId: string }) {
 
         <div className="bof-driver-info-grid" aria-label="Contact and assignment">
           <div className="bof-info-block">
+            <h3 className="bof-h3">Operational quick edit</h3>
+            <p className="bof-muted bof-small">
+              Edit compliance dates and core contact/payment fields directly on this screen.
+            </p>
+            {!editingOperational ? (
+              <button
+                type="button"
+                className="bof-intake-engine-btn"
+                onClick={() => setEditingOperational(true)}
+              >
+                Edit operational fields
+              </button>
+            ) : (
+              <div className="bof-driver-vault-form">
+                <label>
+                  <span>CDL expiration date</span>
+                  <input
+                    type="date"
+                    value={operationalDraft.cdl_expiration_date}
+                    onChange={(e) =>
+                      setOperationalDraft((s) => ({ ...s, cdl_expiration_date: e.target.value }))
+                    }
+                  />
+                </label>
+                <label>
+                  <span>Medical certification expiration date</span>
+                  <input
+                    type="date"
+                    value={operationalDraft.med_card_expiration_date}
+                    onChange={(e) =>
+                      setOperationalDraft((s) => ({ ...s, med_card_expiration_date: e.target.value }))
+                    }
+                  />
+                </label>
+                <label>
+                  <span>MVR expiration date</span>
+                  <input
+                    type="date"
+                    value={operationalDraft.mvr_expiration_date}
+                    onChange={(e) =>
+                      setOperationalDraft((s) => ({ ...s, mvr_expiration_date: e.target.value }))
+                    }
+                  />
+                </label>
+                <label>
+                  <span>FMCSA review date</span>
+                  <input
+                    type="date"
+                    value={operationalDraft.fmcsa_review_date}
+                    onChange={(e) =>
+                      setOperationalDraft((s) => ({ ...s, fmcsa_review_date: e.target.value }))
+                    }
+                  />
+                </label>
+                <label>
+                  <span>Emergency contact name</span>
+                  <input
+                    value={operationalDraft.emergencyContactName}
+                    onChange={(e) =>
+                      setOperationalDraft((s) => ({ ...s, emergencyContactName: e.target.value }))
+                    }
+                  />
+                </label>
+                <label>
+                  <span>Emergency contact relationship</span>
+                  <input
+                    value={operationalDraft.emergencyContactRelationship}
+                    onChange={(e) =>
+                      setOperationalDraft((s) => ({
+                        ...s,
+                        emergencyContactRelationship: e.target.value,
+                      }))
+                    }
+                  />
+                </label>
+                <label>
+                  <span>Emergency contact phone</span>
+                  <input
+                    value={operationalDraft.emergencyContactPhone}
+                    onChange={(e) =>
+                      setOperationalDraft((s) => ({ ...s, emergencyContactPhone: e.target.value }))
+                    }
+                  />
+                </label>
+                <label>
+                  <span>Secondary contact name</span>
+                  <input
+                    value={operationalDraft.secondaryContactName}
+                    onChange={(e) =>
+                      setOperationalDraft((s) => ({ ...s, secondaryContactName: e.target.value }))
+                    }
+                  />
+                </label>
+                <label>
+                  <span>Secondary contact relationship</span>
+                  <input
+                    value={operationalDraft.secondaryContactRelationship}
+                    onChange={(e) =>
+                      setOperationalDraft((s) => ({
+                        ...s,
+                        secondaryContactRelationship: e.target.value,
+                      }))
+                    }
+                  />
+                </label>
+                <label>
+                  <span>Secondary contact phone</span>
+                  <input
+                    value={operationalDraft.secondaryContactPhone}
+                    onChange={(e) =>
+                      setOperationalDraft((s) => ({ ...s, secondaryContactPhone: e.target.value }))
+                    }
+                  />
+                </label>
+                <label>
+                  <span>Bank name</span>
+                  <input
+                    value={operationalDraft.bankName}
+                    onChange={(e) =>
+                      setOperationalDraft((s) => ({ ...s, bankName: e.target.value }))
+                    }
+                  />
+                </label>
+                <label>
+                  <span>Bank account type</span>
+                  <input
+                    value={operationalDraft.bankAccountType}
+                    onChange={(e) =>
+                      setOperationalDraft((s) => ({ ...s, bankAccountType: e.target.value }))
+                    }
+                  />
+                </label>
+                <label>
+                  <span>Bank routing number</span>
+                  <input
+                    value={operationalDraft.bankRoutingNumber}
+                    onChange={(e) =>
+                      setOperationalDraft((s) => ({ ...s, bankRoutingNumber: e.target.value }))
+                    }
+                  />
+                </label>
+                <label>
+                  <span>Bank account last 4</span>
+                  <input
+                    value={operationalDraft.bankAccountLast4}
+                    onChange={(e) =>
+                      setOperationalDraft((s) => ({ ...s, bankAccountLast4: e.target.value }))
+                    }
+                  />
+                </label>
+                <div className="bof-driver-vault-actions">
+                  <button
+                    type="button"
+                    className="bof-intake-engine-btn bof-intake-engine-btn--primary"
+                    onClick={saveOperationalEdits}
+                  >
+                    Save
+                  </button>
+                  <button
+                    type="button"
+                    className="bof-intake-engine-btn"
+                    onClick={() => setEditingOperational(false)}
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+          <div className="bof-info-block">
             <h3 className="bof-h3">Contact</h3>
             <dl className="bof-dl">
               <dt>Address</dt>
@@ -240,6 +503,43 @@ export function DriverDetailPageClient({ driverId }: { driverId: string }) {
                   "Not on file"
                 )}
               </dd>
+            </dl>
+          </div>
+          <div className="bof-info-block">
+            <h3 className="bof-h3">Secondary contact</h3>
+            <dl className="bof-dl">
+              <dt>Name</dt>
+              <dd>{emergency.secondaryContactName ?? "Not on file"}</dd>
+              <dt>Relationship</dt>
+              <dd>{emergency.secondaryContactRelationship ?? "Not on file"}</dd>
+              <dt>Phone</dt>
+              <dd>{emergency.secondaryContactPhone ?? "Not on file"}</dd>
+            </dl>
+          </div>
+          <div className="bof-info-block">
+            <h3 className="bof-h3">Compliance dates</h3>
+            <dl className="bof-dl">
+              <dt>CDL expiration</dt>
+              <dd>{emergency.cdl_expiration_date ?? "Not on file"}</dd>
+              <dt>Medical certification expiration</dt>
+              <dd>{emergency.med_card_expiration_date ?? "Not on file"}</dd>
+              <dt>MVR expiration</dt>
+              <dd>{emergency.mvr_expiration_date ?? "Not on file"}</dd>
+              <dt>FMCSA review date</dt>
+              <dd>{emergency.fmcsa_review_date ?? "Not on file"}</dd>
+            </dl>
+          </div>
+          <div className="bof-info-block">
+            <h3 className="bof-h3">Bank information</h3>
+            <dl className="bof-dl">
+              <dt>Bank name</dt>
+              <dd>{emergency.bankName ?? "Not on file"}</dd>
+              <dt>Account type</dt>
+              <dd>{emergency.bankAccountType ?? "Not on file"}</dd>
+              <dt>Routing number</dt>
+              <dd>{emergency.bankRoutingNumber ?? "Not on file"}</dd>
+              <dt>Account last 4</dt>
+              <dd>{emergency.bankAccountLast4 ?? "Not on file"}</dd>
             </dl>
           </div>
           <div className="bof-info-block">

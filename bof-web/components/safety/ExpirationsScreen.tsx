@@ -2,19 +2,24 @@
 
 import { useMemo, useState } from "react";
 import { useSafetyStore } from "@/lib/stores/safety-store";
+import { useBofDemoData } from "@/lib/bof-demo-data-context";
 import {
   buildExpirationRows,
   dispatchEligibilityLabel,
   type ExpirationRow,
 } from "@/lib/safety-rules";
+import { deriveComplianceStatusFromDates, deriveDocStatusFromExpiration } from "@/lib/driver-operational-edit";
 
 export function ExpirationsScreen() {
   const drivers = useSafetyStore((s) => s.drivers);
   const events = useSafetyStore((s) => s.events);
+  const { updateDriver, updateDocument } = useBofDemoData();
 
   const [terminalQ, setTerminalQ] = useState("");
   const [docType, setDocType] = useState<"" | ExpirationRow["document_type"]>("");
   const [statusF, setStatusF] = useState<"" | "Expired" | "Expiring soon">("");
+  const [editingKey, setEditingKey] = useState<string | null>(null);
+  const [draftDate, setDraftDate] = useState("");
 
   const rows = useMemo(() => buildExpirationRows(drivers), [drivers]);
   const totals = useMemo(() => {
@@ -32,6 +37,44 @@ export function ExpirationsScreen() {
       return true;
     });
   }, [rows, terminalQ, docType, statusF]);
+
+  function openRowEditor(row: ExpirationRow) {
+    setEditingKey(`${row.driver_id}-${row.document_type}`);
+    setDraftDate(row.expiration_date ?? "");
+  }
+
+  function saveRowEdit(row: ExpirationRow) {
+    const driver = drivers.find((d) => d.driver_id === row.driver_id);
+    if (!driver) return;
+    const nextCdl =
+      row.document_type === "CDL" ? draftDate : (driver.cdl_expiration_date ?? "");
+    const nextMed =
+      row.document_type === "Med Card"
+        ? draftDate
+        : (driver.med_card_expiration_date ?? "");
+    const nextMvr =
+      row.document_type === "MVR" ? draftDate : (driver.mvr_expiration_date ?? "");
+    updateDriver(row.driver_id, {
+      cdl_expiration_date: nextCdl || null,
+      med_card_expiration_date: nextMed || null,
+      mvr_expiration_date: nextMvr || null,
+      compliance_status: deriveComplianceStatusFromDates({
+        cdlExpirationDate: nextCdl,
+        medCardExpirationDate: nextMed,
+      }),
+    });
+
+    const docTypeMap: Record<ExpirationRow["document_type"], string> = {
+      CDL: "CDL",
+      "Med Card": "Medical Card",
+      MVR: "MVR",
+    };
+    updateDocument(row.driver_id, docTypeMap[row.document_type], {
+      expirationDate: draftDate || null,
+      status: deriveDocStatusFromExpiration(draftDate),
+    });
+    setEditingKey(null);
+  }
 
   return (
     <div className="flex min-h-0 flex-1 flex-col gap-4 p-5">
@@ -116,6 +159,9 @@ export function ExpirationsScreen() {
                 <th className="border-b border-slate-800 px-3 py-2 font-medium">
                   Dispatch
                 </th>
+                <th className="border-b border-slate-800 px-3 py-2 font-medium">
+                  Edit
+                </th>
               </tr>
             </thead>
             <tbody>
@@ -151,6 +197,40 @@ export function ExpirationsScreen() {
                     </td>
                     <td className="px-3 py-2 text-xs text-slate-300">
                       {dispatchEligibilityLabel(d, events)}
+                    </td>
+                    <td className="px-3 py-2 text-xs text-slate-300">
+                      {editingKey === `${r.driver_id}-${r.document_type}` ? (
+                        <div className="flex items-center gap-2">
+                          <input
+                            type="date"
+                            value={draftDate}
+                            onChange={(e) => setDraftDate(e.target.value)}
+                            className="rounded border border-slate-700 bg-slate-950 px-2 py-1 text-xs text-slate-100"
+                          />
+                          <button
+                            type="button"
+                            className="bof-intake-engine-btn bof-intake-engine-btn--primary"
+                            onClick={() => saveRowEdit(r)}
+                          >
+                            Save
+                          </button>
+                          <button
+                            type="button"
+                            className="bof-intake-engine-btn"
+                            onClick={() => setEditingKey(null)}
+                          >
+                            Cancel
+                          </button>
+                        </div>
+                      ) : (
+                        <button
+                          type="button"
+                          className="bof-intake-engine-btn"
+                          onClick={() => openRowEditor(r)}
+                        >
+                          Edit date
+                        </button>
+                      )}
                     </td>
                   </tr>
                 );
