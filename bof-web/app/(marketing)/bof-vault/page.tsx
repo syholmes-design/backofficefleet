@@ -159,16 +159,17 @@ const PROCESS_STEPS = [
 export default function BofVaultPage() {
   return (
     <>
-      <MarketingPremiumHero
+      <MarketingGovernmentIntegratedHero
         titleId="bof-mkt-vault-hero-heading"
         sectionAriaLabelledBy="bof-mkt-vault-hero-heading"
-        heroLayout="photo"
         eyebrow="BOF ecosystem · credential intelligence"
-        title={<>Have Your Documents Ready When Opportunity Knocks</>}
-        subtitle="Drivers upload once. Fleets verify instantly. Compliance stays current—without turning BOF Vault into yet another passive file dump."
-        support="Vault is the secure substrate beneath BOF enforcement: it feeds dispatch gates, settlement intelligence, and audit defense while the command center stays the operator’s home screen."
+        title={<>Secure Document Vault for Fleet Operations</>}
+        subtitle="Upload once, verify instantly, and maintain compliance across your entire fleet. BOF Vault connects directly to dispatch, settlements, and audit systems."
+        support="Vault is the secure substrate beneath BOF enforcement: it feeds dispatch gates, settlement intelligence, and audit defense while command center stays operator's home screen."
         trustItems={HERO_TRUST}
-        trustAriaLabel="BOF Vault capability highlights"
+        imageSrc="/assets/images/hero-bof-vault.png"
+        imageAlt="Secure BOF Vault document management and verification system"
+        imageCaption="Enterprise-grade credential vault with real-time verification, audit trails, and integration with dispatch and settlement systems."
         ctas={
           <>
             <Link
@@ -181,13 +182,6 @@ export default function BofVaultPage() {
               Explore document vault demo
             </Link>
           </>
-        }
-        visual={
-          <MarketingHeroImagePanel
-            windowTitle="BOF Vault · credential fabric"
-            imagePath="/assets/images/hero-bof-vault.png"
-            caption="Single file of record: upload once, verify against fleet rules, feed dispatch and settlements."
-          />
         }
       />
 
