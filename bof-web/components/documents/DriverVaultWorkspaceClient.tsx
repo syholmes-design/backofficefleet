@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo } from "react";
+import { useEffect, useMemo } from "react";
 import { useBofDemoData } from "@/lib/bof-demo-data-context";
 import {
   DRIVER_VAULT_CATEGORIES,
@@ -30,6 +30,7 @@ export function DriverVaultWorkspaceClient() {
   const { data } = useBofDemoData();
   const initFromData = useDriverVaultWorkspaceStore((s) => s.initFromData);
   const initialized = useDriverVaultWorkspaceStore((s) => s.initialized);
+  const syncSharedFromData = useDriverVaultWorkspaceStore((s) => s.syncSharedFromData);
   const drivers = useDriverVaultWorkspaceStore((s) => s.drivers);
   const selectedDriverId = useDriverVaultWorkspaceStore((s) => s.selectedDriverId);
   const selectedCategory = useDriverVaultWorkspaceStore((s) => s.selectedCategory);
@@ -45,6 +46,12 @@ export function DriverVaultWorkspaceClient() {
   if (!initialized) {
     initFromData(data);
   }
+
+  useEffect(() => {
+    if (initialized) {
+      syncSharedFromData(data);
+    }
+  }, [data, initialized, syncSharedFromData]);
 
   const selectedDriver = useMemo(
     () => drivers.find((d) => d.driverId === selectedDriverId) ?? drivers[0],

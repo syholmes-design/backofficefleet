@@ -1,7 +1,8 @@
-import type { DriverWithEC } from "@/lib/emergency-contacts/drivers";
+import type { DriverOperationalProfile } from "@/lib/driver-operational-profile";
 
-export function EmergencyContactCard({ driver }: { driver: DriverWithEC }) {
-  const initials = `${driver.firstName[0] ?? ""}${driver.lastName[0] ?? ""}`.toUpperCase();
+export function EmergencyContactCard({ driver }: { driver: DriverOperationalProfile }) {
+  const parts = driver.fullName.split(" ");
+  const initials = `${parts[0]?.[0] ?? ""}${parts[1]?.[0] ?? ""}`.toUpperCase();
 
   return (
     <article className="ec-card-shell" aria-label={`Emergency contact card for ${driver.fullName}`}>
@@ -16,7 +17,7 @@ export function EmergencyContactCard({ driver }: { driver: DriverWithEC }) {
           <div>
             <p className="ec-driver-name">{driver.fullName}</p>
             <p className="ec-driver-meta">
-              {driver.id} • {driver.licenseClass} • {driver.licenseNumber} ({driver.licenseState})
+              {driver.driverId} • {driver.licenseClass} • {driver.licenseNumber} ({driver.licenseState})
             </p>
           </div>
         </div>
@@ -32,11 +33,11 @@ export function EmergencyContactCard({ driver }: { driver: DriverWithEC }) {
           </div>
           <div className="ec-info-row">
             <span className="ec-info-label">Address</span>
-            <span className="ec-info-value">{driver.fullAddress}</span>
+            <span className="ec-info-value">{driver.address || "Not on file"}</span>
           </div>
           <div className="ec-info-row">
             <span className="ec-info-label">DOB</span>
-            <span className="ec-info-value">{driver.dob}</span>
+            <span className="ec-info-value">{driver.dob || "Not on file"}</span>
           </div>
           <div className="ec-info-row">
             <span className="ec-info-label">CDL</span>
@@ -44,39 +45,8 @@ export function EmergencyContactCard({ driver }: { driver: DriverWithEC }) {
               {driver.licenseClass} {driver.licenseNumber} ({driver.licenseState})
             </span>
           </div>
-          <div className="ec-info-row">
-            <span className="ec-info-label">Gender</span>
-            <span className="ec-info-value">{driver.gender}</span>
-          </div>
         </div>
       </section>
-
-      <div className="ec-physical-strip">
-        <div className="ec-phys-item">
-          <span className="ec-phys-label">Hair</span>
-          <span className="ec-phys-value">{driver.hair}</span>
-        </div>
-        <span className="ec-phys-divider">|</span>
-        <div className="ec-phys-item">
-          <span className="ec-phys-label">Eyes</span>
-          <span className="ec-phys-value">{driver.eyes}</span>
-        </div>
-        <span className="ec-phys-divider">|</span>
-        <div className="ec-phys-item">
-          <span className="ec-phys-label">Height</span>
-          <span className="ec-phys-value">{driver.height}</span>
-        </div>
-        <span className="ec-phys-divider">|</span>
-        <div className="ec-phys-item">
-          <span className="ec-phys-label">Weight</span>
-          <span className="ec-phys-value">{driver.weight} lbs</span>
-        </div>
-        <span className="ec-phys-divider">|</span>
-        <div className="ec-phys-item">
-          <span className="ec-phys-label">Ethnicity</span>
-          <span className="ec-phys-value">{driver.ethnicity}</span>
-        </div>
-      </div>
 
       <section className="ec-section">
         <p className="ec-section-title">Emergency Contacts</p>
@@ -84,28 +54,40 @@ export function EmergencyContactCard({ driver }: { driver: DriverWithEC }) {
           <div className="ec-contact-card ec-contact-card-primary">
             <p className="ec-tier-label">Primary Contact</p>
             <p>
-              <span className="ec-contact-name">{driver.primaryContact.name}</span>
-              <span className="ec-contact-rel">({driver.primaryContact.relationship})</span>
+              <span className="ec-contact-name">{driver.primaryEmergencyName || "Not on file"}</span>
+              <span className="ec-contact-rel">
+                ({driver.primaryEmergencyRelationship || "Not on file"})
+              </span>
             </p>
-            <p className="ec-contact-phone">{driver.primaryContact.phone}</p>
+            <p className="ec-contact-phone">{driver.primaryEmergencyPhone || "Not on file"}</p>
             <p className="ec-contact-detail">
-              <a href={`mailto:${driver.primaryContact.email}`}>{driver.primaryContact.email}</a>
+              {driver.primaryEmergencyEmail ? (
+                <a href={`mailto:${driver.primaryEmergencyEmail}`}>{driver.primaryEmergencyEmail}</a>
+              ) : (
+                "Not on file"
+              )}
               <br />
-              {driver.primaryContact.address}
+              {driver.primaryEmergencyAddress || "Not on file"}
             </p>
           </div>
 
           <div className="ec-contact-card ec-contact-card-secondary">
             <p className="ec-tier-label">Secondary Contact</p>
             <p>
-              <span className="ec-contact-name">{driver.secondaryContact.name}</span>
-              <span className="ec-contact-rel">({driver.secondaryContact.relationship})</span>
+              <span className="ec-contact-name">{driver.secondaryEmergencyName || "Not on file"}</span>
+              <span className="ec-contact-rel">
+                ({driver.secondaryEmergencyRelationship || "Not on file"})
+              </span>
             </p>
-            <p className="ec-contact-phone">{driver.secondaryContact.phone}</p>
+            <p className="ec-contact-phone">{driver.secondaryEmergencyPhone || "Not on file"}</p>
             <p className="ec-contact-detail">
-              <a href={`mailto:${driver.secondaryContact.email}`}>{driver.secondaryContact.email}</a>
+              {driver.secondaryEmergencyEmail ? (
+                <a href={`mailto:${driver.secondaryEmergencyEmail}`}>{driver.secondaryEmergencyEmail}</a>
+              ) : (
+                "Not on file"
+              )}
               <br />
-              {driver.secondaryContact.address}
+              {driver.secondaryEmergencyAddress || "Not on file"}
             </p>
           </div>
         </div>

@@ -1,5 +1,4 @@
 import { EmergencyContactList } from "@/components/emergency-contacts/EmergencyContactList";
-import { emergencyContactDrivers } from "@/lib/emergency-contacts/drivers";
 
 export const metadata = {
   title: "Emergency Contacts | BOF",
@@ -21,7 +20,7 @@ export default function EmergencyContactsPage() {
           </p>
         </div>
       </header>
-      <EmergencyContactList drivers={emergencyContactDrivers} />
+      <EmergencyContactList />
     </div>
   );
 }

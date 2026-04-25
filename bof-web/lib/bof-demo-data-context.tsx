@@ -23,6 +23,7 @@ import {
 import type { BofData } from "@/lib/load-bof-data";
 import type { DriverMedicalExpanded } from "@/lib/driver-medical-expanded";
 import { EMPTY_DRIVER_MEDICAL_EXPANDED } from "@/lib/driver-medical-expanded";
+import { applyOperationalSeedDefaults } from "@/lib/driver-operational-profile";
 
 const STORAGE_KEY = "bof-demo-data-v1";
 
@@ -61,7 +62,7 @@ export function BofDemoDataProvider({
   seed: BofData;
   children: ReactNode;
 }) {
-  const [data, setData] = useState<BofData>(() => deepClone(seed));
+  const [data, setData] = useState<BofData>(() => applyOperationalSeedDefaults(deepClone(seed)));
   const [hydrated, setHydrated] = useState(false);
 
   useEffect(() => {
@@ -70,7 +71,7 @@ export function BofDemoDataProvider({
       if (raw) {
         const parsed = JSON.parse(raw) as BofData;
         if (parsed && Array.isArray(parsed.drivers) && Array.isArray(parsed.documents)) {
-          setData(parsed);
+          setData(applyOperationalSeedDefaults(parsed));
         }
       }
     } catch {
@@ -80,13 +81,13 @@ export function BofDemoDataProvider({
   }, []);
 
   const setFullData = useCallback((next: BofData) => {
-    const copy = deepClone(next);
+    const copy = applyOperationalSeedDefaults(deepClone(next));
     setData(copy);
     persistToStorage(copy);
   }, []);
 
   const resetDemoData = useCallback(() => {
-    const fresh = deepClone(seed);
+    const fresh = applyOperationalSeedDefaults(deepClone(seed));
     setData(fresh);
     try {
       localStorage.removeItem(STORAGE_KEY);

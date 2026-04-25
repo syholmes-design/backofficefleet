@@ -20,6 +20,7 @@ type DriverVaultWorkspaceState = {
   selectedDriverId: string | null;
   selectedCategory: DriverVaultCategory | null;
   initFromData: (data: BofData) => void;
+  syncSharedFromData: (data: BofData) => void;
   selectDriver: (driverId: string) => void;
   selectCategory: (category: DriverVaultCategory) => void;
   updateSharedField: (driverId: string, key: string, value: string) => void;
@@ -119,6 +120,34 @@ export const useDriverVaultWorkspaceStore = create<DriverVaultWorkspaceState>((s
       selectedCategory: "Driver Profile",
     });
   },
+
+  syncSharedFromData: (data) =>
+    set((s) => {
+      if (!s.initialized) return s;
+      const baseline = buildDriverVaultWorkspaces(data);
+      const baselineByDriver = new Map(baseline.map((d) => [d.driverId, d]));
+      return {
+        drivers: s.drivers.map((d) => {
+          const base = baselineByDriver.get(d.driverId);
+          if (!base) return d;
+          const shared = base.sharedProfileFields;
+          const categories = { ...d.categories };
+          (Object.keys(categories) as DriverVaultCategory[]).forEach((category) => {
+            const item = categories[category];
+            const merged = applySharedFieldAutofill(category, shared, item.templateFields);
+            categories[category] = {
+              ...item,
+              templateFields: merged,
+              generatedPreview: {
+                ...item.generatedPreview,
+                sections: toSections(merged),
+              },
+            };
+          });
+          return { ...d, sharedProfileFields: shared, categories };
+        }),
+      };
+    }),
 
   selectDriver: (driverId) => set({ selectedDriverId: driverId }),
 

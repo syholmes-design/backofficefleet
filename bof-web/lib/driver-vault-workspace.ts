@@ -1,6 +1,5 @@
 import type { BofData } from "@/lib/load-bof-data";
-import { bankInfoByDriverId } from "@/lib/bank-info/bankInfoData";
-import { emergencyContactDrivers } from "@/lib/emergency-contacts/drivers";
+import { getDriverOperationalProfile } from "@/lib/driver-operational-profile";
 
 export const DRIVER_VAULT_CATEGORIES = [
   "Driver Profile",
@@ -244,12 +243,9 @@ function sourceTypeToCategory(type: string): DriverVaultCategory {
 }
 
 export function buildDriverVaultWorkspaces(data: BofData): DriverVaultDriverWorkspace[] {
-  const emergencyById = new Map(emergencyContactDrivers.map((d) => [d.id, d]));
-
   return data.drivers.map((d) => {
     const addr = parseAddress(d.address ?? "");
-    const emergency = emergencyById.get(d.id);
-    const bank = bankInfoByDriverId.get(d.id);
+    const profile = getDriverOperationalProfile(data, d.id);
     const shared: DriverVaultSharedProfile = {
       full_name: d.name,
       driver_id: d.id,
@@ -259,16 +255,16 @@ export function buildDriverVaultWorkspaces(data: BofData): DriverVaultDriverWork
       zip: addr.zip,
       phone: d.phone ?? "",
       email: d.email ?? "",
-      date_of_birth: emergency?.dob ?? "—",
-      license_number: emergency?.licenseNumber ?? "—",
+      date_of_birth: profile?.dob || "—",
+      license_number: profile?.licenseNumber || "—",
       masked_ssn: maskedFromDriverId(d.id),
-      emergency_contact_name: emergency?.primaryContact.name ?? "Not on file",
-      emergency_contact_phone: emergency?.primaryContact.phone ?? "Not on file",
-      secondary_contact_name: emergency?.secondaryContact.name ?? "Not on file",
-      secondary_contact_phone: emergency?.secondaryContact.phone ?? "Not on file",
-      bank_name: bank?.bankName ?? "Not on file",
-      bank_account_last4: bank?.accountNumber?.slice(-4) ?? "----",
-      routing_last4: bank?.routingNumber?.slice(-4) ?? "----",
+      emergency_contact_name: profile?.primaryEmergencyName || "Not on file",
+      emergency_contact_phone: profile?.primaryEmergencyPhone || "Not on file",
+      secondary_contact_name: profile?.secondaryEmergencyName || "Not on file",
+      secondary_contact_phone: profile?.secondaryEmergencyPhone || "Not on file",
+      bank_name: profile?.bankName || "Not on file",
+      bank_account_last4: profile?.bankAccountLast4 || "----",
+      routing_last4: profile?.bankRoutingNumber?.slice(-4) || "----",
     };
 
     const seedDocs = data.documents.filter((row) => row.driverId === d.id);
