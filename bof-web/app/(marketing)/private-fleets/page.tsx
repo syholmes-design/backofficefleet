@@ -7,7 +7,7 @@ import {
   MarketingCtaPanel,
   MarketingFormShell,
   MarketingFunnelEntryRow,
-  MarketingHeroImagePanel,
+  MarketingGovernmentIntegratedHero,
   MarketingIconCardGrid,
   MarketingPremiumHero,
   MarketingProcessSteps,
@@ -159,16 +159,18 @@ const PROCESS_STEPS = [
 export default function PrivateFleetsPage() {
   return (
     <>
-      <MarketingPremiumHero
+      <MarketingGovernmentIntegratedHero
         titleId="bof-mkt-private-hero-heading"
         sectionAriaLabelledBy="bof-mkt-private-hero-heading"
-        trustAriaLabel="Private fleet highlights"
-        heroLayout="photo"
         eyebrow="Private fleets · enterprise operations"
         title={<>Enterprise Control for Captive Fleet Networks</>}
         subtitle="Standardize compliance, proof, and dispatch enforcement across yards, branches, and internal boards—without turning your operation into a patchwork of spreadsheets."
         support="BOF treats private fleets with the same operational rigor as for-hire carriers: one command center, one readiness bar, one defensible record."
         trustItems={HERO_TRUST}
+        trustAriaLabel="Private fleet highlights"
+        imageSrc="/assets/images/hero-private-fleets-bof.png"
+        imageAlt="Enterprise private fleet control center with unified operations across yards and branches"
+        imageCaption="Standardized private-fleet governance: one command center, one readiness bar, one defensible record across all locations."
         ctas={
           <>
             <Link
@@ -181,13 +183,6 @@ export default function PrivateFleetsPage() {
               Open Demo
             </Link>
           </>
-        }
-        visual={
-          <MarketingHeroImagePanel
-            windowTitle="Private fleet control plane"
-            imagePath="/assets/images/hero-private-fleets-bof.png"
-            caption="Standardized private-fleet governance across yards, branches, and internal dispatch boards."
-          />
         }
       />
 
