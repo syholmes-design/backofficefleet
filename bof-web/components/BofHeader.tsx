@@ -14,39 +14,14 @@ const marketingNav = [
 
 const productNav = [
   { href: "/dashboard", label: "Dashboard" },
-  { href: "/intake", label: "Intake Engine" },
   { href: "/command-center", label: "Command Center" },
   { href: "/drivers", label: "Drivers" },
-  { href: "/emergency-contacts", label: "Emergency Contacts", icon: "phone-shield" as const },
-  { href: "/source-of-truth", label: "Source of Truth" },
   { href: "/documents", label: "Documents" },
-  { href: "/documents/vault", label: "BOF Vault Workspace" },
+  { href: "/settlements", label: "Settlements" },
   { href: "/safety", label: "Safety" },
   { href: "/dispatch", label: "Dispatch" },
-  { href: "/maintenance", label: "Maintenance" },
-  { href: "/load-requirements", label: "Load intake" },
-  { href: "/loads", label: "Loads" },
-  { href: "/rf-actions", label: "RF Actions" },
-  { href: "/settlements", label: "Settlements" },
-  { href: "/money-at-risk", label: "Money at Risk" },
 ];
 
-function ProductNavLabel({
-  label,
-  icon,
-}: {
-  label: string;
-  icon?: "phone-shield";
-}) {
-  if (icon !== "phone-shield") return <>{label}</>;
-  return (
-    <span className="bof-global-nav-icon-label">
-      <Shield size={12} aria-hidden />
-      <Phone size={12} aria-hidden />
-      {label}
-    </span>
-  );
-}
 
 export function BofHeader() {
   const pathname = usePathname();
@@ -66,7 +41,7 @@ export function BofHeader() {
     <header className="bof-global-header">
       <div className="bof-global-header-inner">
         <Link href="/" className="bof-global-header-logo">
-          <BofLogo variant="light" priority />
+          <BofLogo variant="light" priority className="bof-global-header-logo-enhanced" />
         </Link>
 
         <nav
@@ -82,23 +57,30 @@ export function BofHeader() {
           </div>
           {marketingOnlyHeader ? (
             <div className="bof-global-header-nav-group" aria-label="Demo">
-              <Link href="/dashboard">Product Demo</Link>
+              <Link href="/dashboard" className="bof-global-header-nav-link">Product Demo</Link>
             </div>
           ) : (
             <>
               <span className="bof-global-header-sep" aria-hidden="true" />
               <div className="bof-global-header-nav-group" aria-label="Product demo">
                 {productNav.map((item) => (
-                  <Link key={item.href} href={item.href}>
-                    <ProductNavLabel label={item.label} icon={item.icon} />
+                  <Link key={item.href} href={item.href} className="bof-global-header-nav-link">
+                    {item.label}
                   </Link>
                 ))}
               </div>
             </>
           )}
-          <Link href="/book-assessment" className="bof-global-header-cta">
-            Book Assessment
-          </Link>
+          <div className="bof-global-header-ctas">
+            {marketingOnlyHeader && (
+              <Link href="/apply" className="bof-global-header-cta bof-global-header-cta--primary">
+                Become a Founding Member
+              </Link>
+            )}
+            <Link href="/book-assessment" className="bof-global-header-cta bof-global-header-cta--secondary">
+              {marketingOnlyHeader ? "Assess Your Business" : "Book Assessment"}
+            </Link>
+          </div>
         </nav>
       </div>
     </header>

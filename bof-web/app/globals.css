@@ -107,6 +107,11 @@ body {
   flex-shrink: 0;
 }
 
+.bof-global-header-logo-enhanced {
+  transform: scale(1.15);
+  margin-right: 0.25rem;
+}
+
 .bof-global-header-nav {
   display: flex;
   align-items: center;
@@ -130,6 +135,18 @@ body {
   color: #111827;
 }
 
+.bof-global-header-nav-link {
+  padding: 0.35rem 0.65rem;
+  border-radius: 6px;
+  transition: all 0.15s ease;
+  font-weight: 500;
+}
+
+.bof-global-header-nav-link:hover {
+  background: rgba(15, 23, 42, 0.06);
+  color: #0f172a;
+}
+
 .bof-global-header-nav-group {
   display: flex;
   flex-wrap: wrap;
@@ -144,21 +161,42 @@ body {
   flex-shrink: 0;
 }
 
+.bof-global-header-ctas {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-left: 0.5rem;
+}
+
 .bof-global-header-cta {
-  margin-left: 0.25rem;
   padding: 0.4rem 0.85rem;
   border-radius: 8px;
   font-weight: 600;
   font-size: 0.8125rem;
-  color: #fff !important;
-  background: linear-gradient(135deg, #0d9488 0%, #14b8a6 100%);
-  border: 1px solid #0f766e;
   white-space: nowrap;
+  transition: all 0.15s ease;
+  text-decoration: none;
 }
 
-.bof-global-header-cta:hover {
-  filter: brightness(1.06);
-  color: #fff !important;
+.bof-global-header-cta--primary {
+  background: #0d9488;
+  color: #fff;
+}
+
+.bof-global-header-cta--primary:hover {
+  background: #0f766e;
+  color: #fff;
+}
+
+.bof-global-header-cta--secondary {
+  background: rgba(15, 23, 42, 0.08);
+  color: #0f172a;
+  border: 1px solid rgba(15, 23, 42, 0.12);
+}
+
+.bof-global-header-cta--secondary:hover {
+  background: rgba(15, 23, 42, 0.12);
+  color: #0f172a;
 }
 
 .bof-logo-wrap {
