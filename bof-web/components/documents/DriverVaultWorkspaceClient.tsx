@@ -11,6 +11,7 @@ import { useDriverVaultWorkspaceStore } from "@/lib/stores/driver-vault-workspac
 import { BofWorkflowFormShortcuts } from "@/components/documents/BofWorkflowFormShortcuts";
 import { BofTemplateUsageSurface } from "@/components/documents/BofTemplateUsageSurface";
 import { mapDriverVaultCategoryToOwnership } from "@/lib/bof-vault-ownership-adapter";
+import { BofVaultReferencesPanel } from "@/components/documents/BofVaultReferencesPanel";
 
 function statusClass(status: string) {
   if (status === "valid") return "bof-status-pill bof-status-pill-ok";
@@ -80,6 +81,7 @@ export function DriverVaultWorkspaceClient() {
   }
 
   const workflowEntityId = selectedDriver.driverId;
+  const driverLoadId = data.loads.find((l) => l.driverId === selectedDriver.driverId)?.id ?? null;
 
   return (
     <div className="bof-page bof-driver-vault">
@@ -106,6 +108,10 @@ export function DriverVaultWorkspaceClient() {
         entityId={workflowEntityId}
         title="Vault document ownership map"
         subtitle="Vault-owned driver records first; dispatch/load/billing/claim docs appear as secondary references."
+      />
+      <BofVaultReferencesPanel
+        context={{ driverId: selectedDriver.driverId, loadId: driverLoadId }}
+        title="Driver-linked workflow references"
       />
 
       <section className="bof-driver-vault-grid">

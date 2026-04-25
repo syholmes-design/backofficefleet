@@ -496,6 +496,11 @@ export const BOF_TEMPLATE_PACKS: BofTemplatePack[] = [
         requiredBeforeRelease: false,
         requiredBeforeBilling: true,
         requiredForClaimPacket: false,
+      }, {
+        vaultCategory: "workflow_reference",
+        vaultPrimaryOwner: "billing",
+        vaultSortOrder: 410,
+        vaultSecondaryVisible: true,
       }),
       t("accessorial-summary", "billing-settlement-v3", "Accessorial Summary", "billing_packet", "editable_template", ["Validates additional charge controls before invoice finalization."], {
         primaryModule: "billing",
@@ -571,6 +576,11 @@ export const BOF_TEMPLATE_PACKS: BofTemplatePack[] = [
         requiredBeforeRelease: false,
         requiredBeforeBilling: true,
         requiredForClaimPacket: true,
+      }, {
+        vaultCategory: "workflow_reference",
+        vaultPrimaryOwner: "billing",
+        vaultSortOrder: 420,
+        vaultSecondaryVisible: true,
       }),
       t("billing-packet-cover", "billing-settlement-v3", "Billing Packet Cover Sheet", "billing_packet", "generated_autofill_output", ["Summarizes packet readiness and release posture."], {
         primaryModule: "billing",
@@ -666,6 +676,11 @@ export const BOF_TEMPLATE_PACKS: BofTemplatePack[] = [
         requiredBeforeRelease: true,
         requiredBeforeBilling: false,
         requiredForClaimPacket: false,
+      }, {
+        vaultCategory: "dispatch_reference",
+        vaultPrimaryOwner: "dispatch",
+        vaultSortOrder: 225,
+        vaultSecondaryVisible: true,
       }),
       t("facility-rules-sheet", "driver-dispatch-readiness-v2", "Facility Rules Sheet", "facility", "generated_autofill_output", ["Facility-specific compliance acknowledgment control."], {
         primaryModule: "dispatch",
@@ -681,6 +696,11 @@ export const BOF_TEMPLATE_PACKS: BofTemplatePack[] = [
         requiredBeforeRelease: true,
         requiredBeforeBilling: false,
         requiredForClaimPacket: false,
+      }, {
+        vaultCategory: "dispatch_reference",
+        vaultPrimaryOwner: "dispatch",
+        vaultSortOrder: 228,
+        vaultSecondaryVisible: true,
       }),
       t("proof-requirements-sheet", "driver-dispatch-readiness-v2", "Proof Requirements Sheet", "dispatch_packet", "generated_autofill_output", ["Defines expected BOL/POD/seal/photo requirements."], {
         primaryModule: "dispatch",
@@ -871,7 +891,14 @@ export const BOF_TEMPLATE_PACKS: BofTemplatePack[] = [
         requiredBeforeRelease: false,
         requiredBeforeBilling: false,
         requiredForClaimPacket: true,
-      }, { claimsSensitiveLoad: true, insuranceReviewRequired: true }),
+      }, {
+        claimsSensitiveLoad: true,
+        insuranceReviewRequired: true,
+        vaultCategory: "workflow_reference",
+        vaultPrimaryOwner: "claims",
+        vaultSortOrder: 430,
+        vaultSecondaryVisible: true,
+      }),
       t("high-value-cargo-review", "insurance-claims-v2", "High-Value Cargo Review Sheet", "claim_packet", "editable_template", ["Major BOF control artifact for command center watch and dispatch block decisions."], {
         primaryModule: "claims",
         secondaryModules: ["dispatch", "field_ops"],

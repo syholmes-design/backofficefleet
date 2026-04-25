@@ -7,6 +7,7 @@ import { buildVaultRows } from "@/lib/document-vault";
 import { useBofDemoData } from "@/lib/bof-demo-data-context";
 import { DEFAULT_PREVIEW_DRIVER_ID, DEFAULT_WORKFLOW_LOAD_ID } from "@/lib/bof-defaults";
 import { BofWorkflowFormShortcuts } from "@/components/documents/BofWorkflowFormShortcuts";
+import { BofVaultReferencesPanel } from "@/components/documents/BofVaultReferencesPanel";
 import { getDriverById } from "@/lib/driver-queries";
 import { OPS_COPY } from "@/lib/ops-copy";
 
@@ -79,6 +80,10 @@ export function DocumentsPageClient() {
       <section className="bof-oper-panel bof-oper-panel-tight" aria-label="Document table">
         <DocumentVaultClient rows={rows} totalExpected={rows.length} />
       </section>
+      <BofVaultReferencesPanel
+        context={{ loadId: workflowEntityId, driverId: previewDriver?.id ?? null }}
+        title="Vault secondary references (registry-driven)"
+      />
     </div>
   );
 }
