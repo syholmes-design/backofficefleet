@@ -13,6 +13,7 @@ import { useBofDemoData } from "@/lib/bof-demo-data-context";
 import { DEFAULT_WORKFLOW_LOAD_ID } from "@/lib/bof-defaults";
 import { BofIntakeFormPrimaryPanel } from "@/components/documents/BofIntakeFormPrimaryPanel";
 import { BofWorkflowFormShortcuts } from "@/components/documents/BofWorkflowFormShortcuts";
+import { BofTemplateUsageSurface } from "@/components/documents/BofTemplateUsageSurface";
 import {
   applyFacilityMatch,
   buildLoadIntakeIntelligence,
@@ -285,6 +286,12 @@ export function LoadRequirementsWizard() {
         context="intake"
         entityId={formEntityId}
         title="Open BOF load forms while you work this intake"
+      />
+      <BofTemplateUsageSurface
+        context="load_intake"
+        entityId={formEntityId}
+        title="Intake docs mapped to BOF workflow"
+        subtitle="Editable intake-first forms with dispatch, field, and billing handoff generated from the BOF registry."
       />
 
       <div className="bof-load-intake-progress" role="navigation" aria-label="Wizard progress">

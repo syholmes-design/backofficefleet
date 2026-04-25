@@ -1,5 +1,9 @@
 import type { BofData } from "@/lib/load-bof-data";
-import type { BofTemplateDefinition } from "@/lib/bof-template-system";
+import type {
+  BofRequiredEntityKey,
+  BofTemplateDefinition,
+  BofTemplateUsageSurface,
+} from "@/lib/bof-template-system";
 import { getLoadProofItems, proofBlockingCount } from "@/lib/load-proof";
 import {
   type BofLoadRfidReadiness,
@@ -10,19 +14,13 @@ import {
   rfidHintsForTemplateRow,
 } from "@/lib/bof-rfid-readiness";
 
-export type TemplateUsageSurfaceContext =
-  | "dispatch_load"
-  | "settlement_billing"
-  | "claims_insurance";
+export type TemplateUsageSurfaceContext = BofTemplateUsageSurface;
 
 export type SettlementLoadLinkage =
   | "not_applicable"
   | "none"
-  /** At least one settlement line supplied a `load_id` — preferred anchor. */
   | "lines_explicit"
-  /** Driver has exactly one load; no line-level `load_id` in passed linkage. */
   | "driver_single_inferred"
-  /** Driver has multiple loads; BOF merged RFID/proof across all (conservative). */
   | "driver_multi_merged";
 
 export type TemplateRowPrimaryState =
@@ -44,10 +42,12 @@ export type ResolvedTemplateEntityContext = {
   loadId: string | null;
   driverId: string | null;
   settlementId: string | null;
-  /** Loads used for RFID / proof merge (order: explicit lines first, else driver set). */
+  claimId: string | null;
+  customerId: string | null;
+  facilityId: string | null;
+  billingPacketId: string | null;
   linkedLoadIds: string[];
   settlementLoadLinkage: SettlementLoadLinkage;
-  /** Operator-facing note when linkage is not line-explicit. */
   settlementLinkageNote: string | null;
   missingContext: string[];
   presentContext: string[];
@@ -69,45 +69,26 @@ function sortedDriverLoadIds(data: BofData, driverId: string): string[] {
     .sort();
 }
 
-export function resolveTemplateEntityContext(
+function resolveLoadScopedContext(
   data: BofData,
-  context: TemplateUsageSurfaceContext,
   entityId: string,
-  linkedLoadIdsFromParent?: string[]
+  context: TemplateUsageSurfaceContext
 ): ResolvedTemplateEntityContext {
   const missing: string[] = [];
   const present: string[] = [];
+  const load = data.loads.find((l) => l.id === entityId);
 
-  if (context === "dispatch_load" || context === "claims_insurance") {
-    const load = data.loads.find((l) => l.id === entityId);
-    if (!load) {
-      missing.push("No load row for this entityId in BOF demo data");
-      return {
-        loadId: null,
-        driverId: null,
-        settlementId: null,
-        linkedLoadIds: [],
-        settlementLoadLinkage: "not_applicable",
-        settlementLinkageNote: null,
-        missingContext: missing,
-        presentContext: present,
-      };
-    }
-    present.push(`Load ${load.number} (${load.id})`);
-    if (load.driverId) {
-      present.push(`Driver ${load.driverId}`);
-      const dr = data.drivers.find((d) => d.id === load.driverId);
-      if (!dr) missing.push("Driver profile not found for load.driverId");
-    } else missing.push("No driverId on load");
-
-    if (load.origin) present.push("Route / origin context");
-    if (context === "claims_insurance") present.push("Claim workflow scoped to this load");
-
+  if (!load) {
+    missing.push("No load row for this entityId in BOF demo data");
     return {
-      loadId: load.id,
-      driverId: load.driverId,
+      loadId: null,
+      driverId: null,
       settlementId: null,
-      linkedLoadIds: [load.id],
+      claimId: context === "claims_insurance" ? entityId : null,
+      customerId: null,
+      facilityId: null,
+      billingPacketId: null,
+      linkedLoadIds: [],
       settlementLoadLinkage: "not_applicable",
       settlementLinkageNote: null,
       missingContext: missing,
@@ -115,17 +96,80 @@ export function resolveTemplateEntityContext(
     };
   }
 
-  // settlement_billing
+  present.push(`Load ${load.number} (${load.id})`);
+  if (load.driverId) present.push(`Driver ${load.driverId}`);
+  else missing.push("No driverId on load");
+  if (load.origin) present.push("Route / origin context");
+
+  const customerId = (load as { customerId?: string; shipperId?: string }).customerId ??
+    (load as { customerId?: string; shipperId?: string }).shipperId ??
+    null;
+  const facilityId =
+    (load as { originFacilityId?: string; facilityId?: string }).originFacilityId ??
+    (load as { originFacilityId?: string; facilityId?: string }).facilityId ??
+    null;
+  if (customerId) present.push(`Customer ${customerId}`);
+  if (facilityId) present.push(`Facility ${facilityId}`);
+
+  return {
+    loadId: load.id,
+    driverId: load.driverId ?? null,
+    settlementId: null,
+    claimId: context === "claims_insurance" ? load.id : null,
+    customerId,
+    facilityId,
+    billingPacketId: context === "settlement_billing" ? entityId : null,
+    linkedLoadIds: [load.id],
+    settlementLoadLinkage: "not_applicable",
+    settlementLinkageNote: null,
+    missingContext: missing,
+    presentContext: present,
+  };
+}
+
+export function resolveTemplateEntityContext(
+  data: BofData,
+  context: TemplateUsageSurfaceContext,
+  entityId: string,
+  linkedLoadIdsFromParent?: string[]
+): ResolvedTemplateEntityContext {
+  if (context === "dispatch_load" || context === "claims_insurance" || context === "load_intake") {
+    return resolveLoadScopedContext(data, entityId, context);
+  }
+
+  if (context === "vault_documents") {
+    const drv = data.drivers.find((d) => d.id === entityId);
+    const present: string[] = [];
+    const missing: string[] = [];
+    if (drv) present.push(`Driver ${drv.id}`);
+    else missing.push("No driver row for this entityId in BOF demo data");
+    return {
+      loadId: null,
+      driverId: drv?.id ?? null,
+      settlementId: null,
+      claimId: null,
+      customerId: null,
+      facilityId: null,
+      billingPacketId: null,
+      linkedLoadIds: [],
+      settlementLoadLinkage: "not_applicable",
+      settlementLinkageNote: null,
+      missingContext: missing,
+      presentContext: present,
+    };
+  }
+
+  const missing: string[] = [];
+  const present: string[] = [];
   const settlementId = entityId;
-  present.push(`Settlement ${settlementId}`);
   const raw = rawSettlementById(data, settlementId);
   const driverId = raw ? (raw as { driverId: string }).driverId : null;
+  present.push(`Settlement ${settlementId}`);
   if (!raw) missing.push("Settlement not found in demo settlements seed");
   if (driverId) present.push(`Driver ${driverId}`);
   else missing.push("No driver on settlement row");
 
   const fromParent = [...new Set((linkedLoadIdsFromParent ?? []).filter(Boolean) as string[])];
-
   let linkedLoadIds: string[] = [];
   let settlementLoadLinkage: SettlementLoadLinkage = "none";
   let settlementLinkageNote: string | null = null;
@@ -137,8 +181,6 @@ export function resolveTemplateEntityContext(
   } else if (driverId) {
     const driverLoads = sortedDriverLoadIds(data, driverId);
     if (driverLoads.length === 0) {
-      linkedLoadIds = [];
-      settlementLoadLinkage = "none";
       missing.push("No loads on file for this driver — cannot anchor billing context");
     } else if (driverLoads.length === 1) {
       linkedLoadIds = driverLoads;
@@ -153,28 +195,34 @@ export function resolveTemplateEntityContext(
         "No settlement line supplied a load_id — BOF merged RFID/proof across all of this driver's loads (conservative). Tie payroll lines to loads for a tighter billing anchor.";
       present.push(settlementLinkageNote);
     }
-  } else {
-    settlementLoadLinkage = "none";
-    settlementLinkageNote = null;
   }
+
+  const load = linkedLoadIds[0] ? data.loads.find((l) => l.id === linkedLoadIds[0]) : null;
+  const customerId = (load as { customerId?: string; shipperId?: string } | null)?.customerId ??
+    (load as { customerId?: string; shipperId?: string } | null)?.shipperId ??
+    null;
+  const facilityId =
+    (load as { originFacilityId?: string; facilityId?: string } | null)?.originFacilityId ??
+    (load as { originFacilityId?: string; facilityId?: string } | null)?.facilityId ??
+    null;
+  if (customerId) present.push(`Customer ${customerId}`);
+  if (facilityId) present.push(`Facility ${facilityId}`);
 
   const holdLine = driverId
     ? data.loads.some(
-        (l) =>
-          l.driverId === driverId && proofBlockingCount(getLoadProofItems(data, l.id)) > 0
+        (l) => l.driverId === driverId && proofBlockingCount(getLoadProofItems(data, l.id)) > 0
       )
     : false;
   if (holdLine) present.push("At least one driver load shows proof blockers (payroll posture)");
-  else present.push("No proof blockers on driver loads (reference)");
-
-  if (!linkedLoadIds.length && settlementLoadLinkage !== "none") {
-    missing.push("No primary load linked to this settlement");
-  }
 
   return {
     loadId: linkedLoadIds[0] ?? null,
     driverId,
     settlementId,
+    claimId: null,
+    customerId,
+    facilityId,
+    billingPacketId: settlementId,
     linkedLoadIds,
     settlementLoadLinkage,
     settlementLinkageNote,
@@ -184,30 +232,27 @@ export function resolveTemplateEntityContext(
 }
 
 function workflowRoleForRow(
-  templateId: string,
+  template: BofTemplateDefinition,
   context: TemplateUsageSurfaceContext
 ): TemplateWorkflowRole {
-  const id = templateId.toLowerCase();
-  if (context === "dispatch_load") {
-    if (id.includes("release") || id.includes("proof-requirements") || id.includes("pretrip"))
-      return "required_before_release";
-    if (id.includes("high-value")) return "required_before_release";
-    return "workflow_document";
+  if (template.requiredBeforeRelease) return "required_before_release";
+  if (template.requiredBeforeBilling) return "required_before_billing";
+  if (template.requiredForClaimPacket) return "required_for_claim_packet";
+  if (template.appearsInFieldOps || (context === "settlement_billing" && template.appearsInFieldOps)) {
+    return "linked_proof_support";
   }
-  if (context === "settlement_billing") {
-    if (id.includes("invoice") || id.includes("billing-packet") || id.includes("settlement-hold"))
-      return "required_before_billing";
-    if (id.includes("pod") || id.includes("bol") || id.includes("lumper")) return "linked_proof_support";
-    return "workflow_document";
+  if (
+    (context === "vault_documents" && !template.appearsInVault) ||
+    (!template.appearsInIntake &&
+      !template.appearsInDispatch &&
+      !template.appearsInFieldOps &&
+      !template.appearsInSettlements &&
+      !template.appearsInClaims &&
+      !template.appearsInVault)
+  ) {
+    return "optional_reference";
   }
-  if (id.includes("claim") || id.includes("incident") || id.includes("damage")) {
-    return "required_for_claim_packet";
-  }
-  if (id.includes("pod") || id.includes("bol") || id.includes("settlement-hold")) return "linked_proof_support";
-  if (id.includes("invoice")) return "required_before_billing";
-  if (id.includes("insurance") || id.includes("coi") || id.includes("facility-insurance"))
-    return "workflow_document";
-  return "optional_reference";
+  return "workflow_document";
 }
 
 function workflowRoleLabel(role: TemplateWorkflowRole): string {
@@ -227,34 +272,17 @@ function workflowRoleLabel(role: TemplateWorkflowRole): string {
   }
 }
 
-function templateNeedsLoad(template: BofTemplateDefinition): boolean {
-  return (
-    template.contextType === "load" ||
-    template.contextType === "dispatch_packet" ||
-    template.contextType === "billing_packet" ||
-    template.contextType === "claim_packet"
-  );
-}
-
-function templateNeedsDriverOnly(template: BofTemplateDefinition): boolean {
-  return template.contextType === "driver" && template.templateId === "compliance-missing-doc-notice";
-}
-
-function templateNeedsFacility(template: BofTemplateDefinition): boolean {
-  return template.contextType === "facility";
-}
-
-function templateNeedsCustomer(template: BofTemplateDefinition): boolean {
-  return template.contextType === "customer";
-}
-
-function strictSettlementBillingAnchor(template: BofTemplateDefinition, role: TemplateWorkflowRole) {
-  if (role !== "required_before_billing" && role !== "linked_proof_support") return false;
-  return (
-    template.contextType === "billing_packet" ||
-    template.templateId === "pod" ||
-    template.templateId === "bol"
-  );
+function contextValueForKey(
+  key: BofRequiredEntityKey,
+  resolved: ResolvedTemplateEntityContext
+): string | null {
+  if (key === "loadId") return resolved.loadId;
+  if (key === "driverId") return resolved.driverId;
+  if (key === "facilityId") return resolved.facilityId;
+  if (key === "claimId") return resolved.claimId;
+  if (key === "billingPacketId") return resolved.billingPacketId;
+  if (key === "customerId") return resolved.customerId;
+  return resolved.settlementId;
 }
 
 function rowMissingForTemplate(
@@ -262,22 +290,18 @@ function rowMissingForTemplate(
   template: BofTemplateDefinition,
   context: TemplateUsageSurfaceContext
 ): string[] {
-  const extra = [...resolved.missingContext];
-  if (templateNeedsLoad(template) && !resolved.loadId) {
-    if (!extra.some((m) => m.includes("No loads on file") || m.includes("No primary load linked")))
-      extra.push("No loadId for this template row");
+  const out = [...resolved.missingContext];
+  for (const key of template.requiredEntityKeys) {
+    if (!contextValueForKey(key, resolved)) out.push(`Missing required ${key}`);
   }
-  if (templateNeedsDriverOnly(template) && !resolved.driverId) extra.push("No driverId");
-  if (templateNeedsFacility(template) && !resolved.loadId && context === "settlement_billing") {
-    extra.push("No facility / load anchor on settlement surface");
+  if (
+    context === "settlement_billing" &&
+    resolved.settlementLoadLinkage === "driver_multi_merged" &&
+    (template.requiredBeforeBilling || template.requiredEntityKeys.includes("loadId"))
+  ) {
+    out.push("Context inferred from multiple driver loads — review load-to-settlement binding");
   }
-  if (templateNeedsCustomer(template) && context === "settlement_billing") {
-    extra.push("Customer context is load-scoped — open from load detail for richer autofill");
-  }
-  if (template.templateId === "invoice" && context === "settlement_billing" && !resolved.loadId) {
-    extra.push("No linked load for invoice line items (demo)");
-  }
-  return [...new Set(extra)];
+  return [...new Set(out)];
 }
 
 function whyMattersLine(
@@ -286,6 +310,7 @@ function whyMattersLine(
   context: TemplateUsageSurfaceContext
 ): string {
   const trigger = template.triggerInBof[0] ?? template.templateName;
+  if (context === "load_intake") return `${trigger} — intake handoff to dispatch and billing.`;
   if (context === "dispatch_load") {
     if (role === "required_before_release") return `${trigger} — dispatch gate / release packet.`;
     return `${trigger} — supports dispatch and field execution.`;
@@ -294,6 +319,7 @@ function whyMattersLine(
     if (role === "required_before_billing") return `${trigger} — AR / settlement release chain.`;
     return `${trigger} — billing packet and proof alignment.`;
   }
+  if (context === "vault_documents") return `${trigger} — driver compliance and document home.`;
   return `${trigger} — claim packet and insurer-facing controls.`;
 }
 
@@ -323,78 +349,21 @@ export function computeTemplateRowReadiness({
   hasFinal: boolean;
   rfid: BofLoadRfidReadiness | null;
 }): TemplateRowReadiness {
-  const workflowRole = workflowRoleForRow(template.templateId, context);
+  const workflowRole = workflowRoleForRow(template, context);
   const missing = rowMissingForTemplate(resolved, template, context);
+  const inferredOnly = missing.some((m) => m.includes("Context inferred"));
+  const hardMissing = missing.some((m) => m.startsWith("Missing required"));
   const rfidHints = rfid ? rfidHintsForTemplateRow(template.templateId, rfid) : [];
   const rfidGate = resolveRfidTemplateGate(template.templateId, rfid);
 
-  const hardMissing =
-    missing.length > 0 &&
-    (missing.some((m) => m.includes("No loadId")) ||
-      missing.some((m) => m.includes("No load row")) ||
-      missing.some((m) => m.includes("No driverId")) ||
-      missing.some((m) => m.includes("No loads on file")) ||
-      missing.some((m) => m.includes("No primary load linked")));
-
-  const billingAnchorAmbiguous =
-    context === "settlement_billing" &&
-    resolved.settlementLoadLinkage === "driver_multi_merged" &&
-    strictSettlementBillingAnchor(template, workflowRole);
-
-  if (hasFinal) {
-    return {
-      primary: "final_available",
-      workflowRole,
-      workflowLabel: workflowRoleLabel(workflowRole),
-      missingContext: missing,
-      presentContext: resolved.presentContext,
-      whyMatters: whyMattersLine(template, workflowRole, context),
-      rfidHints,
-      rfidGate,
-    };
-  }
-
-  if (hardMissing) {
-    return {
-      primary: "missing_context",
-      workflowRole,
-      workflowLabel: workflowRoleLabel(workflowRole),
-      missingContext: missing,
-      presentContext: resolved.presentContext,
-      whyMatters: whyMattersLine(template, workflowRole, context),
-      rfidHints,
-      rfidGate,
-    };
-  }
-
-  if (billingAnchorAmbiguous) {
-    return {
-      primary: "context_inferred",
-      workflowRole,
-      workflowLabel: workflowRoleLabel(workflowRole),
-      missingContext: missing,
-      presentContext: resolved.presentContext,
-      whyMatters: whyMattersLine(template, workflowRole, context),
-      rfidHints,
-      rfidGate,
-    };
-  }
-
-  if (hasDraft) {
-    return {
-      primary: "draft_exists",
-      workflowRole,
-      workflowLabel: workflowRoleLabel(workflowRole),
-      missingContext: missing,
-      presentContext: resolved.presentContext,
-      whyMatters: whyMattersLine(template, workflowRole, context),
-      rfidHints,
-      rfidGate,
-    };
-  }
+  let primary: TemplateRowPrimaryState = "ready_to_generate";
+  if (hasFinal) primary = "final_available";
+  else if (hardMissing) primary = "missing_context";
+  else if (inferredOnly) primary = "context_inferred";
+  else if (hasDraft) primary = "draft_exists";
 
   return {
-    primary: "ready_to_generate",
+    primary,
     workflowRole,
     workflowLabel: workflowRoleLabel(workflowRole),
     missingContext: missing,
@@ -407,7 +376,7 @@ export function computeTemplateRowReadiness({
 
 export function resolveRfidForSurface(
   data: BofData,
-  context: TemplateUsageSurfaceContext,
+  _context: TemplateUsageSurfaceContext,
   resolved: ResolvedTemplateEntityContext
 ): BofLoadRfidReadiness | null {
   if (!resolved.linkedLoadIds.length) return null;
@@ -431,7 +400,6 @@ export function primaryStateLabel(primary: TemplateRowPrimaryState): string {
   }
 }
 
-/** Single object: merged RFID row for a resolved template surface (dispatch / settlement / claims). */
 export function buildRfidReadinessSummaryForSurface(
   data: BofData,
   context: TemplateUsageSurfaceContext,
@@ -442,7 +410,6 @@ export function buildRfidReadinessSummaryForSurface(
   return resolveRfidForSurface(data, context, resolved);
 }
 
-/** One resolution pass for template usage UI + gates (avoids duplicating entity resolution). */
 export function resolveTemplateSurfaceBundle(
   data: BofData,
   context: TemplateUsageSurfaceContext,

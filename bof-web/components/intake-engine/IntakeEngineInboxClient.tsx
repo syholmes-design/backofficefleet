@@ -9,6 +9,7 @@ import { useBofDemoData } from "@/lib/bof-demo-data-context";
 import { DEFAULT_WORKFLOW_LOAD_ID } from "@/lib/bof-defaults";
 import { BofIntakeFormPrimaryPanel } from "@/components/documents/BofIntakeFormPrimaryPanel";
 import { BofWorkflowFormShortcuts } from "@/components/documents/BofWorkflowFormShortcuts";
+import { BofTemplateUsageSurface } from "@/components/documents/BofTemplateUsageSurface";
 
 const TABS: { id: IntakeFilterTab; label: string }[] = [
   { id: "all", label: "All" },
@@ -107,6 +108,12 @@ export function IntakeEngineInboxClient() {
         context="intake"
         entityId={formEntityId}
         title="From this screen — open BOF forms & packets"
+      />
+      <BofTemplateUsageSurface
+        context="load_intake"
+        entityId={formEntityId}
+        title="BOF Intake Template Mapping"
+        subtitle="Registry-driven intake forms and downstream handoff docs for this load intake context."
       />
 
       <section className="bof-intake-engine-kpis" aria-label="Intake summary">

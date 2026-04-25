@@ -24,6 +24,41 @@ export type BofTemplateContextType =
   | "facility"
   | "customer";
 
+export type BofWorkflowModule =
+  | "intake"
+  | "dispatch"
+  | "field_ops"
+  | "billing"
+  | "claims"
+  | "vault"
+  | "customer";
+
+export type BofPrimarySurface =
+  | "load_intake"
+  | "load_detail"
+  | "dispatch_release"
+  | "field_proof"
+  | "settlement_detail"
+  | "claim_packet"
+  | "vault_documents"
+  | "customer_setup";
+
+export type BofTemplateUsageSurface =
+  | "load_intake"
+  | "dispatch_load"
+  | "settlement_billing"
+  | "claims_insurance"
+  | "vault_documents";
+
+export type BofRequiredEntityKey =
+  | "loadId"
+  | "driverId"
+  | "facilityId"
+  | "claimId"
+  | "billingPacketId"
+  | "customerId"
+  | "settlementId";
+
 export type BofTemplateDefinition = {
   templateId: string;
   packId: BofTemplatePackId;
@@ -41,6 +76,19 @@ export type BofTemplateDefinition = {
   insuranceReviewRequired: boolean;
   escalationReviewBlock: string;
   triggerInBof: string[];
+  primaryModule: BofWorkflowModule;
+  secondaryModules: BofWorkflowModule[];
+  primarySurface: BofPrimarySurface;
+  requiredEntityKeys: BofRequiredEntityKey[];
+  appearsInIntake: boolean;
+  appearsInDispatch: boolean;
+  appearsInFieldOps: boolean;
+  appearsInSettlements: boolean;
+  appearsInClaims: boolean;
+  appearsInVault: boolean;
+  requiredBeforeRelease: boolean;
+  requiredBeforeBilling: boolean;
+  requiredForClaimPacket: boolean;
 };
 
 export type BofTemplatePack = {
@@ -51,6 +99,23 @@ export type BofTemplatePack = {
   roleSummary: string;
   templates: BofTemplateDefinition[];
 };
+
+type MappingProfile = Pick<
+  BofTemplateDefinition,
+  | "primaryModule"
+  | "secondaryModules"
+  | "primarySurface"
+  | "requiredEntityKeys"
+  | "appearsInIntake"
+  | "appearsInDispatch"
+  | "appearsInFieldOps"
+  | "appearsInSettlements"
+  | "appearsInClaims"
+  | "appearsInVault"
+  | "requiredBeforeRelease"
+  | "requiredBeforeBilling"
+  | "requiredForClaimPacket"
+>;
 
 const DEFAULTS = {
   approvalStatus: "pending_review" as BofApprovalStatus,
@@ -71,7 +136,19 @@ function t(
   contextType: BofTemplateContextType,
   documentType: BofDocumentType,
   triggerInBof: string[],
-  overrides?: Partial<Omit<BofTemplateDefinition, "templateId" | "packId" | "templateName" | "contextType" | "documentType" | "triggerInBof">>
+  mapping: MappingProfile,
+  overrides?: Partial<
+    Omit<
+      BofTemplateDefinition,
+      | "templateId"
+      | "packId"
+      | "templateName"
+      | "contextType"
+      | "documentType"
+      | "triggerInBof"
+      | keyof MappingProfile
+    >
+  >
 ): BofTemplateDefinition {
   return {
     templateId,
@@ -80,6 +157,7 @@ function t(
     contextType,
     documentType,
     triggerInBof,
+    ...mapping,
     approvalStatus: overrides?.approvalStatus ?? DEFAULTS.approvalStatus,
     documentStatus: overrides?.documentStatus ?? DEFAULTS.documentStatus,
     commandCenterStatus: overrides?.commandCenterStatus ?? DEFAULTS.commandCenterStatus,
@@ -89,8 +167,28 @@ function t(
     settlementGate: overrides?.settlementGate ?? DEFAULTS.settlementGate,
     claimsSensitiveLoad: overrides?.claimsSensitiveLoad ?? DEFAULTS.claimsSensitiveLoad,
     insuranceReviewRequired: overrides?.insuranceReviewRequired ?? DEFAULTS.insuranceReviewRequired,
-    escalationReviewBlock: overrides?.escalationReviewBlock ?? "Escalate to Ops Manager when unresolved after first review cycle.",
+    escalationReviewBlock:
+      overrides?.escalationReviewBlock ??
+      "Escalate to Ops Manager when unresolved after first review cycle.",
   };
+}
+
+function inSurface(template: BofTemplateDefinition, surface: BofTemplateUsageSurface): boolean {
+  if (surface === "load_intake") return template.appearsInIntake;
+  if (surface === "dispatch_load") return template.appearsInDispatch || template.appearsInFieldOps;
+  if (surface === "settlement_billing") return template.appearsInSettlements || template.requiredBeforeBilling;
+  if (surface === "claims_insurance") return template.appearsInClaims || template.requiredForClaimPacket;
+  return template.appearsInVault;
+}
+
+function isPrimaryOnSurface(template: BofTemplateDefinition, surface: BofTemplateUsageSurface): boolean {
+  if (surface === "load_intake") return template.primarySurface === "load_intake";
+  if (surface === "dispatch_load") {
+    return template.primarySurface === "load_detail" || template.primarySurface === "dispatch_release";
+  }
+  if (surface === "settlement_billing") return template.primarySurface === "settlement_detail";
+  if (surface === "claims_insurance") return template.primarySurface === "claim_packet";
+  return template.primarySurface === "vault_documents";
 }
 
 export const BOF_TEMPLATE_PACKS: BofTemplatePack[] = [
@@ -99,15 +197,114 @@ export const BOF_TEMPLATE_PACKS: BofTemplatePack[] = [
     title: "BOF Load Intake Template Pack",
     version: "v3",
     sourceFileName: "BOF Load Intake Template Pack v3.docx",
-    roleSummary: "Intake setup, commercial order intake, service schedule/work order, onboarding and customer setup.",
+    roleSummary:
+      "Intake setup, commercial order intake, service schedule/work order, onboarding and customer setup.",
     templates: [
-      t("load-tender", "load-intake-v3", "Load Tender", "load", "editable_template", ["Creates intake packet baseline and dispatch intake gate."]),
-      t("rate-confirmation", "load-intake-v3", "Rate Confirmation", "load", "generated_autofill_output", ["Defines commercial baseline for billing and proof expectations."]),
-      t("trip-schedule", "load-intake-v3", "Trip Schedule", "load", "generated_autofill_output", ["Sets appointment and route schedule controls."]),
-      t("multi-trip-batch", "load-intake-v3", "Multi-Trip Batch Sheet", "dispatch_packet", "editable_template", ["Groups multi-stop/multi-leg execution into one dispatch packet."]),
-      t("service-schedule-work-order", "load-intake-v3", "Service Schedule / Work Order", "facility", "editable_template", ["Activates field operations schedule and proof checklist."]),
-      t("customer-setup", "load-intake-v3", "Customer Setup", "customer", "editable_template", ["Creates customer profile controls and compliance expectations."]),
-      t("carrier-broker-agreement-summary", "load-intake-v3", "Carrier-Broker Agreement Summary", "customer", "generated_autofill_output", ["Flags legal/commercial controls before dispatch release."]),
+      t("load-tender", "load-intake-v3", "Load Tender", "load", "editable_template", ["Creates intake packet baseline and dispatch intake gate."], {
+        primaryModule: "intake",
+        secondaryModules: ["dispatch", "billing"],
+        primarySurface: "load_intake",
+        requiredEntityKeys: ["loadId"],
+        appearsInIntake: true,
+        appearsInDispatch: true,
+        appearsInFieldOps: false,
+        appearsInSettlements: false,
+        appearsInClaims: false,
+        appearsInVault: false,
+        requiredBeforeRelease: true,
+        requiredBeforeBilling: false,
+        requiredForClaimPacket: false,
+      }),
+      t("rate-confirmation", "load-intake-v3", "Rate Confirmation", "load", "generated_autofill_output", ["Defines commercial baseline for billing and proof expectations."], {
+        primaryModule: "intake",
+        secondaryModules: ["billing", "customer"],
+        primarySurface: "load_intake",
+        requiredEntityKeys: ["loadId", "customerId"],
+        appearsInIntake: true,
+        appearsInDispatch: true,
+        appearsInFieldOps: false,
+        appearsInSettlements: true,
+        appearsInClaims: false,
+        appearsInVault: false,
+        requiredBeforeRelease: false,
+        requiredBeforeBilling: true,
+        requiredForClaimPacket: false,
+      }),
+      t("trip-schedule", "load-intake-v3", "Trip Schedule", "load", "generated_autofill_output", ["Sets appointment and route schedule controls."], {
+        primaryModule: "intake",
+        secondaryModules: ["dispatch", "field_ops"],
+        primarySurface: "load_intake",
+        requiredEntityKeys: ["loadId", "facilityId"],
+        appearsInIntake: true,
+        appearsInDispatch: true,
+        appearsInFieldOps: true,
+        appearsInSettlements: false,
+        appearsInClaims: false,
+        appearsInVault: false,
+        requiredBeforeRelease: true,
+        requiredBeforeBilling: false,
+        requiredForClaimPacket: false,
+      }),
+      t("multi-trip-batch", "load-intake-v3", "Multi-Trip Batch Sheet", "dispatch_packet", "editable_template", ["Groups multi-stop/multi-leg execution into one dispatch packet."], {
+        primaryModule: "intake",
+        secondaryModules: ["dispatch"],
+        primarySurface: "load_intake",
+        requiredEntityKeys: ["loadId"],
+        appearsInIntake: true,
+        appearsInDispatch: true,
+        appearsInFieldOps: false,
+        appearsInSettlements: false,
+        appearsInClaims: false,
+        appearsInVault: false,
+        requiredBeforeRelease: false,
+        requiredBeforeBilling: false,
+        requiredForClaimPacket: false,
+      }),
+      t("service-schedule-work-order", "load-intake-v3", "Service Schedule / Work Order", "facility", "editable_template", ["Activates field operations schedule and proof checklist."], {
+        primaryModule: "intake",
+        secondaryModules: ["field_ops", "dispatch"],
+        primarySurface: "load_intake",
+        requiredEntityKeys: ["loadId", "facilityId"],
+        appearsInIntake: true,
+        appearsInDispatch: true,
+        appearsInFieldOps: true,
+        appearsInSettlements: false,
+        appearsInClaims: false,
+        appearsInVault: false,
+        requiredBeforeRelease: false,
+        requiredBeforeBilling: false,
+        requiredForClaimPacket: false,
+      }),
+      t("customer-setup", "load-intake-v3", "Customer Setup", "customer", "editable_template", ["Creates customer profile controls and compliance expectations."], {
+        primaryModule: "customer",
+        secondaryModules: ["intake", "billing"],
+        primarySurface: "customer_setup",
+        requiredEntityKeys: ["customerId"],
+        appearsInIntake: true,
+        appearsInDispatch: false,
+        appearsInFieldOps: false,
+        appearsInSettlements: true,
+        appearsInClaims: false,
+        appearsInVault: false,
+        requiredBeforeRelease: false,
+        requiredBeforeBilling: true,
+        requiredForClaimPacket: false,
+      }),
+      t("carrier-broker-agreement-summary", "load-intake-v3", "Carrier-Broker Agreement Summary", "customer", "generated_autofill_output", ["Flags legal/commercial controls before dispatch release."], {
+        primaryModule: "intake",
+        secondaryModules: ["customer", "dispatch"],
+        primarySurface: "load_intake",
+        requiredEntityKeys: ["loadId", "customerId"],
+        appearsInIntake: true,
+        appearsInDispatch: true,
+        appearsInFieldOps: false,
+        appearsInSettlements: true,
+        appearsInClaims: false,
+        appearsInVault: false,
+        requiredBeforeRelease: true,
+        requiredBeforeBilling: true,
+        requiredForClaimPacket: false,
+      }),
     ],
   },
   {
@@ -115,17 +312,144 @@ export const BOF_TEMPLATE_PACKS: BofTemplatePack[] = [
     title: "BOF Field Operations Template Pack",
     version: "v3",
     sourceFileName: "BOF Field Operations Template Pack v3.docx",
-    roleSummary: "Execution proof, pickup/delivery evidence, seal/photo/appointment/special-handling controls.",
+    roleSummary:
+      "Execution proof, pickup/delivery evidence, seal/photo/appointment/special-handling controls.",
     templates: [
-      t("bol", "field-operations-v3", "Bill of Lading (BOL)", "load", "generated_autofill_output", ["Required proof expectation for dispatch and billing packet release."]),
-      t("pod", "field-operations-v3", "Proof of Delivery (POD)", "load", "generated_autofill_output", ["Settlement release control and dispute defense evidence."]),
-      t("seal-verification", "field-operations-v3", "Seal Verification Form", "load", "editable_template", ["Updates seal acknowledgment readiness and exception logic."]),
-      t("pickup-checklist", "field-operations-v3", "Pickup Checklist", "facility", "editable_template", ["Confirms pickup execution controls at facility level."]),
-      t("delivery-checklist", "field-operations-v3", "Delivery Checklist", "facility", "editable_template", ["Confirms delivery execution controls at facility level."]),
-      t("cargo-photo-checklist", "field-operations-v3", "Cargo Photo Checklist", "load", "editable_template", ["Closes pre-trip and cargo evidence requirements."]),
-      t("empty-trailer-confirmation", "field-operations-v3", "Empty Trailer Photo Confirmation", "load", "editable_template", ["Closes trailer condition and pre-trip gate checks."]),
-      t("appointment-confirmation", "field-operations-v3", "Appointment Confirmation Sheet", "facility", "generated_autofill_output", ["Updates appointment confirmation readiness check."]),
-      t("special-handling-sheet", "field-operations-v3", "Special Handling Instructions Sheet", "load", "generated_autofill_output", ["Requires acknowledgment before dispatch release."]),
+      t("bol", "field-operations-v3", "Bill of Lading (BOL)", "load", "generated_autofill_output", ["Required proof expectation for dispatch and billing packet release."], {
+        primaryModule: "field_ops",
+        secondaryModules: ["dispatch", "billing", "claims"],
+        primarySurface: "field_proof",
+        requiredEntityKeys: ["loadId"],
+        appearsInIntake: false,
+        appearsInDispatch: true,
+        appearsInFieldOps: true,
+        appearsInSettlements: true,
+        appearsInClaims: true,
+        appearsInVault: false,
+        requiredBeforeRelease: true,
+        requiredBeforeBilling: true,
+        requiredForClaimPacket: true,
+      }),
+      t("pod", "field-operations-v3", "Proof of Delivery (POD)", "load", "generated_autofill_output", ["Settlement release control and dispute defense evidence."], {
+        primaryModule: "field_ops",
+        secondaryModules: ["billing", "claims"],
+        primarySurface: "field_proof",
+        requiredEntityKeys: ["loadId"],
+        appearsInIntake: false,
+        appearsInDispatch: true,
+        appearsInFieldOps: true,
+        appearsInSettlements: true,
+        appearsInClaims: true,
+        appearsInVault: false,
+        requiredBeforeRelease: false,
+        requiredBeforeBilling: true,
+        requiredForClaimPacket: true,
+      }),
+      t("seal-verification", "field-operations-v3", "Seal Verification Form", "load", "editable_template", ["Updates seal acknowledgment readiness and exception logic."], {
+        primaryModule: "field_ops",
+        secondaryModules: ["dispatch", "claims"],
+        primarySurface: "field_proof",
+        requiredEntityKeys: ["loadId"],
+        appearsInIntake: false,
+        appearsInDispatch: true,
+        appearsInFieldOps: true,
+        appearsInSettlements: false,
+        appearsInClaims: true,
+        appearsInVault: false,
+        requiredBeforeRelease: true,
+        requiredBeforeBilling: false,
+        requiredForClaimPacket: true,
+      }),
+      t("pickup-checklist", "field-operations-v3", "Pickup Checklist", "facility", "editable_template", ["Confirms pickup execution controls at facility level."], {
+        primaryModule: "dispatch",
+        secondaryModules: ["field_ops"],
+        primarySurface: "dispatch_release",
+        requiredEntityKeys: ["loadId", "facilityId"],
+        appearsInIntake: false,
+        appearsInDispatch: true,
+        appearsInFieldOps: true,
+        appearsInSettlements: false,
+        appearsInClaims: false,
+        appearsInVault: false,
+        requiredBeforeRelease: true,
+        requiredBeforeBilling: false,
+        requiredForClaimPacket: false,
+      }),
+      t("delivery-checklist", "field-operations-v3", "Delivery Checklist", "facility", "editable_template", ["Confirms delivery execution controls at facility level."], {
+        primaryModule: "dispatch",
+        secondaryModules: ["field_ops"],
+        primarySurface: "dispatch_release",
+        requiredEntityKeys: ["loadId", "facilityId"],
+        appearsInIntake: false,
+        appearsInDispatch: true,
+        appearsInFieldOps: true,
+        appearsInSettlements: false,
+        appearsInClaims: false,
+        appearsInVault: false,
+        requiredBeforeRelease: true,
+        requiredBeforeBilling: false,
+        requiredForClaimPacket: false,
+      }),
+      t("cargo-photo-checklist", "field-operations-v3", "Cargo Photo Checklist", "load", "editable_template", ["Closes pre-trip and cargo evidence requirements."], {
+        primaryModule: "field_ops",
+        secondaryModules: ["dispatch", "claims"],
+        primarySurface: "field_proof",
+        requiredEntityKeys: ["loadId"],
+        appearsInIntake: false,
+        appearsInDispatch: true,
+        appearsInFieldOps: true,
+        appearsInSettlements: false,
+        appearsInClaims: true,
+        appearsInVault: false,
+        requiredBeforeRelease: true,
+        requiredBeforeBilling: false,
+        requiredForClaimPacket: true,
+      }),
+      t("empty-trailer-confirmation", "field-operations-v3", "Empty Trailer Photo Confirmation", "load", "editable_template", ["Closes trailer condition and pre-trip gate checks."], {
+        primaryModule: "field_ops",
+        secondaryModules: ["dispatch"],
+        primarySurface: "field_proof",
+        requiredEntityKeys: ["loadId"],
+        appearsInIntake: false,
+        appearsInDispatch: true,
+        appearsInFieldOps: true,
+        appearsInSettlements: false,
+        appearsInClaims: false,
+        appearsInVault: false,
+        requiredBeforeRelease: true,
+        requiredBeforeBilling: false,
+        requiredForClaimPacket: false,
+      }),
+      t("appointment-confirmation", "field-operations-v3", "Appointment Confirmation Sheet", "facility", "generated_autofill_output", ["Updates appointment confirmation readiness check."], {
+        primaryModule: "dispatch",
+        secondaryModules: ["field_ops", "customer"],
+        primarySurface: "dispatch_release",
+        requiredEntityKeys: ["loadId", "facilityId"],
+        appearsInIntake: true,
+        appearsInDispatch: true,
+        appearsInFieldOps: true,
+        appearsInSettlements: false,
+        appearsInClaims: false,
+        appearsInVault: false,
+        requiredBeforeRelease: true,
+        requiredBeforeBilling: false,
+        requiredForClaimPacket: false,
+      }),
+      t("special-handling-sheet", "field-operations-v3", "Special Handling Instructions Sheet", "load", "generated_autofill_output", ["Requires acknowledgment before dispatch release."], {
+        primaryModule: "dispatch",
+        secondaryModules: ["field_ops"],
+        primarySurface: "dispatch_release",
+        requiredEntityKeys: ["loadId"],
+        appearsInIntake: false,
+        appearsInDispatch: true,
+        appearsInFieldOps: true,
+        appearsInSettlements: false,
+        appearsInClaims: false,
+        appearsInVault: false,
+        requiredBeforeRelease: true,
+        requiredBeforeBilling: false,
+        requiredForClaimPacket: false,
+      }),
     ],
   },
   {
@@ -135,14 +459,126 @@ export const BOF_TEMPLATE_PACKS: BofTemplatePack[] = [
     sourceFileName: "BOF Billing and Settlement Template Pack v3.docx",
     roleSummary: "Invoice, accessorials, factoring, settlement hold, and billing packet control forms.",
     templates: [
-      t("invoice", "billing-settlement-v3", "Invoice", "billing_packet", "generated_autofill_output", ["Starts billing packet lifecycle and AR flow."]),
-      t("accessorial-summary", "billing-settlement-v3", "Accessorial Summary", "billing_packet", "editable_template", ["Validates additional charge controls before invoice finalization."]),
-      t("lumper-cover-sheet", "billing-settlement-v3", "Lumper Receipt Cover Sheet", "billing_packet", "editable_template", ["Clears lumper proof blockers on settlement."]),
-      t("detention-layover-request", "billing-settlement-v3", "Detention / Layover Request", "billing_packet", "editable_template", ["Routes exception charge requests for manager approval."]),
-      t("factoring-notice", "billing-settlement-v3", "Factoring Notice", "billing_packet", "generated_autofill_output", ["Signals receivables handoff controls in billing packet."]),
-      t("settlement-hold-notice", "billing-settlement-v3", "Settlement Hold Notice", "billing_packet", "generated_autofill_output", ["Activates settlement hold status when required proof is missing."]),
-      t("billing-packet-cover", "billing-settlement-v3", "Billing Packet Cover Sheet", "billing_packet", "generated_autofill_output", ["Summarizes packet readiness and release posture."]),
-      t("lumper-overrun-authorization", "billing-settlement-v3", "Lumper Exception / Additional Charge Authorization", "billing_packet", "editable_template", ["Approval control for lumper overrun workflow."], { insuranceReviewRequired: false }),
+      t("invoice", "billing-settlement-v3", "Invoice", "billing_packet", "generated_autofill_output", ["Starts billing packet lifecycle and AR flow."], {
+        primaryModule: "billing",
+        secondaryModules: [],
+        primarySurface: "settlement_detail",
+        requiredEntityKeys: ["billingPacketId", "loadId", "customerId"],
+        appearsInIntake: false,
+        appearsInDispatch: false,
+        appearsInFieldOps: false,
+        appearsInSettlements: true,
+        appearsInClaims: false,
+        appearsInVault: false,
+        requiredBeforeRelease: false,
+        requiredBeforeBilling: true,
+        requiredForClaimPacket: false,
+      }),
+      t("accessorial-summary", "billing-settlement-v3", "Accessorial Summary", "billing_packet", "editable_template", ["Validates additional charge controls before invoice finalization."], {
+        primaryModule: "billing",
+        secondaryModules: ["dispatch"],
+        primarySurface: "settlement_detail",
+        requiredEntityKeys: ["billingPacketId", "loadId"],
+        appearsInIntake: false,
+        appearsInDispatch: false,
+        appearsInFieldOps: false,
+        appearsInSettlements: true,
+        appearsInClaims: false,
+        appearsInVault: false,
+        requiredBeforeRelease: false,
+        requiredBeforeBilling: true,
+        requiredForClaimPacket: false,
+      }),
+      t("lumper-cover-sheet", "billing-settlement-v3", "Lumper Receipt Cover Sheet", "billing_packet", "editable_template", ["Clears lumper proof blockers on settlement."], {
+        primaryModule: "billing",
+        secondaryModules: ["field_ops", "claims"],
+        primarySurface: "settlement_detail",
+        requiredEntityKeys: ["billingPacketId", "loadId"],
+        appearsInIntake: false,
+        appearsInDispatch: true,
+        appearsInFieldOps: true,
+        appearsInSettlements: true,
+        appearsInClaims: true,
+        appearsInVault: false,
+        requiredBeforeRelease: false,
+        requiredBeforeBilling: true,
+        requiredForClaimPacket: false,
+      }),
+      t("detention-layover-request", "billing-settlement-v3", "Detention / Layover Request", "billing_packet", "editable_template", ["Routes exception charge requests for manager approval."], {
+        primaryModule: "billing",
+        secondaryModules: ["dispatch"],
+        primarySurface: "settlement_detail",
+        requiredEntityKeys: ["billingPacketId", "loadId"],
+        appearsInIntake: false,
+        appearsInDispatch: false,
+        appearsInFieldOps: false,
+        appearsInSettlements: true,
+        appearsInClaims: false,
+        appearsInVault: false,
+        requiredBeforeRelease: false,
+        requiredBeforeBilling: true,
+        requiredForClaimPacket: false,
+      }),
+      t("factoring-notice", "billing-settlement-v3", "Factoring Notice", "billing_packet", "generated_autofill_output", ["Signals receivables handoff controls in billing packet."], {
+        primaryModule: "billing",
+        secondaryModules: [],
+        primarySurface: "settlement_detail",
+        requiredEntityKeys: ["billingPacketId", "customerId"],
+        appearsInIntake: false,
+        appearsInDispatch: false,
+        appearsInFieldOps: false,
+        appearsInSettlements: true,
+        appearsInClaims: false,
+        appearsInVault: false,
+        requiredBeforeRelease: false,
+        requiredBeforeBilling: false,
+        requiredForClaimPacket: false,
+      }),
+      t("settlement-hold-notice", "billing-settlement-v3", "Settlement Hold Notice", "billing_packet", "generated_autofill_output", ["Activates settlement hold status when required proof is missing."], {
+        primaryModule: "billing",
+        secondaryModules: ["claims"],
+        primarySurface: "settlement_detail",
+        requiredEntityKeys: ["settlementId", "billingPacketId"],
+        appearsInIntake: false,
+        appearsInDispatch: false,
+        appearsInFieldOps: false,
+        appearsInSettlements: true,
+        appearsInClaims: true,
+        appearsInVault: false,
+        requiredBeforeRelease: false,
+        requiredBeforeBilling: true,
+        requiredForClaimPacket: true,
+      }),
+      t("billing-packet-cover", "billing-settlement-v3", "Billing Packet Cover Sheet", "billing_packet", "generated_autofill_output", ["Summarizes packet readiness and release posture."], {
+        primaryModule: "billing",
+        secondaryModules: ["claims"],
+        primarySurface: "settlement_detail",
+        requiredEntityKeys: ["billingPacketId", "settlementId"],
+        appearsInIntake: false,
+        appearsInDispatch: false,
+        appearsInFieldOps: false,
+        appearsInSettlements: true,
+        appearsInClaims: true,
+        appearsInVault: false,
+        requiredBeforeRelease: false,
+        requiredBeforeBilling: true,
+        requiredForClaimPacket: true,
+      }),
+      t("lumper-overrun-authorization", "billing-settlement-v3", "Lumper Exception / Additional Charge Authorization", "billing_packet", "editable_template", ["Approval control for lumper overrun workflow."], {
+        primaryModule: "billing",
+        secondaryModules: ["claims"],
+        primarySurface: "settlement_detail",
+        requiredEntityKeys: ["billingPacketId", "loadId"],
+        appearsInIntake: false,
+        appearsInDispatch: false,
+        appearsInFieldOps: false,
+        appearsInSettlements: true,
+        appearsInClaims: false,
+        appearsInVault: false,
+        requiredBeforeRelease: false,
+        requiredBeforeBilling: true,
+        requiredForClaimPacket: false,
+      }, { insuranceReviewRequired: false }),
     ],
   },
   {
@@ -150,15 +586,114 @@ export const BOF_TEMPLATE_PACKS: BofTemplatePack[] = [
     title: "BOF Driver and Dispatch Readiness Template Pack",
     version: "v2",
     sourceFileName: "BOF Driver and Dispatch Readiness Template Pack v2.docx",
-    roleSummary: "Dispatch gate, pre-trip readiness, assignment packet, dispatch release, and proof expectations.",
+    roleSummary:
+      "Dispatch gate, pre-trip readiness, assignment packet, dispatch release, and proof expectations.",
     templates: [
-      t("driver-assignment-packet", "driver-dispatch-readiness-v2", "Driver Assignment Packet", "dispatch_packet", "generated_autofill_output", ["Consolidated dispatch-ready reference for assigned driver/load."]),
-      t("pretrip-readiness-summary", "driver-dispatch-readiness-v2", "Pre-Trip Readiness Summary", "dispatch_packet", "generated_autofill_output", ["Readiness rollup gate to Ready / At Risk / Blocked."]),
-      t("load-instruction-sheet", "driver-dispatch-readiness-v2", "Load-Specific Instruction Sheet", "dispatch_packet", "generated_autofill_output", ["Dispatch instructions acknowledgment requirement."]),
-      t("facility-rules-sheet", "driver-dispatch-readiness-v2", "Facility Rules Sheet", "facility", "generated_autofill_output", ["Facility-specific compliance acknowledgment control."]),
-      t("proof-requirements-sheet", "driver-dispatch-readiness-v2", "Proof Requirements Sheet", "dispatch_packet", "generated_autofill_output", ["Defines expected BOL/POD/seal/photo requirements."]),
-      t("dispatch-release-checklist", "driver-dispatch-readiness-v2", "Dispatch Release Checklist", "dispatch_packet", "editable_template", ["Final release authorization control."]),
-      t("compliance-missing-doc-notice", "driver-dispatch-readiness-v2", "Compliance Reminder / Missing Doc Notice", "driver", "editable_template", ["Creates waiting-on response loop for driver compliance updates."]),
+      t("driver-assignment-packet", "driver-dispatch-readiness-v2", "Driver Assignment Packet", "dispatch_packet", "generated_autofill_output", ["Consolidated dispatch-ready reference for assigned driver/load."], {
+        primaryModule: "dispatch",
+        secondaryModules: ["field_ops"],
+        primarySurface: "load_detail",
+        requiredEntityKeys: ["loadId", "driverId"],
+        appearsInIntake: false,
+        appearsInDispatch: true,
+        appearsInFieldOps: false,
+        appearsInSettlements: false,
+        appearsInClaims: false,
+        appearsInVault: false,
+        requiredBeforeRelease: true,
+        requiredBeforeBilling: false,
+        requiredForClaimPacket: false,
+      }),
+      t("pretrip-readiness-summary", "driver-dispatch-readiness-v2", "Pre-Trip Readiness Summary", "dispatch_packet", "generated_autofill_output", ["Readiness rollup gate to Ready / At Risk / Blocked."], {
+        primaryModule: "dispatch",
+        secondaryModules: ["field_ops"],
+        primarySurface: "dispatch_release",
+        requiredEntityKeys: ["loadId", "driverId"],
+        appearsInIntake: false,
+        appearsInDispatch: true,
+        appearsInFieldOps: false,
+        appearsInSettlements: false,
+        appearsInClaims: false,
+        appearsInVault: false,
+        requiredBeforeRelease: true,
+        requiredBeforeBilling: false,
+        requiredForClaimPacket: false,
+      }),
+      t("load-instruction-sheet", "driver-dispatch-readiness-v2", "Load-Specific Instruction Sheet", "dispatch_packet", "generated_autofill_output", ["Dispatch instructions acknowledgment requirement."], {
+        primaryModule: "dispatch",
+        secondaryModules: ["field_ops"],
+        primarySurface: "load_detail",
+        requiredEntityKeys: ["loadId", "driverId"],
+        appearsInIntake: false,
+        appearsInDispatch: true,
+        appearsInFieldOps: false,
+        appearsInSettlements: false,
+        appearsInClaims: false,
+        appearsInVault: false,
+        requiredBeforeRelease: true,
+        requiredBeforeBilling: false,
+        requiredForClaimPacket: false,
+      }),
+      t("facility-rules-sheet", "driver-dispatch-readiness-v2", "Facility Rules Sheet", "facility", "generated_autofill_output", ["Facility-specific compliance acknowledgment control."], {
+        primaryModule: "dispatch",
+        secondaryModules: ["field_ops"],
+        primarySurface: "dispatch_release",
+        requiredEntityKeys: ["loadId", "facilityId"],
+        appearsInIntake: true,
+        appearsInDispatch: true,
+        appearsInFieldOps: false,
+        appearsInSettlements: false,
+        appearsInClaims: false,
+        appearsInVault: false,
+        requiredBeforeRelease: true,
+        requiredBeforeBilling: false,
+        requiredForClaimPacket: false,
+      }),
+      t("proof-requirements-sheet", "driver-dispatch-readiness-v2", "Proof Requirements Sheet", "dispatch_packet", "generated_autofill_output", ["Defines expected BOL/POD/seal/photo requirements."], {
+        primaryModule: "dispatch",
+        secondaryModules: ["field_ops", "billing"],
+        primarySurface: "dispatch_release",
+        requiredEntityKeys: ["loadId", "driverId"],
+        appearsInIntake: false,
+        appearsInDispatch: true,
+        appearsInFieldOps: true,
+        appearsInSettlements: true,
+        appearsInClaims: true,
+        appearsInVault: false,
+        requiredBeforeRelease: true,
+        requiredBeforeBilling: true,
+        requiredForClaimPacket: true,
+      }),
+      t("dispatch-release-checklist", "driver-dispatch-readiness-v2", "Dispatch Release Checklist", "dispatch_packet", "editable_template", ["Final release authorization control."], {
+        primaryModule: "dispatch",
+        secondaryModules: [],
+        primarySurface: "dispatch_release",
+        requiredEntityKeys: ["loadId", "driverId"],
+        appearsInIntake: false,
+        appearsInDispatch: true,
+        appearsInFieldOps: false,
+        appearsInSettlements: false,
+        appearsInClaims: false,
+        appearsInVault: false,
+        requiredBeforeRelease: true,
+        requiredBeforeBilling: false,
+        requiredForClaimPacket: false,
+      }),
+      t("compliance-missing-doc-notice", "driver-dispatch-readiness-v2", "Compliance Reminder / Missing Doc Notice", "driver", "editable_template", ["Creates waiting-on response loop for driver compliance updates."], {
+        primaryModule: "vault",
+        secondaryModules: ["dispatch"],
+        primarySurface: "vault_documents",
+        requiredEntityKeys: ["driverId"],
+        appearsInIntake: false,
+        appearsInDispatch: true,
+        appearsInFieldOps: false,
+        appearsInSettlements: false,
+        appearsInClaims: false,
+        appearsInVault: true,
+        requiredBeforeRelease: true,
+        requiredBeforeBilling: false,
+        requiredForClaimPacket: false,
+      }),
     ],
   },
   {
@@ -166,17 +701,151 @@ export const BOF_TEMPLATE_PACKS: BofTemplatePack[] = [
     title: "BOF Insurance and Claims Template Pack",
     version: "v2",
     sourceFileName: "BOF Insurance and Claims Template Pack v2.docx",
-    roleSummary: "COI/additional insured/facility insurance, claim intake, incident handling, and high-value cargo controls.",
+    roleSummary:
+      "COI/additional insured/facility insurance, claim intake, incident handling, and high-value cargo controls.",
     templates: [
-      t("insurance-notice-coi", "insurance-claims-v2", "Insurance Notice / COI Request", "claim_packet", "generated_autofill_output", ["Triggers insurance review and command center watch."], { claimsSensitiveLoad: true, insuranceReviewRequired: true }),
-      t("additional-insured-request", "insurance-claims-v2", "Additional Insured Request", "claim_packet", "editable_template", ["Routes COI endorsement updates to insurance review."], { claimsSensitiveLoad: true, insuranceReviewRequired: true }),
-      t("facility-insurance-notice", "insurance-claims-v2", "Facility Insurance Requirement Notice", "facility", "generated_autofill_output", ["Links facility requirements to claims-sensitive controls."], { claimsSensitiveLoad: true, insuranceReviewRequired: true }),
-      t("claim-intake", "insurance-claims-v2", "Claim Intake", "claim_packet", "editable_template", ["Opens claim packet and sets reserve/exposure tracking."], { claimsSensitiveLoad: true, insuranceReviewRequired: true }),
-      t("damage-report", "insurance-claims-v2", "Damage Report", "claim_packet", "editable_template", ["Feeds claim packet support stack and command center watch."], { claimsSensitiveLoad: true, insuranceReviewRequired: true }),
-      t("incident-report", "insurance-claims-v2", "Incident Report", "claim_packet", "editable_template", ["Documents incident facts and links to reserve exposure review."], { claimsSensitiveLoad: true, insuranceReviewRequired: true }),
-      t("police-report-cover", "insurance-claims-v2", "Police Report Cover", "claim_packet", "generated_autofill_output", ["Links police artifacts into claim support packet."], { claimsSensitiveLoad: true, insuranceReviewRequired: true }),
-      t("claim-support-packet-cover", "insurance-claims-v2", "Claim Support Packet Cover", "claim_packet", "generated_autofill_output", ["Consolidates claim-support evidence for settlement and insurer review."], { claimsSensitiveLoad: true, insuranceReviewRequired: true }),
-      t("high-value-cargo-review", "insurance-claims-v2", "High-Value Cargo Review Sheet", "claim_packet", "editable_template", ["Major BOF control artifact for command center watch and dispatch block decisions."], { claimsSensitiveLoad: true, insuranceReviewRequired: true, documentStatus: "blocked", commandCenterStatus: "action_required", escalationReviewBlock: "High-value cargo requires insurance + management approval before dispatch release." }),
+      t("insurance-notice-coi", "insurance-claims-v2", "Insurance Notice / COI Request", "claim_packet", "generated_autofill_output", ["Triggers insurance review and command center watch."], {
+        primaryModule: "claims",
+        secondaryModules: ["customer", "vault"],
+        primarySurface: "claim_packet",
+        requiredEntityKeys: ["claimId", "loadId", "customerId"],
+        appearsInIntake: false,
+        appearsInDispatch: false,
+        appearsInFieldOps: false,
+        appearsInSettlements: false,
+        appearsInClaims: true,
+        appearsInVault: true,
+        requiredBeforeRelease: false,
+        requiredBeforeBilling: false,
+        requiredForClaimPacket: true,
+      }, { claimsSensitiveLoad: true, insuranceReviewRequired: true }),
+      t("additional-insured-request", "insurance-claims-v2", "Additional Insured Request", "claim_packet", "editable_template", ["Routes COI endorsement updates to insurance review."], {
+        primaryModule: "claims",
+        secondaryModules: ["customer", "vault"],
+        primarySurface: "claim_packet",
+        requiredEntityKeys: ["claimId", "customerId"],
+        appearsInIntake: false,
+        appearsInDispatch: false,
+        appearsInFieldOps: false,
+        appearsInSettlements: false,
+        appearsInClaims: true,
+        appearsInVault: true,
+        requiredBeforeRelease: false,
+        requiredBeforeBilling: false,
+        requiredForClaimPacket: true,
+      }, { claimsSensitiveLoad: true, insuranceReviewRequired: true }),
+      t("facility-insurance-notice", "insurance-claims-v2", "Facility Insurance Requirement Notice", "facility", "generated_autofill_output", ["Links facility requirements to claims-sensitive controls."], {
+        primaryModule: "claims",
+        secondaryModules: ["dispatch", "vault"],
+        primarySurface: "claim_packet",
+        requiredEntityKeys: ["claimId", "facilityId", "loadId"],
+        appearsInIntake: false,
+        appearsInDispatch: true,
+        appearsInFieldOps: false,
+        appearsInSettlements: false,
+        appearsInClaims: true,
+        appearsInVault: true,
+        requiredBeforeRelease: false,
+        requiredBeforeBilling: false,
+        requiredForClaimPacket: true,
+      }, { claimsSensitiveLoad: true, insuranceReviewRequired: true }),
+      t("claim-intake", "insurance-claims-v2", "Claim Intake", "claim_packet", "editable_template", ["Opens claim packet and sets reserve/exposure tracking."], {
+        primaryModule: "claims",
+        secondaryModules: ["dispatch", "billing"],
+        primarySurface: "claim_packet",
+        requiredEntityKeys: ["claimId", "loadId"],
+        appearsInIntake: false,
+        appearsInDispatch: false,
+        appearsInFieldOps: false,
+        appearsInSettlements: false,
+        appearsInClaims: true,
+        appearsInVault: false,
+        requiredBeforeRelease: false,
+        requiredBeforeBilling: false,
+        requiredForClaimPacket: true,
+      }, { claimsSensitiveLoad: true, insuranceReviewRequired: true }),
+      t("damage-report", "insurance-claims-v2", "Damage Report", "claim_packet", "editable_template", ["Feeds claim packet support stack and command center watch."], {
+        primaryModule: "claims",
+        secondaryModules: ["field_ops"],
+        primarySurface: "claim_packet",
+        requiredEntityKeys: ["claimId", "loadId"],
+        appearsInIntake: false,
+        appearsInDispatch: false,
+        appearsInFieldOps: true,
+        appearsInSettlements: false,
+        appearsInClaims: true,
+        appearsInVault: false,
+        requiredBeforeRelease: false,
+        requiredBeforeBilling: false,
+        requiredForClaimPacket: true,
+      }, { claimsSensitiveLoad: true, insuranceReviewRequired: true }),
+      t("incident-report", "insurance-claims-v2", "Incident Report", "claim_packet", "editable_template", ["Documents incident facts and links to reserve exposure review."], {
+        primaryModule: "claims",
+        secondaryModules: ["dispatch"],
+        primarySurface: "claim_packet",
+        requiredEntityKeys: ["claimId", "loadId"],
+        appearsInIntake: false,
+        appearsInDispatch: false,
+        appearsInFieldOps: false,
+        appearsInSettlements: false,
+        appearsInClaims: true,
+        appearsInVault: false,
+        requiredBeforeRelease: false,
+        requiredBeforeBilling: false,
+        requiredForClaimPacket: true,
+      }, { claimsSensitiveLoad: true, insuranceReviewRequired: true }),
+      t("police-report-cover", "insurance-claims-v2", "Police Report Cover", "claim_packet", "generated_autofill_output", ["Links police artifacts into claim support packet."], {
+        primaryModule: "claims",
+        secondaryModules: ["vault"],
+        primarySurface: "claim_packet",
+        requiredEntityKeys: ["claimId"],
+        appearsInIntake: false,
+        appearsInDispatch: false,
+        appearsInFieldOps: false,
+        appearsInSettlements: false,
+        appearsInClaims: true,
+        appearsInVault: true,
+        requiredBeforeRelease: false,
+        requiredBeforeBilling: false,
+        requiredForClaimPacket: true,
+      }, { claimsSensitiveLoad: true, insuranceReviewRequired: true }),
+      t("claim-support-packet-cover", "insurance-claims-v2", "Claim Support Packet Cover", "claim_packet", "generated_autofill_output", ["Consolidates claim-support evidence for settlement and insurer review."], {
+        primaryModule: "claims",
+        secondaryModules: ["billing", "field_ops"],
+        primarySurface: "claim_packet",
+        requiredEntityKeys: ["claimId", "loadId"],
+        appearsInIntake: false,
+        appearsInDispatch: false,
+        appearsInFieldOps: true,
+        appearsInSettlements: true,
+        appearsInClaims: true,
+        appearsInVault: false,
+        requiredBeforeRelease: false,
+        requiredBeforeBilling: false,
+        requiredForClaimPacket: true,
+      }, { claimsSensitiveLoad: true, insuranceReviewRequired: true }),
+      t("high-value-cargo-review", "insurance-claims-v2", "High-Value Cargo Review Sheet", "claim_packet", "editable_template", ["Major BOF control artifact for command center watch and dispatch block decisions."], {
+        primaryModule: "claims",
+        secondaryModules: ["dispatch", "field_ops"],
+        primarySurface: "claim_packet",
+        requiredEntityKeys: ["claimId", "loadId"],
+        appearsInIntake: false,
+        appearsInDispatch: true,
+        appearsInFieldOps: true,
+        appearsInSettlements: false,
+        appearsInClaims: true,
+        appearsInVault: false,
+        requiredBeforeRelease: true,
+        requiredBeforeBilling: false,
+        requiredForClaimPacket: true,
+      }, {
+        claimsSensitiveLoad: true,
+        insuranceReviewRequired: true,
+        documentStatus: "blocked",
+        commandCenterStatus: "action_required",
+        escalationReviewBlock:
+          "High-value cargo requires insurance + management approval before dispatch release.",
+      }),
     ],
   },
 ];
@@ -186,15 +855,28 @@ export function listAllBofTemplates() {
 }
 
 export function findBofTemplateById(templateId: string): BofTemplateDefinition | null {
-  return listAllBofTemplates().find((t) => t.templateId === templateId) ?? null;
+  return listAllBofTemplates().find((x) => x.templateId === templateId) ?? null;
 }
 
 export function findPackForTemplate(templateId: string): BofTemplatePack | null {
-  return BOF_TEMPLATE_PACKS.find((p) => p.templates.some((t) => t.templateId === templateId)) ?? null;
+  return BOF_TEMPLATE_PACKS.find((p) => p.templates.some((x) => x.templateId === templateId)) ?? null;
 }
 
 export function templatesForContext(contextType: BofTemplateContextType) {
-  return listAllBofTemplates().filter((t) => t.contextType === contextType);
+  return listAllBofTemplates().filter((x) => x.contextType === contextType);
+}
+
+export function listTemplatesForUsageSurface(surface: BofTemplateUsageSurface) {
+  const rows = listAllBofTemplates().filter((x) => inSurface(x, surface));
+  return rows.sort((a, b) => {
+    const ap = isPrimaryOnSurface(a, surface) ? 0 : 1;
+    const bp = isPrimaryOnSurface(b, surface) ? 0 : 1;
+    if (ap !== bp) return ap - bp;
+    if (a.requiredBeforeRelease !== b.requiredBeforeRelease) return a.requiredBeforeRelease ? -1 : 1;
+    if (a.requiredBeforeBilling !== b.requiredBeforeBilling) return a.requiredBeforeBilling ? -1 : 1;
+    if (a.requiredForClaimPacket !== b.requiredForClaimPacket) return a.requiredForClaimPacket ? -1 : 1;
+    return a.templateName.localeCompare(b.templateName);
+  });
 }
 
 export function buildTemplateDefaultBody(data: BofData, template: BofTemplateDefinition, entityId: string) {
@@ -206,7 +888,17 @@ export function buildTemplateDefaultBody(data: BofData, template: BofTemplateDef
     `Pack: ${template.packId}`,
     `Entity Context: ${template.contextType}`,
     `Entity ID: ${entityId}`,
-    `Document Type: ${template.documentType === "generated_autofill_output" ? "Generated / Autofill Output" : "Editable Template"}`,
+    `Document Type: ${
+      template.documentType === "generated_autofill_output"
+        ? "Generated / Autofill Output"
+        : "Editable Template"
+    }`,
+    `Primary Module: ${template.primaryModule}`,
+    `Primary Surface: ${template.primarySurface}`,
+    `Required Entity Keys: ${template.requiredEntityKeys.join(", ") || "None"}`,
+    `Required Before Release: ${template.requiredBeforeRelease ? "Yes" : "No"}`,
+    `Required Before Billing: ${template.requiredBeforeBilling ? "Yes" : "No"}`,
+    `Required For Claim Packet: ${template.requiredForClaimPacket ? "Yes" : "No"}`,
     `Approval Status: ${template.approvalStatus}`,
     `Document Status: ${template.documentStatus}`,
     `Command Center Status: ${template.commandCenterStatus}`,
@@ -217,8 +909,14 @@ export function buildTemplateDefaultBody(data: BofData, template: BofTemplateDef
     `Claims-Sensitive Load: ${template.claimsSensitiveLoad ? "Yes" : "No"}`,
     `Insurance Review Required: ${template.insuranceReviewRequired ? "Yes" : "No"}`,
     `Waiting On: ${template.documentStatus === "ready" ? "None" : "Ops Review Queue"}`,
-    `Driver Acknowledgment Received: ${template.contextType === "driver" || template.contextType === "dispatch_packet" ? "No" : "N/A"}`,
-    `Load Ready Notification Sent: ${template.contextType === "load" || template.contextType === "dispatch_packet" ? "No" : "N/A"}`,
+    `Driver Acknowledgment Received: ${
+      template.contextType === "driver" || template.contextType === "dispatch_packet"
+        ? "No"
+        : "N/A"
+    }`,
+    `Load Ready Notification Sent: ${
+      template.contextType === "load" || template.contextType === "dispatch_packet" ? "No" : "N/A"
+    }`,
     `Next Action Required: ${template.escalationReviewBlock}`,
     "",
     `Auto context: Load ${load?.number ?? "N/A"} (${load?.id ?? entityId})`,
@@ -239,9 +937,7 @@ export function buildTemplateArtifactHtml(
     .split(/\r?\n/)
     .map((line) => line.trim())
     .filter(Boolean);
-  const htmlRows = lines
-    .map((line) => `<p>${line.replace(/</g, "&lt;")}</p>`)
-    .join("");
+  const htmlRows = lines.map((line) => `<p>${line.replace(/</g, "&lt;")}</p>`).join("");
   return `<!doctype html><html><head><meta charset="utf-8"/><title>${title}</title>
   <style>
   body{font-family:Inter,Segoe UI,Arial,sans-serif;background:#0f1419;color:#dbe7f3;padding:24px}
@@ -251,6 +947,8 @@ export function buildTemplateArtifactHtml(
   p{margin:0 0 8px 0;padding-bottom:8px;border-bottom:1px solid #1f2b39;font-size:13px}
   </style></head><body><div class="card"><div class="head"><div class="k">BOF Unified Document System</div><h1>${title}</h1></div>
   <div class="meta">Generated ${new Date(generatedAt).toLocaleString()} · Document Type ${
-    template.documentType === "generated_autofill_output" ? "Generated / Autofill Output" : "Editable Template"
+    template.documentType === "generated_autofill_output"
+      ? "Generated / Autofill Output"
+      : "Editable Template"
   }</div><div class="body">${htmlRows}</div></div></body></html>`;
 }

@@ -5,12 +5,11 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useBofDemoData } from "@/lib/bof-demo-data-context";
 import {
-  BOF_TEMPLATE_PACKS,
-  type BofTemplatePack,
+  listTemplatesForUsageSurface,
   buildTemplateArtifactHtml,
   buildTemplateDefaultBody,
   type BofTemplateDefinition,
-  type BofTemplatePackId,
+  findPackForTemplate,
 } from "@/lib/bof-template-system";
 import { useBofTemplateWorkspaceStore } from "@/lib/stores/bof-template-workspace-store";
 import {
@@ -21,47 +20,12 @@ import {
 import { describeRfidSurfacePosture, rfidRelevantForTemplate } from "@/lib/bof-rfid-readiness";
 import { buildBofDocumentViewerHref } from "@/lib/bof-document-viewer-href";
 
-type SurfaceContext = "dispatch_load" | "settlement_billing" | "claims_insurance";
-
-const CONTEXT_PACKS: Record<SurfaceContext, BofTemplatePackId[]> = {
-  dispatch_load: ["load-intake-v3", "driver-dispatch-readiness-v2", "field-operations-v3"],
-  settlement_billing: ["billing-settlement-v3", "field-operations-v3"],
-  claims_insurance: ["insurance-claims-v2", "field-operations-v3", "billing-settlement-v3"],
-};
-
-function filterTemplatesForContext<T extends BofTemplateDefinition>(
-  context: SurfaceContext,
-  templates: T[]
-) {
-  if (context === "dispatch_load") {
-    return templates.filter(
-      (t) =>
-        t.contextType === "load" ||
-        t.contextType === "dispatch_packet" ||
-        t.templateId === "service-schedule-work-order"
-    );
-  }
-  if (context === "settlement_billing") {
-    return templates.filter(
-      (t) =>
-        t.contextType === "billing_packet" ||
-        t.templateId === "pod" ||
-        t.templateId === "bol" ||
-        t.templateId === "lumper-cover-sheet" ||
-        t.templateId === "settlement-hold-notice"
-    );
-  }
-  return templates.filter(
-    (t) =>
-      t.contextType === "claim_packet" ||
-      t.templateId === "pod" ||
-      t.templateId === "bol" ||
-      t.templateId === "seal-verification" ||
-      t.templateId === "cargo-photo-checklist" ||
-      t.templateId === "settlement-hold-notice" ||
-      t.templateId === "invoice"
-  );
-}
+type SurfaceContext =
+  | "load_intake"
+  | "dispatch_load"
+  | "settlement_billing"
+  | "claims_insurance"
+  | "vault_documents";
 
 function primaryPillClass(primary: string) {
   if (primary === "final_available") return "bof-status-pill bof-status-pill-ok";
@@ -99,13 +63,11 @@ export function BofTemplateUsageSurface({
   const getArtifact = useBofTemplateWorkspaceStore((s) => s.getArtifact);
 
   const rows = useMemo(() => {
-    const packs = CONTEXT_PACKS[context];
-    const templates: Array<BofTemplateDefinition & { packTitle: string }> = BOF_TEMPLATE_PACKS
-      .filter((p: BofTemplatePack) => packs.includes(p.packId))
-      .flatMap((p: BofTemplatePack) =>
-        p.templates.map((t) => ({ ...t, packTitle: p.title }))
-      );
-    return filterTemplatesForContext(context, templates);
+    const templates = listTemplatesForUsageSurface(context);
+    return templates.map((t): BofTemplateDefinition & { packTitle: string } => ({
+      ...t,
+      packTitle: findPackForTemplate(t.templateId)?.title ?? t.packId,
+    }));
   }, [context]);
 
   const { resolved: resolvedEntity, rfid: rfidSummary } = useMemo(
