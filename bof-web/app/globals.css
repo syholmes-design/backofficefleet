@@ -3347,7 +3347,7 @@ body {
 /* Private Fleets hero specific styling - handling original image with baked-in text */
 .bof-mkt-private-fleets-hero .bof-mkt-gov-hero-integrated__bg-image {
   filter: brightness(1.25) contrast(1.08) saturate(1.15);
-  object-position: center 25%;
+  object-position: center 15%;
 }
 
 .bof-mkt-private-fleets-hero .bof-mkt-gov-hero-integrated__overlay {
@@ -3374,7 +3374,7 @@ body {
 /* Mobile adjustments for Private Fleets with original image */
 @media (max-width: 900px) {
   .bof-mkt-private-fleets-hero .bof-mkt-gov-hero-integrated__bg-image {
-    object-position: center 20%;
+    object-position: center 10%;
     filter: brightness(1.3) contrast(1.08) saturate(1.15);
   }
   
