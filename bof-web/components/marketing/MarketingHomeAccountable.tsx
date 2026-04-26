@@ -60,6 +60,11 @@ const AUTOMATION_ITEMS: MarketingIconCardItem[] = [
     icon: <IconLoadProof />,
   },
   {
+    title: "Carrier revenue protection",
+    description: "Settlement intelligence and holds surface in one command narrative—prioritized by capital impact.",
+    icon: <IconLoadProof />,
+  },
+  {
     title: "Customer communication automation",
     description: "Provide clear, timely updates and stronger documentation without manual follow-up loops.",
     icon: <IconDispatch />,
@@ -73,6 +78,15 @@ const STAKEHOLDER_PAIN = [
       "System-level visibility and accountability",
       "Fewer missed details and fewer reactive escalations",
       "Better control over compliance, proof, settlements, and exceptions",
+    ],
+  },
+  {
+    title: "For for-hire carriers",
+    points: [
+      "Dispatch moves faster than compliance can keep up—credential drift hides until audits",
+      "Proof lives everywhere except the load record—finance can't tie evidence to disputes",
+      "Disputes eat margin before leadership sees the pattern—soft costs and customer churn",
+      "No enforcement layer—trackers show dots but don't stop unqualified drivers",
     ],
   },
   {

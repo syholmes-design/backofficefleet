@@ -5,7 +5,6 @@ import { usePathname } from "next/navigation";
 import { BofLogo } from "@/components/BofLogo";
 
 const marketingNav = [
-  { href: "/for-hire-carriers", label: "For-Hire Carriers" },
   { href: "/private-fleets", label: "Private Fleets" },
   { href: "/government", label: "Government" },
   { href: "/bof-vault", label: "BOF Vault" },
@@ -26,7 +25,6 @@ export function BofHeader() {
   const pathname = usePathname();
   const marketingOnlyPaths = new Set([
     "/",
-    "/for-hire-carriers",
     "/private-fleets",
     "/government",
     "/bof-vault",
