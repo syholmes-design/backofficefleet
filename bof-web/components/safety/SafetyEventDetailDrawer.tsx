@@ -122,7 +122,7 @@ export function SafetyEventDetailDrawer({ event, open, onClose }: Props) {
                 href={event.evidence_image_url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="relative block aspect-video max-h-48 overflow-hidden rounded border border-slate-800"
+                className="relative block aspect-video max-h-48 overflow-hidden rounded border border-slate-800 scale-80 transform origin-center"
               >
                 <Image
                   src={event.evidence_image_url}
