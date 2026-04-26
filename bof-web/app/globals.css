@@ -108,7 +108,7 @@ body {
 }
 
 .bof-global-header-logo-enhanced {
-  transform: scale(1.955);
+  transform: scale(1.955) translateY(-4px);
   margin-right: 0.25rem;
 }
 
@@ -117,7 +117,7 @@ body {
   align-items: center;
   flex-wrap: wrap;
   gap: 0.5rem 1rem;
-  font-size: 0.8125rem;
+  font-size: 1.21875rem;
   font-weight: 500;
   color: #374151;
   justify-content: flex-end;
