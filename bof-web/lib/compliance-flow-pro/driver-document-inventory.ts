@@ -5,7 +5,7 @@
  * to the correct BOF Vault categories for proper organization.
  */
 
-import { promises as fs, existsSync, readdirSync, statSync } from 'fs';
+import { existsSync, readdirSync, statSync } from 'fs';
 import path from 'path';
 import type { DqfDocumentType } from "./dqf-types";
 
@@ -49,7 +49,7 @@ export class DriverDocumentInventoryService {
   /**
    * Map existing files to BOF Vault categories
    */
-  private mapFileToVaultCategory(fileName: string, _filePath: string): {
+  private mapFileToVaultCategory(fileName: string): {
     documentType: DqfDocumentType;
     bofVaultCategory: string;
     fileFormat: "image" | "html" | "pdf";
@@ -185,7 +185,7 @@ export class DriverDocumentInventoryService {
           const filePath = path.join(driverDocPath, file);
           const stats = statSync(filePath);
           
-          const mapping = this.mapFileToVaultCategory(file, filePath);
+          const mapping = this.mapFileToVaultCategory(file);
           const quality = this.assessFileQuality(file, stats.size, mapping.fileFormat);
           
           const existingFile: ExistingDocumentFile = {
@@ -271,7 +271,7 @@ export class DriverDocumentInventoryService {
             generatedFiles.includes(file)
           );
         }
-      } catch (_error) {
+      } catch {
         // Generated directory doesn't exist or isn't accessible
       }
       

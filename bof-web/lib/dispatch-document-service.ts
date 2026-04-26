@@ -26,8 +26,6 @@ interface LoadProofItemNoFiles {
   riskNote?: string;
 }
 
-type LoadProofItem = LoadProofItemWithFiles | LoadProofItemNoFiles;
-
 export type DispatchDocumentCategory = 
   | "Bill of Lading"
   | "Proof of Delivery"

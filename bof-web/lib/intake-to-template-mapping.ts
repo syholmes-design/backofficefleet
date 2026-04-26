@@ -7,7 +7,6 @@
 
 import type { IntakeRecord, ExtractedFields } from "./intake-engine-types";
 import type { IntakeWizardState } from "./load-requirements-intake-types";
-import type { BofTemplateDefinition } from "./bof-template-system";
 
 export type TemplateFieldMapping = {
   templateId: string;
@@ -446,7 +445,7 @@ Downstream Documents: ${mappingReport.downstreamDocuments.join(", ")}
 
 Extracted Fields:
 ${Object.entries(context.extractedFields)
-  .filter(([_, value]) => value !== undefined && value !== null && value !== "")
+  .filter(([, value]) => value !== undefined && value !== null && value !== "")
   .map(([key, value]) => `  ${key}: ${value}`)
   .join("\n")}
 ========================================

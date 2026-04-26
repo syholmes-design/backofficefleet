@@ -9,7 +9,7 @@ import {
   inferDriverVaultCategoryFromDocumentType,
   mapDriverVaultCategoryToOwnership,
 } from "@/lib/bof-vault-ownership-adapter";
-import { getCanonicalMappingService, type CanonicalDocumentRow } from "@/lib/compliance-flow-pro/canonical-mapping-service";
+import { getCanonicalMappingService } from "@/lib/compliance-flow-pro/canonical-mapping-service";
 
 export type VaultDocumentRow = DocumentRow & {
   driverName: string;

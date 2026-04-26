@@ -76,7 +76,7 @@ export class DocumentPlacementService {
       case "generate_missing":
         return this.generateMissing(action);
       case "remove_duplicate":
-        return this.removeDuplicate(action);
+        return this.removeDuplicate();
       default:
         return {
           success: false,
@@ -175,7 +175,7 @@ export class DocumentPlacementService {
   /**
    * Remove duplicate files
    */
-  private async removeDuplicate(_action: PlacementAction): Promise<PlacementActionResult> {
+  private async removeDuplicate(): Promise<PlacementActionResult> {
     // For now, just log duplicates - actual removal can be done manually
     return {
       success: true,

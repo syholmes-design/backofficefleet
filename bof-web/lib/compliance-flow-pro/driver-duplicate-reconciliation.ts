@@ -244,7 +244,7 @@ export class DriverDuplicateReconciliationService {
             });
           }
         }
-      } catch (_error) {
+      } catch {
         // Directory doesn't exist or access error, continue
       }
     }

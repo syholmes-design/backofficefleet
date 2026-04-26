@@ -1,7 +1,7 @@
 import { MOCK_DOC_URLS } from "@/lib/dispatch-dashboard-seed";
 import type { ExtractedFields, ProposedTrip } from "@/lib/intake-engine-types";
 import type { Load } from "@/types/dispatch";
-import { buildIntakeToTemplateContext, getTemplateFieldValues } from "@/lib/intake-to-template-mapping";
+import { getTemplateFieldValues } from "@/lib/intake-to-template-mapping";
 
 function laneLabel(facility?: string, city?: string, state?: string): string {
   const c = [city, state].filter(Boolean).join(", ");

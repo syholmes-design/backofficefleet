@@ -210,7 +210,7 @@ export class ComplianceFlowEligibilityService {
       onboardingStep: this.calculateOnboardingStep(documents),
       onboardingRequiredDocs: this.getMissingRequiredDocs(documents),
       calculatedAt: now.toISOString(),
-      nextReviewDate: this.calculateNextReviewDate(documents),
+      nextReviewDate: this.calculateNextReviewDate(),
     };
   }
 
@@ -290,7 +290,7 @@ export class ComplianceFlowEligibilityService {
         autoEmailSent: false,
         escalationLevel: 1,
         requiresAction: alertLevel !== "notice",
-        recommendedAction: this.getRecommendedAction(alertLevel, daysUntilExpiration),
+        recommendedAction: this.getRecommendedAction(alertLevel),
       });
     });
 
@@ -316,7 +316,7 @@ export class ComplianceFlowEligibilityService {
               alerts.push(...this.createAlerts(rule, documents, action.parameters));
               break;
             case "create_warning":
-              warnings.push(...this.createWarnings(rule, documents, action.parameters));
+              warnings.push(...this.createWarnings(rule, documents));
               break;
           }
         }
