@@ -12,6 +12,9 @@ export { MarketingIconCardGrid, type MarketingIconCardItem } from "./MarketingIc
 export { MarketingPremiumHero } from "./MarketingPremiumHero";
 export { MarketingGovernmentIntegratedHero } from "./MarketingGovernmentIntegratedHero";
 export { MarketingHomeIntegratedHero } from "./MarketingHomeIntegratedHero";
+export { MarketingPrivateFleetsHero } from "./MarketingPrivateFleetsHero";
+export { MarketingGovernmentHero } from "./MarketingGovernmentHero";
+export { MarketingBofVaultHero } from "./MarketingBofVaultHero";
 export { MarketingProcessSteps, type MarketingProcessStep } from "./MarketingProcessSteps";
 export { MarketingSection, type MarketingSectionVariant } from "./MarketingSection";
 export { MarketingSectionHeader } from "./MarketingSectionHeader";

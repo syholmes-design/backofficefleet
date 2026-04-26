@@ -7,7 +7,7 @@ import {
   MarketingCtaPanel,
   MarketingFormShell,
   MarketingFunnelEntryRow,
-  MarketingGovernmentIntegratedHero,
+  MarketingBofVaultHero,
   MarketingIconCardGrid,
   MarketingProcessSteps,
   MarketingSection,
@@ -158,7 +158,7 @@ const PROCESS_STEPS = [
 export default function BofVaultPage() {
   return (
     <>
-      <MarketingGovernmentIntegratedHero
+      <MarketingBofVaultHero
         titleId="bof-mkt-vault-hero-heading"
         sectionAriaLabelledBy="bof-mkt-vault-hero-heading"
         eyebrow="BOF ecosystem · credential intelligence"

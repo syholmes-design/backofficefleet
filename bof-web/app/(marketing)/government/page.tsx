@@ -7,7 +7,7 @@ import {
   MarketingCtaPanel,
   MarketingFormShell,
   MarketingFunnelEntryRow,
-  MarketingGovernmentIntegratedHero,
+  MarketingGovernmentHero,
   MarketingIconCardGrid,
   MarketingProcessSteps,
   MarketingSection,
@@ -158,7 +158,7 @@ const PROCESS_STEPS = [
 export default function GovernmentPage() {
   return (
     <>
-      <MarketingGovernmentIntegratedHero
+      <MarketingGovernmentHero
         titleId="bof-mkt-gov-hero-heading"
         sectionAriaLabelledBy="bof-mkt-gov-hero-heading"
         eyebrow="Government & regulated fleets · public accountability"

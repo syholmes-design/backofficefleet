@@ -7,7 +7,7 @@ import {
   MarketingCtaPanel,
   MarketingFormShell,
   MarketingFunnelEntryRow,
-  MarketingGovernmentIntegratedHero,
+  MarketingPrivateFleetsHero,
   MarketingIconCardGrid,
   MarketingProcessSteps,
   MarketingSection,
@@ -158,7 +158,7 @@ const PROCESS_STEPS = [
 export default function PrivateFleetsPage() {
   return (
     <>
-      <MarketingGovernmentIntegratedHero
+      <MarketingPrivateFleetsHero
         titleId="bof-mkt-private-hero-heading"
         sectionAriaLabelledBy="bof-mkt-private-hero-heading"
         eyebrow="Private fleets · enterprise operations"
@@ -170,7 +170,6 @@ export default function PrivateFleetsPage() {
         imageSrc="/assets/images/hero-private-fleets-bof.png"
         imageAlt="Enterprise private fleet control center with unified operations across yards and branches"
         imageCaption="Standardized private-fleet governance: one command center, one readiness bar, one defensible record across all locations."
-        className="bof-mkt-private-fleets-hero"
         ctas={
           <>
             <Link
