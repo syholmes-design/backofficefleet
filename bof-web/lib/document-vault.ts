@@ -9,6 +9,7 @@ import {
   inferDriverVaultCategoryFromDocumentType,
   mapDriverVaultCategoryToOwnership,
 } from "@/lib/bof-vault-ownership-adapter";
+import { getCanonicalMappingService, type CanonicalDocumentRow } from "@/lib/compliance-flow-pro/canonical-mapping-service";
 
 export type VaultDocumentRow = DocumentRow & {
   driverName: string;
@@ -65,10 +66,13 @@ function complianceFlagsForDoc(
 
 /**
  * One row per record in `data.documents` (fleet driver rows from demo JSON, including structured supplemental stack).
+ * Uses canonical mapping to surface only chosen canonical files and suppress duplicates.
  */
 export function buildVaultRows(data: BofData): VaultDocumentRow[] {
   const nameById = new Map(data.drivers.map((d) => [d.id, d.name]));
-
+  
+  // For now, return original documents without canonical mapping
+  // The canonical mapping will be applied client-side in DocumentsPageClient
   const rows = data.documents.map((raw) => {
     const doc = raw as DocumentRow & { blocksPayment?: boolean };
     const flags = complianceFlagsForDoc(data, doc.driverId, doc.type);
@@ -98,5 +102,52 @@ export function buildVaultRows(data: BofData): VaultDocumentRow[] {
     if (a.vaultSortOrder !== b.vaultSortOrder) return a.vaultSortOrder - b.vaultSortOrder;
     if (a.driverId !== b.driverId) return a.driverId.localeCompare(b.driverId);
     return a.type.localeCompare(b.type);
+  });
+}
+
+/**
+ * Client-side function to apply canonical mapping to vault rows
+ */
+export async function applyCanonicalMappingToRows(rows: VaultDocumentRow[]): Promise<VaultDocumentRow[]> {
+  const canonicalService = getCanonicalMappingService();
+  await canonicalService.loadMapping();
+  
+  // Convert VaultDocumentRow back to DocumentRow for filtering
+  const documentRows: DocumentRow[] = rows.map(row => ({
+    driverId: row.driverId,
+    type: row.type,
+    status: row.status,
+    issueDate: row.issueDate,
+    expirationDate: row.expirationDate,
+    previewUrl: row.previewUrl,
+    fileUrl: row.fileUrl,
+    blocksPayment: row.blocking,
+    docTier: row.docTier,
+    demoPlaceholder: row.demoPlaceholder,
+    sourceLicenseNumber: row.sourceLicenseNumber,
+    cdlNumber: row.cdlNumber,
+    licenseClass: row.licenseClass,
+    cdlIssueDate: row.cdlIssueDate,
+    cdlExpiration: row.cdlExpiration,
+    cdlEndorsements: row.cdlEndorsements,
+    cdlRestrictions: row.cdlRestrictions,
+  }));
+  
+  // Filter documents using canonical mapping
+  const canonicalDocuments = canonicalService.filterCanonicalDocuments(documentRows);
+  
+  // Map back to VaultDocumentRow format
+  return canonicalDocuments.map((doc) => {
+    const originalRow = rows.find(r => r.driverId === doc.driverId && r.type === doc.type);
+    return {
+      ...doc,
+      driverName: originalRow?.driverName || doc.driverId,
+      atRisk: originalRow?.atRisk || false,
+      blocking: originalRow?.blocking || false,
+      vaultGroup: originalRow?.vaultGroup || "Other",
+      vaultOwnershipLabel: originalRow?.vaultOwnershipLabel || "",
+      vaultPrimaryOwner: originalRow?.vaultPrimaryOwner || "vault",
+      vaultSortOrder: originalRow?.vaultSortOrder || 999,
+    };
   });
 }

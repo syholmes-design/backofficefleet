@@ -1,9 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo } from "react";
+import { useState, useEffect } from "react";
 import { DocumentVaultClient } from "@/components/DocumentVaultClient";
-import { buildVaultRows } from "@/lib/document-vault";
+import { buildVaultRows, applyCanonicalMappingToRows, type VaultDocumentRow } from "@/lib/document-vault";
 import { useBofDemoData } from "@/lib/bof-demo-data-context";
 import { DEFAULT_PREVIEW_DRIVER_ID, DEFAULT_WORKFLOW_LOAD_ID } from "@/lib/bof-defaults";
 import { BofWorkflowFormShortcuts } from "@/components/documents/BofWorkflowFormShortcuts";
@@ -14,8 +14,26 @@ import { OPS_COPY } from "@/lib/ops-copy";
 export function DocumentsPageClient() {
   const { data } = useBofDemoData();
   const workflowEntityId = data.loads[0]?.id ?? DEFAULT_WORKFLOW_LOAD_ID;
+  const [rows, setRows] = useState<VaultDocumentRow[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const rows = useMemo(() => buildVaultRows(data), [data]);
+  useEffect(() => {
+    const loadVaultRows = async () => {
+      try {
+        setLoading(true);
+        const vaultRows = buildVaultRows(data);
+        const canonicalRows = await applyCanonicalMappingToRows(vaultRows);
+        setRows(canonicalRows);
+      } catch (error) {
+        console.error('Error loading vault rows:', error);
+        setRows([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadVaultRows();
+  }, [data]);
   const previewDriver = getDriverById(data, DEFAULT_PREVIEW_DRIVER_ID);
   const previewSettlementId =
     data.settlements?.find((s) => s.driverId === DEFAULT_PREVIEW_DRIVER_ID)?.settlementId ?? null;
@@ -82,7 +100,11 @@ export function DocumentsPageClient() {
       />
 
       <section className="bof-oper-panel bof-oper-panel-tight" aria-label="Document table">
-        <DocumentVaultClient rows={rows} totalExpected={rows.length} />
+        {loading ? (
+          <div className="bof-loading">Loading Document Vault...</div>
+        ) : (
+          <DocumentVaultClient rows={rows} totalExpected={rows.length} />
+        )}
       </section>
       <BofVaultReferencesPanel
         context={{
