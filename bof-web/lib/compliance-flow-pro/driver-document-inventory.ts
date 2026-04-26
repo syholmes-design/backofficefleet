@@ -182,7 +182,7 @@ export class DriverDocumentInventoryService {
       if (fs.existsSync(driverDocPath)) {
         const files = fs.readdirSync(driverDocPath);
         
-        files.forEach(file => {
+        files.forEach((file: string) => {
           const filePath = path.join(driverDocPath, file);
           const stats = fs.statSync(filePath);
           

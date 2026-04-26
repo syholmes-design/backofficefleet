@@ -20,6 +20,7 @@ export const DQF_DOCUMENT_TYPES = [
   "Alcohol Test Result",
   "Prior Employer Inquiry",
   "Emergency Contact",
+  "Secondary Contact",
   
   // BOF extended DQF documents
   "FMCSA Clearinghouse",
@@ -43,6 +44,7 @@ export const DQF_DOCUMENT_TYPES = [
   "Payroll Setup",
   "Uniform Agreement",
   "Equipment Assignment",
+  "Other / Supporting Docs",
 ] as const;
 
 export type DqfDocumentType = (typeof DQF_DOCUMENT_TYPES)[number];

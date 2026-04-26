@@ -27,6 +27,7 @@ function documentTypeDescription(type: DqfDocumentType): string {
     "Medical Certification": "DOT Medical Certificate or Medical Card",
     "Medical Card": "DOT Medical Card - current and valid",
     "MVR": "Motor Vehicle Record (3-year driving record)",
+    "Secondary Contact": "Secondary contact information for emergencies",
     "Driver Application": "§391.21 Driver Qualification Application",
     "Employment Verification": "Prior employment verification",
     "I-9": "Employment Eligibility Verification",
@@ -53,6 +54,7 @@ function documentTypeDescription(type: DqfDocumentType): string {
     "Payroll Setup": "Payroll enrollment form",
     "Uniform Agreement": "Uniform sizing and agreement",
     "Equipment Assignment": "Assigned equipment acknowledgment",
+    "Other / Supporting Docs": "Additional supporting documentation",
   };
 
   return descriptions[type] || type;
