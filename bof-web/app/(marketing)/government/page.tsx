@@ -167,7 +167,7 @@ export default function GovernmentPage() {
         support="The same premium enforcement posture BOF delivers to elite private fleets—expressed for agencies, authorities, and contractors who answer to the public."
         trustItems={HERO_TRUST}
         trustAriaLabel="Government program highlights"
-        imageSrc="/assets/images/hero-government-fleets.png"
+        imageSrc="/assets/images/hero-government-cinematic.png"
         imageAlt="Government and regulated fleet field and command operations at a glance"
         imageCaption="Audit-ready posture: evidence packets, oversight queues, and traceable readiness—one band, not a separate product mock."
         ctas={
