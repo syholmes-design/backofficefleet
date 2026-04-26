@@ -170,6 +170,7 @@ export default function BofVaultPage() {
         imageSrc="/assets/images/hero-bof-vault.png"
         imageAlt="Secure BOF Vault document management and verification system"
         imageCaption="Enterprise-grade credential vault with real-time verification, audit trails, and integration with dispatch and settlement systems."
+        className="bof-mkt-vault-hero"
         ctas={
           <>
             <Link

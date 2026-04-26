@@ -167,7 +167,7 @@ export default function PrivateFleetsPage() {
         support="BOF treats private fleets with the same operational rigor as for-hire carriers: one command center, one readiness bar, one defensible record."
         trustItems={HERO_TRUST}
         trustAriaLabel="Private fleet highlights"
-        imageSrc="/assets/images/hero-bof-vault.png"
+        imageSrc="/assets/images/hero-private-fleets-bof.png"
         imageAlt="Enterprise private fleet control center with unified operations across yards and branches"
         imageCaption="Standardized private-fleet governance: one command center, one readiness bar, one defensible record across all locations."
         className="bof-mkt-private-fleets-hero"
