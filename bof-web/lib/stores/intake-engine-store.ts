@@ -264,6 +264,7 @@ export const useIntakeEngineStore = create<IntakeEngineState>((set, get) => ({
       const load = {
         ...buildDraftLoadFromExtracted(intake.extracted, {
           dispatch_notes: `Intake ${intake.intake_id} · ${intake.subject_line}`,
+          intake_id: intake.intake_id,
         }),
         ...stamp,
       };
