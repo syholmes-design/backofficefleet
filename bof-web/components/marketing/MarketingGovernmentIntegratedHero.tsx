@@ -41,8 +41,24 @@ export function MarketingGovernmentIntegratedHero({
       className="bof-mkt-gov-hero-integrated"
       aria-labelledby={sectionAriaLabelledBy ?? titleId}
     >
-      <div className="bof-mkt-gov-hero-integrated__grid">
-        <div className="bof-mkt-gov-hero-integrated__copy">
+      {/* Full-width background image */}
+      <div className="bof-mkt-gov-hero-integrated__background">
+        <Image
+          src={imageSrc}
+          alt={imageAlt}
+          fill
+          priority
+          sizes="100vw"
+          className="bof-mkt-gov-hero-integrated__bg-image"
+        />
+      </div>
+      
+      {/* Dark gradient overlay for text readability */}
+      <div className="bof-mkt-gov-hero-integrated__overlay" />
+      
+      {/* Content container with text and CTAs */}
+      <div className="bof-mkt-gov-hero-integrated__container">
+        <div className="bof-mkt-gov-hero-integrated__content">
           <p className="bof-mkt-gov-hero-integrated__eyebrow">{eyebrow}</p>
           <h1 id={titleId} className="bof-mkt-gov-hero-integrated__title">
             {title}
@@ -61,23 +77,14 @@ export function MarketingGovernmentIntegratedHero({
             </ul>
           ) : null}
         </div>
-
-        <div className="bof-mkt-gov-hero-integrated__visual">
-          <div className="bof-mkt-gov-hero-integrated__image-wrap">
-            <Image
-              src={imageSrc}
-              alt={imageAlt}
-              fill
-              priority
-              sizes="(max-width: 899px) 100vw, 50vw"
-              className="bof-mkt-gov-hero-integrated__image"
-            />
-            {imageCaption ? (
-              <p className="bof-mkt-gov-hero-integrated__image-figcaption">{imageCaption}</p>
-            ) : null}
-          </div>
-        </div>
       </div>
+      
+      {/* Optional caption overlay */}
+      {imageCaption ? (
+        <div className="bof-mkt-gov-hero-integrated__caption-overlay">
+          <p className="bof-mkt-gov-hero-integrated__image-caption">{imageCaption}</p>
+        </div>
+      ) : null}
     </section>
   );
 }
