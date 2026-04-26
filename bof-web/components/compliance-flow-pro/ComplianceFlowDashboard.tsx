@@ -6,6 +6,13 @@ import { ComplianceFlowEligibilityService } from "@/lib/compliance-flow-pro/elig
 import type {
   DqfComplianceState,
   DqfEligibilityState,
+  DqfDocumentType,
+  DqfDocumentCategory,
+  DqfDocumentStatus,
+  DqfVerificationStatus,
+  DqfReviewState,
+  DqfDocumentRequirement,
+  DqfDocumentRecord,
 } from "@/lib/compliance-flow-pro/dqf-types";
 import { DriverAvatar } from "@/components/DriverAvatar";
 import { DriverLink } from "@/components/DriverLink";
@@ -72,36 +79,36 @@ export function ComplianceFlowDashboard() {
       const driverDocuments = data.documents.filter(doc => doc.driverId === driver.id);
       
       // Convert to DQF format (simplified for demo)
-      const dqfDocuments = driverDocuments.map(doc => ({
+      const dqfDocuments: DqfDocumentRecord[] = driverDocuments.map(doc => ({
         id: `${doc.driverId}-${doc.type}`,
         driverId: doc.driverId,
-        documentType: doc.type as any,
-        category: "core_dqf" as any,
-        requirement: "required" as any,
+        documentType: doc.type as DqfDocumentType,
+        category: "core_dqf" as DqfDocumentCategory,
+        requirement: "required" as DqfDocumentRequirement,
         issueDate: doc.issueDate,
         expirationDate: doc.expirationDate,
-        status: doc.status.toLowerCase() as any,
-        verificationStatus: "verified" as any,
-        reviewState: "reviewed" as any,
+        status: doc.status.toLowerCase() as DqfDocumentStatus,
+        verificationStatus: "verified" as DqfVerificationStatus,
+        reviewState: "reviewed" as DqfReviewState,
         fileUrl: doc.fileUrl,
         previewUrl: doc.previewUrl,
         fileName: doc.type,
         extractedFields: {},
-        extractionConfidence: "high" as any,
+        extractionConfidence: "high" as "high" | "medium" | "low",
         reviewNotes: undefined,
         reviewerId: undefined,
         reviewFlags: undefined,
-        blocksDispatch: (doc as any).blocksPayment || false,
-        blocksPayment: (doc as any).blocksPayment || false,
+        blocksDispatch: (doc as { blocksPayment?: boolean }).blocksPayment || false,
+        blocksPayment: (doc as { blocksPayment?: boolean }).blocksPayment || false,
         complianceAlerts: [],
         auditLog: [{
           id: "1",
           timestamp: new Date().toISOString(),
-          action: "created" as any,
-          userType: "system" as any,
+          action: "created" as "created" | "updated" | "viewed" | "verified" | "rejected" | "exported" | "reviewed",
+          userType: "system" as "driver" | "admin" | "system" | "auditor",
           details: "Document created from existing BOF data"
         }],
-        source: "legacy" as any,
+        source: "legacy" as "driver_upload" | "admin_upload" | "system_generated" | "imported" | "legacy",
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
       }));
