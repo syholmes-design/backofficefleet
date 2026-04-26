@@ -75,8 +75,17 @@ function complianceFlagsForDoc(
 export function buildVaultRows(data: BofData): VaultDocumentRow[] {
   const nameById = new Map(data.drivers.map((d) => [d.id, d.name]));
   
-  // Process all documents and apply ownership categorization
-  const rows = data.documents.map((raw) => {
+  // Process only driver-core documents that belong in BOF Vault
+  // Load-specific documents (BOL, POD, etc.) are handled by Dispatch/Loads areas
+  const vaultDocuments = data.documents.filter(doc => {
+    const category = inferDriverVaultCategoryFromDocumentType(doc.type);
+    // Only process documents that have a valid Vault category
+    return category !== "Other / Supporting Docs" || 
+           doc.type.toLowerCase().includes("profile") ||
+           doc.type.toLowerCase().includes("supporting");
+  });
+
+  const rows = vaultDocuments.map((raw) => {
     const doc = raw as DocumentRow & { blocksPayment?: boolean };
     const flags = complianceFlagsForDoc(data, doc.driverId, doc.type);
     const statusNorm = normalizeDocStatus(doc.status);
@@ -98,16 +107,7 @@ export function buildVaultRows(data: BofData): VaultDocumentRow[] {
     };
   });
 
-  // Filter to only show vault-owned documents in main BOF Vault view
-  // Load-specific documents (dispatch-owned) will only show as secondary references
-  const vaultOnlyRows = rows.filter(row => {
-    // Show vault-owned documents
-    if (row.vaultPrimaryOwner === "vault") return true;
-    // Hide dispatch-owned documents from main vault view
-    return false;
-  });
-
-  return vaultOnlyRows.sort((a, b) => {
+  return rows.sort((a, b) => {
     if (a.vaultSortOrder !== b.vaultSortOrder) return a.vaultSortOrder - b.vaultSortOrder;
     if (a.driverId !== b.driverId) return a.driverId.localeCompare(b.driverId);
     return a.type.localeCompare(b.type);

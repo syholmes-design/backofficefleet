@@ -13,7 +13,6 @@ export const DRIVER_VAULT_CATEGORIES = [
   "Emergency Contact",
   "Secondary Contact",
   "Other / Supporting Docs",
-  "Dispatch Documents",
 ] as const;
 
 export type DriverVaultCategory = (typeof DRIVER_VAULT_CATEGORIES)[number];
@@ -337,7 +336,6 @@ const CATEGORY_TITLES: Record<DriverVaultCategory, string> = {
   "Bank Information": "Driver Bank Information Sheet",
   "Emergency Contact": "Emergency Contact Sheet",
   "Secondary Contact": "Secondary Contact Sheet",
-  "Dispatch Documents": "Load & Dispatch Documents",
   "Other / Supporting Docs": "Supporting Driver Document",
 };
 
