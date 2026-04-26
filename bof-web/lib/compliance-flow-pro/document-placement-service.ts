@@ -5,7 +5,7 @@
  * and handles file organization for ComplianceFlow Pro integration.
  */
 
-import type { DriverDocumentInventory, PlacementAction } from "./driver-document-inventory";
+import type { PlacementAction } from "./driver-document-inventory";
 import { DriverDocumentInventoryService } from "./driver-document-inventory";
 import { promises as fs } from 'fs';
 import path from 'path';
@@ -175,7 +175,7 @@ export class DocumentPlacementService {
   /**
    * Remove duplicate files
    */
-  private async removeDuplicate(action: PlacementAction): Promise<PlacementActionResult> {
+  private async removeDuplicate(_action: PlacementAction): Promise<PlacementActionResult> {
     // For now, just log duplicates - actual removal can be done manually
     return {
       success: true,

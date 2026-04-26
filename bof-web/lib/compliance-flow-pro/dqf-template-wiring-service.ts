@@ -249,7 +249,7 @@ export class DQFTemplateWiringService {
             existingFiles.set(file, filePath);
           });
         }
-      } catch (error) {
+      } catch (_error) {
         // Directory doesn't exist, continue
       }
     }

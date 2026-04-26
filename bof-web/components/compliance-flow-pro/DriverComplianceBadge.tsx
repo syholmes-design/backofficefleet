@@ -3,7 +3,7 @@
 import { useMemo } from "react";
 import { useBofDemoData } from "@/lib/bof-demo-data-context";
 import { ComplianceFlowEligibilityService } from "@/lib/compliance-flow-pro/eligibility-service";
-import type { DqfDriverComplianceProfile, DqfDocumentRecord, DqfDocumentType, DqfDocumentCategory, DqfDocumentStatus, DqfVerificationStatus, DqfReviewState } from "@/lib/compliance-flow-pro/dqf-types";
+import type { DqfDocumentRecord, DqfDocumentType, DqfDocumentCategory, DqfDocumentStatus, DqfVerificationStatus, DqfReviewState } from "@/lib/compliance-flow-pro/dqf-types";
 
 interface DriverComplianceBadgeProps {
   driverId: string;

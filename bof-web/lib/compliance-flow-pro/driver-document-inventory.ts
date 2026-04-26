@@ -49,7 +49,7 @@ export class DriverDocumentInventoryService {
   /**
    * Map existing files to BOF Vault categories
    */
-  private mapFileToVaultCategory(fileName: string, filePath: string): {
+  private mapFileToVaultCategory(fileName: string, _filePath: string): {
     documentType: DqfDocumentType;
     bofVaultCategory: string;
     fileFormat: "image" | "html" | "pdf";
@@ -271,7 +271,7 @@ export class DriverDocumentInventoryService {
             generatedFiles.includes(file)
           );
         }
-      } catch (error) {
+      } catch (_error) {
         // Generated directory doesn't exist or isn't accessible
       }
       
