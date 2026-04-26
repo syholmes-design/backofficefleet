@@ -3344,19 +3344,19 @@ body {
   }
 }
 
-/* Private Fleets hero specific styling */
+/* Private Fleets hero specific styling with clean BOF Vault image */
 .bof-mkt-private-fleets-hero .bof-mkt-gov-hero-integrated__bg-image {
-  filter: brightness(1.15) contrast(1.05) saturate(1.1);
-  object-position: center 35%;
+  filter: brightness(1.05) contrast(1.02);
+  object-position: center 40%;
 }
 
 .bof-mkt-private-fleets-hero .bof-mkt-gov-hero-integrated__overlay {
   background: linear-gradient(
     to right,
-    rgba(15, 23, 42, 0.88) 0%,
-    rgba(15, 23, 42, 0.75) 25%,
-    rgba(15, 23, 42, 0.55) 50%,
-    rgba(15, 23, 42, 0.3) 100%
+    rgba(15, 23, 42, 0.92) 0%,
+    rgba(15, 23, 42, 0.8) 25%,
+    rgba(15, 23, 42, 0.6) 50%,
+    rgba(15, 23, 42, 0.35) 100%
   );
 }
 
@@ -3366,25 +3366,25 @@ body {
 }
 
 .bof-mkt-private-fleets-hero .bof-mkt-gov-hero-integrated__content {
-  max-width: 520px;
+  max-width: 580px;
   padding-top: 2rem;
   padding-bottom: 2rem;
 }
 
-/* Mobile adjustments for Private Fleets */
+/* Mobile adjustments for Private Fleets with clean image */
 @media (max-width: 900px) {
   .bof-mkt-private-fleets-hero .bof-mkt-gov-hero-integrated__bg-image {
-    object-position: center 30%;
-    filter: brightness(1.2) contrast(1.05) saturate(1.1);
+    object-position: center 45%;
+    filter: brightness(1.08) contrast(1.02);
   }
   
   .bof-mkt-private-fleets-hero .bof-mkt-gov-hero-integrated__overlay {
     background: linear-gradient(
       to bottom,
-      rgba(15, 23, 42, 0.88) 0%,
-      rgba(15, 23, 42, 0.65) 40%,
-      rgba(15, 23, 42, 0.35) 80%,
-      rgba(15, 23, 42, 0.15) 100%
+      rgba(15, 23, 42, 0.92) 0%,
+      rgba(15, 23, 42, 0.7) 40%,
+      rgba(15, 23, 42, 0.4) 80%,
+      rgba(15, 23, 42, 0.2) 100%
     );
   }
   
