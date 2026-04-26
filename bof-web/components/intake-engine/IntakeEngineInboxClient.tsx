@@ -8,6 +8,8 @@ import { intakeKpis, useIntakeEngineStore } from "@/lib/stores/intake-engine-sto
 import { BofIntakeFormPrimaryPanel } from "@/components/documents/BofIntakeFormPrimaryPanel";
 import { BofWorkflowFormShortcuts } from "@/components/documents/BofWorkflowFormShortcuts";
 import { BofTemplateUsageSurface } from "@/components/documents/BofTemplateUsageSurface";
+import { DynamicIntakeDispatchPanel } from "@/components/intake-engine/DynamicIntakeDispatchPanel";
+import { CollapsibleAdvancedPanel } from "@/components/intake-engine/CollapsibleAdvancedPanel";
 import { toBofIntakeEntityId } from "@/lib/bof-intake-entity";
 import { buildBofIntakeSurfaceContextFromInbox } from "@/lib/bof-intake-surface-context";
 
@@ -108,18 +110,28 @@ export function IntakeEngineInboxClient() {
       </header>
 
       <BofIntakeFormPrimaryPanel entityId={intakeEntityId} />
+      <DynamicIntakeDispatchPanel
+        activeIntake={activeIntake}
+        entityId={intakeEntityId}
+      />
       <BofWorkflowFormShortcuts
         context="intake"
         entityId={intakeEntityId}
         title="From this screen — open BOF forms & packets"
       />
-      <BofTemplateUsageSurface
-        context="load_intake"
-        entityId={intakeEntityId}
-        intakeContextPayload={intakeSurfaceContext}
-        title="BOF Intake Template Mapping"
-        subtitle="Registry-driven intake forms using active inbox context (customer/facility/destination) before load creation."
-      />
+      <CollapsibleAdvancedPanel
+        title="Template Mapping & Debug"
+        subtitle="Advanced: BOF template registry, context mapping, and readiness diagnostics for power users."
+        defaultOpen={false}
+      >
+        <BofTemplateUsageSurface
+          context="load_intake"
+          entityId={intakeEntityId}
+          intakeContextPayload={intakeSurfaceContext}
+          title="BOF Intake Template Registry"
+          subtitle="Template readiness, context mapping, and document generation diagnostics."
+        />
+      </CollapsibleAdvancedPanel>
 
       <section className="bof-intake-engine-kpis" aria-label="Intake summary">
         <div className="bof-intake-engine-kpi">
