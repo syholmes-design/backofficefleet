@@ -22,6 +22,10 @@ export type VaultDocumentRow = DocumentRow & {
   vaultOwnershipLabel: string;
   vaultPrimaryOwner: "vault" | "dispatch" | "billing" | "claims" | "load";
   vaultSortOrder: number;
+  /** Whether this document should appear in main BOF Vault view */
+  vaultVisible: boolean;
+  /** Whether this document should appear as secondary reference */
+  vaultSecondaryVisible: boolean;
 };
 
 function vaultGroupLabel(doc: DocumentRow): VaultDocumentRow["vaultGroup"] {
@@ -71,8 +75,7 @@ function complianceFlagsForDoc(
 export function buildVaultRows(data: BofData): VaultDocumentRow[] {
   const nameById = new Map(data.drivers.map((d) => [d.id, d.name]));
   
-  // For now, return original documents without canonical mapping
-  // The canonical mapping will be applied client-side in DocumentsPageClient
+  // Process all documents and apply ownership categorization
   const rows = data.documents.map((raw) => {
     const doc = raw as DocumentRow & { blocksPayment?: boolean };
     const flags = complianceFlagsForDoc(data, doc.driverId, doc.type);
@@ -90,15 +93,21 @@ export function buildVaultRows(data: BofData): VaultDocumentRow[] {
       vaultOwnershipLabel: ownership.ownershipLabel,
       vaultPrimaryOwner: ownership.vaultPrimaryOwner,
       vaultSortOrder: ownership.vaultSortOrder,
+      vaultVisible: ownership.vaultVisible,
+      vaultSecondaryVisible: ownership.vaultSecondaryVisible,
     };
   });
 
-  return rows.sort((a, b) => {
-    const ownerOrder = (x: VaultDocumentRow) =>
-      x.vaultPrimaryOwner === "vault" ? 0 : x.vaultPrimaryOwner === "dispatch" ? 1 : 2;
-    const ao = ownerOrder(a);
-    const bo = ownerOrder(b);
-    if (ao !== bo) return ao - bo;
+  // Filter to only show vault-owned documents in main BOF Vault view
+  // Load-specific documents (dispatch-owned) will only show as secondary references
+  const vaultOnlyRows = rows.filter(row => {
+    // Show vault-owned documents
+    if (row.vaultPrimaryOwner === "vault") return true;
+    // Hide dispatch-owned documents from main vault view
+    return false;
+  });
+
+  return vaultOnlyRows.sort((a, b) => {
     if (a.vaultSortOrder !== b.vaultSortOrder) return a.vaultSortOrder - b.vaultSortOrder;
     if (a.driverId !== b.driverId) return a.driverId.localeCompare(b.driverId);
     return a.type.localeCompare(b.type);
@@ -148,6 +157,8 @@ export async function applyCanonicalMappingToRows(rows: VaultDocumentRow[]): Pro
       vaultOwnershipLabel: originalRow?.vaultOwnershipLabel || "",
       vaultPrimaryOwner: originalRow?.vaultPrimaryOwner || "vault",
       vaultSortOrder: originalRow?.vaultSortOrder || 999,
+      vaultVisible: originalRow?.vaultVisible || false,
+      vaultSecondaryVisible: originalRow?.vaultSecondaryVisible || false,
     };
   });
 }
