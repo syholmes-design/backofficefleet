@@ -36,6 +36,19 @@ function ownershipLabel(owner: BofVaultOwner, category: BofVaultOwnershipCategor
 export function mapDriverVaultCategoryToOwnership(
   category: DriverVaultCategory
 ): BofVaultOwnershipMeta {
+  // Load-specific documents belong to dispatch, not vault
+  if (category === "Dispatch Documents") {
+    return {
+      vaultPrimaryOwner: "dispatch",
+      vaultCategory: "dispatch_reference",
+      vaultSortOrder: DRIVER_VAULT_ORDER[category] ?? 220,
+      vaultVisible: false, // Don't show in main Vault
+      vaultSecondaryVisible: true, // Show as secondary reference only
+      ownershipLabel: ownershipLabel("dispatch", "dispatch_reference"),
+    };
+  }
+  
+  // Driver core documents belong to vault
   return {
     vaultPrimaryOwner: "vault",
     vaultCategory: "driver_core",
@@ -50,6 +63,19 @@ export function inferDriverVaultCategoryFromDocumentType(
   docType: string
 ): DriverVaultCategory {
   const t = docType.toLowerCase();
+  
+  // Load-specific documents that should belong to Dispatch/Loads, not BOF Vault
+  if (t.includes("bol") || t.includes("bill of lading")) return "Dispatch Documents";
+  if (t.includes("pod") || t.includes("proof of delivery")) return "Dispatch Documents";
+  if (t.includes("rate confirmation")) return "Dispatch Documents";
+  if (t.includes("fuel receipt")) return "Dispatch Documents";
+  if (t.includes("seal photo")) return "Dispatch Documents";
+  if (t.includes("cargo photo")) return "Dispatch Documents";
+  if (t.includes("empty-trailer") || t.includes("empty trailer")) return "Dispatch Documents";
+  if (t.includes("lumper receipt")) return "Dispatch Documents";
+  if (t.includes("rfid") || t.includes("dock validation")) return "Dispatch Documents";
+  
+  // Driver core documents that belong in BOF Vault
   if (t.includes("cdl")) return "CDL";
   if (t.includes("medical")) return "Medical Certification";
   if (t.includes("mvr")) return "MVR";
