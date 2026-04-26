@@ -98,32 +98,33 @@ export class DocumentPlacementService {
       };
     }
 
-    const files = action.files as any[];
+    const files = action.files as unknown[];
     let processedCount = 0;
 
     for (const file of files) {
+      const fileRecord = file as { filePath: string; fileName: string; fileFormat?: string; documentType?: string };
       try {
-        const sourcePath = path.join(this.baseDir, "public", file.filePath);
+        const sourcePath = path.join(this.baseDir, "public", fileRecord.filePath);
         const targetDir = path.join(this.baseDir, "public", "generated", "drivers", action.driverId);
         
         // Ensure target directory exists
         await fs.mkdir(targetDir, { recursive: true });
         
         // Convert to HTML if needed for generated directory
-        const targetFileName = file.fileName.replace(/\.[^/.]+$/, '.html');
+        const targetFileName = fileRecord.fileName.replace(/\.[^/.]+$/, '.html');
         const targetPath = path.join(targetDir, targetFileName);
         
-        if (file.fileFormat === "html") {
+        if (fileRecord.fileFormat === "html") {
           // Move HTML files directly
           await fs.copyFile(sourcePath, targetPath);
-        } else if (file.fileFormat === "image") {
+        } else if (fileRecord.fileFormat === "image") {
           // For images, create a simple HTML wrapper
-          await this.createImageHtmlWrapper(sourcePath, targetPath, file.documentType);
+          await this.createImageHtmlWrapper(sourcePath, targetPath, fileRecord.documentType || "Unknown");
         }
         
         processedCount++;
       } catch (error) {
-        console.error(`Error moving ${file.fileName}:`, error);
+        console.error(`Error moving ${fileRecord.fileName}:`, error);
       }
     }
 
@@ -146,20 +147,21 @@ export class DocumentPlacementService {
       };
     }
 
-    const files = action.files as any[];
+    const files = action.files as unknown[];
     let processedCount = 0;
 
     for (const file of files) {
+      const fileRecord = file as { fileName: string; documentType: string };
       try {
         const targetDir = path.join(this.baseDir, "public", "generated", "drivers", action.driverId);
         await fs.mkdir(targetDir, { recursive: true });
         
-        const targetPath = path.join(targetDir, file.fileName);
-        await this.generateDocumentPlaceholder(file.documentType, targetPath);
+        const targetPath = path.join(targetDir, fileRecord.fileName);
+        await this.generateDocumentPlaceholder(fileRecord.documentType, targetPath);
         
         processedCount++;
       } catch (error) {
-        console.error(`Error generating ${file.fileName}:`, error);
+        console.error(`Error generating ${fileRecord.fileName}:`, error);
       }
     }
 

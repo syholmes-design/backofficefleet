@@ -149,7 +149,7 @@ export interface DqfAuditEntry {
   userId?: string;
   userType: "driver" | "admin" | "system" | "auditor";
   details: string;
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>;
 }
 
 // Driver compliance state machine
@@ -418,12 +418,12 @@ export interface DqfComplianceRule {
 export interface DqfRuleCondition {
   field: string; // e.g., "documentStatus", "daysUntilExpiration"
   operator: "equals" | "not_equals" | "greater_than" | "less_than" | "contains" | "in" | "not_in";
-  value: any;
+  value: unknown;
   logicalOperator?: "and" | "or";
 }
 
 export interface DqfRuleAction {
   type: "set_state" | "create_alert" | "create_blocking_issue" | "create_warning" | "send_notification" | "escalate";
-  parameters: Record<string, any>;
+  parameters: Record<string, unknown>;
   delay?: number; // Delay in hours before executing
 }

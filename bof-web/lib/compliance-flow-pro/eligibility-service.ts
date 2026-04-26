@@ -15,6 +15,7 @@ import type {
   DqfComplianceWarning,
   DqfExpirationAlert,
   DqfComplianceRule,
+  DqfRuleCondition,
 } from "./dqf-types";
 
 // Core DQF document requirements
@@ -159,13 +160,13 @@ export class ComplianceFlowEligibilityService {
     documents: DqfDocumentRecord[]
   ): DqfDriverComplianceProfile {
     const now = new Date();
-    const docsByType = new Map(documents.map(doc => [doc.documentType, doc]));
+    // const docsByType = new Map(documents.map(doc => [doc.documentType, doc])); // Unused but kept for reference
 
     // Count document statuses
     const documentCounts = this.countDocumentStatuses(documents);
     
     // Calculate expiration alerts
-    const expirationAlerts = this.calculateExpirationAlerts(documents);
+    // const expirationAlerts = this.calculateExpirationAlerts(documents); // Unused but kept for reference
     
     // Apply compliance rules
     const ruleResults = this.applyComplianceRules(documents);
@@ -330,7 +331,7 @@ export class ComplianceFlowEligibilityService {
   /**
    * Evaluate rule conditions against documents
    */
-  private evaluateRuleConditions(conditions: any[], documents: DqfDocumentRecord[]): boolean {
+  private evaluateRuleConditions(conditions: DqfRuleCondition[], documents: DqfDocumentRecord[]): boolean {
     if (conditions.length === 0) return true;
 
     // Simple evaluation - in production, this would be more sophisticated
@@ -339,13 +340,13 @@ export class ComplianceFlowEligibilityService {
       
       switch (field) {
         case "documentType":
-          return this.evaluateDocumentTypeCondition(documents, operator, value);
+          return this.evaluateDocumentTypeCondition(documents, operator, value as string);
         case "status":
-          return this.evaluateStatusCondition(documents, operator, value);
+          return this.evaluateStatusCondition(documents, operator, value as string);
         case "daysUntilExpiration":
-          return this.evaluateExpirationCondition(documents, operator, value);
+          return this.evaluateExpirationCondition(documents, operator, value as number);
         case "extractedFields.result":
-          return this.evaluateExtractedFieldCondition(documents, "result", operator, value);
+          return this.evaluateExtractedFieldCondition(documents, "result", operator, value as string);
         default:
           return false;
       }
@@ -381,7 +382,7 @@ export class ComplianceFlowEligibilityService {
     });
   }
 
-  private evaluateExtractedFieldCondition(documents: DqfDocumentRecord[], field: string, operator: string, value: any): boolean {
+  private evaluateExtractedFieldCondition(documents: DqfDocumentRecord[], field: string, operator: string, value: unknown): boolean {
     return documents.some(doc => {
       const fieldValue = doc.extractedFields?.[field];
       if (!fieldValue) return false;
@@ -392,7 +393,7 @@ export class ComplianceFlowEligibilityService {
   /**
    * Create blocking issues from rule
    */
-  private createBlockingIssues(rule: DqfComplianceRule, documents: DqfDocumentRecord[], parameters: any): DqfBlockingIssue[] {
+  private createBlockingIssues(rule: DqfComplianceRule, documents: DqfDocumentRecord[], parameters: Record<string, unknown>): DqfBlockingIssue[] {
     const issues: DqfBlockingIssue[] = [];
     
     // Find relevant documents for this rule
@@ -416,12 +417,12 @@ export class ComplianceFlowEligibilityService {
       issues.push({
         id: `block-${rule.id}-${doc.id}-${Date.now()}`,
         type: this.mapRuleToIssueType(rule.category),
-        severity: parameters.severity || rule.severity,
+        severity: (parameters.severity as "critical" | "high") || rule.severity,
         description: rule.description,
         documentType: doc.documentType,
         documentId: doc.id,
-        blocksDispatch: parameters.blocksDispatch || false,
-        blocksPayment: parameters.blocksPayment || false,
+        blocksDispatch: (parameters.blocksDispatch as boolean) || false,
+        blocksPayment: (parameters.blocksPayment as boolean) || false,
         resolutionRequired: this.getResolutionRequired(rule.category),
         dueDate: this.calculateDueDate(rule.category, doc),
         autoResolveDate: this.calculateAutoResolveDate(rule.category, doc),
@@ -434,14 +435,14 @@ export class ComplianceFlowEligibilityService {
   /**
    * Create alerts from rule
    */
-  private createAlerts(rule: DqfComplianceRule, documents: DqfDocumentRecord[], parameters: any): DqfComplianceAlert[] {
+  private createAlerts(rule: DqfComplianceRule, documents: DqfDocumentRecord[], parameters: Record<string, unknown>): DqfComplianceAlert[] {
     const alerts: DqfComplianceAlert[] = [];
     
     documents.forEach(doc => {
       alerts.push({
         id: `alert-${rule.id}-${doc.id}-${Date.now()}`,
         type: this.mapRuleToAlertType(rule.category),
-        severity: parameters.severity || rule.severity,
+        severity: (parameters.severity as "medium" | "low") || rule.severity,
         description: rule.description,
         documentType: doc.documentType,
         documentId: doc.id,
@@ -457,7 +458,7 @@ export class ComplianceFlowEligibilityService {
   /**
    * Create warnings from rule
    */
-  private createWarnings(rule: DqfComplianceRule, documents: DqfDocumentRecord[], parameters: any): DqfComplianceWarning[] {
+  private createWarnings(rule: DqfComplianceRule, documents: DqfDocumentRecord[], _parameters: Record<string, unknown>): DqfComplianceWarning[] {
     const warnings: DqfComplianceWarning[] = [];
     
     documents.forEach(doc => {
@@ -477,7 +478,7 @@ export class ComplianceFlowEligibilityService {
    * Determine overall compliance state
    */
   private determineComplianceState(
-    documentCounts: any,
+    documentCounts: { validDocuments: number; expiredDocuments: number; missingDocuments: number; expiringDocuments: number; totalDocuments: number; pendingDocuments: number; },
     blockingIssues: DqfBlockingIssue[],
     alerts: DqfComplianceAlert[]
   ): DqfComplianceState {
@@ -523,8 +524,8 @@ export class ComplianceFlowEligibilityService {
    */
   private determineEligibilityState(
     complianceState: DqfComplianceState,
-    blockingIssues: DqfBlockingIssue[],
-    documents: DqfDocumentRecord[]
+    _blockingIssues: DqfBlockingIssue[],
+    _documents: DqfDocumentRecord[]
   ): DqfEligibilityState {
     switch (complianceState) {
       case "Active":
@@ -676,7 +677,7 @@ export class ComplianceFlowEligibilityService {
     );
   }
 
-  private calculateNextReviewDate(documents: DqfDocumentRecord[]): string {
+  private calculateNextReviewDate(_documents: DqfDocumentRecord[]): string {
     const nextReview = new Date();
     nextReview.setDate(nextReview.getDate() + 30); // Monthly review
     return nextReview.toISOString();
@@ -755,19 +756,19 @@ export class ComplianceFlowEligibilityService {
     return undefined;
   }
 
-  private calculateEscalationDate(document: DqfDocumentRecord): string {
+  private calculateEscalationDate(_document: DqfDocumentRecord): string {
     const escalateDate = new Date();
     escalateDate.setDate(escalateDate.getDate() + 7);
     return escalateDate.toISOString();
   }
 
-  private calculateMonitorUntil(document: DqfDocumentRecord): string {
+  private calculateMonitorUntil(_document: DqfDocumentRecord): string {
     const monitorUntil = new Date();
     monitorUntil.setDate(monitorUntil.getDate() + 30);
     return monitorUntil.toISOString();
   }
 
-  private getRecommendedAction(alertLevel: string, daysUntilExpiration: number): string {
+  private getRecommendedAction(alertLevel: string, _daysUntilExpiration: number): string {
     if (alertLevel === "critical") {
       return "Immediate renewal required";
     } else if (alertLevel === "warning") {

@@ -5,6 +5,8 @@
  * to the correct BOF Vault categories for proper organization.
  */
 
+import { promises as fs, existsSync, readdirSync, statSync } from 'fs';
+import path from 'path';
 import type { DqfDocumentType } from "./dqf-types";
 
 export interface DriverDocumentInventory {
@@ -176,15 +178,12 @@ export class DriverDocumentInventoryService {
     const driverDocPath = `public/documents/drivers/${driverId}`;
     
     try {
-      const fs = require('fs');
-      const path = require('path');
-      
-      if (fs.existsSync(driverDocPath)) {
-        const files = fs.readdirSync(driverDocPath);
+      if (existsSync(driverDocPath)) {
+        const files = readdirSync(driverDocPath);
         
         files.forEach((file: string) => {
           const filePath = path.join(driverDocPath, file);
-          const stats = fs.statSync(filePath);
+          const stats = statSync(filePath);
           
           const mapping = this.mapFileToVaultCategory(file, filePath);
           const quality = this.assessFileQuality(file, stats.size, mapping.fileFormat);
@@ -215,8 +214,8 @@ export class DriverDocumentInventoryService {
       fileMap.forEach((paths, baseName) => {
         if (paths.length > 1) {
           const recommendedKeep = paths.reduce((best, current) => {
-            const bestStats = fs.statSync(best);
-            const currentStats = fs.statSync(current);
+            const bestStats = statSync(best);
+            const currentStats = statSync(current);
             return currentStats.size > bestStats.size ? current : best;
           });
           
@@ -263,8 +262,8 @@ export class DriverDocumentInventoryService {
       let alreadyCorrectlyPlaced = false;
       
       try {
-        if (require('fs').existsSync(generatedPath)) {
-          const generatedFiles = require('fs').readdirSync(generatedPath);
+        if (existsSync(generatedPath)) {
+          const generatedFiles = readdirSync(generatedPath);
           const expectedGeneratedFiles = categoryFiles.map(f => 
             f.fileName.replace(/\.[^/.]+$/, '.html')
           );

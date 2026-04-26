@@ -62,7 +62,7 @@ function documentTypeDescription(type: DqfDocumentType): string {
 
 export function DriverOnboardingIntake({ driverId, driverName, onComplete }: DriverOnboardingIntakeProps) {
   const [uploadedDocuments, setUploadedDocuments] = useState<Record<DqfDocumentType, File | null>>({} as Record<DqfDocumentType, File | null>);
-  const [extractedData, setExtractedData] = useState<Record<DqfDocumentType, any>>({} as Record<DqfDocumentType, any>);
+  const [extractedData, setExtractedData] = useState<Record<DqfDocumentType, Record<string, unknown>>>({} as Record<DqfDocumentType, Record<string, unknown>>);
   const [isProcessing, setIsProcessing] = useState<Record<DqfDocumentType, boolean>>({} as Record<DqfDocumentType, boolean>);
   const [currentStep, setCurrentStep] = useState(0);
   const [isComplete, setIsComplete] = useState(false);
@@ -81,7 +81,7 @@ export function DriverOnboardingIntake({ driverId, driverName, onComplete }: Dri
     setIsProcessing({ ...isProcessing, [documentType]: false });
   };
 
-  const mockExtractDataForDocument = (documentType: DqfDocumentType, file: File): any => {
+  const mockExtractDataForDocument = (documentType: DqfDocumentType, file: File): Record<string, unknown> => {
     switch (documentType) {
       case "CDL":
         return {
@@ -432,7 +432,7 @@ interface DocumentUploadStepProps {
   documentType: DqfDocumentType;
   description: string;
   file: File | null;
-  extractedData?: any;
+  extractedData?: Record<string, unknown>;
   isProcessing: boolean;
   onUpload: (file: File) => void;
 }

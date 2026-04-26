@@ -122,12 +122,20 @@ export class EmployerInquiryService {
    */
   generateGoodFaithCertificate(inquiry: DqfEmployerInquiry): {
     certificateUrl: string;
-    certificateData: any;
+    certificateData: {
+      driverId: string;
+      priorEmployer: string;
+      attempts: number;
+      goodFaithEffortDate?: string;
+      justification?: string;
+      generatedAt: string;
+      certificateNumber: string;
+    };
   } {
     const certificateData = {
       driverId: inquiry.driverId,
       priorEmployer: inquiry.priorEmployer,
-      attempts: inquiry.attempts,
+      attempts: inquiry.attempts.length,
       goodFaithEffortDate: inquiry.goodFaithEffortDate,
       justification: inquiry.goodFaithEffortJustification,
       generatedAt: new Date().toISOString(),
