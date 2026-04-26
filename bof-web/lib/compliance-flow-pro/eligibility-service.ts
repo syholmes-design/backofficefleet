@@ -180,9 +180,7 @@ export class ComplianceFlowEligibilityService {
     
     // Determine eligibility state
     const eligibilityState = this.determineEligibilityState(
-      complianceState,
-      ruleResults.blockingIssues,
-      documents
+      complianceState
     );
 
     // Generate dispatch restrictions
@@ -448,7 +446,7 @@ export class ComplianceFlowEligibilityService {
         documentId: doc.id,
         actionRequired: this.getActionRequired(rule.category),
         dueDate: this.calculateDueDate(rule.category, doc),
-        autoEscalateDate: parameters.autoEscalate ? this.calculateEscalationDate(doc) : undefined,
+        autoEscalateDate: parameters.autoEscalate ? this.calculateEscalationDate() : undefined,
       });
     });
 
@@ -458,7 +456,7 @@ export class ComplianceFlowEligibilityService {
   /**
    * Create warnings from rule
    */
-  private createWarnings(rule: DqfComplianceRule, documents: DqfDocumentRecord[], _parameters: Record<string, unknown>): DqfComplianceWarning[] {
+  private createWarnings(rule: DqfComplianceRule, documents: DqfDocumentRecord[]): DqfComplianceWarning[] {
     const warnings: DqfComplianceWarning[] = [];
     
     documents.forEach(doc => {
@@ -467,7 +465,7 @@ export class ComplianceFlowEligibilityService {
         type: "conditional_approval",
         description: rule.description,
         recommendation: this.getRecommendation(rule.category),
-        monitorUntil: this.calculateMonitorUntil(doc),
+        monitorUntil: this.calculateMonitorUntil(),
       });
     });
 
@@ -523,9 +521,7 @@ export class ComplianceFlowEligibilityService {
    * Determine eligibility state
    */
   private determineEligibilityState(
-    complianceState: DqfComplianceState,
-    _blockingIssues: DqfBlockingIssue[],
-    _documents: DqfDocumentRecord[]
+    complianceState: DqfComplianceState
   ): DqfEligibilityState {
     switch (complianceState) {
       case "Active":
@@ -677,7 +673,7 @@ export class ComplianceFlowEligibilityService {
     );
   }
 
-  private calculateNextReviewDate(_documents: DqfDocumentRecord[]): string {
+  private calculateNextReviewDate(): string {
     const nextReview = new Date();
     nextReview.setDate(nextReview.getDate() + 30); // Monthly review
     return nextReview.toISOString();
@@ -756,19 +752,19 @@ export class ComplianceFlowEligibilityService {
     return undefined;
   }
 
-  private calculateEscalationDate(_document: DqfDocumentRecord): string {
+  private calculateEscalationDate(): string {
     const escalateDate = new Date();
     escalateDate.setDate(escalateDate.getDate() + 7);
     return escalateDate.toISOString();
   }
 
-  private calculateMonitorUntil(_document: DqfDocumentRecord): string {
+  private calculateMonitorUntil(): string {
     const monitorUntil = new Date();
     monitorUntil.setDate(monitorUntil.getDate() + 30);
     return monitorUntil.toISOString();
   }
 
-  private getRecommendedAction(alertLevel: string, _daysUntilExpiration: number): string {
+  private getRecommendedAction(alertLevel: string): string {
     if (alertLevel === "critical") {
       return "Immediate renewal required";
     } else if (alertLevel === "warning") {
