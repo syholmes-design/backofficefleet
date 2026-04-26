@@ -16,6 +16,8 @@ export type MarketingGovernmentIntegratedHeroProps = {
   imageAlt: string;
   /** Short line on the image (not a product mock; editorial caption bar). */
   imageCaption?: string;
+  /** Optional custom className for page-specific styling */
+  className?: string;
 };
 
 /**
@@ -35,10 +37,11 @@ export function MarketingGovernmentIntegratedHero({
   imageSrc,
   imageAlt,
   imageCaption,
+  className,
 }: MarketingGovernmentIntegratedHeroProps) {
   return (
     <section
-      className="bof-mkt-gov-hero-integrated"
+      className={`bof-mkt-gov-hero-integrated ${className || ''}`}
       aria-labelledby={sectionAriaLabelledBy ?? titleId}
     >
       {/* Full-width background image */}

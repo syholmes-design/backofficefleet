@@ -170,6 +170,7 @@ export default function PrivateFleetsPage() {
         imageSrc="/assets/images/hero-private-fleets-bof.png"
         imageAlt="Enterprise private fleet control center with unified operations across yards and branches"
         imageCaption="Standardized private-fleet governance: one command center, one readiness bar, one defensible record across all locations."
+        className="bof-mkt-private-fleets-hero"
         ctas={
           <>
             <Link
