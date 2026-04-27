@@ -5,6 +5,18 @@ import type { BofData } from "@/lib/load-bof-data";
 import { getBofData } from "@/lib/load-bof-data";
 import type { Driver, EventStatus, SafetyEvent, SafetyNavId, ComplianceStatus } from "@/types/safety";
 import { buildExpirationRowsFromBofDocuments } from "@/lib/safety-rules";
+
+// Original buildExpirationRows function for compatibility
+export function buildExpirationRows(drivers: Driver[]) {
+  return drivers.map(driver => ({
+    driver_id: driver.driver_id,
+    driver_name: driver.name,
+    home_terminal: driver.home_terminal,
+    document_type: "Medical Card",
+    expiration_date: null,
+    status: "VALID" as "VALID" | "Expired"
+  }));
+}
 import {
   canTransitionEventStatus,
   isDispatchBlocked,

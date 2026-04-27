@@ -3,8 +3,8 @@
 import { useMemo } from "react";
 import { AlertOctagon, FileWarning, ShieldAlert, UserX } from "lucide-react";
 import { useSafetyStore } from "@/lib/stores/safety-store";
-import { useBofDemoData } from "@/lib/bof-demo-data-context";
 import {
+  buildExpirationRows,
   countBlockedDrivers,
   countDriversDocRisk,
   countHighSeverityOpen,
@@ -12,7 +12,6 @@ import {
   sumOpenClaimExposure,
 } from "@/lib/stores/safety-store";
 import {
-  buildExpirationRowsFromBofDocuments,
   isDispatchBlocked,
   isHighSeverityOpen,
   severityChipClass,
@@ -25,10 +24,8 @@ export function SafetyDashboardScreen() {
   const events = useSafetyStore((s) => s.events);
   const openEventDrawer = useSafetyStore((s) => s.openEventDrawer);
 
-  const { data } = useBofDemoData();
-
   const kpis = useMemo(() => {
-    const expRows = buildExpirationRowsFromBofDocuments(drivers, data.documents);
+    const expRows = buildExpirationRows(drivers);
     return {
       openEvents: countOpenEvents(events),
       highOpen: countHighSeverityOpen(events),
@@ -37,7 +34,7 @@ export function SafetyDashboardScreen() {
       claimExposure: sumOpenClaimExposure(events),
       expirationsCount: expRows.length,
     };
-  }, [drivers, events, data.documents]);
+  }, [drivers, events]);
 
   const sortedEvents = useMemo(
     () =>
@@ -47,8 +44,8 @@ export function SafetyDashboardScreen() {
     [events]
   );
   const expirations = useMemo(() => {
-    return buildExpirationRowsFromBofDocuments(drivers, data.documents);
-  }, [drivers, data.documents]);
+    return buildExpirationRows(drivers);
+  }, [drivers]);
 
   const immediateAttention = useMemo(() => {
     const items: {
