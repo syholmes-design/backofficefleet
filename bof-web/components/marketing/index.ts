@@ -10,7 +10,6 @@ export * from "./MarketingGovernmentIcons";
 export * as MarketingHomeIcons from "./MarketingHomeIcons";
 export { MarketingIconCardGrid, type MarketingIconCardItem } from "./MarketingIconCardGrid";
 export { MarketingPremiumHero } from "./MarketingPremiumHero";
-export { MarketingGovernmentIntegratedHero } from "./MarketingGovernmentIntegratedHero";
 export { MarketingHomeIntegratedHero } from "./MarketingHomeIntegratedHero";
 export { MarketingPrivateFleetsHero } from "./MarketingPrivateFleetsHero";
 export { MarketingGovernmentHero } from "./MarketingGovernmentHero";
