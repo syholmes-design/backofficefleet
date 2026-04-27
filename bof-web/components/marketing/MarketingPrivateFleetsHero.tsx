@@ -19,8 +19,8 @@ export type MarketingPrivateFleetsHeroProps = {
 };
 
 /**
- * Private Fleets hero: two-column layout with left copy and right image
- * Mirrors the home page hero structure for proper integration
+ * Private Fleets hero: integrated composition with BOF text on left and supervisor photo on right
+ * Creates a single premium hero with clean layout and no text/image collisions
  */
 export function MarketingPrivateFleetsHero({
   titleId,
@@ -41,43 +41,51 @@ export function MarketingPrivateFleetsHero({
       className="bof-mkt-private-fleets-hero"
       aria-labelledby={sectionAriaLabelledBy ?? titleId}
     >
-      <div className="bof-mkt-private-fleets-hero__grid">
-        <div className="bof-mkt-private-fleets-hero__copy">
-          <p className="bof-mkt-private-fleets-hero__eyebrow">{eyebrow}</p>
-          <h1 id={titleId} className="bof-mkt-private-fleets-hero__title">
-            {title}
-          </h1>
-          <p className="bof-mkt-private-fleets-hero__sub">{subtitle}</p>
-          <p className="bof-mkt-private-fleets-hero__support">{support}</p>
-          <div className="bof-mkt-private-fleets-hero__ctas">{ctas}</div>
-          {trustItems.length > 0 ? (
-            <ul className="bof-mkt-private-fleets-hero__trust" aria-label={trustAriaLabel}>
-              {trustItems.map((label) => (
-                <li key={label}>
-                  <span className="bof-mkt-private-fleets-hero__trust-mark" aria-hidden />
-                  <span>{label}</span>
-                </li>
-              ))}
-            </ul>
-          ) : null}
-        </div>
-
-        <div className="bof-mkt-private-fleets-hero__visual">
-          <div className="bof-mkt-private-fleets-hero__image-wrap">
-            <Image
-              src={imageSrc}
-              alt={imageAlt}
-              fill
-              priority
-              sizes="(max-width: 899px) 100vw, 50vw"
-              className="bof-mkt-private-fleets-hero__image"
-            />
+      <div className="bof-mkt-private-fleets-hero__integrated">
+        {/* Left side: BOF text content */}
+        <div className="bof-mkt-private-fleets-hero__content">
+          <div className="bof-mkt-private-fleets-hero__text">
+            <p className="bof-mkt-private-fleets-hero__eyebrow">{eyebrow}</p>
+            <h1 id={titleId} className="bof-mkt-private-fleets-hero__title">
+              {title}
+            </h1>
+            <p className="bof-mkt-private-fleets-hero__sub">{subtitle}</p>
+            <p className="bof-mkt-private-fleets-hero__support">{support}</p>
+            <div className="bof-mkt-private-fleets-hero__ctas">{ctas}</div>
+            {trustItems.length > 0 ? (
+              <ul className="bof-mkt-private-fleets-hero__trust" aria-label={trustAriaLabel}>
+                {trustItems.map((label) => (
+                  <li key={label}>
+                    <span className="bof-mkt-private-fleets-hero__trust-mark" aria-hidden />
+                    <span>{label}</span>
+                  </li>
+                ))}
+              </ul>
+            ) : null}
           </div>
-          {imageCaption ? (
-            <div className="bof-mkt-private-fleets-hero__caption">
-              <p className="bof-mkt-private-fleets-hero__image-caption">{imageCaption}</p>
+
+          {/* Right side: Integrated supervisor/photo */}
+          <div className="bof-mkt-private-fleets-hero__visual">
+            <div className="bof-mkt-private-fleets-hero__image-wrap">
+              <div className="bof-mkt-private-fleets-hero__image-overlay">
+                {/* Gradient overlay for readability */}
+                <div className="bof-mkt-private-fleets-hero__image-gradient" />
+              </div>
+              <Image
+                src={imageSrc}
+                alt={imageAlt}
+                fill
+                priority
+                sizes="(max-width: 899px) 100vw, 50vw"
+                className="bof-mkt-private-fleets-hero__image"
+              />
             </div>
-          ) : null}
+            {imageCaption ? (
+              <div className="bof-mkt-private-fleets-hero__caption">
+                <p className="bof-mkt-private-fleets-hero__image-caption">{imageCaption}</p>
+              </div>
+            ) : null}
+          </div>
         </div>
       </div>
     </section>
