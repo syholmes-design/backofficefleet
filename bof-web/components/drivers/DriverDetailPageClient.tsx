@@ -237,15 +237,6 @@ export function DriverDetailPageClient({ driverId }: { driverId: string }) {
         <span aria-hidden> / </span>
         <span>{driver.name}</span>
       </nav>
-      <p className="bof-small" style={{ margin: "0 0 0.7rem" }}>
-        <Link href={`/drivers/${driver.id}/bank-info`} className="bof-link-secondary">
-          Bank Info
-        </Link>
-        {" · "}
-        <Link href={`/emergency-contacts/${driverId}`} className="bof-link-secondary">
-          Emergency Contacts
-        </Link>
-      </p>
 
       <section
         className="bof-driver-hub-section bof-driver-hub-section--profile"
@@ -713,18 +704,6 @@ export function DriverDetailPageClient({ driverId }: { driverId: string }) {
           </div>
         )}
       </section>
-
-      <DocumentEnginePanel
-        variant="supporting"
-        title="Generated forms (automation preview)"
-        lead="SVG shells built from the same demo JSON — supporting view; credential truth lives in the sections above and in the vault."
-        documents={engineDriverDocs}
-        crossLinks={[
-          { label: "Document vault", href: "/documents" },
-          { label: "Settlements", href: "/settlements" },
-          { label: "Money at risk", href: "/money-at-risk" },
-        ]}
-      />
     </div>
   );
 }
