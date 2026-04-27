@@ -34,10 +34,10 @@ export const metadata: Metadata = {
 };
 
 const HERO_TRUST = [
-  "Single driver file of record",
-  "Fleet-side verification",
-  "Feeds dispatch & settlements",
-  "Designed for audit defense",
+  "Driver-controlled document storage",
+  "Organized by credential and requirement",
+  "Readiness checks before the next job depends on it",
+  "Clear view of missing, expired, or review-needed items",
 ] as const;
 
 const VAULT_CC_ROWS: readonly CcMockRow[] = [
@@ -161,29 +161,17 @@ export default function BofVaultPage() {
       <MarketingBofVaultHero
         titleId="bof-mkt-vault-hero-heading"
         sectionAriaLabelledBy="bof-mkt-vault-hero-heading"
-        eyebrow="BOF ecosystem · credential intelligence"
-        title={<>Secure Document Vault for Fleet Operations</>}
-        subtitle="Upload once, verify instantly, and maintain compliance across your entire fleet. BOF Vault connects directly to dispatch, settlements, and audit systems."
-        support="Vault is the secure substrate beneath BOF enforcement: it feeds dispatch gates, settlement intelligence, and audit defense while command center stays operator's home screen."
+        eyebrow="BOF Vault · Driver readiness"
+        title={<>Keep Your Driving Documents Ready Before You Need Them</>}
+        subtitle="BOF Vault gives drivers one secure place to upload, organize, and maintain the records that matter—so expired, missing, or incomplete documents do not slow the next opportunity."
+        support="Upload once. BOF helps evaluate your file, flag issues, and keep your credentials ready for onboarding, dispatch, or carrier review when the time comes."
         trustItems={HERO_TRUST}
         trustAriaLabel="BOF Vault capability highlights"
-        imageSrc="/assets/images/hero-bof-vault.png"
-        imageAlt="Secure BOF Vault document management and verification system"
-        imageCaption="Enterprise-grade credential vault with real-time verification, audit trails, and integration with dispatch and settlement systems."
+        imageSrc="/assets/images/BofVaultHero2.png"
+        imageAlt="Driver-controlled BOF Vault document storage and readiness system"
+        imageCaption="Driver-controlled vault where individual drivers store and maintain their driving/qualification documents for evaluation and readiness."
         className="bof-mkt-vault-hero"
-        ctas={
-          <>
-            <Link
-              href="/book-assessment"
-              className="bof-mkt-btn-enterprise bof-mkt-btn-enterprise-primary"
-            >
-              Take The Assessment
-            </Link>
-            <Link href="/documents" className="bof-mkt-btn-enterprise bof-mkt-btn-enterprise-secondary">
-              See The Demo
-            </Link>
-          </>
-        }
+        ctas={null}
       />
 
       <MarketingSection variant="light" ariaLabelledBy="bof-mkt-vault-stats-heading">
