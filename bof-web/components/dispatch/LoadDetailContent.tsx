@@ -16,7 +16,7 @@ import {
 } from "@/lib/dispatch-dashboard-seed";
 import { formatMoney, proofChipClass, sealChipClass } from "./dispatch-ui";
 import { LoadStatusTimeline } from "./LoadStatusTimeline";
-import { LoadDocumentsLibrary } from "./LoadDocumentsLibrary";
+import { LoadDocumentsLibraryEnhanced } from "./LoadDocumentsLibraryEnhanced";
 import { DocumentationReadinessPanel } from "./DocumentationReadinessPanel";
 import { BofWorkflowFormShortcuts } from "@/components/documents/BofWorkflowFormShortcuts";
 
@@ -118,7 +118,7 @@ export function LoadDetailContent({ load, onClose }: Props) {
             other <span className="font-mono text-slate-400">/public</span>{" "}
             folders — grouped for shipper packet, billing, and claim support.
           </p>
-          <LoadDocumentsLibrary load={load} />
+          <LoadDocumentsLibraryEnhanced load={load} />
         </section>
 
         <section className="rounded-lg border border-slate-800 bg-slate-900/40 p-4">
