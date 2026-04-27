@@ -25,8 +25,10 @@ export function SafetyDashboardScreen() {
   const events = useSafetyStore((s) => s.events);
   const openEventDrawer = useSafetyStore((s) => s.openEventDrawer);
 
+  const { data } = useBofDemoData();
+
   const kpis = useMemo(() => {
-    const expRows = buildExpirationRows(drivers);
+    const expRows = buildExpirationRowsFromBofDocuments(drivers, data.documents);
     return {
       openEvents: countOpenEvents(events),
       highOpen: countHighSeverityOpen(events),
@@ -35,7 +37,7 @@ export function SafetyDashboardScreen() {
       claimExposure: sumOpenClaimExposure(events),
       expirationsCount: expRows.length,
     };
-  }, [drivers, events]);
+  }, [drivers, events, data.documents]);
 
   const sortedEvents = useMemo(
     () =>
@@ -44,8 +46,6 @@ export function SafetyDashboardScreen() {
       ),
     [events]
   );
-
-  const { data } = useBofDemoData();
   const expirations = useMemo(() => {
     return buildExpirationRowsFromBofDocuments(drivers, data.documents);
   }, [drivers, data.documents]);

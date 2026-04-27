@@ -1401,10 +1401,10 @@
       "type": "Driver profile (HTML)",
       "status": "VALID",
       "expirationDate": "2026-12-31",
-      "fileUrl": "/generated/drivers/DRV-002/driver-profile.html",
-      "previewUrl": "/generated/drivers/DRV-002/driver-profile.html",
+      "fileUrl": "/documents/drivers/DRV-002/drv-002-profile-dashboard.html",
+      "previewUrl": "/documents/drivers/DRV-002/drv-002-profile-dashboard.html",
       "docTier": "secondary",
-      "demoPlaceholder": true
+      "demoPlaceholder": false
     },
     {
       "driverId": "DRV-003",
@@ -1490,10 +1490,10 @@
       "type": "Driver profile (HTML)",
       "status": "VALID",
       "expirationDate": "2026-12-31",
-      "fileUrl": "/generated/drivers/DRV-003/driver-profile.html",
-      "previewUrl": "/generated/drivers/DRV-003/driver-profile.html",
+      "fileUrl": "/documents/drivers/DRV-003/drv-003-profile-dashboard.html",
+      "previewUrl": "/documents/drivers/DRV-003/drv-003-profile-dashboard.html",
       "docTier": "secondary",
-      "demoPlaceholder": true
+      "demoPlaceholder": false
     },
     {
       "driverId": "DRV-004",
@@ -1579,10 +1579,10 @@
       "type": "Driver profile (HTML)",
       "status": "VALID",
       "expirationDate": "2026-12-31",
-      "fileUrl": "/generated/drivers/DRV-004/driver-profile.html",
-      "previewUrl": "/generated/drivers/DRV-004/driver-profile.html",
+      "fileUrl": "/documents/drivers/DRV-004/drv-004-profile-dashboard.html",
+      "previewUrl": "/documents/drivers/DRV-004/drv-004-profile-dashboard.html",
       "docTier": "secondary",
-      "demoPlaceholder": true
+      "demoPlaceholder": false
     },
     {
       "driverId": "DRV-005",
@@ -1668,10 +1668,10 @@
       "type": "Driver profile (HTML)",
       "status": "VALID",
       "expirationDate": "2026-12-31",
-      "fileUrl": "/generated/drivers/DRV-005/driver-profile.html",
-      "previewUrl": "/generated/drivers/DRV-005/driver-profile.html",
+      "fileUrl": "/documents/drivers/DRV-005/drv-005-profile-dashboard.html",
+      "previewUrl": "/documents/drivers/DRV-005/drv-005-profile-dashboard.html",
       "docTier": "secondary",
-      "demoPlaceholder": true
+      "demoPlaceholder": false
     },
     {
       "driverId": "DRV-006",
@@ -1757,10 +1757,10 @@
       "type": "Driver profile (HTML)",
       "status": "VALID",
       "expirationDate": "2026-12-31",
-      "fileUrl": "/generated/drivers/DRV-006/driver-profile.html",
-      "previewUrl": "/generated/drivers/DRV-006/driver-profile.html",
+      "fileUrl": "/documents/drivers/DRV-006/drv-006-profile-dashboard.html",
+      "previewUrl": "/documents/drivers/DRV-006/drv-006-profile-dashboard.html",
       "docTier": "secondary",
-      "demoPlaceholder": true
+      "demoPlaceholder": false
     },
     {
       "driverId": "DRV-007",
@@ -1846,10 +1846,10 @@
       "type": "Driver profile (HTML)",
       "status": "VALID",
       "expirationDate": "2026-12-31",
-      "fileUrl": "/generated/drivers/DRV-007/driver-profile.html",
-      "previewUrl": "/generated/drivers/DRV-007/driver-profile.html",
+      "fileUrl": "/documents/drivers/DRV-007/drv-007-profile-dashboard.html",
+      "previewUrl": "/documents/drivers/DRV-007/drv-007-profile-dashboard.html",
       "docTier": "secondary",
-      "demoPlaceholder": true
+      "demoPlaceholder": false
     },
     {
       "driverId": "DRV-008",
@@ -1935,10 +1935,10 @@
       "type": "Driver profile (HTML)",
       "status": "VALID",
       "expirationDate": "2026-12-31",
-      "fileUrl": "/generated/drivers/DRV-008/driver-profile.html",
-      "previewUrl": "/generated/drivers/DRV-008/driver-profile.html",
+      "fileUrl": "/documents/drivers/DRV-008/drv-008-profile-dashboard.html",
+      "previewUrl": "/documents/drivers/DRV-008/drv-008-profile-dashboard.html",
       "docTier": "secondary",
-      "demoPlaceholder": true
+      "demoPlaceholder": false
     },
     {
       "driverId": "DRV-009",
@@ -2024,10 +2024,10 @@
       "type": "Driver profile (HTML)",
       "status": "VALID",
       "expirationDate": "2026-12-31",
-      "fileUrl": "/generated/drivers/DRV-009/driver-profile.html",
-      "previewUrl": "/generated/drivers/DRV-009/driver-profile.html",
+      "fileUrl": "/documents/drivers/DRV-009/drv-009-profile-dashboard.html",
+      "previewUrl": "/documents/drivers/DRV-009/drv-009-profile-dashboard.html",
       "docTier": "secondary",
-      "demoPlaceholder": true
+      "demoPlaceholder": false
     },
     {
       "driverId": "DRV-010",
@@ -2113,10 +2113,10 @@
       "type": "Driver profile (HTML)",
       "status": "VALID",
       "expirationDate": "2026-12-31",
-      "fileUrl": "/generated/drivers/DRV-010/driver-profile.html",
-      "previewUrl": "/generated/drivers/DRV-010/driver-profile.html",
+      "fileUrl": "/documents/drivers/DRV-010/drv-010-profile-dashboard.html",
+      "previewUrl": "/documents/drivers/DRV-010/drv-010-profile-dashboard.html",
       "docTier": "secondary",
-      "demoPlaceholder": true
+      "demoPlaceholder": false
     },
     {
       "driverId": "DRV-011",
@@ -2202,10 +2202,10 @@
       "type": "Driver profile (HTML)",
       "status": "VALID",
       "expirationDate": "2026-12-31",
-      "fileUrl": "/generated/drivers/DRV-011/driver-profile.html",
-      "previewUrl": "/generated/drivers/DRV-011/driver-profile.html",
+      "fileUrl": "/documents/drivers/DRV-011/drv-011-profile-dashboard.html",
+      "previewUrl": "/documents/drivers/DRV-011/drv-011-profile-dashboard.html",
       "docTier": "secondary",
-      "demoPlaceholder": true
+      "demoPlaceholder": false
     },
     {
       "driverId": "DRV-012",
@@ -2291,10 +2291,10 @@
       "type": "Driver profile (HTML)",
       "status": "VALID",
       "expirationDate": "2026-12-31",
-      "fileUrl": "/generated/drivers/DRV-012/driver-profile.html",
-      "previewUrl": "/generated/drivers/DRV-012/driver-profile.html",
+      "fileUrl": "/documents/drivers/DRV-012/drv-012-profile-dashboard.html",
+      "previewUrl": "/documents/drivers/DRV-012/drv-012-profile-dashboard.html",
       "docTier": "secondary",
-      "demoPlaceholder": true
+      "demoPlaceholder": false
     },
     {
       "driverId": "DRV-001",

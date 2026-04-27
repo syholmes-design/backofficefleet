@@ -3,7 +3,7 @@
 import { create } from "zustand";
 import type { BofData } from "@/lib/load-bof-data";
 import { getBofData } from "@/lib/load-bof-data";
-import type { Driver, EventStatus, SafetyEvent, SafetyNavId } from "@/types/safety";
+import type { Driver, EventStatus, SafetyEvent, SafetyNavId, ComplianceStatus } from "@/types/safety";
 import { buildExpirationRowsFromBofDocuments } from "@/lib/safety-rules";
 import {
   canTransitionEventStatus,
@@ -33,16 +33,16 @@ const initialData = getBofData();
 const initialDrivers = initialData.drivers.map((d) => ({
   driver_id: d.id,
   name: d.name,
-  status: "Active",
+  status: "Active" as const,
   home_terminal: d.address ? `${d.address.split(",")[1]?.trim()}, ${d.address.split(",")[2]?.split(" ")[0]}` : "Cleveland, OH",
-  compliance_status: "VALID",
+  compliance_status: "VALID" as ComplianceStatus,
   cdl_expiration_date: null,
   med_card_expiration_date: null,
   mvr_expiration_date: null,
-  qual_file_status: "Complete",
-  safety_ack_status: "Signed",
+  qual_file_status: "Complete" as const,
+  safety_ack_status: "Signed" as const,
 }));
-const initialEvents = [];
+const initialEvents: SafetyEvent[] = [];
 
 export const useSafetyStore = create<SafetyState>((set, get) => ({
   drivers: initialDrivers,
@@ -99,14 +99,14 @@ export const useSafetyStore = create<SafetyState>((set, get) => ({
       const nextDrivers = data.drivers.map((d) => ({
         driver_id: d.id,
         name: d.name,
-        status: "Active",
+        status: "Active" as const,
         home_terminal: d.address ? `${d.address.split(",")[1]?.trim()}, ${d.address.split(",")[2]?.split(" ")[0]}` : "Cleveland, OH",
-        compliance_status: "VALID",
+        compliance_status: "VALID" as ComplianceStatus,
         cdl_expiration_date: null,
         med_card_expiration_date: null,
         mvr_expiration_date: null,
-        qual_file_status: "Complete",
-        safety_ack_status: "Signed",
+        qual_file_status: "Complete" as const,
+        safety_ack_status: "Signed" as const,
       }));
       const nameByDriverId = new Map(nextDrivers.map((d) => [d.driver_id, d.name]));
       const validDriverIds = new Set(nextDrivers.map((d) => d.driver_id));
