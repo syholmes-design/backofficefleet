@@ -35,7 +35,7 @@ export interface SafetyEvent {
   /** Dispatch / safety desk notes (demo). */
   internal_notes?: string;
   linked_load_id?: string;
-  evidence_image_url?: string | null;
+  evidence_image_url: string | null;
   insurance_claim_needed: boolean;
   estimated_claim_exposure: number;
 }
