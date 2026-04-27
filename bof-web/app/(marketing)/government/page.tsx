@@ -169,7 +169,6 @@ export default function GovernmentPage() {
         trustAriaLabel="Government program highlights"
         imageSrc="/assets/images/government-hero2.png"
         imageAlt="Government and regulated fleet field and command operations at a glance"
-        imageCaption="Audit-ready posture: evidence packets, oversight queues, and traceable readiness—one band, not a separate product mock."
         ctas={
           <>
             <Link

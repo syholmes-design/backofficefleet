@@ -3708,8 +3708,9 @@ body {
 .bof-mkt-government-hero__image {
   object-fit: cover;
   object-position: center;
-  width: 100%;
-  height: 100%;
+  width: 108%;
+  height: 108%;
+  transform: translate(-4%, -4%);
 }
 
 .bof-mkt-government-hero__caption {
