@@ -3,6 +3,7 @@
 import { useMemo } from "react";
 import { AlertOctagon, FileWarning, ShieldAlert, UserX } from "lucide-react";
 import { useSafetyStore } from "@/lib/stores/safety-store";
+import { useBofDemoData } from "@/lib/bof-demo-data-context";
 import {
   countBlockedDrivers,
   countDriversDocRisk,
@@ -11,7 +12,7 @@ import {
   sumOpenClaimExposure,
 } from "@/lib/stores/safety-store";
 import {
-  buildExpirationRows,
+  buildExpirationRowsFromBofDocuments,
   isDispatchBlocked,
   isHighSeverityOpen,
   severityChipClass,
@@ -44,7 +45,10 @@ export function SafetyDashboardScreen() {
     [events]
   );
 
-  const expirations = useMemo(() => buildExpirationRows(drivers), [drivers]);
+  const { data } = useBofDemoData();
+  const expirations = useMemo(() => {
+    return buildExpirationRowsFromBofDocuments(drivers, data.documents);
+  }, [drivers, data.documents]);
 
   const immediateAttention = useMemo(() => {
     const items: {

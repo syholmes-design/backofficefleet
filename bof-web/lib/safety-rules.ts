@@ -157,6 +157,46 @@ export function buildExpirationRows(drivers: Driver[]): ExpirationRow[] {
   return rows.sort((a, b) => a.expiration_date.localeCompare(b.expiration_date));
 }
 
+export function buildExpirationRowsFromBofDocuments(
+  drivers: Driver[],
+  bofDocuments: Array<{ driverId: string; type: string; cdlExpiration?: string; mvrExpiration?: string; status?: string }>
+): ExpirationRow[] {
+  const rows: ExpirationRow[] = [];
+  const soon = 60;
+  
+  for (const d of drivers) {
+    // Find documents for this driver from BOF source of truth
+    const driverDocs = bofDocuments.filter(doc => doc.driverId === d.driver_id);
+    
+    const pairs: [ExpirationRow["document_type"], string | null | undefined][] =
+      [
+        ["CDL", driverDocs.find(doc => doc.type === "CDL")?.cdlExpiration],
+        ["Med Card", driverDocs.find(doc => doc.type === "Med Card")?.cdlExpiration], // Using cdlExpiration field for Med Card
+        ["MVR", driverDocs.find(doc => doc.type === "MVR")?.mvrExpiration],
+      ];
+    
+    for (const [docType, raw] of pairs) {
+      if (!raw) continue;
+      const days = daysUntil(raw);
+      if (days === null) continue;
+      let status: ExpirationRow["status"];
+      if (days < 0) status = "Expired";
+      else if (days <= soon) status = "Expiring soon";
+      else status = "OK";
+      if (status === "OK") continue;
+      rows.push({
+        driver_id: d.driver_id,
+        driver_name: d.name,
+        home_terminal: d.home_terminal,
+        document_type: docType,
+        expiration_date: raw,
+        status,
+      });
+    }
+  }
+  return rows.sort((a, b) => a.expiration_date.localeCompare(b.expiration_date));
+}
+
 export function dispatchEligibilityLabel(
   driver: Driver,
   events: SafetyEvent[]

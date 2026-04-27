@@ -4,7 +4,7 @@ import { create } from "zustand";
 import type { BofData } from "@/lib/load-bof-data";
 import { getBofData } from "@/lib/load-bof-data";
 import type { Driver, EventStatus, SafetyEvent, SafetyNavId } from "@/types/safety";
-import { createSafetySeedDrivers, createSafetySeedEvents } from "@/lib/safety-seed";
+import { buildExpirationRowsFromBofDocuments } from "@/lib/safety-rules";
 import {
   canTransitionEventStatus,
   isDispatchBlocked,
@@ -30,8 +30,19 @@ type SafetyState = {
 };
 
 const initialData = getBofData();
-const initialDrivers = createSafetySeedDrivers(initialData);
-const initialEvents = createSafetySeedEvents(initialDrivers);
+const initialDrivers = initialData.drivers.map((d) => ({
+  driver_id: d.id,
+  name: d.name,
+  status: "Active",
+  home_terminal: d.address ? `${d.address.split(",")[1]?.trim()}, ${d.address.split(",")[2]?.split(" ")[0]}` : "Cleveland, OH",
+  compliance_status: "VALID",
+  cdl_expiration_date: null,
+  med_card_expiration_date: null,
+  mvr_expiration_date: null,
+  qual_file_status: "Complete",
+  safety_ack_status: "Signed",
+}));
+const initialEvents = [];
 
 export const useSafetyStore = create<SafetyState>((set, get) => ({
   drivers: initialDrivers,
@@ -85,7 +96,18 @@ export const useSafetyStore = create<SafetyState>((set, get) => ({
 
   hydrateFromBofData: (data) =>
     set((s) => {
-      const nextDrivers = createSafetySeedDrivers(data);
+      const nextDrivers = data.drivers.map((d) => ({
+        driver_id: d.id,
+        name: d.name,
+        status: "Active",
+        home_terminal: d.address ? `${d.address.split(",")[1]?.trim()}, ${d.address.split(",")[2]?.split(" ")[0]}` : "Cleveland, OH",
+        compliance_status: "VALID",
+        cdl_expiration_date: null,
+        med_card_expiration_date: null,
+        mvr_expiration_date: null,
+        qual_file_status: "Complete",
+        safety_ack_status: "Signed",
+      }));
       const nameByDriverId = new Map(nextDrivers.map((d) => [d.driver_id, d.name]));
       const validDriverIds = new Set(nextDrivers.map((d) => d.driver_id));
       const hasOnlyCanonicalEventDrivers =
@@ -97,7 +119,7 @@ export const useSafetyStore = create<SafetyState>((set, get) => ({
             ...e,
             driver_name: nameByDriverId.get(e.driver_id) ?? e.driver_name,
           }))
-        : createSafetySeedEvents(nextDrivers);
+        : [];
 
       const selectedDriverId = validDriverIds.has(s.selectedDriverId)
         ? s.selectedDriverId
