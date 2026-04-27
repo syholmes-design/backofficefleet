@@ -98,12 +98,12 @@ export function DriversRosterTable() {
         },
         pendingPay: `$${pendingPay}`,
         actions: {
-          profile: `/drivers/${driver.id}`,
-          hr: `/emergency-contacts/${driver.id}`,
-          vault: `/documents`,
-          safety: `/safety`,
-          settlements: `/settlements`,
-          dispatch: activeLoad ? `/loads/${activeLoad.id}` : undefined
+          profile: `/drivers/${driver.id}/profile`,
+          hr: `/drivers/${driver.id}/hr`,
+          vault: `/drivers/${driver.id}/vault`,
+          safety: `/drivers/${driver.id}/safety`,
+          settlements: `/drivers/${driver.id}/settlements`,
+          dispatch: `/drivers/${driver.id}/dispatch`
         }
       };
     });
