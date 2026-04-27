@@ -169,7 +169,6 @@ export default function BofVaultPage() {
         trustAriaLabel="BOF Vault capability highlights"
         imageSrc="/assets/images/BofVaultHero2.png"
         imageAlt="Driver-controlled BOF Vault document storage and readiness system"
-        imageCaption="Driver-controlled vault where individual drivers store and maintain their driving/qualification documents for evaluation and readiness."
         className="bof-mkt-vault-hero"
         ctas={null}
       />
