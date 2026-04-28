@@ -33,7 +33,7 @@ export function SafetyNav({ active, onChange }: Props) {
       <div className="mb-3 flex items-center gap-2 px-4 pb-2">
         <Shield className="h-4 w-4 text-teal-500" aria-hidden />
         <span className="text-xs font-semibold uppercase tracking-wide text-slate-500">
-          Safety
+          Safety &amp; Compliance
         </span>
       </div>
       <ul className="min-h-0 flex-1 space-y-0.5 overflow-y-auto px-2">

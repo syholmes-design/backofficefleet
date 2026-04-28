@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo } from "react";
+import Link from "next/link";
 import { AlertOctagon, FileWarning, ShieldAlert, UserX } from "lucide-react";
 import { useSafetyStore } from "@/lib/stores/safety-store";
 import {
@@ -18,6 +19,13 @@ import {
   eventStatusChipClass,
 } from "@/lib/safety-rules";
 import { formatExposure } from "./safety-ui";
+import {
+  getAtRiskSafetyDrivers,
+  getSafetyScorecardRows,
+  getSafetyScorecardSummary,
+  getSafetyViolationActions,
+  type SafetyPerformanceTier,
+} from "@/lib/safety-scorecard";
 
 export function SafetyDashboardScreen() {
   const drivers = useSafetyStore((s) => s.drivers);
@@ -46,6 +54,10 @@ export function SafetyDashboardScreen() {
   const expirations = useMemo(() => {
     return buildExpirationRows(drivers);
   }, [drivers]);
+  const safetyScorecardRows = useMemo(() => getSafetyScorecardRows(), []);
+  const safetyScoreSummary = useMemo(() => getSafetyScorecardSummary(), []);
+  const atRiskSafetyDrivers = useMemo(() => getAtRiskSafetyDrivers(), []);
+  const safetyViolationActions = useMemo(() => getSafetyViolationActions(), []);
 
   const immediateAttention = useMemo(() => {
     const items: {
@@ -97,47 +109,111 @@ export function SafetyDashboardScreen() {
     <div className="flex min-h-0 flex-1 flex-col gap-6 p-5">
       <header>
         <h1 className="text-lg font-semibold tracking-tight text-white">
-          Safety dashboard
+          Safety &amp; Compliance
         </h1>
         <p className="mt-1 max-w-3xl text-sm text-slate-400">
-          Operational snapshot — open events, credential risk, dispatch blocks,
-          and carrier claim exposure. Row opens event detail.
+          Fleetwide safety scorecard combining HOS, OOS, asset inspection, cargo
+          damage, safety bonus, and recent violations.
         </p>
       </header>
 
       <section className="grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
         <KpiCard
-          label="Open safety events"
-          value={kpis.openEvents}
+          label="Scored Drivers"
+          value={safetyScoreSummary.scoredDrivers}
           icon={<ShieldAlert className="h-4 w-4 text-teal-500" />}
         />
         <KpiCard
-          label="High / critical (open)"
-          value={kpis.highOpen}
+          label="Elite Tier %"
+          value={`${Math.round(safetyScoreSummary.eliteTierPct)}%`}
           icon={<AlertOctagon className="h-4 w-4 text-orange-400" />}
         />
         <KpiCard
-          label="Drivers — doc risk"
-          value={kpis.docRiskDrivers}
-          sub={`${kpis.expirationsCount} expiring/expired lines`}
+          label="At-Risk Drivers"
+          value={safetyScoreSummary.atRiskDrivers}
           icon={<FileWarning className="h-4 w-4 text-amber-400" />}
         />
         <KpiCard
-          label="Blocked from dispatch"
-          value={kpis.blockedDrivers}
+          label="Cargo Damage Exposure"
+          value={formatExposure(safetyScoreSummary.cargoDamageExposureUsd)}
           icon={<UserX className="h-4 w-4 text-red-400" />}
         />
         <KpiCard
-          label="Est. claim exposure (open)"
-          value={formatExposure(kpis.claimExposure)}
+          label="Safety Bonus Earned"
+          value={formatExposure(safetyScoreSummary.safetyBonusEarnedUsd)}
           icon={<ShieldAlert className="h-4 w-4 text-rose-400" />}
         />
+      </section>
+
+      <section>
+        <h2 className="mb-2 text-sm font-semibold text-slate-200">
+          Driver Safety Metrics
+        </h2>
+        <div className="overflow-x-auto rounded-lg border border-slate-800">
+          <table className="w-full min-w-[980px] border-collapse text-left text-sm">
+            <thead className="bg-slate-900/90 text-[10px] uppercase tracking-wide text-slate-500">
+              <tr>
+                <th className="border-b border-slate-800 px-3 py-2 font-medium">Driver</th>
+                <th className="border-b border-slate-800 px-3 py-2 font-medium">OOS Violations</th>
+                <th className="border-b border-slate-800 px-3 py-2 font-medium">HOS Compliance</th>
+                <th className="border-b border-slate-800 px-3 py-2 font-medium">Maintenance Photos</th>
+                <th className="border-b border-slate-800 px-3 py-2 font-medium">Tire/Asset Insp.</th>
+                <th className="border-b border-slate-800 px-3 py-2 font-medium">Cargo Damage</th>
+                <th className="border-b border-slate-800 px-3 py-2 font-medium">Safety Bonus</th>
+                <th className="border-b border-slate-800 px-3 py-2 font-medium">Performance Tier</th>
+              </tr>
+            </thead>
+            <tbody className="text-slate-200">
+              {safetyScorecardRows.map((row) => (
+                <tr key={row.driverId} className="border-b border-slate-800/80 hover:bg-slate-900/60">
+                  <td className="px-3 py-2 text-xs">
+                    <Link href={`/drivers/${row.driverId}/profile`} className="font-medium text-teal-300 hover:text-teal-200">
+                      {row.driverName}
+                    </Link>
+                    <span className="ml-2 font-mono text-[11px] text-slate-500">{row.driverId}</span>
+                  </td>
+                  <td className="px-3 py-2 text-xs">{row.oosViolations}</td>
+                  <td className={["px-3 py-2 text-xs font-medium", row.hosCompliancePct < 90 ? "text-rose-300" : "text-slate-200"].join(" ")}>
+                    {row.hosCompliancePct}%
+                  </td>
+                  <td className="px-3 py-2 text-xs">{row.maintenancePhotosDate}</td>
+                  <td className="px-3 py-2 text-xs">
+                    <span
+                      className={[
+                        "inline-flex rounded px-2 py-0.5 text-[11px] font-semibold",
+                        row.tireAssetInspection === "Fail"
+                          ? "bg-rose-900/40 text-rose-300 ring-1 ring-rose-700/60"
+                          : "bg-emerald-900/35 text-emerald-300 ring-1 ring-emerald-700/50",
+                      ].join(" ")}
+                    >
+                      {row.tireAssetInspection}
+                    </span>
+                  </td>
+                  <td className={["px-3 py-2 font-mono text-xs", row.cargoDamageUsd > 0 ? "font-semibold text-rose-300" : "text-slate-400"].join(" ")}>
+                    {formatExposure(row.cargoDamageUsd)}
+                  </td>
+                  <td className="px-3 py-2 font-mono text-xs text-emerald-300">
+                    {formatExposure(row.safetyBonusUsd)}
+                  </td>
+                  <td className="px-3 py-2 text-xs">
+                    <TierChip tier={row.performanceTier} />
+                  </td>
+                </tr>
+              ))}
+              <tr className="border-b border-slate-800/80">
+                <td className="px-3 py-2 text-xs text-slate-400" colSpan={8}>
+                  DRV-012 (Robert Johnson): No safety score on file.
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
       </section>
 
       <div className="grid gap-6 lg:grid-cols-3">
         <section className="lg:col-span-2">
           <h2 className="mb-2 text-sm font-semibold text-slate-200">
-            Recent safety events
+            Recent Violations &amp; Required Actions
           </h2>
           <div className="overflow-x-auto rounded-lg border border-slate-800">
             <table className="w-full min-w-[720px] border-collapse text-left text-sm">
@@ -223,6 +299,52 @@ export function SafetyDashboardScreen() {
         <div className="flex flex-col gap-6">
           <section>
             <h2 className="mb-2 text-sm font-semibold text-slate-200">
+              At-Risk Driver Summary
+            </h2>
+            <ul className="space-y-2 text-xs">
+              {atRiskSafetyDrivers.map((row) => (
+                <li key={row.driverId} className="rounded border border-rose-900/40 bg-rose-950/20 px-3 py-2">
+                  <div className="font-semibold text-rose-200">{row.driverName}</div>
+                  <div className="mt-0.5 text-slate-300">
+                    {row.driverId === "DRV-004"
+                      ? "Failed tire/asset inspection and cargo damage."
+                      : "HOS compliance below standard, failed tire/asset inspection, and high cargo damage."}
+                  </div>
+                </li>
+              ))}
+            </ul>
+          </section>
+
+          <section>
+            <h2 className="mb-2 text-sm font-semibold text-slate-200">
+              Required Actions
+            </h2>
+            <ul className="space-y-2 text-xs">
+              {safetyViolationActions.map((row) => (
+                <li key={row.driverId} className="rounded border border-slate-800 bg-slate-900/40 px-3 py-2">
+                  <div className="flex items-center justify-between gap-2">
+                    <span className="font-semibold text-slate-100">
+                      {row.driverShortName} · {row.code}
+                    </span>
+                    <span
+                      className={[
+                        "inline-flex rounded px-2 py-0.5 text-[11px] font-semibold",
+                        row.severity === "High"
+                          ? "bg-rose-900/40 text-rose-300 ring-1 ring-rose-700/50"
+                          : "bg-amber-900/30 text-amber-300 ring-1 ring-amber-700/40",
+                      ].join(" ")}
+                    >
+                      {row.severity}
+                    </span>
+                  </div>
+                  <div className="mt-1 text-slate-400">{row.action}</div>
+                </li>
+              ))}
+            </ul>
+          </section>
+
+          <section>
+            <h2 className="mb-2 text-sm font-semibold text-slate-200">
               Upcoming expirations
             </h2>
             <div className="max-h-64 overflow-y-auto rounded-lg border border-slate-800">
@@ -302,6 +424,16 @@ export function SafetyDashboardScreen() {
       </div>
     </div>
   );
+}
+
+function TierChip({ tier }: { tier: SafetyPerformanceTier }) {
+  const cls =
+    tier === "Elite"
+      ? "bg-teal-900/35 text-teal-300 ring-1 ring-teal-700/50"
+      : tier === "Standard"
+        ? "bg-amber-900/30 text-amber-300 ring-1 ring-amber-700/40"
+        : "bg-rose-900/40 text-rose-300 ring-1 ring-rose-700/55";
+  return <span className={`inline-flex rounded px-2 py-0.5 text-[11px] font-semibold ${cls}`}>{tier}</span>;
 }
 
 function KpiCard({
