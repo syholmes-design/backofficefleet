@@ -116,13 +116,8 @@ export function SettlementsDashboardScreen() {
           Settlements dashboard
         </h1>
         <p className="mt-1 max-w-3xl text-sm text-slate-400">
-          Rows derived from <span className="font-mono text-slate-300">demo-data.json</span>{" "}
-          Payroll_Clean merge. Net pay is recomputed from settlement lines (gross −
-          deductions). Open a row for line detail and export rules.
-        </p>
-        <p className="mt-1 max-w-3xl text-xs text-slate-500">
-          Payroll earnings include base earnings, approved backhaul pay, and
-          safety bonuses generated from the Safety &amp; Compliance module.
+          Review driver settlement status, earnings, deductions, backhaul pay,
+          safety bonuses, and pending exceptions.
         </p>
       </header>
 
@@ -450,12 +445,12 @@ export function SettlementsDashboardScreen() {
 
       <section className="rounded-lg border border-slate-800 bg-slate-900/20 p-3">
         <h3 className="text-xs font-semibold uppercase tracking-wide text-slate-400">
-          Workbook/source details
+          Source details
         </h3>
         <p className="mt-1 text-xs text-slate-500">
-          Source data: main workbook via settlement merge (`npm run merge:settlements` / `npm run build:data`),
-          then rendered from `lib/demo-data.json`. Use `BOF_MAIN_SOURCE_XLSX` and
-          `BOF_SETTLEMENTS_SHEET` to override workbook path/sheet.
+          Settlement rows are sourced from the active payroll workbook,
+          normalized during build:data, and enriched with BOF safety bonus and
+          document/proof status.
         </p>
       </section>
 
