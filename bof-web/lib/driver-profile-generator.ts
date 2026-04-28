@@ -5,7 +5,27 @@ import type { BofData } from "@/lib/load-bof-data";
  * Modeled after John Carter's canonical profile dashboard
  */
 
-export function generateDriverProfileHTML(driver: BofData["drivers"][0]): string {
+type DriverProfileFields = BofData["drivers"][0] & {
+  dateOfBirth?: string;
+  licenseClass?: string;
+  licenseState?: string;
+  bankName?: string;
+  bankAccountType?: string;
+  bankAccountLast4?: string;
+  paymentPreference?: string;
+  bankInfoStatus?: string;
+  taxClassification?: string;
+  tinType?: string;
+  emergencyContactEmail?: string;
+  emergencyContactAddress?: string;
+  secondaryContactName?: string;
+  secondaryContactRelationship?: string;
+  secondaryContactPhone?: string;
+  secondaryContactEmail?: string;
+  secondaryContactAddress?: string;
+};
+
+export function generateDriverProfileHTML(driver: DriverProfileFields): string {
   const initials = driver.name.split(" ").map(n => n[0]).join("");
   const addressParts = driver.address.split(",");
   const city = addressParts[1]?.trim() || "";

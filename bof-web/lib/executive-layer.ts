@@ -173,8 +173,11 @@ export function settlementTotals(data: BofData) {
   let totalNet = 0;
   let pendingOrHold = 0;
   for (const s of data.settlements) {
-    const safetyBonus = getSafetyBonusByDriverId(s.driverId);
-    const gross = s.baseEarnings + s.backhaulPay + safetyBonus;
+    const safetyBonus =
+      typeof (s as { safetyBonus?: number }).safetyBonus === "number"
+        ? (s as { safetyBonus?: number }).safetyBonus ?? 0
+        : getSafetyBonusByDriverId(s.driverId);
+    const gross = s.grossPay;
     totalBase += s.baseEarnings;
     totalBackhaul += s.backhaulPay;
     totalSafetyBonus += safetyBonus;
@@ -200,8 +203,10 @@ export function enrichSettlementRows(data: BofData) {
   if (!("settlements" in data) || !Array.isArray(data.settlements)) return [];
   return data.settlements.map((s) => ({
     ...s,
-    safetyBonus: getSafetyBonusByDriverId(s.driverId),
-    grossPay: s.baseEarnings + s.backhaulPay + getSafetyBonusByDriverId(s.driverId),
+    safetyBonus:
+      typeof (s as { safetyBonus?: number }).safetyBonus === "number"
+        ? (s as { safetyBonus?: number }).safetyBonus ?? 0
+        : getSafetyBonusByDriverId(s.driverId),
     name: data.drivers.find((d) => d.id === s.driverId)?.name ?? s.driverId,
   }));
 }

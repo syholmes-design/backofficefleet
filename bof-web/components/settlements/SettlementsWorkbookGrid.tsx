@@ -31,9 +31,10 @@ export function SettlementsWorkbookGrid() {
       </p>
       <h1 className="bof-title">Settlements — workbook grid</h1>
       <p className="bof-lead">
-        Payroll / settlement rows come from the{" "}
-        <code className="bof-code">Payroll_Clean</code> sheet in the main Excel
-        workbook (default{" "}
+        Payroll / settlement rows come from the settlement worksheet in the main
+        Excel workbook (prefers <code className="bof-code">Payroll_Clean</code>,
+        then <code className="bof-code">Payroll</code>, then{" "}
+        <code className="bof-code">Vercel_Settlements</code>; default{" "}
         <code className="bof-code">public/data/main-source_enhanced_bof_aligned.xlsx</code>
         , or override with env <code className="bof-code">BOF_MAIN_SOURCE_XLSX</code>
         ), merged into <code className="bof-code">lib/demo-data.json</code> when you
@@ -200,6 +201,10 @@ function SettlementTableRow({
     exportStatus?: string;
     settlementUrl?: string;
     rate401k?: string;
+    settlementDocStatus?: string;
+    bofGeneratedStatus?: string;
+    loadProofStatus?: string;
+    claimRfidNotes?: string;
   };
 
   const holds = proofItemsForDriverLoads(data, row.driverId).filter(
@@ -271,7 +276,9 @@ function SettlementTableRow({
       </td>
       <td className="bof-small">{r.exportStatus || "—"}</td>
       <td className="bof-small">
-        {r.settlementUrl ? (
+        {r.settlementDocStatus ? (
+          r.settlementDocStatus
+        ) : r.settlementUrl ? (
           <a
             href={r.settlementUrl}
             target="_blank"
@@ -284,22 +291,22 @@ function SettlementTableRow({
           "—"
         )}
       </td>
-      <td className="bof-small">
-        {r.settlementId ? (
-          <a
-            href={`${GENERATED_PUBLIC_PREFIX}/settlements/${r.settlementId}/settlement-summary.svg`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="bof-link-secondary"
-          >
-            Summary
-          </a>
-        ) : (
-          "—"
-        )}
-      </td>
+      <td className="bof-small">{r.bofGeneratedStatus || (r.settlementId ? (
+        <a
+          href={`${GENERATED_PUBLIC_PREFIX}/settlements/${r.settlementId}/settlement-summary.svg`}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="bof-link-secondary"
+        >
+          Summary
+        </a>
+      ) : (
+        "—"
+      ))}</td>
       <td className="bof-cell-muted">
-        {holds.length === 0 ? (
+        {r.loadProofStatus ? (
+          r.loadProofStatus
+        ) : holds.length === 0 ? (
           "—"
         ) : (
           <span className="bof-settlement-proof-links">
@@ -320,7 +327,7 @@ function SettlementTableRow({
         )}
       </td>
       <td className="bof-cell-muted bof-small">
-        {settlementOpsNote(data, row.driverId)}
+        {r.claimRfidNotes || settlementOpsNote(data, row.driverId)}
       </td>
     </tr>
   );

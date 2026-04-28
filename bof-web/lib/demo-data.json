@@ -4,31 +4,12 @@
       "id": "DRV-001",
       "name": "John Carter",
       "address": "1240 W 6th St, Cleveland, OH 44113",
-      "phone": "216-667-3424",
+      "phone": "206-667-3424",
       "email": "john.carter@boftransport.demo",
-      "emergencyContactName": "Sarah Carter",
+      "emergencyContactName": "Jane Carter",
       "emergencyContactRelationship": "Spouse",
-      "emergencyContactPhone": "206-482-0199",
-      "emergencyContactEmail": "sarah.carter@gmail.com",
-      "emergencyContactAddress": "1240 W 6th St, Cleveland, OH 44113",
-      "secondaryContactName": "Mark Carter",
-      "secondaryContactRelationship": "Brother",
-      "secondaryContactPhone": "216-347-8321",
-      "secondaryContactEmail": "mcarter@aol.com",
-      "secondaryContactAddress": "3920 Lorain Ave, Cleveland, OH 44113",
-      "referenceCdlNumber": "OH1668243",
-      "dateOfBirth": "01/08/1971",
-      "licenseClass": "Class A",
-      "licenseState": "OH",
-      "bankName": "Huntington National Bank",
-      "bankAccountType": "Checking",
-      "bankRoutingNumber": "423877480",
-      "bankAccountLast4": "5636",
-      "paymentPreference": "Direct Deposit",
-      "bankSubmissionDate": "April 10, 2024",
-      "bankInfoStatus": "Verified",
-      "taxClassification": "Individual/Sole Proprietor",
-      "tinType": "SSN"
+      "emergencyContactPhone": "216-555-0198",
+      "referenceCdlNumber": "OH1668243"
     },
     {
       "id": "DRV-002",
@@ -37,28 +18,9 @@
       "phone": "707-773-6386",
       "email": "maria.lopez@boftransport.demo",
       "referenceCdlNumber": "DLN-00002",
-      "dateOfBirth": "01/04/1983",
-      "licenseClass": "Class A",
-      "licenseState": "IL",
-      "emergencyContactName": "Carlos Lopez",
-      "emergencyContactRelationship": "Spouse",
-      "emergencyContactPhone": "312-739-4718",
-      "emergencyContactEmail": "clopez@yahoo.com",
-      "emergencyContactAddress": "450 N Michigan Ave, Chicago, IL 60611",
-      "secondaryContactName": "Rosa Hernandez",
-      "secondaryContactRelationship": "Mother",
-      "secondaryContactPhone": "312-482-2364",
-      "secondaryContactEmail": "rosa.hernandez@gmail.com",
-      "secondaryContactAddress": "1835 S Blue Island Ave, Chicago, IL 60608",
-      "bankName": "Chase Bank",
-      "bankAccountType": "Checking",
-      "bankRoutingNumber": "465266204",
-      "bankAccountLast4": "1328",
-      "paymentPreference": "Direct Deposit",
-      "bankSubmissionDate": "June 03, 2024",
-      "bankInfoStatus": "Verified",
-      "taxClassification": "Individual/Sole Proprietor",
-      "tinType": "SSN"
+      "emergencyContactName": "Maria — emergency contact (demo)",
+      "emergencyContactRelationship": "Family",
+      "emergencyContactPhone": "555-0102"
     },
     {
       "id": "DRV-003",
@@ -67,28 +29,9 @@
       "phone": "675-486-1335",
       "email": "alex.kim@boftransport.demo",
       "referenceCdlNumber": "DLN-00003",
-      "dateOfBirth": "01/04/1971",
-      "licenseClass": "Class A",
-      "licenseState": "GA",
-      "emergencyContactName": "Min-Ji Kim",
-      "emergencyContactRelationship": "Spouse",
-      "emergencyContactPhone": "404-347-8293",
-      "emergencyContactEmail": "minji.kim@hotmail.com",
-      "emergencyContactAddress": "780 Peachtree St, Atlanta, GA 30308",
-      "secondaryContactName": "Daniel Kim",
-      "secondaryContactRelationship": "Brother",
-      "secondaryContactPhone": "770-618-4917",
-      "secondaryContactEmail": "dkim@yahoo.com",
-      "secondaryContactAddress": "2145 Buford Hwy, Atlanta, GA 30329",
-      "bankName": "Chase Bank",
-      "bankAccountType": "Checking",
-      "bankRoutingNumber": "942648543",
-      "bankAccountLast4": "4641",
-      "paymentPreference": "Direct Deposit",
-      "bankSubmissionDate": "July 15, 2024",
-      "bankInfoStatus": "Verified",
-      "taxClassification": "Individual/Sole Proprietor",
-      "tinType": "SSN"
+      "emergencyContactName": "Alex — emergency contact (demo)",
+      "emergencyContactRelationship": "Family",
+      "emergencyContactPhone": "555-0103"
     },
     {
       "id": "DRV-004",
@@ -97,28 +40,9 @@
       "phone": "359-469-5960",
       "email": "priya.patel@boftransport.demo",
       "referenceCdlNumber": "DLN-00004",
-      "dateOfBirth": "08/12/1993",
-      "licenseClass": "Class A",
-      "licenseState": "OH",
-      "emergencyContactName": "Raj Patel",
-      "emergencyContactRelationship": "Spouse",
-      "emergencyContactPhone": "216-618-3847",
-      "emergencyContactEmail": "raj.patel@aol.com",
-      "emergencyContactAddress": "2200 Superior Ave, Cleveland, OH 44114",
-      "secondaryContactName": "Anita Sharma",
-      "secondaryContactRelationship": "Sister",
-      "secondaryContactPhone": "216-739-6102",
-      "secondaryContactEmail": "anita.sharma@hotmail.com",
-      "secondaryContactAddress": "1480 E 9th St, Cleveland, OH 44114",
-      "bankName": "Chase Bank",
-      "bankAccountType": "Savings",
-      "bankRoutingNumber": "190070998",
-      "bankAccountLast4": "7109",
-      "paymentPreference": "Direct Deposit",
-      "bankSubmissionDate": "May 20, 2024",
-      "bankInfoStatus": "Verified",
-      "taxClassification": "Individual/Sole Proprietor",
-      "tinType": "SSN"
+      "emergencyContactName": "Priya — emergency contact (demo)",
+      "emergencyContactRelationship": "Family",
+      "emergencyContactPhone": "555-0104"
     },
     {
       "id": "DRV-005",
@@ -127,28 +51,9 @@
       "phone": "871-429-6220",
       "email": "kenji.tanaka@boftransport.demo",
       "referenceCdlNumber": "DLN-00005",
-      "dateOfBirth": "10/18/1966",
-      "licenseClass": "Class A",
-      "licenseState": "OH",
-      "emergencyContactName": "Yuki Tanaka",
-      "emergencyContactRelationship": "Spouse",
-      "emergencyContactPhone": "614-823-9012",
-      "emergencyContactEmail": "ytanaka@gmail.com",
-      "emergencyContactAddress": "115 E Broad St, Columbus, OH 43215",
-      "secondaryContactName": "Hiroshi Tanaka",
-      "secondaryContactRelationship": "Father",
-      "secondaryContactPhone": "614-276-3485",
-      "secondaryContactEmail": "htanaka@aol.com",
-      "secondaryContactAddress": "445 N High St, Columbus, OH 43215",
-      "bankName": "Chase Bank",
-      "bankAccountType": "Checking",
-      "bankRoutingNumber": "426693965",
-      "bankAccountLast4": "8966",
-      "paymentPreference": "Direct Deposit",
-      "bankSubmissionDate": "August 05, 2024",
-      "bankInfoStatus": "Verified",
-      "taxClassification": "Individual/Sole Proprietor",
-      "tinType": "SSN"
+      "emergencyContactName": "Kenji — emergency contact (demo)",
+      "emergencyContactRelationship": "Family",
+      "emergencyContactPhone": "555-0105"
     },
     {
       "id": "DRV-006",
@@ -157,28 +62,9 @@
       "phone": "283-876-4322",
       "email": "marcus.chen@boftransport.demo",
       "referenceCdlNumber": "DLN-00006",
-      "dateOfBirth": "02/08/1970",
-      "licenseClass": "Class A",
-      "licenseState": "TX",
-      "emergencyContactName": "Linda Chen",
-      "emergencyContactRelationship": "Spouse",
-      "emergencyContactPhone": "214-491-6734",
-      "emergencyContactEmail": "linda.chen@yahoo.com",
-      "emergencyContactAddress": "500 Pacific Ave, Dallas, TX 75202",
-      "secondaryContactName": "Wei Chen",
-      "secondaryContactRelationship": "Brother",
-      "secondaryContactPhone": "214-384-8923",
-      "secondaryContactEmail": "wei.chen@gmail.com",
-      "secondaryContactAddress": "2727 Commerce St, Dallas, TX 75226",
-      "bankName": "Chase Bank",
-      "bankAccountType": "Checking",
-      "bankRoutingNumber": "973738233",
-      "bankAccountLast4": "0803",
-      "paymentPreference": "Direct Deposit",
-      "bankSubmissionDate": "September 09, 2024",
-      "bankInfoStatus": "Verified",
-      "taxClassification": "Individual/Sole Proprietor",
-      "tinType": "SSN"
+      "emergencyContactName": "Marcus — emergency contact (demo)",
+      "emergencyContactRelationship": "Family",
+      "emergencyContactPhone": "555-0106"
     },
     {
       "id": "DRV-007",
@@ -187,28 +73,9 @@
       "phone": "896-828-7164",
       "email": "sofia.gomez@boftransport.demo",
       "referenceCdlNumber": "DLN-00007",
-      "dateOfBirth": "12/14/1999",
-      "licenseClass": "Class A",
-      "licenseState": "OH",
-      "emergencyContactName": "Miguel Gomez",
-      "emergencyContactRelationship": "Father",
-      "emergencyContactPhone": "216-276-1482",
-      "emergencyContactEmail": "mgomez@hotmail.com",
-      "emergencyContactAddress": "2847 Clark Ave, Cleveland, OH 44109",
-      "secondaryContactName": "Isabel Torres",
-      "secondaryContactRelationship": "Mother",
-      "secondaryContactPhone": "216-917-7536",
-      "secondaryContactEmail": "itorres@yahoo.com",
-      "secondaryContactAddress": "4310 Lorain Ave, Cleveland, OH 44113",
-      "bankName": "Bank of America",
-      "bankAccountType": "Checking",
-      "bankRoutingNumber": "865581806",
-      "bankAccountLast4": "9424",
-      "paymentPreference": "Direct Deposit",
-      "bankSubmissionDate": "October 01, 2024",
-      "bankInfoStatus": "Verified",
-      "taxClassification": "Individual/Sole Proprietor",
-      "tinType": "SSN"
+      "emergencyContactName": "Sofia — emergency contact (demo)",
+      "emergencyContactRelationship": "Family",
+      "emergencyContactPhone": "555-0107"
     },
     {
       "id": "DRV-008",
@@ -217,28 +84,9 @@
       "phone": "820-223-4829",
       "email": "liam.smith@boftransport.demo",
       "referenceCdlNumber": "DLN-00008",
-      "dateOfBirth": "08/23/1964",
-      "licenseClass": "Class A",
-      "licenseState": "OH",
-      "emergencyContactName": "Jessica Smith",
-      "emergencyContactRelationship": "Spouse",
-      "emergencyContactPhone": "419-384-2938",
-      "emergencyContactEmail": "jessica.smith@gmail.com",
-      "emergencyContactAddress": "240 Madison Ave, Toledo, OH 43604",
-      "secondaryContactName": "Brian Smith",
-      "secondaryContactRelationship": "Brother",
-      "secondaryContactPhone": "419-653-6147",
-      "secondaryContactEmail": "brian.smith@hotmail.com",
-      "secondaryContactAddress": "520 Jefferson Ave, Toledo, OH 43604",
-      "bankName": "PNC Bank",
-      "bankAccountType": "Checking",
-      "bankRoutingNumber": "560687670",
-      "bankAccountLast4": "4220",
-      "paymentPreference": "Direct Deposit",
-      "bankSubmissionDate": "June 24, 2024",
-      "bankInfoStatus": "Verified",
-      "taxClassification": "Individual/Sole Proprietor",
-      "tinType": "SSN"
+      "emergencyContactName": "Liam — emergency contact (demo)",
+      "emergencyContactRelationship": "Family",
+      "emergencyContactPhone": "555-0108"
     },
     {
       "id": "DRV-009",
@@ -247,28 +95,9 @@
       "phone": "206-700-7666",
       "email": "emma.brown@boftransport.demo",
       "referenceCdlNumber": "DLN-00009",
-      "dateOfBirth": "10/16/1984",
-      "licenseClass": "Class B",
-      "licenseState": "OH",
-      "emergencyContactName": "Michael Brown",
-      "emergencyContactRelationship": "Spouse",
-      "emergencyContactPhone": "614-917-7261",
-      "emergencyContactEmail": "mbrown@aol.com",
-      "emergencyContactAddress": "330 Civic Center Dr, Columbus, OH 43215",
-      "secondaryContactName": "Laura Davis",
-      "secondaryContactRelationship": "Sister",
-      "secondaryContactPhone": "614-491-1893",
-      "secondaryContactEmail": "ldavis@gmail.com",
-      "secondaryContactAddress": "175 S 3rd St, Columbus, OH 43215",
-      "bankName": "Chase Bank",
-      "bankAccountType": "Savings",
-      "bankRoutingNumber": "347101867",
-      "bankAccountLast4": "8087",
-      "paymentPreference": "Direct Deposit",
-      "bankSubmissionDate": "July 29, 2024",
-      "bankInfoStatus": "Verified",
-      "taxClassification": "Individual/Sole Proprietor",
-      "tinType": "SSN"
+      "emergencyContactName": "Emma — emergency contact (demo)",
+      "emergencyContactRelationship": "Family",
+      "emergencyContactPhone": "555-0109"
     },
     {
       "id": "DRV-010",
@@ -277,28 +106,9 @@
       "phone": "582-987-2387",
       "email": "noah.wilson@boftransport.demo",
       "referenceCdlNumber": "DLN-00010",
-      "dateOfBirth": "09/11/1966",
-      "licenseClass": "Class A",
-      "licenseState": "IL",
-      "emergencyContactName": "Angela Wilson",
-      "emergencyContactRelationship": "Spouse",
-      "emergencyContactPhone": "312-653-8145",
-      "emergencyContactEmail": "angela.wilson@yahoo.com",
-      "emergencyContactAddress": "110 W Adams St, Chicago, IL 60603",
-      "secondaryContactName": "Terrance Wilson",
-      "secondaryContactRelationship": "Brother",
-      "secondaryContactPhone": "773-823-4628",
-      "secondaryContactEmail": "terrance.wilson@aol.com",
-      "secondaryContactAddress": "7830 S Cottage Grove Ave, Chicago, IL 60619",
-      "bankName": "Chase Bank",
-      "bankAccountType": "Checking",
-      "bankRoutingNumber": "446897081",
-      "bankAccountLast4": "6839",
-      "paymentPreference": "Direct Deposit",
-      "bankSubmissionDate": "August 19, 2024",
-      "bankInfoStatus": "Verified",
-      "taxClassification": "Individual/Sole Proprietor",
-      "tinType": "SSN"
+      "emergencyContactName": "Noah — emergency contact (demo)",
+      "emergencyContactRelationship": "Family",
+      "emergencyContactPhone": "555-0110"
     },
     {
       "id": "DRV-011",
@@ -307,28 +117,9 @@
       "phone": "337-857-3607",
       "email": "olivia.lee@boftransport.demo",
       "referenceCdlNumber": "DLN-00011",
-      "dateOfBirth": "03/14/1968",
-      "licenseClass": "Class A",
-      "licenseState": "GA",
-      "emergencyContactName": "Vikram Sharma",
-      "emergencyContactRelationship": "Spouse",
-      "emergencyContactPhone": "404-741-3619",
-      "emergencyContactEmail": "vsharma@gmail.com",
-      "emergencyContactAddress": "600 Peachtree St, Atlanta, GA 30308",
-      "secondaryContactName": "Meera Nair",
-      "secondaryContactRelationship": "Sister",
-      "secondaryContactPhone": "678-294-2740",
-      "secondaryContactEmail": "mnair@hotmail.com",
-      "secondaryContactAddress": "1255 Ponce De Leon Ave, Atlanta, GA 30306",
-      "bankName": "Bank of America",
-      "bankAccountType": "Savings",
-      "bankRoutingNumber": "207931918",
-      "bankAccountLast4": "2449",
-      "paymentPreference": "Direct Deposit",
-      "bankSubmissionDate": "September 16, 2024",
-      "bankInfoStatus": "Verified",
-      "taxClassification": "Individual/Sole Proprietor",
-      "tinType": "SSN"
+      "emergencyContactName": "Olivia — emergency contact (demo)",
+      "emergencyContactRelationship": "Family",
+      "emergencyContactPhone": "555-0111"
     },
     {
       "id": "DRV-012",
@@ -337,28 +128,9 @@
       "phone": "618-623-9317",
       "email": "robert.johnson@boftransport.demo",
       "referenceCdlNumber": "DLN-00012",
-      "dateOfBirth": "04/11/1990",
-      "licenseClass": "Class A",
-      "licenseState": "IL",
-      "emergencyContactName": "Karen Johnson",
-      "emergencyContactRelationship": "Spouse",
-      "emergencyContactPhone": "312-294-5478",
-      "emergencyContactEmail": "karen.johnson@hotmail.com",
-      "emergencyContactAddress": "618 S Michigan Ave, Chicago, IL 60605",
-      "secondaryContactName": "David Johnson",
-      "secondaryContactRelationship": "Brother",
-      "secondaryContactPhone": "312-741-9317",
-      "secondaryContactEmail": "david.johnson@yahoo.com",
-      "secondaryContactAddress": "425 S Wabash Ave, Chicago, IL 60605",
-      "bankName": "Wells Fargo Bank",
-      "bankAccountType": "Checking",
-      "bankRoutingNumber": "782385202",
-      "bankAccountLast4": "1916",
-      "paymentPreference": "Direct Deposit",
-      "bankSubmissionDate": "October 14, 2024",
-      "bankInfoStatus": "Verified",
-      "taxClassification": "Individual/Sole Proprietor",
-      "tinType": "SSN"
+      "emergencyContactName": "Robert — emergency contact (demo)",
+      "emergencyContactRelationship": "Family",
+      "emergencyContactPhone": "555-0112"
     }
   ],
   "documents": [
@@ -382,7 +154,7 @@
     {
       "driverId": "DRV-001",
       "type": "Medical Card",
-      "status": "VALID",
+      "status": "EXPIRED",
       "expirationDate": "2026-04-22",
       "issueDate": "2024-01-15",
       "fileUrl": "/generated/drivers/DRV-001/medical-card.html",
@@ -454,7 +226,7 @@
     {
       "driverId": "DRV-002",
       "type": "Medical Card",
-      "status": "VALID",
+      "status": "EXPIRED",
       "expirationDate": "2026-04-22",
       "issueDate": "2024-01-15",
       "fileUrl": "/generated/drivers/DRV-002/medical-card.html",
@@ -520,14 +292,13 @@
       "cdlRestrictions": "None",
       "fileUrl": "/documents/drivers/DRV-003/cdl.png",
       "previewUrl": "/documents/drivers/DRV-003/cdl.png",
-      "demoPlaceholder": true,
       "docTier": "primary",
       "sourceLicenseNumber": "DLN-00003"
     },
     {
       "driverId": "DRV-003",
       "type": "Medical Card",
-      "status": "VALID",
+      "status": "EXPIRED",
       "expirationDate": "2026-04-22",
       "issueDate": "2024-01-15",
       "fileUrl": "/generated/drivers/DRV-003/medical-card.html",
@@ -599,7 +370,7 @@
     {
       "driverId": "DRV-004",
       "type": "Medical Card",
-      "status": "VALID",
+      "status": "EXPIRED",
       "expirationDate": "2026-04-22",
       "issueDate": "2024-01-15",
       "fileUrl": "/generated/drivers/DRV-004/medical-card.html",
@@ -671,7 +442,7 @@
     {
       "driverId": "DRV-005",
       "type": "Medical Card",
-      "status": "VALID",
+      "status": "EXPIRED",
       "expirationDate": "2026-04-22",
       "issueDate": "2024-01-15",
       "fileUrl": "/generated/drivers/DRV-005/medical-card.html",
@@ -737,14 +508,13 @@
       "cdlRestrictions": "None",
       "fileUrl": "/documents/drivers/DRV-006/cdl.png",
       "previewUrl": "/documents/drivers/DRV-006/cdl.png",
-      "demoPlaceholder": true,
       "docTier": "primary",
       "sourceLicenseNumber": "DLN-00006"
     },
     {
       "driverId": "DRV-006",
       "type": "Medical Card",
-      "status": "VALID",
+      "status": "EXPIRED",
       "expirationDate": "2026-04-22",
       "issueDate": "2024-01-15",
       "fileUrl": "/generated/drivers/DRV-006/medical-card.html",
@@ -816,7 +586,7 @@
     {
       "driverId": "DRV-007",
       "type": "Medical Card",
-      "status": "VALID",
+      "status": "EXPIRED",
       "expirationDate": "2026-04-22",
       "issueDate": "2024-01-15",
       "fileUrl": "/generated/drivers/DRV-007/medical-card.html",
@@ -888,7 +658,7 @@
     {
       "driverId": "DRV-008",
       "type": "Medical Card",
-      "status": "VALID",
+      "status": "EXPIRED",
       "expirationDate": "2026-04-22",
       "issueDate": "2024-01-15",
       "fileUrl": "/generated/drivers/DRV-008/medical-card.html",
@@ -960,7 +730,7 @@
     {
       "driverId": "DRV-009",
       "type": "Medical Card",
-      "status": "VALID",
+      "status": "EXPIRED",
       "expirationDate": "2026-04-22",
       "issueDate": "2024-01-15",
       "fileUrl": "/generated/drivers/DRV-009/medical-card.html",
@@ -1032,7 +802,7 @@
     {
       "driverId": "DRV-010",
       "type": "Medical Card",
-      "status": "VALID",
+      "status": "EXPIRED",
       "expirationDate": "2026-04-22",
       "issueDate": "2024-01-15",
       "fileUrl": "/generated/drivers/DRV-010/medical-card.html",
@@ -1104,7 +874,7 @@
     {
       "driverId": "DRV-011",
       "type": "Medical Card",
-      "status": "VALID",
+      "status": "EXPIRED",
       "expirationDate": "2026-04-22",
       "issueDate": "2024-01-15",
       "fileUrl": "/generated/drivers/DRV-011/medical-card.html",
@@ -1176,7 +946,7 @@
     {
       "driverId": "DRV-012",
       "type": "Medical Card",
-      "status": "VALID",
+      "status": "EXPIRED",
       "expirationDate": "2026-04-22",
       "issueDate": "2024-01-15",
       "fileUrl": "/generated/drivers/DRV-012/medical-card.html",
@@ -1255,7 +1025,7 @@
       "fileUrl": "/documents/drivers/DRV-001/driver-application.html",
       "previewUrl": "/documents/drivers/DRV-001/driver-application.html",
       "docTier": "secondary",
-      "demoPlaceholder": true
+      "demoPlaceholder": false
     },
     {
       "driverId": "DRV-001",
@@ -1276,6 +1046,16 @@
       "previewUrl": "/generated/drivers/DRV-001/qualification-file.html",
       "docTier": "secondary",
       "demoPlaceholder": true
+    },
+    {
+      "driverId": "DRV-001",
+      "type": "Insurance Card",
+      "status": "VALID",
+      "expirationDate": "",
+      "fileUrl": "/documents/drivers/DRV-001/insurance-card.png",
+      "previewUrl": "/documents/drivers/DRV-001/insurance-card.png",
+      "docTier": "secondary",
+      "demoPlaceholder": false
     },
     {
       "driverId": "DRV-001",
@@ -1344,7 +1124,7 @@
       "fileUrl": "/documents/drivers/DRV-002/driver-application.html",
       "previewUrl": "/documents/drivers/DRV-002/driver-application.html",
       "docTier": "secondary",
-      "demoPlaceholder": true
+      "demoPlaceholder": false
     },
     {
       "driverId": "DRV-002",
@@ -1365,6 +1145,16 @@
       "previewUrl": "/generated/drivers/DRV-002/qualification-file.html",
       "docTier": "secondary",
       "demoPlaceholder": true
+    },
+    {
+      "driverId": "DRV-002",
+      "type": "Insurance Card",
+      "status": "VALID",
+      "expirationDate": "",
+      "fileUrl": "/documents/drivers/DRV-002/insurance-card.png",
+      "previewUrl": "/documents/drivers/DRV-002/insurance-card.png",
+      "docTier": "secondary",
+      "demoPlaceholder": false
     },
     {
       "driverId": "DRV-002",
@@ -1401,10 +1191,10 @@
       "type": "Driver profile (HTML)",
       "status": "VALID",
       "expirationDate": "2026-12-31",
-      "fileUrl": "/documents/drivers/DRV-002/drv-002-profile-dashboard.html",
-      "previewUrl": "/documents/drivers/DRV-002/drv-002-profile-dashboard.html",
+      "fileUrl": "/generated/drivers/DRV-002/driver-profile.html",
+      "previewUrl": "/generated/drivers/DRV-002/driver-profile.html",
       "docTier": "secondary",
-      "demoPlaceholder": false
+      "demoPlaceholder": true
     },
     {
       "driverId": "DRV-003",
@@ -1433,7 +1223,7 @@
       "fileUrl": "/documents/drivers/DRV-003/driver-application.html",
       "previewUrl": "/documents/drivers/DRV-003/driver-application.html",
       "docTier": "secondary",
-      "demoPlaceholder": true
+      "demoPlaceholder": false
     },
     {
       "driverId": "DRV-003",
@@ -1454,6 +1244,16 @@
       "previewUrl": "/generated/drivers/DRV-003/qualification-file.html",
       "docTier": "secondary",
       "demoPlaceholder": true
+    },
+    {
+      "driverId": "DRV-003",
+      "type": "Insurance Card",
+      "status": "VALID",
+      "expirationDate": "",
+      "fileUrl": "/documents/drivers/DRV-003/insurance-card.png",
+      "previewUrl": "/documents/drivers/DRV-003/insurance-card.png",
+      "docTier": "secondary",
+      "demoPlaceholder": false
     },
     {
       "driverId": "DRV-003",
@@ -1490,10 +1290,10 @@
       "type": "Driver profile (HTML)",
       "status": "VALID",
       "expirationDate": "2026-12-31",
-      "fileUrl": "/documents/drivers/DRV-003/drv-003-profile-dashboard.html",
-      "previewUrl": "/documents/drivers/DRV-003/drv-003-profile-dashboard.html",
+      "fileUrl": "/generated/drivers/DRV-003/driver-profile.html",
+      "previewUrl": "/generated/drivers/DRV-003/driver-profile.html",
       "docTier": "secondary",
-      "demoPlaceholder": false
+      "demoPlaceholder": true
     },
     {
       "driverId": "DRV-004",
@@ -1522,7 +1322,7 @@
       "fileUrl": "/documents/drivers/DRV-004/driver-application.html",
       "previewUrl": "/documents/drivers/DRV-004/driver-application.html",
       "docTier": "secondary",
-      "demoPlaceholder": true
+      "demoPlaceholder": false
     },
     {
       "driverId": "DRV-004",
@@ -1543,6 +1343,16 @@
       "previewUrl": "/generated/drivers/DRV-004/qualification-file.html",
       "docTier": "secondary",
       "demoPlaceholder": true
+    },
+    {
+      "driverId": "DRV-004",
+      "type": "Insurance Card",
+      "status": "VALID",
+      "expirationDate": "",
+      "fileUrl": "/documents/drivers/DRV-004/insurance-card.png",
+      "previewUrl": "/documents/drivers/DRV-004/insurance-card.png",
+      "docTier": "secondary",
+      "demoPlaceholder": false
     },
     {
       "driverId": "DRV-004",
@@ -1579,10 +1389,10 @@
       "type": "Driver profile (HTML)",
       "status": "VALID",
       "expirationDate": "2026-12-31",
-      "fileUrl": "/documents/drivers/DRV-004/drv-004-profile-dashboard.html",
-      "previewUrl": "/documents/drivers/DRV-004/drv-004-profile-dashboard.html",
+      "fileUrl": "/generated/drivers/DRV-004/driver-profile.html",
+      "previewUrl": "/generated/drivers/DRV-004/driver-profile.html",
       "docTier": "secondary",
-      "demoPlaceholder": false
+      "demoPlaceholder": true
     },
     {
       "driverId": "DRV-005",
@@ -1611,7 +1421,7 @@
       "fileUrl": "/documents/drivers/DRV-005/driver-application.html",
       "previewUrl": "/documents/drivers/DRV-005/driver-application.html",
       "docTier": "secondary",
-      "demoPlaceholder": true
+      "demoPlaceholder": false
     },
     {
       "driverId": "DRV-005",
@@ -1632,6 +1442,16 @@
       "previewUrl": "/generated/drivers/DRV-005/qualification-file.html",
       "docTier": "secondary",
       "demoPlaceholder": true
+    },
+    {
+      "driverId": "DRV-005",
+      "type": "Insurance Card",
+      "status": "VALID",
+      "expirationDate": "",
+      "fileUrl": "/documents/drivers/DRV-005/insurance-card.png",
+      "previewUrl": "/documents/drivers/DRV-005/insurance-card.png",
+      "docTier": "secondary",
+      "demoPlaceholder": false
     },
     {
       "driverId": "DRV-005",
@@ -1668,10 +1488,10 @@
       "type": "Driver profile (HTML)",
       "status": "VALID",
       "expirationDate": "2026-12-31",
-      "fileUrl": "/documents/drivers/DRV-005/drv-005-profile-dashboard.html",
-      "previewUrl": "/documents/drivers/DRV-005/drv-005-profile-dashboard.html",
+      "fileUrl": "/generated/drivers/DRV-005/driver-profile.html",
+      "previewUrl": "/generated/drivers/DRV-005/driver-profile.html",
       "docTier": "secondary",
-      "demoPlaceholder": false
+      "demoPlaceholder": true
     },
     {
       "driverId": "DRV-006",
@@ -1700,7 +1520,7 @@
       "fileUrl": "/documents/drivers/DRV-006/driver-application.html",
       "previewUrl": "/documents/drivers/DRV-006/driver-application.html",
       "docTier": "secondary",
-      "demoPlaceholder": true
+      "demoPlaceholder": false
     },
     {
       "driverId": "DRV-006",
@@ -1721,6 +1541,16 @@
       "previewUrl": "/generated/drivers/DRV-006/qualification-file.html",
       "docTier": "secondary",
       "demoPlaceholder": true
+    },
+    {
+      "driverId": "DRV-006",
+      "type": "Insurance Card",
+      "status": "VALID",
+      "expirationDate": "",
+      "fileUrl": "/documents/drivers/DRV-006/insurance-card.png",
+      "previewUrl": "/documents/drivers/DRV-006/insurance-card.png",
+      "docTier": "secondary",
+      "demoPlaceholder": false
     },
     {
       "driverId": "DRV-006",
@@ -1757,10 +1587,10 @@
       "type": "Driver profile (HTML)",
       "status": "VALID",
       "expirationDate": "2026-12-31",
-      "fileUrl": "/documents/drivers/DRV-006/drv-006-profile-dashboard.html",
-      "previewUrl": "/documents/drivers/DRV-006/drv-006-profile-dashboard.html",
+      "fileUrl": "/generated/drivers/DRV-006/driver-profile.html",
+      "previewUrl": "/generated/drivers/DRV-006/driver-profile.html",
       "docTier": "secondary",
-      "demoPlaceholder": false
+      "demoPlaceholder": true
     },
     {
       "driverId": "DRV-007",
@@ -1789,7 +1619,7 @@
       "fileUrl": "/documents/drivers/DRV-007/driver-application.html",
       "previewUrl": "/documents/drivers/DRV-007/driver-application.html",
       "docTier": "secondary",
-      "demoPlaceholder": true
+      "demoPlaceholder": false
     },
     {
       "driverId": "DRV-007",
@@ -1810,6 +1640,16 @@
       "previewUrl": "/generated/drivers/DRV-007/qualification-file.html",
       "docTier": "secondary",
       "demoPlaceholder": true
+    },
+    {
+      "driverId": "DRV-007",
+      "type": "Insurance Card",
+      "status": "VALID",
+      "expirationDate": "",
+      "fileUrl": "/documents/drivers/DRV-007/insurance-card.png",
+      "previewUrl": "/documents/drivers/DRV-007/insurance-card.png",
+      "docTier": "secondary",
+      "demoPlaceholder": false
     },
     {
       "driverId": "DRV-007",
@@ -1846,10 +1686,10 @@
       "type": "Driver profile (HTML)",
       "status": "VALID",
       "expirationDate": "2026-12-31",
-      "fileUrl": "/documents/drivers/DRV-007/drv-007-profile-dashboard.html",
-      "previewUrl": "/documents/drivers/DRV-007/drv-007-profile-dashboard.html",
+      "fileUrl": "/generated/drivers/DRV-007/driver-profile.html",
+      "previewUrl": "/generated/drivers/DRV-007/driver-profile.html",
       "docTier": "secondary",
-      "demoPlaceholder": false
+      "demoPlaceholder": true
     },
     {
       "driverId": "DRV-008",
@@ -1878,7 +1718,7 @@
       "fileUrl": "/documents/drivers/DRV-008/driver-application.html",
       "previewUrl": "/documents/drivers/DRV-008/driver-application.html",
       "docTier": "secondary",
-      "demoPlaceholder": true
+      "demoPlaceholder": false
     },
     {
       "driverId": "DRV-008",
@@ -1899,6 +1739,16 @@
       "previewUrl": "/generated/drivers/DRV-008/qualification-file.html",
       "docTier": "secondary",
       "demoPlaceholder": true
+    },
+    {
+      "driverId": "DRV-008",
+      "type": "Insurance Card",
+      "status": "VALID",
+      "expirationDate": "",
+      "fileUrl": "/documents/drivers/DRV-008/insurance-card.png",
+      "previewUrl": "/documents/drivers/DRV-008/insurance-card.png",
+      "docTier": "secondary",
+      "demoPlaceholder": false
     },
     {
       "driverId": "DRV-008",
@@ -1935,10 +1785,10 @@
       "type": "Driver profile (HTML)",
       "status": "VALID",
       "expirationDate": "2026-12-31",
-      "fileUrl": "/documents/drivers/DRV-008/drv-008-profile-dashboard.html",
-      "previewUrl": "/documents/drivers/DRV-008/drv-008-profile-dashboard.html",
+      "fileUrl": "/generated/drivers/DRV-008/driver-profile.html",
+      "previewUrl": "/generated/drivers/DRV-008/driver-profile.html",
       "docTier": "secondary",
-      "demoPlaceholder": false
+      "demoPlaceholder": true
     },
     {
       "driverId": "DRV-009",
@@ -1967,7 +1817,7 @@
       "fileUrl": "/documents/drivers/DRV-009/driver-application.html",
       "previewUrl": "/documents/drivers/DRV-009/driver-application.html",
       "docTier": "secondary",
-      "demoPlaceholder": true
+      "demoPlaceholder": false
     },
     {
       "driverId": "DRV-009",
@@ -1988,6 +1838,16 @@
       "previewUrl": "/generated/drivers/DRV-009/qualification-file.html",
       "docTier": "secondary",
       "demoPlaceholder": true
+    },
+    {
+      "driverId": "DRV-009",
+      "type": "Insurance Card",
+      "status": "VALID",
+      "expirationDate": "",
+      "fileUrl": "/documents/drivers/DRV-009/insurance-card.png",
+      "previewUrl": "/documents/drivers/DRV-009/insurance-card.png",
+      "docTier": "secondary",
+      "demoPlaceholder": false
     },
     {
       "driverId": "DRV-009",
@@ -2024,10 +1884,10 @@
       "type": "Driver profile (HTML)",
       "status": "VALID",
       "expirationDate": "2026-12-31",
-      "fileUrl": "/documents/drivers/DRV-009/drv-009-profile-dashboard.html",
-      "previewUrl": "/documents/drivers/DRV-009/drv-009-profile-dashboard.html",
+      "fileUrl": "/generated/drivers/DRV-009/driver-profile.html",
+      "previewUrl": "/generated/drivers/DRV-009/driver-profile.html",
       "docTier": "secondary",
-      "demoPlaceholder": false
+      "demoPlaceholder": true
     },
     {
       "driverId": "DRV-010",
@@ -2056,7 +1916,7 @@
       "fileUrl": "/documents/drivers/DRV-010/driver-application.html",
       "previewUrl": "/documents/drivers/DRV-010/driver-application.html",
       "docTier": "secondary",
-      "demoPlaceholder": true
+      "demoPlaceholder": false
     },
     {
       "driverId": "DRV-010",
@@ -2077,6 +1937,16 @@
       "previewUrl": "/generated/drivers/DRV-010/qualification-file.html",
       "docTier": "secondary",
       "demoPlaceholder": true
+    },
+    {
+      "driverId": "DRV-010",
+      "type": "Insurance Card",
+      "status": "VALID",
+      "expirationDate": "",
+      "fileUrl": "/documents/drivers/DRV-010/insurance-card.png",
+      "previewUrl": "/documents/drivers/DRV-010/insurance-card.png",
+      "docTier": "secondary",
+      "demoPlaceholder": false
     },
     {
       "driverId": "DRV-010",
@@ -2113,10 +1983,10 @@
       "type": "Driver profile (HTML)",
       "status": "VALID",
       "expirationDate": "2026-12-31",
-      "fileUrl": "/documents/drivers/DRV-010/drv-010-profile-dashboard.html",
-      "previewUrl": "/documents/drivers/DRV-010/drv-010-profile-dashboard.html",
+      "fileUrl": "/generated/drivers/DRV-010/driver-profile.html",
+      "previewUrl": "/generated/drivers/DRV-010/driver-profile.html",
       "docTier": "secondary",
-      "demoPlaceholder": false
+      "demoPlaceholder": true
     },
     {
       "driverId": "DRV-011",
@@ -2145,7 +2015,7 @@
       "fileUrl": "/documents/drivers/DRV-011/driver-application.html",
       "previewUrl": "/documents/drivers/DRV-011/driver-application.html",
       "docTier": "secondary",
-      "demoPlaceholder": true
+      "demoPlaceholder": false
     },
     {
       "driverId": "DRV-011",
@@ -2166,6 +2036,16 @@
       "previewUrl": "/generated/drivers/DRV-011/qualification-file.html",
       "docTier": "secondary",
       "demoPlaceholder": true
+    },
+    {
+      "driverId": "DRV-011",
+      "type": "Insurance Card",
+      "status": "VALID",
+      "expirationDate": "",
+      "fileUrl": "/documents/drivers/DRV-011/insurance-card.png",
+      "previewUrl": "/documents/drivers/DRV-011/insurance-card.png",
+      "docTier": "secondary",
+      "demoPlaceholder": false
     },
     {
       "driverId": "DRV-011",
@@ -2202,10 +2082,10 @@
       "type": "Driver profile (HTML)",
       "status": "VALID",
       "expirationDate": "2026-12-31",
-      "fileUrl": "/documents/drivers/DRV-011/drv-011-profile-dashboard.html",
-      "previewUrl": "/documents/drivers/DRV-011/drv-011-profile-dashboard.html",
+      "fileUrl": "/generated/drivers/DRV-011/driver-profile.html",
+      "previewUrl": "/generated/drivers/DRV-011/driver-profile.html",
       "docTier": "secondary",
-      "demoPlaceholder": false
+      "demoPlaceholder": true
     },
     {
       "driverId": "DRV-012",
@@ -2234,7 +2114,7 @@
       "fileUrl": "/documents/drivers/DRV-012/driver-application.html",
       "previewUrl": "/documents/drivers/DRV-012/driver-application.html",
       "docTier": "secondary",
-      "demoPlaceholder": true
+      "demoPlaceholder": false
     },
     {
       "driverId": "DRV-012",
@@ -2255,6 +2135,16 @@
       "previewUrl": "/generated/drivers/DRV-012/qualification-file.html",
       "docTier": "secondary",
       "demoPlaceholder": true
+    },
+    {
+      "driverId": "DRV-012",
+      "type": "Insurance Card",
+      "status": "VALID",
+      "expirationDate": "",
+      "fileUrl": "/documents/drivers/DRV-012/insurance-card.png",
+      "previewUrl": "/documents/drivers/DRV-012/insurance-card.png",
+      "docTier": "secondary",
+      "demoPlaceholder": false
     },
     {
       "driverId": "DRV-012",
@@ -2291,130 +2181,10 @@
       "type": "Driver profile (HTML)",
       "status": "VALID",
       "expirationDate": "2026-12-31",
-      "fileUrl": "/documents/drivers/DRV-012/drv-012-profile-dashboard.html",
-      "previewUrl": "/documents/drivers/DRV-012/drv-012-profile-dashboard.html",
+      "fileUrl": "/generated/drivers/DRV-012/driver-profile.html",
+      "previewUrl": "/generated/drivers/DRV-012/driver-profile.html",
       "docTier": "secondary",
-      "demoPlaceholder": false
-    },
-    {
-      "driverId": "DRV-001",
-      "type": "Insurance Card",
-      "status": "VALID",
-      "expirationDate": "",
-      "fileUrl": "/documents/drivers/DRV-001/insurance-card.png",
-      "previewUrl": "/documents/drivers/DRV-001/insurance-card.png",
-      "docTier": "secondary",
-      "demoPlaceholder": false
-    },
-    {
-      "driverId": "DRV-002",
-      "type": "Insurance Card",
-      "status": "VALID",
-      "expirationDate": "",
-      "fileUrl": "/documents/drivers/DRV-002/insurance-card.png",
-      "previewUrl": "/documents/drivers/DRV-002/insurance-card.png",
-      "docTier": "secondary",
-      "demoPlaceholder": false
-    },
-    {
-      "driverId": "DRV-003",
-      "type": "Insurance Card",
-      "status": "VALID",
-      "expirationDate": "",
-      "fileUrl": "/documents/drivers/DRV-003/insurance-card.png",
-      "previewUrl": "/documents/drivers/DRV-003/insurance-card.png",
-      "docTier": "secondary",
-      "demoPlaceholder": false
-    },
-    {
-      "driverId": "DRV-004",
-      "type": "Insurance Card",
-      "status": "VALID",
-      "expirationDate": "",
-      "fileUrl": "/documents/drivers/DRV-004/insurance-card.png",
-      "previewUrl": "/documents/drivers/DRV-004/insurance-card.png",
-      "docTier": "secondary",
-      "demoPlaceholder": false
-    },
-    {
-      "driverId": "DRV-005",
-      "type": "Insurance Card",
-      "status": "VALID",
-      "expirationDate": "",
-      "fileUrl": "/documents/drivers/DRV-005/insurance-card.png",
-      "previewUrl": "/documents/drivers/DRV-005/insurance-card.png",
-      "docTier": "secondary",
-      "demoPlaceholder": false
-    },
-    {
-      "driverId": "DRV-006",
-      "type": "Insurance Card",
-      "status": "VALID",
-      "expirationDate": "",
-      "fileUrl": "/documents/drivers/DRV-006/insurance-card.png",
-      "previewUrl": "/documents/drivers/DRV-006/insurance-card.png",
-      "docTier": "secondary",
-      "demoPlaceholder": false
-    },
-    {
-      "driverId": "DRV-007",
-      "type": "Insurance Card",
-      "status": "VALID",
-      "expirationDate": "",
-      "fileUrl": "/documents/drivers/DRV-007/insurance-card.png",
-      "previewUrl": "/documents/drivers/DRV-007/insurance-card.png",
-      "docTier": "secondary",
-      "demoPlaceholder": false
-    },
-    {
-      "driverId": "DRV-008",
-      "type": "Insurance Card",
-      "status": "VALID",
-      "expirationDate": "",
-      "fileUrl": "/documents/drivers/DRV-008/insurance-card.png",
-      "previewUrl": "/documents/drivers/DRV-008/insurance-card.png",
-      "docTier": "secondary",
-      "demoPlaceholder": false
-    },
-    {
-      "driverId": "DRV-009",
-      "type": "Insurance Card",
-      "status": "VALID",
-      "expirationDate": "",
-      "fileUrl": "/documents/drivers/DRV-009/insurance-card.png",
-      "previewUrl": "/documents/drivers/DRV-009/insurance-card.png",
-      "docTier": "secondary",
-      "demoPlaceholder": false
-    },
-    {
-      "driverId": "DRV-010",
-      "type": "Insurance Card",
-      "status": "VALID",
-      "expirationDate": "",
-      "fileUrl": "/documents/drivers/DRV-010/insurance-card.png",
-      "previewUrl": "/documents/drivers/DRV-010/insurance-card.png",
-      "docTier": "secondary",
-      "demoPlaceholder": false
-    },
-    {
-      "driverId": "DRV-011",
-      "type": "Insurance Card",
-      "status": "VALID",
-      "expirationDate": "",
-      "fileUrl": "/documents/drivers/DRV-011/insurance-card.png",
-      "previewUrl": "/documents/drivers/DRV-011/insurance-card.png",
-      "docTier": "secondary",
-      "demoPlaceholder": false
-    },
-    {
-      "driverId": "DRV-012",
-      "type": "Insurance Card",
-      "status": "VALID",
-      "expirationDate": "",
-      "fileUrl": "/documents/drivers/DRV-012/insurance-card.png",
-      "previewUrl": "/documents/drivers/DRV-012/insurance-card.png",
-      "docTier": "secondary",
-      "demoPlaceholder": false
+      "demoPlaceholder": true
     }
   ],
   "complianceIncidents": [
@@ -2932,9 +2702,14 @@
       "settlementId": "STL-001",
       "exportStatus": "READY",
       "settlementUrl": "/documents/settlements/DRV-001_SETTLEMENT.pdf",
+      "settlementDocStatus": "",
+      "bofGeneratedStatus": "",
+      "loadProofStatus": "",
+      "claimRfidNotes": "",
       "baseEarnings": 2100,
       "backhaulPay": 65,
-      "grossPay": 2165,
+      "safetyBonus": 125,
+      "grossPay": 2290,
       "fica": 0,
       "oasdi": 0,
       "federalWithholding": 0,
@@ -2949,8 +2724,9 @@
       "healthInsurancePremiums": 0,
       "lifeInsuranceAbove50k": 0,
       "deductions": 329.71,
+      "totalDeductions": 329.71,
       "fuelReimbursement": 0,
-      "netPay": 1835.29,
+      "netPay": 1960.29,
       "status": "Paid",
       "pendingReason": "",
       "rate401k": "3%"
@@ -2961,9 +2737,14 @@
       "settlementId": "STL-002",
       "exportStatus": "READY",
       "settlementUrl": "/documents/settlements/DRV-002_SETTLEMENT.pdf",
+      "settlementDocStatus": "",
+      "bofGeneratedStatus": "",
+      "loadProofStatus": "",
+      "claimRfidNotes": "",
       "baseEarnings": 1910,
       "backhaulPay": 95,
-      "grossPay": 2005,
+      "safetyBonus": 125,
+      "grossPay": 2130,
       "fica": 0,
       "oasdi": 0,
       "federalWithholding": 0,
@@ -2978,8 +2759,9 @@
       "healthInsurancePremiums": 0,
       "lifeInsuranceAbove50k": 0,
       "deductions": 191.1,
+      "totalDeductions": 191.1,
       "fuelReimbursement": 120,
-      "netPay": 1933.9,
+      "netPay": 2058.9,
       "status": "Pending",
       "pendingReason": "Awaiting Receipts",
       "rate401k": "0%"
@@ -2990,9 +2772,14 @@
       "settlementId": "STL-003",
       "exportStatus": "READY",
       "settlementUrl": "/documents/settlements/DRV-003_SETTLEMENT.pdf",
+      "settlementDocStatus": "",
+      "bofGeneratedStatus": "",
+      "loadProofStatus": "",
+      "claimRfidNotes": "",
       "baseEarnings": 2155,
       "backhaulPay": 45,
-      "grossPay": 2200,
+      "safetyBonus": 75,
+      "grossPay": 2275,
       "fica": 0,
       "oasdi": 0,
       "federalWithholding": 0,
@@ -3007,8 +2794,9 @@
       "healthInsurancePremiums": 0,
       "lifeInsuranceAbove50k": 0,
       "deductions": 30.98,
+      "totalDeductions": 30.98,
       "fuelReimbursement": 0,
-      "netPay": 2169.02,
+      "netPay": 2244.02,
       "status": "Paid",
       "pendingReason": "",
       "rate401k": "6%"
@@ -3019,9 +2807,14 @@
       "settlementId": "STL-004",
       "exportStatus": "READY",
       "settlementUrl": "/documents/settlements/DRV-004_SETTLEMENT.pdf",
+      "settlementDocStatus": "",
+      "bofGeneratedStatus": "",
+      "loadProofStatus": "",
+      "claimRfidNotes": "",
       "baseEarnings": 2020,
       "backhaulPay": 88,
-      "grossPay": 2108,
+      "safetyBonus": 25,
+      "grossPay": 2133,
       "fica": 0,
       "oasdi": 0,
       "federalWithholding": 0,
@@ -3036,8 +2829,9 @@
       "healthInsurancePremiums": 0,
       "lifeInsuranceAbove50k": 0,
       "deductions": 32.58,
+      "totalDeductions": 32.58,
       "fuelReimbursement": 150,
-      "netPay": 2225.42,
+      "netPay": 2250.42,
       "status": "Pending",
       "pendingReason": "Awaiting Receipts",
       "rate401k": "0%"
@@ -3048,9 +2842,14 @@
       "settlementId": "STL-005",
       "exportStatus": "READY",
       "settlementUrl": "/documents/settlements/DRV-005_SETTLEMENT.pdf",
+      "settlementDocStatus": "",
+      "bofGeneratedStatus": "",
+      "loadProofStatus": "",
+      "claimRfidNotes": "",
       "baseEarnings": 2280,
       "backhaulPay": 45,
-      "grossPay": 2325,
+      "safetyBonus": 75,
+      "grossPay": 2400,
       "fica": 0,
       "oasdi": 0,
       "federalWithholding": 0,
@@ -3065,8 +2864,9 @@
       "healthInsurancePremiums": 0,
       "lifeInsuranceAbove50k": 0,
       "deductions": 286.23,
+      "totalDeductions": 286.23,
       "fuelReimbursement": 0,
-      "netPay": 2038.77,
+      "netPay": 2113.77,
       "status": "Pending",
       "pendingReason": "Load Verification",
       "rate401k": "3%"
@@ -3077,9 +2877,14 @@
       "settlementId": "STL-006",
       "exportStatus": "READY",
       "settlementUrl": "/documents/settlements/DRV-006_SETTLEMENT.pdf",
+      "settlementDocStatus": "",
+      "bofGeneratedStatus": "",
+      "loadProofStatus": "",
+      "claimRfidNotes": "",
       "baseEarnings": 2090,
       "backhaulPay": 72,
-      "grossPay": 2162,
+      "safetyBonus": 125,
+      "grossPay": 2287,
       "fica": 0,
       "oasdi": 0,
       "federalWithholding": 0,
@@ -3094,8 +2899,9 @@
       "healthInsurancePremiums": 0,
       "lifeInsuranceAbove50k": 24.94,
       "deductions": 24.94,
+      "totalDeductions": 24.94,
       "fuelReimbursement": 0,
-      "netPay": 2137.06,
+      "netPay": 2262.06,
       "status": "Paid",
       "pendingReason": "",
       "rate401k": "3%"
@@ -3106,9 +2912,14 @@
       "settlementId": "STL-007",
       "exportStatus": "READY",
       "settlementUrl": "/documents/settlements/DRV-007_SETTLEMENT.pdf",
+      "settlementDocStatus": "",
+      "bofGeneratedStatus": "",
+      "loadProofStatus": "",
+      "claimRfidNotes": "",
       "baseEarnings": 1975,
       "backhaulPay": 58,
-      "grossPay": 2033,
+      "safetyBonus": 125,
+      "grossPay": 2158,
       "fica": 0,
       "oasdi": 0,
       "federalWithholding": 0,
@@ -3123,8 +2934,9 @@
       "healthInsurancePremiums": 0,
       "lifeInsuranceAbove50k": 7.04,
       "deductions": 400.61,
+      "totalDeductions": 400.61,
       "fuelReimbursement": 0,
-      "netPay": 1632.39,
+      "netPay": 1757.39,
       "status": "Paid",
       "pendingReason": "",
       "rate401k": "5%"
@@ -3135,9 +2947,14 @@
       "settlementId": "STL-008",
       "exportStatus": "READY",
       "settlementUrl": "/documents/settlements/DRV-008_SETTLEMENT.pdf",
+      "settlementDocStatus": "",
+      "bofGeneratedStatus": "",
+      "loadProofStatus": "",
+      "claimRfidNotes": "",
       "baseEarnings": 2165,
       "backhaulPay": 81,
-      "grossPay": 2246,
+      "safetyBonus": 25,
+      "grossPay": 2271,
       "fica": 0,
       "oasdi": 0,
       "federalWithholding": 0,
@@ -3152,8 +2969,9 @@
       "healthInsurancePremiums": 111.66,
       "lifeInsuranceAbove50k": 0,
       "deductions": 156.68,
+      "totalDeductions": 156.68,
       "fuelReimbursement": 0,
-      "netPay": 2089.32,
+      "netPay": 2114.32,
       "status": "Pending",
       "pendingReason": "Load Verification",
       "rate401k": "0%"
@@ -3164,9 +2982,14 @@
       "settlementId": "STL-009",
       "exportStatus": "READY",
       "settlementUrl": "/documents/settlements/DRV-009_SETTLEMENT.pdf",
+      "settlementDocStatus": "",
+      "bofGeneratedStatus": "",
+      "loadProofStatus": "",
+      "claimRfidNotes": "",
       "baseEarnings": 2110,
       "backhaulPay": 49,
-      "grossPay": 2159,
+      "safetyBonus": 75,
+      "grossPay": 2234,
       "fica": 0,
       "oasdi": 0,
       "federalWithholding": 0,
@@ -3181,8 +3004,9 @@
       "healthInsurancePremiums": 0,
       "lifeInsuranceAbove50k": 0,
       "deductions": 91.93,
+      "totalDeductions": 91.93,
       "fuelReimbursement": 0,
-      "netPay": 2067.07,
+      "netPay": 2142.07,
       "status": "Paid",
       "pendingReason": "",
       "rate401k": "0%"
@@ -3193,9 +3017,14 @@
       "settlementId": "STL-010",
       "exportStatus": "READY",
       "settlementUrl": "/documents/settlements/DRV-010_SETTLEMENT.pdf",
+      "settlementDocStatus": "",
+      "bofGeneratedStatus": "",
+      "loadProofStatus": "",
+      "claimRfidNotes": "",
       "baseEarnings": 2080,
       "backhaulPay": 77,
-      "grossPay": 2157,
+      "safetyBonus": 125,
+      "grossPay": 2282,
       "fica": 0,
       "oasdi": 0,
       "federalWithholding": 0,
@@ -3210,8 +3039,9 @@
       "healthInsurancePremiums": 196.15,
       "lifeInsuranceAbove50k": 0,
       "deductions": 196.15,
+      "totalDeductions": 196.15,
       "fuelReimbursement": 0,
-      "netPay": 1960.85,
+      "netPay": 2085.85,
       "status": "Paid",
       "pendingReason": "",
       "rate401k": "2%"
@@ -3222,9 +3052,14 @@
       "settlementId": "STL-011",
       "exportStatus": "READY",
       "settlementUrl": "/documents/settlements/DRV-011_SETTLEMENT.pdf",
+      "settlementDocStatus": "",
+      "bofGeneratedStatus": "",
+      "loadProofStatus": "",
+      "claimRfidNotes": "",
       "baseEarnings": 2010,
       "backhaulPay": 63,
-      "grossPay": 2073,
+      "safetyBonus": 75,
+      "grossPay": 2148,
       "fica": 0,
       "oasdi": 0,
       "federalWithholding": 0,
@@ -3239,8 +3074,9 @@
       "healthInsurancePremiums": 0,
       "lifeInsuranceAbove50k": 0,
       "deductions": 97.94,
+      "totalDeductions": 97.94,
       "fuelReimbursement": 0,
-      "netPay": 1975.06,
+      "netPay": 2050.06,
       "status": "Paid",
       "pendingReason": "",
       "rate401k": "0%"
@@ -3251,8 +3087,13 @@
       "settlementId": "STL-012",
       "exportStatus": "READY",
       "settlementUrl": "/documents/settlements/DRV-012_SETTLEMENT.pdf",
+      "settlementDocStatus": "",
+      "bofGeneratedStatus": "",
+      "loadProofStatus": "",
+      "claimRfidNotes": "",
       "baseEarnings": 2230,
       "backhaulPay": 69,
+      "safetyBonus": 0,
       "grossPay": 2299,
       "fica": 0,
       "oasdi": 0,
@@ -3268,6 +3109,7 @@
       "healthInsurancePremiums": 0,
       "lifeInsuranceAbove50k": 0,
       "deductions": 48.75,
+      "totalDeductions": 48.75,
       "fuelReimbursement": 0,
       "netPay": 2250.25,
       "status": "Pending",

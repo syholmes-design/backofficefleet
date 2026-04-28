@@ -13,6 +13,13 @@ export default function DriverProfilePage({ params }: Props) {
   const { id } = use(params);
   const { data } = useBofDemoData();
   const driver = data.drivers.find(d => d.id === id);
+  const profileDriver = driver as (typeof driver & {
+    photoUrl?: string;
+    licenseClass?: string;
+    licenseState?: string;
+    referenceCdlNumber?: string;
+    dateOfBirth?: string;
+  });
   
   if (!driver) {
     notFound();
@@ -68,7 +75,7 @@ export default function DriverProfilePage({ params }: Props) {
               <div className="space-y-3">
                 <div className="flex items-center space-x-4">
                   <img
-                    src={(driver as { photoUrl?: string }).photoUrl?.trim() || `/generated/drivers/${id}/${id}.png`}
+                    src={profileDriver.photoUrl?.trim() || `/generated/drivers/${id}/${id}.png`}
                     alt={driver.name}
                     className="w-20 h-20 rounded-full object-cover"
                   />
@@ -78,9 +85,9 @@ export default function DriverProfilePage({ params }: Props) {
                   </div>
                 </div>
                 <div className="space-y-2">
-                  <p><span className="font-medium">CDL Class/State:</span> {driver.licenseClass} / {driver.licenseState}</p>
-                  <p><span className="font-medium">CDL Number:</span> {(driver as { referenceCdlNumber?: string }).referenceCdlNumber}</p>
-                  <p><span className="font-medium">Date of Birth:</span> {(driver as { dateOfBirth?: string }).dateOfBirth}</p>
+                  <p><span className="font-medium">CDL Class/State:</span> {profileDriver.licenseClass || "—"} / {profileDriver.licenseState || "—"}</p>
+                  <p><span className="font-medium">CDL Number:</span> {profileDriver.referenceCdlNumber || "—"}</p>
+                  <p><span className="font-medium">Date of Birth:</span> {profileDriver.dateOfBirth || "—"}</p>
                 </div>
               </div>
             </div>

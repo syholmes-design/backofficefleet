@@ -12,6 +12,23 @@ export default function DriverHRPage({ params }: Props) {
   const { id } = use(params);
   const { data } = useBofDemoData();
   const driver = data.drivers.find(d => d.id === id);
+  const hrDriver = driver as (typeof driver & {
+    emergencyContactEmail?: string;
+    emergencyContactAddress?: string;
+    secondaryContactName?: string;
+    secondaryContactRelationship?: string;
+    secondaryContactPhone?: string;
+    secondaryContactEmail?: string;
+    secondaryContactAddress?: string;
+    bankName?: string;
+    bankAccountType?: string;
+    bankAccountLast4?: string;
+    paymentPreference?: string;
+    bankInfoStatus?: string;
+    bankSubmissionDate?: string;
+    taxClassification?: string;
+    tinType?: string;
+  });
   
   if (!driver) {
     notFound();
@@ -44,11 +61,11 @@ export default function DriverHRPage({ params }: Props) {
                 </div>
                 <div>
                   <span className="font-medium">Email:</span>
-                  <p className="text-gray-700">{driver.emergencyContactEmail}</p>
+                  <p className="text-gray-700">{hrDriver.emergencyContactEmail || "—"}</p>
                 </div>
                 <div>
                   <span className="font-medium">Address:</span>
-                  <p className="text-gray-700">{driver.emergencyContactAddress}</p>
+                  <p className="text-gray-700">{hrDriver.emergencyContactAddress || "—"}</p>
                 </div>
               </div>
             </div>
@@ -59,23 +76,23 @@ export default function DriverHRPage({ params }: Props) {
               <div className="space-y-3">
                 <div>
                   <span className="font-medium">Name:</span>
-                  <p className="text-gray-700">{driver.secondaryContactName}</p>
+                  <p className="text-gray-700">{hrDriver.secondaryContactName || "—"}</p>
                 </div>
                 <div>
                   <span className="font-medium">Relationship:</span>
-                  <p className="text-gray-700">{driver.secondaryContactRelationship}</p>
+                  <p className="text-gray-700">{hrDriver.secondaryContactRelationship || "—"}</p>
                 </div>
                 <div>
                   <span className="font-medium">Phone:</span>
-                  <p className="text-gray-700">{driver.secondaryContactPhone}</p>
+                  <p className="text-gray-700">{hrDriver.secondaryContactPhone || "—"}</p>
                 </div>
                 <div>
                   <span className="font-medium">Email:</span>
-                  <p className="text-gray-700">{driver.secondaryContactEmail}</p>
+                  <p className="text-gray-700">{hrDriver.secondaryContactEmail || "—"}</p>
                 </div>
                 <div>
                   <span className="font-medium">Address:</span>
-                  <p className="text-gray-700">{driver.secondaryContactAddress}</p>
+                  <p className="text-gray-700">{hrDriver.secondaryContactAddress || "—"}</p>
                 </div>
               </div>
             </div>
@@ -86,27 +103,27 @@ export default function DriverHRPage({ params }: Props) {
               <div className="space-y-3">
                 <div>
                   <span className="font-medium">Bank Name:</span>
-                  <p className="text-gray-700">{(driver as { bankName?: string }).bankName}</p>
+                  <p className="text-gray-700">{hrDriver.bankName || "—"}</p>
                 </div>
                 <div>
                   <span className="font-medium">Account Type:</span>
-                  <p className="text-gray-700">{(driver as { bankAccountType?: string }).bankAccountType}</p>
+                  <p className="text-gray-700">{hrDriver.bankAccountType || "—"}</p>
                 </div>
                 <div>
                   <span className="font-medium">Last 4 Digits:</span>
-                  <p className="text-gray-700">{(driver as { bankAccountLast4?: string }).bankAccountLast4}</p>
+                  <p className="text-gray-700">{hrDriver.bankAccountLast4 || "—"}</p>
                 </div>
                 <div>
                   <span className="font-medium">Payment Preference:</span>
-                  <p className="text-gray-700">{(driver as { paymentPreference?: string }).paymentPreference}</p>
+                  <p className="text-gray-700">{hrDriver.paymentPreference || "—"}</p>
                 </div>
                 <div>
                   <span className="font-medium">Status:</span>
-                  <p className="text-green-600 font-medium">{(driver as { bankInfoStatus?: string }).bankInfoStatus}</p>
+                  <p className="text-green-600 font-medium">{hrDriver.bankInfoStatus || "—"}</p>
                 </div>
                 <div>
                   <span className="font-medium">Submission Date:</span>
-                  <p className="text-gray-700">{(driver as { bankSubmissionDate?: string }).bankSubmissionDate}</p>
+                  <p className="text-gray-700">{hrDriver.bankSubmissionDate || "—"}</p>
                 </div>
               </div>
             </div>
@@ -117,11 +134,11 @@ export default function DriverHRPage({ params }: Props) {
               <div className="space-y-3">
                 <div>
                   <span className="font-medium">Tax Classification:</span>
-                  <p className="text-gray-700">{(driver as { taxClassification?: string }).taxClassification}</p>
+                  <p className="text-gray-700">{hrDriver.taxClassification || "—"}</p>
                 </div>
                 <div>
                   <span className="font-medium">TIN Type:</span>
-                  <p className="text-gray-700">{(driver as { tinType?: string }).tinType}</p>
+                  <p className="text-gray-700">{hrDriver.tinType || "—"}</p>
                 </div>
                 <div>
                   <span className="font-medium">Hire Date:</span>
