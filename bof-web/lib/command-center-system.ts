@@ -8,6 +8,7 @@ import {
 } from "./executive-layer";
 import { formatUsd } from "./format-money";
 import { buildRfActions, getLoadProofItems } from "./load-proof";
+import { getBackhaulOpportunitySummary } from "./backhaul-opportunity-engine";
 
 const PENDING_SETTLEMENT = new Set([
   "Pending",
@@ -132,6 +133,10 @@ export type CommandCenterKpiStripModel = {
   disputedProofLoads: number;
   maintenanceIssues: number;
   networkImpactTotalUsd: number;
+  backhaulOpportunitiesFound: number;
+  deadheadMilesAvoided: number;
+  backhaulRevenueCapturedUsd: number;
+  bofBackhaulBonusPendingUsd: number;
 };
 
 export function buildCommandCenterKpiStrip(data: BofData): CommandCenterKpiStripModel {
@@ -157,6 +162,7 @@ export function buildCommandCenterKpiStrip(data: BofData): CommandCenterKpiStrip
   const recoverableClaims = claims.reduce((a, c) => a + c.amountAtRiskUsd, 0);
 
   const impact = buildBofNetworkImpact(data);
+  const backhaul = getBackhaulOpportunitySummary(data);
   const networkImpactTotalUsd =
     impact.settlementRecoveryUsd +
     impact.claimExposurePreventedUsd +
@@ -178,6 +184,10 @@ export function buildCommandCenterKpiStrip(data: BofData): CommandCenterKpiStrip
     disputedProofLoads: proof.loadsWithDisputeSensitivity,
     maintenanceIssues: maintMarCount,
     networkImpactTotalUsd,
+    backhaulOpportunitiesFound: backhaul.opportunitiesFound,
+    deadheadMilesAvoided: backhaul.deadheadMilesAvoided,
+    backhaulRevenueCapturedUsd: backhaul.backhaulRevenueCaptured,
+    bofBackhaulBonusPendingUsd: backhaul.bofBackhaulBonusPending,
   };
 }
 

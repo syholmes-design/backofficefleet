@@ -5,6 +5,7 @@
 import type { BofData } from "./load-bof-data";
 import { buildSavingsEngineScorecard } from "./bof-savings-engine";
 import { buildRfActions, getLoadProofItems } from "./load-proof";
+import { getBackhaulPendingApprovalAlert } from "./backhaul-opportunity-engine";
 
 export type SavingsScorecardModel = {
   insuranceSavingsUsd: number;
@@ -91,7 +92,7 @@ export type ImmediateActionRow = {
   driverName: string;
   amountAtRiskUsd: number | null;
   resolveHref: string;
-  source: "rf" | "pod" | "compliance" | "settlement";
+  source: "rf" | "pod" | "compliance" | "settlement" | "backhaul";
 };
 
 const PENDING_ST = new Set(["Pending", "On Hold", "Awaiting Receipts"]);
@@ -177,6 +178,25 @@ export function buildImmediateActionsRequired(
         source: "settlement",
       });
     }
+  }
+
+  const backhaulPending = getBackhaulPendingApprovalAlert(data);
+  if (backhaulPending) {
+    const load = data.loads.find((l) => l.id === backhaulPending.linkedLoadId);
+    push({
+      id: `ia-bh-${backhaulPending.opportunityId}`,
+      priority: "P1",
+      label: `${backhaulPending.title} — ${backhaulPending.reason}`,
+      loadId: backhaulPending.linkedLoadId,
+      loadNumber: load?.number,
+      driverId: load?.driverId ?? "DRV-UNK",
+      driverName: load
+        ? data.drivers.find((d) => d.id === load.driverId)?.name ?? load.driverId
+        : "Unknown driver",
+      amountAtRiskUsd: null,
+      resolveHref: "/dispatch",
+      source: "backhaul",
+    });
   }
 
   const order = { P0: 0, P1: 1, P2: 2 };

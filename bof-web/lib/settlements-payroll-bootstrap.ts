@@ -5,6 +5,7 @@ import {
   proofBlockingCount,
   proofItemsForDriverLoads,
 } from "@/lib/load-proof";
+import { getBookedOrApprovedBackhaulForDriver } from "@/lib/backhaul-opportunity-engine";
 import type {
   Load,
   Settlement,
@@ -171,20 +172,33 @@ export function bootstrapPayrollFromBof(data: BofData): {
       exception_flag: primaryLoad?.dispatchExceptionFlag,
     });
 
-    if (s.backhaulPay > 0) {
+    const backhaulOpp = getBookedOrApprovedBackhaulForDriver(data, s.driverId);
+    const modeledBackhaulPay = backhaulOpp?.driverBackhaulPay ?? 0;
+    const effectiveBackhaulPay = Math.max(s.backhaulPay, modeledBackhaulPay);
+
+    if (effectiveBackhaulPay > 0) {
       pushLine({
         settlement_id,
         type: "Earnings",
-        description: "Backhaul pay",
-        amount: s.backhaulPay,
-        load_id: secondaryLoad?.id ?? primaryLoad?.id ?? null,
+        description: backhaulOpp
+          ? `Backhaul pay (${backhaulOpp.opportunityId})`
+          : "Backhaul pay",
+        amount: effectiveBackhaulPay,
+        load_id: backhaulOpp?.linkedLoadId ?? secondaryLoad?.id ?? primaryLoad?.id ?? null,
         proof_status:
-          secondaryLoad != null
-            ? bolPodProofSummary(data, secondaryLoad.id).proof_status
+          backhaulOpp?.linkedLoadId
+            ? bolPodProofSummary(data, backhaulOpp.linkedLoadId).proof_status
+            : secondaryLoad != null
+              ? bolPodProofSummary(data, secondaryLoad.id).proof_status
+              : primaryLoad
+                ? bolPodProofSummary(data, primaryLoad.id).proof_status
+                : null,
+        exception_flag: backhaulOpp
+          ? data.loads.find((l) => l.id === backhaulOpp.linkedLoadId)
+              ?.dispatchExceptionFlag
             : primaryLoad
-              ? bolPodProofSummary(data, primaryLoad.id).proof_status
-              : null,
-        exception_flag: secondaryLoad?.dispatchExceptionFlag,
+              ? primaryLoad.dispatchExceptionFlag
+              : undefined,
       });
     }
 

@@ -12,6 +12,7 @@ import {
 import { useIntakeEngineStore } from "@/lib/stores/intake-engine-store";
 import { buildSavingsEngineScorecard } from "@/lib/bof-savings-engine";
 import { buildSavingsQualification, buildImmediateActionsRequired } from "@/lib/bof-savings-layer";
+import { getBackhaulPendingApprovalAlert } from "@/lib/backhaul-opportunity-engine";
 import {
   FleetScorecardPanel,
   BofNetworkImpactPanel,
@@ -42,6 +43,10 @@ export function CommandCenterPageClient() {
   const savingsEngine = useMemo(() => buildSavingsEngineScorecard(data), [data]);
   const savingsQualify = useMemo(() => buildSavingsQualification(data), [data]);
   const immediateActions = useMemo(() => buildImmediateActionsRequired(data), [data]);
+  const backhaulPendingAlert = useMemo(
+    () => getBackhaulPendingApprovalAlert(data),
+    [data]
+  );
 
   return (
     <div className="bof-page bof-cc-page">
@@ -68,6 +73,20 @@ export function CommandCenterPageClient() {
             line and a specific BOF next step.
           </p>
         </div>
+        {backhaulPendingAlert && (
+          <div className="mb-3 rounded border border-amber-800/50 bg-amber-950/25 px-3 py-2 text-sm">
+            <p className="font-semibold text-amber-200">
+              {backhaulPendingAlert.title}
+              <span className="ml-2 rounded bg-amber-900/35 px-2 py-0.5 text-[10px] uppercase tracking-wide text-amber-300">
+                Severity: {backhaulPendingAlert.severity}
+              </span>
+            </p>
+            <p className="mt-1 text-amber-100/90">{backhaulPendingAlert.reason}</p>
+            <p className="mt-1 text-amber-200/90">
+              Recommended fix: {backhaulPendingAlert.recommendedFix}
+            </p>
+          </div>
+        )}
         <CommandCenterIssueList items={enrichedItems} />
       </section>
 

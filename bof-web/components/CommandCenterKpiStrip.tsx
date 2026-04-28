@@ -38,6 +38,15 @@ export function CommandCenterKpiStrip({ kpis }: { kpis: CommandCenterKpiStripMod
         <span className="bof-cc-kpi-value">{formatUsd(kpis.networkImpactTotalUsd)}</span>
         <span className="bof-cc-kpi-sub">Recovery + prevention + efficiency (est.)</span>
       </article>
+      <article className="bof-cc-kpi-card">
+        <span className="bof-cc-kpi-label">Backhaul opportunity engine</span>
+        <span className="bof-cc-kpi-value">{kpis.backhaulOpportunitiesFound}</span>
+        <span className="bof-cc-kpi-sub">
+          {kpis.deadheadMilesAvoided} mi avoided · captured{" "}
+          {formatUsd(kpis.backhaulRevenueCapturedUsd)} · bonus pending{" "}
+          {formatUsd(kpis.bofBackhaulBonusPendingUsd)}
+        </span>
+      </article>
     </section>
   );
 }

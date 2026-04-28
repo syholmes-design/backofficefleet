@@ -17,6 +17,14 @@ export type ProofStatus = "Complete" | "Incomplete" | "Missing";
 
 export type SealStatus = "Match" | "Mismatch" | "Missing";
 
+export type BackhaulScanStatus =
+  | "not_scanned"
+  | "scanning"
+  | "opportunity_found"
+  | "no_match"
+  | "booked"
+  | "declined";
+
 export interface Driver {
   driver_id: string;
   name: string;
@@ -99,6 +107,13 @@ export interface Load {
   supporting_attachment_url?: string;
 
   rfid_tag_id?: string;
+
+  destinationMarket?: string;
+  nextKnownPickupMarket?: string | null;
+  estimatedDeadheadMiles?: number;
+  backhaulScanStatus?: BackhaulScanStatus;
+  backhaulOpportunityId?: string;
+  backhaulRecommended?: boolean;
 }
 
 export type DispatchNavId =

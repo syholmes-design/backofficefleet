@@ -5,7 +5,10 @@ import { Filter, Search } from "lucide-react";
 import type { Load, LoadStatus } from "@/types/dispatch";
 import { useDispatchDashboardStore } from "@/lib/stores/dispatch-dashboard-store";
 import { driverNameById } from "@/lib/dispatch-dashboard-seed";
+import { getBofData } from "@/lib/load-bof-data";
+import { getMockBackhaulOpportunities } from "@/lib/backhaul-opportunity-engine";
 import {
+  formatMoney,
   loadStatusChipClass,
   orderedStatusGroups,
   proofChipClass,
@@ -68,6 +71,25 @@ export function DispatchBoardScreen() {
     }
     return m;
   }, [filtered]);
+
+  const backhaulOpportunities = useMemo(
+    () => getMockBackhaulOpportunities(getBofData()),
+    []
+  );
+  const backhaulByLoadId = useMemo(
+    () => new Map(backhaulOpportunities.map((o) => [o.linkedLoadId, o])),
+    [backhaulOpportunities]
+  );
+  const backhaulRelevantLoads = useMemo(
+    () =>
+      loads.filter(
+        (l) =>
+          l.backhaulScanStatus &&
+          l.backhaulScanStatus !== "not_scanned" &&
+          (l.status === "In Transit" || l.status === "Delivered" || l.status === "Assigned")
+      ),
+    [loads]
+  );
 
   return (
     <div className="flex min-h-0 flex-1 flex-col gap-4 p-5">
@@ -293,6 +315,99 @@ export function DispatchBoardScreen() {
             </section>
           );
         })}
+
+        <section>
+          <h2 className="mb-2 flex items-center gap-2 text-sm font-semibold text-slate-200">
+            Backhaul Opportunities
+            <span className="rounded bg-slate-900 px-2 py-0.5 text-[11px] font-medium text-slate-400">
+              Backhaul opportunity feed — demo data
+            </span>
+          </h2>
+          <div className="overflow-x-auto rounded-lg border border-slate-800">
+            <table className="min-w-[1150px] w-full border-collapse text-left text-sm">
+              <thead className="bg-slate-900/95 text-xs uppercase tracking-wide text-slate-500">
+                <tr>
+                  <th className="border-b border-slate-800 px-3 py-2 font-medium">Load</th>
+                  <th className="border-b border-slate-800 px-3 py-2 font-medium">Scan status</th>
+                  <th className="border-b border-slate-800 px-3 py-2 font-medium">Deadhead avoided</th>
+                  <th className="border-b border-slate-800 px-3 py-2 font-medium">Lane</th>
+                  <th className="border-b border-slate-800 px-3 py-2 font-medium">Rate</th>
+                  <th className="border-b border-slate-800 px-3 py-2 font-medium">Driver Backhaul Pay</th>
+                  <th className="border-b border-slate-800 px-3 py-2 font-medium">BOF Backhaul Bonus</th>
+                  <th className="border-b border-slate-800 px-3 py-2 font-medium">Net Fleet Recovery</th>
+                  <th className="border-b border-slate-800 px-3 py-2 font-medium">Confidence</th>
+                  <th className="border-b border-slate-800 px-3 py-2 font-medium">Recommended action</th>
+                </tr>
+              </thead>
+              <tbody className="text-slate-200">
+                {backhaulRelevantLoads.map((l) => {
+                  const opp = backhaulByLoadId.get(l.load_id);
+                  const statusLabel =
+                    opp?.status === "pending_approval"
+                      ? "Pending Approval"
+                      : l.backhaulScanStatus === "booked"
+                      ? "Booked"
+                      : l.backhaulScanStatus === "opportunity_found"
+                        ? "Opportunity Found"
+                        : l.backhaulScanStatus === "scanning"
+                          ? "Scanning"
+                          : l.backhaulScanStatus === "no_match"
+                            ? "No Match"
+                            : l.backhaulScanStatus === "declined"
+                              ? "Declined"
+                              : "Not Scanned";
+                  const statusClass =
+                    opp?.status === "pending_approval"
+                      ? "bg-amber-900/30 text-amber-300 ring-1 ring-amber-700/50"
+                      : l.backhaulScanStatus === "booked"
+                      ? "bg-teal-900/35 text-teal-300 ring-1 ring-teal-700/50"
+                      : l.backhaulScanStatus === "opportunity_found"
+                        ? "bg-teal-900/30 text-teal-200 ring-1 ring-teal-700/40"
+                        : l.backhaulScanStatus === "scanning"
+                          ? "bg-amber-900/25 text-amber-300 ring-1 ring-amber-700/40"
+                          : l.backhaulScanStatus === "no_match"
+                            ? "bg-slate-800 text-slate-300 ring-1 ring-slate-700/70"
+                            : l.backhaulScanStatus === "declined"
+                              ? "bg-rose-900/30 text-rose-300 ring-1 ring-rose-700/50"
+                              : "bg-slate-800 text-slate-300";
+                  const recommendedAction =
+                    opp?.status === "pending_approval"
+                      ? "Manager approval required before booking"
+                      : opp?.status === "booked"
+                        ? `Booked · link to settlement line (${opp.opportunityId})`
+                        : l.backhaulScanStatus === "no_match"
+                          ? "No lane match within timing/equipment constraints"
+                          : "Review lane and approve recommendation";
+                  return (
+                    <tr key={`bh-${l.load_id}`} className="border-b border-slate-800/80 hover:bg-slate-900/60">
+                      <td className="px-3 py-2 text-xs">
+                        <div className="font-mono text-teal-300">{l.load_id}</div>
+                        <div className="text-slate-500">{l.destinationMarket ?? l.destination}</div>
+                      </td>
+                      <td className="px-3 py-2">
+                        <span className={`inline-flex rounded px-2 py-0.5 text-[11px] font-semibold ${statusClass}`}>
+                          {statusLabel}
+                        </span>
+                      </td>
+                      <td className="px-3 py-2 font-mono text-xs">
+                        {l.estimatedDeadheadMiles ? `${l.estimatedDeadheadMiles} mi` : "—"}
+                      </td>
+                      <td className="px-3 py-2 text-xs">
+                        {opp ? `${opp.pickupCity}, ${opp.pickupState} → ${opp.deliveryCity}, ${opp.deliveryState}` : "No qualifying lane"}
+                      </td>
+                      <td className="px-3 py-2 font-mono text-xs">{opp ? formatMoney(opp.rate) : "—"}</td>
+                      <td className="px-3 py-2 font-mono text-xs text-teal-200">{opp ? formatMoney(opp.driverBackhaulPay) : "—"}</td>
+                      <td className="px-3 py-2 font-mono text-xs text-amber-200">{opp ? formatMoney(opp.bofBackhaulBonus) : "—"}</td>
+                      <td className="px-3 py-2 font-mono text-xs">{opp ? formatMoney(opp.netFleetRecovery) : "—"}</td>
+                      <td className="px-3 py-2 text-xs">{opp ? `${opp.confidenceScore}%` : "—"}</td>
+                      <td className="px-3 py-2 text-xs text-slate-300">{recommendedAction}</td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        </section>
       </div>
     </div>
   );

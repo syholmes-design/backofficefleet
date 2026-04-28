@@ -6,6 +6,8 @@ import { useSettlementsPayrollStore, countByStatus, sumNetPendingExport } from "
 import type { Settlement } from "@/types/settlements-payroll";
 import { formatPayrollCurrency, settlementStatusChipClass } from "./settlements-payroll-ui";
 import { BofAdvantageCard, BofAdvantageStrip } from "@/components/bof-advantage/BofAdvantageCard";
+import { getBofData } from "@/lib/load-bof-data";
+import { getMockBackhaulOpportunities } from "@/lib/backhaul-opportunity-engine";
 
 export function SettlementsDashboardScreen() {
   const settlements = useSettlementsPayrollStore((s) => s.settlements);
@@ -29,6 +31,10 @@ export function SettlementsDashboardScreen() {
       netPending: sumNetPendingExport(settlements),
     }),
     [settlements]
+  );
+  const backhaulOpportunities = useMemo(
+    () => getMockBackhaulOpportunities(getBofData()),
+    []
   );
 
   const filtered = useMemo(() => {
@@ -93,6 +99,70 @@ export function SettlementsDashboardScreen() {
         <Kpi label="Exported" value={kpis.exported} />
         <Kpi label="On hold" value={kpis.onHold} />
         <Kpi label="Net pay pending (non-exported)" value={formatPayrollCurrency(kpis.netPending)} />
+      </section>
+
+      <section className="rounded-lg border border-slate-800 bg-slate-900/30 p-4">
+        <div className="mb-2 flex items-center justify-between gap-2">
+          <h2 className="text-sm font-semibold text-slate-100">
+            Backhaul economics (payroll + BOF internal)
+          </h2>
+          <span className="rounded bg-slate-900 px-2 py-0.5 text-[11px] text-slate-400">
+            Mock backhaul feed
+          </span>
+        </div>
+        <div className="overflow-x-auto rounded border border-slate-800">
+          <table className="w-full min-w-[900px] border-collapse text-left text-xs">
+            <thead className="bg-slate-900/90 text-[10px] uppercase tracking-wide text-slate-500">
+              <tr>
+                <th className="border-b border-slate-800 px-2 py-2 font-medium">Driver settlement</th>
+                <th className="border-b border-slate-800 px-2 py-2 font-medium">Linked Backhaul Opportunity</th>
+                <th className="border-b border-slate-800 px-2 py-2 font-medium">Linked Load</th>
+                <th className="border-b border-slate-800 px-2 py-2 font-medium">Driver Backhaul Pay</th>
+                <th className="border-b border-slate-800 px-2 py-2 font-medium">BOF Backhaul Bonus</th>
+                <th className="border-b border-slate-800 px-2 py-2 font-medium">Net Fleet Recovery</th>
+                <th className="border-b border-slate-800 px-2 py-2 font-medium">Deadhead Miles Avoided</th>
+                <th className="border-b border-slate-800 px-2 py-2 font-medium">Source</th>
+                <th className="border-b border-slate-800 px-2 py-2 font-medium">Status</th>
+              </tr>
+            </thead>
+            <tbody className="text-slate-200">
+              {backhaulOpportunities.map((op) => {
+                const st = settlements.find((s) => s.driver_id === op.driverId);
+                const statusChip =
+                  op.status === "booked"
+                    ? "bg-teal-900/35 text-teal-300 ring-1 ring-teal-700/50"
+                    : op.status === "pending_approval"
+                      ? "bg-amber-900/30 text-amber-300 ring-1 ring-amber-700/50"
+                      : "bg-slate-800 text-slate-300";
+                return (
+                  <tr key={op.opportunityId} className="border-b border-slate-800/80">
+                    <td className="px-2 py-1.5 font-mono">
+                      {st?.settlement_id ?? "—"}
+                    </td>
+                    <td className="px-2 py-1.5">{op.opportunityId}</td>
+                    <td className="px-2 py-1.5 font-mono text-teal-300">{op.linkedLoadId}</td>
+                    <td className="px-2 py-1.5 font-mono text-emerald-300">
+                      {formatPayrollCurrency(op.driverBackhaulPay)}
+                    </td>
+                    <td className="px-2 py-1.5 font-mono text-amber-200">
+                      {formatPayrollCurrency(op.bofBackhaulBonus)}
+                    </td>
+                    <td className="px-2 py-1.5 font-mono">
+                      {formatPayrollCurrency(op.netFleetRecovery)}
+                    </td>
+                    <td className="px-2 py-1.5 font-mono">{op.estimatedMiles} mi</td>
+                    <td className="px-2 py-1.5">{op.source}</td>
+                    <td className="px-2 py-1.5">
+                      <span className={`inline-flex rounded px-2 py-0.5 text-[10px] font-semibold ${statusChip}`}>
+                        {op.status === "pending_approval" ? "Pending Approval" : "Booked"}
+                      </span>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
       </section>
 
       <section className="rounded-lg border border-slate-800 bg-slate-900/30 p-4">

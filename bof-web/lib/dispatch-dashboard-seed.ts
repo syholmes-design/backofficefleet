@@ -10,6 +10,7 @@ import type {
 } from "@/types/dispatch";
 import demoData from "@/lib/demo-data.json";
 import type { BofData } from "@/lib/load-bof-data";
+import { getBackhaulLoadSignals } from "@/lib/backhaul-opportunity-engine";
 
 /** Static demo files from `public/mocks/` — served at `/mocks/…`. */
 export const MOCK_DOC_URLS = {
@@ -198,6 +199,7 @@ function proofMediaUrls(
  * Used by the dispatch store and by the shipper portal so readiness stays aligned.
  */
 export function buildDispatchLoadsFromDemoLoads(loads: DemoLoad[]): Load[] {
+  const backhaulSignals = getBackhaulLoadSignals();
   return loads.map((l, idx) => {
     const base = new Date();
     base.setDate(base.getDate() + idx - 4);
@@ -261,6 +263,12 @@ export function buildDispatchLoadsFromDemoLoads(loads: DemoLoad[]): Load[] {
       ...proofMediaUrls(proof_status, idx),
 
       rfid_tag_id: `RFID-${l.id}`,
+      destinationMarket: backhaulSignals[l.id]?.destinationMarket,
+      nextKnownPickupMarket: backhaulSignals[l.id]?.nextKnownPickupMarket ?? null,
+      estimatedDeadheadMiles: backhaulSignals[l.id]?.estimatedDeadheadMiles,
+      backhaulScanStatus: backhaulSignals[l.id]?.backhaulScanStatus ?? "not_scanned",
+      backhaulOpportunityId: backhaulSignals[l.id]?.backhaulOpportunityId,
+      backhaulRecommended: backhaulSignals[l.id]?.backhaulRecommended ?? false,
     };
 
     return applyDocumentationDemos(row, l);

@@ -14,6 +14,7 @@ import { BofTemplateUsageSurface } from "@/components/documents/BofTemplateUsage
 import { BofWorkflowFormShortcuts } from "@/components/documents/BofWorkflowFormShortcuts";
 import { buildRfidReadinessSummaryForSurface } from "@/lib/template-usage-readiness";
 import { resolveBillingPacketRfidGate } from "@/lib/bof-rfid-readiness";
+import { getMockBackhaulOpportunities } from "@/lib/backhaul-opportunity-engine";
 
 type Props = {
   settlementId: string | null;
@@ -79,6 +80,15 @@ export function SettlementDetailDrawer({ settlementId, open, onClose }: Props) {
       loads
     );
   }, [data, settlement, lines, loads]);
+
+  const backhaulForSettlement = useMemo(() => {
+    if (!settlement) return null;
+    return (
+      getMockBackhaulOpportunities(data).find(
+        (o) => o.driverId === settlement.driver_id
+      ) ?? null
+    );
+  }, [data, settlement]);
 
   /** Earnings lines first, then other line load_ids — matches payroll anchor expectations. */
   const linkedLoadIdsForTemplateUsage = useMemo(() => {
@@ -265,6 +275,28 @@ export function SettlementDetailDrawer({ settlementId, open, onClose }: Props) {
               )}
             </div>
           </section>
+
+          {backhaulForSettlement && (
+            <section className="rounded-lg border border-slate-800 bg-slate-900/35 p-3">
+              <p className="text-[10px] font-semibold uppercase tracking-wide text-slate-500">
+                Backhaul economics split (demo feed)
+              </p>
+              <dl className="mt-2 grid grid-cols-2 gap-2 text-xs">
+                <dt className="text-slate-500">Linked opportunity</dt>
+                <dd className="font-mono text-teal-300">{backhaulForSettlement.opportunityId}</dd>
+                <dt className="text-slate-500">Linked load</dt>
+                <dd className="font-mono text-teal-300">{backhaulForSettlement.linkedLoadId}</dd>
+                <dt className="text-slate-500">Driver Backhaul Pay (payroll)</dt>
+                <dd className="font-mono text-emerald-300">{formatPayrollCurrency(backhaulForSettlement.driverBackhaulPay)}</dd>
+                <dt className="text-slate-500">BOF Backhaul Bonus (internal)</dt>
+                <dd className="font-mono text-amber-200">{formatPayrollCurrency(backhaulForSettlement.bofBackhaulBonus)}</dd>
+                <dt className="text-slate-500">Net Fleet Recovery</dt>
+                <dd className="font-mono text-slate-100">{formatPayrollCurrency(backhaulForSettlement.netFleetRecovery)}</dd>
+                <dt className="text-slate-500">Deadhead miles avoided</dt>
+                <dd className="font-mono text-slate-100">{backhaulForSettlement.estimatedMiles} mi</dd>
+              </dl>
+            </section>
+          )}
           <section className="rounded-lg border border-slate-800 bg-slate-900/30 px-3 py-2">
             <p className="text-[10px] font-semibold uppercase tracking-wide text-slate-500">
               Readiness story
