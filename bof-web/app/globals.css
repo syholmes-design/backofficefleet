@@ -3988,10 +3988,77 @@ body {
   filter: brightness(1.1) contrast(1.05) saturate(1.1);
 }
 
+/* Private Fleets hero refinement:
+   tighten text-to-visual relationship without impacting other marketing heroes. */
+.bof-mkt-private-fleets-hero__shell {
+  position: relative;
+  width: 100%;
+  min-height: inherit;
+}
+
+.bof-mkt-private-fleets-hero__container {
+  max-width: min(96vw, 78rem);
+  padding-left: clamp(1.5rem, 4vw, 3rem);
+  padding-right: clamp(1rem, 2.4vw, 2rem);
+}
+
+.bof-mkt-private-fleets-hero__content {
+  width: min(45%, 36rem);
+  margin-left: clamp(1rem, 3.2vw, 3.75rem);
+  padding: clamp(1rem, 1.8vw, 1.5rem) clamp(0.5rem, 1.4vw, 1rem);
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.bof-mkt-private-fleets-hero__image {
+  object-position: 58% center;
+}
+
+.bof-mkt-private-fleets-hero__overlay {
+  background:
+    linear-gradient(
+      90deg,
+      rgba(241, 245, 249, 0.97) 0%,
+      rgba(241, 245, 249, 0.95) 28%,
+      rgba(241, 245, 249, 0.86) 44%,
+      rgba(241, 245, 249, 0.7) 55%,
+      rgba(15, 23, 42, 0.1) 74%,
+      rgba(15, 23, 42, 0.02) 100%
+    );
+}
+
 /* Tablet adjustments for integrated layout */
 @media (max-width: 1200px) and (min-width: 901px) {
+  .bof-mkt-private-fleets-hero__container {
+    max-width: min(97vw, 74rem);
+  }
+
+  .bof-mkt-private-fleets-hero__content {
+    width: min(52%, 35rem);
+    margin-left: clamp(0.75rem, 2vw, 2rem);
+  }
+
   .bof-mkt-private-fleets-hero__text {
     padding: 2rem 1.5rem 2rem 3rem;
+  }
+}
+
+@media (max-width: 900px) {
+  .bof-mkt-private-fleets-hero__container {
+    max-width: 100%;
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+
+  .bof-mkt-private-fleets-hero__content {
+    width: 100%;
+    margin-left: 0;
+    padding: 1.25rem 0.5rem 0.75rem;
+  }
+
+  .bof-mkt-private-fleets-hero__image {
+    object-position: center 22%;
   }
 }
 
