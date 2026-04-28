@@ -583,32 +583,6 @@ function main() {
     process.exit(1);
   }
 
-  const workbook = XLSX.readFile(XLSX_PATH, { cellDates: true, type: "file" });
-  if (!workbook.SheetNames.includes("Drivers_Clean")) {
-    throw new Error('Workbook must contain sheet "Drivers_Clean".');
-  }
-  if (!workbook.SheetNames.includes("Documents_Clean")) {
-    throw new Error('Workbook must contain sheet "Documents_Clean".');
-  }
-
-  const driverRows = readSheetRows(workbook, "Drivers_Clean");
-  let drivers = patchDriversForJohnCarter(buildDrivers(driverRows));
-
-  const byDoc = readDocumentsClean(workbook, drivers);
-  const documents = materializeDocuments(drivers, byDoc);
-
-  const validIds = new Set(drivers.map((d) => d.id));
-  const complianceIncidents = workbook.SheetNames.includes("Compliance_Events")
-    ? readCompliance(workbook, validIds)
-    : [];
-
-  const expectedBase = drivers.length * DOC_TYPES.length;
-  if (documents.length < expectedBase) {
-    throw new Error(
-      `Document count mismatch: got ${documents.length}, expected at least ${expectedBase}`
-    );
-  }
-
   let prevFull = null;
   if (fs.existsSync(OUT_PATH)) {
     try {
@@ -616,6 +590,48 @@ function main() {
     } catch {
       prevFull = null;
     }
+  }
+
+  const workbook = XLSX.readFile(XLSX_PATH, { cellDates: true, type: "file" });
+  const hasDriversSheet = workbook.SheetNames.includes("Drivers_Clean");
+  const hasDocumentsSheet = workbook.SheetNames.includes("Documents_Clean");
+
+  let drivers;
+  let documents;
+  let complianceIncidents;
+  let expectedBase = 0;
+
+  if (hasDriversSheet && hasDocumentsSheet) {
+    const driverRows = readSheetRows(workbook, "Drivers_Clean");
+    drivers = patchDriversForJohnCarter(buildDrivers(driverRows));
+
+    const byDoc = readDocumentsClean(workbook, drivers);
+    documents = materializeDocuments(drivers, byDoc);
+
+    const validIds = new Set(drivers.map((d) => d.id));
+    complianceIncidents = workbook.SheetNames.includes("Compliance_Events")
+      ? readCompliance(workbook, validIds)
+      : [];
+
+    expectedBase = drivers.length * DOC_TYPES.length;
+    if (documents.length < expectedBase) {
+      throw new Error(
+        `Document count mismatch: got ${documents.length}, expected at least ${expectedBase}`
+      );
+    }
+  } else {
+    if (!Array.isArray(prevFull?.drivers) || !Array.isArray(prevFull?.documents)) {
+      throw new Error(
+        'Workbook missing "Drivers_Clean"/"Documents_Clean" and no prior demo-data baseline exists.'
+      );
+    }
+    // Settlement-only workbook mode: preserve prior core demo entities.
+    drivers = prevFull.drivers;
+    documents = prevFull.documents;
+    complianceIncidents = Array.isArray(prevFull?.complianceIncidents)
+      ? prevFull.complianceIncidents
+      : [];
+    expectedBase = drivers.length * DOC_TYPES.length;
   }
 
   const existingLoads = Array.isArray(prevFull?.loads) ? prevFull.loads : [];
@@ -658,7 +674,11 @@ function main() {
     out.driverMedicalExpanded = driverMedicalExpanded;
   }
 
-  if (workbook.SheetNames.includes("Payroll_Clean")) {
+  if (
+    workbook.SheetNames.includes("Payroll") ||
+    workbook.SheetNames.includes("Payroll_Clean") ||
+    workbook.SheetNames.includes("Vercel_Settlements")
+  ) {
     const prevSettlements = Array.isArray(prevFull?.settlements)
       ? prevFull.settlements
       : [];
