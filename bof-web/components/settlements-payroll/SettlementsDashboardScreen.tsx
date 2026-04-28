@@ -6,6 +6,12 @@ import { useSettlementsPayrollStore, countByStatus, sumNetPendingExport } from "
 import type { Settlement } from "@/types/settlements-payroll";
 import { formatPayrollCurrency, settlementStatusChipClass } from "./settlements-payroll-ui";
 import { getPayrollMonthlyTrend } from "@/lib/demo-trends";
+import {
+  getSettlementPeriods,
+  getSettlementRowsForPeriod,
+  getSettlementSummaryForPeriod,
+  type CurrentSettlementRowInput,
+} from "@/lib/settlement-periods";
 
 export function SettlementsDashboardScreen() {
   const settlements = useSettlementsPayrollStore((s) => s.settlements);
@@ -20,6 +26,7 @@ export function SettlementsDashboardScreen() {
   const [driverQ, setDriverQ] = useState("");
   const [statusF, setStatusF] = useState<"" | Settlement["status"]>("");
   const [holdOnly, setHoldOnly] = useState(false);
+  const [selectedPeriodId, setSelectedPeriodId] = useState("current-2026-04-01");
 
   const kpis = useMemo(
     () => ({
@@ -32,6 +39,12 @@ export function SettlementsDashboardScreen() {
     [settlements]
   );
   const payrollMonthlyTrend = useMemo(() => getPayrollMonthlyTrend(), []);
+  const settlementPeriods = useMemo(() => getSettlementPeriods(), []);
+  const selectedPeriod = useMemo(
+    () =>
+      settlementPeriods.find((p) => p.id === selectedPeriodId) ?? settlementPeriods[0],
+    [selectedPeriodId, settlementPeriods]
+  );
   const settlementEarningsById = useMemo(() => {
     const out = new Map<
       string,
@@ -55,23 +68,46 @@ export function SettlementsDashboardScreen() {
     return out;
   }, [lines]);
 
+  const currentPeriodRows = useMemo<CurrentSettlementRowInput[]>(
+    () =>
+      settlements.map((s) => ({
+        settlementId: s.settlement_id,
+        driverId: s.driver_id,
+        driverName: s.driver_name,
+        status: s.status,
+        grossPay: s.total_gross_pay,
+        totalDeductions: s.total_deductions,
+        netPay: s.net_pay,
+        backhaulPay: settlementEarningsById.get(s.settlement_id)?.backhaul ?? 0,
+        safetyBonus: settlementEarningsById.get(s.settlement_id)?.safetyBonus ?? 0,
+      })),
+    [settlements, settlementEarningsById]
+  );
+
+  const periodRows = useMemo(
+    () => getSettlementRowsForPeriod(selectedPeriod.id, currentPeriodRows),
+    [selectedPeriod.id, currentPeriodRows]
+  );
+
   const filtered = useMemo(() => {
-    return settlements.filter((s) => {
+    return periodRows.filter((s) => {
       if (driverQ) {
         const q = driverQ.toLowerCase();
-        if (
-          !s.driver_name.toLowerCase().includes(q) &&
-          !s.driver_id.toLowerCase().includes(q)
-        )
+        if (!s.driverName.toLowerCase().includes(q) && !s.driverId.toLowerCase().includes(q))
           return false;
       }
       if (statusF && s.status !== statusF) return false;
-      if (holdOnly && !s.settlement_hold) return false;
-      if (dateFrom && s.period_end < dateFrom) return false;
-      if (dateTo && s.period_start > dateTo) return false;
+      if (holdOnly && !(s.status === "Pending" || s.status === "On Hold")) return false;
+      if (selectedPeriod.isCurrent && dateFrom && "period_end" in s && (s as unknown as Settlement).period_end < dateFrom) return false;
+      if (selectedPeriod.isCurrent && dateTo && "period_start" in s && (s as unknown as Settlement).period_start > dateTo) return false;
       return true;
     });
-  }, [settlements, driverQ, statusF, holdOnly, dateFrom, dateTo]);
+  }, [periodRows, driverQ, statusF, holdOnly, dateFrom, dateTo, selectedPeriod.isCurrent]);
+
+  const periodSummary = useMemo(
+    () => getSettlementSummaryForPeriod(filtered),
+    [filtered]
+  );
 
   return (
     <div className="flex min-h-0 flex-1 flex-col gap-5 p-5">
@@ -99,11 +135,26 @@ export function SettlementsDashboardScreen() {
         </div>
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
           <label className="text-xs text-slate-500">
+            Settlement Period
+            <select
+              value={selectedPeriod.id}
+              onChange={(e) => setSelectedPeriodId(e.target.value)}
+              className="mt-1 w-full rounded border border-slate-700 bg-slate-950 px-2 py-1.5 text-sm text-slate-100"
+            >
+              {settlementPeriods.map((period) => (
+                <option key={period.id} value={period.id}>
+                  {period.label}
+                </option>
+              ))}
+            </select>
+          </label>
+          <label className="text-xs text-slate-500">
             Period start ≥
             <input
               type="date"
               value={dateFrom}
               onChange={(e) => setDateFrom(e.target.value)}
+              disabled={!selectedPeriod.isCurrent}
               className="mt-1 w-full rounded border border-slate-700 bg-slate-950 px-2 py-1.5 text-sm text-slate-100"
             />
           </label>
@@ -113,6 +164,7 @@ export function SettlementsDashboardScreen() {
               type="date"
               value={dateTo}
               onChange={(e) => setDateTo(e.target.value)}
+              disabled={!selectedPeriod.isCurrent}
               className="mt-1 w-full rounded border border-slate-700 bg-slate-950 px-2 py-1.5 text-sm text-slate-100"
             />
           </label>
@@ -150,6 +202,9 @@ export function SettlementsDashboardScreen() {
             Settlement hold only
           </label>
         </div>
+        <p className="mt-3 text-xs text-slate-500">
+          Current period uses workbook settlement detail. Prior periods use demo archive summaries for trend review.
+        </p>
       </section>
 
       <section>
@@ -161,21 +216,17 @@ export function SettlementsDashboardScreen() {
             <thead className="bg-slate-900/95 text-[10px] uppercase tracking-wide text-slate-500">
               <tr>
                 <th className="border-b border-slate-800 px-3 py-2 font-medium">
-                  Settlement ID
-                </th>
-                <th className="border-b border-slate-800 px-3 py-2 font-medium">
                   Driver
                 </th>
-                <th className="border-b border-slate-800 px-3 py-2 font-medium">Period</th>
-                  <th className="border-b border-slate-800 px-3 py-2 font-medium text-right">
-                    Base
-                  </th>
-                  <th className="border-b border-slate-800 px-3 py-2 font-medium text-right">
-                    Backhaul
-                  </th>
-                  <th className="border-b border-slate-800 px-3 py-2 font-medium text-right">
-                    Safety bonus
-                  </th>
+                <th className="border-b border-slate-800 px-3 py-2 font-medium">Driver ID</th>
+                {selectedPeriod.isCurrent && (
+                  <th className="border-b border-slate-800 px-3 py-2 font-medium">Period</th>
+                )}
+                {selectedPeriod.isCurrent && (
+                  <th className="border-b border-slate-800 px-3 py-2 font-medium text-right">Base</th>
+                )}
+                <th className="border-b border-slate-800 px-3 py-2 font-medium text-right">Backhaul</th>
+                <th className="border-b border-slate-800 px-3 py-2 font-medium text-right">Safety bonus</th>
                 <th className="border-b border-slate-800 px-3 py-2 font-medium text-right">
                   Gross
                 </th>
@@ -186,102 +237,131 @@ export function SettlementsDashboardScreen() {
                   Net
                 </th>
                 <th className="border-b border-slate-800 px-3 py-2 font-medium">Status</th>
-                <th className="border-b border-slate-800 px-3 py-2 font-medium">Hold</th>
+                <th className="border-b border-slate-800 px-3 py-2 font-medium">Settlement ID</th>
+                <th className="border-b border-slate-800 px-3 py-2 font-medium">Action</th>
               </tr>
             </thead>
             <tbody className="text-slate-200">
               {filtered.map((s) => (
                 <tr
-                  key={s.settlement_id}
-                  className="cursor-pointer border-b border-slate-800/80 hover:bg-slate-900/80"
-                  onClick={() => openDrawer(s.settlement_id)}
+                  key={`${selectedPeriod.id}-${s.settlementId}-${s.driverId}`}
+                  className={[
+                    "border-b border-slate-800/80",
+                    selectedPeriod.isCurrent ? "cursor-pointer hover:bg-slate-900/80" : "",
+                  ].join(" ")}
+                  onClick={() => {
+                    if (selectedPeriod.isCurrent) openDrawer(s.settlementId);
+                  }}
                 >
-                  <td className="px-3 py-2 font-mono text-xs text-teal-300">
-                    {s.settlement_id}
-                  </td>
                   <td className="px-3 py-2 text-xs">
-                    <div className="font-medium text-slate-100">{s.driver_name}</div>
-                    <div className="font-mono text-[10px] text-slate-500">{s.driver_id}</div>
+                    <div className="font-medium text-slate-100">{s.driverName}</div>
                   </td>
-                  <td className="whitespace-nowrap px-3 py-2 font-mono text-xs text-slate-400">
-                    {s.period_start} → {s.period_end}
+                  <td className="px-3 py-2 font-mono text-[10px] text-slate-500">
+                    {s.driverId}
                   </td>
-                  <td className="px-3 py-2 text-right font-mono text-xs">
-                    {formatPayrollCurrency(
-                      settlementEarningsById.get(s.settlement_id)?.base ?? 0
-                    )}
-                  </td>
+                  {selectedPeriod.isCurrent && (
+                    <td className="whitespace-nowrap px-3 py-2 font-mono text-xs text-slate-400">
+                      {
+                        settlements.find((row) => row.settlement_id === s.settlementId)?.period_start
+                      }{" "}
+                      →{" "}
+                      {
+                        settlements.find((row) => row.settlement_id === s.settlementId)?.period_end
+                      }
+                    </td>
+                  )}
+                  {selectedPeriod.isCurrent && (
+                    <td className="px-3 py-2 text-right font-mono text-xs">
+                      {formatPayrollCurrency(
+                        settlementEarningsById.get(s.settlementId)?.base ?? 0
+                      )}
+                    </td>
+                  )}
                   <td className="px-3 py-2 text-right font-mono text-xs text-teal-200">
-                    {formatPayrollCurrency(
-                      settlementEarningsById.get(s.settlement_id)?.backhaul ?? 0
-                    )}
+                    {formatPayrollCurrency(s.backhaulPay)}
                   </td>
                   <td className="px-3 py-2 text-right font-mono text-xs text-amber-200">
-                    {formatPayrollCurrency(
-                      settlementEarningsById.get(s.settlement_id)?.safetyBonus ?? 0
-                    )}
+                    {formatPayrollCurrency(s.safetyBonus)}
                   </td>
                   <td className="px-3 py-2 text-right font-mono text-xs">
-                    {formatPayrollCurrency(s.total_gross_pay)}
+                    {formatPayrollCurrency(s.grossPay)}
                   </td>
                   <td className="px-3 py-2 text-right font-mono text-xs">
-                    {formatPayrollCurrency(s.total_deductions)}
+                    {formatPayrollCurrency(s.totalDeductions)}
                   </td>
                   <td className="px-3 py-2 text-right font-mono text-xs font-semibold text-teal-200">
-                    {formatPayrollCurrency(s.net_pay)}
+                    {formatPayrollCurrency(s.netPay)}
                   </td>
                   <td className="px-3 py-2">
                     <span
                       className={[
                         "inline-flex rounded px-2 py-0.5 text-[11px] font-semibold",
-                        settlementStatusChipClass(s.status),
+                        s.status === "Pending" || s.status === "On Hold"
+                          ? "bg-amber-900/30 text-amber-300 ring-1 ring-amber-700/50"
+                          : s.status === "Paid" || s.status === "Exported"
+                            ? "bg-teal-900/35 text-teal-300 ring-1 ring-teal-700/50"
+                            : settlementStatusChipClass(s.status as Settlement["status"]),
                       ].join(" ")}
                     >
                       {s.status}
                     </span>
-                    {generatedDocs[s.settlement_id] && (
-                      <div className="mt-1 flex flex-wrap gap-2 text-[10px]">
-                        {generatedDocs[s.settlement_id]?.summaryUrl && (
-                          <a
-                            href={generatedDocs[s.settlement_id]!.summaryUrl}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="bof-link-secondary"
-                            onClick={(e) => e.stopPropagation()}
-                          >
-                            Summary
-                          </a>
-                        )}
-                        {generatedDocs[s.settlement_id]?.holdUrl && (
-                          <a
-                            href={generatedDocs[s.settlement_id]!.holdUrl}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="bof-link-secondary"
-                            onClick={(e) => e.stopPropagation()}
-                          >
-                            Hold
-                          </a>
-                        )}
-                        {generatedDocs[s.settlement_id]?.insuranceUrl && (
-                          <a
-                            href={generatedDocs[s.settlement_id]!.insuranceUrl}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="bof-link-secondary"
-                            onClick={(e) => e.stopPropagation()}
-                          >
-                            Insurance
-                          </a>
-                        )}
-                      </div>
-                    )}
+                  </td>
+                  <td className="px-3 py-2 font-mono text-xs text-teal-300">
+                    {s.settlementId || "—"}
                   </td>
                   <td className="px-3 py-2 text-xs">
-                    {s.settlement_hold ? (
-                      <span className="font-medium text-red-300">Hold</span>
+                    {selectedPeriod.isCurrent ? (
+                      generatedDocs[s.settlementId] ? (
+                        <div className="mt-1 flex flex-wrap gap-2 text-[10px]">
+                          {generatedDocs[s.settlementId]?.summaryUrl && (
+                            <a
+                              href={generatedDocs[s.settlementId]!.summaryUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="bof-link-secondary"
+                              onClick={(e) => e.stopPropagation()}
+                            >
+                              Summary
+                            </a>
+                          )}
+                          {generatedDocs[s.settlementId]?.holdUrl && (
+                            <a
+                              href={generatedDocs[s.settlementId]!.holdUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="bof-link-secondary"
+                              onClick={(e) => e.stopPropagation()}
+                            >
+                              Hold
+                            </a>
+                          )}
+                          {generatedDocs[s.settlementId]?.insuranceUrl && (
+                            <a
+                              href={generatedDocs[s.settlementId]!.insuranceUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="bof-link-secondary"
+                              onClick={(e) => e.stopPropagation()}
+                            >
+                              Insurance
+                            </a>
+                          )}
+                        </div>
+                      ) : (
+                        <span className="text-slate-400">Open settlement</span>
+                      )
                     ) : (
-                      <span className="text-slate-600">—</span>
+                      <div className="flex flex-wrap gap-2">
+                        <span className="rounded bg-slate-800 px-2 py-0.5 text-[10px] text-slate-300">
+                          Archived summary
+                        </span>
+                        <span className="rounded bg-slate-800 px-2 py-0.5 text-[10px] text-slate-300">
+                          Export
+                        </span>
+                        <span className="rounded bg-slate-800 px-2 py-0.5 text-[10px] text-slate-400">
+                          View unavailable
+                        </span>
+                      </div>
                     )}
                   </td>
                 </tr>
@@ -296,10 +376,10 @@ export function SettlementsDashboardScreen() {
           Exceptions / pending holds
         </h2>
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-          <Kpi label="On hold" value={kpis.onHold} />
+          <Kpi label="Pending / on hold" value={periodSummary.pendingOrOnHold} />
           <Kpi label="Draft" value={kpis.draft} />
           <Kpi label="Ready for export" value={kpis.ready} />
-          <Kpi label="Net pay pending" value={formatPayrollCurrency(kpis.netPending)} />
+          <Kpi label="Net pay pending" value={formatPayrollCurrency(periodSummary.totalNetPay)} />
         </div>
       </section>
 
@@ -307,12 +387,13 @@ export function SettlementsDashboardScreen() {
         <h2 className="mb-2 text-sm font-semibold text-slate-100">
           Summary totals
         </h2>
-        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
-          <Kpi label="Draft" value={kpis.draft} />
-          <Kpi label="Ready for export" value={kpis.ready} />
-          <Kpi label="Exported" value={kpis.exported} />
-          <Kpi label="On hold" value={kpis.onHold} />
-          <Kpi label="Net pay pending (non-exported)" value={formatPayrollCurrency(kpis.netPending)} />
+        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-6">
+          <Kpi label="Total gross pay" value={formatPayrollCurrency(periodSummary.totalGrossPay)} />
+          <Kpi label="Total backhaul pay" value={formatPayrollCurrency(periodSummary.totalBackhaulPay)} />
+          <Kpi label="Total safety bonus" value={formatPayrollCurrency(periodSummary.totalSafetyBonus)} />
+          <Kpi label="Total deductions" value={formatPayrollCurrency(periodSummary.totalDeductions)} />
+          <Kpi label="Total net pay" value={formatPayrollCurrency(periodSummary.totalNetPay)} />
+          <Kpi label="Pending / on hold" value={periodSummary.pendingOrOnHold} />
         </div>
       </section>
 
