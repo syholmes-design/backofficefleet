@@ -5,9 +5,6 @@ import { Filter } from "lucide-react";
 import { useSettlementsPayrollStore, countByStatus, sumNetPendingExport } from "@/lib/stores/settlements-payroll-store";
 import type { Settlement } from "@/types/settlements-payroll";
 import { formatPayrollCurrency, settlementStatusChipClass } from "./settlements-payroll-ui";
-import { BofAdvantageCard, BofAdvantageStrip } from "@/components/bof-advantage/BofAdvantageCard";
-import { getBofData } from "@/lib/load-bof-data";
-import { getMockBackhaulOpportunities } from "@/lib/backhaul-opportunity-engine";
 import { getPayrollMonthlyTrend } from "@/lib/demo-trends";
 
 export function SettlementsDashboardScreen() {
@@ -33,10 +30,6 @@ export function SettlementsDashboardScreen() {
       netPending: sumNetPendingExport(settlements),
     }),
     [settlements]
-  );
-  const backhaulOpportunities = useMemo(
-    () => getMockBackhaulOpportunities(getBofData()),
-    []
   );
   const payrollMonthlyTrend = useMemo(() => getPayrollMonthlyTrend(), []);
   const settlementEarningsById = useMemo(() => {
@@ -96,154 +89,6 @@ export function SettlementsDashboardScreen() {
           safety bonuses generated from the Safety &amp; Compliance module.
         </p>
       </header>
-
-      <BofAdvantageStrip>
-        <BofAdvantageCard
-          eyebrow="Settlement acceleration"
-          title="Proof-linked readiness for export"
-          subtitle="Demo store — status counts from merged payroll rows"
-          value={`${kpis.ready} settlement(s) in Ready for Export`}
-          delta={
-            kpis.onHold
-              ? `${kpis.onHold} on hold — complete packets clear most demo holds faster`
-              : "No settlement holds flagged on this snapshot"
-          }
-          explanation="Ready / hold counts are BOF-backed from the settlements store. Acceleration hours are illustrative until proof-to-pay timestamps exist."
-          tone={kpis.onHold ? "caution" : "positive"}
-        />
-        <BofAdvantageCard
-          eyebrow="Admin Time Reduced"
-          title="Complete packet handling"
-          subtitle="Illustrative back-office minutes avoided per ready settlement"
-          value={`~${Math.max(15, Math.round(kpis.ready * 22 + kpis.draft * 6))} min demo equivalent / week`}
-          delta={`${kpis.draft} still in Draft — tighter proof linkage reduces rework loops`}
-          explanation="Minute estimate is a labeled demo placeholder; wire to export queue + document completion events for production."
-          tone="neutral"
-        />
-      </BofAdvantageStrip>
-
-      <section className="grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
-        <Kpi label="Draft" value={kpis.draft} />
-        <Kpi label="Ready for export" value={kpis.ready} />
-        <Kpi label="Exported" value={kpis.exported} />
-        <Kpi label="On hold" value={kpis.onHold} />
-        <Kpi label="Net pay pending (non-exported)" value={formatPayrollCurrency(kpis.netPending)} />
-      </section>
-
-      <section className="rounded-lg border border-slate-800 bg-slate-900/30 p-4">
-        <div className="mb-2 flex items-center justify-between gap-2">
-          <h2 className="text-sm font-semibold text-slate-100">
-            6-Month Payroll Trend
-          </h2>
-          <span className="rounded bg-slate-900 px-2 py-0.5 text-[11px] text-slate-400">
-            Demo trend data
-          </span>
-        </div>
-        <div className="overflow-x-auto rounded border border-slate-800">
-          <table className="w-full min-w-[920px] border-collapse text-left text-xs">
-            <thead className="bg-slate-900/90 text-[10px] uppercase tracking-wide text-slate-500">
-              <tr>
-                <th className="border-b border-slate-800 px-2 py-2 font-medium">Month</th>
-                <th className="border-b border-slate-800 px-2 py-2 font-medium">Gross Pay</th>
-                <th className="border-b border-slate-800 px-2 py-2 font-medium">Backhaul Pay</th>
-                <th className="border-b border-slate-800 px-2 py-2 font-medium">Safety Bonus</th>
-                <th className="border-b border-slate-800 px-2 py-2 font-medium">Deductions</th>
-                <th className="border-b border-slate-800 px-2 py-2 font-medium">Fuel Reimb.</th>
-                <th className="border-b border-slate-800 px-2 py-2 font-medium">Net Pay</th>
-              </tr>
-            </thead>
-            <tbody className="text-slate-200">
-              {payrollMonthlyTrend.map((row) => (
-                <tr key={row.month} className="border-b border-slate-800/80">
-                  <td className="px-2 py-1.5 font-medium text-slate-100">{row.month}</td>
-                  <td className="px-2 py-1.5 font-mono text-teal-300">
-                    {formatPayrollCurrency(row.grossPay)}
-                  </td>
-                  <td className="px-2 py-1.5 font-mono text-emerald-300">
-                    {formatPayrollCurrency(row.backhaulPay)}
-                  </td>
-                  <td className="px-2 py-1.5 font-mono text-amber-200">
-                    {formatPayrollCurrency(row.safetyBonus)}
-                  </td>
-                  <td className="px-2 py-1.5 font-mono">
-                    {formatPayrollCurrency(row.deductions)}
-                  </td>
-                  <td className="px-2 py-1.5 font-mono">
-                    {formatPayrollCurrency(row.fuelReimbursements)}
-                  </td>
-                  <td className="px-2 py-1.5 font-mono font-semibold text-teal-200">
-                    {formatPayrollCurrency(row.netPay)}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </section>
-
-      <section className="rounded-lg border border-slate-800 bg-slate-900/30 p-4">
-        <div className="mb-2 flex items-center justify-between gap-2">
-          <h2 className="text-sm font-semibold text-slate-100">
-            Backhaul economics (payroll + BOF internal)
-          </h2>
-          <span className="rounded bg-slate-900 px-2 py-0.5 text-[11px] text-slate-400">
-            Mock backhaul feed
-          </span>
-        </div>
-        <div className="overflow-x-auto rounded border border-slate-800">
-          <table className="w-full min-w-[900px] border-collapse text-left text-xs">
-            <thead className="bg-slate-900/90 text-[10px] uppercase tracking-wide text-slate-500">
-              <tr>
-                <th className="border-b border-slate-800 px-2 py-2 font-medium">Driver settlement</th>
-                <th className="border-b border-slate-800 px-2 py-2 font-medium">Linked Backhaul Opportunity</th>
-                <th className="border-b border-slate-800 px-2 py-2 font-medium">Linked Load</th>
-                <th className="border-b border-slate-800 px-2 py-2 font-medium">Driver Backhaul Pay</th>
-                <th className="border-b border-slate-800 px-2 py-2 font-medium">BOF Backhaul Bonus</th>
-                <th className="border-b border-slate-800 px-2 py-2 font-medium">Net Fleet Recovery</th>
-                <th className="border-b border-slate-800 px-2 py-2 font-medium">Deadhead Miles Avoided</th>
-                <th className="border-b border-slate-800 px-2 py-2 font-medium">Source</th>
-                <th className="border-b border-slate-800 px-2 py-2 font-medium">Status</th>
-              </tr>
-            </thead>
-            <tbody className="text-slate-200">
-              {backhaulOpportunities.map((op) => {
-                const st = settlements.find((s) => s.driver_id === op.driverId);
-                const statusChip =
-                  op.status === "booked"
-                    ? "bg-teal-900/35 text-teal-300 ring-1 ring-teal-700/50"
-                    : op.status === "pending_approval"
-                      ? "bg-amber-900/30 text-amber-300 ring-1 ring-amber-700/50"
-                      : "bg-slate-800 text-slate-300";
-                return (
-                  <tr key={op.opportunityId} className="border-b border-slate-800/80">
-                    <td className="px-2 py-1.5 font-mono">
-                      {st?.settlement_id ?? "—"}
-                    </td>
-                    <td className="px-2 py-1.5">{op.opportunityId}</td>
-                    <td className="px-2 py-1.5 font-mono text-teal-300">{op.linkedLoadId}</td>
-                    <td className="px-2 py-1.5 font-mono text-emerald-300">
-                      {formatPayrollCurrency(op.driverBackhaulPay)}
-                    </td>
-                    <td className="px-2 py-1.5 font-mono text-amber-200">
-                      {formatPayrollCurrency(op.bofBackhaulBonus)}
-                    </td>
-                    <td className="px-2 py-1.5 font-mono">
-                      {formatPayrollCurrency(op.netFleetRecovery)}
-                    </td>
-                    <td className="px-2 py-1.5 font-mono">{op.estimatedMiles} mi</td>
-                    <td className="px-2 py-1.5">{op.source}</td>
-                    <td className="px-2 py-1.5">
-                      <span className={`inline-flex rounded px-2 py-0.5 text-[10px] font-semibold ${statusChip}`}>
-                        {op.status === "pending_approval" ? "Pending Approval" : "Booked"}
-                      </span>
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
-        </div>
-      </section>
 
       <section className="rounded-lg border border-slate-800 bg-slate-900/30 p-4">
         <div className="mb-3 flex items-center gap-2 text-slate-300">
@@ -307,139 +152,232 @@ export function SettlementsDashboardScreen() {
         </div>
       </section>
 
-      <div className="overflow-x-auto rounded-lg border border-slate-800">
-        <table className="w-full min-w-[960px] border-collapse text-left text-sm">
-          <thead className="bg-slate-900/95 text-[10px] uppercase tracking-wide text-slate-500">
-            <tr>
-              <th className="border-b border-slate-800 px-3 py-2 font-medium">
-                Settlement ID
-              </th>
-              <th className="border-b border-slate-800 px-3 py-2 font-medium">
-                Driver
-              </th>
-              <th className="border-b border-slate-800 px-3 py-2 font-medium">Period</th>
+      <section>
+        <h2 className="mb-2 text-sm font-semibold text-slate-100">
+          Driver settlement table
+        </h2>
+        <div className="overflow-x-auto rounded-lg border border-slate-800">
+          <table className="w-full min-w-[960px] border-collapse text-left text-sm">
+            <thead className="bg-slate-900/95 text-[10px] uppercase tracking-wide text-slate-500">
+              <tr>
+                <th className="border-b border-slate-800 px-3 py-2 font-medium">
+                  Settlement ID
+                </th>
+                <th className="border-b border-slate-800 px-3 py-2 font-medium">
+                  Driver
+                </th>
+                <th className="border-b border-slate-800 px-3 py-2 font-medium">Period</th>
+                  <th className="border-b border-slate-800 px-3 py-2 font-medium text-right">
+                    Base
+                  </th>
+                  <th className="border-b border-slate-800 px-3 py-2 font-medium text-right">
+                    Backhaul
+                  </th>
+                  <th className="border-b border-slate-800 px-3 py-2 font-medium text-right">
+                    Safety bonus
+                  </th>
                 <th className="border-b border-slate-800 px-3 py-2 font-medium text-right">
-                  Base
+                  Gross
                 </th>
                 <th className="border-b border-slate-800 px-3 py-2 font-medium text-right">
-                  Backhaul
+                  Deductions
                 </th>
                 <th className="border-b border-slate-800 px-3 py-2 font-medium text-right">
-                  Safety bonus
+                  Net
                 </th>
-              <th className="border-b border-slate-800 px-3 py-2 font-medium text-right">
-                Gross
-              </th>
-              <th className="border-b border-slate-800 px-3 py-2 font-medium text-right">
-                Deductions
-              </th>
-              <th className="border-b border-slate-800 px-3 py-2 font-medium text-right">
-                Net
-              </th>
-              <th className="border-b border-slate-800 px-3 py-2 font-medium">Status</th>
-              <th className="border-b border-slate-800 px-3 py-2 font-medium">Hold</th>
-            </tr>
-          </thead>
-          <tbody className="text-slate-200">
-            {filtered.map((s) => (
-              <tr
-                key={s.settlement_id}
-                className="cursor-pointer border-b border-slate-800/80 hover:bg-slate-900/80"
-                onClick={() => openDrawer(s.settlement_id)}
-              >
-                <td className="px-3 py-2 font-mono text-xs text-teal-300">
-                  {s.settlement_id}
-                </td>
-                <td className="px-3 py-2 text-xs">
-                  <div className="font-medium text-slate-100">{s.driver_name}</div>
-                  <div className="font-mono text-[10px] text-slate-500">{s.driver_id}</div>
-                </td>
-                <td className="whitespace-nowrap px-3 py-2 font-mono text-xs text-slate-400">
-                  {s.period_start} → {s.period_end}
-                </td>
-                <td className="px-3 py-2 text-right font-mono text-xs">
-                  {formatPayrollCurrency(
-                    settlementEarningsById.get(s.settlement_id)?.base ?? 0
-                  )}
-                </td>
-                <td className="px-3 py-2 text-right font-mono text-xs text-teal-200">
-                  {formatPayrollCurrency(
-                    settlementEarningsById.get(s.settlement_id)?.backhaul ?? 0
-                  )}
-                </td>
-                <td className="px-3 py-2 text-right font-mono text-xs text-amber-200">
-                  {formatPayrollCurrency(
-                    settlementEarningsById.get(s.settlement_id)?.safetyBonus ?? 0
-                  )}
-                </td>
-                <td className="px-3 py-2 text-right font-mono text-xs">
-                  {formatPayrollCurrency(s.total_gross_pay)}
-                </td>
-                <td className="px-3 py-2 text-right font-mono text-xs">
-                  {formatPayrollCurrency(s.total_deductions)}
-                </td>
-                <td className="px-3 py-2 text-right font-mono text-xs font-semibold text-teal-200">
-                  {formatPayrollCurrency(s.net_pay)}
-                </td>
-                <td className="px-3 py-2">
-                  <span
-                    className={[
-                      "inline-flex rounded px-2 py-0.5 text-[11px] font-semibold",
-                      settlementStatusChipClass(s.status),
-                    ].join(" ")}
-                  >
-                    {s.status}
-                  </span>
-                  {generatedDocs[s.settlement_id] && (
-                    <div className="mt-1 flex flex-wrap gap-2 text-[10px]">
-                      {generatedDocs[s.settlement_id]?.summaryUrl && (
-                        <a
-                          href={generatedDocs[s.settlement_id]!.summaryUrl}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="bof-link-secondary"
-                          onClick={(e) => e.stopPropagation()}
-                        >
-                          Summary
-                        </a>
-                      )}
-                      {generatedDocs[s.settlement_id]?.holdUrl && (
-                        <a
-                          href={generatedDocs[s.settlement_id]!.holdUrl}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="bof-link-secondary"
-                          onClick={(e) => e.stopPropagation()}
-                        >
-                          Hold
-                        </a>
-                      )}
-                      {generatedDocs[s.settlement_id]?.insuranceUrl && (
-                        <a
-                          href={generatedDocs[s.settlement_id]!.insuranceUrl}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="bof-link-secondary"
-                          onClick={(e) => e.stopPropagation()}
-                        >
-                          Insurance
-                        </a>
-                      )}
-                    </div>
-                  )}
-                </td>
-                <td className="px-3 py-2 text-xs">
-                  {s.settlement_hold ? (
-                    <span className="font-medium text-red-300">Hold</span>
-                  ) : (
-                    <span className="text-slate-600">—</span>
-                  )}
-                </td>
+                <th className="border-b border-slate-800 px-3 py-2 font-medium">Status</th>
+                <th className="border-b border-slate-800 px-3 py-2 font-medium">Hold</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+            </thead>
+            <tbody className="text-slate-200">
+              {filtered.map((s) => (
+                <tr
+                  key={s.settlement_id}
+                  className="cursor-pointer border-b border-slate-800/80 hover:bg-slate-900/80"
+                  onClick={() => openDrawer(s.settlement_id)}
+                >
+                  <td className="px-3 py-2 font-mono text-xs text-teal-300">
+                    {s.settlement_id}
+                  </td>
+                  <td className="px-3 py-2 text-xs">
+                    <div className="font-medium text-slate-100">{s.driver_name}</div>
+                    <div className="font-mono text-[10px] text-slate-500">{s.driver_id}</div>
+                  </td>
+                  <td className="whitespace-nowrap px-3 py-2 font-mono text-xs text-slate-400">
+                    {s.period_start} → {s.period_end}
+                  </td>
+                  <td className="px-3 py-2 text-right font-mono text-xs">
+                    {formatPayrollCurrency(
+                      settlementEarningsById.get(s.settlement_id)?.base ?? 0
+                    )}
+                  </td>
+                  <td className="px-3 py-2 text-right font-mono text-xs text-teal-200">
+                    {formatPayrollCurrency(
+                      settlementEarningsById.get(s.settlement_id)?.backhaul ?? 0
+                    )}
+                  </td>
+                  <td className="px-3 py-2 text-right font-mono text-xs text-amber-200">
+                    {formatPayrollCurrency(
+                      settlementEarningsById.get(s.settlement_id)?.safetyBonus ?? 0
+                    )}
+                  </td>
+                  <td className="px-3 py-2 text-right font-mono text-xs">
+                    {formatPayrollCurrency(s.total_gross_pay)}
+                  </td>
+                  <td className="px-3 py-2 text-right font-mono text-xs">
+                    {formatPayrollCurrency(s.total_deductions)}
+                  </td>
+                  <td className="px-3 py-2 text-right font-mono text-xs font-semibold text-teal-200">
+                    {formatPayrollCurrency(s.net_pay)}
+                  </td>
+                  <td className="px-3 py-2">
+                    <span
+                      className={[
+                        "inline-flex rounded px-2 py-0.5 text-[11px] font-semibold",
+                        settlementStatusChipClass(s.status),
+                      ].join(" ")}
+                    >
+                      {s.status}
+                    </span>
+                    {generatedDocs[s.settlement_id] && (
+                      <div className="mt-1 flex flex-wrap gap-2 text-[10px]">
+                        {generatedDocs[s.settlement_id]?.summaryUrl && (
+                          <a
+                            href={generatedDocs[s.settlement_id]!.summaryUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="bof-link-secondary"
+                            onClick={(e) => e.stopPropagation()}
+                          >
+                            Summary
+                          </a>
+                        )}
+                        {generatedDocs[s.settlement_id]?.holdUrl && (
+                          <a
+                            href={generatedDocs[s.settlement_id]!.holdUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="bof-link-secondary"
+                            onClick={(e) => e.stopPropagation()}
+                          >
+                            Hold
+                          </a>
+                        )}
+                        {generatedDocs[s.settlement_id]?.insuranceUrl && (
+                          <a
+                            href={generatedDocs[s.settlement_id]!.insuranceUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="bof-link-secondary"
+                            onClick={(e) => e.stopPropagation()}
+                          >
+                            Insurance
+                          </a>
+                        )}
+                      </div>
+                    )}
+                  </td>
+                  <td className="px-3 py-2 text-xs">
+                    {s.settlement_hold ? (
+                      <span className="font-medium text-red-300">Hold</span>
+                    ) : (
+                      <span className="text-slate-600">—</span>
+                    )}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section className="rounded-lg border border-slate-800 bg-slate-900/30 p-4">
+        <h2 className="mb-2 text-sm font-semibold text-slate-100">
+          Exceptions / pending holds
+        </h2>
+        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+          <Kpi label="On hold" value={kpis.onHold} />
+          <Kpi label="Draft" value={kpis.draft} />
+          <Kpi label="Ready for export" value={kpis.ready} />
+          <Kpi label="Net pay pending" value={formatPayrollCurrency(kpis.netPending)} />
+        </div>
+      </section>
+
+      <section className="rounded-lg border border-slate-800 bg-slate-900/30 p-4">
+        <h2 className="mb-2 text-sm font-semibold text-slate-100">
+          Summary totals
+        </h2>
+        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
+          <Kpi label="Draft" value={kpis.draft} />
+          <Kpi label="Ready for export" value={kpis.ready} />
+          <Kpi label="Exported" value={kpis.exported} />
+          <Kpi label="On hold" value={kpis.onHold} />
+          <Kpi label="Net pay pending (non-exported)" value={formatPayrollCurrency(kpis.netPending)} />
+        </div>
+      </section>
+
+      <section className="rounded-lg border border-slate-800 bg-slate-900/30 p-4">
+        <div className="mb-2 flex items-center justify-between gap-2">
+          <h2 className="text-sm font-semibold text-slate-100">
+            Historical payroll trends
+          </h2>
+          <span className="rounded bg-slate-900 px-2 py-0.5 text-[11px] text-slate-400">
+            Demo trend data
+          </span>
+        </div>
+        <div className="overflow-x-auto rounded border border-slate-800">
+          <table className="w-full min-w-[920px] border-collapse text-left text-xs">
+            <thead className="bg-slate-900/90 text-[10px] uppercase tracking-wide text-slate-500">
+              <tr>
+                <th className="border-b border-slate-800 px-2 py-2 font-medium">Month</th>
+                <th className="border-b border-slate-800 px-2 py-2 font-medium">Gross Pay</th>
+                <th className="border-b border-slate-800 px-2 py-2 font-medium">Backhaul Pay</th>
+                <th className="border-b border-slate-800 px-2 py-2 font-medium">Safety Bonus</th>
+                <th className="border-b border-slate-800 px-2 py-2 font-medium">Deductions</th>
+                <th className="border-b border-slate-800 px-2 py-2 font-medium">Fuel Reimb.</th>
+                <th className="border-b border-slate-800 px-2 py-2 font-medium">Net Pay</th>
+              </tr>
+            </thead>
+            <tbody className="text-slate-200">
+              {payrollMonthlyTrend.map((row) => (
+                <tr key={row.month} className="border-b border-slate-800/80">
+                  <td className="px-2 py-1.5 font-medium text-slate-100">{row.month}</td>
+                  <td className="px-2 py-1.5 font-mono text-teal-300">
+                    {formatPayrollCurrency(row.grossPay)}
+                  </td>
+                  <td className="px-2 py-1.5 font-mono text-emerald-300">
+                    {formatPayrollCurrency(row.backhaulPay)}
+                  </td>
+                  <td className="px-2 py-1.5 font-mono text-amber-200">
+                    {formatPayrollCurrency(row.safetyBonus)}
+                  </td>
+                  <td className="px-2 py-1.5 font-mono">
+                    {formatPayrollCurrency(row.deductions)}
+                  </td>
+                  <td className="px-2 py-1.5 font-mono">
+                    {formatPayrollCurrency(row.fuelReimbursements)}
+                  </td>
+                  <td className="px-2 py-1.5 font-mono font-semibold text-teal-200">
+                    {formatPayrollCurrency(row.netPay)}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section className="rounded-lg border border-slate-800 bg-slate-900/20 p-3">
+        <h3 className="text-xs font-semibold uppercase tracking-wide text-slate-400">
+          Workbook/source details
+        </h3>
+        <p className="mt-1 text-xs text-slate-500">
+          Source data: main workbook via settlement merge (`npm run merge:settlements` / `npm run build:data`),
+          then rendered from `lib/demo-data.json`. Use `BOF_MAIN_SOURCE_XLSX` and
+          `BOF_SETTLEMENTS_SHEET` to override workbook path/sheet.
+        </p>
+      </section>
+
     </div>
   );
 }
