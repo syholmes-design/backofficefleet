@@ -4,6 +4,7 @@ import type { ReactNode } from "react";
 export type MarketingHomeIntegratedHeroProps = {
   titleId: string;
   sectionAriaLabelledBy?: string;
+  className?: string;
   eyebrow: string;
   title: ReactNode;
   subtitle: string;
@@ -26,6 +27,7 @@ export type MarketingHomeIntegratedHeroProps = {
 export function MarketingHomeIntegratedHero({
   titleId,
   sectionAriaLabelledBy,
+  className,
   eyebrow,
   title,
   subtitle,
@@ -37,9 +39,13 @@ export function MarketingHomeIntegratedHero({
   imageSrc,
   imageAlt,
 }: MarketingHomeIntegratedHeroProps) {
+  const rootClassName = className
+    ? `bof-mkt-home-hero-integrated ${className}`
+    : "bof-mkt-home-hero-integrated";
+
   return (
     <section
-      className="bof-mkt-home-hero-integrated"
+      className={rootClassName}
       aria-labelledby={sectionAriaLabelledBy ?? titleId}
     >
       <div className="bof-mkt-home-hero-integrated__grid">

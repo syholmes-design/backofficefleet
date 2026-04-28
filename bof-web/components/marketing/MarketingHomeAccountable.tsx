@@ -111,6 +111,7 @@ export default function MarketingHomeAccountable() {
   return (
     <>
       <MarketingHomeIntegratedHero
+        className="bof-home-tight-hero"
         titleId="bof-mkt-hero-heading"
         sectionAriaLabelledBy="bof-mkt-hero-heading"
         eyebrow="Back office, built for the driver, accountable to the fleet"

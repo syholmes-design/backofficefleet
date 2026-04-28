@@ -495,6 +495,31 @@ body {
   }
 }
 
+/* Homepage-only desktop tightening:
+   keep existing premium look while pulling copy and visual composition together. */
+@media (min-width: 1024px) {
+  .bof-home-tight-hero .bof-mkt-home-hero-integrated__copy {
+    max-width: min(46%, 40rem);
+    margin-left: clamp(40px, 4.5vw, 70px);
+    padding-left: clamp(18px, 2.2vw, 36px);
+    padding-right: clamp(16px, 2vw, 30px);
+  }
+
+  .bof-home-tight-hero .bof-mkt-home-hero-integrated__image {
+    object-position: 55% center;
+  }
+
+  .bof-home-tight-hero .bof-mkt-home-hero-integrated__visual::after {
+    background: linear-gradient(
+      to right,
+      rgba(15, 23, 42, 0.84) 0%,
+      rgba(15, 23, 42, 0.67) 26%,
+      rgba(15, 23, 42, 0.38) 52%,
+      rgba(15, 23, 42, 0.18) 100%
+    );
+  }
+}
+
 .bof-logo-wrap {
   display: flex;
   align-items: center;
