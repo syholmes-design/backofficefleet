@@ -1,6 +1,6 @@
 /**
  * Source of truth: settlement worksheet in the main workbook.
- * Preferred sheet order: Payroll_Clean -> Payroll -> Vercel_Settlements.
+ * Preferred sheet order: BOF_SETTLEMENTS_SHEET override -> Payroll -> Payroll_Clean -> Vercel_Settlements.
  *
  * Includes explicit header alias mapping so workbook header variants normalize into
  * a stable settlement payload used by lib/demo-data.json + settlements UI.
@@ -8,6 +8,9 @@
 import XLSX from "xlsx";
 
 const DEBUG = String(process.env.BOF_SETTLEMENTS_DEBUG ?? "").trim() === "1";
+const SETTLEMENTS_SHEET_OVERRIDE = String(
+  process.env.BOF_SETTLEMENTS_SHEET ?? ""
+).trim();
 
 const SAFETY_BONUS_BY_DRIVER = {
   "DRV-001": 125,
@@ -24,7 +27,22 @@ const SAFETY_BONUS_BY_DRIVER = {
   "DRV-012": 0,
 };
 
-const SHEET_CANDIDATES = ["Payroll_Clean", "Payroll", "Vercel_Settlements"];
+const SHEET_CANDIDATES = ["Payroll", "Payroll_Clean", "Vercel_Settlements"];
+
+const DRIVER_ID_FROM_SHORT_NAME = {
+  "J. CARTER": "DRV-001",
+  "M. LOPEZ": "DRV-002",
+  "A. KIM": "DRV-003",
+  "P. PATEL": "DRV-004",
+  "K. TANAKA": "DRV-005",
+  "M. CHEN": "DRV-006",
+  "S. GOMEZ": "DRV-007",
+  "L. SMITH": "DRV-008",
+  "E. BROWN": "DRV-009",
+  "N. WILSON": "DRV-010",
+  "O. LEE": "DRV-011",
+  "R. JOHNSON": "DRV-012",
+};
 
 const HEADER_ALIASES = {
   settlementId: ["Settlement ID", "Settlement", "Payroll ID"],
@@ -156,7 +174,12 @@ function normalizeSheetRows(rows) {
 }
 
 function rowToSettlement(r) {
-  const driverId = str(r.driverId);
+  const rawDriverId = str(r.driverId);
+  const rawDriverName = str(r.driverName);
+  const driverId =
+    rawDriverId ||
+    DRIVER_ID_FROM_SHORT_NAME[rawDriverName.toUpperCase()] ||
+    "";
   const safetyBonus =
     hasNumericValue(r.safetyBonus) ? num(r.safetyBonus) : num(SAFETY_BONUS_BY_DRIVER[driverId]);
   const baseEarnings = num(r.baseEarnings);
@@ -220,6 +243,15 @@ function rowToSettlement(r) {
 }
 
 function pickSettlementSheet(workbook) {
+  if (SETTLEMENTS_SHEET_OVERRIDE) {
+    const sheet = workbook.Sheets[SETTLEMENTS_SHEET_OVERRIDE];
+    if (sheet) {
+      const rows = XLSX.utils.sheet_to_json(sheet, { raw: true, defval: null });
+      if (rows.length > 0) {
+        return { sheetName: SETTLEMENTS_SHEET_OVERRIDE, rows };
+      }
+    }
+  }
   for (const sheetName of SHEET_CANDIDATES) {
     const sheet = workbook.Sheets[sheetName];
     if (!sheet) continue;

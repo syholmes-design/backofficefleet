@@ -32,8 +32,10 @@ export function SettlementsWorkbookGrid() {
       <h1 className="bof-title">Settlements — workbook grid</h1>
       <p className="bof-lead">
         Payroll / settlement rows come from the settlement worksheet in the main
-        Excel workbook (prefers <code className="bof-code">Payroll_Clean</code>,
-        then <code className="bof-code">Payroll</code>, then{" "}
+        Excel workbook (prefers env{" "}
+        <code className="bof-code">BOF_SETTLEMENTS_SHEET</code>, then{" "}
+        <code className="bof-code">Payroll</code>, then{" "}
+        <code className="bof-code">Payroll_Clean</code>, then{" "}
         <code className="bof-code">Vercel_Settlements</code>; default{" "}
         <code className="bof-code">public/data/main-source_enhanced_bof_aligned.xlsx</code>
         , or override with env <code className="bof-code">BOF_MAIN_SOURCE_XLSX</code>
