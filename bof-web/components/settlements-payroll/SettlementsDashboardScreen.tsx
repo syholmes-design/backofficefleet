@@ -75,11 +75,16 @@ export function SettlementsDashboardScreen() {
         driverId: s.driver_id,
         driverName: s.driver_name,
         status: s.status,
+        baseEarnings: settlementEarningsById.get(s.settlement_id)?.base ?? 0,
         grossPay: s.total_gross_pay,
         totalDeductions: s.total_deductions,
         netPay: s.net_pay,
         backhaulPay: settlementEarningsById.get(s.settlement_id)?.backhaul ?? 0,
         safetyBonus: settlementEarningsById.get(s.settlement_id)?.safetyBonus ?? 0,
+        fuelReimbursement:
+          (s.total_gross_pay - s.total_deductions) !== 0
+            ? Math.max(0, s.net_pay - (s.total_gross_pay - s.total_deductions))
+            : 0,
       })),
     [settlements, settlementEarningsById]
   );

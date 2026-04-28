@@ -9,11 +9,13 @@ export type CurrentSettlementRowInput = {
   driverId: string;
   driverName: string;
   status: string;
+  baseEarnings?: number;
   grossPay: number;
   totalDeductions: number;
   netPay: number;
   backhaulPay: number;
   safetyBonus: number;
+  fuelReimbursement?: number;
 };
 
 export type SettlementPeriodRow = {
@@ -21,11 +23,13 @@ export type SettlementPeriodRow = {
   driverId: string;
   driverName: string;
   status: string;
+  baseEarnings?: number;
   grossPay: number;
   totalDeductions: number;
   netPay: number;
   backhaulPay: number;
   safetyBonus: number;
+  fuelReimbursement?: number;
 };
 
 export const SETTLEMENT_PERIODS: readonly SettlementPeriodOption[] = [
@@ -58,6 +62,39 @@ function synthSafetyBonus(baseSafety: number, seed: string): number {
   return round2(between(seed, 0, 25));
 }
 
+function periodTag(periodId: string): string {
+  if (periodId === "2026-03-16") return "MAR2";
+  if (periodId === "2026-03-01") return "MAR1";
+  if (periodId === "2026-02-16") return "FEB2";
+  return periodId.replace(/[^0-9]/g, "").slice(-4);
+}
+
+function driverOrdinalFromId(driverId: string): string {
+  const m = /^DRV-(\d+)$/i.exec(driverId);
+  if (!m) return "000";
+  return m[1].padStart(3, "0");
+}
+
+function isDev(): boolean {
+  return typeof process !== "undefined" && process.env.NODE_ENV !== "production";
+}
+
+function validatePerDriverVariance(rows: SettlementPeriodRow[], periodId: string) {
+  if (!isDev() || rows.length < 5) return;
+  const signatureCounts = new Map<string, number>();
+  for (const r of rows) {
+    const sig = `${r.baseEarnings ?? 0}|${r.grossPay}|${r.totalDeductions}|${r.netPay}`;
+    signatureCounts.set(sig, (signatureCounts.get(sig) ?? 0) + 1);
+  }
+  const maxCluster = Math.max(...signatureCounts.values());
+  if (maxCluster / rows.length > 0.8) {
+    // Dev-only guard for accidental summary-to-row mapping regressions.
+    console.warn(
+      `[settlement-periods] suspicious row duplication for ${periodId}: ${maxCluster}/${rows.length} rows share identical values`
+    );
+  }
+}
+
 export function getSettlementPeriods(): SettlementPeriodOption[] {
   return [...SETTLEMENT_PERIODS];
 }
@@ -70,28 +107,35 @@ export function getSettlementRowsForPeriod(
     return currentRows.map((r) => ({ ...r }));
   }
 
-  return currentRows.map((r) => {
+  const rows = currentRows.map((r) => {
     const seed = `${periodId}:${r.driverId}`;
-    const gross = round2(r.grossPay * between(`${seed}:gross`, 0.92, 1.06));
+    const base = round2((r.baseEarnings ?? Math.max(r.grossPay - r.backhaulPay - r.safetyBonus, 0)) * between(`${seed}:base`, 0.92, 1.06));
     const backhaul = round2(r.backhaulPay * between(`${seed}:backhaul`, 0.72, 1.28));
     const safetyBonus = synthSafetyBonus(r.safetyBonus, `${seed}:safety`);
-    const deductions = round2(r.totalDeductions * between(`${seed}:ded`, 0.94, 1.08));
-    const net = round2(gross - deductions);
+    const gross = round2(base + backhaul + safetyBonus);
+    const deductionRate = between(`${seed}:dedrate`, 0.065, 0.115);
+    const deductions = round2(gross * deductionRate);
+    const fuelReimbursement = round2((r.fuelReimbursement ?? 0) * between(`${seed}:fuel`, 0.8, 1.2));
+    const net = round2(gross - deductions + fuelReimbursement);
     const archivedStatus =
       periodId === "2026-02-16" && r.driverId === "DRV-004" ? "Pending" : "Paid";
 
     return {
-      settlementId: `${r.settlementId || "STL"}-${periodId.slice(2, 7).replace("-", "")}`,
+      settlementId: `STL-${driverOrdinalFromId(r.driverId)}-${periodTag(periodId)}`,
       driverId: r.driverId,
       driverName: r.driverName,
       status: archivedStatus,
+      baseEarnings: base,
       grossPay: gross,
       totalDeductions: deductions,
       netPay: net,
       backhaulPay: backhaul,
       safetyBonus,
+      fuelReimbursement,
     };
   });
+  validatePerDriverVariance(rows, periodId);
+  return rows;
 }
 
 export function getSettlementSummaryForPeriod(rows: SettlementPeriodRow[]) {
