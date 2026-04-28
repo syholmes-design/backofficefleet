@@ -148,7 +148,8 @@ export function bootstrapPayrollFromBof(data: BofData): {
     const adjustedGross = round2(s.baseEarnings + workbookBackhaulPay + safetyBonus);
     const status = mapToSettlementStatus(data, s);
 
-    const settlement_id = s.settlementId ?? `GEN-${s.driverId}`;
+    const settlement_id =
+      (s.settlementId && s.settlementId.trim()) || `GEN-${s.driverId}`;
     settlements.push({
       settlement_id,
       driver_id: s.driverId,

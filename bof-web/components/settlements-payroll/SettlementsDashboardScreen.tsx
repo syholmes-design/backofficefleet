@@ -211,6 +211,11 @@ export function SettlementsDashboardScreen() {
         <h2 className="mb-2 text-sm font-semibold text-slate-100">
           Driver settlement table
         </h2>
+        {selectedPeriod.isCurrent && currentPeriodRows.length === 0 && (
+          <div className="mb-2 rounded border border-rose-900/50 bg-rose-950/20 px-3 py-2 text-xs text-rose-200">
+            Settlement workbook rows unavailable.
+          </div>
+        )}
         <div className="overflow-x-auto rounded-lg border border-slate-800">
           <table className="w-full min-w-[960px] border-collapse text-left text-sm">
             <thead className="bg-slate-900/95 text-[10px] uppercase tracking-wide text-slate-500">

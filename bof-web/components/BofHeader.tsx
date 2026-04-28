@@ -10,17 +10,6 @@ const marketingNav = [
   { href: "/bof-vault", label: "BOF Vault" },
 ];
 
-const productNav = [
-  { href: "/dashboard", label: "Dashboard" },
-  { href: "/command-center", label: "Command Center" },
-  { href: "/drivers", label: "Drivers" },
-  { href: "/documents", label: "Documents" },
-  { href: "/settlements", label: "Settlements" },
-  { href: "/safety", label: "Safety" },
-  { href: "/dispatch", label: "Dispatch" },
-];
-
-
 export function BofHeader() {
   const pathname = usePathname();
   const marketingOnlyPaths = new Set([
@@ -33,6 +22,7 @@ export function BofHeader() {
     "/fleet-savings",
   ]);
   const marketingOnlyHeader = marketingOnlyPaths.has(pathname);
+  if (!marketingOnlyHeader) return null;
 
   return (
     <header className="bof-global-header">
@@ -52,30 +42,15 @@ export function BofHeader() {
               </Link>
             ))}
           </div>
-          {marketingOnlyHeader ? (
-            <div className="bof-global-header-nav-group" aria-label="Demo">
-              <Link href="/dashboard" className="bof-global-header-nav-link">Product Demo</Link>
-            </div>
-          ) : (
-            <>
-              <span className="bof-global-header-sep" aria-hidden="true" />
-              <div className="bof-global-header-nav-group" aria-label="Product demo">
-                {productNav.map((item) => (
-                  <Link key={item.href} href={item.href} className="bof-global-header-nav-link">
-                    {item.label}
-                  </Link>
-                ))}
-              </div>
-            </>
-          )}
+          <div className="bof-global-header-nav-group" aria-label="Demo">
+            <Link href="/dashboard" className="bof-global-header-nav-link">Product Demo</Link>
+          </div>
           <div className="bof-global-header-ctas">
-            {marketingOnlyHeader && (
-              <Link href="/apply" className="bof-global-header-cta bof-global-header-cta--primary">
-                Become a Founding Member
-              </Link>
-            )}
+            <Link href="/apply" className="bof-global-header-cta bof-global-header-cta--primary">
+              Become a Founding Member
+            </Link>
             <Link href="/book-assessment" className="bof-global-header-cta bof-global-header-cta--secondary">
-              {marketingOnlyHeader ? "Assess Your Fleet" : "Book Assessment"}
+              Assess Your Fleet
             </Link>
           </div>
         </nav>

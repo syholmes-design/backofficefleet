@@ -81,13 +81,24 @@ function isDev(): boolean {
 
 function validatePerDriverVariance(rows: SettlementPeriodRow[], periodId: string) {
   if (!isDev() || rows.length < 5) return;
+  const oversized = rows.filter((r) => (r.baseEarnings ?? 0) > 10000 || r.grossPay > 10000);
+  if (oversized.length > 0) {
+    console.warn(
+      `[settlement-periods] settlement row appears to contain fleet totals, not driver-level pay (${periodId})`,
+      oversized.slice(0, 3).map((r) => ({
+        driverId: r.driverId,
+        baseEarnings: r.baseEarnings ?? 0,
+        grossPay: r.grossPay,
+      }))
+    );
+  }
   const signatureCounts = new Map<string, number>();
   for (const r of rows) {
     const sig = `${r.baseEarnings ?? 0}|${r.grossPay}|${r.totalDeductions}|${r.netPay}`;
     signatureCounts.set(sig, (signatureCounts.get(sig) ?? 0) + 1);
   }
   const maxCluster = Math.max(...signatureCounts.values());
-  if (maxCluster / rows.length > 0.8) {
+  if (maxCluster / rows.length > 0.5) {
     // Dev-only guard for accidental summary-to-row mapping regressions.
     console.warn(
       `[settlement-periods] suspicious row duplication for ${periodId}: ${maxCluster}/${rows.length} rows share identical values`
@@ -104,7 +115,9 @@ export function getSettlementRowsForPeriod(
   currentRows: CurrentSettlementRowInput[]
 ): SettlementPeriodRow[] {
   if (periodId === "current-2026-04-01") {
-    return currentRows.map((r) => ({ ...r }));
+    const rows = currentRows.map((r) => ({ ...r }));
+    validatePerDriverVariance(rows, periodId);
+    return rows;
   }
 
   const rows = currentRows.map((r) => {

@@ -143,6 +143,12 @@ function normalizeSettlementPhotoUrl(raw, driverId) {
   return u;
 }
 
+function settlementIdFromDriverId(driverId) {
+  const m = /^DRV-(\d+)$/i.exec(String(driverId ?? "").trim());
+  if (!m) return "";
+  return `STL-${m[1].padStart(3, "0")}`;
+}
+
 function buildHeaderLookup(firstRow) {
   const lookup = new Map();
   for (const key of Object.keys(firstRow ?? {})) {
@@ -208,7 +214,7 @@ function rowToSettlement(r) {
   return {
     driverId,
     photoUrl: normalizeSettlementPhotoUrl(r.photoUrl, driverId),
-    settlementId: str(r.settlementId),
+    settlementId: str(r.settlementId) || settlementIdFromDriverId(driverId),
     exportStatus: str(r.exportStatus),
     settlementUrl: str(r.settlementUrl),
     settlementDocStatus: str(r.settlementDocStatus),
