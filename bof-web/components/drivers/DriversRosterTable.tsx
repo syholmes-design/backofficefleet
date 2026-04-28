@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useBofDemoData } from "@/lib/bof-demo-data-context";
 import { DriverAvatar } from "@/components/DriverAvatar";
 import { driverPhotoPath } from "@/lib/driver-photo";
@@ -19,70 +19,142 @@ type DriverRow = {
     label: string;
     blocker?: string;
   };
-  pendingPay: string;
+  pendingPay: number;
+  pendingPayReason?: string;
   actions: {
     profile: string;
     hr: string;
     vault: string;
     safety: string;
     settlements: string;
-    dispatch?: string;
+    dispatch: string;
   };
 };
+
+const CURRENCY = new Intl.NumberFormat("en-US", {
+  style: "currency",
+  currency: "USD",
+  maximumFractionDigits: 2,
+});
+
+function formatCityStateFromAddress(address?: string): string {
+  if (!address) return "Unknown terminal";
+  const parts = address.split(",");
+  if (parts.length < 2) return address;
+  const city = parts[parts.length - 2]?.trim();
+  const stateZip = parts[parts.length - 1]?.trim() ?? "";
+  const state = stateZip.split(" ")[0];
+  if (!city || !state) return address;
+  return `${city}, ${state}`;
+}
+
+function formatCityStateFromStop(stop?: string): string {
+  if (!stop) return "Unknown destination";
+  const parts = stop.split(" - ");
+  return parts[parts.length - 1]?.trim() || stop;
+}
 
 export function DriversRosterTable() {
   const { data } = useBofDemoData();
   const [dropdownOpen, setDropdownOpen] = useState<string | null>(null);
+  const rosterRootRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    function onOutsideClick(event: MouseEvent) {
+      if (!rosterRootRef.current?.contains(event.target as Node)) {
+        setDropdownOpen(null);
+      }
+    }
+    document.addEventListener("mousedown", onOutsideClick);
+    return () => document.removeEventListener("mousedown", onOutsideClick);
+  }, []);
 
   const driverRows = useMemo(() => {
+    const settlements =
+      (data as typeof data & {
+        settlements?: Array<{
+          driverId: string;
+          netPay?: number;
+          status?: string;
+          pendingReason?: string;
+        }>;
+      }).settlements ?? [];
+    const moneyAtRisk = data.moneyAtRisk ?? [];
+
     return data.drivers.map((driver) => {
       const documents = getOrderedDocumentsForDriver(data, driver.id);
       const readiness = readinessFromDocuments(documents);
       const trucks = assignedTrucksForDriver(data, driver.id);
       const primary = primaryAssignedTruck(data, driver.id);
       const compliance = complianceNotesForDriver(data, driver.id);
-      
-      // Asset assignment
-      const assetLabel = trucks.length === 0 
-        ? "Unassigned" 
-        : trucks.length === 1 
-          ? trucks[0] 
-          : `${primary ?? trucks[0]} (${trucks.length} assets)`;
 
-      // Current operational status
-      const activeLoad = data.loads.find(l => l.driverId === driver.id && (l.status === "En Route" || l.status === "Pending"));
-      let status = "Available · Terminal";
+      const assetLabel =
+        trucks.length === 0
+          ? "Unassigned"
+          : trucks.length === 1
+            ? trucks[0]
+            : `${primary ?? trucks[0]} (${trucks.length} assets)`;
+
+      const activeLoad = data.loads.find(
+        (l) =>
+          l.driverId === driver.id && (l.status === "En Route" || l.status === "Pending")
+      );
+      const latestLoad = data.loads.find((l) => l.driverId === driver.id);
+      const terminalLabel = formatCityStateFromAddress(driver.address);
+      let status = `Available · ${terminalLabel} terminal`;
       let statusLink = undefined;
-      
+
       if (activeLoad) {
         if (activeLoad.status === "En Route") {
-          status = `In transit · ${activeLoad.number}`;
+          status = `In transit · L${activeLoad.number}`;
           statusLink = `/loads/${activeLoad.id}`;
         } else {
-          status = `At receiver · ${activeLoad.destination || "Destination"}`;
+          status = `At receiver · ${formatCityStateFromStop(activeLoad.destination)}`;
           statusLink = `/loads/${activeLoad.id}`;
         }
       } else if (readiness.missing + readiness.expired > 0) {
         status = "In pipeline · Onboarding";
+      } else if (latestLoad?.status === "Delivered") {
+        status = `Off duty · Rest stop · ${terminalLabel.split(", ")[1] ?? "PA"}`;
       }
 
-      // Compliance status
       let complianceStatus: "ok" | "warn" | "danger" = "ok";
       let complianceLabel = "Compliant";
       let blocker = undefined;
-      
+
+      const openHighRisk = compliance.filter(
+        (c) =>
+          (c.severity.toUpperCase() === "HIGH" || c.severity.toUpperCase() === "CRITICAL") &&
+          c.status.toUpperCase() !== "CLOSED"
+      );
+
       if (readiness.missing + readiness.expired > 0) {
         complianceStatus = "danger";
         complianceLabel = "Action required";
         blocker = `${readiness.missing + readiness.expired} items need attention`;
-      } else if (compliance.some(c => c.severity.toUpperCase() === "HIGH" && c.status.toUpperCase() !== "CLOSED")) {
+      } else if (openHighRisk.length > 0) {
         complianceStatus = "warn";
         complianceLabel = "At risk";
-        blocker = "Compliance items need review";
+        blocker = `${openHighRisk.length} incident item(s) open`;
       }
 
-      // Pending pay (mock data for now - would come from settlements)
-      const pendingPay = Math.floor(Math.random() * 2000) + 500;
+      const driverMar = moneyAtRisk.filter(
+        (row) =>
+          row.driverId === driver.id &&
+          !["CLOSED", "RESOLVED", "PAID"].includes((row.status ?? "").toUpperCase())
+      );
+      const pendingFromMar = driverMar.reduce((sum, row) => sum + (row.amount ?? 0), 0);
+
+      const pendingSettlement = settlements.find(
+        (row) => row.driverId === driver.id && row.status?.toUpperCase() === "PENDING"
+      );
+      const pendingFromSettlement = pendingSettlement?.netPay ?? 0;
+      const pendingPay = pendingFromMar > 0 ? pendingFromMar : pendingFromSettlement;
+      const pendingPayReason =
+        driverMar[0]?.rootCause ??
+        (pendingSettlement?.pendingReason
+          ? `Settlement pending: ${pendingSettlement.pendingReason}`
+          : undefined);
 
       return {
         id: driver.id,
@@ -94,17 +166,18 @@ export function DriversRosterTable() {
         compliance: {
           status: complianceStatus,
           label: complianceLabel,
-          blocker
+          blocker,
         },
-        pendingPay: `$${pendingPay}`,
+        pendingPay,
+        pendingPayReason,
         actions: {
           profile: `/drivers/${driver.id}/profile`,
           hr: `/drivers/${driver.id}/hr`,
           vault: `/drivers/${driver.id}/vault`,
           safety: `/drivers/${driver.id}/safety`,
           settlements: `/drivers/${driver.id}/settlements`,
-          dispatch: `/drivers/${driver.id}/dispatch`
-        }
+          dispatch: `/drivers/${driver.id}/dispatch`,
+        },
       };
     });
   }, [data]);
@@ -114,12 +187,12 @@ export function DriversRosterTable() {
   };
 
   return (
-    <div className="bof-page">
+    <div className="bof-page" ref={rosterRootRef}>
       <div className="bof-roster-header">
-        <h1 className="bof-title">Drivers</h1>
+        <h1 className="bof-title">Driver Operations Roster</h1>
         <p className="bof-lead">
-          Fleet-wide driver roster with operational status, compliance, and settlement data. 
-          Individual driver details available through profile actions.
+          Fleet-wide operations view with dispatch status, compliance posture, and pending pay exposure.
+          Use Actions to route into each driver module without leaving roster context.
         </p>
       </div>
 
@@ -143,7 +216,9 @@ export function DriversRosterTable() {
                     <DriverAvatar name={driver.name} photoUrl={driver.photo} size={40} />
                     <div className="bof-roster-driver-info">
                       <div className="bof-roster-driver-name">{driver.name}</div>
-                      <div className="bof-roster-driver-id">{driver.id}</div>
+                      <div className="bof-roster-driver-id">
+                        {driver.id} · {formatCityStateFromAddress(data.drivers.find((d) => d.id === driver.id)?.address)}
+                      </div>
                     </div>
                   </div>
                 </td>
@@ -176,7 +251,12 @@ export function DriversRosterTable() {
                 </td>
                 
                 <td className="bof-roster-cell">
-                  <span className="bof-roster-pay">{driver.pendingPay}</span>
+                  <span className="bof-roster-pay">
+                    {driver.pendingPay > 0 ? CURRENCY.format(driver.pendingPay) : "—"}
+                  </span>
+                  {driver.pendingPayReason && (
+                    <div className="bof-roster-pay-reason">{driver.pendingPayReason}</div>
+                  )}
                 </td>
                 
                 <td className="bof-roster-cell">
@@ -188,7 +268,7 @@ export function DriversRosterTable() {
                       aria-expanded={dropdownOpen === driver.id}
                       aria-haspopup="true"
                     >
-                      Actions
+                      Open
                       <svg 
                         className="bof-roster-action-chevron" 
                         width="12" 
@@ -217,11 +297,9 @@ export function DriversRosterTable() {
                         <Link href={driver.actions.settlements} className="bof-roster-dropdown-item">
                           Settlements
                         </Link>
-                        {driver.actions.dispatch && (
-                          <Link href={driver.actions.dispatch} className="bof-roster-dropdown-item">
-                            Current Load
-                          </Link>
-                        )}
+                        <Link href={driver.actions.dispatch} className="bof-roster-dropdown-item">
+                          Dispatch
+                        </Link>
                       </div>
                     )}
                   </div>
