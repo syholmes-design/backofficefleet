@@ -200,3 +200,9 @@ export function getAtRiskSafetyDrivers(): SafetyScorecardRow[] {
 export function getSafetyViolationActions(): SafetyViolationActionRow[] {
   return [...SAFETY_VIOLATION_ACTIONS];
 }
+
+export function getSafetyBonusByDriverId(driverId: string): number {
+  return (
+    SAFETY_SCORECARD_ROWS.find((r) => r.driverId === driverId)?.safetyBonusUsd ?? 0
+  );
+}

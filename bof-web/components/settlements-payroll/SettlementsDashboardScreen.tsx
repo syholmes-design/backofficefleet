@@ -11,6 +11,7 @@ import { getMockBackhaulOpportunities } from "@/lib/backhaul-opportunity-engine"
 
 export function SettlementsDashboardScreen() {
   const settlements = useSettlementsPayrollStore((s) => s.settlements);
+  const lines = useSettlementsPayrollStore((s) => s.lines);
   const openDrawer = useSettlementsPayrollStore((s) => s.openDrawer);
   const generatedDocs = useSettlementsPayrollStore(
     (s) => s.generatedDocsBySettlementId
@@ -36,6 +37,28 @@ export function SettlementsDashboardScreen() {
     () => getMockBackhaulOpportunities(getBofData()),
     []
   );
+  const settlementEarningsById = useMemo(() => {
+    const out = new Map<
+      string,
+      { base: number; backhaul: number; safetyBonus: number; gross: number }
+    >();
+    for (const line of lines) {
+      const cur = out.get(line.settlement_id) ?? {
+        base: 0,
+        backhaul: 0,
+        safetyBonus: 0,
+        gross: 0,
+      };
+      if (line.type === "Earnings") {
+        cur.gross += line.amount;
+        if (line.description === "Base earnings (Payroll_Clean)") cur.base += line.amount;
+        else if (line.description.includes("Backhaul pay")) cur.backhaul += line.amount;
+        else if (line.description.includes("Safety bonus")) cur.safetyBonus += line.amount;
+      }
+      out.set(line.settlement_id, cur);
+    }
+    return out;
+  }, [lines]);
 
   const filtered = useMemo(() => {
     return settlements.filter((s) => {
@@ -65,6 +88,10 @@ export function SettlementsDashboardScreen() {
           Rows derived from <span className="font-mono text-slate-300">demo-data.json</span>{" "}
           Payroll_Clean merge. Net pay is recomputed from settlement lines (gross −
           deductions). Open a row for line detail and export rules.
+        </p>
+        <p className="mt-1 max-w-3xl text-xs text-slate-500">
+          Payroll earnings include base earnings, approved backhaul pay, and
+          safety bonuses generated from the Safety &amp; Compliance module.
         </p>
       </header>
 
@@ -238,6 +265,15 @@ export function SettlementsDashboardScreen() {
                 Driver
               </th>
               <th className="border-b border-slate-800 px-3 py-2 font-medium">Period</th>
+                <th className="border-b border-slate-800 px-3 py-2 font-medium text-right">
+                  Base
+                </th>
+                <th className="border-b border-slate-800 px-3 py-2 font-medium text-right">
+                  Backhaul
+                </th>
+                <th className="border-b border-slate-800 px-3 py-2 font-medium text-right">
+                  Safety bonus
+                </th>
               <th className="border-b border-slate-800 px-3 py-2 font-medium text-right">
                 Gross
               </th>
@@ -267,6 +303,21 @@ export function SettlementsDashboardScreen() {
                 </td>
                 <td className="whitespace-nowrap px-3 py-2 font-mono text-xs text-slate-400">
                   {s.period_start} → {s.period_end}
+                </td>
+                <td className="px-3 py-2 text-right font-mono text-xs">
+                  {formatPayrollCurrency(
+                    settlementEarningsById.get(s.settlement_id)?.base ?? 0
+                  )}
+                </td>
+                <td className="px-3 py-2 text-right font-mono text-xs text-teal-200">
+                  {formatPayrollCurrency(
+                    settlementEarningsById.get(s.settlement_id)?.backhaul ?? 0
+                  )}
+                </td>
+                <td className="px-3 py-2 text-right font-mono text-xs text-amber-200">
+                  {formatPayrollCurrency(
+                    settlementEarningsById.get(s.settlement_id)?.safetyBonus ?? 0
+                  )}
                 </td>
                 <td className="px-3 py-2 text-right font-mono text-xs">
                   {formatPayrollCurrency(s.total_gross_pay)}

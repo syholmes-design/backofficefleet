@@ -1,5 +1,6 @@
 import type { BofData } from "./load-bof-data";
 import { getLoadProofItems } from "./load-proof";
+import { getSafetyBonusByDriverId } from "./safety-scorecard";
 
 export type CommandCenterItem = {
   id: string;
@@ -153,29 +154,54 @@ export function buildCommandCenterItems(data: BofData): CommandCenterItem[] {
 export function settlementTotals(data: BofData) {
   if (!("settlements" in data) || !Array.isArray(data.settlements)) {
     return {
+      totalBase: 0,
+      totalBackhaul: 0,
+      totalSafetyBonus: 0,
       totalGross: 0,
       totalDeductions: 0,
+      totalFuelReimb: 0,
       totalNet: 0,
       pendingOrHold: 0,
     };
   }
+  let totalBase = 0;
+  let totalBackhaul = 0;
+  let totalSafetyBonus = 0;
   let totalGross = 0;
   let totalDeductions = 0;
+  let totalFuelReimb = 0;
   let totalNet = 0;
   let pendingOrHold = 0;
   for (const s of data.settlements) {
-    totalGross += s.grossPay;
+    const safetyBonus = getSafetyBonusByDriverId(s.driverId);
+    const gross = s.baseEarnings + s.backhaulPay + safetyBonus;
+    totalBase += s.baseEarnings;
+    totalBackhaul += s.backhaulPay;
+    totalSafetyBonus += safetyBonus;
+    totalGross += gross;
     totalDeductions += s.deductions;
+    totalFuelReimb += s.fuelReimbursement;
     totalNet += s.netPay;
     if (PENDING.has(s.status)) pendingOrHold += 1;
   }
-  return { totalGross, totalDeductions, totalNet, pendingOrHold };
+  return {
+    totalBase,
+    totalBackhaul,
+    totalSafetyBonus,
+    totalGross,
+    totalDeductions,
+    totalFuelReimb,
+    totalNet,
+    pendingOrHold,
+  };
 }
 
 export function enrichSettlementRows(data: BofData) {
   if (!("settlements" in data) || !Array.isArray(data.settlements)) return [];
   return data.settlements.map((s) => ({
     ...s,
+    safetyBonus: getSafetyBonusByDriverId(s.driverId),
+    grossPay: s.baseEarnings + s.backhaulPay + getSafetyBonusByDriverId(s.driverId),
     name: data.drivers.find((d) => d.id === s.driverId)?.name ?? s.driverId,
   }));
 }

@@ -6,6 +6,7 @@ import {
   proofItemsForDriverLoads,
 } from "@/lib/load-proof";
 import { getBookedOrApprovedBackhaulForDriver } from "@/lib/backhaul-opportunity-engine";
+import { getSafetyBonusByDriverId } from "@/lib/safety-scorecard";
 import type {
   Load,
   Settlement,
@@ -15,7 +16,18 @@ import type {
 
 export type RawSettlement = NonNullable<BofData["settlements"]>[number] & {
   lifeInsuranceAbove50k?: number;
+  safetyBonus?: number;
 };
+
+function round2(n: number): number {
+  return Math.round(n * 100) / 100;
+}
+
+function scalePctAmount(previousAmount: number, oldGross: number, newGross: number): number {
+  if (!previousAmount || !Number.isFinite(previousAmount)) return 0;
+  if (!oldGross || oldGross <= 0) return previousAmount;
+  return round2((previousAmount / oldGross) * newGross);
+}
 
 function customerFromOrigin(origin: string): string {
   const part = origin.split(" - ")[0]?.trim() || origin;
@@ -130,6 +142,10 @@ export function bootstrapPayrollFromBof(data: BofData): {
     const s = row as unknown as RawSettlement;
     const period = periodForIndex(idx);
     const hold = workbookHold(s);
+    const safetyBonus = getSafetyBonusByDriverId(s.driverId);
+    const oldGrossBase = s.grossPay || s.baseEarnings + s.backhaulPay;
+    const workbookBackhaulPay = s.backhaulPay;
+    const adjustedGross = round2(s.baseEarnings + workbookBackhaulPay + safetyBonus);
     const status = mapToSettlementStatus(data, s);
 
     const settlement_id = s.settlementId ?? `GEN-${s.driverId}`;
@@ -139,7 +155,7 @@ export function bootstrapPayrollFromBof(data: BofData): {
       driver_name: row.name,
       period_start: period.start,
       period_end: period.end,
-      total_gross_pay: s.grossPay,
+      total_gross_pay: adjustedGross,
       total_deductions: s.deductions,
       net_pay: s.netPay,
       status,
@@ -174,7 +190,7 @@ export function bootstrapPayrollFromBof(data: BofData): {
 
     const backhaulOpp = getBookedOrApprovedBackhaulForDriver(data, s.driverId);
     const modeledBackhaulPay = backhaulOpp?.driverBackhaulPay ?? 0;
-    const effectiveBackhaulPay = Math.max(s.backhaulPay, modeledBackhaulPay);
+    const effectiveBackhaulPay = Math.max(workbookBackhaulPay, modeledBackhaulPay);
 
     if (effectiveBackhaulPay > 0) {
       pushLine({
@@ -202,6 +218,17 @@ export function bootstrapPayrollFromBof(data: BofData): {
       });
     }
 
+    if (safetyBonus > 0) {
+      pushLine({
+        settlement_id,
+        type: "Earnings",
+        description: "Safety bonus (Safety & Compliance)",
+        amount: safetyBonus,
+        load_id: null,
+        proof_status: null,
+      });
+    }
+
     if (s.fuelReimbursement > 0) {
       pushLine({
         settlement_id,
@@ -216,7 +243,7 @@ export function bootstrapPayrollFromBof(data: BofData): {
       });
     }
 
-    const deductionSpecs: [string, number][] = [
+    const rawDeductionSpecs: [string, number][] = [
       ["FICA", s.fica],
       ["OASDI", s.oasdi],
       ["Federal withholding", s.federalWithholding],
@@ -232,10 +259,45 @@ export function bootstrapPayrollFromBof(data: BofData): {
       ["Life insurance (>50k)", s.lifeInsuranceAbove50k],
     ];
 
-    let dedSum = 0;
+    const deductionSpecs: [string, number][] = [
+      [
+        "FICA",
+        scalePctAmount(s.fica, oldGrossBase, adjustedGross),
+      ],
+      [
+        "OASDI",
+        scalePctAmount(s.oasdi, oldGrossBase, adjustedGross),
+      ],
+      [
+        "Federal withholding",
+        scalePctAmount(s.federalWithholding, oldGrossBase, adjustedGross),
+      ],
+      [
+        "State withholding",
+        scalePctAmount(s.stateWithholding, oldGrossBase, adjustedGross),
+      ],
+      [
+        "SDI",
+        scalePctAmount(s.sdi, oldGrossBase, adjustedGross),
+      ],
+      [
+        "FM leave",
+        scalePctAmount(s.fmLeave, oldGrossBase, adjustedGross),
+      ],
+      ["Family support", s.familySupport],
+      ["Insurance premiums", s.insurancePremiums],
+      ["Credit union / savings club", s.creditUnionSavingsClub],
+      [
+        "401(k) contribution",
+        scalePctAmount(s.contribution401k, oldGrossBase, adjustedGross),
+      ],
+      ["HSA/FSA health", s.hsaFsaHealthDeduction],
+      ["Health insurance premiums", s.healthInsurancePremiums],
+      ["Life insurance (>50k)", s.lifeInsuranceAbove50k],
+    ];
+
     for (const [label, amt] of deductionSpecs) {
       if (amt && amt > 0) {
-        dedSum += amt;
         pushLine({
           settlement_id,
           type: "Deduction",
@@ -247,7 +309,9 @@ export function bootstrapPayrollFromBof(data: BofData): {
       }
     }
 
-    const remainder = Math.round((s.deductions - dedSum) * 100) / 100;
+    const originalDeductionSum = rawDeductionSpecs.reduce((a, [, amt]) => a + (amt || 0), 0);
+    const carryThroughRemainder = round2(s.deductions - originalDeductionSum);
+    const remainder = round2(carryThroughRemainder);
     if (remainder > 0.005) {
       pushLine({
         settlement_id,

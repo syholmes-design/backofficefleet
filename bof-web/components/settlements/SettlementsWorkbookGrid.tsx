@@ -41,8 +41,24 @@ export function SettlementsWorkbookGrid() {
         <code className="bof-code">npm run merge:settlements</code> for settlements
         only). This view reads that JSON. Scroll horizontally for all columns.
       </p>
+      <p className="bof-lead text-sm">
+        Payroll earnings include base earnings, approved backhaul pay, and safety
+        bonuses generated from the Safety &amp; Compliance module.
+      </p>
 
       <section className="bof-kpi-grid" aria-label="Settlement totals">
+        <div className="bof-kpi">
+          <span className="bof-kpi-label">Total base earnings</span>
+          <span className="bof-kpi-value">{formatUsdFull(st.totalBase)}</span>
+        </div>
+        <div className="bof-kpi">
+          <span className="bof-kpi-label">Total backhaul pay</span>
+          <span className="bof-kpi-value">{formatUsdFull(st.totalBackhaul)}</span>
+        </div>
+        <div className="bof-kpi">
+          <span className="bof-kpi-label">Total safety bonus</span>
+          <span className="bof-kpi-value">{formatUsdFull(st.totalSafetyBonus)}</span>
+        </div>
         <div className="bof-kpi">
           <span className="bof-kpi-label">Total gross pay</span>
           <span className="bof-kpi-value">{formatUsdFull(st.totalGross)}</span>
@@ -52,6 +68,10 @@ export function SettlementsWorkbookGrid() {
           <span className="bof-kpi-value">
             {formatUsdFull(st.totalDeductions)}
           </span>
+        </div>
+        <div className="bof-kpi">
+          <span className="bof-kpi-label">Total fuel reimb.</span>
+          <span className="bof-kpi-value">{formatUsdFull(st.totalFuelReimb)}</span>
         </div>
         <div className="bof-kpi">
           <span className="bof-kpi-label">Total net pay</span>
@@ -86,6 +106,9 @@ export function SettlementsWorkbookGrid() {
               </th>
               <th scope="col" className="bof-num" title="Backhaul pay">
                 Backhaul pay
+              </th>
+              <th scope="col" className="bof-num" title="Safety bonus">
+                Safety bonus
               </th>
               <th scope="col" className="bof-num">
                 FICA
@@ -159,6 +182,7 @@ function SettlementTableRow({
   const r = row as SettlementRow & {
     baseEarnings?: number;
     backhaulPay?: number;
+    safetyBonus?: number;
     fica?: number;
     oasdi?: number;
     federalWithholding?: number;
@@ -222,6 +246,7 @@ function SettlementTableRow({
       </td>
       <td className="bof-num">{usd(r.baseEarnings)}</td>
       <td className="bof-num">{usd(r.backhaulPay)}</td>
+      <td className="bof-num">{usd(r.safetyBonus)}</td>
       <td className="bof-num">{usd(r.fica)}</td>
       <td className="bof-num">{usd(r.oasdi)}</td>
       <td className="bof-num">{usd(r.federalWithholding)}</td>
