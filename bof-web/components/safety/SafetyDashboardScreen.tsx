@@ -26,6 +26,7 @@ import {
   getSafetyViolationActions,
   type SafetyPerformanceTier,
 } from "@/lib/safety-scorecard";
+import { getSafetyMonthlyTrend } from "@/lib/demo-trends";
 
 export function SafetyDashboardScreen() {
   const drivers = useSafetyStore((s) => s.drivers);
@@ -58,6 +59,7 @@ export function SafetyDashboardScreen() {
   const safetyScoreSummary = useMemo(() => getSafetyScorecardSummary(), []);
   const atRiskSafetyDrivers = useMemo(() => getAtRiskSafetyDrivers(), []);
   const safetyViolationActions = useMemo(() => getSafetyViolationActions(), []);
+  const safetyMonthlyTrend = useMemo(() => getSafetyMonthlyTrend(), []);
 
   const immediateAttention = useMemo(() => {
     const items: {
@@ -143,6 +145,49 @@ export function SafetyDashboardScreen() {
           value={formatExposure(safetyScoreSummary.safetyBonusEarnedUsd)}
           icon={<ShieldAlert className="h-4 w-4 text-rose-400" />}
         />
+      </section>
+
+      <section className="rounded-lg border border-slate-800 bg-slate-900/30 p-4">
+        <div className="mb-2 flex items-center justify-between gap-2">
+          <h2 className="text-sm font-semibold text-slate-100">
+            6-Month Safety Trend
+          </h2>
+          <span className="rounded bg-slate-900 px-2 py-0.5 text-[11px] text-slate-400">
+            Demo trend data
+          </span>
+        </div>
+        <div className="overflow-x-auto rounded border border-slate-800">
+          <table className="w-full min-w-[860px] border-collapse text-left text-xs">
+            <thead className="bg-slate-900/90 text-[10px] uppercase tracking-wide text-slate-500">
+              <tr>
+                <th className="border-b border-slate-800 px-2 py-2 font-medium">Month</th>
+                <th className="border-b border-slate-800 px-2 py-2 font-medium">Safety Score</th>
+                <th className="border-b border-slate-800 px-2 py-2 font-medium">Avg HOS</th>
+                <th className="border-b border-slate-800 px-2 py-2 font-medium">At-Risk Drivers</th>
+                <th className="border-b border-slate-800 px-2 py-2 font-medium">OOS Violations</th>
+                <th className="border-b border-slate-800 px-2 py-2 font-medium">Cargo Damage Exposure</th>
+                <th className="border-b border-slate-800 px-2 py-2 font-medium">Safety Bonus Paid</th>
+              </tr>
+            </thead>
+            <tbody className="text-slate-200">
+              {safetyMonthlyTrend.map((row) => (
+                <tr key={row.month} className="border-b border-slate-800/80">
+                  <td className="px-2 py-1.5 font-medium text-slate-100">{row.month}</td>
+                  <td className="px-2 py-1.5 font-mono text-teal-300">{row.safetyScore}</td>
+                  <td className="px-2 py-1.5 font-mono">{row.avgHosCompliance}%</td>
+                  <td className="px-2 py-1.5 font-mono">{row.atRiskDrivers}</td>
+                  <td className="px-2 py-1.5 font-mono">{row.oosViolations}</td>
+                  <td className="px-2 py-1.5 font-mono text-rose-300">
+                    {formatExposure(row.cargoDamageExposure)}
+                  </td>
+                  <td className="px-2 py-1.5 font-mono text-emerald-300">
+                    {formatExposure(row.safetyBonusPaid)}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </section>
 
       <section>
