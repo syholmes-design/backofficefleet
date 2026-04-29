@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import Link from "next/link";
 import { AlertOctagon, FileWarning, ShieldAlert, UserX } from "lucide-react";
 import { formatExposure } from "./safety-ui";
@@ -191,6 +191,7 @@ export function SafetyDashboardScreen() {
                       key={item.id}
                       className="rounded border border-slate-800 bg-slate-950/50 px-2 py-2 text-xs"
                     >
+                      <EvidenceThumb url={item.url} alt={item.label} />
                       <div className="flex items-center justify-between gap-2">
                         <span className="font-medium text-slate-100">{item.label}</span>
                         <span
@@ -205,6 +206,10 @@ export function SafetyDashboardScreen() {
                         </span>
                       </div>
                       <p className="mt-1 text-slate-400">{item.note}</p>
+                      <p className="mt-1 text-[10px] text-slate-500">
+                        {item.date}
+                        {item.location ? ` · ${item.location}` : ""}
+                      </p>
                       <a
                         href={item.url}
                         target="_blank"
@@ -303,6 +308,26 @@ export function SafetyDashboardScreen() {
         </p>
       </section>
     </div>
+  );
+}
+
+function EvidenceThumb({ url, alt }: { url: string; alt: string }) {
+  const [failed, setFailed] = useState(false);
+  if (failed) {
+    return (
+      <div className="mb-2 rounded border border-slate-700 bg-slate-900 px-2 py-1 text-[10px] text-slate-400">
+        Evidence image unavailable
+      </div>
+    );
+  }
+  return (
+    // eslint-disable-next-line @next/next/no-img-element
+    <img
+      src={url}
+      alt={alt}
+      className="mb-2 h-28 w-full rounded border border-slate-800 object-cover"
+      onError={() => setFailed(true)}
+    />
   );
 }
 

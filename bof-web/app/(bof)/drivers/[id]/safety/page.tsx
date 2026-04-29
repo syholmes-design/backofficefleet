@@ -1,6 +1,6 @@
 "use client";
 
-import { use } from "react";
+import { use, useState } from "react";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { useBofDemoData } from "@/lib/bof-demo-data-context";
@@ -149,11 +149,12 @@ export default function DriverSafetyPage({ params }: Props) {
         <section className="rounded-lg border border-slate-800 bg-slate-900/30 p-4">
           <h2 className="mb-2 text-sm font-semibold text-slate-100">Safety Events / Evidence Photos</h2>
           {evidence.length === 0 ? (
-            <p className="text-xs text-slate-500">No open safety events for this driver.</p>
+            <p className="text-xs text-slate-500">No safety evidence photos on file for this driver.</p>
           ) : (
             <div className="grid gap-2 md:grid-cols-2">
               {evidence.map((item) => (
                 <div key={item.id} className="rounded border border-slate-800 bg-slate-950/50 p-3 text-xs">
+                  <EvidenceThumb url={item.url} alt={item.label} />
                   <div className="flex items-center justify-between gap-2">
                     <span className="font-medium text-slate-100">{item.label}</span>
                     <span
@@ -168,6 +169,10 @@ export default function DriverSafetyPage({ params }: Props) {
                     </span>
                   </div>
                   <p className="mt-1 text-slate-400">{item.note}</p>
+                  <p className="mt-1 text-[10px] text-slate-500">
+                    {item.date}
+                    {item.location ? ` · ${item.location}` : ""}
+                  </p>
                   <a
                     href={item.url}
                     target="_blank"
@@ -247,6 +252,26 @@ export default function DriverSafetyPage({ params }: Props) {
         </section>
       </div>
     </div>
+  );
+}
+
+function EvidenceThumb({ url, alt }: { url: string; alt: string }) {
+  const [failed, setFailed] = useState(false);
+  if (failed) {
+    return (
+      <div className="mb-2 rounded border border-slate-700 bg-slate-900 px-2 py-1 text-[10px] text-slate-400">
+        Evidence image unavailable
+      </div>
+    );
+  }
+  return (
+    // eslint-disable-next-line @next/next/no-img-element
+    <img
+      src={url}
+      alt={alt}
+      className="mb-2 h-28 w-full rounded border border-slate-800 object-cover"
+      onError={() => setFailed(true)}
+    />
   );
 }
 

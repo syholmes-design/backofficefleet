@@ -1,5 +1,5 @@
 import type { BofData } from "./load-bof-data";
-import { getSafetyEvidenceByLoadId } from "./safety-scorecard";
+import { getSafetyEvidenceByLoadId } from "./safety-evidence";
 
 export const LOAD_PROOF_TYPES = [
   "Rate Confirmation",
@@ -591,7 +591,7 @@ export function getLoadDocumentPacket(data: BofData, loadId: string): LoadDocume
       loadId,
       label: ev.label,
       type:
-        ev.type === "cargo_damage_photo"
+        ev.type === "cargo_damage"
           ? "cargo_photo"
           : "safety_violation_photo",
       status: "ready",
