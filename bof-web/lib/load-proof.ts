@@ -68,6 +68,49 @@ export type LoadProofBundle = {
   items?: Partial<Record<string, Partial<LoadProofItem>>>;
 };
 
+export type LoadEvidenceType =
+  | "rate_confirmation"
+  | "bol"
+  | "pod"
+  | "invoice"
+  | "cargo_photo"
+  | "seal_photo"
+  | "safety_violation_photo"
+  | "lumper_receipt"
+  | "rfid_proof"
+  | "claim_packet"
+  | "insurance_notice";
+
+export type LoadEvidenceStatus =
+  | "ready"
+  | "pending"
+  | "missing"
+  | "not_applicable"
+  | "blocked";
+
+export type LoadEvidenceItem = {
+  id: string;
+  loadId: string;
+  label: string;
+  type: LoadEvidenceType;
+  status: LoadEvidenceStatus;
+  url?: string;
+  fileName?: string;
+  note?: string;
+  requiredForSettlementRelease: boolean;
+  requiredForClaimRelease?: boolean;
+  uploadedAt?: string;
+  source?: "actual_docs" | "generated" | "mock" | "manual_upload" | "rfid" | "camera";
+};
+
+export type LoadDocumentPacket = {
+  loadId: string;
+  customerName?: string;
+  settlementHold: boolean;
+  holdReason?: string;
+  documents: LoadEvidenceItem[];
+};
+
 function loadRecord(data: BofData, loadId: string) {
   return data.loads.find((l) => l.id === loadId) ?? null;
 }
@@ -365,4 +408,243 @@ export function buildRfActions(data: BofData): RfActionRow[] {
     (a, b) => order[a.priority] - order[b.priority] || a.id.localeCompare(b.id)
   );
   return out;
+}
+
+function toEvidenceStatus(status: LoadProofStatus): LoadEvidenceStatus {
+  if (status === "Complete") return "ready";
+  if (status === "Pending") return "pending";
+  if (status === "Missing") return "missing";
+  if (status === "Not required") return "not_applicable";
+  return "blocked";
+}
+
+function sourceFromUrl(url?: string): LoadEvidenceItem["source"] {
+  const u = String(url ?? "").trim();
+  if (!u) return undefined;
+  if (u.includes("/actual_docs/")) return "actual_docs";
+  if (u.includes("/generated/")) return "generated";
+  if (u.includes("/proof/")) return "mock";
+  return "manual_upload";
+}
+
+function fileNameFromUrl(url?: string): string | undefined {
+  const u = String(url ?? "").trim();
+  if (!u) return undefined;
+  const parts = u.split("/").filter(Boolean);
+  return parts.length > 0 ? parts[parts.length - 1] : undefined;
+}
+
+function proofByType(items: LoadProofItem[], type: string): LoadProofItem | undefined {
+  return items.find((i) => i.type === type);
+}
+
+function toEvidenceItem(
+  loadId: string,
+  label: string,
+  type: LoadEvidenceType,
+  proof: LoadProofItem | undefined,
+  requiredForSettlementRelease: boolean,
+  extra?: Partial<LoadEvidenceItem>
+): LoadEvidenceItem {
+  const status = proof ? toEvidenceStatus(proof.status) : "missing";
+  const url = (proof?.fileUrl || proof?.previewUrl || "").trim() || undefined;
+  return {
+    id: `${loadId}:${type}`,
+    loadId,
+    label,
+    type,
+    status,
+    url,
+    fileName: fileNameFromUrl(url),
+    note: proof?.riskNote || proof?.notes || extra?.note,
+    requiredForSettlementRelease,
+    source: sourceFromUrl(url) ?? extra?.source,
+    ...extra,
+  };
+}
+
+let hasWarnedPacketCoverage = false;
+
+export function getLoadDocumentPacket(data: BofData, loadId: string): LoadDocumentPacket | null {
+  const load = loadRecord(data, loadId);
+  if (!load) return null;
+  const proofItems = getLoadProofItems(data, loadId);
+  const bundle = bundleForLoad(data, loadId);
+
+  const rate = toEvidenceItem(
+    loadId,
+    "Rate Confirmation",
+    "rate_confirmation",
+    proofByType(proofItems, "Rate Confirmation"),
+    true
+  );
+  const bol = toEvidenceItem(loadId, "BOL", "bol", proofByType(proofItems, "BOL"), true);
+  const pod = toEvidenceItem(loadId, "POD", "pod", proofByType(proofItems, "POD"), true);
+  const invoiceOverride = bundle?.items?.Invoice;
+  const invoice: LoadEvidenceItem = {
+    id: `${loadId}:invoice`,
+    loadId,
+    label: "Invoice",
+    type: "invoice",
+    status: invoiceOverride?.status
+      ? toEvidenceStatus(invoiceOverride.status as LoadProofStatus)
+      : load.status === "Delivered"
+        ? "ready"
+        : "pending",
+    url:
+      String(invoiceOverride?.fileUrl ?? invoiceOverride?.previewUrl ?? "").trim() || undefined,
+    fileName: fileNameFromUrl(String(invoiceOverride?.fileUrl ?? invoiceOverride?.previewUrl ?? "")),
+    note:
+      String(invoiceOverride?.notes ?? "").trim() ||
+      (load.status === "Delivered"
+        ? "Invoice packet generated from settlement/billing workflow."
+        : "Invoice publishes after delivery confirmation."),
+    requiredForSettlementRelease: true,
+    source:
+      sourceFromUrl(String(invoiceOverride?.fileUrl ?? invoiceOverride?.previewUrl ?? "")) ??
+      (load.status === "Delivered" ? "generated" : "mock"),
+  };
+  const cargo = toEvidenceItem(
+    loadId,
+    "Cargo photo",
+    "cargo_photo",
+    proofByType(proofItems, "Pre-Trip Cargo Photo"),
+    true
+  );
+  const sealProof =
+    proofByType(proofItems, "Delivery Seal Photo") ??
+    proofByType(proofItems, "Pickup Seal Photo");
+  const seal = toEvidenceItem(loadId, "Seal photo", "seal_photo", sealProof, true);
+  const lumper = toEvidenceItem(
+    loadId,
+    "Lumper receipt",
+    "lumper_receipt",
+    proofByType(proofItems, "Lumper Receipt"),
+    Boolean(load.status === "Delivered" && settlementLumperFlag(data, load.driverId))
+  );
+  const rfid = toEvidenceItem(
+    loadId,
+    "RFID dock proof",
+    "rfid_proof",
+    proofByType(proofItems, "RFID / Dock Validation Record"),
+    false,
+    { source: "rfid" }
+  );
+  const safetyPhoto = toEvidenceItem(
+    loadId,
+    "Safety violation photo",
+    "safety_violation_photo",
+    proofByType(proofItems, "Cargo Damage Photos"),
+    false,
+    {
+      status:
+        load.driverId === "DRV-004" || load.driverId === "DRV-008"
+          ? proofByType(proofItems, "Cargo Damage Photos")
+            ? toEvidenceStatus(proofByType(proofItems, "Cargo Damage Photos")!.status)
+            : "pending"
+          : "not_applicable",
+      note:
+        load.driverId === "DRV-004"
+          ? "Tire/asset inspection failure evidence required."
+          : load.driverId === "DRV-008"
+            ? "HOS/inspection exception evidence for safety review."
+            : "No active safety violation media required.",
+      source:
+        load.driverId === "DRV-004" || load.driverId === "DRV-008" ? "camera" : "mock",
+    }
+  );
+  const claim = toEvidenceItem(
+    loadId,
+    "Claim packet",
+    "claim_packet",
+    proofByType(proofItems, "Claim Support Docs"),
+    false,
+    { requiredForClaimRelease: claimApplicable(load, bundle) }
+  );
+  const insurance: LoadEvidenceItem = {
+    id: `${loadId}:insurance_notice`,
+    loadId,
+    label: "Insurance notice",
+    type: "insurance_notice",
+    status:
+      claim.status === "ready" || claim.status === "blocked"
+        ? "ready"
+        : claim.requiredForClaimRelease
+          ? "pending"
+          : "not_applicable",
+    url:
+      (claim.url && claim.url.includes("insurance")
+        ? claim.url
+        : claim.url && claim.url.includes("claim")
+          ? claim.url
+          : undefined) ?? undefined,
+    fileName: fileNameFromUrl(claim.url),
+    note: claim.requiredForClaimRelease
+      ? "Insurance path is tied to claim packet completeness."
+      : "No insurance notice needed for this load.",
+    requiredForSettlementRelease: false,
+    requiredForClaimRelease: claim.requiredForClaimRelease,
+    source: sourceFromUrl(claim.url) ?? (claim.requiredForClaimRelease ? "mock" : undefined),
+  };
+
+  const documents = [
+    rate,
+    bol,
+    pod,
+    invoice,
+    cargo,
+    seal,
+    lumper,
+    rfid,
+    safetyPhoto,
+    claim,
+    insurance,
+  ];
+  const blockers = documents.filter(
+    (d) =>
+      d.requiredForSettlementRelease &&
+      !(d.status === "ready" || d.status === "not_applicable")
+  );
+
+  if (
+    !hasWarnedPacketCoverage &&
+    typeof process !== "undefined" &&
+    process.env.NODE_ENV !== "production"
+  ) {
+    hasWarnedPacketCoverage = true;
+    const allLoadIds = data.loads.map((l) => l.id);
+    const withPackets = allLoadIds.filter((id) => getLoadDocumentPacket(data, id) != null).length;
+    const packetGaps = allLoadIds.filter((id) => getLoadDocumentPacket(data, id) == null);
+    if (packetGaps.length > 0 || withPackets !== allLoadIds.length) {
+      console.warn("[load-proof] packet coverage gap", {
+        totalLoads: allLoadIds.length,
+        loadsWithDocumentPackets: withPackets,
+        loadsMissingPacket: packetGaps,
+      });
+    }
+  }
+
+  return {
+    loadId,
+    customerName: customerFromLoad(load),
+    settlementHold: blockers.length > 0,
+    holdReason:
+      blockers.length > 0
+        ? `Settlement hold is on — missing required proof: ${blockers
+            .map((b) => b.label)
+            .join(", ")}`
+        : "Settlement release supported — all required proof is on file.",
+    documents,
+  };
+}
+
+function customerFromLoad(load: NonNullable<ReturnType<typeof loadRecord>>): string {
+  const part = load.origin.split(" - ")[0]?.trim() || load.origin;
+  return part.length > 56 ? `${part.slice(0, 53)}…` : part;
+}
+
+export function getLoadEvidenceForSettlement(data: BofData, loadIds: string[]) {
+  return loadIds
+    .map((lid) => getLoadDocumentPacket(data, lid))
+    .filter((packet): packet is LoadDocumentPacket => Boolean(packet));
 }

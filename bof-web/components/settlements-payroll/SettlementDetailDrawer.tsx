@@ -15,6 +15,7 @@ import { BofWorkflowFormShortcuts } from "@/components/documents/BofWorkflowForm
 import { buildRfidReadinessSummaryForSurface } from "@/lib/template-usage-readiness";
 import { resolveBillingPacketRfidGate } from "@/lib/bof-rfid-readiness";
 import { getMockBackhaulOpportunities } from "@/lib/backhaul-opportunity-engine";
+import { getLoadDocumentPacket } from "@/lib/load-proof";
 
 type Props = {
   settlementId: string | null;
@@ -406,6 +407,7 @@ export function SettlementDetailDrawer({ settlementId, open, onClose }: Props) {
               ).flatMap((lid) => {
                 const snap = loads.find((x) => x.load_id === lid);
                 if (!snap) return [];
+                const packet = getLoadDocumentPacket(data, lid);
                 const signal = proofSignalLabel(
                   snap.proof_status,
                   snap.settlement_hold,
@@ -451,6 +453,70 @@ export function SettlementDetailDrawer({ settlementId, open, onClose }: Props) {
                         {signal}
                       </span>
                     </p>
+                    {!packet && (
+                      <p className="mt-2 text-amber-200/90">
+                        No document packet found for this load.
+                      </p>
+                    )}
+                    {packet && (
+                      <>
+                        <p className="mt-2 text-slate-300">{packet.holdReason}</p>
+                        <div className="mt-2 overflow-x-auto rounded border border-slate-800">
+                          <table className="w-full min-w-[640px] border-collapse text-left text-[11px]">
+                            <thead className="bg-slate-900/80 text-[10px] uppercase tracking-wide text-slate-500">
+                              <tr>
+                                <th className="border-b border-slate-800 px-2 py-1.5">Document</th>
+                                <th className="border-b border-slate-800 px-2 py-1.5">Status</th>
+                                <th className="border-b border-slate-800 px-2 py-1.5">Action</th>
+                                <th className="border-b border-slate-800 px-2 py-1.5">Note</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {packet.documents.map((doc) => {
+                                const canOpen = doc.status === "ready" && Boolean(doc.url);
+                                const label =
+                                  doc.status === "not_applicable"
+                                    ? "Not applicable"
+                                    : doc.status === "ready"
+                                      ? "Ready"
+                                      : doc.status === "pending"
+                                        ? "Pending"
+                                        : doc.status === "missing"
+                                          ? "Missing"
+                                          : "Blocked";
+                                return (
+                                  <tr key={doc.id} className="border-b border-slate-800/80">
+                                    <td className="px-2 py-1.5 text-slate-200">{doc.label}</td>
+                                    <td className="px-2 py-1.5">
+                                      <span className="inline-flex rounded px-2 py-0.5 text-[10px] font-medium bg-slate-800 text-slate-200">
+                                        {label}
+                                      </span>
+                                    </td>
+                                    <td className="px-2 py-1.5">
+                                      {canOpen ? (
+                                        <a
+                                          href={doc.url}
+                                          target="_blank"
+                                          rel="noopener noreferrer"
+                                          className="bof-link-secondary"
+                                        >
+                                          {doc.type.includes("photo") ? "View photo" : "Open"}
+                                        </a>
+                                      ) : (
+                                        <span className="text-slate-500">—</span>
+                                      )}
+                                    </td>
+                                    <td className="px-2 py-1.5 text-slate-400">
+                                      {doc.note || "—"}
+                                    </td>
+                                  </tr>
+                                );
+                              })}
+                            </tbody>
+                          </table>
+                        </div>
+                      </>
+                    )}
                     {snap.settlement_hold_reason && (
                       <p className="mt-2 text-amber-200/90">{snap.settlement_hold_reason}</p>
                     )}

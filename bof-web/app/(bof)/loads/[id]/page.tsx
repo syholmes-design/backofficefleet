@@ -2,7 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getBofData } from "@/lib/load-bof-data";
 import { DriverCell } from "@/components/DriverCell";
-import { getLoadProofItems, proofBlockingCount } from "@/lib/load-proof";
+import { getLoadDocumentPacket, getLoadProofItems, proofBlockingCount } from "@/lib/load-proof";
 import { buildClaimPacketContext } from "@/lib/claim-packet";
 import { buildLoadRouteMapModel } from "@/lib/load-route-map";
 import { LoadProofPanel } from "@/components/LoadProofPanel";
@@ -49,6 +49,7 @@ export default async function LoadDetailPage({ params }: Props) {
 
   const driver = data.drivers.find((d) => d.id === load.driverId);
   const proofItems = getLoadProofItems(data, load.id);
+  const proofPacket = getLoadDocumentPacket(data, load.id);
   const blockCount = proofBlockingCount(proofItems);
   const claimCtx = buildClaimPacketContext(data, load.id);
   const routeMapModel = buildLoadRouteMapModel(data, load.id);
@@ -192,6 +193,7 @@ export default async function LoadDetailPage({ params }: Props) {
         loadId={load.id}
         loadNumber={load.number}
         items={proofItems}
+        packet={proofPacket}
         automationProofLinks={automationProofLinks}
       />
 
