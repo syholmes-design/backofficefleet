@@ -6,6 +6,7 @@ import { AlertOctagon, FileWarning, ShieldAlert, UserX } from "lucide-react";
 import { formatExposure } from "./safety-ui";
 import {
   getAtRiskSafetyDrivers,
+  getSafetyEvidenceByDriverId,
   getSafetyScorecardRows,
   getSafetyScorecardSummary,
   getSafetyViolationActions,
@@ -19,6 +20,11 @@ export function SafetyDashboardScreen() {
   const atRiskSafetyDrivers = useMemo(() => getAtRiskSafetyDrivers(), []);
   const safetyViolationActions = useMemo(() => getSafetyViolationActions(), []);
   const safetyMonthlyTrend = useMemo(() => getSafetyMonthlyTrend(), []);
+  const evidenceByDriverId = useMemo(() => {
+    const out = new Map<string, ReturnType<typeof getSafetyEvidenceByDriverId>>();
+    for (const row of safetyScorecardRows) out.set(row.driverId, getSafetyEvidenceByDriverId(row.driverId));
+    return out;
+  }, [safetyScorecardRows]);
 
   return (
     <div className="flex min-h-0 flex-1 flex-col gap-6 p-5">
@@ -88,12 +94,22 @@ export function SafetyDashboardScreen() {
                     <TierChip tier={row.performanceTier} />
                   </td>
                   <td className="px-3 py-2 text-xs">
-                    <Link
-                      href={`/drivers/${row.driverId}/safety`}
-                      className="inline-flex rounded border border-teal-700/50 bg-teal-900/25 px-2 py-1 text-[11px] font-semibold text-teal-200 hover:bg-teal-900/40"
-                    >
-                      Open Safety
-                    </Link>
+                    <div className="flex flex-wrap gap-2">
+                      <Link
+                        href={`/drivers/${row.driverId}/safety`}
+                        className="inline-flex rounded border border-teal-700/50 bg-teal-900/25 px-2 py-1 text-[11px] font-semibold text-teal-200 hover:bg-teal-900/40"
+                      >
+                        Open Safety
+                      </Link>
+                      {(evidenceByDriverId.get(row.driverId)?.length ?? 0) > 0 && (
+                        <a
+                          href={`#evidence-${row.driverId}`}
+                          className="inline-flex rounded border border-slate-700 bg-slate-900 px-2 py-1 text-[11px] font-semibold text-slate-200 hover:bg-slate-800"
+                        >
+                          Evidence ({evidenceByDriverId.get(row.driverId)!.length})
+                        </a>
+                      )}
+                    </div>
                   </td>
                 </tr>
               ))}
@@ -153,6 +169,58 @@ export function SafetyDashboardScreen() {
           </ul>
         </section>
       </div>
+
+      <section>
+        <h2 className="mb-2 text-sm font-semibold text-slate-200">Safety evidence</h2>
+        <div className="grid gap-3 lg:grid-cols-2">
+          {["DRV-004", "DRV-008"].map((driverId) => {
+            const evidence = evidenceByDriverId.get(driverId) ?? [];
+            if (evidence.length === 0) return null;
+            return (
+              <div
+                key={driverId}
+                id={`evidence-${driverId}`}
+                className="rounded-lg border border-slate-800 bg-slate-900/35 p-3"
+              >
+                <p className="text-xs font-semibold text-slate-100">
+                  {evidence[0]?.driverName} ({driverId})
+                </p>
+                <div className="mt-2 space-y-2">
+                  {evidence.map((item) => (
+                    <div
+                      key={item.id}
+                      className="rounded border border-slate-800 bg-slate-950/50 px-2 py-2 text-xs"
+                    >
+                      <div className="flex items-center justify-between gap-2">
+                        <span className="font-medium text-slate-100">{item.label}</span>
+                        <span
+                          className={[
+                            "inline-flex rounded px-2 py-0.5 text-[10px] font-semibold",
+                            item.severity === "high"
+                              ? "bg-rose-900/40 text-rose-300 ring-1 ring-rose-700/50"
+                              : "bg-amber-900/30 text-amber-300 ring-1 ring-amber-700/40",
+                          ].join(" ")}
+                        >
+                          {item.severity === "high" ? "High" : "Medium"}
+                        </span>
+                      </div>
+                      <p className="mt-1 text-slate-400">{item.note}</p>
+                      <a
+                        href={item.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="mt-1 inline-flex text-[11px] font-semibold text-teal-300 hover:text-teal-200"
+                      >
+                        Open evidence
+                      </a>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </section>
 
       <section className="grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
         <KpiCard

@@ -12,6 +12,7 @@ import {
   isMvrExpired,
   severityChipClass,
 } from "@/lib/safety-rules";
+import { getSafetyEvidenceByDriverId } from "@/lib/safety-scorecard";
 
 export function DriverSafetyProfileScreen() {
   const drivers = useSafetyStore((s) => s.drivers);
@@ -37,6 +38,10 @@ export function DriverSafetyProfileScreen() {
             new Date(b.event_date).getTime() - new Date(a.event_date).getTime()
         ),
     [events, driver?.driver_id]
+  );
+  const evidence = useMemo(
+    () => getSafetyEvidenceByDriverId(driver.driver_id),
+    [driver.driver_id]
   );
 
   if (!driver) {
@@ -183,6 +188,42 @@ export function DriverSafetyProfileScreen() {
           </table>
         </div>
       </section>
+      {evidence.length > 0 && (
+        <section>
+          <h2 className="mb-2 text-sm font-semibold text-slate-200">Linked evidence</h2>
+          <div className="grid gap-2 sm:grid-cols-2">
+            {evidence.map((item) => (
+              <div
+                key={item.id}
+                className="rounded border border-slate-800 bg-slate-900/40 px-3 py-2 text-xs"
+              >
+                <div className="flex items-center justify-between gap-2">
+                  <span className="font-medium text-slate-100">{item.label}</span>
+                  <span
+                    className={[
+                      "inline-flex rounded px-2 py-0.5 text-[10px] font-semibold",
+                      item.severity === "high"
+                        ? "bg-rose-900/40 text-rose-300 ring-1 ring-rose-700/50"
+                        : "bg-amber-900/30 text-amber-300 ring-1 ring-amber-700/40",
+                    ].join(" ")}
+                  >
+                    {item.severity === "high" ? "High" : "Medium"}
+                  </span>
+                </div>
+                <p className="mt-1 text-slate-400">{item.note}</p>
+                <a
+                  href={item.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="mt-1 inline-flex text-[11px] font-semibold text-teal-300 hover:text-teal-200"
+                >
+                  Open evidence
+                </a>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
     </div>
   );
 }

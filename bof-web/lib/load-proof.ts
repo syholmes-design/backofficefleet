@@ -1,4 +1,5 @@
 import type { BofData } from "./load-bof-data";
+import { getSafetyEvidenceByLoadId } from "./safety-scorecard";
 
 export const LOAD_PROOF_TYPES = [
   "Rate Confirmation",
@@ -537,12 +538,7 @@ export function getLoadDocumentPacket(data: BofData, loadId: string): LoadDocume
     proofByType(proofItems, "Cargo Damage Photos"),
     false,
     {
-      status:
-        load.driverId === "DRV-004" || load.driverId === "DRV-008"
-          ? proofByType(proofItems, "Cargo Damage Photos")
-            ? toEvidenceStatus(proofByType(proofItems, "Cargo Damage Photos")!.status)
-            : "pending"
-          : "not_applicable",
+      status: getSafetyEvidenceByLoadId(loadId).length > 0 ? "ready" : "not_applicable",
       note:
         load.driverId === "DRV-004"
           ? "Tire/asset inspection failure evidence required."
@@ -551,6 +547,8 @@ export function getLoadDocumentPacket(data: BofData, loadId: string): LoadDocume
             : "No active safety violation media required.",
       source:
         load.driverId === "DRV-004" || load.driverId === "DRV-008" ? "camera" : "mock",
+      url: getSafetyEvidenceByLoadId(loadId)[0]?.url,
+      fileName: fileNameFromUrl(getSafetyEvidenceByLoadId(loadId)[0]?.url),
     }
   );
   const claim = toEvidenceItem(
@@ -587,6 +585,24 @@ export function getLoadDocumentPacket(data: BofData, loadId: string): LoadDocume
     source: sourceFromUrl(claim.url) ?? (claim.requiredForClaimRelease ? "mock" : undefined),
   };
 
+  const safetyEvidenceDocuments: LoadEvidenceItem[] = getSafetyEvidenceByLoadId(loadId).map(
+    (ev) => ({
+      id: ev.id,
+      loadId,
+      label: ev.label,
+      type:
+        ev.type === "cargo_damage_photo"
+          ? "cargo_photo"
+          : "safety_violation_photo",
+      status: "ready",
+      url: ev.url,
+      fileName: fileNameFromUrl(ev.url),
+      note: ev.note,
+      requiredForSettlementRelease: false,
+      source: "camera",
+    })
+  );
+
   const documents = [
     rate,
     bol,
@@ -599,6 +615,7 @@ export function getLoadDocumentPacket(data: BofData, loadId: string): LoadDocume
     safetyPhoto,
     claim,
     insurance,
+    ...safetyEvidenceDocuments,
   ];
   const blockers = documents.filter(
     (d) =>

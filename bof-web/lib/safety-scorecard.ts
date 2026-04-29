@@ -30,6 +30,26 @@ export type SafetyScorecardSummary = {
   safetyBonusEarnedUsd: number;
 };
 
+export type SafetyEvidenceSeverity = "medium" | "high";
+
+export type SafetyEvidenceItem = {
+  id: string;
+  driverId: string;
+  driverName: string;
+  loadId?: string;
+  type:
+    | "tire_inspection"
+    | "hos_violation"
+    | "cargo_damage_photo"
+    | "safety_equipment_inspection"
+    | "logbook_review"
+    | "trailer_brake_inspection";
+  label: string;
+  severity: SafetyEvidenceSeverity;
+  url: string;
+  note: string;
+};
+
 const SAFETY_SCORECARD_ROWS: readonly SafetyScorecardRow[] = [
   {
     driverId: "DRV-001",
@@ -173,6 +193,97 @@ const SAFETY_VIOLATION_ACTIONS: readonly SafetyViolationActionRow[] = [
   },
 ];
 
+const SAFETY_EVIDENCE_REGISTRY: readonly SafetyEvidenceItem[] = [
+  {
+    id: "EVID-DRV-004-B102",
+    driverId: "DRV-004",
+    driverName: "Priya Patel",
+    loadId: "L004",
+    type: "tire_inspection",
+    label: "B-102 Tires",
+    severity: "medium",
+    url: "/evidence/safety/p_patel_b102_tire_irregular_wear.png",
+    note: "Tire inspection failed — irregular wear detected.",
+  },
+  {
+    id: "EVID-DRV-004-PRETRIP-TREAD",
+    driverId: "DRV-004",
+    driverName: "Priya Patel",
+    loadId: "L004",
+    type: "tire_inspection",
+    label: "Pre-trip tire inspection",
+    severity: "medium",
+    url: "/evidence/safety/p_patel_pretrip_tire_tread_depth.png",
+    note: "Tire tread depth below minimum requirement.",
+  },
+  {
+    id: "EVID-DRV-004-CARGO",
+    driverId: "DRV-004",
+    driverName: "Priya Patel",
+    loadId: "L004",
+    type: "cargo_damage_photo",
+    label: "Cargo damage photo",
+    severity: "medium",
+    url: "/evidence/safety/p_patel_cargo_damage_box_puncture.png",
+    note: "Box punctured and product damaged.",
+  },
+  {
+    id: "EVID-DRV-004-EQUIP",
+    driverId: "DRV-004",
+    driverName: "Priya Patel",
+    loadId: "L004",
+    type: "safety_equipment_inspection",
+    label: "Safety equipment inspection",
+    severity: "medium",
+    url: "/evidence/safety/p_patel_safety_equipment_extinguisher.png",
+    note: "Fire extinguisher inspection tag expired.",
+  },
+  {
+    id: "EVID-DRV-008-L405",
+    driverId: "DRV-008",
+    driverName: "Liam Smith",
+    loadId: "L008",
+    type: "hos_violation",
+    label: "L-405 HOS",
+    severity: "high",
+    url: "/evidence/safety/l_smith_l405_hos_violation_eld.png",
+    note: "Hours of Service violation — daily driving limit exceeded.",
+  },
+  {
+    id: "EVID-DRV-008-LOGBOOK",
+    driverId: "DRV-008",
+    driverName: "Liam Smith",
+    loadId: "L008",
+    type: "logbook_review",
+    label: "Logbook review",
+    severity: "high",
+    url: "/evidence/safety/l_smith_logbook_review_violation.png",
+    note: "Required reset / logbook violation.",
+  },
+  {
+    id: "EVID-DRV-008-BRAKES",
+    driverId: "DRV-008",
+    driverName: "Liam Smith",
+    loadId: "L008",
+    type: "trailer_brake_inspection",
+    label: "Trailer brake inspection",
+    severity: "high",
+    url: "/evidence/safety/l_smith_trailer_brake_inspection.png",
+    note: "Brake lining worn below minimum standard.",
+  },
+  {
+    id: "EVID-DRV-008-CARGO",
+    driverId: "DRV-008",
+    driverName: "Liam Smith",
+    loadId: "L008",
+    type: "cargo_damage_photo",
+    label: "Cargo damage photo",
+    severity: "high",
+    url: "/evidence/safety/l_smith_cargo_damage_pallet_wrap.png",
+    note: "Significant cargo damage / damaged wrapped pallet.",
+  },
+];
+
 export function getSafetyScorecardRows(): SafetyScorecardRow[] {
   return [...SAFETY_SCORECARD_ROWS];
 }
@@ -205,4 +316,12 @@ export function getSafetyBonusByDriverId(driverId: string): number {
   return (
     SAFETY_SCORECARD_ROWS.find((r) => r.driverId === driverId)?.safetyBonusUsd ?? 0
   );
+}
+
+export function getSafetyEvidenceByDriverId(driverId: string): SafetyEvidenceItem[] {
+  return SAFETY_EVIDENCE_REGISTRY.filter((r) => r.driverId === driverId);
+}
+
+export function getSafetyEvidenceByLoadId(loadId: string): SafetyEvidenceItem[] {
+  return SAFETY_EVIDENCE_REGISTRY.filter((r) => r.loadId === loadId);
 }
