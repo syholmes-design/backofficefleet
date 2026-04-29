@@ -4,6 +4,7 @@ import {
   MarketingCtaPanel,
   MarketingHomeIntegratedHero,
   MarketingIconCardGrid,
+  MarketingServiceTiers,
   MarketingSection,
   MarketingSectionHeader,
 } from "@/components/marketing";
@@ -162,6 +163,10 @@ export default function MarketingHomeAccountable() {
           />
           <MarketingIconCardGrid items={AUTOMATION_ITEMS} variant="feature" />
         </div>
+      </MarketingSection>
+
+      <MarketingSection variant="light" ariaLabelledBy="bof-mkt-service-tiers-heading">
+        <MarketingServiceTiers />
       </MarketingSection>
 
       <MarketingSection variant="light" ariaLabelledBy="bof-mkt-stakeholder-heading">

@@ -17,6 +17,7 @@ export { MarketingBofVaultHero } from "./MarketingBofVaultHero";
 export { MarketingProcessSteps, type MarketingProcessStep } from "./MarketingProcessSteps";
 export { MarketingSection, type MarketingSectionVariant } from "./MarketingSection";
 export { MarketingSectionHeader } from "./MarketingSectionHeader";
+export { MarketingServiceTiers } from "./MarketingServiceTiers";
 export { MarketingStatBand, type MarketingStat } from "./MarketingStatBand";
 export { MarketingTrustStrip } from "./MarketingTrustStrip";
 export * from "./MarketingVaultIcons";
