@@ -1,579 +1,408 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo, useState } from "react";
-import { useBofDemoData } from "@/lib/bof-demo-data-context";
+import { useMemo } from "react";
 import { DriverAvatar } from "@/components/DriverAvatar";
+import { useBofDemoData } from "@/lib/bof-demo-data-context";
+import {
+  getComplianceStatusChartData,
+  getDriverDashboardSummary,
+  getDriverReadinessChartData,
+  getOwnerAttentionQueue,
+  getSafetyTierChartData,
+  getSettlementStatusChartData,
+  type BreakdownPoint,
+  type DashboardKpi,
+} from "@/lib/dashboard-insights";
+import { formatUsd } from "@/lib/format-money";
 import { driverPhotoPath } from "@/lib/driver-photo";
-import { readinessFromDocuments, getOrderedDocumentsForDriver, assignedTrucksForDriver, primaryAssignedTruck, complianceNotesForDriver } from "@/lib/driver-queries";
+import { getOrderedDocumentsForDriver, readinessFromDocuments } from "@/lib/driver-queries";
 import { getSafetyScorecardRows } from "@/lib/safety-scorecard";
 
+type Severity = "high" | "medium" | "low";
+
 type DriverRow = {
-  id: string;
+  driverId: string;
   name: string;
-  photo: string;
-  asset: string;
-  status: string;
-  statusLink?: string;
-  compliance: {
-    status: "ok" | "warn" | "danger";
-    label: string;
-    blocker?: string;
-  };
-  blocked: boolean;
-  needsReview: boolean;
-  dispatchReady: boolean;
-  settlementState: "Paid" | "Pending" | "Hold / Review";
-  safetyTier: "Elite" | "Standard" | "At Risk";
-  primaryBlocker: "compliance" | "safety" | "settlement" | "hr" | null;
+  email?: string;
+  phone?: string;
+  avatar: string;
+  status: "Dispatch Ready" | "Needs Review" | "Blocked";
+  dispatchEligibility: string;
+  compliance: string;
+  safety: "Elite" | "Standard" | "At Risk";
+  settlement: "Paid" | "Pending" | "Hold / Review";
+  currentOrNextLoad: string;
+  documentSummary: string;
+  blocker?: string;
   pendingPay: number;
-  pendingPayReason?: string;
-  actions: {
-    profile: string;
-    hr: string;
-    vault: string;
-    safety: string;
-    settlements: string;
-    dispatch: string;
-  };
 };
 
-const CURRENCY = new Intl.NumberFormat("en-US", {
-  style: "currency",
-  currency: "USD",
-  maximumFractionDigits: 2,
-});
-
-function formatCityStateFromAddress(address?: string): string {
-  if (!address) return "Unknown terminal";
-  const parts = address.split(",");
-  if (parts.length < 2) return address;
-  const city = parts[parts.length - 2]?.trim();
-  const stateZip = parts[parts.length - 1]?.trim() ?? "";
-  const state = stateZip.split(" ")[0];
-  if (!city || !state) return address;
-  return `${city}, ${state}`;
-}
-
-function formatCityStateFromStop(stop?: string): string {
-  if (!stop) return "Unknown destination";
-  const parts = stop.split(" - ");
-  return parts[parts.length - 1]?.trim() || stop;
-}
+type ExceptionItem = {
+  key: string;
+  driver: string;
+  issue: string;
+  severity: Severity;
+  nextStep: string;
+  actionHref: string;
+  actionLabel: string;
+};
 
 export function DriversRosterTable() {
   const { data } = useBofDemoData();
-  const [filterMode, setFilterMode] = useState<"all" | "blocked" | "ready" | "at-risk" | "expiring">("all");
+  const safetyTierMap = useMemo(
+    () => new Map(getSafetyScorecardRows().map((row) => [row.driverId, row.performanceTier])),
+    []
+  );
+  const summary = useMemo(() => getDriverDashboardSummary(data), [data]);
+  const readinessData = useMemo(() => getDriverReadinessChartData(data), [data]);
+  const safetyData = useMemo(() => getSafetyTierChartData(data), [data]);
+  const complianceData = useMemo(() => getComplianceStatusChartData(data), [data]);
+  const settlementData = useMemo(() => getSettlementStatusChartData(data), [data]);
 
-  const driverRows = useMemo(() => {
-    const settlements =
-      (data as typeof data & {
-        settlements?: Array<{
-          driverId: string;
-          netPay?: number;
-          status?: string;
-          pendingReason?: string;
-        }>;
-      }).settlements ?? [];
-    const moneyAtRisk = data.moneyAtRisk ?? [];
-    const safetyByDriver = new Map(getSafetyScorecardRows().map((r) => [r.driverId, r.performanceTier]));
-
+  const driverRows = useMemo<DriverRow[]>(() => {
     return data.drivers.map((driver) => {
-      const documents = getOrderedDocumentsForDriver(data, driver.id);
-      const readiness = readinessFromDocuments(documents);
-      const trucks = assignedTrucksForDriver(data, driver.id);
-      const primary = primaryAssignedTruck(data, driver.id);
-      const compliance = complianceNotesForDriver(data, driver.id);
-      const settlementRow = settlements.find((row) => row.driverId === driver.id);
-
-      const assetLabel =
-        trucks.length === 0
-          ? "Unassigned"
-          : trucks.length === 1
-            ? trucks[0]
-            : `${primary ?? trucks[0]} (${trucks.length} assets)`;
+      const docs = getOrderedDocumentsForDriver(data, driver.id);
+      const readiness = readinessFromDocuments(docs);
+      const expiring = docs.filter((doc) => {
+        if (!doc.expirationDate || doc.status.toUpperCase() !== "VALID") return false;
+        const days = Math.ceil((new Date(doc.expirationDate).getTime() - Date.now()) / 86400000);
+        return Number.isFinite(days) && days >= 0 && days <= 45;
+      }).length;
+      const complianceIncidents = data.complianceIncidents.filter(
+        (incident) => incident.driverId === driver.id && incident.status.toUpperCase() === "OPEN"
+      );
+      const criticalIncident = complianceIncidents.find((incident) => incident.severity === "CRITICAL");
+      const safetyTier = (safetyTierMap.get(driver.id) ?? "Standard") as DriverRow["safety"];
+      const settlement = data.settlements.find((row) => row.driverId === driver.id);
+      const hasHold = data.moneyAtRisk.some(
+        (item) => item.driverId === driver.id && item.status.toUpperCase() === "BLOCKED"
+      );
+      const pendingPay = data.moneyAtRisk
+        .filter((item) => item.driverId === driver.id && item.status.toUpperCase() !== "PAID")
+        .reduce((sum, item) => sum + item.amount, 0);
 
       const activeLoad = data.loads.find(
-        (l) =>
-          l.driverId === driver.id && (l.status === "En Route" || l.status === "Pending")
+        (load) => load.driverId === driver.id && (load.status === "En Route" || load.status === "Pending")
       );
-      const latestLoad = data.loads.find((l) => l.driverId === driver.id);
-      const terminalLabel = formatCityStateFromAddress(driver.address);
-      let status = `Available · ${terminalLabel} terminal`;
-      let statusLink = undefined;
+      const latestLoad = data.loads.find((load) => load.driverId === driver.id);
 
-      if (activeLoad) {
-        if (activeLoad.status === "En Route") {
-          status = `In transit · L${activeLoad.number}`;
-          statusLink = `/loads/${activeLoad.id}`;
-        } else {
-          status = `At receiver · ${formatCityStateFromStop(activeLoad.destination)}`;
-          statusLink = `/loads/${activeLoad.id}`;
-        }
-      } else if (readiness.missing + readiness.expired > 0) {
-        status = "In pipeline · Onboarding";
-      } else if (latestLoad?.status === "Delivered") {
-        status = `Off duty · Rest stop · ${terminalLabel.split(", ")[1] ?? "PA"}`;
-      }
+      const isBlocked =
+        readiness.expired > 0 ||
+        readiness.missing > 0 ||
+        !!criticalIncident ||
+        hasHold ||
+        safetyTier === "At Risk";
+      const needsReview = !isBlocked && (expiring > 0 || complianceIncidents.length > 0 || settlement?.status === "Pending");
+      const status: DriverRow["status"] = isBlocked ? "Blocked" : needsReview ? "Needs Review" : "Dispatch Ready";
 
-      let complianceStatus: "ok" | "warn" | "danger" = "ok";
-      let complianceLabel = "Compliant";
-      let blocker = undefined;
-
-      const openHighRisk = compliance.filter(
-        (c) =>
-          (c.severity.toUpperCase() === "HIGH" || c.severity.toUpperCase() === "CRITICAL") &&
-          c.status.toUpperCase() !== "CLOSED"
-      );
-      const openAnyRisk = compliance.filter(
-        (c) => c.status.toUpperCase() !== "CLOSED" && c.status.toUpperCase() !== "RESOLVED"
-      );
-
-      if (readiness.missing + readiness.expired > 0) {
-        complianceStatus = "danger";
-        complianceLabel = "Action required";
-        blocker = `${readiness.missing + readiness.expired} items need attention`;
-      } else if (openHighRisk.length > 0) {
-        complianceStatus = "warn";
-        complianceLabel = "At risk";
-        blocker = `${openHighRisk.length} incident item(s) open`;
-      }
-
-      const driverMar = moneyAtRisk.filter(
-        (row) =>
-          row.driverId === driver.id &&
-          !["CLOSED", "RESOLVED", "PAID"].includes((row.status ?? "").toUpperCase())
-      );
-      const pendingFromMar = driverMar.reduce((sum, row) => sum + (row.amount ?? 0), 0);
-
-      const pendingSettlement = settlements.find(
-        (row) => row.driverId === driver.id && row.status?.toUpperCase() === "PENDING"
-      );
-      const pendingFromSettlement = pendingSettlement?.netPay ?? 0;
-      const pendingPay = pendingFromMar > 0 ? pendingFromMar : pendingFromSettlement;
-      const pendingPayReason =
-        driverMar[0]?.rootCause ??
-        (pendingSettlement?.pendingReason
-          ? `Settlement pending: ${pendingSettlement.pendingReason}`
-          : undefined);
-
-      const safetyTier = (safetyByDriver.get(driver.id) ?? "Standard") as DriverRow["safetyTier"];
-      const settlementState: DriverRow["settlementState"] =
-        settlementRow?.status === "Paid"
-          ? "Paid"
-          : settlementRow?.status === "On Hold" || pendingPay > 0
-            ? "Hold / Review"
+      const settlementState: DriverRow["settlement"] =
+        hasHold || settlement?.status === "On Hold"
+          ? "Hold / Review"
+          : settlement?.status === "Paid"
+            ? "Paid"
             : "Pending";
-      const blocked = readiness.expired > 0 || openHighRisk.length > 0 || settlementState === "Hold / Review";
-      const needsReview = !blocked && (readiness.missing > 0 || openAnyRisk.length > 0 || settlementState === "Pending");
-      const dispatchReady = !blocked && !needsReview;
-      const primaryBlocker: DriverRow["primaryBlocker"] =
-        readiness.expired > 0 || readiness.missing > 0
-          ? "compliance"
-          : openHighRisk.length > 0 || safetyTier === "At Risk"
-            ? "safety"
-            : settlementState === "Hold / Review"
-              ? "settlement"
-              : null;
 
       return {
-        id: driver.id,
+        driverId: driver.id,
         name: driver.name,
-        photo: (driver as { photoUrl?: string }).photoUrl?.trim() || driverPhotoPath(driver.id),
-        asset: assetLabel,
+        email: driver.email,
+        phone: driver.phone,
+        avatar: driverPhotoPath(driver.id),
         status,
-        statusLink,
-        compliance: {
-          status: complianceStatus,
-          label: complianceLabel,
-          blocker,
-        },
-        blocked,
-        needsReview,
-        dispatchReady,
-        settlementState,
-        safetyTier,
-        primaryBlocker,
+        dispatchEligibility:
+          status === "Dispatch Ready"
+            ? "Eligible now"
+            : status === "Needs Review"
+              ? "Review before assign"
+              : "Blocked until resolved",
+        compliance:
+          readiness.expired > 0 || readiness.missing > 0
+            ? `${readiness.missing + readiness.expired} doc blocker(s)`
+            : complianceIncidents.length > 0
+              ? `${complianceIncidents.length} open incident(s)`
+              : "Compliant",
+        safety: safetyTier,
+        settlement: settlementState,
+        currentOrNextLoad: activeLoad
+          ? `L${activeLoad.number} · ${activeLoad.status}`
+          : latestLoad
+            ? `L${latestLoad.number} · last delivered`
+            : "Unassigned",
+        documentSummary:
+          expiring > 0 ? `${expiring} expiring soon` : readiness.missing + readiness.expired > 0 ? "Requires updates" : "All core docs valid",
+        blocker: criticalIncident?.type ?? (isBlocked ? "Readiness blocker active" : undefined),
         pendingPay,
-        pendingPayReason,
-        actions: {
-          profile: `/drivers/${driver.id}/profile`,
-          hr: `/drivers/${driver.id}/hr`,
-          vault: `/drivers/${driver.id}/vault`,
-          safety: `/drivers/${driver.id}/safety`,
-          settlements: `/drivers/${driver.id}/settlements`,
-          dispatch: `/drivers/${driver.id}/dispatch`,
-        },
       };
     });
-  }, [data]);
+  }, [data, safetyTierMap]);
 
-  const filteredRows = useMemo(() => {
-    if (filterMode === "blocked") return driverRows.filter((r) => r.blocked);
-    if (filterMode === "ready") return driverRows.filter((r) => r.dispatchReady);
-    if (filterMode === "at-risk") return driverRows.filter((r) => r.safetyTier === "At Risk");
-    if (filterMode === "expiring") {
-      return driverRows.filter((r) => {
-        const docs = getOrderedDocumentsForDriver(data, r.id);
-        return docs.some((d) => {
-          const exp = d.expirationDate ? new Date(d.expirationDate) : null;
-          if (!exp || Number.isNaN(exp.getTime())) return false;
-          const days = Math.ceil((exp.getTime() - Date.now()) / 86400000);
-          return days >= 0 && days <= 60;
+  const kpis = useMemo<DashboardKpi[]>(
+    () => [
+      { label: "Active Drivers", value: summary.activeDrivers, hint: "Total driver profiles in fleet demo.", tone: "info" },
+      { label: "Dispatch Ready", value: summary.dispatchReady, hint: "Immediately assignable drivers.", tone: "ok" },
+      { label: "Compliance Blocked", value: summary.complianceBlocked, hint: "Drivers blocked by doc/compliance gaps.", tone: "danger" },
+      { label: "Safety At Risk", value: summary.safetyAtRisk, hint: "Drivers in at-risk safety tier.", tone: "danger" },
+      { label: "Settlement Pending", value: summary.settlementPending, hint: "Pending or hold/review settlements.", tone: "warn" },
+      { label: "Expiring Credentials", value: summary.expiringCredentials, hint: "Drivers with credentials expiring <= 60 days.", tone: "warn" },
+    ],
+    [summary]
+  );
+
+  const blockedDriverRows = useMemo(
+    () => driverRows.filter((row) => row.status === "Blocked").slice(0, 6),
+    [driverRows]
+  );
+
+  const expiringRows = useMemo<ExceptionItem[]>(() => {
+    const items: ExceptionItem[] = [];
+    for (const row of driverRows) {
+      const docs = getOrderedDocumentsForDriver(data, row.driverId);
+      for (const doc of docs) {
+        if (!doc.expirationDate || doc.status.toUpperCase() !== "VALID") continue;
+        const days = Math.ceil((new Date(doc.expirationDate).getTime() - Date.now()) / 86400000);
+        if (!Number.isFinite(days) || days < 0 || days > 60) continue;
+        items.push({
+          key: `${row.driverId}-${doc.type}`,
+          driver: row.name,
+          issue: `${doc.type} expires in ${days} day(s)`,
+          severity: days <= 15 ? "high" : "medium",
+          nextStep: "Collect renewal and verify in vault",
+          actionHref: `/drivers/${row.driverId}/vault`,
+          actionLabel: "Open Documents",
         });
-      });
-    }
-    return driverRows;
-  }, [driverRows, filterMode, data]);
-
-  const readinessBreakdown = useMemo(() => {
-    const total = driverRows.length || 1;
-    const ready = driverRows.filter((r) => r.dispatchReady).length;
-    const blocked = driverRows.filter((r) => r.blocked).length;
-    const review = total - ready - blocked;
-    return [
-      { label: "Dispatch Ready", value: ready, color: "bg-emerald-500" },
-      { label: "Needs Review", value: review, color: "bg-amber-500" },
-      { label: "Blocked", value: blocked, color: "bg-rose-500" },
-    ];
-  }, [driverRows]);
-
-  const safetyTierData = useMemo(() => {
-    const elite = driverRows.filter((r) => r.safetyTier === "Elite").length;
-    const standard = driverRows.filter((r) => r.safetyTier === "Standard").length;
-    const atRisk = driverRows.filter((r) => r.safetyTier === "At Risk").length;
-    return [
-      { label: "Elite", value: elite, color: "bg-emerald-500" },
-      { label: "Standard", value: standard, color: "bg-sky-500" },
-      { label: "At Risk", value: atRisk, color: "bg-rose-500" },
-    ];
-  }, [driverRows]);
-
-  const settlementStatusData = useMemo(() => {
-    const paid = driverRows.filter((r) => r.settlementState === "Paid").length;
-    const pending = driverRows.filter((r) => r.settlementState === "Pending").length;
-    const hold = driverRows.filter((r) => r.settlementState === "Hold / Review").length;
-    return [
-      { label: "Paid", value: paid, color: "bg-emerald-500" },
-      { label: "Pending", value: pending, color: "bg-amber-500" },
-      { label: "Hold / Review", value: hold, color: "bg-rose-500" },
-    ];
-  }, [driverRows]);
-
-  const expirationForecast = useMemo(() => {
-    const buckets = { b30: 0, b60: 0, b90: 0, b90p: 0 };
-    for (const r of driverRows) {
-      const docs = getOrderedDocumentsForDriver(data, r.id).filter((d) => d.type === "CDL" || d.type === "Medical Card");
-      for (const d of docs) {
-        const exp = d.expirationDate ? new Date(d.expirationDate) : null;
-        if (!exp || Number.isNaN(exp.getTime())) continue;
-        const days = Math.ceil((exp.getTime() - Date.now()) / 86400000);
-        if (days <= 30) buckets.b30 += 1;
-        else if (days <= 60) buckets.b60 += 1;
-        else if (days <= 90) buckets.b90 += 1;
-        else buckets.b90p += 1;
       }
     }
-    return [
-      { label: "0-30 days", value: buckets.b30, color: "bg-rose-500" },
-      { label: "31-60 days", value: buckets.b60, color: "bg-amber-500" },
-      { label: "61-90 days", value: buckets.b90, color: "bg-sky-500" },
-      { label: "90+ days", value: buckets.b90p, color: "bg-emerald-500" },
-    ];
-  }, [driverRows, data]);
+    return items.slice(0, 6);
+  }, [data, driverRows]);
 
-  const expiringPanel = useMemo(() => {
-    const items: Array<{ driverId: string; name: string; doc: string; days: number }> = [];
-    for (const r of driverRows) {
-      for (const d of getOrderedDocumentsForDriver(data, r.id)) {
-        if (d.type !== "CDL" && d.type !== "Medical Card") continue;
-        const exp = d.expirationDate ? new Date(d.expirationDate) : null;
-        if (!exp || Number.isNaN(exp.getTime())) continue;
-        const days = Math.ceil((exp.getTime() - Date.now()) / 86400000);
-        if (days >= 0 && days <= 90) items.push({ driverId: r.id, name: r.name, doc: d.type, days });
-      }
-    }
-    return items.sort((a, b) => a.days - b.days).slice(0, 6);
-  }, [driverRows, data]);
-
-  const safetyPanel = useMemo(
+  const safetyRows = useMemo<ExceptionItem[]>(
     () =>
       driverRows
-        .filter((r) => r.safetyTier === "At Risk" || r.compliance.status === "warn")
-        .slice(0, 6)
-        .map((r) => ({
-          driverId: r.id,
-          name: r.name,
-          issue: r.compliance.blocker || "Safety review required",
-          severity: r.safetyTier === "At Risk" ? "High" : "Medium",
-        })),
+        .filter((row) => row.safety === "At Risk")
+        .map((row) => ({
+          key: `safety-${row.driverId}`,
+          driver: row.name,
+          issue: row.blocker ?? "Safety review required",
+          severity: "high",
+          nextStep: "Run safety action workflow and clear findings",
+          actionHref: `/drivers/${row.driverId}/safety`,
+          actionLabel: "Open Safety",
+        }))
+        .slice(0, 6),
     [driverRows]
   );
 
-  const settlementPanel = useMemo(
+  const settlementRows = useMemo<ExceptionItem[]>(
     () =>
       driverRows
-        .filter((r) => r.settlementState === "Hold / Review")
-        .slice(0, 6)
-        .map((r) => ({
-          driverId: r.id,
-          name: r.name,
-          reason: r.pendingPayReason || "Settlement hold/review pending",
-        })),
+        .filter((row) => row.settlement === "Hold / Review" || row.settlement === "Pending")
+        .map((row) => ({
+          key: `settlement-${row.driverId}`,
+          driver: row.name,
+          issue: row.settlement === "Hold / Review" ? "Settlement hold/review active" : "Settlement pending release",
+          severity: row.settlement === "Hold / Review" ? "high" : "medium",
+          nextStep: "Complete proof + finance review to release pay",
+          actionHref: `/drivers/${row.driverId}/settlements`,
+          actionLabel: "Open Settlement",
+        }))
+        .slice(0, 6),
     [driverRows]
   );
 
-  function exportRosterCsv() {
-    const header = ["driverId", "name", "asset", "status", "compliance", "safetyTier", "settlementState"];
-    const rows = driverRows.map((r) => [r.id, r.name, r.asset, r.status, r.compliance.label, r.safetyTier, r.settlementState]);
-    const csv = [header, ...rows].map((row) => row.map((c) => `"${String(c).replace(/"/g, '""')}"`).join(",")).join("\n");
-    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = "bof-driver-roster.csv";
-    a.click();
-    URL.revokeObjectURL(url);
-  }
-
-  function resolveBlockerHref(row: DriverRow): string {
-    if (row.primaryBlocker === "compliance") return row.actions.vault;
-    if (row.primaryBlocker === "safety") return row.actions.safety;
-    if (row.primaryBlocker === "settlement") return row.actions.settlements;
-    if (row.primaryBlocker === "hr") return row.actions.hr;
-    return row.actions.profile;
-  }
+  const commandCenterRows = useMemo(
+    () =>
+      getOwnerAttentionQueue(data)
+        .filter((item) => item.target.includes("DRV-") || item.area === "Driver readiness")
+        .slice(0, 6)
+        .map((item) => ({
+          key: item.id,
+          driver: item.target,
+          issue: item.issue,
+          severity: item.severity === "critical" || item.severity === "high" ? "high" : "medium",
+          nextStep: item.recommendedFix,
+          actionHref: item.actionHref,
+          actionLabel: item.actionLabel,
+        })) satisfies ExceptionItem[],
+    [data]
+  );
 
   return (
-    <div className="bof-page">
-      <div className="bof-roster-header">
-        <h1 className="bof-title">Driver Operations Roster</h1>
-        <p className="bof-lead">
-          Fleet-wide operations view with dispatch status, compliance posture, and pending pay exposure.
-          Use Actions to route into each driver module without leaving roster context.
+    <div className="bof-page bof-cc-page">
+      <section className="bof-cc-hero">
+        <p className="bof-cc-kicker">Fleet-owner control surface</p>
+        <h1 className="bof-title bof-cc-title">Drivers Command Center</h1>
+        <p className="bof-lead bof-cc-lead">
+          Monitor driver readiness, compliance, safety, settlement status, and dispatch eligibility from one view.
         </p>
-      </div>
+        <div className="bof-cc-hero-actions">
+          <Link href="/dispatch" className="bof-cc-btn bof-cc-btn-primary">Assign Loads</Link>
+          <Link href="/documents" className="bof-cc-btn">Open Documents</Link>
+          <Link href="/safety" className="bof-cc-btn">Open Safety</Link>
+        </div>
+      </section>
 
-      <div className="mb-4 flex flex-wrap gap-2">
-        <button className="rounded border border-slate-700 px-3 py-1.5 text-xs text-slate-300 opacity-70" disabled>
-          Add Driver (Demo only)
-        </button>
-        <button onClick={() => setFilterMode("blocked")} className="rounded border border-rose-700 bg-rose-900/30 px-3 py-1.5 text-xs text-rose-100">
-          Review Blocked Drivers
-        </button>
-        <button onClick={exportRosterCsv} className="rounded border border-slate-700 px-3 py-1.5 text-xs text-slate-200">
-          Export Driver Roster
-        </button>
-        <Link href="/documents" className="rounded border border-teal-700 bg-teal-900/30 px-3 py-1.5 text-xs text-teal-100">
-          Open BOF Vault
-        </Link>
-        <button onClick={() => setFilterMode("ready")} className="rounded border border-emerald-700 bg-emerald-900/30 px-3 py-1.5 text-xs text-emerald-100">
-          Dispatch Ready Drivers
-        </button>
-        <button onClick={() => setFilterMode("all")} className="rounded border border-slate-700 px-3 py-1.5 text-xs text-slate-300">
-          Clear Filters
-        </button>
-      </div>
+      <section className="bof-cc-kpi-grid" aria-label="Driver KPI cards">
+        {kpis.map((kpi) => (
+          <article key={kpi.label} className={`bof-cc-kpi bof-cc-tone-${kpi.tone}`}>
+            <p className="bof-cc-kpi-label">{kpi.label}</p>
+            <p className="bof-cc-kpi-value">{kpi.value}</p>
+            <p className="bof-cc-kpi-hint">{kpi.hint}</p>
+          </article>
+        ))}
+      </section>
 
-      <div className="mb-5 grid gap-3 md:grid-cols-2 xl:grid-cols-4">
-        <ChartCard title="Driver Readiness Breakdown" data={readinessBreakdown} onClickLabel={(label) => setFilterMode(label === "Blocked" ? "blocked" : label === "Dispatch Ready" ? "ready" : "all")} />
-        <ChartCard title="Safety Tier Distribution" data={safetyTierData} onClickLabel={(label) => setFilterMode(label === "At Risk" ? "at-risk" : "all")} />
-        <ChartCard title="Settlement Status Breakdown" data={settlementStatusData} onClickLabel={(label) => setFilterMode(label === "Hold / Review" ? "blocked" : "all")} />
-        <ChartCard title="Credential Expiration Forecast" data={expirationForecast} onClickLabel={(label) => setFilterMode(label !== "90+ days" ? "expiring" : "all")} />
-      </div>
+      <section className="bof-cc-chart-grid" aria-label="Driver chart breakdowns">
+        <ChartCard title="Driver Readiness Breakdown" data={readinessData} />
+        <ChartCard title="Safety Tier Distribution" data={safetyData} />
+        <ChartCard title="Compliance Status Breakdown" data={complianceData} />
+        <ChartCard title="Settlement Status Breakdown" data={settlementData} />
+      </section>
 
-      <div className="bof-roster-table-container">
-        <table className="bof-roster-table">
-          <thead>
-            <tr>
-              <th className="bof-roster-header-cell">Driver</th>
-              <th className="bof-roster-header-cell">Asset</th>
-              <th className="bof-roster-header-cell">Status</th>
-              <th className="bof-roster-header-cell">Compliance</th>
-              <th className="bof-roster-header-cell">Safety Tier</th>
-              <th className="bof-roster-header-cell">Settlement</th>
-              <th className="bof-roster-header-cell">Pending Pay</th>
-              <th className="bof-roster-header-cell">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {filteredRows.map((driver) => (
-              <tr key={driver.id} className="bof-roster-row">
-                <td className="bof-roster-cell bof-roster-driver-cell">
-                  <div className="bof-roster-driver">
-                    <DriverAvatar name={driver.name} photoUrl={driver.photo} size={40} />
-                    <div className="bof-roster-driver-info">
-                      <div className="bof-roster-driver-name">{driver.name}</div>
-                      <div className="bof-roster-driver-id">
-                        {driver.id} · {formatCityStateFromAddress(data.drivers.find((d) => d.id === driver.id)?.address)}
+      <section className="bof-cc-panel" aria-label="Driver roster table">
+        <div className="bof-cc-panel-head">
+          <h2 className="bof-h2">Primary Driver Table</h2>
+          <p className="bof-cc-panel-sub">All 12 drivers with readiness, risk posture, and owner actions.</p>
+        </div>
+        <div className="bof-cc-table-wrap">
+          <table className="bof-cc-table">
+            <thead>
+              <tr>
+                <th>Driver</th>
+                <th>Status</th>
+                <th>Dispatch Eligibility</th>
+                <th>Compliance</th>
+                <th>Safety</th>
+                <th>Settlement</th>
+                <th>Current / Next Load</th>
+                <th>Documents</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {driverRows.map((row) => (
+                <tr key={row.driverId}>
+                  <td>
+                    <div className="bof-cc-driver-cell">
+                      <DriverAvatar name={row.name} photoUrl={row.avatar} size={40} />
+                      <div>
+                        <p className="bof-cc-driver-name">{row.name}</p>
+                        <p className="bof-cc-driver-meta">{row.driverId}</p>
+                        <p className="bof-cc-driver-meta">{row.email ?? row.phone ?? "No contact on file"}</p>
                       </div>
                     </div>
-                  </div>
-                </td>
-                
-                <td className="bof-roster-cell">
-                  <span className="bof-roster-asset">{driver.asset}</span>
-                </td>
-                <td className="bof-roster-cell">
-                  <span className={`inline-flex rounded px-2 py-0.5 text-xs ${driver.safetyTier === "At Risk" ? "bg-rose-900/30 text-rose-200" : driver.safetyTier === "Elite" ? "bg-emerald-900/30 text-emerald-200" : "bg-sky-900/30 text-sky-200"}`}>
-                    {driver.safetyTier}
-                  </span>
-                </td>
-                <td className="bof-roster-cell">
-                  <span className={`inline-flex rounded px-2 py-0.5 text-xs ${driver.settlementState === "Hold / Review" ? "bg-rose-900/30 text-rose-200" : driver.settlementState === "Paid" ? "bg-emerald-900/30 text-emerald-200" : "bg-amber-900/30 text-amber-200"}`}>
-                    {driver.settlementState}
-                  </span>
-                </td>
-                
-                <td className="bof-roster-cell">
-                  {driver.statusLink ? (
-                    <Link href={driver.statusLink} className="bof-roster-status-link">
-                      {driver.status}
-                    </Link>
-                  ) : (
-                    <span className="bof-roster-status">{driver.status}</span>
-                  )}
-                </td>
-                
-                <td className="bof-roster-cell">
-                  <div className="bof-roster-compliance">
-                    <span className={`bof-roster-compliance-pill bof-roster-compliance-${driver.compliance.status}`}>
-                      {driver.compliance.label}
-                    </span>
-                    {driver.compliance.blocker && (
-                      <div className="bof-roster-compliance-blocker">
-                        {driver.compliance.blocker}
-                      </div>
-                    )}
-                  </div>
-                </td>
-                
-                <td className="bof-roster-cell">
-                  <span className="bof-roster-pay">
-                    {driver.pendingPay > 0 ? CURRENCY.format(driver.pendingPay) : "—"}
-                  </span>
-                  {driver.pendingPayReason && (
-                    <div className="bof-roster-pay-reason">{driver.pendingPayReason}</div>
-                  )}
-                </td>
-                
-                <td className="bof-roster-cell">
-                  <div className="flex flex-wrap gap-1">
-                    <Link href={driver.actions.profile} className="rounded border border-slate-700 px-2 py-1 text-[11px] text-slate-200">Open Profile</Link>
-                    <Link href={driver.actions.vault} className="rounded border border-slate-700 px-2 py-1 text-[11px] text-slate-200">Documents</Link>
-                    <Link href={driver.actions.hr} className="rounded border border-slate-700 px-2 py-1 text-[11px] text-slate-200">HR Packet</Link>
-                    <Link href={driver.actions.safety} className="rounded border border-slate-700 px-2 py-1 text-[11px] text-slate-200">Safety</Link>
-                    <Link href={driver.actions.settlements} className="rounded border border-slate-700 px-2 py-1 text-[11px] text-slate-200">Settlement</Link>
-                    <Link href={`/dispatch?driverId=${driver.id}`} className="rounded border border-teal-700 bg-teal-900/30 px-2 py-1 text-[11px] text-teal-100">Assign Load</Link>
-                    {(driver.blocked || driver.needsReview) && (
-                      <Link href={resolveBlockerHref(driver)} className="rounded border border-rose-700 bg-rose-900/30 px-2 py-1 text-[11px] text-rose-100">
-                        Resolve Blocker
-                      </Link>
-                    )}
-                  </div>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+                  </td>
+                  <td><StatusChip label={row.status} /></td>
+                  <td>{row.dispatchEligibility}</td>
+                  <td>{row.compliance}</td>
+                  <td><StatusChip label={row.safety} /></td>
+                  <td>
+                    <StatusChip label={row.settlement} />
+                    {row.pendingPay > 0 ? <p className="bof-cc-driver-meta">{formatUsd(row.pendingPay)} pending</p> : null}
+                  </td>
+                  <td>{row.currentOrNextLoad}</td>
+                  <td>{row.documentSummary}</td>
+                  <td>
+                    <div className="bof-cc-action-wrap">
+                      <Link href={`/drivers/${row.driverId}/profile`} className="bof-cc-action-btn">Profile</Link>
+                      <Link href={`/drivers/${row.driverId}/vault`} className="bof-cc-action-btn">Docs</Link>
+                      <Link href={`/drivers/${row.driverId}/hr`} className="bof-cc-action-btn">HR</Link>
+                      <Link href={`/drivers/${row.driverId}/safety`} className="bof-cc-action-btn">Safety</Link>
+                      <Link href={`/drivers/${row.driverId}/settlements`} className="bof-cc-action-btn">Settlement</Link>
+                      <Link href={`/dispatch?driverId=${row.driverId}`} className="bof-cc-action-btn bof-cc-action-btn-primary">Assign Load</Link>
+                      {row.status === "Blocked" ? (
+                        <Link href={`/drivers/${row.driverId}/dispatch`} className="bof-cc-action-btn bof-cc-action-btn-danger">
+                          Resolve Blocker
+                        </Link>
+                      ) : null}
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </section>
 
-      <div className="mt-5 grid gap-3 lg:grid-cols-2">
-        <ExceptionPanel
-          title="Expiring Credentials"
-          rows={expiringPanel.map((r) => ({
-            key: `${r.driverId}-${r.doc}`,
-            line: `${r.name} · ${r.doc} · ${r.days} day(s)`,
-            href: `/drivers/${r.driverId}/vault`,
-            action: "Open Documents",
-          }))}
-        />
-        <ExceptionPanel
-          title="Safety / Risk Items"
-          rows={safetyPanel.map((r) => ({
-            key: `${r.driverId}-${r.issue}`,
-            line: `${r.name} · ${r.issue} · ${r.severity}`,
-            href: `/drivers/${r.driverId}/safety`,
-            action: "Open Safety",
-          }))}
-        />
-        <ExceptionPanel
-          title="Settlement Holds"
-          rows={settlementPanel.map((r) => ({
-            key: `${r.driverId}-${r.reason}`,
-            line: `${r.name} · ${r.reason}`,
-            href: `/drivers/${r.driverId}/settlements`,
-            action: "Open Settlement",
-          }))}
-        />
-        <ExceptionPanel
-          title="Dispatch Blockers"
-          rows={driverRows.filter((r) => r.blocked).slice(0, 6).map((r) => ({
-            key: r.id,
-            line: `${r.name} · ${r.compliance.blocker || "Dispatch blocker"}`,
-            href: resolveBlockerHref(r),
-            action: "Resolve",
-          }))}
-        />
-      </div>
+      <section className="bof-cc-grid-2" aria-label="Driver exception panels">
+        <ExceptionPanel title="Drivers Blocked From Dispatch" items={blockedDriverRows.map((row) => ({
+          key: `blocked-${row.driverId}`,
+          driver: row.name,
+          issue: row.blocker ?? row.compliance,
+          severity: "high",
+          nextStep: "Open driver dispatch readiness and clear blocker",
+          actionHref: `/drivers/${row.driverId}/dispatch`,
+          actionLabel: "Resolve Blocker",
+        }))} />
+        <ExceptionPanel title="Credentials Expiring Soon" items={expiringRows} />
+        <ExceptionPanel title="Safety Issues Requiring Action" items={safetyRows} />
+        <ExceptionPanel title="Settlement Holds / Pending" items={settlementRows.length > 0 ? settlementRows : commandCenterRows} />
+      </section>
     </div>
   );
 }
 
-function ChartCard({
-  title,
-  data,
-  onClickLabel,
-}: {
-  title: string;
-  data: Array<{ label: string; value: number; color: string }>;
-  onClickLabel?: (label: string) => void;
-}) {
-  const total = data.reduce((a, b) => a + b.value, 0) || 1;
+function toneClass(tone: BreakdownPoint["tone"]): string {
+  if (tone === "ok") return "bof-cc-bar-ok";
+  if (tone === "warn") return "bof-cc-bar-warn";
+  if (tone === "danger") return "bof-cc-bar-danger";
+  return "bof-cc-bar-info";
+}
+
+function ChartCard({ title, data }: { title: string; data: BreakdownPoint[] }) {
+  const total = data.reduce((sum, point) => sum + point.value, 0) || 1;
   return (
-    <section className="rounded border border-slate-800 bg-slate-950/40 p-3">
-      <h3 className="mb-2 text-xs font-semibold uppercase tracking-wide text-slate-400">{title}</h3>
-      <div className="space-y-2">
-        {data.map((d) => (
-          <button key={d.label} type="button" onClick={() => onClickLabel?.(d.label)} className="w-full text-left">
-            <div className="flex items-center justify-between text-xs text-slate-300">
-              <span>{d.label}</span>
-              <span>{d.value}</span>
+    <article className="bof-cc-panel">
+      <h3 className="bof-cc-panel-title">{title}</h3>
+      <div className="bof-cc-bars">
+        {data.map((point) => (
+          <div key={point.label} className="bof-cc-bar-row">
+            <div className="bof-cc-bar-meta">
+              <span>{point.label}</span>
+              <strong>{point.value}</strong>
             </div>
-            <div className="mt-1 h-2 rounded bg-slate-800">
-              <div className={`${d.color} h-2 rounded`} style={{ width: `${Math.max(6, (d.value / total) * 100)}%` }} />
+            <div className="bof-cc-bar-track">
+              <div className={`bof-cc-bar-fill ${toneClass(point.tone)}`} style={{ width: `${Math.max(8, (point.value / total) * 100)}%` }} />
             </div>
-          </button>
+          </div>
         ))}
       </div>
-    </section>
+    </article>
   );
 }
 
-function ExceptionPanel({
-  title,
-  rows,
-}: {
-  title: string;
-  rows: Array<{ key: string; line: string; href: string; action: string }>;
-}) {
+function StatusChip({ label }: { label: string }) {
+  const cls =
+    label === "Dispatch Ready" || label === "Elite" || label === "Paid"
+      ? "bof-cc-chip bof-cc-chip-ok"
+      : label === "Blocked" || label === "At Risk" || label === "Hold / Review"
+        ? "bof-cc-chip bof-cc-chip-danger"
+        : "bof-cc-chip bof-cc-chip-warn";
+  return <span className={cls}>{label}</span>;
+}
+
+function ExceptionPanel({ title, items }: { title: string; items: ExceptionItem[] }) {
   return (
-    <section className="rounded border border-slate-800 bg-slate-950/40 p-3">
-      <h3 className="mb-2 text-xs font-semibold uppercase tracking-wide text-slate-400">{title}</h3>
-      {rows.length === 0 ? (
-        <p className="text-xs text-slate-500">No items.</p>
+    <article className="bof-cc-panel">
+      <h3 className="bof-cc-panel-title">{title}</h3>
+      {items.length === 0 ? (
+        <p className="bof-cc-panel-sub">No active exceptions right now.</p>
       ) : (
-        <div className="space-y-2">
-          {rows.map((r) => (
-            <div key={r.key} className="flex items-center justify-between gap-2 rounded border border-slate-800 bg-slate-900/40 px-2 py-1.5">
-              <p className="text-xs text-slate-200">{r.line}</p>
-              <Link href={r.href} className="rounded border border-slate-700 px-2 py-1 text-[11px] text-slate-200">
-                {r.action}
+        <div className="bof-cc-exception-list">
+          {items.map((item) => (
+            <div key={item.key} className={`bof-cc-exception-row bof-cc-exception-${item.severity}`}>
+              <div>
+                <p className="bof-cc-exception-title">{item.driver}</p>
+                <p className="bof-cc-exception-issue">{item.issue}</p>
+                <p className="bof-cc-exception-next">{item.nextStep}</p>
+              </div>
+              <Link href={item.actionHref} className="bof-cc-action-btn">
+                {item.actionLabel}
               </Link>
             </div>
           ))}
         </div>
       )}
-    </section>
+    </article>
   );
 }
