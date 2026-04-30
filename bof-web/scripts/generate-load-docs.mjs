@@ -19,8 +19,15 @@ const TEMPLATE_MAP = {
   bol: "bol.template.html",
   pod: "pod.template.html",
   invoice: "invoice.template.html",
+  workOrder: "work-order.template.html",
+  masterAgreementReference: "master-agreement-reference.template.html",
   sealVerification: "seal-verification.template.html",
   rfidProof: "rfid-proof.template.html",
+  claimIntake: "claim-intake.template.html",
+  insuranceNotification: "insurance-notification.template.html",
+  factoringNotification: "factoring-notification.template.html",
+  settlementHoldNotice: "settlement-hold-notice.template.html",
+  damagePhotoPacket: "damage-photo-packet.template.html",
   claimPacket: "claim-packet.template.html",
 };
 
@@ -29,8 +36,15 @@ const FILE_MAP = {
   bol: "bol.html",
   pod: "pod.html",
   invoice: "invoice.html",
+  workOrder: "work-order.html",
+  masterAgreementReference: "master-agreement-reference.html",
   sealVerification: "seal-verification.html",
   rfidProof: "rfid-proof.html",
+  claimIntake: "claim-intake.html",
+  insuranceNotification: "insurance-notification.html",
+  factoringNotification: "factoring-notification.html",
+  settlementHoldNotice: "settlement-hold-notice.html",
+  damagePhotoPacket: "damage-photo-packet.html",
   claimPacket: "claim-packet.html",
 };
 
@@ -107,11 +121,18 @@ function deriveLoadContext(data, load) {
   const dateKey = now.toISOString().slice(0, 10).replaceAll("-", "");
   const loadDate = `${now.getUTCMonth() + 1}/${now.getUTCDate()}/${now.getUTCFullYear()}`;
   const totalAmount = rate + fuelSurcharge + backhaulPay + (lumperCharge > 0 ? lumperCharge : 0) + detention;
+  const customer = laneOrigin.split(" ")[0] || "BOF Customer";
+  const masterAgreementId = `MA-${customer.toUpperCase().replace(/[^A-Z0-9]/g, "").slice(0, 6) || "BOF"}-2026`;
+  const masterAgreementDate = "01/15/2026";
+  const workOrderId = `WO-${load.id}-${load.number}`;
+  const claimRequired = hasClaim;
+  const settlementHold = String(load.podStatus).toLowerCase() !== "verified";
+  const receiverName = `${deliveryFacility.split(" ")[0] || "Receiver"} Contact`;
 
   return {
     loadId: load.id,
     loadNumber: load.number,
-    customer: laneOrigin.split(" ")[0] || "BOF Customer",
+    customer,
     carrier: "BackOfficeFleet Carrier Group",
     driverId: load.driverId,
     driverName: driver?.name ?? load.driverId,
@@ -167,6 +188,15 @@ function deriveLoadContext(data, load) {
     paymentTerms: "Net 30 from POD receipt",
     remittanceNote: "Remit to BOF Demo Clearing · ACH Ref: BOF-DEMO",
     claimExposure: hasClaim ? money(Math.max(450, Math.round(rate * 0.18))) : "$0.00",
+    masterAgreementId,
+    masterAgreementDate,
+    workOrderId,
+    claimRequired: yesNo(claimRequired),
+    settlementHold: yesNo(settlementHold),
+    driverSignature: driver?.name ?? load.driverId,
+    receiverSignature: receiverName,
+    opsSignature: "BOF Ops Coordinator",
+    claimDate: loadDate,
   };
 }
 
@@ -217,6 +247,11 @@ function resolveMockEvidence(mockFile) {
 function shouldEmit(docKey, ctx) {
   if (docKey === "sealVerification") return ctx.hasSealData;
   if (docKey === "claimPacket") return ctx.hasClaim;
+  if (docKey === "claimIntake") return ctx.hasClaim;
+  if (docKey === "insuranceNotification") return ctx.hasClaim;
+  if (docKey === "damagePhotoPacket") return ctx.hasClaim;
+  if (docKey === "settlementHoldNotice") return ctx.settlementHold === "Yes";
+  if (docKey === "factoringNotification") return true;
   if (docKey === "rfidProof") return ctx.rfidWorkflow;
   return true;
 }
@@ -236,21 +271,14 @@ function main() {
     const ctx = deriveLoadContext(data, load);
     const entry = {};
 
-    const cargoPhoto =
-      resolveEvidenceEntry(ctx.loadId, ["cargo-photo.jpg", "cargo-photo.png"]) ||
-      resolveMockEvidence("mock_cargo.jpg");
-    const sealPickupPhoto =
-      resolveEvidenceEntry(ctx.loadId, ["seal-pickup.jpg", "seal-pickup.png"]) ||
-      resolveMockEvidence("mock_seal.jpg");
-    const sealDeliveryPhoto =
-      resolveEvidenceEntry(ctx.loadId, ["seal-delivery.jpg", "seal-delivery.png"]) ||
-      resolveMockEvidence("mock_seal.jpg");
-    const lumperReceipt =
-      resolveEvidenceEntry(ctx.loadId, ["lumper-receipt.jpg", "lumper-receipt.png"]) ||
-      (ctx.lumperRequired === "Yes" ? resolveMockEvidence("mock_seal.jpg") : undefined);
-    const damageClaimPhoto =
-      resolveEvidenceEntry(ctx.loadId, ["damage-photo.jpg", "damage-photo.png", "claim-photo.jpg"]) ||
-      (ctx.hasClaim ? resolveMockEvidence("trailerdamage.PNG") : undefined);
+    const cargoPhoto = resolveEvidenceEntry(ctx.loadId, ["cargo-photo.svg", "cargo-photo.jpg", "cargo-photo.png"]);
+    const sealPickupPhoto = resolveEvidenceEntry(ctx.loadId, ["seal-pickup-photo.svg", "seal-pickup.jpg", "seal-pickup.png"]);
+    const sealDeliveryPhoto = resolveEvidenceEntry(ctx.loadId, ["seal-delivery-photo.svg", "seal-delivery.jpg", "seal-delivery.png"]);
+    const equipmentPhoto = resolveEvidenceEntry(ctx.loadId, ["equipment-photo.svg", "equipment-photo.jpg", "equipment-photo.png"]);
+    const pickupPhoto = resolveEvidenceEntry(ctx.loadId, ["pickup-photo.svg", "pickup-photo.jpg", "pickup-photo.png"]);
+    const deliveryPhoto = resolveEvidenceEntry(ctx.loadId, ["delivery-photo.svg", "delivery-photo.jpg", "delivery-photo.png"]);
+    const lumperReceipt = resolveEvidenceEntry(ctx.loadId, ["lumper-receipt.svg", "lumper-receipt.jpg", "lumper-receipt.png"]);
+    const damageClaimPhoto = resolveEvidenceEntry(ctx.loadId, ["damage-photo.svg", "damage-photo.jpg", "damage-photo.png", "claim-photo.jpg"]);
     const safetyViolationPhoto = ctx.hasClaim ? resolveMockEvidence("hosviolation.PNG") : undefined;
     const ctxForTemplates = {
       ...ctx,
@@ -271,6 +299,9 @@ function main() {
     if (cargoPhoto) entry.cargoPhoto = cargoPhoto;
     if (sealPickupPhoto) entry.sealPickupPhoto = sealPickupPhoto;
     if (sealDeliveryPhoto) entry.sealDeliveryPhoto = sealDeliveryPhoto;
+    if (equipmentPhoto) entry.equipmentPhoto = equipmentPhoto;
+    if (pickupPhoto) entry.pickupPhoto = pickupPhoto;
+    if (deliveryPhoto) entry.deliveryPhoto = deliveryPhoto;
     if (lumperReceipt) entry.lumperReceipt = lumperReceipt;
     if (damageClaimPhoto) entry.damageClaimPhoto = damageClaimPhoto;
     if (safetyViolationPhoto) entry.safetyViolationPhoto = safetyViolationPhoto;

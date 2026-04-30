@@ -76,13 +76,20 @@ export type LoadEvidenceType =
   | "bol"
   | "pod"
   | "invoice"
+  | "work_order"
+  | "master_agreement_reference"
   | "cargo_photo"
   | "seal_photo"
   | "equipment_photo"
   | "pickup_photo"
+  | "delivery_photo"
   | "safety_violation_photo"
   | "lumper_receipt"
   | "rfid_proof"
+  | "claim_intake"
+  | "factoring_notification"
+  | "settlement_hold_notice"
+  | "damage_photo_packet"
   | "claim_packet"
   | "insurance_notice";
 
@@ -484,6 +491,11 @@ export function getLoadDocumentPacket(data: BofData, loadId: string): LoadDocume
   const generatedBol = getGeneratedLoadDocUrl(loadId, "bol");
   const generatedPod = getGeneratedLoadDocUrl(loadId, "pod");
   const generatedInvoice = getGeneratedLoadDocUrl(loadId, "invoice");
+  const generatedWorkOrder = getGeneratedLoadDocUrl(loadId, "workOrder");
+  const generatedMasterAgreementReference = getGeneratedLoadDocUrl(
+    loadId,
+    "masterAgreementReference"
+  );
   const generatedSeal = getGeneratedLoadDocUrl(loadId, "sealVerification");
   const generatedRfid = getGeneratedLoadDocUrl(loadId, "rfidProof");
   const generatedCargoPhoto = getGeneratedLoadDocUrl(loadId, "cargoPhoto");
@@ -492,6 +504,24 @@ export function getLoadDocumentPacket(data: BofData, loadId: string): LoadDocume
   const generatedSealPhoto = getLoadEvidenceUrl(loadId, "sealPhoto");
   const generatedEquipmentPhoto = getLoadEvidenceUrl(loadId, "equipmentPhoto");
   const generatedPickupPhoto = getLoadEvidenceUrl(loadId, "pickupPhoto");
+  const generatedDeliveryPhoto = getLoadEvidenceUrl(loadId, "deliveryPhoto");
+  const generatedClaimIntake = getGeneratedLoadDocUrl(loadId, "claimIntake");
+  const generatedInsuranceNotification = getGeneratedLoadDocUrl(
+    loadId,
+    "insuranceNotification"
+  );
+  const generatedFactoringNotification = getGeneratedLoadDocUrl(
+    loadId,
+    "factoringNotification"
+  );
+  const generatedSettlementHoldNotice = getGeneratedLoadDocUrl(
+    loadId,
+    "settlementHoldNotice"
+  );
+  const generatedDamagePhotoPacket = getGeneratedLoadDocUrl(
+    loadId,
+    "damagePhotoPacket"
+  );
   const generatedLumper = getGeneratedLoadDocUrl(loadId, "lumperReceipt");
   const generatedClaim = getGeneratedLoadDocUrl(loadId, "claimPacket");
   const generatedDamagePhoto = getGeneratedLoadDocUrl(loadId, "damageClaimPhoto");
@@ -566,6 +596,36 @@ export function getLoadDocumentPacket(data: BofData, loadId: string): LoadDocume
       sourceFromUrl(generatedInvoice || String(invoiceOverride?.fileUrl ?? invoiceOverride?.previewUrl ?? "")) ??
       (load.status === "Delivered" ? "generated" : "mock"),
   };
+  const workOrder: LoadEvidenceItem = {
+    id: `${loadId}:work_order`,
+    loadId,
+    label: "Work Order",
+    section: "core",
+    type: "work_order",
+    status: generatedWorkOrder ? "ready" : "missing",
+    url: generatedWorkOrder,
+    fileName: fileNameFromUrl(generatedWorkOrder),
+    note: generatedWorkOrder
+      ? "Generated schedule/work-order document."
+      : "Work order missing for this load.",
+    requiredForSettlementRelease: true,
+    source: generatedWorkOrder ? "generated" : undefined,
+  };
+  const masterAgreementReference: LoadEvidenceItem = {
+    id: `${loadId}:master_agreement_reference`,
+    loadId,
+    label: "Master Agreement Reference",
+    section: "core",
+    type: "master_agreement_reference",
+    status: generatedMasterAgreementReference ? "ready" : "pending",
+    url: generatedMasterAgreementReference,
+    fileName: fileNameFromUrl(generatedMasterAgreementReference),
+    note: generatedMasterAgreementReference
+      ? "Generated reference to governing master agreement."
+      : "No agreement reference document generated.",
+    requiredForSettlementRelease: false,
+    source: generatedMasterAgreementReference ? "generated" : undefined,
+  };
   const cargoUrl = getLoadEvidenceUrl(loadId, "cargoPhoto") ?? generatedCargoPhoto;
   const cargo = {
     ...toEvidenceItem(
@@ -623,6 +683,16 @@ export function getLoadDocumentPacket(data: BofData, loadId: string): LoadDocume
       ? "Pickup proof image."
       : "Pickup evidence image not generated.",
     source: generatedPickupPhoto ? sourceFromUrl(generatedPickupPhoto) : undefined,
+  } as LoadEvidenceItem;
+  const deliveryPhoto = {
+    ...toEvidenceItem(loadId, "Delivery photo", "proof", "delivery_photo", undefined, false),
+    status: generatedDeliveryPhoto ? "ready" : "missing",
+    url: generatedDeliveryPhoto,
+    fileName: fileNameFromUrl(generatedDeliveryPhoto),
+    note: generatedDeliveryPhoto
+      ? "Delivery proof image."
+      : "Delivery evidence image not generated.",
+    source: generatedDeliveryPhoto ? sourceFromUrl(generatedDeliveryPhoto) : undefined,
   } as LoadEvidenceItem;
   const sealPickupPhoto = {
     ...toEvidenceItem(
@@ -781,26 +851,101 @@ export function getLoadDocumentPacket(data: BofData, loadId: string): LoadDocume
       : "Claim packet required but not generated."
     : "No claim packet required for this load.";
   claim.source = generatedClaim ? "generated" : claim.source;
+  const claimIntake: LoadEvidenceItem = {
+    id: `${loadId}:claim_intake`,
+    loadId,
+    label: "Claim Intake Form",
+    section: "exceptions",
+    type: "claim_intake",
+    status: claim.requiredForClaimRelease
+      ? generatedClaimIntake
+        ? "ready"
+        : "missing"
+      : "not_applicable",
+    url: generatedClaimIntake,
+    fileName: fileNameFromUrl(generatedClaimIntake),
+    note: claim.requiredForClaimRelease
+      ? generatedClaimIntake
+        ? "Generated claim intake form."
+        : "Claim intake form required."
+      : "No claim intake required.",
+    requiredForSettlementRelease: false,
+    requiredForClaimRelease: claim.requiredForClaimRelease,
+    source: generatedClaimIntake ? "generated" : undefined,
+  };
+  const damagePhotoPacket: LoadEvidenceItem = {
+    id: `${loadId}:damage_photo_packet`,
+    loadId,
+    label: "Damage Photo Packet",
+    section: "exceptions",
+    type: "damage_photo_packet",
+    status: claim.requiredForClaimRelease
+      ? generatedDamagePhotoPacket
+        ? "ready"
+        : "missing"
+      : "not_applicable",
+    url: generatedDamagePhotoPacket,
+    fileName: fileNameFromUrl(generatedDamagePhotoPacket),
+    note: claim.requiredForClaimRelease
+      ? generatedDamagePhotoPacket
+        ? "Generated damage packet references."
+        : "Damage packet required for claim."
+      : "No damage packet required.",
+    requiredForSettlementRelease: false,
+    requiredForClaimRelease: claim.requiredForClaimRelease,
+    source: generatedDamagePhotoPacket ? "generated" : undefined,
+  };
   const insurance: LoadEvidenceItem = {
     id: `${loadId}:insurance_notice`,
     loadId,
     label: "Insurance notice",
     section: "exceptions",
     type: "insurance_notice",
-    status: claim.status === "ready" ? "ready" : claim.requiredForClaimRelease ? "pending" : "not_applicable",
-    url:
-      (claim.url && claim.url.includes("insurance")
-        ? claim.url
-        : claim.url && claim.url.includes("claim")
-          ? claim.url
-          : undefined) ?? undefined,
-    fileName: fileNameFromUrl(claim.url),
+    status: claim.requiredForClaimRelease
+      ? generatedInsuranceNotification
+        ? "ready"
+        : "pending"
+      : "not_applicable",
+    url: generatedInsuranceNotification,
+    fileName: fileNameFromUrl(generatedInsuranceNotification),
     note: claim.requiredForClaimRelease
       ? "Insurance path is tied to claim packet completeness."
       : "No insurance notice needed for this load.",
     requiredForSettlementRelease: false,
     requiredForClaimRelease: claim.requiredForClaimRelease,
-    source: sourceFromUrl(claim.url) ?? (claim.requiredForClaimRelease ? "mock" : undefined),
+    source:
+      sourceFromUrl(generatedInsuranceNotification) ??
+      (claim.requiredForClaimRelease ? "generated" : undefined),
+  };
+  const factoringNotification: LoadEvidenceItem = {
+    id: `${loadId}:factoring_notification`,
+    loadId,
+    label: "Factoring Notification",
+    section: "exceptions",
+    type: "factoring_notification",
+    status: generatedFactoringNotification ? "ready" : "missing",
+    url: generatedFactoringNotification,
+    fileName: fileNameFromUrl(generatedFactoringNotification),
+    note: generatedFactoringNotification
+      ? "Generated AR/factoring collectability notice."
+      : "Factoring notification not generated.",
+    requiredForSettlementRelease: false,
+    source: generatedFactoringNotification ? "generated" : undefined,
+  };
+  const settlementHoldNotice: LoadEvidenceItem = {
+    id: `${loadId}:settlement_hold_notice`,
+    loadId,
+    label: "Settlement Hold Notice",
+    section: "exceptions",
+    type: "settlement_hold_notice",
+    status: generatedSettlementHoldNotice ? "ready" : "not_applicable",
+    url: generatedSettlementHoldNotice,
+    fileName: fileNameFromUrl(generatedSettlementHoldNotice),
+    note: generatedSettlementHoldNotice
+      ? "Generated settlement hold notice."
+      : "No active settlement hold notice generated.",
+    requiredForSettlementRelease: false,
+    source: generatedSettlementHoldNotice ? "generated" : undefined,
   };
 
   const safetyEvidenceDocuments: LoadEvidenceItem[] = getSafetyEvidenceByLoadId(loadId).map(
@@ -827,19 +972,26 @@ export function getLoadDocumentPacket(data: BofData, loadId: string): LoadDocume
     bol,
     pod,
     invoice,
+    workOrder,
+    masterAgreementReference,
     cargo,
     sealPhoto,
     sealPickupPhoto,
     sealDeliveryPhoto,
     equipmentPhoto,
     pickupPhoto,
+    deliveryPhoto,
     seal,
     lumper,
     rfid,
     damagePhoto,
+    damagePhotoPacket,
+    claimIntake,
     safetyPhoto,
     claim,
     insurance,
+    factoringNotification,
+    settlementHoldNotice,
     ...safetyEvidenceDocuments,
   ];
   const blockers = documents.filter(

@@ -1,0 +1,30 @@
+<!doctype html>
+<html>
+  <head><meta charset="utf-8" /><title>Claim Intake {{loadId}}</title><style>{{styles}}</style></head>
+  <body>
+    <div class="paper">
+      <header class="doc-header">
+        <div><h1 class="doc-title">Claim Intake Form</h1><div class="generated-label">Generated demo document</div></div>
+        <div class="status-stamp">Claim Required</div>
+      </header>
+      <table>
+        <tr><th>Load ID</th><th>Driver</th><th>Customer</th><th>Claim Date</th></tr>
+        <tr><td>{{loadId}}</td><td>{{driverName}}</td><td>{{customer}}</td><td>{{claimDate}}</td></tr>
+      </table>
+      <table>
+        <tr><th>Pickup</th><th>Delivery</th><th>Commodity</th><th>Exposure</th></tr>
+        <tr><td>{{pickupAddress}}</td><td>{{deliveryAddress}}</td><td>{{commodity}}</td><td>{{claimExposure}}</td></tr>
+      </table>
+      <div class="terms-box">
+        Damage description: {{exceptionNotes}}<br />
+        Evidence links: {{cargoPhotoRef}}, {{damageClaimPhotoRef}}, {{sealPickupPhotoRef}}, {{sealDeliveryPhotoRef}}<br />
+        RFID / proof reference: {{rfidTag}} / {{statusStamp}}.
+      </div>
+      <div class="sig-line">
+        <div class="sig-slot">Driver signature: <em>{{driverSignature}}</em> / {{deliveryDate}}</div>
+        <div class="sig-slot">Receiver signature: <em>{{receiverSignature}}</em> / {{deliveryDate}}</div>
+      </div>
+      <footer><span>{{generatedDate}}</span><span>BOF demo document packet</span></footer>
+    </div>
+  </body>
+</html>

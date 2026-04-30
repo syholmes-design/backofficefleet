@@ -1,0 +1,26 @@
+<!doctype html>
+<html>
+  <head><meta charset="utf-8" /><title>Factoring Notification {{loadId}}</title><style>{{styles}}</style></head>
+  <body>
+    <div class="paper">
+      <header class="doc-header">
+        <div><h1 class="doc-title">Factoring Company Notification</h1><div class="generated-label">Generated demo document</div></div>
+        <div class="status-stamp">{{statusStamp}}</div>
+      </header>
+      <table>
+        <tr><th>Invoice</th><th>Load ID</th><th>Customer</th><th>Amount</th></tr>
+        <tr><td>{{invoiceNumber}}</td><td>{{loadId}}</td><td>{{customer}}</td><td>{{invoiceTotal}}</td></tr>
+      </table>
+      <table>
+        <tr><th>Settlement Hold</th><th>Claim Status</th><th>Proof Status</th><th>Generated</th></tr>
+        <tr><td>{{settlementHold}}</td><td>{{claimStatus}}</td><td>{{statusStamp}}</td><td>{{generatedDate}}</td></tr>
+      </table>
+      <div class="terms-box">BOF demo factoring notice for AR/collectability workflow simulation.</div>
+      <div class="sig-line">
+        <div class="sig-slot">Finance signature: <em>{{opsSignature}}</em></div>
+        <div class="sig-slot">Date: {{generatedDate}}</div>
+      </div>
+      <footer><span>{{generatedDate}}</span><span>BOF demo document packet</span></footer>
+    </div>
+  </body>
+</html>

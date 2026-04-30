@@ -1,0 +1,20 @@
+<!doctype html>
+<html>
+  <head><meta charset="utf-8" /><title>Settlement Hold Notice {{loadId}}</title><style>{{styles}}</style></head>
+  <body>
+    <div class="paper">
+      <header class="doc-header">
+        <div><h1 class="doc-title">Settlement Hold Notice</h1><div class="generated-label">Generated demo document</div></div>
+        <div class="status-stamp">Settlement Hold</div>
+      </header>
+      <table>
+        <tr><th>Load ID</th><th>Driver</th><th>Customer</th><th>Reason</th></tr>
+        <tr><td>{{loadId}}</td><td>{{driverName}}</td><td>{{customer}}</td><td>{{exceptionNotes}}</td></tr>
+      </table>
+      <div class="terms-box">
+        Settlement hold is active until required proof stack is complete and reviewed.
+      </div>
+      <footer><span>{{generatedDate}}</span><span>BOF demo document packet</span></footer>
+    </div>
+  </body>
+</html>

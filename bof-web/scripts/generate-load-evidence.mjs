@@ -86,6 +86,11 @@ function warningForLoad(load) {
   return "";
 }
 
+function hasLumperIssue(load, settlements) {
+  const s = (settlements ?? []).find((row) => row.driverId === load.driverId);
+  return /lumper/i.test(String(s?.pendingReason ?? ""));
+}
+
 function writeEvidenceSvg(loadId, fileName, svgContent) {
   const loadDir = path.join(EVIDENCE_ROOT, loadId);
   ensureDir(loadDir);
@@ -151,12 +156,73 @@ function main() {
         status: "Pickup proof captured",
       })
     );
+    const deliveryPhoto = writeEvidenceSvg(
+      load.id,
+      "delivery-photo.svg",
+      renderEvidenceSvg({
+        ...common,
+        title: "Delivery Photo",
+        location: load.destination,
+        status: "Delivery proof captured",
+      })
+    );
+    const sealPickupPhoto = writeEvidenceSvg(
+      load.id,
+      "seal-pickup-photo.svg",
+      renderEvidenceSvg({
+        ...common,
+        title: "Seal Pickup Photo",
+        location: load.origin,
+        status: `Seal captured at pickup (${load.pickupSeal || "N/A"})`,
+      })
+    );
+    const sealDeliveryPhoto = writeEvidenceSvg(
+      load.id,
+      "seal-delivery-photo.svg",
+      renderEvidenceSvg({
+        ...common,
+        title: "Seal Delivery Photo",
+        location: load.destination,
+        status: `Seal captured at delivery (${load.deliverySeal || "N/A"})`,
+      })
+    );
+    const lumperReceipt = hasLumperIssue(load, data.settlements)
+      ? writeEvidenceSvg(
+          load.id,
+          "lumper-receipt.svg",
+          renderEvidenceSvg({
+            ...common,
+            title: "Lumper Receipt",
+            location: load.destination,
+            status: "Lumper receipt pending/review tracked for settlement",
+          })
+        )
+      : undefined;
+    const damagePhoto =
+      load.dispatchExceptionFlag || String(load.sealStatus).toUpperCase() === "MISMATCH"
+        ? writeEvidenceSvg(
+            load.id,
+            "damage-photo.svg",
+            renderEvidenceSvg({
+              ...common,
+              title: "Damage Photo Packet",
+              location: `${load.origin} -> ${load.destination}`,
+              status: "Damage observed / claim review required",
+              warning: warning || "Claim review required",
+            })
+          )
+        : undefined;
 
     manifest[load.id] = {
       cargoPhoto,
       sealPhoto,
+      sealPickupPhoto,
+      sealDeliveryPhoto,
       equipmentPhoto,
       pickupPhoto,
+      deliveryPhoto,
+      ...(lumperReceipt ? { lumperReceipt } : {}),
+      ...(damagePhoto ? { damagePhoto } : {}),
     };
   }
 

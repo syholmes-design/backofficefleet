@@ -1,0 +1,20 @@
+<!doctype html>
+<html>
+  <head><meta charset="utf-8" /><title>Damage Photo Packet {{loadId}}</title><style>{{styles}}</style></head>
+  <body>
+    <div class="paper">
+      <header class="doc-header">
+        <div><h1 class="doc-title">Damage Photo Packet</h1><div class="generated-label">Generated demo document</div></div>
+        <div class="status-stamp">Claim Required</div>
+      </header>
+      <table>
+        <tr><th>Load</th><th>Driver</th><th>Route</th><th>Exposure</th></tr>
+        <tr><td>{{loadId}}</td><td>{{driverName}}</td><td>{{pickupFacility}} -> {{deliveryFacility}}</td><td>{{claimExposure}}</td></tr>
+      </table>
+      <div class="terms-box">
+        Linked evidence: {{damageClaimPhotoRef}}, {{cargoPhotoRef}}, {{safetyViolationPhotoRef}}.
+      </div>
+      <footer><span>{{generatedDate}}</span><span>BOF demo document packet</span></footer>
+    </div>
+  </body>
+</html>

@@ -3,8 +3,13 @@ import evidenceManifestRaw from "@/lib/generated/load-evidence-manifest.json";
 export type LoadEvidenceKey =
   | "cargoPhoto"
   | "sealPhoto"
+  | "sealPickupPhoto"
+  | "sealDeliveryPhoto"
   | "equipmentPhoto"
-  | "pickupPhoto";
+  | "pickupPhoto"
+  | "deliveryPhoto"
+  | "lumperReceipt"
+  | "damagePhoto";
 
 export type LoadEvidenceManifestEntry = Partial<Record<LoadEvidenceKey, string>>;
 type LoadEvidenceManifest = Record<string, LoadEvidenceManifestEntry>;
