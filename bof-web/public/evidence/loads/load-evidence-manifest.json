@@ -1,0 +1,74 @@
+{
+  "L001": {
+    "cargoPhoto": "/evidence/loads/L001/cargo-photo.svg",
+    "sealPhoto": "/evidence/loads/L001/seal-photo.svg",
+    "equipmentPhoto": "/evidence/loads/L001/equipment-photo.svg",
+    "pickupPhoto": "/evidence/loads/L001/pickup-photo.svg"
+  },
+  "L002": {
+    "cargoPhoto": "/evidence/loads/L002/cargo-photo.svg",
+    "sealPhoto": "/evidence/loads/L002/seal-photo.svg",
+    "equipmentPhoto": "/evidence/loads/L002/equipment-photo.svg",
+    "pickupPhoto": "/evidence/loads/L002/pickup-photo.svg"
+  },
+  "L003": {
+    "cargoPhoto": "/evidence/loads/L003/cargo-photo.svg",
+    "sealPhoto": "/evidence/loads/L003/seal-photo.svg",
+    "equipmentPhoto": "/evidence/loads/L003/equipment-photo.svg",
+    "pickupPhoto": "/evidence/loads/L003/pickup-photo.svg"
+  },
+  "L004": {
+    "cargoPhoto": "/evidence/loads/L004/cargo-photo.svg",
+    "sealPhoto": "/evidence/loads/L004/seal-photo.svg",
+    "equipmentPhoto": "/evidence/loads/L004/equipment-photo.svg",
+    "pickupPhoto": "/evidence/loads/L004/pickup-photo.svg"
+  },
+  "L005": {
+    "cargoPhoto": "/evidence/loads/L005/cargo-photo.svg",
+    "sealPhoto": "/evidence/loads/L005/seal-photo.svg",
+    "equipmentPhoto": "/evidence/loads/L005/equipment-photo.svg",
+    "pickupPhoto": "/evidence/loads/L005/pickup-photo.svg"
+  },
+  "L006": {
+    "cargoPhoto": "/evidence/loads/L006/cargo-photo.svg",
+    "sealPhoto": "/evidence/loads/L006/seal-photo.svg",
+    "equipmentPhoto": "/evidence/loads/L006/equipment-photo.svg",
+    "pickupPhoto": "/evidence/loads/L006/pickup-photo.svg"
+  },
+  "L007": {
+    "cargoPhoto": "/evidence/loads/L007/cargo-photo.svg",
+    "sealPhoto": "/evidence/loads/L007/seal-photo.svg",
+    "equipmentPhoto": "/evidence/loads/L007/equipment-photo.svg",
+    "pickupPhoto": "/evidence/loads/L007/pickup-photo.svg"
+  },
+  "L008": {
+    "cargoPhoto": "/evidence/loads/L008/cargo-photo.svg",
+    "sealPhoto": "/evidence/loads/L008/seal-photo.svg",
+    "equipmentPhoto": "/evidence/loads/L008/equipment-photo.svg",
+    "pickupPhoto": "/evidence/loads/L008/pickup-photo.svg"
+  },
+  "L009": {
+    "cargoPhoto": "/evidence/loads/L009/cargo-photo.svg",
+    "sealPhoto": "/evidence/loads/L009/seal-photo.svg",
+    "equipmentPhoto": "/evidence/loads/L009/equipment-photo.svg",
+    "pickupPhoto": "/evidence/loads/L009/pickup-photo.svg"
+  },
+  "L010": {
+    "cargoPhoto": "/evidence/loads/L010/cargo-photo.svg",
+    "sealPhoto": "/evidence/loads/L010/seal-photo.svg",
+    "equipmentPhoto": "/evidence/loads/L010/equipment-photo.svg",
+    "pickupPhoto": "/evidence/loads/L010/pickup-photo.svg"
+  },
+  "L011": {
+    "cargoPhoto": "/evidence/loads/L011/cargo-photo.svg",
+    "sealPhoto": "/evidence/loads/L011/seal-photo.svg",
+    "equipmentPhoto": "/evidence/loads/L011/equipment-photo.svg",
+    "pickupPhoto": "/evidence/loads/L011/pickup-photo.svg"
+  },
+  "L012": {
+    "cargoPhoto": "/evidence/loads/L012/cargo-photo.svg",
+    "sealPhoto": "/evidence/loads/L012/seal-photo.svg",
+    "equipmentPhoto": "/evidence/loads/L012/equipment-photo.svg",
+    "pickupPhoto": "/evidence/loads/L012/pickup-photo.svg"
+  }
+}

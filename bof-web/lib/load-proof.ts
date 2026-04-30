@@ -1,6 +1,7 @@
 import type { BofData } from "./load-bof-data";
 import { getSafetyEvidenceByLoadId } from "./safety-evidence";
 import { getGeneratedLoadDocUrl } from "./load-doc-manifest";
+import { getLoadEvidenceUrl } from "./load-documents";
 
 export const LOAD_PROOF_TYPES = [
   "Rate Confirmation",
@@ -77,6 +78,8 @@ export type LoadEvidenceType =
   | "invoice"
   | "cargo_photo"
   | "seal_photo"
+  | "equipment_photo"
+  | "pickup_photo"
   | "safety_violation_photo"
   | "lumper_receipt"
   | "rfid_proof"
@@ -486,6 +489,9 @@ export function getLoadDocumentPacket(data: BofData, loadId: string): LoadDocume
   const generatedCargoPhoto = getGeneratedLoadDocUrl(loadId, "cargoPhoto");
   const generatedSealPickupPhoto = getGeneratedLoadDocUrl(loadId, "sealPickupPhoto");
   const generatedSealDeliveryPhoto = getGeneratedLoadDocUrl(loadId, "sealDeliveryPhoto");
+  const generatedSealPhoto = getLoadEvidenceUrl(loadId, "sealPhoto");
+  const generatedEquipmentPhoto = getLoadEvidenceUrl(loadId, "equipmentPhoto");
+  const generatedPickupPhoto = getLoadEvidenceUrl(loadId, "pickupPhoto");
   const generatedLumper = getGeneratedLoadDocUrl(loadId, "lumperReceipt");
   const generatedClaim = getGeneratedLoadDocUrl(loadId, "claimPacket");
   const generatedDamagePhoto = getGeneratedLoadDocUrl(loadId, "damageClaimPhoto");
@@ -560,6 +566,7 @@ export function getLoadDocumentPacket(data: BofData, loadId: string): LoadDocume
       sourceFromUrl(generatedInvoice || String(invoiceOverride?.fileUrl ?? invoiceOverride?.previewUrl ?? "")) ??
       (load.status === "Delivered" ? "generated" : "mock"),
   };
+  const cargoUrl = getLoadEvidenceUrl(loadId, "cargoPhoto") ?? generatedCargoPhoto;
   const cargo = {
     ...toEvidenceItem(
     loadId,
@@ -569,13 +576,53 @@ export function getLoadDocumentPacket(data: BofData, loadId: string): LoadDocume
     proofByType(proofItems, "Pre-Trip Cargo Photo"),
     true
     ),
-    status: generatedCargoPhoto ? "ready" : "missing",
-    url: generatedCargoPhoto,
-    fileName: fileNameFromUrl(generatedCargoPhoto),
-    note: generatedCargoPhoto
+    status: cargoUrl ? "ready" : "missing",
+    url: cargoUrl,
+    fileName: fileNameFromUrl(cargoUrl),
+    note: cargoUrl
       ? "Cargo condition evidence image."
       : "Cargo photo evidence is missing.",
-    source: generatedCargoPhoto ? sourceFromUrl(generatedCargoPhoto) : undefined,
+    source: cargoUrl ? sourceFromUrl(cargoUrl) : undefined,
+  } as LoadEvidenceItem;
+  const sealPhotoUrl = generatedSealPhoto ?? generatedSealDeliveryPhoto ?? generatedSealPickupPhoto;
+  const sealPhoto = {
+    ...toEvidenceItem(
+      loadId,
+      "Seal photo",
+      "proof",
+      "seal_photo",
+      proofByType(proofItems, "Delivery Seal Photo") ?? proofByType(proofItems, "Pickup Seal Photo"),
+      requiredSeal
+    ),
+    status: !requiredSeal ? "not_applicable" : sealPhotoUrl ? "ready" : "missing",
+    url: sealPhotoUrl,
+    fileName: fileNameFromUrl(sealPhotoUrl),
+    note: !requiredSeal
+      ? "No seal checkpoint required."
+      : sealPhotoUrl
+        ? "Combined seal proof image."
+        : "Seal photo evidence not generated.",
+    source: sealPhotoUrl ? sourceFromUrl(sealPhotoUrl) : undefined,
+  } as LoadEvidenceItem;
+  const equipmentPhoto = {
+    ...toEvidenceItem(loadId, "Equipment photo", "proof", "equipment_photo", undefined, false),
+    status: generatedEquipmentPhoto ? "ready" : "missing",
+    url: generatedEquipmentPhoto,
+    fileName: fileNameFromUrl(generatedEquipmentPhoto),
+    note: generatedEquipmentPhoto
+      ? "Equipment inspection evidence image."
+      : "Equipment evidence image not generated.",
+    source: generatedEquipmentPhoto ? sourceFromUrl(generatedEquipmentPhoto) : undefined,
+  } as LoadEvidenceItem;
+  const pickupPhoto = {
+    ...toEvidenceItem(loadId, "Pickup photo", "proof", "pickup_photo", undefined, false),
+    status: generatedPickupPhoto ? "ready" : "missing",
+    url: generatedPickupPhoto,
+    fileName: fileNameFromUrl(generatedPickupPhoto),
+    note: generatedPickupPhoto
+      ? "Pickup proof image."
+      : "Pickup evidence image not generated.",
+    source: generatedPickupPhoto ? sourceFromUrl(generatedPickupPhoto) : undefined,
   } as LoadEvidenceItem;
   const sealPickupPhoto = {
     ...toEvidenceItem(
@@ -781,8 +828,11 @@ export function getLoadDocumentPacket(data: BofData, loadId: string): LoadDocume
     pod,
     invoice,
     cargo,
+    sealPhoto,
     sealPickupPhoto,
     sealDeliveryPhoto,
+    equipmentPhoto,
+    pickupPhoto,
     seal,
     lumper,
     rfid,

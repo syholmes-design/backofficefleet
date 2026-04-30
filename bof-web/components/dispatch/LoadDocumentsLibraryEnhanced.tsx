@@ -30,24 +30,39 @@ function showExceptionClaimSection(load: Load): boolean {
   );
 }
 
-function proofAndMediaDocs(load: Load): DocLinkItem[] {
-  const src = [
-    ["cargo", "Cargo photo", load.cargo_photo_url],
-    ["seal", "Seal photo", load.seal_photo_url],
-    ["equipment", "Equipment photo", load.equipment_photo_url],
-    ["pickup", "Pickup photo", load.pickup_photo_url],
-    ["delivery", "Delivery photo", load.delivery_photo_url],
-    ["lumper", "Lumper receipt", load.lumper_photo_url],
-  ] as const;
-  return src.map(([key, label, url]) => ({
-    key,
-    label,
-    url: url || undefined,
-    kind: "image",
-    showSignedBadge: false,
-    status: url ? "ready" : "missing",
-    required: false,
-  }));
+function packetDocsByLabels(
+  packet: ReturnType<typeof getLoadDocumentPacket>,
+  labels: string[]
+): DocLinkItem[] {
+  const byLabel = new Map((packet?.documents ?? []).map((d) => [d.label, d]));
+  return labels.map((label) => {
+    const row = byLabel.get(label);
+    const ready = row?.status === "ready" && Boolean(row.url);
+    return {
+      key: label.toLowerCase().replace(/[^a-z0-9]+/g, "-"),
+      label,
+      url: row?.url,
+      kind: "image",
+      showSignedBadge: false,
+      status: ready ? "ready" : "missing",
+      required: Boolean(row?.requiredForSettlementRelease),
+    };
+  });
+}
+
+function proofAndMediaDocs(load: Load, packet: ReturnType<typeof getLoadDocumentPacket>): DocLinkItem[] {
+  const labels = [
+    "Cargo photo",
+    "Seal photo",
+    "Equipment photo",
+    "Pickup photo",
+    "Seal pickup photo",
+    "Seal delivery photo",
+    "Lumper receipt",
+    "Damage / claim photo",
+    "Safety violation photo",
+  ];
+  return packetDocsByLabels(packet, labels);
 }
 
 type Props = {
@@ -78,7 +93,12 @@ export function LoadDocumentsLibraryEnhanced({ load }: Props) {
     };
   });
 
-  const proofDocs = proofAndMediaDocs(load);
+  const proofDocs = proofAndMediaDocs(load, packet);
+  const exceptionDocs = packetDocsByLabels(packet, [
+    "Claim packet",
+    "Damage / claim photo",
+    "Safety violation photo",
+  ]);
   const allDocs = [...coreDocs, ...proofDocs];
   const hasAny = allDocs.length > 0;
 
@@ -141,13 +161,14 @@ export function LoadDocumentsLibraryEnhanced({ load }: Props) {
         )}
       </div>
 
-      <DocGroup title="Core shipment docs" items={coreDocs} emptyHint="No rate con, BOL, POD, or invoice documents available." />
-      <DocGroup title="Proof & media" items={proofDocs} emptyHint="No photo, seal, or media documents available." />
+      <DocGroup title="Core Documents" items={coreDocs} emptyHint="No rate con, BOL, POD, or invoice documents available." />
+      <DocGroup title="Proof & Evidence" items={proofDocs} emptyHint="No photo, seal, or media documents available." />
+      <DocGroup title="Exceptions / Claims" items={exceptionDocs} emptyHint="No claim or exception evidence available." />
 
       {showExceptionClaimSection(load) && (
         <div>
           <h4 className="mb-2 text-[10px] font-semibold uppercase tracking-wide text-slate-500">
-            Exception / claim support
+            Exceptions / Claims Notes
           </h4>
           <div className="space-y-2">
             {load.exception_reason && (
