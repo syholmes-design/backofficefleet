@@ -20,6 +20,7 @@ type HrDocRow = {
   type: string;
   status: string;
   href?: string;
+  source?: string;
 };
 
 function humanizeStatus(raw?: string) {
@@ -46,6 +47,15 @@ function chipClass(status: string) {
   return "border border-emerald-700/60 bg-emerald-950/35 text-emerald-200";
 }
 
+function sourceLabel(href?: string): string {
+  if (!href) return "No file";
+  const ext = href.split(".").pop()?.toLowerCase();
+  if (ext === "pdf") return "PDF";
+  if (ext === "png" || ext === "jpg" || ext === "jpeg") return "Image";
+  if (ext === "html") return "HTML";
+  return "File";
+}
+
 function Field({ label, value }: { label: string; value?: string }) {
   return (
     <div className="space-y-1">
@@ -70,23 +80,28 @@ export default function DriverHRPage({ params }: Props) {
     const canonical = getCanonicalDriverDocuments(data, id);
     const byType = new Map(canonical.map((doc) => [doc.type, doc]));
     const rows: Array<{ label: string; type: string }> = [
-      { label: "I-9", type: "I-9" },
       { label: "Emergency Contact", type: "Emergency Contact" },
-      { label: "FMCSA Compliance", type: "FMCSA" },
-      { label: "W-9", type: "W-9" },
-      { label: "Bank Information", type: "Bank Info" },
-      { label: "Medical Card", type: "Medical Card" },
       { label: "CDL", type: "CDL" },
+      { label: "Insurance Card", type: "Insurance Card" },
+      { label: "Medical Card", type: "Medical Card" },
+      { label: "Bank Information", type: "Bank Info" },
       { label: "MVR", type: "MVR" },
+      { label: "I-9", type: "I-9" },
+      { label: "W-9", type: "W-9" },
+      { label: "FMCSA Compliance", type: "FMCSA" },
     ];
     return rows.map((row) => {
       const doc = byType.get(row.type);
-      const canonicalUrl = doc?.fileUrl ?? getDriverDocumentByType(id, row.type);
+      const canonicalUrl = getDriverDocumentByType(id, row.type) ?? doc?.fileUrl;
+      const status = canonicalUrl
+        ? humanizeStatus(doc?.status ?? "VALID")
+        : "Missing / Needs Review";
       return {
         label: row.label,
         type: row.type,
-        status: humanizeStatus(doc?.status),
+        status,
         href: canonicalUrl,
+        source: sourceLabel(canonicalUrl),
       };
     });
   }, [data, id]);
@@ -101,6 +116,7 @@ export default function DriverHRPage({ params }: Props) {
       ["bankInformation", "Bank Info"],
       ["medicalCard", "Medical Card"],
       ["cdl", "CDL"],
+      ["insuranceCard", "Insurance Card"],
       ["mvr", "MVR"],
     ];
     keyToType.forEach(([key, type]) => {
@@ -197,6 +213,9 @@ export default function DriverHRPage({ params }: Props) {
             >
               <p className="text-sm font-medium text-slate-100">{doc.label}</p>
               <div className="flex items-center gap-2">
+                <span className="inline-flex rounded border border-slate-700/70 bg-slate-900/70 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-slate-300">
+                  {doc.source}
+                </span>
                 <span className={`inline-flex rounded px-2 py-0.5 text-xs font-semibold ${chipClass(doc.status)}`}>
                   {doc.status}
                 </span>
