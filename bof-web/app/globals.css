@@ -3878,6 +3878,31 @@ body {
   .bof-government-hero .bof-mkt-government-hero__image-wrap,
   .bof-vault-hero .bof-mkt-vault-hero__image-wrap {
     background: var(--bof-mkt-surface-hero);
+    min-height: clamp(520px, 62vh, 640px);
+    height: clamp(520px, 62vh, 640px);
+    padding: 0;
+  }
+
+  .bof-government-hero .bof-mkt-government-hero__visual {
+    width: 100vw;
+    margin-left: calc(-50vw + 50%);
+    min-height: clamp(520px, 62vh, 640px);
+    height: clamp(520px, 62vh, 640px);
+  }
+
+  .bof-vault-hero .bof-mkt-vault-hero__visual {
+    min-height: clamp(520px, 62vh, 640px);
+    height: clamp(520px, 62vh, 640px);
+  }
+
+  .bof-government-hero .bof-mkt-government-hero__grid,
+  .bof-vault-hero .bof-mkt-vault-hero__grid {
+    min-height: clamp(520px, 62vh, 640px);
+  }
+
+  .bof-government-hero .bof-mkt-government-hero__caption,
+  .bof-vault-hero .bof-mkt-vault-hero__caption {
+    margin-top: 0.35rem;
   }
 
   .bof-government-hero .bof-mkt-government-hero__image,
