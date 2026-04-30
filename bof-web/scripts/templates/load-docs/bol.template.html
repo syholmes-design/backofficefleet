@@ -2,19 +2,53 @@
 <html>
   <head><meta charset="utf-8" /><title>BOL {{loadId}}</title><style>{{styles}}</style></head>
   <body>
-    <header><h1>BackOfficeFleet - Bill of Lading</h1><p>Generated for BOF demo</p></header>
-    <h2>BOL {{bolNumber}} / Load {{loadId}}</h2>
-    <table>
-      <tr><td>Shipper</td><td>{{pickupFacility}} - {{pickupAddress}}</td></tr>
-      <tr><td>Consignee</td><td>{{deliveryFacility}} - {{deliveryAddress}}</td></tr>
-      <tr><td>Pickup Appointment</td><td>{{pickupAppointment}}</td></tr>
-      <tr><td>Delivery Appointment</td><td>{{deliveryAppointment}}</td></tr>
-      <tr><td>Commodity</td><td>{{commodity}}</td></tr>
-      <tr><td>Weight / Pieces</td><td>{{weight}} lbs / {{piecesPallets}}</td></tr>
-      <tr><td>Seal At Pickup</td><td>{{sealPickup}}</td></tr>
-      <tr><td>Seal At Delivery</td><td>{{sealDelivery}}</td></tr>
-    </table>
-    <p>Driver Signature: ____________________ Date: ____________</p>
-    <p>Receiver Signature: __________________ Date: ____________</p>
+    <div class="paper">
+      <header class="doc-header">
+        <div>
+          <h1 class="doc-title">Bill of Lading</h1>
+          <div class="generated-label">BOF demo generated paperwork</div>
+        </div>
+        <div class="status-stamp">{{statusStamp}}</div>
+      </header>
+
+      <div class="meta-grid">
+        <div class="meta-box"><div class="meta-label">BOL Number</div><div class="meta-value">{{bolNumber}}</div></div>
+        <div class="meta-box"><div class="meta-label">Load ID</div><div class="meta-value">{{loadId}}</div></div>
+        <div class="meta-box"><div class="meta-label">Shipper</div><div class="meta-value">{{pickupFacility}}</div></div>
+        <div class="meta-box"><div class="meta-label">Consignee</div><div class="meta-value">{{deliveryFacility}}</div></div>
+      </div>
+
+      <table>
+        <tr><th>Pickup Address</th><th>Delivery Address</th><th>Pickup Date</th><th>Delivery Date</th></tr>
+        <tr><td>{{pickupAddress}}</td><td>{{deliveryAddress}}</td><td>{{pickupDate}}</td><td>{{deliveryDate}}</td></tr>
+      </table>
+
+      <div class="section-title">Freight Description</div>
+      <table>
+        <tr><th>Commodity</th><th>Pieces/Pallets</th><th>Weight</th><th>NMFC / Class</th></tr>
+        <tr><td>{{commodity}}</td><td>{{piecesPallets}}</td><td>{{weight}} lbs</td><td>{{nmfcClass}}</td></tr>
+      </table>
+
+      <div class="section-title">Equipment & Seal</div>
+      <table>
+        <tr><th>Driver</th><th>Truck</th><th>Trailer</th><th>Pickup Seal</th><th>Delivery Seal</th></tr>
+        <tr><td>{{driverName}} ({{driverId}})</td><td>{{truckNumber}}</td><td>{{trailerNumber}}</td><td>{{sealPickup}}</td><td>{{sealDelivery}}</td></tr>
+      </table>
+
+      <div class="sig-line">
+        <div class="sig-slot">Shipper signature / date</div>
+        <div class="sig-slot">Driver signature / date</div>
+      </div>
+      <div class="sig-line">
+        <div class="sig-slot">Consignee signature / date</div>
+        <div class="sig-slot">Carrier representative / date</div>
+      </div>
+
+      <div class="barcode-ref">|| ||| | | {{loadId}} {{bolNumber}} | || ||</div>
+      <footer>
+        <span>Generated: {{generatedDate}}</span>
+        <span>BOF demo document packet</span>
+      </footer>
+    </div>
   </body>
 </html>
