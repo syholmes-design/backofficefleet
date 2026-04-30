@@ -13,6 +13,8 @@
     "patch:dispatch": "node scripts/patch-dispatch-clean-columns.mjs",
     "build:loads": "node scripts/build-dispatch-loads.mjs",
     "generate:docs": "node scripts/generate-bof-documents.mjs",
+    "generate:load-docs": "node scripts/generate-load-docs.mjs",
+    "validate:load-docs": "node scripts/validate-load-docs.mjs",
     "generate:driver-docs": "node scripts/generate-driver-docs.mjs",
     "deploy:full": "node scripts/generate-driver-docs.mjs && git add . && (git commit -m \"Auto deploy: regenerate docs + sync\" || node -e \"process.exit(0)\") && git push && vercel --prod --cwd ..",
     "demo:reset": "node scripts/reset-demo.mjs",

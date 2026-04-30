@@ -1,0 +1,19 @@
+<!doctype html>
+<html>
+  <head><meta charset="utf-8" /><title>Claim Packet {{loadId}}</title><style>{{styles}}</style></head>
+  <body>
+    <header><h1>BackOfficeFleet - Claim Packet</h1><p>Generated for BOF demo</p></header>
+    <h2>Load {{loadId}} Exception / Claim Support</h2>
+    <table>
+      <tr><td>Customer/Broker</td><td>{{customer}}</td></tr>
+      <tr><td>Driver</td><td>{{driverName}} ({{driverId}})</td></tr>
+      <tr><td>BOL Number</td><td>{{bolNumber}}</td></tr>
+      <tr><td>Seal Status</td><td>{{sealStatus}}</td></tr>
+      <tr><td>POD Status</td><td>{{podStatus}}</td></tr>
+      <tr><td>Claim Status</td><td>{{claimStatus}}</td></tr>
+      <tr><td>Settlement Status</td><td>{{settlementStatus}}</td></tr>
+      <tr><td>Exception Notes</td><td>{{exceptionNotes}}</td></tr>
+    </table>
+    <p>Evidence references: cargo photos, seal photos, and related load documents.</p>
+  </body>
+</html>

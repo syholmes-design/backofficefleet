@@ -11,6 +11,7 @@ import type {
 import demoData from "@/lib/demo-data.json";
 import type { BofData } from "@/lib/load-bof-data";
 import { getBackhaulLoadSignals } from "@/lib/backhaul-opportunity-engine";
+import { getGeneratedLoadDocEntry } from "@/lib/load-doc-manifest";
 
 /** Static demo files from `public/mocks/` — served at `/mocks/…`. */
 export const MOCK_DOC_URLS = {
@@ -209,6 +210,7 @@ export function buildDispatchLoadsFromDemoLoads(loads: DemoLoad[]): Load[] {
 
     const st = mapDemoStatusToLoadStatus(l.status, Boolean(l.driverId));
     const signedDocs = ACTUAL_SIGNED_RATE_AND_BOL[l.id];
+    const generatedDocs = getGeneratedLoadDocEntry(l.id);
     const proof_status: ProofStatus = signedDocs
       ? "Complete"
       : mapProof(l.podStatus);
@@ -253,9 +255,11 @@ export function buildDispatchLoadsFromDemoLoads(loads: DemoLoad[]): Load[] {
       pickup_seal_number: l.pickupSeal || undefined,
       delivery_seal_number: l.deliverySeal || undefined,
 
-      rate_con_url: signedDocs?.rate_con_url ?? MOCK_DOC_URLS.rate_con,
-      bol_url: signedDocs?.bol_url ?? MOCK_DOC_URLS.bol,
-      invoice_url: MOCK_DOC_URLS.invoice,
+      rate_con_url:
+        generatedDocs.rateConfirmation ?? signedDocs?.rate_con_url ?? MOCK_DOC_URLS.rate_con,
+      bol_url: generatedDocs.bol ?? signedDocs?.bol_url ?? MOCK_DOC_URLS.bol,
+      pod_url: generatedDocs.pod,
+      invoice_url: generatedDocs.invoice ?? MOCK_DOC_URLS.invoice,
       equipment_photo_url: MOCK_DOC_URLS.equipment_photo,
       cargo_photo_url: MOCK_DOC_URLS.cargo_photo,
       seal_photo_url: MOCK_DOC_URLS.seal_photo,
@@ -271,7 +275,17 @@ export function buildDispatchLoadsFromDemoLoads(loads: DemoLoad[]): Load[] {
       backhaulRecommended: backhaulSignals[l.id]?.backhaulRecommended ?? false,
     };
 
-    return applyDocumentationDemos(row, l);
+    const seeded = applyDocumentationDemos(row, l);
+    return {
+      ...seeded,
+      rate_con_url:
+        generatedDocs.rateConfirmation ?? seeded.rate_con_url ?? signedDocs?.rate_con_url,
+      bol_url: generatedDocs.bol ?? seeded.bol_url ?? signedDocs?.bol_url,
+      pod_url: generatedDocs.pod ?? seeded.pod_url,
+      invoice_url: generatedDocs.invoice ?? seeded.invoice_url,
+      claim_form_url: generatedDocs.claimPacket ?? seeded.claim_form_url,
+      lumper_photo_url: generatedDocs.lumperReceipt ?? seeded.lumper_photo_url,
+    };
   });
 }
 

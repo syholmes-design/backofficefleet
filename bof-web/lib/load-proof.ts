@@ -1,5 +1,6 @@
 import type { BofData } from "./load-bof-data";
 import { getSafetyEvidenceByLoadId } from "./safety-evidence";
+import { getGeneratedLoadDocUrl } from "./load-doc-manifest";
 
 export const LOAD_PROOF_TYPES = [
   "Rate Confirmation",
@@ -472,37 +473,81 @@ export function getLoadDocumentPacket(data: BofData, loadId: string): LoadDocume
   const proofItems = getLoadProofItems(data, loadId);
   const bundle = bundleForLoad(data, loadId);
 
-  const rate = toEvidenceItem(
-    loadId,
-    "Rate Confirmation",
-    "rate_confirmation",
-    proofByType(proofItems, "Rate Confirmation"),
-    true
-  );
-  const bol = toEvidenceItem(loadId, "BOL", "bol", proofByType(proofItems, "BOL"), true);
-  const pod = toEvidenceItem(loadId, "POD", "pod", proofByType(proofItems, "POD"), true);
+  const requiredSeal = Boolean(String(load.pickupSeal ?? "").trim() || String(load.deliverySeal ?? "").trim());
+  const generatedRate = getGeneratedLoadDocUrl(loadId, "rateConfirmation");
+  const generatedBol = getGeneratedLoadDocUrl(loadId, "bol");
+  const generatedPod = getGeneratedLoadDocUrl(loadId, "pod");
+  const generatedInvoice = getGeneratedLoadDocUrl(loadId, "invoice");
+  const generatedSeal = getGeneratedLoadDocUrl(loadId, "sealVerification");
+  const generatedRfid = getGeneratedLoadDocUrl(loadId, "rfidProof");
+  const generatedLumper = getGeneratedLoadDocUrl(loadId, "lumperReceipt");
+  const generatedClaim = getGeneratedLoadDocUrl(loadId, "claimPacket");
+
+  const rate = {
+    ...toEvidenceItem(
+      loadId,
+      "Rate Confirmation",
+      "rate_confirmation",
+      proofByType(proofItems, "Rate Confirmation"),
+      true
+    ),
+    status: generatedRate ? "ready" : "missing",
+    url: generatedRate,
+    fileName: fileNameFromUrl(generatedRate),
+    note: generatedRate
+      ? "Generated from load data template."
+      : "Required document not generated yet for this load.",
+    source: generatedRate ? "generated" : undefined,
+  } as LoadEvidenceItem;
+  const bol = {
+    ...toEvidenceItem(loadId, "BOL", "bol", proofByType(proofItems, "BOL"), true),
+    status: generatedBol ? "ready" : "missing",
+    url: generatedBol,
+    fileName: fileNameFromUrl(generatedBol),
+    note: generatedBol
+      ? "Generated from load data template."
+      : "Required document not generated yet for this load.",
+    source: generatedBol ? "generated" : undefined,
+  } as LoadEvidenceItem;
+  const pod = {
+    ...toEvidenceItem(loadId, "POD", "pod", proofByType(proofItems, "POD"), true),
+    status: generatedPod ? "ready" : load.status === "Delivered" ? "missing" : "pending",
+    url: generatedPod,
+    fileName: fileNameFromUrl(generatedPod),
+    note: generatedPod
+      ? "Generated from load data template."
+      : load.status === "Delivered"
+        ? "Required POD document missing for delivered load."
+        : "POD can be generated once delivery proof is finalized.",
+    source: generatedPod ? "generated" : undefined,
+  } as LoadEvidenceItem;
   const invoiceOverride = bundle?.items?.Invoice;
   const invoice: LoadEvidenceItem = {
     id: `${loadId}:invoice`,
     loadId,
     label: "Invoice",
     type: "invoice",
-    status: invoiceOverride?.status
-      ? toEvidenceStatus(invoiceOverride.status as LoadProofStatus)
-      : load.status === "Delivered"
-        ? "ready"
-        : "pending",
-    url:
-      String(invoiceOverride?.fileUrl ?? invoiceOverride?.previewUrl ?? "").trim() || undefined,
-    fileName: fileNameFromUrl(String(invoiceOverride?.fileUrl ?? invoiceOverride?.previewUrl ?? "")),
+    status: generatedInvoice
+      ? "ready"
+      : invoiceOverride?.status
+        ? toEvidenceStatus(invoiceOverride.status as LoadProofStatus)
+        : load.status === "Delivered"
+          ? "missing"
+          : "pending",
+    url: generatedInvoice || String(invoiceOverride?.fileUrl ?? invoiceOverride?.previewUrl ?? "").trim() || undefined,
+    fileName: fileNameFromUrl(
+      generatedInvoice || String(invoiceOverride?.fileUrl ?? invoiceOverride?.previewUrl ?? "")
+    ),
     note:
       String(invoiceOverride?.notes ?? "").trim() ||
-      (load.status === "Delivered"
-        ? "Invoice packet generated from settlement/billing workflow."
-        : "Invoice publishes after delivery confirmation."),
+      (generatedInvoice
+        ? "Generated from load data template."
+        : load.status === "Delivered"
+          ? "Required invoice is missing for delivered load."
+          : "Invoice publishes after delivery confirmation."),
     requiredForSettlementRelease: true,
     source:
-      sourceFromUrl(String(invoiceOverride?.fileUrl ?? invoiceOverride?.previewUrl ?? "")) ??
+      sourceFromUrl(generatedInvoice || String(invoiceOverride?.fileUrl ?? invoiceOverride?.previewUrl ?? "")) ??
       (load.status === "Delivered" ? "generated" : "mock"),
   };
   const cargo = toEvidenceItem(
@@ -515,14 +560,37 @@ export function getLoadDocumentPacket(data: BofData, loadId: string): LoadDocume
   const sealProof =
     proofByType(proofItems, "Delivery Seal Photo") ??
     proofByType(proofItems, "Pickup Seal Photo");
-  const seal = toEvidenceItem(loadId, "Seal photo", "seal_photo", sealProof, true);
-  const lumper = toEvidenceItem(
-    loadId,
-    "Lumper receipt",
-    "lumper_receipt",
-    proofByType(proofItems, "Lumper Receipt"),
-    Boolean(load.status === "Delivered" && settlementLumperFlag(data, load.driverId))
-  );
+  const seal = {
+    ...toEvidenceItem(loadId, "Seal Verification", "seal_photo", sealProof, requiredSeal),
+    status: !requiredSeal ? "not_applicable" : generatedSeal ? "ready" : "missing",
+    url: generatedSeal,
+    fileName: fileNameFromUrl(generatedSeal),
+    note: !requiredSeal
+      ? "No pickup/delivery seal data on this load."
+      : generatedSeal
+        ? "Generated from load data template."
+        : "Required because this load contains seal checkpoints.",
+    source: generatedSeal ? "generated" : undefined,
+  } as LoadEvidenceItem;
+  const lumperRequired = Boolean(load.status === "Delivered" && settlementLumperFlag(data, load.driverId));
+  const lumper = {
+    ...toEvidenceItem(
+      loadId,
+      "Lumper receipt",
+      "lumper_receipt",
+      proofByType(proofItems, "Lumper Receipt"),
+      lumperRequired
+    ),
+    status: !lumperRequired ? "not_applicable" : generatedLumper ? "ready" : "missing",
+    url: generatedLumper,
+    fileName: fileNameFromUrl(generatedLumper),
+    note: !lumperRequired
+      ? "Not required for this settlement path."
+      : generatedLumper
+        ? "Generated from load data template."
+        : "Required lumper receipt not generated yet.",
+    source: generatedLumper ? "generated" : undefined,
+  } as LoadEvidenceItem;
   const rfid = toEvidenceItem(
     loadId,
     "RFID dock proof",
@@ -531,6 +599,13 @@ export function getLoadDocumentPacket(data: BofData, loadId: string): LoadDocume
     false,
     { source: "rfid" }
   );
+  rfid.status = generatedRfid ? "ready" : "pending";
+  rfid.url = generatedRfid;
+  rfid.fileName = fileNameFromUrl(generatedRfid);
+  rfid.note = generatedRfid
+    ? "Generated RFID/geo proof summary."
+    : "RFID proof not generated yet for this load.";
+  rfid.source = generatedRfid ? "generated" : "rfid";
   const safetyPhoto = toEvidenceItem(
     loadId,
     "Safety violation photo",
@@ -559,17 +634,25 @@ export function getLoadDocumentPacket(data: BofData, loadId: string): LoadDocume
     false,
     { requiredForClaimRelease: claimApplicable(load, bundle) }
   );
+  claim.status = claim.requiredForClaimRelease
+    ? generatedClaim
+      ? "ready"
+      : "missing"
+    : "not_applicable";
+  claim.url = generatedClaim;
+  claim.fileName = fileNameFromUrl(generatedClaim);
+  claim.note = claim.requiredForClaimRelease
+    ? generatedClaim
+      ? "Generated claim packet from load exception context."
+      : "Claim packet required but not generated."
+    : "No claim packet required for this load.";
+  claim.source = generatedClaim ? "generated" : claim.source;
   const insurance: LoadEvidenceItem = {
     id: `${loadId}:insurance_notice`,
     loadId,
     label: "Insurance notice",
     type: "insurance_notice",
-    status:
-      claim.status === "ready" || claim.status === "blocked"
-        ? "ready"
-        : claim.requiredForClaimRelease
-          ? "pending"
-          : "not_applicable",
+    status: claim.status === "ready" ? "ready" : claim.requiredForClaimRelease ? "pending" : "not_applicable",
     url:
       (claim.url && claim.url.includes("insurance")
         ? claim.url

@@ -1,0 +1,17 @@
+<!doctype html>
+<html>
+  <head><meta charset="utf-8" /><title>RFID Proof {{loadId}}</title><style>{{styles}}</style></head>
+  <body>
+    <header><h1>BackOfficeFleet - RFID / Geo Proof Summary</h1><p>Generated for BOF demo</p></header>
+    <h2>Load {{loadId}} Traceability</h2>
+    <table>
+      <tr><td>RFID Tag</td><td>{{rfidTag}}</td></tr>
+      <tr><td>Origin</td><td>{{pickupFacility}} ({{pickupAddress}})</td></tr>
+      <tr><td>Destination</td><td>{{deliveryFacility}} ({{deliveryAddress}})</td></tr>
+      <tr><td>Pickup Appointment</td><td>{{pickupAppointment}}</td></tr>
+      <tr><td>Delivery Appointment</td><td>{{deliveryAppointment}}</td></tr>
+      <tr><td>Status</td><td>{{loadStatus}}</td></tr>
+    </table>
+    <p>Dock / geofence checkpoints linked in BOF evidence registry where available.</p>
+  </body>
+</html>

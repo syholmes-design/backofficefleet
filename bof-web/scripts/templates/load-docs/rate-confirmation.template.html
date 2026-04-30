@@ -1,0 +1,23 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Rate Confirmation {{loadId}}</title>
+    <style>{{styles}}</style>
+  </head>
+  <body>
+    <header><h1>BackOfficeFleet - Rate Confirmation</h1><p>Generated for BOF demo</p></header>
+    <h2>Load {{loadId}} / {{loadNumber}}</h2>
+    <p>Customer/Broker: {{customer}} | Carrier: {{carrier}}</p>
+    <p>Driver: {{driverName}} ({{driverId}}) | Truck: {{truckNumber}} | Trailer: {{trailerNumber}}</p>
+    <table>
+      <tr><td>Pickup</td><td>{{pickupFacility}} - {{pickupAddress}} at {{pickupAppointment}}</td></tr>
+      <tr><td>Delivery</td><td>{{deliveryFacility}} - {{deliveryAddress}} at {{deliveryAppointment}}</td></tr>
+      <tr><td>Commodity</td><td>{{commodity}} | {{weight}} lbs | {{piecesPallets}}</td></tr>
+      <tr><td>Linehaul Rate</td><td>{{rate}}</td></tr>
+      <tr><td>Accessorials</td><td>{{accessorials}}</td></tr>
+      <tr><td>Lumper</td><td>{{lumper}}</td></tr>
+    </table>
+    <footer>Prepared by BOF dispatch documentation pipeline.</footer>
+  </body>
+</html>

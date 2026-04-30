@@ -1,0 +1,20 @@
+<!doctype html>
+<html>
+  <head><meta charset="utf-8" /><title>BOL {{loadId}}</title><style>{{styles}}</style></head>
+  <body>
+    <header><h1>BackOfficeFleet - Bill of Lading</h1><p>Generated for BOF demo</p></header>
+    <h2>BOL {{bolNumber}} / Load {{loadId}}</h2>
+    <table>
+      <tr><td>Shipper</td><td>{{pickupFacility}} - {{pickupAddress}}</td></tr>
+      <tr><td>Consignee</td><td>{{deliveryFacility}} - {{deliveryAddress}}</td></tr>
+      <tr><td>Pickup Appointment</td><td>{{pickupAppointment}}</td></tr>
+      <tr><td>Delivery Appointment</td><td>{{deliveryAppointment}}</td></tr>
+      <tr><td>Commodity</td><td>{{commodity}}</td></tr>
+      <tr><td>Weight / Pieces</td><td>{{weight}} lbs / {{piecesPallets}}</td></tr>
+      <tr><td>Seal At Pickup</td><td>{{sealPickup}}</td></tr>
+      <tr><td>Seal At Delivery</td><td>{{sealDelivery}}</td></tr>
+    </table>
+    <p>Driver Signature: ____________________ Date: ____________</p>
+    <p>Receiver Signature: __________________ Date: ____________</p>
+  </body>
+</html>
