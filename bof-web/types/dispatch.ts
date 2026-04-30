@@ -25,6 +25,26 @@ export type BackhaulScanStatus =
   | "booked"
   | "declined";
 
+export type RouteStatus =
+  | "scheduled"
+  | "dispatched"
+  | "in_transit"
+  | "delivered"
+  | "delayed"
+  | "at_risk";
+
+export type LoadProofEvent = {
+  id: string;
+  loadId: string;
+  type: "pickup" | "seal" | "rfid" | "delivery" | "pod" | "claim";
+  label: string;
+  lat: number;
+  lng: number;
+  timestamp: string;
+  status: "ready" | "pending" | "exception";
+  documentUrl?: string;
+};
+
 export interface Driver {
   driver_id: string;
   name: string;
@@ -114,6 +134,22 @@ export interface Load {
   backhaulScanStatus?: BackhaulScanStatus;
   backhaulOpportunityId?: string;
   backhaulRecommended?: boolean;
+
+  pickupLat?: number;
+  pickupLng?: number;
+  deliveryLat?: number;
+  deliveryLng?: number;
+  currentLat?: number;
+  currentLng?: number;
+  routeStatus?: RouteStatus;
+  routeProgressPct?: number;
+  eta?: string;
+  actualDeliveryTime?: string;
+  currentLocationLabel?: string;
+  nextStopLabel?: string;
+  routeMiles?: number;
+  deadheadMiles?: number;
+  proofEvents?: LoadProofEvent[];
 }
 
 export type DispatchNavId =
