@@ -44,7 +44,7 @@ export function MarketingPrivateFleetsHero({
       aria-labelledby={sectionAriaLabelledBy ?? titleId}
     >
       <div className="bof-mkt-private-fleets-hero__shell">
-        <div className="bof-mkt-private-fleets-hero__media">
+        <div className="bof-mkt-private-fleets-hero__media bof-mkt-hero-image-panel--private-fleets-size">
           <Image
             src={imageSrc}
             alt={imageAlt}

@@ -66,7 +66,7 @@ export function MarketingGovernmentHero({
         </div>
 
         <div className="bof-mkt-government-hero__visual">
-          <div className="bof-mkt-government-hero__image-wrap">
+          <div className="bof-mkt-government-hero__image-wrap bof-mkt-hero-image-panel--private-fleets-size">
             <Image
               src={imageSrc}
               alt={imageAlt}

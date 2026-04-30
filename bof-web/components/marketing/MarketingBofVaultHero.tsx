@@ -66,7 +66,7 @@ export function MarketingBofVaultHero({
         </div>
 
         <div className="bof-mkt-vault-hero__visual">
-          <div className="bof-mkt-vault-hero__image-wrap">
+          <div className="bof-mkt-vault-hero__image-wrap bof-mkt-hero-image-panel--private-fleets-size">
             <Image
               src={imageSrc}
               alt={imageAlt}

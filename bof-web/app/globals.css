@@ -3519,6 +3519,23 @@ body {
   overflow: hidden;
 }
 
+/* Image frame height aligned to Private Fleets hero (same min-height rhythm). */
+.bof-mkt-hero-image-panel--private-fleets-size {
+  min-height: 600px;
+  box-sizing: border-box;
+}
+
+@media (max-width: 900px) {
+  .bof-mkt-hero-image-panel--private-fleets-size {
+    min-height: 500px;
+  }
+}
+
+/* Private Fleets full-bleed media: class documents shared baseline; layout unchanged. */
+.bof-mkt-private-fleets-hero__media.bof-mkt-hero-image-panel--private-fleets-size {
+  min-height: inherit;
+}
+
 .bof-mkt-private-fleets-hero__integrated {
   position: relative;
   width: 100%;
@@ -3708,7 +3725,7 @@ body {
   }
 }
 
-/* Government hero */
+/* Government hero — section rhythm matches Private Fleets; image uses contain in fixed frame. */
 .bof-mkt-government-hero {
   position: relative;
   min-height: 600px;
@@ -3721,7 +3738,6 @@ body {
 .bof-mkt-government-hero__grid {
   position: relative;
   width: 100%;
-  height: 100%;
   min-height: 600px;
   display: flex;
   flex-direction: column;
@@ -3733,7 +3749,7 @@ body {
   z-index: 3;
   max-width: 600px;
   padding: var(--bof-mkt-space-xl);
-  display: none;
+  display: flex;
   flex-direction: column;
   gap: var(--bof-mkt-space-md);
 }
@@ -3741,41 +3757,42 @@ body {
 .bof-mkt-government-hero__visual {
   position: relative;
   width: 100%;
-  height: 100%;
   min-height: 600px;
+  display: flex;
+  flex-direction: column;
 }
 
 .bof-mkt-government-hero__image-wrap {
   position: relative;
   width: 100%;
-  height: 100%;
+  flex: 1 1 auto;
   min-height: 600px;
 }
 
 .bof-mkt-government-hero__image {
-  object-fit: cover;
-  object-position: center;
+  object-fit: contain;
+  object-position: center center;
   width: 100%;
   height: 100%;
-  transform: none;
 }
 
-/* Government-only framing refinement:
-   desktop hero photo is less cropped while preserving full cover. */
-@media (min-width: 1024px) {
-  .bof-mkt-government-hero,
-  .bof-mkt-government-hero__grid,
-  .bof-mkt-government-hero__visual,
-  .bof-mkt-government-hero__image-wrap {
-    min-height: 420px;
-    height: 420px;
+@media (min-width: 901px) {
+  .bof-mkt-government-hero__grid {
+    display: grid;
+    grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+    column-gap: clamp(1rem, 2.5vw, 2.5rem);
+    align-items: stretch;
+    width: 100%;
+    max-width: min(96vw, 78rem);
+    margin-inline: auto;
+    padding-inline: clamp(1.5rem, 4vw, 3rem);
+    box-sizing: border-box;
   }
 
-  .bof-mkt-government-hero__image {
-    width: 100%;
+  .bof-mkt-government-hero__visual,
+  .bof-mkt-government-hero__image-wrap {
+    min-height: 600px;
     height: 100%;
-    transform: none;
-    object-position: center center;
   }
 }
 
@@ -3854,10 +3871,10 @@ body {
   margin-top: 2px;
 }
 
-/* BOF Vault hero */
+/* BOF Vault hero — same section and image-panel rhythm as Private Fleets / Government. */
 .bof-mkt-vault-hero {
   position: relative;
-  min-height: 80vh;
+  min-height: 600px;
   display: flex;
   align-items: center;
   background: var(--bof-mkt-surface-hero);
@@ -3867,101 +3884,51 @@ body {
 .bof-mkt-vault-hero__grid {
   position: relative;
   width: 100%;
-  height: 100%;
-  min-height: 80vh;
-  display: block;
+  min-height: 600px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
 .bof-mkt-vault-hero__visual {
   position: relative;
-  width: 100vw;
-  height: 80vh;
+  width: 100%;
   min-height: 600px;
-  margin-left: calc(-50vw + 50%);
+  display: flex;
+  flex-direction: column;
 }
 
 .bof-mkt-vault-hero__image-wrap {
   position: relative;
   width: 100%;
-  height: 100%;
+  flex: 1 1 auto;
   min-height: 600px;
 }
 
 .bof-mkt-vault-hero__image {
-  object-fit: cover;
+  object-fit: contain;
   object-position: center center;
   width: 100%;
   height: 100%;
 }
 
-/* Page-specific zoom-out treatment for Government and BOF Vault heroes.
-   Keep this scoped so other heroes are unchanged. */
-@media (min-width: 1024px) {
-  .bof-government-hero,
-  .bof-vault-hero {
+@media (min-width: 901px) {
+  .bof-mkt-vault-hero__grid {
+    display: grid;
+    grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+    column-gap: clamp(1rem, 2.5vw, 2.5rem);
+    align-items: stretch;
     width: 100%;
-    max-width: none;
-    padding-left: clamp(12px, 1.8vw, 28px);
-    padding-right: clamp(12px, 1.8vw, 28px);
+    max-width: min(96vw, 78rem);
+    margin-inline: auto;
+    padding-inline: clamp(1.5rem, 4vw, 3rem);
+    box-sizing: border-box;
   }
 
-  .bof-government-hero .bof-mkt-government-hero__grid,
-  .bof-vault-hero .bof-mkt-vault-hero__grid {
-    min-height: clamp(320px, 28vw, 420px);
-    height: clamp(320px, 28vw, 420px);
-    width: 100%;
-  }
-
-  .bof-government-hero .bof-mkt-government-hero__visual,
-  .bof-vault-hero .bof-mkt-vault-hero__visual {
-    width: min(94vw, 1500px);
-    max-width: none;
-    margin-left: auto;
-    margin-right: auto;
-    min-height: clamp(320px, 28vw, 420px);
-    height: clamp(320px, 28vw, 420px);
-  }
-
-  .bof-government-hero .bof-mkt-government-hero__image-wrap,
-  .bof-vault-hero .bof-mkt-vault-hero__image-wrap {
-    background: var(--bof-mkt-surface-hero);
-    width: 100%;
-    max-width: none;
-    min-height: clamp(320px, 28vw, 420px);
-    height: clamp(320px, 28vw, 420px);
-    padding: 0;
-  }
-
-  .bof-government-hero .bof-mkt-government-hero__caption,
-  .bof-vault-hero .bof-mkt-vault-hero__caption {
-    margin-top: 0.35rem;
-  }
-
-  .bof-government-hero .bof-mkt-government-hero__image,
-  .bof-vault-hero .bof-mkt-vault-hero__image {
-    object-fit: contain;
-    object-position: center center;
-    width: 100%;
-    height: auto;
-    max-height: 100%;
-    transform: none;
-  }
-}
-
-@media (min-width: 1024px) {
-  .bof-mkt-vault-hero,
-  .bof-mkt-vault-hero__grid,
   .bof-mkt-vault-hero__visual,
   .bof-mkt-vault-hero__image-wrap {
-    min-height: 420px;
-    height: 420px;
-  }
-
-  .bof-mkt-vault-hero__image {
-    width: 100%;
+    min-height: 600px;
     height: 100%;
-    transform: none;
-    object-position: center center;
   }
 }
 
@@ -3982,7 +3949,7 @@ body {
   z-index: 3;
   max-width: 600px;
   padding: var(--bof-mkt-space-xl);
-  display: none;
+  display: flex;
   flex-direction: column;
   gap: var(--bof-mkt-space-md);
 }
@@ -4070,16 +4037,36 @@ body {
   .bof-mkt-vault-hero__visual {
     position: relative;
     height: 300px;
+    min-height: 0;
     order: -1;
   }
+
+  .bof-mkt-government-hero__image-wrap,
+  .bof-mkt-vault-hero__image-wrap {
+    min-height: 300px;
+    height: 100%;
+  }
+
+  .bof-mkt-government-hero__image-wrap.bof-mkt-hero-image-panel--private-fleets-size,
+  .bof-mkt-vault-hero__image-wrap.bof-mkt-hero-image-panel--private-fleets-size {
+    min-height: 300px;
+  }
   
-  .bof-mkt-private-fleets-hero__text,
+  .bof-mkt-private-fleets-hero__text {
+    padding: var(--bof-mkt-space-lg) var(--bof-mkt-space-md);
+    max-width: 100%;
+    text-align: center;
+    display: none;
+  }
+
   .bof-mkt-government-hero__copy,
   .bof-mkt-vault-hero__copy {
     padding: var(--bof-mkt-space-lg) var(--bof-mkt-space-md);
     max-width: 100%;
     text-align: center;
-    display: none;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
   }
   
   .bof-mkt-private-fleets-hero__ctas,
