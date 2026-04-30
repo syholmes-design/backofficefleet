@@ -3733,9 +3733,9 @@ body {
 .bof-mkt-government-hero__image {
   object-fit: cover;
   object-position: center;
-  width: 108%;
-  height: 108%;
-  transform: translate(-4%, -4%);
+  width: 100%;
+  height: 100%;
+  transform: none;
 }
 
 /* Government-only framing refinement:
@@ -3752,8 +3752,8 @@ body {
   .bof-mkt-government-hero__image {
     width: 100%;
     height: 100%;
-    transform: translate(0, 0);
-    object-position: 52% center;
+    transform: none;
+    object-position: center center;
   }
 }
 
@@ -3872,6 +3872,24 @@ body {
   height: 100%;
 }
 
+/* Page-specific zoom-out treatment for Government and BOF Vault heroes.
+   Keep this scoped so other heroes are unchanged. */
+@media (min-width: 1024px) {
+  .bof-government-hero .bof-mkt-government-hero__image-wrap,
+  .bof-vault-hero .bof-mkt-vault-hero__image-wrap {
+    background: var(--bof-mkt-surface-hero);
+  }
+
+  .bof-government-hero .bof-mkt-government-hero__image,
+  .bof-vault-hero .bof-mkt-vault-hero__image {
+    object-fit: contain;
+    object-position: center center;
+    width: 100%;
+    height: 100%;
+    transform: none;
+  }
+}
+
 @media (min-width: 1024px) {
   .bof-mkt-vault-hero,
   .bof-mkt-vault-hero__grid,
@@ -3884,8 +3902,8 @@ body {
   .bof-mkt-vault-hero__image {
     width: 100%;
     height: 100%;
-    transform: translate(0, 0);
-    object-position: 52% center;
+    transform: none;
+    object-position: center center;
   }
 }
 

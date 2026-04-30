@@ -169,6 +169,7 @@ export default function GovernmentPage() {
         trustAriaLabel="Government program highlights"
         imageSrc="/assets/images/government-hero2.png"
         imageAlt="Government and regulated fleet field and command operations at a glance"
+        className="bof-government-hero"
         ctas={
           <>
             <Link

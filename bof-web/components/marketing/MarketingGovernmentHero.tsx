@@ -16,6 +16,8 @@ export type MarketingGovernmentHeroProps = {
   imageAlt: string;
   /** Short line on the image (not a product mock; editorial caption bar). */
   imageCaption?: string;
+  /** Optional custom className for page-specific styling */
+  className?: string;
 };
 
 /**
@@ -35,10 +37,11 @@ export function MarketingGovernmentHero({
   imageSrc,
   imageAlt,
   imageCaption,
+  className,
 }: MarketingGovernmentHeroProps) {
   return (
     <section
-      className="bof-mkt-government-hero"
+      className={`bof-mkt-government-hero ${className || ""}`}
       aria-labelledby={sectionAriaLabelledBy ?? titleId}
     >
       <div className="bof-mkt-government-hero__grid">
