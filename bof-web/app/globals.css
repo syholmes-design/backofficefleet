@@ -3879,34 +3879,35 @@ body {
   .bof-vault-hero {
     width: 100%;
     max-width: none;
+    padding-left: clamp(12px, 1.8vw, 28px);
+    padding-right: clamp(12px, 1.8vw, 28px);
+  }
+
+  .bof-government-hero .bof-mkt-government-hero__grid,
+  .bof-vault-hero .bof-mkt-vault-hero__grid {
+    min-height: clamp(320px, 28vw, 420px);
+    height: clamp(320px, 28vw, 420px);
+    width: 100%;
+  }
+
+  .bof-government-hero .bof-mkt-government-hero__visual,
+  .bof-vault-hero .bof-mkt-vault-hero__visual {
+    width: min(94vw, 1500px);
+    max-width: none;
+    margin-left: auto;
+    margin-right: auto;
+    min-height: clamp(320px, 28vw, 420px);
+    height: clamp(320px, 28vw, 420px);
   }
 
   .bof-government-hero .bof-mkt-government-hero__image-wrap,
   .bof-vault-hero .bof-mkt-vault-hero__image-wrap {
     background: var(--bof-mkt-surface-hero);
-    min-height: clamp(340px, 34vw, 430px);
-    height: clamp(340px, 34vw, 430px);
+    width: 100%;
+    max-width: none;
+    min-height: clamp(320px, 28vw, 420px);
+    height: clamp(320px, 28vw, 420px);
     padding: 0;
-  }
-
-  .bof-government-hero .bof-mkt-government-hero__visual {
-    width: 100vw;
-    margin-left: calc(-50vw + 50%);
-    min-height: clamp(340px, 34vw, 430px);
-    height: clamp(340px, 34vw, 430px);
-  }
-
-  .bof-vault-hero .bof-mkt-vault-hero__visual {
-    width: 100vw;
-    margin-left: calc(-50vw + 50%);
-    min-height: clamp(340px, 34vw, 430px);
-    height: clamp(340px, 34vw, 430px);
-  }
-
-  .bof-government-hero .bof-mkt-government-hero__grid,
-  .bof-vault-hero .bof-mkt-vault-hero__grid {
-    min-height: clamp(340px, 34vw, 430px);
-    height: clamp(340px, 34vw, 430px);
   }
 
   .bof-government-hero .bof-mkt-government-hero__caption,
@@ -3919,7 +3920,8 @@ body {
     object-fit: contain;
     object-position: center center;
     width: 100%;
-    height: 100%;
+    height: auto;
+    max-height: 100%;
     transform: none;
   }
 }
