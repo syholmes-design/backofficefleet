@@ -14,9 +14,10 @@ import {
   computeDocumentationReadiness,
   documentationLineBadgeClass,
   overallPacketBadgeClass,
-  type DocumentationReadinessLine,
 } from "@/lib/documentation-readiness";
 import { useDispatchDashboardStore } from "@/lib/stores/dispatch-dashboard-store";
+import { useBofDemoData } from "@/lib/bof-demo-data-context";
+import { getLoadDocumentPacket } from "@/lib/load-proof";
 
 type Props = {
   load: Load;
@@ -33,7 +34,79 @@ function firstBundleUrl(load: Load): string | null {
 }
 
 export function DocumentationReadinessPanel({ load }: Props) {
+  const { data } = useBofDemoData();
   const report = useMemo(() => computeDocumentationReadiness(load), [load]);
+  const packet = useMemo(
+    () => getLoadDocumentPacket(data, load.load_id),
+    [data, load.load_id]
+  );
+  const packetMap = useMemo(
+    () => new Map((packet?.documents ?? []).map((d) => [d.label, d])),
+    [packet]
+  );
+  const drawerRows = useMemo(() => {
+    const pick = (label: string, fallbackStatus: string, fallbackDetail?: string) => {
+      const item = packetMap.get(label);
+      if (!item) {
+        return {
+          key: label,
+          label,
+          status: "Missing",
+          href: undefined as string | undefined,
+          detail: fallbackDetail || "Generated document not found",
+          ready: false,
+        };
+      }
+      const ready = item.status === "ready" && Boolean(item.url);
+      return {
+        key: label,
+        label,
+        status:
+          label === "Claim packet" && item.requiredForClaimRelease && !ready
+            ? "Claim Required"
+            : item.status === "ready"
+              ? "Ready"
+              : item.status === "missing"
+                ? "Missing"
+                : item.status === "pending"
+                  ? "Pending"
+                  : item.status === "not_applicable"
+                    ? "Not applicable"
+                    : "Blocked",
+        href: ready ? item.url : undefined,
+        detail:
+          item.note ||
+          (!ready && item.status === "ready"
+            ? "Generated document not found"
+            : fallbackDetail),
+        ready,
+      };
+    };
+    return [
+      pick("Rate Confirmation", "Missing"),
+      pick("BOL", "Missing"),
+      pick("POD", "Missing"),
+      pick("Invoice", "Missing"),
+      pick("Cargo photo", "Missing"),
+      pick("Seal Verification", "Missing"),
+      pick("Lumper receipt", "Not applicable"),
+      pick("RFID dock proof", "Pending"),
+      pick("Claim packet", "Claim Required"),
+    ];
+  }, [packetMap]);
+
+  if (
+    typeof window !== "undefined" &&
+    process.env.NODE_ENV !== "production" &&
+    load.load_id === "L004"
+  ) {
+    console.info("[dispatch-proof-debug]", {
+      selectedLoadId: load.load_id,
+      normalizedLoadId: load.load_id,
+      packet,
+      rows: drawerRows,
+    });
+  }
   const setSettlementHold = useDispatchDashboardStore(
     (s) => s.setSettlementHold
   );
@@ -157,11 +230,33 @@ export function DocumentationReadinessPanel({ load }: Props) {
               <th className="border-b border-slate-800 px-3 py-2 font-medium">
                 Status
               </th>
+              <th className="border-b border-slate-800 px-3 py-2 font-medium">
+                Link
+              </th>
             </tr>
           </thead>
           <tbody className="text-slate-200">
-            {report.lines.map((line) => (
-              <ReadinessRow key={line.key} line={line} />
+            {drawerRows.map((line) => (
+              <ReadinessRow
+                key={line.key}
+                line={{
+                  key: line.key,
+                  label: line.label,
+                  status:
+                    line.status === "Ready"
+                      ? "Ready"
+                      : line.status === "Missing"
+                        ? "Missing"
+                        : line.status === "Pending"
+                          ? "Incomplete"
+                          : line.status === "Not applicable"
+                            ? "Not applicable"
+                            : "Claim Required",
+                  detail: line.detail,
+                }}
+                href={line.href}
+                viewLabel={line.label.toLowerCase().includes("photo") ? "View photo" : "Open"}
+              />
             ))}
           </tbody>
         </table>
@@ -383,7 +478,20 @@ export function DocumentationReadinessPanel({ load }: Props) {
   );
 }
 
-function ReadinessRow({ line }: { line: DocumentationReadinessLine }) {
+function ReadinessRow({
+  line,
+  href,
+  viewLabel,
+}: {
+  line: {
+    key: string;
+    label: string;
+    status: "Ready" | "Missing" | "Incomplete" | "Claim Required" | "Not applicable";
+    detail?: string;
+  };
+  href?: string;
+  viewLabel?: string;
+}) {
   return (
     <tr className="border-b border-slate-800/80 last:border-b-0">
       <td className="px-3 py-2 align-top text-slate-200">{line.label}</td>
@@ -398,6 +506,20 @@ function ReadinessRow({ line }: { line: DocumentationReadinessLine }) {
         </span>
         {line.detail && (
           <p className="mt-1 text-[11px] text-slate-500">{line.detail}</p>
+        )}
+      </td>
+      <td className="px-3 py-2 align-top">
+        {href ? (
+          <a
+            href={href}
+            target="_blank"
+            rel="noreferrer"
+            className="text-xs font-semibold text-teal-300 hover:text-teal-200"
+          >
+            {viewLabel || "Open"}
+          </a>
+        ) : (
+          <span className="text-xs text-slate-500">Missing / Needs review</span>
         )}
       </td>
     </tr>

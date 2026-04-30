@@ -16,8 +16,16 @@ type GeneratedLoadDocManifest = Record<string, GeneratedLoadDocEntry>;
 
 const manifest = (rawManifest ?? {}) as GeneratedLoadDocManifest;
 
+export function normalizeLoadId(loadId: string): string {
+  const raw = String(loadId ?? "").trim().toUpperCase();
+  const digits = raw.match(/\d+/)?.[0] ?? "";
+  if (!digits) return raw;
+  return `L${digits.padStart(3, "0")}`;
+}
+
 export function getGeneratedLoadDocEntry(loadId: string): GeneratedLoadDocEntry {
-  return manifest[loadId] ?? {};
+  const normalized = normalizeLoadId(loadId);
+  return manifest[normalized] ?? manifest[loadId] ?? {};
 }
 
 export function getGeneratedLoadDocUrl(
