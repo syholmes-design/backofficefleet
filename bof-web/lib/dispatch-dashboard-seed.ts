@@ -2,8 +2,10 @@ import type {
   ComplianceStatus,
   Driver,
   Load,
+  LoadProofEvent,
   LoadStatus,
   ProofStatus,
+  RouteStatus,
   SealStatus,
   Tractor,
   Trailer,
@@ -12,6 +14,7 @@ import demoData from "@/lib/demo-data.json";
 import type { BofData } from "@/lib/load-bof-data";
 import { getBackhaulLoadSignals } from "@/lib/backhaul-opportunity-engine";
 import { getGeneratedLoadDocEntry } from "@/lib/load-doc-manifest";
+import { coordsForLoadRoute, interpolateAlongRoute } from "@/lib/load-route-geo";
 
 /** Static demo files from `public/mocks/` — served at `/mocks/…`. */
 export const MOCK_DOC_URLS = {
@@ -110,6 +113,44 @@ function trailerIdForTractor(tractorId: string | null): string | null {
   const n = parseInt(tractorId.replace(/^T-/, ""), 10);
   if (Number.isNaN(n)) return null;
   return `TR-${100 + n}`;
+}
+
+function laneCityLabel(lane: string): string {
+  const parts = lane.split(" - ").map((x) => x.trim());
+  return parts[parts.length - 1] || lane;
+}
+
+function routeStatusForLoad(st: LoadStatus, hasRisk: boolean): RouteStatus {
+  if (st === "Delivered") return "delivered";
+  if (st === "In Transit") return hasRisk ? "at_risk" : "in_transit";
+  if (st === "Exception") return "delayed";
+  if (st === "Dispatched" || st === "Assigned") return "dispatched";
+  return "scheduled";
+}
+
+function routeMilesBetween(
+  origin: [number, number],
+  destination: [number, number]
+): number {
+  const [lat1, lon1] = origin;
+  const [lat2, lon2] = destination;
+  const toRad = (deg: number) => (deg * Math.PI) / 180;
+  const dLat = toRad(lat2 - lat1);
+  const dLon = toRad(lon2 - lon1);
+  const a =
+    Math.sin(dLat / 2) ** 2 +
+    Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLon / 2) ** 2;
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  const miles = 3958.8 * c;
+  return Math.max(25, Math.round(miles));
+}
+
+function routeProgressForStatus(st: LoadStatus, idx: number): number {
+  if (st === "Delivered") return 100;
+  if (st === "In Transit") return 35 + ((idx * 17) % 45);
+  if (st === "Exception") return 28 + ((idx * 11) % 40);
+  if (st === "Dispatched" || st === "Assigned") return 6 + (idx % 10);
+  return 0;
 }
 
 function homeTerminalFromAddress(addr: string): string | undefined {
@@ -221,6 +262,31 @@ export function buildDispatchLoadsFromDemoLoads(loads: DemoLoad[]): Load[] {
     const bh = (l as { backhaulPay?: number }).backhaulPay ?? 0;
     const tractor_id = l.assetId || null;
     const trailer_id = trailerIdForTractor(tractor_id);
+    const laneOrigin = laneCityLabel(l.origin);
+    const laneDestination = laneCityLabel(l.destination);
+    const coords = coordsForLoadRoute(laneOrigin, laneDestination);
+    const hasRouteRisk =
+      l.dispatchExceptionFlag ||
+      l.sealStatus === "Mismatch" ||
+      (st === "Delivered" && proof_status !== "Complete");
+    const routeStatus = routeStatusForLoad(st, hasRouteRisk);
+    const routeProgressPct = routeProgressForStatus(st, idx);
+    const routeMiles = routeMilesBetween(coords.origin, coords.destination);
+    const currentPoint = interpolateAlongRoute(
+      coords.origin,
+      coords.destination,
+      routeProgressPct / 100
+    );
+    const eta =
+      routeStatus === "delivered"
+        ? undefined
+        : routeStatus === "in_transit" ||
+            routeStatus === "at_risk" ||
+            routeStatus === "delayed"
+          ? isoDate(delivery)
+          : isoDate(new Date(pickup.getTime() + 6 * 60 * 60 * 1000));
+    const actualDeliveryTime =
+      routeStatus === "delivered" ? isoDate(delivery) : undefined;
 
     const row: Load = {
       load_id: l.id,
@@ -273,10 +339,46 @@ export function buildDispatchLoadsFromDemoLoads(loads: DemoLoad[]): Load[] {
       backhaulScanStatus: backhaulSignals[l.id]?.backhaulScanStatus ?? "not_scanned",
       backhaulOpportunityId: backhaulSignals[l.id]?.backhaulOpportunityId,
       backhaulRecommended: backhaulSignals[l.id]?.backhaulRecommended ?? false,
+      pickupLat: coords.origin[0],
+      pickupLng: coords.origin[1],
+      deliveryLat: coords.destination[0],
+      deliveryLng: coords.destination[1],
+      currentLat:
+        routeStatus === "in_transit" ||
+        routeStatus === "at_risk" ||
+        routeStatus === "delayed"
+          ? currentPoint[0]
+          : undefined,
+      currentLng:
+        routeStatus === "in_transit" ||
+        routeStatus === "at_risk" ||
+        routeStatus === "delayed"
+          ? currentPoint[1]
+          : undefined,
+      routeStatus,
+      routeProgressPct,
+      eta,
+      actualDeliveryTime,
+      currentLocationLabel:
+        routeStatus === "in_transit" ||
+        routeStatus === "at_risk" ||
+        routeStatus === "delayed"
+          ? "Demo tracking position - derived from route progress"
+          : routeStatus === "delivered"
+            ? laneDestination
+            : laneOrigin,
+      nextStopLabel:
+        routeStatus === "delivered"
+          ? "Route complete"
+          : routeStatus === "scheduled" || routeStatus === "dispatched"
+            ? `Pickup - ${laneOrigin}`
+            : `Delivery - ${laneDestination}`,
+      routeMiles,
+      deadheadMiles: backhaulSignals[l.id]?.estimatedDeadheadMiles,
     };
 
     const seeded = applyDocumentationDemos(row, l);
-    return {
+    const withDocs = {
       ...seeded,
       rate_con_url:
         generatedDocs.rateConfirmation ?? seeded.rate_con_url ?? signedDocs?.rate_con_url,
@@ -285,6 +387,79 @@ export function buildDispatchLoadsFromDemoLoads(loads: DemoLoad[]): Load[] {
       invoice_url: generatedDocs.invoice ?? seeded.invoice_url,
       claim_form_url: generatedDocs.claimPacket ?? seeded.claim_form_url,
       lumper_photo_url: generatedDocs.lumperReceipt ?? seeded.lumper_photo_url,
+    };
+    const proofEvents: LoadProofEvent[] = [
+      {
+        id: `${l.id}-pickup-proof`,
+        loadId: l.id,
+        type: "pickup",
+        label: "Pickup geofence entered",
+        lat: coords.origin[0],
+        lng: coords.origin[1],
+        timestamp: withDocs.pickup_datetime,
+        status: withDocs.pickup_photo_url ? "ready" : "pending",
+        documentUrl: withDocs.pickup_photo_url,
+      },
+      {
+        id: `${l.id}-seal-proof`,
+        loadId: l.id,
+        type: "seal",
+        label: "Seal photo captured",
+        lat: coords.origin[0] + 0.04,
+        lng: coords.origin[1] + 0.04,
+        timestamp: withDocs.pickup_datetime,
+        status: withDocs.seal_photo_url ? "ready" : "pending",
+        documentUrl: withDocs.seal_photo_url,
+      },
+      {
+        id: `${l.id}-rfid-proof`,
+        loadId: l.id,
+        type: "rfid",
+        label: "RFID checkpoint validated",
+        lat: (coords.origin[0] + coords.destination[0]) / 2,
+        lng: (coords.origin[1] + coords.destination[1]) / 2,
+        timestamp: withDocs.delivery_datetime,
+        status: withDocs.rfid_tag_id ? "ready" : "pending",
+      },
+      {
+        id: `${l.id}-delivery-proof`,
+        loadId: l.id,
+        type: "delivery",
+        label: "Delivery geofence entered",
+        lat: coords.destination[0],
+        lng: coords.destination[1],
+        timestamp: withDocs.delivery_datetime,
+        status: withDocs.delivery_photo_url ? "ready" : "pending",
+        documentUrl: withDocs.delivery_photo_url,
+      },
+      {
+        id: `${l.id}-pod-proof`,
+        loadId: l.id,
+        type: "pod",
+        label: "POD uploaded",
+        lat: coords.destination[0] + 0.03,
+        lng: coords.destination[1] - 0.03,
+        timestamp: withDocs.delivery_datetime,
+        status: withDocs.pod_url ? "ready" : "pending",
+        documentUrl: withDocs.pod_url,
+      },
+    ];
+    if (withDocs.claim_form_url || withDocs.damage_photo_url) {
+      proofEvents.push({
+        id: `${l.id}-claim-proof`,
+        loadId: l.id,
+        type: "claim",
+        label: "Claim photo captured",
+        lat: coords.destination[0] - 0.04,
+        lng: coords.destination[1] + 0.04,
+        timestamp: withDocs.delivery_datetime,
+        status: withDocs.claim_form_url ? "exception" : "pending",
+        documentUrl: withDocs.claim_form_url ?? withDocs.damage_photo_url,
+      });
+    }
+    return {
+      ...withDocs,
+      proofEvents,
     };
   });
 }

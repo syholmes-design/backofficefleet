@@ -3125,6 +3125,28 @@ body {
   margin-bottom: 0;
 }
 
+.bof-map-popup-link {
+  display: block;
+  margin-top: 0.35rem;
+  color: #5eead4;
+  font-size: 0.76rem;
+  text-decoration: none;
+}
+
+.bof-map-popup-link:hover {
+  text-decoration: underline;
+}
+
+.bof-dispatch-map-popup .leaflet-popup-content-wrapper {
+  background: #0f172a;
+  color: #e2e8f0;
+  border: 1px solid rgba(51, 65, 85, 0.9);
+}
+
+.bof-dispatch-map-popup .leaflet-popup-tip {
+  background: #0f172a;
+}
+
 .bof-map-legend {
   display: flex;
   flex-wrap: wrap;

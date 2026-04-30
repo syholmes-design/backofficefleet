@@ -1,13 +1,17 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { LoadsDispatchTable } from "@/components/LoadsDispatchTable";
 import { useBofDemoData } from "@/lib/bof-demo-data-context";
 import { OPS_COPY } from "@/lib/ops-copy";
+import { buildDispatchLoadsFromBofData } from "@/lib/dispatch-dashboard-seed";
+import { DispatchRouteMapClient } from "@/components/dispatch/DispatchRouteMapClient";
 
 export function LoadsPageClient() {
   const { data } = useBofDemoData();
+  const [selectedLoadId, setSelectedLoadId] = useState<string | undefined>();
+  const mapLoads = useMemo(() => buildDispatchLoadsFromBofData(data), [data]);
   const totals = useMemo(() => {
     const all = data.loads.length;
     const pending = data.loads.filter((l) => l.status === "Pending").length;
@@ -40,7 +44,19 @@ export function LoadsPageClient() {
       </section>
 
       <section className="bof-oper-panel bof-oper-panel-tight" aria-label="Dispatch table">
-        <LoadsDispatchTable data={data} />
+        <div className="grid gap-4 lg:grid-cols-[1.2fr_1fr]">
+          <LoadsDispatchTable
+            data={data}
+            selectedLoadId={selectedLoadId}
+            onSelectLoad={setSelectedLoadId}
+          />
+          <DispatchRouteMapClient
+            loads={mapLoads}
+            selectedLoadId={selectedLoadId}
+            onSelectLoad={setSelectedLoadId}
+            mode="all"
+          />
+        </div>
       </section>
 
       <p className="bof-muted bof-small">

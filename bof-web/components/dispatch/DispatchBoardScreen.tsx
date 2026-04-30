@@ -14,6 +14,7 @@ import {
   proofChipClass,
   sealChipClass,
 } from "./dispatch-ui";
+import { DispatchRouteMapClient } from "./DispatchRouteMapClient";
 
 function applyBoardFilters(
   loads: Load[],
@@ -51,6 +52,8 @@ export function DispatchBoardScreen() {
   const boardFilters = useDispatchDashboardStore((s) => s.boardFilters);
   const setBoardFilters = useDispatchDashboardStore((s) => s.setBoardFilters);
   const openLoadDrawer = useDispatchDashboardStore((s) => s.openLoadDrawer);
+  const selectedLoadId = useDispatchDashboardStore((s) => s.selectedLoadId);
+  const selectLoad = useDispatchDashboardStore((s) => s.selectLoad);
 
   const nameById = useMemo(
     () => new Map(drivers.map((d) => [d.driver_id, d.name])),
@@ -173,6 +176,48 @@ export function DispatchBoardScreen() {
         </div>
       </section>
 
+      <section className="grid min-h-0 gap-4 lg:grid-cols-[1.1fr_1.4fr]">
+        <div className="rounded-lg border border-slate-800 bg-slate-900/30 p-4">
+          <h2 className="text-sm font-semibold text-slate-100">Route operations</h2>
+          <p className="mt-1 text-xs text-slate-400">
+            Click a row or map marker to select and open the load drawer.
+          </p>
+          <div className="mt-3 space-y-2 text-xs text-slate-300">
+            <div className="flex items-center justify-between rounded border border-slate-800 px-2 py-1.5">
+              <span>In Transit</span>
+              <strong>{filtered.filter((l) => l.routeStatus === "in_transit").length}</strong>
+            </div>
+            <div className="flex items-center justify-between rounded border border-slate-800 px-2 py-1.5">
+              <span>At Risk / Delayed</span>
+              <strong>
+                {
+                  filtered.filter(
+                    (l) => l.routeStatus === "at_risk" || l.routeStatus === "delayed"
+                  ).length
+                }
+              </strong>
+            </div>
+            <div className="flex items-center justify-between rounded border border-slate-800 px-2 py-1.5">
+              <span>Delivered</span>
+              <strong>{filtered.filter((l) => l.routeStatus === "delivered").length}</strong>
+            </div>
+            <div className="flex items-center justify-between rounded border border-slate-800 px-2 py-1.5">
+              <span>Selected load</span>
+              <strong className="font-mono text-teal-300">{selectedLoadId ?? "—"}</strong>
+            </div>
+          </div>
+        </div>
+        <DispatchRouteMapClient
+          loads={filtered}
+          selectedLoadId={selectedLoadId ?? undefined}
+          onSelectLoad={(loadId) => {
+            selectLoad(loadId);
+            openLoadDrawer(loadId);
+          }}
+          mode="all"
+        />
+      </section>
+
       <div className="min-h-0 flex-1 space-y-8 overflow-y-auto pb-8">
         {orderedStatusGroups().map((status) => {
           const rows = grouped.get(status) ?? [];
@@ -239,8 +284,14 @@ export function DispatchBoardScreen() {
                     {rows.map((l) => (
                       <tr
                         key={l.load_id}
-                        className="cursor-pointer border-b border-slate-800/80 hover:bg-slate-900/80"
-                        onClick={() => openLoadDrawer(l.load_id)}
+                        className={[
+                          "cursor-pointer border-b border-slate-800/80 hover:bg-slate-900/80",
+                          l.load_id === selectedLoadId ? "bg-slate-900/70 ring-1 ring-teal-700/40" : "",
+                        ].join(" ")}
+                        onClick={() => {
+                          selectLoad(l.load_id);
+                          openLoadDrawer(l.load_id);
+                        }}
                       >
                         <td className="whitespace-nowrap px-3 py-2 font-mono text-xs text-teal-300">
                           {l.load_id}

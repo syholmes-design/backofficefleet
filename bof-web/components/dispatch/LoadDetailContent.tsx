@@ -19,6 +19,7 @@ import { LoadStatusTimeline } from "./LoadStatusTimeline";
 import { LoadDocumentsLibraryEnhanced } from "./LoadDocumentsLibraryEnhanced";
 import { DocumentationReadinessPanel } from "./DocumentationReadinessPanel";
 import { BofWorkflowFormShortcuts } from "@/components/documents/BofWorkflowFormShortcuts";
+import { DispatchRouteMapClient } from "./DispatchRouteMapClient";
 
 type Props = {
   load: Load;
@@ -70,6 +71,35 @@ export function LoadDetailContent({ load, onClose }: Props) {
         <LoadStatusTimeline status={load.status} />
 
         <DocumentationReadinessPanel load={load} />
+
+        <section className="rounded-lg border border-slate-800 bg-slate-900/40 p-4">
+          <h3 className="mb-2 text-xs font-semibold uppercase tracking-wide text-slate-500">
+            Route &amp; proof
+          </h3>
+          <DispatchRouteMapClient
+            loads={[load]}
+            selectedLoadId={load.load_id}
+            mode="selected"
+            compact
+          />
+          <div className="mt-2 grid grid-cols-2 gap-2 text-xs text-slate-400">
+            <p>
+              Progress: <span className="text-slate-200">{load.routeProgressPct ?? 0}%</span>
+            </p>
+            <p>
+              Next stop: <span className="text-slate-200">{load.nextStopLabel ?? "—"}</span>
+            </p>
+            <p>
+              ETA: <span className="text-slate-200">{load.eta ?? "—"}</span>
+            </p>
+            <p>
+              Current:{" "}
+              <span className="text-slate-200">
+                {load.currentLocationLabel ?? "Demo tracking unavailable"}
+              </span>
+            </p>
+          </div>
+        </section>
 
         <BofWorkflowFormShortcuts
           context="load"

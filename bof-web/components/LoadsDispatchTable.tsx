@@ -18,7 +18,15 @@ function loadSignal(load: BofData["loads"][number]): "Blocking action" | "At ris
   return "Resolved / clean";
 }
 
-export function LoadsDispatchTable({ data }: { data: BofData }) {
+export function LoadsDispatchTable({
+  data,
+  selectedLoadId,
+  onSelectLoad,
+}: {
+  data: BofData;
+  selectedLoadId?: string;
+  onSelectLoad?: (loadId: string) => void;
+}) {
   return (
     <div className="bof-table-wrap">
       <table className="bof-table">
@@ -38,7 +46,16 @@ export function LoadsDispatchTable({ data }: { data: BofData }) {
             const driver = data.drivers.find((d) => d.id === load.driverId);
             const signal = loadSignal(load);
             return (
-              <tr key={load.id} className="bof-load-row">
+              <tr
+                key={load.id}
+                className="bof-load-row"
+                style={
+                  selectedLoadId === load.id
+                    ? { outline: "1px solid rgba(20,184,166,0.5)" }
+                    : undefined
+                }
+                onClick={() => onSelectLoad?.(load.id)}
+              >
                 <td>
                   <Link href={`/loads/${load.id}`} className="bof-driver-link">
                     <code className="bof-code">{load.id}</code> · {load.number}

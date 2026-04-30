@@ -78,6 +78,57 @@ function findDriver(drivers: Driver[], id: string) {
   return drivers.find((d) => d.driver_id === id) ?? null;
 }
 
+function routePatchForStatus(load: Load, status: LoadStatus): Partial<Load> {
+  const next: Partial<Load> = {};
+  if (status === "Delivered") {
+    next.routeStatus = "delivered";
+    next.routeProgressPct = 100;
+    next.actualDeliveryTime = load.delivery_datetime;
+    next.currentLat = load.deliveryLat;
+    next.currentLng = load.deliveryLng;
+    next.currentLocationLabel = load.destination;
+    next.nextStopLabel = "Route complete";
+    return next;
+  }
+  if (status === "In Transit") {
+    next.routeStatus = load.exception_flag ? "at_risk" : "in_transit";
+    const progress = Math.max(20, Math.min(95, load.routeProgressPct ?? 52));
+    next.routeProgressPct = progress;
+    if (
+      Number.isFinite(load.pickupLat) &&
+      Number.isFinite(load.pickupLng) &&
+      Number.isFinite(load.deliveryLat) &&
+      Number.isFinite(load.deliveryLng)
+    ) {
+      const t = progress / 100;
+      next.currentLat = (load.pickupLat as number) + ((load.deliveryLat as number) - (load.pickupLat as number)) * t;
+      next.currentLng = (load.pickupLng as number) + ((load.deliveryLng as number) - (load.pickupLng as number)) * t;
+    }
+    next.currentLocationLabel = "Demo tracking position - derived from route progress";
+    next.nextStopLabel = `Delivery - ${load.destination}`;
+    next.actualDeliveryTime = undefined;
+    return next;
+  }
+  if (status === "Dispatched" || status === "Assigned") {
+    next.routeStatus = "dispatched";
+    next.routeProgressPct = Math.min(load.routeProgressPct ?? 8, 15);
+    next.currentLat = undefined;
+    next.currentLng = undefined;
+    next.currentLocationLabel = load.origin;
+    next.nextStopLabel = `Pickup - ${load.origin}`;
+    next.actualDeliveryTime = undefined;
+    return next;
+  }
+  next.routeStatus = "scheduled";
+  next.routeProgressPct = 0;
+  next.currentLat = undefined;
+  next.currentLng = undefined;
+  next.currentLocationLabel = load.origin;
+  next.nextStopLabel = `Pickup - ${load.origin}`;
+  next.actualDeliveryTime = undefined;
+  return next;
+}
+
 export const useDispatchDashboardStore = create<DispatchDashboardState>(
   (set, get) => ({
     loads: createSeedLoads(),
@@ -160,7 +211,9 @@ export const useDispatchDashboardStore = create<DispatchDashboardState>(
     setLoadStatus: (load_id, status) =>
       set((s) => ({
         loads: s.loads.map((l) =>
-          l.load_id === load_id ? { ...l, status } : l
+          l.load_id === load_id
+            ? { ...l, status, ...routePatchForStatus(l, status) }
+            : l
         ),
       })),
 
@@ -171,6 +224,7 @@ export const useDispatchDashboardStore = create<DispatchDashboardState>(
             ? {
                 ...l,
                 status: "Exception" as LoadStatus,
+                routeStatus: "delayed",
                 exception_flag: true,
                 exception_reason: reason,
               }
@@ -190,6 +244,10 @@ export const useDispatchDashboardStore = create<DispatchDashboardState>(
                   l.status === "Exception"
                     ? ("In Transit" as LoadStatus)
                     : l.status,
+                routeStatus:
+                  l.status === "Exception"
+                    ? ("in_transit" as const)
+                    : l.routeStatus,
               }
             : l
         ),
