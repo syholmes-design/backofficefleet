@@ -1,30 +1,77 @@
 <!doctype html>
 <html>
   <head><meta charset="utf-8" /><title>BOL L004</title><style>
-  body { font-family: Arial, Helvetica, sans-serif; margin: 24px; color: #0f172a; }
-  header { border-bottom: 2px solid #0f172a; margin-bottom: 16px; padding-bottom: 8px; }
-  h1 { margin: 0; font-size: 20px; }
-  h2 { margin: 8px 0 14px; font-size: 16px; }
-  p { margin: 8px 0; }
-  table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-  td { border: 1px solid #cbd5e1; padding: 8px; vertical-align: top; }
-  td:first-child { width: 210px; font-weight: 600; background: #f8fafc; }
-  footer { margin-top: 16px; font-size: 12px; color: #334155; }
+  @page { size: auto; margin: 0.5in; }
+  * { box-sizing: border-box; }
+  body { font-family: "Inter", "Segoe UI", Arial, Helvetica, sans-serif; margin: 0; background: #f3f4f6; color: #111827; }
+  .paper { width: 8.5in; max-width: 100%; margin: 20px auto; background: #fff; border: 1px solid #d1d5db; padding: 26px; box-shadow: 0 8px 30px rgba(15, 23, 42, 0.08); }
+  .doc-header { display: flex; justify-content: space-between; gap: 16px; border-bottom: 2px solid #111827; padding-bottom: 12px; margin-bottom: 14px; }
+  .doc-title { margin: 0; font-size: 22px; letter-spacing: .2px; }
+  .generated-label { margin-top: 4px; font-size: 11px; color: #4b5563; text-transform: uppercase; letter-spacing: .08em; }
+  .status-stamp { border: 2px solid #111827; padding: 6px 10px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; }
+  .meta-grid, .entity-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin-bottom: 12px; }
+  .meta-box { border: 1px solid #d1d5db; background: #f9fafb; padding: 8px; }
+  .meta-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; color: #4b5563; margin-bottom: 4px; }
+  .meta-value { font-size: 13px; }
+  table { width: 100%; border-collapse: collapse; margin-top: 8px; }
+  th, td { border: 1px solid #d1d5db; padding: 7px 8px; vertical-align: top; text-align: left; font-size: 12px; }
+  th { background: #f3f4f6; font-size: 11px; text-transform: uppercase; letter-spacing: .05em; color: #374151; }
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .section-title { margin: 14px 0 6px; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; color: #1f2937; }
+  .sig-line { margin-top: 24px; display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  .sig-slot { border-top: 1px solid #1f2937; padding-top: 4px; font-size: 11px; color: #4b5563; }
+  .terms-box { border: 1px solid #d1d5db; background: #f9fafb; padding: 10px; font-size: 11px; color: #374151; }
+  .barcode-ref { margin-top: 10px; display: inline-block; font-family: "Courier New", monospace; letter-spacing: 2px; font-size: 11px; border: 1px solid #111827; padding: 3px 8px; }
+  footer { margin-top: 16px; padding-top: 8px; border-top: 1px dashed #9ca3af; display: flex; justify-content: space-between; font-size: 11px; color: #6b7280; }
 </style></head>
   <body>
-    <header><h1>BackOfficeFleet - Bill of Lading</h1><p>Generated for BOF demo</p></header>
-    <h2>BOL BOL-L004-504 / Load L004</h2>
-    <table>
-      <tr><td>Shipper</td><td>NorthStar Paper Dallas TX - NorthStar Paper - Dallas, TX</td></tr>
-      <tr><td>Consignee</td><td>Cleveland Receiver St Louis MO - Cleveland Receiver - St. Louis, MO</td></tr>
-      <tr><td>Pickup Appointment</td><td>L004 08:00 local</td></tr>
-      <tr><td>Delivery Appointment</td><td>L004 16:00 local</td></tr>
-      <tr><td>Commodity</td><td>Mixed Dry Goods</td></tr>
-      <tr><td>Weight / Pieces</td><td>42504 lbs / 26 pallets</td></tr>
-      <tr><td>Seal At Pickup</td><td>SEAL-61044</td></tr>
-      <tr><td>Seal At Delivery</td><td>SEAL-61043</td></tr>
-    </table>
-    <p>Driver Signature: ____________________ Date: ____________</p>
-    <p>Receiver Signature: __________________ Date: ____________</p>
+    <div class="paper">
+      <header class="doc-header">
+        <div>
+          <h1 class="doc-title">Bill of Lading</h1>
+          <div class="generated-label">BOF demo generated paperwork</div>
+        </div>
+        <div class="status-stamp">Pending Review</div>
+      </header>
+
+      <div class="meta-grid">
+        <div class="meta-box"><div class="meta-label">BOL Number</div><div class="meta-value">BOL-L004-504</div></div>
+        <div class="meta-box"><div class="meta-label">Load ID</div><div class="meta-value">L004</div></div>
+        <div class="meta-box"><div class="meta-label">Shipper</div><div class="meta-value">NorthStar Paper Dallas TX</div></div>
+        <div class="meta-box"><div class="meta-label">Consignee</div><div class="meta-value">Cleveland Receiver St Louis MO</div></div>
+      </div>
+
+      <table>
+        <tr><th>Pickup Address</th><th>Delivery Address</th><th>Pickup Date</th><th>Delivery Date</th></tr>
+        <tr><td>NorthStar Paper - Dallas, TX</td><td>Cleveland Receiver - St. Louis, MO</td><td>4/30/2026 08:00</td><td>4/30/2026 16:00</td></tr>
+      </table>
+
+      <div class="section-title">Freight Description</div>
+      <table>
+        <tr><th>Commodity</th><th>Pieces/Pallets</th><th>Weight</th><th>NMFC / Class</th></tr>
+        <tr><td>Mixed Dry Goods</td><td>26 pallets</td><td>42504 lbs</td><td>NMFC 156600 / Class 70 (demo)</td></tr>
+      </table>
+
+      <div class="section-title">Equipment & Seal</div>
+      <table>
+        <tr><th>Driver</th><th>Truck</th><th>Trailer</th><th>Pickup Seal</th><th>Delivery Seal</th></tr>
+        <tr><td>Priya Patel (DRV-004)</td><td>T-108</td><td>TR-108</td><td>SEAL-61044</td><td>SEAL-61043</td></tr>
+      </table>
+
+      <div class="sig-line">
+        <div class="sig-slot">Shipper signature / date</div>
+        <div class="sig-slot">Driver signature / date</div>
+      </div>
+      <div class="sig-line">
+        <div class="sig-slot">Consignee signature / date</div>
+        <div class="sig-slot">Carrier representative / date</div>
+      </div>
+
+      <div class="barcode-ref">|| ||| | | L004 BOL-L004-504 | || ||</div>
+      <footer>
+        <span>Generated: 4/30/2026, 2:55:10 PM</span>
+        <span>BOF demo document packet</span>
+      </footer>
+    </div>
   </body>
 </html>

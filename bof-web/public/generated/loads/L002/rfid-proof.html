@@ -1,27 +1,56 @@
 <!doctype html>
 <html>
   <head><meta charset="utf-8" /><title>RFID Proof L002</title><style>
-  body { font-family: Arial, Helvetica, sans-serif; margin: 24px; color: #0f172a; }
-  header { border-bottom: 2px solid #0f172a; margin-bottom: 16px; padding-bottom: 8px; }
-  h1 { margin: 0; font-size: 20px; }
-  h2 { margin: 8px 0 14px; font-size: 16px; }
-  p { margin: 8px 0; }
-  table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-  td { border: 1px solid #cbd5e1; padding: 8px; vertical-align: top; }
-  td:first-child { width: 210px; font-weight: 600; background: #f8fafc; }
-  footer { margin-top: 16px; font-size: 12px; color: #334155; }
+  @page { size: auto; margin: 0.5in; }
+  * { box-sizing: border-box; }
+  body { font-family: "Inter", "Segoe UI", Arial, Helvetica, sans-serif; margin: 0; background: #f3f4f6; color: #111827; }
+  .paper { width: 8.5in; max-width: 100%; margin: 20px auto; background: #fff; border: 1px solid #d1d5db; padding: 26px; box-shadow: 0 8px 30px rgba(15, 23, 42, 0.08); }
+  .doc-header { display: flex; justify-content: space-between; gap: 16px; border-bottom: 2px solid #111827; padding-bottom: 12px; margin-bottom: 14px; }
+  .doc-title { margin: 0; font-size: 22px; letter-spacing: .2px; }
+  .generated-label { margin-top: 4px; font-size: 11px; color: #4b5563; text-transform: uppercase; letter-spacing: .08em; }
+  .status-stamp { border: 2px solid #111827; padding: 6px 10px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; }
+  .meta-grid, .entity-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin-bottom: 12px; }
+  .meta-box { border: 1px solid #d1d5db; background: #f9fafb; padding: 8px; }
+  .meta-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; color: #4b5563; margin-bottom: 4px; }
+  .meta-value { font-size: 13px; }
+  table { width: 100%; border-collapse: collapse; margin-top: 8px; }
+  th, td { border: 1px solid #d1d5db; padding: 7px 8px; vertical-align: top; text-align: left; font-size: 12px; }
+  th { background: #f3f4f6; font-size: 11px; text-transform: uppercase; letter-spacing: .05em; color: #374151; }
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .section-title { margin: 14px 0 6px; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; color: #1f2937; }
+  .sig-line { margin-top: 24px; display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  .sig-slot { border-top: 1px solid #1f2937; padding-top: 4px; font-size: 11px; color: #4b5563; }
+  .terms-box { border: 1px solid #d1d5db; background: #f9fafb; padding: 10px; font-size: 11px; color: #374151; }
+  .barcode-ref { margin-top: 10px; display: inline-block; font-family: "Courier New", monospace; letter-spacing: 2px; font-size: 11px; border: 1px solid #111827; padding: 3px 8px; }
+  footer { margin-top: 16px; padding-top: 8px; border-top: 1px dashed #9ca3af; display: flex; justify-content: space-between; font-size: 11px; color: #6b7280; }
 </style></head>
   <body>
-    <header><h1>BackOfficeFleet - RFID / Geo Proof Summary</h1><p>Generated for BOF demo</p></header>
-    <h2>Load L002 Traceability</h2>
-    <table>
-      <tr><td>RFID Tag</td><td>RFID-L002</td></tr>
-      <tr><td>Origin</td><td>Midwest Foods Chicago IL (Midwest Foods - Chicago, IL)</td></tr>
-      <tr><td>Destination</td><td>South Hub DC Memphis TN (South Hub DC - Memphis, TN)</td></tr>
-      <tr><td>Pickup Appointment</td><td>L002 08:00 local</td></tr>
-      <tr><td>Delivery Appointment</td><td>L002 16:00 local</td></tr>
-      <tr><td>Status</td><td>En Route</td></tr>
-    </table>
-    <p>Dock / geofence checkpoints linked in BOF evidence registry where available.</p>
+    <div class="paper">
+      <header class="doc-header">
+        <div>
+          <h1 class="doc-title">RFID / Geo Proof Summary</h1>
+          <div class="generated-label">BOF telemetry validation sheet</div>
+        </div>
+        <div class="status-stamp">In Transit</div>
+      </header>
+      <div class="meta-grid">
+        <div class="meta-box"><div class="meta-label">Load ID</div><div class="meta-value">L002</div></div>
+        <div class="meta-box"><div class="meta-label">RFID Tag</div><div class="meta-value">RFID-L002</div></div>
+      </div>
+      <table>
+        <tr><th>Event</th><th>Timestamp</th><th>Location</th><th>Status</th></tr>
+        <tr><td>Pickup geofence entry</td><td>4/30/2026 08:00</td><td>Midwest Foods Chicago IL</td><td>Captured</td></tr>
+        <tr><td>RFID dock scan</td><td>4/30/2026 08:00</td><td>Midwest Foods Chicago IL dock</td><td>Matched</td></tr>
+        <tr><td>Delivery geofence entry</td><td>4/30/2026 16:00</td><td>South Hub DC Memphis TN</td><td>In Transit</td></tr>
+        <tr><td>RFID dock close-out</td><td>4/30/2026 16:00</td><td>South Hub DC Memphis TN dock</td><td>En Route</td></tr>
+      </table>
+      <div class="terms-box">
+        Proof status: telemetry-linked custody reference for billing packet support.
+      </div>
+      <footer>
+        <span>Generated: 4/30/2026, 2:55:10 PM</span>
+        <span>BOF demo document packet</span>
+      </footer>
+    </div>
   </body>
 </html>

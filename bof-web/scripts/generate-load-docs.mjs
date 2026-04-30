@@ -236,13 +236,6 @@ function main() {
     const ctx = deriveLoadContext(data, load);
     const entry = {};
 
-    for (const [docKey, fileName] of Object.entries(FILE_MAP)) {
-      if (!(docKey in TEMPLATE_MAP)) continue;
-      if (!shouldEmit(docKey, ctx)) continue;
-      const html = renderTemplate(templates[docKey], { ...ctx, styles: SHARED_STYLES });
-      entry[docKey] = writeDoc(ctx.loadId, fileName, html);
-    }
-
     const cargoPhoto =
       resolveEvidenceEntry(ctx.loadId, ["cargo-photo.jpg", "cargo-photo.png"]) ||
       resolveMockEvidence("mock_cargo.jpg");
@@ -259,6 +252,21 @@ function main() {
       resolveEvidenceEntry(ctx.loadId, ["damage-photo.jpg", "damage-photo.png", "claim-photo.jpg"]) ||
       (ctx.hasClaim ? resolveMockEvidence("trailerdamage.PNG") : undefined);
     const safetyViolationPhoto = ctx.hasClaim ? resolveMockEvidence("hosviolation.PNG") : undefined;
+    const ctxForTemplates = {
+      ...ctx,
+      cargoPhotoRef: cargoPhoto || "Not available",
+      sealPickupPhotoRef: sealPickupPhoto || "Not available",
+      sealDeliveryPhotoRef: sealDeliveryPhoto || "Not available",
+      damageClaimPhotoRef: damageClaimPhoto || "Not available",
+      safetyViolationPhotoRef: safetyViolationPhoto || "Not available",
+    };
+
+    for (const [docKey, fileName] of Object.entries(FILE_MAP)) {
+      if (!(docKey in TEMPLATE_MAP)) continue;
+      if (!shouldEmit(docKey, ctx)) continue;
+      const html = renderTemplate(templates[docKey], { ...ctxForTemplates, styles: SHARED_STYLES });
+      entry[docKey] = writeDoc(ctx.loadId, fileName, html);
+    }
 
     if (cargoPhoto) entry.cargoPhoto = cargoPhoto;
     if (sealPickupPhoto) entry.sealPickupPhoto = sealPickupPhoto;

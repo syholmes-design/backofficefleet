@@ -197,15 +197,18 @@ export function DriversRosterTable() {
     () =>
       driverRows
         .filter((row) => row.settlement === "Hold / Review" || row.settlement === "Pending")
-        .map((row) => ({
+        .map((row) => {
+          const severity: Severity = row.settlement === "Hold / Review" ? "high" : "medium";
+          return {
           key: `settlement-${row.driverId}`,
           driver: row.name,
           issue: row.settlement === "Hold / Review" ? "Settlement hold/review active" : "Settlement pending release",
-          severity: (row.settlement === "Hold / Review" ? "high" : "medium") as const,
+          severity,
           nextStep: "Complete proof + finance review to release pay",
           actionHref: `/drivers/${row.driverId}/settlements`,
           actionLabel: "Open Settlement",
-        }))
+          };
+        })
         .slice(0, 6),
     [driverRows]
   );
@@ -215,15 +218,19 @@ export function DriversRosterTable() {
       getOwnerAttentionQueue(data)
         .filter((item) => item.target.includes("DRV-") || item.area === "Driver readiness")
         .slice(0, 6)
-        .map((item) => ({
-          key: item.id,
-          driver: item.target,
-          issue: item.issue,
-          severity: (item.severity === "critical" || item.severity === "high" ? "high" : "medium") as const,
-          nextStep: item.recommendedFix,
-          actionHref: item.actionHref,
-          actionLabel: item.actionLabel,
-        })) satisfies ExceptionItem[],
+        .map((item) => {
+          const severity: Severity =
+            item.severity === "critical" || item.severity === "high" ? "high" : "medium";
+          return {
+            key: item.id,
+            driver: item.target,
+            issue: item.issue,
+            severity,
+            nextStep: item.recommendedFix,
+            actionHref: item.actionHref,
+            actionLabel: item.actionLabel,
+          };
+        }) satisfies ExceptionItem[],
     [data]
   );
 

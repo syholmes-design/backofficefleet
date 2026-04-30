@@ -6,7 +6,12 @@
     "invoice": "/generated/loads/L001/invoice.html",
     "sealVerification": "/generated/loads/L001/seal-verification.html",
     "rfidProof": "/generated/loads/L001/rfid-proof.html",
-    "claimPacket": "/generated/loads/L001/claim-packet.html"
+    "claimPacket": "/generated/loads/L001/claim-packet.html",
+    "cargoPhoto": "/mocks/mock_cargo.jpg",
+    "sealPickupPhoto": "/mocks/mock_seal.jpg",
+    "sealDeliveryPhoto": "/mocks/mock_seal.jpg",
+    "damageClaimPhoto": "/mocks/trailerdamage.PNG",
+    "safetyViolationPhoto": "/mocks/hosviolation.PNG"
   },
   "L002": {
     "rateConfirmation": "/generated/loads/L002/rate-confirmation.html",
@@ -14,7 +19,10 @@
     "pod": "/generated/loads/L002/pod.html",
     "invoice": "/generated/loads/L002/invoice.html",
     "sealVerification": "/generated/loads/L002/seal-verification.html",
-    "rfidProof": "/generated/loads/L002/rfid-proof.html"
+    "rfidProof": "/generated/loads/L002/rfid-proof.html",
+    "cargoPhoto": "/mocks/mock_cargo.jpg",
+    "sealPickupPhoto": "/mocks/mock_seal.jpg",
+    "sealDeliveryPhoto": "/mocks/mock_seal.jpg"
   },
   "L003": {
     "rateConfirmation": "/generated/loads/L003/rate-confirmation.html",
@@ -23,7 +31,12 @@
     "invoice": "/generated/loads/L003/invoice.html",
     "sealVerification": "/generated/loads/L003/seal-verification.html",
     "rfidProof": "/generated/loads/L003/rfid-proof.html",
-    "claimPacket": "/generated/loads/L003/claim-packet.html"
+    "claimPacket": "/generated/loads/L003/claim-packet.html",
+    "cargoPhoto": "/mocks/mock_cargo.jpg",
+    "sealPickupPhoto": "/mocks/mock_seal.jpg",
+    "sealDeliveryPhoto": "/mocks/mock_seal.jpg",
+    "damageClaimPhoto": "/mocks/trailerdamage.PNG",
+    "safetyViolationPhoto": "/mocks/hosviolation.PNG"
   },
   "L004": {
     "rateConfirmation": "/generated/loads/L004/rate-confirmation.html",
@@ -32,7 +45,12 @@
     "invoice": "/generated/loads/L004/invoice.html",
     "sealVerification": "/generated/loads/L004/seal-verification.html",
     "rfidProof": "/generated/loads/L004/rfid-proof.html",
-    "claimPacket": "/generated/loads/L004/claim-packet.html"
+    "claimPacket": "/generated/loads/L004/claim-packet.html",
+    "cargoPhoto": "/mocks/mock_cargo.jpg",
+    "sealPickupPhoto": "/mocks/mock_seal.jpg",
+    "sealDeliveryPhoto": "/mocks/mock_seal.jpg",
+    "damageClaimPhoto": "/mocks/trailerdamage.PNG",
+    "safetyViolationPhoto": "/mocks/hosviolation.PNG"
   },
   "L005": {
     "rateConfirmation": "/generated/loads/L005/rate-confirmation.html",
@@ -40,7 +58,10 @@
     "pod": "/generated/loads/L005/pod.html",
     "invoice": "/generated/loads/L005/invoice.html",
     "sealVerification": "/generated/loads/L005/seal-verification.html",
-    "rfidProof": "/generated/loads/L005/rfid-proof.html"
+    "rfidProof": "/generated/loads/L005/rfid-proof.html",
+    "cargoPhoto": "/mocks/mock_cargo.jpg",
+    "sealPickupPhoto": "/mocks/mock_seal.jpg",
+    "sealDeliveryPhoto": "/mocks/mock_seal.jpg"
   },
   "L006": {
     "rateConfirmation": "/generated/loads/L006/rate-confirmation.html",
@@ -49,7 +70,12 @@
     "invoice": "/generated/loads/L006/invoice.html",
     "sealVerification": "/generated/loads/L006/seal-verification.html",
     "rfidProof": "/generated/loads/L006/rfid-proof.html",
-    "claimPacket": "/generated/loads/L006/claim-packet.html"
+    "claimPacket": "/generated/loads/L006/claim-packet.html",
+    "cargoPhoto": "/mocks/mock_cargo.jpg",
+    "sealPickupPhoto": "/mocks/mock_seal.jpg",
+    "sealDeliveryPhoto": "/mocks/mock_seal.jpg",
+    "damageClaimPhoto": "/mocks/trailerdamage.PNG",
+    "safetyViolationPhoto": "/mocks/hosviolation.PNG"
   },
   "L007": {
     "rateConfirmation": "/generated/loads/L007/rate-confirmation.html",
@@ -58,7 +84,12 @@
     "invoice": "/generated/loads/L007/invoice.html",
     "sealVerification": "/generated/loads/L007/seal-verification.html",
     "rfidProof": "/generated/loads/L007/rfid-proof.html",
-    "claimPacket": "/generated/loads/L007/claim-packet.html"
+    "claimPacket": "/generated/loads/L007/claim-packet.html",
+    "cargoPhoto": "/mocks/mock_cargo.jpg",
+    "sealPickupPhoto": "/mocks/mock_seal.jpg",
+    "sealDeliveryPhoto": "/mocks/mock_seal.jpg",
+    "damageClaimPhoto": "/mocks/trailerdamage.PNG",
+    "safetyViolationPhoto": "/mocks/hosviolation.PNG"
   },
   "L008": {
     "rateConfirmation": "/generated/loads/L008/rate-confirmation.html",
@@ -66,7 +97,10 @@
     "pod": "/generated/loads/L008/pod.html",
     "invoice": "/generated/loads/L008/invoice.html",
     "sealVerification": "/generated/loads/L008/seal-verification.html",
-    "rfidProof": "/generated/loads/L008/rfid-proof.html"
+    "rfidProof": "/generated/loads/L008/rfid-proof.html",
+    "cargoPhoto": "/mocks/mock_cargo.jpg",
+    "sealPickupPhoto": "/mocks/mock_seal.jpg",
+    "sealDeliveryPhoto": "/mocks/mock_seal.jpg"
   },
   "L009": {
     "rateConfirmation": "/generated/loads/L009/rate-confirmation.html",
@@ -75,7 +109,12 @@
     "invoice": "/generated/loads/L009/invoice.html",
     "sealVerification": "/generated/loads/L009/seal-verification.html",
     "rfidProof": "/generated/loads/L009/rfid-proof.html",
-    "claimPacket": "/generated/loads/L009/claim-packet.html"
+    "claimPacket": "/generated/loads/L009/claim-packet.html",
+    "cargoPhoto": "/mocks/mock_cargo.jpg",
+    "sealPickupPhoto": "/mocks/mock_seal.jpg",
+    "sealDeliveryPhoto": "/mocks/mock_seal.jpg",
+    "damageClaimPhoto": "/mocks/trailerdamage.PNG",
+    "safetyViolationPhoto": "/mocks/hosviolation.PNG"
   },
   "L010": {
     "rateConfirmation": "/generated/loads/L010/rate-confirmation.html",
@@ -84,7 +123,12 @@
     "invoice": "/generated/loads/L010/invoice.html",
     "sealVerification": "/generated/loads/L010/seal-verification.html",
     "rfidProof": "/generated/loads/L010/rfid-proof.html",
-    "claimPacket": "/generated/loads/L010/claim-packet.html"
+    "claimPacket": "/generated/loads/L010/claim-packet.html",
+    "cargoPhoto": "/mocks/mock_cargo.jpg",
+    "sealPickupPhoto": "/mocks/mock_seal.jpg",
+    "sealDeliveryPhoto": "/mocks/mock_seal.jpg",
+    "damageClaimPhoto": "/mocks/trailerdamage.PNG",
+    "safetyViolationPhoto": "/mocks/hosviolation.PNG"
   },
   "L011": {
     "rateConfirmation": "/generated/loads/L011/rate-confirmation.html",
@@ -92,7 +136,10 @@
     "pod": "/generated/loads/L011/pod.html",
     "invoice": "/generated/loads/L011/invoice.html",
     "sealVerification": "/generated/loads/L011/seal-verification.html",
-    "rfidProof": "/generated/loads/L011/rfid-proof.html"
+    "rfidProof": "/generated/loads/L011/rfid-proof.html",
+    "cargoPhoto": "/mocks/mock_cargo.jpg",
+    "sealPickupPhoto": "/mocks/mock_seal.jpg",
+    "sealDeliveryPhoto": "/mocks/mock_seal.jpg"
   },
   "L012": {
     "rateConfirmation": "/generated/loads/L012/rate-confirmation.html",
@@ -101,6 +148,11 @@
     "invoice": "/generated/loads/L012/invoice.html",
     "sealVerification": "/generated/loads/L012/seal-verification.html",
     "rfidProof": "/generated/loads/L012/rfid-proof.html",
-    "claimPacket": "/generated/loads/L012/claim-packet.html"
+    "claimPacket": "/generated/loads/L012/claim-packet.html",
+    "cargoPhoto": "/mocks/mock_cargo.jpg",
+    "sealPickupPhoto": "/mocks/mock_seal.jpg",
+    "sealDeliveryPhoto": "/mocks/mock_seal.jpg",
+    "damageClaimPhoto": "/mocks/trailerdamage.PNG",
+    "safetyViolationPhoto": "/mocks/hosviolation.PNG"
   }
 }

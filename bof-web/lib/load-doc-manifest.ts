@@ -5,10 +5,15 @@ export type GeneratedLoadDocKey =
   | "bol"
   | "pod"
   | "invoice"
-  | "lumperReceipt"
   | "sealVerification"
   | "rfidProof"
-  | "claimPacket";
+  | "claimPacket"
+  | "cargoPhoto"
+  | "sealPickupPhoto"
+  | "sealDeliveryPhoto"
+  | "lumperReceipt"
+  | "damageClaimPhoto"
+  | "safetyViolationPhoto";
 
 export type GeneratedLoadDocEntry = Partial<Record<GeneratedLoadDocKey, string>>;
 

@@ -94,6 +94,7 @@ export type LoadEvidenceItem = {
   id: string;
   loadId: string;
   label: string;
+  section: "core" | "proof" | "exceptions";
   type: LoadEvidenceType;
   status: LoadEvidenceStatus;
   url?: string;
@@ -443,6 +444,7 @@ function proofByType(items: LoadProofItem[], type: string): LoadProofItem | unde
 function toEvidenceItem(
   loadId: string,
   label: string,
+  section: LoadEvidenceItem["section"],
   type: LoadEvidenceType,
   proof: LoadProofItem | undefined,
   requiredForSettlementRelease: boolean,
@@ -454,6 +456,7 @@ function toEvidenceItem(
     id: `${loadId}:${type}`,
     loadId,
     label,
+    section,
     type,
     status,
     url,
@@ -480,13 +483,19 @@ export function getLoadDocumentPacket(data: BofData, loadId: string): LoadDocume
   const generatedInvoice = getGeneratedLoadDocUrl(loadId, "invoice");
   const generatedSeal = getGeneratedLoadDocUrl(loadId, "sealVerification");
   const generatedRfid = getGeneratedLoadDocUrl(loadId, "rfidProof");
+  const generatedCargoPhoto = getGeneratedLoadDocUrl(loadId, "cargoPhoto");
+  const generatedSealPickupPhoto = getGeneratedLoadDocUrl(loadId, "sealPickupPhoto");
+  const generatedSealDeliveryPhoto = getGeneratedLoadDocUrl(loadId, "sealDeliveryPhoto");
   const generatedLumper = getGeneratedLoadDocUrl(loadId, "lumperReceipt");
   const generatedClaim = getGeneratedLoadDocUrl(loadId, "claimPacket");
+  const generatedDamagePhoto = getGeneratedLoadDocUrl(loadId, "damageClaimPhoto");
+  const generatedSafetyViolationPhoto = getGeneratedLoadDocUrl(loadId, "safetyViolationPhoto");
 
   const rate = {
     ...toEvidenceItem(
       loadId,
       "Rate Confirmation",
+      "core",
       "rate_confirmation",
       proofByType(proofItems, "Rate Confirmation"),
       true
@@ -500,7 +509,7 @@ export function getLoadDocumentPacket(data: BofData, loadId: string): LoadDocume
     source: generatedRate ? "generated" : undefined,
   } as LoadEvidenceItem;
   const bol = {
-    ...toEvidenceItem(loadId, "BOL", "bol", proofByType(proofItems, "BOL"), true),
+    ...toEvidenceItem(loadId, "BOL", "core", "bol", proofByType(proofItems, "BOL"), true),
     status: generatedBol ? "ready" : "missing",
     url: generatedBol,
     fileName: fileNameFromUrl(generatedBol),
@@ -510,7 +519,7 @@ export function getLoadDocumentPacket(data: BofData, loadId: string): LoadDocume
     source: generatedBol ? "generated" : undefined,
   } as LoadEvidenceItem;
   const pod = {
-    ...toEvidenceItem(loadId, "POD", "pod", proofByType(proofItems, "POD"), true),
+    ...toEvidenceItem(loadId, "POD", "core", "pod", proofByType(proofItems, "POD"), true),
     status: generatedPod ? "ready" : load.status === "Delivered" ? "missing" : "pending",
     url: generatedPod,
     fileName: fileNameFromUrl(generatedPod),
@@ -526,6 +535,7 @@ export function getLoadDocumentPacket(data: BofData, loadId: string): LoadDocume
     id: `${loadId}:invoice`,
     loadId,
     label: "Invoice",
+    section: "core",
     type: "invoice",
     status: generatedInvoice
       ? "ready"
@@ -550,18 +560,66 @@ export function getLoadDocumentPacket(data: BofData, loadId: string): LoadDocume
       sourceFromUrl(generatedInvoice || String(invoiceOverride?.fileUrl ?? invoiceOverride?.previewUrl ?? "")) ??
       (load.status === "Delivered" ? "generated" : "mock"),
   };
-  const cargo = toEvidenceItem(
+  const cargo = {
+    ...toEvidenceItem(
     loadId,
     "Cargo photo",
+    "proof",
     "cargo_photo",
     proofByType(proofItems, "Pre-Trip Cargo Photo"),
     true
-  );
+    ),
+    status: generatedCargoPhoto ? "ready" : "missing",
+    url: generatedCargoPhoto,
+    fileName: fileNameFromUrl(generatedCargoPhoto),
+    note: generatedCargoPhoto
+      ? "Cargo condition evidence image."
+      : "Cargo photo evidence is missing.",
+    source: generatedCargoPhoto ? sourceFromUrl(generatedCargoPhoto) : undefined,
+  } as LoadEvidenceItem;
+  const sealPickupPhoto = {
+    ...toEvidenceItem(
+      loadId,
+      "Seal pickup photo",
+      "proof",
+      "seal_photo",
+      proofByType(proofItems, "Pickup Seal Photo"),
+      requiredSeal
+    ),
+    status: !requiredSeal ? "not_applicable" : generatedSealPickupPhoto ? "ready" : "missing",
+    url: generatedSealPickupPhoto,
+    fileName: fileNameFromUrl(generatedSealPickupPhoto),
+    note: !requiredSeal
+      ? "No pickup seal required for this load."
+      : generatedSealPickupPhoto
+        ? "Pickup seal checkpoint image."
+        : "Pickup seal photo missing.",
+    source: generatedSealPickupPhoto ? sourceFromUrl(generatedSealPickupPhoto) : undefined,
+  } as LoadEvidenceItem;
+  const sealDeliveryPhoto = {
+    ...toEvidenceItem(
+      loadId,
+      "Seal delivery photo",
+      "proof",
+      "seal_photo",
+      proofByType(proofItems, "Delivery Seal Photo"),
+      requiredSeal
+    ),
+    status: !requiredSeal ? "not_applicable" : generatedSealDeliveryPhoto ? "ready" : "missing",
+    url: generatedSealDeliveryPhoto,
+    fileName: fileNameFromUrl(generatedSealDeliveryPhoto),
+    note: !requiredSeal
+      ? "No delivery seal required for this load."
+      : generatedSealDeliveryPhoto
+        ? "Delivery seal checkpoint image."
+        : "Delivery seal photo missing.",
+    source: generatedSealDeliveryPhoto ? sourceFromUrl(generatedSealDeliveryPhoto) : undefined,
+  } as LoadEvidenceItem;
   const sealProof =
     proofByType(proofItems, "Delivery Seal Photo") ??
     proofByType(proofItems, "Pickup Seal Photo");
   const seal = {
-    ...toEvidenceItem(loadId, "Seal Verification", "seal_photo", sealProof, requiredSeal),
+    ...toEvidenceItem(loadId, "Seal verification sheet", "proof", "seal_photo", sealProof, requiredSeal),
     status: !requiredSeal ? "not_applicable" : generatedSeal ? "ready" : "missing",
     url: generatedSeal,
     fileName: fileNameFromUrl(generatedSeal),
@@ -577,6 +635,7 @@ export function getLoadDocumentPacket(data: BofData, loadId: string): LoadDocume
     ...toEvidenceItem(
       loadId,
       "Lumper receipt",
+      "proof",
       "lumper_receipt",
       proofByType(proofItems, "Lumper Receipt"),
       lumperRequired
@@ -593,7 +652,8 @@ export function getLoadDocumentPacket(data: BofData, loadId: string): LoadDocume
   } as LoadEvidenceItem;
   const rfid = toEvidenceItem(
     loadId,
-    "RFID dock proof",
+    "RFID / geo proof",
+    "proof",
     "rfid_proof",
     proofByType(proofItems, "RFID / Dock Validation Record"),
     false,
@@ -609,6 +669,7 @@ export function getLoadDocumentPacket(data: BofData, loadId: string): LoadDocume
   const safetyPhoto = toEvidenceItem(
     loadId,
     "Safety violation photo",
+    "exceptions",
     "safety_violation_photo",
     proofByType(proofItems, "Cargo Damage Photos"),
     false,
@@ -622,13 +683,39 @@ export function getLoadDocumentPacket(data: BofData, loadId: string): LoadDocume
             : "No active safety violation media required.",
       source:
         load.driverId === "DRV-004" || load.driverId === "DRV-008" ? "camera" : "mock",
-      url: getSafetyEvidenceByLoadId(loadId)[0]?.url,
-      fileName: fileNameFromUrl(getSafetyEvidenceByLoadId(loadId)[0]?.url),
+      url: generatedSafetyViolationPhoto || getSafetyEvidenceByLoadId(loadId)[0]?.url,
+      fileName: fileNameFromUrl(generatedSafetyViolationPhoto || getSafetyEvidenceByLoadId(loadId)[0]?.url),
     }
   );
+  safetyPhoto.status = safetyPhoto.url ? "ready" : safetyPhoto.status;
+  const damagePhoto = {
+    ...toEvidenceItem(
+      loadId,
+      "Damage / claim photo",
+      "exceptions",
+      "cargo_photo",
+      proofByType(proofItems, "Cargo Damage Photos"),
+      false,
+      { requiredForClaimRelease: claimApplicable(load, bundle) }
+    ),
+    status: claimApplicable(load, bundle)
+      ? generatedDamagePhoto
+        ? "ready"
+        : "missing"
+      : "not_applicable",
+    url: generatedDamagePhoto,
+    fileName: fileNameFromUrl(generatedDamagePhoto),
+    note: claimApplicable(load, bundle)
+      ? generatedDamagePhoto
+        ? "Damage evidence image linked."
+        : "Damage evidence photo required for claim path."
+      : "No active claim path.",
+    source: generatedDamagePhoto ? sourceFromUrl(generatedDamagePhoto) : undefined,
+  } as LoadEvidenceItem;
   const claim = toEvidenceItem(
     loadId,
     "Claim packet",
+    "exceptions",
     "claim_packet",
     proofByType(proofItems, "Claim Support Docs"),
     false,
@@ -651,6 +738,7 @@ export function getLoadDocumentPacket(data: BofData, loadId: string): LoadDocume
     id: `${loadId}:insurance_notice`,
     loadId,
     label: "Insurance notice",
+    section: "exceptions",
     type: "insurance_notice",
     status: claim.status === "ready" ? "ready" : claim.requiredForClaimRelease ? "pending" : "not_applicable",
     url:
@@ -673,6 +761,7 @@ export function getLoadDocumentPacket(data: BofData, loadId: string): LoadDocume
       id: ev.id,
       loadId,
       label: ev.label,
+      section: "exceptions",
       type:
         ev.type === "cargo_damage"
           ? "cargo_photo"
@@ -692,9 +781,12 @@ export function getLoadDocumentPacket(data: BofData, loadId: string): LoadDocume
     pod,
     invoice,
     cargo,
+    sealPickupPhoto,
+    sealDeliveryPhoto,
     seal,
     lumper,
     rfid,
+    damagePhoto,
     safetyPhoto,
     claim,
     insurance,

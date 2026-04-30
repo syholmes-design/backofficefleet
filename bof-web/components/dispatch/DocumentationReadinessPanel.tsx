@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { Fragment, useMemo, useState } from "react";
 import {
   AlertTriangle,
   ClipboardCheck,
@@ -83,30 +83,29 @@ export function DocumentationReadinessPanel({ load }: Props) {
       };
     };
     return [
-      pick("Rate Confirmation", "Missing"),
-      pick("BOL", "Missing"),
-      pick("POD", "Missing"),
-      pick("Invoice", "Missing"),
-      pick("Cargo photo", "Missing"),
-      pick("Seal Verification", "Missing"),
-      pick("Lumper receipt", "Not applicable"),
-      pick("RFID dock proof", "Pending"),
-      pick("Claim packet", "Claim Required"),
+      { section: "Core Documents", ...pick("Rate Confirmation", "Missing") },
+      { section: "Core Documents", ...pick("BOL", "Missing") },
+      { section: "Core Documents", ...pick("POD", "Missing") },
+      { section: "Core Documents", ...pick("Invoice", "Missing") },
+      { section: "Proof & Evidence", ...pick("Cargo photo", "Missing") },
+      { section: "Proof & Evidence", ...pick("Seal pickup photo", "Missing") },
+      { section: "Proof & Evidence", ...pick("Seal delivery photo", "Missing") },
+      { section: "Proof & Evidence", ...pick("Lumper receipt", "Not applicable") },
+      { section: "Proof & Evidence", ...pick("RFID / geo proof", "Pending") },
+      { section: "Proof & Evidence", ...pick("Seal verification sheet", "Missing") },
+      { section: "Exceptions / Claims", ...pick("Claim packet", "Claim Required") },
+      { section: "Exceptions / Claims", ...pick("Damage / claim photo", "Not applicable") },
+      { section: "Exceptions / Claims", ...pick("Safety violation photo", "Not applicable") },
     ];
   }, [packetMap]);
 
-  if (
-    typeof window !== "undefined" &&
-    process.env.NODE_ENV !== "production" &&
-    load.load_id === "L004"
-  ) {
-    console.info("[dispatch-proof-debug]", {
-      selectedLoadId: load.load_id,
-      normalizedLoadId: load.load_id,
-      packet,
-      rows: drawerRows,
-    });
-  }
+  const groupedRows = useMemo(() => {
+    const groups = ["Core Documents", "Proof & Evidence", "Exceptions / Claims"] as const;
+    return groups.map((section) => ({
+      section,
+      rows: drawerRows.filter((r) => r.section === section),
+    }));
+  }, [drawerRows]);
   const setSettlementHold = useDispatchDashboardStore(
     (s) => s.setSettlementHold
   );
@@ -236,27 +235,36 @@ export function DocumentationReadinessPanel({ load }: Props) {
             </tr>
           </thead>
           <tbody className="text-slate-200">
-            {drawerRows.map((line) => (
-              <ReadinessRow
-                key={line.key}
-                line={{
-                  key: line.key,
-                  label: line.label,
-                  status:
-                    line.status === "Ready"
-                      ? "Ready"
-                      : line.status === "Missing"
-                        ? "Missing"
-                        : line.status === "Pending"
-                          ? "Incomplete"
-                          : line.status === "Not applicable"
-                            ? "Not applicable"
-                            : "Claim Required",
-                  detail: line.detail,
-                }}
-                href={line.href}
-                viewLabel={line.label.toLowerCase().includes("photo") ? "View photo" : "Open"}
-              />
+            {groupedRows.map((group) => (
+              <Fragment key={group.section}>
+                <tr className="border-b border-slate-800 bg-slate-950/65">
+                  <td colSpan={3} className="px-3 py-1.5 text-[10px] font-semibold uppercase tracking-wide text-slate-400">
+                    {group.section}
+                  </td>
+                </tr>
+                {group.rows.map((line) => (
+                  <ReadinessRow
+                    key={line.key}
+                    line={{
+                      key: line.key,
+                      label: line.label,
+                      status:
+                        line.status === "Ready"
+                          ? "Ready"
+                          : line.status === "Missing"
+                            ? "Missing"
+                            : line.status === "Pending"
+                              ? "Incomplete"
+                              : line.status === "Not applicable"
+                                ? "Not applicable"
+                                : "Claim Required",
+                      detail: line.detail,
+                    }}
+                    href={line.href}
+                    viewLabel={line.label.toLowerCase().includes("photo") ? "View photo" : "Open"}
+                  />
+                ))}
+              </Fragment>
             ))}
           </tbody>
         </table>

@@ -1,5 +1,6 @@
 "use client";
 
+import { Fragment } from "react";
 import {
   type LoadEvidenceItem,
   type LoadDocumentPacket,
@@ -49,6 +50,7 @@ export function LoadProofPanel({
       id: `${loadId}:${doc.type.toLowerCase().replace(/\s+/g, "_")}`,
       loadId,
       label: doc.type,
+      section: "proof",
       type: "bol",
       status:
         doc.status === "Complete"
@@ -70,6 +72,11 @@ export function LoadProofPanel({
       doc.requiredForSettlementRelease &&
       !(doc.status === "ready" || doc.status === "not_applicable")
   );
+  const grouped = [
+    { section: "Core Documents", rows: evidenceRows.filter((d) => d.section === "core") },
+    { section: "Proof & Evidence", rows: evidenceRows.filter((d) => d.section === "proof") },
+    { section: "Exceptions / Claims", rows: evidenceRows.filter((d) => d.section === "exceptions") },
+  ].filter((g) => g.rows.length > 0);
 
   return (
     <section className="bof-doc-section" aria-labelledby="load-proof-heading">
@@ -98,53 +105,62 @@ export function LoadProofPanel({
             </tr>
           </thead>
           <tbody className="text-slate-200">
-            {evidenceRows.map((doc) => {
-              const auto = autoByType.get(doc.label);
-              const href = doc.url || auto?.fileUrl;
-              const canOpen = Boolean(href) && doc.status === "ready";
-              return (
-                <tr key={doc.id} className="border-b border-slate-800/80">
-                  <td className="px-2 py-1.5">
-                    <span className="font-medium text-slate-100">{doc.label}</span>
-                    {doc.requiredForSettlementRelease && (
-                      <span className="ml-2 text-[10px] text-amber-300">required</span>
-                    )}
-                  </td>
-                  <td className="px-2 py-1.5">
-                    <span className={statusBadgeClass(displayEvidenceStatus(doc.status))}>
-                      {displayEvidenceStatus(doc.status)}
-                    </span>
-                  </td>
-                  <td className="px-2 py-1.5">
-                    {canOpen ? (
-                      <a
-                        href={href}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="bof-link-secondary"
-                      >
-                        {doc.type.includes("photo") ? "View photo" : "Open"}
-                      </a>
-                    ) : (
-                      <span className="text-slate-500">—</span>
-                    )}
-                  </td>
-                  <td className="px-2 py-1.5 font-mono text-[10px] text-slate-500">
-                    {doc.fileName ?? "—"}
-                  </td>
-                  <td className="px-2 py-1.5 text-slate-400">
-                    {doc.note ??
-                      (doc.status === "missing"
-                        ? "Required to release settlement."
-                        : doc.status === "pending"
-                          ? "Awaiting upload or verification."
-                          : doc.status === "not_applicable"
-                            ? "Not required on this move."
-                            : "—")}
+            {grouped.map((group) => (
+              <Fragment key={group.section}>
+                <tr className="border-b border-slate-800 bg-slate-950/65">
+                  <td colSpan={5} className="px-2 py-1.5 text-[10px] font-semibold uppercase tracking-wide text-slate-400">
+                    {group.section}
                   </td>
                 </tr>
-              );
-            })}
+                {group.rows.map((doc) => {
+                  const auto = autoByType.get(doc.label);
+                  const href = doc.url || auto?.fileUrl;
+                  const canOpen = Boolean(href) && doc.status === "ready";
+                  return (
+                    <tr key={doc.id} className="border-b border-slate-800/80">
+                      <td className="px-2 py-1.5">
+                        <span className="font-medium text-slate-100">{doc.label}</span>
+                        {doc.requiredForSettlementRelease && (
+                          <span className="ml-2 text-[10px] text-amber-300">required</span>
+                        )}
+                      </td>
+                      <td className="px-2 py-1.5">
+                        <span className={statusBadgeClass(displayEvidenceStatus(doc.status))}>
+                          {displayEvidenceStatus(doc.status)}
+                        </span>
+                      </td>
+                      <td className="px-2 py-1.5">
+                        {canOpen ? (
+                          <a
+                            href={href}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="bof-link-secondary"
+                          >
+                            {doc.type.includes("photo") ? "View photo" : "Open"}
+                          </a>
+                        ) : (
+                          <span className="text-slate-500">Missing / Needs review</span>
+                        )}
+                      </td>
+                      <td className="px-2 py-1.5 font-mono text-[10px] text-slate-500">
+                        {doc.fileName ?? "—"}
+                      </td>
+                      <td className="px-2 py-1.5 text-slate-400">
+                        {doc.note ??
+                          (doc.status === "missing"
+                            ? "Required to release settlement."
+                            : doc.status === "pending"
+                              ? "Awaiting upload or verification."
+                              : doc.status === "not_applicable"
+                                ? "Not required on this move."
+                                : "—")}
+                      </td>
+                    </tr>
+                  );
+                })}
+              </Fragment>
+            ))}
           </tbody>
         </table>
       </div>

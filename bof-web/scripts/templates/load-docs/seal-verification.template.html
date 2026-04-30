@@ -2,15 +2,36 @@
 <html>
   <head><meta charset="utf-8" /><title>Seal Verification {{loadId}}</title><style>{{styles}}</style></head>
   <body>
-    <header><h1>BackOfficeFleet - Seal Verification Sheet</h1><p>Generated for BOF demo</p></header>
-    <h2>Load {{loadId}} Seal Chain</h2>
-    <table>
-      <tr><td>Pickup Facility</td><td>{{pickupFacility}}</td></tr>
-      <tr><td>Delivery Facility</td><td>{{deliveryFacility}}</td></tr>
-      <tr><td>Seal At Pickup</td><td>{{sealPickup}}</td></tr>
-      <tr><td>Seal At Delivery</td><td>{{sealDelivery}}</td></tr>
-      <tr><td>Comparison</td><td>{{sealStatus}}</td></tr>
-    </table>
-    <p>Verifier: ____________________ Date: ____________</p>
+    <div class="paper">
+      <header class="doc-header">
+        <div>
+          <h1 class="doc-title">Seal Verification Sheet</h1>
+          <div class="generated-label">BOF chain-of-custody support form</div>
+        </div>
+        <div class="status-stamp">{{sealStatus}}</div>
+      </header>
+      <div class="meta-grid">
+        <div class="meta-box"><div class="meta-label">Load ID</div><div class="meta-value">{{loadId}}</div></div>
+        <div class="meta-box"><div class="meta-label">BOL Number</div><div class="meta-value">{{bolNumber}}</div></div>
+      </div>
+      <table>
+        <tr><th>Pickup Facility</th><th>Delivery Facility</th><th>Pickup Seal</th><th>Delivery Seal</th><th>Result</th></tr>
+        <tr><td>{{pickupFacility}}</td><td>{{deliveryFacility}}</td><td>{{sealPickup}}</td><td>{{sealDelivery}}</td><td>{{sealStatus}}</td></tr>
+      </table>
+      <div class="section-title">Evidence Links</div>
+      <div class="terms-box">
+        Pickup seal photo: {{sealPickupPhotoRef}}<br />
+        Delivery seal photo: {{sealDeliveryPhotoRef}}<br />
+        Exception notes: {{exceptionNotes}}
+      </div>
+      <div class="sig-line">
+        <div class="sig-slot">Dispatch verifier / date</div>
+        <div class="sig-slot">Receiver confirmation / date</div>
+      </div>
+      <footer>
+        <span>Generated: {{generatedDate}}</span>
+        <span>BOF demo document packet</span>
+      </footer>
+    </div>
   </body>
 </html>

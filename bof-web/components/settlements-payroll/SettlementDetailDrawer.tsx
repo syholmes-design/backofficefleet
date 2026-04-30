@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { Fragment, useMemo, useState } from "react";
 import { X } from "lucide-react";
 import { useBofDemoData } from "@/lib/bof-demo-data-context";
 import { settlementHasProofOrExceptionIssues } from "@/lib/settlements-payroll-bootstrap";
@@ -472,7 +472,18 @@ export function SettlementDetailDrawer({ settlementId, open, onClose }: Props) {
                               </tr>
                             </thead>
                             <tbody>
-                              {packet.documents.map((doc) => {
+                              {[
+                                { section: "Core Documents", rows: packet.documents.filter((d) => d.section === "core") },
+                                { section: "Proof & Evidence", rows: packet.documents.filter((d) => d.section === "proof") },
+                                { section: "Exceptions / Claims", rows: packet.documents.filter((d) => d.section === "exceptions") },
+                              ].filter((g) => g.rows.length > 0).map((group) => (
+                                <Fragment key={`${lid}-${group.section}`}>
+                                  <tr className="border-b border-slate-800 bg-slate-950/65">
+                                    <td colSpan={4} className="px-2 py-1.5 text-[10px] font-semibold uppercase tracking-wide text-slate-400">
+                                      {group.section}
+                                    </td>
+                                  </tr>
+                                  {group.rows.map((doc) => {
                                 const canOpen = doc.status === "ready" && Boolean(doc.url);
                                 const label =
                                   doc.status === "not_applicable"
@@ -503,7 +514,7 @@ export function SettlementDetailDrawer({ settlementId, open, onClose }: Props) {
                                           {doc.type.includes("photo") ? "View photo" : "Open"}
                                         </a>
                                       ) : (
-                                        <span className="text-slate-500">—</span>
+                                        <span className="text-slate-500">Missing / Needs review</span>
                                       )}
                                     </td>
                                     <td className="px-2 py-1.5 text-slate-400">
@@ -511,7 +522,9 @@ export function SettlementDetailDrawer({ settlementId, open, onClose }: Props) {
                                     </td>
                                   </tr>
                                 );
-                              })}
+                                  })}
+                                </Fragment>
+                              ))}
                             </tbody>
                           </table>
                         </div>
