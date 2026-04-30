@@ -1,6 +1,7 @@
 import type { BofData } from "@/lib/load-bof-data";
 import { buildCommandCenterItems, settlementTotals } from "@/lib/executive-layer";
-import { getOrderedDocumentsForDriver, readinessFromDocuments } from "@/lib/driver-queries";
+import { getOrderedDocumentsForDriver } from "@/lib/driver-queries";
+import { getDriverDispatchEligibility } from "@/lib/driver-dispatch-eligibility";
 import { getSafetyScorecardRows } from "@/lib/safety-scorecard";
 import { getPayrollMonthlyTrend } from "@/lib/demo-trends";
 
@@ -61,40 +62,26 @@ function getDriverState(
   driverId: string,
   safetyTierMap: Map<string, "Elite" | "Standard" | "At Risk">
 ) {
-  const docs = getOrderedDocumentsForDriver(data, driverId);
-  const readiness = readinessFromDocuments(docs);
+  const eligibility = getDriverDispatchEligibility(data, driverId);
   const compliance = data.complianceIncidents.filter(
     (item) =>
       item.driverId === driverId &&
       item.status.toUpperCase() !== "CLOSED" &&
       item.status.toUpperCase() !== "RESOLVED"
   );
-  const settlement = data.settlements.find((row) => row.driverId === driverId);
   const hasHold = data.moneyAtRisk.some(
     (row) => row.driverId === driverId && row.status.toUpperCase() === "BLOCKED"
   );
   const safetyTier = safetyTierMap.get(driverId) ?? "Standard";
-  const criticalCompliance = compliance.some(
-    (item) => item.severity === "CRITICAL" || item.severity === "HIGH"
-  );
 
-  const blocked =
-    readiness.expired > 0 || readiness.missing > 0 || criticalCompliance || hasHold || safetyTier === "At Risk";
-  const needsReview =
-    !blocked &&
-    (compliance.length > 0 ||
-      settlement?.status?.toUpperCase() === "PENDING" ||
-      docs.some((doc) => {
-        if (!doc.expirationDate || doc.status.toUpperCase() !== "VALID") return false;
-        const days = Math.ceil((new Date(doc.expirationDate).getTime() - Date.now()) / 86400000);
-        return Number.isFinite(days) && days >= 0 && days <= 45;
-      }));
+  const blocked = eligibility.status === "blocked";
+  const needsReview = eligibility.status === "needs_review";
 
   return {
     blocked,
     needsReview,
-    dispatchReady: !blocked && !needsReview,
-    readiness,
+    dispatchReady: eligibility.status === "ready",
+    eligibility,
     safetyTier,
     complianceOpen: compliance.length,
     hasSettlementHold: hasHold,
