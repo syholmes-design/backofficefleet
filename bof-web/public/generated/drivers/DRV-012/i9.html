@@ -1,47 +1,18 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="utf-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>I-9 — Robert Johnson</title>
-  <style>
-    * { box-sizing: border-box; }
-    body { font-family: system-ui, Segoe UI, Roboto, Helvetica, Arial, sans-serif; margin: 0; padding: 24px; background: #f1f5f9; color: #0f172a; line-height: 1.45; font-size: 14px; }
-    .sheet { max-width: 720px; margin: 0 auto; background: #fff; border: 1px solid #cbd5e1; border-radius: 8px; padding: 28px 32px; box-shadow: 0 1px 3px rgba(0,0,0,.06); }
-    h1 { font-size: 1.15rem; margin: 0 0 4px; color: #0f172a; }
-    .sub { font-size: 12px; color: #64748b; margin-bottom: 20px; }
-    h2 { font-size: 11px; text-transform: uppercase; letter-spacing: .06em; color: #64748b; margin: 20px 0 8px; border-bottom: 1px solid #e2e8f0; padding-bottom: 4px; }
-    dl { display: grid; grid-template-columns: 160px 1fr; gap: 6px 16px; margin: 0; }
-    dt { color: #64748b; font-size: 12px; }
-    dd { margin: 0; font-weight: 500; }
-    .muted { color: #64748b; font-weight: 400; }
-    .banner { background: #eff6ff; border: 1px solid #bfdbfe; color: #1e3a8a; padding: 10px 12px; border-radius: 6px; font-size: 13px; margin-top: 12px; }
-    .warn { background: #fffbeb; border-color: #fde68a; color: #78350f; }
-    footer { margin-top: 24px; font-size: 11px; color: #94a3b8; }
-  </style>
-</head>
-<body>
-  <div class="sheet">
-    
-    <h1>Form I-9 — Employment Eligibility Verification</h1>
-    <p class="sub">Demo shell · HR record</p>
-    <h2>Driver</h2>
-<dl>
-  <dt>Name</dt><dd>Robert Johnson</dd>
-  <dt>Driver ID</dt><dd><code>DRV-012</code></dd>
-  <dt>Address</dt><dd>88 S Main St, Akron, OH 44308</dd>
-  <dt>Phone</dt><dd>618-623-9317</dd>
-  <dt>Email</dt><dd>robert.johnson@boftransport.demo</dd>
-</dl>
-    <h2>Eligibility</h2>
-    <dl>
-      <dt>Status (demo)</dt><dd>VALID</dd>
-      <dt>Employment eligibility</dt><dd><span class="muted">Pending verification — see HR</span></dd>
-      <dt>Document A / B / C</dt><dd><span class="muted">Not on file</span></dd>
-      <dt>Reverification date</dt><dd>2026-12-31</dd>
-    </dl>
-  
-    <footer>BackOfficeFleet · Demo generated credential shell · Not a legal document</footer>
-  </div>
-</body>
-</html>
+<!doctype html>
+<html><head><meta charset="utf-8"/><title>I9 DRV-012</title><style>
+    body { font-family: Arial, Helvetica, sans-serif; margin: 24px; color: #0f172a; }
+    header { border-bottom: 2px solid #0f172a; margin-bottom: 12px; padding-bottom: 6px; }
+    h1 { margin: 0; font-size: 20px; }
+    h2 { margin: 10px 0 14px; font-size: 16px; }
+    table { width: 100%; border-collapse: collapse; margin-top: 8px; }
+    td { border: 1px solid #cbd5e1; padding: 8px; vertical-align: top; }
+    td:first-child { width: 220px; font-weight: 600; background: #f8fafc; }
+  </style></head><body>
+<header><h1>BackOfficeFleet - I-9 Employment Eligibility Summary</h1><p>Generated for BOF demo</p></header>
+<h2>Robert Johnson (DRV-012)</h2>
+<table>
+<tr><td>Status</td><td>VALID</td></tr>
+<tr><td>Address</td><td>88 S Main St, Akron, OH 44308</td></tr>
+<tr><td>Email</td><td>robert.johnson@boftransport.demo</td></tr>
+</table>
+</body></html>

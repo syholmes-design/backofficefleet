@@ -4,6 +4,10 @@ import {
   JOHN_CARTER_PRIMARY_EXTRA_TYPES,
   JOHN_CARTER_SECONDARY_TYPE_ORDER,
 } from "./john-carter-reference";
+import {
+  getCanonicalDriverDocuments,
+  getDriverDocumentByType,
+} from "./driver-doc-registry";
 
 export const DRIVER_DOCUMENT_TYPES = [
   "CDL",
@@ -53,18 +57,38 @@ export function getOrderedDocumentsForDriver(
   data: BofData,
   driverId: string
 ): DocumentRow[] {
+  const canonical = getCanonicalDriverDocuments(data, driverId);
   const byType = new Map<string, DocumentRow>();
   for (const doc of data.documents) {
     if (doc.driverId !== driverId) continue;
     byType.set(doc.type, doc as DocumentRow);
   }
   return DRIVER_DOCUMENT_TYPES.map((type) => {
+    const canonicalDoc = canonical.find((d) => d.type === type);
     const row = byType.get(type);
-    if (row) return row;
+    if (row) {
+      return {
+        ...row,
+        status: canonicalDoc?.status ?? row.status,
+        expirationDate: canonicalDoc?.expirationDate ?? row.expirationDate,
+        fileUrl:
+          canonicalDoc?.fileUrl ??
+          getDriverDocumentByType(driverId, type) ??
+          row.fileUrl,
+        previewUrl:
+          canonicalDoc?.previewUrl ??
+          getDriverDocumentByType(driverId, type) ??
+          row.previewUrl,
+      };
+    }
     return {
       driverId,
       type,
-      status: "MISSING",
+      status: canonicalDoc?.status ?? "MISSING",
+      expirationDate: canonicalDoc?.expirationDate,
+      fileUrl: canonicalDoc?.fileUrl ?? getDriverDocumentByType(driverId, type),
+      previewUrl:
+        canonicalDoc?.previewUrl ?? getDriverDocumentByType(driverId, type),
     };
   });
 }

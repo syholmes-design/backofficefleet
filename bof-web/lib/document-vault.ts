@@ -10,6 +10,7 @@ import {
   mapDriverVaultCategoryToOwnership,
 } from "@/lib/bof-vault-ownership-adapter";
 import { getCanonicalMappingService } from "@/lib/compliance-flow-pro/canonical-mapping-service";
+import { getDriverDocumentByType } from "@/lib/driver-doc-registry";
 
 export type VaultDocumentRow = DocumentRow & {
   driverName: string;
@@ -92,9 +93,12 @@ export function buildVaultRows(data: BofData): VaultDocumentRow[] {
     const explicitBlock = doc.blocksPayment === true;
     const category = inferDriverVaultCategoryFromDocumentType(doc.type);
     const ownership = mapDriverVaultCategoryToOwnership(category);
+    const canonicalUrl = getDriverDocumentByType(doc.driverId, doc.type);
 
     return {
       ...doc,
+      fileUrl: canonicalUrl ?? doc.fileUrl,
+      previewUrl: canonicalUrl ?? doc.previewUrl,
       driverName: nameById.get(doc.driverId) ?? doc.driverId,
       atRisk: flags.atRisk || statusNorm === "AT RISK" || statusNorm === "AT_RISK",
       blocking: flags.blocking || explicitBlock,

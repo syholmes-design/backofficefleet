@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useState } from "react";
 import type { DocumentRow } from "@/lib/driver-queries";
 import { DRIVER_DOCUMENT_TYPES } from "@/lib/driver-queries";
+import { describeCredentialExpiration } from "@/lib/driver-doc-registry";
 import {
   documentSignal,
   documentSignalClass,
@@ -92,14 +93,7 @@ export function DriverDocumentsPanel({
                 </span>
               </p>
               <div className="bof-doc-expiry">
-                {doc.expirationDate ? (
-                  <>
-                    <span className="bof-muted">Expires</span>{" "}
-                    <time dateTime={doc.expirationDate}>{doc.expirationDate}</time>
-                  </>
-                ) : (
-                  <span className="bof-muted">No expiration on file</span>
-                )}
+                <span className="bof-muted">{describeCredentialExpiration(doc.expirationDate)}</span>
               </div>
               <span className="bof-doc-hint">Click for details · Hover for preview</span>
             </button>

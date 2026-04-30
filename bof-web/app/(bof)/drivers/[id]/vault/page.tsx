@@ -4,6 +4,7 @@ import { use } from "react";
 import { notFound } from "next/navigation";
 import { useBofDemoData } from "@/lib/bof-demo-data-context";
 import { getOrderedDocumentsForDriver, readinessFromDocuments } from "@/lib/driver-queries";
+import { getDriverDocumentPacket } from "@/lib/driver-doc-registry";
 
 type Props = {
   params: Promise<{ id: string }>;
@@ -20,6 +21,7 @@ export default function DriverVaultPage({ params }: Props) {
 
   const documents = getOrderedDocumentsForDriver(data, id);
   const readiness = readinessFromDocuments(documents);
+  const packet = getDriverDocumentPacket(id);
 
   return (
     <div className="min-h-screen bg-slate-50">
@@ -58,7 +60,7 @@ export default function DriverVaultPage({ params }: Props) {
                   <h3 className="font-medium text-gray-900 mb-2">CDL Copy</h3>
                   <p className="text-sm text-gray-600 mb-3">Commercial Driver&apos;s License</p>
                   <iframe
-                    src={`/generated/drivers/${id}/cdl.html`}
+                    src={packet.cdl || "about:blank"}
                     className="w-full h-[400px] border-0 rounded"
                     title="CDL Copy"
                   />
@@ -67,7 +69,7 @@ export default function DriverVaultPage({ params }: Props) {
                   <h3 className="font-medium text-gray-900 mb-2">Medical Card</h3>
                   <p className="text-sm text-gray-600 mb-3">Medical Certification Card</p>
                   <iframe
-                    src={`/generated/drivers/${id}/medical_certification.html`}
+                    src={packet.medicalCard || "about:blank"}
                     className="w-full h-[400px] border-0 rounded"
                     title="Medical Card"
                   />
@@ -76,7 +78,7 @@ export default function DriverVaultPage({ params }: Props) {
                   <h3 className="font-medium text-gray-900 mb-2">MVR</h3>
                   <p className="text-sm text-gray-600 mb-3">Motor Vehicle Record</p>
                   <iframe
-                    src={`/generated/drivers/${id}/mvr.html`}
+                    src={packet.mvr || "about:blank"}
                     className="w-full h-[400px] border-0 rounded"
                     title="MVR"
                   />
@@ -85,7 +87,7 @@ export default function DriverVaultPage({ params }: Props) {
                   <h3 className="font-medium text-gray-900 mb-2">PSP / Clearinghouse</h3>
                   <p className="text-sm text-gray-600 mb-3">Pre-Employment Screening Program</p>
                   <iframe
-                    src={`/generated/drivers/${id}/fmcsa_clearinghouse.html`}
+                    src={packet.fmcsaCompliance || "about:blank"}
                     className="w-full h-[400px] border-0 rounded"
                     title="PSP / Clearinghouse"
                   />
@@ -144,7 +146,7 @@ export default function DriverVaultPage({ params }: Props) {
                   <h3 className="font-medium text-gray-900 mb-2">I-9 / Employment Authorization</h3>
                   <p className="text-sm text-gray-600 mb-3">Employment Eligibility</p>
                   <iframe
-                    src={`/generated/drivers/${id}/i9.html`}
+                    src={packet.i9 || "about:blank"}
                     className="w-full h-[400px] border-0 rounded"
                     title="I-9 / Employment Authorization"
                   />
@@ -153,9 +155,27 @@ export default function DriverVaultPage({ params }: Props) {
                   <h3 className="font-medium text-gray-900 mb-2">W-9</h3>
                   <p className="text-sm text-gray-600 mb-3">Tax Withholding Form</p>
                   <iframe
-                    src={`/generated/drivers/${id}/w9.html`}
+                    src={packet.w9 || "about:blank"}
                     className="w-full h-[400px] border-0 rounded"
                     title="W-9"
+                  />
+                </div>
+                <div className="border rounded-lg p-4 hover:shadow-md transition-shadow">
+                  <h3 className="font-medium text-gray-900 mb-2">Emergency Contact</h3>
+                  <p className="text-sm text-gray-600 mb-3">Primary + secondary emergency contacts</p>
+                  <iframe
+                    src={packet.emergencyContact || "about:blank"}
+                    className="w-full h-[400px] border-0 rounded"
+                    title="Emergency Contact"
+                  />
+                </div>
+                <div className="border rounded-lg p-4 hover:shadow-md transition-shadow">
+                  <h3 className="font-medium text-gray-900 mb-2">Bank Information</h3>
+                  <p className="text-sm text-gray-600 mb-3">Payroll/direct-deposit details</p>
+                  <iframe
+                    src={packet.bankInformation || "about:blank"}
+                    className="w-full h-[400px] border-0 rounded"
+                    title="Bank Information"
                   />
                 </div>
                 <div className="border rounded-lg p-4 hover:shadow-md transition-shadow">

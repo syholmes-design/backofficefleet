@@ -5,6 +5,7 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import { useBofDemoData } from "@/lib/bof-demo-data-context";
 import { complianceNotesForDriver, getOrderedDocumentsForDriver } from "@/lib/driver-queries";
+import { describeCredentialExpiration } from "@/lib/driver-doc-registry";
 import {
   getSafetyEvidenceByDriverId,
   getSafetyScorecardRows,
@@ -120,25 +121,31 @@ export default function DriverSafetyPage({ params }: Props) {
                   : status === "EXPIRED"
                     ? "bg-rose-900/40 text-rose-300 ring-1 ring-rose-700/50"
                     : "bg-amber-900/30 text-amber-300 ring-1 ring-amber-700/40";
-              const href = doc.fileUrl || doc.previewUrl || `/drivers/${id}/vault`;
+              const href = doc.fileUrl || doc.previewUrl;
               return (
                 <div key={doc.type} className="rounded border border-slate-800 bg-slate-950/50 p-3">
                   <p className="text-xs font-semibold text-slate-100">{doc.type}</p>
                   <p className="mt-1 text-[11px] text-slate-400">
-                    {doc.expirationDate ? `Expires ${doc.expirationDate}` : "No expiration date on file"}
+                    {describeCredentialExpiration(doc.expirationDate)}
                   </p>
                   <div className="mt-2 flex items-center justify-between gap-2">
                     <span className={`inline-flex rounded px-2 py-0.5 text-[10px] font-semibold ${chipClass}`}>
                       {doc.status}
                     </span>
-                    <a
-                      href={href}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-[11px] font-semibold text-teal-300 hover:text-teal-200"
-                    >
-                      Open document
-                    </a>
+                    {href ? (
+                      <a
+                        href={href}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-[11px] font-semibold text-teal-300 hover:text-teal-200"
+                      >
+                        Open document
+                      </a>
+                    ) : (
+                      <span className="text-[11px] font-semibold text-amber-300">
+                        Missing / Needs review
+                      </span>
+                    )}
                   </div>
                 </div>
               );
