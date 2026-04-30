@@ -3875,29 +3875,38 @@ body {
 /* Page-specific zoom-out treatment for Government and BOF Vault heroes.
    Keep this scoped so other heroes are unchanged. */
 @media (min-width: 1024px) {
+  .bof-government-hero,
+  .bof-vault-hero {
+    width: 100%;
+    max-width: none;
+  }
+
   .bof-government-hero .bof-mkt-government-hero__image-wrap,
   .bof-vault-hero .bof-mkt-vault-hero__image-wrap {
     background: var(--bof-mkt-surface-hero);
-    min-height: clamp(520px, 62vh, 640px);
-    height: clamp(520px, 62vh, 640px);
+    min-height: clamp(340px, 34vw, 430px);
+    height: clamp(340px, 34vw, 430px);
     padding: 0;
   }
 
   .bof-government-hero .bof-mkt-government-hero__visual {
     width: 100vw;
     margin-left: calc(-50vw + 50%);
-    min-height: clamp(520px, 62vh, 640px);
-    height: clamp(520px, 62vh, 640px);
+    min-height: clamp(340px, 34vw, 430px);
+    height: clamp(340px, 34vw, 430px);
   }
 
   .bof-vault-hero .bof-mkt-vault-hero__visual {
-    min-height: clamp(520px, 62vh, 640px);
-    height: clamp(520px, 62vh, 640px);
+    width: 100vw;
+    margin-left: calc(-50vw + 50%);
+    min-height: clamp(340px, 34vw, 430px);
+    height: clamp(340px, 34vw, 430px);
   }
 
   .bof-government-hero .bof-mkt-government-hero__grid,
   .bof-vault-hero .bof-mkt-vault-hero__grid {
-    min-height: clamp(520px, 62vh, 640px);
+    min-height: clamp(340px, 34vw, 430px);
+    height: clamp(340px, 34vw, 430px);
   }
 
   .bof-government-hero .bof-mkt-government-hero__caption,
