@@ -1,168 +1,222 @@
 "use client";
 
-import { use } from "react";
+import { use, useEffect, useMemo } from "react";
+import Link from "next/link";
 import { notFound } from "next/navigation";
 import { useBofDemoData } from "@/lib/bof-demo-data-context";
-import { getDriverDocumentPacket } from "@/lib/driver-doc-registry";
+import {
+  getCanonicalDriverDocuments,
+  getDriverDocumentByType,
+  getDriverDocumentPacket,
+} from "@/lib/driver-doc-registry";
 import { getDriverOperationalProfile } from "@/lib/driver-operational-profile";
 
 type Props = {
   params: Promise<{ id: string }>;
 };
 
+type HrDocRow = {
+  label: string;
+  type: string;
+  status: string;
+  href?: string;
+};
+
+function humanizeStatus(raw?: string) {
+  const key = String(raw ?? "").trim().toUpperCase();
+  if (key === "VALID") return "Ready";
+  if (key === "EXPIRING_SOON") return "Expiring Soon";
+  if (key === "EXPIRED") return "Expired";
+  if (key === "MISSING") return "Missing / Needs Review";
+  if (key === "PENDING_REVIEW" || key === "PENDING") return "Pending Review";
+  if (!key) return "Missing / Needs Review";
+  return key
+    .toLowerCase()
+    .split("_")
+    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+    .join(" ");
+}
+
+function chipClass(status: string) {
+  const key = status.toUpperCase();
+  if (key.includes("EXPIRED")) return "border border-rose-700/60 bg-rose-950/40 text-rose-200";
+  if (key.includes("EXPIRING")) return "border border-amber-700/60 bg-amber-950/40 text-amber-200";
+  if (key.includes("MISSING")) return "border border-rose-700/60 bg-rose-950/35 text-rose-200";
+  if (key.includes("PENDING")) return "border border-amber-700/60 bg-amber-950/35 text-amber-200";
+  return "border border-emerald-700/60 bg-emerald-950/35 text-emerald-200";
+}
+
+function Field({ label, value }: { label: string; value?: string }) {
+  return (
+    <div className="space-y-1">
+      <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">{label}</p>
+      <p className="text-sm text-slate-100">{value?.trim() ? value : "—"}</p>
+    </div>
+  );
+}
+
 export default function DriverHRPage({ params }: Props) {
   const { id } = use(params);
   const { data } = useBofDemoData();
-  const driver = data.drivers.find(d => d.id === id);
+  const driver = data.drivers.find((d) => d.id === id);
   const profile = getDriverOperationalProfile(data, id);
   const packet = getDriverDocumentPacket(id);
-  
+
   if (!driver) {
     notFound();
   }
 
+  const hrDocs = useMemo<HrDocRow[]>(() => {
+    const canonical = getCanonicalDriverDocuments(data, id);
+    const byType = new Map(canonical.map((doc) => [doc.type, doc]));
+    const rows: Array<{ label: string; type: string }> = [
+      { label: "I-9", type: "I-9" },
+      { label: "Emergency Contact", type: "Emergency Contact" },
+      { label: "FMCSA Compliance", type: "FMCSA" },
+      { label: "W-9", type: "W-9" },
+      { label: "Bank Information", type: "Bank Info" },
+      { label: "Medical Card", type: "Medical Card" },
+      { label: "CDL", type: "CDL" },
+      { label: "MVR", type: "MVR" },
+    ];
+    return rows.map((row) => {
+      const doc = byType.get(row.type);
+      const canonicalUrl = doc?.fileUrl ?? getDriverDocumentByType(id, row.type);
+      return {
+        label: row.label,
+        type: row.type,
+        status: humanizeStatus(doc?.status),
+        href: canonicalUrl,
+      };
+    });
+  }, [data, id]);
+
+  useEffect(() => {
+    if (process.env.NODE_ENV === "production") return;
+    const keyToType: Array<[keyof typeof packet, string]> = [
+      ["i9", "I-9"],
+      ["emergencyContact", "Emergency Contact"],
+      ["fmcsaCompliance", "FMCSA"],
+      ["w9", "W-9"],
+      ["bankInformation", "Bank Info"],
+      ["medicalCard", "Medical Card"],
+      ["cdl", "CDL"],
+      ["mvr", "MVR"],
+    ];
+    keyToType.forEach(([key, type]) => {
+      const packetUrl = packet[key];
+      const canonicalUrl = getDriverDocumentByType(id, type);
+      if ((packetUrl ?? "") !== (canonicalUrl ?? "")) {
+        console.warn("[hr-doc-registry] URL mismatch between packet and canonical registry", {
+          driverId: id,
+          type,
+          packetUrl,
+          canonicalUrl,
+        });
+      }
+    });
+  }, [id, packet]);
+
   return (
-    <div className="min-h-screen bg-slate-50">
-      <div className="container mx-auto px-4 py-8">
-        <div className="bg-white rounded-lg shadow-lg p-6">
-          <h1 className="text-2xl font-bold text-gray-900 mb-6">
-            {driver.name} - HR & Administrative Record
-          </h1>
-          
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {/* Emergency Contact */}
-            <div className="bg-gray-50 rounded-lg p-6">
-              <h2 className="text-lg font-semibold text-gray-900 mb-4">Emergency Contact</h2>
-              <div className="space-y-3">
-                <div>
-                  <span className="font-medium">Name:</span>
-                  <p className="text-gray-700">{driver.emergencyContactName}</p>
-                </div>
-                <div>
-                  <span className="font-medium">Relationship:</span>
-                  <p className="text-gray-700">{driver.emergencyContactRelationship}</p>
-                </div>
-                <div>
-                  <span className="font-medium">Phone:</span>
-                  <p className="text-gray-700">{driver.emergencyContactPhone}</p>
-                </div>
-                <div>
-                  <span className="font-medium">Email:</span>
-                  <p className="text-gray-700">{profile?.primaryEmergencyEmail || "—"}</p>
-                </div>
-                <div>
-                  <span className="font-medium">Address:</span>
-                  <p className="text-gray-700">{profile?.primaryEmergencyAddress || "—"}</p>
-                </div>
-              </div>
-            </div>
-
-            {/* Secondary Contact */}
-            <div className="bg-gray-50 rounded-lg p-6">
-              <h2 className="text-lg font-semibold text-gray-900 mb-4">Secondary Contact</h2>
-              <div className="space-y-3">
-                <div>
-                  <span className="font-medium">Name:</span>
-                  <p className="text-gray-700">{profile?.secondaryEmergencyName || "—"}</p>
-                </div>
-                <div>
-                  <span className="font-medium">Relationship:</span>
-                  <p className="text-gray-700">{profile?.secondaryEmergencyRelationship || "—"}</p>
-                </div>
-                <div>
-                  <span className="font-medium">Phone:</span>
-                  <p className="text-gray-700">{profile?.secondaryEmergencyPhone || "—"}</p>
-                </div>
-                <div>
-                  <span className="font-medium">Email:</span>
-                  <p className="text-gray-700">{profile?.secondaryEmergencyEmail || "—"}</p>
-                </div>
-                <div>
-                  <span className="font-medium">Address:</span>
-                  <p className="text-gray-700">{profile?.secondaryEmergencyAddress || "—"}</p>
-                </div>
-              </div>
-            </div>
-
-            {/* Bank Information */}
-            <div className="bg-gray-50 rounded-lg p-6">
-              <h2 className="text-lg font-semibold text-gray-900 mb-4">Bank & Direct Deposit</h2>
-              <div className="space-y-3">
-                <div>
-                  <span className="font-medium">Bank Name:</span>
-                  <p className="text-gray-700">{profile?.bankName || "—"}</p>
-                </div>
-                <div>
-                  <span className="font-medium">Account Type:</span>
-                  <p className="text-gray-700">{profile?.bankAccountType || "—"}</p>
-                </div>
-                <div>
-                  <span className="font-medium">Last 4 Digits:</span>
-                  <p className="text-gray-700">{profile?.bankAccountLast4 || "—"}</p>
-                </div>
-                <div>
-                  <span className="font-medium">Payment Preference:</span>
-                  <p className="text-gray-700">{profile?.paymentPreference || "—"}</p>
-                </div>
-                <div>
-                  <span className="font-medium">Status:</span>
-                  <p className="text-green-600 font-medium">{profile?.bankStatus || "—"}</p>
-                </div>
-                <div>
-                  <span className="font-medium">Submission Date:</span>
-                  <p className="text-gray-700">{profile?.bankSubmissionDate || "—"}</p>
-                </div>
-              </div>
-            </div>
-
-            {/* Tax & Employment */}
-            <div className="bg-gray-50 rounded-lg p-6">
-              <h2 className="text-lg font-semibold text-gray-900 mb-4">Tax & Employment</h2>
-              <div className="space-y-3">
-                <div>
-                  <span className="font-medium">Tax Classification:</span>
-                  <p className="text-gray-700">{profile?.taxClassification || "—"}</p>
-                </div>
-                <div>
-                  <span className="font-medium">TIN Type:</span>
-                  <p className="text-gray-700">{profile?.tinType || "—"}</p>
-                </div>
-                <div>
-                  <span className="font-medium">Hire Date:</span>
-                  <p className="text-gray-700">Onboarding Complete</p>
-                </div>
-                <div>
-                  <span className="font-medium">Handbook Acknowledgment:</span>
-                  <p className="text-green-600 font-medium">Signed</p>
-                </div>
-                <div>
-                  <span className="font-medium">Orientation Checklist:</span>
-                  <p className="text-green-600 font-medium">Complete</p>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div className="mt-6 rounded-lg border border-slate-200 bg-slate-50 p-4">
-            <h2 className="text-lg font-semibold text-gray-900 mb-3">Generated HR packet links</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-sm">
-              {[
-                ["I-9 document", packet.i9],
-                ["W-9 document", packet.w9],
-                ["Emergency Contact document", packet.emergencyContact],
-                ["Bank Information document", packet.bankInformation],
-                ["FMCSA Compliance document", packet.fmcsaCompliance],
-                ["Medical Card document", packet.medicalCard],
-              ].map(([label, href]) =>
-                href ? (
-                  <a key={label} className="text-teal-700 hover:underline" href={href} target="_blank" rel="noreferrer">{label}</a>
-                ) : (
-                  <span key={label} className="text-amber-700">{label}: Missing / Needs review</span>
-                )
-              )}
-            </div>
-          </div>
+    <div className="bof-page space-y-5">
+      <section className="rounded-lg border border-slate-800 bg-slate-900/50 p-4">
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <h1 className="text-xl font-semibold text-white">{driver.name} - HR & Administrative Record</h1>
+          <Link
+            href={`/drivers/${id}/profile`}
+            className="text-sm font-medium text-teal-300 hover:text-teal-200 hover:underline"
+          >
+            Open Profile
+          </Link>
         </div>
+        <p className="mt-1 text-sm text-slate-400">
+          Canonical HR, emergency, and document readiness details keyed by{" "}
+          <span className="font-mono">{id}</span>.
+        </p>
+      </section>
+
+      <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
+        <section className="rounded-lg border border-slate-800 bg-slate-900/40 p-4">
+          <h2 className="mb-3 text-base font-semibold text-slate-100">Emergency Contact (Primary)</h2>
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+            <Field label="Name" value={profile?.primaryEmergencyName} />
+            <Field label="Relationship" value={profile?.primaryEmergencyRelationship} />
+            <Field label="Phone" value={profile?.primaryEmergencyPhone} />
+            <Field label="Email" value={profile?.primaryEmergencyEmail} />
+            <Field label="Address" value={profile?.primaryEmergencyAddress} />
+          </div>
+        </section>
+
+        <section className="rounded-lg border border-slate-800 bg-slate-900/40 p-4">
+          <h2 className="mb-3 text-base font-semibold text-slate-100">Emergency Contact (Secondary)</h2>
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+            <Field label="Name" value={profile?.secondaryEmergencyName} />
+            <Field label="Relationship" value={profile?.secondaryEmergencyRelationship} />
+            <Field label="Phone" value={profile?.secondaryEmergencyPhone} />
+            <Field label="Email" value={profile?.secondaryEmergencyEmail} />
+            <Field label="Address" value={profile?.secondaryEmergencyAddress} />
+          </div>
+        </section>
+
+        <section className="rounded-lg border border-slate-800 bg-slate-900/40 p-4">
+          <h2 className="mb-3 text-base font-semibold text-slate-100">Bank & Direct Deposit</h2>
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+            <Field label="Bank Name" value={profile?.bankName} />
+            <Field label="Account Type" value={profile?.bankAccountType} />
+            <Field label="Last 4 Digits" value={profile?.bankAccountLast4} />
+            <Field label="Payment Preference" value={profile?.paymentPreference} />
+            <Field label="Submission Date" value={profile?.bankSubmissionDate} />
+            <div className="space-y-1">
+              <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">Status</p>
+              <span className="inline-flex rounded px-2 py-0.5 text-xs font-semibold border border-emerald-700/60 bg-emerald-950/35 text-emerald-200">
+                {profile?.bankStatus || "Pending Review"}
+              </span>
+            </div>
+          </div>
+        </section>
+
+        <section className="rounded-lg border border-slate-800 bg-slate-900/40 p-4">
+          <h2 className="mb-3 text-base font-semibold text-slate-100">Tax & Employment</h2>
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+            <Field label="Tax Classification" value={profile?.taxClassification} />
+            <Field label="TIN Type" value={profile?.tinType} />
+            <Field label="Employment Status" value="Onboarding Complete" />
+            <Field label="Handbook Acknowledgment" value="Signed" />
+            <Field label="Orientation Checklist" value="Complete" />
+          </div>
+        </section>
       </div>
+
+      <section className="rounded-lg border border-slate-800 bg-slate-900/45 p-4">
+        <h2 className="mb-3 text-base font-semibold text-slate-100">HR Packet Documents</h2>
+        <div className="space-y-2">
+          {hrDocs.map((doc) => (
+            <div
+              key={doc.type}
+              className="flex flex-wrap items-center justify-between gap-2 rounded border border-slate-800 bg-slate-950/55 px-3 py-2"
+            >
+              <p className="text-sm font-medium text-slate-100">{doc.label}</p>
+              <div className="flex items-center gap-2">
+                <span className={`inline-flex rounded px-2 py-0.5 text-xs font-semibold ${chipClass(doc.status)}`}>
+                  {doc.status}
+                </span>
+                {doc.href ? (
+                  <a
+                    href={doc.href}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="text-sm font-medium text-teal-300 hover:text-teal-200 hover:underline"
+                  >
+                    Open
+                  </a>
+                ) : (
+                  <span className="text-xs text-amber-300">Missing / Needs Review</span>
+                )}
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
     </div>
   );
 }
