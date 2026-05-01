@@ -5,6 +5,34 @@ function ensureDir(dirPath) {
   fs.mkdirSync(dirPath, { recursive: true });
 }
 
+async function resolveReplicateVersion(model, apiKey) {
+  const configured = model || "black-forest-labs/flux-schnell";
+  if (configured.includes(":")) {
+    const [slug, version] = configured.split(":");
+    if (!slug || !version) throw new Error(`Invalid BOF_REPLICATE_MODEL format: ${configured}`);
+    return { slug, version };
+  }
+  if (!configured.includes("/")) {
+    throw new Error(
+      `BOF_REPLICATE_MODEL must be "owner/model" or "owner/model:version"; got "${configured}"`
+    );
+  }
+  const [owner, name] = configured.split("/");
+  const modelRes = await fetch(`https://api.replicate.com/v1/models/${owner}/${name}`, {
+    headers: { Authorization: `Bearer ${apiKey}` },
+  });
+  if (!modelRes.ok) {
+    const txt = await modelRes.text();
+    throw new Error(`Replicate model lookup failed (${modelRes.status}): ${txt.slice(0, 300)}`);
+  }
+  const payload = await modelRes.json();
+  const version = payload?.latest_version?.id;
+  if (!version) {
+    throw new Error(`Replicate model ${configured} has no latest_version id`);
+  }
+  return { slug: configured, version };
+}
+
 export async function generateEvidenceImage({
   provider,
   apiKey,
@@ -43,14 +71,15 @@ export async function generateEvidenceImage({
   }
 
   if (provider === "replicate") {
+    const resolved = await resolveReplicateVersion(model, apiKey);
     const createRes = await fetch("https://api.replicate.com/v1/predictions", {
       method: "POST",
       headers: {
-        Authorization: `Token ${apiKey}`,
+        Authorization: `Bearer ${apiKey}`,
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        model: model || "black-forest-labs/flux-schnell",
+        version: resolved.version,
         input: {
           prompt,
           aspect_ratio: "16:9",
@@ -71,7 +100,7 @@ export async function generateEvidenceImage({
       }
       await new Promise((resolve) => setTimeout(resolve, 1200));
       const pollRes = await fetch(`https://api.replicate.com/v1/predictions/${pred.id}`, {
-        headers: { Authorization: `Token ${apiKey}` },
+        headers: { Authorization: `Bearer ${apiKey}` },
       });
       if (!pollRes.ok) {
         const txt = await pollRes.text();

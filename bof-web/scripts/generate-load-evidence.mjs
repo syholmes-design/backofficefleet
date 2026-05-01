@@ -48,7 +48,7 @@ const AI_PROMPT_TYPES = new Set([
 function loadEnvLocal() {
   const envPath = path.join(ROOT, ".env.local");
   if (!fs.existsSync(envPath)) return;
-  const raw = fs.readFileSync(envPath, "utf8");
+  const raw = fs.readFileSync(envPath, "utf8").replace(/^\uFEFF/, "");
   for (const line of raw.split(/\r?\n/)) {
     const s = line.trim();
     if (!s || s.startsWith("#")) continue;
@@ -206,7 +206,8 @@ function outputExt(options) {
 }
 
 async function resolveOrGenerate(load, evidenceKey, baseName, svgFactory, options, stats) {
-  const aiEligible = AI_PROMPT_TYPES.has(evidenceKey) && canGenerateAi(options);
+  const underImageLimit = !options.imageLimit || stats.aiAttempted < options.imageLimit;
+  const aiEligible = AI_PROMPT_TYPES.has(evidenceKey) && canGenerateAi(options) && underImageLimit;
   const existing = resolveExistingEvidence(load.id, baseName);
   const shouldRegenerate = Boolean(options.regenerate);
   const shouldKeepExisting =
@@ -268,7 +269,16 @@ async function main() {
   const aiEnabled = argvAi || getenvBool("BOF_ENABLE_AI_IMAGE_GENERATION", false);
   const provider = String(process.env.BOF_IMAGE_PROVIDER || "openai").toLowerCase();
   const outputFormat = String(process.env.BOF_IMAGE_OUTPUT_FORMAT || "png").toLowerCase();
-  const model = String(process.env.BOF_IMAGE_MODEL || "").trim() || undefined;
+  const model = String(
+    process.env.BOF_IMAGE_MODEL ||
+      (provider === "replicate" ? process.env.BOF_REPLICATE_MODEL : "") ||
+      ""
+  ).trim() || undefined;
+  const loadLimitRaw = Number(process.env.BOF_EVIDENCE_LOAD_LIMIT || 0);
+  const imageLimitRaw = Number(process.env.BOF_EVIDENCE_IMAGE_LIMIT || 0);
+  const loadLimit = Number.isFinite(loadLimitRaw) && loadLimitRaw > 0 ? Math.floor(loadLimitRaw) : 0;
+  const imageLimit =
+    Number.isFinite(imageLimitRaw) && imageLimitRaw > 0 ? Math.floor(imageLimitRaw) : 0;
   const apiKey =
     provider === "replicate"
       ? process.env.REPLICATE_API_TOKEN
@@ -276,7 +286,16 @@ async function main() {
         ? process.env.OPENAI_API_KEY
         : undefined;
   const regenerate = getenvBool("BOF_REGENERATE_EVIDENCE", false);
-  const options = { aiEnabled, provider, outputFormat, model, apiKey, regenerate };
+  const options = {
+    aiEnabled,
+    provider,
+    outputFormat,
+    model,
+    apiKey,
+    regenerate,
+    loadLimit,
+    imageLimit,
+  };
   const stats = {
     loads: 0,
     required: 0,
@@ -289,8 +308,14 @@ async function main() {
   };
 
   console.log(
-    `[generate-load-evidence] provider=${provider} aiEnabled=${aiEnabled} apiKeyDetected=${Boolean(apiKey)} regenerate=${regenerate}`
+    `[generate-load-evidence] provider=${provider} aiEnabled=${aiEnabled} apiKeyDetected=${Boolean(apiKey)} regenerate=${regenerate} outputFormat=${outputFormat} model=${model || "default"} loadLimit=${loadLimit || "all"} imageLimit=${imageLimit || "all"}`
   );
+
+  if (aiEnabled && !["replicate", "openai"].includes(provider)) {
+    console.warn(
+      `[generate-load-evidence] Unknown provider "${provider}". Falling back to SVG evidence generation.`
+    );
+  }
 
   if (aiEnabled && !apiKey) {
     const expected =
@@ -304,7 +329,7 @@ async function main() {
     );
   }
 
-  for (const load of data.loads ?? []) {
+  for (const load of (data.loads ?? []).slice(0, loadLimit || undefined)) {
     stats.loads += 1;
     const customer = String(load.origin ?? "BOF Customer").split(" - ")[0] || "BOF Customer";
     const driverName = findDriverName(data.drivers ?? [], load.driverId);
