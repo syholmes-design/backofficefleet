@@ -1,8 +1,7 @@
 "use client";
 
-import { useEffect, useMemo, useRef } from "react";
-import L from "leaflet";
-import "leaflet/dist/leaflet.css";
+import { useEffect, useMemo, useRef, useState, type ReactElement } from "react";
+import Map, { Layer, Marker, NavigationControl, Popup, Source, type MapRef } from "react-map-gl/mapbox";
 import type { Load, LoadProofEvent, RouteStatus } from "@/types/dispatch";
 
 type Mode = "all" | "selected";
@@ -109,7 +108,8 @@ export function DispatchRouteMap({
   compact = false,
 }: Props) {
   const token = process.env.NEXT_PUBLIC_MAPBOX_TOKEN;
-  const containerRef = useRef<HTMLDivElement>(null);
+  const mapRef = useRef<MapRef | null>(null);
+  const [popup, setPopup] = useState<{ load: Load; event?: LoadProofEvent } | null>(null);
   const scopedLoads = useMemo(() => {
     if (mode === "selected" && selectedLoadId) {
       return loads.filter((l) => l.load_id === selectedLoadId);
@@ -117,117 +117,75 @@ export function DispatchRouteMap({
     return loads;
   }, [loads, mode, selectedLoadId]);
 
+  const points = useMemo(() => {
+    const out: Array<[number, number]> = [];
+    for (const l of scopedLoads) {
+      if (Number.isFinite(l.pickupLat) && Number.isFinite(l.pickupLng)) {
+        out.push([l.pickupLng as number, l.pickupLat as number]);
+      }
+      if (Number.isFinite(l.deliveryLat) && Number.isFinite(l.deliveryLng)) {
+        out.push([l.deliveryLng as number, l.deliveryLat as number]);
+      }
+      if (Number.isFinite(l.currentLat) && Number.isFinite(l.currentLng)) {
+        out.push([l.currentLng as number, l.currentLat as number]);
+      }
+      for (const ev of l.proofEvents ?? []) {
+        if (Number.isFinite(ev.lat) && Number.isFinite(ev.lng)) out.push([ev.lng, ev.lat]);
+      }
+    }
+    return out;
+  }, [scopedLoads]);
+
   useEffect(() => {
-    if (!token) return;
-    const el = containerRef.current;
-    if (!el) return;
-    const m = L.map(el, { scrollWheelZoom: false, zoomControl: !compact });
-    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-      maxZoom: 18,
-      attribution:
-        '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
-    }).addTo(m);
-    const bounds = L.latLngBounds([]);
-    for (const load of scopedLoads) {
-      if (
-        !Number.isFinite(load.pickupLat) ||
-        !Number.isFinite(load.pickupLng) ||
-        !Number.isFinite(load.deliveryLat) ||
-        !Number.isFinite(load.deliveryLng)
-      ) {
-        continue;
-      }
-      const a: [number, number] = [load.pickupLat as number, load.pickupLng as number];
-      const b: [number, number] = [load.deliveryLat as number, load.deliveryLng as number];
-      const route = L.polyline([a, b], {
-        color: routeColor(load.routeStatus),
-        weight: load.load_id === selectedLoadId ? 5 : 3,
-        opacity: load.routeStatus === "scheduled" ? 0.35 : 0.9,
-        dashArray:
-          load.routeStatus === "scheduled" || load.routeStatus === "dispatched"
-            ? "8 8"
-            : undefined,
-      }).addTo(m);
-      route.on("click", () => onSelectLoad?.(load.load_id));
-      bounds.extend(a);
-      bounds.extend(b);
-
-      const pickupMarker = L.circleMarker(a, {
-        radius: load.load_id === selectedLoadId ? 7 : 5,
-        color: "#22d3ee",
-        weight: 2,
-        fillColor: "#22d3ee",
-        fillOpacity: 0.9,
-      })
-        .addTo(m)
-        .bindPopup(popupHtml(load), { className: "bof-dispatch-map-popup", maxWidth: 300 });
-      pickupMarker.on("click", () => onSelectLoad?.(load.load_id));
-
-      const deliveryMarker = L.circleMarker(b, {
-        radius: load.load_id === selectedLoadId ? 7 : 5,
-        color: "#14b8a6",
-        weight: 2,
-        fillColor: "#14b8a6",
-        fillOpacity: 0.9,
-      })
-        .addTo(m)
-        .bindPopup(popupHtml(load), { className: "bof-dispatch-map-popup", maxWidth: 300 });
-      deliveryMarker.on("click", () => onSelectLoad?.(load.load_id));
-
-      if (
-        Number.isFinite(load.currentLat) &&
-        Number.isFinite(load.currentLng) &&
-        (load.routeStatus === "in_transit" ||
-          load.routeStatus === "at_risk" ||
-          load.routeStatus === "delayed")
-      ) {
-        const current = L.circleMarker([load.currentLat as number, load.currentLng as number], {
-          radius: load.load_id === selectedLoadId ? 8 : 6,
-          color: "#f8fafc",
-          weight: 2,
-          fillColor: routeColor(load.routeStatus),
-          fillOpacity: 1,
-        })
-          .addTo(m)
-          .bindPopup(popupHtml(load), { className: "bof-dispatch-map-popup", maxWidth: 300 });
-        current.on("click", () => onSelectLoad?.(load.load_id));
-        bounds.extend([load.currentLat as number, load.currentLng as number]);
-      }
-
-      for (const event of load.proofEvents ?? []) {
-        if (load.routeStatus !== "delivered" && event.type !== "claim") continue;
-        const eventColor =
-          event.status === "ready"
-            ? "#14b8a6"
-            : event.status === "exception"
-              ? "#fb7185"
-              : "#f59e0b";
-        const marker = L.circleMarker([event.lat, event.lng], {
-          radius: 4,
-          color: eventColor,
-          fillColor: eventColor,
-          fillOpacity: 0.95,
-          weight: 1,
-        })
-          .addTo(m)
-          .bindPopup(popupHtml(load, event), {
-            className: "bof-dispatch-map-popup",
-            maxWidth: 300,
-          });
-        marker.on("click", () => onSelectLoad?.(load.load_id));
-        bounds.extend([event.lat, event.lng]);
-      }
+    if (!token || !mapRef.current || points.length === 0) return;
+    let minLng = points[0][0];
+    let maxLng = points[0][0];
+    let minLat = points[0][1];
+    let maxLat = points[0][1];
+    for (const [lng, lat] of points) {
+      minLng = Math.min(minLng, lng);
+      maxLng = Math.max(maxLng, lng);
+      minLat = Math.min(minLat, lat);
+      maxLat = Math.max(maxLat, lat);
     }
-    if (bounds.isValid()) {
-      m.fitBounds(bounds, { padding: [24, 24], maxZoom: compact ? 7 : 8 });
-    } else {
-      m.setView([40.2, -83.2], 5);
-    }
-    return () => {
-      m.remove();
-      delete (el as unknown as { _leaflet_id?: number })._leaflet_id;
-    };
-  }, [scopedLoads, onSelectLoad, selectedLoadId, compact, token]);
+    mapRef.current.fitBounds(
+      [
+        [minLng, minLat],
+        [maxLng, maxLat],
+      ],
+      { padding: compact ? 24 : 40, duration: 500, maxZoom: compact ? 7 : 8 }
+    );
+  }, [compact, points, token]);
+
+  const lineFeatures = useMemo(
+    () =>
+      scopedLoads
+        .filter(
+          (l) =>
+            Number.isFinite(l.pickupLat) &&
+            Number.isFinite(l.pickupLng) &&
+            Number.isFinite(l.deliveryLat) &&
+            Number.isFinite(l.deliveryLng)
+        )
+        .map((l) => ({
+          type: "Feature" as const,
+          properties: {
+            loadId: l.load_id,
+            color: routeColor(l.routeStatus),
+            width: l.load_id === selectedLoadId ? 5 : 3,
+            dashed: l.routeStatus === "scheduled" || l.routeStatus === "dispatched" ? 1 : 0,
+            opacity: l.routeStatus === "scheduled" ? 0.35 : 0.9,
+          },
+          geometry: {
+            type: "LineString" as const,
+            coordinates: [
+              [l.pickupLng as number, l.pickupLat as number],
+              [l.deliveryLng as number, l.deliveryLat as number],
+            ],
+          },
+        })),
+    [scopedLoads, selectedLoadId]
+  );
 
   if (!token) {
     return (
@@ -251,7 +209,148 @@ export function DispatchRouteMap({
           Delivered, in-transit, and scheduled lanes with proof markers.
         </p>
       </div>
-      <div ref={containerRef} className={compact ? "h-44 rounded-md" : "h-72 rounded-md"} />
+      <div className={compact ? "h-44 rounded-md overflow-hidden" : "h-72 rounded-md overflow-hidden"}>
+        <Map
+          ref={mapRef}
+          mapboxAccessToken={token}
+          initialViewState={{ longitude: -83.2, latitude: 40.2, zoom: 5 }}
+          mapStyle="mapbox://styles/mapbox/dark-v11"
+          attributionControl={false}
+          scrollZoom={false}
+          style={{ width: "100%", height: "100%" }}
+        >
+          {!compact && <NavigationControl position="top-right" />}
+          {lineFeatures.length > 0 && (
+            <Source
+              id="dispatch-routes"
+              type="geojson"
+              data={{ type: "FeatureCollection", features: lineFeatures }}
+            >
+              <Layer
+                id="dispatch-routes-layer"
+                type="line"
+                paint={{
+                  "line-color": ["get", "color"],
+                  "line-width": ["get", "width"],
+                  "line-opacity": ["get", "opacity"],
+                  "line-dasharray": ["case", ["==", ["get", "dashed"], 1], ["literal", [2, 2]], ["literal", [1, 0]]],
+                }}
+              />
+            </Source>
+          )}
+
+          {scopedLoads.map((load) => {
+            const markers: ReactElement[] = [];
+            if (Number.isFinite(load.pickupLat) && Number.isFinite(load.pickupLng)) {
+              markers.push(
+                <Marker key={`${load.load_id}-pickup`} latitude={load.pickupLat as number} longitude={load.pickupLng as number}>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      onSelectLoad?.(load.load_id);
+                      setPopup({ load });
+                    }}
+                    title={`${load.load_id} pickup`}
+                    style={{
+                      width: load.load_id === selectedLoadId ? 14 : 10,
+                      height: load.load_id === selectedLoadId ? 14 : 10,
+                      borderRadius: "999px",
+                      border: "2px solid #0f172a",
+                      background: "#22d3ee",
+                    }}
+                  />
+                </Marker>
+              );
+            }
+            if (Number.isFinite(load.deliveryLat) && Number.isFinite(load.deliveryLng)) {
+              markers.push(
+                <Marker key={`${load.load_id}-delivery`} latitude={load.deliveryLat as number} longitude={load.deliveryLng as number}>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      onSelectLoad?.(load.load_id);
+                      setPopup({ load });
+                    }}
+                    title={`${load.load_id} delivery`}
+                    style={{
+                      width: load.load_id === selectedLoadId ? 14 : 10,
+                      height: load.load_id === selectedLoadId ? 14 : 10,
+                      borderRadius: "999px",
+                      border: "2px solid #0f172a",
+                      background: "#14b8a6",
+                    }}
+                  />
+                </Marker>
+              );
+            }
+            if (
+              Number.isFinite(load.currentLat) &&
+              Number.isFinite(load.currentLng) &&
+              (load.routeStatus === "in_transit" ||
+                load.routeStatus === "at_risk" ||
+                load.routeStatus === "delayed")
+            ) {
+              markers.push(
+                <Marker key={`${load.load_id}-current`} latitude={load.currentLat as number} longitude={load.currentLng as number}>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      onSelectLoad?.(load.load_id);
+                      setPopup({ load });
+                    }}
+                    title={`${load.load_id} current`}
+                    style={{
+                      width: load.load_id === selectedLoadId ? 16 : 12,
+                      height: load.load_id === selectedLoadId ? 16 : 12,
+                      borderRadius: "999px",
+                      border: "2px solid #f8fafc",
+                      background: routeColor(load.routeStatus),
+                    }}
+                  />
+                </Marker>
+              );
+            }
+            for (const ev of load.proofEvents ?? []) {
+              if (load.routeStatus !== "delivered" && ev.type !== "claim") continue;
+              const eventColor =
+                ev.status === "ready" ? "#14b8a6" : ev.status === "exception" ? "#fb7185" : "#f59e0b";
+              markers.push(
+                <Marker key={`${load.load_id}-${ev.id}`} latitude={ev.lat} longitude={ev.lng}>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      onSelectLoad?.(load.load_id);
+                      setPopup({ load, event: ev });
+                    }}
+                    title={`${load.load_id} ${ev.label}`}
+                    style={{
+                      width: 8,
+                      height: 8,
+                      borderRadius: "999px",
+                      border: "1px solid #0f172a",
+                      background: eventColor,
+                    }}
+                  />
+                </Marker>
+              );
+            }
+            return markers;
+          })}
+
+          {popup && (
+            <Popup
+              longitude={popup.event ? popup.event.lng : ((popup.load.currentLng ?? popup.load.deliveryLng ?? popup.load.pickupLng) as number)}
+              latitude={popup.event ? popup.event.lat : ((popup.load.currentLat ?? popup.load.deliveryLat ?? popup.load.pickupLat) as number)}
+              onClose={() => setPopup(null)}
+              closeButton
+              closeOnClick={false}
+              maxWidth="320px"
+            >
+              <div dangerouslySetInnerHTML={{ __html: popupHtml(popup.load, popup.event) }} />
+            </Popup>
+          )}
+        </Map>
+      </div>
     </section>
   );
 }
