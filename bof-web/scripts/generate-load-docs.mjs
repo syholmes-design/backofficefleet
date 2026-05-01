@@ -113,6 +113,12 @@ function deriveLoadContext(data, load) {
   const claimRequired = hasClaim;
   const settlementHold = String(load.podStatus).toLowerCase() !== "verified";
   const receiverName = `${deliveryFacility.split(" ")[0] || "Receiver"} Contact`;
+  const claimPacketLink = hasClaim
+    ? `/generated/loads/${load.id}/claim-packet.html`
+    : "Not applicable";
+  const insuranceNotificationStatus = hasClaim
+    ? "Queued for carrier/insurance review"
+    : "Not required";
 
   return {
     loadId: load.id,
@@ -184,15 +190,22 @@ function deriveLoadContext(data, load) {
     receiverSignature: receiverName,
     opsSignature: "BOF Ops Coordinator",
     claimDate: loadDate,
+    claimPacketLink,
+    insuranceNotificationStatus,
     hasFormalMasterAgreement: yesNo(hasFormalMasterAgreement),
   };
 }
 
-function writeDoc(loadId, fileName, html, templateRelativePath) {
+function writeDoc(loadId, docType, fileName, html, templateRelativePath) {
   const dir = path.join(OUT_DIR, loadId);
   ensureDir(dir);
   const outPath = path.join(dir, fileName);
-  const withSource = `<!-- BOF_TEMPLATE_SOURCE: ${templateRelativePath} -->\n${html}`;
+  const withSource = [
+    `<!-- BOF_TEMPLATE_SOURCE: ${templateRelativePath} -->`,
+    `<!-- BOF_DOCUMENT_TYPE: ${docType} -->`,
+    `<!-- BOF_LOAD_ID: ${loadId} -->`,
+    html,
+  ].join("\n");
   fs.writeFileSync(outPath, withSource, "utf8");
   return `/generated/loads/${loadId}/${fileName}`;
 }
@@ -296,7 +309,7 @@ function main() {
       const fileName = FILE_MAP[docKey];
       const { html: tpl, relativeFromWebRoot } = templateBodies[docKey];
       const merged = renderTemplate(tpl, { ...ctxForTemplates, styles: sharedStyles });
-      const outUrl = writeDoc(ctx.loadId, fileName, merged, relativeFromWebRoot);
+      const outUrl = writeDoc(ctx.loadId, docKey, fileName, merged, relativeFromWebRoot);
       entry[docKey] = outUrl;
       const outAbs = path.join(OUT_DIR, ctx.loadId, fileName);
       console.log(

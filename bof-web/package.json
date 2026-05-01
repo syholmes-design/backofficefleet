@@ -18,6 +18,7 @@
     "generate:load-evidence:ai": "node scripts/generate-load-evidence.mjs --enable-ai",
     "generate:demo-docs": "npm run generate:load-docs && npm run generate:load-evidence",
     "validate:load-docs": "node scripts/validate-load-docs.mjs",
+    "validate:load-doc-templates": "node scripts/validate-load-doc-templates.mjs",
     "validate:load-evidence": "node scripts/validate-load-evidence.mjs",
     "sync:driver-hr-docs": "node scripts/sync-driver-hr-docs.mjs",
     "validate:driver-docs": "node scripts/validate-driver-docs.mjs",
