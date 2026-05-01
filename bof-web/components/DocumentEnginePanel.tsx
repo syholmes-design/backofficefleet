@@ -26,6 +26,7 @@ export function DocumentEnginePanel({
   documents,
   crossLinks,
   variant = "default",
+  previewScope = "default",
 }: {
   id?: string;
   title: string;
@@ -34,7 +35,13 @@ export function DocumentEnginePanel({
   crossLinks?: { label: string; href: string }[];
   /** Supporting block on driver hub — quieter visual weight */
   variant?: "default" | "supporting";
+  /**
+   * Driver hub HR packet only: scale embedded HTML/image previews so full sheets are visible.
+   * Other surfaces keep default preview sizing.
+   */
+  previewScope?: "default" | "driverHrPacket";
 }) {
+  const hrPacketPreview = previewScope === "driverHrPacket";
   const [hovered, setHovered] = useState<EngineDocument | null>(null);
   const [modal, setModal] = useState<EngineDocument | null>(null);
   const [thumbError, setThumbError] = useState(false);
@@ -63,7 +70,13 @@ export function DocumentEnginePanel({
       return (
         <>
           <div className="bof-doc-popover-title">Preview</div>
-          <iframe src={url} title="" className="bof-doc-popover-iframe" />
+          {hrPacketPreview ? (
+            <div className="bof-hr-packet-preview-frame">
+              <iframe src={url} title="" className="bof-hr-packet-preview-iframe" />
+            </div>
+          ) : (
+            <iframe src={url} title="" className="bof-doc-popover-iframe" />
+          )}
         </>
       );
     }
@@ -78,7 +91,11 @@ export function DocumentEnginePanel({
           <img
             src={url}
             alt=""
-            className="bof-doc-popover-img"
+            className={
+              hrPacketPreview
+                ? "bof-doc-popover-img bof-hr-packet-preview-image"
+                : "bof-doc-popover-img"
+            }
             onError={() => setThumbError(true)}
           />
         </>
@@ -97,7 +114,7 @@ export function DocumentEnginePanel({
   return (
     <section
       id={id}
-      className={`bof-gen-doc-section${variant === "supporting" ? " bof-gen-doc-section--supporting" : ""}`}
+      className={`bof-gen-doc-section${variant === "supporting" ? " bof-gen-doc-section--supporting" : ""}${hrPacketPreview ? " bof-hr-packet-preview" : ""}`}
       aria-labelledby={`${id}-heading`}
     >
       <h2
@@ -330,16 +347,29 @@ export function DocumentEnginePanel({
                 <img
                   src={modal.previewUrl}
                   alt=""
-                  className="bof-modal-proof-preview"
+                  className={
+                    hrPacketPreview
+                      ? "bof-modal-proof-preview bof-hr-packet-preview-modal-image"
+                      : "bof-modal-proof-preview"
+                  }
                 />
               )}
-              {modal.previewUrl && isPdfPath(modal.previewUrl) && (
-                <iframe
-                  src={modal.previewUrl}
-                  title="Document preview"
-                  className="bof-modal-proof-iframe"
-                />
-              )}
+              {modal.previewUrl && isPdfPath(modal.previewUrl) &&
+                (hrPacketPreview ? (
+                  <div className="bof-hr-packet-preview-modal-frame">
+                    <iframe
+                      src={modal.previewUrl}
+                      title="Document preview"
+                      className="bof-hr-packet-preview-modal-iframe"
+                    />
+                  </div>
+                ) : (
+                  <iframe
+                    src={modal.previewUrl}
+                    title="Document preview"
+                    className="bof-modal-proof-iframe"
+                  />
+                ))}
               <p className="bof-modal-note">
                 <a
                   href={modal.fileUrl}
