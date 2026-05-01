@@ -126,7 +126,7 @@ export type IntakeWizardState = {
   lastDraftSavedAt: string | null;
 };
 
-export type LoadIntakeSourceType = "manual" | "upload" | "email" | "api";
+export type LoadIntakeSourceType = "manual" | "upload" | "email" | "api" | "client_manual";
 
 export type LoadIntakeRecord = {
   sourceType: LoadIntakeSourceType;
