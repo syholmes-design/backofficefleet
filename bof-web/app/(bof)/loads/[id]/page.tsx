@@ -24,6 +24,7 @@ import { BofTemplateUsageSurface } from "@/components/documents/BofTemplateUsage
 import { BofIntakeFormPrimaryPanel } from "@/components/documents/BofIntakeFormPrimaryPanel";
 import { BofWorkflowFormShortcuts } from "@/components/documents/BofWorkflowFormShortcuts";
 import { RuntimeLoadDetailFallback } from "@/components/loads/RuntimeLoadDetailFallback";
+import { DemoBackButton } from "@/components/navigation/DemoBackButton";
 
 type Props = { params: Promise<{ id: string }> };
 
@@ -78,6 +79,9 @@ export default async function LoadDetailPage({ params }: Props) {
 
   return (
     <div className="bof-page">
+      <div className="mb-2">
+        <DemoBackButton fallbackHref="/loads" />
+      </div>
       <nav className="bof-breadcrumb" aria-label="Breadcrumb">
         <Link href="/loads">Loads / dispatch</Link>
         <span aria-hidden> / </span>

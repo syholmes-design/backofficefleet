@@ -8,6 +8,7 @@ import {
   auditDriverOperationalProfiles,
   getDriverOperationalProfile,
 } from "@/lib/driver-operational-profile";
+import { DemoBackButton } from "@/components/navigation/DemoBackButton";
 
 export function DriverBankInfoPageClient({ driverId }: { driverId: string }) {
   const { data } = useBofDemoData();
@@ -33,6 +34,9 @@ export function DriverBankInfoPageClient({ driverId }: { driverId: string }) {
 
   return (
     <div className="bof-page">
+      <div style={{ marginBottom: "0.65rem" }}>
+        <DemoBackButton fallbackHref={`/drivers/${driverId}`} />
+      </div>
       <nav className="bof-breadcrumb" aria-label="Breadcrumb">
         <Link href="/drivers">Drivers</Link>
         <span aria-hidden> / </span>

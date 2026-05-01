@@ -39,6 +39,7 @@ import {
   deriveComplianceStatusFromDates,
   deriveDocStatusFromExpiration,
 } from "@/lib/driver-operational-edit";
+import { DemoBackButton } from "@/components/navigation/DemoBackButton";
 
 export function DriverDetailPageClient({ driverId }: { driverId: string }) {
   const { data, updateDriver, updateDocument } = useBofDemoData();
@@ -232,6 +233,9 @@ export function DriverDetailPageClient({ driverId }: { driverId: string }) {
 
   return (
     <div className="bof-page bof-driver-hub">
+      <div className="mb-2">
+        <DemoBackButton fallbackHref="/drivers" />
+      </div>
       <nav className="bof-breadcrumb" aria-label="Breadcrumb">
         <Link href="/drivers">Drivers</Link>
         <span aria-hidden> / </span>

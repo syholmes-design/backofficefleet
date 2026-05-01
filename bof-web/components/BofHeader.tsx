@@ -18,6 +18,7 @@ const productNav = [
   { href: "/settlements", label: "Settlements" },
   { href: "/safety", label: "Safety" },
   { href: "/dispatch", label: "Dispatch" },
+  { href: "/load-requests", label: "Load Requests" },
 ];
 
 export function BofHeader() {
@@ -32,19 +33,22 @@ export function BofHeader() {
     "/fleet-savings",
   ]);
   const marketingOnlyHeader = marketingOnlyPaths.has(pathname);
+  const isActiveProductNav = (href: string) =>
+    pathname === href || pathname.startsWith(`${href}/`);
+
   if (!marketingOnlyHeader) {
     return (
       <header className="sticky top-0 z-40 border-b border-slate-800 bg-slate-950/95 backdrop-blur">
         <div className="mx-auto flex max-w-[80rem] flex-wrap items-center gap-3 px-4 py-3">
           <Link href="/dashboard" className="mr-2 inline-flex items-center text-slate-100">
-            <BofLogo variant="light" priority />
+            <BofLogo variant="light" size="demoLarge" priority />
           </Link>
           <nav
             className="flex flex-1 flex-wrap items-center gap-1 text-sm"
             aria-label="Product demo"
           >
             {productNav.map((item) => {
-              const selected = pathname === item.href;
+              const selected = isActiveProductNav(item.href);
               return (
                 <Link
                   key={item.href}

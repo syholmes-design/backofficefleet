@@ -11,6 +11,7 @@ import {
   getExpectedBankCardPublicPath,
 } from "@/lib/driver-doc-registry";
 import { getDriverOperationalProfile } from "@/lib/driver-operational-profile";
+import { DemoBackButton } from "@/components/navigation/DemoBackButton";
 
 type Props = {
   params: Promise<{ id: string }>;
@@ -152,6 +153,7 @@ export default function DriverHRPage({ params }: Props) {
 
   return (
     <div className="bof-page space-y-5">
+      <DemoBackButton fallbackHref={`/drivers/${id}`} />
       <section className="rounded-lg border border-slate-800 bg-slate-900/50 p-4">
         <div className="flex flex-wrap items-center justify-between gap-2">
           <h1 className="text-xl font-semibold text-white">{driver.name} - HR & Administrative Record</h1>

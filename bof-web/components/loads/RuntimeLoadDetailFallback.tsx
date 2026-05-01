@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useBofDemoData } from "@/lib/bof-demo-data-context";
 import { getLoadProofItems } from "@/lib/load-proof";
+import { DemoBackButton } from "@/components/navigation/DemoBackButton";
 
 export function RuntimeLoadDetailFallback({ loadId }: { loadId: string }) {
   const { data } = useBofDemoData();
@@ -23,6 +24,9 @@ export function RuntimeLoadDetailFallback({ loadId }: { loadId: string }) {
   const proof = getLoadProofItems(data, load.id);
   return (
     <div className="bof-page">
+      <div style={{ marginBottom: "0.65rem" }}>
+        <DemoBackButton fallbackHref="/loads" />
+      </div>
       <nav className="bof-breadcrumb" aria-label="Breadcrumb">
         <Link href="/loads">Loads / dispatch</Link>
         <span aria-hidden> / </span>

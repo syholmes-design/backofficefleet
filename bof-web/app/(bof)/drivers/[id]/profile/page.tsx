@@ -4,6 +4,7 @@ import { use } from "react";
 import { notFound } from "next/navigation";
 import { useBofDemoData } from "@/lib/bof-demo-data-context";
 import { getOrderedDocumentsForDriver, readinessFromDocuments, assignedTrucksForDriver, primaryAssignedTruck, complianceNotesForDriver } from "@/lib/driver-queries";
+import { DemoBackButton } from "@/components/navigation/DemoBackButton";
 
 type Props = {
   params: Promise<{ id: string }>;
@@ -33,6 +34,9 @@ export default function DriverProfilePage({ params }: Props) {
     return (
       <div className="min-h-screen bg-slate-50">
         <div className="container mx-auto px-4 py-8">
+          <div className="mb-3">
+            <DemoBackButton fallbackHref={`/drivers/${id}`} />
+          </div>
           <div className="bg-white rounded-lg shadow-lg p-6">
             <h1 className="text-2xl font-bold text-gray-900 mb-4">
               {driver.name} - Profile Dashboard
@@ -63,6 +67,9 @@ export default function DriverProfilePage({ params }: Props) {
   return (
     <div className="min-h-screen bg-slate-50">
       <div className="container mx-auto px-4 py-8">
+        <div className="mb-3">
+          <DemoBackButton fallbackHref={`/drivers/${id}`} />
+        </div>
         <div className="bg-white rounded-lg shadow-lg p-6">
           <h1 className="text-2xl font-bold text-gray-900 mb-6">
             {driver.name} - Profile
