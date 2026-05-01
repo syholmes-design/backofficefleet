@@ -54,6 +54,7 @@ export function DocumentationReadinessPanel({ load }: Props) {
           status: "Missing",
           href: undefined as string | undefined,
           detail: fallbackDetail || "Generated document not found",
+          source: "Missing",
           ready: false,
         };
       }
@@ -74,6 +75,12 @@ export function DocumentationReadinessPanel({ load }: Props) {
                     ? "Not applicable"
                     : "Blocked",
         href: ready ? item.url : undefined,
+        source:
+          item.source === "generated"
+            ? "Generated demo evidence"
+            : item.source
+              ? "Real file"
+              : "Missing",
         detail:
           item.note ||
           (!ready && item.status === "ready"
@@ -89,19 +96,27 @@ export function DocumentationReadinessPanel({ load }: Props) {
       { section: "Core Documents", ...pick("Invoice", "Missing") },
       { section: "Core Documents", ...pick("Work Order", "Missing") },
       { section: "Core Documents", ...pick("Master Agreement Reference", "Pending") },
-      { section: "Proof & Evidence", ...pick("Cargo photo", "Missing") },
-      { section: "Proof & Evidence", ...pick("Seal photo", "Missing") },
-      { section: "Proof & Evidence", ...pick("Equipment photo", "Missing") },
-      { section: "Proof & Evidence", ...pick("Pickup photo", "Missing") },
-      { section: "Proof & Evidence", ...pick("Delivery photo", "Missing") },
-      { section: "Proof & Evidence", ...pick("Seal pickup photo", "Missing") },
-      { section: "Proof & Evidence", ...pick("Seal delivery photo", "Missing") },
-      { section: "Proof & Evidence", ...pick("Lumper receipt", "Not applicable") },
-      { section: "Proof & Evidence", ...pick("RFID / geo proof", "Pending") },
-      { section: "Proof & Evidence", ...pick("Seal verification sheet", "Missing") },
+      { section: "Proof & Media", ...pick("Cargo photo", "Missing") },
+      { section: "Proof & Media", ...pick("Pickup photo", "Missing") },
+      { section: "Proof & Media", ...pick("Delivery photo", "Missing") },
+      { section: "Proof & Media", ...pick("Equipment photo", "Missing") },
+      { section: "Proof & Media", ...pick("Seal photo", "Missing") },
+      { section: "Proof & Media", ...pick("Seal pickup photo", "Missing") },
+      { section: "Proof & Media", ...pick("Seal delivery photo", "Missing") },
+      { section: "Proof & Media", ...pick("Empty trailer proof", "Missing") },
+      { section: "Proof & Media", ...pick("Lumper receipt", "Not applicable") },
+      { section: "Proof & Media", ...pick("RFID proof", "Pending") },
+      { section: "Proof & Media", ...pick("RFID / geo proof", "Pending") },
+      { section: "Proof & Media", ...pick("Temp check photo", "Not applicable") },
+      { section: "Proof & Media", ...pick("Weight ticket photo", "Pending") },
+      { section: "Proof & Media", ...pick("Detention proof photo", "Not applicable") },
+      { section: "Proof & Media", ...pick("Seal verification sheet", "Missing") },
       { section: "Exceptions / Claims", ...pick("Claim Intake Form", "Not applicable") },
       { section: "Exceptions / Claims", ...pick("Claim packet", "Claim Required") },
       { section: "Exceptions / Claims", ...pick("Damage / claim photo", "Not applicable") },
+      { section: "Exceptions / Claims", ...pick("Cargo damage photo", "Not applicable") },
+      { section: "Exceptions / Claims", ...pick("Damaged pallet photo", "Not applicable") },
+      { section: "Exceptions / Claims", ...pick("Seal mismatch photo", "Not applicable") },
       { section: "Exceptions / Claims", ...pick("Damage Photo Packet", "Not applicable") },
       { section: "Exceptions / Claims", ...pick("Insurance notice", "Not applicable") },
       { section: "Exceptions / Claims", ...pick("Factoring Notification", "Missing") },
@@ -111,7 +126,7 @@ export function DocumentationReadinessPanel({ load }: Props) {
   }, [packetMap]);
 
   const groupedRows = useMemo(() => {
-    const groups = ["Core Documents", "Proof & Evidence", "Exceptions / Claims"] as const;
+    const groups = ["Core Documents", "Proof & Media", "Exceptions / Claims"] as const;
     return groups.map((section) => ({
       section,
       rows: drawerRows.filter((r) => r.section === section),
@@ -243,13 +258,16 @@ export function DocumentationReadinessPanel({ load }: Props) {
               <th className="border-b border-slate-800 px-3 py-2 font-medium">
                 Link
               </th>
+              <th className="border-b border-slate-800 px-3 py-2 font-medium">
+                Source
+              </th>
             </tr>
           </thead>
           <tbody className="text-slate-200">
             {groupedRows.map((group) => (
               <Fragment key={group.section}>
                 <tr className="border-b border-slate-800 bg-slate-950/65">
-                  <td colSpan={3} className="px-3 py-1.5 text-[10px] font-semibold uppercase tracking-wide text-slate-400">
+                  <td colSpan={4} className="px-3 py-1.5 text-[10px] font-semibold uppercase tracking-wide text-slate-400">
                     {group.section}
                   </td>
                 </tr>
@@ -272,6 +290,7 @@ export function DocumentationReadinessPanel({ load }: Props) {
                       detail: line.detail,
                     }}
                     href={line.href}
+                    source={line.source}
                     viewLabel={line.label.toLowerCase().includes("photo") ? "View photo" : "Open"}
                   />
                 ))}
@@ -500,6 +519,7 @@ export function DocumentationReadinessPanel({ load }: Props) {
 function ReadinessRow({
   line,
   href,
+  source,
   viewLabel,
 }: {
   line: {
@@ -509,6 +529,7 @@ function ReadinessRow({
     detail?: string;
   };
   href?: string;
+  source?: string;
   viewLabel?: string;
 }) {
   return (
@@ -541,6 +562,7 @@ function ReadinessRow({
           <span className="text-xs text-slate-500">Missing / Needs review</span>
         )}
       </td>
+      <td className="px-3 py-2 align-top text-xs text-slate-400">{source || "Missing"}</td>
     </tr>
   );
 }

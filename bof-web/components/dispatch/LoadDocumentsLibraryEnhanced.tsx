@@ -13,6 +13,7 @@ type DocLinkItem = {
   kind: "pdf" | "image";
   showSignedBadge: boolean;
   status: "ready" | "missing";
+  source: "real" | "generated" | "missing";
   required?: boolean;
 };
 
@@ -45,6 +46,7 @@ function packetDocsByLabels(
       kind: "image",
       showSignedBadge: false,
       status: ready ? "ready" : "missing",
+      source: ready ? (row?.source === "generated" ? "generated" : "real") : "missing",
       required: Boolean(row?.requiredForSettlementRelease),
     };
   });
@@ -53,13 +55,22 @@ function packetDocsByLabels(
 function proofAndMediaDocs(load: Load, packet: ReturnType<typeof getLoadDocumentPacket>): DocLinkItem[] {
   const labels = [
     "Cargo photo",
-    "Seal photo",
-    "Equipment photo",
     "Pickup photo",
+    "Delivery photo",
+    "Equipment photo",
+    "Seal photo",
     "Seal pickup photo",
     "Seal delivery photo",
+    "Empty trailer proof",
     "Lumper receipt",
+    "RFID proof",
+    "Temp check photo",
+    "Weight ticket photo",
+    "Detention proof photo",
     "Damage / claim photo",
+    "Cargo damage photo",
+    "Damaged pallet photo",
+    "Seal mismatch photo",
     "Safety violation photo",
   ];
   return packetDocsByLabels(packet, labels);
@@ -89,6 +100,7 @@ export function LoadDocumentsLibraryEnhanced({ load }: Props) {
       kind: "pdf",
       showSignedBadge: Boolean(row?.url && isSignedDocUrl(row.url)),
       status: ready ? "ready" : "missing",
+      source: ready ? (row?.source === "generated" ? "generated" : "real") : "missing",
       required: true,
     };
   });
@@ -162,7 +174,7 @@ export function LoadDocumentsLibraryEnhanced({ load }: Props) {
       </div>
 
       <DocGroup title="Core Documents" items={coreDocs} emptyHint="No rate con, BOL, POD, or invoice documents available." />
-      <DocGroup title="Proof & Evidence" items={proofDocs} emptyHint="No photo, seal, or media documents available." />
+      <DocGroup title="Proof & Media" items={proofDocs} emptyHint="No photo, seal, or media documents available." />
       <DocGroup title="Exceptions / Claims" items={exceptionDocs} emptyHint="No claim or exception evidence available." />
 
       {showExceptionClaimSection(load) && (
@@ -214,6 +226,12 @@ function DocCard({ item }: { item: DocLinkItem }) {
     ready: "border-emerald-700/60 bg-emerald-950/40",
     missing: "border-red-700/60 bg-red-950/40",
   };
+  const sourceLabel =
+    item.source === "generated"
+      ? "Generated demo evidence"
+      : item.source === "real"
+        ? "Real file"
+        : "Missing";
   return (
     <a
       href={item.url || "#"}
@@ -246,6 +264,7 @@ function DocCard({ item }: { item: DocLinkItem }) {
           {item.required && <span className="ml-2 inline-flex rounded px-2 py-0.5 text-xs font-medium bg-slate-800 text-slate-100">REQUIRED</span>}
         </div>
         <p className="mt-1 truncate font-mono text-[10px] text-slate-500">{item.url || "No generated URL"}</p>
+        <p className="mt-1 text-[10px] text-slate-400">Source: {sourceLabel}</p>
         <p className="mt-1 text-[10px] font-semibold uppercase tracking-wide text-teal-500/90">
           {item.url && item.status === "ready" ? "Open in new tab" : "Missing / Needs review"}
         </p>
