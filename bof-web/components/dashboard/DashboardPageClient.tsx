@@ -156,8 +156,22 @@ export function DashboardPageClient() {
       <section
         className={`bof-dashboard-hero bof-cc-hero${heroImageMissing ? " bof-dashboard-hero--no-image" : ""}`}
       >
+        {!heroImageMissing ? (
+          <div className="bof-dashboard-hero__imagePanel">
+            <Image
+              src="/images/bof-command-dashboard-hero.png"
+              alt="BOF command dashboard preview — fleet operations, documents, and compliance."
+              fill
+              priority
+              sizes="100vw"
+              className="bof-dashboard-hero__imagePanel-img"
+              onError={() => setHeroImageMissing(true)}
+              unoptimized
+            />
+          </div>
+        ) : null}
         <div className="bof-dashboard-hero__content">
-          <div className="bof-dashboard-hero__copy bof-cc-hero-left">
+          <div className="bof-dashboard-hero__intro bof-cc-hero-left">
             <p className="bof-cc-kicker">Executive Operations Cockpit</p>
             <h1 className="bof-title bof-cc-title">Fleet Command Dashboard</h1>
             <p className="bof-lead bof-cc-lead">
@@ -175,6 +189,8 @@ export function DashboardPageClient() {
                 Open Settlements
               </Link>
             </div>
+          </div>
+          <div className="bof-dashboard-hero__stats">
             <div className="bof-cc-hero-stat-grid">
               {heroSummaryStats.map((stat) => (
                 <article key={stat.label} className="bof-cc-hero-stat">
@@ -184,20 +200,6 @@ export function DashboardPageClient() {
               ))}
             </div>
           </div>
-          {!heroImageMissing ? (
-            <div className="bof-dashboard-hero__visual">
-              <Image
-                src="/images/bof-command-dashboard-hero.png"
-                alt="BOF command dashboard preview — fleet operations, documents, and compliance."
-                fill
-                priority
-                sizes="(max-width: 900px) 100vw, 55vw"
-                className="bof-dashboard-hero__visual-img"
-                onError={() => setHeroImageMissing(true)}
-                unoptimized
-              />
-            </div>
-          ) : null}
         </div>
       </section>
 

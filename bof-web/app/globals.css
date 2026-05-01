@@ -12647,64 +12647,66 @@ body {
 }
 
 /*
- * Dashboard (/dashboard) hero — 45% copy / 55% hero image (visible, not full-bleed buried).
+ * Dashboard (/dashboard) hero — stacked: full-width image panel, then copy + KPI grid (no overlay).
  * Overrides earlier .bof-cc-hero flex alignment from Command Center block.
  */
 .bof-dashboard-hero.bof-cc-hero {
-  display: block;
-  flex-wrap: unset;
-  align-items: unset;
-  justify-content: unset;
-  position: relative;
-  overflow: hidden;
-  border-radius: 1rem;
-  padding: 1.5rem 1.75rem;
-}
-
-.bof-dashboard-hero__content {
-  display: grid;
-  grid-template-columns: minmax(0, 45fr) minmax(0, 55fr);
-  gap: 1.25rem 1.75rem;
-  align-items: stretch;
-}
-
-.bof-dashboard-hero__copy {
-  min-width: 0;
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  align-self: center;
-}
-
-.bof-dashboard-hero__visual {
-  position: relative;
-  min-height: clamp(220px, 32vw, 380px);
-  border-radius: 12px;
+  flex-wrap: nowrap;
+  align-items: stretch;
+  justify-content: flex-start;
+  gap: 1.25rem;
+  padding: 1.25rem;
+  border-radius: 1rem;
   overflow: hidden;
-  border: 1px solid rgba(100, 116, 139, 0.35);
-  background: #0b1220;
-  box-shadow: 0 14px 44px rgba(0, 0, 0, 0.38);
 }
 
-.bof-dashboard-hero__visual > span {
+.bof-dashboard-hero__imagePanel {
+  position: relative;
+  width: 100%;
+  flex-shrink: 0;
+  height: clamp(360px, 40vw, 460px);
+  min-height: 360px;
+  max-height: 460px;
+  border-radius: 1rem;
+  overflow: hidden;
+  background: #020617;
+  border: 1px solid rgba(100, 116, 139, 0.28);
+}
+
+.bof-dashboard-hero__imagePanel > span {
   width: 100% !important;
   height: 100% !important;
 }
 
-.bof-dashboard-hero__visual-img {
+/* contain preserves dashboard artwork; dark panel fills letterboxing */
+.bof-dashboard-hero__imagePanel-img {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
   object-position: center;
 }
 
-.bof-dashboard-hero--no-image .bof-dashboard-hero__content {
-  grid-template-columns: 1fr;
+.bof-dashboard-hero__content {
+  display: grid;
+  grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
+  gap: 1.25rem;
+  align-items: start;
+  min-width: 0;
+}
+
+.bof-dashboard-hero__intro {
+  min-width: 0;
+}
+
+.bof-dashboard-hero__stats {
+  min-width: 0;
 }
 
 .bof-dashboard-hero .bof-cc-hero-stat-grid {
-  grid-template-columns: repeat(auto-fit, minmax(104px, 1fr));
-  gap: 0.35rem;
+  grid-template-columns: repeat(auto-fit, minmax(118px, 1fr));
+  gap: 0.4rem;
 }
 
 .bof-dashboard-hero .bof-cc-hero-stat {
@@ -13446,23 +13448,19 @@ body {
   .bof-cc-kpi-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .bof-cc-page { padding-bottom: 8.5rem; }
   .bof-dashboard-hero.bof-cc-hero {
-    padding: 1.25rem 1.15rem;
+    padding: 1.15rem 1rem;
+    gap: 1rem;
+  }
+
+  .bof-dashboard-hero__imagePanel {
+    height: clamp(220px, 52vw, 380px);
+    min-height: 220px;
+    max-height: 400px;
+    border-radius: 12px;
   }
 
   .bof-dashboard-hero__content {
     grid-template-columns: 1fr;
-  }
-
-  .bof-dashboard-hero__copy {
-    align-self: start;
-    justify-content: flex-start;
-    order: 0;
-  }
-
-  .bof-dashboard-hero__visual {
-    min-height: 200px;
-    max-height: min(280px, 42vh);
-    order: 1;
   }
 
   .bof-dashboard-route-snapshot__panel.bof-cc-route-panel {
