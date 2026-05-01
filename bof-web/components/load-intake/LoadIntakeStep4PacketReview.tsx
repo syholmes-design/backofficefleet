@@ -2,14 +2,21 @@
 
 import Link from "next/link";
 import { useCallback, useEffect, useMemo, useState } from "react";
+import { useBofDemoData } from "@/lib/bof-demo-data-context";
 import {
   blockingFixRoute,
   drawerTabNeededForBlocking,
   panelNeededForBlocking,
   type DrawerDocTab,
 } from "@/lib/load-intake-blocking-fixes";
+import { buildLoadIntakeTemplateRegistry } from "@/lib/load-intake/template-registry";
 import { countWarnings, hasBlockingChecks } from "@/lib/load-requirements-intake-checks";
 import type { AutoCheckResult, IntakeWizardState } from "@/lib/load-requirements-intake-types";
+import type {
+  IntakeFieldKey,
+  LoadIntakeTemplateRegistryItem,
+  TemplateRegistryStatus,
+} from "@/lib/load-intake/types";
 
 function YesNoMini({
   value,
@@ -73,6 +80,7 @@ export function LoadIntakeStep4PacketReview({
   submitError,
   submitSuccess,
 }: Props) {
+  const { data } = useBofDemoData();
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [drawerTab, setDrawerTab] = useState<DrawerDocTab>("bol");
 
@@ -85,6 +93,112 @@ export function LoadIntakeStep4PacketReview({
     () => checks.filter((c) => c.status === "Blocking").map((c) => c.check_id),
     [checks]
   );
+  const intakeLoadIdInput = state.loadRequirement.load_id_input?.trim().toUpperCase() || undefined;
+  const selectedDriverId = state.loadRequirement.assigned_driver_id?.trim() || undefined;
+  const savedRuntimeLoadId = useMemo(() => {
+    const hit = data.loads.find((load) =>
+      String(load.dispatchOpsNotes || "").includes(
+        `Intake generated load from ${state.loadRequirement.load_requirement_id}`
+      )
+    );
+    return hit?.id;
+  }, [data.loads, state.loadRequirement.load_requirement_id]);
+  const registryLoadId = savedRuntimeLoadId || intakeLoadIdInput;
+  const templateRows = useMemo(
+    () =>
+      buildLoadIntakeTemplateRegistry({
+        loadId: registryLoadId,
+        driverId: selectedDriverId,
+      }),
+    [registryLoadId, selectedDriverId]
+  );
+
+  function fieldValue(field: IntakeFieldKey): string | number | boolean | undefined {
+    const shipper = state.shipper;
+    const facility = state.facility;
+    const req = state.loadRequirement;
+    const compliance = state.compliance;
+    const map: Record<IntakeFieldKey, string | number | boolean | undefined> = {
+      load_id_input: req.load_id_input,
+      shipper_name: shipper.shipper_name,
+      pickup_at: req.pickup_at || compliance.appointment_window_start,
+      delivery_at: req.delivery_at || compliance.appointment_window_end,
+      pickup_facility_name: facility.facility_name,
+      pickup_address: facility.address,
+      pickup_city: facility.city,
+      pickup_state: facility.state,
+      pickup_zip: facility.zip,
+      destination_facility_name: req.destination_facility_name,
+      destination_address: req.destination_address,
+      destination_city: req.destination_city,
+      destination_state: req.destination_state,
+      destination_zip: req.destination_zip,
+      commodity: req.commodity,
+      weight: req.weight,
+      pallet_count: req.pallet_count,
+      piece_count: req.piece_count,
+      equipment_type: req.equipment_type,
+      rate_linehaul: req.rate_linehaul,
+      backhaul_pay: req.backhaul_pay,
+      assigned_driver_id: req.assigned_driver_id,
+      truck_id: req.truck_id,
+      trailer_id: req.trailer_id,
+      bol_number: req.bol_number,
+      invoice_number: req.invoice_number,
+      seal_number: req.seal_number,
+      rfid_proof_required: req.rfid_proof_required,
+      claim_damage_flag: req.claim_damage_flag,
+      special_handling: req.special_handling,
+      appointment_window_start: compliance.appointment_window_start,
+      appointment_window_end: compliance.appointment_window_end,
+      insurance_requirements: compliance.insurance_requirements,
+      bol_instructions: compliance.bol_instructions,
+      pod_requirements: compliance.pod_requirements,
+      accessorial_rules: compliance.accessorial_rules,
+      lumper_expected: compliance.lumper_expected,
+    };
+    return map[field];
+  }
+
+  function missingRequiredFieldsForRow(row: LoadIntakeTemplateRegistryItem): IntakeFieldKey[] {
+    return row.requiredFields.filter((field) => {
+      const value = fieldValue(field);
+      if (typeof value === "boolean") return false;
+      if (typeof value === "number") return Number.isNaN(value) || value <= 0;
+      return !String(value ?? "").trim();
+    });
+  }
+
+  function displayStatusForRow(row: LoadIntakeTemplateRegistryItem): TemplateRegistryStatus {
+    const hasRealUrl = Boolean(row.outputPath && String(row.outputPath).startsWith("/"));
+    if (hasRealUrl) return "available";
+    if (row.status === "missing" || row.status === "broken") return row.status;
+    return "needsMapping";
+  }
+
+  function statusPillClass(status: TemplateRegistryStatus): string {
+    if (status === "available") return "bof-load-intake-badge bof-load-intake-badge--pass";
+    if (status === "needsMapping") return "bof-load-intake-badge bof-load-intake-badge--warn";
+    return "bof-load-intake-badge bof-load-intake-badge--block";
+  }
+
+  useEffect(() => {
+    if (typeof process === "undefined" || process.env.NODE_ENV === "production") return;
+    for (const row of templateRows) {
+      const status = displayStatusForRow(row);
+      if (status === "missing" || status === "broken") {
+        console.warn("[load-intake-template-registry] unresolved document", {
+          documentType: row.documentType,
+          displayName: row.displayName,
+          status,
+          templatePath: row.templatePath,
+          outputPath: row.outputPath,
+          relatedLoadId: row.relatedLoadId,
+          relatedDriverId: row.relatedDriverId,
+        });
+      }
+    }
+  }, [templateRows]);
 
   useEffect(() => {
     if (!blocking) return;
@@ -781,6 +895,87 @@ export function LoadIntakeStep4PacketReview({
             .
           </p>
         )}
+      </section>
+
+      <section className="bof-load-intake-card" aria-labelledby="intake-s4-docs">
+        <h2 id="intake-s4-docs">Document readiness checklist</h2>
+        <p className="bof-muted">
+          This checklist uses the BOF template registry plus existing generated/evidence outputs.
+          Open links appear only when a real URL exists.
+        </p>
+        {!registryLoadId && (
+          <div className="bof-load-intake-alert bof-load-intake-alert--warn">
+            <strong>Pending generation</strong> — save this load first to assign/finalize loadId, then
+            run document generation to resolve runtime links.
+          </div>
+        )}
+        <div style={{ overflowX: "auto", marginTop: "0.75rem" }}>
+          <table className="w-full border-collapse text-left text-xs">
+            <thead className="bg-slate-900/90 text-[10px] uppercase tracking-wide text-slate-500">
+              <tr>
+                <th className="border-b border-slate-800 px-2 py-2 font-medium">Document</th>
+                <th className="border-b border-slate-800 px-2 py-2 font-medium">Status</th>
+                <th className="border-b border-slate-800 px-2 py-2 font-medium">Missing required fields</th>
+                <th className="border-b border-slate-800 px-2 py-2 font-medium">Link</th>
+                <th className="border-b border-slate-800 px-2 py-2 font-medium">Template</th>
+              </tr>
+            </thead>
+            <tbody className="text-slate-200">
+              {templateRows
+                .filter((row) => {
+                  if (row.documentType !== "claim_packet") return true;
+                  return Boolean(state.loadRequirement.claim_damage_flag);
+                })
+                .map((row) => {
+                  const status = displayStatusForRow(row);
+                  const missingRequired = missingRequiredFieldsForRow(row);
+                  const openHref =
+                    status === "available" && row.outputPath && row.outputPath.startsWith("/")
+                      ? row.outputPath
+                      : undefined;
+                  return (
+                    <tr key={row.documentType} className="border-b border-slate-800/80">
+                      <td className="px-2 py-1.5">
+                        <strong>{row.displayName}</strong>
+                        <div className="bof-muted bof-small">
+                          {row.vaultCategory.replace(/_/g, " ")}
+                        </div>
+                      </td>
+                      <td className="px-2 py-1.5">
+                        <span className={statusPillClass(status)}>
+                          {status}
+                        </span>
+                      </td>
+                      <td className="px-2 py-1.5">
+                        {missingRequired.length > 0 ? (
+                          <span className="text-amber-300">{missingRequired.join(", ")}</span>
+                        ) : (
+                          <span className="text-slate-400">None</span>
+                        )}
+                      </td>
+                      <td className="px-2 py-1.5">
+                        {openHref ? (
+                          <a
+                            href={openHref}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="bof-link-secondary"
+                          >
+                            Open / View
+                          </a>
+                        ) : (
+                          <span className="text-slate-500">Missing / Needs review</span>
+                        )}
+                      </td>
+                      <td className="px-2 py-1.5 font-mono text-[10px] text-slate-500">
+                        {row.templatePath || "Template missing"}
+                      </td>
+                    </tr>
+                  );
+                })}
+            </tbody>
+          </table>
+        </div>
       </section>
 
       {drawerOpen && (

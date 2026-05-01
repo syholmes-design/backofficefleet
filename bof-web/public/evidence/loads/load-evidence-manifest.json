@@ -5,7 +5,7 @@
       "source": "ai_generated",
       "label": "cargo-photo",
       "promptSummary": "cargoPhoto",
-      "generatedAt": "2026-05-01T12:48:45.988Z"
+      "generatedAt": "2026-05-01T15:01:42.478Z"
     },
     "sealPhoto": {
       "url": "/evidence/loads/L001/seal-photo.svg",
@@ -27,21 +27,21 @@
       "source": "ai_generated",
       "label": "equipment-photo",
       "promptSummary": "equipmentPhoto",
-      "generatedAt": "2026-05-01T12:49:01.562Z"
+      "generatedAt": "2026-05-01T15:01:56.298Z"
     },
     "pickupPhoto": {
       "url": "/evidence/loads/L001/pickup-photo.png",
       "source": "ai_generated",
       "label": "pickup-photo",
       "promptSummary": "pickupPhoto",
-      "generatedAt": "2026-05-01T12:49:15.518Z"
+      "generatedAt": "2026-05-01T15:02:10.880Z"
     },
     "deliveryPhoto": {
       "url": "/evidence/loads/L001/delivery-photo.png",
       "source": "ai_generated",
       "label": "delivery-photo",
       "promptSummary": "deliveryPhoto",
-      "generatedAt": "2026-05-01T12:49:30.751Z"
+      "generatedAt": "2026-05-01T15:02:26.784Z"
     },
     "emptyTrailerProof": {
       "url": "/evidence/loads/L001/empty-trailer-proof.svg",
