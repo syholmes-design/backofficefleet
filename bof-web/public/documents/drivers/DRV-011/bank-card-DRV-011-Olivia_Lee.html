@@ -1,49 +1,590 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>Bank Info — Olivia Lee</title>
-  <style>
-    * { box-sizing: border-box; }
-    body { font-family: system-ui, Segoe UI, Roboto, Helvetica, Arial, sans-serif; margin: 0; padding: 24px; background: #f1f5f9; color: #0f172a; line-height: 1.45; font-size: 14px; }
-    .sheet { max-width: 720px; margin: 0 auto; background: #fff; border: 1px solid #cbd5e1; border-radius: 8px; padding: 28px 32px; box-shadow: 0 1px 3px rgba(0,0,0,.06); }
-    h1 { font-size: 1.15rem; margin: 0 0 4px; color: #0f172a; }
-    .sub { font-size: 12px; color: #64748b; margin-bottom: 20px; }
-    h2 { font-size: 11px; text-transform: uppercase; letter-spacing: .06em; color: #64748b; margin: 20px 0 8px; border-bottom: 1px solid #e2e8f0; padding-bottom: 4px; }
-    dl { display: grid; grid-template-columns: 160px 1fr; gap: 6px 16px; margin: 0; }
-    dt { color: #64748b; font-size: 12px; }
-    dd { margin: 0; font-weight: 500; }
-    .muted { color: #64748b; font-weight: 400; }
-    .banner { background: #eff6ff; border: 1px solid #bfdbfe; color: #1e3a8a; padding: 10px 12px; border-radius: 6px; font-size: 13px; margin-top: 12px; }
-    .warn { background: #fffbeb; border-color: #fde68a; color: #78350f; }
-    footer { margin-top: 24px; font-size: 11px; color: #94a3b8; }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BOF Bank Information Card — DRV-011</title>
+<style>
+  :root {
+    --navy: #1B2A4A;
+    --blue: #2F5496;
+    --light-blue: #D6E4F0;
+    --green: #27AE60;
+    --green-bg: #EAFAF1;
+    --amber: #E67E22;
+    --amber-bg: #FEF5E7;
+    --gray-bg: #F4F6F8;
+    --border: #D5D8DC;
+    --text: #2C3E50;
+    --text-muted: #7F8C8D;
+    --white: #FFFFFF;
+    --red-badge: #E74C3C;
+    --check-bg: #FDFEF9;
+    --check-border: #B8C4B8;
+    --micr-color: #1a1a1a;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif;
+    background: var(--gray-bg);
+    color: var(--text);
+    padding: 24px;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+  }
+  .card {
+    width: 100%;
+    max-width: 780px;
+    background: var(--white);
+    border-radius: 12px;
+    box-shadow: 0 4px 24px rgba(27,42,74,0.12), 0 1px 4px rgba(27,42,74,0.08);
+    overflow: hidden;
+    border: 1px solid var(--border);
+  }
+
+  /* === TOP BAR === */
+  .top-bar {
+    background: var(--navy);
+    padding: 16px 28px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .top-bar h1 {
+    color: var(--white);
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+  .badge {
+    background: var(--blue);
+    color: var(--white);
+    font-size: 13px;
+    font-weight: 700;
+    padding: 5px 14px;
+    border-radius: 20px;
+    letter-spacing: 1px;
+  }
+
+  /* === DRIVER SECTION === */
+  .driver-section {
+    padding: 24px 28px 16px;
+    border-bottom: 1px solid var(--border);
+  }
+  .driver-header {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    margin-bottom: 18px;
+  }
+  .avatar {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background: var(--light-blue);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--navy);
+    flex-shrink: 0;
+    border: 3px solid var(--blue);
+  }
+  .driver-name {
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--navy);
+  }
+  .driver-meta {
+    font-size: 13px;
+    color: var(--text-muted);
+    margin-top: 2px;
+  }
+  .info-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px 32px;
+  }
+  .info-row {
+    display: flex;
+    gap: 8px;
+    align-items: baseline;
+    padding: 4px 0;
+  }
+  .info-label {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    min-width: 70px;
+    flex-shrink: 0;
+  }
+  .info-value {
+    font-size: 14px;
+    color: var(--text);
+    font-weight: 500;
+  }
+
+  /* === BANKING DETAILS === */
+  .section-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--navy);
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid var(--light-blue);
+  }
+  .banking-section {
+    padding: 24px 28px;
+    border-bottom: 1px solid var(--border);
+  }
+  .bank-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px 32px;
+  }
+  .bank-field {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .bank-field-label {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .bank-field-value {
+    font-size: 15px;
+    color: var(--text);
+    font-weight: 600;
+  }
+  .bank-field-value.mono {
+    font-family: 'Consolas', 'Courier New', monospace;
+    font-size: 16px;
+    letter-spacing: 1.5px;
+    color: var(--navy);
+  }
+  .acct-type-badge {
+    display: inline-block;
+    padding: 3px 12px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+  }
+  .status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 14px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 700;
+    background: var(--green-bg);
+    color: var(--green);
+  }
+  .status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--green);
+  }
+
+  /* === VOIDED CHECK === */
+  .check-section {
+    padding: 24px 28px;
+    border-bottom: 1px solid var(--border);
+  }
+  .check-container {
+    position: relative;
+    background: var(--check-bg);
+    border: 2px solid var(--check-border);
+    border-radius: 8px;
+    padding: 0;
+    overflow: hidden;
+    aspect-ratio: 2.4 / 1;
+    max-height: 320px;
+  }
+  .check-inner {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    padding: 20px 24px 16px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+  /* Background pattern - subtle safety lines */
+  .check-container::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background:
+      repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 18px,
+        rgba(180,200,180,0.12) 18px,
+        rgba(180,200,180,0.12) 19px
+      );
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .check-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    position: relative;
+    z-index: 1;
+  }
+  .check-payer {
+    font-size: 13px;
+    font-weight: 600;
+    color: #2C3E50;
+    line-height: 1.5;
+  }
+  .check-payer .payer-name {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--navy);
+  }
+  .check-bank-name {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--blue);
+    text-align: right;
+    letter-spacing: 0.5px;
+  }
+  .check-number {
+    font-family: 'Consolas', 'Courier New', monospace;
+    font-size: 13px;
+    color: var(--text-muted);
+    text-align: right;
+    margin-top: 2px;
+  }
+
+  .check-middle {
+    position: relative;
+    z-index: 1;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 10px;
+    padding: 8px 0;
+  }
+  .check-date-line {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 8px;
+  }
+  .check-date-label {
+    font-size: 11px;
+    color: var(--text-muted);
+  }
+  .check-date-box {
+    width: 140px;
+    border-bottom: 1px solid #999;
+    font-size: 12px;
+    padding-bottom: 2px;
+    color: var(--text-muted);
+    text-align: center;
+  }
+  .check-payto {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+  }
+  .check-payto-label {
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+  .check-payto-line {
+    flex: 1;
+    border-bottom: 1px solid #999;
+    min-height: 18px;
+  }
+  .check-amount-box {
+    border: 2px solid #999;
+    padding: 3px 10px;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text-muted);
+    min-width: 90px;
+    text-align: center;
+    background: var(--white);
+    border-radius: 3px;
+  }
+  .check-memo-sig {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 32px;
+  }
+  .check-memo {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    flex: 1;
+  }
+  .check-memo-label {
+    font-size: 10px;
+    color: var(--text-muted);
+    white-space: nowrap;
+  }
+  .check-memo-line {
+    flex: 1;
+    border-bottom: 1px solid #999;
+  }
+  .check-sig-line {
+    width: 200px;
+    border-bottom: 1px solid #999;
+  }
+
+  /* VOID watermark */
+  .void-watermark {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) rotate(-18deg);
+    font-size: 72px;
+    font-weight: 900;
+    color: rgba(231, 76, 60, 0.22);
+    letter-spacing: 24px;
+    text-transform: uppercase;
+    z-index: 2;
+    pointer-events: none;
+    user-select: none;
+    font-family: Arial, sans-serif;
+  }
+
+  /* MICR line at bottom */
+  .check-micr {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 10px;
+    border-top: 1px solid var(--check-border);
+    margin-top: 4px;
+  }
+  .micr-text {
+    font-family: 'Consolas', 'Courier New', monospace;
+    font-size: 14px;
+    letter-spacing: 3px;
+    color: var(--micr-color);
+    font-weight: 600;
+  }
+  .micr-symbol {
+    color: var(--text-muted);
+    font-size: 14px;
+  }
+
+  /* === W-9 STRIP === */
+  .w9-strip {
+    background: var(--gray-bg);
+    padding: 14px 28px;
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 8px;
+    border-bottom: 1px solid var(--border);
+  }
+  .w9-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .w9-label {
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .w9-value {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text);
+  }
+  .w9-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 2px 10px;
+    border-radius: 10px;
+    font-size: 11px;
+    font-weight: 700;
+    background: var(--green-bg);
+    color: var(--green);
+  }
+
+  /* === FOOTER === */
+  .card-footer {
+    padding: 14px 28px;
+    text-align: center;
+    font-size: 11px;
+    color: var(--text-muted);
+    background: var(--white);
+  }
+  .footer-brand {
+    font-weight: 700;
+    color: var(--navy);
+  }
+</style>
 </head>
 <body>
-  <div class="sheet">
-    
-    <h1>Direct deposit — Bank information</h1>
-    <p class="sub">Demo payroll banking shell</p>
-    <h2>Driver</h2>
-<dl>
-  <dt>Name</dt><dd>Olivia Lee</dd>
-  <dt>Driver ID</dt><dd><code>DRV-011</code></dd>
-  <dt>Address</dt><dd>600 Peachtree St, Atlanta, GA 30308</dd>
-  <dt>Phone</dt><dd>337-857-3607</dd>
-  <dt>Email</dt><dd>olivia.lee@boftransport.demo</dd>
-</dl>
-    <h2>Account</h2>
-    <dl>
-      <dt>Status (demo)</dt><dd>VALID</dd>
-      <dt>Account holder</dt><dd>Olivia Lee</dd>
-      <dt>Financial institution</dt><dd><span class="muted">Not on file</span></dd>
-      <dt>Routing number</dt><dd><span class="muted">Not on file</span></dd>
-      <dt>Account number (last 4)</dt><dd><span class="muted">Not on file</span></dd>
-      <dt>Account type</dt><dd><span class="muted">Pending</span></dd>
-    </dl>
-  
-    <footer>BackOfficeFleet · Demo generated credential shell · Not a legal document</footer>
+<div class="card">
+  <!-- TOP BAR -->
+  <div class="top-bar">
+    <h1>&#x1F3E6; Bank Information Card</h1>
+    <span class="badge">DRV-011</span>
   </div>
+
+  <!-- DRIVER ID SECTION -->
+  <div class="driver-section">
+    <div class="driver-header">
+      <div class="avatar">OL</div>
+      <div>
+        <div class="driver-name">Olivia Lee</div>
+        <div class="driver-meta">DRV-011 &bull; BackOfficeFleet Driver</div>
+      </div>
+    </div>
+    <div class="info-grid">
+      <div class="info-row">
+        <span class="info-label">Address</span>
+        <span class="info-value">600 Peachtree St, Atlanta, GA 30308</span>
+      </div>
+      <div class="info-row">
+        <span class="info-label">Phone</span>
+        <span class="info-value">337-857-3607</span>
+      </div>
+      <div class="info-row">
+        <span class="info-label">Email</span>
+        <span class="info-value">olee@hotmail.com</span>
+      </div>
+      <div class="info-row">
+        <span class="info-label">Payment</span>
+        <span class="info-value">Direct Deposit</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- BANKING DETAILS -->
+  <div class="banking-section">
+    <div class="section-title">Banking Details</div>
+    <div class="bank-grid">
+      <div class="bank-field">
+        <span class="bank-field-label">Bank Name</span>
+        <span class="bank-field-value">Bank of America</span>
+      </div>
+      <div class="bank-field">
+        <span class="bank-field-label">Account Type</span>
+        <span class="acct-type-badge" style="background:#FEF5E7;color:#E67E22;">Savings</span>
+      </div>
+      <div class="bank-field">
+        <span class="bank-field-label">Routing Number</span>
+        <span class="bank-field-value mono">207931918</span>
+      </div>
+      <div class="bank-field">
+        <span class="bank-field-label">Account Number</span>
+        <span class="bank-field-value mono">••••••2449</span>
+      </div>
+      <div class="bank-field">
+        <span class="bank-field-label">Submission Date</span>
+        <span class="bank-field-value">September 16, 2024</span>
+      </div>
+      <div class="bank-field">
+        <span class="bank-field-label">Verification Status</span>
+        <span class="status-badge"><span class="status-dot"></span> Verified</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- VOIDED CHECK UI -->
+  <div class="check-section">
+    <div class="section-title">Voided Check — Visual Verification</div>
+    <div class="check-container">
+      <div class="void-watermark">VOID</div>
+      <div class="check-inner">
+        <!-- Top: Payer info + Bank name + Check # -->
+        <div class="check-top">
+          <div class="check-payer">
+            <div class="payer-name">Olivia Lee</div>
+            <div>600 Peachtree St</div>
+            <div>Atlanta, GA 30308</div>
+          </div>
+          <div>
+            <div class="check-bank-name">Bank of America</div>
+            <div class="check-number">No. 1077</div>
+          </div>
+        </div>
+
+        <!-- Middle: Date, Pay To, Amount -->
+        <div class="check-middle">
+          <div class="check-date-line">
+            <span class="check-date-label">Date</span>
+            <div class="check-date-box">___ / ___ / ______</div>
+          </div>
+          <div class="check-payto">
+            <span class="check-payto-label">Pay to the<br>Order of</span>
+            <div class="check-payto-line"></div>
+            <div class="check-amount-box">$ ______</div>
+          </div>
+        </div>
+
+        <!-- Bottom: Memo, Signature, MICR -->
+        <div>
+          <div class="check-memo-sig">
+            <div class="check-memo">
+              <span class="check-memo-label">Memo</span>
+              <div class="check-memo-line"></div>
+            </div>
+            <div class="check-sig-line"></div>
+          </div>
+          <div class="check-micr">
+            <span class="micr-text"><span class="micr-symbol">&#x2446;</span>207931918<span class="micr-symbol">&#x2446;</span> 906722449<span class="micr-symbol">&#x2447;</span> 1077</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- W-9 SUMMARY STRIP -->
+  <div class="w9-strip">
+    <div class="w9-item">
+      <span class="w9-label">Tax Classification</span>
+      <span class="w9-value">Individual/Sole Proprietor</span>
+    </div>
+    <div class="w9-item">
+      <span class="w9-label">TIN Type</span>
+      <span class="w9-value">SSN</span>
+    </div>
+    <div class="w9-item">
+      <span class="w9-label">W-9 Status</span>
+      <span class="w9-badge">&#x2713; Received</span>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <div class="card-footer">
+    <span class="footer-brand">BackOfficeFleet</span> &mdash; Bank Information Card &bull; Confidential &bull; Generated April 22, 2026
+  </div>
+</div>
 </body>
 </html>
