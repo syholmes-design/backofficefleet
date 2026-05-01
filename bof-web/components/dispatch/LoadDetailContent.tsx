@@ -142,11 +142,10 @@ export function LoadDetailContent({ load, onClose }: Props) {
             Documents library
           </h3>
           <p className="mb-3 text-xs text-slate-500">
-            Linked artifacts use deploy-safe paths under{" "}
-            <span className="font-mono text-slate-400">/mocks/</span>,{" "}
-            <span className="font-mono text-slate-400">/actual_docs/</span>, or
-            other <span className="font-mono text-slate-400">/public</span>{" "}
-            folders — grouped for shipper packet, billing, and claim support.
+            Linked artifacts use canonical manifest-backed paths under{" "}
+            <span className="font-mono text-slate-400">/generated/loads</span>,{" "}
+            <span className="font-mono text-slate-400">/evidence/loads</span>, and{" "}
+            <span className="font-mono text-slate-400">/actual_docs</span> when present.
           </p>
           <LoadDocumentsLibraryEnhanced load={load} />
         </section>

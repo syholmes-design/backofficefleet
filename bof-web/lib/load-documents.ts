@@ -21,7 +21,7 @@ export type LoadEvidenceKey =
   | "detentionProofPhoto"
   | "safetyViolationPhoto";
 
-export type LoadEvidenceSource = "real" | "ai_generated" | "svg_demo";
+export type LoadEvidenceSource = "real" | "ai_generated" | "svg_demo" | "missing";
 export type LoadEvidenceManifestValue =
   | string
   | {
@@ -30,6 +30,11 @@ export type LoadEvidenceManifestValue =
       label?: string;
       promptSummary?: string;
       generatedAt?: string;
+      required?: boolean;
+      conditional?: boolean;
+      applicable?: boolean;
+      reason?: string;
+      basename?: string;
     };
 export type LoadEvidenceManifestEntry = Partial<Record<LoadEvidenceKey, LoadEvidenceManifestValue>>;
 type LoadEvidenceManifest = Record<string, LoadEvidenceManifestEntry>;

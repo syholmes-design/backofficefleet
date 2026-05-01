@@ -134,7 +134,8 @@ export type LoadEvidenceItem = {
     | "camera"
     | "ai_generated"
     | "svg_demo"
-    | "real";
+    | "real"
+    | "missing";
 };
 
 function withResolvedStatus(item: LoadEvidenceItem): LoadEvidenceItem {

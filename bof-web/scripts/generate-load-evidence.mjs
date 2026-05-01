@@ -12,24 +12,26 @@ const EVIDENCE_ROOT = path.join(PUBLIC_ROOT, "evidence", "loads");
 const PUBLIC_MANIFEST_PATH = path.join(EVIDENCE_ROOT, "load-evidence-manifest.json");
 const LIB_MANIFEST_PATH = path.join(ROOT, "lib", "generated", "load-evidence-manifest.json");
 const SOURCE_HINT = "Generated demo evidence";
-const EVIDENCE_KEYS = [
-  "cargoPhoto",
-  "pickupPhoto",
-  "deliveryPhoto",
-  "equipmentPhoto",
-  "sealPickupPhoto",
-  "sealDeliveryPhoto",
-  "emptyTrailerProof",
-  "lumperReceipt",
-  "cargoDamagePhoto",
-  "claimEvidence",
-  "rfidDockProof",
-  "sealMismatchPhoto",
-  "damagedPalletPhoto",
-  "tempCheckPhoto",
-  "weightTicketPhoto",
-  "detentionProofPhoto",
-  "safetyViolationPhoto",
+const EVIDENCE_CATALOG = [
+  { key: "cargoPhoto", label: "Cargo photo", baseName: "cargo-photo", required: true, conditional: false },
+  { key: "equipmentPhoto", label: "Equipment photo", baseName: "equipment-photo", required: true, conditional: false },
+  { key: "pickupPhoto", label: "Pickup photo", baseName: "pickup-photo", required: true, conditional: false },
+  { key: "deliveryPhoto", label: "Delivery photo", baseName: "delivery-photo", required: true, conditional: false },
+  { key: "sealPhoto", label: "Seal photo", baseName: "seal-photo", required: true, conditional: false },
+  { key: "sealPickupPhoto", label: "Seal pickup photo", baseName: "seal-pickup-photo", required: true, conditional: false },
+  { key: "sealDeliveryPhoto", label: "Seal delivery photo", baseName: "seal-delivery-photo", required: true, conditional: false },
+  { key: "emptyTrailerProof", label: "Empty trailer proof", baseName: "empty-trailer-proof", required: true, conditional: false },
+  { key: "rfidDockProof", label: "RFID dock proof", baseName: "rfid-dock-proof", required: true, conditional: false },
+  { key: "lumperReceipt", label: "Lumper receipt", baseName: "lumper-receipt", required: false, conditional: true },
+  { key: "damagePhoto", label: "Damage / claim photo", baseName: "damage-photo", required: false, conditional: true },
+  { key: "cargoDamagePhoto", label: "Cargo damage photo", baseName: "cargo-damage-photo", required: false, conditional: true },
+  { key: "damagedPalletPhoto", label: "Damaged pallet photo", baseName: "damaged-pallet-photo", required: false, conditional: true },
+  { key: "sealMismatchPhoto", label: "Seal mismatch photo", baseName: "seal-mismatch-photo", required: false, conditional: true },
+  { key: "tempCheckPhoto", label: "Temperature check photo", baseName: "temp-check-photo", required: false, conditional: true },
+  { key: "weightTicketPhoto", label: "Weight ticket photo", baseName: "weight-ticket-photo", required: false, conditional: true },
+  { key: "detentionProofPhoto", label: "Detention proof photo", baseName: "detention-proof-photo", required: false, conditional: true },
+  { key: "safetyViolationPhoto", label: "Safety violation photo", baseName: "safety-violation-photo", required: false, conditional: true },
+  { key: "claimEvidence", label: "Claim evidence", baseName: "claim-evidence", required: false, conditional: true },
 ];
 const AI_PROMPT_TYPES = new Set([
   "cargoPhoto",
@@ -193,6 +195,8 @@ function resolveExistingEvidence(loadId, baseName) {
       url: `/evidence/loads/${loadId}/${baseName}${ext}`,
       source,
       label: baseName,
+      basename: baseName,
+      generatedAt: isoNow(),
     };
   }
   return undefined;
@@ -248,6 +252,7 @@ async function resolveOrGenerate(load, evidenceKey, baseName, svgFactory, option
           url: `/evidence/loads/${load.id}/${baseName}.${ext}`,
           source: "ai_generated",
           label: baseName,
+          basename: baseName,
           promptSummary: evidenceKey,
           generatedAt: isoNow(),
         };
@@ -284,6 +289,8 @@ async function resolveOrGenerate(load, evidenceKey, baseName, svgFactory, option
     url,
     source: "svg_demo",
     label: baseName,
+    basename: baseName,
+    generatedAt: isoNow(),
   };
 }
 
@@ -600,7 +607,7 @@ async function main() {
           }), options, stats)
       : undefined;
 
-    manifest[load.id] = {
+    const generated = {
       cargoPhoto,
       sealPhoto,
       sealPickupPhoto,
@@ -610,17 +617,72 @@ async function main() {
       deliveryPhoto,
       emptyTrailerProof,
       rfidDockProof,
-      ...(sealMismatchPhoto ? { sealMismatchPhoto } : {}),
-      ...(tempCheckPhoto ? { tempCheckPhoto } : {}),
-      ...(weightTicketPhoto ? { weightTicketPhoto } : {}),
-      ...(detentionProofPhoto ? { detentionProofPhoto } : {}),
-      ...(lumperReceipt ? { lumperReceipt } : {}),
-      ...(damagePhoto ? { cargoDamagePhoto: damagePhoto, damagePhoto } : {}),
-      ...(damagedPalletPhoto ? { damagedPalletPhoto } : {}),
-      ...(claimEvidence ? { claimEvidence } : {}),
-      ...(safetyViolationPhoto ? { safetyViolationPhoto } : {}),
+      lumperReceipt,
+      damagePhoto,
+      cargoDamagePhoto: damagePhoto,
+      damagedPalletPhoto,
+      sealMismatchPhoto,
+      tempCheckPhoto,
+      weightTicketPhoto,
+      detentionProofPhoto,
+      safetyViolationPhoto,
+      claimEvidence,
     };
-    stats.required += EVIDENCE_KEYS.length;
+
+    const conditions = {
+      lumperReceipt: hasLumperIssue(load, data.settlements),
+      damagePhoto: hasClaim,
+      cargoDamagePhoto: hasClaim,
+      damagedPalletPhoto: hasClaim,
+      sealMismatchPhoto: String(load.sealStatus).toUpperCase() === "MISMATCH",
+      tempCheckPhoto: tempControlled,
+      weightTicketPhoto: Number(load.weight || 0) > 0,
+      detentionProofPhoto: /detention|delay|hold/i.test(String(load.dispatchOpsNotes || "")),
+      safetyViolationPhoto: /safety/i.test(String(load.dispatchOpsNotes || "")),
+      claimEvidence: hasClaim,
+    };
+
+    const entry = {};
+    for (const item of EVIDENCE_CATALOG) {
+      const resolved = generated[item.key];
+      const applicable = item.conditional ? Boolean(conditions[item.key]) : true;
+      const base = {
+        url: "",
+        label: item.label,
+        basename: item.baseName,
+        source: "missing",
+        generatedAt: isoNow(),
+        required: item.required,
+        conditional: item.conditional,
+        applicable,
+      };
+      if (resolved && resolved.url) {
+        entry[item.key] = {
+          ...base,
+          ...resolved,
+          label: item.label,
+          basename: item.baseName,
+          required: item.required,
+          conditional: item.conditional,
+          applicable,
+        };
+      } else if (item.required) {
+        stats.unresolved += 1;
+        entry[item.key] = {
+          ...base,
+          reason: "Required evidence key did not resolve to a URL",
+        };
+      } else {
+        entry[item.key] = {
+          ...base,
+          reason: applicable
+            ? "Applicable conditional evidence unresolved"
+            : "Not required for this load context",
+        };
+      }
+      if (item.required) stats.required += 1;
+    }
+    manifest[load.id] = entry;
     console.log(
       `[generate-load-evidence] load=${load.id} files=${Object.keys(manifest[load.id]).length} out=${PUBLIC_MANIFEST_PATH}`
     );

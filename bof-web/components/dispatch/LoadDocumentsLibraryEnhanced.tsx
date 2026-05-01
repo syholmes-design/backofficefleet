@@ -239,6 +239,9 @@ function DocCard({ item }: { item: DocLinkItem }) {
     missing: "border-red-700/60 bg-red-950/40",
   };
   const sourceLabel =
+    item.source === "missing"
+      ? "Missing"
+    : 
     item.source === "ai_generated"
       ? "AI demo evidence"
       : item.source === "svg_demo" || item.source === "generated"
