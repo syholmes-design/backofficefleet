@@ -110,6 +110,11 @@ export function DispatchRouteMap({
   const mapboxToken = process.env.NEXT_PUBLIC_MAPBOX_TOKEN;
   const mapRef = useRef<MapRef | null>(null);
   const [popup, setPopup] = useState<{ load: Load; event?: LoadProofEvent } | null>(null);
+
+  useEffect(() => {
+    console.log("Mapbox token configured:", Boolean(process.env.NEXT_PUBLIC_MAPBOX_TOKEN));
+  }, []);
+
   const scopedLoads = useMemo(() => {
     if (mode === "selected" && selectedLoadId) {
       return loads.filter((l) => l.load_id === selectedLoadId);
