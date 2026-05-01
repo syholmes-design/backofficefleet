@@ -1,6 +1,8 @@
 import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
+import { generateEvidenceImage } from "./lib/generate-ai-image.mjs";
+import { buildEvidenceImagePrompt } from "./lib/build-evidence-image-prompt.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(__dirname, "..");
@@ -29,6 +31,19 @@ const EVIDENCE_KEYS = [
   "detentionProofPhoto",
   "safetyViolationPhoto",
 ];
+const AI_PROMPT_TYPES = new Set([
+  "cargoPhoto",
+  "cargoDamagePhoto",
+  "emptyTrailerProof",
+  "sealPickupPhoto",
+  "sealDeliveryPhoto",
+  "equipmentPhoto",
+  "pickupPhoto",
+  "deliveryPhoto",
+  "lumperReceipt",
+  "claimEvidence",
+  "rfidDockProof",
+]);
 
 function ensureDir(dirPath) {
   fs.mkdirSync(dirPath, { recursive: true });
@@ -143,26 +158,110 @@ function resolveExistingEvidence(loadId, baseName) {
   const exts = [".jpg", ".jpeg", ".png", ".svg", ".webp", ".pdf", ".html"];
   for (const ext of exts) {
     const p = path.join(EVIDENCE_ROOT, loadId, `${baseName}${ext}`);
-    if (fs.existsSync(p)) return `/evidence/loads/${loadId}/${baseName}${ext}`;
+    if (!fs.existsSync(p)) continue;
+    const source = [".jpg", ".jpeg", ".png", ".webp", ".pdf", ".html"].includes(ext)
+      ? "real"
+      : "svg_demo";
+    return {
+      url: `/evidence/loads/${loadId}/${baseName}${ext}`,
+      source,
+      label: baseName,
+    };
   }
   return undefined;
 }
 
-function resolveOrGenerate(loadId, baseName, svgFactory, stats) {
-  const existing = resolveExistingEvidence(loadId, baseName);
-  if (existing) {
+function canGenerateAi(options) {
+  if (!options.aiEnabled) return false;
+  if (!options.apiKey) return false;
+  return true;
+}
+
+function outputExt(options) {
+  const fmt = String(options.outputFormat || "png").toLowerCase();
+  return fmt === "jpg" || fmt === "jpeg" ? "jpg" : "png";
+}
+
+async function resolveOrGenerate(load, evidenceKey, baseName, svgFactory, options, stats) {
+  const aiEligible = AI_PROMPT_TYPES.has(evidenceKey) && canGenerateAi(options);
+  const existing = resolveExistingEvidence(load.id, baseName);
+  const shouldRegenerate = Boolean(options.regenerate);
+  const shouldKeepExisting =
+    existing &&
+    !shouldRegenerate &&
+    (existing.source === "real" || (!aiEligible && existing.source === "svg_demo"));
+  if (shouldKeepExisting) {
     stats.reused += 1;
     return existing;
   }
-  const url = writeEvidenceSvg(loadId, `${baseName}.svg`, svgFactory());
-  stats.generated += 1;
-  return url;
+  if (aiEligible) {
+    const ext = outputExt(options);
+    const prompt = buildEvidenceImagePrompt(load, evidenceKey);
+    const outPath = path.join(EVIDENCE_ROOT, load.id, `${baseName}.${ext}`);
+    try {
+      await generateEvidenceImage({
+        provider: options.provider,
+        apiKey: options.apiKey,
+        model: options.model,
+        prompt,
+        outputPath: outPath,
+        outputFormat: ext,
+      });
+      stats.aiGenerated += 1;
+      return {
+        url: `/evidence/loads/${load.id}/${baseName}.${ext}`,
+        source: "ai_generated",
+        label: baseName,
+        promptSummary: evidenceKey,
+        generatedAt: isoNow(),
+      };
+    } catch (error) {
+      stats.aiFailed += 1;
+      console.warn(`[generate-load-evidence] AI failed for ${load.id}/${evidenceKey}: ${error}`);
+    }
+  }
+
+  const url = writeEvidenceSvg(load.id, `${baseName}.svg`, svgFactory());
+  stats.svgGenerated += 1;
+  return {
+    url,
+    source: "svg_demo",
+    label: baseName,
+  };
 }
 
-function main() {
+function getenvBool(name, fallback = false) {
+  const value = String(process.env[name] ?? "").trim().toLowerCase();
+  if (!value) return fallback;
+  return value === "1" || value === "true" || value === "yes";
+}
+
+async function main() {
   const data = readJson(DATA_PATH);
   const manifest = {};
-  const stats = { loads: 0, required: 0, reused: 0, generated: 0 };
+  const argvAi = process.argv.includes("--enable-ai");
+  const aiEnabled = argvAi || getenvBool("BOF_ENABLE_AI_IMAGE_GENERATION", false);
+  const provider = String(process.env.BOF_IMAGE_PROVIDER || "openai").toLowerCase();
+  const outputFormat = String(process.env.BOF_IMAGE_OUTPUT_FORMAT || "png").toLowerCase();
+  const model = String(process.env.BOF_IMAGE_MODEL || "").trim() || undefined;
+  const apiKey = process.env.OPENAI_API_KEY;
+  const regenerate = getenvBool("BOF_REGENERATE_EVIDENCE", false);
+  const options = { aiEnabled, provider, outputFormat, model, apiKey, regenerate };
+  const stats = {
+    loads: 0,
+    required: 0,
+    reused: 0,
+    svgGenerated: 0,
+    aiGenerated: 0,
+    aiFailed: 0,
+    unresolved: 0,
+  };
+
+  if (aiEnabled && !apiKey) {
+    console.warn(
+      "[generate-load-evidence] BOF_ENABLE_AI_IMAGE_GENERATION=true but OPENAI_API_KEY is missing. Falling back to SVG."
+    );
+  }
 
   for (const load of data.loads ?? []) {
     stats.loads += 1;
@@ -182,7 +281,7 @@ function main() {
       equipmentRef,
     };
 
-    const cargoPhoto = resolveOrGenerate(load.id, "cargo-photo", () =>
+    const cargoPhoto = await resolveOrGenerate(load, "cargoPhoto", "cargo-photo", () =>
       renderEvidenceSvg({
         ...common,
         title: "Cargo Photo",
@@ -191,8 +290,8 @@ function main() {
         facility: load.origin,
         status: "Pallets secured / cargo condition recorded",
         sealNumber: load.pickupSeal || "",
-      }), stats);
-    const sealPhoto = resolveOrGenerate(load.id, "seal-photo", () =>
+      }), options, stats);
+    const sealPhoto = await resolveOrGenerate(load, "sealPhoto", "seal-photo", () =>
       renderEvidenceSvg({
         ...common,
         title: "Seal Photo",
@@ -201,8 +300,8 @@ function main() {
         facility: "Pickup & delivery checkpoints",
         status: `Seal chain recorded (${load.pickupSeal || "N/A"} / ${load.deliverySeal || "N/A"})`,
         sealNumber: `${load.pickupSeal || "—"} / ${load.deliverySeal || "—"}`,
-      }), stats);
-    const equipmentPhoto = resolveOrGenerate(load.id, "equipment-photo", () =>
+      }), options, stats);
+    const equipmentPhoto = await resolveOrGenerate(load, "equipmentPhoto", "equipment-photo", () =>
       renderEvidenceSvg({
         ...common,
         title: "Equipment Photo",
@@ -211,8 +310,8 @@ function main() {
         facility: load.origin,
         status: `Equipment inspection recorded`,
         sealNumber: "",
-      }), stats);
-    const pickupPhoto = resolveOrGenerate(load.id, "pickup-photo", () =>
+      }), options, stats);
+    const pickupPhoto = await resolveOrGenerate(load, "pickupPhoto", "pickup-photo", () =>
       renderEvidenceSvg({
         ...common,
         title: "Pickup Photo",
@@ -221,8 +320,8 @@ function main() {
         facility: load.origin,
         status: "Pickup proof captured",
         sealNumber: load.pickupSeal || "",
-      }), stats);
-    const deliveryPhoto = resolveOrGenerate(load.id, "delivery-photo", () =>
+      }), options, stats);
+    const deliveryPhoto = await resolveOrGenerate(load, "deliveryPhoto", "delivery-photo", () =>
       renderEvidenceSvg({
         ...common,
         title: "Delivery Photo",
@@ -231,8 +330,8 @@ function main() {
         facility: load.destination,
         status: "Delivery proof captured",
         sealNumber: load.deliverySeal || "",
-      }), stats);
-    const sealPickupPhoto = resolveOrGenerate(load.id, "seal-pickup-photo", () =>
+      }), options, stats);
+    const sealPickupPhoto = await resolveOrGenerate(load, "sealPickupPhoto", "seal-pickup-photo", () =>
       renderEvidenceSvg({
         ...common,
         title: "Seal Pickup Photo",
@@ -241,8 +340,8 @@ function main() {
         facility: load.origin,
         status: `Seal captured at pickup`,
         sealNumber: load.pickupSeal || "N/A",
-      }), stats);
-    const sealDeliveryPhoto = resolveOrGenerate(load.id, "seal-delivery-photo", () =>
+      }), options, stats);
+    const sealDeliveryPhoto = await resolveOrGenerate(load, "sealDeliveryPhoto", "seal-delivery-photo", () =>
       renderEvidenceSvg({
         ...common,
         title: "Seal Delivery Photo",
@@ -251,8 +350,8 @@ function main() {
         facility: load.destination,
         status: `Seal captured at delivery`,
         sealNumber: load.deliverySeal || "N/A",
-      }), stats);
-    const emptyTrailerProof = resolveOrGenerate(load.id, "empty-trailer-proof", () =>
+      }), options, stats);
+    const emptyTrailerProof = await resolveOrGenerate(load, "emptyTrailerProof", "empty-trailer-proof", () =>
       renderEvidenceSvg({
         ...common,
         title: "Empty Trailer Proof",
@@ -262,8 +361,8 @@ function main() {
         status: "Trailer empty after delivery",
         sealNumber: load.deliverySeal || "",
         warning: "",
-      }), stats);
-    const rfidDockProof = resolveOrGenerate(load.id, "rfid-dock-proof", () =>
+      }), options, stats);
+    const rfidDockProof = await resolveOrGenerate(load, "rfidDockProof", "rfid-dock-proof", () =>
       renderEvidenceSvg({
         ...common,
         title: "RFID Dock Proof",
@@ -272,9 +371,9 @@ function main() {
         facility: load.origin,
         status: "RFID dock validation record",
         sealNumber: load.pickupSeal || "",
-      }), stats);
+      }), options, stats);
     const sealMismatchPhoto = String(load.sealStatus).toUpperCase() === "MISMATCH"
-      ? resolveOrGenerate(load.id, "seal-mismatch-photo", () =>
+      ? await resolveOrGenerate(load, "sealMismatchPhoto", "seal-mismatch-photo", () =>
           renderEvidenceSvg({
             ...common,
             title: "Seal Mismatch Photo",
@@ -284,13 +383,13 @@ function main() {
             status: "Seal mismatch observed",
             sealNumber: `${load.pickupSeal || "—"} / ${load.deliverySeal || "—"}`,
             warning: "Seal mismatch - claim review required",
-          }), stats)
+          }), options, stats)
       : undefined;
     const tempControlled = /reefer|temp|cold/i.test(
       `${load.commodity || ""} ${load.dispatchOpsNotes || ""}`
     );
     const tempCheckPhoto = tempControlled
-      ? resolveOrGenerate(load.id, "temp-check-photo", () =>
+      ? await resolveOrGenerate(load, "tempCheckPhoto", "temp-check-photo", () =>
           renderEvidenceSvg({
             ...common,
             title: "Temperature Check Photo",
@@ -299,10 +398,10 @@ function main() {
             facility: "In-transit checks",
             status: "Temperature evidence captured",
             sealNumber: "",
-          }), stats)
+          }), options, stats)
       : undefined;
     const weightTicketPhoto = Number(load.weight || 0) > 0
-      ? resolveOrGenerate(load.id, "weight-ticket-photo", () =>
+      ? await resolveOrGenerate(load, "weightTicketPhoto", "weight-ticket-photo", () =>
           renderEvidenceSvg({
             ...common,
             title: "Weight Ticket Photo",
@@ -311,10 +410,10 @@ function main() {
             facility: load.origin,
             status: "Scale / weight evidence captured",
             sealNumber: "",
-          }), stats)
+          }), options, stats)
       : undefined;
     const detentionProofPhoto = /detention|delay|hold/i.test(String(load.dispatchOpsNotes || ""))
-      ? resolveOrGenerate(load.id, "detention-proof-photo", () =>
+      ? await resolveOrGenerate(load, "detentionProofPhoto", "detention-proof-photo", () =>
           renderEvidenceSvg({
             ...common,
             title: "Detention Proof Photo",
@@ -323,10 +422,10 @@ function main() {
             facility: load.destination,
             status: "Detention/accessorial evidence",
             sealNumber: "",
-          }), stats)
+          }), options, stats)
       : undefined;
     const lumperReceipt = hasLumperIssue(load, data.settlements)
-      ? resolveOrGenerate(load.id, "lumper-receipt", () =>
+      ? await resolveOrGenerate(load, "lumperReceipt", "lumper-receipt", () =>
           renderEvidenceSvg({
             ...common,
             title: "Lumper Receipt",
@@ -335,11 +434,11 @@ function main() {
             facility: load.destination,
             status: "Lumper receipt pending/review tracked for settlement",
             sealNumber: "",
-          }), stats)
+          }), options, stats)
       : undefined;
     const hasClaim = Boolean(load.dispatchExceptionFlag || String(load.sealStatus).toUpperCase() === "MISMATCH");
     const damagePhoto = hasClaim
-      ? resolveOrGenerate(load.id, "cargo-damage-photo", () =>
+      ? await resolveOrGenerate(load, "cargoDamagePhoto", "cargo-damage-photo", () =>
           renderEvidenceSvg({
             ...common,
             title: "Cargo Damage Evidence",
@@ -349,10 +448,10 @@ function main() {
             status: "Damage observed / claim review required",
             sealNumber: `${load.pickupSeal || "—"} → ${load.deliverySeal || "—"}`,
             warning: warning || "Claim review required",
-          }), stats)
+          }), options, stats)
       : undefined;
     const damagedPalletPhoto = hasClaim
-      ? resolveOrGenerate(load.id, "damaged-pallet-photo", () =>
+      ? await resolveOrGenerate(load, "damagedPalletPhoto", "damaged-pallet-photo", () =>
           renderEvidenceSvg({
             ...common,
             title: "Damaged Pallet Photo",
@@ -362,10 +461,10 @@ function main() {
             status: "Damaged pallet evidence captured",
             sealNumber: "",
             warning: warning || undefined,
-          }), stats)
+          }), options, stats)
       : undefined;
     const claimEvidence = hasClaim
-      ? resolveOrGenerate(load.id, "claim-evidence", () =>
+      ? await resolveOrGenerate(load, "claimEvidence", "claim-evidence", () =>
           renderEvidenceSvg({
             ...common,
             title: "Claim Evidence Summary",
@@ -375,10 +474,10 @@ function main() {
             status: "Structured claim evidence placeholder (demo)",
             sealNumber: load.sealStatus || "",
             warning: warning || undefined,
-          }), stats)
+          }), options, stats)
       : undefined;
     const safetyViolationPhoto = /safety/i.test(String(load.dispatchOpsNotes || ""))
-      ? resolveOrGenerate(load.id, "safety-violation-photo", () =>
+      ? await resolveOrGenerate(load, "safetyViolationPhoto", "safety-violation-photo", () =>
           renderEvidenceSvg({
             ...common,
             title: "Safety Violation Photo",
@@ -388,7 +487,7 @@ function main() {
             status: "Safety event evidence attached",
             sealNumber: "",
             warning: "Safety event linked to load",
-          }), stats)
+          }), options, stats)
       : undefined;
 
     manifest[load.id] = {
@@ -421,8 +520,8 @@ function main() {
   writeJson(PUBLIC_MANIFEST_PATH, manifest);
   writeJson(LIB_MANIFEST_PATH, manifest);
   console.log(
-    `[generate-load-evidence] loads=${stats.loads} required=${stats.required} reused=${stats.reused} generated=${stats.generated} manifest=${PUBLIC_MANIFEST_PATH}`
+    `[generate-load-evidence] loads=${stats.loads} required=${stats.required} reused=${stats.reused} ai_generated=${stats.aiGenerated} svg_generated=${stats.svgGenerated} ai_failed=${stats.aiFailed} unresolved=${stats.unresolved} manifest=${PUBLIC_MANIFEST_PATH}`
   );
 }
 
-main();
+await main();

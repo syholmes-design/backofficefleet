@@ -474,7 +474,7 @@ export function SettlementDetailDrawer({ settlementId, open, onClose }: Props) {
                             <tbody>
                               {[
                                 { section: "Core Documents", rows: packet.documents.filter((d) => d.section === "core") },
-                                { section: "Proof & Evidence", rows: packet.documents.filter((d) => d.section === "proof") },
+                                { section: "Proof & Media", rows: packet.documents.filter((d) => d.section === "proof") },
                                 { section: "Exceptions / Claims", rows: packet.documents.filter((d) => d.section === "exceptions") },
                               ].filter((g) => g.rows.length > 0).map((group) => (
                                 <Fragment key={`${lid}-${group.section}`}>

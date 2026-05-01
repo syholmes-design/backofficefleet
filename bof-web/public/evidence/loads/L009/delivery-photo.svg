@@ -21,7 +21,7 @@
   <text x="48" y="378" fill="#cbd5e1" font-size="16" font-family="Segoe UI, Arial">Status: Delivery proof captured</text>
   <text x="48" y="404" fill="#fde68a" font-size="16" font-family="Segoe UI, Arial">Seal / lock ref: SEAL-26791</text>
   <text x="48" y="432" fill="#bae6fd" font-size="16" font-family="Consolas, monospace">Truck T-111 · Trailer TR-111</text>
-  <text x="48" y="470" fill="#cbd5e1" font-size="16" font-family="Consolas, monospace">Timestamp (UTC): 2026-05-01T08:56:40.242Z</text>
+  <text x="48" y="470" fill="#cbd5e1" font-size="16" font-family="Consolas, monospace">Timestamp (UTC): 2026-05-01T10:54:08.547Z</text>
   <rect x="990" y="296" width="230" height="230" rx="12" fill="#111827" stroke="#14b8a6" stroke-width="2"/>
   <circle cx="1105" cy="394" r="52" fill="#0f172a" stroke="#14b8a6" stroke-width="3"/>
   <path d="M1080 394h50M1105 369v50" stroke="#14b8a6" stroke-width="4" stroke-linecap="round"/>

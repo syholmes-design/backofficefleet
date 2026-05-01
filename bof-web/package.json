@@ -15,6 +15,7 @@
     "generate:docs": "node scripts/generate-bof-documents.mjs",
     "generate:load-docs": "node scripts/generate-load-docs.mjs",
     "generate:load-evidence": "node scripts/generate-load-evidence.mjs",
+    "generate:load-evidence:ai": "node scripts/generate-load-evidence.mjs --enable-ai",
     "generate:demo-docs": "npm run generate:load-docs && npm run generate:load-evidence",
     "validate:load-docs": "node scripts/validate-load-docs.mjs",
     "validate:load-evidence": "node scripts/validate-load-evidence.mjs",

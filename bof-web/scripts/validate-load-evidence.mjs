@@ -31,9 +31,14 @@ function main() {
       errors.push(`${load.id}: missing manifest entry`);
       continue;
     }
-    for (const [key, url] of Object.entries(entry)) {
-      if (!url) {
+    for (const [key, value] of Object.entries(entry)) {
+      if (!value) {
         errors.push(`${load.id}: ${key} has empty URL`);
+        continue;
+      }
+      const url = typeof value === "string" ? value : value.url;
+      if (!url) {
+        errors.push(`${load.id}: ${key} is missing url field`);
         continue;
       }
       const fp = toFsPath(String(url));

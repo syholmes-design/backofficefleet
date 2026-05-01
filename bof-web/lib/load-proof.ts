@@ -2,6 +2,7 @@ import type { BofData } from "./load-bof-data";
 import { getSafetyEvidenceByLoadId } from "./safety-evidence";
 import { getGeneratedLoadDocUrl } from "./load-doc-manifest";
 import {
+  getLoadEvidenceMeta,
   getLoadEvidenceForLoad,
   getLoadEvidenceManifest,
   getLoadEvidenceUrl,
@@ -125,7 +126,15 @@ export type LoadEvidenceItem = {
   requiredForSettlementRelease: boolean;
   requiredForClaimRelease?: boolean;
   uploadedAt?: string;
-  source?: "actual_docs" | "generated" | "manual_upload" | "rfid" | "camera";
+  source?:
+    | "actual_docs"
+    | "generated"
+    | "manual_upload"
+    | "rfid"
+    | "camera"
+    | "ai_generated"
+    | "svg_demo"
+    | "real";
 };
 
 function withResolvedStatus(item: LoadEvidenceItem): LoadEvidenceItem {
@@ -490,6 +499,15 @@ function sourceFromUrl(url?: string): LoadEvidenceItem["source"] {
   return "manual_upload";
 }
 
+function sourceFromEvidenceKey(loadId: string, key: Parameters<typeof getLoadEvidenceMeta>[1]) {
+  const meta = getLoadEvidenceMeta(loadId, key);
+  if (!meta?.source) return undefined;
+  if (meta.source === "ai_generated") return "ai_generated";
+  if (meta.source === "svg_demo") return "svg_demo";
+  if (meta.source === "real") return "real";
+  return undefined;
+}
+
 function fileNameFromUrl(url?: string): string | undefined {
   const u = String(url ?? "").trim();
   if (!u) return undefined;
@@ -706,7 +724,9 @@ export function getLoadDocumentPacket(data: BofData, loadId: string): LoadDocume
     note: cargoUrl
       ? "Cargo condition evidence image."
       : "Cargo photo evidence is missing.",
-    source: cargoUrl ? sourceFromUrl(cargoUrl) : undefined,
+    source:
+      sourceFromEvidenceKey(loadId, "cargoPhoto") ??
+      (cargoUrl ? sourceFromUrl(cargoUrl) : undefined),
   } as LoadEvidenceItem;
   const sealPhotoUrl = generatedSealPhoto ?? generatedSealDeliveryPhoto ?? generatedSealPickupPhoto;
   const sealPhoto = {
@@ -726,7 +746,9 @@ export function getLoadDocumentPacket(data: BofData, loadId: string): LoadDocume
       : sealPhotoUrl
         ? "Combined seal proof image."
         : "Seal photo evidence not generated.",
-    source: sealPhotoUrl ? sourceFromUrl(sealPhotoUrl) : undefined,
+    source:
+      sourceFromEvidenceKey(loadId, "sealPhoto") ??
+      (sealPhotoUrl ? sourceFromUrl(sealPhotoUrl) : undefined),
   } as LoadEvidenceItem;
   const equipmentPhoto = {
     ...toEvidenceItem(loadId, "Equipment photo", "proof", "equipment_photo", undefined, false),
@@ -736,7 +758,9 @@ export function getLoadDocumentPacket(data: BofData, loadId: string): LoadDocume
     note: generatedEquipmentPhoto
       ? "Equipment inspection evidence image."
       : "Equipment evidence image not generated.",
-    source: generatedEquipmentPhoto ? sourceFromUrl(generatedEquipmentPhoto) : undefined,
+    source:
+      sourceFromEvidenceKey(loadId, "equipmentPhoto") ??
+      (generatedEquipmentPhoto ? sourceFromUrl(generatedEquipmentPhoto) : undefined),
   } as LoadEvidenceItem;
   const pickupPhoto = {
     ...toEvidenceItem(loadId, "Pickup photo", "proof", "pickup_photo", undefined, false),
@@ -746,7 +770,9 @@ export function getLoadDocumentPacket(data: BofData, loadId: string): LoadDocume
     note: generatedPickupPhoto
       ? "Pickup proof image."
       : "Pickup evidence image not generated.",
-    source: generatedPickupPhoto ? sourceFromUrl(generatedPickupPhoto) : undefined,
+    source:
+      sourceFromEvidenceKey(loadId, "pickupPhoto") ??
+      (generatedPickupPhoto ? sourceFromUrl(generatedPickupPhoto) : undefined),
   } as LoadEvidenceItem;
   const deliveryPhoto = {
     ...toEvidenceItem(loadId, "Delivery photo", "proof", "delivery_photo", undefined, false),
@@ -756,7 +782,9 @@ export function getLoadDocumentPacket(data: BofData, loadId: string): LoadDocume
     note: generatedDeliveryPhoto
       ? "Delivery proof image."
       : "Delivery evidence image not generated.",
-    source: generatedDeliveryPhoto ? sourceFromUrl(generatedDeliveryPhoto) : undefined,
+    source:
+      sourceFromEvidenceKey(loadId, "deliveryPhoto") ??
+      (generatedDeliveryPhoto ? sourceFromUrl(generatedDeliveryPhoto) : undefined),
   } as LoadEvidenceItem;
   const sealPickupPhoto = {
     ...toEvidenceItem(
@@ -775,7 +803,9 @@ export function getLoadDocumentPacket(data: BofData, loadId: string): LoadDocume
       : generatedSealPickupPhoto
         ? "Pickup seal checkpoint image."
         : "Pickup seal photo missing.",
-    source: generatedSealPickupPhoto ? sourceFromUrl(generatedSealPickupPhoto) : undefined,
+    source:
+      sourceFromEvidenceKey(loadId, "sealPickupPhoto") ??
+      (generatedSealPickupPhoto ? sourceFromUrl(generatedSealPickupPhoto) : undefined),
   } as LoadEvidenceItem;
   const sealDeliveryPhoto = {
     ...toEvidenceItem(
@@ -794,7 +824,9 @@ export function getLoadDocumentPacket(data: BofData, loadId: string): LoadDocume
       : generatedSealDeliveryPhoto
         ? "Delivery seal checkpoint image."
         : "Delivery seal photo missing.",
-    source: generatedSealDeliveryPhoto ? sourceFromUrl(generatedSealDeliveryPhoto) : undefined,
+    source:
+      sourceFromEvidenceKey(loadId, "sealDeliveryPhoto") ??
+      (generatedSealDeliveryPhoto ? sourceFromUrl(generatedSealDeliveryPhoto) : undefined),
   } as LoadEvidenceItem;
   const sealProof =
     proofByType(proofItems, "Delivery Seal Photo") ??
@@ -860,7 +892,9 @@ export function getLoadDocumentPacket(data: BofData, loadId: string): LoadDocume
       ? "RFID dock proof available."
       : "RFID workflow applies when dock validation is required.",
     requiredForSettlementRelease: false,
-    source: generatedRfidDockProof ? sourceFromUrl(generatedRfidDockProof) : "rfid",
+    source:
+      sourceFromEvidenceKey(loadId, "rfidDockProof") ??
+      (generatedRfidDockProof ? sourceFromUrl(generatedRfidDockProof) : "rfid"),
   };
   const emptyTrailerProof: LoadEvidenceItem = {
     id: `${loadId}:empty_trailer_proof`,
@@ -875,7 +909,9 @@ export function getLoadDocumentPacket(data: BofData, loadId: string): LoadDocume
       ? "Trailer empty confirmation recorded."
       : "Required after delivery closeout.",
     requiredForSettlementRelease: load.status === "Delivered",
-    source: generatedEmptyTrailerProof ? sourceFromUrl(generatedEmptyTrailerProof) : undefined,
+    source:
+      sourceFromEvidenceKey(loadId, "emptyTrailerProof") ??
+      (generatedEmptyTrailerProof ? sourceFromUrl(generatedEmptyTrailerProof) : undefined),
   };
   const tempCheckPhoto: LoadEvidenceItem = {
     id: `${loadId}:temp_check_photo`,
@@ -888,7 +924,9 @@ export function getLoadDocumentPacket(data: BofData, loadId: string): LoadDocume
     fileName: fileNameFromUrl(generatedTempCheckPhoto),
     note: "Temperature-controlled lane evidence.",
     requiredForSettlementRelease: false,
-    source: generatedTempCheckPhoto ? sourceFromUrl(generatedTempCheckPhoto) : undefined,
+    source:
+      sourceFromEvidenceKey(loadId, "tempCheckPhoto") ??
+      (generatedTempCheckPhoto ? sourceFromUrl(generatedTempCheckPhoto) : undefined),
   };
   const weightTicketPhoto: LoadEvidenceItem = {
     id: `${loadId}:weight_ticket_photo`,
@@ -901,7 +939,9 @@ export function getLoadDocumentPacket(data: BofData, loadId: string): LoadDocume
     fileName: fileNameFromUrl(generatedWeightTicketPhoto),
     note: "Weight/scale proof for compliance checks.",
     requiredForSettlementRelease: false,
-    source: generatedWeightTicketPhoto ? sourceFromUrl(generatedWeightTicketPhoto) : undefined,
+    source:
+      sourceFromEvidenceKey(loadId, "weightTicketPhoto") ??
+      (generatedWeightTicketPhoto ? sourceFromUrl(generatedWeightTicketPhoto) : undefined),
   };
   const detentionProofPhoto: LoadEvidenceItem = {
     id: `${loadId}:detention_proof_photo`,
@@ -914,7 +954,9 @@ export function getLoadDocumentPacket(data: BofData, loadId: string): LoadDocume
     fileName: fileNameFromUrl(generatedDetentionProofPhoto),
     note: "Detention/accessorial evidence when applicable.",
     requiredForSettlementRelease: false,
-    source: generatedDetentionProofPhoto ? sourceFromUrl(generatedDetentionProofPhoto) : undefined,
+    source:
+      sourceFromEvidenceKey(loadId, "detentionProofPhoto") ??
+      (generatedDetentionProofPhoto ? sourceFromUrl(generatedDetentionProofPhoto) : undefined),
   };
   const safetyPhoto = toEvidenceItem(
     loadId,
@@ -961,7 +1003,9 @@ export function getLoadDocumentPacket(data: BofData, loadId: string): LoadDocume
         ? `Damage evidence image linked.${generatedClaimEvidence ? ` Claim evidence file: ${generatedClaimEvidence}.` : ""}`
         : "Damage evidence photo required for claim path."
       : "No active claim path.",
-    source: generatedDamagePhoto ? sourceFromUrl(generatedDamagePhoto) : undefined,
+    source:
+      sourceFromEvidenceKey(loadId, "cargoDamagePhoto") ??
+      (generatedDamagePhoto ? sourceFromUrl(generatedDamagePhoto) : undefined),
   } as LoadEvidenceItem;
   const cargoDamagePhoto: LoadEvidenceItem = {
     id: `${loadId}:cargo_damage_photo`,
@@ -977,7 +1021,9 @@ export function getLoadDocumentPacket(data: BofData, loadId: string): LoadDocume
       : "Required when claim/damage workflow is active.",
     requiredForSettlementRelease: false,
     requiredForClaimRelease: claimRequired,
-    source: generatedCargoDamagePhoto ? sourceFromUrl(generatedCargoDamagePhoto) : undefined,
+    source:
+      sourceFromEvidenceKey(loadId, "cargoDamagePhoto") ??
+      (generatedCargoDamagePhoto ? sourceFromUrl(generatedCargoDamagePhoto) : undefined),
   };
   const damagedPalletPhoto: LoadEvidenceItem = {
     id: `${loadId}:damaged_pallet_photo`,
@@ -993,7 +1039,9 @@ export function getLoadDocumentPacket(data: BofData, loadId: string): LoadDocume
       : "Required for cargo damage claims.",
     requiredForSettlementRelease: false,
     requiredForClaimRelease: claimRequired,
-    source: generatedDamagedPalletPhoto ? sourceFromUrl(generatedDamagedPalletPhoto) : undefined,
+    source:
+      sourceFromEvidenceKey(loadId, "damagedPalletPhoto") ??
+      (generatedDamagedPalletPhoto ? sourceFromUrl(generatedDamagedPalletPhoto) : undefined),
   };
   const sealMismatchPhoto: LoadEvidenceItem = {
     id: `${loadId}:seal_mismatch_photo`,
@@ -1011,7 +1059,9 @@ export function getLoadDocumentPacket(data: BofData, loadId: string): LoadDocume
     fileName: fileNameFromUrl(generatedSealMismatchPhoto),
     note: "Required when pickup/delivery seal numbers mismatch.",
     requiredForSettlementRelease: false,
-    source: generatedSealMismatchPhoto ? sourceFromUrl(generatedSealMismatchPhoto) : undefined,
+    source:
+      sourceFromEvidenceKey(loadId, "sealMismatchPhoto") ??
+      (generatedSealMismatchPhoto ? sourceFromUrl(generatedSealMismatchPhoto) : undefined),
   };
   const claim = toEvidenceItem(
     loadId,

@@ -21,7 +21,17 @@ export type LoadEvidenceKey =
   | "detentionProofPhoto"
   | "safetyViolationPhoto";
 
-export type LoadEvidenceManifestEntry = Partial<Record<LoadEvidenceKey, string>>;
+export type LoadEvidenceSource = "real" | "ai_generated" | "svg_demo";
+export type LoadEvidenceManifestValue =
+  | string
+  | {
+      url: string;
+      source?: LoadEvidenceSource;
+      label?: string;
+      promptSummary?: string;
+      generatedAt?: string;
+    };
+export type LoadEvidenceManifestEntry = Partial<Record<LoadEvidenceKey, LoadEvidenceManifestValue>>;
 type LoadEvidenceManifest = Record<string, LoadEvidenceManifestEntry>;
 
 const manifest = (evidenceManifestRaw ?? {}) as LoadEvidenceManifest;
@@ -52,7 +62,13 @@ export function getLoadEvidenceUrl(
 ): string | undefined {
   const raw = getLoadEvidenceEntry(loadId)[key];
   if (!raw) return undefined;
-  const value = String(raw).trim();
+  const value = typeof raw === "string" ? raw : String(raw.url ?? "");
   return value.length > 0 ? value : undefined;
+}
+
+export function getLoadEvidenceMeta(loadId: string, key: LoadEvidenceKey) {
+  const raw = getLoadEvidenceEntry(loadId)[key];
+  if (!raw || typeof raw === "string") return undefined;
+  return raw;
 }
 

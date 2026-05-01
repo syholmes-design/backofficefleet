@@ -76,11 +76,13 @@ export function DocumentationReadinessPanel({ load }: Props) {
                     : "Blocked",
         href: ready ? item.url : undefined,
         source:
-          item.source === "generated"
-            ? "Generated demo evidence"
-            : item.source
-              ? "Real file"
-              : "Missing",
+          item.source === "ai_generated"
+            ? "AI demo evidence"
+            : item.source === "svg_demo" || item.source === "generated"
+              ? "Demo SVG evidence"
+              : item.source
+                ? "Real evidence"
+                : "Missing",
         detail:
           item.note ||
           (!ready && item.status === "ready"

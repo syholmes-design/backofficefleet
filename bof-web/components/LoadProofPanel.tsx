@@ -26,7 +26,9 @@ function displayEvidenceStatus(status: LoadEvidenceItem["status"]) {
 
 function displaySource(source?: LoadEvidenceItem["source"]) {
   if (!source) return "Missing";
-  if (source === "generated") return "Generated demo evidence";
+  if (source === "ai_generated") return "AI demo evidence";
+  if (source === "svg_demo" || source === "generated") return "Demo SVG evidence";
+  if (source === "real" || source === "actual_docs" || source === "manual_upload") return "Real evidence";
   return "Real file";
 }
 

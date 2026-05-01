@@ -13,7 +13,7 @@ type DocLinkItem = {
   kind: "pdf" | "image";
   showSignedBadge: boolean;
   status: "ready" | "missing";
-  source: "real" | "generated" | "missing";
+  source: "real" | "generated" | "ai_generated" | "svg_demo" | "missing";
   required?: boolean;
 };
 
@@ -46,7 +46,13 @@ function packetDocsByLabels(
       kind: "image",
       showSignedBadge: false,
       status: ready ? "ready" : "missing",
-      source: ready ? (row?.source === "generated" ? "generated" : "real") : "missing",
+      source: ready
+        ? row?.source === "ai_generated"
+          ? "ai_generated"
+          : row?.source === "svg_demo" || row?.source === "generated"
+            ? "svg_demo"
+            : "real"
+        : "missing",
       required: Boolean(row?.requiredForSettlementRelease),
     };
   });
@@ -100,7 +106,13 @@ export function LoadDocumentsLibraryEnhanced({ load }: Props) {
       kind: "pdf",
       showSignedBadge: Boolean(row?.url && isSignedDocUrl(row.url)),
       status: ready ? "ready" : "missing",
-      source: ready ? (row?.source === "generated" ? "generated" : "real") : "missing",
+      source: ready
+        ? row?.source === "ai_generated"
+          ? "ai_generated"
+          : row?.source === "svg_demo" || row?.source === "generated"
+            ? "svg_demo"
+            : "real"
+        : "missing",
       required: true,
     };
   });
@@ -227,10 +239,12 @@ function DocCard({ item }: { item: DocLinkItem }) {
     missing: "border-red-700/60 bg-red-950/40",
   };
   const sourceLabel =
-    item.source === "generated"
-      ? "Generated demo evidence"
+    item.source === "ai_generated"
+      ? "AI demo evidence"
+      : item.source === "svg_demo" || item.source === "generated"
+        ? "Demo SVG evidence"
       : item.source === "real"
-        ? "Real file"
+        ? "Real evidence"
         : "Missing";
   return (
     <a
