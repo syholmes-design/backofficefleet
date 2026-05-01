@@ -7,6 +7,7 @@ import {
   runAutoChecks,
 } from "@/lib/load-requirements-intake-checks";
 import type { IntakeWizardState, LoadPacket } from "@/lib/load-requirements-intake-types";
+import type { LoadIntakeRecord } from "@/lib/load-requirements-intake-types";
 import { LoadIntakeStep4PacketReview } from "@/components/load-intake/LoadIntakeStep4PacketReview";
 import { LoadIntakeAddressCombo } from "@/components/load-intake/LoadIntakeAddressCombo";
 import { useBofDemoData } from "@/lib/bof-demo-data-context";
@@ -24,6 +25,17 @@ import {
   findFacilityByName,
   routesForOriginFacility,
 } from "@/lib/load-intake-intelligence";
+import { normalizeLoadIntake } from "@/lib/load-intake/normalize-intake";
+
+type ExtractionResponse = {
+  providerName: "local";
+  status: "success" | "needs_review" | "failed";
+  confidence: number;
+  normalizedFields: Partial<LoadIntakeRecord>;
+  extractedTextPreview: string;
+  warnings: string[];
+  fieldConfidence: Record<string, number>;
+};
 
 const SHIP_ID = "SHIP-INTAKE-DRAFT";
 const FAC_ID = "FAC-INTAKE-DRAFT";
@@ -178,6 +190,106 @@ function YesNo({
   );
 }
 
+function splitDateTime(value?: string): { date?: string; time?: string } {
+  const v = String(value || "").trim();
+  if (!v) return {};
+  if (v.includes("T")) {
+    const [date, time] = v.split("T");
+    return { date, time: (time || "").slice(0, 5) };
+  }
+  return { date: v.slice(0, 10) };
+}
+
+function buildRecordFromState(
+  state: IntakeWizardState,
+  sourceType: "manual" | "upload",
+  extraction?: ExtractionResponse | null
+): Partial<LoadIntakeRecord> {
+  const pickup = splitDateTime(state.loadRequirement.pickup_at || state.compliance.appointment_window_start);
+  const delivery = splitDateTime(state.loadRequirement.delivery_at || state.compliance.appointment_window_end);
+  return {
+    sourceType,
+    extractionProvider: extraction?.providerName,
+    extractionConfidence: extraction?.confidence,
+    extractionWarnings: extraction?.warnings,
+    humanReviewRequired: sourceType === "upload",
+    customerName: state.shipper.shipper_name,
+    shipperName: state.shipper.shipper_name,
+    pickupFacilityName: state.facility.facility_name,
+    pickupAddress1: state.facility.address,
+    pickupCity: state.facility.city,
+    pickupState: state.facility.state,
+    pickupZip: state.facility.zip,
+    pickupAppointmentDate: pickup.date,
+    pickupAppointmentTime: pickup.time,
+    deliveryFacilityName: state.loadRequirement.destination_facility_name,
+    deliveryAddress1: state.loadRequirement.destination_address,
+    deliveryCity: state.loadRequirement.destination_city,
+    deliveryState: state.loadRequirement.destination_state,
+    deliveryZip: state.loadRequirement.destination_zip,
+    deliveryAppointmentDate: delivery.date,
+    deliveryAppointmentTime: delivery.time,
+    commodity: state.loadRequirement.commodity,
+    weight: state.loadRequirement.weight,
+    equipmentType: state.loadRequirement.equipment_type,
+    rate: state.loadRequirement.rate_linehaul,
+    bolNumber: state.loadRequirement.bol_number,
+    sealRequired: state.compliance.seal_required,
+    sealNumber: state.loadRequirement.seal_number,
+    lumperInstructions: state.compliance.lumper_expected ? "Lumper expected" : "",
+    detentionTerms: state.compliance.accessorial_rules,
+    insuranceRequired: state.compliance.certificateRequired,
+    cargoInsuranceMinimum: state.compliance.cargoCoverageLevel,
+    specialInstructions: state.loadRequirement.special_handling,
+    assignedDriverId: state.loadRequirement.assigned_driver_id,
+    assignedTruckId: state.loadRequirement.truck_id,
+    assignedTrailerId: state.loadRequirement.trailer_id,
+    loadId: state.loadRequirement.load_id_input,
+    invoiceNumber: state.loadRequirement.invoice_number,
+    poNumber: undefined,
+    rateConfirmationNumber: undefined,
+  };
+}
+
+function applyExtractedFieldsToState(state: IntakeWizardState, fields: Partial<LoadIntakeRecord>): IntakeWizardState {
+  const next = structuredClone(state);
+  if (fields.customerName) next.shipper.shipper_name = String(fields.customerName);
+  if (fields.shipperName && !next.shipper.shipper_name) next.shipper.shipper_name = String(fields.shipperName);
+  if (fields.pickupFacilityName) next.facility.facility_name = String(fields.pickupFacilityName);
+  if (fields.pickupAddress1) next.facility.address = String(fields.pickupAddress1);
+  if (fields.pickupCity) next.facility.city = String(fields.pickupCity);
+  if (fields.pickupState) next.facility.state = String(fields.pickupState);
+  if (fields.pickupZip) next.facility.zip = String(fields.pickupZip);
+  if (fields.deliveryFacilityName) next.loadRequirement.destination_facility_name = String(fields.deliveryFacilityName);
+  if (fields.deliveryAddress1) next.loadRequirement.destination_address = String(fields.deliveryAddress1);
+  if (fields.deliveryCity) next.loadRequirement.destination_city = String(fields.deliveryCity);
+  if (fields.deliveryState) next.loadRequirement.destination_state = String(fields.deliveryState);
+  if (fields.deliveryZip) next.loadRequirement.destination_zip = String(fields.deliveryZip);
+  if (fields.pickupAppointmentDate) {
+    next.loadRequirement.pickup_at = `${fields.pickupAppointmentDate}T${String(fields.pickupAppointmentTime || "08:00").slice(0, 5)}`;
+  }
+  if (fields.deliveryAppointmentDate) {
+    next.loadRequirement.delivery_at = `${fields.deliveryAppointmentDate}T${String(fields.deliveryAppointmentTime || "17:00").slice(0, 5)}`;
+  }
+  if (fields.commodity) next.loadRequirement.commodity = String(fields.commodity);
+  if (fields.weight) next.loadRequirement.weight = Number(fields.weight) || next.loadRequirement.weight;
+  if (fields.equipmentType) next.loadRequirement.equipment_type = String(fields.equipmentType);
+  if (fields.rate) next.loadRequirement.rate_linehaul = Number(fields.rate) || next.loadRequirement.rate_linehaul;
+  if (fields.bolNumber) next.loadRequirement.bol_number = String(fields.bolNumber);
+  if (fields.sealNumber) next.loadRequirement.seal_number = String(fields.sealNumber);
+  if (typeof fields.sealRequired !== "undefined") next.compliance.seal_required = Boolean(fields.sealRequired);
+  if (fields.specialInstructions) next.loadRequirement.special_handling = String(fields.specialInstructions);
+  if (fields.detentionTerms) next.compliance.accessorial_rules = String(fields.detentionTerms);
+  if (fields.cargoInsuranceMinimum) {
+    const v = String(fields.cargoInsuranceMinimum);
+    if (v.includes("100")) next.compliance.cargoCoverageLevel = "$100k";
+    else if (v.includes("500")) next.compliance.cargoCoverageLevel = "$500k";
+    else if (v.includes("1M")) next.compliance.cargoCoverageLevel = "$1M+";
+    else next.compliance.cargoCoverageLevel = "$250k";
+  }
+  return next;
+}
+
 const STEPS = [
   { n: 1, title: "Shipper & facility", short: "Shipper" },
   { n: 2, title: "Load requirements", short: "Load" },
@@ -192,6 +304,11 @@ export function LoadRequirementsWizard() {
   const [state, setState] = useState<IntakeWizardState>(() => createInitialState());
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [submitSuccess, setSubmitSuccess] = useState<string | null>(null);
+  const [intakeMode, setIntakeMode] = useState<"manual" | "upload">("manual");
+  const [uploadFile, setUploadFile] = useState<File | null>(null);
+  const [extracting, setExtracting] = useState(false);
+  const [extractionError, setExtractionError] = useState<string | null>(null);
+  const [extractionResult, setExtractionResult] = useState<ExtractionResponse | null>(null);
   const formEntityId = toBofIntakeEntityId(state.loadRequirement.load_requirement_id);
   const intakeSurfaceContext = useMemo(
     () => buildBofIntakeSurfaceContextFromWizard(formEntityId, state),
@@ -284,6 +401,14 @@ export function LoadRequirementsWizard() {
   );
 
   const blocking = hasBlockingChecks(checks);
+  const normalizedReview = useMemo(
+    () =>
+      normalizeLoadIntake({
+        sourceType: intakeMode,
+        fields: buildRecordFromState(state, intakeMode, extractionResult),
+      }),
+    [extractionResult, intakeMode, state]
+  );
 
   const goStep = (n: number) => setStep(n);
 
