@@ -7376,8 +7376,18 @@ body {
     height: 228px;
   }
 
+  .bof-hr-packet-preview-frame-inner {
+    width: min(100%, calc(720px * 0.34));
+    height: calc(620px * 0.34);
+  }
+
   .bof-hr-packet-preview-iframe {
     transform: scale(0.34);
+  }
+
+  .bof-hr-packet-preview-modal-frame-inner {
+    width: min(100%, calc(720px * 0.44));
+    height: calc(960px * 0.44);
   }
 
   .bof-hr-packet-preview-modal-iframe {

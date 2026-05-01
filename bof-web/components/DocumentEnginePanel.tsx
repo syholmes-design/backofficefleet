@@ -76,7 +76,9 @@ export function DocumentEnginePanel({
           <div className="bof-doc-popover-title">Preview</div>
           {hrPacketPreview ? (
             <div className="bof-hr-packet-preview-frame">
-              <iframe src={url} title="" className="bof-hr-packet-preview-iframe" />
+              <div className="bof-hr-packet-preview-frame-inner">
+                <iframe src={url} title="" className="bof-hr-packet-preview-iframe" />
+              </div>
             </div>
           ) : (
             <iframe src={url} title="" className="bof-doc-popover-iframe" />
@@ -89,7 +91,9 @@ export function DocumentEnginePanel({
         <>
           <div className="bof-doc-popover-title">Preview</div>
           <div className="bof-hr-packet-preview-frame">
-            <iframe src={url} title="" className="bof-hr-packet-preview-iframe" />
+            <div className="bof-hr-packet-preview-frame-inner">
+              <iframe src={url} title="" className="bof-hr-packet-preview-iframe" />
+            </div>
           </div>
         </>
       );
@@ -373,11 +377,13 @@ export function DocumentEnginePanel({
                 (isPdfPath(modal.previewUrl) ||
                   isHtmlDocumentPath(modal.previewUrl)) && (
                   <div className="bof-hr-packet-preview-modal-frame">
-                    <iframe
-                      src={modal.previewUrl}
-                      title="Document preview"
-                      className="bof-hr-packet-preview-modal-iframe"
-                    />
+                    <div className="bof-hr-packet-preview-modal-frame-inner">
+                      <iframe
+                        src={modal.previewUrl}
+                        title="Document preview"
+                        className="bof-hr-packet-preview-modal-iframe"
+                      />
+                    </div>
                   </div>
                 )}
               {modal.previewUrl &&
