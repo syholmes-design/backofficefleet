@@ -7,7 +7,7 @@
  * 3. Rebuild loads[] from Dispatch_Clean.
  * 4. Clear public/generated/drivers and public/generated/loads, recreate empty dirs.
  * 5. Regenerate driver credential HTML + fileUrl/previewUrl in demo-data.json.
- * 6. Optional: generate-load-docs.mjs if present.
+ * 6. Optional: generate-load-evidence.mjs then generate-load-docs.mjs if present.
  *
  * Note: patch-drivers / patch-documents are covered by build-demo-data (Drivers_Clean, Documents_Clean).
  *
@@ -200,6 +200,7 @@ function main() {
 
   runNodeScript("scripts/generate-driver-docs.mjs", "generate:driver-docs (84 HTML + URLs)");
 
+  tryRunOptional("scripts/generate-load-evidence.mjs", "generate-load-evidence");
   tryRunOptional("scripts/generate-load-docs.mjs", "generate-load-docs");
 
   const stats = validate();

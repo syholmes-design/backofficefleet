@@ -23,7 +23,8 @@ export type GeneratedLoadDocKey =
   | "deliveryPhoto"
   | "lumperReceipt"
   | "damageClaimPhoto"
-  | "safetyViolationPhoto";
+  | "safetyViolationPhoto"
+  | "claimEvidence";
 
 export type GeneratedLoadDocEntry = Partial<Record<GeneratedLoadDocKey, string>>;
 

@@ -1,25 +1,60 @@
 <!doctype html>
 <html>
-  <head><meta charset="utf-8" /><title>Work Order {{loadId}}</title><style>{{styles}}</style></head>
+  <head><meta charset="utf-8" /><title>Schedule / Work Order {{loadId}}</title><style>{{styles}}</style></head>
   <body>
     <div class="paper">
       <header class="doc-header">
-        <div><h1 class="doc-title">Schedule / Work Order</h1><div class="generated-label">Generated demo document</div></div>
+        <div>
+          <h1 class="doc-title">Schedule / Work Order</h1>
+          <div class="generated-label">BOF load-specific order under master agreement</div>
+        </div>
         <div class="status-stamp">{{statusStamp}}</div>
       </header>
       <div class="meta-grid">
-        <div class="meta-box"><div class="meta-label">Work Order ID</div><div class="meta-value">{{workOrderId}}</div></div>
-        <div class="meta-box"><div class="meta-label">Load ID</div><div class="meta-value">{{loadId}}</div></div>
+        <div class="meta-box"><div class="meta-label">Work order ID</div><div class="meta-value">{{workOrderId}}</div></div>
+        <div class="meta-box"><div class="meta-label">Load ID / BOL ref</div><div class="meta-value">{{loadId}} · {{bolNumber}}</div></div>
         <div class="meta-box"><div class="meta-label">Customer</div><div class="meta-value">{{customer}}</div></div>
-        <div class="meta-box"><div class="meta-label">Master Agreement</div><div class="meta-value">{{masterAgreementId}}</div></div>
+        <div class="meta-box"><div class="meta-label">Master agreement</div><div class="meta-value">{{masterAgreementId}}</div></div>
+        <div class="meta-box"><div class="meta-label">Driver</div><div class="meta-value">{{driverName}} ({{driverId}})</div></div>
+        <div class="meta-box"><div class="meta-label">Power unit / trailer</div><div class="meta-value">{{truckNumber}} / {{trailerNumber}}</div></div>
       </div>
+      <div class="section-title">Pickup</div>
       <table>
-        <tr><th>Pickup</th><th>Delivery</th><th>Rate</th><th>Terms</th></tr>
-        <tr><td>{{pickupAddress}}</td><td>{{deliveryAddress}}</td><td>{{rate}}</td><td>{{paymentTerms}}</td></tr>
+        <tr><th>Facility</th><th>Address</th><th>Appointment</th><th>Seal</th></tr>
+        <tr>
+          <td>{{pickupFacility}}</td>
+          <td>{{pickupAddress}}</td>
+          <td>{{pickupAppointment}} · {{pickupDate}}</td>
+          <td>{{sealPickup}}</td>
+        </tr>
       </table>
+      <div class="section-title">Delivery</div>
+      <table>
+        <tr><th>Facility</th><th>Address</th><th>Appointment</th><th>Seal</th></tr>
+        <tr>
+          <td>{{deliveryFacility}}</td>
+          <td>{{deliveryAddress}}</td>
+          <td>{{deliveryAppointment}} · {{deliveryDate}}</td>
+          <td>{{sealDelivery}}</td>
+        </tr>
+      </table>
+      <div class="section-title">Freight & commercial</div>
+      <table>
+        <tr><th>Commodity</th><th>Weight</th><th>Pieces / pallets</th><th>NMFC / class</th></tr>
+        <tr><td>{{commodity}}</td><td>{{weight}} lbs</td><td>{{piecesPallets}}</td><td>{{nmfcClass}}</td></tr>
+        <tr><th>Equipment type</th><th>Linehaul</th><th>FSC</th><th>Accessorials</th></tr>
+        <tr><td>{{equipmentType}}</td><td>{{rate}}</td><td>{{fuelSurcharge}}</td><td>{{accessorials}}</td></tr>
+        <tr><th>Detention</th><th>Backhaul</th><th>Lumper</th><th>Payment terms</th></tr>
+        <tr><td>{{detention}}</td><td>{{backhaulPay}}</td><td>{{lumper}} (req: {{lumperRequired}})</td><td>{{paymentTerms}}</td></tr>
+      </table>
+      <div class="section-title">Authorized signatures</div>
       <div class="sig-line">
-        <div class="sig-slot">Carrier signature: <em>{{driverSignature}}</em> / {{pickupDate}}</div>
-        <div class="sig-slot">Operations signature: <em>{{opsSignature}}</em> / {{pickupDate}}</div>
+        <div class="sig-slot">Carrier / driver — {{driverSignature}} — date ____________</div>
+        <div class="sig-slot">Shipper / facility — authorized representative — date ____________</div>
+      </div>
+      <div class="sig-line">
+        <div class="sig-slot">BOF dispatch — {{opsSignature}} — date ____________</div>
+        <div class="sig-slot">Consignee receiver — {{receiverSignature}} — date ____________</div>
       </div>
       <footer><span>{{generatedDate}}</span><span>BOF demo document packet</span></footer>
     </div>

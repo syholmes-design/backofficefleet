@@ -14,16 +14,14 @@ import demoData from "@/lib/demo-data.json";
 import type { BofData } from "@/lib/load-bof-data";
 import { getBackhaulLoadSignals } from "@/lib/backhaul-opportunity-engine";
 import { getGeneratedLoadDocEntry } from "@/lib/load-doc-manifest";
+import { getLoadEvidenceUrl } from "@/lib/load-documents";
 import { coordsForLoadRoute, interpolateAlongRoute } from "@/lib/load-route-geo";
 
-/** Static demo files from `public/mocks/` — served at `/mocks/…`. */
+/** Static demo PDFs from `public/mocks/` — only used when generated HTML docs are absent. */
 export const MOCK_DOC_URLS = {
   rate_con: "/mocks/mock_rate_con.pdf",
   bol: "/mocks/mock_bol.pdf",
   invoice: "/mocks/mock_invoice.pdf",
-  equipment_photo: "/mocks/mock_equipment.jpg",
-  cargo_photo: "/mocks/mock_cargo.jpg",
-  seal_photo: "/mocks/mock_seal.jpg",
 } as const;
 
 /**
@@ -72,6 +70,9 @@ type DemoLoad = {
   sealStatus: string;
   dispatchExceptionFlag: boolean;
   dispatchOpsNotes?: string;
+  masterAgreementId?: string;
+  masterAgreementDate?: string;
+  workOrderId?: string;
 };
 
 function mapDemoStatusToLoadStatus(
@@ -184,16 +185,17 @@ function applyDocumentationDemos(load: Load, l: DemoLoad): Load {
     return {
       ...load,
       lumper_receipt_required: true,
-      lumper_photo_url: "/mocks/mock_seal.jpg",
+      lumper_photo_url: getLoadEvidenceUrl(l.id, "lumperReceipt"),
     };
   }
   if (l.id === "L001") {
+    const gen = getGeneratedLoadDocEntry(l.id);
     return {
       ...load,
       lumper_receipt_required: false,
-      claim_form_url: "/mocks/mock_invoice.pdf",
-      damage_photo_url: "/mocks/mock_cargo.jpg",
-      supporting_attachment_url: "/mocks/mock_bol.pdf",
+      claim_form_url: gen.claimPacket,
+      damage_photo_url: getLoadEvidenceUrl(l.id, "damagePhoto"),
+      supporting_attachment_url: gen.bol ?? load.supporting_attachment_url,
     };
   }
   return {
@@ -202,9 +204,11 @@ function applyDocumentationDemos(load: Load, l: DemoLoad): Load {
   };
 }
 
-function proofMediaUrls(
+function proofMediaUrlsForLoad(
+  loadId: string,
   proof: ProofStatus,
-  idx: number
+  idx: number,
+  generated: ReturnType<typeof getGeneratedLoadDocEntry>
 ): Pick<
   Load,
   | "pod_url"
@@ -212,27 +216,31 @@ function proofMediaUrls(
   | "delivery_photo_url"
   | "lumper_photo_url"
 > {
+  const pickup = getLoadEvidenceUrl(loadId, "pickupPhoto");
+  const delivery = getLoadEvidenceUrl(loadId, "deliveryPhoto");
+  const lumper = getLoadEvidenceUrl(loadId, "lumperReceipt");
+  const pod = generated.pod;
   if (proof === "Complete") {
     return {
-      pod_url: "/mocks/mock_invoice.pdf",
-      pickup_photo_url: "/mocks/mock_equipment.jpg",
-      delivery_photo_url: "/mocks/mock_cargo.jpg",
-      lumper_photo_url: idx % 3 === 0 ? "/mocks/mock_seal.jpg" : undefined,
+      pod_url: pod,
+      pickup_photo_url: pickup,
+      delivery_photo_url: delivery,
+      lumper_photo_url: idx % 3 === 0 ? getLoadEvidenceUrl(loadId, "sealPhoto") : lumper,
     };
   }
   if (proof === "Incomplete") {
     return {
-      pod_url: "/mocks/mock_bol.pdf",
-      pickup_photo_url: "/mocks/mock_equipment.jpg",
+      pod_url: pod,
+      pickup_photo_url: pickup,
       delivery_photo_url: undefined,
       lumper_photo_url: undefined,
     };
   }
   return {
-    pod_url: undefined,
-    pickup_photo_url: undefined,
-    delivery_photo_url: undefined,
-    lumper_photo_url: undefined,
+    pod_url: pod,
+    pickup_photo_url: pickup,
+    delivery_photo_url: delivery,
+    lumper_photo_url: lumper,
   };
 }
 
@@ -326,11 +334,11 @@ export function buildDispatchLoadsFromDemoLoads(loads: DemoLoad[]): Load[] {
       bol_url: generatedDocs.bol ?? signedDocs?.bol_url ?? MOCK_DOC_URLS.bol,
       pod_url: generatedDocs.pod,
       invoice_url: generatedDocs.invoice ?? MOCK_DOC_URLS.invoice,
-      equipment_photo_url: MOCK_DOC_URLS.equipment_photo,
-      cargo_photo_url: MOCK_DOC_URLS.cargo_photo,
-      seal_photo_url: MOCK_DOC_URLS.seal_photo,
+      equipment_photo_url: getLoadEvidenceUrl(l.id, "equipmentPhoto"),
+      cargo_photo_url: getLoadEvidenceUrl(l.id, "cargoPhoto"),
+      seal_photo_url: getLoadEvidenceUrl(l.id, "sealPhoto"),
 
-      ...proofMediaUrls(proof_status, idx),
+      ...proofMediaUrlsForLoad(l.id, proof_status, idx, generatedDocs),
 
       rfid_tag_id: `RFID-${l.id}`,
       destinationMarket: backhaulSignals[l.id]?.destinationMarket,

@@ -37,15 +37,28 @@ function isoNow() {
 
 function renderEvidenceSvg({
   title,
+  evidenceType,
   loadId,
+  workOrderId,
   customer,
   driver,
   location,
+  facility,
   status,
   warning,
   timestamp,
+  sealNumber,
+  equipmentRef,
 }) {
-  const warningLine = warning ? `<text x="24" y="228" fill="#fca5a5" font-size="16" font-weight="700">Warning: ${esc(warning)}</text>` : "";
+  const warningLine = warning
+    ? `<text x="24" y="248" fill="#fca5a5" font-size="16" font-weight="700">Warning: ${esc(warning)}</text>`
+    : "";
+  const sealLine = sealNumber
+    ? `<text x="48" y="404" fill="#fde68a" font-size="16" font-family="Segoe UI, Arial">Seal / lock ref: ${esc(sealNumber)}</text>`
+    : "";
+  const equipLine = equipmentRef
+    ? `<text x="48" y="432" fill="#bae6fd" font-size="16" font-family="Consolas, monospace">${esc(equipmentRef)}</text>`
+    : "";
   return `<?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" width="1280" height="720" viewBox="0 0 1280 720">
   <defs>
@@ -56,22 +69,24 @@ function renderEvidenceSvg({
   </defs>
   <rect x="0" y="0" width="1280" height="720" fill="url(#bg)"/>
   <rect x="22" y="22" width="1236" height="676" rx="14" fill="none" stroke="#14b8a6" stroke-width="2"/>
-  <text x="24" y="64" fill="#14b8a6" font-size="34" font-family="Segoe UI, Arial" font-weight="700">BOF Demo Evidence</text>
-  <text x="24" y="108" fill="#e2e8f0" font-size="28" font-family="Segoe UI, Arial" font-weight="600">${esc(title)}</text>
-  <text x="24" y="152" fill="#cbd5e1" font-size="20" font-family="Consolas, monospace">Load: ${esc(loadId)}</text>
-  <text x="24" y="184" fill="#cbd5e1" font-size="18" font-family="Segoe UI, Arial">Customer: ${esc(customer)}</text>
-  <text x="24" y="208" fill="#cbd5e1" font-size="18" font-family="Segoe UI, Arial">Driver: ${esc(driver)}</text>
+  <text x="24" y="56" fill="#14b8a6" font-size="22" font-family="Segoe UI, Arial" font-weight="700">BOF Demo Evidence</text>
+  <text x="24" y="86" fill="#94a3b8" font-size="14" font-family="Consolas, monospace">${esc(evidenceType)} · ${esc(loadId)}</text>
+  <text x="24" y="124" fill="#e2e8f0" font-size="28" font-family="Segoe UI, Arial" font-weight="600">${esc(title)}</text>
+  <text x="24" y="162" fill="#cbd5e1" font-size="18" font-family="Segoe UI, Arial">Work order: ${esc(workOrderId)}</text>
+  <text x="24" y="190" fill="#cbd5e1" font-size="18" font-family="Segoe UI, Arial">Customer: ${esc(customer)}</text>
+  <text x="24" y="218" fill="#cbd5e1" font-size="18" font-family="Segoe UI, Arial">Driver: ${esc(driver)}</text>
   ${warningLine}
-  <rect x="24" y="262" width="1232" height="330" rx="10" fill="#0b1220" stroke="#334155"/>
-  <text x="48" y="308" fill="#93c5fd" font-size="18" font-family="Segoe UI, Arial">Location / Facility: ${esc(location)}</text>
-  <text x="48" y="340" fill="#a7f3d0" font-size="18" font-family="Segoe UI, Arial">Status: ${esc(status)}</text>
-  <text x="48" y="372" fill="#cbd5e1" font-size="16" font-family="Segoe UI, Arial">Timestamp: ${esc(timestamp)}</text>
-  <rect x="990" y="286" width="230" height="230" rx="12" fill="#111827" stroke="#14b8a6" stroke-width="2"/>
-  <circle cx="1105" cy="384" r="52" fill="#0f172a" stroke="#14b8a6" stroke-width="3"/>
-  <path d="M1080 384h50M1105 359v50" stroke="#14b8a6" stroke-width="4" stroke-linecap="round"/>
-  <text x="24" y="670" fill="#94a3b8" font-size="14" font-family="Segoe UI, Arial">
-    Generated demo evidence - non-field photo artifact for BOF presentation
-  </text>
+  <rect x="24" y="272" width="1232" height="360" rx="10" fill="#0b1220" stroke="#334155"/>
+  <text x="48" y="318" fill="#93c5fd" font-size="18" font-family="Segoe UI, Arial">Facility / location: ${esc(facility || location)}</text>
+  <text x="48" y="348" fill="#a7f3d0" font-size="18" font-family="Segoe UI, Arial">Lane / stop: ${esc(location)}</text>
+  <text x="48" y="378" fill="#cbd5e1" font-size="16" font-family="Segoe UI, Arial">Status: ${esc(status)}</text>
+  ${sealLine}
+  ${equipLine}
+  <text x="48" y="470" fill="#cbd5e1" font-size="16" font-family="Consolas, monospace">Timestamp (UTC): ${esc(timestamp)}</text>
+  <rect x="990" y="296" width="230" height="230" rx="12" fill="#111827" stroke="#14b8a6" stroke-width="2"/>
+  <circle cx="1105" cy="394" r="52" fill="#0f172a" stroke="#14b8a6" stroke-width="3"/>
+  <path d="M1080 394h50M1105 369v50" stroke="#14b8a6" stroke-width="4" stroke-linecap="round"/>
+  <text x="24" y="698" fill="#94a3b8" font-size="14" font-family="Segoe UI, Arial">Generated demo evidence</text>
 </svg>`;
 }
 
@@ -91,6 +106,11 @@ function hasLumperIssue(load, settlements) {
   return /lumper/i.test(String(s?.pendingReason ?? ""));
 }
 
+function workOrderIdFor(load) {
+  if (load.workOrderId != null && String(load.workOrderId).trim()) return String(load.workOrderId).trim();
+  return `WO-${load.id}-${load.number}`;
+}
+
 function writeEvidenceSvg(loadId, fileName, svgContent) {
   const loadDir = path.join(EVIDENCE_ROOT, loadId);
   ensureDir(loadDir);
@@ -108,12 +128,16 @@ function main() {
     const driverName = findDriverName(data.drivers ?? [], load.driverId);
     const warning = warningForLoad(load);
     const ts = isoNow();
+    const wo = workOrderIdFor(load);
+    const equipmentRef = `Truck ${load.assetId} · Trailer TR-${String(load.assetId || "").replace(/^T-/, "")}`;
     const common = {
       loadId: load.id,
+      workOrderId: wo,
       customer,
       driver: `${driverName} (${load.driverId})`,
       timestamp: ts,
       warning,
+      equipmentRef,
     };
 
     const cargoPhoto = writeEvidenceSvg(
@@ -122,8 +146,11 @@ function main() {
       renderEvidenceSvg({
         ...common,
         title: "Cargo Photo",
-        location: load.origin,
+        evidenceType: "cargo_photo",
+        location: `${load.origin} → ${load.destination}`,
+        facility: load.origin,
         status: "Pallets secured / cargo condition recorded",
+        sealNumber: load.pickupSeal || "",
       })
     );
     const sealPhoto = writeEvidenceSvg(
@@ -132,8 +159,11 @@ function main() {
       renderEvidenceSvg({
         ...common,
         title: "Seal Photo",
-        location: `${load.origin} -> ${load.destination}`,
-        status: `Seal captured at pickup/delivery (${load.pickupSeal || "N/A"} / ${load.deliverySeal || "N/A"})`,
+        evidenceType: "seal_photo",
+        location: `${load.origin} → ${load.destination}`,
+        facility: "Pickup & delivery checkpoints",
+        status: `Seal chain recorded (${load.pickupSeal || "N/A"} / ${load.deliverySeal || "N/A"})`,
+        sealNumber: `${load.pickupSeal || "—"} / ${load.deliverySeal || "—"}`,
       })
     );
     const equipmentPhoto = writeEvidenceSvg(
@@ -142,8 +172,11 @@ function main() {
       renderEvidenceSvg({
         ...common,
         title: "Equipment Photo",
+        evidenceType: "equipment_photo",
         location: load.origin,
-        status: `Equipment inspection recorded (truck ${load.assetId}, trailer TR-${String(load.assetId || "").replace(/^T-/, "")})`,
+        facility: load.origin,
+        status: `Equipment inspection recorded`,
+        sealNumber: "",
       })
     );
     const pickupPhoto = writeEvidenceSvg(
@@ -152,8 +185,11 @@ function main() {
       renderEvidenceSvg({
         ...common,
         title: "Pickup Photo",
+        evidenceType: "pickup_photo",
         location: load.origin,
+        facility: load.origin,
         status: "Pickup proof captured",
+        sealNumber: load.pickupSeal || "",
       })
     );
     const deliveryPhoto = writeEvidenceSvg(
@@ -162,8 +198,11 @@ function main() {
       renderEvidenceSvg({
         ...common,
         title: "Delivery Photo",
+        evidenceType: "delivery_photo",
         location: load.destination,
+        facility: load.destination,
         status: "Delivery proof captured",
+        sealNumber: load.deliverySeal || "",
       })
     );
     const sealPickupPhoto = writeEvidenceSvg(
@@ -172,8 +211,11 @@ function main() {
       renderEvidenceSvg({
         ...common,
         title: "Seal Pickup Photo",
+        evidenceType: "seal_pickup_photo",
         location: load.origin,
-        status: `Seal captured at pickup (${load.pickupSeal || "N/A"})`,
+        facility: load.origin,
+        status: `Seal captured at pickup`,
+        sealNumber: load.pickupSeal || "N/A",
       })
     );
     const sealDeliveryPhoto = writeEvidenceSvg(
@@ -182,8 +224,11 @@ function main() {
       renderEvidenceSvg({
         ...common,
         title: "Seal Delivery Photo",
+        evidenceType: "seal_delivery_photo",
         location: load.destination,
-        status: `Seal captured at delivery (${load.deliverySeal || "N/A"})`,
+        facility: load.destination,
+        status: `Seal captured at delivery`,
+        sealNumber: load.deliverySeal || "N/A",
       })
     );
     const lumperReceipt = hasLumperIssue(load, data.settlements)
@@ -193,25 +238,47 @@ function main() {
           renderEvidenceSvg({
             ...common,
             title: "Lumper Receipt",
+            evidenceType: "lumper_receipt",
             location: load.destination,
+            facility: load.destination,
             status: "Lumper receipt pending/review tracked for settlement",
+            sealNumber: "",
           })
         )
       : undefined;
-    const damagePhoto =
-      load.dispatchExceptionFlag || String(load.sealStatus).toUpperCase() === "MISMATCH"
-        ? writeEvidenceSvg(
-            load.id,
-            "damage-photo.svg",
-            renderEvidenceSvg({
-              ...common,
-              title: "Damage Photo Packet",
-              location: `${load.origin} -> ${load.destination}`,
-              status: "Damage observed / claim review required",
-              warning: warning || "Claim review required",
-            })
-          )
-        : undefined;
+    const hasClaim = Boolean(load.dispatchExceptionFlag || String(load.sealStatus).toUpperCase() === "MISMATCH");
+    const damagePhoto = hasClaim
+      ? writeEvidenceSvg(
+          load.id,
+          "damage-photo.svg",
+          renderEvidenceSvg({
+            ...common,
+            title: "Damage Photo",
+            evidenceType: "damage_photo",
+            location: `${load.origin} → ${load.destination}`,
+            facility: "Exception corridor",
+            status: "Damage observed / claim review required",
+            sealNumber: `${load.pickupSeal || "—"} → ${load.deliverySeal || "—"}`,
+            warning: warning || "Claim review required",
+          })
+        )
+      : undefined;
+    const claimEvidence = hasClaim
+      ? writeEvidenceSvg(
+          load.id,
+          "claim-evidence.svg",
+          renderEvidenceSvg({
+            ...common,
+            title: "Claim Evidence Summary",
+            evidenceType: "claim_evidence",
+            location: `${load.origin} → ${load.destination}`,
+            facility: "Claims desk queue",
+            status: "Structured claim evidence placeholder (demo)",
+            sealNumber: load.sealStatus || "",
+            warning: warning || undefined,
+          })
+        )
+      : undefined;
 
     manifest[load.id] = {
       cargoPhoto,
@@ -223,7 +290,11 @@ function main() {
       deliveryPhoto,
       ...(lumperReceipt ? { lumperReceipt } : {}),
       ...(damagePhoto ? { damagePhoto } : {}),
+      ...(claimEvidence ? { claimEvidence } : {}),
     };
+    console.log(
+      `[generate-load-evidence] load=${load.id} files=${Object.keys(manifest[load.id]).length} out=${PUBLIC_MANIFEST_PATH}`
+    );
   }
 
   ensureDir(EVIDENCE_ROOT);
@@ -233,4 +304,3 @@ function main() {
 }
 
 main();
-

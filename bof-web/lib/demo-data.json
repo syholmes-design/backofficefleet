@@ -2236,7 +2236,10 @@
       "pickupSeal": "SEAL-83921",
       "deliverySeal": "SEAL-83920",
       "sealStatus": "Mismatch",
-      "dispatchExceptionFlag": true
+      "dispatchExceptionFlag": true,
+      "masterAgreementId": "MA-ACME-2026-AGR-01",
+      "masterAgreementDate": "01/10/2026",
+      "workOrderId": "WO-L001-501-EXEC"
     },
     {
       "id": "L002",
@@ -2252,7 +2255,10 @@
       "pickupSeal": "SEAL-55219",
       "deliverySeal": "SEAL-55219",
       "sealStatus": "OK",
-      "dispatchExceptionFlag": false
+      "dispatchExceptionFlag": false,
+      "masterAgreementId": "MA-MIDWEST-2026-AGR-02",
+      "masterAgreementDate": "02/01/2026",
+      "workOrderId": "WO-L002-502-EXEC"
     },
     {
       "id": "L003",
@@ -2268,7 +2274,10 @@
       "pickupSeal": "SEAL-77102",
       "deliverySeal": "",
       "sealStatus": "Mismatch",
-      "dispatchExceptionFlag": true
+      "dispatchExceptionFlag": true,
+      "masterAgreementId": "MA-BLUELINE-2026-AGR-03",
+      "masterAgreementDate": "01/22/2026",
+      "workOrderId": "WO-L003-503-EXEC"
     },
     {
       "id": "L004",

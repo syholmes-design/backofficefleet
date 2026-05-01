@@ -9,7 +9,8 @@ export type LoadEvidenceKey =
   | "pickupPhoto"
   | "deliveryPhoto"
   | "lumperReceipt"
-  | "damagePhoto";
+  | "damagePhoto"
+  | "claimEvidence";
 
 export type LoadEvidenceManifestEntry = Partial<Record<LoadEvidenceKey, string>>;
 type LoadEvidenceManifest = Record<string, LoadEvidenceManifestEntry>;

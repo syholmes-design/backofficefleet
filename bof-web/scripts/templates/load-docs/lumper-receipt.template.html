@@ -2,15 +2,29 @@
 <html>
   <head><meta charset="utf-8" /><title>Lumper Receipt {{loadId}}</title><style>{{styles}}</style></head>
   <body>
-    <header><h1>BackOfficeFleet - Lumper Receipt</h1><p>Generated for BOF demo</p></header>
-    <h2>Load {{loadId}} Lumper Receipt</h2>
-    <table>
-      <tr><td>Facility</td><td>{{deliveryFacility}}</td></tr>
-      <tr><td>Driver</td><td>{{driverName}} ({{driverId}})</td></tr>
-      <tr><td>Invoice Ref</td><td>{{invoiceNumber}}</td></tr>
-      <tr><td>Lumper Charge</td><td>{{lumper}}</td></tr>
-      <tr><td>Status</td><td>Approved for settlement attachment</td></tr>
-    </table>
-    <p>Receiver Signature: __________________ Date: ____________</p>
+    <div class="paper">
+      <header class="doc-header">
+        <div>
+          <h1 class="doc-title">Lumper Receipt</h1>
+          <div class="generated-label">BOF settlement attachment</div>
+        </div>
+        <div class="status-stamp">Lumper</div>
+      </header>
+      <div class="meta-grid">
+        <div class="meta-box"><div class="meta-label">Load ID</div><div class="meta-value">{{loadId}}</div></div>
+        <div class="meta-box"><div class="meta-label">Invoice ref</div><div class="meta-value">{{invoiceNumber}}</div></div>
+        <div class="meta-box"><div class="meta-label">Facility</div><div class="meta-value">{{deliveryFacility}}</div></div>
+        <div class="meta-box"><div class="meta-label">Driver</div><div class="meta-value">{{driverName}} ({{driverId}})</div></div>
+      </div>
+      <table>
+        <tr><th>Lumper charge</th><th>Status</th></tr>
+        <tr><td>{{lumper}}</td><td>Approved for settlement attachment (demo)</td></tr>
+      </table>
+      <div class="sig-line">
+        <div class="sig-slot">Receiver signature __________________ date ____________</div>
+        <div class="sig-slot">Driver acknowledgment __________________ date ____________</div>
+      </div>
+      <footer><span>{{generatedDate}}</span><span>BOF demo document packet</span></footer>
+    </div>
   </body>
 </html>

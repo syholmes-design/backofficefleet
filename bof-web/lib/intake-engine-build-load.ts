@@ -93,9 +93,9 @@ export function buildDraftLoadFromExtracted(
     rate_con_url: MOCK_DOC_URLS.rate_con,
     bol_url: MOCK_DOC_URLS.bol,
     invoice_url: MOCK_DOC_URLS.invoice,
-    equipment_photo_url: MOCK_DOC_URLS.equipment_photo,
-    cargo_photo_url: MOCK_DOC_URLS.cargo_photo,
-    seal_photo_url: MOCK_DOC_URLS.seal_photo,
+    equipment_photo_url: undefined,
+    cargo_photo_url: undefined,
+    seal_photo_url: undefined,
 
     lumper_receipt_required: false,
     rfid_tag_id: `RFID-${load_id}`,

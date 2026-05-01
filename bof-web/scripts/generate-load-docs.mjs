@@ -1,34 +1,26 @@
 import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
+import {
+  resolveLoadDocumentTemplate,
+  resolveSharedDocumentStyles,
+  LOAD_DOCUMENT_TEMPLATE_FILES,
+} from "./lib/resolve-load-document-template.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(__dirname, "..");
 const DATA_PATH = path.join(ROOT, "lib", "demo-data.json");
-const TEMPLATE_DIR = path.join(ROOT, "scripts", "templates", "load-docs");
 const OUT_DIR = path.join(ROOT, "public", "generated", "loads");
 const PUBLIC_DIR = path.join(ROOT, "public");
-const MOCKS_DIR = path.join(PUBLIC_DIR, "mocks");
 const PUBLIC_MANIFEST = path.join(OUT_DIR, "load-doc-manifest.json");
 const LIB_MANIFEST = path.join(ROOT, "lib", "generated", "load-doc-manifest.json");
 
 const CORE_DOCS = ["rateConfirmation", "bol", "pod", "invoice"];
 
-const TEMPLATE_MAP = {
-  rateConfirmation: "rate-confirmation.template.html",
-  bol: "bol.template.html",
-  pod: "pod.template.html",
-  invoice: "invoice.template.html",
-  workOrder: "work-order.template.html",
-  masterAgreementReference: "master-agreement-reference.template.html",
-  sealVerification: "seal-verification.template.html",
-  rfidProof: "rfid-proof.template.html",
-  claimIntake: "claim-intake.template.html",
-  insuranceNotification: "insurance-notification.template.html",
-  factoringNotification: "factoring-notification.template.html",
-  settlementHoldNotice: "settlement-hold-notice.template.html",
-  damagePhotoPacket: "damage-photo-packet.template.html",
-  claimPacket: "claim-packet.template.html",
+/** Primary safety still image per load (matches `lib/safety-evidence.ts` URLs). */
+const SAFETY_STILL_URL_BY_LOAD_ID = {
+  L004: "/evidence/safety/p_patel_b102_tire_irregular_wear.png",
+  L008: "/evidence/safety/l_smith_l405_hos_violation_eld.png",
 };
 
 const FILE_MAP = {
@@ -46,32 +38,8 @@ const FILE_MAP = {
   settlementHoldNotice: "settlement-hold-notice.html",
   damagePhotoPacket: "damage-photo-packet.html",
   claimPacket: "claim-packet.html",
+  lumperReceipt: "lumper-receipt.html",
 };
-
-const SHARED_STYLES = `
-  @page { size: auto; margin: 0.5in; }
-  * { box-sizing: border-box; }
-  body { font-family: "Inter", "Segoe UI", Arial, Helvetica, sans-serif; margin: 0; background: #f3f4f6; color: #111827; }
-  .paper { width: 8.5in; max-width: 100%; margin: 20px auto; background: #fff; border: 1px solid #d1d5db; padding: 26px; box-shadow: 0 8px 30px rgba(15, 23, 42, 0.08); }
-  .doc-header { display: flex; justify-content: space-between; gap: 16px; border-bottom: 2px solid #111827; padding-bottom: 12px; margin-bottom: 14px; }
-  .doc-title { margin: 0; font-size: 22px; letter-spacing: .2px; }
-  .generated-label { margin-top: 4px; font-size: 11px; color: #4b5563; text-transform: uppercase; letter-spacing: .08em; }
-  .status-stamp { border: 2px solid #111827; padding: 6px 10px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; }
-  .meta-grid, .entity-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin-bottom: 12px; }
-  .meta-box { border: 1px solid #d1d5db; background: #f9fafb; padding: 8px; }
-  .meta-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; color: #4b5563; margin-bottom: 4px; }
-  .meta-value { font-size: 13px; }
-  table { width: 100%; border-collapse: collapse; margin-top: 8px; }
-  th, td { border: 1px solid #d1d5db; padding: 7px 8px; vertical-align: top; text-align: left; font-size: 12px; }
-  th { background: #f3f4f6; font-size: 11px; text-transform: uppercase; letter-spacing: .05em; color: #374151; }
-  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-  .section-title { margin: 14px 0 6px; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; color: #1f2937; }
-  .sig-line { margin-top: 24px; display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-  .sig-slot { border-top: 1px solid #1f2937; padding-top: 4px; font-size: 11px; color: #4b5563; }
-  .terms-box { border: 1px solid #d1d5db; background: #f9fafb; padding: 10px; font-size: 11px; color: #374151; }
-  .barcode-ref { margin-top: 10px; display: inline-block; font-family: "Courier New", monospace; letter-spacing: 2px; font-size: 11px; border: 1px solid #111827; padding: 3px 8px; }
-  footer { margin-top: 16px; padding-top: 8px; border-top: 1px dashed #9ca3af; display: flex; justify-content: space-between; font-size: 11px; color: #6b7280; }
-`;
 
 function ensureDir(dir) {
   fs.mkdirSync(dir, { recursive: true });
@@ -122,9 +90,26 @@ function deriveLoadContext(data, load) {
   const loadDate = `${now.getUTCMonth() + 1}/${now.getUTCDate()}/${now.getUTCFullYear()}`;
   const totalAmount = rate + fuelSurcharge + backhaulPay + (lumperCharge > 0 ? lumperCharge : 0) + detention;
   const customer = laneOrigin.split(" ")[0] || "BOF Customer";
-  const masterAgreementId = `MA-${customer.toUpperCase().replace(/[^A-Z0-9]/g, "").slice(0, 6) || "BOF"}-2026`;
-  const masterAgreementDate = "01/15/2026";
-  const workOrderId = `WO-${load.id}-${load.number}`;
+
+  const rawMaId = load.masterAgreementId != null ? String(load.masterAgreementId).trim() : "";
+  const hasFormalMasterAgreement = Boolean(rawMaId);
+  const masterAgreementId = hasFormalMasterAgreement
+    ? rawMaId
+    : "— Pending / needs review —";
+  const masterAgreementDate =
+    load.masterAgreementDate != null && String(load.masterAgreementDate).trim()
+      ? String(load.masterAgreementDate).trim()
+      : hasFormalMasterAgreement
+        ? "01/15/2026"
+        : "—";
+  const masterAgreementStamp = hasFormalMasterAgreement ? "Active MA" : "Draft ref";
+  const masterAgreementLegalNote = hasFormalMasterAgreement
+    ? `This movement is executed under Master Agreement ${rawMaId} (effective ${masterAgreementDate}). The Schedule / Work Order for load ${load.id} supplements that agreement for this shipment only.`
+    : `No executed master agreement ID is on file for this customer in demo data. This page is a draft reference generated only from the approved BOF master-agreement reference template — obtain countersigned MA before production dispatch.`;
+
+  const workOrderId = load.workOrderId != null && String(load.workOrderId).trim()
+    ? String(load.workOrderId).trim()
+    : `WO-${load.id}-${load.number}`;
   const claimRequired = hasClaim;
   const settlementHold = String(load.podStatus).toLowerCase() !== "verified";
   const receiverName = `${deliveryFacility.split(" ")[0] || "Receiver"} Contact`;
@@ -190,6 +175,8 @@ function deriveLoadContext(data, load) {
     claimExposure: hasClaim ? money(Math.max(450, Math.round(rate * 0.18))) : "$0.00",
     masterAgreementId,
     masterAgreementDate,
+    masterAgreementStamp,
+    masterAgreementLegalNote,
     workOrderId,
     claimRequired: yesNo(claimRequired),
     settlementHold: yesNo(settlementHold),
@@ -197,13 +184,16 @@ function deriveLoadContext(data, load) {
     receiverSignature: receiverName,
     opsSignature: "BOF Ops Coordinator",
     claimDate: loadDate,
+    hasFormalMasterAgreement: yesNo(hasFormalMasterAgreement),
   };
 }
 
-function writeDoc(loadId, fileName, html) {
+function writeDoc(loadId, fileName, html, templateRelativePath) {
   const dir = path.join(OUT_DIR, loadId);
   ensureDir(dir);
-  fs.writeFileSync(path.join(dir, fileName), html, "utf8");
+  const outPath = path.join(dir, fileName);
+  const withSource = `<!-- BOF_TEMPLATE_SOURCE: ${templateRelativePath} -->\n${html}`;
+  fs.writeFileSync(outPath, withSource, "utf8");
   return `/generated/loads/${loadId}/${fileName}`;
 }
 
@@ -238,10 +228,11 @@ function resolveEvidenceEntry(loadId, candidates) {
   return undefined;
 }
 
-function resolveMockEvidence(mockFile) {
-  const abs = path.join(MOCKS_DIR, mockFile);
-  if (!fileExists(abs)) return undefined;
-  return `/mocks/${mockFile}`;
+function safetyPhotoUrlForLoad(loadId) {
+  const u = SAFETY_STILL_URL_BY_LOAD_ID[loadId];
+  if (!u) return undefined;
+  const abs = path.join(PUBLIC_DIR, u.replace(/^\//, "").split("/").join(path.sep));
+  return fileExists(abs) ? u : undefined;
 }
 
 function shouldEmit(docKey, ctx) {
@@ -253,6 +244,7 @@ function shouldEmit(docKey, ctx) {
   if (docKey === "settlementHoldNotice") return ctx.settlementHold === "Yes";
   if (docKey === "factoringNotification") return true;
   if (docKey === "rfidProof") return ctx.rfidWorkflow;
+  if (docKey === "lumperReceipt") return /Yes/i.test(String(ctx.lumperRequired ?? ""));
   return true;
 }
 
@@ -260,9 +252,15 @@ function main() {
   const data = readJson(DATA_PATH);
   ensureDir(OUT_DIR);
 
-  const templates = {};
-  for (const [k, file] of Object.entries(TEMPLATE_MAP)) {
-    templates[k] = fs.readFileSync(path.join(TEMPLATE_DIR, file), "utf8");
+  const { css: sharedStyles, relativeFromWebRoot: sharedStylesRel } = resolveSharedDocumentStyles();
+
+  const templateBodies = {};
+  for (const docType of Object.keys(LOAD_DOCUMENT_TEMPLATE_FILES)) {
+    const { absolutePath, relativeFromWebRoot } = resolveLoadDocumentTemplate(docType);
+    templateBodies[docType] = {
+      html: fs.readFileSync(absolutePath, "utf8"),
+      relativeFromWebRoot,
+    };
   }
 
   const manifest = {};
@@ -277,23 +275,33 @@ function main() {
     const equipmentPhoto = resolveEvidenceEntry(ctx.loadId, ["equipment-photo.svg", "equipment-photo.jpg", "equipment-photo.png"]);
     const pickupPhoto = resolveEvidenceEntry(ctx.loadId, ["pickup-photo.svg", "pickup-photo.jpg", "pickup-photo.png"]);
     const deliveryPhoto = resolveEvidenceEntry(ctx.loadId, ["delivery-photo.svg", "delivery-photo.jpg", "delivery-photo.png"]);
-    const lumperReceipt = resolveEvidenceEntry(ctx.loadId, ["lumper-receipt.svg", "lumper-receipt.jpg", "lumper-receipt.png"]);
+    const lumperReceiptFile = resolveEvidenceEntry(ctx.loadId, ["lumper-receipt.svg", "lumper-receipt.jpg", "lumper-receipt.png"]);
     const damageClaimPhoto = resolveEvidenceEntry(ctx.loadId, ["damage-photo.svg", "damage-photo.jpg", "damage-photo.png", "claim-photo.jpg"]);
-    const safetyViolationPhoto = ctx.hasClaim ? resolveMockEvidence("hosviolation.PNG") : undefined;
+    const claimEvidencePhoto = resolveEvidenceEntry(ctx.loadId, ["claim-evidence.svg"]);
+    const safetyViolationPhoto = safetyPhotoUrlForLoad(ctx.loadId);
+
     const ctxForTemplates = {
       ...ctx,
       cargoPhotoRef: cargoPhoto || "Not available",
       sealPickupPhotoRef: sealPickupPhoto || "Not available",
       sealDeliveryPhotoRef: sealDeliveryPhoto || "Not available",
       damageClaimPhotoRef: damageClaimPhoto || "Not available",
+      claimEvidencePhotoRef: claimEvidencePhoto || "Not available",
       safetyViolationPhotoRef: safetyViolationPhoto || "Not available",
     };
 
-    for (const [docKey, fileName] of Object.entries(FILE_MAP)) {
-      if (!(docKey in TEMPLATE_MAP)) continue;
+    for (const docKey of Object.keys(FILE_MAP)) {
+      if (!(docKey in LOAD_DOCUMENT_TEMPLATE_FILES)) continue;
       if (!shouldEmit(docKey, ctx)) continue;
-      const html = renderTemplate(templates[docKey], { ...ctxForTemplates, styles: SHARED_STYLES });
-      entry[docKey] = writeDoc(ctx.loadId, fileName, html);
+      const fileName = FILE_MAP[docKey];
+      const { html: tpl, relativeFromWebRoot } = templateBodies[docKey];
+      const merged = renderTemplate(tpl, { ...ctxForTemplates, styles: sharedStyles });
+      const outUrl = writeDoc(ctx.loadId, fileName, merged, relativeFromWebRoot);
+      entry[docKey] = outUrl;
+      const outAbs = path.join(OUT_DIR, ctx.loadId, fileName);
+      console.log(
+        `[generate-load-docs] type=${docKey} template=${relativeFromWebRoot} sharedStyles=${sharedStylesRel} output=${path.relative(ROOT, outAbs)}`
+      );
     }
 
     if (cargoPhoto) entry.cargoPhoto = cargoPhoto;
@@ -302,8 +310,9 @@ function main() {
     if (equipmentPhoto) entry.equipmentPhoto = equipmentPhoto;
     if (pickupPhoto) entry.pickupPhoto = pickupPhoto;
     if (deliveryPhoto) entry.deliveryPhoto = deliveryPhoto;
-    if (lumperReceipt) entry.lumperReceipt = lumperReceipt;
+    if (lumperReceiptFile) entry.lumperReceipt = lumperReceiptFile;
     if (damageClaimPhoto) entry.damageClaimPhoto = damageClaimPhoto;
+    if (claimEvidencePhoto) entry.claimEvidence = claimEvidencePhoto;
     if (safetyViolationPhoto) entry.safetyViolationPhoto = safetyViolationPhoto;
 
     for (const required of CORE_DOCS) {
@@ -316,7 +325,10 @@ function main() {
 
   writeJson(PUBLIC_MANIFEST, manifest);
   writeJson(LIB_MANIFEST, manifest);
-  console.log(`Generated load docs for ${Object.keys(manifest).length} loads.`);
+  const docCount = Object.values(manifest).reduce((n, e) => n + Object.keys(e).length, 0);
+  console.log(
+    `[generate-load-docs] loads=${Object.keys(manifest).length} totalManifestEntries≈${docCount} (includes evidence URL keys)`
+  );
 }
 
 main();

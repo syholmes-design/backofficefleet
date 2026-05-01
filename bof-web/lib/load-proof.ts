@@ -311,7 +311,7 @@ export function getLoadProofItems(data: BofData, loadId: string): LoadProofItem[
     },
   ];
 
-  return derived.map((item) => {
+  const withOverrides = derived.map((item) => {
     const o = overrides[item.type];
     if (!o) return item;
     return {
@@ -319,6 +319,32 @@ export function getLoadProofItems(data: BofData, loadId: string): LoadProofItem[
       ...o,
       type: item.type,
     };
+  });
+
+  return attachDemoEvidenceFileUrls(loadId, withOverrides);
+}
+
+/** When generated demo evidence exists on disk, surface URLs and mark line items Present. */
+function attachDemoEvidenceFileUrls(loadId: string, items: LoadProofItem[]): LoadProofItem[] {
+  const urlByType: Record<string, string | undefined> = {
+    "Pickup Seal Photo": getLoadEvidenceUrl(loadId, "sealPickupPhoto"),
+    "Delivery Seal Photo": getLoadEvidenceUrl(loadId, "sealDeliveryPhoto"),
+    "Pre-Trip Cargo Photo": getLoadEvidenceUrl(loadId, "cargoPhoto"),
+    "Delivery / Empty-Trailer Photo": getLoadEvidenceUrl(loadId, "deliveryPhoto"),
+    "Cargo Damage Photos": getLoadEvidenceUrl(loadId, "damagePhoto"),
+    "Claim Support Docs": getLoadEvidenceUrl(loadId, "claimEvidence"),
+  };
+
+  return items.map((item) => {
+    const url = urlByType[item.type];
+    if (!url) return item;
+    const merged: LoadProofItem = {
+      ...item,
+      fileUrl: item.fileUrl ?? url,
+      previewUrl: item.previewUrl ?? url,
+    };
+    if (item.status === "Disputed") return merged;
+    return { ...merged, status: "Complete" };
   });
 }
 
@@ -436,6 +462,7 @@ function sourceFromUrl(url?: string): LoadEvidenceItem["source"] {
   if (!u) return undefined;
   if (u.includes("/actual_docs/")) return "actual_docs";
   if (u.includes("/generated/")) return "generated";
+  if (u.includes("/evidence/")) return "generated";
   if (u.includes("/proof/")) return "mock";
   return "manual_upload";
 }
@@ -522,9 +549,12 @@ export function getLoadDocumentPacket(data: BofData, loadId: string): LoadDocume
     loadId,
     "damagePhotoPacket"
   );
-  const generatedLumper = getGeneratedLoadDocUrl(loadId, "lumperReceipt");
+  const generatedLumper =
+    getLoadEvidenceUrl(loadId, "lumperReceipt") ?? getGeneratedLoadDocUrl(loadId, "lumperReceipt");
   const generatedClaim = getGeneratedLoadDocUrl(loadId, "claimPacket");
-  const generatedDamagePhoto = getGeneratedLoadDocUrl(loadId, "damageClaimPhoto");
+  const generatedDamagePhoto =
+    getLoadEvidenceUrl(loadId, "damagePhoto") ?? getGeneratedLoadDocUrl(loadId, "damageClaimPhoto");
+  const generatedClaimEvidence = getLoadEvidenceUrl(loadId, "claimEvidence");
   const generatedSafetyViolationPhoto = getGeneratedLoadDocUrl(loadId, "safetyViolationPhoto");
 
   const rate = {
@@ -611,18 +641,21 @@ export function getLoadDocumentPacket(data: BofData, loadId: string): LoadDocume
     requiredForSettlementRelease: true,
     source: generatedWorkOrder ? "generated" : undefined,
   };
+  const formalMasterAgreement = Boolean(String(load.masterAgreementId ?? "").trim());
   const masterAgreementReference: LoadEvidenceItem = {
     id: `${loadId}:master_agreement_reference`,
     loadId,
     label: "Master Agreement Reference",
     section: "core",
     type: "master_agreement_reference",
-    status: generatedMasterAgreementReference ? "ready" : "pending",
+    status: generatedMasterAgreementReference ? "ready" : "missing",
     url: generatedMasterAgreementReference,
     fileName: fileNameFromUrl(generatedMasterAgreementReference),
     note: generatedMasterAgreementReference
-      ? "Generated reference to governing master agreement."
-      : "No agreement reference document generated.",
+      ? formalMasterAgreement
+        ? "Reference to executed master agreement on file (approved BOF template)."
+        : "Draft reference from approved BOF template — assign masterAgreementId in demo data when MA is executed."
+      : "Approved template missing or document not generated.",
     requiredForSettlementRelease: false,
     source: generatedMasterAgreementReference ? "generated" : undefined,
   };
@@ -824,7 +857,7 @@ export function getLoadDocumentPacket(data: BofData, loadId: string): LoadDocume
     fileName: fileNameFromUrl(generatedDamagePhoto),
     note: claimApplicable(load, bundle)
       ? generatedDamagePhoto
-        ? "Damage evidence image linked."
+        ? `Damage evidence image linked.${generatedClaimEvidence ? ` Claim evidence file: ${generatedClaimEvidence}.` : ""}`
         : "Damage evidence photo required for claim path."
       : "No active claim path.",
     source: generatedDamagePhoto ? sourceFromUrl(generatedDamagePhoto) : undefined,

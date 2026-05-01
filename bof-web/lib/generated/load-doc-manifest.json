@@ -20,7 +20,7 @@
     "pickupPhoto": "/evidence/loads/L001/pickup-photo.svg",
     "deliveryPhoto": "/evidence/loads/L001/delivery-photo.svg",
     "damageClaimPhoto": "/evidence/loads/L001/damage-photo.svg",
-    "safetyViolationPhoto": "/mocks/hosviolation.PNG"
+    "claimEvidence": "/evidence/loads/L001/claim-evidence.svg"
   },
   "L002": {
     "rateConfirmation": "/generated/loads/L002/rate-confirmation.html",
@@ -61,7 +61,7 @@
     "pickupPhoto": "/evidence/loads/L003/pickup-photo.svg",
     "deliveryPhoto": "/evidence/loads/L003/delivery-photo.svg",
     "damageClaimPhoto": "/evidence/loads/L003/damage-photo.svg",
-    "safetyViolationPhoto": "/mocks/hosviolation.PNG"
+    "claimEvidence": "/evidence/loads/L003/claim-evidence.svg"
   },
   "L004": {
     "rateConfirmation": "/generated/loads/L004/rate-confirmation.html",
@@ -84,7 +84,8 @@
     "pickupPhoto": "/evidence/loads/L004/pickup-photo.svg",
     "deliveryPhoto": "/evidence/loads/L004/delivery-photo.svg",
     "damageClaimPhoto": "/evidence/loads/L004/damage-photo.svg",
-    "safetyViolationPhoto": "/mocks/hosviolation.PNG"
+    "claimEvidence": "/evidence/loads/L004/claim-evidence.svg",
+    "safetyViolationPhoto": "/evidence/safety/p_patel_b102_tire_irregular_wear.png"
   },
   "L005": {
     "rateConfirmation": "/generated/loads/L005/rate-confirmation.html",
@@ -125,7 +126,7 @@
     "pickupPhoto": "/evidence/loads/L006/pickup-photo.svg",
     "deliveryPhoto": "/evidence/loads/L006/delivery-photo.svg",
     "damageClaimPhoto": "/evidence/loads/L006/damage-photo.svg",
-    "safetyViolationPhoto": "/mocks/hosviolation.PNG"
+    "claimEvidence": "/evidence/loads/L006/claim-evidence.svg"
   },
   "L007": {
     "rateConfirmation": "/generated/loads/L007/rate-confirmation.html",
@@ -148,7 +149,7 @@
     "pickupPhoto": "/evidence/loads/L007/pickup-photo.svg",
     "deliveryPhoto": "/evidence/loads/L007/delivery-photo.svg",
     "damageClaimPhoto": "/evidence/loads/L007/damage-photo.svg",
-    "safetyViolationPhoto": "/mocks/hosviolation.PNG"
+    "claimEvidence": "/evidence/loads/L007/claim-evidence.svg"
   },
   "L008": {
     "rateConfirmation": "/generated/loads/L008/rate-confirmation.html",
@@ -166,7 +167,8 @@
     "sealDeliveryPhoto": "/evidence/loads/L008/seal-delivery-photo.svg",
     "equipmentPhoto": "/evidence/loads/L008/equipment-photo.svg",
     "pickupPhoto": "/evidence/loads/L008/pickup-photo.svg",
-    "deliveryPhoto": "/evidence/loads/L008/delivery-photo.svg"
+    "deliveryPhoto": "/evidence/loads/L008/delivery-photo.svg",
+    "safetyViolationPhoto": "/evidence/safety/l_smith_l405_hos_violation_eld.png"
   },
   "L009": {
     "rateConfirmation": "/generated/loads/L009/rate-confirmation.html",
@@ -189,7 +191,7 @@
     "pickupPhoto": "/evidence/loads/L009/pickup-photo.svg",
     "deliveryPhoto": "/evidence/loads/L009/delivery-photo.svg",
     "damageClaimPhoto": "/evidence/loads/L009/damage-photo.svg",
-    "safetyViolationPhoto": "/mocks/hosviolation.PNG"
+    "claimEvidence": "/evidence/loads/L009/claim-evidence.svg"
   },
   "L010": {
     "rateConfirmation": "/generated/loads/L010/rate-confirmation.html",
@@ -212,7 +214,7 @@
     "pickupPhoto": "/evidence/loads/L010/pickup-photo.svg",
     "deliveryPhoto": "/evidence/loads/L010/delivery-photo.svg",
     "damageClaimPhoto": "/evidence/loads/L010/damage-photo.svg",
-    "safetyViolationPhoto": "/mocks/hosviolation.PNG"
+    "claimEvidence": "/evidence/loads/L010/claim-evidence.svg"
   },
   "L011": {
     "rateConfirmation": "/generated/loads/L011/rate-confirmation.html",
@@ -253,6 +255,6 @@
     "pickupPhoto": "/evidence/loads/L012/pickup-photo.svg",
     "deliveryPhoto": "/evidence/loads/L012/delivery-photo.svg",
     "damageClaimPhoto": "/evidence/loads/L012/damage-photo.svg",
-    "safetyViolationPhoto": "/mocks/hosviolation.PNG"
+    "claimEvidence": "/evidence/loads/L012/claim-evidence.svg"
   }
 }
