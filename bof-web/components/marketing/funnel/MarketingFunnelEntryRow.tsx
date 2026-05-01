@@ -4,7 +4,12 @@ import Link from "next/link";
  * Cross-links from sector/home “shell” cards into the live Phase C funnel routes.
  * Keeps CTAs consistent across marketing pages.
  */
-export function MarketingFunnelEntryRow() {
+type MarketingFunnelEntryRowProps = {
+  sector?: "for-hire" | "private-fleet" | "government";
+};
+
+export function MarketingFunnelEntryRow({ sector }: MarketingFunnelEntryRowProps = {}) {
+  const assessmentHref = sector ? `/book-assessment?sector=${sector}` : "/book-assessment";
   return (
     <div className="bof-mkt-funnel-entry-row">
       <Link
@@ -14,7 +19,7 @@ export function MarketingFunnelEntryRow() {
         Open savings calculator
       </Link>
       <Link
-        href="/book-assessment"
+        href={assessmentHref}
         className="bof-mkt-btn-enterprise bof-mkt-btn-enterprise-secondary bof-mkt-funnel-entry-btn"
       >
         Start fleet assessment

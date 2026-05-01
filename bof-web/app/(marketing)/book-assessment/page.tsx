@@ -7,11 +7,19 @@ export const metadata: Metadata = {
     "Multi-step fleet assessment for dispatch, compliance, proof, and settlement workflows — consultative intake aligned with BOF engagements.",
 };
 
-export default function BookAssessmentPage() {
+type BookAssessmentPageProps = {
+  searchParams?: Promise<{
+    sector?: string;
+  }>;
+};
+
+export default async function BookAssessmentPage({ searchParams }: BookAssessmentPageProps) {
+  const params = searchParams ? await searchParams : undefined;
+  const requestedSector = params?.sector;
   return (
     <div className="bof-mkt-funnel-page">
       <div className="bof-mkt-funnel-shell">
-        <FleetAssessmentWizardClient />
+        <FleetAssessmentWizardClient initialSector={requestedSector} />
       </div>
     </div>
   );

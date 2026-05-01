@@ -173,7 +173,7 @@ export default function PrivateFleetsPage() {
         ctas={
           <>
             <Link
-              href="/book-assessment"
+              href="/book-assessment?sector=private-fleet"
               className="bof-mkt-btn-enterprise bof-mkt-btn-enterprise-primary"
             >
               Take The Assessment
@@ -261,7 +261,7 @@ export default function PrivateFleetsPage() {
             />
           </div>
           <div className="bof-mkt-funnel-marketing-entry">
-            <MarketingFunnelEntryRow />
+            <MarketingFunnelEntryRow sector="private-fleet" />
           </div>
         </div>
       </MarketingSection>
@@ -301,7 +301,7 @@ export default function PrivateFleetsPage() {
         title="Bring the same enforcement rigor to your internal fleet"
         lead="Book a private fleet assessment. We map branch variance, readiness gaps, and settlement pressure—then show how BOF would govern it in production."
       >
-        <Link href="/book-assessment" className="bof-mkt-btn-enterprise bof-mkt-btn-enterprise-primary">
+        <Link href="/book-assessment?sector=private-fleet" className="bof-mkt-btn-enterprise bof-mkt-btn-enterprise-primary">
           Take The Assessment
         </Link>
         <Link href="/dashboard" className="bof-mkt-btn-enterprise bof-mkt-btn-enterprise-secondary">

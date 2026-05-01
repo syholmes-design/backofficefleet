@@ -174,7 +174,7 @@ export default function GovernmentPage() {
         ctas={
           <>
             <Link
-              href="/book-assessment"
+              href="/book-assessment?sector=government"
               className="bof-mkt-btn-enterprise bof-mkt-btn-enterprise-primary"
             >
               Take The Assessment
@@ -262,7 +262,7 @@ export default function GovernmentPage() {
             />
           </div>
           <div className="bof-mkt-funnel-marketing-entry">
-            <MarketingFunnelEntryRow />
+            <MarketingFunnelEntryRow sector="government" />
           </div>
         </div>
       </MarketingSection>
@@ -302,7 +302,7 @@ export default function GovernmentPage() {
         title="Bring defensible fleet enforcement to your agency"
         lead="Book a government fleet assessment. We map documentation gaps, contractor variance, and capital risk—then show how BOF would govern it under public scrutiny."
       >
-        <Link href="/book-assessment" className="bof-mkt-btn-enterprise bof-mkt-btn-enterprise-primary">
+        <Link href="/book-assessment?sector=government" className="bof-mkt-btn-enterprise bof-mkt-btn-enterprise-primary">
           Take The Assessment
         </Link>
         <Link href="/dashboard" className="bof-mkt-btn-enterprise bof-mkt-btn-enterprise-secondary">

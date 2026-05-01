@@ -25,6 +25,76 @@ export type AssessmentDraft = {
   phone: string;
 };
 
+type SectorKey = "for_hire" | "private_fleet" | "government";
+
+type SectorQuestionSet = {
+  scaleTitle: string;
+  powerUnitsLabel: string;
+  activeDriversLabel: string;
+  monthlyLoadsLabel: string;
+  equipmentLabel: string;
+  equipmentHint: string;
+  painTitle: string;
+  painCompliance: string;
+  painProof: string;
+  painDispatch: string;
+  painSettlements: string;
+  painAdmin: string;
+  systemsLabel: string;
+  systemsHint: string;
+};
+
+const sectorQuestionSets: Record<SectorKey, SectorQuestionSet> = {
+  for_hire: {
+    scaleTitle: "Fleet scale",
+    powerUnitsLabel: "Power units / active tractors",
+    activeDriversLabel: "Active drivers (CDL)",
+    monthlyLoadsLabel: "Loads moved per month (linehaul)",
+    equipmentLabel: "Equipment profile & lanes",
+    equipmentHint: "Reefer, flatbed, tank, dedicated shipper, drayage, intermodal, etc.",
+    painTitle: "Where pain shows up today",
+    painCompliance: "Credential / DOT compliance drift",
+    painProof: "POD, seals, photos, GPS proof gaps",
+    painDispatch: "Dispatch readiness & asset assignment chaos",
+    painSettlements: "Settlement holds, disputes, or finance rework",
+    painAdmin: "Admin time lost to chasing documents & status",
+    systemsLabel: "TMS, safety, HR, telematics, settlement tools",
+    systemsHint: "Include spreadsheets, shared drives, or outsourced partners—truth beats aspiration.",
+  },
+  private_fleet: {
+    scaleTitle: "Private fleet profile",
+    powerUnitsLabel: "Owned/leased fleet size (power units and key assets)",
+    activeDriversLabel: "Active drivers / operators",
+    monthlyLoadsLabel: "Internal delivery volume per month",
+    equipmentLabel: "Route density, facility mix, and delivery model",
+    equipmentHint: "Warehouse/store/site distribution, dedicated routes, regional density, etc.",
+    painTitle: "Where private-fleet pressure appears",
+    painCompliance: "Driver readiness and policy variance across locations",
+    painProof: "Delivery proof / custody and service-level evidence gaps",
+    painDispatch: "Warehouse-facility coordination and route execution failures",
+    painSettlements: "Internal chargebacks, cost allocation, or department reporting friction",
+    painAdmin: "Manual branch reporting and cross-team rework",
+    systemsLabel: "Routing, warehouse, maintenance, and internal reporting systems",
+    systemsHint: "Include WMS, route planners, maintenance stack, and chargeback/reporting tools.",
+  },
+  government: {
+    scaleTitle: "Government program profile",
+    powerUnitsLabel: "Vehicles/assets in program scope",
+    activeDriversLabel: "Operators/crews in active service",
+    monthlyLoadsLabel: "Service/work-order volume per month",
+    equipmentLabel: "Agency type, mission profile, and chain-of-custody model",
+    equipmentHint: "Department scope, emergency readiness, and service obligations by site/region.",
+    painTitle: "Where public-sector risk appears",
+    painCompliance: "Public-sector compliance and inspection readiness burden",
+    painProof: "Audit trail / chain-of-custody proof-of-service gaps",
+    painDispatch: "Work-order response and emergency readiness coordination issues",
+    painSettlements: "Procurement, grant/funding, and budget reporting friction",
+    painAdmin: "Manual audit packet and cross-agency reporting overhead",
+    systemsLabel: "Work-order, procurement, compliance, and audit reporting systems",
+    systemsHint: "Include CMMS/work order tools, procurement systems, and audit evidence workflows.",
+  },
+};
+
 const EMPTY: AssessmentDraft = {
   fleetPowerUnits: "",
   activeDrivers: "",
@@ -48,14 +118,25 @@ const EMPTY: AssessmentDraft = {
 /** Form steps 0–7 (review on 7); step 8 = success. */
 const FORM_STEPS = 8;
 
-function loadDraft(): AssessmentDraft {
+function toSectorKey(input?: string): SectorKey {
+  const raw = String(input || "").trim().toLowerCase();
+  if (raw === "for-hire" || raw === "for_hire") return "for_hire";
+  if (raw === "private-fleet" || raw === "private_fleet") return "private_fleet";
+  if (raw === "government") return "government";
+  return "for_hire";
+}
+
+function loadDraft(initialSector?: string): AssessmentDraft {
   if (typeof window === "undefined") return { ...EMPTY };
   try {
     const raw = sessionStorage.getItem(MARKETING_ASSESSMENT_STORAGE_KEY) ?? localStorage.getItem(MARKETING_ASSESSMENT_STORAGE_KEY);
-    if (!raw) return { ...EMPTY };
-    return { ...EMPTY, ...JSON.parse(raw) } as AssessmentDraft;
+    const fallback = { ...EMPTY, sector: toSectorKey(initialSector) };
+    if (!raw) return fallback;
+    const parsed = { ...fallback, ...JSON.parse(raw) } as AssessmentDraft;
+    if (initialSector) parsed.sector = toSectorKey(initialSector);
+    return parsed;
   } catch {
-    return { ...EMPTY };
+    return { ...EMPTY, sector: toSectorKey(initialSector) };
   }
 }
 
@@ -69,14 +150,17 @@ function persistDraft(d: AssessmentDraft) {
   }
 }
 
-export function FleetAssessmentWizardClient() {
+export function FleetAssessmentWizardClient({ initialSector }: { initialSector?: string }) {
   const [step, setStep] = useState(0);
   const [draft, setDraft] = useState<AssessmentDraft>(EMPTY);
   const [errors, setErrors] = useState<Record<string, string>>({});
 
   useEffect(() => {
-    setDraft(loadDraft());
-  }, []);
+    setDraft(loadDraft(initialSector));
+  }, [initialSector]);
+
+  const activeSector = useMemo<SectorKey>(() => toSectorKey(draft.sector), [draft.sector]);
+  const questionSet = useMemo(() => sectorQuestionSets[activeSector], [activeSector]);
 
   const update = useCallback((patch: Partial<AssessmentDraft>) => {
     setDraft((prev) => {
@@ -219,8 +303,8 @@ export function FleetAssessmentWizardClient() {
       <div className="bof-mkt-funnel-panel bof-mkt-funnel-panel--step">
         {step === 0 && (
           <>
-            <h2 className="bof-mkt-funnel-h2">Fleet scale</h2>
-            <MarketingFunnelField id="fa-pu" label="Power units / active tractors" error={errors.fleetPowerUnits}>
+            <h2 className="bof-mkt-funnel-h2">{questionSet.scaleTitle}</h2>
+            <MarketingFunnelField id="fa-pu" label={questionSet.powerUnitsLabel} error={errors.fleetPowerUnits}>
               <input
                 id="fa-pu"
                 className="bof-mkt-funnel-input"
@@ -228,7 +312,7 @@ export function FleetAssessmentWizardClient() {
                 onChange={(e) => update({ fleetPowerUnits: e.target.value })}
               />
             </MarketingFunnelField>
-            <MarketingFunnelField id="fa-dr" label="Active drivers (CDL)" error={errors.activeDrivers}>
+            <MarketingFunnelField id="fa-dr" label={questionSet.activeDriversLabel} error={errors.activeDrivers}>
               <input
                 id="fa-dr"
                 className="bof-mkt-funnel-input"
@@ -236,7 +320,7 @@ export function FleetAssessmentWizardClient() {
                 onChange={(e) => update({ activeDrivers: e.target.value })}
               />
             </MarketingFunnelField>
-            <MarketingFunnelField id="fa-ml" label="Loads moved per month (linehaul)" error={errors.monthlyLoads}>
+            <MarketingFunnelField id="fa-ml" label={questionSet.monthlyLoadsLabel} error={errors.monthlyLoads}>
               <input
                 id="fa-ml"
                 className="bof-mkt-funnel-input"
@@ -272,8 +356,8 @@ export function FleetAssessmentWizardClient() {
             <h2 className="bof-mkt-funnel-h2">Equipment &amp; mode</h2>
             <MarketingFunnelField
               id="fa-eq"
-              label="Equipment profile & lanes"
-              hint="Reefer, flatbed, tank, dedicated shipper, drayage, intermodal, etc."
+              label={questionSet.equipmentLabel}
+              hint={questionSet.equipmentHint}
               error={errors.equipmentProfile}
             >
               <textarea
@@ -289,7 +373,7 @@ export function FleetAssessmentWizardClient() {
 
         {step === 3 && (
           <>
-            <h2 className="bof-mkt-funnel-h2">Where pain shows up today</h2>
+            <h2 className="bof-mkt-funnel-h2">{questionSet.painTitle}</h2>
             <p className="bof-mkt-funnel-hint-block">Select every area that creates weekly executive or dispatcher attention.</p>
             <label className="bof-mkt-funnel-check">
               <input
@@ -297,11 +381,11 @@ export function FleetAssessmentWizardClient() {
                 checked={draft.painCompliance}
                 onChange={(e) => update({ painCompliance: e.target.checked })}
               />
-              Credential / DOT compliance drift
+              {questionSet.painCompliance}
             </label>
             <label className="bof-mkt-funnel-check">
               <input type="checkbox" checked={draft.painProof} onChange={(e) => update({ painProof: e.target.checked })} />
-              POD, seals, photos, GPS proof gaps
+              {questionSet.painProof}
             </label>
             <label className="bof-mkt-funnel-check">
               <input
@@ -309,7 +393,7 @@ export function FleetAssessmentWizardClient() {
                 checked={draft.painDispatch}
                 onChange={(e) => update({ painDispatch: e.target.checked })}
               />
-              Dispatch readiness & asset assignment chaos
+              {questionSet.painDispatch}
             </label>
             <label className="bof-mkt-funnel-check">
               <input
@@ -317,11 +401,11 @@ export function FleetAssessmentWizardClient() {
                 checked={draft.painSettlements}
                 onChange={(e) => update({ painSettlements: e.target.checked })}
               />
-              Settlement holds, disputes, or finance rework
+              {questionSet.painSettlements}
             </label>
             <label className="bof-mkt-funnel-check">
               <input type="checkbox" checked={draft.painAdmin} onChange={(e) => update({ painAdmin: e.target.checked })} />
-              Admin time lost to chasing documents & status
+              {questionSet.painAdmin}
             </label>
           </>
         )}
@@ -331,8 +415,8 @@ export function FleetAssessmentWizardClient() {
             <h2 className="bof-mkt-funnel-h2">Current systems & workflow</h2>
             <MarketingFunnelField
               id="fa-tech"
-              label="TMS, safety, HR, telematics, settlement tools"
-              hint="Include spreadsheets, shared drives, or outsourced partners—truth beats aspiration."
+              label={questionSet.systemsLabel}
+              hint={questionSet.systemsHint}
               error={errors.techStack}
             >
               <textarea
