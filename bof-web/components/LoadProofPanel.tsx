@@ -24,6 +24,12 @@ function displayEvidenceStatus(status: LoadEvidenceItem["status"]) {
   return "Not applicable";
 }
 
+function displaySource(source?: LoadEvidenceItem["source"]) {
+  if (!source) return "Missing";
+  if (source === "generated") return "Generated demo evidence";
+  return "Real file";
+}
+
 export function LoadProofPanel({
   loadId,
   loadNumber,
@@ -74,7 +80,7 @@ export function LoadProofPanel({
   );
   const grouped = [
     { section: "Core Documents", rows: evidenceRows.filter((d) => d.section === "core") },
-    { section: "Proof & Evidence", rows: evidenceRows.filter((d) => d.section === "proof") },
+    { section: "Proof & Media", rows: evidenceRows.filter((d) => d.section === "proof") },
     { section: "Exceptions / Claims", rows: evidenceRows.filter((d) => d.section === "exceptions") },
   ].filter((g) => g.rows.length > 0);
 
@@ -94,13 +100,14 @@ export function LoadProofPanel({
       </p>
 
       <div className="overflow-x-auto rounded-lg border border-slate-800">
-        <table className="w-full min-w-[860px] border-collapse text-left text-xs">
+        <table className="w-full min-w-[980px] border-collapse text-left text-xs">
           <thead className="bg-slate-900/90 text-[10px] uppercase tracking-wide text-slate-500">
             <tr>
               <th className="border-b border-slate-800 px-2 py-2 font-medium">Document</th>
               <th className="border-b border-slate-800 px-2 py-2 font-medium">Status</th>
               <th className="border-b border-slate-800 px-2 py-2 font-medium">Link</th>
               <th className="border-b border-slate-800 px-2 py-2 font-medium">Filename</th>
+              <th className="border-b border-slate-800 px-2 py-2 font-medium">Source</th>
               <th className="border-b border-slate-800 px-2 py-2 font-medium">Notes</th>
             </tr>
           </thead>
@@ -108,14 +115,14 @@ export function LoadProofPanel({
             {grouped.map((group) => (
               <Fragment key={group.section}>
                 <tr className="border-b border-slate-800 bg-slate-950/65">
-                  <td colSpan={5} className="px-2 py-1.5 text-[10px] font-semibold uppercase tracking-wide text-slate-400">
+                  <td colSpan={6} className="px-2 py-1.5 text-[10px] font-semibold uppercase tracking-wide text-slate-400">
                     {group.section}
                   </td>
                 </tr>
                 {group.rows.map((doc) => {
                   const auto = autoByType.get(doc.label);
                   const href = doc.url || auto?.fileUrl;
-                  const canOpen = Boolean(href) && doc.status === "ready";
+                  const canOpen = Boolean(href);
                   return (
                     <tr key={doc.id} className="border-b border-slate-800/80">
                       <td className="px-2 py-1.5">
@@ -146,6 +153,7 @@ export function LoadProofPanel({
                       <td className="px-2 py-1.5 font-mono text-[10px] text-slate-500">
                         {doc.fileName ?? "—"}
                       </td>
+                      <td className="px-2 py-1.5 text-slate-400">{displaySource(doc.source)}</td>
                       <td className="px-2 py-1.5 text-slate-400">
                         {doc.note ??
                           (doc.status === "missing"

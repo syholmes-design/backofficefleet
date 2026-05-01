@@ -8,9 +8,18 @@ export type LoadEvidenceKey =
   | "equipmentPhoto"
   | "pickupPhoto"
   | "deliveryPhoto"
+  | "emptyTrailerProof"
   | "lumperReceipt"
   | "damagePhoto"
-  | "claimEvidence";
+  | "cargoDamagePhoto"
+  | "damagedPalletPhoto"
+  | "sealMismatchPhoto"
+  | "claimEvidence"
+  | "rfidDockProof"
+  | "tempCheckPhoto"
+  | "weightTicketPhoto"
+  | "detentionProofPhoto"
+  | "safetyViolationPhoto";
 
 export type LoadEvidenceManifestEntry = Partial<Record<LoadEvidenceKey, string>>;
 type LoadEvidenceManifest = Record<string, LoadEvidenceManifestEntry>;
@@ -27,6 +36,14 @@ function normalizeLoadId(loadId: string): string {
 export function getLoadEvidenceEntry(loadId: string): LoadEvidenceManifestEntry {
   const normalized = normalizeLoadId(loadId);
   return manifest[normalized] ?? manifest[loadId] ?? {};
+}
+
+export function getLoadEvidenceManifest(): LoadEvidenceManifest {
+  return manifest;
+}
+
+export function getLoadEvidenceForLoad(loadId: string): LoadEvidenceManifestEntry {
+  return getLoadEvidenceEntry(loadId);
 }
 
 export function getLoadEvidenceUrl(

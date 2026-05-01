@@ -9,6 +9,26 @@ const PUBLIC_ROOT = path.join(ROOT, "public");
 const EVIDENCE_ROOT = path.join(PUBLIC_ROOT, "evidence", "loads");
 const PUBLIC_MANIFEST_PATH = path.join(EVIDENCE_ROOT, "load-evidence-manifest.json");
 const LIB_MANIFEST_PATH = path.join(ROOT, "lib", "generated", "load-evidence-manifest.json");
+const SOURCE_HINT = "Generated demo evidence";
+const EVIDENCE_KEYS = [
+  "cargoPhoto",
+  "pickupPhoto",
+  "deliveryPhoto",
+  "equipmentPhoto",
+  "sealPickupPhoto",
+  "sealDeliveryPhoto",
+  "emptyTrailerProof",
+  "lumperReceipt",
+  "cargoDamagePhoto",
+  "claimEvidence",
+  "rfidDockProof",
+  "sealMismatchPhoto",
+  "damagedPalletPhoto",
+  "tempCheckPhoto",
+  "weightTicketPhoto",
+  "detentionProofPhoto",
+  "safetyViolationPhoto",
+];
 
 function ensureDir(dirPath) {
   fs.mkdirSync(dirPath, { recursive: true });
@@ -86,7 +106,7 @@ function renderEvidenceSvg({
   <rect x="990" y="296" width="230" height="230" rx="12" fill="#111827" stroke="#14b8a6" stroke-width="2"/>
   <circle cx="1105" cy="394" r="52" fill="#0f172a" stroke="#14b8a6" stroke-width="3"/>
   <path d="M1080 394h50M1105 369v50" stroke="#14b8a6" stroke-width="4" stroke-linecap="round"/>
-  <text x="24" y="698" fill="#94a3b8" font-size="14" font-family="Segoe UI, Arial">Generated demo evidence</text>
+  <text x="24" y="698" fill="#94a3b8" font-size="14" font-family="Segoe UI, Arial">${SOURCE_HINT}</text>
 </svg>`;
 }
 
@@ -119,11 +139,33 @@ function writeEvidenceSvg(loadId, fileName, svgContent) {
   return `/evidence/loads/${loadId}/${fileName}`;
 }
 
+function resolveExistingEvidence(loadId, baseName) {
+  const exts = [".jpg", ".jpeg", ".png", ".svg", ".webp", ".pdf", ".html"];
+  for (const ext of exts) {
+    const p = path.join(EVIDENCE_ROOT, loadId, `${baseName}${ext}`);
+    if (fs.existsSync(p)) return `/evidence/loads/${loadId}/${baseName}${ext}`;
+  }
+  return undefined;
+}
+
+function resolveOrGenerate(loadId, baseName, svgFactory, stats) {
+  const existing = resolveExistingEvidence(loadId, baseName);
+  if (existing) {
+    stats.reused += 1;
+    return existing;
+  }
+  const url = writeEvidenceSvg(loadId, `${baseName}.svg`, svgFactory());
+  stats.generated += 1;
+  return url;
+}
+
 function main() {
   const data = readJson(DATA_PATH);
   const manifest = {};
+  const stats = { loads: 0, required: 0, reused: 0, generated: 0 };
 
   for (const load of data.loads ?? []) {
+    stats.loads += 1;
     const customer = String(load.origin ?? "BOF Customer").split(" - ")[0] || "BOF Customer";
     const driverName = findDriverName(data.drivers ?? [], load.driverId);
     const warning = warningForLoad(load);
@@ -140,9 +182,7 @@ function main() {
       equipmentRef,
     };
 
-    const cargoPhoto = writeEvidenceSvg(
-      load.id,
-      "cargo-photo.svg",
+    const cargoPhoto = resolveOrGenerate(load.id, "cargo-photo", () =>
       renderEvidenceSvg({
         ...common,
         title: "Cargo Photo",
@@ -151,11 +191,8 @@ function main() {
         facility: load.origin,
         status: "Pallets secured / cargo condition recorded",
         sealNumber: load.pickupSeal || "",
-      })
-    );
-    const sealPhoto = writeEvidenceSvg(
-      load.id,
-      "seal-photo.svg",
+      }), stats);
+    const sealPhoto = resolveOrGenerate(load.id, "seal-photo", () =>
       renderEvidenceSvg({
         ...common,
         title: "Seal Photo",
@@ -164,11 +201,8 @@ function main() {
         facility: "Pickup & delivery checkpoints",
         status: `Seal chain recorded (${load.pickupSeal || "N/A"} / ${load.deliverySeal || "N/A"})`,
         sealNumber: `${load.pickupSeal || "—"} / ${load.deliverySeal || "—"}`,
-      })
-    );
-    const equipmentPhoto = writeEvidenceSvg(
-      load.id,
-      "equipment-photo.svg",
+      }), stats);
+    const equipmentPhoto = resolveOrGenerate(load.id, "equipment-photo", () =>
       renderEvidenceSvg({
         ...common,
         title: "Equipment Photo",
@@ -177,11 +211,8 @@ function main() {
         facility: load.origin,
         status: `Equipment inspection recorded`,
         sealNumber: "",
-      })
-    );
-    const pickupPhoto = writeEvidenceSvg(
-      load.id,
-      "pickup-photo.svg",
+      }), stats);
+    const pickupPhoto = resolveOrGenerate(load.id, "pickup-photo", () =>
       renderEvidenceSvg({
         ...common,
         title: "Pickup Photo",
@@ -190,11 +221,8 @@ function main() {
         facility: load.origin,
         status: "Pickup proof captured",
         sealNumber: load.pickupSeal || "",
-      })
-    );
-    const deliveryPhoto = writeEvidenceSvg(
-      load.id,
-      "delivery-photo.svg",
+      }), stats);
+    const deliveryPhoto = resolveOrGenerate(load.id, "delivery-photo", () =>
       renderEvidenceSvg({
         ...common,
         title: "Delivery Photo",
@@ -203,11 +231,8 @@ function main() {
         facility: load.destination,
         status: "Delivery proof captured",
         sealNumber: load.deliverySeal || "",
-      })
-    );
-    const sealPickupPhoto = writeEvidenceSvg(
-      load.id,
-      "seal-pickup-photo.svg",
+      }), stats);
+    const sealPickupPhoto = resolveOrGenerate(load.id, "seal-pickup-photo", () =>
       renderEvidenceSvg({
         ...common,
         title: "Seal Pickup Photo",
@@ -216,11 +241,8 @@ function main() {
         facility: load.origin,
         status: `Seal captured at pickup`,
         sealNumber: load.pickupSeal || "N/A",
-      })
-    );
-    const sealDeliveryPhoto = writeEvidenceSvg(
-      load.id,
-      "seal-delivery-photo.svg",
+      }), stats);
+    const sealDeliveryPhoto = resolveOrGenerate(load.id, "seal-delivery-photo", () =>
       renderEvidenceSvg({
         ...common,
         title: "Seal Delivery Photo",
@@ -229,12 +251,82 @@ function main() {
         facility: load.destination,
         status: `Seal captured at delivery`,
         sealNumber: load.deliverySeal || "N/A",
-      })
+      }), stats);
+    const emptyTrailerProof = resolveOrGenerate(load.id, "empty-trailer-proof", () =>
+      renderEvidenceSvg({
+        ...common,
+        title: "Empty Trailer Proof",
+        evidenceType: "empty_trailer_proof",
+        location: load.destination,
+        facility: load.destination,
+        status: "Trailer empty after delivery",
+        sealNumber: load.deliverySeal || "",
+        warning: "",
+      }), stats);
+    const rfidDockProof = resolveOrGenerate(load.id, "rfid-dock-proof", () =>
+      renderEvidenceSvg({
+        ...common,
+        title: "RFID Dock Proof",
+        evidenceType: "rfid_dock_proof",
+        location: `${load.origin} dock`,
+        facility: load.origin,
+        status: "RFID dock validation record",
+        sealNumber: load.pickupSeal || "",
+      }), stats);
+    const sealMismatchPhoto = String(load.sealStatus).toUpperCase() === "MISMATCH"
+      ? resolveOrGenerate(load.id, "seal-mismatch-photo", () =>
+          renderEvidenceSvg({
+            ...common,
+            title: "Seal Mismatch Photo",
+            evidenceType: "seal_mismatch_photo",
+            location: `${load.origin} → ${load.destination}`,
+            facility: "Exception corridor",
+            status: "Seal mismatch observed",
+            sealNumber: `${load.pickupSeal || "—"} / ${load.deliverySeal || "—"}`,
+            warning: "Seal mismatch - claim review required",
+          }), stats)
+      : undefined;
+    const tempControlled = /reefer|temp|cold/i.test(
+      `${load.commodity || ""} ${load.dispatchOpsNotes || ""}`
     );
+    const tempCheckPhoto = tempControlled
+      ? resolveOrGenerate(load.id, "temp-check-photo", () =>
+          renderEvidenceSvg({
+            ...common,
+            title: "Temperature Check Photo",
+            evidenceType: "temp_check_photo",
+            location: `${load.origin} → ${load.destination}`,
+            facility: "In-transit checks",
+            status: "Temperature evidence captured",
+            sealNumber: "",
+          }), stats)
+      : undefined;
+    const weightTicketPhoto = Number(load.weight || 0) > 0
+      ? resolveOrGenerate(load.id, "weight-ticket-photo", () =>
+          renderEvidenceSvg({
+            ...common,
+            title: "Weight Ticket Photo",
+            evidenceType: "weight_ticket_photo",
+            location: load.origin,
+            facility: load.origin,
+            status: "Scale / weight evidence captured",
+            sealNumber: "",
+          }), stats)
+      : undefined;
+    const detentionProofPhoto = /detention|delay|hold/i.test(String(load.dispatchOpsNotes || ""))
+      ? resolveOrGenerate(load.id, "detention-proof-photo", () =>
+          renderEvidenceSvg({
+            ...common,
+            title: "Detention Proof Photo",
+            evidenceType: "detention_proof_photo",
+            location: load.destination,
+            facility: load.destination,
+            status: "Detention/accessorial evidence",
+            sealNumber: "",
+          }), stats)
+      : undefined;
     const lumperReceipt = hasLumperIssue(load, data.settlements)
-      ? writeEvidenceSvg(
-          load.id,
-          "lumper-receipt.svg",
+      ? resolveOrGenerate(load.id, "lumper-receipt", () =>
           renderEvidenceSvg({
             ...common,
             title: "Lumper Receipt",
@@ -243,30 +335,37 @@ function main() {
             facility: load.destination,
             status: "Lumper receipt pending/review tracked for settlement",
             sealNumber: "",
-          })
-        )
+          }), stats)
       : undefined;
     const hasClaim = Boolean(load.dispatchExceptionFlag || String(load.sealStatus).toUpperCase() === "MISMATCH");
     const damagePhoto = hasClaim
-      ? writeEvidenceSvg(
-          load.id,
-          "damage-photo.svg",
+      ? resolveOrGenerate(load.id, "cargo-damage-photo", () =>
           renderEvidenceSvg({
             ...common,
-            title: "Damage Photo",
+            title: "Cargo Damage Evidence",
             evidenceType: "damage_photo",
             location: `${load.origin} → ${load.destination}`,
             facility: "Exception corridor",
             status: "Damage observed / claim review required",
             sealNumber: `${load.pickupSeal || "—"} → ${load.deliverySeal || "—"}`,
             warning: warning || "Claim review required",
-          })
-        )
+          }), stats)
+      : undefined;
+    const damagedPalletPhoto = hasClaim
+      ? resolveOrGenerate(load.id, "damaged-pallet-photo", () =>
+          renderEvidenceSvg({
+            ...common,
+            title: "Damaged Pallet Photo",
+            evidenceType: "damaged_pallet_photo",
+            location: `${load.origin} → ${load.destination}`,
+            facility: "Claim packet support",
+            status: "Damaged pallet evidence captured",
+            sealNumber: "",
+            warning: warning || undefined,
+          }), stats)
       : undefined;
     const claimEvidence = hasClaim
-      ? writeEvidenceSvg(
-          load.id,
-          "claim-evidence.svg",
+      ? resolveOrGenerate(load.id, "claim-evidence", () =>
           renderEvidenceSvg({
             ...common,
             title: "Claim Evidence Summary",
@@ -276,8 +375,20 @@ function main() {
             status: "Structured claim evidence placeholder (demo)",
             sealNumber: load.sealStatus || "",
             warning: warning || undefined,
-          })
-        )
+          }), stats)
+      : undefined;
+    const safetyViolationPhoto = /safety/i.test(String(load.dispatchOpsNotes || ""))
+      ? resolveOrGenerate(load.id, "safety-violation-photo", () =>
+          renderEvidenceSvg({
+            ...common,
+            title: "Safety Violation Photo",
+            evidenceType: "safety_violation_photo",
+            location: load.origin,
+            facility: "Safety escalation lane",
+            status: "Safety event evidence attached",
+            sealNumber: "",
+            warning: "Safety event linked to load",
+          }), stats)
       : undefined;
 
     manifest[load.id] = {
@@ -288,10 +399,19 @@ function main() {
       equipmentPhoto,
       pickupPhoto,
       deliveryPhoto,
+      emptyTrailerProof,
+      rfidDockProof,
+      ...(sealMismatchPhoto ? { sealMismatchPhoto } : {}),
+      ...(tempCheckPhoto ? { tempCheckPhoto } : {}),
+      ...(weightTicketPhoto ? { weightTicketPhoto } : {}),
+      ...(detentionProofPhoto ? { detentionProofPhoto } : {}),
       ...(lumperReceipt ? { lumperReceipt } : {}),
-      ...(damagePhoto ? { damagePhoto } : {}),
+      ...(damagePhoto ? { cargoDamagePhoto: damagePhoto, damagePhoto } : {}),
+      ...(damagedPalletPhoto ? { damagedPalletPhoto } : {}),
       ...(claimEvidence ? { claimEvidence } : {}),
+      ...(safetyViolationPhoto ? { safetyViolationPhoto } : {}),
     };
+    stats.required += EVIDENCE_KEYS.length;
     console.log(
       `[generate-load-evidence] load=${load.id} files=${Object.keys(manifest[load.id]).length} out=${PUBLIC_MANIFEST_PATH}`
     );
@@ -300,7 +420,9 @@ function main() {
   ensureDir(EVIDENCE_ROOT);
   writeJson(PUBLIC_MANIFEST_PATH, manifest);
   writeJson(LIB_MANIFEST_PATH, manifest);
-  console.log(`Generated load evidence for ${Object.keys(manifest).length} loads.`);
+  console.log(
+    `[generate-load-evidence] loads=${stats.loads} required=${stats.required} reused=${stats.reused} generated=${stats.generated} manifest=${PUBLIC_MANIFEST_PATH}`
+  );
 }
 
 main();

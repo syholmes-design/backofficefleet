@@ -1,7 +1,11 @@
 import type { BofData } from "./load-bof-data";
 import { getSafetyEvidenceByLoadId } from "./safety-evidence";
 import { getGeneratedLoadDocUrl } from "./load-doc-manifest";
-import { getLoadEvidenceUrl } from "./load-documents";
+import {
+  getLoadEvidenceForLoad,
+  getLoadEvidenceManifest,
+  getLoadEvidenceUrl,
+} from "./load-documents";
 
 export const LOAD_PROOF_TYPES = [
   "Rate Confirmation",
@@ -83,9 +87,17 @@ export type LoadEvidenceType =
   | "equipment_photo"
   | "pickup_photo"
   | "delivery_photo"
+  | "empty_trailer_proof"
+  | "seal_mismatch_photo"
+  | "cargo_damage_photo"
+  | "damaged_pallet_photo"
+  | "temp_check_photo"
+  | "weight_ticket_photo"
+  | "detention_proof_photo"
   | "safety_violation_photo"
   | "lumper_receipt"
   | "rfid_proof"
+  | "rfid_dock_proof"
   | "claim_intake"
   | "factoring_notification"
   | "settlement_hold_notice"
@@ -113,8 +125,19 @@ export type LoadEvidenceItem = {
   requiredForSettlementRelease: boolean;
   requiredForClaimRelease?: boolean;
   uploadedAt?: string;
-  source?: "actual_docs" | "generated" | "mock" | "manual_upload" | "rfid" | "camera";
+  source?: "actual_docs" | "generated" | "manual_upload" | "rfid" | "camera";
 };
+
+function withResolvedStatus(item: LoadEvidenceItem): LoadEvidenceItem {
+  if (item.status === "ready" && !item.url) {
+    return {
+      ...item,
+      status: "missing",
+      note: item.note || "File URL missing. Marked Missing to prevent false-ready state.",
+    };
+  }
+  return item;
+}
 
 export type LoadDocumentPacket = {
   loadId: string;
@@ -463,7 +486,7 @@ function sourceFromUrl(url?: string): LoadEvidenceItem["source"] {
   if (u.includes("/actual_docs/")) return "actual_docs";
   if (u.includes("/generated/")) return "generated";
   if (u.includes("/evidence/")) return "generated";
-  if (u.includes("/proof/")) return "mock";
+  if (u.includes("/proof/")) return "manual_upload";
   return "manual_upload";
 }
 
@@ -555,6 +578,14 @@ export function getLoadDocumentPacket(data: BofData, loadId: string): LoadDocume
   const generatedDamagePhoto =
     getLoadEvidenceUrl(loadId, "damagePhoto") ?? getGeneratedLoadDocUrl(loadId, "damageClaimPhoto");
   const generatedClaimEvidence = getLoadEvidenceUrl(loadId, "claimEvidence");
+  const generatedEmptyTrailerProof = getLoadEvidenceUrl(loadId, "emptyTrailerProof");
+  const generatedRfidDockProof = getLoadEvidenceUrl(loadId, "rfidDockProof");
+  const generatedCargoDamagePhoto = getLoadEvidenceUrl(loadId, "cargoDamagePhoto");
+  const generatedDamagedPalletPhoto = getLoadEvidenceUrl(loadId, "damagedPalletPhoto");
+  const generatedSealMismatchPhoto = getLoadEvidenceUrl(loadId, "sealMismatchPhoto");
+  const generatedTempCheckPhoto = getLoadEvidenceUrl(loadId, "tempCheckPhoto");
+  const generatedWeightTicketPhoto = getLoadEvidenceUrl(loadId, "weightTicketPhoto");
+  const generatedDetentionProofPhoto = getLoadEvidenceUrl(loadId, "detentionProofPhoto");
   const generatedSafetyViolationPhoto = getGeneratedLoadDocUrl(loadId, "safetyViolationPhoto");
 
   const rate = {
@@ -624,7 +655,7 @@ export function getLoadDocumentPacket(data: BofData, loadId: string): LoadDocume
     requiredForSettlementRelease: true,
     source:
       sourceFromUrl(generatedInvoice || String(invoiceOverride?.fileUrl ?? invoiceOverride?.previewUrl ?? "")) ??
-      (load.status === "Delivered" ? "generated" : "mock"),
+      (load.status === "Delivered" ? "generated" : undefined),
   };
   const workOrder: LoadEvidenceItem = {
     id: `${loadId}:work_order`,
@@ -816,6 +847,75 @@ export function getLoadDocumentPacket(data: BofData, loadId: string): LoadDocume
     ? "Generated RFID/geo proof summary."
     : "RFID proof not generated yet for this load.";
   rfid.source = generatedRfid ? "generated" : "rfid";
+  const rfidDockProof: LoadEvidenceItem = {
+    id: `${loadId}:rfid_dock_proof`,
+    loadId,
+    label: "RFID proof",
+    section: "proof",
+    type: "rfid_dock_proof",
+    status: generatedRfidDockProof ? "ready" : "pending",
+    url: generatedRfidDockProof,
+    fileName: fileNameFromUrl(generatedRfidDockProof),
+    note: generatedRfidDockProof
+      ? "RFID dock proof available."
+      : "RFID workflow applies when dock validation is required.",
+    requiredForSettlementRelease: false,
+    source: generatedRfidDockProof ? sourceFromUrl(generatedRfidDockProof) : "rfid",
+  };
+  const emptyTrailerProof: LoadEvidenceItem = {
+    id: `${loadId}:empty_trailer_proof`,
+    loadId,
+    label: "Empty trailer proof",
+    section: "proof",
+    type: "empty_trailer_proof",
+    status: generatedEmptyTrailerProof ? "ready" : load.status === "Delivered" ? "missing" : "pending",
+    url: generatedEmptyTrailerProof,
+    fileName: fileNameFromUrl(generatedEmptyTrailerProof),
+    note: generatedEmptyTrailerProof
+      ? "Trailer empty confirmation recorded."
+      : "Required after delivery closeout.",
+    requiredForSettlementRelease: load.status === "Delivered",
+    source: generatedEmptyTrailerProof ? sourceFromUrl(generatedEmptyTrailerProof) : undefined,
+  };
+  const tempCheckPhoto: LoadEvidenceItem = {
+    id: `${loadId}:temp_check_photo`,
+    loadId,
+    label: "Temp check photo",
+    section: "proof",
+    type: "temp_check_photo",
+    status: generatedTempCheckPhoto ? "ready" : "not_applicable",
+    url: generatedTempCheckPhoto,
+    fileName: fileNameFromUrl(generatedTempCheckPhoto),
+    note: "Temperature-controlled lane evidence.",
+    requiredForSettlementRelease: false,
+    source: generatedTempCheckPhoto ? sourceFromUrl(generatedTempCheckPhoto) : undefined,
+  };
+  const weightTicketPhoto: LoadEvidenceItem = {
+    id: `${loadId}:weight_ticket_photo`,
+    loadId,
+    label: "Weight ticket photo",
+    section: "proof",
+    type: "weight_ticket_photo",
+    status: generatedWeightTicketPhoto ? "ready" : "pending",
+    url: generatedWeightTicketPhoto,
+    fileName: fileNameFromUrl(generatedWeightTicketPhoto),
+    note: "Weight/scale proof for compliance checks.",
+    requiredForSettlementRelease: false,
+    source: generatedWeightTicketPhoto ? sourceFromUrl(generatedWeightTicketPhoto) : undefined,
+  };
+  const detentionProofPhoto: LoadEvidenceItem = {
+    id: `${loadId}:detention_proof_photo`,
+    loadId,
+    label: "Detention proof photo",
+    section: "proof",
+    type: "detention_proof_photo",
+    status: generatedDetentionProofPhoto ? "ready" : "not_applicable",
+    url: generatedDetentionProofPhoto,
+    fileName: fileNameFromUrl(generatedDetentionProofPhoto),
+    note: "Detention/accessorial evidence when applicable.",
+    requiredForSettlementRelease: false,
+    source: generatedDetentionProofPhoto ? sourceFromUrl(generatedDetentionProofPhoto) : undefined,
+  };
   const safetyPhoto = toEvidenceItem(
     loadId,
     "Safety violation photo",
@@ -832,12 +932,13 @@ export function getLoadDocumentPacket(data: BofData, loadId: string): LoadDocume
             ? "HOS/inspection exception evidence for safety review."
             : "No active safety violation media required.",
       source:
-        load.driverId === "DRV-004" || load.driverId === "DRV-008" ? "camera" : "mock",
+        load.driverId === "DRV-004" || load.driverId === "DRV-008" ? "camera" : undefined,
       url: generatedSafetyViolationPhoto || getSafetyEvidenceByLoadId(loadId)[0]?.url,
       fileName: fileNameFromUrl(generatedSafetyViolationPhoto || getSafetyEvidenceByLoadId(loadId)[0]?.url),
     }
   );
   safetyPhoto.status = safetyPhoto.url ? "ready" : safetyPhoto.status;
+  const claimRequired = claimApplicable(load, bundle);
   const damagePhoto = {
     ...toEvidenceItem(
       loadId,
@@ -846,22 +947,72 @@ export function getLoadDocumentPacket(data: BofData, loadId: string): LoadDocume
       "cargo_photo",
       proofByType(proofItems, "Cargo Damage Photos"),
       false,
-      { requiredForClaimRelease: claimApplicable(load, bundle) }
+      { requiredForClaimRelease: claimRequired }
     ),
-    status: claimApplicable(load, bundle)
+    status: claimRequired
       ? generatedDamagePhoto
         ? "ready"
         : "missing"
       : "not_applicable",
     url: generatedDamagePhoto,
     fileName: fileNameFromUrl(generatedDamagePhoto),
-    note: claimApplicable(load, bundle)
+    note: claimRequired
       ? generatedDamagePhoto
         ? `Damage evidence image linked.${generatedClaimEvidence ? ` Claim evidence file: ${generatedClaimEvidence}.` : ""}`
         : "Damage evidence photo required for claim path."
       : "No active claim path.",
     source: generatedDamagePhoto ? sourceFromUrl(generatedDamagePhoto) : undefined,
   } as LoadEvidenceItem;
+  const cargoDamagePhoto: LoadEvidenceItem = {
+    id: `${loadId}:cargo_damage_photo`,
+    loadId,
+    label: "Cargo damage photo",
+    section: "exceptions",
+    type: "cargo_damage_photo",
+    status: generatedCargoDamagePhoto ? "ready" : claimRequired ? "missing" : "not_applicable",
+    url: generatedCargoDamagePhoto,
+    fileName: fileNameFromUrl(generatedCargoDamagePhoto),
+    note: generatedCargoDamagePhoto
+      ? "Cargo damage image attached."
+      : "Required when claim/damage workflow is active.",
+    requiredForSettlementRelease: false,
+    requiredForClaimRelease: claimRequired,
+    source: generatedCargoDamagePhoto ? sourceFromUrl(generatedCargoDamagePhoto) : undefined,
+  };
+  const damagedPalletPhoto: LoadEvidenceItem = {
+    id: `${loadId}:damaged_pallet_photo`,
+    loadId,
+    label: "Damaged pallet photo",
+    section: "exceptions",
+    type: "damaged_pallet_photo",
+    status: generatedDamagedPalletPhoto ? "ready" : claimRequired ? "missing" : "not_applicable",
+    url: generatedDamagedPalletPhoto,
+    fileName: fileNameFromUrl(generatedDamagedPalletPhoto),
+    note: generatedDamagedPalletPhoto
+      ? "Damaged pallet evidence attached."
+      : "Required for cargo damage claims.",
+    requiredForSettlementRelease: false,
+    requiredForClaimRelease: claimRequired,
+    source: generatedDamagedPalletPhoto ? sourceFromUrl(generatedDamagedPalletPhoto) : undefined,
+  };
+  const sealMismatchPhoto: LoadEvidenceItem = {
+    id: `${loadId}:seal_mismatch_photo`,
+    loadId,
+    label: "Seal mismatch photo",
+    section: "exceptions",
+    type: "seal_mismatch_photo",
+    status:
+      String(load.sealStatus).toUpperCase() === "MISMATCH"
+        ? generatedSealMismatchPhoto
+          ? "ready"
+          : "missing"
+        : "not_applicable",
+    url: generatedSealMismatchPhoto,
+    fileName: fileNameFromUrl(generatedSealMismatchPhoto),
+    note: "Required when pickup/delivery seal numbers mismatch.",
+    requiredForSettlementRelease: false,
+    source: generatedSealMismatchPhoto ? sourceFromUrl(generatedSealMismatchPhoto) : undefined,
+  };
   const claim = toEvidenceItem(
     loadId,
     "Claim packet",
@@ -869,7 +1020,7 @@ export function getLoadDocumentPacket(data: BofData, loadId: string): LoadDocume
     "claim_packet",
     proofByType(proofItems, "Claim Support Docs"),
     false,
-    { requiredForClaimRelease: claimApplicable(load, bundle) }
+    { requiredForClaimRelease: claimRequired }
   );
   claim.status = claim.requiredForClaimRelease
     ? generatedClaim
@@ -1014,10 +1165,18 @@ export function getLoadDocumentPacket(data: BofData, loadId: string): LoadDocume
     equipmentPhoto,
     pickupPhoto,
     deliveryPhoto,
+    emptyTrailerProof,
     seal,
     lumper,
     rfid,
+    rfidDockProof,
+    tempCheckPhoto,
+    weightTicketPhoto,
+    detentionProofPhoto,
     damagePhoto,
+    cargoDamagePhoto,
+    damagedPalletPhoto,
+    sealMismatchPhoto,
     damagePhotoPacket,
     claimIntake,
     safetyPhoto,
@@ -1026,7 +1185,7 @@ export function getLoadDocumentPacket(data: BofData, loadId: string): LoadDocume
     factoringNotification,
     settlementHoldNotice,
     ...safetyEvidenceDocuments,
-  ];
+  ].map(withResolvedStatus);
   const blockers = documents.filter(
     (d) =>
       d.requiredForSettlementRelease &&
@@ -1075,3 +1234,5 @@ export function getLoadEvidenceForSettlement(data: BofData, loadIds: string[]) {
     .map((lid) => getLoadDocumentPacket(data, lid))
     .filter((packet): packet is LoadDocumentPacket => Boolean(packet));
 }
+
+export { getLoadEvidenceManifest, getLoadEvidenceForLoad };
