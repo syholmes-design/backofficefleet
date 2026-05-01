@@ -16,6 +16,30 @@ import { normalizeLoadIntakeForm } from "@/lib/load-intake-normalize";
 import { buildDispatchLoadsFromBofData } from "@/lib/dispatch-dashboard-seed";
 import { useDispatchDashboardStore } from "@/lib/stores/dispatch-dashboard-store";
 
+const BOF_STORAGE_KEY = "bof-demo-data-v1";
+
+function latestDataSnapshot(fallback: Parameters<typeof getClientLoadRequests>[0]) {
+  try {
+    const raw = localStorage.getItem(BOF_STORAGE_KEY);
+    if (!raw) return fallback;
+    const parsed = JSON.parse(raw) as typeof fallback;
+    if (!parsed || !Array.isArray(parsed.loads) || !Array.isArray(parsed.drivers) || !Array.isArray(parsed.documents)) {
+      return fallback;
+    }
+    return parsed;
+  } catch {
+    return fallback;
+  }
+}
+
+function persistDirect(next: Parameters<typeof getClientLoadRequests>[0]) {
+  try {
+    localStorage.setItem(BOF_STORAGE_KEY, JSON.stringify(next));
+  } catch {
+    // Keep setFullData as source of truth; this is a safety write for conversion flows.
+  }
+}
+
 function buildIntakeStateFromRequest(request: ClientLoadRequest): IntakeWizardState {
   return {
     lastDraftSavedAt: null,
@@ -120,7 +144,9 @@ export function ClientLoadRequestsReviewPageClient() {
   const editing = requests.find((r) => r.requestId === editingId) || null;
 
   const updateRequest = (requestId: string, patch: Partial<ClientLoadRequest>) => {
-    const nextRequests = requests.map((r) => {
+    const base = latestDataSnapshot(data);
+    const currentRequests = getClientLoadRequests(base);
+    const nextRequests = currentRequests.map((r) => {
       if (r.requestId !== requestId) return r;
       const merged = { ...r, ...patch };
       const review = validateClientLoadRequestDraft(merged);
@@ -137,12 +163,15 @@ export function ClientLoadRequestsReviewPageClient() {
               : "submitted",
       };
     });
-    const next = structuredClone(data);
+    const next = structuredClone(base);
     setClientLoadRequests(next, nextRequests);
+    persistDirect(next);
     setFullData(next);
   };
 
   const convertRequest = (request: ClientLoadRequest) => {
+    const base = latestDataSnapshot(data);
+    const currentRequests = getClientLoadRequests(base);
     const review = normalizeLoadIntake({
       sourceType: "client_manual",
       fields: clientRequestToIntakeRecord(request),
@@ -156,21 +185,23 @@ export function ClientLoadRequestsReviewPageClient() {
       return;
     }
     const intakeState = buildIntakeStateFromRequest(request);
-    const normalized = normalizeLoadIntakeForm(intakeState, data, {
+    const normalized = normalizeLoadIntakeForm(intakeState, base, {
       ...review.normalized,
       sourceType: "client_manual",
       reviewedAt: new Date().toISOString(),
       reviewedBy: "internal_bof",
     });
-    const next = structuredClone(data);
+    const next = structuredClone(base);
     const existingIdx = next.loads.findIndex((l) => l.id === normalized.bofLoad.id);
-    if (existingIdx >= 0) next.loads[existingIdx] = normalized.bofLoad;
-    else next.loads.push(normalized.bofLoad);
+    next.loads =
+      existingIdx >= 0
+        ? next.loads.map((l, idx) => (idx === existingIdx ? normalized.bofLoad : l))
+        : [...next.loads, normalized.bofLoad];
     next.loadProofBundles = {
       ...(next.loadProofBundles || {}),
       [normalized.canonical.loadId]: normalized.loadProofBundle,
     };
-    const nextRequests = requests.map((r) =>
+    const nextRequests = currentRequests.map((r) =>
       r.requestId === request.requestId
         ? {
             ...r,
@@ -184,6 +215,7 @@ export function ClientLoadRequestsReviewPageClient() {
         : r
     );
     setClientLoadRequests(next, nextRequests);
+    persistDirect(next);
     setFullData(next);
     const mappedDispatch = buildDispatchLoadsFromBofData(next).find((l) => l.load_id === normalized.canonical.loadId);
     if (mappedDispatch) upsertDispatchLoad(mappedDispatch);
@@ -241,6 +273,29 @@ export function ClientLoadRequestsReviewPageClient() {
             <EditField request={editing} onChange={(patch) => updateRequest(editing.requestId, patch)} k="deliveryAddress1" label="Delivery Address" />
             <EditField request={editing} onChange={(patch) => updateRequest(editing.requestId, patch)} k="commodity" label="Commodity" />
             <EditField request={editing} onChange={(patch) => updateRequest(editing.requestId, patch)} k="equipmentType" label="Equipment Type" />
+          </div>
+          <div className="bof-load-intake-toolbar">
+            <button
+              type="button"
+              className="bof-load-intake-btn"
+              onClick={() => updateRequest(editing.requestId, { status: "approved" })}
+            >
+              Approve
+            </button>
+            <button
+              type="button"
+              className="bof-load-intake-btn bof-load-intake-btn--danger"
+              onClick={() => updateRequest(editing.requestId, { status: "rejected" })}
+            >
+              Reject
+            </button>
+            <button
+              type="button"
+              className="bof-load-intake-btn bof-load-intake-btn--primary"
+              onClick={() => convertRequest(editing)}
+            >
+              Convert to Load
+            </button>
           </div>
         </section>
       ) : null}
