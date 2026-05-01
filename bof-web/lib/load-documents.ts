@@ -39,7 +39,7 @@ export type LoadEvidenceManifestValue =
 export type LoadEvidenceManifestEntry = Partial<Record<LoadEvidenceKey, LoadEvidenceManifestValue>>;
 type LoadEvidenceManifest = Record<string, LoadEvidenceManifestEntry>;
 
-const manifest = (evidenceManifestRaw ?? {}) as LoadEvidenceManifest;
+const manifest = (evidenceManifestRaw ?? {}) as unknown as LoadEvidenceManifest;
 
 function normalizeLoadId(loadId: string): string {
   const raw = String(loadId ?? "").trim().toUpperCase();

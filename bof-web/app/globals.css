@@ -12633,6 +12633,11 @@ body {
   padding-bottom: 9rem;
 }
 
+/* Dashboard page: extra clearance above fixed / docked bottom UI (Queue Detail table, etc.) */
+.bof-dashboard-page.bof-page.bof-cc-page {
+  padding-bottom: max(11rem, calc(9rem + env(safe-area-inset-bottom, 0px)));
+}
+
 .bof-cc-hero {
   border: 1px solid var(--bof-cc-border);
   background: linear-gradient(160deg, #0b1220 0%, #111b30 100%);
@@ -12641,21 +12646,37 @@ body {
   margin-bottom: 1rem;
 }
 
-/* Dashboard (/dashboard) — hero art spans full card; copy + stats stay live DOM above overlay */
+/*
+ * Dashboard (/dashboard) hero — full-width cockpit backdrop.
+ * Overrides earlier .bof-cc-hero { display:flex; align-items:flex-end } from Command Center block
+ * so content is top-aligned and absolute bg layers span the entire hero card.
+ */
 .bof-dashboard-hero.bof-cc-hero {
+  display: block;
+  flex-wrap: unset;
+  align-items: unset;
+  justify-content: unset;
   position: relative;
   overflow: hidden;
   isolation: isolate;
+  border-radius: 1rem;
+  min-height: 520px;
+  padding: 2rem;
 }
 
-.bof-dashboard-hero__image {
+.bof-dashboard-hero__bg {
   position: absolute;
   inset: 0;
   z-index: 0;
   pointer-events: none;
 }
 
-.bof-dashboard-hero__image-el {
+.bof-dashboard-hero__bg > span {
+  width: 100% !important;
+  height: 100% !important;
+}
+
+.bof-dashboard-hero__bg-img {
   width: 100%;
   height: 100%;
   object-fit: cover;
@@ -12667,12 +12688,9 @@ body {
   inset: 0;
   z-index: 1;
   pointer-events: none;
-  background: linear-gradient(
-    105deg,
-    rgba(2, 6, 23, 0.88) 0%,
-    rgba(2, 6, 23, 0.5) 42%,
-    rgba(2, 6, 23, 0.72) 100%
-  );
+  background:
+    linear-gradient(90deg, rgba(2, 6, 23, 0.95) 0%, rgba(2, 6, 23, 0.78) 42%, rgba(2, 6, 23, 0.45) 100%),
+    linear-gradient(180deg, rgba(2, 6, 23, 0.2) 0%, rgba(2, 6, 23, 0.85) 100%);
 }
 
 .bof-dashboard-hero__content {
@@ -12680,13 +12698,50 @@ body {
   z-index: 2;
   display: grid;
   grid-template-columns: minmax(0, 1.2fr) minmax(280px, 0.8fr);
-  gap: 1rem;
+  gap: 1.25rem;
   align-items: start;
 }
 
+.bof-dashboard-hero .bof-cc-hero-left {
+  align-self: start;
+}
+
+.bof-dashboard-hero .bof-cc-hero-stat-grid {
+  grid-template-columns: repeat(auto-fit, minmax(124px, 1fr));
+  gap: 0.4rem;
+}
+
 .bof-dashboard-hero .bof-cc-hero-stat {
-  background: rgba(15, 27, 47, 0.9);
-  backdrop-filter: blur(8px);
+  background: rgba(15, 27, 47, 0.88);
+  backdrop-filter: blur(10px);
+}
+
+/* Translucent route snapshot over hero art — no duplicate hero image inside */
+.bof-dashboard-hero-route-panel.bof-cc-route-panel {
+  background: rgba(13, 23, 41, 0.72);
+  backdrop-filter: blur(12px);
+  border-color: rgba(100, 116, 139, 0.35);
+  max-height: min(380px, 52vh);
+  overflow-x: hidden;
+  overflow-y: auto;
+  align-self: start;
+}
+
+.bof-dashboard-hero-route-panel .bof-cc-route-svg {
+  height: 92px;
+}
+
+.bof-dashboard-hero-route-panel .bof-cc-route-list {
+  gap: 0.28rem;
+}
+
+.bof-dashboard-hero-route-panel .bof-cc-route-row {
+  padding: 0.3rem 0.38rem;
+  font-size: 0.74rem;
+}
+
+.bof-dashboard-hero--no-image.bof-cc-hero {
+  min-height: 0;
 }
 
 .bof-cc-hero-left {
@@ -13393,13 +13448,19 @@ body {
     grid-template-columns: 1fr;
   }
 
+  .bof-dashboard-hero.bof-cc-hero {
+    min-height: min(440px, 72vh);
+    padding: 1.35rem;
+  }
+
+  .bof-dashboard-hero-route-panel.bof-cc-route-panel {
+    max-height: min(320px, 48vh);
+  }
+
   .bof-dashboard-hero__overlay {
-    background: linear-gradient(
-      180deg,
-      rgba(2, 6, 23, 0.92) 0%,
-      rgba(2, 6, 23, 0.84) 50%,
-      rgba(2, 6, 23, 0.9) 100%
-    );
+    background:
+      linear-gradient(180deg, rgba(2, 6, 23, 0.93) 0%, rgba(2, 6, 23, 0.82) 45%, rgba(2, 6, 23, 0.9) 100%),
+      linear-gradient(90deg, rgba(2, 6, 23, 0.88) 0%, rgba(2, 6, 23, 0.65) 100%);
   }
 }
 

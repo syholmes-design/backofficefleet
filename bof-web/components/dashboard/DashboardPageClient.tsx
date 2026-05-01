@@ -152,20 +152,20 @@ export function DashboardPageClient() {
   ] as const;
 
   return (
-    <div className="bof-page bof-cc-page">
+    <div className="bof-page bof-cc-page bof-dashboard-page">
       <section
         className={`bof-dashboard-hero bof-cc-hero${heroImageMissing ? " bof-dashboard-hero--no-image" : ""}`}
       >
         {!heroImageMissing ? (
           <>
-            <div className="bof-dashboard-hero__image" aria-hidden>
+            <div className="bof-dashboard-hero__bg" aria-hidden>
               <Image
                 src="/images/bof-command-dashboard-hero.png"
                 alt=""
                 fill
                 priority
-                sizes="(max-width: 900px) 100vw, min(1200px, 100vw)"
-                className="bof-dashboard-hero__image-el"
+                sizes="100vw"
+                className="bof-dashboard-hero__bg-img"
                 onError={() => setHeroImageMissing(true)}
                 unoptimized
               />
@@ -393,7 +393,10 @@ function HeroVisualPanel({
   topRiskLoads: Array<{ id: string; origin: string; destination: string; status: string; sealStatus: string }>;
 }) {
   return (
-    <aside className="bof-cc-route-panel" aria-label="Route summary visual">
+    <aside
+      className="bof-cc-route-panel bof-dashboard-hero-route-panel"
+      aria-label="Route summary visual"
+    >
       <h3 className="bof-cc-panel-title">
         {hasBackdropImage ? "Route & Alert Snapshot" : "Route Risk Snapshot"}
       </h3>
