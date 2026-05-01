@@ -12,6 +12,7 @@ import {
 import { buildLoadIntakeTemplateRegistry } from "@/lib/load-intake/template-registry";
 import { countWarnings, hasBlockingChecks } from "@/lib/load-requirements-intake-checks";
 import type { AutoCheckResult, IntakeWizardState } from "@/lib/load-requirements-intake-types";
+import type { LoadIntakeRecord } from "@/lib/load-requirements-intake-types";
 import type {
   IntakeFieldKey,
   LoadIntakeTemplateRegistryItem,
@@ -67,6 +68,13 @@ type Props = {
   validationErrors: string[];
   submitError: string | null;
   submitSuccess: string | null;
+  intakeMode: "manual" | "upload";
+  normalizedReview: {
+    normalized: LoadIntakeRecord;
+    warnings: string[];
+    missingRequiredFields: string[];
+    status: "draft" | "needs_review" | "ready_to_save";
+  };
 };
 
 export function LoadIntakeStep4PacketReview({
@@ -79,6 +87,8 @@ export function LoadIntakeStep4PacketReview({
   validationErrors,
   submitError,
   submitSuccess,
+  intakeMode,
+  normalizedReview,
 }: Props) {
   const { data } = useBofDemoData();
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -323,6 +333,36 @@ export function LoadIntakeStep4PacketReview({
             Back to compliance
           </button>
         </div>
+      </section>
+
+      <section className="bof-load-intake-card" aria-label="Unified intake review">
+        <h2>Unified intake review ({intakeMode})</h2>
+        <p className="bof-muted">
+          Manual and upload flows both pass through the same canonical intake normalizer before save.
+        </p>
+        <div className="bof-load-intake-metrics">
+          <span>
+            <strong>Status</strong>: {normalizedReview.status}
+          </span>
+          <span>
+            <strong>Missing</strong>: {normalizedReview.missingRequiredFields.length}
+          </span>
+          <span>
+            <strong>Warnings</strong>: {normalizedReview.warnings.length}
+          </span>
+        </div>
+        {normalizedReview.missingRequiredFields.length > 0 ? (
+          <div className="bof-load-intake-alert bof-load-intake-alert--warn">
+            Missing required fields: {normalizedReview.missingRequiredFields.join(", ")}
+          </div>
+        ) : null}
+        {normalizedReview.warnings.length > 0 ? (
+          <ul className="bof-cc-change-list">
+            {normalizedReview.warnings.map((warning) => (
+              <li key={warning}>{warning}</li>
+            ))}
+          </ul>
+        ) : null}
       </section>
 
       <section className="bof-load-intake-card" aria-labelledby="intake-s4b">

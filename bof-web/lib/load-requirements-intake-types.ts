@@ -162,6 +162,7 @@ export type LoadIntakeRecord = {
   rate?: number | string;
   poNumber?: string;
   bolNumber?: string;
+  invoiceNumber?: string;
   rateConfirmationNumber?: string;
   sealRequired?: boolean | string;
   sealNumber?: string;

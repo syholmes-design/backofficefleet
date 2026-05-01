@@ -4,9 +4,16 @@ import { LocalPdfProvider } from "@/lib/load-intake/extraction/local-pdf-provide
 export const runtime = "nodejs";
 
 const provider = new LocalPdfProvider();
+const configuredProvider = process.env.LOAD_INTAKE_EXTRACTION_PROVIDER || "local";
 
 export async function POST(req: Request) {
   try {
+    if (configuredProvider !== "local") {
+      return NextResponse.json(
+        { error: `Unsupported extraction provider '${configuredProvider}'. Set LOAD_INTAKE_EXTRACTION_PROVIDER=local.` },
+        { status: 400 }
+      );
+    }
     const form = await req.formData();
     const file = form.get("file");
     if (!(file instanceof File)) {

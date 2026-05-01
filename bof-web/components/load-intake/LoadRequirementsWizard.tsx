@@ -190,6 +190,17 @@ function YesNo({
   );
 }
 
+function ConfidenceBadge({
+  score,
+}: {
+  score?: number;
+}) {
+  if (typeof score !== "number") return null;
+  const pct = Math.round(score * 100);
+  const tone = pct >= 80 ? "high" : pct >= 60 ? "medium" : "low";
+  return <span className={`bof-intake-confidence bof-intake-confidence-${tone}`}>{pct}%</span>;
+}
+
 function splitDateTime(value?: string): { date?: string; time?: string } {
   const v = String(value || "").trim();
   if (!v) return {};
@@ -409,6 +420,7 @@ export function LoadRequirementsWizard() {
       }),
     [extractionResult, intakeMode, state]
   );
+  const fieldConfidence = extractionResult?.fieldConfidence ?? {};
 
   const goStep = (n: number) => setStep(n);
 
@@ -488,12 +500,29 @@ export function LoadRequirementsWizard() {
   const saveIntakeLoad = useCallback(() => {
     setSubmitError(null);
     setSubmitSuccess(null);
+    if (normalizedReview.status !== "ready_to_save" && normalizedReview.status !== "needs_review") {
+      setSubmitError("Intake record is not ready for review.");
+      return;
+    }
+    if (normalizedReview.missingRequiredFields.length > 0) {
+      setSubmitError(`Missing required fields: ${normalizedReview.missingRequiredFields.join(", ")}.`);
+      return;
+    }
     if (validationErrors.length > 0) {
       setSubmitError(validationErrors.join(" "));
       return;
     }
     try {
-      const normalized = normalizeLoadIntakeForm(state, data);
+      const normalized = normalizeLoadIntakeForm(state, data, {
+        ...normalizedReview.normalized,
+        sourceType: intakeMode,
+        sourceDocumentUrl: uploadFile?.name,
+        extractionProvider: extractionResult?.providerName,
+        extractionConfidence: extractionResult?.confidence,
+        extractionWarnings: extractionResult?.warnings,
+        reviewedAt: new Date().toISOString(),
+        reviewedBy: "dispatcher",
+      });
       const next = structuredClone(data);
       const existingIdx = next.loads.findIndex((l) => l.id === normalized.bofLoad.id);
       if (existingIdx >= 0) next.loads[existingIdx] = normalized.bofLoad;
@@ -516,7 +545,48 @@ export function LoadRequirementsWizard() {
       const msg = err instanceof Error ? err.message : "Failed to save intake load.";
       setSubmitError(msg);
     }
-  }, [data, setFullData, state, upsertDispatchLoad, validationErrors]);
+  }, [
+    data,
+    extractionResult?.confidence,
+    extractionResult?.providerName,
+    extractionResult?.warnings,
+    intakeMode,
+    normalizedReview.missingRequiredFields,
+    normalizedReview.normalized,
+    normalizedReview.status,
+    setFullData,
+    state,
+    uploadFile?.name,
+    upsertDispatchLoad,
+    validationErrors,
+  ]);
+
+  const extractUploadDocument = useCallback(async () => {
+    setExtractionError(null);
+    setExtractionResult(null);
+    if (!uploadFile) {
+      setExtractionError("Select a PDF file to extract.");
+      return;
+    }
+    setExtracting(true);
+    try {
+      const form = new FormData();
+      form.append("file", uploadFile);
+      const res = await fetch("/api/load-intake/extract", {
+        method: "POST",
+        body: form,
+      });
+      const json = (await res.json()) as ExtractionResponse & { error?: string };
+      if (!res.ok) {
+        throw new Error(json.error || "Extraction failed.");
+      }
+      setExtractionResult(json);
+    } catch (error) {
+      setExtractionError(error instanceof Error ? error.message : "Extraction failed.");
+    } finally {
+      setExtracting(false);
+    }
+  }, [uploadFile]);
 
   return (
     <div className="bof-load-intake">
@@ -947,9 +1017,100 @@ export function LoadRequirementsWizard() {
         <section className="bof-load-intake-card" aria-labelledby="intake-s2">
           <h2 id="intake-s2">Step 2 — Load requirements</h2>
           <p className="bof-muted">Commodity, counts, equipment, handling, and temperature policy.</p>
+          <div className="bof-load-intake-toolbar" style={{ marginBottom: "0.8rem" }}>
+            <button
+              type="button"
+              className={`bof-load-intake-btn ${intakeMode === "manual" ? "bof-load-intake-btn--primary" : ""}`}
+              onClick={() => setIntakeMode("manual")}
+            >
+              Manual Entry
+            </button>
+            <button
+              type="button"
+              className={`bof-load-intake-btn ${intakeMode === "upload" ? "bof-load-intake-btn--primary" : ""}`}
+              onClick={() => setIntakeMode("upload")}
+            >
+              Upload Document
+            </button>
+          </div>
+          {intakeMode === "upload" && (
+            <div className="bof-load-intake-subsection" style={{ marginBottom: "1rem" }}>
+              <h3>Upload Rate Con / PO / Tender</h3>
+              <div className="bof-load-intake-grid-2">
+                <div className="bof-load-intake-field">
+                  <label htmlFor="intake-upload-file">PDF document</label>
+                  <input
+                    id="intake-upload-file"
+                    type="file"
+                    accept=".pdf,application/pdf"
+                    onChange={(e) => setUploadFile(e.target.files?.[0] ?? null)}
+                  />
+                </div>
+                <div className="bof-load-intake-field">
+                  <label>Actions</label>
+                  <div className="bof-load-intake-toolbar">
+                    <button
+                      type="button"
+                      className="bof-load-intake-btn bof-load-intake-btn--primary"
+                      disabled={extracting || !uploadFile}
+                      onClick={extractUploadDocument}
+                    >
+                      {extracting ? "Extracting..." : "Extract fields"}
+                    </button>
+                    {extractionResult ? (
+                      <button
+                        type="button"
+                        className="bof-load-intake-btn"
+                        onClick={() => setState((s) => applyExtractedFieldsToState(s, extractionResult.normalizedFields))}
+                      >
+                        Apply to form
+                      </button>
+                    ) : null}
+                  </div>
+                </div>
+              </div>
+              {extractionError ? (
+                <div className="bof-load-intake-alert bof-load-intake-alert--block">{extractionError}</div>
+              ) : null}
+              {extractionResult ? (
+                <div style={{ marginTop: "0.7rem" }}>
+                  <p className="bof-muted">
+                    Provider: <strong>{extractionResult.providerName}</strong> · Confidence:{" "}
+                    <strong>{Math.round(extractionResult.confidence * 100)}%</strong> · Status:{" "}
+                    <strong>{extractionResult.status}</strong>
+                  </p>
+                  {extractionResult.warnings.length > 0 ? (
+                    <ul className="bof-cc-change-list">
+                      {extractionResult.warnings.map((w) => (
+                        <li key={w}>{w}</li>
+                      ))}
+                    </ul>
+                  ) : null}
+                  <details style={{ marginTop: "0.5rem" }}>
+                    <summary>Extracted text preview</summary>
+                    <pre className="bof-load-intake-code">{extractionResult.extractedTextPreview}</pre>
+                  </details>
+                  <details style={{ marginTop: "0.5rem" }}>
+                    <summary>Field confidence breakdown</summary>
+                    <div className="bof-load-intake-confidence-list">
+                      {Object.entries(extractionResult.fieldConfidence)
+                        .sort((a, b) => a[1] - b[1])
+                        .map(([field, score]) => (
+                          <div key={field} className="bof-load-intake-confidence-row">
+                            <span>{field}</span>
+                            <ConfidenceBadge score={score} />
+                          </div>
+                        ))}
+                    </div>
+                  </details>
+                </div>
+              ) : null}
+            </div>
+          )}
           <div className="bof-load-intake-grid-2">
             <div className="bof-load-intake-field">
               <label htmlFor="commodity">Commodity</label>
+                <ConfidenceBadge score={fieldConfidence.commodity} />
               <input
                 id="commodity"
                 value={state.loadRequirement.commodity}
@@ -963,6 +1124,7 @@ export function LoadRequirementsWizard() {
             </div>
             <div className="bof-load-intake-field">
               <label htmlFor="equip">Equipment type</label>
+                <ConfidenceBadge score={fieldConfidence.equipmentType} />
               <select
                 id="equip"
                 value={state.loadRequirement.equipment_type}
@@ -984,6 +1146,7 @@ export function LoadRequirementsWizard() {
             </div>
             <div className="bof-load-intake-field">
               <label htmlFor="weight">Weight (lb)</label>
+                <ConfidenceBadge score={fieldConfidence.weight} />
               <input
                 id="weight"
                 type="number"
@@ -1055,6 +1218,7 @@ export function LoadRequirementsWizard() {
             </div>
             <div className="bof-load-intake-field">
               <label htmlFor="rate_linehaul">Rate / linehaul amount</label>
+                <ConfidenceBadge score={fieldConfidence.rate} />
               <input
                 id="rate_linehaul"
                 type="number"
@@ -1074,6 +1238,7 @@ export function LoadRequirementsWizard() {
             </div>
             <div className="bof-load-intake-field">
               <label htmlFor="pickup_at">Pickup appointment</label>
+                <ConfidenceBadge score={Math.max(fieldConfidence.pickupAppointmentDate ?? 0, fieldConfidence.pickupAppointmentTime ?? 0)} />
               <input
                 id="pickup_at"
                 type="datetime-local"
@@ -1088,6 +1253,7 @@ export function LoadRequirementsWizard() {
             </div>
             <div className="bof-load-intake-field">
               <label htmlFor="delivery_at">Delivery appointment</label>
+                <ConfidenceBadge score={Math.max(fieldConfidence.deliveryAppointmentDate ?? 0, fieldConfidence.deliveryAppointmentTime ?? 0)} />
               <input
                 id="delivery_at"
                 type="datetime-local"
@@ -1305,6 +1471,7 @@ export function LoadRequirementsWizard() {
               />
               <div className="bof-load-intake-field">
                 <label htmlFor="seal_number">Seal number (if known)</label>
+                <ConfidenceBadge score={fieldConfidence.sealNumber} />
                 <input
                   id="seal_number"
                   value={state.loadRequirement.seal_number ?? ""}
@@ -1623,6 +1790,7 @@ export function LoadRequirementsWizard() {
               </div>
               <div className="bof-load-intake-field">
                 <label htmlFor="bol_number">BOL number (optional)</label>
+                <ConfidenceBadge score={fieldConfidence.bolNumber} />
                 <input
                   id="bol_number"
                   value={state.loadRequirement.bol_number ?? ""}
@@ -1808,6 +1976,8 @@ export function LoadRequirementsWizard() {
             validationErrors={validationErrors}
             submitError={submitError}
             submitSuccess={submitSuccess}
+            normalizedReview={normalizedReview}
+            intakeMode={intakeMode}
           />
           <section className="bof-load-intake-card" aria-label="Runtime export">
             <h2>Session export</h2>

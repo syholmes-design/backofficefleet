@@ -23,7 +23,7 @@ function assign(
   confidence: number
 ) {
   if (!value) return;
-  out[key] = value;
+  (out as Record<string, unknown>)[String(key)] = value;
   conf[String(key)] = confidence;
 }
 

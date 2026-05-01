@@ -1,5 +1,6 @@
 import type { BofData } from "@/lib/load-bof-data";
 import type { IntakeWizardState, LoadRequirement } from "@/lib/load-requirements-intake-types";
+import type { LoadIntakeRecord } from "@/lib/load-requirements-intake-types";
 
 export type IntakeCanonicalLoad = {
   loadId: string;
@@ -65,7 +66,8 @@ function appointmentOrFallback(value?: string) {
 
 export function normalizeLoadIntakeForm(
   state: IntakeWizardState,
-  data: BofData
+  data: BofData,
+  intakeRecord?: Partial<LoadIntakeRecord>
 ): NormalizeResult {
   const req: LoadRequirement = state.loadRequirement;
   const driverId = req.assigned_driver_id?.trim() || "UNASSIGNED";
@@ -170,6 +172,13 @@ export function normalizeLoadIntakeForm(
     sealNumber: canonical.sealNumber,
     invoiceNumber: canonical.invoiceNumber,
     bolNumber: canonical.bolNumber,
+    intakeSourceType: intakeRecord?.sourceType ?? "manual",
+    intakeSourceDocumentUrl: intakeRecord?.sourceDocumentUrl,
+    extractionProvider: intakeRecord?.extractionProvider,
+    extractionConfidence: intakeRecord?.extractionConfidence,
+    extractionWarnings: intakeRecord?.extractionWarnings,
+    reviewedAt: intakeRecord?.reviewedAt,
+    reviewedBy: intakeRecord?.reviewedBy,
   } as BofData["loads"][number];
 
   const loadProofBundle: NormalizeResult["loadProofBundle"] = {

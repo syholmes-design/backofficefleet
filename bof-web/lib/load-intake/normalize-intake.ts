@@ -117,8 +117,12 @@ export function normalizeLoadIntake(input: NormalizeInput): NormalizeResult {
   }
   if (!normalized.pickupState) warnings.push("Pickup state is missing or invalid.");
   if (!normalized.deliveryState) warnings.push("Delivery state is missing or invalid.");
-  if (normalized.rate == null || normalized.rate <= 0) warnings.push("Rate is missing or invalid.");
-  if (normalized.weight == null || normalized.weight <= 0) warnings.push("Weight is missing or invalid.");
+  if (typeof normalized.rate !== "number" || normalized.rate <= 0) {
+    warnings.push("Rate is missing or invalid.");
+  }
+  if (typeof normalized.weight !== "number" || normalized.weight <= 0) {
+    warnings.push("Weight is missing or invalid.");
+  }
   if (input.sourceType === "upload" && !normalized.extractionProvider) {
     warnings.push("Upload source is missing extraction provider metadata.");
   }
