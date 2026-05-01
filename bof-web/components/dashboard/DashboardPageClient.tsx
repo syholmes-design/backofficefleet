@@ -156,25 +156,8 @@ export function DashboardPageClient() {
       <section
         className={`bof-dashboard-hero bof-cc-hero${heroImageMissing ? " bof-dashboard-hero--no-image" : ""}`}
       >
-        {!heroImageMissing ? (
-          <>
-            <div className="bof-dashboard-hero__bg" aria-hidden>
-              <Image
-                src="/images/bof-command-dashboard-hero.png"
-                alt=""
-                fill
-                priority
-                sizes="100vw"
-                className="bof-dashboard-hero__bg-img"
-                onError={() => setHeroImageMissing(true)}
-                unoptimized
-              />
-            </div>
-            <div className="bof-dashboard-hero__overlay" aria-hidden />
-          </>
-        ) : null}
         <div className="bof-dashboard-hero__content">
-          <div className="bof-cc-hero-left">
+          <div className="bof-dashboard-hero__copy bof-cc-hero-left">
             <p className="bof-cc-kicker">Executive Operations Cockpit</p>
             <h1 className="bof-title bof-cc-title">Fleet Command Dashboard</h1>
             <p className="bof-lead bof-cc-lead">
@@ -201,13 +184,29 @@ export function DashboardPageClient() {
               ))}
             </div>
           </div>
-          <HeroVisualPanel
-            hasBackdropImage={!heroImageMissing}
-            latestCriticalAlert={latestCriticalAlert}
-            loadsAtRisk={summary.loadsAtRisk}
-            topRiskLoads={topRiskLoads}
-          />
+          {!heroImageMissing ? (
+            <div className="bof-dashboard-hero__visual">
+              <Image
+                src="/images/bof-command-dashboard-hero.png"
+                alt="BOF command dashboard preview — fleet operations, documents, and compliance."
+                fill
+                priority
+                sizes="(max-width: 900px) 100vw, 55vw"
+                className="bof-dashboard-hero__visual-img"
+                onError={() => setHeroImageMissing(true)}
+                unoptimized
+              />
+            </div>
+          ) : null}
         </div>
+      </section>
+
+      <section className="bof-dashboard-route-snapshot" aria-label="Route and alert snapshot">
+        <RouteSnapshotCard
+          latestCriticalAlert={latestCriticalAlert}
+          loadsAtRisk={summary.loadsAtRisk}
+          topRiskLoads={topRiskLoads}
+        />
       </section>
 
       <section className="bof-cc-kpi-sections" aria-label="Executive KPI strip">
@@ -381,25 +380,18 @@ export function DashboardPageClient() {
   );
 }
 
-function HeroVisualPanel({
-  hasBackdropImage,
+function RouteSnapshotCard({
   latestCriticalAlert,
   loadsAtRisk,
   topRiskLoads,
 }: {
-  hasBackdropImage: boolean;
   latestCriticalAlert: OwnerAttentionItem | null;
   loadsAtRisk: number;
   topRiskLoads: Array<{ id: string; origin: string; destination: string; status: string; sealStatus: string }>;
 }) {
   return (
-    <aside
-      className="bof-cc-route-panel bof-dashboard-hero-route-panel"
-      aria-label="Route summary visual"
-    >
-      <h3 className="bof-cc-panel-title">
-        {hasBackdropImage ? "Route & Alert Snapshot" : "Route Risk Snapshot"}
-      </h3>
+    <aside className="bof-cc-route-panel bof-dashboard-route-snapshot__panel" aria-label="Route summary visual">
+      <h3 className="bof-cc-panel-title">Route &amp; Alert Snapshot</h3>
       <p className="bof-cc-panel-sub">{loadsAtRisk} loads currently at risk across active lanes.</p>
       {latestCriticalAlert ? (
         <div className="bof-cc-critical-note">

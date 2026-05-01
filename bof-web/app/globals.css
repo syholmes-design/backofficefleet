@@ -12647,9 +12647,8 @@ body {
 }
 
 /*
- * Dashboard (/dashboard) hero — full-width cockpit backdrop.
- * Overrides earlier .bof-cc-hero { display:flex; align-items:flex-end } from Command Center block
- * so content is top-aligned and absolute bg layers span the entire hero card.
+ * Dashboard (/dashboard) hero — 45% copy / 55% hero image (visible, not full-bleed buried).
+ * Overrides earlier .bof-cc-hero flex alignment from Command Center block.
  */
 .bof-dashboard-hero.bof-cc-hero {
   display: block;
@@ -12658,90 +12657,92 @@ body {
   justify-content: unset;
   position: relative;
   overflow: hidden;
-  isolation: isolate;
   border-radius: 1rem;
-  min-height: 520px;
-  padding: 2rem;
+  padding: 1.5rem 1.75rem;
 }
 
-.bof-dashboard-hero__bg {
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-  pointer-events: none;
+.bof-dashboard-hero__content {
+  display: grid;
+  grid-template-columns: minmax(0, 45fr) minmax(0, 55fr);
+  gap: 1.25rem 1.75rem;
+  align-items: stretch;
 }
 
-.bof-dashboard-hero__bg > span {
+.bof-dashboard-hero__copy {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-self: center;
+}
+
+.bof-dashboard-hero__visual {
+  position: relative;
+  min-height: clamp(220px, 32vw, 380px);
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid rgba(100, 116, 139, 0.35);
+  background: #0b1220;
+  box-shadow: 0 14px 44px rgba(0, 0, 0, 0.38);
+}
+
+.bof-dashboard-hero__visual > span {
   width: 100% !important;
   height: 100% !important;
 }
 
-.bof-dashboard-hero__bg-img {
+.bof-dashboard-hero__visual-img {
   width: 100%;
   height: 100%;
   object-fit: cover;
   object-position: center;
 }
 
-.bof-dashboard-hero__overlay {
-  position: absolute;
-  inset: 0;
-  z-index: 1;
-  pointer-events: none;
-  background:
-    linear-gradient(90deg, rgba(2, 6, 23, 0.95) 0%, rgba(2, 6, 23, 0.78) 42%, rgba(2, 6, 23, 0.45) 100%),
-    linear-gradient(180deg, rgba(2, 6, 23, 0.2) 0%, rgba(2, 6, 23, 0.85) 100%);
-}
-
-.bof-dashboard-hero__content {
-  position: relative;
-  z-index: 2;
-  display: grid;
-  grid-template-columns: minmax(0, 1.2fr) minmax(280px, 0.8fr);
-  gap: 1.25rem;
-  align-items: start;
-}
-
-.bof-dashboard-hero .bof-cc-hero-left {
-  align-self: start;
+.bof-dashboard-hero--no-image .bof-dashboard-hero__content {
+  grid-template-columns: 1fr;
 }
 
 .bof-dashboard-hero .bof-cc-hero-stat-grid {
-  grid-template-columns: repeat(auto-fit, minmax(124px, 1fr));
-  gap: 0.4rem;
+  grid-template-columns: repeat(auto-fit, minmax(104px, 1fr));
+  gap: 0.35rem;
 }
 
 .bof-dashboard-hero .bof-cc-hero-stat {
-  background: rgba(15, 27, 47, 0.88);
-  backdrop-filter: blur(10px);
+  padding: 0.34rem 0.42rem;
+  background: #101c31;
+  border-color: rgba(43, 59, 87, 0.95);
 }
 
-/* Translucent route snapshot over hero art — no duplicate hero image inside */
-.bof-dashboard-hero-route-panel.bof-cc-route-panel {
-  background: rgba(13, 23, 41, 0.72);
-  backdrop-filter: blur(12px);
-  border-color: rgba(100, 116, 139, 0.35);
-  max-height: min(380px, 52vh);
+.bof-dashboard-hero .bof-cc-hero-stat-label {
+  font-size: 0.61rem;
+}
+
+.bof-dashboard-hero .bof-cc-hero-stat-value {
+  font-size: 0.82rem;
+}
+
+/* Route / alert snapshot — full-width card below hero */
+.bof-dashboard-route-snapshot {
+  margin-bottom: 1rem;
+}
+
+.bof-dashboard-route-snapshot__panel.bof-cc-route-panel {
+  max-height: min(420px, 56vh);
   overflow-x: hidden;
   overflow-y: auto;
-  align-self: start;
 }
 
-.bof-dashboard-hero-route-panel .bof-cc-route-svg {
-  height: 92px;
+.bof-dashboard-route-snapshot__panel .bof-cc-route-svg {
+  height: 96px;
 }
 
-.bof-dashboard-hero-route-panel .bof-cc-route-list {
-  gap: 0.28rem;
+.bof-dashboard-route-snapshot__panel .bof-cc-route-list {
+  gap: 0.32rem;
 }
 
-.bof-dashboard-hero-route-panel .bof-cc-route-row {
-  padding: 0.3rem 0.38rem;
+.bof-dashboard-route-snapshot__panel .bof-cc-route-row {
+  padding: 0.32rem 0.4rem;
   font-size: 0.74rem;
-}
-
-.bof-dashboard-hero--no-image.bof-cc-hero {
-  min-height: 0;
 }
 
 .bof-cc-hero-left {
@@ -13444,23 +13445,28 @@ body {
   .bof-cc-table { min-width: 760px; }
   .bof-cc-kpi-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .bof-cc-page { padding-bottom: 8.5rem; }
+  .bof-dashboard-hero.bof-cc-hero {
+    padding: 1.25rem 1.15rem;
+  }
+
   .bof-dashboard-hero__content {
     grid-template-columns: 1fr;
   }
 
-  .bof-dashboard-hero.bof-cc-hero {
-    min-height: min(440px, 72vh);
-    padding: 1.35rem;
+  .bof-dashboard-hero__copy {
+    align-self: start;
+    justify-content: flex-start;
+    order: 0;
   }
 
-  .bof-dashboard-hero-route-panel.bof-cc-route-panel {
-    max-height: min(320px, 48vh);
+  .bof-dashboard-hero__visual {
+    min-height: 200px;
+    max-height: min(280px, 42vh);
+    order: 1;
   }
 
-  .bof-dashboard-hero__overlay {
-    background:
-      linear-gradient(180deg, rgba(2, 6, 23, 0.93) 0%, rgba(2, 6, 23, 0.82) 45%, rgba(2, 6, 23, 0.9) 100%),
-      linear-gradient(90deg, rgba(2, 6, 23, 0.88) 0%, rgba(2, 6, 23, 0.65) 100%);
+  .bof-dashboard-route-snapshot__panel.bof-cc-route-panel {
+    max-height: min(360px, 50vh);
   }
 }
 
