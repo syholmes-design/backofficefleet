@@ -13,6 +13,10 @@ function isPdfPath(url: string) {
   return /\.pdf(\?|$)/i.test(url);
 }
 
+function isHtmlDocumentPath(url: string) {
+  return /\.html(\?|$)/i.test(url);
+}
+
 function badgeClass(blocks: boolean) {
   return blocks
     ? "bof-badge bof-badge-warn"
@@ -77,6 +81,16 @@ export function DocumentEnginePanel({
           ) : (
             <iframe src={url} title="" className="bof-doc-popover-iframe" />
           )}
+        </>
+      );
+    }
+    if (hrPacketPreview && isHtmlDocumentPath(url)) {
+      return (
+        <>
+          <div className="bof-doc-popover-title">Preview</div>
+          <div className="bof-hr-packet-preview-frame">
+            <iframe src={url} title="" className="bof-hr-packet-preview-iframe" />
+          </div>
         </>
       );
     }
@@ -354,8 +368,10 @@ export function DocumentEnginePanel({
                   }
                 />
               )}
-              {modal.previewUrl && isPdfPath(modal.previewUrl) &&
-                (hrPacketPreview ? (
+              {modal.previewUrl &&
+                hrPacketPreview &&
+                (isPdfPath(modal.previewUrl) ||
+                  isHtmlDocumentPath(modal.previewUrl)) && (
                   <div className="bof-hr-packet-preview-modal-frame">
                     <iframe
                       src={modal.previewUrl}
@@ -363,13 +379,16 @@ export function DocumentEnginePanel({
                       className="bof-hr-packet-preview-modal-iframe"
                     />
                   </div>
-                ) : (
+                )}
+              {modal.previewUrl &&
+                !hrPacketPreview &&
+                isPdfPath(modal.previewUrl) && (
                   <iframe
                     src={modal.previewUrl}
                     title="Document preview"
                     className="bof-modal-proof-iframe"
                   />
-                ))}
+                )}
               <p className="bof-modal-note">
                 <a
                   href={modal.fileUrl}
