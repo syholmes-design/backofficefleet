@@ -107,7 +107,7 @@ export function DispatchRouteMap({
   mode = "all",
   compact = false,
 }: Props) {
-  const token = process.env.NEXT_PUBLIC_MAPBOX_TOKEN;
+  const mapboxToken = process.env.NEXT_PUBLIC_MAPBOX_TOKEN;
   const mapRef = useRef<MapRef | null>(null);
   const [popup, setPopup] = useState<{ load: Load; event?: LoadProofEvent } | null>(null);
   const scopedLoads = useMemo(() => {
@@ -137,7 +137,7 @@ export function DispatchRouteMap({
   }, [scopedLoads]);
 
   useEffect(() => {
-    if (!token || !mapRef.current || points.length === 0) return;
+    if (!mapboxToken || !mapRef.current || points.length === 0) return;
     let minLng = points[0][0];
     let maxLng = points[0][0];
     let minLat = points[0][1];
@@ -155,7 +155,7 @@ export function DispatchRouteMap({
       ],
       { padding: compact ? 24 : 40, duration: 500, maxZoom: compact ? 7 : 8 }
     );
-  }, [compact, points, token]);
+  }, [compact, points, mapboxToken]);
 
   const lineFeatures = useMemo(
     () =>
@@ -187,7 +187,7 @@ export function DispatchRouteMap({
     [scopedLoads, selectedLoadId]
   );
 
-  if (!token) {
+  if (!mapboxToken) {
     return (
       <section className="rounded-lg border border-slate-800 bg-slate-950/70 p-3">
         <div className={compact ? "mb-2" : "mb-3"}>
@@ -212,7 +212,7 @@ export function DispatchRouteMap({
       <div className={compact ? "h-44 rounded-md overflow-hidden" : "h-72 rounded-md overflow-hidden"}>
         <Map
           ref={mapRef}
-          mapboxAccessToken={token}
+          mapboxAccessToken={mapboxToken}
           initialViewState={{ longitude: -83.2, latitude: 40.2, zoom: 5 }}
           mapStyle="mapbox://styles/mapbox/dark-v11"
           attributionControl={false}
