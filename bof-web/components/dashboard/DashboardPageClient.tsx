@@ -153,41 +153,61 @@ export function DashboardPageClient() {
 
   return (
     <div className="bof-page bof-cc-page">
-      <section className="bof-cc-hero bof-cc-hero-premium">
-        <div className="bof-cc-hero-left">
-          <p className="bof-cc-kicker">Executive Operations Cockpit</p>
-          <h1 className="bof-title bof-cc-title">Fleet Command Dashboard</h1>
-          <p className="bof-lead bof-cc-lead">
-            Readiness, dispatch risk, compliance blocks, settlements, proof exceptions, and revenue impact in one
-            operating view.
-          </p>
-          <div className="bof-cc-hero-actions">
-            <Link href="/dispatch" className="bof-cc-btn bof-cc-btn-primary">
-              Open Dispatch Board
-            </Link>
-            <a href="#attention-queue" className="bof-cc-btn">
-              Review Attention Queue
-            </a>
-            <Link href="/settlements" className="bof-cc-btn">
-              Open Settlements
-            </Link>
+      <section
+        className={`bof-dashboard-hero bof-cc-hero${heroImageMissing ? " bof-dashboard-hero--no-image" : ""}`}
+      >
+        {!heroImageMissing ? (
+          <>
+            <div className="bof-dashboard-hero__image" aria-hidden>
+              <Image
+                src="/images/bof-command-dashboard-hero.png"
+                alt=""
+                fill
+                priority
+                sizes="(max-width: 900px) 100vw, min(1200px, 100vw)"
+                className="bof-dashboard-hero__image-el"
+                onError={() => setHeroImageMissing(true)}
+                unoptimized
+              />
+            </div>
+            <div className="bof-dashboard-hero__overlay" aria-hidden />
+          </>
+        ) : null}
+        <div className="bof-dashboard-hero__content">
+          <div className="bof-cc-hero-left">
+            <p className="bof-cc-kicker">Executive Operations Cockpit</p>
+            <h1 className="bof-title bof-cc-title">Fleet Command Dashboard</h1>
+            <p className="bof-lead bof-cc-lead">
+              Readiness, dispatch risk, compliance blocks, settlements, proof exceptions, and revenue impact in one
+              operating view.
+            </p>
+            <div className="bof-cc-hero-actions">
+              <Link href="/dispatch" className="bof-cc-btn bof-cc-btn-primary">
+                Open Dispatch Board
+              </Link>
+              <a href="#attention-queue" className="bof-cc-btn">
+                Review Attention Queue
+              </a>
+              <Link href="/settlements" className="bof-cc-btn">
+                Open Settlements
+              </Link>
+            </div>
+            <div className="bof-cc-hero-stat-grid">
+              {heroSummaryStats.map((stat) => (
+                <article key={stat.label} className="bof-cc-hero-stat">
+                  <span className="bof-cc-hero-stat-label">{stat.label}</span>
+                  <strong className="bof-cc-hero-stat-value">{stat.value}</strong>
+                </article>
+              ))}
+            </div>
           </div>
-          <div className="bof-cc-hero-stat-grid">
-            {heroSummaryStats.map((stat) => (
-              <article key={stat.label} className="bof-cc-hero-stat">
-                <span className="bof-cc-hero-stat-label">{stat.label}</span>
-                <strong className="bof-cc-hero-stat-value">{stat.value}</strong>
-              </article>
-            ))}
-          </div>
+          <HeroVisualPanel
+            hasBackdropImage={!heroImageMissing}
+            latestCriticalAlert={latestCriticalAlert}
+            loadsAtRisk={summary.loadsAtRisk}
+            topRiskLoads={topRiskLoads}
+          />
         </div>
-        <HeroVisualPanel
-          hasImage={!heroImageMissing}
-          onImageMissing={() => setHeroImageMissing(true)}
-          latestCriticalAlert={latestCriticalAlert}
-          loadsAtRisk={summary.loadsAtRisk}
-          topRiskLoads={topRiskLoads}
-        />
       </section>
 
       <section className="bof-cc-kpi-sections" aria-label="Executive KPI strip">
@@ -362,34 +382,21 @@ export function DashboardPageClient() {
 }
 
 function HeroVisualPanel({
-  hasImage,
-  onImageMissing,
+  hasBackdropImage,
   latestCriticalAlert,
   loadsAtRisk,
   topRiskLoads,
 }: {
-  hasImage: boolean;
-  onImageMissing: () => void;
+  hasBackdropImage: boolean;
   latestCriticalAlert: OwnerAttentionItem | null;
   loadsAtRisk: number;
   topRiskLoads: Array<{ id: string; origin: string; destination: string; status: string; sealStatus: string }>;
 }) {
   return (
     <aside className="bof-cc-route-panel" aria-label="Route summary visual">
-      {hasImage ? (
-        <div className="bof-cc-hero-image-wrap">
-          <Image
-            src="/images/bof-command-dashboard-hero.png"
-            alt="BOF command dashboard showing fleet operations, documents, compliance, and route visibility."
-            fill
-            className="bof-cc-hero-image"
-            onError={onImageMissing}
-            unoptimized
-          />
-          <div className="bof-cc-hero-image-overlay" />
-        </div>
-      ) : null}
-      <h3 className="bof-cc-panel-title">{hasImage ? "Route & Alert Snapshot" : "Route Risk Snapshot"}</h3>
+      <h3 className="bof-cc-panel-title">
+        {hasBackdropImage ? "Route & Alert Snapshot" : "Route Risk Snapshot"}
+      </h3>
       <p className="bof-cc-panel-sub">{loadsAtRisk} loads currently at risk across active lanes.</p>
       {latestCriticalAlert ? (
         <div className="bof-cc-critical-note">
