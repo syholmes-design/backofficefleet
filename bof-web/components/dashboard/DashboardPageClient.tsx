@@ -122,6 +122,7 @@ export function DashboardPageClient() {
   const criticalQueue = attentionQueue.filter((item) => item.severity === "critical");
   const nonCriticalQueue = attentionQueue.filter((item) => item.severity !== "critical");
   const prioritizedQueue = [...criticalQueue, ...nonCriticalQueue];
+  const queuePreview = prioritizedQueue.slice(0, 4);
 
   return (
     <div className="bof-page bof-cc-page">
@@ -183,6 +184,38 @@ export function DashboardPageClient() {
         </article>
       </section>
 
+      <section className="bof-cc-panel bof-cc-attention-priority" aria-label="Priority owner actions" id="owners-attention-queue">
+        <div className="bof-cc-panel-head">
+          <h2 className="bof-h2">Owner&apos;s Attention Queue</h2>
+          <Link href="/command-center" className="bof-link-secondary">Open full queue →</Link>
+        </div>
+        <p className="bof-cc-panel-sub">
+          Critical blockers are pinned first with direct actions into the canonical BOF workflow.
+        </p>
+        <div className="bof-cc-critical-banner">
+          <strong>{criticalQueue.length}</strong> critical items require immediate owner action.
+        </div>
+        <div className="bof-cc-queue-cards">
+          {queuePreview.map((item) => (
+            <article key={item.id} className={`bof-cc-queue-card bof-cc-queue-${item.severity}`}>
+              <div className="bof-cc-queue-head">
+                <span className={`bof-cc-sev bof-cc-sev-${item.severity}`}>{item.severity}</span>
+                <span className="bof-cc-chip bof-cc-chip-info">{item.area}</span>
+              </div>
+              <p className="bof-cc-queue-target">{item.target}</p>
+              <p className="bof-cc-queue-issue">{item.issue}</p>
+              <p className="bof-cc-queue-fix"><strong>Recommended fix:</strong> {item.recommendedFix}</p>
+              <div className="bof-cc-queue-foot">
+                <span>{item.financialImpact ? formatUsd(item.financialImpact) : "No direct amount"}</span>
+                <Link href={item.actionHref} className="bof-cc-action-btn bof-cc-action-btn-primary">
+                  {item.actionLabel}
+                </Link>
+              </div>
+            </article>
+          ))}
+        </div>
+      </section>
+
       <section className="bof-cc-chart-grid" aria-label="Fleet breakdown charts">
         <DonutChartCard title="Fleet Risk Breakdown" subtitle="Compliance, dispatch, safety, settlements, and claims." data={fleetRisk} />
         <BarChartCard title="Driver Readiness" subtitle="Ready vs review vs blocked dispatch states." data={readiness} />
@@ -201,13 +234,9 @@ export function DashboardPageClient() {
         />
       </section>
 
-      <section className="bof-cc-panel" aria-label="Owner attention queue" id="owners-attention-queue">
+      <section className="bof-cc-panel" aria-label="Owner attention queue table">
         <div className="bof-cc-panel-head">
-          <h2 className="bof-h2">Owner&apos;s Attention Queue</h2>
-          <Link href="/command-center" className="bof-link-secondary">Open full queue →</Link>
-        </div>
-        <div className="bof-cc-critical-banner">
-          <strong>{criticalQueue.length}</strong> critical items require immediate owner action.
+          <h3 className="bof-cc-panel-title">Queue Detail</h3>
         </div>
         <div className="bof-cc-table-wrap">
           <table className="bof-cc-table">
@@ -268,11 +297,13 @@ export function DashboardPageClient() {
 
         <article className="bof-cc-panel">
           <h2 className="bof-h2">What Changed Today</h2>
-          <ul className="bof-cc-change-list">
-            {todayChanges.map((item) => (
-              <li key={item}>{item}</li>
-            ))}
-          </ul>
+          <div className="bof-cc-notes">
+            <ExecutiveNote label="Loads newly at risk" value={summary.loadsAtRisk} tone={summary.loadsAtRisk > 0 ? "danger" : "ok"} detail={todayChanges[0]} />
+            <ExecutiveNote label="Drivers newly blocked" value={summary.complianceBlocked} tone={summary.complianceBlocked > 0 ? "warn" : "ok"} detail={`${summary.driversReady} drivers currently dispatch-ready.`} />
+            <ExecutiveNote label="Settlement holds changed" value={summary.settlementHolds} tone={summary.settlementHolds > 0 ? "warn" : "ok"} detail={todayChanges[1]} />
+            <ExecutiveNote label="Claim exposure changed" value={formatUsd(summary.claimExposure)} tone={summary.claimExposure > 0 ? "danger" : "ok"} detail={summary.claimExposure > 0 ? "Active claim-linked exposure remains open." : "No active claim-linked exposure."} />
+            <ExecutiveNote label="Documents / proof exceptions" value={`${summary.loadsAtRisk} open`} tone={summary.loadsAtRisk > 0 ? "warn" : "ok"} detail={todayChanges[4]} />
+          </div>
         </article>
       </section>
     </div>
@@ -457,10 +488,16 @@ function RouteSummaryPanel({
   loadsAtRisk: number;
   topRiskLoads: Array<{ id: string; origin: string; destination: string; status: string; sealStatus: string }>;
 }) {
+  const topOrigins = Array.from(new Set(topRiskLoads.map((load) => load.origin))).slice(0, 3);
+  const topDestinations = Array.from(new Set(topRiskLoads.map((load) => load.destination))).slice(0, 3);
   return (
     <aside className="bof-cc-route-panel" aria-label="Route summary visual">
       <h3 className="bof-cc-panel-title">Route Risk Snapshot</h3>
       <p className="bof-cc-panel-sub">{loadsAtRisk} loads currently at risk across active lanes.</p>
+      <div className="bof-cc-route-pills">
+        {topOrigins.length ? <span className="bof-cc-chip bof-cc-chip-info">Origins: {topOrigins.join(", ")}</span> : null}
+        {topDestinations.length ? <span className="bof-cc-chip bof-cc-chip-info">Destinations: {topDestinations.join(", ")}</span> : null}
+      </div>
       <svg viewBox="0 0 360 120" className="bof-cc-route-svg" role="img" aria-label="Route summary">
         <path d="M 20 92 C 82 20, 162 118, 234 45 C 272 12, 315 40, 340 22" className="bof-cc-route-line" />
         <circle cx="20" cy="92" r="5" className="bof-cc-route-node-start" />
@@ -481,5 +518,27 @@ function RouteSummaryPanel({
         )}
       </div>
     </aside>
+  );
+}
+
+function ExecutiveNote({
+  label,
+  value,
+  tone,
+  detail,
+}: {
+  label: string;
+  value: string | number;
+  tone: "ok" | "warn" | "danger";
+  detail: string;
+}) {
+  return (
+    <article className={`bof-cc-note bof-cc-note-${tone}`}>
+      <div className="bof-cc-note-head">
+        <span>{label}</span>
+        <strong>{value}</strong>
+      </div>
+      <p>{detail}</p>
+    </article>
   );
 }

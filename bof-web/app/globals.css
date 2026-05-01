@@ -12456,6 +12456,7 @@ body {
   --bof-cc-amber: #f59e0b;
   --bof-cc-rose: #fb7185;
   color: var(--bof-cc-text);
+  padding-bottom: 9rem;
 }
 
 .bof-cc-hero {
@@ -12464,6 +12465,12 @@ body {
   border-radius: 14px;
   padding: 1rem 1.1rem 1.2rem;
   margin-bottom: 1rem;
+}
+
+.bof-cc-hero-premium {
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(280px, 0.8fr);
+  gap: 1rem;
 }
 
 .bof-cc-kicker {
@@ -12517,6 +12524,24 @@ body {
   grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
   gap: 0.75rem;
   margin-bottom: 1rem;
+}
+
+.bof-cc-kpi-sections {
+  display: grid;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.bof-cc-kpi-group-head .bof-h2 {
+  margin-bottom: 0.5rem;
+}
+
+.bof-cc-kpi-link {
+  text-decoration: none;
+}
+
+.bof-cc-kpi-link .bof-cc-kpi {
+  height: 100%;
 }
 
 .bof-cc-kpi {
@@ -12602,6 +12627,44 @@ body {
   gap: 0.45rem;
 }
 
+.bof-cc-donut-layout {
+  display: grid;
+  grid-template-columns: 136px minmax(0, 1fr);
+  gap: 0.75rem;
+  align-items: center;
+}
+
+.bof-cc-donut-svg {
+  width: 136px;
+  height: 136px;
+}
+
+.bof-cc-donut-track {
+  fill: none;
+  stroke: #1f2937;
+  stroke-width: 13;
+}
+
+.bof-cc-donut-slice {
+  fill: none;
+  stroke-width: 13;
+  transform: rotate(-90deg);
+  transform-origin: 70px 70px;
+}
+
+.bof-cc-donut-total-label {
+  fill: var(--bof-cc-muted);
+  font-size: 8px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.bof-cc-donut-total-value {
+  fill: #f8fafc;
+  font-size: 13px;
+  font-weight: 700;
+}
+
 .bof-cc-bar-row { display: grid; gap: 0.2rem; }
 
 .bof-cc-bar-meta {
@@ -12652,6 +12715,10 @@ body {
   letter-spacing: 0.05em;
   color: var(--bof-cc-muted);
   font-size: 0.68rem;
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  background: #111c31;
 }
 
 .bof-cc-table tr:nth-child(even) { background: rgba(15, 23, 42, 0.55); }
@@ -12762,6 +12829,113 @@ body {
   color: #ffe4e6;
   background: rgba(244, 63, 94, 0.28);
   border-color: rgba(244, 63, 94, 0.5);
+}
+
+.bof-cc-chip-info {
+  color: #cffafe;
+  background: rgba(45, 212, 191, 0.16);
+  border-color: rgba(45, 212, 191, 0.42);
+}
+
+.bof-cc-attention-priority {
+  margin-bottom: 0.85rem;
+}
+
+.bof-cc-queue-cards {
+  margin-top: 0.65rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 0.55rem;
+}
+
+.bof-cc-queue-card {
+  background: #111c30;
+  border: 1px solid #2a3f5f;
+  border-left-width: 4px;
+  border-radius: 10px;
+  padding: 0.6rem;
+  display: grid;
+  gap: 0.35rem;
+}
+
+.bof-cc-queue-critical { border-left-color: #fb7185; }
+.bof-cc-queue-high { border-left-color: #f59e0b; }
+.bof-cc-queue-medium { border-left-color: #22d3ee; }
+
+.bof-cc-queue-head {
+  display: flex;
+  gap: 0.35rem;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.bof-cc-queue-target {
+  margin: 0;
+  color: #f8fafc;
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.bof-cc-queue-issue,
+.bof-cc-queue-fix {
+  margin: 0;
+  color: #cbd5e1;
+  font-size: 0.72rem;
+  line-height: 1.35;
+}
+
+.bof-cc-queue-foot {
+  margin-top: 0.2rem;
+  display: flex;
+  justify-content: space-between;
+  gap: 0.4rem;
+  align-items: center;
+  font-size: 0.68rem;
+  color: #9fb1c9;
+}
+
+.bof-cc-notes {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.bof-cc-note {
+  border: 1px solid #31445f;
+  border-left-width: 4px;
+  border-radius: 9px;
+  padding: 0.55rem;
+  background: #101a2c;
+}
+
+.bof-cc-note-ok { border-left-color: #10b981; }
+.bof-cc-note-warn { border-left-color: #f59e0b; }
+.bof-cc-note-danger { border-left-color: #fb7185; }
+
+.bof-cc-note-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.6rem;
+  align-items: center;
+  margin-bottom: 0.16rem;
+  font-size: 0.73rem;
+}
+
+.bof-cc-note-head strong {
+  color: #f8fafc;
+  font-size: 0.78rem;
+}
+
+.bof-cc-note p {
+  margin: 0;
+  color: #cbd5e1;
+  font-size: 0.71rem;
+}
+
+.bof-cc-route-pills {
+  margin: 0.55rem 0 0.4rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.32rem;
 }
 
 .bof-cc-action-wrap {
@@ -12881,6 +13055,7 @@ body {
 @media (max-width: 900px) {
   .bof-cc-table { min-width: 760px; }
   .bof-cc-kpi-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .bof-cc-page { padding-bottom: 8.5rem; }
 }
 
 /* Tailwind — utilities + components only (no @tailwind base — avoids touching BOF globals). */
