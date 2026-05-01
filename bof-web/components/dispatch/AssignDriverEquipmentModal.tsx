@@ -3,6 +3,8 @@
 import { useEffect, useMemo, useState } from "react";
 import { AlertOctagon, X } from "lucide-react";
 import { useDispatchDashboardStore } from "@/lib/stores/dispatch-dashboard-store";
+import { useBofDemoData } from "@/lib/bof-demo-data-context";
+import { getDriverDispatchEligibility } from "@/lib/driver-dispatch-eligibility";
 import type { Tractor, Trailer } from "@/types/dispatch";
 
 type Props = {
@@ -29,6 +31,7 @@ function mergeSelectable<T extends { status: string }>(
 }
 
 export function AssignDriverEquipmentModal({ open, loadId, onClose }: Props) {
+  const { data } = useBofDemoData();
   const loads = useDispatchDashboardStore((s) => s.loads);
   const drivers = useDispatchDashboardStore((s) => s.drivers);
   const tractorsAll = useDispatchDashboardStore((s) => s.tractors);
@@ -66,9 +69,12 @@ export function AssignDriverEquipmentModal({ open, loadId, onClose }: Props) {
   }, [trailersAll, load?.trailer_id]);
 
   const selectedDriver = drivers.find((d) => d.driver_id === driverId);
-  const complianceOk = selectedDriver?.compliance_status === "VALID";
+  const selectedEligibility = selectedDriver
+    ? getDriverDispatchEligibility(data, selectedDriver.driver_id)
+    : null;
+  const dispatchBlocked = selectedEligibility?.status === "blocked";
   const canSave =
-    Boolean(driverId) && Boolean(tractorId) && complianceOk;
+    Boolean(driverId) && Boolean(tractorId) && !dispatchBlocked;
 
   if (!open || !loadId) return null;
 
@@ -115,15 +121,14 @@ export function AssignDriverEquipmentModal({ open, loadId, onClose }: Props) {
           <p className="p-6 text-sm text-slate-400">Load not found.</p>
         ) : (
           <>
-            {selectedDriver && !complianceOk && (
+            {selectedDriver && dispatchBlocked && (
               <div className="mx-4 mt-4 flex gap-2 rounded border border-red-800 bg-red-950/50 p-3 text-sm text-red-100">
                 <AlertOctagon className="h-5 w-5 shrink-0" aria-hidden />
                 <div>
                   <p className="font-semibold">Assignment blocked</p>
                   <p className="mt-1 text-xs text-red-200/90">
-                    Driver {selectedDriver.name} is{" "}
-                    <strong>{selectedDriver.compliance_status}</strong>. Only{" "}
-                    <strong>VALID</strong> compliance may be assigned.
+                    Driver {selectedDriver.name} is blocked for dispatch:{" "}
+                    <strong>{selectedEligibility?.hardBlockers[0] ?? "Resolve hard blocker"}</strong>.
                   </p>
                 </div>
               </div>
@@ -132,7 +137,8 @@ export function AssignDriverEquipmentModal({ open, loadId, onClose }: Props) {
             <div className="grid min-h-0 flex-1 gap-0 overflow-hidden md:grid-cols-3">
               <Panel title="Drivers (Active)">
                 {activeDrivers.map((d) => {
-                  const invalid = d.compliance_status !== "VALID";
+                  const eligibility = getDriverDispatchEligibility(data, d.driver_id);
+                  const invalid = eligibility.status === "blocked";
                   const sel = d.driver_id === driverId;
                   return (
                     <button
@@ -153,6 +159,16 @@ export function AssignDriverEquipmentModal({ open, loadId, onClose }: Props) {
                       <div className="font-mono text-[10px] text-slate-500">
                         {d.driver_id}
                       </div>
+                      <div className="mt-1 text-[10px] uppercase text-slate-500">
+                        Dispatch: {eligibility.status === "ready" ? "READY" : eligibility.status === "needs_review" ? "NEEDS REVIEW" : "BLOCKED"}
+                      </div>
+                      {eligibility.status !== "ready" ? (
+                        <div className="mt-1 text-[10px] text-slate-400">
+                          {eligibility.status === "blocked"
+                            ? eligibility.hardBlockers[0]
+                            : eligibility.softWarnings[0]}
+                        </div>
+                      ) : null}
                       <div className="mt-1 text-[10px] uppercase text-slate-500">
                         Compliance: {d.compliance_status}
                       </div>
@@ -243,7 +259,7 @@ export function AssignDriverEquipmentModal({ open, loadId, onClose }: Props) {
                   });
                   if (!ok) {
                     window.alert(
-                      "Assignment rejected — driver must be Active with VALID compliance, and a tractor must be selected."
+                      "Assignment rejected — driver is blocked for dispatch or required equipment is missing."
                     );
                   }
                 }}

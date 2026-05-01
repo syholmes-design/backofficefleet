@@ -43,7 +43,7 @@ type DispatchDashboardState = {
   closeLoadDrawer: () => void;
   openAssignModal: (load_id: string) => void;
   closeAssignModal: () => void;
-  /** Returns false if driver is not compliance-valid (assignment blocked). */
+  /** Returns false if assignment preconditions are not met. */
   assignDriverEquipment: (args: {
     load_id: string;
     driver_id: string;
@@ -189,7 +189,6 @@ export const useDispatchDashboardStore = create<DispatchDashboardState>(
       const { drivers, loads } = get();
       const dr = findDriver(drivers, driver_id);
       if (!dr || dr.status !== "Active") return false;
-      if (dr.compliance_status !== "VALID") return false;
       if (!tractor_id) return false;
 
       set({

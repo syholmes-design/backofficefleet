@@ -18,6 +18,7 @@ import { formatUsd } from "@/lib/format-money";
 import { driverPhotoPath } from "@/lib/driver-photo";
 import { getOrderedDocumentsForDriver } from "@/lib/driver-queries";
 import {
+  devLogDriverEligibilitySnapshot,
   getDriverDispatchEligibility,
   warnDispatchEligibilityAllBlocked,
 } from "@/lib/driver-dispatch-eligibility";
@@ -131,6 +132,7 @@ export function DriversRosterTable() {
   useEffect(() => {
     const list = data.drivers.map((d) => getDriverDispatchEligibility(data, d.id));
     warnDispatchEligibilityAllBlocked(list);
+    devLogDriverEligibilitySnapshot(data);
   }, [data]);
 
   const kpis = useMemo<DashboardKpi[]>(
@@ -322,15 +324,21 @@ export function DriversRosterTable() {
                       <Link href={`/drivers/${row.driverId}/hr`} className="bof-cc-action-btn">HR</Link>
                       <Link href={`/drivers/${row.driverId}/safety`} className="bof-cc-action-btn">Safety</Link>
                       <Link href={`/drivers/${row.driverId}/settlements`} className="bof-cc-action-btn">Settlement</Link>
-                      <Link
-                        href={`/dispatch?driverId=${row.driverId}`}
-                        className={[
-                          "bof-cc-action-btn",
-                          row.eligibilityStatus === "ready" ? "bof-cc-action-btn-primary" : "",
-                        ].join(" ")}
-                      >
-                        Assign Load
-                      </Link>
+                      {row.eligibilityStatus === "blocked" ? (
+                        <span className="bof-cc-action-btn bof-cc-action-btn-disabled" aria-disabled="true">
+                          Assign Load
+                        </span>
+                      ) : (
+                        <Link
+                          href={`/dispatch?driverId=${row.driverId}`}
+                          className={[
+                            "bof-cc-action-btn",
+                            row.eligibilityStatus === "ready" ? "bof-cc-action-btn-primary" : "",
+                          ].join(" ")}
+                        >
+                          Assign Load
+                        </Link>
+                      )}
                       {row.eligibilityStatus === "needs_review" ? (
                         <Link href={`/drivers/${row.driverId}/profile`} className="bof-cc-action-btn">
                           Review Docs

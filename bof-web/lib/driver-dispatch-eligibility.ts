@@ -9,6 +9,7 @@ import {
 export type DispatchEligibilityStatus = "ready" | "needs_review" | "blocked";
 
 export type DriverDispatchEligibility = {
+  driverId: string;
   status: DispatchEligibilityStatus;
   label: string;
   reasons: string[];
@@ -79,13 +80,30 @@ export function getDriverDispatchEligibility(
   driverId: string
 ): DriverDispatchEligibility {
   const docs = getOrderedDocumentsForDriver(data, driverId);
-  const cdl = docByType(docs, "CDL");
-  const medical = docByType(docs, "Medical Card");
-  const mvr = docByType(docs, "MVR");
-  const fmcsa = docByType(docs, "FMCSA");
-  const i9 = docByType(docs, "I-9");
-  const w9 = docByType(docs, "W-9");
-  const bank = docByType(docs, "Bank Info");
+  const rawByType = new Map(
+    data.documents.filter((doc) => doc.driverId === driverId).map((doc) => [doc.type, doc as DocumentRow])
+  );
+  const preferDriverDoc = (type: string): DocumentRow | undefined => {
+    const ordered = docByType(docs, type);
+    const raw = rawByType.get(type);
+    if (!raw) return ordered;
+    return {
+      ...ordered,
+      ...raw,
+      status: raw.status ?? ordered?.status ?? "MISSING",
+      expirationDate: raw.expirationDate ?? ordered?.expirationDate,
+      fileUrl: ordered?.fileUrl ?? raw.fileUrl,
+      previewUrl: ordered?.previewUrl ?? raw.previewUrl,
+    };
+  };
+
+  const cdl = preferDriverDoc("CDL");
+  const medical = preferDriverDoc("Medical Card");
+  const mvr = preferDriverDoc("MVR");
+  const fmcsa = preferDriverDoc("FMCSA");
+  const i9 = preferDriverDoc("I-9");
+  const w9 = preferDriverDoc("W-9");
+  const bank = preferDriverDoc("Bank Info");
 
   const hardBlockers: string[] = [];
   const softWarnings: string[] = [];
@@ -148,11 +166,21 @@ export function getDriverDispatchEligibility(
     softWarnings.push(`Open compliance: ${c.type} (high)`);
   }
 
-  const hasMoneyBlock = data.moneyAtRisk.some(
+  const hasSettlementOrPayBlock = data.moneyAtRisk.some(
     (m) => m.driverId === driverId && String(m.status ?? "").toUpperCase() === "BLOCKED"
   );
-  if (hasMoneyBlock) {
-    hardBlockers.push("Settlement / pay pipeline blocked for this driver");
+  const hasDispatchSpecificMoneyBlock = data.moneyAtRisk.some(
+    (m) =>
+      m.driverId === driverId &&
+      String(m.status ?? "").toUpperCase() === "BLOCKED" &&
+      /dispatch|out[- ]of[- ]service|oos|safety hold/i.test(
+        `${m.category ?? ""} ${m.rootCause ?? ""} ${m.nextBestAction ?? ""}`
+      )
+  );
+  if (hasDispatchSpecificMoneyBlock) {
+    hardBlockers.push("Dispatch blocked by active finance/compliance hold");
+  } else if (hasSettlementOrPayBlock) {
+    softWarnings.push("Settlement / pay hold active — dispatch review recommended");
   }
 
   if (isSafetyHardGate(driverId)) {
@@ -215,16 +243,16 @@ export function getDriverDispatchEligibility(
       ? { label: "Resolve Blocker", href: `/drivers/${driverId}/vault` }
       : isSafetyHardGate(driverId)
         ? { label: "Resolve Blocker", href: `/drivers/${driverId}/safety` }
-        : hasMoneyBlock
+          : hasDispatchSpecificMoneyBlock
           ? { label: "Resolve Blocker", href: `/drivers/${driverId}/settlements` }
           : { label: "Resolve Blocker", href: `/drivers/${driverId}/dispatch` };
   } else if (status === "needs_review") {
     recommendedAction = { label: "Review Docs", href: `/drivers/${driverId}/profile` };
   }
 
-  const expiredCore = CORE_DISPATCH_TYPES.filter((t) => statusU(docByType(docs, t)) === "EXPIRED")
+  const expiredCore = CORE_DISPATCH_TYPES.filter((t) => statusU(preferDriverDoc(t)) === "EXPIRED")
     .length;
-  const missingCore = CORE_DISPATCH_TYPES.filter((t) => statusU(docByType(docs, t)) === "MISSING")
+  const missingCore = CORE_DISPATCH_TYPES.filter((t) => statusU(preferDriverDoc(t)) === "MISSING")
     .length;
 
   let complianceLabel = "Valid";
@@ -246,6 +274,7 @@ export function getDriverDispatchEligibility(
   }
 
   return {
+    driverId,
     status,
     label,
     reasons,
@@ -282,4 +311,19 @@ export function warnDispatchEligibilityAllBlocked(
       { max, total: eligibilities.length }
     );
   }
+}
+
+export function devLogDriverEligibilitySnapshot(data: BofData): void {
+  if (process.env.NODE_ENV === "production") return;
+  const rows = data.drivers.map((driver) => {
+    const eligibility = getDriverDispatchEligibility(data, driver.id);
+    return {
+      driverId: driver.id,
+      name: driver.name,
+      eligibilityStatus: eligibility.status,
+      hardBlockers: eligibility.hardBlockers.join(" | ") || "—",
+      softWarnings: eligibility.softWarnings.join(" | ") || "—",
+    };
+  });
+  console.table(rows);
 }

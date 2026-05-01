@@ -12968,6 +12968,13 @@ body {
   color: #ffe4e6;
 }
 
+.bof-cc-action-btn-disabled {
+  border-color: #334155;
+  background: #0f172a;
+  color: #64748b;
+  cursor: not-allowed;
+}
+
 .bof-cc-exception-list {
   display: grid;
   gap: 0.45rem;
