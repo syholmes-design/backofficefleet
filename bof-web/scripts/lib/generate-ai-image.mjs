@@ -13,32 +13,89 @@ export async function generateEvidenceImage({
   outputPath,
   outputFormat = "png",
 }) {
-  if (provider !== "openai") {
-    throw new Error(`Unsupported image provider: ${provider}`);
+  if (provider === "openai") {
+    const res = await fetch("https://api.openai.com/v1/images/generations", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${apiKey}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        model: model || "gpt-image-1",
+        prompt,
+        size: "1536x1024",
+        response_format: "b64_json",
+        output_format: outputFormat === "jpg" ? "jpeg" : outputFormat,
+      }),
+    });
+    if (!res.ok) {
+      const txt = await res.text();
+      throw new Error(`OpenAI image generation failed (${res.status}): ${txt.slice(0, 300)}`);
+    }
+    const payload = await res.json();
+    const base64 = payload?.data?.[0]?.b64_json;
+    if (!base64) {
+      throw new Error("OpenAI image response missing image bytes");
+    }
+    ensureDir(path.dirname(outputPath));
+    fs.writeFileSync(outputPath, Buffer.from(base64, "base64"));
+    return;
   }
-  const res = await fetch("https://api.openai.com/v1/images/generations", {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${apiKey}`,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      model: model || "gpt-image-1",
-      prompt,
-      size: "1536x1024",
-      response_format: "b64_json",
-      output_format: outputFormat === "jpg" ? "jpeg" : outputFormat,
-    }),
-  });
-  if (!res.ok) {
-    const txt = await res.text();
-    throw new Error(`OpenAI image generation failed (${res.status}): ${txt.slice(0, 300)}`);
+
+  if (provider === "replicate") {
+    const createRes = await fetch("https://api.replicate.com/v1/predictions", {
+      method: "POST",
+      headers: {
+        Authorization: `Token ${apiKey}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        model: model || "black-forest-labs/flux-schnell",
+        input: {
+          prompt,
+          aspect_ratio: "16:9",
+          output_format: outputFormat === "jpg" ? "jpg" : "png",
+          output_quality: 90,
+        },
+      }),
+    });
+    if (!createRes.ok) {
+      const txt = await createRes.text();
+      throw new Error(`Replicate create failed (${createRes.status}): ${txt.slice(0, 300)}`);
+    }
+    let pred = await createRes.json();
+    const started = Date.now();
+    while (pred?.status === "starting" || pred?.status === "processing") {
+      if (Date.now() - started > 90000) {
+        throw new Error(`Replicate prediction timeout: ${pred?.id}`);
+      }
+      await new Promise((resolve) => setTimeout(resolve, 1200));
+      const pollRes = await fetch(`https://api.replicate.com/v1/predictions/${pred.id}`, {
+        headers: { Authorization: `Token ${apiKey}` },
+      });
+      if (!pollRes.ok) {
+        const txt = await pollRes.text();
+        throw new Error(`Replicate poll failed (${pollRes.status}): ${txt.slice(0, 300)}`);
+      }
+      pred = await pollRes.json();
+    }
+    if (pred?.status !== "succeeded") {
+      throw new Error(`Replicate generation failed: ${pred?.error || pred?.status || "unknown"}`);
+    }
+    const out = Array.isArray(pred.output) ? pred.output[0] : pred.output;
+    const outUrl = typeof out === "string" ? out : out?.url;
+    if (!outUrl) {
+      throw new Error("Replicate output URL missing");
+    }
+    const imageRes = await fetch(outUrl);
+    if (!imageRes.ok) {
+      throw new Error(`Replicate output download failed (${imageRes.status})`);
+    }
+    const bytes = new Uint8Array(await imageRes.arrayBuffer());
+    ensureDir(path.dirname(outputPath));
+    fs.writeFileSync(outputPath, bytes);
+    return;
   }
-  const payload = await res.json();
-  const base64 = payload?.data?.[0]?.b64_json;
-  if (!base64) {
-    throw new Error("OpenAI image response missing image bytes");
-  }
-  ensureDir(path.dirname(outputPath));
-  fs.writeFileSync(outputPath, Buffer.from(base64, "base64"));
+
+  throw new Error(`Unsupported image provider: ${provider}`);
 }

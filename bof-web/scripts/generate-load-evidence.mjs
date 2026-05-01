@@ -45,6 +45,29 @@ const AI_PROMPT_TYPES = new Set([
   "rfidDockProof",
 ]);
 
+function loadEnvLocal() {
+  const envPath = path.join(ROOT, ".env.local");
+  if (!fs.existsSync(envPath)) return;
+  const raw = fs.readFileSync(envPath, "utf8");
+  for (const line of raw.split(/\r?\n/)) {
+    const s = line.trim();
+    if (!s || s.startsWith("#")) continue;
+    const idx = s.indexOf("=");
+    if (idx <= 0) continue;
+    const key = s.slice(0, idx).trim();
+    if (!key) continue;
+    if (process.env[key] != null && String(process.env[key]).length > 0) continue;
+    let val = s.slice(idx + 1).trim();
+    if (
+      (val.startsWith('"') && val.endsWith('"')) ||
+      (val.startsWith("'") && val.endsWith("'"))
+    ) {
+      val = val.slice(1, -1);
+    }
+    process.env[key] = val;
+  }
+}
+
 function ensureDir(dirPath) {
   fs.mkdirSync(dirPath, { recursive: true });
 }
@@ -195,6 +218,7 @@ async function resolveOrGenerate(load, evidenceKey, baseName, svgFactory, option
     return existing;
   }
   if (aiEligible) {
+    stats.aiAttempted += 1;
     const ext = outputExt(options);
     const prompt = buildEvidenceImagePrompt(load, evidenceKey);
     const outPath = path.join(EVIDENCE_ROOT, load.id, `${baseName}.${ext}`);
@@ -237,6 +261,7 @@ function getenvBool(name, fallback = false) {
 }
 
 async function main() {
+  loadEnvLocal();
   const data = readJson(DATA_PATH);
   const manifest = {};
   const argvAi = process.argv.includes("--enable-ai");
@@ -244,22 +269,38 @@ async function main() {
   const provider = String(process.env.BOF_IMAGE_PROVIDER || "openai").toLowerCase();
   const outputFormat = String(process.env.BOF_IMAGE_OUTPUT_FORMAT || "png").toLowerCase();
   const model = String(process.env.BOF_IMAGE_MODEL || "").trim() || undefined;
-  const apiKey = process.env.OPENAI_API_KEY;
+  const apiKey =
+    provider === "replicate"
+      ? process.env.REPLICATE_API_TOKEN
+      : provider === "openai"
+        ? process.env.OPENAI_API_KEY
+        : undefined;
   const regenerate = getenvBool("BOF_REGENERATE_EVIDENCE", false);
   const options = { aiEnabled, provider, outputFormat, model, apiKey, regenerate };
   const stats = {
     loads: 0,
     required: 0,
     reused: 0,
+    aiAttempted: 0,
     svgGenerated: 0,
     aiGenerated: 0,
     aiFailed: 0,
     unresolved: 0,
   };
 
+  console.log(
+    `[generate-load-evidence] provider=${provider} aiEnabled=${aiEnabled} apiKeyDetected=${Boolean(apiKey)} regenerate=${regenerate}`
+  );
+
   if (aiEnabled && !apiKey) {
+    const expected =
+      provider === "replicate"
+        ? "REPLICATE_API_TOKEN"
+        : provider === "openai"
+          ? "OPENAI_API_KEY"
+          : "provider token";
     console.warn(
-      "[generate-load-evidence] BOF_ENABLE_AI_IMAGE_GENERATION=true but OPENAI_API_KEY is missing. Falling back to SVG."
+      `[generate-load-evidence] BOF_ENABLE_AI_IMAGE_GENERATION=true but ${expected} is missing for provider=${provider}. Falling back to SVG.`
     );
   }
 
@@ -520,7 +561,7 @@ async function main() {
   writeJson(PUBLIC_MANIFEST_PATH, manifest);
   writeJson(LIB_MANIFEST_PATH, manifest);
   console.log(
-    `[generate-load-evidence] loads=${stats.loads} required=${stats.required} reused=${stats.reused} ai_generated=${stats.aiGenerated} svg_generated=${stats.svgGenerated} ai_failed=${stats.aiFailed} unresolved=${stats.unresolved} manifest=${PUBLIC_MANIFEST_PATH}`
+    `[generate-load-evidence] loads=${stats.loads} required=${stats.required} reused=${stats.reused} ai_attempted=${stats.aiAttempted} ai_generated=${stats.aiGenerated} svg_generated=${stats.svgGenerated} ai_failed=${stats.aiFailed} unresolved=${stats.unresolved} manifest=${PUBLIC_MANIFEST_PATH}`
   );
 }
 
