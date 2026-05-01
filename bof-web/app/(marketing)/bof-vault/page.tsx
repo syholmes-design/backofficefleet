@@ -159,17 +159,31 @@ export default function BofVaultPage() {
   return (
     <>
       <MarketingBofVaultHero
+        layout="imageFirst"
         titleId="bof-mkt-vault-hero-heading"
         sectionAriaLabelledBy="bof-mkt-vault-hero-heading"
         eyebrow="BOF Vault · Driver readiness"
         title={<>Keep Your Driving Documents Ready Before You Need Them</>}
+        belowHeroHeadline="One secure vault for credentials, versions, and readiness"
         subtitle="BOF Vault gives drivers one secure place to upload, organize, and maintain the records that matter—so expired, missing, or incomplete documents do not slow the next opportunity."
         support="Upload once. BOF helps evaluate your file, flag issues, and keep your credentials ready for onboarding, dispatch, or carrier review when the time comes."
         trustItems={HERO_TRUST}
         trustAriaLabel="BOF Vault capability highlights"
         imageSrc="/assets/images/BofVaultHero2.png"
         imageAlt="Driver-controlled BOF Vault document storage and readiness system"
-        ctas={null}
+        ctas={
+          <>
+            <Link
+              href="/book-assessment"
+              className="bof-mkt-btn-enterprise bof-mkt-btn-enterprise-primary"
+            >
+              Take The Assessment
+            </Link>
+            <Link href="/dashboard" className="bof-mkt-btn-enterprise bof-mkt-btn-enterprise-secondary">
+              See The Demo
+            </Link>
+          </>
+        }
       />
 
       <MarketingSection variant="light" ariaLabelledBy="bof-mkt-vault-stats-heading">

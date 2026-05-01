@@ -4017,6 +4017,141 @@ body {
   margin-top: 2px;
 }
 
+/* Government + BOF Vault marketing: full-width hero graphic first, copy + CTAs below (.bof-image-first-hero only). */
+.bof-mkt-government-hero.bof-image-first-hero,
+.bof-mkt-vault-hero.bof-image-first-hero {
+  min-height: 0;
+  display: block;
+  align-items: stretch;
+  padding-block: clamp(0.75rem, 2vw, 1.5rem) clamp(1.25rem, 2.5vw, 2rem);
+}
+
+.bof-mkt-government-hero.bof-image-first-hero .bof-mkt-government-hero__grid,
+.bof-mkt-vault-hero.bof-image-first-hero .bof-mkt-vault-hero__grid {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: flex-start;
+  min-height: 0;
+  width: 100%;
+  max-width: min(92vw, 1500px);
+  margin-inline: auto;
+  padding-inline: clamp(1rem, 3vw, 1.75rem);
+  box-sizing: border-box;
+  gap: clamp(1.25rem, 3vw, 2rem);
+}
+
+@media (min-width: 1024px) {
+  .bof-mkt-government-hero.bof-image-first-hero .bof-mkt-hero-image-surface,
+  .bof-mkt-vault-hero.bof-image-first-hero .bof-mkt-hero-image-surface {
+    width: min(92vw, 1500px);
+    max-width: none;
+    margin-inline: auto;
+  }
+}
+
+.bof-mkt-government-hero.bof-image-first-hero .bof-mkt-government-hero__visual,
+.bof-mkt-vault-hero.bof-image-first-hero .bof-mkt-vault-hero__visual {
+  width: 100%;
+  min-height: 0;
+  height: auto;
+  flex: 0 0 auto;
+}
+
+.bof-mkt-government-hero.bof-image-first-hero .bof-mkt-government-hero__image-wrap,
+.bof-mkt-vault-hero.bof-image-first-hero .bof-mkt-vault-hero__image-wrap,
+.bof-mkt-government-hero.bof-image-first-hero .bof-mkt-hero-image-surface,
+.bof-mkt-vault-hero.bof-image-first-hero .bof-mkt-hero-image-surface {
+  min-height: 0;
+  height: auto;
+  flex: none;
+  position: relative;
+  width: 100%;
+}
+
+.bof-mkt-government-hero.bof-image-first-hero .bof-mkt-government-hero__image,
+.bof-mkt-vault-hero.bof-image-first-hero .bof-mkt-vault-hero__image,
+.bof-mkt-government-hero.bof-image-first-hero .bof-mkt-hero-image,
+.bof-mkt-vault-hero.bof-image-first-hero .bof-mkt-hero-image {
+  position: relative;
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  height: auto;
+  object-fit: contain;
+  object-position: center center;
+  transform: none;
+}
+
+.bof-mkt-government-hero.bof-image-first-hero .bof-mkt-government-hero__copy--below-hero,
+.bof-mkt-vault-hero.bof-image-first-hero .bof-mkt-vault-hero__copy--below-hero {
+  max-width: min(48rem, 100%);
+  margin-inline: auto;
+  padding-block: 0;
+  padding-inline: clamp(0.25rem, 1.5vw, 0.75rem);
+  width: 100%;
+  text-align: center;
+  align-items: center;
+}
+
+.bof-mkt-government-hero.bof-image-first-hero .bof-mkt-government-hero__title--below-hero,
+.bof-mkt-vault-hero.bof-image-first-hero .bof-mkt-vault-hero__title--below-hero {
+  font-size: clamp(1.35rem, 2.6vw, 1.95rem);
+  line-height: 1.25;
+  max-width: 36ch;
+  margin-inline: auto;
+}
+
+.bof-mkt-government-hero.bof-image-first-hero .bof-mkt-government-hero__sub,
+.bof-mkt-vault-hero.bof-image-first-hero .bof-mkt-vault-hero__sub {
+  text-align: left;
+  max-width: 40rem;
+  margin-inline: auto;
+}
+
+.bof-mkt-government-hero.bof-image-first-hero .bof-mkt-government-hero__support,
+.bof-mkt-vault-hero.bof-image-first-hero .bof-mkt-vault-hero__support {
+  text-align: left;
+  max-width: 38rem;
+  margin-inline: auto;
+}
+
+.bof-mkt-government-hero.bof-image-first-hero .bof-mkt-government-hero__trust,
+.bof-mkt-vault-hero.bof-image-first-hero .bof-mkt-vault-hero__trust {
+  margin-inline: auto;
+  max-width: 40rem;
+  text-align: left;
+  align-items: flex-start;
+}
+
+.bof-mkt-government-hero.bof-image-first-hero .bof-mkt-government-hero__caption,
+.bof-mkt-vault-hero.bof-image-first-hero .bof-mkt-vault-hero__caption {
+  position: relative;
+  bottom: auto;
+  right: auto;
+  margin-inline: auto;
+  margin-top: 0.75rem;
+  max-width: 36rem;
+}
+
+@media (min-width: 901px) {
+  .bof-mkt-government-hero.bof-image-first-hero .bof-mkt-government-hero__grid,
+  .bof-mkt-vault-hero.bof-image-first-hero .bof-mkt-vault-hero__grid {
+    display: flex;
+    flex-direction: column;
+    max-width: min(92vw, 1500px);
+    margin-inline: auto;
+  }
+
+  .bof-mkt-government-hero.bof-image-first-hero .bof-mkt-government-hero__visual,
+  .bof-mkt-government-hero.bof-image-first-hero .bof-mkt-government-hero__image-wrap,
+  .bof-mkt-vault-hero.bof-image-first-hero .bof-mkt-vault-hero__visual,
+  .bof-mkt-vault-hero.bof-image-first-hero .bof-mkt-vault-hero__image-wrap {
+    min-height: 0;
+    height: auto;
+  }
+}
+
 /* Responsive adjustments for all new heroes */
 @media (max-width: 900px) {
   .bof-mkt-private-fleets-hero,
@@ -4104,6 +4239,35 @@ body {
   
   .bof-mkt-private-fleets-hero__image {
     object-position: center 20%;
+  }
+
+  /* Image-first (Government / Vault): shared hero mobile heights crop full-bleed art */
+  .bof-mkt-government-hero.bof-image-first-hero,
+  .bof-mkt-vault-hero.bof-image-first-hero {
+    min-height: 0;
+  }
+
+  .bof-mkt-government-hero.bof-image-first-hero .bof-mkt-government-hero__grid,
+  .bof-mkt-vault-hero.bof-image-first-hero .bof-mkt-vault-hero__grid {
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .bof-mkt-government-hero.bof-image-first-hero .bof-mkt-government-hero__visual,
+  .bof-mkt-vault-hero.bof-image-first-hero .bof-mkt-vault-hero__visual {
+    height: auto;
+    min-height: 0;
+  }
+
+  .bof-mkt-government-hero.bof-image-first-hero .bof-mkt-government-hero__image-wrap,
+  .bof-mkt-vault-hero.bof-image-first-hero .bof-mkt-vault-hero__image-wrap,
+  .bof-mkt-government-hero.bof-image-first-hero
+    .bof-mkt-government-hero__image-wrap.bof-mkt-hero-image-panel--private-fleets-size,
+  .bof-mkt-vault-hero.bof-image-first-hero
+    .bof-mkt-vault-hero__image-wrap.bof-mkt-hero-image-panel--private-fleets-size {
+    min-height: 0;
+    height: auto;
   }
 }
 
