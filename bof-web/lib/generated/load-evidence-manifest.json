@@ -5,7 +5,7 @@
       "source": "ai_generated",
       "label": "cargo-photo",
       "promptSummary": "cargoPhoto",
-      "generatedAt": "2026-05-01T12:24:06.206Z"
+      "generatedAt": "2026-05-01T12:48:45.988Z"
     },
     "sealPhoto": {
       "url": "/evidence/loads/L001/seal-photo.svg",
@@ -23,19 +23,25 @@
       "label": "seal-delivery-photo"
     },
     "equipmentPhoto": {
-      "url": "/evidence/loads/L001/equipment-photo.svg",
-      "source": "svg_demo",
-      "label": "equipment-photo"
+      "url": "/evidence/loads/L001/equipment-photo.png",
+      "source": "ai_generated",
+      "label": "equipment-photo",
+      "promptSummary": "equipmentPhoto",
+      "generatedAt": "2026-05-01T12:49:01.562Z"
     },
     "pickupPhoto": {
-      "url": "/evidence/loads/L001/pickup-photo.svg",
-      "source": "svg_demo",
-      "label": "pickup-photo"
+      "url": "/evidence/loads/L001/pickup-photo.png",
+      "source": "ai_generated",
+      "label": "pickup-photo",
+      "promptSummary": "pickupPhoto",
+      "generatedAt": "2026-05-01T12:49:15.518Z"
     },
     "deliveryPhoto": {
-      "url": "/evidence/loads/L001/delivery-photo.svg",
-      "source": "svg_demo",
-      "label": "delivery-photo"
+      "url": "/evidence/loads/L001/delivery-photo.png",
+      "source": "ai_generated",
+      "label": "delivery-photo",
+      "promptSummary": "deliveryPhoto",
+      "generatedAt": "2026-05-01T12:49:30.751Z"
     },
     "emptyTrailerProof": {
       "url": "/evidence/loads/L001/empty-trailer-proof.svg",
@@ -71,6 +77,53 @@
       "url": "/evidence/loads/L001/claim-evidence.svg",
       "source": "svg_demo",
       "label": "claim-evidence"
+    }
+  },
+  "L002": {
+    "cargoPhoto": {
+      "url": "/evidence/loads/L002/cargo-photo.svg",
+      "source": "svg_demo",
+      "label": "cargo-photo"
+    },
+    "sealPhoto": {
+      "url": "/evidence/loads/L002/seal-photo.svg",
+      "source": "svg_demo",
+      "label": "seal-photo"
+    },
+    "sealPickupPhoto": {
+      "url": "/evidence/loads/L002/seal-pickup-photo.svg",
+      "source": "svg_demo",
+      "label": "seal-pickup-photo"
+    },
+    "sealDeliveryPhoto": {
+      "url": "/evidence/loads/L002/seal-delivery-photo.svg",
+      "source": "svg_demo",
+      "label": "seal-delivery-photo"
+    },
+    "equipmentPhoto": {
+      "url": "/evidence/loads/L002/equipment-photo.svg",
+      "source": "svg_demo",
+      "label": "equipment-photo"
+    },
+    "pickupPhoto": {
+      "url": "/evidence/loads/L002/pickup-photo.svg",
+      "source": "svg_demo",
+      "label": "pickup-photo"
+    },
+    "deliveryPhoto": {
+      "url": "/evidence/loads/L002/delivery-photo.svg",
+      "source": "svg_demo",
+      "label": "delivery-photo"
+    },
+    "emptyTrailerProof": {
+      "url": "/evidence/loads/L002/empty-trailer-proof.svg",
+      "source": "svg_demo",
+      "label": "empty-trailer-proof"
+    },
+    "rfidDockProof": {
+      "url": "/evidence/loads/L002/rfid-dock-proof.svg",
+      "source": "svg_demo",
+      "label": "rfid-dock-proof"
     }
   }
 }

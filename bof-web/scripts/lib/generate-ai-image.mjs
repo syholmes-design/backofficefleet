@@ -5,6 +5,12 @@ function ensureDir(dirPath) {
   fs.mkdirSync(dirPath, { recursive: true });
 }
 
+function providerError(message, extra = {}) {
+  const err = new Error(message);
+  Object.assign(err, extra);
+  return err;
+}
+
 async function resolveReplicateVersion(model, apiKey) {
   const configured = model || "black-forest-labs/flux-schnell";
   if (configured.includes(":")) {
@@ -58,7 +64,11 @@ export async function generateEvidenceImage({
     });
     if (!res.ok) {
       const txt = await res.text();
-      throw new Error(`OpenAI image generation failed (${res.status}): ${txt.slice(0, 300)}`);
+      throw providerError(`OpenAI image generation failed (${res.status}): ${txt.slice(0, 300)}`, {
+        provider: "openai",
+        status: res.status,
+        retryable: res.status === 429,
+      });
     }
     const payload = await res.json();
     const base64 = payload?.data?.[0]?.b64_json;
@@ -90,7 +100,17 @@ export async function generateEvidenceImage({
     });
     if (!createRes.ok) {
       const txt = await createRes.text();
-      throw new Error(`Replicate create failed (${createRes.status}): ${txt.slice(0, 300)}`);
+      let retryAfter;
+      try {
+        const parsed = JSON.parse(txt);
+        retryAfter = Number(parsed?.retry_after);
+      } catch {}
+      throw providerError(`Replicate create failed (${createRes.status}): ${txt.slice(0, 300)}`, {
+        provider: "replicate",
+        status: createRes.status,
+        retryable: createRes.status === 429,
+        retryAfterSeconds: Number.isFinite(retryAfter) ? retryAfter : undefined,
+      });
     }
     let pred = await createRes.json();
     const started = Date.now();
@@ -104,21 +124,43 @@ export async function generateEvidenceImage({
       });
       if (!pollRes.ok) {
         const txt = await pollRes.text();
-        throw new Error(`Replicate poll failed (${pollRes.status}): ${txt.slice(0, 300)}`);
+        let retryAfter;
+        try {
+          const parsed = JSON.parse(txt);
+          retryAfter = Number(parsed?.retry_after);
+        } catch {}
+        throw providerError(`Replicate poll failed (${pollRes.status}): ${txt.slice(0, 300)}`, {
+          provider: "replicate",
+          status: pollRes.status,
+          retryable: pollRes.status === 429,
+          retryAfterSeconds: Number.isFinite(retryAfter) ? retryAfter : undefined,
+        });
       }
       pred = await pollRes.json();
     }
     if (pred?.status !== "succeeded") {
-      throw new Error(`Replicate generation failed: ${pred?.error || pred?.status || "unknown"}`);
+      throw providerError(`Replicate generation failed: ${pred?.error || pred?.status || "unknown"}`, {
+        provider: "replicate",
+        status: 500,
+        retryable: false,
+      });
     }
     const out = Array.isArray(pred.output) ? pred.output[0] : pred.output;
     const outUrl = typeof out === "string" ? out : out?.url;
     if (!outUrl) {
-      throw new Error("Replicate output URL missing");
+      throw providerError("Replicate output URL missing", {
+        provider: "replicate",
+        status: 500,
+        retryable: false,
+      });
     }
     const imageRes = await fetch(outUrl);
     if (!imageRes.ok) {
-      throw new Error(`Replicate output download failed (${imageRes.status})`);
+      throw providerError(`Replicate output download failed (${imageRes.status})`, {
+        provider: "replicate",
+        status: imageRes.status,
+        retryable: imageRes.status === 429,
+      });
     }
     const bytes = new Uint8Array(await imageRes.arrayBuffer());
     ensureDir(path.dirname(outputPath));
@@ -126,5 +168,9 @@ export async function generateEvidenceImage({
     return;
   }
 
-  throw new Error(`Unsupported image provider: ${provider}`);
+  throw providerError(`Unsupported image provider: ${provider}`, {
+    provider,
+    status: 400,
+    retryable: false,
+  });
 }

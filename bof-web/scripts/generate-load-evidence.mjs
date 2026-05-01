@@ -72,6 +72,10 @@ function ensureDir(dirPath) {
   fs.mkdirSync(dirPath, { recursive: true });
 }
 
+function sleep(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
 function readJson(filePath) {
   return JSON.parse(fs.readFileSync(filePath, "utf8"));
 }
@@ -219,35 +223,63 @@ async function resolveOrGenerate(load, evidenceKey, baseName, svgFactory, option
     return existing;
   }
   if (aiEligible) {
+    if (stats.aiAttempted > 0 && options.aiDelayMs > 0) {
+      await sleep(options.aiDelayMs);
+    }
     stats.aiAttempted += 1;
     const ext = outputExt(options);
     const prompt = buildEvidenceImagePrompt(load, evidenceKey);
     const outPath = path.join(EVIDENCE_ROOT, load.id, `${baseName}.${ext}`);
-    try {
-      await generateEvidenceImage({
-        provider: options.provider,
-        apiKey: options.apiKey,
-        model: options.model,
-        prompt,
-        outputPath: outPath,
-        outputFormat: ext,
-      });
-      stats.aiGenerated += 1;
-      return {
-        url: `/evidence/loads/${load.id}/${baseName}.${ext}`,
-        source: "ai_generated",
-        label: baseName,
-        promptSummary: evidenceKey,
-        generatedAt: isoNow(),
-      };
-    } catch (error) {
-      stats.aiFailed += 1;
-      console.warn(`[generate-load-evidence] AI failed for ${load.id}/${evidenceKey}: ${error}`);
+    for (let attempt = 0; attempt <= options.aiMaxRetries; attempt += 1) {
+      try {
+        console.log(
+          `[generate-load-evidence] ai attempt load=${load.id} evidence=${evidenceKey} try=${attempt + 1}/${options.aiMaxRetries + 1}`
+        );
+        await generateEvidenceImage({
+          provider: options.provider,
+          apiKey: options.apiKey,
+          model: options.model,
+          prompt,
+          outputPath: outPath,
+          outputFormat: ext,
+        });
+        stats.aiGenerated += 1;
+        return {
+          url: `/evidence/loads/${load.id}/${baseName}.${ext}`,
+          source: "ai_generated",
+          label: baseName,
+          promptSummary: evidenceKey,
+          generatedAt: isoNow(),
+        };
+      } catch (error) {
+        const status = Number(error?.status || 0);
+        const retryAfterSeconds = Number(error?.retryAfterSeconds || 0);
+        const retryable = Boolean(error?.retryable) || status === 429;
+        const finalAttempt = attempt >= options.aiMaxRetries;
+        if (retryable && !finalAttempt) {
+          const waitMs = Math.max(
+            options.aiDelayMs,
+            ((Number.isFinite(retryAfterSeconds) && retryAfterSeconds > 0 ? retryAfterSeconds : 8) + 1) *
+              1000
+          );
+          console.warn(
+            `[generate-load-evidence] rate-limited load=${load.id} evidence=${evidenceKey} status=${status} retry=${attempt + 1}/${options.aiMaxRetries} waitingMs=${waitMs}`
+          );
+          await sleep(waitMs);
+          continue;
+        }
+        stats.aiFailed += 1;
+        console.warn(
+          `[generate-load-evidence] AI failed for ${load.id}/${evidenceKey} after ${attempt + 1} attempt(s): ${error}`
+        );
+        break;
+      }
     }
   }
 
   const url = writeEvidenceSvg(load.id, `${baseName}.svg`, svgFactory());
   stats.svgGenerated += 1;
+  console.log(`[generate-load-evidence] fallback=svg load=${load.id} evidence=${evidenceKey}`);
   return {
     url,
     source: "svg_demo",
@@ -276,9 +308,19 @@ async function main() {
   ).trim() || undefined;
   const loadLimitRaw = Number(process.env.BOF_EVIDENCE_LOAD_LIMIT || 0);
   const imageLimitRaw = Number(process.env.BOF_EVIDENCE_IMAGE_LIMIT || 0);
+  const delayRaw = Number(process.env.BOF_AI_IMAGE_DELAY_MS || 0);
+  const retriesRaw = Number(process.env.BOF_AI_MAX_RETRIES || 3);
   const loadLimit = Number.isFinite(loadLimitRaw) && loadLimitRaw > 0 ? Math.floor(loadLimitRaw) : 0;
   const imageLimit =
     Number.isFinite(imageLimitRaw) && imageLimitRaw > 0 ? Math.floor(imageLimitRaw) : 0;
+  const aiDelayMs =
+    Number.isFinite(delayRaw) && delayRaw > 0
+      ? Math.floor(delayRaw)
+      : provider === "replicate"
+        ? 12000
+        : 2000;
+  const aiMaxRetries =
+    Number.isFinite(retriesRaw) && retriesRaw >= 0 ? Math.floor(retriesRaw) : 3;
   const apiKey =
     provider === "replicate"
       ? process.env.REPLICATE_API_TOKEN
@@ -295,6 +337,8 @@ async function main() {
     regenerate,
     loadLimit,
     imageLimit,
+    aiDelayMs,
+    aiMaxRetries,
   };
   const stats = {
     loads: 0,
@@ -308,7 +352,7 @@ async function main() {
   };
 
   console.log(
-    `[generate-load-evidence] provider=${provider} aiEnabled=${aiEnabled} apiKeyDetected=${Boolean(apiKey)} regenerate=${regenerate} outputFormat=${outputFormat} model=${model || "default"} loadLimit=${loadLimit || "all"} imageLimit=${imageLimit || "all"}`
+    `[generate-load-evidence] provider=${provider} aiEnabled=${aiEnabled} apiKeyDetected=${Boolean(apiKey)} regenerate=${regenerate} outputFormat=${outputFormat} model=${model || "default"} loadLimit=${loadLimit || "all"} imageLimit=${imageLimit || "all"} aiDelayMs=${aiDelayMs} aiMaxRetries=${aiMaxRetries}`
   );
 
   if (aiEnabled && !["replicate", "openai"].includes(provider)) {
@@ -586,7 +630,7 @@ async function main() {
   writeJson(PUBLIC_MANIFEST_PATH, manifest);
   writeJson(LIB_MANIFEST_PATH, manifest);
   console.log(
-    `[generate-load-evidence] loads=${stats.loads} required=${stats.required} reused=${stats.reused} ai_attempted=${stats.aiAttempted} ai_generated=${stats.aiGenerated} svg_generated=${stats.svgGenerated} ai_failed=${stats.aiFailed} unresolved=${stats.unresolved} manifest=${PUBLIC_MANIFEST_PATH}`
+    `[generate-load-evidence] loads=${stats.loads} required=${stats.required} reused=${stats.reused} ai_attempted=${stats.aiAttempted} ai_generated=${stats.aiGenerated} svg_fallbacks=${stats.svgGenerated} ai_failed=${stats.aiFailed} unresolved=${stats.unresolved} manifest=${PUBLIC_MANIFEST_PATH}`
   );
 }
 
