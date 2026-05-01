@@ -704,6 +704,24 @@ export function DriverDetailPageClient({ driverId }: { driverId: string }) {
           </div>
         )}
       </section>
+
+      <section
+        className="bof-driver-hub-section"
+        aria-labelledby="driver-hr-generated-packet-heading"
+      >
+        <DocumentEnginePanel
+          id="document-engine"
+          title="HR Generated Packet"
+          lead="Driver-scoped automation summaries. Bank Information uses the canonical payroll bank card HTML under /documents/drivers/{driverId}/ when indexed."
+          documents={engineDriverDocs}
+          variant="supporting"
+          crossLinks={[
+            { label: "HR & administrative record", href: `/drivers/${driver.id}/hr` },
+            { label: "Document vault", href: `/drivers/${driver.id}/vault` },
+            { label: "Drivers list", href: "/drivers" },
+          ]}
+        />
+      </section>
     </div>
   );
 }

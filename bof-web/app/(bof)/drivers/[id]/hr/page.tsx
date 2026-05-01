@@ -8,6 +8,7 @@ import {
   getCanonicalDriverDocuments,
   getDriverDocumentByType,
   getDriverDocumentPacket,
+  getExpectedBankCardPublicPath,
 } from "@/lib/driver-doc-registry";
 import { getDriverOperationalProfile } from "@/lib/driver-operational-profile";
 
@@ -21,6 +22,8 @@ type HrDocRow = {
   status: string;
   href?: string;
   source?: string;
+  /** Canonical bank-card path when the file is missing (Bank Information only). */
+  expectedCanonicalUrl?: string;
 };
 
 function humanizeStatus(raw?: string) {
@@ -96,12 +99,15 @@ export default function DriverHRPage({ params }: Props) {
       const status = canonicalUrl
         ? humanizeStatus(doc?.status ?? "VALID")
         : "Missing / Needs Review";
+      const expectedCanonicalUrl =
+        row.type === "Bank Info" && !canonicalUrl ? getExpectedBankCardPublicPath(id) : undefined;
       return {
         label: row.label,
         type: row.type,
         status,
         href: canonicalUrl,
         source: sourceLabel(canonicalUrl),
+        expectedCanonicalUrl,
       };
     });
   }, [data, id]);
@@ -122,6 +128,17 @@ export default function DriverHRPage({ params }: Props) {
     keyToType.forEach(([key, type]) => {
       const packetUrl = packet[key];
       const canonicalUrl = getDriverDocumentByType(id, type);
+      if (key === "bankInformation") {
+        const expected = getExpectedBankCardPublicPath(id);
+        if (expected && canonicalUrl && canonicalUrl !== expected) {
+          console.warn("[hr-doc-registry] Bank Information URL differs from canonical registry path", {
+            driverId: id,
+            expected,
+            canonicalUrl,
+          });
+        }
+        return;
+      }
       if ((packetUrl ?? "") !== (canonicalUrl ?? "")) {
         console.warn("[hr-doc-registry] URL mismatch between packet and canonical registry", {
           driverId: id,
@@ -229,7 +246,14 @@ export default function DriverHRPage({ params }: Props) {
                     Open
                   </a>
                 ) : (
-                  <span className="text-xs text-amber-300">Missing / Needs Review</span>
+                  <div className="text-right text-xs text-amber-300">
+                    <p>Missing / Needs Review</p>
+                    {doc.expectedCanonicalUrl ? (
+                      <p className="mt-1 font-mono text-[10px] text-slate-400">
+                        Expected file: {doc.expectedCanonicalUrl}
+                      </p>
+                    ) : null}
+                  </div>
                 )}
               </div>
             </div>

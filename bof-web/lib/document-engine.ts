@@ -12,6 +12,7 @@ import {
   SETTLEMENT_GENERATED_FILES,
 } from "./bof-generated-svgs";
 import { getOrderedDocumentsForDriver } from "./driver-queries";
+import { resolveDriverBankInformationUrl } from "./driver-doc-registry";
 import { getLoadProofItems, LOAD_PROOF_TYPES } from "./load-proof";
 import { mergeRfidIntoLoadScopedDocument } from "./rf-document-influence";
 import {
@@ -252,6 +253,28 @@ export function generateDriverDocument(
 ): EngineDocument | null {
   const driver = driverRecord(data, driverId);
   if (!driver) return null;
+  if (type === "Bank Info") {
+    const bankHtml = resolveDriverBankInformationUrl(driverId);
+    if (bankHtml) {
+      const rows = getOrderedDocumentsForDriver(data, driverId);
+      const row = rows.find((r) => r.type === "Bank Info");
+      const blocks = row?.blocksPayment === true;
+      return {
+        id: `ENG-DRIVER-${driverId}-bankcardhtml`,
+        type,
+        title: `Bank Info · ${driver.name}`,
+        driverId,
+        status: row?.status ?? "VALID",
+        fileUrl: bankHtml,
+        previewUrl: bankHtml,
+        blocksPayment: blocks,
+        generatedAt: nowIso(),
+        sourceDataSummary: buildSourceSummaryDriver(data, driverId),
+        notes: "Canonical bank card HTML under /documents/drivers/{driverId}/.",
+        links: linksForDriver(driverId),
+      };
+    }
+  }
   const file = DRIVER_TYPE_TO_FILE[type];
   if (!file || !(DRIVER_GENERATED_FILES as readonly string[]).includes(file)) {
     return null;

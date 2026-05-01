@@ -4,6 +4,7 @@ import path from "path";
 const ROOT = process.cwd();
 const DRIVER_DOCS_ROOT = path.join(ROOT, "public", "documents", "drivers");
 const INDEX_PATH = path.join(ROOT, "lib", "generated", "driver-public-doc-index.json");
+const CANONICAL_BANK_PATH = path.join(ROOT, "lib", "driver-canonical-bank-cards.json");
 const EXT_PRIORITY = [".pdf", ".png", ".jpg", ".jpeg", ".html"];
 
 const REQUIRED = [
@@ -11,7 +12,6 @@ const REQUIRED = [
   "cdlnew-{n}",
   "icard-drv-{n}",
   "Medical Card-{n}",
-  "bank-card-drv-{n}",
   "mvr-card-drv-{n}",
 ];
 
@@ -42,6 +42,13 @@ function run() {
     return;
   }
 
+  if (!exists(CANONICAL_BANK_PATH)) {
+    fail("Missing lib/driver-canonical-bank-cards.json");
+  }
+  const canonicalBank = exists(CANONICAL_BANK_PATH)
+    ? JSON.parse(fs.readFileSync(CANONICAL_BANK_PATH, "utf8"))
+    : {};
+
   for (let i = 1; i <= 12; i += 1) {
     const n = String(i).padStart(3, "0");
     const driverId = `DRV-${n}`;
@@ -56,6 +63,12 @@ function run() {
         fail(`Missing required doc for ${driverId}: ${base}`);
       }
     }
+    const bankFile = canonicalBank[driverId];
+    if (!bankFile) {
+      fail(`Missing canonical bank-card mapping for ${driverId} in driver-canonical-bank-cards.json`);
+    } else if (!exists(path.join(dir, bankFile))) {
+      fail(`Missing canonical bank HTML for ${driverId}: ${bankFile}`);
+    }
   }
 
   if (!exists(INDEX_PATH)) {
@@ -63,6 +76,18 @@ function run() {
   } else {
     const index = JSON.parse(fs.readFileSync(INDEX_PATH, "utf8"));
     const files = Array.isArray(index.files) ? index.files : [];
+    const fileSet = new Set(files);
+    for (let i = 1; i <= 12; i += 1) {
+      const n = String(i).padStart(3, "0");
+      const driverId = `DRV-${n}`;
+      const bankFile = canonicalBank[driverId];
+      if (bankFile) {
+        const expectedUrl = `/documents/drivers/${driverId}/${bankFile}`;
+        if (!fileSet.has(expectedUrl)) {
+          fail(`Index missing canonical Bank Information URL for ${driverId}: ${expectedUrl}`);
+        }
+      }
+    }
     for (const file of files) {
       if (!file.startsWith("/documents/drivers/")) {
         fail(`Non-driver-doc path in index: ${file}`);
@@ -81,6 +106,7 @@ function run() {
           file.includes("icard-drv-") ||
           file.includes("Medical Card-") ||
           file.includes("bank-card-drv-") ||
+          file.includes("bank-card-DRV-") ||
           file.includes("mvr-card-drv-");
         if (suspicious && !file.includes(expectedSuffix)) {
           fail(`Driver suffix mismatch in path: ${file}`);

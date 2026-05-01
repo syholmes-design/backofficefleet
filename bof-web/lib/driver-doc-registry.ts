@@ -1,6 +1,7 @@
 import type { BofData } from "@/lib/load-bof-data";
 import manifestRaw from "@/lib/generated/driver-doc-manifest.json";
 import publicDocIndexRaw from "@/lib/generated/driver-public-doc-index.json";
+import canonicalBankCardFiles from "@/lib/driver-canonical-bank-cards.json";
 import { getDriverOperationalProfile } from "@/lib/driver-operational-profile";
 
 export type DriverDocManifestKey =
@@ -38,6 +39,8 @@ const publicDocIndex = (publicDocIndexRaw ?? { files: [] }) as {
 const PUBLIC_FILES = new Set((publicDocIndex.files ?? []).map((x) => x.trim()));
 const EXT_PRIORITY = [".pdf", ".png", ".jpg", ".jpeg", ".html"] as const;
 
+const DRIVER_CANONICAL_BANK_CARD_FILE = canonicalBankCardFiles as Record<string, string>;
+
 function driverSuffix(driverId: string): string {
   const n = driverId.replace(/^DRV-/, "").trim();
   return n.padStart(3, "0");
@@ -59,8 +62,6 @@ function sourcePathForType(driverId: string, type: string): string | undefined {
     CDL: `${root}/cdlnew-${suffix}`,
     "Insurance Card": `${root}/icard-drv-${suffix}`,
     "Medical Card": `${root}/Medical Card-${suffix}`,
-    "Bank Info": `${root}/bank-card-drv-${suffix}`,
-    "Bank Information": `${root}/bank-card-drv-${suffix}`,
     MVR: `${root}/mvr-card-drv-${suffix}`,
     "I-9": `${root}/i9`,
     "W-9": `${root}/w9`,
@@ -70,10 +71,33 @@ function sourcePathForType(driverId: string, type: string): string | undefined {
   return byType[type];
 }
 
+/** Expected public URL for the canonical bank-card HTML (may not be on disk / in index yet). */
+export function getExpectedBankCardPublicPath(driverId: string): string | undefined {
+  const file = DRIVER_CANONICAL_BANK_CARD_FILE[driverId];
+  if (!file) return undefined;
+  return `/documents/drivers/${driverId}/${file}`;
+}
+
+/**
+ * Canonical driver bank card under /documents/drivers/{id}/, keyed by driverId only.
+ * Prefers bank-card-DRV-xxx-Name.html; falls back to legacy bank-card-drv-xxx when indexed.
+ * Does not use /generated/.../bank-information.html.
+ */
+export function resolveDriverBankInformationUrl(driverId: string): string | undefined {
+  const canonical = getExpectedBankCardPublicPath(driverId);
+  if (canonical && PUBLIC_FILES.has(canonical)) return canonical;
+  const suffix = driverSuffix(driverId);
+  const root = `/documents/drivers/${driverId}`;
+  return resolveByPriority(`${root}/bank-card-drv-${suffix}`);
+}
+
 export function getDriverPublicDocPath(
   driverId: string,
   type: string
 ): string | undefined {
+  if (type === "Bank Info" || type === "Bank Information") {
+    return resolveDriverBankInformationUrl(driverId);
+  }
   const base = sourcePathForType(driverId, type);
   if (!base) return undefined;
   return resolveByPriority(base);
@@ -90,8 +114,7 @@ export function getDriverDocumentPacket(driverId: string): DriverDocManifestEntr
       getDriverPublicDocPath(driverId, "Insurance Card") ?? merged.insuranceCard,
     medicalCard:
       getDriverPublicDocPath(driverId, "Medical Card") ?? merged.medicalCard,
-    bankInformation:
-      getDriverPublicDocPath(driverId, "Bank Information") ?? merged.bankInformation,
+    bankInformation: resolveDriverBankInformationUrl(driverId),
     mvr: getDriverPublicDocPath(driverId, "MVR") ?? merged.mvr,
     i9: getDriverPublicDocPath(driverId, "I-9") ?? merged.i9,
     w9: getDriverPublicDocPath(driverId, "W-9") ?? merged.w9,
@@ -108,6 +131,7 @@ export function getDriverDocumentByType(
   if (!key) return undefined;
   const direct = getDriverPublicDocPath(driverId, type);
   if (direct) return direct;
+  if (key === "bankInformation") return undefined;
   const value = getDriverDocumentPacket(driverId)[key];
   if (!value) return undefined;
   const normalized = String(value).trim();

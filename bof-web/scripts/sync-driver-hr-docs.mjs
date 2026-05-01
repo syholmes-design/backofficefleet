@@ -8,6 +8,8 @@ const GENERATED_ROOT = path.join(PUBLIC_ROOT, "generated", "drivers");
 const REFERENCE_EC_ROOT = path.join(PUBLIC_ROOT, "reference", "emergency-contacts");
 const DOWNLOADS_ROOT = path.join(process.env.USERPROFILE || "", "Downloads");
 const INDEX_OUT = path.join(ROOT, "lib", "generated", "driver-public-doc-index.json");
+const CANONICAL_BANK_PATH = path.join(ROOT, "lib", "driver-canonical-bank-cards.json");
+const CANONICAL_BANK = JSON.parse(fs.readFileSync(CANONICAL_BANK_PATH, "utf8"));
 
 const EXT_PRIORITY = [".pdf", ".png", ".jpg", ".jpeg", ".html"];
 
@@ -16,7 +18,14 @@ const DOC_SPECS = [
   { type: "CDL", base: (n) => `cdlnew-${n}` },
   { type: "Insurance Card", base: (n) => `icard-drv-${n}` },
   { type: "Medical Card", base: (n) => `Medical Card-${n}` },
-  { type: "Bank Information", base: (n) => `bank-card-drv-${n}` },
+  {
+    type: "Bank Information",
+    base: (n, driverId) => {
+      const fn = CANONICAL_BANK[driverId];
+      if (fn) return fn.replace(/\.html$/i, "");
+      return `bank-card-drv-${n}`;
+    },
+  },
   { type: "MVR", base: (n) => `mvr-card-drv-${n}` },
   { type: "I-9", base: () => "i9" },
   { type: "W-9", base: () => "w9" },
@@ -103,6 +112,7 @@ function buildCandidates(driverId, suffix3) {
       path.join(gen, "medical_certification.html"),
     ],
     "Bank Information": [
+      path.join(dir, `bank-card-drv-${suffix3}.html`),
       ...EXT_PRIORITY.map((ext) =>
         path.join(DOWNLOADS_ROOT, `bank-card-drv-${suffix3}${ext}`)
       ),
@@ -141,7 +151,10 @@ function run() {
     const candidates = buildCandidates(driverId, suffix3);
 
     for (const spec of DOC_SPECS) {
-      const baseAbs = path.join(dir, spec.base(suffix3));
+      const baseFn = spec.base;
+      const baseRel =
+        spec.type === "Bank Information" ? baseFn(suffix3, driverId) : baseFn(suffix3);
+      const baseAbs = path.join(dir, baseRel);
       const already = firstByExt(baseAbs);
       if (!already) {
         const src = pickExisting(candidates[spec.type] ?? []);
@@ -152,7 +165,15 @@ function run() {
         index.files.push(toPublicUrl(resolved));
       }
     }
+
+    const legacyBankAbs = firstByExt(path.join(dir, `bank-card-drv-${suffix3}`));
+    if (legacyBankAbs) {
+      const u = toPublicUrl(legacyBankAbs);
+      if (!index.files.includes(u)) index.files.push(u);
+    }
   }
+
+  index.files = [...new Set(index.files)].sort();
 
   ensureDir(path.dirname(INDEX_OUT));
   fs.writeFileSync(INDEX_OUT, JSON.stringify(index, null, 2));
