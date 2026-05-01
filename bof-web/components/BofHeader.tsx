@@ -38,13 +38,13 @@ export function BofHeader() {
 
   if (!marketingOnlyHeader) {
     return (
-      <header className="sticky top-0 z-40 border-b border-slate-800 bg-slate-950/95 backdrop-blur">
-        <div className="mx-auto flex max-w-[80rem] flex-wrap items-center gap-3 px-4 py-3">
-          <Link href="/dashboard" className="mr-2 inline-flex items-center text-slate-100">
+      <header className="sticky top-0 z-40 w-full border-b border-slate-800 bg-slate-950/95 backdrop-blur">
+        <div className="flex w-full max-w-none flex-wrap items-center gap-4 px-6 py-3">
+          <Link href="/dashboard" className="mr-2 inline-flex shrink-0 items-center text-slate-100">
             <BofLogo variant="light" size="demoLarge" priority />
           </Link>
           <nav
-            className="flex flex-1 flex-wrap items-center gap-1 text-sm"
+            className="flex min-w-0 flex-1 flex-wrap items-center gap-2 overflow-x-auto text-sm"
             aria-label="Product demo"
           >
             {productNav.map((item) => {
