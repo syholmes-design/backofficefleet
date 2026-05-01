@@ -12537,6 +12537,10 @@ body {
   gap: 1rem;
 }
 
+.bof-cc-hero-left {
+  min-width: 0;
+}
+
 .bof-cc-kicker {
   margin: 0 0 0.35rem;
   color: #8de4d8;
@@ -12560,6 +12564,35 @@ body {
   display: flex;
   flex-wrap: wrap;
   gap: 0.6rem;
+}
+
+.bof-cc-hero-stat-grid {
+  margin-top: 0.8rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 0.45rem;
+}
+
+.bof-cc-hero-stat {
+  border: 1px solid #2b3b57;
+  border-radius: 9px;
+  background: #0f1b2f;
+  padding: 0.45rem 0.5rem;
+}
+
+.bof-cc-hero-stat-label {
+  display: block;
+  font-size: 0.66rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #9fb1c9;
+}
+
+.bof-cc-hero-stat-value {
+  display: block;
+  margin-top: 0.15rem;
+  color: #f8fafc;
+  font-size: 0.92rem;
 }
 
 .bof-cc-btn {
@@ -13002,6 +13035,106 @@ body {
   gap: 0.32rem;
 }
 
+.bof-cc-route-panel {
+  border: 1px solid #2b3b57;
+  border-radius: 12px;
+  background: #0d1729;
+  padding: 0.65rem;
+  overflow: hidden;
+}
+
+.bof-cc-hero-image-wrap {
+  position: relative;
+  width: 100%;
+  height: 180px;
+  border-radius: 10px;
+  overflow: hidden;
+  border: 1px solid #31445f;
+  margin-bottom: 0.5rem;
+  background: #0b1220;
+}
+
+.bof-cc-hero-image {
+  object-fit: cover;
+  object-position: center;
+}
+
+.bof-cc-hero-image-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(2, 6, 23, 0.15) 0%, rgba(2, 6, 23, 0.62) 100%);
+  pointer-events: none;
+}
+
+.bof-cc-critical-note {
+  border: 1px solid #7f1d1d;
+  border-left: 4px solid #fb7185;
+  border-radius: 9px;
+  background: #1f1522;
+  padding: 0.45rem 0.5rem;
+  margin-top: 0.45rem;
+}
+
+.bof-cc-critical-note strong {
+  display: block;
+  font-size: 0.76rem;
+  margin-top: 0.2rem;
+}
+
+.bof-cc-critical-note p {
+  margin: 0.2rem 0 0;
+  font-size: 0.72rem;
+  color: #d5d9e6;
+}
+
+.bof-cc-route-summary-body {
+  margin-top: 0.45rem;
+}
+
+.bof-cc-route-svg {
+  width: 100%;
+  height: 110px;
+  display: block;
+}
+
+.bof-cc-route-line {
+  fill: none;
+  stroke: #2dd4bf;
+  stroke-width: 3;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  opacity: 0.95;
+}
+
+.bof-cc-route-node-start { fill: #38bdf8; }
+.bof-cc-route-node-mid { fill: #f59e0b; }
+.bof-cc-route-node-end { fill: #10b981; }
+
+.bof-cc-route-list {
+  display: grid;
+  gap: 0.35rem;
+}
+
+.bof-cc-route-row {
+  display: grid;
+  gap: 0.1rem;
+  border: 1px solid #2b3b57;
+  border-radius: 7px;
+  padding: 0.35rem 0.45rem;
+  background: #101b2d;
+  font-size: 0.7rem;
+}
+
+.bof-cc-route-status {
+  color: #a6bdd8;
+}
+
+.bof-cc-route-empty {
+  margin: 0.35rem 0 0;
+  font-size: 0.72rem;
+  color: #9fb1c9;
+}
+
 .bof-cc-action-wrap {
   display: flex;
   flex-wrap: wrap;
@@ -13127,6 +13260,8 @@ body {
   .bof-cc-table { min-width: 760px; }
   .bof-cc-kpi-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .bof-cc-page { padding-bottom: 8.5rem; }
+  .bof-cc-hero-premium { grid-template-columns: 1fr; }
+  .bof-cc-hero-image-wrap { height: 150px; }
 }
 
 /* Tailwind — utilities + components only (no @tailwind base — avoids touching BOF globals). */

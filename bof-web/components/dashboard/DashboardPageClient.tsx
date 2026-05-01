@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo } from "react";
+import Image from "next/image";
+import { useMemo, useState } from "react";
 import { useBofDemoData } from "@/lib/bof-demo-data-context";
 import { formatUsd } from "@/lib/format-money";
 import {
@@ -14,12 +15,15 @@ import {
   getSettlementStatusChartData,
   type BreakdownPoint,
   type DashboardKpi,
+  type OwnerAttentionItem,
 } from "@/lib/dashboard-insights";
 import { settlementTotals } from "@/lib/executive-layer";
 import { getPayrollMonthlyTrend } from "@/lib/demo-trends";
+import { getClientLoadRequests } from "@/lib/client-load-requests";
 
 export function DashboardPageClient() {
   const { data } = useBofDemoData();
+  const [heroImageMissing, setHeroImageMissing] = useState(false);
 
   const st = useMemo(() => settlementTotals(data), [data]);
   const summary = useMemo(() => getMainDashboardSummary(data), [data]);
@@ -28,6 +32,13 @@ export function DashboardPageClient() {
   const loadStatus = useMemo(() => getLoadStatusChartData(data), [data]);
   const settlementStatus = useMemo(() => getSettlementStatusChartData(data), [data]);
   const attentionQueue = useMemo(() => getOwnerAttentionQueue(data), [data]);
+  const pendingClientLoadRequests = useMemo(
+    () =>
+      getClientLoadRequests(data).filter(
+        (request) => request.status !== "converted_to_load" && request.status !== "rejected"
+      ).length,
+    [data]
+  );
   const todayChanges = useMemo(() => getDashboardTodayChanges(data), [data]);
   const payrollTrend = useMemo(() => getPayrollMonthlyTrend(), []);
   const topRiskLoads = useMemo(
@@ -120,14 +131,30 @@ export function DashboardPageClient() {
   );
 
   const criticalQueue = attentionQueue.filter((item) => item.severity === "critical");
+  const latestCriticalAlert = criticalQueue[0] ?? null;
   const nonCriticalQueue = attentionQueue.filter((item) => item.severity !== "critical");
   const prioritizedQueue = [...criticalQueue, ...nonCriticalQueue];
   const queuePreview = prioritizedQueue.slice(0, 4);
+  const readinessSplit = {
+    ready: readiness.find((point) => point.label === "Ready")?.value ?? 0,
+    review: readiness.find((point) => point.label === "Needs Review")?.value ?? 0,
+    blocked: readiness.find((point) => point.label === "Blocked")?.value ?? 0,
+  };
+  const heroSummaryStats = [
+    { label: "Active Loads", value: summary.activeLoads },
+    { label: "Loads At Risk", value: summary.loadsAtRisk },
+    { label: "Drivers Ready", value: readinessSplit.ready },
+    { label: "Drivers Blocked", value: readinessSplit.blocked },
+    { label: "Needs Review", value: readinessSplit.review },
+    { label: "Settlement Holds", value: summary.settlementHolds },
+    { label: "Claim Exposure", value: formatUsd(summary.claimExposure) },
+    { label: "Client Requests Pending", value: pendingClientLoadRequests },
+  ] as const;
 
   return (
     <div className="bof-page bof-cc-page">
       <section className="bof-cc-hero bof-cc-hero-premium">
-        <div>
+        <div className="bof-cc-hero-left">
           <p className="bof-cc-kicker">Executive Operations Cockpit</p>
           <h1 className="bof-title bof-cc-title">Fleet Command Dashboard</h1>
           <p className="bof-lead bof-cc-lead">
@@ -138,15 +165,29 @@ export function DashboardPageClient() {
             <Link href="/dispatch" className="bof-cc-btn bof-cc-btn-primary">
               Open Dispatch Board
             </Link>
-            <a href="#owners-attention-queue" className="bof-cc-btn">
+            <a href="#attention-queue" className="bof-cc-btn">
               Review Attention Queue
             </a>
             <Link href="/settlements" className="bof-cc-btn">
               Open Settlements
             </Link>
           </div>
+          <div className="bof-cc-hero-stat-grid">
+            {heroSummaryStats.map((stat) => (
+              <article key={stat.label} className="bof-cc-hero-stat">
+                <span className="bof-cc-hero-stat-label">{stat.label}</span>
+                <strong className="bof-cc-hero-stat-value">{stat.value}</strong>
+              </article>
+            ))}
+          </div>
         </div>
-        <RouteSummaryPanel loadsAtRisk={summary.loadsAtRisk} topRiskLoads={topRiskLoads} />
+        <HeroVisualPanel
+          hasImage={!heroImageMissing}
+          onImageMissing={() => setHeroImageMissing(true)}
+          latestCriticalAlert={latestCriticalAlert}
+          loadsAtRisk={summary.loadsAtRisk}
+          topRiskLoads={topRiskLoads}
+        />
       </section>
 
       <section className="bof-cc-kpi-sections" aria-label="Executive KPI strip">
@@ -184,7 +225,7 @@ export function DashboardPageClient() {
         </article>
       </section>
 
-      <section className="bof-cc-panel bof-cc-attention-priority" aria-label="Priority owner actions" id="owners-attention-queue">
+      <section className="bof-cc-panel bof-cc-attention-priority" aria-label="Priority owner actions" id="attention-queue">
         <div className="bof-cc-panel-head">
           <h2 className="bof-h2">Owner&apos;s Attention Queue</h2>
           <Link href="/command-center" className="bof-link-secondary">Open full queue →</Link>
@@ -303,10 +344,64 @@ export function DashboardPageClient() {
             <ExecutiveNote label="Settlement holds changed" value={summary.settlementHolds} tone={summary.settlementHolds > 0 ? "warn" : "ok"} detail={todayChanges[1]} />
             <ExecutiveNote label="Claim exposure changed" value={formatUsd(summary.claimExposure)} tone={summary.claimExposure > 0 ? "danger" : "ok"} detail={summary.claimExposure > 0 ? "Active claim-linked exposure remains open." : "No active claim-linked exposure."} />
             <ExecutiveNote label="Documents / proof exceptions" value={`${summary.loadsAtRisk} open`} tone={summary.loadsAtRisk > 0 ? "warn" : "ok"} detail={todayChanges[4]} />
+            <ExecutiveNote
+              label="Client load requests pending"
+              value={pendingClientLoadRequests}
+              tone={pendingClientLoadRequests > 0 ? "warn" : "ok"}
+              detail={
+                pendingClientLoadRequests > 0
+                  ? "Internal BOF review queue has pending client submissions."
+                  : "No pending client submissions in load request queue."
+              }
+            />
           </div>
         </article>
       </section>
     </div>
+  );
+}
+
+function HeroVisualPanel({
+  hasImage,
+  onImageMissing,
+  latestCriticalAlert,
+  loadsAtRisk,
+  topRiskLoads,
+}: {
+  hasImage: boolean;
+  onImageMissing: () => void;
+  latestCriticalAlert: OwnerAttentionItem | null;
+  loadsAtRisk: number;
+  topRiskLoads: Array<{ id: string; origin: string; destination: string; status: string; sealStatus: string }>;
+}) {
+  return (
+    <aside className="bof-cc-route-panel" aria-label="Route summary visual">
+      {hasImage ? (
+        <div className="bof-cc-hero-image-wrap">
+          <Image
+            src="/images/bof-command-dashboard-hero.png"
+            alt="BOF command dashboard showing fleet operations, documents, compliance, and route visibility."
+            fill
+            className="bof-cc-hero-image"
+            onError={onImageMissing}
+            unoptimized
+          />
+          <div className="bof-cc-hero-image-overlay" />
+        </div>
+      ) : null}
+      <h3 className="bof-cc-panel-title">{hasImage ? "Route & Alert Snapshot" : "Route Risk Snapshot"}</h3>
+      <p className="bof-cc-panel-sub">{loadsAtRisk} loads currently at risk across active lanes.</p>
+      {latestCriticalAlert ? (
+        <div className="bof-cc-critical-note">
+          <span className="bof-cc-sev bof-cc-sev-critical">critical</span>
+          <strong>{latestCriticalAlert.issue}</strong>
+          <p>{latestCriticalAlert.recommendedFix}</p>
+        </div>
+      ) : (
+        <p className="bof-cc-route-empty">No critical alert currently open.</p>
+      )}
+      <RouteSummaryPanel loadsAtRisk={loadsAtRisk} topRiskLoads={topRiskLoads} />
+    </aside>
   );
 }
 
@@ -491,9 +586,7 @@ function RouteSummaryPanel({
   const topOrigins = Array.from(new Set(topRiskLoads.map((load) => load.origin))).slice(0, 3);
   const topDestinations = Array.from(new Set(topRiskLoads.map((load) => load.destination))).slice(0, 3);
   return (
-    <aside className="bof-cc-route-panel" aria-label="Route summary visual">
-      <h3 className="bof-cc-panel-title">Route Risk Snapshot</h3>
-      <p className="bof-cc-panel-sub">{loadsAtRisk} loads currently at risk across active lanes.</p>
+    <div className="bof-cc-route-summary-body" aria-label="Route summary visual detail">
       <div className="bof-cc-route-pills">
         {topOrigins.length ? <span className="bof-cc-chip bof-cc-chip-info">Origins: {topOrigins.join(", ")}</span> : null}
         {topDestinations.length ? <span className="bof-cc-chip bof-cc-chip-info">Destinations: {topDestinations.join(", ")}</span> : null}
@@ -514,10 +607,12 @@ function RouteSummaryPanel({
             </div>
           ))
         ) : (
-          <p className="bof-cc-route-empty">No active risk lanes detected.</p>
+          <p className="bof-cc-route-empty">
+            {loadsAtRisk > 0 ? "Risk lanes available in dispatch map." : "No active risk lanes detected."}
+          </p>
         )}
       </div>
-    </aside>
+    </div>
   );
 }
 
