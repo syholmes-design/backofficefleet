@@ -10,6 +10,9 @@ import type { IntakeWizardState, LoadPacket } from "@/lib/load-requirements-inta
 import { LoadIntakeStep4PacketReview } from "@/components/load-intake/LoadIntakeStep4PacketReview";
 import { LoadIntakeAddressCombo } from "@/components/load-intake/LoadIntakeAddressCombo";
 import { useBofDemoData } from "@/lib/bof-demo-data-context";
+import { useDispatchDashboardStore } from "@/lib/stores/dispatch-dashboard-store";
+import { buildDispatchLoadsFromBofData } from "@/lib/dispatch-dashboard-seed";
+import { normalizeLoadIntakeForm } from "@/lib/load-intake-normalize";
 import { BofIntakeFormPrimaryPanel } from "@/components/documents/BofIntakeFormPrimaryPanel";
 import { BofWorkflowFormShortcuts } from "@/components/documents/BofWorkflowFormShortcuts";
 import { BofTemplateUsageSurface } from "@/components/documents/BofTemplateUsageSurface";
@@ -52,10 +55,26 @@ function createInitialState(): IntakeWizardState {
       load_requirement_id: LR_ID,
       shipper_id: SHIP_ID,
       facility_id: FAC_ID,
+      load_id_input: "",
+      pickup_at: "",
+      delivery_at: "",
       commodity: "",
       weight: 0,
       pallet_count: 0,
       piece_count: 0,
+      rate_linehaul: 0,
+      assigned_driver_id: "",
+      truck_id: "",
+      trailer_id: "",
+      intake_status: "scheduled",
+      bol_number: "",
+      invoice_number: "",
+      seal_number: "",
+      rfid_proof_required: false,
+      insurance_requirements_summary: "",
+      pod_bol_instructions: "",
+      backhaul_pay: 0,
+      claim_damage_flag: false,
       equipment_type: "",
       special_handling: "",
       destination_facility_name: "",
@@ -167,9 +186,12 @@ const STEPS = [
 ] as const;
 
 export function LoadRequirementsWizard() {
-  const { data } = useBofDemoData();
+  const { data, setFullData } = useBofDemoData();
+  const upsertDispatchLoad = useDispatchDashboardStore((s) => s.upsertLoad);
   const [step, setStep] = useState(1);
   const [state, setState] = useState<IntakeWizardState>(() => createInitialState());
+  const [submitError, setSubmitError] = useState<string | null>(null);
+  const [submitSuccess, setSubmitSuccess] = useState<string | null>(null);
   const formEntityId = toBofIntakeEntityId(state.loadRequirement.load_requirement_id);
   const intakeSurfaceContext = useMemo(
     () => buildBofIntakeSurfaceContextFromWizard(formEntityId, state),
@@ -267,6 +289,7 @@ export function LoadRequirementsWizard() {
 
   const generatePacket = () => {
     if (blocking) return;
+    setSubmitError(null);
     const packet: LoadPacket = {
       load_packet_id: `LP-${Date.now()}`,
       load_requirement_id: state.loadRequirement.load_requirement_id,
@@ -275,6 +298,100 @@ export function LoadRequirementsWizard() {
     };
     setState((s) => ({ ...s, loadPacket: packet }));
   };
+
+  const validationErrors = useMemo(() => {
+    const out: string[] = [];
+    const req = state.loadRequirement;
+    const pickupAddress = state.facility.address.trim();
+    const deliveryAddress = (req.destination_address || "").trim();
+    const pickupAt = req.pickup_at || state.compliance.appointment_window_start;
+    const deliveryAt = req.delivery_at || state.compliance.appointment_window_end;
+    if (!state.shipper.shipper_name.trim()) out.push("Missing customer / broker (shipper name).");
+    if (!state.facility.facility_name.trim()) out.push("Missing pickup facility.");
+    if (!pickupAddress) out.push("Missing pickup address.");
+    if (!(req.destination_facility_name || "").trim()) out.push("Missing delivery facility.");
+    if (!deliveryAddress) out.push("Missing delivery address.");
+    if (!req.commodity.trim()) out.push("Missing commodity.");
+    if (!(Number(req.rate_linehaul) > 0)) out.push("Missing or invalid rate / linehaul amount.");
+    if (!(Number(req.weight) > 0)) out.push("Invalid weight.");
+    if (pickupAt && deliveryAt && new Date(pickupAt).getTime() > new Date(deliveryAt).getTime()) {
+      out.push("Delivery appointment must be after pickup appointment.");
+    }
+    if (req.assigned_driver_id?.trim()) {
+      const exists = data.drivers.some((d) => d.id === req.assigned_driver_id?.trim());
+      if (!exists) out.push(`Assigned driver does not exist: ${req.assigned_driver_id}.`);
+    }
+    return out;
+  }, [data.drivers, state]);
+
+  const runtimeIntakeLoadIds = useMemo(
+    () =>
+      data.loads
+        .filter(
+          (l) =>
+            Boolean((l as { intakeStatus?: string }).intakeStatus) ||
+            String(l.dispatchOpsNotes || "").includes("Intake generated load from")
+        )
+        .map((l) => l.id),
+    [data.loads]
+  );
+
+  const exportRuntimeIntakeLoads = useCallback(() => {
+    const ids = new Set(runtimeIntakeLoadIds);
+    const payload = {
+      exportedAt: new Date().toISOString(),
+      type: "bof-runtime-intake-loads",
+      count: ids.size,
+      loads: data.loads.filter((l) => ids.has(l.id)),
+      loadProofBundles: Object.fromEntries(
+        Object.entries(data.loadProofBundles || {}).filter(([loadId]) => ids.has(loadId))
+      ),
+    };
+    const blob = new Blob([JSON.stringify(payload, null, 2)], {
+      type: "application/json",
+    });
+    const stamp = new Date().toISOString().replace(/[:.]/g, "-");
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = `bof-runtime-intake-loads-${stamp}.json`;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(a.href);
+  }, [data.loadProofBundles, data.loads, runtimeIntakeLoadIds]);
+
+  const saveIntakeLoad = useCallback(() => {
+    setSubmitError(null);
+    setSubmitSuccess(null);
+    if (validationErrors.length > 0) {
+      setSubmitError(validationErrors.join(" "));
+      return;
+    }
+    try {
+      const normalized = normalizeLoadIntakeForm(state, data);
+      const next = structuredClone(data);
+      const existingIdx = next.loads.findIndex((l) => l.id === normalized.bofLoad.id);
+      if (existingIdx >= 0) next.loads[existingIdx] = normalized.bofLoad;
+      else next.loads.push(normalized.bofLoad);
+      next.loadProofBundles = {
+        ...(next.loadProofBundles || {}),
+        [normalized.canonical.loadId]: normalized.loadProofBundle,
+      };
+      setFullData(next);
+      const mappedDispatch = buildDispatchLoadsFromBofData(next).find(
+        (l) => l.load_id === normalized.canonical.loadId
+      );
+      if (mappedDispatch) {
+        upsertDispatchLoad(mappedDispatch);
+      }
+      setSubmitSuccess(
+        `Saved ${normalized.canonical.loadId}. Pending generation — run npm run generate:load-docs && npm run generate:load-evidence.`
+      );
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : "Failed to save intake load.";
+      setSubmitError(msg);
+    }
+  }, [data, setFullData, state, upsertDispatchLoad, validationErrors]);
 
   return (
     <div className="bof-load-intake">
@@ -797,6 +914,156 @@ export function LoadRequirementsWizard() {
                 }
               />
             </div>
+            <div className="bof-load-intake-field">
+              <label htmlFor="load_id_input">Load ID (optional)</label>
+              <input
+                id="load_id_input"
+                placeholder="Auto-generated when blank"
+                value={state.loadRequirement.load_id_input ?? ""}
+                onChange={(e) =>
+                  setState((s) => ({
+                    ...s,
+                    loadRequirement: { ...s.loadRequirement, load_id_input: e.target.value.toUpperCase() },
+                  }))
+                }
+              />
+            </div>
+            <div className="bof-load-intake-field">
+              <label htmlFor="rate_linehaul">Rate / linehaul amount</label>
+              <input
+                id="rate_linehaul"
+                type="number"
+                min={0}
+                step={0.01}
+                value={state.loadRequirement.rate_linehaul || ""}
+                onChange={(e) =>
+                  setState((s) => ({
+                    ...s,
+                    loadRequirement: {
+                      ...s.loadRequirement,
+                      rate_linehaul: parseFloat(e.target.value) || 0,
+                    },
+                  }))
+                }
+              />
+            </div>
+            <div className="bof-load-intake-field">
+              <label htmlFor="pickup_at">Pickup appointment</label>
+              <input
+                id="pickup_at"
+                type="datetime-local"
+                value={state.loadRequirement.pickup_at ?? ""}
+                onChange={(e) =>
+                  setState((s) => ({
+                    ...s,
+                    loadRequirement: { ...s.loadRequirement, pickup_at: e.target.value },
+                  }))
+                }
+              />
+            </div>
+            <div className="bof-load-intake-field">
+              <label htmlFor="delivery_at">Delivery appointment</label>
+              <input
+                id="delivery_at"
+                type="datetime-local"
+                value={state.loadRequirement.delivery_at ?? ""}
+                onChange={(e) =>
+                  setState((s) => ({
+                    ...s,
+                    loadRequirement: { ...s.loadRequirement, delivery_at: e.target.value },
+                  }))
+                }
+              />
+            </div>
+            <div className="bof-load-intake-field">
+              <label htmlFor="assigned_driver_id">Assigned driver</label>
+              <select
+                id="assigned_driver_id"
+                value={state.loadRequirement.assigned_driver_id ?? ""}
+                onChange={(e) =>
+                  setState((s) => ({
+                    ...s,
+                    loadRequirement: { ...s.loadRequirement, assigned_driver_id: e.target.value },
+                  }))
+                }
+              >
+                <option value="">Unassigned</option>
+                {data.drivers.map((d) => (
+                  <option key={d.id} value={d.id}>
+                    {d.id} - {d.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div className="bof-load-intake-field">
+              <label htmlFor="truck_id">Truck / asset</label>
+              <input
+                id="truck_id"
+                placeholder="T-101"
+                value={state.loadRequirement.truck_id ?? ""}
+                onChange={(e) =>
+                  setState((s) => ({
+                    ...s,
+                    loadRequirement: { ...s.loadRequirement, truck_id: e.target.value.toUpperCase() },
+                  }))
+                }
+              />
+            </div>
+            <div className="bof-load-intake-field">
+              <label htmlFor="trailer_id">Trailer (optional)</label>
+              <input
+                id="trailer_id"
+                placeholder="TR-201"
+                value={state.loadRequirement.trailer_id ?? ""}
+                onChange={(e) =>
+                  setState((s) => ({
+                    ...s,
+                    loadRequirement: { ...s.loadRequirement, trailer_id: e.target.value.toUpperCase() },
+                  }))
+                }
+              />
+            </div>
+            <div className="bof-load-intake-field">
+              <label htmlFor="intake_status">Initial status</label>
+              <select
+                id="intake_status"
+                value={state.loadRequirement.intake_status ?? "scheduled"}
+                onChange={(e) =>
+                  setState((s) => ({
+                    ...s,
+                    loadRequirement: {
+                      ...s.loadRequirement,
+                      intake_status: e.target.value as
+                        | "scheduled"
+                        | "dispatched"
+                        | "in_transit"
+                        | "delivered",
+                    },
+                  }))
+                }
+              >
+                <option value="scheduled">Scheduled</option>
+                <option value="dispatched">Dispatched</option>
+                <option value="in_transit">In transit</option>
+                <option value="delivered">Delivered</option>
+              </select>
+            </div>
+            <div className="bof-load-intake-field">
+              <label htmlFor="backhaul_pay">Backhaul opportunity/pay</label>
+              <input
+                id="backhaul_pay"
+                type="number"
+                min={0}
+                step={0.01}
+                value={state.loadRequirement.backhaul_pay || ""}
+                onChange={(e) =>
+                  setState((s) => ({
+                    ...s,
+                    loadRequirement: { ...s.loadRequirement, backhaul_pay: parseFloat(e.target.value) || 0 },
+                  }))
+                }
+              />
+            </div>
             <div className="bof-load-intake-field" style={{ gridColumn: "1 / -1" }}>
               <label htmlFor="special">Special handling instructions</label>
               <textarea
@@ -908,6 +1175,41 @@ export function LoadRequirementsWizard() {
                   setState((s) => ({
                     ...s,
                     compliance: { ...s.compliance, seal_number_required: v },
+                  }))
+                }
+              />
+              <div className="bof-load-intake-field">
+                <label htmlFor="seal_number">Seal number (if known)</label>
+                <input
+                  id="seal_number"
+                  value={state.loadRequirement.seal_number ?? ""}
+                  onChange={(e) =>
+                    setState((s) => ({
+                      ...s,
+                      loadRequirement: { ...s.loadRequirement, seal_number: e.target.value },
+                    }))
+                  }
+                />
+              </div>
+              <YesNo
+                idPrefix="rfid-proof"
+                label="RFID/proof workflow required?"
+                value={state.loadRequirement.rfid_proof_required ?? false}
+                onChange={(v) =>
+                  setState((s) => ({
+                    ...s,
+                    loadRequirement: { ...s.loadRequirement, rfid_proof_required: v },
+                  }))
+                }
+              />
+              <YesNo
+                idPrefix="claim-flag"
+                label="Claim / damage flag?"
+                value={state.loadRequirement.claim_damage_flag ?? false}
+                onChange={(v) =>
+                  setState((s) => ({
+                    ...s,
+                    loadRequirement: { ...s.loadRequirement, claim_damage_flag: v },
                   }))
                 }
               />
@@ -1093,6 +1395,19 @@ export function LoadRequirementsWizard() {
                   rows={2}
                 />
               </div>
+              <div className="bof-load-intake-field">
+                <label htmlFor="invoice_number">Invoice number (optional)</label>
+                <input
+                  id="invoice_number"
+                  value={state.loadRequirement.invoice_number ?? ""}
+                  onChange={(e) =>
+                    setState((s) => ({
+                      ...s,
+                      loadRequirement: { ...s.loadRequirement, invoice_number: e.target.value },
+                    }))
+                  }
+                />
+              </div>
             </div>
           </div>
 
@@ -1179,6 +1494,19 @@ export function LoadRequirementsWizard() {
                     }))
                   }
                   rows={3}
+                />
+              </div>
+              <div className="bof-load-intake-field">
+                <label htmlFor="bol_number">BOL number (optional)</label>
+                <input
+                  id="bol_number"
+                  value={state.loadRequirement.bol_number ?? ""}
+                  onChange={(e) =>
+                    setState((s) => ({
+                      ...s,
+                      loadRequirement: { ...s.loadRequirement, bol_number: e.target.value },
+                    }))
+                  }
                 />
               </div>
             </div>
@@ -1344,13 +1672,39 @@ export function LoadRequirementsWizard() {
       )}
 
       {step === 4 && (
-        <LoadIntakeStep4PacketReview
-          state={state}
-          setState={setState}
-          checks={checks}
-          goStep={goStep}
-          generatePacket={generatePacket}
-        />
+        <>
+          <LoadIntakeStep4PacketReview
+            state={state}
+            setState={setState}
+            checks={checks}
+            goStep={goStep}
+            generatePacket={generatePacket}
+            onSaveLoad={saveIntakeLoad}
+            validationErrors={validationErrors}
+            submitError={submitError}
+            submitSuccess={submitSuccess}
+          />
+          <section className="bof-load-intake-card" aria-label="Runtime export">
+            <h2>Session export</h2>
+            <p className="bof-muted">
+              Demo-created intake loads are stored in session/local demo data. Export them as JSON to
+              promote into seed data when needed.
+            </p>
+            <div className="bof-load-intake-toolbar">
+              <button
+                type="button"
+                className="bof-load-intake-btn"
+                onClick={exportRuntimeIntakeLoads}
+                disabled={runtimeIntakeLoadIds.length === 0}
+              >
+                Export runtime intake loads JSON
+              </button>
+              <span className="bof-muted bof-small">
+                {runtimeIntakeLoadIds.length} runtime load(s) available
+              </span>
+            </div>
+          </section>
+        </>
       )}
     </div>
   );

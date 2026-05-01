@@ -56,6 +56,10 @@ type Props = {
   checks: AutoCheckResult[];
   goStep: (n: number) => void;
   generatePacket: () => void;
+  onSaveLoad: () => void;
+  validationErrors: string[];
+  submitError: string | null;
+  submitSuccess: string | null;
 };
 
 export function LoadIntakeStep4PacketReview({
@@ -64,6 +68,10 @@ export function LoadIntakeStep4PacketReview({
   checks,
   goStep,
   generatePacket,
+  onSaveLoad,
+  validationErrors,
+  submitError,
+  submitSuccess,
 }: Props) {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [drawerTab, setDrawerTab] = useState<DrawerDocTab>("bol");
@@ -726,7 +734,37 @@ export function LoadIntakeStep4PacketReview({
           >
             Generate load packet
           </button>
+          <button
+            type="button"
+            className="bof-load-intake-btn bof-load-intake-btn--primary"
+            onClick={onSaveLoad}
+          >
+            Save load to BOF
+          </button>
         </div>
+
+        {validationErrors.length > 0 && (
+          <div className="bof-load-intake-alert bof-load-intake-alert--warn" role="alert">
+            <strong>Validation</strong> — {validationErrors.join(" ")}
+          </div>
+        )}
+        {submitError && (
+          <div className="bof-load-intake-alert bof-load-intake-alert--block" role="alert">
+            <strong>Save failed</strong> — {submitError}
+          </div>
+        )}
+        {submitSuccess && (
+          <div className="bof-load-intake-alert bof-load-intake-alert--ok" role="status">
+            <strong>Saved</strong> — {submitSuccess}{" "}
+            <Link href="/loads" className="bof-link-secondary">
+              Open Loads
+            </Link>{" "}
+            ·{" "}
+            <Link href="/dispatch" className="bof-link-secondary">
+              Open Dispatch
+            </Link>
+          </div>
+        )}
 
         {state.loadPacket && !blocking && (
           <p className="bof-muted" style={{ marginTop: "1rem", fontSize: "0.85rem" }}>

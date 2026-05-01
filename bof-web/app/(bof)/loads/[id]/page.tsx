@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { notFound } from "next/navigation";
 import { getBofData } from "@/lib/load-bof-data";
 import { DriverCell } from "@/components/DriverCell";
 import { getLoadDocumentPacket, getLoadProofItems, proofBlockingCount } from "@/lib/load-proof";
@@ -24,6 +23,7 @@ import { LoadReadinessMessagingPanel } from "@/components/loads/LoadReadinessMes
 import { BofTemplateUsageSurface } from "@/components/documents/BofTemplateUsageSurface";
 import { BofIntakeFormPrimaryPanel } from "@/components/documents/BofIntakeFormPrimaryPanel";
 import { BofWorkflowFormShortcuts } from "@/components/documents/BofWorkflowFormShortcuts";
+import { RuntimeLoadDetailFallback } from "@/components/loads/RuntimeLoadDetailFallback";
 
 type Props = { params: Promise<{ id: string }> };
 
@@ -45,7 +45,7 @@ export default async function LoadDetailPage({ params }: Props) {
   const { id } = await params;
   const data = getBofData();
   const load = data.loads.find((l) => l.id === id);
-  if (!load) notFound();
+  if (!load) return <RuntimeLoadDetailFallback loadId={id} />;
 
   const driver = data.drivers.find((d) => d.id === load.driverId);
   const proofItems = getLoadProofItems(data, load.id);

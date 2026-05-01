@@ -24,10 +24,30 @@ export interface LoadRequirement {
   load_requirement_id: string;
   shipper_id: string;
   facility_id: string;
+  load_id_input?: string;
+  pickup_at?: string;
+  delivery_at?: string;
   commodity: string;
   weight: number;
   pallet_count: number;
   piece_count: number;
+  rate_linehaul?: number;
+  assigned_driver_id?: string;
+  truck_id?: string;
+  trailer_id?: string;
+  intake_status?:
+    | "scheduled"
+    | "dispatched"
+    | "in_transit"
+    | "delivered";
+  bol_number?: string;
+  invoice_number?: string;
+  seal_number?: string;
+  rfid_proof_required?: boolean;
+  insurance_requirements_summary?: string;
+  pod_bol_instructions?: string;
+  backhaul_pay?: number;
+  claim_damage_flag?: boolean;
   equipment_type: string;
   special_handling: string;
   destination_facility_name?: string;

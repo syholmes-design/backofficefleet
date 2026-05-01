@@ -70,6 +70,8 @@ type DispatchDashboardState = {
   ) => void;
   /** Append a draft load (e.g. from BOF Intake Engine finalize). */
   appendLoad: (load: Load) => void;
+  /** Insert or update a load by load_id. */
+  upsertLoad: (load: Load) => void;
   /** Merge fields onto an existing board load (e.g. intake proof stamp). */
   patchLoad: (load_id: string, patch: Partial<Load>) => void;
 };
@@ -277,6 +279,15 @@ export const useDispatchDashboardStore = create<DispatchDashboardState>(
       set((s) => ({
         loads: [...s.loads, load],
       })),
+
+    upsertLoad: (load) =>
+      set((s) => {
+        const idx = s.loads.findIndex((l) => l.load_id === load.load_id);
+        if (idx === -1) return { loads: [...s.loads, load] };
+        const loads = [...s.loads];
+        loads[idx] = { ...loads[idx], ...load };
+        return { loads };
+      }),
 
     patchLoad: (load_id, patch) =>
       set((s) => ({

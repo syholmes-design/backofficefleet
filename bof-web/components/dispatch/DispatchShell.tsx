@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { DispatchNav } from "./DispatchNav";
 import { DispatchBoardScreen } from "./DispatchBoardScreen";
 import { LoadDetailDrawer } from "./LoadDetailDrawer";
@@ -9,8 +9,11 @@ import { AssignDriverEquipmentModal } from "./AssignDriverEquipmentModal";
 import { ExceptionViewScreen } from "./ExceptionViewScreen";
 import { SettlementReadinessScreen } from "./SettlementReadinessScreen";
 import { useDispatchDashboardStore } from "@/lib/stores/dispatch-dashboard-store";
+import { useBofDemoData } from "@/lib/bof-demo-data-context";
+import { buildDispatchLoadsFromBofData } from "@/lib/dispatch-dashboard-seed";
 
 export function DispatchShell() {
+  const { data } = useBofDemoData();
   const nav = useDispatchDashboardStore((s) => s.nav);
   const setNav = useDispatchDashboardStore((s) => s.setNav);
   const selectedLoadId = useDispatchDashboardStore((s) => s.selectedLoadId);
@@ -22,6 +25,7 @@ export function DispatchShell() {
   const closeAssignModal = useDispatchDashboardStore((s) => s.closeAssignModal);
   const openAssignModal = useDispatchDashboardStore((s) => s.openAssignModal);
   const selectLoad = useDispatchDashboardStore((s) => s.selectLoad);
+  const upsertLoad = useDispatchDashboardStore((s) => s.upsertLoad);
 
   const [assignPick, setAssignPick] = useState("");
 
@@ -29,6 +33,13 @@ export function DispatchShell() {
     () => loads.find((l) => l.load_id === selectedLoadId) ?? null,
     [loads, selectedLoadId]
   );
+
+  useEffect(() => {
+    const mapped = buildDispatchLoadsFromBofData(data);
+    for (const row of mapped) {
+      upsertLoad(row);
+    }
+  }, [data, upsertLoad]);
 
   return (
     <div className="flex min-h-[calc(100vh-3.5rem)] bg-slate-950 text-slate-100">
