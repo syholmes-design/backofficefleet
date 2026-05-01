@@ -3401,7 +3401,7 @@
       }
     },
     "L008": {
-      "claimApplicable": true,
+      "claimApplicable": false,
       "items": {
         "Rate Confirmation": {
           "status": "Complete",

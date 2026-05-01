@@ -82,20 +82,33 @@ export function LoadProofPanel({
       !(doc.status === "ready" || doc.status === "not_applicable")
   );
   const grouped = [
-    { section: "Core Documents", rows: evidenceRows.filter((d) => d.section === "core") },
+    { section: "Core Trip Documents", rows: evidenceRows.filter((d) => d.section === "core") },
     { section: "Proof & Media", rows: evidenceRows.filter((d) => d.section === "proof") },
     { section: "Exceptions / Claims", rows: evidenceRows.filter((d) => d.section === "exceptions") },
+    { section: "Reference Documents", rows: evidenceRows.filter((d) => d.section === "reference") },
   ].filter((g) => g.rows.length > 0);
+
+  const tripSummary = packet?.tripValidation;
 
   return (
     <section className="bof-doc-section" aria-labelledby="load-proof-heading">
       <h2 id="load-proof-heading" className="bof-h2">
-        Load proof stack
+        Trip Document Packet
       </h2>
       <p className="bof-doc-section-lead">
-        Dynamic proof registry for load {loadNumber}. Settlement release requires all
-        required items to be Ready or Not applicable.
+        Canonical trip packet for load {loadNumber}. Settlement release requires required items to be Ready or Not applicable.
       </p>
+      {tripSummary && (
+        <div className="mb-4 flex flex-wrap gap-2 text-xs">
+          <span className="bof-doc-badge bof-doc-badge-neutral">
+            {tripSummary.status.replace(/_/g, " ")}
+          </span>
+          <span className="bof-doc-badge bof-doc-badge-neutral">
+            Ready {tripSummary.readyCount}/{tripSummary.requiredCount}
+          </span>
+          <span className="bof-doc-badge bof-doc-badge-neutral">{tripSummary.recommendedAction}</span>
+        </div>
+      )}
       <p className={requiredBlocking.length > 0 ? "bof-proof-flag bof-proof-flag-block" : "bof-proof-flag bof-proof-flag-risk"}>
         {requiredBlocking.length > 0
           ? "Settlement hold is on — documentation does not yet support release."

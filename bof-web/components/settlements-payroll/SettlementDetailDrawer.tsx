@@ -16,6 +16,7 @@ import { buildRfidReadinessSummaryForSurface } from "@/lib/template-usage-readin
 import { resolveBillingPacketRfidGate } from "@/lib/bof-rfid-readiness";
 import { getMockBackhaulOpportunities } from "@/lib/backhaul-opportunity-engine";
 import { getLoadDocumentPacket } from "@/lib/load-proof";
+import { filingReadinessLabel, tripPacketUiLabel } from "@/lib/load-trip-packet";
 
 type Props = {
   settlementId: string | null;
@@ -461,6 +462,24 @@ export function SettlementDetailDrawer({ settlementId, open, onClose }: Props) {
                     {packet && (
                       <>
                         <p className="mt-2 text-slate-300">{packet.holdReason}</p>
+                        {packet.tripValidation && (
+                          <div className="mt-2 flex flex-wrap gap-2 text-[11px] text-slate-300">
+                            <span className="rounded bg-slate-800 px-2 py-0.5 font-medium text-slate-100">
+                              {tripPacketUiLabel(packet.tripValidation.status)}
+                            </span>
+                            <span className="rounded bg-slate-800 px-2 py-0.5">
+                              Required ready {packet.tripValidation.readyCount}/
+                              {packet.tripValidation.requiredCount}
+                            </span>
+                            <span className="rounded bg-slate-800 px-2 py-0.5">
+                              Filing:{" "}
+                              {filingReadinessLabel(
+                                packet.tripValidation,
+                                snap.status?.toLowerCase() === "delivered"
+                              )}
+                            </span>
+                          </div>
+                        )}
                         <div className="mt-2 overflow-x-auto rounded border border-slate-800">
                           <table className="w-full min-w-[640px] border-collapse text-left text-[11px]">
                             <thead className="bg-slate-900/80 text-[10px] uppercase tracking-wide text-slate-500">
@@ -473,9 +492,10 @@ export function SettlementDetailDrawer({ settlementId, open, onClose }: Props) {
                             </thead>
                             <tbody>
                               {[
-                                { section: "Core Documents", rows: packet.documents.filter((d) => d.section === "core") },
+                                { section: "Core Trip Documents", rows: packet.documents.filter((d) => d.section === "core") },
                                 { section: "Proof & Media", rows: packet.documents.filter((d) => d.section === "proof") },
                                 { section: "Exceptions / Claims", rows: packet.documents.filter((d) => d.section === "exceptions") },
+                                { section: "Reference Documents", rows: packet.documents.filter((d) => d.section === "reference") },
                               ].filter((g) => g.rows.length > 0).map((group) => (
                                 <Fragment key={`${lid}-${group.section}`}>
                                   <tr className="border-b border-slate-800 bg-slate-950/65">

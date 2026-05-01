@@ -1,25 +1,12 @@
 "use client";
 
 import Image from "next/image";
+import { useMemo, useState } from "react";
 import { CheckCircle2, FileText, ImageIcon, AlertCircle } from "lucide-react";
 import type { Load } from "@/types/dispatch";
 import { useBofDemoData } from "@/lib/bof-demo-data-context";
-import { getLoadDocumentPacket } from "@/lib/load-proof";
-
-type DocLinkItem = {
-  key: string;
-  label: string;
-  url?: string;
-  kind: "pdf" | "image";
-  showSignedBadge: boolean;
-  status: "ready" | "missing";
-  source: "real" | "generated" | "ai_generated" | "svg_demo" | "missing";
-  required?: boolean;
-};
-
-function isSignedDocUrl(url: string): boolean {
-  return url.includes("/actual_docs/");
-}
+import { buildTripDocumentPacket, groupTripPacketRows } from "@/lib/load-trip-packet";
+import type { TripPacketRow } from "@/lib/load-trip-packet";
 
 function showExceptionClaimSection(load: Load): boolean {
   return Boolean(
@@ -31,55 +18,12 @@ function showExceptionClaimSection(load: Load): boolean {
   );
 }
 
-function packetDocsByLabels(
-  packet: ReturnType<typeof getLoadDocumentPacket>,
-  labels: string[]
-): DocLinkItem[] {
-  const byLabel = new Map((packet?.documents ?? []).map((d) => [d.label, d]));
-  return labels.map((label) => {
-    const row = byLabel.get(label);
-    const ready = row?.status === "ready" && Boolean(row.url);
-    return {
-      key: label.toLowerCase().replace(/[^a-z0-9]+/g, "-"),
-      label,
-      url: row?.url,
-      kind: "image",
-      showSignedBadge: false,
-      status: ready ? "ready" : "missing",
-      source: ready
-        ? row?.source === "ai_generated"
-          ? "ai_generated"
-          : row?.source === "svg_demo" || row?.source === "generated"
-            ? "svg_demo"
-            : "real"
-        : "missing",
-      required: Boolean(row?.requiredForSettlementRelease),
-    };
-  });
+function rowReady(row: TripPacketRow): boolean {
+  return row.status === "ready" && Boolean(row.url?.trim());
 }
 
-function proofAndMediaDocs(load: Load, packet: ReturnType<typeof getLoadDocumentPacket>): DocLinkItem[] {
-  const labels = [
-    "Cargo photo",
-    "Pickup photo",
-    "Delivery photo",
-    "Equipment photo",
-    "Seal photo",
-    "Seal pickup photo",
-    "Seal delivery photo",
-    "Empty trailer proof",
-    "Lumper receipt",
-    "RFID proof",
-    "Temp check photo",
-    "Weight ticket photo",
-    "Detention proof photo",
-    "Damage / claim photo",
-    "Cargo damage photo",
-    "Damaged pallet photo",
-    "Seal mismatch photo",
-    "Safety violation photo",
-  ];
-  return packetDocsByLabels(packet, labels);
+function isSignedDocUrl(url: string): boolean {
+  return url.includes("/actual_docs/");
 }
 
 type Props = {
@@ -88,59 +32,40 @@ type Props = {
 
 export function LoadDocumentsLibraryEnhanced({ load }: Props) {
   const { data } = useBofDemoData();
-  const packet = getLoadDocumentPacket(data, load.load_id);
-  const byLabel = new Map((packet?.documents ?? []).map((d) => [d.label, d]));
+  const trip = useMemo(() => buildTripDocumentPacket(data, load.load_id), [data, load.load_id]);
+  const groups = useMemo(
+    () => groupTripPacketRows(trip, { hideNotApplicable: true }),
+    [trip]
+  );
+  const [referenceOpen, setReferenceOpen] = useState(false);
 
-  const coreDocs: DocLinkItem[] = [
-    ["rate-con", "Rate Confirmation"],
-    ["bol", "BOL"],
-    ["pod", "POD"],
-    ["invoice", "Invoice"],
-  ].map(([key, label]) => {
-    const row = byLabel.get(label);
-    const ready = row?.status === "ready" && Boolean(row.url);
+  const visibleRows = useMemo(
+    () =>
+      groups.flatMap((g) => {
+        if (g.group === "reference" && !referenceOpen) return [];
+        return g.rows;
+      }),
+    [groups, referenceOpen]
+  );
+
+  const docStatus = useMemo(() => {
+    const applicable = visibleRows;
     return {
-      key,
-      label,
-      url: row?.url,
-      kind: "pdf",
-      showSignedBadge: Boolean(row?.url && isSignedDocUrl(row.url)),
-      status: ready ? "ready" : "missing",
-      source: ready
-        ? row?.source === "ai_generated"
-          ? "ai_generated"
-          : row?.source === "svg_demo" || row?.source === "generated"
-            ? "svg_demo"
-            : "real"
-        : "missing",
-      required: true,
+      available: applicable.filter(rowReady).length,
+      missing: applicable.filter((r) => !rowReady(r)).length,
+      required: applicable.filter((r) => r.requiredForSettlementRelease || r.deliveredMinimum).length,
     };
-  });
+  }, [visibleRows]);
 
-  const proofDocs = proofAndMediaDocs(load, packet);
-  const exceptionDocs = packetDocsByLabels(packet, [
-    "Claim packet",
-    "Damage / claim photo",
-    "Safety violation photo",
-  ]);
-  const allDocs = [...coreDocs, ...proofDocs];
-  const hasAny = allDocs.length > 0;
-
-  const docStatus = {
-    available: allDocs.filter((d) => d.status === "ready").length,
-    missing: allDocs.filter((d) => d.status === "missing").length,
-    required: allDocs.filter((d) => d.required).length,
-  };
-
-  if (!hasAny) {
+  if (!trip || groups.length === 0) {
     return (
       <div className="space-y-6">
         <div className="rounded-lg border border-slate-800 bg-slate-900/40 p-4">
           <h3 className="mb-3 flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-slate-500">
             <FileText className="h-3.5 w-3.5 text-teal-500" />
-            Load Documents
+            Trip Document Packet
           </h3>
-          <p className="text-sm text-slate-300">No documents are currently available for this load.</p>
+          <p className="text-sm text-slate-300">No manifest-backed packet rows for this load.</p>
         </div>
       </div>
     );
@@ -151,8 +76,18 @@ export function LoadDocumentsLibraryEnhanced({ load }: Props) {
       <div className="rounded-lg border border-slate-800 bg-slate-900/40 p-4">
         <h3 className="mb-3 flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-slate-500">
           <FileText className="h-3.5 w-3.5 text-teal-500" />
-          Document Status
+          Trip Document Packet
         </h3>
+        {trip.validation && (
+          <div className="mb-3 flex flex-wrap gap-2 text-[11px] text-slate-200">
+            <span className="rounded border border-slate-700 bg-slate-950/80 px-2 py-1 font-semibold capitalize">
+              {trip.validation.status.replace(/_/g, " ")}
+            </span>
+            <span className="rounded border border-slate-700 bg-slate-950/80 px-2 py-1">
+              Ready {trip.validation.readyCount}/{trip.validation.requiredCount}
+            </span>
+          </div>
+        )}
         <div className="grid grid-cols-3 gap-4 text-sm">
           <div className="text-center">
             <div className={`text-2xl font-bold ${docStatus.available > 0 ? "text-emerald-400" : "text-slate-600"}`}>
@@ -164,13 +99,13 @@ export function LoadDocumentsLibraryEnhanced({ load }: Props) {
             <div className={`text-2xl font-bold ${docStatus.missing > 0 ? "text-red-400" : "text-slate-600"}`}>
               {docStatus.missing}
             </div>
-            <div className="text-xs text-slate-400">Missing</div>
+            <div className="text-xs text-slate-400">Missing / review</div>
           </div>
           <div className="text-center">
             <div className={`text-2xl font-bold ${docStatus.required > 0 ? "text-teal-400" : "text-slate-600"}`}>
               {docStatus.required}
             </div>
-            <div className="text-xs text-slate-400">Required</div>
+            <div className="text-xs text-slate-400">Required rows</div>
           </div>
         </div>
         {docStatus.missing > 0 && (
@@ -178,16 +113,26 @@ export function LoadDocumentsLibraryEnhanced({ load }: Props) {
             <div className="flex items-start gap-2">
               <AlertCircle className="mt-0.5 h-4 w-4 shrink-0 text-amber-400" />
               <div className="text-xs text-amber-100">
-                <strong>Readiness blockers:</strong> required docs without generated URLs remain Missing.
+                <strong>Needs review:</strong> rows without URLs stay closed — regenerate from demo scripts or attach uploads.
               </div>
             </div>
           </div>
         )}
       </div>
 
-      <DocGroup title="Core Documents" items={coreDocs} emptyHint="No rate con, BOL, POD, or invoice documents available." />
-      <DocGroup title="Proof & Media" items={proofDocs} emptyHint="No photo, seal, or media documents available." />
-      <DocGroup title="Exceptions / Claims" items={exceptionDocs} emptyHint="No claim or exception evidence available." />
+      {groups.map((group) => (
+        <DocGroup
+          key={group.group}
+          title={group.label}
+          rows={group.rows}
+          referenceCollapsed={group.group === "reference" && !referenceOpen}
+          onExpandReference={
+            group.group === "reference"
+              ? () => setReferenceOpen(true)
+              : undefined
+          }
+        />
+      ))}
 
       {showExceptionClaimSection(load) && (
         <div>
@@ -210,22 +155,39 @@ export function LoadDocumentsLibraryEnhanced({ load }: Props) {
 
 function DocGroup({
   title,
-  items,
-  emptyHint,
+  rows,
+  referenceCollapsed,
+  onExpandReference,
 }: {
   title: string;
-  items: DocLinkItem[];
-  emptyHint: string;
+  rows: TripPacketRow[];
+  referenceCollapsed?: boolean;
+  onExpandReference?: () => void;
 }) {
+  if (referenceCollapsed && onExpandReference) {
+    return (
+      <div>
+        <h4 className="mb-2 text-[10px] font-semibold uppercase tracking-wide text-slate-500">{title}</h4>
+        <button
+          type="button"
+          onClick={onExpandReference}
+          className="text-xs font-semibold text-teal-400 hover:text-teal-300"
+        >
+          Show reference documents ({rows.length})
+        </button>
+      </div>
+    );
+  }
+
   return (
     <div>
       <h4 className="mb-2 text-[10px] font-semibold uppercase tracking-wide text-slate-500">{title}</h4>
-      {items.length === 0 ? (
-        <p className="text-xs text-slate-600">{emptyHint}</p>
+      {rows.length === 0 ? (
+        <p className="text-xs text-slate-600">No items in this group.</p>
       ) : (
         <div className="grid gap-2 sm:grid-cols-2">
-          {items.map((item) => (
-            <DocCard key={item.key} item={item} />
+          {rows.map((row) => (
+            <DocCard key={row.key} row={row} />
           ))}
         </div>
       )}
@@ -233,35 +195,42 @@ function DocGroup({
   );
 }
 
-function DocCard({ item }: { item: DocLinkItem }) {
+function DocCard({ row }: { row: TripPacketRow }) {
+  const ready = rowReady(row);
   const statusColors = {
     ready: "border-emerald-700/60 bg-emerald-950/40",
     missing: "border-red-700/60 bg-red-950/40",
   };
+  const kind: "pdf" | "image" = row.group === "proof" ? "image" : "pdf";
+  const url = row.url?.trim();
   const sourceLabel =
-    item.source === "missing"
+    row.source === "missing"
       ? "Missing"
-    : 
-    item.source === "ai_generated"
-      ? "AI demo evidence"
-      : item.source === "svg_demo" || item.source === "generated"
-        ? "Demo SVG evidence"
-      : item.source === "real"
-        ? "Real evidence"
-        : "Missing";
+      : row.source === "ai_generated"
+        ? "AI demo evidence"
+        : row.source === "svg_demo" || row.source === "generated"
+          ? "Demo generated"
+          : row.source === "real" || row.source === "actual_docs"
+            ? "Real evidence"
+            : row.source === "rfid"
+              ? "RFID"
+              : row.source
+                ? "Evidence"
+                : "Missing";
+
   return (
     <a
-      href={item.url || "#"}
+      href={url || "#"}
       target="_blank"
       rel="noopener noreferrer"
       onClick={(e) => {
-        if (!item.url || item.status !== "ready") e.preventDefault();
+        if (!url || !ready) e.preventDefault();
       }}
-      className={`group flex gap-3 rounded-lg border p-3 transition-colors ${statusColors[item.status]} hover:border-teal-700/60`}
+      className={`group flex gap-3 rounded-lg border p-3 transition-colors ${statusColors[ready ? "ready" : "missing"]} hover:border-teal-700/60`}
     >
       <div className="relative h-14 w-20 shrink-0 overflow-hidden rounded border border-slate-800 bg-slate-900">
-        {item.kind === "image" && item.url ? (
-          <Image src={item.url} alt="" fill sizes="80px" className="object-cover" unoptimized />
+        {kind === "image" && url && ready ? (
+          <Image src={url} alt="" fill sizes="80px" className="object-cover" unoptimized />
         ) : (
           <div className="flex h-full w-full flex-col items-center justify-center gap-0.5 text-slate-500">
             <FileText className="h-6 w-6 text-teal-500/90" aria-hidden />
@@ -271,19 +240,24 @@ function DocCard({ item }: { item: DocLinkItem }) {
       </div>
       <div className="min-w-0 flex-1">
         <div className="flex items-start gap-1.5">
-          {item.kind === "image" && <ImageIcon className="mt-0.5 h-3.5 w-3.5 shrink-0 text-slate-500" aria-hidden />}
-          {item.showSignedBadge && <CheckCircle2 className="mt-0.5 h-3.5 w-3.5 shrink-0 text-emerald-500" aria-label="Signed document attached" />}
-          {item.status === "missing" && <AlertCircle className="h-3.5 w-3.5 shrink-0 text-red-400" />}
-          <span className="text-sm font-medium text-slate-100 group-hover:text-teal-100">{item.label}</span>
-          <span className={`ml-2 inline-flex rounded px-2 py-0.5 text-xs font-medium ${item.status === "missing" ? "bg-red-950 text-red-100" : "bg-emerald-950 text-emerald-100"}`}>
-            {item.status.toUpperCase()}
+          {kind === "image" && <ImageIcon className="mt-0.5 h-3.5 w-3.5 shrink-0 text-slate-500" aria-hidden />}
+          {url && isSignedDocUrl(url) && (
+            <CheckCircle2 className="mt-0.5 h-3.5 w-3.5 shrink-0 text-emerald-500" aria-label="Signed document attached" />
+          )}
+          {!ready && <AlertCircle className="h-3.5 w-3.5 shrink-0 text-red-400" />}
+          <span className="text-sm font-medium text-slate-100 group-hover:text-teal-100">{row.label}</span>
+          <span
+            className={`ml-2 inline-flex rounded px-2 py-0.5 text-xs font-medium ${ready ? "bg-emerald-950 text-emerald-100" : "bg-red-950 text-red-100"}`}
+          >
+            {ready ? "READY" : String(row.status).toUpperCase()}
           </span>
-          {item.required && <span className="ml-2 inline-flex rounded px-2 py-0.5 text-xs font-medium bg-slate-800 text-slate-100">REQUIRED</span>}
+          <span className="ml-2 inline-flex rounded px-2 py-0.5 text-[10px] font-medium bg-slate-800 text-slate-300">
+            {sourceLabel}
+          </span>
         </div>
-        <p className="mt-1 truncate font-mono text-[10px] text-slate-500">{item.url || "No generated URL"}</p>
-        <p className="mt-1 text-[10px] text-slate-400">Source: {sourceLabel}</p>
+        <p className="mt-1 truncate font-mono text-[10px] text-slate-500">{url || "No URL"}</p>
         <p className="mt-1 text-[10px] font-semibold uppercase tracking-wide text-teal-500/90">
-          {item.url && item.status === "ready" ? "Open in new tab" : "Missing / Needs review"}
+          {url && ready ? "Open in new tab" : "Missing / Needs review"}
         </p>
       </div>
     </a>

@@ -20,6 +20,7 @@
     "validate:load-docs": "node scripts/validate-load-docs.mjs",
     "validate:load-doc-templates": "node scripts/validate-load-doc-templates.mjs",
     "validate:load-evidence": "node scripts/validate-load-evidence.mjs",
+    "validate:load-trip-packets": "node scripts/validate-load-trip-packets.mjs",
     "sync:driver-hr-docs": "node scripts/sync-driver-hr-docs.mjs",
     "validate:driver-docs": "node scripts/validate-driver-docs.mjs",
     "generate:driver-docs": "node scripts/generate-driver-docs.mjs",

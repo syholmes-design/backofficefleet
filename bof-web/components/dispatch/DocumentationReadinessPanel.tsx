@@ -17,7 +17,13 @@ import {
 } from "@/lib/documentation-readiness";
 import { useDispatchDashboardStore } from "@/lib/stores/dispatch-dashboard-store";
 import { useBofDemoData } from "@/lib/bof-demo-data-context";
-import { getLoadDocumentPacket } from "@/lib/load-proof";
+import {
+  buildTripDocumentPacket,
+  filingReadinessLabel,
+  groupTripPacketRows,
+  tripPacketUiLabel,
+} from "@/lib/load-trip-packet";
+import type { TripPacketRow } from "@/lib/load-trip-packet";
 
 type Props = {
   load: Load;
@@ -33,110 +39,61 @@ function firstBundleUrl(load: Load): string | null {
   );
 }
 
+function tripRowPresentation(line: TripPacketRow): {
+  key: string;
+  label: string;
+  status: "Ready" | "Missing" | "Incomplete" | "Claim Required" | "Not applicable";
+  href?: string;
+  detail?: string;
+  source: string;
+} {
+  const ready = line.status === "ready" && Boolean(line.url?.trim());
+  const status: "Ready" | "Missing" | "Incomplete" | "Claim Required" | "Not applicable" =
+    line.key === "claim_packet" && Boolean(line.requiredForClaimRelease) && !ready
+      ? "Claim Required"
+      : ready
+        ? "Ready"
+        : line.status === "missing"
+          ? "Missing"
+          : line.status === "pending"
+            ? "Incomplete"
+            : line.status === "not_applicable"
+              ? "Not applicable"
+              : "Incomplete";
+  const srcRaw = line.source;
+  const source =
+    srcRaw === "missing"
+      ? "Missing"
+      : srcRaw === "ai_generated"
+        ? "AI demo evidence"
+        : srcRaw === "svg_demo" || srcRaw === "generated"
+          ? "Demo SVG evidence"
+          : srcRaw === "rfid"
+            ? "RFID"
+            : srcRaw
+              ? "Evidence"
+              : "Missing";
+  return {
+    key: line.key,
+    label: line.label,
+    status,
+    href: ready ? line.url : undefined,
+    detail: line.note,
+    source,
+  };
+}
+
 export function DocumentationReadinessPanel({ load }: Props) {
   const { data } = useBofDemoData();
   const report = useMemo(() => computeDocumentationReadiness(load), [load]);
-  const packet = useMemo(
-    () => getLoadDocumentPacket(data, load.load_id),
-    [data, load.load_id]
+  const trip = useMemo(() => buildTripDocumentPacket(data, load.load_id), [data, load.load_id]);
+  const groupedRows = useMemo(
+    () => groupTripPacketRows(trip, { hideNotApplicable: true }),
+    [trip]
   );
-  const packetMap = useMemo(
-    () => new Map((packet?.documents ?? []).map((d) => [d.label, d])),
-    [packet]
-  );
-  const drawerRows = useMemo(() => {
-    const pick = (label: string, fallbackStatus: string, fallbackDetail?: string) => {
-      const item = packetMap.get(label);
-      if (!item) {
-        return {
-          key: label,
-          label,
-          status: "Missing",
-          href: undefined as string | undefined,
-          detail: fallbackDetail || "Generated document not found",
-          source: "Missing",
-          ready: false,
-        };
-      }
-      const ready = item.status === "ready" && Boolean(item.url);
-      return {
-        key: label,
-        label,
-        status:
-          label === "Claim packet" && item.requiredForClaimRelease && !ready
-            ? "Claim Required"
-            : item.status === "ready"
-              ? "Ready"
-              : item.status === "missing"
-                ? "Missing"
-                : item.status === "pending"
-                  ? "Pending"
-                  : item.status === "not_applicable"
-                    ? "Not applicable"
-                    : "Blocked",
-        href: ready ? item.url : undefined,
-        source:
-          item.source === "missing"
-            ? "Missing"
-            :
-          item.source === "ai_generated"
-            ? "AI demo evidence"
-            : item.source === "svg_demo" || item.source === "generated"
-              ? "Demo SVG evidence"
-              : item.source
-                ? "Real evidence"
-                : "Missing",
-        detail:
-          item.note ||
-          (!ready && item.status === "ready"
-            ? "Generated document not found"
-            : fallbackDetail),
-        ready,
-      };
-    };
-    return [
-      { section: "Core Documents", ...pick("Rate Confirmation", "Missing") },
-      { section: "Core Documents", ...pick("BOL", "Missing") },
-      { section: "Core Documents", ...pick("POD", "Missing") },
-      { section: "Core Documents", ...pick("Invoice", "Missing") },
-      { section: "Core Documents", ...pick("Work Order", "Missing") },
-      { section: "Core Documents", ...pick("Master Agreement Reference", "Pending") },
-      { section: "Proof & Media", ...pick("Cargo photo", "Missing") },
-      { section: "Proof & Media", ...pick("Pickup photo", "Missing") },
-      { section: "Proof & Media", ...pick("Delivery photo", "Missing") },
-      { section: "Proof & Media", ...pick("Equipment photo", "Missing") },
-      { section: "Proof & Media", ...pick("Seal photo", "Missing") },
-      { section: "Proof & Media", ...pick("Seal pickup photo", "Missing") },
-      { section: "Proof & Media", ...pick("Seal delivery photo", "Missing") },
-      { section: "Proof & Media", ...pick("Empty trailer proof", "Missing") },
-      { section: "Proof & Media", ...pick("Lumper receipt", "Not applicable") },
-      { section: "Proof & Media", ...pick("RFID proof", "Pending") },
-      { section: "Proof & Media", ...pick("RFID / geo proof", "Pending") },
-      { section: "Proof & Media", ...pick("Temp check photo", "Not applicable") },
-      { section: "Proof & Media", ...pick("Weight ticket photo", "Pending") },
-      { section: "Proof & Media", ...pick("Detention proof photo", "Not applicable") },
-      { section: "Proof & Media", ...pick("Seal verification sheet", "Missing") },
-      { section: "Exceptions / Claims", ...pick("Claim Intake Form", "Not applicable") },
-      { section: "Exceptions / Claims", ...pick("Claim packet", "Claim Required") },
-      { section: "Exceptions / Claims", ...pick("Damage / claim photo", "Not applicable") },
-      { section: "Exceptions / Claims", ...pick("Cargo damage photo", "Not applicable") },
-      { section: "Exceptions / Claims", ...pick("Damaged pallet photo", "Not applicable") },
-      { section: "Exceptions / Claims", ...pick("Seal mismatch photo", "Not applicable") },
-      { section: "Exceptions / Claims", ...pick("Damage Photo Packet", "Not applicable") },
-      { section: "Exceptions / Claims", ...pick("Insurance notice", "Not applicable") },
-      { section: "Exceptions / Claims", ...pick("Factoring Notification", "Missing") },
-      { section: "Exceptions / Claims", ...pick("Settlement Hold Notice", "Not applicable") },
-      { section: "Exceptions / Claims", ...pick("Safety violation photo", "Not applicable") },
-    ];
-  }, [packetMap]);
+  const delivered = load.status?.toLowerCase() === "delivered";
+  const validation = trip?.validation;
 
-  const groupedRows = useMemo(() => {
-    const groups = ["Core Documents", "Proof & Media", "Exceptions / Claims"] as const;
-    return groups.map((section) => ({
-      section,
-      rows: drawerRows.filter((r) => r.section === section),
-    }));
-  }, [drawerRows]);
   const setSettlementHold = useDispatchDashboardStore(
     (s) => s.setSettlementHold
   );
@@ -145,6 +102,7 @@ export function DocumentationReadinessPanel({ load }: Props) {
   );
   const [notice, setNotice] = useState<string | null>(null);
   const [busy, setBusy] = useState<"shipper" | "billing" | "claim" | null>(null);
+  const [referenceOpen, setReferenceOpen] = useState(false);
 
   async function postGenerate<T extends Record<string, unknown>>(
     path: string,
@@ -170,12 +128,12 @@ export function DocumentationReadinessPanel({ load }: Props) {
         <div>
           <h3 className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-slate-500">
             <ClipboardCheck className="h-3.5 w-3.5 text-teal-500" />
-            Documentation readiness
+            Trip Document Packet
           </h3>
           <p className="mt-1 max-w-2xl text-xs text-slate-500">
-            Shipper packet checklist — rate con, BOL, POD, billing, seal &amp;
-            cargo proof, lumper (when required), and exception / claim file
-            status. BOF drives packet rules; linked files are demo artifacts only.
+            Single manifest-backed packet per load — core docs, proof &amp; media,
+            exceptions when applicable, and reference templates. No duplicate rows;
+            Open only when a real file URL exists.
           </p>
           {(load.source_intake_id ||
             load.intake_signed_bol_required ||
@@ -200,10 +158,29 @@ export function DocumentationReadinessPanel({ load }: Props) {
               </p>
             </div>
           )}
+          {validation && (
+            <div className="mt-3 flex flex-wrap gap-2">
+              <span className="inline-flex rounded border border-slate-700 bg-slate-950/80 px-2 py-1 text-[11px] font-semibold text-slate-100">
+                {tripPacketUiLabel(validation.status)}
+              </span>
+              <span className="inline-flex rounded border border-slate-700 bg-slate-950/80 px-2 py-1 text-[11px] text-slate-200">
+                Ready {validation.readyCount}/{validation.requiredCount}
+              </span>
+              <span className="inline-flex rounded border border-slate-700 bg-slate-950/80 px-2 py-1 text-[11px] text-slate-200">
+                Filing: {filingReadinessLabel(validation, delivered)}
+              </span>
+              {delivered && (
+                <span className="inline-flex rounded border border-slate-700 bg-slate-950/80 px-2 py-1 text-[11px] text-slate-300">
+                  Delivered checklist:{" "}
+                  {validation.status === "complete" ? "Complete" : validation.recommendedAction}
+                </span>
+              )}
+            </div>
+          )}
         </div>
         <div className="text-right">
           <p className="text-[10px] font-semibold uppercase tracking-wide text-slate-500">
-            Overall packet
+            Dispatch readiness (URL stamps)
           </p>
           <span
             className={[
@@ -269,45 +246,81 @@ export function DocumentationReadinessPanel({ load }: Props) {
             </tr>
           </thead>
           <tbody className="text-slate-200">
+            {groupedRows.length === 0 && (
+              <tr>
+                <td colSpan={4} className="px-3 py-6 text-center text-sm text-slate-500">
+                  No trip packet rows to display for this load.
+                </td>
+              </tr>
+            )}
             {groupedRows.map((group) => (
-              <Fragment key={group.section}>
-                <tr className="border-b border-slate-800 bg-slate-950/65">
-                  <td colSpan={4} className="px-3 py-1.5 text-[10px] font-semibold uppercase tracking-wide text-slate-400">
-                    {group.section}
-                  </td>
-                </tr>
-                {group.rows.map((line) => (
-                  <ReadinessRow
-                    key={line.key}
-                    line={{
-                      key: line.key,
-                      label: line.label,
-                      status:
-                        line.status === "Ready"
-                          ? "Ready"
-                          : line.status === "Missing"
-                            ? "Missing"
-                            : line.status === "Pending"
-                              ? "Incomplete"
-                              : line.status === "Not applicable"
-                                ? "Not applicable"
-                                : "Claim Required",
-                      detail: line.detail,
-                    }}
-                    href={line.href}
-                    source={line.source}
-                    viewLabel={line.label.toLowerCase().includes("photo") ? "View photo" : "Open"}
-                  />
-                ))}
+              <Fragment key={group.group}>
+                {group.group === "reference" && !referenceOpen ? (
+                  <tr className="border-b border-slate-800 bg-slate-950/65">
+                    <td colSpan={4} className="px-3 py-2">
+                      <button
+                        type="button"
+                        onClick={() => setReferenceOpen(true)}
+                        className="text-left text-[11px] font-semibold uppercase tracking-wide text-teal-300 hover:text-teal-200"
+                      >
+                        Reference Documents ({group.rows.length}) — show
+                      </button>
+                    </td>
+                  </tr>
+                ) : (
+                  <>
+                    <tr className="border-b border-slate-800 bg-slate-950/65">
+                      <td colSpan={4} className="px-3 py-1.5 text-[10px] font-semibold uppercase tracking-wide text-slate-400">
+                        {group.label}
+                        {group.group === "reference" && referenceOpen && (
+                          <button
+                            type="button"
+                            onClick={() => setReferenceOpen(false)}
+                            className="ml-3 text-[10px] font-normal normal-case text-teal-400 hover:text-teal-300"
+                          >
+                            Hide
+                          </button>
+                        )}
+                      </td>
+                    </tr>
+                    {group.rows.map((row) => {
+                      const line = tripRowPresentation(row);
+                      return (
+                        <ReadinessRow
+                          key={line.key}
+                          line={{
+                            key: line.key,
+                            label: line.label,
+                            status: line.status,
+                            detail: line.detail,
+                          }}
+                          href={line.href}
+                          source={line.source}
+                          viewLabel={
+                            row.group === "proof" || /photo/i.test(row.label)
+                              ? "View photo"
+                              : "Open"
+                          }
+                        />
+                      );
+                    })}
+                  </>
+                )}
               </Fragment>
             ))}
           </tbody>
         </table>
       </div>
 
+      {(validation?.missingRequiredLabels.length ?? 0) > 0 && (
+        <div className="mt-3 rounded border border-slate-800 bg-slate-950/50 px-3 py-2 text-xs text-slate-300">
+          <span className="font-semibold text-slate-400">Missing required (delivered): </span>
+          {validation!.missingRequiredLabels.join(", ")}
+        </div>
+      )}
       {report.missingRequired.length > 0 && (
         <div className="mt-3 rounded border border-slate-800 bg-slate-950/50 px-3 py-2 text-xs text-slate-300">
-          <span className="font-semibold text-slate-400">Missing for packet: </span>
+          <span className="font-semibold text-slate-400">Dispatch intake gaps: </span>
           {report.missingRequired.join(", ")}
         </div>
       )}
