@@ -107,7 +107,13 @@ export function DriverDocumentsPanel({
                   <>
                     <div className="bof-doc-popover-title">Preview</div>
                     {isEmbedPreviewPath(doc.previewUrl || doc.fileUrl || "") ? (
-                      <div className="bof-doc-popover-iframe-host">
+                      <div
+                        className={
+                          doc.type === "CDL"
+                            ? "bof-doc-popover-iframe-host bof-cdl-preview-frame bof-driver-doc-preview--cdl"
+                            : "bof-doc-popover-iframe-host"
+                        }
+                      >
                         <iframe
                           src={doc.previewUrl || doc.fileUrl}
                           title=""
@@ -119,7 +125,11 @@ export function DriverDocumentsPanel({
                       <img
                         src={doc.previewUrl || doc.fileUrl}
                         alt=""
-                        className="bof-doc-popover-img"
+                        className={
+                          doc.type === "CDL"
+                            ? "bof-doc-popover-img bof-cdl-preview bof-driver-doc-preview--cdl"
+                            : "bof-doc-popover-img"
+                        }
                       />
                     ) : (
                       <p className="bof-doc-popover-file">

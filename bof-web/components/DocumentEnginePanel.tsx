@@ -23,6 +23,11 @@ function badgeClass(blocks: boolean) {
     : "bof-badge bof-badge-neutral";
 }
 
+/** HR packet hover/modal only — shrink CDL thumbnails without touching source files. */
+function isCdlHrPreviewDoc(doc: Pick<EngineDocument, "type">) {
+  return doc.type === "CDL";
+}
+
 export function DocumentEnginePanel({
   id = "document-engine",
   title,
@@ -67,19 +72,27 @@ export function DocumentEnginePanel({
 
   function renderPopover(doc: EngineDocument) {
     const url = doc.previewUrl?.trim() ?? "";
+    const cdlHrThumb = hrPacketPreview && isCdlHrPreviewDoc(doc);
     if (!url) {
       return <p className="bof-doc-popover-empty">Preview not available</p>;
     }
     if (isPdfPath(url)) {
+      const hrFrame = (
+        <div className="bof-hr-packet-preview-frame">
+          <div className="bof-hr-packet-preview-frame-inner">
+            <iframe src={url} title="" className="bof-hr-packet-preview-iframe" />
+          </div>
+        </div>
+      );
       return (
         <>
           <div className="bof-doc-popover-title">Preview</div>
           {hrPacketPreview ? (
-            <div className="bof-hr-packet-preview-frame">
-              <div className="bof-hr-packet-preview-frame-inner">
-                <iframe src={url} title="" className="bof-hr-packet-preview-iframe" />
-              </div>
-            </div>
+            cdlHrThumb ? (
+              <div className="bof-cdl-preview-frame-popover bof-driver-doc-preview--cdl">{hrFrame}</div>
+            ) : (
+              hrFrame
+            )
           ) : (
             <iframe src={url} title="" className="bof-doc-popover-iframe" />
           )}
@@ -87,14 +100,21 @@ export function DocumentEnginePanel({
       );
     }
     if (hrPacketPreview && isHtmlDocumentPath(url)) {
+      const hrFrame = (
+        <div className="bof-hr-packet-preview-frame">
+          <div className="bof-hr-packet-preview-frame-inner">
+            <iframe src={url} title="" className="bof-hr-packet-preview-iframe" />
+          </div>
+        </div>
+      );
       return (
         <>
           <div className="bof-doc-popover-title">Preview</div>
-          <div className="bof-hr-packet-preview-frame">
-            <div className="bof-hr-packet-preview-frame-inner">
-              <iframe src={url} title="" className="bof-hr-packet-preview-iframe" />
-            </div>
-          </div>
+          {cdlHrThumb ? (
+            <div className="bof-cdl-preview-frame-popover bof-driver-doc-preview--cdl">{hrFrame}</div>
+          ) : (
+            hrFrame
+          )}
         </>
       );
     }
@@ -105,17 +125,29 @@ export function DocumentEnginePanel({
       return (
         <>
           <div className="bof-doc-popover-title">Preview</div>
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src={url}
-            alt=""
-            className={
-              hrPacketPreview
-                ? "bof-doc-popover-img bof-hr-packet-preview-image"
-                : "bof-doc-popover-img"
-            }
-            onError={() => setThumbError(true)}
-          />
+          {cdlHrThumb ? (
+            <div className="bof-cdl-preview-img-popover bof-driver-doc-preview--cdl">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={url}
+                alt=""
+                className="bof-doc-popover-img bof-hr-packet-preview-image bof-cdl-preview"
+                onError={() => setThumbError(true)}
+              />
+            </div>
+          ) : (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
+              src={url}
+              alt=""
+              className={
+                hrPacketPreview
+                  ? "bof-doc-popover-img bof-hr-packet-preview-image"
+                  : "bof-doc-popover-img"
+              }
+              onError={() => setThumbError(true)}
+            />
+          )}
         </>
       );
     }
@@ -361,28 +393,47 @@ export function DocumentEnginePanel({
                 )}
               </nav>
               {modal.previewUrl && isImagePath(modal.previewUrl) && (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img
-                  src={modal.previewUrl}
-                  alt=""
-                  className={
-                    hrPacketPreview
-                      ? "bof-modal-proof-preview bof-hr-packet-preview-modal-image"
-                      : "bof-modal-proof-preview"
-                  }
-                />
+                hrPacketPreview && isCdlHrPreviewDoc(modal) ? (
+                  <div className="bof-cdl-preview-modal-img-host bof-driver-doc-preview--cdl">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={modal.previewUrl}
+                      alt=""
+                      className="bof-modal-proof-preview bof-hr-packet-preview-modal-image bof-cdl-preview"
+                    />
+                  </div>
+                ) : (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img
+                    src={modal.previewUrl}
+                    alt=""
+                    className={
+                      hrPacketPreview
+                        ? "bof-modal-proof-preview bof-hr-packet-preview-modal-image"
+                        : "bof-modal-proof-preview"
+                    }
+                  />
+                )
               )}
               {modal.previewUrl &&
                 hrPacketPreview &&
                 (isPdfPath(modal.previewUrl) ||
                   isHtmlDocumentPath(modal.previewUrl)) && (
-                  <div className="bof-hr-packet-preview-modal-frame">
-                    <div className="bof-hr-packet-preview-modal-frame-inner">
-                      <iframe
-                        src={modal.previewUrl}
-                        title="Document preview"
-                        className="bof-hr-packet-preview-modal-iframe"
-                      />
+                  <div
+                    className={
+                      isCdlHrPreviewDoc(modal)
+                        ? "bof-cdl-preview-modal-frame-host bof-driver-doc-preview--cdl"
+                        : undefined
+                    }
+                  >
+                    <div className="bof-hr-packet-preview-modal-frame">
+                      <div className="bof-hr-packet-preview-modal-frame-inner">
+                        <iframe
+                          src={modal.previewUrl}
+                          title="Document preview"
+                          className="bof-hr-packet-preview-modal-iframe"
+                        />
+                      </div>
                     </div>
                   </div>
                 )}

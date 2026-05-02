@@ -7367,6 +7367,93 @@ body {
   object-position: top center;
 }
 
+/*
+ * CDL only — HR Generated Packet (DocumentEnginePanel driverHrPacket).
+ * ~55% smaller embedded preview than other HR rows; does not alter served CDL bytes.
+ */
+.bof-hr-packet-preview .bof-cdl-preview-frame-popover .bof-hr-packet-preview-frame {
+  height: 138px;
+}
+
+.bof-hr-packet-preview .bof-cdl-preview-frame-popover .bof-hr-packet-preview-frame-inner {
+  width: min(100%, calc(720px * 0.209));
+  height: calc(620px * 0.209);
+}
+
+.bof-hr-packet-preview .bof-cdl-preview-frame-popover .bof-hr-packet-preview-iframe {
+  transform: scale(0.209);
+}
+
+.bof-hr-packet-preview .bof-cdl-preview-img-popover {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  max-height: 118px;
+  overflow: hidden;
+  padding: 0.2rem;
+  box-sizing: border-box;
+}
+
+.bof-hr-packet-preview .bof-cdl-preview-img-popover .bof-hr-packet-preview-image {
+  max-height: 200px;
+  width: auto;
+  max-width: 100%;
+  object-fit: contain;
+  object-position: center center;
+  transform: scale(0.52);
+  transform-origin: center center;
+}
+
+.bof-modal-proof .bof-cdl-preview-modal-img-host {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  max-height: min(26vh, 232px);
+  margin-top: 1rem;
+  box-sizing: border-box;
+}
+
+.bof-modal-proof .bof-cdl-preview-modal-img-host .bof-hr-packet-preview-modal-image {
+  max-height: min(44vh, 380px);
+  width: auto;
+  max-width: 100%;
+  transform: scale(0.52);
+  transform-origin: center center;
+}
+
+.bof-hr-packet-preview-modal-frame-host .bof-hr-packet-preview-modal-frame {
+  height: min(24vh, 220px);
+}
+
+.bof-hr-packet-preview-modal-frame-host .bof-hr-packet-preview-modal-frame-inner {
+  width: min(100%, calc(720px * 0.286));
+  height: calc(960px * 0.286);
+}
+
+.bof-hr-packet-preview-modal-frame-host .bof-hr-packet-preview-modal-iframe {
+  transform: scale(0.286);
+}
+
+/* Driver documents hover popover — CDL iframe / image only */
+.bof-driver-doc-popover .bof-doc-popover-iframe-host.bof-cdl-preview-frame {
+  height: 72px;
+}
+
+.bof-driver-doc-popover .bof-cdl-preview-frame .bof-doc-popover-iframe {
+  transform: scale(0.165);
+}
+
+.bof-driver-doc-popover .bof-doc-popover-img.bof-cdl-preview {
+  max-height: 68px;
+  width: auto;
+  max-width: 100%;
+  margin-inline: auto;
+  display: block;
+  object-fit: contain;
+  object-position: center center;
+}
+
 @media (max-width: 520px) {
   .bof-hr-packet-preview .bof-gen-doc-popover.bof-doc-popover {
     max-width: calc(100vw - 1.5rem);
@@ -7396,6 +7483,32 @@ body {
 
   .bof-hr-packet-preview-modal-frame {
     height: min(40vh, 320px);
+  }
+
+  .bof-hr-packet-preview .bof-cdl-preview-frame-popover .bof-hr-packet-preview-frame {
+    height: 126px;
+  }
+
+  .bof-hr-packet-preview .bof-cdl-preview-frame-popover .bof-hr-packet-preview-frame-inner {
+    width: min(100%, calc(720px * 0.187));
+    height: calc(620px * 0.187);
+  }
+
+  .bof-hr-packet-preview .bof-cdl-preview-frame-popover .bof-hr-packet-preview-iframe {
+    transform: scale(0.187);
+  }
+
+  .bof-hr-packet-preview-modal-frame-host .bof-hr-packet-preview-modal-frame-inner {
+    width: min(100%, calc(720px * 0.242));
+    height: calc(960px * 0.242);
+  }
+
+  .bof-hr-packet-preview-modal-frame-host .bof-hr-packet-preview-modal-iframe {
+    transform: scale(0.242);
+  }
+
+  .bof-hr-packet-preview-modal-frame-host .bof-hr-packet-preview-modal-frame {
+    height: min(22vh, 200px);
   }
 }
 
