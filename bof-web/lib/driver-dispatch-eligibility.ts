@@ -247,7 +247,10 @@ export function getDriverDispatchEligibility(
           ? { label: "Resolve Blocker", href: `/drivers/${driverId}/settlements` }
           : { label: "Resolve Blocker", href: `/drivers/${driverId}/dispatch` };
   } else if (status === "needs_review") {
-    recommendedAction = { label: "Review Docs", href: `/drivers/${driverId}/profile` };
+    recommendedAction = {
+      label: "Open documents",
+      href: `/drivers/${driverId}#driver-hub-documents-heading`,
+    };
   }
 
   const expiredCore = CORE_DISPATCH_TYPES.filter((t) => statusU(preferDriverDoc(t)) === "EXPIRED")

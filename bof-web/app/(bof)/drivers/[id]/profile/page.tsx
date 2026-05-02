@@ -1,10 +1,22 @@
 "use client";
 
-import { use } from "react";
+import { use, useMemo } from "react";
+import Link from "next/link";
 import { notFound } from "next/navigation";
 import { useBofDemoData } from "@/lib/bof-demo-data-context";
-import { getOrderedDocumentsForDriver, readinessFromDocuments, assignedTrucksForDriver, primaryAssignedTruck, complianceNotesForDriver } from "@/lib/driver-queries";
+import {
+  assignedTrucksForDriver,
+  complianceNotesForDriver,
+  getDriverById,
+  getOrderedDocumentsForDriver,
+  primaryAssignedTruck,
+  readinessFromDocuments,
+} from "@/lib/driver-queries";
 import { DemoBackButton } from "@/components/navigation/DemoBackButton";
+import { DriverAvatar } from "@/components/DriverAvatar";
+import { driverPhotoPath } from "@/lib/driver-photo";
+import { getDriverDispatchEligibility } from "@/lib/driver-dispatch-eligibility";
+import { getDriverOperationalProfile } from "@/lib/driver-operational-profile";
 
 type Props = {
   params: Promise<{ id: string }>;
@@ -13,160 +25,276 @@ type Props = {
 export default function DriverProfilePage({ params }: Props) {
   const { id } = use(params);
   const { data } = useBofDemoData();
-  const driver = data.drivers.find(d => d.id === id);
-  const profileDriver = driver as (typeof driver & {
+  const driver = getDriverById(data, id);
+  if (!driver) {
+    notFound();
+  }
+  const profileDriver = driver as typeof driver & {
     photoUrl?: string;
     licenseClass?: string;
     licenseState?: string;
     referenceCdlNumber?: string;
     dateOfBirth?: string;
-  });
-  
-  if (!driver) {
-    notFound();
-  }
+    compliance_status?: string;
+  };
 
-  // Check if there's a richer compiled dashboard for this driver
-  const hasRichDashboard = id === "DRV-001"; // John Carter has rich dashboard
-  
+  const hasRichDashboard = id === "DRV-001";
+
+  const documents = useMemo(() => getOrderedDocumentsForDriver(data, id), [data, id]);
+  const readiness = useMemo(() => readinessFromDocuments(documents), [documents]);
+  const trucks = useMemo(() => assignedTrucksForDriver(data, id), [data, id]);
+  const primary = useMemo(() => primaryAssignedTruck(data, id), [data, id]);
+  const compliance = useMemo(() => complianceNotesForDriver(data, id), [data, id]);
+  const eligibility = useMemo(() => getDriverDispatchEligibility(data, id), [data, id]);
+  const operational = useMemo(() => getDriverOperationalProfile(data, id), [data, id]);
+  const expiringSoon = useMemo(
+    () => documents.filter((d) => d.status.toUpperCase() === "EXPIRING_SOON").length,
+    [documents]
+  );
+  const expiredDocs = useMemo(
+    () => documents.filter((d) => d.status.toUpperCase() === "EXPIRED"),
+    [documents]
+  );
+  const activeLoad = useMemo(() => {
+    const mine = data.loads.filter((l) => l.driverId === id);
+    return mine.find((l) => l.status === "En Route") ?? mine.find((l) => l.status === "Pending") ?? null;
+  }, [data.loads, id]);
+
+  const dispatchChipClass =
+    eligibility.status === "ready"
+      ? "bof-driver-dispatch-chip bof-driver-dispatch-chip--ready"
+      : eligibility.status === "needs_review"
+        ? "bof-driver-dispatch-chip bof-driver-dispatch-chip--review"
+        : "bof-driver-dispatch-chip bof-driver-dispatch-chip--blocked";
+
+  const photo =
+    profileDriver.photoUrl?.trim() || driverPhotoPath(id);
+
+  const cdlDoc = documents.find((d) => d.type === "CDL");
+
   if (hasRichDashboard) {
-    // Redirect to compiled dashboard
     return (
-      <div className="min-h-screen bg-slate-50">
-        <div className="container mx-auto px-4 py-8">
-          <div className="mb-3">
-            <DemoBackButton fallbackHref={`/drivers/${id}`} />
-          </div>
-          <div className="bg-white rounded-lg shadow-lg p-6">
-            <h1 className="text-2xl font-bold text-gray-900 mb-4">
-              {driver.name} - Profile Dashboard
-            </h1>
-            <div className="prose">
-              <p className="text-gray-600 mb-4">
-                Opening compiled driver profile dashboard for {driver.name}...
+      <div className="bof-page bof-driver-hub">
+        <header className="bof-driver-profile-toolbar">
+          <DemoBackButton fallbackHref={`/drivers/${id}`} />
+          <div className="bof-driver-profile-toolbar-row">
+            <div className="bof-driver-profile-title-block">
+              <h1 className="bof-title bof-title-tight">{driver.name}</h1>
+              <p className="bof-driver-sub">
+                <code className="bof-code">{driver.id}</code>
+                <span className={`${dispatchChipClass}`} style={{ marginLeft: "0.65rem" }}>
+                  Dispatch:{" "}
+                  {eligibility.status === "ready"
+                    ? "Ready"
+                    : eligibility.status === "needs_review"
+                      ? "Needs review"
+                      : "Blocked"}
+                </span>
               </p>
-              <iframe
-                src={`/generated/drivers/${id}/john-carter-profile-dashboard.html`}
-                className="w-full h-[800px] border-0 rounded"
-                title={`${driver.name} Profile Dashboard`}
-              />
+              <p className="bof-muted bof-small" style={{ marginTop: "0.35rem" }}>
+                Compiled profile dashboard (reference driver). Operational hub:{" "}
+                <Link href={`/drivers/${id}`} className="bof-link-secondary">
+                  Open driver hub
+                </Link>
+                .
+              </p>
             </div>
+            <nav className="bof-driver-profile-actions" aria-label="Quick links">
+              <Link href={`/drivers/${id}`} className="bof-driver-profile-action">
+                Driver hub
+              </Link>
+              <Link href={`/drivers/${id}/hr`} className="bof-driver-profile-action bof-driver-profile-action--ghost">
+                HR record
+              </Link>
+            </nav>
           </div>
+        </header>
+        <div className="bof-driver-panel" style={{ marginBottom: "1rem" }}>
+          <p className="bof-muted bof-small" style={{ margin: 0 }}>
+            Embedded dashboard HTML — same data as the BOF driver hub, formatted for printable / kiosk review.
+          </p>
+        </div>
+        <div
+          className="bof-driver-panel"
+          style={{ padding: 0, overflow: "hidden", minHeight: "min(80vh, 820px)" }}
+        >
+          <iframe
+            src={`/generated/drivers/${id}/john-carter-profile-dashboard.html`}
+            className="w-full border-0"
+            style={{ minHeight: "min(80vh, 820px)", height: "80vh", display: "block", background: "#0f172a" }}
+            title={`${driver.name} profile dashboard`}
+          />
         </div>
       </div>
     );
   }
 
-  // Generic profile view for drivers without rich dashboards
-  const documents = getOrderedDocumentsForDriver(data, id);
-  const readiness = readinessFromDocuments(documents);
-  const trucks = assignedTrucksForDriver(data, id);
-  const primary = primaryAssignedTruck(data, id);
-  const compliance = complianceNotesForDriver(data, id);
-
   return (
-    <div className="min-h-screen bg-slate-50">
-      <div className="container mx-auto px-4 py-8">
-        <div className="mb-3">
-          <DemoBackButton fallbackHref={`/drivers/${id}`} />
+    <div className="bof-page bof-driver-hub">
+      <header className="bof-driver-profile-toolbar">
+        <DemoBackButton fallbackHref={`/drivers/${id}`} />
+        <div className="bof-driver-profile-toolbar-row">
+          <div className="bof-driver-profile-title-block">
+            <h1 className="bof-title bof-title-tight">{driver.name}</h1>
+            <p className="bof-driver-sub">
+              <code className="bof-code">{driver.id}</code>
+              <span className={dispatchChipClass} style={{ marginLeft: "0.65rem" }}>
+                Dispatch:{" "}
+                {eligibility.status === "ready"
+                  ? "Ready"
+                  : eligibility.status === "needs_review"
+                    ? "Needs review"
+                    : "Blocked"}
+              </span>
+            </p>
+            <p className="bof-muted bof-small" style={{ marginTop: "0.35rem" }}>
+              Lightweight profile view. For documents, HR packet, and route tools use the{" "}
+              <Link href={`/drivers/${id}`} className="bof-link-secondary">
+                driver hub
+              </Link>
+              .
+            </p>
+          </div>
+          <nav className="bof-driver-profile-actions" aria-label="Quick links">
+            <Link href={`/drivers/${id}`} className="bof-driver-profile-action">
+              Open driver hub
+            </Link>
+            <Link href={`/drivers/${id}#driver-hub-documents-heading`} className="bof-driver-profile-action">
+              Documents
+            </Link>
+            <Link href={`/drivers/${id}/dispatch`} className="bof-driver-profile-action">
+              Assign load
+            </Link>
+          </nav>
         </div>
-        <div className="bg-white rounded-lg shadow-lg p-6">
-          <h1 className="text-2xl font-bold text-gray-900 mb-6">
-            {driver.name} - Profile
-          </h1>
-          
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {/* Driver Identity Section */}
-            <div className="bg-gray-50 rounded-lg p-6">
-              <h2 className="text-lg font-semibold text-gray-900 mb-4">Driver Identity</h2>
-              <div className="space-y-3">
-                <div className="flex items-center space-x-4">
-                  <img
-                    src={profileDriver.photoUrl?.trim() || `/generated/drivers/${id}/${id}.png`}
-                    alt={driver.name}
-                    className="w-20 h-20 rounded-full object-cover"
-                  />
-                  <div>
-                    <p className="font-medium text-gray-900">{driver.name}</p>
-                    <p className="text-sm text-gray-500">{driver.id}</p>
-                  </div>
-                </div>
-                <div className="space-y-2">
-                  <p><span className="font-medium">CDL Class/State:</span> {profileDriver.licenseClass || "—"} / {profileDriver.licenseState || "—"}</p>
-                  <p><span className="font-medium">CDL Number:</span> {profileDriver.referenceCdlNumber || "—"}</p>
-                  <p><span className="font-medium">Date of Birth:</span> {profileDriver.dateOfBirth || "—"}</p>
-                </div>
+      </header>
+
+      <div className="bof-driver-profile-columns">
+        <div className="bof-driver-panel">
+          <h2 className="bof-h3">Driver identity</h2>
+          <div className="bof-driver-identity-header">
+            <DriverAvatar name={driver.name} photoUrl={photo} size={96} />
+            <div style={{ minWidth: 0 }}>
+              <p className="bof-muted bof-small" style={{ margin: 0 }}>
+                Compliance status
+              </p>
+              <p style={{ margin: "0.2rem 0 0", fontWeight: 700, color: "#f8fafc" }}>
+                {profileDriver.compliance_status?.trim() || "—"}
+              </p>
+            </div>
+          </div>
+          <dl className="bof-driver-identity-dl">
+            <dt>CDL class / state</dt>
+            <dd>
+              {(cdlDoc?.licenseClass || profileDriver.licenseClass || operational?.licenseClass || "—") +
+                " · " +
+                (operational?.licenseState || profileDriver.licenseState || "—")}
+            </dd>
+            <dt>CDL number</dt>
+            <dd>
+              <code className="bof-code">
+                {cdlDoc?.cdlNumber || cdlDoc?.sourceLicenseNumber || profileDriver.referenceCdlNumber || "—"}
+              </code>
+            </dd>
+            <dt>Date of birth</dt>
+            <dd>{operational?.dob || profileDriver.dateOfBirth || "—"}</dd>
+          </dl>
+        </div>
+
+        <div className="bof-driver-panel">
+          <h2 className="bof-h3">Compliance overview</h2>
+          <div className="bof-driver-metric-grid">
+            <div className="bof-driver-metric">
+              <div className="bof-driver-metric-label">Ready</div>
+              <div className="bof-driver-metric-value bof-driver-metric-value--ok">{readiness.valid}</div>
+            </div>
+            <div className="bof-driver-metric">
+              <div className="bof-driver-metric-label">Missing</div>
+              <div
+                className={`bof-driver-metric-value${readiness.missing > 0 ? " bof-driver-metric-value--danger" : ""}`}
+              >
+                {readiness.missing}
               </div>
             </div>
-
-            {/* Compliance Overview */}
-            <div className="bg-gray-50 rounded-lg p-6">
-              <h2 className="text-lg font-semibold text-gray-900 mb-4">Compliance Overview</h2>
-              <div className="space-y-3">
-                <div className="flex items-center justify-between">
-                  <span className="font-medium">Ready Documents:</span>
-                  <span className="text-green-600 font-semibold">{readiness.valid}</span>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="font-medium">Missing Documents:</span>
-                  <span className="text-red-600 font-semibold">{readiness.missing}</span>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="font-medium">Expired Documents:</span>
-                  <span className="text-orange-600 font-semibold">{readiness.expired}</span>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="font-medium">Overall Status:</span>
-                  <span className={`px-3 py-1 rounded-full text-sm font-medium ${
-                    readiness.missing + readiness.expired === 0 
-                      ? 'bg-green-100 text-green-800' 
-                      : 'bg-red-100 text-red-800'
-                  }`}>
-                    {readiness.missing + readiness.expired === 0 ? 'Ready' : 'Action Required'}
-                  </span>
-                </div>
+            <div className="bof-driver-metric">
+              <div className="bof-driver-metric-label">Expired</div>
+              <div
+                className={`bof-driver-metric-value${readiness.expired > 0 ? " bof-driver-metric-value--danger" : ""}`}
+              >
+                {readiness.expired}
               </div>
             </div>
-
-            {/* Asset Assignment */}
-            <div className="bg-gray-50 rounded-lg p-6">
-              <h2 className="text-lg font-semibold text-gray-900 mb-4">Asset Assignment</h2>
-              <div className="space-y-2">
-                {trucks.length === 0 ? (
-                  <p className="text-gray-500">Unassigned</p>
-                ) : (
-                  <div>
-                    <p className="font-medium">Assigned Assets:</p>
-                    <ul className="list-disc list-inside text-gray-700">
-                      {trucks.map(truck => (
-                        <li key={truck}>{truck}</li>
-                      ))}
-                    </ul>
-                    {primary && (
-                      <p className="text-sm text-green-600">Primary: {primary}</p>
-                    )}
-                  </div>
-                )}
-              </div>
-            </div>
-
-            {/* Operational Summary */}
-            <div className="bg-gray-50 rounded-lg p-6">
-              <h2 className="text-lg font-semibold text-gray-900 mb-4">Operational Summary</h2>
-              <div className="space-y-3">
-                <div>
-                  <span className="font-medium">Current Load:</span>
-                  <span className="text-gray-700">
-                    {data.loads.find(l => l.driverId === id && (l.status === "En Route" || l.status === "Pending"))?.number || "Available"}
-                  </span>
-                </div>
-                <div>
-                  <span className="font-medium">Status:</span>
-                  <span className="text-gray-700">Available at Terminal</span>
-                </div>
+            <div className="bof-driver-metric">
+              <div className="bof-driver-metric-label">Expiring soon</div>
+              <div
+                className={`bof-driver-metric-value${expiringSoon > 0 ? " bof-driver-metric-value--warn" : ""}`}
+              >
+                {expiringSoon}
               </div>
             </div>
           </div>
+          {expiredDocs.map((doc) => (
+            <div key={doc.type} className="bof-driver-doc-alert" role="status">
+              <div className="bof-driver-doc-alert-title">{doc.type} expired</div>
+              <div className="bof-driver-doc-alert-body">
+                Expires: {doc.expirationDate ?? "—"}. Renew and upload on the driver hub document stacks.
+              </div>
+              <div style={{ marginTop: "0.5rem" }}>
+                <Link href={`/drivers/${id}#driver-hub-documents-heading`} className="bof-driver-profile-action">
+                  Open documents
+                </Link>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        <div className="bof-driver-panel">
+          <h2 className="bof-h3">Asset assignment</h2>
+          <div className="bof-driver-ops-row">
+            <span className="bof-driver-ops-k">Primary tractor</span>
+            <span className="bof-driver-ops-v">{primary ?? (trucks[0] ?? "—")}</span>
+          </div>
+          <div className="bof-driver-ops-row">
+            <span className="bof-driver-ops-k">Current load</span>
+            <span className="bof-driver-ops-v">
+              {activeLoad ? (
+                <Link href={`/loads/${activeLoad.id}`} className="bof-link-secondary">
+                  {activeLoad.number} · {activeLoad.status}
+                </Link>
+              ) : (
+                "Available for assignment"
+              )}
+            </span>
+          </div>
+          <div style={{ marginTop: "0.75rem" }}>
+            <Link href={`/drivers/${id}/dispatch`} className="bof-driver-profile-action">
+              Assign load
+            </Link>
+          </div>
+        </div>
+
+        <div className="bof-driver-panel">
+          <h2 className="bof-h3">Operational summary</h2>
+          <div className="bof-driver-ops-row">
+            <span className="bof-driver-ops-k">Dispatch</span>
+            <span className="bof-driver-ops-v">{eligibility.label}</span>
+          </div>
+          <div className="bof-driver-ops-row">
+            <span className="bof-driver-ops-k">Open compliance items</span>
+            <span className="bof-driver-ops-v">
+              {compliance.filter((c) => {
+                const st = c.status.toUpperCase();
+                return st !== "CLOSED" && st !== "RESOLVED";
+              }).length}
+            </span>
+          </div>
+          {eligibility.recommendedAction ? (
+            <div style={{ marginTop: "0.65rem" }}>
+              <Link href={eligibility.recommendedAction.href} className="bof-driver-profile-action">
+                {eligibility.recommendedAction.label}
+              </Link>
+            </div>
+          ) : null}
         </div>
       </div>
     </div>

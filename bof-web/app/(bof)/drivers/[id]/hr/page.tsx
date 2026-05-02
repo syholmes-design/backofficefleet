@@ -152,7 +152,7 @@ export default function DriverHRPage({ params }: Props) {
   }, [id, packet]);
 
   return (
-    <div className="bof-page space-y-5">
+    <div className="bof-page bof-driver-sub-page space-y-5">
       <DemoBackButton fallbackHref={`/drivers/${id}`} />
       <section className="rounded-lg border border-slate-800 bg-slate-900/50 p-4">
         <div className="flex flex-wrap items-center justify-between gap-2">

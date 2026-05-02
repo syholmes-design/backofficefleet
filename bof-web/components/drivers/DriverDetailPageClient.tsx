@@ -40,6 +40,17 @@ import {
   deriveDocStatusFromExpiration,
 } from "@/lib/driver-operational-edit";
 import { DemoBackButton } from "@/components/navigation/DemoBackButton";
+import { getDriverDispatchEligibility } from "@/lib/driver-dispatch-eligibility";
+import { getDriverOperationalProfile } from "@/lib/driver-operational-profile";
+import { getSafetyScorecardRows } from "@/lib/safety-scorecard";
+
+function homeBaseFromAddress(address: string): string {
+  const parts = address.split(",").map((p) => p.trim()).filter(Boolean);
+  if (parts.length >= 2) {
+    return `${parts[parts.length - 2]}, ${parts[parts.length - 1]}`;
+  }
+  return address.trim() || "—";
+}
 
 export function DriverDetailPageClient({ driverId }: { driverId: string }) {
   const { data, updateDriver, updateDocument } = useBofDemoData();
@@ -95,6 +106,50 @@ export function DriverDetailPageClient({ driverId }: { driverId: string }) {
   const engineDriverDocs = useMemo(
     () => listEngineDocumentsForDriver(data, driverId),
     [data, driverId]
+  );
+  const operationalProfile = useMemo(
+    () => getDriverOperationalProfile(data, driverId),
+    [data, driverId]
+  );
+  const dispatchEligibility = useMemo(
+    () => getDriverDispatchEligibility(data, driverId),
+    [data, driverId]
+  );
+  const safetyScoreRow = useMemo(
+    () => getSafetyScorecardRows().find((r) => r.driverId === driverId),
+    [driverId]
+  );
+  const settlementRow = useMemo(
+    () => data.settlements.find((s) => s.driverId === driverId),
+    [data.settlements, driverId]
+  );
+  const cdlDocument = useMemo(
+    () => documents.find((d) => d.type === "CDL"),
+    [documents]
+  );
+  const expiringSoonCount = useMemo(
+    () => documents.filter((d) => d.status.toUpperCase() === "EXPIRING_SOON").length,
+    [documents]
+  );
+  const expiredDocuments = useMemo(
+    () => documents.filter((d) => d.status.toUpperCase() === "EXPIRED"),
+    [documents]
+  );
+  const driverLoads = useMemo(
+    () => data.loads.filter((l) => l.driverId === driverId),
+    [data.loads, driverId]
+  );
+  const exceptionLoadCount = useMemo(
+    () => driverLoads.filter((l) => Boolean(l.dispatchExceptionFlag)).length,
+    [driverLoads]
+  );
+  const openComplianceCount = useMemo(
+    () =>
+      compliance.filter((c) => {
+        const st = c.status.toUpperCase();
+        return st !== "CLOSED" && st !== "RESOLVED";
+      }).length,
+    [compliance]
   );
   const isRefDriver = isJohnCarterReferenceDriver(driverId);
 
@@ -231,11 +286,93 @@ export function DriverDetailPageClient({ driverId }: { driverId: string }) {
   const driverPhoto =
     (driver as { photoUrl?: string | undefined }).photoUrl?.trim() || driverPhotoPath(driver.id);
 
+  const dispatchChipClass =
+    dispatchEligibility.status === "ready"
+      ? "bof-driver-dispatch-chip bof-driver-dispatch-chip--ready"
+      : dispatchEligibility.status === "needs_review"
+        ? "bof-driver-dispatch-chip bof-driver-dispatch-chip--review"
+        : "bof-driver-dispatch-chip bof-driver-dispatch-chip--blocked";
+
+  const dispatchChipLabel =
+    dispatchEligibility.status === "ready"
+      ? "Ready"
+      : dispatchEligibility.status === "needs_review"
+        ? "Needs review"
+        : "Blocked";
+
+  const overallDocStatusLabel =
+    dispatchEligibility.status === "blocked"
+      ? "Blocked — resolve hard gates"
+      : readiness.expired + readiness.missing > 0
+        ? "Action required — credentials"
+        : expiringSoonCount > 0
+          ? "Expiring soon — renew"
+          : "Fleet docs ready";
+
+  const cdlNumberDisplay =
+    cdlDocument?.cdlNumber?.trim() ||
+    cdlDocument?.sourceLicenseNumber?.trim() ||
+    (driver as { referenceCdlNumber?: string }).referenceCdlNumber?.trim() ||
+    "—";
+
+  const licenseClassDisplay =
+    cdlDocument?.licenseClass?.trim() || operationalProfile?.licenseClass?.trim() || "—";
+
+  const licenseStateDisplay = operationalProfile?.licenseState?.trim() || "—";
+
+  const dobDisplay =
+    operationalProfile?.dob?.trim() ||
+    (driver as { dateOfBirth?: string }).dateOfBirth?.trim() ||
+    "—";
+
+  const complianceStatusDisplay =
+    (driver as { compliance_status?: string }).compliance_status?.trim() || "—";
+
   return (
     <div className="bof-page bof-driver-hub">
-      <div className="mb-2">
+      <header className="bof-driver-profile-toolbar">
         <DemoBackButton fallbackHref="/drivers" />
-      </div>
+        <div className="bof-driver-profile-toolbar-row">
+          <div className="bof-driver-profile-title-block">
+            <h1 className="bof-title bof-title-tight">{driver.name}</h1>
+            <p className="bof-driver-sub">
+              <code className="bof-code">{driver.id}</code>
+              <span className="bof-muted" style={{ marginLeft: "0.5rem" }}>
+                {readiness.label}
+              </span>
+            </p>
+            <div className="bof-driver-profile-meta-row">
+              <span className={dispatchChipClass} title={dispatchEligibility.label}>
+                Dispatch: {dispatchChipLabel}
+              </span>
+              <span
+                className={`bof-readiness-pill bof-readiness-${
+                  readiness.missing + readiness.expired > 0 ? "warn" : "ok"
+                }`}
+              >
+                {overallDocStatusLabel}
+              </span>
+            </div>
+          </div>
+          <nav className="bof-driver-profile-actions" aria-label="Driver quick actions">
+            <Link href={`#driver-hub-documents-heading`} className="bof-driver-profile-action">
+              Open documents
+            </Link>
+            <Link href="#document-engine" className="bof-driver-profile-action">
+              HR packet
+            </Link>
+            <Link href={`/drivers/${driver.id}/safety`} className="bof-driver-profile-action">
+              Safety
+            </Link>
+            <Link href={`/drivers/${driver.id}/dispatch`} className="bof-driver-profile-action">
+              Assign load
+            </Link>
+            <Link href={`/drivers/${driver.id}/vault`} className="bof-driver-profile-action bof-driver-profile-action--ghost">
+              Vault
+            </Link>
+          </nav>
+        </div>
+      </header>
       <nav className="bof-breadcrumb" aria-label="Breadcrumb">
         <Link href="/drivers">Drivers</Link>
         <span aria-hidden> / </span>
@@ -246,23 +383,6 @@ export function DriverDetailPageClient({ driverId }: { driverId: string }) {
         className="bof-driver-hub-section bof-driver-hub-section--profile"
         aria-label="Profile and operations"
       >
-        <header className="bof-driver-header">
-          <DriverAvatar name={driver.name} photoUrl={driverPhoto} size={88} />
-          <div className="bof-driver-header-text">
-            <h1 className="bof-title bof-title-tight">{driver.name}</h1>
-            <p className="bof-driver-sub">
-              <code className="bof-code">{driver.id}</code>
-            </p>
-            <p
-              className={`bof-readiness-pill bof-readiness-${
-                readiness.missing + readiness.expired > 0 ? "warn" : "ok"
-              }`}
-            >
-              {readiness.label}
-            </p>
-          </div>
-        </header>
-
         {isRefDriver && (
           <p className="bof-driver-ref-strip">
             Reference record: BOF id{" "}
@@ -293,7 +413,244 @@ export function DriverDetailPageClient({ driverId }: { driverId: string }) {
           </div>
         ) : null}
 
-        <div className="bof-driver-info-grid" aria-label="Contact and assignment">
+        <div className="bof-driver-profile-columns">
+          <div>
+            <div className="bof-driver-panel" aria-labelledby="driver-identity-heading">
+              <h2 id="driver-identity-heading" className="bof-h3">
+                Driver identity
+              </h2>
+              <div className="bof-driver-identity-header">
+                <DriverAvatar name={driver.name} photoUrl={driverPhoto} size={112} />
+                <div style={{ minWidth: 0 }}>
+                  <p className="bof-muted bof-small" style={{ margin: 0 }}>
+                    Profile status
+                  </p>
+                  <p style={{ margin: "0.2rem 0 0", fontWeight: 700, color: "#f8fafc" }}>
+                    {complianceStatusDisplay}
+                  </p>
+                  <p className="bof-muted bof-small" style={{ margin: "0.5rem 0 0" }}>
+                    Home base
+                  </p>
+                  <p style={{ margin: "0.15rem 0 0", color: "#e2e8f0", fontSize: "0.88rem" }}>
+                    {homeBaseFromAddress(driver.address)}
+                  </p>
+                </div>
+              </div>
+              <dl className="bof-driver-identity-dl">
+                <dt>CDL class / state</dt>
+                <dd>
+                  {licenseClassDisplay} · {licenseStateDisplay}
+                </dd>
+                <dt>CDL number</dt>
+                <dd>
+                  <code className="bof-code">{cdlNumberDisplay}</code>
+                </dd>
+                <dt>Date of birth</dt>
+                <dd>{dobDisplay}</dd>
+              </dl>
+            </div>
+
+            <div className="bof-driver-panel" aria-labelledby="driver-asset-heading">
+              <h2 id="driver-asset-heading" className="bof-h3">
+                Asset assignment
+              </h2>
+              <div className="bof-driver-ops-row">
+                <span className="bof-driver-ops-k">Primary tractor</span>
+                <span className="bof-driver-ops-v">{primary ?? truckLabel ?? "—"}</span>
+              </div>
+              <div className="bof-driver-ops-row">
+                <span className="bof-driver-ops-k">Trailer</span>
+                <span className="bof-driver-ops-v">Not on load record (demo)</span>
+              </div>
+              <div className="bof-driver-ops-row">
+                <span className="bof-driver-ops-k">Current load</span>
+                <span className="bof-driver-ops-v">
+                  {activeLoadForRoute ? (
+                    <>
+                      <Link href={`/loads/${activeLoadForRoute.id}`} className="bof-link-secondary">
+                        {activeLoadForRoute.number}
+                      </Link>
+                      <span className="bof-muted"> · {activeLoadForRoute.status}</span>
+                    </>
+                  ) : (
+                    <span>Available for assignment</span>
+                  )}
+                </span>
+              </div>
+              <div className="bof-driver-ops-row">
+                <span className="bof-driver-ops-k">Asset readiness</span>
+                <span className="bof-driver-ops-v">{truckLabel ? "Assets on record" : "No assets linked"}</span>
+              </div>
+              {trucks.length > 1 && (
+                <p className="bof-muted bof-small" style={{ marginTop: "0.65rem" }}>
+                  All recorded assets: {trucks.join(", ")}
+                </p>
+              )}
+              <div style={{ marginTop: "0.85rem", display: "flex", flexWrap: "wrap", gap: "0.45rem" }}>
+                {activeLoadForRoute ? (
+                  <Link href={`/loads/${activeLoadForRoute.id}`} className="bof-driver-profile-action">
+                    Open load
+                  </Link>
+                ) : null}
+                <Link href={`/drivers/${driver.id}/dispatch`} className="bof-driver-profile-action">
+                  Assign load
+                </Link>
+              </div>
+            </div>
+
+            {activeLoadForRoute ? (
+              <div className="bof-driver-panel" aria-label="Route support for active trip">
+                <h3 className="bof-h3">Trip route support</h3>
+                <p className="bof-muted bof-small">
+                  Next rest stop context for{" "}
+                  <Link href={`/loads/${activeLoadForRoute.id}`} className="bof-link-secondary">
+                    load {activeLoadForRoute.number}
+                  </Link>{" "}
+                  (<code className="bof-code">{activeLoadForRoute.id}</code>) ·{" "}
+                  <Link href={`/trip-release/${activeLoadForRoute.id}`} className="bof-link-secondary">
+                    Trip release
+                  </Link>
+                </p>
+                <RouteSupportWidget loadId={activeLoadForRoute.id} variant="full" />
+                <DieselRouteInsightWidget loadId={activeLoadForRoute.id} variant="full" />
+              </div>
+            ) : null}
+          </div>
+
+          <div>
+            <div className="bof-driver-panel" aria-labelledby="driver-compliance-overview-heading">
+              <h2 id="driver-compliance-overview-heading" className="bof-h3">
+                Compliance overview
+              </h2>
+              <p className="bof-muted bof-small" style={{ marginTop: 0 }}>
+                Seven fleet-required credential slots plus core dispatch documents.
+              </p>
+              <div className="bof-driver-metric-grid">
+                <div className="bof-driver-metric">
+                  <div className="bof-driver-metric-label">Ready</div>
+                  <div className="bof-driver-metric-value bof-driver-metric-value--ok">{readiness.valid}</div>
+                </div>
+                <div className="bof-driver-metric">
+                  <div className="bof-driver-metric-label">Missing</div>
+                  <div
+                    className={`bof-driver-metric-value${
+                      readiness.missing > 0 ? " bof-driver-metric-value--danger" : ""
+                    }`}
+                  >
+                    {readiness.missing}
+                  </div>
+                </div>
+                <div className="bof-driver-metric">
+                  <div className="bof-driver-metric-label">Expired</div>
+                  <div
+                    className={`bof-driver-metric-value${
+                      readiness.expired > 0 ? " bof-driver-metric-value--danger" : ""
+                    }`}
+                  >
+                    {readiness.expired}
+                  </div>
+                </div>
+                <div className="bof-driver-metric">
+                  <div className="bof-driver-metric-label">Expiring soon</div>
+                  <div
+                    className={`bof-driver-metric-value${
+                      expiringSoonCount > 0 ? " bof-driver-metric-value--warn" : ""
+                    }`}
+                  >
+                    {expiringSoonCount}
+                  </div>
+                </div>
+              </div>
+              <div style={{ marginTop: "0.75rem" }}>
+                <span className={dispatchChipClass}>Overall: {overallDocStatusLabel}</span>
+              </div>
+              {expiredDocuments.map((doc) => (
+                <div key={doc.type} className="bof-driver-doc-alert" role="status">
+                  <div className="bof-driver-doc-alert-title">{doc.type} expired</div>
+                  <div className="bof-driver-doc-alert-body">
+                    Expiration: {doc.expirationDate ?? "—"}. Renew the credential and upload the updated file to
+                    the driver vault, then refresh this hub.
+                  </div>
+                  <div style={{ marginTop: "0.5rem" }}>
+                    <Link href="#driver-hub-documents-heading" className="bof-driver-profile-action">
+                      Open documents
+                    </Link>
+                  </div>
+                </div>
+              ))}
+              {readiness.missing > 0 && expiredDocuments.length === 0 ? (
+                <div className="bof-driver-doc-alert" role="status">
+                  <div className="bof-driver-doc-alert-title">Missing required documents</div>
+                  <div className="bof-driver-doc-alert-body">
+                    {dispatchEligibility.hardBlockers.find((b) => b.includes("missing")) ??
+                      "One or more fleet-required documents are not on file. Upload scans in the document stacks below."}
+                  </div>
+                  <div style={{ marginTop: "0.5rem" }}>
+                    <Link href="#driver-hub-documents-heading" className="bof-driver-profile-action">
+                      Open documents
+                    </Link>
+                  </div>
+                </div>
+              ) : null}
+            </div>
+
+            <div className="bof-driver-panel" aria-labelledby="driver-ops-summary-heading">
+              <h2 id="driver-ops-summary-heading" className="bof-h3">
+                Operational summary
+              </h2>
+              <div className="bof-driver-ops-row">
+                <span className="bof-driver-ops-k">Dispatch eligibility</span>
+                <span className="bof-driver-ops-v">{dispatchEligibility.label}</span>
+              </div>
+              <div className="bof-driver-ops-row">
+                <span className="bof-driver-ops-k">Current load</span>
+                <span className="bof-driver-ops-v">
+                  {activeLoadForRoute
+                    ? `${activeLoadForRoute.number} (${activeLoadForRoute.status})`
+                    : "Available"}
+                </span>
+              </div>
+              <div className="bof-driver-ops-row">
+                <span className="bof-driver-ops-k">Safety tier</span>
+                <span className="bof-driver-ops-v">
+                  {safetyScoreRow ? safetyScoreRow.performanceTier : "No score on file"}
+                  {safetyScoreRow ? ` · HOS ${safetyScoreRow.hosCompliancePct}%` : ""}
+                </span>
+              </div>
+              <div className="bof-driver-ops-row">
+                <span className="bof-driver-ops-k">Settlement</span>
+                <span className="bof-driver-ops-v">
+                  {settlementRow ? `${settlementRow.status ?? "—"}` : "—"}
+                </span>
+              </div>
+              <div className="bof-driver-ops-row">
+                <span className="bof-driver-ops-k">Open compliance items</span>
+                <span className="bof-driver-ops-v">{openComplianceCount}</span>
+              </div>
+              <div className="bof-driver-ops-row">
+                <span className="bof-driver-ops-k">Loads w/ dispatch exception</span>
+                <span className="bof-driver-ops-v">{exceptionLoadCount}</span>
+              </div>
+              <div className="bof-driver-ops-row">
+                <span className="bof-driver-ops-k">Recommended next step</span>
+                <span className="bof-driver-ops-v">
+                  {dispatchEligibility.recommendedAction ? (
+                    <Link
+                      href={dispatchEligibility.recommendedAction.href}
+                      className="bof-link-secondary"
+                    >
+                      {dispatchEligibility.recommendedAction.label}
+                    </Link>
+                  ) : (
+                    <span className="bof-muted">No action — profile clean for dispatch</span>
+                  )}
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="bof-driver-detail-grid" aria-label="Contact and operational details">
           <div className="bof-info-block">
             <h3 className="bof-h3">Operational quick edit</h3>
             <p className="bof-muted bof-small">
@@ -537,37 +894,7 @@ export function DriverDetailPageClient({ driverId }: { driverId: string }) {
               <dd>{emergency.bankAccountLast4 ?? "Not on file"}</dd>
             </dl>
           </div>
-          <div className="bof-info-block">
-            <h3 className="bof-h3">Assignment</h3>
-            <dl className="bof-dl">
-              <dt>Assigned truck / asset</dt>
-              <dd>{truckLabel ?? "—"}</dd>
-            </dl>
-            {trucks.length > 1 && (
-              <p className="bof-muted bof-small">
-                All assets from dispatch loads: {trucks.join(", ")}
-              </p>
-            )}
-          </div>
         </div>
-
-        {activeLoadForRoute && (
-          <div className="bof-driver-route-support" aria-label="Route support for active trip">
-            <h3 className="bof-h3">Trip route support</h3>
-            <p className="bof-muted bof-small">
-              Next rest stop context for{" "}
-              <Link href={`/loads/${activeLoadForRoute.id}`} className="bof-link-secondary">
-                load {activeLoadForRoute.number}
-              </Link>{" "}
-              (<code className="bof-code">{activeLoadForRoute.id}</code>) ·{" "}
-              <Link href={`/trip-release/${activeLoadForRoute.id}`} className="bof-link-secondary">
-                Trip release
-              </Link>
-            </p>
-            <RouteSupportWidget loadId={activeLoadForRoute.id} variant="full" />
-            <DieselRouteInsightWidget loadId={activeLoadForRoute.id} variant="full" />
-          </div>
-        )}
       </section>
 
       <section
