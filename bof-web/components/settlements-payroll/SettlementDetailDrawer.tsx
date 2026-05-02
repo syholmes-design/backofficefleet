@@ -15,7 +15,11 @@ import { BofWorkflowFormShortcuts } from "@/components/documents/BofWorkflowForm
 import { buildRfidReadinessSummaryForSurface } from "@/lib/template-usage-readiness";
 import { resolveBillingPacketRfidGate } from "@/lib/bof-rfid-readiness";
 import { getMockBackhaulOpportunities } from "@/lib/backhaul-opportunity-engine";
-import { getLoadDocumentPacket } from "@/lib/load-proof";
+import {
+  EvidencePhotoViewer,
+  isLoadEvidenceImageUrl,
+} from "@/components/evidence/EvidencePhotoViewer";
+import { getLoadDocumentPacket, type LoadEvidenceItem } from "@/lib/load-proof";
 import { filingReadinessLabel, tripPacketUiLabel } from "@/lib/load-trip-packet";
 
 type Props = {
@@ -23,6 +27,16 @@ type Props = {
   open: boolean;
   onClose: () => void;
 };
+
+function settlementEvidenceSourceLabel(source?: LoadEvidenceItem["source"]) {
+  if (!source || source === "missing") return "Missing";
+  if (source === "ai_generated") return "AI demo evidence";
+  if (source === "svg_demo" || source === "generated") return "Demo SVG evidence";
+  if (source === "real" || source === "actual_docs" || source === "manual_upload") return "Real evidence";
+  if (source === "rfid") return "RFID";
+  if (source === "camera") return "Camera";
+  return "Evidence";
+}
 
 function proofSignalLabel(
   proofStatus: string,
@@ -504,7 +518,9 @@ export function SettlementDetailDrawer({ settlementId, open, onClose }: Props) {
                                     </td>
                                   </tr>
                                   {group.rows.map((doc) => {
-                                const canOpen = doc.status === "ready" && Boolean(doc.url);
+                                const u = doc.url?.trim();
+                                const canOpen = doc.status === "ready" && Boolean(u);
+                                const imageOpen = Boolean(u && isLoadEvidenceImageUrl(u));
                                 const label =
                                   doc.status === "not_applicable"
                                     ? "Not applicable"
@@ -523,10 +539,18 @@ export function SettlementDetailDrawer({ settlementId, open, onClose }: Props) {
                                         {label}
                                       </span>
                                     </td>
-                                    <td className="px-2 py-1.5">
-                                      {canOpen ? (
+                                    <td className="px-2 py-1.5 align-middle">
+                                      {canOpen && imageOpen && u ? (
+                                        <EvidencePhotoViewer
+                                          url={u}
+                                          label={doc.label}
+                                          source={settlementEvidenceSourceLabel(doc.source)}
+                                          loadId={doc.loadId}
+                                          description={doc.note}
+                                        />
+                                      ) : canOpen && u ? (
                                         <a
-                                          href={doc.url}
+                                          href={u}
                                           target="_blank"
                                           rel="noopener noreferrer"
                                           className="bof-link-secondary"

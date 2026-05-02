@@ -2,6 +2,10 @@
 
 import { Fragment } from "react";
 import {
+  EvidencePhotoViewer,
+  isLoadEvidenceImageUrl,
+} from "@/components/evidence/EvidencePhotoViewer";
+import {
   type LoadEvidenceItem,
   type LoadDocumentPacket,
   type LoadProofItem,
@@ -137,8 +141,9 @@ export function LoadProofPanel({
                 </tr>
                 {group.rows.map((doc) => {
                   const auto = autoByType.get(doc.label);
-                  const href = doc.url || auto?.fileUrl;
+                  const href = (doc.url || auto?.fileUrl || "").trim();
                   const canOpen = Boolean(href);
+                  const viewAsPhoto = isLoadEvidenceImageUrl(href);
                   return (
                     <tr key={doc.id} className="border-b border-slate-800/80">
                       <td className="px-2 py-1.5">
@@ -152,8 +157,16 @@ export function LoadProofPanel({
                           {displayEvidenceStatus(doc.status)}
                         </span>
                       </td>
-                      <td className="px-2 py-1.5">
-                        {canOpen ? (
+                      <td className="px-2 py-1.5 align-middle">
+                        {canOpen && viewAsPhoto ? (
+                          <EvidencePhotoViewer
+                            url={href}
+                            label={doc.label}
+                            source={displaySource(doc.source)}
+                            loadId={loadId}
+                            description={doc.note}
+                          />
+                        ) : canOpen ? (
                           <a
                             href={href}
                             target="_blank"

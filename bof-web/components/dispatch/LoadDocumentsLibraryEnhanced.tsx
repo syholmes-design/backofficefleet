@@ -1,8 +1,11 @@
 "use client";
 
-import Image from "next/image";
 import { useMemo, useState } from "react";
 import { CheckCircle2, FileText, ImageIcon, AlertCircle } from "lucide-react";
+import {
+  EvidencePhotoViewer,
+  isLoadEvidenceImageUrl,
+} from "@/components/evidence/EvidencePhotoViewer";
 import type { Load } from "@/types/dispatch";
 import { useBofDemoData } from "@/lib/bof-demo-data-context";
 import { buildTripDocumentPacket, groupTripPacketRows } from "@/lib/load-trip-packet";
@@ -123,6 +126,7 @@ export function LoadDocumentsLibraryEnhanced({ load }: Props) {
       {groups.map((group) => (
         <DocGroup
           key={group.group}
+          loadId={load.load_id}
           title={group.label}
           rows={group.rows}
           referenceCollapsed={group.group === "reference" && !referenceOpen}
@@ -154,11 +158,13 @@ export function LoadDocumentsLibraryEnhanced({ load }: Props) {
 }
 
 function DocGroup({
+  loadId,
   title,
   rows,
   referenceCollapsed,
   onExpandReference,
 }: {
+  loadId: string;
   title: string;
   rows: TripPacketRow[];
   referenceCollapsed?: boolean;
@@ -187,7 +193,7 @@ function DocGroup({
       ) : (
         <div className="grid gap-2 sm:grid-cols-2">
           {rows.map((row) => (
-            <DocCard key={row.key} row={row} />
+            <DocCard key={row.key} loadId={loadId} row={row} />
           ))}
         </div>
       )}
@@ -195,14 +201,14 @@ function DocGroup({
   );
 }
 
-function DocCard({ row }: { row: TripPacketRow }) {
+function DocCard({ loadId, row }: { loadId: string; row: TripPacketRow }) {
   const ready = rowReady(row);
   const statusColors = {
     ready: "border-emerald-700/60 bg-emerald-950/40",
     missing: "border-red-700/60 bg-red-950/40",
   };
   const url = row.url?.trim();
-  const isRasterEvidence = /\.(png|jpe?g|webp|gif)$/i.test(url || "");
+  const isRasterEvidence = isLoadEvidenceImageUrl(url || "");
   const kind: "pdf" | "image" =
     row.group === "proof" || isRasterEvidence ? "image" : "pdf";
   const sourceLabel =
@@ -221,40 +227,33 @@ function DocCard({ row }: { row: TripPacketRow }) {
                 : "Missing";
 
   return (
-    <a
-      href={url || "#"}
-      target="_blank"
-      rel="noopener noreferrer"
-      onClick={(e) => {
-        if (!url || !ready) e.preventDefault();
-      }}
-      className={`group flex gap-3 rounded-lg border p-3 transition-colors ${statusColors[ready ? "ready" : "missing"]} hover:border-teal-700/60`}
+    <div
+      className={`group flex gap-3 rounded-lg border p-3 transition-colors ${statusColors[ready ? "ready" : "missing"]} ${ready && url ? "hover:border-teal-700/60" : ""}`}
     >
-      <div className="relative h-14 w-20 shrink-0 overflow-hidden rounded border border-slate-800 bg-slate-900">
-        {kind === "image" && url && ready ? (
-          <Image
-            src={url}
-            alt=""
-            fill
-            sizes="80px"
-            className="object-cover object-center"
-            unoptimized
+      {kind === "image" && url && ready ? (
+        <div className="shrink-0">
+          <EvidencePhotoViewer
+            url={url}
+            label={row.label}
+            source={sourceLabel}
+            loadId={loadId}
+            layout="stack"
           />
-        ) : (
-          <div className="flex h-full w-full flex-col items-center justify-center gap-0.5 text-slate-500">
-            <FileText className="h-6 w-6 text-teal-500/90" aria-hidden />
-            <span className="text-[9px] font-medium uppercase tracking-wide">PDF</span>
-          </div>
-        )}
-      </div>
+        </div>
+      ) : (
+        <div className="bof-evidence-thumb flex shrink-0 flex-col items-center justify-center gap-0.5 border border-slate-800 bg-slate-900 text-slate-500">
+          <FileText className="h-6 w-6 text-teal-500/90" aria-hidden />
+          <span className="text-[9px] font-medium uppercase tracking-wide">PDF</span>
+        </div>
+      )}
       <div className="min-w-0 flex-1">
-        <div className="flex items-start gap-1.5">
+        <div className="flex flex-wrap items-start gap-1.5">
           {kind === "image" && <ImageIcon className="mt-0.5 h-3.5 w-3.5 shrink-0 text-slate-500" aria-hidden />}
           {url && isSignedDocUrl(url) && (
             <CheckCircle2 className="mt-0.5 h-3.5 w-3.5 shrink-0 text-emerald-500" aria-label="Signed document attached" />
           )}
           {!ready && <AlertCircle className="h-3.5 w-3.5 shrink-0 text-red-400" />}
-          <span className="text-sm font-medium text-slate-100 group-hover:text-teal-100">{row.label}</span>
+          <span className="text-sm font-medium text-slate-100">{row.label}</span>
           <span
             className={`ml-2 inline-flex rounded px-2 py-0.5 text-xs font-medium ${ready ? "bg-emerald-950 text-emerald-100" : "bg-red-950 text-red-100"}`}
           >
@@ -265,10 +264,20 @@ function DocCard({ row }: { row: TripPacketRow }) {
           </span>
         </div>
         <p className="mt-1 truncate font-mono text-[10px] text-slate-500">{url || "No URL"}</p>
-        <p className="mt-1 text-[10px] font-semibold uppercase tracking-wide text-teal-500/90">
-          {url && ready ? "Open in new tab" : "Missing / Needs review"}
-        </p>
+        {kind === "image" && url && ready ? (
+          <p className="mt-1 text-[10px] text-slate-500">Thumbnail — use View photo for full resolution.</p>
+        ) : url && ready ? (
+          <p className="mt-1 text-[10px] font-semibold uppercase tracking-wide text-teal-500/90">
+            <a href={url} target="_blank" rel="noopener noreferrer" className="hover:underline">
+              Open in new tab
+            </a>
+          </p>
+        ) : (
+          <p className="mt-1 text-[10px] font-semibold uppercase tracking-wide text-slate-500">
+            Missing / Needs review
+          </p>
+        )}
       </div>
-    </a>
+    </div>
   );
 }

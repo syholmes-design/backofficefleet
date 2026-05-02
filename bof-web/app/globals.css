@@ -2115,6 +2115,114 @@ body {
   max-width: 720px;
 }
 
+/* Load evidence — compact thumbs in tables/cards; full-size modal above drawers */
+.bof-evidence-thumb {
+  display: block;
+  width: 112px;
+  height: 72px;
+}
+
+.bof-evidence-thumb__img {
+  display: block;
+}
+
+.bof-evidence-modal__backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 5000;
+  background: rgba(0, 0, 0, 0.72);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: max(12px, env(safe-area-inset-top)) max(12px, env(safe-area-inset-right))
+    max(12px, env(safe-area-inset-bottom)) max(12px, env(safe-area-inset-left));
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+.bof-evidence-modal {
+  width: min(96vw, 1400px);
+  max-height: 92vh;
+  display: flex;
+  flex-direction: column;
+  background: var(--bof-surface);
+  border: 1px solid var(--bof-border);
+  border-radius: var(--bof-radius);
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.55);
+}
+
+.bof-evidence-modal__head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.85rem 1rem;
+  border-bottom: 1px solid var(--bof-border);
+  flex-shrink: 0;
+}
+
+.bof-evidence-modal__title {
+  margin: 0;
+}
+
+.bof-evidence-modal__close {
+  flex-shrink: 0;
+  background: none;
+  border: none;
+  color: var(--bof-muted);
+  font-size: 1.5rem;
+  line-height: 1;
+  cursor: pointer;
+  padding: 0 0.25rem;
+}
+
+.bof-evidence-modal__close:hover {
+  color: var(--bof-text);
+}
+
+.bof-evidence-modal__toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1rem;
+  padding: 0.65rem 1rem;
+  border-bottom: 1px solid var(--bof-border);
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.bof-evidence-modal__badge {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 999px;
+  border: 1px solid var(--bof-border);
+  background: rgba(15, 23, 42, 0.65);
+  padding: 0.2rem 0.65rem;
+  font-size: 0.72rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--bof-muted);
+}
+
+.bof-evidence-modal__image-wrap {
+  padding: 0.75rem 1rem 1rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 0;
+  flex: 1;
+  overflow: auto;
+}
+
+.bof-evidence-modal__image {
+  max-width: min(96vw, 1400px);
+  max-height: 88vh;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  vertical-align: middle;
+}
+
 /* Pre-trip tablet (/pretrip/[loadId]) */
 .bof-pretrip-page {
   max-width: 1100px;

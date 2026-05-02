@@ -25,6 +25,10 @@ import {
 } from "@/lib/load-trip-packet";
 import type { TripPacketRow } from "@/lib/load-trip-packet";
 import { evaluateLoadPacketReadiness } from "@/lib/load-packet-readiness";
+import {
+  EvidencePhotoViewer,
+  isLoadEvidenceImageUrl,
+} from "@/components/evidence/EvidencePhotoViewer";
 
 type Props = {
   load: Load;
@@ -293,6 +297,7 @@ export function DocumentationReadinessPanel({ load }: Props) {
                       return (
                         <ReadinessRow
                           key={line.key}
+                          loadId={load.load_id}
                           line={{
                             key: line.key,
                             label: line.label,
@@ -521,11 +526,13 @@ export function DocumentationReadinessPanel({ load }: Props) {
 }
 
 function ReadinessRow({
+  loadId,
   line,
   href,
   source,
   viewLabel,
 }: {
+  loadId: string;
   line: {
     key: string;
     label: string;
@@ -536,6 +543,9 @@ function ReadinessRow({
   source?: string;
   viewLabel?: string;
 }) {
+  const url = href?.trim();
+  const imageReady = Boolean(url && isLoadEvidenceImageUrl(url));
+
   return (
     <tr className="border-b border-slate-800/80 last:border-b-0">
       <td className="px-3 py-2 align-top text-slate-200">{line.label}</td>
@@ -553,9 +563,17 @@ function ReadinessRow({
         )}
       </td>
       <td className="px-3 py-2 align-top">
-        {href ? (
+        {imageReady && url ? (
+          <EvidencePhotoViewer
+            url={url}
+            label={line.label}
+            source={source || "Evidence"}
+            loadId={loadId}
+            description={line.detail}
+          />
+        ) : url ? (
           <a
-            href={href}
+            href={url}
             target="_blank"
             rel="noreferrer"
             className="text-xs font-semibold text-teal-300 hover:text-teal-200"
