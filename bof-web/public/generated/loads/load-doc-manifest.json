@@ -246,15 +246,15 @@
     "claimIntake": "/generated/loads/L012/claim-intake.html",
     "insuranceNotification": "/generated/loads/L012/insurance-notification.html",
     "factoringNotification": "/generated/loads/L012/factoring-notification.html",
-    "damagePhotoPacket": "/generated/loads/L012/damage-photo-packet.html",
+    "damagePhotoPacket": "/evidence/loads/L012/damage-photo-packet.png",
     "claimPacket": "/generated/loads/L012/claim-packet.html",
-    "cargoPhoto": "/evidence/loads/L012/cargo-photo.svg",
-    "sealPickupPhoto": "/evidence/loads/L012/seal-pickup-photo.svg",
-    "sealDeliveryPhoto": "/evidence/loads/L012/seal-delivery-photo.svg",
-    "equipmentPhoto": "/evidence/loads/L012/equipment-photo.svg",
-    "pickupPhoto": "/evidence/loads/L012/pickup-photo.svg",
-    "deliveryPhoto": "/evidence/loads/L012/delivery-photo.svg",
-    "damageClaimPhoto": "/evidence/loads/L012/damage-photo.svg",
-    "claimEvidence": "/evidence/loads/L012/claim-evidence.svg"
+    "cargoPhoto": "/evidence/loads/L012/cargo-photo.png",
+    "sealPickupPhoto": "/evidence/loads/L012/seal-pickup-photo.png",
+    "sealDeliveryPhoto": "/evidence/loads/L012/seal-delivery-photo.png",
+    "equipmentPhoto": "/evidence/loads/L012/equipment-photo.png",
+    "pickupPhoto": "/evidence/loads/L012/pickup-photo.png",
+    "deliveryPhoto": "/evidence/loads/L012/delivery-photo.png",
+    "damageClaimPhoto": "/evidence/loads/L012/cargo-damage-photo.png",
+    "claimEvidence": "/evidence/loads/L012/claim-evidence.png"
   }
 }

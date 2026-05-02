@@ -2227,11 +2227,11 @@
       "applicable": true
     },
     "sealPhoto": {
-      "url": "/evidence/loads/L012/seal-photo.svg",
+      "url": "/evidence/loads/L012/seal-pickup-photo.png",
       "label": "Seal photo",
       "basename": "seal-photo",
-      "source": "svg_demo",
-      "generatedAt": "2026-05-01T22:30:04.214Z",
+      "source": "real",
+      "generatedAt": "2026-05-02T18:00:00.000Z",
       "required": true,
       "conditional": false,
       "applicable": true
@@ -2258,7 +2258,7 @@
     },
     "emptyTrailerProof": {
       "url": "/evidence/loads/L012/empty-trailer-proof.png",
-      "label": "Empty trailer proof",
+      "label": "Delivery / empty-trailer proof",
       "basename": "empty-trailer-proof",
       "source": "real",
       "generatedAt": "2026-05-01T22:30:04.214Z",
@@ -2268,7 +2268,7 @@
     },
     "rfidDockProof": {
       "url": "/evidence/loads/L012/rfid-dock-proof.png",
-      "label": "RFID dock proof",
+      "label": "RFID / geo proof",
       "basename": "rfid-dock-proof",
       "source": "real",
       "generatedAt": "2026-05-01T22:30:04.214Z",
@@ -2308,21 +2308,21 @@
       "applicable": true
     },
     "damagedPalletPhoto": {
-      "url": "/evidence/loads/L012/damaged-pallet-photo.svg",
+      "url": "/evidence/loads/L012/damaged-pallet-photo.png",
       "label": "Damaged pallet photo",
       "basename": "damaged-pallet-photo",
-      "source": "svg_demo",
-      "generatedAt": "2026-05-01T22:30:04.215Z",
+      "source": "real",
+      "generatedAt": "2026-05-02T18:00:00.000Z",
       "required": false,
       "conditional": true,
       "applicable": true
     },
     "sealMismatchPhoto": {
-      "url": "/evidence/loads/L012/seal-mismatch-photo.svg",
+      "url": "/evidence/loads/L012/seal-mismatch-photo.png",
       "label": "Seal mismatch photo",
       "basename": "seal-mismatch-photo",
-      "source": "svg_demo",
-      "generatedAt": "2026-05-01T22:30:04.214Z",
+      "source": "real",
+      "generatedAt": "2026-05-02T18:00:00.000Z",
       "required": false,
       "conditional": true,
       "applicable": true
