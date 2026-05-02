@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { DriverAvatar } from "@/components/DriverAvatar";
@@ -156,6 +157,11 @@ export function DriversRosterTable() {
     });
   }, [data, safetyTierMap]);
 
+  const emmaSpotlightRow = useMemo(
+    () => driverRows.find((r) => r.driverId === "DRV-009") ?? null,
+    [driverRows]
+  );
+
   useEffect(() => {
     const list = data.drivers.map((d) => getDriverDispatchEligibility(data, d.id));
     warnDispatchEligibilityAllBlocked(list);
@@ -260,31 +266,48 @@ export function DriversRosterTable() {
   return (
     <div className="bof-page bof-cc-page">
       <section
-        className="bof-drivers-command-hero bof-drivers-hero bof-drivers-hero--image-left"
+        className="bof-drivers-command-hero bof-drivers-hero bof-drivers-hero--overlay"
         aria-labelledby="bof-drivers-command-title"
       >
-        <div className="bof-drivers-hero__media">
+        <div className="bof-drivers-hero__bg">
           {!heroImageFailed ? (
-            <>
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                className="bof-drivers-hero__image"
-                src={heroImageSrc}
-                alt="Emma Brown standing in front of a truck at a fleet terminal."
-                onError={() => setHeroImageFailed(true)}
-              />
-              <div className="bof-drivers-hero__mediaFade" aria-hidden="true" />
-            </>
+            <Image
+              src={heroImageSrc}
+              alt="Emma Brown standing in front of a truck at a fleet terminal."
+              fill
+              sizes="100vw"
+              priority
+              className="bof-drivers-hero__bgImage"
+              onError={() => setHeroImageFailed(true)}
+            />
           ) : (
             <div className="bof-drivers-command-hero__placeholder">
               <strong>Hero image not found</strong>
               <p>
                 Add <code className="text-teal-300/90">public/images/drivers-emma-brown-hero.png</code> (Emma Brown,
-                DRV-009). Live fleet metrics are shown on the right.
+                DRV-009). Metrics below use live fleet data.
               </p>
             </div>
           )}
         </div>
+        {!heroImageFailed ? <div className="bof-drivers-hero__overlayGrad" aria-hidden="true" /> : null}
+        {emmaSpotlightRow && !heroImageFailed ? (
+          <div className="bof-drivers-hero__caption">
+            <Link href={`/drivers/${emmaSpotlightRow.driverId}`} className="bof-drivers-hero__caption-title">
+              {emmaSpotlightRow.name} · {emmaSpotlightRow.driverId}
+            </Link>
+            <p className="bof-drivers-hero__caption-line">
+              {emmaSpotlightRow.status === "Review"
+                ? "Needs review"
+                : emmaSpotlightRow.status === "Blocked"
+                  ? "Blocked"
+                  : "Active"}
+            </p>
+            <p className="bof-drivers-hero__caption-line bof-drivers-hero__caption-muted">
+              {emmaSpotlightRow.currentOrNextLoad}
+            </p>
+          </div>
+        ) : null}
         <div className="bof-drivers-hero__content">
           <div className="bof-drivers-hero__content-inner">
             <p className="bof-cc-hero-eyebrow">Driver Operations</p>

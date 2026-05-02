@@ -6238,7 +6238,7 @@ body {
   filter: brightness(1.06);
 }
 
-/* Drivers list — unified command hero (photo left, content + live metrics right) */
+/* Drivers list — unified command hero (default shell for non-overlay consumers) */
 .bof-drivers-command-hero {
   margin-bottom: 1.25rem;
   padding: 1.25rem 1.35rem 1.35rem;
@@ -6253,68 +6253,104 @@ body {
   box-shadow: 0 14px 42px rgba(0, 0, 0, 0.3);
 }
 
-.bof-drivers-command-hero.bof-drivers-hero--image-left {
+/* Drivers /drivers — full-bleed Emma hero + gradient overlay + right content column */
+.bof-drivers-command-hero.bof-drivers-hero--overlay {
   position: relative;
-  padding: 0;
+  min-height: 460px;
   overflow: hidden;
-  display: block;
-  min-height: 420px;
+  border-radius: 1rem;
+  border: 1px solid rgba(45, 212, 191, 0.2);
+  background: #020617;
+  padding: 0;
   max-width: 100%;
 }
 
-.bof-drivers-hero__media {
-  position: absolute;
-  inset: 0 auto 0 0;
-  width: min(58%, 720px);
-  min-height: 100%;
-  overflow: hidden;
-  background: #020617;
-  border-radius: calc(var(--bof-radius) + 3px) 0 0 calc(var(--bof-radius) + 3px);
-}
-
-.bof-drivers-hero__image {
+.bof-drivers-hero__bg {
   position: absolute;
   inset: 0;
+  z-index: 0;
+}
+
+.bof-drivers-hero__bgImage {
   width: 100%;
   height: 100%;
-  object-fit: contain;
-  object-position: center center;
-  display: block;
+  object-fit: cover;
+  object-position: 35% center;
 }
 
-.bof-drivers-hero__mediaFade {
+.bof-drivers-hero__overlayGrad {
   position: absolute;
   inset: 0;
-  pointer-events: none;
   z-index: 1;
+  pointer-events: none;
   background:
     linear-gradient(
       90deg,
       rgba(2, 6, 23, 0.05) 0%,
-      rgba(2, 6, 23, 0.12) 35%,
-      rgba(15, 23, 42, 0.48) 72%,
-      rgba(15, 23, 42, 0.92) 100%
+      rgba(2, 6, 23, 0.18) 35%,
+      rgba(15, 23, 42, 0.78) 58%,
+      rgba(15, 23, 42, 0.96) 100%
     ),
-    linear-gradient(180deg, rgba(2, 6, 23, 0) 55%, rgba(2, 6, 23, 0.22) 100%);
+    linear-gradient(180deg, rgba(2, 6, 23, 0.08) 0%, rgba(2, 6, 23, 0.18) 100%);
 }
 
-.bof-drivers-hero__content {
+.bof-drivers-hero__caption {
+  position: absolute;
+  bottom: 1rem;
+  left: 1rem;
+  z-index: 3;
+  max-width: min(38vw, 17rem);
+  padding: 0.65rem 0.85rem;
+  border-radius: 0.5rem;
+  background: rgba(15, 23, 42, 0.72);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(148, 163, 184, 0.28);
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.28);
+}
+
+.bof-drivers-hero__caption-title {
+  display: inline-block;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #e2e8f0;
+  text-decoration: none;
+}
+
+.bof-drivers-hero__caption-title:hover {
+  color: #99f6e4;
+}
+
+.bof-drivers-hero__caption-line {
+  margin: 0.2rem 0 0;
+  font-size: 0.68rem;
+  line-height: 1.35;
+  color: #94a3b8;
+}
+
+.bof-drivers-hero__caption-muted {
+  color: #64748b;
+}
+
+.bof-drivers-command-hero.bof-drivers-hero--overlay .bof-drivers-hero__content {
   position: relative;
   z-index: 2;
   min-width: 0;
-  margin-left: clamp(320px, calc(min(58vw, 720px) + 1.25rem), 760px);
-  padding: 2rem 2rem 2rem 1.5rem;
-  min-height: 420px;
+  margin-left: auto;
+  width: min(48%, 620px);
+  padding: 2rem;
+  min-height: 460px;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  background:
-    radial-gradient(ellipse 70% 65% at 0% 42%, rgba(20, 184, 166, 0.08), transparent 52%),
-    linear-gradient(180deg, rgba(15, 23, 42, 0.97) 0%, rgba(15, 23, 42, 0.99) 100%);
+  background: transparent;
 }
 
 .bof-drivers-hero__content-inner {
   max-width: 52rem;
+}
+
+.bof-drivers-command-hero.bof-drivers-hero--overlay .bof-drivers-hero__content-inner {
+  max-width: none;
 }
 
 .bof-drivers-command-hero__chips {
@@ -6322,6 +6358,18 @@ body {
   flex-wrap: wrap;
   gap: 0.45rem;
   margin-top: 1rem;
+}
+
+.bof-drivers-command-hero.bof-drivers-hero--overlay .bof-drivers-command-hero__chips {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.45rem;
+}
+
+@media (min-width: 1100px) {
+  .bof-drivers-command-hero.bof-drivers-hero--overlay .bof-drivers-command-hero__chips {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
 }
 
 .bof-drivers-command-hero__chip {
@@ -6332,7 +6380,13 @@ body {
   border-radius: 0.55rem;
   background: rgba(15, 23, 42, 0.65);
   border: 1px solid rgba(100, 116, 139, 0.35);
-  min-width: 6.5rem;
+  min-width: 0;
+}
+
+.bof-drivers-command-hero.bof-drivers-hero--overlay .bof-drivers-command-hero__chip {
+  background: rgba(15, 23, 42, 0.72);
+  backdrop-filter: blur(8px);
+  border-color: rgba(100, 116, 139, 0.42);
 }
 
 .bof-drivers-command-hero__chip-label {
@@ -6367,6 +6421,10 @@ body {
   height: 100%;
   padding: 1rem 1.1rem;
   text-align: center;
+}
+
+.bof-drivers-command-hero.bof-drivers-hero--overlay .bof-drivers-command-hero__placeholder {
+  min-height: 460px;
 }
 
 .bof-drivers-command-hero__placeholder strong {
@@ -6415,19 +6473,48 @@ body {
 }
 
 @media (max-width: 900px) {
-  .bof-drivers-command-hero.bof-drivers-hero--image-left {
+  .bof-drivers-command-hero.bof-drivers-hero--overlay {
     display: flex;
     flex-direction: column;
     min-height: 0;
   }
 
-  .bof-drivers-hero__media {
+  .bof-drivers-command-hero.bof-drivers-hero--overlay .bof-drivers-hero__bg {
     position: relative;
     inset: auto;
+    min-height: 300px;
+    flex-shrink: 0;
+    border-radius: 1rem 1rem 0 0;
+    overflow: hidden;
+  }
+
+  .bof-drivers-command-hero.bof-drivers-hero--overlay .bof-drivers-hero__bgImage {
+    object-position: 35% center;
+  }
+
+  .bof-drivers-command-hero.bof-drivers-hero--overlay .bof-drivers-hero__overlayGrad {
+    display: none;
+  }
+
+  .bof-drivers-command-hero.bof-drivers-hero--overlay .bof-drivers-hero__caption {
+    position: relative;
+    bottom: auto;
+    left: auto;
+    z-index: 2;
+    max-width: none;
+    margin: 0.65rem 1rem 0;
+    align-self: stretch;
+  }
+
+  .bof-drivers-command-hero.bof-drivers-hero--overlay .bof-drivers-hero__content {
     width: 100%;
-    min-height: 280px;
-    max-height: 320px;
-    border-radius: calc(var(--bof-radius) + 3px) calc(var(--bof-radius) + 3px) 0 0;
+    margin-left: 0;
+    min-height: 0;
+    padding: 1.25rem;
+  }
+
+  .bof-drivers-command-hero.bof-drivers-hero--overlay .bof-drivers-command-hero__chips {
+    grid-template-columns: repeat(auto-fill, minmax(9.5rem, 1fr));
   }
 
   .bof-drivers-command-hero__placeholder {
@@ -6435,26 +6522,6 @@ body {
     min-height: 280px;
     max-height: 320px;
     height: auto;
-  }
-
-  .bof-drivers-hero__image {
-    object-fit: cover;
-    object-position: center center;
-  }
-
-  .bof-drivers-hero__mediaFade {
-    background: linear-gradient(
-      180deg,
-      rgba(2, 6, 23, 0) 0%,
-      rgba(2, 6, 23, 0.08) 45%,
-      rgba(15, 23, 42, 0.38) 100%
-    );
-  }
-
-  .bof-drivers-hero__content {
-    margin-left: 0;
-    min-height: 0;
-    padding: 1.25rem;
   }
 }
 
