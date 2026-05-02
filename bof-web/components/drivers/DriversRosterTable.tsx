@@ -156,12 +156,6 @@ export function DriversRosterTable() {
     });
   }, [data, safetyTierMap]);
 
-  /** Hero photo subject — caption lines come only from this roster row (no invented status). */
-  const emmaSpotlightRow = useMemo(
-    () => driverRows.find((r) => r.driverId === "DRV-009") ?? null,
-    [driverRows]
-  );
-
   useEffect(() => {
     const list = data.drivers.map((d) => getDriverDispatchEligibility(data, d.id));
     warnDispatchEligibilityAllBlocked(list);
@@ -280,23 +274,6 @@ export function DriversRosterTable() {
                 onError={() => setHeroImageFailed(true)}
               />
               <div className="bof-drivers-hero__mediaFade" aria-hidden="true" />
-              {emmaSpotlightRow ? (
-                <div className="bof-drivers-hero__spotlight">
-                  <Link href={`/drivers/${emmaSpotlightRow.driverId}`} className="bof-drivers-hero__spotlight-title">
-                    {emmaSpotlightRow.name} · {emmaSpotlightRow.driverId}
-                  </Link>
-                  <p className="bof-drivers-hero__spotlight-line">
-                    {emmaSpotlightRow.status === "Review"
-                      ? "Needs review"
-                      : emmaSpotlightRow.status === "Blocked"
-                        ? "Blocked"
-                        : "Active"}
-                  </p>
-                  <p className="bof-drivers-hero__spotlight-line bof-drivers-hero__spotlight-muted">
-                    {emmaSpotlightRow.currentOrNextLoad}
-                  </p>
-                </div>
-              ) : null}
             </>
           ) : (
             <div className="bof-drivers-command-hero__placeholder">
