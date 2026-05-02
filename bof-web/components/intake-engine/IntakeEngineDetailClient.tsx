@@ -8,6 +8,7 @@ import { buildIntakeTriggerRows } from "@/lib/intake-engine-triggers";
 import { useBofDemoData } from "@/lib/bof-demo-data-context";
 import { useIntakeEngineStore } from "@/lib/stores/intake-engine-store";
 import { DEFAULT_WORKFLOW_LOAD_ID } from "@/lib/bof-defaults";
+import { intakeRecordSupportsLoadWizard } from "@/lib/load-intake/map-intake-engine-to-wizard";
 import { BofIntakeFormPrimaryPanel } from "@/components/documents/BofIntakeFormPrimaryPanel";
 import { BofWorkflowFormShortcuts } from "@/components/documents/BofWorkflowFormShortcuts";
 
@@ -116,6 +117,37 @@ export function IntakeEngineDetailClient() {
           {notice}
         </div>
       ) : null}
+
+      {intakeRecordSupportsLoadWizard(intake) ? (
+        <section
+          className="bof-card"
+          style={{ marginBottom: 16, borderColor: "rgba(45, 212, 191, 0.35)", background: "rgba(15, 118, 110, 0.12)" }}
+        >
+          <p className="bof-small" style={{ margin: 0, color: "#ccfbf1" }}>
+            Continue in the canonical load intake wizard — fields are prefilled only from this intake&apos;s
+            stored extraction (no mock parser output).
+          </p>
+          <div style={{ marginTop: 12 }}>
+            <Link
+              href={`/load-intake?intakeId=${encodeURIComponent(intake.intake_id)}`}
+              className="bof-intake-engine-btn bof-intake-engine-btn--primary"
+            >
+              Open BOF Load Intake (prefilled)
+            </Link>
+          </div>
+        </section>
+      ) : (
+        <section className="bof-card" style={{ marginBottom: 16 }}>
+          <p className="bof-muted bof-small" style={{ margin: 0 }}>
+            This intake kind is not mapped into the load trip wizard. Use driver or claims workflows as
+            applicable, or open{" "}
+            <Link href="/load-intake" className="bof-link-secondary">
+              Load Intake
+            </Link>{" "}
+            for a new manual load.
+          </p>
+        </section>
+      )}
 
       <BofIntakeFormPrimaryPanel entityId={formEntityId} compact />
       <BofWorkflowFormShortcuts

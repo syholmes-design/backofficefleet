@@ -72,6 +72,17 @@ function run() {
     }
   }
 
+  const intakeDetail = path.join(ROOT, "components", "intake-engine", "IntakeEngineDetailClient.tsx");
+  if (fs.existsSync(intakeDetail)) {
+    const s = read(intakeDetail);
+    if (!s.includes("/load-intake?intakeId=")) {
+      issues.push({
+        file: "components/intake-engine/IntakeEngineDetailClient.tsx",
+        issue: "intake_engine_detail_missing_load_intake_deeplink",
+      });
+    }
+  }
+
   const clientReview = path.join(ROOT, "components", "load-request", "ClientLoadRequestsReviewPageClient.tsx");
   if (fs.existsSync(clientReview)) {
     const s = read(clientReview);

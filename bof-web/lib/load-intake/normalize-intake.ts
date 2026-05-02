@@ -86,7 +86,10 @@ export function normalizeLoadIntake(input: NormalizeInput): NormalizeResult {
     deliveryAppointmentDate: normalizeDate(fields.deliveryAppointmentDate),
     pickupAppointmentTime: normalizeTime(fields.pickupAppointmentTime),
     deliveryAppointmentTime: normalizeTime(fields.deliveryAppointmentTime),
-    humanReviewRequired: fields.sourceType === "upload" ? true : Boolean(fields.humanReviewRequired),
+    humanReviewRequired:
+      input.sourceType === "upload" || input.sourceType === "email"
+        ? true
+        : Boolean(fields.humanReviewRequired),
   };
 
   const required: Array<keyof LoadIntakeRecord> = [

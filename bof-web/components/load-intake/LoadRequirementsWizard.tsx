@@ -31,6 +31,12 @@ import {
   routesForOriginFacility,
 } from "@/lib/load-intake-intelligence";
 import { normalizeLoadIntake } from "@/lib/load-intake/normalize-intake";
+import { createLoadIntakeWizardState } from "@/lib/load-intake/wizard-initial-state";
+import {
+  intakeRecordSupportsLoadWizard,
+  mergeIntakeEngineRecordIntoWizardState,
+} from "@/lib/load-intake/map-intake-engine-to-wizard";
+import { useIntakeEngineStore } from "@/lib/stores/intake-engine-store";
 
 type ExtractionResponse = {
   providerName: "local";
@@ -41,107 +47,6 @@ type ExtractionResponse = {
   warnings: string[];
   fieldConfidence: Record<string, number>;
 };
-
-const SHIP_ID = "SHIP-INTAKE-DRAFT";
-const FAC_ID = "FAC-INTAKE-DRAFT";
-const LR_ID = "LR-INTAKE-DRAFT";
-const REQ_ID = "CR-INTAKE-DRAFT";
-
-function createInitialState(): IntakeWizardState {
-  return {
-    lastDraftSavedAt: null,
-    shipper: {
-      shipper_id: SHIP_ID,
-      shipper_name: "",
-      primary_contact_name: "",
-      primary_contact_email: "",
-      primary_contact_phone: "",
-    },
-    facility: {
-      facility_id: FAC_ID,
-      shipper_id: SHIP_ID,
-      facility_name: "",
-      address: "",
-      city: "",
-      state: "",
-      zip: "",
-      facility_rules: "",
-      appointment_required: false,
-    },
-    loadRequirement: {
-      load_requirement_id: LR_ID,
-      shipper_id: SHIP_ID,
-      facility_id: FAC_ID,
-      load_id_input: "",
-      pickup_at: "",
-      delivery_at: "",
-      commodity: "",
-      weight: 0,
-      pallet_count: 0,
-      piece_count: 0,
-      rate_linehaul: 0,
-      assigned_driver_id: "",
-      truck_id: "",
-      trailer_id: "",
-      intake_status: "scheduled",
-      bol_number: "",
-      invoice_number: "",
-      seal_number: "",
-      rfid_proof_required: false,
-      insurance_requirements_summary: "",
-      pod_bol_instructions: "",
-      backhaul_pay: 0,
-      claim_damage_flag: false,
-      equipment_type: "",
-      special_handling: "",
-      destination_facility_name: "",
-      destination_address: "",
-      destination_city: "",
-      destination_state: "",
-      destination_zip: "",
-      route_memory_key: "",
-      temperature_required: false,
-      temperature_min: undefined,
-      temperature_max: undefined,
-    },
-    compliance: {
-      requirement_id: REQ_ID,
-      load_requirement_id: LR_ID,
-      seal_required: false,
-      seal_number_required: false,
-      pickup_photos_required: false,
-      delivery_photos_required: false,
-      cargo_photos_required: false,
-      insuranceRequirementType: "Standard COI",
-      cargoCoverageLevel: "$250k",
-      certificateRequired: true,
-      additionalInsuredRequired: false,
-      facilityEndorsementRequired: false,
-      bolRequirementType: "Standard shipper BOL",
-      signedBolRequired: true,
-      palletCountRequired: true,
-      pieceCountRequired: true,
-      sealNotationRequired: false,
-      bolSpecialInstructions: "",
-      podRequirementType: "POD + photo evidence",
-      signedPodRequired: true,
-      receiverPrintedNameRequired: true,
-      deliveryPhotoRequired: true,
-      emptyTrailerPhotoRequired: false,
-      sealVerificationRequired: false,
-      gpsTimestampRequired: true,
-      podSpecialInstructions: "",
-      insurance_requirements: "",
-      appointment_window_start: "",
-      appointment_window_end: "",
-      bol_instructions: "",
-      pod_requirements: "",
-      accessorial_rules: "",
-      lumper_expected: false,
-    },
-    loadPacket: null,
-  };
-}
 
 function YesNo({
   value,
@@ -253,11 +158,12 @@ const STEPS = [
   { n: 5, title: "Save to dispatch", short: "Save" },
 ] as const;
 
-export type IntakeEntrySource = "manual_entry" | "upload_parser" | "client_request";
+export type IntakeEntrySource = "manual_entry" | "upload_parser" | "client_request" | "intake_engine";
 
 function toPipelineSourceType(entry: IntakeEntrySource): LoadIntakeSourceType {
   if (entry === "upload_parser") return "upload";
   if (entry === "client_request") return "client_manual";
+  if (entry === "intake_engine") return "email";
   return "manual";
 }
 
@@ -266,12 +172,13 @@ export function LoadRequirementsWizard() {
   const { data, setFullData } = useBofDemoData();
   const upsertDispatchLoad = useDispatchDashboardStore((s) => s.upsertLoad);
   const [step, setStep] = useState(1);
-  const [state, setState] = useState<IntakeWizardState>(() => createInitialState());
+  const [state, setState] = useState<IntakeWizardState>(() => createLoadIntakeWizardState());
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [submitSuccess, setSubmitSuccess] = useState<string | null>(null);
   const [lastSavedLoadId, setLastSavedLoadId] = useState<string | null>(null);
   const [intakeEntrySource, setIntakeEntrySource] = useState<IntakeEntrySource>("manual_entry");
   const clientPrefillAppliedRef = useRef<string | null>(null);
+  const intakeEnginePrefillRef = useRef<string | null>(null);
   const [uploadFile, setUploadFile] = useState<File | null>(null);
   const [extracting, setExtracting] = useState(false);
   const [extractionError, setExtractionError] = useState<string | null>(null);
@@ -282,11 +189,17 @@ export function LoadRequirementsWizard() {
   );
 
   useEffect(() => {
+    if (searchParams.get("intakeId")) return;
     const id = searchParams.get("clientRequestId");
-    if (!id || clientPrefillAppliedRef.current === id) return;
+    if (!id) {
+      clientPrefillAppliedRef.current = null;
+      return;
+    }
+    if (clientPrefillAppliedRef.current === id) return;
     const row = getClientLoadRequests(data).find((r) => r.requestId === id);
     if (!row) return;
     clientPrefillAppliedRef.current = id;
+    intakeEnginePrefillRef.current = null;
     setIntakeEntrySource("client_request");
     setState(buildIntakeWizardStateFromClientRequest(row));
     setStep(1);
@@ -294,6 +207,25 @@ export function LoadRequirementsWizard() {
     setSubmitSuccess(null);
     setExtractionResult(null);
   }, [data, searchParams]);
+
+  useEffect(() => {
+    const intakeId = searchParams.get("intakeId");
+    if (!intakeId) {
+      intakeEnginePrefillRef.current = null;
+      return;
+    }
+    if (intakeEnginePrefillRef.current === intakeId) return;
+    const row = useIntakeEngineStore.getState().getIntake(intakeId);
+    if (!row || !intakeRecordSupportsLoadWizard(row)) return;
+    intakeEnginePrefillRef.current = intakeId;
+    clientPrefillAppliedRef.current = null;
+    setIntakeEntrySource("intake_engine");
+    setState(mergeIntakeEngineRecordIntoWizardState(row));
+    setStep(1);
+    setSubmitError(null);
+    setSubmitSuccess(null);
+    setExtractionResult(null);
+  }, [searchParams]);
 
   const formEntityId = toBofIntakeEntityId(state.loadRequirement.load_requirement_id);
   const intakeSurfaceContext = useMemo(
@@ -495,7 +427,12 @@ export function LoadRequirementsWizard() {
         extractionProvider: extractionResult?.providerName,
         extractionConfidence: extractionResult?.confidence,
         extractionWarnings: extractionResult?.warnings,
-        reviewedBy: intakeEntrySource === "client_request" ? "client_request_import" : "dispatcher",
+        reviewedBy:
+          intakeEntrySource === "client_request"
+            ? "client_request_import"
+            : intakeEntrySource === "intake_engine"
+              ? "intake_engine_import"
+              : "dispatcher",
       });
       setFullData(committed.nextData);
       if (committed.dispatchLoad) {
@@ -595,7 +532,15 @@ export function LoadRequirementsWizard() {
           </button>
         </div>
         <p className="bof-muted bof-small" style={{ marginTop: "0.75rem" }}>
-          {intakeEntrySource === "client_request" ? (
+          {intakeEntrySource === "intake_engine" ? (
+            <>
+              Prefilled from the{" "}
+              <Link href="/intake" className="bof-link-secondary">
+                Intake Engine
+              </Link>{" "}
+              using only stored extraction fields — review and complete missing requirements before save.
+            </>
+          ) : intakeEntrySource === "client_request" ? (
             <>
               Open the{" "}
               <Link href="/load-requests" className="bof-link-secondary">
@@ -1006,8 +951,8 @@ export function LoadRequirementsWizard() {
           )}
           <div className="bof-load-intake-toolbar">
             <span className="bof-muted" style={{ fontSize: "0.8rem" }}>
-              IDs: <code className="bof-code">{SHIP_ID}</code> ·{" "}
-              <code className="bof-code">{FAC_ID}</code>
+              IDs: <code className="bof-code">{state.shipper.shipper_id}</code> ·{" "}
+              <code className="bof-code">{state.facility.facility_id}</code>
             </span>
             <button type="button" className="bof-load-intake-btn bof-load-intake-btn--primary" onClick={() => goStep(2)}>
               Continue to load requirements
