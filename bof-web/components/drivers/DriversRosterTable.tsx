@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { DriverAvatar } from "@/components/DriverAvatar";
 import { useBofDemoData } from "@/lib/bof-demo-data-context";
 import {
@@ -12,7 +12,6 @@ import {
   getSafetyTierChartData,
   getSettlementStatusChartData,
   type BreakdownPoint,
-  type DashboardKpi,
 } from "@/lib/dashboard-insights";
 import { formatUsd } from "@/lib/format-money";
 import { driverPhotoPath } from "@/lib/driver-photo";
@@ -67,6 +66,34 @@ export function DriversRosterTable() {
   const safetyData = useMemo(() => getSafetyTierChartData(data), [data]);
   const complianceData = useMemo(() => getComplianceStatusChartData(data), [data]);
   const settlementData = useMemo(() => getSettlementStatusChartData(data), [data]);
+
+  const [heroImageFailed, setHeroImageFailed] = useState(false);
+  const heroImageSrc = "/images/drivers-emma-brown-hero.png";
+
+  const commandHeroChips = useMemo(() => {
+    const ready = readinessData.find((p) => p.label === "Ready")?.value ?? 0;
+    const needsReview = readinessData.find((p) => p.label === "Needs Review")?.value ?? 0;
+    const blocked = readinessData.find((p) => p.label === "Blocked")?.value ?? 0;
+    const safetyTierMap = new Map(getSafetyScorecardRows().map((row) => [row.driverId, row.performanceTier]));
+    let availableForDispatch = 0;
+    for (const driver of data.drivers) {
+      const el = getDriverDispatchEligibility(data, driver.id);
+      const tier = safetyTierMap.get(driver.id) ?? "Standard";
+      if (el.status === "ready" && tier !== "At Risk") availableForDispatch += 1;
+    }
+    return [
+      { label: "Drivers ready", value: ready, hint: "Dispatch eligibility status: Ready" },
+      { label: "Needs review", value: needsReview, hint: "Soft warnings — review before long haul" },
+      { label: "Blocked", value: blocked, hint: "Hard gates on credentials, safety, or finance" },
+      { label: "Expiring documents", value: summary.expiringCredentials, hint: "Drivers with credentials expiring ≤60 days" },
+      { label: "Safety at risk", value: summary.safetyAtRisk, hint: "Drivers in At Risk safety tier" },
+      {
+        label: "Available for dispatch",
+        value: availableForDispatch,
+        hint: "Ready + not safety At Risk (premium lane gate)",
+      },
+    ];
+  }, [data, readinessData, summary]);
 
   const driverRows = useMemo<DriverRow[]>(() => {
     return data.drivers.map((driver) => {
@@ -134,18 +161,6 @@ export function DriversRosterTable() {
     warnDispatchEligibilityAllBlocked(list);
     devLogDriverEligibilitySnapshot(data);
   }, [data]);
-
-  const kpis = useMemo<DashboardKpi[]>(
-    () => [
-      { label: "Active Drivers", value: summary.activeDrivers, hint: "Total driver profiles in fleet demo.", tone: "info" },
-      { label: "Dispatch Ready", value: summary.dispatchReady, hint: "Immediately assignable drivers.", tone: "ok" },
-      { label: "Compliance Blocked", value: summary.complianceBlocked, hint: "Drivers blocked by doc/compliance gaps.", tone: "danger" },
-      { label: "Safety At Risk", value: summary.safetyAtRisk, hint: "Drivers in at-risk safety tier.", tone: "danger" },
-      { label: "Settlement Pending", value: summary.settlementPending, hint: "Pending or hold/review settlements.", tone: "warn" },
-      { label: "Expiring Credentials", value: summary.expiringCredentials, hint: "Drivers with credentials expiring <= 60 days.", tone: "warn" },
-    ],
-    [summary]
-  );
 
   const blockedDriverRows = useMemo(
     () => driverRows.filter((row) => row.eligibilityStatus === "blocked").slice(0, 6),
@@ -244,37 +259,97 @@ export function DriversRosterTable() {
 
   return (
     <div className="bof-page bof-cc-page">
-      <section className="bof-cc-hero">
-        <p className="bof-cc-kicker">Fleet-owner control surface</p>
-        <h1 className="bof-title bof-cc-title">Drivers Command Center</h1>
-        <p className="bof-lead bof-cc-lead">
-          Monitor driver readiness, compliance, safety, settlement status, and dispatch eligibility from one view.
-        </p>
-        <div className="bof-cc-hero-actions">
-          <Link href="/dispatch" className="bof-cc-btn bof-cc-btn-primary">Assign Loads</Link>
-          <Link href="/documents" className="bof-cc-btn">Open Documents</Link>
-          <Link href="/safety" className="bof-cc-btn">Open Safety</Link>
+      <section className="bof-drivers-command-hero" aria-labelledby="bof-drivers-command-title">
+        <div className="bof-drivers-command-hero__grid">
+          <div className="bof-drivers-command-hero__copy">
+            <p className="bof-cc-hero-eyebrow">Driver Operations</p>
+            <h1 id="bof-drivers-command-title" className="bof-cc-hero-title">
+              Drivers Command Center
+            </h1>
+            <p className="bof-cc-hero-tagline">
+              Track driver readiness, compliance documents, safety risk, dispatch eligibility, and settlement readiness in
+              one BOF view.
+            </p>
+            <div className="bof-cc-hero-actions">
+              <a href="#driver-blocked-dispatch" className="bof-cc-hero-cta bof-cc-hero-cta-primary">
+                Review Blocked Drivers
+              </a>
+              <Link href="/bof-vault" className="bof-cc-hero-cta bof-cc-hero-cta-secondary">
+                Open BOF Vault
+              </Link>
+              <Link href="/dispatch" className="bof-cc-hero-cta bof-cc-hero-cta-secondary">
+                Dispatch Ready Drivers
+              </Link>
+            </div>
+            <div className="bof-drivers-command-hero__chips" aria-label="Live dispatch and readiness metrics">
+              {commandHeroChips.map((chip) => (
+                <div key={chip.label} className="bof-drivers-command-hero__chip">
+                  <span className="bof-drivers-command-hero__chip-label">{chip.label}</span>
+                  <span className="bof-drivers-command-hero__chip-value">{chip.value}</span>
+                  <span className="bof-drivers-command-hero__chip-hint">{chip.hint}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+          <div className="bof-drivers-command-hero__visual">
+            {!heroImageFailed ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                src={heroImageSrc}
+                alt="Emma Brown standing in front of a BOF truck at a fleet terminal."
+                onError={() => setHeroImageFailed(true)}
+              />
+            ) : (
+              <div className="bof-drivers-command-hero__placeholder">
+                <strong>Hero image not found</strong>
+                <p>
+                  Add <code className="text-teal-300/90">public/images/drivers-emma-brown-hero.png</code> (Emma Brown,
+                  DRV-009) for the professional terminal photo. Metrics above remain live from BOF data.
+                </p>
+              </div>
+            )}
+          </div>
         </div>
       </section>
 
-      <section className="bof-cc-kpi-grid" aria-label="Driver KPI cards">
-        {kpis.map((kpi) => (
-          <article key={kpi.label} className={`bof-cc-kpi bof-cc-tone-${kpi.tone}`}>
-            <p className="bof-cc-kpi-label">{kpi.label}</p>
-            <p className="bof-cc-kpi-value">{kpi.value}</p>
-            <p className="bof-cc-kpi-hint">{kpi.hint}</p>
-          </article>
-        ))}
-      </section>
+      <nav className="bof-drivers-quick-actions" id="bof-drivers-quick-actions" aria-label="Quick filters and actions">
+        <span className="bof-drivers-quick-actions__label">Quick</span>
+        <a href="#driver-blocked-dispatch">Blocked roster</a>
+        <span className="text-slate-600">·</span>
+        <a href="#driver-readiness-charts">Readiness charts</a>
+        <span className="text-slate-600">·</span>
+        <a href="#driver-exception-panels">Exception panels</a>
+        <span className="text-slate-600">·</span>
+        <a href="#driver-primary-table">Primary table</a>
+      </nav>
 
-      <section className="bof-cc-chart-grid" aria-label="Driver chart breakdowns">
+      <section id="driver-readiness-charts" className="bof-cc-chart-grid" aria-label="Driver chart breakdowns">
         <ChartCard title="Driver Readiness Breakdown" data={readinessData} />
         <ChartCard title="Safety Tier Distribution" data={safetyData} />
         <ChartCard title="Compliance Status Breakdown" data={complianceData} />
         <ChartCard title="Settlement Status Breakdown" data={settlementData} />
       </section>
 
-      <section className="bof-cc-panel" aria-label="Driver roster table">
+      <section id="driver-exception-panels" className="bof-cc-grid-2" aria-label="Driver exception panels">
+        <ExceptionPanel
+          panelId="driver-blocked-dispatch"
+          title="Drivers Blocked From Dispatch"
+          items={blockedDriverRows.map((row) => ({
+            key: `blocked-${row.driverId}`,
+            driver: row.name,
+            issue: row.hardBlockers.length ? row.hardBlockers.slice(0, 2).join(" · ") : row.dispatchEligibility,
+            severity: "high",
+            nextStep: "Clear hard gates (credentials, safety, or settlement block) before dispatch",
+            actionHref: row.blockerHref ?? `/drivers/${row.driverId}/dispatch`,
+            actionLabel: "Resolve Blocker",
+          }))}
+        />
+        <ExceptionPanel title="Credentials Expiring Soon" items={expiringRows} />
+        <ExceptionPanel title="Safety Issues Requiring Action" items={safetyRows} />
+        <ExceptionPanel title="Settlement Holds / Pending" items={settlementRows.length > 0 ? settlementRows : commandCenterRows} />
+      </section>
+
+      <section id="driver-primary-table" className="bof-cc-panel" aria-label="Driver roster table">
         <div className="bof-cc-panel-head">
           <h2 className="bof-h2">Primary Driver Table</h2>
           <p className="bof-cc-panel-sub">All 12 drivers with readiness, risk posture, and owner actions.</p>
@@ -360,21 +435,6 @@ export function DriversRosterTable() {
           </table>
         </div>
       </section>
-
-      <section className="bof-cc-grid-2" aria-label="Driver exception panels">
-        <ExceptionPanel title="Drivers Blocked From Dispatch" items={blockedDriverRows.map((row) => ({
-          key: `blocked-${row.driverId}`,
-          driver: row.name,
-          issue: row.hardBlockers.length ? row.hardBlockers.slice(0, 2).join(" · ") : row.dispatchEligibility,
-          severity: "high",
-          nextStep: "Clear hard gates (credentials, safety, or settlement block) before dispatch",
-          actionHref: row.blockerHref ?? `/drivers/${row.driverId}/dispatch`,
-          actionLabel: "Resolve Blocker",
-        }))} />
-        <ExceptionPanel title="Credentials Expiring Soon" items={expiringRows} />
-        <ExceptionPanel title="Safety Issues Requiring Action" items={safetyRows} />
-        <ExceptionPanel title="Settlement Holds / Pending" items={settlementRows.length > 0 ? settlementRows : commandCenterRows} />
-      </section>
     </div>
   );
 }
@@ -418,9 +478,17 @@ function StatusChip({ label }: { label: string }) {
   return <span className={cls}>{label}</span>;
 }
 
-function ExceptionPanel({ title, items }: { title: string; items: ExceptionItem[] }) {
+function ExceptionPanel({
+  title,
+  items,
+  panelId,
+}: {
+  title: string;
+  items: ExceptionItem[];
+  panelId?: string;
+}) {
   return (
-    <article className="bof-cc-panel">
+    <article className="bof-cc-panel" id={panelId}>
       <h3 className="bof-cc-panel-title">{title}</h3>
       {items.length === 0 ? (
         <p className="bof-cc-panel-sub">No active exceptions right now.</p>

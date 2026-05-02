@@ -6238,6 +6238,163 @@ body {
   filter: brightness(1.06);
 }
 
+/* Drivers list — command hero + Emma Brown visual */
+.bof-drivers-command-hero {
+  margin-bottom: 1.25rem;
+  padding: 1.25rem 1.35rem 1.35rem;
+  background: linear-gradient(
+    135deg,
+    rgba(20, 184, 166, 0.1) 0%,
+    rgba(15, 23, 42, 0.98) 38%,
+    var(--bof-surface) 100%
+  );
+  border: 1px solid rgba(20, 184, 166, 0.26);
+  border-radius: calc(var(--bof-radius) + 4px);
+  box-shadow: 0 14px 42px rgba(0, 0, 0, 0.3);
+}
+
+.bof-drivers-command-hero__grid {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: stretch;
+  gap: 1.25rem 1.5rem;
+}
+
+.bof-drivers-command-hero__copy {
+  flex: 1 1 280px;
+  min-width: 0;
+}
+
+.bof-drivers-command-hero__chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  margin-top: 1rem;
+}
+
+.bof-drivers-command-hero__chip {
+  display: inline-flex;
+  flex-direction: column;
+  gap: 0.1rem;
+  padding: 0.45rem 0.65rem;
+  border-radius: 0.55rem;
+  background: rgba(15, 23, 42, 0.65);
+  border: 1px solid rgba(100, 116, 139, 0.35);
+  min-width: 6.5rem;
+}
+
+.bof-drivers-command-hero__chip-label {
+  font-size: 0.58rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #94a3b8;
+}
+
+.bof-drivers-command-hero__chip-value {
+  font-size: 1.05rem;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  color: #f8fafc;
+}
+
+.bof-drivers-command-hero__chip-hint {
+  font-size: 0.58rem;
+  color: #64748b;
+  max-width: 11rem;
+  line-height: 1.25;
+}
+
+.bof-drivers-command-hero__visual {
+  flex: 0 1 320px;
+  min-height: 280px;
+  max-height: 360px;
+  border-radius: 0.85rem;
+  overflow: hidden;
+  border: 1px solid rgba(45, 212, 191, 0.25);
+  background: #020617;
+  position: relative;
+}
+
+.bof-drivers-command-hero__visual img {
+  width: 100%;
+  height: 100%;
+  min-height: 280px;
+  max-height: 360px;
+  object-fit: cover;
+  object-position: center center;
+  display: block;
+}
+
+.bof-drivers-command-hero__placeholder {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 0.5rem;
+  height: 100%;
+  min-height: 280px;
+  max-height: 360px;
+  padding: 1rem 1.1rem;
+  text-align: center;
+}
+
+.bof-drivers-command-hero__placeholder strong {
+  color: #5eead4;
+  font-size: 0.78rem;
+}
+
+.bof-drivers-command-hero__placeholder p {
+  margin: 0;
+  font-size: 0.72rem;
+  line-height: 1.45;
+  color: #94a3b8;
+}
+
+.bof-drivers-quick-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem 0.75rem;
+  margin-bottom: 1.25rem;
+  padding: 0.55rem 0.75rem;
+  border-radius: 0.65rem;
+  border: 1px solid rgba(51, 65, 85, 0.65);
+  background: rgba(15, 23, 42, 0.45);
+}
+
+.bof-drivers-quick-actions__label {
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: #64748b;
+  margin-right: 0.35rem;
+}
+
+.bof-drivers-quick-actions a {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #5eead4;
+  text-decoration: none;
+}
+
+.bof-drivers-quick-actions a:hover {
+  color: #99f6e4;
+  text-decoration: underline;
+}
+
+@media (max-width: 900px) {
+  .bof-drivers-command-hero__visual {
+    flex: 1 1 100%;
+    max-width: none;
+    order: 2;
+  }
+  .bof-drivers-command-hero__copy {
+    order: 1;
+    flex: 1 1 100%;
+  }
+}
+
 /* Command Center — savings scorecard, qualification, immediate actions */
 .bof-cc-savings-section {
   margin-bottom: 1.35rem;
