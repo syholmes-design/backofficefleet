@@ -1592,7 +1592,7 @@
   },
   "L009": {
     "cargoPhoto": {
-      "url": "/evidence/loads/L009/cargo-photo.png",
+      "url": "/evidence/support/document-support/pre-trip-cargo-photo.png",
       "label": "Cargo photo",
       "basename": "cargo-photo",
       "source": "real",
@@ -1602,7 +1602,7 @@
       "applicable": true
     },
     "equipmentPhoto": {
-      "url": "/evidence/loads/L009/equipment-photo.png",
+      "url": "/evidence/support/document-support/trailer-condition-photo.png",
       "label": "Equipment photo",
       "basename": "equipment-photo",
       "source": "real",
@@ -1612,7 +1612,7 @@
       "applicable": true
     },
     "pickupPhoto": {
-      "url": "/evidence/loads/L009/pickup-photo.png",
+      "url": "/evidence/support/document-support/loading-dock-photo.png",
       "label": "Pickup photo",
       "basename": "pickup-photo",
       "source": "real",
@@ -1622,7 +1622,7 @@
       "applicable": true
     },
     "deliveryPhoto": {
-      "url": "/evidence/loads/L009/delivery-photo.png",
+      "url": "/evidence/support/document-support/delivery-pod-photo.png",
       "label": "Delivery photo",
       "basename": "delivery-photo",
       "source": "real",
@@ -1632,17 +1632,17 @@
       "applicable": true
     },
     "sealPhoto": {
-      "url": "/evidence/loads/L009/seal-photo.svg",
+      "url": "/evidence/support/document-support/seal-verification-photo.png",
       "label": "Seal photo",
       "basename": "seal-photo",
-      "source": "svg_demo",
+      "source": "real",
       "generatedAt": "2026-05-01T22:30:04.208Z",
       "required": true,
       "conditional": false,
       "applicable": true
     },
     "sealPickupPhoto": {
-      "url": "/evidence/loads/L009/seal-pickup-photo.png",
+      "url": "/evidence/support/document-support/seal-verification-photo.png",
       "label": "Seal pickup photo",
       "basename": "seal-pickup-photo",
       "source": "real",
@@ -1652,7 +1652,7 @@
       "applicable": true
     },
     "sealDeliveryPhoto": {
-      "url": "/evidence/loads/L009/seal-delivery-photo.png",
+      "url": "/evidence/support/document-support/seal-close-up-photo.png",
       "label": "Seal delivery photo",
       "basename": "seal-delivery-photo",
       "source": "real",
@@ -1662,7 +1662,7 @@
       "applicable": true
     },
     "emptyTrailerProof": {
-      "url": "/evidence/loads/L009/empty-trailer-proof.png",
+      "url": "/evidence/support/document-support/trailer-door-photo.png",
       "label": "Empty trailer proof",
       "basename": "empty-trailer-proof",
       "source": "real",
@@ -1672,7 +1672,7 @@
       "applicable": true
     },
     "rfidDockProof": {
-      "url": "/evidence/loads/L009/rfid-dock-proof.png",
+      "url": "/evidence/support/document-support/rf-actions-device-photo.png",
       "label": "RFID dock proof",
       "basename": "rfid-dock-proof",
       "source": "real",
@@ -1713,20 +1713,20 @@
       "applicable": true
     },
     "damagedPalletPhoto": {
-      "url": "/evidence/loads/L009/damaged-pallet-photo.svg",
+      "url": "/evidence/support/document-support/pallet-count-photo.png",
       "label": "Damaged pallet photo",
       "basename": "damaged-pallet-photo",
-      "source": "svg_demo",
+      "source": "real",
       "generatedAt": "2026-05-01T22:30:04.210Z",
       "required": false,
       "conditional": true,
       "applicable": true
     },
     "sealMismatchPhoto": {
-      "url": "/evidence/loads/L009/seal-mismatch-photo.svg",
+      "url": "/evidence/support/document-support/seal-close-up-photo.png",
       "label": "Seal mismatch photo",
       "basename": "seal-mismatch-photo",
-      "source": "svg_demo",
+      "source": "real",
       "generatedAt": "2026-05-01T22:30:04.209Z",
       "required": false,
       "conditional": true,
@@ -1755,10 +1755,10 @@
       "reason": "Not required for this load context"
     },
     "detentionProofPhoto": {
-      "url": "/evidence/loads/L009/detention-proof-photo.svg",
+      "url": "/evidence/support/document-support/accessorial-receipt-preview.png",
       "label": "Detention proof photo",
       "basename": "detention-proof-photo",
-      "source": "svg_demo",
+      "source": "real",
       "generatedAt": "2026-05-01T22:30:04.209Z",
       "required": false,
       "conditional": true,

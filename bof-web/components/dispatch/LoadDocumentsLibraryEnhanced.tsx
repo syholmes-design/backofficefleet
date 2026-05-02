@@ -201,8 +201,10 @@ function DocCard({ row }: { row: TripPacketRow }) {
     ready: "border-emerald-700/60 bg-emerald-950/40",
     missing: "border-red-700/60 bg-red-950/40",
   };
-  const kind: "pdf" | "image" = row.group === "proof" ? "image" : "pdf";
   const url = row.url?.trim();
+  const isRasterEvidence = /\.(png|jpe?g|webp|gif)$/i.test(url || "");
+  const kind: "pdf" | "image" =
+    row.group === "proof" || isRasterEvidence ? "image" : "pdf";
   const sourceLabel =
     row.source === "missing"
       ? "Missing"
@@ -230,7 +232,14 @@ function DocCard({ row }: { row: TripPacketRow }) {
     >
       <div className="relative h-14 w-20 shrink-0 overflow-hidden rounded border border-slate-800 bg-slate-900">
         {kind === "image" && url && ready ? (
-          <Image src={url} alt="" fill sizes="80px" className="object-cover" unoptimized />
+          <Image
+            src={url}
+            alt=""
+            fill
+            sizes="80px"
+            className="object-cover object-center"
+            unoptimized
+          />
         ) : (
           <div className="flex h-full w-full flex-col items-center justify-center gap-0.5 text-slate-500">
             <FileText className="h-6 w-6 text-teal-500/90" aria-hidden />
