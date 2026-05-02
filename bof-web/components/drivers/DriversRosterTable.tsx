@@ -304,7 +304,7 @@ export function DriversRosterTable() {
                 <img
                   className="bof-drivers-hero__image"
                   src={heroImageSrc}
-                  alt="Emma Brown standing in front of a BOF truck at a fleet terminal."
+                  alt="Emma Brown standing in front of a truck at a fleet terminal."
                   onError={() => setHeroImageFailed(true)}
                 />
               ) : (

@@ -6317,7 +6317,7 @@ body {
   box-shadow: 0 10px 32px rgba(0, 0, 0, 0.35), 0 0 0 1px rgba(2, 6, 23, 0.6) inset;
 }
 
-/* Photo only — crop + fade hide baked-in hero UI at bottom of asset */
+/* Photographic hero — cropped still, no baked-in dashboard copy */
 .bof-drivers-command-hero__imagePanel {
   position: relative;
   flex: 1 1 auto;
@@ -6329,23 +6329,13 @@ body {
   background: #020617;
 }
 
-.bof-drivers-command-hero__imagePanel:has(.bof-drivers-hero__image)::after {
-  content: "";
-  position: absolute;
-  inset: auto 0 0 0;
-  height: 35%;
-  background: linear-gradient(to bottom, rgba(2, 6, 23, 0), rgba(2, 6, 23, 0.92));
-  pointer-events: none;
-  z-index: 1;
-}
-
 .bof-drivers-hero__image {
   position: absolute;
   inset: 0;
   width: 100%;
   height: 100%;
   object-fit: cover;
-  object-position: center 28%;
+  object-position: center 38%;
   display: block;
 }
 
