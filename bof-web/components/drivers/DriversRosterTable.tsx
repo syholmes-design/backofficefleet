@@ -156,6 +156,12 @@ export function DriversRosterTable() {
     });
   }, [data, safetyTierMap]);
 
+  /** Hero photo subject — caption lines come only from this roster row (no invented status). */
+  const emmaSpotlightRow = useMemo(
+    () => driverRows.find((r) => r.driverId === "DRV-009") ?? null,
+    [driverRows]
+  );
+
   useEffect(() => {
     const list = data.drivers.map((d) => getDriverDispatchEligibility(data, d.id));
     warnDispatchEligibilityAllBlocked(list);
@@ -292,22 +298,36 @@ export function DriversRosterTable() {
             </div>
           </div>
           <div className="bof-drivers-command-hero__visual">
-            {!heroImageFailed ? (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img
-                src={heroImageSrc}
-                alt="Emma Brown standing in front of a BOF truck at a fleet terminal."
-                onError={() => setHeroImageFailed(true)}
-              />
-            ) : (
-              <div className="bof-drivers-command-hero__placeholder">
-                <strong>Hero image not found</strong>
-                <p>
-                  Add <code className="text-teal-300/90">public/images/drivers-emma-brown-hero.png</code> (Emma Brown,
-                  DRV-009) for the professional terminal photo. Metrics above remain live from BOF data.
+            <div className="bof-drivers-command-hero__imagePanel">
+              {!heroImageFailed ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img
+                  className="bof-drivers-hero__image"
+                  src={heroImageSrc}
+                  alt="Emma Brown standing in front of a BOF truck at a fleet terminal."
+                  onError={() => setHeroImageFailed(true)}
+                />
+              ) : (
+                <div className="bof-drivers-command-hero__placeholder">
+                  <strong>Hero image not found</strong>
+                  <p>
+                    Add <code className="text-teal-300/90">public/images/drivers-emma-brown-hero.png</code> (Emma
+                    Brown, DRV-009) for the professional terminal photo. Metrics above remain live from BOF data.
+                  </p>
+                </div>
+              )}
+            </div>
+            {emmaSpotlightRow ? (
+              <div className="bof-drivers-command-hero__caption">
+                <Link href={`/drivers/${emmaSpotlightRow.driverId}`} className="bof-drivers-command-hero__caption-title">
+                  {emmaSpotlightRow.name} · {emmaSpotlightRow.driverId}
+                </Link>
+                <p className="bof-drivers-command-hero__caption-line">{emmaSpotlightRow.dispatchEligibility}</p>
+                <p className="bof-drivers-command-hero__caption-line bof-drivers-command-hero__caption-muted">
+                  {emmaSpotlightRow.currentOrNextLoad}
                 </p>
               </div>
-            )}
+            ) : null}
           </div>
         </div>
       </section>
