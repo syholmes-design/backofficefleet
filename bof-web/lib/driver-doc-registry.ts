@@ -168,6 +168,166 @@ export function describeCredentialExpiration(expirationDate?: string): string {
   return `Current (${days} day(s) remaining)`;
 }
 
+export type DriverMedicalCardCanonicalStatus =
+  | "valid"
+  | "expiring_soon"
+  | "expired"
+  | "pending_review"
+  | "missing";
+
+export type DriverMedicalCardStatusSource =
+  | "canonical_document"
+  | "driver_doc_registry"
+  | "fallback";
+
+export type DriverMedicalCardStatus = {
+  driverId: string;
+  documentType: "medical_card";
+  fileUrl?: string;
+  expirationDate?: string;
+  status: DriverMedicalCardCanonicalStatus;
+  /** Row status string used across DocumentRow / dispatch (VALID, EXPIRED, …). */
+  rowStatus: string;
+  source: DriverMedicalCardStatusSource;
+  reason: string;
+};
+
+function pickCanonicalMedicalRow(data: BofData, driverId: string) {
+  const rows = data.documents.filter(
+    (d) => d.driverId === driverId && d.type === "Medical Card"
+  );
+  if (rows.length === 0) return null;
+  const primary = rows.find((r) => r.docTier === "primary");
+  return primary ?? rows[0];
+}
+
+function medicalCanonicalToRowStatus(s: DriverMedicalCardCanonicalStatus): string {
+  switch (s) {
+    case "valid":
+      return "VALID";
+    case "expiring_soon":
+      return "EXPIRING_SOON";
+    case "expired":
+      return "EXPIRED";
+    case "pending_review":
+      return "PENDING REVIEW";
+    default:
+      return "MISSING";
+  }
+}
+
+/**
+ * Canonical medical card resolver: keyed by driverId; derives status from structured expirationDate.
+ * Ignores stale `status` on the Medical Card row when expirationDate is present.
+ */
+export function getDriverMedicalCardStatus(
+  data: BofData,
+  driverId: string
+): DriverMedicalCardStatus {
+  const fileUrl = getDriverDocumentByType(driverId, "Medical Card");
+  const row = pickCanonicalMedicalRow(data, driverId);
+
+  if (!row) {
+    if (!fileUrl) {
+      return {
+        driverId,
+        documentType: "medical_card",
+        status: "missing",
+        rowStatus: "MISSING",
+        source: "fallback",
+        reason: "No Medical Card row in demo documents and no indexed file URL",
+      };
+    }
+    return {
+      driverId,
+      documentType: "medical_card",
+      fileUrl,
+      status: "pending_review",
+      rowStatus: "PENDING REVIEW",
+      source: "driver_doc_registry",
+      reason: "Indexed medical card file without structured Medical Card row",
+    };
+  }
+
+  const expirationDate = row.expirationDate?.trim() || undefined;
+
+  if (expirationDate) {
+    const derived = deriveCredentialStatusFromExpiration(expirationDate);
+    let status: DriverMedicalCardCanonicalStatus;
+    switch (derived) {
+      case "VALID":
+        status = "valid";
+        break;
+      case "EXPIRING_SOON":
+        status = "expiring_soon";
+        break;
+      case "EXPIRED":
+        status = "expired";
+        break;
+      default:
+        status = "pending_review";
+        break;
+    }
+    return {
+      driverId,
+      documentType: "medical_card",
+      fileUrl: fileUrl ?? undefined,
+      expirationDate,
+      status,
+      rowStatus: medicalCanonicalToRowStatus(status),
+      source: "canonical_document",
+      reason:
+        "expirationDate on canonical Medical Card row (status derived from date, not stale row.status)",
+    };
+  }
+
+  if (fileUrl) {
+    return {
+      driverId,
+      documentType: "medical_card",
+      fileUrl,
+      expirationDate: undefined,
+      status: "pending_review",
+      rowStatus: "PENDING REVIEW",
+      source: "canonical_document",
+      reason:
+        "Medical Card row present without expirationDate; file on file — pending review",
+    };
+  }
+
+  return {
+    driverId,
+    documentType: "medical_card",
+    expirationDate: undefined,
+    status: "missing",
+    rowStatus: "MISSING",
+    source: "canonical_document",
+    reason: "Medical Card row without expirationDate and no indexed file",
+  };
+}
+
+export function medicalCardHardBlockReason(med: DriverMedicalCardStatus): string | null {
+  if (med.status === "expired" && med.expirationDate) {
+    return `Medical Card expired on ${med.expirationDate}`;
+  }
+  if (med.status === "missing") {
+    return "Medical Card missing";
+  }
+  return null;
+}
+
+export function medicalCardSoftWarningReason(med: DriverMedicalCardStatus): string | null {
+  if (med.status === "expiring_soon" && med.expirationDate) {
+    return `Medical Card expiring soon on ${med.expirationDate}`;
+  }
+  if (med.status === "pending_review") {
+    return med.expirationDate
+      ? `Medical Card pending review (expiration ${med.expirationDate})`
+      : "Medical Card pending review — confirm expiration on file";
+  }
+  return null;
+}
+
 export function getCanonicalDriverDocuments(data: BofData, driverId: string) {
   const packet = getDriverDocumentPacket(driverId);
   const byType = new Map(
@@ -177,6 +337,7 @@ export function getCanonicalDriverDocuments(data: BofData, driverId: string) {
   );
 
   const profile = getDriverOperationalProfile(data, driverId);
+  const medicalResolved = getDriverMedicalCardStatus(data, driverId);
   return [
     {
       type: "CDL",
@@ -196,10 +357,8 @@ export function getCanonicalDriverDocuments(data: BofData, driverId: string) {
     },
     {
       type: "Medical Card",
-      status: getDriverDocumentByType(driverId, "Medical Card")
-        ? deriveCredentialStatusFromExpiration(byType.get("Medical Card")?.expirationDate)
-        : "MISSING",
-      expirationDate: byType.get("Medical Card")?.expirationDate,
+      status: medicalResolved.rowStatus,
+      expirationDate: medicalResolved.expirationDate,
       fileUrl: packet.medicalCard,
       previewUrl: packet.medicalCard,
     },

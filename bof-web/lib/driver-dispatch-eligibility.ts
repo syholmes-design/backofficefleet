@@ -1,4 +1,9 @@
 import type { BofData } from "@/lib/load-bof-data";
+import {
+  getDriverMedicalCardStatus,
+  medicalCardHardBlockReason,
+  medicalCardSoftWarningReason,
+} from "@/lib/driver-doc-registry";
 import { getOrderedDocumentsForDriver, type DocumentRow } from "@/lib/driver-queries";
 import {
   getSafetyScorecardRows,
@@ -98,7 +103,6 @@ export function getDriverDispatchEligibility(
   };
 
   const cdl = preferDriverDoc("CDL");
-  const medical = preferDriverDoc("Medical Card");
   const mvr = preferDriverDoc("MVR");
   const fmcsa = preferDriverDoc("FMCSA");
   const i9 = preferDriverDoc("I-9");
@@ -118,16 +122,13 @@ export function getDriverDispatchEligibility(
     else softWarnings.push(`CDL status: ${cdl?.status ?? "Unknown"}`);
   }
 
-  if (isHardDocMissingOrExpired(medical)) {
-    hardBlockers.push(
-      statusU(medical) === "EXPIRED"
-        ? "Medical Card expired"
-        : "Medical Card missing or not on file"
-    );
-  } else if (statusU(medical) !== "VALID") {
-    const s = statusU(medical);
-    if (s === "EXPIRING_SOON") softWarnings.push("Medical Card expiring soon");
-    else softWarnings.push(`Medical Card status: ${medical?.status ?? "Unknown"}`);
+  const medicalCanon = getDriverMedicalCardStatus(data, driverId);
+  const medicalHard = medicalCardHardBlockReason(medicalCanon);
+  if (medicalHard) {
+    hardBlockers.push(medicalHard);
+  } else {
+    const medicalSoft = medicalCardSoftWarningReason(medicalCanon);
+    if (medicalSoft) softWarnings.push(medicalSoft);
   }
 
   if (isHardDocMissingOrExpired(mvr)) {
@@ -235,7 +236,7 @@ export function getDriverDispatchEligibility(
     const firstDocHard = hardBlockers.find(
       (h) =>
         h.includes("CDL") ||
-        h.includes("Medical") ||
+        h.includes("Medical Card") ||
         h.includes("MVR") ||
         h.includes("FMCSA")
     );
@@ -253,10 +254,14 @@ export function getDriverDispatchEligibility(
     };
   }
 
-  const expiredCore = CORE_DISPATCH_TYPES.filter((t) => statusU(preferDriverDoc(t)) === "EXPIRED")
-    .length;
-  const missingCore = CORE_DISPATCH_TYPES.filter((t) => statusU(preferDriverDoc(t)) === "MISSING")
-    .length;
+  const expiredCore = CORE_DISPATCH_TYPES.filter((t) => {
+    if (t === "Medical Card") return medicalCanon.rowStatus === "EXPIRED";
+    return statusU(preferDriverDoc(t)) === "EXPIRED";
+  }).length;
+  const missingCore = CORE_DISPATCH_TYPES.filter((t) => {
+    if (t === "Medical Card") return medicalCanon.rowStatus === "MISSING";
+    return statusU(preferDriverDoc(t)) === "MISSING";
+  }).length;
 
   let complianceLabel = "Valid";
   if (missingCore > 0) complianceLabel = "Missing Required Doc";

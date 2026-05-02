@@ -1,5 +1,6 @@
 import type { BofData } from "@/lib/load-bof-data";
 import type { Driver, SafetyEvent } from "@/types/safety";
+import { getDriverMedicalCardStatus } from "@/lib/driver-doc-registry";
 
 type SafetyDriverOverride = Partial<
   Pick<
@@ -89,15 +90,16 @@ export function createSafetySeedDrivers(data: BofData): Driver[] {
     const override = SAFETY_DRIVER_OVERRIDES_BY_INDEX[idx] ?? {};
     const cdlDoc = docFor(data, base.id, "CDL");
     const medDoc = docFor(data, base.id, "Medical Card");
+    const medCanon = getDriverMedicalCardStatus(data, base.id);
     const mvrDoc = docFor(data, base.id, "MVR");
     const qualDoc = docFor(data, base.id, "Qualification File");
     const ackDoc = docFor(data, base.id, "Safety Acknowledgment");
 
-    const docCompliance = [cdlDoc?.status, medDoc?.status].some((s) =>
+    const docCompliance = [cdlDoc?.status, medCanon.rowStatus].some((s) =>
       String(s || "").toUpperCase().includes("EXPIRED")
     )
       ? "EXPIRED"
-      : [cdlDoc?.status, medDoc?.status].some((s) =>
+      : [cdlDoc?.status, medCanon.rowStatus].some((s) =>
             String(s || "").toUpperCase().includes("EXPIRING")
           )
         ? "EXPIRING_SOON"
@@ -111,7 +113,7 @@ export function createSafetySeedDrivers(data: BofData): Driver[] {
       compliance_status: override.compliance_status ?? docCompliance,
       cdl_expiration_date: override.cdl_expiration_date ?? cdlDoc?.expirationDate ?? null,
       med_card_expiration_date:
-        override.med_card_expiration_date ?? medDoc?.expirationDate ?? null,
+        override.med_card_expiration_date ?? medCanon.expirationDate ?? medDoc?.expirationDate ?? null,
       mvr_expiration_date: override.mvr_expiration_date ?? mvrDoc?.expirationDate ?? null,
       qual_file_status:
         override.qual_file_status ??

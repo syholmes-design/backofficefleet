@@ -50,7 +50,9 @@ export function DriverMedicalExpandedPanel({
   const issue =
     x.medicalIssueDate?.trim() || medicalDoc.issueDate?.trim() || "";
   const exp =
-    x.medicalExpirationDate?.trim() || medicalDoc.expirationDate || "";
+    medicalDoc.expirationDate?.trim() ||
+    x.medicalExpirationDate?.trim() ||
+    "";
 
   return (
     <section

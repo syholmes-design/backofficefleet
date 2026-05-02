@@ -1,5 +1,6 @@
 import type { BofData } from "@/lib/load-bof-data";
 import { buildCommandCenterItems, settlementTotals } from "@/lib/executive-layer";
+import { getDriverMedicalCardStatus } from "@/lib/driver-doc-registry";
 import { getOrderedDocumentsForDriver } from "@/lib/driver-queries";
 import { getDriverDispatchEligibility } from "@/lib/driver-dispatch-eligibility";
 import { getSafetyScorecardRows } from "@/lib/safety-scorecard";
@@ -173,29 +174,42 @@ export function getComplianceStatusChartData(data: BofData): BreakdownPoint[] {
   let pendingReview = 0;
   let expired = 0;
 
-  for (const doc of data.documents) {
-    const status = doc.status.toUpperCase();
+  const tallyCredential = (statusRaw: string, expirationDate?: string) => {
+    const status = statusRaw.toUpperCase();
     if (status === "MISSING") {
       missing += 1;
-      continue;
+      return;
     }
     if (status === "EXPIRED") {
       expired += 1;
-      continue;
+      return;
+    }
+    if (status === "EXPIRING_SOON") {
+      expiringSoon += 1;
+      return;
     }
     if (status === "PENDING REVIEW" || status === "AT RISK") {
       pendingReview += 1;
-      continue;
+      return;
     }
-
-    if (status === "VALID" && doc.expirationDate) {
-      const days = Math.ceil((new Date(doc.expirationDate).getTime() - Date.now()) / 86400000);
+    if (status === "VALID" && expirationDate) {
+      const days = Math.ceil((new Date(expirationDate).getTime() - Date.now()) / 86400000);
       if (Number.isFinite(days) && days >= 0 && days <= 45) {
         expiringSoon += 1;
-        continue;
+        return;
       }
     }
     valid += 1;
+  };
+
+  for (const doc of data.documents) {
+    if (doc.type === "Medical Card") continue;
+    tallyCredential(doc.status, doc.expirationDate);
+  }
+
+  for (const driver of data.drivers) {
+    const med = getDriverMedicalCardStatus(data, driver.id);
+    tallyCredential(med.rowStatus, med.expirationDate);
   }
 
   return [

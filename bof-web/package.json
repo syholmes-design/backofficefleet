@@ -25,6 +25,7 @@
     "validate:safety-evidence": "node scripts/validate-safety-evidence.mjs",
     "sync:driver-hr-docs": "node scripts/sync-driver-hr-docs.mjs",
     "validate:driver-docs": "node scripts/validate-driver-docs.mjs",
+    "validate:driver-medical-status": "node scripts/validate-driver-medical-status.mjs",
     "generate:driver-docs": "node scripts/generate-driver-docs.mjs",
     "deploy:full": "node scripts/generate-driver-docs.mjs && git add . && (git commit -m \"Auto deploy: regenerate docs + sync\" || node -e \"process.exit(0)\") && git push && vercel --prod --cwd ..",
     "demo:reset": "node scripts/reset-demo.mjs",
