@@ -547,7 +547,7 @@ export function LoadRequirementsWizard() {
                 client request queue
               </Link>{" "}
               or launch a row with{" "}
-              <code className="bof-code">/load-intake?clientRequestId=…</code> to prefill this wizard.
+              <code className="bof-code">/dispatch/intake?clientRequestId=…</code> to prefill this wizard.
             </>
           ) : intakeEntrySource === "upload_parser" ? (
             <>
@@ -1982,14 +1982,14 @@ export function LoadRequirementsWizard() {
               <div className="bof-load-intake-toolbar" style={{ marginTop: "0.75rem" }}>
                 {lastSavedLoadId ? (
                   <>
+                    <Link href="/dispatch" className="bof-load-intake-btn bof-load-intake-btn--primary">
+                      Open in dispatch board
+                    </Link>
                     <Link
                       href={`/loads/${lastSavedLoadId}`}
-                      className="bof-load-intake-btn bof-load-intake-btn--primary"
+                      className="bof-load-intake-btn"
                     >
-                      Open load
-                    </Link>
-                    <Link href="/dispatch" className="bof-load-intake-btn">
-                      Open dispatch
+                      Open load detail
                     </Link>
                     <Link
                       href={`/loads/${lastSavedLoadId}/readiness-summary`}
@@ -1997,14 +1997,20 @@ export function LoadRequirementsWizard() {
                     >
                       Open trip packet
                     </Link>
+                    <Link href="/dispatch/intake" className="bof-load-intake-btn">
+                      Start another load
+                    </Link>
                   </>
                 ) : (
                   <>
-                    <Link href="/loads" className="bof-load-intake-btn">
-                      Open loads
+                    <Link href="/dispatch" className="bof-load-intake-btn bof-load-intake-btn--primary">
+                      Open in dispatch board
                     </Link>
-                    <Link href="/dispatch" className="bof-load-intake-btn">
-                      Open dispatch
+                    <Link href="/loads" className="bof-load-intake-btn">
+                      Open loads list
+                    </Link>
+                    <Link href="/dispatch/intake" className="bof-load-intake-btn">
+                      Start another load
                     </Link>
                   </>
                 )}

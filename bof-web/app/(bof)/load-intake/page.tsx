@@ -1,26 +1,25 @@
-import { Suspense } from "react";
-import Link from "next/link";
-import { LoadRequirementsWizard } from "@/components/load-intake/LoadRequirementsWizard";
+import { redirect } from "next/navigation";
 
 export const metadata = {
-  title: "BOF Load Intake | BOF",
-  description:
-    "Canonical load intake: manual entry, document extraction when configured, client request import, validation, and save to BOF loads with dispatch sync.",
+  title: "Load Intake | BOF",
+  description: "Redirects to canonical dispatch load intake.",
 };
 
-export default function LoadIntakePage() {
-  return (
-    <div className="bof-page">
-      <nav className="bof-breadcrumb" aria-label="Breadcrumb">
-        <Link href="/dispatch" className="bof-link-secondary">
-          Dispatch
-        </Link>
-        <span aria-hidden> / </span>
-        <span>Load intake</span>
-      </nav>
-      <Suspense fallback={<p className="bof-muted bof-small">Loading intake…</p>}>
-        <LoadRequirementsWizard />
-      </Suspense>
-    </div>
-  );
+type Props = {
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
+};
+
+/**
+ * Compatibility route — canonical intake UI lives at `/dispatch/intake`.
+ */
+export default async function LoadIntakePage({ searchParams }: Props) {
+  const sp = await searchParams;
+  const q = new URLSearchParams();
+  for (const key of ["clientRequestId", "intakeId", "templateId"] as const) {
+    const raw = sp[key];
+    const v = Array.isArray(raw) ? raw[0] : raw;
+    if (typeof v === "string" && v.trim()) q.set(key, v.trim());
+  }
+  const suffix = q.toString();
+  redirect(suffix ? `/dispatch/intake?${suffix}` : "/dispatch/intake");
 }

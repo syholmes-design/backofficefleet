@@ -1,33 +1,49 @@
 "use client";
 
+import Link from "next/link";
+import { usePathname, useSearchParams } from "next/navigation";
 import {
   AlertTriangle,
   Banknote,
   ClipboardList,
+  FileInput,
   LayoutGrid,
   Link2,
   UserPlus,
 } from "lucide-react";
 import type { DispatchNavId } from "@/types/dispatch";
 
-const ITEMS: {
-  id: DispatchNavId;
+type NavItem = {
+  id: DispatchNavId | "intake";
   label: string;
   icon: typeof LayoutGrid;
-}[] = [
-  { id: "board", label: "Dispatch Board", icon: LayoutGrid },
-  { id: "load-detail", label: "Load Detail", icon: ClipboardList },
-  { id: "assign", label: "Assign Driver & Equipment", icon: UserPlus },
-  { id: "exceptions", label: "Exception View", icon: AlertTriangle },
-  { id: "settlement", label: "Settlement Readiness", icon: Banknote },
-];
-
-type Props = {
-  active: DispatchNavId;
-  onChange: (id: DispatchNavId) => void;
+  href: string;
 };
 
-export function DispatchNav({ active, onChange }: Props) {
+const ITEMS: NavItem[] = [
+  { id: "board", label: "Dispatch Board", icon: LayoutGrid, href: "/dispatch" },
+  { id: "intake", label: "Load Intake", icon: FileInput, href: "/dispatch/intake" },
+  { id: "load-detail", label: "Load Detail", icon: ClipboardList, href: "/dispatch?view=load-detail" },
+  { id: "assign", label: "Assign Driver & Equipment", icon: UserPlus, href: "/dispatch?view=assign" },
+  { id: "exceptions", label: "Exception View", icon: AlertTriangle, href: "/dispatch?view=exceptions" },
+  { id: "settlement", label: "Settlement Readiness", icon: Banknote, href: "/dispatch?view=settlement" },
+];
+
+function activeItemId(pathname: string, view: string | null): NavItem["id"] {
+  if (pathname.startsWith("/dispatch/intake")) return "intake";
+  if (pathname !== "/dispatch") return "board";
+  if (view === "load-detail" || view === "assign" || view === "exceptions" || view === "settlement") {
+    return view;
+  }
+  return "board";
+}
+
+export function DispatchNav() {
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const view = searchParams.get("view");
+  const active = activeItemId(pathname, view);
+
   return (
     <nav
       className="flex w-56 shrink-0 flex-col gap-0.5 border-r border-slate-800 bg-slate-950/80 p-3"
@@ -39,13 +55,12 @@ export function DispatchNav({ active, onChange }: Props) {
         </p>
         <p className="text-sm font-semibold text-teal-500">Operations</p>
       </div>
-      {ITEMS.map(({ id, label, icon: Icon }) => {
+      {ITEMS.map(({ id, label, icon: Icon, href }) => {
         const on = id === active;
         return (
-          <button
+          <Link
             key={id}
-            type="button"
-            onClick={() => onChange(id)}
+            href={href}
             className={[
               "flex items-center gap-2 rounded-md px-2.5 py-2 text-left text-sm transition-colors",
               on
@@ -55,7 +70,7 @@ export function DispatchNav({ active, onChange }: Props) {
           >
             <Icon className="h-4 w-4 shrink-0 opacity-90" aria-hidden />
             <span className="leading-snug">{label}</span>
-          </button>
+          </Link>
         );
       })}
       <div className="mt-auto border-t border-slate-800 pt-3 text-[10px] text-slate-600">

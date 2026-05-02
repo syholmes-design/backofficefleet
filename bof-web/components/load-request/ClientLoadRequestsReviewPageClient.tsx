@@ -102,7 +102,7 @@ export function ClientLoadRequestsReviewPageClient() {
                     <button type="button" className="bof-cc-action-btn" onClick={() => updateRequest(request.requestId, { status: "approved" })}>Approve</button>
                     <button type="button" className="bof-cc-action-btn bof-cc-action-btn-danger" onClick={() => updateRequest(request.requestId, { status: "rejected" })}>Reject</button>
                     <Link
-                      href={`/load-intake?clientRequestId=${encodeURIComponent(request.requestId)}`}
+                      href={`/dispatch/intake?clientRequestId=${encodeURIComponent(request.requestId)}`}
                       className="bof-cc-action-btn bof-cc-action-btn-primary"
                     >
                       Open in Load Intake
@@ -141,7 +141,7 @@ export function ClientLoadRequestsReviewPageClient() {
               Reject
             </button>
             <Link
-              href={`/load-intake?clientRequestId=${encodeURIComponent(editing.requestId)}`}
+              href={`/dispatch/intake?clientRequestId=${encodeURIComponent(editing.requestId)}`}
               className="bof-load-intake-btn bof-load-intake-btn--primary"
             >
               Open in Load Intake

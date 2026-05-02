@@ -78,7 +78,7 @@ export function BofTemplatePacksWorkspaceClient({
         </p>
         <p className="bof-muted bof-small" style={{ marginTop: 10 }}>
           Quick links:{" "}
-          <Link href="/load-intake" className="bof-link-secondary">
+          <Link href="/dispatch/intake" className="bof-link-secondary">
             Canonical load intake
           </Link>
           {" · "}

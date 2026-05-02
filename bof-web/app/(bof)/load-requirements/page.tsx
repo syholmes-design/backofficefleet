@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 
-/** @deprecated Use `/load-intake` — single canonical BOF load intake pipeline. */
-export default function LoadRequirementsIntakeRedirectPage() {
-  redirect("/load-intake");
+/** @deprecated Use `/dispatch/intake` — canonical BOF load intake under Dispatch. */
+export default function LoadRequirementsPage() {
+  redirect("/dispatch/intake");
 }

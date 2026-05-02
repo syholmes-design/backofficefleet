@@ -15,6 +15,7 @@ import type { AutoCheckResult, IntakeWizardState } from "@/lib/load-requirements
 import type { LoadIntakeRecord } from "@/lib/load-requirements-intake-types";
 import type {
   IntakeFieldKey,
+  LoadIntakeDocumentType,
   LoadIntakeTemplateRegistryItem,
   TemplateRegistryStatus,
 } from "@/lib/load-intake/types";
@@ -126,6 +127,37 @@ export function LoadIntakeStep4PacketReview({
       }),
     [registryLoadId, selectedDriverId]
   );
+
+  const documentSections = useMemo(() => {
+    type Bucket = "core" | "reference" | "proof" | "exceptions";
+    function bucketFor(dt: LoadIntakeDocumentType): Bucket {
+      if (dt === "trip_schedule" || dt === "master_agreement") return "reference";
+      if (dt === "claim_packet") return "exceptions";
+      if (
+        dt === "seal_cargo_photo_sheet" ||
+        dt === "pod" ||
+        dt === "lumper_receipt" ||
+        dt === "rfid_proof"
+      ) {
+        return "proof";
+      }
+      return "core";
+    }
+    const filtered = templateRows.filter((row) => {
+      if (row.documentType !== "claim_packet") return true;
+      return Boolean(state.loadRequirement.claim_damage_flag);
+    });
+    const order: Array<{ key: Bucket; title: string }> = [
+      { key: "core", title: "Core trip documents" },
+      { key: "reference", title: "Reference documents" },
+      { key: "proof", title: "Proof & media" },
+      { key: "exceptions", title: "Exceptions / claims" },
+    ];
+    return order.map((sec) => ({
+      ...sec,
+      rows: filtered.filter((r) => bucketFor(r.documentType) === sec.key),
+    }));
+  }, [templateRows, state.loadRequirement.claim_damage_flag]);
 
   function fieldValue(field: IntakeFieldKey): string | number | boolean | undefined {
     const shipper = state.shipper;
@@ -956,7 +988,9 @@ export function LoadIntakeStep4PacketReview({
         <h2 id="intake-s4-docs">Document readiness checklist</h2>
         <p className="bof-muted">
           This checklist uses the BOF template registry plus existing generated/evidence outputs.
-          Open links appear only when a real URL exists.
+          Open links appear only when a real URL exists. Runtime-created loads may show{" "}
+          <strong>Pending generation / needs review</strong> until manifests and generators populate
+          paths.
         </p>
         {!registryLoadId && (
           <div className="bof-load-intake-alert bof-load-intake-alert--warn">
@@ -975,60 +1009,72 @@ export function LoadIntakeStep4PacketReview({
                 <th className="border-b border-slate-800 px-2 py-2 font-medium">Template</th>
               </tr>
             </thead>
-            <tbody className="text-slate-200">
-              {templateRows
-                .filter((row) => {
-                  if (row.documentType !== "claim_packet") return true;
-                  return Boolean(state.loadRequirement.claim_damage_flag);
-                })
-                .map((row) => {
-                  const status = displayStatusForRow(row);
-                  const missingRequired = missingRequiredFieldsForRow(row);
-                  const openHref =
-                    status === "available" && row.outputPath && row.outputPath.startsWith("/")
-                      ? row.outputPath
-                      : undefined;
-                  return (
-                    <tr key={row.documentType} className="border-b border-slate-800/80">
-                      <td className="px-2 py-1.5">
-                        <strong>{row.displayName}</strong>
-                        <div className="bof-muted bof-small">
-                          {row.vaultCategory.replace(/_/g, " ")}
-                        </div>
-                      </td>
-                      <td className="px-2 py-1.5">
-                        <span className={statusPillClass(status)}>
-                          {status}
-                        </span>
-                      </td>
-                      <td className="px-2 py-1.5">
-                        {missingRequired.length > 0 ? (
-                          <span className="text-amber-300">{missingRequired.join(", ")}</span>
-                        ) : (
-                          <span className="text-slate-400">None</span>
-                        )}
-                      </td>
-                      <td className="px-2 py-1.5">
-                        {openHref ? (
-                          <a
-                            href={openHref}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="bof-link-secondary"
-                          >
-                            Open / View
-                          </a>
-                        ) : (
-                          <span className="text-slate-500">Missing / Needs review</span>
-                        )}
-                      </td>
-                      <td className="px-2 py-1.5 font-mono text-[10px] text-slate-500">
-                        {row.templatePath || "Template missing"}
-                      </td>
-                    </tr>
-                  );
-                })}
-            </tbody>
+            {documentSections.map((sec) =>
+              sec.rows.length === 0 ? null : (
+                <tbody key={sec.key} className="text-slate-200">
+                  <tr className="bg-slate-900/60">
+                    <td
+                      colSpan={5}
+                      className="border-b border-slate-800 px-2 py-2 text-[11px] font-semibold uppercase tracking-wide text-teal-400"
+                    >
+                      {sec.title}
+                    </td>
+                  </tr>
+                  {sec.rows.map((row) => {
+                    const status = displayStatusForRow(row);
+                    const missingRequired = missingRequiredFieldsForRow(row);
+                    const openHref =
+                      status === "available" && row.outputPath && row.outputPath.startsWith("/")
+                        ? row.outputPath
+                        : undefined;
+                    const statusLabel =
+                      status === "available"
+                        ? "Ready"
+                        : !registryLoadId
+                          ? "Pending load ID / save"
+                          : status === "missing" || status === "broken"
+                            ? "Missing / needs review"
+                            : "Pending generation / needs review";
+                    return (
+                      <tr key={row.documentType} className="border-b border-slate-800/80">
+                        <td className="px-2 py-1.5">
+                          <strong>{row.displayName}</strong>
+                        </td>
+                        <td className="px-2 py-1.5">
+                          <span className={statusPillClass(status)} title={status}>
+                            {statusLabel}
+                          </span>
+                        </td>
+                        <td className="px-2 py-1.5">
+                          {missingRequired.length > 0 ? (
+                            <span className="text-amber-300">{missingRequired.join(", ")}</span>
+                          ) : (
+                            <span className="text-slate-400">None</span>
+                          )}
+                        </td>
+                        <td className="px-2 py-1.5">
+                          {openHref ? (
+                            <a
+                              href={openHref}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="bof-link-secondary"
+                            >
+                              Open / View
+                            </a>
+                          ) : (
+                            <span className="text-slate-500">Missing / Needs review</span>
+                          )}
+                        </td>
+                        <td className="px-2 py-1.5 font-mono text-[10px] text-slate-500">
+                          {row.templatePath || "Template missing"}
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              )
+            )}
           </table>
         </div>
       </section>

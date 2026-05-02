@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import { DispatchNav } from "./DispatchNav";
 import { DispatchBoardScreen } from "./DispatchBoardScreen";
 import { LoadDetailDrawer } from "./LoadDetailDrawer";
@@ -14,6 +15,7 @@ import { buildDispatchLoadsFromBofData } from "@/lib/dispatch-dashboard-seed";
 
 export function DispatchShell() {
   const { data } = useBofDemoData();
+  const searchParams = useSearchParams();
   const nav = useDispatchDashboardStore((s) => s.nav);
   const setNav = useDispatchDashboardStore((s) => s.setNav);
   const selectedLoadId = useDispatchDashboardStore((s) => s.selectedLoadId);
@@ -41,9 +43,18 @@ export function DispatchShell() {
     }
   }, [data, upsertLoad]);
 
+  useEffect(() => {
+    const view = searchParams.get("view");
+    if (view === "load-detail" || view === "assign" || view === "exceptions" || view === "settlement") {
+      setNav(view);
+    } else {
+      setNav("board");
+    }
+  }, [searchParams, setNav]);
+
   return (
     <div className="flex min-h-[calc(100vh-3.5rem)] bg-slate-950 text-slate-100">
-      <DispatchNav active={nav} onChange={setNav} />
+      <DispatchNav />
       <div className="flex min-h-0 min-w-0 flex-1 flex-col">
         {nav === "board" && <DispatchBoardScreen />}
         {nav === "load-detail" && (

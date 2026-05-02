@@ -129,7 +129,7 @@ export function IntakeEngineDetailClient() {
           </p>
           <div style={{ marginTop: 12 }}>
             <Link
-              href={`/load-intake?intakeId=${encodeURIComponent(intake.intake_id)}`}
+              href={`/dispatch/intake?intakeId=${encodeURIComponent(intake.intake_id)}`}
               className="bof-intake-engine-btn bof-intake-engine-btn--primary"
             >
               Open BOF Load Intake (prefilled)
@@ -141,7 +141,7 @@ export function IntakeEngineDetailClient() {
           <p className="bof-muted bof-small" style={{ margin: 0 }}>
             This intake kind is not mapped into the load trip wizard. Use driver or claims workflows as
             applicable, or open{" "}
-            <Link href="/load-intake" className="bof-link-secondary">
+            <Link href="/dispatch/intake" className="bof-link-secondary">
               Load Intake
             </Link>{" "}
             for a new manual load.

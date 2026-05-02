@@ -115,7 +115,7 @@ export function IntakeEngineInboxClient() {
       >
         <p className="bof-small" style={{ margin: 0, color: "#ccfbf1" }}>
           <strong>Dispatch-ready loads</strong> use the canonical pipeline:{" "}
-          <Link href="/load-intake" className="bof-link-secondary">
+          <Link href="/dispatch/intake" className="bof-link-secondary">
             BOF Load Intake
           </Link>
           . This inbox remains for packet classification and gap review; it does not replace the unified
