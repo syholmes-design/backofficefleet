@@ -1,6 +1,8 @@
 "use client";
 
-import { useCallback, useMemo, useState } from "react";
+import Link from "next/link";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import {
   countWarnings,
   hasBlockingChecks,
@@ -12,8 +14,11 @@ import { LoadIntakeStep4PacketReview } from "@/components/load-intake/LoadIntake
 import { LoadIntakeAddressCombo } from "@/components/load-intake/LoadIntakeAddressCombo";
 import { useBofDemoData } from "@/lib/bof-demo-data-context";
 import { useDispatchDashboardStore } from "@/lib/stores/dispatch-dashboard-store";
-import { buildDispatchLoadsFromBofData } from "@/lib/dispatch-dashboard-seed";
-import { normalizeLoadIntakeForm } from "@/lib/load-intake-normalize";
+import type { LoadIntakeSourceType } from "@/lib/load-requirements-intake-types";
+import { buildWizardIntakeRecord } from "@/lib/load-intake/build-wizard-intake-record";
+import { commitIntakeWizardToBof } from "@/lib/load-intake/commit-intake-to-bof";
+import { buildIntakeWizardStateFromClientRequest } from "@/lib/load-intake/prefill-client-request-intake";
+import { getClientLoadRequests } from "@/lib/client-load-requests";
 import { BofIntakeFormPrimaryPanel } from "@/components/documents/BofIntakeFormPrimaryPanel";
 import { BofWorkflowFormShortcuts } from "@/components/documents/BofWorkflowFormShortcuts";
 import { BofTemplateUsageSurface } from "@/components/documents/BofTemplateUsageSurface";
@@ -201,67 +206,6 @@ function ConfidenceBadge({
   return <span className={`bof-intake-confidence bof-intake-confidence-${tone}`}>{pct}%</span>;
 }
 
-function splitDateTime(value?: string): { date?: string; time?: string } {
-  const v = String(value || "").trim();
-  if (!v) return {};
-  if (v.includes("T")) {
-    const [date, time] = v.split("T");
-    return { date, time: (time || "").slice(0, 5) };
-  }
-  return { date: v.slice(0, 10) };
-}
-
-function buildRecordFromState(
-  state: IntakeWizardState,
-  sourceType: "manual" | "upload",
-  extraction?: ExtractionResponse | null
-): Partial<LoadIntakeRecord> {
-  const pickup = splitDateTime(state.loadRequirement.pickup_at || state.compliance.appointment_window_start);
-  const delivery = splitDateTime(state.loadRequirement.delivery_at || state.compliance.appointment_window_end);
-  return {
-    sourceType,
-    extractionProvider: extraction?.providerName,
-    extractionConfidence: extraction?.confidence,
-    extractionWarnings: extraction?.warnings,
-    humanReviewRequired: sourceType === "upload",
-    customerName: state.shipper.shipper_name,
-    shipperName: state.shipper.shipper_name,
-    pickupFacilityName: state.facility.facility_name,
-    pickupAddress1: state.facility.address,
-    pickupCity: state.facility.city,
-    pickupState: state.facility.state,
-    pickupZip: state.facility.zip,
-    pickupAppointmentDate: pickup.date,
-    pickupAppointmentTime: pickup.time,
-    deliveryFacilityName: state.loadRequirement.destination_facility_name,
-    deliveryAddress1: state.loadRequirement.destination_address,
-    deliveryCity: state.loadRequirement.destination_city,
-    deliveryState: state.loadRequirement.destination_state,
-    deliveryZip: state.loadRequirement.destination_zip,
-    deliveryAppointmentDate: delivery.date,
-    deliveryAppointmentTime: delivery.time,
-    commodity: state.loadRequirement.commodity,
-    weight: state.loadRequirement.weight,
-    equipmentType: state.loadRequirement.equipment_type,
-    rate: state.loadRequirement.rate_linehaul,
-    bolNumber: state.loadRequirement.bol_number,
-    sealRequired: state.compliance.seal_required,
-    sealNumber: state.loadRequirement.seal_number,
-    lumperInstructions: state.compliance.lumper_expected ? "Lumper expected" : "",
-    detentionTerms: state.compliance.accessorial_rules,
-    insuranceRequired: state.compliance.certificateRequired,
-    cargoInsuranceMinimum: state.compliance.cargoCoverageLevel,
-    specialInstructions: state.loadRequirement.special_handling,
-    assignedDriverId: state.loadRequirement.assigned_driver_id,
-    assignedTruckId: state.loadRequirement.truck_id,
-    assignedTrailerId: state.loadRequirement.trailer_id,
-    loadId: state.loadRequirement.load_id_input,
-    invoiceNumber: state.loadRequirement.invoice_number,
-    poNumber: undefined,
-    rateConfirmationNumber: undefined,
-  };
-}
-
 function applyExtractedFieldsToState(state: IntakeWizardState, fields: Partial<LoadIntakeRecord>): IntakeWizardState {
   const next = structuredClone(state);
   if (fields.customerName) next.shipper.shipper_name = String(fields.customerName);
@@ -304,22 +248,53 @@ function applyExtractedFieldsToState(state: IntakeWizardState, fields: Partial<L
 const STEPS = [
   { n: 1, title: "Shipper & facility", short: "Shipper" },
   { n: 2, title: "Load requirements", short: "Load" },
-  { n: 3, title: "Compliance & docs", short: "Compliance" },
-  { n: 4, title: "Auto-checks & packet", short: "Review" },
+  { n: 3, title: "Compliance, proof & financial", short: "Compliance" },
+  { n: 4, title: "Review & packet", short: "Review" },
+  { n: 5, title: "Save to dispatch", short: "Save" },
 ] as const;
 
+export type IntakeEntrySource = "manual_entry" | "upload_parser" | "client_request";
+
+function toPipelineSourceType(entry: IntakeEntrySource): LoadIntakeSourceType {
+  if (entry === "upload_parser") return "upload";
+  if (entry === "client_request") return "client_manual";
+  return "manual";
+}
+
 export function LoadRequirementsWizard() {
+  const searchParams = useSearchParams();
   const { data, setFullData } = useBofDemoData();
   const upsertDispatchLoad = useDispatchDashboardStore((s) => s.upsertLoad);
   const [step, setStep] = useState(1);
   const [state, setState] = useState<IntakeWizardState>(() => createInitialState());
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [submitSuccess, setSubmitSuccess] = useState<string | null>(null);
-  const [intakeMode, setIntakeMode] = useState<"manual" | "upload">("manual");
+  const [lastSavedLoadId, setLastSavedLoadId] = useState<string | null>(null);
+  const [intakeEntrySource, setIntakeEntrySource] = useState<IntakeEntrySource>("manual_entry");
+  const clientPrefillAppliedRef = useRef<string | null>(null);
   const [uploadFile, setUploadFile] = useState<File | null>(null);
   const [extracting, setExtracting] = useState(false);
   const [extractionError, setExtractionError] = useState<string | null>(null);
   const [extractionResult, setExtractionResult] = useState<ExtractionResponse | null>(null);
+  const pipelineSourceType = useMemo(
+    () => toPipelineSourceType(intakeEntrySource),
+    [intakeEntrySource]
+  );
+
+  useEffect(() => {
+    const id = searchParams.get("clientRequestId");
+    if (!id || clientPrefillAppliedRef.current === id) return;
+    const row = getClientLoadRequests(data).find((r) => r.requestId === id);
+    if (!row) return;
+    clientPrefillAppliedRef.current = id;
+    setIntakeEntrySource("client_request");
+    setState(buildIntakeWizardStateFromClientRequest(row));
+    setStep(1);
+    setSubmitError(null);
+    setSubmitSuccess(null);
+    setExtractionResult(null);
+  }, [data, searchParams]);
+
   const formEntityId = toBofIntakeEntityId(state.loadRequirement.load_requirement_id);
   const intakeSurfaceContext = useMemo(
     () => buildBofIntakeSurfaceContextFromWizard(formEntityId, state),
@@ -415,10 +390,10 @@ export function LoadRequirementsWizard() {
   const normalizedReview = useMemo(
     () =>
       normalizeLoadIntake({
-        sourceType: intakeMode,
-        fields: buildRecordFromState(state, intakeMode, extractionResult),
+        sourceType: pipelineSourceType,
+        fields: buildWizardIntakeRecord(state, pipelineSourceType, extractionResult),
       }),
-    [extractionResult, intakeMode, state]
+    [extractionResult, pipelineSourceType, state]
   );
   const fieldConfidence = extractionResult?.fieldConfidence ?? {};
 
@@ -513,33 +488,22 @@ export function LoadRequirementsWizard() {
       return;
     }
     try {
-      const normalized = normalizeLoadIntakeForm(state, data, {
-        ...normalizedReview.normalized,
-        sourceType: intakeMode,
-        sourceDocumentUrl: uploadFile?.name,
+      const committed = commitIntakeWizardToBof(data, state, {
+        normalizedRecord: normalizedReview.normalized,
+        sourceType: pipelineSourceType,
+        uploadFileName: uploadFile?.name ?? null,
         extractionProvider: extractionResult?.providerName,
         extractionConfidence: extractionResult?.confidence,
         extractionWarnings: extractionResult?.warnings,
-        reviewedAt: new Date().toISOString(),
-        reviewedBy: "dispatcher",
+        reviewedBy: intakeEntrySource === "client_request" ? "client_request_import" : "dispatcher",
       });
-      const next = structuredClone(data);
-      const existingIdx = next.loads.findIndex((l) => l.id === normalized.bofLoad.id);
-      if (existingIdx >= 0) next.loads[existingIdx] = normalized.bofLoad;
-      else next.loads.push(normalized.bofLoad);
-      next.loadProofBundles = {
-        ...(next.loadProofBundles || {}),
-        [normalized.canonical.loadId]: normalized.loadProofBundle,
-      };
-      setFullData(next);
-      const mappedDispatch = buildDispatchLoadsFromBofData(next).find(
-        (l) => l.load_id === normalized.canonical.loadId
-      );
-      if (mappedDispatch) {
-        upsertDispatchLoad(mappedDispatch);
+      setFullData(committed.nextData);
+      if (committed.dispatchLoad) {
+        upsertDispatchLoad(committed.dispatchLoad);
       }
+      setLastSavedLoadId(committed.loadId);
       setSubmitSuccess(
-        `Saved ${normalized.canonical.loadId}. Pending generation — run npm run generate:load-docs && npm run generate:load-evidence.`
+        `Saved ${committed.loadId}. Pending generation — run npm run generate:load-docs && npm run generate:load-evidence.`
       );
     } catch (err) {
       const msg = err instanceof Error ? err.message : "Failed to save intake load.";
@@ -550,7 +514,8 @@ export function LoadRequirementsWizard() {
     extractionResult?.confidence,
     extractionResult?.providerName,
     extractionResult?.warnings,
-    intakeMode,
+    intakeEntrySource,
+    pipelineSourceType,
     normalizedReview.missingRequiredFields,
     normalizedReview.normalized,
     normalizedReview.status,
@@ -591,26 +556,64 @@ export function LoadRequirementsWizard() {
   return (
     <div className="bof-load-intake">
       <div className="bof-load-intake-hero">
-        <h1>Shipper requirements intake</h1>
+        <h1>BOF Load Intake Command</h1>
         <p>
-          Pre-dispatch operational capture: shipper rules, load profile, compliance, and BOF
-          auto-validation. Output feeds the dispatch load packet — not a carrier signup flow.
+          One canonical pipeline: capture requirements, normalize, review, save to BOF loads, sync
+          dispatch, and initialize proof bundles. Manual entry, PDF extraction (when configured), and
+          client requests all converge here before save.
         </p>
       </div>
 
-      <BofIntakeFormPrimaryPanel entityId={formEntityId} />
-      <BofWorkflowFormShortcuts
-        context="intake"
-        entityId={formEntityId}
-        title="Open BOF load forms while you work this intake"
-      />
-      <BofTemplateUsageSurface
-        context="load_intake"
-        entityId={formEntityId}
-        intakeContextPayload={intakeSurfaceContext}
-        title="Intake docs mapped to BOF workflow"
-        subtitle="Editable intake-first forms with live customer/facility/route/contract context before load creation."
-      />
+      <section className="bof-load-intake-card" aria-label="Intake source">
+        <h2 className="bof-muted" style={{ fontSize: "0.75rem", textTransform: "uppercase", letterSpacing: "0.08em" }}>
+          Intake source
+        </h2>
+        <div className="bof-load-intake-toolbar" style={{ marginTop: "0.75rem" }}>
+          <button
+            type="button"
+            className={`bof-load-intake-btn ${intakeEntrySource === "manual_entry" ? "bof-load-intake-btn--primary" : ""}`}
+            onClick={() => {
+              setIntakeEntrySource("manual_entry");
+              setExtractionResult(null);
+            }}
+          >
+            Manual entry
+          </button>
+          <button
+            type="button"
+            className={`bof-load-intake-btn ${intakeEntrySource === "upload_parser" ? "bof-load-intake-btn--primary" : ""}`}
+            onClick={() => setIntakeEntrySource("upload_parser")}
+          >
+            Upload / parser
+          </button>
+          <button
+            type="button"
+            className={`bof-load-intake-btn ${intakeEntrySource === "client_request" ? "bof-load-intake-btn--primary" : ""}`}
+            onClick={() => setIntakeEntrySource("client_request")}
+          >
+            Client request
+          </button>
+        </div>
+        <p className="bof-muted bof-small" style={{ marginTop: "0.75rem" }}>
+          {intakeEntrySource === "client_request" ? (
+            <>
+              Open the{" "}
+              <Link href="/load-requests" className="bof-link-secondary">
+                client request queue
+              </Link>{" "}
+              or launch a row with{" "}
+              <code className="bof-code">/load-intake?clientRequestId=…</code> to prefill this wizard.
+            </>
+          ) : intakeEntrySource === "upload_parser" ? (
+            <>
+              PDF extraction uses the local provider when available. If extraction is unavailable, use
+              manual fields — the demo does not fabricate parser output.
+            </>
+          ) : (
+            <>Typed intake uses the same normalization and save path as upload and client flows.</>
+          )}
+        </p>
+      </section>
 
       <div className="bof-load-intake-progress" role="navigation" aria-label="Wizard progress">
         {STEPS.map((s) => (
@@ -1017,23 +1020,7 @@ export function LoadRequirementsWizard() {
         <section className="bof-load-intake-card" aria-labelledby="intake-s2">
           <h2 id="intake-s2">Step 2 — Load requirements</h2>
           <p className="bof-muted">Commodity, counts, equipment, handling, and temperature policy.</p>
-          <div className="bof-load-intake-toolbar" style={{ marginBottom: "0.8rem" }}>
-            <button
-              type="button"
-              className={`bof-load-intake-btn ${intakeMode === "manual" ? "bof-load-intake-btn--primary" : ""}`}
-              onClick={() => setIntakeMode("manual")}
-            >
-              Manual Entry
-            </button>
-            <button
-              type="button"
-              className={`bof-load-intake-btn ${intakeMode === "upload" ? "bof-load-intake-btn--primary" : ""}`}
-              onClick={() => setIntakeMode("upload")}
-            >
-              Upload Document
-            </button>
-          </div>
-          {intakeMode === "upload" && (
+          {intakeEntrySource === "upload_parser" && (
             <div className="bof-load-intake-subsection" style={{ marginBottom: "1rem" }}>
               <h3>Upload Rate Con / PO / Tender</h3>
               <div className="bof-load-intake-grid-2">
@@ -1439,9 +1426,9 @@ export function LoadRequirementsWizard() {
 
       {step === 3 && (
         <section className="bof-load-intake-card" aria-labelledby="intake-s3">
-          <h2 id="intake-s3">Step 3 — Compliance &amp; documentation</h2>
+          <h2 id="intake-s3">Step 3 — Compliance, proof &amp; financial</h2>
           <p className="bof-muted">
-            Security, proof standards, timing, BOL/POD, and accessorial economics.
+            Security, proof standards, timing, BOL/POD, insurance, and accessorial economics.
           </p>
 
           <div className="bof-load-intake-subsection">
@@ -1958,7 +1945,7 @@ export function LoadRequirementsWizard() {
               Back
             </button>
             <button type="button" className="bof-load-intake-btn bof-load-intake-btn--primary" onClick={() => goStep(4)}>
-              Run auto-checks &amp; summary
+              Continue to review &amp; packet
             </button>
           </div>
         </section>
@@ -1966,6 +1953,19 @@ export function LoadRequirementsWizard() {
 
       {step === 4 && (
         <>
+          <BofIntakeFormPrimaryPanel entityId={formEntityId} />
+          <BofWorkflowFormShortcuts
+            context="intake"
+            entityId={formEntityId}
+            title="Open BOF load forms while you review this intake"
+          />
+          <BofTemplateUsageSurface
+            context="load_intake"
+            entityId={formEntityId}
+            intakeContextPayload={intakeSurfaceContext}
+            title="Template &amp; document packet readiness"
+            subtitle="Mapped to the BOF load template library — compact view for Step 4 only."
+          />
           <LoadIntakeStep4PacketReview
             state={state}
             setState={setState}
@@ -1977,7 +1977,8 @@ export function LoadRequirementsWizard() {
             submitError={submitError}
             submitSuccess={submitSuccess}
             normalizedReview={normalizedReview}
-            intakeMode={intakeMode}
+            intakeReviewLabel={pipelineSourceType}
+            showEmbeddedSave={false}
           />
           <section className="bof-load-intake-card" aria-label="Runtime export">
             <h2>Session export</h2>
@@ -2000,6 +2001,80 @@ export function LoadRequirementsWizard() {
             </div>
           </section>
         </>
+      )}
+
+      {step === 5 && (
+        <section className="bof-load-intake-card" aria-labelledby="intake-s5">
+          <h2 id="intake-s5">Step 5 — Save to dispatch</h2>
+          <p className="bof-muted">
+            Commit writes the load into BOF demo data, attaches the proof bundle shell, and upserts the
+            dispatch board row. Run document generation scripts afterward for full HTML artifacts.
+          </p>
+          <dl className="bof-muted" style={{ fontSize: "0.85rem", lineHeight: 1.6 }}>
+            <dt style={{ fontWeight: 600, color: "#e2e8f0" }}>Customer</dt>
+            <dd>{state.shipper.shipper_name || "—"}</dd>
+            <dt style={{ fontWeight: 600, color: "#e2e8f0" }}>Lane</dt>
+            <dd>
+              {state.facility.city}, {state.facility.state} → {state.loadRequirement.destination_city},{" "}
+              {state.loadRequirement.destination_state}
+            </dd>
+            <dt style={{ fontWeight: 600, color: "#e2e8f0" }}>Pipeline</dt>
+            <dd>{pipelineSourceType}</dd>
+          </dl>
+          {validationErrors.length > 0 ? (
+            <div className="bof-load-intake-alert bof-load-intake-alert--warn" role="alert">
+              <strong>Validation</strong> — {validationErrors.join(" ")}
+            </div>
+          ) : null}
+          {submitError ? (
+            <div className="bof-load-intake-alert bof-load-intake-alert--block" role="alert">
+              <strong>Save failed</strong> — {submitError}
+            </div>
+          ) : null}
+          {submitSuccess ? (
+            <div className="bof-load-intake-alert bof-load-intake-alert--ok" role="status">
+              <strong>Saved</strong> — {submitSuccess}
+              <div className="bof-load-intake-toolbar" style={{ marginTop: "0.75rem" }}>
+                {lastSavedLoadId ? (
+                  <>
+                    <Link
+                      href={`/loads/${lastSavedLoadId}`}
+                      className="bof-load-intake-btn bof-load-intake-btn--primary"
+                    >
+                      Open load
+                    </Link>
+                    <Link href="/dispatch" className="bof-load-intake-btn">
+                      Open dispatch
+                    </Link>
+                    <Link
+                      href={`/loads/${lastSavedLoadId}/readiness-summary`}
+                      className="bof-load-intake-btn"
+                    >
+                      Open trip packet
+                    </Link>
+                  </>
+                ) : (
+                  <>
+                    <Link href="/loads" className="bof-load-intake-btn">
+                      Open loads
+                    </Link>
+                    <Link href="/dispatch" className="bof-load-intake-btn">
+                      Open dispatch
+                    </Link>
+                  </>
+                )}
+              </div>
+            </div>
+          ) : null}
+          <div className="bof-load-intake-toolbar">
+            <button type="button" className="bof-load-intake-btn" onClick={() => goStep(4)}>
+              Back to review
+            </button>
+            <button type="button" className="bof-load-intake-btn bof-load-intake-btn--primary" onClick={saveIntakeLoad}>
+              Save load to BOF &amp; sync dispatch
+            </button>
+          </div>
+        </section>
       )}
     </div>
   );

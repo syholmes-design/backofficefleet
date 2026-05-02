@@ -109,6 +109,20 @@ export function IntakeEngineInboxClient() {
         </div>
       </header>
 
+      <section
+        className="bof-card"
+        style={{ marginBottom: 16, borderColor: "rgba(45, 212, 191, 0.35)", background: "rgba(15, 118, 110, 0.12)" }}
+      >
+        <p className="bof-small" style={{ margin: 0, color: "#ccfbf1" }}>
+          <strong>Dispatch-ready loads</strong> use the canonical pipeline:{" "}
+          <Link href="/load-intake" className="bof-link-secondary">
+            BOF Load Intake
+          </Link>
+          . This inbox remains for packet classification and gap review; it does not replace the unified
+          load save path.
+        </p>
+      </section>
+
       <BofIntakeFormPrimaryPanel entityId={intakeEntityId} />
       <DynamicIntakeDispatchPanel
         activeIntake={activeIntake}

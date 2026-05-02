@@ -14,7 +14,7 @@ export function RuntimeLoadDetailFallback({ loadId }: { loadId: string }) {
         <h1 className="bof-title">Load not found</h1>
         <p className="bof-muted">This load is not present in seeded data or the current demo session.</p>
         <p>
-          <Link href="/load-requirements" className="bof-link-secondary">
+          <Link href="/load-intake" className="bof-link-secondary">
             Open Load Intake
           </Link>
         </p>

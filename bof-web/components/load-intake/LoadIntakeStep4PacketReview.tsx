@@ -68,7 +68,10 @@ type Props = {
   validationErrors: string[];
   submitError: string | null;
   submitSuccess: string | null;
-  intakeMode: "manual" | "upload";
+  /** Pipeline source label for review header (e.g. manual / upload / client_manual). */
+  intakeReviewLabel: string;
+  /** When false, save + post-save alerts are handled on Step 5 of the parent wizard. */
+  showEmbeddedSave?: boolean;
   normalizedReview: {
     normalized: LoadIntakeRecord;
     warnings: string[];
@@ -87,7 +90,8 @@ export function LoadIntakeStep4PacketReview({
   validationErrors,
   submitError,
   submitSuccess,
-  intakeMode,
+  intakeReviewLabel,
+  showEmbeddedSave = true,
   normalizedReview,
 }: Props) {
   const { data } = useBofDemoData();
@@ -336,7 +340,7 @@ export function LoadIntakeStep4PacketReview({
       </section>
 
       <section className="bof-load-intake-card" aria-label="Unified intake review">
-        <h2>Unified intake review ({intakeMode})</h2>
+        <h2>Unified intake review ({intakeReviewLabel})</h2>
         <p className="bof-muted">
           Manual and upload flows both pass through the same canonical intake normalizer before save.
         </p>
@@ -888,26 +892,37 @@ export function LoadIntakeStep4PacketReview({
           >
             Generate load packet
           </button>
-          <button
-            type="button"
-            className="bof-load-intake-btn bof-load-intake-btn--primary"
-            onClick={onSaveLoad}
-          >
-            Save load to BOF
-          </button>
+          {showEmbeddedSave ? (
+            <button
+              type="button"
+              className="bof-load-intake-btn bof-load-intake-btn--primary"
+              onClick={onSaveLoad}
+            >
+              Save load to BOF
+            </button>
+          ) : (
+            <button
+              type="button"
+              className="bof-load-intake-btn bof-load-intake-btn--primary"
+              disabled={blocking}
+              onClick={() => goStep(5)}
+            >
+              Continue to Step 5 — Save to dispatch
+            </button>
+          )}
         </div>
 
-        {validationErrors.length > 0 && (
+        {showEmbeddedSave && validationErrors.length > 0 && (
           <div className="bof-load-intake-alert bof-load-intake-alert--warn" role="alert">
             <strong>Validation</strong> — {validationErrors.join(" ")}
           </div>
         )}
-        {submitError && (
+        {showEmbeddedSave && submitError && (
           <div className="bof-load-intake-alert bof-load-intake-alert--block" role="alert">
             <strong>Save failed</strong> — {submitError}
           </div>
         )}
-        {submitSuccess && (
+        {showEmbeddedSave && submitSuccess && (
           <div className="bof-load-intake-alert bof-load-intake-alert--ok" role="status">
             <strong>Saved</strong> — {submitSuccess}{" "}
             <Link href="/loads" className="bof-link-secondary">
