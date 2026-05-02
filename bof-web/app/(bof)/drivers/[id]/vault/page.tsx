@@ -10,6 +10,32 @@ type Props = {
   params: Promise<{ id: string }>;
 };
 
+type DqfVaultPreviewVariant = "cdl" | "medical" | "standard";
+
+function DqfVaultDocPreviewIframe({
+  src,
+  title,
+  variant,
+}: {
+  src: string;
+  title: string;
+  variant: DqfVaultPreviewVariant;
+}) {
+  const variantClass =
+    variant === "cdl"
+      ? "bof-dqf-doc-preview--cdl"
+      : variant === "medical"
+        ? "bof-dqf-doc-preview--medical"
+        : "bof-dqf-doc-preview--standard";
+  return (
+    <div className={`bof-dqf-doc-preview ${variantClass}`}>
+      <div className="bof-dqf-doc-preview-frame">
+        <iframe src={src} className="bof-dqf-doc-preview-iframe" title={title} />
+      </div>
+    </div>
+  );
+}
+
 export default function DriverVaultPage({ params }: Props) {
   const { id } = use(params);
   const { data } = useBofDemoData();
@@ -26,7 +52,7 @@ export default function DriverVaultPage({ params }: Props) {
   return (
     <div className="min-h-screen bg-slate-50">
       <div className="container mx-auto px-4 py-8">
-        <div className="bg-white rounded-lg shadow-lg p-6">
+        <div className="bg-white rounded-lg shadow-lg p-6 bof-dqf-doc-vault">
           <h1 className="text-2xl font-bold text-gray-900 mb-6">
             {driver.name} - Document Vault / Qualification File
           </h1>
@@ -59,37 +85,29 @@ export default function DriverVaultPage({ params }: Props) {
                 <div className="border rounded-lg p-4 hover:shadow-md transition-shadow">
                   <h3 className="font-medium text-gray-900 mb-2">CDL Copy</h3>
                   <p className="text-sm text-gray-600 mb-3">Commercial Driver&apos;s License</p>
-                  <iframe
-                    src={packet.cdl || "about:blank"}
-                    className="w-full h-[400px] border-0 rounded"
-                    title="CDL Copy"
-                  />
+                  <DqfVaultDocPreviewIframe src={packet.cdl || "about:blank"} title="CDL Copy" variant="cdl" />
                 </div>
                 <div className="border rounded-lg p-4 hover:shadow-md transition-shadow">
                   <h3 className="font-medium text-gray-900 mb-2">Medical Card</h3>
                   <p className="text-sm text-gray-600 mb-3">Medical Certification Card</p>
-                  <iframe
+                  <DqfVaultDocPreviewIframe
                     src={packet.medicalCard || "about:blank"}
-                    className="w-full h-[400px] border-0 rounded"
                     title="Medical Card"
+                    variant="medical"
                   />
                 </div>
                 <div className="border rounded-lg p-4 hover:shadow-md transition-shadow">
                   <h3 className="font-medium text-gray-900 mb-2">MVR</h3>
                   <p className="text-sm text-gray-600 mb-3">Motor Vehicle Record</p>
-                  <iframe
-                    src={packet.mvr || "about:blank"}
-                    className="w-full h-[400px] border-0 rounded"
-                    title="MVR"
-                  />
+                  <DqfVaultDocPreviewIframe src={packet.mvr || "about:blank"} title="MVR" variant="standard" />
                 </div>
                 <div className="border rounded-lg p-4 hover:shadow-md transition-shadow">
                   <h3 className="font-medium text-gray-900 mb-2">PSP / Clearinghouse</h3>
                   <p className="text-sm text-gray-600 mb-3">Pre-Employment Screening Program</p>
-                  <iframe
+                  <DqfVaultDocPreviewIframe
                     src={packet.fmcsaCompliance || "about:blank"}
-                    className="w-full h-[400px] border-0 rounded"
                     title="PSP / Clearinghouse"
+                    variant="standard"
                   />
                 </div>
               </div>
@@ -102,37 +120,37 @@ export default function DriverVaultPage({ params }: Props) {
                 <div className="border rounded-lg p-4 hover:shadow-md transition-shadow">
                   <h3 className="font-medium text-gray-900 mb-2">Road Test Certificate</h3>
                   <p className="text-sm text-gray-600 mb-3">Road Test Completion</p>
-                  <iframe
+                  <DqfVaultDocPreviewIframe
                     src={`/generated/drivers/${id}/road_test_certificate.html`}
-                    className="w-full h-[400px] border-0 rounded"
                     title="Road Test Certificate"
+                    variant="standard"
                   />
                 </div>
                 <div className="border rounded-lg p-4 hover:shadow-md transition-shadow">
                   <h3 className="font-medium text-gray-900 mb-2">Prior Employer Inquiry</h3>
                   <p className="text-sm text-gray-600 mb-3">Employment Verification</p>
-                  <iframe
+                  <DqfVaultDocPreviewIframe
                     src={`/generated/drivers/${id}/prior_employer_inquiry.html`}
-                    className="w-full h-[400px] border-0 rounded"
                     title="Prior Employer Inquiry"
+                    variant="standard"
                   />
                 </div>
                 <div className="border rounded-lg p-4 hover:shadow-md transition-shadow">
                   <h3 className="font-medium text-gray-900 mb-2">Annual Review</h3>
                   <p className="text-sm text-gray-600 mb-3">Annual Driving Record Review</p>
-                  <iframe
+                  <DqfVaultDocPreviewIframe
                     src={`/generated/drivers/${id}/qualification-file.html`}
-                    className="w-full h-[400px] border-0 rounded"
                     title="Annual Review"
+                    variant="standard"
                   />
                 </div>
                 <div className="border rounded-lg p-4 hover:shadow-md transition-shadow">
                   <h3 className="font-medium text-gray-900 mb-2">Drug Test Result</h3>
                   <p className="text-sm text-gray-600 mb-3">Drug Screening Results</p>
-                  <iframe
+                  <DqfVaultDocPreviewIframe
                     src={`/generated/drivers/${id}/drug_test_result.html`}
-                    className="w-full h-[400px] border-0 rounded"
                     title="Drug Test Result"
+                    variant="standard"
                   />
                 </div>
               </div>
@@ -145,55 +163,51 @@ export default function DriverVaultPage({ params }: Props) {
                 <div className="border rounded-lg p-4 hover:shadow-md transition-shadow">
                   <h3 className="font-medium text-gray-900 mb-2">I-9 / Employment Authorization</h3>
                   <p className="text-sm text-gray-600 mb-3">Employment Eligibility</p>
-                  <iframe
+                  <DqfVaultDocPreviewIframe
                     src={packet.i9 || "about:blank"}
-                    className="w-full h-[400px] border-0 rounded"
                     title="I-9 / Employment Authorization"
+                    variant="standard"
                   />
                 </div>
                 <div className="border rounded-lg p-4 hover:shadow-md transition-shadow">
                   <h3 className="font-medium text-gray-900 mb-2">W-9</h3>
                   <p className="text-sm text-gray-600 mb-3">Tax Withholding Form</p>
-                  <iframe
-                    src={packet.w9 || "about:blank"}
-                    className="w-full h-[400px] border-0 rounded"
-                    title="W-9"
-                  />
+                  <DqfVaultDocPreviewIframe src={packet.w9 || "about:blank"} title="W-9" variant="standard" />
                 </div>
                 <div className="border rounded-lg p-4 hover:shadow-md transition-shadow">
                   <h3 className="font-medium text-gray-900 mb-2">Emergency Contact</h3>
                   <p className="text-sm text-gray-600 mb-3">Primary + secondary emergency contacts</p>
-                  <iframe
+                  <DqfVaultDocPreviewIframe
                     src={packet.emergencyContact || "about:blank"}
-                    className="w-full h-[400px] border-0 rounded"
                     title="Emergency Contact"
+                    variant="standard"
                   />
                 </div>
                 <div className="border rounded-lg p-4 hover:shadow-md transition-shadow">
                   <h3 className="font-medium text-gray-900 mb-2">Bank Information</h3>
                   <p className="text-sm text-gray-600 mb-3">Payroll/direct-deposit details</p>
-                  <iframe
+                  <DqfVaultDocPreviewIframe
                     src={packet.bankInformation || "about:blank"}
-                    className="w-full h-[400px] border-0 rounded"
                     title="Bank Information"
+                    variant="standard"
                   />
                 </div>
                 <div className="border rounded-lg p-4 hover:shadow-md transition-shadow">
                   <h3 className="font-medium text-gray-900 mb-2">Safety Acknowledgment</h3>
                   <p className="text-sm text-gray-600 mb-3">Safety Policy Acknowledgment</p>
-                  <iframe
+                  <DqfVaultDocPreviewIframe
                     src={`/generated/drivers/${id}/safety-acknowledgment.html`}
-                    className="w-full h-[400px] border-0 rounded"
                     title="Safety Acknowledgment"
+                    variant="standard"
                   />
                 </div>
                 <div className="border rounded-lg p-4 hover:shadow-md transition-shadow">
                   <h3 className="font-medium text-gray-900 mb-2">Medical Summary</h3>
                   <p className="text-sm text-gray-600 mb-3">Medical History Summary</p>
-                  <iframe
+                  <DqfVaultDocPreviewIframe
                     src={`/generated/drivers/${id}/bof-medical-summary.html`}
-                    className="w-full h-[400px] border-0 rounded"
                     title="Medical Summary"
+                    variant="standard"
                   />
                 </div>
               </div>

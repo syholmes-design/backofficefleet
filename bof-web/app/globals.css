@@ -1583,6 +1583,90 @@ body {
   background: rgba(15, 23, 42, 0.5);
 }
 
+/*
+ * Driver /drivers/[id]/vault — DQF document previews only.
+ * Scaled iframe viewport so HTML/PDF sheets fit without hard-crop scrollbars.
+ * Scoped under .bof-dqf-doc-vault — does not affect load packet previews or marketing.
+ */
+.bof-dqf-doc-vault {
+  max-width: 100%;
+}
+
+.bof-dqf-doc-vault .bof-dqf-doc-preview {
+  margin-top: 0.75rem;
+  width: 100%;
+  max-width: 100%;
+}
+
+.bof-dqf-doc-vault .bof-dqf-doc-preview-frame {
+  position: relative;
+  width: 100%;
+  max-width: 100%;
+  height: 340px;
+  overflow: hidden;
+  border-radius: 0.75rem;
+  background: #f8fafc;
+  border: 1px solid rgba(148, 163, 184, 0.35);
+}
+
+.bof-dqf-doc-vault .bof-dqf-doc-preview-iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  border: 0;
+  width: 172.414%;
+  height: 172.414%;
+  transform: scale(0.58);
+  transform-origin: top left;
+  background: #f8fafc;
+}
+
+.bof-dqf-doc-vault .bof-dqf-doc-preview--cdl .bof-dqf-doc-preview-iframe {
+  width: 181.818%;
+  height: 181.818%;
+  transform: scale(0.55);
+}
+
+.bof-dqf-doc-vault .bof-dqf-doc-preview--medical .bof-dqf-doc-preview-iframe {
+  width: 166.667%;
+  height: 166.667%;
+  transform: scale(0.6);
+}
+
+.bof-dqf-doc-vault .bof-dqf-doc-preview-image {
+  display: block;
+  width: 100%;
+  height: 100%;
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  object-position: center;
+}
+
+@media (max-width: 900px) {
+  .bof-dqf-doc-vault .bof-dqf-doc-preview-frame {
+    height: 260px;
+  }
+
+  .bof-dqf-doc-vault .bof-dqf-doc-preview--cdl .bof-dqf-doc-preview-iframe {
+    width: 200%;
+    height: 200%;
+    transform: scale(0.5);
+  }
+
+  .bof-dqf-doc-vault .bof-dqf-doc-preview--medical .bof-dqf-doc-preview-iframe {
+    width: 185.185%;
+    height: 185.185%;
+    transform: scale(0.54);
+  }
+
+  .bof-dqf-doc-vault .bof-dqf-doc-preview--standard .bof-dqf-doc-preview-iframe {
+    width: 181.818%;
+    height: 181.818%;
+    transform: scale(0.55);
+  }
+}
+
 /* Document Vault (/documents) */
 .bof-vault-toolbar {
   display: flex;
