@@ -82,13 +82,13 @@ export function DriversRosterTable() {
       if (el.status === "ready" && tier !== "At Risk") availableForDispatch += 1;
     }
     return [
-      { label: "Drivers ready", value: ready, hint: "Dispatch eligibility status: Ready" },
-      { label: "Needs review", value: needsReview, hint: "Soft warnings — review before long haul" },
+      { label: "Drivers Ready", value: ready, hint: "Dispatch eligibility status: Ready" },
+      { label: "Needs Review", value: needsReview, hint: "Soft warnings — review before long haul" },
       { label: "Blocked", value: blocked, hint: "Hard gates on credentials, safety, or finance" },
-      { label: "Expiring documents", value: summary.expiringCredentials, hint: "Drivers with credentials expiring ≤60 days" },
-      { label: "Safety at risk", value: summary.safetyAtRisk, hint: "Drivers in At Risk safety tier" },
+      { label: "Expiring Documents", value: summary.expiringCredentials, hint: "Drivers with credentials expiring ≤60 days" },
+      { label: "Safety At Risk", value: summary.safetyAtRisk, hint: "Drivers in At Risk safety tier" },
       {
-        label: "Available for dispatch",
+        label: "Available for Dispatch",
         value: availableForDispatch,
         hint: "Ready + not safety At Risk (premium lane gate)",
       },
@@ -267,8 +267,8 @@ export function DriversRosterTable() {
               Drivers Command Center
             </h1>
             <p className="bof-cc-hero-tagline">
-              Track driver readiness, compliance documents, safety risk, dispatch eligibility, and settlement readiness in
-              one BOF view.
+              Track driver readiness, compliance documents, safety risk, dispatch eligibility, and settlement readiness
+              across the fleet.
             </p>
             <div className="bof-cc-hero-actions">
               <a href="#driver-blocked-dispatch" className="bof-cc-hero-cta bof-cc-hero-cta-primary">
