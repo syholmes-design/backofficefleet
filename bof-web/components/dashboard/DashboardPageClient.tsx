@@ -165,6 +165,15 @@ export function DashboardPageClient() {
     { label: "Client Requests Pending", value: pendingClientLoadRequests },
   ] as const;
 
+  const bookDemoHref = useMemo(() => {
+    const external =
+      process.env.NEXT_PUBLIC_CALENDAR_URL?.trim() ||
+      process.env.NEXT_PUBLIC_CALENDLY_URL?.trim() ||
+      process.env.NEXT_PUBLIC_BOOK_DEMO_URL?.trim();
+    if (external) return external;
+    return "/book-assessment?source=dashboard-hero";
+  }, []);
+
   return (
     <div className="bof-page bof-cc-page bof-dashboard-page">
       <section
@@ -183,6 +192,14 @@ export function DashboardPageClient() {
                 onError={() => setHeroImageMissing(true)}
                 unoptimized
               />
+              <Link
+                href={bookDemoHref}
+                className="bof-dashboard-hero__calendarCta"
+                aria-label="Book a BOF demo appointment"
+                prefetch={false}
+              >
+                Book a Demo
+              </Link>
             </div>
             <nav className="bof-dashboard-hero__hotspots" aria-label="Quick dashboard links">
               <Link href="/dispatch" className="bof-dashboard-hero__hotspot">
@@ -238,6 +255,11 @@ export function DashboardPageClient() {
                 Open Settlements
               </Link>
             </div>
+            <p className="bof-dashboard-hero__book-demo-subtle">
+              <Link href={bookDemoHref} prefetch={false}>
+                Schedule walkthrough / book demo
+              </Link>
+            </p>
           </div>
           <div className="bof-dashboard-hero__stats">
             <div className="bof-cc-hero-stat-grid">

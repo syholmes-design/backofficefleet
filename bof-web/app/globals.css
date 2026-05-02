@@ -13123,13 +13123,18 @@ body {
   overflow: hidden;
   background: #020617;
   border: 1px solid rgba(100, 116, 139, 0.28);
+  padding: 0.75rem;
+  box-sizing: border-box;
 }
 
-/* Image fills the panel edge-to-edge; Next/Image wrapper must stretch */
+/* Inset frame so hero artwork sits slightly inside the panel (reduces top clipping with cover). */
 .bof-dashboard-hero__imageSlot {
   position: absolute;
-  inset: 0;
+  inset: 0.75rem;
   z-index: 1;
+  border-radius: 0.75rem;
+  overflow: hidden;
+  background: #020617;
 }
 
 .bof-dashboard-hero__imageSlot > span {
@@ -13142,8 +13147,41 @@ body {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  object-position: center center;
+  object-position: center top;
   display: block;
+  border-radius: 0.75rem;
+}
+
+.bof-dashboard-hero__calendarCta {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  z-index: 5;
+  border: 1px solid rgba(45, 212, 191, 0.7);
+  background: rgba(13, 148, 136, 0.92);
+  color: #fff;
+  border-radius: 0.6rem;
+  padding: 0.55rem 0.85rem;
+  font-weight: 700;
+  font-size: 0.8rem;
+  text-decoration: none;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.35);
+  line-height: 1.2;
+  outline: none;
+  transition:
+    background 0.15s ease,
+    border-color 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+.bof-dashboard-hero__calendarCta:hover,
+.bof-dashboard-hero__calendarCta:focus-visible {
+  background: rgba(20, 184, 166, 1);
+  border-color: rgba(153, 246, 228, 0.85);
+  outline: 2px solid rgba(153, 246, 228, 0.75);
+  outline-offset: 2px;
 }
 
 .bof-dashboard-hero__hotspots {
@@ -13216,6 +13254,25 @@ body {
   gap: 1.25rem;
   align-items: start;
   min-width: 0;
+}
+
+.bof-dashboard-hero__book-demo-subtle {
+  margin: 0.65rem 0 0;
+  font-size: 0.78rem;
+  color: #94a3b8;
+}
+
+.bof-dashboard-hero__book-demo-subtle a {
+  color: #5eead4;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.bof-dashboard-hero__book-demo-subtle a:hover,
+.bof-dashboard-hero__book-demo-subtle a:focus-visible {
+  color: #99f6e4;
+  text-decoration: underline;
+  outline: none;
 }
 
 .bof-dashboard-hero__intro {
@@ -13994,6 +14051,7 @@ body {
     min-height: 0;
     max-height: none;
     border-radius: 12px;
+    padding: 0.65rem;
   }
 
   .bof-dashboard-hero__imageSlot {
@@ -14004,6 +14062,27 @@ body {
     flex-shrink: 0;
     border-radius: 12px;
     overflow: hidden;
+    inset: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    background: #020617;
+  }
+
+  .bof-dashboard-hero__imageSlot > span {
+    flex: 1;
+    min-height: 0;
+    border-radius: 0.65rem;
+    overflow: hidden;
+  }
+
+  .bof-dashboard-hero__calendarCta {
+    position: static;
+    align-self: flex-end;
+    margin: 0;
+    z-index: 4;
+    font-size: 0.76rem;
+    padding: 0.5rem 0.75rem;
   }
 
   .bof-dashboard-hero__hotspots {
