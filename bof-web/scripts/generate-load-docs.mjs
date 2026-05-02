@@ -20,7 +20,7 @@ const CORE_DOCS = ["rateConfirmation", "bol", "pod", "invoice"];
 /** Primary safety still image per load (matches `lib/safety-evidence.ts` URLs). */
 const SAFETY_STILL_URL_BY_LOAD_ID = {
   L004: "/evidence/safety/b102-tires-irregular-wear.png",
-  L008: "/evidence/safety/l_smith_l405_hos_violation_eld.svg",
+  L008: "/evidence/safety/l405-hos-eld-violation.png",
 };
 
 const FILE_MAP = {

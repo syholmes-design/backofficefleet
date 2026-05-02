@@ -45,7 +45,7 @@ export function SafetyEvidenceThumb({ rawUrl, alt, className }: Props) {
     "mb-2 h-28 w-full rounded border border-slate-800 bg-slate-950 object-cover object-center";
 
   return (
-    <div className="relative mb-2 min-h-[4.5rem] overflow-hidden rounded border border-slate-800 bg-slate-950">
+    <div className="relative mb-2 min-h-[4.5rem] overflow-hidden rounded-lg rounded-t-xl border border-slate-800 bg-slate-950">
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
         src={resolved.url}

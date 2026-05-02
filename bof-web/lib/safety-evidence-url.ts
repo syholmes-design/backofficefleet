@@ -1,6 +1,6 @@
 /**
  * Resolves demo safety violation stills under `/evidence/safety/*`.
- * Priya Patel (DRV-004) stills ship as PNG crops; other demos remain SVG.
+ * DRV-004 / DRV-008 demo stills ship as PNG crops; legacy `.png` → `.svg` swap applies only when both paths are listed.
  * Legacy `.png` URLs that map to an existing `.svg` still resolve to the SVG.
  */
 
@@ -17,10 +17,10 @@ export const SAFETY_EVIDENCE_PUBLIC_PATHS: readonly string[] = [
   "/evidence/safety/pre-trip-tire-tread-depth.png",
   "/evidence/safety/cargo-damage-punctured-box.png",
   "/evidence/safety/safety-equipment-fire-extinguisher-tag.png",
-  "/evidence/safety/l_smith_l405_hos_violation_eld.svg",
-  "/evidence/safety/l_smith_logbook_review_violation.svg",
-  "/evidence/safety/l_smith_trailer_brake_inspection.svg",
-  "/evidence/safety/l_smith_cargo_damage_pallet_wrap.svg",
+  "/evidence/safety/l405-hos-eld-violation.png",
+  "/evidence/safety/logbook-review-reset-violation.png",
+  "/evidence/safety/trailer-brake-lining-worn.png",
+  "/evidence/safety/cargo-damage-wrapped-pallet.png",
 ] as const;
 
 const PATH_SET = new Set<string>(SAFETY_EVIDENCE_PUBLIC_PATHS);

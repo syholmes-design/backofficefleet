@@ -6,9 +6,9 @@
     "/evidence/safety/pre-trip-tire-tread-depth.png",
     "/evidence/safety/cargo-damage-punctured-box.png",
     "/evidence/safety/safety-equipment-fire-extinguisher-tag.png",
-    "/evidence/safety/l_smith_l405_hos_violation_eld.svg",
-    "/evidence/safety/l_smith_logbook_review_violation.svg",
-    "/evidence/safety/l_smith_trailer_brake_inspection.svg",
-    "/evidence/safety/l_smith_cargo_damage_pallet_wrap.svg"
+    "/evidence/safety/l405-hos-eld-violation.png",
+    "/evidence/safety/logbook-review-reset-violation.png",
+    "/evidence/safety/trailer-brake-lining-worn.png",
+    "/evidence/safety/cargo-damage-wrapped-pallet.png"
   ]
 }

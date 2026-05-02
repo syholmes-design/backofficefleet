@@ -168,7 +168,7 @@
     "equipmentPhoto": "/evidence/loads/L008/equipment-photo.svg",
     "pickupPhoto": "/evidence/loads/L008/pickup-photo.svg",
     "deliveryPhoto": "/evidence/loads/L008/delivery-photo.svg",
-    "safetyViolationPhoto": "/evidence/safety/l_smith_l405_hos_violation_eld.svg"
+    "safetyViolationPhoto": "/evidence/safety/l405-hos-eld-violation.png"
   },
   "L009": {
     "rateConfirmation": "/generated/loads/L009/rate-confirmation.html",
