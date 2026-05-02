@@ -6238,7 +6238,7 @@ body {
   filter: brightness(1.06);
 }
 
-/* Drivers list — command hero + Emma Brown visual */
+/* Drivers list — unified command hero (photo left, content + live metrics right) */
 .bof-drivers-command-hero {
   margin-bottom: 1.25rem;
   padding: 1.25rem 1.35rem 1.35rem;
@@ -6253,16 +6253,104 @@ body {
   box-shadow: 0 14px 42px rgba(0, 0, 0, 0.3);
 }
 
-.bof-drivers-command-hero__grid {
-  display: flex;
-  flex-wrap: wrap;
+.bof-drivers-command-hero.bof-drivers-hero--image-left {
+  padding: 0;
+  overflow: hidden;
+  display: grid;
+  grid-template-columns: minmax(300px, 0.46fr) minmax(0, 1.14fr);
+  gap: 0;
+  min-height: 420px;
   align-items: stretch;
-  gap: 1.25rem 1.5rem;
+  max-width: 100%;
 }
 
-.bof-drivers-command-hero__copy {
-  flex: 1 1 280px;
+.bof-drivers-hero__media {
+  position: relative;
+  min-height: 420px;
+  overflow: hidden;
+  background: #020617;
+  border-radius: calc(var(--bof-radius) + 3px) 0 0 calc(var(--bof-radius) + 3px);
+}
+
+.bof-drivers-hero__image {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: left center;
+  display: block;
+}
+
+.bof-drivers-hero__mediaFade {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+  background: linear-gradient(
+    90deg,
+    rgba(2, 6, 23, 0) 0%,
+    rgba(2, 6, 23, 0.18) 42%,
+    rgba(15, 23, 42, 0.88) 78%,
+    rgba(15, 23, 42, 0.98) 100%
+  );
+}
+
+.bof-drivers-hero__spotlight {
+  position: absolute;
+  z-index: 3;
+  left: 0.85rem;
+  right: 0.85rem;
+  bottom: 0.85rem;
+  max-width: 15rem;
+  padding: 0.55rem 0.65rem 0.6rem;
+  border-radius: 0.55rem;
+  border: 1px solid rgba(45, 212, 191, 0.22);
+  background: rgba(2, 6, 23, 0.78);
+  backdrop-filter: blur(8px);
+}
+
+.bof-drivers-hero__spotlight-title {
+  display: inline-block;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  color: #f1f5f9;
+  text-decoration: none;
+}
+
+.bof-drivers-hero__spotlight-title:hover {
+  color: #5eead4;
+  text-decoration: underline;
+}
+
+.bof-drivers-hero__spotlight-line {
+  margin: 0.15rem 0 0;
+  font-size: 0.65rem;
+  line-height: 1.3;
+  color: #cbd5e1;
+}
+
+.bof-drivers-hero__spotlight-muted {
+  color: #94a3b8;
+  font-size: 0.62rem;
+}
+
+.bof-drivers-hero__content {
+  position: relative;
+  z-index: 2;
   min-width: 0;
+  padding: 1.75rem 1.75rem 1.85rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  background:
+    radial-gradient(ellipse 85% 70% at 0% 45%, rgba(20, 184, 166, 0.12), transparent 55%),
+    linear-gradient(180deg, rgba(15, 23, 42, 0.98) 0%, rgba(15, 23, 42, 0.99) 100%);
+}
+
+.bof-drivers-hero__content-inner {
+  max-width: 52rem;
 }
 
 .bof-drivers-command-hero__chips {
@@ -6304,75 +6392,6 @@ body {
   line-height: 1.25;
 }
 
-.bof-drivers-command-hero__visual {
-  flex: 0 1 380px;
-  min-width: 0;
-  max-width: 100%;
-  display: flex;
-  flex-direction: column;
-  border-radius: calc(var(--bof-radius) + 2px);
-  overflow: hidden;
-  border: 1px solid rgba(45, 212, 191, 0.18);
-  background: #020617;
-  box-shadow: 0 10px 32px rgba(0, 0, 0, 0.35), 0 0 0 1px rgba(2, 6, 23, 0.6) inset;
-}
-
-/* Photographic hero — cropped still, no baked-in dashboard copy */
-.bof-drivers-command-hero__imagePanel {
-  position: relative;
-  flex: 1 1 auto;
-  width: 100%;
-  min-width: 0;
-  min-height: 312px;
-  max-height: 408px;
-  overflow: hidden;
-  background: #020617;
-}
-
-.bof-drivers-hero__image {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: center 38%;
-  display: block;
-}
-
-.bof-drivers-command-hero__caption {
-  flex: 0 0 auto;
-  padding: 0.65rem 0.85rem 0.75rem;
-  border-top: 1px solid rgba(45, 212, 191, 0.12);
-  background: #020617;
-  z-index: 2;
-}
-
-.bof-drivers-command-hero__caption-title {
-  display: inline-block;
-  font-size: 0.8rem;
-  font-weight: 800;
-  letter-spacing: -0.01em;
-  color: #e2e8f0;
-  text-decoration: none;
-}
-
-.bof-drivers-command-hero__caption-title:hover {
-  color: #5eead4;
-  text-decoration: underline;
-}
-
-.bof-drivers-command-hero__caption-line {
-  margin: 0.2rem 0 0;
-  font-size: 0.72rem;
-  line-height: 1.35;
-  color: #cbd5e1;
-}
-
-.bof-drivers-command-hero__caption-muted {
-  color: #94a3b8;
-  font-size: 0.68rem;
-}
-
 .bof-drivers-command-hero__placeholder {
   position: relative;
   z-index: 0;
@@ -6380,8 +6399,7 @@ body {
   flex-direction: column;
   justify-content: center;
   gap: 0.5rem;
-  min-height: 312px;
-  max-height: 408px;
+  min-height: 420px;
   height: 100%;
   padding: 1rem 1.1rem;
   text-align: center;
@@ -6433,14 +6451,40 @@ body {
 }
 
 @media (max-width: 900px) {
-  .bof-drivers-command-hero__visual {
-    flex: 1 1 100%;
-    max-width: none;
-    order: 2;
+  .bof-drivers-command-hero.bof-drivers-hero--image-left {
+    grid-template-columns: 1fr;
+    min-height: 0;
   }
-  .bof-drivers-command-hero__copy {
-    order: 1;
-    flex: 1 1 100%;
+
+  .bof-drivers-hero__media {
+    min-height: 260px;
+    max-height: 320px;
+    border-radius: calc(var(--bof-radius) + 3px) calc(var(--bof-radius) + 3px) 0 0;
+  }
+
+  .bof-drivers-command-hero__placeholder {
+    min-height: 260px;
+    max-height: 320px;
+  }
+
+  .bof-drivers-hero__mediaFade {
+    background: linear-gradient(
+      180deg,
+      rgba(2, 6, 23, 0) 0%,
+      rgba(2, 6, 23, 0.2) 55%,
+      rgba(15, 23, 42, 0.55) 100%
+    );
+  }
+
+  .bof-drivers-hero__content {
+    padding: 1rem 1.15rem 1.25rem;
+  }
+
+  .bof-drivers-hero__spotlight {
+    left: 0.65rem;
+    right: 0.65rem;
+    bottom: 0.65rem;
+    max-width: none;
   }
 }
 

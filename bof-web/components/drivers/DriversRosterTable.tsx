@@ -265,9 +265,51 @@ export function DriversRosterTable() {
 
   return (
     <div className="bof-page bof-cc-page">
-      <section className="bof-drivers-command-hero" aria-labelledby="bof-drivers-command-title">
-        <div className="bof-drivers-command-hero__grid">
-          <div className="bof-drivers-command-hero__copy">
+      <section
+        className="bof-drivers-command-hero bof-drivers-hero bof-drivers-hero--image-left"
+        aria-labelledby="bof-drivers-command-title"
+      >
+        <div className="bof-drivers-hero__media">
+          {!heroImageFailed ? (
+            <>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                className="bof-drivers-hero__image"
+                src={heroImageSrc}
+                alt="Emma Brown standing in front of a truck at a fleet terminal."
+                onError={() => setHeroImageFailed(true)}
+              />
+              <div className="bof-drivers-hero__mediaFade" aria-hidden="true" />
+              {emmaSpotlightRow ? (
+                <div className="bof-drivers-hero__spotlight">
+                  <Link href={`/drivers/${emmaSpotlightRow.driverId}`} className="bof-drivers-hero__spotlight-title">
+                    {emmaSpotlightRow.name} · {emmaSpotlightRow.driverId}
+                  </Link>
+                  <p className="bof-drivers-hero__spotlight-line">
+                    {emmaSpotlightRow.status === "Review"
+                      ? "Needs review"
+                      : emmaSpotlightRow.status === "Blocked"
+                        ? "Blocked"
+                        : "Active"}
+                  </p>
+                  <p className="bof-drivers-hero__spotlight-line bof-drivers-hero__spotlight-muted">
+                    {emmaSpotlightRow.currentOrNextLoad}
+                  </p>
+                </div>
+              ) : null}
+            </>
+          ) : (
+            <div className="bof-drivers-command-hero__placeholder">
+              <strong>Hero image not found</strong>
+              <p>
+                Add <code className="text-teal-300/90">public/images/drivers-emma-brown-hero.png</code> (Emma Brown,
+                DRV-009). Live fleet metrics are shown on the right.
+              </p>
+            </div>
+          )}
+        </div>
+        <div className="bof-drivers-hero__content">
+          <div className="bof-drivers-hero__content-inner">
             <p className="bof-cc-hero-eyebrow">Driver Operations</p>
             <h1 id="bof-drivers-command-title" className="bof-cc-hero-title">
               Drivers Command Center
@@ -296,38 +338,6 @@ export function DriversRosterTable() {
                 </div>
               ))}
             </div>
-          </div>
-          <div className="bof-drivers-command-hero__visual">
-            <div className="bof-drivers-command-hero__imagePanel">
-              {!heroImageFailed ? (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img
-                  className="bof-drivers-hero__image"
-                  src={heroImageSrc}
-                  alt="Emma Brown standing in front of a truck at a fleet terminal."
-                  onError={() => setHeroImageFailed(true)}
-                />
-              ) : (
-                <div className="bof-drivers-command-hero__placeholder">
-                  <strong>Hero image not found</strong>
-                  <p>
-                    Add <code className="text-teal-300/90">public/images/drivers-emma-brown-hero.png</code> (Emma
-                    Brown, DRV-009) for the professional terminal photo. Metrics above remain live from BOF data.
-                  </p>
-                </div>
-              )}
-            </div>
-            {emmaSpotlightRow ? (
-              <div className="bof-drivers-command-hero__caption">
-                <Link href={`/drivers/${emmaSpotlightRow.driverId}`} className="bof-drivers-command-hero__caption-title">
-                  {emmaSpotlightRow.name} · {emmaSpotlightRow.driverId}
-                </Link>
-                <p className="bof-drivers-command-hero__caption-line">{emmaSpotlightRow.dispatchEligibility}</p>
-                <p className="bof-drivers-command-hero__caption-line bof-drivers-command-hero__caption-muted">
-                  {emmaSpotlightRow.currentOrNextLoad}
-                </p>
-              </div>
-            ) : null}
           </div>
         </div>
       </section>
