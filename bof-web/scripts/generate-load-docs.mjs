@@ -215,6 +215,127 @@ function writeJson(filePath, data) {
   fs.writeFileSync(filePath, JSON.stringify(data, null, 2), "utf8");
 }
 
+function escAttr(s) {
+  return String(s ?? "")
+    .replace(/&/g, "&amp;")
+    .replace(/"/g, "&quot;")
+    .replace(/</g, "&lt;");
+}
+
+function escText(s) {
+  return String(s ?? "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;");
+}
+
+function linkLi(label, url) {
+  if (!url || typeof url !== "string") return "";
+  const u = url.trim();
+  if (!u) return "";
+  return `<li><a class="doc-link" href="${escAttr(u)}">${escText(label)}</a><div class="mono">${escText(u)}</div></li>`;
+}
+
+function packetShell(title, body) {
+  return `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <title>${escText(title)}</title>
+  <style>
+    body { font-family: system-ui, sans-serif; background: #0f172a; color: #e2e8f0; padding: 24px; max-width: 960px; margin: 0 auto; }
+    h1 { font-size: 20px; margin-bottom: 8px; }
+    .sub { font-size: 13px; color: #94a3b8; margin-bottom: 20px; }
+    ul { list-style: none; padding: 0; }
+    li { margin: 12px 0; padding: 12px; background: #1e293b; border-radius: 8px; border: 1px solid #334155; }
+    .mono { font-size: 11px; color: #94a3b8; margin-top: 6px; word-break: break-all; }
+    .doc-link { color: #5eead4; font-weight: 600; text-decoration: none; }
+    .doc-link:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+  <h1>${escText(title)}</h1>
+  <p class="sub">BOF manifest-backed bundle index — links open existing generated or evidence documents only.</p>
+  <ul>${body}</ul>
+</body>
+</html>`;
+}
+
+/** HTML index pages for shipper / billing / insurance / claim bundles (one set per load). */
+function writePacketBundlePages(loadId, entry) {
+  const loadOut = path.join(OUT_DIR, loadId);
+  ensureDir(loadOut);
+
+  const shipBody = [
+    ["Rate confirmation", entry.rateConfirmation],
+    ["Work order / trip schedule", entry.workOrder],
+    ["Bill of Lading", entry.bol],
+    ["POD", entry.pod],
+    ["Seal verification", entry.sealVerification],
+    ["Pickup photo", entry.pickupPhoto],
+    ["Cargo photo", entry.cargoPhoto],
+    ["Seal pickup photo", entry.sealPickupPhoto],
+    ["Seal delivery photo", entry.sealDeliveryPhoto],
+    ["Delivery photo", entry.deliveryPhoto],
+    ["RFID proof (summary)", entry.rfidProof],
+  ]
+    .map(([a, b]) => linkLi(a, b))
+    .join("");
+
+  const billingBody = [
+    ["Invoice", entry.invoice],
+    ["Bill of Lading", entry.bol],
+    ["POD", entry.pod],
+    ["Lumper receipt", entry.lumperReceipt],
+    ["Factoring notification", entry.factoringNotification],
+  ]
+    .map(([a, b]) => linkLi(a, b))
+    .join("");
+
+  const insuranceBody = [
+    ["Claim intake", entry.claimIntake],
+    ["Claim packet", entry.claimPacket],
+    ["Damage photo / packet", entry.damagePhotoPacket],
+    ["Insurance notification", entry.insuranceNotification],
+    ["POD", entry.pod],
+    ["BOL", entry.bol],
+  ]
+    .map(([a, b]) => linkLi(a, b))
+    .join("");
+
+  const claimBody = [
+    ["Claim intake", entry.claimIntake],
+    ["Claim packet", entry.claimPacket],
+    ["Damage photo / packet", entry.damagePhotoPacket],
+    ["Insurance notification", entry.insuranceNotification],
+    ["Pickup photo", entry.pickupPhoto],
+    ["Cargo photo", entry.cargoPhoto],
+    ["Claim evidence photo", entry.claimEvidence],
+  ]
+    .map(([a, b]) => linkLi(a, b))
+    .join("");
+
+  fs.writeFileSync(
+    path.join(loadOut, "shipper-packet.html"),
+    packetShell(`Shipper packet — ${loadId}`, shipBody),
+    "utf8"
+  );
+  fs.writeFileSync(
+    path.join(loadOut, "billing-packet.html"),
+    packetShell(`Billing packet — ${loadId}`, billingBody),
+    "utf8"
+  );
+  fs.writeFileSync(
+    path.join(loadOut, "insurance-packet.html"),
+    packetShell(`Insurance packet — ${loadId}`, insuranceBody),
+    "utf8"
+  );
+  fs.writeFileSync(
+    path.join(loadOut, "claim-packet-bundle.html"),
+    packetShell(`Claim packet bundle — ${loadId}`, claimBody),
+    "utf8"
+  );
+}
+
 function publicUrlFromAbsolute(absPath) {
   const rel = path.relative(PUBLIC_DIR, absPath).replaceAll("\\", "/");
   return `/${rel}`;
@@ -290,7 +411,10 @@ function main() {
     const deliveryPhoto = resolveEvidenceEntry(ctx.loadId, ["delivery-photo.svg", "delivery-photo.jpg", "delivery-photo.png"]);
     const lumperReceiptFile = resolveEvidenceEntry(ctx.loadId, ["lumper-receipt.svg", "lumper-receipt.jpg", "lumper-receipt.png"]);
     const damageClaimPhoto = resolveEvidenceEntry(ctx.loadId, ["damage-photo.svg", "damage-photo.jpg", "damage-photo.png", "claim-photo.jpg"]);
-    const claimEvidencePhoto = resolveEvidenceEntry(ctx.loadId, ["claim-evidence.svg"]);
+    const claimEvidencePhoto = resolveEvidenceEntry(ctx.loadId, [
+      "claim-evidence.png",
+      "claim-evidence.svg",
+    ]);
     const safetyViolationPhoto = safetyPhotoUrlForLoad(ctx.loadId);
 
     const ctxForTemplates = {
@@ -333,6 +457,14 @@ function main() {
         throw new Error(`Missing required generated doc ${required} for ${ctx.loadId}`);
       }
     }
+
+    const damagePacketPng = evidencePathForLoad(ctx.loadId, "damage-photo-packet.png");
+    if (fileExists(damagePacketPng)) {
+      entry.damagePhotoPacket = publicUrlFromAbsolute(damagePacketPng);
+    }
+
+    writePacketBundlePages(ctx.loadId, entry);
+
     manifest[ctx.loadId] = entry;
   }
 

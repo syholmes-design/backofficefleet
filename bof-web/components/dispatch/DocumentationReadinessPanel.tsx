@@ -24,6 +24,7 @@ import {
   tripPacketUiLabel,
 } from "@/lib/load-trip-packet";
 import type { TripPacketRow } from "@/lib/load-trip-packet";
+import { evaluateLoadPacketReadiness } from "@/lib/load-packet-readiness";
 
 type Props = {
   load: Load;
@@ -37,6 +38,22 @@ function firstBundleUrl(load: Load): string | null {
     load.invoice_url ||
     null
   );
+}
+
+function firstManifestBackedDocUrl(
+  load: Load,
+  trip: ReturnType<typeof buildTripDocumentPacket> | null
+): string | null {
+  const direct = firstBundleUrl(load);
+  if (direct) return direct;
+  if (!trip) return null;
+  const order = ["rate_confirmation", "bol", "pod", "invoice", "work_order"] as const;
+  for (const key of order) {
+    const row = trip.rows.find((r) => r.key === key);
+    const u = row?.url?.trim();
+    if (u && row?.status === "ready") return u;
+  }
+  return null;
 }
 
 function tripRowPresentation(line: TripPacketRow): {
@@ -91,34 +108,22 @@ export function DocumentationReadinessPanel({ load }: Props) {
     () => groupTripPacketRows(trip, { hideNotApplicable: true }),
     [trip]
   );
+  const packetReadiness = useMemo(
+    () => evaluateLoadPacketReadiness(data, load.load_id),
+    [data, load.load_id]
+  );
+  const claimPacketReadiness = useMemo(
+    () => packetReadiness.find((p) => p.packetType === "claim"),
+    [packetReadiness]
+  );
   const delivered = load.status?.toLowerCase() === "delivered";
   const validation = trip?.validation;
 
   const setSettlementHold = useDispatchDashboardStore(
     (s) => s.setSettlementHold
   );
-  const setLoadDocumentUrls = useDispatchDashboardStore(
-    (s) => s.setLoadDocumentUrls
-  );
   const [notice, setNotice] = useState<string | null>(null);
-  const [busy, setBusy] = useState<"shipper" | "billing" | "claim" | null>(null);
   const [referenceOpen, setReferenceOpen] = useState(false);
-
-  async function postGenerate<T extends Record<string, unknown>>(
-    path: string,
-    payload: Record<string, unknown>
-  ): Promise<T> {
-    const res = await fetch(path, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload),
-    });
-    const data = (await res.json()) as T & { ok?: boolean; error?: string };
-    if (!res.ok || data.ok === false) {
-      throw new Error(data.error || `Generation failed (${res.status})`);
-    }
-    return data as T;
-  }
 
   const showClaimZone = load.exception_flag || load.insurance_claim_needed;
 
@@ -325,162 +330,128 @@ export function DocumentationReadinessPanel({ load }: Props) {
         </div>
       )}
 
-      <div className="mt-4 flex flex-wrap gap-2 border-t border-slate-800 pt-4">
-        <button
-          type="button"
-          disabled={busy !== null}
-          onClick={() => {
-            setBusy("shipper");
-            void (async () => {
-              try {
-                const basePayload = {
-                  loadId: load.load_id,
-                };
-                const bol = await postGenerate<{
-                  generatedUrl: string;
-                  publicUrl?: string;
-                }>("/api/generate/bol", {
-                  ...basePayload,
-                  bol_date: load.pickup_datetime,
-                  shipper_name: load.origin,
-                  consignee_name: load.destination,
-                });
-                const pod = await postGenerate<{
-                  generatedUrl: string;
-                  publicUrl?: string;
-                }>("/api/generate/pod", {
-                  ...basePayload,
-                  delivery_date: load.delivery_datetime,
-                  delivery_location: load.destination,
-                });
-                setLoadDocumentUrls(load.load_id, {
-                  bol_url: bol.publicUrl || bol.generatedUrl,
-                  pod_url: pod.publicUrl || pod.generatedUrl,
-                });
-                setNotice(
-                  "Generated BOL + POD packet docs and linked them to this load."
-                );
-              } catch (err) {
-                setNotice(
-                  `Could not generate shipper packet docs: ${
-                    err instanceof Error ? err.message : "Unknown error"
-                  }`
-                );
-              } finally {
-                setBusy(null);
-              }
-            })();
-          }}
-          className="inline-flex items-center gap-1.5 rounded border border-teal-600 bg-teal-900/30 px-3 py-1.5 text-xs font-medium text-teal-50 hover:bg-teal-900/50 disabled:opacity-50"
-        >
-          <FileOutput className="h-3.5 w-3.5" aria-hidden />
-          {busy === "shipper" ? "Generating shipper packet..." : "Generate shipper packet"}
-        </button>
-        <button
-          type="button"
-          onClick={() => {
-            const u = firstBundleUrl(load);
-            if (u) window.open(u, "_blank", "noopener,noreferrer");
-            else setNotice("No linked documents to open.");
-          }}
-          className="inline-flex items-center gap-1.5 rounded border border-slate-600 bg-slate-800/80 px-3 py-1.5 text-xs font-medium text-slate-100 hover:bg-slate-800"
-        >
-          <FolderOpen className="h-3.5 w-3.5" aria-hidden />
-          Open documentation bundle
-        </button>
-        <button
-          type="button"
-          disabled={busy !== null}
-          onClick={() => {
-            setBusy("billing");
-            void (async () => {
-              try {
-                const invoice = await postGenerate<{
-                  generatedUrl: string;
-                  publicUrl?: string;
-                }>("/api/generate/invoice", {
-                  loadId: load.load_id,
-                  rate: load.total_pay,
-                  total: load.total_pay,
-                });
-                const nextUrl = invoice.publicUrl || invoice.generatedUrl;
-                setLoadDocumentUrls(load.load_id, { invoice_url: nextUrl });
-                window.open(nextUrl, "_blank", "noopener,noreferrer");
-                setNotice("Generated invoice document and linked it to this load.");
-              } catch (err) {
-                setNotice(
-                  `Could not generate invoice: ${
-                    err instanceof Error ? err.message : "Unknown error"
-                  }`
-                );
-              } finally {
-                setBusy(null);
-              }
-            })();
-          }}
-          className="inline-flex items-center gap-1.5 rounded border border-slate-600 bg-slate-800/80 px-3 py-1.5 text-xs font-medium text-slate-100 hover:bg-slate-800 disabled:opacity-50"
-        >
-          <Scale className="h-3.5 w-3.5" aria-hidden />
-          {busy === "billing" ? "Generating invoice..." : "Prepare billing packet"}
-        </button>
-        {showClaimZone && (
-          <button
-            type="button"
-            disabled={busy !== null}
-            onClick={() => {
-              setBusy("claim");
-              void (async () => {
-                try {
-                  const claim = await postGenerate<{
-                    generatedUrl: string;
-                    publicUrl?: string;
-                    metadata?: {
-                      relatedDocuments?: Array<{
-                        type?: string;
-                        generatedUrl?: string;
-                        publicUrl?: string;
-                      }>;
-                    };
-                  }>("/api/generate/claims", {
-                    loadId: load.load_id,
-                    description: load.exception_reason || "Dispatch claim review",
-                  });
-                  const related = claim.metadata?.relatedDocuments ?? [];
-                  const evidence = related.find((r) =>
-                    String(r.type || "").toLowerCase().includes("evidence")
-                  );
-                  const damage = related.find((r) =>
-                    String(r.type || "").toLowerCase().includes("damage")
-                  );
-                  const claimUrl = claim.publicUrl || claim.generatedUrl;
-                  setLoadDocumentUrls(load.load_id, {
-                    claim_form_url: claimUrl,
-                    supporting_attachment_url:
-                      evidence?.publicUrl || evidence?.generatedUrl || load.supporting_attachment_url,
-                    damage_photo_url:
-                      damage?.publicUrl || damage?.generatedUrl || load.damage_photo_url,
-                  });
-                  window.open(claimUrl, "_blank", "noopener,noreferrer");
-                  setNotice("Generated claims packet artifacts and linked them to this load.");
-                } catch (err) {
-                  const msg =
-                    err instanceof Error ? err.message : "Unknown error";
-                  setNotice(
-                    /unknown incidentid|missing or unknown incidentid/i.test(msg)
-                      ? "Could not generate claim packet: no claim incident is linked to this load/driver in current demo data."
-                      : `Could not generate claim packet: ${msg}`
-                  );
-                } finally {
-                  setBusy(null);
-                }
-              })();
-            }}
-            className="inline-flex items-center gap-1.5 rounded border border-rose-800/60 bg-rose-950/35 px-3 py-1.5 text-xs font-medium text-rose-100 hover:bg-rose-950/55 disabled:opacity-50"
+      <div className="mt-4 grid gap-2 sm:grid-cols-2">
+        {packetReadiness.map((p) => (
+          <div
+            key={p.packetType}
+            className="rounded border border-slate-800 bg-slate-950/50 p-2 text-[11px] text-slate-300"
           >
-            <Package className="h-3.5 w-3.5" aria-hidden />
-            {busy === "claim" ? "Generating claim packet..." : "Prepare claim packet"}
-          </button>
-        )}
+            <div className="font-semibold capitalize text-slate-200">{p.packetType} packet</div>
+            <div className="mt-0.5 text-slate-400">{p.status.replace(/_/g, " ")}</div>
+            {p.missingItems.length > 0 && (
+              <p className="mt-1 text-amber-200/90">Missing: {p.missingItems.join(", ")}</p>
+            )}
+            {p.status !== "ready" && p.status !== "not_applicable" && (
+              <p className="mt-1 text-slate-500">{p.recommendedAction}</p>
+            )}
+          </div>
+        ))}
+      </div>
+
+      <div className="mt-4 flex flex-wrap gap-2 border-t border-slate-800 pt-4">
+        {(() => {
+          const shipper = packetReadiness.find((x) => x.packetType === "shipper");
+          const billing = packetReadiness.find((x) => x.packetType === "billing");
+          const insurance = packetReadiness.find((x) => x.packetType === "insurance");
+          const claimPack = packetReadiness.find((x) => x.packetType === "claim");
+          const openOrExplain = (label: string, pack: typeof shipper) => {
+            if (!pack) return;
+            if (pack.status === "not_applicable") {
+              setNotice(`${label}: not applicable for this load.`);
+              return;
+            }
+            if (pack.status !== "ready" || !pack.outputUrl) {
+              setNotice(
+                `${label} incomplete — ${pack.missingItems.length ? pack.missingItems.join(", ") : pack.recommendedAction}`
+              );
+              return;
+            }
+            window.open(pack.outputUrl, "_blank", "noopener,noreferrer");
+          };
+          return (
+            <>
+              <button
+                type="button"
+                disabled={shipper?.status !== "ready"}
+                title={
+                  shipper?.status === "ready"
+                    ? "Open shipper packet index (manifest-backed links)"
+                    : shipper?.missingItems.join(", ") || shipper?.recommendedAction
+                }
+                onClick={() => openOrExplain("Shipper packet", shipper)}
+                className="inline-flex items-center gap-1.5 rounded border border-teal-600 bg-teal-900/30 px-3 py-1.5 text-xs font-medium text-teal-50 hover:bg-teal-900/50 disabled:opacity-50"
+              >
+                <FileOutput className="h-3.5 w-3.5" aria-hidden />
+                {shipper?.status === "ready" ? "Open shipper packet" : "Shipper packet (incomplete)"}
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  const u = firstManifestBackedDocUrl(load, trip);
+                  if (u) window.open(u, "_blank", "noopener,noreferrer");
+                  else
+                    setNotice(
+                      "No linked documents to open — complete core trip rows or apply manifest-backed URLs."
+                    );
+                }}
+                className="inline-flex items-center gap-1.5 rounded border border-slate-600 bg-slate-800/80 px-3 py-1.5 text-xs font-medium text-slate-100 hover:bg-slate-800"
+              >
+                <FolderOpen className="h-3.5 w-3.5" aria-hidden />
+                Open documentation bundle
+              </button>
+              <button
+                type="button"
+                disabled={billing?.status !== "ready"}
+                title={
+                  billing?.status === "ready"
+                    ? "Open billing packet index"
+                    : billing?.missingItems.join(", ") || billing?.recommendedAction
+                }
+                onClick={() => openOrExplain("Billing packet", billing)}
+                className="inline-flex items-center gap-1.5 rounded border border-slate-600 bg-slate-800/80 px-3 py-1.5 text-xs font-medium text-slate-100 hover:bg-slate-800 disabled:opacity-50"
+              >
+                <Scale className="h-3.5 w-3.5" aria-hidden />
+                {billing?.status === "ready" ? "Open billing packet" : "Billing packet (incomplete)"}
+              </button>
+              {showClaimZone && (
+                <>
+                  <button
+                    type="button"
+                    disabled={insurance?.status !== "ready"}
+                    title={
+                      insurance?.status === "ready"
+                        ? "Open insurance packet index"
+                        : insurance?.missingItems.join(", ") || insurance?.recommendedAction
+                    }
+                    onClick={() => openOrExplain("Insurance packet", insurance)}
+                    className="inline-flex items-center gap-1.5 rounded border border-slate-600 bg-slate-800/80 px-3 py-1.5 text-xs font-medium text-slate-100 hover:bg-slate-800 disabled:opacity-50"
+                  >
+                    <FileOutput className="h-3.5 w-3.5" aria-hidden />
+                    {insurance?.status === "ready"
+                      ? "Open insurance packet"
+                      : "Insurance packet (incomplete)"}
+                  </button>
+                  <button
+                    type="button"
+                    disabled={claimPack?.status !== "ready"}
+                    title={
+                      claimPack?.status === "ready"
+                        ? "Open claim packet bundle index"
+                        : claimPack?.missingItems.join(", ") || claimPack?.recommendedAction
+                    }
+                    onClick={() => openOrExplain("Claim packet", claimPack)}
+                    className="inline-flex items-center gap-1.5 rounded border border-rose-800/60 bg-rose-950/35 px-3 py-1.5 text-xs font-medium text-rose-100 hover:bg-rose-950/55 disabled:opacity-50"
+                  >
+                    <Package className="h-3.5 w-3.5" aria-hidden />
+                    {claimPack?.status === "ready"
+                      ? "Open claim packet"
+                      : "Claim packet (incomplete)"}
+                  </button>
+                </>
+              )}
+            </>
+          );
+        })()}
       </div>
 
       {showClaimZone && (
@@ -502,15 +473,30 @@ export function DocumentationReadinessPanel({ load }: Props) {
                 <span
                   className={[
                     "inline-flex rounded px-2 py-0.5 text-[11px] font-medium",
-                    report.claimPacketReady
+                    claimPacketReadiness?.status === "ready"
                       ? documentationLineBadgeClass("Ready")
-                      : documentationLineBadgeClass("Incomplete"),
+                      : claimPacketReadiness?.status === "not_applicable"
+                        ? documentationLineBadgeClass("Not applicable")
+                        : documentationLineBadgeClass("Incomplete"),
                   ].join(" ")}
                 >
-                  {report.claimPacketReady ? "Ready" : "Incomplete"}
+                  {claimPacketReadiness?.status === "ready"
+                    ? "Ready"
+                    : claimPacketReadiness?.status === "not_applicable"
+                      ? "Not applicable"
+                      : "Incomplete"}
                 </span>
               </dd>
             </div>
+            {claimPacketReadiness &&
+              claimPacketReadiness.status !== "ready" &&
+              claimPacketReadiness.status !== "not_applicable" &&
+              claimPacketReadiness.missingItems.length > 0 && (
+                <div className="rounded border border-rose-900/30 bg-rose-950/20 p-2 text-[11px] text-rose-100/90">
+                  <span className="font-semibold text-rose-200/95">Manifest gaps: </span>
+                  {claimPacketReadiness.missingItems.join("; ")}
+                </div>
+              )}
             {load.exception_reason && (
               <div className="rounded border border-slate-800 bg-slate-900/60 p-2 text-slate-200">
                 <span className="font-semibold text-slate-500">Exception: </span>

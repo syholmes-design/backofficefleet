@@ -165,6 +165,30 @@ function homeTerminalFromAddress(addr: string): string | undefined {
 }
 
 /** Demo-only storyline: ready packet (L003), incomplete (L002), claim / exception (L001). */
+/** When demo load is in claim / exception workflow, hydrate dispatch URL stamps from manifests so readiness matches trip packet rows. */
+function hydrateClaimUrlsForDemoLoad(l: DemoLoad, load: Load): Partial<Load> {
+  const claimWorkflow =
+    Boolean(l.dispatchExceptionFlag) ||
+    (String(l.status) === "Delivered" &&
+      String(l.sealStatus).toUpperCase() === "MISMATCH");
+  if (!claimWorkflow) return {};
+  const gen = getGeneratedLoadDocEntry(l.id);
+  const damagePacket = gen.damagePhotoPacket;
+  const damage =
+    getLoadEvidenceUrl(l.id, "damagePhoto") ||
+    getLoadEvidenceUrl(l.id, "cargoDamagePhoto") ||
+    (typeof damagePacket === "string" && /\.(png|jpe?g|webp|gif)$/i.test(damagePacket)
+      ? damagePacket
+      : undefined);
+  const supporting =
+    getLoadEvidenceUrl(l.id, "claimEvidence") || gen.bol || load.supporting_attachment_url;
+  return {
+    claim_form_url: gen.claimPacket ?? load.claim_form_url,
+    damage_photo_url: damage ?? load.damage_photo_url,
+    supporting_attachment_url: supporting ?? load.supporting_attachment_url,
+  };
+}
+
 function applyDocumentationDemos(load: Load, l: DemoLoad): Load {
   if (l.id === "L002") {
     return {
@@ -396,6 +420,7 @@ export function buildDispatchLoadsFromDemoLoads(loads: DemoLoad[]): Load[] {
       claim_form_url: generatedDocs.claimPacket ?? seeded.claim_form_url,
       lumper_photo_url: generatedDocs.lumperReceipt ?? seeded.lumper_photo_url,
     };
+    const withClaim = { ...withDocs, ...hydrateClaimUrlsForDemoLoad(l, withDocs) };
     const proofEvents: LoadProofEvent[] = [
       {
         id: `${l.id}-pickup-proof`,
@@ -404,9 +429,9 @@ export function buildDispatchLoadsFromDemoLoads(loads: DemoLoad[]): Load[] {
         label: "Pickup geofence entered",
         lat: coords.origin[0],
         lng: coords.origin[1],
-        timestamp: withDocs.pickup_datetime,
-        status: withDocs.pickup_photo_url ? "ready" : "pending",
-        documentUrl: withDocs.pickup_photo_url,
+        timestamp: withClaim.pickup_datetime,
+        status: withClaim.pickup_photo_url ? "ready" : "pending",
+        documentUrl: withClaim.pickup_photo_url,
       },
       {
         id: `${l.id}-seal-proof`,
@@ -415,9 +440,9 @@ export function buildDispatchLoadsFromDemoLoads(loads: DemoLoad[]): Load[] {
         label: "Seal photo captured",
         lat: coords.origin[0] + 0.04,
         lng: coords.origin[1] + 0.04,
-        timestamp: withDocs.pickup_datetime,
-        status: withDocs.seal_photo_url ? "ready" : "pending",
-        documentUrl: withDocs.seal_photo_url,
+        timestamp: withClaim.pickup_datetime,
+        status: withClaim.seal_photo_url ? "ready" : "pending",
+        documentUrl: withClaim.seal_photo_url,
       },
       {
         id: `${l.id}-rfid-proof`,
@@ -426,8 +451,8 @@ export function buildDispatchLoadsFromDemoLoads(loads: DemoLoad[]): Load[] {
         label: "RFID checkpoint validated",
         lat: (coords.origin[0] + coords.destination[0]) / 2,
         lng: (coords.origin[1] + coords.destination[1]) / 2,
-        timestamp: withDocs.delivery_datetime,
-        status: withDocs.rfid_tag_id ? "ready" : "pending",
+        timestamp: withClaim.delivery_datetime,
+        status: withClaim.rfid_tag_id ? "ready" : "pending",
       },
       {
         id: `${l.id}-delivery-proof`,
@@ -436,9 +461,9 @@ export function buildDispatchLoadsFromDemoLoads(loads: DemoLoad[]): Load[] {
         label: "Delivery geofence entered",
         lat: coords.destination[0],
         lng: coords.destination[1],
-        timestamp: withDocs.delivery_datetime,
-        status: withDocs.delivery_photo_url ? "ready" : "pending",
-        documentUrl: withDocs.delivery_photo_url,
+        timestamp: withClaim.delivery_datetime,
+        status: withClaim.delivery_photo_url ? "ready" : "pending",
+        documentUrl: withClaim.delivery_photo_url,
       },
       {
         id: `${l.id}-pod-proof`,
@@ -447,12 +472,12 @@ export function buildDispatchLoadsFromDemoLoads(loads: DemoLoad[]): Load[] {
         label: "POD uploaded",
         lat: coords.destination[0] + 0.03,
         lng: coords.destination[1] - 0.03,
-        timestamp: withDocs.delivery_datetime,
-        status: withDocs.pod_url ? "ready" : "pending",
-        documentUrl: withDocs.pod_url,
+        timestamp: withClaim.delivery_datetime,
+        status: withClaim.pod_url ? "ready" : "pending",
+        documentUrl: withClaim.pod_url,
       },
     ];
-    if (withDocs.claim_form_url || withDocs.damage_photo_url) {
+    if (withClaim.claim_form_url || withClaim.damage_photo_url) {
       proofEvents.push({
         id: `${l.id}-claim-proof`,
         loadId: l.id,
@@ -460,13 +485,13 @@ export function buildDispatchLoadsFromDemoLoads(loads: DemoLoad[]): Load[] {
         label: "Claim photo captured",
         lat: coords.destination[0] - 0.04,
         lng: coords.destination[1] + 0.04,
-        timestamp: withDocs.delivery_datetime,
-        status: withDocs.claim_form_url ? "exception" : "pending",
-        documentUrl: withDocs.claim_form_url ?? withDocs.damage_photo_url,
+        timestamp: withClaim.delivery_datetime,
+        status: withClaim.claim_form_url ? "exception" : "pending",
+        documentUrl: withClaim.claim_form_url ?? withClaim.damage_photo_url,
       });
     }
     return {
-      ...withDocs,
+      ...withClaim,
       proofEvents,
     };
   });

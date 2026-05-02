@@ -113,7 +113,11 @@ function srcFromUrl(url?: string): LoadEvidenceItem["source"] {
   if (!u) return undefined;
   if (u.includes("/actual_docs/")) return "actual_docs";
   if (u.includes("/generated/")) return "generated";
-  if (u.includes("/evidence/")) return "generated";
+  if (u.includes("/evidence/")) {
+    if (/\.svg$/i.test(u)) return "svg_demo";
+    if (/\.(png|jpe?g|webp|gif)$/i.test(u)) return "real";
+    return "generated";
+  }
   return "manual_upload";
 }
 
@@ -321,7 +325,9 @@ export function buildTripDocumentPacket(data: BofData, loadId: string): TripPack
       requiredForSettlementRelease: false,
       deliveredMinimum: false,
       loadEvidenceType: rfidEvidenceType,
-      source: rfidUrl ? srcFromUrl(rfidUrl) : "rfid",
+      source:
+        srcFromEvidence(loadId, "rfidDockProof") ??
+        (rfidUrl ? srcFromUrl(rfidUrl) : "rfid"),
     },
     {
       key: "lumper_receipt",
