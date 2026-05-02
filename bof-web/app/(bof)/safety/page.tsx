@@ -1,9 +1,9 @@
 import { SafetyShell } from "@/components/safety/SafetyShell";
 
 export const metadata = {
-  title: "Safety & Compliance | BOF",
+  title: "Safety Command Center | BOF",
   description:
-    "Safety events, driver compliance posture, expirations, and claim exposure for fleet operations",
+    "Driver risk, HOS/OOS alerts, proof certification, safety bonus eligibility, and compliance signals for fleet operations",
 };
 
 export default function SafetyPage() {

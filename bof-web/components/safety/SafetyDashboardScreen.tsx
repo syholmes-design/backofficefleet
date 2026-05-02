@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import Link from "next/link";
 import { AlertOctagon, FileWarning, ShieldAlert, UserX } from "lucide-react";
 import { formatExposure } from "./safety-ui";
@@ -17,13 +17,52 @@ import {
   getSafetyEvidenceOpenHref,
   SafetyEvidenceThumb,
 } from "@/components/safety/SafetyEvidenceThumb";
+import { useBofDemoData } from "@/lib/bof-demo-data-context";
+import { useSafetyStore } from "@/lib/stores/safety-store";
+import {
+  buildSafetyCommandFeed,
+  filterSafetyCommandFeed,
+  getSafetyCommandHeroStats,
+  type SafetyCommandDriverFilter,
+  type SafetyCommandEventTypeFilter,
+  type SafetyCommandSeverityFilter,
+  type SafetyCommandStatusFilter,
+} from "@/lib/safety-command-feed";
+import { getDriverSafetyBonusRows } from "@/lib/safety-bonus";
+import { SafetyCommandHero } from "@/components/safety/SafetyCommandHero";
+import { SafetyCommandFiltersBar } from "@/components/safety/SafetyCommandFiltersBar";
+import { SafetyCommandEventList } from "@/components/safety/SafetyCommandEventList";
+import { SafetyBonusPanel } from "@/components/safety/SafetyBonusPanel";
 
 export function SafetyDashboardScreen() {
+  const { data } = useBofDemoData();
+  const storeEvents = useSafetyStore((s) => s.events);
+  const openEventDrawer = useSafetyStore((s) => s.openEventDrawer);
+  const setEventStatus = useSafetyStore((s) => s.setEventStatus);
+
+  const [eventType, setEventType] = useState<SafetyCommandEventTypeFilter>("all");
+  const [driverFilter, setDriverFilter] = useState<SafetyCommandDriverFilter>("all");
+  const [severity, setSeverity] = useState<SafetyCommandSeverityFilter>("all");
+  const [status, setStatus] = useState<SafetyCommandStatusFilter>("all");
+
   const safetyScorecardRows = useMemo(() => getSafetyScorecardRows(), []);
   const safetyScoreSummary = useMemo(() => getSafetyScorecardSummary(), []);
   const atRiskSafetyDrivers = useMemo(() => getAtRiskSafetyDrivers(), []);
   const safetyViolationActions = useMemo(() => getSafetyViolationActions(), []);
   const safetyMonthlyTrend = useMemo(() => getSafetyMonthlyTrend(), []);
+
+  const feed = useMemo(() => buildSafetyCommandFeed(data, storeEvents), [data, storeEvents]);
+  const heroStats = useMemo(() => getSafetyCommandHeroStats(data, feed), [data, feed]);
+  const filteredFeed = useMemo(
+    () => filterSafetyCommandFeed(feed, { eventType, driverId: driverFilter, severity, status }),
+    [feed, eventType, driverFilter, severity, status]
+  );
+  const bonusRows = useMemo(() => getDriverSafetyBonusRows(data), [data]);
+  const driverIds = useMemo(
+    () => [...(data.drivers ?? [])].map((d) => d.id).sort(),
+    [data.drivers]
+  );
+
   const evidenceByDriverId = useMemo(() => {
     const out = new Map<string, ReturnType<typeof getSafetyEvidenceByDriverId>>();
     for (const row of safetyScorecardRows) out.set(row.driverId, getSafetyEvidenceByDriverId(row.driverId));
@@ -32,20 +71,40 @@ export function SafetyDashboardScreen() {
 
   return (
     <div className="flex min-h-0 flex-1 flex-col gap-6 p-5">
-      <header>
-        <h1 className="text-lg font-semibold tracking-tight text-white">
-          Safety &amp; Compliance
-        </h1>
-        <p className="mt-1 max-w-3xl text-sm text-slate-400">
-          Review driver safety status, HOS compliance, OOS violations, asset inspection
-          results, cargo exposure, safety bonuses, and required actions.
-        </p>
-      </header>
+      <SafetyCommandHero stats={heroStats} />
+
+      <SafetyCommandFiltersBar
+        driverIds={driverIds}
+        eventType={eventType}
+        driverId={driverFilter}
+        severity={severity}
+        status={status}
+        onEventType={setEventType}
+        onDriverId={setDriverFilter}
+        onSeverity={setSeverity}
+        onStatus={setStatus}
+      />
 
       <section>
-        <h2 className="mb-2 text-sm font-semibold text-slate-200">
-          Driver Safety Metrics
-        </h2>
+        <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
+          <h2 className="text-sm font-semibold text-slate-200">Live safety signals</h2>
+          <span className="text-[10px] text-slate-500">
+            Compliance + protocol + loads + evidence + coaching queue ({filteredFeed.length} shown)
+          </span>
+        </div>
+        <SafetyCommandEventList
+          data={data}
+          rows={filteredFeed}
+          storeEvents={storeEvents}
+          onOpenDrawer={openEventDrawer}
+          onAdvanceEvent={(eventId, next) => setEventStatus(eventId, next)}
+        />
+      </section>
+
+      <SafetyBonusPanel data={data} rows={bonusRows} />
+
+      <section>
+        <h2 className="mb-2 text-sm font-semibold text-slate-200">Driver safety scorecard</h2>
         <div className="overflow-x-auto rounded-lg border border-slate-800">
           <table className="w-full min-w-[1120px] border-collapse text-left text-sm">
             <thead className="bg-slate-900/90 text-[10px] uppercase tracking-wide text-slate-500">
@@ -91,9 +150,7 @@ export function SafetyDashboardScreen() {
                   <td className={["px-3 py-2 font-mono text-xs", row.cargoDamageUsd > 0 ? "font-semibold text-rose-300" : "text-slate-400"].join(" ")}>
                     {formatExposure(row.cargoDamageUsd)}
                   </td>
-                  <td className="px-3 py-2 font-mono text-xs text-emerald-300">
-                    {formatExposure(row.safetyBonusUsd)}
-                  </td>
+                  <td className="px-3 py-2 font-mono text-xs text-emerald-300">{formatExposure(row.safetyBonusUsd)}</td>
                   <td className="px-3 py-2 text-xs">
                     <TierChip tier={row.performanceTier} />
                   </td>
@@ -129,9 +186,7 @@ export function SafetyDashboardScreen() {
 
       <div className="grid gap-6 lg:grid-cols-2">
         <section>
-          <h2 className="mb-2 text-sm font-semibold text-slate-200">
-            At-Risk Drivers / Required Actions
-          </h2>
+          <h2 className="mb-2 text-sm font-semibold text-slate-200">At-Risk Drivers / Required Actions</h2>
           <ul className="space-y-2 text-xs">
             {atRiskSafetyDrivers.map((row) => (
               <li key={row.driverId} className="rounded border border-rose-900/40 bg-rose-950/20 px-3 py-2">
@@ -146,9 +201,7 @@ export function SafetyDashboardScreen() {
           </ul>
         </section>
         <section>
-          <h2 className="mb-2 text-sm font-semibold text-slate-200">
-            Recent Violations &amp; Required Actions
-          </h2>
+          <h2 className="mb-2 text-sm font-semibold text-slate-200">Recent Violations &amp; Required Actions</h2>
           <ul className="space-y-2 text-xs">
             {safetyViolationActions.map((row) => (
               <li key={row.driverId} className="rounded border border-slate-800 bg-slate-900/40 px-3 py-2">
@@ -191,10 +244,7 @@ export function SafetyDashboardScreen() {
                 </p>
                 <div className="mt-2 space-y-2">
                   {evidence.map((item) => (
-                    <div
-                      key={item.id}
-                      className="rounded border border-slate-800 bg-slate-950/50 px-2 py-2 text-xs"
-                    >
+                    <div key={item.id} className="rounded border border-slate-800 bg-slate-950/50 px-2 py-2 text-xs">
                       <SafetyEvidenceThumb rawUrl={item.url} alt={item.label} />
                       <div className="flex items-center justify-between gap-2">
                         <span className="font-medium text-slate-100">{item.label}</span>
@@ -267,12 +317,8 @@ export function SafetyDashboardScreen() {
 
       <section className="rounded-lg border border-slate-800 bg-slate-900/30 p-4">
         <div className="mb-2 flex items-center justify-between gap-2">
-          <h2 className="text-sm font-semibold text-slate-100">
-            6-Month Safety Trend
-          </h2>
-          <span className="rounded bg-slate-900 px-2 py-0.5 text-[11px] text-slate-400">
-            Demo trend data
-          </span>
+          <h2 className="text-sm font-semibold text-slate-100">6-Month Safety Trend</h2>
+          <span className="rounded bg-slate-900 px-2 py-0.5 text-[11px] text-slate-400">Demo trend data</span>
         </div>
         <div className="overflow-x-auto rounded border border-slate-800">
           <table className="w-full min-w-[860px] border-collapse text-left text-xs">
@@ -295,12 +341,8 @@ export function SafetyDashboardScreen() {
                   <td className="px-2 py-1.5 font-mono">{row.avgHosCompliance}%</td>
                   <td className="px-2 py-1.5 font-mono">{row.atRiskDrivers}</td>
                   <td className="px-2 py-1.5 font-mono">{row.oosViolations}</td>
-                  <td className="px-2 py-1.5 font-mono text-rose-300">
-                    {formatExposure(row.cargoDamageExposure)}
-                  </td>
-                  <td className="px-2 py-1.5 font-mono text-emerald-300">
-                    {formatExposure(row.safetyBonusPaid)}
-                  </td>
+                  <td className="px-2 py-1.5 font-mono text-rose-300">{formatExposure(row.cargoDamageExposure)}</td>
+                  <td className="px-2 py-1.5 font-mono text-emerald-300">{formatExposure(row.safetyBonusPaid)}</td>
                 </tr>
               ))}
             </tbody>
@@ -309,12 +351,14 @@ export function SafetyDashboardScreen() {
       </section>
 
       <section className="rounded-lg border border-slate-800 bg-slate-900/20 p-3">
-        <h3 className="text-xs font-semibold uppercase tracking-wide text-slate-400">
-          Source details
-        </h3>
+        <h3 className="text-xs font-semibold uppercase tracking-wide text-slate-400">Source details</h3>
         <p className="mt-1 text-xs text-slate-500">
-          Driver safety metrics are sourced from the BOF safety scorecard rows and
-          current demo safety violations data.
+          Scorecard rows and violation actions come from <code className="text-slate-400">lib/safety-scorecard.ts</code>. Live
+          signals join <code className="text-slate-400">complianceIncidents</code>, <code className="text-slate-400">loads</code>{" "}
+          (POD/seal), <code className="text-slate-400">load-evidence-manifest</code> via{" "}
+          <code className="text-slate-400">getLoadEvidenceUrl</code>, registry safety evidence, coaching tier rows, and the
+          interactive safety event store. Dispatch impact uses <code className="text-slate-400">getDriverDispatchEligibility</code>{" "}
+          without changing its rules.
         </p>
       </section>
     </div>
@@ -345,9 +389,7 @@ function KpiCard({
   return (
     <div className="rounded-lg border border-slate-800 bg-slate-900/40 p-4">
       <div className="flex items-center justify-between gap-2">
-        <span className="text-[10px] font-semibold uppercase tracking-wide text-slate-500">
-          {label}
-        </span>
+        <span className="text-[10px] font-semibold uppercase tracking-wide text-slate-500">{label}</span>
         {icon}
       </div>
       <p className="mt-2 text-2xl font-semibold tabular-nums text-white">{value}</p>
