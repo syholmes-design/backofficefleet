@@ -1,6 +1,6 @@
 "use client";
 
-import { use, useState } from "react";
+import { use } from "react";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { useBofDemoData } from "@/lib/bof-demo-data-context";
@@ -11,6 +11,10 @@ import {
   getSafetyScorecardRows,
   getSafetyViolationActions,
 } from "@/lib/safety-scorecard";
+import {
+  getSafetyEvidenceOpenHref,
+  SafetyEvidenceThumb,
+} from "@/components/safety/SafetyEvidenceThumb";
 
 type Props = {
   params: Promise<{ id: string }>;
@@ -161,7 +165,7 @@ export default function DriverSafetyPage({ params }: Props) {
             <div className="grid gap-2 md:grid-cols-2">
               {evidence.map((item) => (
                 <div key={item.id} className="rounded border border-slate-800 bg-slate-950/50 p-3 text-xs">
-                  <EvidenceThumb url={item.url} alt={item.label} />
+                  <SafetyEvidenceThumb rawUrl={item.url} alt={item.label} />
                   <div className="flex items-center justify-between gap-2">
                     <span className="font-medium text-slate-100">{item.label}</span>
                     <span
@@ -180,14 +184,20 @@ export default function DriverSafetyPage({ params }: Props) {
                     {item.date}
                     {item.location ? ` · ${item.location}` : ""}
                   </p>
-                  <a
-                    href={item.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="mt-1 inline-flex font-semibold text-teal-300 hover:text-teal-200"
-                  >
-                    Open evidence
-                  </a>
+                  {getSafetyEvidenceOpenHref(item.url) ? (
+                    <a
+                      href={getSafetyEvidenceOpenHref(item.url)!}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="mt-1 inline-flex font-semibold text-teal-300 hover:text-teal-200"
+                    >
+                      Open evidence
+                    </a>
+                  ) : (
+                    <span className="mt-1 inline-flex font-semibold text-slate-500">
+                      Open evidence unavailable
+                    </span>
+                  )}
                 </div>
               ))}
             </div>
@@ -259,26 +269,6 @@ export default function DriverSafetyPage({ params }: Props) {
         </section>
       </div>
     </div>
-  );
-}
-
-function EvidenceThumb({ url, alt }: { url: string; alt: string }) {
-  const [failed, setFailed] = useState(false);
-  if (failed) {
-    return (
-      <div className="mb-2 rounded border border-slate-700 bg-slate-900 px-2 py-1 text-[10px] text-slate-400">
-        Evidence image unavailable
-      </div>
-    );
-  }
-  return (
-    // eslint-disable-next-line @next/next/no-img-element
-    <img
-      src={url}
-      alt={alt}
-      className="mb-2 h-28 w-full rounded border border-slate-800 object-cover"
-      onError={() => setFailed(true)}
-    />
   );
 }
 

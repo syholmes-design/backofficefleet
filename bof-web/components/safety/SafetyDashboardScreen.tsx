@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import Link from "next/link";
 import { AlertOctagon, FileWarning, ShieldAlert, UserX } from "lucide-react";
 import { formatExposure } from "./safety-ui";
@@ -13,6 +13,10 @@ import {
   type SafetyPerformanceTier,
 } from "@/lib/safety-scorecard";
 import { getSafetyMonthlyTrend } from "@/lib/demo-trends";
+import {
+  getSafetyEvidenceOpenHref,
+  SafetyEvidenceThumb,
+} from "@/components/safety/SafetyEvidenceThumb";
 
 export function SafetyDashboardScreen() {
   const safetyScorecardRows = useMemo(() => getSafetyScorecardRows(), []);
@@ -191,7 +195,7 @@ export function SafetyDashboardScreen() {
                       key={item.id}
                       className="rounded border border-slate-800 bg-slate-950/50 px-2 py-2 text-xs"
                     >
-                      <EvidenceThumb url={item.url} alt={item.label} />
+                      <SafetyEvidenceThumb rawUrl={item.url} alt={item.label} />
                       <div className="flex items-center justify-between gap-2">
                         <span className="font-medium text-slate-100">{item.label}</span>
                         <span
@@ -210,14 +214,20 @@ export function SafetyDashboardScreen() {
                         {item.date}
                         {item.location ? ` · ${item.location}` : ""}
                       </p>
-                      <a
-                        href={item.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="mt-1 inline-flex text-[11px] font-semibold text-teal-300 hover:text-teal-200"
-                      >
-                        Open evidence
-                      </a>
+                      {getSafetyEvidenceOpenHref(item.url) ? (
+                        <a
+                          href={getSafetyEvidenceOpenHref(item.url)!}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="mt-1 inline-flex text-[11px] font-semibold text-teal-300 hover:text-teal-200"
+                        >
+                          Open evidence
+                        </a>
+                      ) : (
+                        <span className="mt-1 inline-flex text-[11px] font-semibold text-slate-500">
+                          Open evidence unavailable
+                        </span>
+                      )}
                     </div>
                   ))}
                 </div>
@@ -308,26 +318,6 @@ export function SafetyDashboardScreen() {
         </p>
       </section>
     </div>
-  );
-}
-
-function EvidenceThumb({ url, alt }: { url: string; alt: string }) {
-  const [failed, setFailed] = useState(false);
-  if (failed) {
-    return (
-      <div className="mb-2 rounded border border-slate-700 bg-slate-900 px-2 py-1 text-[10px] text-slate-400">
-        Evidence image unavailable
-      </div>
-    );
-  }
-  return (
-    // eslint-disable-next-line @next/next/no-img-element
-    <img
-      src={url}
-      alt={alt}
-      className="mb-2 h-28 w-full rounded border border-slate-800 object-cover"
-      onError={() => setFailed(true)}
-    />
   );
 }
 

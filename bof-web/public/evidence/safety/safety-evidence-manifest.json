@@ -1,0 +1,14 @@
+{
+  "version": 1,
+  "description": "Committed demo safety stills (SVG). Referenced by lib/safety-evidence.ts and load-doc manifests.",
+  "files": [
+    "/evidence/safety/p_patel_b102_tire_irregular_wear.svg",
+    "/evidence/safety/p_patel_pretrip_tire_tread_depth.svg",
+    "/evidence/safety/p_patel_cargo_damage_box_puncture.svg",
+    "/evidence/safety/p_patel_safety_equipment_extinguisher.svg",
+    "/evidence/safety/l_smith_l405_hos_violation_eld.svg",
+    "/evidence/safety/l_smith_logbook_review_violation.svg",
+    "/evidence/safety/l_smith_trailer_brake_inspection.svg",
+    "/evidence/safety/l_smith_cargo_damage_pallet_wrap.svg"
+  ]
+}

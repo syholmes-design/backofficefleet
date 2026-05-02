@@ -85,7 +85,7 @@
     "deliveryPhoto": "/evidence/loads/L004/delivery-photo.svg",
     "damageClaimPhoto": "/evidence/loads/L004/damage-photo.svg",
     "claimEvidence": "/evidence/loads/L004/claim-evidence.svg",
-    "safetyViolationPhoto": "/evidence/safety/p_patel_b102_tire_irregular_wear.png"
+    "safetyViolationPhoto": "/evidence/safety/p_patel_b102_tire_irregular_wear.svg"
   },
   "L005": {
     "rateConfirmation": "/generated/loads/L005/rate-confirmation.html",
@@ -168,7 +168,7 @@
     "equipmentPhoto": "/evidence/loads/L008/equipment-photo.svg",
     "pickupPhoto": "/evidence/loads/L008/pickup-photo.svg",
     "deliveryPhoto": "/evidence/loads/L008/delivery-photo.svg",
-    "safetyViolationPhoto": "/evidence/safety/l_smith_l405_hos_violation_eld.png"
+    "safetyViolationPhoto": "/evidence/safety/l_smith_l405_hos_violation_eld.svg"
   },
   "L009": {
     "rateConfirmation": "/generated/loads/L009/rate-confirmation.html",

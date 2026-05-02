@@ -13,6 +13,10 @@ import {
   severityChipClass,
 } from "@/lib/safety-rules";
 import { getSafetyEvidenceByDriverId } from "@/lib/safety-scorecard";
+import {
+  getSafetyEvidenceOpenHref,
+  SafetyEvidenceThumb,
+} from "@/components/safety/SafetyEvidenceThumb";
 
 export function DriverSafetyProfileScreen() {
   const drivers = useSafetyStore((s) => s.drivers);
@@ -210,15 +214,26 @@ export function DriverSafetyProfileScreen() {
                     {item.severity === "high" ? "High" : "Medium"}
                   </span>
                 </div>
+                <SafetyEvidenceThumb
+                  rawUrl={item.url}
+                  alt={item.label}
+                  className="mb-2 h-24 w-full rounded border border-slate-800 bg-slate-950 object-contain object-center"
+                />
                 <p className="mt-1 text-slate-400">{item.note}</p>
-                <a
-                  href={item.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="mt-1 inline-flex text-[11px] font-semibold text-teal-300 hover:text-teal-200"
-                >
-                  Open evidence
-                </a>
+                {getSafetyEvidenceOpenHref(item.url) ? (
+                  <a
+                    href={getSafetyEvidenceOpenHref(item.url)!}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="mt-1 inline-flex text-[11px] font-semibold text-teal-300 hover:text-teal-200"
+                  >
+                    Open evidence
+                  </a>
+                ) : (
+                  <span className="mt-1 inline-flex text-[11px] font-semibold text-slate-500">
+                    Open evidence unavailable
+                  </span>
+                )}
               </div>
             ))}
           </div>

@@ -1,4 +1,5 @@
 import rawManifest from "@/lib/generated/load-doc-manifest.json";
+import { resolveSafetyEvidencePublicUrl } from "@/lib/safety-evidence-url";
 
 export type GeneratedLoadDocKey =
   | "rateConfirmation"
@@ -51,6 +52,11 @@ export function getGeneratedLoadDocUrl(
   const raw = getGeneratedLoadDocEntry(loadId)[key];
   if (!raw) return undefined;
   const normalized = String(raw).trim();
-  return normalized.length > 0 ? normalized : undefined;
+  if (!normalized.length) return undefined;
+  if (key === "safetyViolationPhoto") {
+    const resolved = resolveSafetyEvidencePublicUrl(normalized);
+    return resolved.url ?? undefined;
+  }
+  return normalized;
 }
 
