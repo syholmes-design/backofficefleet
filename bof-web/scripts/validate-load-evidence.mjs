@@ -1,6 +1,7 @@
 import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
+import { findInvalidPcdataInSvgFile } from "./lib/scan-svg-invalid-pcdata.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(__dirname, "..");
@@ -162,6 +163,27 @@ function main() {
   if (mockHits.length > 0) {
     errors.push(`Found /mocks/mock_* evidence references: ${mockHits.join(", ")}`);
   }
+
+  function scanManifestSvgPcdata(manifest, label) {
+    for (const [loadId, entry] of Object.entries(manifest)) {
+      if (!entry || typeof entry !== "object") continue;
+      for (const [, value] of Object.entries(entry)) {
+        if (!value || typeof value !== "object" || !value.url) continue;
+        const url = String(value.url);
+        if (!url.toLowerCase().endsWith(".svg")) continue;
+        const fp = toFsPath(url);
+        if (!fs.existsSync(fp)) continue;
+        const bad = findInvalidPcdataInSvgFile(fp);
+        if (!bad.ok) {
+          errors.push(
+            `${label} ${loadId}: SVG ${url} has invalid XML char U+${bad.code.toString(16).toUpperCase()} at line ${bad.line} col ${bad.column}`
+          );
+        }
+      }
+    }
+  }
+  scanManifestSvgPcdata(publicManifest, "public manifest");
+  scanManifestSvgPcdata(libManifest, "lib manifest");
 
   if (errors.length > 0) {
     console.error("validate:load-evidence failed");

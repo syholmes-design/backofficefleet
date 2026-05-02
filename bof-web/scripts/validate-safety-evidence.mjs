@@ -6,6 +6,7 @@
 import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
+import { findInvalidPcdataInSvgFile, walkSvgFiles } from "./lib/scan-svg-invalid-pcdata.mjs";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const PUBLIC = path.join(ROOT, "public");
@@ -22,6 +23,12 @@ function assertFileFromPublicUrl(url) {
   if (!fs.existsSync(disk)) die(`Missing file for URL ${u} (expected ${disk})`);
   const ext = path.extname(u).toLowerCase();
   if (ext !== ".svg") die(`Safety evidence must be committed .svg for demo consistency: ${u}`);
+  const bad = findInvalidPcdataInSvgFile(disk);
+  if (!bad.ok) {
+    die(
+      `Invalid XML control character U+${bad.code.toString(16).toUpperCase()} in ${path.relative(ROOT, disk)} line ${bad.line} column ${bad.column}`
+    );
+  }
 }
 
 const manifestPath = path.join(PUBLIC, "evidence", "safety", "safety-evidence-manifest.json");
@@ -39,6 +46,16 @@ if (urls.length === 0) die(`No url: "/evidence/safety/..." entries found in ${pa
 for (const u of urls) {
   assertFileFromPublicUrl(u);
 }
+
+const evidenceRoot = path.join(PUBLIC, "evidence");
+walkSvgFiles(evidenceRoot, (full) => {
+  const bad = findInvalidPcdataInSvgFile(full);
+  if (!bad.ok) {
+    die(
+      `Invalid XML control character U+${bad.code.toString(16).toUpperCase()} in ${path.relative(ROOT, full)} line ${bad.line} column ${bad.column}`
+    );
+  }
+});
 
 const docManifestPaths = [
   path.join(ROOT, "lib", "generated", "load-doc-manifest.json"),

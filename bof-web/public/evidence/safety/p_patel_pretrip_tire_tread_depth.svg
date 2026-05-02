@@ -8,13 +8,13 @@
   </defs>
   <rect width="1280" height="720" fill="url(#bg)"/>
   <rect x="22" y="22" width="1236" height="676" rx="14" fill="none" stroke="#f97316" stroke-width="2"/>
-  <text x="32" y="56" fill="#fb923c" font-size="22" font-family="Segoe UI, Arial" font-weight="700">BOF Demo  Safety evidence</text>
+  <text x="32" y="56" fill="#fb923c" font-size="22" font-family="Segoe UI, Arial" font-weight="700">BOF Demo — Safety evidence</text>
   <text x="32" y="92" fill="#94a3b8" font-size="14" font-family="Consolas, monospace">p_patel_pretrip_tire_tread_depth.svg</text>
   <text x="32" y="140" fill="#e2e8f0" font-size="26" font-family="Segoe UI, Arial" font-weight="600">Pre-trip tire tread depth</text>
-  <text x="32" y="178" fill="#cbd5e1" font-size="18" font-family="Segoe UI, Arial">Driver: Priya Patel (DRV-004) � Load L004</text>
+  <text x="32" y="178" fill="#cbd5e1" font-size="18" font-family="Segoe UI, Arial">Driver: Priya Patel (DRV-004) · Load L004</text>
   <text x="32" y="210" fill="#fca5a5" font-size="16" font-weight="700">Tread below minimum (demo still)</text>
   <rect x="32" y="240" width="1216" height="400" rx="10" fill="#0b1220" stroke="#334155"/>
-  <text x="56" y="290" fill="#93c5fd" font-size="17" font-family="Segoe UI, Arial">Synthetic demo asset  not a production photograph.</text>
-  <text x="56" y="330" fill="#a7f3d0" font-size="16" font-family="Segoe UI, Arial">Location: Atlanta, GA � 2026-04-02</text>
+  <text x="56" y="290" fill="#93c5fd" font-size="17" font-family="Segoe UI, Arial">Synthetic demo asset — not a production photograph.</text>
+  <text x="56" y="330" fill="#a7f3d0" font-size="16" font-family="Segoe UI, Arial">Location: Atlanta, GA · 2026-04-02</text>
   <text x="32" y="698" fill="#64748b" font-size="13" font-family="Segoe UI, Arial">/evidence/safety/p_patel_pretrip_tire_tread_depth.svg</text>
 </svg>
