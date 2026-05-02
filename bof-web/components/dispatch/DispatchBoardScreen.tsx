@@ -7,6 +7,8 @@ import { useDispatchDashboardStore } from "@/lib/stores/dispatch-dashboard-store
 import { driverNameById } from "@/lib/dispatch-dashboard-seed";
 import { getBofData } from "@/lib/load-bof-data";
 import { getMockBackhaulOpportunities } from "@/lib/backhaul-opportunity-engine";
+import { useBofDemoData } from "@/lib/bof-demo-data-context";
+import { getLoadRiskExplanation } from "@/lib/load-risk-explanation";
 import {
   formatMoney,
   loadStatusChipClass,
@@ -47,6 +49,7 @@ function applyBoardFilters(
 }
 
 export function DispatchBoardScreen() {
+  const { data, demoRiskOverrides } = useBofDemoData();
   const loads = useDispatchDashboardStore((s) => s.loads);
   const drivers = useDispatchDashboardStore((s) => s.drivers);
   const boardFilters = useDispatchDashboardStore((s) => s.boardFilters);
@@ -282,6 +285,17 @@ export function DispatchBoardScreen() {
                   </thead>
                   <tbody className="text-slate-200">
                     {rows.map((l) => (
+                      (() => {
+                        const risk = getLoadRiskExplanation(data, l.load_id, demoRiskOverrides);
+                        const riskLabel =
+                          risk.riskStatus === "blocked"
+                            ? `Blocked: ${risk.primaryReasonLabel}`
+                            : risk.riskStatus === "at_risk"
+                              ? `At Risk: ${risk.primaryReasonLabel}`
+                              : risk.riskStatus === "needs_review"
+                                ? `Review: ${risk.primaryReasonLabel}`
+                                : "Clean";
+                        return (
                       <tr
                         key={l.load_id}
                         className={[
@@ -321,6 +335,20 @@ export function DispatchBoardScreen() {
                           >
                             {l.status}
                           </span>
+                          <div className="mt-1 text-[10px] text-slate-400">{riskLabel}</div>
+                          {risk.riskStatus !== "clean" ? (
+                            <button
+                              type="button"
+                              className="mt-1 text-[10px] text-teal-300 hover:text-teal-200"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                selectLoad(l.load_id);
+                                openLoadDrawer(l.load_id);
+                              }}
+                            >
+                              Why at risk?
+                            </button>
+                          ) : null}
                         </td>
                         <td className="whitespace-nowrap px-3 py-2 text-xs">
                           {driverNameById(drivers, l.driver_id)}
@@ -359,6 +387,8 @@ export function DispatchBoardScreen() {
                           )}
                         </td>
                       </tr>
+                        );
+                      })()
                     ))}
                   </tbody>
                 </table>

@@ -20,6 +20,8 @@ import { LoadDocumentsLibraryEnhanced } from "./LoadDocumentsLibraryEnhanced";
 import { DocumentationReadinessPanel } from "./DocumentationReadinessPanel";
 import { BofWorkflowFormShortcuts } from "@/components/documents/BofWorkflowFormShortcuts";
 import { DispatchRouteMapClient } from "./DispatchRouteMapClient";
+import { useBofDemoData } from "@/lib/bof-demo-data-context";
+import { getLoadRiskExplanation } from "@/lib/load-risk-explanation";
 
 type Props = {
   load: Load;
@@ -27,6 +29,7 @@ type Props = {
 };
 
 export function LoadDetailContent({ load, onClose }: Props) {
+  const { data, demoRiskOverrides, resolveLoadRiskReason, resolveDriverRiskReason } = useBofDemoData();
   const drivers = useDispatchDashboardStore((s) => s.drivers);
   const tractors = useDispatchDashboardStore((s) => s.tractors);
   const trailers = useDispatchDashboardStore((s) => s.trailers);
@@ -39,6 +42,7 @@ export function LoadDetailContent({ load, onClose }: Props) {
   const clearExceptionFlag = useDispatchDashboardStore(
     (s) => s.clearExceptionFlag
   );
+  const loadRisk = getLoadRiskExplanation(data, load.load_id, demoRiskOverrides);
 
   return (
     <div className="flex h-full flex-col">
@@ -71,6 +75,53 @@ export function LoadDetailContent({ load, onClose }: Props) {
         <LoadStatusTimeline status={load.status} />
 
         <DocumentationReadinessPanel load={load} />
+
+        {loadRisk.riskStatus !== "clean" ? (
+          <section className="rounded-lg border border-slate-800 bg-slate-900/40 p-4">
+            <h3 className="mb-2 text-xs font-semibold uppercase tracking-wide text-slate-500">
+              Why at risk?
+            </h3>
+            <p className="text-xs text-slate-300">
+              {loadRisk.primaryReasonLabel} · {loadRisk.recommendedNextStep}
+            </p>
+            <p className="mt-1 text-[11px] text-slate-500">
+              Dispatch impact: {loadRisk.canDispatch ? "Can dispatch / needs review" : "Blocked"}
+            </p>
+            <ul className="mt-2 space-y-2">
+              {loadRisk.reasons.map((reason) => (
+                <li key={reason.id} className="rounded border border-slate-800 bg-slate-950/40 p-2 text-xs">
+                  <p className="font-semibold text-slate-200">
+                    [{reason.category}] {reason.title}
+                  </p>
+                  <p className="mt-1 text-slate-400">{reason.detail}</p>
+                  <p className="mt-1 text-slate-500">Fix: {reason.recommendedFix}</p>
+                  <div className="mt-1 flex flex-wrap gap-2">
+                    {reason.actionHref ? (
+                      <a href={reason.actionHref} className="text-teal-300 hover:text-teal-200">
+                        {reason.actionLabel || "Open"}
+                      </a>
+                    ) : null}
+                    {reason.clearableInDemo ? (
+                      <button
+                        type="button"
+                        className="text-amber-300 hover:text-amber-200"
+                        onClick={() => {
+                          if (reason.id.startsWith("driver-") && load.driver_id) {
+                            resolveDriverRiskReason(load.driver_id, reason.id, "Demo action");
+                          } else {
+                            resolveLoadRiskReason(load.load_id, reason.id, "Demo action");
+                          }
+                        }}
+                      >
+                        Demo action: Clear risk
+                      </button>
+                    ) : null}
+                  </div>
+                </li>
+              ))}
+            </ul>
+          </section>
+        ) : null}
 
         <section className="rounded-lg border border-slate-800 bg-slate-900/40 p-4">
           <h3 className="mb-2 text-xs font-semibold uppercase tracking-wide text-slate-500">

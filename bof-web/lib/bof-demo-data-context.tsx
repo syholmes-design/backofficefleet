@@ -26,6 +26,7 @@ import { EMPTY_DRIVER_MEDICAL_EXPANDED } from "@/lib/driver-medical-expanded";
 import { applyOperationalSeedDefaults } from "@/lib/driver-operational-profile";
 
 const STORAGE_KEY = "bof-demo-data-v1";
+const RISK_OVERRIDES_STORAGE_KEY = "bof-demo-risk-overrides-v1";
 
 function deepClone<T>(x: T): T {
   if (typeof structuredClone === "function") return structuredClone(x);
@@ -51,6 +52,29 @@ export type BofDemoDataContextValue = {
     driverId: string,
     patch: Partial<DriverMedicalExpanded>
   ) => void;
+  demoRiskOverrides: {
+    loads: Record<
+      string,
+      {
+        resolvedReasonIds: string[];
+        resolvedAt: string;
+        resolvedBy: "demo-editor";
+        note?: string;
+      }
+    >;
+    drivers: Record<
+      string,
+      {
+        resolvedReasonIds: string[];
+        resolvedAt: string;
+        resolvedBy: "demo-editor";
+        note?: string;
+      }
+    >;
+  };
+  resolveLoadRiskReason: (loadId: string, reasonId: string, note?: string) => void;
+  resolveDriverRiskReason: (driverId: string, reasonId: string, note?: string) => void;
+  resetDemoRiskOverrides: () => void;
 };
 
 const BofDemoDataContext = createContext<BofDemoDataContextValue | null>(null);
@@ -63,6 +87,9 @@ export function BofDemoDataProvider({
   children: ReactNode;
 }) {
   const [data, setData] = useState<BofData>(() => applyOperationalSeedDefaults(deepClone(seed)));
+  const [demoRiskOverrides, setDemoRiskOverrides] = useState<BofDemoDataContextValue["demoRiskOverrides"]>(
+    () => ({ loads: {}, drivers: {} })
+  );
   const [hydrated, setHydrated] = useState(false);
 
   useEffect(() => {
@@ -72,6 +99,17 @@ export function BofDemoDataProvider({
         const parsed = JSON.parse(raw) as BofData;
         if (parsed && Array.isArray(parsed.drivers) && Array.isArray(parsed.documents)) {
           setData(applyOperationalSeedDefaults(parsed));
+        }
+      }
+    } catch {
+      /* ignore corrupt storage */
+    }
+    try {
+      const rawOverrides = localStorage.getItem(RISK_OVERRIDES_STORAGE_KEY);
+      if (rawOverrides) {
+        const parsed = JSON.parse(rawOverrides) as BofDemoDataContextValue["demoRiskOverrides"];
+        if (parsed && parsed.loads && parsed.drivers) {
+          setDemoRiskOverrides(parsed);
         }
       }
     } catch {
@@ -145,6 +183,81 @@ export function BofDemoDataProvider({
     []
   );
 
+  const persistRiskOverrides = useCallback(
+    (next: BofDemoDataContextValue["demoRiskOverrides"]) => {
+      try {
+        localStorage.setItem(RISK_OVERRIDES_STORAGE_KEY, JSON.stringify(next));
+      } catch {
+        /* ignore */
+      }
+    },
+    []
+  );
+
+  const resolveLoadRiskReason = useCallback(
+    (loadId: string, reasonId: string, note?: string) => {
+      setDemoRiskOverrides((prev) => {
+        const row = prev.loads[loadId] ?? {
+          resolvedReasonIds: [],
+          resolvedAt: new Date().toISOString(),
+          resolvedBy: "demo-editor" as const,
+        };
+        const next = {
+          ...prev,
+          loads: {
+            ...prev.loads,
+            [loadId]: {
+              ...row,
+              resolvedReasonIds: Array.from(new Set([...row.resolvedReasonIds, reasonId])),
+              resolvedAt: new Date().toISOString(),
+              note: note ?? row.note,
+            },
+          },
+        };
+        persistRiskOverrides(next);
+        return next;
+      });
+    },
+    [persistRiskOverrides]
+  );
+
+  const resolveDriverRiskReason = useCallback(
+    (driverId: string, reasonId: string, note?: string) => {
+      setDemoRiskOverrides((prev) => {
+        const row = prev.drivers[driverId] ?? {
+          resolvedReasonIds: [],
+          resolvedAt: new Date().toISOString(),
+          resolvedBy: "demo-editor" as const,
+        };
+        const next = {
+          ...prev,
+          drivers: {
+            ...prev.drivers,
+            [driverId]: {
+              ...row,
+              resolvedReasonIds: Array.from(new Set([...row.resolvedReasonIds, reasonId])),
+              resolvedAt: new Date().toISOString(),
+              note: note ?? row.note,
+            },
+          },
+        };
+        persistRiskOverrides(next);
+        return next;
+      });
+    },
+    [persistRiskOverrides]
+  );
+
+  const resetDemoRiskOverrides = useCallback(() => {
+    const next = { loads: {}, drivers: {} };
+    setDemoRiskOverrides(next);
+    try {
+      localStorage.removeItem(RISK_OVERRIDES_STORAGE_KEY);
+    } catch {
+      /* ignore */
+    }
+  }, []);
+
   const value = useMemo<BofDemoDataContextValue>(
     () => ({
       data,
@@ -154,8 +267,24 @@ export function BofDemoDataProvider({
       updateDriver,
       updateDocument,
       updateDriverMedicalExpanded,
+      demoRiskOverrides,
+      resolveLoadRiskReason,
+      resolveDriverRiskReason,
+      resetDemoRiskOverrides,
     }),
-    [data, hydrated, setFullData, resetDemoData, updateDriver, updateDocument, updateDriverMedicalExpanded]
+    [
+      data,
+      hydrated,
+      setFullData,
+      resetDemoData,
+      updateDriver,
+      updateDocument,
+      updateDriverMedicalExpanded,
+      demoRiskOverrides,
+      resolveLoadRiskReason,
+      resolveDriverRiskReason,
+      resetDemoRiskOverrides,
+    ]
   );
 
   return <BofDemoDataContext.Provider value={value}>{children}</BofDemoDataContext.Provider>;

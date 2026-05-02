@@ -9,7 +9,7 @@ import { buildDispatchLoadsFromBofData } from "@/lib/dispatch-dashboard-seed";
 import { DispatchRouteMapClient } from "@/components/dispatch/DispatchRouteMapClient";
 
 export function LoadsPageClient() {
-  const { data } = useBofDemoData();
+  const { data, resetDemoRiskOverrides } = useBofDemoData();
   const [selectedLoadId, setSelectedLoadId] = useState<string | undefined>();
   const mapLoads = useMemo(() => buildDispatchLoadsFromBofData(data), [data]);
   const totals = useMemo(() => {
@@ -44,6 +44,16 @@ export function LoadsPageClient() {
       </section>
 
       <section className="bof-oper-panel bof-oper-panel-tight" aria-label="Dispatch table">
+        <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: 8 }}>
+          <button
+            type="button"
+            className="bof-link-secondary"
+            onClick={resetDemoRiskOverrides}
+            style={{ fontSize: 12 }}
+          >
+            Reset demo risk overrides
+          </button>
+        </div>
         <div className="grid gap-4 lg:grid-cols-[1.2fr_1fr]">
           <LoadsDispatchTable
             data={data}
