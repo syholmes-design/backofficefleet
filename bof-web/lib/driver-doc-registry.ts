@@ -13,7 +13,8 @@ export type DriverDocManifestKey =
   | "i9"
   | "emergencyContact"
   | "bankInformation"
-  | "fmcsaCompliance";
+  | "fmcsaCompliance"
+  | "dqfComplianceSummary";
 
 export type DriverDocManifestEntry = Partial<Record<DriverDocManifestKey, string>>;
 
@@ -29,6 +30,7 @@ const DRIVER_DOC_TYPE_TO_KEY: Record<string, DriverDocManifestKey> = {
   "Emergency Contact": "emergencyContact",
   "Bank Info": "bankInformation",
   FMCSA: "fmcsaCompliance",
+  "FMCSA DQF Compliance Summary": "dqfComplianceSummary",
 };
 
 const driverDocManifest = (manifestRaw ?? {}) as DriverDocManifest;
@@ -68,6 +70,7 @@ function sourcePathForType(driverId: string, type: string): string | undefined {
     "W-9": `${root}/w9-${driverId.toLowerCase()}`,
     FMCSA: `${root}/fmcsa-compliance`,
     "FMCSA Compliance": `${root}/fmcsa-compliance`,
+    "FMCSA DQF Compliance Summary": `${root}/dqf-compliance-summary`,
   };
   return byType[type];
 }
@@ -121,6 +124,9 @@ export function getDriverDocumentPacket(driverId: string): DriverDocManifestEntr
     w9: getDriverPublicDocPath(driverId, "W-9") ?? merged.w9,
     fmcsaCompliance:
       getDriverPublicDocPath(driverId, "FMCSA Compliance") ?? merged.fmcsaCompliance,
+    dqfComplianceSummary:
+      getDriverPublicDocPath(driverId, "FMCSA DQF Compliance Summary") ??
+      merged.dqfComplianceSummary,
   };
 }
 

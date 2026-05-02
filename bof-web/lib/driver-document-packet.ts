@@ -102,6 +102,11 @@ const SUMMARY_TYPES: Array<{ canonicalType: string; label: string; sourceType: s
     label: "HR Administrative Record",
     sourceType: "__needs_mapping__",
   },
+  {
+    canonicalType: "dqf_compliance_summary",
+    label: "FMCSA DQF Compliance Summary",
+    sourceType: "FMCSA DQF Compliance Summary",
+  },
 ];
 
 function inferSourceKind(doc: Pick<DriverPacketDocument, "fileUrl">): DriverDocumentSourceKind {
@@ -232,6 +237,7 @@ export function buildDriverDocumentPacket(data: BofData, driverId: string): Driv
     ...WORKFLOW_TYPES.map((r) => r.canonicalType),
     ...SUMMARY_TYPES.map((r) => r.canonicalType),
   ];
+  // SUMMARY_TYPES order already includes dqf_compliance_summary last.
   const orderedDocs = ordered
     .map((key) => deduped.get(key))
     .filter((d): d is DriverPacketDocument => Boolean(d));

@@ -1,0 +1,369 @@
+<!doctype html>
+<!-- BOF_TEMPLATE_SOURCE: scripts/templates/driver-docs/dqf-compliance-summary.template.html -->
+<!-- BOF_DOCUMENT_TYPE: dqf_compliance_summary -->
+<!-- BOF_DRIVER_ID: DRV-004 -->
+<!-- BOF_SYNTHETIC_DEMO_FIELDS: reviewerName, reviewerTitle, reviewerSignatureText, reviewerSignedAt, reviewDate, reviewNotes, carrierDisplay, driverAcknowledgmentStatus, driverSignatureTextOrPending, driverAckSignedAt, driverAckLabel, annualMvrNotes, syntheticDemoFieldsNote -->
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>FMCSA DQF Compliance Summary — DRV-004</title>
+    <style>
+      body {
+        font-family: "Inter", "Segoe UI", Arial, Helvetica, sans-serif;
+        margin: 0;
+        background: #f3f4f6;
+        color: #111827;
+      }
+      .paper {
+        width: 8.5in;
+        max-width: 100%;
+        margin: 20px auto;
+        background: #fff;
+        border: 1px solid #d1d5db;
+        padding: 26px;
+        box-shadow: 0 8px 30px rgba(15, 23, 42, 0.08);
+      }
+      .demo-banner {
+        background: #0f172a;
+        color: #e2e8f0;
+        padding: 10px 12px;
+        border-radius: 6px;
+        font-size: 11px;
+        margin-bottom: 14px;
+        border: 1px solid #334155;
+      }
+      h1 {
+        margin: 0 0 6px;
+        font-size: 22px;
+        letter-spacing: 0.02em;
+      }
+      .subtitle {
+        font-size: 12px;
+        color: #4b5563;
+        margin-bottom: 16px;
+      }
+      .meta-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 10px;
+        margin-bottom: 14px;
+      }
+      .meta-box {
+        border: 1px solid #d1d5db;
+        background: #f9fafb;
+        padding: 8px;
+      }
+      .meta-label {
+        font-size: 10px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: #4b5563;
+        margin-bottom: 4px;
+      }
+      .meta-value {
+        font-size: 13px;
+      }
+      .section-title {
+        margin: 16px 0 8px;
+        font-size: 12px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: #1f2937;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 6px;
+      }
+      th,
+      td {
+        border: 1px solid #d1d5db;
+        padding: 7px 8px;
+        vertical-align: top;
+        text-align: left;
+        font-size: 11px;
+      }
+      th {
+        background: #f3f4f6;
+        font-size: 10px;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: #374151;
+      }
+      .status-pill {
+        display: inline-block;
+        padding: 2px 8px;
+        border-radius: 999px;
+        font-size: 10px;
+        font-weight: 700;
+      }
+      .pill-ok {
+        background: #d1fae5;
+        color: #065f46;
+      }
+      .pill-warn {
+        background: #fef3c7;
+        color: #92400e;
+      }
+      .pill-bad {
+        background: #fee2e2;
+        color: #991b1b;
+      }
+      .checklist td:first-child {
+        font-weight: 600;
+      }
+      .sig-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 14px;
+        margin-top: 12px;
+      }
+      .sig-block {
+        border: 1px solid #e5e7eb;
+        border-radius: 6px;
+        padding: 10px;
+      }
+      .sig-role {
+        font-size: 10px;
+        font-weight: 700;
+        text-transform: uppercase;
+        color: #6b7280;
+      }
+      .sig-script {
+        font-family: "Brush Script MT", "Segoe Script", "Lucida Handwriting", cursive;
+        font-size: 22px;
+        margin: 6px 0;
+        color: #111827;
+      }
+      .sig-meta {
+        font-size: 11px;
+        color: #374151;
+      }
+      .sig-line {
+        border-bottom: 1px solid #1f2937;
+        margin: 8px 0 4px;
+      }
+      .sig-date {
+        font-size: 10px;
+        color: #4b5563;
+      }
+      .sig-status {
+        font-size: 10px;
+        font-weight: 700;
+        margin-top: 4px;
+      }
+      footer {
+        margin-top: 18px;
+        padding-top: 10px;
+        border-top: 1px dashed #9ca3af;
+        font-size: 10px;
+        color: #6b7280;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="paper">
+      <div class="demo-banner">
+        <strong>BOF demo compliance summary.</strong> This is a generated BOF support worksheet — not an official FMCSA
+        form. Credential statuses below are derived from canonical BOF document records keyed by
+        <code>DRV-004</code>.
+      </div>
+      <h1>FMCSA Driver Qualification File Compliance Summary</h1>
+      <p class="subtitle">
+        BOF demo compliance summary — generated from driver document vault and dispatch eligibility data.
+      </p>
+
+      <div class="meta-grid">
+        <div class="meta-box">
+          <div class="meta-label">Driver</div>
+          <div class="meta-value">Priya Patel</div>
+        </div>
+        <div class="meta-box">
+          <div class="meta-label">Driver ID</div>
+          <div class="meta-value">DRV-004</div>
+        </div>
+        <div class="meta-box">
+          <div class="meta-label">Carrier / company</div>
+          <div class="meta-value">BackOffice Fleet — BOF demo carrier (synthetic display name)</div>
+        </div>
+        <div class="meta-box">
+          <div class="meta-label">Review date</div>
+          <div class="meta-value">Jan 14, 2026, 6:12 PM UTC</div>
+        </div>
+        <div class="meta-box">
+          <div class="meta-label">Reviewed by</div>
+          <div class="meta-value">Ethan Wallace — BOF Operations Compliance Lead</div>
+        </div>
+        <div class="meta-box">
+          <div class="meta-label">Overall DQF status</div>
+          <div class="meta-value">DQF incomplete — dispatch blocked until hard gates clear</div>
+        </div>
+        <div class="meta-box">
+          <div class="meta-label">Dispatch eligibility</div>
+          <div class="meta-value">Blocked: Medical Card expired on 2026-04-22</div>
+        </div>
+        <div class="meta-box">
+          <div class="meta-label">Next recommended action</div>
+          <div class="meta-value">Resolve Blocker (/drivers/DRV-004/vault)</div>
+        </div>
+      </div>
+
+      <div class="section-title">1. Driver identity</div>
+      <table>
+        <tr>
+          <th>Field</th>
+          <th>Value</th>
+          <th>Source</th>
+        </tr>
+        <tr>
+          <td>Full name</td>
+          <td>Priya Patel</td>
+          <td>canonical</td>
+        </tr>
+        <tr>
+          <td>Driver ID</td>
+          <td>DRV-004</td>
+          <td>canonical</td>
+        </tr>
+        <tr>
+          <td>CDL number</td>
+          <td>DLN-00004</td>
+          <td>canonical</td>
+        </tr>
+        <tr>
+          <td>CDL class / endorsements</td>
+          <td>Class A</td>
+          <td>canonical</td>
+        </tr>
+        <tr>
+          <td>Home base / terminal</td>
+          <td>OH</td>
+          <td>canonical</td>
+        </tr>
+      </table>
+
+      <div class="section-title">2. Core DQF documents</div>
+      <table>
+        <thead>
+          <tr>
+            <th>Document</th>
+            <th>Status</th>
+            <th>Expiration / review</th>
+            <th>Source / file</th>
+            <th>Notes</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>Driver Application</td><td><span class="status-pill pill-ok">VALID</span></td><td>2024-02-01</td><td>On file — BOF documents[] row</td><td>DQF review held — resolve hard blockers before next dispatch assignment. (demo note #4)</td></tr>
+<tr><td>CDL / road test equivalent</td><td><span class="status-pill pill-ok">VALID</span></td><td>2027-08-22</td><td>canonical — indexed vault</td><td>Status from canonical CDL row + expiration.</td></tr>
+<tr><td>Medical Examiner’s Certificate</td><td><span class="status-pill pill-bad">EXPIRED</span></td><td>2026-04-22</td><td>canonical — indexed vault</td><td></td></tr>
+<tr><td>MVR</td><td><span class="status-pill pill-ok">VALID</span></td><td>2026-12-31</td><td>canonical — indexed vault</td><td></td></tr>
+<tr><td>Annual MVR / annual review</td><td><span class="status-pill pill-ok">VALID</span></td><td>2026-12-31</td><td>derived — tied to MVR pull</td><td>Annual cadence: align next review with MVR pull date on file (synthetic_demo checklist note).</td></tr>
+<tr><td>FMCSA compliance (source record)</td><td><span class="status-pill pill-ok">VALID</span></td><td>2026-12-31</td><td>canonical — indexed vault</td><td></td></tr>
+<tr><td>I-9</td><td><span class="status-pill pill-ok">VALID</span></td><td>2026-12-31</td><td>canonical — indexed vault</td><td></td></tr>
+<tr><td>W-9</td><td><span class="status-pill pill-ok">VALID</span></td><td>2026-12-31</td><td>canonical — indexed vault</td><td></td></tr>
+<tr><td>Bank information</td><td><span class="status-pill pill-ok">VALID</span></td><td>2026-12-31</td><td>canonical — indexed vault</td><td></td></tr>
+<tr><td>Emergency contact</td><td><span class="status-pill pill-ok">VALID</span></td><td>—</td><td>canonical — indexed vault</td><td></td></tr>
+<tr><td>Insurance card</td><td><span class="status-pill pill-ok">VALID</span></td><td>—</td><td>canonical — indexed vault</td><td></td></tr>
+        </tbody>
+      </table>
+
+      <div class="section-title">3. FMCSA / compliance checklist</div>
+      <table class="checklist">
+        <thead>
+          <tr>
+            <th>Item</th>
+            <th>State</th>
+            <th>Notes</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>Application on file</td><td>Complete</td><td>documents[] Driver Application</td></tr>
+<tr><td>Initial MVR / licensing inquiry</td><td>Complete</td><td>MVR row + vault path</td></tr>
+<tr><td>Medical certification</td><td>Needs review</td><td>expirationDate on canonical Medical Card row (status derived from date, not stale row.status)</td></tr>
+<tr><td>CDL / road test equivalent</td><td>Complete</td><td>Canonical CDL status</td></tr>
+<tr><td>Annual MVR</td><td>Complete</td><td>MVR expiration / review: 2026-12-31</td></tr>
+<tr><td>Annual review</td><td>Needs review</td><td>Dispatch eligibility gate (no hard blockers)</td></tr>
+<tr><td>Violation certification</td><td>Complete</td><td>No high-severity open violations in scorecard feed</td></tr>
+<tr><td>Medical variance / SPE</td><td>Needs review</td><td>Not present in BOF driverMedicalExpanded for this demo slice</td></tr>
+<tr><td>Safety / incident review</td><td>Needs review</td><td>See safety section</td></tr>
+        </tbody>
+      </table>
+
+      <div class="section-title">4. Dispatch eligibility</div>
+      <table>
+        <tr>
+          <th>Summary</th>
+          <td>Blocked: Medical Card expired on 2026-04-22</td>
+        </tr>
+        <tr>
+          <th>Hard blockers</th>
+          <td>Medical Card expired on 2026-04-22; Open compliance: MVR Review Required (critical); Safety hard gate — at-risk profile with unresolved severe findings</td>
+        </tr>
+        <tr>
+          <th>Soft warnings</th>
+          <td>Settlement pending review</td>
+        </tr>
+      </table>
+
+      <div class="section-title">5. Safety / incident review</div>
+      <table>
+        <thead>
+          <tr>
+            <th>Topic</th>
+            <th>Value</th>
+            <th>Source</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>Safety tier</td><td>At Risk</td><td>canonical</td></tr>
+<tr><td>Open safety events (high severity count)</td><td>0</td><td>canonical</td></tr>
+<tr><td>HOS / OOS snapshot</td><td>HOS 92% · OOS violations 1</td><td>canonical</td></tr>
+<tr><td>Recent load POD / seal snapshot (demo)</td><td>L004 POD=verified seals=Mismatch status=Pending</td><td>canonical</td></tr>
+<tr><td>Dispatch hard gates (safety-related)</td><td>Medical Card expired on 2026-04-22; Open compliance: MVR Review Required (critical); Safety hard gate — at-risk profile with unresolved severe findings</td><td>derived</td></tr>
+        </tbody>
+      </table>
+
+      <div class="section-title">6. Review determination</div>
+      <p style="font-size: 12px; margin: 8px 0">Blocked: resolve hard dispatch gates before treating the qualification file as dispatch-ready.</p>
+      <ul style="font-size: 11px; color: #374151; margin: 0; padding-left: 18px">
+        <li>☐ File complete (demo criteria)</li>
+        <li>☐ File complete with follow-up required</li>
+        <li>☐ Missing required document</li>
+        <li>☑ Expired credential</li>
+        <li>☑ Not dispatch eligible pending correction</li>
+      </ul>
+
+      <div class="section-title">7. Signatures</div>
+      <div class="sig-grid">
+        <div class="sig-block">
+          <div class="sig-role">BOF compliance coordinator</div>
+          <div class="sig-script">Ethan Wallace</div>
+          <div class="sig-meta">Ethan Wallace — BOF Operations Compliance Lead</div>
+          <div class="sig-line"></div>
+          <div class="sig-date">Jan 14, 2026, 6:12 PM UTC</div>
+          <div class="sig-status">Signed (demo)</div>
+        </div>
+        <div class="sig-block">
+          <div class="sig-role">Driver acknowledgment</div>
+          <div class="sig-script">— Pending —</div>
+          <div class="sig-meta">Pending — driver acknowledgment not stored in BOF demo JSON (synthetic_demo).</div>
+          <div class="sig-line"></div>
+          <div class="sig-date">Jan 16, 2026, 6:12 PM UTC</div>
+          <div class="sig-status">Awaiting driver sign-off (demo)</div>
+        </div>
+      </div>
+
+      <footer>
+        <p>Synthetic/demo fields used: reviewerName, reviewerTitle, reviewerSignatureText, reviewerSignedAt, reviewDate, reviewNotes, carrierDisplay, driverAcknowledgmentStatus, driverSignatureTextOrPending, driverAckSignedAt, driverAckLabel, annualMvrNotes, syntheticDemoFieldsNote. Credential columns use canonical | derived | missing flags only.</p>
+        <p>
+          Demo-generated summary. Synthetic reviewer/signature fields may be used where BOF source data is
+          unavailable. Credential statuses are derived from canonical BOF document records.
+        </p>
+      </footer>
+    </div>
+  </body>
+</html>

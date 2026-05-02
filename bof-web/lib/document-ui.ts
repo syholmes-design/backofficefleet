@@ -15,6 +15,7 @@ const DOCUMENT_TYPE_LABELS: Record<string, string> = {
   "Insurance Card": "Insurance card",
   "Incident / Accident Report": "Incident / accident report",
   "BOF Medical Summary": "BOF medical summary",
+  "FMCSA DQF Compliance Summary": "FMCSA DQF compliance summary (generated)",
 };
 
 export function documentTypeLabel(type: string): string {

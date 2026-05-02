@@ -188,6 +188,7 @@ const DRIVER_ENGINE_TYPES = [
   "FMCSA Compliance",
   "W-9",
   "Bank Info",
+  "FMCSA DQF Compliance Summary",
 ] as const;
 
 function proofItemForType(data: BofData, loadId: string, proofLabel: string) {
@@ -300,6 +301,40 @@ export function generateDriverDocument(
       };
     }
     return null;
+  }
+  if (type === "FMCSA DQF Compliance Summary") {
+    const dqfUrl = getDriverDocumentByType(driverId, "FMCSA DQF Compliance Summary");
+    if (dqfUrl) {
+      return {
+        id: `ENG-DRIVER-${driverId}-dqfcompliancesummary`,
+        type,
+        title: `FMCSA DQF Compliance Summary · ${driver.name}`,
+        driverId,
+        status: "Summary",
+        fileUrl: dqfUrl,
+        previewUrl: dqfUrl,
+        blocksPayment: false,
+        generatedAt: nowIso(),
+        sourceDataSummary: buildSourceSummaryDriver(data, driverId),
+        notes:
+          "BOF-generated DQF checklist (demo) — not the FMCSA source compliance file. Credential rows mirror canonical vault + dispatch eligibility for this driverId.",
+        links: linksForDriver(driverId),
+      };
+    }
+    return {
+      id: `ENG-DRIVER-${driverId}-dqfcompliancesummary-missing`,
+      type,
+      title: `FMCSA DQF Compliance Summary · ${driver.name}`,
+      driverId,
+      status: "MISSING",
+      fileUrl: "",
+      previewUrl: "",
+      blocksPayment: false,
+      generatedAt: nowIso(),
+      sourceDataSummary: buildSourceSummaryDriver(data, driverId),
+      notes: "Run npm run generate:driver-dqf-summaries to publish dqf-compliance-summary.html under /documents/drivers/{driverId}/.",
+      links: linksForDriver(driverId),
+    };
   }
   const file = DRIVER_TYPE_TO_FILE[type];
   if (!file || !(DRIVER_GENERATED_FILES as readonly string[]).includes(file)) {

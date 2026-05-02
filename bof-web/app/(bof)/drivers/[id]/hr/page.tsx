@@ -93,13 +93,18 @@ export default function DriverHRPage({ params }: Props) {
       { label: "I-9", type: "I-9" },
       { label: "W-9", type: "W-9" },
       { label: "FMCSA Compliance", type: "FMCSA" },
+      { label: "FMCSA DQF Compliance Summary", type: "FMCSA DQF Compliance Summary" },
     ];
     return rows.map((row) => {
       const doc = byType.get(row.type);
       const canonicalUrl = getDriverDocumentByType(id, row.type) ?? doc?.fileUrl;
       const status = canonicalUrl
-        ? humanizeStatus(doc?.status ?? "VALID")
-        : "Missing / Needs Review";
+        ? row.type === "FMCSA DQF Compliance Summary"
+          ? "Generated summary on file"
+          : humanizeStatus(doc?.status ?? "VALID")
+        : row.type === "FMCSA DQF Compliance Summary"
+          ? "Missing / Needs generation"
+          : "Missing / Needs Review";
       const expectedCanonicalUrl =
         row.type === "Bank Info" && !canonicalUrl ? getExpectedBankCardPublicPath(id) : undefined;
       return {
@@ -125,6 +130,7 @@ export default function DriverHRPage({ params }: Props) {
       ["cdl", "CDL"],
       ["insuranceCard", "Insurance Card"],
       ["mvr", "MVR"],
+      ["dqfComplianceSummary", "FMCSA DQF Compliance Summary"],
     ];
     keyToType.forEach(([key, type]) => {
       const packetUrl = packet[key];

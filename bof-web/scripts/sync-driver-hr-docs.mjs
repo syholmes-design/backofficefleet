@@ -31,6 +31,8 @@ const DOC_SPECS = [
   /** Canonical W-9: /documents/drivers/{id}/w9-{idLower}.pdf — keyed by driverId only. */
   { type: "W-9", base: (_n, driverId) => `w9-${driverId.toLowerCase()}` },
   { type: "FMCSA Compliance", base: () => "fmcsa-compliance" },
+  /** BOF demo DQF worksheet — generator output under public/documents/drivers/{id}/ */
+  { type: "FMCSA DQF Compliance Summary", base: () => "dqf-compliance-summary" },
 ];
 
 function exists(p) {
@@ -156,6 +158,7 @@ function buildCandidates(driverId, suffix3) {
       path.join(gen, "mcsa-5876-signed.html"),
       path.join(gen, "mcsa-5875.html"),
     ],
+    "FMCSA DQF Compliance Summary": [path.join(dir, "dqf-compliance-summary.html")],
   };
 }
 
