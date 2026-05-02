@@ -22,7 +22,12 @@ function assertFileFromPublicUrl(url) {
   const disk = path.join(PUBLIC, u.replace(/^\//, ""));
   if (!fs.existsSync(disk)) die(`Missing file for URL ${u} (expected ${disk})`);
   const ext = path.extname(u).toLowerCase();
-  if (ext !== ".svg") die(`Safety evidence must be committed .svg for demo consistency: ${u}`);
+  if (ext === ".png") {
+    const st = fs.statSync(disk);
+    if (!st.isFile() || st.size < 256) die(`Safety evidence PNG too small or not a file: ${u}`);
+    return;
+  }
+  if (ext !== ".svg") die(`Safety evidence must be committed .svg or .png under public/evidence/safety: ${u}`);
   const bad = findInvalidPcdataInSvgFile(disk);
   if (!bad.ok) {
     die(

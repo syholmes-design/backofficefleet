@@ -19,7 +19,7 @@ function EvidenceUnavailableCard({ rawUrl }: { rawUrl: string }) {
     >
       <p className="font-medium text-slate-200">Evidence unavailable / needs review</p>
       <p className="mt-1 text-[10px] leading-snug text-slate-500">
-        The preview could not be loaded (file missing, blocked, or invalid SVG/XML).
+        The preview could not be loaded (file missing, blocked, or unsupported format).
       </p>
       {rawUrl.trim().startsWith("/evidence/safety/") ? (
         <span className="mt-2 block break-all font-mono text-[9px] text-slate-600">{rawUrl}</span>
@@ -42,17 +42,17 @@ export function SafetyEvidenceThumb({ rawUrl, alt, className }: Props) {
 
   const imgClass =
     className ??
-    "mb-2 h-28 w-full rounded border border-slate-800 bg-slate-950 object-contain object-center";
+    "mb-2 h-28 w-full rounded border border-slate-800 bg-slate-950 object-cover object-center";
 
   return (
-    <div className="relative mb-2 min-h-[4.5rem] rounded border border-slate-800 bg-slate-950">
+    <div className="relative mb-2 min-h-[4.5rem] overflow-hidden rounded border border-slate-800 bg-slate-950">
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
         src={resolved.url}
         alt={alt}
         loading="lazy"
         decoding="async"
-        className={`${imgClass} mb-0 block`}
+        className={`${imgClass} mb-0 block max-h-28 w-full`}
         onError={() => setDecodeFailed(true)}
       />
     </div>

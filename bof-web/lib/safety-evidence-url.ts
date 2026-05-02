@@ -1,6 +1,7 @@
 /**
  * Resolves demo safety violation stills under `/evidence/safety/*`.
- * Source JSON may reference legacy `.png` names; committed assets are deterministic SVGs.
+ * Priya Patel (DRV-004) stills ship as PNG crops; other demos remain SVG.
+ * Legacy `.png` URLs that map to an existing `.svg` still resolve to the SVG.
  */
 
 export type ResolvedSafetyEvidenceUrl = {
@@ -12,10 +13,10 @@ export type ResolvedSafetyEvidenceUrl = {
 
 /** Canonical public paths that ship with the repo (must match files on disk). */
 export const SAFETY_EVIDENCE_PUBLIC_PATHS: readonly string[] = [
-  "/evidence/safety/p_patel_b102_tire_irregular_wear.svg",
-  "/evidence/safety/p_patel_pretrip_tire_tread_depth.svg",
-  "/evidence/safety/p_patel_cargo_damage_box_puncture.svg",
-  "/evidence/safety/p_patel_safety_equipment_extinguisher.svg",
+  "/evidence/safety/b102-tires-irregular-wear.png",
+  "/evidence/safety/pre-trip-tire-tread-depth.png",
+  "/evidence/safety/cargo-damage-punctured-box.png",
+  "/evidence/safety/safety-equipment-fire-extinguisher-tag.png",
   "/evidence/safety/l_smith_l405_hos_violation_eld.svg",
   "/evidence/safety/l_smith_logbook_review_violation.svg",
   "/evidence/safety/l_smith_trailer_brake_inspection.svg",

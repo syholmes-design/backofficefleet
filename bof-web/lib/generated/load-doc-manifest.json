@@ -85,7 +85,7 @@
     "deliveryPhoto": "/evidence/loads/L004/delivery-photo.svg",
     "damageClaimPhoto": "/evidence/loads/L004/damage-photo.svg",
     "claimEvidence": "/evidence/loads/L004/claim-evidence.svg",
-    "safetyViolationPhoto": "/evidence/safety/p_patel_b102_tire_irregular_wear.svg"
+    "safetyViolationPhoto": "/evidence/safety/b102-tires-irregular-wear.png"
   },
   "L005": {
     "rateConfirmation": "/generated/loads/L005/rate-confirmation.html",

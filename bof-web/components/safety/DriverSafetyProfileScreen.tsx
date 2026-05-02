@@ -217,7 +217,7 @@ export function DriverSafetyProfileScreen() {
                 <SafetyEvidenceThumb
                   rawUrl={item.url}
                   alt={item.label}
-                  className="mb-2 h-24 w-full rounded border border-slate-800 bg-slate-950 object-contain object-center"
+                  className="mb-2 h-24 w-full rounded border border-slate-800 bg-slate-950 object-cover object-center"
                 />
                 <p className="mt-1 text-slate-400">{item.note}</p>
                 {getSafetyEvidenceOpenHref(item.url) ? (
