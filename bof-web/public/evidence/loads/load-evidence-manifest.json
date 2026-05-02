@@ -834,10 +834,10 @@
       "applicable": true
     },
     "sealPhoto": {
-      "url": "/evidence/loads/L005/seal-photo.svg",
+      "url": "/evidence/loads/L005/seal-pickup-photo.png",
       "label": "Seal photo",
       "basename": "seal-photo",
-      "source": "svg_demo",
+      "source": "real",
       "generatedAt": "2026-05-01T22:30:04.202Z",
       "required": true,
       "conditional": false,
