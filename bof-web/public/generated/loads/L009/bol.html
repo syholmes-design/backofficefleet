@@ -22,6 +22,19 @@ th { background: #f3f4f6; font-size: 11px; text-transform: uppercase; letter-spa
 .section-title { margin: 14px 0 6px; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; color: #1f2937; }
 .sig-line { margin-top: 24px; display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
 .sig-slot { border-top: 1px solid #1f2937; padding-top: 4px; font-size: 11px; color: #4b5563; }
+.signature-section-title { margin: 18px 0 8px; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; color: #1f2937; }
+.signature-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 10px; }
+.signature-block { border: 1px solid #e5e7eb; border-radius: 6px; padding: 10px 10px 8px; background: #fff; }
+.signature-role { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: #6b7280; margin-bottom: 6px; }
+.signature-script { font-family: "Brush Script MT", "Segoe Script", "Lucida Handwriting", cursive; font-size: 22px; color: #111827; line-height: 1.2; min-height: 28px; }
+.signature-meta { font-size: 12px; font-weight: 600; color: #111827; margin-top: 4px; }
+.signature-title { font-size: 10px; color: #4b5563; margin-top: 2px; }
+.signature-line { border-bottom: 1px solid #1f2937; margin: 8px 0 4px; height: 1px; }
+.signature-datetime { font-size: 10px; color: #374151; }
+.signature-status { font-size: 10px; margin-top: 4px; font-weight: 700; }
+.signature-signed .signature-status { color: #047857; }
+.signature-pending .signature-status { color: #b45309; }
+.signature-img { display: block; margin-top: 4px; max-width: 220px; height: auto; }
 .terms-box { border: 1px solid #d1d5db; background: #f9fafb; padding: 10px; font-size: 11px; color: #374151; }
 .barcode-ref { margin-top: 10px; display: inline-block; font-family: "Courier New", monospace; letter-spacing: 2px; font-size: 11px; border: 1px solid #111827; padding: 3px 8px; }
 footer { margin-top: 16px; padding-top: 8px; border-top: 1px dashed #9ca3af; display: flex; justify-content: space-between; font-size: 11px; color: #6b7280; }
@@ -60,18 +73,54 @@ footer { margin-top: 16px; padding-top: 8px; border-top: 1px dashed #9ca3af; dis
         <tr><td>Emma Brown (DRV-009)</td><td>T-111</td><td>TR-111</td><td>SEAL-26790</td><td>SEAL-26791</td></tr>
       </table>
 
-      <div class="sig-line">
-        <div class="sig-slot">Shipper signature / date</div>
-        <div class="sig-slot">Driver signature / date</div>
-      </div>
-      <div class="sig-line">
-        <div class="sig-slot">Consignee signature / date</div>
-        <div class="sig-slot">Carrier representative / date</div>
+      <div class="signature-section-title">Authorized signatures (demo)</div>
+      <div class="signature-grid">
+        <div class="signature-block signature-pending">
+          <div class="signature-role">Shipper — pickup</div>
+          
+          <div class="signature-script">Pending signature</div>
+          <div class="signature-meta">BlueLine Retail — authorized representative</div>
+          <div class="signature-title">Shipper / origin facility</div>
+          <div class="signature-line"></div>
+          <div class="signature-datetime">—</div>
+          <div class="signature-status" data-bof-sig-role="shipper_bol">Pending signature</div>
+        </div>
+        <div class="signature-block signature-pending">
+          <div class="signature-role">Driver — pickup</div>
+          
+          <div class="signature-script">Pending signature</div>
+          <div class="signature-meta">Emma Brown</div>
+          <div class="signature-title">Driver · DRV-009 — pickup</div>
+          <div class="signature-line"></div>
+          <div class="signature-datetime">—</div>
+          <div class="signature-status" data-bof-sig-role="driver_bol_pickup">Pending signature</div>
+        </div>
+        <div class="signature-block signature-pending">
+          <div class="signature-role">Consignee / receiver — delivery</div>
+          
+          <div class="signature-script">Pending signature</div>
+          <div class="signature-meta">Lakeside Grocery — receiving clerk</div>
+          <div class="signature-title">Consignee / receiver</div>
+          <div class="signature-line"></div>
+          <div class="signature-datetime">—</div>
+          <div class="signature-status" data-bof-sig-role="receiver_bol">Pending signature</div>
+        </div>
+        <div class="signature-block signature-pending">
+          <div class="signature-role">Carrier representative — delivery</div>
+          
+          <div class="signature-script">Pending signature</div>
+          <div class="signature-meta">M. Torres</div>
+          <div class="signature-title">Authorized carrier representative · BOF carrier group</div>
+          <div class="signature-line"></div>
+          <div class="signature-datetime">—</div>
+          <div class="signature-status" data-bof-sig-role="carrier_bol">Pending signature</div>
+        </div>
       </div>
 
       <div class="barcode-ref">|| ||| | | L009 BOL-L009-509 | || ||</div>
+      <!-- bof-sig-bol:pre_pickup -->
       <footer>
-        <span>Generated: 5/2/2026, 2:18:12 PM</span>
+        <span>Generated: 5/2/2026, 5:19:19 PM</span>
         <span>BOF demo document packet</span>
       </footer>
     </div>

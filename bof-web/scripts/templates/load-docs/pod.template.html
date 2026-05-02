@@ -35,12 +35,35 @@
         Evidence references: cargo photo {{cargoPhotoRef}}, seal pickup {{sealPickupPhotoRef}}, seal delivery {{sealDeliveryPhotoRef}}.
       </div>
 
-      <div class="sig-line">
-        <div class="sig-slot">Receiver signature / date</div>
-        <div class="sig-slot">Driver signature / date</div>
+      <div class="section-title">Delivery timestamp (manifest)</div>
+      <div class="terms-box">{{deliveryTimestampDisplay}}</div>
+
+      <div class="signature-section-title">Delivery signatures (demo)</div>
+      <div class="signature-grid">
+        <div class="signature-block {{receiverSignatureCssClass}}">
+          <div class="signature-role">Receiver / consignee</div>
+          {{receiverSignatureSvgHtml}}
+          <div class="signature-script">{{receiverSignatureText}}</div>
+          <div class="signature-meta">{{receiverSignatureName}}</div>
+          <div class="signature-title">{{receiverSignatureTitle}}</div>
+          <div class="signature-line"></div>
+          <div class="signature-datetime">{{receiverSignedAt}}</div>
+          <div class="signature-status" data-bof-sig-role="receiver_pod">{{receiverSignatureStatus}}</div>
+        </div>
+        <div class="signature-block {{driverSignatureCssClass}}">
+          <div class="signature-role">Driver — delivery confirmation</div>
+          {{driverSignatureSvgHtml}}
+          <div class="signature-script">{{driverSignatureText}}</div>
+          <div class="signature-meta">{{driverSignatureName}}</div>
+          <div class="signature-title">{{driverSignatureTitle}}</div>
+          <div class="signature-line"></div>
+          <div class="signature-datetime">{{driverSignedAt}}</div>
+          <div class="signature-status" data-bof-sig-role="driver_pod">{{driverSignatureStatus}}</div>
+        </div>
       </div>
 
       <div class="barcode-ref">| || | || {{loadId}} {{podNumber}} || | ||</div>
+      {{signaturePodComment}}
       <footer>
         <span>Generated: {{generatedDate}}</span>
         <span>BOF demo document packet</span>

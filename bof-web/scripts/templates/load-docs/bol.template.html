@@ -35,16 +35,52 @@
         <tr><td>{{driverName}} ({{driverId}})</td><td>{{truckNumber}}</td><td>{{trailerNumber}}</td><td>{{sealPickup}}</td><td>{{sealDelivery}}</td></tr>
       </table>
 
-      <div class="sig-line">
-        <div class="sig-slot">Shipper signature / date</div>
-        <div class="sig-slot">Driver signature / date</div>
-      </div>
-      <div class="sig-line">
-        <div class="sig-slot">Consignee signature / date</div>
-        <div class="sig-slot">Carrier representative / date</div>
+      <div class="signature-section-title">Authorized signatures (demo)</div>
+      <div class="signature-grid">
+        <div class="signature-block {{shipperSignatureCssClass}}">
+          <div class="signature-role">Shipper — pickup</div>
+          {{shipperSignatureSvgHtml}}
+          <div class="signature-script">{{shipperSignatureText}}</div>
+          <div class="signature-meta">{{shipperSignatureName}}</div>
+          <div class="signature-title">{{shipperSignatureTitle}}</div>
+          <div class="signature-line"></div>
+          <div class="signature-datetime">{{shipperSignedAt}}</div>
+          <div class="signature-status" data-bof-sig-role="shipper_bol">{{shipperSignatureStatus}}</div>
+        </div>
+        <div class="signature-block {{driverBolPickupSignatureCssClass}}">
+          <div class="signature-role">Driver — pickup</div>
+          {{driverBolPickupSignatureSvgHtml}}
+          <div class="signature-script">{{driverBolPickupSignatureText}}</div>
+          <div class="signature-meta">{{driverBolPickupSignatureName}}</div>
+          <div class="signature-title">{{driverBolPickupSignatureTitle}}</div>
+          <div class="signature-line"></div>
+          <div class="signature-datetime">{{driverBolPickupSignedAt}}</div>
+          <div class="signature-status" data-bof-sig-role="driver_bol_pickup">{{driverBolPickupSignatureStatus}}</div>
+        </div>
+        <div class="signature-block {{receiverSignatureCssClass}}">
+          <div class="signature-role">Consignee / receiver — delivery</div>
+          {{receiverSignatureSvgHtml}}
+          <div class="signature-script">{{receiverSignatureText}}</div>
+          <div class="signature-meta">{{receiverSignatureName}}</div>
+          <div class="signature-title">{{receiverSignatureTitle}}</div>
+          <div class="signature-line"></div>
+          <div class="signature-datetime">{{receiverSignedAt}}</div>
+          <div class="signature-status" data-bof-sig-role="receiver_bol">{{receiverSignatureStatus}}</div>
+        </div>
+        <div class="signature-block {{carrierSignatureCssClass}}">
+          <div class="signature-role">Carrier representative — delivery</div>
+          {{carrierSignatureSvgHtml}}
+          <div class="signature-script">{{carrierSignatureText}}</div>
+          <div class="signature-meta">{{carrierSignatureName}}</div>
+          <div class="signature-title">{{carrierSignatureTitle}}</div>
+          <div class="signature-line"></div>
+          <div class="signature-datetime">{{carrierSignedAt}}</div>
+          <div class="signature-status" data-bof-sig-role="carrier_bol">{{carrierSignatureStatus}}</div>
+        </div>
       </div>
 
       <div class="barcode-ref">|| ||| | | {{loadId}} {{bolNumber}} | || ||</div>
+      {{signatureBolComment}}
       <footer>
         <span>Generated: {{generatedDate}}</span>
         <span>BOF demo document packet</span>

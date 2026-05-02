@@ -24,9 +24,48 @@
         Delivery seal photo: {{sealDeliveryPhotoRef}}<br />
         Exception notes: {{exceptionNotes}}
       </div>
-      <div class="sig-line">
-        <div class="sig-slot">Dispatch verifier / date</div>
-        <div class="sig-slot">Receiver confirmation / date</div>
+      <div class="signature-section-title">Seal custody signatures (demo)</div>
+      <div class="signature-grid">
+        <div class="signature-block {{driverBolPickupSignatureCssClass}}">
+          <div class="signature-role">Driver — pickup seal acknowledgment</div>
+          {{driverBolPickupSignatureSvgHtml}}
+          <div class="signature-script">{{driverBolPickupSignatureText}}</div>
+          <div class="signature-meta">{{driverBolPickupSignatureName}}</div>
+          <div class="signature-title">{{driverBolPickupSignatureTitle}}</div>
+          <div class="signature-line"></div>
+          <div class="signature-datetime">{{driverBolPickupSignedAt}}</div>
+          <div class="signature-status" data-bof-sig-role="driver_seal">{{driverBolPickupSignatureStatus}}</div>
+        </div>
+        <div class="signature-block {{receiverSignatureCssClass}}">
+          <div class="signature-role">Receiver — delivery seal confirmation</div>
+          {{receiverSignatureSvgHtml}}
+          <div class="signature-script">{{receiverSignatureText}}</div>
+          <div class="signature-meta">{{receiverSignatureName}}</div>
+          <div class="signature-title">{{receiverSignatureTitle}}</div>
+          <div class="signature-line"></div>
+          <div class="signature-datetime">{{receiverSignedAt}}</div>
+          <div class="signature-status" data-bof-sig-role="receiver_seal">{{receiverSignatureStatus}}</div>
+        </div>
+        <div class="signature-block {{dispatcherSignatureCssClass}}">
+          <div class="signature-role">Dispatch verifier</div>
+          {{dispatcherSignatureSvgHtml}}
+          <div class="signature-script">{{dispatcherSignatureText}}</div>
+          <div class="signature-meta">{{dispatcherSignatureName}}</div>
+          <div class="signature-title">{{dispatcherSignatureTitle}}</div>
+          <div class="signature-line"></div>
+          <div class="signature-datetime">{{dispatcherSignedAt}}</div>
+          <div class="signature-status" data-bof-sig-role="dispatcher_seal">{{dispatcherSignatureStatus}}</div>
+        </div>
+        <div class="signature-block {{bofOpsReviewSignatureCssClass}}">
+          <div class="signature-role">BOF operations review (mismatch / exception)</div>
+          {{bofOpsReviewSignatureSvgHtml}}
+          <div class="signature-script">{{bofOpsReviewSignatureText}}</div>
+          <div class="signature-meta">{{bofOpsReviewSignatureName}}</div>
+          <div class="signature-title">{{bofOpsReviewSignatureTitle}}</div>
+          <div class="signature-line"></div>
+          <div class="signature-datetime">{{bofOpsReviewSignedAt}}</div>
+          <div class="signature-status" data-bof-sig-role="bof_ops_review">{{bofOpsReviewSignatureStatus}}</div>
+        </div>
       </div>
       <footer>
         <span>Generated: {{generatedDate}}</span>

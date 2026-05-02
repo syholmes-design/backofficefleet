@@ -6,6 +6,7 @@ import {
   resolveSharedDocumentStyles,
   LOAD_DOCUMENT_TEMPLATE_FILES,
 } from "./lib/resolve-load-document-template.mjs";
+import { buildLoadSignaturePlaceholders } from "./lib/load-signatures.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(__dirname, "..");
@@ -69,7 +70,7 @@ function sanitizeSegment(v) {
     .trim();
 }
 
-function deriveLoadContext(data, load) {
+function deriveLoadContext(data, load, now = new Date()) {
   const driver = data.drivers.find((d) => d.id === load.driverId);
   const settlement = data.settlements?.find((s) => s.driverId === load.driverId) ?? null;
   const hasSealData = Boolean(String(load.pickupSeal || "").trim() || String(load.deliverySeal || "").trim());
@@ -84,7 +85,6 @@ function deriveLoadContext(data, load) {
   const lumperCharge = lumperFromSettlement ? 185 : 0;
   const detention = load.status === "En Route" ? 0 : 75;
   const fuelSurcharge = Math.round(rate * 0.09 * 100) / 100;
-  const now = new Date();
   const generatedAt = now.toISOString();
   const dateKey = now.toISOString().slice(0, 10).replaceAll("-", "");
   const loadDate = `${now.getUTCMonth() + 1}/${now.getUTCDate()}/${now.getUTCFullYear()}`;
@@ -112,7 +112,6 @@ function deriveLoadContext(data, load) {
     : `WO-${load.id}-${load.number}`;
   const claimRequired = hasClaim;
   const settlementHold = String(load.podStatus).toLowerCase() !== "verified";
-  const receiverName = `${deliveryFacility.split(" ")[0] || "Receiver"} Contact`;
   const claimPacketLink = hasClaim
     ? `/generated/loads/${load.id}/claim-packet.html`
     : "Not applicable";
@@ -186,9 +185,6 @@ function deriveLoadContext(data, load) {
     workOrderId,
     claimRequired: yesNo(claimRequired),
     settlementHold: yesNo(settlementHold),
-    driverSignature: driver?.name ?? load.driverId,
-    receiverSignature: receiverName,
-    opsSignature: "BOF Ops Coordinator",
     claimDate: loadDate,
     claimPacketLink,
     insuranceNotificationStatus,
@@ -399,8 +395,11 @@ function main() {
 
   const manifest = {};
 
+  const runNow = new Date();
   for (const load of data.loads || []) {
-    const ctx = deriveLoadContext(data, load);
+    const ctx = deriveLoadContext(data, load, runNow);
+    const driver = data.drivers?.find((d) => d.id === load.driverId) ?? null;
+    const signaturePlaceholders = buildLoadSignaturePlaceholders(load, driver, runNow);
     const entry = {};
 
     const cargoPhoto = resolveEvidenceEntry(ctx.loadId, ["cargo-photo.svg", "cargo-photo.jpg", "cargo-photo.png"]);
@@ -432,7 +431,11 @@ function main() {
       if (!shouldEmit(docKey, ctx)) continue;
       const fileName = FILE_MAP[docKey];
       const { html: tpl, relativeFromWebRoot } = templateBodies[docKey];
-      const merged = renderTemplate(tpl, { ...ctxForTemplates, styles: sharedStyles });
+      const merged = renderTemplate(tpl, {
+        ...ctxForTemplates,
+        ...signaturePlaceholders,
+        styles: sharedStyles,
+      });
       const outUrl = writeDoc(ctx.loadId, docKey, fileName, merged, relativeFromWebRoot);
       entry[docKey] = outUrl;
       const outAbs = path.join(OUT_DIR, ctx.loadId, fileName);

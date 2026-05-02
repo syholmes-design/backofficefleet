@@ -14,6 +14,29 @@
       <div class="terms-box">
         Settlement hold is active until required proof stack is complete and reviewed.
       </div>
+      <div class="signature-section-title">Settlement coordination (demo)</div>
+      <div class="signature-grid">
+        <div class="signature-block {{settlementsSignatureCssClass}}">
+          <div class="signature-role">BOF settlements coordinator</div>
+          {{settlementsSignatureSvgHtml}}
+          <div class="signature-script">{{settlementsSignatureText}}</div>
+          <div class="signature-meta">{{settlementsSignatureName}}</div>
+          <div class="signature-title">{{settlementsSignatureTitle}}</div>
+          <div class="signature-line"></div>
+          <div class="signature-datetime">{{settlementsSignedAt}}</div>
+          <div class="signature-status" data-bof-sig-role="settlements_hold">{{settlementsSignatureStatus}}</div>
+        </div>
+        <div class="signature-block {{driverSignatureCssClass}}">
+          <div class="signature-role">Driver acknowledgement (delivery / POD timing)</div>
+          {{driverSignatureSvgHtml}}
+          <div class="signature-script">{{driverSignatureText}}</div>
+          <div class="signature-meta">{{driverSignatureName}}</div>
+          <div class="signature-title">{{driverSignatureTitle}}</div>
+          <div class="signature-line"></div>
+          <div class="signature-datetime">{{driverSignedAt}}</div>
+          <div class="signature-status" data-bof-sig-role="driver_settlement_hold">{{driverSignatureStatus}}</div>
+        </div>
+      </div>
       <footer><span>{{generatedDate}}</span><span>BOF demo document packet</span></footer>
     </div>
   </body>

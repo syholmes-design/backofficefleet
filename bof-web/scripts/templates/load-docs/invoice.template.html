@@ -34,6 +34,19 @@
         {{remittanceNote}}.<br />
         BOF support: billing@backofficefleet.demo
       </div>
+
+      <div class="signature-section-title">Billing authorization (demo)</div>
+      <div class="signature-block {{billingSignatureCssClass}}" style="max-width: 420px">
+        <div class="signature-role">Generated / approved for issuance</div>
+        {{billingSignatureSvgHtml}}
+        <div class="signature-script">{{billingSignatureText}}</div>
+        <div class="signature-meta">{{billingSignatureName}}</div>
+        <div class="signature-title">{{billingSignatureTitle}}</div>
+        <div class="signature-line"></div>
+        <div class="signature-datetime">{{billingSignedAt}}</div>
+        <div class="signature-status" data-bof-sig-role="billing_invoice">{{billingSignatureStatus}}</div>
+      </div>
+
       <footer>
         <span>Generated: {{generatedDate}}</span>
         <span>BOF demo document packet</span>

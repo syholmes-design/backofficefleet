@@ -52,12 +52,42 @@
         Payment terms: {{paymentTerms}}.
       </div>
 
-      <div class="sig-line">
-        <div class="sig-slot">Authorized broker signature / date</div>
-        <div class="sig-slot">Carrier acceptance signature / date</div>
+      <div class="signature-section-title">Acceptance signatures (demo)</div>
+      <div class="signature-grid">
+        <div class="signature-block {{brokerSignatureCssClass}}">
+          <div class="signature-role">Customer / broker tender acceptance</div>
+          {{brokerSignatureSvgHtml}}
+          <div class="signature-script">{{brokerSignatureText}}</div>
+          <div class="signature-meta">{{brokerSignatureName}}</div>
+          <div class="signature-title">{{brokerSignatureTitle}}</div>
+          <div class="signature-line"></div>
+          <div class="signature-datetime">{{brokerSignedAt}}</div>
+          <div class="signature-status" data-bof-sig-role="broker_ratecon">{{brokerSignatureStatus}}</div>
+        </div>
+        <div class="signature-block {{carrierRateConSignatureCssClass}}">
+          <div class="signature-role">Carrier acceptance</div>
+          {{carrierRateConSignatureSvgHtml}}
+          <div class="signature-script">{{carrierRateConSignatureText}}</div>
+          <div class="signature-meta">{{carrierRateConSignatureName}}</div>
+          <div class="signature-title">{{carrierRateConSignatureTitle}}</div>
+          <div class="signature-line"></div>
+          <div class="signature-datetime">{{carrierRateConSignedAt}}</div>
+          <div class="signature-status" data-bof-sig-role="carrier_ratecon">{{carrierRateConSignatureStatus}}</div>
+        </div>
+        <div class="signature-block {{driverRateAckSignatureCssClass}}">
+          <div class="signature-role">Driver acknowledgement (optional)</div>
+          {{driverRateAckSignatureSvgHtml}}
+          <div class="signature-script">{{driverRateAckSignatureText}}</div>
+          <div class="signature-meta">{{driverRateAckSignatureName}}</div>
+          <div class="signature-title">{{driverRateAckSignatureTitle}}</div>
+          <div class="signature-line"></div>
+          <div class="signature-datetime">{{driverRateAckSignedAt}}</div>
+          <div class="signature-status" data-bof-sig-role="driver_rate_ack">{{driverRateAckSignatureStatus}}</div>
+        </div>
       </div>
 
       <div class="barcode-ref">|| | | ||| {{loadId}} {{rateConfirmationNumber}} || ||</div>
+      {{signatureRateConComment}}
       <footer>
         <span>Generated: {{generatedDate}}</span>
         <span>BOF demo document packet</span>

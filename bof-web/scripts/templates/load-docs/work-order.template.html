@@ -47,14 +47,48 @@
         <tr><th>Detention</th><th>Backhaul</th><th>Lumper</th><th>Payment terms</th></tr>
         <tr><td>{{detention}}</td><td>{{backhaulPay}}</td><td>{{lumper}} (req: {{lumperRequired}})</td><td>{{paymentTerms}}</td></tr>
       </table>
-      <div class="section-title">Authorized signatures</div>
-      <div class="sig-line">
-        <div class="sig-slot">Carrier / driver — {{driverSignature}} — date ____________</div>
-        <div class="sig-slot">Shipper / facility — authorized representative — date ____________</div>
-      </div>
-      <div class="sig-line">
-        <div class="sig-slot">BOF dispatch — {{opsSignature}} — date ____________</div>
-        <div class="sig-slot">Consignee receiver — {{receiverSignature}} — date ____________</div>
+      <div class="signature-section-title">Authorized signatures (demo)</div>
+      <div class="signature-grid">
+        <div class="signature-block {{driverBolPickupSignatureCssClass}}">
+          <div class="signature-role">Driver — pickup / execution</div>
+          {{driverBolPickupSignatureSvgHtml}}
+          <div class="signature-script">{{driverBolPickupSignatureText}}</div>
+          <div class="signature-meta">{{driverBolPickupSignatureName}}</div>
+          <div class="signature-title">{{driverBolPickupSignatureTitle}}</div>
+          <div class="signature-line"></div>
+          <div class="signature-datetime">{{driverBolPickupSignedAt}}</div>
+          <div class="signature-status" data-bof-sig-role="driver_wo">{{driverBolPickupSignatureStatus}}</div>
+        </div>
+        <div class="signature-block {{shipperSignatureCssClass}}">
+          <div class="signature-role">Shipper / facility</div>
+          {{shipperSignatureSvgHtml}}
+          <div class="signature-script">{{shipperSignatureText}}</div>
+          <div class="signature-meta">{{shipperSignatureName}}</div>
+          <div class="signature-title">{{shipperSignatureTitle}}</div>
+          <div class="signature-line"></div>
+          <div class="signature-datetime">{{shipperSignedAt}}</div>
+          <div class="signature-status" data-bof-sig-role="shipper_wo">{{shipperSignatureStatus}}</div>
+        </div>
+        <div class="signature-block {{dispatcherSignatureCssClass}}">
+          <div class="signature-role">BOF dispatch</div>
+          {{dispatcherSignatureSvgHtml}}
+          <div class="signature-script">{{dispatcherSignatureText}}</div>
+          <div class="signature-meta">{{dispatcherSignatureName}}</div>
+          <div class="signature-title">{{dispatcherSignatureTitle}}</div>
+          <div class="signature-line"></div>
+          <div class="signature-datetime">{{dispatcherSignedAt}}</div>
+          <div class="signature-status" data-bof-sig-role="dispatcher_wo">{{dispatcherSignatureStatus}}</div>
+        </div>
+        <div class="signature-block {{receiverSignatureCssClass}}">
+          <div class="signature-role">Consignee receiver</div>
+          {{receiverSignatureSvgHtml}}
+          <div class="signature-script">{{receiverSignatureText}}</div>
+          <div class="signature-meta">{{receiverSignatureName}}</div>
+          <div class="signature-title">{{receiverSignatureTitle}}</div>
+          <div class="signature-line"></div>
+          <div class="signature-datetime">{{receiverSignedAt}}</div>
+          <div class="signature-status" data-bof-sig-role="receiver_wo">{{receiverSignatureStatus}}</div>
+        </div>
       </div>
       <footer><span>{{generatedDate}}</span><span>BOF demo document packet</span></footer>
     </div>

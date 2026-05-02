@@ -20,9 +20,28 @@
         <tr><th>Lumper charge</th><th>Status</th></tr>
         <tr><td>{{lumper}}</td><td>Approved for settlement attachment (demo)</td></tr>
       </table>
-      <div class="sig-line">
-        <div class="sig-slot">Receiver signature __________________ date ____________</div>
-        <div class="sig-slot">Driver acknowledgment __________________ date ____________</div>
+      <div class="signature-section-title">Receipt signatures (demo)</div>
+      <div class="signature-grid">
+        <div class="signature-block {{lumperVendorSignatureCssClass}}">
+          <div class="signature-role">Lumper / vendor or facility representative</div>
+          {{lumperVendorSignatureSvgHtml}}
+          <div class="signature-script">{{lumperVendorSignatureText}}</div>
+          <div class="signature-meta">{{lumperVendorSignatureName}}</div>
+          <div class="signature-title">{{lumperVendorSignatureTitle}}</div>
+          <div class="signature-line"></div>
+          <div class="signature-datetime">{{lumperVendorSignedAt}}</div>
+          <div class="signature-status" data-bof-sig-role="lumper_vendor">{{lumperVendorSignatureStatus}}</div>
+        </div>
+        <div class="signature-block {{lumperDriverSignatureCssClass}}">
+          <div class="signature-role">Driver acknowledgment</div>
+          {{lumperDriverSignatureSvgHtml}}
+          <div class="signature-script">{{lumperDriverSignatureText}}</div>
+          <div class="signature-meta">{{lumperDriverSignatureName}}</div>
+          <div class="signature-title">{{lumperDriverSignatureTitle}}</div>
+          <div class="signature-line"></div>
+          <div class="signature-datetime">{{lumperDriverSignedAt}}</div>
+          <div class="signature-status" data-bof-sig-role="lumper_driver">{{lumperDriverSignatureStatus}}</div>
+        </div>
       </div>
       <footer><span>{{generatedDate}}</span><span>BOF demo document packet</span></footer>
     </div>

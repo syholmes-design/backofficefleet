@@ -35,6 +35,39 @@
         </tr>
       </table>
       <div class="terms-box">Required next action: claims adjuster review, verify custody chain, finalize insurance notice status.</div>
+      <div class="signature-section-title">Claim packet signatures (demo)</div>
+      <div class="signature-grid">
+        <div class="signature-block {{claimsSignatureCssClass}}">
+          <div class="signature-role">BOF claims coordinator</div>
+          {{claimsSignatureSvgHtml}}
+          <div class="signature-script">{{claimsSignatureText}}</div>
+          <div class="signature-meta">{{claimsSignatureName}}</div>
+          <div class="signature-title">{{claimsSignatureTitle}}</div>
+          <div class="signature-line"></div>
+          <div class="signature-datetime">{{claimsSignedAt}}</div>
+          <div class="signature-status" data-bof-sig-role="claims_packet">{{claimsSignatureStatus}}</div>
+        </div>
+        <div class="signature-block {{driverClaimStatementSignatureCssClass}}">
+          <div class="signature-role">Driver statement</div>
+          {{driverClaimStatementSignatureSvgHtml}}
+          <div class="signature-script">{{driverClaimStatementSignatureText}}</div>
+          <div class="signature-meta">{{driverClaimStatementSignatureName}}</div>
+          <div class="signature-title">{{driverClaimStatementSignatureTitle}}</div>
+          <div class="signature-line"></div>
+          <div class="signature-datetime">{{driverClaimStatementSignedAt}}</div>
+          <div class="signature-status" data-bof-sig-role="driver_claim_packet">{{driverClaimStatementSignatureStatus}}</div>
+        </div>
+        <div class="signature-block {{receiverClaimAckSignatureCssClass}}">
+          <div class="signature-role">Receiver / customer acknowledgement</div>
+          {{receiverClaimAckSignatureSvgHtml}}
+          <div class="signature-script">{{receiverClaimAckSignatureText}}</div>
+          <div class="signature-meta">{{receiverClaimAckSignatureName}}</div>
+          <div class="signature-title">{{receiverClaimAckSignatureTitle}}</div>
+          <div class="signature-line"></div>
+          <div class="signature-datetime">{{receiverClaimAckSignedAt}}</div>
+          <div class="signature-status" data-bof-sig-role="receiver_claim_packet">{{receiverClaimAckSignatureStatus}}</div>
+        </div>
+      </div>
       <footer>
         <span>Generated: {{generatedDate}}</span>
         <span>BOF demo document packet</span>

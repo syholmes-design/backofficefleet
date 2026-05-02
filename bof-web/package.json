@@ -19,6 +19,7 @@
     "generate:safety-evidence-svg": "node scripts/generate-safety-evidence-svg.mjs",
     "generate:demo-docs": "npm run generate:load-docs && npm run generate:load-evidence",
     "validate:load-docs": "node scripts/validate-load-docs.mjs",
+    "validate:load-signatures": "node scripts/validate-load-signatures.mjs",
     "validate:load-doc-templates": "node scripts/validate-load-doc-templates.mjs",
     "validate:load-evidence": "node scripts/validate-load-evidence.mjs",
     "validate:load-trip-packets": "node scripts/validate-load-trip-packets.mjs",
