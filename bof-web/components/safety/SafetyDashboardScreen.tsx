@@ -358,7 +358,8 @@ export function SafetyDashboardScreen() {
           (POD/seal), <code className="text-slate-400">load-evidence-manifest</code> via{" "}
           <code className="text-slate-400">getLoadEvidenceUrl</code>, registry safety evidence, coaching tier rows, and the
           interactive safety event store. Dispatch impact uses <code className="text-slate-400">getDriverDispatchEligibility</code>{" "}
-          without changing its rules.
+          without changing its rules. Credential status/date labels come from{" "}
+          <code className="text-slate-400">getDriverCredentialStatus</code> for CDL, Medical Card, MVR, and FMCSA.
         </p>
       </section>
     </div>

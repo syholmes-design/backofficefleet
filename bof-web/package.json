@@ -27,6 +27,7 @@
     "validate:driver-docs": "node scripts/validate-driver-docs.mjs",
     "validate:driver-medical-status": "node scripts/validate-driver-medical-status.mjs",
     "validate:driver-document-packets": "node scripts/validate-driver-document-packets.mjs",
+    "validate:safety-credential-mapping": "node scripts/validate-safety-credential-mapping.mjs",
     "generate:driver-docs": "node scripts/generate-driver-docs.mjs && node scripts/patch-medical-card-html-demo.mjs && npm run validate:driver-medical-status",
     "deploy:full": "npm run generate:driver-docs && git add . && (git commit -m \"Auto deploy: regenerate docs + sync\" || node -e \"process.exit(0)\") && git push && vercel --prod --cwd ..",
     "demo:reset": "node scripts/reset-demo.mjs",

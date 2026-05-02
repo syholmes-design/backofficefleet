@@ -4,6 +4,7 @@ import { useMemo } from "react";
 import { ChevronDown } from "lucide-react";
 import type { Driver } from "@/types/safety";
 import { useSafetyStore } from "@/lib/stores/safety-store";
+import { useBofDemoData } from "@/lib/bof-demo-data-context";
 import {
   complianceChipClass,
   eventStatusChipClass,
@@ -12,6 +13,11 @@ import {
   isMvrExpired,
   severityChipClass,
 } from "@/lib/safety-rules";
+import {
+  credentialDisplayText,
+  getDriverCredentialStatus,
+  type CanonicalCredentialStatus,
+} from "@/lib/driver-credential-status";
 import { getSafetyEvidenceByDriverId } from "@/lib/safety-scorecard";
 import {
   getSafetyEvidenceOpenHref,
@@ -19,6 +25,7 @@ import {
 } from "@/components/safety/SafetyEvidenceThumb";
 
 export function DriverSafetyProfileScreen() {
+  const { data } = useBofDemoData();
   const drivers = useSafetyStore((s) => s.drivers);
   const events = useSafetyStore((s) => s.events);
   const selectedDriverId = useSafetyStore((s) => s.selectedDriverId);
@@ -46,6 +53,10 @@ export function DriverSafetyProfileScreen() {
   const evidence = useMemo(
     () => getSafetyEvidenceByDriverId(driver.driver_id),
     [driver.driver_id]
+  );
+  const credential = useMemo(
+    () => getDriverCredentialStatus(data, driver.driver_id),
+    [data, driver.driver_id]
   );
 
   if (!driver) {
@@ -88,30 +99,35 @@ export function DriverSafetyProfileScreen() {
         <h2 className="mb-2 text-sm font-semibold text-slate-200">
           Compliance &amp; qualification
         </h2>
-        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
+        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-6">
           <ComplianceCard
             title="CDL"
-            value={driver.cdl_expiration_date ?? "—"}
-            ok={Boolean(driver.cdl_expiration_date)}
+            status={credential.cdl.status}
+            value={credentialDisplayText(credential.cdl)}
+            hasFile={Boolean(credential.cdl.fileUrl)}
           />
           <ComplianceCard
             title="Med card"
-            value={driver.med_card_expiration_date ?? "—"}
-            ok={Boolean(driver.med_card_expiration_date)}
+            status={credential.medicalCard.status}
+            value={credentialDisplayText(credential.medicalCard)}
+            hasFile={Boolean(credential.medicalCard.fileUrl)}
           />
           <ComplianceCard
             title="MVR"
-            value={driver.mvr_expiration_date ?? "—"}
-            ok={Boolean(driver.mvr_expiration_date)}
+            status={credential.mvr.status}
+            value={credentialDisplayText(credential.mvr)}
+            hasFile={Boolean(credential.mvr.fileUrl)}
             warn={mvrStale}
+          />
+          <ComplianceCard
+            title="FMCSA"
+            status={credential.fmcsa.status}
+            value={credentialDisplayText(credential.fmcsa)}
+            hasFile={Boolean(credential.fmcsa.fileUrl)}
           />
           <QualCard
             title="Driver qual file"
             status={driver.qual_file_status}
-          />
-          <QualCard
-            title="Safety acknowledgment"
-            status={driver.safety_ack_status}
           />
         </div>
         <p className="mt-2 text-[11px] text-slate-500">
@@ -303,19 +319,34 @@ function ProfileHeader({
 function ComplianceCard({
   title,
   value,
-  ok,
+  status,
+  hasFile,
   warn,
 }: {
   title: string;
   value: string;
-  ok: boolean;
+  status: CanonicalCredentialStatus;
+  hasFile: boolean;
   warn?: boolean;
 }) {
+  const statusLabel =
+    status === "valid"
+      ? "Valid"
+      : status === "expiring_soon"
+        ? "Expiring soon"
+        : status === "expired"
+          ? "Expired"
+          : status === "pending_review"
+            ? "Pending review"
+            : "Missing";
+
   return (
     <div
       className={[
         "rounded-lg border p-3",
-        warn
+        status === "expired"
+          ? "border-red-800/60 bg-red-950/25"
+          : warn
           ? "border-amber-800/50 bg-amber-950/20"
           : "border-slate-800 bg-slate-950/50",
       ].join(" ")}
@@ -323,10 +354,11 @@ function ComplianceCard({
       <p className="text-[10px] font-semibold uppercase tracking-wide text-slate-500">
         {title}
       </p>
+      <p className="mt-1 text-[11px] font-semibold text-slate-300">{statusLabel}</p>
       <p className="mt-1 font-mono text-sm text-slate-100">{value}</p>
-      {!ok && (
-        <p className="mt-1 text-[11px] text-red-400">Date not on file</p>
-      )}
+      <p className="mt-1 text-[11px] text-slate-500">
+        {hasFile ? "File on record" : "File missing"}
+      </p>
       {warn && (
         <p className="mt-1 text-[11px] text-amber-300">Review required</p>
       )}
