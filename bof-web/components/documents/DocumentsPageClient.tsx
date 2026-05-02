@@ -81,16 +81,16 @@ export function DocumentsPageClient() {
         claims owned).
       </p>
       <p className="bof-muted bof-small bof-oper-sublead">
-        Need unified cross-pack operations forms? Open{" "}
+        <strong>Internal:</strong> Cross-pack template registry + draft workspace —{" "}
         <Link href="/documents/template-packs" className="bof-link-secondary">
-          BOF Template Packs Workspace
+          Template packs workspace
         </Link>{" "}
-        for standardized intake, field ops, billing/settlement, driver/dispatch readiness, and
-        insurance/claims templates with editable + generated artifact flow. Use the{" "}
+        (inspect mappings, demo statuses, and in-browser artifacts; not the canonical intake or npm
+        document pipeline). Use the{" "}
         <Link href="/documents/template-packs/view" className="bof-link-secondary">
           BOF document viewer
         </Link>{" "}
-        (open from any template row) for save, review, final generation, and stakeholder routing.
+        from template rows for save/review flows.
       </p>
 
       <BofWorkflowFormShortcuts

@@ -273,7 +273,7 @@ export function BofTemplateUsageSurface({
       </div>
       <p className="bof-muted bof-small" style={{ marginTop: 10 }}>
         <Link href="/documents/template-packs" className="bof-link-secondary">
-          Go to Full Template Workspace
+          Internal: full template packs workspace
         </Link>
       </p>
     </section>

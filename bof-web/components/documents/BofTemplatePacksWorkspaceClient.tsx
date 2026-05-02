@@ -61,6 +61,41 @@ export function BofTemplatePacksWorkspaceClient({
         editable drafts, and generated final artifacts.
       </p>
 
+      <aside
+        className="bof-driver-vault-panel"
+        aria-label="Internal workspace notice"
+        style={{ marginBottom: 18 }}
+      >
+        <p className="bof-small">
+          <strong>Internal BOF template workspace.</strong> Used to inspect and test template mappings,
+          standardized metadata (including demo gates such as{" "}
+          <code className="bof-code">dispatch_hold_active</code>), editable HTML drafts, and in-browser
+          artifacts stored in this session.{" "}
+          <strong>Not part of the client-facing load intake workflow</strong> — canonical intake runs
+          through Load Intake / Intake Engine and BOF demo JSON; fleet credential and load evidence files
+          are produced by the document engines and <code className="bof-code">npm</code> generators, not
+          this page.
+        </p>
+        <p className="bof-muted bof-small" style={{ marginTop: 10 }}>
+          Quick links:{" "}
+          <Link href="/load-intake" className="bof-link-secondary">
+            Canonical load intake
+          </Link>
+          {" · "}
+          <Link href="/documents" className="bof-link-secondary">
+            Document vault
+          </Link>
+          {" · "}
+          <Link href="/loads" className="bof-link-secondary">
+            Loads
+          </Link>
+          {" · "}
+          <Link href="/dispatch" className="bof-link-secondary">
+            Dispatch
+          </Link>
+        </p>
+      </aside>
+
       <section className="bof-driver-vault-detail-grid">
         <article className="bof-driver-vault-panel">
           <h2 className="bof-h2">Pack Selection</h2>
