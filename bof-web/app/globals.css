@@ -12635,7 +12635,14 @@ body {
 
 /* Dashboard page: extra clearance above fixed / docked bottom UI (Queue Detail table, etc.) */
 .bof-dashboard-page.bof-page.bof-cc-page {
-  padding-bottom: max(11rem, calc(9rem + env(safe-area-inset-bottom, 0px)));
+  padding-bottom: max(12.5rem, calc(10.5rem + env(safe-area-inset-bottom, 0px)));
+}
+
+.bof-dashboard-bottom-spacer {
+  height: 10rem;
+  min-height: 10rem;
+  flex-shrink: 0;
+  pointer-events: none;
 }
 
 .bof-cc-hero {
@@ -12666,26 +12673,98 @@ body {
   position: relative;
   width: 100%;
   flex-shrink: 0;
-  height: clamp(360px, 40vw, 460px);
+  height: clamp(360px, 42vw, 620px);
   min-height: 360px;
-  max-height: 460px;
+  max-height: 620px;
   border-radius: 1rem;
   overflow: hidden;
   background: #020617;
   border: 1px solid rgba(100, 116, 139, 0.28);
 }
 
-.bof-dashboard-hero__imagePanel > span {
+/* Image fills the panel edge-to-edge; Next/Image wrapper must stretch */
+.bof-dashboard-hero__imageSlot {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+}
+
+.bof-dashboard-hero__imageSlot > span {
   width: 100% !important;
   height: 100% !important;
 }
 
-/* contain preserves dashboard artwork; dark panel fills letterboxing */
-.bof-dashboard-hero__imagePanel-img {
+.bof-dashboard-hero__imagePanel-img,
+.bof-dashboard-hero__image {
   width: 100%;
   height: 100%;
-  object-fit: contain;
-  object-position: center;
+  object-fit: cover;
+  object-position: center center;
+  display: block;
+}
+
+.bof-dashboard-hero__hotspots {
+  position: absolute;
+  left: 1rem;
+  right: 1rem;
+  bottom: 1rem;
+  z-index: 3;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  pointer-events: none;
+}
+
+.bof-dashboard-hero__hotspots > * {
+  pointer-events: auto;
+}
+
+.bof-dashboard-hero__hotspot {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.15rem;
+  max-width: min(12.5rem, 42vw);
+  border: 1px solid rgba(45, 212, 191, 0.35);
+  background: rgba(2, 6, 23, 0.72);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-radius: 0.75rem;
+  padding: 0.6rem 0.75rem;
+  color: #f8fafc;
+  text-decoration: none;
+  font-size: 0.72rem;
+  line-height: 1.25;
+  outline: none;
+  transition:
+    border-color 0.15s ease,
+    background 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+.bof-dashboard-hero__hotspot:hover {
+  border-color: rgba(45, 212, 191, 0.85);
+  background: rgba(15, 118, 110, 0.35);
+  box-shadow: 0 0 0 1px rgba(45, 212, 191, 0.12);
+}
+
+.bof-dashboard-hero__hotspot:focus-visible {
+  border-color: rgba(94, 234, 212, 0.95);
+  box-shadow: 0 0 0 2px rgba(45, 212, 191, 0.45);
+}
+
+.bof-dashboard-hero__hotspot-title {
+  font-weight: 700;
+  font-size: 0.68rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #5eead4;
+}
+
+.bof-dashboard-hero__hotspot-value {
+  font-weight: 600;
+  font-size: 0.78rem;
+  color: #e2e8f0;
 }
 
 .bof-dashboard-hero__content {
@@ -12729,13 +12808,13 @@ body {
 }
 
 .bof-dashboard-route-snapshot__panel.bof-cc-route-panel {
-  max-height: min(420px, 56vh);
+  max-height: min(310px, 42vh);
   overflow-x: hidden;
   overflow-y: auto;
 }
 
 .bof-dashboard-route-snapshot__panel .bof-cc-route-svg {
-  height: 96px;
+  height: 64px;
 }
 
 .bof-dashboard-route-snapshot__panel .bof-cc-route-list {
@@ -12745,6 +12824,16 @@ body {
 .bof-dashboard-route-snapshot__panel .bof-cc-route-row {
   padding: 0.32rem 0.4rem;
   font-size: 0.74rem;
+}
+
+.bof-dashboard-route-snapshot__links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+  margin-top: 0.45rem;
+  padding-top: 0.35rem;
+  border-top: 1px solid rgba(43, 59, 87, 0.65);
+  font-size: 0.72rem;
 }
 
 .bof-cc-hero-left {
@@ -13447,16 +13536,41 @@ body {
   .bof-cc-table { min-width: 760px; }
   .bof-cc-kpi-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .bof-cc-page { padding-bottom: 8.5rem; }
+  .bof-dashboard-page.bof-page.bof-cc-page {
+    padding-bottom: max(12rem, calc(10rem + env(safe-area-inset-bottom, 0px)));
+  }
   .bof-dashboard-hero.bof-cc-hero {
     padding: 1.15rem 1rem;
     gap: 1rem;
   }
 
   .bof-dashboard-hero__imagePanel {
+    display: flex;
+    flex-direction: column;
+    height: auto;
+    min-height: 0;
+    max-height: none;
+    border-radius: 12px;
+  }
+
+  .bof-dashboard-hero__imageSlot {
+    position: relative;
     height: clamp(220px, 52vw, 380px);
     min-height: 220px;
-    max-height: 400px;
+    width: 100%;
+    flex-shrink: 0;
     border-radius: 12px;
+    overflow: hidden;
+  }
+
+  .bof-dashboard-hero__hotspots {
+    position: static;
+    margin-top: 0.75rem;
+    left: auto;
+    right: auto;
+    bottom: auto;
+    z-index: 1;
+    padding: 0 0.15rem;
   }
 
   .bof-dashboard-hero__content {
@@ -13464,7 +13578,7 @@ body {
   }
 
   .bof-dashboard-route-snapshot__panel.bof-cc-route-panel {
-    max-height: min(360px, 50vh);
+    max-height: min(300px, 48vh);
   }
 }
 

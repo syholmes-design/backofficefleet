@@ -20,6 +20,7 @@ import {
 import { settlementTotals } from "@/lib/executive-layer";
 import { getPayrollMonthlyTrend } from "@/lib/demo-trends";
 import { getClientLoadRequests } from "@/lib/client-load-requests";
+import { getDriverDispatchEligibility } from "@/lib/driver-dispatch-eligibility";
 
 export function DashboardPageClient() {
   const { data } = useBofDemoData();
@@ -45,9 +46,22 @@ export function DashboardPageClient() {
     () =>
       data.loads
         .filter((load) => load.dispatchExceptionFlag || load.sealStatus !== "OK" || load.podStatus === "pending")
-        .slice(0, 5),
+        .slice(0, 3),
     [data]
   );
+
+  const driverDispatchRollup = useMemo(() => {
+    let ready = 0;
+    let needsReview = 0;
+    let blocked = 0;
+    for (const d of data.drivers) {
+      const s = getDriverDispatchEligibility(data, d.id).status;
+      if (s === "ready") ready += 1;
+      else if (s === "needs_review") needsReview += 1;
+      else blocked += 1;
+    }
+    return { ready, needsReview, blocked };
+  }, [data]);
 
   const kpis = useMemo<Array<DashboardKpi & { href?: string }>>(
     () => [
@@ -158,16 +172,51 @@ export function DashboardPageClient() {
       >
         {!heroImageMissing ? (
           <div className="bof-dashboard-hero__imagePanel">
-            <Image
-              src="/images/bof-command-dashboard-hero.png"
-              alt="BOF command dashboard preview — fleet operations, documents, and compliance."
-              fill
-              priority
-              sizes="100vw"
-              className="bof-dashboard-hero__imagePanel-img"
-              onError={() => setHeroImageMissing(true)}
-              unoptimized
-            />
+            <div className="bof-dashboard-hero__imageSlot">
+              <Image
+                src="/images/bof-command-dashboard-hero.png"
+                alt="BOF command dashboard showing fleet operations, documents, compliance, and route visibility."
+                fill
+                priority
+                sizes="100vw"
+                className="bof-dashboard-hero__image bof-dashboard-hero__imagePanel-img"
+                onError={() => setHeroImageMissing(true)}
+                unoptimized
+              />
+            </div>
+            <nav className="bof-dashboard-hero__hotspots" aria-label="Quick dashboard links">
+              <Link href="/dispatch" className="bof-dashboard-hero__hotspot">
+                <span className="bof-dashboard-hero__hotspot-title">Dispatch Board</span>
+                <span className="bof-dashboard-hero__hotspot-value">
+                  {summary.activeLoads} active · {summary.loadsAtRisk} at risk
+                </span>
+              </Link>
+              <Link href="/dashboard#attention-queue" className="bof-dashboard-hero__hotspot">
+                <span className="bof-dashboard-hero__hotspot-title">Attention Queue</span>
+                <span className="bof-dashboard-hero__hotspot-value">
+                  {criticalQueue.length} critical · {attentionQueue.length} total
+                </span>
+              </Link>
+              <Link href="/drivers" className="bof-dashboard-hero__hotspot">
+                <span className="bof-dashboard-hero__hotspot-title">Driver Readiness</span>
+                <span className="bof-dashboard-hero__hotspot-value">
+                  {driverDispatchRollup.ready} ready · {driverDispatchRollup.blocked} blocked ·{" "}
+                  {driverDispatchRollup.needsReview} review
+                </span>
+              </Link>
+              <Link href="/settlements" className="bof-dashboard-hero__hotspot">
+                <span className="bof-dashboard-hero__hotspot-title">Settlements</span>
+                <span className="bof-dashboard-hero__hotspot-value">
+                  {summary.settlementHolds} holds · {formatUsd(summary.claimExposure)} exposure
+                </span>
+              </Link>
+              <Link href="/load-requests" className="bof-dashboard-hero__hotspot">
+                <span className="bof-dashboard-hero__hotspot-title">Client Requests</span>
+                <span className="bof-dashboard-hero__hotspot-value">
+                  {pendingClientLoadRequests} pending
+                </span>
+              </Link>
+            </nav>
           </div>
         ) : null}
         <div className="bof-dashboard-hero__content">
@@ -378,6 +427,8 @@ export function DashboardPageClient() {
           </div>
         </article>
       </section>
+
+      <div className="bof-dashboard-bottom-spacer" aria-hidden />
     </div>
   );
 }
@@ -405,6 +456,14 @@ function RouteSnapshotCard({
         <p className="bof-cc-route-empty">No critical alert currently open.</p>
       )}
       <RouteSummaryPanel loadsAtRisk={loadsAtRisk} topRiskLoads={topRiskLoads} />
+      <div className="bof-dashboard-route-snapshot__links">
+        <Link href="/dispatch" className="bof-cc-table-link">
+          Open full dispatch board →
+        </Link>
+        <Link href="/dashboard#attention-queue" className="bof-cc-table-link">
+          Jump to attention queue →
+        </Link>
+      </div>
     </aside>
   );
 }
