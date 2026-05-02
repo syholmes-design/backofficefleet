@@ -12,7 +12,10 @@ import {
   SETTLEMENT_GENERATED_FILES,
 } from "./bof-generated-svgs";
 import { getOrderedDocumentsForDriver } from "./driver-queries";
-import { resolveDriverBankInformationUrl } from "./driver-doc-registry";
+import {
+  getDriverDocumentByType,
+  resolveDriverBankInformationUrl,
+} from "./driver-doc-registry";
 import { getLoadProofItems, LOAD_PROOF_TYPES } from "./load-proof";
 import { mergeRfidIntoLoadScopedDocument } from "./rf-document-influence";
 import {
@@ -274,6 +277,29 @@ export function generateDriverDocument(
         links: linksForDriver(driverId),
       };
     }
+  }
+  if (type === "W-9") {
+    const w9Url = getDriverDocumentByType(driverId, "W-9");
+    if (w9Url) {
+      const rows = getOrderedDocumentsForDriver(data, driverId);
+      const row = rows.find((r) => r.type === "W-9");
+      const blocks = row?.blocksPayment === true;
+      return {
+        id: `ENG-DRIVER-${driverId}-w9canonical`,
+        type,
+        title: `W-9 · ${driver.name}`,
+        driverId,
+        status: row?.status ?? "VALID",
+        fileUrl: w9Url,
+        previewUrl: w9Url,
+        blocksPayment: blocks,
+        generatedAt: nowIso(),
+        sourceDataSummary: buildSourceSummaryDriver(data, driverId),
+        notes: "Canonical W-9 PDF under /documents/drivers/{driverId}/ (driverId-keyed).",
+        links: linksForDriver(driverId),
+      };
+    }
+    return null;
   }
   const file = DRIVER_TYPE_TO_FILE[type];
   if (!file || !(DRIVER_GENERATED_FILES as readonly string[]).includes(file)) {

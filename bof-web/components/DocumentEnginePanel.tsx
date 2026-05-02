@@ -17,6 +17,13 @@ function isHtmlDocumentPath(url: string) {
   return /\.html(\?|$)/i.test(url);
 }
 
+/** Canonical W-9 is a public PDF; iframe embed is unreliable — use card + open link. */
+function isW9CanonicalPdf(doc: Pick<EngineDocument, "type" | "previewUrl" | "fileUrl">) {
+  if (doc.type !== "W-9") return false;
+  const u = (doc.previewUrl || doc.fileUrl || "").trim();
+  return isPdfPath(u);
+}
+
 function badgeClass(blocks: boolean) {
   return blocks
     ? "bof-badge bof-badge-warn"
@@ -77,6 +84,25 @@ export function DocumentEnginePanel({
       return <p className="bof-doc-popover-empty">Preview not available</p>;
     }
     if (isPdfPath(url)) {
+      if (isW9CanonicalPdf(doc)) {
+        const openHref = doc.fileUrl?.trim() || url;
+        return (
+          <>
+            <div className="bof-doc-popover-title">W-9</div>
+            <div className="rounded border border-slate-200 bg-slate-50 p-3 text-sm text-gray-800">
+              <p className="text-gray-600">Canonical PDF on file</p>
+              <a
+                href={openHref}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="mt-2 inline-block font-semibold text-teal-700 hover:underline"
+              >
+                Open file
+              </a>
+            </div>
+          </>
+        );
+      }
       const hrFrame = (
         <div className="bof-hr-packet-preview-frame">
           <div className="bof-hr-packet-preview-frame-inner">
@@ -415,10 +441,25 @@ export function DocumentEnginePanel({
                   />
                 )
               )}
+              {modal.previewUrl && isW9CanonicalPdf(modal) && (
+                <div className="mt-4 rounded border border-slate-200 bg-slate-50 p-4 text-sm text-gray-800">
+                  <p className="font-medium text-gray-900">W-9</p>
+                  <p className="mt-1 text-gray-600">Canonical PDF on file</p>
+                  <a
+                    href={modal.fileUrl?.trim() || modal.previewUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="mt-3 inline-block font-semibold text-teal-700 hover:underline"
+                  >
+                    Open file
+                  </a>
+                </div>
+              )}
               {modal.previewUrl &&
                 hrPacketPreview &&
                 (isPdfPath(modal.previewUrl) ||
-                  isHtmlDocumentPath(modal.previewUrl)) && (
+                  isHtmlDocumentPath(modal.previewUrl)) &&
+                !isW9CanonicalPdf(modal) && (
                   <div
                     className={
                       isCdlHrPreviewDoc(modal)
@@ -439,7 +480,8 @@ export function DocumentEnginePanel({
                 )}
               {modal.previewUrl &&
                 !hrPacketPreview &&
-                isPdfPath(modal.previewUrl) && (
+                isPdfPath(modal.previewUrl) &&
+                !isW9CanonicalPdf(modal) && (
                   <iframe
                     src={modal.previewUrl}
                     title="Document preview"

@@ -134,7 +134,35 @@ function main() {
       }
     }
 
-    // 8) medical card status aligns with expiration
+    // 8) DRV-001–012: W-9 must resolve to canonical public PDF (driverId only; no legacy w9.html)
+    const idMatch = /^DRV-(\d{3})$/i.exec(driverId);
+    if (idMatch) {
+      const n = parseInt(idMatch[1], 10);
+      if (n >= 1 && n <= 12) {
+        const expectedW9 = `/documents/drivers/${driverId}/w9-${driverId.toLowerCase()}.pdf`;
+        const w9Row = byType.get("W-9");
+        if (!w9Row) {
+          errors.push(`${driverId}: W-9 core row missing`);
+        } else {
+          const fu = String(w9Row.fileUrl ?? "").trim();
+          const pu = String(w9Row.previewUrl ?? "").trim();
+          if (fu !== expectedW9) {
+            errors.push(`${driverId}: W-9 fileUrl must be ${expectedW9}, got ${fu || "(empty)"}`);
+          }
+          if (pu && pu !== expectedW9) {
+            errors.push(`${driverId}: W-9 previewUrl must match canonical ${expectedW9}, got ${pu}`);
+          }
+          if (/\/generated\/.*w9\.html/i.test(fu) || /\/generated\/.*w9\.html/i.test(pu)) {
+            errors.push(`${driverId}: W-9 must not point at generated w9.html when canonical PDF is required`);
+          }
+        }
+        if (!existsPublic(expectedW9)) {
+          errors.push(`${driverId}: canonical W-9 PDF missing on disk ${expectedW9}`);
+        }
+      }
+    }
+
+    // 9) medical card status aligns with expiration
     const med = byType.get("Medical Card");
     if (med) {
       const expectedStatus = deriveStatus(med.expirationDate);

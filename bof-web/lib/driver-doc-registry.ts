@@ -64,7 +64,8 @@ function sourcePathForType(driverId: string, type: string): string | undefined {
     "Medical Card": `${root}/Medical Card-${suffix}`,
     MVR: `${root}/mvr-card-drv-${suffix}`,
     "I-9": `${root}/i9`,
-    "W-9": `${root}/w9`,
+    /** Canonical IRS W-9 PDF keyed by driverId only (e.g. w9-drv-009.pdf). */
+    "W-9": `${root}/w9-${driverId.toLowerCase()}`,
     FMCSA: `${root}/fmcsa-compliance`,
     "FMCSA Compliance": `${root}/fmcsa-compliance`,
   };

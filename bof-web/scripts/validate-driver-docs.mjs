@@ -69,6 +69,10 @@ function run() {
     } else if (!exists(path.join(dir, bankFile))) {
       fail(`Missing canonical bank HTML for ${driverId}: ${bankFile}`);
     }
+    const w9Base = `w9-drv-${n}`;
+    if (!resolveBase(dir, w9Base)) {
+      fail(`Missing canonical W-9 PDF for ${driverId}: ${w9Base}.pdf`);
+    }
   }
 
   if (!exists(INDEX_PATH)) {
@@ -86,6 +90,10 @@ function run() {
         if (!fileSet.has(expectedUrl)) {
           fail(`Index missing canonical Bank Information URL for ${driverId}: ${expectedUrl}`);
         }
+      }
+      const w9Url = `/documents/drivers/${driverId}/w9-drv-${n}.pdf`;
+      if (!fileSet.has(w9Url)) {
+        fail(`Index missing canonical W-9 URL for ${driverId}: ${w9Url}`);
       }
     }
     for (const file of files) {

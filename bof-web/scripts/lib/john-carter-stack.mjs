@@ -34,6 +34,9 @@ const mvrCardPath = (driverId) =>
   `/documents/drivers/${driverId}/mvr-card.html`;
 const driverApplicationPath = (driverId) =>
   `/documents/drivers/${driverId}/driver-application.html`;
+/** Canonical IRS W-9 PDFs under public/documents/drivers (driverId only; no generated w9.html). */
+const w9CanonicalPdfPath = (driverId) =>
+  `/documents/drivers/${driverId}/w9-${String(driverId).toLowerCase()}.pdf`;
 
 function stripManagedFleetSupplementals(documents) {
   const drop = new Set(FLEET_MANAGED_SUPPLEMENTAL_TYPES);
@@ -120,8 +123,8 @@ function patchCoreSevenForDriver(documents, driverId, ex, driver) {
     "W-9": {
       status: "VALID",
       expirationDate: genericExp,
-      fileUrl: genPath(driverId, "w9.html"),
-      previewUrl: genPath(driverId, "w9.html"),
+      fileUrl: w9CanonicalPdfPath(driverId),
+      previewUrl: w9CanonicalPdfPath(driverId),
       docTier: "primary",
     },
     "Bank Info": {

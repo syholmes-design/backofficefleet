@@ -36,6 +36,31 @@ function DqfVaultDocPreviewIframe({
   );
 }
 
+/** W-9 is served as a canonical PDF; iframes often fail for PDF — card + open link instead. */
+function DqfVaultW9Block({ href }: { href?: string }) {
+  const url = href?.trim();
+  if (!url) {
+    return <p className="text-sm text-gray-500">Missing / Needs review</p>;
+  }
+  if (/\.pdf(\?|$)/i.test(url)) {
+    return (
+      <div className="rounded border border-slate-200 bg-slate-50 p-4 text-sm text-gray-800">
+        <p className="font-medium text-gray-900">W-9</p>
+        <p className="mt-1 text-gray-600">Canonical PDF on file</p>
+        <a
+          href={url}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="mt-3 inline-block font-semibold text-teal-700 hover:underline"
+        >
+          Open file
+        </a>
+      </div>
+    );
+  }
+  return <DqfVaultDocPreviewIframe src={url} title="W-9" variant="standard" />;
+}
+
 export default function DriverVaultPage({ params }: Props) {
   const { id } = use(params);
   const { data } = useBofDemoData();
@@ -172,7 +197,7 @@ export default function DriverVaultPage({ params }: Props) {
                 <div className="border rounded-lg p-4 hover:shadow-md transition-shadow">
                   <h3 className="font-medium text-gray-900 mb-2">W-9</h3>
                   <p className="text-sm text-gray-600 mb-3">Tax Withholding Form</p>
-                  <DqfVaultDocPreviewIframe src={packet.w9 || "about:blank"} title="W-9" variant="standard" />
+                  <DqfVaultW9Block href={packet.w9} />
                 </div>
                 <div className="border rounded-lg p-4 hover:shadow-md transition-shadow">
                   <h3 className="font-medium text-gray-900 mb-2">Emergency Contact</h3>

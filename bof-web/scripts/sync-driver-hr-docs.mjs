@@ -28,7 +28,8 @@ const DOC_SPECS = [
   },
   { type: "MVR", base: (n) => `mvr-card-drv-${n}` },
   { type: "I-9", base: () => "i9" },
-  { type: "W-9", base: () => "w9" },
+  /** Canonical W-9: /documents/drivers/{id}/w9-{idLower}.pdf — keyed by driverId only. */
+  { type: "W-9", base: (_n, driverId) => `w9-${driverId.toLowerCase()}` },
   { type: "FMCSA Compliance", base: () => "fmcsa-compliance" },
 ];
 
@@ -70,6 +71,20 @@ function copyWithOriginalExt(srcAbs, targetBaseAbs) {
   const out = `${targetBaseAbs}${ext}`;
   fs.copyFileSync(srcAbs, out);
   return out;
+}
+
+function w9DownloadCandidates(driverId) {
+  if (!exists(DOWNLOADS_ROOT)) return [];
+  const prefix = `W9_${driverId}_`.toLowerCase();
+  return fs
+    .readdirSync(DOWNLOADS_ROOT)
+    .filter(
+      (f) =>
+        f.toLowerCase().startsWith(prefix) &&
+        f.toLowerCase().endsWith(".pdf") &&
+        !f.includes("(1)")
+    )
+    .map((f) => path.join(DOWNLOADS_ROOT, f));
 }
 
 function buildCandidates(driverId, suffix3) {
@@ -128,7 +143,12 @@ function buildCandidates(driverId, suffix3) {
       path.join(gen, "mvr.html"),
     ],
     "I-9": [path.join(gen, "i9.html"), path.join(gen, "i-9.html")],
-    "W-9": [path.join(gen, "w9.html"), path.join(gen, "w-9.html")],
+    "W-9": [
+      path.join(dir, `w9-${driverId.toLowerCase()}.pdf`),
+      ...w9DownloadCandidates(driverId),
+      path.join(gen, "w9.html"),
+      path.join(gen, "w-9.html"),
+    ],
     "FMCSA Compliance": [
       path.join(gen, "fmcsa-compliance.html"),
       path.join(gen, "fmcsa.html"),
@@ -153,7 +173,9 @@ function run() {
     for (const spec of DOC_SPECS) {
       const baseFn = spec.base;
       const baseRel =
-        spec.type === "Bank Information" ? baseFn(suffix3, driverId) : baseFn(suffix3);
+        spec.type === "Bank Information" || spec.type === "W-9"
+          ? baseFn(suffix3, driverId)
+          : baseFn(suffix3);
       const baseAbs = path.join(dir, baseRel);
       const already = firstByExt(baseAbs);
       if (!already) {

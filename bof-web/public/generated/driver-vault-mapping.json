@@ -15,7 +15,7 @@
     "Prior Employer Inquiry": "generated\\drivers\\DRV-001\\prior_employer_inquiry.html",
     "Safety Performance History": "generated\\drivers\\DRV-001\\safety-acknowledgment.html",
     "Secondary Contact": "generated\\drivers\\DRV-001\\secondary_contact.html",
-    "W-9": "generated\\drivers\\DRV-001\\w9.html"
+    "W-9": "documents\\drivers\\DRV-001\\w9-drv-001.pdf"
   },
   "DRV-002": {
     "CDL": "generated\\drivers\\DRV-002\\cdl.html",
@@ -33,7 +33,7 @@
     "Prior Employer Inquiry": "generated\\drivers\\DRV-002\\prior_employer_inquiry.html",
     "Safety Performance History": "generated\\drivers\\DRV-002\\safety-acknowledgment.html",
     "Secondary Contact": "generated\\drivers\\DRV-002\\secondary_contact.html",
-    "W-9": "generated\\drivers\\DRV-002\\w9.html"
+    "W-9": "documents\\drivers\\DRV-002\\w9-drv-002.pdf"
   },
   "DRV-003": {
     "CDL": "generated\\drivers\\DRV-003\\cdl.html",
@@ -51,7 +51,7 @@
     "Prior Employer Inquiry": "generated\\drivers\\DRV-003\\prior_employer_inquiry.html",
     "Safety Performance History": "generated\\drivers\\DRV-003\\safety-acknowledgment.html",
     "Secondary Contact": "generated\\drivers\\DRV-003\\secondary_contact.html",
-    "W-9": "generated\\drivers\\DRV-003\\w9.html"
+    "W-9": "documents\\drivers\\DRV-003\\w9-drv-003.pdf"
   },
   "DRV-004": {
     "CDL": "generated\\drivers\\DRV-004\\cdl.html",
@@ -69,7 +69,7 @@
     "Prior Employer Inquiry": "generated\\drivers\\DRV-004\\prior_employer_inquiry.html",
     "Safety Performance History": "generated\\drivers\\DRV-004\\safety-acknowledgment.html",
     "Secondary Contact": "generated\\drivers\\DRV-004\\secondary_contact.html",
-    "W-9": "generated\\drivers\\DRV-004\\w9.html"
+    "W-9": "documents\\drivers\\DRV-004\\w9-drv-004.pdf"
   },
   "DRV-005": {
     "CDL": "generated\\drivers\\DRV-005\\cdl.html",
@@ -87,7 +87,7 @@
     "Prior Employer Inquiry": "generated\\drivers\\DRV-005\\prior_employer_inquiry.html",
     "Safety Performance History": "generated\\drivers\\DRV-005\\safety-acknowledgment.html",
     "Secondary Contact": "generated\\drivers\\DRV-005\\secondary_contact.html",
-    "W-9": "generated\\drivers\\DRV-005\\w9.html"
+    "W-9": "documents\\drivers\\DRV-005\\w9-drv-005.pdf"
   },
   "DRV-006": {
     "CDL": "generated\\drivers\\DRV-006\\cdl.html",
@@ -105,7 +105,7 @@
     "Prior Employer Inquiry": "generated\\drivers\\DRV-006\\prior_employer_inquiry.html",
     "Safety Performance History": "generated\\drivers\\DRV-006\\safety-acknowledgment.html",
     "Secondary Contact": "generated\\drivers\\DRV-006\\secondary_contact.html",
-    "W-9": "generated\\drivers\\DRV-006\\w9.html"
+    "W-9": "documents\\drivers\\DRV-006\\w9-drv-006.pdf"
   },
   "DRV-007": {
     "CDL": "generated\\drivers\\DRV-007\\cdl.html",
@@ -123,7 +123,7 @@
     "Prior Employer Inquiry": "generated\\drivers\\DRV-007\\prior_employer_inquiry.html",
     "Safety Performance History": "generated\\drivers\\DRV-007\\safety-acknowledgment.html",
     "Secondary Contact": "generated\\drivers\\DRV-007\\secondary_contact.html",
-    "W-9": "generated\\drivers\\DRV-007\\w9.html"
+    "W-9": "documents\\drivers\\DRV-007\\w9-drv-007.pdf"
   },
   "DRV-008": {
     "CDL": "generated\\drivers\\DRV-008\\cdl.html",
@@ -141,7 +141,7 @@
     "Prior Employer Inquiry": "generated\\drivers\\DRV-008\\prior_employer_inquiry.html",
     "Safety Performance History": "generated\\drivers\\DRV-008\\safety-acknowledgment.html",
     "Secondary Contact": "generated\\drivers\\DRV-008\\secondary_contact.html",
-    "W-9": "generated\\drivers\\DRV-008\\w9.html"
+    "W-9": "documents\\drivers\\DRV-008\\w9-drv-008.pdf"
   },
   "DRV-009": {
     "CDL": "generated\\drivers\\DRV-009\\cdl.html",
@@ -159,7 +159,7 @@
     "Prior Employer Inquiry": "generated\\drivers\\DRV-009\\prior_employer_inquiry.html",
     "Safety Performance History": "generated\\drivers\\DRV-009\\safety-acknowledgment.html",
     "Secondary Contact": "generated\\drivers\\DRV-009\\secondary_contact.html",
-    "W-9": "generated\\drivers\\DRV-009\\w9.html"
+    "W-9": "documents\\drivers\\DRV-009\\w9-drv-009.pdf"
   },
   "DRV-010": {
     "CDL": "generated\\drivers\\DRV-010\\cdl.html",
@@ -177,7 +177,7 @@
     "Prior Employer Inquiry": "generated\\drivers\\DRV-010\\prior_employer_inquiry.html",
     "Safety Performance History": "generated\\drivers\\DRV-010\\safety-acknowledgment.html",
     "Secondary Contact": "generated\\drivers\\DRV-010\\secondary_contact.html",
-    "W-9": "generated\\drivers\\DRV-010\\w9.html"
+    "W-9": "documents\\drivers\\DRV-010\\w9-drv-010.pdf"
   },
   "DRV-011": {
     "CDL": "generated\\drivers\\DRV-011\\cdl.html",
@@ -195,7 +195,7 @@
     "Prior Employer Inquiry": "generated\\drivers\\DRV-011\\prior_employer_inquiry.html",
     "Safety Performance History": "generated\\drivers\\DRV-011\\safety-acknowledgment.html",
     "Secondary Contact": "generated\\drivers\\DRV-011\\secondary_contact.html",
-    "W-9": "generated\\drivers\\DRV-011\\w9.html"
+    "W-9": "documents\\drivers\\DRV-011\\w9-drv-011.pdf"
   },
   "DRV-012": {
     "CDL": "generated\\drivers\\DRV-012\\cdl.html",
@@ -213,6 +213,6 @@
     "Prior Employer Inquiry": "generated\\drivers\\DRV-012\\prior_employer_inquiry.html",
     "Safety Performance History": "generated\\drivers\\DRV-012\\safety-acknowledgment.html",
     "Secondary Contact": "generated\\drivers\\DRV-012\\secondary_contact.html",
-    "W-9": "generated\\drivers\\DRV-012\\w9.html"
+    "W-9": "documents\\drivers\\DRV-012\\w9-drv-012.pdf"
   }
 }
