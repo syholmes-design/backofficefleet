@@ -14,7 +14,6 @@ import {
   getDriverById,
   getDriverMedicalExpanded,
   getOrderedDocumentsForDriver,
-  getPrimaryStackExtraDocuments,
   getSecondaryStackDocumentsOrdered,
   primaryAssignedTruck,
   readinessFromDocuments,
@@ -26,12 +25,11 @@ import {
 } from "@/lib/john-carter-reference";
 import { getSupplementalDocumentsForDriver } from "@/lib/supplemental-driver-docs";
 import { DriverMedicalExpandedPanel } from "@/components/DriverMedicalExpandedPanel";
-import { DriverFleetDocumentStacks } from "@/components/DriverFleetDocumentStacks";
 import { DriverAvatar } from "@/components/DriverAvatar";
 import { driverPhotoPath } from "@/lib/driver-photo";
 import { GENERATED_PUBLIC_PREFIX } from "@/lib/generated-public-prefix";
-import { listEngineDocumentsForDriver } from "@/lib/document-engine";
-import { DocumentEnginePanel } from "@/components/DocumentEnginePanel";
+import { buildDriverDocumentPacket } from "@/lib/driver-document-packet";
+import { DriverDocumentPacketSection } from "@/components/drivers/DriverDocumentPacketSection";
 import { RouteSupportWidget } from "@/components/route-support/RouteSupportWidget";
 import { DieselRouteInsightWidget } from "@/components/fuel/DieselRouteInsightWidget";
 import { useIntakeEngineStore } from "@/lib/stores/intake-engine-store";
@@ -70,10 +68,6 @@ export function DriverDetailPageClient({ driverId }: { driverId: string }) {
     () => getSupplementalDocumentsForDriver(data, driverId),
     [data, driverId]
   );
-  const primaryStackExtra = useMemo(
-    () => getPrimaryStackExtraDocuments(data, driverId),
-    [data, driverId]
-  );
   const secondaryStackOrdered = useMemo(
     () => getSecondaryStackDocumentsOrdered(data, driverId),
     [data, driverId]
@@ -103,8 +97,8 @@ export function DriverDetailPageClient({ driverId }: { driverId: string }) {
     }
     return { blocking, atRisk, resolved };
   }, [compliance]);
-  const engineDriverDocs = useMemo(
-    () => listEngineDocumentsForDriver(data, driverId),
+  const driverDocumentPacket = useMemo(
+    () => buildDriverDocumentPacket(data, driverId),
     [data, driverId]
   );
   const operationalProfile = useMemo(
@@ -1006,13 +1000,7 @@ export function DriverDetailPageClient({ driverId }: { driverId: string }) {
           .
         </p>
 
-        <DriverFleetDocumentStacks
-          driverId={driver.id}
-          driverName={driver.name}
-          primaryCore={documents}
-          primaryExtra={primaryStackExtra}
-          secondary={secondaryStackOrdered}
-        />
+        <DriverDocumentPacketSection packet={driverDocumentPacket} />
 
         {supplementalDocs.length > 0 && (
           <div className="bof-driver-hub-supplemental">
@@ -1036,23 +1024,33 @@ export function DriverDetailPageClient({ driverId }: { driverId: string }) {
         )}
       </section>
 
-      <section
-        className="bof-driver-hub-section"
-        aria-labelledby="driver-hr-generated-packet-heading"
-      >
-        <DocumentEnginePanel
-          id="document-engine"
-          title="HR Generated Packet"
-          lead="Driver-scoped automation summaries. Bank Information uses the canonical payroll bank card HTML under /documents/drivers/{driverId}/ when indexed."
-          documents={engineDriverDocs}
-          variant="supporting"
-          previewScope="driverHrPacket"
-          crossLinks={[
-            { label: "HR & administrative record", href: `/drivers/${driver.id}/hr` },
-            { label: "Document vault", href: `/drivers/${driver.id}/vault` },
-            { label: "Drivers list", href: "/drivers" },
-          ]}
-        />
+      <section className="bof-driver-hub-section" aria-labelledby="driver-hr-generated-packet-heading">
+        <h2 id="driver-hr-generated-packet-heading" className="bof-h2 bof-driver-hub-h2">
+          HR packet shortcuts
+        </h2>
+        <p className="bof-doc-section-lead bof-driver-hub-lead">
+          Administrative packet documents are now deduplicated into Generated Administrative Summaries
+          in the document summary above. Use shortcuts below for full workflow pages.
+        </p>
+        <div className="bof-driver-hub-supplemental">
+          <ul className="bof-compliance-mini">
+            <li>
+              <Link href={`/drivers/${driver.id}/hr`} className="bof-link-secondary">
+                HR &amp; administrative record
+              </Link>
+            </li>
+            <li>
+              <Link href={`/drivers/${driver.id}/vault`} className="bof-link-secondary">
+                Driver document vault / qualification file
+              </Link>
+            </li>
+            <li>
+              <Link href="/documents" className="bof-link-secondary">
+                BOF document vault index
+              </Link>
+            </li>
+          </ul>
+        </div>
       </section>
     </div>
   );

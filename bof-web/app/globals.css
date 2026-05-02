@@ -1583,6 +1583,115 @@ body {
   background: rgba(15, 23, 42, 0.5);
 }
 
+/* Driver hub packet redesign: grouped + deduped docs with selected preview */
+.bof-driver-doc-summary-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  margin: 0 0 0.75rem;
+}
+
+.bof-driver-doc-group {
+  margin-top: 0.75rem;
+  border: 1px solid var(--bof-border);
+  border-radius: 0.75rem;
+  background: rgba(15, 23, 42, 0.35);
+  overflow: hidden;
+}
+
+.bof-driver-doc-group summary {
+  cursor: pointer;
+  list-style: none;
+  font-weight: 700;
+  font-size: 0.86rem;
+  padding: 0.7rem 0.8rem;
+  color: #e2e8f0;
+  border-bottom: 1px solid rgba(100, 116, 139, 0.25);
+}
+
+.bof-driver-doc-table {
+  display: flex;
+  flex-direction: column;
+}
+
+.bof-driver-doc-row {
+  display: grid;
+  grid-template-columns: minmax(170px, 1.7fr) minmax(110px, 0.8fr) minmax(150px, 1fr) minmax(130px, 0.9fr) minmax(120px, 0.8fr);
+  gap: 0.5rem;
+  width: 100%;
+  border: 0;
+  border-top: 1px solid rgba(71, 85, 105, 0.32);
+  background: transparent;
+  color: inherit;
+  text-align: left;
+  padding: 0.55rem 0.8rem;
+  cursor: pointer;
+}
+
+.bof-driver-doc-row:hover {
+  background: rgba(15, 23, 42, 0.55);
+}
+
+.bof-driver-doc-col {
+  font-size: 0.74rem;
+  color: #cbd5e1;
+  min-width: 0;
+}
+
+.bof-driver-doc-col-title {
+  font-weight: 600;
+  color: #f8fafc;
+}
+
+.bof-driver-doc-col-action {
+  color: #5eead4;
+  font-weight: 600;
+}
+
+.bof-driver-doc-preview-panel {
+  margin-top: 0.9rem;
+  border: 1px solid var(--bof-border);
+  border-radius: 0.75rem;
+  padding: 0.8rem;
+  background: rgba(15, 23, 42, 0.45);
+}
+
+.bof-driver-doc-preview-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4rem 0.55rem;
+  margin-bottom: 0.4rem;
+}
+
+.bof-driver-doc-preview-frame {
+  width: 100%;
+  height: 320px;
+  border: 1px solid rgba(148, 163, 184, 0.35);
+  border-radius: 0.65rem;
+  background: #fff;
+}
+
+.bof-driver-doc-preview-image {
+  width: 100%;
+  max-height: 320px;
+  border: 1px solid rgba(148, 163, 184, 0.35);
+  border-radius: 0.65rem;
+  object-fit: contain;
+  background: #fff;
+}
+
+@media (max-width: 1000px) {
+  .bof-driver-doc-row {
+    grid-template-columns: minmax(140px, 1.6fr) minmax(100px, 0.9fr) minmax(120px, 1fr);
+  }
+
+  .bof-driver-doc-row .bof-driver-doc-col:nth-child(4),
+  .bof-driver-doc-row .bof-driver-doc-col:nth-child(5) {
+    display: none;
+  }
+}
+
 /*
  * Driver /drivers/[id]/vault — DQF document previews only.
  * Scaled iframe viewport so HTML/PDF sheets fit without hard-crop scrollbars.
