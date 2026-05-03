@@ -1,11 +1,11 @@
 "use client";
 
 import Link from "next/link";
-import Image from "next/image";
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import { BookDemoLink } from "@/components/BookDemoLink";
+import { DashboardHeroMockup } from "@/components/dashboard/DashboardHeroMockup";
 import { useBofDemoData } from "@/lib/bof-demo-data-context";
-import { demoHeroLinks, sectorLinks } from "@/lib/site-links";
+import { sectorLinks } from "@/lib/site-links";
 import { formatUsd } from "@/lib/format-money";
 import {
   getDashboardTodayChanges,
@@ -22,11 +22,9 @@ import {
 import { settlementTotals } from "@/lib/executive-layer";
 import { getPayrollMonthlyTrend } from "@/lib/demo-trends";
 import { getClientLoadRequests } from "@/lib/client-load-requests";
-import { getDriverDispatchEligibility } from "@/lib/driver-dispatch-eligibility";
 
 export function DashboardPageClient() {
   const { data } = useBofDemoData();
-  const [heroImageMissing, setHeroImageMissing] = useState(false);
 
   const st = useMemo(() => settlementTotals(data), [data]);
   const summary = useMemo(() => getMainDashboardSummary(data), [data]);
@@ -51,19 +49,6 @@ export function DashboardPageClient() {
         .slice(0, 3),
     [data]
   );
-
-  const driverDispatchRollup = useMemo(() => {
-    let ready = 0;
-    let needsReview = 0;
-    let blocked = 0;
-    for (const d of data.drivers) {
-      const s = getDriverDispatchEligibility(data, d.id).status;
-      if (s === "ready") ready += 1;
-      else if (s === "needs_review") needsReview += 1;
-      else blocked += 1;
-    }
-    return { ready, needsReview, blocked };
-  }, [data]);
 
   const kpis = useMemo<Array<DashboardKpi & { href?: string }>>(
     () => [
@@ -151,118 +136,30 @@ export function DashboardPageClient() {
   const nonCriticalQueue = attentionQueue.filter((item) => item.severity !== "critical");
   const prioritizedQueue = [...criticalQueue, ...nonCriticalQueue];
   const queuePreview = prioritizedQueue.slice(0, 4);
-  const readinessSplit = {
-    ready: readiness.find((point) => point.label === "Ready")?.value ?? 0,
-    review: readiness.find((point) => point.label === "Needs Review")?.value ?? 0,
-    blocked: readiness.find((point) => point.label === "Blocked")?.value ?? 0,
-  };
-  const heroSummaryStats = [
-    { label: "Active Loads", value: summary.activeLoads },
-    { label: "Loads At Risk", value: summary.loadsAtRisk },
-    { label: "Drivers Ready", value: readinessSplit.ready },
-    { label: "Drivers Blocked", value: readinessSplit.blocked },
-    { label: "Needs Review", value: readinessSplit.review },
-    { label: "Settlement Holds", value: summary.settlementHolds },
-    { label: "Claim Exposure", value: formatUsd(summary.claimExposure) },
-    { label: "Client Requests Pending", value: pendingClientLoadRequests },
-  ] as const;
 
   return (
     <div className="bof-page bof-cc-page bof-dashboard-page">
-      <section
-        className={`bof-dashboard-hero bof-cc-hero${heroImageMissing ? " bof-dashboard-hero--no-image" : ""}`}
-      >
-        {!heroImageMissing ? (
-          <div className="bof-dashboard-hero__imagePanel">
-            <div className="bof-dashboard-hero__imageSlot">
-              <Image
-                src="/images/bof-command-dashboard-hero.png"
-                alt="BOF command dashboard showing fleet operations, documents, compliance, and route visibility."
-                fill
-                priority
-                sizes="100vw"
-                className="bof-dashboard-hero__image bof-dashboard-hero__imagePanel-img"
-                onError={() => setHeroImageMissing(true)}
-                unoptimized
-              />
-              <div
-                className="bof-dashboard-hero__overlayActions"
-                aria-label="Working demo actions (PNG chrome above is decorative)"
-              >
-                <BookDemoLink
-                  className="bof-dashboard-hero__overlayBtn bof-dashboard-hero__overlayBtn--primary"
-                  ariaLabel="Book a BOF demo appointment"
-                >
-                  Book a Demo
-                </BookDemoLink>
-                <Link
-                  href="/command-center"
-                  prefetch={false}
-                  className="bof-dashboard-hero__overlayBtn"
-                >
-                  Explore the Demo
-                </Link>
-              </div>
-            </div>
-            <nav className="bof-dashboard-hero__hotspots" aria-label="Quick dashboard links">
-              <Link href="/dispatch" className="bof-dashboard-hero__hotspot">
-                <span className="bof-dashboard-hero__hotspot-title">Open Dispatch Board</span>
-                <span className="bof-dashboard-hero__hotspot-value">
-                  {summary.activeLoads} active · {summary.loadsAtRisk} at risk
-                </span>
-              </Link>
-              <Link href="/dashboard#attention-queue" className="bof-dashboard-hero__hotspot">
-                <span className="bof-dashboard-hero__hotspot-title">Review Attention Queue</span>
-                <span className="bof-dashboard-hero__hotspot-value">
-                  {criticalQueue.length} critical · {attentionQueue.length} total
-                </span>
-              </Link>
-              <Link href="/drivers" className="bof-dashboard-hero__hotspot">
-                <span className="bof-dashboard-hero__hotspot-title">Driver Readiness</span>
-                <span className="bof-dashboard-hero__hotspot-value">
-                  {driverDispatchRollup.ready} ready · {driverDispatchRollup.blocked} blocked ·{" "}
-                  {driverDispatchRollup.needsReview} review
-                </span>
-              </Link>
-              <Link href="/settlements" className="bof-dashboard-hero__hotspot">
-                <span className="bof-dashboard-hero__hotspot-title">Open Settlements</span>
-                <span className="bof-dashboard-hero__hotspot-value">
-                  {summary.settlementHolds} holds · {formatUsd(summary.claimExposure)} exposure
-                </span>
-              </Link>
-              <Link href="/load-requests" className="bof-dashboard-hero__hotspot">
-                <span className="bof-dashboard-hero__hotspot-title">Client Requests</span>
-                <span className="bof-dashboard-hero__hotspot-value">
-                  {pendingClientLoadRequests} pending
-                </span>
-              </Link>
-            </nav>
-          </div>
-        ) : null}
-        <div className="bof-dashboard-hero__content">
+      <section className="bof-dashboard-hero bof-cc-hero">
+        <div className="bof-dashboard-hero__shell">
           <div className="bof-dashboard-hero__intro bof-cc-hero-left">
             <p className="bof-cc-kicker">Executive Operations Cockpit</p>
-            <h1 className="bof-title bof-cc-title">Fleet Command Dashboard</h1>
+            <h1 className="bof-title bof-cc-title">
+              The Back Office Platform Built for Freight Operations
+            </h1>
             <p className="bof-lead bof-cc-lead">
-              Readiness, dispatch risk, compliance blocks, settlements, proof exceptions, and revenue impact in one
+              BOF unifies dispatch, drivers, documents, compliance, proof, settlements, and revenue risk in one
               operating view.
             </p>
             <div className="bof-dashboard-hero__ctaRow" aria-label="Dashboard actions">
-              {demoHeroLinks.map((cta) => (
-                <Link
-                  key={cta.id}
-                  href={cta.href}
-                  prefetch={false}
-                  className={
-                    cta.variant === "primary" ? "bof-cc-btn bof-cc-btn-primary" : "bof-cc-btn"
-                  }
-                >
-                  {cta.label}
-                </Link>
-              ))}
-              <BookDemoLink className="bof-cc-btn" ariaLabel="Book a BOF demo appointment">
+              <BookDemoLink className="bof-cc-btn bof-cc-btn-primary" ariaLabel="Book a BOF demo appointment">
                 Book a Demo
               </BookDemoLink>
+              <Link href="/dispatch" prefetch={false} className="bof-cc-btn">
+                Open Dispatch Board
+              </Link>
+              <Link href="/dashboard#attention-queue" prefetch={false} className="bof-cc-btn">
+                Review Attention Queue
+              </Link>
             </div>
             <nav className="bof-dashboard-hero__sectorRow" aria-label="Solutions by fleet type">
               {sectorLinks.map((item) => (
@@ -272,15 +169,16 @@ export function DashboardPageClient() {
               ))}
             </nav>
           </div>
-          <div className="bof-dashboard-hero__stats">
-            <div className="bof-cc-hero-stat-grid">
-              {heroSummaryStats.map((stat) => (
-                <article key={stat.label} className="bof-cc-hero-stat">
-                  <span className="bof-cc-hero-stat-label">{stat.label}</span>
-                  <strong className="bof-cc-hero-stat-value">{stat.value}</strong>
-                </article>
-              ))}
-            </div>
+          <div className="bof-dashboard-hero__visual">
+            <DashboardHeroMockup
+              activeLoads={summary.activeLoads}
+              loadsAtRisk={summary.loadsAtRisk}
+              driversReady={summary.driversReady}
+              settlementHolds={summary.settlementHolds}
+              fleetRisk={fleetRisk}
+              payrollTrend={payrollTrend}
+              queuePreview={queuePreview}
+            />
           </div>
         </div>
       </section>

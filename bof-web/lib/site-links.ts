@@ -41,15 +41,14 @@ export function getBookAssessmentHrefForSector(
   return `/book-assessment?${params.toString()}`;
 }
 
-/** Canonical in-app CTAs for the /dashboard hero (all routes exist under (bof)). */
+/** Legacy operational links for the /dashboard hero (DOM only; prefer explicit CTAs in the hero). */
 export type DashboardHeroCta = {
-  id: "dispatch" | "attention_queue" | "settlements";
+  id: "dispatch" | "attention_queue";
   label: string;
   href: string;
   variant: "primary" | "secondary";
 };
 
-/** Primary operational CTAs for the /dashboard hero (DOM links; image is decorative). */
 export const demoHeroLinks: DashboardHeroCta[] = [
   {
     id: "dispatch",
@@ -63,12 +62,6 @@ export const demoHeroLinks: DashboardHeroCta[] = [
     href: "/dashboard#attention-queue",
     variant: "secondary",
   },
-  {
-    id: "settlements",
-    label: "Open Settlements",
-    href: "/settlements",
-    variant: "secondary",
-  },
 ];
 
 export function getHeroLinks(): DashboardHeroCta[] {
@@ -76,17 +69,17 @@ export function getHeroLinks(): DashboardHeroCta[] {
 }
 
 /**
- * External booking URL (Calendar app, Cal.com, etc.) or internal assessment fallback.
- * Priority: NEXT_PUBLIC_BOOK_DEMO_URL → NEXT_PUBLIC_CALENDAR_URL → /book-assessment?source=demo-hero
- *
- * Do not hardcode private calendar URLs in source — set env in deployment or `.env.local`.
+ * External booking URL (Calendly, Calendarfy, etc.) or internal assessment fallback.
+ * Priority: NEXT_PUBLIC_BOOK_DEMO_URL → NEXT_PUBLIC_CALENDAR_URL → NEXT_PUBLIC_CALENDLY_URL (legacy)
+ * → /book-assessment?source=dashboard-hero
  */
 export function getBookDemoHref(): string {
   const bookDemo =
     process.env.NEXT_PUBLIC_BOOK_DEMO_URL?.trim() ||
-    process.env.NEXT_PUBLIC_CALENDAR_URL?.trim();
+    process.env.NEXT_PUBLIC_CALENDAR_URL?.trim() ||
+    process.env.NEXT_PUBLIC_CALENDLY_URL?.trim();
   if (bookDemo) return bookDemo;
-  return "/book-assessment?source=demo-hero";
+  return "/book-assessment?source=dashboard-hero";
 }
 
 export function isExternalHref(href: string): boolean {

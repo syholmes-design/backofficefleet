@@ -55,8 +55,8 @@ function main() {
   if (!siteLinks.includes("NEXT_PUBLIC_CALENDAR_URL")) {
     issues.push("getBookDemoHref should read NEXT_PUBLIC_CALENDAR_URL");
   }
-  if (!siteLinks.includes('/book-assessment?source=demo-hero')) {
-    issues.push("getBookDemoHref should fall back to /book-assessment?source=demo-hero");
+  if (!siteLinks.includes('/book-assessment?source=dashboard-hero')) {
+    issues.push("getBookDemoHref should fall back to /book-assessment?source=dashboard-hero");
   }
 
   const heroRoutes = [
