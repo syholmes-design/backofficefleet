@@ -77,6 +77,10 @@ function run() {
     if (!resolveBase(dir, i9Base)) {
       fail(`Missing canonical I-9 PDF for ${driverId}: ${i9Base}.pdf`);
     }
+    const dqfBase = `dqf-compliance-summary-drv-${n}`;
+    if (!resolveBase(dir, dqfBase)) {
+      fail(`Missing canonical FMCSA DQF Compliance Summary PDF for ${driverId}: ${dqfBase}.pdf`);
+    }
   }
 
   if (!exists(INDEX_PATH)) {
@@ -103,6 +107,10 @@ function run() {
       if (!fileSet.has(i9Url)) {
         fail(`Index missing canonical I-9 URL for ${driverId}: ${i9Url}`);
       }
+      const dqfUrl = `/documents/drivers/${driverId}/dqf-compliance-summary-drv-${n}.pdf`;
+      if (!fileSet.has(dqfUrl)) {
+        fail(`Index missing canonical FMCSA DQF Compliance Summary URL for ${driverId}: ${dqfUrl}`);
+      }
     }
     for (const file of files) {
       if (!file.startsWith("/documents/drivers/")) {
@@ -124,7 +132,8 @@ function run() {
           file.includes("bank-card-drv-") ||
           file.includes("bank-card-DRV-") ||
           file.includes("mvr-card-drv-") ||
-          file.includes("i9-drv-");
+          file.includes("i9-drv-") ||
+          file.includes("dqf-compliance-summary-drv-");
         if (suspicious && !file.includes(expectedSuffix)) {
           fail(`Driver suffix mismatch in path: ${file}`);
         }

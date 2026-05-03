@@ -1,5 +1,7 @@
 /**
- * Generates BOF demo FMCSA DQF Compliance Summary HTML per driver (DRV-001–DRV-012).
+ * Generates legacy BOF demo FMCSA DQF Compliance Summary HTML per driver (DRV-001–DRV-012).
+ * Canonical demo summaries are external PDFs at dqf-compliance-summary-drv-{NNN}.pdf (sync from Downloads).
+ * This script still writes dqf-compliance-summary.html for reference only; manifests point at the canonical PDF URL.
  * Run: npx tsx scripts/generate-driver-dqf-summaries.ts
  * (Also invoked via scripts/generate-driver-dqf-summaries.mjs.)
  *
@@ -36,7 +38,6 @@ const TEMPLATE_PATH = path.join(
 );
 const MANIFEST_LIB = path.join(ROOT, "lib/generated/driver-doc-manifest.json");
 const MANIFEST_PUBLIC = path.join(ROOT, "public/generated/drivers/driver-doc-manifest.json");
-const INDEX_PATH = path.join(ROOT, "lib/generated/driver-public-doc-index.json");
 
 const DRIVER_IDS = Array.from({ length: 12 }, (_, i) => `DRV-${String(i + 1).padStart(3, "0")}`);
 
@@ -476,23 +477,16 @@ function main() {
     const outFile = path.join(outDir, "dqf-compliance-summary.html");
     fs.writeFileSync(outFile, outHtml, "utf8");
 
-    const publicUrl = `/documents/drivers/${driverId}/dqf-compliance-summary.html`;
-    manifestLib[driverId] = { ...(manifestLib[driverId] ?? {}), dqfComplianceSummary: publicUrl };
-    manifestPublic[driverId] = { ...(manifestPublic[driverId] ?? {}), dqfComplianceSummary: publicUrl };
+    const suffix3 = driverId.replace(/^DRV-/, "").padStart(3, "0");
+    const publicPdfUrl = `/documents/drivers/${driverId}/dqf-compliance-summary-drv-${suffix3}.pdf`;
+    manifestLib[driverId] = { ...(manifestLib[driverId] ?? {}), dqfComplianceSummary: publicPdfUrl };
+    manifestPublic[driverId] = { ...(manifestPublic[driverId] ?? {}), dqfComplianceSummary: publicPdfUrl };
 
     console.log(`Wrote ${path.relative(ROOT, outFile)}`);
   }
 
   fs.writeFileSync(MANIFEST_LIB, JSON.stringify(manifestLib, null, 2), "utf8");
   fs.writeFileSync(MANIFEST_PUBLIC, JSON.stringify(manifestPublic, null, 2), "utf8");
-
-  const indexRaw = JSON.parse(fs.readFileSync(INDEX_PATH, "utf8")) as { generatedAt?: string; files: string[] };
-  const fileSet = new Set(indexRaw.files ?? []);
-  for (const driverId of DRIVER_IDS) {
-    fileSet.add(`/documents/drivers/${driverId}/dqf-compliance-summary.html`);
-  }
-  indexRaw.files = [...fileSet].sort();
-  fs.writeFileSync(INDEX_PATH, JSON.stringify(indexRaw, null, 2), "utf8");
 
   console.log("generate-driver-dqf-summaries: done");
 }

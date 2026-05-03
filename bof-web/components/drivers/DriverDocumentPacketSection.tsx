@@ -7,6 +7,7 @@ import {
   documentSignal,
   documentSignalClass,
   documentSignalLabel,
+  isCanonicalDqfComplianceSummaryPdf,
   isCanonicalVaultFormPdf,
   isEmbedPreviewPath,
   isImagePath,
@@ -189,7 +190,8 @@ export function DriverDocumentPacketSection({
                   </a>
                 </p>
                 {isCanonicalVaultFormPdf(selected.previewUrl || selected.fileUrl || "", "i9") ||
-                isCanonicalVaultFormPdf(selected.previewUrl || selected.fileUrl || "", "w9") ? (
+                isCanonicalVaultFormPdf(selected.previewUrl || selected.fileUrl || "", "w9") ||
+                isCanonicalDqfComplianceSummaryPdf(selected.previewUrl || selected.fileUrl || "") ? (
                   <div className="mt-3 rounded border border-slate-600/40 bg-slate-900/40 p-4 text-sm">
                     <p className="font-medium text-slate-100">{selected.label}</p>
                     <p className="mt-1 text-slate-400">Canonical PDF on file</p>

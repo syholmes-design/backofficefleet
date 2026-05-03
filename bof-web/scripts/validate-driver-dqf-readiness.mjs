@@ -1,6 +1,6 @@
 /**
  * Keep rules aligned with `lib/driver-dqf-readiness.ts` (Core DQF KPIs + canonical dates).
- * Validates DRV-001..012: core doc rows, W-9 index paths, stale EXPIRED labels vs expiration dates,
+ * Validates DRV-001..012: core doc rows, W-9 / I-9 / DQF summary PDF index paths, stale EXPIRED labels vs expiration dates,
  * and duplicate core types per driver.
  */
 import fs from "fs";
@@ -126,7 +126,7 @@ function main() {
     process.exit(1);
   }
   console.log(
-    "validate-driver-dqf-readiness OK (core rows, W-9 + I-9 index, expiration vs EXPIRED labels)."
+    "validate-driver-dqf-readiness OK (core rows, W-9 + I-9 + DQF summary PDF index, expiration vs EXPIRED labels)."
   );
 }
 

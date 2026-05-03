@@ -8,7 +8,7 @@
     "emergencyContact": "/generated/drivers/DRV-001/emergency-contact.html",
     "bankInformation": "/generated/drivers/DRV-001/bank-information.html",
     "fmcsaCompliance": "/generated/drivers/DRV-001/fmcsa-compliance.html",
-    "dqfComplianceSummary": "/documents/drivers/DRV-001/dqf-compliance-summary.html"
+    "dqfComplianceSummary": "/documents/drivers/DRV-001/dqf-compliance-summary-drv-001.pdf"
   },
   "DRV-002": {
     "cdl": "/generated/drivers/DRV-002/cdl.html",
@@ -19,7 +19,7 @@
     "emergencyContact": "/generated/drivers/DRV-002/emergency-contact.html",
     "bankInformation": "/generated/drivers/DRV-002/bank-information.html",
     "fmcsaCompliance": "/generated/drivers/DRV-002/fmcsa-compliance.html",
-    "dqfComplianceSummary": "/documents/drivers/DRV-002/dqf-compliance-summary.html"
+    "dqfComplianceSummary": "/documents/drivers/DRV-002/dqf-compliance-summary-drv-002.pdf"
   },
   "DRV-003": {
     "cdl": "/generated/drivers/DRV-003/cdl.html",
@@ -30,7 +30,7 @@
     "emergencyContact": "/generated/drivers/DRV-003/emergency-contact.html",
     "bankInformation": "/generated/drivers/DRV-003/bank-information.html",
     "fmcsaCompliance": "/generated/drivers/DRV-003/fmcsa-compliance.html",
-    "dqfComplianceSummary": "/documents/drivers/DRV-003/dqf-compliance-summary.html"
+    "dqfComplianceSummary": "/documents/drivers/DRV-003/dqf-compliance-summary-drv-003.pdf"
   },
   "DRV-004": {
     "cdl": "/generated/drivers/DRV-004/cdl.html",
@@ -41,7 +41,7 @@
     "emergencyContact": "/generated/drivers/DRV-004/emergency-contact.html",
     "bankInformation": "/generated/drivers/DRV-004/bank-information.html",
     "fmcsaCompliance": "/generated/drivers/DRV-004/fmcsa-compliance.html",
-    "dqfComplianceSummary": "/documents/drivers/DRV-004/dqf-compliance-summary.html"
+    "dqfComplianceSummary": "/documents/drivers/DRV-004/dqf-compliance-summary-drv-004.pdf"
   },
   "DRV-005": {
     "cdl": "/generated/drivers/DRV-005/cdl.html",
@@ -52,7 +52,7 @@
     "emergencyContact": "/generated/drivers/DRV-005/emergency-contact.html",
     "bankInformation": "/generated/drivers/DRV-005/bank-information.html",
     "fmcsaCompliance": "/generated/drivers/DRV-005/fmcsa-compliance.html",
-    "dqfComplianceSummary": "/documents/drivers/DRV-005/dqf-compliance-summary.html"
+    "dqfComplianceSummary": "/documents/drivers/DRV-005/dqf-compliance-summary-drv-005.pdf"
   },
   "DRV-006": {
     "cdl": "/generated/drivers/DRV-006/cdl.html",
@@ -63,7 +63,7 @@
     "emergencyContact": "/generated/drivers/DRV-006/emergency-contact.html",
     "bankInformation": "/generated/drivers/DRV-006/bank-information.html",
     "fmcsaCompliance": "/generated/drivers/DRV-006/fmcsa-compliance.html",
-    "dqfComplianceSummary": "/documents/drivers/DRV-006/dqf-compliance-summary.html"
+    "dqfComplianceSummary": "/documents/drivers/DRV-006/dqf-compliance-summary-drv-006.pdf"
   },
   "DRV-007": {
     "cdl": "/generated/drivers/DRV-007/cdl.html",
@@ -74,7 +74,7 @@
     "emergencyContact": "/generated/drivers/DRV-007/emergency-contact.html",
     "bankInformation": "/generated/drivers/DRV-007/bank-information.html",
     "fmcsaCompliance": "/generated/drivers/DRV-007/fmcsa-compliance.html",
-    "dqfComplianceSummary": "/documents/drivers/DRV-007/dqf-compliance-summary.html"
+    "dqfComplianceSummary": "/documents/drivers/DRV-007/dqf-compliance-summary-drv-007.pdf"
   },
   "DRV-008": {
     "cdl": "/generated/drivers/DRV-008/cdl.html",
@@ -85,7 +85,7 @@
     "emergencyContact": "/generated/drivers/DRV-008/emergency-contact.html",
     "bankInformation": "/generated/drivers/DRV-008/bank-information.html",
     "fmcsaCompliance": "/generated/drivers/DRV-008/fmcsa-compliance.html",
-    "dqfComplianceSummary": "/documents/drivers/DRV-008/dqf-compliance-summary.html"
+    "dqfComplianceSummary": "/documents/drivers/DRV-008/dqf-compliance-summary-drv-008.pdf"
   },
   "DRV-009": {
     "cdl": "/generated/drivers/DRV-009/cdl.html",
@@ -96,7 +96,7 @@
     "emergencyContact": "/generated/drivers/DRV-009/emergency-contact.html",
     "bankInformation": "/generated/drivers/DRV-009/bank-information.html",
     "fmcsaCompliance": "/generated/drivers/DRV-009/fmcsa-compliance.html",
-    "dqfComplianceSummary": "/documents/drivers/DRV-009/dqf-compliance-summary.html"
+    "dqfComplianceSummary": "/documents/drivers/DRV-009/dqf-compliance-summary-drv-009.pdf"
   },
   "DRV-010": {
     "cdl": "/generated/drivers/DRV-010/cdl.html",
@@ -107,7 +107,7 @@
     "emergencyContact": "/generated/drivers/DRV-010/emergency-contact.html",
     "bankInformation": "/generated/drivers/DRV-010/bank-information.html",
     "fmcsaCompliance": "/generated/drivers/DRV-010/fmcsa-compliance.html",
-    "dqfComplianceSummary": "/documents/drivers/DRV-010/dqf-compliance-summary.html"
+    "dqfComplianceSummary": "/documents/drivers/DRV-010/dqf-compliance-summary-drv-010.pdf"
   },
   "DRV-011": {
     "cdl": "/generated/drivers/DRV-011/cdl.html",
@@ -118,7 +118,7 @@
     "emergencyContact": "/generated/drivers/DRV-011/emergency-contact.html",
     "bankInformation": "/generated/drivers/DRV-011/bank-information.html",
     "fmcsaCompliance": "/generated/drivers/DRV-011/fmcsa-compliance.html",
-    "dqfComplianceSummary": "/documents/drivers/DRV-011/dqf-compliance-summary.html"
+    "dqfComplianceSummary": "/documents/drivers/DRV-011/dqf-compliance-summary-drv-011.pdf"
   },
   "DRV-012": {
     "cdl": "/generated/drivers/DRV-012/cdl.html",
@@ -129,6 +129,6 @@
     "emergencyContact": "/generated/drivers/DRV-012/emergency-contact.html",
     "bankInformation": "/generated/drivers/DRV-012/bank-information.html",
     "fmcsaCompliance": "/generated/drivers/DRV-012/fmcsa-compliance.html",
-    "dqfComplianceSummary": "/documents/drivers/DRV-012/dqf-compliance-summary.html"
+    "dqfComplianceSummary": "/documents/drivers/DRV-012/dqf-compliance-summary-drv-012.pdf"
   }
 }

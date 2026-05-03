@@ -92,6 +92,13 @@ function main() {
 
     // 3) all open URLs point to existing files under public
     for (const row of docs) {
+      const fu = String(row.fileUrl ?? "").trim();
+      const pu = String(row.previewUrl ?? "").trim();
+      if (/\/dqf-compliance-summary\.html(\?|$)/i.test(fu) || /\/dqf-compliance-summary\.html(\?|$)/i.test(pu)) {
+        errors.push(
+          `${driverId}: document row must not reference legacy dqf-compliance-summary.html (${row.type}); use canonical PDF`
+        );
+      }
       const url = row.fileUrl || row.previewUrl;
       if (url && !existsPublic(url)) {
         errors.push(`${driverId}: URL missing on disk ${row.type} -> ${url}`);
@@ -178,6 +185,10 @@ function main() {
         }
         if (!existsPublic(expectedI9)) {
           errors.push(`${driverId}: canonical I-9 PDF missing on disk ${expectedI9}`);
+        }
+        const expectedDqf = `/documents/drivers/${driverId}/dqf-compliance-summary-drv-${idMatch[1]}.pdf`;
+        if (!existsPublic(expectedDqf)) {
+          errors.push(`${driverId}: canonical FMCSA DQF Compliance Summary PDF missing ${expectedDqf}`);
         }
       }
     }

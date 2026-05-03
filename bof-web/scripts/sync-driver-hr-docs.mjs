@@ -8,6 +8,8 @@ const GENERATED_ROOT = path.join(PUBLIC_ROOT, "generated", "drivers");
 const REFERENCE_EC_ROOT = path.join(PUBLIC_ROOT, "reference", "emergency-contacts");
 const DOWNLOADS_ROOT = path.join(process.env.USERPROFILE || "", "Downloads");
 const INDEX_OUT = path.join(ROOT, "lib", "generated", "driver-public-doc-index.json");
+const MANIFEST_LIB = path.join(ROOT, "lib", "generated", "driver-doc-manifest.json");
+const MANIFEST_PUBLIC = path.join(ROOT, "public", "generated", "drivers", "driver-doc-manifest.json");
 const CANONICAL_BANK_PATH = path.join(ROOT, "lib", "driver-canonical-bank-cards.json");
 const CANONICAL_BANK = JSON.parse(fs.readFileSync(CANONICAL_BANK_PATH, "utf8"));
 
@@ -32,8 +34,11 @@ const DOC_SPECS = [
   /** Canonical W-9: /documents/drivers/{id}/w9-{idLower}.pdf — keyed by driverId only. */
   { type: "W-9", base: (_n, driverId) => `w9-${driverId.toLowerCase()}` },
   { type: "FMCSA Compliance", base: () => "fmcsa-compliance" },
-  /** BOF demo DQF worksheet — generator output under public/documents/drivers/{id}/ */
-  { type: "FMCSA DQF Compliance Summary", base: () => "dqf-compliance-summary" },
+  /** Canonical FMCSA DQF Compliance Summary PDF — driverId-keyed basename (dqf-compliance-summary-drv-009). */
+  {
+    type: "FMCSA DQF Compliance Summary",
+    base: (_n, driverId) => `dqf-compliance-summary-${driverId.toLowerCase()}`,
+  },
 ];
 
 function exists(p) {
@@ -111,6 +116,38 @@ function i9DownloadCandidates(driverId) {
   return matches.map((m) => m.abs);
 }
 
+/** Pattern DQF_DRV-009_*.pdf anywhere under Downloads — newest first for duplicates. */
+function dqfDownloadCandidates(driverId) {
+  if (!exists(DOWNLOADS_ROOT)) return [];
+  const wantPrefix = `DQF_${driverId}_`.toLowerCase();
+  const matches = [];
+  function walk(dir) {
+    let ents;
+    try {
+      ents = fs.readdirSync(dir, { withFileTypes: true });
+    } catch {
+      return;
+    }
+    for (const ent of ents) {
+      const full = path.join(dir, ent.name);
+      if (ent.isDirectory()) walk(full);
+      else if (ent.isFile()) {
+        const lower = ent.name.toLowerCase();
+        if (!lower.endsWith(".pdf")) continue;
+        if (!lower.startsWith(wantPrefix)) continue;
+        try {
+          matches.push({ abs: full, mtime: fs.statSync(full).mtimeMs });
+        } catch {
+          /* skip */
+        }
+      }
+    }
+  }
+  walk(DOWNLOADS_ROOT);
+  matches.sort((a, b) => b.mtime - a.mtime);
+  return matches.map((m) => m.abs);
+}
+
 function buildCandidates(driverId, suffix3) {
   const dir = path.join(DRIVER_DOCS_ROOT, driverId);
   const gen = path.join(GENERATED_ROOT, driverId);
@@ -180,8 +217,27 @@ function buildCandidates(driverId, suffix3) {
       path.join(gen, "mcsa-5876-signed.html"),
       path.join(gen, "mcsa-5875.html"),
     ],
-    "FMCSA DQF Compliance Summary": [path.join(dir, "dqf-compliance-summary.html")],
+    "FMCSA DQF Compliance Summary": [
+      path.join(dir, `dqf-compliance-summary-drv-${suffix3}.pdf`),
+      ...dqfDownloadCandidates(driverId),
+    ],
   };
+}
+
+function patchManifestDqfComplianceSummaries() {
+  for (const manifestPath of [MANIFEST_LIB, MANIFEST_PUBLIC]) {
+    if (!exists(manifestPath)) continue;
+    const manifest = JSON.parse(fs.readFileSync(manifestPath, "utf8"));
+    for (let i = 1; i <= 12; i += 1) {
+      const suffix3 = String(i).padStart(3, "0");
+      const id = `DRV-${suffix3}`;
+      manifest[id] = {
+        ...(manifest[id] ?? {}),
+        dqfComplianceSummary: `/documents/drivers/${id}/dqf-compliance-summary-drv-${suffix3}.pdf`,
+      };
+    }
+    fs.writeFileSync(manifestPath, JSON.stringify(manifest, null, 2));
+  }
 }
 
 function run() {
@@ -198,7 +254,10 @@ function run() {
     for (const spec of DOC_SPECS) {
       const baseFn = spec.base;
       const baseRel =
-        spec.type === "Bank Information" || spec.type === "W-9" || spec.type === "I-9"
+        spec.type === "Bank Information" ||
+        spec.type === "W-9" ||
+        spec.type === "I-9" ||
+        spec.type === "FMCSA DQF Compliance Summary"
           ? baseFn(suffix3, driverId)
           : baseFn(suffix3);
       const baseAbs = path.join(dir, baseRel);
@@ -224,6 +283,7 @@ function run() {
 
   ensureDir(path.dirname(INDEX_OUT));
   fs.writeFileSync(INDEX_OUT, JSON.stringify(index, null, 2));
+  patchManifestDqfComplianceSummaries();
   console.log(`Synced HR docs and wrote ${path.relative(ROOT, INDEX_OUT)}`);
 }
 

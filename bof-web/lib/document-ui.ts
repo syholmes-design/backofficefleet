@@ -59,10 +59,22 @@ export function isCanonicalVaultFormPdf(url: string, kind: "i9" | "w9"): boolean
   return /\/i9-drv-\d{3}\.pdf$/i.test(u);
 }
 
-/** Previews that render in an iframe (HTML credential shells; PDFs except canonical I-9/W-9 vault PDFs). */
+/** Canonical FMCSA DQF Compliance Summary PDF — administrative summary only; not a credential expiration source. */
+export function isCanonicalDqfComplianceSummaryPdf(url: string): boolean {
+  const u = url.trim();
+  if (!u.startsWith("/documents/drivers/DRV-")) return false;
+  return /\.pdf(\?|$)/i.test(u) && /\/dqf-compliance-summary-drv-\d{3}\.pdf$/i.test(u);
+}
+
+/** Previews that render in an iframe (HTML credential shells; PDFs except canonical non-embed driver vault PDFs). */
 export function isEmbedPreviewPath(url: string) {
   if (!url) return false;
-  if (isCanonicalVaultFormPdf(url, "i9") || isCanonicalVaultFormPdf(url, "w9")) return false;
+  if (
+    isCanonicalVaultFormPdf(url, "i9") ||
+    isCanonicalVaultFormPdf(url, "w9") ||
+    isCanonicalDqfComplianceSummaryPdf(url)
+  )
+    return false;
   return isHtmlPath(url) || /\.pdf(\?|$)/i.test(url);
 }
 

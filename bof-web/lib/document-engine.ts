@@ -354,7 +354,7 @@ export function generateDriverDocument(
         generatedAt: nowIso(),
         sourceDataSummary: buildSourceSummaryDriver(data, driverId),
         notes:
-          "BOF-generated DQF checklist (demo) — not the FMCSA source compliance file. Credential rows mirror canonical vault + dispatch eligibility for this driverId.",
+          "Administrative compliance summary PDF on file — not the FMCSA source compliance document and not used as the source of credential expiration dates.",
         links: linksForDriver(driverId),
       };
     }
@@ -369,7 +369,8 @@ export function generateDriverDocument(
       blocksPayment: false,
       generatedAt: nowIso(),
       sourceDataSummary: buildSourceSummaryDriver(data, driverId),
-      notes: "Run npm run generate:driver-dqf-summaries to publish dqf-compliance-summary.html under /documents/drivers/{driverId}/.",
+      notes:
+        "Expected canonical PDF at /documents/drivers/{driverId}/dqf-compliance-summary-{driverIdLower}.pdf — copy DQF_{driverId}_*.pdf from Downloads and run npm run sync:driver-hr-docs.",
       links: linksForDriver(driverId),
     };
   }

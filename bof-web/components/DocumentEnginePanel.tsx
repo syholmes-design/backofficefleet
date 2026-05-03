@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
 import type { EngineDocument } from "@/lib/document-engine";
 import { formatUsd } from "@/lib/format-money";
-import { isCanonicalVaultFormPdf } from "@/lib/document-ui";
+import { isCanonicalDqfComplianceSummaryPdf, isCanonicalVaultFormPdf } from "@/lib/document-ui";
 
 function isImagePath(url: string) {
   return /\.(png|jpe?g|gif|webp|svg)(\?|$)/i.test(url);
@@ -18,18 +18,20 @@ function isHtmlDocumentPath(url: string) {
   return /\.html(\?|$)/i.test(url);
 }
 
-/** Canonical I-9 / W-9 vault PDFs — iframe embed is unreliable; use compact card + open link. */
-function isCanonicalVaultEmploymentPdf(doc: Pick<EngineDocument, "type" | "previewUrl" | "fileUrl">) {
+/** Canonical driver vault PDFs where iframe embed is unreliable — use compact card + open link. */
+function isCanonicalNonIframeDriverPdf(doc: Pick<EngineDocument, "type" | "previewUrl" | "fileUrl">) {
   const u = (doc.previewUrl || doc.fileUrl || "").trim();
   if (!isPdfPath(u)) return false;
   if (doc.type === "W-9") return isCanonicalVaultFormPdf(u, "w9");
   if (doc.type === "I-9") return isCanonicalVaultFormPdf(u, "i9");
+  if (doc.type === "FMCSA DQF Compliance Summary") return isCanonicalDqfComplianceSummaryPdf(u);
   return false;
 }
 
 function canonicalVaultPdfCardTitle(doc: Pick<EngineDocument, "type">) {
   if (doc.type === "W-9") return "W-9";
   if (doc.type === "I-9") return "I-9";
+  if (doc.type === "FMCSA DQF Compliance Summary") return "FMCSA DQF Compliance Summary";
   return "Document";
 }
 
@@ -93,7 +95,7 @@ export function DocumentEnginePanel({
       return <p className="bof-doc-popover-empty">Preview not available</p>;
     }
     if (isPdfPath(url)) {
-      if (isCanonicalVaultEmploymentPdf(doc)) {
+      if (isCanonicalNonIframeDriverPdf(doc)) {
         const openHref = doc.fileUrl?.trim() || url;
         return (
           <>
@@ -450,7 +452,7 @@ export function DocumentEnginePanel({
                   />
                 )
               )}
-              {modal.previewUrl && isCanonicalVaultEmploymentPdf(modal) && (
+              {modal.previewUrl && isCanonicalNonIframeDriverPdf(modal) && (
                 <div className="mt-4 rounded border border-slate-200 bg-slate-50 p-4 text-sm text-gray-800">
                   <p className="font-medium text-gray-900">{canonicalVaultPdfCardTitle(modal)}</p>
                   <p className="mt-1 text-gray-600">Canonical PDF on file</p>
@@ -468,7 +470,7 @@ export function DocumentEnginePanel({
                 hrPacketPreview &&
                 (isPdfPath(modal.previewUrl) ||
                   isHtmlDocumentPath(modal.previewUrl)) &&
-                !isCanonicalVaultEmploymentPdf(modal) && (
+                !isCanonicalNonIframeDriverPdf(modal) && (
                   <div
                     className={
                       isCdlHrPreviewDoc(modal)
@@ -490,7 +492,7 @@ export function DocumentEnginePanel({
               {modal.previewUrl &&
                 !hrPacketPreview &&
                 isPdfPath(modal.previewUrl) &&
-                !isCanonicalVaultEmploymentPdf(modal) && (
+                !isCanonicalNonIframeDriverPdf(modal) && (
                   <iframe
                     src={modal.previewUrl}
                     title="Document preview"

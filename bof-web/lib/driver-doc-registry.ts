@@ -70,7 +70,8 @@ function sourcePathForType(driverId: string, type: string): string | undefined {
     "W-9": `${root}/w9-${driverId.toLowerCase()}`,
     FMCSA: `${root}/fmcsa-compliance`,
     "FMCSA Compliance": `${root}/fmcsa-compliance`,
-    "FMCSA DQF Compliance Summary": `${root}/dqf-compliance-summary`,
+    /** Canonical FMCSA DQF Compliance Summary PDF — driverId only (dqf-compliance-summary-drv-009.pdf). */
+    "FMCSA DQF Compliance Summary": `${root}/dqf-compliance-summary-${driverId.toLowerCase()}`,
   };
   return byType[type];
 }
@@ -125,9 +126,8 @@ export function getDriverDocumentPacket(driverId: string): DriverDocManifestEntr
     w9: getDriverPublicDocPath(driverId, "W-9") ?? merged.w9,
     fmcsaCompliance:
       getDriverPublicDocPath(driverId, "FMCSA Compliance") ?? merged.fmcsaCompliance,
-    dqfComplianceSummary:
-      getDriverPublicDocPath(driverId, "FMCSA DQF Compliance Summary") ??
-      merged.dqfComplianceSummary,
+    /** Canonical PDF only when listed in driver-public-doc-index (sync from disk); no legacy HTML manifest fallback. */
+    dqfComplianceSummary: getDriverPublicDocPath(driverId, "FMCSA DQF Compliance Summary"),
   };
 }
 
