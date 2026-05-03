@@ -202,6 +202,8 @@ export function getDriverCredentialStatus(data: BofData, driverId: string): Driv
   const expanded = medicalExpanded(data, driverId);
   const issueFromExpanded = expanded?.medicalIssueDate?.trim() || undefined;
   const examinerFromExpanded = expanded?.medicalExaminerName?.trim() || undefined;
+  const medicalIssue = med.issueDate?.trim() || issueFromExpanded;
+  const medicalExaminer = med.examinerName?.trim() || examinerFromExpanded;
 
   const mvrCanon = getDriverMvrStatus(data, driverId);
 
@@ -225,8 +227,8 @@ export function getDriverCredentialStatus(data: BofData, driverId: string): Driv
       label: "Medical Card",
       status: med.status,
       expirationDate: med.expirationDate,
-      issueDate: issueFromExpanded,
-      examinerName: examinerFromExpanded,
+      issueDate: medicalIssue,
+      examinerName: medicalExaminer,
       fileUrl: med.fileUrl,
       source: med.source,
       reason: med.reason,

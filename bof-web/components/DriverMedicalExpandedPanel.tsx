@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useCallback, useEffect, useState } from "react";
 import type { DocumentRow } from "@/lib/driver-queries";
 import type { DriverMedicalExpanded } from "@/lib/driver-medical-expanded";
@@ -69,6 +70,8 @@ export function DriverMedicalExpandedPanel({
     "";
   const examiner =
     canon?.examinerName?.trim() || x.medicalExaminerName?.trim() || "";
+  const cardHref = proofHref(medicalDoc) ?? medicalDoc.previewUrl ?? medicalDoc.fileUrl ?? "";
+  const showPngPreview = /\.png(\?|#|$)/i.test(cardHref);
   const statusLabel = canon ? canonicalCredentialBadgeLabel(canon) : medicalDoc.status;
 
   return (
@@ -103,9 +106,37 @@ export function DriverMedicalExpandedPanel({
         </p>
         <dl className="bof-medical-dl bof-medical-dl-primary">
           {dlItem("Issue date", issue)}
-          {dlItem("Expiration date", exp)}
+          {dlItem(
+            "Expiration date",
+            exp ||
+              (canon?.status === "pending_review"
+                ? "On file — expiration needs review"
+                : "")
+          )}
           {dlItem("Examiner name", examiner)}
         </dl>
+        {cardHref.trim() ? (
+          <div className="bof-medical-card-preview-wrap">
+            <a
+              href={cardHref}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="bof-link-secondary bof-medical-open-link"
+            >
+              Open / view medical card
+            </a>
+            {showPngPreview ? (
+              <Image
+                src={cardHref}
+                alt=""
+                width={880}
+                height={620}
+                unoptimized
+                className="bof-medical-card-preview-img"
+              />
+            ) : null}
+          </div>
+        ) : null}
         <button
           type="button"
           className="bof-btn-medical-detail"

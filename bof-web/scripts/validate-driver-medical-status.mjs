@@ -127,6 +127,14 @@ function run() {
       });
     }
 
+    const canonicalMedPng = path.join(
+      ROOT,
+      "public",
+      "documents",
+      "drivers",
+      driverId,
+      `medical-card-${driverId.toLowerCase()}.png`
+    );
     const htmlPath = path.join(
       ROOT,
       "public",
@@ -135,7 +143,7 @@ function run() {
       driverId,
       "medical-card.html"
     );
-    if (fs.existsSync(htmlPath)) {
+    if (!fs.existsSync(canonicalMedPng) && fs.existsSync(htmlPath)) {
       const html = fs.readFileSync(htmlPath, "utf8");
       const m = html.match(
         /<tr><td>Medical Card Expiration<\/td><td>(\d{4}-\d{2}-\d{2})<\/td><\/tr>\s*<tr><td>Status<\/td><td>([A-Z_ ]+)<\/td><\/tr>/

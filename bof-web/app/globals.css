@@ -8077,6 +8077,25 @@ body {
   margin-bottom: 0.15rem;
 }
 
+.bof-medical-card-preview-wrap {
+  margin: 0.75rem 0 0;
+}
+
+.bof-medical-card-preview-wrap .bof-medical-open-link {
+  display: inline-block;
+  margin-bottom: 0.45rem;
+}
+
+.bof-medical-card-preview-img {
+  width: 100%;
+  height: auto;
+  max-height: min(420px, 52vh);
+  object-fit: contain;
+  border-radius: 8px;
+  border: 1px solid rgba(148, 163, 184, 0.35);
+  background: rgba(15, 23, 42, 0.35);
+}
+
 .bof-medical-dl dt {
   margin: 0;
   font-size: 0.7rem;

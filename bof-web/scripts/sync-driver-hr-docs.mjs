@@ -19,7 +19,12 @@ const DOC_SPECS = [
   { type: "Emergency Contact", base: (n) => `ec-card-drv-${n}` },
   { type: "CDL", base: (n) => `cdlnew-${n}` },
   { type: "Insurance Card", base: (n) => `icard-drv-${n}` },
-  { type: "Medical Card", base: (n) => `Medical Card-${n}` },
+  /** Canonical medical card PNG — `medical-card-drv-009.png` (sync from Downloads `medcard_drv-009*.png` or legacy `Medical Card-009.png`). */
+  {
+    type: "Medical Card",
+    base: (_n, driverId) => `medical-card-${driverId.toLowerCase()}`,
+    extPriority: [".png"],
+  },
   {
     type: "Bank Information",
     base: (n, driverId) => {
@@ -65,8 +70,8 @@ function pickExisting(files) {
   return null;
 }
 
-function firstByExt(baseAbs) {
-  for (const ext of EXT_PRIORITY) {
+function firstByExt(baseAbs, extList = EXT_PRIORITY) {
+  for (const ext of extList) {
     const p = `${baseAbs}${ext}`;
     if (exists(p)) return p;
   }
@@ -148,6 +153,38 @@ function dqfDownloadCandidates(driverId) {
   return matches.map((m) => m.abs);
 }
 
+/** Downloads `medcard_drv-009*.png` — newest wins when duplicates exist. */
+function medcardDownloadCandidates(driverId) {
+  if (!exists(DOWNLOADS_ROOT)) return [];
+  const prefix = `medcard_${driverId.toLowerCase()}`;
+  const matches = [];
+  for (const f of fs.readdirSync(DOWNLOADS_ROOT)) {
+    const lower = f.toLowerCase();
+    if (!lower.endsWith(".png")) continue;
+    if (!lower.startsWith(prefix)) continue;
+    const abs = path.join(DOWNLOADS_ROOT, f);
+    try {
+      matches.push({ abs, mtime: fs.statSync(abs).mtimeMs });
+    } catch {
+      /* skip */
+    }
+  }
+  matches.sort((a, b) => b.mtime - a.mtime);
+  return matches.map((m) => m.abs);
+}
+
+function ensureCanonicalMedicalPng(driverId, suffix3, dir) {
+  const target = path.join(dir, `medical-card-${driverId.toLowerCase()}.png`);
+  if (exists(target)) return;
+  const fromDl = medcardDownloadCandidates(driverId)[0];
+  if (fromDl) {
+    fs.copyFileSync(fromDl, target);
+    return;
+  }
+  const legacyPng = path.join(dir, `Medical Card-${suffix3}.png`);
+  if (exists(legacyPng)) fs.copyFileSync(legacyPng, target);
+}
+
 function buildCandidates(driverId, suffix3) {
   const dir = path.join(DRIVER_DOCS_ROOT, driverId);
   const gen = path.join(GENERATED_ROOT, driverId);
@@ -179,9 +216,11 @@ function buildCandidates(driverId, suffix3) {
       path.join(gen, "insurance-card.html"),
     ],
     "Medical Card": [
+      ...medcardDownloadCandidates(driverId),
       ...EXT_PRIORITY.map((ext) =>
         path.join(DOWNLOADS_ROOT, `Medical Card-${suffix3}${ext}`)
       ),
+      path.join(dir, `Medical Card-${suffix3}.png`),
       path.join(dir, "john-carter-mcsa-5876-signed.pdf"),
       path.join(gen, "medical-card.html"),
       path.join(gen, "medical_card.html"),
@@ -240,6 +279,31 @@ function patchManifestDqfComplianceSummaries() {
   }
 }
 
+function patchManifestMedicalCards() {
+  const pubRoot = path.join(ROOT, "public");
+  for (const manifestPath of [MANIFEST_LIB, MANIFEST_PUBLIC]) {
+    if (!exists(manifestPath)) continue;
+    const manifest = JSON.parse(fs.readFileSync(manifestPath, "utf8"));
+    for (let i = 1; i <= 12; i += 1) {
+      const suffix3 = String(i).padStart(3, "0");
+      const id = `DRV-${suffix3}`;
+      const rel = path.join(
+        "documents",
+        "drivers",
+        id,
+        `medical-card-${id.toLowerCase()}.png`
+      );
+      const abs = path.join(pubRoot, rel);
+      if (!exists(abs)) continue;
+      manifest[id] = {
+        ...(manifest[id] ?? {}),
+        medicalCard: `/documents/drivers/${id}/medical-card-${id.toLowerCase()}.png`,
+      };
+    }
+    fs.writeFileSync(manifestPath, JSON.stringify(manifest, null, 2));
+  }
+}
+
 function run() {
   ensureDir(DRIVER_DOCS_ROOT);
   const index = { generatedAt: new Date().toISOString(), files: [] };
@@ -249,6 +313,7 @@ function run() {
     const driverId = `DRV-${suffix3}`;
     const dir = path.join(DRIVER_DOCS_ROOT, driverId);
     ensureDir(dir);
+    ensureCanonicalMedicalPng(driverId, suffix3, dir);
     const candidates = buildCandidates(driverId, suffix3);
 
     for (const spec of DOC_SPECS) {
@@ -257,16 +322,18 @@ function run() {
         spec.type === "Bank Information" ||
         spec.type === "W-9" ||
         spec.type === "I-9" ||
-        spec.type === "FMCSA DQF Compliance Summary"
+        spec.type === "FMCSA DQF Compliance Summary" ||
+        spec.type === "Medical Card"
           ? baseFn(suffix3, driverId)
           : baseFn(suffix3);
       const baseAbs = path.join(dir, baseRel);
-      const already = firstByExt(baseAbs);
+      const extList = spec.extPriority ?? EXT_PRIORITY;
+      const already = firstByExt(baseAbs, extList);
       if (!already) {
         const src = pickExisting(candidates[spec.type] ?? []);
         copyWithOriginalExt(src, baseAbs);
       }
-      const resolved = firstByExt(baseAbs);
+      const resolved = firstByExt(baseAbs, extList);
       if (resolved) {
         index.files.push(toPublicUrl(resolved));
       }
@@ -277,6 +344,12 @@ function run() {
       const u = toPublicUrl(legacyBankAbs);
       if (!index.files.includes(u)) index.files.push(u);
     }
+
+    const legacyMedicalAbs = firstByExt(path.join(dir, `Medical Card-${suffix3}`));
+    if (legacyMedicalAbs) {
+      const u = toPublicUrl(legacyMedicalAbs);
+      if (!index.files.includes(u)) index.files.push(u);
+    }
   }
 
   index.files = [...new Set(index.files)].sort();
@@ -284,6 +357,7 @@ function run() {
   ensureDir(path.dirname(INDEX_OUT));
   fs.writeFileSync(INDEX_OUT, JSON.stringify(index, null, 2));
   patchManifestDqfComplianceSummaries();
+  patchManifestMedicalCards();
   console.log(`Synced HR docs and wrote ${path.relative(ROOT, INDEX_OUT)}`);
 }
 

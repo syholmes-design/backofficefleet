@@ -55,6 +55,15 @@ function resolveByPriority(basePath: string): string | undefined {
   return undefined;
 }
 
+/** Canonical DOT medical card image — driverId-keyed PNG under public/documents/drivers (sync from Downloads `medcard_drv-XXX*.png` or legacy `Medical Card-XXX.png`). */
+export function getCanonicalMedicalCardPublicPath(driverId: string): string {
+  return `/documents/drivers/${driverId}/medical-card-${driverId.toLowerCase()}.png`;
+}
+
+export function isCanonicalMedicalCardPngUrl(url: string | undefined, driverId: string): boolean {
+  return String(url ?? "").trim() === getCanonicalMedicalCardPublicPath(driverId);
+}
+
 function sourcePathForType(driverId: string, type: string): string | undefined {
   const suffix = driverSuffix(driverId);
   const root = `/documents/drivers/${driverId}`;
@@ -62,6 +71,7 @@ function sourcePathForType(driverId: string, type: string): string | undefined {
     "Emergency Contact": `${root}/ec-card-drv-${suffix}`,
     CDL: `${root}/cdlnew-${suffix}`,
     "Insurance Card": `${root}/icard-drv-${suffix}`,
+    /** Legacy basename — used only when canonical PNG is not indexed */
     "Medical Card": `${root}/Medical Card-${suffix}`,
     MVR: `${root}/mvr-card-drv-${suffix}`,
     /** Canonical USCIS I-9 PDF — driverId only: i9-drv-009.pdf */
@@ -102,6 +112,13 @@ export function getDriverPublicDocPath(
 ): string | undefined {
   if (type === "Bank Info" || type === "Bank Information") {
     return resolveDriverBankInformationUrl(driverId);
+  }
+  if (type === "Medical Card") {
+    const canonical = getCanonicalMedicalCardPublicPath(driverId);
+    if (PUBLIC_FILES.has(canonical)) return canonical;
+    const legacy = sourcePathForType(driverId, type);
+    if (!legacy) return undefined;
+    return resolveByPriority(legacy);
   }
   const base = sourcePathForType(driverId, type);
   if (!base) return undefined;
@@ -185,9 +202,9 @@ export type DriverMedicalCardCanonicalStatus =
 
 export type DriverMedicalCardStatusSource =
   | "runtime_override"
-  | "canonical_document"
+  | "canonical_medcard_png"
   | "structured_demo_data"
-  | "driver_doc_registry"
+  | "public_doc_index"
   | "missing";
 
 export type DriverMedicalCardStatus = {
@@ -195,6 +212,8 @@ export type DriverMedicalCardStatus = {
   documentType: "medical_card";
   fileUrl?: string;
   expirationDate?: string;
+  issueDate?: string;
+  examinerName?: string;
   status: DriverMedicalCardCanonicalStatus;
   /** Row status string used across DocumentRow / dispatch (VALID, EXPIRED, …). */
   rowStatus: string;
@@ -209,6 +228,34 @@ function pickCanonicalMedicalRow(data: BofData, driverId: string) {
   if (rows.length === 0) return null;
   const primary = rows.find((r) => r.docTier === "primary");
   return primary ?? rows[0];
+}
+
+/** Issue / examiner: documents[] Medical Card row first, then driverMedicalExpanded for this driverId only. */
+function medicalIssueExaminerFromStructured(
+  data: BofData,
+  driverId: string,
+  row: ReturnType<typeof pickCanonicalMedicalRow>
+): { issueDate?: string; examinerName?: string } {
+  type ExpRow = { medicalIssueDate?: string; medicalExaminerName?: string };
+  const exp = (data as BofData & { driverMedicalExpanded?: Record<string, ExpRow> })
+    .driverMedicalExpanded?.[driverId];
+  const r = row as { issueDate?: string; examinerName?: string } | null;
+  const issueDate =
+    r?.issueDate?.trim() || exp?.medicalIssueDate?.trim() || undefined;
+  const examinerName =
+    r?.examinerName?.trim() || exp?.medicalExaminerName?.trim() || undefined;
+  return { issueDate, examinerName };
+}
+
+function medicalStatusSource(
+  fileUrl: string | undefined,
+  driverId: string,
+  structuredDatesPresent: boolean
+): DriverMedicalCardStatusSource {
+  if (isCanonicalMedicalCardPngUrl(fileUrl, driverId)) return "canonical_medcard_png";
+  if (structuredDatesPresent) return "structured_demo_data";
+  if (fileUrl) return "public_doc_index";
+  return "missing";
 }
 
 function medicalStatusFromDerived(
@@ -236,6 +283,7 @@ export function getDriverMedicalCardStatus(
 ): DriverMedicalCardStatus {
   const fileUrl = getDriverDocumentByType(driverId, "Medical Card");
   const row = pickCanonicalMedicalRow(data, driverId);
+  const { issueDate, examinerName } = medicalIssueExaminerFromStructured(data, driverId, row);
   const overrideExp =
     data.driverCredentialOverrides?.[driverId]?.medicalCardExpirationDate?.trim() || undefined;
 
@@ -247,6 +295,8 @@ export function getDriverMedicalCardStatus(
       documentType: "medical_card",
       fileUrl: fileUrl ?? undefined,
       expirationDate: overrideExp,
+      issueDate,
+      examinerName,
       status,
       rowStatus,
       source: "runtime_override",
@@ -269,9 +319,11 @@ export function getDriverMedicalCardStatus(
         documentType: "medical_card",
         fileUrl: fileUrl ?? undefined,
         expirationDate: expandedExp,
+        issueDate,
+        examinerName,
         status,
         rowStatus,
-        source: "structured_demo_data",
+        source: medicalStatusSource(fileUrl, driverId, true),
         reason: "driverMedicalExpanded.medicalExpirationDate (no documents[] Medical Card row)",
       };
     }
@@ -279,6 +331,8 @@ export function getDriverMedicalCardStatus(
       return {
         driverId,
         documentType: "medical_card",
+        issueDate,
+        examinerName,
         status: "missing",
         rowStatus: "MISSING",
         source: "missing",
@@ -289,9 +343,11 @@ export function getDriverMedicalCardStatus(
       driverId,
       documentType: "medical_card",
       fileUrl,
+      issueDate,
+      examinerName,
       status: "pending_review",
       rowStatus: "PENDING REVIEW",
-      source: "driver_doc_registry",
+      source: medicalStatusSource(fileUrl, driverId, false),
       reason: "Indexed medical card file without structured Medical Card row",
     };
   }
@@ -306,11 +362,13 @@ export function getDriverMedicalCardStatus(
       documentType: "medical_card",
       fileUrl: fileUrl ?? undefined,
       expirationDate,
+      issueDate,
+      examinerName,
       status,
       rowStatus,
-      source: "canonical_document",
+      source: medicalStatusSource(fileUrl, driverId, true),
       reason:
-        "expirationDate on canonical Medical Card row (status derived from date, not stale row.status)",
+        "expirationDate on structured Medical Card row for this driverId (status derived from date, not stale row.status)",
     };
   }
 
@@ -322,9 +380,11 @@ export function getDriverMedicalCardStatus(
       documentType: "medical_card",
       fileUrl: fileUrl ?? undefined,
       expirationDate: expandedExp,
+      issueDate,
+      examinerName,
       status,
       rowStatus,
-      source: "structured_demo_data",
+      source: medicalStatusSource(fileUrl, driverId, true),
       reason:
         "driverMedicalExpanded.medicalExpirationDate — documents row missing expirationDate",
     };
@@ -336,9 +396,11 @@ export function getDriverMedicalCardStatus(
       documentType: "medical_card",
       fileUrl,
       expirationDate: undefined,
+      issueDate,
+      examinerName,
       status: "pending_review",
       rowStatus: "PENDING REVIEW",
-      source: "canonical_document",
+      source: medicalStatusSource(fileUrl, driverId, Boolean(issueDate || examinerName)),
       reason:
         "Medical Card row present without expirationDate; file on file — pending review",
     };
@@ -348,6 +410,8 @@ export function getDriverMedicalCardStatus(
     driverId,
     documentType: "medical_card",
     expirationDate: undefined,
+    issueDate,
+    examinerName,
     status: "missing",
     rowStatus: "MISSING",
     source: "missing",
