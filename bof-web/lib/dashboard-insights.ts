@@ -1,5 +1,5 @@
 import type { BofData } from "@/lib/load-bof-data";
-import { complianceIncidentSuppressedByCanonicalMvr } from "@/lib/driver-credential-status";
+import { reconcileCredentialIncident } from "@/lib/compliance/credential-incident-reconciliation";
 import { buildCommandCenterItems, settlementTotals } from "@/lib/executive-layer";
 import { getDriverMedicalCardStatus } from "@/lib/driver-doc-registry";
 import { getOrderedDocumentsForDriver } from "@/lib/driver-queries";
@@ -71,7 +71,7 @@ export function countEffectiveOpenComplianceIncidents(data: BofData): number {
   return data.complianceIncidents.filter(
     (item) =>
       isComplianceIncidentOpen(item) &&
-      !complianceIncidentSuppressedByCanonicalMvr(data, item)
+      reconcileCredentialIncident(data, item).display
   ).length;
 }
 
@@ -85,7 +85,8 @@ function getDriverState(
     (item) =>
       item.driverId === driverId &&
       item.status.toUpperCase() !== "CLOSED" &&
-      item.status.toUpperCase() !== "RESOLVED"
+      item.status.toUpperCase() !== "RESOLVED" &&
+      reconcileCredentialIncident(data, item).display
   );
   const hasHold = data.moneyAtRisk.some(
     (row) => row.driverId === driverId && row.status.toUpperCase() === "BLOCKED"

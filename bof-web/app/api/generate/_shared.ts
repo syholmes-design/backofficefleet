@@ -1,4 +1,5 @@
 import type { BofData } from "@/lib/load-bof-data";
+import { reconcileCredentialIncident } from "@/lib/compliance/credential-incident-reconciliation";
 import type { EngineDocument } from "@/lib/document-engine";
 
 export type GenerateSuccess = {
@@ -104,10 +105,17 @@ export function resolveIncident(
 
   const load = resolveLoad(data, body);
   if (!load) return null;
-  const open = data.complianceIncidents.find(
-    (c) => c.driverId === load.driverId && c.status === "OPEN"
+  const openDisplayed = data.complianceIncidents.find(
+    (c) =>
+      c.driverId === load.driverId &&
+      c.status === "OPEN" &&
+      reconcileCredentialIncident(data, c).display
   );
-  return open ?? data.complianceIncidents.find((c) => c.driverId === load.driverId) ?? null;
+  return (
+    openDisplayed ??
+    data.complianceIncidents.find((c) => c.driverId === load.driverId) ??
+    null
+  );
 }
 
 export function formatDocSuccess(

@@ -1,4 +1,5 @@
 import type { BofData } from "@/lib/load-bof-data";
+import { reconcileCredentialIncident } from "@/lib/compliance/credential-incident-reconciliation";
 import type { SafetyEvent } from "@/types/safety";
 import { getLoadEvidenceMeta, getLoadEvidenceUrl } from "@/lib/load-documents";
 import { getGeneratedLoadDocUrl, normalizeLoadId } from "@/lib/load-doc-manifest";
@@ -137,6 +138,8 @@ export function buildSafetyCommandFeed(data: BofData, storeEvents: SafetyEvent[]
   const atRiskIds = new Set(getAtRiskSafetyDrivers().map((r) => r.driverId));
 
   for (const c of data.complianceIncidents ?? []) {
+    const rec = reconcileCredentialIncident(data, c);
+    if (!rec.display) continue;
     const driverId = c.driverId;
     const loadId = normalizeIncidentLoadId(c.loadId);
     const { label: severityLabel } = complianceSeverity(c.severity);
@@ -154,7 +157,7 @@ export function buildSafetyCommandFeed(data: BofData, storeEvents: SafetyEvent[]
       driverName: names.get(driverId) ?? driverId,
       loadId,
       eventTypeLabel: "Compliance incident",
-      summary: `${c.type} (${c.incidentId})`,
+      summary: `${rec.presentationTitle ?? c.type} (${c.incidentId})`,
       whyMatters:
         String(c.severity).toUpperCase() === "CRITICAL"
           ? "Critical compliance gaps can block dispatch and void insurance posture."

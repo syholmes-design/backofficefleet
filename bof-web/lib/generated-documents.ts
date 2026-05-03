@@ -2,6 +2,7 @@
  * Adapter: legacy entry shape + cross-links, backed by document-engine.
  */
 import type { BofData } from "./load-bof-data";
+import { reconcileCredentialIncident } from "./compliance/credential-incident-reconciliation";
 import {
   engineDocumentToLegacyEntry,
   generateExceptionDocument,
@@ -158,7 +159,12 @@ export function getGeneratedCrossLinksForLoad(data: BofData, loadId: string) {
     [];
 
   const incidents = data.complianceIncidents
-    .filter((c) => c.driverId === load.driverId && c.status === "OPEN")
+    .filter(
+      (c) =>
+        c.driverId === load.driverId &&
+        c.status === "OPEN" &&
+        reconcileCredentialIncident(data, c).display
+    )
     .map((c) => c.incidentId);
 
   return { settlements, mar, incidents };

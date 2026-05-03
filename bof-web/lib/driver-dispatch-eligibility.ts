@@ -1,4 +1,5 @@
 import type { BofData } from "@/lib/load-bof-data";
+import { reconcileCredentialIncident } from "@/lib/compliance/credential-incident-reconciliation";
 import {
   getDriverMedicalCardStatus,
   medicalCardHardBlockReason,
@@ -162,14 +163,16 @@ export function collectDispatchHardBlockers(data: BofData, driverId: string): Di
   const complianceOpen = data.complianceIncidents.filter(
     (c) =>
       c.driverId === driverId &&
-      !["CLOSED", "RESOLVED"].includes(String(c.status ?? "").toUpperCase())
+      !["CLOSED", "RESOLVED"].includes(String(c.status ?? "").toUpperCase()) &&
+      reconcileCredentialIncident(data, c).display
   );
   const criticalOpen = complianceOpen.filter((c) => c.severity === "CRITICAL");
 
   for (const c of criticalOpen) {
+    const rec = reconcileCredentialIncident(data, c);
     hard.push({
       id: `open_compliance_critical:${c.incidentId}`,
-      message: `Open compliance: ${c.type} (critical)`,
+      message: `Open compliance: ${rec.presentationTitle ?? c.type} (critical)`,
     });
   }
 
@@ -269,12 +272,14 @@ export function getDriverDispatchEligibility(data: BofData, driverId: string): D
   const complianceOpen = data.complianceIncidents.filter(
     (c) =>
       c.driverId === driverId &&
-      !["CLOSED", "RESOLVED"].includes(String(c.status ?? "").toUpperCase())
+      !["CLOSED", "RESOLVED"].includes(String(c.status ?? "").toUpperCase()) &&
+      reconcileCredentialIncident(data, c).display
   );
   const highOpen = complianceOpen.filter((c) => c.severity === "HIGH");
 
   for (const c of highOpen) {
-    softWarnings.push(`Open compliance: ${c.type} (high)`);
+    const rec = reconcileCredentialIncident(data, c);
+    softWarnings.push(`Open compliance: ${rec.presentationTitle ?? c.type} (high)`);
   }
 
   const hasSettlementOrPayBlock = data.moneyAtRisk.some(

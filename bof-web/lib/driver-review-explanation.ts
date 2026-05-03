@@ -1,9 +1,6 @@
 import type { BofData } from "@/lib/load-bof-data";
-import {
-  complianceIncidentSuppressedByCanonicalMvr,
-  credentialDisplayText,
-  getDriverCredentialStatus,
-} from "@/lib/driver-credential-status";
+import { reconcileCredentialIncident } from "@/lib/compliance/credential-incident-reconciliation";
+import { credentialDisplayText, getDriverCredentialStatus } from "@/lib/driver-credential-status";
 import {
   DISPATCH_BLOCKER_REASON_IDS,
   getDriverDispatchEligibility,
@@ -333,7 +330,8 @@ export function getDriverReviewExplanation(data: BofData, driverId: string): Dri
   }
 
   for (const inc of compliance) {
-    if (complianceIncidentSuppressedByCanonicalMvr(data, inc)) continue;
+    const rec = reconcileCredentialIncident(data, inc);
+    if (!rec.display) continue;
     const sevRaw = String(inc.severity ?? "");
     const id = `compliance:${inc.incidentId}`;
     const issueSev = complianceSeverityToIssueSev(sevRaw);
@@ -343,7 +341,7 @@ export function getDriverReviewExplanation(data: BofData, driverId: string): Dri
         id,
         severity: issueSev,
         category: "compliance",
-        title: `${inc.type} (${inc.status})`,
+        title: `${rec.presentationTitle ?? inc.type} (${inc.status})`,
         detail: `Open compliance incident ${inc.incidentId}`,
         whyItMatters:
           issueSev === "critical"

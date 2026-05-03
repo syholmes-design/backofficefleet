@@ -335,56 +335,6 @@ export function getCanonicalDriverDocuments(data: BofData, driverId: string) {
   ];
 }
 
-/** Seed compliance incidents can drift from structured documents — suppress document-backed MVR noise. */
-export function complianceIncidentSuppressedByCanonicalMvr(
-  data: BofData,
-  incident: { type?: string; driverId?: string }
-): boolean {
-  const title = String(incident.type ?? "").trim().toLowerCase();
-  if (!title.includes("mvr")) return false;
-  if (!/\b(review|required|expired|missing|due|stale|qualification)\b/i.test(String(incident.type ?? "")))
-    return false;
-  const id = String(incident.driverId ?? "").trim();
-  if (!id) return false;
-  return getDriverMvrStatus(data, id).status === "valid";
-}
-
-/** When an MVR-titled compliance incident is kept, align headline with canonical MVR (not stale CMP copy). */
-export function refineMvrComplianceIncidentPresentation(
-  data: BofData,
-  incident: { type: string; driverId: string; severity: string }
-): { title: string; severity: "critical" | "high" | "medium" } | null {
-  const t = incident.type.toLowerCase();
-  if (!t.includes("mvr")) return null;
-  const mvr = getDriverMvrStatus(data, incident.driverId);
-  switch (mvr.status) {
-    case "valid":
-      return null;
-    case "expired":
-      return {
-        title: `MVR expired${mvr.expirationDate ? ` (${mvr.expirationDate})` : ""} — renewal required`,
-        severity: "critical",
-      };
-    case "missing":
-      return {
-        title: "MVR missing — upload or order current motor vehicle record",
-        severity: "critical",
-      };
-    case "expiring_soon":
-      return {
-        title: `MVR expiring soon (${mvr.expirationDate ?? "see vault"}) — schedule review`,
-        severity: "high",
-      };
-    case "pending_review":
-      return {
-        title: "Open compliance review: MVR qualification review",
-        severity: "high",
-      };
-    default:
-      return null;
-  }
-}
-
 export function credentialDisplayText(record: CredentialRecord): string {
   if (record.status === "expired") {
     return record.expirationDate ? `Expired on ${record.expirationDate}` : "Expired";

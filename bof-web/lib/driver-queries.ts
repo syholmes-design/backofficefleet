@@ -4,6 +4,7 @@ import {
   JOHN_CARTER_PRIMARY_EXTRA_TYPES,
   JOHN_CARTER_SECONDARY_TYPE_ORDER,
 } from "./john-carter-reference";
+import { reconcileCredentialIncident } from "./compliance/credential-incident-reconciliation";
 import { getCanonicalDriverDocuments } from "./driver-credential-status";
 import { getDriverDocumentByType } from "./driver-doc-registry";
 
@@ -130,7 +131,12 @@ export function readinessFromDocuments(docs: DocumentRow[]) {
 }
 
 export function complianceNotesForDriver(data: BofData, driverId: string) {
-  return data.complianceIncidents.filter((c) => c.driverId === driverId);
+  return data.complianceIncidents.filter((c) => {
+    if (c.driverId !== driverId) return false;
+    const st = String(c.status ?? "").toUpperCase();
+    if (st === "CLOSED" || st === "RESOLVED") return true;
+    return reconcileCredentialIncident(data, c).display;
+  });
 }
 
 /** Expanded medical / MCSA fields from `driver_templates_expanded.xlsx` (merged into demo-data.json). */

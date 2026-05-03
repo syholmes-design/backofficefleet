@@ -3,6 +3,7 @@
  * Shared by the API route and optional scripts/generate-bof-documents.mjs (keep in sync).
  */
 import type { BofData } from "./load-bof-data";
+import { reconcileCredentialIncident } from "./compliance/credential-incident-reconciliation";
 import { coordsForCity } from "./load-route-geo";
 import { getLoadProofItems } from "./load-proof";
 import {
@@ -114,9 +115,10 @@ export function buildLoadGeneratedSvg(
     `loadNumber: ${load.number}`,
     `driverName: ${dname}`,
   ];
-  const inc = data.complianceIncidents.filter(
-    (c) => c.driverId === load.driverId && c.status === "OPEN"
-  );
+  const inc = data.complianceIncidents.filter((c) => {
+    if (c.driverId !== load.driverId || c.status !== "OPEN") return false;
+    return reconcileCredentialIncident(data, c).display;
+  });
   const mar = data.moneyAtRisk?.filter((m) => m.assetId === load.assetId) ?? [];
   const oCoord = coordsForCity(load.origin);
   const dCoord = coordsForCity(load.destination);

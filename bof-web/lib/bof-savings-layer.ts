@@ -3,6 +3,7 @@
  * Reads existing BOF arrays only — does not mutate data or change core business logic.
  */
 import type { BofData } from "./load-bof-data";
+import { reconcileCredentialIncident } from "./compliance/credential-incident-reconciliation";
 import { buildSavingsEngineScorecard } from "./bof-savings-engine";
 import { buildRfActions, getLoadProofItems } from "./load-proof";
 import { getBackhaulPendingApprovalAlert } from "./backhaul-opportunity-engine";
@@ -149,12 +150,18 @@ export function buildImmediateActionsRequired(
 
   for (const c of data.complianceIncidents) {
     if (c.status !== "OPEN") continue;
+    const rec = reconcileCredentialIncident(data, c);
+    if (!rec.display) continue;
     const pr: ImmediateActionPriority =
       c.severity === "CRITICAL" ? "P0" : c.severity === "DUE_SOON" ? "P1" : "P2";
+    const detail =
+      rec.presentationTitle?.trim() ||
+      String(c.type ?? "").trim() ||
+      "open incident";
     push({
       id: `ia-cmp-${c.incidentId}`,
       priority: pr,
-      label: `Compliance: ${c.type}`,
+      label: `Compliance: ${detail}`,
       driverId: c.driverId,
       driverName: driverName(c.driverId),
       amountAtRiskUsd: null,

@@ -10,6 +10,7 @@ import {
   mapDriverVaultCategoryToOwnership,
 } from "@/lib/bof-vault-ownership-adapter";
 import { getCanonicalMappingService } from "@/lib/compliance-flow-pro/canonical-mapping-service";
+import { reconcileCredentialIncident } from "@/lib/compliance/credential-incident-reconciliation";
 import { getDriverDocumentByType } from "@/lib/driver-doc-registry";
 
 export type VaultDocumentRow = DocumentRow & {
@@ -54,9 +55,12 @@ function complianceFlagsForDoc(
   driverId: string,
   docType: string
 ): { atRisk: boolean; blocking: boolean } {
-  const open = data.complianceIncidents.filter(
-    (c) => c.driverId === driverId && c.status === "OPEN"
-  );
+  const open = data.complianceIncidents.filter((c) => {
+    if (c.driverId !== driverId) return false;
+    const st = String(c.status ?? "").toUpperCase();
+    if (st === "CLOSED" || st === "RESOLVED") return false;
+    return reconcileCredentialIncident(data, c).display;
+  });
   let atRisk = false;
   let blocking = false;
   for (const inc of open) {

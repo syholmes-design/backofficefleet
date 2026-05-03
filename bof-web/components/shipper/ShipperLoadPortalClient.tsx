@@ -19,6 +19,7 @@ import {
   buildClaimPacketContext,
   isClaimPacketEligible,
 } from "@/lib/claim-packet";
+import { reconcileCredentialIncident } from "@/lib/compliance/credential-incident-reconciliation";
 import { getGeneratedCrossLinksForLoad } from "@/lib/generated-documents";
 import type { Load } from "@/types/dispatch";
 import { BofAdvantageCard, BofAdvantageStrip } from "@/components/bof-advantage/BofAdvantageCard";
@@ -218,9 +219,12 @@ export function ShipperLoadPortalClient({ loadId }: { loadId: string }) {
   const openCompliance = useMemo(() => {
     if (!bofLoad) return [];
     return data.complianceIncidents.filter(
-      (c) => c.driverId === bofLoad.driverId && c.status === "OPEN"
+      (c) =>
+        c.driverId === bofLoad.driverId &&
+        c.status === "OPEN" &&
+        reconcileCredentialIncident(data, c).display
     );
-  }, [data.complianceIncidents, bofLoad]);
+  }, [data, bofLoad]);
 
   if (!bofLoad || !dispatchLoad || !pretrip || !docReport) {
     return (

@@ -1,4 +1,5 @@
 import type { BofData } from "./load-bof-data";
+import { reconcileCredentialIncident } from "./compliance/credential-incident-reconciliation";
 import { buildFleetProofRiskSummary } from "./bof-ops-layer";
 import { buildClaimQueueRows } from "./claim-packet";
 import {
@@ -35,6 +36,9 @@ export function buildFleetScorecard(data: BofData): FleetScorecard {
 
   let safetyPen = 0;
   for (const c of data.complianceIncidents) {
+    const st = String(c.status ?? "").toUpperCase();
+    if (st === "CLOSED" || st === "RESOLVED") continue;
+    if (!reconcileCredentialIncident(data, c).display) continue;
     if (c.severity === "CRITICAL") safetyPen += 10;
     else if (c.severity === "DUE_SOON") safetyPen += 5;
     else safetyPen += 3;

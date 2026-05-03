@@ -1,4 +1,5 @@
 import type { BofData } from "./load-bof-data";
+import { reconcileCredentialIncident } from "./compliance/credential-incident-reconciliation";
 import {
   getOrderedDocumentsForDriver,
   type DocumentRow,
@@ -89,9 +90,12 @@ function maintenanceMarForAsset(data: BofData, assetId: string) {
 }
 
 function openComplianceForDriver(data: BofData, driverId: string) {
-  return data.complianceIncidents.filter(
-    (c) => c.driverId === driverId && c.status === "OPEN"
-  );
+  return data.complianceIncidents.filter((c) => {
+    if (c.driverId !== driverId) return false;
+    const st = String(c.status ?? "").toUpperCase();
+    if (st === "CLOSED" || st === "RESOLVED") return false;
+    return reconcileCredentialIncident(data, c).display;
+  });
 }
 
 function hashSeed(s: string) {

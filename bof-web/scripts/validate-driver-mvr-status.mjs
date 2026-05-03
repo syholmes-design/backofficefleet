@@ -8,6 +8,7 @@ const ROOT = process.cwd();
 const DEMO_PATH = path.join(ROOT, "lib", "demo-data.json");
 const REGISTRY_PATH = path.join(ROOT, "lib", "driver-doc-registry.ts");
 const CRED_STATUS_PATH = path.join(ROOT, "lib", "driver-credential-status.ts");
+const CRED_RECON_PATH = path.join(ROOT, "lib", "compliance", "credential-incident-reconciliation.ts");
 
 function toDateOnly(value) {
   if (!value) return null;
@@ -32,15 +33,24 @@ function main() {
   const issues = [];
   const registry = fs.readFileSync(REGISTRY_PATH, "utf8");
   const cred = fs.readFileSync(CRED_STATUS_PATH, "utf8");
+  const credRecon = fs.readFileSync(CRED_RECON_PATH, "utf8");
 
   if (!registry.includes("export function getDriverMvrStatus")) {
     issues.push("driver-doc-registry.ts must export getDriverMvrStatus");
   }
-  if (!registry.includes("getDriverMvrStatus(data, driverId)")) {
-    issues.push("getCanonicalDriverDocuments should resolve MVR via getDriverMvrStatus");
+  if (!registry.includes("export function getDriverMvrStatus(data: BofData, driverId: string)")) {
+    issues.push(
+      "driver-doc-registry.ts should export getDriverMvrStatus(data: BofData, driverId: string) for canonical MVR resolution"
+    );
   }
-  if (!cred.includes("complianceIncidentSuppressedByCanonicalMvr")) {
-    issues.push("driver-credential-status.ts must export complianceIncidentSuppressedByCanonicalMvr");
+  if (!cred.includes("export function getDriverCredentialStatus")) {
+    issues.push("driver-credential-status.ts must export getDriverCredentialStatus");
+  }
+  if (!credRecon.includes("export function reconcileCredentialIncident")) {
+    issues.push("credential-incident-reconciliation.ts must export reconcileCredentialIncident");
+  }
+  if (!credRecon.includes("getDriverCredentialStatus(data, driverId)")) {
+    issues.push("credential-incident-reconciliation must resolve credentials via getDriverCredentialStatus(data, driverId)");
   }
   if (!cred.includes('slot: "mvr"')) {
     issues.push("driver-credential-status should tag MVR CredentialRecord with slot: \"mvr\"");

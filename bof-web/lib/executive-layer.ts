@@ -1,9 +1,6 @@
 import type { BofData } from "./load-bof-data";
-import {
-  complianceIncidentSuppressedByCanonicalMvr,
-  getDriverMedicalCardStatus,
-  refineMvrComplianceIncidentPresentation,
-} from "./driver-credential-status";
+import { reconcileCredentialIncident } from "./compliance/credential-incident-reconciliation";
+import { getDriverMedicalCardStatus } from "./driver-credential-status";
 import { getLoadProofItems } from "./load-proof";
 import { getSafetyBonusByDriverId } from "./safety-scorecard";
 
@@ -63,25 +60,17 @@ export function buildCommandCenterItems(data: BofData): CommandCenterItem[] {
   for (const c of data.complianceIncidents) {
     const st = String(c.status ?? "").toUpperCase();
     if (st === "CLOSED" || st === "RESOLVED") continue;
-    if (complianceIncidentSuppressedByCanonicalMvr(data, c)) continue;
+    const rec = reconcileCredentialIncident(data, c);
+    if (!rec.display) continue;
 
-    let sev: CommandCenterItem["severity"] =
-      c.severity === "CRITICAL"
+    const sev: CommandCenterItem["severity"] =
+      rec.presentationSeverity ??
+      (c.severity === "CRITICAL"
         ? "critical"
         : c.severity === "DUE_SOON"
           ? "high"
-          : "medium";
-    let title = c.type;
-
-    const refined = refineMvrComplianceIncidentPresentation(data, {
-      type: c.type,
-      driverId: c.driverId,
-      severity: c.severity,
-    });
-    if (refined) {
-      title = refined.title;
-      sev = refined.severity;
-    }
+          : "medium");
+    const title = rec.presentationTitle ?? c.type;
 
     items.push({
       id: c.incidentId,

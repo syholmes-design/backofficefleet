@@ -1,4 +1,5 @@
 import type { BofData } from "@/lib/load-bof-data";
+import { reconcileCredentialIncident } from "@/lib/compliance/credential-incident-reconciliation";
 import { getDriverDispatchEligibility } from "@/lib/driver-dispatch-eligibility";
 import { getLoadDocumentPacket } from "@/lib/load-proof";
 
@@ -217,9 +218,11 @@ export function getLoadRiskExplanation(
   const openIncidents = data.complianceIncidents.filter(
     (c) =>
       c.driverId === load.driverId &&
-      !["CLOSED", "RESOLVED"].includes(String(c.status || "").toUpperCase())
+      !["CLOSED", "RESOLVED"].includes(String(c.status || "").toUpperCase()) &&
+      reconcileCredentialIncident(data, c).display
   );
   for (const incident of openIncidents) {
+    const rec = reconcileCredentialIncident(data, incident);
     reasons.push({
       id: `compliance:incident:${incident.incidentId}`,
       severity:
@@ -229,7 +232,7 @@ export function getLoadRiskExplanation(
             ? "high"
             : "warning",
       category: "compliance",
-      title: `Compliance incident: ${incident.type}`,
+      title: `Compliance incident: ${rec.presentationTitle ?? incident.type}`,
       detail: `Incident ${incident.incidentId} is ${incident.status}.`,
       whyItMatters:
         incident.severity === "CRITICAL"

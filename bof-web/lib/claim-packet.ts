@@ -1,4 +1,5 @@
 import type { BofData } from "./load-bof-data";
+import { reconcileCredentialIncident } from "./compliance/credential-incident-reconciliation";
 import { formatUsd } from "./format-money";
 import {
   getLoadProofItems,
@@ -102,9 +103,12 @@ export function buildClaimPacketContext(
   const load = loadRecord(data, loadId)!;
   const driver = data.drivers.find((d) => d.id === load.driverId);
   const proofs = getLoadProofItems(data, loadId);
-  const incidents = data.complianceIncidents.filter(
-    (c) => c.driverId === load.driverId
-  );
+  const incidents = data.complianceIncidents.filter((c) => {
+    if (c.driverId !== load.driverId) return false;
+    const st = String(c.status ?? "").toUpperCase();
+    if (st === "CLOSED" || st === "RESOLVED") return false;
+    return reconcileCredentialIncident(data, c).display;
+  });
 
   const issueTypes: string[] = [];
   if (load.sealStatus === "Mismatch") issueTypes.push("Seal mismatch");

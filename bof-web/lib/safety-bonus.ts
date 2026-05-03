@@ -1,4 +1,5 @@
 import type { BofData } from "@/lib/load-bof-data";
+import { reconcileCredentialIncident } from "@/lib/compliance/credential-incident-reconciliation";
 import { getDriverDispatchEligibility } from "@/lib/driver-dispatch-eligibility";
 import { getLoadEvidenceMeta, getLoadEvidenceUrl } from "@/lib/load-documents";
 import { normalizeLoadId } from "@/lib/load-doc-manifest";
@@ -72,7 +73,9 @@ function openSafetySignalsForDriver(data: BofData, driverId: string): number {
   for (const c of data.complianceIncidents ?? []) {
     if (c.driverId !== driverId) continue;
     const u = String(c.status ?? "").toUpperCase();
-    if (u !== "CLOSED" && u !== "RESOLVED") n += 1;
+    if (u === "CLOSED" || u === "RESOLVED") continue;
+    if (!reconcileCredentialIncident(data, c).display) continue;
+    n += 1;
   }
   for (const load of loadsForDriver(data, driverId)) {
     const pod = String(load.podStatus ?? "").toLowerCase();
