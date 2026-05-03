@@ -5,7 +5,7 @@ import Image from "next/image";
 import { useMemo, useState } from "react";
 import { BookDemoLink } from "@/components/BookDemoLink";
 import { useBofDemoData } from "@/lib/bof-demo-data-context";
-import { getSectorLinks } from "@/lib/site-links";
+import { getHeroLinks, getSectorLinks } from "@/lib/site-links";
 import { formatUsd } from "@/lib/format-money";
 import {
   getDashboardTodayChanges,
@@ -229,22 +229,20 @@ export function DashboardPageClient() {
               Readiness, dispatch risk, compliance blocks, settlements, proof exceptions, and revenue impact in one
               operating view.
             </p>
-            <div className="bof-dashboard-hero__ctaRow" aria-label="Demo calls to action">
-              <BookDemoLink className="bof-cc-btn bof-cc-btn-primary" />
-              <Link href="/command-center" className="bof-cc-btn">
-                Explore BOF demo
-              </Link>
-            </div>
-            <div className="bof-cc-hero-actions">
-              <Link href="/dispatch" className="bof-cc-btn">
-                Open Dispatch Board
-              </Link>
-              <a href="#attention-queue" className="bof-cc-btn">
-                Review Attention Queue
-              </a>
-              <Link href="/settlements" className="bof-cc-btn">
-                Open Settlements
-              </Link>
+            <div className="bof-dashboard-hero__ctaRow" aria-label="Dashboard actions">
+              {getHeroLinks().map((cta) => (
+                <Link
+                  key={cta.id}
+                  href={cta.href}
+                  prefetch={false}
+                  className={
+                    cta.variant === "primary" ? "bof-cc-btn bof-cc-btn-primary" : "bof-cc-btn"
+                  }
+                >
+                  {cta.label}
+                </Link>
+              ))}
+              <BookDemoLink className="bof-cc-btn">Book a Demo</BookDemoLink>
             </div>
             <nav className="bof-dashboard-hero__sectorRow" aria-label="Solutions by fleet type">
               {getSectorLinks().map((item) => (
