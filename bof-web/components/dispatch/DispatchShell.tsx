@@ -28,6 +28,8 @@ export function DispatchShell() {
   const openAssignModal = useDispatchDashboardStore((s) => s.openAssignModal);
   const selectLoad = useDispatchDashboardStore((s) => s.selectLoad);
   const upsertLoad = useDispatchDashboardStore((s) => s.upsertLoad);
+  const openLoadDrawer = useDispatchDashboardStore((s) => s.openLoadDrawer);
+  const setBoardFilters = useDispatchDashboardStore((s) => s.setBoardFilters);
 
   const [assignPick, setAssignPick] = useState("");
 
@@ -42,6 +44,30 @@ export function DispatchShell() {
       upsertLoad(row);
     }
   }, [data, upsertLoad]);
+
+  const loadIdParam = searchParams.get("loadId");
+  const driverIdParam = searchParams.get("driverId");
+
+  useEffect(() => {
+    if (loads.length === 0) return;
+    if (driverIdParam) {
+      setBoardFilters({ driver: driverIdParam });
+      setNav("board");
+    }
+    if (loadIdParam && loads.some((l) => l.load_id === loadIdParam)) {
+      setNav("board");
+      selectLoad(loadIdParam);
+      openLoadDrawer(loadIdParam);
+    }
+  }, [
+    loads,
+    loadIdParam,
+    driverIdParam,
+    setBoardFilters,
+    setNav,
+    selectLoad,
+    openLoadDrawer,
+  ]);
 
   useEffect(() => {
     const view = searchParams.get("view");

@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import { BOF_SETTLEMENTS_PROFILE_DASHBOARD_HTML } from "@/lib/bof-demo-profile-dashboards";
 import { useSettlementsPayrollStore } from "@/lib/stores/settlements-payroll-store";
 import type { SettlementsPayrollNavId } from "@/types/settlements-payroll";
@@ -15,9 +16,16 @@ const tabs: { id: SettlementsPayrollNavId; label: string }[] = [
 ];
 
 export function SettlementsPayrollShell() {
+  const searchParams = useSearchParams();
   const [nav, setNav] = useState<SettlementsPayrollNavId>("dashboard");
   const drawerSettlementId = useSettlementsPayrollStore((s) => s.drawerSettlementId);
   const closeDrawer = useSettlementsPayrollStore((s) => s.closeDrawer);
+  const openDrawer = useSettlementsPayrollStore((s) => s.openDrawer);
+
+  useEffect(() => {
+    const settlementId = searchParams.get("settlementId");
+    if (settlementId) openDrawer(settlementId);
+  }, [searchParams, openDrawer]);
 
   return (
     <div className="flex min-h-[calc(100vh-8rem)] flex-col text-slate-200">

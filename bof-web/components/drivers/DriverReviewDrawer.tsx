@@ -97,7 +97,7 @@ export function DriverReviewDrawer({
     <ReviewDetailsDrawer
       open
       onClose={onClose}
-      title={`Driver review — ${explanation.driverName}`}
+      title={`Driver review — ${explanation.driverName} (${driverId})`}
       subtitle={subtitle}
       summary={explanation.summary}
       statusChip={

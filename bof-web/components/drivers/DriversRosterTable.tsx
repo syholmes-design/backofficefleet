@@ -23,8 +23,15 @@ import {
   warnDispatchEligibilityAllBlocked,
 } from "@/lib/driver-dispatch-eligibility";
 import { devTraceDriverMedicalStatuses } from "@/lib/dev-driver-medical-trace";
-import { getDriverReviewExplanation, type DriverReviewIssueCategory } from "@/lib/driver-review-explanation";
-import { getSafetyScorecardRows } from "@/lib/safety-scorecard";
+import {
+  getDriverReviewExplanation,
+  type DriverReviewIssueCategory,
+} from "@/lib/driver-review-explanation";
+import {
+  getSafetyEvidenceByDriverId,
+  getSafetyScorecardRows,
+} from "@/lib/safety-scorecard";
+import { getSafetyEvidenceOpenHref } from "@/components/safety/SafetyEvidenceThumb";
 import { DriverReviewDrawer } from "@/components/drivers/DriverReviewDrawer";
 
 type Severity = "high" | "medium" | "low";
@@ -48,7 +55,13 @@ type DriverRow = {
   blockerHref?: string;
   primaryDispatchBlockerId?: string;
   pendingPay: number;
+  /** BOF load id for dispatch / proof deep links */
+  loadLinkId: string | null;
+  /** First matching open issue category for compliance-focused review */
+  complianceDrawerCategory?: DriverReviewIssueCategory;
 };
+
+type DriverStatusFilter = "all" | "ready" | "needs_review" | "blocked";
 
 type ExceptionItem = {
   key: string;
@@ -64,6 +77,8 @@ type ExceptionItem = {
   onResolveAllDemo?: () => void;
   reviewDriverId?: string;
   reviewFilter?: DriverReviewIssueCategory;
+  secondaryActions?: { label: string; href: string }[];
+  detailLines?: string[];
 };
 
 export function DriversRosterTable() {
@@ -79,6 +94,7 @@ export function DriversRosterTable() {
     driverId: string;
     filter?: DriverReviewIssueCategory;
   } | null>(null);
+  const [driverStatusFilter, setDriverStatusFilter] = useState<DriverStatusFilter>("all");
   const safetyTierMap = useMemo(
     () => new Map(getSafetyScorecardRows().map((row) => [row.driverId, row.performanceTier])),
     []
@@ -157,6 +173,19 @@ export function DriversRosterTable() {
           ? `${review.complianceColumnLabel} · ${eligibility.hardBlockerCount} hard gate(s)`
           : review.complianceColumnLabel;
 
+      const openIssues = review.issues.filter((i) => !i.resolved);
+      const complianceFocusOrder: DriverReviewIssueCategory[] = [
+        "dispatch",
+        "credentials",
+        "documents",
+        "compliance",
+      ];
+      const complianceDrawerCategory = complianceFocusOrder.find((c) =>
+        openIssues.some((i) => i.category === c)
+      );
+
+      const loadLinkId = activeLoad?.id ?? latestLoad?.id ?? null;
+
       return {
         driverId: driver.id,
         name: driver.name,
@@ -184,9 +213,26 @@ export function DriversRosterTable() {
         blockerHref: eligibility.recommendedAction?.href,
         primaryDispatchBlockerId: eligibility.hardBlockerDetails[0]?.id,
         pendingPay,
+        loadLinkId,
+        complianceDrawerCategory,
       };
     });
   }, [data, safetyTierMap]);
+
+  const filteredDriverRows = useMemo(() => {
+    if (driverStatusFilter === "all") return driverRows;
+    return driverRows.filter((row) => row.eligibilityStatus === driverStatusFilter);
+  }, [driverRows, driverStatusFilter]);
+
+  const applyReadinessBarFilter = (label: string) => {
+    if (label === "Ready") setDriverStatusFilter("ready");
+    else if (label === "Needs Review") setDriverStatusFilter("needs_review");
+    else if (label === "Blocked") setDriverStatusFilter("blocked");
+    else return;
+    requestAnimationFrame(() => {
+      document.getElementById("primary-driver-table")?.scrollIntoView({ behavior: "smooth", block: "start" });
+    });
+  };
 
   const emmaSpotlightRow = useMemo(
     () => driverRows.find((r) => r.driverId === "DRV-009") ?? null,
@@ -208,11 +254,24 @@ export function DriversRosterTable() {
   const expiringRows = useMemo<ExceptionItem[]>(() => {
     const items: ExceptionItem[] = [];
     for (const row of driverRows) {
+      const activeLoad = data.loads.find(
+        (load) =>
+          load.driverId === row.driverId && (load.status === "En Route" || load.status === "Pending")
+      );
       const docs = getOrderedDocumentsForDriver(data, row.driverId);
       for (const doc of docs) {
         if (!doc.expirationDate || doc.status.toUpperCase() !== "VALID") continue;
         const days = Math.ceil((new Date(doc.expirationDate).getTime() - Date.now()) / 86400000);
         if (!Number.isFinite(days) || days < 0 || days > 60) continue;
+        const secondaryActions =
+          activeLoad?.id != null
+            ? [
+                {
+                  label: "Open Load Proof",
+                  href: `/dispatch?loadId=${encodeURIComponent(activeLoad.id)}&driverId=${encodeURIComponent(row.driverId)}`,
+                },
+              ]
+            : undefined;
         items.push({
           key: `${row.driverId}-${doc.type}`,
           driver: row.name,
@@ -223,6 +282,7 @@ export function DriversRosterTable() {
           actionLabel: "Open Documents",
           reviewDriverId: row.driverId,
           reviewFilter: "credentials" as const,
+          secondaryActions,
         });
       }
     }
@@ -243,6 +303,25 @@ export function DriversRosterTable() {
           r.driverId === "DRV-008" || (r.driverId === "DRV-004" && r.tireAssetInspection === "Fail")
             ? "high"
             : "medium";
+        const activeLoad = data.loads.find(
+          (load) =>
+            load.driverId === r.driverId && (load.status === "En Route" || load.status === "Pending")
+        );
+        const evidence = getSafetyEvidenceByDriverId(r.driverId);
+        const firstEvidence = evidence[0];
+        const evidenceHref = firstEvidence
+          ? getSafetyEvidenceOpenHref(firstEvidence.url) ?? `/drivers/${r.driverId}/safety`
+          : null;
+        const secondaryActions: { label: string; href: string }[] = [];
+        if (activeLoad?.id) {
+          secondaryActions.push({
+            label: "Open Load Proof",
+            href: `/dispatch?loadId=${encodeURIComponent(activeLoad.id)}&driverId=${encodeURIComponent(r.driverId)}`,
+          });
+        }
+        if (evidenceHref) {
+          secondaryActions.push({ label: "Review Evidence", href: evidenceHref });
+        }
         return {
           key: `safety-${r.driverId}`,
           driver: name,
@@ -253,6 +332,7 @@ export function DriversRosterTable() {
           actionLabel: "Open Safety",
           reviewDriverId: r.driverId,
           reviewFilter: "safety" as const,
+          secondaryActions: secondaryActions.length ? secondaryActions : undefined,
         };
       })
       .slice(0, 6);
@@ -264,20 +344,72 @@ export function DriversRosterTable() {
         .filter((row) => row.settlement === "Hold / Review" || row.settlement === "Pending")
         .map((row) => {
           const severity: Severity = row.settlement === "Hold / Review" ? "high" : "medium";
+          const expl = getDriverReviewExplanation(data, row.driverId);
+          const stIssues = expl.issues.filter((i) => !i.resolved && i.category === "settlement");
+          const settlementRec = data.settlements?.find((s) => s.driverId === row.driverId);
+          const activeLoad = data.loads.find(
+            (load) =>
+              load.driverId === row.driverId && (load.status === "En Route" || load.status === "Pending")
+          );
+          const issueTitle =
+            stIssues[0]?.title ??
+            (row.settlement === "Hold / Review"
+              ? "Settlement hold/review active"
+              : settlementRec?.pendingReason && settlementRec.pendingReason !== "N/A"
+                ? settlementRec.pendingReason
+                : "Settlement pending release");
+          const whyHold = stIssues[0]?.detail ?? settlementRec?.pendingReason;
+          const financialLine =
+            row.pendingPay > 0
+              ? `Financial exposure: ${formatUsd(row.pendingPay)} pending (money at risk / holds)`
+              : settlementRec?.netPay != null && row.settlement !== "Paid"
+                ? `Scheduled net pay: ${formatUsd(settlementRec.netPay)}`
+                : undefined;
+          const recommendedFix =
+            stIssues[0]?.recommendedFix ?? "Complete proof + finance review to release pay";
+          const docsBlob = stIssues.map((i) => `${i.title} ${i.detail}`).join(" ").toLowerCase();
+          const needsFinanceDocs = /\bw-9\b|bank|direct deposit|routing|account/i.test(docsBlob);
+
+          const secondaryActions: { label: string; href: string }[] = [];
+          if (settlementRec?.settlementId) {
+            secondaryActions.push({
+              label: "Open fleet settlement",
+              href: `/settlements?settlementId=${encodeURIComponent(settlementRec.settlementId)}`,
+            });
+          }
+          if (activeLoad?.id) {
+            secondaryActions.push({
+              label: "Open Load Proof",
+              href: `/dispatch?loadId=${encodeURIComponent(activeLoad.id)}&driverId=${encodeURIComponent(row.driverId)}`,
+            });
+          }
+          if (needsFinanceDocs) {
+            secondaryActions.push({
+              label: "Open Documents",
+              href: `/drivers/${row.driverId}/vault`,
+            });
+          }
+
+          const detailLines = [whyHold, financialLine, stIssues[0]?.whyItMatters].filter(
+            (x): x is string => Boolean(x && x.trim())
+          );
+
           return {
-          key: `settlement-${row.driverId}`,
-          driver: row.name,
-          issue: row.settlement === "Hold / Review" ? "Settlement hold/review active" : "Settlement pending release",
-          severity,
-          nextStep: "Complete proof + finance review to release pay",
-          actionHref: `/drivers/${row.driverId}/settlements`,
-          actionLabel: "Open Settlement",
-          reviewDriverId: row.driverId,
-          reviewFilter: "settlement" as const,
+            key: `settlement-${row.driverId}`,
+            driver: row.name,
+            issue: issueTitle,
+            severity,
+            nextStep: recommendedFix,
+            actionHref: `/drivers/${row.driverId}/settlements`,
+            actionLabel: "Open Settlement",
+            reviewDriverId: row.driverId,
+            reviewFilter: "settlement" as const,
+            secondaryActions: secondaryActions.length ? secondaryActions : undefined,
+            detailLines: detailLines.length ? detailLines : undefined,
           };
         })
         .slice(0, 6),
-    [driverRows]
+    [data, driverRows]
   );
 
   const commandCenterRows = useMemo(
@@ -289,7 +421,30 @@ export function DriversRosterTable() {
           const severity: Severity =
             item.severity === "critical" || item.severity === "high" ? "high" : "medium";
           const hrefMatch = item.actionHref.match(/\/drivers\/(DRV-[0-9]+)/i);
-          const reviewDriverId = hrefMatch?.[1];
+          const reviewDriverId = item.reviewDriverId ?? hrefMatch?.[1];
+          const secondaryActions: { label: string; href: string }[] = [];
+          if (item.reviewLoadId) {
+            secondaryActions.push({
+              label: "Open Load Proof",
+              href: `/dispatch?loadId=${encodeURIComponent(item.reviewLoadId)}${
+                reviewDriverId ? `&driverId=${encodeURIComponent(reviewDriverId)}` : ""
+              }`,
+            });
+          }
+          if (reviewDriverId) {
+            const st = data.settlements?.find((s) => s.driverId === reviewDriverId);
+            if (st?.settlementId) {
+              secondaryActions.push({
+                label: "Open fleet settlement",
+                href: `/settlements?settlementId=${encodeURIComponent(st.settlementId)}`,
+              });
+            }
+          }
+          const detailLines = [
+            item.financialImpact != null && item.financialImpact > 0
+              ? `Financial impact: ${formatUsd(item.financialImpact)}`
+              : undefined,
+          ].filter((x): x is string => Boolean(x));
           return {
             key: item.id,
             driver: item.target,
@@ -299,6 +454,12 @@ export function DriversRosterTable() {
             actionHref: item.actionHref,
             actionLabel: item.actionLabel,
             reviewDriverId,
+            reviewFilter:
+              item.area?.includes("Settlement") || item.area?.includes("payroll")
+                ? ("settlement" as const)
+                : undefined,
+            secondaryActions: secondaryActions.length ? secondaryActions : undefined,
+            detailLines: detailLines.length ? detailLines : undefined,
           };
         }) satisfies ExceptionItem[],
     [data]
@@ -360,7 +521,7 @@ export function DriversRosterTable() {
               across the fleet.
             </p>
             <div className="bof-cc-hero-actions">
-              <a href="#driver-blocked-dispatch" className="bof-cc-hero-cta bof-cc-hero-cta-primary">
+              <a href="#blocked-roster" className="bof-cc-hero-cta bof-cc-hero-cta-primary">
                 Review Blocked Drivers
               </a>
               <Link href="/bof-vault" className="bof-cc-hero-cta bof-cc-hero-cta-secondary">
@@ -385,25 +546,29 @@ export function DriversRosterTable() {
 
       <nav className="bof-drivers-quick-actions" id="bof-drivers-quick-actions" aria-label="Quick filters and actions">
         <span className="bof-drivers-quick-actions__label">Quick</span>
-        <a href="#driver-blocked-dispatch">Blocked roster</a>
+        <a href="#blocked-roster">Blocked roster</a>
         <span className="text-slate-600">·</span>
-        <a href="#driver-readiness-charts">Readiness charts</a>
+        <a href="#readiness-charts">Readiness charts</a>
         <span className="text-slate-600">·</span>
-        <a href="#driver-exception-panels">Exception panels</a>
+        <a href="#exception-panels">Exception panels</a>
         <span className="text-slate-600">·</span>
-        <a href="#driver-primary-table">Primary table</a>
+        <a href="#primary-driver-table">Primary table</a>
       </nav>
 
-      <section id="driver-readiness-charts" className="bof-cc-chart-grid" aria-label="Driver chart breakdowns">
-        <ChartCard title="Driver Readiness Breakdown" data={readinessData} />
+      <section id="readiness-charts" className="bof-cc-chart-grid" aria-label="Driver chart breakdowns">
+        <ChartCard
+          title="Driver Readiness Breakdown"
+          data={readinessData}
+          onBarClick={applyReadinessBarFilter}
+        />
         <ChartCard title="Safety Tier Distribution" data={safetyData} />
         <ChartCard title="Compliance Status Breakdown" data={complianceData} />
         <ChartCard title="Settlement Status Breakdown" data={settlementData} />
       </section>
 
-      <section id="driver-exception-panels" className="bof-cc-grid-2" aria-label="Driver exception panels">
+      <section id="exception-panels" className="bof-cc-grid-2" aria-label="Driver exception panels">
         <ExceptionPanel
-          panelId="driver-blocked-dispatch"
+          panelId="blocked-roster"
           title="Drivers Blocked From Dispatch"
           items={blockedDriverRows.map((row) => {
             const elig = getDriverDispatchEligibility(data, row.driverId);
@@ -456,10 +621,33 @@ export function DriversRosterTable() {
         />
       </section>
 
-      <section id="driver-primary-table" className="bof-cc-panel" aria-label="Driver roster table">
+      <section id="primary-driver-table" className="bof-cc-panel" aria-label="Driver roster table">
         <div className="bof-cc-panel-head">
-          <h2 className="bof-h2">Primary Driver Table</h2>
-          <p className="bof-cc-panel-sub">All 12 drivers with readiness, risk posture, and owner actions.</p>
+          <div className="flex flex-wrap items-start justify-between gap-3">
+            <div>
+              <h2 className="bof-h2">Primary Driver Table</h2>
+              <p className="bof-cc-panel-sub">All 12 drivers with readiness, risk posture, and owner actions.</p>
+            </div>
+            {driverStatusFilter !== "all" ? (
+              <div className="flex flex-wrap items-center gap-2">
+                <span className="bof-cc-chip bof-cc-chip-warn" title="Roster filtered from readiness chart">
+                  Filter:{" "}
+                  {driverStatusFilter === "ready"
+                    ? "Ready"
+                    : driverStatusFilter === "needs_review"
+                      ? "Needs review"
+                      : "Blocked"}
+                </span>
+                <button
+                  type="button"
+                  className="bof-cc-action-btn"
+                  onClick={() => setDriverStatusFilter("all")}
+                >
+                  Clear filter
+                </button>
+              </div>
+            ) : null}
+          </div>
         </div>
         <div className="bof-cc-table-wrap">
           <table className="bof-cc-table">
@@ -477,7 +665,7 @@ export function DriversRosterTable() {
               </tr>
             </thead>
             <tbody>
-              {driverRows.map((row) => (
+              {filteredDriverRows.map((row) => (
                 <tr key={row.driverId}>
                   <td>
                     <div className="bof-cc-driver-cell">
@@ -492,10 +680,11 @@ export function DriversRosterTable() {
                   <td>
                     <StatusChip
                       label={row.status}
-                      onClick={
-                        row.status === "Review" || row.status === "Blocked"
-                          ? () => setReviewDrawer({ driverId: row.driverId })
-                          : undefined
+                      onClick={() =>
+                        setReviewDrawer({
+                          driverId: row.driverId,
+                          filter: row.status === "Blocked" ? "dispatch" : undefined,
+                        })
                       }
                     />
                   </td>
@@ -512,17 +701,89 @@ export function DriversRosterTable() {
                       row.dispatchEligibility
                     )}
                   </td>
-                  <td>{row.compliance}</td>
-                  <td><StatusChip label={row.safety} /></td>
                   <td>
-                    <StatusChip label={row.settlement} />
+                    <button
+                      type="button"
+                      className="bof-driver-review-dispatch-link text-left"
+                      onClick={() =>
+                        setReviewDrawer({
+                          driverId: row.driverId,
+                          filter: row.complianceDrawerCategory,
+                        })
+                      }
+                    >
+                      {row.compliance}
+                    </button>
+                  </td>
+                  <td>
+                    {row.safety === "At Risk" ? (
+                      <button
+                        type="button"
+                        className="bof-cc-chip bof-cc-chip-danger bof-cc-chip-action"
+                        onClick={() =>
+                          setReviewDrawer({ driverId: row.driverId, filter: "safety" })
+                        }
+                        title="Open driver review — safety"
+                      >
+                        {row.safety}
+                      </button>
+                    ) : (
+                      <Link
+                        href={`/drivers/${row.driverId}/safety`}
+                        className={[
+                          "bof-cc-chip inline-flex no-underline hover:opacity-90",
+                          row.safety === "Elite" ? "bof-cc-chip-ok" : "bof-cc-chip-warn",
+                        ].join(" ")}
+                      >
+                        {row.safety}
+                      </Link>
+                    )}
+                  </td>
+                  <td>
+                    {row.settlement === "Paid" ? (
+                      <Link
+                        href={`/drivers/${row.driverId}/settlements`}
+                        className="bof-cc-chip bof-cc-chip-ok inline-flex no-underline hover:opacity-90"
+                      >
+                        {row.settlement}
+                      </Link>
+                    ) : (
+                      <button
+                        type="button"
+                        className={`bof-cc-chip ${row.settlement === "Hold / Review" ? "bof-cc-chip-danger" : "bof-cc-chip-warn"} bof-cc-chip-action`}
+                        onClick={() =>
+                          setReviewDrawer({ driverId: row.driverId, filter: "settlement" })
+                        }
+                        title="Open driver review — settlement"
+                      >
+                        {row.settlement}
+                      </button>
+                    )}
                     {row.pendingPay > 0 ? <p className="bof-cc-driver-meta">{formatUsd(row.pendingPay)} pending</p> : null}
                   </td>
-                  <td>{row.currentOrNextLoad}</td>
-                  <td>{row.documentSummary}</td>
+                  <td>
+                    {row.loadLinkId ? (
+                      <Link
+                        href={`/dispatch?loadId=${encodeURIComponent(row.loadLinkId)}&driverId=${encodeURIComponent(row.driverId)}`}
+                        className="bof-driver-review-dispatch-link"
+                      >
+                        {row.currentOrNextLoad}
+                      </Link>
+                    ) : (
+                      row.currentOrNextLoad
+                    )}
+                  </td>
+                  <td>
+                    <Link
+                      href={`/drivers/${row.driverId}/vault`}
+                      className="bof-driver-review-dispatch-link"
+                    >
+                      {row.documentSummary}
+                    </Link>
+                  </td>
                   <td>
                     <div className="bof-cc-action-wrap">
-                      <Link href={`/drivers/${row.driverId}/profile`} className="bof-cc-action-btn">Profile</Link>
+                      <Link href={`/drivers/${row.driverId}`} className="bof-cc-action-btn">Profile</Link>
                       <Link href={`/drivers/${row.driverId}/vault`} className="bof-cc-action-btn">Docs</Link>
                       <Link href={`/drivers/${row.driverId}/hr`} className="bof-cc-action-btn">HR</Link>
                       <Link href={`/drivers/${row.driverId}/safety`} className="bof-cc-action-btn">Safety</Link>
@@ -602,23 +863,58 @@ function toneClass(tone: BreakdownPoint["tone"]): string {
   return "bof-cc-bar-info";
 }
 
-function ChartCard({ title, data }: { title: string; data: BreakdownPoint[] }) {
+function ChartCard({
+  title,
+  data,
+  onBarClick,
+}: {
+  title: string;
+  data: BreakdownPoint[];
+  onBarClick?: (label: string) => void;
+}) {
   const total = data.reduce((sum, point) => sum + point.value, 0) || 1;
+  const readinessInteractive =
+    Boolean(onBarClick) &&
+    (title === "Driver Readiness Breakdown" || title.toLowerCase().includes("readiness breakdown"));
   return (
     <article className="bof-cc-panel">
       <h3 className="bof-cc-panel-title">{title}</h3>
       <div className="bof-cc-bars">
-        {data.map((point) => (
-          <div key={point.label} className="bof-cc-bar-row">
-            <div className="bof-cc-bar-meta">
-              <span>{point.label}</span>
-              <strong>{point.value}</strong>
+        {data.map((point) => {
+          const isFilterBar =
+            readinessInteractive &&
+            (point.label === "Ready" ||
+              point.label === "Needs Review" ||
+              point.label === "Blocked");
+          return (
+            <div key={point.label} className="bof-cc-bar-row">
+              <div className="bof-cc-bar-meta">
+                {isFilterBar ? (
+                  <button
+                    type="button"
+                    className="flex w-full cursor-pointer items-center justify-between gap-2 rounded border border-transparent bg-transparent px-0 py-0.5 text-left font-inherit text-inherit hover:border-teal-600/35 hover:bg-teal-950/25"
+                    onClick={() => onBarClick?.(point.label)}
+                    title="Apply this readiness filter to the primary table"
+                  >
+                    <span>{point.label}</span>
+                    <strong>{point.value}</strong>
+                  </button>
+                ) : (
+                  <>
+                    <span>{point.label}</span>
+                    <strong>{point.value}</strong>
+                  </>
+                )}
+              </div>
+              <div className="bof-cc-bar-track">
+                <div
+                  className={`bof-cc-bar-fill ${toneClass(point.tone)}`}
+                  style={{ width: `${Math.max(8, (point.value / total) * 100)}%` }}
+                />
+              </div>
             </div>
-            <div className="bof-cc-bar-track">
-              <div className={`bof-cc-bar-fill ${toneClass(point.tone)}`} style={{ width: `${Math.max(8, (point.value / total) * 100)}%` }} />
-            </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
     </article>
   );
@@ -671,6 +967,11 @@ function ExceptionPanel({
               <div>
                 <p className="bof-cc-exception-title">{item.driver}</p>
                 <p className="bof-cc-exception-issue">{item.issue}</p>
+                {item.detailLines?.map((line, idx) => (
+                  <p key={`${item.key}-ctx-${idx}`} className="bof-cc-exception-next text-slate-400">
+                    {line}
+                  </p>
+                ))}
                 <p className="bof-cc-exception-next">{item.nextStep}</p>
               </div>
               <div style={{ display: "flex", flexDirection: "column", gap: "0.35rem", alignItems: "stretch" }}>
@@ -700,6 +1001,11 @@ function ExceptionPanel({
                 <Link href={item.actionHref} className="bof-cc-action-btn">
                   {item.actionLabel}
                 </Link>
+                {item.secondaryActions?.map((a) => (
+                  <Link key={a.label + a.href} href={a.href} className="bof-cc-action-btn">
+                    {a.label}
+                  </Link>
+                ))}
               </div>
             </div>
           ))}
