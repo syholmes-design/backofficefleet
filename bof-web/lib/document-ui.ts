@@ -50,8 +50,19 @@ export function isHtmlPath(url: string) {
   return /\.html(\?|$)/i.test(url);
 }
 
-/** Previews that render in an iframe (HTML credential shells, PDFs). */
+/** Canonical vault PDFs (I-9 / W-9): iframe embed is unreliable — open in new tab from compact card. */
+export function isCanonicalVaultFormPdf(url: string, kind: "i9" | "w9"): boolean {
+  const u = url.trim();
+  if (!u.startsWith("/documents/drivers/DRV-")) return false;
+  if (!/\.pdf(\?|$)/i.test(u)) return false;
+  if (kind === "w9") return /\/w9-drv-\d{3}\.pdf$/i.test(u);
+  return /\/i9-drv-\d{3}\.pdf$/i.test(u);
+}
+
+/** Previews that render in an iframe (HTML credential shells; PDFs except canonical I-9/W-9 vault PDFs). */
 export function isEmbedPreviewPath(url: string) {
+  if (!url) return false;
+  if (isCanonicalVaultFormPdf(url, "i9") || isCanonicalVaultFormPdf(url, "w9")) return false;
   return isHtmlPath(url) || /\.pdf(\?|$)/i.test(url);
 }
 

@@ -84,6 +84,11 @@ function main() {
       fail(errors, `${driverId}: canonical W-9 missing from public index: ${w9Url}`);
     }
 
+    const i9Url = `/documents/drivers/${driverId}/i9-drv-${n}.pdf`;
+    if (!fileSet.has(i9Url)) {
+      fail(errors, `${driverId}: canonical I-9 missing from public index: ${i9Url}`);
+    }
+
     for (const t of ["CDL", "MVR", "FMCSA"]) {
       const row = docs.find((d) => d.type === t);
       const exp = row?.expirationDate?.trim();
@@ -120,7 +125,9 @@ function main() {
     console.error("validate-driver-dqf-readiness FAILED:\n" + errors.join("\n"));
     process.exit(1);
   }
-  console.log("validate-driver-dqf-readiness OK (core rows, W-9 index, expiration vs EXPIRED labels).");
+  console.log(
+    "validate-driver-dqf-readiness OK (core rows, W-9 + I-9 index, expiration vs EXPIRED labels)."
+  );
 }
 
 main();

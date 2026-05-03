@@ -7,6 +7,7 @@ import {
   documentSignal,
   documentSignalClass,
   documentSignalLabel,
+  isCanonicalVaultFormPdf,
   isEmbedPreviewPath,
   isImagePath,
   statusBadgeClass,
@@ -187,7 +188,21 @@ export function DriverDocumentPacketSection({
                     Open file in new tab
                   </a>
                 </p>
-                {isEmbedPreviewPath(selected.previewUrl || selected.fileUrl || "") ? (
+                {isCanonicalVaultFormPdf(selected.previewUrl || selected.fileUrl || "", "i9") ||
+                isCanonicalVaultFormPdf(selected.previewUrl || selected.fileUrl || "", "w9") ? (
+                  <div className="mt-3 rounded border border-slate-600/40 bg-slate-900/40 p-4 text-sm">
+                    <p className="font-medium text-slate-100">{selected.label}</p>
+                    <p className="mt-1 text-slate-400">Canonical PDF on file</p>
+                    <a
+                      href={selected.fileUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="mt-3 inline-block font-semibold text-teal-400 hover:underline"
+                    >
+                      Open file
+                    </a>
+                  </div>
+                ) : isEmbedPreviewPath(selected.previewUrl || selected.fileUrl || "") ? (
                   <iframe
                     src={selected.previewUrl || selected.fileUrl}
                     title={selected.label}

@@ -159,6 +159,26 @@ function main() {
         if (!existsPublic(expectedW9)) {
           errors.push(`${driverId}: canonical W-9 PDF missing on disk ${expectedW9}`);
         }
+        const expectedI9 = `/documents/drivers/${driverId}/i9-${driverId.toLowerCase()}.pdf`;
+        const i9Row = byType.get("I-9");
+        if (!i9Row) {
+          errors.push(`${driverId}: I-9 core row missing`);
+        } else {
+          const i9Fu = String(i9Row.fileUrl ?? "").trim();
+          const i9Pu = String(i9Row.previewUrl ?? "").trim();
+          if (i9Fu !== expectedI9) {
+            errors.push(`${driverId}: I-9 fileUrl must be ${expectedI9}, got ${i9Fu || "(empty)"}`);
+          }
+          if (i9Pu && i9Pu !== expectedI9) {
+            errors.push(`${driverId}: I-9 previewUrl must match canonical ${expectedI9}, got ${i9Pu}`);
+          }
+          if (/\/generated\/.*i9\.html/i.test(i9Fu) || /\/generated\/.*i9\.html/i.test(i9Pu)) {
+            errors.push(`${driverId}: I-9 must not point at generated i9.html when canonical PDF is required`);
+          }
+        }
+        if (!existsPublic(expectedI9)) {
+          errors.push(`${driverId}: canonical I-9 PDF missing on disk ${expectedI9}`);
+        }
       }
     }
 

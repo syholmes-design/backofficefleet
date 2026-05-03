@@ -27,7 +27,8 @@ const DOC_SPECS = [
     },
   },
   { type: "MVR", base: (n) => `mvr-card-drv-${n}` },
-  { type: "I-9", base: () => "i9" },
+  /** Canonical I-9: /documents/drivers/{id}/i9-drv-xxx.pdf (driverId-keyed; never generated HTML when PDF exists). */
+  { type: "I-9", base: (_n, driverId) => `i9-${driverId.toLowerCase()}` },
   /** Canonical W-9: /documents/drivers/{id}/w9-{idLower}.pdf — keyed by driverId only. */
   { type: "W-9", base: (_n, driverId) => `w9-${driverId.toLowerCase()}` },
   { type: "FMCSA Compliance", base: () => "fmcsa-compliance" },
@@ -89,6 +90,27 @@ function w9DownloadCandidates(driverId) {
     .map((f) => path.join(DOWNLOADS_ROOT, f));
 }
 
+/** Newest first — pattern I9-DRV-001_*.pdf (case-insensitive). Duplicate downloads → pick latest mtime. */
+function i9DownloadCandidates(driverId) {
+  if (!exists(DOWNLOADS_ROOT)) return [];
+  const idLower = driverId.toLowerCase();
+  const wantPrefix = `i9-${idLower}_`;
+  const matches = [];
+  for (const f of fs.readdirSync(DOWNLOADS_ROOT)) {
+    const lower = f.toLowerCase();
+    if (!lower.endsWith(".pdf")) continue;
+    if (!lower.startsWith(wantPrefix)) continue;
+    const abs = path.join(DOWNLOADS_ROOT, f);
+    try {
+      matches.push({ abs, mtime: fs.statSync(abs).mtimeMs });
+    } catch {
+      /* skip */
+    }
+  }
+  matches.sort((a, b) => b.mtime - a.mtime);
+  return matches.map((m) => m.abs);
+}
+
 function buildCandidates(driverId, suffix3) {
   const dir = path.join(DRIVER_DOCS_ROOT, driverId);
   const gen = path.join(GENERATED_ROOT, driverId);
@@ -144,7 +166,7 @@ function buildCandidates(driverId, suffix3) {
       path.join(dir, "mvr-card.html"),
       path.join(gen, "mvr.html"),
     ],
-    "I-9": [path.join(gen, "i9.html"), path.join(gen, "i-9.html")],
+    "I-9": [...i9DownloadCandidates(driverId)],
     "W-9": [
       path.join(dir, `w9-${driverId.toLowerCase()}.pdf`),
       ...w9DownloadCandidates(driverId),
@@ -176,7 +198,7 @@ function run() {
     for (const spec of DOC_SPECS) {
       const baseFn = spec.base;
       const baseRel =
-        spec.type === "Bank Information" || spec.type === "W-9"
+        spec.type === "Bank Information" || spec.type === "W-9" || spec.type === "I-9"
           ? baseFn(suffix3, driverId)
           : baseFn(suffix3);
       const baseAbs = path.join(dir, baseRel);

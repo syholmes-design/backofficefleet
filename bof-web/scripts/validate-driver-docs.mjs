@@ -73,6 +73,10 @@ function run() {
     if (!resolveBase(dir, w9Base)) {
       fail(`Missing canonical W-9 PDF for ${driverId}: ${w9Base}.pdf`);
     }
+    const i9Base = `i9-drv-${n}`;
+    if (!resolveBase(dir, i9Base)) {
+      fail(`Missing canonical I-9 PDF for ${driverId}: ${i9Base}.pdf`);
+    }
   }
 
   if (!exists(INDEX_PATH)) {
@@ -95,6 +99,10 @@ function run() {
       if (!fileSet.has(w9Url)) {
         fail(`Index missing canonical W-9 URL for ${driverId}: ${w9Url}`);
       }
+      const i9Url = `/documents/drivers/${driverId}/i9-drv-${n}.pdf`;
+      if (!fileSet.has(i9Url)) {
+        fail(`Index missing canonical I-9 URL for ${driverId}: ${i9Url}`);
+      }
     }
     for (const file of files) {
       if (!file.startsWith("/documents/drivers/")) {
@@ -115,7 +123,8 @@ function run() {
           file.includes("Medical Card-") ||
           file.includes("bank-card-drv-") ||
           file.includes("bank-card-DRV-") ||
-          file.includes("mvr-card-drv-");
+          file.includes("mvr-card-drv-") ||
+          file.includes("i9-drv-");
         if (suspicious && !file.includes(expectedSuffix)) {
           fail(`Driver suffix mismatch in path: ${file}`);
         }

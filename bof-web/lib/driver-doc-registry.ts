@@ -64,7 +64,8 @@ function sourcePathForType(driverId: string, type: string): string | undefined {
     "Insurance Card": `${root}/icard-drv-${suffix}`,
     "Medical Card": `${root}/Medical Card-${suffix}`,
     MVR: `${root}/mvr-card-drv-${suffix}`,
-    "I-9": `${root}/i9`,
+    /** Canonical USCIS I-9 PDF — driverId only: i9-drv-009.pdf */
+    "I-9": `${root}/i9-${driverId.toLowerCase()}`,
     /** Canonical IRS W-9 PDF keyed by driverId only (e.g. w9-drv-009.pdf). */
     "W-9": `${root}/w9-${driverId.toLowerCase()}`,
     FMCSA: `${root}/fmcsa-compliance`,
@@ -119,7 +120,8 @@ export function getDriverDocumentPacket(driverId: string): DriverDocManifestEntr
       getDriverPublicDocPath(driverId, "Medical Card") ?? merged.medicalCard,
     bankInformation: resolveDriverBankInformationUrl(driverId),
     mvr: getDriverPublicDocPath(driverId, "MVR") ?? merged.mvr,
-    i9: getDriverPublicDocPath(driverId, "I-9") ?? merged.i9,
+    /** Canonical I-9 PDF only when listed in driver-public-doc-index (sync from disk); no generated HTML fallback. */
+    i9: getDriverPublicDocPath(driverId, "I-9"),
     w9: getDriverPublicDocPath(driverId, "W-9") ?? merged.w9,
     fmcsaCompliance:
       getDriverPublicDocPath(driverId, "FMCSA Compliance") ?? merged.fmcsaCompliance,

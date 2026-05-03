@@ -279,6 +279,43 @@ export function generateDriverDocument(
       };
     }
   }
+  if (type === "I-9") {
+    const i9Url = getDriverDocumentByType(driverId, "I-9");
+    const rows = getOrderedDocumentsForDriver(data, driverId);
+    const row = rows.find((r) => r.type === "I-9");
+    const blocks = row?.blocksPayment === true;
+    if (i9Url) {
+      return {
+        id: `ENG-DRIVER-${driverId}-i9canonical`,
+        type,
+        title: `I-9 · ${driver.name}`,
+        driverId,
+        status: row?.status ?? "VALID",
+        fileUrl: i9Url,
+        previewUrl: i9Url,
+        blocksPayment: blocks,
+        generatedAt: nowIso(),
+        sourceDataSummary: buildSourceSummaryDriver(data, driverId),
+        notes: "Canonical Form I-9 PDF under /documents/drivers/{driverId}/ (driverId-keyed).",
+        links: linksForDriver(driverId),
+      };
+    }
+    return {
+      id: `ENG-DRIVER-${driverId}-i9missing`,
+      type,
+      title: `I-9 · ${driver.name}`,
+      driverId,
+      status: row?.status ?? "MISSING",
+      fileUrl: "",
+      previewUrl: "",
+      blocksPayment: blocks,
+      generatedAt: nowIso(),
+      sourceDataSummary: buildSourceSummaryDriver(data, driverId),
+      notes:
+        "Expected canonical PDF at /documents/drivers/{driverId}/i9-{driverIdLower}.pdf — copy I9-{driverId}_*.pdf from Downloads and run npm run sync:driver-hr-docs.",
+      links: linksForDriver(driverId),
+    };
+  }
   if (type === "W-9") {
     const w9Url = getDriverDocumentByType(driverId, "W-9");
     if (w9Url) {

@@ -37,6 +37,9 @@ const driverApplicationPath = (driverId) =>
 /** Canonical IRS W-9 PDFs under public/documents/drivers (driverId only; no generated w9.html). */
 const w9CanonicalPdfPath = (driverId) =>
   `/documents/drivers/${driverId}/w9-${String(driverId).toLowerCase()}.pdf`;
+/** Canonical USCIS I-9 PDFs (driverId-keyed). Legacy /generated/.../i9.html is not used when this path is on file. */
+const i9CanonicalPdfPath = (driverId) =>
+  `/documents/drivers/${driverId}/i9-${String(driverId).toLowerCase()}.pdf`;
 
 function stripManagedFleetSupplementals(documents) {
   const drop = new Set(FLEET_MANAGED_SUPPLEMENTAL_TYPES);
@@ -109,8 +112,8 @@ function patchCoreSevenForDriver(documents, driverId, ex, driver) {
     "I-9": {
       status: "VALID",
       expirationDate: genericExp,
-      fileUrl: genPath(driverId, "i9.html"),
-      previewUrl: genPath(driverId, "i9.html"),
+      fileUrl: i9CanonicalPdfPath(driverId),
+      previewUrl: i9CanonicalPdfPath(driverId),
       docTier: "primary",
     },
     FMCSA: {

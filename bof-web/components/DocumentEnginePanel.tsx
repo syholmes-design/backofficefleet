@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
 import type { EngineDocument } from "@/lib/document-engine";
 import { formatUsd } from "@/lib/format-money";
+import { isCanonicalVaultFormPdf } from "@/lib/document-ui";
 
 function isImagePath(url: string) {
   return /\.(png|jpe?g|gif|webp|svg)(\?|$)/i.test(url);
@@ -17,11 +18,19 @@ function isHtmlDocumentPath(url: string) {
   return /\.html(\?|$)/i.test(url);
 }
 
-/** Canonical W-9 is a public PDF; iframe embed is unreliable — use card + open link. */
-function isW9CanonicalPdf(doc: Pick<EngineDocument, "type" | "previewUrl" | "fileUrl">) {
-  if (doc.type !== "W-9") return false;
+/** Canonical I-9 / W-9 vault PDFs — iframe embed is unreliable; use compact card + open link. */
+function isCanonicalVaultEmploymentPdf(doc: Pick<EngineDocument, "type" | "previewUrl" | "fileUrl">) {
   const u = (doc.previewUrl || doc.fileUrl || "").trim();
-  return isPdfPath(u);
+  if (!isPdfPath(u)) return false;
+  if (doc.type === "W-9") return isCanonicalVaultFormPdf(u, "w9");
+  if (doc.type === "I-9") return isCanonicalVaultFormPdf(u, "i9");
+  return false;
+}
+
+function canonicalVaultPdfCardTitle(doc: Pick<EngineDocument, "type">) {
+  if (doc.type === "W-9") return "W-9";
+  if (doc.type === "I-9") return "I-9";
+  return "Document";
 }
 
 function badgeClass(blocks: boolean) {
@@ -84,11 +93,11 @@ export function DocumentEnginePanel({
       return <p className="bof-doc-popover-empty">Preview not available</p>;
     }
     if (isPdfPath(url)) {
-      if (isW9CanonicalPdf(doc)) {
+      if (isCanonicalVaultEmploymentPdf(doc)) {
         const openHref = doc.fileUrl?.trim() || url;
         return (
           <>
-            <div className="bof-doc-popover-title">W-9</div>
+            <div className="bof-doc-popover-title">{canonicalVaultPdfCardTitle(doc)}</div>
             <div className="rounded border border-slate-200 bg-slate-50 p-3 text-sm text-gray-800">
               <p className="text-gray-600">Canonical PDF on file</p>
               <a
@@ -441,9 +450,9 @@ export function DocumentEnginePanel({
                   />
                 )
               )}
-              {modal.previewUrl && isW9CanonicalPdf(modal) && (
+              {modal.previewUrl && isCanonicalVaultEmploymentPdf(modal) && (
                 <div className="mt-4 rounded border border-slate-200 bg-slate-50 p-4 text-sm text-gray-800">
-                  <p className="font-medium text-gray-900">W-9</p>
+                  <p className="font-medium text-gray-900">{canonicalVaultPdfCardTitle(modal)}</p>
                   <p className="mt-1 text-gray-600">Canonical PDF on file</p>
                   <a
                     href={modal.fileUrl?.trim() || modal.previewUrl}
@@ -459,7 +468,7 @@ export function DocumentEnginePanel({
                 hrPacketPreview &&
                 (isPdfPath(modal.previewUrl) ||
                   isHtmlDocumentPath(modal.previewUrl)) &&
-                !isW9CanonicalPdf(modal) && (
+                !isCanonicalVaultEmploymentPdf(modal) && (
                   <div
                     className={
                       isCdlHrPreviewDoc(modal)
@@ -481,7 +490,7 @@ export function DocumentEnginePanel({
               {modal.previewUrl &&
                 !hrPacketPreview &&
                 isPdfPath(modal.previewUrl) &&
-                !isW9CanonicalPdf(modal) && (
+                !isCanonicalVaultEmploymentPdf(modal) && (
                   <iframe
                     src={modal.previewUrl}
                     title="Document preview"
