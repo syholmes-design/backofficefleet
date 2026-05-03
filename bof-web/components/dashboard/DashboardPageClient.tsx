@@ -152,6 +152,8 @@ export function DashboardPageClient() {
           />
         </div>
         <div className="bof-dashboard-hero__fade" aria-hidden="true" />
+        <div className="bof-dashboard-hero__textMask" aria-hidden="true" />
+        <div className="bof-dashboard-hero__artifactMask" aria-hidden="true" />
         <div className="bof-dashboard-hero__content">
           <div className="bof-dashboard-hero__intro bof-cc-hero-left">
             <p className="bof-cc-kicker">Executive Operations Cockpit</p>

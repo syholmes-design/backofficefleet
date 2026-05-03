@@ -14038,8 +14038,8 @@ body {
 }
 
 /*
- * Dashboard (/dashboard) hero — full-card background image + left fade.
- * PNG is decorative only (cover, right-weighted); baked-in landing chrome stays under the fade/crop.
+ * Dashboard (/dashboard) hero — full-card background image + layered fades/masks.
+ * PNG is decorative only (cover, right-weighted); baked-in PNG text + teal chrome masked off.
  * Real CTAs are DOM-only (BookDemoLink + Next Link). Does not affect Drivers / other marketing heroes.
  */
 .bof-dashboard-hero.bof-dashboard-hero--image-bg.bof-cc-hero {
@@ -14063,8 +14063,8 @@ body {
 
 .bof-dashboard-hero__bgImage {
   object-fit: cover;
-  object-position: 78% 48%;
-  /* Lift monitor/UI legibility without touching DOM column or global hero palette */
+  /* Nudge monitor / dashboard art lower + right — reduces collision with live headline column */
+  object-position: 86% 56%;
   filter: brightness(1.1) contrast(1.06) saturate(1.03);
 }
 
@@ -14073,28 +14073,64 @@ body {
   inset: 0;
   z-index: 1;
   pointer-events: none;
-  /* Top-right radial: PNG chrome only — tighter + softer so it doesn’t veil the monitor. */
+  /* Strong left/top/middle read lane; lighter toward right monitor + bottom scene */
   background:
-    radial-gradient(
-      ellipse 195px 62px at calc(100% - 2.5rem) clamp(1.35rem, 3.8vw, 2.85rem),
-      rgba(2, 6, 23, 0.96) 0%,
-      rgba(2, 6, 23, 0.48) 48%,
-      transparent 76%
-    ),
     linear-gradient(
       90deg,
-      rgba(2, 6, 23, 0.98) 0%,
-      rgba(2, 6, 23, 0.94) 24%,
-      rgba(2, 6, 23, 0.72) 42%,
-      rgba(2, 6, 23, 0.14) 66%,
-      rgba(2, 6, 23, 0) 100%
+      rgba(2, 6, 23, 0.99) 0%,
+      rgba(2, 6, 23, 0.98) 30%,
+      rgba(2, 6, 23, 0.82) 48%,
+      rgba(2, 6, 23, 0.22) 70%,
+      rgba(2, 6, 23, 0.02) 100%
     ),
-    linear-gradient(180deg, rgba(2, 6, 23, 0.08) 0%, rgba(2, 6, 23, 0.28) 100%);
+    linear-gradient(
+      180deg,
+      rgba(2, 6, 23, 0.94) 0%,
+      rgba(2, 6, 23, 0.82) 24%,
+      rgba(2, 6, 23, 0.42) 52%,
+      rgba(2, 6, 23, 0.16) 82%,
+      rgba(2, 6, 23, 0.06) 100%
+    );
+}
+
+/* Extra suppression of baked-in PNG headline copy (center-left) — does not extend over right monitor */
+.bof-dashboard-hero__textMask {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 62%;
+  height: 58%;
+  z-index: 1;
+  pointer-events: none;
+  background: radial-gradient(
+    circle at 28% 30%,
+    rgba(2, 6, 23, 0.98) 0%,
+    rgba(2, 6, 23, 0.72) 42%,
+    rgba(2, 6, 23, 0) 72%
+  );
+}
+
+/* Hides baked-in teal/green chrome bar above monitor (top-right) — blends into hero bg */
+.bof-dashboard-hero__artifactMask {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: clamp(150px, 14vw, 280px);
+  height: clamp(36px, 4.5vw, 72px);
+  z-index: 1;
+  pointer-events: none;
+  border-radius: 0 1rem 0 0;
+  background: linear-gradient(
+    90deg,
+    rgba(2, 6, 23, 0) 0%,
+    rgba(2, 6, 23, 0.92) 30%,
+    rgba(2, 6, 23, 1) 100%
+  );
 }
 
 .bof-dashboard-hero__content {
   position: relative;
-  z-index: 2;
+  z-index: 3;
   max-width: 58rem;
   min-width: 0;
 }
@@ -15045,27 +15081,50 @@ body {
   }
 
   .bof-dashboard-hero__bgImage {
-    object-position: 84% 46%;
+    object-position: 82% 54%;
     filter: brightness(1.08) contrast(1.05) saturate(1.02);
   }
 
   .bof-dashboard-hero__fade {
     background:
-      radial-gradient(
-        ellipse 175px 56px at calc(100% - 1rem) clamp(1rem, 4vw, 2.1rem),
-        rgba(2, 6, 23, 0.94) 0%,
-        rgba(2, 6, 23, 0.42) 46%,
-        transparent 78%
-      ),
       linear-gradient(
         90deg,
-        rgba(2, 6, 23, 0.985) 0%,
-        rgba(2, 6, 23, 0.93) 18%,
-        rgba(2, 6, 23, 0.74) 38%,
-        rgba(2, 6, 23, 0.18) 66%,
-        rgba(2, 6, 23, 0) 100%
+        rgba(2, 6, 23, 0.995) 0%,
+        rgba(2, 6, 23, 0.985) 28%,
+        rgba(2, 6, 23, 0.88) 46%,
+        rgba(2, 6, 23, 0.26) 68%,
+        rgba(2, 6, 23, 0.03) 100%
       ),
-      linear-gradient(180deg, rgba(2, 6, 23, 0.1) 0%, rgba(2, 6, 23, 0.36) 100%);
+      linear-gradient(
+        180deg,
+        rgba(2, 6, 23, 0.96) 0%,
+        rgba(2, 6, 23, 0.84) 22%,
+        rgba(2, 6, 23, 0.44) 50%,
+        rgba(2, 6, 23, 0.14) 80%,
+        rgba(2, 6, 23, 0.05) 100%
+      );
+  }
+
+  .bof-dashboard-hero__textMask {
+    width: 72%;
+    height: 64%;
+    background: radial-gradient(
+      circle at 22% 28%,
+      rgba(2, 6, 23, 0.99) 0%,
+      rgba(2, 6, 23, 0.78) 40%,
+      rgba(2, 6, 23, 0) 74%
+    );
+  }
+
+  .bof-dashboard-hero__artifactMask {
+    width: clamp(160px, 42vw, 300px);
+    height: clamp(42px, 8vw, 86px);
+    background: linear-gradient(
+      90deg,
+      rgba(2, 6, 23, 0) 0%,
+      rgba(2, 6, 23, 0.94) 26%,
+      rgba(2, 6, 23, 1) 100%
+    );
   }
 
   .bof-dashboard-route-snapshot__panel.bof-cc-route-panel {
