@@ -14073,23 +14073,24 @@ body {
   inset: 0;
   z-index: 1;
   pointer-events: none;
-  /* Strong left/top/middle read lane; lighter toward right monitor + bottom scene */
+  /* Strong left/top/middle read lane; right monitor ~10–15% brighter via lighter mid-right stops */
   background:
     linear-gradient(
       90deg,
       rgba(2, 6, 23, 0.99) 0%,
       rgba(2, 6, 23, 0.98) 30%,
       rgba(2, 6, 23, 0.82) 48%,
-      rgba(2, 6, 23, 0.22) 70%,
-      rgba(2, 6, 23, 0.02) 100%
+      rgba(2, 6, 23, 0.52) 56%,
+      rgba(2, 6, 23, 0.12) 72%,
+      rgba(2, 6, 23, 0.00) 100%
     ),
     linear-gradient(
       180deg,
       rgba(2, 6, 23, 0.94) 0%,
       rgba(2, 6, 23, 0.82) 24%,
-      rgba(2, 6, 23, 0.42) 52%,
-      rgba(2, 6, 23, 0.16) 82%,
-      rgba(2, 6, 23, 0.06) 100%
+      rgba(2, 6, 23, 0.38) 52%,
+      rgba(2, 6, 23, 0.10) 82%,
+      rgba(2, 6, 23, 0.03) 100%
     );
 }
 
@@ -15092,16 +15093,17 @@ body {
         rgba(2, 6, 23, 0.995) 0%,
         rgba(2, 6, 23, 0.985) 28%,
         rgba(2, 6, 23, 0.88) 46%,
-        rgba(2, 6, 23, 0.26) 68%,
-        rgba(2, 6, 23, 0.03) 100%
+        rgba(2, 6, 23, 0.56) 54%,
+        rgba(2, 6, 23, 0.14) 70%,
+        rgba(2, 6, 23, 0.00) 100%
       ),
       linear-gradient(
         180deg,
         rgba(2, 6, 23, 0.96) 0%,
         rgba(2, 6, 23, 0.84) 22%,
-        rgba(2, 6, 23, 0.44) 50%,
-        rgba(2, 6, 23, 0.14) 80%,
-        rgba(2, 6, 23, 0.05) 100%
+        rgba(2, 6, 23, 0.40) 50%,
+        rgba(2, 6, 23, 0.09) 80%,
+        rgba(2, 6, 23, 0.03) 100%
       );
   }
 

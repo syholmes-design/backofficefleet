@@ -12,7 +12,7 @@ export type SectorLink = {
 export const sectorLinks: SectorLink[] = [
   {
     label: "For-Hire Carriers",
-    href: "/for-hire-carriers",
+    href: "/",
     sector: "for-hire",
   },
   {

@@ -60,6 +60,7 @@ function main() {
   }
 
   const heroRoutes = [
+    "/",
     "/dispatch",
     "/dashboard",
     "/settlements",
