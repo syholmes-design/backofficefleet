@@ -250,9 +250,21 @@ export function DashboardPageClient() {
               <p className="bof-cc-queue-fix"><strong>Recommended fix:</strong> {item.recommendedFix}</p>
               <div className="bof-cc-queue-foot">
                 <span>{item.financialImpact ? formatUsd(item.financialImpact) : "No direct amount"}</span>
-                <Link href={item.actionHref} className="bof-cc-action-btn bof-cc-action-btn-primary">
-                  {item.actionLabel}
-                </Link>
+                <span style={{ display: "flex", flexWrap: "wrap", gap: "0.35rem", justifyContent: "flex-end" }}>
+                  {item.reviewDriverId ? (
+                    <Link href={`/drivers/${item.reviewDriverId}#driver-review`} className="bof-cc-action-btn">
+                      View driver review
+                    </Link>
+                  ) : null}
+                  {item.reviewLoadId ? (
+                    <Link href={`/loads/${item.reviewLoadId}#load-review`} className="bof-cc-action-btn">
+                      View load review
+                    </Link>
+                  ) : null}
+                  <Link href={item.actionHref} className="bof-cc-action-btn bof-cc-action-btn-primary">
+                    {item.actionLabel}
+                  </Link>
+                </span>
               </div>
             </article>
           ))}
@@ -304,9 +316,21 @@ export function DashboardPageClient() {
                   <td>{item.financialImpact ? formatUsd(item.financialImpact) : "—"}</td>
                   <td>{item.recommendedFix}</td>
                   <td>
-                    <Link href={item.actionHref} className="bof-cc-table-link">
-                      {item.actionLabel}
-                    </Link>
+                    <div style={{ display: "flex", flexDirection: "column", gap: "0.35rem" }}>
+                      {item.reviewDriverId ? (
+                        <Link href={`/drivers/${item.reviewDriverId}#driver-review`} className="bof-cc-table-link">
+                          Driver review details
+                        </Link>
+                      ) : null}
+                      {item.reviewLoadId ? (
+                        <Link href={`/loads/${item.reviewLoadId}#load-review`} className="bof-cc-table-link">
+                          Load review details
+                        </Link>
+                      ) : null}
+                      <Link href={item.actionHref} className="bof-cc-table-link">
+                        {item.actionLabel}
+                      </Link>
+                    </div>
                   </td>
                 </tr>
               ))}

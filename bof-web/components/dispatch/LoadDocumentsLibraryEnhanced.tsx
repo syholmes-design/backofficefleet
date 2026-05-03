@@ -10,6 +10,7 @@ import type { Load } from "@/types/dispatch";
 import { useBofDemoData } from "@/lib/bof-demo-data-context";
 import { buildTripDocumentPacket, groupTripPacketRows } from "@/lib/load-trip-packet";
 import type { TripPacketRow } from "@/lib/load-trip-packet";
+import { ProofGapReviewLinks } from "@/components/review/ReviewDeepLinks";
 
 function showExceptionClaimSection(load: Load): boolean {
   return Boolean(
@@ -118,6 +119,11 @@ export function LoadDocumentsLibraryEnhanced({ load }: Props) {
               <div className="text-xs text-amber-100">
                 <strong>Needs review:</strong> rows without URLs stay closed — regenerate from demo scripts or attach uploads.
               </div>
+              <ProofGapReviewLinks
+                driverId={load.driver_id}
+                loadId={load.load_id}
+                className="mt-2 flex flex-wrap gap-x-2 gap-y-1"
+              />
             </div>
           </div>
         )}
@@ -127,6 +133,7 @@ export function LoadDocumentsLibraryEnhanced({ load }: Props) {
         <DocGroup
           key={group.group}
           loadId={load.load_id}
+          driverId={load.driver_id}
           title={group.label}
           rows={group.rows}
           referenceCollapsed={group.group === "reference" && !referenceOpen}
@@ -159,12 +166,14 @@ export function LoadDocumentsLibraryEnhanced({ load }: Props) {
 
 function DocGroup({
   loadId,
+  driverId,
   title,
   rows,
   referenceCollapsed,
   onExpandReference,
 }: {
   loadId: string;
+  driverId?: string | null;
   title: string;
   rows: TripPacketRow[];
   referenceCollapsed?: boolean;
@@ -193,7 +202,7 @@ function DocGroup({
       ) : (
         <div className="grid gap-2 sm:grid-cols-2">
           {rows.map((row) => (
-            <DocCard key={row.key} loadId={loadId} row={row} />
+            <DocCard key={row.key} loadId={loadId} driverId={driverId} row={row} />
           ))}
         </div>
       )}
@@ -201,7 +210,15 @@ function DocGroup({
   );
 }
 
-function DocCard({ loadId, row }: { loadId: string; row: TripPacketRow }) {
+function DocCard({
+  loadId,
+  driverId,
+  row,
+}: {
+  loadId: string;
+  driverId?: string | null;
+  row: TripPacketRow;
+}) {
   const ready = rowReady(row);
   const statusColors = {
     ready: "border-emerald-700/60 bg-emerald-950/40",
@@ -273,9 +290,16 @@ function DocCard({ loadId, row }: { loadId: string; row: TripPacketRow }) {
             </a>
           </p>
         ) : (
-          <p className="mt-1 text-[10px] font-semibold uppercase tracking-wide text-slate-500">
-            Missing / Needs review
-          </p>
+          <>
+            <p className="mt-1 text-[10px] font-semibold uppercase tracking-wide text-slate-500">
+              Missing / Needs review
+            </p>
+            <ProofGapReviewLinks
+              driverId={driverId}
+              loadId={loadId}
+              className="mt-1 flex flex-wrap gap-x-2 gap-y-1"
+            />
+          </>
         )}
       </div>
     </div>

@@ -43,12 +43,19 @@ export type DriverReviewIssue = {
 export type DriverReviewExplanation = {
   driverId: string;
   driverName: string;
+  entityType: "driver";
+  entityId: string;
+  entityLabel: string;
+  /** Dispatch posture — mirrors reviewStatus */
+  status: "ready" | "needs_review" | "blocked";
   reviewStatus: "ready" | "needs_review" | "blocked";
   summary: string;
   issues: DriverReviewIssue[];
   documentsColumnLabel: string;
   complianceColumnLabel: string;
   primaryAction?: { label: string; href: string };
+  /** Narrative primary remediation — first open issue fix, else eligibility CTA label */
+  recommendedNextStepText: string;
 };
 
 function hashString(s: string): string {
@@ -488,14 +495,24 @@ export function getDriverReviewExplanation(data: BofData, driverId: string): Dri
     primaryAction = { label: first.actionLabel, href: first.actionHref };
   }
 
+  const recommendedNextStepText =
+    first?.recommendedFix ??
+    eligibility.recommendedAction?.label ??
+    (activeIssues.length === 0 ? "" : summary);
+
   return {
     driverId,
     driverName,
+    entityType: "driver",
+    entityId: driverId,
+    entityLabel: driverId,
+    status: eligibility.status,
     reviewStatus: eligibility.status,
     summary,
     issues,
     documentsColumnLabel,
     complianceColumnLabel,
     primaryAction,
+    recommendedNextStepText,
   };
 }

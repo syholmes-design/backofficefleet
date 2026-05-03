@@ -7,6 +7,7 @@ import type { SafetyCommandFeedRow } from "@/lib/safety-command-feed";
 import { dispatchImpactLabel } from "@/lib/safety-command-feed";
 import { severityChipClass, nextEventStatuses } from "@/lib/safety-rules";
 import type { SafetySeverity } from "@/types/safety";
+import { ProofGapReviewLinks } from "@/components/review/ReviewDeepLinks";
 
 function toChipSeverity(l: SafetyCommandFeedRow["severityLabel"]): SafetySeverity {
   if (l === "Critical") return "Critical";
@@ -128,8 +129,9 @@ export function SafetyCommandEventList({ data, rows, storeEvents, onOpenDrawer, 
                   </a>
                 )
               ) : (
-                <span className="inline-flex rounded border border-amber-900/40 bg-amber-950/20 px-2.5 py-1 text-[10px] font-semibold text-amber-200/90">
-                  Missing / Needs review
+                <span className="inline-flex flex-wrap items-center gap-x-2 gap-y-1 rounded border border-amber-900/40 bg-amber-950/20 px-2.5 py-1 text-[10px] font-semibold text-amber-200/90">
+                  <span>Missing / Needs review</span>
+                  <ProofGapReviewLinks driverId={row.driverId} loadId={row.loadId} />
                 </span>
               )}
               {row.storeEventId && storeEv ? (

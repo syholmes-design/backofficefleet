@@ -154,7 +154,15 @@ export function DynamicIntakeDispatchPanel({ activeIntake, entityId }: Props) {
             <div style={{ fontWeight: 600, color: "#ef4444" }}>{documentStatus.missing}</div>
           </div>
         </div>
-        
+
+        {documentStatus.needsReview > 0 ? (
+          <p className="bof-muted bof-small" style={{ marginTop: 12 }}>
+            <Link href={`/intake/${activeIntake.intake_id}`} className="bof-link-secondary">
+              Open intake to review flagged attachments
+            </Link>
+          </p>
+        ) : null}
+
         {activeIntake.attachments.length > 0 && (
           <div style={{ marginTop: 12 }}>
             <div className="bof-muted bof-small mb-2">Document Types:</div>

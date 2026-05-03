@@ -138,11 +138,10 @@ export function DriversRosterTable() {
       );
       const latestLoad = data.loads.find((load) => load.driverId === driver.id);
 
-      const openReviewCount = review.issues.filter((i) => !i.resolved).length;
       const status: DriverRow["status"] =
         eligibility.status === "blocked"
           ? "Blocked"
-          : eligibility.status === "needs_review" && openReviewCount > 0
+          : eligibility.status === "needs_review"
             ? "Review"
             : "Active";
 
@@ -168,7 +167,7 @@ export function DriversRosterTable() {
         eligibilityStatus:
           eligibility.status === "blocked"
             ? "blocked"
-            : eligibility.status === "needs_review" && openReviewCount > 0
+            : eligibility.status === "needs_review"
               ? "needs_review"
               : "ready",
         dispatchEligibility: eligibility.label,

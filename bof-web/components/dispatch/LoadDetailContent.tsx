@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import {
   AlertTriangle,
   FileStack,
@@ -22,6 +23,8 @@ import { BofWorkflowFormShortcuts } from "@/components/documents/BofWorkflowForm
 import { DispatchRouteMapClient } from "./DispatchRouteMapClient";
 import { useBofDemoData } from "@/lib/bof-demo-data-context";
 import { getLoadRiskExplanation } from "@/lib/load-risk-explanation";
+import { loadRiskReasonUsesDriverOverride } from "@/lib/load-review-explanation";
+import { LoadReviewDrawer } from "@/components/review/LoadReviewDrawer";
 
 type Props = {
   load: Load;
@@ -30,6 +33,7 @@ type Props = {
 
 export function LoadDetailContent({ load, onClose }: Props) {
   const { data, demoRiskOverrides, resolveLoadRiskReason, resolveDriverRiskReason } = useBofDemoData();
+  const [loadReviewOpen, setLoadReviewOpen] = useState(false);
   const drivers = useDispatchDashboardStore((s) => s.drivers);
   const tractors = useDispatchDashboardStore((s) => s.tractors);
   const trailers = useDispatchDashboardStore((s) => s.trailers);
@@ -78,9 +82,18 @@ export function LoadDetailContent({ load, onClose }: Props) {
 
         {loadRisk.riskStatus !== "clean" ? (
           <section className="rounded-lg border border-slate-800 bg-slate-900/40 p-4">
-            <h3 className="mb-2 text-xs font-semibold uppercase tracking-wide text-slate-500">
-              Why at risk?
-            </h3>
+            <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
+              <h3 className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+                Load review summary
+              </h3>
+              <button
+                type="button"
+                className="text-[11px] font-semibold text-teal-300 hover:text-teal-200"
+                onClick={() => setLoadReviewOpen(true)}
+              >
+                View full review details
+              </button>
+            </div>
             <p className="text-xs text-slate-300">
               {loadRisk.primaryReasonLabel} · {loadRisk.recommendedNextStep}
             </p>
@@ -94,6 +107,7 @@ export function LoadDetailContent({ load, onClose }: Props) {
                     [{reason.category}] {reason.title}
                   </p>
                   <p className="mt-1 text-slate-400">{reason.detail}</p>
+                  <p className="mt-1 text-slate-500">Why it matters: {reason.whyItMatters}</p>
                   <p className="mt-1 text-slate-500">Fix: {reason.recommendedFix}</p>
                   <div className="mt-1 flex flex-wrap gap-2">
                     {reason.actionHref ? (
@@ -106,7 +120,7 @@ export function LoadDetailContent({ load, onClose }: Props) {
                         type="button"
                         className="text-amber-300 hover:text-amber-200"
                         onClick={() => {
-                          if (reason.id.startsWith("driver-") && load.driver_id) {
+                          if (loadRiskReasonUsesDriverOverride(reason.id) && load.driver_id) {
                             resolveDriverRiskReason(load.driver_id, reason.id, "Demo action");
                           } else {
                             resolveLoadRiskReason(load.load_id, reason.id, "Demo action");
@@ -344,6 +358,18 @@ export function LoadDetailContent({ load, onClose }: Props) {
           )}
         </div>
       </footer>
+
+      {loadReviewOpen ? (
+        <LoadReviewDrawer
+          data={data}
+          loadId={load.load_id}
+          demoRiskOverrides={demoRiskOverrides}
+          open
+          onClose={() => setLoadReviewOpen(false)}
+          resolveLoadRiskReason={resolveLoadRiskReason}
+          resolveDriverRiskReason={resolveDriverRiskReason}
+        />
+      ) : null}
     </div>
   );
 }

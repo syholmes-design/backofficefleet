@@ -18,5 +18,5 @@ export default function DriverVaultPage({ params }: Props) {
     notFound();
   }
 
-  return <DriverVaultDqfPageClient data={data} driverId={id} />;
+  return <DriverVaultDqfPageClient driverId={id} />;
 }

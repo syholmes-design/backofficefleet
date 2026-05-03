@@ -24,6 +24,7 @@ import { BofTemplateUsageSurface } from "@/components/documents/BofTemplateUsage
 import { BofIntakeFormPrimaryPanel } from "@/components/documents/BofIntakeFormPrimaryPanel";
 import { BofWorkflowFormShortcuts } from "@/components/documents/BofWorkflowFormShortcuts";
 import { RuntimeLoadDetailFallback } from "@/components/loads/RuntimeLoadDetailFallback";
+import { LoadDetailReviewIsland } from "@/components/loads/LoadDetailReviewIsland";
 import { DemoBackButton } from "@/components/navigation/DemoBackButton";
 
 type Props = { params: Promise<{ id: string }> };
@@ -137,6 +138,8 @@ export default async function LoadDetailPage({ params }: Props) {
         </div>
       </header>
 
+      <LoadDetailReviewIsland loadId={load.id} />
+
       <BofIntakeFormPrimaryPanel entityId={load.id} compact />
       <BofWorkflowFormShortcuts
         context="load"
@@ -196,6 +199,7 @@ export default async function LoadDetailPage({ params }: Props) {
       <LoadProofPanel
         loadId={load.id}
         loadNumber={load.number}
+        assignedDriverId={load.driverId}
         items={proofItems}
         packet={proofPacket}
         automationProofLinks={automationProofLinks}

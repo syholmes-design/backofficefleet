@@ -37,6 +37,8 @@ export type DriverCredentialOverrideRow = {
 export type BofData = typeof raw & {
   driverDispatchBlockerOverrides?: Record<string, DriverDispatchBlockerOverrideRow>;
   driverReviewOverrides?: Record<string, DriverReviewOverrideRow>;
+  /** Demo-only DQF row marks (`dqf:${canonicalType}` ids), keyed by driverId — does not remove real missing/expired signals */
+  documentReviewOverrides?: Record<string, DriverReviewOverrideRow>;
   driverCredentialOverrides?: Record<string, DriverCredentialOverrideRow>;
 };
 

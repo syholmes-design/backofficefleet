@@ -221,9 +221,13 @@ export function IntakeEngineInboxClient() {
                   <td>
                     <span className="bof-intake-engine-confidence">{i.match_confidence}</span>
                     {i.needs_review ? (
-                      <span className="bof-intake-engine-flag" title="Needs review">
+                      <Link
+                        href={`/intake/${i.intake_id}`}
+                        className="bof-intake-engine-flag"
+                        title="Needs review — open intake"
+                      >
                         Review
-                      </span>
+                      </Link>
                     ) : null}
                   </td>
                   <td className="bof-muted">

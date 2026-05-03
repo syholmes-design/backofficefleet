@@ -7,6 +7,7 @@ import { formatUsd } from "@/lib/format-money";
 import { DriverAvatar } from "@/components/DriverAvatar";
 import { DriverLink } from "@/components/DriverLink";
 import { driverPhotoPath } from "@/lib/driver-photo";
+import { ProofGapReviewLinks } from "@/components/review/ReviewDeepLinks";
 
 function moneySuffix(item: EnrichedCommandCenterItem): string | null {
   if (item.moneyImpactUsd == null) return null;
@@ -157,6 +158,15 @@ export function CommandCenterIssueList({
                     Owner: {item.owner}
                   </span>
                 </div>
+                {(item.driverId || item.loadId) && (
+                  <div className="mt-2">
+                    <ProofGapReviewLinks
+                      driverId={item.driverId}
+                      loadId={item.loadId}
+                      className="flex flex-wrap gap-x-3 gap-y-1"
+                    />
+                  </div>
+                )}
               </div>
 
               <div className="bof-cc-attention-side">

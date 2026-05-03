@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useMemo, useState } from "react";
 import { useSafetyStore } from "@/lib/stores/safety-store";
 import { useBofDemoData } from "@/lib/bof-demo-data-context";
@@ -187,6 +188,9 @@ export function ExpirationsScreen() {
                   Dispatch
                 </th>
                 <th className="border-b border-slate-800 px-3 py-2 font-medium">
+                  Review
+                </th>
+                <th className="border-b border-slate-800 px-3 py-2 font-medium">
                   Edit
                 </th>
               </tr>
@@ -229,6 +233,16 @@ export function ExpirationsScreen() {
                     </td>
                     <td className="px-3 py-2 text-xs text-slate-300">
                       {dispatchEligibilityLabel(data, r.driver_id, shell, events)}
+                    </td>
+                    <td className="px-3 py-2 text-xs text-slate-300">
+                      {r.status === "Needs review" ||
+                      dispatchEligibilityLabel(data, r.driver_id, shell, events).toLowerCase().includes("review") ? (
+                        <Link href={`/drivers/${r.driver_id}#driver-review`} className="text-teal-300 hover:text-teal-200">
+                          View review details
+                        </Link>
+                      ) : (
+                        "—"
+                      )}
                     </td>
                     <td className="px-3 py-2 text-xs text-slate-300">
                       {editingKey === `${r.driver_id}-${r.document_type}` ? (

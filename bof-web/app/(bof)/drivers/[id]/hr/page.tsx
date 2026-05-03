@@ -12,6 +12,7 @@ import {
 } from "@/lib/driver-doc-registry";
 import { getDriverOperationalProfile } from "@/lib/driver-operational-profile";
 import { DemoBackButton } from "@/components/navigation/DemoBackButton";
+import { DriverHubReviewLink, DriverVaultReviewLink } from "@/components/review/ReviewDeepLinks";
 
 type Props = {
   params: Promise<{ id: string }>;
@@ -130,7 +131,6 @@ export default function DriverHRPage({ params }: Props) {
       ["cdl", "CDL"],
       ["insuranceCard", "Insurance Card"],
       ["mvr", "MVR"],
-      ["dqfComplianceSummary", "FMCSA DQF Compliance Summary"],
     ];
     keyToType.forEach(([key, type]) => {
       const packetUrl = packet[key];
@@ -256,6 +256,16 @@ export default function DriverHRPage({ params }: Props) {
                 ) : (
                   <div className="text-right text-xs text-amber-300">
                     <p>Missing / Needs Review</p>
+                    <div className="mt-1 flex flex-wrap justify-end gap-x-2 gap-y-1">
+                      <DriverHubReviewLink
+                        driverId={id}
+                        className="text-[10px] font-semibold text-teal-300 hover:text-teal-200"
+                      />
+                      <DriverVaultReviewLink
+                        driverId={id}
+                        className="text-[10px] font-semibold text-slate-400 hover:text-slate-200"
+                      />
+                    </div>
                     {doc.expectedCanonicalUrl ? (
                       <p className="mt-1 font-mono text-[10px] text-slate-400">
                         Expected file: {doc.expectedCanonicalUrl}

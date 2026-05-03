@@ -29,6 +29,7 @@ import {
   EvidencePhotoViewer,
   isLoadEvidenceImageUrl,
 } from "@/components/evidence/EvidencePhotoViewer";
+import { ProofGapReviewLinks } from "@/components/review/ReviewDeepLinks";
 
 type Props = {
   load: Load;
@@ -298,6 +299,7 @@ export function DocumentationReadinessPanel({ load }: Props) {
                         <ReadinessRow
                           key={line.key}
                           loadId={load.load_id}
+                          driverId={load.driver_id}
                           line={{
                             key: line.key,
                             label: line.label,
@@ -527,12 +529,14 @@ export function DocumentationReadinessPanel({ load }: Props) {
 
 function ReadinessRow({
   loadId,
+  driverId,
   line,
   href,
   source,
   viewLabel,
 }: {
   loadId: string;
+  driverId?: string | null;
   line: {
     key: string;
     label: string;
@@ -581,7 +585,14 @@ function ReadinessRow({
             {viewLabel || "Open"}
           </a>
         ) : (
-          <span className="text-xs text-slate-500">Missing / Needs review</span>
+          <>
+            <span className="text-xs text-slate-500">Missing / Needs review</span>
+            <ProofGapReviewLinks
+              driverId={driverId}
+              loadId={loadId}
+              className="mt-1 flex flex-wrap gap-x-2 gap-y-1"
+            />
+          </>
         )}
       </td>
       <td className="px-3 py-2 align-top text-xs text-slate-400">{source || "Missing"}</td>

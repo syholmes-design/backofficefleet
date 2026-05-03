@@ -33,6 +33,8 @@ export type OwnerAttentionItem = {
   recommendedFix: string;
   actionLabel: string;
   actionHref: string;
+  reviewDriverId?: string;
+  reviewLoadId?: string;
 };
 
 export type DriverDashboardSummary = {
@@ -365,6 +367,8 @@ export function getOwnerAttentionQueue(data: BofData): OwnerAttentionItem[] {
       recommendedFix: item.nextAction,
       actionLabel,
       actionHref,
+      reviewDriverId: item.driverId,
+      reviewLoadId: item.loadId,
     } satisfies OwnerAttentionItem;
   });
 

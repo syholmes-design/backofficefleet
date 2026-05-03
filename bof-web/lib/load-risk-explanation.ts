@@ -20,6 +20,7 @@ export type LoadRiskReason = {
   category: LoadRiskReasonCategory;
   title: string;
   detail: string;
+  whyItMatters: string;
   recommendedFix: string;
   actionHref?: string;
   actionLabel?: string;
@@ -83,7 +84,6 @@ export function getLoadRiskExplanation(
 
   const reasons: LoadRiskReason[] = [];
   const eligibility = getDriverDispatchEligibility(data, load.driverId);
-  const driver = data.drivers.find((d) => d.id === load.driverId);
 
   for (const hard of eligibility.hardBlockers) {
     const hardId = `driver-hard:${load.driverId}:${hard}`;
@@ -96,8 +96,10 @@ export function getLoadRiskExplanation(
           ? "compliance"
           : "driver",
       title: "Driver compliance block",
-      detail: `${driver?.name ?? load.driverId}: ${hard}`,
-      recommendedFix: "Open driver profile and clear hard blocker before dispatch.",
+      detail: `Assigned driver ${load.driverId}: ${hard}`,
+      whyItMatters:
+        "Hard gates stop legal dispatch and revenue capture until the assigned driver record is brought current.",
+      recommendedFix: "Open driver hub and clear hard blocker before dispatch.",
       actionHref: `/drivers/${load.driverId}`,
       actionLabel: "Open Driver",
       clearableInDemo: true,
@@ -105,6 +107,7 @@ export function getLoadRiskExplanation(
   }
 
   for (const soft of eligibility.softWarnings) {
+    if (soft.startsWith("Demo override active")) continue;
     const softId = `driver-soft:${load.driverId}:${soft}`;
     reasons.push({
       id: softId,
@@ -115,7 +118,9 @@ export function getLoadRiskExplanation(
           ? "compliance"
           : "driver",
       title: "Driver needs review",
-      detail: `${driver?.name ?? load.driverId}: ${soft}`,
+      detail: `Assigned driver ${load.driverId}: ${soft}`,
+      whyItMatters:
+        "Soft warnings often still block premium lanes and increase audit exposure until dispositioned.",
       recommendedFix: "Review driver warning and clear before assigning premium lanes.",
       actionHref: `/drivers/${load.driverId}`,
       actionLabel: "Open Driver",
@@ -131,6 +136,7 @@ export function getLoadRiskExplanation(
       category: "proof",
       title: `POD ${pod.toLowerCase()}`,
       detail: `Load ${load.number}: POD is ${pod.toLowerCase()} and may block settlement release.`,
+      whyItMatters: "Proof-of-delivery gaps delay invoice proofing and settlement release on this load.",
       recommendedFix: "Upload and verify POD in load proof packet.",
       actionHref: `/loads/${load.id}`,
       actionLabel: "Open Load Proof",
@@ -146,6 +152,7 @@ export function getLoadRiskExplanation(
       category: "proof",
       title: "Seal mismatch",
       detail: `Pickup seal ${load.pickupSeal || "—"} vs delivery seal ${load.deliverySeal || "—"} do not match.`,
+      whyItMatters: "Seal exceptions are high-severity integrity signals for cargo claims and insurer review.",
       recommendedFix: "Review seal evidence and resolve exception with receiver/broker.",
       actionHref: `/loads/${load.id}`,
       actionLabel: "Open Load Proof",
@@ -160,6 +167,7 @@ export function getLoadRiskExplanation(
       category: "route",
       title: "Dispatch exception flag",
       detail: load.dispatchOpsNotes || "Dispatch exception flagged on this load.",
+      whyItMatters: "Flagged exceptions route loads into manual review and can pause downstream billing.",
       recommendedFix: "Resolve dispatch exception and verify proof package completeness.",
       actionHref: `/loads/${load.id}`,
       actionLabel: "Open Load",
@@ -179,6 +187,7 @@ export function getLoadRiskExplanation(
       category: "settlement",
       title: "Settlement hold",
       detail: `${hold.category}: ${hold.rootCause}`,
+      whyItMatters: "Blocked settlement rows stop driver pay release until finance clears proof and root cause.",
       recommendedFix: hold.nextBestAction || "Review settlement hold and release after documentation is complete.",
       actionHref: `/settlements`,
       actionLabel: "Open Settlement",
@@ -196,6 +205,7 @@ export function getLoadRiskExplanation(
         category: "documents",
         title: "Trip packet incomplete",
         detail: `Missing required docs: ${missing.join(", ")}`,
+        whyItMatters: "Incomplete trip packets fail filing readiness checks and slow broker/customer sign-off.",
         recommendedFix: "Generate or upload missing packet docs and re-check filing readiness.",
         actionHref: `/loads/${load.id}`,
         actionLabel: "Open Load Documents",
@@ -221,6 +231,10 @@ export function getLoadRiskExplanation(
       category: "compliance",
       title: `Compliance incident: ${incident.type}`,
       detail: `Incident ${incident.incidentId} is ${incident.status}.`,
+      whyItMatters:
+        incident.severity === "CRITICAL"
+          ? "Critical incidents can hard-stop dispatch until compliance disposition is recorded."
+          : "Open incidents elevate insurer and customer scrutiny on affected loads.",
       recommendedFix: "Open compliance workflow and resolve or document closure.",
       actionHref: `/drivers/${load.driverId}/safety`,
       actionLabel: "Open Safety",

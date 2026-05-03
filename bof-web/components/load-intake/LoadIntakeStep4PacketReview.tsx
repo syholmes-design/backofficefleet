@@ -19,6 +19,7 @@ import type {
   LoadIntakeTemplateRegistryItem,
   TemplateRegistryStatus,
 } from "@/lib/load-intake/types";
+import { ProofGapReviewLinks } from "@/components/review/ReviewDeepLinks";
 
 function YesNoMini({
   value,
@@ -992,6 +993,11 @@ export function LoadIntakeStep4PacketReview({
           <strong>Pending generation / needs review</strong> until manifests and generators populate
           paths.
         </p>
+        {(registryLoadId || selectedDriverId) && (
+          <div className="mt-2">
+            <ProofGapReviewLinks loadId={registryLoadId} driverId={selectedDriverId} />
+          </div>
+        )}
         {!registryLoadId && (
           <div className="bof-load-intake-alert bof-load-intake-alert--warn">
             <strong>Pending generation</strong> — save this load first to assign/finalize loadId, then
@@ -1063,7 +1069,17 @@ export function LoadIntakeStep4PacketReview({
                               Open / View
                             </a>
                           ) : (
-                            <span className="text-slate-500">Missing / Needs review</span>
+                            <>
+                              <span className="text-slate-500">Missing / Needs review</span>
+                              {(registryLoadId || selectedDriverId) && (
+                                <div className="mt-1">
+                                  <ProofGapReviewLinks
+                                    loadId={registryLoadId}
+                                    driverId={selectedDriverId}
+                                  />
+                                </div>
+                              )}
+                            </>
                           )}
                         </td>
                         <td className="px-2 py-1.5 font-mono text-[10px] text-slate-500">

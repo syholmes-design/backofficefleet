@@ -6,6 +6,11 @@ import { useDispatchDashboardStore } from "@/lib/stores/dispatch-dashboard-store
 import { useBofDemoData } from "@/lib/bof-demo-data-context";
 import { getDriverDispatchEligibility } from "@/lib/driver-dispatch-eligibility";
 import type { Tractor, Trailer } from "@/types/dispatch";
+import {
+  DriverHubReviewLink,
+  DriverVaultReviewLink,
+  ProofGapReviewLinks,
+} from "@/components/review/ReviewDeepLinks";
 
 type Props = {
   open: boolean;
@@ -141,13 +146,10 @@ export function AssignDriverEquipmentModal({ open, loadId, onClose }: Props) {
                   const invalid = eligibility.status === "blocked";
                   const sel = d.driver_id === driverId;
                   return (
-                    <button
+                    <div
                       key={d.driver_id}
-                      type="button"
-                      disabled={invalid}
-                      onClick={() => setDriverId(d.driver_id)}
                       className={[
-                        "w-full rounded border px-2 py-2 text-left text-xs transition-colors",
+                        "rounded border px-2 py-2 text-left text-xs transition-colors",
                         invalid
                           ? "cursor-not-allowed border-slate-800 bg-slate-950/60 text-slate-600"
                           : sel
@@ -155,24 +157,48 @@ export function AssignDriverEquipmentModal({ open, loadId, onClose }: Props) {
                             : "border-slate-800 bg-slate-900/60 text-slate-200 hover:border-slate-600",
                       ].join(" ")}
                     >
-                      <div className="font-medium">{d.name}</div>
-                      <div className="font-mono text-[10px] text-slate-500">
-                        {d.driver_id}
-                      </div>
-                      <div className="mt-1 text-[10px] uppercase text-slate-500">
-                        Dispatch: {eligibility.status === "ready" ? "READY" : eligibility.status === "needs_review" ? "NEEDS REVIEW" : "BLOCKED"}
-                      </div>
-                      {eligibility.status !== "ready" ? (
-                        <div className="mt-1 text-[10px] text-slate-400">
-                          {eligibility.status === "blocked"
-                            ? eligibility.hardBlockers[0]
-                            : eligibility.softWarnings[0]}
+                      <button
+                        type="button"
+                        disabled={invalid}
+                        onClick={() => setDriverId(d.driver_id)}
+                        className="w-full text-left disabled:cursor-not-allowed"
+                      >
+                        <div className="font-medium">{d.name}</div>
+                        <div className="font-mono text-[10px] text-slate-500">
+                          {d.driver_id}
+                        </div>
+                        <div className="mt-1 text-[10px] uppercase text-slate-500">
+                          Dispatch:{" "}
+                          {eligibility.status === "ready"
+                            ? "READY"
+                            : eligibility.status === "needs_review"
+                              ? "NEEDS REVIEW"
+                              : "BLOCKED"}
+                        </div>
+                        {eligibility.status !== "ready" ? (
+                          <div className="mt-1 text-[10px] text-slate-400">
+                            {eligibility.status === "blocked"
+                              ? eligibility.hardBlockers[0]
+                              : eligibility.softWarnings[0]}
+                          </div>
+                        ) : null}
+                        <div className="mt-1 text-[10px] uppercase text-slate-500">
+                          Compliance: {d.compliance_status}
+                        </div>
+                      </button>
+                      {!invalid && eligibility.status !== "ready" ? (
+                        <div className="mt-2 flex flex-wrap gap-x-2 gap-y-1 border-t border-slate-800/80 pt-2">
+                          <DriverHubReviewLink
+                            driverId={d.driver_id}
+                            className="text-[10px] font-semibold text-teal-300 hover:text-teal-200"
+                          />
+                          <DriverVaultReviewLink
+                            driverId={d.driver_id}
+                            className="text-[10px] font-semibold text-slate-400 hover:text-slate-200"
+                          />
                         </div>
                       ) : null}
-                      <div className="mt-1 text-[10px] uppercase text-slate-500">
-                        Compliance: {d.compliance_status}
-                      </div>
-                    </button>
+                    </div>
                   );
                 })}
               </Panel>
@@ -237,9 +263,16 @@ export function AssignDriverEquipmentModal({ open, loadId, onClose }: Props) {
             </div>
 
             <footer className="flex flex-wrap items-center justify-end gap-2 border-t border-slate-800 px-4 py-3">
-              <p className="mr-auto max-w-md text-[11px] text-slate-500">
-                Driver and tractor are required. Trailer is optional.
-              </p>
+              <div className="mr-auto max-w-md space-y-1">
+                <p className="text-[11px] text-slate-500">
+                  Driver and tractor are required. Trailer is optional.
+                </p>
+                <ProofGapReviewLinks
+                  driverId={driverId || load.driver_id}
+                  loadId={load.load_id}
+                  className="flex flex-wrap gap-x-2 gap-y-1"
+                />
+              </div>
               <button
                 type="button"
                 onClick={onClose}

@@ -38,10 +38,11 @@ import {
   deriveDocStatusFromExpiration,
 } from "@/lib/driver-operational-edit";
 import { DemoBackButton } from "@/components/navigation/DemoBackButton";
-import { getDriverCredentialStatus } from "@/lib/driver-credential-status";
 import { getDriverDispatchEligibility } from "@/lib/driver-dispatch-eligibility";
 import { getDriverOperationalProfile } from "@/lib/driver-operational-profile";
 import { getSafetyScorecardRows } from "@/lib/safety-scorecard";
+import { getDriverReviewExplanation } from "@/lib/driver-review-explanation";
+import { DriverReviewDrawer } from "@/components/drivers/DriverReviewDrawer";
 
 function homeBaseFromAddress(address: string): string {
   const parts = address.split(",").map((p) => p.trim()).filter(Boolean);
@@ -59,6 +60,8 @@ export function DriverDetailPageClient({ driverId }: { driverId: string }) {
     resolveDriverDispatchBlocker,
     resolveAllDriverDispatchBlockersForDemo,
     resetDriverDispatchBlockerOverrides,
+    resolveDriverReviewIssue,
+    resetDriverReviewOverrides,
   } = useBofDemoData();
   const intakeReadiness = useIntakeEngineStore((s) => s.driverReadinessLog);
 
@@ -70,10 +73,6 @@ export function DriverDetailPageClient({ driverId }: { driverId: string }) {
   );
   const medicalExpanded = useMemo(
     () => getDriverMedicalExpanded(data, driverId),
-    [data, driverId]
-  );
-  const medicalCanonical = useMemo(
-    () => getDriverCredentialStatus(data, driverId).medicalCard,
     [data, driverId]
   );
   const supplementalDocs = useMemo(
@@ -119,6 +118,10 @@ export function DriverDetailPageClient({ driverId }: { driverId: string }) {
   );
   const dispatchEligibility = useMemo(
     () => getDriverDispatchEligibility(data, driverId),
+    [data, driverId]
+  );
+  const reviewExplanation = useMemo(
+    () => getDriverReviewExplanation(data, driverId),
     [data, driverId]
   );
   const safetyScoreRow = useMemo(
@@ -176,6 +179,16 @@ export function DriverDetailPageClient({ driverId }: { driverId: string }) {
     document.title = `${driver.name} | Driver | BOF`;
   }, [driver]);
 
+  useEffect(() => {
+    const sync = () => {
+      if (typeof window === "undefined") return;
+      setReviewDrawerOpen(window.location.hash === "#driver-review");
+    };
+    sync();
+    window.addEventListener("hashchange", sync);
+    return () => window.removeEventListener("hashchange", sync);
+  }, []);
+
   type DriverOperational = {
     emergencyContactName?: string;
     emergencyContactRelationship?: string;
@@ -193,6 +206,24 @@ export function DriverDetailPageClient({ driverId }: { driverId: string }) {
     fmcsa_review_date?: string;
   };
   const emergency = (driver ?? {}) as DriverOperational;
+
+  const [reviewDrawerOpen, setReviewDrawerOpen] = useState(false);
+
+  const openReviewDrawer = () => {
+    setReviewDrawerOpen(true);
+    if (typeof window !== "undefined") {
+      const base = `${window.location.pathname}${window.location.search}`;
+      window.history.replaceState(null, "", `${base}#driver-review`);
+    }
+  };
+
+  const closeReviewDrawer = () => {
+    setReviewDrawerOpen(false);
+    if (typeof window !== "undefined" && window.location.hash === "#driver-review") {
+      const base = `${window.location.pathname}${window.location.search}`;
+      window.history.replaceState(null, "", base);
+    }
+  };
 
   const [editingOperational, setEditingOperational] = useState(false);
   const [operationalDraft, setOperationalDraft] = useState({
@@ -358,9 +389,25 @@ export function DriverDetailPageClient({ driverId }: { driverId: string }) {
               </span>
             </p>
             <div className="bof-driver-profile-meta-row">
-              <span className={dispatchChipClass} title={dispatchEligibility.label}>
-                Dispatch: {dispatchChipLabel}
-              </span>
+              {dispatchEligibility.status === "needs_review" || dispatchEligibility.status === "blocked" ? (
+                <button
+                  type="button"
+                  className={dispatchChipClass}
+                  title={dispatchEligibility.label}
+                  onClick={openReviewDrawer}
+                >
+                  Dispatch: {dispatchChipLabel.toUpperCase()}
+                </button>
+              ) : (
+                <span className={dispatchChipClass} title={dispatchEligibility.label}>
+                  Dispatch: {dispatchChipLabel}
+                </span>
+              )}
+              {(dispatchEligibility.status === "needs_review" || dispatchEligibility.status === "blocked") && (
+                <button type="button" className="bof-link-secondary bof-small" style={{ marginLeft: "0.35rem" }} onClick={openReviewDrawer}>
+                  What needs review?
+                </button>
+              )}
               <span
                 className={`bof-readiness-pill bof-readiness-${
                   readiness.missing + readiness.expired > 0 ? "warn" : "ok"
@@ -616,7 +663,17 @@ export function DriverDetailPageClient({ driverId }: { driverId: string }) {
               </h2>
               <div className="bof-driver-ops-row">
                 <span className="bof-driver-ops-k">Dispatch eligibility</span>
-                <span className="bof-driver-ops-v">{dispatchEligibility.label}</span>
+                <span className="bof-driver-ops-v">
+                  {dispatchEligibility.label}
+                  {(dispatchEligibility.status === "needs_review" || dispatchEligibility.status === "blocked") && (
+                    <>
+                      {" "}
+                      <button type="button" className="bof-link-secondary" onClick={openReviewDrawer}>
+                        View review details
+                      </button>
+                    </>
+                  )}
+                </span>
               </div>
               <div className="bof-driver-ops-row">
                 <span className="bof-driver-ops-k">Current load</span>
@@ -650,7 +707,24 @@ export function DriverDetailPageClient({ driverId }: { driverId: string }) {
               <div className="bof-driver-ops-row">
                 <span className="bof-driver-ops-k">Recommended next step</span>
                 <span className="bof-driver-ops-v">
-                  {dispatchEligibility.recommendedAction ? (
+                  {reviewExplanation.recommendedNextStepText ? (
+                    <>
+                      <span>{reviewExplanation.recommendedNextStepText}</span>
+                      {(dispatchEligibility.recommendedAction ?? reviewExplanation.primaryAction) ? (
+                        <>
+                          {" "}
+                          <Link
+                            href={
+                              (dispatchEligibility.recommendedAction ?? reviewExplanation.primaryAction)!.href
+                            }
+                            className="bof-link-secondary"
+                          >
+                            {(dispatchEligibility.recommendedAction ?? reviewExplanation.primaryAction)!.label}
+                          </Link>
+                        </>
+                      ) : null}
+                    </>
+                  ) : dispatchEligibility.recommendedAction ? (
                     <Link
                       href={dispatchEligibility.recommendedAction.href}
                       className="bof-link-secondary"
@@ -1071,7 +1145,6 @@ export function DriverDetailPageClient({ driverId }: { driverId: string }) {
           <DriverMedicalExpandedPanel
             driverName={driver.name}
             medicalDoc={medicalDoc}
-            medicalCanonical={medicalCanonical}
             expanded={medicalExpanded}
             mcsa5876Signed={mcsa5876Signed}
           />
@@ -1147,6 +1220,17 @@ export function DriverDetailPageClient({ driverId }: { driverId: string }) {
           </ul>
         </div>
       </section>
+
+      {reviewDrawerOpen ? (
+        <DriverReviewDrawer
+          data={data}
+          driverId={driverId}
+          onClose={closeReviewDrawer}
+          resolveDriverDispatchBlocker={resolveDriverDispatchBlocker}
+          resolveDriverReviewIssue={resolveDriverReviewIssue}
+          resetDriverReviewOverrides={resetDriverReviewOverrides}
+        />
+      ) : null}
     </div>
   );
 }

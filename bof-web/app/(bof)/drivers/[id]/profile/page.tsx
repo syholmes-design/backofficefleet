@@ -90,6 +90,11 @@ export default function DriverProfilePage({ params }: Props) {
                       ? "Needs review"
                       : "Blocked"}
                 </span>
+                {(eligibility.status === "needs_review" || eligibility.status === "blocked") && (
+                  <Link href={`/drivers/${id}#driver-review`} className="bof-link-secondary bof-small" style={{ marginLeft: "0.5rem" }}>
+                    View review details
+                  </Link>
+                )}
               </p>
               <p className="bof-muted bof-small" style={{ marginTop: "0.35rem" }}>
                 Compiled profile dashboard (reference driver). Operational hub:{" "}
@@ -146,6 +151,11 @@ export default function DriverProfilePage({ params }: Props) {
                     ? "Needs review"
                     : "Blocked"}
               </span>
+              {(eligibility.status === "needs_review" || eligibility.status === "blocked") && (
+                <Link href={`/drivers/${id}#driver-review`} className="bof-link-secondary bof-small" style={{ marginLeft: "0.5rem" }}>
+                  View review details
+                </Link>
+              )}
             </p>
             <p className="bof-muted bof-small" style={{ marginTop: "0.35rem" }}>
               Lightweight profile view. For documents, HR packet, and route tools use the{" "}

@@ -12,6 +12,7 @@ import {
   statusBadgeClass,
 } from "@/lib/document-ui";
 import { describeCredentialExpiration } from "@/lib/driver-doc-registry";
+import { ProofGapReviewLinks } from "@/components/review/ReviewDeepLinks";
 
 function statusCounts(rows: DriverPacketDocument[]) {
   let ready = 0;
@@ -74,6 +75,15 @@ export function DriverDocumentPacketSection({
         <span className="bof-status-pill bof-status-pill-danger">Expired: {counts.expired}</span>
         <span className="bof-status-pill bof-status-pill-info">Missing: {counts.missing}</span>
       </div>
+      {(counts.needsReview > 0 || counts.missing > 0) && (
+        <div className="mt-2">
+          <ProofGapReviewLinks
+            driverId={packet.driverId}
+            loadId={null}
+            className="flex flex-wrap gap-x-3 gap-y-1"
+          />
+        </div>
+      )}
 
       {packet.duplicates.length > 0 ? (
         <p className="bof-small bof-muted">

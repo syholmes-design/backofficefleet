@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { resolveSafetyEvidencePublicUrl } from "@/lib/safety-evidence-url";
+import { ProofGapReviewLinks } from "@/components/review/ReviewDeepLinks";
 
 type Props = {
   /** Raw URL from demo data (may be legacy `.png`). */
@@ -9,9 +10,20 @@ type Props = {
   alt: string;
   /** Applied to the image when evidence resolves and loads. */
   className?: string;
+  /** When preview fails, surface hub / vault / load review routes if known. */
+  driverId?: string | null;
+  loadId?: string | null;
 };
 
-function EvidenceUnavailableCard({ rawUrl }: { rawUrl: string }) {
+function EvidenceUnavailableCard({
+  rawUrl,
+  driverId,
+  loadId,
+}: {
+  rawUrl: string;
+  driverId?: string | null;
+  loadId?: string | null;
+}) {
   return (
     <div
       className="mb-2 rounded border border-amber-900/40 bg-slate-900/80 px-2 py-3 text-center text-[11px] text-slate-300"
@@ -21,6 +33,11 @@ function EvidenceUnavailableCard({ rawUrl }: { rawUrl: string }) {
       <p className="mt-1 text-[10px] leading-snug text-slate-500">
         The preview could not be loaded (file missing, blocked, or unsupported format).
       </p>
+      <ProofGapReviewLinks
+        driverId={driverId}
+        loadId={loadId}
+        className="mt-2 flex flex-wrap justify-center gap-x-2 gap-y-1"
+      />
       {rawUrl.trim().startsWith("/evidence/safety/") ? (
         <span className="mt-2 block break-all font-mono text-[9px] text-slate-600">{rawUrl}</span>
       ) : null}
@@ -28,7 +45,7 @@ function EvidenceUnavailableCard({ rawUrl }: { rawUrl: string }) {
   );
 }
 
-export function SafetyEvidenceThumb({ rawUrl, alt, className }: Props) {
+export function SafetyEvidenceThumb({ rawUrl, alt, className, driverId, loadId }: Props) {
   const resolved = useMemo(() => resolveSafetyEvidencePublicUrl(rawUrl), [rawUrl]);
   const [decodeFailed, setDecodeFailed] = useState(false);
 
@@ -37,7 +54,7 @@ export function SafetyEvidenceThumb({ rawUrl, alt, className }: Props) {
   }, [resolved.url, resolved.ready]);
 
   if (!resolved.ready || !resolved.url || decodeFailed) {
-    return <EvidenceUnavailableCard rawUrl={rawUrl} />;
+    return <EvidenceUnavailableCard rawUrl={rawUrl} driverId={driverId} loadId={loadId} />;
   }
 
   const imgClass =

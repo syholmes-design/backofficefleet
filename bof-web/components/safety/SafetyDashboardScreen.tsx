@@ -245,7 +245,7 @@ export function SafetyDashboardScreen() {
                 <div className="mt-2 space-y-2">
                   {evidence.map((item) => (
                     <div key={item.id} className="rounded border border-slate-800 bg-slate-950/50 px-2 py-2 text-xs">
-                      <SafetyEvidenceThumb rawUrl={item.url} alt={item.label} />
+                      <SafetyEvidenceThumb rawUrl={item.url} alt={item.label} driverId={driverId} />
                       <div className="flex items-center justify-between gap-2">
                         <span className="font-medium text-slate-100">{item.label}</span>
                         <span

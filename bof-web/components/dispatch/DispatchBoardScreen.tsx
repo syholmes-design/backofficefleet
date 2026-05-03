@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { Filter, Search } from "lucide-react";
 import type { Load, LoadStatus } from "@/types/dispatch";
 import { useDispatchDashboardStore } from "@/lib/stores/dispatch-dashboard-store";
@@ -10,6 +10,7 @@ import { getBofData } from "@/lib/load-bof-data";
 import { getMockBackhaulOpportunities } from "@/lib/backhaul-opportunity-engine";
 import { useBofDemoData } from "@/lib/bof-demo-data-context";
 import { getLoadRiskExplanation } from "@/lib/load-risk-explanation";
+import { LoadReviewDrawer } from "@/components/review/LoadReviewDrawer";
 import {
   formatMoney,
   loadStatusChipClass,
@@ -50,7 +51,13 @@ function applyBoardFilters(
 }
 
 export function DispatchBoardScreen() {
-  const { data, demoRiskOverrides } = useBofDemoData();
+  const {
+    data,
+    demoRiskOverrides,
+    resolveLoadRiskReason,
+    resolveDriverRiskReason,
+  } = useBofDemoData();
+  const [loadReviewId, setLoadReviewId] = useState<string | null>(null);
   const loads = useDispatchDashboardStore((s) => s.loads);
   const drivers = useDispatchDashboardStore((s) => s.drivers);
   const boardFilters = useDispatchDashboardStore((s) => s.boardFilters);
@@ -351,11 +358,10 @@ export function DispatchBoardScreen() {
                               className="mt-1 text-[10px] text-teal-300 hover:text-teal-200"
                               onClick={(e) => {
                                 e.stopPropagation();
-                                selectLoad(l.load_id);
-                                openLoadDrawer(l.load_id);
+                                setLoadReviewId(l.load_id);
                               }}
                             >
-                              Why at risk?
+                              What needs review?
                             </button>
                           ) : null}
                         </td>
@@ -499,6 +505,18 @@ export function DispatchBoardScreen() {
           </div>
         </section>
       </div>
+
+      {loadReviewId ? (
+        <LoadReviewDrawer
+          data={data}
+          loadId={loadReviewId}
+          demoRiskOverrides={demoRiskOverrides}
+          open
+          onClose={() => setLoadReviewId(null)}
+          resolveLoadRiskReason={resolveLoadRiskReason}
+          resolveDriverRiskReason={resolveDriverRiskReason}
+        />
+      ) : null}
     </div>
   );
 }

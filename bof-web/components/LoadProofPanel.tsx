@@ -10,6 +10,7 @@ import {
   type LoadDocumentPacket,
   type LoadProofItem,
 } from "@/lib/load-proof";
+import { ProofGapReviewLinks } from "@/components/review/ReviewDeepLinks";
 
 function statusBadgeClass(s: string) {
   const u = s.toUpperCase();
@@ -40,12 +41,15 @@ function displaySource(source?: LoadEvidenceItem["source"]) {
 export function LoadProofPanel({
   loadId,
   loadNumber,
+  assignedDriverId,
   items,
   packet,
   automationProofLinks,
 }: {
   loadId: string;
   loadNumber: string;
+  /** Assigned driver for proof-gap deep links (hub review + vault). */
+  assignedDriverId?: string | null;
   items: LoadProofItem[];
   packet?: LoadDocumentPacket | null;
   /** Document engine output: automated SVG per proof type */
@@ -176,7 +180,14 @@ export function LoadProofPanel({
                             {doc.type.includes("photo") ? "View photo" : "Open"}
                           </a>
                         ) : (
-                          <span className="text-slate-500">Missing / Needs review</span>
+                          <>
+                            <span className="text-slate-500">Missing / Needs review</span>
+                            <ProofGapReviewLinks
+                              driverId={assignedDriverId}
+                              loadId={loadId}
+                              className="mt-1 flex flex-wrap gap-x-2 gap-y-1"
+                            />
+                          </>
                         )}
                       </td>
                       <td className="px-2 py-1.5 font-mono text-[10px] text-slate-500">

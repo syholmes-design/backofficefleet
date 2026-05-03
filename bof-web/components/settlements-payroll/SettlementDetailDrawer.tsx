@@ -21,6 +21,7 @@ import {
 } from "@/components/evidence/EvidencePhotoViewer";
 import { getLoadDocumentPacket, type LoadEvidenceItem } from "@/lib/load-proof";
 import { filingReadinessLabel, tripPacketUiLabel } from "@/lib/load-trip-packet";
+import { ProofGapReviewLinks } from "@/components/review/ReviewDeepLinks";
 
 type Props = {
   settlementId: string | null;
@@ -558,7 +559,14 @@ export function SettlementDetailDrawer({ settlementId, open, onClose }: Props) {
                                           {doc.type.includes("photo") ? "View photo" : "Open"}
                                         </a>
                                       ) : (
-                                        <span className="text-slate-500">Missing / Needs review</span>
+                                        <>
+                                          <span className="text-slate-500">Missing / Needs review</span>
+                                          <ProofGapReviewLinks
+                                            driverId={settlement.driver_id}
+                                            loadId={doc.loadId}
+                                            className="mt-1 flex flex-wrap gap-x-2 gap-y-1"
+                                          />
+                                        </>
                                       )}
                                     </td>
                                     <td className="px-2 py-1.5 text-slate-400">

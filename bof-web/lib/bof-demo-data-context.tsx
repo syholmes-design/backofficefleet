@@ -94,6 +94,10 @@ export type BofDemoDataContextValue = {
   resolveDriverReviewIssue: (driverId: string, issueId: string, note?: string) => void;
   resetDriverReviewOverrides: (driverId: string) => void;
   resetAllDriverReviewOverrides: () => void;
+  /** Demo-only marks for DQF review rows (`dqf:${canonicalType}` ids on `data.documentReviewOverrides`). */
+  resolveDocumentReviewIssue: (driverId: string, issueId: string, note?: string) => void;
+  resetDocumentReviewOverrides: (driverId: string) => void;
+  resetAllDocumentReviewOverrides: () => void;
   /** Demo credential dates edited from Safety → Credential expirations (persisted on `data.driverCredentialOverrides`). */
   updateDriverCredentialOverride: (
     driverId: string,
@@ -409,6 +413,48 @@ export function BofDemoDataProvider({
     });
   }, []);
 
+  const resolveDocumentReviewIssue = useCallback((driverId: string, issueId: string, note?: string) => {
+    setData((prev) => {
+      const next = deepClone(prev);
+      const map = { ...(next.documentReviewOverrides ?? {}) };
+      const row: DriverReviewOverrideRow = map[driverId] ?? {
+        resolvedIssueIds: [],
+        resolvedAt: new Date().toISOString(),
+        resolvedBy: "demo-editor",
+      };
+      map[driverId] = {
+        ...row,
+        resolvedIssueIds: Array.from(new Set([...row.resolvedIssueIds, issueId])),
+        resolvedAt: new Date().toISOString(),
+        note: note ?? row.note,
+      };
+      next.documentReviewOverrides = map;
+      persistToStorage(next);
+      return next;
+    });
+  }, []);
+
+  const resetDocumentReviewOverrides = useCallback((driverId: string) => {
+    setData((prev) => {
+      const next = deepClone(prev);
+      const map = { ...(next.documentReviewOverrides ?? {}) };
+      delete map[driverId];
+      if (Object.keys(map).length === 0) delete next.documentReviewOverrides;
+      else next.documentReviewOverrides = map;
+      persistToStorage(next);
+      return next;
+    });
+  }, []);
+
+  const resetAllDocumentReviewOverrides = useCallback(() => {
+    setData((prev) => {
+      const next = deepClone(prev);
+      delete next.documentReviewOverrides;
+      persistToStorage(next);
+      return next;
+    });
+  }, []);
+
   const updateDriverCredentialOverride = useCallback(
     (
       driverId: string,
@@ -473,6 +519,9 @@ export function BofDemoDataProvider({
       resolveDriverReviewIssue,
       resetDriverReviewOverrides,
       resetAllDriverReviewOverrides,
+      resolveDocumentReviewIssue,
+      resetDocumentReviewOverrides,
+      resetAllDocumentReviewOverrides,
       updateDriverCredentialOverride,
       resetDriverCredentialOverrides,
     }),
@@ -495,6 +544,9 @@ export function BofDemoDataProvider({
       resolveDriverReviewIssue,
       resetDriverReviewOverrides,
       resetAllDriverReviewOverrides,
+      resolveDocumentReviewIssue,
+      resetDocumentReviewOverrides,
+      resetAllDocumentReviewOverrides,
       updateDriverCredentialOverride,
       resetDriverCredentialOverrides,
     ]
