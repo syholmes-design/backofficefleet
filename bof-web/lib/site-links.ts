@@ -76,15 +76,15 @@ export function getHeroLinks(): DashboardHeroCta[] {
 }
 
 /**
- * External booking URL (Calendly, Calendarfy, etc.) or internal assessment fallback.
- * Priority: NEXT_PUBLIC_BOOK_DEMO_URL → NEXT_PUBLIC_CALENDAR_URL → NEXT_PUBLIC_CALENDLY_URL (legacy)
- * → /book-assessment?source=demo-hero
+ * External booking URL (Calendar app, Cal.com, etc.) or internal assessment fallback.
+ * Priority: NEXT_PUBLIC_BOOK_DEMO_URL → NEXT_PUBLIC_CALENDAR_URL → /book-assessment?source=demo-hero
+ *
+ * Do not hardcode private calendar URLs in source — set env in deployment or `.env.local`.
  */
 export function getBookDemoHref(): string {
   const bookDemo =
     process.env.NEXT_PUBLIC_BOOK_DEMO_URL?.trim() ||
-    process.env.NEXT_PUBLIC_CALENDAR_URL?.trim() ||
-    process.env.NEXT_PUBLIC_CALENDLY_URL?.trim();
+    process.env.NEXT_PUBLIC_CALENDAR_URL?.trim();
   if (bookDemo) return bookDemo;
   return "/book-assessment?source=demo-hero";
 }

@@ -1,6 +1,6 @@
 import type { BofData } from "@/lib/load-bof-data";
+import { getDriverMedicalCardStatus } from "@/lib/driver-credential-status";
 import {
-  getDriverMedicalCardStatus,
   medicalCardHardBlockReason,
   medicalCardSoftWarningReason,
 } from "@/lib/driver-doc-registry";

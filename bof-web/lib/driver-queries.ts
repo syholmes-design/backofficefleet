@@ -114,9 +114,10 @@ export function readinessFromDocuments(docs: DocumentRow[]) {
   let expired = 0;
   let missing = 0;
   for (const d of docs) {
-    const s = d.status.toUpperCase();
-    if (s === "VALID") valid += 1;
+    const s = d.status.toUpperCase().replace(/\s+/g, "_");
+    if (s === "VALID" || s === "EXPIRING_SOON" || s === "PENDING_REVIEW") valid += 1;
     else if (s === "EXPIRED") expired += 1;
+    else if (s === "MISSING") missing += 1;
     else missing += 1;
   }
   const label =

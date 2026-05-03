@@ -1,6 +1,6 @@
 import type { BofData } from "@/lib/load-bof-data";
 import { buildCommandCenterItems, settlementTotals } from "@/lib/executive-layer";
-import { getDriverMedicalCardStatus } from "@/lib/driver-doc-registry";
+import { getDriverMedicalCardStatus } from "@/lib/driver-credential-status";
 import { getOrderedDocumentsForDriver } from "@/lib/driver-queries";
 import { getDriverDispatchEligibility } from "@/lib/driver-dispatch-eligibility";
 import { getSafetyScorecardRows } from "@/lib/safety-scorecard";

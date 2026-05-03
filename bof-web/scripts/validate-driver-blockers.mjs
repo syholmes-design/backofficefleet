@@ -40,6 +40,15 @@ function run() {
     issues.push("bof-demo-data-context.tsx should persist driverDispatchBlockerOverrides on BofData");
   }
 
+  const execLayerPath = path.join(ROOT, "lib", "executive-layer.ts");
+  const execLayer = read(execLayerPath);
+  if (!execLayer.includes('doc.type === "Medical Card"')) {
+    issues.push("executive-layer.ts should skip raw Medical Card rows when tallying document gaps");
+  }
+  if (!execLayer.includes("getDriverMedicalCardStatus")) {
+    issues.push("executive-layer.ts should use getDriverMedicalCardStatus for driver readiness medical state");
+  }
+
   const demoPath = path.join(ROOT, "lib", "demo-data.json");
   const data = JSON.parse(read(demoPath));
 

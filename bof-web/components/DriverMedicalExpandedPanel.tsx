@@ -4,6 +4,13 @@ import { useCallback, useEffect, useState } from "react";
 import type { DocumentRow } from "@/lib/driver-queries";
 import type { DriverMedicalExpanded } from "@/lib/driver-medical-expanded";
 import { EMPTY_DRIVER_MEDICAL_EXPANDED } from "@/lib/driver-medical-expanded";
+import type { CanonicalCredentialRecord } from "@/lib/driver-credential-status";
+import {
+  canonicalCredentialBadgeLabel,
+  credentialDisplayText,
+  medicalCanonicalSignal,
+  medicalCanonicalSignalLabel,
+} from "@/lib/driver-credential-status";
 import {
   documentSignal,
   documentSignalClass,
@@ -25,11 +32,14 @@ function dlItem(label: string, value: string) {
 export function DriverMedicalExpandedPanel({
   driverName,
   medicalDoc,
+  medicalCanonical,
   expanded,
   mcsa5876Signed,
 }: {
   driverName: string;
   medicalDoc: DocumentRow;
+  /** Canonical resolver output — badge/signal lines ignore stale documents[].status when present. */
+  medicalCanonical?: CanonicalCredentialRecord | null;
   expanded: DriverMedicalExpanded | null;
   /** Signed long-form exam (PDF/HTML); opens from the nested MCSA-5876 detail view. */
   mcsa5876Signed?: Pick<DocumentRow, "fileUrl" | "previewUrl"> | null;
@@ -50,9 +60,24 @@ export function DriverMedicalExpandedPanel({
   const issue =
     x.medicalIssueDate?.trim() || medicalDoc.issueDate?.trim() || "";
   const exp =
+    medicalCanonical?.expirationDate?.trim() ||
     medicalDoc.expirationDate?.trim() ||
     x.medicalExpirationDate?.trim() ||
     "";
+
+  const badgeLabel = medicalCanonical
+    ? canonicalCredentialBadgeLabel(medicalCanonical)
+    : medicalDoc.status;
+  const medSignal = medicalCanonical
+    ? medicalCanonicalSignal(medicalCanonical)
+    : documentSignal(medicalDoc);
+  const signalLineClass = documentSignalClass(medSignal);
+  const signalLineText = medicalCanonical
+    ? medicalCanonicalSignalLabel(medicalCanonicalSignal(medicalCanonical))
+    : documentSignalLabel(medSignal);
+  const expirationDlValue = medicalCanonical
+    ? credentialDisplayText(medicalCanonical)
+    : exp;
 
   return (
     <section
@@ -69,18 +94,21 @@ export function DriverMedicalExpandedPanel({
       <div className="bof-medical-primary bof-medical-card">
         <div className="bof-medical-primary-top">
           <span className="bof-medical-label">Medical Card</span>
-          <span className={statusBadgeClass(medicalDoc.status)}>
-            {medicalDoc.status}
+          <span className={statusBadgeClass(badgeLabel)}>
+            {badgeLabel}
           </span>
         </div>
         <p className="bof-doc-signal-line">
-          <span className={documentSignalClass(documentSignal(medicalDoc))}>
-            {documentSignalLabel(documentSignal(medicalDoc))}
+          <span className={signalLineClass}>
+            {signalLineText}
           </span>
         </p>
         <dl className="bof-medical-dl bof-medical-dl-primary">
           {dlItem("Issue date", issue)}
-          {dlItem("Expiration date", exp)}
+          {dlItem(
+            medicalCanonical ? "Medical status" : "Expiration date",
+            medicalCanonical ? expirationDlValue : exp
+          )}
           {dlItem("Examiner name", x.medicalExaminerName)}
         </dl>
         <button

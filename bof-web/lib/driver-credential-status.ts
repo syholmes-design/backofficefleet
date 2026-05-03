@@ -16,13 +16,15 @@ export type CanonicalCredentialStatus =
   | "missing"
   | "pending_review";
 
-type CredentialRecord = {
+export type CanonicalCredentialRecord = {
   status: CanonicalCredentialStatus;
   expirationDate?: string;
   reviewDate?: string;
   fileUrl?: string;
   source: string;
 };
+
+type CredentialRecord = CanonicalCredentialRecord;
 
 export type DriverCredentialStatus = {
   driverId: string;
@@ -92,6 +94,55 @@ export function getDriverCredentialStatus(
   };
 }
 
+/** Maps canonical resolver status to legacy document badge styles (VALID / EXPIRED / …). */
+export function canonicalCredentialBadgeLabel(record: CanonicalCredentialRecord): string {
+  switch (record.status) {
+    case "valid":
+      return "VALID";
+    case "expired":
+      return "EXPIRED";
+    case "missing":
+      return "MISSING";
+    case "expiring_soon":
+      return "AT RISK";
+    case "pending_review":
+      return "PENDING REVIEW";
+    default:
+      return "UNKNOWN";
+  }
+}
+
+export type CanonicalMedicalSignal = "blocking" | "expired" | "missing" | "at-risk" | "resolved";
+
+/** Signal line for medical UI — derived only from canonical status, not raw documents[].status. */
+export function medicalCanonicalSignal(record: CanonicalCredentialRecord): CanonicalMedicalSignal {
+  switch (record.status) {
+    case "expired":
+      return "expired";
+    case "missing":
+      return "missing";
+    case "expiring_soon":
+    case "pending_review":
+      return "at-risk";
+    case "valid":
+    default:
+      return "resolved";
+  }
+}
+
+export function medicalCanonicalSignalLabel(signal: CanonicalMedicalSignal): string {
+  switch (signal) {
+    case "expired":
+      return "Medical expired — renewal required";
+    case "missing":
+      return "Medical certificate missing";
+    case "at-risk":
+      return "Medical needs attention or review";
+    default:
+      return "Medical credential in good standing";
+  }
+}
+
 export function credentialDisplayText(
   record: CredentialRecord
 ): string {
@@ -108,7 +159,7 @@ export function credentialDisplayText(
   if (record.status === "expiring_soon") {
     return record.expirationDate
       ? `Expiring soon on ${record.expirationDate}`
-      : "Expiring soon";
+      : "Expiring soon — date pending";
   }
   if (record.status === "pending_review") {
     if (record.fileUrl && !record.expirationDate) return "On file — expiration needs review";

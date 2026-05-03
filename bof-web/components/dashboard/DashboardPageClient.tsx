@@ -185,16 +185,34 @@ export function DashboardPageClient() {
                 onError={() => setHeroImageMissing(true)}
                 unoptimized
               />
+              <div
+                className="bof-dashboard-hero__overlayActions"
+                aria-label="Working demo actions (PNG chrome above is decorative)"
+              >
+                <BookDemoLink
+                  className="bof-dashboard-hero__overlayBtn bof-dashboard-hero__overlayBtn--primary"
+                  ariaLabel="Book a BOF demo appointment"
+                >
+                  Book a Demo
+                </BookDemoLink>
+                <Link
+                  href="/command-center"
+                  prefetch={false}
+                  className="bof-dashboard-hero__overlayBtn"
+                >
+                  Explore the Demo
+                </Link>
+              </div>
             </div>
             <nav className="bof-dashboard-hero__hotspots" aria-label="Quick dashboard links">
               <Link href="/dispatch" className="bof-dashboard-hero__hotspot">
-                <span className="bof-dashboard-hero__hotspot-title">Dispatch Board</span>
+                <span className="bof-dashboard-hero__hotspot-title">Open Dispatch Board</span>
                 <span className="bof-dashboard-hero__hotspot-value">
                   {summary.activeLoads} active · {summary.loadsAtRisk} at risk
                 </span>
               </Link>
               <Link href="/dashboard#attention-queue" className="bof-dashboard-hero__hotspot">
-                <span className="bof-dashboard-hero__hotspot-title">Attention Queue</span>
+                <span className="bof-dashboard-hero__hotspot-title">Review Attention Queue</span>
                 <span className="bof-dashboard-hero__hotspot-value">
                   {criticalQueue.length} critical · {attentionQueue.length} total
                 </span>
@@ -207,7 +225,7 @@ export function DashboardPageClient() {
                 </span>
               </Link>
               <Link href="/settlements" className="bof-dashboard-hero__hotspot">
-                <span className="bof-dashboard-hero__hotspot-title">Settlements</span>
+                <span className="bof-dashboard-hero__hotspot-title">Open Settlements</span>
                 <span className="bof-dashboard-hero__hotspot-value">
                   {summary.settlementHolds} holds · {formatUsd(summary.claimExposure)} exposure
                 </span>

@@ -38,6 +38,7 @@ import {
   deriveDocStatusFromExpiration,
 } from "@/lib/driver-operational-edit";
 import { DemoBackButton } from "@/components/navigation/DemoBackButton";
+import { getDriverCredentialStatus } from "@/lib/driver-credential-status";
 import { getDriverDispatchEligibility } from "@/lib/driver-dispatch-eligibility";
 import { getDriverOperationalProfile } from "@/lib/driver-operational-profile";
 import { getSafetyScorecardRows } from "@/lib/safety-scorecard";
@@ -69,6 +70,10 @@ export function DriverDetailPageClient({ driverId }: { driverId: string }) {
   );
   const medicalExpanded = useMemo(
     () => getDriverMedicalExpanded(data, driverId),
+    [data, driverId]
+  );
+  const medicalCanonical = useMemo(
+    () => getDriverCredentialStatus(data, driverId).medicalCard,
     [data, driverId]
   );
   const supplementalDocs = useMemo(
@@ -1066,6 +1071,7 @@ export function DriverDetailPageClient({ driverId }: { driverId: string }) {
           <DriverMedicalExpandedPanel
             driverName={driver.name}
             medicalDoc={medicalDoc}
+            medicalCanonical={medicalCanonical}
             expanded={medicalExpanded}
             mcsa5876Signed={mcsa5876Signed}
           />

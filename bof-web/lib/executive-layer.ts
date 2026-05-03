@@ -1,4 +1,5 @@
 import type { BofData } from "./load-bof-data";
+import { getDriverMedicalCardStatus } from "./driver-credential-status";
 import { getLoadProofItems } from "./load-proof";
 import { getSafetyBonusByDriverId } from "./safety-scorecard";
 
@@ -120,13 +121,27 @@ export function buildCommandCenterItems(data: BofData): CommandCenterItem[] {
     }
   }
 
+  /**
+   * Driver readiness gaps — medical cards use canonical expiration-derived status only.
+   * Raw `documents[].status` on Medical Card rows is ignored here so stale JSON flags cannot
+   * propagate false “expired” alerts when expirationDate implies valid/pending_review.
+   */
   const readiness = new Map<string, { missing: number; expired: number }>();
   for (const doc of data.documents) {
+    if (doc.type === "Medical Card") continue;
     if (doc.status !== "MISSING" && doc.status !== "EXPIRED") continue;
     const cur = readiness.get(doc.driverId) ?? { missing: 0, expired: 0 };
     if (doc.status === "MISSING") cur.missing += 1;
     else cur.expired += 1;
     readiness.set(doc.driverId, cur);
+  }
+  for (const driver of data.drivers) {
+    const driverId = driver.id;
+    const med = getDriverMedicalCardStatus(data, driverId);
+    const cur = readiness.get(driverId) ?? { missing: 0, expired: 0 };
+    if (med.status === "missing") cur.missing += 1;
+    else if (med.status === "expired") cur.expired += 1;
+    readiness.set(driverId, cur);
   }
   for (const [driverId, counts] of readiness) {
     if (counts.missing + counts.expired === 0) continue;
