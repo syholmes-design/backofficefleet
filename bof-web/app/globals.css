@@ -15256,6 +15256,15 @@ body {
   color: #bae6fd;
 }
 
+/* Settlements payroll — command center readability */
+.bof-settlements-command {
+  font-size: 15px;
+  line-height: 1.55;
+}
+.bof-settlements-shell {
+  scroll-padding-bottom: 10rem;
+}
+
 /* Tailwind — utilities + components only (no @tailwind base — avoids touching BOF globals). */
 @tailwind components;
 @tailwind utilities;

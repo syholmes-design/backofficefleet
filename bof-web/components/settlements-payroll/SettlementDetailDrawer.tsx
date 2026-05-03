@@ -1,6 +1,7 @@
 "use client";
 
-import { Fragment, useMemo, useState } from "react";
+import Link from "next/link";
+import { useMemo, useState } from "react";
 import { X } from "lucide-react";
 import { useBofDemoData } from "@/lib/bof-demo-data-context";
 import { settlementHasProofOrExceptionIssues } from "@/lib/settlements-payroll-bootstrap";
@@ -16,28 +17,16 @@ import { buildRfidReadinessSummaryForSurface } from "@/lib/template-usage-readin
 import { resolveBillingPacketRfidGate } from "@/lib/bof-rfid-readiness";
 import { getMockBackhaulOpportunities } from "@/lib/backhaul-opportunity-engine";
 import {
-  EvidencePhotoViewer,
-  isLoadEvidenceImageUrl,
-} from "@/components/evidence/EvidencePhotoViewer";
-import { getLoadDocumentPacket, type LoadEvidenceItem } from "@/lib/load-proof";
-import { filingReadinessLabel, tripPacketUiLabel } from "@/lib/load-trip-packet";
-import { ProofGapReviewLinks } from "@/components/review/ReviewDeepLinks";
+  getLoadDocumentPacket,
+  getLoadProofItems,
+  proofStatusDisplay,
+} from "@/lib/load-proof";
 
 type Props = {
   settlementId: string | null;
   open: boolean;
   onClose: () => void;
 };
-
-function settlementEvidenceSourceLabel(source?: LoadEvidenceItem["source"]) {
-  if (!source || source === "missing") return "Missing";
-  if (source === "ai_generated") return "AI demo evidence";
-  if (source === "svg_demo" || source === "generated") return "Demo SVG evidence";
-  if (source === "real" || source === "actual_docs" || source === "manual_upload") return "Real evidence";
-  if (source === "rfid") return "RFID";
-  if (source === "camera") return "Camera";
-  return "Evidence";
-}
 
 function proofSignalLabel(
   proofStatus: string,
@@ -57,6 +46,12 @@ function settlementDocLabel(kind: "summary" | "hold" | "insurance"): string {
   return "insurance notice";
 }
 
+function proofTypeStatus(data: Parameters<typeof getLoadProofItems>[0], loadId: string, needle: string) {
+  const items = getLoadProofItems(data, loadId);
+  const hit = items.find((i) => i.type.toLowerCase().includes(needle.toLowerCase()));
+  return hit ? proofStatusDisplay(hit.status) : "—";
+}
+
 export function SettlementDetailDrawer({ settlementId, open, onClose }: Props) {
   const { data } = useBofDemoData();
   const settlements = useSettlementsPayrollStore((s) => s.settlements);
@@ -72,8 +67,12 @@ export function SettlementDetailDrawer({ settlementId, open, onClose }: Props) {
   const setGeneratedDocument = useSettlementsPayrollStore(
     (s) => s.setGeneratedDocument
   );
+  const markSettlementReviewedDemo = useSettlementsPayrollStore(
+    (s) => s.markSettlementReviewedDemo
+  );
   const [docBusy, setDocBusy] = useState<"summary" | "hold" | "insurance" | null>(null);
   const [docNotice, setDocNotice] = useState<string | null>(null);
+  const [showAdvancedPacket, setShowAdvancedPacket] = useState(false);
 
   const settlement = useMemo(
     () => settlements.find((x) => x.settlement_id === settlementId) ?? null,
@@ -119,6 +118,11 @@ export function SettlementDetailDrawer({ settlementId, open, onClose }: Props) {
       .map((l) => l.load_id as string);
     return [...new Set([...earnings, ...rest])];
   }, [settlementId, lines]);
+
+  const uniqueLoadIds = useMemo(
+    () => [...new Set(myLines.map((l) => l.load_id).filter(Boolean) as string[])],
+    [myLines]
+  );
 
   const billingRfidGate = useMemo(() => {
     if (!settlementId) {
@@ -411,34 +415,135 @@ export function SettlementDetailDrawer({ settlementId, open, onClose }: Props) {
             </div>
           </section>
 
+          {(settlement.settlement_hold ||
+            settlement.status === "Draft" ||
+            proofReview.recommendHold) && (
+            <section
+              id="stl-settlement-review"
+              className="rounded-lg border border-teal-800/45 bg-teal-950/25 p-4 text-sm"
+            >
+              <h3 className="text-base font-semibold text-teal-50">Settlement review</h3>
+              <p className="mt-1 text-slate-300">
+                <span className="font-medium text-white">{settlement.driver_name}</span>{" "}
+                <span className="font-mono text-slate-400">{settlement.driver_id}</span>
+              </p>
+              <p className="mt-2 font-mono text-xs text-slate-400">
+                {settlement.period_start} → {settlement.period_end}
+              </p>
+              <p className="mt-2 text-lg font-semibold text-teal-200">
+                Net {formatPayrollCurrency(settlement.net_pay)}
+              </p>
+              {settlement.settlement_hold_reason ? (
+                <p className="mt-2 text-amber-100/95">
+                  <span className="font-semibold text-amber-200">Hold / review reason:</span>{" "}
+                  {settlement.settlement_hold_reason}
+                </p>
+              ) : null}
+              {proofReview.messages.length > 0 ? (
+                <div className="mt-3">
+                  <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">
+                    Proof / documents needed
+                  </p>
+                  <ul className="mt-1 list-inside list-disc text-slate-200">
+                    {proofReview.messages.map((m) => (
+                      <li key={m}>{m}</li>
+                    ))}
+                  </ul>
+                </div>
+              ) : null}
+              <p className="mt-3 text-xs text-slate-400">
+                Recommended: clear proof gaps on linked loads, then mark ready for export or clear
+                the settlement hold from payroll controls below.
+              </p>
+              <div className="mt-4 flex flex-wrap gap-2">
+                <Link
+                  href={`/drivers/${settlement.driver_id}/settlements`}
+                  className="rounded border border-teal-700 bg-teal-950/40 px-3 py-2 text-sm font-medium text-teal-50 hover:bg-teal-900/45"
+                >
+                  Open settlement page
+                </Link>
+                <Link
+                  href={`/drivers/${settlement.driver_id}`}
+                  className="rounded border border-slate-600 bg-slate-900 px-3 py-2 text-sm text-slate-100 hover:bg-slate-800"
+                >
+                  Open driver
+                </Link>
+                {uniqueLoadIds[0] ? (
+                  <>
+                    <Link
+                      href={`/dispatch?loadId=${encodeURIComponent(uniqueLoadIds[0])}&driverId=${encodeURIComponent(settlement.driver_id)}`}
+                      className="rounded border border-slate-600 bg-slate-900 px-3 py-2 text-sm text-slate-100 hover:bg-slate-800"
+                    >
+                      Open dispatch load
+                    </Link>
+                    <Link
+                      href={`/loads/${encodeURIComponent(uniqueLoadIds[0])}`}
+                      className="rounded border border-slate-600 bg-slate-900 px-3 py-2 text-sm text-slate-100 hover:bg-slate-800"
+                    >
+                      Open load proof packet
+                    </Link>
+                  </>
+                ) : null}
+                <Link
+                  href={`/drivers/${settlement.driver_id}/vault`}
+                  className="rounded border border-slate-600 bg-slate-900 px-3 py-2 text-sm text-slate-100 hover:bg-slate-800"
+                >
+                  Open documentation bundle
+                </Link>
+                <button
+                  type="button"
+                  onClick={() => {
+                    markSettlementReviewedDemo(settlement.settlement_id);
+                  }}
+                  className="rounded border border-slate-500 px-3 py-2 text-sm text-slate-200 hover:bg-slate-900"
+                >
+                  Mark reviewed (demo)
+                </button>
+              </div>
+            </section>
+          )}
+
           <section>
-            <h3 className="mb-2 text-xs font-semibold uppercase tracking-wide text-slate-500">
-              Load proof / readiness
-            </h3>
-            <div className="space-y-2">
-              {Array.from(
-                new Set(
-                  myLines.map((l) => l.load_id).filter(Boolean) as string[]
-                )
-              ).flatMap((lid) => {
+            <div className="mb-2 flex flex-wrap items-end justify-between gap-2">
+              <h3 className="text-sm font-semibold text-slate-200">Source load packet</h3>
+              <button
+                type="button"
+                className="text-xs font-medium text-teal-400 hover:text-teal-300"
+                onClick={() => setShowAdvancedPacket((v) => !v)}
+              >
+                {showAdvancedPacket ? "Hide" : "Show"} trip packet checklist
+              </button>
+            </div>
+            <p className="mb-3 text-sm text-slate-400">
+              Readiness summary per load. Use dispatch and load proof for the authoritative document
+              library — this panel stays compact on purpose.
+            </p>
+            <div className="space-y-3">
+              {uniqueLoadIds.map((lid) => {
                 const snap = loads.find((x) => x.load_id === lid);
-                if (!snap) return [];
+                if (!snap) return null;
+                const bofLoad = data.loads.find((l) => l.id === lid);
                 const packet = getLoadDocumentPacket(data, lid);
                 const signal = proofSignalLabel(
                   snap.proof_status,
                   snap.settlement_hold,
                   snap.exception_flag
                 );
-                return [
+                const podLabel = bofLoad?.podStatus
+                  ? String(bofLoad.podStatus)
+                  : proofTypeStatus(data, lid, "pod");
+                const claimLabel =
+                  snap.insurance_claim_needed || snap.exception_flag ? "Review" : "None";
+                return (
                   <div
                     key={lid}
-                    className="rounded border border-slate-800 bg-slate-900/50 px-3 py-2 text-xs"
+                    className="rounded-lg border border-slate-800 bg-slate-900/50 p-4 text-sm"
                   >
                     <div className="flex flex-wrap items-center justify-between gap-2">
-                      <span className="font-mono text-teal-300">{lid}</span>
+                      <span className="font-mono text-base text-teal-300">{lid}</span>
                       <span
                         className={[
-                          "rounded px-2 py-0.5 text-[10px] font-medium",
+                          "rounded px-2 py-0.5 text-xs font-medium",
                           proofChipClass(snap.proof_status),
                         ].join(" ")}
                       >
@@ -446,16 +551,35 @@ export function SettlementDetailDrawer({ settlementId, open, onClose }: Props) {
                       </span>
                     </div>
                     <p className="mt-1 text-slate-400">{snap.customer_name}</p>
-                    <dl className="mt-2 grid grid-cols-2 gap-1 text-[11px]">
-                      <dt className="text-slate-500">Load status</dt>
-                      <dd>{snap.status}</dd>
-                      <dt className="text-slate-500">Proof hold (load)</dt>
-                      <dd>{snap.settlement_hold ? "Yes" : "No"}</dd>
-                      <dt className="text-slate-500">Exception</dt>
-                      <dd>{snap.exception_flag ? "Yes" : "No"}</dd>
-                      <dt className="text-slate-500">Claim</dt>
-                      <dd>{snap.insurance_claim_needed ? "Yes" : "No"}</dd>
+                    <dl className="mt-3 grid gap-2 sm:grid-cols-2">
+                      <div className="flex justify-between gap-2 border-b border-slate-800/80 py-1">
+                        <dt className="text-slate-500">POD</dt>
+                        <dd className="font-medium text-slate-100">{podLabel}</dd>
+                      </div>
+                      <div className="flex justify-between gap-2 border-b border-slate-800/80 py-1">
+                        <dt className="text-slate-500">BOL stack</dt>
+                        <dd className="font-medium text-slate-100">{proofTypeStatus(data, lid, "bol")}</dd>
+                      </div>
+                      <div className="flex justify-between gap-2 border-b border-slate-800/80 py-1">
+                        <dt className="text-slate-500">Invoice</dt>
+                        <dd className="font-medium text-slate-100">{proofTypeStatus(data, lid, "invoice")}</dd>
+                      </div>
+                      <div className="flex justify-between gap-2 border-b border-slate-800/80 py-1">
+                        <dt className="text-slate-500">Lumper / accessorial</dt>
+                        <dd className="font-medium text-slate-100">{proofTypeStatus(data, lid, "lumper")}</dd>
+                      </div>
+                      <div className="flex justify-between gap-2 border-b border-slate-800/80 py-1">
+                        <dt className="text-slate-500">Seal / proof</dt>
+                        <dd className="font-medium text-slate-100">{bofLoad?.sealStatus ?? "—"}</dd>
+                      </div>
+                      <div className="flex justify-between gap-2 border-b border-slate-800/80 py-1">
+                        <dt className="text-slate-500">Claim / exception</dt>
+                        <dd className="font-medium text-slate-100">{claimLabel}</dd>
+                      </div>
                     </dl>
+                    {packet?.holdReason ? (
+                      <p className="mt-2 text-xs text-amber-100/90">{packet.holdReason}</p>
+                    ) : null}
                     <p className="mt-2">
                       <span
                         className={
@@ -469,127 +593,37 @@ export function SettlementDetailDrawer({ settlementId, open, onClose }: Props) {
                         {signal}
                       </span>
                     </p>
-                    {!packet && (
-                      <p className="mt-2 text-amber-200/90">
-                        No document packet found for this load.
+                    <div className="mt-3 flex flex-wrap gap-2">
+                      <Link
+                        href={`/dispatch?loadId=${encodeURIComponent(lid)}&driverId=${encodeURIComponent(settlement.driver_id)}`}
+                        className="text-sm font-medium text-teal-400 hover:text-teal-300"
+                      >
+                        View dispatch load →
+                      </Link>
+                      <Link
+                        href={`/loads/${encodeURIComponent(lid)}`}
+                        className="text-sm font-medium text-teal-400 hover:text-teal-300"
+                      >
+                        Open load proof packet →
+                      </Link>
+                      <Link
+                        href={`/drivers/${settlement.driver_id}/vault`}
+                        className="text-sm font-medium text-teal-400 hover:text-teal-300"
+                      >
+                        Open documentation bundle →
+                      </Link>
+                    </div>
+                    {showAdvancedPacket && packet && (
+                      <p className="mt-3 text-xs text-slate-500">
+                        Trip packet: {packet.tripValidation ? `${packet.tripValidation.readyCount}/${packet.tripValidation.requiredCount} required items ready` : "No trip validation snapshot"}.
+                        Full checklist lives on the load record.
                       </p>
                     )}
-                    {packet && (
-                      <>
-                        <p className="mt-2 text-slate-300">{packet.holdReason}</p>
-                        {packet.tripValidation && (
-                          <div className="mt-2 flex flex-wrap gap-2 text-[11px] text-slate-300">
-                            <span className="rounded bg-slate-800 px-2 py-0.5 font-medium text-slate-100">
-                              {tripPacketUiLabel(packet.tripValidation.status)}
-                            </span>
-                            <span className="rounded bg-slate-800 px-2 py-0.5">
-                              Required ready {packet.tripValidation.readyCount}/
-                              {packet.tripValidation.requiredCount}
-                            </span>
-                            <span className="rounded bg-slate-800 px-2 py-0.5">
-                              Filing:{" "}
-                              {filingReadinessLabel(
-                                packet.tripValidation,
-                                snap.status?.toLowerCase() === "delivered"
-                              )}
-                            </span>
-                          </div>
-                        )}
-                        <div className="mt-2 overflow-x-auto rounded border border-slate-800">
-                          <table className="w-full min-w-[640px] border-collapse text-left text-[11px]">
-                            <thead className="bg-slate-900/80 text-[10px] uppercase tracking-wide text-slate-500">
-                              <tr>
-                                <th className="border-b border-slate-800 px-2 py-1.5">Document</th>
-                                <th className="border-b border-slate-800 px-2 py-1.5">Status</th>
-                                <th className="border-b border-slate-800 px-2 py-1.5">Action</th>
-                                <th className="border-b border-slate-800 px-2 py-1.5">Note</th>
-                              </tr>
-                            </thead>
-                            <tbody>
-                              {[
-                                { section: "Core Trip Documents", rows: packet.documents.filter((d) => d.section === "core") },
-                                { section: "Proof & Media", rows: packet.documents.filter((d) => d.section === "proof") },
-                                { section: "Exceptions / Claims", rows: packet.documents.filter((d) => d.section === "exceptions") },
-                                { section: "Reference Documents", rows: packet.documents.filter((d) => d.section === "reference") },
-                              ].filter((g) => g.rows.length > 0).map((group) => (
-                                <Fragment key={`${lid}-${group.section}`}>
-                                  <tr className="border-b border-slate-800 bg-slate-950/65">
-                                    <td colSpan={4} className="px-2 py-1.5 text-[10px] font-semibold uppercase tracking-wide text-slate-400">
-                                      {group.section}
-                                    </td>
-                                  </tr>
-                                  {group.rows.map((doc) => {
-                                const u = doc.url?.trim();
-                                const canOpen = doc.status === "ready" && Boolean(u);
-                                const imageOpen = Boolean(u && isLoadEvidenceImageUrl(u));
-                                const label =
-                                  doc.status === "not_applicable"
-                                    ? "Not applicable"
-                                    : doc.status === "ready"
-                                      ? "Ready"
-                                      : doc.status === "pending"
-                                        ? "Pending"
-                                        : doc.status === "missing"
-                                          ? "Missing"
-                                          : "Blocked";
-                                return (
-                                  <tr key={doc.id} className="border-b border-slate-800/80">
-                                    <td className="px-2 py-1.5 text-slate-200">{doc.label}</td>
-                                    <td className="px-2 py-1.5">
-                                      <span className="inline-flex rounded px-2 py-0.5 text-[10px] font-medium bg-slate-800 text-slate-200">
-                                        {label}
-                                      </span>
-                                    </td>
-                                    <td className="px-2 py-1.5 align-middle">
-                                      {canOpen && imageOpen && u ? (
-                                        <EvidencePhotoViewer
-                                          url={u}
-                                          label={doc.label}
-                                          source={settlementEvidenceSourceLabel(doc.source)}
-                                          loadId={doc.loadId}
-                                          description={doc.note}
-                                        />
-                                      ) : canOpen && u ? (
-                                        <a
-                                          href={u}
-                                          target="_blank"
-                                          rel="noopener noreferrer"
-                                          className="bof-link-secondary"
-                                        >
-                                          {doc.type.includes("photo") ? "View photo" : "Open"}
-                                        </a>
-                                      ) : (
-                                        <>
-                                          <span className="text-slate-500">Missing / Needs review</span>
-                                          <ProofGapReviewLinks
-                                            driverId={settlement.driver_id}
-                                            loadId={doc.loadId}
-                                            className="mt-1 flex flex-wrap gap-x-2 gap-y-1"
-                                          />
-                                        </>
-                                      )}
-                                    </td>
-                                    <td className="px-2 py-1.5 text-slate-400">
-                                      {doc.note || "—"}
-                                    </td>
-                                  </tr>
-                                );
-                                  })}
-                                </Fragment>
-                              ))}
-                            </tbody>
-                          </table>
-                        </div>
-                      </>
-                    )}
-                    {snap.settlement_hold_reason && (
-                      <p className="mt-2 text-amber-200/90">{snap.settlement_hold_reason}</p>
-                    )}
-                  </div>,
-                ];
+                  </div>
+                );
               })}
-              {myLines.every((l) => !l.load_id) && (
-                <p className="text-xs text-slate-500">
+              {uniqueLoadIds.length === 0 && (
+                <p className="text-sm text-slate-500">
                   No load-linked lines — proof readiness is N/A for this settlement.
                 </p>
               )}

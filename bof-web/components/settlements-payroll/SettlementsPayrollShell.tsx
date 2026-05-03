@@ -27,8 +27,14 @@ export function SettlementsPayrollShell() {
     if (settlementId) openDrawer(settlementId);
   }, [searchParams, openDrawer]);
 
+  useEffect(() => {
+    const tab = searchParams.get("tab");
+    if (tab === "export") setNav("export");
+    else if (tab === "dashboard") setNav("dashboard");
+  }, [searchParams]);
+
   return (
-    <div className="flex min-h-[calc(100vh-8rem)] flex-col text-slate-200">
+    <div className="bof-settlements-shell flex min-h-[calc(100vh-8rem)] flex-col text-slate-200">
       <div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-800 bg-slate-950/80 px-4 py-3">
         <nav className="flex gap-1" aria-label="Settlements payroll">
           {tabs.map((t) => {

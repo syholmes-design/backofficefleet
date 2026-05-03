@@ -9,6 +9,7 @@ import {
 import type {
   Settlement,
   SettlementLine,
+  SettlementStatus,
   Load,
 } from "@/types/settlements-payroll";
 
@@ -50,6 +51,8 @@ type Store = {
     url: string
   ) => void;
   exportSelectedToPayroll: (settlement_ids: string[]) => string;
+  /** Demo: clear hold / proof gate friction for payroll review rehearsal */
+  markSettlementReviewedDemo: (settlement_id: string) => void;
 };
 
 export const useSettlementsPayrollStore = create<Store>((set, get) => ({
@@ -173,6 +176,23 @@ export const useSettlementsPayrollStore = create<Store>((set, get) => ({
     }));
     return batch;
   },
+
+  markSettlementReviewedDemo: (settlement_id) =>
+    set((st) => ({
+      settlements: st.settlements.map((x) =>
+        x.settlement_id === settlement_id
+          ? {
+              ...x,
+              settlement_hold: false,
+              settlement_hold_reason: null,
+              status:
+                x.status === "Exported"
+                  ? x.status
+                  : ("Draft" as SettlementStatus),
+            }
+          : x
+      ),
+    })),
 }));
 
 export function countByStatus(
