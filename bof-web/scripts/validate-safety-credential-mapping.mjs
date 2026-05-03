@@ -7,6 +7,15 @@ const INDEX_PATH = path.join(ROOT, "lib", "generated", "driver-public-doc-index.
 const SAFETY_SCORECARD_PATH = path.join(ROOT, "lib", "safety-scorecard.ts");
 const SAFETY_STORE_PATH = path.join(ROOT, "lib", "stores", "safety-store.ts");
 const SAFETY_PROFILE_PATH = path.join(ROOT, "components", "safety", "DriverSafetyProfileScreen.tsx");
+const DRIVER_SAFETY_PAGE_PATH = path.join(
+  ROOT,
+  "app",
+  "(bof)",
+  "drivers",
+  "[id]",
+  "safety",
+  "page.tsx"
+);
 
 function toDateOnly(value) {
   if (!value) return null;
@@ -60,6 +69,7 @@ function main() {
 
   const storeSource = fs.readFileSync(SAFETY_STORE_PATH, "utf8");
   const profileSource = fs.readFileSync(SAFETY_PROFILE_PATH, "utf8");
+  const driverSafetyPageSource = fs.readFileSync(DRIVER_SAFETY_PAGE_PATH, "utf8");
 
   if (!storeSource.includes("getDriverCredentialStatus(data, d.id)")) {
     fail(
@@ -88,6 +98,25 @@ function main() {
       "profile",
       "stale_not_on_file_wording_present",
       "Safety profile still renders stale Date not on file wording"
+    );
+  }
+
+  if (!driverSafetyPageSource.includes("getDriverCredentialStatus(data, id)")) {
+    fail(
+      issues,
+      "ALL",
+      "driver_safety_page",
+      "driver_safety_page_missing_canonical",
+      "drivers/[id]/safety page must use getDriverCredentialStatus(data, id)"
+    );
+  }
+  if (driverSafetyPageSource.includes("describeCredentialExpiration")) {
+    fail(
+      issues,
+      "ALL",
+      "driver_safety_page",
+      "driver_safety_page_uses_relative_expiration",
+      "drivers/[id]/safety must not use describeCredentialExpiration for credentials — use credentialDisplayText from canonical status"
     );
   }
 

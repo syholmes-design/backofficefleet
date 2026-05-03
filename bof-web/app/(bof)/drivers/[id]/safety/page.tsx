@@ -4,8 +4,12 @@ import { use } from "react";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { useBofDemoData } from "@/lib/bof-demo-data-context";
-import { complianceNotesForDriver, getOrderedDocumentsForDriver } from "@/lib/driver-queries";
-import { describeCredentialExpiration } from "@/lib/driver-doc-registry";
+import { complianceNotesForDriver } from "@/lib/driver-queries";
+import {
+  credentialDisplayText,
+  getDriverCredentialStatus,
+  type CanonicalCredentialStatus,
+} from "@/lib/driver-credential-status";
 import {
   getSafetyEvidenceByDriverId,
   getSafetyScorecardRows,
@@ -30,9 +34,12 @@ export default function DriverSafetyPage({ params }: Props) {
   }
 
   const compliance = complianceNotesForDriver(data, id);
-  const credentialDocs = getOrderedDocumentsForDriver(data, id).filter(
-    (d) => d.type === "CDL" || d.type === "Medical Card" || d.type === "MVR"
-  );
+  const credentials = getDriverCredentialStatus(data, id);
+  const credentialRows = [
+    { label: "CDL", record: credentials.cdl },
+    { label: "Medical Card", record: credentials.medicalCard },
+    { label: "MVR", record: credentials.mvr },
+  ] as const;
   const scoreRow = getSafetyScorecardRows().find((r) => r.driverId === id) ?? null;
   const evidence = getSafetyEvidenceByDriverId(id);
   const violationActions = getSafetyViolationActions().filter((r) => r.driverId === id);
@@ -116,25 +123,21 @@ export default function DriverSafetyPage({ params }: Props) {
 
         <section className="rounded-lg border border-slate-800 bg-slate-900/30 p-4">
           <h2 className="mb-2 text-sm font-semibold text-slate-100">Credential status</h2>
+          <p className="mb-3 text-[11px] text-slate-500">
+            Same canonical driver document records as dispatch eligibility and the document vault (keyed by{" "}
+            <code className="text-slate-400">{id}</code>).
+          </p>
           <div className="grid gap-3 md:grid-cols-3">
-            {credentialDocs.map((doc) => {
-              const status = doc.status.toUpperCase();
-              const chipClass =
-                status === "VALID"
-                  ? "bg-emerald-900/35 text-emerald-300 ring-1 ring-emerald-700/50"
-                  : status === "EXPIRED"
-                    ? "bg-rose-900/40 text-rose-300 ring-1 ring-rose-700/50"
-                    : "bg-amber-900/30 text-amber-300 ring-1 ring-amber-700/40";
-              const href = doc.fileUrl || doc.previewUrl;
+            {credentialRows.map(({ label, record }) => {
+              const { chipClass, chipLabel } = canonicalCredentialChip(record.status);
+              const href = record.fileUrl?.trim();
               return (
-                <div key={doc.type} className="rounded border border-slate-800 bg-slate-950/50 p-3">
-                  <p className="text-xs font-semibold text-slate-100">{doc.type}</p>
-                  <p className="mt-1 text-[11px] text-slate-400">
-                    {describeCredentialExpiration(doc.expirationDate)}
-                  </p>
+                <div key={label} className="rounded border border-slate-800 bg-slate-950/50 p-3">
+                  <p className="text-xs font-semibold text-slate-100">{label}</p>
+                  <p className="mt-1 text-[11px] text-slate-400">{credentialDisplayText(record)}</p>
                   <div className="mt-2 flex items-center justify-between gap-2">
                     <span className={`inline-flex rounded px-2 py-0.5 text-[10px] font-semibold ${chipClass}`}>
-                      {doc.status}
+                      {chipLabel}
                     </span>
                     {href ? (
                       <a
@@ -147,7 +150,7 @@ export default function DriverSafetyPage({ params }: Props) {
                       </a>
                     ) : (
                       <span className="text-[11px] font-semibold text-amber-300">
-                        Missing / Needs review
+                        Missing / needs review
                       </span>
                     )}
                   </div>
@@ -279,4 +282,37 @@ function Kpi({ label, value }: { label: string; value: string | number }) {
       <p className="mt-1 text-lg font-semibold text-white">{value}</p>
     </div>
   );
+}
+
+function canonicalCredentialChip(status: CanonicalCredentialStatus): {
+  chipClass: string;
+  chipLabel: string;
+} {
+  switch (status) {
+    case "valid":
+      return {
+        chipClass: "bg-emerald-900/35 text-emerald-300 ring-1 ring-emerald-700/50",
+        chipLabel: "Valid",
+      };
+    case "expired":
+      return {
+        chipClass: "bg-rose-900/40 text-rose-300 ring-1 ring-rose-700/50",
+        chipLabel: "Expired",
+      };
+    case "expiring_soon":
+      return {
+        chipClass: "bg-amber-900/30 text-amber-300 ring-1 ring-amber-700/40",
+        chipLabel: "Expiring soon",
+      };
+    case "pending_review":
+      return {
+        chipClass: "bg-amber-900/30 text-amber-300 ring-1 ring-amber-700/40",
+        chipLabel: "Needs review",
+      };
+    default:
+      return {
+        chipClass: "bg-amber-900/30 text-amber-300 ring-1 ring-amber-700/40",
+        chipLabel: "Missing",
+      };
+  }
 }
