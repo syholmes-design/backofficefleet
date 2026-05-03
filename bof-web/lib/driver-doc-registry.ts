@@ -330,7 +330,7 @@ export function medicalCardSoftWarningReason(med: DriverMedicalCardStatus): stri
   if (med.status === "pending_review") {
     return med.expirationDate
       ? `Medical Card pending review (expiration ${med.expirationDate})`
-      : "Medical Card pending review — confirm expiration on file";
+      : "Medical Card on file — expiration needs review";
   }
   return null;
 }

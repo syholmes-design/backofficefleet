@@ -51,7 +51,14 @@ function homeBaseFromAddress(address: string): string {
 }
 
 export function DriverDetailPageClient({ driverId }: { driverId: string }) {
-  const { data, updateDriver, updateDocument } = useBofDemoData();
+  const {
+    data,
+    updateDriver,
+    updateDocument,
+    resolveDriverDispatchBlocker,
+    resolveAllDriverDispatchBlockersForDemo,
+    resetDriverDispatchBlockerOverrides,
+  } = useBofDemoData();
   const intakeReadiness = useIntakeEngineStore((s) => s.driverReadinessLog);
 
   const driver = useMemo(() => getDriverById(data, driverId), [data, driverId]);
@@ -248,10 +255,20 @@ export function DriverDetailPageClient({ driverId }: { driverId: string }) {
       expirationDate: operationalDraft.cdl_expiration_date || null,
       status: deriveDocStatusFromExpiration(operationalDraft.cdl_expiration_date),
     });
-    updateDocument(driver.id, "Medical Card", {
-      expirationDate: operationalDraft.med_card_expiration_date || null,
-      status: deriveDocStatusFromExpiration(operationalDraft.med_card_expiration_date),
-    });
+    const medDate = operationalDraft.med_card_expiration_date?.trim();
+    updateDocument(
+      driver.id,
+      "Medical Card",
+      medDate
+        ? {
+            expirationDate: medDate,
+            status: deriveDocStatusFromExpiration(medDate),
+          }
+        : {
+            expirationDate: medicalDoc?.expirationDate,
+            status: medicalDoc?.status ?? "PENDING REVIEW",
+          }
+    );
     updateDocument(driver.id, "MVR", {
       expirationDate: operationalDraft.mvr_expiration_date || null,
       status: deriveDocStatusFromExpiration(operationalDraft.mvr_expiration_date),
@@ -640,6 +657,78 @@ export function DriverDetailPageClient({ driverId }: { driverId: string }) {
                   )}
                 </span>
               </div>
+              {dispatchEligibility.hardBlockerDetails.length > 0 ||
+              dispatchEligibility.demoResolvedHardBlockers.length > 0 ? (
+                <div
+                  className="bof-driver-ops-row"
+                  style={{ flexDirection: "column", alignItems: "stretch", gap: "0.5rem" }}
+                >
+                  <span className="bof-driver-ops-k">Dispatch hard gates</span>
+                  {dispatchEligibility.hardBlockerDetails.length > 0 ? (
+                    <ul className="bof-muted" style={{ margin: 0, paddingLeft: "1.1rem" }}>
+                      {dispatchEligibility.hardBlockerDetails.map((b) => (
+                        <li key={b.id}>{b.message}</li>
+                      ))}
+                    </ul>
+                  ) : (
+                    <p className="bof-muted bof-small" style={{ margin: 0 }}>
+                      No active hard gates — remaining items are soft warnings or demo overrides.
+                    </p>
+                  )}
+                  {dispatchEligibility.demoResolvedHardBlockers.length > 0 ? (
+                    <p className="bof-small bof-muted" style={{ margin: 0 }}>
+                      <strong>Resolved for demo:</strong>{" "}
+                      {dispatchEligibility.demoResolvedHardBlockers.map((b) => b.message).join(" · ")}
+                    </p>
+                  ) : null}
+                  {dispatchEligibility.softWarnings.some((w) => w.startsWith("Demo override active")) ? (
+                    <p className="bof-small bof-muted" style={{ margin: 0 }}>
+                      {dispatchEligibility.softWarnings.find((w) => w.startsWith("Demo override active"))}
+                    </p>
+                  ) : null}
+                  {dispatchEligibility.status === "blocked" && dispatchEligibility.hardBlockerDetails.length > 0 ? (
+                    <div style={{ display: "flex", flexWrap: "wrap", gap: "0.5rem" }}>
+                      {dispatchEligibility.hardBlockerDetails.map((b) => (
+                        <button
+                          key={b.id}
+                          type="button"
+                          className="bof-intake-engine-btn"
+                          onClick={() =>
+                            resolveDriverDispatchBlocker(
+                              driverId,
+                              b.id,
+                              b.id.startsWith("medical_card")
+                                ? "Mark credential reviewed for demo"
+                                : "Override block for demo"
+                            )
+                          }
+                        >
+                          {b.id.startsWith("medical_card")
+                            ? "Mark credential reviewed for demo"
+                            : "Override block for demo"}
+                        </button>
+                      ))}
+                      <button
+                        type="button"
+                        className="bof-intake-engine-btn"
+                        onClick={() => resolveAllDriverDispatchBlockersForDemo(driverId)}
+                      >
+                        Resolve all for demo
+                      </button>
+                    </div>
+                  ) : null}
+                  {dispatchEligibility.demoResolvedHardBlockers.length > 0 ? (
+                    <button
+                      type="button"
+                      className="bof-link-secondary"
+                      style={{ alignSelf: "flex-start", background: "none", border: "none", cursor: "pointer", padding: 0 }}
+                      onClick={() => resetDriverDispatchBlockerOverrides(driverId)}
+                    >
+                      Reset demo overrides
+                    </button>
+                  ) : null}
+                </div>
+              ) : null}
             </div>
           </div>
         </div>

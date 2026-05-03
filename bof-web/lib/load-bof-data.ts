@@ -9,7 +9,17 @@
  */
 import raw from "./demo-data.json";
 
-export type BofData = typeof raw;
+/** Runtime-only demo dispatch blocker acknowledgements (persisted with demo data in localStorage). */
+export type DriverDispatchBlockerOverrideRow = {
+  resolvedReasonIds: string[];
+  resolvedAt: string;
+  resolvedBy: "demo-editor";
+  note?: string;
+};
+
+export type BofData = typeof raw & {
+  driverDispatchBlockerOverrides?: Record<string, DriverDispatchBlockerOverrideRow>;
+};
 
 export function getBofData(): BofData {
   return raw;

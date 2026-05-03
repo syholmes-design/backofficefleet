@@ -43,6 +43,7 @@ type DriverRow = {
   documentSummary: string;
   hardBlockers: string[];
   blockerHref?: string;
+  primaryDispatchBlockerId?: string;
   pendingPay: number;
 };
 
@@ -54,10 +55,18 @@ type ExceptionItem = {
   nextStep: string;
   actionHref: string;
   actionLabel: string;
+  /** Primary dispatch blocker id for one-click demo resolve */
+  resolveDriverId?: string;
+  resolveReasonId?: string;
+  onResolveAllDemo?: () => void;
 };
 
 export function DriversRosterTable() {
-  const { data } = useBofDemoData();
+  const {
+    data,
+    resolveDriverDispatchBlocker,
+    resolveAllDriverDispatchBlockersForDemo,
+  } = useBofDemoData();
   const safetyTierMap = useMemo(
     () => new Map(getSafetyScorecardRows().map((row) => [row.driverId, row.performanceTier])),
     []
@@ -152,6 +161,7 @@ export function DriversRosterTable() {
         documentSummary: eligibility.documentSummaryLabel,
         hardBlockers: eligibility.hardBlockers,
         blockerHref: eligibility.recommendedAction?.href,
+        primaryDispatchBlockerId: eligibility.hardBlockerDetails[0]?.id,
         pendingPay,
       };
     });
@@ -364,15 +374,26 @@ export function DriversRosterTable() {
         <ExceptionPanel
           panelId="driver-blocked-dispatch"
           title="Drivers Blocked From Dispatch"
-          items={blockedDriverRows.map((row) => ({
-            key: `blocked-${row.driverId}`,
-            driver: row.name,
-            issue: row.hardBlockers.length ? row.hardBlockers.slice(0, 2).join(" · ") : row.dispatchEligibility,
-            severity: "high",
-            nextStep: "Clear hard gates (credentials, safety, or settlement block) before dispatch",
-            actionHref: row.blockerHref ?? `/drivers/${row.driverId}/dispatch`,
-            actionLabel: "Resolve Blocker",
-          }))}
+          items={blockedDriverRows.map((row) => {
+            const elig = getDriverDispatchEligibility(data, row.driverId);
+            const first = elig.hardBlockerDetails[0];
+            return {
+              key: `blocked-${row.driverId}`,
+              driver: row.name,
+              issue: row.hardBlockers.length ? row.hardBlockers.slice(0, 2).join(" · ") : row.dispatchEligibility,
+              severity: "high" as const,
+              nextStep:
+                "Clear hard gates in vault / safety / finance, or use a demo override to rehearse downstream flows.",
+              actionHref: row.blockerHref ?? `/drivers/${row.driverId}/vault`,
+              actionLabel: "Open workspace",
+              resolveDriverId: row.driverId,
+              resolveReasonId: first?.id,
+              onResolveAllDemo: () => resolveAllDriverDispatchBlockersForDemo(row.driverId),
+            };
+          })}
+          onResolveDispatchDemo={(driverId, reasonId) =>
+            resolveDriverDispatchBlocker(driverId, reasonId, "Drivers command — resolve blocker (demo)")
+          }
         />
         <ExceptionPanel title="Credentials Expiring Soon" items={expiringRows} />
         <ExceptionPanel title="Safety Issues Requiring Action" items={safetyRows} />
@@ -449,13 +470,25 @@ export function DriversRosterTable() {
                           Review Docs
                         </Link>
                       ) : null}
-                      {row.eligibilityStatus === "blocked" ? (
-                        <Link
-                          href={row.blockerHref ?? `/drivers/${row.driverId}/dispatch`}
-                          className="bof-cc-action-btn bof-cc-action-btn-danger"
-                        >
-                          Resolve Blocker
-                        </Link>
+                      {row.eligibilityStatus === "blocked" && row.primaryDispatchBlockerId ? (
+                        <>
+                          <button
+                            type="button"
+                            className="bof-cc-action-btn bof-cc-action-btn-danger"
+                            onClick={() =>
+                              resolveDriverDispatchBlocker(
+                                row.driverId,
+                                row.primaryDispatchBlockerId!,
+                                "Primary dispatch blocker — demo override"
+                              )
+                            }
+                          >
+                            Resolve blocker (demo)
+                          </button>
+                          <Link href={row.blockerHref ?? `/drivers/${row.driverId}/vault`} className="bof-cc-action-btn">
+                            Open workspace
+                          </Link>
+                        </>
                       ) : null}
                     </div>
                   </td>
@@ -512,10 +545,12 @@ function ExceptionPanel({
   title,
   items,
   panelId,
+  onResolveDispatchDemo,
 }: {
   title: string;
   items: ExceptionItem[];
   panelId?: string;
+  onResolveDispatchDemo?: (driverId: string, reasonId: string) => void;
 }) {
   return (
     <article className="bof-cc-panel" id={panelId}>
@@ -531,9 +566,25 @@ function ExceptionPanel({
                 <p className="bof-cc-exception-issue">{item.issue}</p>
                 <p className="bof-cc-exception-next">{item.nextStep}</p>
               </div>
-              <Link href={item.actionHref} className="bof-cc-action-btn">
-                {item.actionLabel}
-              </Link>
+              <div style={{ display: "flex", flexDirection: "column", gap: "0.35rem", alignItems: "stretch" }}>
+                {item.resolveDriverId && item.resolveReasonId && onResolveDispatchDemo ? (
+                  <button
+                    type="button"
+                    className="bof-cc-action-btn bof-cc-action-btn-danger"
+                    onClick={() => onResolveDispatchDemo(item.resolveDriverId!, item.resolveReasonId!)}
+                  >
+                    Resolve blocker (demo)
+                  </button>
+                ) : null}
+                {item.onResolveAllDemo ? (
+                  <button type="button" className="bof-cc-action-btn" onClick={item.onResolveAllDemo}>
+                    Resolve all for demo
+                  </button>
+                ) : null}
+                <Link href={item.actionHref} className="bof-cc-action-btn">
+                  {item.actionLabel}
+                </Link>
+              </div>
             </div>
           ))}
         </div>

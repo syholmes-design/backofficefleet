@@ -54,6 +54,7 @@ function run() {
     }
   }
 
+  const medicalExpirations = [];
   for (const driver of data.drivers ?? []) {
     const driverId = driver.id;
     const docs = (data.documents ?? []).filter(
@@ -65,6 +66,7 @@ function run() {
     }
 
     const exp = primary?.expirationDate?.trim();
+    if (exp) medicalExpirations.push(exp);
     const derived = deriveCredentialStatusFromExpiration(exp);
     const rowNorm = normalizeStatus(primary?.status);
 
@@ -120,6 +122,15 @@ function run() {
       }
     }
 
+  }
+
+  const uniqMed = new Set(medicalExpirations);
+  if (uniqMed.size < 2 && (data.drivers ?? []).length >= 4) {
+    mismatches.push({
+      driverId: "(fleet)",
+      issue: "medical_expiration_not_diverse",
+      detail: "All Medical Card expirationDate values are identical — blocker UI cannot vary per driver",
+    });
   }
 
   if (mismatches.length) {

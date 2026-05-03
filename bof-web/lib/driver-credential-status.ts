@@ -5,6 +5,10 @@ import {
   getDriverMedicalCardStatus,
 } from "@/lib/driver-doc-registry";
 
+/** Canonical medical resolver — re-exported for a single import surface (`@/lib/driver-credential-status`). */
+export { getDriverMedicalCardStatus } from "./driver-doc-registry";
+export type { DriverMedicalCardStatus } from "./driver-doc-registry";
+
 export type CanonicalCredentialStatus =
   | "valid"
   | "expiring_soon"

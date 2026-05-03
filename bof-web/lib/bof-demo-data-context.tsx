@@ -20,9 +20,10 @@ import {
   useState,
   type ReactNode,
 } from "react";
-import type { BofData } from "@/lib/load-bof-data";
+import type { BofData, DriverDispatchBlockerOverrideRow } from "@/lib/load-bof-data";
 import type { DriverMedicalExpanded } from "@/lib/driver-medical-expanded";
 import { EMPTY_DRIVER_MEDICAL_EXPANDED } from "@/lib/driver-medical-expanded";
+import { collectDispatchHardBlockers } from "@/lib/driver-dispatch-eligibility";
 import { applyOperationalSeedDefaults } from "@/lib/driver-operational-profile";
 
 const STORAGE_KEY = "bof-demo-data-v1";
@@ -75,6 +76,11 @@ export type BofDemoDataContextValue = {
   resolveLoadRiskReason: (loadId: string, reasonId: string, note?: string) => void;
   resolveDriverRiskReason: (driverId: string, reasonId: string, note?: string) => void;
   resetDemoRiskOverrides: () => void;
+  /** Dispatch hard-gate demo overrides (persisted on `data.driverDispatchBlockerOverrides`). */
+  resolveDriverDispatchBlocker: (driverId: string, reasonId: string, note?: string) => void;
+  resolveAllDriverDispatchBlockersForDemo: (driverId: string, note?: string) => void;
+  resetDriverDispatchBlockerOverrides: (driverId: string) => void;
+  resetAllDriverDispatchBlockerOverrides: () => void;
 };
 
 const BofDemoDataContext = createContext<BofDemoDataContextValue | null>(null);
@@ -258,6 +264,70 @@ export function BofDemoDataProvider({
     }
   }, []);
 
+  const resolveDriverDispatchBlocker = useCallback((driverId: string, reasonId: string, note?: string) => {
+    setData((prev) => {
+      const next = deepClone(prev);
+      const map = { ...(next.driverDispatchBlockerOverrides ?? {}) };
+      const row: DriverDispatchBlockerOverrideRow = map[driverId] ?? {
+        resolvedReasonIds: [],
+        resolvedAt: new Date().toISOString(),
+        resolvedBy: "demo-editor",
+      };
+      map[driverId] = {
+        ...row,
+        resolvedReasonIds: Array.from(new Set([...row.resolvedReasonIds, reasonId])),
+        resolvedAt: new Date().toISOString(),
+        note: note ?? row.note,
+      };
+      next.driverDispatchBlockerOverrides = map;
+      persistToStorage(next);
+      return next;
+    });
+  }, []);
+
+  const resolveAllDriverDispatchBlockersForDemo = useCallback((driverId: string, note?: string) => {
+    setData((prev) => {
+      const ids = collectDispatchHardBlockers(prev, driverId).map((b) => b.id);
+      const next = deepClone(prev);
+      const map = { ...(next.driverDispatchBlockerOverrides ?? {}) };
+      const row: DriverDispatchBlockerOverrideRow = map[driverId] ?? {
+        resolvedReasonIds: [],
+        resolvedAt: new Date().toISOString(),
+        resolvedBy: "demo-editor",
+      };
+      map[driverId] = {
+        ...row,
+        resolvedReasonIds: Array.from(new Set([...row.resolvedReasonIds, ...ids])),
+        resolvedAt: new Date().toISOString(),
+        note: note ?? row.note ?? "Resolved all dispatch hard gates for demo",
+      };
+      next.driverDispatchBlockerOverrides = map;
+      persistToStorage(next);
+      return next;
+    });
+  }, []);
+
+  const resetDriverDispatchBlockerOverrides = useCallback((driverId: string) => {
+    setData((prev) => {
+      const next = deepClone(prev);
+      const map = { ...(next.driverDispatchBlockerOverrides ?? {}) };
+      delete map[driverId];
+      if (Object.keys(map).length === 0) delete next.driverDispatchBlockerOverrides;
+      else next.driverDispatchBlockerOverrides = map;
+      persistToStorage(next);
+      return next;
+    });
+  }, []);
+
+  const resetAllDriverDispatchBlockerOverrides = useCallback(() => {
+    setData((prev) => {
+      const next = deepClone(prev);
+      delete next.driverDispatchBlockerOverrides;
+      persistToStorage(next);
+      return next;
+    });
+  }, []);
+
   const value = useMemo<BofDemoDataContextValue>(
     () => ({
       data,
@@ -271,6 +341,10 @@ export function BofDemoDataProvider({
       resolveLoadRiskReason,
       resolveDriverRiskReason,
       resetDemoRiskOverrides,
+      resolveDriverDispatchBlocker,
+      resolveAllDriverDispatchBlockersForDemo,
+      resetDriverDispatchBlockerOverrides,
+      resetAllDriverDispatchBlockerOverrides,
     }),
     [
       data,
@@ -284,6 +358,10 @@ export function BofDemoDataProvider({
       resolveLoadRiskReason,
       resolveDriverRiskReason,
       resetDemoRiskOverrides,
+      resolveDriverDispatchBlocker,
+      resolveAllDriverDispatchBlockersForDemo,
+      resetDriverDispatchBlockerOverrides,
+      resetAllDriverDispatchBlockerOverrides,
     ]
   );
 

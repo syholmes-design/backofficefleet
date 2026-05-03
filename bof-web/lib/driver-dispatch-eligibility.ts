@@ -13,12 +13,32 @@ import {
 
 export type DispatchEligibilityStatus = "ready" | "needs_review" | "blocked";
 
+/** Stable id for demo “resolve blocker” / validation; unique per underlying gate where possible. */
+export type DispatchHardBlocker = { id: string; message: string };
+
+export const DISPATCH_BLOCKER_REASON_IDS = {
+  cdl_expired: "cdl_expired",
+  cdl_missing: "cdl_missing",
+  medical_card_expired: "medical_card_expired",
+  medical_card_missing: "medical_card_missing",
+  mvr_expired: "mvr_expired",
+  mvr_missing: "mvr_missing",
+  fmcsa_not_cleared: "fmcsa_not_cleared",
+  fmcsa_dispatch_block: "fmcsa_dispatch_block",
+  finance_dispatch_hold: "finance_dispatch_hold",
+  safety_hard_gate: "safety_hard_gate",
+} as const;
+
 export type DriverDispatchEligibility = {
   driverId: string;
   status: DispatchEligibilityStatus;
   label: string;
   reasons: string[];
   hardBlockers: string[];
+  /** Active hard gates after demo overrides */
+  hardBlockerDetails: DispatchHardBlocker[];
+  /** Hard gates acknowledged for demo (still listed for transparency) */
+  demoResolvedHardBlockers: DispatchHardBlocker[];
   softWarnings: string[];
   recommendedAction: { label: string; href: string } | null;
   /** Table / panel helpers */
@@ -78,12 +98,118 @@ function isSafetySoftWarning(driverId: string): boolean {
 }
 
 /**
- * Dispatch eligibility keyed by `driverId` only — no name joins, no shared global blockers.
+ * Raw hard gates from canonical demo data (no demo overrides applied).
  */
-export function getDriverDispatchEligibility(
-  data: BofData,
-  driverId: string
-): DriverDispatchEligibility {
+export function collectDispatchHardBlockers(data: BofData, driverId: string): DispatchHardBlocker[] {
+  const docs = getOrderedDocumentsForDriver(data, driverId);
+  const rawByType = new Map(
+    data.documents.filter((doc) => doc.driverId === driverId).map((doc) => [doc.type, doc as DocumentRow])
+  );
+  const preferDriverDoc = (type: string): DocumentRow | undefined => {
+    const ordered = docByType(docs, type);
+    const raw = rawByType.get(type);
+    if (!raw) return ordered;
+    return {
+      ...ordered,
+      ...raw,
+      status: raw.status ?? ordered?.status ?? "MISSING",
+      expirationDate: raw.expirationDate ?? ordered?.expirationDate,
+      fileUrl: ordered?.fileUrl ?? raw.fileUrl,
+      previewUrl: ordered?.previewUrl ?? raw.previewUrl,
+    };
+  };
+
+  const cdl = preferDriverDoc("CDL");
+  const mvr = preferDriverDoc("MVR");
+  const fmcsa = preferDriverDoc("FMCSA");
+
+  const hard: DispatchHardBlocker[] = [];
+
+  if (isHardDocMissingOrExpired(cdl)) {
+    hard.push({
+      id: statusU(cdl) === "EXPIRED" ? DISPATCH_BLOCKER_REASON_IDS.cdl_expired : DISPATCH_BLOCKER_REASON_IDS.cdl_missing,
+      message: statusU(cdl) === "EXPIRED" ? "CDL expired" : "CDL missing or not on file",
+    });
+  }
+
+  const medicalCanon = getDriverMedicalCardStatus(data, driverId);
+  const medicalHard = medicalCardHardBlockReason(medicalCanon);
+  if (medicalHard) {
+    hard.push({
+      id:
+        medicalCanon.status === "missing"
+          ? DISPATCH_BLOCKER_REASON_IDS.medical_card_missing
+          : DISPATCH_BLOCKER_REASON_IDS.medical_card_expired,
+      message: medicalHard,
+    });
+  }
+
+  if (isHardDocMissingOrExpired(mvr)) {
+    hard.push({
+      id: statusU(mvr) === "EXPIRED" ? DISPATCH_BLOCKER_REASON_IDS.mvr_expired : DISPATCH_BLOCKER_REASON_IDS.mvr_missing,
+      message: statusU(mvr) === "EXPIRED" ? "MVR expired" : "MVR missing or not on file",
+    });
+  }
+
+  if (isFmcsaHardGate(fmcsa)) {
+    if (statusU(fmcsa) === "MISSING" || statusU(fmcsa) === "EXPIRED") {
+      hard.push({
+        id: DISPATCH_BLOCKER_REASON_IDS.fmcsa_not_cleared,
+        message: "FMCSA / Clearinghouse not cleared",
+      });
+    } else if (fmcsa?.blocksPayment) {
+      hard.push({
+        id: DISPATCH_BLOCKER_REASON_IDS.fmcsa_dispatch_block,
+        message: "FMCSA compliance blocks dispatch until reviewed",
+      });
+    }
+  }
+
+  const complianceOpen = data.complianceIncidents.filter(
+    (c) =>
+      c.driverId === driverId &&
+      !["CLOSED", "RESOLVED"].includes(String(c.status ?? "").toUpperCase())
+  );
+  const criticalOpen = complianceOpen.filter((c) => c.severity === "CRITICAL");
+
+  for (const c of criticalOpen) {
+    hard.push({
+      id: `open_compliance_critical:${c.incidentId}`,
+      message: `Open compliance: ${c.type} (critical)`,
+    });
+  }
+
+  const hasDispatchSpecificMoneyBlock = data.moneyAtRisk.some(
+    (m) =>
+      m.driverId === driverId &&
+      String(m.status ?? "").toUpperCase() === "BLOCKED" &&
+      /dispatch|out[- ]of[- ]service|oos|safety hold/i.test(
+        `${m.category ?? ""} ${m.rootCause ?? ""} ${m.nextBestAction ?? ""}`
+      )
+  );
+  if (hasDispatchSpecificMoneyBlock) {
+    hard.push({
+      id: DISPATCH_BLOCKER_REASON_IDS.finance_dispatch_hold,
+      message: "Dispatch blocked by active finance/compliance hold",
+    });
+  }
+
+  if (isSafetyHardGate(driverId)) {
+    hard.push({
+      id: DISPATCH_BLOCKER_REASON_IDS.safety_hard_gate,
+      message: "Safety hard gate — at-risk profile with unresolved severe findings",
+    });
+  }
+
+  return hard;
+}
+
+/**
+ * Dispatch eligibility keyed by `driverId` only — medical card uses canonical structured rows
+ * via `getDriverMedicalCardStatus`. Demo overrides in `data.driverDispatchBlockerOverrides` suppress
+ * acknowledged hard gates without mutating seed JSON.
+ */
+export function getDriverDispatchEligibility(data: BofData, driverId: string): DriverDispatchEligibility {
   const docs = getOrderedDocumentsForDriver(data, driverId);
   const rawByType = new Map(
     data.documents.filter((doc) => doc.driverId === driverId).map((doc) => [doc.type, doc as DocumentRow])
@@ -109,46 +235,40 @@ export function getDriverDispatchEligibility(
   const w9 = preferDriverDoc("W-9");
   const bank = preferDriverDoc("Bank Info");
 
-  const hardBlockers: string[] = [];
+  const rawHard = collectDispatchHardBlockers(data, driverId);
+  const resolved = new Set(data.driverDispatchBlockerOverrides?.[driverId]?.resolvedReasonIds ?? []);
+  const demoResolvedHardBlockers = rawHard.filter((b) => resolved.has(b.id));
+  const hardBlockerDetails = rawHard.filter((b) => !resolved.has(b.id));
+  const hardBlockers = hardBlockerDetails.map((b) => b.message);
+
   const softWarnings: string[] = [];
 
-  if (isHardDocMissingOrExpired(cdl)) {
-    hardBlockers.push(
-      statusU(cdl) === "EXPIRED" ? "CDL expired" : "CDL missing or not on file"
+  if (demoResolvedHardBlockers.length > 0) {
+    softWarnings.push(
+      `Demo override active — ${demoResolvedHardBlockers.length} hard gate(s) acknowledged for this session`
     );
-  } else if (statusU(cdl) !== "VALID") {
+  }
+
+  if (!isHardDocMissingOrExpired(cdl) && cdl && statusU(cdl) !== "VALID") {
     const s = statusU(cdl);
     if (s === "EXPIRING_SOON") softWarnings.push("CDL expiring soon");
     else softWarnings.push(`CDL status: ${cdl?.status ?? "Unknown"}`);
   }
 
   const medicalCanon = getDriverMedicalCardStatus(data, driverId);
-  const medicalHard = medicalCardHardBlockReason(medicalCanon);
-  if (medicalHard) {
-    hardBlockers.push(medicalHard);
-  } else {
+  if (!medicalCardHardBlockReason(medicalCanon)) {
     const medicalSoft = medicalCardSoftWarningReason(medicalCanon);
     if (medicalSoft) softWarnings.push(medicalSoft);
   }
 
-  if (isHardDocMissingOrExpired(mvr)) {
-    hardBlockers.push(
-      statusU(mvr) === "EXPIRED" ? "MVR expired" : "MVR missing or not on file"
-    );
-  } else if (statusU(mvr) !== "VALID") {
+  if (!isHardDocMissingOrExpired(mvr) && mvr && statusU(mvr) !== "VALID") {
     const s = statusU(mvr);
     if (s === "EXPIRING_SOON" || s === "PENDING REVIEW")
       softWarnings.push(`MVR: ${mvr?.status ?? "Review"}`);
     else softWarnings.push(`MVR status: ${mvr?.status ?? "Unknown"}`);
   }
 
-  if (isFmcsaHardGate(fmcsa)) {
-    if (statusU(fmcsa) === "MISSING" || statusU(fmcsa) === "EXPIRED") {
-      hardBlockers.push("FMCSA / Clearinghouse not cleared");
-    } else if (fmcsa?.blocksPayment) {
-      hardBlockers.push("FMCSA compliance blocks dispatch until reviewed");
-    }
-  } else if (statusU(fmcsa) !== "VALID") {
+  if (!isFmcsaHardGate(fmcsa) && fmcsa && statusU(fmcsa) !== "VALID") {
     softWarnings.push(`FMCSA: ${fmcsa?.status ?? "Review"}`);
   }
 
@@ -157,12 +277,8 @@ export function getDriverDispatchEligibility(
       c.driverId === driverId &&
       !["CLOSED", "RESOLVED"].includes(String(c.status ?? "").toUpperCase())
   );
-  const criticalOpen = complianceOpen.filter((c) => c.severity === "CRITICAL");
   const highOpen = complianceOpen.filter((c) => c.severity === "HIGH");
 
-  for (const c of criticalOpen) {
-    hardBlockers.push(`Open compliance: ${c.type} (critical)`);
-  }
   for (const c of highOpen) {
     softWarnings.push(`Open compliance: ${c.type} (high)`);
   }
@@ -178,15 +294,11 @@ export function getDriverDispatchEligibility(
         `${m.category ?? ""} ${m.rootCause ?? ""} ${m.nextBestAction ?? ""}`
       )
   );
-  if (hasDispatchSpecificMoneyBlock) {
-    hardBlockers.push("Dispatch blocked by active finance/compliance hold");
-  } else if (hasSettlementOrPayBlock) {
+  if (!hasDispatchSpecificMoneyBlock && hasSettlementOrPayBlock) {
     softWarnings.push("Settlement / pay hold active — dispatch review recommended");
   }
 
-  if (isSafetyHardGate(driverId)) {
-    hardBlockers.push("Safety hard gate — at-risk profile with unresolved severe findings");
-  } else if (isSafetySoftWarning(driverId)) {
+  if (isSafetySoftWarning(driverId)) {
     softWarnings.push("Safety tier At Risk — review before long haul");
   }
 
@@ -244,7 +356,7 @@ export function getDriverDispatchEligibility(
       ? { label: "Resolve Blocker", href: `/drivers/${driverId}/vault` }
       : isSafetyHardGate(driverId)
         ? { label: "Resolve Blocker", href: `/drivers/${driverId}/safety` }
-          : hasDispatchSpecificMoneyBlock
+        : hasDispatchSpecificMoneyBlock
           ? { label: "Resolve Blocker", href: `/drivers/${driverId}/settlements` }
           : { label: "Resolve Blocker", href: `/drivers/${driverId}/dispatch` };
   } else if (status === "needs_review") {
@@ -287,6 +399,8 @@ export function getDriverDispatchEligibility(
     label,
     reasons,
     hardBlockers,
+    hardBlockerDetails,
+    demoResolvedHardBlockers,
     softWarnings,
     recommendedAction,
     complianceLabel,
