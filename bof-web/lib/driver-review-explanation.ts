@@ -1,5 +1,9 @@
 import type { BofData } from "@/lib/load-bof-data";
-import { getDriverCredentialStatus, credentialDisplayText } from "@/lib/driver-credential-status";
+import {
+  complianceIncidentSuppressedByCanonicalMvr,
+  credentialDisplayText,
+  getDriverCredentialStatus,
+} from "@/lib/driver-credential-status";
 import { getDriverDispatchEligibility } from "@/lib/driver-dispatch-eligibility";
 import { complianceNotesForDriver } from "@/lib/driver-queries";
 import { buildDriverDocumentPacket } from "@/lib/driver-document-packet";
@@ -250,6 +254,7 @@ export function getDriverReviewExplanation(data: BofData, driverId: string): Dri
   }
 
   for (const inc of compliance) {
+    if (complianceIncidentSuppressedByCanonicalMvr(data, inc)) continue;
     const sevRaw = String(inc.severity ?? "");
     const id = `compliance:${inc.incidentId}`;
     const issueSev = complianceSeverityToIssueSev(sevRaw);

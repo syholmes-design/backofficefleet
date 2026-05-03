@@ -1,6 +1,7 @@
 import type { BofData } from "@/lib/load-bof-data";
+import { complianceIncidentSuppressedByCanonicalMvr } from "@/lib/driver-credential-status";
 import { buildCommandCenterItems, settlementTotals } from "@/lib/executive-layer";
-import { getDriverMedicalCardStatus } from "@/lib/driver-credential-status";
+import { getDriverMedicalCardStatus } from "@/lib/driver-doc-registry";
 import { getOrderedDocumentsForDriver } from "@/lib/driver-queries";
 import { getDriverDispatchEligibility } from "@/lib/driver-dispatch-eligibility";
 import { getSafetyScorecardRows } from "@/lib/safety-scorecard";
@@ -56,6 +57,20 @@ export type MainDashboardSummary = {
 
 function getSafetyTierMap() {
   return new Map(getSafetyScorecardRows().map((row) => [row.driverId, row.performanceTier]));
+}
+
+function isComplianceIncidentOpen(item: { status?: string }): boolean {
+  const st = String(item.status ?? "").toUpperCase();
+  return st !== "CLOSED" && st !== "RESOLVED";
+}
+
+/** Open incidents that still surface in Command Center / KPIs after canonical document reconciliation. */
+export function countEffectiveOpenComplianceIncidents(data: BofData): number {
+  return data.complianceIncidents.filter(
+    (item) =>
+      isComplianceIncidentOpen(item) &&
+      !complianceIncidentSuppressedByCanonicalMvr(data, item)
+  ).length;
 }
 
 function getDriverState(
@@ -248,7 +263,7 @@ export function getMainDashboardSummary(data: BofData): MainDashboardSummary {
   const loadsAtRisk = data.loads.filter(
     (load) => load.dispatchExceptionFlag || load.sealStatus !== "OK" || load.podStatus === "pending"
   ).length;
-  const complianceBlocked = data.complianceIncidents.filter((item) => item.status === "OPEN").length;
+  const complianceBlocked = countEffectiveOpenComplianceIncidents(data);
   const claimExposure = data.moneyAtRisk
     .filter((item) => item.category.toLowerCase().includes("claim"))
     .reduce((sum, item) => sum + item.amount, 0);
@@ -269,7 +284,7 @@ export function getMainDashboardSummary(data: BofData): MainDashboardSummary {
 }
 
 export function getFleetRiskChartData(data: BofData): BreakdownPoint[] {
-  const complianceRisk = data.complianceIncidents.filter((item) => item.status === "OPEN").length;
+  const complianceRisk = countEffectiveOpenComplianceIncidents(data);
   const dispatchRisk = data.loads.filter((load) => load.dispatchExceptionFlag || load.sealStatus !== "OK").length;
   const safetyRisk = getSafetyScorecardRows().filter(
     (row) => row.performanceTier === "At Risk" || row.hosCompliancePct < 92

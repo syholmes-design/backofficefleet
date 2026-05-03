@@ -368,6 +368,168 @@ export function medicalCardSoftWarningReason(med: DriverMedicalCardStatus): stri
   return null;
 }
 
+export type DriverMvrCanonicalStatus = DriverMedicalCardCanonicalStatus;
+
+export type DriverMvrStatusSource =
+  | "canonical_document"
+  | "driver_doc_registry"
+  | "demo_runtime_override"
+  | "fallback";
+
+export type DriverMvrStatus = {
+  driverId: string;
+  documentType: "mvr";
+  fileUrl?: string;
+  expirationDate?: string;
+  status: DriverMvrCanonicalStatus;
+  rowStatus: string;
+  source: DriverMvrStatusSource;
+  reason: string;
+};
+
+function pickCanonicalMvrRow(data: BofData, driverId: string) {
+  const rows = data.documents.filter(
+    (d) => d.driverId === driverId && d.type === "MVR"
+  );
+  if (rows.length === 0) return null;
+  const primary = rows.find((r) => r.docTier === "primary");
+  return primary ?? rows[0];
+}
+
+function mvrCanonicalToRowStatus(s: DriverMvrCanonicalStatus): string {
+  switch (s) {
+    case "valid":
+      return "VALID";
+    case "expiring_soon":
+      return "EXPIRING_SOON";
+    case "expired":
+      return "EXPIRED";
+    case "pending_review":
+      return "PENDING REVIEW";
+    default:
+      return "MISSING";
+  }
+}
+
+/**
+ * Canonical MVR resolver keyed by driverId: derives status from structured expirationDate and indexed file.
+ * Ignores stale `documents[].status` when expirationDate is present (same policy as Medical Card).
+ */
+export function getDriverMvrStatus(data: BofData, driverId: string): DriverMvrStatus {
+  const fileUrl = getDriverDocumentByType(driverId, "MVR");
+  const row = pickCanonicalMvrRow(data, driverId);
+  const overrideExp =
+    data.driverCredentialOverrides?.[driverId]?.mvrReviewDate?.trim() || undefined;
+
+  if (overrideExp) {
+    const derived = deriveCredentialStatusFromExpiration(overrideExp);
+    let status: DriverMvrCanonicalStatus;
+    switch (derived) {
+      case "VALID":
+        status = "valid";
+        break;
+      case "EXPIRING_SOON":
+        status = "expiring_soon";
+        break;
+      case "EXPIRED":
+        status = "expired";
+        break;
+      default:
+        status = "pending_review";
+        break;
+    }
+    return {
+      driverId,
+      documentType: "mvr",
+      fileUrl: fileUrl ?? undefined,
+      expirationDate: overrideExp,
+      status,
+      rowStatus: mvrCanonicalToRowStatus(status),
+      source: "demo_runtime_override",
+      reason:
+        "Demo runtime override — takes precedence over seed MVR row for dashboard/dispatch alignment",
+    };
+  }
+
+  if (!row) {
+    if (!fileUrl) {
+      return {
+        driverId,
+        documentType: "mvr",
+        status: "missing",
+        rowStatus: "MISSING",
+        source: "fallback",
+        reason: "No MVR row in demo documents and no indexed file URL",
+      };
+    }
+    return {
+      driverId,
+      documentType: "mvr",
+      fileUrl,
+      status: "pending_review",
+      rowStatus: "PENDING REVIEW",
+      source: "driver_doc_registry",
+      reason: "Indexed MVR file without structured MVR documents row",
+    };
+  }
+
+  const expirationDate = row.expirationDate?.trim() || undefined;
+
+  if (expirationDate) {
+    const derived = deriveCredentialStatusFromExpiration(expirationDate);
+    let status: DriverMvrCanonicalStatus;
+    switch (derived) {
+      case "VALID":
+        status = "valid";
+        break;
+      case "EXPIRING_SOON":
+        status = "expiring_soon";
+        break;
+      case "EXPIRED":
+        status = "expired";
+        break;
+      default:
+        status = "pending_review";
+        break;
+    }
+    return {
+      driverId,
+      documentType: "mvr",
+      fileUrl: fileUrl ?? undefined,
+      expirationDate,
+      status,
+      rowStatus: mvrCanonicalToRowStatus(status),
+      source: "canonical_document",
+      reason:
+        "expirationDate on canonical MVR row (status derived from date, not stale row.status or complianceIncidents)",
+    };
+  }
+
+  if (fileUrl) {
+    return {
+      driverId,
+      documentType: "mvr",
+      fileUrl,
+      expirationDate: undefined,
+      status: "pending_review",
+      rowStatus: "PENDING REVIEW",
+      source: "canonical_document",
+      reason:
+        "MVR documents row without expirationDate; file on file — review date needs verification",
+    };
+  }
+
+  return {
+    driverId,
+    documentType: "mvr",
+    expirationDate: undefined,
+    status: "missing",
+    rowStatus: "MISSING",
+    source: "canonical_document",
+    reason: "MVR row without expirationDate and no indexed file",
+  };
+}
+
 export function getCanonicalDriverDocuments(data: BofData, driverId: string) {
   const packet = getDriverDocumentPacket(driverId);
   const byType = new Map(
@@ -378,6 +540,7 @@ export function getCanonicalDriverDocuments(data: BofData, driverId: string) {
 
   const profile = getDriverOperationalProfile(data, driverId);
   const medicalResolved = getDriverMedicalCardStatus(data, driverId);
+  const mvrResolved = getDriverMvrStatus(data, driverId);
   return [
     {
       type: "CDL",
@@ -404,8 +567,8 @@ export function getCanonicalDriverDocuments(data: BofData, driverId: string) {
     },
     {
       type: "MVR",
-      status: packet.mvr ? byType.get("MVR")?.status ?? "VALID" : "MISSING",
-      expirationDate: byType.get("MVR")?.expirationDate,
+      status: mvrResolved.rowStatus,
+      expirationDate: mvrResolved.expirationDate,
       fileUrl: packet.mvr,
       previewUrl: packet.mvr,
     },

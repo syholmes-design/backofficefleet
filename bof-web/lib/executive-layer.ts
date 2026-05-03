@@ -1,5 +1,9 @@
 import type { BofData } from "./load-bof-data";
-import { getDriverMedicalCardStatus } from "./driver-credential-status";
+import {
+  complianceIncidentSuppressedByCanonicalMvr,
+  getDriverMedicalCardStatus,
+  refineMvrComplianceIncidentPresentation,
+} from "./driver-credential-status";
 import { getLoadProofItems } from "./load-proof";
 import { getSafetyBonusByDriverId } from "./safety-scorecard";
 
@@ -57,17 +61,33 @@ export function buildCommandCenterItems(data: BofData): CommandCenterItem[] {
   }
 
   for (const c of data.complianceIncidents) {
-    const sev =
+    const st = String(c.status ?? "").toUpperCase();
+    if (st === "CLOSED" || st === "RESOLVED") continue;
+    if (complianceIncidentSuppressedByCanonicalMvr(data, c)) continue;
+
+    let sev: CommandCenterItem["severity"] =
       c.severity === "CRITICAL"
         ? "critical"
         : c.severity === "DUE_SOON"
           ? "high"
           : "medium";
+    let title = c.type;
+
+    const refined = refineMvrComplianceIncidentPresentation(data, {
+      type: c.type,
+      driverId: c.driverId,
+      severity: c.severity,
+    });
+    if (refined) {
+      title = refined.title;
+      sev = refined.severity;
+    }
+
     items.push({
       id: c.incidentId,
       severity: sev,
       bucket: "Compliance",
-      title: c.type,
+      title,
       detail: `${c.status} — ${c.severity}`,
       driver: driverName(data, c.driverId),
       driverId: c.driverId,
