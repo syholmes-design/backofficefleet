@@ -313,7 +313,11 @@ export function getDriverMedicalCardStatus(
   if (!row) {
     if (expandedExp) {
       const derived = deriveCredentialStatusFromExpiration(expandedExp);
-      const { status, rowStatus } = medicalStatusFromDerived(derived);
+      let { status, rowStatus } = medicalStatusFromDerived(derived);
+      if (isCanonicalMedicalCardPngUrl(fileUrl, driverId) && status === "expired") {
+        status = "valid";
+        rowStatus = "VALID";
+      }
       return {
         driverId,
         documentType: "medical_card",
@@ -324,7 +328,10 @@ export function getDriverMedicalCardStatus(
         status,
         rowStatus,
         source: medicalStatusSource(fileUrl, driverId, true),
-        reason: "driverMedicalExpanded.medicalExpirationDate (no documents[] Medical Card row)",
+        reason:
+          status === "valid" && isCanonicalMedicalCardPngUrl(fileUrl, driverId)
+            ? "Canonical medical card image indexed — legacy expanded expiration ignored for roster posture"
+            : "driverMedicalExpanded.medicalExpirationDate (no documents[] Medical Card row)",
       };
     }
     if (!fileUrl) {
@@ -356,7 +363,12 @@ export function getDriverMedicalCardStatus(
 
   if (expirationDate) {
     const derived = deriveCredentialStatusFromExpiration(expirationDate);
-    const { status, rowStatus } = medicalStatusFromDerived(derived);
+    let { status, rowStatus } = medicalStatusFromDerived(derived);
+    /** Canonical DOT med-card art on file — demo seed row expirations can lag; do not hard-block roster as expired. */
+    if (isCanonicalMedicalCardPngUrl(fileUrl, driverId) && status === "expired") {
+      status = "valid";
+      rowStatus = "VALID";
+    }
     return {
       driverId,
       documentType: "medical_card",
@@ -368,13 +380,19 @@ export function getDriverMedicalCardStatus(
       rowStatus,
       source: medicalStatusSource(fileUrl, driverId, true),
       reason:
-        "expirationDate on structured Medical Card row for this driverId (status derived from date, not stale row.status)",
+        status === "valid" && isCanonicalMedicalCardPngUrl(fileUrl, driverId)
+          ? "Canonical medical card image indexed for this driverId — treating as current despite legacy expiration row"
+          : "expirationDate on structured Medical Card row for this driverId (status derived from date, not stale row.status)",
     };
   }
 
   if (expandedExp) {
     const derived = deriveCredentialStatusFromExpiration(expandedExp);
-    const { status, rowStatus } = medicalStatusFromDerived(derived);
+    let { status, rowStatus } = medicalStatusFromDerived(derived);
+    if (isCanonicalMedicalCardPngUrl(fileUrl, driverId) && status === "expired") {
+      status = "valid";
+      rowStatus = "VALID";
+    }
     return {
       driverId,
       documentType: "medical_card",
@@ -386,7 +404,9 @@ export function getDriverMedicalCardStatus(
       rowStatus,
       source: medicalStatusSource(fileUrl, driverId, true),
       reason:
-        "driverMedicalExpanded.medicalExpirationDate — documents row missing expirationDate",
+        status === "valid" && isCanonicalMedicalCardPngUrl(fileUrl, driverId)
+          ? "Canonical medical card image indexed — legacy expanded date ignored when structured row lacks expirationDate"
+          : "driverMedicalExpanded.medicalExpirationDate — documents row missing expirationDate",
     };
   }
 

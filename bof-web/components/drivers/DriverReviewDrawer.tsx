@@ -88,6 +88,13 @@ export function DriverReviewDrawer({
         ? "Needs Review"
         : "Blocked";
 
+  const quickLinks = [
+    { label: "Open Documents", href: `/drivers/${driverId}/vault` },
+    { label: "Open Safety", href: `/drivers/${driverId}/safety` },
+    { label: "Open Settlement", href: `/drivers/${driverId}/settlements` },
+    { label: "Open Dispatch", href: `/dispatch?driverId=${encodeURIComponent(driverId)}` },
+  ];
+
   const subtitle =
     filterCategory != null
       ? `${explanation.entityId} · filter: ${CATEGORY_LABEL[filterCategory]}`
@@ -104,6 +111,7 @@ export function DriverReviewDrawer({
         filterCategory != null ? `${topStatus} (${CATEGORY_LABEL[filterCategory]})` : topStatus
       }
       primaryAction={explanation.primaryAction}
+      quickLinks={quickLinks}
       issues={displayIssues}
       categoryOrder={[...CATEGORY_ORDER]}
       categoryLabels={CATEGORY_LABEL}

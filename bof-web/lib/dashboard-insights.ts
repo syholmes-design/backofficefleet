@@ -3,7 +3,7 @@ import { reconcileCredentialIncident } from "@/lib/compliance/credential-inciden
 import { buildCommandCenterItems, settlementTotals } from "@/lib/executive-layer";
 import { getDriverMedicalCardStatus } from "@/lib/driver-doc-registry";
 import { getOrderedDocumentsForDriver } from "@/lib/driver-queries";
-import { getDriverDispatchEligibility } from "@/lib/driver-dispatch-eligibility";
+import { getDriverReviewExplanation } from "@/lib/driver-review-explanation";
 import { getSafetyScorecardRows } from "@/lib/safety-scorecard";
 import { getPayrollMonthlyTrend } from "@/lib/demo-trends";
 
@@ -80,29 +80,17 @@ function getDriverState(
   driverId: string,
   safetyTierMap: Map<string, "Elite" | "Standard" | "At Risk">
 ) {
-  const eligibility = getDriverDispatchEligibility(data, driverId);
-  const compliance = data.complianceIncidents.filter(
-    (item) =>
-      item.driverId === driverId &&
-      item.status.toUpperCase() !== "CLOSED" &&
-      item.status.toUpperCase() !== "RESOLVED" &&
-      reconcileCredentialIncident(data, item).display
-  );
+  const review = getDriverReviewExplanation(data, driverId);
   const hasHold = data.moneyAtRisk.some(
     (row) => row.driverId === driverId && row.status.toUpperCase() === "BLOCKED"
   );
   const safetyTier = safetyTierMap.get(driverId) ?? "Standard";
 
-  const blocked = eligibility.status === "blocked";
-  const needsReview = eligibility.status === "needs_review";
-
   return {
-    blocked,
-    needsReview,
-    dispatchReady: eligibility.status === "ready",
-    eligibility,
+    blocked: review.reviewStatus === "blocked",
+    needsReview: review.reviewStatus === "needs_review",
+    dispatchReady: review.reviewStatus === "ready",
     safetyTier,
-    complianceOpen: compliance.length,
     hasSettlementHold: hasHold,
   };
 }

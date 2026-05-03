@@ -1,12 +1,18 @@
 import type { BofData } from "@/lib/load-bof-data";
-import { reconcileCredentialIncident } from "@/lib/compliance/credential-incident-reconciliation";
-import { credentialDisplayText, getDriverCredentialStatus } from "@/lib/driver-credential-status";
+import {
+  hasIndependentInvestigation,
+  reconcileCredentialIncident,
+} from "@/lib/compliance/credential-incident-reconciliation";
+import {
+  credentialDisplayText,
+  getDriverCredentialStatus,
+  type CredentialRecord,
+} from "@/lib/driver-credential-status";
 import {
   DISPATCH_BLOCKER_REASON_IDS,
   getDriverDispatchEligibility,
   type DriverDispatchEligibility,
 } from "@/lib/driver-dispatch-eligibility";
-import { getDriverMedicalCardStatus } from "@/lib/driver-doc-registry";
 import { complianceNotesForDriver } from "@/lib/driver-queries";
 import { buildDriverDocumentPacket } from "@/lib/driver-document-packet";
 import { getSafetyScorecardRows } from "@/lib/safety-scorecard";
@@ -103,12 +109,10 @@ function complianceSeverityToIssueSev(sev: string): DriverReviewIssueSeverity {
 }
 
 function resolveComplianceColumnLabelFromCanonical(
-  data: BofData,
-  driverId: string,
   eligibility: DriverDispatchEligibility,
   activeIssues: DriverReviewIssue[],
+  medicalSlice: CredentialRecord,
 ): string {
-  const medical = getDriverMedicalCardStatus(data, driverId);
   const open = activeIssues.filter((i) => !i.resolved);
 
   const criticalNonMedicalCompliance = open.filter(
@@ -123,15 +127,15 @@ function resolveComplianceColumnLabelFromCanonical(
       /expired|missing|review/i.test(i.title),
   );
 
-  if (medical.status === "expired" && medical.expirationDate) {
+  if (medicalSlice.status === "expired" && medicalSlice.expirationDate) {
     return otherCredProblems.length
-      ? `Medical Card expired on ${medical.expirationDate} · other credential gap`
-      : `Medical Card expired on ${medical.expirationDate}`;
+      ? `Medical Card expired on ${medicalSlice.expirationDate} · other credential gap`
+      : `Medical Card expired on ${medicalSlice.expirationDate}`;
   }
-  if (medical.status === "missing") {
+  if (medicalSlice.status === "missing") {
     return otherCredProblems.length ? "Medical Card missing · other credential gap" : "Medical Card missing";
   }
-  if (medical.status === "pending_review") {
+  if (medicalSlice.status === "pending_review") {
     return "Medical card date needs review";
   }
 
@@ -151,8 +155,60 @@ function resolveComplianceColumnLabelFromCanonical(
       .filter(Boolean);
     return types.length ? `${types.slice(0, 2).join(" + ")} expired` : "Expired";
   }
-  if (open.length > 0 && eligibility.status !== "ready") return "Needs review";
+  if (open.length > 0 && eligibility.status !== "ready") {
+    const sorted = [...open].sort((a, b) => {
+      const rank = (s: DriverReviewIssue["severity"]) =>
+        s === "critical" ? 0 : s === "high" ? 1 : s === "warning" ? 2 : 3;
+      return rank(a.severity) - rank(b.severity);
+    });
+    const head = sorted[0];
+    return head ? head.title : "Needs review";
+  }
   return "Valid";
+}
+
+function filterIssuesAgainstCanonicalCredentials(
+  data: BofData,
+  driverId: string,
+  issues: DriverReviewIssue[],
+): DriverReviewIssue[] {
+  const cred = getDriverCredentialStatus(data, driverId);
+  return issues.filter((issue) => {
+    if (issue.id === "credential:medicalCard" && cred.medicalCard.status === "valid") return false;
+    if (issue.id === "credential:mvr" && cred.mvr.status === "valid") return false;
+    if (issue.id === "credential:cdl" && cred.cdl.status === "valid") return false;
+    if (issue.category !== "compliance" || !issue.id.startsWith("compliance:")) return true;
+    const incidentId = issue.id.slice("compliance:".length);
+    const inc = data.complianceIncidents?.find((c) => c.incidentId === incidentId);
+    if (!inc) return true;
+    const type = String(inc.type ?? "");
+    if (/medical/i.test(type) && cred.medicalCard.status === "valid") return false;
+    if (/\bmvr\b|motor\s*vehicle/i.test(type) && cred.mvr.status === "valid" && !hasIndependentInvestigation(inc)) {
+      return false;
+    }
+    if (/\bcdl\b/i.test(type) && cred.cdl.status === "valid" && !hasIndependentInvestigation(inc)) return false;
+    return true;
+  });
+}
+
+function buildDocumentsColumnLabel(cred: ReturnType<typeof getDriverCredentialStatus>, credDocIssues: DriverReviewIssue[]) {
+  if (credDocIssues.length > 0) {
+    if (credDocIssues.length === 1) {
+      const t = credDocIssues[0].title.split(":")[0]?.trim() ?? credDocIssues[0].title;
+      return `${t} — review`;
+    }
+    const short = credDocIssues
+      .slice(0, 2)
+      .map((i) => i.title.split(":")[0]?.trim() ?? i.title)
+      .join(" + ");
+    return credDocIssues.length > 2 ? `${credDocIssues.length} items need review` : `${short} — review`;
+  }
+  const parts: string[] = [];
+  if (cred.w9.status !== "valid") parts.push(`W-9: ${credentialDisplayText(cred.w9)}`);
+  if (cred.bankInformation.status !== "valid")
+    parts.push(`Bank: ${credentialDisplayText(cred.bankInformation)}`);
+  if (parts.length > 0) return parts.slice(0, 2).join(" · ");
+  return "OK";
 }
 
 /**
@@ -165,7 +221,6 @@ export function getDriverReviewExplanation(data: BofData, driverId: string): Dri
   const issues: DriverReviewIssue[] = [];
 
   const eligibility = getDriverDispatchEligibility(data, driverId);
-  const medicalCanon = getDriverMedicalCardStatus(data, driverId);
   const cred = getDriverCredentialStatus(data, driverId);
   const scoreRow = getSafetyScorecardRows().find((r) => r.driverId === driverId);
   const settlement = data.settlements.find((s) => s.driverId === driverId);
@@ -177,13 +232,13 @@ export function getDriverReviewExplanation(data: BofData, driverId: string): Dri
   for (const hb of eligibility.hardBlockerDetails) {
     if (
       hb.id === DISPATCH_BLOCKER_REASON_IDS.medical_card_expired &&
-      medicalCanon.status !== "expired"
+      cred.medicalCard.status !== "expired"
     ) {
       continue;
     }
     if (
       hb.id === DISPATCH_BLOCKER_REASON_IDS.medical_card_missing &&
-      medicalCanon.status !== "missing"
+      cred.medicalCard.status !== "missing"
     ) {
       continue;
     }
@@ -370,7 +425,7 @@ export function getDriverReviewExplanation(data: BofData, driverId: string): Dri
     const rec = cred[key];
     if (
       key === "medicalCard" &&
-      medicalCanon.status === "valid" &&
+      cred.medicalCard.status === "valid" &&
       rec.source === "runtime_override"
     ) {
       pushUnique(
@@ -459,32 +514,20 @@ export function getDriverReviewExplanation(data: BofData, driverId: string): Dri
     );
   }
 
-  const activeIssues = issues.filter((i) => !i.resolved);
+  const issuesForPresentation = filterIssuesAgainstCanonicalCredentials(data, driverId, issues);
+  const activeIssues = issuesForPresentation.filter((i) => !i.resolved);
   const summary =
     activeIssues.length === 0
       ? "No open review items for this driver."
       : `${activeIssues.length} open item(s) — ${activeIssues.filter((i) => i.severity === "critical").length} critical, ${activeIssues.filter((i) => i.severity === "high").length} high.`;
 
   const credDocIssues = activeIssues.filter((i) => i.category === "credentials" || i.category === "documents");
-  let documentsColumnLabel: string;
-  if (credDocIssues.length === 0) {
-    documentsColumnLabel = "OK";
-  } else if (credDocIssues.length === 1) {
-    const t = credDocIssues[0].title.split(":")[0]?.trim() ?? credDocIssues[0].title;
-    documentsColumnLabel = `${t} — view`;
-  } else {
-    const short = credDocIssues
-      .slice(0, 2)
-      .map((i) => i.title.split(":")[0]?.trim() ?? i.title)
-      .join(" + ");
-    documentsColumnLabel = credDocIssues.length > 2 ? `${credDocIssues.length} need review` : `${short} review`;
-  }
+  const documentsColumnLabel = buildDocumentsColumnLabel(cred, credDocIssues);
 
   const complianceColumnLabel = resolveComplianceColumnLabelFromCanonical(
-    data,
-    driverId,
     eligibility,
-    activeIssues
+    activeIssues,
+    cred.medicalCard
   );
 
   let primaryAction: DriverReviewExplanation["primaryAction"];
@@ -498,16 +541,21 @@ export function getDriverReviewExplanation(data: BofData, driverId: string): Dri
     eligibility.recommendedAction?.label ??
     (activeIssues.length === 0 ? "" : summary);
 
+  let reviewStatus: DriverReviewExplanation["reviewStatus"] = eligibility.status;
+  if (reviewStatus === "needs_review" && activeIssues.length === 0) {
+    reviewStatus = "ready";
+  }
+
   return {
     driverId,
     driverName,
     entityType: "driver",
     entityId: driverId,
     entityLabel: driverId,
-    status: eligibility.status,
-    reviewStatus: eligibility.status,
+    status: reviewStatus,
+    reviewStatus,
     summary,
-    issues,
+    issues: issuesForPresentation,
     documentsColumnLabel,
     complianceColumnLabel,
     primaryAction,

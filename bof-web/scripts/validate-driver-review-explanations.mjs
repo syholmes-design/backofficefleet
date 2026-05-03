@@ -43,8 +43,8 @@ function run() {
 
   const reviewPath = path.join(ROOT, "lib", "driver-review-explanation.ts");
   const review = fs.readFileSync(reviewPath, "utf8");
-  if (!review.includes("getDriverMedicalCardStatus")) {
-    issues.push("driver-review-explanation.ts must import getDriverMedicalCardStatus");
+  if (!review.includes("getDriverCredentialStatus")) {
+    issues.push("driver-review-explanation.ts must import getDriverCredentialStatus for canonical credentials");
   }
   if (!review.includes("DISPATCH_BLOCKER_REASON_IDS.medical_card_expired")) {
     issues.push(

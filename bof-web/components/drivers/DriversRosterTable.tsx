@@ -27,6 +27,7 @@ import {
   getDriverReviewExplanation,
   type DriverReviewIssueCategory,
 } from "@/lib/driver-review-explanation";
+import { getDriverTableRowModel } from "@/lib/drivers/driver-table-row-model";
 import {
   getSafetyEvidenceByDriverId,
   getSafetyScorecardRows,
@@ -59,6 +60,7 @@ type DriverRow = {
   loadLinkId: string | null;
   /** First matching open issue category for compliance-focused review */
   complianceDrawerCategory?: DriverReviewIssueCategory;
+  primaryReviewReason: string;
 };
 
 type DriverStatusFilter = "all" | "ready" | "needs_review" | "blocked";
@@ -95,10 +97,6 @@ export function DriversRosterTable() {
     filter?: DriverReviewIssueCategory;
   } | null>(null);
   const [driverStatusFilter, setDriverStatusFilter] = useState<DriverStatusFilter>("all");
-  const safetyTierMap = useMemo(
-    () => new Map(getSafetyScorecardRows().map((row) => [row.driverId, row.performanceTier])),
-    []
-  );
   const summary = useMemo(() => getDriverDashboardSummary(data), [data]);
   const readinessData = useMemo(() => getDriverReadinessChartData(data), [data]);
   const safetyData = useMemo(() => getSafetyTierChartData(data), [data]);
@@ -112,12 +110,10 @@ export function DriversRosterTable() {
     const ready = readinessData.find((p) => p.label === "Ready")?.value ?? 0;
     const needsReview = readinessData.find((p) => p.label === "Needs Review")?.value ?? 0;
     const blocked = readinessData.find((p) => p.label === "Blocked")?.value ?? 0;
-    const safetyTierMap = new Map(getSafetyScorecardRows().map((row) => [row.driverId, row.performanceTier]));
     let availableForDispatch = 0;
     for (const driver of data.drivers) {
-      const el = getDriverDispatchEligibility(data, driver.id);
-      const tier = safetyTierMap.get(driver.id) ?? "Standard";
-      if (el.status === "ready" && tier !== "At Risk") availableForDispatch += 1;
+      const m = getDriverTableRowModel(data, driver.id);
+      if (m.status === "ready" && m.safetyLabel !== "At Risk") availableForDispatch += 1;
     }
     return [
       { label: "Drivers Ready", value: ready, hint: "Dispatch eligibility status: Ready" },
@@ -135,45 +131,8 @@ export function DriversRosterTable() {
 
   const driverRows = useMemo<DriverRow[]>(() => {
     return data.drivers.map((driver) => {
-      const eligibility = getDriverDispatchEligibility(data, driver.id);
-      const review = getDriverReviewExplanation(data, driver.id);
-      const safetyTier = (safetyTierMap.get(driver.id) ?? "Standard") as DriverRow["safety"];
-      const settlement = data.settlements.find((row) => row.driverId === driver.id);
-      const hasHold = data.moneyAtRisk.some(
-        (item) => item.driverId === driver.id && item.status.toUpperCase() === "BLOCKED"
-      );
-      const settlementHold =
-        String(settlement?.status ?? "").toLowerCase().includes("hold") ||
-        String(settlement?.status ?? "").toLowerCase().includes("review");
-      const pendingPay = data.moneyAtRisk
-        .filter((item) => item.driverId === driver.id && item.status.toUpperCase() !== "PAID")
-        .reduce((sum, item) => sum + item.amount, 0);
-
-      const activeLoad = data.loads.find(
-        (load) => load.driverId === driver.id && (load.status === "En Route" || load.status === "Pending")
-      );
-      const latestLoad = data.loads.find((load) => load.driverId === driver.id);
-
-      const status: DriverRow["status"] =
-        eligibility.status === "blocked"
-          ? "Blocked"
-          : eligibility.status === "needs_review"
-            ? "Review"
-            : "Active";
-
-      const settlementState: DriverRow["settlement"] =
-        hasHold || settlementHold
-          ? "Hold / Review"
-          : settlement?.status === "Paid"
-            ? "Paid"
-            : "Pending";
-
-      const complianceText =
-        eligibility.hardBlockerCount > 0
-          ? `${review.complianceColumnLabel} · ${eligibility.hardBlockerCount} hard gate(s)`
-          : review.complianceColumnLabel;
-
-      const openIssues = review.issues.filter((i) => !i.resolved);
+      const m = getDriverTableRowModel(data, driver.id);
+      const openIssues = m.issues.filter((i) => !i.resolved);
       const complianceFocusOrder: DriverReviewIssueCategory[] = [
         "dispatch",
         "credentials",
@@ -184,40 +143,30 @@ export function DriversRosterTable() {
         openIssues.some((i) => i.category === c)
       );
 
-      const loadLinkId = activeLoad?.id ?? latestLoad?.id ?? null;
-
       return {
-        driverId: driver.id,
-        name: driver.name,
+        driverId: m.driverId,
+        name: m.driverName,
         email: driver.email,
         phone: driver.phone,
         avatar: driverPhotoPath(driver.id),
-        status,
-        eligibilityStatus:
-          eligibility.status === "blocked"
-            ? "blocked"
-            : eligibility.status === "needs_review"
-              ? "needs_review"
-              : "ready",
-        dispatchEligibility: eligibility.label,
-        compliance: complianceText,
-        safety: safetyTier,
-        settlement: settlementState,
-        currentOrNextLoad: activeLoad
-          ? `L${activeLoad.number} · ${activeLoad.status}`
-          : latestLoad
-            ? `L${latestLoad.number} · last delivered`
-            : "Unassigned",
-        documentSummary: review.documentsColumnLabel,
-        hardBlockers: eligibility.hardBlockers,
-        blockerHref: eligibility.recommendedAction?.href,
-        primaryDispatchBlockerId: eligibility.hardBlockerDetails[0]?.id,
-        pendingPay,
-        loadLinkId,
+        status: m.statusLabel,
+        eligibilityStatus: m.status,
+        dispatchEligibility: m.dispatchEligibilityLabel,
+        compliance: m.complianceLabel,
+        safety: m.safetyLabel,
+        settlement: m.settlementLabel,
+        currentOrNextLoad: m.currentLoadLabel,
+        documentSummary: m.documentsLabel,
+        hardBlockers: m.hardBlockers,
+        blockerHref: m.blockerHref,
+        primaryDispatchBlockerId: m.primaryDispatchBlockerId,
+        pendingPay: m.pendingPay,
+        loadLinkId: m.loadLinkId,
         complianceDrawerCategory,
+        primaryReviewReason: m.primaryReviewReason,
       };
     });
-  }, [data, safetyTierMap]);
+  }, [data]);
 
   const filteredDriverRows = useMemo(() => {
     if (driverStatusFilter === "all") return driverRows;
@@ -687,12 +636,17 @@ export function DriversRosterTable() {
                         })
                       }
                     />
+                    {row.eligibilityStatus === "needs_review" && row.primaryReviewReason ? (
+                      <p className="bof-cc-driver-meta" style={{ marginTop: "0.35rem" }}>
+                        Reason: {row.primaryReviewReason}
+                      </p>
+                    ) : null}
                   </td>
                   <td>
-                    {/needs review|need review/i.test(row.dispatchEligibility) ? (
+                    {row.eligibilityStatus === "needs_review" || row.eligibilityStatus === "blocked" ? (
                       <button
                         type="button"
-                        className="bof-driver-review-dispatch-link"
+                        className="bof-driver-review-dispatch-link text-left"
                         onClick={() => setReviewDrawer({ driverId: row.driverId })}
                       >
                         {row.dispatchEligibility}
@@ -774,12 +728,18 @@ export function DriversRosterTable() {
                     )}
                   </td>
                   <td>
-                    <Link
-                      href={`/drivers/${row.driverId}/vault`}
-                      className="bof-driver-review-dispatch-link"
+                    <button
+                      type="button"
+                      className="bof-driver-review-dispatch-link text-left"
+                      onClick={() =>
+                        setReviewDrawer({
+                          driverId: row.driverId,
+                          filter: "documents",
+                        })
+                      }
                     >
                       {row.documentSummary}
-                    </Link>
+                    </button>
                   </td>
                   <td>
                     <div className="bof-cc-action-wrap">
@@ -803,7 +763,7 @@ export function DriversRosterTable() {
                           Assign Load
                         </Link>
                       )}
-                      {row.eligibilityStatus === "needs_review" ? (
+                      {row.eligibilityStatus === "needs_review" || row.eligibilityStatus === "blocked" ? (
                         <button
                           type="button"
                           className="bof-cc-action-btn"

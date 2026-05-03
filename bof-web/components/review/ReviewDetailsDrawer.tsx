@@ -26,6 +26,8 @@ export type ReviewDetailsDrawerProps = {
   summary?: string;
   statusChip?: string;
   primaryAction?: { label: string; href: string };
+  /** Hub shortcuts — same targets as roster “where to click next”. */
+  quickLinks?: { label: string; href: string }[];
   issues: ReviewDrawerIssue[];
   categoryOrder: string[];
   categoryLabels: Record<string, string>;
@@ -42,6 +44,7 @@ export function ReviewDetailsDrawer({
   summary,
   statusChip,
   primaryAction,
+  quickLinks,
   issues,
   categoryOrder,
   categoryLabels,
@@ -116,6 +119,23 @@ export function ReviewDetailsDrawer({
                 {primaryAction.label}
               </Link>
             </p>
+          ) : null}
+          {quickLinks && quickLinks.length > 0 ? (
+            <div
+              style={{
+                display: "flex",
+                flexWrap: "wrap",
+                gap: "0.4rem",
+                margin: "0 0 1rem",
+                alignItems: "center",
+              }}
+            >
+              {quickLinks.map((q) => (
+                <Link key={q.href + q.label} href={q.href} className="bof-cc-action-btn">
+                  {q.label}
+                </Link>
+              ))}
+            </div>
           ) : null}
           {headerExtra}
           {footerNote ? (
