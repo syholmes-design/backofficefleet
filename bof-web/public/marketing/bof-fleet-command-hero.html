@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=1440, height=900" />
+    <title>BOF | Fleet Command Hero — 1440×900 Export</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@600;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --bg: #0f1117;
+        --teal: #14b8a6;
+        --teal-dim: rgba(20, 184, 166, 0.35);
+        --cyan: #22d3ee;
+        --card-bg: rgba(15, 23, 42, 0.82);
+        --border: rgba(148, 163, 184, 0.12);
+        --text: #f1f5f9;
+        --muted: #94a3b8;
+      }
+
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      /**
+       * Export modes:
+       * - Default: charcoal + teal glow (marketing PNG).
+       * - Add class `transparent-bg` on <body> before screenshot for PNG alpha (Chrome layers trick).
+       */
+      body {
+        font-family: "Inter", system-ui, sans-serif;
+        background: var(--bg);
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      body.transparent-bg {
+        background: transparent;
+      }
+
+      body.transparent-bg .hero-canvas {
+        background: transparent;
+      }
+
+      body.transparent-bg .hero-glow {
+        opacity: 0.55;
+      }
+
+      .hero-canvas {
+        width: 1440px;
+        height: 900px;
+        position: relative;
+        overflow: hidden;
+        background: var(--bg);
+      }
+
+      .hero-glow {
+        position: absolute;
+        width: 900px;
+        height: 700px;
+        left: 50%;
+        top: 52%;
+        transform: translate(-50%, -50%);
+        background: radial-gradient(
+          ellipse at center,
+          rgba(20, 184, 166, 0.28) 0%,
+          rgba(34, 211, 238, 0.06) 40%,
+          transparent 68%
+        );
+        pointer-events: none;
+      }
+
+      .hero-inner {
+        position: relative;
+        z-index: 1;
+        height: 100%;
+        padding: 36px 56px 40px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+
+      h1 {
+        color: #fff;
+        font-weight: 700;
+        font-size: 48px;
+        line-height: 1.12;
+        letter-spacing: -0.03em;
+        text-align: center;
+        max-width: 920px;
+        margin-bottom: 28px;
+        text-shadow: 0 2px 24px rgba(0, 0, 0, 0.45);
+      }
+
+      .brand-chip {
+        font-size: 11px;
+        font-weight: 600;
+        letter-spacing: 0.22em;
+        text-transform: uppercase;
+        color: var(--cyan);
+        margin-bottom: 14px;
+        opacity: 0.92;
+      }
+
+      /* ----- Monitor mockup (3D) ----- */
+      .mock-stage {
+        perspective: 2200px;
+        perspective-origin: 50% 40%;
+        margin-bottom: 26px;
+      }
+
+      .monitor {
+        transform-style: preserve-3d;
+        transform: rotateX(10deg) rotateY(-14deg) translateZ(0);
+        filter: drop-shadow(0 32px 64px rgba(0, 0, 0, 0.55))
+          drop-shadow(0 0 60px rgba(20, 184, 166, 0.08));
+      }
+
+      .monitor-bezel {
+        background: linear-gradient(
+          145deg,
+          #2a2d38 0%,
+          #1a1d26 38%,
+          #12141c 100%
+        );
+        border-radius: 14px;
+        padding: 14px 14px 18px;
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
+      }
+
+      .monitor-notch {
+        width: 120px;
+        height: 5px;
+        background: #0a0c10;
+        border-radius: 0 0 8px 8px;
+        margin: -6px auto 10px;
+        opacity: 0.85;
+      }
+
+      .monitor-screen {
+        width: 1040px;
+        height: 560px;
+        border-radius: 6px;
+        background: #070910;
+        overflow: hidden;
+        border: 1px solid rgba(20, 184, 166, 0.18);
+        box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.6);
+      }
+
+      .dashboard {
+        height: 100%;
+        padding: 18px 20px;
+        background: linear-gradient(180deg, #0c111c 0%, #070910 100%);
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
+
+      .dashboard-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+
+      .dashboard-title {
+        font-size: 13px;
+        font-weight: 700;
+        color: var(--text);
+        letter-spacing: -0.02em;
+      }
+
+      .dashboard-title span {
+        color: var(--muted);
+        font-weight: 600;
+        font-size: 11px;
+      }
+
+      .dashboard-live {
+        font-size: 10px;
+        font-weight: 600;
+        color: var(--teal);
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+
+      .live-dot {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: var(--teal);
+        box-shadow: 0 0 10px var(--teal);
+      }
+
+      .metrics {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 10px;
+      }
+
+      .metric-card {
+        background: var(--card-bg);
+        border: 1px solid rgba(20, 184, 166, 0.35);
+        border-radius: 8px;
+        padding: 10px 12px;
+        box-shadow: 0 0 24px rgba(20, 184, 166, 0.06);
+      }
+
+      .metric-card.warn {
+        border-color: rgba(251, 191, 36, 0.35);
+        box-shadow: 0 0 20px rgba(251, 191, 36, 0.05);
+      }
+
+      .metric-card.danger {
+        border-color: rgba(248, 113, 113, 0.35);
+      }
+
+      .metric-label {
+        font-size: 10px;
+        font-weight: 600;
+        color: var(--muted);
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+      }
+
+      .metric-val {
+        font-size: 22px;
+        font-weight: 700;
+        color: #fff;
+        margin-top: 4px;
+        letter-spacing: -0.03em;
+      }
+
+      .metric-val.teal {
+        color: #5eead4;
+      }
+
+      .metric-val.amber {
+        color: #fcd34d;
+      }
+
+      .metric-val.rose {
+        color: #fda4af;
+      }
+
+      .charts-row {
+        flex: 1;
+        display: grid;
+        grid-template-columns: 1fr 1.05fr;
+        gap: 10px;
+        min-height: 0;
+      }
+
+      .panel {
+        background: rgba(15, 23, 42, 0.65);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        padding: 12px 14px;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .panel-title {
+        font-size: 11px;
+        font-weight: 700;
+        color: var(--text);
+        margin-bottom: 10px;
+        letter-spacing: -0.01em;
+      }
+
+      .panel-body {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 0;
+      }
+
+      /* Donut */
+      .donut-wrap {
+        display: flex;
+        align-items: center;
+        gap: 18px;
+      }
+
+      .donut-legend {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        font-size: 10px;
+        color: var(--muted);
+      }
+
+      .donut-legend div {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .swatch {
+        width: 8px;
+        height: 8px;
+        border-radius: 2px;
+      }
+
+      /* Bar chart area */
+      .bars-svg-wrap {
+        width: 100%;
+        height: 140px;
+      }
+
+      /* Attention queue */
+      .queue-panel {
+        grid-column: 1 / -1;
+        flex: 0 0 auto;
+      }
+
+      .queue-rows {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+      }
+
+      .queue-row {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 8px 10px;
+        border-radius: 6px;
+        background: rgba(15, 23, 42, 0.5);
+        border: 1px solid var(--border);
+        font-size: 10px;
+      }
+
+      .sev {
+        font-weight: 700;
+        font-size: 9px;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        padding: 3px 6px;
+        border-radius: 4px;
+        flex-shrink: 0;
+      }
+
+      .sev-critical {
+        background: rgba(248, 113, 113, 0.12);
+        color: #fecaca;
+        border: 1px solid rgba(248, 113, 113, 0.25);
+      }
+
+      .sev-high {
+        background: rgba(251, 191, 36, 0.1);
+        color: #fde68a;
+        border: 1px solid rgba(251, 191, 36, 0.22);
+      }
+
+      .sev-med {
+        background: rgba(34, 211, 238, 0.08);
+        color: #a5f3fc;
+        border: 1px solid rgba(34, 211, 238, 0.2);
+      }
+
+      .queue-main {
+        flex: 1;
+        color: #e2e8f0;
+        font-weight: 600;
+      }
+
+      .queue-area {
+        color: var(--muted);
+        font-weight: 600;
+      }
+
+      .queue-meta {
+        color: var(--muted);
+        font-size: 9px;
+      }
+
+      /* CTAs */
+      .cta-row {
+        display: flex;
+        gap: 14px;
+        justify-content: center;
+        flex-wrap: wrap;
+      }
+
+      .cta {
+        font-family: "Inter", system-ui, sans-serif;
+        font-size: 14px;
+        font-weight: 600;
+        padding: 12px 26px;
+        border-radius: 999px;
+        cursor: default;
+        border: none;
+      }
+
+      .cta-teal {
+        background: linear-gradient(135deg, #14b8a6 0%, #0d9488 100%);
+        color: #042f2e;
+        box-shadow: 0 8px 28px rgba(20, 184, 166, 0.35);
+      }
+
+      .cta-outline {
+        background: transparent;
+        color: #e2e8f0;
+        border: 1px solid rgba(148, 163, 184, 0.45);
+      }
+
+      .cta-outline:hover {
+        border-color: var(--teal);
+        color: var(--teal);
+      }
+
+      .export-hint {
+        position: absolute;
+        bottom: 8px;
+        right: 12px;
+        font-size: 9px;
+        color: rgba(148, 163, 184, 0.45);
+        z-index: 5;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="hero-canvas" id="hero">
+      <div class="hero-glow" aria-hidden="true"></div>
+      <div class="hero-inner">
+        <div class="brand-chip">BOF · Back Office Freight</div>
+        <h1>The Back Office Platform Built for Freight Operations</h1>
+
+        <div class="mock-stage">
+          <div class="monitor">
+            <div class="monitor-bezel">
+              <div class="monitor-notch"></div>
+              <div class="monitor-screen">
+                <div class="dashboard">
+                  <div class="dashboard-head">
+                    <div class="dashboard-title">
+                      Fleet Command <span>· Live ops snapshot</span>
+                    </div>
+                    <div class="dashboard-live">
+                      <span class="live-dot"></span> LIVE
+                    </div>
+                  </div>
+
+                  <div class="metrics">
+                    <div class="metric-card">
+                      <div class="metric-label">Active Loads</div>
+                      <div class="metric-val teal">24</div>
+                    </div>
+                    <div class="metric-card warn">
+                      <div class="metric-label">Loads at Risk</div>
+                      <div class="metric-val amber">7</div>
+                    </div>
+                    <div class="metric-card">
+                      <div class="metric-label">Drivers Ready</div>
+                      <div class="metric-val teal">18</div>
+                    </div>
+                    <div class="metric-card danger">
+                      <div class="metric-label">Settlement Holds</div>
+                      <div class="metric-val rose">5</div>
+                    </div>
+                  </div>
+
+                  <div class="charts-row">
+                    <div class="panel">
+                      <div class="panel-title">Fleet Risk Breakdown</div>
+                      <div class="panel-body">
+                        <div class="donut-wrap">
+                          <svg width="130" height="130" viewBox="0 0 130 130" aria-hidden="true">
+                            <circle cx="65" cy="65" r="46" fill="none" stroke="#1e293b" stroke-width="18" />
+                            <circle
+                              cx="65"
+                              cy="65"
+                              r="46"
+                              fill="none"
+                              stroke="#fbbf24"
+                              stroke-width="18"
+                              stroke-dasharray="72 217"
+                              stroke-dashoffset="0"
+                              transform="rotate(-90 65 65)"
+                            />
+                            <circle
+                              cx="65"
+                              cy="65"
+                              r="46"
+                              fill="none"
+                              stroke="#f87171"
+                              stroke-width="18"
+                              stroke-dasharray="58 217"
+                              stroke-dashoffset="-72"
+                              transform="rotate(-90 65 65)"
+                            />
+                            <circle
+                              cx="65"
+                              cy="65"
+                              r="46"
+                              fill="none"
+                              stroke="#22d3ee"
+                              stroke-width="18"
+                              stroke-dasharray="44 217"
+                              stroke-dashoffset="-130"
+                              transform="rotate(-90 65 65)"
+                            />
+                            <circle
+                              cx="65"
+                              cy="65"
+                              r="46"
+                              fill="none"
+                              stroke="#64748b"
+                              stroke-width="18"
+                              stroke-dasharray="43 217"
+                              stroke-dashoffset="-174"
+                              transform="rotate(-90 65 65)"
+                            />
+                            <circle cx="65" cy="65" r="30" fill="#0b1220" stroke="rgba(20,184,166,0.2)" stroke-width="1" />
+                            <text x="65" y="62" text-anchor="middle" fill="#94a3b8" font-size="9" font-family="Inter,sans-serif">Risk</text>
+                            <text x="65" y="76" text-anchor="middle" fill="#f8fafc" font-size="14" font-weight="700" font-family="Inter,sans-serif">100%</text>
+                          </svg>
+                          <div class="donut-legend">
+                            <div><span class="swatch" style="background:#fbbf24"></span>Compliance</div>
+                            <div><span class="swatch" style="background:#f87171"></span>Dispatch</div>
+                            <div><span class="swatch" style="background:#22d3ee"></span>Safety</div>
+                            <div><span class="swatch" style="background:#64748b"></span>Settlements</div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="panel">
+                      <div class="panel-title">6-Month Revenue Trend</div>
+                      <div class="panel-body bars-svg-wrap">
+                        <svg width="100%" height="140" viewBox="0 0 460 140" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+                          <line x1="36" y1="118" x2="440" y2="118" stroke="#334155" stroke-width="1" />
+                          <text x="36" y="132" fill="#64748b" font-size="9" font-family="Inter,sans-serif">Jan</text>
+                          <text x="108" y="132" fill="#64748b" font-size="9" font-family="Inter,sans-serif">Feb</text>
+                          <text x="180" y="132" fill="#64748b" font-size="9" font-family="Inter,sans-serif">Mar</text>
+                          <text x="252" y="132" fill="#64748b" font-size="9" font-family="Inter,sans-serif">Apr</text>
+                          <text x="324" y="132" fill="#64748b" font-size="9" font-family="Inter,sans-serif">May</text>
+                          <text x="396" y="132" fill="#64748b" font-size="9" font-family="Inter,sans-serif">Jun</text>
+                          <rect x="44" y="62" width="36" height="56" rx="4" fill="url(#barGrad)" opacity="0.95" />
+                          <rect x="116" y="48" width="36" height="70" rx="4" fill="url(#barGrad)" opacity="0.95" />
+                          <rect x="188" y="70" width="36" height="48" rx="4" fill="url(#barGrad)" opacity="0.95" />
+                          <rect x="260" y="38" width="36" height="80" rx="4" fill="url(#barGrad)" opacity="0.95" />
+                          <rect x="332" y="55" width="36" height="63" rx="4" fill="url(#barGrad)" opacity="0.95" />
+                          <rect x="404" y="28" width="36" height="90" rx="4" fill="url(#barGrad)" opacity="0.95" />
+                          <defs>
+                            <linearGradient id="barGrad" x1="0" y1="0" x2="0" y2="1">
+                              <stop offset="0%" stop-color="#22d3ee" />
+                              <stop offset="100%" stop-color="#14b8a6" />
+                            </linearGradient>
+                          </defs>
+                        </svg>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="panel queue-panel">
+                    <div class="panel-title">Owner&apos;s Attention Queue</div>
+                    <div class="queue-rows">
+                      <div class="queue-row">
+                        <span class="sev sev-critical">Critical</span>
+                        <span class="queue-main">Seal mismatch · Load proof blocking settlement</span>
+                        <span class="queue-area">Dispatch / proof</span>
+                        <span class="queue-meta">L501 · $2.0k</span>
+                      </div>
+                      <div class="queue-row">
+                        <span class="sev sev-high">High</span>
+                        <span class="queue-main">Medical card expiring — DRV-002 review window</span>
+                        <span class="queue-area">Compliance</span>
+                        <span class="queue-meta">CMP-001 · OPEN</span>
+                      </div>
+                      <div class="queue-row">
+                        <span class="sev sev-high">High</span>
+                        <span class="queue-main">Settlement hold — POD verification queue</span>
+                        <span class="queue-area">Finance</span>
+                        <span class="queue-meta">3 loads · aging</span>
+                      </div>
+                      <div class="queue-row">
+                        <span class="sev sev-med">Medium</span>
+                        <span class="queue-main">Safety tier At Risk — coaching cadence due</span>
+                        <span class="queue-area">Safety</span>
+                        <span class="queue-meta">Fleet policy</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="cta-row">
+          <button type="button" class="cta cta-teal">Book a Demo</button>
+          <button type="button" class="cta cta-outline">Open Dispatch Board</button>
+          <button type="button" class="cta cta-outline">Review Attention Queue</button>
+        </div>
+      </div>
+
+      <p class="export-hint">
+        1440×900 · Toggle body.transparent-bg for alpha exports · Print via DevTools screenshot
+      </p>
+    </div>
+
+    <script>
+      // ?transparent=1 — preview transparent export background
+      if (new URLSearchParams(location.search).get("transparent") === "1") {
+        document.body.classList.add("transparent-bg");
+      }
+    </script>
+  </body>
+</html>
