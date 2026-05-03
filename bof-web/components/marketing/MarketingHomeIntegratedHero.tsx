@@ -15,7 +15,7 @@ export type MarketingHomeIntegratedHeroProps = {
   trustAriaLabel?: string;
   /** Optional brand block shown above eyebrow. */
   brand?: ReactNode;
-  /** Public path e.g. `/assets/images/hero-landing-bof.png` */
+  /** Public path e.g. `/assets/images/bof-landing-hero-clean.png` */
   imageSrc: string;
   imageAlt: string;
 };

@@ -505,18 +505,25 @@ body {
     padding-right: clamp(16px, 2vw, 30px);
   }
 
+  /* Cropped hero asset: anchor slightly above center so nav + monitor read cleanly without lower badge strip. */
   .bof-home-tight-hero .bof-mkt-home-hero-integrated__image {
-    object-position: 55% center;
+    object-position: 52% 18%;
   }
 
   .bof-home-tight-hero .bof-mkt-home-hero-integrated__visual::after {
-    background: linear-gradient(
-      to right,
-      rgba(15, 23, 42, 0.84) 0%,
-      rgba(15, 23, 42, 0.67) 26%,
-      rgba(15, 23, 42, 0.38) 52%,
-      rgba(15, 23, 42, 0.18) 100%
-    );
+    background:
+      /* Quiet lower-left ghost UI under the headline column */
+      linear-gradient(165deg, rgba(15, 23, 42, 0.62) 0%, transparent 44%),
+      /* Bottom breathing room — hides any residual strip / fades footer of screenshot */
+      linear-gradient(to bottom, transparent 0%, transparent 52%, rgba(15, 23, 42, 0.35) 78%, rgba(15, 23, 42, 0.82) 100%),
+      /* Primary left-to-right readability for copy */
+      linear-gradient(
+        to right,
+        rgba(15, 23, 42, 0.84) 0%,
+        rgba(15, 23, 42, 0.67) 26%,
+        rgba(15, 23, 42, 0.38) 52%,
+        rgba(15, 23, 42, 0.18) 100%
+      );
   }
 }
 

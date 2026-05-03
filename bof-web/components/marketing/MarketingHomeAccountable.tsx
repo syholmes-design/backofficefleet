@@ -122,7 +122,7 @@ export default function MarketingHomeAccountable() {
         support="We are a road dog, not a watchdog. BOF rewards the pre-trip checks, the careful documentation, and the quiet professionalism that too often get skipped in reporting—and turns them into the proof you need for billing, settlement, and claims when it counts."
         trustItems={HERO_TRUST}
         trustAriaLabel="BOF capability highlights"
-        imageSrc="/assets/images/hero-landing-bof.png"
+        imageSrc="/assets/images/bof-landing-hero-clean.png"
         imageAlt="BOF operational layer connecting management oversight, driver workflows, and customer communication"
         ctas={
           <>
