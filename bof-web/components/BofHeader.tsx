@@ -2,13 +2,9 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { BookDemoLink } from "@/components/BookDemoLink";
 import { BofLogo } from "@/components/BofLogo";
-
-const marketingNav = [
-  { href: "/private-fleets", label: "Private Fleets" },
-  { href: "/government", label: "Government" },
-  { href: "/bof-vault", label: "BOF Vault" },
-];
+import { getSectorLinks } from "@/lib/site-links";
 
 const productNav = [
   { href: "/dashboard", label: "Dashboard" },
@@ -25,6 +21,7 @@ export function BofHeader() {
   const pathname = usePathname();
   const marketingOnlyPaths = new Set([
     "/",
+    "/for-hire-carriers",
     "/private-fleets",
     "/government",
     "/bof-vault",
@@ -82,22 +79,24 @@ export function BofHeader() {
           aria-label="Main"
         >
           <div className="bof-global-header-nav-group" aria-label="Solutions">
-            {marketingNav.map((item) => (
+            {getSectorLinks().map((item) => (
               <Link key={item.href} href={item.href}>
                 {item.label}
               </Link>
             ))}
+            <Link href="/bof-vault">BOF Vault</Link>
           </div>
           <div className="bof-global-header-nav-group" aria-label="Demo">
             <Link href="/dashboard" className="bof-global-header-nav-link">Product Demo</Link>
+            <Link href="/book-assessment?source=header-marketing">Fleet assessment</Link>
           </div>
           <div className="bof-global-header-ctas">
             <Link href="/apply" className="bof-global-header-cta bof-global-header-cta--primary">
               Become a Founding Member
             </Link>
-            <Link href="/book-assessment" className="bof-global-header-cta bof-global-header-cta--secondary">
-              Assess Your Fleet
-            </Link>
+            <BookDemoLink className="bof-global-header-cta bof-global-header-cta--secondary">
+              Book a Demo
+            </BookDemoLink>
           </div>
         </nav>
       </div>

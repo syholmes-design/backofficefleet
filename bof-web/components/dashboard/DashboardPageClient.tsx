@@ -3,7 +3,9 @@
 import Link from "next/link";
 import Image from "next/image";
 import { useMemo, useState } from "react";
+import { BookDemoLink } from "@/components/BookDemoLink";
 import { useBofDemoData } from "@/lib/bof-demo-data-context";
+import { getSectorLinks } from "@/lib/site-links";
 import { formatUsd } from "@/lib/format-money";
 import {
   getDashboardTodayChanges,
@@ -165,15 +167,6 @@ export function DashboardPageClient() {
     { label: "Client Requests Pending", value: pendingClientLoadRequests },
   ] as const;
 
-  const bookDemoHref = useMemo(() => {
-    const external =
-      process.env.NEXT_PUBLIC_CALENDAR_URL?.trim() ||
-      process.env.NEXT_PUBLIC_CALENDLY_URL?.trim() ||
-      process.env.NEXT_PUBLIC_BOOK_DEMO_URL?.trim();
-    if (external) return external;
-    return "/book-assessment?source=dashboard-hero";
-  }, []);
-
   return (
     <div className="bof-page bof-cc-page bof-dashboard-page">
       <section
@@ -192,14 +185,6 @@ export function DashboardPageClient() {
                 onError={() => setHeroImageMissing(true)}
                 unoptimized
               />
-              <Link
-                href={bookDemoHref}
-                className="bof-dashboard-hero__calendarCta"
-                aria-label="Book a BOF demo appointment"
-                prefetch={false}
-              >
-                Book a Demo
-              </Link>
             </div>
             <nav className="bof-dashboard-hero__hotspots" aria-label="Quick dashboard links">
               <Link href="/dispatch" className="bof-dashboard-hero__hotspot">
@@ -244,8 +229,14 @@ export function DashboardPageClient() {
               Readiness, dispatch risk, compliance blocks, settlements, proof exceptions, and revenue impact in one
               operating view.
             </p>
+            <div className="bof-dashboard-hero__ctaRow" aria-label="Demo calls to action">
+              <BookDemoLink className="bof-cc-btn bof-cc-btn-primary" />
+              <Link href="/command-center" className="bof-cc-btn">
+                Explore BOF demo
+              </Link>
+            </div>
             <div className="bof-cc-hero-actions">
-              <Link href="/dispatch" className="bof-cc-btn bof-cc-btn-primary">
+              <Link href="/dispatch" className="bof-cc-btn">
                 Open Dispatch Board
               </Link>
               <a href="#attention-queue" className="bof-cc-btn">
@@ -255,11 +246,13 @@ export function DashboardPageClient() {
                 Open Settlements
               </Link>
             </div>
-            <p className="bof-dashboard-hero__book-demo-subtle">
-              <Link href={bookDemoHref} prefetch={false}>
-                Schedule walkthrough / book demo
-              </Link>
-            </p>
+            <nav className="bof-dashboard-hero__sectorRow" aria-label="Solutions by fleet type">
+              {getSectorLinks().map((item) => (
+                <Link key={item.href} href={item.href} className="bof-dashboard-hero__sectorLink" prefetch={false}>
+                  {item.label}
+                </Link>
+              ))}
+            </nav>
           </div>
           <div className="bof-dashboard-hero__stats">
             <div className="bof-cc-hero-stat-grid">
