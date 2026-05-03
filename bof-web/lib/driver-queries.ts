@@ -4,10 +4,8 @@ import {
   JOHN_CARTER_PRIMARY_EXTRA_TYPES,
   JOHN_CARTER_SECONDARY_TYPE_ORDER,
 } from "./john-carter-reference";
-import {
-  getCanonicalDriverDocuments,
-  getDriverDocumentByType,
-} from "./driver-doc-registry";
+import { getCanonicalDriverDocuments } from "./driver-credential-status";
+import { getDriverDocumentByType } from "./driver-doc-registry";
 
 export const DRIVER_DOCUMENT_TYPES = [
   "CDL",

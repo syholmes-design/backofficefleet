@@ -4,13 +4,6 @@ import { useCallback, useEffect, useState } from "react";
 import type { DocumentRow } from "@/lib/driver-queries";
 import type { DriverMedicalExpanded } from "@/lib/driver-medical-expanded";
 import { EMPTY_DRIVER_MEDICAL_EXPANDED } from "@/lib/driver-medical-expanded";
-import type { CanonicalCredentialRecord } from "@/lib/driver-credential-status";
-import {
-  canonicalCredentialBadgeLabel,
-  credentialDisplayText,
-  medicalCanonicalSignal,
-  medicalCanonicalSignalLabel,
-} from "@/lib/driver-credential-status";
 import {
   documentSignal,
   documentSignalClass,
@@ -18,6 +11,12 @@ import {
   proofHref,
   statusBadgeClass,
 } from "@/lib/document-ui";
+import {
+  type CanonicalCredentialRecord,
+  canonicalCredentialBadgeLabel,
+  medicalCanonicalSignal,
+  medicalCanonicalSignalLabel,
+} from "@/lib/driver-credential-status";
 
 function dlItem(label: string, value: string) {
   const v = value?.trim();
@@ -32,17 +31,17 @@ function dlItem(label: string, value: string) {
 export function DriverMedicalExpandedPanel({
   driverName,
   medicalDoc,
-  medicalCanonical,
   expanded,
   mcsa5876Signed,
+  medicalCanonical,
 }: {
   driverName: string;
   medicalDoc: DocumentRow;
-  /** Canonical resolver output — badge/signal lines ignore stale documents[].status when present. */
-  medicalCanonical?: CanonicalCredentialRecord | null;
   expanded: DriverMedicalExpanded | null;
   /** Signed long-form exam (PDF/HTML); opens from the nested MCSA-5876 detail view. */
   mcsa5876Signed?: Pick<DocumentRow, "fileUrl" | "previewUrl"> | null;
+  /** Canonical resolver slice — aligns dates/status with hub compliance card + document summary. */
+  medicalCanonical?: CanonicalCredentialRecord | null;
 }) {
   const [open, setOpen] = useState(false);
   const close = useCallback(() => setOpen(false), []);
@@ -57,27 +56,20 @@ export function DriverMedicalExpandedPanel({
   }, [open, close]);
 
   const x = expanded ?? EMPTY_DRIVER_MEDICAL_EXPANDED;
+  const canon = medicalCanonical;
   const issue =
-    x.medicalIssueDate?.trim() || medicalDoc.issueDate?.trim() || "";
+    canon?.issueDate?.trim() ||
+    x.medicalIssueDate?.trim() ||
+    medicalDoc.issueDate?.trim() ||
+    "";
   const exp =
-    medicalCanonical?.expirationDate?.trim() ||
+    canon?.expirationDate?.trim() ||
     medicalDoc.expirationDate?.trim() ||
     x.medicalExpirationDate?.trim() ||
     "";
-
-  const badgeLabel = medicalCanonical
-    ? canonicalCredentialBadgeLabel(medicalCanonical)
-    : medicalDoc.status;
-  const medSignal = medicalCanonical
-    ? medicalCanonicalSignal(medicalCanonical)
-    : documentSignal(medicalDoc);
-  const signalLineClass = documentSignalClass(medSignal);
-  const signalLineText = medicalCanonical
-    ? medicalCanonicalSignalLabel(medicalCanonicalSignal(medicalCanonical))
-    : documentSignalLabel(medSignal);
-  const expirationDlValue = medicalCanonical
-    ? credentialDisplayText(medicalCanonical)
-    : exp;
+  const examiner =
+    canon?.examinerName?.trim() || x.medicalExaminerName?.trim() || "";
+  const statusLabel = canon ? canonicalCredentialBadgeLabel(canon) : medicalDoc.status;
 
   return (
     <section
@@ -94,22 +86,25 @@ export function DriverMedicalExpandedPanel({
       <div className="bof-medical-primary bof-medical-card">
         <div className="bof-medical-primary-top">
           <span className="bof-medical-label">Medical Card</span>
-          <span className={statusBadgeClass(badgeLabel)}>
-            {badgeLabel}
+          <span className={statusBadgeClass(statusLabel)}>
+            {statusLabel}
           </span>
         </div>
         <p className="bof-doc-signal-line">
-          <span className={signalLineClass}>
-            {signalLineText}
-          </span>
+          {canon ? (
+            <span className={documentSignalClass(medicalCanonicalSignal(canon))}>
+              {medicalCanonicalSignalLabel(medicalCanonicalSignal(canon))}
+            </span>
+          ) : (
+            <span className={documentSignalClass(documentSignal(medicalDoc))}>
+              {documentSignalLabel(documentSignal(medicalDoc))}
+            </span>
+          )}
         </p>
         <dl className="bof-medical-dl bof-medical-dl-primary">
           {dlItem("Issue date", issue)}
-          {dlItem(
-            medicalCanonical ? "Medical status" : "Expiration date",
-            medicalCanonical ? expirationDlValue : exp
-          )}
-          {dlItem("Examiner name", x.medicalExaminerName)}
+          {dlItem("Expiration date", exp)}
+          {dlItem("Examiner name", examiner)}
         </dl>
         <button
           type="button"

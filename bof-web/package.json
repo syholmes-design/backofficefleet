@@ -30,6 +30,7 @@
     "validate:driver-medical-status": "node scripts/validate-driver-medical-status.mjs",
     "validate:driver-review-explanations": "node scripts/validate-driver-review-explanations.mjs",
     "validate:review-explanations": "npx --yes tsx scripts/validate-review-explanations.ts",
+    "validate:driver-credential-source-alignment": "node scripts/validate-driver-credential-source-alignment.mjs",
     "validate:driver-blockers": "node scripts/validate-driver-blockers.mjs",
     "validate:driver-document-packets": "node scripts/validate-driver-document-packets.mjs",
     "validate:driver-dqf-readiness": "node scripts/validate-driver-dqf-readiness.mjs",

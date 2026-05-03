@@ -40,6 +40,10 @@ import {
 import { DemoBackButton } from "@/components/navigation/DemoBackButton";
 import { getDriverDispatchEligibility } from "@/lib/driver-dispatch-eligibility";
 import { getDriverOperationalProfile } from "@/lib/driver-operational-profile";
+import {
+  complianceCredentialPrimaryLine,
+  getDriverCredentialStatus,
+} from "@/lib/driver-credential-status";
 import { getSafetyScorecardRows } from "@/lib/safety-scorecard";
 import { getDriverReviewExplanation } from "@/lib/driver-review-explanation";
 import { DriverReviewDrawer } from "@/components/drivers/DriverReviewDrawer";
@@ -114,6 +118,10 @@ export function DriverDetailPageClient({ driverId }: { driverId: string }) {
   );
   const operationalProfile = useMemo(
     () => getDriverOperationalProfile(data, driverId),
+    [data, driverId]
+  );
+  const credentialStatus = useMemo(
+    () => getDriverCredentialStatus(data, driverId),
     [data, driverId]
   );
   const dispatchEligibility = useMemo(
@@ -205,8 +213,6 @@ export function DriverDetailPageClient({ driverId }: { driverId: string }) {
     mvr_expiration_date?: string;
     fmcsa_review_date?: string;
   };
-  const emergency = (driver ?? {}) as DriverOperational;
-
   const [reviewDrawerOpen, setReviewDrawerOpen] = useState(false);
 
   const openReviewDrawer = () => {
@@ -227,54 +233,72 @@ export function DriverDetailPageClient({ driverId }: { driverId: string }) {
 
   const [editingOperational, setEditingOperational] = useState(false);
   const [operationalDraft, setOperationalDraft] = useState({
-    cdl_expiration_date: emergency.cdl_expiration_date ?? "",
-    med_card_expiration_date: emergency.med_card_expiration_date ?? "",
-    mvr_expiration_date: emergency.mvr_expiration_date ?? "",
-    fmcsa_review_date: emergency.fmcsa_review_date ?? "",
-    emergencyContactName: emergency.emergencyContactName ?? "",
-    emergencyContactRelationship: emergency.emergencyContactRelationship ?? "",
-    emergencyContactPhone: emergency.emergencyContactPhone ?? "",
-    secondaryContactName: emergency.secondaryContactName ?? "",
-    secondaryContactRelationship: emergency.secondaryContactRelationship ?? "",
-    secondaryContactPhone: emergency.secondaryContactPhone ?? "",
-    bankName: emergency.bankName ?? "",
-    bankAccountType: emergency.bankAccountType ?? "",
-    bankRoutingNumber: emergency.bankRoutingNumber ?? "",
-    bankAccountLast4: emergency.bankAccountLast4 ?? "",
+    cdl_expiration_date: credentialStatus.cdl.expirationDate ?? "",
+    med_card_expiration_date: credentialStatus.medicalCard.expirationDate ?? "",
+    mvr_expiration_date: credentialStatus.mvr.expirationDate ?? "",
+    fmcsa_review_date:
+      credentialStatus.fmcsa.reviewDate ?? credentialStatus.fmcsa.expirationDate ?? "",
+    emergencyContactName: operationalProfile?.primaryEmergencyName ?? "",
+    emergencyContactRelationship: operationalProfile?.primaryEmergencyRelationship ?? "",
+    emergencyContactPhone: operationalProfile?.primaryEmergencyPhone ?? "",
+    secondaryContactName: operationalProfile?.secondaryEmergencyName ?? "",
+    secondaryContactRelationship: operationalProfile?.secondaryEmergencyRelationship ?? "",
+    secondaryContactPhone: operationalProfile?.secondaryEmergencyPhone ?? "",
+    bankName: operationalProfile?.bankName ?? "",
+    bankAccountType: operationalProfile?.bankAccountType ?? "",
+    bankRoutingNumber: operationalProfile?.bankRoutingNumber ?? "",
+    bankAccountLast4: operationalProfile?.bankAccountLast4 ?? "",
   });
 
   useEffect(() => {
+    if (!driver) return;
+    const d = driver as DriverOperational;
     setOperationalDraft({
-      cdl_expiration_date: emergency.cdl_expiration_date ?? "",
-      med_card_expiration_date: emergency.med_card_expiration_date ?? "",
-      mvr_expiration_date: emergency.mvr_expiration_date ?? "",
-      fmcsa_review_date: emergency.fmcsa_review_date ?? "",
-      emergencyContactName: emergency.emergencyContactName ?? "",
-      emergencyContactRelationship: emergency.emergencyContactRelationship ?? "",
-      emergencyContactPhone: emergency.emergencyContactPhone ?? "",
-      secondaryContactName: emergency.secondaryContactName ?? "",
-      secondaryContactRelationship: emergency.secondaryContactRelationship ?? "",
-      secondaryContactPhone: emergency.secondaryContactPhone ?? "",
-      bankName: emergency.bankName ?? "",
-      bankAccountType: emergency.bankAccountType ?? "",
-      bankRoutingNumber: emergency.bankRoutingNumber ?? "",
-      bankAccountLast4: emergency.bankAccountLast4 ?? "",
+      cdl_expiration_date:
+        credentialStatus.cdl.expirationDate ?? d.cdl_expiration_date ?? "",
+      med_card_expiration_date:
+        credentialStatus.medicalCard.expirationDate ?? d.med_card_expiration_date ?? "",
+      mvr_expiration_date:
+        credentialStatus.mvr.expirationDate ?? d.mvr_expiration_date ?? "",
+      fmcsa_review_date:
+        credentialStatus.fmcsa.reviewDate ??
+        credentialStatus.fmcsa.expirationDate ??
+        d.fmcsa_review_date ??
+        "",
+      emergencyContactName:
+        operationalProfile?.primaryEmergencyName ?? d.emergencyContactName ?? "",
+      emergencyContactRelationship:
+        operationalProfile?.primaryEmergencyRelationship ?? d.emergencyContactRelationship ?? "",
+      emergencyContactPhone:
+        operationalProfile?.primaryEmergencyPhone ?? d.emergencyContactPhone ?? "",
+      secondaryContactName:
+        operationalProfile?.secondaryEmergencyName ?? d.secondaryContactName ?? "",
+      secondaryContactRelationship:
+        operationalProfile?.secondaryEmergencyRelationship ?? d.secondaryContactRelationship ?? "",
+      secondaryContactPhone:
+        operationalProfile?.secondaryEmergencyPhone ?? d.secondaryContactPhone ?? "",
+      bankName: operationalProfile?.bankName ?? d.bankName ?? "",
+      bankAccountType: operationalProfile?.bankAccountType ?? d.bankAccountType ?? "",
+      bankRoutingNumber: operationalProfile?.bankRoutingNumber ?? d.bankRoutingNumber ?? "",
+      bankAccountLast4: operationalProfile?.bankAccountLast4 ?? d.bankAccountLast4 ?? "",
     });
   }, [
-    emergency.bankAccountLast4,
-    emergency.bankAccountType,
-    emergency.bankName,
-    emergency.bankRoutingNumber,
-    emergency.cdl_expiration_date,
-    emergency.emergencyContactName,
-    emergency.emergencyContactPhone,
-    emergency.emergencyContactRelationship,
-    emergency.fmcsa_review_date,
-    emergency.med_card_expiration_date,
-    emergency.mvr_expiration_date,
-    emergency.secondaryContactName,
-    emergency.secondaryContactPhone,
-    emergency.secondaryContactRelationship,
+    driver,
+    credentialStatus.cdl.expirationDate,
+    credentialStatus.medicalCard.expirationDate,
+    credentialStatus.mvr.expirationDate,
+    credentialStatus.fmcsa.expirationDate,
+    credentialStatus.fmcsa.reviewDate,
+    operationalProfile?.primaryEmergencyName,
+    operationalProfile?.primaryEmergencyRelationship,
+    operationalProfile?.primaryEmergencyPhone,
+    operationalProfile?.secondaryEmergencyName,
+    operationalProfile?.secondaryEmergencyRelationship,
+    operationalProfile?.secondaryEmergencyPhone,
+    operationalProfile?.bankName,
+    operationalProfile?.bankAccountType,
+    operationalProfile?.bankRoutingNumber,
+    operationalProfile?.bankAccountLast4,
   ]);
 
   function saveOperationalEdits() {
@@ -308,6 +332,10 @@ export function DriverDetailPageClient({ driverId }: { driverId: string }) {
     updateDocument(driver.id, "MVR", {
       expirationDate: operationalDraft.mvr_expiration_date || null,
       status: deriveDocStatusFromExpiration(operationalDraft.mvr_expiration_date),
+    });
+    updateDocument(driver.id, "FMCSA", {
+      expirationDate: operationalDraft.fmcsa_review_date || null,
+      status: deriveDocStatusFromExpiration(operationalDraft.fmcsa_review_date),
     });
     setEditingOperational(false);
   }
@@ -1002,19 +1030,33 @@ export function DriverDetailPageClient({ driverId }: { driverId: string }) {
             <h3 className="bof-h3">Emergency contact</h3>
             <dl className="bof-dl">
               <dt>Name</dt>
-              <dd>{emergency.emergencyContactName ?? "Not on file"}</dd>
+              <dd>
+                {operationalProfile?.primaryEmergencyName?.trim()
+                  ? operationalProfile.primaryEmergencyName
+                  : credentialStatus.emergencyContact.status === "missing"
+                    ? "Missing / needs review"
+                    : "On file — details need review"}
+              </dd>
               <dt>Relationship</dt>
-              <dd>{emergency.emergencyContactRelationship ?? "Not on file"}</dd>
+              <dd>
+                {operationalProfile?.primaryEmergencyRelationship?.trim()
+                  ? operationalProfile.primaryEmergencyRelationship
+                  : credentialStatus.emergencyContact.status === "missing"
+                    ? "Missing / needs review"
+                    : "—"}
+              </dd>
               <dt>Phone</dt>
               <dd>
-                {emergency.emergencyContactPhone ? (
+                {operationalProfile?.primaryEmergencyPhone?.trim() ? (
                   <a
-                    href={`tel:${emergency.emergencyContactPhone.replace(/\D/g, "")}`}
+                    href={`tel:${operationalProfile.primaryEmergencyPhone.replace(/\D/g, "")}`}
                   >
-                    {emergency.emergencyContactPhone}
+                    {operationalProfile.primaryEmergencyPhone}
                   </a>
+                ) : credentialStatus.emergencyContact.status === "missing" ? (
+                  "Missing / needs review"
                 ) : (
-                  "Not on file"
+                  "On file — details need review"
                 )}
               </dd>
             </dl>
@@ -1023,37 +1065,77 @@ export function DriverDetailPageClient({ driverId }: { driverId: string }) {
             <h3 className="bof-h3">Secondary contact</h3>
             <dl className="bof-dl">
               <dt>Name</dt>
-              <dd>{emergency.secondaryContactName ?? "Not on file"}</dd>
+              <dd>
+                {operationalProfile?.secondaryEmergencyName?.trim()
+                  ? operationalProfile.secondaryEmergencyName
+                  : "—"}
+              </dd>
               <dt>Relationship</dt>
-              <dd>{emergency.secondaryContactRelationship ?? "Not on file"}</dd>
+              <dd>
+                {operationalProfile?.secondaryEmergencyRelationship?.trim()
+                  ? operationalProfile.secondaryEmergencyRelationship
+                  : "—"}
+              </dd>
               <dt>Phone</dt>
-              <dd>{emergency.secondaryContactPhone ?? "Not on file"}</dd>
+              <dd>
+                {operationalProfile?.secondaryEmergencyPhone?.trim()
+                  ? operationalProfile.secondaryEmergencyPhone
+                  : "—"}
+              </dd>
             </dl>
           </div>
           <div className="bof-info-block">
             <h3 className="bof-h3">Compliance dates</h3>
+            <p className="bof-muted bof-small" style={{ marginTop: 0 }}>
+              Same source as document summary —{" "}
+              <code className="bof-code">getDriverCredentialStatus</code>.
+            </p>
             <dl className="bof-dl">
               <dt>CDL expiration</dt>
-              <dd>{emergency.cdl_expiration_date ?? "Not on file"}</dd>
+              <dd>{complianceCredentialPrimaryLine(credentialStatus.cdl, "expiration")}</dd>
               <dt>Medical certification expiration</dt>
-              <dd>{emergency.med_card_expiration_date ?? "Not on file"}</dd>
+              <dd>{complianceCredentialPrimaryLine(credentialStatus.medicalCard, "expiration")}</dd>
               <dt>MVR expiration</dt>
-              <dd>{emergency.mvr_expiration_date ?? "Not on file"}</dd>
+              <dd>{complianceCredentialPrimaryLine(credentialStatus.mvr, "mvr_review")}</dd>
               <dt>FMCSA review date</dt>
-              <dd>{emergency.fmcsa_review_date ?? "Not on file"}</dd>
+              <dd>{complianceCredentialPrimaryLine(credentialStatus.fmcsa, "fmcsa_review")}</dd>
             </dl>
           </div>
           <div className="bof-info-block">
             <h3 className="bof-h3">Bank information</h3>
             <dl className="bof-dl">
               <dt>Bank name</dt>
-              <dd>{emergency.bankName ?? "Not on file"}</dd>
+              <dd>
+                {operationalProfile?.bankName?.trim()
+                  ? operationalProfile.bankName
+                  : credentialStatus.bankInformation.status === "missing"
+                    ? "Missing / needs review"
+                    : "On file — details need review"}
+              </dd>
               <dt>Account type</dt>
-              <dd>{emergency.bankAccountType ?? "Not on file"}</dd>
+              <dd>
+                {operationalProfile?.bankAccountType?.trim()
+                  ? operationalProfile.bankAccountType
+                  : credentialStatus.bankInformation.status === "missing"
+                    ? "Missing / needs review"
+                    : "—"}
+              </dd>
               <dt>Routing number</dt>
-              <dd>{emergency.bankRoutingNumber ?? "Not on file"}</dd>
+              <dd>
+                {operationalProfile?.bankRoutingNumber?.trim()
+                  ? operationalProfile.bankRoutingNumber
+                  : credentialStatus.bankInformation.status === "missing"
+                    ? "Missing / needs review"
+                    : "—"}
+              </dd>
               <dt>Account last 4</dt>
-              <dd>{emergency.bankAccountLast4 ?? "Not on file"}</dd>
+              <dd>
+                {operationalProfile?.bankAccountLast4?.trim()
+                  ? operationalProfile.bankAccountLast4
+                  : credentialStatus.bankInformation.status === "missing"
+                    ? "Missing / needs review"
+                    : "—"}
+              </dd>
             </dl>
           </div>
         </div>
@@ -1147,6 +1229,7 @@ export function DriverDetailPageClient({ driverId }: { driverId: string }) {
             medicalDoc={medicalDoc}
             expanded={medicalExpanded}
             mcsa5876Signed={mcsa5876Signed}
+            medicalCanonical={credentialStatus.medicalCard}
           />
         </section>
       )}

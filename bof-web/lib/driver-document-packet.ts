@@ -1,6 +1,11 @@
 import type { BofData } from "@/lib/load-bof-data";
 import type { DocumentRow } from "@/lib/driver-queries";
 import {
+  canonicalCredentialBadgeLabel,
+  getDriverCredentialStatus,
+  type CredentialRecord,
+} from "@/lib/driver-credential-status";
+import {
   getOrderedDocumentsForDriver,
   getPrimaryStackExtraDocuments,
   getSecondaryStackDocumentsOrdered,
@@ -170,6 +175,53 @@ function toPacketDoc(
   };
 }
 
+/** Core DQF rows only — generated summaries keep template/engine dates out of credential slots. */
+function mergeCredentialResolverIntoCorePacket(
+  data: BofData,
+  driverId: string,
+  packet: DriverDocumentPacket
+): DriverDocumentPacket {
+  const cred = getDriverCredentialStatus(data, driverId);
+  const sliceByCanonical: Record<string, CredentialRecord> = {
+    cdl: cred.cdl,
+    medical_card: cred.medicalCard,
+    mvr: cred.mvr,
+    fmcsa_compliance: cred.fmcsa,
+    w9: cred.w9,
+    bank_information: cred.bankInformation,
+    emergency_contact: cred.emergencyContact,
+    insurance_card: cred.insuranceCard,
+  };
+
+  const documents = packet.documents.map((doc) => {
+    if (doc.group !== "core_dqf") return doc;
+    const slice = sliceByCanonical[doc.canonicalType];
+    if (!slice) return doc;
+
+    const primaryDate =
+      doc.canonicalType === "fmcsa_compliance"
+        ? slice.reviewDate?.trim() || slice.expirationDate?.trim()
+        : slice.expirationDate?.trim() || slice.reviewDate?.trim();
+
+    const nextStatus = canonicalCredentialBadgeLabel(slice);
+    const fileUrl = slice.fileUrl?.trim() || doc.fileUrl;
+    const previewUrl = fileUrl || doc.previewUrl;
+    const sourceKind = inferSourceKind({ fileUrl });
+
+    return {
+      ...doc,
+      status: nextStatus,
+      expirationDate: primaryDate || doc.expirationDate,
+      fileUrl,
+      previewUrl,
+      sourceKind,
+      sourceLabel: sourceLabelFromKind(sourceKind),
+    };
+  });
+
+  return { ...packet, documents };
+}
+
 export function buildDriverDocumentPacket(data: BofData, driverId: string): DriverDocumentPacket {
   const primaryCore = getOrderedDocumentsForDriver(data, driverId);
   const primaryExtra = getPrimaryStackExtraDocuments(data, driverId);
@@ -242,10 +294,10 @@ export function buildDriverDocumentPacket(data: BofData, driverId: string): Driv
     .map((key) => deduped.get(key))
     .filter((d): d is DriverPacketDocument => Boolean(d));
 
-  return {
+  return mergeCredentialResolverIntoCorePacket(data, driverId, {
     driverId,
     documents: orderedDocs,
     duplicates,
-  };
+  });
 }
 

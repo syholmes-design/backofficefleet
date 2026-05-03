@@ -20,11 +20,8 @@ import {
 } from "../lib/driver-queries";
 import { getDriverDispatchEligibility } from "../lib/driver-dispatch-eligibility";
 import { getSafetyScorecardRows, getSafetyViolationActions } from "../lib/safety-scorecard";
-import {
-  getCanonicalDriverDocuments,
-  getDriverMedicalCardStatus,
-  describeCredentialExpiration,
-} from "../lib/driver-doc-registry";
+import { getCanonicalDriverDocuments } from "../lib/driver-credential-status";
+import { getDriverMedicalCardStatus, describeCredentialExpiration } from "../lib/driver-doc-registry";
 import {
   getDqfReviewerForDriver,
   getDqfDeterministicTimestamp,
@@ -172,11 +169,14 @@ function buildDocumentRows(args: {
     pushRow(label, st, exp, has ? "canonical — indexed vault" : "missing", "");
   }
 
-  const ec = canonical.find((c) => c.type === "Emergency Contact");
+  const ec = canonical.find((c) => c.type === "Emergency Contact") as
+    | { status?: string; expirationDate?: string; fileUrl?: string | null }
+    | undefined;
+  const ecExp = ec?.expirationDate?.trim() || "—";
   pushRow(
     "Emergency contact",
     ec?.status ?? "MISSING",
-    ec?.expirationDate?.trim() || "—",
+    ecExp,
     ec?.fileUrl ? "canonical — indexed vault" : "missing",
     ""
   );

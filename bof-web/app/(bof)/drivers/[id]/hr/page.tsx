@@ -4,8 +4,8 @@ import { use, useEffect, useMemo } from "react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { useBofDemoData } from "@/lib/bof-demo-data-context";
+import { getCanonicalDriverDocuments } from "@/lib/driver-credential-status";
 import {
-  getCanonicalDriverDocuments,
   getDriverDocumentByType,
   getDriverDocumentPacket,
   getExpectedBankCardPublicPath,
@@ -83,7 +83,9 @@ export default function DriverHRPage({ params }: Props) {
 
   const hrDocs = useMemo<HrDocRow[]>(() => {
     const canonical = getCanonicalDriverDocuments(data, id);
-    const byType = new Map(canonical.map((doc) => [doc.type, doc]));
+    const byType = new Map<string, (typeof canonical)[number]>(
+      canonical.map((doc) => [doc.type, doc])
+    );
     const rows: Array<{ label: string; type: string }> = [
       { label: "Emergency Contact", type: "Emergency Contact" },
       { label: "CDL", type: "CDL" },

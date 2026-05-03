@@ -2,7 +2,6 @@ import type { BofData } from "@/lib/load-bof-data";
 import manifestRaw from "@/lib/generated/driver-doc-manifest.json";
 import publicDocIndexRaw from "@/lib/generated/driver-public-doc-index.json";
 import canonicalBankCardFiles from "@/lib/driver-canonical-bank-cards.json";
-import { getDriverOperationalProfile } from "@/lib/driver-operational-profile";
 
 export type DriverDocManifestKey =
   | "cdl"
@@ -536,95 +535,5 @@ export function getDriverMvrStatus(data: BofData, driverId: string): DriverMvrSt
     source: "canonical_document",
     reason: "MVR row without expirationDate and no indexed file",
   };
-}
-
-export function getCanonicalDriverDocuments(data: BofData, driverId: string) {
-  const packet = getDriverDocumentPacket(driverId);
-  const byType = new Map(
-    data.documents
-      .filter((d) => d.driverId === driverId)
-      .map((d) => [d.type, d])
-  );
-
-  const profile = getDriverOperationalProfile(data, driverId);
-  const medicalResolved = getDriverMedicalCardStatus(data, driverId);
-  const mvrResolved = getDriverMvrStatus(data, driverId);
-  return [
-    {
-      type: "CDL",
-      status: getDriverDocumentByType(driverId, "CDL")
-        ? deriveCredentialStatusFromExpiration(byType.get("CDL")?.expirationDate)
-        : "MISSING",
-      expirationDate: byType.get("CDL")?.expirationDate,
-      fileUrl: packet.cdl,
-      previewUrl: packet.cdl,
-    },
-    {
-      type: "Insurance Card",
-      status: packet.insuranceCard ? "VALID" : "MISSING",
-      expirationDate: byType.get("Insurance Card")?.expirationDate,
-      fileUrl: packet.insuranceCard,
-      previewUrl: packet.insuranceCard,
-    },
-    {
-      type: "Medical Card",
-      status: medicalResolved.rowStatus,
-      expirationDate: medicalResolved.expirationDate,
-      fileUrl: packet.medicalCard,
-      previewUrl: packet.medicalCard,
-    },
-    {
-      type: "MVR",
-      status: mvrResolved.rowStatus,
-      expirationDate: mvrResolved.expirationDate,
-      fileUrl: packet.mvr,
-      previewUrl: packet.mvr,
-    },
-    {
-      type: "I-9",
-      status: packet.i9 ? byType.get("I-9")?.status ?? "VALID" : "MISSING",
-      expirationDate: byType.get("I-9")?.expirationDate,
-      fileUrl: packet.i9,
-      previewUrl: packet.i9,
-    },
-    {
-      type: "FMCSA",
-      status: packet.fmcsaCompliance
-        ? byType.get("FMCSA")?.status ?? "VALID"
-        : "MISSING",
-      expirationDate: byType.get("FMCSA")?.expirationDate,
-      fileUrl: packet.fmcsaCompliance,
-      previewUrl: packet.fmcsaCompliance,
-    },
-    {
-      type: "W-9",
-      status: packet.w9 ? byType.get("W-9")?.status ?? "VALID" : "MISSING",
-      expirationDate: byType.get("W-9")?.expirationDate,
-      fileUrl: packet.w9,
-      previewUrl: packet.w9,
-    },
-    {
-      type: "Bank Info",
-      status:
-        profile?.hasMissingBank || !packet.bankInformation
-          ? "MISSING"
-          : byType.get("Bank Info")?.status ?? "VALID",
-      expirationDate: byType.get("Bank Info")?.expirationDate,
-      fileUrl: packet.bankInformation,
-      previewUrl: packet.bankInformation,
-    },
-    {
-      type: "Emergency Contact",
-      status:
-        profile?.hasMissingEmergencyPrimary ||
-        profile?.hasMissingEmergencySecondary ||
-        !packet.emergencyContact
-          ? "MISSING"
-          : "VALID",
-      expirationDate: undefined,
-      fileUrl: packet.emergencyContact,
-      previewUrl: packet.emergencyContact,
-    },
-  ];
 }
 
