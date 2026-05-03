@@ -14835,9 +14835,152 @@ body {
   color: #c8d6e9;
 }
 
+/* Dashboard payroll trend chart — readable SVG (no default black fill) */
+.bof-cc-trend-chart-wrap {
+  width: 100%;
+  max-height: 360px;
+  margin-top: 0.65rem;
+  padding: 0.45rem 0.35rem 0.5rem;
+  border-radius: 10px;
+  background: rgba(15, 23, 42, 0.55);
+  border: 1px solid rgba(51, 65, 85, 0.7);
+  box-sizing: border-box;
+}
+
+.bof-cc-trend-svg-chart {
+  width: 100%;
+  height: auto;
+  max-height: 320px;
+  display: block;
+  overflow: visible;
+}
+
+.bof-cc-trend-plot-bg {
+  fill: rgba(15, 23, 42, 0.35);
+  stroke: rgba(71, 85, 105, 0.45);
+  stroke-width: 1;
+}
+
+.bof-cc-trend-grid-line {
+  stroke: rgba(148, 163, 184, 0.14);
+  stroke-width: 1;
+}
+
+.bof-cc-trend-axis-line {
+  stroke: rgba(148, 163, 184, 0.35);
+  stroke-width: 1;
+}
+
+.bof-cc-trend-axis-text {
+  fill: #94a3b8;
+  font-size: 10px;
+  font-family: ui-sans-serif, system-ui, sans-serif;
+}
+
+.bof-cc-trend-month-label {
+  fill: #cbd5e1;
+  font-size: 10px;
+  font-family: ui-sans-serif, system-ui, sans-serif;
+}
+
+.bof-cc-trend-area-net {
+  fill: rgba(45, 212, 191, 0.16);
+  stroke: none;
+}
+
+.bof-cc-trend-line-gross {
+  stroke: rgba(56, 189, 248, 0.9);
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.bof-cc-trend-line-net {
+  stroke: #2dd4bf;
+  stroke-width: 3;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.bof-cc-trend-line-safety {
+  stroke: rgba(226, 232, 240, 0.55);
+  stroke-width: 1.75;
+  stroke-dasharray: 5 4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.bof-cc-trend-line-backhaul {
+  stroke: rgba(129, 140, 248, 0.95);
+  stroke-width: 1.75;
+  stroke-dasharray: 3 5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.bof-cc-trend-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem 1rem;
+  justify-content: center;
+  margin-top: 0.35rem;
+  padding: 0 0.25rem;
+  font-size: 0.68rem;
+  color: #94a3b8;
+}
+
+.bof-cc-trend-legend-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.bof-cc-trend-legend-swatch {
+  width: 14px;
+  height: 3px;
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+
+.bof-cc-trend-legend-swatch--net {
+  background: #2dd4bf;
+  height: 4px;
+}
+
+.bof-cc-trend-legend-swatch--gross {
+  background: rgba(56, 189, 248, 0.95);
+}
+
+.bof-cc-trend-legend-swatch--safety {
+  background: repeating-linear-gradient(
+    90deg,
+    rgba(226, 232, 240, 0.65) 0 4px,
+    transparent 4px 7px
+  );
+}
+
+.bof-cc-trend-legend-swatch--backhaul {
+  background: repeating-linear-gradient(
+    90deg,
+    rgba(129, 140, 248, 0.95) 0 3px,
+    transparent 3px 6px
+  );
+}
+
+.bof-cc-trend-empty {
+  margin: 0.75rem 0 0;
+  padding: 0.85rem 1rem;
+  border-radius: 10px;
+  border: 1px dashed rgba(71, 85, 105, 0.75);
+  background: rgba(15, 23, 42, 0.4);
+  font-size: 0.8rem;
+  color: #94a3b8;
+}
+
 .bof-cc-trend-list {
   display: grid;
   gap: 0.45rem;
+  margin-top: 0.65rem;
 }
 
 .bof-cc-trend-row {

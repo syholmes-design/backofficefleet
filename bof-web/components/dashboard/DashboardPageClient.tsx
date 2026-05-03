@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { useMemo } from "react";
+import { useMemo, type ReactNode } from "react";
 import { BookDemoLink } from "@/components/BookDemoLink";
 import { useBofDemoData } from "@/lib/bof-demo-data-context";
 import { sectorLinks } from "@/lib/site-links";
@@ -556,37 +556,160 @@ function TrendCard({
   subtitle: string;
   rows: Array<{ label: string; grossPay: number; safetyBonus: number; backhaulPay: number; netPay: number }>;
 }) {
-  const maxY = Math.max(...rows.map((row) => row.grossPay), 1);
-  const points = rows.map((row, idx) => {
-    const x = rows.length === 1 ? 0 : (idx / (rows.length - 1)) * 100;
-    const grossY = 100 - (row.grossPay / maxY) * 100;
-    const netY = 100 - (row.netPay / maxY) * 100;
-    return { x, grossY, netY };
-  });
-  const grossPath = points.map((p, idx) => `${idx === 0 ? "M" : "L"} ${p.x} ${p.grossY}`).join(" ");
-  const netPath = points.map((p, idx) => `${idx === 0 ? "M" : "L"} ${p.x} ${p.netY}`).join(" ");
+  const validated = rows.filter(
+    (r) =>
+      Boolean(String(r.label ?? "").trim()) &&
+      Number.isFinite(r.grossPay) &&
+      Number.isFinite(r.netPay) &&
+      Number.isFinite(r.safetyBonus) &&
+      Number.isFinite(r.backhaulPay) &&
+      r.grossPay >= 0 &&
+      r.netPay >= 0 &&
+      r.safetyBonus >= 0 &&
+      r.backhaulPay >= 0
+  );
+
+  const maxYForBars = Math.max(...validated.map((row) => row.grossPay), 1);
+
+  const W = 640;
+  const H = 312;
+  const padL = 64;
+  const padR = 20;
+  const padT = 16;
+  const padB = 56;
+  const chartW = W - padL - padR;
+  const chartH = H - padT - padB;
+  const baselineY = padT + chartH;
+
+  const maxSeries = Math.max(
+    ...validated.flatMap((r) => [r.grossPay, r.netPay, r.safetyBonus, r.backhaulPay]),
+    1
+  );
+
+  function linePath(pts: Array<{ x: number; y: number }>): string {
+    if (!pts.length) return "";
+    return pts
+      .map((p, idx) => `${idx === 0 ? "M" : "L"} ${p.x.toFixed(2)} ${p.y.toFixed(2)}`)
+      .join(" ");
+  }
+
+  function xAt(i: number, n: number): number {
+    if (n <= 1) return padL + chartW / 2;
+    return padL + (i / (n - 1)) * chartW;
+  }
+
+  function yAt(v: number): number {
+    const clamped = Math.min(Math.max(v / maxSeries, 0), 1);
+    return baselineY - clamped * chartH;
+  }
+
+  let svgChart: ReactNode = null;
+
+  if (validated.length > 0) {
+    const n = validated.length;
+    const grossPts = validated.map((r, i) => ({ x: xAt(i, n), y: yAt(r.grossPay) }));
+    const netPts = validated.map((r, i) => ({ x: xAt(i, n), y: yAt(r.netPay) }));
+    const safetyPts = validated.map((r, i) => ({ x: xAt(i, n), y: yAt(r.safetyBonus) }));
+    const backhaulPts = validated.map((r, i) => ({ x: xAt(i, n), y: yAt(r.backhaulPay) }));
+
+    const netLine = linePath(netPts);
+    const lastNet = netPts[n - 1];
+    const firstNet = netPts[0];
+    const netAreaD =
+      netLine && lastNet && firstNet
+        ? `${netLine} L ${lastNet.x.toFixed(2)} ${baselineY.toFixed(2)} L ${firstNet.x.toFixed(2)} ${baselineY.toFixed(2)} Z`
+        : "";
+
+    const tickVals = [0, 0.25, 0.5, 0.75, 1].map((t) => Math.round(maxSeries * t));
+
+    svgChart = (
+      <div className="bof-cc-trend-chart-wrap">
+        <svg
+          viewBox={`0 0 ${W} ${H}`}
+          className="bof-cc-trend-svg-chart"
+          role="img"
+          aria-label={`${title}: gross, net, safety bonus, and backhaul by month`}
+          preserveAspectRatio="xMidYMid meet"
+        >
+          <rect x={padL} y={padT} width={chartW} height={chartH} className="bof-cc-trend-plot-bg" rx={6} />
+
+          {tickVals.map((tv) => {
+            const yy = yAt(tv);
+            return (
+              <g key={`g-${tv}`}>
+                <line x1={padL} x2={padL + chartW} y1={yy} y2={yy} className="bof-cc-trend-grid-line" />
+                <text x={padL - 8} y={yy + 4} textAnchor="end" className="bof-cc-trend-axis-text">
+                  {formatUsd(tv)}
+                </text>
+              </g>
+            );
+          })}
+
+          <line
+            x1={padL}
+            x2={padL + chartW}
+            y1={baselineY}
+            y2={baselineY}
+            className="bof-cc-trend-axis-line"
+          />
+
+          {netAreaD ? <path d={netAreaD} className="bof-cc-trend-area-net" /> : null}
+
+          <path d={linePath(grossPts)} className="bof-cc-trend-line-gross" fill="none" />
+          <path d={linePath(backhaulPts)} className="bof-cc-trend-line-backhaul" fill="none" />
+          <path d={linePath(safetyPts)} className="bof-cc-trend-line-safety" fill="none" />
+          <path d={netLine} className="bof-cc-trend-line-net" fill="none" />
+
+          {validated.map((row, i) => (
+            <text key={row.label} x={xAt(i, n)} y={H - 14} textAnchor="middle" className="bof-cc-trend-month-label">
+              {row.label}
+            </text>
+          ))}
+        </svg>
+
+        <div className="bof-cc-trend-legend" aria-hidden="true">
+          <span className="bof-cc-trend-legend-item">
+            <span className="bof-cc-trend-legend-swatch bof-cc-trend-legend-swatch--net" /> Net pay
+          </span>
+          <span className="bof-cc-trend-legend-item">
+            <span className="bof-cc-trend-legend-swatch bof-cc-trend-legend-swatch--gross" /> Gross pay
+          </span>
+          <span className="bof-cc-trend-legend-item">
+            <span className="bof-cc-trend-legend-swatch bof-cc-trend-legend-swatch--safety" /> Safety bonus
+          </span>
+          <span className="bof-cc-trend-legend-item">
+            <span className="bof-cc-trend-legend-swatch bof-cc-trend-legend-swatch--backhaul" /> Backhaul pay
+          </span>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <article className="bof-cc-panel bof-cc-panel-wide">
       <h3 className="bof-cc-panel-title">{title}</h3>
       <p className="bof-cc-panel-sub">{subtitle}</p>
-      <svg viewBox="0 0 100 30" className="bof-cc-trend-svg" role="img" aria-label={title}>
-        <path d={`${grossPath} L 100 100 L 0 100 Z`} className="bof-cc-trend-area-gross" />
-        <path d={grossPath} className="bof-cc-trend-line-gross" />
-        <path d={netPath} className="bof-cc-trend-line-net" />
-      </svg>
+      {validated.length === 0 ? (
+        <p className="bof-cc-trend-empty">
+          Payroll trend data is missing or invalid — chart hidden until demo series is available.
+        </p>
+      ) : (
+        svgChart
+      )}
       <div className="bof-cc-trend-list">
-        {rows.map((row) => (
+        {validated.map((row) => (
           <div key={row.label} className="bof-cc-trend-row">
             <div className="bof-cc-trend-head">
               <span>{row.label}</span>
               <strong>{formatUsd(row.netPay)}</strong>
             </div>
             <div className="bof-cc-trend-track">
-              <div className="bof-cc-trend-gross" style={{ width: `${(row.grossPay / maxY) * 100}%` }} />
-              <div className="bof-cc-trend-net" style={{ width: `${(row.netPay / maxY) * 100}%` }} />
+              <div className="bof-cc-trend-gross" style={{ width: `${(row.grossPay / maxYForBars) * 100}%` }} />
+              <div className="bof-cc-trend-net" style={{ width: `${(row.netPay / maxYForBars) * 100}%` }} />
             </div>
             <p className="bof-cc-trend-meta">
-              Gross {formatUsd(row.grossPay)} · Safety {formatUsd(row.safetyBonus)} · Backhaul {formatUsd(row.backhaulPay)}
+              Gross {formatUsd(row.grossPay)} · Safety {formatUsd(row.safetyBonus)} · Backhaul{" "}
+              {formatUsd(row.backhaulPay)}
             </p>
           </div>
         ))}
