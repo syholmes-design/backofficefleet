@@ -9,7 +9,6 @@ export type SectorLink = {
   sector: "for-hire" | "private-fleet" | "government";
 };
 
-/** Landing pages for sector positioning (used by /dashboard hero and header). */
 export const sectorLinks: SectorLink[] = [
   {
     label: "For-Hire Carriers",
@@ -28,6 +27,13 @@ export const sectorLinks: SectorLink[] = [
   },
 ];
 
+/** Operational dashboard hero links (DOM only; decorative PNG is not interactive). */
+export const demoHeroLinks = [
+  { label: "Open Dispatch Board", href: "/dispatch" },
+  { label: "Review Attention Queue", href: "/dashboard#attention-queue" },
+  { label: "Open Settlements", href: "/settlements" },
+];
+
 export function getSectorLinks(): SectorLink[] {
   return sectorLinks.map((s) => ({ ...s }));
 }
@@ -41,43 +47,10 @@ export function getBookAssessmentHrefForSector(
   return `/book-assessment?${params.toString()}`;
 }
 
-/** Legacy operational links for the /dashboard hero (DOM only; prefer explicit CTAs in the hero). */
-export type DashboardHeroCta = {
-  id: "dispatch" | "attention_queue";
-  label: string;
-  href: string;
-  variant: "primary" | "secondary";
-};
-
-export const demoHeroLinks: DashboardHeroCta[] = [
-  {
-    id: "dispatch",
-    label: "Open Dispatch Board",
-    href: "/dispatch",
-    variant: "primary",
-  },
-  {
-    id: "attention_queue",
-    label: "Review Attention Queue",
-    href: "/dashboard#attention-queue",
-    variant: "secondary",
-  },
-];
-
-export function getHeroLinks(): DashboardHeroCta[] {
-  return demoHeroLinks.map((c) => ({ ...c }));
-}
-
-/**
- * External booking URL (Calendly, Calendarfy, etc.) or internal assessment fallback.
- * Priority: NEXT_PUBLIC_BOOK_DEMO_URL → NEXT_PUBLIC_CALENDAR_URL → NEXT_PUBLIC_CALENDLY_URL (legacy)
- * → /book-assessment?source=dashboard-hero
- */
 export function getBookDemoHref(): string {
   const bookDemo =
     process.env.NEXT_PUBLIC_BOOK_DEMO_URL?.trim() ||
-    process.env.NEXT_PUBLIC_CALENDAR_URL?.trim() ||
-    process.env.NEXT_PUBLIC_CALENDLY_URL?.trim();
+    process.env.NEXT_PUBLIC_CALENDAR_URL?.trim();
   if (bookDemo) return bookDemo;
   return "/book-assessment?source=dashboard-hero";
 }

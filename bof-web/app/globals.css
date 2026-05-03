@@ -14038,7 +14038,7 @@ body {
 }
 
 /*
- * Dashboard (/dashboard) hero — DOM copy + live-data mockup (no PNG hotspots).
+ * Dashboard (/dashboard) hero — DOM copy + decorative PNG (contain; real CTAs are DOM-only).
  */
 .bof-dashboard-hero.bof-cc-hero {
   display: block;
@@ -14061,9 +14061,21 @@ body {
 }
 
 .bof-dashboard-hero__visual {
+  position: relative;
+  width: 100%;
   min-width: 0;
-  display: flex;
-  align-items: stretch;
+  min-height: clamp(420px, 48vw, 760px);
+  height: clamp(420px, 48vw, 760px);
+  border-radius: 1rem;
+  overflow: hidden;
+  background: #020617;
+  border: 1px solid rgba(100, 116, 139, 0.28);
+  flex-shrink: 0;
+}
+
+.bof-dashboard-hero__image {
+  object-fit: contain;
+  object-position: center center;
 }
 
 .bof-dashboard-hero__intro {
@@ -14119,278 +14131,6 @@ body {
 .bof-dashboard-hero__sectorLink:hover,
 .bof-dashboard-hero__sectorLink:focus-visible {
   color: #5eead4;
-}
-
-/* Live-data dashboard mockup inside hero (visual only; CTAs live in copy column). */
-.bof-dashboard-hero-mock {
-  flex: 1;
-  min-height: 0;
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
-  padding: 0.85rem 0.95rem 1rem;
-  border-radius: 0.95rem;
-  border: 1px solid rgba(94, 234, 212, 0.22);
-  background: linear-gradient(165deg, rgba(15, 23, 42, 0.92) 0%, rgba(2, 6, 23, 0.98) 100%);
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.06),
-    0 18px 48px rgba(0, 0, 0, 0.35);
-}
-
-.bof-dashboard-hero-mock__metrics {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 0.45rem;
-}
-
-.bof-dashboard-hero-mock__metric {
-  border-radius: 0.55rem;
-  padding: 0.38rem 0.45rem;
-  background: rgba(2, 6, 23, 0.55);
-  border: 1px solid rgba(51, 65, 85, 0.65);
-}
-
-.bof-dashboard-hero-mock__metric-label {
-  display: block;
-  font-size: 0.58rem;
-  font-weight: 600;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: #94a3b8;
-}
-
-.bof-dashboard-hero-mock__metric-value {
-  display: block;
-  margin-top: 0.15rem;
-  font-size: clamp(1rem, 2.4vw, 1.25rem);
-  font-weight: 700;
-  color: #f8fafc;
-  font-variant-numeric: tabular-nums;
-}
-
-.bof-dashboard-hero-mock__mid {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr);
-  gap: 0.65rem;
-  align-items: stretch;
-  min-height: 9.5rem;
-}
-
-.bof-dashboard-hero-mock__blockTitle {
-  margin: 0 0 0.45rem;
-  font-size: 0.62rem;
-  font-weight: 700;
-  letter-spacing: 0.07em;
-  text-transform: uppercase;
-  color: #5eead4;
-}
-
-.bof-dashboard-hero-mock__donutBlock,
-.bof-dashboard-hero-mock__trendBlock {
-  border-radius: 0.6rem;
-  padding: 0.45rem 0.5rem 0.55rem;
-  background: rgba(15, 23, 42, 0.45);
-  border: 1px solid rgba(51, 65, 85, 0.55);
-  min-width: 0;
-}
-
-.bof-dashboard-hero-mock__donutRow {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 0.55rem;
-}
-
-.bof-dashboard-hero-mock__donut {
-  position: relative;
-  width: 4.75rem;
-  height: 4.75rem;
-  flex-shrink: 0;
-}
-
-.bof-dashboard-hero-mock__donutRing {
-  width: 100%;
-  height: 100%;
-  border-radius: 50%;
-}
-
-.bof-dashboard-hero-mock__donutHole {
-  position: absolute;
-  inset: 1.15rem;
-  border-radius: 50%;
-  background: linear-gradient(180deg, #0f172a 0%, #020617 100%);
-  border: 1px solid rgba(51, 65, 85, 0.45);
-}
-
-.bof-dashboard-hero-mock__legend {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 0.2rem;
-  flex: 1;
-  min-width: 6rem;
-}
-
-.bof-dashboard-hero-mock__legendItem {
-  display: grid;
-  grid-template-columns: auto 1fr auto;
-  gap: 0.35rem;
-  align-items: center;
-  font-size: 0.62rem;
-  color: #cbd5e1;
-}
-
-.bof-dashboard-hero-mock__legendSwatch {
-  width: 0.38rem;
-  height: 0.38rem;
-  border-radius: 2px;
-}
-
-.bof-dashboard-hero-mock__legendLabel {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.bof-dashboard-hero-mock__legendValue {
-  font-weight: 700;
-  font-variant-numeric: tabular-nums;
-  color: #f1f5f9;
-}
-
-.bof-dashboard-hero-mock__trendChart {
-  position: relative;
-  height: 5.5rem;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
-}
-
-.bof-dashboard-hero-mock__trendLine {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 1.15rem;
-  height: 72%;
-  width: 100%;
-  pointer-events: none;
-}
-
-.bof-dashboard-hero-mock__bars {
-  display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: 0.2rem;
-  height: 4.25rem;
-  padding-top: 0.25rem;
-}
-
-.bof-dashboard-hero-mock__barCol {
-  flex: 1;
-  min-width: 0;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: flex-end;
-  height: 100%;
-}
-
-.bof-dashboard-hero-mock__barFill {
-  width: 100%;
-  max-width: 1.35rem;
-  border-radius: 3px 3px 0 0;
-  background: linear-gradient(180deg, rgba(56, 189, 248, 0.65) 0%, rgba(14, 165, 233, 0.35) 100%);
-  min-height: 4px;
-}
-
-.bof-dashboard-hero-mock__barLab {
-  margin-top: 0.2rem;
-  font-size: 0.52rem;
-  color: #64748b;
-  font-weight: 600;
-}
-
-.bof-dashboard-hero-mock__trendHint {
-  margin: 0.25rem 0 0;
-  font-size: 0.52rem;
-  color: #64748b;
-}
-
-.bof-dashboard-hero-mock__queueBlock {
-  border-radius: 0.6rem;
-  padding: 0.45rem 0.5rem 0.55rem;
-  background: rgba(15, 23, 42, 0.45);
-  border: 1px solid rgba(51, 65, 85, 0.55);
-}
-
-.bof-dashboard-hero-mock__queue {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 0.28rem;
-}
-
-.bof-dashboard-hero-mock__qrow {
-  display: grid;
-  grid-template-columns: auto 1fr auto;
-  gap: 0.35rem;
-  align-items: center;
-  padding: 0.35rem 0.45rem;
-  border-radius: 0.45rem;
-  font-size: 0.64rem;
-  line-height: 1.25;
-  border: 1px solid rgba(51, 65, 85, 0.55);
-  background: rgba(2, 6, 23, 0.35);
-}
-
-.bof-dashboard-hero-mock__qrow--critical {
-  border-left: 3px solid #fb7185;
-}
-
-.bof-dashboard-hero-mock__qrow--high {
-  border-left: 3px solid #fbbf24;
-}
-
-.bof-dashboard-hero-mock__qrow--medium {
-  border-left: 3px solid #94a3b8;
-}
-
-.bof-dashboard-hero-mock__qrow--empty {
-  opacity: 0.68;
-  border-left: 3px solid rgba(51, 65, 85, 0.85);
-}
-
-.bof-dashboard-hero-mock__qseverity {
-  font-size: 0.52rem;
-  font-weight: 800;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: #94a3b8;
-}
-
-.bof-dashboard-hero-mock__qissue {
-  color: #e2e8f0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.bof-dashboard-hero-mock__qmeta {
-  font-size: 0.55rem;
-  color: #64748b;
-  white-space: nowrap;
-}
-
-.bof-dashboard-hero-mock__qempty {
-  grid-column: 1 / -1;
-  color: #64748b;
-  font-style: italic;
-  font-size: 0.62rem;
 }
 
 /* Route / alert snapshot — full-width card below hero */
@@ -15138,17 +14878,9 @@ body {
     grid-template-columns: 1fr;
   }
 
-  .bof-dashboard-hero-mock__metrics {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  .bof-dashboard-hero-mock__mid {
-    grid-template-columns: 1fr;
-    min-height: 0;
-  }
-
-  .bof-dashboard-hero-mock__trendChart {
-    height: 5rem;
+  .bof-dashboard-hero__visual {
+    min-height: clamp(280px, 58vw, 480px);
+    height: clamp(280px, 58vw, 480px);
   }
 
   .bof-dashboard-route-snapshot__panel.bof-cc-route-panel {
