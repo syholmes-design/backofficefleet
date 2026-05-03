@@ -20,7 +20,7 @@ import {
   useState,
   type ReactNode,
 } from "react";
-import type { BofData, DriverDispatchBlockerOverrideRow } from "@/lib/load-bof-data";
+import type { BofData, DriverDispatchBlockerOverrideRow, DriverReviewOverrideRow } from "@/lib/load-bof-data";
 import type { DriverMedicalExpanded } from "@/lib/driver-medical-expanded";
 import { EMPTY_DRIVER_MEDICAL_EXPANDED } from "@/lib/driver-medical-expanded";
 import { collectDispatchHardBlockers } from "@/lib/driver-dispatch-eligibility";
@@ -81,6 +81,10 @@ export type BofDemoDataContextValue = {
   resolveAllDriverDispatchBlockersForDemo: (driverId: string, note?: string) => void;
   resetDriverDispatchBlockerOverrides: (driverId: string) => void;
   resetAllDriverDispatchBlockerOverrides: () => void;
+  /** Non-dispatch review items marked resolved for demo (persisted on `data.driverReviewOverrides`). */
+  resolveDriverReviewIssue: (driverId: string, issueId: string, note?: string) => void;
+  resetDriverReviewOverrides: (driverId: string) => void;
+  resetAllDriverReviewOverrides: () => void;
 };
 
 const BofDemoDataContext = createContext<BofDemoDataContextValue | null>(null);
@@ -328,6 +332,48 @@ export function BofDemoDataProvider({
     });
   }, []);
 
+  const resolveDriverReviewIssue = useCallback((driverId: string, issueId: string, note?: string) => {
+    setData((prev) => {
+      const next = deepClone(prev);
+      const map = { ...(next.driverReviewOverrides ?? {}) };
+      const row: DriverReviewOverrideRow = map[driverId] ?? {
+        resolvedIssueIds: [],
+        resolvedAt: new Date().toISOString(),
+        resolvedBy: "demo-editor",
+      };
+      map[driverId] = {
+        ...row,
+        resolvedIssueIds: Array.from(new Set([...row.resolvedIssueIds, issueId])),
+        resolvedAt: new Date().toISOString(),
+        note: note ?? row.note,
+      };
+      next.driverReviewOverrides = map;
+      persistToStorage(next);
+      return next;
+    });
+  }, []);
+
+  const resetDriverReviewOverrides = useCallback((driverId: string) => {
+    setData((prev) => {
+      const next = deepClone(prev);
+      const map = { ...(next.driverReviewOverrides ?? {}) };
+      delete map[driverId];
+      if (Object.keys(map).length === 0) delete next.driverReviewOverrides;
+      else next.driverReviewOverrides = map;
+      persistToStorage(next);
+      return next;
+    });
+  }, []);
+
+  const resetAllDriverReviewOverrides = useCallback(() => {
+    setData((prev) => {
+      const next = deepClone(prev);
+      delete next.driverReviewOverrides;
+      persistToStorage(next);
+      return next;
+    });
+  }, []);
+
   const value = useMemo<BofDemoDataContextValue>(
     () => ({
       data,
@@ -345,6 +391,9 @@ export function BofDemoDataProvider({
       resolveAllDriverDispatchBlockersForDemo,
       resetDriverDispatchBlockerOverrides,
       resetAllDriverDispatchBlockerOverrides,
+      resolveDriverReviewIssue,
+      resetDriverReviewOverrides,
+      resetAllDriverReviewOverrides,
     }),
     [
       data,
@@ -362,6 +411,9 @@ export function BofDemoDataProvider({
       resolveAllDriverDispatchBlockersForDemo,
       resetDriverDispatchBlockerOverrides,
       resetAllDriverDispatchBlockerOverrides,
+      resolveDriverReviewIssue,
+      resetDriverReviewOverrides,
+      resetAllDriverReviewOverrides,
     ]
   );
 

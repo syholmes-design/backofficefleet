@@ -22,7 +22,9 @@ import {
   getDriverDispatchEligibility,
   warnDispatchEligibilityAllBlocked,
 } from "@/lib/driver-dispatch-eligibility";
+import { getDriverReviewExplanation, type DriverReviewIssueCategory } from "@/lib/driver-review-explanation";
 import { getSafetyScorecardRows } from "@/lib/safety-scorecard";
+import { DriverReviewDrawer } from "@/components/drivers/DriverReviewDrawer";
 
 type Severity = "high" | "medium" | "low";
 
@@ -59,6 +61,8 @@ type ExceptionItem = {
   resolveDriverId?: string;
   resolveReasonId?: string;
   onResolveAllDemo?: () => void;
+  reviewDriverId?: string;
+  reviewFilter?: DriverReviewIssueCategory;
 };
 
 export function DriversRosterTable() {
@@ -66,7 +70,14 @@ export function DriversRosterTable() {
     data,
     resolveDriverDispatchBlocker,
     resolveAllDriverDispatchBlockersForDemo,
+    resolveDriverReviewIssue,
+    resetDriverReviewOverrides,
   } = useBofDemoData();
+
+  const [reviewDrawer, setReviewDrawer] = useState<{
+    driverId: string;
+    filter?: DriverReviewIssueCategory;
+  } | null>(null);
   const safetyTierMap = useMemo(
     () => new Map(getSafetyScorecardRows().map((row) => [row.driverId, row.performanceTier])),
     []
@@ -108,11 +119,15 @@ export function DriversRosterTable() {
   const driverRows = useMemo<DriverRow[]>(() => {
     return data.drivers.map((driver) => {
       const eligibility = getDriverDispatchEligibility(data, driver.id);
+      const review = getDriverReviewExplanation(data, driver.id);
       const safetyTier = (safetyTierMap.get(driver.id) ?? "Standard") as DriverRow["safety"];
       const settlement = data.settlements.find((row) => row.driverId === driver.id);
       const hasHold = data.moneyAtRisk.some(
         (item) => item.driverId === driver.id && item.status.toUpperCase() === "BLOCKED"
       );
+      const settlementHold =
+        String(settlement?.status ?? "").toLowerCase().includes("hold") ||
+        String(settlement?.status ?? "").toLowerCase().includes("review");
       const pendingPay = data.moneyAtRisk
         .filter((item) => item.driverId === driver.id && item.status.toUpperCase() !== "PAID")
         .reduce((sum, item) => sum + item.amount, 0);
@@ -122,15 +137,16 @@ export function DriversRosterTable() {
       );
       const latestLoad = data.loads.find((load) => load.driverId === driver.id);
 
+      const openReviewCount = review.issues.filter((i) => !i.resolved).length;
       const status: DriverRow["status"] =
         eligibility.status === "blocked"
           ? "Blocked"
-          : eligibility.status === "needs_review"
+          : eligibility.status === "needs_review" && openReviewCount > 0
             ? "Review"
             : "Active";
 
       const settlementState: DriverRow["settlement"] =
-        hasHold || settlement?.status === "On Hold"
+        hasHold || settlementHold
           ? "Hold / Review"
           : settlement?.status === "Paid"
             ? "Paid"
@@ -138,8 +154,8 @@ export function DriversRosterTable() {
 
       const complianceText =
         eligibility.hardBlockerCount > 0
-          ? `${eligibility.complianceLabel} · ${eligibility.hardBlockerCount} hard gate(s)`
-          : eligibility.complianceLabel;
+          ? `${review.complianceColumnLabel} · ${eligibility.hardBlockerCount} hard gate(s)`
+          : review.complianceColumnLabel;
 
       return {
         driverId: driver.id,
@@ -148,7 +164,12 @@ export function DriversRosterTable() {
         phone: driver.phone,
         avatar: driverPhotoPath(driver.id),
         status,
-        eligibilityStatus: eligibility.status,
+        eligibilityStatus:
+          eligibility.status === "blocked"
+            ? "blocked"
+            : eligibility.status === "needs_review" && openReviewCount > 0
+              ? "needs_review"
+              : "ready",
         dispatchEligibility: eligibility.label,
         compliance: complianceText,
         safety: safetyTier,
@@ -158,7 +179,7 @@ export function DriversRosterTable() {
           : latestLoad
             ? `L${latestLoad.number} · last delivered`
             : "Unassigned",
-        documentSummary: eligibility.documentSummaryLabel,
+        documentSummary: review.documentsColumnLabel,
         hardBlockers: eligibility.hardBlockers,
         blockerHref: eligibility.recommendedAction?.href,
         primaryDispatchBlockerId: eligibility.hardBlockerDetails[0]?.id,
@@ -199,6 +220,8 @@ export function DriversRosterTable() {
           nextStep: "Collect renewal and verify in vault",
           actionHref: `/drivers/${row.driverId}/vault`,
           actionLabel: "Open Documents",
+          reviewDriverId: row.driverId,
+          reviewFilter: "credentials" as const,
         });
       }
     }
@@ -227,6 +250,8 @@ export function DriversRosterTable() {
           nextStep: "Run safety workflow and clear findings before long haul",
           actionHref: `/drivers/${r.driverId}/safety`,
           actionLabel: "Open Safety",
+          reviewDriverId: r.driverId,
+          reviewFilter: "safety" as const,
         };
       })
       .slice(0, 6);
@@ -246,6 +271,8 @@ export function DriversRosterTable() {
           nextStep: "Complete proof + finance review to release pay",
           actionHref: `/drivers/${row.driverId}/settlements`,
           actionLabel: "Open Settlement",
+          reviewDriverId: row.driverId,
+          reviewFilter: "settlement" as const,
           };
         })
         .slice(0, 6),
@@ -260,6 +287,8 @@ export function DriversRosterTable() {
         .map((item) => {
           const severity: Severity =
             item.severity === "critical" || item.severity === "high" ? "high" : "medium";
+          const hrefMatch = item.actionHref.match(/\/drivers\/(DRV-[0-9]+)/i);
+          const reviewDriverId = hrefMatch?.[1];
           return {
             key: item.id,
             driver: item.target,
@@ -268,6 +297,7 @@ export function DriversRosterTable() {
             nextStep: item.recommendedFix,
             actionHref: item.actionHref,
             actionLabel: item.actionLabel,
+            reviewDriverId,
           };
         }) satisfies ExceptionItem[],
     [data]
@@ -377,10 +407,21 @@ export function DriversRosterTable() {
           items={blockedDriverRows.map((row) => {
             const elig = getDriverDispatchEligibility(data, row.driverId);
             const first = elig.hardBlockerDetails[0];
+            const expl = getDriverReviewExplanation(data, row.driverId);
+            const openIssues = expl.issues.filter((i) => !i.resolved);
+            const reasonLine =
+              openIssues.length > 0
+                ? openIssues
+                    .slice(0, 3)
+                    .map((i) => i.title)
+                    .join(" · ")
+                : row.hardBlockers.length
+                  ? row.hardBlockers.slice(0, 2).join(" · ")
+                  : row.dispatchEligibility;
             return {
               key: `blocked-${row.driverId}`,
               driver: row.name,
-              issue: row.hardBlockers.length ? row.hardBlockers.slice(0, 2).join(" · ") : row.dispatchEligibility,
+              issue: reasonLine,
               severity: "high" as const,
               nextStep:
                 "Clear hard gates in vault / safety / finance, or use a demo override to rehearse downstream flows.",
@@ -389,15 +430,29 @@ export function DriversRosterTable() {
               resolveDriverId: row.driverId,
               resolveReasonId: first?.id,
               onResolveAllDemo: () => resolveAllDriverDispatchBlockersForDemo(row.driverId),
+              reviewDriverId: row.driverId,
             };
           })}
           onResolveDispatchDemo={(driverId, reasonId) =>
             resolveDriverDispatchBlocker(driverId, reasonId, "Drivers command — resolve blocker (demo)")
           }
+          onOpenReview={(driverId, filter) => setReviewDrawer({ driverId, filter })}
         />
-        <ExceptionPanel title="Credentials Expiring Soon" items={expiringRows} />
-        <ExceptionPanel title="Safety Issues Requiring Action" items={safetyRows} />
-        <ExceptionPanel title="Settlement Holds / Pending" items={settlementRows.length > 0 ? settlementRows : commandCenterRows} />
+        <ExceptionPanel
+          title="Credentials Expiring Soon"
+          items={expiringRows}
+          onOpenReview={(driverId, filter) => setReviewDrawer({ driverId, filter })}
+        />
+        <ExceptionPanel
+          title="Safety Issues Requiring Action"
+          items={safetyRows}
+          onOpenReview={(driverId, filter) => setReviewDrawer({ driverId, filter })}
+        />
+        <ExceptionPanel
+          title="Settlement Holds / Pending"
+          items={settlementRows.length > 0 ? settlementRows : commandCenterRows}
+          onOpenReview={(driverId, filter) => setReviewDrawer({ driverId, filter })}
+        />
       </section>
 
       <section id="driver-primary-table" className="bof-cc-panel" aria-label="Driver roster table">
@@ -433,8 +488,29 @@ export function DriversRosterTable() {
                       </div>
                     </div>
                   </td>
-                  <td><StatusChip label={row.status} /></td>
-                  <td>{row.dispatchEligibility}</td>
+                  <td>
+                    <StatusChip
+                      label={row.status}
+                      onClick={
+                        row.status === "Review" || row.status === "Blocked"
+                          ? () => setReviewDrawer({ driverId: row.driverId })
+                          : undefined
+                      }
+                    />
+                  </td>
+                  <td>
+                    {/needs review|need review/i.test(row.dispatchEligibility) ? (
+                      <button
+                        type="button"
+                        className="bof-driver-review-dispatch-link"
+                        onClick={() => setReviewDrawer({ driverId: row.driverId })}
+                      >
+                        {row.dispatchEligibility}
+                      </button>
+                    ) : (
+                      row.dispatchEligibility
+                    )}
+                  </td>
                   <td>{row.compliance}</td>
                   <td><StatusChip label={row.safety} /></td>
                   <td>
@@ -466,9 +542,13 @@ export function DriversRosterTable() {
                         </Link>
                       )}
                       {row.eligibilityStatus === "needs_review" ? (
-                        <Link href={`/drivers/${row.driverId}/profile`} className="bof-cc-action-btn">
+                        <button
+                          type="button"
+                          className="bof-cc-action-btn"
+                          onClick={() => setReviewDrawer({ driverId: row.driverId })}
+                        >
                           Review Docs
-                        </Link>
+                        </button>
                       ) : null}
                       {row.eligibilityStatus === "blocked" && row.primaryDispatchBlockerId ? (
                         <>
@@ -498,6 +578,18 @@ export function DriversRosterTable() {
           </table>
         </div>
       </section>
+
+      {reviewDrawer ? (
+        <DriverReviewDrawer
+          data={data}
+          driverId={reviewDrawer.driverId}
+          filterCategory={reviewDrawer.filter}
+          onClose={() => setReviewDrawer(null)}
+          resolveDriverDispatchBlocker={resolveDriverDispatchBlocker}
+          resolveDriverReviewIssue={resolveDriverReviewIssue}
+          resetDriverReviewOverrides={resetDriverReviewOverrides}
+        />
+      ) : null}
     </div>
   );
 }
@@ -531,13 +623,25 @@ function ChartCard({ title, data }: { title: string; data: BreakdownPoint[] }) {
   );
 }
 
-function StatusChip({ label }: { label: string }) {
+function StatusChip({ label, onClick }: { label: string; onClick?: () => void }) {
   const cls =
     label === "Active" || label === "Elite" || label === "Paid"
       ? "bof-cc-chip bof-cc-chip-ok"
       : label === "Blocked" || label === "At Risk" || label === "Hold / Review"
         ? "bof-cc-chip bof-cc-chip-danger"
         : "bof-cc-chip bof-cc-chip-warn";
+  if (onClick) {
+    return (
+      <button
+        type="button"
+        className={`${cls} bof-cc-chip-action`}
+        onClick={onClick}
+        title="Open driver review"
+      >
+        {label}
+      </button>
+    );
+  }
   return <span className={cls}>{label}</span>;
 }
 
@@ -546,11 +650,13 @@ function ExceptionPanel({
   items,
   panelId,
   onResolveDispatchDemo,
+  onOpenReview,
 }: {
   title: string;
   items: ExceptionItem[];
   panelId?: string;
   onResolveDispatchDemo?: (driverId: string, reasonId: string) => void;
+  onOpenReview?: (driverId: string, filter?: DriverReviewIssueCategory) => void;
 }) {
   return (
     <article className="bof-cc-panel" id={panelId}>
@@ -579,6 +685,15 @@ function ExceptionPanel({
                 {item.onResolveAllDemo ? (
                   <button type="button" className="bof-cc-action-btn" onClick={item.onResolveAllDemo}>
                     Resolve all for demo
+                  </button>
+                ) : null}
+                {item.reviewDriverId && onOpenReview ? (
+                  <button
+                    type="button"
+                    className="bof-cc-action-btn bof-cc-action-btn-primary"
+                    onClick={() => onOpenReview(item.reviewDriverId!, item.reviewFilter)}
+                  >
+                    View review
                   </button>
                 ) : null}
                 <Link href={item.actionHref} className="bof-cc-action-btn">

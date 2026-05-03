@@ -17,8 +17,17 @@ export type DriverDispatchBlockerOverrideRow = {
   note?: string;
 };
 
+/** Demo-only “reviewed” markers for non-dispatch issues (persisted with demo data in localStorage). */
+export type DriverReviewOverrideRow = {
+  resolvedIssueIds: string[];
+  resolvedAt: string;
+  resolvedBy: "demo-editor";
+  note?: string;
+};
+
 export type BofData = typeof raw & {
   driverDispatchBlockerOverrides?: Record<string, DriverDispatchBlockerOverrideRow>;
+  driverReviewOverrides?: Record<string, DriverReviewOverrideRow>;
 };
 
 export function getBofData(): BofData {

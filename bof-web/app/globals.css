@@ -14700,6 +14700,109 @@ body {
   }
 }
 
+.bof-cc-chip-action {
+  cursor: pointer;
+  font: inherit;
+  border: none;
+  display: inline-flex;
+  align-items: center;
+}
+.bof-cc-chip-action:focus-visible {
+  outline: 2px solid rgba(45, 212, 191, 0.65);
+  outline-offset: 2px;
+}
+.bof-driver-review-dispatch-link {
+  cursor: pointer;
+  font: inherit;
+  color: inherit;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  background: none;
+  border: none;
+  padding: 0;
+  text-align: left;
+}
+.bof-driver-review-dispatch-link:hover {
+  color: #5eead4;
+}
+
+/* Driver review drawer (/drivers roster) */
+.bof-driver-review-drawer-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 110;
+  background: rgba(0, 0, 0, 0.55);
+  display: flex;
+  justify-content: flex-end;
+  align-items: stretch;
+}
+.bof-driver-review-drawer-panel {
+  width: min(460px, 100vw);
+  max-height: 100vh;
+  overflow: auto;
+  background: var(--bof-surface);
+  border-left: 1px solid var(--bof-border);
+  box-shadow: -12px 0 40px rgba(0, 0, 0, 0.45);
+  display: flex;
+  flex-direction: column;
+}
+.bof-driver-review-drawer-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: 1rem 1.1rem;
+  border-bottom: 1px solid var(--bof-border);
+  position: sticky;
+  top: 0;
+  background: var(--bof-surface);
+  z-index: 1;
+}
+.bof-driver-review-drawer-body {
+  padding: 0.85rem 1.1rem 1.25rem;
+  flex: 1;
+}
+.bof-driver-review-issue {
+  border: 1px solid var(--bof-border);
+  border-radius: var(--bof-radius);
+  padding: 0.75rem 0.85rem;
+  margin-bottom: 0.65rem;
+  background: rgba(15, 23, 42, 0.35);
+}
+.bof-driver-review-issue-resolved {
+  opacity: 0.72;
+  border-style: dashed;
+}
+.bof-driver-review-chip-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  margin-bottom: 0.4rem;
+}
+.bof-driver-review-chip {
+  font-size: 0.68rem;
+  padding: 0.12rem 0.45rem;
+  border-radius: 999px;
+  border: 1px solid var(--bof-border);
+  color: var(--bof-muted);
+}
+.bof-driver-review-chip-sev-critical {
+  border-color: rgba(239, 68, 68, 0.55);
+  color: #fecaca;
+}
+.bof-driver-review-chip-sev-high {
+  border-color: rgba(249, 115, 22, 0.55);
+  color: #fed7aa;
+}
+.bof-driver-review-chip-sev-warning {
+  border-color: rgba(234, 179, 8, 0.45);
+  color: #fef08a;
+}
+.bof-driver-review-chip-sev-info {
+  border-color: rgba(56, 189, 248, 0.45);
+  color: #bae6fd;
+}
+
 /* Tailwind — utilities + components only (no @tailwind base — avoids touching BOF globals). */
 @tailwind components;
 @tailwind utilities;
