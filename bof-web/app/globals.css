@@ -1736,10 +1736,12 @@ body {
   transform: scale(0.55);
 }
 
+/* Medical-only: ~35% larger visible content vs prior 0.6 scale; W/H tuned so W×S ≈ 100% (fits frame, no scroll). */
 .bof-dqf-doc-vault .bof-dqf-doc-preview--medical .bof-dqf-doc-preview-iframe {
-  width: 166.667%;
-  height: 166.667%;
-  transform: scale(0.6);
+  width: 123.457%;
+  height: 123.457%;
+  transform: scale(0.81);
+  transform-origin: top left;
 }
 
 .bof-dqf-doc-vault .bof-dqf-doc-preview-image {
@@ -1764,9 +1766,10 @@ body {
   }
 
   .bof-dqf-doc-vault .bof-dqf-doc-preview--medical .bof-dqf-doc-preview-iframe {
-    width: 185.185%;
-    height: 185.185%;
-    transform: scale(0.54);
+    width: 137.174%;
+    height: 137.174%;
+    transform: scale(0.729);
+    transform-origin: top left;
   }
 
   .bof-dqf-doc-vault .bof-dqf-doc-preview--standard .bof-dqf-doc-preview-iframe {
