@@ -20,7 +20,12 @@ import {
   useState,
   type ReactNode,
 } from "react";
-import type { BofData, DriverDispatchBlockerOverrideRow, DriverReviewOverrideRow } from "@/lib/load-bof-data";
+import type {
+  BofData,
+  DriverCredentialOverrideRow,
+  DriverDispatchBlockerOverrideRow,
+  DriverReviewOverrideRow,
+} from "@/lib/load-bof-data";
 import type { DriverMedicalExpanded } from "@/lib/driver-medical-expanded";
 import { EMPTY_DRIVER_MEDICAL_EXPANDED } from "@/lib/driver-medical-expanded";
 import { collectDispatchHardBlockers } from "@/lib/driver-dispatch-eligibility";
@@ -85,6 +90,14 @@ export type BofDemoDataContextValue = {
   resolveDriverReviewIssue: (driverId: string, issueId: string, note?: string) => void;
   resetDriverReviewOverrides: (driverId: string) => void;
   resetAllDriverReviewOverrides: () => void;
+  /** Demo credential dates edited from Safety → Credential expirations (persisted on `data.driverCredentialOverrides`). */
+  updateDriverCredentialOverride: (
+    driverId: string,
+    patch: Partial<
+      Pick<DriverCredentialOverrideRow, "medicalCardExpirationDate" | "cdlExpirationDate" | "mvrReviewDate">
+    >
+  ) => void;
+  resetDriverCredentialOverrides: (driverId?: string) => void;
 };
 
 const BofDemoDataContext = createContext<BofDemoDataContextValue | null>(null);
@@ -374,6 +387,50 @@ export function BofDemoDataProvider({
     });
   }, []);
 
+  const updateDriverCredentialOverride = useCallback(
+    (
+      driverId: string,
+      patch: Partial<
+        Pick<DriverCredentialOverrideRow, "medicalCardExpirationDate" | "cdlExpirationDate" | "mvrReviewDate">
+      >
+    ) => {
+      setData((prev) => {
+        const next = deepClone(prev);
+        const map = { ...(next.driverCredentialOverrides ?? {}) };
+        const row: DriverCredentialOverrideRow = map[driverId] ?? {
+          updatedAt: new Date().toISOString(),
+          updatedBy: "demo-editor",
+        };
+        map[driverId] = {
+          ...row,
+          ...patch,
+          updatedAt: new Date().toISOString(),
+          updatedBy: "demo-editor",
+        };
+        next.driverCredentialOverrides = map;
+        persistToStorage(next);
+        return next;
+      });
+    },
+    []
+  );
+
+  const resetDriverCredentialOverrides = useCallback((driverId?: string) => {
+    setData((prev) => {
+      const next = deepClone(prev);
+      if (!driverId) {
+        delete next.driverCredentialOverrides;
+      } else {
+        const map = { ...(next.driverCredentialOverrides ?? {}) };
+        delete map[driverId];
+        if (Object.keys(map).length === 0) delete next.driverCredentialOverrides;
+        else next.driverCredentialOverrides = map;
+      }
+      persistToStorage(next);
+      return next;
+    });
+  }, []);
+
   const value = useMemo<BofDemoDataContextValue>(
     () => ({
       data,
@@ -394,6 +451,8 @@ export function BofDemoDataProvider({
       resolveDriverReviewIssue,
       resetDriverReviewOverrides,
       resetAllDriverReviewOverrides,
+      updateDriverCredentialOverride,
+      resetDriverCredentialOverrides,
     }),
     [
       data,
@@ -414,6 +473,8 @@ export function BofDemoDataProvider({
       resolveDriverReviewIssue,
       resetDriverReviewOverrides,
       resetAllDriverReviewOverrides,
+      updateDriverCredentialOverride,
+      resetDriverCredentialOverrides,
     ]
   );
 

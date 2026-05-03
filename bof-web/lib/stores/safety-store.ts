@@ -6,18 +6,6 @@ import { getBofData } from "@/lib/load-bof-data";
 import type { Driver, EventStatus, SafetyEvent, SafetyNavId, ComplianceStatus } from "@/types/safety";
 import { getDriverCredentialStatus } from "@/lib/driver-credential-status";
 import { deriveComplianceStatusFromDates } from "@/lib/driver-operational-edit";
-
-// Original buildExpirationRows function for compatibility
-export function buildExpirationRows(drivers: Driver[]) {
-  return drivers.map(driver => ({
-    driver_id: driver.driver_id,
-    driver_name: driver.name,
-    home_terminal: driver.home_terminal,
-    document_type: "Medical Card",
-    expiration_date: null,
-    status: "VALID" as "VALID" | "Expired"
-  }));
-}
 import {
   canTransitionEventStatus,
   isDispatchBlocked,
@@ -187,15 +175,18 @@ export const useSafetyStore = create<SafetyState>((set, get) => ({
     set((s) => {
       const nextDrivers = data.drivers.map((d) => {
         const cred = getDriverCredentialStatus(data, d.id);
+        const derivedCompliance = deriveComplianceStatusFromDates({
+          cdlExpirationDate: cred.cdl.expirationDate ?? "",
+          medCardExpirationDate: cred.medicalCard.expirationDate ?? "",
+        });
+        const complianceSafe =
+          derivedCompliance === "PENDING REVIEW" ? "VALID" : derivedCompliance;
         return {
           driver_id: d.id,
           name: d.name,
           status: "Active" as const,
           home_terminal: d.address ? `${d.address.split(",")[1]?.trim()}, ${d.address.split(",")[2]?.split(" ")[0]}` : "Cleveland, OH",
-          compliance_status: deriveComplianceStatusFromDates({
-            cdlExpirationDate: cred.cdl.expirationDate ?? "",
-            medCardExpirationDate: cred.medicalCard.expirationDate ?? "",
-          }) as ComplianceStatus,
+          compliance_status: complianceSafe as ComplianceStatus,
           cdl_expiration_date: cred.cdl.expirationDate ?? null,
           med_card_expiration_date: cred.medicalCard.expirationDate ?? null,
           mvr_expiration_date: cred.mvr.expirationDate ?? null,

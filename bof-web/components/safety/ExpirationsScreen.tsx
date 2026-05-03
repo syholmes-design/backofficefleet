@@ -3,30 +3,44 @@
 import { useMemo, useState } from "react";
 import { useSafetyStore } from "@/lib/stores/safety-store";
 import { useBofDemoData } from "@/lib/bof-demo-data-context";
+import type { Driver } from "@/types/safety";
 import {
   buildExpirationRows,
   dispatchEligibilityLabel,
+  expirationSignalLabel,
   type ExpirationRow,
 } from "@/lib/safety-rules";
-import { deriveComplianceStatusFromDates, deriveDocStatusFromExpiration } from "@/lib/driver-operational-edit";
+import { deriveDocStatusFromExpiration } from "@/lib/driver-operational-edit";
 
 export function ExpirationsScreen() {
   const drivers = useSafetyStore((s) => s.drivers);
   const events = useSafetyStore((s) => s.events);
-  const { updateDriver, updateDocument } = useBofDemoData();
+  const {
+    data,
+    updateDocument,
+    updateDriverCredentialOverride,
+    resetDriverCredentialOverrides,
+  } = useBofDemoData();
 
   const [terminalQ, setTerminalQ] = useState("");
   const [docType, setDocType] = useState<"" | ExpirationRow["document_type"]>("");
-  const [statusF, setStatusF] = useState<"" | "Expired" | "Expiring soon">("");
+  const [statusF, setStatusF] = useState<"" | ExpirationRow["status"]>("");
   const [editingKey, setEditingKey] = useState<string | null>(null);
   const [draftDate, setDraftDate] = useState("");
+  const [demoBanner, setDemoBanner] = useState<string | null>(null);
 
-  const rows = useMemo(() => buildExpirationRows(drivers), [drivers]);
+  const rows = useMemo(() => buildExpirationRows(data), [data]);
   const totals = useMemo(() => {
     const expired = rows.filter((r) => r.status === "Expired").length;
     const expiring = rows.filter((r) => r.status === "Expiring soon").length;
-    return { expired, expiring };
+    const needs = rows.filter((r) => r.status === "Needs review").length;
+    return { expired, expiring, needs };
   }, [rows]);
+
+  const hasCredentialOverrides = useMemo(
+    () => Object.keys(data.driverCredentialOverrides ?? {}).length > 0,
+    [data.driverCredentialOverrides]
+  );
 
   const filtered = useMemo(() => {
     return rows.filter((r) => {
@@ -40,29 +54,18 @@ export function ExpirationsScreen() {
 
   function openRowEditor(row: ExpirationRow) {
     setEditingKey(`${row.driver_id}-${row.document_type}`);
-    setDraftDate(row.expiration_date ?? "");
+    setDraftDate(row.expiration_date?.trim() ?? "");
   }
 
   function saveRowEdit(row: ExpirationRow) {
-    const driver = drivers.find((d) => d.driver_id === row.driver_id);
-    if (!driver) return;
-    const nextCdl =
-      row.document_type === "CDL" ? draftDate : (driver.cdl_expiration_date ?? "");
-    const nextMed =
-      row.document_type === "Med Card"
-        ? draftDate
-        : (driver.med_card_expiration_date ?? "");
-    const nextMvr =
-      row.document_type === "MVR" ? draftDate : (driver.mvr_expiration_date ?? "");
-    updateDriver(row.driver_id, {
-      cdl_expiration_date: nextCdl || null,
-      med_card_expiration_date: nextMed || null,
-      mvr_expiration_date: nextMvr || null,
-      compliance_status: deriveComplianceStatusFromDates({
-        cdlExpirationDate: nextCdl,
-        medCardExpirationDate: nextMed,
-      }),
-    });
+    const iso = draftDate.trim();
+    if (row.document_type === "Med Card") {
+      updateDriverCredentialOverride(row.driver_id, { medicalCardExpirationDate: iso });
+    } else if (row.document_type === "CDL") {
+      updateDriverCredentialOverride(row.driver_id, { cdlExpirationDate: iso });
+    } else {
+      updateDriverCredentialOverride(row.driver_id, { mvrReviewDate: iso });
+    }
 
     const docTypeMap: Record<ExpirationRow["document_type"], string> = {
       CDL: "CDL",
@@ -70,10 +73,12 @@ export function ExpirationsScreen() {
       MVR: "MVR",
     };
     updateDocument(row.driver_id, docTypeMap[row.document_type], {
-      expirationDate: draftDate || null,
-      status: deriveDocStatusFromExpiration(draftDate),
+      expirationDate: iso || null,
+      status: deriveDocStatusFromExpiration(iso),
     });
     setEditingKey(null);
+    setDemoBanner("Updated for demo");
+    window.setTimeout(() => setDemoBanner(null), 4000);
   }
 
   return (
@@ -83,12 +88,19 @@ export function ExpirationsScreen() {
           Credential expirations
         </h1>
         <p className="mt-1 max-w-3xl text-sm text-slate-400">
-          CDL, med card, and MVR windows (60-day horizon). Expired rows highlighted;
-          MVR-only expiry does not block dispatch in this configuration.
+          CDL, med card, and MVR windows (60-day horizon). Rows below use the same canonical credential
+          resolver as dispatch eligibility and driver documents. Medical Card gaps hard-block dispatch;
+          MVR-only issues follow soft-review policy for this configuration.
         </p>
       </header>
 
-      <section className="flex flex-wrap gap-3 rounded-lg border border-slate-800 bg-slate-900/30 p-4">
+      {demoBanner ? (
+        <div className="rounded-lg border border-emerald-800/60 bg-emerald-950/35 px-3 py-2 text-xs text-emerald-100">
+          {demoBanner}
+        </div>
+      ) : null}
+
+      <section className="flex flex-wrap items-center gap-3 rounded-lg border border-slate-800 bg-slate-900/30 p-4">
         <label className="text-xs text-slate-500">
           Terminal contains
           <input
@@ -125,14 +137,29 @@ export function ExpirationsScreen() {
             <option value="">All</option>
             <option value="Expired">Expired</option>
             <option value="Expiring soon">Expiring soon</option>
+            <option value="Needs review">Needs review</option>
           </select>
         </label>
+        {hasCredentialOverrides ? (
+          <button
+            type="button"
+            className="bof-intake-engine-btn mt-5"
+            onClick={() => {
+              resetDriverCredentialOverrides();
+              setDemoBanner("Credential demo overrides cleared — documents JSON drives dates again");
+              window.setTimeout(() => setDemoBanner(null), 5000);
+            }}
+          >
+            Reset credential demo overrides
+          </button>
+        ) : null}
       </section>
       <div className="flex flex-wrap gap-2">
         <span className="bof-status-pill bof-status-pill-danger">Expired: {totals.expired}</span>
         <span className="bof-status-pill bof-status-pill-warn">Expiring soon: {totals.expiring}</span>
+        <span className="bof-status-pill bof-status-pill-info">Needs review: {totals.needs}</span>
         <span className="bof-status-pill bof-status-pill-info">
-          Blocking / at risk language mirrors BOF document vault
+          Dispatch column mirrors live eligibility + safety critical events
         </span>
       </div>
 
@@ -166,37 +193,42 @@ export function ExpirationsScreen() {
             </thead>
             <tbody>
               {filtered.map((r) => {
-                const d = drivers.find((x) => x.driver_id === r.driver_id)!;
-                const expired = r.status === "Expired";
+                const shell: Pick<Driver, "status"> = {
+                  status:
+                    drivers.find((x) => x.driver_id === r.driver_id)?.status ?? "Active",
+                };
+                const blockingLook = r.signal === "blocking_action";
                 return (
                   <tr
-                    key={`${r.driver_id}-${r.document_type}`}
+                    key={`${r.driver_id}-${r.document_type}-${r.status}-${r.expiration_date}`}
                     className={[
                       "border-b border-slate-800/80",
-                      expired ? "bg-red-950/25" : "hover:bg-slate-900/60",
+                      blockingLook ? "bg-red-950/25" : "hover:bg-slate-900/60",
                     ].join(" ")}
                   >
                     <td className="px-3 py-2 text-slate-100">{r.driver_name}</td>
                     <td className="px-3 py-2 text-slate-300">{r.document_type}</td>
                     <td className="px-3 py-2 font-mono text-xs text-slate-400">
-                      {r.expiration_date}
+                      {r.expiration_date?.trim() ? r.expiration_date : "—"}
                     </td>
                     <td className="px-3 py-2">
                       <span
                         className={
-                          expired
+                          r.signal === "blocking_action"
                             ? "bof-status-pill bof-status-pill-danger"
-                            : "bof-status-pill bof-status-pill-warn"
+                            : r.signal === "review_warning"
+                              ? "bof-status-pill bof-status-pill-warn"
+                              : "bof-status-pill bof-status-pill-info"
                         }
                       >
-                        {expired ? "Blocking action" : "At risk"}
+                        {expirationSignalLabel(r.signal)}
                       </span>
                     </td>
                     <td className="px-3 py-2 text-xs text-slate-400">
                       {r.home_terminal}
                     </td>
                     <td className="px-3 py-2 text-xs text-slate-300">
-                      {dispatchEligibilityLabel(d, events)}
+                      {dispatchEligibilityLabel(data, r.driver_id, shell, events)}
                     </td>
                     <td className="px-3 py-2 text-xs text-slate-300">
                       {editingKey === `${r.driver_id}-${r.document_type}` ? (

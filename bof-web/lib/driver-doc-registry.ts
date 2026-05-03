@@ -185,6 +185,7 @@ export type DriverMedicalCardCanonicalStatus =
 export type DriverMedicalCardStatusSource =
   | "canonical_document"
   | "driver_doc_registry"
+  | "demo_runtime_override"
   | "fallback";
 
 export type DriverMedicalCardStatus = {
@@ -233,6 +234,38 @@ export function getDriverMedicalCardStatus(
 ): DriverMedicalCardStatus {
   const fileUrl = getDriverDocumentByType(driverId, "Medical Card");
   const row = pickCanonicalMedicalRow(data, driverId);
+  const overrideExp =
+    data.driverCredentialOverrides?.[driverId]?.medicalCardExpirationDate?.trim() || undefined;
+
+  if (overrideExp) {
+    const derived = deriveCredentialStatusFromExpiration(overrideExp);
+    let status: DriverMedicalCardCanonicalStatus;
+    switch (derived) {
+      case "VALID":
+        status = "valid";
+        break;
+      case "EXPIRING_SOON":
+        status = "expiring_soon";
+        break;
+      case "EXPIRED":
+        status = "expired";
+        break;
+      default:
+        status = "pending_review";
+        break;
+    }
+    return {
+      driverId,
+      documentType: "medical_card",
+      fileUrl: fileUrl ?? undefined,
+      expirationDate: overrideExp,
+      status,
+      rowStatus: medicalCanonicalToRowStatus(status),
+      source: "demo_runtime_override",
+      reason:
+        "Demo runtime override (Safety expirations editor) — takes precedence over seed documents row",
+    };
+  }
 
   if (!row) {
     if (!fileUrl) {

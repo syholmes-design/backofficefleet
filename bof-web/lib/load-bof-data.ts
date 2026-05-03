@@ -25,9 +25,19 @@ export type DriverReviewOverrideRow = {
   note?: string;
 };
 
+/** Runtime credential edits from Safety expirations / demo editors (localStorage only). */
+export type DriverCredentialOverrideRow = {
+  medicalCardExpirationDate?: string;
+  cdlExpirationDate?: string;
+  mvrReviewDate?: string;
+  updatedAt: string;
+  updatedBy: "demo-editor";
+};
+
 export type BofData = typeof raw & {
   driverDispatchBlockerOverrides?: Record<string, DriverDispatchBlockerOverrideRow>;
   driverReviewOverrides?: Record<string, DriverReviewOverrideRow>;
+  driverCredentialOverrides?: Record<string, DriverCredentialOverrideRow>;
 };
 
 export function getBofData(): BofData {

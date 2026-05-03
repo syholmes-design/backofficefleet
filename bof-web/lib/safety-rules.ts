@@ -1,3 +1,9 @@
+import type { BofData } from "@/lib/load-bof-data";
+import {
+  getDriverCredentialStatus,
+  type CredentialRecord,
+} from "@/lib/driver-credential-status";
+import { getDriverDispatchEligibility } from "@/lib/driver-dispatch-eligibility";
 import type { Driver, EventStatus, SafetyEvent, SafetySeverity } from "@/types/safety";
 
 const MS_DAY = 86400000;
@@ -116,92 +122,148 @@ export function daysUntil(dateStr: string | null | undefined): number | null {
   return Math.round((x.getTime() - t.getTime()) / MS_DAY);
 }
 
+export type ExpirationRowSignal = "blocking_action" | "review_warning" | "needs_review";
+
 export type ExpirationRow = {
   driver_id: string;
   driver_name: string;
   home_terminal: string;
   document_type: "CDL" | "Med Card" | "MVR";
+  /** ISO date when known; empty when expiration is unknown / needs review */
   expiration_date: string;
-  status: "Expired" | "Expiring soon" | "OK";
+  status: "Expired" | "Expiring soon" | "Needs review";
+  signal: ExpirationRowSignal;
 };
 
-export function buildExpirationRows(drivers: Driver[]): ExpirationRow[] {
-  const rows: ExpirationRow[] = [];
-  const soon = 60;
-  for (const d of drivers) {
-    const pairs: [ExpirationRow["document_type"], string | null | undefined][] =
-      [
-        ["CDL", d.cdl_expiration_date],
-        ["Med Card", d.med_card_expiration_date],
-        ["MVR", d.mvr_expiration_date],
-      ];
-    for (const [docType, raw] of pairs) {
-      if (!raw) continue;
-      const days = daysUntil(raw);
-      if (days === null) continue;
-      let status: ExpirationRow["status"];
-      if (days < 0) status = "Expired";
-      else if (days <= soon) status = "Expiring soon";
-      else status = "OK";
-      if (status === "OK") continue;
-      rows.push({
-        driver_id: d.driver_id,
-        driver_name: d.name,
-        home_terminal: d.home_terminal,
-        document_type: docType,
-        expiration_date: raw,
-        status,
-      });
-    }
-  }
-  return rows.sort((a, b) => a.expiration_date.localeCompare(b.expiration_date));
+const SOON = 60;
+
+function homeTerminalFromSeedAddress(address?: string): string {
+  if (!address?.trim()) return "Cleveland, OH";
+  const parts = address.split(",");
+  const mid = parts[1]?.trim();
+  const region = parts[2]?.trim().split(/\s+/)?.[0];
+  if (mid && region) return `${mid}, ${region}`;
+  return "Cleveland, OH";
 }
 
-export function buildExpirationRowsFromBofDocuments(
-  drivers: Driver[],
-  bofDocuments: Array<{ driverId: string; type: string; cdlExpiration?: string; mvrExpiration?: string; status?: string }>
-): ExpirationRow[] {
+function credentialSliceToExpirationRow(
+  document_type: ExpirationRow["document_type"],
+  rec: CredentialRecord
+): Omit<ExpirationRow, "driver_id" | "driver_name" | "home_terminal"> | null {
+  const exp = rec.expirationDate?.trim() ?? "";
+  const days = exp ? daysUntil(exp) : null;
+
+  if (rec.status === "valid") {
+    if (!exp || days === null) return null;
+    if (days < 0) {
+      return {
+        document_type,
+        expiration_date: exp,
+        status: "Expired",
+        signal: document_type === "MVR" ? "review_warning" : "blocking_action",
+      };
+    }
+    if (days <= SOON) {
+      return {
+        document_type,
+        expiration_date: exp,
+        status: "Expiring soon",
+        signal: "review_warning",
+      };
+    }
+    return null;
+  }
+
+  if (rec.status === "expiring_soon") {
+    return {
+      document_type,
+      expiration_date: exp || "",
+      status: "Expiring soon",
+      signal: "review_warning",
+    };
+  }
+
+  if (rec.status === "expired") {
+    return {
+      document_type,
+      expiration_date: exp || "",
+      status: "Expired",
+      signal: document_type === "MVR" ? "review_warning" : "blocking_action",
+    };
+  }
+
+  if (rec.status === "missing") {
+    return {
+      document_type,
+      expiration_date: "",
+      status: "Needs review",
+      signal: document_type === "MVR" ? "needs_review" : "blocking_action",
+    };
+  }
+
+  if (rec.status === "pending_review") {
+    return {
+      document_type,
+      expiration_date: exp,
+      status: "Needs review",
+      signal: document_type === "MVR" ? "needs_review" : "needs_review",
+    };
+  }
+
+  return null;
+}
+
+/** Credential expirations for Safety UI — one canonical resolver (`getDriverCredentialStatus`), keyed by driverId. */
+export function buildExpirationRows(data: BofData): ExpirationRow[] {
   const rows: ExpirationRow[] = [];
-  const soon = 60;
-  
-  for (const d of drivers) {
-    // Find documents for this driver from BOF source of truth
-    const driverDocs = bofDocuments.filter(doc => doc.driverId === d.driver_id);
-    
-    const pairs: [ExpirationRow["document_type"], string | null | undefined][] =
-      [
-        ["CDL", driverDocs.find(doc => doc.type === "CDL")?.cdlExpiration],
-        ["Med Card", driverDocs.find(doc => doc.type === "Med Card")?.cdlExpiration], // Using cdlExpiration field for Med Card
-        ["MVR", driverDocs.find(doc => doc.type === "MVR")?.mvrExpiration],
-      ];
-    
-    for (const [docType, raw] of pairs) {
-      if (!raw) continue;
-      const days = daysUntil(raw);
-      if (days === null) continue;
-      let status: ExpirationRow["status"];
-      if (days < 0) status = "Expired";
-      else if (days <= soon) status = "Expiring soon";
-      else status = "OK";
-      if (status === "OK") continue;
+  for (const d of data.drivers) {
+    const cred = getDriverCredentialStatus(data, d.id);
+    const home_terminal = homeTerminalFromSeedAddress(d.address);
+    const parts: [ExpirationRow["document_type"], CredentialRecord][] = [
+      ["CDL", cred.cdl],
+      ["Med Card", cred.medicalCard],
+      ["MVR", cred.mvr],
+    ];
+    for (const [document_type, rec] of parts) {
+      const slice = credentialSliceToExpirationRow(document_type, rec);
+      if (!slice) continue;
       rows.push({
-        driver_id: d.driver_id,
+        driver_id: d.id,
         driver_name: d.name,
-        home_terminal: d.home_terminal,
-        document_type: docType,
-        expiration_date: raw,
-        status,
+        home_terminal,
+        ...slice,
       });
     }
   }
-  return rows.sort((a, b) => a.expiration_date.localeCompare(b.expiration_date));
+  return rows.sort((a, b) => {
+    const ae = a.expiration_date || "9999-12-31";
+    const be = b.expiration_date || "9999-12-31";
+    return ae.localeCompare(be);
+  });
+}
+
+export function expirationSignalLabel(signal: ExpirationRowSignal): string {
+  switch (signal) {
+    case "blocking_action":
+      return "Blocking action";
+    case "review_warning":
+      return "Review / warning";
+    case "needs_review":
+    default:
+      return "Needs review";
+  }
 }
 
 export function dispatchEligibilityLabel(
-  driver: Driver,
+  data: BofData,
+  driverId: string,
+  driverShell: Pick<Driver, "status">,
   events: SafetyEvent[]
 ): string {
-  if (isDispatchBlocked(driver, events)) return "Blocked";
-  if (isMvrExpired(driver)) return "Eligible — MVR review";
+  if (driverShell.status === "Inactive") return "Blocked";
+  if (hasOpenCriticalEvent(driverId, events)) return "Blocked";
+  const el = getDriverDispatchEligibility(data, driverId);
+  if (el.status === "blocked") return "Blocked";
+  if (el.status === "needs_review") return "Needs Review";
   return "Eligible";
 }

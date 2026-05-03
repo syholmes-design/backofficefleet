@@ -1,6 +1,6 @@
 import type { BofData } from "@/lib/load-bof-data";
-import { getDriverMedicalCardStatus } from "@/lib/driver-credential-status";
 import {
+  getDriverMedicalCardStatus,
   medicalCardHardBlockReason,
   medicalCardSoftWarningReason,
 } from "@/lib/driver-doc-registry";
@@ -120,7 +120,6 @@ export function collectDispatchHardBlockers(data: BofData, driverId: string): Di
   };
 
   const cdl = preferDriverDoc("CDL");
-  const mvr = preferDriverDoc("MVR");
   const fmcsa = preferDriverDoc("FMCSA");
 
   const hard: DispatchHardBlocker[] = [];
@@ -144,12 +143,7 @@ export function collectDispatchHardBlockers(data: BofData, driverId: string): Di
     });
   }
 
-  if (isHardDocMissingOrExpired(mvr)) {
-    hard.push({
-      id: statusU(mvr) === "EXPIRED" ? DISPATCH_BLOCKER_REASON_IDS.mvr_expired : DISPATCH_BLOCKER_REASON_IDS.mvr_missing,
-      message: statusU(mvr) === "EXPIRED" ? "MVR expired" : "MVR missing or not on file",
-    });
-  }
+  /** Demo BOF: MVR-only gaps surface as soft warnings — they do not hard-block dispatch here. */
 
   if (isFmcsaHardGate(fmcsa)) {
     if (statusU(fmcsa) === "MISSING" || statusU(fmcsa) === "EXPIRED") {

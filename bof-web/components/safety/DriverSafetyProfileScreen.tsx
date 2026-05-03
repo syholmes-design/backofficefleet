@@ -8,11 +8,11 @@ import { useBofDemoData } from "@/lib/bof-demo-data-context";
 import {
   complianceChipClass,
   eventStatusChipClass,
-  isDispatchBlocked,
+  hasOpenCriticalEvent,
   isHighSeverityOpen,
-  isMvrExpired,
   severityChipClass,
 } from "@/lib/safety-rules";
+import { getDriverDispatchEligibility } from "@/lib/driver-dispatch-eligibility";
 import {
   credentialDisplayText,
   getDriverCredentialStatus,
@@ -37,8 +37,19 @@ export function DriverSafetyProfileScreen() {
     [drivers, selectedDriverId]
   );
 
-  const blocked = driver ? isDispatchBlocked(driver, events) : true;
-  const mvrStale = driver ? isMvrExpired(driver) && !blocked : false;
+  const credential = useMemo(() => {
+    if (!driver) return null;
+    return getDriverCredentialStatus(data, driver.driver_id);
+  }, [data, driver]);
+
+  const blocked = !driver
+    ? true
+    : driver.status === "Inactive" ||
+      hasOpenCriticalEvent(driver.driver_id, events) ||
+      getDriverDispatchEligibility(data, driver.driver_id).status === "blocked";
+
+  const mvrStale =
+    credential !== null && Boolean(driver) && !blocked && credential.mvr.status === "expired";
 
   const driverEvents = useMemo(
     () =>
@@ -54,12 +65,8 @@ export function DriverSafetyProfileScreen() {
     () => getSafetyEvidenceByDriverId(driver.driver_id),
     [driver.driver_id]
   );
-  const credential = useMemo(
-    () => getDriverCredentialStatus(data, driver.driver_id),
-    [data, driver.driver_id]
-  );
 
-  if (!driver) {
+  if (!driver || !credential) {
     return <p className="p-5 text-sm text-slate-500">No drivers in demo set.</p>;
   }
 

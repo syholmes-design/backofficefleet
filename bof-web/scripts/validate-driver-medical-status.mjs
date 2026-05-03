@@ -7,6 +7,13 @@ import path from "path";
 
 const ROOT = process.cwd();
 const DEMO_PATH = path.join(ROOT, "lib", "demo-data.json");
+const EXPIRATIONS_SCREEN_PATH = path.join(
+  ROOT,
+  "components",
+  "safety",
+  "ExpirationsScreen.tsx"
+);
+const SAFETY_RULES_PATH = path.join(ROOT, "lib", "safety-rules.ts");
 
 function toDateOnly(value) {
   if (!value) return null;
@@ -38,6 +45,24 @@ function run() {
   const raw = fs.readFileSync(DEMO_PATH, "utf8");
   const data = JSON.parse(raw);
   const mismatches = [];
+
+  const forbiddenSnippet = "2026-04-22";
+  const expUi = fs.readFileSync(EXPIRATIONS_SCREEN_PATH, "utf8");
+  const safetyRules = fs.readFileSync(SAFETY_RULES_PATH, "utf8");
+  if (expUi.includes(forbiddenSnippet)) {
+    mismatches.push({
+      driverId: "(ui)",
+      issue: "hardcoded_medical_expiration_in_expirations_screen",
+      detail: "Safety Expirations UI must not embed a fixed medical expiration date string",
+    });
+  }
+  if (safetyRules.includes(forbiddenSnippet)) {
+    mismatches.push({
+      driverId: "(rules)",
+      issue: "hardcoded_medical_expiration_in_safety_rules",
+      detail: "lib/safety-rules must not embed a shared medical fallback date",
+    });
+  }
 
   const medCounts = new Map();
   for (const doc of data.documents ?? []) {

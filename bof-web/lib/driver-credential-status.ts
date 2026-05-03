@@ -1,4 +1,6 @@
 import type { BofData } from "@/lib/load-bof-data";
+import type { DocumentSignal } from "@/lib/document-ui";
+import { documentSignalLabel } from "@/lib/document-ui";
 import {
   deriveCredentialStatusFromExpiration,
   getDriverDocumentByType,
@@ -16,7 +18,7 @@ export type CanonicalCredentialStatus =
   | "missing"
   | "pending_review";
 
-export type CanonicalCredentialRecord = {
+export type CredentialRecord = {
   status: CanonicalCredentialStatus;
   expirationDate?: string;
   reviewDate?: string;
@@ -24,7 +26,8 @@ export type CanonicalCredentialRecord = {
   source: string;
 };
 
-type CredentialRecord = CanonicalCredentialRecord;
+/** Alias for panels that surface canonical resolver slices next to raw document rows. */
+export type CanonicalCredentialRecord = CredentialRecord;
 
 export type DriverCredentialStatus = {
   driverId: string;
@@ -65,12 +68,20 @@ export function getDriverCredentialStatus(
     data.documents.filter((d) => d.driverId === driverId).map((d) => [d.type, d])
   );
 
-  const cdlExp = byType.get("CDL")?.expirationDate?.trim() || undefined;
+  const credOverride = data.driverCredentialOverrides?.[driverId];
+
+  const cdlExp =
+    credOverride?.cdlExpirationDate?.trim() ||
+    byType.get("CDL")?.expirationDate?.trim() ||
+    undefined;
   const cdlFile = getDriverDocumentByType(driverId, "CDL");
 
   const med = getDriverMedicalCardStatus(data, driverId);
 
-  const mvrExp = byType.get("MVR")?.expirationDate?.trim() || undefined;
+  const mvrExp =
+    credOverride?.mvrReviewDate?.trim() ||
+    byType.get("MVR")?.expirationDate?.trim() ||
+    undefined;
   const mvrFile = getDriverDocumentByType(driverId, "MVR");
 
   const fmcsaReview = byType.get("FMCSA")?.expirationDate?.trim() || undefined;
@@ -94,55 +105,6 @@ export function getDriverCredentialStatus(
   };
 }
 
-/** Maps canonical resolver status to legacy document badge styles (VALID / EXPIRED / …). */
-export function canonicalCredentialBadgeLabel(record: CanonicalCredentialRecord): string {
-  switch (record.status) {
-    case "valid":
-      return "VALID";
-    case "expired":
-      return "EXPIRED";
-    case "missing":
-      return "MISSING";
-    case "expiring_soon":
-      return "AT RISK";
-    case "pending_review":
-      return "PENDING REVIEW";
-    default:
-      return "UNKNOWN";
-  }
-}
-
-export type CanonicalMedicalSignal = "blocking" | "expired" | "missing" | "at-risk" | "resolved";
-
-/** Signal line for medical UI — derived only from canonical status, not raw documents[].status. */
-export function medicalCanonicalSignal(record: CanonicalCredentialRecord): CanonicalMedicalSignal {
-  switch (record.status) {
-    case "expired":
-      return "expired";
-    case "missing":
-      return "missing";
-    case "expiring_soon":
-    case "pending_review":
-      return "at-risk";
-    case "valid":
-    default:
-      return "resolved";
-  }
-}
-
-export function medicalCanonicalSignalLabel(signal: CanonicalMedicalSignal): string {
-  switch (signal) {
-    case "expired":
-      return "Medical expired — renewal required";
-    case "missing":
-      return "Medical certificate missing";
-    case "at-risk":
-      return "Medical needs attention or review";
-    default:
-      return "Medical credential in good standing";
-  }
-}
-
 export function credentialDisplayText(
   record: CredentialRecord
 ): string {
@@ -159,7 +121,7 @@ export function credentialDisplayText(
   if (record.status === "expiring_soon") {
     return record.expirationDate
       ? `Expiring soon on ${record.expirationDate}`
-      : "Expiring soon — date pending";
+      : "Expiring soon";
   }
   if (record.status === "pending_review") {
     if (record.fileUrl && !record.expirationDate) return "On file — expiration needs review";
@@ -170,5 +132,32 @@ export function credentialDisplayText(
   if (record.fileUrl && !record.expirationDate) return "On file — expiration needs review";
   if (!record.fileUrl && record.expirationDate) return "Status recorded — file missing";
   return "Missing / needs review";
+}
+
+export function canonicalCredentialBadgeLabel(record: CredentialRecord): string {
+  switch (record.status) {
+    case "valid":
+      return "VALID";
+    case "expired":
+      return "EXPIRED";
+    case "missing":
+      return "MISSING";
+    case "expiring_soon":
+      return "EXPIRING_SOON";
+    case "pending_review":
+    default:
+      return "PENDING REVIEW";
+  }
+}
+
+/** Dispatch-style severity mapping for medical credential slices (HR packet). */
+export function medicalCanonicalSignal(record: CredentialRecord): DocumentSignal {
+  if (record.status === "expired" || record.status === "missing") return "blocking";
+  if (record.status === "expiring_soon" || record.status === "pending_review") return "at-risk";
+  return "resolved";
+}
+
+export function medicalCanonicalSignalLabel(signal: DocumentSignal): string {
+  return documentSignalLabel(signal);
 }
 

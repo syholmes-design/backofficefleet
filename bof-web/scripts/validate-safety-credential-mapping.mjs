@@ -16,6 +16,14 @@ const DRIVER_SAFETY_PAGE_PATH = path.join(
   "safety",
   "page.tsx"
 );
+const EXPIRATIONS_SCREEN_PATH = path.join(
+  ROOT,
+  "components",
+  "safety",
+  "ExpirationsScreen.tsx"
+);
+const SAFETY_RULES_PATH = path.join(ROOT, "lib", "safety-rules.ts");
+const DISPATCH_ELIGIBILITY_PATH = path.join(ROOT, "lib", "driver-dispatch-eligibility.ts");
 
 function toDateOnly(value) {
   if (!value) return null;
@@ -70,6 +78,9 @@ function main() {
   const storeSource = fs.readFileSync(SAFETY_STORE_PATH, "utf8");
   const profileSource = fs.readFileSync(SAFETY_PROFILE_PATH, "utf8");
   const driverSafetyPageSource = fs.readFileSync(DRIVER_SAFETY_PAGE_PATH, "utf8");
+  const expirationsSource = fs.readFileSync(EXPIRATIONS_SCREEN_PATH, "utf8");
+  const safetyRulesSource = fs.readFileSync(SAFETY_RULES_PATH, "utf8");
+  const dispatchEligSource = fs.readFileSync(DISPATCH_ELIGIBILITY_PATH, "utf8");
 
   if (!storeSource.includes("getDriverCredentialStatus(data, d.id)")) {
     fail(
@@ -98,6 +109,58 @@ function main() {
       "profile",
       "stale_not_on_file_wording_present",
       "Safety profile still renders stale Date not on file wording"
+    );
+  }
+
+  if (!expirationsSource.includes("buildExpirationRows(data)")) {
+    fail(
+      issues,
+      "ALL",
+      "expirations",
+      "expirations_must_use_bof_data_resolver",
+      "ExpirationsScreen must call buildExpirationRows(data) so rows track canonical demo JSON + overrides"
+    );
+  }
+  if (!expirationsSource.includes("updateDriverCredentialOverride")) {
+    fail(
+      issues,
+      "ALL",
+      "expirations",
+      "expirations_missing_override_writer",
+      "ExpirationsScreen must persist edits via updateDriverCredentialOverride"
+    );
+  }
+  if (!safetyRulesSource.includes("getDriverCredentialStatus")) {
+    fail(
+      issues,
+      "ALL",
+      "safety_rules",
+      "expiration_rows_not_canonical",
+      "lib/safety-rules buildExpirationRows must use getDriverCredentialStatus(data, …)"
+    );
+  }
+  if (safetyRulesSource.includes("med_card_expiration_date")) {
+    fail(
+      issues,
+      "ALL",
+      "safety_rules",
+      "expiration_rows_use_flat_med_field",
+      "safety-rules expiration rows must not read flattened med_card_expiration_date — use canonical resolver"
+    );
+  }
+  const collectIdx = dispatchEligSource.indexOf("export function collectDispatchHardBlockers");
+  const execIdx = dispatchEligSource.indexOf("export function getDriverDispatchEligibility");
+  const collectBody =
+    collectIdx !== -1 && execIdx > collectIdx
+      ? dispatchEligSource.slice(collectIdx, execIdx)
+      : dispatchEligSource;
+  if (/isHardDocMissingOrExpired\(mvr\)/.test(collectBody)) {
+    fail(
+      issues,
+      "ALL",
+      "dispatch",
+      "mvr_hard_gate_in_collect",
+      "collectDispatchHardBlockers must not treat MVR missing/expired as a dispatch hard gate for this demo configuration"
     );
   }
 
