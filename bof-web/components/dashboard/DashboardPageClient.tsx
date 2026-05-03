@@ -5,7 +5,7 @@ import Image from "next/image";
 import { useMemo } from "react";
 import { BookDemoLink } from "@/components/BookDemoLink";
 import { useBofDemoData } from "@/lib/bof-demo-data-context";
-import { demoHeroLinks, sectorLinks } from "@/lib/site-links";
+import { sectorLinks } from "@/lib/site-links";
 import { formatUsd } from "@/lib/format-money";
 import {
   getDashboardTodayChanges,
@@ -154,13 +154,12 @@ export function DashboardPageClient() {
               <BookDemoLink className="bof-cc-btn bof-cc-btn-primary" ariaLabel="Book a BOF demo appointment">
                 Book a Demo
               </BookDemoLink>
-              {demoHeroLinks
-                .filter((cta) => cta.href !== "/settlements")
-                .map((cta) => (
-                  <Link key={cta.href} href={cta.href} prefetch={false} className="bof-cc-btn">
-                    {cta.label}
-                  </Link>
-                ))}
+              <Link href="/dispatch" prefetch={false} className="bof-cc-btn">
+                Open Dispatch Board
+              </Link>
+              <Link href="/dashboard#attention-queue" prefetch={false} className="bof-cc-btn">
+                Review Attention Queue
+              </Link>
             </div>
             <nav className="bof-dashboard-hero__sectorRow" aria-label="Solutions by fleet type">
               {sectorLinks.map((item) => (
@@ -171,15 +170,17 @@ export function DashboardPageClient() {
             </nav>
           </div>
           <div className="bof-dashboard-hero__visual">
-            <Image
-              src="/images/bof-command-dashboard-hero.png"
-              alt="BOF command dashboard showing fleet operations, documents, compliance, and route visibility."
-              fill
-              sizes="(max-width: 900px) 100vw, 52vw"
-              priority
-              className="bof-dashboard-hero__image"
-              unoptimized
-            />
+            <div className="bof-dashboard-hero__visual-frame">
+              <Image
+                src="/images/bof-command-dashboard-hero.png"
+                alt="Fleet operations dashboard preview — dispatch, documents, and route visibility on a command monitor."
+                fill
+                sizes="(max-width: 900px) 100vw, 52vw"
+                priority
+                className="bof-dashboard-hero__image"
+                unoptimized
+              />
+            </div>
           </div>
         </div>
       </section>

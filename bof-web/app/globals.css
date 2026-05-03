@@ -14038,7 +14038,9 @@ body {
 }
 
 /*
- * Dashboard (/dashboard) hero — DOM copy + decorative PNG (contain; real CTAs are DOM-only).
+ * Dashboard (/dashboard) hero — DOM copy + decorative PNG.
+ * Image uses cover + right-weighted crop so baked-in landing chrome (nav/headline/buttons in PNG) stays off-frame;
+ * left gradient blends into the hero shell. Real CTAs are DOM-only (BookDemoLink + Next Link).
  */
 .bof-dashboard-hero.bof-cc-hero {
   display: block;
@@ -14073,9 +14075,33 @@ body {
   flex-shrink: 0;
 }
 
+/* Soft blend into live DOM copy — hides/minimizes PNG chrome peeking from the crop */
+.bof-dashboard-hero__visual::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  border-radius: inherit;
+  background: linear-gradient(
+    90deg,
+    rgba(11, 18, 36, 0.96) 0%,
+    rgba(11, 18, 36, 0.78) 10%,
+    rgba(11, 18, 36, 0.42) 24%,
+    rgba(11, 18, 36, 0.12) 40%,
+    transparent 56%
+  );
+}
+
+.bof-dashboard-hero__visual-frame {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+}
+
 .bof-dashboard-hero__image {
-  object-fit: contain;
-  object-position: center center;
+  object-fit: cover;
+  object-position: 84% 46%;
 }
 
 .bof-dashboard-hero__intro {
@@ -14881,6 +14907,19 @@ body {
   .bof-dashboard-hero__visual {
     min-height: clamp(280px, 58vw, 480px);
     height: clamp(280px, 58vw, 480px);
+  }
+
+  .bof-dashboard-hero__image {
+    object-position: 78% 44%;
+  }
+
+  .bof-dashboard-hero__visual::after {
+    background: linear-gradient(
+      90deg,
+      rgba(11, 18, 36, 0.94) 0%,
+      rgba(11, 18, 36, 0.55) 18%,
+      transparent 52%
+    );
   }
 
   .bof-dashboard-route-snapshot__panel.bof-cc-route-panel {

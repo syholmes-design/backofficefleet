@@ -27,7 +27,10 @@ export const sectorLinks: SectorLink[] = [
   },
 ];
 
-/** Operational dashboard hero links (DOM only; decorative PNG is not interactive). */
+/**
+ * Reference CTAs for dashboards / docs. The /dashboard hero lists Book + Dispatch + Attention Queue
+ * explicitly in `DashboardPageClient` so URLs stay obvious and the hero PNG stays non-interactive.
+ */
 export const demoHeroLinks = [
   { label: "Open Dispatch Board", href: "/dispatch" },
   { label: "Review Attention Queue", href: "/dashboard#attention-queue" },
