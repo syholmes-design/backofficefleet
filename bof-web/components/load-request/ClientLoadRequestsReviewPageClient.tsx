@@ -9,12 +9,15 @@ import {
   validateClientLoadRequestDraft,
   type ClientLoadRequest,
 } from "@/lib/client-load-requests";
-
-const BOF_STORAGE_KEY = "bof-demo-data-v1";
+import {
+  BOF_DEMO_DATA_LEGACY_STORAGE_KEY,
+  BOF_DEMO_DATA_STORAGE_KEY,
+} from "@/lib/demo-storage-keys";
 
 function latestDataSnapshot(fallback: Parameters<typeof getClientLoadRequests>[0]) {
   try {
-    const raw = localStorage.getItem(BOF_STORAGE_KEY);
+    let raw = localStorage.getItem(BOF_DEMO_DATA_STORAGE_KEY);
+    if (!raw) raw = localStorage.getItem(BOF_DEMO_DATA_LEGACY_STORAGE_KEY);
     if (!raw) return fallback;
     const parsed = JSON.parse(raw) as typeof fallback;
     if (!parsed || !Array.isArray(parsed.loads) || !Array.isArray(parsed.drivers) || !Array.isArray(parsed.documents)) {
@@ -28,7 +31,7 @@ function latestDataSnapshot(fallback: Parameters<typeof getClientLoadRequests>[0
 
 function persistDirect(next: Parameters<typeof getClientLoadRequests>[0]) {
   try {
-    localStorage.setItem(BOF_STORAGE_KEY, JSON.stringify(next));
+    localStorage.setItem(BOF_DEMO_DATA_STORAGE_KEY, JSON.stringify(next));
   } catch {
     // Keep setFullData as source of truth; this is a safety write for conversion flows.
   }

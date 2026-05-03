@@ -22,6 +22,7 @@ import {
   getDriverDispatchEligibility,
   warnDispatchEligibilityAllBlocked,
 } from "@/lib/driver-dispatch-eligibility";
+import { devTraceDriverMedicalStatuses } from "@/lib/dev-driver-medical-trace";
 import { getDriverReviewExplanation, type DriverReviewIssueCategory } from "@/lib/driver-review-explanation";
 import { getSafetyScorecardRows } from "@/lib/safety-scorecard";
 import { DriverReviewDrawer } from "@/components/drivers/DriverReviewDrawer";
@@ -197,6 +198,7 @@ export function DriversRosterTable() {
     const list = data.drivers.map((d) => getDriverDispatchEligibility(data, d.id));
     warnDispatchEligibilityAllBlocked(list);
     devLogDriverEligibilitySnapshot(data);
+    devTraceDriverMedicalStatuses(data);
   }, [data]);
 
   const blockedDriverRows = useMemo(

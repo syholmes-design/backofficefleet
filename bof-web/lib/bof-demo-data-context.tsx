@@ -30,8 +30,12 @@ import type { DriverMedicalExpanded } from "@/lib/driver-medical-expanded";
 import { EMPTY_DRIVER_MEDICAL_EXPANDED } from "@/lib/driver-medical-expanded";
 import { collectDispatchHardBlockers } from "@/lib/driver-dispatch-eligibility";
 import { applyOperationalSeedDefaults } from "@/lib/driver-operational-profile";
+import { migrateLegacySharedMedicalExpiration } from "@/lib/demo-data-medical-migration";
+import {
+  BOF_DEMO_DATA_LEGACY_STORAGE_KEY,
+  BOF_DEMO_DATA_STORAGE_KEY,
+} from "@/lib/demo-storage-keys";
 
-const STORAGE_KEY = "bof-demo-data-v1";
 const RISK_OVERRIDES_STORAGE_KEY = "bof-demo-risk-overrides-v1";
 
 function deepClone<T>(x: T): T {
@@ -41,7 +45,7 @@ function deepClone<T>(x: T): T {
 
 function persistToStorage(next: BofData) {
   try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
+    localStorage.setItem(BOF_DEMO_DATA_STORAGE_KEY, JSON.stringify(next));
   } catch {
     /* quota / private mode */
   }
@@ -117,11 +121,28 @@ export function BofDemoDataProvider({
 
   useEffect(() => {
     try {
-      const raw = localStorage.getItem(STORAGE_KEY);
+      let raw = localStorage.getItem(BOF_DEMO_DATA_STORAGE_KEY);
+      let legacyHydratedFrom: string | null = null;
+      if (!raw) {
+        raw = localStorage.getItem(BOF_DEMO_DATA_LEGACY_STORAGE_KEY);
+        legacyHydratedFrom = BOF_DEMO_DATA_LEGACY_STORAGE_KEY;
+      }
       if (raw) {
         const parsed = JSON.parse(raw) as BofData;
         if (parsed && Array.isArray(parsed.drivers) && Array.isArray(parsed.documents)) {
-          setData(applyOperationalSeedDefaults(parsed));
+          const { data: migrated, mutated } = migrateLegacySharedMedicalExpiration(parsed, seed);
+          const next = mutated || legacyHydratedFrom ? migrated : parsed;
+          setData(applyOperationalSeedDefaults(next));
+          if (mutated || legacyHydratedFrom) {
+            persistToStorage(next);
+            if (legacyHydratedFrom) {
+              try {
+                localStorage.removeItem(BOF_DEMO_DATA_LEGACY_STORAGE_KEY);
+              } catch {
+                /* ignore */
+              }
+            }
+          }
         }
       }
     } catch {
@@ -139,7 +160,7 @@ export function BofDemoDataProvider({
       /* ignore corrupt storage */
     }
     setHydrated(true);
-  }, []);
+  }, [seed]);
 
   const setFullData = useCallback((next: BofData) => {
     const copy = applyOperationalSeedDefaults(deepClone(next));
@@ -151,7 +172,8 @@ export function BofDemoDataProvider({
     const fresh = applyOperationalSeedDefaults(deepClone(seed));
     setData(fresh);
     try {
-      localStorage.removeItem(STORAGE_KEY);
+      localStorage.removeItem(BOF_DEMO_DATA_STORAGE_KEY);
+      localStorage.removeItem(BOF_DEMO_DATA_LEGACY_STORAGE_KEY);
     } catch {
       /* ignore */
     }

@@ -46,6 +46,9 @@ function run() {
   const data = JSON.parse(raw);
   const mismatches = [];
 
+  const legacyMedicalAnchor = "2026-04-22";
+  const legacyMedicalAllowedDrivers = new Set(["DRV-004", "DRV-008"]);
+
   const forbiddenSnippet = "2026-04-22";
   const expUi = fs.readFileSync(EXPIRATIONS_SCREEN_PATH, "utf8");
   const safetyRules = fs.readFileSync(SAFETY_RULES_PATH, "utf8");
@@ -92,6 +95,18 @@ function run() {
 
     const exp = primary?.expirationDate?.trim();
     if (exp) medicalExpirations.push(exp);
+    if (
+      exp === legacyMedicalAnchor &&
+      !legacyMedicalAllowedDrivers.has(driverId)
+    ) {
+      mismatches.push({
+        driverId,
+        issue: "unexpected_shared_medical_anchor_date",
+        detail: `Medical Card expirationDate=${legacyMedicalAnchor} is reserved for expired demo drivers ${[
+          ...legacyMedicalAllowedDrivers,
+        ].join(", ")} only`,
+      });
+    }
     const derived = deriveCredentialStatusFromExpiration(exp);
     const rowNorm = normalizeStatus(primary?.status);
 

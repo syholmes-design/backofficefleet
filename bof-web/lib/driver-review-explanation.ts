@@ -4,7 +4,12 @@ import {
   credentialDisplayText,
   getDriverCredentialStatus,
 } from "@/lib/driver-credential-status";
-import { getDriverDispatchEligibility } from "@/lib/driver-dispatch-eligibility";
+import {
+  DISPATCH_BLOCKER_REASON_IDS,
+  getDriverDispatchEligibility,
+  type DriverDispatchEligibility,
+} from "@/lib/driver-dispatch-eligibility";
+import { getDriverMedicalCardStatus } from "@/lib/driver-doc-registry";
 import { complianceNotesForDriver } from "@/lib/driver-queries";
 import { buildDriverDocumentPacket } from "@/lib/driver-document-packet";
 import { getSafetyScorecardRows } from "@/lib/safety-scorecard";
@@ -93,6 +98,59 @@ function complianceSeverityToIssueSev(sev: string): DriverReviewIssueSeverity {
   return "warning";
 }
 
+function resolveComplianceColumnLabelFromCanonical(
+  data: BofData,
+  driverId: string,
+  eligibility: DriverDispatchEligibility,
+  activeIssues: DriverReviewIssue[],
+): string {
+  const medical = getDriverMedicalCardStatus(data, driverId);
+  const open = activeIssues.filter((i) => !i.resolved);
+
+  const criticalNonMedicalCompliance = open.filter(
+    (i) => i.category === "compliance" && i.severity === "critical" && !/medical/i.test(i.title),
+  );
+  if (criticalNonMedicalCompliance.length > 0) return "Critical compliance";
+
+  const otherCredProblems = open.filter(
+    (i) =>
+      i.category === "credentials" &&
+      !/medical card/i.test(i.title) &&
+      /expired|missing|review/i.test(i.title),
+  );
+
+  if (medical.status === "expired" && medical.expirationDate) {
+    return otherCredProblems.length
+      ? `Medical Card expired on ${medical.expirationDate} · other credential gap`
+      : `Medical Card expired on ${medical.expirationDate}`;
+  }
+  if (medical.status === "missing") {
+    return otherCredProblems.length ? "Medical Card missing · other credential gap" : "Medical Card missing";
+  }
+  if (medical.status === "pending_review") {
+    return "Medical card date needs review";
+  }
+
+  if (otherCredProblems.length > 0) {
+    const label = otherCredProblems[0].title.split(":")[0]?.trim() ?? "Credential";
+    return `${label} — needs attention`;
+  }
+
+  const complianceIssues = open.filter(
+    (i) => i.category === "compliance" || (i.category === "credentials" && /expired|missing/i.test(i.title)),
+  );
+  if (complianceIssues.some((i) => i.severity === "critical")) return "Critical compliance";
+  if (complianceIssues.some((i) => /expired/i.test(i.title))) {
+    const types = complianceIssues
+      .filter((i) => i.category === "credentials" && /expired/i.test(i.title))
+      .map((i) => i.title.split(":")[0]?.trim() ?? "")
+      .filter(Boolean);
+    return types.length ? `${types.slice(0, 2).join(" + ")} expired` : "Expired";
+  }
+  if (open.length > 0 && eligibility.status !== "ready") return "Needs review";
+  return "Valid";
+}
+
 /**
  * Canonical driver review narrative for roster / drawer — keyed by driverId only.
  */
@@ -103,6 +161,7 @@ export function getDriverReviewExplanation(data: BofData, driverId: string): Dri
   const issues: DriverReviewIssue[] = [];
 
   const eligibility = getDriverDispatchEligibility(data, driverId);
+  const medicalCanon = getDriverMedicalCardStatus(data, driverId);
   const cred = getDriverCredentialStatus(data, driverId);
   const scoreRow = getSafetyScorecardRows().find((r) => r.driverId === driverId);
   const settlement = data.settlements.find((s) => s.driverId === driverId);
@@ -112,6 +171,19 @@ export function getDriverReviewExplanation(data: BofData, driverId: string): Dri
   });
 
   for (const hb of eligibility.hardBlockerDetails) {
+    if (
+      hb.id === DISPATCH_BLOCKER_REASON_IDS.medical_card_expired &&
+      medicalCanon.status !== "expired"
+    ) {
+      continue;
+    }
+    if (
+      hb.id === DISPATCH_BLOCKER_REASON_IDS.medical_card_missing &&
+      medicalCanon.status !== "missing"
+    ) {
+      continue;
+    }
+
     const isCred =
       hb.message.includes("CDL") ||
       hb.message.includes("Medical Card") ||
@@ -291,6 +363,30 @@ export function getDriverReviewExplanation(data: BofData, driverId: string): Dri
 
   for (const { key, label } of credSlots) {
     const rec = cred[key];
+    if (
+      key === "medicalCard" &&
+      medicalCanon.status === "valid" &&
+      rec.source === "runtime_override"
+    ) {
+      pushUnique(
+        issues,
+        {
+          id: "credential:medical_demo_override",
+          severity: "info",
+          category: "credentials",
+          title: "Demo override active — medical card",
+          detail:
+            "A runtime medical-card date override is present for this driver. Canonical structured data shows the card as valid; verify the override matches your rehearsal scenario.",
+          whyItMatters: "Overrides persist in local demo storage and can diverge from seed documents until reset.",
+          recommendedFix: "Open Safety → Credential expirations or reset credential overrides for this driver.",
+          actionHref: `/drivers/${driverId}/safety`,
+          actionLabel: "Open safety expirations",
+          canResolveInDemo: false,
+        },
+        resolved
+      );
+      continue;
+    }
     if (rec.status === "valid") continue;
     const dup = issues.some(
       (i) =>
@@ -379,20 +475,12 @@ export function getDriverReviewExplanation(data: BofData, driverId: string): Dri
     documentsColumnLabel = credDocIssues.length > 2 ? `${credDocIssues.length} need review` : `${short} review`;
   }
 
-  const complianceIssues = activeIssues.filter(
-    (i) => i.category === "compliance" || (i.category === "credentials" && /expired|missing/i.test(i.title))
+  const complianceColumnLabel = resolveComplianceColumnLabelFromCanonical(
+    data,
+    driverId,
+    eligibility,
+    activeIssues
   );
-  let complianceColumnLabel = eligibility.complianceLabel;
-  if (complianceIssues.some((i) => i.severity === "critical")) complianceColumnLabel = "Critical compliance";
-  else if (complianceIssues.some((i) => /expired/i.test(i.title))) {
-    const types = complianceIssues
-      .filter((i) => i.category === "credentials" && /expired/i.test(i.title))
-      .map((i) => i.title.split(":")[0]?.trim() ?? "")
-      .filter(Boolean);
-    complianceColumnLabel = types.length ? `${types.slice(0, 2).join(" + ")} expired` : "Expired";
-  } else if (activeIssues.length > 0 && eligibility.status !== "ready") {
-    complianceColumnLabel = "Needs review";
-  }
 
   let primaryAction: DriverReviewExplanation["primaryAction"];
   const first = activeIssues[0];

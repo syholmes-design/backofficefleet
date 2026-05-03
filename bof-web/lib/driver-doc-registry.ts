@@ -183,10 +183,11 @@ export type DriverMedicalCardCanonicalStatus =
   | "missing";
 
 export type DriverMedicalCardStatusSource =
+  | "runtime_override"
   | "canonical_document"
+  | "structured_demo_data"
   | "driver_doc_registry"
-  | "demo_runtime_override"
-  | "fallback";
+  | "missing";
 
 export type DriverMedicalCardStatus = {
   driverId: string;
@@ -209,18 +210,18 @@ function pickCanonicalMedicalRow(data: BofData, driverId: string) {
   return primary ?? rows[0];
 }
 
-function medicalCanonicalToRowStatus(s: DriverMedicalCardCanonicalStatus): string {
-  switch (s) {
-    case "valid":
-      return "VALID";
-    case "expiring_soon":
-      return "EXPIRING_SOON";
-    case "expired":
-      return "EXPIRED";
-    case "pending_review":
-      return "PENDING REVIEW";
+function medicalStatusFromDerived(
+  derived: string,
+): { status: DriverMedicalCardCanonicalStatus; rowStatus: string } {
+  switch (derived) {
+    case "VALID":
+      return { status: "valid", rowStatus: "VALID" };
+    case "EXPIRING_SOON":
+      return { status: "expiring_soon", rowStatus: "EXPIRING_SOON" };
+    case "EXPIRED":
+      return { status: "expired", rowStatus: "EXPIRED" };
     default:
-      return "MISSING";
+      return { status: "pending_review", rowStatus: "PENDING REVIEW" };
   }
 }
 
@@ -239,42 +240,47 @@ export function getDriverMedicalCardStatus(
 
   if (overrideExp) {
     const derived = deriveCredentialStatusFromExpiration(overrideExp);
-    let status: DriverMedicalCardCanonicalStatus;
-    switch (derived) {
-      case "VALID":
-        status = "valid";
-        break;
-      case "EXPIRING_SOON":
-        status = "expiring_soon";
-        break;
-      case "EXPIRED":
-        status = "expired";
-        break;
-      default:
-        status = "pending_review";
-        break;
-    }
+    const { status, rowStatus } = medicalStatusFromDerived(derived);
     return {
       driverId,
       documentType: "medical_card",
       fileUrl: fileUrl ?? undefined,
       expirationDate: overrideExp,
       status,
-      rowStatus: medicalCanonicalToRowStatus(status),
-      source: "demo_runtime_override",
+      rowStatus,
+      source: "runtime_override",
       reason:
-        "Demo runtime override (Safety expirations editor) — takes precedence over seed documents row",
+        "Runtime credential override (Safety expirations / demo editor) — scoped to this driverId only",
     };
   }
 
+  const expandedExp =
+    (
+      data.driverMedicalExpanded as Record<string, { medicalExpirationDate?: string }> | undefined
+    )?.[driverId]?.medicalExpirationDate?.trim() || undefined;
+
   if (!row) {
+    if (expandedExp) {
+      const derived = deriveCredentialStatusFromExpiration(expandedExp);
+      const { status, rowStatus } = medicalStatusFromDerived(derived);
+      return {
+        driverId,
+        documentType: "medical_card",
+        fileUrl: fileUrl ?? undefined,
+        expirationDate: expandedExp,
+        status,
+        rowStatus,
+        source: "structured_demo_data",
+        reason: "driverMedicalExpanded.medicalExpirationDate (no documents[] Medical Card row)",
+      };
+    }
     if (!fileUrl) {
       return {
         driverId,
         documentType: "medical_card",
         status: "missing",
         rowStatus: "MISSING",
-        source: "fallback",
+        source: "missing",
         reason: "No Medical Card row in demo documents and no indexed file URL",
       };
     }
@@ -293,31 +299,33 @@ export function getDriverMedicalCardStatus(
 
   if (expirationDate) {
     const derived = deriveCredentialStatusFromExpiration(expirationDate);
-    let status: DriverMedicalCardCanonicalStatus;
-    switch (derived) {
-      case "VALID":
-        status = "valid";
-        break;
-      case "EXPIRING_SOON":
-        status = "expiring_soon";
-        break;
-      case "EXPIRED":
-        status = "expired";
-        break;
-      default:
-        status = "pending_review";
-        break;
-    }
+    const { status, rowStatus } = medicalStatusFromDerived(derived);
     return {
       driverId,
       documentType: "medical_card",
       fileUrl: fileUrl ?? undefined,
       expirationDate,
       status,
-      rowStatus: medicalCanonicalToRowStatus(status),
+      rowStatus,
       source: "canonical_document",
       reason:
         "expirationDate on canonical Medical Card row (status derived from date, not stale row.status)",
+    };
+  }
+
+  if (expandedExp) {
+    const derived = deriveCredentialStatusFromExpiration(expandedExp);
+    const { status, rowStatus } = medicalStatusFromDerived(derived);
+    return {
+      driverId,
+      documentType: "medical_card",
+      fileUrl: fileUrl ?? undefined,
+      expirationDate: expandedExp,
+      status,
+      rowStatus,
+      source: "structured_demo_data",
+      reason:
+        "driverMedicalExpanded.medicalExpirationDate — documents row missing expirationDate",
     };
   }
 
@@ -341,7 +349,7 @@ export function getDriverMedicalCardStatus(
     expirationDate: undefined,
     status: "missing",
     rowStatus: "MISSING",
-    source: "canonical_document",
+    source: "missing",
     reason: "Medical Card row without expirationDate and no indexed file",
   };
 }
@@ -371,10 +379,10 @@ export function medicalCardSoftWarningReason(med: DriverMedicalCardStatus): stri
 export type DriverMvrCanonicalStatus = DriverMedicalCardCanonicalStatus;
 
 export type DriverMvrStatusSource =
+  | "runtime_override"
   | "canonical_document"
   | "driver_doc_registry"
-  | "demo_runtime_override"
-  | "fallback";
+  | "missing";
 
 export type DriverMvrStatus = {
   driverId: string;
@@ -445,9 +453,9 @@ export function getDriverMvrStatus(data: BofData, driverId: string): DriverMvrSt
       expirationDate: overrideExp,
       status,
       rowStatus: mvrCanonicalToRowStatus(status),
-      source: "demo_runtime_override",
+      source: "runtime_override",
       reason:
-        "Demo runtime override — takes precedence over seed MVR row for dashboard/dispatch alignment",
+        "Runtime credential override — scoped to this driverId; precedes seed MVR row",
     };
   }
 
@@ -458,7 +466,7 @@ export function getDriverMvrStatus(data: BofData, driverId: string): DriverMvrSt
         documentType: "mvr",
         status: "missing",
         rowStatus: "MISSING",
-        source: "fallback",
+        source: "missing",
         reason: "No MVR row in demo documents and no indexed file URL",
       };
     }
