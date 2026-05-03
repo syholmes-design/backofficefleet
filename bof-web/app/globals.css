@@ -14071,7 +14071,14 @@ body {
   inset: 0;
   z-index: 1;
   pointer-events: none;
+  /* Top-right radial soft-kills baked-in teal/chrome above the monitor (PNG artifact); blends into slate. */
   background:
+    radial-gradient(
+      ellipse 220px 76px at calc(100% - 2.75rem) clamp(1.75rem, 4.5vw, 3.75rem),
+      rgba(2, 6, 23, 0.99) 0%,
+      rgba(2, 6, 23, 0.62) 46%,
+      transparent 72%
+    ),
     linear-gradient(
       90deg,
       rgba(2, 6, 23, 0.98) 0%,
@@ -14101,8 +14108,8 @@ body {
 }
 
 .bof-dashboard-hero__intro .bof-cc-title {
-  font-size: clamp(2.6rem, 5vw, 5.25rem);
-  line-height: 1.05;
+  font-size: clamp(2.29rem, 4.4vw, 4.62rem);
+  line-height: 1.06;
   letter-spacing: -0.03em;
   margin-top: 0.35rem;
 }
@@ -14898,6 +14905,12 @@ body {
 
   .bof-dashboard-hero__fade {
     background:
+      radial-gradient(
+        ellipse 200px 68px at calc(100% - 1.25rem) clamp(1.25rem, 5vw, 2.75rem),
+        rgba(2, 6, 23, 0.995) 0%,
+        rgba(2, 6, 23, 0.68) 44%,
+        transparent 74%
+      ),
       linear-gradient(
         90deg,
         rgba(2, 6, 23, 0.985) 0%,
