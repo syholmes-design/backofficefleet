@@ -8,16 +8,24 @@ type Props = {
   entityId: string;
   /** Slightly smaller copy for detail pages */
   compact?: boolean;
+  /** When set, canonical intake opens prefilled from this intake engine record */
+  intakeId?: string;
 };
 
+function canonicalDispatchIntakeHref(intakeId?: string): string {
+  const id = intakeId?.trim();
+  return id ? `/dispatch/intake?intakeId=${encodeURIComponent(id)}` : "/dispatch/intake";
+}
+
 /**
- * Prominent on-screen path to the BOF-native load tender (intake form) in the document viewer:
- * open → edit → save draft → generate final — not a hidden template row.
+ * Primary CTA to canonical BOF load intake (`/dispatch/intake`).
+ * Optional link to the load tender in the document viewer for template-style editing.
  */
-export function BofIntakeFormPrimaryPanel({ entityId, compact }: Props) {
+export function BofIntakeFormPrimaryPanel({ entityId, compact, intakeId }: Props) {
   const pathname = usePathname() ?? "";
   const returnTo = pathname || undefined;
-  const href = buildBofDocumentViewerHref({
+  const canonicalHref = canonicalDispatchIntakeHref(intakeId);
+  const tenderViewerHref = buildBofDocumentViewerHref({
     templateId: "load-tender",
     entityId,
     packId: "load-intake-v3",
@@ -36,23 +44,30 @@ export function BofIntakeFormPrimaryPanel({ entityId, compact }: Props) {
           </h2>
           <p className="bof-intake-form-primary-lead">
             {compact
-              ? "BOF document viewer: edit the commercial intake, then generate rate confirmation and trip schedule from the same intake context before load creation."
-              : "The primary BOF load intake is the load tender. Open it here, write into the fields, save a draft, and generate a final. What you capture flows to contract clarity, customer expectation (rate con), and lane timing (trip schedule) — then dispatch readiness, proof, billing, and claims inherit this intake story downstream."}
+              ? "Canonical Dispatch Load Intake: shipper & facility, requirements, compliance & proof, review & packet, then save to the BOF dispatch pipeline."
+              : "The primary path is Dispatch → Load Intake — one wizard for manual entry, upload/parser, or client request. What you save flows into loads, assignments, proof, billing, and claims. Use the load tender in the document viewer only when you need template-style field editing for the same entity."}
           </p>
           <ol className="bof-intake-form-primary-steps" aria-label="What happens next in BOF">
-            <li>Contract / tender baseline and shipper terms</li>
-            <li>Rate confirmation and trip schedule (generated from BOF data)</li>
-            <li>Driver assignment packet and pre-trip / release discipline</li>
-            <li>Proof, settlement, and claim packets downstream</li>
+            <li>Shipper, facilities, lane, and equipment baseline</li>
+            <li>Load requirements and operational constraints</li>
+            <li>Compliance, proof, and financial readiness</li>
+            <li>Review &amp; packet, then save to dispatch</li>
           </ol>
         </div>
         <div className="bof-intake-form-primary-cta">
-          <Link href={href} className="bof-intake-form-primary-btn">
+          <Link href={canonicalHref} className="bof-intake-form-primary-btn">
             Open load intake form
           </Link>
           <p className="bof-intake-form-primary-hint bof-small bof-muted">
-            Also reachable from the shortcuts below. Same session as the template workspace; you are not required to use{" "}
-            <code className="bof-code">/template-packs</code> to find it.
+            <Link href={tenderViewerHref} className="bof-link-secondary">
+              Load tender (document viewer)
+            </Link>
+            {" · "}
+            Internal template admin stays under{" "}
+            <Link href="/documents/template-packs" className="bof-link-secondary">
+              Documents → Template packs
+            </Link>
+            .
           </p>
         </div>
       </div>

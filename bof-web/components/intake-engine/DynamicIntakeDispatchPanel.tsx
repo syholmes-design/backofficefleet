@@ -2,11 +2,8 @@
 
 import { useMemo } from "react";
 import Link from "next/link";
-import { useBofDemoData } from "@/lib/bof-demo-data-context";
 import type { IntakeRecord } from "@/lib/intake-engine-types";
-import { buildBofDocumentViewerHref } from "@/lib/bof-document-viewer-href";
 import { buildDraftLoadFromExtracted } from "@/lib/intake-engine-build-load";
-import type { Load } from "@/types/dispatch";
 
 type Props = {
   activeIntake: IntakeRecord | null | undefined;
@@ -234,14 +231,10 @@ export function DynamicIntakeDispatchPanel({ activeIntake, entityId }: Props) {
         <h3 className="bof-h3">Actions</h3>
         <div style={{ display: "flex", flexWrap: "wrap", gap: 12, marginTop: 12 }}>
           <Link
-            href={buildBofDocumentViewerHref({
-              templateId: "load-tender",
-              entityId,
-              packId: "load-intake-v3",
-            })}
+            href={`/dispatch/intake?intakeId=${encodeURIComponent(activeIntake.intake_id)}`}
             className="bof-btn-primary"
           >
-            Edit Load Intake
+            Open Dispatch Load Intake
           </Link>
           {readinessIssues.length === 0 && (
             <Link

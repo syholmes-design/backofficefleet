@@ -123,7 +123,7 @@ export function IntakeEngineInboxClient() {
         </p>
       </section>
 
-      <BofIntakeFormPrimaryPanel entityId={intakeEntityId} />
+      <BofIntakeFormPrimaryPanel entityId={intakeEntityId} intakeId={activeIntake?.intake_id} />
       <DynamicIntakeDispatchPanel
         activeIntake={activeIntake}
         entityId={intakeEntityId}
@@ -131,6 +131,7 @@ export function IntakeEngineInboxClient() {
       <BofWorkflowFormShortcuts
         context="intake"
         entityId={intakeEntityId}
+        intakeId={activeIntake?.intake_id}
         title="From this screen — open BOF forms & packets"
       />
       <CollapsibleAdvancedPanel

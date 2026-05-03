@@ -149,10 +149,11 @@ export function IntakeEngineDetailClient() {
         </section>
       )}
 
-      <BofIntakeFormPrimaryPanel entityId={formEntityId} compact />
+      <BofIntakeFormPrimaryPanel entityId={formEntityId} intakeId={intake.intake_id} compact />
       <BofWorkflowFormShortcuts
         context="intake"
         entityId={formEntityId}
+        intakeId={intake.intake_id}
         title="BOF forms for this intake context"
       />
 

@@ -37,6 +37,7 @@ export function BofWorkflowFormShortcuts({
   entityId,
   context,
   settlementId,
+  intakeId,
   title,
   className = "",
   variant = "bof",
@@ -45,6 +46,8 @@ export function BofWorkflowFormShortcuts({
   context: WorkflowShortcutContext;
   /** For settlement_billing, entityId may be settlement id; pass for claim-style copy */
   settlementId?: string;
+  /** Prefill canonical `/dispatch/intake` from an intake engine record */
+  intakeId?: string;
   title?: string;
   className?: string;
   /** `dispatch` — dark surfaces (dispatch load detail drawer). */
@@ -57,10 +60,22 @@ export function BofWorkflowFormShortcuts({
   const shortcuts: Shortcut[] = [];
   const pack = (p: BofTemplatePackId) => p;
 
+  const dispatchIntakeHref =
+    intakeId?.trim().length
+      ? `/dispatch/intake?intakeId=${encodeURIComponent(intakeId.trim())}`
+      : "/dispatch/intake";
+
   if (context === "intake" || context === "load" || context === "documents") {
     shortcuts.push(
       {
-        label: "Open load intake form (tender)",
+        label: "Open Dispatch Load Intake",
+        sub: "Canonical wizard · manual, upload, or client request",
+        href: dispatchIntakeHref,
+        kind: "editable",
+        gate: "Saves into BOF dispatch pipeline",
+      },
+      {
+        label: "Load tender (document viewer)",
         sub: "Commercial intake · contract baseline",
         href: buildBofDocumentViewerHref({
           templateId: "load-tender",
@@ -69,7 +84,7 @@ export function BofWorkflowFormShortcuts({
           returnTo: ret,
         }),
         kind: "editable",
-        gate: "Downstream: dispatch + billing",
+        gate: "Template-style editing",
       },
       {
         label: "Rate Confirmation",
@@ -175,8 +190,8 @@ export function BofWorkflowFormShortcuts({
   }
 
   shortcuts.push({
-    label: "All template packs (full index)",
-    sub: "Browse every BOF form",
+    label: "Internal Template Admin (full index)",
+    sub: "Browse every BOF form template — not the primary intake path",
     href: `/documents/template-packs?entityId=${encodeURIComponent(eid)}`,
     kind: "workspace",
   });
@@ -187,9 +202,9 @@ export function BofWorkflowFormShortcuts({
       <div className="bof-wf-sh-head">
         <h2 className="bof-wf-sh-title">{title ?? "BOF forms & packets — open and work here"}</h2>
         <p className="bof-wf-sh-lead">
-          These links open the BOF <strong>document viewer</strong>: save draft, mark reviewed, generate
-          final, and route by audience. Same store as template workspace — you do not have to find{" "}
-          <code className="bof-code">/template-packs</code> on your own.
+          Start loads in <strong>Dispatch Load Intake</strong> (<code className="bof-code">/dispatch/intake</code>
+          ). Other cards open the BOF <strong>document viewer</strong> for generated packets and the load
+          tender. Internal template admin is labeled separately.
         </p>
       </div>
       <ul className="bof-wf-sh-grid">
