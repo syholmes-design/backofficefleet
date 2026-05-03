@@ -79,11 +79,6 @@ const WORKFLOW_TYPES: Array<{ canonicalType: string; label: string; sourceType: 
     label: "Incident / Accident Report",
     sourceType: "Incident / Accident Report",
   },
-  {
-    canonicalType: "bof_medical_summary",
-    label: "BOF Medical Summary",
-    sourceType: "BOF Medical Summary",
-  },
 ];
 
 const SUMMARY_TYPES: Array<{ canonicalType: string; label: string; sourceType: string }> = [
@@ -106,6 +101,11 @@ const SUMMARY_TYPES: Array<{ canonicalType: string; label: string; sourceType: s
     canonicalType: "dqf_compliance_summary",
     label: "FMCSA DQF Compliance Summary",
     sourceType: "FMCSA DQF Compliance Summary",
+  },
+  {
+    canonicalType: "bof_medical_summary",
+    label: "BOF Medical Summary",
+    sourceType: "BOF Medical Summary",
   },
 ];
 
@@ -195,6 +195,7 @@ export function buildDriverDocumentPacket(data: BofData, driverId: string): Driv
       continue;
     }
     const engineDoc = engine.find((d) => d.type === row.sourceType);
+    const secondaryRow = docByType(secondary, row.sourceType);
     const fromEngine: DocumentRow | undefined = engineDoc
       ? {
           driverId,
@@ -204,7 +205,7 @@ export function buildDriverDocumentPacket(data: BofData, driverId: string): Driv
           previewUrl: engineDoc.previewUrl,
           expirationDate: undefined,
         }
-      : undefined;
+      : secondaryRow;
     docs.push(toPacketDoc(row, fromEngine, "generated_summaries"));
   }
 
@@ -237,7 +238,6 @@ export function buildDriverDocumentPacket(data: BofData, driverId: string): Driv
     ...WORKFLOW_TYPES.map((r) => r.canonicalType),
     ...SUMMARY_TYPES.map((r) => r.canonicalType),
   ];
-  // SUMMARY_TYPES order already includes dqf_compliance_summary last.
   const orderedDocs = ordered
     .map((key) => deduped.get(key))
     .filter((d): d is DriverPacketDocument => Boolean(d));

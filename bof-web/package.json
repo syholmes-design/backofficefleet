@@ -30,6 +30,7 @@
     "validate:driver-medical-status": "node scripts/validate-driver-medical-status.mjs",
     "validate:driver-blockers": "node scripts/validate-driver-blockers.mjs",
     "validate:driver-document-packets": "node scripts/validate-driver-document-packets.mjs",
+    "validate:driver-dqf-readiness": "node scripts/validate-driver-dqf-readiness.mjs",
     "generate:driver-dqf-summaries": "node scripts/generate-driver-dqf-summaries.mjs",
     "validate:driver-dqf-summaries": "node scripts/validate-driver-dqf-summaries.mjs",
     "validate:safety-credential-mapping": "node scripts/validate-safety-credential-mapping.mjs",
