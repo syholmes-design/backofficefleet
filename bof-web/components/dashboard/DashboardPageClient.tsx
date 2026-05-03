@@ -5,7 +5,7 @@ import Image from "next/image";
 import { useMemo, useState } from "react";
 import { BookDemoLink } from "@/components/BookDemoLink";
 import { useBofDemoData } from "@/lib/bof-demo-data-context";
-import { getHeroLinks, getSectorLinks } from "@/lib/site-links";
+import { demoHeroLinks, sectorLinks } from "@/lib/site-links";
 import { formatUsd } from "@/lib/format-money";
 import {
   getDashboardTodayChanges,
@@ -230,7 +230,7 @@ export function DashboardPageClient() {
               operating view.
             </p>
             <div className="bof-dashboard-hero__ctaRow" aria-label="Dashboard actions">
-              {getHeroLinks().map((cta) => (
+              {demoHeroLinks.map((cta) => (
                 <Link
                   key={cta.id}
                   href={cta.href}
@@ -242,10 +242,12 @@ export function DashboardPageClient() {
                   {cta.label}
                 </Link>
               ))}
-              <BookDemoLink className="bof-cc-btn">Book a Demo</BookDemoLink>
+              <BookDemoLink className="bof-cc-btn" ariaLabel="Book a BOF demo appointment">
+                Book a Demo
+              </BookDemoLink>
             </div>
             <nav className="bof-dashboard-hero__sectorRow" aria-label="Solutions by fleet type">
-              {getSectorLinks().map((item) => (
+              {sectorLinks.map((item) => (
                 <Link key={item.href} href={item.href} className="bof-dashboard-hero__sectorLink" prefetch={false}>
                   {item.label}
                 </Link>

@@ -14076,9 +14076,32 @@ body {
   border-radius: 0.75rem;
   overflow: hidden;
   background: #020617;
+  isolation: isolate;
 }
 
-/* Fade baked-in PNG CTAs at bottom; live DOM links are authoritative. */
+/*
+ * Mask + crop: marketing PNG embeds fake top nav and hero CTAs ("Book a Demo", sector links).
+ * Reposition/zoom the artwork and add a top veil so only the dashboard / truck / monitor reads as visual.
+ * Real actions are DOM-only (hotspots + CTA row).
+ */
+.bof-dashboard-hero__imageSlot::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  border-radius: inherit;
+  pointer-events: none;
+  background: linear-gradient(
+    to bottom,
+    rgba(2, 6, 23, 1) 0%,
+    rgba(2, 6, 23, 0.97) 7%,
+    rgba(2, 6, 23, 0.82) 14%,
+    rgba(2, 6, 23, 0.35) 24%,
+    rgba(2, 6, 23, 0) 36%
+  );
+}
+
+/* Fade any remaining baked-in PNG promo strip at bottom. */
 .bof-dashboard-hero__imageSlot::after {
   content: "";
   position: absolute;
@@ -14088,16 +14111,18 @@ body {
   pointer-events: none;
   background: linear-gradient(
     to bottom,
-    rgba(2, 6, 23, 0) 52%,
-    rgba(2, 6, 23, 0.35) 72%,
-    rgba(2, 6, 23, 0.88) 92%,
-    rgba(2, 6, 23, 0.96) 100%
+    rgba(2, 6, 23, 0) 48%,
+    rgba(2, 6, 23, 0.4) 68%,
+    rgba(2, 6, 23, 0.9) 88%,
+    rgba(2, 6, 23, 0.97) 100%
   );
 }
 
 .bof-dashboard-hero__imageSlot > span {
   width: 100% !important;
   height: 100% !important;
+  position: relative;
+  z-index: 0;
 }
 
 .bof-dashboard-hero__imagePanel-img,
@@ -14105,7 +14130,10 @@ body {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  object-position: center top;
+  /* Focal point below fake header/CTA chrome baked into the asset */
+  object-position: 50% 34%;
+  transform: scale(1.09);
+  transform-origin: 50% 38%;
   display: block;
   border-radius: 0.75rem;
 }

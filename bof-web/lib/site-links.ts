@@ -9,7 +9,8 @@ export type SectorLink = {
   sector: "for-hire" | "private-fleet" | "government";
 };
 
-const SECTOR_LINKS: SectorLink[] = [
+/** Landing pages for sector positioning (used by /dashboard hero and header). */
+export const sectorLinks: SectorLink[] = [
   {
     label: "For-Hire Carriers",
     href: "/for-hire-carriers",
@@ -28,7 +29,7 @@ const SECTOR_LINKS: SectorLink[] = [
 ];
 
 export function getSectorLinks(): SectorLink[] {
-  return SECTOR_LINKS;
+  return sectorLinks.map((s) => ({ ...s }));
 }
 
 export function getBookAssessmentHrefForSector(
@@ -48,27 +49,30 @@ export type DashboardHeroCta = {
   variant: "primary" | "secondary";
 };
 
+/** Primary operational CTAs for the /dashboard hero (DOM links; image is decorative). */
+export const demoHeroLinks: DashboardHeroCta[] = [
+  {
+    id: "dispatch",
+    label: "Open Dispatch Board",
+    href: "/dispatch",
+    variant: "primary",
+  },
+  {
+    id: "attention_queue",
+    label: "Review Attention Queue",
+    href: "/dashboard#attention-queue",
+    variant: "secondary",
+  },
+  {
+    id: "settlements",
+    label: "Open Settlements",
+    href: "/settlements",
+    variant: "secondary",
+  },
+];
+
 export function getHeroLinks(): DashboardHeroCta[] {
-  return [
-    {
-      id: "dispatch",
-      label: "Open Dispatch Board",
-      href: "/dispatch",
-      variant: "primary",
-    },
-    {
-      id: "attention_queue",
-      label: "Review Attention Queue",
-      href: "/dashboard#attention-queue",
-      variant: "secondary",
-    },
-    {
-      id: "settlements",
-      label: "Open Settlements",
-      href: "/settlements",
-      variant: "secondary",
-    },
-  ];
+  return demoHeroLinks.map((c) => ({ ...c }));
 }
 
 /**
