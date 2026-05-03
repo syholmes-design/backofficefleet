@@ -14038,70 +14038,56 @@ body {
 }
 
 /*
- * Dashboard (/dashboard) hero — DOM copy + decorative PNG.
- * Image uses cover + right-weighted crop so baked-in landing chrome (nav/headline/buttons in PNG) stays off-frame;
- * left gradient blends into the hero shell. Real CTAs are DOM-only (BookDemoLink + Next Link).
+ * Dashboard (/dashboard) hero — full-card background image + left fade.
+ * PNG is decorative only (cover, right-weighted); baked-in landing chrome stays under the fade/crop.
+ * Real CTAs are DOM-only (BookDemoLink + Next Link). Does not affect Drivers / other marketing heroes.
  */
-.bof-dashboard-hero.bof-cc-hero {
-  display: block;
-  padding: clamp(1.1rem, 2vw, 1.45rem);
-  border-radius: 1rem;
-  overflow: hidden;
-  border-color: rgba(51, 65, 85, 0.65);
-  background:
-    radial-gradient(ellipse 85% 65% at 78% 18%, rgba(45, 212, 191, 0.14), transparent 52%),
-    radial-gradient(ellipse 60% 45% at 12% 88%, rgba(14, 165, 233, 0.06), transparent 55%),
-    linear-gradient(165deg, #0b1224 0%, #0c1629 42%, #070d18 100%);
-}
-
-.bof-dashboard-hero__shell {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(17rem, 1.05fr);
-  gap: clamp(1rem, 3vw, 2rem);
-  align-items: stretch;
-  min-width: 0;
-}
-
-.bof-dashboard-hero__visual {
+.bof-dashboard-hero.bof-dashboard-hero--image-bg.bof-cc-hero {
   position: relative;
-  width: 100%;
-  min-width: 0;
-  min-height: clamp(420px, 48vw, 760px);
-  height: clamp(420px, 48vw, 760px);
-  border-radius: 1rem;
+  display: block;
   overflow: hidden;
+  border-radius: 1rem;
+  min-height: clamp(520px, 52vw, 760px);
+  padding: clamp(1.5rem, 3vw, 3rem);
+  margin-bottom: 1rem;
+  border: 1px solid rgba(51, 65, 85, 0.65);
+  border-color: rgba(51, 65, 85, 0.65);
   background: #020617;
-  border: 1px solid rgba(100, 116, 139, 0.28);
-  flex-shrink: 0;
 }
 
-/* Soft blend into live DOM copy — hides/minimizes PNG chrome peeking from the crop */
-.bof-dashboard-hero__visual::after {
-  content: "";
+.bof-dashboard-hero__bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+}
+
+.bof-dashboard-hero__bgImage {
+  object-fit: cover;
+  object-position: 78% 48%;
+}
+
+.bof-dashboard-hero__fade {
   position: absolute;
   inset: 0;
   z-index: 1;
   pointer-events: none;
-  border-radius: inherit;
-  background: linear-gradient(
-    90deg,
-    rgba(11, 18, 36, 0.96) 0%,
-    rgba(11, 18, 36, 0.78) 10%,
-    rgba(11, 18, 36, 0.42) 24%,
-    rgba(11, 18, 36, 0.12) 40%,
-    transparent 56%
-  );
+  background:
+    linear-gradient(
+      90deg,
+      rgba(2, 6, 23, 0.98) 0%,
+      rgba(2, 6, 23, 0.94) 24%,
+      rgba(2, 6, 23, 0.78) 42%,
+      rgba(2, 6, 23, 0.3) 66%,
+      rgba(2, 6, 23, 0.08) 100%
+    ),
+    linear-gradient(180deg, rgba(2, 6, 23, 0.2) 0%, rgba(2, 6, 23, 0.7) 100%);
 }
 
-.bof-dashboard-hero__visual-frame {
-  position: absolute;
-  inset: 0;
-  overflow: hidden;
-}
-
-.bof-dashboard-hero__image {
-  object-fit: cover;
-  object-position: 84% 46%;
+.bof-dashboard-hero__content {
+  position: relative;
+  z-index: 2;
+  max-width: 58rem;
+  min-width: 0;
 }
 
 .bof-dashboard-hero__intro {
@@ -14896,30 +14882,32 @@ body {
   .bof-dashboard-page.bof-page.bof-cc-page {
     padding-bottom: max(12rem, calc(10rem + env(safe-area-inset-bottom, 0px)));
   }
-  .bof-dashboard-hero.bof-cc-hero {
-    padding: 1.15rem 1rem;
+  .bof-dashboard-hero.bof-dashboard-hero--image-bg.bof-cc-hero {
+    padding: clamp(1.25rem, 4vw, 1.75rem);
+    min-height: clamp(460px, 78vw, 620px);
   }
 
-  .bof-dashboard-hero__shell {
-    grid-template-columns: 1fr;
+  .bof-dashboard-hero__content {
+    max-width: none;
+    width: 100%;
   }
 
-  .bof-dashboard-hero__visual {
-    min-height: clamp(280px, 58vw, 480px);
-    height: clamp(280px, 58vw, 480px);
+  .bof-dashboard-hero__bgImage {
+    object-position: 84% 46%;
   }
 
-  .bof-dashboard-hero__image {
-    object-position: 78% 44%;
-  }
-
-  .bof-dashboard-hero__visual::after {
-    background: linear-gradient(
-      90deg,
-      rgba(11, 18, 36, 0.94) 0%,
-      rgba(11, 18, 36, 0.55) 18%,
-      transparent 52%
-    );
+  .bof-dashboard-hero__fade {
+    background:
+      linear-gradient(
+        90deg,
+        rgba(2, 6, 23, 0.985) 0%,
+        rgba(2, 6, 23, 0.96) 18%,
+        rgba(2, 6, 23, 0.88) 38%,
+        rgba(2, 6, 23, 0.42) 62%,
+        rgba(2, 6, 23, 0.12) 82%,
+        rgba(2, 6, 23, 0.06) 100%
+      ),
+      linear-gradient(180deg, rgba(2, 6, 23, 0.35) 0%, rgba(2, 6, 23, 0.82) 100%);
   }
 
   .bof-dashboard-route-snapshot__panel.bof-cc-route-panel {

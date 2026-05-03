@@ -139,8 +139,20 @@ export function DashboardPageClient() {
 
   return (
     <div className="bof-page bof-cc-page bof-dashboard-page">
-      <section className="bof-dashboard-hero bof-cc-hero">
-        <div className="bof-dashboard-hero__shell">
+      <section className="bof-dashboard-hero bof-dashboard-hero--image-bg bof-cc-hero">
+        <div className="bof-dashboard-hero__bg">
+          <Image
+            src="/images/bof-command-dashboard-hero.png"
+            alt="BOF command dashboard showing fleet operations, documents, compliance, and route visibility."
+            fill
+            sizes="100vw"
+            priority
+            className="bof-dashboard-hero__bgImage"
+            unoptimized
+          />
+        </div>
+        <div className="bof-dashboard-hero__fade" aria-hidden="true" />
+        <div className="bof-dashboard-hero__content">
           <div className="bof-dashboard-hero__intro bof-cc-hero-left">
             <p className="bof-cc-kicker">Executive Operations Cockpit</p>
             <h1 className="bof-title bof-cc-title">
@@ -168,19 +180,6 @@ export function DashboardPageClient() {
                 </Link>
               ))}
             </nav>
-          </div>
-          <div className="bof-dashboard-hero__visual">
-            <div className="bof-dashboard-hero__visual-frame">
-              <Image
-                src="/images/bof-command-dashboard-hero.png"
-                alt="Fleet operations dashboard preview — dispatch, documents, and route visibility on a command monitor."
-                fill
-                sizes="(max-width: 900px) 100vw, 52vw"
-                priority
-                className="bof-dashboard-hero__image"
-                unoptimized
-              />
-            </div>
           </div>
         </div>
       </section>
