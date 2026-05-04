@@ -1,14 +1,15 @@
 import Link from "next/link";
+import Image from "next/image";
 import {
   MarketingCommandCenterPreview,
   MarketingCtaPanel,
-  MarketingHomeIntegratedHero,
   MarketingIconCardGrid,
   MarketingServiceTiers,
   MarketingSection,
   MarketingSectionHeader,
 } from "@/components/marketing";
 import { BofLogo } from "@/components/BofLogo";
+import { BookDemoLink } from "@/components/BookDemoLink";
 import { IconDispatch, IconLoadProof, IconShield } from "@/components/marketing/MarketingHomeIcons";
 import type { MarketingIconCardItem } from "@/components/marketing/MarketingIconCardGrid";
 import type { Metadata } from "next";
@@ -18,13 +19,6 @@ export const metadata: Metadata = {
   description:
     "When dispatch, proof, and billing signals disagree, the whole operation misses. BOF aligns the front office with what drivers need—pretrip discipline, clean documentation, and truth that holds through settlement and claims.",
 };
-
-const HERO_TRUST = [
-  "Ground truth that survives dispatch and billing",
-  "Pretrip, proof, and packet discipline as advantage",
-  "From driver cab to owner desk—one accountable cadence",
-  "A road dog, not a watchdog: reward the work that usually goes unseen",
-] as const;
 
 const DIFFERENTIATOR_POINTS = [
   {
@@ -111,30 +105,48 @@ const STAKEHOLDER_PAIN = [
 export default function MarketingHomeAccountable() {
   return (
     <>
-      <MarketingHomeIntegratedHero
-        className="bof-home-tight-hero"
-        titleId="bof-mkt-hero-heading"
-        sectionAriaLabelledBy="bof-mkt-hero-heading"
-        eyebrow="Back office, built for the driver, accountable to the fleet"
-        brand={<BofLogo variant="dark" className="bof-mkt-home-hero-logo" priority />}
-        title={<>The Front Office Has to Be Built for Drivers to Win—Signal to Signal, Mile to Mile.</>}
-        subtitle="If dispatch, customers, and proof are telling different stories, the line misses as a system—and your drivers feel it first. BOF is the connective layer that makes front-office decisions match the reality in the cab and on the yard."
-        support="We are a road dog, not a watchdog. BOF rewards the pre-trip checks, the careful documentation, and the quiet professionalism that too often get skipped in reporting—and turns them into the proof you need for billing, settlement, and claims when it counts."
-        trustItems={HERO_TRUST}
-        trustAriaLabel="BOF capability highlights"
-        imageSrc="/generated/marketing/demoheroimage.png"
-        imageAlt="BOF command view — dispatch, drivers, documents, and settlement risk in one operating surface"
-        ctas={
-          <>
-            <Link href="/book-assessment" className="bof-mkt-btn-enterprise bof-mkt-btn-enterprise-primary">
-              Take The Assessment
+      <section className="bof-home-tight-hero" aria-labelledby="bof-mkt-hero-heading">
+        <div className="bof-mkt-container">
+          <div style={{ marginBottom: "0.9rem" }}>
+            <BofLogo variant="dark" className="bof-mkt-home-hero-logo" priority />
+          </div>
+          <h1 id="bof-mkt-hero-heading" className="sr-only">
+            BOF marketing hero image
+          </h1>
+          <div
+            style={{
+              position: "relative",
+              width: "100%",
+              minHeight: "480px",
+              borderRadius: "14px",
+              overflow: "hidden",
+              background: "#0b1220",
+              border: "1px solid rgba(255,255,255,0.08)",
+            }}
+          >
+            <Image
+              src="/generated/marketing/demoheroimage.png"
+              alt="The Back Office Platform Built for Freight Operations with command dashboard monitor and BOF operations context."
+              fill
+              priority
+              sizes="100vw"
+              className="bof-mkt-home-hero-integrated__image"
+              style={{ objectFit: "contain", objectPosition: "center top" }}
+            />
+          </div>
+          <div className="bof-mkt-home-hero-integrated__ctas" style={{ marginTop: "1rem" }}>
+            <BookDemoLink className="bof-mkt-btn-enterprise bof-mkt-btn-enterprise-primary">
+              Book a Demo
+            </BookDemoLink>
+            <Link href="/dispatch" className="bof-mkt-btn-enterprise bof-mkt-btn-enterprise-secondary">
+              Open Dispatch Board
             </Link>
-            <Link href="/dashboard" className="bof-mkt-btn-enterprise bof-mkt-btn-enterprise-secondary">
-              See The Demo
+            <Link href="/dashboard#attention-queue" className="bof-mkt-btn-enterprise bof-mkt-btn-enterprise-secondary">
+              Review Attention Queue
             </Link>
-          </>
-        }
-      />
+          </div>
+        </div>
+      </section>
 
       <nav className="bof-mkt-home-audience" aria-label="BOF by fleet type">
         <div className="bof-mkt-container">
