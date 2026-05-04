@@ -41,6 +41,8 @@ export type BofData = typeof raw & {
   /** Demo-only DQF row marks (`dqf:${canonicalType}` ids), keyed by driverId — does not remove real missing/expired signals */
   documentReviewOverrides?: Record<string, DriverReviewOverrideRow>;
   driverCredentialOverrides?: Record<string, DriverCredentialOverrideRow>;
+  /** Canonical settlement->load link adapter (typed sidecar when settlement rows do not include loadId). */
+  settlementLoadLinks?: Record<string, string>;
 };
 
 let reconciledSeed: BofData | null = null;

@@ -19,6 +19,12 @@ export type RawSettlement = NonNullable<BofData["settlements"]>[number] & {
   safetyBonus?: number;
 };
 
+function linkedLoadIdForSettlement(data: BofData, settlementId: string): string | null {
+  const link = data.settlementLoadLinks?.[settlementId];
+  if (!link) return null;
+  return data.loads.some((l) => l.id === link) ? link : null;
+}
+
 function round2(n: number): number {
   return Math.round(n * 100) / 100;
 }
@@ -166,8 +172,11 @@ export function bootstrapPayrollFromBof(data: BofData): {
     });
 
     const driverLoads = data.loads.filter((l) => l.driverId === s.driverId);
-    const primaryLoad = driverLoads[0];
-    const secondaryLoad = driverLoads[1];
+    const linkedLoadId = linkedLoadIdForSettlement(data, settlement_id);
+    const primaryLoad = linkedLoadId
+      ? data.loads.find((l) => l.id === linkedLoadId) ?? driverLoads[0]
+      : driverLoads[0];
+    const secondaryLoad = driverLoads.find((l) => l.id !== primaryLoad?.id) ?? driverLoads[1];
 
     let lineIdx = 0;
     const pushLine = (line: Omit<SettlementLine, "line_id">) => {

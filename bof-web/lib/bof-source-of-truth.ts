@@ -363,6 +363,21 @@ function reconcileCoreDocuments(data: BofData, workbook: WorkbookSnapshot | null
   return result;
 }
 
+function buildSettlementLoadLinks(data: BofData): Record<string, string> {
+  const byDriver = new Map<string, string[]>();
+  for (const load of data.loads) {
+    const list = byDriver.get(load.driverId) ?? [];
+    list.push(load.id);
+    byDriver.set(load.driverId, list);
+  }
+  const out: Record<string, string> = {};
+  for (const settlement of data.settlements) {
+    const candidate = byDriver.get(settlement.driverId)?.[0];
+    if (candidate) out[settlement.settlementId] = candidate;
+  }
+  return out;
+}
+
 /** Canonical BOF source-of-truth reconciliation for dashboard, drivers, compliance, dispatch, and settlements. */
 export function reconcileBofSourceOfTruth(seed: BofData): BofData {
   const next = structuredClone(seed) as BofData;
@@ -373,6 +388,7 @@ export function reconcileBofSourceOfTruth(seed: BofData): BofData {
     .sort((a, b) => String(a.id).localeCompare(String(b.id))) as BofData["drivers"];
 
   next.documents = reconcileCoreDocuments(next, workbook) as BofData["documents"];
+  next.settlementLoadLinks = buildSettlementLoadLinks(next);
 
   return next;
 }
