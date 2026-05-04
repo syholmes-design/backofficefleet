@@ -1,11 +1,47 @@
 <!doctype html>
-<html>
-<head><meta charset="utf-8"><title>{{title}}</title></head>
-<body style="font-family:Arial,sans-serif;background:#0f172a;color:#e2e8f0;padding:20px;">
-  <h1>{{title}}</h1>
-  <p>Load {{loadId}} ({{loadNumber}}) · Driver {{driverId}}</p>
-  <p>Settlement {{settlementId}} · Status {{settlementStatus}} · Pending Reason {{pendingReason}}</p>
-  <p>Revenue: {{revenue}} · Origin: {{origin}} · Destination: {{destination}}</p>
-  <p>Generated for BOF demo operating-document pack on {{generatedOn}}.</p>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>{{title}}</title>
+  <style>
+    @page { size: letter; margin: 0.5in; }
+    body { font-family: Arial, sans-serif; color: #111; margin: 0; background: #fff; }
+    .paper { max-width: 8.5in; margin: 0 auto; border: 1px solid #222; padding: 18px; }
+    h1 { margin: 0 0 6px; font-size: 20px; text-transform: uppercase; letter-spacing: .05em; }
+    .sub { margin: 0 0 12px; font-size: 12px; color: #333; }
+    table { width: 100%; border-collapse: collapse; margin-top: 8px; }
+    th, td { border: 1px solid #999; padding: 6px; font-size: 12px; text-align: left; vertical-align: top; }
+    th { background: #f3f6f9; text-transform: uppercase; font-size: 10px; letter-spacing: .05em; }
+    .note { margin-top: 10px; font-size: 11px; color: #444; }
+    .sigs { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 14px; }
+    .sig { border-top: 1px solid #111; padding-top: 4px; font-size: 11px; min-height: 30px; }
+  </style>
+</head>
+<body>
+  <div class="paper">
+    <h1>Settlement Summary</h1>
+    <p class="sub">BOF Settlement and Hold Review Record</p>
+    <table>
+      <tr><th>Settlement ID</th><th>Load ID</th><th>Load Number</th><th>Driver</th></tr>
+      <tr><td>{{settlementId}}</td><td>{{loadId}}</td><td>{{loadNumber}}</td><td>{{driverId}}</td></tr>
+    </table>
+    <table>
+      <tr><th>Settlement Status</th><th>Pending / Hold Reason</th><th>Gross Revenue Reference</th></tr>
+      <tr><td>{{settlementStatus}}</td><td>{{pendingReason}}</td><td>{{revenue}}</td></tr>
+    </table>
+    <table>
+      <tr><th>Lane</th><th>Required Support</th><th>Release Condition</th></tr>
+      <tr>
+        <td>{{origin}} -> {{destination}}</td>
+        <td>POD, BOL, invoice, and exception stack where applicable</td>
+        <td>All required proof rows present and hold reasons resolved</td>
+      </tr>
+    </table>
+    <p class="note">Generated on {{generatedOn}} from canonical BOF load/settlement data.</p>
+    <div class="sigs">
+      <div class="sig">Payroll Reviewer Signature / Date</div>
+      <div class="sig">Operations Approval Signature / Date</div>
+    </div>
+  </div>
 </body>
 </html>

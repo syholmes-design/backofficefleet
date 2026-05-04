@@ -1,11 +1,41 @@
 <!doctype html>
-<html>
-<head><meta charset="utf-8"><title>BOF L003 Lumper Reimbursement Support</title></head>
-<body style="font-family:Arial,sans-serif;background:#111827;color:#e5e7eb;padding:20px;">
-  <h1>BOF L003 Lumper Reimbursement Support</h1>
-  <p>Load L003 (503) · Driver DRV-003</p>
-  <p>Settlement STL-003 · Pending Reason N/A</p>
-  <p>Support evidence path: /evidence/loads/L003/lumper-receipt.png</p>
-  <p>Prepared for reimbursement review on 2026-05-04.</p>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>BOF L003 Lumper Reimbursement Support</title>
+  <style>
+    @page { size: letter; margin: 0.5in; }
+    body { font-family: Arial, sans-serif; color: #111; margin: 0; background: #fff; }
+    .paper { max-width: 8.5in; margin: 0 auto; border: 1px solid #222; padding: 18px; }
+    h1 { margin: 0 0 6px; font-size: 20px; text-transform: uppercase; letter-spacing: .05em; }
+    .sub { margin: 0 0 12px; font-size: 12px; color: #333; }
+    table { width: 100%; border-collapse: collapse; margin-top: 8px; }
+    th, td { border: 1px solid #999; padding: 6px; font-size: 12px; text-align: left; vertical-align: top; }
+    th { background: #f3f6f9; text-transform: uppercase; font-size: 10px; letter-spacing: .05em; }
+    .note { margin-top: 10px; font-size: 11px; color: #444; }
+    .sig { border-top: 1px solid #111; padding-top: 4px; margin-top: 14px; font-size: 11px; min-height: 30px; width: 48%; }
+  </style>
+</head>
+<body>
+  <div class="paper">
+    <h1>Lumper Reimbursement Support</h1>
+    <p class="sub">Accessorial Reimbursement and Audit Support Form</p>
+    <table>
+      <tr><th>Load ID</th><th>Load Number</th><th>Driver</th><th>Settlement</th></tr>
+      <tr><td>L003</td><td>503</td><td>DRV-003</td><td>STL-003</td></tr>
+    </table>
+    <table>
+      <tr><th>Pending Reason</th><th>Lumper Receipt Reference</th><th>Review Date</th></tr>
+      <tr><td>N/A</td><td>/evidence/loads/L003/lumper-receipt.png</td><td>2026-05-04</td></tr>
+    </table>
+    <table>
+      <tr><th>Reviewer Checklist</th><th>Status</th></tr>
+      <tr><td>Receipt path present and readable</td><td>To review</td></tr>
+      <tr><td>Amount aligns to settlement deduction</td><td>To review</td></tr>
+      <tr><td>Accessorial approved by dispatch/payroll</td><td>To review</td></tr>
+    </table>
+    <p class="note">Deterministic BOF support document generated from current settlement context.</p>
+    <div class="sig">Payroll Approval Signature / Date</div>
+  </div>
 </body>
 </html>

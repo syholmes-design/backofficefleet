@@ -1,11 +1,43 @@
 <!doctype html>
-<html>
-<head><meta charset="utf-8"><title>{{title}}</title></head>
-<body style="font-family:Arial,sans-serif;background:#111827;color:#e5e7eb;padding:20px;">
-  <h1>{{title}}</h1>
-  <p>Load {{loadId}} ({{loadNumber}}) · Driver {{driverId}}</p>
-  <p>Invoice path: {{invoicePath}}</p>
-  <p>Factoring notice path: {{factoringNoticePath}}</p>
-  <p>Submission date (deterministic): {{generatedOn}}</p>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>{{title}}</title>
+  <style>
+    @page { size: letter; margin: 0.5in; }
+    body { font-family: Arial, sans-serif; color: #111; margin: 0; background: #fff; }
+    .paper { max-width: 8.5in; margin: 0 auto; border: 1px solid #222; padding: 18px; }
+    h1 { margin: 0 0 6px; font-size: 20px; text-transform: uppercase; letter-spacing: .05em; }
+    .sub { margin: 0 0 12px; font-size: 12px; color: #333; }
+    table { width: 100%; border-collapse: collapse; margin-top: 8px; }
+    th, td { border: 1px solid #999; padding: 6px; font-size: 12px; text-align: left; vertical-align: top; }
+    th { background: #f3f6f9; text-transform: uppercase; font-size: 10px; letter-spacing: .05em; }
+    .sig-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 14px; }
+    .sig { border-top: 1px solid #111; padding-top: 4px; font-size: 11px; min-height: 30px; }
+  </style>
+</head>
+<body>
+  <div class="paper">
+    <h1>Factoring Submission Cover</h1>
+    <p class="sub">Accounts Receivable Assignment and Submission Checklist</p>
+    <table>
+      <tr><th>Load ID</th><th>Load Number</th><th>Driver</th><th>Submission Date</th></tr>
+      <tr><td>{{loadId}}</td><td>{{loadNumber}}</td><td>{{driverId}}</td><td>{{generatedOn}}</td></tr>
+    </table>
+    <table>
+      <tr><th>Required Attachment</th><th>Reference</th><th>Status</th></tr>
+      <tr><td>Invoice</td><td>{{invoicePath}}</td><td>Attached by link</td></tr>
+      <tr><td>Factoring Notification</td><td>{{factoringNoticePath}}</td><td>Attached by link</td></tr>
+      <tr><td>POD / BOL support</td><td>/generated/loads/{{loadId}}/pod.html and /generated/loads/{{loadId}}/bol.html</td><td>Referenced</td></tr>
+    </table>
+    <table>
+      <tr><th>Certification</th></tr>
+      <tr><td>Submitter certifies attached references correspond to the listed load and invoice package for assignment review.</td></tr>
+    </table>
+    <div class="sig-row">
+      <div class="sig">AR Specialist Signature / Date</div>
+      <div class="sig">Factoring Coordinator Signature / Date</div>
+    </div>
+  </div>
 </body>
 </html>

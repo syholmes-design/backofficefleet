@@ -1,11 +1,43 @@
 <!doctype html>
-<html>
-<head><meta charset="utf-8"><title>BOF L009 driver statement</title></head>
-<body style="font-family:Arial,sans-serif;background:#111827;color:#e5e7eb;padding:20px;">
-  <h1>BOF L009 driver statement</h1>
-  <p>Driver DRV-009 statement for load L009 (509).</p>
-  <p>Route: BlueLine Retail - Cleveland, OH to Lakeside Grocery - Dallas, TX</p>
-  <p>Statement focus: chain-of-custody, seal/POD observations, and delivery exceptions.</p>
-  <p>Generated on 2026-05-04 for demo review.</p>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>BOF L009 Operating Report</title>
+  <style>
+    @page { size: letter; margin: 0.5in; }
+    body { font-family: Arial, sans-serif; color: #111; margin: 0; background: #fff; }
+    .paper { max-width: 8.5in; margin: 0 auto; border: 1px solid #222; padding: 18px; }
+    h1 { margin: 0 0 6px; font-size: 20px; text-transform: uppercase; letter-spacing: .05em; }
+    .sub { margin: 0 0 12px; font-size: 12px; color: #333; }
+    .meta { border: 1px solid #999; padding: 8px; font-size: 12px; margin-bottom: 10px; }
+    .label { font-size: 10px; text-transform: uppercase; font-weight: 700; color: #444; }
+    .statement { border: 1px solid #999; min-height: 180px; padding: 10px; font-size: 12px; line-height: 1.45; }
+    .statement p { margin: 0 0 8px; }
+    .sig-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 16px; }
+    .sig { border-top: 1px solid #111; padding-top: 4px; font-size: 11px; min-height: 32px; }
+  </style>
+</head>
+<body>
+  <div class="paper">
+    <h1>Driver Statement</h1>
+    <p class="sub">Load Incident Narrative and Chain-of-Custody Statement</p>
+    <div class="meta">
+      <div class="label">Load / Driver</div>
+      Load L009 (509) &nbsp;|&nbsp; Driver DRV-009 &nbsp;|&nbsp; Settlement STL-009
+      <br/>Route: BlueLine Retail - Cleveland, OH -> Lakeside Grocery - Dallas, TX
+      <br/>Generated Date: 2026-05-04
+    </div>
+    <div class="statement">
+      <p>I, DRV-009, submit this statement regarding load L009.</p>
+      <p>I accepted dispatch instructions for the route listed above and followed standard pickup, transit, and delivery procedures.</p>
+      <p>Observed condition and timeline: Dispatch exception=true; seal=Mismatch; pod=verified</p>
+      <p>Seal / POD observations: Seal status Mismatch; POD status verified.</p>
+      <p>I affirm this statement is complete to the best of my knowledge and is provided for claims and settlement review.</p>
+    </div>
+    <div class="sig-row">
+      <div class="sig">Driver Signature / Date</div>
+      <div class="sig">Witness or Dispatcher Signature / Date</div>
+    </div>
+  </div>
 </body>
 </html>

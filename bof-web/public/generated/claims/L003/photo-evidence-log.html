@@ -1,15 +1,44 @@
 <!doctype html>
-<html>
-<head><meta charset="utf-8"><title>BOF L003 photo evidence log</title></head>
-<body style="font-family:Arial,sans-serif;background:#0f172a;color:#e2e8f0;padding:20px;">
-  <h1>BOF L003 photo evidence log</h1>
-  <p>Load L003 · Driver DRV-003</p>
-  <ul>
-    <li>Pickup photo: /evidence/loads/L003/pickup-photo.png</li>
-    <li>Delivery photo: /evidence/loads/L003/delivery-photo.png</li>
-    <li>Seal delivery photo: /evidence/loads/L003/seal-delivery-photo.png</li>
-    <li>Claim photo: /evidence/loads/L003/cargo-damage-photo.png</li>
-  </ul>
-  <p>Generated on 2026-05-04 from canonical BOF evidence paths.</p>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>BOF L003 Operating Report</title>
+  <style>
+    @page { size: letter; margin: 0.5in; }
+    body { font-family: Arial, sans-serif; color: #111; margin: 0; background: #fff; }
+    .paper { max-width: 8.5in; margin: 0 auto; border: 1px solid #222; padding: 18px; }
+    h1 { margin: 0 0 6px; font-size: 20px; text-transform: uppercase; letter-spacing: .05em; }
+    .sub { margin: 0 0 12px; font-size: 12px; color: #333; }
+    table { width: 100%; border-collapse: collapse; margin-top: 8px; }
+    th, td { border: 1px solid #999; padding: 6px; font-size: 12px; text-align: left; vertical-align: top; }
+    th { background: #f3f6f9; text-transform: uppercase; font-size: 10px; letter-spacing: .05em; }
+    .small { font-size: 11px; color: #444; margin-top: 10px; }
+    .sig { border-top: 1px solid #111; padding-top: 4px; margin-top: 16px; font-size: 11px; min-height: 30px; width: 48%; }
+  </style>
+</head>
+<body>
+  <div class="paper">
+    <h1>Photo Evidence Log</h1>
+    <p class="sub">Claim Support Evidence Register</p>
+    <table>
+      <tr><th>Load ID</th><th>Driver</th><th>Settlement</th><th>Generated Date</th></tr>
+      <tr><td>L003</td><td>DRV-003</td><td>STL-003</td><td>2026-05-04</td></tr>
+    </table>
+    <table>
+      <tr><th>Evidence Type</th><th>Reference Path</th><th>Notes</th></tr>
+      <tr><td>Pickup Photo</td><td>/evidence/loads/L003/pickup-photo.png</td><td>Pickup condition and dock context</td></tr>
+      <tr><td>Delivery Photo</td><td>/evidence/loads/L003/delivery-photo.png</td><td>Delivery condition and consignee handoff context</td></tr>
+      <tr><td>Seal Delivery Photo</td><td>/evidence/loads/L003/seal-delivery-photo.png</td><td>Seal integrity at delivery event</td></tr>
+      <tr><td>Claim Photo</td><td>/evidence/loads/L003/cargo-damage-photo.png</td><td>Damage-focused support media</td></tr>
+    </table>
+    <table>
+      <tr><th>Audit Checkpoint</th><th>Reviewer Mark</th><th>Comment</th></tr>
+      <tr><td>File path resolves</td><td>Pending</td><td></td></tr>
+      <tr><td>Timestamp sequence supports narrative</td><td>Pending</td><td></td></tr>
+      <tr><td>Media aligns with claim intake details</td><td>Pending</td><td></td></tr>
+    </table>
+    <p class="small">Route context: BlueLine Retail - Indianapolis, IN -> Lakeside Grocery - Atlanta, GA. Incident context: Dispatch exception=true; seal=Mismatch; pod=verified</p>
+    <div class="sig">Claims File Reviewer Signature / Date</div>
+  </div>
 </body>
 </html>

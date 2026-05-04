@@ -1,11 +1,52 @@
 <!doctype html>
-<html>
-<head><meta charset="utf-8"><title>{{title}}</title></head>
-<body style="font-family:Arial,sans-serif;background:#0b1220;color:#d1d5db;padding:20px;">
-  <h1>{{title}}</h1>
-  <p>Load {{loadId}} ({{loadNumber}}) · Driver {{driverId}}</p>
-  <p>Issue summary: {{incidentContext}}</p>
-  <p>Seal status {{sealStatus}} · POD status {{podStatus}}</p>
-  <p>Generated on {{generatedOn}} for BOF claims documentation.</p>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>{{title}}</title>
+  <style>
+    @page { size: letter; margin: 0.5in; }
+    body { font-family: Arial, sans-serif; color: #111; margin: 0; background: #fff; }
+    .paper { max-width: 8.5in; margin: 0 auto; border: 1px solid #222; padding: 18px; }
+    h1 { margin: 0 0 4px; font-size: 20px; text-transform: uppercase; letter-spacing: .05em; }
+    .sub { margin: 0 0 12px; font-size: 12px; color: #333; }
+    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .cell { border: 1px solid #999; padding: 8px; min-height: 52px; font-size: 12px; }
+    .label { font-size: 10px; text-transform: uppercase; font-weight: 700; color: #444; margin-bottom: 3px; }
+    table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+    th, td { border: 1px solid #999; padding: 6px; font-size: 12px; text-align: left; vertical-align: top; }
+    th { background: #f3f6f9; text-transform: uppercase; font-size: 10px; letter-spacing: .05em; }
+    .sig-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 16px; }
+    .sig { border-top: 1px solid #111; padding-top: 4px; font-size: 11px; min-height: 32px; }
+  </style>
+</head>
+<body>
+  <div class="paper">
+    <h1>Incident Report</h1>
+    <p class="sub">Dispatch Exception and Claims Intake Support Record</p>
+    <div class="grid">
+      <div class="cell"><div class="label">Load</div>{{loadId}} ({{loadNumber}})</div>
+      <div class="cell"><div class="label">Driver</div>{{driverId}}</div>
+      <div class="cell"><div class="label">Route</div>{{origin}} -> {{destination}}</div>
+      <div class="cell"><div class="label">Generated Date</div>{{generatedOn}}</div>
+    </div>
+    <table>
+      <tr><th>Incident Details</th><th>Status Snapshot</th></tr>
+      <tr>
+        <td>{{incidentContext}}</td>
+        <td>Seal status: {{sealStatus}}<br/>POD status: {{podStatus}}<br/>Settlement reason: {{pendingReason}}</td>
+      </tr>
+    </table>
+    <table>
+      <tr><th>Primary Risk</th><th>Mitigation</th></tr>
+      <tr>
+        <td>Documentation variance can impact claim recovery and settlement release timing.</td>
+        <td>Maintain aligned evidence log, driver statement, and insurance notification references.</td>
+      </tr>
+    </table>
+    <div class="sig-row">
+      <div class="sig">Dispatch Supervisor Signature / Date</div>
+      <div class="sig">Claims Reviewer Signature / Date</div>
+    </div>
+  </div>
 </body>
 </html>
