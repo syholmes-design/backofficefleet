@@ -2,7 +2,7 @@ import type { BofData } from "./load-bof-data";
 import { reconcileCredentialIncident } from "./compliance/credential-incident-reconciliation";
 import { getDriverMedicalCardStatus } from "./driver-credential-status";
 import { getLoadProofItems } from "./load-proof";
-import { getSafetyBonusByDriverId } from "./safety-scorecard";
+import { getSafetyBonusByDriverId, getSafetyScorecardRows } from "./safety-scorecard";
 
 export type CommandCenterItem = {
   id: string;
@@ -12,7 +12,8 @@ export type CommandCenterItem = {
     | "Compliance"
     | "Dispatch / proof"
     | "Driver readiness"
-    | "Money at risk";
+    | "Money at risk"
+    | "Safety";
   title: string;
   detail: string;
   driver?: string;
@@ -41,7 +42,8 @@ export function buildCommandCenterItems(data: BofData): CommandCenterItem[] {
       const blocked = row.status === "Blocked";
       items.push({
         id: row.id,
-        severity: blocked ? "critical" : "high",
+        /** Blocked releases are elevated; open exposure rows stay medium unless another module marks them higher. */
+        severity: blocked ? "high" : "medium",
         bucket: "Money at risk",
         title: row.category,
         detail: row.rootCause,
@@ -163,6 +165,22 @@ export function buildCommandCenterItems(data: BofData): CommandCenterItem[] {
       driver: driverName(data, driverId),
       driverId,
       nextAction: "Collect or renew documents before next dispatch",
+      owner: "Safety",
+      status: "Open",
+    });
+  }
+
+  for (const row of getSafetyScorecardRows()) {
+    if (row.performanceTier !== "At Risk") continue;
+    items.push({
+      id: `SAFETY-${row.driverId}`,
+      severity: "medium",
+      bucket: "Safety",
+      title: `Safety scorecard — ${row.driverId} (at-risk tier)`,
+      detail: `HOS compliance ${row.hosCompliancePct}%; coaching recommended in Safety workspace.`,
+      driver: driverName(data, row.driverId),
+      driverId: row.driverId,
+      nextAction: "Open Safety workspace and assign coaching follow-up",
       owner: "Safety",
       status: "Open",
     });

@@ -2,37 +2,44 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { useMemo, type ReactNode } from "react";
+import { useMemo, useState, type ReactNode } from "react";
 import { BookDemoLink } from "@/components/BookDemoLink";
 import { useBofDemoData } from "@/lib/bof-demo-data-context";
 import { sectorLinks } from "@/lib/site-links";
 import { formatUsd } from "@/lib/format-money";
 import {
   getDashboardTodayChanges,
-  getDriverReadinessChartData,
-  getFleetRiskChartData,
-  getLoadStatusChartData,
   getMainDashboardSummary,
-  getOwnerAttentionQueue,
   getSettlementStatusChartData,
   type BreakdownPoint,
   type DashboardKpi,
-  type OwnerAttentionItem,
 } from "@/lib/dashboard-insights";
+import {
+  buildExecutiveDashboardModel,
+  type ExecutiveDashboardOwnerItem,
+} from "@/lib/dashboard-command-summary";
 import { settlementTotals } from "@/lib/executive-layer";
 import { getPayrollMonthlyTrend } from "@/lib/demo-trends";
 import { getClientLoadRequests } from "@/lib/client-load-requests";
+import { useIntakeEngineStore } from "@/lib/stores/intake-engine-store";
+
+const SEV_ORDER: Record<ExecutiveDashboardOwnerItem["severity"], number> = {
+  critical: 0,
+  high: 1,
+  medium: 2,
+};
 
 export function DashboardPageClient() {
   const { data } = useBofDemoData();
+  const intakeCommandCenterItems = useIntakeEngineStore((s) => s.commandCenterIntakeItems);
 
   const st = useMemo(() => settlementTotals(data), [data]);
   const summary = useMemo(() => getMainDashboardSummary(data), [data]);
-  const fleetRisk = useMemo(() => getFleetRiskChartData(data), [data]);
-  const readiness = useMemo(() => getDriverReadinessChartData(data), [data]);
-  const loadStatus = useMemo(() => getLoadStatusChartData(data), [data]);
+  const exec = useMemo(
+    () => buildExecutiveDashboardModel(data, intakeCommandCenterItems),
+    [data, intakeCommandCenterItems]
+  );
   const settlementStatus = useMemo(() => getSettlementStatusChartData(data), [data]);
-  const attentionQueue = useMemo(() => getOwnerAttentionQueue(data), [data]);
   const pendingClientLoadRequests = useMemo(
     () =>
       getClientLoadRequests(data).filter(
@@ -50,92 +57,74 @@ export function DashboardPageClient() {
     [data]
   );
 
-  const kpis = useMemo<Array<DashboardKpi & { href?: string }>>(
+  const [expandedReadiness, setExpandedReadiness] = useState<Record<string, boolean>>({});
+
+  /** Command-center KPI strip — every value is derived in `buildExecutiveDashboardModel` from BOF + merged CC queue. */
+  const commandKpis = useMemo<Array<DashboardKpi & { href?: string }>>(
     () => [
       {
         label: "Active Loads",
-        value: summary.activeLoads,
-        hint: "En route + pending loads currently in play.",
-        tone: summary.activeLoads > 5 ? "info" : "warn",
-        delta: `${summary.activeLoads > 5 ? "High" : "Normal"} fleet movement`,
+        value: exec.topSummary.activeLoads,
+        hint: "En route + pending loads in the dispatch register.",
+        tone: exec.topSummary.activeLoads > 5 ? "info" : "warn",
+        delta: "Same load list as dispatch",
         href: "/dispatch",
       },
       {
-        label: "Drivers Ready",
-        value: summary.driversReady,
-        hint: "Drivers clear for immediate dispatch assignment.",
-        tone: "ok",
-        delta: `${summary.driversReady} dispatch-eligible`,
-        href: "/drivers",
-      },
-      {
         label: "Loads At Risk",
-        value: summary.loadsAtRisk,
-        hint: "Exception, seal mismatch, or pending proof risk.",
-        tone: summary.loadsAtRisk > 3 ? "danger" : "warn",
-        delta: summary.loadsAtRisk > 0 ? "Needs owner review" : "No flagged loads",
+        value: exec.topSummary.loadsAtRisk,
+        hint: "Exception, seal mismatch, or pending proof on active loads.",
+        tone: exec.topSummary.loadsAtRisk > 3 ? "danger" : "warn",
+        delta: exec.topSummary.loadsAtRisk > 0 ? "Review dispatch proof stack" : "No flagged loads",
         href: "/loads",
       },
       {
-        label: "Compliance Blocked",
-        value: summary.complianceBlocked,
-        hint: "Open compliance incidents affecting operations.",
-        tone: summary.complianceBlocked > 0 ? "danger" : "ok",
-        delta: summary.complianceBlocked > 0 ? "Blocking dispatch readiness" : "No open blockers",
+        label: "Dispatch Blocked",
+        value: exec.topSummary.dispatchBlockedDrivers,
+        hint: "Drivers in canonical dispatch-blocked review state.",
+        tone: exec.topSummary.dispatchBlockedDrivers > 0 ? "danger" : "ok",
+        delta:
+          exec.topSummary.dispatchBlockedDrivers > 0
+            ? "Clear compliance / document gates"
+            : "No dispatch hard-gates",
         href: "/drivers",
       },
       {
+        label: "Documents Needing Action",
+        value: exec.topSummary.documentsNeedingAction,
+        hint: "Compliance + credential queue rows from the same Command Center feed.",
+        tone: exec.topSummary.documentsNeedingAction > 0 ? "warn" : "ok",
+        delta: "Each row maps to a CC item",
+        href: "/command-center",
+      },
+      {
         label: "Settlement Holds",
-        value: summary.settlementHolds,
-        hint: "Driver settlements held or pending release.",
-        tone: summary.settlementHolds > 0 ? "warn" : "ok",
-        delta: summary.settlementHolds > 0 ? "Release queue active" : "Settlement queue clear",
+        value: exec.topSummary.settlementHolds,
+        hint: "Drivers in pending / on-hold settlement posture (settlement totals).",
+        tone: exec.topSummary.settlementHolds > 0 ? "warn" : "ok",
+        delta: exec.topSummary.settlementHolds > 0 ? "Release queue active" : "Settlement queue clear",
         href: "/settlements",
       },
       {
         label: "Claim Exposure",
-        value: formatUsd(summary.claimExposure),
-        hint: "Open claim-linked money-at-risk exposure.",
-        tone: summary.claimExposure > 0 ? "danger" : "ok",
-        delta: summary.claimExposure > 0 ? "Exposure currently open" : "No active claim exposure",
+        value: formatUsd(exec.topSummary.claimExposureUsd),
+        hint: "Open claim-linked rows in the money-at-risk register.",
+        tone: exec.topSummary.claimExposureUsd > 0 ? "danger" : "ok",
+        delta: exec.topSummary.claimExposureUsd > 0 ? "Exposure open" : "No claim-linked exposure",
         href: "/money-at-risk",
       },
-      {
-        label: "Backhaul Recovery",
-        value: formatUsd(summary.backhaulRecovery),
-        hint: "Current backhaul pay tracked across fleet loads.",
-        tone: "info",
-        delta: "Recovery opportunity in flight",
-        href: "/dispatch",
-      },
-      {
-        label: "Safety At Risk",
-        value: summary.safetyAtRisk,
-        hint: "Drivers in at-risk safety tier right now.",
-        tone: summary.safetyAtRisk > 0 ? "danger" : "ok",
-        delta: summary.safetyAtRisk > 0 ? "Needs coaching plan" : "Safety posture stable",
-        href: "/safety",
-      },
     ],
-    [summary]
+    [exec.topSummary]
   );
 
-  const groupedKpis = useMemo(
-    () => ({
-      operations: kpis.filter((kpi) => ["Active Loads", "Loads At Risk", "Backhaul Recovery"].includes(kpi.label)),
-      peopleCompliance: kpis.filter((kpi) =>
-        ["Drivers Ready", "Compliance Blocked", "Safety At Risk"].includes(kpi.label)
-      ),
-      money: kpis.filter((kpi) => ["Settlement Holds", "Claim Exposure"].includes(kpi.label)),
-    }),
-    [kpis]
-  );
-
-  const criticalQueue = attentionQueue.filter((item) => item.severity === "critical");
-  const latestCriticalAlert = criticalQueue[0] ?? null;
-  const nonCriticalQueue = attentionQueue.filter((item) => item.severity !== "critical");
-  const prioritizedQueue = [...criticalQueue, ...nonCriticalQueue];
+  const criticalQueue = exec.ownerAttentionQueue.filter((item) => item.severity === "critical");
+  const prioritizedQueue = useMemo(() => {
+    return [...exec.ownerAttentionQueue].sort(
+      (a, b) => SEV_ORDER[a.severity] - SEV_ORDER[b.severity] || a.id.localeCompare(b.id)
+    );
+  }, [exec.ownerAttentionQueue]);
   const queuePreview = prioritizedQueue.slice(0, 4);
+  const snapshotAlert = prioritizedQueue[0] ?? null;
 
   return (
     <div className="bof-page bof-cc-page bof-dashboard-page">
@@ -188,41 +177,26 @@ export function DashboardPageClient() {
 
       <section className="bof-dashboard-route-snapshot" aria-label="Route and alert snapshot">
         <RouteSnapshotCard
-          latestCriticalAlert={latestCriticalAlert}
-          loadsAtRisk={summary.loadsAtRisk}
+          priorityAlert={snapshotAlert}
+          loadsAtRisk={exec.topSummary.loadsAtRisk}
           topRiskLoads={topRiskLoads}
         />
       </section>
 
-      <section className="bof-cc-kpi-sections" aria-label="Executive KPI strip">
+      <section className="bof-cc-kpi-sections" aria-label="Command center summary">
         <article className="bof-cc-panel">
           <div className="bof-cc-kpi-group-head">
-            <h2 className="bof-h2">Operations</h2>
+            <h2 className="bof-h2">Fleet command summary</h2>
+            <p className="bof-cc-panel-sub" style={{ marginTop: "0.35rem" }}>
+              Metrics below use the same merged Command Center queue as{" "}
+              <Link href="/command-center" className="bof-link-secondary">
+                Command Center
+              </Link>{" "}
+              plus canonical BOF registers (loads, settlements, money-at-risk, driver review).
+            </p>
           </div>
           <div className="bof-cc-kpi-grid">
-            {groupedKpis.operations.map((kpi) => (
-              <KpiCard key={kpi.label} kpi={kpi} />
-            ))}
-          </div>
-        </article>
-
-        <article className="bof-cc-panel">
-          <div className="bof-cc-kpi-group-head">
-            <h2 className="bof-h2">People &amp; Compliance</h2>
-          </div>
-          <div className="bof-cc-kpi-grid">
-            {groupedKpis.peopleCompliance.map((kpi) => (
-              <KpiCard key={kpi.label} kpi={kpi} />
-            ))}
-          </div>
-        </article>
-
-        <article className="bof-cc-panel">
-          <div className="bof-cc-kpi-group-head">
-            <h2 className="bof-h2">Money</h2>
-          </div>
-          <div className="bof-cc-kpi-grid">
-            {groupedKpis.money.map((kpi) => (
+            {commandKpis.map((kpi) => (
               <KpiCard key={kpi.label} kpi={kpi} />
             ))}
           </div>
@@ -231,21 +205,28 @@ export function DashboardPageClient() {
 
       <section className="bof-cc-panel bof-cc-attention-priority" aria-label="Priority owner actions" id="attention-queue">
         <div className="bof-cc-panel-head">
-          <h2 className="bof-h2">Owner&apos;s Attention Queue</h2>
+          <h2 className="bof-h2">What needs attention</h2>
           <Link href="/command-center" className="bof-link-secondary">Open full queue →</Link>
         </div>
         <p className="bof-cc-panel-sub">
-          Critical blockers are pinned first with direct actions into the canonical BOF workflow.
+          Sourced from <code className="text-xs opacity-90">buildCommandCenterItems</code> merged with intake CC
+          rows — severity matches the canonical queue, not cosmetic labels.
         </p>
-        <div className="bof-cc-critical-banner">
-          <strong>{criticalQueue.length}</strong> critical items require immediate owner action.
-        </div>
+        {criticalQueue.length > 0 ? (
+          <div className="bof-cc-critical-banner">
+            <strong>{criticalQueue.length}</strong> item{criticalQueue.length === 1 ? "" : "s"} at critical severity
+            (compliance / hard gates).
+          </div>
+        ) : (
+          <p className="bof-cc-panel-sub">No critical-severity queue items right now.</p>
+        )}
         <div className="bof-cc-queue-cards">
           {queuePreview.map((item) => (
             <article key={item.id} className={`bof-cc-queue-card bof-cc-queue-${item.severity}`}>
               <div className="bof-cc-queue-head">
                 <span className={`bof-cc-sev bof-cc-sev-${item.severity}`}>{item.severity}</span>
                 <span className="bof-cc-chip bof-cc-chip-info">{item.area}</span>
+                <span className="bof-cc-chip bof-cc-chip-info">{item.entityType}</span>
               </div>
               <p className="bof-cc-queue-target">{item.target}</p>
               <p className="bof-cc-queue-issue">{item.issue}</p>
@@ -274,9 +255,61 @@ export function DashboardPageClient() {
       </section>
 
       <section className="bof-cc-chart-grid" aria-label="Fleet breakdown charts">
-        <DonutChartCard title="Fleet Risk Breakdown" subtitle="Compliance, dispatch, safety, settlements, and claims." data={fleetRisk} />
-        <BarChartCard title="Driver Readiness" subtitle="Ready vs review vs blocked dispatch states." data={readiness} />
-        <DonutChartCard title="Load Status Breakdown" subtitle="On-time, risk, delayed, and completed loads." data={loadStatus} />
+        <DonutChartCard
+          title="Fleet Risk Breakdown"
+          subtitle="Counts of Command Center items by lane (same feed as the queue above)."
+          data={exec.fleetRiskFromAlerts}
+        />
+        <div className="bof-cc-panel">
+          <BarChartCard
+            title="Driver Readiness"
+            subtitle="Ready, action needed (only when review lists issues), dispatch blocked."
+            data={exec.driverReadiness}
+          />
+          <div className="bof-cc-panel-sub" style={{ marginTop: "0.75rem" }}>
+            <strong>Details</strong> — from <code className="text-xs opacity-90">getDriverReviewExplanation</code>{" "}
+            per driver.
+          </div>
+          <ul className="bof-cc-notes" style={{ listStyle: "none", padding: 0, marginTop: "0.5rem" }}>
+            {exec.driverReadinessDetails
+              .filter((r) => r.segment !== "ready")
+              .map((row) => (
+                <li key={row.driverId} className="bof-cc-note bof-cc-note-warn" style={{ marginBottom: "0.35rem" }}>
+                  <button
+                    type="button"
+                    className="bof-link-secondary"
+                    style={{ background: "none", border: "none", padding: 0, cursor: "pointer", font: "inherit" }}
+                    onClick={() =>
+                      setExpandedReadiness((prev) => ({ ...prev, [row.driverId]: !prev[row.driverId] }))
+                    }
+                  >
+                    {row.driverId} — {row.segment === "blocked" ? "Dispatch blocked" : "Action needed"}
+                    {expandedReadiness[row.driverId] ? " ▲" : " ▼"}
+                  </button>
+                  {expandedReadiness[row.driverId] ? (
+                    <ul style={{ marginTop: "0.35rem", paddingLeft: "1.1rem" }}>
+                      {row.reasonLines.length ? (
+                        row.reasonLines.map((line, idx) => (
+                          <li key={`${row.driverId}-reason-${idx}`}>{line}</li>
+                        ))
+                      ) : (
+                        <li>
+                          <Link href={`/drivers/${row.driverId}#driver-review`} className="bof-cc-table-link">
+                            Open driver review
+                          </Link>
+                        </li>
+                      )}
+                    </ul>
+                  ) : null}
+                </li>
+              ))}
+          </ul>
+        </div>
+        <DonutChartCard
+          title="Load Status Breakdown"
+          subtitle="Partition of every load in `data.loads` (dispatch register)."
+          data={exec.loadStatus}
+        />
         <BarChartCard title="Settlement Exposure" subtitle="Paid vs pending vs hold/review settlement posture." data={settlementStatus} />
         <TrendCard
           title="6-Month Payroll / Revenue Trend"
@@ -293,18 +326,20 @@ export function DashboardPageClient() {
 
       <section className="bof-cc-panel" aria-label="Owner attention queue table">
         <div className="bof-cc-panel-head">
-          <h3 className="bof-cc-panel-title">Queue Detail</h3>
+          <h3 className="bof-cc-panel-title">Queue detail</h3>
         </div>
         <div className="bof-cc-table-wrap">
           <table className="bof-cc-table">
             <thead>
               <tr>
                 <th>Severity</th>
-                <th>Category</th>
+                <th>Area</th>
+                <th>Entity</th>
+                <th>Entity ID</th>
                 <th>Driver / Load</th>
                 <th>Issue</th>
-                <th>Financial Impact</th>
-                <th>Recommended Fix</th>
+                <th>Financial impact</th>
+                <th>Recommended fix</th>
                 <th>Action</th>
               </tr>
             </thead>
@@ -313,6 +348,8 @@ export function DashboardPageClient() {
                 <tr key={item.id} className={item.severity === "critical" ? "bof-cc-row-critical" : undefined}>
                   <td><span className={`bof-cc-sev bof-cc-sev-${item.severity}`}>{item.severity}</span></td>
                   <td><span className="bof-cc-chip bof-cc-chip-info">{item.area}</span></td>
+                  <td>{item.entityType}</td>
+                  <td>{item.entityId}</td>
                   <td>{item.target}</td>
                   <td>{item.issue}</td>
                   <td>{item.financialImpact ? formatUsd(item.financialImpact) : "—"}</td>
@@ -368,7 +405,7 @@ export function DashboardPageClient() {
           <h2 className="bof-h2">What Changed Today</h2>
           <div className="bof-cc-notes">
             <ExecutiveNote label="Loads newly at risk" value={summary.loadsAtRisk} tone={summary.loadsAtRisk > 0 ? "danger" : "ok"} detail={todayChanges[0]} />
-            <ExecutiveNote label="Drivers newly blocked" value={summary.complianceBlocked} tone={summary.complianceBlocked > 0 ? "warn" : "ok"} detail={`${summary.driversReady} drivers currently dispatch-ready.`} />
+            <ExecutiveNote label="Drivers dispatch-blocked" value={summary.complianceBlocked} tone={summary.complianceBlocked > 0 ? "warn" : "ok"} detail={`${summary.driversReady} drivers currently dispatch-ready · ${summary.openComplianceIncidents} open compliance incident(s) in queue.`} />
             <ExecutiveNote label="Settlement holds changed" value={summary.settlementHolds} tone={summary.settlementHolds > 0 ? "warn" : "ok"} detail={todayChanges[1]} />
             <ExecutiveNote label="Claim exposure changed" value={formatUsd(summary.claimExposure)} tone={summary.claimExposure > 0 ? "danger" : "ok"} detail={summary.claimExposure > 0 ? "Active claim-linked exposure remains open." : "No active claim-linked exposure."} />
             <ExecutiveNote label="Documents / proof exceptions" value={`${summary.loadsAtRisk} open`} tone={summary.loadsAtRisk > 0 ? "warn" : "ok"} detail={todayChanges[4]} />
@@ -392,11 +429,11 @@ export function DashboardPageClient() {
 }
 
 function RouteSnapshotCard({
-  latestCriticalAlert,
+  priorityAlert,
   loadsAtRisk,
   topRiskLoads,
 }: {
-  latestCriticalAlert: OwnerAttentionItem | null;
+  priorityAlert: ExecutiveDashboardOwnerItem | null;
   loadsAtRisk: number;
   topRiskLoads: Array<{ id: string; origin: string; destination: string; status: string; sealStatus: string }>;
 }) {
@@ -404,14 +441,22 @@ function RouteSnapshotCard({
     <aside className="bof-cc-route-panel bof-dashboard-route-snapshot__panel" aria-label="Route summary visual">
       <h3 className="bof-cc-panel-title">Route &amp; Alert Snapshot</h3>
       <p className="bof-cc-panel-sub">{loadsAtRisk} loads currently at risk across active lanes.</p>
-      {latestCriticalAlert ? (
+      {priorityAlert ? (
         <div className="bof-cc-critical-note">
-          <span className="bof-cc-sev bof-cc-sev-critical">critical</span>
-          <strong>{latestCriticalAlert.issue}</strong>
-          <p>{latestCriticalAlert.recommendedFix}</p>
+          <span className={`bof-cc-sev bof-cc-sev-${priorityAlert.severity}`}>{priorityAlert.severity}</span>
+          <span className="bof-cc-chip bof-cc-chip-info" style={{ marginLeft: "0.35rem" }}>
+            {priorityAlert.entityType} · {priorityAlert.entityId}
+          </span>
+          <strong>{priorityAlert.issue}</strong>
+          <p>{priorityAlert.recommendedFix}</p>
+          <p>
+            <Link href={priorityAlert.actionHref} className="bof-cc-table-link">
+              {priorityAlert.actionLabel} →
+            </Link>
+          </p>
         </div>
       ) : (
-        <p className="bof-cc-route-empty">No critical alert currently open.</p>
+        <p className="bof-cc-route-empty">No queue items in the merged Command Center feed.</p>
       )}
       <RouteSummaryPanel loadsAtRisk={loadsAtRisk} topRiskLoads={topRiskLoads} />
       <div className="bof-dashboard-route-snapshot__links">

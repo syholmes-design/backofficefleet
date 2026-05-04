@@ -38,10 +38,11 @@ function attentionSort(a: EnrichedCommandCenterItem, b: EnrichedCommandCenterIte
     if (i.bucket === "Dispatch / proof" && /blocking payment/i.test(i.title))
       return 1;
     if (i.bucket === "Compliance") return 2;
-    if (/maintenance/i.test(i.title) || /maintenance/i.test(i.detail)) return 3;
-    if (i.bucket === "Dispatch / proof") return 4;
-    if (i.bucket === "Driver readiness" || i.id.startsWith("DOC-")) return 5;
-    return 6;
+    if (i.bucket === "Safety") return 3;
+    if (/maintenance/i.test(i.title) || /maintenance/i.test(i.detail)) return 4;
+    if (i.bucket === "Dispatch / proof") return 5;
+    if (i.bucket === "Driver readiness" || i.id.startsWith("DOC-")) return 6;
+    return 7;
   };
   const dr = rank(a) - rank(b);
   if (dr !== 0) return dr;

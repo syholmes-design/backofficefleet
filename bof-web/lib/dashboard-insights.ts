@@ -1,6 +1,18 @@
 import type { BofData } from "@/lib/load-bof-data";
 import { reconcileCredentialIncident } from "@/lib/compliance/credential-incident-reconciliation";
-import { buildCommandCenterItems, settlementTotals } from "@/lib/executive-layer";
+import {
+  buildCommandCenterItems,
+  settlementTotals,
+  type CommandCenterItem,
+} from "@/lib/executive-layer";
+import {
+  aggregateFleetRiskFromCommandItems,
+  buildDriverReadinessBreakdown,
+  buildLoadStatusBreakdownFromLoads,
+  buildOwnerAttentionFromCommandItems,
+  mergeCommandCenterItemsForDashboard,
+  type OwnerAttentionEntityType,
+} from "@/lib/dashboard-command-summary";
 import { getDriverMedicalCardStatus } from "@/lib/driver-doc-registry";
 import { getOrderedDocumentsForDriver } from "@/lib/driver-queries";
 import { getDriverReviewExplanation } from "@/lib/driver-review-explanation";
@@ -35,6 +47,8 @@ export type OwnerAttentionItem = {
   actionHref: string;
   reviewDriverId?: string;
   reviewLoadId?: string;
+  entityType?: OwnerAttentionEntityType;
+  entityId?: string;
 };
 
 export type DriverDashboardSummary = {
@@ -50,7 +64,10 @@ export type MainDashboardSummary = {
   activeLoads: number;
   driversReady: number;
   loadsAtRisk: number;
+  /** Drivers in canonical dispatch-blocked review state (same gate as driver review). */
   complianceBlocked: number;
+  /** Open compliance incidents still shown after credential reconciliation (queue depth). */
+  openComplianceIncidents: number;
   settlementHolds: number;
   claimExposure: number;
   backhaulRecovery: number;
@@ -137,22 +154,8 @@ export function getDriverDashboardSummary(data: BofData): DriverDashboardSummary
 }
 
 export function getDriverReadinessChartData(data: BofData): BreakdownPoint[] {
-  const safetyTierMap = getSafetyTierMap();
-  let ready = 0;
-  let needsReview = 0;
-  let blocked = 0;
-
-  for (const driver of data.drivers) {
-    const state = getDriverState(data, driver.id, safetyTierMap);
-    if (state.dispatchReady) ready += 1;
-    else if (state.blocked) blocked += 1;
-    else needsReview += 1;
-  }
-  return [
-    { label: "Ready", value: ready, tone: "ok" },
-    { label: "Needs Review", value: needsReview, tone: "warn" },
-    { label: "Blocked", value: blocked, tone: "danger" },
-  ];
+  /** Canonical readiness buckets — shared with executive dashboard (`buildDriverReadinessBreakdown`). */
+  return buildDriverReadinessBreakdown(data).chart;
 }
 
 export function getSafetyTierChartData(data: BofData): BreakdownPoint[] {
@@ -254,7 +257,12 @@ export function getMainDashboardSummary(data: BofData): MainDashboardSummary {
   const loadsAtRisk = data.loads.filter(
     (load) => load.dispatchExceptionFlag || load.sealStatus !== "OK" || load.podStatus === "pending"
   ).length;
-  const complianceBlocked = countEffectiveOpenComplianceIncidents(data);
+  const safetyTierMap = getSafetyTierMap();
+  let dispatchBlockedDrivers = 0;
+  for (const driver of data.drivers) {
+    if (getDriverState(data, driver.id, safetyTierMap).blocked) dispatchBlockedDrivers += 1;
+  }
+  const openComplianceIncidents = countEffectiveOpenComplianceIncidents(data);
   const claimExposure = data.moneyAtRisk
     .filter((item) => item.category.toLowerCase().includes("claim"))
     .reduce((sum, item) => sum + item.amount, 0);
@@ -266,7 +274,8 @@ export function getMainDashboardSummary(data: BofData): MainDashboardSummary {
     activeLoads,
     driversReady,
     loadsAtRisk,
-    complianceBlocked,
+    complianceBlocked: dispatchBlockedDrivers,
+    openComplianceIncidents,
     settlementHolds,
     claimExposure,
     backhaulRecovery,
@@ -275,93 +284,35 @@ export function getMainDashboardSummary(data: BofData): MainDashboardSummary {
 }
 
 export function getFleetRiskChartData(data: BofData): BreakdownPoint[] {
-  const complianceRisk = countEffectiveOpenComplianceIncidents(data);
-  const dispatchRisk = data.loads.filter((load) => load.dispatchExceptionFlag || load.sealStatus !== "OK").length;
-  const safetyRisk = getSafetyScorecardRows().filter(
-    (row) => row.performanceTier === "At Risk" || row.hosCompliancePct < 92
-  ).length;
-  const settlementsRisk = data.settlements.filter((row) => row.status.toUpperCase() !== "PAID").length;
-  const claimsRisk = data.moneyAtRisk.filter((row) => row.category.toLowerCase().includes("claim")).length;
-
-  return [
-    { label: "Compliance", value: complianceRisk, tone: "warn" },
-    { label: "Dispatch", value: dispatchRisk, tone: "danger" },
-    { label: "Safety", value: safetyRisk, tone: "danger" },
-    { label: "Settlements", value: settlementsRisk, tone: "warn" },
-    { label: "Claims", value: claimsRisk, tone: "info" },
-  ];
+  /** Counts per lane match Command Center queue rows from `buildCommandCenterItems` (no parallel formulas). */
+  return aggregateFleetRiskFromCommandItems(buildCommandCenterItems(data));
 }
 
 export function getLoadStatusChartData(data: BofData): BreakdownPoint[] {
-  let onTime = 0;
-  let atRisk = 0;
-  let delayed = 0;
-  let completed = 0;
-
-  for (const load of data.loads) {
-    if (load.status === "Delivered") {
-      completed += 1;
-      continue;
-    }
-    if (load.dispatchExceptionFlag || load.sealStatus !== "OK") {
-      atRisk += 1;
-      continue;
-    }
-    if (load.status === "Pending" || load.podStatus === "pending") {
-      delayed += 1;
-      continue;
-    }
-    onTime += 1;
-  }
-
-  return [
-    { label: "On Time", value: onTime, tone: "ok" },
-    { label: "At Risk", value: atRisk, tone: "danger" },
-    { label: "Delayed", value: delayed, tone: "warn" },
-    { label: "Completed", value: completed, tone: "info" },
-  ];
+  /** Partition of `data.loads` — same register as dispatch boards (`buildLoadStatusBreakdownFromLoads`). */
+  return buildLoadStatusBreakdownFromLoads(data);
 }
 
-export function getOwnerAttentionQueue(data: BofData): OwnerAttentionItem[] {
-  const fromCommandCenter = buildCommandCenterItems(data).map((item) => {
-    let actionHref = "/command-center";
-    let actionLabel = "Open Command Center";
-    if (item.driverId && item.bucket === "Compliance") {
-      actionHref = `/drivers/${item.driverId}/vault`;
-      actionLabel = "Open Documents";
-    } else if (item.driverId && item.bucket === "Driver readiness") {
-      actionHref = `/drivers/${item.driverId}/dispatch`;
-      actionLabel = "Open Driver Dispatch";
-    } else if (item.driverId && item.bucket === "Settlement / payroll") {
-      actionHref = `/drivers/${item.driverId}/settlements`;
-      actionLabel = "Open Settlement";
-    } else if (item.loadId && item.bucket === "Dispatch / proof") {
-      actionHref = `/loads/${item.loadId}`;
-      actionLabel = "Open Load Proof";
-    } else if (item.bucket === "Money at risk") {
-      actionHref = "/money-at-risk";
-      actionLabel = "Open Money at Risk";
-    }
-
-    const target =
-      item.loadId && item.driver ? `Load ${item.loadId} · ${item.driver}` : item.driver ?? item.loadId ?? "Fleet";
-
-    return {
-      id: item.id,
-      severity: item.severity,
-      area: item.bucket,
-      target,
-      issue: item.title,
-      financialImpact: item.sourceAmount,
-      recommendedFix: item.nextAction,
-      actionLabel,
-      actionHref,
-      reviewDriverId: item.driverId,
-      reviewLoadId: item.loadId,
-    } satisfies OwnerAttentionItem;
-  });
-
-  return fromCommandCenter.slice(0, 10);
+export function getOwnerAttentionQueue(
+  data: BofData,
+  intakeCommandItems: CommandCenterItem[] = []
+): OwnerAttentionItem[] {
+  const merged = mergeCommandCenterItemsForDashboard(data, intakeCommandItems);
+  return buildOwnerAttentionFromCommandItems(merged).map((row) => ({
+    id: row.id,
+    severity: row.severity,
+    area: row.area,
+    target: row.target,
+    issue: row.issue,
+    financialImpact: row.financialImpact,
+    recommendedFix: row.recommendedFix,
+    actionLabel: row.actionLabel,
+    actionHref: row.actionHref,
+    reviewDriverId: row.reviewDriverId,
+    reviewLoadId: row.reviewLoadId,
+    entityType: row.entityType,
+    entityId: row.entityId,
+  }));
 }
 
 export function getDashboardTodayChanges(data: BofData): string[] {

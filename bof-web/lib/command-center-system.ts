@@ -259,6 +259,9 @@ function moneyImpactMeta(
   if (item.bucket === "Driver readiness" || item.bucket === "Compliance") {
     return { kind: "exposure", column: "Compliance exposure" };
   }
+  if (item.bucket === "Safety") {
+    return { kind: "exposure", column: "Safety exposure" };
+  }
   if (item.bucket === "Dispatch / proof") {
     return { kind: "at_risk", column: "Revenue at risk" };
   }
@@ -356,6 +359,10 @@ function pickActionAndDraft(
 
   if (item.bucket === "Compliance") {
     return { actionLabel: "Upload to Unlock Driver", draftKind: "upload_docs" };
+  }
+
+  if (item.bucket === "Safety" && item.driverId) {
+    return { actionLabel: "Open Safety workspace", draftKind: "generic_rf" };
   }
 
   return { actionLabel: "Run RF playbook", draftKind: "generic_rf" };

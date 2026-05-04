@@ -22,6 +22,7 @@ import {
   getDriverDispatchEligibility,
   warnDispatchEligibilityAllBlocked,
 } from "@/lib/driver-dispatch-eligibility";
+import { useIntakeEngineStore } from "@/lib/stores/intake-engine-store";
 import { devTraceDriverMedicalStatuses } from "@/lib/dev-driver-medical-trace";
 import {
   getDriverReviewExplanation,
@@ -91,6 +92,7 @@ export function DriversRosterTable() {
     resolveDriverReviewIssue,
     resetDriverReviewOverrides,
   } = useBofDemoData();
+  const intakeCommandCenterItems = useIntakeEngineStore((s) => s.commandCenterIntakeItems);
 
   const [reviewDrawer, setReviewDrawer] = useState<{
     driverId: string;
@@ -108,8 +110,8 @@ export function DriversRosterTable() {
 
   const commandHeroChips = useMemo(() => {
     const ready = readinessData.find((p) => p.label === "Ready")?.value ?? 0;
-    const needsReview = readinessData.find((p) => p.label === "Needs Review")?.value ?? 0;
-    const blocked = readinessData.find((p) => p.label === "Blocked")?.value ?? 0;
+    const needsReview = readinessData.find((p) => p.label === "Action needed")?.value ?? 0;
+    const blocked = readinessData.find((p) => p.label === "Dispatch blocked")?.value ?? 0;
     let availableForDispatch = 0;
     for (const driver of data.drivers) {
       const m = getDriverTableRowModel(data, driver.id);
@@ -117,8 +119,8 @@ export function DriversRosterTable() {
     }
     return [
       { label: "Drivers Ready", value: ready, hint: "Dispatch eligibility status: Ready" },
-      { label: "Needs Review", value: needsReview, hint: "Soft warnings — review before long haul" },
-      { label: "Blocked", value: blocked, hint: "Hard gates on credentials, safety, or finance" },
+      { label: "Action needed", value: needsReview, hint: "Review issues listed on the driver file" },
+      { label: "Dispatch blocked", value: blocked, hint: "Hard gates on credentials, safety, or finance" },
       { label: "Expiring Documents", value: summary.expiringCredentials, hint: "Drivers with credentials expiring ≤60 days" },
       { label: "Safety At Risk", value: summary.safetyAtRisk, hint: "Drivers in At Risk safety tier" },
       {
@@ -175,8 +177,8 @@ export function DriversRosterTable() {
 
   const applyReadinessBarFilter = (label: string) => {
     if (label === "Ready") setDriverStatusFilter("ready");
-    else if (label === "Needs Review") setDriverStatusFilter("needs_review");
-    else if (label === "Blocked") setDriverStatusFilter("blocked");
+    else if (label === "Action needed") setDriverStatusFilter("needs_review");
+    else if (label === "Dispatch blocked") setDriverStatusFilter("blocked");
     else return;
     requestAnimationFrame(() => {
       document.getElementById("primary-driver-table")?.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -363,7 +365,7 @@ export function DriversRosterTable() {
 
   const commandCenterRows = useMemo(
     () =>
-      getOwnerAttentionQueue(data)
+      getOwnerAttentionQueue(data, intakeCommandCenterItems)
         .filter((item) => item.target.includes("DRV-") || item.area === "Driver readiness")
         .slice(0, 6)
         .map((item) => {
@@ -411,7 +413,7 @@ export function DriversRosterTable() {
             detailLines: detailLines.length ? detailLines : undefined,
           };
         }) satisfies ExceptionItem[],
-    [data]
+    [data, intakeCommandCenterItems]
   );
 
   return (
@@ -844,8 +846,8 @@ function ChartCard({
           const isFilterBar =
             readinessInteractive &&
             (point.label === "Ready" ||
-              point.label === "Needs Review" ||
-              point.label === "Blocked");
+              point.label === "Action needed" ||
+              point.label === "Dispatch blocked");
           return (
             <div key={point.label} className="bof-cc-bar-row">
               <div className="bof-cc-bar-meta">
