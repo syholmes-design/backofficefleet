@@ -1,0 +1,1552 @@
+{
+  "audit1": {
+    "primaryWorkbookPath": "C:\\Users\\syhol\\OneDrive\\Documents\\GitHub\\backofficefleet\\bof-web\\data\\source-workbooks\\main-source_enhanced_bof_aligned.xlsx",
+    "backupWorkbookPath": "C:\\Users\\syhol\\OneDrive\\Documents\\GitHub\\backofficefleet\\bof-web\\data\\source-workbooks\\main-source.xlsx",
+    "templateWorkbookPath": "C:\\Users\\syhol\\OneDrive\\Documents\\GitHub\\backofficefleet\\bof-web\\data\\source-workbooks\\driver_templates_expanded_untruncated.xlsx",
+    "usedUntruncatedTemplate": true,
+    "downloadsHardcodedInRuntimeLogic": false,
+    "downloadsMentionsInScriptsOrDocs": true
+  },
+  "audit2": {
+    "driverCount": 12,
+    "expectedIds": [
+      "DRV-001",
+      "DRV-002",
+      "DRV-003",
+      "DRV-004",
+      "DRV-005",
+      "DRV-006",
+      "DRV-007",
+      "DRV-008",
+      "DRV-009",
+      "DRV-010",
+      "DRV-011",
+      "DRV-012"
+    ],
+    "actualIds": [
+      "DRV-001",
+      "DRV-002",
+      "DRV-003",
+      "DRV-004",
+      "DRV-005",
+      "DRV-006",
+      "DRV-007",
+      "DRV-008",
+      "DRV-009",
+      "DRV-010",
+      "DRV-011",
+      "DRV-012"
+    ],
+    "missingIds": [],
+    "duplicateIds": [],
+    "drv012": {
+      "id": "DRV-012",
+      "name": "Robert Johnson",
+      "address": "618 S Michigan Ave, Chicago, IL 60605",
+      "phone": "618-667-2121",
+      "email": "robertjohnson@hotmail.com",
+      "referenceCdlNumber": "IL1895570",
+      "emergencyContactName": "Karen Johnson",
+      "emergencyContactRelationship": "Spouse",
+      "emergencyContactPhone": "312-294-5478",
+      "licenseClass": "Class A",
+      "licenseState": "IL",
+      "dateOfBirth": "1990-04-11",
+      "ssnMasked": "***-**-5664",
+      "emergencyContactEmail": "karen.johnson@hotmail.com",
+      "emergencyContactAddress": "618 S Michigan Ave, Chicago, IL 60605",
+      "secondaryContactName": "David Johnson",
+      "secondaryContactRelationship": "Brother",
+      "secondaryContactPhone": "312-741-9317",
+      "secondaryContactEmail": "david.johnson@yahoo.com",
+      "secondaryContactAddress": "425 S Wabash Ave, Chicago, IL 60605"
+    },
+    "drv012TemplateRow": {
+      "Driver ID": "DRV-012",
+      "Full Name": "Robert Johnson",
+      "Full Address": "618 S Michigan Ave, Chicago, IL 60605",
+      "Phone": "618-667-2121",
+      "SSN (Masked)": "***-**-5664",
+      "Bank Name": "Wells Fargo",
+      "Routing Number": 782385202,
+      "Account Number": 689231916,
+      "Document Type": "CDL Summary",
+      "Status": "VALID",
+      "Document Number": "IL1895570",
+      "CDL Expiration": 46706,
+      "Med Card Expiration": 46609,
+      "MVR Expiration": 46519,
+      "Incident Details": "",
+      "Hair Color": "Blonde",
+      "Eye Color": "Green",
+      "Height": "6'-1\"",
+      "Weight": 209,
+      "Gender": "M",
+      "DOB": 32974,
+      "Driver Photo": "DRV-012.png",
+      "Ethnicity": "Caucasian",
+      "Email": "robertjohnson@hotmail.com",
+      "Street Address": "618 S Michigan Ave",
+      "City": "Chicago",
+      "State": "IL",
+      "ZIP": 60605,
+      "State of Residence": "IL",
+      "License Class": "Class A",
+      "CDL Issue Date": 44884,
+      "CDL Endorsements": "",
+      "CDL Restrictions": "Corrective lenses",
+      "Medical Issue Date": 45879,
+      "Medical Certificate Number": "MC-0120411",
+      "Medical Examiner Name": "Dr. Victor Reed",
+      "Medical Examiner Registry Number": "ME100012",
+      "Medical Restrictions": "Corrective lenses",
+      "Medical Status": "Qualified",
+      "MVR Review Date": 46489,
+      "Violation Points": 1,
+      "Accidents on Record": 1,
+      "MVR Restrictions": "Corrective lenses",
+      "MVR Status": "Reviewed - Clear to Drive",
+      "Hire Date": 45579,
+      "Work Authorization Status": "Authorized to Work",
+      "I9 Document 1": "U.S. Passport",
+      "I9 Document 2": "",
+      "I9 Document 3": "",
+      "I9 Completion Date": 45579,
+      "Employer Representative": "BOF Onboarding Team",
+      "I9 Status": "Complete",
+      "Business Name": "",
+      "Tax Classification": "Individual/Sole Proprietor",
+      "TIN Type": "SSN",
+      "TIN": "***-**-5664",
+      "Exemption Codes": "",
+      "W9 Submission Date": 45579,
+      "W9 Status": "Received",
+      "Account Type": "Checking",
+      "Payment Preference": "Direct Deposit",
+      "Bank Info Submission Date": 45579,
+      "Bank Info Status": "Verified",
+      "Road Test Date": 45572,
+      "Examiner Name": "E. Barnes",
+      "Vehicle Type": "Sleeper tractor",
+      "Trailer Type": "53 ft dry van",
+      "Road Test Location": "Chicago, IL",
+      "Pre-Trip Inspection Score": 4,
+      "Vehicle Control Score": 4,
+      "Backing Score": 4,
+      "Turning Score": 4,
+      "Braking Score": 4,
+      "Mirror Use Score": 4,
+      "Coupling Score": 4,
+      "Defensive Driving Score": 4,
+      "Overall Safety Score": 4,
+      "Road Test Result": "Pass",
+      "Restrictions or Recommendations": "Corrective lenses",
+      "Road Test Status": "Passed",
+      "Drug and Alcohol Status": "Enrolled",
+      "Clearinghouse Status": "Query Completed",
+      "Compliance Review Date": 46037,
+      "Next Review Date": 46218,
+      "Open Deficiencies": "",
+      "Compliance Status": "Compliant",
+      "Notes": "",
+      "First Name": "Robert",
+      "Last Name": "Johnson",
+      "5876 Driver License Number": "IL1895570",
+      "5876 License Issuing State": "IL",
+      "5876 CLP/CDL Applicant/Holder": "CDL Holder",
+      "5876 Driver Signature Name": "Robert Johnson",
+      "5876 Driver Signature Date": 45879,
+      "5876 Certificate Expiration Date": 46609,
+      "5876 Medical Examiner Telephone": "(312) 300-1431",
+      "5876 Medical Examiner Signature Name": "Dr. Victor Reed",
+      "5876 Date Certificate Signed": 45879,
+      "5876 Medical Examiner License Number": "IL-ME-120233",
+      "5876 National Registry Number": "ME100012",
+      "5876 Practitioner Type": "DO",
+      "5876 Issuing State/Province": "IL",
+      "5876 Certification Basis": "Federal Motor Carrier Safety Regulations",
+      "5876 State Variance Details": "",
+      "5876 Waiver/Exemption": "No",
+      "5876 SPE Certificate": "No",
+      "5876 Exempt Intracity Zone": "No",
+      "5876 Grandfathered from State Requirements": "No",
+      "5876 Wearing Corrective Lenses": "Yes",
+      "5876 Wearing Hearing Aid": "No",
+      "Emergency Contact Name": "Jane Doe",
+      "Emergency Contact Relation": "Sister",
+      "Emergency Contact Phone": "555-555-5555",
+      "5875 High Blood Pressure": "No",
+      "5875 Diabetes": "No",
+      "5875 Sleep Apnea": "No",
+      "5875 Heart Disease": "No",
+      "5875 Surgeries": "Yes - Appendectomy (2005)",
+      "5875 Vision Score Right": "20/20",
+      "5875 Vision Score Left": "20/20",
+      "5875 Hearing Score": "Pass",
+      "5875 Blood Pressure Sys": "118",
+      "5875 Blood Pressure Dia": "78",
+      "5875 Pulse": "72",
+      "5875 Urinalysis": "Normal",
+      "Clearinghouse Consent Date": 45392,
+      "Drug Test Result Date": 45394,
+      "Drug Test Result": "Negative",
+      "Safety Policy Ack Date": 45397,
+      "Safety Policy Name": "BOF Fleet Safety & Compliance Policy 2024",
+      "DQF Status": "Complete",
+      "DQF Audit Date": 45413
+    }
+  },
+  "audit3": [
+    {
+      "driverId": "DRV-001",
+      "driverName": "John Carter",
+      "docCount": 7,
+      "missingTypes": "",
+      "duplicateTypes": "",
+      "expiredDocs": "",
+      "expiringSoonDocs": "",
+      "pendingReviewDocs": ""
+    },
+    {
+      "driverId": "DRV-002",
+      "driverName": "Maria Lopez",
+      "docCount": 7,
+      "missingTypes": "",
+      "duplicateTypes": "",
+      "expiredDocs": "",
+      "expiringSoonDocs": "",
+      "pendingReviewDocs": ""
+    },
+    {
+      "driverId": "DRV-003",
+      "driverName": "Alex Kim",
+      "docCount": 7,
+      "missingTypes": "",
+      "duplicateTypes": "",
+      "expiredDocs": "",
+      "expiringSoonDocs": "",
+      "pendingReviewDocs": ""
+    },
+    {
+      "driverId": "DRV-004",
+      "driverName": "Priya Patel",
+      "docCount": 7,
+      "missingTypes": "",
+      "duplicateTypes": "",
+      "expiredDocs": "",
+      "expiringSoonDocs": "",
+      "pendingReviewDocs": ""
+    },
+    {
+      "driverId": "DRV-005",
+      "driverName": "Kenji Tanaka",
+      "docCount": 7,
+      "missingTypes": "",
+      "duplicateTypes": "",
+      "expiredDocs": "",
+      "expiringSoonDocs": "",
+      "pendingReviewDocs": ""
+    },
+    {
+      "driverId": "DRV-006",
+      "driverName": "Marcus Chen",
+      "docCount": 7,
+      "missingTypes": "",
+      "duplicateTypes": "",
+      "expiredDocs": "",
+      "expiringSoonDocs": "",
+      "pendingReviewDocs": ""
+    },
+    {
+      "driverId": "DRV-007",
+      "driverName": "Sofia Gomez",
+      "docCount": 7,
+      "missingTypes": "",
+      "duplicateTypes": "",
+      "expiredDocs": "",
+      "expiringSoonDocs": "",
+      "pendingReviewDocs": ""
+    },
+    {
+      "driverId": "DRV-008",
+      "driverName": "Liam Smith",
+      "docCount": 7,
+      "missingTypes": "",
+      "duplicateTypes": "",
+      "expiredDocs": "",
+      "expiringSoonDocs": "",
+      "pendingReviewDocs": ""
+    },
+    {
+      "driverId": "DRV-009",
+      "driverName": "Emma Brown",
+      "docCount": 7,
+      "missingTypes": "",
+      "duplicateTypes": "",
+      "expiredDocs": "",
+      "expiringSoonDocs": "",
+      "pendingReviewDocs": ""
+    },
+    {
+      "driverId": "DRV-010",
+      "driverName": "Noah Wilson",
+      "docCount": 7,
+      "missingTypes": "",
+      "duplicateTypes": "",
+      "expiredDocs": "",
+      "expiringSoonDocs": "",
+      "pendingReviewDocs": ""
+    },
+    {
+      "driverId": "DRV-011",
+      "driverName": "Olivia Lee",
+      "docCount": 7,
+      "missingTypes": "",
+      "duplicateTypes": "",
+      "expiredDocs": "",
+      "expiringSoonDocs": "",
+      "pendingReviewDocs": ""
+    },
+    {
+      "driverId": "DRV-012",
+      "driverName": "Robert Johnson",
+      "docCount": 7,
+      "missingTypes": "",
+      "duplicateTypes": "",
+      "expiredDocs": "",
+      "expiringSoonDocs": "",
+      "pendingReviewDocs": ""
+    }
+  ],
+  "audit4": [
+    {
+      "driverId": "DRV-001",
+      "docType": "CDL",
+      "primaryDate": "2027-08-22",
+      "templateDate": "2027-08-22",
+      "finalDate": "2027-08-22",
+      "ruleApplied": "later_date_wins",
+      "finalStatus": "VALID"
+    },
+    {
+      "driverId": "DRV-001",
+      "docType": "Medical Card",
+      "primaryDate": "2026-03-13",
+      "templateDate": "2026-09-13",
+      "finalDate": "2027-06-15",
+      "ruleApplied": "manual_or_seed_override",
+      "finalStatus": "VALID"
+    },
+    {
+      "driverId": "DRV-001",
+      "docType": "MVR",
+      "primaryDate": "2026-02-27",
+      "templateDate": "2026-10-21",
+      "finalDate": "2026-12-31",
+      "ruleApplied": "manual_or_seed_override",
+      "finalStatus": "VALID"
+    },
+    {
+      "driverId": "DRV-001",
+      "docType": "I-9",
+      "primaryDate": "2026-03-23",
+      "templateDate": "2024-04-10",
+      "finalDate": "2026-12-31",
+      "ruleApplied": "manual_or_seed_override",
+      "finalStatus": "VALID"
+    },
+    {
+      "driverId": "DRV-001",
+      "docType": "FMCSA",
+      "primaryDate": "2025-11-17",
+      "templateDate": "2026-07-15",
+      "finalDate": "2026-12-31",
+      "ruleApplied": "manual_or_seed_override",
+      "finalStatus": "VALID"
+    },
+    {
+      "driverId": "DRV-001",
+      "docType": "W-9",
+      "primaryDate": "2026-06-17",
+      "templateDate": "2024-04-10",
+      "finalDate": "2026-12-31",
+      "ruleApplied": "manual_or_seed_override",
+      "finalStatus": "VALID"
+    },
+    {
+      "driverId": "DRV-001",
+      "docType": "Bank Info",
+      "primaryDate": "2026-02-21",
+      "templateDate": "2024-04-10",
+      "finalDate": "2026-12-31",
+      "ruleApplied": "manual_or_seed_override",
+      "finalStatus": "VALID"
+    },
+    {
+      "driverId": "DRV-002",
+      "docType": "CDL",
+      "primaryDate": "2027-05-11",
+      "templateDate": "2027-05-11",
+      "finalDate": "2027-08-22",
+      "ruleApplied": "manual_or_seed_override",
+      "finalStatus": "VALID"
+    },
+    {
+      "driverId": "DRV-002",
+      "docType": "Medical Card",
+      "primaryDate": "2027-07-28",
+      "templateDate": "2027-07-28",
+      "finalDate": "2027-07-28",
+      "ruleApplied": "later_date_wins",
+      "finalStatus": "VALID"
+    },
+    {
+      "driverId": "DRV-002",
+      "docType": "MVR",
+      "primaryDate": "2027-03-19",
+      "templateDate": "2027-03-09",
+      "finalDate": "2027-03-09",
+      "ruleApplied": "manual_or_seed_override",
+      "finalStatus": "VALID"
+    },
+    {
+      "driverId": "DRV-002",
+      "docType": "I-9",
+      "primaryDate": "2026-01-27",
+      "templateDate": "2024-06-03",
+      "finalDate": "2026-12-31",
+      "ruleApplied": "manual_or_seed_override",
+      "finalStatus": "VALID"
+    },
+    {
+      "driverId": "DRV-002",
+      "docType": "FMCSA",
+      "primaryDate": "2026-06-09",
+      "templateDate": "2026-07-15",
+      "finalDate": "2026-12-31",
+      "ruleApplied": "manual_or_seed_override",
+      "finalStatus": "VALID"
+    },
+    {
+      "driverId": "DRV-002",
+      "docType": "W-9",
+      "primaryDate": "2026-01-21",
+      "templateDate": "2024-06-03",
+      "finalDate": "2026-12-31",
+      "ruleApplied": "manual_or_seed_override",
+      "finalStatus": "VALID"
+    },
+    {
+      "driverId": "DRV-002",
+      "docType": "Bank Info",
+      "primaryDate": "2025-12-06",
+      "templateDate": "2024-06-03",
+      "finalDate": "2026-12-31",
+      "ruleApplied": "manual_or_seed_override",
+      "finalStatus": "VALID"
+    },
+    {
+      "driverId": "DRV-003",
+      "docType": "CDL",
+      "primaryDate": "2027-02-02",
+      "templateDate": "2027-02-02",
+      "finalDate": "2027-08-22",
+      "ruleApplied": "manual_or_seed_override",
+      "finalStatus": "VALID"
+    },
+    {
+      "driverId": "DRV-003",
+      "docType": "Medical Card",
+      "primaryDate": "2027-09-29",
+      "templateDate": "2027-09-29",
+      "finalDate": "2027-09-29",
+      "ruleApplied": "later_date_wins",
+      "finalStatus": "VALID"
+    },
+    {
+      "driverId": "DRV-003",
+      "docType": "MVR",
+      "primaryDate": "2027-03-19",
+      "templateDate": "2027-03-03",
+      "finalDate": "2027-03-03",
+      "ruleApplied": "manual_or_seed_override",
+      "finalStatus": "VALID"
+    },
+    {
+      "driverId": "DRV-003",
+      "docType": "I-9",
+      "primaryDate": "2026-01-16",
+      "templateDate": "2024-07-15",
+      "finalDate": "2026-12-31",
+      "ruleApplied": "manual_or_seed_override",
+      "finalStatus": "VALID"
+    },
+    {
+      "driverId": "DRV-003",
+      "docType": "FMCSA",
+      "primaryDate": "2026-01-09",
+      "templateDate": "2026-07-15",
+      "finalDate": "2026-12-31",
+      "ruleApplied": "manual_or_seed_override",
+      "finalStatus": "VALID"
+    },
+    {
+      "driverId": "DRV-003",
+      "docType": "W-9",
+      "primaryDate": "2026-06-30",
+      "templateDate": "2024-07-15",
+      "finalDate": "2026-12-31",
+      "ruleApplied": "manual_or_seed_override",
+      "finalStatus": "VALID"
+    },
+    {
+      "driverId": "DRV-003",
+      "docType": "Bank Info",
+      "primaryDate": "2025-12-24",
+      "templateDate": "2024-07-15",
+      "finalDate": "2026-12-31",
+      "ruleApplied": "manual_or_seed_override",
+      "finalStatus": "VALID"
+    },
+    {
+      "driverId": "DRV-004",
+      "docType": "CDL",
+      "primaryDate": "2027-12-18",
+      "templateDate": "2027-12-18",
+      "finalDate": "2027-12-18",
+      "ruleApplied": "later_date_wins",
+      "finalStatus": "VALID"
+    },
+    {
+      "driverId": "DRV-004",
+      "docType": "Medical Card",
+      "primaryDate": "2027-04-09",
+      "templateDate": "2027-04-09",
+      "finalDate": "2027-04-09",
+      "ruleApplied": "later_date_wins",
+      "finalStatus": "VALID"
+    },
+    {
+      "driverId": "DRV-004",
+      "docType": "MVR",
+      "primaryDate": "2027-03-19",
+      "templateDate": "2027-03-06",
+      "finalDate": "2027-03-06",
+      "ruleApplied": "manual_or_seed_override",
+      "finalStatus": "VALID"
+    },
+    {
+      "driverId": "DRV-004",
+      "docType": "I-9",
+      "primaryDate": "2025-11-15",
+      "templateDate": "2024-05-20",
+      "finalDate": "2026-12-31",
+      "ruleApplied": "manual_or_seed_override",
+      "finalStatus": "VALID"
+    },
+    {
+      "driverId": "DRV-004",
+      "docType": "FMCSA",
+      "primaryDate": "2026-02-23",
+      "templateDate": "2026-07-15",
+      "finalDate": "2026-12-31",
+      "ruleApplied": "manual_or_seed_override",
+      "finalStatus": "VALID"
+    },
+    {
+      "driverId": "DRV-004",
+      "docType": "W-9",
+      "primaryDate": "2026-05-23",
+      "templateDate": "2024-05-20",
+      "finalDate": "2026-12-31",
+      "ruleApplied": "manual_or_seed_override",
+      "finalStatus": "VALID"
+    },
+    {
+      "driverId": "DRV-004",
+      "docType": "Bank Info",
+      "primaryDate": "2025-12-30",
+      "templateDate": "2024-05-20",
+      "finalDate": "2026-12-31",
+      "ruleApplied": "manual_or_seed_override",
+      "finalStatus": "VALID"
+    },
+    {
+      "driverId": "DRV-005",
+      "docType": "CDL",
+      "primaryDate": "2027-07-09",
+      "templateDate": "2027-07-09",
+      "finalDate": "2027-08-22",
+      "ruleApplied": "manual_or_seed_override",
+      "finalStatus": "VALID"
+    },
+    {
+      "driverId": "DRV-005",
+      "docType": "Medical Card",
+      "primaryDate": "2027-04-19",
+      "templateDate": "2027-04-19",
+      "finalDate": "2027-06-15",
+      "ruleApplied": "manual_or_seed_override",
+      "finalStatus": "VALID"
+    },
+    {
+      "driverId": "DRV-005",
+      "docType": "MVR",
+      "primaryDate": "2027-03-19",
+      "templateDate": "2027-04-01",
+      "finalDate": "2027-04-01",
+      "ruleApplied": "later_date_wins",
+      "finalStatus": "VALID"
+    },
+    {
+      "driverId": "DRV-005",
+      "docType": "I-9",
+      "primaryDate": "2026-08-12",
+      "templateDate": "2024-08-05",
+      "finalDate": "2026-12-31",
+      "ruleApplied": "manual_or_seed_override",
+      "finalStatus": "VALID"
+    },
+    {
+      "driverId": "DRV-005",
+      "docType": "FMCSA",
+      "primaryDate": "2026-06-20",
+      "templateDate": "2026-07-15",
+      "finalDate": "2026-12-31",
+      "ruleApplied": "manual_or_seed_override",
+      "finalStatus": "VALID"
+    },
+    {
+      "driverId": "DRV-005",
+      "docType": "W-9",
+      "primaryDate": "2026-03-10",
+      "templateDate": "2024-08-05",
+      "finalDate": "2026-12-31",
+      "ruleApplied": "manual_or_seed_override",
+      "finalStatus": "VALID"
+    },
+    {
+      "driverId": "DRV-005",
+      "docType": "Bank Info",
+      "primaryDate": "2026-07-24",
+      "templateDate": "2024-08-05",
+      "finalDate": "2026-12-31",
+      "ruleApplied": "manual_or_seed_override",
+      "finalStatus": "VALID"
+    },
+    {
+      "driverId": "DRV-006",
+      "docType": "CDL",
+      "primaryDate": "2026-02-09",
+      "templateDate": "2025-06-18",
+      "finalDate": "2027-08-22",
+      "ruleApplied": "manual_or_seed_override",
+      "finalStatus": "VALID"
+    },
+    {
+      "driverId": "DRV-006",
+      "docType": "Medical Card",
+      "primaryDate": "2027-01-07",
+      "templateDate": "2027-01-07",
+      "finalDate": "2027-06-15",
+      "ruleApplied": "manual_or_seed_override",
+      "finalStatus": "VALID"
+    },
+    {
+      "driverId": "DRV-006",
+      "docType": "MVR",
+      "primaryDate": "2027-03-19",
+      "templateDate": "2027-03-09",
+      "finalDate": "2027-03-09",
+      "ruleApplied": "manual_or_seed_override",
+      "finalStatus": "VALID"
+    },
+    {
+      "driverId": "DRV-006",
+      "docType": "I-9",
+      "primaryDate": "2025-12-20",
+      "templateDate": "2024-09-09",
+      "finalDate": "2026-12-31",
+      "ruleApplied": "manual_or_seed_override",
+      "finalStatus": "VALID"
+    },
+    {
+      "driverId": "DRV-006",
+      "docType": "FMCSA",
+      "primaryDate": "2026-01-05",
+      "templateDate": "2026-07-15",
+      "finalDate": "2026-12-31",
+      "ruleApplied": "manual_or_seed_override",
+      "finalStatus": "VALID"
+    },
+    {
+      "driverId": "DRV-006",
+      "docType": "W-9",
+      "primaryDate": "2026-03-11",
+      "templateDate": "2024-09-09",
+      "finalDate": "2026-12-31",
+      "ruleApplied": "manual_or_seed_override",
+      "finalStatus": "VALID"
+    },
+    {
+      "driverId": "DRV-006",
+      "docType": "Bank Info",
+      "primaryDate": "2026-02-20",
+      "templateDate": "2024-09-09",
+      "finalDate": "2026-12-31",
+      "ruleApplied": "manual_or_seed_override",
+      "finalStatus": "VALID"
+    },
+    {
+      "driverId": "DRV-007",
+      "docType": "CDL",
+      "primaryDate": "2027-05-23",
+      "templateDate": "2027-05-23",
+      "finalDate": "2027-08-22",
+      "ruleApplied": "manual_or_seed_override",
+      "finalStatus": "VALID"
+    },
+    {
+      "driverId": "DRV-007",
+      "docType": "Medical Card",
+      "primaryDate": "2026-05-13",
+      "templateDate": "2025-03-23",
+      "finalDate": "2027-06-15",
+      "ruleApplied": "manual_or_seed_override",
+      "finalStatus": "VALID"
+    },
+    {
+      "driverId": "DRV-007",
+      "docType": "MVR",
+      "primaryDate": "2027-03-19",
+      "templateDate": "2027-03-10",
+      "finalDate": "2027-03-10",
+      "ruleApplied": "manual_or_seed_override",
+      "finalStatus": "VALID"
+    },
+    {
+      "driverId": "DRV-007",
+      "docType": "I-9",
+      "primaryDate": "2026-07-01",
+      "templateDate": "2024-10-01",
+      "finalDate": "2026-12-31",
+      "ruleApplied": "manual_or_seed_override",
+      "finalStatus": "VALID"
+    },
+    {
+      "driverId": "DRV-007",
+      "docType": "FMCSA",
+      "primaryDate": "2026-01-14",
+      "templateDate": "2026-07-15",
+      "finalDate": "2026-12-31",
+      "ruleApplied": "manual_or_seed_override",
+      "finalStatus": "VALID"
+    },
+    {
+      "driverId": "DRV-007",
+      "docType": "W-9",
+      "primaryDate": "2025-12-30",
+      "templateDate": "2024-10-01",
+      "finalDate": "2026-12-31",
+      "ruleApplied": "manual_or_seed_override",
+      "finalStatus": "VALID"
+    },
+    {
+      "driverId": "DRV-007",
+      "docType": "Bank Info",
+      "primaryDate": "2026-07-07",
+      "templateDate": "2024-10-01",
+      "finalDate": "2026-12-31",
+      "ruleApplied": "manual_or_seed_override",
+      "finalStatus": "VALID"
+    },
+    {
+      "driverId": "DRV-008",
+      "docType": "CDL",
+      "primaryDate": "2027-08-21",
+      "templateDate": "2027-08-21",
+      "finalDate": "2027-08-22",
+      "ruleApplied": "manual_or_seed_override",
+      "finalStatus": "VALID"
+    },
+    {
+      "driverId": "DRV-008",
+      "docType": "Medical Card",
+      "primaryDate": "2027-10-10",
+      "templateDate": "2027-10-10",
+      "finalDate": "2027-10-10",
+      "ruleApplied": "later_date_wins",
+      "finalStatus": "VALID"
+    },
+    {
+      "driverId": "DRV-008",
+      "docType": "MVR",
+      "primaryDate": "2027-03-19",
+      "templateDate": "2027-03-06",
+      "finalDate": "2027-03-06",
+      "ruleApplied": "manual_or_seed_override",
+      "finalStatus": "VALID"
+    },
+    {
+      "driverId": "DRV-008",
+      "docType": "I-9",
+      "primaryDate": "2026-01-11",
+      "templateDate": "2024-06-24",
+      "finalDate": "2026-12-31",
+      "ruleApplied": "manual_or_seed_override",
+      "finalStatus": "VALID"
+    },
+    {
+      "driverId": "DRV-008",
+      "docType": "FMCSA",
+      "primaryDate": "2026-02-12",
+      "templateDate": "2026-07-15",
+      "finalDate": "2026-12-31",
+      "ruleApplied": "manual_or_seed_override",
+      "finalStatus": "VALID"
+    },
+    {
+      "driverId": "DRV-008",
+      "docType": "W-9",
+      "primaryDate": "2026-02-19",
+      "templateDate": "2024-06-24",
+      "finalDate": "2026-12-31",
+      "ruleApplied": "manual_or_seed_override",
+      "finalStatus": "VALID"
+    },
+    {
+      "driverId": "DRV-008",
+      "docType": "Bank Info",
+      "primaryDate": "2026-05-27",
+      "templateDate": "2024-06-24",
+      "finalDate": "2026-12-31",
+      "ruleApplied": "manual_or_seed_override",
+      "finalStatus": "VALID"
+    },
+    {
+      "driverId": "DRV-009",
+      "docType": "CDL",
+      "primaryDate": "2027-02-06",
+      "templateDate": "2027-02-06",
+      "finalDate": "2027-08-22",
+      "ruleApplied": "manual_or_seed_override",
+      "finalStatus": "VALID"
+    },
+    {
+      "driverId": "DRV-009",
+      "docType": "Medical Card",
+      "primaryDate": "2027-09-15",
+      "templateDate": "2027-09-15",
+      "finalDate": "2027-09-15",
+      "ruleApplied": "later_date_wins",
+      "finalStatus": "VALID"
+    },
+    {
+      "driverId": "DRV-009",
+      "docType": "MVR",
+      "primaryDate": "2027-03-19",
+      "templateDate": "2027-03-05",
+      "finalDate": "2027-03-05",
+      "ruleApplied": "manual_or_seed_override",
+      "finalStatus": "VALID"
+    },
+    {
+      "driverId": "DRV-009",
+      "docType": "I-9",
+      "primaryDate": "2026-05-23",
+      "templateDate": "2024-07-29",
+      "finalDate": "2026-12-31",
+      "ruleApplied": "manual_or_seed_override",
+      "finalStatus": "VALID"
+    },
+    {
+      "driverId": "DRV-009",
+      "docType": "FMCSA",
+      "primaryDate": "2026-08-10",
+      "templateDate": "2026-07-15",
+      "finalDate": "2026-12-31",
+      "ruleApplied": "manual_or_seed_override",
+      "finalStatus": "VALID"
+    },
+    {
+      "driverId": "DRV-009",
+      "docType": "W-9",
+      "primaryDate": "2026-02-07",
+      "templateDate": "2024-07-29",
+      "finalDate": "2026-12-31",
+      "ruleApplied": "manual_or_seed_override",
+      "finalStatus": "VALID"
+    },
+    {
+      "driverId": "DRV-009",
+      "docType": "Bank Info",
+      "primaryDate": "2026-05-02",
+      "templateDate": "2024-07-29",
+      "finalDate": "2026-12-31",
+      "ruleApplied": "manual_or_seed_override",
+      "finalStatus": "VALID"
+    },
+    {
+      "driverId": "DRV-010",
+      "docType": "CDL",
+      "primaryDate": "2027-09-17",
+      "templateDate": "2027-09-17",
+      "finalDate": "2027-09-17",
+      "ruleApplied": "later_date_wins",
+      "finalStatus": "VALID"
+    },
+    {
+      "driverId": "DRV-010",
+      "docType": "Medical Card",
+      "primaryDate": "2027-12-31",
+      "templateDate": "2027-12-31",
+      "finalDate": "2027-12-31",
+      "ruleApplied": "later_date_wins",
+      "finalStatus": "VALID"
+    },
+    {
+      "driverId": "DRV-010",
+      "docType": "MVR",
+      "primaryDate": "2027-03-19",
+      "templateDate": "2027-04-04",
+      "finalDate": "2027-04-04",
+      "ruleApplied": "later_date_wins",
+      "finalStatus": "VALID"
+    },
+    {
+      "driverId": "DRV-010",
+      "docType": "I-9",
+      "primaryDate": "2026-01-02",
+      "templateDate": "2024-08-19",
+      "finalDate": "2026-12-31",
+      "ruleApplied": "manual_or_seed_override",
+      "finalStatus": "VALID"
+    },
+    {
+      "driverId": "DRV-010",
+      "docType": "FMCSA",
+      "primaryDate": "2025-11-24",
+      "templateDate": "2026-07-15",
+      "finalDate": "2026-12-31",
+      "ruleApplied": "manual_or_seed_override",
+      "finalStatus": "VALID"
+    },
+    {
+      "driverId": "DRV-010",
+      "docType": "W-9",
+      "primaryDate": "2026-07-05",
+      "templateDate": "2024-08-19",
+      "finalDate": "2026-12-31",
+      "ruleApplied": "manual_or_seed_override",
+      "finalStatus": "VALID"
+    },
+    {
+      "driverId": "DRV-010",
+      "docType": "Bank Info",
+      "primaryDate": "2026-02-08",
+      "templateDate": "2024-08-19",
+      "finalDate": "2026-12-31",
+      "ruleApplied": "manual_or_seed_override",
+      "finalStatus": "VALID"
+    },
+    {
+      "driverId": "DRV-011",
+      "docType": "CDL",
+      "primaryDate": "2027-06-28",
+      "templateDate": "2027-06-28",
+      "finalDate": "2027-08-22",
+      "ruleApplied": "manual_or_seed_override",
+      "finalStatus": "VALID"
+    },
+    {
+      "driverId": "DRV-011",
+      "docType": "Medical Card",
+      "primaryDate": "2027-04-22",
+      "templateDate": "2027-04-22",
+      "finalDate": "2027-06-15",
+      "ruleApplied": "manual_or_seed_override",
+      "finalStatus": "VALID"
+    },
+    {
+      "driverId": "DRV-011",
+      "docType": "MVR",
+      "primaryDate": "2027-03-19",
+      "templateDate": "2027-04-07",
+      "finalDate": "2027-04-07",
+      "ruleApplied": "later_date_wins",
+      "finalStatus": "VALID"
+    },
+    {
+      "driverId": "DRV-011",
+      "docType": "I-9",
+      "primaryDate": "2026-06-12",
+      "templateDate": "2024-09-16",
+      "finalDate": "2026-12-31",
+      "ruleApplied": "manual_or_seed_override",
+      "finalStatus": "VALID"
+    },
+    {
+      "driverId": "DRV-011",
+      "docType": "FMCSA",
+      "primaryDate": "2026-01-11",
+      "templateDate": "2026-07-15",
+      "finalDate": "2026-12-31",
+      "ruleApplied": "manual_or_seed_override",
+      "finalStatus": "VALID"
+    },
+    {
+      "driverId": "DRV-011",
+      "docType": "W-9",
+      "primaryDate": "2026-08-15",
+      "templateDate": "2024-09-16",
+      "finalDate": "2026-12-31",
+      "ruleApplied": "manual_or_seed_override",
+      "finalStatus": "VALID"
+    },
+    {
+      "driverId": "DRV-011",
+      "docType": "Bank Info",
+      "primaryDate": "2026-01-03",
+      "templateDate": "2024-09-16",
+      "finalDate": "2026-12-31",
+      "ruleApplied": "manual_or_seed_override",
+      "finalStatus": "VALID"
+    },
+    {
+      "driverId": "DRV-012",
+      "docType": "CDL",
+      "primaryDate": "2026-04-23",
+      "templateDate": "2027-11-15",
+      "finalDate": "2027-11-15",
+      "ruleApplied": "later_date_wins",
+      "finalStatus": "VALID"
+    },
+    {
+      "driverId": "DRV-012",
+      "docType": "Medical Card",
+      "primaryDate": "2026-01-20",
+      "templateDate": "2027-08-10",
+      "finalDate": "2027-08-10",
+      "ruleApplied": "later_date_wins",
+      "finalStatus": "VALID"
+    },
+    {
+      "driverId": "DRV-012",
+      "docType": "MVR",
+      "primaryDate": "2025-12-06",
+      "templateDate": "2027-05-12",
+      "finalDate": "2027-05-12",
+      "ruleApplied": "later_date_wins",
+      "finalStatus": "VALID"
+    },
+    {
+      "driverId": "DRV-012",
+      "docType": "I-9",
+      "primaryDate": "2025-12-09",
+      "templateDate": "2024-10-14",
+      "finalDate": "2026-12-31",
+      "ruleApplied": "manual_or_seed_override",
+      "finalStatus": "VALID"
+    },
+    {
+      "driverId": "DRV-012",
+      "docType": "FMCSA",
+      "primaryDate": "2026-05-05",
+      "templateDate": "2026-07-15",
+      "finalDate": "2026-12-31",
+      "ruleApplied": "manual_or_seed_override",
+      "finalStatus": "VALID"
+    },
+    {
+      "driverId": "DRV-012",
+      "docType": "W-9",
+      "primaryDate": "2025-12-27",
+      "templateDate": "2024-10-14",
+      "finalDate": "2026-12-31",
+      "ruleApplied": "manual_or_seed_override",
+      "finalStatus": "VALID"
+    },
+    {
+      "driverId": "DRV-012",
+      "docType": "Bank Info",
+      "primaryDate": "2026-02-16",
+      "templateDate": "2024-10-14",
+      "finalDate": "2026-12-31",
+      "ruleApplied": "manual_or_seed_override",
+      "finalStatus": "VALID"
+    }
+  ],
+  "audit5": [
+    {
+      "driverId": "DRV-001",
+      "primaryContactName": "Sarah Carter",
+      "primaryContactPhone": "206-482-0199",
+      "secondaryContactName": "Mark Carter",
+      "secondaryContactPhone": "216-347-8321",
+      "source": "ec-card (emergencyContactDrivers)"
+    },
+    {
+      "driverId": "DRV-002",
+      "primaryContactName": "Carlos Lopez",
+      "primaryContactPhone": "312-739-4718",
+      "secondaryContactName": "Rosa Hernandez",
+      "secondaryContactPhone": "312-482-2364",
+      "source": "ec-card (emergencyContactDrivers)"
+    },
+    {
+      "driverId": "DRV-003",
+      "primaryContactName": "Min-Ji Kim",
+      "primaryContactPhone": "404-347-8293",
+      "secondaryContactName": "Daniel Kim",
+      "secondaryContactPhone": "770-618-4917",
+      "source": "ec-card (emergencyContactDrivers)"
+    },
+    {
+      "driverId": "DRV-004",
+      "primaryContactName": "Raj Patel",
+      "primaryContactPhone": "216-618-3847",
+      "secondaryContactName": "Anita Sharma",
+      "secondaryContactPhone": "216-739-6102",
+      "source": "ec-card (emergencyContactDrivers)"
+    },
+    {
+      "driverId": "DRV-005",
+      "primaryContactName": "Yuki Tanaka",
+      "primaryContactPhone": "614-823-9012",
+      "secondaryContactName": "Hiroshi Tanaka",
+      "secondaryContactPhone": "614-276-3485",
+      "source": "ec-card (emergencyContactDrivers)"
+    },
+    {
+      "driverId": "DRV-006",
+      "primaryContactName": "Linda Chen",
+      "primaryContactPhone": "214-491-6734",
+      "secondaryContactName": "Wei Chen",
+      "secondaryContactPhone": "214-384-8923",
+      "source": "ec-card (emergencyContactDrivers)"
+    },
+    {
+      "driverId": "DRV-007",
+      "primaryContactName": "Miguel Gomez",
+      "primaryContactPhone": "216-276-1482",
+      "secondaryContactName": "Isabel Torres",
+      "secondaryContactPhone": "216-917-7536",
+      "source": "ec-card (emergencyContactDrivers)"
+    },
+    {
+      "driverId": "DRV-008",
+      "primaryContactName": "Jessica Smith",
+      "primaryContactPhone": "419-384-2938",
+      "secondaryContactName": "Brian Smith",
+      "secondaryContactPhone": "419-653-6147",
+      "source": "ec-card (emergencyContactDrivers)"
+    },
+    {
+      "driverId": "DRV-009",
+      "primaryContactName": "Michael Brown",
+      "primaryContactPhone": "614-917-7261",
+      "secondaryContactName": "Laura Davis",
+      "secondaryContactPhone": "614-491-1893",
+      "source": "ec-card (emergencyContactDrivers)"
+    },
+    {
+      "driverId": "DRV-010",
+      "primaryContactName": "Angela Wilson",
+      "primaryContactPhone": "312-653-8145",
+      "secondaryContactName": "Terrance Wilson",
+      "secondaryContactPhone": "773-823-4628",
+      "source": "ec-card (emergencyContactDrivers)"
+    },
+    {
+      "driverId": "DRV-011",
+      "primaryContactName": "Vikram Sharma",
+      "primaryContactPhone": "404-741-3619",
+      "secondaryContactName": "Meera Nair",
+      "secondaryContactPhone": "678-294-2740",
+      "source": "ec-card (emergencyContactDrivers)"
+    },
+    {
+      "driverId": "DRV-012",
+      "primaryContactName": "Karen Johnson",
+      "primaryContactPhone": "312-294-5478",
+      "secondaryContactName": "David Johnson",
+      "secondaryContactPhone": "312-741-9317",
+      "source": "ec-card (emergencyContactDrivers)"
+    }
+  ],
+  "audit6": {
+    "ssnIngestPath": "lib/bof-source-of-truth.ts (SSN (Masked) / TIN masked values from template workbook)",
+    "fullSsnExposedInPublic": false,
+    "uiMaskedOnly": true,
+    "notes": "Only ssnMasked is written to runtime driver records; no full SSN column mapped."
+  },
+  "audit7": [
+    {
+      "loadId": "L001",
+      "driverId": "DRV-001",
+      "driverName": "John Carter",
+      "status": "Delivered",
+      "riskReason": "dispatchExceptionFlag;seal:Mismatch",
+      "evidencePathStatus": "placeholder_or_none",
+      "dispatchBlockedReason": "dispatchExceptionFlag;seal:Mismatch"
+    },
+    {
+      "loadId": "L002",
+      "driverId": "DRV-002",
+      "driverName": "Maria Lopez",
+      "status": "En Route",
+      "riskReason": "pod_pending",
+      "evidencePathStatus": "placeholder_or_none",
+      "dispatchBlockedReason": "pod_pending"
+    },
+    {
+      "loadId": "L003",
+      "driverId": "DRV-003",
+      "driverName": "Alex Kim",
+      "status": "Delivered",
+      "riskReason": "dispatchExceptionFlag;seal:Mismatch",
+      "evidencePathStatus": "placeholder_or_none",
+      "dispatchBlockedReason": "dispatchExceptionFlag;seal:Mismatch"
+    },
+    {
+      "loadId": "L004",
+      "driverId": "DRV-004",
+      "driverName": "Priya Patel",
+      "status": "Pending",
+      "riskReason": "dispatchExceptionFlag;seal:Mismatch",
+      "evidencePathStatus": "placeholder_or_none",
+      "dispatchBlockedReason": "dispatchExceptionFlag;seal:Mismatch"
+    },
+    {
+      "loadId": "L005",
+      "driverId": "DRV-005",
+      "driverName": "Kenji Tanaka",
+      "status": "Delivered",
+      "riskReason": "pod_pending",
+      "evidencePathStatus": "placeholder_or_none",
+      "dispatchBlockedReason": "pod_pending"
+    },
+    {
+      "loadId": "L006",
+      "driverId": "DRV-006",
+      "driverName": "Marcus Chen",
+      "status": "Delivered",
+      "riskReason": "dispatchExceptionFlag;seal:Mismatch",
+      "evidencePathStatus": "placeholder_or_none",
+      "dispatchBlockedReason": "dispatchExceptionFlag;seal:Mismatch"
+    },
+    {
+      "loadId": "L007",
+      "driverId": "DRV-007",
+      "driverName": "Sofia Gomez",
+      "status": "En Route",
+      "riskReason": "dispatchExceptionFlag;seal:Mismatch",
+      "evidencePathStatus": "placeholder_or_none",
+      "dispatchBlockedReason": "dispatchExceptionFlag;seal:Mismatch"
+    },
+    {
+      "loadId": "L008",
+      "driverId": "DRV-008",
+      "driverName": "Liam Smith",
+      "status": "Delivered",
+      "riskReason": "pod_pending",
+      "evidencePathStatus": "placeholder_or_none",
+      "dispatchBlockedReason": "pod_pending"
+    },
+    {
+      "loadId": "L009",
+      "driverId": "DRV-009",
+      "driverName": "Emma Brown",
+      "status": "Pending",
+      "riskReason": "dispatchExceptionFlag;seal:Mismatch",
+      "evidencePathStatus": "placeholder_or_none",
+      "dispatchBlockedReason": "dispatchExceptionFlag;seal:Mismatch"
+    },
+    {
+      "loadId": "L010",
+      "driverId": "DRV-010",
+      "driverName": "Noah Wilson",
+      "status": "Delivered",
+      "riskReason": "dispatchExceptionFlag;seal:Mismatch",
+      "evidencePathStatus": "placeholder_or_none",
+      "dispatchBlockedReason": "dispatchExceptionFlag;seal:Mismatch"
+    },
+    {
+      "loadId": "L011",
+      "driverId": "DRV-011",
+      "driverName": "Olivia Lee",
+      "status": "En Route",
+      "riskReason": "pod_pending",
+      "evidencePathStatus": "placeholder_or_none",
+      "dispatchBlockedReason": "pod_pending"
+    },
+    {
+      "loadId": "L012",
+      "driverId": "DRV-012",
+      "driverName": "Robert Johnson",
+      "status": "Delivered",
+      "riskReason": "dispatchExceptionFlag;seal:Mismatch",
+      "evidencePathStatus": "placeholder_or_none",
+      "dispatchBlockedReason": "dispatchExceptionFlag;seal:Mismatch"
+    }
+  ],
+  "audit8": [
+    {
+      "settlementId": "STL-001",
+      "driverId": "DRV-001",
+      "loadId": "L001",
+      "status": "Paid",
+      "holdAmount": 0,
+      "holdReason": "N/A",
+      "linkedDocsExist": true
+    },
+    {
+      "settlementId": "STL-002",
+      "driverId": "DRV-002",
+      "loadId": "L002",
+      "status": "Pending",
+      "holdAmount": 0,
+      "holdReason": "Awaiting Receipts",
+      "linkedDocsExist": true
+    },
+    {
+      "settlementId": "STL-003",
+      "driverId": "DRV-003",
+      "loadId": "L003",
+      "status": "Paid",
+      "holdAmount": 0,
+      "holdReason": "N/A",
+      "linkedDocsExist": true
+    },
+    {
+      "settlementId": "STL-004",
+      "driverId": "DRV-004",
+      "loadId": "L004",
+      "status": "Pending",
+      "holdAmount": 0,
+      "holdReason": "Awaiting Receipts",
+      "linkedDocsExist": true
+    },
+    {
+      "settlementId": "STL-005",
+      "driverId": "DRV-005",
+      "loadId": "L005",
+      "status": "Pending",
+      "holdAmount": 0,
+      "holdReason": "Load Verification",
+      "linkedDocsExist": true
+    },
+    {
+      "settlementId": "STL-006",
+      "driverId": "DRV-006",
+      "loadId": "L006",
+      "status": "Paid",
+      "holdAmount": 0,
+      "holdReason": "N/A",
+      "linkedDocsExist": true
+    },
+    {
+      "settlementId": "STL-007",
+      "driverId": "DRV-007",
+      "loadId": "L007",
+      "status": "Paid",
+      "holdAmount": 0,
+      "holdReason": "N/A",
+      "linkedDocsExist": true
+    },
+    {
+      "settlementId": "STL-008",
+      "driverId": "DRV-008",
+      "loadId": "L008",
+      "status": "Pending",
+      "holdAmount": 0,
+      "holdReason": "Load Verification",
+      "linkedDocsExist": true
+    },
+    {
+      "settlementId": "STL-009",
+      "driverId": "DRV-009",
+      "loadId": "L009",
+      "status": "Paid",
+      "holdAmount": 0,
+      "holdReason": "N/A",
+      "linkedDocsExist": true
+    },
+    {
+      "settlementId": "STL-010",
+      "driverId": "DRV-010",
+      "loadId": "L010",
+      "status": "Paid",
+      "holdAmount": 0,
+      "holdReason": "N/A",
+      "linkedDocsExist": true
+    },
+    {
+      "settlementId": "STL-011",
+      "driverId": "DRV-011",
+      "loadId": "L011",
+      "status": "Paid",
+      "holdAmount": 0,
+      "holdReason": "N/A",
+      "linkedDocsExist": true
+    },
+    {
+      "settlementId": "STL-012",
+      "driverId": "DRV-012",
+      "loadId": "L012",
+      "status": "Paid",
+      "holdAmount": 0,
+      "holdReason": "N/A",
+      "linkedDocsExist": true
+    }
+  ],
+  "audit9": {
+    "ownerAttentionSample": [
+      {
+        "id": "LOAD-L004",
+        "severity": "high",
+        "area": "Dispatch / proof",
+        "target": "Load L004 · Driver DRV-004 · Asset T-108",
+        "issue": "Load 504 — Pending — Seal: Mismatch; POD: verified",
+        "financialImpact": 1950,
+        "recommendedFix": "Resolve dispatch exception and update load status",
+        "actionLabel": "Open Load Proof",
+        "actionHref": "/loads/L004",
+        "reviewDriverId": "DRV-004",
+        "reviewLoadId": "L004",
+        "entityType": "load",
+        "entityId": "L004"
+      },
+      {
+        "id": "LOAD-L007",
+        "severity": "high",
+        "area": "Dispatch / proof",
+        "target": "Load L007 · Driver DRV-007 · Asset T-109",
+        "issue": "Load 507 — En Route — Seal: Mismatch; POD: verified",
+        "financialImpact": 2300,
+        "recommendedFix": "Resolve dispatch exception and update load status",
+        "actionLabel": "Open Load Proof",
+        "actionHref": "/loads/L007",
+        "reviewDriverId": "DRV-007",
+        "reviewLoadId": "L007",
+        "entityType": "load",
+        "entityId": "L007"
+      },
+      {
+        "id": "LOAD-L009",
+        "severity": "high",
+        "area": "Dispatch / proof",
+        "target": "Load L009 · Driver DRV-009 · Asset T-111",
+        "issue": "Load 509 — Pending — Seal: Mismatch; POD: verified",
+        "financialImpact": 2400,
+        "recommendedFix": "Resolve dispatch exception and update load status",
+        "actionLabel": "Open Load Proof",
+        "actionHref": "/loads/L009",
+        "reviewDriverId": "DRV-009",
+        "reviewLoadId": "L009",
+        "entityType": "load",
+        "entityId": "L009"
+      },
+      {
+        "id": "MAR-002",
+        "severity": "high",
+        "area": "Money at risk",
+        "target": "Load L009 · Driver DRV-009 · Asset T-111",
+        "issue": "Settlement holds — Customer freight claim tied to load L009",
+        "financialImpact": 2020,
+        "recommendedFix": "Claims review with customer; release or adjust settlement",
+        "actionLabel": "Open Money at Risk",
+        "actionHref": "/money-at-risk",
+        "reviewDriverId": "DRV-009",
+        "reviewLoadId": "L009",
+        "entityType": "settlement",
+        "entityId": "DRV-009"
+      },
+      {
+        "id": "MAR-007",
+        "severity": "high",
+        "area": "Money at risk",
+        "target": "Driver DRV-012 · Asset T-106",
+        "issue": "Settlement holds — ACH return on prior deposit",
+        "financialImpact": 1820,
+        "recommendedFix": "Verify W-9 and bank info; re-issue payment",
+        "actionLabel": "Open Money at Risk",
+        "actionHref": "/money-at-risk",
+        "reviewDriverId": "DRV-012",
+        "entityType": "settlement",
+        "entityId": "DRV-012"
+      }
+    ],
+    "driverReadiness": [
+      {
+        "label": "Ready",
+        "value": 6,
+        "tone": "ok"
+      },
+      {
+        "label": "Action needed",
+        "value": 4,
+        "tone": "warn"
+      },
+      {
+        "label": "Dispatch blocked",
+        "value": 2,
+        "tone": "danger"
+      }
+    ],
+    "fleetRisk": [
+      {
+        "label": "Compliance",
+        "value": 0,
+        "tone": "warn"
+      },
+      {
+        "label": "Dispatch / proof",
+        "value": 8,
+        "tone": "danger"
+      },
+      {
+        "label": "Safety",
+        "value": 2,
+        "tone": "warn"
+      },
+      {
+        "label": "Settlements",
+        "value": 6,
+        "tone": "warn"
+      },
+      {
+        "label": "Claims",
+        "value": 1,
+        "tone": "info"
+      }
+    ],
+    "loadStatus": [
+      {
+        "label": "On time",
+        "value": 0,
+        "tone": "ok"
+      },
+      {
+        "label": "At risk",
+        "value": 2,
+        "tone": "warn"
+      },
+      {
+        "label": "Delayed",
+        "value": 0,
+        "tone": "warn"
+      },
+      {
+        "label": "Completed",
+        "value": 7,
+        "tone": "info"
+      },
+      {
+        "label": "Blocked / exception",
+        "value": 3,
+        "tone": "danger"
+      }
+    ]
+  }
+}
