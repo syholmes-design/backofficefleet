@@ -224,6 +224,165 @@ function escText(s) {
     .replace(/</g, "&lt;");
 }
 
+function parseUsLocalDateTime(str, fallback) {
+  const fb = fallback instanceof Date ? fallback : new Date();
+  const m = String(str ?? "")
+    .trim()
+    .match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})\s+(\d{1,2}):(\d{2})$/);
+  if (!m) return fb;
+  const month = Number(m[1]) - 1;
+  const day = Number(m[2]);
+  const year = Number(m[3]);
+  const hour = Number(m[4]);
+  const minute = Number(m[5]);
+  return new Date(year, month, day, hour, minute, 0, 0);
+}
+
+function formatScanLocal(d) {
+  return d.toLocaleString("en-US", {
+    month: "numeric",
+    day: "numeric",
+    year: "numeric",
+    hour: "numeric",
+    minute: "2-digit",
+  });
+}
+
+function dockBayFromLoadId(loadId) {
+  const n = Number(String(loadId ?? "").replace(/^L/i, ""));
+  return Number.isFinite(n) ? String(n).padStart(2, "0") : "01";
+}
+
+/**
+ * @param {string | undefined} url
+ * @param {string} caption
+ */
+function buildPodPhotoFrame(url, caption) {
+  if (!url || typeof url !== "string" || !url.trim()) {
+    return `<div class="pod-photo-cell"><div class="pod-photo-frame"><div class="pod-photo-missing">Photo evidence on file — image archived in BOF vault.</div><div class="pod-photo-label">${escText(caption)}</div></div></div>`;
+  }
+  const u = url.trim();
+  return `<div class="pod-photo-cell"><div class="pod-photo-frame"><img src="${escAttr(u)}" alt="" /><div class="pod-photo-label">${escText(caption)}</div></div></div>`;
+}
+
+/**
+ * Customer-facing POD fields (RFID times are deterministic from delivery timestamp in ctx.deliveryDate).
+ * @param {object} ctx load context from deriveLoadContext
+ * @param {object} load
+ * @param {object | null} driver
+ * @param {{ pickupPhoto?: string, deliveryPhoto?: string, sealPickupPhoto?: string, sealDeliveryPhoto?: string, cargoPhoto?: string }} ev
+ * @param {Date} runNow
+ */
+function buildPodTemplateFields(ctx, load, driver, ev, runNow) {
+  const beforeUrl = ev.pickupPhoto || ev.sealPickupPhoto || ev.cargoPhoto || "";
+  const afterUrl = ev.deliveryPhoto || ev.sealDeliveryPhoto || "";
+  const beforeDeliveryPhotoHtml = buildPodPhotoFrame(
+    beforeUrl,
+    "Before delivery — condition at pickup / gate"
+  );
+  const afterDeliveryPhotoHtml = buildPodPhotoFrame(
+    afterUrl,
+    "After delivery — condition at release"
+  );
+
+  const deliveryInstant = parseUsLocalDateTime(ctx.deliveryDate, runNow);
+  const arrival = new Date(deliveryInstant.getTime() - 30 * 60 * 1000);
+  const dockScanT = new Date(deliveryInstant.getTime() - 24 * 60 * 1000);
+  const unloadT = new Date(deliveryInstant.getTime());
+  const departure = new Date(deliveryInstant.getTime() + 18 * 60 * 1000);
+
+  const trailerTail = String(ctx.trailerNumber ?? "")
+    .replace(/^TR-/i, "")
+    .trim();
+  const podRfidTagId = trailerTail ? `RFID-TR-${trailerTail}` : `RFID-TR-${load.id}`;
+
+  const dockBay = dockBayFromLoadId(load.id);
+  const dockBayDisplay = `Dock ${dockBay}`;
+  const podReaderLocation = `${ctx.deliveryFacility} — ${dockBayDisplay}`;
+
+  const sealLower = String(ctx.sealStatus ?? "").toLowerCase();
+  const sealMismatch = sealLower === "mismatch";
+  const sealOk = sealLower === "ok" || sealLower === "match";
+
+  const gpsStatusLine =
+    load.status === "Delivered"
+      ? "GPS arrival verified within consignee facility geofence."
+      : "GPS monitoring attached — delivery confirmation pending.";
+
+  const podDeliveryStatusLine = `${ctx.statusStamp} · POD ${ctx.podStatus}`;
+
+  const shipperContactLine = "Shipping office — contact on file with shipper of record";
+  const consigneeContactLine = "Receiving desk — facility contact on file";
+  const carrierContactLine = driver?.phone
+    ? `Carrier dispatch ${driver.phone}`
+    : "Carrier dispatch — on file with carrier operations";
+
+  const podOpsSummary = escText(
+    String(load.dispatchOpsNotes ?? ctx.exceptionNotes ?? "Recorded per BOF delivery procedure.")
+  );
+
+  const sealMatchStatus = sealMismatch
+    ? "MISMATCH — REVIEW REQUIRED"
+    : sealOk
+      ? "VERIFIED — SEALS RECONCILED"
+      : "REVIEW — VERIFY SEAL RECORD";
+
+  const hasException = Boolean(load.dispatchExceptionFlag) || sealMismatch;
+  const sealExceptionPacketStatus = hasException
+    ? "Created — linked seal verification record available"
+    : "Not applicable — no seal exception on file";
+
+  const podChainOfCustody = sealMismatch
+    ? "Under review — seal exception coordination active"
+    : "Verified — receiver confirmation aligned with RFID dock scans";
+
+  const podTrailerPresence =
+    "Confirmed — trailer presence matched at dock reader during unload window";
+
+  const podRfidSealLaneStatus = sealMismatch
+    ? "Exception — mismatch flagged; RFID lane reviewed"
+    : "Verified — RFID lane consistent with seal capture";
+
+  const podRfidStatus = ctx.rfidWorkflow ? "Active — dock reader synchronized" : "Inactive — lane not equipped";
+
+  const dateKey = runNow.toISOString().slice(0, 10).replaceAll("-", "");
+  const bofProofId = `BOF-PROOF-${dateKey}-${load.number}`;
+  const vaultId = `VAULT-${load.id}-${load.number}`;
+
+  const podAuditNarrative =
+    "Generated from dispatch record, GPS event log, RFID dock reader events, photo evidence bundle, and receiver confirmation. Internal archive references are not displayed on this customer copy.";
+
+  return {
+    podDeliveryStatusLine,
+    shipperContactLine,
+    consigneeContactLine,
+    carrierContactLine,
+    beforeDeliveryPhotoHtml,
+    afterDeliveryPhotoHtml,
+    gpsStatusLine,
+    dockBayDisplay,
+    podRfidTagId,
+    podReaderLocation,
+    podArrivalScan: formatScanLocal(arrival),
+    podDockScan: formatScanLocal(dockScanT),
+    podUnloadScan: formatScanLocal(unloadT),
+    podDepartureScan: formatScanLocal(departure),
+    podChainOfCustody,
+    podTrailerPresence,
+    podRfidSealLaneStatus,
+    podRfidStatus,
+    rfidNarrative1: "Trailer tag detected at consignee dock reader.",
+    rfidNarrative2: "Trailer presence confirmed during unload window.",
+    rfidNarrative3: "RFID dock event matched GPS delivery window.",
+    sealMatchStatus,
+    sealExceptionPacketStatus,
+    podOpsSummary,
+    bofProofId,
+    vaultId,
+    podAuditNarrative,
+  };
+}
+
 function linkLi(label, url) {
   if (!url || typeof url !== "string") return "";
   const u = url.trim();
@@ -431,9 +590,24 @@ function main() {
       if (!shouldEmit(docKey, ctx)) continue;
       const fileName = FILE_MAP[docKey];
       const { html: tpl, relativeFromWebRoot } = templateBodies[docKey];
+      const podEvidenceUrls =
+        docKey === "pod"
+          ? {
+              pickupPhoto,
+              deliveryPhoto,
+              sealPickupPhoto,
+              sealDeliveryPhoto,
+              cargoPhoto,
+            }
+          : null;
+      const podExtras =
+        docKey === "pod"
+          ? buildPodTemplateFields(ctx, load, driver, podEvidenceUrls, runNow)
+          : {};
       const merged = renderTemplate(tpl, {
         ...ctxForTemplates,
         ...signaturePlaceholders,
+        ...podExtras,
         styles: sharedStyles,
       });
       const outUrl = writeDoc(ctx.loadId, docKey, fileName, merged, relativeFromWebRoot);

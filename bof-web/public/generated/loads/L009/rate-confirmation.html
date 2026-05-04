@@ -41,6 +41,112 @@ th { background: #f3f4f6; font-size: 11px; text-transform: uppercase; letter-spa
 .terms-box { border: 1px solid #d1d5db; background: #f9fafb; padding: 10px; font-size: 11px; color: #374151; }
 .barcode-ref { margin-top: 10px; display: inline-block; font-family: "Courier New", monospace; letter-spacing: 2px; font-size: 11px; border: 1px solid #111827; padding: 3px 8px; }
 footer { margin-top: 16px; padding-top: 8px; border-top: 1px dashed #9ca3af; display: flex; justify-content: space-between; font-size: 11px; color: #6b7280; }
+
+/* POD — freight-style section rails (shared tokens; used only by pod.template.html classes) */
+.pod-section-heading {
+  margin: 16px 0 8px;
+  padding: 8px 10px;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #fff;
+  background: #1e40af;
+  border-radius: 2px;
+}
+.meta-grid--pod-header { margin-bottom: 10px; }
+.entity-grid--parties {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  margin-bottom: 12px;
+}
+.party-block {
+  border: 1px solid #d1d5db;
+  background: #f9fafb;
+  padding: 10px;
+  font-size: 12px;
+}
+.party-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: #6b7280; margin-bottom: 4px; }
+.party-name { font-weight: 700; color: #111827; }
+.party-addr { margin-top: 4px; color: #374151; line-height: 1.45; }
+.party-contact { margin-top: 6px; font-size: 11px; color: #4b5563; }
+.pod-lead { font-size: 11px; color: #4b5563; margin: 0 0 8px; line-height: 1.5; }
+.pod-photo-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-top: 6px;
+}
+.pod-photo-cell { min-width: 0; }
+.pod-photo-frame {
+  border: 1px solid #d1d5db;
+  background: #f9fafb;
+  padding: 8px;
+  min-height: 100px;
+}
+.pod-photo-frame img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  border: 1px solid #e5e7eb;
+}
+.pod-photo-missing {
+  font-size: 11px;
+  color: #4b5563;
+  padding: 20px 8px;
+  text-align: center;
+  line-height: 1.45;
+}
+.pod-photo-label {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  margin-top: 6px;
+  color: #374151;
+  letter-spacing: 0.04em;
+}
+.pod-verify-panel {
+  margin-top: 12px;
+  border: 1px solid #1e40af;
+  background: #eff6ff;
+  padding: 10px 12px;
+  font-size: 12px;
+}
+.pod-verify-title {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #1e3a8a;
+  margin-bottom: 8px;
+}
+.pod-verify-row { display: flex; gap: 10px; padding: 4px 0; border-bottom: 1px solid #bfdbfe; }
+.pod-verify-row:last-child { border-bottom: none; }
+.pod-verify-row .k { flex: 0 0 38%; font-weight: 700; color: #1e3a8a; font-size: 11px; }
+.pod-verify-row .v { flex: 1; color: #111827; }
+.pod-rfid-lead { font-size: 11px; color: #374151; margin: 0 0 8px; line-height: 1.55; }
+.pod-ops-title { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 6px; color: #1f2937; }
+.pod-ops-body { margin: 0 0 8px; font-size: 12px; line-height: 1.5; }
+.pod-proof-list { margin: 0; padding-left: 18px; font-size: 11px; color: #374151; line-height: 1.5; }
+.signature-grid--pod { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.pod-audit-box {
+  margin-top: 16px;
+  padding: 10px 12px;
+  border: 1px dashed #94a3b8;
+  background: #f8fafc;
+  font-size: 11px;
+  color: #475569;
+  line-height: 1.5;
+}
+.pod-audit-title { font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 6px; color: #334155; }
+.pod-audit-id { margin: 0 0 6px; }
+.pod-audit-body { margin: 0; }
+@media (max-width: 960px) {
+  .entity-grid--parties { grid-template-columns: 1fr; }
+  .signature-grid--pod { grid-template-columns: 1fr; }
+  .pod-photo-grid { grid-template-columns: 1fr; }
+}
 </style>
   </head>
   <body>
@@ -55,7 +161,7 @@ footer { margin-top: 16px; padding-top: 8px; border-top: 1px dashed #9ca3af; dis
 
       <div class="meta-grid">
         <div class="meta-box"><div class="meta-label">Load ID</div><div class="meta-value">L009</div></div>
-        <div class="meta-box"><div class="meta-label">Rate Con #</div><div class="meta-value">RC-20260502-509</div></div>
+        <div class="meta-box"><div class="meta-label">Rate Con #</div><div class="meta-value">RC-20260504-509</div></div>
         <div class="meta-box"><div class="meta-label">Customer / Broker</div><div class="meta-value">BlueLine</div></div>
         <div class="meta-box"><div class="meta-label">Carrier</div><div class="meta-value">BackOfficeFleet Carrier Group</div></div>
       </div>
@@ -63,7 +169,7 @@ footer { margin-top: 16px; padding-top: 8px; border-top: 1px dashed #9ca3af; dis
       <div class="section-title">Pickup & Delivery</div>
       <table>
         <tr><th>Pickup Facility</th><th>Pickup Date/Time</th><th>Delivery Facility</th><th>Delivery Date/Time</th></tr>
-        <tr><td>BlueLine Retail Cleveland OH<br />BlueLine Retail - Cleveland, OH</td><td>5/2/2026 08:00</td><td>Lakeside Grocery Dallas TX<br />Lakeside Grocery - Dallas, TX</td><td>5/2/2026 16:00</td></tr>
+        <tr><td>BlueLine Retail Cleveland OH<br />BlueLine Retail - Cleveland, OH</td><td>5/4/2026 08:00</td><td>Lakeside Grocery Dallas TX<br />Lakeside Grocery - Dallas, TX</td><td>5/4/2026 16:00</td></tr>
       </table>
 
       <div class="section-title">Shipment & Equipment</div>
@@ -124,10 +230,10 @@ footer { margin-top: 16px; padding-top: 8px; border-top: 1px dashed #9ca3af; dis
         </div>
       </div>
 
-      <div class="barcode-ref">|| | | ||| L009 RC-20260502-509 || ||</div>
+      <div class="barcode-ref">|| | | ||| L009 RC-20260504-509 || ||</div>
       <!-- bof-sig-ratecon:pre_pickup -->
       <footer>
-        <span>Generated: 5/2/2026, 5:19:19 PM</span>
+        <span>Generated: 5/4/2026, 1:32:13 PM</span>
         <span>BOF demo document packet</span>
       </footer>
     </div>
