@@ -30,6 +30,7 @@ import type { DriverMedicalExpanded } from "@/lib/driver-medical-expanded";
 import { EMPTY_DRIVER_MEDICAL_EXPANDED } from "@/lib/driver-medical-expanded";
 import { collectDispatchHardBlockers } from "@/lib/driver-dispatch-eligibility";
 import { applyOperationalSeedDefaults } from "@/lib/driver-operational-profile";
+import { reconcileBofSourceOfTruth } from "@/lib/bof-source-of-truth";
 import { migrateLegacySharedMedicalExpiration } from "@/lib/demo-data-medical-migration";
 import {
   BOF_DEMO_DATA_LEGACY_STORAGE_KEY,
@@ -41,6 +42,10 @@ const RISK_OVERRIDES_STORAGE_KEY = "bof-demo-risk-overrides-v1";
 function deepClone<T>(x: T): T {
   if (typeof structuredClone === "function") return structuredClone(x);
   return JSON.parse(JSON.stringify(x)) as T;
+}
+
+function normalizeBofData(next: BofData): BofData {
+  return applyOperationalSeedDefaults(reconcileBofSourceOfTruth(next));
 }
 
 function persistToStorage(next: BofData) {
@@ -117,7 +122,7 @@ export function BofDemoDataProvider({
   seed: BofData;
   children: ReactNode;
 }) {
-  const [data, setData] = useState<BofData>(() => applyOperationalSeedDefaults(deepClone(seed)));
+  const [data, setData] = useState<BofData>(() => normalizeBofData(deepClone(seed)));
   const [demoRiskOverrides, setDemoRiskOverrides] = useState<BofDemoDataContextValue["demoRiskOverrides"]>(
     () => ({ loads: {}, drivers: {} })
   );
@@ -136,7 +141,7 @@ export function BofDemoDataProvider({
         if (parsed && Array.isArray(parsed.drivers) && Array.isArray(parsed.documents)) {
           const { data: migrated, mutated } = migrateLegacySharedMedicalExpiration(parsed, seed);
           const next = mutated || legacyHydratedFrom ? migrated : parsed;
-          setData(applyOperationalSeedDefaults(next));
+          setData(normalizeBofData(next));
           if (mutated || legacyHydratedFrom) {
             persistToStorage(next);
             if (legacyHydratedFrom) {
@@ -167,13 +172,13 @@ export function BofDemoDataProvider({
   }, [seed]);
 
   const setFullData = useCallback((next: BofData) => {
-    const copy = applyOperationalSeedDefaults(deepClone(next));
+    const copy = normalizeBofData(deepClone(next));
     setData(copy);
     persistToStorage(copy);
   }, []);
 
   const resetDemoData = useCallback(() => {
-    const fresh = applyOperationalSeedDefaults(deepClone(seed));
+    const fresh = normalizeBofData(deepClone(seed));
     setData(fresh);
     try {
       localStorage.removeItem(BOF_DEMO_DATA_STORAGE_KEY);

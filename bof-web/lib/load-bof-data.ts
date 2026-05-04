@@ -8,6 +8,7 @@
  * documents, money at risk, loads, RF actions, settlement drawer proof review, etc.).
  */
 import raw from "./demo-data.json";
+import { reconcileBofSourceOfTruth } from "@/lib/bof-source-of-truth";
 
 /** Runtime-only demo dispatch blocker acknowledgements (persisted with demo data in localStorage). */
 export type DriverDispatchBlockerOverrideRow = {
@@ -42,6 +43,10 @@ export type BofData = typeof raw & {
   driverCredentialOverrides?: Record<string, DriverCredentialOverrideRow>;
 };
 
+let reconciledSeed: BofData | null = null;
+
 export function getBofData(): BofData {
-  return raw;
+  if (reconciledSeed) return reconciledSeed;
+  reconciledSeed = reconcileBofSourceOfTruth(raw as BofData);
+  return reconciledSeed;
 }
