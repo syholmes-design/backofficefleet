@@ -134,6 +134,13 @@ function resolveSealDeliveryUrl(load: BofLoad): string | undefined {
   return preferred;
 }
 
+function firstExistingPublicUrl(candidates: string[]): string | undefined {
+  for (const candidate of candidates) {
+    if (publicUrlExists(candidate)) return candidate;
+  }
+  return undefined;
+}
+
 const EVIDENCE_DEFS: EvidenceDef[] = [
   {
     evidenceType: "rate_confirmation",
@@ -182,7 +189,14 @@ const EVIDENCE_DEFS: EvidenceDef[] = [
   {
     evidenceType: "lumper_receipt",
     title: "Lumper Receipt",
-    resolve: (load) => getLoadEvidenceUrl(load.id, "lumperReceipt") ?? getGeneratedLoadDocUrl(load.id, "lumperReceipt"),
+    resolve: (load) =>
+      firstExistingPublicUrl([
+        `/evidence/loads/${load.id}/lumper-receipt.png`,
+        `/evidence/loads/${load.id}/lumper-receipt.jpg`,
+      ]) ??
+      getLoadEvidenceUrl(load.id, "lumperReceipt") ??
+      getGeneratedLoadDocUrl(load.id, "lumperReceipt") ??
+      `/evidence/loads/${load.id}/lumper-receipt.png`,
     required: (data, load) => hasLumperContext(data, load),
     notRequiredReason: () =>
       "Lumper receipt is not required because no lumper/unload payment context is present on the load settlement trail.",
@@ -197,9 +211,15 @@ const EVIDENCE_DEFS: EvidenceDef[] = [
     evidenceType: "claim_photo",
     title: "Claim Photo Evidence",
     resolve: (load) =>
+      firstExistingPublicUrl([
+        `/evidence/loads/${load.id}/cargo-damage-photo.png`,
+        `/evidence/loads/${load.id}/claim-evidence.png`,
+        `/evidence/loads/${load.id}/damage-photo.png`,
+      ]) ??
       getLoadEvidenceUrl(load.id, "damagePhoto") ??
       getLoadEvidenceUrl(load.id, "cargoDamagePhoto") ??
-      getGeneratedLoadDocUrl(load.id, "damageClaimPhoto"),
+      getGeneratedLoadDocUrl(load.id, "damageClaimPhoto") ??
+      `/evidence/loads/${load.id}/cargo-damage-photo.png`,
     required: (data, load) => hasClaimContext(data, load),
     notRequiredReason: (_, load) =>
       `No active claim/damage incident context is linked to ${load.id} in canonical money-at-risk rows.`,

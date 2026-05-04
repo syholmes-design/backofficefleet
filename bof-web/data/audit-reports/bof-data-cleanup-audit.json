@@ -1212,13 +1212,10 @@
       "status": "Delivered",
       "riskReason": "dispatchExceptionFlag;seal:Mismatch",
       "dispatchBlockedReason": "dispatchExceptionFlag;seal:Mismatch",
-      "evidenceAvailableCount": 6,
-      "evidenceMissingCount": 2,
-      "evidencePathStatus": "partial",
-      "missingEvidenceTypes": [
-        "lumper_receipt",
-        "claim_photo"
-      ]
+      "evidenceAvailableCount": 8,
+      "evidenceMissingCount": 0,
+      "evidencePathStatus": "available",
+      "missingEvidenceTypes": []
     },
     {
       "loadId": "L004",
@@ -1227,12 +1224,10 @@
       "status": "Pending",
       "riskReason": "dispatchExceptionFlag;seal:Mismatch",
       "dispatchBlockedReason": "dispatchExceptionFlag;seal:Mismatch",
-      "evidenceAvailableCount": 6,
-      "evidenceMissingCount": 1,
-      "evidencePathStatus": "partial",
-      "missingEvidenceTypes": [
-        "seal_delivery_photo"
-      ]
+      "evidenceAvailableCount": 7,
+      "evidenceMissingCount": 0,
+      "evidencePathStatus": "available",
+      "missingEvidenceTypes": []
     },
     {
       "loadId": "L005",
@@ -1265,12 +1260,10 @@
       "status": "En Route",
       "riskReason": "dispatchExceptionFlag;seal:Mismatch",
       "dispatchBlockedReason": "dispatchExceptionFlag;seal:Mismatch",
-      "evidenceAvailableCount": 5,
-      "evidenceMissingCount": 1,
-      "evidencePathStatus": "partial",
-      "missingEvidenceTypes": [
-        "seal_delivery_photo"
-      ]
+      "evidenceAvailableCount": 6,
+      "evidenceMissingCount": 0,
+      "evidencePathStatus": "available",
+      "missingEvidenceTypes": []
     },
     {
       "loadId": "L008",
@@ -1279,13 +1272,10 @@
       "status": "Delivered",
       "riskReason": "pod_pending",
       "dispatchBlockedReason": "pod_pending",
-      "evidenceAvailableCount": 4,
-      "evidenceMissingCount": 2,
-      "evidencePathStatus": "partial",
-      "missingEvidenceTypes": [
-        "lumper_receipt",
-        "claim_photo"
-      ]
+      "evidenceAvailableCount": 6,
+      "evidenceMissingCount": 0,
+      "evidencePathStatus": "available",
+      "missingEvidenceTypes": []
     },
     {
       "loadId": "L009",
@@ -1294,12 +1284,10 @@
       "status": "Pending",
       "riskReason": "dispatchExceptionFlag;seal:Mismatch",
       "dispatchBlockedReason": "dispatchExceptionFlag;seal:Mismatch",
-      "evidenceAvailableCount": 6,
-      "evidenceMissingCount": 1,
-      "evidencePathStatus": "partial",
-      "missingEvidenceTypes": [
-        "claim_photo"
-      ]
+      "evidenceAvailableCount": 7,
+      "evidenceMissingCount": 0,
+      "evidencePathStatus": "available",
+      "missingEvidenceTypes": []
     },
     {
       "loadId": "L010",
