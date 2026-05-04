@@ -495,6 +495,16 @@ body {
   }
 }
 
+/* Homepage hero — keep full marketing art visible (headline + monitor in frame); letterbox with BOF slate */
+.bof-home-tight-hero .bof-mkt-home-hero-integrated__image-wrap {
+  background: #0f172a;
+}
+
+.bof-home-tight-hero .bof-mkt-home-hero-integrated__image {
+  object-fit: contain;
+  object-position: center center;
+}
+
 /* Homepage-only desktop tightening:
    keep existing premium look while pulling copy and visual composition together. */
 @media (min-width: 1024px) {
@@ -505,26 +515,78 @@ body {
     padding-right: clamp(16px, 2vw, 30px);
   }
 
-  /* Cropped hero asset: anchor slightly above center so nav + monitor read cleanly without lower badge strip. */
-  .bof-home-tight-hero .bof-mkt-home-hero-integrated__image {
-    object-position: 52% 18%;
-  }
-
   .bof-home-tight-hero .bof-mkt-home-hero-integrated__visual::after {
-    background:
-      /* Quiet lower-left ghost UI under the headline column */
-      linear-gradient(165deg, rgba(15, 23, 42, 0.62) 0%, transparent 44%),
-      /* Bottom breathing room — hides any residual strip / fades footer of screenshot */
-      linear-gradient(to bottom, transparent 0%, transparent 52%, rgba(15, 23, 42, 0.35) 78%, rgba(15, 23, 42, 0.82) 100%),
-      /* Primary left-to-right readability for copy */
-      linear-gradient(
-        to right,
-        rgba(15, 23, 42, 0.84) 0%,
-        rgba(15, 23, 42, 0.67) 26%,
-        rgba(15, 23, 42, 0.38) 52%,
-        rgba(15, 23, 42, 0.18) 100%
-      );
+    background: linear-gradient(
+      to right,
+      rgba(15, 23, 42, 0.88) 0%,
+      rgba(15, 23, 42, 0.52) 28%,
+      rgba(15, 23, 42, 0.18) 54%,
+      rgba(15, 23, 42, 0.06) 100%
+    );
   }
+}
+
+/* Audience entry points — below homepage hero (not part of hero image) */
+.bof-mkt-home-audience {
+  padding: 1.25rem 0 1.75rem;
+  background: linear-gradient(180deg, rgba(15, 23, 42, 0.55) 0%, rgba(15, 23, 42, 0.92) 100%);
+  border-bottom: 1px solid rgba(51, 65, 85, 0.55);
+}
+
+.bof-mkt-home-audience__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+  justify-content: center;
+  align-items: stretch;
+}
+
+@media (min-width: 768px) {
+  .bof-mkt-home-audience__list {
+    flex-wrap: nowrap;
+    gap: 0.85rem;
+  }
+}
+
+.bof-mkt-home-audience__pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 2.75rem;
+  padding: 0.55rem 1.35rem;
+  border-radius: 999px;
+  border: 1px solid rgba(94, 234, 212, 0.38);
+  background: rgba(15, 23, 42, 0.88);
+  color: #e2e8f0;
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-decoration: none;
+  letter-spacing: 0.01em;
+  transition:
+    border-color 0.15s ease,
+    color 0.15s ease,
+    background 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+.bof-mkt-home-audience__pill:hover {
+  border-color: rgba(45, 212, 191, 0.95);
+  color: #f0fdfa;
+  background: rgba(15, 118, 110, 0.22);
+  box-shadow: 0 0 0 1px rgba(45, 212, 191, 0.28);
+}
+
+.bof-mkt-home-audience__pill:active {
+  border-color: rgba(20, 184, 166, 1);
+  background: rgba(13, 148, 136, 0.28);
+}
+
+.bof-mkt-home-audience__pill:focus-visible {
+  outline: 2px solid rgba(45, 212, 191, 0.85);
+  outline-offset: 3px;
 }
 
 .bof-logo-wrap {

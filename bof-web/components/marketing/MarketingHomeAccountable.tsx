@@ -122,8 +122,8 @@ export default function MarketingHomeAccountable() {
         support="We are a road dog, not a watchdog. BOF rewards the pre-trip checks, the careful documentation, and the quiet professionalism that too often get skipped in reporting—and turns them into the proof you need for billing, settlement, and claims when it counts."
         trustItems={HERO_TRUST}
         trustAriaLabel="BOF capability highlights"
-        imageSrc="/assets/images/bof-landing-hero-clean.png"
-        imageAlt="BOF operational layer connecting management oversight, driver workflows, and customer communication"
+        imageSrc="/generated/marketing/demoheroimage.png"
+        imageAlt="BOF command view — dispatch, drivers, documents, and settlement risk in one operating surface"
         ctas={
           <>
             <Link href="/book-assessment" className="bof-mkt-btn-enterprise bof-mkt-btn-enterprise-primary">
@@ -135,6 +135,28 @@ export default function MarketingHomeAccountable() {
           </>
         }
       />
+
+      <nav className="bof-mkt-home-audience" aria-label="BOF by fleet type">
+        <div className="bof-mkt-container">
+          <ul className="bof-mkt-home-audience__list">
+            <li>
+              <Link href="/for-hire-carriers" className="bof-mkt-home-audience__pill">
+                For-Hire Trucking
+              </Link>
+            </li>
+            <li>
+              <Link href="/private-fleets" className="bof-mkt-home-audience__pill">
+                Private Fleets
+              </Link>
+            </li>
+            <li>
+              <Link href="/government" className="bof-mkt-home-audience__pill">
+                Government
+              </Link>
+            </li>
+          </ul>
+        </div>
+      </nav>
 
       <MarketingSection variant="light" ariaLabelledBy="bof-mkt-different-heading">
         <div className="bof-mkt-container">
