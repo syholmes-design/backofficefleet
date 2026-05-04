@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { DocumentVaultClient } from "@/components/DocumentVaultClient";
 import { buildVaultRows, applyCanonicalMappingToRows, type VaultDocumentRow } from "@/lib/document-vault";
 import { useBofDemoData } from "@/lib/bof-demo-data-context";
@@ -10,6 +10,13 @@ import { BofWorkflowFormShortcuts } from "@/components/documents/BofWorkflowForm
 import { BofVaultReferencesPanel } from "@/components/documents/BofVaultReferencesPanel";
 import { getDriverById } from "@/lib/driver-queries";
 import { OPS_COPY } from "@/lib/ops-copy";
+import {
+  getOperatingDocumentPath,
+  getOperatingDocumentTitle,
+  getOperatingDocumentsForFactoring,
+  getOperatingDocumentsForLoad,
+  getOperatingDocumentsForVendor,
+} from "@/lib/operating-documents";
 
 export function DocumentsPageClient() {
   const { data } = useBofDemoData();
@@ -39,6 +46,19 @@ export function DocumentsPageClient() {
     data.settlements?.find((s) => s.driverId === DEFAULT_PREVIEW_DRIVER_ID)?.settlementId ?? null;
   const previewClaimId =
     data.complianceIncidents?.find((c) => c.driverId === DEFAULT_PREVIEW_DRIVER_ID)?.incidentId ?? null;
+  const previewOperatingDocs = useMemo(() => {
+    const loads = ["L003", "L004", "L008", "L009"];
+    const loadDocs = loads.flatMap((loadId) => getOperatingDocumentsForLoad(loadId));
+    const factoringDocs = getOperatingDocumentsForFactoring("L011");
+    const vendorDocs = getOperatingDocumentsForVendor("VEND-001");
+    const seen = new Set<string>();
+    return [...loadDocs, ...factoringDocs, ...vendorDocs].filter((doc) => {
+      const path = getOperatingDocumentPath(doc);
+      if (seen.has(path)) return false;
+      seen.add(path);
+      return true;
+    });
+  }, []);
 
   return (
     <div className="bof-page">
@@ -106,6 +126,27 @@ export function DocumentsPageClient() {
           <DocumentVaultClient rows={rows} totalExpected={rows.length} />
         )}
       </section>
+      {previewOperatingDocs.length > 0 && (
+        <section className="bof-oper-panel bof-oper-panel-tight" aria-label="Operating document links">
+          <h2 className="bof-h2">Generated operating documents</h2>
+          <p className="bof-muted bof-small">
+            Manifest-backed P1 operating documents available in existing BOF flows.
+          </p>
+          <div className="bof-driver-vault-actions">
+            {previewOperatingDocs.map((doc) => (
+              <a
+                key={doc.id}
+                href={getOperatingDocumentPath(doc)}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="bof-link-secondary"
+              >
+                {getOperatingDocumentTitle(doc)}
+              </a>
+            ))}
+          </div>
+        </section>
+      )}
       <BofVaultReferencesPanel
         context={{
           loadId: workflowEntityId,

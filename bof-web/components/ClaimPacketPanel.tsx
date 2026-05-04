@@ -9,6 +9,11 @@ import { BofWorkflowFormShortcuts } from "@/components/documents/BofWorkflowForm
 import { useBofDemoData } from "@/lib/bof-demo-data-context";
 import { buildRfidReadinessSummaryForSurface } from "@/lib/template-usage-readiness";
 import { resolveRfidTemplateGate } from "@/lib/bof-rfid-readiness";
+import {
+  getOperatingDocumentPath,
+  getOperatingDocumentTitle,
+  getOperatingDocumentsForLoad,
+} from "@/lib/operating-documents";
 
 const ACTIONS: { kind: ClaimDraftKind; label: string }[] = [
   { kind: "packet", label: "Generate claim packet" },
@@ -38,6 +43,11 @@ export function ClaimPacketPanel({ ctx }: { ctx: ClaimPacketContext }) {
     const rfid = buildRfidReadinessSummaryForSurface(data, "claims_insurance", ctx.loadId);
     return resolveRfidTemplateGate("claim-support-packet-cover", rfid);
   }, [data, ctx.loadId]);
+  const operatingClaimDocs = useMemo(
+    () =>
+      getOperatingDocumentsForLoad(ctx.loadId).filter((doc) => doc.category === "claims"),
+    [ctx.loadId]
+  );
 
   const close = useCallback(() => setOpen(null), []);
 
@@ -196,6 +206,27 @@ export function ClaimPacketPanel({ ctx }: { ctx: ClaimPacketContext }) {
         title="BOF Template Usage — Claims / Insurance"
         subtitle="Claim, insurance, linked proof, and settlement-impact templates for this load claim workflow."
       />
+      {operatingClaimDocs.length > 0 && (
+        <section className="bof-driver-vault-panel" style={{ marginTop: 12 }}>
+          <h3 className="bof-h3">Operating claim documents</h3>
+          <p className="bof-muted bof-small">
+            Manifest-backed operating documents for this load claim workflow.
+          </p>
+          <div className="bof-driver-vault-actions">
+            {operatingClaimDocs.map((doc) => (
+              <a
+                key={doc.id}
+                href={getOperatingDocumentPath(doc)}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="bof-link-secondary"
+              >
+                {getOperatingDocumentTitle(doc)}
+              </a>
+            ))}
+          </div>
+        </section>
+      )}
 
       {open && (
         <div

@@ -1,0 +1,114 @@
+<!-- BOF_TEMPLATE_SOURCE: scripts/templates/load-docs/seal-verification.template.html -->
+<!-- BOF_DOCUMENT_TYPE: sealVerification -->
+<!-- BOF_LOAD_ID: L008 -->
+<!doctype html>
+<html>
+  <head><meta charset="utf-8" /><title>Seal Verification L008</title><style>@page { size: auto; margin: 0.5in; }
+* { box-sizing: border-box; }
+body { font-family: "Inter", "Segoe UI", Arial, Helvetica, sans-serif; margin: 0; background: #f3f4f6; color: #111827; }
+.paper { width: 8.5in; max-width: 100%; margin: 20px auto; background: #fff; border: 1px solid #d1d5db; padding: 26px; box-shadow: 0 8px 30px rgba(15, 23, 42, 0.08); }
+.doc-header { display: flex; justify-content: space-between; gap: 16px; border-bottom: 2px solid #111827; padding-bottom: 12px; margin-bottom: 14px; }
+.doc-title { margin: 0; font-size: 22px; letter-spacing: .2px; }
+.generated-label { margin-top: 4px; font-size: 11px; color: #4b5563; text-transform: uppercase; letter-spacing: .08em; }
+.status-stamp { border: 2px solid #111827; padding: 6px 10px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; }
+.meta-grid, .entity-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin-bottom: 12px; }
+.meta-box { border: 1px solid #d1d5db; background: #f9fafb; padding: 8px; }
+.meta-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; color: #4b5563; margin-bottom: 4px; }
+.meta-value { font-size: 13px; }
+table { width: 100%; border-collapse: collapse; margin-top: 8px; }
+th, td { border: 1px solid #d1d5db; padding: 7px 8px; vertical-align: top; text-align: left; font-size: 12px; }
+th { background: #f3f4f6; font-size: 11px; text-transform: uppercase; letter-spacing: .05em; color: #374151; }
+.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.section-title { margin: 14px 0 6px; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; color: #1f2937; }
+.sig-line { margin-top: 24px; display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+.sig-slot { border-top: 1px solid #1f2937; padding-top: 4px; font-size: 11px; color: #4b5563; }
+.signature-section-title { margin: 18px 0 8px; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; color: #1f2937; }
+.signature-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 10px; }
+.signature-block { border: 1px solid #e5e7eb; border-radius: 6px; padding: 10px 10px 8px; background: #fff; }
+.signature-role { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: #6b7280; margin-bottom: 6px; }
+.signature-script { font-family: "Brush Script MT", "Segoe Script", "Lucida Handwriting", cursive; font-size: 22px; color: #111827; line-height: 1.2; min-height: 28px; }
+.signature-meta { font-size: 12px; font-weight: 600; color: #111827; margin-top: 4px; }
+.signature-title { font-size: 10px; color: #4b5563; margin-top: 2px; }
+.signature-line { border-bottom: 1px solid #1f2937; margin: 8px 0 4px; height: 1px; }
+.signature-datetime { font-size: 10px; color: #374151; }
+.signature-status { font-size: 10px; margin-top: 4px; font-weight: 700; }
+.signature-signed .signature-status { color: #047857; }
+.signature-pending .signature-status { color: #b45309; }
+.signature-img { display: block; margin-top: 4px; max-width: 220px; height: auto; }
+.terms-box { border: 1px solid #d1d5db; background: #f9fafb; padding: 10px; font-size: 11px; color: #374151; }
+.barcode-ref { margin-top: 10px; display: inline-block; font-family: "Courier New", monospace; letter-spacing: 2px; font-size: 11px; border: 1px solid #111827; padding: 3px 8px; }
+footer { margin-top: 16px; padding-top: 8px; border-top: 1px dashed #9ca3af; display: flex; justify-content: space-between; font-size: 11px; color: #6b7280; }
+</style></head>
+  <body>
+    <div class="paper">
+      <header class="doc-header">
+        <div>
+          <h1 class="doc-title">Seal Verification Sheet</h1>
+          <div class="generated-label">BOF chain-of-custody support form</div>
+        </div>
+        <div class="status-stamp">OK</div>
+      </header>
+      <div class="meta-grid">
+        <div class="meta-box"><div class="meta-label">Load ID</div><div class="meta-value">L008</div></div>
+        <div class="meta-box"><div class="meta-label">BOL Number</div><div class="meta-value">BOL-L008-508</div></div>
+      </div>
+      <table>
+        <tr><th>Pickup Facility</th><th>Delivery Facility</th><th>Pickup Seal</th><th>Delivery Seal</th><th>Result</th></tr>
+        <tr><td>Midwest Foods Nashville TN</td><td>South Hub DC Indianapolis IN</td><td>SEAL-18542</td><td>SEAL-18542</td><td>OK</td></tr>
+      </table>
+      <div class="section-title">Evidence Links</div>
+      <div class="terms-box">
+        Pickup seal photo: /evidence/loads/L008/seal-pickup-photo.svg<br />
+        Delivery seal photo: /evidence/loads/L008/seal-delivery-photo.svg<br />
+        Exception notes: Dispatch exception workflow in review.
+      </div>
+      <div class="signature-section-title">Seal custody signatures (demo)</div>
+      <div class="signature-grid">
+        <div class="signature-block signature-signed">
+          <div class="signature-role">Driver — pickup seal acknowledgment</div>
+          <img class="signature-img" src="data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22300%22%20height%3D%2256%22%20viewBox%3D%220%200%20300%2056%22%3E%3Ctext%20x%3D%226%22%20y%3D%2238%22%20font-family%3D%22Brush%20Script%20MT%2CSegoe%20Script%2CLucida%20Handwriting%2Ccursive%22%20font-size%3D%2226%22%20fill%3D%22%23111827%22%3ELiam%20Smith%3C%2Ftext%3E%3C%2Fsvg%3E" alt="" width="220" height="44" />
+          <div class="signature-script">Liam Smith</div>
+          <div class="signature-meta">Liam Smith</div>
+          <div class="signature-title">Driver · DRV-008 — pickup</div>
+          <div class="signature-line"></div>
+          <div class="signature-datetime">May 01, 2026, 9:19 AM UTC</div>
+          <div class="signature-status" data-bof-sig-role="driver_seal">Signed</div>
+        </div>
+        <div class="signature-block signature-signed">
+          <div class="signature-role">Receiver — delivery seal confirmation</div>
+          <img class="signature-img" src="data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22300%22%20height%3D%2256%22%20viewBox%3D%220%200%20300%2056%22%3E%3Ctext%20x%3D%226%22%20y%3D%2238%22%20font-family%3D%22Brush%20Script%20MT%2CSegoe%20Script%2CLucida%20Handwriting%2Ccursive%22%20font-size%3D%2226%22%20fill%3D%22%23111827%22%3ESouth%20Hub%20DC%20%E2%80%94%20receiving%20clerk%3C%2Ftext%3E%3C%2Fsvg%3E" alt="" width="220" height="44" />
+          <div class="signature-script">South Hub DC — receiving clerk</div>
+          <div class="signature-meta">South Hub DC — receiving clerk</div>
+          <div class="signature-title">Consignee / receiver</div>
+          <div class="signature-line"></div>
+          <div class="signature-datetime">May 02, 2026, 5:19 PM UTC</div>
+          <div class="signature-status" data-bof-sig-role="receiver_seal">Signed</div>
+        </div>
+        <div class="signature-block signature-signed">
+          <div class="signature-role">Dispatch verifier</div>
+          <img class="signature-img" src="data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22300%22%20height%3D%2256%22%20viewBox%3D%220%200%20300%2056%22%3E%3Ctext%20x%3D%226%22%20y%3D%2238%22%20font-family%3D%22Brush%20Script%20MT%2CSegoe%20Script%2CLucida%20Handwriting%2Ccursive%22%20font-size%3D%2226%22%20fill%3D%22%23111827%22%3EAvery%20Kim%3C%2Ftext%3E%3C%2Fsvg%3E" alt="" width="220" height="44" />
+          <div class="signature-script">Avery Kim</div>
+          <div class="signature-meta">Avery Kim</div>
+          <div class="signature-title">BOF Dispatcher · Operations</div>
+          <div class="signature-line"></div>
+          <div class="signature-datetime">May 01, 2026, 3:19 PM UTC</div>
+          <div class="signature-status" data-bof-sig-role="dispatcher_seal">Signed</div>
+        </div>
+        <div class="signature-block signature-pending">
+          <div class="signature-role">BOF operations review (mismatch / exception)</div>
+          
+          <div class="signature-script">Pending signature</div>
+          <div class="signature-meta">L. Okonkwo</div>
+          <div class="signature-title">BOF Operations — seal / custody review</div>
+          <div class="signature-line"></div>
+          <div class="signature-datetime">—</div>
+          <div class="signature-status" data-bof-sig-role="bof_ops_review">Pending signature</div>
+        </div>
+      </div>
+      <footer>
+        <span>Generated: 5/2/2026, 5:19:19 PM</span>
+        <span>BOF demo document packet</span>
+      </footer>
+    </div>
+  </body>
+</html>

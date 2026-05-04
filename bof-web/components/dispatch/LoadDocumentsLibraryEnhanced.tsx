@@ -11,6 +11,7 @@ import { useBofDemoData } from "@/lib/bof-demo-data-context";
 import { buildTripDocumentPacket, groupTripPacketRows } from "@/lib/load-trip-packet";
 import type { TripPacketRow } from "@/lib/load-trip-packet";
 import { ProofGapReviewLinks } from "@/components/review/ReviewDeepLinks";
+import { getOperatingDocumentsForLoad, getOperatingDocumentPath, getOperatingDocumentTitle } from "@/lib/operating-documents";
 
 function showExceptionClaimSection(load: Load): boolean {
   return Boolean(
@@ -51,6 +52,30 @@ export function LoadDocumentsLibraryEnhanced({ load }: Props) {
       }),
     [groups, referenceOpen]
   );
+  const operatingRows = useMemo(() => {
+    const docs = getOperatingDocumentsForLoad(load.load_id);
+    const existingUrls = new Set(
+      visibleRows
+        .map((row) => row.url?.trim())
+        .filter((url): url is string => Boolean(url))
+    );
+    return docs
+      .map((doc) => {
+        const url = getOperatingDocumentPath(doc);
+        return {
+          key: `operating:${doc.id}`,
+          label: getOperatingDocumentTitle(doc),
+          group: "reference" as const,
+          status: "ready" as const,
+          url,
+          requiredForSettlementRelease: false,
+          deliveredMinimum: false,
+          loadEvidenceType: "work_order" as const,
+          source: doc.kind === "generated" ? ("generated" as const) : ("manual_upload" as const),
+        };
+      })
+      .filter((row) => !existingUrls.has(row.url));
+  }, [load.load_id, visibleRows]);
 
   const docStatus = useMemo(() => {
     const applicable = visibleRows;
@@ -144,6 +169,15 @@ export function LoadDocumentsLibraryEnhanced({ load }: Props) {
           }
         />
       ))}
+
+      {operatingRows.length > 0 && (
+        <DocGroup
+          loadId={load.load_id}
+          driverId={load.driver_id}
+          title="Operating Documents"
+          rows={operatingRows}
+        />
+      )}
 
       {showExceptionClaimSection(load) && (
         <div>

@@ -1,0 +1,300 @@
+{
+  "generatedOn": "2026-05-04",
+  "p1Scope": "demo-critical-only",
+  "docs": [
+    {
+      "id": "L003:insurance-notification.html",
+      "kind": "promoted_from_loads",
+      "category": "claims",
+      "loadId": "L003",
+      "path": "/generated/claims/L003/insurance-notification.html"
+    },
+    {
+      "id": "L003:claim-intake.html",
+      "kind": "promoted_from_loads",
+      "category": "claims",
+      "loadId": "L003",
+      "path": "/generated/claims/L003/claim-intake.html"
+    },
+    {
+      "id": "L003:claim-packet.html",
+      "kind": "promoted_from_loads",
+      "category": "claims",
+      "loadId": "L003",
+      "path": "/generated/claims/L003/claim-packet.html"
+    },
+    {
+      "id": "L003:damage-photo-packet.html",
+      "kind": "promoted_from_loads",
+      "category": "claims",
+      "loadId": "L003",
+      "path": "/generated/claims/L003/damage-photo-packet.html"
+    },
+    {
+      "id": "L003:seal-verification.html",
+      "kind": "promoted_from_loads",
+      "category": "claims",
+      "loadId": "L003",
+      "path": "/generated/claims/L003/seal-verification.html"
+    },
+    {
+      "id": "L003:accident-report.html",
+      "kind": "generated",
+      "category": "claims",
+      "loadId": "L003",
+      "path": "/generated/claims/L003/accident-report.html"
+    },
+    {
+      "id": "L003:incident-report.html",
+      "kind": "generated",
+      "category": "claims",
+      "loadId": "L003",
+      "path": "/generated/claims/L003/incident-report.html"
+    },
+    {
+      "id": "L003:driver-statement.html",
+      "kind": "generated",
+      "category": "claims",
+      "loadId": "L003",
+      "path": "/generated/claims/L003/driver-statement.html"
+    },
+    {
+      "id": "L003:photo-evidence-log.html",
+      "kind": "generated",
+      "category": "claims",
+      "loadId": "L003",
+      "path": "/generated/claims/L003/photo-evidence-log.html"
+    },
+    {
+      "id": "L004:insurance-notification.html",
+      "kind": "promoted_from_loads",
+      "category": "claims",
+      "loadId": "L004",
+      "path": "/generated/claims/L004/insurance-notification.html"
+    },
+    {
+      "id": "L004:claim-intake.html",
+      "kind": "promoted_from_loads",
+      "category": "claims",
+      "loadId": "L004",
+      "path": "/generated/claims/L004/claim-intake.html"
+    },
+    {
+      "id": "L004:claim-packet.html",
+      "kind": "promoted_from_loads",
+      "category": "claims",
+      "loadId": "L004",
+      "path": "/generated/claims/L004/claim-packet.html"
+    },
+    {
+      "id": "L004:damage-photo-packet.html",
+      "kind": "promoted_from_loads",
+      "category": "claims",
+      "loadId": "L004",
+      "path": "/generated/claims/L004/damage-photo-packet.html"
+    },
+    {
+      "id": "L004:seal-verification.html",
+      "kind": "promoted_from_loads",
+      "category": "claims",
+      "loadId": "L004",
+      "path": "/generated/claims/L004/seal-verification.html"
+    },
+    {
+      "id": "L004:accident-report.html",
+      "kind": "generated",
+      "category": "claims",
+      "loadId": "L004",
+      "path": "/generated/claims/L004/accident-report.html"
+    },
+    {
+      "id": "L004:incident-report.html",
+      "kind": "generated",
+      "category": "claims",
+      "loadId": "L004",
+      "path": "/generated/claims/L004/incident-report.html"
+    },
+    {
+      "id": "L004:driver-statement.html",
+      "kind": "generated",
+      "category": "claims",
+      "loadId": "L004",
+      "path": "/generated/claims/L004/driver-statement.html"
+    },
+    {
+      "id": "L004:photo-evidence-log.html",
+      "kind": "generated",
+      "category": "claims",
+      "loadId": "L004",
+      "path": "/generated/claims/L004/photo-evidence-log.html"
+    },
+    {
+      "id": "L008:seal-verification.html",
+      "kind": "promoted_from_loads",
+      "category": "claims",
+      "loadId": "L008",
+      "path": "/generated/claims/L008/seal-verification.html"
+    },
+    {
+      "id": "L008:accident-report.html",
+      "kind": "generated",
+      "category": "claims",
+      "loadId": "L008",
+      "path": "/generated/claims/L008/accident-report.html"
+    },
+    {
+      "id": "L008:incident-report.html",
+      "kind": "generated",
+      "category": "claims",
+      "loadId": "L008",
+      "path": "/generated/claims/L008/incident-report.html"
+    },
+    {
+      "id": "L008:driver-statement.html",
+      "kind": "generated",
+      "category": "claims",
+      "loadId": "L008",
+      "path": "/generated/claims/L008/driver-statement.html"
+    },
+    {
+      "id": "L008:photo-evidence-log.html",
+      "kind": "generated",
+      "category": "claims",
+      "loadId": "L008",
+      "path": "/generated/claims/L008/photo-evidence-log.html"
+    },
+    {
+      "id": "L009:insurance-notification.html",
+      "kind": "promoted_from_loads",
+      "category": "claims",
+      "loadId": "L009",
+      "path": "/generated/claims/L009/insurance-notification.html"
+    },
+    {
+      "id": "L009:claim-intake.html",
+      "kind": "promoted_from_loads",
+      "category": "claims",
+      "loadId": "L009",
+      "path": "/generated/claims/L009/claim-intake.html"
+    },
+    {
+      "id": "L009:claim-packet.html",
+      "kind": "promoted_from_loads",
+      "category": "claims",
+      "loadId": "L009",
+      "path": "/generated/claims/L009/claim-packet.html"
+    },
+    {
+      "id": "L009:damage-photo-packet.html",
+      "kind": "promoted_from_loads",
+      "category": "claims",
+      "loadId": "L009",
+      "path": "/generated/claims/L009/damage-photo-packet.html"
+    },
+    {
+      "id": "L009:seal-verification.html",
+      "kind": "promoted_from_loads",
+      "category": "claims",
+      "loadId": "L009",
+      "path": "/generated/claims/L009/seal-verification.html"
+    },
+    {
+      "id": "L009:accident-report.html",
+      "kind": "generated",
+      "category": "claims",
+      "loadId": "L009",
+      "path": "/generated/claims/L009/accident-report.html"
+    },
+    {
+      "id": "L009:incident-report.html",
+      "kind": "generated",
+      "category": "claims",
+      "loadId": "L009",
+      "path": "/generated/claims/L009/incident-report.html"
+    },
+    {
+      "id": "L009:driver-statement.html",
+      "kind": "generated",
+      "category": "claims",
+      "loadId": "L009",
+      "path": "/generated/claims/L009/driver-statement.html"
+    },
+    {
+      "id": "L009:photo-evidence-log.html",
+      "kind": "generated",
+      "category": "claims",
+      "loadId": "L009",
+      "path": "/generated/claims/L009/photo-evidence-log.html"
+    },
+    {
+      "id": "L003:lumper-reimbursement-support",
+      "kind": "generated",
+      "category": "settlements",
+      "loadId": "L003",
+      "path": "/generated/settlements/L003/lumper-reimbursement-support.html"
+    },
+    {
+      "id": "L008:lumper-reimbursement-support",
+      "kind": "generated",
+      "category": "settlements",
+      "loadId": "L008",
+      "path": "/generated/settlements/L008/lumper-reimbursement-support.html"
+    },
+    {
+      "id": "L003:settlement-summary",
+      "kind": "generated",
+      "category": "settlements",
+      "loadId": "L003",
+      "path": "/generated/settlements/L003/settlement-summary.html"
+    },
+    {
+      "id": "L004:settlement-summary",
+      "kind": "generated",
+      "category": "settlements",
+      "loadId": "L004",
+      "path": "/generated/settlements/L004/settlement-summary.html"
+    },
+    {
+      "id": "L008:settlement-summary",
+      "kind": "generated",
+      "category": "settlements",
+      "loadId": "L008",
+      "path": "/generated/settlements/L008/settlement-summary.html"
+    },
+    {
+      "id": "L009:settlement-summary",
+      "kind": "generated",
+      "category": "settlements",
+      "loadId": "L009",
+      "path": "/generated/settlements/L009/settlement-summary.html"
+    },
+    {
+      "id": "L011:factoring-notification.html",
+      "kind": "promoted_from_loads",
+      "category": "factoring",
+      "loadId": "L011",
+      "path": "/generated/factoring/L011/factoring-notification.html"
+    },
+    {
+      "id": "L011:invoice.html",
+      "kind": "promoted_from_loads",
+      "category": "factoring",
+      "loadId": "L011",
+      "path": "/generated/factoring/L011/invoice.html"
+    },
+    {
+      "id": "L011:factoring-submission-cover",
+      "kind": "generated",
+      "category": "factoring",
+      "loadId": "L011",
+      "path": "/generated/factoring/L011/factoring-submission-cover.html"
+    },
+    {
+      "id": "VEND-001:vendor-w9-ach-authorization",
+      "kind": "generated",
+      "category": "vendors",
+      "vendorId": "VEND-001",
+      "path": "/generated/vendors/VEND-001/vendor-w9-ach-authorization.html"
+    }
+  ]
+}

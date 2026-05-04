@@ -11,6 +11,13 @@ import {
   type BofTemplatePackId,
 } from "@/lib/bof-template-system";
 import { useBofTemplateWorkspaceStore } from "@/lib/stores/bof-template-workspace-store";
+import {
+  getOperatingDocumentPath,
+  getOperatingDocumentTitle,
+  getOperatingDocumentsForFactoring,
+  getOperatingDocumentsForLoad,
+  getOperatingDocumentsForVendor,
+} from "@/lib/operating-documents";
 
 export function BofTemplatePacksWorkspaceClient({
   initialPackId,
@@ -35,6 +42,18 @@ export function BofTemplatePacksWorkspaceClient({
 
   const pack = BOF_TEMPLATE_PACKS.find((p) => p.packId === packId) ?? BOF_TEMPLATE_PACKS[0];
   const selectedTemplate = pack.templates.find((t) => t.templateId === selectedTemplateId) ?? pack.templates[0];
+  const manifestDocsForEntity = (() => {
+    const loadDocs = getOperatingDocumentsForLoad(entityId);
+    const factoringDocs = getOperatingDocumentsForFactoring(entityId);
+    const vendorDocs = getOperatingDocumentsForVendor(entityId);
+    const seen = new Set<string>();
+    return [...loadDocs, ...factoringDocs, ...vendorDocs].filter((doc) => {
+      const path = getOperatingDocumentPath(doc);
+      if (seen.has(path)) return false;
+      seen.add(path);
+      return true;
+    });
+  })();
 
   const draftKey = `${selectedTemplate.templateId}::${entityId}`;
   const artifactKey = `${selectedTemplate.templateId}::${entityId}`;
@@ -220,6 +239,26 @@ export function BofTemplatePacksWorkspaceClient({
               Stored artifact: <code className="bof-code">{activeArtifact.artifactFileName}</code> ·{" "}
               {new Date(activeArtifact.generatedAt).toLocaleString()}
             </p>
+          ) : null}
+          {manifestDocsForEntity.length > 0 ? (
+            <div style={{ marginTop: 10 }}>
+              <p className="bof-muted bof-small">
+                Manifest-backed generated operating docs for <code className="bof-code">{entityId}</code>:
+              </p>
+              <div className="bof-driver-vault-actions">
+                {manifestDocsForEntity.map((doc) => (
+                  <a
+                    key={doc.id}
+                    href={getOperatingDocumentPath(doc)}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="bof-link-secondary"
+                  >
+                    {getOperatingDocumentTitle(doc)}
+                  </a>
+                ))}
+              </div>
+            </div>
           ) : null}
         </article>
       </section>

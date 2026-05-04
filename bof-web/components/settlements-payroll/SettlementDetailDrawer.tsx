@@ -21,6 +21,13 @@ import {
   getLoadProofItems,
   proofStatusDisplay,
 } from "@/lib/load-proof";
+import { getGeneratedLoadDocUrl } from "@/lib/load-doc-manifest";
+import {
+  getOperatingDocumentPath,
+  getOperatingDocumentTitle,
+  getOperatingDocumentsForFactoring,
+  getOperatingDocumentsForLoad,
+} from "@/lib/operating-documents";
 
 type Props = {
   settlementId: string | null;
@@ -152,6 +159,24 @@ export function SettlementDetailDrawer({ settlementId, open, onClose }: Props) {
     settlement.status === "Exported" ||
     billingRfidGate.level === "hard_block";
   const docs = generatedDocs[settlement.settlement_id];
+  const operatingDocsByLoad = useMemo(() => {
+    return uniqueLoadIds.map((loadId) => {
+      const settlementDocs = getOperatingDocumentsForLoad(loadId).filter(
+        (doc) => doc.category === "settlements"
+      );
+      const factoringDocs = getOperatingDocumentsForFactoring(loadId);
+      const holdNoticePath = getGeneratedLoadDocUrl(loadId, "settlementHoldNotice");
+      const merged = [...settlementDocs, ...factoringDocs];
+      const seen = new Set<string>();
+      const unique = merged.filter((doc) => {
+        const path = getOperatingDocumentPath(doc);
+        if (seen.has(path)) return false;
+        seen.add(path);
+        return true;
+      });
+      return { loadId, docs: unique, holdNoticePath };
+    });
+  }, [uniqueLoadIds]);
 
   async function generateSettlementDoc(
     target: NonNullable<typeof settlement>,
@@ -629,6 +654,48 @@ export function SettlementDetailDrawer({ settlementId, open, onClose }: Props) {
               )}
             </div>
           </section>
+
+          {operatingDocsByLoad.some((row) => row.docs.length > 0 || row.holdNoticePath) && (
+            <section className="rounded-lg border border-slate-800 bg-slate-900/35 p-3">
+              <h3 className="text-sm font-semibold text-slate-200">Operating documents</h3>
+              <p className="mt-1 text-xs text-slate-400">
+                Manifest-backed settlement and factoring documents for linked loads.
+              </p>
+              <div className="mt-3 space-y-2">
+                {operatingDocsByLoad.map((row) => {
+                  if (!row.docs.length && !row.holdNoticePath) return null;
+                  return (
+                    <div key={row.loadId} className="rounded border border-slate-800 bg-slate-950/50 p-2">
+                      <p className="text-xs font-semibold text-slate-300">{row.loadId}</p>
+                      <div className="mt-1 flex flex-wrap gap-3">
+                        {row.docs.map((doc) => (
+                          <a
+                            key={doc.id}
+                            href={getOperatingDocumentPath(doc)}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="bof-link-secondary"
+                          >
+                            {getOperatingDocumentTitle(doc)}
+                          </a>
+                        ))}
+                        {row.holdNoticePath ? (
+                          <a
+                            href={row.holdNoticePath}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="bof-link-secondary"
+                          >
+                            Settlement Hold Notice
+                          </a>
+                        ) : null}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </section>
+          )}
 
           <BofWorkflowFormShortcuts
             context="settlement"
