@@ -1189,11 +1189,9 @@
       "riskReason": "dispatchExceptionFlag;seal:Mismatch",
       "dispatchBlockedReason": "dispatchExceptionFlag;seal:Mismatch",
       "evidenceAvailableCount": 7,
-      "evidenceMissingCount": 1,
-      "evidencePathStatus": "partial",
-      "missingEvidenceTypes": [
-        "lumper_receipt"
-      ]
+      "evidenceMissingCount": 0,
+      "evidencePathStatus": "available",
+      "missingEvidenceTypes": []
     },
     {
       "loadId": "L002",
@@ -1203,11 +1201,9 @@
       "riskReason": "pod_pending",
       "dispatchBlockedReason": "pod_pending",
       "evidenceAvailableCount": 4,
-      "evidenceMissingCount": 1,
-      "evidencePathStatus": "partial",
-      "missingEvidenceTypes": [
-        "seal_delivery_photo"
-      ]
+      "evidenceMissingCount": 0,
+      "evidencePathStatus": "available",
+      "missingEvidenceTypes": []
     },
     {
       "loadId": "L003",
@@ -1245,12 +1241,10 @@
       "status": "Delivered",
       "riskReason": "pod_pending",
       "dispatchBlockedReason": "pod_pending",
-      "evidenceAvailableCount": 5,
-      "evidenceMissingCount": 1,
-      "evidencePathStatus": "partial",
-      "missingEvidenceTypes": [
-        "lumper_receipt"
-      ]
+      "evidenceAvailableCount": 4,
+      "evidenceMissingCount": 0,
+      "evidencePathStatus": "available",
+      "missingEvidenceTypes": []
     },
     {
       "loadId": "L006",
@@ -1259,12 +1253,10 @@
       "status": "Delivered",
       "riskReason": "dispatchExceptionFlag;seal:Mismatch",
       "dispatchBlockedReason": "dispatchExceptionFlag;seal:Mismatch",
-      "evidenceAvailableCount": 7,
-      "evidenceMissingCount": 1,
-      "evidencePathStatus": "partial",
-      "missingEvidenceTypes": [
-        "lumper_receipt"
-      ]
+      "evidenceAvailableCount": 6,
+      "evidenceMissingCount": 0,
+      "evidencePathStatus": "available",
+      "missingEvidenceTypes": []
     },
     {
       "loadId": "L007",
@@ -1274,11 +1266,10 @@
       "riskReason": "dispatchExceptionFlag;seal:Mismatch",
       "dispatchBlockedReason": "dispatchExceptionFlag;seal:Mismatch",
       "evidenceAvailableCount": 5,
-      "evidenceMissingCount": 2,
+      "evidenceMissingCount": 1,
       "evidencePathStatus": "partial",
       "missingEvidenceTypes": [
-        "seal_delivery_photo",
-        "claim_photo"
+        "seal_delivery_photo"
       ]
     },
     {
@@ -1292,8 +1283,8 @@
       "evidenceMissingCount": 2,
       "evidencePathStatus": "partial",
       "missingEvidenceTypes": [
-        "seal_delivery_photo",
-        "lumper_receipt"
+        "lumper_receipt",
+        "claim_photo"
       ]
     },
     {
@@ -1317,12 +1308,10 @@
       "status": "Delivered",
       "riskReason": "dispatchExceptionFlag;seal:Mismatch",
       "dispatchBlockedReason": "dispatchExceptionFlag;seal:Mismatch",
-      "evidenceAvailableCount": 7,
-      "evidenceMissingCount": 1,
-      "evidencePathStatus": "partial",
-      "missingEvidenceTypes": [
-        "lumper_receipt"
-      ]
+      "evidenceAvailableCount": 6,
+      "evidenceMissingCount": 0,
+      "evidencePathStatus": "available",
+      "missingEvidenceTypes": []
     },
     {
       "loadId": "L011",
@@ -1332,11 +1321,9 @@
       "riskReason": "pod_pending",
       "dispatchBlockedReason": "pod_pending",
       "evidenceAvailableCount": 4,
-      "evidenceMissingCount": 1,
-      "evidencePathStatus": "partial",
-      "missingEvidenceTypes": [
-        "seal_delivery_photo"
-      ]
+      "evidenceMissingCount": 0,
+      "evidencePathStatus": "available",
+      "missingEvidenceTypes": []
     },
     {
       "loadId": "L012",
@@ -1345,12 +1332,10 @@
       "status": "Delivered",
       "riskReason": "dispatchExceptionFlag;seal:Mismatch",
       "dispatchBlockedReason": "dispatchExceptionFlag;seal:Mismatch",
-      "evidenceAvailableCount": 7,
-      "evidenceMissingCount": 1,
-      "evidencePathStatus": "partial",
-      "missingEvidenceTypes": [
-        "lumper_receipt"
-      ]
+      "evidenceAvailableCount": 6,
+      "evidenceMissingCount": 0,
+      "evidencePathStatus": "available",
+      "missingEvidenceTypes": []
     }
   ],
   "audit8": [

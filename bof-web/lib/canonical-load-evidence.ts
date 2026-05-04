@@ -37,8 +37,8 @@ type EvidenceDef = {
   evidenceType: BofLoadEvidenceType;
   title: string;
   resolve: (load: BofLoad) => string | undefined;
-  required: (load: BofLoad) => boolean;
-  notRequiredReason?: (load: BofLoad) => string;
+  required: (data: BofData, load: BofLoad) => boolean;
+  notRequiredReason?: (data: BofData, load: BofLoad) => string;
 };
 
 function fileNameFromUrl(url?: string): string | undefined {
@@ -86,6 +86,46 @@ function isClaimContext(load: BofLoad): boolean {
   return Boolean(load.dispatchExceptionFlag) || String(load.sealStatus).toUpperCase() === "MISMATCH";
 }
 
+function hasLumperContext(data: BofData, load: BofLoad): boolean {
+  const bundle = (data.loadProofBundles as Record<string, { items?: Record<string, { status?: string; notes?: string }> }> | undefined)?.[
+    load.id
+  ]?.items?.["Lumper Receipt"];
+  const bundleStatus = String(bundle?.status ?? "").trim().toLowerCase();
+  if (bundleStatus === "complete" || bundleStatus === "pending" || bundleStatus === "missing" || bundleStatus === "disputed") {
+    return true;
+  }
+  if (bundleStatus === "not required") return false;
+  const settlement = data.settlements.find((row) => row.driverId === load.driverId);
+  const text = `${settlement?.pendingReason ?? ""} ${settlement?.loadProofStatus ?? ""}`.toLowerCase();
+  return /lumper/.test(text);
+}
+
+function hasClaimContext(data: BofData, load: BofLoad): boolean {
+  const bundle = (data.loadProofBundles as Record<string, { items?: Record<string, { status?: string; notes?: string }> }> | undefined)?.[
+    load.id
+  ]?.items?.["Claim Support Docs"];
+  const bundleStatus = String(bundle?.status ?? "").trim().toLowerCase();
+  if (bundleStatus === "complete" || bundleStatus === "pending" || bundleStatus === "missing" || bundleStatus === "disputed") {
+    return true;
+  }
+  if (bundleStatus === "not required") return false;
+  const rows = (data.moneyAtRisk ?? []).filter((row) => {
+    const sameLoad = String(row.loadId ?? "").trim() === load.id;
+    if (sameLoad) return true;
+    if (row.driverId !== load.driverId) return false;
+    const category = String(row.category ?? "").toLowerCase();
+    const rootCause = String(row.rootCause ?? "").toLowerCase();
+    return /claim|damage|cargo|dispute|theft/.test(`${category} ${rootCause}`);
+  });
+  return rows.length > 0;
+}
+
+function requiresDeliverySealVerification(load: BofLoad): boolean {
+  if (load.id === "L004") return true;
+  if (String(load.sealStatus).toUpperCase() === "MISMATCH") return true;
+  return false;
+}
+
 function resolveSealDeliveryUrl(load: BofLoad): string | undefined {
   if (load.id !== "L004") {
     return getLoadEvidenceUrl(load.id, "sealDeliveryPhoto") ?? getGeneratedLoadDocUrl(load.id, "sealDeliveryPhoto");
@@ -123,7 +163,9 @@ const EVIDENCE_DEFS: EvidenceDef[] = [
     evidenceType: "seal_delivery_photo",
     title: "Seal Delivery Photo",
     resolve: (load) => resolveSealDeliveryUrl(load),
-    required: () => true,
+    required: (_, load) => requiresDeliverySealVerification(load),
+    notRequiredReason: (_, load) =>
+      `Seal delivery verification is not required for ${load.id} because no delivery seal exception is active.`,
   },
   {
     evidenceType: "cargo_pickup_photo",
@@ -141,8 +183,9 @@ const EVIDENCE_DEFS: EvidenceDef[] = [
     evidenceType: "lumper_receipt",
     title: "Lumper Receipt",
     resolve: (load) => getLoadEvidenceUrl(load.id, "lumperReceipt") ?? getGeneratedLoadDocUrl(load.id, "lumperReceipt"),
-    required: (load) => String(load.status) === "Delivered",
-    notRequiredReason: () => "Lumper receipt is not required for this load context.",
+    required: (data, load) => hasLumperContext(data, load),
+    notRequiredReason: () =>
+      "Lumper receipt is not required because no lumper/unload payment context is present on the load settlement trail.",
   },
   {
     evidenceType: "rfid_geo_proof",
@@ -157,20 +200,21 @@ const EVIDENCE_DEFS: EvidenceDef[] = [
       getLoadEvidenceUrl(load.id, "damagePhoto") ??
       getLoadEvidenceUrl(load.id, "cargoDamagePhoto") ??
       getGeneratedLoadDocUrl(load.id, "damageClaimPhoto"),
-    required: (load) => isClaimContext(load),
-    notRequiredReason: () => "No active claim context for this load.",
+    required: (data, load) => hasClaimContext(data, load),
+    notRequiredReason: (_, load) =>
+      `No active claim/damage incident context is linked to ${load.id} in canonical money-at-risk rows.`,
   },
   {
     evidenceType: "insurance_packet",
     title: "Insurance Packet",
     resolve: (load) => getGeneratedLoadDocUrl(load.id, "insuranceNotification"),
-    required: (load) => isClaimContext(load),
+    required: (_data, load) => isClaimContext(load),
     notRequiredReason: () => "Insurance packet is only required for claim workflows.",
   },
 ];
 
-function buildEvidenceRecord(load: BofLoad, def: EvidenceDef): BofLoadEvidence {
-  const required = def.required(load);
+function buildEvidenceRecord(data: BofData, load: BofLoad, def: EvidenceDef): BofLoadEvidence {
+  const required = def.required(data, load);
   const rawUrl = def.resolve(load);
   const normalizedUrl = rawUrl?.trim() || undefined;
   const exists = publicUrlExists(normalizedUrl);
@@ -186,7 +230,7 @@ function buildEvidenceRecord(load: BofLoad, def: EvidenceDef): BofLoadEvidence {
   let reason: string | undefined;
   if (!required) {
     status = "not_required";
-    reason = def.notRequiredReason?.(load);
+    reason = def.notRequiredReason?.(data, load);
   } else if (!normalizedUrl) {
     status = "missing";
     reason = "No generated evidence file exists yet for this load/evidence type.";
@@ -225,7 +269,7 @@ export function getCanonicalLoadEvidenceForLoad(data: BofData, loadId: string): 
   if (cached?.length) return cached;
   const load = data.loads.find((row) => row.id === loadId);
   if (!load) return [];
-  return EVIDENCE_DEFS.map((def) => buildEvidenceRecord(load, def));
+  return EVIDENCE_DEFS.map((def) => buildEvidenceRecord(data, load, def));
 }
 
 export function getCanonicalLoadEvidence(data: BofData): Record<string, BofLoadEvidence[]> {
