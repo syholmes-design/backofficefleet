@@ -573,6 +573,7 @@ function ReadinessRow({
             label={line.label}
             source={source || "Evidence"}
             loadId={loadId}
+            evidenceType={line.key}
             description={line.detail}
           />
         ) : url ? (

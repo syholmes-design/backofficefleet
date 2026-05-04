@@ -254,6 +254,7 @@ function DocCard({
             label={row.label}
             source={sourceLabel}
             loadId={loadId}
+            evidenceType={row.key}
             layout="stack"
           />
         </div>
@@ -282,7 +283,7 @@ function DocCard({
         </div>
         <p className="mt-1 truncate font-mono text-[10px] text-slate-500">{url || "No URL"}</p>
         {kind === "image" && url && ready ? (
-          <p className="mt-1 text-[10px] text-slate-500">Thumbnail — use View photo for full resolution.</p>
+          <p className="mt-1 text-[10px] text-slate-500">Click the thumbnail or &quot;View photo&quot; for a large preview.</p>
         ) : url && ready ? (
           <p className="mt-1 text-[10px] font-semibold uppercase tracking-wide text-teal-500/90">
             <a href={url} target="_blank" rel="noopener noreferrer" className="hover:underline">

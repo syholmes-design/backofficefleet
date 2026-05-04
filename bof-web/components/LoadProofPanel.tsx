@@ -168,6 +168,7 @@ export function LoadProofPanel({
                             label={doc.label}
                             source={displaySource(doc.source)}
                             loadId={loadId}
+                            evidenceType={doc.type}
                             description={doc.note}
                           />
                         ) : canOpen ? (

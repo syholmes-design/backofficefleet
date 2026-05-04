@@ -2,6 +2,7 @@
 
 import type { ReactNode } from "react";
 import { useCallback, useEffect, useId, useState } from "react";
+import { createPortal } from "react-dom";
 
 /** Manifest-backed raster or SVG evidence (full-resolution URL, not a resized asset). */
 export function isLoadEvidenceImageUrl(url: string | undefined | null): boolean {
@@ -20,11 +21,22 @@ function filenameFromUrl(url: string): string {
 }
 
 export type EvidencePhotoViewerProps = {
-  url: string;
+  /** Shown in table / card — evidence title (e.g. "Seal delivery photo"). */
   label: string;
   source: string;
   loadId: string;
   description?: string;
+  /**
+   * Image URL used for thumbnail and modal when no separate full URL is provided.
+   * Must be the manifest / full-resolution asset (not a resized CDN thumb).
+   */
+  url: string;
+  /** When the data model supplies a smaller preview URL, use this for the thumb only. */
+  thumbnailUrl?: string;
+  /** Full-resolution URL for modal, "Open in new tab", and "Download" (defaults to `url`). */
+  fullImageUrl?: string;
+  /** Stable evidence key / type (e.g. `seal_delivery_photo`, `pod`). */
+  evidenceType?: string;
   /**
    * `inline` — compact row for tables (thumb + actions).
    * `stack` — thumb on top, actions below (narrow columns).
@@ -40,16 +52,25 @@ export function EvidencePhotoViewer({
   source,
   loadId,
   description,
+  thumbnailUrl,
+  fullImageUrl,
+  evidenceType,
   layout = "inline",
   renderThumb,
 }: EvidencePhotoViewerProps) {
-  const fullUrl = url.trim();
+  const imageSrc = (fullImageUrl ?? url).trim();
+  const thumbSrc = (thumbnailUrl ?? imageSrc).trim();
   const titleId = useId();
   const [open, setOpen] = useState(false);
   const [thumbBroken, setThumbBroken] = useState(false);
+  const [mounted, setMounted] = useState(false);
 
   const openModal = useCallback(() => setOpen(true), []);
   const close = useCallback(() => setOpen(false), []);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   useEffect(() => {
     if (!open) return;
@@ -65,10 +86,10 @@ export function EvidencePhotoViewer({
     };
   }, [open, close]);
 
-  if (!isLoadEvidenceImageUrl(fullUrl)) {
+  if (!isLoadEvidenceImageUrl(imageSrc)) {
     return (
       <a
-        href={fullUrl}
+        href={imageSrc}
         target="_blank"
         rel="noopener noreferrer"
         className="bof-link-secondary text-xs font-semibold"
@@ -78,7 +99,7 @@ export function EvidencePhotoViewer({
     );
   }
 
-  const downloadName = filenameFromUrl(fullUrl);
+  const downloadName = filenameFromUrl(imageSrc);
 
   const defaultThumb = (
     <button
@@ -92,8 +113,8 @@ export function EvidencePhotoViewer({
       {!thumbBroken ? (
         // eslint-disable-next-line @next/next/no-img-element -- manifest URLs; avoid Next remotePatterns churn
         <img
-          src={fullUrl}
-          alt=""
+          src={thumbSrc}
+          alt={label}
           className="bof-evidence-thumb__img h-full w-full object-contain"
           loading="lazy"
           onError={() => setThumbBroken(true)}
@@ -116,7 +137,7 @@ export function EvidencePhotoViewer({
         View photo
       </button>
       <a
-        href={fullUrl}
+        href={imageSrc}
         target="_blank"
         rel="noopener noreferrer"
         className="text-[11px] font-medium text-slate-400 underline-offset-2 hover:text-slate-200 hover:underline"
@@ -126,18 +147,20 @@ export function EvidencePhotoViewer({
     </div>
   );
 
-  const modal = open && (
+  const modalInner = (
     <div
       className="bof-evidence-modal__backdrop"
       role="presentation"
-      onClick={close}
+      onMouseDown={(e) => {
+        if (e.target === e.currentTarget) close();
+      }}
     >
       <div
         className="bof-evidence-modal"
         role="dialog"
         aria-modal="true"
         aria-labelledby={titleId}
-        onClick={(e) => e.stopPropagation()}
+        onMouseDown={(e) => e.stopPropagation()}
       >
         <header className="bof-evidence-modal__head">
           <div className="min-w-0 flex-1">
@@ -146,6 +169,13 @@ export function EvidencePhotoViewer({
             </h2>
             <p className="mt-0.5 truncate text-xs text-slate-500">
               <span className="font-mono text-slate-400">{loadId}</span>
+              {evidenceType ? (
+                <>
+                  {" "}
+                  <span className="text-slate-600">·</span>{" "}
+                  <span className="font-mono text-slate-500">{evidenceType}</span>
+                </>
+              ) : null}
             </p>
             {description ? (
               <p className="mt-1 text-xs text-slate-400">{description}</p>
@@ -155,7 +185,7 @@ export function EvidencePhotoViewer({
             type="button"
             className="bof-evidence-modal__close"
             onClick={close}
-            aria-label="Close"
+            aria-label="Close preview"
           >
             ×
           </button>
@@ -163,7 +193,7 @@ export function EvidencePhotoViewer({
         <div className="bof-evidence-modal__toolbar">
           <span className="bof-evidence-modal__badge">{source}</span>
           <a
-            href={fullUrl}
+            href={imageSrc}
             target="_blank"
             rel="noopener noreferrer"
             className="text-xs font-semibold text-teal-300 hover:text-teal-200"
@@ -171,7 +201,7 @@ export function EvidencePhotoViewer({
             Open in new tab
           </a>
           <a
-            href={fullUrl}
+            href={imageSrc}
             download={downloadName}
             className="text-xs font-semibold text-slate-300 hover:text-white"
           >
@@ -180,15 +210,13 @@ export function EvidencePhotoViewer({
         </div>
         <div className="bof-evidence-modal__image-wrap">
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src={fullUrl}
-            alt=""
-            className="bof-evidence-modal__image"
-          />
+          <img src={imageSrc} alt={label} className="bof-evidence-modal__image" />
         </div>
       </div>
     </div>
   );
+
+  const modal = mounted && open ? createPortal(modalInner, document.body) : null;
 
   const thumbEl = renderThumb ? renderThumb(openModal) : defaultThumb;
 

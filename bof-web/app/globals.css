@@ -2489,8 +2489,8 @@ body {
 .bof-evidence-modal__backdrop {
   position: fixed;
   inset: 0;
-  z-index: 5000;
-  background: rgba(0, 0, 0, 0.72);
+  z-index: 10050;
+  background: rgba(0, 0, 0, 0.78);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -2501,8 +2501,8 @@ body {
 }
 
 .bof-evidence-modal {
-  width: min(96vw, 1400px);
-  max-height: 92vh;
+  width: min(90vw, 1400px);
+  max-height: 90vh;
   display: flex;
   flex-direction: column;
   background: var(--bof-surface);
@@ -2570,13 +2570,14 @@ body {
   justify-content: center;
   align-items: center;
   min-height: 0;
-  flex: 1;
+  flex: 1 1 auto;
   overflow: auto;
+  max-height: calc(85vh - 7.5rem);
 }
 
 .bof-evidence-modal__image {
-  max-width: min(96vw, 1400px);
-  max-height: 88vh;
+  max-width: 90vw;
+  max-height: 85vh;
   width: auto;
   height: auto;
   object-fit: contain;
