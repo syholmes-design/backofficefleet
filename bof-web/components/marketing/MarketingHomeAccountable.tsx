@@ -122,7 +122,7 @@ export default function MarketingHomeAccountable() {
             {/* Background art only — do not use bof-mkt-home-hero-integrated__image here:
                 globals force object-fit:contain under .bof-home-tight-hero and expose baked-in screenshot chrome. */}
             <Image
-              src="/generated/marketing/demoheroimage.png"
+              src="/generated/marketing/demoheroimage-v2.png"
               alt="BOF demo operations hero visual"
               fill
               priority
