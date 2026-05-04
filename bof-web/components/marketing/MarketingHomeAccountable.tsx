@@ -107,108 +107,181 @@ export default function MarketingHomeAccountable() {
     <>
       <section className="bof-home-tight-hero" aria-labelledby="bof-mkt-hero-heading">
         <div className="bof-mkt-container">
-          <div style={{ marginBottom: "0.9rem" }}>
-            <BofLogo variant="dark" className="bof-mkt-home-hero-logo" priority />
-          </div>
           <div
             style={{
               position: "relative",
               width: "100%",
-              minHeight: "620px",
-              maxHeight: "670px",
+              minHeight: "clamp(520px, 68vw, 680px)",
+              maxHeight: "680px",
               borderRadius: "14px",
               overflow: "hidden",
-              background: "#0b1220",
+              background: "#030712",
               border: "1px solid rgba(255,255,255,0.08)",
             }}
           >
-            <div
-              style={{
-                position: "absolute",
-                inset: 0,
-                zIndex: 2,
-                background:
-                  "linear-gradient(to right, rgba(15,23,42,0.92) 0%, rgba(15,23,42,0.66) 36%, rgba(15,23,42,0.18) 68%, rgba(15,23,42,0.06) 100%)",
-              }}
-            />
+            {/* Background art only — do not use bof-mkt-home-hero-integrated__image here:
+                globals force object-fit:contain under .bof-home-tight-hero and expose baked-in screenshot chrome. */}
             <Image
               src="/generated/marketing/demoheroimage.png"
               alt="BOF demo operations hero visual"
               fill
               priority
               sizes="100vw"
-              className="bof-mkt-home-hero-integrated__image"
-              style={{ objectFit: "cover", objectPosition: "right top" }}
+              style={{
+                zIndex: 0,
+                objectFit: "cover",
+                objectPosition: "right top",
+              }}
             />
+
+            <div
+              aria-hidden
+              style={{
+                position: "absolute",
+                inset: 0,
+                zIndex: 2,
+                pointerEvents: "none",
+                background:
+                  "linear-gradient(90deg, #030712 0%, rgba(3,7,18,0.96) 10%, rgba(3,7,18,0.82) 38%, rgba(3,7,18,0.2) 72%, rgba(3,7,18,0.06) 100%)",
+              }}
+            />
+
+            <div
+              aria-hidden
+              style={{
+                position: "absolute",
+                left: 0,
+                right: 0,
+                bottom: 0,
+                height: "clamp(150px, 24vw, 210px)",
+                zIndex: 2,
+                pointerEvents: "none",
+                background:
+                  "linear-gradient(to top, #030712 0%, rgba(3,7,18,0.95) 42%, rgba(3,7,18,0.5) 72%, transparent 100%)",
+              }}
+            />
+
+            <div
+              aria-hidden
+              style={{
+                position: "absolute",
+                left: 0,
+                right: 0,
+                top: 0,
+                height: "clamp(64px, 11vw, 92px)",
+                zIndex: 2,
+                pointerEvents: "none",
+                background: "linear-gradient(to bottom, rgba(3,7,18,0.88) 0%, transparent 100%)",
+              }}
+            />
+
             <div
               style={{
                 position: "relative",
-                zIndex: 3,
-                maxWidth: "760px",
-                padding: "clamp(18px, 3vw, 34px)",
+                zIndex: 4,
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "space-between",
+                minHeight: "clamp(520px, 68vw, 680px)",
+                maxHeight: "680px",
+                padding: "clamp(16px, 2.6vw, 30px)",
               }}
             >
-              <h1
-                id="bof-mkt-hero-heading"
+              <div style={{ position: "relative", zIndex: 5 }}>
+                <BofLogo variant="dark" className="bof-mkt-home-hero-logo" priority />
+              </div>
+
+              <div
                 style={{
-                  margin: 0,
-                  color: "#fff",
-                  fontWeight: 700,
-                  lineHeight: 1.16,
-                  fontSize: "clamp(1.9rem, 4vw, 3.25rem)",
+                  flex: "1 1 auto",
+                  display: "flex",
+                  alignItems: "center",
+                  paddingBottom: "clamp(6px, 1.5vw, 14px)",
                 }}
               >
-                The Back Office Platform Built for Freight Operations
-              </h1>
-              <p
-                style={{
-                  margin: "0.95rem 0 0",
-                  color: "#e2e8f0",
-                  fontSize: "clamp(1rem, 1.8vw, 1.22rem)",
-                  lineHeight: 1.55,
-                  maxWidth: "56ch",
-                }}
-              >
-                BOF unifies dispatch, drivers, documents, compliance, proof, settlements, and revenue risk in one operating
-                view.
-              </p>
-              <div className="bof-mkt-home-hero-integrated__ctas" style={{ marginTop: "1rem" }}>
-                <BookDemoLink className="bof-mkt-btn-enterprise bof-mkt-btn-enterprise-primary">
-                  Book a Demo
-                </BookDemoLink>
-                <Link href="/dispatch" className="bof-mkt-btn-enterprise bof-mkt-btn-enterprise-secondary">
-                  Open Dispatch Board
-                </Link>
-                <Link href="/dashboard#attention-queue" className="bof-mkt-btn-enterprise bof-mkt-btn-enterprise-secondary">
-                  Review Attention Queue
-                </Link>
+                <div style={{ maxWidth: "760px", width: "100%" }}>
+                  <p
+                    style={{
+                      margin: 0,
+                      color: "#5eead4",
+                      fontSize: "0.72rem",
+                      fontWeight: 700,
+                      letterSpacing: "0.22em",
+                      textTransform: "uppercase",
+                    }}
+                  >
+                    Executive Operations Cockpit
+                  </p>
+                  <h1
+                    id="bof-mkt-hero-heading"
+                    style={{
+                      margin: "0.55rem 0 0",
+                      color: "#fff",
+                      fontWeight: 700,
+                      lineHeight: 1.14,
+                      fontSize: "clamp(1.85rem, 4vw, 3.15rem)",
+                    }}
+                  >
+                    The Back Office Platform Built for Freight Operations
+                  </h1>
+                  <p
+                    style={{
+                      margin: "0.95rem 0 0",
+                      color: "#e2e8f0",
+                      fontSize: "clamp(1rem, 1.8vw, 1.22rem)",
+                      lineHeight: 1.55,
+                      maxWidth: "56ch",
+                    }}
+                  >
+                    BOF unifies dispatch, drivers, documents, compliance, proof, settlements, and revenue risk in one operating
+                    view.
+                  </p>
+                  <div
+                    className="bof-mkt-home-hero-integrated__ctas"
+                    style={{ marginTop: "1.15rem", flexWrap: "wrap", rowGap: "0.5rem" }}
+                  >
+                    <BookDemoLink className="bof-mkt-btn-enterprise bof-mkt-btn-enterprise-primary">
+                      Book a Demo
+                    </BookDemoLink>
+                    <Link href="/dispatch" className="bof-mkt-btn-enterprise bof-mkt-btn-enterprise-secondary">
+                      Open Dispatch Board
+                    </Link>
+                    <Link href="/dashboard#attention-queue" className="bof-mkt-btn-enterprise bof-mkt-btn-enterprise-secondary">
+                      Review Attention Queue
+                    </Link>
+                  </div>
+
+                  <nav aria-label="BOF by fleet type" style={{ marginTop: "1.35rem" }}>
+                    <ul
+                      className="bof-mkt-home-audience__list"
+                      style={{
+                        justifyContent: "flex-start",
+                        margin: 0,
+                      }}
+                    >
+                      <li>
+                        <Link href="/for-hire-carriers" className="bof-mkt-home-audience__pill">
+                          For-Hire Carriers
+                        </Link>
+                      </li>
+                      <li>
+                        <Link href="/private-fleets" className="bof-mkt-home-audience__pill">
+                          Private Fleets
+                        </Link>
+                      </li>
+                      <li>
+                        <Link href="/government" className="bof-mkt-home-audience__pill">
+                          Government
+                        </Link>
+                      </li>
+                    </ul>
+                  </nav>
+                </div>
               </div>
             </div>
           </div>
         </div>
       </section>
-
-      <nav className="bof-mkt-home-audience" aria-label="BOF by fleet type">
-        <div className="bof-mkt-container">
-          <ul className="bof-mkt-home-audience__list">
-            <li>
-              <Link href="/for-hire-carriers" className="bof-mkt-home-audience__pill">
-                For-Hire Trucking
-              </Link>
-            </li>
-            <li>
-              <Link href="/private-fleets" className="bof-mkt-home-audience__pill">
-                Private Fleets
-              </Link>
-            </li>
-            <li>
-              <Link href="/government" className="bof-mkt-home-audience__pill">
-                Government
-              </Link>
-            </li>
-          </ul>
-        </div>
-      </nav>
 
       <MarketingSection variant="light" ariaLabelledBy="bof-mkt-different-heading">
         <div className="bof-mkt-container">
