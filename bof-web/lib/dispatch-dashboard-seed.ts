@@ -10,8 +10,7 @@ import type {
   Tractor,
   Trailer,
 } from "@/types/dispatch";
-import demoData from "@/lib/demo-data.json";
-import type { BofData } from "@/lib/load-bof-data";
+import { getBofData, type BofData } from "@/lib/load-bof-data";
 import { getBackhaulLoadSignals } from "@/lib/backhaul-opportunity-engine";
 import { getGeneratedLoadDocEntry } from "@/lib/load-doc-manifest";
 import { getLoadEvidenceUrl } from "@/lib/load-documents";
@@ -502,6 +501,7 @@ export function buildDispatchLoadsFromBofData(data: BofData): Load[] {
 }
 
 export function createSeedLoads(): Load[] {
+  const demoData = getBofData();
   return buildDispatchLoadsFromDemoLoads((demoData.loads ?? []) as DemoLoad[]);
 }
 
@@ -512,6 +512,7 @@ function complianceForDriverId(driverId: string): ComplianceStatus {
 }
 
 export function createSeedDrivers(): Driver[] {
+  const demoData = getBofData();
   const drivers = (demoData.drivers ?? []) as DemoDriver[];
   return drivers.map((d) => {
     const c = complianceForDriverId(d.id);
