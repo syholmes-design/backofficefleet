@@ -144,21 +144,6 @@ export function SettlementDetailDrawer({ settlementId, open, onClose }: Props) {
     return resolveBillingPacketRfidGate(summary);
   }, [data, settlementId, linkedLoadIdsForTemplateUsage]);
 
-  if (!open || !settlement) return null;
-
-  const netCheck =
-    Math.abs(
-      settlement.net_pay -
-        (settlement.total_gross_pay - settlement.total_deductions)
-    ) < 0.02;
-
-  const lineCount = myLines.length;
-  const readyDisabled =
-    settlement.settlement_hold ||
-    lineCount === 0 ||
-    settlement.status === "Exported" ||
-    billingRfidGate.level === "hard_block";
-  const docs = generatedDocs[settlement.settlement_id];
   const operatingDocsByLoad = useMemo(() => {
     return uniqueLoadIds.map((loadId) => {
       const settlementDocs = getOperatingDocumentsForLoad(loadId).filter(
@@ -177,6 +162,22 @@ export function SettlementDetailDrawer({ settlementId, open, onClose }: Props) {
       return { loadId, docs: unique, holdNoticePath };
     });
   }, [uniqueLoadIds]);
+
+  if (!open || !settlement) return null;
+
+  const netCheck =
+    Math.abs(
+      settlement.net_pay -
+        (settlement.total_gross_pay - settlement.total_deductions)
+    ) < 0.02;
+
+  const lineCount = myLines.length;
+  const readyDisabled =
+    settlement.settlement_hold ||
+    lineCount === 0 ||
+    settlement.status === "Exported" ||
+    billingRfidGate.level === "hard_block";
+  const docs = generatedDocs[settlement.settlement_id];
 
   async function generateSettlementDoc(
     target: NonNullable<typeof settlement>,

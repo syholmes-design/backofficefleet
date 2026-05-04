@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Employment Verification - Marcus Chen</title>
+  <title>Employment Verification - {{driverName}}</title>
   <style>
     @page { size: Letter; margin: 0.5in; }
     body { font-family: Arial, sans-serif; margin: 0; color: #111; background: #fff; }
@@ -26,30 +26,30 @@
     <h1>EMPLOYMENT VERIFICATION</h1>
     <div class="sub">Driver Qualification File verification record · 49 CFR Part 391</div>
     <div class="grid">
-      <div class="box"><div class="label">Driver Name</div><div class="value">Marcus Chen</div></div>
-      <div class="box"><div class="label">Driver ID</div><div class="value">DRV-006</div></div>
-      <div class="box"><div class="label">Address</div><div class="value">500 Pacific Ave, Dallas, TX 75202</div></div>
-      <div class="box"><div class="label">Phone / Email</div><div class="value">283-876-4322 · marcus.chen@boftransport.demo</div></div>
-      <div class="box"><div class="label">CDL Number / State / Class</div><div class="value">DLN-00006 / TX / Class A</div></div>
-      <div class="box"><div class="label">Verification ID</div><div class="value">EMPV-DRV-006-2026</div></div>
+      <div class="box"><div class="label">Driver Name</div><div class="value">{{driverName}}</div></div>
+      <div class="box"><div class="label">Driver ID</div><div class="value">{{driverId}}</div></div>
+      <div class="box"><div class="label">Address</div><div class="value">{{driverAddress}}</div></div>
+      <div class="box"><div class="label">Phone / Email</div><div class="value">{{driverPhone}} · {{driverEmail}}</div></div>
+      <div class="box"><div class="label">CDL Number / State / Class</div><div class="value">{{cdlNumber}} / {{licenseState}} / {{licenseClass}}</div></div>
+      <div class="box"><div class="label">Verification ID</div><div class="value">{{verificationId}}</div></div>
     </div>
     <div class="section">
       <div class="label">Employment confirmation checklist</div>
       <div class="checks">
-        <div>[X] Prior employment dates verified</div>
-        <div>[X] Safety performance history requested</div>
-        <div>[X] Drug/alcohol history reviewed</div>
+        <div>[{{priorDatesCheck}}] Prior employment dates verified</div>
+        <div>[{{safetyCheck}}] Safety performance history requested</div>
+        <div>[{{drugAlcoholCheck}}] Drug/alcohol history reviewed</div>
       </div>
       <div class="tiny">Carrier: BOF Transportation, LLC · DOT 123467 · MC 765432</div>
     </div>
     <div class="sig">
       <div>
-        <div class="line">Karen Brooks</div>
-        <div class="tiny">Verifier Signature · Karen Brooks (Safety Compliance Officer)</div>
+        <div class="line">{{verifierSignature}}</div>
+        <div class="tiny">Verifier Signature · {{verifierName}} ({{verifierTitle}})</div>
       </div>
       <div>
-        <div class="line">Marcus Chen</div>
-        <div class="tiny">Driver Acknowledgment Signature · Date 2026-05-15</div>
+        <div class="line">{{driverSignature}}</div>
+        <div class="tiny">Driver Acknowledgment Signature · Date {{issueDate}}</div>
       </div>
     </div>
   </div>

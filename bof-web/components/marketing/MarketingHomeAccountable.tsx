@@ -110,40 +110,80 @@ export default function MarketingHomeAccountable() {
           <div style={{ marginBottom: "0.9rem" }}>
             <BofLogo variant="dark" className="bof-mkt-home-hero-logo" priority />
           </div>
-          <h1 id="bof-mkt-hero-heading" className="sr-only">
-            BOF marketing hero image
-          </h1>
           <div
             style={{
               position: "relative",
               width: "100%",
-              minHeight: "480px",
+              minHeight: "620px",
+              maxHeight: "670px",
               borderRadius: "14px",
               overflow: "hidden",
               background: "#0b1220",
               border: "1px solid rgba(255,255,255,0.08)",
             }}
           >
+            <div
+              style={{
+                position: "absolute",
+                inset: 0,
+                zIndex: 2,
+                background:
+                  "linear-gradient(to right, rgba(15,23,42,0.92) 0%, rgba(15,23,42,0.66) 36%, rgba(15,23,42,0.18) 68%, rgba(15,23,42,0.06) 100%)",
+              }}
+            />
             <Image
               src="/generated/marketing/demoheroimage.png"
-              alt="The Back Office Platform Built for Freight Operations with command dashboard monitor and BOF operations context."
+              alt="BOF demo operations hero visual"
               fill
               priority
               sizes="100vw"
               className="bof-mkt-home-hero-integrated__image"
-              style={{ objectFit: "contain", objectPosition: "center top" }}
+              style={{ objectFit: "cover", objectPosition: "right top" }}
             />
-          </div>
-          <div className="bof-mkt-home-hero-integrated__ctas" style={{ marginTop: "1rem" }}>
-            <BookDemoLink className="bof-mkt-btn-enterprise bof-mkt-btn-enterprise-primary">
-              Book a Demo
-            </BookDemoLink>
-            <Link href="/dispatch" className="bof-mkt-btn-enterprise bof-mkt-btn-enterprise-secondary">
-              Open Dispatch Board
-            </Link>
-            <Link href="/dashboard#attention-queue" className="bof-mkt-btn-enterprise bof-mkt-btn-enterprise-secondary">
-              Review Attention Queue
-            </Link>
+            <div
+              style={{
+                position: "relative",
+                zIndex: 3,
+                maxWidth: "760px",
+                padding: "clamp(18px, 3vw, 34px)",
+              }}
+            >
+              <h1
+                id="bof-mkt-hero-heading"
+                style={{
+                  margin: 0,
+                  color: "#fff",
+                  fontWeight: 700,
+                  lineHeight: 1.16,
+                  fontSize: "clamp(1.9rem, 4vw, 3.25rem)",
+                }}
+              >
+                The Back Office Platform Built for Freight Operations
+              </h1>
+              <p
+                style={{
+                  margin: "0.95rem 0 0",
+                  color: "#e2e8f0",
+                  fontSize: "clamp(1rem, 1.8vw, 1.22rem)",
+                  lineHeight: 1.55,
+                  maxWidth: "56ch",
+                }}
+              >
+                BOF unifies dispatch, drivers, documents, compliance, proof, settlements, and revenue risk in one operating
+                view.
+              </p>
+              <div className="bof-mkt-home-hero-integrated__ctas" style={{ marginTop: "1rem" }}>
+                <BookDemoLink className="bof-mkt-btn-enterprise bof-mkt-btn-enterprise-primary">
+                  Book a Demo
+                </BookDemoLink>
+                <Link href="/dispatch" className="bof-mkt-btn-enterprise bof-mkt-btn-enterprise-secondary">
+                  Open Dispatch Board
+                </Link>
+                <Link href="/dashboard#attention-queue" className="bof-mkt-btn-enterprise bof-mkt-btn-enterprise-secondary">
+                  Review Attention Queue
+                </Link>
+              </div>
+            </div>
           </div>
         </div>
       </section>

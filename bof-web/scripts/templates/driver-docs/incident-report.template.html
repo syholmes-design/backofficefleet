@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Driver Incident Report - Kenji Tanaka</title>
+  <title>Driver Incident Report - {{driverName}}</title>
   <style>
     @page { size: Letter; margin: 0.5in; }
     body { font-family: Arial, sans-serif; margin: 0; color: #111; }
@@ -28,26 +28,26 @@
     <div class="section">
       <div class="title">Driver Details</div>
       <div class="grid">
-        <div class="item"><div class="label">Driver Name</div><div class="value">Kenji Tanaka</div></div>
-        <div class="item"><div class="label">Driver ID</div><div class="value">DRV-005</div></div>
-        <div class="item"><div class="label">CDL Number</div><div class="value">DLN-00005</div></div>
-        <div class="item"><div class="label">License State</div><div class="value">OH</div></div>
+        <div class="item"><div class="label">Driver Name</div><div class="value">{{driverName}}</div></div>
+        <div class="item"><div class="label">Driver ID</div><div class="value">{{driverId}}</div></div>
+        <div class="item"><div class="label">CDL Number</div><div class="value">{{cdlNumber}}</div></div>
+        <div class="item"><div class="label">License State</div><div class="value">{{licenseState}}</div></div>
       </div>
     </div>
     <div class="section">
       <div class="title">Incident Summary</div>
       <div class="grid">
-        <div class="item"><div class="label">Incident ID</div><div class="value">INC-DRV-005-2026</div></div>
-        <div class="item"><div class="label">Incident Date</div><div class="value">2026-05-14</div></div>
-        <div class="item"><div class="label">Location</div><div class="value">Columbus, OH 43215</div></div>
-        <div class="item"><div class="label">Status</div><div class="value">Reviewed / Closed</div></div>
+        <div class="item"><div class="label">Incident ID</div><div class="value">{{incidentId}}</div></div>
+        <div class="item"><div class="label">Incident Date</div><div class="value">{{incidentDate}}</div></div>
+        <div class="item"><div class="label">Location</div><div class="value">{{incidentLocation}}</div></div>
+        <div class="item"><div class="label">Status</div><div class="value">{{incidentStatus}}</div></div>
       </div>
-      <div class="item" style="margin-top:8px;"><div class="label">Narrative</div><div class="value">No disqualifying safety events identified. Driver incident register reviewed and acknowledged as part of periodic qualification maintenance.</div></div>
+      <div class="item" style="margin-top:8px;"><div class="label">Narrative</div><div class="value">{{incidentNarrative}}</div></div>
     </div>
     <div class="sig">
-      <div><div class="line">Kenji Tanaka</div><div class="tiny">Driver Signature</div></div>
-      <div><div class="line">Michael Brown</div><div class="tiny">Safety Officer Signature</div></div>
-      <div><div class="line">James Wilson</div><div class="tiny">Carrier Representative Signature</div></div>
+      <div><div class="line">{{driverSignature}}</div><div class="tiny">Driver Signature</div></div>
+      <div><div class="line">{{safetyOfficerSignature}}</div><div class="tiny">Safety Officer Signature</div></div>
+      <div><div class="line">{{carrierRepSignature}}</div><div class="tiny">Carrier Representative Signature</div></div>
     </div>
   </div>
 </body>

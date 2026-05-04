@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Safety Policy Acknowledgment - Kenji Tanaka</title>
+  <title>Safety Policy Acknowledgment - {{driverName}}</title>
   <style>
     @page { size: Letter; margin: 0.5in; }
     body { font-family: Arial, sans-serif; margin: 0; color: #111; }
@@ -26,25 +26,25 @@
     <div class="sub">Driver acknowledgment form · BOF Transportation Safety Program</div>
     <div class="block">
       <div class="title">Driver Information</div>
-      <div class="line"><strong>Name:</strong> Kenji Tanaka</div>
-      <div class="line"><strong>Driver ID:</strong> DRV-005</div>
-      <div class="line"><strong>CDL Number:</strong> DLN-00005 (OH)</div>
-      <div class="line"><strong>Policy Version:</strong> BOF-SAF-2026.2 · <strong>Issue Date:</strong> 2026-05-14</div>
+      <div class="line"><strong>Name:</strong> {{driverName}}</div>
+      <div class="line"><strong>Driver ID:</strong> {{driverId}}</div>
+      <div class="line"><strong>CDL Number:</strong> {{cdlNumber}} ({{licenseState}})</div>
+      <div class="line"><strong>Policy Version:</strong> {{policyVersion}} · <strong>Issue Date:</strong> {{issueDate}}</div>
     </div>
     <div class="block">
       <div class="title">Acknowledgment</div>
       <div class="line">I acknowledge receipt of BOF Transportation safety policies and agree to operate in compliance with DOT/FMCSA requirements and carrier procedures.</div>
       <div class="checks">
-        <div>[X] Hours of Service policy reviewed</div>
-        <div>[X] Pre/Post trip inspection policy reviewed</div>
-        <div>[X] Cargo securement policy reviewed</div>
-        <div>[X] Incident reporting requirements reviewed</div>
+        <div>[{{checkHours}}] Hours of Service policy reviewed</div>
+        <div>[{{checkInspection}}] Pre/Post trip inspection policy reviewed</div>
+        <div>[{{checkCargo}}] Cargo securement policy reviewed</div>
+        <div>[{{checkIncident}}] Incident reporting requirements reviewed</div>
       </div>
     </div>
     <div class="sig">
-      <div><div class="sigline">Kenji Tanaka</div><div class="tiny">Driver Signature</div></div>
-      <div><div class="sigline">Michael Brown</div><div class="tiny">Safety Officer Signature</div></div>
-      <div><div class="sigline">James Wilson</div><div class="tiny">Carrier Representative Signature</div></div>
+      <div><div class="sigline">{{driverSignature}}</div><div class="tiny">Driver Signature</div></div>
+      <div><div class="sigline">{{safetyOfficerSignature}}</div><div class="tiny">Safety Officer Signature</div></div>
+      <div><div class="sigline">{{carrierRepSignature}}</div><div class="tiny">Carrier Representative Signature</div></div>
     </div>
   </div>
 </body>

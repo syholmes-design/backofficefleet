@@ -1,46 +1,54 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>Incident / accident register — Priya Patel</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Driver Incident Report - Priya Patel</title>
   <style>
-    * { box-sizing: border-box; }
-    body { font-family: system-ui, Segoe UI, Roboto, Helvetica, Arial, sans-serif; margin: 0; padding: 24px; background: #f1f5f9; color: #0f172a; line-height: 1.45; font-size: 14px; }
-    .sheet { max-width: 720px; margin: 0 auto; background: #fff; border: 1px solid #cbd5e1; border-radius: 8px; padding: 28px 32px; box-shadow: 0 1px 3px rgba(0,0,0,.06); }
-    h1 { font-size: 1.15rem; margin: 0 0 4px; color: #0f172a; }
-    .sub { font-size: 12px; color: #64748b; margin-bottom: 20px; }
-    h2 { font-size: 11px; text-transform: uppercase; letter-spacing: .06em; color: #64748b; margin: 20px 0 8px; border-bottom: 1px solid #e2e8f0; padding-bottom: 4px; }
-    dl { display: grid; grid-template-columns: 160px 1fr; gap: 6px 16px; margin: 0; }
-    dt { color: #64748b; font-size: 12px; }
-    dd { margin: 0; font-weight: 500; }
-    .muted { color: #64748b; font-weight: 400; }
-    .banner { background: #eff6ff; border: 1px solid #bfdbfe; color: #1e3a8a; padding: 10px 12px; border-radius: 6px; font-size: 13px; margin-top: 12px; }
-    .warn { background: #fffbeb; border-color: #fde68a; color: #78350f; }
-    footer { margin-top: 24px; font-size: 11px; color: #94a3b8; }
+    @page { size: Letter; margin: 0.5in; }
+    body { font-family: Arial, sans-serif; margin: 0; color: #111; }
+    .page { border: 2px solid #222; padding: 14px; max-width: 980px; margin: 0 auto; }
+    h1 { font-size: 28px; margin: 0; }
+    .sub { font-size: 12px; margin-top: 4px; }
+    .section { border: 1px solid #333; padding: 8px; margin-top: 10px; }
+    .title { font-size: 12px; font-weight: 700; text-transform: uppercase; margin-bottom: 6px; }
+    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px 12px; }
+    .item { border: 1px solid #ccc; padding: 6px; min-height: 50px; }
+    .label { font-size: 10px; font-weight: 700; text-transform: uppercase; color: #333; }
+    .value { font-size: 15px; font-weight: 700; margin-top: 3px; }
+    .sig { margin-top: 12px; display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
+    .line { border-bottom: 1px solid #333; min-height: 30px; font-family: "Segoe Script", cursive; font-size: 23px; }
+    .tiny { font-size: 11px; color: #444; margin-top: 3px; }
   </style>
 </head>
 <body>
-  <div class="sheet">
-    
-    <h1>Incident / accident register</h1>
-    <p class="sub">Demo workflow shell · Not a legal filing</p>
-    <h2>Driver</h2>
-<dl>
-  <dt>Name</dt><dd>Priya Patel</dd>
-  <dt>Driver ID</dt><dd><code>DRV-004</code></dd>
-  <dt>Address</dt><dd>2200 Superior Ave, Cleveland, OH 44114</dd>
-  <dt>Phone</dt><dd>359-469-5960</dd>
-  <dt>Email</dt><dd>priya.patel@boftransport.demo</dd>
-</dl>
-    <h2>Record</h2>
-    <dl>
-      <dt>Status (demo)</dt><dd>AT RISK</dd>
-      <dt>Expiration</dt><dd><span class="muted">—</span></dd>
-    </dl>
-    
-  
-    <footer>BackOfficeFleet · Demo generated credential shell · Not a legal document</footer>
+  <div class="page">
+    <h1>DRIVER INCIDENT REPORT</h1>
+    <div class="sub">Safety and compliance record form · BOF Driver Qualification File</div>
+    <div class="section">
+      <div class="title">Driver Details</div>
+      <div class="grid">
+        <div class="item"><div class="label">Driver Name</div><div class="value">Priya Patel</div></div>
+        <div class="item"><div class="label">Driver ID</div><div class="value">DRV-004</div></div>
+        <div class="item"><div class="label">CDL Number</div><div class="value">DLN-00004</div></div>
+        <div class="item"><div class="label">License State</div><div class="value">OH</div></div>
+      </div>
+    </div>
+    <div class="section">
+      <div class="title">Incident Summary</div>
+      <div class="grid">
+        <div class="item"><div class="label">Incident ID</div><div class="value">INC-DRV-004-2026</div></div>
+        <div class="item"><div class="label">Incident Date</div><div class="value">2026-05-13</div></div>
+        <div class="item"><div class="label">Location</div><div class="value">Cleveland, OH 44114</div></div>
+        <div class="item"><div class="label">Status</div><div class="value">Reviewed / Closed</div></div>
+      </div>
+      <div class="item" style="margin-top:8px;"><div class="label">Narrative</div><div class="value">No disqualifying safety events identified. Driver incident register reviewed and acknowledged as part of periodic qualification maintenance.</div></div>
+    </div>
+    <div class="sig">
+      <div><div class="line">Priya Patel</div><div class="tiny">Driver Signature</div></div>
+      <div><div class="line">Alicia Grant</div><div class="tiny">Safety Officer Signature</div></div>
+      <div><div class="line">Olivia Turner</div><div class="tiny">Carrier Representative Signature</div></div>
+    </div>
   </div>
 </body>
 </html>
