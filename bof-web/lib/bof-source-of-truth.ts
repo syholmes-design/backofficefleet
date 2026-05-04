@@ -1,5 +1,6 @@
 import type { BofData } from "@/lib/load-bof-data";
 import { emergencyContactDrivers } from "@/lib/emergency-contacts/drivers";
+import { getCanonicalLoadEvidence } from "@/lib/canonical-load-evidence";
 
 const CORE_DOC_TYPES = ["CDL", "Medical Card", "MVR", "I-9", "FMCSA", "W-9", "Bank Info"] as const;
 const FALLBACK_EXPIRED_DATE = "2027-04-24";
@@ -389,6 +390,7 @@ export function reconcileBofSourceOfTruth(seed: BofData): BofData {
 
   next.documents = reconcileCoreDocuments(next, workbook) as BofData["documents"];
   next.settlementLoadLinks = buildSettlementLoadLinks(next);
+  next.loadEvidenceRecords = getCanonicalLoadEvidence(next);
 
   return next;
 }

@@ -9,6 +9,7 @@
  */
 import raw from "./demo-data.json";
 import { reconcileBofSourceOfTruth } from "@/lib/bof-source-of-truth";
+import type { BofLoadEvidence } from "@/lib/canonical-load-evidence";
 
 /** Runtime-only demo dispatch blocker acknowledgements (persisted with demo data in localStorage). */
 export type DriverDispatchBlockerOverrideRow = {
@@ -43,6 +44,8 @@ export type BofData = typeof raw & {
   driverCredentialOverrides?: Record<string, DriverCredentialOverrideRow>;
   /** Canonical settlement->load link adapter (typed sidecar when settlement rows do not include loadId). */
   settlementLoadLinks?: Record<string, string>;
+  /** Canonical load evidence rows keyed by load id. */
+  loadEvidenceRecords?: Record<string, BofLoadEvidence[]>;
 };
 
 let reconciledSeed: BofData | null = null;

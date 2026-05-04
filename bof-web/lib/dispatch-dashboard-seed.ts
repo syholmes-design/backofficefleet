@@ -14,6 +14,7 @@ import { getBofData, type BofData } from "@/lib/load-bof-data";
 import { getBackhaulLoadSignals } from "@/lib/backhaul-opportunity-engine";
 import { getGeneratedLoadDocEntry } from "@/lib/load-doc-manifest";
 import { getLoadEvidenceUrl } from "@/lib/load-documents";
+import { getCanonicalLoadEvidenceByType } from "@/lib/canonical-load-evidence";
 import { coordsForLoadRoute, interpolateAlongRoute } from "@/lib/load-route-geo";
 
 /** Static demo PDFs from `public/mocks/` — only used when generated HTML docs are absent. */
@@ -228,6 +229,7 @@ function applyDocumentationDemos(load: Load, l: DemoLoad): Load {
 }
 
 function proofMediaUrlsForLoad(
+  data: BofData,
   loadId: string,
   proof: ProofStatus,
   idx: number,
@@ -239,9 +241,9 @@ function proofMediaUrlsForLoad(
   | "delivery_photo_url"
   | "lumper_photo_url"
 > {
-  const pickup = getLoadEvidenceUrl(loadId, "pickupPhoto");
-  const delivery = getLoadEvidenceUrl(loadId, "deliveryPhoto");
-  const lumper = getLoadEvidenceUrl(loadId, "lumperReceipt");
+  const pickup = getCanonicalLoadEvidenceByType(data, loadId, "cargo_pickup_photo")?.url;
+  const delivery = getCanonicalLoadEvidenceByType(data, loadId, "cargo_delivery_photo")?.url;
+  const lumper = getCanonicalLoadEvidenceByType(data, loadId, "lumper_receipt")?.url;
   const pod = generated.pod;
   if (proof === "Complete") {
     return {
@@ -271,7 +273,7 @@ function proofMediaUrlsForLoad(
  * Build dispatch `Load[]` from demo-shaped load rows (same mapping as static seed).
  * Used by the dispatch store and by the shipper portal so readiness stays aligned.
  */
-export function buildDispatchLoadsFromDemoLoads(loads: DemoLoad[]): Load[] {
+export function buildDispatchLoadsFromDemoLoads(loads: DemoLoad[], data: BofData): Load[] {
   const backhaulSignals = getBackhaulLoadSignals();
   return loads.map((l, idx) => {
     const base = new Date();
@@ -359,9 +361,11 @@ export function buildDispatchLoadsFromDemoLoads(loads: DemoLoad[]): Load[] {
       invoice_url: generatedDocs.invoice ?? MOCK_DOC_URLS.invoice,
       equipment_photo_url: getLoadEvidenceUrl(l.id, "equipmentPhoto"),
       cargo_photo_url: getLoadEvidenceUrl(l.id, "cargoPhoto"),
-      seal_photo_url: getLoadEvidenceUrl(l.id, "sealPhoto"),
+      seal_photo_url:
+        getCanonicalLoadEvidenceByType(data, l.id, "seal_delivery_photo")?.url ??
+        getLoadEvidenceUrl(l.id, "sealPhoto"),
 
-      ...proofMediaUrlsForLoad(l.id, proof_status, idx, generatedDocs),
+      ...proofMediaUrlsForLoad(data, l.id, proof_status, idx, generatedDocs),
 
       rfid_tag_id: `RFID-${l.id}`,
       destinationMarket: backhaulSignals[l.id]?.destinationMarket,
@@ -497,12 +501,12 @@ export function buildDispatchLoadsFromDemoLoads(loads: DemoLoad[]): Load[] {
 }
 
 export function buildDispatchLoadsFromBofData(data: BofData): Load[] {
-  return buildDispatchLoadsFromDemoLoads((data.loads ?? []) as DemoLoad[]);
+  return buildDispatchLoadsFromDemoLoads((data.loads ?? []) as DemoLoad[], data);
 }
 
 export function createSeedLoads(): Load[] {
   const demoData = getBofData();
-  return buildDispatchLoadsFromDemoLoads((demoData.loads ?? []) as DemoLoad[]);
+  return buildDispatchLoadsFromDemoLoads((demoData.loads ?? []) as DemoLoad[], demoData);
 }
 
 function complianceForDriverId(driverId: string): ComplianceStatus {

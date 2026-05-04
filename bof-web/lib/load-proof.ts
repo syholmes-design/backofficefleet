@@ -1,10 +1,9 @@
 import type { BofData } from "./load-bof-data";
 import type { TripPacketValidation } from "./load-trip-packet";
 import {
-  getLoadEvidenceForLoad,
   getLoadEvidenceManifest,
-  getLoadEvidenceUrl,
 } from "./load-documents";
+import { getCanonicalLoadEvidenceForLoad, type BofLoadEvidence } from "./canonical-load-evidence";
 import { tripPacketToLoadDocumentPacket } from "./load-trip-packet";
 
 export const LOAD_PROOF_TYPES = [
@@ -344,30 +343,36 @@ export function getLoadProofItems(data: BofData, loadId: string): LoadProofItem[
     };
   });
 
-  return attachDemoEvidenceFileUrls(loadId, withOverrides);
+  return attachDemoEvidenceFileUrls(data, loadId, withOverrides);
 }
 
 /** When generated demo evidence exists on disk, surface URLs and mark line items Present. */
-function attachDemoEvidenceFileUrls(loadId: string, items: LoadProofItem[]): LoadProofItem[] {
-  const urlByType: Record<string, string | undefined> = {
-    "Pickup Seal Photo": getLoadEvidenceUrl(loadId, "sealPickupPhoto"),
-    "Delivery Seal Photo": getLoadEvidenceUrl(loadId, "sealDeliveryPhoto"),
-    "Pre-Trip Cargo Photo": getLoadEvidenceUrl(loadId, "cargoPhoto"),
-    "Delivery / Empty-Trailer Photo": getLoadEvidenceUrl(loadId, "deliveryPhoto"),
-    "Cargo Damage Photos": getLoadEvidenceUrl(loadId, "damagePhoto"),
-    "Claim Support Docs": getLoadEvidenceUrl(loadId, "claimEvidence"),
+function attachDemoEvidenceFileUrls(data: BofData, loadId: string, items: LoadProofItem[]): LoadProofItem[] {
+  const evidence = new Map<BofLoadEvidence["evidenceType"], BofLoadEvidence>(
+    getCanonicalLoadEvidenceForLoad(data, loadId).map((row) => [row.evidenceType, row])
+  );
+  const byProofType: Record<string, BofLoadEvidence["evidenceType"]> = {
+    "Pickup Seal Photo": "seal_pickup_photo",
+    "Delivery Seal Photo": "seal_delivery_photo",
+    "Pre-Trip Cargo Photo": "cargo_pickup_photo",
+    "Delivery / Empty-Trailer Photo": "cargo_delivery_photo",
+    "Cargo Damage Photos": "claim_photo",
+    "Claim Support Docs": "claim_photo",
   };
 
   return items.map((item) => {
-    const url = urlByType[item.type];
-    if (!url) return item;
+    const evidenceType = byProofType[item.type];
+    if (!evidenceType) return item;
+    const matched = evidence.get(evidenceType);
+    const url = matched?.url;
+    if (!matched || !url) return item;
     const merged: LoadProofItem = {
       ...item,
       fileUrl: item.fileUrl ?? url,
       previewUrl: item.previewUrl ?? url,
     };
     if (item.status === "Disputed") return merged;
-    return { ...merged, status: "Complete" };
+    return matched.status === "available" ? { ...merged, status: "Complete" } : merged;
   });
 }
 
@@ -483,4 +488,4 @@ export function getLoadEvidenceForSettlement(data: BofData, loadIds: string[]) {
     .filter((packet): packet is LoadDocumentPacket => Boolean(packet));
 }
 
-export { getLoadEvidenceManifest, getLoadEvidenceForLoad };
+export { getLoadEvidenceManifest };

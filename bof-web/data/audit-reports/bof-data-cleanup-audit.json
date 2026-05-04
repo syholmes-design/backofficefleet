@@ -1187,8 +1187,13 @@
       "driverName": "John Carter",
       "status": "Delivered",
       "riskReason": "dispatchExceptionFlag;seal:Mismatch",
-      "evidencePathStatus": "placeholder_or_none",
-      "dispatchBlockedReason": "dispatchExceptionFlag;seal:Mismatch"
+      "dispatchBlockedReason": "dispatchExceptionFlag;seal:Mismatch",
+      "evidenceAvailableCount": 7,
+      "evidenceMissingCount": 1,
+      "evidencePathStatus": "partial",
+      "missingEvidenceTypes": [
+        "lumper_receipt"
+      ]
     },
     {
       "loadId": "L002",
@@ -1196,8 +1201,13 @@
       "driverName": "Maria Lopez",
       "status": "En Route",
       "riskReason": "pod_pending",
-      "evidencePathStatus": "placeholder_or_none",
-      "dispatchBlockedReason": "pod_pending"
+      "dispatchBlockedReason": "pod_pending",
+      "evidenceAvailableCount": 4,
+      "evidenceMissingCount": 1,
+      "evidencePathStatus": "partial",
+      "missingEvidenceTypes": [
+        "seal_delivery_photo"
+      ]
     },
     {
       "loadId": "L003",
@@ -1205,8 +1215,14 @@
       "driverName": "Alex Kim",
       "status": "Delivered",
       "riskReason": "dispatchExceptionFlag;seal:Mismatch",
-      "evidencePathStatus": "placeholder_or_none",
-      "dispatchBlockedReason": "dispatchExceptionFlag;seal:Mismatch"
+      "dispatchBlockedReason": "dispatchExceptionFlag;seal:Mismatch",
+      "evidenceAvailableCount": 6,
+      "evidenceMissingCount": 2,
+      "evidencePathStatus": "partial",
+      "missingEvidenceTypes": [
+        "lumper_receipt",
+        "claim_photo"
+      ]
     },
     {
       "loadId": "L004",
@@ -1214,8 +1230,13 @@
       "driverName": "Priya Patel",
       "status": "Pending",
       "riskReason": "dispatchExceptionFlag;seal:Mismatch",
-      "evidencePathStatus": "placeholder_or_none",
-      "dispatchBlockedReason": "dispatchExceptionFlag;seal:Mismatch"
+      "dispatchBlockedReason": "dispatchExceptionFlag;seal:Mismatch",
+      "evidenceAvailableCount": 6,
+      "evidenceMissingCount": 1,
+      "evidencePathStatus": "partial",
+      "missingEvidenceTypes": [
+        "seal_delivery_photo"
+      ]
     },
     {
       "loadId": "L005",
@@ -1223,8 +1244,13 @@
       "driverName": "Kenji Tanaka",
       "status": "Delivered",
       "riskReason": "pod_pending",
-      "evidencePathStatus": "placeholder_or_none",
-      "dispatchBlockedReason": "pod_pending"
+      "dispatchBlockedReason": "pod_pending",
+      "evidenceAvailableCount": 5,
+      "evidenceMissingCount": 1,
+      "evidencePathStatus": "partial",
+      "missingEvidenceTypes": [
+        "lumper_receipt"
+      ]
     },
     {
       "loadId": "L006",
@@ -1232,8 +1258,13 @@
       "driverName": "Marcus Chen",
       "status": "Delivered",
       "riskReason": "dispatchExceptionFlag;seal:Mismatch",
-      "evidencePathStatus": "placeholder_or_none",
-      "dispatchBlockedReason": "dispatchExceptionFlag;seal:Mismatch"
+      "dispatchBlockedReason": "dispatchExceptionFlag;seal:Mismatch",
+      "evidenceAvailableCount": 7,
+      "evidenceMissingCount": 1,
+      "evidencePathStatus": "partial",
+      "missingEvidenceTypes": [
+        "lumper_receipt"
+      ]
     },
     {
       "loadId": "L007",
@@ -1241,8 +1272,14 @@
       "driverName": "Sofia Gomez",
       "status": "En Route",
       "riskReason": "dispatchExceptionFlag;seal:Mismatch",
-      "evidencePathStatus": "placeholder_or_none",
-      "dispatchBlockedReason": "dispatchExceptionFlag;seal:Mismatch"
+      "dispatchBlockedReason": "dispatchExceptionFlag;seal:Mismatch",
+      "evidenceAvailableCount": 5,
+      "evidenceMissingCount": 2,
+      "evidencePathStatus": "partial",
+      "missingEvidenceTypes": [
+        "seal_delivery_photo",
+        "claim_photo"
+      ]
     },
     {
       "loadId": "L008",
@@ -1250,8 +1287,14 @@
       "driverName": "Liam Smith",
       "status": "Delivered",
       "riskReason": "pod_pending",
-      "evidencePathStatus": "placeholder_or_none",
-      "dispatchBlockedReason": "pod_pending"
+      "dispatchBlockedReason": "pod_pending",
+      "evidenceAvailableCount": 4,
+      "evidenceMissingCount": 2,
+      "evidencePathStatus": "partial",
+      "missingEvidenceTypes": [
+        "seal_delivery_photo",
+        "lumper_receipt"
+      ]
     },
     {
       "loadId": "L009",
@@ -1259,8 +1302,13 @@
       "driverName": "Emma Brown",
       "status": "Pending",
       "riskReason": "dispatchExceptionFlag;seal:Mismatch",
-      "evidencePathStatus": "placeholder_or_none",
-      "dispatchBlockedReason": "dispatchExceptionFlag;seal:Mismatch"
+      "dispatchBlockedReason": "dispatchExceptionFlag;seal:Mismatch",
+      "evidenceAvailableCount": 6,
+      "evidenceMissingCount": 1,
+      "evidencePathStatus": "partial",
+      "missingEvidenceTypes": [
+        "claim_photo"
+      ]
     },
     {
       "loadId": "L010",
@@ -1268,8 +1316,13 @@
       "driverName": "Noah Wilson",
       "status": "Delivered",
       "riskReason": "dispatchExceptionFlag;seal:Mismatch",
-      "evidencePathStatus": "placeholder_or_none",
-      "dispatchBlockedReason": "dispatchExceptionFlag;seal:Mismatch"
+      "dispatchBlockedReason": "dispatchExceptionFlag;seal:Mismatch",
+      "evidenceAvailableCount": 7,
+      "evidenceMissingCount": 1,
+      "evidencePathStatus": "partial",
+      "missingEvidenceTypes": [
+        "lumper_receipt"
+      ]
     },
     {
       "loadId": "L011",
@@ -1277,8 +1330,13 @@
       "driverName": "Olivia Lee",
       "status": "En Route",
       "riskReason": "pod_pending",
-      "evidencePathStatus": "placeholder_or_none",
-      "dispatchBlockedReason": "pod_pending"
+      "dispatchBlockedReason": "pod_pending",
+      "evidenceAvailableCount": 4,
+      "evidenceMissingCount": 1,
+      "evidencePathStatus": "partial",
+      "missingEvidenceTypes": [
+        "seal_delivery_photo"
+      ]
     },
     {
       "loadId": "L012",
@@ -1286,8 +1344,13 @@
       "driverName": "Robert Johnson",
       "status": "Delivered",
       "riskReason": "dispatchExceptionFlag;seal:Mismatch",
-      "evidencePathStatus": "placeholder_or_none",
-      "dispatchBlockedReason": "dispatchExceptionFlag;seal:Mismatch"
+      "dispatchBlockedReason": "dispatchExceptionFlag;seal:Mismatch",
+      "evidenceAvailableCount": 7,
+      "evidenceMissingCount": 1,
+      "evidencePathStatus": "partial",
+      "missingEvidenceTypes": [
+        "lumper_receipt"
+      ]
     }
   ],
   "audit8": [

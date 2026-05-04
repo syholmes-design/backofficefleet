@@ -14,6 +14,7 @@ import type {
 } from "./load-proof";
 import { getGeneratedLoadDocUrl } from "./load-doc-manifest";
 import { getLoadEvidenceMeta, getLoadEvidenceUrl } from "./load-documents";
+import { getCanonicalLoadEvidenceByType } from "./canonical-load-evidence";
 
 export type TripPacketGroupId = "core" | "proof" | "exceptions" | "reference";
 
@@ -156,10 +157,12 @@ export function buildTripDocumentPacket(data: BofData, loadId: string): TripPack
 
   const gen = (k: Parameters<typeof getGeneratedLoadDocUrl>[1]) => getGeneratedLoadDocUrl(loadId, k);
   const ev = (k: Parameters<typeof getLoadEvidenceUrl>[1]) => getLoadEvidenceUrl(loadId, k);
+  const canon = (t: Parameters<typeof getCanonicalLoadEvidenceByType>[2]) =>
+    getCanonicalLoadEvidenceByType(data, loadId, t);
 
-  const rateUrl = gen("rateConfirmation");
-  const bolUrl = gen("bol");
-  const podUrl = gen("pod");
+  const rateUrl = canon("rate_confirmation")?.url ?? gen("rateConfirmation");
+  const bolUrl = canon("bol")?.url ?? gen("bol");
+  const podUrl = canon("pod")?.url ?? gen("pod");
   const invoiceUrl =
     gen("invoice") ||
     String(bundle?.items?.Invoice?.fileUrl ?? bundle?.items?.Invoice?.previewUrl ?? "").trim() ||
@@ -167,22 +170,22 @@ export function buildTripDocumentPacket(data: BofData, loadId: string): TripPack
   const workOrderUrl = gen("workOrder");
   const masterUrl = gen("masterAgreementReference");
 
-  const pickupPhotoUrl = ev("pickupPhoto");
-  const cargoPhotoUrl = ev("cargoPhoto") ?? gen("cargoPhoto");
-  const sealPickupUrl = ev("sealPickupPhoto") ?? gen("sealPickupPhoto");
-  const sealDeliveryUrl = ev("sealDeliveryPhoto") ?? gen("sealDeliveryPhoto");
+  const pickupPhotoUrl = canon("cargo_pickup_photo")?.url ?? ev("pickupPhoto");
+  const cargoPhotoUrl = canon("cargo_pickup_photo")?.url ?? ev("cargoPhoto") ?? gen("cargoPhoto");
+  const sealPickupUrl = canon("seal_pickup_photo")?.url ?? ev("sealPickupPhoto") ?? gen("sealPickupPhoto");
+  const sealDeliveryUrl = canon("seal_delivery_photo")?.url ?? ev("sealDeliveryPhoto") ?? gen("sealDeliveryPhoto");
   const emptyTrailerUrl = ev("emptyTrailerProof");
   const deliveryPhotoUrl = ev("deliveryPhoto");
   const deliveryMergedUrl = emptyTrailerUrl || deliveryPhotoUrl;
-  const rfidDockProofUrl = ev("rfidDockProof");
+  const rfidDockProofUrl = canon("rfid_geo_proof")?.url ?? ev("rfidDockProof");
   const rfidUrl = rfidDockProofUrl || gen("rfidProof");
   const rfidEvidenceType: LoadEvidenceType = rfidDockProofUrl ? "rfid_dock_proof" : "rfid_proof";
-  const lumperUrl = ev("lumperReceipt") ?? gen("lumperReceipt");
+  const lumperUrl = canon("lumper_receipt")?.url ?? ev("lumperReceipt") ?? gen("lumperReceipt");
 
   const claimIntakeUrl = gen("claimIntake");
   const claimPacketUrl = gen("claimPacket");
   const damagePhotoPacketUrl = gen("damagePhotoPacket");
-  const insuranceUrl = gen("insuranceNotification");
+  const insuranceUrl = canon("insurance_packet")?.url ?? gen("insuranceNotification");
   const settlementHoldNoticeUrl = gen("settlementHoldNotice");
   const factoringUrl = gen("factoringNotification");
   const sealMismatchPhotoUrl = ev("sealMismatchPhoto");
