@@ -14326,107 +14326,34 @@ body {
 }
 
 /*
- * Dashboard (/dashboard) demo hero — full-card background image + layered fades/masks.
- * PNG is decorative only (cover, right-weighted); fades/masks support legible DOM headline/CTAs over art.
- * Real CTAs are DOM-only (BookDemoLink + Next Link). Does not affect Drivers / other marketing heroes.
+ * Dashboard (/dashboard) demo hero — product cockpit preview (HTML + canonical demo metrics).
+ * No marketing photography; headline and CTAs stay in normal flow beside the preview panel.
  */
-.bof-dashboard-hero.bof-dashboard-hero--image-bg.bof-cc-hero {
+.bof-dashboard-hero.bof-dashboard-hero--product.bof-cc-hero {
   position: relative;
-  display: block;
-  overflow: hidden;
+  overflow: visible;
   border-radius: 1rem;
-  min-height: clamp(520px, 52vw, 760px);
-  padding: clamp(1.5rem, 3vw, 3rem);
+  padding: clamp(1.25rem, 2.5vw, 2rem);
   margin-bottom: 1rem;
   border: 1px solid rgba(51, 65, 85, 0.65);
-  border-color: rgba(51, 65, 85, 0.65);
-  background: #020617;
+  background: linear-gradient(145deg, #020617 0%, #0f172a 55%, #0b1220 100%);
+  max-height: none;
 }
 
-.bof-dashboard-hero__bg {
-  position: absolute;
-  inset: 0;
-  z-index: 0;
+.bof-dashboard-hero__productGrid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(260px, 0.95fr);
+  gap: clamp(1.25rem, 3vw, 2.25rem);
+  align-items: start;
 }
 
-.bof-dashboard-hero__bgImage {
-  object-fit: cover;
-  /* Wide photographic hero — bias toward cab/right; dark left read lane from asset + gradient */
-  object-position: 88% 36%;
-  filter: brightness(1.1) contrast(1.06) saturate(1.03);
-}
-
-.bof-dashboard-hero__fade {
-  position: absolute;
-  inset: 0;
-  z-index: 1;
-  pointer-events: none;
-  /* Strong left/top/middle read lane; right monitor ~10–15% brighter via lighter mid-right stops */
-  background:
-    linear-gradient(
-      90deg,
-      rgba(2, 6, 23, 0.99) 0%,
-      rgba(2, 6, 23, 0.98) 30%,
-      rgba(2, 6, 23, 0.82) 48%,
-      rgba(2, 6, 23, 0.52) 56%,
-      rgba(2, 6, 23, 0.12) 72%,
-      rgba(2, 6, 23, 0.00) 100%
-    ),
-    linear-gradient(
-      180deg,
-      rgba(2, 6, 23, 0.94) 0%,
-      rgba(2, 6, 23, 0.82) 24%,
-      rgba(2, 6, 23, 0.38) 52%,
-      rgba(2, 6, 23, 0.10) 82%,
-      rgba(2, 6, 23, 0.03) 100%
-    );
-}
-
-/* Extra suppression of baked-in PNG headline copy (center-left) — does not extend over right monitor */
-.bof-dashboard-hero__textMask {
-  position: absolute;
-  left: 0;
-  top: 0;
-  width: 62%;
-  height: 58%;
-  z-index: 1;
-  pointer-events: none;
-  background: radial-gradient(
-    circle at 28% 30%,
-    rgba(2, 6, 23, 0.98) 0%,
-    rgba(2, 6, 23, 0.72) 42%,
-    rgba(2, 6, 23, 0) 72%
-  );
-}
-
-/* Hides baked-in teal/green chrome bar above monitor (top-right) — blends into hero bg */
-.bof-dashboard-hero__artifactMask {
-  position: absolute;
-  top: 0;
-  right: 0;
-  width: clamp(150px, 14vw, 280px);
-  height: clamp(36px, 4.5vw, 72px);
-  z-index: 1;
-  pointer-events: none;
-  border-radius: 0 1rem 0 0;
-  background: linear-gradient(
-    90deg,
-    rgba(2, 6, 23, 0) 0%,
-    rgba(2, 6, 23, 0.92) 30%,
-    rgba(2, 6, 23, 1) 100%
-  );
-}
-
-.bof-dashboard-hero__content {
-  position: relative;
-  z-index: 3;
-  max-width: 58rem;
+.bof-dashboard-hero__introWrap {
   min-width: 0;
 }
 
 .bof-dashboard-hero__intro {
   min-width: 0;
-  max-width: min(44rem, 100%);
+  max-width: none;
 }
 
 .bof-dashboard-hero__intro .bof-cc-kicker {
@@ -14477,6 +14404,181 @@ body {
 .bof-dashboard-hero__sectorLink:hover,
 .bof-dashboard-hero__sectorLink:focus-visible {
   color: #5eead4;
+}
+
+/* Dashboard hero — right-hand product preview (no marketing image) */
+.bof-dashboard-hero-preview {
+  border-radius: 12px;
+  border: 1px solid rgba(51, 65, 85, 0.85);
+  background: rgba(15, 23, 42, 0.92);
+  padding: 0.85rem 0.95rem 1rem;
+  box-shadow: inset 0 1px 0 rgba(148, 163, 184, 0.08);
+}
+
+.bof-dashboard-hero-preview__chrome {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #94a3b8;
+  margin-bottom: 0.65rem;
+}
+
+.bof-dashboard-hero-preview__dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  background: #2dd4bf;
+  box-shadow: 0 0 0 3px rgba(45, 212, 191, 0.22);
+}
+
+.bof-dashboard-hero-preview__kpis {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.45rem;
+  margin-bottom: 0.75rem;
+}
+
+.bof-dashboard-hero-preview__kpi {
+  border-radius: 10px;
+  border: 1px solid rgba(51, 65, 85, 0.65);
+  background: rgba(2, 6, 23, 0.55);
+  padding: 0.45rem 0.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.bof-dashboard-hero-preview__kpiLabel {
+  font-size: 0.62rem;
+  font-weight: 700;
+  color: #94a3b8;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.bof-dashboard-hero-preview__kpi strong {
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: #e2e8f0;
+  line-height: 1.2;
+}
+
+.bof-dashboard-hero-preview__cards {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.55rem;
+  margin-bottom: 0.65rem;
+}
+
+.bof-dashboard-hero-preview__card {
+  border-radius: 10px;
+  border: 1px solid rgba(51, 65, 85, 0.55);
+  background: rgba(2, 6, 23, 0.45);
+  padding: 0.55rem 0.6rem;
+  min-height: 6.5rem;
+}
+
+.bof-dashboard-hero-preview__cardTitle {
+  margin: 0 0 0.35rem;
+  font-size: 0.62rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #cbd5e1;
+}
+
+.bof-dashboard-hero-preview__sev {
+  display: inline-block;
+  margin: 0 0 0.35rem;
+  font-size: 0.62rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.bof-dashboard-hero-preview__sev--critical {
+  color: #fb7185;
+}
+.bof-dashboard-hero-preview__sev--high {
+  color: #fbbf24;
+}
+.bof-dashboard-hero-preview__sev--medium {
+  color: #38bdf8;
+}
+
+.bof-dashboard-hero-preview__cardIssue {
+  margin: 0 0 0.45rem;
+  font-size: 0.74rem;
+  line-height: 1.35;
+  color: #cbd5e1;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.bof-dashboard-hero-preview__muted {
+  margin: 0;
+  font-size: 0.76rem;
+  color: #64748b;
+}
+
+.bof-dashboard-hero-preview__readinessRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem 0.65rem;
+  font-size: 0.72rem;
+  color: #94a3b8;
+  margin-bottom: 0.45rem;
+}
+
+.bof-dashboard-hero-preview__readinessRow strong {
+  color: #e2e8f0;
+  margin-left: 0.15rem;
+}
+
+.bof-dashboard-hero-preview__cardLink {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #5eead4;
+  text-decoration: none;
+}
+
+.bof-dashboard-hero-preview__cardLink:hover {
+  text-decoration: underline;
+}
+
+.bof-dashboard-hero-preview__footer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  padding-top: 0.55rem;
+  border-top: 1px solid rgba(51, 65, 85, 0.45);
+}
+
+.bof-dashboard-hero-preview__proof {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+}
+
+.bof-dashboard-hero-preview__proofLabel {
+  font-size: 0.62rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #94a3b8;
+}
+
+.bof-dashboard-hero-preview__proof strong {
+  font-size: 1.05rem;
+  color: #e2e8f0;
 }
 
 /* Route / alert snapshot — full-width card below hero */
@@ -15359,62 +15461,20 @@ body {
   .bof-dashboard-page.bof-page.bof-cc-page {
     padding-bottom: max(12rem, calc(10rem + env(safe-area-inset-bottom, 0px)));
   }
-  .bof-dashboard-hero.bof-dashboard-hero--image-bg.bof-cc-hero {
-    padding: clamp(1.25rem, 4vw, 1.75rem);
-    min-height: clamp(460px, 78vw, 620px);
+  .bof-dashboard-hero.bof-dashboard-hero--product.bof-cc-hero {
+    padding: clamp(1rem, 3vw, 1.35rem);
   }
 
-  .bof-dashboard-hero__content {
-    max-width: none;
-    width: 100%;
+  .bof-dashboard-hero__productGrid {
+    grid-template-columns: 1fr;
   }
 
-  .bof-dashboard-hero__bgImage {
-    object-position: 88% 42%;
-    filter: brightness(1.08) contrast(1.05) saturate(1.02);
+  .bof-dashboard-hero-preview__kpis {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 
-  .bof-dashboard-hero__fade {
-    background:
-      linear-gradient(
-        90deg,
-        rgba(2, 6, 23, 0.995) 0%,
-        rgba(2, 6, 23, 0.985) 28%,
-        rgba(2, 6, 23, 0.88) 46%,
-        rgba(2, 6, 23, 0.56) 54%,
-        rgba(2, 6, 23, 0.14) 70%,
-        rgba(2, 6, 23, 0.00) 100%
-      ),
-      linear-gradient(
-        180deg,
-        rgba(2, 6, 23, 0.96) 0%,
-        rgba(2, 6, 23, 0.84) 22%,
-        rgba(2, 6, 23, 0.40) 50%,
-        rgba(2, 6, 23, 0.09) 80%,
-        rgba(2, 6, 23, 0.03) 100%
-      );
-  }
-
-  .bof-dashboard-hero__textMask {
-    width: 72%;
-    height: 64%;
-    background: radial-gradient(
-      circle at 22% 28%,
-      rgba(2, 6, 23, 0.99) 0%,
-      rgba(2, 6, 23, 0.78) 40%,
-      rgba(2, 6, 23, 0) 74%
-    );
-  }
-
-  .bof-dashboard-hero__artifactMask {
-    width: clamp(160px, 42vw, 300px);
-    height: clamp(42px, 8vw, 86px);
-    background: linear-gradient(
-      90deg,
-      rgba(2, 6, 23, 0) 0%,
-      rgba(2, 6, 23, 0.94) 26%,
-      rgba(2, 6, 23, 1) 100%
-    );
+  .bof-dashboard-hero-preview__cards {
+    grid-template-columns: 1fr;
   }
 
   .bof-dashboard-route-snapshot__panel.bof-cc-route-panel {

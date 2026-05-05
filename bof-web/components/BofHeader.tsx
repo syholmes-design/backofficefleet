@@ -35,7 +35,7 @@ export function BofHeader() {
 
   if (!marketingOnlyHeader) {
     return (
-      <header className="sticky top-0 z-40 w-full border-b border-slate-800 bg-slate-950/95 backdrop-blur">
+      <header className="sticky top-0 z-40 w-full border-b border-slate-800 bg-slate-950 backdrop-blur-sm shadow-sm">
         <div className="flex w-full max-w-none flex-wrap items-center gap-4 px-6 py-3">
           <Link href="/dashboard" className="mr-2 inline-flex shrink-0 items-center text-slate-100">
             <BofLogo variant="light" size="demoLarge" priority />

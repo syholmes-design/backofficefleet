@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import Image from "next/image";
 import { useMemo, useState, type ReactNode } from "react";
 import { BookDemoLink } from "@/components/BookDemoLink";
 import { useBofDemoData } from "@/lib/bof-demo-data-context";
@@ -16,7 +15,9 @@ import {
 } from "@/lib/dashboard-insights";
 import {
   buildExecutiveDashboardModel,
+  type DashboardBreakdownPoint,
   type ExecutiveDashboardOwnerItem,
+  type ExecutiveDashboardTopSummary,
 } from "@/lib/dashboard-command-summary";
 import { settlementTotals } from "@/lib/executive-layer";
 import { getPayrollMonthlyTrend } from "@/lib/demo-trends";
@@ -126,52 +127,52 @@ export function DashboardPageClient() {
   const queuePreview = prioritizedQueue.slice(0, 4);
   const snapshotAlert = prioritizedQueue[0] ?? null;
 
+  const proofPendingLoads = useMemo(
+    () =>
+      data.loads.filter((l) => String(l.podStatus ?? "").toLowerCase() === "pending").length,
+    [data.loads]
+  );
+
   return (
     <div className="bof-page bof-cc-page bof-dashboard-page">
-      <section className="bof-dashboard-hero bof-dashboard-hero--image-bg bof-cc-hero">
-        <div className="bof-dashboard-hero__bg">
-          <Image
-            src="/generated/marketing/demoheroimage-v2.png"
-            alt="BOF operations hero visual — fleet command and proof context."
-            fill
-            sizes="100vw"
-            priority
-            className="bof-dashboard-hero__bgImage"
-            unoptimized
-          />
-        </div>
-        <div className="bof-dashboard-hero__fade" aria-hidden="true" />
-        <div className="bof-dashboard-hero__textMask" aria-hidden="true" />
-        <div className="bof-dashboard-hero__artifactMask" aria-hidden="true" />
-        <div className="bof-dashboard-hero__content">
-          <div className="bof-dashboard-hero__intro bof-cc-hero-left">
-            <p className="bof-cc-kicker">Executive Operations Cockpit</p>
-            <h1 className="bof-title bof-cc-title">
-              The Back Office Platform Built for Freight Operations
-            </h1>
-            <p className="bof-lead bof-cc-lead">
-              BOF unifies dispatch, drivers, documents, compliance, proof, settlements, and revenue risk in one
-              operating view.
-            </p>
-            <div className="bof-dashboard-hero__ctaRow" aria-label="Dashboard actions">
-              <BookDemoLink className="bof-cc-btn bof-cc-btn-primary" ariaLabel="Book a BOF demo appointment">
-                Book a Demo
-              </BookDemoLink>
-              <Link href="/dispatch" prefetch={false} className="bof-cc-btn">
-                Open Dispatch Board
-              </Link>
-              <Link href="/dashboard#attention-queue" prefetch={false} className="bof-cc-btn">
-                Review Attention Queue
-              </Link>
-            </div>
-            <nav className="bof-dashboard-hero__sectorRow" aria-label="Solutions by fleet type">
-              {sectorLinks.map((item) => (
-                <Link key={item.href} href={item.href} className="bof-dashboard-hero__sectorLink" prefetch={false}>
-                  {item.label}
+      <section className="bof-dashboard-hero bof-dashboard-hero--product bof-cc-hero">
+        <div className="bof-dashboard-hero__productGrid">
+          <div className="bof-dashboard-hero__introWrap">
+            <div className="bof-dashboard-hero__intro bof-cc-hero-left">
+              <p className="bof-cc-kicker">Executive Operations Cockpit</p>
+              <h1 className="bof-title bof-cc-title">
+                The Back Office Platform Built for Freight Operations
+              </h1>
+              <p className="bof-lead bof-cc-lead">
+                BOF unifies dispatch, drivers, documents, compliance, proof, settlements, and revenue risk in one
+                operating view.
+              </p>
+              <div className="bof-dashboard-hero__ctaRow" aria-label="Dashboard actions">
+                <BookDemoLink className="bof-cc-btn bof-cc-btn-primary" ariaLabel="Book a BOF demo appointment">
+                  Book a Demo
+                </BookDemoLink>
+                <Link href="/dispatch" prefetch={false} className="bof-cc-btn">
+                  Open Dispatch Board
                 </Link>
-              ))}
-            </nav>
+                <Link href="/dashboard#attention-queue" prefetch={false} className="bof-cc-btn">
+                  Review Attention Queue
+                </Link>
+              </div>
+              <nav className="bof-dashboard-hero__sectorRow" aria-label="Solutions by fleet type">
+                {sectorLinks.map((item) => (
+                  <Link key={item.href} href={item.href} className="bof-dashboard-hero__sectorLink" prefetch={false}>
+                    {item.label}
+                  </Link>
+                ))}
+              </nav>
+            </div>
           </div>
+          <DashboardHeroProductPreview
+            topSummary={exec.topSummary}
+            driverReadiness={exec.driverReadiness}
+            attentionSample={snapshotAlert}
+            proofPendingLoads={proofPendingLoads}
+          />
         </div>
       </section>
 
@@ -425,6 +426,93 @@ export function DashboardPageClient() {
 
       <div className="bof-dashboard-bottom-spacer" aria-hidden />
     </div>
+  );
+}
+
+function readinessCount(rows: DashboardBreakdownPoint[], label: string): number {
+  return rows.find((r) => r.label === label)?.value ?? 0;
+}
+
+function DashboardHeroProductPreview({
+  topSummary,
+  driverReadiness,
+  attentionSample,
+  proofPendingLoads,
+}: {
+  topSummary: ExecutiveDashboardTopSummary;
+  driverReadiness: DashboardBreakdownPoint[];
+  attentionSample: ExecutiveDashboardOwnerItem | null;
+  proofPendingLoads: number;
+}) {
+  const ready = readinessCount(driverReadiness, "Ready");
+  const actionNeeded = readinessCount(driverReadiness, "Action needed");
+  const blocked = readinessCount(driverReadiness, "Dispatch blocked");
+
+  return (
+    <aside className="bof-dashboard-hero-preview" aria-label="Live operations preview">
+      <div className="bof-dashboard-hero-preview__chrome">
+        <span className="bof-dashboard-hero-preview__dot" aria-hidden />
+        Operations cockpit preview · live demo data
+      </div>
+      <div className="bof-dashboard-hero-preview__kpis">
+        <div className="bof-dashboard-hero-preview__kpi">
+          <span className="bof-dashboard-hero-preview__kpiLabel">Active loads</span>
+          <strong>{topSummary.activeLoads}</strong>
+        </div>
+        <div className="bof-dashboard-hero-preview__kpi">
+          <span className="bof-dashboard-hero-preview__kpiLabel">Loads at risk</span>
+          <strong>{topSummary.loadsAtRisk}</strong>
+        </div>
+        <div className="bof-dashboard-hero-preview__kpi">
+          <span className="bof-dashboard-hero-preview__kpiLabel">Docs need action</span>
+          <strong>{topSummary.documentsNeedingAction}</strong>
+        </div>
+      </div>
+      <div className="bof-dashboard-hero-preview__cards">
+        <div className="bof-dashboard-hero-preview__card">
+          <p className="bof-dashboard-hero-preview__cardTitle">Attention queue</p>
+          {attentionSample ? (
+            <>
+              <p className={`bof-dashboard-hero-preview__sev bof-dashboard-hero-preview__sev--${attentionSample.severity}`}>
+                {attentionSample.severity}
+              </p>
+              <p className="bof-dashboard-hero-preview__cardIssue">{attentionSample.issue}</p>
+              <Link href={attentionSample.actionHref} className="bof-dashboard-hero-preview__cardLink">
+                {attentionSample.actionLabel} →
+              </Link>
+            </>
+          ) : (
+            <p className="bof-dashboard-hero-preview__muted">No queued items.</p>
+          )}
+        </div>
+        <div className="bof-dashboard-hero-preview__card">
+          <p className="bof-dashboard-hero-preview__cardTitle">Driver readiness</p>
+          <div className="bof-dashboard-hero-preview__readinessRow">
+            <span>
+              Ready <strong>{ready}</strong>
+            </span>
+            <span>
+              Review <strong>{actionNeeded}</strong>
+            </span>
+            <span>
+              Blocked <strong>{blocked}</strong>
+            </span>
+          </div>
+          <Link href="/drivers" className="bof-dashboard-hero-preview__cardLink">
+            Open drivers →
+          </Link>
+        </div>
+      </div>
+      <div className="bof-dashboard-hero-preview__footer">
+        <div className="bof-dashboard-hero-preview__proof">
+          <span className="bof-dashboard-hero-preview__proofLabel">Loads with POD pending</span>
+          <strong>{proofPendingLoads}</strong>
+        </div>
+        <Link href="/loads" className="bof-dashboard-hero-preview__cardLink">
+          Review loads →
+        </Link>
+      </div>
+    </aside>
   );
 }
 
