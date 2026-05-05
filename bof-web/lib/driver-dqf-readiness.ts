@@ -176,7 +176,7 @@ function explainRow(row: DriverDqfDocumentRow, driverId: string): DriverDqfDocum
 }
 
 const SUPPLEMENTAL_FILES: Array<{ canonicalType: string; label: string; file: string }> = [
-  { canonicalType: "road_test_certificate", label: "Road Test Certificate", file: "road_test_certificate.html" },
+  { canonicalType: "road_test_certificate", label: "Road Test Certificate", file: "road-test-certificate.html" },
   { canonicalType: "prior_employer_inquiry", label: "Prior Employer Inquiry", file: "prior_employer_inquiry.html" },
   { canonicalType: "annual_review_qual_file", label: "Annual Review (Qualification File)", file: "qualification-file.html" },
   { canonicalType: "drug_test_result", label: "Drug Test Result", file: "drug_test_result.html" },

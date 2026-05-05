@@ -1717,6 +1717,62 @@ body {
   font-weight: 600;
 }
 
+.bof-driver-hub-vault-groups {
+  margin-bottom: 1.35rem;
+}
+
+.bof-driver-hub-vault-jump {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem 0.75rem;
+  margin-bottom: 0.35rem;
+}
+
+.bof-driver-hub-vault-jump-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #5eead4;
+  text-decoration: none;
+}
+
+.bof-driver-hub-vault-jump-link:hover {
+  text-decoration: underline;
+}
+
+.bof-driver-hub-vault-jump-count {
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: #94a3b8;
+  background: rgba(15, 23, 42, 0.6);
+  border-radius: 999px;
+  padding: 0.08rem 0.4rem;
+}
+
+.bof-driver-hub-vault-blurb {
+  margin: 0 0.8rem 0.5rem;
+  font-size: 0.78rem;
+  line-height: 1.45;
+  color: #94a3b8;
+}
+
+.bof-driver-hub-vault-row {
+  display: grid;
+  grid-template-columns: minmax(140px, 1.5fr) minmax(120px, 1fr) minmax(100px, 0.7fr) minmax(72px, 0.5fr);
+  gap: 0.5rem;
+  align-items: center;
+  border-top: 1px solid rgba(71, 85, 105, 0.32);
+  padding: 0.5rem 0.8rem;
+}
+
+.bof-driver-hub-vault-foot {
+  margin: 0;
+  padding: 0.45rem 0.8rem 0.65rem;
+  border-top: 1px solid rgba(71, 85, 105, 0.25);
+}
+
 .bof-driver-doc-preview-panel {
   margin-top: 0.9rem;
   border: 1px solid var(--bof-border);

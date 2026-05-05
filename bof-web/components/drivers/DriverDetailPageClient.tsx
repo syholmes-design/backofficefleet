@@ -47,6 +47,8 @@ import {
 import { getSafetyScorecardRows } from "@/lib/safety-scorecard";
 import { getDriverReviewExplanation } from "@/lib/driver-review-explanation";
 import { DriverReviewDrawer } from "@/components/drivers/DriverReviewDrawer";
+import { getDriverDqfReadinessSummary } from "@/lib/driver-dqf-readiness";
+import { DriverHubVaultGroups } from "@/components/drivers/DriverHubVaultGroups";
 
 function homeBaseFromAddress(address: string): string {
   const parts = address.split(",").map((p) => p.trim()).filter(Boolean);
@@ -114,6 +116,10 @@ export function DriverDetailPageClient({ driverId }: { driverId: string }) {
   }, [compliance]);
   const driverDocumentPacket = useMemo(
     () => buildDriverDocumentPacket(data, driverId),
+    [data, driverId]
+  );
+  const dqfVaultSummary = useMemo(
+    () => getDriverDqfReadinessSummary(data, driverId),
     [data, driverId]
   );
   const operationalProfile = useMemo(
@@ -1287,14 +1293,16 @@ export function DriverDetailPageClient({ driverId }: { driverId: string }) {
           Documents &amp; credentials
         </h2>
         <p className="bof-doc-section-lead bof-driver-hub-lead">
-          Primary slots are the seven fleet-required types, plus MCSA-5875 and emergency
-          contact. Secondary files (MCSA-5876, profile, applications, internal summaries)
-          stay linked here and in the{" "}
+          The qualification file is organized in the same five vault categories as the
+          full DQF page. Below that, the packet summary keeps file-level preview and
+          technical grouping. Global index:{" "}
           <Link href="/documents" className="bof-link-secondary">
-            vault
+            document workspace
           </Link>
           .
         </p>
+
+        <DriverHubVaultGroups driverId={driverId} documents={dqfVaultSummary.documents} />
 
         <DriverDocumentPacketSection packet={driverDocumentPacket} />
 
