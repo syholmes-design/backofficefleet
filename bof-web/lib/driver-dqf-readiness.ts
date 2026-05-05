@@ -152,7 +152,7 @@ function explainRow(row: DriverDqfDocumentRow, driverId: string): DriverDqfDocum
     return {
       ...base,
       whyItMatters: "Settlements and 1099 payroll flows need a signed W-9 on file.",
-      recommendedFix: "Attach the canonical W-9 PDF under the driver’s public documents path.",
+      recommendedFix: "Upload the signed W-9 to the driver file so settlements can be released.",
       actionLabel: "Open HR",
       actionHref: hr,
     };
@@ -161,15 +161,15 @@ function explainRow(row: DriverDqfDocumentRow, driverId: string): DriverDqfDocum
     return {
       ...base,
       whyItMatters: "Payroll cannot release funds without verified direct-deposit instructions.",
-      recommendedFix: "Add the canonical bank card HTML or PDF referenced in fleet bank-card mapping.",
+      recommendedFix: "Add the bank information form or direct-deposit document in the driver file.",
       actionLabel: "Open HR",
       actionHref: hr,
     };
   }
   return {
     ...base,
-    whyItMatters: "This DQF item is required or strongly recommended for dispatch and audit readiness.",
-    recommendedFix: "Review the document slot, upload or refresh the file, and confirm dates in BOF.",
+    whyItMatters: "This driver-file item needs review before the file can be fully cleared.",
+    recommendedFix: "Open the driver vault, confirm the specific item status, and update the missing or outdated file.",
     actionLabel: "Open vault",
     actionHref: v,
   };

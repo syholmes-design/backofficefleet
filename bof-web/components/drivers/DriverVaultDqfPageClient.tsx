@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useMemo, useState } from "react";
+import { Fragment, useEffect, useMemo, useState } from "react";
 import { useBofDemoData } from "@/lib/bof-demo-data-context";
 import {
   getDriverDqfReadinessSummary,
@@ -13,16 +13,11 @@ import {
   DRIVER_VAULT_UI_GROUP_ORDER,
   groupDqfRowsByVaultUi,
 } from "@/lib/driver-vault-ui-groups";
-import { ReviewDetailsDrawer } from "@/components/review/ReviewDetailsDrawer";
-import { dqfDocumentIssueId, dqfRowToReviewIssue } from "@/lib/dqf-document-review-explanation";
-import type { ReviewDrawerIssue } from "@/components/review/review-types";
+import { dqfDocumentIssueId } from "@/lib/dqf-document-review-explanation";
 
 type Props = {
   driverId: string;
 };
-
-const DOC_CAT_ORDER = ["documents"];
-const DOC_CAT_LABEL: Record<string, string> = { documents: "Documents" };
 
 function statusChipClass(overall: string): string {
   if (overall === "ready") return "bof-dqf-vault-chip bof-dqf-vault-chip--ok";
@@ -66,7 +61,7 @@ function rowNeedsExplain(row: DriverDqfDocumentRow): boolean {
 }
 
 export function DriverVaultDqfPageClient({ driverId }: Props) {
-  const { data, resolveDocumentReviewIssue, resetDocumentReviewOverrides } = useBofDemoData();
+  const { data, resetDocumentReviewOverrides } = useBofDemoData();
   const summary = useMemo(() => getDriverDqfReadinessSummary(data, driverId), [data, driverId]);
   const grouped = useMemo(() => groupDqfRowsByVaultUi(summary.documents), [summary.documents]);
 
@@ -83,9 +78,7 @@ export function DriverVaultDqfPageClient({ driverId }: Props) {
     setSelected(firstSelectable);
   }, [driverId, firstSelectable]);
 
-  const [reviewOpen, setReviewOpen] = useState(false);
-  const [reviewTitle, setReviewTitle] = useState("");
-  const [reviewIssues, setReviewIssues] = useState<ReviewDrawerIssue[]>([]);
+  const [expandedIssueKey, setExpandedIssueKey] = useState<string | null>(null);
 
   const effectiveCanonical = selected ?? firstSelectable;
 
@@ -108,31 +101,45 @@ export function DriverVaultDqfPageClient({ driverId }: Props) {
           ? "Blocked"
           : "Action Required";
 
-  function buildIssuesForRows(rows: DriverDqfDocumentRow[]): ReviewDrawerIssue[] {
-    return rows.filter(rowNeedsExplain).map((row) => {
-      const base = dqfRowToReviewIssue(row, driverId);
-      return {
-        ...base,
-        resolved: resolvedDocIds.has(dqfDocumentIssueId(row.canonicalType)),
-      };
-    });
+  function issueStatus(overall: string): "Blocked" | "Needs Review" | "Watch" {
+    if (overall === "blocked") return "Blocked";
+    if (overall === "needs_review") return "Needs Review";
+    return "Watch";
   }
 
-  function openFullVaultReview() {
-    setReviewTitle("Document vault — review items");
-    setReviewIssues(buildIssuesForRows(summary.documents));
-    setReviewOpen(true);
+  function rowIssueTitle(row: DriverDqfDocumentRow): string {
+    if (row.status === "missing") return "Required document missing";
+    if (row.status === "expired") return `${row.label} expired`;
+    if (row.status === "expiring_soon") return `${row.label} expires soon`;
+    if (row.status === "needs_review" || row.status === "pending_review") {
+      return row.label.toLowerCase().includes("safety")
+        ? "Safety review needed"
+        : "Driver file review";
+    }
+    return "Review reason needs clarification";
   }
 
-  function openRowReview(row: DriverDqfDocumentRow) {
-    setReviewTitle(`${row.label} (${driverId})`);
-    setReviewIssues([
-      {
-        ...dqfRowToReviewIssue(row, driverId),
-        resolved: resolvedDocIds.has(dqfDocumentIssueId(row.canonicalType)),
-      },
-    ]);
-    setReviewOpen(true);
+  function rowIssueWhy(row: DriverDqfDocumentRow): string {
+    if (row.status === "missing") {
+      return "BOF cannot fully clear this driver file until the required document is added.";
+    }
+    if (row.status === "expired") {
+      return "This expired credential can block dispatch readiness until it is renewed.";
+    }
+    if (row.status === "expiring_soon") {
+      return "The driver is usable now, but this credential is approaching expiration.";
+    }
+    if (row.whyItMatters?.trim()) return row.whyItMatters;
+    return "This driver is marked for review, but BOF has not identified a specific expired document, missing document, safety item, load issue, or settlement hold.";
+  }
+
+  function rowIssueFix(row: DriverDqfDocumentRow): string {
+    if (row.recommendedFix?.trim()) return row.recommendedFix;
+    return "Review the driver vault and replace this generic review flag with the specific document or safety item causing the issue.";
+  }
+
+  function toggleIssuePanel(key: string) {
+    setExpandedIssueKey((prev) => (prev === key ? null : key));
   }
 
   return (
@@ -156,7 +163,7 @@ export function DriverVaultDqfPageClient({ driverId }: Props) {
                   type="button"
                   className={statusChipClass(summary.overallStatus)}
                   style={{ cursor: "pointer", border: "none", font: "inherit" }}
-                  onClick={openFullVaultReview}
+                  onClick={() => setExpandedIssueKey((prev) => (prev === "__vault_review__" ? null : "__vault_review__"))}
                 >
                   {chipLabel}
                 </button>
@@ -164,12 +171,33 @@ export function DriverVaultDqfPageClient({ driverId }: Props) {
                 <span className={statusChipClass(summary.overallStatus)}>{chipLabel}</span>
               )}
               {(summary.overallStatus === "needs_review" || summary.overallStatus === "blocked") && (
-                <button type="button" className="bof-dqf-vault-link" style={{ fontSize: "0.85rem" }} onClick={openFullVaultReview}>
+                <button
+                  type="button"
+                  className="bof-dqf-vault-link"
+                  style={{ fontSize: "0.85rem" }}
+                  onClick={() => setExpandedIssueKey((prev) => (prev === "__vault_review__" ? null : "__vault_review__"))}
+                >
                   What needs review?
                 </button>
               )}
             </div>
           </div>
+          {expandedIssueKey === "__vault_review__" ? (
+            <div className="rounded border border-slate-800 bg-slate-950/60 p-3 text-sm">
+              <p><strong>Title:</strong> Driver file review</p>
+              <p><strong>Status:</strong> {issueStatus(summary.overallStatus)}</p>
+              <p>
+                <strong>Why:</strong> {summary.nextRecommendedAction || "The driver file has unresolved items that need review."}
+              </p>
+              <p>
+                <strong>Recommended fix:</strong> Open the driver vault and address each missing, expired, or pending item below.
+              </p>
+              <div className="mt-2 flex flex-wrap gap-2">
+                <Link href={`/drivers/${driverId}/vault`} className="bof-cc-action-btn">Open driver vault</Link>
+                <Link href={`/drivers/${driverId}#driver-review`} className="bof-cc-action-btn">Review driver file</Link>
+              </div>
+            </div>
+          ) : null}
           <p className="bof-dqf-vault-next">{summary.nextRecommendedAction}</p>
           <div className="bof-dqf-vault-quick">
             <Link href={`/drivers/${driverId}/profile`} className="bof-dqf-vault-btn">
@@ -185,7 +213,7 @@ export function DriverVaultDqfPageClient({ driverId }: Props) {
               Open dispatch
             </Link>
             <Link href={`/drivers/${driverId}/hr`} className="bof-dqf-vault-btn bof-dqf-vault-btn--secondary">
-              HR / generated packet
+              Open HR workspace
             </Link>
             <button
               type="button"
@@ -264,8 +292,8 @@ export function DriverVaultDqfPageClient({ driverId }: Props) {
                       </thead>
                       <tbody>
                         {sectionRows.map((row) => (
+                          <Fragment key={row.canonicalType}>
                           <tr
-                            key={row.canonicalType}
                             className={
                               effectiveCanonical === row.canonicalType ? "bof-dqf-vault-tr--active" : undefined
                             }
@@ -312,7 +340,7 @@ export function DriverVaultDqfPageClient({ driverId }: Props) {
                                   <button
                                     type="button"
                                     className="bof-dqf-vault-link"
-                                    onClick={() => openRowReview(row)}
+                                    onClick={() => toggleIssuePanel(`row:${row.canonicalType}`)}
                                   >
                                     What needs review?
                                   </button>
@@ -320,6 +348,29 @@ export function DriverVaultDqfPageClient({ driverId }: Props) {
                               </div>
                             </td>
                           </tr>
+                          {expandedIssueKey === `row:${row.canonicalType}` && rowNeedsExplain(row) ? (
+                            <tr>
+                              <td colSpan={5}>
+                                <div className="rounded border border-slate-800 bg-slate-950/60 p-3 text-sm">
+                                  <p><strong>Title:</strong> {rowIssueTitle(row)}</p>
+                                  <p><strong>Status:</strong> {issueStatus(summary.overallStatus)}</p>
+                                  <p><strong>Why:</strong> {rowIssueWhy(row)}</p>
+                                  <p><strong>Recommended fix:</strong> {rowIssueFix(row)}</p>
+                                  <div className="mt-2 flex flex-wrap gap-2">
+                                    {row.actionHref ? (
+                                      <Link href={row.actionHref} className="bof-cc-action-btn">
+                                        {row.actionLabel ?? "Open related item"}
+                                      </Link>
+                                    ) : null}
+                                    <Link href={`/drivers/${driverId}/vault`} className="bof-cc-action-btn">
+                                      Open driver vault
+                                    </Link>
+                                  </div>
+                                </div>
+                              </td>
+                            </tr>
+                          ) : null}
+                          </Fragment>
                         ))}
                       </tbody>
                     </table>
@@ -373,8 +424,12 @@ export function DriverVaultDqfPageClient({ driverId }: Props) {
                 ) : null}
                 {rowNeedsExplain(selectedRow) ? (
                   <div style={{ marginTop: "0.65rem" }}>
-                    <button type="button" className="bof-dqf-vault-btn bof-dqf-vault-btn--secondary" onClick={() => openRowReview(selectedRow)}>
-                      Open review details drawer
+                    <button
+                      type="button"
+                      className="bof-dqf-vault-btn bof-dqf-vault-btn--secondary"
+                      onClick={() => toggleIssuePanel(`row:${selectedRow.canonicalType}`)}
+                    >
+                      Show review details
                     </button>
                   </div>
                 ) : null}
@@ -384,28 +439,6 @@ export function DriverVaultDqfPageClient({ driverId }: Props) {
         </div>
       </div>
 
-      <ReviewDetailsDrawer
-        open={reviewOpen}
-        onClose={() => setReviewOpen(false)}
-        title={reviewTitle}
-        subtitle={driverId}
-        summary={`${reviewIssues.length} item(s) derived from DQF row metadata for ${driverId}.`}
-        statusChip={chipLabel}
-        issues={reviewIssues}
-        categoryOrder={DOC_CAT_ORDER}
-        categoryLabels={DOC_CAT_LABEL}
-        onResolveIssue={(issueId) => {
-          if (!issueId.startsWith("dqf:")) return;
-          resolveDocumentReviewIssue(driverId, issueId, "DQF demo review mark");
-        }}
-        headerExtra={
-          <div style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap", marginBottom: "1rem" }}>
-            <button type="button" className="bof-cc-action-btn" onClick={() => resetDocumentReviewOverrides(driverId)}>
-              Reset DQF demo marks (this driver)
-            </button>
-          </div>
-        }
-      />
     </div>
   );
 }
