@@ -1,13 +1,18 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useBofDemoData } from "@/lib/bof-demo-data-context";
 import {
-  filterDqfRowsByGroup,
   getDriverDqfReadinessSummary,
   type DriverDqfDocumentRow,
 } from "@/lib/driver-dqf-readiness";
+import {
+  DRIVER_VAULT_UI_GROUP_DESCRIPTION,
+  DRIVER_VAULT_UI_GROUP_LABEL,
+  DRIVER_VAULT_UI_GROUP_ORDER,
+  groupDqfRowsByVaultUi,
+} from "@/lib/driver-vault-ui-groups";
 import { ReviewDetailsDrawer } from "@/components/review/ReviewDetailsDrawer";
 import { dqfDocumentIssueId, dqfRowToReviewIssue } from "@/lib/dqf-document-review-explanation";
 import type { ReviewDrawerIssue } from "@/components/review/review-types";
@@ -63,26 +68,30 @@ function rowNeedsExplain(row: DriverDqfDocumentRow): boolean {
 export function DriverVaultDqfPageClient({ driverId }: Props) {
   const { data, resolveDocumentReviewIssue, resetDocumentReviewOverrides } = useBofDemoData();
   const summary = useMemo(() => getDriverDqfReadinessSummary(data, driverId), [data, driverId]);
-  const core = useMemo(() => filterDqfRowsByGroup(summary.documents, "core_dqf"), [summary.documents]);
-  const hr = useMemo(() => filterDqfRowsByGroup(summary.documents, "hr_workflow"), [summary.documents]);
-  const gen = useMemo(() => filterDqfRowsByGroup(summary.documents, "generated_summaries"), [summary.documents]);
-  const supplemental = useMemo(
-    () => summary.documents.filter((d) => d.group === "vault_supplemental"),
-    [summary.documents]
-  );
+  const grouped = useMemo(() => groupDqfRowsByVaultUi(summary.documents), [summary.documents]);
 
-  const defaultSelect = core[0]?.canonicalType ?? hr[0]?.canonicalType ?? null;
-  const [selected, setSelected] = useState<string | null>(defaultSelect);
-  const [hrOpen, setHrOpen] = useState(false);
-  const [genOpen, setGenOpen] = useState(false);
+  const firstSelectable = useMemo(() => {
+    for (const g of DRIVER_VAULT_UI_GROUP_ORDER) {
+      const row = grouped[g][0];
+      if (row) return row.canonicalType;
+    }
+    return null;
+  }, [grouped]);
+
+  const [selected, setSelected] = useState<string | null>(null);
+  useEffect(() => {
+    setSelected(firstSelectable);
+  }, [driverId, firstSelectable]);
 
   const [reviewOpen, setReviewOpen] = useState(false);
   const [reviewTitle, setReviewTitle] = useState("");
   const [reviewIssues, setReviewIssues] = useState<ReviewDrawerIssue[]>([]);
 
+  const effectiveCanonical = selected ?? firstSelectable;
+
   const selectedRow = useMemo(
-    () => summary.documents.find((d) => d.canonicalType === selected) ?? null,
-    [summary.documents, selected]
+    () => summary.documents.find((d) => d.canonicalType === effectiveCanonical) ?? null,
+    [summary.documents, effectiveCanonical]
   );
 
   const resolvedDocIds = useMemo(
@@ -217,116 +226,107 @@ export function DriverVaultDqfPageClient({ driverId }: Props) {
           </div>
         </section>
 
+        <nav className="bof-dqf-vault-group-nav" aria-label="Vault document groups">
+          {DRIVER_VAULT_UI_GROUP_ORDER.map((g) => {
+            const n = grouped[g].length;
+            if (!n) return null;
+            return (
+              <a key={g} href={`#vault-${g}`} className="bof-dqf-vault-group-nav-link">
+                {DRIVER_VAULT_UI_GROUP_LABEL[g]}
+                <span className="bof-dqf-vault-group-nav-count">{n}</span>
+              </a>
+            );
+          })}
+        </nav>
+
         <div className="bof-dqf-vault-layout">
           <div className="bof-dqf-vault-main">
-            <section className="bof-dqf-vault-panel">
-              <h2 className="bof-dqf-vault-h2">Core DQF documents</h2>
-              <div className="bof-dqf-vault-table-wrap">
-                <table className="bof-dqf-vault-table">
-                  <thead>
-                    <tr>
-                      <th>Document</th>
-                      <th>Status</th>
-                      <th>Expiration / review</th>
-                      <th>Source</th>
-                      <th>Action</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {core.map((row) => (
-                      <tr
-                        key={row.canonicalType}
-                        className={selected === row.canonicalType ? "bof-dqf-vault-tr--active" : undefined}
-                      >
-                        <td>
-                          <button
-                            type="button"
-                            className="bof-dqf-vault-doc-link"
-                            onClick={() => setSelected(row.canonicalType)}
+            {DRIVER_VAULT_UI_GROUP_ORDER.map((g) => {
+              const sectionRows = grouped[g];
+              if (!sectionRows.length) return null;
+              return (
+                <section key={g} id={`vault-${g}`} className="bof-dqf-vault-panel">
+                  <h2 className="bof-dqf-vault-h2">
+                    {DRIVER_VAULT_UI_GROUP_LABEL[g]}
+                    <span className="bof-dqf-vault-group-count"> ({sectionRows.length})</span>
+                  </h2>
+                  <p className="bof-dqf-vault-group-desc">{DRIVER_VAULT_UI_GROUP_DESCRIPTION[g]}</p>
+                  <div className="bof-dqf-vault-table-wrap">
+                    <table className="bof-dqf-vault-table">
+                      <thead>
+                        <tr>
+                          <th>Document</th>
+                          <th>Status</th>
+                          <th>Expiration / review</th>
+                          <th>Source</th>
+                          <th>Action</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {sectionRows.map((row) => (
+                          <tr
+                            key={row.canonicalType}
+                            className={
+                              effectiveCanonical === row.canonicalType ? "bof-dqf-vault-tr--active" : undefined
+                            }
                           >
-                            {row.label}
-                          </button>
-                          {row.optionalForReadiness ? (
-                            <span className="bof-dqf-vault-optional">Optional</span>
-                          ) : null}
-                        </td>
-                        <td>
-                          <span className={rowStatusPill(row.status)}>{row.status.replace(/_/g, " ")}</span>
-                          {resolvedDocIds.has(dqfDocumentIssueId(row.canonicalType)) ? (
-                            <span className="bof-dqf-vault-pill bof-dqf-vault-pill--ok" style={{ marginLeft: 6 }}>
-                              Demo resolved
-                            </span>
-                          ) : null}
-                        </td>
-                        <td>{row.expirationDate ?? "—"}</td>
-                        <td>{formatSource(row.source)}</td>
-                        <td>
-                          <div style={{ display: "flex", flexDirection: "column", gap: "0.35rem", alignItems: "flex-start" }}>
-                            {row.actionHref ? (
-                              <Link href={row.actionHref} className="bof-dqf-vault-link">
-                                {row.actionLabel ?? "Open"}
-                              </Link>
-                            ) : (
-                              "—"
-                            )}
-                            {rowNeedsExplain(row) ? (
-                              <button type="button" className="bof-dqf-vault-link" onClick={() => openRowReview(row)}>
-                                What needs review?
+                            <td>
+                              <button
+                                type="button"
+                                className="bof-dqf-vault-doc-link"
+                                onClick={() => setSelected(row.canonicalType)}
+                              >
+                                {row.label}
                               </button>
-                            ) : null}
-                          </div>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </section>
-
-            <section className="bof-dqf-vault-panel">
-              <button type="button" className="bof-dqf-vault-collapse-head" onClick={() => setHrOpen((o) => !o)}>
-                <span>Applications &amp; HR workflow</span>
-                <span>{hrOpen ? "▼" : "▶"}</span>
-              </button>
-              {hrOpen ? (
-                <DqfSubTable
-                  rows={hr}
-                  selected={selected}
-                  onSelect={setSelected}
-                  resolvedDocIds={resolvedDocIds}
-                  onExplainRow={openRowReview}
-                />
-              ) : null}
-            </section>
-
-            <section className="bof-dqf-vault-panel">
-              <button type="button" className="bof-dqf-vault-collapse-head" onClick={() => setGenOpen((o) => !o)}>
-                <span>Generated administrative summaries</span>
-                <span>{genOpen ? "▼" : "▶"}</span>
-              </button>
-              {genOpen ? (
-                <DqfSubTable
-                  rows={gen}
-                  selected={selected}
-                  onSelect={setSelected}
-                  resolvedDocIds={resolvedDocIds}
-                  onExplainRow={openRowReview}
-                />
-              ) : null}
-            </section>
-
-            {supplemental.length > 0 ? (
-              <section className="bof-dqf-vault-panel">
-                <h2 className="bof-dqf-vault-h2">Additional compliance (generated)</h2>
-                <DqfSubTable
-                  rows={supplemental}
-                  selected={selected}
-                  onSelect={setSelected}
-                  resolvedDocIds={resolvedDocIds}
-                  onExplainRow={openRowReview}
-                />
-              </section>
-            ) : null}
+                              {row.optionalForReadiness ? (
+                                <span className="bof-dqf-vault-optional">Optional</span>
+                              ) : null}
+                            </td>
+                            <td>
+                              <span className={rowStatusPill(row.status)}>{row.status.replace(/_/g, " ")}</span>
+                              {resolvedDocIds.has(dqfDocumentIssueId(row.canonicalType)) ? (
+                                <span className="bof-dqf-vault-pill bof-dqf-vault-pill--ok" style={{ marginLeft: 6 }}>
+                                  Demo resolved
+                                </span>
+                              ) : null}
+                            </td>
+                            <td>{row.expirationDate ?? "—"}</td>
+                            <td>{formatSource(row.source)}</td>
+                            <td>
+                              <div
+                                style={{
+                                  display: "flex",
+                                  flexDirection: "column",
+                                  gap: "0.35rem",
+                                  alignItems: "flex-start",
+                                }}
+                              >
+                                {row.actionHref ? (
+                                  <Link href={row.actionHref} className="bof-dqf-vault-link">
+                                    {row.actionLabel ?? "Open"}
+                                  </Link>
+                                ) : (
+                                  "—"
+                                )}
+                                {rowNeedsExplain(row) ? (
+                                  <button
+                                    type="button"
+                                    className="bof-dqf-vault-link"
+                                    onClick={() => openRowReview(row)}
+                                  >
+                                    What needs review?
+                                  </button>
+                                ) : null}
+                              </div>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </section>
+              );
+            })}
           </div>
 
           <aside className="bof-dqf-vault-preview" aria-label="Selected document preview">
@@ -406,74 +406,6 @@ export function DriverVaultDqfPageClient({ driverId }: Props) {
           </div>
         }
       />
-    </div>
-  );
-}
-
-function DqfSubTable({
-  rows,
-  selected,
-  onSelect,
-  resolvedDocIds,
-  onExplainRow,
-}: {
-  rows: DriverDqfDocumentRow[];
-  selected: string | null;
-  onSelect: (id: string) => void;
-  resolvedDocIds: Set<string>;
-  onExplainRow: (row: DriverDqfDocumentRow) => void;
-}) {
-  if (!rows.length) return <p className="bof-dqf-vault-muted">No rows.</p>;
-  return (
-    <div className="bof-dqf-vault-table-wrap">
-      <table className="bof-dqf-vault-table">
-        <thead>
-          <tr>
-            <th>Document</th>
-            <th>Status</th>
-            <th>Expiration</th>
-            <th>Source</th>
-            <th>Action</th>
-          </tr>
-        </thead>
-        <tbody>
-          {rows.map((row) => (
-            <tr key={row.canonicalType} className={selected === row.canonicalType ? "bof-dqf-vault-tr--active" : undefined}>
-              <td>
-                <button type="button" className="bof-dqf-vault-doc-link" onClick={() => onSelect(row.canonicalType)}>
-                  {row.label}
-                </button>
-              </td>
-              <td>
-                <span className={rowStatusPill(row.status)}>{row.status.replace(/_/g, " ")}</span>
-                {resolvedDocIds.has(dqfDocumentIssueId(row.canonicalType)) ? (
-                  <span className="bof-dqf-vault-pill bof-dqf-vault-pill--ok" style={{ marginLeft: 6 }}>
-                    Demo resolved
-                  </span>
-                ) : null}
-              </td>
-              <td>{row.expirationDate ?? "—"}</td>
-              <td>{formatSource(row.source)}</td>
-              <td>
-                <div style={{ display: "flex", flexDirection: "column", gap: "0.35rem", alignItems: "flex-start" }}>
-                  {row.fileUrl ? (
-                    <a href={row.fileUrl} target="_blank" rel="noopener noreferrer" className="bof-dqf-vault-link">
-                      Open
-                    </a>
-                  ) : (
-                    "—"
-                  )}
-                  {rowNeedsExplain(row) ? (
-                    <button type="button" className="bof-dqf-vault-link" onClick={() => onExplainRow(row)}>
-                      What needs review?
-                    </button>
-                  ) : null}
-                </div>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
     </div>
   );
 }

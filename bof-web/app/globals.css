@@ -1888,6 +1888,47 @@ body {
   padding: 1rem 1.25rem;
   margin-bottom: 1.25rem;
 }
+.bof-dqf-vault-group-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1rem;
+  align-items: center;
+  margin-bottom: 1.25rem;
+  padding: 0.75rem 1rem;
+  border-radius: 12px;
+  border: 1px solid #e2e8f0;
+  background: #fff;
+}
+.bof-dqf-vault-group-nav-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: #0f766e;
+  text-decoration: none;
+}
+.bof-dqf-vault-group-nav-link:hover {
+  text-decoration: underline;
+}
+.bof-dqf-vault-group-nav-count {
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: #64748b;
+  background: #f1f5f9;
+  border-radius: 999px;
+  padding: 0.1rem 0.45rem;
+}
+.bof-dqf-vault-group-desc {
+  margin: 0 0 0.85rem;
+  font-size: 0.8125rem;
+  line-height: 1.45;
+  color: #64748b;
+}
+.bof-dqf-vault-group-count {
+  font-weight: 600;
+  color: #64748b;
+}
 .bof-dqf-vault-h2 {
   margin: 0 0 0.75rem;
   font-size: 1.05rem;
