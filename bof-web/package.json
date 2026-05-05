@@ -41,6 +41,7 @@
     "validate:compliance-incident-reconciliation": "node scripts/validate-compliance-incident-reconciliation.mjs",
     "validate:driver-review-ux": "node scripts/validate-driver-review-ux.mjs",
     "validate:dashboard-attention-queue": "node scripts/validate-dashboard-attention-queue.mjs",
+    "audit:actionability-links": "node scripts/audit-actionability-links.mjs",
     "generate:driver-docs": "node scripts/generate-driver-docs.mjs && node scripts/patch-medical-card-html-demo.mjs && npm run validate:driver-medical-status",
     "deploy:full": "npm run generate:driver-docs && git add . && (git commit -m \"Auto deploy: regenerate docs + sync\" || node -e \"process.exit(0)\") && git push && vercel --prod --cwd ..",
     "demo:reset": "node scripts/reset-demo.mjs",

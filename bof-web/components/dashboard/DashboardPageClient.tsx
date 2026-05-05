@@ -23,6 +23,8 @@ import { settlementTotals } from "@/lib/executive-layer";
 import { getPayrollMonthlyTrend } from "@/lib/demo-trends";
 import { getClientLoadRequests } from "@/lib/client-load-requests";
 import { useIntakeEngineStore } from "@/lib/stores/intake-engine-store";
+import { ActionableSummary } from "@/components/actionability/ActionableSummary";
+import { getDemoActionabilityIssues } from "@/lib/actionability/demo-actionability";
 
 const SEV_ORDER: Record<ExecutiveDashboardOwnerItem["severity"], number> = {
   critical: 0,
@@ -59,6 +61,7 @@ export function DashboardPageClient() {
   );
 
   const [expandedReadiness, setExpandedReadiness] = useState<Record<string, boolean>>({});
+  const actionabilityIssues = useMemo(() => getDemoActionabilityIssues(data), [data]);
 
   /** Command-center KPI strip — every value is derived in `buildExecutiveDashboardModel` from BOF + merged CC queue. */
   const commandKpis = useMemo<Array<DashboardKpi & { href?: string }>>(
@@ -183,6 +186,8 @@ export function DashboardPageClient() {
           topRiskLoads={topRiskLoads}
         />
       </section>
+
+      <ActionableSummary title="Demo Actionability Queue" issues={actionabilityIssues} />
 
       <section className="bof-cc-kpi-sections" aria-label="Command center summary">
         <article className="bof-cc-panel">

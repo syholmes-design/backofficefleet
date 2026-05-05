@@ -14,7 +14,6 @@ const productNav = [
   { href: "/settlements", label: "Settlements" },
   { href: "/safety", label: "Safety" },
   { href: "/dispatch", label: "Dispatch" },
-  { href: "/load-requests", label: "Load Requests" },
 ];
 
 export function BofHeader() {

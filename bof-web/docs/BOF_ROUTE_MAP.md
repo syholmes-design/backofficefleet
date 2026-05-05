@@ -74,8 +74,8 @@ All discovered routes are active Next.js routes unless marked legacy redirect.
 | `/intake` | `app/(bof)/intake/page.tsx` | `IntakeEnginePage` | DEMO | ACTIVE_ROUTE |  |
 | `/intake/:intakeId` | `app/(bof)/intake/[intakeId]/page.tsx` | `IntakeEngineDetailPage` | DEMO | ACTIVE_ROUTE |  |
 | `/load-intake` | `app/(bof)/load-intake/page.tsx` | redirect page | LEGACY | ACTIVE_ROUTE | Redirects to `/dispatch/intake`. |
-| `/load-request` | `app/(bof)/load-request/page.tsx` | `LoadRequestPage` | DISPATCH | ACTIVE_ROUTE |  |
-| `/load-requests` | `app/(bof)/load-requests/page.tsx` | `LoadRequestsPage` | DISPATCH | ACTIVE_ROUTE |  |
+| `/load-request` | `app/(bof)/load-request/page.tsx` | `LoadRequestPage` | LEGACY | ACTIVE_ROUTE | LEGACY_DO_NOT_USE for issue triage links; keep only for explicit intake workflow. |
+| `/load-requests` | `app/(bof)/load-requests/page.tsx` | `LoadRequestsPage` | LEGACY | ACTIVE_ROUTE | LEGACY_DO_NOT_USE for operational issue links; avoid primary nav entry. |
 | `/load-requirements` | `app/(bof)/load-requirements/page.tsx` | redirect page | LEGACY | ACTIVE_ROUTE | Redirects to `/dispatch/intake`. |
 | `/loads` | `app/(bof)/loads/page.tsx` | `LoadsPage` | DISPATCH | ACTIVE_ROUTE |  |
 | `/loads/:id` | `app/(bof)/loads/[id]/page.tsx` | `LoadDetailsPage` | DISPATCH | ACTIVE_ROUTE | Calls `getBofData()`. |
