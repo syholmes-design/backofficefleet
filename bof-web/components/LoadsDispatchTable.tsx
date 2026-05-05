@@ -6,7 +6,7 @@ import { DriverCell } from "@/components/DriverCell";
 import { useState } from "react";
 import { useBofDemoData } from "@/lib/bof-demo-data-context";
 import { getLoadRiskExplanation } from "@/lib/load-risk-explanation";
-import { LoadReviewDrawer } from "@/components/review/LoadReviewDrawer";
+import { LoadReviewInlinePanel } from "@/components/loads/LoadReviewInlinePanel";
 
 function loadStatusClass(status: string) {
   const s = status.toUpperCase();
@@ -25,7 +25,7 @@ export function LoadsDispatchTable({
   selectedLoadId?: string;
   onSelectLoad?: (loadId: string) => void;
 }) {
-  const { demoRiskOverrides, resolveLoadRiskReason, resolveDriverRiskReason } = useBofDemoData();
+  const { demoRiskOverrides } = useBofDemoData();
   const [loadReviewId, setLoadReviewId] = useState<string | null>(null);
 
   function signalText(status: "clean" | "at_risk" | "blocked" | "needs_review", reason: string) {
@@ -109,7 +109,7 @@ export function LoadsDispatchTable({
                         setLoadReviewId(load.id);
                       }}
                     >
-                      View review details
+                      Show issue
                     </button>
                   ) : null}
                 </td>
@@ -123,15 +123,16 @@ export function LoadsDispatchTable({
       </table>
 
       {loadReviewId ? (
-        <LoadReviewDrawer
-          data={data}
-          loadId={loadReviewId}
-          demoRiskOverrides={demoRiskOverrides}
-          open
-          onClose={() => setLoadReviewId(null)}
-          resolveLoadRiskReason={resolveLoadRiskReason}
-          resolveDriverRiskReason={resolveDriverRiskReason}
-        />
+        <tr>
+          <td colSpan={7}>
+            <LoadReviewInlinePanel
+              loadId={loadReviewId}
+              loadNumber={data.loads.find(l => l.id === loadReviewId)?.number || loadReviewId}
+              riskExplanation={getLoadRiskExplanation(data, loadReviewId)}
+              data={data}
+            />
+          </td>
+        </tr>
       ) : null}
     </div>
   );
