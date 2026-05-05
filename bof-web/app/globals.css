@@ -7102,6 +7102,37 @@ body {
   background: rgba(13, 148, 136, 0.22);
   color: #ecfdf5;
 }
+.bof-drivers-credential-window {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  flex-wrap: wrap;
+  margin: 0.5rem 0 0.75rem;
+  padding: 0.5rem 0.65rem;
+  border: 1px solid rgba(51, 65, 85, 0.45);
+  border-radius: 0.5rem;
+  background: rgba(15, 23, 42, 0.35);
+}
+.bof-drivers-credential-window__label {
+  font-size: 0.72rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #94a3b8;
+}
+.bof-drivers-credential-window__select {
+  min-width: 7.5rem;
+  padding: 0.35rem 0.55rem;
+  border-radius: 0.4rem;
+  border: 1px solid rgba(45, 212, 191, 0.35);
+  background: rgba(2, 6, 23, 0.85);
+  color: #e2e8f0;
+  font-size: 0.82rem;
+}
+.bof-drivers-credential-window__select:focus {
+  outline: 2px solid rgba(45, 212, 191, 0.45);
+  outline-offset: 1px;
+}
 .bof-drivers-secondary-metrics {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
