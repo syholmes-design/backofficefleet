@@ -3,7 +3,6 @@
 import Link from "next/link";
 import { Fragment, useMemo, useState } from "react";
 import { DriverAvatar } from "@/components/DriverAvatar";
-import { DriverReviewDrawer } from "@/components/drivers/DriverReviewDrawer";
 import { DriverReviewInlinePanel } from "@/components/drivers/DriverReviewInlinePanel";
 import { useBofDemoData } from "@/lib/bof-demo-data-context";
 import { driverPhotoPath } from "@/lib/driver-photo";
@@ -56,13 +55,7 @@ export function DriversRosterTable() {
   const {
     data,
     resolveDriverDispatchBlocker,
-    resolveDriverReviewIssue,
-    resetDriverReviewOverrides,
   } = useBofDemoData();
-  const [reviewDrawer, setReviewDrawer] = useState<{
-    driverId: string;
-    filter?: DriverReviewIssueCategory;
-  } | null>(null);
   const [expandedDriverId, setExpandedDriverId] = useState<string | null>(null);
   const [driverStatusFilter, setDriverStatusFilter] = useState<DriverStatusFilter>("all");
   const [credentialWindowDays, setCredentialWindowDays] = useState<90 | 60 | 30>(90);
@@ -231,49 +224,41 @@ export function DriversRosterTable() {
                   <td>
                     <StatusChip
                       label={row.status}
-                      onClick={() => setReviewDrawer({ driverId: row.driverId, filter: row.status === "Blocked" ? "dispatch" : undefined })}
                     />
-                    {(row.eligibilityStatus === "needs_review" || row.eligibilityStatus === "blocked") && row.primaryReviewReason ? (
+                    {row.primaryReviewReason ? (
                       <p className="bof-cc-driver-meta" style={{ marginTop: "0.35rem" }}>
-                        Why: {row.primaryReviewReason}
+                        {row.primaryReviewReason}
                       </p>
                     ) : null}
                   </td>
                   <td>
-                    {row.eligibilityStatus === "needs_review" || row.eligibilityStatus === "blocked" ? (
-                      <button type="button" className="bof-driver-review-dispatch-link text-left" onClick={() => setReviewDrawer({ driverId: row.driverId })}>
-                        {row.dispatchEligibility}
-                      </button>
-                    ) : row.dispatchEligibility}
+                    <button 
+                      type="button" 
+                      className="bof-driver-review-dispatch-link text-left" 
+                      onClick={() => setExpandedDriverId((prev) => (prev === row.driverId ? null : row.driverId))}
+                    >
+                      Show issue
+                    </button>
                   </td>
                   <td>
                     <button
                       type="button"
                       className="bof-driver-review-dispatch-link text-left"
-                      onClick={() => setReviewDrawer({ driverId: row.driverId, filter: row.complianceDrawerCategory })}
+                      onClick={() => setExpandedDriverId((prev) => (prev === row.driverId ? null : row.driverId))}
                     >
                       {row.compliance}
                     </button>
                   </td>
-                  <td><StatusChip label={row.safety} onClick={row.safety === "At Risk" ? () => setReviewDrawer({ driverId: row.driverId, filter: "safety" }) : undefined} /></td>
-                  <td><StatusChip label={row.settlement} onClick={row.settlement !== "Paid" ? () => setReviewDrawer({ driverId: row.driverId, filter: "settlement" }) : undefined} /></td>
+                  <td><StatusChip label={row.safety} /></td>
+                  <td><StatusChip label={row.settlement} /></td>
                   <td>{row.loadLinkId ? <Link href={`/loads/${encodeURIComponent(row.loadLinkId)}`} className="bof-driver-review-dispatch-link">{row.currentOrNextLoad}</Link> : row.currentOrNextLoad}</td>
                   <td>
-                    <button type="button" className="bof-driver-review-dispatch-link text-left" onClick={() => setReviewDrawer({ driverId: row.driverId, filter: "documents" })}>
+                    <button type="button" className="bof-driver-review-dispatch-link text-left">
                       {row.documentSummary}
                     </button>
                   </td>
                   <td>
                     <div className="bof-cc-action-wrap">
-                      <Link href={`/drivers/${row.driverId}/vault`} className="bof-cc-action-btn">Open vault</Link>
-                      <Link href={`/drivers/${row.driverId}/safety`} className="bof-cc-action-btn">Review safety</Link>
-                      <button
-                        type="button"
-                        className="bof-cc-action-btn bof-cc-action-btn-primary"
-                        onClick={() => setExpandedDriverId((prev) => (prev === row.driverId ? null : row.driverId))}
-                      >
-                        {expandedDriverId === row.driverId ? "Hide issue" : "Review issue"}
-                      </button>
                       {row.eligibilityStatus === "blocked" && row.primaryDispatchBlockerId ? (
                         <button
                           type="button"
@@ -286,19 +271,28 @@ export function DriversRosterTable() {
                             )
                           }
                         >
-                          Resolve blocker (demo)
+                          Fix issue
                         </button>
-                      ) : null}
-                      {row.eligibilityStatus === "blocked" ? (
-                        <Link href={row.blockerHref ?? `/drivers/${row.driverId}/vault`} className="bof-cc-action-btn">Open workspace</Link>
-                      ) : null}
+                      ) : (
+                        <button
+                          type="button"
+                          className="bof-cc-action-btn bof-cc-action-btn-primary"
+                          onClick={() => setExpandedDriverId((prev) => (prev === row.driverId ? null : row.driverId))}
+                        >
+                          {expandedDriverId === row.driverId ? "Hide issue" : "Show issue"}
+                        </button>
+                      )}
                     </div>
                   </td>
                 </tr>
               {expandedDriverId === row.driverId ? (
                 <tr>
                   <td colSpan={9}>
-                    <DriverReviewInlinePanel explanation={row.reviewExplanation} />
+                    <DriverReviewInlinePanel 
+                explanation={row.reviewExplanation} 
+                driverId={row.driverId} 
+                driverName={row.name} 
+              />
                   </td>
                 </tr>
               ) : null}
@@ -309,18 +303,7 @@ export function DriversRosterTable() {
         </div>
       </section>
 
-      {reviewDrawer ? (
-        <DriverReviewDrawer
-          data={data}
-          driverId={reviewDrawer.driverId}
-          filterCategory={reviewDrawer.filter}
-          onClose={() => setReviewDrawer(null)}
-          resolveDriverDispatchBlocker={resolveDriverDispatchBlocker}
-          resolveDriverReviewIssue={resolveDriverReviewIssue}
-          resetDriverReviewOverrides={resetDriverReviewOverrides}
-        />
-      ) : null}
-    </div>
+          </div>
   );
 }
 
