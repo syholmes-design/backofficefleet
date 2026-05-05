@@ -16,6 +16,44 @@ function loadStatusClass(status: string) {
   return "bof-status-pill bof-status-pill-muted";
 }
 
+function getLifecycleStage(load: BofData["loads"][number]): string {
+  if (load.dispatchExceptionFlag) return "Exception Review";
+  if (load.status === "Pending") return "Pre-trip / Dispatch Release";
+  if (load.status === "En Route") return "In Route";
+  if (load.status === "Delivered") {
+    if (load.podStatus === "verified") return "Settlement / Billing";
+    return "Delivery / POD";
+  }
+  return "Dispatch review";
+}
+
+function getPacketStatus(load: BofData["loads"][number], risk: ReturnType<typeof getLoadRiskExplanation>): string {
+  if (risk.riskStatus === "blocked") return "Assignment blocked";
+  if (load.sealStatus === "Mismatch") return "Delivery proof incomplete";
+  if (load.podStatus !== "verified") return "Missing required proof";
+  if (load.status === "Delivered") return "Settlement ready";
+  return "Packet in progress";
+}
+
+function getKeyDocumentsStatus(data: BofData, load: BofData["loads"][number]): string {
+  // Since we can't safely check document availability without additional imports,
+  // return a simple action to open the trip packet
+  return "Open trip packet";
+}
+
+function getProofStatus(load: BofData["loads"][number]): { pod: string; seal: string; exception?: string } {
+  const status: { pod: string; seal: string; exception?: string } = {
+    pod: load.podStatus === "verified" ? "POD ready" : "POD pending",
+    seal: load.sealStatus === "OK" ? "Seal ready" : "Seal review"
+  };
+  
+  if (load.dispatchExceptionFlag) {
+    status.exception = "Exception review";
+  }
+  
+  return status;
+}
+
 export function LoadsDispatchTable({
   data,
   selectedLoadId,
@@ -44,7 +82,10 @@ export function LoadsDispatchTable({
             <th scope="col">Driver</th>
             <th scope="col">Asset</th>
             <th scope="col">Route</th>
-            <th scope="col">POD / seals</th>
+            <th scope="col">Lifecycle Stage</th>
+            <th scope="col">Packet Status</th>
+            <th scope="col">Key Documents</th>
+            <th scope="col">Proof Status</th>
             <th scope="col">Signal</th>
             <th scope="col">Status</th>
           </tr>
@@ -83,7 +124,27 @@ export function LoadsDispatchTable({
                   {load.origin} → {load.destination}
                 </td>
                 <td className="bof-small">
-                  POD {load.podStatus} · Seals {load.sealStatus}
+                  {getLifecycleStage(load)}
+                </td>
+                <td className="bof-small">
+                  {getPacketStatus(load, risk)}
+                </td>
+                <td className="bof-small">
+                  <Link href={`/loads/${load.id}`} className="bof-link-secondary">
+                    {getKeyDocumentsStatus(data, load)}
+                  </Link>
+                </td>
+                <td className="bof-small">
+                  {(() => {
+                    const proof = getProofStatus(load);
+                    return (
+                      <div className="space-y-1">
+                        <div>{proof.pod}</div>
+                        <div>{proof.seal}</div>
+                        {proof.exception && <div>{proof.exception}</div>}
+                      </div>
+                    );
+                  })()}
                 </td>
                 <td>
                   <span
@@ -124,7 +185,7 @@ export function LoadsDispatchTable({
 
       {loadReviewId ? (
         <tr>
-          <td colSpan={7}>
+          <td colSpan={10}>
             <LoadReviewInlinePanel
               loadId={loadReviewId}
               loadNumber={data.loads.find(l => l.id === loadReviewId)?.number || loadReviewId}

@@ -245,7 +245,7 @@ function DocGroup({
 }
 
 function getAudienceTags(key: string, group: TripPacketGroupId): React.ReactNode[] {
-  const tags: JSX.Element[] = [];
+  const tags: React.ReactNode[] = [];
   
   // Fleet owner applies to most core documents
   if (["rate_confirmation", "bol", "pod", "invoice"].includes(key)) {
