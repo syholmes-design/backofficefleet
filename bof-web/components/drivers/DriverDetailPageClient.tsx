@@ -476,6 +476,87 @@ export function DriverDetailPageClient({ driverId }: { driverId: string }) {
         <span>{driver.name}</span>
       </nav>
 
+      <section
+        className="bof-driver-hub-section"
+        aria-labelledby="driver-hub-documents-heading"
+      >
+        <h2 id="driver-hub-documents-heading" className="bof-h2 bof-driver-hub-h2">
+          Documents &amp; credentials
+        </h2>
+        <div className="bof-driver-readiness-summary" style={{ marginBottom: "1rem" }}>
+          <div className="bof-driver-readiness-item">
+            <span className="bof-driver-readiness-label">Driver file status:</span>
+            <span className={`bof-driver-readiness-value ${
+              dispatchEligibility.status === "ready" ? "bof-driver-readiness-ready" :
+              dispatchEligibility.status === "needs_review" ? "bof-driver-readiness-review" :
+              "bof-driver-readiness-blocked"
+            }`}>
+              {dispatchEligibility.status === "ready" ? "Ready" :
+               dispatchEligibility.status === "needs_review" ? "Needs Review" :
+               "Blocked"}
+            </span>
+          </div>
+          <div className="bof-driver-readiness-item">
+            <span className="bof-driver-readiness-label">Documents valid:</span>
+            <span className="bof-driver-readiness-value">{readiness.valid}</span>
+          </div>
+          <div className="bof-driver-readiness-item">
+            <span className="bof-driver-readiness-label">Documents expiring:</span>
+            <span className="bof-driver-readiness-value">{readiness.valid}</span>
+          </div>
+          <div className="bof-driver-readiness-item">
+            <span className="bof-driver-readiness-label">Documents expired:</span>
+            <span className="bof-driver-readiness-value">{readiness.expired}</span>
+          </div>
+          <div className="bof-driver-readiness-item">
+            <span className="bof-driver-readiness-label">Documents missing:</span>
+            <span className="bof-driver-readiness-value">{readiness.missing}</span>
+          </div>
+        </div>
+        <p className="bof-doc-section-lead bof-driver-hub-lead">
+          The qualification file is organized in the same five vault categories as the
+          full DQF page. Below that, packet summary keeps file-level preview and
+          technical grouping. Global index:{" "}
+          <Link href="/documents" className="bof-link-secondary">
+            document workspace
+          </Link>
+          .
+        </p>
+        <div style={{ marginBottom: "1rem" }}>
+          <Link href={`/drivers/${driver.id}/vault`} className="bof-cc-action-btn" style={{ marginRight: "0.5rem" }}>
+            Open driver vault
+          </Link>
+          <Link href={`/drivers/${driver.id}/vault`} className="bof-cc-action-btn">
+            Review driver documents
+          </Link>
+        </div>
+
+        <DriverHubVaultGroups driverId={driverId} documents={dqfVaultSummary.documents} />
+
+        <DriverDocumentPacketSection packet={driverDocumentPacket} />
+
+        {supplementalDocs.length > 0 && (
+          <div className="bof-driver-hub-supplemental">
+            <h3 className="bof-h3">Additional attachments</h3>
+            <ul className="bof-compliance-mini">
+              {supplementalDocs.map((doc) => (
+                <li key={`${doc.driverId}-${doc.type}`}>
+                  <a
+                    href={doc.fileUrl ?? doc.previewUrl ?? "#"}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="bof-link-secondary"
+                  >
+                    {doc.type}
+                    {doc.status ? ` (${doc.status})` : ""}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+      </section>
+
       <section className="bof-driver-panel bof-driver-dispatch-panel" aria-labelledby="dispatch-decision-heading">
         <div className="bof-driver-dispatch-panel__head">
           <h2 id="dispatch-decision-heading" className="bof-h3">
@@ -1284,49 +1365,6 @@ export function DriverDetailPageClient({ driverId }: { driverId: string }) {
           />
         </section>
       )}
-
-      <section
-        className="bof-driver-hub-section"
-        aria-labelledby="driver-hub-documents-heading"
-      >
-        <h2 id="driver-hub-documents-heading" className="bof-h2 bof-driver-hub-h2">
-          Documents &amp; credentials
-        </h2>
-        <p className="bof-doc-section-lead bof-driver-hub-lead">
-          The qualification file is organized in the same five vault categories as the
-          full DQF page. Below that, the packet summary keeps file-level preview and
-          technical grouping. Global index:{" "}
-          <Link href="/documents" className="bof-link-secondary">
-            document workspace
-          </Link>
-          .
-        </p>
-
-        <DriverHubVaultGroups driverId={driverId} documents={dqfVaultSummary.documents} />
-
-        <DriverDocumentPacketSection packet={driverDocumentPacket} />
-
-        {supplementalDocs.length > 0 && (
-          <div className="bof-driver-hub-supplemental">
-            <h3 className="bof-h3">Additional attachments</h3>
-            <ul className="bof-compliance-mini">
-              {supplementalDocs.map((doc) => (
-                <li key={`${doc.driverId}-${doc.type}`}>
-                  <a
-                    href={doc.fileUrl ?? doc.previewUrl ?? "#"}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="bof-link-secondary"
-                  >
-                    {doc.type}
-                    {doc.status ? ` (${doc.status})` : ""}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </div>
-        )}
-      </section>
 
       <section className="bof-driver-hub-section" aria-labelledby="driver-hr-generated-packet-heading">
         <h2 id="driver-hr-generated-packet-heading" className="bof-h2 bof-driver-hub-h2">

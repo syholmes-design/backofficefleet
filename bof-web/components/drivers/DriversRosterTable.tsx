@@ -136,12 +136,20 @@ export function DriversRosterTable() {
     <div className="bof-page bof-cc-page">
       <section className="bof-drivers-command-header" aria-labelledby="bof-drivers-command-title">
         <div className="bof-drivers-command-header__intro">
-          <p className="bof-cc-hero-eyebrow">Driver operations</p>
-          <h1 id="bof-drivers-command-title" className="bof-cc-hero-title">Driver Readiness Command</h1>
+          <p className="bof-cc-hero-eyebrow">Driver file and document readiness</p>
+          <h1 id="bof-drivers-command-title" className="bof-cc-hero-title">Driver Document Command Center</h1>
           <p className="bof-cc-panel-sub">
-            {commandSummary.totalDrivers} drivers monitored · {commandSummary.needsReview} need review ·{" "}
-            {commandSummary.dispatchBlocked} blocked
+            {commandSummary.totalDrivers} drivers monitored · {commandSummary.needsReview} need document review ·{" "}
+            {commandSummary.dispatchBlocked} blocked from dispatch
           </p>
+          <div className="bof-drivers-lead-ctas" style={{ marginTop: "1rem" }}>
+            <Link href="/documents" className="bof-cc-action-btn" style={{ marginRight: "0.5rem" }}>
+              View document readiness
+            </Link>
+            <Link href="/documents/vault" className="bof-cc-action-btn">
+              Open driver vault workspace
+            </Link>
+          </div>
         </div>
         <div className="bof-drivers-credential-window" aria-label="Driver roster controls">
           <label className="bof-drivers-credential-window__label" htmlFor="bof-drivers-search">Search driver</label>
