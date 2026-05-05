@@ -57,6 +57,8 @@ export type DriverReviewGuidance = {
   primaryActionHref?: string;
 };
 
+export type DriverReviewIssueType = "document" | "safety" | "dispatch" | "settlement" | "unknown";
+
 export type DriverReviewExplanation = {
   driverId: string;
   driverName: string;
@@ -74,6 +76,16 @@ export type DriverReviewExplanation = {
   /** Narrative primary remediation — first open issue fix, else eligibility CTA label */
   recommendedNextStepText: string;
   primaryGuidance: DriverReviewGuidance;
+  severity: "blocked" | "needs_review" | "watch" | "ready";
+  headline: string;
+  reason: string;
+  impact: string;
+  recommendedFix: string;
+  issueType: DriverReviewIssueType;
+  documentType?: string;
+  loadId?: string;
+  settlementId?: string;
+  actions: Array<{ label: string; href?: string }>;
 };
 
 function hashString(s: string): string {
@@ -340,6 +352,28 @@ function normalizeIssueForDispatchers(
     );
   }
 
+  if (issue.category === "settlement" || /settlement|pay hold|payroll/.test(text)) {
+    return set(
+      "Settlement hold needs review",
+      "A settlement item is pending review for this driver.",
+      "Dispatch and payroll should confirm this hold is expected before next assignment.",
+      "Open the settlement hold, confirm deductions or claims, and release it if no unresolved issue remains.",
+      "Open settlement hold",
+      baseHref || undefined
+    );
+  }
+
+  if (issue.category === "dispatch" || /dispatch/.test(text)) {
+    return set(
+      "Dispatch eligibility review required",
+      "This driver has a dispatch readiness condition that needs confirmation.",
+      "Dispatch should verify eligibility before assigning the next load.",
+      "Review dispatch eligibility and clear any blocking or warning condition.",
+      "Review dispatch eligibility",
+      baseHref || undefined
+    );
+  }
+
   if (/safety/.test(text) || issue.category === "safety") {
     return set(
       "Safety review needed",
@@ -347,6 +381,18 @@ function normalizeIssueForDispatchers(
       "Dispatch should confirm eligibility before assigning the next load.",
       "Open the safety record, resolve flagged items, and document the review outcome.",
       "Open safety record",
+      baseHref || undefined
+    );
+  }
+
+  if (issue.category === "documents" || issue.category === "credentials") {
+    const doc = titleCaseDocument(extractKnownDocumentName(issue.title) ?? "required document");
+    return set(
+      `${doc} needs review`,
+      `The driver file has a ${doc.toLowerCase()} item that needs attention.`,
+      "If not corrected, this can delay or block dispatch.",
+      `Open the driver vault, update ${doc.toLowerCase()}, and submit it for review.`,
+      `Open ${doc}`,
       baseHref || undefined
     );
   }
@@ -363,7 +409,7 @@ function normalizeIssueForDispatchers(
     );
   }
 
-  if (reviewStatus === "blocked" && (issue.category === "dispatch" || issue.severity === "critical")) {
+  if (reviewStatus === "blocked" && issue.severity === "critical") {
     return set(
       "Driver blocked",
       "This driver has unresolved items that currently prevent dispatch.",
@@ -375,8 +421,8 @@ function normalizeIssueForDispatchers(
   }
 
   return set(
-    "Review needed",
-    "This driver has a readiness issue that needs manual review.",
+    "Review reason needs clarification",
+    "This driver was marked for review, but the system did not identify a specific document, safety item, load, or settlement issue.",
     "Dispatch should confirm eligibility before assignment.",
     "Open the driver vault and review required documents, safety status, and dispatch eligibility.",
     baseLabel || "Review driver file",
@@ -393,6 +439,25 @@ function guidancePriorityRank(i: DriverReviewIssue): number {
   if (/driver blocked|dispatch blocked|safety review needed/.test(txt)) return 5;
   if (/expir/.test(txt)) return 6;
   return 7;
+}
+
+function inferIssueType(i: DriverReviewIssue): DriverReviewIssueType {
+  if (i.category === "safety") return "safety";
+  if (i.category === "settlement") return "settlement";
+  if (i.category === "documents" || i.category === "credentials") return "document";
+  if (i.category === "dispatch") return "dispatch";
+  return "unknown";
+}
+
+function inferDocumentType(i: DriverReviewIssue): string | undefined {
+  const txt = `${i.title} ${i.detail}`.toLowerCase();
+  if (txt.includes("cdl")) return "CDL";
+  if (txt.includes("medical")) return "Medical Card";
+  if (txt.includes("w-9")) return "W-9";
+  if (txt.includes("i-9")) return "I-9";
+  if (txt.includes("mvr")) return "MVR";
+  if (txt.includes("fmcsa")) return "FMCSA";
+  return undefined;
 }
 
 /**
@@ -734,8 +799,9 @@ export function getDriverReviewExplanation(data: BofData, driverId: string): Dri
   }
 
   const fallbackGuidance: DriverReviewGuidance = {
-    headline: "Review needed",
-    plainEnglishReason: "This driver has a readiness issue that needs manual review.",
+    headline: "Review reason needs clarification",
+    plainEnglishReason:
+      "This driver was marked for review, but the system did not identify a specific document, safety item, load, or settlement issue.",
     operationalImpact: "Dispatch should confirm eligibility before assignment.",
     proposedSolution:
       "Open the driver vault and review required documents, safety status, and dispatch eligibility.",
@@ -771,6 +837,42 @@ export function getDriverReviewExplanation(data: BofData, driverId: string): Dri
     };
   }
 
+  const activeLoadId =
+    data.loads.find((l) => l.driverId === driverId && (l.status === "En Route" || l.status === "Pending"))?.id ??
+    data.loads.find((l) => l.driverId === driverId)?.id;
+  const settlementId = data.settlements.find((s) => s.driverId === driverId)?.settlementId;
+  const issueType: DriverReviewIssueType = first ? inferIssueType(first) : "unknown";
+  const documentType = first ? inferDocumentType(first) : undefined;
+  const actions: Array<{ label: string; href?: string }> = [];
+  if (issueType === "document") {
+    actions.push({
+      label: documentType ? `Open ${documentType}` : "Open driver vault",
+      href: `/drivers/${driverId}/vault${documentType ? `?doc=${encodeURIComponent(documentType)}` : ""}`,
+    });
+  } else if (issueType === "safety") {
+    actions.push({ label: "Open safety record", href: `/drivers/${driverId}/safety` });
+    if (activeLoadId) actions.push({ label: "Open assigned load", href: `/loads/${activeLoadId}` });
+  } else if (issueType === "settlement") {
+    actions.push({
+      label: "Open settlement hold",
+      href: settlementId
+        ? `/settlements?settlementId=${encodeURIComponent(settlementId)}`
+        : `/drivers/${driverId}/settlements`,
+    });
+    if (activeLoadId) actions.push({ label: "Review linked load", href: `/loads/${activeLoadId}` });
+  } else if (issueType === "dispatch") {
+    actions.push({ label: "Review dispatch eligibility", href: `/drivers/${driverId}` });
+    if (activeLoadId) actions.push({ label: "Open assigned load", href: `/loads/${activeLoadId}` });
+  } else {
+    actions.push({ label: "Open driver vault", href: `/drivers/${driverId}/vault` });
+  }
+  if (primaryGuidance.primaryActionHref) {
+    actions.push({ label: primaryGuidance.primaryActionLabel, href: primaryGuidance.primaryActionHref });
+  }
+  const dedupActions = actions.filter(
+    (a, idx) => actions.findIndex((x) => x.label === a.label && x.href === a.href) === idx
+  );
+
   return {
     driverId,
     driverName,
@@ -786,5 +888,15 @@ export function getDriverReviewExplanation(data: BofData, driverId: string): Dri
     primaryAction,
     recommendedNextStepText,
     primaryGuidance,
+    severity: reviewStatus,
+    headline: primaryGuidance.headline,
+    reason: primaryGuidance.plainEnglishReason,
+    impact: primaryGuidance.operationalImpact,
+    recommendedFix: primaryGuidance.proposedSolution,
+    issueType,
+    documentType,
+    loadId: activeLoadId,
+    settlementId,
+    actions: dedupActions,
   };
 }

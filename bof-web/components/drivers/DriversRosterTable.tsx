@@ -1,12 +1,13 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo, useState } from "react";
+import { Fragment, useMemo, useState } from "react";
 import { DriverAvatar } from "@/components/DriverAvatar";
 import { DriverReviewDrawer } from "@/components/drivers/DriverReviewDrawer";
+import { DriverReviewInlinePanel } from "@/components/drivers/DriverReviewInlinePanel";
 import { useBofDemoData } from "@/lib/bof-demo-data-context";
 import { driverPhotoPath } from "@/lib/driver-photo";
-import { type DriverReviewIssueCategory } from "@/lib/driver-review-explanation";
+import { getDriverReviewExplanation, type DriverReviewExplanation, type DriverReviewIssueCategory } from "@/lib/driver-review-explanation";
 import { getDriverTableRowModel } from "@/lib/drivers/driver-table-row-model";
 import {
   driverHasCredentialExpiringWithin,
@@ -42,7 +43,14 @@ type DriverRow = {
   loadLinkId: string | null;
   complianceDrawerCategory?: DriverReviewIssueCategory;
   primaryReviewReason: string;
+  reviewExplanation: DriverReviewExplanation;
 };
+
+function compactSentence(text: string): string {
+  const first = text.split(".")[0]?.trim() ?? text.trim();
+  if (!first) return text.trim();
+  return first.endsWith(".") ? first : `${first}.`;
+}
 
 export function DriversRosterTable() {
   const {
@@ -55,6 +63,7 @@ export function DriversRosterTable() {
     driverId: string;
     filter?: DriverReviewIssueCategory;
   } | null>(null);
+  const [expandedDriverId, setExpandedDriverId] = useState<string | null>(null);
   const [driverStatusFilter, setDriverStatusFilter] = useState<DriverStatusFilter>("all");
   const [credentialWindowDays, setCredentialWindowDays] = useState<90 | 60 | 30>(90);
   const [searchText, setSearchText] = useState("");
@@ -68,6 +77,7 @@ export function DriversRosterTable() {
     () =>
       data.drivers.map((driver) => {
         const m = getDriverTableRowModel(data, driver.id);
+        const reviewExplanation = getDriverReviewExplanation(data, driver.id);
         const openIssues = m.issues.filter((i) => !i.resolved);
         const complianceFocusOrder: DriverReviewIssueCategory[] = [
           "dispatch",
@@ -96,7 +106,11 @@ export function DriversRosterTable() {
           primaryDispatchBlockerId: m.primaryDispatchBlockerId,
           loadLinkId: m.loadLinkId,
           complianceDrawerCategory,
-          primaryReviewReason: m.primaryReviewReason,
+          primaryReviewReason:
+            reviewExplanation.severity === "ready"
+              ? m.primaryReviewReason
+              : `${reviewExplanation.headline} — ${compactSentence(reviewExplanation.recommendedFix)}`,
+          reviewExplanation,
         };
       }),
     [data]
@@ -202,7 +216,8 @@ export function DriversRosterTable() {
             </thead>
             <tbody>
               {filteredDriverRows.map((row) => (
-                <tr key={row.driverId}>
+                <Fragment key={row.driverId}>
+                <tr>
                   <td>
                     <div className="bof-cc-driver-cell">
                       <DriverAvatar name={row.name} photoUrl={row.avatar} size={40} />
@@ -252,7 +267,13 @@ export function DriversRosterTable() {
                     <div className="bof-cc-action-wrap">
                       <Link href={`/drivers/${row.driverId}/vault`} className="bof-cc-action-btn">Open vault</Link>
                       <Link href={`/drivers/${row.driverId}/safety`} className="bof-cc-action-btn">Review safety</Link>
-                      <button type="button" className="bof-cc-action-btn" onClick={() => setReviewDrawer({ driverId: row.driverId })}>View review</button>
+                      <button
+                        type="button"
+                        className="bof-cc-action-btn bof-cc-action-btn-primary"
+                        onClick={() => setExpandedDriverId((prev) => (prev === row.driverId ? null : row.driverId))}
+                      >
+                        {expandedDriverId === row.driverId ? "Hide issue" : "Review issue"}
+                      </button>
                       {row.eligibilityStatus === "blocked" && row.primaryDispatchBlockerId ? (
                         <button
                           type="button"
@@ -274,6 +295,14 @@ export function DriversRosterTable() {
                     </div>
                   </td>
                 </tr>
+              {expandedDriverId === row.driverId ? (
+                <tr>
+                  <td colSpan={9}>
+                    <DriverReviewInlinePanel explanation={row.reviewExplanation} />
+                  </td>
+                </tr>
+              ) : null}
+              </Fragment>
               ))}
             </tbody>
           </table>
