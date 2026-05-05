@@ -131,8 +131,8 @@ export function DashboardPageClient() {
       <section className="bof-dashboard-hero bof-dashboard-hero--image-bg bof-cc-hero">
         <div className="bof-dashboard-hero__bg">
           <Image
-            src="/images/bof-command-dashboard-hero.png"
-            alt="BOF command dashboard showing fleet operations, documents, compliance, and route visibility."
+            src="/generated/marketing/demoheroimage-v2.png"
+            alt="BOF operations hero visual — fleet command and proof context."
             fill
             sizes="100vw"
             priority

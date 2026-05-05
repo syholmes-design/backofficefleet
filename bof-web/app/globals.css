@@ -14127,8 +14127,8 @@ body {
 }
 
 /*
- * Dashboard (/dashboard) hero — full-card background image + layered fades/masks.
- * PNG is decorative only (cover, right-weighted); baked-in PNG text + teal chrome masked off.
+ * Dashboard (/dashboard) demo hero — full-card background image + layered fades/masks.
+ * PNG is decorative only (cover, right-weighted); fades/masks support legible DOM headline/CTAs over art.
  * Real CTAs are DOM-only (BookDemoLink + Next Link). Does not affect Drivers / other marketing heroes.
  */
 .bof-dashboard-hero.bof-dashboard-hero--image-bg.bof-cc-hero {
@@ -14152,8 +14152,8 @@ body {
 
 .bof-dashboard-hero__bgImage {
   object-fit: cover;
-  /* Nudge monitor / dashboard art lower + right — reduces collision with live headline column */
-  object-position: 86% 56%;
+  /* Wide photographic hero — bias toward cab/right; dark left read lane from asset + gradient */
+  object-position: 88% 36%;
   filter: brightness(1.1) contrast(1.06) saturate(1.03);
 }
 
@@ -15171,7 +15171,7 @@ body {
   }
 
   .bof-dashboard-hero__bgImage {
-    object-position: 82% 54%;
+    object-position: 88% 42%;
     filter: brightness(1.08) contrast(1.05) saturate(1.02);
   }
 
