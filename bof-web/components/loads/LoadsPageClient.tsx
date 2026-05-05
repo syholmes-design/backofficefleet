@@ -62,6 +62,49 @@ export function LoadsPageClient() {
         </div>
       </section>
 
+      <section className="bof-oper-panel" aria-label="Load document readiness">
+        <div className="bof-cc-panel-head">
+          <h2 className="bof-h2">Load Document Readiness</h2>
+          <p className="bof-cc-panel-sub">BOF tracks paperwork and proof needed to release, monitor, deliver, bill, and settle every load</p>
+        </div>
+        <div className="bof-cc-table-wrap">
+          <table className="bof-cc-table">
+            <thead>
+              <tr>
+                <th scope="col">Packet complete</th>
+                <th scope="col">Missing required proof</th>
+                <th scope="col">Settlement ready</th>
+                <th scope="col">Total loads</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>
+                  <strong className="bof-cc-metric-value">{dispatchFleet.proofCompleteLoads}</strong>
+                </td>
+                <td>
+                  <strong className="bof-cc-metric-value">{dispatchFleet.missingOrWeakProofLoads}</strong>
+                </td>
+                <td>
+                  <strong className="bof-cc-metric-value">{dispatchFleet.settlementOrClaimHolds}</strong>
+                </td>
+                <td>
+                  <strong className="bof-cc-metric-value">{totals.all}</strong>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div style={{ marginTop: "0.75rem" }}>
+          <Link href="/documents" className="bof-cc-action-btn" style={{ marginRight: "0.5rem" }}>
+            View document workspace
+          </Link>
+          <Link href="/documents/vault" className="bof-cc-action-btn">
+            Open load vault workspace
+          </Link>
+        </div>
+      </section>
+
       <DispatchAttentionQueue variant="light" limit={6} className="bof-oper-panel bof-oper-panel-tight" />
 
       <section className="bof-oper-panel bof-oper-panel-tight" aria-label="Dispatch table">
