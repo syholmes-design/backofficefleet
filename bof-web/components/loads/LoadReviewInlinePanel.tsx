@@ -10,14 +10,15 @@ type LoadReviewInlinePanelProps = {
   data: BofData;
 };
 
-function getLoadIssueStage(risk: any): string {
-  if (risk.category === "proof") return "POD / proof";
-  if (risk.category === "documents") return "Documents";
-  if (risk.category === "driver") return "Assignment";
-  if (risk.category === "compliance") return "Compliance";
-  if (risk.category === "settlement") return "Settlement";
-  if (risk.category === "safety") return "Safety";
-  if (risk.category === "route") return "Route";
+function getLoadIssueStage(risk: ReturnType<typeof getLoadRiskExplanation>): string {
+  const firstReason = risk.reasons?.[0];
+  if (firstReason?.category === "proof") return "POD / proof";
+  if (firstReason?.category === "documents") return "Documents";
+  if (firstReason?.category === "driver") return "Assignment";
+  if (firstReason?.category === "compliance") return "Compliance";
+  if (firstReason?.category === "settlement") return "Settlement";
+  if (firstReason?.category === "safety") return "Safety";
+  if (firstReason?.category === "route") return "Route";
   return "Unknown";
 }
 
@@ -32,7 +33,7 @@ export function LoadReviewInlinePanel({
   loadId,
   loadNumber,
   riskExplanation,
-  data,
+  data, // eslint-disable-line @typescript-eslint/no-unused-vars
 }: LoadReviewInlinePanelProps) {
   const stage = getLoadIssueStage(riskExplanation);
   const severityLabel = getSeverityLabel(riskExplanation.riskStatus);
