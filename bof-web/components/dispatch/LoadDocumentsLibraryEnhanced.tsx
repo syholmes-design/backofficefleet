@@ -9,7 +9,7 @@ import {
 import type { Load } from "@/types/dispatch";
 import { useBofDemoData } from "@/lib/bof-demo-data-context";
 import { buildTripDocumentPacket, groupTripPacketRows } from "@/lib/load-trip-packet";
-import type { TripPacketRow } from "@/lib/load-trip-packet";
+import type { TripPacketRow, TripPacketGroupId } from "@/lib/load-trip-packet";
 import { ProofGapReviewLinks } from "@/components/review/ReviewDeepLinks";
 import { getOperatingDocumentsForLoad, getOperatingDocumentPath, getOperatingDocumentTitle } from "@/lib/operating-documents";
 
@@ -105,7 +105,7 @@ export function LoadDocumentsLibraryEnhanced({ load }: Props) {
       <div className="rounded-lg border border-slate-800 bg-slate-900/40 p-4">
         <h3 className="mb-3 flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-slate-500">
           <FileText className="h-3.5 w-3.5 text-teal-500" />
-          Trip Document Packet
+          Trip document packet
         </h3>
         {trip.validation && (
           <div className="mb-3 flex flex-wrap gap-2 text-[11px] text-slate-200">
@@ -244,6 +244,72 @@ function DocGroup({
   );
 }
 
+function getAudienceTags(key: string, group: TripPacketGroupId): React.ReactNode[] {
+  const tags: JSX.Element[] = [];
+  
+  // Fleet owner applies to most core documents
+  if (["rate_confirmation", "bol", "pod", "invoice"].includes(key)) {
+    tags.push(<span key="fleet" className="inline-flex rounded px-1 py-0.5 text-[8px] font-medium bg-blue-950 text-blue-100">Fleet owner</span>);
+  }
+  
+  // Dispatcher tags
+  if (["rate_confirmation", "work_order", "bol", "pod"].includes(key)) {
+    tags.push(<span key="dispatcher" className="inline-flex rounded px-1 py-0.5 text-[8px] font-medium bg-green-950 text-green-100">Dispatcher</span>);
+  }
+  
+  // Driver tags
+  if (["work_order", "bol", "pod"].includes(key)) {
+    tags.push(<span key="driver" className="inline-flex rounded px-1 py-0.5 text-[8px] font-medium bg-purple-950 text-purple-100">Driver</span>);
+  }
+  
+  // Billing tags
+  if (["rate_confirmation", "bol", "pod", "invoice"].includes(key)) {
+    tags.push(<span key="billing" className="inline-flex rounded px-1 py-0.5 text-[8px] font-medium bg-orange-950 text-orange-100">Billing</span>);
+  }
+  
+  // Claims tags
+  if (["claim_intake", "claim_packet", "damage_photo_packet"].includes(key)) {
+    tags.push(<span key="claims" className="inline-flex rounded px-1 py-0.5 text-[8px] font-medium bg-red-950 text-red-100">Claims</span>);
+  }
+  
+  // Insurance tags
+  if (["insurance_notification"].includes(key)) {
+    tags.push(<span key="insurance" className="inline-flex rounded px-1 py-0.5 text-[8px] font-medium bg-cyan-950 text-cyan-100">Insurance</span>);
+  }
+  
+  // Factoring tags
+  if (["factoring_notification"].includes(key)) {
+    tags.push(<span key="factoring" className="inline-flex rounded px-1 py-0.5 text-[8px] font-medium bg-pink-950 text-pink-100">Factoring</span>);
+  }
+  
+  // Legal tags
+  if (["claim_packet"].includes(key)) {
+    tags.push(<span key="legal" className="inline-flex rounded px-1 py-0.5 text-[8px] font-medium bg-indigo-950 text-indigo-100">Legal</span>);
+  }
+  
+  return tags;
+}
+
+function getActionLabel(key: string): string {
+  switch (key) {
+    case "rate_confirmation": return "Open rate confirmation";
+    case "work_order": return "Open work order";
+    case "bol": return "Open BOL";
+    case "pod": return "Open POD";
+    case "invoice": return "Open invoice";
+    case "claim_packet": return "Open claim packet";
+    case "factoring_notification": return "Open factoring notice";
+    case "pickup_photo": return "View pickup photo";
+    case "cargo_photo": return "View cargo photo";
+    case "seal_pickup_photo": return "View seal pickup photo";
+    case "seal_delivery_photo": return "View seal delivery photo";
+    case "delivery_empty_trailer": return "View empty-trailer proof";
+    case "rfid_geo": return "View RFID proof";
+    case "seal_mismatch_photo": return "View seal mismatch photo";
+    default: return "Open in new tab";
+  }
+}
+
 function DocCard({
   loadId,
   driverId,
@@ -266,15 +332,15 @@ function DocCard({
     row.source === "missing"
       ? "Missing"
       : row.source === "ai_generated"
-        ? "AI demo evidence"
+        ? "Generated document"
         : row.source === "svg_demo" || row.source === "generated"
-          ? "Demo generated"
+          ? "Generated document"
           : row.source === "real" || row.source === "actual_docs"
-            ? "Real evidence"
+            ? "Verified trip proof"
             : row.source === "rfid"
-              ? "RFID"
+              ? "RFID proof"
               : row.source
-                ? "Evidence"
+                ? "Photo proof"
                 : "Missing";
 
   return (
@@ -314,20 +380,24 @@ function DocCard({
           <span className="ml-2 inline-flex rounded px-2 py-0.5 text-[10px] font-medium bg-slate-800 text-slate-300">
             {sourceLabel}
           </span>
+          {/* Audience tags */}
+          <div className="ml-2 flex flex-wrap gap-1">
+            {getAudienceTags(row.key, row.group)}
+          </div>
         </div>
         <p className="mt-1 truncate font-mono text-[10px] text-slate-500">{url || "No URL"}</p>
         {kind === "image" && url && ready ? (
-          <p className="mt-1 text-[10px] text-slate-500">Click the thumbnail or &quot;View photo&quot; for a large preview.</p>
+          <p className="mt-1 text-[10px] text-slate-500">Click to thumbnail or {getActionLabel(row.key)} for a large preview.</p>
         ) : url && ready ? (
           <p className="mt-1 text-[10px] font-semibold uppercase tracking-wide text-teal-500/90">
             <a href={url} target="_blank" rel="noopener noreferrer" className="hover:underline">
-              Open in new tab
+              {getActionLabel(row.key)}
             </a>
           </p>
         ) : (
           <>
             <p className="mt-1 text-[10px] font-semibold uppercase tracking-wide text-slate-500">
-              Missing / Needs review
+              {row.status === "not_applicable" ? "Not required for this trip" : "Missing / Needs review"}
             </p>
             <ProofGapReviewLinks
               driverId={driverId}
