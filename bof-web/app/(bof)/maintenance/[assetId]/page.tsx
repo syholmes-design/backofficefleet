@@ -1,3 +1,11 @@
+/**
+ * BOF Route Owner:
+ * URL: /maintenance/:assetId
+ * Type: DEMO
+ * Primary component: Unknown
+ * Route map: docs/BOF_ROUTE_MAP.md
+ * Edit this file only for route-level layout/wiring.
+ */
 import { notFound } from "next/navigation";
 import { allMaintenanceAssetIds } from "@/lib/maintenance-data";
 import { MaintenanceAssetDetailClient } from "@/components/maintenance/MaintenanceAssetDetailClient";

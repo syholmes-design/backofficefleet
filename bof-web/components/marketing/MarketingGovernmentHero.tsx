@@ -1,3 +1,9 @@
+/**
+ * BOF Shared Component:
+ * Used by: /government
+ * Do not edit for one page unless props/page-specific overrides are used.
+ * See docs/BOF_ROUTE_MAP.md.
+ */
 import Image from "next/image";
 import type { ReactNode } from "react";
 

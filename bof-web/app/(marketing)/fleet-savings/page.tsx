@@ -1,3 +1,11 @@
+/**
+ * BOF Route Owner:
+ * URL: /fleet-savings
+ * Type: MARKETING
+ * Primary component: FleetSavingsPage
+ * Route map: docs/BOF_ROUTE_MAP.md
+ * Edit this file only for route-level layout/wiring.
+ */
 import type { Metadata } from "next";
 import { FleetSavingsCalculatorClient } from "@/components/marketing/funnel/FleetSavingsCalculatorClient";
 

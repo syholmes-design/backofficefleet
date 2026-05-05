@@ -1,3 +1,11 @@
+/**
+ * BOF Route Owner:
+ * URL: /drivers/:id/bank-info
+ * Type: DEMO
+ * Primary component: Unknown
+ * Route map: docs/BOF_ROUTE_MAP.md
+ * Edit this file only for route-level layout/wiring.
+ */
 import { notFound } from "next/navigation";
 import { getBofData } from "@/lib/load-bof-data";
 import { DriverBankInfoPageClient } from "@/components/drivers/DriverBankInfoPageClient";

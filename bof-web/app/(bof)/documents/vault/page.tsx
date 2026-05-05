@@ -1,3 +1,11 @@
+/**
+ * BOF Route Owner:
+ * URL: /documents/vault
+ * Type: DRIVER_DOCS
+ * Primary component: DriverVaultWorkspacePage
+ * Route map: docs/BOF_ROUTE_MAP.md
+ * Edit this file only for route-level layout/wiring.
+ */
 import { DriverVaultWorkspaceClient } from "@/components/documents/DriverVaultWorkspaceClient";
 
 export const metadata = {

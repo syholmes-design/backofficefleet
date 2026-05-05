@@ -1,3 +1,11 @@
+/**
+ * BOF Route Owner:
+ * URL: /drivers/:id/vault
+ * Type: DEMO
+ * Primary component: DriverVaultPage
+ * Route map: docs/BOF_ROUTE_MAP.md
+ * Edit this file only for route-level layout/wiring.
+ */
 "use client";
 
 import { use } from "react";

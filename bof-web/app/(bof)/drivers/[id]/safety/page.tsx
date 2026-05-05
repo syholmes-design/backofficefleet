@@ -1,3 +1,11 @@
+/**
+ * BOF Route Owner:
+ * URL: /drivers/:id/safety
+ * Type: DEMO
+ * Primary component: DriverSafetyPage
+ * Route map: docs/BOF_ROUTE_MAP.md
+ * Edit this file only for route-level layout/wiring.
+ */
 "use client";
 
 import { use } from "react";

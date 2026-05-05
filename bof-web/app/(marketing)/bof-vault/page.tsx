@@ -1,3 +1,11 @@
+/**
+ * BOF Route Owner:
+ * URL: /bof-vault
+ * Type: MARKETING
+ * Primary component: BofVaultPage
+ * Route map: docs/BOF_ROUTE_MAP.md
+ * Edit this file only for route-level layout/wiring.
+ */
 import type { Metadata } from "next";
 import Link from "next/link";
 import {

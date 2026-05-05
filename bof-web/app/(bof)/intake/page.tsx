@@ -1,3 +1,11 @@
+/**
+ * BOF Route Owner:
+ * URL: /intake
+ * Type: DEMO
+ * Primary component: IntakeEnginePage
+ * Route map: docs/BOF_ROUTE_MAP.md
+ * Edit this file only for route-level layout/wiring.
+ */
 import { IntakeEngineInboxClient } from "@/components/intake-engine/IntakeEngineInboxClient";
 
 export const metadata = {

@@ -1,3 +1,11 @@
+/**
+ * BOF Route Owner:
+ * URL: /drivers/:id
+ * Type: DEMO
+ * Primary component: Unknown
+ * Route map: docs/BOF_ROUTE_MAP.md
+ * Edit this file only for route-level layout/wiring.
+ */
 import { notFound } from "next/navigation";
 import { getBofData } from "@/lib/load-bof-data";
 import { getDriverById } from "@/lib/driver-queries";

@@ -1,3 +1,11 @@
+/**
+ * BOF Route Owner:
+ * URL: /settlements
+ * Type: SETTLEMENTS
+ * Primary component: SettlementsPage
+ * Route map: docs/BOF_ROUTE_MAP.md
+ * Edit this file only for route-level layout/wiring.
+ */
 import { Suspense } from "react";
 import { SettlementsPayrollPageClient } from "@/components/settlements-payroll/SettlementsPayrollPageClient";
 

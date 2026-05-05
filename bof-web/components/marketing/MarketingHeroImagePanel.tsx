@@ -1,3 +1,9 @@
+/**
+ * BOF Shared Component:
+ * Used by: shared marketing hero wrappers (private/government/vault)
+ * Do not edit for one page unless props/page-specific overrides are used.
+ * See docs/BOF_ROUTE_MAP.md.
+ */
 import type { CSSProperties } from "react";
 
 type MarketingHeroImagePanelProps = {

@@ -1,3 +1,11 @@
+/**
+ * BOF Route Owner:
+ * URL: /pretrip/:loadId
+ * Type: DEMO
+ * Primary component: Unknown
+ * Route map: docs/BOF_ROUTE_MAP.md
+ * Edit this file only for route-level layout/wiring.
+ */
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getBofData } from "@/lib/load-bof-data";

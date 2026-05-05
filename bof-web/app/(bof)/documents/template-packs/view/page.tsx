@@ -1,3 +1,11 @@
+/**
+ * BOF Route Owner:
+ * URL: /documents/template-packs/view
+ * Type: DRIVER_DOCS
+ * Primary component: BofDocumentViewerPage
+ * Route map: docs/BOF_ROUTE_MAP.md
+ * Edit this file only for route-level layout/wiring.
+ */
 import { Suspense } from "react";
 import { BofDocumentViewerClient } from "@/components/documents/BofDocumentViewerClient";
 

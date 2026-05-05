@@ -1,3 +1,11 @@
+/**
+ * BOF Route Owner:
+ * URL: /emergency-contacts/:driverId
+ * Type: DEMO
+ * Primary component: Unknown
+ * Route map: docs/BOF_ROUTE_MAP.md
+ * Edit this file only for route-level layout/wiring.
+ */
 import { EmergencyContactCard } from "@/components/emergency-contacts/EmergencyContactCard";
 import { getDriverOperationalProfile } from "@/lib/driver-operational-profile";
 import { useBofDemoData } from "@/lib/bof-demo-data-context";

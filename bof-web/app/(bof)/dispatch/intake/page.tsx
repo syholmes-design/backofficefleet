@@ -1,3 +1,11 @@
+/**
+ * BOF Route Owner:
+ * URL: /dispatch/intake
+ * Type: DISPATCH
+ * Primary component: DispatchIntakePage
+ * Route map: docs/BOF_ROUTE_MAP.md
+ * Edit this file only for route-level layout/wiring.
+ */
 import { Suspense } from "react";
 import { DispatchIntakePageClient } from "@/components/dispatch/DispatchIntakePageClient";
 

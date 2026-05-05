@@ -1,3 +1,11 @@
+/**
+ * BOF Route Owner:
+ * URL: /rf-actions
+ * Type: DEMO
+ * Primary component: RfActionsPage
+ * Route map: docs/BOF_ROUTE_MAP.md
+ * Edit this file only for route-level layout/wiring.
+ */
 import { RfActionsPageClient } from "@/components/rf-actions/RfActionsPageClient";
 
 export const metadata = {

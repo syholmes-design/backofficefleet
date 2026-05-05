@@ -1,3 +1,11 @@
+/**
+ * BOF Route Owner:
+ * URL: /emergency-contacts
+ * Type: DEMO
+ * Primary component: EmergencyContactsPage
+ * Route map: docs/BOF_ROUTE_MAP.md
+ * Edit this file only for route-level layout/wiring.
+ */
 import { EmergencyContactList } from "@/components/emergency-contacts/EmergencyContactList";
 
 export const metadata = {

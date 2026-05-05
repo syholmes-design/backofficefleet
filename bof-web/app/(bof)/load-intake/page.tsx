@@ -1,3 +1,11 @@
+/**
+ * BOF Route Owner:
+ * URL: /load-intake
+ * Type: DISPATCH
+ * Primary component: Unknown
+ * Route map: docs/BOF_ROUTE_MAP.md
+ * Edit this file only for route-level layout/wiring.
+ */
 import { redirect } from "next/navigation";
 
 export const metadata = {

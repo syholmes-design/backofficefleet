@@ -1,3 +1,11 @@
+/**
+ * BOF Route Owner:
+ * URL: /dispatch
+ * Type: DISPATCH
+ * Primary component: DispatchPage
+ * Route map: docs/BOF_ROUTE_MAP.md
+ * Edit this file only for route-level layout/wiring.
+ */
 import { Suspense } from "react";
 import { DispatchShell } from "@/components/dispatch/DispatchShell";
 

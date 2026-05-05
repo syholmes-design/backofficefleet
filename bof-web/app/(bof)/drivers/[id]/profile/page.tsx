@@ -1,3 +1,11 @@
+/**
+ * BOF Route Owner:
+ * URL: /drivers/:id/profile
+ * Type: DEMO
+ * Primary component: DriverProfilePage
+ * Route map: docs/BOF_ROUTE_MAP.md
+ * Edit this file only for route-level layout/wiring.
+ */
 "use client";
 
 import { use, useMemo } from "react";

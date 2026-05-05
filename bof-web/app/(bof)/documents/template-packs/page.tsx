@@ -1,3 +1,11 @@
+/**
+ * BOF Route Owner:
+ * URL: /documents/template-packs
+ * Type: DRIVER_DOCS
+ * Primary component: Unknown
+ * Route map: docs/BOF_ROUTE_MAP.md
+ * Edit this file only for route-level layout/wiring.
+ */
 import { BofTemplatePacksWorkspaceClient } from "@/components/documents/BofTemplatePacksWorkspaceClient";
 import type { BofTemplatePackId } from "@/lib/bof-template-system";
 

@@ -1,3 +1,9 @@
+/**
+ * BOF Shared Component:
+ * Used by: / (via app/(marketing)/page.tsx)
+ * Do not edit for one page unless props/page-specific overrides are used.
+ * See docs/BOF_ROUTE_MAP.md.
+ */
 import Link from "next/link";
 import Image from "next/image";
 import {

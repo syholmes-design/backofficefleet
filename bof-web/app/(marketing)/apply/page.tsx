@@ -1,3 +1,11 @@
+/**
+ * BOF Route Owner:
+ * URL: /apply
+ * Type: MARKETING
+ * Primary component: ApplyPage
+ * Route map: docs/BOF_ROUTE_MAP.md
+ * Edit this file only for route-level layout/wiring.
+ */
 import type { Metadata } from "next";
 import { FleetApplicationWizardClient } from "@/components/marketing/funnel/FleetApplicationWizardClient";
 

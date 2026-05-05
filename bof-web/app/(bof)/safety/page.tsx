@@ -1,3 +1,11 @@
+/**
+ * BOF Route Owner:
+ * URL: /safety
+ * Type: DEMO
+ * Primary component: SafetyPage
+ * Route map: docs/BOF_ROUTE_MAP.md
+ * Edit this file only for route-level layout/wiring.
+ */
 import { SafetyShell } from "@/components/safety/SafetyShell";
 
 export const metadata = {
