@@ -470,6 +470,51 @@ export function DriverDetailPageClient({ driverId }: { driverId: string }) {
         <span>{driver.name}</span>
       </nav>
 
+      <section className="bof-driver-panel bof-driver-dispatch-panel" aria-labelledby="dispatch-decision-heading">
+        <div className="bof-driver-dispatch-panel__head">
+          <h2 id="dispatch-decision-heading" className="bof-h3">
+            Dispatch decision
+          </h2>
+          <span className={dispatchChipClass} title={dispatchEligibility.label}>
+            {dispatchChipLabel}
+          </span>
+        </div>
+        <p style={{ margin: "0.35rem 0 0", color: "#cbd5e1", fontSize: "0.88rem" }}>
+          {dispatchEligibility.label}
+        </p>
+        {dispatchEligibility.hardBlockerDetails.length > 0 ? (
+          <ul className="bof-driver-blocker-list">
+            {dispatchEligibility.hardBlockerDetails.map((b) => (
+              <li key={b.id}>
+                <span className="bof-driver-blocker-msg">{b.message}</span>
+                <Link className="bof-link-secondary bof-small" href={`/drivers/${driverId}/vault`}>
+                  Review in vault
+                </Link>
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p className="bof-muted bof-small" style={{ marginTop: "0.5rem" }}>
+            No active hard gates from CDL / medical / MVR / FMCSA / safety finance holds.
+          </p>
+        )}
+        {dispatchEligibility.recommendedAction ? (
+          <div style={{ marginTop: "0.75rem" }}>
+            <Link href={dispatchEligibility.recommendedAction.href} className="bof-cc-action-btn bof-cc-action-btn-primary">
+              {dispatchEligibility.recommendedAction.label}
+            </Link>
+          </div>
+        ) : null}
+        <div style={{ marginTop: "0.65rem", display: "flex", flexWrap: "wrap", gap: "0.5rem" }}>
+          <Link href={`/drivers/${driver.id}/dispatch`} className="bof-cc-action-btn">
+            Assignment workspace
+          </Link>
+          <Link href={`/dispatch?driverId=${encodeURIComponent(driver.id)}`} className="bof-cc-action-btn">
+            Open dispatch board
+          </Link>
+        </div>
+      </section>
+
       <section
         className="bof-driver-hub-section bof-driver-hub-section--profile"
         aria-label="Profile and operations"

@@ -6962,6 +6962,82 @@ body {
   filter: brightness(1.06);
 }
 
+/* Drivers /drivers — enterprise command header (no full-bleed image) */
+.bof-drivers-command-header {
+  margin-bottom: 1.25rem;
+  padding: 1.35rem 1.35rem 1.25rem;
+  border-radius: calc(var(--bof-radius) + 4px);
+  border: 1px solid rgba(51, 65, 85, 0.65);
+  background: var(--bof-surface);
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.04) inset;
+}
+.bof-drivers-command-header__intro {
+  margin-bottom: 1rem;
+}
+.bof-drivers-kpi-strip.bof-oper-metrics {
+  flex-wrap: wrap;
+  margin-bottom: 1rem;
+}
+.bof-drivers-filter-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-bottom: 1rem;
+}
+.bof-drivers-filter-pill {
+  border-radius: 999px;
+  border: 1px solid rgba(51, 65, 85, 0.85);
+  background: rgba(15, 23, 42, 0.35);
+  color: #e2e8f0;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  padding: 0.35rem 0.75rem;
+  cursor: pointer;
+}
+.bof-drivers-filter-pill:hover {
+  border-color: rgba(45, 212, 191, 0.45);
+  color: #ccfbf1;
+}
+.bof-drivers-filter-pill--active {
+  border-color: rgba(45, 212, 191, 0.65);
+  background: rgba(13, 148, 136, 0.22);
+  color: #ecfdf5;
+}
+.bof-drivers-secondary-metrics {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 0.65rem;
+}
+.bof-drivers-secondary-metric {
+  border: 1px solid rgba(51, 65, 85, 0.55);
+  border-radius: 0.5rem;
+  padding: 0.5rem 0.65rem;
+  background: rgba(15, 23, 42, 0.25);
+}
+.bof-drivers-secondary-metric__label {
+  display: block;
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #94a3b8;
+}
+.bof-drivers-secondary-metric__value {
+  display: block;
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #f8fafc;
+}
+.bof-drivers-secondary-metric__hint {
+  display: block;
+  font-size: 0.62rem;
+  color: #64748b;
+  margin-top: 0.15rem;
+  line-height: 1.35;
+}
+
 /* Drivers list — unified command hero (default shell for non-overlay consumers) */
 .bof-drivers-command-hero {
   margin-bottom: 1.25rem;
@@ -8433,6 +8509,32 @@ body {
 
 .bof-driver-panel .bof-muted {
   color: #94a3b8;
+}
+
+.bof-driver-dispatch-panel {
+  margin-bottom: 1rem;
+  background: rgba(15, 23, 42, 0.92);
+}
+.bof-driver-dispatch-panel__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.65rem;
+}
+.bof-driver-blocker-list {
+  margin: 0.65rem 0 0;
+  padding-left: 1.1rem;
+  color: #e2e8f0;
+  font-size: 0.84rem;
+  line-height: 1.45;
+}
+.bof-driver-blocker-list li {
+  margin: 0.35rem 0;
+}
+.bof-driver-blocker-msg {
+  display: block;
+  margin-bottom: 0.15rem;
 }
 
 .bof-driver-identity-header {

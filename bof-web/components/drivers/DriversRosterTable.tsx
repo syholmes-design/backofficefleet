@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { DriverAvatar } from "@/components/DriverAvatar";
@@ -35,6 +34,11 @@ import {
 } from "@/lib/safety-scorecard";
 import { getSafetyEvidenceOpenHref } from "@/components/safety/SafetyEvidenceThumb";
 import { DriverReviewDrawer } from "@/components/drivers/DriverReviewDrawer";
+import {
+  getDriverCommandSummary,
+  driverHasExpiringSoonDoc,
+  driverHasMissingOrInvalidDoc,
+} from "@/lib/drivers/drivers-command-metrics";
 
 type Severity = "high" | "medium" | "low";
 
@@ -64,7 +68,13 @@ type DriverRow = {
   primaryReviewReason: string;
 };
 
-type DriverStatusFilter = "all" | "ready" | "needs_review" | "blocked";
+type DriverStatusFilter =
+  | "all"
+  | "ready"
+  | "needs_review"
+  | "blocked"
+  | "expiring_soon"
+  | "missing_docs";
 
 type ExceptionItem = {
   key: string;
@@ -105,8 +115,7 @@ export function DriversRosterTable() {
   const complianceData = useMemo(() => getComplianceStatusChartData(data), [data]);
   const settlementData = useMemo(() => getSettlementStatusChartData(data), [data]);
 
-  const [heroImageFailed, setHeroImageFailed] = useState(false);
-  const heroImageSrc = "/images/drivers-emma-brown-hero.png";
+  const commandSummary = useMemo(() => getDriverCommandSummary(data), [data]);
 
   const commandHeroChips = useMemo(() => {
     const ready = readinessData.find((p) => p.label === "Ready")?.value ?? 0;
@@ -172,8 +181,14 @@ export function DriversRosterTable() {
 
   const filteredDriverRows = useMemo(() => {
     if (driverStatusFilter === "all") return driverRows;
+    if (driverStatusFilter === "expiring_soon") {
+      return driverRows.filter((row) => driverHasExpiringSoonDoc(data, row.driverId));
+    }
+    if (driverStatusFilter === "missing_docs") {
+      return driverRows.filter((row) => driverHasMissingOrInvalidDoc(data, row.driverId));
+    }
     return driverRows.filter((row) => row.eligibilityStatus === driverStatusFilter);
-  }, [driverRows, driverStatusFilter]);
+  }, [data, driverRows, driverStatusFilter]);
 
   const applyReadinessBarFilter = (label: string) => {
     if (label === "Ready") setDriverStatusFilter("ready");
@@ -184,11 +199,6 @@ export function DriversRosterTable() {
       document.getElementById("primary-driver-table")?.scrollIntoView({ behavior: "smooth", block: "start" });
     });
   };
-
-  const emmaSpotlightRow = useMemo(
-    () => driverRows.find((r) => r.driverId === "DRV-009") ?? null,
-    [driverRows]
-  );
 
   useEffect(() => {
     const list = data.drivers.map((d) => getDriverDispatchEligibility(data, d.id));
@@ -419,79 +429,101 @@ export function DriversRosterTable() {
   return (
     <div className="bof-page bof-cc-page">
       <section
-        className="bof-drivers-command-hero bof-drivers-hero bof-drivers-hero--overlay"
+        className="bof-drivers-command-header"
         aria-labelledby="bof-drivers-command-title"
       >
-        <div className="bof-drivers-hero__bg">
-          {!heroImageFailed ? (
-            <Image
-              src={heroImageSrc}
-              alt="Emma Brown standing in front of a truck at a fleet terminal."
-              fill
-              sizes="100vw"
-              priority
-              className="bof-drivers-hero__bgImage"
-              onError={() => setHeroImageFailed(true)}
-            />
-          ) : (
-            <div className="bof-drivers-command-hero__placeholder">
-              <strong>Hero image not found</strong>
-              <p>
-                Add <code className="text-teal-300/90">public/images/drivers-emma-brown-hero.png</code> (Emma Brown,
-                DRV-009). Metrics below use live fleet data.
-              </p>
-            </div>
-          )}
-        </div>
-        {!heroImageFailed ? <div className="bof-drivers-hero__overlayGrad" aria-hidden="true" /> : null}
-        {emmaSpotlightRow && !heroImageFailed ? (
-          <div className="bof-drivers-hero__caption">
-            <Link href={`/drivers/${emmaSpotlightRow.driverId}`} className="bof-drivers-hero__caption-title">
-              {emmaSpotlightRow.name} · {emmaSpotlightRow.driverId}
+        <div className="bof-drivers-command-header__intro">
+          <p className="bof-cc-hero-eyebrow">Driver operations</p>
+          <h1 id="bof-drivers-command-title" className="bof-cc-hero-title">
+            Driver readiness &amp; vault command
+          </h1>
+          <p className="bof-cc-hero-tagline">
+            Canonical driver credentials, vault documents, dispatch gates, and safety posture — one roster view tied
+            to the same eligibility engine as dispatch.
+          </p>
+          <div className="bof-cc-hero-actions">
+            <a href="#blocked-roster" className="bof-cc-hero-cta bof-cc-hero-cta-primary">
+              Review blocked drivers
+            </a>
+            <Link href="/bof-vault" className="bof-cc-hero-cta bof-cc-hero-cta-secondary">
+              Open BOF Vault
             </Link>
-            <p className="bof-drivers-hero__caption-line">
-              {emmaSpotlightRow.status === "Review"
-                ? "Needs review"
-                : emmaSpotlightRow.status === "Blocked"
-                  ? "Blocked"
-                  : "Active"}
-            </p>
-            <p className="bof-drivers-hero__caption-line bof-drivers-hero__caption-muted">
-              {emmaSpotlightRow.currentOrNextLoad}
-            </p>
+            <Link href="/dispatch" className="bof-cc-hero-cta bof-cc-hero-cta-secondary">
+              Open dispatch board
+            </Link>
+            <Link href="/command-center" className="bof-cc-hero-cta bof-cc-hero-cta-secondary">
+              Command Center queue
+            </Link>
           </div>
-        ) : null}
-        <div className="bof-drivers-hero__content">
-          <div className="bof-drivers-hero__content-inner">
-            <p className="bof-cc-hero-eyebrow">Driver Operations</p>
-            <h1 id="bof-drivers-command-title" className="bof-cc-hero-title">
-              Drivers Command Center
-            </h1>
-            <p className="bof-cc-hero-tagline">
-              Track driver readiness, compliance documents, safety risk, dispatch eligibility, and settlement readiness
-              across the fleet.
-            </p>
-            <div className="bof-cc-hero-actions">
-              <a href="#blocked-roster" className="bof-cc-hero-cta bof-cc-hero-cta-primary">
-                Review Blocked Drivers
-              </a>
-              <Link href="/bof-vault" className="bof-cc-hero-cta bof-cc-hero-cta-secondary">
-                Open BOF Vault
-              </Link>
-              <Link href="/dispatch" className="bof-cc-hero-cta bof-cc-hero-cta-secondary">
-                Dispatch Ready Drivers
-              </Link>
-            </div>
-            <div className="bof-drivers-command-hero__chips" aria-label="Live dispatch and readiness metrics">
-              {commandHeroChips.map((chip) => (
-                <div key={chip.label} className="bof-drivers-command-hero__chip">
-                  <span className="bof-drivers-command-hero__chip-label">{chip.label}</span>
-                  <span className="bof-drivers-command-hero__chip-value">{chip.value}</span>
-                  <span className="bof-drivers-command-hero__chip-hint">{chip.hint}</span>
-                </div>
-              ))}
-            </div>
+        </div>
+
+        <section className="bof-oper-metrics bof-drivers-kpi-strip" aria-label="Fleet readiness summary">
+          <div className="bof-oper-metric">
+            <span className="bof-oper-metric-label">Total drivers</span>
+            <strong className="bof-oper-metric-value">{commandSummary.totalDrivers}</strong>
           </div>
+          <div className="bof-oper-metric">
+            <span className="bof-oper-metric-label">Ready</span>
+            <strong className="bof-oper-metric-value">{commandSummary.ready}</strong>
+          </div>
+          <div className="bof-oper-metric">
+            <span className="bof-oper-metric-label">Needs review</span>
+            <strong className="bof-oper-metric-value">{commandSummary.needsReview}</strong>
+          </div>
+          <div className="bof-oper-metric">
+            <span className="bof-oper-metric-label">Dispatch blocked</span>
+            <strong className="bof-oper-metric-value">{commandSummary.dispatchBlocked}</strong>
+          </div>
+          <div className="bof-oper-metric">
+            <span className="bof-oper-metric-label">Expiring soon</span>
+            <strong className="bof-oper-metric-value">{commandSummary.expiringSoonDrivers}</strong>
+          </div>
+          <div className="bof-oper-metric">
+            <span className="bof-oper-metric-label">Missing / invalid docs</span>
+            <strong className="bof-oper-metric-value">{commandSummary.missingOrInvalidDocsDrivers}</strong>
+          </div>
+          <div className="bof-oper-metric">
+            <span className="bof-oper-metric-label">Safety at risk</span>
+            <strong className="bof-oper-metric-value">{commandSummary.safetyAtRiskDrivers}</strong>
+          </div>
+        </section>
+
+        <div className="bof-drivers-filter-bar" role="toolbar" aria-label="Filter driver roster">
+          {[
+            { id: "all" as const, label: "All" },
+            { id: "ready" as const, label: "Ready" },
+            { id: "needs_review" as const, label: "Needs review" },
+            { id: "blocked" as const, label: "Dispatch blocked" },
+            { id: "expiring_soon" as const, label: "Expiring soon" },
+            { id: "missing_docs" as const, label: "Missing docs" },
+          ].map((f) => (
+            <button
+              key={f.id}
+              type="button"
+              className={`bof-drivers-filter-pill ${driverStatusFilter === f.id ? "bof-drivers-filter-pill--active" : ""}`}
+              onClick={() => {
+                setDriverStatusFilter(f.id);
+                requestAnimationFrame(() => {
+                  document.getElementById("primary-driver-table")?.scrollIntoView({
+                    behavior: "smooth",
+                    block: "start",
+                  });
+                });
+              }}
+            >
+              {f.label}
+            </button>
+          ))}
+        </div>
+
+        <div className="bof-drivers-secondary-metrics" aria-label="Secondary readiness breakdown">
+          {commandHeroChips.map((chip) => (
+            <div key={chip.label} className="bof-drivers-secondary-metric">
+              <span className="bof-drivers-secondary-metric__label">{chip.label}</span>
+              <span className="bof-drivers-secondary-metric__value">{chip.value}</span>
+              <span className="bof-drivers-secondary-metric__hint">{chip.hint}</span>
+            </div>
+          ))}
         </div>
       </section>
 
@@ -581,13 +613,19 @@ export function DriversRosterTable() {
             </div>
             {driverStatusFilter !== "all" ? (
               <div className="flex flex-wrap items-center gap-2">
-                <span className="bof-cc-chip bof-cc-chip-warn" title="Roster filtered from readiness chart">
+                <span className="bof-cc-chip bof-cc-chip-warn" title="Roster filter active">
                   Filter:{" "}
                   {driverStatusFilter === "ready"
                     ? "Ready"
                     : driverStatusFilter === "needs_review"
                       ? "Needs review"
-                      : "Blocked"}
+                      : driverStatusFilter === "blocked"
+                        ? "Dispatch blocked"
+                        : driverStatusFilter === "expiring_soon"
+                          ? "Expiring soon"
+                          : driverStatusFilter === "missing_docs"
+                            ? "Missing docs"
+                            : "—"}
                 </span>
                 <button
                   type="button"

@@ -5,6 +5,8 @@ import { AlertOctagon, X } from "lucide-react";
 import { useDispatchDashboardStore } from "@/lib/stores/dispatch-dashboard-store";
 import { useBofDemoData } from "@/lib/bof-demo-data-context";
 import { getDriverDispatchEligibility } from "@/lib/driver-dispatch-eligibility";
+import { getOrderedDocumentsForDriver } from "@/lib/driver-queries";
+import type { BofData } from "@/lib/load-bof-data";
 import type { Tractor, Trailer } from "@/types/dispatch";
 import {
   DriverHubReviewLink,
@@ -17,6 +19,24 @@ type Props = {
   loadId: string | null;
   onClose: () => void;
 };
+
+function driverDocumentAssignmentSummary(data: BofData, driverId: string) {
+  const docs = getOrderedDocumentsForDriver(data, driverId);
+  const verified = docs.filter((d) => d.status.toUpperCase() === "VALID").length;
+  let latestTs = 0;
+  for (const d of docs) {
+    for (const raw of [d.issueDate, d.cdlIssueDate]) {
+      if (typeof raw !== "string" || !raw.trim()) continue;
+      const t = Date.parse(raw);
+      if (!Number.isNaN(t) && t >= latestTs) latestTs = t;
+    }
+  }
+  const lastReviewed =
+    latestTs > 0
+      ? new Date(latestTs).toLocaleDateString(undefined, { dateStyle: "medium" })
+      : null;
+  return { verifiedCount: verified, coreDocTotal: docs.length, lastReviewed };
+}
 
 function mergeSelectable<T extends { status: string }>(
   available: T[],
@@ -145,6 +165,7 @@ export function AssignDriverEquipmentModal({ open, loadId, onClose }: Props) {
                   const eligibility = getDriverDispatchEligibility(data, d.driver_id);
                   const invalid = eligibility.status === "blocked";
                   const sel = d.driver_id === driverId;
+                  const docSum = driverDocumentAssignmentSummary(data, d.driver_id);
                   return (
                     <div
                       key={d.driver_id}
@@ -184,6 +205,15 @@ export function AssignDriverEquipmentModal({ open, loadId, onClose }: Props) {
                         ) : null}
                         <div className="mt-1 text-[10px] uppercase text-slate-500">
                           Compliance: {d.compliance_status}
+                        </div>
+                        <div className="mt-1 text-[10px] text-slate-500">
+                          Core docs verified: {docSum.verifiedCount}/{docSum.coreDocTotal}
+                          {docSum.lastReviewed ? (
+                            <span className="text-slate-600">
+                              {" "}
+                              · Last doc activity {docSum.lastReviewed}
+                            </span>
+                          ) : null}
                         </div>
                       </button>
                       {!invalid && eligibility.status !== "ready" ? (
