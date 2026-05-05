@@ -35,6 +35,28 @@ export function CommandCenterIssueList({
 
   return (
     <>
+      <section className="bof-cc-risk-summary" aria-label="Compact risk summary">
+        <h3 className="bof-cc-risk-summary-title">Risk Summary</h3>
+        <div className="bof-cc-risk-summary-grid">
+          <div className="bof-cc-risk-summary-item">
+            <span className="bof-cc-risk-summary-label">Critical issues</span>
+            <span className="bof-cc-risk-summary-value bof-cc-risk-summary--critical">{critical}</span>
+          </div>
+          <div className="bof-cc-risk-summary-item">
+            <span className="bof-cc-risk-summary-label">Revenue at risk</span>
+            <span className="bof-cc-risk-summary-value">{revenueAtRisk}</span>
+          </div>
+          <div className="bof-cc-risk-summary-item">
+            <span className="bof-cc-risk-summary-label">Drivers blocked/under review</span>
+            <span className="bof-cc-risk-summary-value">{driversFlagged}</span>
+          </div>
+          <div className="bof-cc-risk-summary-item">
+            <span className="bof-cc-risk-summary-label">Loads with missing proof</span>
+            <span className="bof-cc-risk-summary-value">{proofIssues}</span>
+          </div>
+        </div>
+      </section>
+
       <div className="bof-drivers-filter-bar" role="toolbar" aria-label="Queue quick metrics">
         <button type="button" className={`bof-drivers-filter-pill ${severityFilter === "Critical" ? "bof-drivers-filter-pill--active" : ""}`} onClick={() => setSeverityFilter(severityFilter === "Critical" ? "all" : "Critical")}>
           Critical issues: {critical}

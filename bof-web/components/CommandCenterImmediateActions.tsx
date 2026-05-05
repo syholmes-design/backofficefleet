@@ -17,6 +17,31 @@ function priorityLabel(p: ImmediateActionRow["priority"]) {
   return "Watch";
 }
 
+function getActionLabel(r: ImmediateActionRow): string {
+  if (r.loadId && /proof|pod|seal/i.test(r.label)) {
+    return `Open ${r.loadId} proof issue`;
+  }
+  if (r.loadId && /dispatch/i.test(r.label)) {
+    return `Open load ${r.loadId}`;
+  }
+  if (r.driverId && /compliance|document/i.test(r.label)) {
+    return `Open driver vault`;
+  }
+  if (r.driverId && /settlement|hold/i.test(r.label)) {
+    return `Open settlement hold`;
+  }
+  if (r.driverId && /safety|claim/i.test(r.label)) {
+    return `Open safety review`;
+  }
+  if (r.loadId) {
+    return `Open load ${r.loadId}`;
+  }
+  if (r.driverId) {
+    return `Open ${r.driverName} issue`;
+  }
+  return "Open issue";
+}
+
 export function CommandCenterImmediateActions({
   rows,
 }: {
@@ -109,7 +134,7 @@ export function CommandCenterImmediateActions({
                   </td>
                   <td>
                     <Link href={r.resolveHref} className="bof-cc-resolve-btn">
-                      Resolve
+                      {getActionLabel(r)}
                     </Link>
                   </td>
                 </tr>
