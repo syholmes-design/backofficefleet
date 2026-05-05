@@ -172,10 +172,10 @@ export function ReviewDetailsDrawer({
                       </div>
                       <p style={{ margin: "0 0 0.35rem", fontWeight: 600, fontSize: "0.92rem" }}>{issue.title}</p>
                       <p style={{ margin: "0 0 0.35rem", fontSize: "0.82rem", color: "var(--bof-muted)" }}>
-                        {issue.detail}
+                        <strong>Why:</strong> {issue.detail}
                       </p>
                       <p style={{ margin: "0 0 0.35rem", fontSize: "0.82rem" }}>
-                        <strong>Why it matters:</strong> {issue.whyItMatters}
+                        <strong>Impact:</strong> {issue.whyItMatters}
                       </p>
                       <p style={{ margin: "0 0 0.5rem", fontSize: "0.82rem" }}>
                         <strong>Recommended fix:</strong> {issue.recommendedFix}

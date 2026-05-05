@@ -41,6 +41,20 @@ export type DriverReviewIssue = {
   dispatchBlockerId?: string;
   canResolveInDemo: boolean;
   resolved?: boolean;
+  plainEnglishReason?: string;
+  operationalImpact?: string;
+  proposedSolution?: string;
+  severityLabel?: "blocked" | "needs_review" | "watch";
+};
+
+export type DriverReviewGuidance = {
+  headline: string;
+  plainEnglishReason: string;
+  operationalImpact: string;
+  proposedSolution: string;
+  severity: "blocked" | "needs_review" | "watch";
+  primaryActionLabel: string;
+  primaryActionHref?: string;
 };
 
 export type DriverReviewExplanation = {
@@ -59,6 +73,7 @@ export type DriverReviewExplanation = {
   primaryAction?: { label: string; href: string };
   /** Narrative primary remediation — first open issue fix, else eligibility CTA label */
   recommendedNextStepText: string;
+  primaryGuidance: DriverReviewGuidance;
 };
 
 function hashString(s: string): string {
@@ -209,6 +224,175 @@ function buildDocumentsColumnLabel(cred: ReturnType<typeof getDriverCredentialSt
     parts.push(`Bank: ${credentialDisplayText(cred.bankInformation)}`);
   if (parts.length > 0) return parts.slice(0, 2).join(" · ");
   return "OK";
+}
+
+function titleCaseDocument(doc: string): string {
+  if (/^\s*w-?9\s*$/i.test(doc)) return "W-9";
+  if (/^\s*i-?9\s*$/i.test(doc)) return "I-9";
+  if (/^\s*cdl\s*$/i.test(doc)) return "CDL";
+  if (/medical\s*card/i.test(doc)) return "Medical card";
+  if (/fmcsa/i.test(doc)) return "FMCSA document";
+  if (/mvr/i.test(doc)) return "MVR";
+  return doc.trim() || "document";
+}
+
+function extractKnownDocumentName(raw: string): string | null {
+  const candidates = ["CDL", "Medical Card", "FMCSA", "MVR", "W-9", "I-9", "Bank Information"];
+  const lower = raw.toLowerCase();
+  for (const c of candidates) {
+    if (lower.includes(c.toLowerCase())) return c;
+  }
+  return null;
+}
+
+function toSeverityLabel(s: DriverReviewIssueSeverity): "blocked" | "needs_review" | "watch" {
+  if (s === "critical" || s === "high") return "blocked";
+  if (s === "warning") return "needs_review";
+  return "watch";
+}
+
+function normalizeIssueForDispatchers(
+  issue: DriverReviewIssue,
+  reviewStatus: DriverReviewExplanation["reviewStatus"],
+  cred: ReturnType<typeof getDriverCredentialStatus>
+): DriverReviewIssue {
+  const baseHref = issue.actionHref ?? "";
+  const baseLabel = issue.actionLabel?.trim() || "Review driver file";
+  const text = `${issue.id} ${issue.title} ${issue.detail}`.toLowerCase();
+
+  const set = (
+    headline: string,
+    reason: string,
+    impact: string,
+    solution: string,
+    actionLabel: string,
+    actionHref?: string
+  ): DriverReviewIssue => ({
+    ...issue,
+    title: headline,
+    detail: reason,
+    whyItMatters: impact,
+    recommendedFix: solution,
+    actionLabel,
+    actionHref: actionHref ?? issue.actionHref,
+    plainEnglishReason: reason,
+    operationalImpact: impact,
+    proposedSolution: solution,
+    severityLabel: toSeverityLabel(issue.severity),
+  });
+
+  if (/cdl/.test(text) && /expired/.test(text)) {
+    return set(
+      "CDL expired",
+      "This driver cannot be cleared for dispatch because the CDL is expired.",
+      "Dispatch should not assign this driver until the renewed CDL is uploaded and verified.",
+      "Upload the renewed CDL, confirm the expiration date, then mark it ready for review.",
+      "Open CDL document",
+      baseHref
+    );
+  }
+
+  if (/medical/.test(text) && /expired/.test(text) && cred.medicalCard.status === "expired") {
+    const suffix = cred.medicalCard.expirationDate ? ` (expired ${cred.medicalCard.expirationDate})` : "";
+    return set(
+      "Medical card expired",
+      `This driver cannot be cleared for dispatch because the medical card is expired${suffix}.`,
+      "Dispatch should not assign this driver until the updated medical card is uploaded and verified.",
+      "Request the renewed medical card, upload it to the driver vault, and verify the new expiration date.",
+      "Open medical card",
+      baseHref
+    );
+  }
+
+  if (/medical/.test(text) && (/expiring/.test(text) || /due soon/.test(text))) {
+    const exp = cred.medicalCard.expirationDate ? ` on ${cred.medicalCard.expirationDate}` : "";
+    return set(
+      "Medical card expires soon",
+      `This driver is currently usable, but the medical card is approaching expiration${exp}.`,
+      "If not renewed in time, this driver can become dispatch blocked.",
+      "Request the updated medical card now and upload it to the driver vault before expiration.",
+      "Open medical card",
+      baseHref
+    );
+  }
+
+  if ((/fmcsa/.test(text) || /mvr/.test(text)) && /expired/.test(text)) {
+    const doc = /fmcsa/.test(text) ? "FMCSA document" : "MVR";
+    return set(
+      `${doc} expired`,
+      `This driver has an expired ${doc} requirement on file.`,
+      "Dispatch and compliance review should treat this as not dispatch-ready until corrected.",
+      `Upload the updated ${doc}, verify the date, and clear the review item.`,
+      `Open ${doc}`,
+      baseHref
+    );
+  }
+
+  if (/missing/.test(text)) {
+    const doc = titleCaseDocument(extractKnownDocumentName(issue.title) ?? "required document");
+    return set(
+      "Required document missing",
+      `The driver file is missing ${doc}.`,
+      "BOF cannot fully clear this driver until the missing document is provided.",
+      `Upload ${doc} to the driver vault and submit it for review.`,
+      "Open driver vault",
+      baseHref || undefined
+    );
+  }
+
+  if (/safety/.test(text) || issue.category === "safety") {
+    return set(
+      "Safety review needed",
+      "This driver has a safety item that should be reviewed before assignment.",
+      "Dispatch should confirm eligibility before assigning the next load.",
+      "Open the safety record, resolve flagged items, and document the review outcome.",
+      "Open safety record",
+      baseHref || undefined
+    );
+  }
+
+  if (/expiring/.test(text)) {
+    const doc = titleCaseDocument(extractKnownDocumentName(issue.title) ?? "credential");
+    return set(
+      `${doc} expires soon`,
+      `This driver is currently usable, but ${doc.toLowerCase()} is approaching expiration.`,
+      "Renewal should be completed now to avoid a dispatch block.",
+      `Request the updated ${doc.toLowerCase()} and upload it to the driver vault.`,
+      "Open driver vault",
+      baseHref || undefined
+    );
+  }
+
+  if (reviewStatus === "blocked" && (issue.category === "dispatch" || issue.severity === "critical")) {
+    return set(
+      "Driver blocked",
+      "This driver has unresolved items that currently prevent dispatch.",
+      "Do not assign this driver until the blocking items are cleared.",
+      "Start with expired or missing compliance documents, then rerun the readiness check.",
+      "Open driver vault",
+      baseHref || undefined
+    );
+  }
+
+  return set(
+    "Review needed",
+    "This driver has a readiness issue that needs manual review.",
+    "Dispatch should confirm eligibility before assignment.",
+    "Open the driver vault and review required documents, safety status, and dispatch eligibility.",
+    baseLabel || "Review driver file",
+    baseHref || undefined
+  );
+}
+
+function guidancePriorityRank(i: DriverReviewIssue): number {
+  const txt = `${i.title} ${i.detail}`.toLowerCase();
+  if (/cdl/.test(txt) && /expired/.test(txt)) return 1;
+  if (/medical/.test(txt) && /expired/.test(txt)) return 2;
+  if (/fmcsa|mvr|compliance/.test(txt) && /expired/.test(txt)) return 3;
+  if (/missing/.test(txt)) return 4;
+  if (/driver blocked|dispatch blocked|safety review needed/.test(txt)) return 5;
+  if (/expir/.test(txt)) return 6;
+  return 7;
 }
 
 /**
@@ -515,7 +699,10 @@ export function getDriverReviewExplanation(data: BofData, driverId: string): Dri
   }
 
   const issuesForPresentation = filterIssuesAgainstCanonicalCredentials(data, driverId, issues);
-  const activeIssues = issuesForPresentation.filter((i) => !i.resolved);
+  const normalizedIssues = issuesForPresentation.map((i) =>
+    normalizeIssueForDispatchers(i, eligibility.status, cred)
+  );
+  const activeIssues = normalizedIssues.filter((i) => !i.resolved);
   const summary =
     activeIssues.length === 0
       ? "No open review items for this driver."
@@ -531,7 +718,7 @@ export function getDriverReviewExplanation(data: BofData, driverId: string): Dri
   );
 
   let primaryAction: DriverReviewExplanation["primaryAction"];
-  const first = activeIssues[0];
+  const first = [...activeIssues].sort((a, b) => guidancePriorityRank(a) - guidancePriorityRank(b))[0];
   if (first?.actionHref && first.actionLabel) {
     primaryAction = { label: first.actionLabel, href: first.actionHref };
   }
@@ -546,6 +733,44 @@ export function getDriverReviewExplanation(data: BofData, driverId: string): Dri
     reviewStatus = "ready";
   }
 
+  const fallbackGuidance: DriverReviewGuidance = {
+    headline: "Review needed",
+    plainEnglishReason: "This driver has a readiness issue that needs manual review.",
+    operationalImpact: "Dispatch should confirm eligibility before assignment.",
+    proposedSolution:
+      "Open the driver vault and review required documents, safety status, and dispatch eligibility.",
+    severity: reviewStatus === "blocked" ? "blocked" : reviewStatus === "needs_review" ? "needs_review" : "watch",
+    primaryActionLabel: "Open driver vault",
+    primaryActionHref: `/drivers/${driverId}/vault`,
+  };
+
+  let primaryGuidance: DriverReviewGuidance = first
+    ? {
+        headline: first.title,
+        plainEnglishReason: first.detail,
+        operationalImpact: first.whyItMatters,
+        proposedSolution: first.recommendedFix,
+        severity:
+          reviewStatus === "blocked" ? "blocked" : reviewStatus === "needs_review" ? "needs_review" : "watch",
+        primaryActionLabel: first.actionLabel?.trim() || fallbackGuidance.primaryActionLabel,
+        primaryActionHref: first.actionHref ?? fallbackGuidance.primaryActionHref,
+      }
+    : fallbackGuidance;
+
+  if (reviewStatus === "blocked" && activeIssues.length > 1) {
+    primaryGuidance = {
+      ...primaryGuidance,
+      headline: "Driver blocked",
+      plainEnglishReason: "This driver has multiple unresolved items that prevent dispatch.",
+      operationalImpact: "Do not assign this driver until the blocking items are cleared.",
+      proposedSolution:
+        "Start with expired or missing compliance documents, then rerun the readiness check.",
+      primaryActionLabel: "Open driver vault",
+      primaryActionHref: `/drivers/${driverId}/vault`,
+      severity: "blocked",
+    };
+  }
+
   return {
     driverId,
     driverName,
@@ -555,10 +780,11 @@ export function getDriverReviewExplanation(data: BofData, driverId: string): Dri
     status: reviewStatus,
     reviewStatus,
     summary,
-    issues: issuesForPresentation,
+    issues: normalizedIssues,
     documentsColumnLabel,
     complianceColumnLabel,
     primaryAction,
     recommendedNextStepText,
+    primaryGuidance,
   };
 }

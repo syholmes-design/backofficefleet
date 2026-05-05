@@ -34,6 +34,13 @@ function issueSeverityRank(s: DriverReviewIssue["severity"]) {
   return s === "critical" ? 0 : s === "high" ? 1 : s === "warning" ? 2 : 3;
 }
 
+function compactFix(text: string | undefined): string {
+  const raw = (text ?? "").trim();
+  if (!raw) return "review and resolve";
+  const one = raw.split(".")[0]?.trim() ?? raw;
+  return one.charAt(0).toLowerCase() + one.slice(1);
+}
+
 /**
  * Single projection for the Drivers roster table and review drawer — driverId-keyed only.
  */
@@ -51,12 +58,14 @@ export function getDriverTableRowModel(data: BofData, driverId: string): DriverT
   const sorted = [...open].sort((a, b) => issueSeverityRank(a.severity) - issueSeverityRank(b.severity));
   const primary = sorted[0];
   const primaryReviewReason =
-    primary?.title ??
+    primary
+      ? `${primary.title} — ${compactFix(primary.recommendedFix)}.`
+      :
     (effective === "needs_review" || effective === "blocked"
       ? "Dispatch readiness review — see driver review"
       : "");
   const reviewReasonSource =
-    primary?.detail ?? primary?.whyItMatters ?? "getDriverReviewExplanation (issues + dispatch eligibility)";
+    primary?.detail ?? primary?.whyItMatters ?? "Driver review guidance";
 
   const statusLabel: DriverTableRowModel["statusLabel"] =
     effective === "blocked" ? "Blocked" : effective === "needs_review" ? "Review" : "Active";

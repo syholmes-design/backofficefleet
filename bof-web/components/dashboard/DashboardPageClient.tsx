@@ -268,8 +268,7 @@ export function DashboardPageClient() {
             data={exec.driverReadiness}
           />
           <div className="bof-cc-panel-sub" style={{ marginTop: "0.75rem" }}>
-            <strong>Details</strong> — from <code className="text-xs opacity-90">getDriverReviewExplanation</code>{" "}
-            per driver.
+            <strong>Details</strong> — plain-language driver review reasons and recommended next steps.
           </div>
           <ul className="bof-cc-notes" style={{ listStyle: "none", padding: 0, marginTop: "0.5rem" }}>
             {exec.driverReadinessDetails

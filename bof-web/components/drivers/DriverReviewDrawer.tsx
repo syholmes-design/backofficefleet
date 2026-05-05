@@ -106,11 +106,18 @@ export function DriverReviewDrawer({
       onClose={onClose}
       title={`Driver review — ${explanation.driverName} (${driverId})`}
       subtitle={subtitle}
-      summary={explanation.summary}
+      summary={`${explanation.primaryGuidance.headline}: ${explanation.primaryGuidance.plainEnglishReason}`}
       statusChip={
         filterCategory != null ? `${topStatus} (${CATEGORY_LABEL[filterCategory]})` : topStatus
       }
-      primaryAction={explanation.primaryAction}
+      primaryAction={
+        explanation.primaryGuidance.primaryActionHref
+          ? {
+              label: explanation.primaryGuidance.primaryActionLabel,
+              href: explanation.primaryGuidance.primaryActionHref,
+            }
+          : explanation.primaryAction
+      }
       quickLinks={quickLinks}
       issues={displayIssues}
       categoryOrder={[...CATEGORY_ORDER]}

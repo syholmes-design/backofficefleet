@@ -10,10 +10,17 @@ import { getDriverTableRowModel } from "../lib/drivers/driver-table-row-model";
 
 const data = raw as unknown as BofData;
 
-const WATCH_IDS = ["DRV-002", "DRV-004", "DRV-005", "DRV-008", "DRV-009", "DRV-012"];
-
 function main() {
   const issues: string[] = [];
+  const blockedOrReview: Array<{
+    driverId: string;
+    status: string;
+    headline: string;
+    reason: string;
+    impact: string;
+    proposedSolution: string;
+    action: string;
+  }> = [];
 
   for (const driver of data.drivers ?? []) {
     const driverId = driver.id;
@@ -36,6 +43,30 @@ function main() {
       if (!String(row.primaryReviewReason ?? "").trim()) {
         issues.push(`${driverId}: needs_review missing primaryReviewReason`);
       }
+    }
+    if (row.status === "needs_review" || row.status === "blocked") {
+      if (!expl.primaryGuidance.headline.trim()) issues.push(`${driverId}: missing guidance headline`);
+      if (!expl.primaryGuidance.plainEnglishReason.trim()) issues.push(`${driverId}: missing plainEnglishReason`);
+      if (!expl.primaryGuidance.operationalImpact.trim()) issues.push(`${driverId}: missing operationalImpact`);
+      if (!expl.primaryGuidance.proposedSolution.trim()) issues.push(`${driverId}: missing proposedSolution`);
+      if (!expl.primaryGuidance.primaryActionLabel.trim()) issues.push(`${driverId}: missing primaryActionLabel`);
+      const badTerms = /\b(status mismatch|canonical reconciliation|row model|hardblocker|source-of-truth)\b/i;
+      const blob = [
+        expl.primaryGuidance.headline,
+        expl.primaryGuidance.plainEnglishReason,
+        expl.primaryGuidance.operationalImpact,
+        expl.primaryGuidance.proposedSolution,
+      ].join(" ");
+      if (badTerms.test(blob)) issues.push(`${driverId}: guidance contains internal technical terms`);
+      blockedOrReview.push({
+        driverId,
+        status: row.status,
+        headline: expl.primaryGuidance.headline,
+        reason: expl.primaryGuidance.plainEnglishReason,
+        impact: expl.primaryGuidance.operationalImpact,
+        proposedSolution: expl.primaryGuidance.proposedSolution,
+        action: expl.primaryGuidance.primaryActionLabel,
+      });
     }
 
     const comp = row.complianceLabel.trim();
@@ -93,10 +124,12 @@ function main() {
   }
 
   console.log("validate-driver-review-ux: OK");
-  console.log("\nPhase 7 — six drivers (row model):\n");
-  for (const id of WATCH_IDS) {
+  console.log("\nAll drivers — row model + guidance:\n");
+  for (const driver of data.drivers ?? []) {
+    const id = driver.id;
     const row = getDriverTableRowModel(data, id);
     const cred = getDriverCredentialStatus(data, id);
+    const expl = getDriverReviewExplanation(data, id);
     const staleMedicalCopy = /Medical Card expired on 2026-04-22/i.test(row.complianceLabel);
     console.log(
       JSON.stringify(
@@ -108,6 +141,7 @@ function main() {
           documentsLabel: row.documentsLabel,
           primaryReviewReason: row.primaryReviewReason,
           recommendedFix: row.recommendedFix,
+          primaryGuidance: expl.primaryGuidance,
           canonicalMedical: { status: cred.medicalCard.status, expirationDate: cred.medicalCard.expirationDate },
           staleMedical20260422InCompliance: staleMedicalCopy,
           medicalSuppressionNote:
@@ -122,6 +156,8 @@ function main() {
       ),
     );
   }
+  console.log("\nBlocked/Needs Review drivers with proposed solutions:\n");
+  console.log(JSON.stringify(blockedOrReview, null, 2));
 }
 
 main();

@@ -596,14 +596,10 @@ export function DriversRosterTable() {
                         })
                       }
                     />
-                    {row.eligibilityStatus === "needs_review" && row.primaryReviewReason ? (
+                    {(row.eligibilityStatus === "needs_review" || row.eligibilityStatus === "blocked") &&
+                    row.primaryReviewReason ? (
                       <p className="bof-cc-driver-meta" style={{ marginTop: "0.35rem" }}>
-                        Reason: {row.primaryReviewReason}
-                      </p>
-                    ) : null}
-                    {row.eligibilityStatus === "blocked" && row.hardBlockers.length ? (
-                      <p className="bof-cc-driver-meta" style={{ marginTop: "0.35rem" }}>
-                        Blocked: {row.hardBlockers.slice(0, 2).join(" · ")}
+                        Why: {row.primaryReviewReason}
                       </p>
                     ) : null}
                   </td>
@@ -840,6 +836,243 @@ export function DriversRosterTable() {
           items={settlementRows.length > 0 ? settlementRows : commandCenterRows}
           onOpenReview={(driverId, filter) => setReviewDrawer({ driverId, filter })}
         />
+      </section>
+
+      <section id="primary-driver-table" className="bof-cc-panel" aria-label="Driver roster table">
+        <div className="bof-cc-panel-head">
+          <div className="flex flex-wrap items-start justify-between gap-3">
+            <div>
+              <h2 className="bof-h2">Primary Driver Table</h2>
+              <p className="bof-cc-panel-sub">All 12 drivers with readiness, risk posture, and owner actions.</p>
+            </div>
+            {driverStatusFilter !== "all" ? (
+              <div className="flex flex-wrap items-center gap-2">
+                <span className="bof-cc-chip bof-cc-chip-warn" title="Roster filter active">
+                  Filter:{" "}
+                  {driverStatusFilter === "ready"
+                    ? "Ready"
+                    : driverStatusFilter === "needs_review"
+                      ? "Needs review"
+                      : driverStatusFilter === "blocked"
+                        ? "Dispatch blocked"
+                        : driverStatusFilter === "expiring_soon"
+                          ? "Expiring soon"
+                          : driverStatusFilter === "missing_docs"
+                            ? "Missing docs"
+                            : "—"}
+                </span>
+                <button
+                  type="button"
+                  className="bof-cc-action-btn"
+                  onClick={() => setDriverStatusFilter("all")}
+                >
+                  Clear filter
+                </button>
+              </div>
+            ) : null}
+          </div>
+        </div>
+        <div className="bof-cc-table-wrap">
+          <table className="bof-cc-table">
+            <thead>
+              <tr>
+                <th>Driver</th>
+                <th>Status</th>
+                <th>Dispatch Eligibility</th>
+                <th>Compliance</th>
+                <th>Safety</th>
+                <th>Settlement</th>
+                <th>Current / Next Load</th>
+                <th>Documents</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {filteredDriverRows.map((row) => (
+                <tr key={row.driverId}>
+                  <td>
+                    <div className="bof-cc-driver-cell">
+                      <DriverAvatar name={row.name} photoUrl={row.avatar} size={40} />
+                      <div>
+                        <p className="bof-cc-driver-name">{row.name}</p>
+                        <p className="bof-cc-driver-meta">{row.driverId}</p>
+                        <p className="bof-cc-driver-meta">{row.email ?? row.phone ?? "No contact on file"}</p>
+                      </div>
+                    </div>
+                  </td>
+                  <td>
+                    <StatusChip
+                      label={row.status}
+                      onClick={() =>
+                        setReviewDrawer({
+                          driverId: row.driverId,
+                          filter: row.status === "Blocked" ? "dispatch" : undefined,
+                        })
+                      }
+                    />
+                    {row.eligibilityStatus === "needs_review" && row.primaryReviewReason ? (
+                      <p className="bof-cc-driver-meta" style={{ marginTop: "0.35rem" }}>
+                        Reason: {row.primaryReviewReason}
+                      </p>
+                    ) : null}
+                  </td>
+                  <td>
+                    {row.eligibilityStatus === "needs_review" || row.eligibilityStatus === "blocked" ? (
+                      <button
+                        type="button"
+                        className="bof-driver-review-dispatch-link text-left"
+                        onClick={() => setReviewDrawer({ driverId: row.driverId })}
+                      >
+                        {row.dispatchEligibility}
+                      </button>
+                    ) : (
+                      row.dispatchEligibility
+                    )}
+                  </td>
+                  <td>
+                    <button
+                      type="button"
+                      className="bof-driver-review-dispatch-link text-left"
+                      onClick={() =>
+                        setReviewDrawer({
+                          driverId: row.driverId,
+                          filter: row.complianceDrawerCategory,
+                        })
+                      }
+                    >
+                      {row.compliance}
+                    </button>
+                  </td>
+                  <td>
+                    {row.safety === "At Risk" ? (
+                      <button
+                        type="button"
+                        className="bof-cc-chip bof-cc-chip-danger bof-cc-chip-action"
+                        onClick={() =>
+                          setReviewDrawer({ driverId: row.driverId, filter: "safety" })
+                        }
+                        title="Open driver review — safety"
+                      >
+                        {row.safety}
+                      </button>
+                    ) : (
+                      <Link
+                        href={`/drivers/${row.driverId}/safety`}
+                        className={[
+                          "bof-cc-chip inline-flex no-underline hover:opacity-90",
+                          row.safety === "Elite" ? "bof-cc-chip-ok" : "bof-cc-chip-warn",
+                        ].join(" ")}
+                      >
+                        {row.safety}
+                      </Link>
+                    )}
+                  </td>
+                  <td>
+                    {row.settlement === "Paid" ? (
+                      <Link
+                        href={`/drivers/${row.driverId}/settlements`}
+                        className="bof-cc-chip bof-cc-chip-ok inline-flex no-underline hover:opacity-90"
+                      >
+                        {row.settlement}
+                      </Link>
+                    ) : (
+                      <button
+                        type="button"
+                        className={`bof-cc-chip ${row.settlement === "Hold / Review" ? "bof-cc-chip-danger" : "bof-cc-chip-warn"} bof-cc-chip-action`}
+                        onClick={() =>
+                          setReviewDrawer({ driverId: row.driverId, filter: "settlement" })
+                        }
+                        title="Open driver review — settlement"
+                      >
+                        {row.settlement}
+                      </button>
+                    )}
+                    {row.pendingPay > 0 ? <p className="bof-cc-driver-meta">{formatUsd(row.pendingPay)} pending</p> : null}
+                  </td>
+                  <td>
+                    {row.loadLinkId ? (
+                      <Link
+                        href={`/dispatch?loadId=${encodeURIComponent(row.loadLinkId)}&driverId=${encodeURIComponent(row.driverId)}`}
+                        className="bof-driver-review-dispatch-link"
+                      >
+                        {row.currentOrNextLoad}
+                      </Link>
+                    ) : (
+                      row.currentOrNextLoad
+                    )}
+                  </td>
+                  <td>
+                    <button
+                      type="button"
+                      className="bof-driver-review-dispatch-link text-left"
+                      onClick={() =>
+                        setReviewDrawer({
+                          driverId: row.driverId,
+                          filter: "documents",
+                        })
+                      }
+                    >
+                      {row.documentSummary}
+                    </button>
+                  </td>
+                  <td>
+                    <div className="bof-cc-action-wrap">
+                      <Link href={`/drivers/${row.driverId}`} className="bof-cc-action-btn">Profile</Link>
+                      <Link href={`/drivers/${row.driverId}/vault`} className="bof-cc-action-btn">Docs</Link>
+                      <Link href={`/drivers/${row.driverId}/hr`} className="bof-cc-action-btn">HR</Link>
+                      <Link href={`/drivers/${row.driverId}/safety`} className="bof-cc-action-btn">Safety</Link>
+                      <Link href={`/drivers/${row.driverId}/settlements`} className="bof-cc-action-btn">Settlement</Link>
+                      {row.eligibilityStatus === "blocked" ? (
+                        <span className="bof-cc-action-btn bof-cc-action-btn-disabled" aria-disabled="true">
+                          Assign Load
+                        </span>
+                      ) : (
+                        <Link
+                          href={`/dispatch?driverId=${row.driverId}`}
+                          className={[
+                            "bof-cc-action-btn",
+                            row.eligibilityStatus === "ready" ? "bof-cc-action-btn-primary" : "",
+                          ].join(" ")}
+                        >
+                          Assign Load
+                        </Link>
+                      )}
+                      {row.eligibilityStatus === "needs_review" || row.eligibilityStatus === "blocked" ? (
+                        <button
+                          type="button"
+                          className="bof-cc-action-btn"
+                          onClick={() => setReviewDrawer({ driverId: row.driverId })}
+                        >
+                          Review Docs
+                        </button>
+                      ) : null}
+                      {row.eligibilityStatus === "blocked" && row.primaryDispatchBlockerId ? (
+                        <>
+                          <button
+                            type="button"
+                            className="bof-cc-action-btn bof-cc-action-btn-danger"
+                            onClick={() =>
+                              resolveDriverDispatchBlocker(
+                                row.driverId,
+                                row.primaryDispatchBlockerId!,
+                                "Primary dispatch blocker — demo override"
+                              )
+                            }
+                          >
+                            Resolve blocker (demo)
+                          </button>
+                          <Link href={row.blockerHref ?? `/drivers/${row.driverId}/vault`} className="bof-cc-action-btn">
+                            Open workspace
+                          </Link>
+                        </>
+                      ) : null}
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </section>
 
       {reviewDrawer ? (
