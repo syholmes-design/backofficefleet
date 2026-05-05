@@ -9,11 +9,10 @@ export function CommandCenterExecutiveHeader() {
           <BofLogo variant="dark" className="bof-cc-hero-logo" />
         </div>
         <div className="bof-cc-hero-copy">
-          <p className="bof-cc-hero-eyebrow">Operations control</p>
+          <p className="bof-cc-hero-eyebrow">BOF action center</p>
           <h1 className="bof-cc-hero-title">Command Center</h1>
           <p className="bof-cc-hero-tagline">
-            Real-time operational control across compliance, proof, settlements,
-            and risk.
+            BOF shows the issues that can delay dispatch, block payment, increase claims risk, or require owner review.
           </p>
         </div>
       </div>

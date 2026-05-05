@@ -10,6 +10,13 @@ function priorityClass(p: ImmediateActionRow["priority"]) {
   return "bof-cc-pri bof-cc-pri--p2";
 }
 
+function priorityLabel(p: ImmediateActionRow["priority"]) {
+  if (p === "P0") return "Critical";
+  if (p === "P1") return "High";
+  if (p === "P2") return "Medium";
+  return "Watch";
+}
+
 export function CommandCenterImmediateActions({
   rows,
 }: {
@@ -38,7 +45,7 @@ export function CommandCenterImmediateActions({
           <table className="bof-table bof-cc-immediate-table">
             <thead>
               <tr>
-                <th scope="col">Priority</th>
+                <th scope="col">Severity</th>
                 <th scope="col">Issue</th>
                 <th scope="col">Load</th>
                 <th scope="col" className="bof-table-photo-col">
@@ -55,7 +62,7 @@ export function CommandCenterImmediateActions({
               {rows.map((r) => (
                 <tr key={r.id}>
                   <td>
-                    <span className={priorityClass(r.priority)}>{r.priority}</span>
+                    <span className={priorityClass(r.priority)}>{priorityLabel(r.priority)}</span>
                   </td>
                   <td className="bof-cc-immediate-issue">{r.label}</td>
                   <td className="bof-small">

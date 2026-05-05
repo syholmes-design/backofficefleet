@@ -108,11 +108,10 @@ export function CommandCenterSavingsScorecard({
       aria-label="Savings scorecard"
     >
       <div className="bof-cc-savings-head">
-        <h2 className="bof-cc-savings-title">Savings scorecard</h2>
+        <h2 className="bof-cc-savings-title">BOF Savings Scorecard</h2>
         <p className="bof-cc-savings-lead">
-          Values trace to <code className="bof-code">loads[]</code>,{" "}
-          <code className="bof-code">settlements[]</code>, and the RF action
-          queue. Click a card for formulas and inputs.
+          Estimated operating value created by preventing delays, holds, rework,
+          and missed compliance steps.
         </p>
       </div>
       <div className="bof-cc-savings-grid">

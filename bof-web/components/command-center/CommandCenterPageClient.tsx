@@ -25,6 +25,7 @@ import { CommandCenterKpiStrip } from "@/components/CommandCenterKpiStrip";
 import { CommandCenterIssueList } from "@/components/CommandCenterIssueList";
 import { CommandCenterRfClaimsExposure } from "@/components/CommandCenterRfClaimsExposure";
 import { CommandCenterSupportingOps } from "@/components/CommandCenterSupportingOps";
+import { buildCommandCenterIssueViewModels } from "@/lib/command-center/command-center-issue-view-model";
 
 export function CommandCenterPageClient() {
   const { data } = useBofDemoData();
@@ -39,6 +40,10 @@ export function CommandCenterPageClient() {
     const canonical = enrichCommandCenterItems(data);
     return [...fromIntake, ...canonical];
   }, [data, intakeCommandCenterItems]);
+  const issueViewModels = useMemo(
+    () => buildCommandCenterIssueViewModels(data, enrichedItems),
+    [data, enrichedItems]
+  );
   const kpiStrip = useMemo(() => buildCommandCenterKpiStrip(data), [data]);
   const savingsEngine = useMemo(() => buildSavingsEngineScorecard(data), [data]);
   const savingsQualify = useMemo(() => buildSavingsQualification(data), [data]);
@@ -52,25 +57,13 @@ export function CommandCenterPageClient() {
     <div className="bof-page bof-cc-page">
       <CommandCenterExecutiveHeader />
 
-      <CommandCenterSavingsScorecard scorecard={savingsEngine} />
-      <CommandCenterSavingsQualify model={savingsQualify} />
-      <CommandCenterImmediateActions rows={immediateActions} />
-
-      <CommandCenterKpiStrip kpis={kpiStrip} />
-
-      <div className="bof-cc-scoreboard-row">
-        <FleetScorecardPanel card={scorecard} />
-        <BofNetworkImpactPanel impact={networkImpact} />
-      </div>
-
       <section className="bof-cc-attention-section" aria-labelledby="cc-attention-heading">
         <div className="bof-cc-attention-section-head">
           <h2 id="cc-attention-heading" className="bof-cc-section-title">
-            What needs attention right now
+            What Needs Attention Now
           </h2>
           <p className="bof-cc-section-lead">
-            Blocked settlements, proof gaps, compliance, and dispatch exceptions — with money on the
-            line and a specific BOF next step.
+            Plain-English action queue with severity, operational impact, recommended fix, owner, and direct links.
           </p>
         </div>
         {backhaulPendingAlert && (
@@ -87,8 +80,19 @@ export function CommandCenterPageClient() {
             </p>
           </div>
         )}
-        <CommandCenterIssueList items={enrichedItems} />
+        <CommandCenterIssueList items={issueViewModels} />
       </section>
+
+      <CommandCenterImmediateActions rows={immediateActions} />
+
+      <CommandCenterSavingsScorecard scorecard={savingsEngine} />
+      <CommandCenterSavingsQualify model={savingsQualify} />
+      <CommandCenterKpiStrip kpis={kpiStrip} />
+
+      <div className="bof-cc-scoreboard-row">
+        <FleetScorecardPanel card={scorecard} />
+        <BofNetworkImpactPanel impact={networkImpact} />
+      </div>
 
       <CommandCenterRfClaimsExposure data={data} />
 
