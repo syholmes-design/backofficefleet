@@ -210,7 +210,7 @@ export default function MarketingHomeAccountable() {
                       textTransform: "uppercase",
                     }}
                   >
-                    Executive Operations Cockpit
+                    Live Operations Demo
                   </p>
                   <h1
                     id="bof-mkt-hero-heading"
@@ -219,10 +219,10 @@ export default function MarketingHomeAccountable() {
                       color: "#fff",
                       fontWeight: 700,
                       lineHeight: 1.14,
-                      fontSize: "clamp(1.85rem, 4vw, 3.15rem)",
+                      fontSize: "clamp(1.8rem, 3.8vw, 3rem)",
                     }}
                   >
-                    The Back Office Platform Built for Freight Operations
+                    See BOF Run the Freight Back Office
                   </h1>
                   <p
                     style={{
@@ -233,48 +233,45 @@ export default function MarketingHomeAccountable() {
                       maxWidth: "56ch",
                     }}
                   >
-                    BOF unifies dispatch, drivers, documents, compliance, proof, settlements, and revenue risk in one operating
-                    view.
+                    Explore how BOF turns driver readiness, dispatch risk, proof, documents, settlements, and exceptions
+                    into one operating command center.
                   </p>
                   <div
                     className="bof-mkt-home-hero-integrated__ctas"
                     style={{ marginTop: "1.15rem", flexWrap: "wrap", rowGap: "0.5rem" }}
                   >
-                    <BookDemoLink className="bof-mkt-btn-enterprise bof-mkt-btn-enterprise-primary">
-                      Book a Demo
-                    </BookDemoLink>
-                    <Link href="/dispatch" className="bof-mkt-btn-enterprise bof-mkt-btn-enterprise-secondary">
-                      Open Dispatch Board
+                    <Link href="/command-center" className="bof-mkt-btn-enterprise bof-mkt-btn-enterprise-primary">
+                      Open Command Center
                     </Link>
-                    <Link href="/dashboard#attention-queue" className="bof-mkt-btn-enterprise bof-mkt-btn-enterprise-secondary">
-                      Review Attention Queue
+                    <Link href="/drivers" className="bof-mkt-btn-enterprise bof-mkt-btn-enterprise-secondary">
+                      Review Driver Readiness
+                    </Link>
+                    <Link href="/dispatch" className="bof-mkt-btn-enterprise bof-mkt-btn-enterprise-secondary">
+                      Inspect Load Proof
                     </Link>
                   </div>
+                  <p style={{ margin: "0.65rem 0 0", color: "#94a3b8", fontSize: "0.86rem" }}>
+                    Live demo data · 12 drivers · 12 loads · document and proof workflows wired
+                  </p>
+                  <p style={{ margin: "0.45rem 0 0", fontSize: "0.9rem" }}>
+                    <BookDemoLink className="text-teal-300 hover:text-teal-200">Talk to BOF</BookDemoLink>
+                  </p>
 
                   <nav aria-label="BOF by fleet type" style={{ marginTop: "1.35rem" }}>
-                    <ul
-                      className="bof-mkt-home-audience__list"
-                      style={{
-                        justifyContent: "flex-start",
-                        margin: 0,
-                      }}
-                    >
-                      <li>
-                        <Link href="/for-hire-carriers" className="bof-mkt-home-audience__pill">
-                          For-Hire Carriers
-                        </Link>
-                      </li>
-                      <li>
-                        <Link href="/private-fleets" className="bof-mkt-home-audience__pill">
-                          Private Fleets
-                        </Link>
-                      </li>
-                      <li>
-                        <Link href="/government" className="bof-mkt-home-audience__pill">
-                          Government
-                        </Link>
-                      </li>
-                    </ul>
+                    <p style={{ margin: 0, color: "#94a3b8", fontSize: "0.9rem" }}>
+                      Built for:{" "}
+                      <Link href="/for-hire-carriers" className="text-slate-200 hover:text-white">
+                        For-Hire Carriers
+                      </Link>{" "}
+                      ·{" "}
+                      <Link href="/private-fleets" className="text-slate-200 hover:text-white">
+                        Private Fleets
+                      </Link>{" "}
+                      ·{" "}
+                      <Link href="/government" className="text-slate-200 hover:text-white">
+                        Government Fleets
+                      </Link>
+                    </p>
                   </nav>
                 </div>
               </div>
