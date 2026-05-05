@@ -138,6 +138,30 @@ export function DriverVaultDqfPageClient({ driverId }: Props) {
     return "Review the driver vault and replace this generic review flag with the specific document or safety item causing the issue.";
   }
 
+function getDocumentReviewExplanation(row: DriverDqfDocumentRow): {
+  document: string;
+  status: string;
+  whyItMatters: string;
+  recommendedFix: string;
+  actionLabel: string;
+  actionHref: string;
+} {
+  const status = row.status === "missing" ? "Missing" :
+                row.status === "expired" ? "Expired" :
+                row.status === "expiring_soon" ? "Expiring Soon" :
+                row.status === "needs_review" || row.status === "pending_review" ? "Needs Verification" :
+                "Review Reason Unclear";
+
+  return {
+    document: row.label,
+    status,
+    whyItMatters: rowIssueWhy(row),
+    recommendedFix: rowIssueFix(row),
+    actionLabel: row.fileUrl ? `Open ${row.label}` : "Open driver vault",
+    actionHref: row.fileUrl || `/drivers/${driverId}/vault`,
+  };
+}
+
   function toggleIssuePanel(key: string) {
     setExpandedIssueKey((prev) => (prev === key ? null : key));
   }
@@ -170,34 +194,73 @@ export function DriverVaultDqfPageClient({ driverId }: Props) {
               ) : (
                 <span className={statusChipClass(summary.overallStatus)}>{chipLabel}</span>
               )}
-              {(summary.overallStatus === "needs_review" || summary.overallStatus === "blocked") && (
-                <button
-                  type="button"
-                  className="bof-dqf-vault-link"
-                  style={{ fontSize: "0.85rem" }}
-                  onClick={() => setExpandedIssueKey((prev) => (prev === "__vault_review__" ? null : "__vault_review__"))}
-                >
-                  What needs review?
-                </button>
-              )}
             </div>
           </div>
-          {expandedIssueKey === "__vault_review__" ? (
-            <div className="rounded border border-slate-800 bg-slate-950/60 p-3 text-sm">
-              <p><strong>Title:</strong> Driver file review</p>
-              <p><strong>Status:</strong> {issueStatus(summary.overallStatus)}</p>
-              <p>
-                <strong>Why:</strong> {summary.nextRecommendedAction || "The driver file has unresolved items that need review."}
-              </p>
-              <p>
-                <strong>Recommended fix:</strong> Open the driver vault and address each missing, expired, or pending item below.
-              </p>
-              <div className="mt-2 flex flex-wrap gap-2">
-                <Link href={`/drivers/${driverId}/vault`} className="bof-cc-action-btn">Open driver vault</Link>
-                <Link href={`/drivers/${driverId}#driver-review`} className="bof-cc-action-btn">Review driver file</Link>
-              </div>
+          {(summary.overallStatus === "needs_review" || summary.overallStatus === "blocked") && (
+            <div className="rounded border border-slate-800 bg-slate-950/60 p-3 text-sm mb-4">
+              <h4 className="font-medium text-slate-100 mb-3">Document Review Items</h4>
+              {summary.documents
+                .filter(row => row.status !== "ready")
+                .map(row => {
+                  const explanation = getDocumentReviewExplanation(row);
+                  return (
+                    <div key={row.canonicalType} className="mb-4 pb-4 border-b border-slate-700 last:border-b-0">
+                      <div className="mb-2">
+                        <span className="font-medium text-slate-100">Document:</span>
+                        <span className="ml-2 text-slate-300">{explanation.document}</span>
+                      </div>
+                      <div className="mb-2">
+                        <span className="font-medium text-slate-100">Status:</span>
+                        <span className={`ml-2 px-2 py-1 rounded text-xs font-medium ${
+                          explanation.status === "Missing" ? "bg-red-900 text-red-200" :
+                          explanation.status === "Expired" ? "bg-red-800 text-red-100" :
+                          explanation.status === "Expiring Soon" ? "bg-yellow-900 text-yellow-200" :
+                          "bg-blue-900 text-blue-200"
+                        }`}>
+                          {explanation.status}
+                        </span>
+                      </div>
+                      <div className="mb-2">
+                        <span className="font-medium text-slate-100">Why it matters:</span>
+                        <p className="mt-1 text-slate-300 text-sm">{explanation.whyItMatters}</p>
+                      </div>
+                      <div className="mb-3">
+                        <span className="font-medium text-slate-100">Recommended fix:</span>
+                        <p className="mt-1 text-slate-300 text-sm">{explanation.recommendedFix}</p>
+                      </div>
+                      <div>
+                        <Link href={explanation.actionHref} className="inline-flex items-center px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded transition-colors">
+                          {explanation.actionLabel}
+                        </Link>
+                      </div>
+                    </div>
+                  );
+                })}
+              {summary.documents.filter(row => row.status !== "ready").length === 0 && (
+                <div>
+                  <span className="font-medium text-slate-100">Issue:</span>
+                  <span className="ml-2 text-slate-300">Review reason needs clarification</span>
+                  <div className="mt-2">
+                    <span className="font-medium text-slate-100">Why it matters:</span>
+                    <p className="mt-1 text-slate-300 text-sm">
+                      BOF marked this item for review, but specific expired document, missing file, inconsistent date, or blocker was not identified.
+                    </p>
+                  </div>
+                  <div className="mt-3">
+                    <span className="font-medium text-slate-100">Recommended fix:</span>
+                    <p className="mt-1 text-slate-300 text-sm">
+                      Open driver vault and replace this generic review flag with the exact document or record causing the issue.
+                    </p>
+                  </div>
+                  <div>
+                    <Link href={`/drivers/${driverId}/vault`} className="inline-flex items-center px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded transition-colors">
+                      Open driver vault
+                    </Link>
+                  </div>
+                </div>
+              )}
             </div>
-          ) : null}
+          )}
           <p className="bof-dqf-vault-next">{summary.nextRecommendedAction}</p>
           <div className="bof-dqf-vault-quick">
             <Link href={`/drivers/${driverId}/profile`} className="bof-dqf-vault-btn">
