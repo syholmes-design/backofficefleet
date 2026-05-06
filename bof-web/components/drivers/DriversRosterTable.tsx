@@ -11,7 +11,6 @@ import { getDriverTableRowModel } from "@/lib/drivers/driver-table-row-model";
 import {
   driverHasCredentialExpiringWithin,
   driverHasMissingOrInvalidDoc,
-  getDriverCommandSummary,
 } from "@/lib/drivers/drivers-command-metrics";
 
 type DriverStatusFilter =
@@ -61,11 +60,7 @@ export function DriversRosterTable() {
   const [credentialWindowDays, setCredentialWindowDays] = useState<90 | 60 | 30>(90);
   const [searchText, setSearchText] = useState("");
 
-  const commandSummary = useMemo(
-    () => getDriverCommandSummary(data, credentialWindowDays),
-    [data, credentialWindowDays]
-  );
-
+  
   const driverRows = useMemo<DriverRow[]>(
     () =>
       data.drivers.map((driver) => {
@@ -136,11 +131,13 @@ export function DriversRosterTable() {
     <div className="bof-page bof-cc-page">
       <section className="bof-drivers-command-header" aria-labelledby="bof-drivers-command-title">
         <div className="bof-drivers-command-header__intro">
-          <p className="bof-cc-hero-eyebrow">Driver file and document readiness</p>
-          <h1 id="bof-drivers-command-title" className="bof-cc-hero-title">Driver Document Command Center</h1>
+          <p className="bof-cc-hero-eyebrow">Driver Document Center</p>
+          <h1 id="bof-drivers-command-title" className="bof-cc-hero-title">Driver Document Center</h1>
           <p className="bof-cc-panel-sub">
-            {commandSummary.totalDrivers} drivers monitored · {commandSummary.needsReview} need document review ·{" "}
-            {commandSummary.dispatchBlocked} blocked from dispatch
+            Qualification, HR, payroll-support, and administrative documents for every driver.
+          </p>
+          <p className="bof-cc-panel-sub" style={{ fontSize: "0.875rem", opacity: 0.8, marginTop: "0.5rem" }}>
+            Safety, settlement, and dispatch exceptions are managed in Command Center, Safety, Settlements, and Dispatch. This page focuses on driver documents.
           </p>
           <div className="bof-drivers-lead-ctas" style={{ marginTop: "1rem" }}>
             <Link href="/documents" className="bof-cc-action-btn" style={{ marginRight: "0.5rem" }}>
@@ -206,12 +203,10 @@ export function DriversRosterTable() {
               <tr>
                 <th>Driver</th>
                 <th>Status</th>
-                <th>Dispatch Eligibility</th>
                 <th>Compliance</th>
-                <th>Safety</th>
-                <th>Settlement</th>
-                <th>Current / Next Load</th>
                 <th>Documents</th>
+                <th>HR / Employment Admin</th>
+                <th>Payroll / Deduction Support</th>
                 <th>Actions</th>
               </tr>
             </thead>
@@ -240,15 +235,6 @@ export function DriversRosterTable() {
                     ) : null}
                   </td>
                   <td>
-                    <button 
-                      type="button" 
-                      className="bof-driver-review-dispatch-link text-left" 
-                      onClick={() => setExpandedDriverId((prev) => (prev === row.driverId ? null : row.driverId))}
-                    >
-                      Show issue
-                    </button>
-                  </td>
-                  <td>
                     <button
                       type="button"
                       className="bof-driver-review-dispatch-link text-left"
@@ -257,13 +243,30 @@ export function DriversRosterTable() {
                       {row.compliance}
                     </button>
                   </td>
-                  <td><StatusChip label={row.safety} /></td>
-                  <td><StatusChip label={row.settlement} /></td>
-                  <td>{row.loadLinkId ? <Link href={`/loads/${encodeURIComponent(row.loadLinkId)}`} className="bof-driver-review-dispatch-link">{row.currentOrNextLoad}</Link> : row.currentOrNextLoad}</td>
                   <td>
                     <button type="button" className="bof-driver-review-dispatch-link text-left">
                       {row.documentSummary}
                     </button>
+                  </td>
+                  <td>
+                    <div className="bof-cc-doc-links">
+                      <Link href={`/generated/drivers/${row.driverId}/hr-payroll/benefits-enrollment.html`} className="bof-cc-doc-link">
+                        Benefits Enrollment
+                      </Link>
+                      <Link href={`/generated/drivers/${row.driverId}/hr-payroll/life-insurance-beneficiary-election.html`} className="bof-cc-doc-link">
+                        Life Insurance Election
+                      </Link>
+                    </div>
+                  </td>
+                  <td>
+                    <div className="bof-cc-doc-links">
+                      <Link href={`/generated/drivers/${row.driverId}/hr-payroll/flexible-spending-account-election.html`} className="bof-cc-doc-link">
+                        FSA Election
+                      </Link>
+                      <Link href={`/generated/drivers/${row.driverId}/hr-payroll/garnishment-withholding-summary.html`} className="bof-cc-doc-link">
+                        Garnishment Summary
+                      </Link>
+                    </div>
                   </td>
                   <td>
                     <div className="bof-cc-action-wrap">
@@ -295,7 +298,7 @@ export function DriversRosterTable() {
                 </tr>
               {expandedDriverId === row.driverId ? (
                 <tr>
-                  <td colSpan={9}>
+                  <td colSpan={7}>
                     <DriverReviewInlinePanel 
                 explanation={row.reviewExplanation} 
                 driverId={row.driverId} 
