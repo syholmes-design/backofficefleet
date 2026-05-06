@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flexible Spending Account Election</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            line-height: 1.6;
+            color: #1a202c;
+            max-width: 8.5in;
+            margin: 0 auto;
+            padding: 1in;
+            background: #ffffff;
+        }
+        .paper {
+            background: #ffffff;
+            width: 8.5in;
+            height: 11in;
+            padding: 0.75in;
+            border: 1px solid #e5e7eb;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 1.5in;
+        }
+        .company-name {
+            font-size: 18pt;
+            font-weight: bold;
+            color: #0BA5A4;
+            margin-bottom: 0.5in;
+        }
+        .document-title {
+            font-size: 16pt;
+            font-weight: bold;
+            color: #1a202c;
+            margin-bottom: 0.25in;
+            text-align: center;
+        }
+        .section {
+            margin-bottom: 0.75in;
+        }
+        .section-title {
+            font-size: 14pt;
+            font-weight: bold;
+            color: #1a202c;
+            margin-bottom: 0.25in;
+            border-bottom: 2px solid #0BA5A4;
+            padding-bottom: 0.25in;
+        }
+        .section-content {
+            font-size: 12pt;
+            line-height: 1.4;
+            margin-bottom: 0.5in;
+        }
+        .form-group {
+            margin-bottom: 0.5in;
+        }
+        .form-row {
+            display: flex;
+            margin-bottom: 0.25in;
+        }
+        .form-label {
+            width: 3in;
+            font-weight: bold;
+        }
+        .form-input {
+            flex: 1;
+            border-bottom: 1px solid #ccc;
+            min-height: 0.25in;
+        }
+        .checkbox-item {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 0.25in;
+            font-size: 11pt;
+        }
+        .checkbox {
+            margin-right: 0.5in;
+            border: 2px solid #0BA5A4;
+        }
+        .signature-area {
+            margin-top: 1.5in;
+            border-top: 2px solid #e5e7eb;
+            padding-top: 0.75in;
+        }
+        .signature-line {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.25in;
+        }
+        .signature {
+            font-style: italic;
+            color: #666666;
+            font-size: 12pt;
+        }
+        .date {
+            font-size: 11pt;
+            color: #666666;
+        }
+        .footer {
+            margin-top: 1in;
+            padding-top: 0.5in;
+            border-top: 2px solid #e5e7eb;
+            font-size: 9pt;
+            color: #666666;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="paper">
+        <div class="header">
+            <div class="company-name">BOF TRANSPORT</div>
+            <div class="document-title">Flexible Spending Account Election</div>
+        </div>
+
+        <div class="section">
+            <div class="section-title">Employee Information</div>
+            <div class="section-content">
+                <div class="form-group">
+                    <div class="form-row">
+                        <div class="form-label">Employee Name:</div>
+                        <div class="form-input">Robert Johnson</div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-label">Driver ID:</div>
+                        <div class="form-input">DRV-012</div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-label">Address:</div>
+                        <div class="form-input">330 Civic Center Dr, Columbus, OH 43215</div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-label">Phone:</div>
+                        <div class="form-input">206-700-7666</div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-label">Email:</div>
+                        <div class="form-input">robert.johnson@boftransport.demo</div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-label">Start Date:</div>
+                        <div class="form-input">December 1, 2024</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <div class="section-title">Health Care FSA Election</div>
+            <div class="section-content">
+                <div class="form-group">
+                    <div class="form-row">
+                        <div class="form-label">Annual Election Amount:</div>
+                        <div class="form-input">$2,900</div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-label">Pay Period:</div>
+                        <div class="form-input">Per Paycheck</div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-label">Coverage Type:</div>
+                        <div class="form-input">Employee Only</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <div class="section-title">Dependent Care FSA Election</div>
+            <div class="section-content">
+                <div class="form-group">
+                    <div class="form-row">
+                        <div class="form-label">Annual Election Amount:</div>
+                        <div class="form-input">$1,200</div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-label">Pay Period:</div>
+                        <div class="form-input">Per Paycheck</div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-label">Coverage Type:</div>
+                        <div class="form-input">Medical Only</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <div class="section-title">Annual Election Amount</div>
+            <div class="section-content">
+                <div class="form-group">
+                    <div class="form-row">
+                        <div class="form-label">Per-period Deduction Estimate:</div>
+                        <div class="form-input">$81.67</div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-label">Payroll Certification:</div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" class="checkbox" checked disabled>
+                            <span>I understand and authorize FSA deduction amounts</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="signature-area">
+            <div class="signature-line">
+                <div>
+                    <span class="signature">Employee Signature:</span> _________________________
+                </div>
+                <div>
+                    <span class="date">Date:</span> ___________________
+                </div>
+            </div>
+            <div class="signature-line">
+                <div>
+                    <span class="signature">HR Representative:</span> _________________________
+                </div>
+                <div>
+                    <span class="date">Date:</span> December 1, 2024
+                </div>
+            </div>
+        </div>
+
+        <div class="footer">
+            BOF Demo Document — Not for legal filing, payroll processing, benefits enrollment, or employee use.
+        </div>
+    </div>
+</body>
+</html>
