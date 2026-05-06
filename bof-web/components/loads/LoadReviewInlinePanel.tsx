@@ -2,6 +2,8 @@
 
 import type { BofData } from "@/lib/load-bof-data";
 import { getLoadRiskExplanation } from "@/lib/load-risk-explanation";
+import { getCanonicalLoadEvidenceForLoad } from "@/lib/canonical-load-evidence";
+import { buildTripDocumentPacket } from "@/lib/load-trip-packet";
 
 type LoadReviewInlinePanelProps = {
   loadId: string;
@@ -10,17 +12,6 @@ type LoadReviewInlinePanelProps = {
   data: BofData;
 };
 
-function getLoadIssueStage(risk: ReturnType<typeof getLoadRiskExplanation>): string {
-  const firstReason = risk.reasons?.[0];
-  if (firstReason?.category === "proof") return "POD / proof";
-  if (firstReason?.category === "documents") return "Documents";
-  if (firstReason?.category === "driver") return "Assignment";
-  if (firstReason?.category === "compliance") return "Compliance";
-  if (firstReason?.category === "settlement") return "Settlement";
-  if (firstReason?.category === "safety") return "Safety";
-  if (firstReason?.category === "route") return "Route";
-  return "Unknown";
-}
 
 function getSeverityLabel(severity: string): string {
   if (severity === "critical") return "Critical";
@@ -29,26 +20,82 @@ function getSeverityLabel(severity: string): string {
   return "Watch";
 }
 
+function getLifecycleStageFromLoad(data: BofData, loadId: string): string {
+  const load = data.loads.find(l => l.id === loadId);
+  if (!load) return "Unknown";
+  
+  if (load.dispatchExceptionFlag) return "Exception Review";
+  if (load.status === "Pending") return "Pre-trip / Dispatch Release";
+  if (load.status === "En Route") return "In Route";
+  if (load.status === "Delivered") {
+    if (load.podStatus === "verified") return "Settlement / Billing";
+    return "Delivery / POD";
+  }
+  return "Dispatch review";
+}
+
+function getAvailableDocuments(data: BofData, loadId: string): string[] {
+  const evidence = getCanonicalLoadEvidenceForLoad(data, loadId);
+  const trip = buildTripDocumentPacket(data, loadId);
+  
+  if (!trip) return [];
+  
+  const available: string[] = [];
+  
+  // Check for key documents using correct BofLoadEvidenceType values
+  if (evidence.some(e => e.evidenceType === "rate_confirmation")) {
+    available.push("Rate confirmation");
+  }
+  if (evidence.some(e => e.evidenceType === "bol")) {
+    available.push("BOL");
+  }
+  if (evidence.some(e => e.evidenceType === "pod")) {
+    available.push("POD");
+  }
+  
+  return available;
+}
+
+function getMissingRequiredProof(data: BofData, loadId: string): string[] {
+  const load = data.loads.find(l => l.id === loadId);
+  if (!load) return [];
+  
+  const missing: string[] = [];
+  
+  if (load.podStatus !== "verified") {
+    missing.push("POD pending");
+  }
+  if (load.sealStatus === "Mismatch") {
+    missing.push("Seal review required");
+  }
+  if (load.dispatchExceptionFlag) {
+    missing.push("Exception review required");
+  }
+  
+  return missing;
+}
+
 export function LoadReviewInlinePanel({
   loadId,
   loadNumber,
   riskExplanation,
-  data, // eslint-disable-line @typescript-eslint/no-unused-vars
+  data,
 }: LoadReviewInlinePanelProps) {
-  const stage = getLoadIssueStage(riskExplanation);
+  const stage = getLifecycleStageFromLoad(data, loadId);
   const severityLabel = getSeverityLabel(riskExplanation.riskStatus);
+  const availableDocuments = getAvailableDocuments(data, loadId);
+  const missingRequiredProof = getMissingRequiredProof(data, loadId);
 
   return (
     <div className="bof-load-review-inline-panel">
       <div className="bof-load-review-inline-header">
         <h4 className="bof-load-review-inline-load-id">
-          {loadId} · {loadNumber}
+          Load {loadId} / {loadNumber}
         </h4>
         <span className={`bof-load-review-inline-stage bof-load-review-inline-stage--${riskExplanation.riskStatus}`}>
           {stage}
         </span>
       </div>
-
       <div className="bof-load-review-inline-content">
         <div className="bof-load-review-inline-issue">
           <h5 className="bof-load-review-inline-headline">Issue</h5>
@@ -56,7 +103,7 @@ export function LoadReviewInlinePanel({
         </div>
 
         <div className="bof-load-review-inline-status">
-          <h5 className="bof-load-review-inline-headline">Stage</h5>
+          <h5 className="bof-load-review-inline-headline">Lifecycle stage</h5>
           <p className="bof-load-review-inline-text">{stage}</p>
         </div>
 
@@ -75,24 +122,65 @@ export function LoadReviewInlinePanel({
           <p className="bof-load-review-inline-text">{riskExplanation.recommendedNextStep}</p>
         </div>
 
+        <div className="bof-load-review-inline-documents">
+          <h5 className="bof-load-review-inline-headline">Available documents</h5>
+          <div className="bof-load-review-inline-text">
+            {availableDocuments.length > 0 ? (
+              availableDocuments.map((doc, index) => (
+                <div key={index} className="bof-load-review-inline-doc-item">
+                  {doc}
+                </div>
+              ))
+            ) : (
+              <a href={`/loads/${loadId}`} className="bof-load-review-inline-btn bof-load-review-inline-btn--primary">
+                Open trip packet to review available documents
+              </a>
+            )}
+          </div>
+        </div>
+
+        <div className="bof-load-review-inline-missing">
+          <h5 className="bof-load-review-inline-headline">Missing required proof</h5>
+          <div className="bof-load-review-inline-text">
+            {missingRequiredProof.length > 0 ? (
+              missingRequiredProof.map((proof, index) => (
+                <div key={index} className="bof-load-review-inline-missing-item">
+                  {proof}
+                </div>
+              ))
+            ) : (
+              <div>No required proof issue identified from current load status</div>
+            )}
+          </div>
+        </div>
+
         <div className="bof-load-review-inline-actions">
           <h5 className="bof-load-review-inline-headline">Actions</h5>
           <div className="bof-load-review-inline-buttons">
-            {riskExplanation.reasons?.[0]?.category === "proof" && (
+            {missingRequiredProof.includes("POD pending") && (
               <a
                 href={`/loads/${loadId}`}
                 className="bof-load-review-inline-btn bof-load-review-inline-btn--primary"
               >
-                Open {loadId} proof issue
+                Open POD
               </a>
             )}
             
-            {riskExplanation.reasons?.[0]?.category === "documents" && (
+            {missingRequiredProof.includes("Seal review required") && (
               <a
                 href={`/loads/${loadId}`}
                 className="bof-load-review-inline-btn bof-load-review-inline-btn--primary"
               >
-                Open {loadId} documents
+                Review delivery proof
+              </a>
+            )}
+            
+            {missingRequiredProof.includes("Exception review required") && (
+              <a
+                href={`/loads/${loadId}`}
+                className="bof-load-review-inline-btn bof-load-review-inline-btn--primary"
+              >
+                Review assignment blocker
               </a>
             )}
             
@@ -101,7 +189,7 @@ export function LoadReviewInlinePanel({
                 href={`/dispatch`}
                 className="bof-load-review-inline-btn bof-load-review-inline-btn--primary"
               >
-                Open {loadId} dispatch record
+                Review assignment blocker
               </a>
             )}
             
@@ -114,38 +202,11 @@ export function LoadReviewInlinePanel({
               </a>
             )}
             
-            {riskExplanation.reasons?.[0]?.category === "settlement" && (
-              <a
-                href={`/settlements`}
-                className="bof-load-review-inline-btn bof-load-review-inline-btn--primary"
-              >
-                Open {loadId} settlement
-              </a>
-            )}
-            
-            {riskExplanation.reasons?.[0]?.category === "safety" && (
-              <a
-                href={`/safety`}
-                className="bof-load-review-inline-btn bof-load-review-inline-btn--primary"
-              >
-                Open {loadId} safety issue
-              </a>
-            )}
-            
-            {riskExplanation.reasons?.[0]?.category === "route" && (
-              <a
-                href={`/dispatch`}
-                className="bof-load-review-inline-btn bof-load-review-inline-btn--primary"
-              >
-                Open {loadId} route issue
-              </a>
-            )}
-            
             <a
               href={`/loads/${loadId}`}
-              className="bof-load-review-inline-btn"
+              className="bof-load-review-inline-btn bof-load-review-inline-btn--primary"
             >
-              Open load {loadId}
+              Open trip packet
             </a>
           </div>
         </div>
