@@ -47,7 +47,7 @@ function statusPresentation(ev: BofLoadEvidence): {
   if (ev.status === "placeholder") {
     return {
       chip: "Pending review",
-      headline: `${title} — placeholder artifact`,
+      headline: `${title} — placeholder document`,
       sub: "Replace with canonical scan or upload.",
       tone: "warn",
     };

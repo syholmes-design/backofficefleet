@@ -310,8 +310,22 @@ export function DocumentationReadinessPanel({ load }: Props) {
                           source={line.source}
                           viewLabel={
                             row.group === "proof" || /photo/i.test(row.label)
-                              ? "View photo"
-                              : "Open"
+                              ? /pickup/i.test(row.label)
+                                ? "View pickup photo"
+                                : /seal/i.test(row.label)
+                                  ? "View seal photo"
+                                  : /cargo/i.test(row.label)
+                                    ? "View cargo photo"
+                                    : "View delivery photo"
+                              : /rate/i.test(row.label)
+                                ? "Open rate confirmation"
+                                : /bol/i.test(row.label)
+                                  ? "Open BOL"
+                                  : /pod/i.test(row.label)
+                                    ? "Open POD"
+                                    : /invoice/i.test(row.label)
+                                      ? "Open invoice"
+                                      : "Open document"
                           }
                         />
                       );
