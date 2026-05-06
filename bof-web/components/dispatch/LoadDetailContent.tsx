@@ -3,7 +3,6 @@
 import { useState } from "react";
 import {
   AlertTriangle,
-  FileStack,
   Link2,
   ShieldAlert,
   Truck,
@@ -17,8 +16,8 @@ import {
 } from "@/lib/dispatch-dashboard-seed";
 import { formatMoney, proofChipClass, sealChipClass } from "./dispatch-ui";
 import { LoadStatusTimeline } from "./LoadStatusTimeline";
-import { LoadDocumentsLibraryEnhanced } from "./LoadDocumentsLibraryEnhanced";
 import { DocumentationReadinessPanel } from "./DocumentationReadinessPanel";
+import { LoadLifecyclePacket } from "./LoadLifecyclePacket";
 import { BofWorkflowFormShortcuts } from "@/components/documents/BofWorkflowFormShortcuts";
 import { DispatchRouteMapClient } from "./DispatchRouteMapClient";
 import { useBofDemoData } from "@/lib/bof-demo-data-context";
@@ -239,17 +238,7 @@ export function LoadDetailContent({ load, onClose }: Props) {
               variant="dispatch"
               title="This load in BOF — open intake, driver packet, claim forms"
             />
-            <section className="rounded-lg border border-slate-800 bg-slate-900/40 p-4">
-              <h3 className="mb-3 flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-slate-500">
-                <FileStack className="h-3.5 w-3.5 text-teal-500" />
-                Documents library
-              </h3>
-              <p className="mb-3 text-xs text-slate-500">
-                Trip packet, load-doc manifest, and operating documents appear below when present in
-                the BOF bundle. Links open in a new tab.
-              </p>
-              <LoadDocumentsLibraryEnhanced load={load} />
-            </section>
+            <LoadLifecyclePacket load={load} />
           </>
         ) : null}
 
