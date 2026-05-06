@@ -35,7 +35,12 @@ function getPacketStatus(load: BofData["loads"][number], risk: ReturnType<typeof
   return "Packet in progress";
 }
 
-function getKeyDocumentsStatus(data: BofData, load: BofData["loads"][number]): string {
+function getKeyDocumentsStatus(
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  _data: BofData, 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  _load: BofData["loads"][number]
+): string {
   // Since we can't safely check document availability without additional imports,
   // return a simple action to open the trip packet
   return "Open trip packet";

@@ -44,8 +44,6 @@ import {
   complianceCredentialPrimaryLine,
   getDriverCredentialStatus,
 } from "@/lib/driver-credential-status";
-import { getSafetyScorecardRows } from "@/lib/safety-scorecard";
-import { getDriverReviewExplanation } from "@/lib/driver-review-explanation";
 import { DriverReviewDrawer } from "@/components/drivers/DriverReviewDrawer";
 import { getDriverDqfReadinessSummary } from "@/lib/driver-dqf-readiness";
 import { DriverHubVaultGroups } from "@/components/drivers/DriverHubVaultGroups";
@@ -134,19 +132,7 @@ export function DriverDetailPageClient({ driverId }: { driverId: string }) {
     () => getDriverDispatchEligibility(data, driverId),
     [data, driverId]
   );
-  const reviewExplanation = useMemo(
-    () => getDriverReviewExplanation(data, driverId),
-    [data, driverId]
-  );
-  const safetyScoreRow = useMemo(
-    () => getSafetyScorecardRows().find((r) => r.driverId === driverId),
-    [driverId]
-  );
-  const settlementRow = useMemo(
-    () => data.settlements.find((s) => s.driverId === driverId),
-    [data.settlements, driverId]
-  );
-  const cdlDocument = useMemo(
+    const cdlDocument = useMemo(
     () => documents.find((d) => d.type === "CDL"),
     [documents]
   );
@@ -158,23 +144,7 @@ export function DriverDetailPageClient({ driverId }: { driverId: string }) {
     () => documents.filter((d) => d.status.toUpperCase() === "EXPIRED"),
     [documents]
   );
-  const driverLoads = useMemo(
-    () => data.loads.filter((l) => l.driverId === driverId),
-    [data.loads, driverId]
-  );
-  const exceptionLoadCount = useMemo(
-    () => driverLoads.filter((l) => Boolean(l.dispatchExceptionFlag)).length,
-    [driverLoads]
-  );
-  const openComplianceCount = useMemo(
-    () =>
-      compliance.filter((c) => {
-        const st = c.status.toUpperCase();
-        return st !== "CLOSED" && st !== "RESOLVED";
-      }).length,
-    [compliance]
-  );
-  const isRefDriver = isJohnCarterReferenceDriver(driverId);
+      const isRefDriver = isJohnCarterReferenceDriver(driverId);
 
   const intakeReadinessForDriver = useMemo(
     () => intakeReadiness.filter((e) => e.driver_id === driverId),

@@ -9,7 +9,7 @@ import {
 import type { Load } from "@/types/dispatch";
 import { useBofDemoData } from "@/lib/bof-demo-data-context";
 import { buildTripDocumentPacket, groupTripPacketRows } from "@/lib/load-trip-packet";
-import type { TripPacketRow, TripPacketGroupId } from "@/lib/load-trip-packet";
+import type { TripPacketRow } from "@/lib/load-trip-packet";
 import { ProofGapReviewLinks } from "@/components/review/ReviewDeepLinks";
 import { getOperatingDocumentsForLoad, getOperatingDocumentPath, getOperatingDocumentTitle } from "@/lib/operating-documents";
 
@@ -244,7 +244,7 @@ function DocGroup({
   );
 }
 
-function getAudienceTags(key: string, group: TripPacketGroupId): React.ReactNode[] {
+function getAudienceTags(key: string): React.ReactNode[] {
   const tags: React.ReactNode[] = [];
   
   // Fleet owner applies to most core documents
@@ -382,7 +382,7 @@ function DocCard({
           </span>
           {/* Audience tags */}
           <div className="ml-2 flex flex-wrap gap-1">
-            {getAudienceTags(row.key, row.group)}
+            {getAudienceTags(row.key)}
           </div>
         </div>
         <p className="mt-1 truncate font-mono text-[10px] text-slate-500">{url || "No URL"}</p>
