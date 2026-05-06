@@ -34,6 +34,7 @@ function statusCounts(rows: DriverPacketDocument[]) {
 function groupTitle(group: DriverPacketDocument["group"]) {
   if (group === "core_dqf") return "Driver Qualification File";
   if (group === "hr_workflow") return "HR / Employment Admin";
+  if (group === "payroll_deduction_support") return "Payroll / Deduction Support";
   return "Supporting Documents";
 }
 
@@ -51,6 +52,10 @@ function actionLabel(row: DriverPacketDocument) {
     if (row.canonicalType === "emergency_contact") return "Open Emergency Contact";
     if (row.canonicalType === "bank_information") return "Open Bank Information";
     if (row.canonicalType === "benefits_enrollment") return "Open Benefits Enrollment";
+    if (row.canonicalType === "employee_handbook_acknowledgment") return "Open Employee Handbook Acknowledgment";
+    if (row.canonicalType === "life_insurance_beneficiary_election") return "Open Life Insurance Beneficiary Election";
+    if (row.canonicalType === "flexible_spending_account_election") return "Open Flexible Spending Account Election";
+    if (row.canonicalType === "garnishment_withholding_summary") return "Open Garnishment Withholding Summary";
     if (row.canonicalType === "handbook_acknowledgment") return "Open Handbook";
     if (row.canonicalType === "policy_acknowledgment") return "Open Policy";
     if (row.canonicalType === "training_acknowledgment") return "Open Training";
@@ -88,6 +93,7 @@ export function DriverDocumentPacketSection({
     return {
       core: packet.documents.filter((d) => d.group === "core_dqf"),
       workflow: packet.documents.filter((d) => d.group === "hr_workflow"),
+      payroll: packet.documents.filter((d) => d.group === "payroll_deduction_support"),
       summaries: packet.documents.filter((d) => d.group === "generated_summaries"),
     };
   }, [packet.documents]);
@@ -188,6 +194,15 @@ export function DriverDocumentPacketSection({
               {row.canonicalType === "benefits_enrollment" && (
                 <span className="bof-driver-doc-relationship">Administrative document — does not block dispatch</span>
               )}
+              {row.canonicalType === "employee_handbook_acknowledgment" && (
+                <span className="bof-driver-doc-relationship">Administrative document — does not block dispatch</span>
+              )}
+              {row.canonicalType === "life_insurance_beneficiary_election" && (
+                <span className="bof-driver-doc-relationship">Administrative document — does not block dispatch</span>
+              )}
+              {row.canonicalType === "flexible_spending_account_election" && (
+                <span className="bof-driver-doc-relationship">Administrative document — does not block dispatch</span>
+              )}
               {row.canonicalType === "handbook_acknowledgment" && (
                 <span className="bof-driver-doc-relationship">Administrative document — does not block dispatch</span>
               )}
@@ -202,6 +217,34 @@ export function DriverDocumentPacketSection({
               )}
               {row.canonicalType === "w4_withholding" && (
                 <span className="bof-driver-doc-relationship">Administrative document — does not block dispatch</span>
+              )}
+            </button>
+          ))}
+        </div>
+      </details>
+
+      <details className="bof-driver-doc-group">
+        <summary>{groupTitle("payroll_deduction_support")}</summary>
+        <div className="bof-driver-doc-table">
+          {groups.payroll.map((row) => (
+            <button
+              key={row.canonicalType}
+              type="button"
+              className="bof-driver-doc-row"
+              onClick={() => setSelectedCanonicalType(row.canonicalType)}
+            >
+              <span className="bof-driver-doc-col bof-driver-doc-col-title">{row.label}</span>
+              <span className="bof-driver-doc-col">
+                <span className={statusBadgeClass(row.status)}>{row.status}</span>
+              </span>
+              <span className="bof-driver-doc-col">
+                {row.expirationDate || describeCredentialExpiration(row.expirationDate)}
+              </span>
+              <span className="bof-driver-doc-col">{row.sourceLabel}</span>
+              <span className="bof-driver-doc-col bof-driver-doc-col-action">{actionLabel(row)}</span>
+              {/* Payroll document notes */}
+              {row.canonicalType === "garnishment_withholding_summary" && (
+                <span className="bof-driver-doc-relationship">Payroll/admin summary only — not for compliance review</span>
               )}
             </button>
           ))}

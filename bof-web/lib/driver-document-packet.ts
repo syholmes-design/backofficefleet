@@ -12,7 +12,7 @@ import {
 } from "@/lib/driver-queries";
 import { listEngineDocumentsForDriver } from "@/lib/document-engine";
 
-export type DriverDocumentGroupKey = "core_dqf" | "hr_workflow" | "generated_summaries";
+export type DriverDocumentGroupKey = "core_dqf" | "hr_workflow" | "generated_summaries" | "payroll_deduction_support";
 
 export type DriverDocumentSourceKind =
   | "public_file"
@@ -83,6 +83,34 @@ const WORKFLOW_TYPES: Array<{ canonicalType: string; label: string; sourceType: 
     canonicalType: "incident_report",
     label: "Incident / Accident Report",
     sourceType: "Incident / Accident Report",
+  },
+  {
+    canonicalType: "employee_handbook_acknowledgment",
+    label: "Employee Handbook Acknowledgment",
+    sourceType: "Employee Handbook Acknowledgment",
+  },
+  {
+    canonicalType: "benefits_enrollment",
+    label: "Benefits Enrollment",
+    sourceType: "Benefits Enrollment",
+  },
+  {
+    canonicalType: "life_insurance_beneficiary_election",
+    label: "Life Insurance Beneficiary Election",
+    sourceType: "Life Insurance Beneficiary Election",
+  },
+  {
+    canonicalType: "flexible_spending_account_election",
+    label: "Flexible Spending Account Election",
+    sourceType: "Flexible Spending Account Election",
+  },
+];
+
+const PAYROLL_TYPES: Array<{ canonicalType: string; label: string; sourceType: string }> = [
+  {
+    canonicalType: "garnishment_withholding_summary",
+    label: "Garnishment Withholding Summary",
+    sourceType: "Garnishment Withholding Summary",
   },
 ];
 
@@ -241,6 +269,10 @@ export function buildDriverDocumentPacket(data: BofData, driverId: string): Driv
     docs.push(toPacketDoc(row, docByType(secondary, row.sourceType), "hr_workflow"));
   }
 
+  for (const row of PAYROLL_TYPES) {
+    docs.push(toPacketDoc(row, docByType(secondary, row.sourceType), "payroll_deduction_support"));
+  }
+
   for (const row of SUMMARY_TYPES) {
     if (row.sourceType === "__needs_mapping__") {
       docs.push(toPacketDoc(row, undefined, "generated_summaries"));
@@ -288,6 +320,7 @@ export function buildDriverDocumentPacket(data: BofData, driverId: string): Driv
   const ordered = [
     ...CORE_ROWS.map((r) => r.canonicalType),
     ...WORKFLOW_TYPES.map((r) => r.canonicalType),
+    ...PAYROLL_TYPES.map((r) => r.canonicalType),
     ...SUMMARY_TYPES.map((r) => r.canonicalType),
   ];
   const orderedDocs = ordered

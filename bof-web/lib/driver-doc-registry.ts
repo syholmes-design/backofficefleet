@@ -13,7 +13,12 @@ export type DriverDocManifestKey =
   | "emergencyContact"
   | "bankInformation"
   | "fmcsaCompliance"
-  | "dqfComplianceSummary";
+  | "dqfComplianceSummary"
+  | "employee_handbook_acknowledgment"
+  | "benefits_enrollment"
+  | "life_insurance_beneficiary_election"
+  | "flexible_spending_account_election"
+  | "garnishment_withholding_summary";
 
 export type DriverDocManifestEntry = Partial<Record<DriverDocManifestKey, string>>;
 
@@ -30,6 +35,11 @@ const DRIVER_DOC_TYPE_TO_KEY: Record<string, DriverDocManifestKey> = {
   "Bank Info": "bankInformation",
   FMCSA: "fmcsaCompliance",
   "FMCSA DQF Compliance Summary": "dqfComplianceSummary",
+  "Employee Handbook Acknowledgment": "employee_handbook_acknowledgment",
+  "Benefits Enrollment": "benefits_enrollment",
+  "Life Insurance Beneficiary Election": "life_insurance_beneficiary_election",
+  "Flexible Spending Account Election": "flexible_spending_account_election",
+  "Garnishment Withholding Summary": "garnishment_withholding_summary",
 };
 
 const driverDocManifest = (manifestRaw ?? {}) as DriverDocManifest;
@@ -67,6 +77,7 @@ export function isCanonicalMedicalCardPngUrl(url: string | undefined, driverId: 
 function sourcePathForType(driverId: string, type: string): string | undefined {
   const suffix = driverSuffix(driverId);
   const root = `/documents/drivers/${driverId}`;
+  const hrPayrollRoot = `/generated/drivers/${driverId}/hr-payroll`;
   const byType: Record<string, string> = {
     "Emergency Contact": `${root}/ec-card-drv-${suffix}`,
     CDL: `${root}/cdlnew-${suffix}`,
@@ -82,6 +93,12 @@ function sourcePathForType(driverId: string, type: string): string | undefined {
     "FMCSA Compliance": `${root}/fmcsa-compliance`,
     /** Canonical FMCSA DQF Compliance Summary PDF — driverId only (dqf-compliance-summary-drv-009.pdf). */
     "FMCSA DQF Compliance Summary": `${root}/dqf-compliance-summary-${driverId.toLowerCase()}`,
+    /** HR/Payroll documents in generated/hr-payroll folder */
+    "Employee Handbook Acknowledgment": `${hrPayrollRoot}/employee-handbook-acknowledgment`,
+    "Benefits Enrollment": `${hrPayrollRoot}/benefits-enrollment`,
+    "Life Insurance Beneficiary Election": `${hrPayrollRoot}/life-insurance-beneficiary-election`,
+    "Flexible Spending Account Election": `${hrPayrollRoot}/flexible-spending-account-election`,
+    "Garnishment Withholding Summary": `${hrPayrollRoot}/garnishment-withholding-summary`,
   };
   return byType[type];
 }
@@ -145,6 +162,12 @@ export function getDriverDocumentPacket(driverId: string): DriverDocManifestEntr
       getDriverPublicDocPath(driverId, "FMCSA Compliance") ?? merged.fmcsaCompliance,
     /** Canonical PDF only when listed in driver-public-doc-index (sync from disk); no legacy HTML manifest fallback. */
     dqfComplianceSummary: getDriverPublicDocPath(driverId, "FMCSA DQF Compliance Summary"),
+    /** HR/Payroll documents - generated HTML files in hr-payroll folder */
+    employee_handbook_acknowledgment: getDriverPublicDocPath(driverId, "Employee Handbook Acknowledgment"),
+    benefits_enrollment: getDriverPublicDocPath(driverId, "Benefits Enrollment"),
+    life_insurance_beneficiary_election: getDriverPublicDocPath(driverId, "Life Insurance Beneficiary Election"),
+    flexible_spending_account_election: getDriverPublicDocPath(driverId, "Flexible Spending Account Election"),
+    garnishment_withholding_summary: getDriverPublicDocPath(driverId, "Garnishment Withholding Summary"),
   };
 }
 
