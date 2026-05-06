@@ -32,13 +32,44 @@ function statusCounts(rows: DriverPacketDocument[]) {
 }
 
 function groupTitle(group: DriverPacketDocument["group"]) {
-  if (group === "core_dqf") return "Core Driver Qualification File";
-  if (group === "hr_workflow") return "Applications & HR Workflow";
-  return "Generated Administrative Summaries";
+  if (group === "core_dqf") return "Driver Qualification File";
+  if (group === "hr_workflow") return "HR / Employment Admin";
+  return "Supporting Documents";
 }
 
 function actionLabel(row: DriverPacketDocument) {
-  if (row.fileUrl) return "Open file";
+  if (row.fileUrl) {
+    // Specific action labels based on document type
+    if (row.canonicalType === "cdl") return "Open CDL";
+    if (row.canonicalType === "medical_card") return "Open Medical Card";
+    if (row.canonicalType === "mvr") return "Open MVR";
+    if (row.canonicalType === "fmcsa_clearinghouse") return "Open FMCSA";
+    if (row.canonicalType === "road_test_certificate") return "Open Road Test";
+    if (row.canonicalType === "employment_application") return "Open Employment Application";
+    if (row.canonicalType === "i9") return "Open I-9";
+    if (row.canonicalType === "w9") return "Open W-4";
+    if (row.canonicalType === "emergency_contact") return "Open Emergency Contact";
+    if (row.canonicalType === "bank_information") return "Open Bank Information";
+    if (row.canonicalType === "benefits_enrollment") return "Open Benefits Enrollment";
+    if (row.canonicalType === "handbook_acknowledgment") return "Open Handbook";
+    if (row.canonicalType === "policy_acknowledgment") return "Open Policy";
+    if (row.canonicalType === "training_acknowledgment") return "Open Training";
+    if (row.canonicalType === "direct_deposit_authorization") return "Open Direct Deposit";
+    if (row.canonicalType === "w4_withholding") return "Open W-4";
+    if (row.canonicalType === "garnishment_order") return "Open Garnishment Order";
+    if (row.canonicalType === "child_support_withholding") return "Open Child Support";
+    if (row.canonicalType === "retirement_plan") return "Open 401(k)";
+    if (row.canonicalType === "health_insurance_deduction") return "Open Health Insurance";
+    if (row.canonicalType === "life_insurance_deduction") return "Open Life Insurance";
+    if (row.canonicalType === "uniform_deduction") return "Open Uniform Agreement";
+    if (row.canonicalType === "reimbursement_authorization") return "Open Reimbursement";
+    if (row.canonicalType === "fuel_card_agreement") return "Open Fuel Card";
+    if (row.canonicalType === "advance_repayment") return "Open Advance Repayment";
+    if (row.canonicalType === "equipment_assignment") return "Open Equipment Assignment";
+    if (row.canonicalType === "driver_agreement") return "Open Driver Agreement";
+    if (row.canonicalType === "owner_operator_agreement") return "Open Owner-Op Agreement";
+    return "Open file";
+  }
   if (row.needsMapping) return "Needs mapping";
   return "Missing / Needs review";
 }
@@ -113,6 +144,22 @@ export function DriverDocumentPacketSection({
               </span>
               <span className="bof-driver-doc-col">{row.sourceLabel}</span>
               <span className="bof-driver-doc-col bof-driver-doc-col-action">{actionLabel(row)}</span>
+              {/* Qualification document notes */}
+              {row.canonicalType === "cdl" && (
+                <span className="bof-driver-doc-relationship">Qualification document — may affect dispatch eligibility</span>
+              )}
+              {row.canonicalType === "medical_card" && (
+                <span className="bof-driver-doc-relationship">Qualification document — may affect dispatch eligibility</span>
+              )}
+              {row.canonicalType === "mvr" && (
+                <span className="bof-driver-doc-relationship">Qualification document — may affect dispatch eligibility</span>
+              )}
+              {row.canonicalType === "fmcsa_clearinghouse" && (
+                <span className="bof-driver-doc-relationship">Qualification document — may affect dispatch eligibility</span>
+              )}
+              {row.canonicalType === "road_test_certificate" && (
+                <span className="bof-driver-doc-relationship">Qualification document — may affect dispatch eligibility</span>
+              )}
             </button>
           ))}
         </div>
@@ -137,6 +184,25 @@ export function DriverDocumentPacketSection({
               </span>
               <span className="bof-driver-doc-col">{row.sourceLabel}</span>
               <span className="bof-driver-doc-col bof-driver-doc-col-action">{actionLabel(row)}</span>
+              {/* HR/Admin document notes */}
+              {row.canonicalType === "benefits_enrollment" && (
+                <span className="bof-driver-doc-relationship">Administrative document — does not block dispatch</span>
+              )}
+              {row.canonicalType === "handbook_acknowledgment" && (
+                <span className="bof-driver-doc-relationship">Administrative document — does not block dispatch</span>
+              )}
+              {row.canonicalType === "policy_acknowledgment" && (
+                <span className="bof-driver-doc-relationship">Administrative document — does not block dispatch</span>
+              )}
+              {row.canonicalType === "training_acknowledgment" && (
+                <span className="bof-driver-doc-relationship">Administrative document — does not block dispatch</span>
+              )}
+              {row.canonicalType === "direct_deposit_authorization" && (
+                <span className="bof-driver-doc-relationship">Administrative document — does not block dispatch</span>
+              )}
+              {row.canonicalType === "w4_withholding" && (
+                <span className="bof-driver-doc-relationship">Administrative document — does not block dispatch</span>
+              )}
             </button>
           ))}
         </div>
@@ -161,6 +227,22 @@ export function DriverDocumentPacketSection({
               </span>
               <span className="bof-driver-doc-col">{row.needsMapping ? "Needs mapping" : row.sourceLabel}</span>
               <span className="bof-driver-doc-col bof-driver-doc-col-action">{actionLabel(row)}</span>
+              {/* Qualification document notes */}
+              {row.canonicalType === "cdl" && (
+                <span className="bof-driver-doc-relationship">Qualification document — may affect dispatch eligibility</span>
+              )}
+              {row.canonicalType === "medical_card" && (
+                <span className="bof-driver-doc-relationship">Qualification document — may affect dispatch eligibility</span>
+              )}
+              {row.canonicalType === "mvr" && (
+                <span className="bof-driver-doc-relationship">Qualification document — may affect dispatch eligibility</span>
+              )}
+              {row.canonicalType === "fmcsa_clearinghouse" && (
+                <span className="bof-driver-doc-relationship">Qualification document — may affect dispatch eligibility</span>
+              )}
+              {row.canonicalType === "road_test_certificate" && (
+                <span className="bof-driver-doc-relationship">Qualification document — may affect dispatch eligibility</span>
+              )}
             </button>
           ))}
         </div>

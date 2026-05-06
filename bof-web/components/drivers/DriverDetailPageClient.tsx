@@ -817,84 +817,23 @@ export function DriverDetailPageClient({ driverId }: { driverId: string }) {
               ) : null}
             </div>
 
-            <div className="bof-driver-panel" aria-labelledby="driver-ops-summary-heading">
-              <h2 id="driver-ops-summary-heading" className="bof-h3">
-                Operational summary
+            <div className="bof-driver-panel" aria-labelledby="driver-doc-center-heading">
+              <h2 id="driver-doc-center-heading" className="bof-h3">
+                Driver Document Center
               </h2>
-              <div className="bof-driver-ops-row">
-                <span className="bof-driver-ops-k">Dispatch eligibility</span>
-                <span className="bof-driver-ops-v">
-                  {dispatchEligibility.label}
-                  {(dispatchEligibility.status === "needs_review" || dispatchEligibility.status === "blocked") && (
-                    <>
-                      {" "}
-                      <button type="button" className="bof-link-secondary" onClick={openReviewDrawer}>
-                        View review details
-                      </button>
-                    </>
-                  )}
-                </span>
-              </div>
-              <div className="bof-driver-ops-row">
-                <span className="bof-driver-ops-k">Current load</span>
-                <span className="bof-driver-ops-v">
-                  {activeLoadForRoute
-                    ? `${activeLoadForRoute.number} (${activeLoadForRoute.status})`
-                    : "Available"}
-                </span>
-              </div>
-              <div className="bof-driver-ops-row">
-                <span className="bof-driver-ops-k">Safety tier</span>
-                <span className="bof-driver-ops-v">
-                  {safetyScoreRow ? safetyScoreRow.performanceTier : "No score on file"}
-                  {safetyScoreRow ? ` · HOS ${safetyScoreRow.hosCompliancePct}%` : ""}
-                </span>
-              </div>
-              <div className="bof-driver-ops-row">
-                <span className="bof-driver-ops-k">Settlement</span>
-                <span className="bof-driver-ops-v">
-                  {settlementRow ? `${settlementRow.status ?? "—"}` : "—"}
-                </span>
-              </div>
-              <div className="bof-driver-ops-row">
-                <span className="bof-driver-ops-k">Open compliance items</span>
-                <span className="bof-driver-ops-v">{openComplianceCount}</span>
-              </div>
-              <div className="bof-driver-ops-row">
-                <span className="bof-driver-ops-k">Loads w/ dispatch exception</span>
-                <span className="bof-driver-ops-v">{exceptionLoadCount}</span>
-              </div>
-              <div className="bof-driver-ops-row">
-                <span className="bof-driver-ops-k">Recommended next step</span>
-                <span className="bof-driver-ops-v">
-                  {reviewExplanation.recommendedNextStepText ? (
-                    <>
-                      <span>{reviewExplanation.recommendedNextStepText}</span>
-                      {(dispatchEligibility.recommendedAction ?? reviewExplanation.primaryAction) ? (
-                        <>
-                          {" "}
-                          <Link
-                            href={
-                              (dispatchEligibility.recommendedAction ?? reviewExplanation.primaryAction)!.href
-                            }
-                            className="bof-link-secondary"
-                          >
-                            {(dispatchEligibility.recommendedAction ?? reviewExplanation.primaryAction)!.label}
-                          </Link>
-                        </>
-                      ) : null}
-                    </>
-                  ) : dispatchEligibility.recommendedAction ? (
-                    <Link
-                      href={dispatchEligibility.recommendedAction.href}
-                      className="bof-link-secondary"
-                    >
-                      {dispatchEligibility.recommendedAction.label}
-                    </Link>
-                  ) : (
-                    <span className="bof-muted">No action — profile clean for dispatch</span>
-                  )}
-                </span>
+              <p className="bof-muted bof-small" style={{ marginTop: "0.5rem", marginBottom: "1rem" }}>
+                Qualification, employment, payroll-support, and administrative documents for this driver.
+              </p>
+              <div className="bof-driver-cross-links" style={{ marginBottom: "1rem" }}>
+                <p className="bof-muted bof-small" style={{ marginBottom: "0.5rem" }}>
+                  Safety events are managed in <Link href="/safety" className="bof-link-secondary">Command Center</Link> and <Link href="/safety" className="bof-link-secondary">Safety</Link>.
+                </p>
+                <p className="bof-muted bof-small" style={{ marginBottom: "0.5rem" }}>
+                  Settlement holds and payroll exceptions are managed in <Link href="/settlements" className="bof-link-secondary">Settlements</Link>.
+                </p>
+                <p className="bof-muted bof-small">
+                  Dispatch eligibility and assignment issues are managed in <Link href="/dispatch" className="bof-link-secondary">Dispatch</Link>.
+                </p>
               </div>
               {dispatchEligibility.hardBlockerDetails.length > 0 ||
               dispatchEligibility.demoResolvedHardBlockers.length > 0 ? (
