@@ -62,6 +62,14 @@ export interface Settlement {
   pendingReason: string;
   rate401k: string;
 }
+
+import type { BofData } from './load-bof-data';
+import { 
+  calculateDriverPayOrSettlement,
+  DEFAULT_DRIVER_PAY_ASSUMPTIONS,
+  type DriverPayAssumptions
+} from './driver-pay-settlement-methods';
+
 import { FinancialAssumptions, LoadSpecificAssumptions, mergeAssumptions } from './financial-assumptions';
 
 export interface LoadRevenue {
@@ -156,34 +164,44 @@ export function calculateLoadRevenue(
   };
 }
 
-export function calculateLoadCostsWithRevenue(
-  load: Load,
+export function buildLoadCosts(
   driver: Driver | undefined,
+  asset: { id: string; number: string; type: string; status: string } | undefined,
   settlement: Settlement | undefined,
-  assumptions: FinancialAssumptions & LoadSpecificAssumptions & { calculatedRevenue: number },
-  revenue: LoadRevenue
+  revenue: LoadRevenue,
+  data: BofData,
+  assumptions: FinancialAssumptions,
+  driverPayAssumptions: DriverPayAssumptions = DEFAULT_DRIVER_PAY_ASSUMPTIONS
 ): LoadCosts {
-  // Driver settlement
+  // Driver settlement using new pay/settlement methods
   let driverSettlement = 0;
-  if (driver?.workerType === 'Independent Contractor / Owner-Operator') {
-    driverSettlement = assumptions.driverPayAmount ?? settlement?.grossPay ?? 0;
-  } else {
-    driverSettlement = assumptions.driverPayAmount ?? settlement?.grossPay ?? 0;
+  if (driver) {
+    const loadMiles = {
+      loadedMiles: 450, // Demo assumption - would come from actual data
+      emptyMiles: 50,  // Demo assumption - would come from actual data
+      totalMiles: 500, // Demo assumption - would come from actual data
+    };
+    
+    const settlementCalculation = calculateDriverPayOrSettlement(
+      driver.id,
+      revenue,
+      loadMiles,
+      data,
+      driverPayAssumptions
+    );
+    
+    driverSettlement = settlementCalculation.finalDriverCost;
   }
 
   // Fuel cost
   let fuelCost = 0;
-  if (assumptions.actualFuelCost) {
-    fuelCost = assumptions.actualFuelCost;
-  } else {
-    const totalMiles = (assumptions.loadedMiles ?? 0) + (assumptions.emptyMiles ?? 0);
-    fuelCost = totalMiles > 0 ? (totalMiles / assumptions.mpg) * assumptions.fuelPricePerGallon : 0;
-  }
+  const totalMiles = 500; // Demo assumption - would come from actual data
+  fuelCost = totalMiles > 0 ? (totalMiles / assumptions.mpg) * assumptions.fuelPricePerGallon : 0;
 
-  // Other costs
-  const tolls = assumptions.tolls ?? 0;
-  const lumperPaid = assumptions.lumperPaid ?? 0;
-  const repairs = assumptions.repairs ?? 0;
+  // Other costs (demo assumptions)
+  const tolls = 50; // Demo assumption
+  const lumperPaid = 25; // Demo assumption
+  const repairs = 75; // Demo assumption
 
   // Factoring fee (calculated after revenue is determined)
   const factoringFee = assumptions.factoringFeePercent 
@@ -191,13 +209,12 @@ export function calculateLoadCostsWithRevenue(
     : 0;
 
   // Allocated costs
-  const maintenanceAllocation = assumptions.maintenanceReservePerMile * ((assumptions.loadedMiles ?? 0) + (assumptions.emptyMiles ?? 0));
+  const maintenanceAllocation = assumptions.maintenanceReservePerMile * totalMiles;
   const insuranceAllocation = assumptions.insuranceAllocationPerLoad;
   const tractorDebtAllocation = assumptions.tractorDebtAllocationPerLoad;
   const trailerDebtAllocation = assumptions.trailerDebtAllocationPerLoad;
   const depreciationAllocation = assumptions.depreciationPerLoad;
-  const adminOverheadAllocation = assumptions.adminOverheadAmount 
-    ?? (revenue.totalRevenue * assumptions.adminOverheadPercent);
+  const adminOverheadAllocation = revenue.totalRevenue * assumptions.adminOverheadPercent;
 
   return {
     driverSettlement,
@@ -316,7 +333,8 @@ export function buildLoadFinancials(
   driver: Driver | undefined,
   settlement: Settlement | undefined,
   baseAssumptions: FinancialAssumptions,
-  loadSpecificAssumptions: LoadSpecificAssumptions = {}
+  loadSpecificAssumptions: LoadSpecificAssumptions = {},
+  data: BofData
 ): LoadFinancials {
   const assumptions = mergeAssumptions(baseAssumptions, loadSpecificAssumptions);
   
@@ -328,7 +346,8 @@ export function buildLoadFinancials(
     calculatedRevenue: revenue.totalRevenue,
   };
   
-  const costs = calculateLoadCostsWithRevenue(load, driver, settlement, updatedAssumptions, revenue);
+  const asset = { id: load.assetId, number: load.assetId, type: 'Tractor', status: 'Active' };
+  const costs = buildLoadCosts(driver, asset, settlement, revenue, data, updatedAssumptions);
   const results = calculateLoadResults(revenue, costs, updatedAssumptions);
   const actualsVsAssumptions = trackActualsVsAssumptions(revenue, costs, updatedAssumptions);
 

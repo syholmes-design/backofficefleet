@@ -106,6 +106,70 @@ export function mergeAssumptions(
   };
 }
 
+export interface CashFlowAssumptions {
+  // Cash flow timing
+  averageBillingDays: number;
+  factoringAdvanceDays: number;
+  reserveReleaseDays: number;
+  settlementPaymentDays: number;
+  fuelCardPaymentDays: number;
+  insurancePaymentDays: number;
+  debtPaymentDays: number;
+  
+  // Cash flow optimization
+  proofCompletionRate: number;
+  invoiceApprovalRate: number;
+  factoringUtilizationRate: number;
+  earlyPaymentDiscountRate: number;
+}
+
+export interface AuditReadinessAssumptions {
+  // Document completeness
+  proofBundleCompletenessRate: number;
+  fuelMileageSupportRate: number;
+  invoicePodSupportRate: number;
+  assetScheduleCompletenessRate: number;
+  settlementRecordCompletenessRate: number;
+  
+  // Audit timing
+  recordRetentionDays: number;
+  auditTriggerThreshold: number;
+  periodCloseLeadTime: number;
+  auditSampleRate: number;
+}
+
+export const DEFAULT_CASH_FLOW_ASSUMPTIONS: CashFlowAssumptions = {
+  // Cash flow timing
+  averageBillingDays: 7,
+  factoringAdvanceDays: 2,
+  reserveReleaseDays: 30,
+  settlementPaymentDays: 7,
+  fuelCardPaymentDays: 15,
+  insurancePaymentDays: 30,
+  debtPaymentDays: 30,
+  
+  // Cash flow optimization
+  proofCompletionRate: 0.85, // 85%
+  invoiceApprovalRate: 0.90, // 90%
+  factoringUtilizationRate: 0.75, // 75%
+  earlyPaymentDiscountRate: 0.02, // 2%
+};
+
+export const DEFAULT_AUDIT_READINESS_ASSUMPTIONS: AuditReadinessAssumptions = {
+  // Document completeness
+  proofBundleCompletenessRate: 0.80, // 80%
+  fuelMileageSupportRate: 0.75, // 75%
+  invoicePodSupportRate: 0.85, // 85%
+  assetScheduleCompletenessRate: 0.90, // 90%
+  settlementRecordCompletenessRate: 0.95, // 95%
+  
+  // Audit timing
+  recordRetentionDays: 2555, // 7 years
+  auditTriggerThreshold: 100000, // $100k
+  periodCloseLeadTime: 5, // 5 days
+  auditSampleRate: 0.10, // 10%
+};
+
 export function validateAssumptions(assumptions: FinancialAssumptions): string[] {
   const errors: string[] = [];
   

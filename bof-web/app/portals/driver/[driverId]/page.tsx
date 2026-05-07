@@ -1,5 +1,10 @@
 import { getBofData } from '@/lib/load-bof-data';
 import { getDriverPortalProfile } from '@/lib/demo-portals';
+import { 
+  getDriverPaySettlementMethod,
+  getSettlementTermsLabel,
+  getSettlementMethodBadge
+} from '@/lib/driver-pay-settlement-methods';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 
@@ -29,6 +34,9 @@ export default async function DriverPortalDetailPage({ params }: PageProps) {
   const driverLoads = data.loads.filter(load => load.driverId === driverId);
   const driverSettlements = data.settlements.filter(settlement => settlement.driverId === driverId);
   const currentLoad = driverLoads.find(load => load.status !== 'Delivered');
+  
+  // Get driver pay/settlement method
+  const driverPayMethod = getDriverPaySettlementMethod(driverId, data);
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -43,6 +51,18 @@ export default async function DriverPortalDetailPage({ params }: PageProps) {
               <div className="text-sm text-gray-500">
                     {driverProfile.driverId} • {driverProfile.workerType}
               </div>
+              {driverPayMethod.workerType === 'Independent Contractor / Owner-Operator' && (
+                <div className="mt-2">
+                  <div className="text-sm text-gray-600">Settlement Method:</div>
+                  <div className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium mt-1 ${
+                    getSettlementMethodBadge(driverId, data).color === 'purple' 
+                      ? 'bg-purple-100 text-purple-800' 
+                      : 'bg-blue-100 text-blue-800'
+                  }`}>
+                    {getSettlementTermsLabel(driverId, data)}
+                  </div>
+                </div>
+              )}
             </div>
             <div className="text-right">
               <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${

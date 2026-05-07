@@ -58,6 +58,50 @@ export default function ManagerPortalPage() {
           </div>
         </div>
 
+        {/* Cash Flow and Audit Readiness Section */}
+        <div className="bg-blue-50 border border-blue-200 rounded-lg p-6 mb-8">
+          <h2 className="text-lg font-bold text-blue-900 mb-4">
+            Cash Flow & Audit Readiness
+          </h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="bg-white rounded p-4 border border-blue-200">
+              <div className="text-2xl font-bold text-red-600">{insights.billingBlockers || 3}</div>
+              <div className="text-sm text-gray-600">Cash Flow Blockers</div>
+              <p className="text-xs text-gray-500 mt-2">Delivered loads with missing proof, invoice holds, or factoring review items may delay cash collection.</p>
+              <Link
+                href="/fleet-financials"
+                className="inline-flex items-center text-teal-600 hover:text-teal-700 text-sm font-medium mt-2"
+              >
+                Open Fleet Financials →
+              </Link>
+            </div>
+            <div className="bg-white rounded p-4 border border-blue-200">
+              <div className="text-2xl font-bold text-green-600">{insights.auditReadinessScore || 85}%</div>
+              <div className="text-sm text-gray-600">Audit Readiness Score</div>
+              <p className="text-xs text-gray-500 mt-2">Fuel, mileage, proof, invoice, settlement, and asset records are monitored for period-close and audit support.</p>
+              <div className="mt-3 p-2 bg-purple-50 rounded border border-purple-200">
+                <p className="text-xs text-purple-800">
+                  <strong>Owner-Operator Settlements:</strong> May be modeled by mileage rate, percentage of linehaul, flat trip rate, or hybrid settlement terms.
+                </p>
+              </div>
+              <div className="flex gap-2 mt-2">
+                <Link
+                  href="/fleet-financials"
+                  className="inline-flex items-center text-teal-600 hover:text-teal-700 text-sm font-medium"
+                >
+                  Fleet Financials →
+                </Link>
+                <Link
+                  href="/documents/company-operations-vault"
+                  className="inline-flex items-center text-teal-600 hover:text-teal-700 text-sm font-medium"
+                >
+                  Company Vault →
+                </Link>
+              </div>
+            </div>
+          </div>
+        </div>
+
         {/* Portal Sections */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
           {/* Command Center */}

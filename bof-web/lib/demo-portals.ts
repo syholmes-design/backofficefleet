@@ -209,13 +209,22 @@ export function getManagerInsights(data: BofData) {
     (doc.type === 'I-9' || doc.type === 'W-9') && doc.status !== 'Acknowledged'
   ).length;
 
+  // Cash flow and audit readiness metrics for Phase 7C
+  const billingBlockers = data.loads.filter(load => 
+    load.status === 'Delivered' && load.podStatus !== 'Complete'
+  ).length;
+
+  const auditReadinessScore = 85; // Demo score - would be calculated from actual data
+
   return {
     criticalAlerts,
     blockedDispatchItems,
     expiringDocuments,
     settlementReviewItems,
     openClaims,
-    documentsNeedingAcknowledgment
+    documentsNeedingAcknowledgment,
+    billingBlockers,
+    auditReadinessScore
   };
 }
 

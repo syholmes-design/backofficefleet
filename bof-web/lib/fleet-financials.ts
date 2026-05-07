@@ -1,8 +1,8 @@
 import type { BofData } from '@/lib/load-bof-data';
-import { DEFAULT_FINANCIAL_ASSUMPTIONS } from './financial-assumptions';
+import { DEFAULT_FINANCIAL_ASSUMPTIONS, DEFAULT_CASH_FLOW_ASSUMPTIONS, DEFAULT_AUDIT_READINESS_ASSUMPTIONS } from './financial-assumptions';
 
 // Re-export for convenience
-export { DEFAULT_FINANCIAL_ASSUMPTIONS };
+export { DEFAULT_FINANCIAL_ASSUMPTIONS, DEFAULT_CASH_FLOW_ASSUMPTIONS, DEFAULT_AUDIT_READINESS_ASSUMPTIONS };
 import { buildLoadFinancials, LoadFinancials } from './load-profitability';
 
 export interface FleetFinancialOverview {
@@ -78,6 +78,50 @@ export interface ActualsVsAssumptionsComparison {
   variancePercent: number | null;
 }
 
+export interface CashFlowLever {
+  id: string;
+  name: string;
+  status: 'Complete' | 'Pending' | 'Blocked' | 'Needs Review';
+  estimatedCashImpact: number;
+  relatedLoadId?: string;
+  recommendedAction: string;
+}
+
+export interface CashFlowMaximization {
+  invoiceReadyLoads: number;
+  loadsBlockedFromBilling: number;
+  estimatedCashDelayedByProof: number;
+  factoringAdvanceAvailable: number;
+  expectedReserveRelease: number;
+  upcomingSettlementObligations: number;
+  upcomingFuelInsuranceDebtPayments: number;
+  cashFlowLevers: CashFlowLever[];
+  netCashPosition: {
+    days7: number;
+    days14: number;
+    days30: number;
+  };
+}
+
+export interface AuditSupportItem {
+  category: string;
+  available: boolean;
+  missing: boolean;
+  needsReview: boolean;
+  relatedModule: string;
+  action: string;
+}
+
+export interface AuditReadinessMetrics {
+  loadsWithCompleteProofBundle: number;
+  loadsWithFuelMileageSupport: number;
+  loadsWithInvoicePodSupport: number;
+  assetsWithDebtInsuranceSchedule: number;
+  recordsNeedingReview: number;
+  auditReadinessScore: number;
+  auditSupportChecklist: AuditSupportItem[];
+}
+
 export function buildFleetFinancials(
   data: BofData,
   assumptions = DEFAULT_FINANCIAL_ASSUMPTIONS
@@ -88,12 +132,14 @@ export function buildFleetFinancials(
   cashFlowForecast: CashFlowForecast[];
   assetDebtSchedule: AssetDebtScheduleItem[];
   actualsVsAssumptions: ActualsVsAssumptionsComparison[];
+  cashFlowMaximization: CashFlowMaximization;
+  auditReadinessMetrics: AuditReadinessMetrics;
 } {
   // Build load-level financials
   const loadFinancials = data.loads.map(load => {
     const driver = data.drivers.find(d => d.id === load.driverId);
     const settlement = data.settlements.find(s => s.driverId === load.driverId);
-    return buildLoadFinancials(load, driver, settlement, assumptions);
+    return buildLoadFinancials(load, driver, settlement, assumptions, {}, data);
   });
 
   // Calculate fleet overview
@@ -111,6 +157,12 @@ export function buildFleetFinancials(
   // Build actuals vs assumptions comparison
   const actualsVsAssumptions = buildActualsVsAssumptionsComparison(loadFinancials);
 
+  // Build cash flow maximization
+  const cashFlowMaximization = buildCashFlowMaximization(loadFinancials);
+
+  // Build audit readiness metrics
+  const auditReadinessMetrics = buildAuditReadinessMetrics(data, loadFinancials, DEFAULT_AUDIT_READINESS_ASSUMPTIONS);
+
   return {
     overview,
     loadFinancials,
@@ -118,6 +170,8 @@ export function buildFleetFinancials(
     cashFlowForecast,
     assetDebtSchedule,
     actualsVsAssumptions,
+    cashFlowMaximization,
+    auditReadinessMetrics,
   };
 }
 
@@ -242,8 +296,9 @@ export function buildCashFlowForecast(
     const expectedCashIn = expectedAdvances + expectedReserveReleases;
     
     // Calculate expected cash out
+    const totalDriverSettlements = loadFinancials.reduce((sum, load) => sum + load.costs.driverSettlement, 0);
     const expectedCashOut = 
-      (loadFinancials.length * 1000) + // Estimated payroll
+      (totalDriverSettlements * (days / 30)) + // Driver settlements/payroll
       (loadFinancials.length * 500) +  // Estimated fuel card
       (loadFinancials.length * 200) +  // Estimated insurance
       (loadFinancials.length * 300);   // Estimated debt payments
@@ -366,4 +421,236 @@ export function buildActualsVsAssumptionsComparison(loadFinancials: LoadFinancia
       variancePercent,
     };
   });
+}
+
+export function buildCashFlowMaximization(
+  loadFinancials: LoadFinancials[]
+): CashFlowMaximization {
+  const deliveredLoads = loadFinancials.filter(load => load.status === 'Delivered');
+  const invoiceReadyLoads = deliveredLoads.filter(load => load.invoiceReadiness === 'Ready');
+  const loadsBlockedFromBilling = deliveredLoads.filter(load => load.invoiceReadiness === 'Blocked by proof');
+  
+  const estimatedCashDelayedByProof = loadsBlockedFromBilling.reduce(
+    (sum, load) => sum + load.revenue.totalRevenue, 0
+  );
+  
+  const factoringAdvanceAvailable = invoiceReadyLoads.reduce(
+    (sum, load) => sum + (load.revenue.totalRevenue * 0.90), // 90% advance rate
+    0
+  );
+  
+  const expectedReserveRelease = loadFinancials.reduce(
+    (sum, load) => sum + (load.revenue.totalRevenue * 0.10), // 10% reserve
+    0
+  );
+  
+  const upcomingSettlementObligations = loadFinancials.reduce(
+    (sum, load) => sum + load.costs.driverSettlement, 0
+  );
+  
+  const upcomingFuelInsuranceDebtPayments = loadFinancials.reduce(
+    (sum, load) => sum + load.costs.fuelCost + load.costs.insuranceAllocation + 
+                   load.costs.tractorDebtAllocation + load.costs.trailerDebtAllocation,
+    0
+  );
+
+  // Build cash flow levers
+  const cashFlowLevers: CashFlowLever[] = [
+    {
+      id: 'pod-proof',
+      name: 'POD/proof complete',
+      status: loadsBlockedFromBilling.length > 0 ? 'Blocked' : 'Complete',
+      estimatedCashImpact: estimatedCashDelayedByProof,
+      relatedLoadId: loadsBlockedFromBilling[0]?.loadId,
+      recommendedAction: loadsBlockedFromBilling.length > 0 ? 'Complete missing POD/proof' : 'All proofs complete'
+    },
+    {
+      id: 'invoice-ready',
+      name: 'Invoice ready',
+      status: invoiceReadyLoads.length > 0 ? 'Complete' : 'Pending',
+      estimatedCashImpact: invoiceReadyLoads.reduce((sum, load) => sum + load.revenue.totalRevenue, 0),
+      recommendedAction: 'Review invoice for factoring'
+    },
+    {
+      id: 'factoring-eligible',
+      name: 'Factoring eligible',
+      status: factoringAdvanceAvailable > 0 ? 'Complete' : 'Pending',
+      estimatedCashImpact: factoringAdvanceAvailable,
+      recommendedAction: 'Release billing hold'
+    },
+    {
+      id: 'reserve-holdback',
+      name: 'Reserve holdback pending',
+      status: 'Pending',
+      estimatedCashImpact: expectedReserveRelease,
+      recommendedAction: 'Confirm settlement approval'
+    },
+    {
+      id: 'settlement-due',
+      name: 'Settlement due',
+      status: 'Needs Review',
+      estimatedCashImpact: upcomingSettlementObligations,
+      recommendedAction: 'Review factoring fee/advance assumptions'
+    },
+    {
+      id: 'fuel-card-payment',
+      name: 'Fuel card payment due',
+      status: 'Pending',
+      estimatedCashImpact: loadFinancials.reduce((sum, load) => sum + load.costs.fuelCost, 0),
+      recommendedAction: 'Monitor reserve release date'
+    },
+    {
+      id: 'insurance-debt',
+      name: 'Insurance/debt allocation due',
+      status: 'Pending',
+      estimatedCashImpact: upcomingFuelInsuranceDebtPayments,
+      recommendedAction: 'Review payment schedules'
+    },
+    {
+      id: 'billing-blocker',
+      name: 'Billing blocker',
+      status: loadsBlockedFromBilling.length > 0 ? 'Blocked' : 'Complete',
+      estimatedCashImpact: estimatedCashDelayedByProof,
+      recommendedAction: 'Resolve billing blockers'
+    }
+  ];
+
+  // Calculate net cash position
+  const netCashPosition = {
+    days7: factoringAdvanceAvailable - upcomingSettlementObligations - (upcomingFuelInsuranceDebtPayments * 0.25),
+    days14: factoringAdvanceAvailable + expectedReserveRelease - upcomingSettlementObligations - (upcomingFuelInsuranceDebtPayments * 0.5),
+    days30: factoringAdvanceAvailable + expectedReserveRelease - upcomingSettlementObligations - upcomingFuelInsuranceDebtPayments
+  };
+
+  return {
+    invoiceReadyLoads: invoiceReadyLoads.length,
+    loadsBlockedFromBilling: loadsBlockedFromBilling.length,
+    estimatedCashDelayedByProof,
+    factoringAdvanceAvailable,
+    expectedReserveRelease,
+    upcomingSettlementObligations,
+    upcomingFuelInsuranceDebtPayments,
+    cashFlowLevers,
+    netCashPosition
+  };
+}
+
+export function buildAuditReadinessMetrics(
+  data: BofData,
+  loadFinancials: LoadFinancials[],
+  auditAssumptions: typeof DEFAULT_AUDIT_READINESS_ASSUMPTIONS
+): AuditReadinessMetrics {
+  const deliveredLoads = loadFinancials.filter(load => load.status === 'Delivered');
+  
+  const loadsWithCompleteProofBundle = Math.floor(deliveredLoads.length * auditAssumptions.proofBundleCompletenessRate);
+  const loadsWithFuelMileageSupport = Math.floor(deliveredLoads.length * auditAssumptions.fuelMileageSupportRate);
+  const loadsWithInvoicePodSupport = Math.floor(deliveredLoads.length * auditAssumptions.invoicePodSupportRate);
+  
+  const assetsWithDebtInsuranceSchedule = Math.floor(data.loads.length * auditAssumptions.assetScheduleCompletenessRate);
+  const recordsNeedingReview = Math.floor(deliveredLoads.length * (1 - auditAssumptions.settlementRecordCompletenessRate));
+  
+  // Calculate audit readiness score
+  const totalChecks = 5; // proof, fuel/mileage, invoice/POD, assets, settlements
+  const completedChecks = 
+    (deliveredLoads.length > 0 ? 1 : 0) +
+    (loadsWithFuelMileageSupport > 0 ? 1 : 0) +
+    (loadsWithInvoicePodSupport > 0 ? 1 : 0) +
+    (assetsWithDebtInsuranceSchedule > 0 ? 1 : 0) +
+    (recordsNeedingReview === 0 ? 1 : 0);
+  
+  const auditReadinessScore = (completedChecks / totalChecks) * 100;
+
+  // Build audit support checklist
+  const auditSupportChecklist: AuditSupportItem[] = [
+    {
+      category: 'Load record',
+      available: deliveredLoads.length > 0,
+      missing: false,
+      needsReview: false,
+      relatedModule: 'Dispatch/Loads',
+      action: deliveredLoads.length === 0 ? 'Create load records' : 'Verify load data completeness'
+    },
+    {
+      category: 'Route/mileage support',
+      available: loadsWithFuelMileageSupport > 0,
+      missing: deliveredLoads.length - loadsWithFuelMileageSupport > 0,
+      needsReview: false,
+      relatedModule: 'Dispatch/Pretrip',
+      action: 'Complete mileage documentation for all loads'
+    },
+    {
+      category: 'Fuel cost support',
+      available: loadsWithFuelMileageSupport > 0,
+      missing: deliveredLoads.length - loadsWithFuelMileageSupport > 0,
+      needsReview: recordsNeedingReview > 0,
+      relatedModule: 'Fuel/Maintenance',
+      action: 'Attach fuel receipts to load records'
+    },
+    {
+      category: 'Toll/lumper support',
+      available: true, // Demo assumption
+      missing: false,
+      needsReview: false,
+      relatedModule: 'Settlements',
+      action: 'Review toll and lumper documentation'
+    },
+    {
+      category: 'POD/proof bundle',
+      available: loadsWithCompleteProofBundle > 0,
+      missing: deliveredLoads.length - loadsWithCompleteProofBundle > 0,
+      needsReview: recordsNeedingReview > 0,
+      relatedModule: 'Documents',
+      action: 'Complete proof bundles for outstanding loads'
+    },
+    {
+      category: 'Invoice/receivable record',
+      available: loadsWithInvoicePodSupport > 0,
+      missing: deliveredLoads.length - loadsWithInvoicePodSupport > 0,
+      needsReview: false,
+      relatedModule: 'Settlements',
+      action: 'Generate missing invoices'
+    },
+    {
+      category: 'Driver settlement support',
+      available: true, // Demo assumption
+      missing: false,
+      needsReview: recordsNeedingReview > 0,
+      relatedModule: 'Settlements',
+      action: 'Review settlement calculations'
+    },
+    {
+      category: 'Asset/debt allocation support',
+      available: assetsWithDebtInsuranceSchedule > 0,
+      missing: data.loads.length - assetsWithDebtInsuranceSchedule > 0,
+      needsReview: false,
+      relatedModule: 'Maintenance',
+      action: 'Update asset allocation schedules'
+    },
+    {
+      category: 'Insurance/claim support',
+      available: true, // Demo assumption
+      missing: false,
+      needsReview: false,
+      relatedModule: 'Safety',
+      action: 'Review insurance documentation'
+    },
+    {
+      category: 'Retention policy linked',
+      available: true, // Demo assumption
+      missing: false,
+      needsReview: false,
+      relatedModule: 'Documents',
+      action: 'Verify retention policy compliance'
+    }
+  ];
+
+  return {
+    loadsWithCompleteProofBundle,
+    loadsWithFuelMileageSupport,
+    loadsWithInvoicePodSupport,
+    assetsWithDebtInsuranceSchedule,
+    recordsNeedingReview,
+    auditReadinessScore,
+    auditSupportChecklist
+  };
 }
