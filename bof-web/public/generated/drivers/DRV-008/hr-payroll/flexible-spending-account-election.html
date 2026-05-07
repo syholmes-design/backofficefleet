@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Flexible Spending Account Election</title>
+    <title>Flexible Spending Account Election - Delta Advanced Trucking</title>
     <style>
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
@@ -11,7 +11,7 @@
             color: #1a202c;
             max-width: 8.5in;
             margin: 0 auto;
-            padding: 1in;
+            padding: 0.5in;
             background: #ffffff;
         }
         .paper {
@@ -24,207 +24,247 @@
         }
         .header {
             text-align: center;
-            margin-bottom: 1.5in;
+            margin-bottom: 1in;
+            border-bottom: 2px solid #0BA5A4;
+            padding-bottom: 0.5in;
         }
         .company-name {
-            font-size: 18pt;
+            font-size: 16pt;
             font-weight: bold;
             color: #0BA5A4;
+            margin-bottom: 0.125in;
+        }
+        .company-address {
+            font-size: 10pt;
+            color: #4a5568;
             margin-bottom: 0.5in;
         }
         .document-title {
-            font-size: 16pt;
+            font-size: 14pt;
             font-weight: bold;
             color: #1a202c;
             margin-bottom: 0.25in;
-            text-align: center;
+        }
+        .instructions {
+            font-size: 9pt;
+            color: #4a5568;
+            margin-bottom: 0.75in;
+            line-height: 1.4;
         }
         .section {
             margin-bottom: 0.75in;
         }
         .section-title {
-            font-size: 14pt;
+            font-size: 12pt;
             font-weight: bold;
             color: #1a202c;
             margin-bottom: 0.25in;
-            border-bottom: 2px solid #0BA5A4;
-            padding-bottom: 0.25in;
+            border-bottom: 1px solid #0BA5A4;
+            padding-bottom: 0.125in;
         }
-        .section-content {
-            font-size: 12pt;
-            line-height: 1.4;
+        .employee-info {
+            border: 1px solid #cbd5e0;
+            padding: 0.25in;
             margin-bottom: 0.5in;
-        }
-        .form-group {
-            margin-bottom: 0.5in;
+            background: #f7fafc;
         }
         .form-row {
             display: flex;
-            margin-bottom: 0.25in;
+            margin-bottom: 0.125in;
+            font-size: 10pt;
         }
         .form-label {
-            width: 3in;
-            font-weight: bold;
+            width: 2in;
+            font-weight: 600;
+            color: #2d3748;
         }
         .form-input {
             flex: 1;
-            border-bottom: 1px solid #ccc;
-            min-height: 0.25in;
+            padding: 2px 4px;
+            border-bottom: 1px solid #cbd5e0;
         }
-        .checkbox-item {
-            display: flex;
-            align-items: flex-start;
-            margin-bottom: 0.25in;
-            font-size: 11pt;
+        .election-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 0.5in;
+            font-size: 10pt;
+        }
+        .election-table th {
+            background: #0BA5A4;
+            color: white;
+            padding: 4px 8px;
+            text-align: left;
+            font-weight: 600;
+        }
+        .election-table td {
+            border: 1px solid #e2e8f0;
+            padding: 4px 8px;
+        }
+        .checkbox-cell {
+            text-align: center;
+            width: 20px;
         }
         .checkbox {
-            margin-right: 0.5in;
-            border: 2px solid #0BA5A4;
+            width: 12px;
+            height: 12px;
+        }
+        .amount-cell {
+            text-align: right;
+            font-family: 'Courier New', monospace;
         }
         .signature-area {
-            margin-top: 1.5in;
-            border-top: 2px solid #e5e7eb;
-            padding-top: 0.75in;
+            margin-top: 1in;
+        }
+        .signature-block {
+            margin-bottom: 0.75in;
         }
         .signature-line {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 0.25in;
+            border-bottom: 1px solid #1a202c;
+            width: 3in;
+            margin-bottom: 0.125in;
         }
-        .signature {
-            font-style: italic;
-            color: #666666;
-            font-size: 12pt;
-        }
-        .date {
-            font-size: 11pt;
-            color: #666666;
+        .signature-label {
+            font-size: 9pt;
+            color: #4a5568;
         }
         .footer {
             margin-top: 1in;
-            padding-top: 0.5in;
-            border-top: 2px solid #e5e7eb;
-            font-size: 9pt;
-            color: #666666;
+            font-size: 8pt;
+            color: #718096;
             text-align: center;
+            border-top: 1px solid #e2e8f0;
+            padding-top: 0.25in;
         }
     </style>
 </head>
 <body>
     <div class="paper">
         <div class="header">
-            <div class="company-name">BOF TRANSPORT</div>
-            <div class="document-title">Flexible Spending Account Election</div>
+            <div class="company-name">Delta Advanced Trucking, Inc.</div>
+            <div class="company-address">2475 Laver Rd. • Mansfield, OH 44905</div>
+            <div class="document-title">Flexible Spending Account Election Form</div>
+            <div class="instructions">
+                <strong>Instructions:</strong> Complete this form to elect your Flexible Spending Account (FSA) contributions for the plan year. 
+                Your election is irrevocable for the plan year unless you experience a qualifying life event. 
+                Delta Advanced Trucking uses 26 pay periods per year for FSA calculations.
+            </div>
         </div>
 
         <div class="section">
             <div class="section-title">Employee Information</div>
-            <div class="section-content">
-                <div class="form-group">
-                    <div class="form-row">
-                        <div class="form-label">Employee Name:</div>
-                        <div class="form-input">Liam Smith</div>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-label">Driver ID:</div>
-                        <div class="form-input">DRV-008</div>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-label">Address:</div>
-                        <div class="form-input">240 Madison Ave, Toledo, OH 43604</div>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-label">Phone:</div>
-                        <div class="form-input">820-223-4829</div>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-label">Email:</div>
-                        <div class="form-input">liam.smith@boftransport.demo</div>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-label">Start Date:</div>
-                        <div class="form-input">December 28, 2025</div>
-                    </div>
+            <div class="employee-info">
+                <div class="form-row">
+                    <div class="form-label">Employee Name:</div>
+                    <div class="form-input">Liam Smith</div>
+                </div>
+                <div class="form-row">
+                    <div class="form-label">Employee ID:</div>
+                    <div class="form-input">DRV-008</div>
+                </div>
+                <div class="form-row">
+                    <div class="form-label">Address:</div>
+                    <div class="form-input">240 Madison Ave, Toledo, OH 43604</div>
+                </div>
+                <div class="form-row">
+                    <div class="form-label">Phone:</div>
+                    <div class="form-input">820-223-4829</div>
+                </div>
+                <div class="form-row">
+                    <div class="form-label">Email:</div>
+                    <div class="form-input">liam.smith@boftransport.demo</div>
+                </div>
+                <div class="form-row">
+                    <div class="form-label">Hire Date:</div>
+                    <div class="form-input">December 28, 2025</div>
                 </div>
             </div>
         </div>
 
         <div class="section">
             <div class="section-title">Health Care FSA Election</div>
-            <div class="section-content">
-                <div class="form-group">
-                    <div class="form-row">
-                        <div class="form-label">Annual Election Amount:</div>
-                        <div class="form-input">$2,200</div>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-label">Pay Period:</div>
-                        <div class="form-input">Per Paycheck</div>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-label">Coverage Type:</div>
-                        <div class="form-input">Employee + Spouse</div>
-                    </div>
-                </div>
-            </div>
+            <table class="election-table">
+                <thead>
+                    <tr>
+                        <th class="checkbox-cell"></th>
+                        <th>Election Type</th>
+                        <th>Annual Amount</th>
+                        <th>Per Pay Period (26)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="checkbox-cell"><input type="checkbox" class="checkbox" checked></td>
+                        <td>Health Care FSA</td>
+                        <td class="amount-cell">$628.42</td>
+                        <td class="amount-cell">$24.17</td>
+                    </tr>
+                    <tr>
+                        <td class="checkbox-cell"><input type="checkbox" class="checkbox"></td>
+                        <td>Health Care FSA - Waive Coverage</td>
+                        <td class="amount-cell">$0.00</td>
+                        <td class="amount-cell">$0.00</td>
+                    </tr>
+                </tbody>
+            </table>
         </div>
 
         <div class="section">
             <div class="section-title">Dependent Care FSA Election</div>
-            <div class="section-content">
-                <div class="form-group">
-                    <div class="form-row">
-                        <div class="form-label">Annual Election Amount:</div>
-                        <div class="form-input">$800</div>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-label">Pay Period:</div>
-                        <div class="form-input">Per Paycheck</div>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-label">Coverage Type:</div>
-                        <div class="form-input">Medical Only</div>
-                    </div>
-                </div>
-            </div>
+            <table class="election-table">
+                <thead>
+                    <tr>
+                        <th class="checkbox-cell"></th>
+                        <th>Election Type</th>
+                        <th>Annual Amount</th>
+                        <th>Per Pay Period (26)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="checkbox-cell"><input type="checkbox" class="checkbox"></td>
+                        <td>Dependent Care FSA</td>
+                        <td class="amount-cell">$0.00</td>
+                        <td class="amount-cell">$0.00</td>
+                    </tr>
+                    <tr>
+                        <td class="checkbox-cell"><input type="checkbox" class="checkbox" checked></td>
+                        <td>Dependent Care FSA - Waive Coverage</td>
+                        <td class="amount-cell">$0.00</td>
+                        <td class="amount-cell">$0.00</td>
+                    </tr>
+                </tbody>
+            </table>
         </div>
 
         <div class="section">
-            <div class="section-title">Annual Election Amount</div>
-            <div class="section-content">
-                <div class="form-group">
-                    <div class="form-row">
-                        <div class="form-label">Per-period Deduction Estimate:</div>
-                        <div class="form-input">$62.50</div>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-label">Payroll Certification:</div>
-                        <div class="checkbox-item">
-                            <input type="checkbox" class="checkbox" checked disabled>
-                            <span>I understand and authorize FSA deduction amounts</span>
-                        </div>
-                    </div>
-                </div>
+            <div class="section-title">Employee Certification</div>
+            <div style="font-size: 10pt; margin-bottom: 0.5in;">
+                I hereby elect to participate in the Flexible Spending Account program as indicated above. 
+                I understand that my election is irrevocable for the plan year unless I experience a qualifying life event. 
+                I acknowledge that any unused funds remaining at the end of the plan year will be forfeited according to the "use-it-or-lose-it" rule.
             </div>
         </div>
 
         <div class="signature-area">
-            <div class="signature-line">
-                <div>
-                    <span class="signature">Employee Signature:</span> _________________________
-                </div>
-                <div>
-                    <span class="date">Date:</span> ___________________
-                </div>
+            <div class="signature-block">
+                <div class="signature-line"></div>
+                <div class="signature-label">Employee Signature</div>
             </div>
-            <div class="signature-line">
-                <div>
-                    <span class="signature">HR Representative:</span> _________________________
-                </div>
-                <div>
-                    <span class="date">Date:</span> December 28, 2025
-                </div>
+            <div class="signature-block">
+                <div class="signature-line"></div>
+                <div class="signature-label">Date: December 28, 2025</div>
+            </div>
+        </div>
+
+        <div class="signature-area">
+            <div class="section-title">HR Representative</div>
+            <div class="signature-block">
+                <div class="signature-line"></div>
+                <div class="signature-label">HR Representative Signature</div>
+            </div>
+            <div class="signature-block">
+                <div class="signature-line"></div>
+                <div class="signature-label">Date: December 28, 2025</div>
             </div>
         </div>
 
