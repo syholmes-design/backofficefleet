@@ -3,257 +3,432 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Benefits Enrollment Form</title>
+    <title>Benefits Enrollment Form - Delta Advanced Trucking</title>
     <style>
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-            line-height: 1.6;
+            line-height: 1.4;
             color: #1a202c;
             max-width: 8.5in;
             margin: 0 auto;
-            padding: 1in;
+            padding: 0.25in;
             background: #ffffff;
         }
         .paper {
             background: #ffffff;
             width: 8.5in;
             height: 11in;
-            padding: 0.75in;
+            padding: 0.5in;
             border: 1px solid #e5e7eb;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
         .header {
             text-align: center;
-            margin-bottom: 1.5in;
-        }
-        .company-name {
-            font-size: 18pt;
-            font-weight: bold;
-            color: #0BA5A4;
             margin-bottom: 0.5in;
-        }
-        .document-title {
-            font-size: 16pt;
-            font-weight: bold;
-            color: #1a202c;
-            margin-bottom: 0.25in;
-            text-align: center;
-        }
-        .section {
-            margin-bottom: 0.75in;
-        }
-        .section-title {
-            font-size: 14pt;
-            font-weight: bold;
-            color: #1a202c;
-            margin-bottom: 0.25in;
             border-bottom: 2px solid #0BA5A4;
             padding-bottom: 0.25in;
         }
-        .section-content {
-            font-size: 12pt;
-            line-height: 1.4;
-            margin-bottom: 0.5in;
-        }
-        .form-group {
-            margin-bottom: 0.5in;
-        }
-        .form-row {
-            display: flex;
-            margin-bottom: 0.25in;
-        }
-        .form-label {
-            width: 3in;
+        .company-name {
+            font-size: 14pt;
             font-weight: bold;
+            color: #0BA5A4;
+            margin-bottom: 0.0625in;
         }
-        .form-input {
-            flex: 1;
-            border-bottom: 1px solid #ccc;
-            min-height: 0.25in;
-        }
-        .checkbox-item {
-            display: flex;
-            align-items: flex-start;
+        .company-address {
+            font-size: 9pt;
+            color: #4a5568;
             margin-bottom: 0.25in;
-            font-size: 11pt;
+        }
+        .document-title {
+            font-size: 12pt;
+            font-weight: bold;
+            color: #1a202c;
+            margin-bottom: 0.125in;
+        }
+        .enrollment-type {
+            font-size: 9pt;
+            color: #4a5568;
+            margin-bottom: 0.5in;
+        }
+        .section {
+            margin-bottom: 0.5in;
+        }
+        .section-title {
+            font-size: 10pt;
+            font-weight: bold;
+            color: #1a202c;
+            margin-bottom: 0.125in;
+            border-bottom: 1px solid #0BA5A4;
+            padding-bottom: 0.0625in;
+        }
+        .employee-data-table {
+            width: 100%;
+            border: 1px solid #cbd5e0;
+            border-collapse: collapse;
+            margin-bottom: 0.5in;
+            font-size: 9pt;
+            background: #f7fafc;
+        }
+        .employee-data-table td {
+            border: 1px solid #cbd5e0;
+            padding: 3px 6px;
+        }
+        .data-label {
+            font-weight: 600;
+            color: #2d3748;
+            width: 1.5in;
+        }
+        .election-box {
+            border: 1px solid #e2e8f0;
+            padding: 0.25in;
+            margin-bottom: 0.25in;
+            background: #fafafa;
+        }
+        .election-title {
+            font-weight: bold;
+            font-size: 9pt;
+            margin-bottom: 0.125in;
+            color: #1a202c;
+        }
+        .plan-option {
+            display: flex;
+            align-items: center;
+            margin-bottom: 0.0625in;
+            font-size: 8pt;
         }
         .checkbox {
-            margin-right: 0.5in;
-            border: 2px solid #0BA5A4;
+            width: 10px;
+            height: 10px;
+            margin-right: 4px;
+        }
+        .coverage-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 0.25in;
+            font-size: 8pt;
+        }
+        .coverage-table th {
+            background: #0BA5A4;
+            color: white;
+            padding: 2px 4px;
+            text-align: left;
+            font-weight: 600;
+        }
+        .coverage-table td {
+            border: 1px solid #e2e8f0;
+            padding: 2px 4px;
+        }
+        .amount-cell {
+            text-align: right;
+            font-family: 'Courier New', monospace;
+        }
+        .dependent-table {
+            width: 100%;
+            border: 1px solid #e2e8f0;
+            border-collapse: collapse;
+            margin-bottom: 0.25in;
+            font-size: 8pt;
+        }
+        .dependent-table th {
+            background: #f1f5f9;
+            padding: 2px 4px;
+            text-align: left;
+            font-weight: 600;
+            border: 1px solid #e2e8f0;
+        }
+        .dependent-table td {
+            border: 1px solid #e2e8f0;
+            padding: 2px 4px;
         }
         .signature-area {
-            margin-top: 1.5in;
-            border-top: 2px solid #e5e7eb;
-            padding-top: 0.75in;
+            margin-top: 0.5in;
+        }
+        .signature-block {
+            margin-bottom: 0.375in;
         }
         .signature-line {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 0.25in;
+            border-bottom: 1px solid #1a202c;
+            width: 2.5in;
+            margin-bottom: 0.0625in;
         }
-        .signature {
-            font-style: italic;
-            color: #666666;
-            font-size: 12pt;
-        }
-        .date {
-            font-size: 11pt;
-            color: #666666;
+        .signature-label {
+            font-size: 8pt;
+            color: #4a5568;
         }
         .footer {
-            margin-top: 1in;
-            padding-top: 0.5in;
-            border-top: 2px solid #e5e7eb;
-            font-size: 9pt;
-            color: #666666;
+            margin-top: 0.75in;
+            font-size: 7pt;
+            color: #718096;
             text-align: center;
+            border-top: 1px solid #e2e8f0;
+            padding-top: 0.125in;
+        }
+        .note {
+            font-size: 7pt;
+            color: #718096;
+            font-style: italic;
+            margin-top: 0.25in;
         }
     </style>
 </head>
 <body>
     <div class="paper">
         <div class="header">
-            <div class="company-name">BOF TRANSPORT</div>
+            <div class="company-name">Delta Advanced Trucking, Inc.</div>
+            <div class="company-address">2475 Laver Rd. • Mansfield, OH 44905</div>
             <div class="document-title">Benefits Enrollment Form</div>
+            <div class="enrollment-type">
+                <strong>Enrollment Type:</strong> New Hire / Annual Open Enrollment / Qualifying Life Event
+            </div>
         </div>
 
         <div class="section">
-            <div class="section-title">Employee Information</div>
-            <div class="section-content">
-                <div class="form-group">
-                    <div class="form-row">
-                        <div class="form-label">Employee Name:</div>
-                        <div class="form-input">Olivia Lee</div>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-label">Driver ID:</div>
-                        <div class="form-input">DRV-011</div>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-label">Address:</div>
-                        <div class="form-input">330 Civic Center Dr, Columbus, OH 43215</div>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-label">Phone:</div>
-                        <div class="form-input">206-700-7666</div>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-label">Email:</div>
-                        <div class="form-input">olivia.lee@boftransport.demo</div>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-label">Start Date:</div>
-                        <div class="form-input">October 15, 2025</div>
-                    </div>
+            <div class="section-title">Employee Data</div>
+            <table class="employee-data-table">
+                <tr>
+                    <td class="data-label">Employee Name:</td>
+                    <td>Michael Brown</td>
+                    <td class="data-label">Employee ID:</td>
+                    <td>DRV-011</td>
+                </tr>
+                <tr>
+                    <td class="data-label">Address:</td>
+                    <td>1240 W 6th St, Cleveland, OH 44113</td>
+                    <td class="data-label">Phone:</td>
+                    <td>206-667-3424</td>
+                </tr>
+                <tr>
+                    <td class="data-label">Email:</td>
+                    <td>michael.brown@boftransport.demo</td>
+                    <td class="data-label">Hire Date:</td>
+                    <td>December 28, 2025</td>
+                </tr>
+                <tr>
+                    <td class="data-label">Department:</td>
+                    <td>Transportation</td>
+                    <td class="data-label">Job Title:</td>
+                    <td>Driver</td>
+                </tr>
+            </table>
+        </div>
+
+        <div class="section">
+            <div class="section-title">Health Plan Election</div>
+            <div class="election-box">
+                <div class="election-title">Medical Coverage Options:</div>
+                <div class="plan-option">
+                    <input type="checkbox" class="checkbox" checked>
+                    <span>Delta Health Plan — Standard</span>
+                </div>
+                <div class="plan-option">
+                    <input type="checkbox" class="checkbox">
+                    <span>Delta Health Plan — HSA Compatible</span>
+                </div>
+                <div class="plan-option">
+                    <input type="checkbox" class="checkbox">
+                    <span>Waived / No employee deduction on file</span>
+                </div>
+            </div>
+            <table class="coverage-table">
+                <thead>
+                    <tr>
+                        <th>Coverage Type</th>
+                        <th>Election</th>
+                        <th>Annual Employee Cost</th>
+                        <th>Per Pay Period (26)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Medical</td>
+                        <td>Enrolled</td>
+                        <td class="amount-cell">$1,233.18</td>
+                        <td class="amount-cell">$47.43</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="section">
+            <div class="section-title">Dental Plan Election</div>
+            <div class="election-box">
+                <div class="election-title">Dental Coverage Options:</div>
+                <div class="plan-option">
+                    <input type="checkbox" class="checkbox">
+                    <span>Delta Dental Plan — Standard</span>
+                </div>
+                <div class="plan-option">
+                    <input type="checkbox" class="checkbox" checked>
+                    <span>Waived / No source deduction on file</span>
+                </div>
+            </div>
+            <table class="coverage-table">
+                <thead>
+                    <tr>
+                        <th>Coverage Type</th>
+                        <th>Election</th>
+                        <th>Annual Employee Cost</th>
+                        <th>Per Pay Period (26)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Dental</td>
+                        <td>Waived</td>
+                        <td class="amount-cell">$0.00</td>
+                        <td class="amount-cell">$0.00</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="section">
+            <div class="section-title">Vision Plan Election</div>
+            <div class="election-box">
+                <div class="election-title">Vision Coverage Options:</div>
+                <div class="plan-option">
+                    <input type="checkbox" class="checkbox">
+                    <span>Delta Vision Plan — Standard</span>
+                </div>
+                <div class="plan-option">
+                    <input type="checkbox" class="checkbox" checked>
+                    <span>Waived / No source deduction on file</span>
+                </div>
+            </div>
+            <table class="coverage-table">
+                <thead>
+                    <tr>
+                        <th>Coverage Type</th>
+                        <th>Election</th>
+                        <th>Annual Employee Cost</th>
+                        <th>Per Pay Period (26)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Vision</td>
+                        <td>Waived</td>
+                        <td class="amount-cell">$0.00</td>
+                        <td class="amount-cell">$0.00</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="section">
+            <div class="section-title">Coverage Tier</div>
+            <div class="election-box">
+                <div class="plan-option">
+                    <input type="checkbox" class="checkbox" checked>
+                    <span>Employee Only</span>
+                </div>
+                <div class="plan-option">
+                    <input type="checkbox" class="checkbox">
+                    <span>Employee + Spouse</span>
+                </div>
+                <div class="plan-option">
+                    <input type="checkbox" class="checkbox">
+                    <span>Employee + Child(ren)</span>
+                </div>
+                <div class="plan-option">
+                    <input type="checkbox" class="checkbox">
+                    <span>Employee + Family</span>
+                </div>
+                <div class="plan-option">
+                    <input type="checkbox" class="checkbox">
+                    <span>No coverage elected</span>
                 </div>
             </div>
         </div>
 
         <div class="section">
-            <div class="section-title">Coverage Election</div>
-            <div class="section-content">
-                <div class="form-group">
-                    <div class="section-content">
-                        <strong>Medical Coverage:</strong> Enroll / Waive<br>
-                        <div class="checkbox-item">
-                            <input type="checkbox" class="checkbox" checked disabled>
-                            <span>Employee enrolls in medical coverage</span>
-                        </div>
-                    </div>
-                    <div class="section-content">
-                        <strong>Dental Coverage:</strong> Enroll / Waive<br>
-                        <div class="checkbox-item">
-                            <input type="checkbox" class="checkbox" checked disabled>
-                            <span>Employee enrolls in dental coverage</span>
-                        </div>
-                    </div>
-                    <div class="section-content">
-                        <strong>Vision Coverage:</strong> Enroll / Waive<br>
-                        <div class="checkbox-item">
-                            <input type="checkbox" class="checkbox" checked disabled>
-                            <span>Employee enrolls in vision coverage</span>
-                        </div>
-                    </div>
+            <div class="section-title">Dependent Information</div>
+            <table class="dependent-table">
+                <thead>
+                    <tr>
+                        <th>Dependent Name</th>
+                        <th>Relationship</th>
+                        <th>Date of Birth</th>
+                        <th>SSN (Last 4)</th>
+                        <th>Coverage</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td colspan="5" style="text-align: center; color: #718096;">No dependent coverage elected</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="section">
+            <div class="section-title">Supplemental Life Insurance Election</div>
+            <div class="election-box">
+                <div class="plan-option">
+                    <input type="checkbox" class="checkbox">
+                    <span>Supplemental Life — Demo Election</span>
+                </div>
+                <div class="plan-option">
+                    <input type="checkbox" class="checkbox" checked>
+                    <span>Waived / Not elected</span>
                 </div>
             </div>
         </div>
 
         <div class="section">
-            <div class="section-title">Dependents Section</div>
-            <div class="section-content">
-                <div class="form-group">
-                    <div class="section-content">
-                        <strong>Medical Coverage:</strong> Add dependents for medical coverage<br>
-                        <div class="checkbox-item">
-                            <input type="checkbox" class="checkbox" checked disabled>
-                            <span>2 medical dependents</span>
-                        </div>
-                    </div>
-                    <div class="section-content">
-                        <strong>Dental Coverage:</strong> Add dependents for dental coverage<br>
-                        <div class="checkbox-item">
-                            <input type="checkbox" class="checkbox" checked disabled>
-                            <span>1 dental dependent</span>
-                        </div>
-                    </div>
-                    <div class="section-content">
-                        <strong>Vision Coverage:</strong> Add dependents for vision coverage<br>
-                        <div class="checkbox-item">
-                            <input type="checkbox" class="checkbox" checked disabled>
-                            <span>2 vision dependents</span>
-                        </div>
-                    </div>
+            <div class="section-title">Dependent Life Insurance Election</div>
+            <div class="election-box">
+                <div class="plan-option">
+                    <input type="checkbox" class="checkbox">
+                    <span>Dependent Life — Demo Election</span>
+                </div>
+                <div class="plan-option">
+                    <input type="checkbox" class="checkbox" checked>
+                    <span>Waived / Not elected</span>
                 </div>
             </div>
         </div>
 
         <div class="section">
             <div class="section-title">Payroll Deduction Authorization</div>
-            <div class="section-content">
-                <div class="form-group">
-                    <div class="section-content">
-                        <strong>Benefits Premium Deduction:</strong> Authorized<br>
-                        <div class="checkbox-item">
-                            <input type="checkbox" class="checkbox" checked disabled>
-                            <span>Authorize medical premium deductions</span>
-                        </div>
-                    </div>
-                    <div class="section-content">
-                        <strong>Dental Premium Deduction:</strong> Authorized<br>
-                        <div class="checkbox-item">
-                            <input type="checkbox" class="checkbox" checked disabled>
-                            <span>Authorize dental premium deductions</span>
-                        </div>
-                    </div>
-                    <div class="section-content">
-                        <strong>Vision Premium Deduction:</strong> Authorized<br>
-                        <div class="checkbox-item">
-                            <input type="checkbox" class="checkbox" checked disabled>
-                            <span>Authorize vision premium deductions</span>
-                        </div>
-                    </div>
+            <div style="font-size: 8pt; margin-bottom: 0.25in;">
+                I hereby authorize Delta Advanced Trucking to deduct the elected benefits premiums from my payroll checks on a per-pay-period basis. 
+                I understand that these deductions will continue until I submit a written change request during the annual open enrollment period or due to a qualifying life event.
+            </div>
+            <div class="election-box">
+                <div class="plan-option">
+                    <input type="checkbox" class="checkbox" checked>
+                    <span>Authorization signed for applicable deductions</span>
                 </div>
             </div>
         </div>
 
         <div class="signature-area">
-            <div class="signature-line">
-                <div>
-                    <span class="signature">Employee Signature:</span> _________________________
-                </div>
-                <div>
-                    <span class="date">Date:</span> ___________________
-                </div>
+            <div class="section-title">Employee Signature</div>
+            <div class="signature-block">
+                <div class="signature-line"></div>
+                <div class="signature-label">Employee Signature</div>
             </div>
-            <div class="signature-line">
-                <div>
-                    <span class="signature">Printed Name:</span> Olivia Lee
-                </div>
-                <div>
-                    <span class="date">Date:</span> October 15, 2025
-                </div>
+            <div class="signature-block">
+                <div class="signature-line"></div>
+                <div class="signature-label">Date: December 28, 2025</div>
             </div>
+        </div>
+
+        <div class="signature-area">
+            <div class="section-title">HR/Benefits Review</div>
+            <div class="signature-block">
+                <div class="signature-line"></div>
+                <div class="signature-label">HR Representative Signature</div>
+            </div>
+            <div class="signature-block">
+                <div class="signature-line"></div>
+                <div class="signature-label">Date: December 28, 2025</div>
+            </div>
+        </div>
+
+        <div class="note">
+            Supports payroll deduction and benefits administration.
         </div>
 
         <div class="footer">
