@@ -3,263 +3,335 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Life Insurance Beneficiary Election</title>
+    <title>Life Insurance Beneficiary Election Form - John Carter</title>
     <style>
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-            line-height: 1.6;
+            line-height: 1.4;
             color: #1a202c;
             max-width: 8.5in;
             margin: 0 auto;
-            padding: 1in;
+            padding: 0.25in;
             background: #ffffff;
         }
         .paper {
             background: #ffffff;
             width: 8.5in;
             height: 11in;
-            padding: 0.75in;
+            padding: 0.5in;
             border: 1px solid #e5e7eb;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
         .header {
             text-align: center;
-            margin-bottom: 1.5in;
-        }
-        .company-name {
-            font-size: 18pt;
-            font-weight: bold;
-            color: #0BA5A4;
             margin-bottom: 0.5in;
-        }
-        .document-title {
-            font-size: 16pt;
-            font-weight: bold;
-            color: #1a202c;
-            margin-bottom: 0.25in;
-            text-align: center;
-        }
-        .section {
-            margin-bottom: 0.75in;
-        }
-        .section-title {
-            font-size: 14pt;
-            font-weight: bold;
-            color: #1a202c;
-            margin-bottom: 0.25in;
             border-bottom: 2px solid #0BA5A4;
             padding-bottom: 0.25in;
         }
-        .section-content {
-            font-size: 12pt;
-            line-height: 1.4;
-            margin-bottom: 0.5in;
-        }
-        .form-group {
-            margin-bottom: 0.5in;
-        }
-        .form-row {
-            display: flex;
-            margin-bottom: 0.25in;
-        }
-        .form-label {
-            width: 3in;
+        .company-name {
+            font-size: 14pt;
             font-weight: bold;
+            color: #0BA5A4;
+            margin-bottom: 0.0625in;
         }
-        .form-input {
-            flex: 1;
-            border-bottom: 1px solid #ccc;
-            min-height: 0.25in;
-        }
-        .checkbox-item {
-            display: flex;
-            align-items: flex-start;
+        .company-address {
+            font-size: 9pt;
+            color: #4a5568;
             margin-bottom: 0.25in;
+        }
+        .document-title {
+            font-size: 12pt;
+            font-weight: bold;
+            color: #1a202c;
+            margin-bottom: 0.125in;
+        }
+        .section {
+            margin-bottom: 0.5in;
+        }
+        .section-title {
             font-size: 11pt;
+            font-weight: bold;
+            color: #0BA5A4;
+            margin-bottom: 0.125in;
+            border-bottom: 1px solid #e2e8f0;
+            padding-bottom: 0.0625in;
+        }
+        .employer-info {
+            margin-bottom: 0.25in;
+        }
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.0625in;
+        }
+        .info-label {
+            font-weight: 600;
+            color: #4a5568;
+            min-width: 2in;
+        }
+        .info-value {
+            color: #1a202c;
+        }
+        .employee-info {
+            margin-bottom: 0.25in;
+        }
+        .election-box {
+            margin-bottom: 0.25in;
+        }
+        .election-title {
+            font-weight: 600;
+            margin-bottom: 0.125in;
+        }
+        .plan-option {
+            display: flex;
+            align-items: center;
+            margin-bottom: 0.125in;
         }
         .checkbox {
-            margin-right: 0.5in;
-            border: 2px solid #0BA5A4;
+            margin-right: 0.25in;
         }
-        .signature-area {
-            margin-top: 1.5in;
-            border-top: 2px solid #e5e7eb;
-            padding-top: 0.75in;
+        .beneficiary-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 0.25in;
+            font-size: 9pt;
+        }
+        .beneficiary-table th {
+            background: #f1f5f9;
+            padding: 2px 4px;
+            text-align: left;
+            font-weight: 600;
+            border: 1px solid #e2e8f0;
+        }
+        .beneficiary-table td {
+            border: 1px solid #e2e8f0;
+            padding: 2px 4px;
+            text-align: left;
+        }
+        .percentage-cell {
+            text-align: right;
+            font-family: 'Courier New', monospace;
+            width: 1.5in;
+        }
+        .amount-cell {
+            text-align: right;
+            font-family: 'Courier New', monospace;
+        }
+        .signature-section {
+            margin-top: 0.75in;
+            border-top: 1px solid #e2e8f0;
+            padding-top: 0.25in;
         }
         .signature-line {
             display: flex;
             justify-content: space-between;
-            align-items: center;
-            margin-bottom: 0.25in;
+            margin-bottom: 0.125in;
         }
-        .signature {
-            font-style: italic;
-            color: #666666;
-            font-size: 12pt;
+        .signature-box {
+            width: 3in;
+            border-bottom: 1px solid #4a5568;
+            height: 0.5in;
         }
-        .date {
-            font-size: 11pt;
-            color: #666666;
+        .date-box {
+            width: 2in;
+            text-align: center;
+            font-size: 9pt;
         }
         .footer {
-            margin-top: 1in;
-            padding-top: 0.5in;
-            border-top: 2px solid #e5e7eb;
-            font-size: 9pt;
-            color: #666666;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: #f7fafc;
+            border-top: 1px solid #e2e8f0;
+            padding: 0.125in;
             text-align: center;
+            font-size: 8pt;
+            color: #4a5568;
         }
     </style>
 </head>
 <body>
     <div class="paper">
         <div class="header">
-            <div class="company-name">BOF TRANSPORT</div>
-            <div class="document-title">Life Insurance Beneficiary Election</div>
+            <div class="company-name">Delta Advanced Trucking, Inc.</div>
+            <div class="company-address">2475 Laver Rd., Mansfield, OH 44905</div>
+            <div class="document-title">Life Insurance Beneficiary Election Form</div>
+            <div style="font-size: 9pt; color: #4a5568;">2025 Annual Election Period</div>
         </div>
 
         <div class="section">
-            <div class="section-title">Employee Information</div>
-            <div class="section-content">
-                <div class="form-group">
-                    <div class="form-row">
-                        <div class="form-label">Employee Name:</div>
-                        <div class="form-input">John Carter</div>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-label">Driver ID:</div>
-                        <div class="form-input">DRV-001</div>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-label">Address:</div>
-                        <div class="form-input">1240 W 6th St, Cleveland, OH 44113</div>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-label">Phone:</div>
-                        <div class="form-input">206-667-3424</div>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-label">Email:</div>
-                        <div class="form-input">john.carter@boftransport.demo</div>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-label">Start Date:</div>
-                        <div class="form-input">December 18, 2025</div>
-                    </div>
+            <div class="section-title">Employer / Group Information</div>
+            <div class="employer-info">
+                <div class="info-row">
+                    <div class="info-label">Employer:</div>
+                    <div class="info-value">Delta Advanced Trucking, Inc.</div>
+                </div>
+                <div class="info-row">
+                    <div class="info-label">Group:</div>
+                    <div class="info-value">BOF Demo Group</div>
+                </div>
+                <div class="info-row">
+                    <div class="info-label">Policy Reference:</div>
+                    <div class="info-value">Demo Policy Reference #2025-LIFE</div>
                 </div>
             </div>
         </div>
 
         <div class="section">
-            <div class="section-title">Basic Life Election</div>
-            <div class="section-content">
-                <div class="form-group">
-                    <div class="form-row">
-                        <div class="form-label">Coverage Amount:</div>
-                        <div class="form-input">$50,000</div>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-label">Beneficiary Type:</div>
-                        <div class="form-input">Primary</div>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-label">Payment Option:</div>
-                        <div class="form-input">Level Premium</div>
-                    </div>
+            <div class="section-title">Employee / Insured Information</div>
+            <div class="employee-info">
+                <div class="info-row">
+                    <div class="info-label">Employee Name:</div>
+                    <div class="info-value">John Carter</div>
+                </div>
+                <div class="info-row">
+                    <div class="info-label">Employee ID:</div>
+                    <div class="info-value">DRV-001</div>
+                </div>
+                <div class="info-row">
+                    <div class="info-label">Address:</div>
+                    <div class="info-value">1240 W 6th St, Cleveland, OH 44113</div>
+                </div>
+                <div class="info-row">
+                    <div class="info-label">Phone:</div>
+                    <div class="info-value">206-667-3424</div>
+                </div>
+                <div class="info-row">
+                    <div class="info-label">Email:</div>
+                    <div class="info-value">john.carter@boftransport.demo</div>
                 </div>
             </div>
         </div>
 
         <div class="section">
-            <div class="section-title">Supplemental Life Election</div>
-            <div class="section-content">
-                <div class="form-group">
-                    <div class="form-row">
-                        <div class="form-label">Coverage Amount:</div>
-                        <div class="form-input">$25,000</div>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-label">Beneficiary Type:</div>
-                        <div class="form-input">Secondary</div>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-label">Payment Option:</div>
-                        <div class="form-input">Level Premium</div>
-                    </div>
+            <div class="section-title">Basic Life Insurance Election</div>
+            <div class="election-box">
+                <div class="plan-option">
+                    <input type="checkbox" class="checkbox" checked>
+                    <span>Basic Life — Active / Included</span>
+                </div>
+                <div class="plan-option">
+                    <input type="checkbox" class="checkbox">
+                    <span>Basic Life — Declined</span>
                 </div>
             </div>
+        </div>
+
+        <div class="section">
+            <div class="section-title">Supplemental Life Insurance Election</div>
+            <div class="election-box">
+                <div class="plan-option">
+                    <input type="checkbox" class="checkbox" >
+                    <span>Supplemental Life — Elected</span>
+                </div>
+                <div class="plan-option">
+                    <input type="checkbox" class="checkbox" checked>
+                    <span>Waived / No payroll deduction on file</span>
+                </div>
+            </div>
+            
         </div>
 
         <div class="section">
             <div class="section-title">Primary Beneficiary</div>
-            <div class="section-content">
-                <div class="form-group">
-                    <div class="form-row">
-                        <div class="form-label">Full Name:</div>
-                        <div class="form-input">Jane Carter</div>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-label">Relationship:</div>
-                        <div class="form-input">Spouse</div>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-label">Percentage:</div>
-                        <div class="form-input">75%</div>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-label">SSN:</div>
-                        <div class="form-input">***-**-1234</div>
-                    </div>
-                </div>
-            </div>
+            <table class="beneficiary-table">
+                <thead>
+                    <tr>
+                        <th>Beneficiary Name</th>
+                        <th>Relationship</th>
+                        <th>Address</th>
+                        <th>Allocation %</th>
+                        <th>Allocation Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Demo Beneficiary A</td>
+                        <td>Spouse</td>
+                        <td>50.0</td>
+                        <td class="amount-cell">$50,000.00</td>
+                    </tr>
+                    
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td colspan="2" style="text-align: left; font-weight: 600;">Total Allocation:</td>
+                        <td colspan="2" class="amount-cell" style="text-align: right;">100.0%</td>
+                        <td class="amount-cell" style="text-align: right;">$100,000.00</td>
+                    </tr>
+                </tfoot>
+            </table>
         </div>
 
         <div class="section">
-            <div class="section-title">Secondary Beneficiary</div>
-            <div class="section-content">
-                <div class="form-group">
-                    <div class="form-row">
-                        <div class="form-label">Full Name:</div>
-                        <div class="form-input">Michael Carter</div>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-label">Relationship:</div>
-                        <div class="form-input">Son</div>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-label">Percentage:</div>
-                        <div class="form-input">25%</div>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-label">SSN:</div>
-                        <div class="form-input">***-**-5678</div>
-                    </div>
-                </div>
+            <div class="section-title">Contingent Beneficiary</div>
+            <table class="beneficiary-table">
+                <thead>
+                    <tr>
+                        <th>Beneficiary Name</th>
+                        <th>Relationship</th>
+                        <th>Address</th>
+                        <th>Allocation %</th>
+                        <th>Allocation Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td colspan="2" style="text-align: left; font-weight: 600;">Total Allocation:</td>
+                        <td colspan="2" class="amount-cell" style="text-align: right;">100.0%</td>
+                        <td class="amount-cell" style="text-align: right;">$50,000.00</td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+
+        <div class="section">
+            <div class="section-title">Employee Certification</div>
+            <div style="font-size: 8pt; margin-bottom: 0.25in;">
+                I hereby certify that the beneficiary designations made are in accordance with my wishes and that I have provided all required information to the best of my knowledge. 
+                I understand that I may change these designations at any time by submitting a written request to Human Resources.
             </div>
         </div>
 
-        <div class="signature-area">
+        <div class="signature-section">
+            <div class="section-title">Employee Signature</div>
             <div class="signature-line">
-                <div>
-                    <span class="signature">Employee Signature:</span> _________________________
-                </div>
-                <div>
-                    <span class="date">Date:</span> ___________________
+                <div class="signature-box"></div>
+                <div class="date-box">
+                    <div style="font-weight: 600;">Date:</div>
+                    <div>2025-11-11</div>
                 </div>
             </div>
-            <div class="signature-line">
-                <div>
-                    <span class="signature">HR Representative:</span> _________________________
-                </div>
-                <div>
-                    <span class="date">Date:</span> November 3, 2025
-                </div>
+            <div style="font-size: 8pt; margin-top: 0.25in;">
+                <strong>Employee Name (Print):</strong> John Carter
             </div>
         </div>
 
-        <div class="footer">
-            BOF Demo Document — Not for legal filing, payroll processing, benefits enrollment, or employee use.
+        <div class="signature-section">
+            <div class="section-title">HR/Benefits Review</div>
+            <div class="signature-line">
+                <div class="signature-box"></div>
+                <div class="date-box">
+                    <div style="font-weight: 600;">Date:</div>
+                    <div>2025-10-29</div>
+                </div>
+            </div>
+            <div style="font-size: 8pt; margin-top: 0.25in;">
+                <strong>HR Representative:</strong> _________________________
+            </div>
         </div>
+
+        <div style="font-size: 8pt; margin-top: 0.5in; color: #4a5568;">
+            <strong>Relationship Note:</strong> This form connects to benefits administration and life insurance policy management where applicable.
+        </div>
+    </div>
+
+    <div class="footer">
+        BOF Demo Document — Not for legal filing, payroll processing, benefits enrollment, or employee use.
     </div>
 </body>
 </html>

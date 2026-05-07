@@ -800,7 +800,7 @@ function ensureDirectoryExists(filePath) {
 
 // Main generation function
 function generateDocuments() {
-  console.log("🚀 Starting Driver HR/Payroll Document Generator (Phase 3: Employee Handbook + Benefits Enrollment + FSA Election)");
+  console.log("🚀 Starting Driver HR/Payroll Document Generator (Phase 4: Employee Handbook + Benefits Enrollment + FSA Election + Life Insurance)");
   
   const bofData = loadBofData();
   const generatedFiles = [];
@@ -859,6 +859,22 @@ function generateDocuments() {
       
       console.log(`✅ Generated FSA: ${driver.id} - ${driverInfo.name}`);
       
+      // Generate Life Insurance Beneficiary Election
+      const lifeInsurancePath = join(PROJECT_ROOT, "public", "generated", "drivers", driver.id, "hr-payroll", "life-insurance-beneficiary-election.html");
+      ensureDirectoryExists(lifeInsurancePath);
+      
+      const lifeInsuranceContent = generateLifeInsuranceBeneficiaryElection(driverInfo, settlementData);
+      writeFileSync(lifeInsurancePath, lifeInsuranceContent, "utf8");
+      
+      generatedFiles.push({
+        driverId: driver.id,
+        driverName: driverInfo.name,
+        path: lifeInsurancePath,
+        type: "life-insurance-beneficiary-election"
+      });
+      
+      console.log(`✅ Generated Life Insurance: ${driver.id} - ${driverInfo.name}`);
+      
     } catch (error) {
       errors.push({
         driverId: driver.id,
@@ -878,6 +894,382 @@ function generateDocuments() {
   }
   
   return { generatedFiles, errors };
+}
+
+// Generate Life Insurance Beneficiary Election
+function generateLifeInsuranceBeneficiaryElection(driverInfo, settlementData) {
+  const electionDate = generateRandomDate();
+  const reviewDate = generateRandomDate();
+  
+  // Calculate life insurance election based on settlement data
+  const lifeInsuranceAbove50k = parseFloat(settlementData.lifeInsuranceAbove50k) || 0;
+  const basicLifeEnrolled = true; // All drivers get basic life insurance as part of demo benefits package
+  const supplementalLifeEnrolled = lifeInsuranceAbove50k > 0;
+  
+  // Generate demo beneficiaries if no source data exists
+  const hasBeneficiaryData = false; // No explicit beneficiary source field found
+  const primaryBeneficiary = hasBeneficiaryData ? "Demo Beneficiary A" : "Demo Beneficiary A";
+  const contingentBeneficiary = hasBeneficiaryData ? "Demo Beneficiary B" : null;
+  
+  return `<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Life Insurance Beneficiary Election Form - ${driverInfo.name}</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            line-height: 1.4;
+            color: #1a202c;
+            max-width: 8.5in;
+            margin: 0 auto;
+            padding: 0.25in;
+            background: #ffffff;
+        }
+        .paper {
+            background: #ffffff;
+            width: 8.5in;
+            height: 11in;
+            padding: 0.5in;
+            border: 1px solid #e5e7eb;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 0.5in;
+            border-bottom: 2px solid #0BA5A4;
+            padding-bottom: 0.25in;
+        }
+        .company-name {
+            font-size: 14pt;
+            font-weight: bold;
+            color: #0BA5A4;
+            margin-bottom: 0.0625in;
+        }
+        .company-address {
+            font-size: 9pt;
+            color: #4a5568;
+            margin-bottom: 0.25in;
+        }
+        .document-title {
+            font-size: 12pt;
+            font-weight: bold;
+            color: #1a202c;
+            margin-bottom: 0.125in;
+        }
+        .section {
+            margin-bottom: 0.5in;
+        }
+        .section-title {
+            font-size: 11pt;
+            font-weight: bold;
+            color: #0BA5A4;
+            margin-bottom: 0.125in;
+            border-bottom: 1px solid #e2e8f0;
+            padding-bottom: 0.0625in;
+        }
+        .employer-info {
+            margin-bottom: 0.25in;
+        }
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.0625in;
+        }
+        .info-label {
+            font-weight: 600;
+            color: #4a5568;
+            min-width: 2in;
+        }
+        .info-value {
+            color: #1a202c;
+        }
+        .employee-info {
+            margin-bottom: 0.25in;
+        }
+        .election-box {
+            margin-bottom: 0.25in;
+        }
+        .election-title {
+            font-weight: 600;
+            margin-bottom: 0.125in;
+        }
+        .plan-option {
+            display: flex;
+            align-items: center;
+            margin-bottom: 0.125in;
+        }
+        .checkbox {
+            margin-right: 0.25in;
+        }
+        .beneficiary-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 0.25in;
+            font-size: 9pt;
+        }
+        .beneficiary-table th {
+            background: #f1f5f9;
+            padding: 2px 4px;
+            text-align: left;
+            font-weight: 600;
+            border: 1px solid #e2e8f0;
+        }
+        .beneficiary-table td {
+            border: 1px solid #e2e8f0;
+            padding: 2px 4px;
+            text-align: left;
+        }
+        .percentage-cell {
+            text-align: right;
+            font-family: 'Courier New', monospace;
+            width: 1.5in;
+        }
+        .amount-cell {
+            text-align: right;
+            font-family: 'Courier New', monospace;
+        }
+        .signature-section {
+            margin-top: 0.75in;
+            border-top: 1px solid #e2e8f0;
+            padding-top: 0.25in;
+        }
+        .signature-line {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.125in;
+        }
+        .signature-box {
+            width: 3in;
+            border-bottom: 1px solid #4a5568;
+            height: 0.5in;
+        }
+        .date-box {
+            width: 2in;
+            text-align: center;
+            font-size: 9pt;
+        }
+        .footer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: #f7fafc;
+            border-top: 1px solid #e2e8f0;
+            padding: 0.125in;
+            text-align: center;
+            font-size: 8pt;
+            color: #4a5568;
+        }
+    </style>
+</head>
+<body>
+    <div class="paper">
+        <div class="header">
+            <div class="company-name">Delta Advanced Trucking, Inc.</div>
+            <div class="company-address">2475 Laver Rd., Mansfield, OH 44905</div>
+            <div class="document-title">Life Insurance Beneficiary Election Form</div>
+            <div style="font-size: 9pt; color: #4a5568;">2025 Annual Election Period</div>
+        </div>
+
+        <div class="section">
+            <div class="section-title">Employer / Group Information</div>
+            <div class="employer-info">
+                <div class="info-row">
+                    <div class="info-label">Employer:</div>
+                    <div class="info-value">Delta Advanced Trucking, Inc.</div>
+                </div>
+                <div class="info-row">
+                    <div class="info-label">Group:</div>
+                    <div class="info-value">BOF Demo Group</div>
+                </div>
+                <div class="info-row">
+                    <div class="info-label">Policy Reference:</div>
+                    <div class="info-value">Demo Policy Reference #2025-LIFE</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <div class="section-title">Employee / Insured Information</div>
+            <div class="employee-info">
+                <div class="info-row">
+                    <div class="info-label">Employee Name:</div>
+                    <div class="info-value">${driverInfo.name}</div>
+                </div>
+                <div class="info-row">
+                    <div class="info-label">Employee ID:</div>
+                    <div class="info-value">${driverInfo.id}</div>
+                </div>
+                <div class="info-row">
+                    <div class="info-label">Address:</div>
+                    <div class="info-value">${driverInfo.address}</div>
+                </div>
+                <div class="info-row">
+                    <div class="info-label">Phone:</div>
+                    <div class="info-value">${driverInfo.phone}</div>
+                </div>
+                <div class="info-row">
+                    <div class="info-label">Email:</div>
+                    <div class="info-value">${driverInfo.email}</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <div class="section-title">Basic Life Insurance Election</div>
+            <div class="election-box">
+                <div class="plan-option">
+                    <input type="checkbox" class="checkbox" checked>
+                    <span>Basic Life — Active / Included</span>
+                </div>
+                <div class="plan-option">
+                    <input type="checkbox" class="checkbox">
+                    <span>Basic Life — Declined</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <div class="section-title">Supplemental Life Insurance Election</div>
+            <div class="election-box">
+                <div class="plan-option">
+                    <input type="checkbox" class="checkbox" ${supplementalLifeEnrolled ? 'checked' : ''}>
+                    <span>Supplemental Life — Elected</span>
+                </div>
+                <div class="plan-option">
+                    <input type="checkbox" class="checkbox" ${!supplementalLifeEnrolled ? 'checked' : ''}>
+                    <span>${supplementalLifeEnrolled ? 'Declined' : 'Waived / No payroll deduction on file'}</span>
+                </div>
+            </div>
+            ${supplementalLifeEnrolled ? `
+            <div class="section">
+                <div class="section-title">Supplemental Life Insurance Details</div>
+                <div style="font-size: 8pt; margin-bottom: 0.25in;">
+                    Per-pay-period deduction: <strong>$${lifeInsuranceAbove50k.toFixed(2)}</strong><br>
+                    Annual deduction: <strong>$${(lifeInsuranceAbove50k * 26).toFixed(2)}</strong>
+                </div>
+            </div>
+            ` : ''}
+        </div>
+
+        <div class="section">
+            <div class="section-title">Primary Beneficiary</div>
+            <table class="beneficiary-table">
+                <thead>
+                    <tr>
+                        <th>Beneficiary Name</th>
+                        <th>Relationship</th>
+                        <th>Address</th>
+                        <th>Allocation %</th>
+                        <th>Allocation Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>${primaryBeneficiary}</td>
+                        <td>Spouse</td>
+                        <td>50.0</td>
+                        <td class="amount-cell">$50,000.00</td>
+                    </tr>
+                    ${contingentBeneficiary ? `
+                    <tr>
+                        <td>${contingentBeneficiary}</td>
+                        <td>Child</td>
+                        <td>50.0</td>
+                        <td class="amount-cell">$50,000.00</td>
+                    </tr>
+                    ` : ''}
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td colspan="2" style="text-align: left; font-weight: 600;">Total Allocation:</td>
+                        <td colspan="2" class="amount-cell" style="text-align: right;">100.0%</td>
+                        <td class="amount-cell" style="text-align: right;">$100,000.00</td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+
+        <div class="section">
+            <div class="section-title">Contingent Beneficiary</div>
+            <table class="beneficiary-table">
+                <thead>
+                    <tr>
+                        <th>Beneficiary Name</th>
+                        <th>Relationship</th>
+                        <th>Address</th>
+                        <th>Allocation %</th>
+                        <th>Allocation Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${contingentBeneficiary ? `
+                    <tr>
+                        <td>${contingentBeneficiary}</td>
+                        <td>Child</td>
+                        <td>50.0</td>
+                        <td class="amount-cell">$50,000.00</td>
+                    </tr>
+                    ` : ''}
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td colspan="2" style="text-align: left; font-weight: 600;">Total Allocation:</td>
+                        <td colspan="2" class="amount-cell" style="text-align: right;">100.0%</td>
+                        <td class="amount-cell" style="text-align: right;">$50,000.00</td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+
+        <div class="section">
+            <div class="section-title">Employee Certification</div>
+            <div style="font-size: 8pt; margin-bottom: 0.25in;">
+                I hereby certify that the beneficiary designations made are in accordance with my wishes and that I have provided all required information to the best of my knowledge. 
+                I understand that I may change these designations at any time by submitting a written request to Human Resources.
+            </div>
+        </div>
+
+        <div class="signature-section">
+            <div class="section-title">Employee Signature</div>
+            <div class="signature-line">
+                <div class="signature-box"></div>
+                <div class="date-box">
+                    <div style="font-weight: 600;">Date:</div>
+                    <div>${electionDate}</div>
+                </div>
+            </div>
+            <div style="font-size: 8pt; margin-top: 0.25in;">
+                <strong>Employee Name (Print):</strong> ${driverInfo.name}
+            </div>
+        </div>
+
+        <div class="signature-section">
+            <div class="section-title">HR/Benefits Review</div>
+            <div class="signature-line">
+                <div class="signature-box"></div>
+                <div class="date-box">
+                    <div style="font-weight: 600;">Date:</div>
+                    <div>${reviewDate}</div>
+                </div>
+            </div>
+            <div style="font-size: 8pt; margin-top: 0.25in;">
+                <strong>HR Representative:</strong> _________________________
+            </div>
+        </div>
+
+        <div style="font-size: 8pt; margin-top: 0.5in; color: #4a5568;">
+            <strong>Relationship Note:</strong> This form connects to benefits administration and life insurance policy management where applicable.
+        </div>
+    </div>
+
+    <div class="footer">
+        BOF Demo Document — Not for legal filing, payroll processing, benefits enrollment, or employee use.
+    </div>
+</body>
+</html>`;
 }
 
 // Generate Flexible Spending Account Election
