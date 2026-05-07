@@ -19,8 +19,7 @@ type DriverStatusFilter =
   | "needs_review"
   | "blocked"
   | "expiring_soon"
-  | "missing_docs"
-  | "safety_at_risk";
+  | "missing_docs";
 
 type DriverRow = {
   driverId: string;
@@ -113,8 +112,6 @@ export function DriversRosterTable() {
       );
     } else if (driverStatusFilter === "missing_docs") {
       rows = rows.filter((row) => driverHasMissingOrInvalidDoc(data, row.driverId));
-    } else if (driverStatusFilter === "safety_at_risk") {
-      rows = rows.filter((row) => row.safety === "At Risk");
     } else if (driverStatusFilter !== "all") {
       rows = rows.filter((row) => row.eligibilityStatus === driverStatusFilter);
     }
@@ -179,7 +176,6 @@ export function DriversRosterTable() {
             { id: "blocked" as const, label: "Dispatch blocked" },
             { id: "expiring_soon" as const, label: "Expiring soon" },
             { id: "missing_docs" as const, label: "Missing docs" },
-            { id: "safety_at_risk" as const, label: "Safety at risk" },
           ].map((f) => (
             <button
               key={f.id}
@@ -193,124 +189,124 @@ export function DriversRosterTable() {
         </div>
       </section>
 
-      <section id="primary-driver-table" className="bof-cc-panel" aria-label="Driver roster table">
+      <section id="primary-driver-table" className="bof-cc-panel" aria-label="Driver document center">
         <div className="bof-cc-panel-head">
-          <h2 className="bof-h2">Driver roster ({filteredDriverRows.length} of {driverRows.length})</h2>
+          <h2 className="bof-h2">Driver Document Center ({filteredDriverRows.length} of {driverRows.length})</h2>
         </div>
-        <div className="bof-cc-table-wrap">
-          <table className="bof-cc-table">
-            <thead>
-              <tr>
-                <th>Driver</th>
-                <th>Status</th>
-                <th>Compliance</th>
-                <th>Documents</th>
-                <th>HR / Employment Admin</th>
-                <th>Payroll / Deduction Support</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filteredDriverRows.map((row) => (
-                <Fragment key={row.driverId}>
-                <tr>
-                  <td>
-                    <div className="bof-cc-driver-cell">
-                      <DriverAvatar name={row.name} photoUrl={row.avatar} size={40} />
-                      <div>
-                        <p className="bof-cc-driver-name">{row.name}</p>
-                        <p className="bof-cc-driver-meta">{row.driverId}</p>
-                        <p className="bof-cc-driver-meta">{row.email ?? row.phone ?? "No contact on file"}</p>
-                      </div>
+        <div className="bof-driver-cards-grid" style={{ paddingBottom: "6rem" }}>
+          {filteredDriverRows.map((row) => (
+            <Fragment key={row.driverId}>
+              <div className="bof-driver-card">
+                {/* Driver Header */}
+                <div className="bof-driver-card-header">
+                  <div className="bof-driver-card-info">
+                    <DriverAvatar name={row.name} photoUrl={row.avatar} size={48} />
+                    <div className="bof-driver-card-details">
+                      <h3 className="bof-driver-card-name">{row.name}</h3>
+                      <p className="bof-driver-card-id">{row.driverId}</p>
+                      <p className="bof-driver-card-contact">{row.email ?? row.phone ?? "No contact on file"}</p>
                     </div>
-                  </td>
-                  <td>
-                    <StatusChip
-                      label={row.status}
-                    />
-                    {row.primaryReviewReason ? (
-                      <p className="bof-cc-driver-meta" style={{ marginTop: "0.35rem" }}>
-                        {row.primaryReviewReason}
-                      </p>
-                    ) : null}
-                  </td>
-                  <td>
+                  </div>
+                  <StatusChip label={row.status} />
+                </div>
+
+                {/* Primary Issue - Visible without clicking */}
+                {row.primaryReviewReason && (
+                  <div className="bof-driver-card-issue">
+                    <div className="bof-driver-card-issue-header">
+                      <span className="bof-driver-card-issue-label">Primary Issue</span>
+                    </div>
+                    <p className="bof-driver-card-issue-text">{row.primaryReviewReason}</p>
+                  </div>
+                )}
+
+                {/* Document Status */}
+                <div className="bof-driver-card-status">
+                  <div className="bof-driver-card-status-row">
+                    <span className="bof-driver-card-status-label">Qualification Documents:</span>
+                    <span className="bof-driver-card-status-value">{row.documentSummary}</span>
+                  </div>
+                  <div className="bof-driver-card-status-row">
+                    <span className="bof-driver-card-status-label">Compliance Status:</span>
                     <button
                       type="button"
-                      className="bof-driver-review-dispatch-link text-left"
+                      className="bof-driver-card-status-link"
                       onClick={() => setExpandedDriverId((prev) => (prev === row.driverId ? null : row.driverId))}
                     >
                       {row.compliance}
                     </button>
-                  </td>
-                  <td>
-                    <button type="button" className="bof-driver-review-dispatch-link text-left">
-                      {row.documentSummary}
-                    </button>
-                  </td>
-                  <td>
-                    <div className="bof-cc-doc-links">
-                      <Link href={`/generated/drivers/${row.driverId}/hr-payroll/benefits-enrollment.html`} className="bof-cc-doc-link">
+                  </div>
+                </div>
+
+                {/* Document Links */}
+                <div className="bof-driver-card-docs">
+                  <div className="bof-driver-card-doc-section">
+                    <h4 className="bof-driver-card-doc-title">HR / Employment Admin</h4>
+                    <div className="bof-driver-card-doc-chips">
+                      <Link href={`/generated/drivers/${row.driverId}/hr-payroll/benefits-enrollment.html`} className="bof-driver-card-doc-chip">
                         Benefits Enrollment
                       </Link>
-                      <Link href={`/generated/drivers/${row.driverId}/hr-payroll/life-insurance-beneficiary-election.html`} className="bof-cc-doc-link">
+                      <Link href={`/generated/drivers/${row.driverId}/hr-payroll/life-insurance-beneficiary-election.html`} className="bof-driver-card-doc-chip">
                         Life Insurance Election
                       </Link>
                     </div>
-                  </td>
-                  <td>
-                    <div className="bof-cc-doc-links">
-                      <Link href={`/generated/drivers/${row.driverId}/hr-payroll/flexible-spending-account-election.html`} className="bof-cc-doc-link">
+                  </div>
+                  <div className="bof-driver-card-doc-section">
+                    <h4 className="bof-driver-card-doc-title">Payroll / Deduction Support</h4>
+                    <div className="bof-driver-card-doc-chips">
+                      <Link href={`/generated/drivers/${row.driverId}/hr-payroll/flexible-spending-account-election.html`} className="bof-driver-card-doc-chip">
                         FSA Election
                       </Link>
-                      <Link href={`/generated/drivers/${row.driverId}/hr-payroll/garnishment-withholding-summary.html`} className="bof-cc-doc-link">
+                      <Link href={`/generated/drivers/${row.driverId}/hr-payroll/garnishment-withholding-summary.html`} className="bof-driver-card-doc-chip">
                         Garnishment Summary
                       </Link>
                     </div>
-                  </td>
-                  <td>
-                    <div className="bof-cc-action-wrap">
-                      {row.eligibilityStatus === "blocked" && row.primaryDispatchBlockerId ? (
-                        <button
-                          type="button"
-                          className="bof-cc-action-btn bof-cc-action-btn-danger"
-                          onClick={() =>
-                            resolveDriverDispatchBlocker(
-                              row.driverId,
-                              row.primaryDispatchBlockerId!,
-                              "Primary dispatch blocker — demo override"
-                            )
-                          }
-                        >
-                          Fix issue
-                        </button>
-                      ) : (
-                        <button
-                          type="button"
-                          className="bof-cc-action-btn bof-cc-action-btn-primary"
-                          onClick={() => setExpandedDriverId((prev) => (prev === row.driverId ? null : row.driverId))}
-                        >
-                          {expandedDriverId === row.driverId ? "Hide issue" : "Show issue"}
-                        </button>
-                      )}
-                    </div>
-                  </td>
-                </tr>
+                  </div>
+                </div>
+
+                {/* Actions */}
+                <div className="bof-driver-card-actions">
+                  <Link href={`/documents/vault/${row.driverId}`} className="bof-driver-card-action-btn bof-driver-card-action-btn-secondary">
+                    Open Driver Vault
+                  </Link>
+                  {row.eligibilityStatus === "blocked" && row.primaryDispatchBlockerId ? (
+                    <button
+                      type="button"
+                      className="bof-driver-card-action-btn bof-driver-card-action-btn-danger"
+                      onClick={() =>
+                        resolveDriverDispatchBlocker(
+                          row.driverId,
+                          row.primaryDispatchBlockerId!,
+                          "Primary dispatch blocker — demo override"
+                        )
+                      }
+                    >
+                      Fix Issue
+                    </button>
+                  ) : (
+                    <button
+                      type="button"
+                      className="bof-driver-card-action-btn bof-driver-card-action-btn-primary"
+                      onClick={() => setExpandedDriverId((prev) => (prev === row.driverId ? null : row.driverId))}
+                    >
+                      {expandedDriverId === row.driverId ? "Hide Details" : "Show Details"}
+                    </button>
+                  )}
+                </div>
+              </div>
+
+              {/* Expanded Issue Panel */}
               {expandedDriverId === row.driverId ? (
-                <tr>
-                  <td colSpan={7}>
-                    <DriverReviewInlinePanel 
-                explanation={row.reviewExplanation} 
-                driverId={row.driverId} 
-                driverName={row.name} 
-              />
-                  </td>
-                </tr>
+                <div className="bof-driver-card-expanded">
+                  <DriverReviewInlinePanel 
+                    explanation={row.reviewExplanation} 
+                    driverId={row.driverId} 
+                    driverName={row.name} 
+                  />
+                </div>
               ) : null}
-              </Fragment>
-              ))}
-            </tbody>
-          </table>
+            </Fragment>
+          ))}
         </div>
       </section>
 
