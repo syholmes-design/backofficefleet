@@ -21,53 +21,53 @@ import type { MarketingIconCardItem } from "@/components/marketing/MarketingIcon
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "BackOfficeFleet | Front office built so drivers can win",
+  title: "BackOfficeFleet | The Complete Back-Office Operating System for Trucking",
   description:
-    "When dispatch, proof, and billing signals disagree, the whole operation misses. BOF aligns the front office with what drivers need—pretrip discipline, clean documentation, and truth that holds through settlement and claims.",
+    "BOF is the back-office operating system that unifies dispatch, driver management, fleet financials, compliance, and customer communication. One platform for complete operational control and profitability.",
 };
 
 const DIFFERENTIATOR_POINTS = [
   {
-    title: "Drivers already know the gap",
+    title: "Unified Operating System",
     description:
-      "They know what they are missing, what the shipper promised, and when the plan quietly changed. The failure mode is a front office that is not built to make them successful.",
+      "BOF is the complete back-office operating system that unifies dispatch, driver management, fleet financials, compliance, and customer communication in one platform.",
   },
   {
-    title: "The front office has to earn alignment",
+    title: "Real-Time Operational Control",
     description:
-      "When contract, customer expectation, and dispatch direction drift apart, the driver pays first—then the fleet pays in lost miles, late paperwork, and fights at settlement. BOF keeps those signals intentionally tied together.",
+      "From dispatch to settlement, BOF provides complete visibility and control over every aspect of your trucking operation with real-time data and automated workflows.",
   },
   {
-    title: "BOF is operational, not performative",
+    title: "Profitability-First Design",
     description:
-      "We turn pre-trip rigor, proof capture, and documentation into leverage—cleaner handoffs, faster answers, and fewer surprises when money and risk are on the line.",
+      "Every feature is built to improve your bottom line. BOF connects operational data directly to financial outcomes, helping you make smarter decisions faster.",
   },
 ] as const;
 
 const AUTOMATION_ITEMS: MarketingIconCardItem[] = [
   {
-    title: "Intake automation",
-    description: "Convert incoming packets into controlled workflows instead of inbox backlog.",
+    title: "Dispatch & Load Management",
+    description: "Automated load intake, intelligent dispatch, and real-time load tracking across your entire fleet.",
     icon: <IconDispatch />,
   },
   {
-    title: "Compliance automation",
-    description: "Surface credential and readiness gaps before they become dispatch or audit failures.",
+    title: "Driver Management & Compliance",
+    description: "Complete driver lifecycle management, credential tracking, and automated compliance monitoring.",
     icon: <IconShield />,
   },
   {
-    title: "Proof and settlement automation",
-    description: "Tie POD, seal, and document quality directly to billing and settlement outcomes.",
+    title: "Fleet Financials & Settlement",
+    description: "Real-time profitability tracking, driver pay/settlement methods, and comprehensive cash flow management.",
     icon: <IconLoadProof />,
   },
   {
-    title: "Carrier revenue protection",
-    description: "Settlement intelligence and holds surface in one command narrative—prioritized by capital impact.",
+    title: "Document & Proof Management",
+    description: "Automated document workflows, proof capture, and audit-ready documentation packages.",
     icon: <IconLoadProof />,
   },
   {
-    title: "Customer communication automation",
-    description: "Provide clear, timely updates and stronger documentation without manual follow-up loops.",
+    title: "Customer Communication & Portals",
+    description: "Automated customer updates, portal access, and professional communication workflows.",
     icon: <IconDispatch />,
   },
 ];
@@ -76,34 +76,34 @@ const STAKEHOLDER_PAIN = [
   {
     title: "For management / ownership",
     points: [
-      "System-level visibility and accountability",
-      "Fewer missed details and fewer reactive escalations",
-      "Better control over compliance, proof, settlements, and exceptions",
+      "Complete operational visibility across dispatch, drivers, and finances",
+      "Real-time profitability tracking and cash flow management",
+      "Automated compliance monitoring and audit readiness",
     ],
   },
   {
     title: "For for-hire carriers",
     points: [
-      "Dispatch moves faster than compliance can keep up—credential drift hides until audits",
-      "Proof lives everywhere except the load record—finance can't tie evidence to disputes",
-      "Disputes eat margin before leadership sees the pattern—soft costs and customer churn",
-      "No enforcement layer—trackers show dots but don't stop unqualified drivers",
+      "Unified dispatch and compliance workflows eliminate credential drift",
+      "Integrated proof capture tied directly to settlement and billing",
+      "Automated revenue protection and dispute resolution",
+      "Scalable driver management with automated enforcement",
     ],
   },
   {
     title: "For drivers",
     points: [
-      "Fewer surprises before and during dispatch",
-      "Clear readiness and less document confusion",
-      "Faster issue resolution with fewer settlement disputes",
+      "Clear dispatch instructions and automated readiness checks",
+      "Simplified document workflows and faster issue resolution",
+      "Transparent pay/settlement methods and fewer disputes",
     ],
   },
   {
     title: "For customers",
     points: [
-      "Cleaner communication and faster responses",
-      "Better proof quality and documentation confidence",
-      "More consistent execution across the full load lifecycle",
+      "Real-time shipment tracking and automated status updates",
+      "Professional customer portal with document access",
+      "Consistent service quality and communication",
     ],
   },
 ] as const;
@@ -216,7 +216,7 @@ export default function MarketingHomeAccountable() {
                       textTransform: "uppercase",
                     }}
                   >
-                    Live Operations Demo
+                    Back-Office Operating System
                   </p>
                   <h1
                     id="bof-mkt-hero-heading"
@@ -228,7 +228,7 @@ export default function MarketingHomeAccountable() {
                       fontSize: "clamp(1.8rem, 3.8vw, 3rem)",
                     }}
                   >
-                    See BOF Run the Freight Back Office
+                    BOF takes over the back office for fleets.
                   </h1>
                   <p
                     style={{
@@ -239,8 +239,7 @@ export default function MarketingHomeAccountable() {
                       maxWidth: "56ch",
                     }}
                   >
-                    Explore how BOF turns driver readiness, dispatch risk, proof, documents, settlements, and exceptions
-                    into one operating command center.
+                    Dispatch, documents, driver readiness, HR, payroll, finance, factoring, compliance, customer proof, fleet financials, and audit-ready records — all connected in one accountable operating system.
                   </p>
                   <div
                     className="bof-mkt-home-hero-integrated__ctas"
@@ -249,11 +248,11 @@ export default function MarketingHomeAccountable() {
                     <Link href="/command-center" className="bof-mkt-btn-enterprise bof-mkt-btn-enterprise-primary">
                       Open Command Center
                     </Link>
-                    <Link href="/drivers" className="bof-mkt-btn-enterprise bof-mkt-btn-enterprise-secondary">
-                      Review Driver Readiness
+                    <Link href="/fleet-financials" className="bof-mkt-btn-enterprise bof-mkt-btn-enterprise-secondary">
+                      View Fleet Financials
                     </Link>
-                    <Link href="/dispatch" className="bof-mkt-btn-enterprise bof-mkt-btn-enterprise-secondary">
-                      Inspect Load Proof
+                    <Link href="/drivers" className="bof-mkt-btn-enterprise bof-mkt-btn-enterprise-secondary">
+                      Review Driver Management
                     </Link>
                   </div>
                   <p style={{ margin: "0.65rem 0 0", color: "#94a3b8", fontSize: "0.86rem" }}>
@@ -290,8 +289,8 @@ export default function MarketingHomeAccountable() {
         <div className="bof-mkt-container">
           <MarketingSectionHeader
             titleId="bof-mkt-different-heading"
-            title="Why BOF is different"
-            lead="Trucking does not break because nobody cares—it breaks when what the business thinks is true is not what the driver can execute. BOF is built to close that gap, not to decorate it."
+            title="The Complete Back-Office Operating System"
+            lead="BOF unifies every aspect of trucking operations—dispatch, drivers, finances, compliance, and customer communication—in one powerful platform built for profitability and scale."
           />
           <div className="bof-mkt-differentiator-grid">
             {DIFFERENTIATOR_POINTS.map((item) => (
@@ -308,10 +307,47 @@ export default function MarketingHomeAccountable() {
         <div className="bof-mkt-container">
           <MarketingSectionHeader
             titleId="bof-mkt-auto-heading"
-            title="Where winning fleets put the work"
-            lead="The advantage is not a prettier dashboard. It is disciplined intake, ironclad pretrip and proof habits, and packet quality that still makes sense at settlement. BOF encodes that discipline so it scales past your best shift lead."
+            title="Complete Operational Control"
+            lead="BOF provides the tools and automation to manage every aspect of your trucking operation. From dispatch to settlement, every workflow is designed for efficiency, accuracy, and profitability."
           />
           <MarketingIconCardGrid items={AUTOMATION_ITEMS} variant="feature" />
+        </div>
+      </MarketingSection>
+
+      <MarketingSection variant="light" ariaLabelledBy="bof-mkt-portals-heading">
+        <div className="bof-mkt-container">
+          <MarketingSectionHeader
+            titleId="bof-mkt-portals-heading"
+            title="Three Portals. One Operating System."
+            lead="BOF provides specialized portals for each stakeholder, all unified through the same back-office operating system."
+          />
+          <div className="bof-mkt-hub">
+            <article className="bof-mkt-hub-node bof-mkt-hub-node--top">
+              <h3>Manager Portal</h3>
+              <p>Control the fleet back office with operational insights, cash flow visibility, and audit readiness metrics.</p>
+              <Link href="/portals/manager" className="bof-mkt-btn-enterprise bof-mkt-btn-enterprise-secondary" style={{ marginTop: '1rem' }}>
+                Open Manager Portal
+              </Link>
+            </article>
+            <article className="bof-mkt-hub-core">
+              <h3>BOF</h3>
+              <p>Unified Operating System</p>
+            </article>
+            <article className="bof-mkt-hub-node bof-mkt-hub-node--left">
+              <h3>Driver Portal</h3>
+              <p>Execute assignments and manage required documents, settlements, and compliance workflows.</p>
+              <Link href="/portals/driver" className="bof-mkt-btn-enterprise bof-mkt-btn-enterprise-secondary" style={{ marginTop: '1rem' }}>
+                Open Driver Portal
+              </Link>
+            </article>
+            <article className="bof-mkt-hub-node bof-mkt-hub-node--right">
+              <h3>Customer Portal</h3>
+              <p>See shipment status, proof, exceptions, and invoice readiness with professional communication.</p>
+              <Link href="/portals/customer" className="bof-mkt-btn-enterprise bof-mkt-btn-enterprise-secondary" style={{ marginTop: '1rem' }}>
+                Open Customer Portal
+              </Link>
+            </article>
+          </div>
         </div>
       </MarketingSection>
 
@@ -323,8 +359,8 @@ export default function MarketingHomeAccountable() {
         <div className="bof-mkt-container">
           <MarketingSectionHeader
             titleId="bof-mkt-stakeholder-heading"
-            title="What changes for each part of the line"
-            lead="From the first dispatch note to the last dollar released, everyone has to be looking at the same load story. BOF makes that feel operational, not aspirational."
+            title="Benefits for Every Role"
+            lead="From management to drivers to customers, BOF provides specific benefits that improve efficiency, profitability, and communication across your entire operation."
           />
           <div className="bof-mkt-stakeholder-grid">
             {STAKEHOLDER_PAIN.map((group) => (
@@ -341,29 +377,51 @@ export default function MarketingHomeAccountable() {
         </div>
       </MarketingSection>
 
+      <MarketingSection variant="white" ariaLabelledBy="bof-mkt-vault-heading">
+        <div className="bof-mkt-container">
+          <MarketingSectionHeader
+            titleId="bof-mkt-vault-heading"
+            title="Company Operations Vault"
+            lead="Policies, SOPs, HR records, payroll procedures, finance controls, privacy/security policies, AI governance, vendor controls, and audit-readiness documents organized by business function."
+          />
+          <div className="bof-mkt-hub">
+            <article className="bof-mkt-hub-core">
+              <h3>Complete Document Management</h3>
+              <p>All operational policies, procedures, and compliance documents centralized and organized by business function for easy access and audit readiness.</p>
+              <Link href="/documents/company-operations-vault" className="bof-mkt-btn-enterprise bof-mkt-btn-enterprise-primary" style={{ marginTop: '1rem' }}>
+                Open Company Operations Vault
+              </Link>
+            </article>
+          </div>
+        </div>
+      </MarketingSection>
+
       <MarketingSection variant="white" ariaLabelledBy="bof-mkt-center-heading">
         <div className="bof-mkt-container">
           <MarketingSectionHeader
             titleId="bof-mkt-center-heading"
-            title="At the center of it all: BOF"
-            lead="Management dashboard, driver workflow, and customer portal stay connected through BOF as the coordinating operating layer."
+            title="The Back-Office Operating System"
+            lead="BOF connects every aspect of your trucking operation—dispatch, drivers, fleet financials, compliance, and customers—through one unified platform."
           />
           <div className="bof-mkt-hub">
             <article className="bof-mkt-hub-node bof-mkt-hub-node--top">
-              <h3>Management dashboard</h3>
-              <p>Executive visibility, compliance posture, proof quality, exceptions, and settlement risk in one command view.</p>
+              <h3>Fleet Financials</h3>
+              <p>Turn each load into a financial event with load-level profitability, editable assumptions, cash-flow forecasts, factoring visibility, asset/debt allocation, and management P&L previews. Identify billing blockers, accelerate receivables, model factoring decisions, and forecast settlement, fuel, insurance, debt, and reserve-release timing.</p>
+              <Link href="/fleet-financials" className="bof-mkt-btn-enterprise bof-mkt-btn-enterprise-secondary" style={{ marginTop: '1rem' }}>
+                Open Fleet Financials
+              </Link>
             </article>
             <article className="bof-mkt-hub-core">
               <h3>BOF</h3>
-              <p>Accountable operating layer</p>
+              <p>Back-Office Operating System</p>
             </article>
             <article className="bof-mkt-hub-node bof-mkt-hub-node--left">
-              <h3>Driver workflow</h3>
-              <p>Readiness, credential clarity, issue follow-up, and cleaner proof handoff to reduce disputes.</p>
+              <h3>Driver Management & Compliance</h3>
+              <p>BOF supports employee drivers and owner-operators with worker-type specific onboarding, HR/payroll records, owner-operator packets, settlement methods, and policy acknowledgments. Fuel, mileage, proof, invoice, settlement, and asset records are organized for tax and regulatory audit readiness.</p>
             </article>
             <article className="bof-mkt-hub-node bof-mkt-hub-node--right">
-              <h3>Customer dashboard / portal</h3>
-              <p>Cleaner communication, faster responses, better proof, and stronger confidence in execution.</p>
+              <h3>Dispatch & Operations</h3>
+              <p>Trucking dispatch, load proof, BOL/POD management, customer visibility, claims/exceptions handling, and document readiness—all connected through the same operating system.</p>
             </article>
           </div>
         </div>
@@ -373,24 +431,24 @@ export default function MarketingHomeAccountable() {
         <div className="bof-mkt-container">
           <MarketingSectionHeader
             titleId="bof-mkt-preview-heading"
-            title="Dashboard preview across the operation"
-            lead="Open the live BOF views used by management, drivers, and customers."
+            title="Experience the Complete Back-Office Operating System"
+            lead="Explore the live BOF dashboards that demonstrate complete operational control and profitability management."
           />
           <div className="bof-mkt-preview-grid">
-            <Link href="/dashboard" className="bof-mkt-preview-card">
-              <h3>Management view</h3>
-              <p>Command center KPIs, risk posture, and operational priorities.</p>
-              <span>Open dashboard</span>
+            <Link href="/command-center" className="bof-mkt-preview-card">
+              <h3>Command Center</h3>
+              <p>Complete operational overview, KPIs, and system-wide visibility.</p>
+              <span>Open command center</span>
             </Link>
-            <Link href="/drivers/DRV-001" className="bof-mkt-preview-card">
-              <h3>Driver view</h3>
-              <p>Driver readiness, compliance stack, and document workflow.</p>
-              <span>Open driver workflow</span>
+            <Link href="/fleet-financials" className="bof-mkt-preview-card">
+              <h3>Fleet Financials</h3>
+              <p>Real-time profitability, driver settlements, and cash flow management.</p>
+              <span>View fleet financials</span>
             </Link>
-            <Link href="/shipper-portal/L001" className="bof-mkt-preview-card">
-              <h3>Customer view</h3>
-              <p>Portal-style shipment communication and proof visibility.</p>
-              <span>Open customer portal</span>
+            <Link href="/drivers" className="bof-mkt-preview-card">
+              <h3>Driver Management</h3>
+              <p>Driver lifecycle, compliance, readiness, and settlement workflows.</p>
+              <span>Manage drivers</span>
             </Link>
           </div>
         </div>
@@ -402,14 +460,14 @@ export default function MarketingHomeAccountable() {
 
       <MarketingCtaPanel
         id="bof-mkt-final-cta-heading"
-        title="Make the front office as serious as the miles you run"
-        lead="Book a fleet assessment. We walk the signal path—intake, dispatch, proof, settlement, and claims—and show what it looks like when those layers stop arguing with each other."
+        title="Transform Your Back-Office Operations"
+        lead="Schedule a personalized demo of BOF's complete back-office operating system. See how unified dispatch, driver management, fleet financials, and compliance can transform your profitability and operational control."
       >
         <Link href="/book-assessment" className="bof-mkt-btn-enterprise bof-mkt-btn-enterprise-primary">
-          Take The Assessment
+          Schedule Demo
         </Link>
-        <Link href="/dashboard" className="bof-mkt-btn-enterprise bof-mkt-btn-enterprise-secondary">
-          See The Demo
+        <Link href="/command-center" className="bof-mkt-btn-enterprise bof-mkt-btn-enterprise-secondary">
+          Explore System
         </Link>
       </MarketingCtaPanel>
     </>
