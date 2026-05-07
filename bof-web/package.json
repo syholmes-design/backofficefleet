@@ -37,6 +37,7 @@
     "generate:driver-dqf-summaries": "node scripts/generate-driver-dqf-summaries.mjs",
     "validate:driver-dqf-summaries": "node scripts/validate-driver-dqf-summaries.mjs",
     "validate:safety-credential-mapping": "node scripts/validate-safety-credential-mapping.mjs",
+    "generate:driver-hr-payroll-docs": "node scripts/generate-driver-hr-payroll-docs.mjs",
     "validate:driver-mvr-status": "node scripts/validate-driver-mvr-status.mjs",
     "validate:compliance-incident-reconciliation": "node scripts/validate-compliance-incident-reconciliation.mjs",
     "validate:driver-review-ux": "node scripts/validate-driver-review-ux.mjs",

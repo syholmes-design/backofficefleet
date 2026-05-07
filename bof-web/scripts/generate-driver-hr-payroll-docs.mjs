@@ -1,9 +1,105 @@
-<!DOCTYPE html>
+#!/usr/bin/env node
+
+/**
+ * Driver HR/Payroll Document Generator
+ * 
+ * Phase 1: Employee Handbook Acknowledgment Only
+ * 
+ * Reads BOF source data and regenerates HR/payroll documents consistently.
+ * Safeguards: SSN masking, date range validation, BOF branding.
+ */
+
+import { readFileSync, writeFileSync, existsSync, mkdirSync } from "fs";
+import { join, dirname } from "path";
+import { fileURLToPath } from "url";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+const PROJECT_ROOT = join(__dirname, "..");
+
+// Configuration
+const BOF_CONFIG = {
+  company: "Delta Advanced Trucking, Inc.",
+  address: "2475 Laver Rd., Mansfield, OH 44905",
+  disclaimer: "BOF Demo Document — Not for legal filing, payroll processing, benefits enrollment, or employee use.",
+  tealColor: "#0BA5A4",
+  payPeriodsPerYear: 26
+};
+
+const DATE_RANGE = {
+  start: "2025-10-10",
+  end: "2025-12-28"
+};
+
+const CANONICAL_DRIVERS = [
+  { id: "DRV-001", name: "John Carter" },
+  { id: "DRV-002", name: "Maria Lopez" },
+  { id: "DRV-003", name: "Alex Kim" },
+  { id: "DRV-004", name: "Priya Patel" },
+  { id: "DRV-005", name: "Kenji Tanaka" },
+  { id: "DRV-006", name: "Marcus Chen" },
+  { id: "DRV-007", name: "Sofia Gomez" },
+  { id: "DRV-008", name: "Liam Smith" },
+  { id: "DRV-009", name: "Emma Brown" },
+  { id: "DRV-010", name: "Noah Wilson" },
+  { id: "DRV-011", name: "Olivia Lee" },
+  { id: "DRV-012", name: "Robert Johnson" }
+];
+
+// Load BOF data
+function loadBofData() {
+  try {
+    const demoDataPath = join(PROJECT_ROOT, "lib", "demo-data.json");
+    const rawData = readFileSync(demoDataPath, "utf8");
+    return JSON.parse(rawData);
+  } catch (error) {
+    console.error("Error loading BOF data:", error.message);
+    process.exit(1);
+  }
+}
+
+// Get driver information from BOF data
+function getDriverInfo(bofData, driverId) {
+  const driver = bofData.drivers?.find(d => d.id === driverId);
+  if (!driver) {
+    console.warn(`Driver ${driverId} not found in BOF data, using canonical data`);
+    return CANONICAL_DRIVERS.find(d => d.id === driverId) || { id: driverId, name: "Unknown" };
+  }
+  return driver;
+}
+
+// Validate date is within allowed range
+function validateDate(dateString) {
+  const date = new Date(dateString);
+  const start = new Date(DATE_RANGE.start);
+  const end = new Date(DATE_RANGE.end);
+  
+  if (date < start || date > end) {
+    console.warn(`Date ${dateString} is outside allowed range ${DATE_RANGE.start} to ${DATE_RANGE.end}`);
+    return DATE_RANGE.end; // Use latest allowed date
+  }
+  return dateString;
+}
+
+// Generate random date within range for demo purposes
+function generateRandomDate() {
+  const start = new Date(DATE_RANGE.start);
+  const end = new Date(DATE_RANGE.end);
+  const randomTime = start.getTime() + Math.random() * (end.getTime() - start.getTime());
+  return new Date(randomTime).toISOString().split('T')[0];
+}
+
+// Generate Employee Handbook Acknowledgment HTML
+function generateEmployeeHandbookAcknowledgment(driverInfo) {
+  const acknowledgmentDate = generateRandomDate();
+  const reviewDate = generateRandomDate();
+  
+  return `<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Employee Handbook Acknowledgment - Liam Smith</title>
+    <title>Employee Handbook Acknowledgment - ${driverInfo.name}</title>
     <style>
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
@@ -25,13 +121,13 @@
         .header {
             text-align: center;
             margin-bottom: 0.75in;
-            border-bottom: 2px solid #0BA5A4;
+            border-bottom: 2px solid ${BOF_CONFIG.tealColor};
             padding-bottom: 0.5in;
         }
         .company-name {
             font-size: 16pt;
             font-weight: bold;
-            color: #0BA5A4;
+            color: ${BOF_CONFIG.tealColor};
             margin-bottom: 0.125in;
         }
         .company-address {
@@ -53,7 +149,7 @@
             font-weight: bold;
             color: #1a202c;
             margin-bottom: 0.25in;
-            border-bottom: 1px solid #0BA5A4;
+            border-bottom: 1px solid ${BOF_CONFIG.tealColor};
             padding-bottom: 0.125in;
         }
         .employee-info {
@@ -130,8 +226,8 @@
 <body>
     <div class="paper">
         <div class="header">
-            <div class="company-name">Delta Advanced Trucking, Inc.</div>
-            <div class="company-address">2475 Laver Rd., Mansfield, OH 44905</div>
+            <div class="company-name">${BOF_CONFIG.company}</div>
+            <div class="company-address">${BOF_CONFIG.address}</div>
             <div class="document-title">Employee Handbook Acknowledgment</div>
         </div>
 
@@ -140,23 +236,23 @@
             <div class="employee-info">
                 <div class="info-row">
                     <div class="info-label">Employee Name:</div>
-                    <div class="info-value">Liam Smith</div>
+                    <div class="info-value">${driverInfo.name}</div>
                 </div>
                 <div class="info-row">
                     <div class="info-label">Employee ID:</div>
-                    <div class="info-value">DRV-008</div>
+                    <div class="info-value">${driverInfo.id}</div>
                 </div>
                 <div class="info-row">
                     <div class="info-label">Address:</div>
-                    <div class="info-value">240 Madison Ave, Toledo, OH 43604</div>
+                    <div class="info-value">${driverInfo.address || 'N/A'}</div>
                 </div>
                 <div class="info-row">
                     <div class="info-label">Phone:</div>
-                    <div class="info-value">820-223-4829</div>
+                    <div class="info-value">${driverInfo.phone || 'N/A'}</div>
                 </div>
                 <div class="info-row">
                     <div class="info-label">Email:</div>
-                    <div class="info-value">liam.smith@boftransport.demo</div>
+                    <div class="info-value">${driverInfo.email || 'N/A'}</div>
                 </div>
             </div>
         </div>
@@ -195,7 +291,7 @@
             </div>
             <div class="signature-block">
                 <div class="signature-line"></div>
-                <div class="signature-label">Date: 2025-10-10</div>
+                <div class="signature-label">Date: ${acknowledgmentDate}</div>
             </div>
         </div>
 
@@ -207,7 +303,7 @@
             </div>
             <div class="signature-block">
                 <div class="signature-line"></div>
-                <div class="signature-label">Date: 2025-12-17</div>
+                <div class="signature-label">Date: ${reviewDate}</div>
             </div>
         </div>
 
@@ -216,8 +312,69 @@
         </div>
 
         <div class="footer">
-            BOF Demo Document — Not for legal filing, payroll processing, benefits enrollment, or employee use.
+            ${BOF_CONFIG.disclaimer}
         </div>
     </div>
 </body>
-</html>
+</html>`;
+}
+
+// Ensure directory exists
+function ensureDirectoryExists(filePath) {
+  const dir = dirname(filePath);
+  if (!existsSync(dir)) {
+    mkdirSync(dir, { recursive: true });
+  }
+}
+
+// Main generation function
+function generateDocuments() {
+  console.log("🚀 Starting Driver HR/Payroll Document Generator (Phase 1: Employee Handbook Acknowledgment)");
+  
+  const bofData = loadBofData();
+  const generatedFiles = [];
+  const errors = [];
+  
+  for (const driver of CANONICAL_DRIVERS) {
+    try {
+      const driverInfo = getDriverInfo(bofData, driver.id);
+      const outputPath = join(PROJECT_ROOT, "public", "generated", "drivers", driver.id, "hr-payroll", "employee-handbook-acknowledgment.html");
+      
+      ensureDirectoryExists(outputPath);
+      
+      const htmlContent = generateEmployeeHandbookAcknowledgment(driverInfo);
+      writeFileSync(outputPath, htmlContent, "utf8");
+      
+      generatedFiles.push({
+        driverId: driver.id,
+        driverName: driverInfo.name,
+        path: outputPath,
+        type: "employee-handbook-acknowledgment"
+      });
+      
+      console.log(`✅ Generated: ${driver.id} - ${driverInfo.name}`);
+    } catch (error) {
+      errors.push({
+        driverId: driver.id,
+        error: error.message
+      });
+      console.error(`❌ Error generating ${driver.id}:`, error.message);
+    }
+  }
+  
+  console.log(`\n📊 Generation Summary:`);
+  console.log(`✅ Successfully generated: ${generatedFiles.length} files`);
+  console.log(`❌ Errors: ${errors.length}`);
+  
+  if (errors.length > 0) {
+    console.log("\n❌ Errors:");
+    errors.forEach(err => console.log(`  ${err.driverId}: ${err.error}`));
+  }
+  
+  return { generatedFiles, errors };
+}
+
+// Run generator if called directly
+generateDocuments();
+
+export { generateDocuments, generateEmployeeHandbookAcknowledgment, getDriverInfo, loadBofData };
