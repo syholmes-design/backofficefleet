@@ -172,17 +172,19 @@ export default function ManagerPortalPage() {
             <p className="text-gray-600">Safety programs and compliance management</p>
           </Link>
 
-          {/* Fleet Financials - Coming Soon */}
-          <div className="bg-gray-100 rounded-lg shadow-lg border border-gray-200 p-6 opacity-75">
-            <div className="w-12 h-12 bg-gray-200 rounded-lg flex items-center justify-center mb-4">
-              <svg className="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          {/* Fleet Financials */}
+          <Link
+            href="/fleet-financials"
+            className="bg-white rounded-lg shadow-lg border border-gray-200 p-6 hover:shadow-xl transition-shadow duration-300 group"
+          >
+            <div className="w-12 h-12 bg-teal-100 rounded-lg flex items-center justify-center mb-4 group-hover:bg-teal-200 transition-colors">
+              <svg className="w-6 h-6 text-teal-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3-1.343-3-3 0-1.657 1.343-3 3 0 1.657-1.343 3-3 3 0 1.657 1.343 3 3zm0 0a9 9 0 11-18 0 9 9 0 0118 0zm0 0a9 9 0 11-18 0 9 9 0 0118 0" />
               </svg>
             </div>
-            <h3 className="text-lg font-bold text-gray-500 mb-2">Fleet Financials</h3>
-            <p className="text-gray-400 mb-2">Coming next: Fleet Financials</p>
-            <div className="text-sm text-gray-500">Advanced financial analytics and reporting</div>
-          </div>
+            <h3 className="text-lg font-bold text-gray-900 mb-2">Fleet Financials</h3>
+            <p className="text-gray-600">Load profitability, assumption modeling, and management P&L</p>
+          </Link>
         </div>
 
         {/* Navigation */}
