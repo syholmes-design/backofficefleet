@@ -800,7 +800,7 @@ function ensureDirectoryExists(filePath) {
 
 // Main generation function
 function generateDocuments() {
-  console.log("🚀 Starting Driver HR/Payroll Document Generator (Phase 2: Employee Handbook + Benefits Enrollment)");
+  console.log("🚀 Starting Driver HR/Payroll Document Generator (Phase 3: Employee Handbook + Benefits Enrollment + FSA Election)");
   
   const bofData = loadBofData();
   const generatedFiles = [];
@@ -843,6 +843,22 @@ function generateDocuments() {
       
       console.log(`✅ Generated benefits: ${driver.id} - ${driverInfo.name}`);
       
+      // Generate Flexible Spending Account Election
+      const fsaPath = join(PROJECT_ROOT, "public", "generated", "drivers", driver.id, "hr-payroll", "flexible-spending-account-election.html");
+      ensureDirectoryExists(fsaPath);
+      
+      const fsaContent = generateFlexibleSpendingAccountElection(driverInfo, settlementData);
+      writeFileSync(fsaPath, fsaContent, "utf8");
+      
+      generatedFiles.push({
+        driverId: driver.id,
+        driverName: driverInfo.name,
+        path: fsaPath,
+        type: "flexible-spending-account-election"
+      });
+      
+      console.log(`✅ Generated FSA: ${driver.id} - ${driverInfo.name}`);
+      
     } catch (error) {
       errors.push({
         driverId: driver.id,
@@ -862,6 +878,318 @@ function generateDocuments() {
   }
   
   return { generatedFiles, errors };
+}
+
+// Generate Flexible Spending Account Election
+function generateFlexibleSpendingAccountElection(driverInfo, settlementData) {
+  const electionDate = generateRandomDate();
+  const reviewDate = generateRandomDate();
+  
+  // Calculate FSA election based on settlement data
+  const hsaFsaDeduction = parseFloat(settlementData.hsaFsaHealthDeduction) || 0;
+  const healthFsaEnrolled = hsaFsaDeduction > 0;
+  const dependentFsaEnrolled = false; // No explicit dependent-care FSA field found in source data
+  
+  // Calculate annual amounts (assuming settlement data is per-pay period)
+  const healthFsaAnnual = healthFsaEnrolled ? (hsaFsaDeduction * 26).toFixed(2) : "0.00";
+  const dependentFsaAnnual = dependentFsaEnrolled ? "0.00" : "0.00";
+  
+  return `<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flexible Spending Account Election Form - ${driverInfo.name}</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            line-height: 1.4;
+            color: #1a202c;
+            max-width: 8.5in;
+            margin: 0 auto;
+            padding: 0.25in;
+            background: #ffffff;
+        }
+        .paper {
+            background: #ffffff;
+            width: 8.5in;
+            height: 11in;
+            padding: 0.5in;
+            border: 1px solid #e5e7eb;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 0.5in;
+            border-bottom: 2px solid #0BA5A4;
+            padding-bottom: 0.25in;
+        }
+        .company-name {
+            font-size: 14pt;
+            font-weight: bold;
+            color: #0BA5A4;
+            margin-bottom: 0.0625in;
+        }
+        .company-address {
+            font-size: 9pt;
+            color: #4a5568;
+            margin-bottom: 0.25in;
+        }
+        .document-title {
+            font-size: 12pt;
+            font-weight: bold;
+            color: #1a202c;
+            margin-bottom: 0.125in;
+        }
+        .section {
+            margin-bottom: 0.5in;
+        }
+        .section-title {
+            font-size: 11pt;
+            font-weight: bold;
+            color: #0BA5A4;
+            margin-bottom: 0.125in;
+            border-bottom: 1px solid #e2e8f0;
+            padding-bottom: 0.0625in;
+        }
+        .employee-info {
+            margin-bottom: 0.25in;
+        }
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.0625in;
+        }
+        .info-label {
+            font-weight: 600;
+            color: #4a5568;
+            min-width: 2in;
+        }
+        .info-value {
+            color: #1a202c;
+        }
+        .election-box {
+            margin-bottom: 0.25in;
+        }
+        .election-title {
+            font-weight: 600;
+            margin-bottom: 0.125in;
+        }
+        .plan-option {
+            display: flex;
+            align-items: center;
+            margin-bottom: 0.125in;
+        }
+        .checkbox {
+            margin-right: 0.25in;
+        }
+        .coverage-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 0.25in;
+            font-size: 9pt;
+        }
+        .coverage-table th {
+            background: #f1f5f9;
+            padding: 2px 4px;
+            text-align: left;
+            font-weight: 600;
+            border: 1px solid #e2e8f0;
+        }
+        .coverage-table td {
+            border: 1px solid #e2e8f0;
+            padding: 2px 4px;
+            text-align: center;
+        }
+        .amount-cell {
+            text-align: right;
+            font-family: 'Courier New', monospace;
+        }
+        .signature-section {
+            margin-top: 0.75in;
+            border-top: 1px solid #e2e8f0;
+            padding-top: 0.25in;
+        }
+        .signature-line {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.125in;
+        }
+        .signature-box {
+            width: 3in;
+            border-bottom: 1px solid #4a5568;
+            height: 0.5in;
+        }
+        .date-box {
+            width: 2in;
+            text-align: center;
+            font-size: 9pt;
+        }
+        .footer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: #f7fafc;
+            border-top: 1px solid #e2e8f0;
+            padding: 0.125in;
+            text-align: center;
+            font-size: 8pt;
+            color: #4a5568;
+        }
+    </style>
+</head>
+<body>
+    <div class="paper">
+        <div class="header">
+            <div class="company-name">Delta Advanced Trucking, Inc.</div>
+            <div class="company-address">2475 Laver Rd., Mansfield, OH 44905</div>
+            <div class="document-title">Flexible Spending Account Election Form</div>
+            <div style="font-size: 9pt; color: #4a5568;">2025 Annual Election Period</div>
+        </div>
+
+        <div class="section">
+            <div class="section-title">Employee Information</div>
+            <div class="employee-info">
+                <div class="info-row">
+                    <div class="info-label">Employee Name:</div>
+                    <div class="info-value">${driverInfo.name}</div>
+                </div>
+                <div class="info-row">
+                    <div class="info-label">Employee ID:</div>
+                    <div class="info-value">${driverInfo.id}</div>
+                </div>
+                <div class="info-row">
+                    <div class="info-label">Address:</div>
+                    <div class="info-value">${driverInfo.address}</div>
+                </div>
+                <div class="info-row">
+                    <div class="info-label">Phone:</div>
+                    <div class="info-value">${driverInfo.phone}</div>
+                </div>
+                <div class="info-row">
+                    <div class="info-label">Email:</div>
+                    <div class="info-value">${driverInfo.email}</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <div class="section-title">Health Care Flexible Spending Account (FSA)</div>
+            <div class="election-box">
+                <div class="election-title">Health Care FSA Election:</div>
+                <div class="plan-option">
+                    <input type="checkbox" class="checkbox" ${healthFsaEnrolled ? 'checked' : ''}>
+                    <span>Health Care FSA — Annual Election Amount</span>
+                </div>
+                <div class="plan-option">
+                    <input type="checkbox" class="checkbox" ${!healthFsaEnrolled ? 'checked' : ''}>
+                    <span>${healthFsaEnrolled ? 'Declined' : 'Waived / No election on file'}</span>
+                </div>
+            </div>
+            <table class="coverage-table">
+                <thead>
+                    <tr>
+                        <th>Coverage Type</th>
+                        <th>Election</th>
+                        <th>Annual Election Amount</th>
+                        <th>Per Pay Period (26)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Health Care FSA</td>
+                        <td>${healthFsaEnrolled ? 'Elected' : 'Waived'}</td>
+                        <td class="amount-cell">$${healthFsaAnnual}</td>
+                        <td class="amount-cell">$${healthFsaEnrolled ? hsaFsaDeduction.toFixed(2) : '0.00'}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="section">
+            <div class="section-title">Dependent Care Flexible Spending Account</div>
+            <div class="election-box">
+                <div class="election-title">Dependent Care FSA Election:</div>
+                <div class="plan-option">
+                    <input type="checkbox" class="checkbox" ${dependentFsaEnrolled ? 'checked' : ''}>
+                    <span>Dependent Care FSA — Annual Election Amount</span>
+                </div>
+                <div class="plan-option">
+                    <input type="checkbox" class="checkbox" ${!dependentFsaEnrolled ? 'checked' : ''}>
+                    <span>${dependentFsaEnrolled ? 'Declined' : 'Waived / Source deduction not found'}</span>
+                </div>
+            </div>
+            <table class="coverage-table">
+                <thead>
+                    <tr>
+                        <th>Coverage Type</th>
+                        <th>Election</th>
+                        <th>Annual Election Amount</th>
+                        <th>Per Pay Period (26)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Dependent Care FSA</td>
+                        <td>${dependentFsaEnrolled ? 'Elected' : 'Waived'}</td>
+                        <td class="amount-cell">$${dependentFsaAnnual}</td>
+                        <td class="amount-cell">$0.00</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="section">
+            <div class="section-title">Payroll Deduction Authorization</div>
+            <div style="font-size: 8pt; margin-bottom: 0.25in;">
+                I hereby authorize Delta Advanced Trucking, Inc. to deduct elected FSA contributions from my payroll checks on a per-pay-period basis. 
+                I understand that these deductions will continue until I submit a written change request during annual open enrollment period or due to a qualifying life event.
+                I certify that the FSA contributions will be used for eligible health care and/or dependent care expenses as defined by IRS Section 125.
+            </div>
+            <div style="font-size: 8pt; margin-bottom: 0.25in;">
+                <strong>Employee Certification:</strong> I understand that unused FSA funds at year-end will be forfeited according to IRS regulations and company policy.
+            </div>
+        </div>
+
+        <div class="signature-section">
+            <div class="section-title">Employee Signature</div>
+            <div class="signature-line">
+                <div class="signature-box"></div>
+                <div class="date-box">
+                    <div style="font-weight: 600;">Date:</div>
+                    <div>${electionDate}</div>
+                </div>
+            </div>
+            <div style="font-size: 8pt; margin-top: 0.25in;">
+                <strong>Employee Name (Print):</strong> ${driverInfo.name}
+            </div>
+        </div>
+
+        <div class="signature-section">
+            <div class="section-title">HR/Benefits Review</div>
+            <div class="signature-line">
+                <div class="signature-box"></div>
+                <div class="date-box">
+                    <div style="font-weight: 600;">Date:</div>
+                    <div>${reviewDate}</div>
+                </div>
+            </div>
+            <div style="font-size: 8pt; margin-top: 0.25in;">
+                <strong>HR Representative:</strong> _________________________
+            </div>
+        </div>
+
+        <div style="font-size: 8pt; margin-top: 0.5in; color: #4a5568;">
+            <strong>Relationship Note:</strong> This form connects to payroll deduction worksheet and annual FSA contribution tracking.
+        </div>
+    </div>
+
+    <div class="footer">
+        BOF Demo Document — Not for legal filing, payroll processing, benefits enrollment, or employee use.
+    </div>
+</body>
+</html>`;
 }
 
 // Run generator if called directly
