@@ -12,6 +12,8 @@ import {
   driverHasCredentialExpiringWithin,
   driverHasMissingOrInvalidDoc,
 } from "@/lib/drivers/drivers-command-metrics";
+import { getDriverWorkerType, getDriverReadinessSummary, getDriverPolicyAcknowledgments, getDriverSettlementSummary } from "@/lib/driver-readiness-ui";
+import type { WorkerType } from "@/lib/driver-pay-settlement-methods";
 
 type DriverStatusFilter =
   | "all"
@@ -19,7 +21,12 @@ type DriverStatusFilter =
   | "needs_review"
   | "blocked"
   | "expiring_soon"
-  | "missing_docs";
+  | "missing_docs"
+  | "employee_driver"
+  | "owner_operator"
+  | "documents_expiring"
+  | "missing_acknowledgments"
+  | "settlement_review";
 
 type DriverRow = {
   driverId: string;
@@ -41,6 +48,22 @@ type DriverRow = {
   complianceDrawerCategory?: DriverReviewIssueCategory;
   primaryReviewReason: string;
   reviewExplanation: DriverReviewExplanation;
+  workerType?: WorkerType;
+  readinessSummary?: {
+    status: 'ready' | 'needs_review' | 'blocked';
+    primaryReason: string;
+    businessImpact: string;
+    requiredFix: string;
+    ownerTeam: string;
+    relatedDocument?: string;
+    dueDate?: string;
+    fixAction?: {
+      label: string;
+      href?: string;
+    };
+  };
+  settlementSummary?: string;
+  ownerOperatorPacketStatus?: string;
 };
 
 function compactSentence(text: string): string {
@@ -75,6 +98,9 @@ export function DriversRosterTable() {
         const complianceDrawerCategory = complianceFocusOrder.find((c) =>
           openIssues.some((i) => i.category === c)
         );
+        const workerType = getDriverWorkerType(driver.id, data);
+        const readinessSummary = getDriverReadinessSummary(driver.id, data);
+        
         return {
           driverId: m.driverId,
           name: m.driverName,
@@ -98,6 +124,8 @@ export function DriversRosterTable() {
               ? m.primaryReviewReason
               : `${reviewExplanation.headline} — ${compactSentence(reviewExplanation.recommendedFix)}`,
           reviewExplanation,
+          workerType,
+          readinessSummary,
         };
       }),
     [data]
@@ -106,15 +134,36 @@ export function DriversRosterTable() {
   const filteredDriverRows = useMemo(() => {
     const query = searchText.trim().toLowerCase();
     let rows = driverRows;
+    
+    // Handle existing filters
     if (driverStatusFilter === "expiring_soon") {
       rows = rows.filter((row) =>
         driverHasCredentialExpiringWithin(data, row.driverId, credentialWindowDays)
       );
     } else if (driverStatusFilter === "missing_docs") {
       rows = rows.filter((row) => driverHasMissingOrInvalidDoc(data, row.driverId));
+    } else if (driverStatusFilter === "employee_driver") {
+      rows = rows.filter((row) => row.workerType === 'Employee Driver');
+    } else if (driverStatusFilter === "owner_operator") {
+      rows = rows.filter((row) => row.workerType === 'Independent Contractor / Owner-Operator');
+    } else if (driverStatusFilter === "documents_expiring") {
+      rows = rows.filter((row) => 
+        driverHasCredentialExpiringWithin(data, row.driverId, 90)
+      );
+    } else if (driverStatusFilter === "missing_acknowledgments") {
+      rows = rows.filter((row) => {
+        const acknowledgments = getDriverPolicyAcknowledgments(row.driverId, data);
+        return acknowledgments.some(ack => ack.status === 'missing');
+      });
+    } else if (driverStatusFilter === "settlement_review") {
+      rows = rows.filter((row) => {
+        const settlement = getDriverSettlementSummary(row.driverId, data);
+        return settlement.status === 'needs_review';
+      });
     } else if (driverStatusFilter !== "all") {
       rows = rows.filter((row) => row.eligibilityStatus === driverStatusFilter);
     }
+    
     if (!query) return rows;
     return rows.filter(
       (row) =>
@@ -173,9 +222,14 @@ export function DriversRosterTable() {
             { id: "all" as const, label: "All" },
             { id: "ready" as const, label: "Ready" },
             { id: "needs_review" as const, label: "Needs review" },
-            { id: "blocked" as const, label: "Dispatch blocked" },
+            { id: "blocked" as const, label: "Blocked" },
             { id: "expiring_soon" as const, label: "Expiring soon" },
             { id: "missing_docs" as const, label: "Missing docs" },
+            { id: "employee_driver" as const, label: "Employee Driver" },
+            { id: "owner_operator" as const, label: "Owner-Operator" },
+            { id: "documents_expiring" as const, label: "Documents Expiring" },
+            { id: "missing_acknowledgments" as const, label: "Missing Acknowledgments" },
+            { id: "settlement_review" as const, label: "Settlement Review" },
           ].map((f) => (
             <button
               key={f.id}
@@ -205,18 +259,29 @@ export function DriversRosterTable() {
                       <h3 className="bof-driver-card-name">{row.name}</h3>
                       <p className="bof-driver-card-id">{row.driverId}</p>
                       <p className="bof-driver-card-contact">{row.email ?? row.phone ?? "No contact on file"}</p>
+                      {/* Worker Type Badge */}
+                      {row.workerType && (
+                        <span 
+                          className={`bof-driver-card-worker-type ${row.workerType === 'Employee Driver' ? 'employee' : 'owner-operator'}`}
+                        >
+                          {row.workerType}
+                        </span>
+                      )}
                     </div>
                   </div>
                   <StatusChip label={row.status} />
                 </div>
 
                 {/* Primary Issue - Visible without clicking */}
-                {row.primaryReviewReason && (
+                {row.readinessSummary && row.readinessSummary.status !== 'ready' && (
                   <div className="bof-driver-card-issue">
                     <div className="bof-driver-card-issue-header">
-                      <span className="bof-driver-card-issue-label">Primary Issue</span>
+                      <span className="bof-driver-card-issue-label">{row.readinessSummary.status === 'blocked' ? 'Blocked' : 'Needs Review'}</span>
                     </div>
-                    <p className="bof-driver-card-issue-text">{row.primaryReviewReason}</p>
+                    <p className="bof-driver-card-issue-text">{row.readinessSummary.primaryReason}</p>
+                    {row.readinessSummary.dueDate && (
+                      <p className="bof-driver-card-issue-due">Due: {row.readinessSummary.dueDate}</p>
+                    )}
                   </div>
                 )}
 
@@ -284,13 +349,9 @@ export function DriversRosterTable() {
                       Fix Issue
                     </button>
                   ) : (
-                    <button
-                      type="button"
-                      className="bof-driver-card-action-btn bof-driver-card-action-btn-primary"
-                      onClick={() => setExpandedDriverId((prev) => (prev === row.driverId ? null : row.driverId))}
-                    >
-                      {expandedDriverId === row.driverId ? "Hide Details" : "Show Details"}
-                    </button>
+                    <Link href={`/drivers/${row.driverId}`} className="bof-driver-card-action-btn bof-driver-card-action-btn-primary">
+                      View Driver
+                    </Link>
                   )}
                 </div>
               </div>

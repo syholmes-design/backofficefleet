@@ -47,6 +47,11 @@ import {
 import { DriverReviewDrawer } from "@/components/drivers/DriverReviewDrawer";
 import { getDriverDqfReadinessSummary } from "@/lib/driver-dqf-readiness";
 import { DriverHubVaultGroups } from "@/components/drivers/DriverHubVaultGroups";
+import { 
+  getDriverReadinessSummary, 
+  getDriverSettlementSummary, 
+  getOwnerOperatorPacketStatus 
+} from "@/lib/driver-readiness-ui";
 
 function homeBaseFromAddress(address: string): string {
   const parts = address.split(",").map((p) => p.trim()).filter(Boolean);
@@ -132,6 +137,11 @@ export function DriverDetailPageClient({ driverId }: { driverId: string }) {
     () => getDriverDispatchEligibility(data, driverId),
     [data, driverId]
   );
+  
+  // New helper functions for Phase 9
+  const readinessSummary = useMemo(() => getDriverReadinessSummary(driverId, data), [data, driverId]);
+  const settlementSummary = useMemo(() => getDriverSettlementSummary(driverId, data), [data, driverId]);
+  const ownerOperatorPacket = useMemo(() => getOwnerOperatorPacketStatus(driverId, data), [data, driverId]);
     const cdlDocument = useMemo(
     () => documents.find((d) => d.type === "CDL"),
     [documents]
@@ -445,6 +455,146 @@ export function DriverDetailPageClient({ driverId }: { driverId: string }) {
         <span aria-hidden> / </span>
         <span>{driver.name}</span>
       </nav>
+
+      {/* Phase 9: Why this driver is ready / needs review / blocked */}
+      {readinessSummary && (
+        <section className="bof-driver-hub-section" style={{ marginBottom: "1rem" }}>
+          <h2 className="bof-h2">Why this driver is {readinessSummary.status === 'ready' ? 'ready' : readinessSummary.status === 'blocked' ? 'blocked' : 'needs review'}</h2>
+          <div className="bof-driver-readiness-panel">
+            <div className="bof-driver-readiness-row">
+              <div className="bof-driver-readiness-label">Status:</div>
+              <div className={`bof-driver-readiness-value ${readinessSummary.status === 'ready' ? 'ready' : readinessSummary.status === 'blocked' ? 'blocked' : 'needs-review'}`}>
+                {readinessSummary.status === 'ready' ? 'Ready' : readinessSummary.status === 'blocked' ? 'Blocked' : 'Needs Review'}
+              </div>
+            </div>
+            <div className="bof-driver-readiness-row">
+              <div className="bof-driver-readiness-label">Root cause:</div>
+              <div className="bof-driver-readiness-value">{readinessSummary.primaryReason}</div>
+            </div>
+            <div className="bof-driver-readiness-row">
+              <div className="bof-driver-readiness-label">Business impact:</div>
+              <div className="bof-driver-readiness-value">{readinessSummary.businessImpact}</div>
+            </div>
+            <div className="bof-driver-readiness-row">
+              <div className="bof-driver-readiness-label">Required fix:</div>
+              <div className="bof-driver-readiness-value">{readinessSummary.requiredFix}</div>
+            </div>
+            <div className="bof-driver-readiness-row">
+              <div className="bof-driver-readiness-label">Owner team:</div>
+              <div className="bof-driver-readiness-value">{readinessSummary.ownerTeam}</div>
+            </div>
+            {readinessSummary.dueDate && (
+              <div className="bof-driver-readiness-row">
+                <div className="bof-driver-readiness-label">Due date:</div>
+                <div className="bof-driver-readiness-value">{readinessSummary.dueDate}</div>
+              </div>
+            )}
+            {readinessSummary.fixAction && (
+              <div className="bof-driver-readiness-row">
+                <div className="bof-driver-readiness-label">Action:</div>
+                <div className="bof-driver-readiness-value">
+                  {readinessSummary.fixAction?.href ? (
+                    <Link href={readinessSummary.fixAction.href} className="bof-link-primary">
+                      {readinessSummary.fixAction.label}
+                    </Link>
+                  ) : (
+                    <span className="bof-link-primary" style={{ opacity: 0.6 }}>
+                      {readinessSummary.fixAction?.label}
+                    </span>
+                  )}
+                </div>
+              </div>
+            )}
+          </div>
+        </section>
+      )}
+
+      {/* Phase 9: Worker Type and Settlement Panel */}
+      {settlementSummary && (
+        <section className="bof-driver-hub-section">
+          <h2 className="bof-h2">Worker Type & Settlement</h2>
+          <div className="bof-driver-settlement-panel">
+            <div className="bof-driver-settlement-row">
+              <div className="bof-driver-settlement-label">Worker Type:</div>
+              <div className="bof-driver-settlement-value">{settlementSummary.workerType}</div>
+            </div>
+            <div className="bof-driver-settlement-row">
+              <div className="bof-driver-settlement-label">Settlement Method:</div>
+              <div className="bof-driver-settlement-value">{settlementSummary.settlementMethod}</div>
+            </div>
+            <div className="bof-driver-settlement-row">
+              <div className="bof-driver-settlement-label">Settlement Terms:</div>
+              <div className="bof-driver-settlement-value">{settlementSummary.settlementTerms}</div>
+            </div>
+            {settlementSummary.passThroughItems && (
+              <div className="bof-driver-settlement-row">
+                <div className="bof-driver-settlement-label">Pass-through Items:</div>
+                <div className="bof-driver-settlement-value">
+                  <div>Fuel Surcharge: ${settlementSummary.passThroughItems.fuelSurcharge}</div>
+                  <div>Accessorial: ${settlementSummary.passThroughItems.accessorial}</div>
+                  <div>Reimbursements: ${settlementSummary.passThroughItems.reimbursements}</div>
+                </div>
+              </div>
+            )}
+            {settlementSummary.deductions && (
+              <div className="bof-driver-settlement-row">
+                <div className="bof-driver-settlement-label">Deductions:</div>
+                <div className="bof-driver-settlement-value">
+                  {settlementSummary.deductions.payrollDeductions && <div>Payroll Deductions: ${settlementSummary.deductions.payrollDeductions}</div>}
+                  {settlementSummary.deductions.familySupport && <div>Family Support: ${settlementSummary.deductions.familySupport}</div>}
+                  {settlementSummary.deductions.settlementDeductions && <div>Settlement Deductions: ${settlementSummary.deductions.settlementDeductions}</div>}
+                  {settlementSummary.deductions.chargebacks && <div>Chargebacks: ${settlementSummary.deductions.chargebacks}</div>}
+                </div>
+              </div>
+            )}
+          </div>
+        </section>
+      )}
+
+      {/* Phase 9: Owner-Operator Packet Section */}
+      {ownerOperatorPacket && ownerOperatorPacket.isOwnerOperator && (
+        <section className="bof-driver-hub-section">
+          <h2 className="bof-h2">Owner-Operator Packet</h2>
+          <div className="bof-owner-operator-packet">
+            <div className="bof-owner-operator-packet-status">
+              <span className="bof-owner-operator-packet-label">Status:</span>
+              <span className={`bof-owner-operator-packet-value ${ownerOperatorPacket.packetStatus === 'complete' ? 'complete' : ownerOperatorPacket.packetStatus === 'needs_review' ? 'needs-review' : 'pending'}`}>
+                {ownerOperatorPacket.packetStatus === 'complete' ? 'Complete' : ownerOperatorPacket.packetStatus === 'needs_review' ? 'Needs Review' : 'Pending'}
+              </span>
+            </div>
+            <div className="bof-owner-operator-packet-summary">
+              <span className="bof-owner-operator-packet-label">Required Documents:</span>
+              <span className="bof-owner-operator-packet-value">
+                {ownerOperatorPacket.requiredDocuments.filter(doc => doc.status === 'complete').length} of {ownerOperatorPacket.requiredDocuments.length} complete
+              </span>
+            </div>
+            <div className="bof-owner-operator-packet-documents">
+              {ownerOperatorPacket.requiredDocuments.map((doc, index) => (
+                <div key={index} className="bof-owner-operator-packet-document">
+                  <div className="bof-owner-operator-packet-document-name">{doc.documentName}</div>
+                  <div className="bof-owner-operator-packet-document-status">
+                    <span className={`bof-owner-operator-packet-status-badge ${doc.status === 'complete' ? 'complete' : doc.status === 'needs_review' ? 'needs-review' : 'missing'}`}>
+                      {doc.status === 'complete' ? 'Complete' : doc.status === 'needs_review' ? 'Needs Review' : 'Missing'}
+                    </span>
+                    {doc.lastUpdated && (
+                      <span className="bof-owner-operator-packet-document-date">Last updated: {doc.lastUpdated}</span>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* Phase 9: Driver Portal Link */}
+      <section className="bof-driver-hub-section">
+        <div className="bof-driver-portal-link">
+          <Link href={`/portals/driver/${driverId}`} className="bof-link-primary">
+            Open driver-facing portal
+          </Link>
+        </div>
+      </section>
 
       <section
         className="bof-driver-hub-section"
