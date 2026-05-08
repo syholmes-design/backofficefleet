@@ -19,9 +19,12 @@ import {
   DEFAULT_DRIVER_PAY_ASSUMPTIONS,
   getSettlementTermsLabel,
   getSettlementMethodBadge,
+  getDriverPaySettlementMethod,
   type DriverPayAssumptions,
   type SettlementCalculation
 } from '@/lib/driver-pay-settlement-methods';
+import { getNegativeContributionExplanation } from '@/lib/load-profitability';
+import LossExplanationTooltip from '@/components/ui/LossExplanationTooltip';
 import Link from 'next/link';
 
 interface FleetFinancialsPageClientProps {
@@ -48,6 +51,11 @@ export default function FleetFinancialsPageClient({ initialData }: FleetFinancia
   const [fleetFinancials, setFleetFinancials] = useState(() => 
     buildFleetFinancials(data, assumptions)
   );
+
+  // Get driver settlement method for tooltip generation
+  const getDriverSettlementMethod = (driverId: string) => {
+    return getDriverPaySettlementMethod(driverId, data);
+  };
 
   // Recalculate financials when assumptions change
   useEffect(() => {
@@ -263,9 +271,20 @@ export default function FleetFinancialsPageClient({ initialData }: FleetFinancia
                         {formatCurrency(load.costs.totalCosts)}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm">
-                        <span className={`font-medium ${load.netContribution >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-                          {formatCurrency(load.netContribution)}
-                        </span>
+                        <div className="flex items-center">
+                          <span className={`font-medium ${load.netContribution >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                            {formatCurrency(load.netContribution)}
+                          </span>
+                          {load.netContribution < 0 && (
+                            <LossExplanationTooltip 
+                              explanation={getNegativeContributionExplanation(load, getDriverSettlementMethod(load.driverId))}
+                            >
+                              <svg className="w-4 h-4 text-teal-600 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4a1 1 0 01-1-1H7a1 1 0 00-1 1v4a1 1 0 001 1h1a1 1 0 001-1v-4zM13 16h-1v-4a1 1 0 01-1-1H7a1 1 0 00-1 1v4a1 1 0 001 1h1a1 1 0 001-1v-4z"/>
+                              </svg>
+                            </LossExplanationTooltip>
+                          )}
+                        </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm">
                         <span className={`font-medium ${load.contributionMargin >= 0 ? 'text-green-600' : 'text-red-600'}`}>
@@ -477,7 +496,47 @@ export default function FleetFinancialsPageClient({ initialData }: FleetFinancia
                 </div>
               </div>
 
-              {/* Editable Assumption Panel */}
+              {/* Loss Explanation Panel */}
+              {selectedLoad.netContribution < 0 && (
+                <div className="mt-6 bg-white rounded-lg shadow p-6">
+                  <h3 className="text-lg font-semibold text-gray-900 mb-4">Loss Explanation</h3>
+                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <div>
+                      <div className="text-sm font-medium text-gray-700 mb-2">Why This Load Shows a Loss</div>
+                      <div className="text-xs text-gray-600 bg-gray-50 p-3 rounded">
+                        {getNegativeContributionExplanation(selectedLoad, getDriverSettlementMethod(selectedLoad.driverId)).shortTooltip}
+                      </div>
+                    </div>
+                    
+                    <div>
+                      <div className="text-sm font-medium text-gray-700 mb-2">Primary Loss Drivers</div>
+                      <ul className="text-xs text-gray-600 space-y-1">
+                        {getNegativeContributionExplanation(selectedLoad, getDriverSettlementMethod(selectedLoad.driverId)).primaryLossDrivers.map((driver, index) => (
+                          <li key={index} className="flex items-start">
+                            <span className="text-teal-600 mr-1">•</span>
+                            {driver}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  </div>
+                  
+                  <div className="mt-4 pt-4 border-t border-gray-200">
+                    <div className="text-sm font-medium text-gray-700 mb-2">Recommended Review Actions</div>
+                    <ul className="text-xs text-gray-600 space-y-1">
+                      {getNegativeContributionExplanation(selectedLoad, getDriverSettlementMethod(selectedLoad.driverId)).recommendedReviewActions.map((action, index) => (
+                        <li key={index} className="flex items-start">
+                          <span className="text-teal-600 mr-1">•</span>
+                          {action}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Editable Assumption Panel */}
               <div className="bg-white rounded-lg shadow p-6">
                 <h3 className="text-lg font-semibold text-gray-900 mb-4">Editable Assumptions</h3>
                 <div className="space-y-4">
@@ -671,7 +730,6 @@ export default function FleetFinancialsPageClient({ initialData }: FleetFinancia
                 </div>
               </div>
             </div>
-          </div>
         )}
 
         {/* Fleet Rollup / Management P&L Preview */}

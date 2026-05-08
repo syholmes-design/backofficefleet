@@ -67,7 +67,8 @@ import type { BofData } from './load-bof-data';
 import { 
   calculateDriverPayOrSettlement,
   DEFAULT_DRIVER_PAY_ASSUMPTIONS,
-  type DriverPayAssumptions
+  type DriverPayAssumptions,
+  type DriverPaySettlementMethod
 } from './driver-pay-settlement-methods';
 
 import { FinancialAssumptions, LoadSpecificAssumptions, mergeAssumptions } from './financial-assumptions';
@@ -389,4 +390,72 @@ export function formatPercent(value: number): string {
     minimumFractionDigits: 1,
     maximumFractionDigits: 1,
   }).format(value);
+}
+
+
+export interface LossExplanation {
+  shortTooltip: string;
+  primaryLossDrivers: string[];
+  recommendedReviewActions: string[];
+}
+
+export function getNegativeContributionExplanation(
+  loadFinancials: LoadFinancials,
+  driverSettlementMethod?: DriverPaySettlementMethod
+): LossExplanation {
+  const isOwnerOperator = driverSettlementMethod?.workerType === 'Independent Contractor / Owner-Operator';
+  
+  // Primary loss drivers based on cost structure
+  const primaryLossDrivers: string[] = [];
+  
+  if (loadFinancials.costs.driverSettlement > 0) {
+    primaryLossDrivers.push(isOwnerOperator ? 'Owner-operator settlement costs' : 'Driver payroll costs');
+  }
+  
+  if (loadFinancials.costs.fuelCost > 0) {
+    primaryLossDrivers.push('Fuel costs');
+  }
+  
+  if (loadFinancials.costs.factoringFee > 0) {
+    primaryLossDrivers.push('Factoring fees');
+  }
+  
+  if (loadFinancials.costs.maintenanceAllocation > 0) {
+    primaryLossDrivers.push('Maintenance reserve');
+  }
+  
+  if (loadFinancials.costs.insuranceAllocation > 0) {
+    primaryLossDrivers.push('Insurance allocation');
+  }
+  
+  if ((loadFinancials.costs.tractorDebtAllocation + loadFinancials.costs.trailerDebtAllocation) > 0) {
+    primaryLossDrivers.push('Debt allocation');
+  }
+  
+  if (loadFinancials.costs.adminOverheadAllocation > 0) {
+    primaryLossDrivers.push('Overhead costs');
+  }
+
+  // Recommended review actions
+  const recommendedReviewActions: string[] = [
+    'Review linehaul rate',
+    'Review loaded and empty miles',
+    'Review fuel price and MPG assumptions',
+    'Review settlement method',
+    'Confirm fuel surcharge and accessorial pass-through',
+    'Review maintenance reserve',
+    'Review insurance/debt allocation',
+    'Review factoring fee assumptions'
+  ];
+
+  // Generate short tooltip based on worker type. This is a fleet profitability issue, not a driver loss.
+  const shortTooltip = isOwnerOperator
+    ? "This is a negative contribution to the fleet, not a driver loss. The owner-operator settlement is a fleet cost, and load revenue did not cover the settlement plus fuel, factoring, maintenance, insurance, debt allocation, and overhead."
+    : "This is a negative contribution to the fleet. Load revenue did not cover driver pay plus fuel, factoring, maintenance, insurance, debt allocation, and overhead.";
+
+  return {
+    shortTooltip,
+    primaryLossDrivers,
+    recommendedReviewActions
+  };
 }
