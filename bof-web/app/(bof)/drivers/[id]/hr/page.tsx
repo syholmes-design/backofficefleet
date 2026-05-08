@@ -168,23 +168,24 @@ export default function DriverHRPage({ params }: Props) {
   }, [id, packet]);
 
   return (
-    <div className="bof-page bof-driver-sub-page space-y-5">
-      <DemoBackButton fallbackHref={`/drivers/${id}`} />
-      <section className="rounded-lg border border-slate-800 bg-slate-900/50 p-4">
-        <div className="flex flex-wrap items-center justify-between gap-2">
-          <h1 className="text-xl font-semibold text-white">{driver.name} - HR & Administrative Record</h1>
-          <Link
-            href={`/drivers/${id}/profile`}
-            className="text-sm font-medium text-teal-300 hover:text-teal-200 hover:underline"
-          >
-            Open Profile
-          </Link>
-        </div>
-        <p className="mt-1 text-sm text-slate-400">
-          Canonical HR, emergency, and document readiness details keyed by{" "}
-          <span className="font-mono">{id}</span>.
-        </p>
-      </section>
+    <>
+      <div className="bof-page bof-driver-sub-page space-y-5">
+        <DemoBackButton fallbackHref={`/drivers/${id}`} />
+        <section className="rounded-lg border border-slate-800 bg-slate-900/50 p-4">
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <h1 className="text-xl font-semibold text-white">{driver.name} - HR & Administrative Record</h1>
+            <Link
+              href={`/drivers/${id}/profile`}
+              className="text-sm font-medium text-teal-300 hover:text-teal-200 hover:underline"
+            >
+              Open Profile
+            </Link>
+          </div>
+          <p className="mt-1 text-sm text-slate-400">
+            Canonical HR, emergency, and document readiness details keyed by{" "}
+            <span className="font-mono">{id}</span>.
+          </p>
+        </section>
 
       <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
         <section className="rounded-lg border border-slate-800 bg-slate-900/40 p-4">
@@ -219,24 +220,79 @@ export default function DriverHRPage({ params }: Props) {
             <Field label="Submission Date" value={profile?.bankSubmissionDate} />
             <div className="space-y-1">
               <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">Status</p>
-              <span className="inline-flex rounded px-2 py-0.5 text-xs font-semibold border border-emerald-700/60 bg-emerald-950/35 text-emerald-200">
-                {profile?.bankStatus || "Pending Review"}
-              </span>
+              <p className="text-sm text-slate-100">Active</p>
             </div>
           </div>
         </section>
 
         <section className="rounded-lg border border-slate-800 bg-slate-900/40 p-4">
-          <h2 className="mb-3 text-base font-semibold text-slate-100">Tax & Employment</h2>
+          <h2 className="mb-3 text-base font-semibold text-slate-100">Recruitment & Pipeline</h2>
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-            <Field label="Tax Classification" value={profile?.taxClassification} />
-            <Field label="TIN Type" value={profile?.tinType} />
-            <Field label="Employment Status" value="Onboarding Complete" />
-            <Field label="Handbook Acknowledgment" value="Signed" />
-            <Field label="Orientation Checklist" value="Complete" />
+            <Field label="BOF Vault Roster Status" value="Active - Document Ready" />
+            <Field label="Worker Type Preference" value="Employee Driver" />
+            <Field label="Preferred Lanes" value="Regional OTR" />
+            <Field label="Availability Status" value="Open to Opportunities" />
+            <Field label="Document Readiness Profile" value="Complete - Dispatch Ready" />
+            <Field label="Specialized Trucking Job Boards" value="Connected - DAT & Truckstop" />
+            <Field label="Owner-Operator Networks" value="Regional Partnerships Active" />
+            <Field label="Referral Campaign Status" value="Employee Referral Program Live" />
+            <Field label="Social Media Recruiting" value="LinkedIn & Facebook Active" />
+            <Field label="Fleet Website Applicants" value="Career Portal Integration" />
+            <Field label="Recruiter-Entered Leads" value="3 Active Leads This Month" />
+            <Field label="Candidate-to-Dispatch Readiness" value="72-Hour Onboarding Pipeline" />
+          </div>
+        </section>
+
+        <section className="rounded-lg border border-slate-800 bg-slate-900/40 p-4">
+          <h2 className="mb-3 text-base font-semibold text-slate-100">BOF Vault Integration</h2>
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+            <Field label="Roster Management" value="BOF Vault Driver Roster Connected" />
+            <Field label="Document Pipeline" value="Automated Document Collection" />
+            <Field label="Readiness Scoring" value="Integrated Assessment Scores" />
+            <Field label="Opportunity Matching" value="Lane & Equipment Preference Matching" />
+            <Field label="Onboarding Workflow" value="Digital Document Onboarding" />
+          </div>
+        </section>
+
+        <section className="rounded-lg border border-slate-800 bg-slate-900/40 p-4">
+          <h2 className="mb-3 text-base font-semibold text-slate-100">Training & Development</h2>
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+            <Field label="Short-Form Video Training" value="Mobile-Optimized Micro-Lessons" />
+            <Field label="TikTok-Style Safety Clips" value="60-Second Safety Reminders" />
+            <Field label="Mobile Training Choices" value="iOS & Android Apps Available" />
+            <Field label="Policy Acknowledgment Tracking" value="Digital Acknowledgment System" />
+            <Field label="Proof-Upload Walkthroughs" value="Interactive Document Uploads" />
+            <Field label="Incident-Based Remediation" value="Targeted Training Assignments" />
+            <Field label="Safety Refreshers" value="Quarterly Safety Refreshers" />
+            <Field label="Customer Service Expectations" value="Service Standard Training" />
+            <Field label="Owner-Operator Compliance" value="OO Compliance Training Modules" />
+          </div>
+        </section>
+
+        <section className="rounded-lg border border-slate-800 bg-slate-900/40 p-4">
+          <h2 className="mb-3 text-base font-semibold text-slate-100">Training Delivery Methods</h2>
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+            <Field label="Video Platform" value="BOF Training Hub" />
+            <Field label="Mobile Access" value="Driver Mobile App" />
+            <Field label="In-Cab Training" value="Tablet-Based In-Cab System" />
+            <Field label="Manager Portal" value="Fleet Manager Training Dashboard" />
+            <Field label="Safety Quiz Integration" value="Knowledge Check Integration" />
+            <Field label="Progress Tracking" value="Individual Progress Monitoring" />
           </div>
         </section>
       </div>
+    </div>
+
+      <section className="rounded-lg border border-slate-800 bg-slate-900/40 p-4">
+        <h2 className="mb-3 text-base font-semibold text-slate-100">Tax & Employment</h2>
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+          <Field label="Tax Classification" value={profile?.taxClassification} />
+          <Field label="TIN Type" value={profile?.tinType} />
+          <Field label="Employment Status" value="Onboarding Complete" />
+          <Field label="Handbook Acknowledgment" value="Signed" />
+          <Field label="Orientation Checklist" value="Complete" />
+        </div>
+      </section>
 
       <section className="rounded-lg border border-slate-800 bg-slate-900/45 p-4">
         <h2 className="mb-3 text-base font-semibold text-slate-100">HR Packet Documents</h2>
@@ -288,6 +344,6 @@ export default function DriverHRPage({ params }: Props) {
           ))}
         </div>
       </section>
-    </div>
+    </>
   );
 }
