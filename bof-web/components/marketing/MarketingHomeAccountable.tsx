@@ -125,18 +125,18 @@ export default function MarketingHomeAccountable() {
               border: "1px solid rgba(255,255,255,0.08)",
             }}
           >
-            {/* Background art only â€” do not use bof-mkt-home-hero-integrated__image here:
+            {/* Background art only — do not use bof-mkt-home-hero-integrated__image here:
                 globals force object-fit:contain under .bof-home-tight-hero and expose baked-in screenshot chrome. */}
             <Image
-              src="/generated/marketing/demoheroimage-v2.png"
-              alt="BOF demo operations hero visual"
+              src="/generated/marketing/bof-back-office-operating-system-hero.png"
+              alt="BOF back-office operating system hero visual"
               fill
               priority
               sizes="100vw"
               style={{
                 zIndex: 0,
                 objectFit: "cover",
-                objectPosition: "right top",
+                objectPosition: "60% center",
               }}
             />
 
@@ -239,24 +239,24 @@ export default function MarketingHomeAccountable() {
                       maxWidth: "56ch",
                     }}
                   >
-                    Dispatch, documents, driver readiness, HR, payroll, finance, factoring, compliance, customer proof, fleet financials, and audit-ready records â€” all connected in one accountable operating system.
+                    Dispatch, documents, driver readiness, HR, payroll, finance, factoring, compliance, customer proof, fleet financials, and audit-ready records — all connected in one accountable operating system.
                   </p>
                   <div
                     className="bof-mkt-home-hero-integrated__ctas"
                     style={{ marginTop: "1.15rem", flexWrap: "wrap", rowGap: "0.5rem" }}
                   >
-                    <Link href="/command-center" className="bof-mkt-btn-enterprise bof-mkt-btn-enterprise-primary">
-                      Take Assessment
+                    <Link href="/book-assessment" className="bof-mkt-btn-enterprise bof-mkt-btn-enterprise-primary">
+                      Take the Assessment
+                    </Link>
+                    <Link href="/command-center" className="bof-mkt-btn-enterprise bof-mkt-btn-enterprise-secondary">
+                      View the Demo
                     </Link>
                     <Link href="/fleet-financials" className="bof-mkt-btn-enterprise bof-mkt-btn-enterprise-secondary">
-                      View Fleet Financials
-                    </Link>
-                    <Link href="/drivers" className="bof-mkt-btn-enterprise bof-mkt-btn-enterprise-secondary">
-                      Review Driver Management
+                      Explore Fleet Financials
                     </Link>
                   </div>
                   <p style={{ margin: "0.65rem 0 0", color: "#94a3b8", fontSize: "0.86rem" }}>
-                    Live demo data Â· 12 drivers Â· 12 loads Â· document and proof workflows wired
+                    Live demo data · 12 drivers · 12 loads · document and proof workflows wired
                   </p>
                   <p style={{ margin: "0.45rem 0 0", fontSize: "0.9rem" }}>
                     <BookDemoLink className="text-teal-300 hover:text-teal-200">Talk to BOF</BookDemoLink>
@@ -268,11 +268,11 @@ export default function MarketingHomeAccountable() {
                       <Link href="/for-hire-carriers" className="text-slate-200 hover:text-white">
                         For-Hire Carriers
                       </Link>{" "}
-                      Â·{" "}
+                      ·{" "}
                       <Link href="/private-fleets" className="text-slate-200 hover:text-white">
                         Private Fleets
                       </Link>{" "}
-                      Â·{" "}
+                      ·{" "}
                       <Link href="/government" className="text-slate-200 hover:text-white">
                         Government Fleets
                       </Link>
@@ -290,7 +290,7 @@ export default function MarketingHomeAccountable() {
           <MarketingSectionHeader
             titleId="bof-mkt-different-heading"
             title="The Complete Back-Office Operating System"
-            lead="BOF unifies every aspect of trucking operationsâ€”dispatch, drivers, finances, compliance, and customer communicationâ€”in one powerful platform built for profitability and scale."
+            lead="BOF unifies every aspect of trucking operations—dispatch, drivers, finances, compliance, and customer communication—in one powerful platform built for profitability and scale."
           />
           <div className="bof-mkt-differentiator-grid">
             {DIFFERENTIATOR_POINTS.map((item) => (
@@ -401,7 +401,7 @@ export default function MarketingHomeAccountable() {
           <MarketingSectionHeader
             titleId="bof-mkt-center-heading"
             title="The Back-Office Operating System"
-            lead="BOF connects every aspect of your trucking operationâ€”dispatch, drivers, fleet financials, compliance, and customersâ€”through one unified platform."
+            lead="BOF connects every aspect of your trucking operation—dispatch, drivers, fleet financials, compliance, and customers—through one unified platform."
           />
           <div className="bof-mkt-hub">
             <article className="bof-mkt-hub-node bof-mkt-hub-node--top">
@@ -421,7 +421,7 @@ export default function MarketingHomeAccountable() {
             </article>
             <article className="bof-mkt-hub-node bof-mkt-hub-node--right">
               <h3>Dispatch & Operations</h3>
-              <p>Trucking dispatch, load proof, BOL/POD management, customer visibility, claims/exceptions handling, and document readinessâ€”all connected through the same operating system.</p>
+              <p>Trucking dispatch, load proof, BOL/POD management, customer visibility, claims/exceptions handling, and document readiness—all connected through the same operating system.</p>
             </article>
           </div>
         </div>
@@ -460,11 +460,11 @@ export default function MarketingHomeAccountable() {
 
       <MarketingCtaPanel
         id="bof-mkt-final-cta-heading"
-        title="Transform Your Back-Office Operations"
-        lead="Schedule a personalized demo of BOF's complete back-office operating system. See how unified dispatch, driver management, fleet financials, and compliance can transform your profitability and operational control."
+        title="Find the Back-Office Gaps Holding Your Fleet Back"
+        lead="Take the Fleet Back Office Assessment to see where dispatch, documents, driver readiness, financials, cash flow, compliance, and customer proof can be tightened into one operating system."
       >
         <Link href="/book-assessment" className="bof-mkt-btn-enterprise bof-mkt-btn-enterprise-primary">
-          Schedule Demo
+          Take the Assessment
         </Link>
         <Link href="/command-center" className="bof-mkt-btn-enterprise bof-mkt-btn-enterprise-secondary">
           Explore System
@@ -473,3 +473,4 @@ export default function MarketingHomeAccountable() {
     </>
   );
 }
+
