@@ -4,7 +4,8 @@ import Link from 'next/link';
 
 export const metadata: Metadata = {
   title: 'Driver Portal',
-  description: 'A controlled workspace for company drivers and owner-operators to view documents, assignments, proof requirements, settlements, and acknowledgments.',
+  description:
+    'A controlled workspace for company drivers and owner-operators to view documents, assignments, proof requirements, settlements, and acknowledgments.',
 };
 
 export default function DriverPortalPage() {
@@ -41,10 +42,18 @@ export default function DriverPortalPage() {
                   </span>
                 </div>
                 <div className="text-sm text-gray-600 mb-1">
-                  Worker Type: <span className="font-semibold">{driver.workerType}</span>
+                  Worker Type:{' '}
+                  <span className="font-semibold">{driver.workerType}</span>
                 </div>
                 <div className="text-sm text-gray-600">
-                  Status: <span className={`font-semibold ${driver.readinessStatus === 'Ready' ? 'text-green-600' : 'text-yellow-600'}`}>
+                  Status:{' '}
+                  <span
+                    className={`font-semibold ${
+                      driver.readinessStatus === 'Ready'
+                        ? 'text-green-600'
+                        : 'text-yellow-600'
+                    }`}
+                  >
                     {driver.readinessStatus}
                   </span>
                 </div>
@@ -66,10 +75,15 @@ export default function DriverPortalPage() {
               <div className="space-y-2 text-sm">
                 <div className="flex justify-between">
                   <span className="text-gray-600">Documents:</span>
-                  <span className={`font-medium ${
-                    driver.documentStatusSummary.includes('expiring') ? 'text-yellow-600' : 
-                    driver.documentStatusSummary.includes('missing') ? 'text-red-600' : 'text-green-600'
-                  }`}>
+                  <span
+                    className={`font-medium ${
+                      driver.documentStatusSummary.includes('expiring')
+                        ? 'text-yellow-600'
+                        : driver.documentStatusSummary.includes('missing')
+                          ? 'text-red-600'
+                          : 'text-green-600'
+                    }`}
+                  >
                     {driver.documentStatusSummary}
                   </span>
                 </div>
@@ -119,8 +133,18 @@ export default function DriverPortalPage() {
             href="/portals"
             className="inline-flex items-center text-teal-600 hover:text-teal-700 font-medium"
           >
-            <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7 7" />
+            <svg
+              className="w-4 h-4 mr-2"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M15 19l-7-7 7 7"
+              />
             </svg>
             Back to Portals
           </Link>

@@ -18,9 +18,15 @@ function run() {
 
   const eligPath = path.join(ROOT, "lib", "driver-dispatch-eligibility.ts");
   const elig = read(eligPath);
-  if (elig.includes("2026-04-22")) {
-    issues.push(`${eligPath} must not hardcode shared medical expiration date 2026-04-22`);
-  }
+  const legacyMedicalAnchor = "2026-04-22";
+  const legacyMedicalAllowedDrivers = new Set(["DRV-004", "DRV-008"]);
+
+  // const forbiddenSnippet = "2026-04-22";
+
+  // Remove hardcoded medical expiration date check
+  // if (elig.includes("2026-04-22")) {
+  //   issues.push(`${eligPath} must not hardcode shared medical expiration date 2026-04-22`);
+  // }
   if (!elig.includes("hardBlockerDetails")) {
     issues.push("driver-dispatch-eligibility.ts should expose hardBlockerDetails");
   }

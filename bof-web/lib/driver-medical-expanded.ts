@@ -1,5 +1,5 @@
 /**
- * Expanded medical / MCSA structure sourced from `public/data/driver_templates_expanded.xlsx`
+ * Expanded medical / MCSA structure sourced from consolidated workbook
  * (merged into `demo-data.json` as `driverMedicalExpanded`).
  */
 export type DriverMedicalExpanded = {

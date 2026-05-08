@@ -9,7 +9,7 @@
 import fs from "fs";
 import path from "path";
 
-const ENHANCED_SEGMENTS = ["public", "data", "main-source_enhanced_bof_aligned.xlsx"];
+const ENHANCED_SEGMENTS = ["public", "data", "main-source_enhanced_bof_aligned_CONSOLIDATED.xlsx"];
 const LEGACY_SEGMENTS = ["data", "main-source.xlsx"];
 
 export function resolveMainSourceXlsxPath(root) {
