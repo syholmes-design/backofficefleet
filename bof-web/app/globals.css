@@ -93,7 +93,7 @@ body {
 .bof-global-header-inner {
   max-width: 80rem;
   margin: 0 auto;
-  padding: 1.25rem 2rem;
+  padding: 1.25rem 1.25rem;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -195,8 +195,8 @@ body {
 .bof-global-header-ctas {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
-  margin-left: 1rem;
+  gap: 1rem;
+  margin-left: 2.5rem;
   flex-shrink: 0;
 }
 
@@ -217,8 +217,10 @@ body {
   }
   
   .bof-global-header-cta {
-    padding: 0.5rem 1rem;
-    font-size: 1.44rem;
+    padding: 0.75rem 1.5rem;
+    font-size: 0.875rem;
+    height: 2.75rem;
+    letter-spacing: 0.025em;
   }
 }
 
@@ -238,8 +240,10 @@ body {
   }
   
   .bof-global-header-cta {
-    padding: 0.425rem 0.875rem;
-    font-size: 1.4rem;
+    padding: 0.625rem 1.125rem;
+    font-size: 0.825rem;
+    height: 2.5rem;
+    letter-spacing: 0.025em;
   }
   
   .bof-global-header-ctas {
@@ -253,17 +257,20 @@ body {
 }
 
 .bof-global-header-cta {
-  padding: 0.625rem 1.25rem;
-  border-radius: 10px;
+  padding: 0.875rem 1.75rem;
+  border-radius: 14px;
   font-weight: 600;
-  font-size: 0.875rem;
-  white-space: nowrap;
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  font-size: 0.9rem;
   text-decoration: none;
   position: relative;
   overflow: hidden;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   border: 1px solid transparent;
+  height: 3rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  letter-spacing: 0.025em;
 }
 
 .bof-global-header-cta::before {

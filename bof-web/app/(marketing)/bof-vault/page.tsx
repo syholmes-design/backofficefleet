@@ -171,10 +171,10 @@ export default function BofVaultPage() {
         titleId="bof-mkt-vault-hero-heading"
         sectionAriaLabelledBy="bof-mkt-vault-hero-heading"
         eyebrow="BOF Vault · Driver readiness"
-        title={<>Keep Your Driving Documents Ready Before You Need Them</>}
-        belowHeroHeadline="One secure vault for credentials, versions, and readiness"
-        subtitle="BOF Vault gives drivers one secure place to upload, organize, and maintain the records that matter—so expired, missing, or incomplete documents do not slow the next opportunity."
-        support="Upload once. BOF helps evaluate your file, flag issues, and keep your credentials ready for onboarding, dispatch, or carrier review when the time comes."
+        title={<>Your Personal Driver Document Vault</>}
+        belowHeroHeadline="Upload once. Access anywhere. Stay ready."
+        subtitle="BOF Vault gives you one secure place to upload, organize, and maintain your driving credentials—so expired, missing, or incomplete documents never slow down your next opportunity."
+        support="Create your personal vault. BOF analyzes your documents, flags expirations, and keeps your Driver Qualification File ready for carriers, recruiters, or compliance reviews."
         trustItems={HERO_TRUST}
         trustAriaLabel="BOF Vault capability highlights"
         imageSrc="/assets/images/BofVaultHero2.png"
@@ -182,10 +182,10 @@ export default function BofVaultPage() {
         ctas={
           <>
             <Link
-              href="/book-assessment"
+              href="/assessment/bof-vault"
               className="bof-mkt-btn-enterprise bof-mkt-btn-enterprise-primary"
             >
-              Take The Assessment
+              Create My Driver Vault
             </Link>
             <Link href="/dashboard" className="bof-mkt-btn-enterprise bof-mkt-btn-enterprise-secondary">
               See The Demo
@@ -310,8 +310,8 @@ export default function BofVaultPage() {
         title="Make credentials as defensible as your operations"
         lead="Book a vault + command center assessment. We map upload chaos, verifier gaps, and integration debt—then show how BOF ties it together."
       >
-        <Link href="/book-assessment" className="bof-mkt-btn-enterprise bof-mkt-btn-enterprise-primary">
-          Take The Assessment
+        <Link href="/assessment/bof-vault" className="bof-mkt-btn-enterprise bof-mkt-btn-enterprise-primary">
+          Create My Driver Vault
         </Link>
         <Link href="/drivers" className="bof-mkt-btn-enterprise bof-mkt-btn-enterprise-secondary">
           See The Demo
