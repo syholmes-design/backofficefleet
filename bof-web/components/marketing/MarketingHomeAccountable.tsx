@@ -14,7 +14,6 @@ import {
   MarketingSection,
   MarketingSectionHeader,
 } from "@/components/marketing";
-import { BofLogo } from "@/components/BofLogo";
 import { BookDemoLink } from "@/components/BookDemoLink";
 import { IconDispatch, IconLoadProof, IconShield } from "@/components/marketing/MarketingHomeIcons";
 import type { MarketingIconCardItem } from "@/components/marketing/MarketingIconCardGrid";
@@ -128,15 +127,15 @@ export default function MarketingHomeAccountable() {
             {/* Background art only — do not use bof-mkt-home-hero-integrated__image here:
                 globals force object-fit:contain under .bof-home-tight-hero and expose baked-in screenshot chrome. */}
             <Image
-              src="/generated/marketing/bof-back-office-operating-system-hero.png"
-              alt="BOF back-office operating system hero visual"
+              src="/generated/marketing/demoheroimage-v2.png"
+              alt="BOF command center and truck operations visual"
               fill
               priority
               sizes="100vw"
               style={{
                 zIndex: 0,
                 objectFit: "cover",
-                objectPosition: "60% center",
+                objectPosition: "center 30%",
               }}
             />
 
@@ -148,7 +147,7 @@ export default function MarketingHomeAccountable() {
                 zIndex: 2,
                 pointerEvents: "none",
                 background:
-                  "linear-gradient(90deg, #030712 0%, rgba(3,7,18,0.96) 10%, rgba(3,7,18,0.82) 38%, rgba(3,7,18,0.2) 72%, rgba(3,7,18,0.06) 100%)",
+                  "linear-gradient(90deg, rgba(3,7,18,0.85) 0%, rgba(3,7,18,0.7) 25%, rgba(3,7,18,0.4) 60%, rgba(3,7,18,0.15) 85%, rgba(3,7,18,0.05) 100%)",
               }}
             />
 
@@ -159,25 +158,11 @@ export default function MarketingHomeAccountable() {
                 left: 0,
                 right: 0,
                 bottom: 0,
-                height: "clamp(150px, 24vw, 210px)",
+                height: "clamp(120px, 20vw, 180px)",
                 zIndex: 2,
                 pointerEvents: "none",
                 background:
-                  "linear-gradient(to top, #030712 0%, rgba(3,7,18,0.95) 42%, rgba(3,7,18,0.5) 72%, transparent 100%)",
-              }}
-            />
-
-            <div
-              aria-hidden
-              style={{
-                position: "absolute",
-                left: 0,
-                right: 0,
-                top: 0,
-                height: "clamp(64px, 11vw, 92px)",
-                zIndex: 2,
-                pointerEvents: "none",
-                background: "linear-gradient(to bottom, rgba(3,7,18,0.88) 0%, transparent 100%)",
+                  "linear-gradient(to top, rgba(3,7,18,0.9) 0%, rgba(3,7,18,0.6) 40%, rgba(3,7,18,0.2) 80%, transparent 100%)",
               }}
             />
 
@@ -187,22 +172,17 @@ export default function MarketingHomeAccountable() {
                 zIndex: 4,
                 display: "flex",
                 flexDirection: "column",
-                justifyContent: "space-between",
+                justifyContent: "center",
                 minHeight: "clamp(520px, 68vw, 680px)",
                 maxHeight: "680px",
                 padding: "clamp(16px, 2.6vw, 30px)",
               }}
             >
-              <div style={{ position: "relative", zIndex: 5 }}>
-                <BofLogo variant="dark" className="bof-mkt-home-hero-logo" priority />
-              </div>
-
               <div
                 style={{
                   flex: "1 1 auto",
                   display: "flex",
                   alignItems: "center",
-                  paddingBottom: "clamp(6px, 1.5vw, 14px)",
                 }}
               >
                 <div style={{ maxWidth: "760px", width: "100%" }}>
