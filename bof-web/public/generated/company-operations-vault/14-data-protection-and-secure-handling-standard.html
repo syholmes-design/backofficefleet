@@ -38,6 +38,23 @@
             color: #4a5568;
             margin-bottom: 0.5in;
         }
+        .metadata {
+            background: #f8fafc;
+            padding: 0.25in;
+            border: 1px solid #e2e8f0;
+            border-radius: 4px;
+            margin-bottom: 0.5in;
+            font-size: 9pt;
+        }
+        .metadata-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.125in;
+        }
+        .metadata-label {
+            font-weight: bold;
+            color: #4a5568;
+        }
         .section {
             margin-bottom: 0.5in;
         }
@@ -51,57 +68,104 @@
         }
         .policy-list {
             list-style: none;
-            padding-left: 0.25in;
-        }
-        .policy-list li {
-            margin-bottom: 0.125in;
-            font-size: 9pt;
+            padding: 0;
+            margin: 0;
         }
         .policy-item {
             display: flex;
             justify-content: space-between;
-            align-items: center;
-            margin-bottom: 0.125in;
+            align-items: flex-start;
+            padding: 0.125in 0;
+            border-bottom: 1px solid #f0f0f0;
         }
         .policy-name {
-            font-weight: 600;
-            color: #1a202c;
-            min-width: 3in;
+            font-weight: bold;
+            color: #2d3748;
+            flex: 1;
+            margin-right: 0.5in;
         }
         .policy-value {
             color: #4a5568;
-            font-style: italic;
+            flex: 2;
+        }
+        .signature-block {
+            margin-top: 1in;
+            border-top: 1px solid #e2e8f0;
+            padding-top: 0.5in;
+        }
+        .signature-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5in;
+        }
+        .signature-field {
+            width: 45%;
+        }
+        .signature-line {
+            border-bottom: 1px solid #2d3748;
+            margin-bottom: 0.125in;
+            height: 0.5in;
         }
         .footer {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: #f7fafc;
-            border-top: 1px solid #e2e8f0;
-            padding: 0.125in;
             text-align: center;
-            font-size: 8pt;
-            color: #4a5568;
+            margin-top: 1in;
+            padding-top: 0.5in;
+            border-top: 1px solid #e2e8f0;
+            font-size: 9pt;
+            color: #718096;
         }
     </style>
 </head>
 <body>
     <div class="paper">
         <div class="header">
-            <div class="title">Delta Advanced Trucking, Inc.</div>
-            <div class="subtitle">Data Protection and Secure Handling Standard</div>
+            <div class="title">Data Protection and Secure Handling Standard</div>
+            <div class="subtitle">Enterprise Data Security Framework and Privacy Controls</div>
+        </div>
+
+        <div class="metadata">
+            <div class="metadata-row">
+                <span class="metadata-label">Document ID:</span>
+                <span>BOF-DPS-004</span>
+            </div>
+            <div class="metadata-row">
+                <span class="metadata-label">Version:</span>
+                <span>2.0</span>
+            </div>
+            <div class="metadata-row">
+                <span class="metadata-label">Effective Date:</span>
+                <span>November 1, 2025</span>
+            </div>
+            <div class="metadata-row">
+                <span class="metadata-label">Owner Team:</span>
+                <span>Information Security & Data Protection</span>
+            </div>
+            <div class="metadata-row">
+                <span class="metadata-label">Approved By:</span>
+                <span>Chief Information Security Officer</span>
+            </div>
+            <div class="metadata-row">
+                <span class="metadata-label">Review Cadence:</span>
+                <span>Semi-annual</span>
+            </div>
+            <div class="metadata-row">
+                <span class="metadata-label">Classification:</span>
+                <span>Internal Use</span>
+            </div>
         </div>
 
         <div class="section">
-            <div class="section-title">Standard Overview</div>
+            <div class="section-title">1. Purpose and Scope</div>
             <p style="font-size: 10pt; margin-bottom: 0.25in;">
-                This Data Protection and Secure Handling Standard establishes requirements for protecting BOF's data assets throughout their lifecycle, ensuring confidentiality, integrity, and availability while maintaining regulatory compliance.
+                This Data Protection and Secure Handling Standard establishes comprehensive requirements for protecting BOF's data assets throughout their lifecycle, ensuring confidentiality, integrity, and availability of information in compliance with regulatory requirements and industry best practices.
+            </p>
+            <p style="font-size: 10pt; margin-bottom: 0.25in;">
+                <strong>Scope:</strong> All electronic and physical data assets, including customer information, employee records, financial data, operational data, intellectual property, and third-party information processed by BOF.
             </p>
         </div>
 
         <div class="section">
-            <div class="section-title">Data Classification</div>
+            <div class="section-title">2. Data Classification Framework</div>
             <ul class="policy-list">
                 <li>
                     <div class="policy-item">
@@ -131,18 +195,18 @@
         </div>
 
         <div class="section">
-            <div class="section-title">Protection Requirements</div>
+            <div class="section-title">3. Technical Protection Requirements</div>
             <ul class="policy-list">
                 <li>
                     <div class="policy-item">
                         <span class="policy-name">Encryption Standards</span>
-                        <span class="policy-value">AES-256 encryption for data at rest and in transit</span>
+                        <span class="policy-value">AES-256 encryption for data at rest and TLS 1.3 for data in transit</span>
                     </div>
                 </li>
                 <li>
                     <div class="policy-item">
                         <span class="policy-name">Access Controls</span>
-                        <span class="policy-value">Multi-factor authentication and least privilege principle</span>
+                        <span class="policy-value">Multi-factor authentication, least privilege, and role-based access controls</span>
                     </div>
                 </li>
                 <li>
@@ -154,141 +218,303 @@
                 <li>
                     <div class="policy-item">
                         <span class="policy-name">Secure Storage</span>
-                        <span class="policy-value">Encrypted storage with regular backup and testing</span>
+                        <span class="policy-value">Encrypted storage with regular backup, testing, and geo-redundancy</span>
                     </div>
                 </li>
                 <li>
                     <div class="policy-item">
                         <span class="policy-name">Secure Transmission</span>
-                        <span class="policy-value">Secure channels and protocols for data transmission</span>
+                        <span class="policy-value">Secure channels, VPN, and encrypted protocols for data transmission</span>
+                    </div>
+                </li>
+                <li>
+                    <div class="policy-item">
+                        <span class="policy-name">Key Management</span>
+                        <span class="policy-value">Centralized key management with secure key rotation and storage</span>
                     </div>
                 </li>
             </ul>
         </div>
 
         <div class="section">
-            <div class="section-title">Data Handling Procedures</div>
+            <div class="section-title">4. Data Lifecycle Management</div>
+            <p style="font-size: 10pt; margin-bottom: 0.25in;">
+                Data protection controls must be applied throughout the entire data lifecycle from creation to disposal.
+            </p>
             <ul class="policy-list">
                 <li>
                     <div class="policy-item">
                         <span class="policy-name">Data Collection</span>
-                        <span class="policy-value">Authorized collection with documented purpose and consent</span>
+                        <span class="policy-value">Authorized collection with documented purpose, consent, and lawful basis</span>
                     </div>
                 </li>
                 <li>
                     <div class="policy-item">
                         <span class="policy-name">Data Processing</span>
-                        <span class="policy-value">Secure processing with audit trails and validation</span>
+                        <span class="policy-value">Secure processing with audit trails, validation, and integrity checks</span>
+                    </div>
+                </li>
+                <li>
+                    <div class="policy-item">
+                        <span class="policy-name">Data Storage</span>
+                        <span class="policy-value">Secure storage with encryption, access controls, and regular backups</span>
                     </div>
                 </li>
                 <li>
                     <div class="policy-item">
                         <span class="policy-name">Data Sharing</span>
-                        <span class="policy-value">Authorized sharing only with proper agreements and controls</span>
+                        <span class="policy-value">Authorized sharing only with proper agreements, controls, and data protection</span>
+                    </div>
+                </li>
+                <li>
+                    <div class="policy-item">
+                        <span class="policy-name">Data Archival</span>
+                        <span class="policy-value">Secure archival with retention schedules and controlled access</span>
                     </div>
                 </li>
                 <li>
                     <div class="policy-item">
                         <span class="policy-name">Data Disposal</span>
-                        <span class="policy-value">Secure disposal with verification and documentation</span>
+                        <span class="policy-value">Secure disposal with verification, documentation, and certificate of destruction</span>
                     </div>
                 </li>
             </ul>
         </div>
 
         <div class="section">
-            <div class="section-title">Incident Response</div>
+            <div class="section-title">5. Incident Response and Breach Management</div>
+            <p style="font-size: 10pt; margin-bottom: 0.25in;">
+                A structured incident response process must be followed for all data breaches and security incidents.
+            </p>
             <ul class="policy-list">
                 <li>
                     <div class="policy-item">
                         <span class="policy-name">Breach Detection</span>
-                        <span class="policy-value">Monitoring systems and rapid breach identification</span>
+                        <span class="policy-value">24/7 monitoring systems, automated alerts, and rapid breach identification</span>
+                    </div>
+                </li>
+                <li>
+                    <div class="policy-item">
+                        <span class="policy-name">Incident Assessment</span>
+                        <span class="policy-value">Immediate assessment of scope, impact, and affected data subjects</span>
                     </div>
                 </li>
                 <li>
                     <div class="policy-item">
                         <span class="policy-name">Containment</span>
-                        <span class="policy-value">Immediate containment to prevent further data loss</span>
+                        <span class="policy-value">Immediate containment to prevent further data loss and system compromise</span>
                     </div>
                 </li>
                 <li>
                     <div class="policy-item">
                         <span class="policy-name">Notification</span>
-                        <span class="policy-value">Timely notification to affected parties and authorities</span>
+                        <span class="policy-value">Timely notification to affected parties, regulators, and authorities per legal requirements</span>
                     </div>
                 </li>
                 <li>
                     <div class="policy-item">
                         <span class="policy-name">Recovery</span>
-                        <span class="policy-value">Data recovery and system restoration procedures</span>
+                        <span class="policy-value">Data recovery, system restoration, and post-incident security improvements</span>
+                    </div>
+                </li>
+                <li>
+                    <div class="policy-item">
+                        <span class="policy-name">Post-Mortem</span>
+                        <span class="policy-value">Root cause analysis, lessons learned, and process improvements</span>
                     </div>
                 </li>
             </ul>
         </div>
 
         <div class="section">
-            <div class="section-title">Compliance Requirements</div>
+            <div class="section-title">6. Regulatory Compliance and Legal Requirements</div>
+            <p style="font-size: 10pt; margin-bottom: 0.25in;">
+                BOF must comply with applicable data protection regulations and legal requirements across all jurisdictions.
+            </p>
             <ul class="policy-list">
                 <li>
                     <div class="policy-item">
                         <span class="policy-name">Regulatory Compliance</span>
-                        <span class="policy-value">Adherence to applicable data protection regulations</span>
+                        <span class="policy-value">GDPR, CCPA, HIPAA, DOT regulations, and state privacy laws</span>
                     </div>
                 </li>
                 <li>
                     <div class="policy-item">
                         <span class="policy-name">Audit Requirements</span>
-                        <span class="policy-value">Regular audits and compliance assessments</span>
+                        <span class="policy-value">Quarterly internal audits, annual external assessments, and compliance reporting</span>
                     </div>
                 </li>
                 <li>
                     <div class="policy-item">
                         <span class="policy-name">Documentation</span>
-                        <span class="policy-value">Comprehensive documentation of data handling procedures</span>
+                        <span class="policy-value">Comprehensive documentation of data handling procedures and compliance evidence</span>
                     </div>
                 </li>
                 <li>
                     <div class="policy-item">
                         <span class="policy-name">Training Requirements</span>
-                        <span class="policy-value">Regular training on data protection and security</span>
+                        <span class="policy-value">Annual data protection training and role-specific security awareness</span>
+                    </div>
+                </li>
+                <li>
+                    <div class="policy-item">
+                        <span class="policy-name">Privacy by Design</span>
+                        <span class="policy-value">Privacy considerations built into systems and processes from inception</span>
                     </div>
                 </li>
             </ul>
         </div>
 
         <div class="section">
-            <div class="section-title">BOF Integration</div>
+            <div class="section-title">7. BOF System Integration</div>
+            <p style="font-size: 10pt; margin-bottom: 0.25in;">
+                Data protection controls must be integrated across all BOF systems and business processes.
+            </p>
             <ul class="policy-list">
                 <li>
                     <div class="policy-item">
                         <span class="policy-name">Dispatch Systems</span>
-                        <span class="policy-value">Secure handling of driver and load data</span>
+                        <span class="policy-value">Secure handling of driver data, load information, and location data with privacy controls</span>
                     </div>
                 </li>
                 <li>
                     <div class="policy-item">
                         <span class="policy-name">Payroll Systems</span>
-                        <span class="policy-value">Protection of employee personal and financial data</span>
+                        <span class="policy-value">Protection of employee personal data, financial information, and tax records</span>
                     </div>
                 </li>
                 <li>
                     <div class="policy-item">
                         <span class="policy-name">Document Management</span>
-                        <span class="policy-value">Secure storage and access controls for company documents</span>
+                        <span class="policy-value">Secure storage, version control, and access controls for all company documents</span>
+                    </div>
+                </li>
+                <li>
+                    <div class="policy-item">
+                        <span class="policy-name">Driver Portal</span>
+                        <span class="policy-value">Secure driver authentication, data privacy, and mobile application security</span>
+                    </div>
+                </li>
+                <li>
+                    <div class="policy-item">
+                        <span class="policy-name">Customer Systems</span>
+                        <span class="policy-value">Protection of customer data, shipment information, and business communications</span>
                     </div>
                 </li>
             </ul>
         </div>
 
         <div class="section">
-            <div class="section-title">Policy Version</div>
+            <div class="section-title">8. Data Subject Rights</div>
             <p style="font-size: 10pt; margin-bottom: 0.25in;">
-                <strong>Version 1.0</strong><br>
-                <strong>Effective:</strong> October 15, 2025<br>
-                <strong>Last Reviewed:</strong> October 15, 2025<br>
-                <strong>Next Review Due:</strong> January 15, 2026<br>
-                <strong>Applies to:</strong> All Staff, IT, Admin
+                BOF must respect and facilitate data subject rights in accordance with applicable privacy regulations.
             </p>
+            <p style="font-size: 10pt; margin-bottom: 0.25in;">
+                <strong>Data Subject Rights:</strong>
+            </p>
+            <ul style="font-size: 10pt; margin-bottom: 0.25in; padding-left: 0.25in;">
+                <li>Right to access personal data held by BOF</li>
+                <li>Right to rectification of inaccurate personal data</li>
+                <li>Right to erasure (right to be forgotten) where applicable</li>
+                <li>Right to restriction of processing under certain conditions</li>
+                <li>Right to data portability for personal data</li>
+                <li>Right to object to processing based on legitimate interests</li>
+                <li>Right to lodge complaints with supervisory authorities</li>
+            </ul>
+        </div>
+
+        <div class="section">
+            <div class="section-title">9. Third-Party and Vendor Management</div>
+            <p style="font-size: 10pt; margin-bottom: 0.25in;">
+                Third parties and vendors processing BOF data must meet equivalent data protection standards.
+            </p>
+            <ul class="policy-list">
+                <li>
+                    <div class="policy-item">
+                        <span class="policy-name">Due Diligence</span>
+                        <span class="policy-value">Comprehensive security and privacy assessments before engagement</span>
+                    </div>
+                </li>
+                <li>
+                    <div class="policy-item">
+                        <span class="policy-name">Data Processing Agreements</span>
+                        <span class="policy-value">Legally binding agreements with data protection obligations</span>
+                    </div>
+                </li>
+                <li>
+                    <div class="policy-item">
+                        <span class="policy-name">Ongoing Monitoring</span>
+                        <span class="policy-value">Regular monitoring and audits of vendor compliance</span>
+                    </div>
+                </li>
+                <li>
+                    <div class="policy-item">
+                        <span class="policy-name">Data Transfer Mechanisms</span>
+                        <span class="policy-value">Appropriate safeguards for international data transfers</span>
+                    </div>
+                </li>
+            </ul>
+        </div>
+
+        <div class="section">
+            <div class="section-title">10. Monitoring and Continuous Improvement</div>
+            <p style="font-size: 10pt; margin-bottom: 0.25in;">
+                Regular monitoring and continuous improvement processes ensure ongoing data protection effectiveness.
+            </p>
+            <ul class="policy-list">
+                <li>
+                    <div class="policy-item">
+                        <span class="policy-name">Security Monitoring</span>
+                        <span class="policy-value">24/7 security monitoring with automated threat detection and response</span>
+                    </div>
+                </li>
+                <li>
+                    <div class="policy-item">
+                        <span class="policy-name">Compliance Monitoring</span>
+                        <span class="policy-value">Continuous compliance monitoring with automated controls and reporting</span>
+                    </div>
+                </li>
+                <li>
+                    <div class="policy-item">
+                        <span class="policy-name">Risk Assessments</span>
+                        <span class="policy-value">Regular risk assessments with mitigation plans and progress tracking</span>
+                    </div>
+                </li>
+                <li>
+                    <div class="policy-item">
+                        <span class="policy-name">Policy Reviews</span>
+                        <span class="policy-value">Semi-annual policy reviews with updates based on threat landscape changes</span>
+                    </div>
+                </li>
+            </ul>
+        </div>
+
+        <div class="signature-block">
+            <div class="section-title">Standard Approval and Implementation</div>
+            <div class="signature-row">
+                <div class="signature-field">
+                    <div class="signature-line"></div>
+                    <p style="font-size: 9pt; text-align: center;">Chief Information Security Officer</p>
+                    <p style="font-size: 8pt; text-align: center;">Date: November 1, 2025</p>
+                </div>
+                <div class="signature-field">
+                    <div class="signature-line"></div>
+                    <p style="font-size: 9pt; text-align: center;">Data Protection Officer</p>
+                    <p style="font-size: 8pt; text-align: center;">Date: November 1, 2025</p>
+                </div>
+            </div>
+            <div class="signature-row">
+                <div class="signature-field">
+                    <div class="signature-line"></div>
+                    <p style="font-size: 9pt; text-align: center;">Chief Technology Officer</p>
+                    <p style="font-size: 8pt; text-align: center;">Date: November 1, 2025</p>
+                </div>
+                <div class="signature-field">
+                    <div class="signature-line"></div>
+                    <p style="font-size: 9pt; text-align: center;">Next Review Date</p>
+                    <p style="font-size: 8pt; text-align: center;">May 1, 2026</p>
+                </div>
+            </div>
         </div>
 
         <div class="footer">

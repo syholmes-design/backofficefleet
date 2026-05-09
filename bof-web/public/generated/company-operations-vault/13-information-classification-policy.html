@@ -38,6 +38,23 @@
             color: #4a5568;
             margin-bottom: 0.5in;
         }
+        .metadata {
+            background: #f8fafc;
+            padding: 0.25in;
+            border: 1px solid #e2e8f0;
+            border-radius: 4px;
+            margin-bottom: 0.5in;
+            font-size: 9pt;
+        }
+        .metadata-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.125in;
+        }
+        .metadata-label {
+            font-weight: bold;
+            color: #4a5568;
+        }
         .section {
             margin-bottom: 0.5in;
         }
@@ -51,57 +68,122 @@
         }
         .policy-list {
             list-style: none;
-            padding-left: 0.25in;
-        }
-        .policy-list li {
-            margin-bottom: 0.125in;
-            font-size: 9pt;
+            padding: 0;
+            margin: 0;
         }
         .policy-item {
             display: flex;
             justify-content: space-between;
-            align-items: center;
-            margin-bottom: 0.125in;
+            align-items: flex-start;
+            padding: 0.125in 0;
+            border-bottom: 1px solid #f0f0f0;
         }
         .policy-name {
-            font-weight: 600;
-            color: #1a202c;
-            min-width: 3in;
+            font-weight: bold;
+            color: #2d3748;
+            flex: 1;
+            margin-right: 0.5in;
         }
         .policy-value {
             color: #4a5568;
-            font-style: italic;
+            flex: 2;
+        }
+        .classification-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 0.25in;
+            font-size: 9pt;
+        }
+        .classification-table th {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            padding: 0.125in;
+            text-align: left;
+            font-weight: bold;
+            color: #0BA5A4;
+        }
+        .classification-table td {
+            border: 1px solid #e2e8f0;
+            padding: 0.125in;
+        }
+        .signature-block {
+            margin-top: 1in;
+            border-top: 1px solid #e2e8f0;
+            padding-top: 0.5in;
+        }
+        .signature-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5in;
+        }
+        .signature-field {
+            width: 45%;
+        }
+        .signature-line {
+            border-bottom: 1px solid #2d3748;
+            margin-bottom: 0.125in;
+            height: 0.5in;
         }
         .footer {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: #f7fafc;
-            border-top: 1px solid #e2e8f0;
-            padding: 0.125in;
             text-align: center;
-            font-size: 8pt;
-            color: #4a5568;
+            margin-top: 1in;
+            padding-top: 0.5in;
+            border-top: 1px solid #e2e8f0;
+            font-size: 9pt;
+            color: #718096;
         }
     </style>
 </head>
 <body>
     <div class="paper">
         <div class="header">
-            <div class="title">Delta Advanced Trucking, Inc.</div>
-            <div class="subtitle">Information Classification Policy</div>
+            <div class="title">Information Classification Policy</div>
+            <div class="subtitle">Enterprise Data Classification Framework and Protection Requirements</div>
+        </div>
+
+        <div class="metadata">
+            <div class="metadata-row">
+                <span class="metadata-label">Document ID:</span>
+                <span>BOF-ICP-003</span>
+            </div>
+            <div class="metadata-row">
+                <span class="metadata-label">Version:</span>
+                <span>2.0</span>
+            </div>
+            <div class="metadata-row">
+                <span class="metadata-label">Effective Date:</span>
+                <span>November 1, 2025</span>
+            </div>
+            <div class="metadata-row">
+                <span class="metadata-label">Owner Team:</span>
+                <span>Information Security & Data Governance</span>
+            </div>
+            <div class="metadata-row">
+                <span class="metadata-label">Approved By:</span>
+                <span>Chief Information Security Officer</span>
+            </div>
+            <div class="metadata-row">
+                <span class="metadata-label">Review Cadence:</span>
+                <span>Annual</span>
+            </div>
+            <div class="metadata-row">
+                <span class="metadata-label">Classification:</span>
+                <span>Internal Use</span>
+            </div>
         </div>
 
         <div class="section">
-            <div class="section-title">Policy Overview</div>
+            <div class="section-title">1. Purpose and Scope</div>
             <p style="font-size: 10pt; margin-bottom: 0.25in;">
-                This Information Classification Policy establishes a standardized framework for classifying BOF's information assets based on sensitivity, confidentiality requirements, and business impact. It ensures appropriate protection measures are applied to all company information.
+                This Information Classification Policy establishes the comprehensive framework for classifying BOF's information assets based on sensitivity, business impact, and regulatory requirements. This policy applies to all information created, stored, transmitted, or processed by BOF, regardless of format or location.
+            </p>
+            <p style="font-size: 10pt; margin-bottom: 0.25in;">
+                <strong>Scope:</strong> All electronic and physical information assets, including but not limited to business documents, customer data, financial records, employee information, intellectual property, and system data.
             </p>
         </div>
 
         <div class="section">
-            <div class="section-title">Classification Levels</div>
+            <div class="section-title">2. Classification Levels</div>
             <ul class="policy-list">
                 <li>
                     <div class="policy-item">
@@ -131,152 +213,286 @@
         </div>
 
         <div class="section">
-            <div class="section-title">Classification Criteria</div>
+            <div class="section-title">3. Classification Criteria</div>
+            <p style="font-size: 10pt; margin-bottom: 0.25in;">
+                Information classification is based on multiple factors including business impact, legal requirements, sensitivity, and distribution needs.
+            </p>
             <ul class="policy-list">
                 <li>
                     <div class="policy-item">
                         <span class="policy-name">Business Impact</span>
-                        <span class="policy-value">Assess potential harm to business operations if compromised</span>
+                        <span class="policy-value">Assess potential harm to business operations, reputation, and financial position if compromised</span>
                     </div>
                 </li>
                 <li>
                     <div class="policy-item">
                         <span class="policy-name">Legal Requirements</span>
-                        <span class="policy-value">Consider regulatory and contractual obligations</span>
+                        <span class="policy-value">Consider regulatory obligations, contractual commitments, and legal protections</span>
                     </div>
                 </li>
                 <li>
                     <div class="policy-item">
                         <span class="policy-name">Sensitivity</span>
-                        <span class="policy-value">Evaluate information sensitivity and privacy implications</span>
+                        <span class="policy-value">Evaluate information sensitivity, privacy implications, and competitive advantage</span>
                     </div>
                 </li>
                 <li>
                     <div class="policy-item">
                         <span class="policy-name">Distribution Needs</span>
-                        <span class="policy-value">Determine who needs access for business functions</span>
+                        <span class="policy-value">Determine who needs access for business functions and operational requirements</span>
                     </div>
                 </li>
             </ul>
         </div>
 
         <div class="section">
-            <div class="section-title">Handling Requirements</div>
-            <ul class="policy-list">
-                <li>
-                    <div class="policy-item">
-                        <span class="policy-name">Public Information</span>
-                        <span class="policy-value">No special handling required, standard business communication</span>
-                    </div>
-                </li>
-                <li>
-                    <div class="policy-item">
-                        <span class="policy-name">Internal Information</span>
-                        <span class="policy-value">Employee access only, no external sharing without authorization</span>
-                    </div>
-                </li>
-                <li>
-                    <div class="policy-item">
-                        <span class="policy-name">Confidential Information</span>
-                        <span class="policy-value">Encryption, access controls, and need-to-know distribution</span>
-                    </div>
-                </li>
-                <li>
-                    <div class="policy-item">
-                        <span class="policy-name">Restricted Information</span>
-                        <span class="policy-value">Strict access controls, audit trails, and limited distribution</span>
-                    </div>
-                </li>
-            </ul>
+            <div class="section-title">4. Detailed Classification Framework</div>
+            <table class="classification-table">
+                <thead>
+                    <tr>
+                        <th>Classification Level</th>
+                        <th>Description</th>
+                        <th>Handling Requirements</th>
+                        <th>Examples</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Public</strong></td>
+                        <td>Information intended for general public distribution with no restrictions</td>
+                        <td>No special handling required</td>
+                        <td>Marketing materials, press releases, website content</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Internal</strong></td>
+                        <td>Company internal use only, limited to employees and authorized contractors</td>
+                        <td>Employee access only, no external sharing</td>
+                        <td>Internal procedures, employee directories, training materials</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Confidential</strong></td>
+                        <td>Sensitive business information, restricted to authorized personnel</td>
+                        <td>Encryption, access controls, need-to-know distribution</td>
+                        <td>Financial data, customer lists, strategic plans, contracts</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Restricted</strong></td>
+                        <td>Highly sensitive information, need-to-know basis only</td>
+                        <td>Strict access controls, audit trails, limited distribution</td>
+                        <td>Mergers and acquisitions, legal matters, security incidents</td>
+                    </tr>
+                </tbody>
+            </table>
         </div>
 
         <div class="section">
-            <div class="section-title">Classification Examples</div>
+            <div class="section-title">5. BOF-Specific Classification Examples</div>
+            <p style="font-size: 10pt; margin-bottom: 0.25in;">
+                The following examples illustrate how BOF information should be classified according to business context and sensitivity.
+            </p>
             <ul class="policy-list">
                 <li>
                     <div class="policy-item">
                         <span class="policy-name">Public</span>
-                        <span class="policy-value">Marketing materials, press releases, website content</span>
+                        <span class="policy-value">Company website, marketing brochures, public safety information, press releases</span>
                     </div>
                 </li>
                 <li>
                     <div class="policy-item">
                         <span class="policy-name">Internal</span>
-                        <span class="policy-value">Internal procedures, employee directories, training materials</span>
+                        <span class="policy-value">Employee handbooks, internal policies, training materials, operational procedures</span>
                     </div>
                 </li>
                 <li>
                     <div class="policy-item">
                         <span class="policy-name">Confidential</span>
-                        <span class="policy-value">Financial data, customer lists, strategic plans, contracts</span>
+                        <span class="policy-value">Customer data, financial reports, driver information, dispatch schedules, pricing</span>
                     </div>
                 </li>
                 <li>
                     <div class="policy-item">
                         <span class="policy-name">Restricted</span>
-                        <span class="policy-value">Mergers and acquisitions, legal matters, security incidents</span>
+                        <span class="policy-value">Security incident details, merger negotiations, legal strategy, executive compensation</span>
                     </div>
                 </li>
             </ul>
         </div>
 
         <div class="section">
-            <div class="section-title">Labeling and Marking</div>
+            <div class="section-title">6. Labeling and Marking Requirements</div>
+            <p style="font-size: 10pt; margin-bottom: 0.25in;">
+                All classified information must be properly labeled to ensure appropriate handling and protection.
+            </p>
             <ul class="policy-list">
                 <li>
                     <div class="policy-item">
                         <span class="policy-name">Document Labeling</span>
-                        <span class="policy-value">All documents must include classification header and footer</span>
+                        <span class="policy-value">All documents must include classification header and footer with level and handling instructions</span>
                     </div>
                 </li>
                 <li>
                     <div class="policy-item">
                         <span class="policy-name">Electronic Marking</span>
-                        <span class="policy-value">Email subjects and file names indicate classification level</span>
+                        <span class="policy-value">Email subjects, file names, and metadata indicate classification level</span>
                     </div>
                 </li>
                 <li>
                     <div class="policy-item">
                         <span class="policy-name">Physical Marking</span>
-                        <span class="policy-value">Confidential documents marked with appropriate labels</span>
+                        <span class="policy-value">Confidential and restricted documents marked with appropriate labels and watermarks</span>
+                    </div>
+                </li>
+                <li>
+                    <div class="policy-item">
+                        <span class="policy-name">System Classification</span>
+                        <span class="policy-value">Electronic systems enforce classification through access controls and metadata</span>
                     </div>
                 </li>
             </ul>
         </div>
 
         <div class="section">
-            <div class="section-title">Access Control</div>
+            <div class="section-title">7. Access Control and Authorization</div>
+            <p style="font-size: 10pt; margin-bottom: 0.25in;">
+                Access to classified information is strictly controlled based on job function, need-to-know, and clearance level.
+            </p>
             <ul class="policy-list">
                 <li>
                     <div class="policy-item">
                         <span class="policy-name">Authorization</span>
-                        <span class="policy-value">Access based on job function and classification level</span>
+                        <span class="policy-value">Access granted based on job function, classification level, and business need</span>
                     </div>
                 </li>
                 <li>
                     <div class="policy-item">
                         <span class="policy-name">Review Process</span>
-                        <span class="policy-value">Regular access reviews and immediate revocation when needed</span>
+                        <span class="policy-value">Quarterly access reviews and immediate revocation when no longer required</span>
                     </div>
                 </li>
                 <li>
                     <div class="policy-item">
                         <span class="policy-name">Audit Trail</span>
-                        <span class="policy-value">Comprehensive logging of access to classified information</span>
+                        <span class="policy-value">Comprehensive logging of all access to classified information</span>
+                    </div>
+                </li>
+                <li>
+                    <div class="policy-item">
+                        <span class="policy-name">Exception Process</span>
+                        <span class="policy-value">Formal approval process for temporary access exceptions</span>
                     </div>
                 </li>
             </ul>
         </div>
 
         <div class="section">
-            <div class="section-title">Policy Version</div>
+            <div class="section-title">8. Data Handling and Storage</div>
             <p style="font-size: 10pt; margin-bottom: 0.25in;">
-                <strong>Version 1.0</strong><br>
-                <strong>Effective:</strong> October 15, 2025<br>
-                <strong>Last Reviewed:</strong> October 15, 2025<br>
-                <strong>Next Review Due:</strong> January 15, 2026<br>
-                <strong>Applies to:</strong> All Staff, IT, Admin
+                Classified information must be handled and stored according to specific security requirements based on classification level.
             </p>
+            <p style="font-size: 10pt; margin-bottom: 0.25in;">
+                <strong>Storage Requirements:</strong>
+            </p>
+            <ul style="font-size: 10pt; margin-bottom: 0.25in; padding-left: 0.25in;">
+                <li><strong>Public:</strong> Standard storage with basic security controls</li>
+                <li><strong>Internal:</strong> Company network storage with access controls</li>
+                <li><strong>Confidential:</strong> Encrypted storage with role-based access controls</li>
+                <li><strong>Restricted:</strong> Highly secure storage with multi-factor authentication and audit logging</li>
+            </ul>
+        </div>
+
+        <div class="section">
+            <div class="section-title">9. Transmission and Sharing</div>
+            <p style="font-size: 10pt; margin-bottom: 0.25in;">
+                Transmission of classified information must follow specific security protocols based on classification level.
+            </p>
+            <p style="font-size: 10pt; margin-bottom: 0.25in;">
+                <strong>Transmission Requirements:</strong>
+            </p>
+            <ul style="font-size: 10pt; margin-bottom: 0.25in; padding-left: 0.25in;">
+                <li><strong>Public:</strong> Standard email and web transmission</li>
+                <li><strong>Internal:</strong> Company email and secure internal networks</li>
+                <li><strong>Confidential:</strong> Encrypted transmission and secure file transfer protocols</li>
+                <li><strong>Restricted:</strong> Encrypted transmission with additional authentication and logging</li>
+            </ul>
+        </div>
+
+        <div class="section">
+            <div class="section-title">10. Classification Review and Updates</div>
+            <p style="font-size: 10pt; margin-bottom: 0.25in;">
+                Information classification must be reviewed periodically and updated when sensitivity or business context changes.
+            </p>
+            <p style="font-size: 10pt; margin-bottom: 0.25in;">
+                <strong>Review Triggers:</strong>
+            </p>
+            <ul style="font-size: 10pt; margin-bottom: 0.25in; padding-left: 0.25in;">
+                <li>Annual classification review by data owners</li>
+                <li>Changes in business context or regulatory requirements</li>
+                <li>Security incidents or data breaches</li>
+                <li>Organizational changes or restructuring</li>
+                <li>New technology implementations</li>
+            </ul>
+        </div>
+
+        <div class="section">
+            <div class="section-title">11. Roles and Responsibilities</div>
+            <p style="font-size: 10pt; margin-bottom: 0.25in;">
+                Specific roles and responsibilities are defined for effective information classification management.
+            </p>
+            <p style="font-size: 10pt; margin-bottom: 0.25in;">
+                <strong>Key Responsibilities:</strong>
+            </p>
+            <ul style="font-size: 10pt; margin-bottom: 0.25in; padding-left: 0.25in;">
+                <li><strong>Data Owners:</strong> Classify information and approve access requests</li>
+                <li><strong>Data Custodians:</strong> Implement security controls and manage storage</li>
+                <li><strong>Users:</strong> Handle information according to classification requirements</li>
+                <li><strong>Security Team:</strong> Monitor compliance and enforce policies</li>
+                <li><strong>Auditors:</strong> Review classification effectiveness and compliance</li>
+            </ul>
+        </div>
+
+        <div class="section">
+            <div class="section-title">12. Policy Violations and Enforcement</div>
+            <p style="font-size: 10pt; margin-bottom: 0.25in;">
+                Violations of this policy may result in disciplinary action, up to and including termination of employment, and may be reported to appropriate regulatory authorities.
+            </p>
+            <p style="font-size: 10pt; margin-bottom: 0.25in;">
+                <strong>Violation Examples:</strong>
+            </p>
+            <ul style="font-size: 10pt; margin-bottom: 0.25in; padding-left: 0.25in;">
+                <li>Unauthorized access to classified information</li>
+                <li>Failure to properly label classified documents</li>
+                <li>Sharing classified information with unauthorized parties</li>
+                <li>Improper storage or transmission of classified data</li>
+                <li>Failure to report classification breaches or violations</li>
+            </ul>
+        </div>
+
+        <div class="signature-block">
+            <div class="section-title">Policy Approval and Implementation</div>
+            <div class="signature-row">
+                <div class="signature-field">
+                    <div class="signature-line"></div>
+                    <p style="font-size: 9pt; text-align: center;">Chief Information Security Officer</p>
+                    <p style="font-size: 8pt; text-align: center;">Date: November 1, 2025</p>
+                </div>
+                <div class="signature-field">
+                    <div class="signature-line"></div>
+                    <p style="font-size: 9pt; text-align: center;">Data Governance Manager</p>
+                    <p style="font-size: 8pt; text-align: center;">Date: November 1, 2025</p>
+                </div>
+            </div>
+            <div class="signature-row">
+                <div class="signature-field">
+                    <div class="signature-line"></div>
+                    <p style="font-size: 9pt; text-align: center;">Chief Technology Officer</p>
+                    <p style="font-size: 8pt; text-align: center;">Date: November 1, 2025</p>
+                </div>
+                <div class="signature-field">
+                    <div class="signature-line"></div>
+                    <p style="font-size: 9pt; text-align: center;">Next Review Date</p>
+                    <p style="font-size: 8pt; text-align: center;">November 1, 2026</p>
+                </div>
+            </div>
         </div>
 
         <div class="footer">

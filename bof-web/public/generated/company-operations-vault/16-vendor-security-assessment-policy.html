@@ -38,6 +38,23 @@
             color: #4a5568;
             margin-bottom: 0.5in;
         }
+        .metadata {
+            background: #f8fafc;
+            padding: 0.25in;
+            border: 1px solid #e2e8f0;
+            border-radius: 4px;
+            margin-bottom: 0.5in;
+            font-size: 9pt;
+        }
+        .metadata-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.125in;
+        }
+        .metadata-label {
+            font-weight: bold;
+            color: #4a5568;
+        }
         .section {
             margin-bottom: 0.5in;
         }
@@ -51,57 +68,104 @@
         }
         .policy-list {
             list-style: none;
-            padding-left: 0.25in;
-        }
-        .policy-list li {
-            margin-bottom: 0.125in;
-            font-size: 9pt;
+            padding: 0;
+            margin: 0;
         }
         .policy-item {
             display: flex;
             justify-content: space-between;
-            align-items: center;
-            margin-bottom: 0.125in;
+            align-items: flex-start;
+            padding: 0.125in 0;
+            border-bottom: 1px solid #f0f0f0;
         }
         .policy-name {
-            font-weight: 600;
-            color: #1a202c;
-            min-width: 3in;
+            font-weight: bold;
+            color: #2d3748;
+            flex: 1;
+            margin-right: 0.5in;
         }
         .policy-value {
             color: #4a5568;
-            font-style: italic;
+            flex: 2;
+        }
+        .signature-block {
+            margin-top: 1in;
+            border-top: 1px solid #e2e8f0;
+            padding-top: 0.5in;
+        }
+        .signature-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5in;
+        }
+        .signature-field {
+            width: 45%;
+        }
+        .signature-line {
+            border-bottom: 1px solid #2d3748;
+            margin-bottom: 0.125in;
+            height: 0.5in;
         }
         .footer {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: #f7fafc;
-            border-top: 1px solid #e2e8f0;
-            padding: 0.125in;
             text-align: center;
-            font-size: 8pt;
-            color: #4a5568;
+            margin-top: 1in;
+            padding-top: 0.5in;
+            border-top: 1px solid #e2e8f0;
+            font-size: 9pt;
+            color: #718096;
         }
     </style>
 </head>
 <body>
     <div class="paper">
         <div class="header">
-            <div class="title">Delta Advanced Trucking, Inc.</div>
-            <div class="subtitle">Vendor Security Assessment Policy</div>
+            <div class="title">Vendor Security Assessment Policy</div>
+            <div class="subtitle">Enterprise Vendor Security Management and Risk Assessment Framework</div>
+        </div>
+
+        <div class="metadata">
+            <div class="metadata-row">
+                <span class="metadata-label">Document ID:</span>
+                <span>BOF-VSA-006</span>
+            </div>
+            <div class="metadata-row">
+                <span class="metadata-label">Version:</span>
+                <span>2.0</span>
+            </div>
+            <div class="metadata-row">
+                <span class="metadata-label">Effective Date:</span>
+                <span>November 1, 2025</span>
+            </div>
+            <div class="metadata-row">
+                <span class="metadata-label">Owner Team:</span>
+                <span>Procurement & Information Security</span>
+            </div>
+            <div class="metadata-row">
+                <span class="metadata-label">Approved By:</span>
+                <span>Chief Procurement Officer</span>
+            </div>
+            <div class="metadata-row">
+                <span class="metadata-label">Review Cadence:</span>
+                <span>Annual</span>
+            </div>
+            <div class="metadata-row">
+                <span class="metadata-label">Classification:</span>
+                <span>Internal Use</span>
+            </div>
         </div>
 
         <div class="section">
-            <div class="section-title">Policy Overview</div>
+            <div class="section-title">1. Purpose and Scope</div>
             <p style="font-size: 10pt; margin-bottom: 0.25in;">
-                This Vendor Security Assessment Policy establishes requirements for evaluating and managing third-party vendor security risks, ensuring that all vendors meet BOF's security standards and regulatory compliance requirements.
+                This Vendor Security Assessment Policy establishes the comprehensive framework for assessing, managing, and monitoring vendor security risks to protect BOF's information assets, ensure regulatory compliance, and maintain business continuity. This policy applies to all third-party vendors, suppliers, contractors, and service providers with access to BOF systems, data, or facilities.
+            </p>
+            <p style="font-size: 10pt; margin-bottom: 0.25in;">
+                <strong>Scope:</strong> All vendors and third parties that process, store, transmit, or access BOF data, provide critical services, or have physical access to BOF facilities.
             </p>
         </div>
 
         <div class="section">
-            <div class="section-title">Assessment Framework</div>
+            <div class="section-title">2. Vendor Security Assessment Framework</div>
             <ul class="policy-list">
                 <li>
                     <div class="policy-item">
@@ -131,176 +195,302 @@
         </div>
 
         <div class="section">
-            <div class="section-title">Security Requirements</div>
+            <div class="section-title">3. Vendor Security Requirements</div>
+            <p style="font-size: 10pt; margin-bottom: 0.25in;">
+                Vendors must meet comprehensive security requirements based on their risk profile and the sensitivity of data they handle.
+            </p>
             <ul class="policy-list">
                 <li>
                     <div class="policy-item">
-                        <span class="policy-name">Information Security</span>
-                        <span class="policy-value">Formal information security management program</span>
+                        <span class="policy-name">Information Security Management</span>
+                        <span class="policy-value">Formal ISMS program with documented policies and procedures</span>
                     </div>
                 </li>
                 <li>
                     <div class="policy-item">
                         <span class="policy-name">Access Controls</span>
-                        <span class="policy-value">Role-based access with least privilege principle</span>
+                        <span class="policy-value">Role-based access with least privilege and MFA requirements</span>
                     </div>
                 </li>
                 <li>
                     <div class="policy-item">
                         <span class="policy-name">Data Protection</span>
-                        <span class="policy-value">Encryption and secure data handling practices</span>
+                        <span class="policy-value">AES-256 encryption at rest and TLS 1.3 for data in transit</span>
                     </div>
                 </li>
                 <li>
                     <div class="policy-item">
                         <span class="policy-name">Incident Response</span>
-                        <span class="policy-value">Documented incident response and notification procedures</span>
+                        <span class="policy-value">24/7 incident response with documented procedures and SLAs</span>
                     </div>
                 </li>
                 <li>
                     <div class="policy-item">
                         <span class="policy-name">Business Continuity</span>
-                        <span class="policy-value">Disaster recovery and business continuity planning</span>
+                        <span class="policy-value">Disaster recovery with RTO/RPO targets and annual testing</span>
                     </div>
                 </li>
                 <li>
                     <div class="policy-item">
                         <span class="policy-name">Compliance Management</span>
-                        <span class="policy-value">Regular compliance audits and regulatory adherence</span>
+                        <span class="policy-value">Regular compliance audits and adherence to industry standards</span>
+                    </div>
+                </li>
+                <li>
+                    <div class="policy-item">
+                        <span class="policy-name">Security Training</span>
+                        <span class="policy-value">Annual security awareness training for all vendor personnel</span>
                     </div>
                 </li>
             </ul>
         </div>
 
         <div class="section">
-            <div class="section-title">Assessment Process</div>
+            <div class="section-title">4. Assessment Process and Methodology</div>
+            <p style="font-size: 10pt; margin-bottom: 0.25in;">
+                A structured assessment process ensures comprehensive evaluation of vendor security capabilities.
+            </p>
             <ul class="policy-list">
                 <li>
                     <div class="policy-item">
                         <span class="policy-name">Initial Screening</span>
-                        <span class="policy-value">Pre-contract security and compliance screening</span>
+                        <span class="policy-value">Pre-contract security and compliance screening with risk scoring</span>
                     </div>
                 </li>
                 <li>
                     <div class="policy-item">
                         <span class="policy-name">Security Questionnaire</span>
-                        <span class="policy-value">Detailed security assessment and documentation</span>
+                        <span class="policy-value">Standardized security assessment based on industry frameworks</span>
                     </div>
                 </li>
                 <li>
                     <div class="policy-item">
                         <span class="policy-name">On-Site Assessment</span>
-                        <span class="policy-value">Physical security and operational controls verification</span>
+                        <span class="policy-value">Physical security and operational controls verification for high-risk vendors</span>
                     </div>
                 </li>
                 <li>
                     <div class="policy-item">
                         <span class="policy-name">Technical Review</span>
-                        <span class="policy-value">Technical security controls and architecture review</span>
+                        <span class="policy-value">Technical security controls, architecture, and vulnerability assessment</span>
                     </div>
                 </li>
                 <li>
                     <div class="policy-item">
                         <span class="policy-name">Reference Checks</span>
-                        <span class="policy-value">Background and security reference verification</span>
+                        <span class="policy-value">Background, financial, and security reference verification</span>
+                    </div>
+                </li>
+                <li>
+                    <div class="policy-item">
+                        <span class="policy-name">Third-Party Validation</span>
+                        <span class="policy-value">Independent security certifications and audit reports review</span>
                     </div>
                 </li>
             </ul>
         </div>
 
         <div class="section">
-            <div class="section-title">Risk Management</div>
+            <div class="section-title">5. Risk Management and Classification</div>
+            <p style="font-size: 10pt; margin-bottom: 0.25in;">
+                Vendors are classified by risk level with corresponding assessment requirements and monitoring frequency.
+            </p>
+            <p style="font-size: 10pt; margin-bottom: 0.25in;">
+                <strong>Risk Classification:</strong>
+            </p>
+            <ul style="font-size: 10pt; margin-bottom: 0.25in; padding-left: 0.25in;">
+                <li><strong>High Risk:</strong> Critical services, sensitive data access, annual assessments</li>
+                <li><strong>Medium Risk:</strong> Important services, moderate data access, biennial assessments</li>
+                <li><strong>Low Risk:</strong> Non-critical services, limited data access, triennial assessments</li>
+            </ul>
             <ul class="policy-list">
                 <li>
                     <div class="policy-item">
                         <span class="policy-name">Risk Identification</span>
-                        <span class="policy-value">Systematic identification of security and business risks</span>
+                        <span class="policy-value">Systematic identification of security, operational, and compliance risks</span>
                     </div>
                 </li>
                 <li>
                     <div class="policy-item">
                         <span class="policy-name">Risk Assessment</span>
-                        <span class="policy-value">Qualitative and quantitative risk evaluation</span>
+                        <span class="policy-value">Qualitative and quantitative risk evaluation with scoring methodology</span>
                     </div>
                 </li>
                 <li>
                     <div class="policy-item">
                         <span class="policy-name">Risk Mitigation</span>
-                        <span class="policy-value">Appropriate risk mitigation strategies and controls</span>
+                        <span class="policy-value">Risk acceptance, transfer, or mitigation strategies with action plans</span>
                     </div>
                 </li>
                 <li>
                     <div class="policy-item">
                         <span class="policy-name">Continuous Monitoring</span>
-                        <span class="policy-value">Ongoing risk monitoring and assessment updates</span>
+                        <span class="policy-value">Ongoing risk monitoring with quarterly risk assessments</span>
                     </div>
                 </li>
             </ul>
         </div>
 
         <div class="section">
-            <div class="section-title">Contractual Requirements</div>
+            <div class="section-title">6. Contractual Security Requirements</div>
+            <p style="font-size: 10pt; margin-bottom: 0.25in;">
+                Security requirements are embedded in vendor contracts to ensure ongoing compliance and accountability.
+            </p>
             <ul class="policy-list">
                 <li>
                     <div class="policy-item">
                         <span class="policy-name">Security Clauses</span>
-                        <span class="policy-value">Mandatory security requirements in vendor contracts</span>
+                        <span class="policy-value">Mandatory security requirements with specific performance metrics</span>
                     </div>
                 </li>
                 <li>
                     <div class="policy-item">
                         <span class="policy-name">Audit Rights</span>
-                        <span class="policy-value">Right to audit vendor security controls and practices</span>
+                        <span class="policy-value">Right to audit vendor security controls and practices with 30-day notice</span>
                     </div>
                 </li>
                 <li>
                     <div class="policy-item">
                         <span class="policy-name">Incident Reporting</span>
-                        <span class="policy-value">Vendor incident reporting and notification requirements</span>
+                        <span class="policy-value">24-hour incident notification and detailed reporting requirements</span>
+                    </div>
+                </li>
+                <li>
+                    <div class="policy-item">
+                        <span class="policy-name">Data Protection</span>
+                        <span class="policy-value">Data processing agreements with privacy and security obligations</span>
                     </div>
                 </li>
                 <li>
                     <div class="policy-item">
                         <span class="policy-name">Termination Rights</span>
-                        <span class="policy-value">Contract termination for security violations</span>
+                        <span class="policy-value">Contract termination rights for security violations and breach events</span>
+                    </div>
+                </li>
+                <li>
+                    <div class="policy-item">
+                        <span class="policy-name">Liability and Insurance</span>
+                        <span class="policy-value">Cyber liability insurance and breach notification costs</span>
                     </div>
                 </li>
             </ul>
         </div>
 
         <div class="section">
-            <div class="section-title">BOF Integration</div>
+            <div class="section-title">7. Ongoing Monitoring and Performance Management</div>
+            <p style="font-size: 10pt; margin-bottom: 0.25in;">
+                Continuous monitoring ensures vendors maintain security standards throughout the contract lifecycle.
+            </p>
             <ul class="policy-list">
                 <li>
                     <div class="policy-item">
-                        <span class="policy-name">Vendor Management</span>
-                        <span class="policy-value">Integration with procurement and vendor management systems</span>
+                        <span class="policy-name">Performance Monitoring</span>
+                        <span class="policy-value">Quarterly security performance reviews and scorecard assessments</span>
                     </div>
                 </li>
                 <li>
                     <div class="policy-item">
-                        <span class="policy-name">Security Monitoring</span>
-                        <span class="policy-value">Vendor security performance monitoring and reporting</span>
+                        <span class="policy-name">Compliance Monitoring</span>
+                        <span class="policy-value">Continuous compliance monitoring with automated alerts</span>
                     </div>
                 </li>
                 <li>
                     <div class="policy-item">
-                        <span class="policy-name">Risk Assessment</span>
-                        <span class="policy-value">Vendor risk assessment integration with BOF risk management</span>
+                        <span class="policy-name">Security Metrics</span>
+                        <span class="policy-value">Key security indicators and performance metrics tracking</span>
+                    </div>
+                </li>
+                <li>
+                    <div class="policy-item">
+                        <span class="policy-name">Incident Tracking</span>
+                        <span class="policy-value">Vendor incident tracking and resolution monitoring</span>
+                    </div>
+                </li>
+                <li>
+                    <div class="policy-item">
+                        <span class="policy-name">Relationship Management</span>
+                        <span class="policy-value">Regular security reviews and strategic alignment meetings</span>
                     </div>
                 </li>
             </ul>
         </div>
 
         <div class="section">
-            <div class="section-title">Policy Version</div>
+            <div class="section-title">8. BOF System Integration</div>
             <p style="font-size: 10pt; margin-bottom: 0.25in;">
-                <strong>Version 1.0</strong><br>
-                <strong>Effective:</strong> October 15, 2025<br>
-                <strong>Last Reviewed:</strong> October 15, 2025<br>
-                <strong>Next Review Due:</strong> January 15, 2026<br>
-                <strong>Applies to:</strong> Procurement, IT, Admin, Vendors
+                Vendor security management is integrated with BOF systems for comprehensive risk management.
             </p>
+            <ul class="policy-list">
+                <li>
+                    <div class="policy-item">
+                        <span class="policy-name">Vendor Management System</span>
+                        <span class="policy-value">Integration with procurement and vendor management platforms</span>
+                    </div>
+                </li>
+                <li>
+                    <div class="policy-item">
+                        <span class="policy-name">Risk Management Integration</span>
+                        <span class="policy-value">Vendor risk assessment integration with enterprise risk management</span>
+                    </div>
+                </li>
+                <li>
+                    <div class="policy-item">
+                        <span class="policy-name">Security Operations</span>
+                        <span class="policy-value">Integration with SOC for vendor security monitoring and incident response</span>
+                    </div>
+                </li>
+                <li>
+                    <div class="policy-item">
+                        <span class="policy-name">Compliance Reporting</span>
+                        <span class="policy-value">Automated compliance reporting and dashboard integration</span>
+                    </div>
+                </li>
+            </ul>
+        </div>
+
+        <div class="section">
+            <div class="section-title">9. Vendor Offboarding and Data Return</div>
+            <p style="font-size: 10pt; margin-bottom: 0.25in;">
+                Secure offboarding procedures ensure proper data handling and system access termination.
+            </p>
+            <p style="font-size: 10pt; margin-bottom: 0.25in;">
+                <strong>Offboarding Requirements:</strong>
+            </p>
+            <ul style="font-size: 10pt; margin-bottom: 0.25in; padding-left: 0.25in;">
+                <li>Immediate revocation of all system access and credentials</li>
+                <li>Secure return or destruction of all BOF data and assets</li>
+                <li>Verification of data destruction with certificates of disposal</li>
+                <li>Final security assessment and compliance verification</li>
+                <li>Post-termination monitoring for potential security risks</li>
+            </ul>
+        </div>
+
+        <div class="signature-block">
+            <div class="section-title">Policy Approval and Implementation</div>
+            <div class="signature-row">
+                <div class="signature-field">
+                    <div class="signature-line"></div>
+                    <p style="font-size: 9pt; text-align: center;">Chief Procurement Officer</p>
+                    <p style="font-size: 8pt; text-align: center;">Date: November 1, 2025</p>
+                </div>
+                <div class="signature-field">
+                    <div class="signature-line"></div>
+                    <p style="font-size: 9pt; text-align: center;">Chief Information Security Officer</p>
+                    <p style="font-size: 8pt; text-align: center;">Date: November 1, 2025</p>
+                </div>
+            </div>
+            <div class="signature-row">
+                <div class="signature-field">
+                    <div class="signature-line"></div>
+                    <p style="font-size: 9pt; text-align: center;">Chief Risk Officer</p>
+                    <p style="font-size: 8pt; text-align: center;">Date: November 1, 2025</p>
+                </div>
+                <div class="signature-field">
+                    <div class="signature-line"></div>
+                    <p style="font-size: 9pt; text-align: center;">Next Review Date</p>
+                    <p style="font-size: 8pt; text-align: center;">November 1, 2026</p>
+                </div>
+            </div>
         </div>
 
         <div class="footer">

@@ -38,6 +38,23 @@
             color: #4a5568;
             margin-bottom: 0.5in;
         }
+        .metadata {
+            background: #f8fafc;
+            padding: 0.25in;
+            border: 1px solid #e2e8f0;
+            border-radius: 4px;
+            margin-bottom: 0.5in;
+            font-size: 9pt;
+        }
+        .metadata-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.125in;
+        }
+        .metadata-label {
+            font-weight: bold;
+            color: #4a5568;
+        }
         .section {
             margin-bottom: 0.5in;
         }
@@ -51,46 +68,90 @@
         }
         .policy-list {
             list-style: none;
-            padding-left: 0.25in;
-        }
-        .policy-list li {
-            margin-bottom: 0.125in;
-            font-size: 9pt;
+            padding: 0;
+            margin: 0;
         }
         .policy-item {
             display: flex;
             justify-content: space-between;
-            align-items: center;
-            margin-bottom: 0.125in;
+            align-items: flex-start;
+            padding: 0.125in 0;
+            border-bottom: 1px solid #f0f0f0;
         }
         .policy-name {
-            font-weight: 600;
-            color: #1a202c;
-            min-width: 3in;
+            font-weight: bold;
+            color: #2d3748;
+            flex: 1;
+            margin-right: 0.5in;
         }
         .policy-value {
             color: #4a5568;
-            font-style: italic;
+            flex: 2;
+        }
+        .signature-block {
+            margin-top: 1in;
+            border-top: 1px solid #e2e8f0;
+            padding-top: 0.5in;
+        }
+        .signature-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5in;
+        }
+        .signature-field {
+            width: 45%;
+        }
+        .signature-line {
+            border-bottom: 1px solid #2d3748;
+            margin-bottom: 0.125in;
+            height: 0.5in;
         }
         .footer {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: #f7fafc;
-            border-top: 1px solid #e2e8f0;
-            padding: 0.125in;
             text-align: center;
-            font-size: 8pt;
-            color: #4a5568;
+            margin-top: 1in;
+            padding-top: 0.5in;
+            border-top: 1px solid #e2e8f0;
+            font-size: 9pt;
+            color: #718096;
         }
     </style>
 </head>
 <body>
     <div class="paper">
         <div class="header">
-            <div class="title">Delta Advanced Trucking, Inc.</div>
-            <div class="subtitle">Privacy and Employee Data Handling Policy</div>
+            <div class="title">Privacy and Employee Data Handling Policy</div>
+            <div class="subtitle">Enterprise Privacy Framework and Employee Data Protection</div>
+        </div>
+
+        <div class="metadata">
+            <div class="metadata-row">
+                <span class="metadata-label">Document ID:</span>
+                <span>BOF-PRV-005</span>
+            </div>
+            <div class="metadata-row">
+                <span class="metadata-label">Version:</span>
+                <span>2.0</span>
+            </div>
+            <div class="metadata-row">
+                <span class="metadata-label">Effective Date:</span>
+                <span>November 1, 2025</span>
+            </div>
+            <div class="metadata-row">
+                <span class="metadata-label">Owner Team:</span>
+                <span>Human Resources & Data Protection</span>
+            </div>
+            <div class="metadata-row">
+                <span class="metadata-label">Approved By:</span>
+                <span>Chief Human Resources Officer</span>
+            </div>
+            <div class="metadata-row">
+                <span class="metadata-label">Review Cadence:</span>
+                <span>Annual</span>
+            </div>
+            <div class="metadata-row">
+                <span class="metadata-label">Classification:</span>
+                <span>Internal Use</span>
+            </div>
         </div>
 
         <div class="section">
@@ -149,54 +210,63 @@
         </div>
 
         <div class="section">
-            <div class="section-title">Employee Data Categories</div>
+            <div class="section-title">3. Employee Data Categories and Classification</div>
             <ul class="policy-list">
                 <li>
                     <div class="policy-item">
                         <span class="policy-name">Personal Information</span>
-                        <span class="policy-value">Name, address, contact details, emergency contacts</span>
+                        <span class="policy-value">Name, address, contact details, emergency contacts, demographic information</span>
                     </div>
                 </li>
                 <li>
                     <div class="policy-item">
                         <span class="policy-name">Employment Data</span>
-                        <span class="policy-value">Job history, performance records, compensation details</span>
+                        <span class="policy-value">Job history, performance records, compensation details, training records</span>
                     </div>
                 </li>
                 <li>
                     <div class="policy-item">
                         <span class="policy-name">Financial Data</span>
-                        <span class="policy-value">Payroll information, bank details, benefits enrollment</span>
+                        <span class="policy-value">Payroll information, bank details, benefits enrollment, tax withholdings</span>
                     </div>
                 </li>
                 <li>
                     <div class="policy-item">
                         <span class="policy-name">Health Information</span>
-                        <span class="policy-value">Medical records, insurance information, disability accommodations</span>
+                        <span class="policy-value">Medical records, insurance information, disability accommodations, FMLA data</span>
                     </div>
                 </li>
                 <li>
                     <div class="policy-item">
                         <span class="policy-name">Biometric Data</span>
-                        <span class="policy-value">Fingerprints, photos, and other biometric identifiers</span>
+                        <span class="policy-value">Fingerprints, photos, facial recognition, and other biometric identifiers</span>
+                    </div>
+                </li>
+                <li>
+                    <div class="policy-item">
+                        <span class="policy-name">Communication Data</span>
+                        <span class="policy-value">Email communications, instant messages, phone records, video conferences</span>
                     </div>
                 </li>
             </ul>
         </div>
 
         <div class="section">
-            <div class="section-title">Data Collection and Use</div>
+            <div class="section-title">4. Data Collection and Processing</div>
+            <p style="font-size: 10pt; margin-bottom: 0.25in;">
+                BOF collects and processes employee data only for legitimate business purposes with appropriate legal basis and consent.
+            </p>
             <ul class="policy-list">
                 <li>
                     <div class="policy-item">
                         <span class="policy-name">Collection Requirements</span>
-                        <span class="policy-value">Collect only necessary data with documented consent</span>
+                        <span class="policy-value">Collect only necessary data with documented consent and legal basis</span>
                     </div>
                 </li>
                 <li>
                     <div class="policy-item">
                         <span class="policy-name">Use Limitations</span>
-                        <span class="policy-value">Use data only for legitimate business purposes</span>
+                        <span class="policy-value">Use data only for specified, legitimate business purposes</span>
                     </div>
                 </li>
                 <li>
@@ -211,28 +281,55 @@
                         <span class="policy-value">Ensure vendors comply with privacy and security standards</span>
                     </div>
                 </li>
+                <li>
+                    <div class="policy-item">
+                        <span class="policy-name">International Transfers</span>
+                        <span class="policy-value">Appropriate safeguards for cross-border data transfers</span>
+                    </div>
+                </li>
             </ul>
         </div>
 
         <div class="section">
-            <div class="section-title">Employee Rights</div>
+            <div class="section-title">5. Employee Privacy Rights</div>
+            <p style="font-size: 10pt; margin-bottom: 0.25in;">
+                Employees have comprehensive rights regarding their personal data in accordance with applicable privacy regulations.
+            </p>
             <ul class="policy-list">
                 <li>
                     <div class="policy-item">
                         <span class="policy-name">Access Rights</span>
-                        <span class="policy-value">Access to personal data and correction capabilities</span>
+                        <span class="policy-value">Access to personal data and correction capabilities within 30 days</span>
                     </div>
                 </li>
                 <li>
                     <div class="policy-item">
                         <span class="policy-name">Consent Rights</span>
-                        <span class="policy-value">Withdraw consent for data collection and processing</span>
+                        <span class="policy-value">Withdraw consent for data collection and processing where applicable</span>
                     </div>
                 </li>
                 <li>
                     <div class="policy-item">
                         <span class="policy-name">Correction Rights</span>
                         <span class="policy-value">Request correction of inaccurate personal data</span>
+                    </div>
+                </li>
+                <li>
+                    <div class="policy-item">
+                        <span class="policy-name">Erasure Rights</span>
+                        <span class="policy-value">Request deletion of personal data where legally permissible</span>
+                    </div>
+                </li>
+                <li>
+                    <div class="policy-item">
+                        <span class="policy-name">Portability Rights</span>
+                        <span class="policy-value">Request transfer of personal data in machine-readable format</span>
+                    </div>
+                </li>
+                <li>
+                    <div class="policy-item">
+                        <span class="policy-name">Objection Rights</span>
+                        <span class="policy-value">Object to processing based on legitimate interests</span>
                     </div>
                 </li>
                 <li>
@@ -245,7 +342,10 @@
         </div>
 
         <div class="section">
-            <div class="section-title">Data Security</div>
+            <div class="section-title">6. Data Security and Protection</div>
+            <p style="font-size: 10pt; margin-bottom: 0.25in;">
+                Comprehensive security measures protect employee data from unauthorized access, disclosure, alteration, or destruction.
+            </p>
             <ul class="policy-list">
                 <li>
                     <div class="policy-item">
@@ -271,11 +371,20 @@
                         <span class="policy-value">Rapid response to data breaches and privacy incidents</span>
                     </div>
                 </li>
+                <li>
+                    <div class="policy-item">
+                        <span class="policy-name">Data Retention</span>
+                        <span class="policy-value">Secure disposal with verification and documentation</span>
+                    </div>
+                </li>
             </ul>
         </div>
 
         <div class="section">
-            <div class="section-title">BOF Integration</div>
+            <div class="section-title">7. BOF System Integration</div>
+            <p style="font-size: 10pt; margin-bottom: 0.25in;">
+                Privacy controls are integrated across all BOF systems and business processes.
+            </p>
             <ul class="policy-list">
                 <li>
                     <div class="policy-item">
@@ -295,18 +404,114 @@
                         <span class="policy-value">Privacy controls for company document access and storage</span>
                     </div>
                 </li>
+                <li>
+                    <div class="policy-item">
+                        <span class="policy-name">Communication Systems</span>
+                        <span class="policy-value">Privacy protection for email, messaging, and collaboration tools</span>
+                    </div>
+                </li>
+                <li>
+                    <div class="policy-item">
+                        <span class="policy-name">Customer Data</span>
+                        <span class="policy-value">Protection of customer personal information and communications</span>
+                    </div>
+                </li>
             </ul>
         </div>
 
         <div class="section">
-            <div class="section-title">Policy Version</div>
+            <div class="section-title">8. Privacy by Design and Default</div>
             <p style="font-size: 10pt; margin-bottom: 0.25in;">
-                <strong>Version 1.0</strong><br>
-                <strong>Effective:</strong> October 15, 2025<br>
-                <strong>Last Reviewed:</strong> October 15, 2025<br>
-                <strong>Next Review Due:</strong> January 15, 2026<br>
-                <strong>Applies to:</strong> All Staff, Drivers, HR
+                Privacy considerations are built into BOF systems and processes from the initial design stage.
             </p>
+            <p style="font-size: 10pt; margin-bottom: 0.25in;">
+                <strong>Privacy by Design Principles:</strong>
+            </p>
+            <ul style="font-size: 10pt; margin-bottom: 0.25in; padding-left: 0.25in;">
+                <li>Privacy impact assessments for new systems and processes</li>
+                <li>Data protection by default settings and configurations</li>
+                <li>Privacy-enhancing technologies and controls</li>
+                <li>Regular privacy testing and validation</li>
+                <li>Privacy training for development and operations teams</li>
+            </ul>
+        </div>
+
+        <div class="section">
+            <div class="section-title">9. Privacy Training and Awareness</div>
+            <p style="font-size: 10pt; margin-bottom: 0.25in;">
+                Regular privacy training ensures all employees understand their privacy responsibilities.
+            </p>
+            <p style="font-size: 10pt; margin-bottom: 0.25in;">
+                <strong>Training Requirements:</strong>
+            </p>
+            <ul style="font-size: 10pt; margin-bottom: 0.25in; padding-left: 0.25in;">
+                <li>Annual privacy awareness training for all employees</li>
+                <li>Role-specific privacy training for HR, IT, and management</li>
+                <li>Privacy training for new employees during onboarding</li>
+                <li>Regular privacy communications and updates</li>
+                <li>Privacy breach response training for security teams</li>
+            </ul>
+        </div>
+
+        <div class="section">
+            <div class="section-title">10. Monitoring and Compliance</div>
+            <p style="font-size: 10pt; margin-bottom: 0.25in;">
+                Regular monitoring ensures ongoing compliance with privacy policies and regulations.
+            </p>
+            <ul class="policy-list">
+                <li>
+                    <div class="policy-item">
+                        <span class="policy-name">Privacy Audits</span>
+                        <span class="policy-value">Annual privacy audits and compliance assessments</span>
+                    </div>
+                </li>
+                <li>
+                    <div class="policy-item">
+                        <span class="policy-name">Compliance Monitoring</span>
+                        <span class="policy-value">Continuous monitoring of privacy controls and processes</span>
+                    </div>
+                </li>
+                <li>
+                    <div class="policy-item">
+                        <span class="policy-name">Regulatory Updates</span>
+                        <span class="policy-value">Monitor and implement changes to privacy regulations</span>
+                    </div>
+                </li>
+                <li>
+                    <div class="policy-item">
+                        <span class="policy-name">Reporting</span>
+                        <span class="policy-value">Regular privacy compliance reporting to management</span>
+                    </div>
+                </li>
+            </ul>
+        </div>
+
+        <div class="signature-block">
+            <div class="section-title">Policy Approval and Implementation</div>
+            <div class="signature-row">
+                <div class="signature-field">
+                    <div class="signature-line"></div>
+                    <p style="font-size: 9pt; text-align: center;">Chief Human Resources Officer</p>
+                    <p style="font-size: 8pt; text-align: center;">Date: November 1, 2025</p>
+                </div>
+                <div class="signature-field">
+                    <div class="signature-line"></div>
+                    <p style="font-size: 9pt; text-align: center;">Data Protection Officer</p>
+                    <p style="font-size: 8pt; text-align: center;">Date: November 1, 2025</p>
+                </div>
+            </div>
+            <div class="signature-row">
+                <div class="signature-field">
+                    <div class="signature-line"></div>
+                    <p style="font-size: 9pt; text-align: center;">Chief Information Security Officer</p>
+                    <p style="font-size: 8pt; text-align: center;">Date: November 1, 2025</p>
+                </div>
+                <div class="signature-field">
+                    <div class="signature-line"></div>
+                    <p style="font-size: 9pt; text-align: center;">Next Review Date</p>
+                    <p style="font-size: 8pt; text-align: center;">November 1, 2026</p>
+                </div>
+            </div>
         </div>
 
         <div class="footer">
