@@ -1,5 +1,6 @@
 import { Metadata } from 'next';
 import { getDriverPortalProfiles } from '@/lib/demo-portals';
+import { getPendingAcknowledgments } from '@/lib/driver-acknowledgment-details';
 import Link from 'next/link';
 
 export const metadata: Metadata = {
@@ -96,9 +97,26 @@ export default function DriverPortalPage() {
                 {driver.pendingAcknowledgments > 0 && (
                   <div className="flex justify-between">
                     <span className="text-gray-600">Pending:</span>
-                    <span className="font-medium text-orange-600">
-                      {driver.pendingAcknowledgments} acknowledgments
-                    </span>
+                    <div className="group relative">
+                      <span className="font-medium text-orange-600 cursor-help">
+                        {driver.pendingAcknowledgments} acknowledgments
+                      </span>
+                      {/* Hover tooltip */}
+                      <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-2 bg-gray-900 text-white text-xs rounded-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 whitespace-nowrap z-10">
+                        <div className="font-medium mb-1">Pending Acknowledgments:</div>
+                        {(() => {
+                          const pendingAcks = getPendingAcknowledgments(driver.driverId);
+                          return pendingAcks.map((ack) => (
+                            <div key={ack.type} className="text-gray-300">
+                              • {ack.type}
+                            </div>
+                          ));
+                        })()}
+                        <div className="absolute top-full left-1/2 transform -translate-x-1/2 -mt-1">
+                          <div className="border-4 border-transparent border-t-gray-900"></div>
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 )}
               </div>
