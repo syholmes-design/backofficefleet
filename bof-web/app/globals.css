@@ -4114,8 +4114,30 @@ body {
 .bof-mkt-container {
   max-width: 1120px;
   margin: 0 auto;
-  padding-left: 1.5rem;
-  padding-right: 1.5rem;
+  padding-left: 1.25rem;
+  padding-right: 1.25rem;
+}
+
+/* Enhanced padding for landing page header */
+@media (min-width: 640px) {
+  .bof-mkt-container {
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .bof-mkt-container {
+    padding-left: 2.5rem;
+    padding-right: 2.5rem;
+  }
+}
+
+@media (min-width: 1280px) {
+  .bof-mkt-container {
+    padding-left: 3rem;
+    padding-right: 3rem;
+  }
 }
 
 /* Government marketing — true integrated hero with full-width background */
@@ -5432,13 +5454,35 @@ body {
   align-items: center;
   justify-content: center;
   font-size: 0.875rem;
-  font-weight: 600;
+  font-weight: 700;
   padding: 0.7rem 1.35rem;
   border-radius: 6px;
   text-decoration: none;
   font-family: inherit;
   letter-spacing: 0.01em;
   transition: background-color 0.15s, border-color 0.15s, color 0.15s;
+}
+
+/* Enhanced CTA buttons for landing page */
+@media (min-width: 640px) {
+  .bof-mkt-btn-enterprise {
+    font-size: 0.9375rem;
+    padding: 0.75rem 1.5rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .bof-mkt-btn-enterprise {
+    font-size: 0.9375rem;
+    padding: 0.875rem 1.75rem;
+  }
+}
+
+@media (min-width: 1280px) {
+  .bof-mkt-btn-enterprise {
+    font-size: 1rem;
+    padding: 0.875rem 2rem;
+  }
 }
 
 .bof-mkt-btn-enterprise-primary {
