@@ -27,8 +27,14 @@
             border-bottom: 2px solid #0BA5A4;
             padding-bottom: 0.25in;
         }
+        .company-header {
+            font-size: 14pt;
+            font-weight: bold;
+            color: #0BA5A4;
+            margin-bottom: 0.125in;
+        }
         .title {
-            font-size: 18pt;
+            font-size: 16pt;
             font-weight: bold;
             color: #0BA5A4;
             margin-bottom: 0.125in;
@@ -48,6 +54,15 @@
             margin-bottom: 0.125in;
             border-bottom: 1px solid #e2e8f0;
             padding-bottom: 0.0625in;
+        }
+        .subsection {
+            margin-bottom: 0.25in;
+        }
+        .subsection-title {
+            font-size: 10pt;
+            font-weight: bold;
+            color: #2d3748;
+            margin-bottom: 0.125in;
         }
         .signature-block {
             margin-top: 1in;
@@ -71,174 +86,336 @@
             font-size: 8pt;
             color: #4a5568;
         }
+        .two-column {
+            display: flex;
+            justify-content: space-between;
+            gap: 0.5in;
+        }
+        .column {
+            width: 48%;
+        }
+        .equipment-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.125in;
+            font-size: 9pt;
+        }
+        .equipment-item {
+            display: flex;
+            justify-content: space-between;
+        }
+        .equipment-label {
+            font-weight: bold;
+        }
     </style>
 </head>
 <body>
     <div class="paper">
         <div class="header">
-            <div class="title">Delta Advanced Trucking, Inc.</div>
-            <div class="subtitle">Owner-Operator Lease Agreement</div>
+            <div class="company-header">Delta Advanced Trucking, Inc.</div>
+            <div class="title">Owner-Operator Lease Agreement</div>
+            <div class="subtitle">Independent Contractor Equipment Lease</div>
         </div>
 
         <div class="section">
-            <div class="section-title">Parties</div>
+            <div class="section-title">1. Effective Date and Initial Term</div>
             <p style="font-size: 10pt; margin-bottom: 0.25in;">
-                <strong>This Owner-Operator Lease Agreement</strong> ("Agreement") is entered into on October 15, 2025, between:
+                <strong>Effective Date:</strong> October 14, 2025
             </p>
             <p style="font-size: 10pt; margin-bottom: 0.25in;">
-                <strong>Delta Advanced Trucking, Inc.</strong> ("Company"), a transportation company located at 88 S Main St, Akron, OH 44308
+                <strong>Initial Term:</strong> This Agreement shall commence on the Effective Date and continue for an initial term of 12 months unless terminated earlier as provided herein.
+            </p>
+            <p style="font-size: 10pt; margin-bottom: 0.25in;">
+                <strong>Renewal:</strong> This Agreement may be renewed for additional 12-month terms upon mutual written agreement of both parties.
+            </p>
+        </div>
+
+        <div class="section">
+            <div class="section-title">2. Parties</div>
+            <p style="font-size: 10pt; margin-bottom: 0.25in;">
+                <strong>This Owner-Operator Lease Agreement</strong> ("Agreement") is entered into on October 14, 2025, between:
+            </p>
+            <p style="font-size: 10pt; margin-bottom: 0.25in;">
+                <strong>Delta Advanced Trucking, Inc.</strong> ("Company"), a transportation company located at 500 Pacific Ave, Dallas, TX 75202
             </p>
             <p style="font-size: 10pt; margin-bottom: 0.25in;">
                 and
             </p>
             <p style="font-size: 10pt; margin-bottom: 0.25in;">
-                <strong>Robert Johnson</strong> ("Owner-Operator"), an independent contractor with Driver ID DRV-012, located at 88 S Main St, Akron, OH 44308
+                <strong>Robert Johnson</strong> ("Owner-Operator"), an independent contractor with Driver ID DRV-012, located at 88 S Main St, Akron, OH 44308, Phone: 618-623-9317
             </p>
         </div>
 
         <div class="section">
-            <div class="section-title">Equipment Description</div>
+            <div class="section-title">3. Independent Contractor Status</div>
+            <p style="font-size: 10pt; margin-bottom: 0.25in;">
+                Owner-Operator is an independent contractor and not an employee, agent, joint venturer, or partner of Company. Owner-Operator shall be solely responsible for all taxes, insurance, benefits, and other obligations associated with self-employment.
+            </p>
+            <p style="font-size: 10pt; margin-bottom: 0.25in;">
+                Owner-Operator shall have the right to control the manner and means of performing the services, subject to Company's dispatch requirements and safety standards.
+            </p>
+        </div>
+
+        <div class="section">
+            <div class="section-title">4. Equipment Subject to Lease</div>
             <p style="font-size: 10pt; margin-bottom: 0.25in;">
                 Owner-Operator agrees to lease the following commercial motor vehicle ("Equipment") to Company:
             </p>
+            
+            <div class="equipment-grid">
+                <div class="equipment-item">
+                    <span class="equipment-label">Vehicle Type:</span>
+                    <span>Class A Tractor</span>
+                </div>
+                <div class="equipment-item">
+                    <span class="equipment-label">Year:</span>
+                    <span>2023</span>
+                </div>
+                <div class="equipment-item">
+                    <span class="equipment-label">Make:</span>
+                    <span>Kenworth</span>
+                </div>
+                <div class="equipment-item">
+                    <span class="equipment-label">Model:</span>
+                    <span>W900</span>
+                </div>
+                <div class="equipment-item">
+                    <span class="equipment-label">VIN:</span>
+                    <span>1KSYW9EX5PE234567</span>
+                </div>
+                <div class="equipment-item">
+                    <span class="equipment-label">License Plate:</span>
+                    <span>OH-5D4E3F</span>
+                </div>
+                <div class="equipment-item">
+                    <span class="equipment-label">Engine:</span>
+                    <span>PACCAR MX-13</span>
+                </div>
+                <div class="equipment-item">
+                    <span class="equipment-label">Transmission:</span>
+                    <span>Eaton-Fuller 18-Speed</span>
+                </div>
+                <div class="equipment-item">
+                    <span class="equipment-label">Sleeper Berth:</span>
+                    <span>Yes</span>
+                </div>
+                <div class="equipment-item">
+                    <span class="equipment-label">DOT Number:</span>
+                    <span>DOT-3456789</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <div class="section-title">5. Term and Termination</div>
+            <div class="subsection">
+                <div class="subsection-title">5.1 Term</div>
+                <p style="font-size: 10pt; margin-bottom: 0.25in;">
+                    This Agreement shall continue for the initial term and any renewal terms unless terminated earlier as provided herein.
+                </p>
+            </div>
+            <div class="subsection">
+                <div class="subsection-title">5.2 Termination for Convenience</div>
+                <p style="font-size: 10pt; margin-bottom: 0.25in;">
+                    Either party may terminate this Agreement with 30 days written notice to the other party.
+                </p>
+            </div>
+            <div class="subsection">
+                <div class="subsection-title">5.3 Termination for Cause</div>
+                <p style="font-size: 10pt; margin-bottom: 0.25in;">
+                    Company may terminate immediately for cause, including but not limited to:
+                </p>
+                <ul style="font-size: 9pt; margin-bottom: 0.25in; padding-left: 0.25in;">
+                    <li>Breach of safety regulations or DOT compliance</li>
+                    <li>Failure to maintain required insurance coverage</li>
+                    <li>Equipment damage due to negligence or misuse</li>
+                    <li>Violation of drug and alcohol policies</li>
+                    <li>Material breach of any provision of this Agreement</li>
+                    <li>Revocation or suspension of Owner-Operator's commercial driver's license</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="section">
+            <div class="section-title">6. Compensation and Payment Terms</div>
+            <div class="subsection">
+                <div class="subsection-title">6.1 Weekly Lease Payment</div>
+                <p style="font-size: 10pt; margin-bottom: 0.25in;">
+                    Company shall pay Owner-Operator a weekly lease payment of $850.00 for use of the Equipment.
+                </p>
+            </div>
+            <div class="subsection">
+                <div class="subsection-title">6.2 Payment Schedule</div>
+                <p style="font-size: 10pt; margin-bottom: 0.25in;">
+                    Weekly payments shall be made via Weekly Direct Deposit every Friday for the preceding week's services.
+                </p>
+            </div>
+            <div class="subsection">
+                <div class="subsection-title">6.3 Itemized Settlement Documentation</div>
+                <p style="font-size: 10pt; margin-bottom: 0.25in;">
+                    Company shall provide Owner-Operator with detailed settlement statements showing all revenue, deductions, and lease payments for each pay period.
+                </p>
+            </div>
+        </div>
+
+        <div class="section">
+            <div class="section-title">7. Owner-Operator Responsibilities</div>
+            <p style="font-size: 10pt; margin-bottom: 0.25in;">
+                Owner-Operator shall be responsible for:
+            </p>
             <ul style="font-size: 9pt; margin-bottom: 0.25in; padding-left: 0.25in;">
-                <li><strong>Vehicle Type:</strong> Class A Tractor</li>
-                <li><strong>Year:</strong> 2023</li>
-                <li><strong>Make:</strong> Kenworth</li>
-                <li><strong>Model:</strong> T680</li>
-                <li><strong>VIN:</strong> 1XKND49X3PJ234567</li>
-                <li><strong>License Plate:</strong> OH-8F7G6H</li>
-                <li><strong>Engine:</strong> PACCAR MX-13</li>
-                <li><strong>Transmission:</strong> Eaton-Fuller 13-Speed</li>
-                <li><strong>Sleeping Quarters:</strong> Yes</li>
+                <li>Maintaining Equipment in good working condition and compliance with all DOT regulations</li>
+                <li>Providing all routine maintenance, repairs, and inspections</li>
+                <li>Maintaining required insurance coverage on Equipment as specified in Section 8</li>
+                <li>Keeping Equipment clean and presentable at all times</li>
+                <li>Providing fuel for Equipment operation and maintaining fuel receipts</li>
+                <li>Complying with all FMCSA regulations and hours of service requirements</li>
+                <li>Maintaining proper licensing, certifications, and medical qualifications</li>
+                <li>Completing all required paperwork and documentation in a timely manner</li>
+                <li>Notifying Company immediately of any Equipment issues or accidents</li>
             </ul>
         </div>
 
         <div class="section">
-            <div class="section-title">Lease Terms</div>
+            <div class="section-title">8. Company Responsibilities</div>
             <p style="font-size: 10pt; margin-bottom: 0.25in;">
-                <strong>Term:</strong> This Agreement shall commence on October 15, 2025, and continue for an initial term of 12 months unless terminated earlier as provided herein.
-            </p>
-            <p style="font-size: 10pt; margin-bottom: 0.25in;">
-                <strong>Rent:</strong> Company shall pay Owner-Operator a weekly lease payment of $775.00 for use of the Equipment.
-            </p>
-            <p style="font-size: 10pt; margin-bottom: 0.25in;">
-                <strong>Payment Schedule:</strong> Weekly payments shall be made via direct deposit every Friday for the preceding week.
-            </p>
-        </div>
-
-        <div class="section">
-            <div class="section-title">Owner-Operator Responsibilities</div>
-            <p style="font-size: 10pt; margin-bottom: 0.25in;">
-                Owner-Operator shall:
+                Company shall be responsible for:
             </p>
             <ul style="font-size: 9pt; margin-bottom: 0.25in; padding-left: 0.25in;">
-                <li>Maintain Equipment in good working condition and compliance with all DOT regulations</li>
-                <li>Provide all routine maintenance, repairs, and inspections</li>
-                <li>Maintain required insurance coverage on Equipment</li>
-                <li>Keep Equipment clean and presentable</li>
-                <li>Provide fuel for Equipment operation</li>
-                <li>Comply with all FMCSA regulations</li>
-                <li>Maintain proper licensing and certifications</li>
+                <li>Providing dispatch services and load assignments</li>
+                <li>Handling billing and collections for services rendered</li>
+                <li>Providing fuel cards with established credit limits and discounts</li>
+                <li>Maintaining cargo insurance coverage for transported goods</li>
+                <li>Providing regulatory compliance support and documentation</li>
+                <li>Paying weekly lease payments as agreed in Section 6</li>
+                <li>Providing settlement statements and support documentation</li>
+                <li>Maintaining necessary operating authority and permits</li>
             </ul>
         </div>
 
         <div class="section">
-            <div class="section-title">Company Responsibilities</div>
+            <div class="section-title">9. Insurance Requirements</div>
             <p style="font-size: 10pt; margin-bottom: 0.25in;">
-                Company shall:
+                Owner-Operator shall maintain at all times the following minimum insurance coverage:
             </p>
             <ul style="font-size: 9pt; margin-bottom: 0.25in; padding-left: 0.25in;">
-                <li>Provide dispatch services and load assignments</li>
-                <li>Handle billing and collections for services rendered</li>
-                <li>Provide fuel cards and advance programs</li>
-                <li>Maintain cargo insurance coverage</li>
-                <li>Provide regulatory compliance support</li>
-                <li>Pay weekly lease payments as agreed</li>
+                <li><strong>Commercial Auto Liability:</strong> $1,000,000 Combined Single Limit</li>
+                <li><strong>Physical Damage Coverage:</strong> Actual cash value of Equipment with $1,000 deductible</li>
+                <li><strong>General Liability:</strong> $1,000,000 Combined Single Limit</li>
+                <li><strong>Workers' Compensation:</strong> As required by law or Occupational Accident Coverage</li>
+                <li><strong>Cargo Insurance:</strong> $100,000 per occurrence, $500,000 in aggregate</li>
+                <li>Company named as loss payee and additional insured on all policies</li>
+                <li>Certificates of insurance provided to Company upon request</li>
             </ul>
         </div>
 
         <div class="section">
-            <div class="section-title">Insurance Requirements</div>
+            <div class="section-title">10. Maintenance and Repairs</div>
+            <div class="subsection">
+                <div class="subsection-title">10.1 Owner-Operator Responsibilities</div>
+                <p style="font-size: 10pt; margin-bottom: 0.25in;">
+                    Owner-Operator shall be responsible for all routine maintenance and repairs, including:
+                </p>
+                <ul style="font-size: 9pt; margin-bottom: 0.25in; padding-left: 0.25in;">
+                    <li>Oil changes and preventive maintenance at recommended intervals</li>
+                    <li>Tire replacement, rotation, and repairs</li>
+                    <li>Brake service and repairs</li>
+                    <li>Engine and transmission repairs and overhauls</li>
+                    <li>DOT annual inspections and compliance maintenance</li>
+                    <li>All other maintenance and repair costs necessary to keep Equipment in good working order</li>
+                </ul>
+            </div>
+            <div class="subsection">
+                <div class="subsection-title">10.2 Maintenance Records</div>
+                <p style="font-size: 10pt; margin-bottom: 0.25in;">
+                    Owner-Operator shall maintain complete maintenance records and make them available to Company upon request.
+                </p>
+            </div>
+        </div>
+
+        <div class="section">
+            <div class="section-title">11. Fuel, Toll, and Operating Expenses</div>
+            <div class="subsection">
+                <div class="subsection-title">11.1 Fuel</div>
+                <p style="font-size: 10pt; margin-bottom: 0.25in;">
+                    Owner-Operator shall be responsible for all fuel costs. Company shall provide fuel cards with established credit limits and negotiated discounts.
+                </p>
+            </div>
+            <div class="subsection">
+                <div class="subsection-title">11.2 Tolls and Fees</div>
+                <p style="font-size: 10pt; margin-bottom: 0.25in;">
+                    Owner-Operator shall be responsible for all tolls, permits, and fees unless otherwise agreed in writing.
+                </p>
+            </div>
+            <div class="subsection">
+                <div class="subsection-title">11.3 Advances</div>
+                <p style="font-size: 10pt; margin-bottom: 0.25in;">
+                    Company may provide fuel advances and expense advances subject to established policies and repayment terms as specified in the Settlement/Payment Authorization.
+                </p>
+            </div>
+        </div>
+
+        <div class="section">
+            <div class="section-title">12. Compliance and Safety</div>
             <p style="font-size: 10pt; margin-bottom: 0.25in;">
-                Owner-Operator shall maintain at all times:
+                Owner-Operator shall comply with all applicable federal, state, and local laws, regulations, and industry standards, including but not limited to:
             </p>
             <ul style="font-size: 9pt; margin-bottom: 0.25in; padding-left: 0.25in;">
-                <li>Commercial auto liability insurance: $1,000,000 CSL</li>
-                <li>Physical damage coverage on Equipment: Actual cash value</li>
-                <li>General liability insurance: $1,000,000 CSL</li>
-                <li>Workers' compensation or occupational accident coverage</li>
-                <li>Company named as loss payee and additional insured</li>
+                <li>All FMCSA regulations and hours of service requirements</li>
+                <li>DOT drug and alcohol testing requirements</li>
+                <li>Vehicle inspection and maintenance standards</li>
+                <li>Hazardous materials regulations (if applicable)</li>
+                <li>Company safety policies and procedures</li>
+                <li>Electronic logging device (ELD) requirements and compliance</li>
             </ul>
         </div>
 
         <div class="section">
-            <div class="section-title">Maintenance and Repairs</div>
+            <div class="section-title">13. Indemnification</div>
             <p style="font-size: 10pt; margin-bottom: 0.25in;">
-                Owner-Operator shall be responsible for all routine maintenance and repairs, including:
-            </p>
-            <ul style="font-size: 9pt; margin-bottom: 0.25in; padding-left: 0.25in;">
-                <li>Oil changes and preventive maintenance</li>
-                <li>Tire replacement and repairs</li>
-                <li>Brake service and repairs</li>
-                <li>Engine and transmission repairs</li>
-                <li>DOT inspections and compliance</li>
-                <li>All other maintenance and repair costs</li>
-            </ul>
-        </div>
-
-        <div class="section">
-            <div class="section-title">Fuel and Expenses</div>
-            <p style="font-size: 10pt; margin-bottom: 0.25in;">
-                <strong>Fuel:</strong> Owner-Operator shall be responsible for all fuel costs. Company shall provide fuel cards with established credit limits and discounts.
-            </p>
-            <p style="font-size: 10pt; margin-bottom: 0.25in;">
-                <strong>Tolls and Fees:</strong> Owner-Operator shall be responsible for all tolls, permits, and fees unless otherwise agreed.
-            </p>
-            <p style="font-size: 10pt; margin-bottom: 0.25in;">
-                <strong>Advances:</strong> Company may provide fuel advances and expense advances subject to established policies and repayment terms.
+                Owner-Operator shall indemnify and hold Company harmless from any claims, damages, losses, or liabilities arising from Owner-Operator's operation of the Equipment, except to the extent caused by Company's negligence or willful misconduct.
             </p>
         </div>
 
         <div class="section">
-            <div class="section-title">Termination</div>
+            <div class="section-title">14. Return of Company Property</div>
             <p style="font-size: 10pt; margin-bottom: 0.25in;">
-                Either party may terminate this Agreement with 30 days written notice. Company may terminate immediately for cause, including:
+                Upon termination of this Agreement, Owner-Operator shall immediately return all Company property, including but not limited to fuel cards, dispatch equipment, and any other items provided by Company.
             </p>
-            <ul style="font-size: 9pt; margin-bottom: 0.25in; padding-left: 0.25in;">
-                <li>Breach of safety regulations</li>
-                <li>Failure to maintain required insurance</li>
-                <li>Equipment damage due to negligence</li>
-                <li>Violation of drug and alcohol policies</li>
-                <li>Non-compliance with DOT regulations</li>
-            </ul>
         </div>
 
         <div class="section">
-            <div class="section-title">Indemnification</div>
+            <div class="section-title">15. Entire Agreement</div>
             <p style="font-size: 10pt; margin-bottom: 0.25in;">
-                Owner-Operator shall indemnify and hold Company harmless from any claims, damages, or liabilities arising from Owner-Operator's operation of the Equipment, except to the extent caused by Company's negligence.
+                This Agreement constitutes the entire agreement between the parties and supersedes all prior discussions, negotiations, and agreements, whether written or oral.
+            </p>
+            <p style="font-size: 10pt; margin-bottom: 0.25in;">
+                This Agreement may only be modified by written agreement signed by both parties.
             </p>
         </div>
 
         <div class="signature-block">
-            <div class="section-title">Signatures</div>
+            <div class="section-title">16. Signatures</div>
             <div style="display: flex; justify-content: space-between; margin-bottom: 0.5in;">
                 <div style="width: 45%;">
                     <p style="font-size: 10pt; margin-bottom: 0.25in;">
                         <strong>Delta Advanced Trucking, Inc.</strong>
                     </p>
                     <div class="signature-line"></div>
-                    <p style="font-size: 9pt; margin-bottom: 0.125in;">Authorized Signature</p>
-                    <p style="font-size: 9pt; margin-bottom: 0.125in;">Date: October 15, 2025</p>
+                    <p style="font-size: 9pt; margin-bottom: 0.125in;">Printed Name: John Smith</p>
+                    <p style="font-size: 9pt; margin-bottom: 0.125in;">Title: Operations Manager</p>
+                    <p style="font-size: 9pt; margin-bottom: 0.125in;">Signature</p>
+                    <p style="font-size: 9pt; margin-bottom: 0.125in;">Date: October 14, 2025</p>
                 </div>
                 <div style="width: 45%;">
                     <p style="font-size: 10pt; margin-bottom: 0.25in;">
                         <strong>Robert Johnson (DRV-012)</strong>
                     </p>
                     <div class="signature-line"></div>
-                    <p style="font-size: 9pt; margin-bottom: 0.125in;">Owner-Operator Signature</p>
-                    <p style="font-size: 9pt; margin-bottom: 0.125in;">Date: October 15, 2025</p>
+                    <p style="font-size: 9pt; margin-bottom: 0.125in;">Printed Name: Robert Johnson</p>
+                    <p style="font-size: 9pt; margin-bottom: 0.125in;">Driver ID: DRV-012</p>
+                    <p style="font-size: 9pt; margin-bottom: 0.125in;">Signature</p>
+                    <p style="font-size: 9pt; margin-bottom: 0.125in;">Date: October 14, 2025</p>
                 </div>
             </div>
         </div>

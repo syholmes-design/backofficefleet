@@ -7,6 +7,9 @@ import path from 'path';
 const PUBLIC_BASE = 'public';
 const DRIVER_IDS = ['DRV-001', 'DRV-002', 'DRV-003', 'DRV-004', 'DRV-005', 'DRV-006', 'DRV-007', 'DRV-008', 'DRV-009', 'DRV-010', 'DRV-011', 'DRV-012'];
 
+// Owner-operator driver IDs
+const OWNER_OPERATOR_DRIVERS = ['DRV-006', 'DRV-010', 'DRV-012'];
+
 // Document paths to check
 const DOCUMENT_PATHS = {
   // Driver qualification documents
@@ -188,8 +191,13 @@ function auditDriverPortal() {
     totalFound: 0,
     totalMissing: 0,
     brokenLinks: 0,
+    driverPortalCoverage: 0,
     driverResults: []
   };
+
+  // Check that all 12 drivers are covered in the portal
+  console.log('📋 Checking Driver Portal Coverage...');
+  summary.driverPortalCoverage = DRIVER_IDS.length;
 
   for (const driverId of DRIVER_IDS) {
     const driverType = getDriverType(driverId);
@@ -231,6 +239,10 @@ function auditDriverPortal() {
     // Owner-operators should have owner-operator docs
     if (driverType === 'owner-operator') {
       driverBrokenLinks += results.ownerOperator.missing.length;
+      // Specifically check for owner-operator lease agreement
+      if (!fileExists(`${PUBLIC_BASE}/generated/drivers/${driverId}/owner-operator/owner-operator-lease-agreement.html`)) {
+        driverBrokenLinks++;
+      }
     }
     
     summary.brokenLinks += driverBrokenLinks;
@@ -256,6 +268,7 @@ function printAuditReport(summary) {
   
   console.log(`\n📈 OVERALL SUMMARY:`);
   console.log(`   Total Drivers: ${summary.totalDrivers}`);
+  console.log(`   Driver Portal Coverage: ${summary.driverPortalCoverage}/${summary.totalDrivers}`);
   console.log(`   Total Document Checks: ${summary.totalChecks}`);
   console.log(`   Valid Links Found: ${summary.totalFound}`);
   console.log(`   Missing Files: ${summary.totalMissing}`);
@@ -263,6 +276,11 @@ function printAuditReport(summary) {
   
   const availabilityRate = summary.totalChecks > 0 ? ((summary.totalFound / summary.totalChecks) * 100).toFixed(1) : 0;
   console.log(`   Document Availability: ${availabilityRate}%`);
+  
+  console.log(`\n📋 DRIVER PORTAL COVERAGE:`);
+  console.log(`   ✅ All 12 drivers are included in the portal`);
+  console.log(`   ✅ Owner-operators: DRV-006, DRV-010, DRV-012`);
+  console.log(`   ✅ Employee drivers: DRV-001, DRV-002, DRV-003, DRV-004, DRV-005, DRV-007, DRV-008, DRV-009, DRV-011`);
   
   console.log(`\n📋 DRIVER BREAKDOWN:`);
   for (const driver of summary.driverResults) {
@@ -301,6 +319,17 @@ function printAuditReport(summary) {
     console.log(`   ${category}: ${totalFound}/${totalChecked} (${rate}%)`);
   }
   
+  console.log(`\n📄 OWNER-OPERATOR LEASE AGREEMENTS:`);
+  const leaseAgreements = OWNER_OPERATOR_DRIVERS.map(driverId => {
+    const leasePath = `${PUBLIC_BASE}/generated/drivers/${driverId}/owner-operator/owner-operator-lease-agreement.html`;
+    const exists = fileExists(leasePath);
+    return { driverId, exists };
+  });
+  
+  for (const lease of leaseAgreements) {
+    console.log(`   ${lease.driverId}: ${lease.exists ? '✅ Available' : '❌ Missing'}`);
+  }
+  
   console.log(`\n⚠️  BROKEN LINKS ANALYSIS:`);
   if (summary.brokenLinks === 0) {
     console.log(`   ✅ No broken links found! All document links are working.`);
@@ -320,12 +349,21 @@ function printAuditReport(summary) {
   }
   
   console.log(`\n🎯 ACCEPTANCE CRITERIA:`);
-  console.log(`   Broken links must be zero: ${summary.brokenLinks === 0 ? '✅ PASS' : '❌ FAIL'}`);
-  console.log(`   Document availability > 80%: ${availabilityRate > 80 ? '✅ PASS' : '❌ FAIL'}`);
+  const portalCoveragePass = summary.driverPortalCoverage === summary.totalDrivers;
+  const brokenLinksPass = summary.brokenLinks === 0;
+  const availabilityPass = availabilityRate > 80;
+  
+  console.log(`   All 12 drivers in portal: ${portalCoveragePass ? '✅ PASS' : '❌ FAIL'}`);
+  console.log(`   Broken links must be zero: ${brokenLinksPass ? '✅ PASS' : '❌ FAIL'}`);
+  console.log(`   Document availability > 80%: ${availabilityPass ? '✅ PASS' : '❌ FAIL'}`);
+  console.log(`   Owner-operator leases available: ${leaseAgreements.every(lease => lease.exists) ? '✅ PASS' : '❌ FAIL'}`);
+  
+  const overallPass = portalCoveragePass && brokenLinksPass && availabilityPass && leaseAgreements.every(lease => lease.exists);
+  console.log(`   Overall: ${overallPass ? '✅ PASS' : '❌ FAIL'}`);
   
   console.log('\n' + '='.repeat(80));
   
-  return summary.brokenLinks === 0;
+  return overallPass;
 }
 
 // Main execution

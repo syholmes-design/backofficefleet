@@ -1,4 +1,5 @@
 import type { BofData } from '@/lib/load-bof-data';
+import { getBofData } from '@/lib/load-bof-data';
 
 export interface PortalCard {
   id: string;
@@ -64,41 +65,60 @@ export const PORTAL_CARDS: PortalCard[] = [
   }
 ];
 
-export const DEMO_DRIVER_PROFILES: DriverPortalProfile[] = [
-  {
-    driverId: 'DRV-006',
-    name: 'Marcus Chen',
-    workerType: 'Independent Contractor / Owner-Operator',
-    readinessStatus: 'Ready',
-    currentLoadId: 'L006',
-    currentLoadStatus: 'In Transit',
-    documentStatusSummary: 'All documents current',
-    settlementStatusSummary: 'Last settlement: Oct 1-15, 2025',
-    pendingAcknowledgments: 2
-  },
-  {
-    driverId: 'DRV-009',
-    name: 'Emma Brown',
-    workerType: 'Employee Driver',
-    readinessStatus: 'Ready',
-    currentLoadId: 'L009',
-    currentLoadStatus: 'Pre-Trip',
-    documentStatusSummary: 'Medical card expiring soon',
-    settlementStatusSummary: 'Last settlement: Oct 1-15, 2025',
-    pendingAcknowledgments: 1
-  },
-  {
-    driverId: 'DRV-002',
-    name: 'Maria Lopez',
-    workerType: 'Employee Driver',
-    readinessStatus: 'Ready',
-    currentLoadId: 'L002',
-    currentLoadStatus: 'Available',
-    documentStatusSummary: 'All documents current',
-    settlementStatusSummary: 'Last settlement: Oct 1-15, 2025',
-    pendingAcknowledgments: 1
+// Owner-operator driver IDs
+const OWNER_OPERATOR_DRIVERS = ['DRV-006', 'DRV-010', 'DRV-012'];
+
+// Generate driver portal profiles from canonical driver data
+function generateDriverPortalProfiles(): DriverPortalProfile[] {
+  const data = getBofData();
+  const profiles: DriverPortalProfile[] = [];
+  
+  for (const driver of data.drivers) {
+    // Determine worker type
+    const workerType = OWNER_OPERATOR_DRIVERS.includes(driver.id) 
+      ? 'Independent Contractor / Owner-Operator' 
+      : 'Employee Driver';
+    
+    // Find current load assignment
+    const currentLoad = data.loads.find(load => load.driverId === driver.id && load.status !== 'Delivered');
+    
+    // Find recent settlement
+    const driverSettlements = data.settlements.filter(settlement => settlement.driverId === driver.id);
+    const latestSettlement = driverSettlements.sort((a, b) => 
+      new Date(b.settlementId).getTime() - new Date(a.settlementId).getTime()
+    )[0];
+    
+    // Calculate document status
+    const driverDocuments = data.documents.filter(doc => doc.driverId === driver.id);
+    const expiringDocuments = driverDocuments.filter(doc => 
+      doc.status === 'Expiring Soon' || doc.status === 'Expired'
+    );
+    const documentStatusSummary = expiringDocuments.length > 0 
+      ? `${expiringDocuments.length} document(s) expiring soon`
+      : 'All documents current';
+    
+    // Calculate pending acknowledgments
+    const pendingAcknowledgments = driverDocuments.filter(doc => 
+      (doc.type === 'I-9' || doc.type === 'W-9') && doc.status !== 'Acknowledged'
+    ).length;
+    
+    profiles.push({
+      driverId: driver.id,
+      name: driver.name,
+      workerType,
+      readinessStatus: 'Ready', // Simplified for demo
+      currentLoadId: currentLoad?.id,
+      currentLoadStatus: currentLoad?.status,
+      documentStatusSummary,
+      settlementStatusSummary: latestSettlement 
+        ? `Last settlement: ${latestSettlement.settlementId}`
+        : 'No settlements yet',
+      pendingAcknowledgments
+    });
   }
-];
+  
+  return profiles.sort((a, b) => a.driverId.localeCompare(b.driverId));
+}
 
 export const DEMO_CUSTOMER_PROFILE: CustomerPortalProfile = {
   customerId: 'CUST-001',
@@ -169,11 +189,11 @@ export function getPortalCards(): PortalCard[] {
 }
 
 export function getDriverPortalProfiles(): DriverPortalProfile[] {
-  return DEMO_DRIVER_PROFILES;
+  return generateDriverPortalProfiles();
 }
 
 export function getDriverPortalProfile(driverId: string): DriverPortalProfile | undefined {
-  return DEMO_DRIVER_PROFILES.find(profile => profile.driverId === driverId);
+  return generateDriverPortalProfiles().find((profile: DriverPortalProfile) => profile.driverId === driverId);
 }
 
 export function getCustomerPortalProfile(): CustomerPortalProfile {

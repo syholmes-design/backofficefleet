@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Owner-Operator Lease Agreement - Noah Wilson (DRV-010)</title>
+    <title>Owner-Operator Lease Agreement - {{DRIVER_NAME}} ({{DRIVER_ID}})</title>
     <style>
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
@@ -120,7 +120,7 @@
         <div class="section">
             <div class="section-title">1. Effective Date and Initial Term</div>
             <p style="font-size: 10pt; margin-bottom: 0.25in;">
-                <strong>Effective Date:</strong> October 14, 2025
+                <strong>Effective Date:</strong> {{EFFECTIVE_DATE}}
             </p>
             <p style="font-size: 10pt; margin-bottom: 0.25in;">
                 <strong>Initial Term:</strong> This Agreement shall commence on the Effective Date and continue for an initial term of 12 months unless terminated earlier as provided herein.
@@ -133,7 +133,7 @@
         <div class="section">
             <div class="section-title">2. Parties</div>
             <p style="font-size: 10pt; margin-bottom: 0.25in;">
-                <strong>This Owner-Operator Lease Agreement</strong> ("Agreement") is entered into on October 14, 2025, between:
+                <strong>This Owner-Operator Lease Agreement</strong> ("Agreement") is entered into on {{EFFECTIVE_DATE}}, between:
             </p>
             <p style="font-size: 10pt; margin-bottom: 0.25in;">
                 <strong>Delta Advanced Trucking, Inc.</strong> ("Company"), a transportation company located at 500 Pacific Ave, Dallas, TX 75202
@@ -142,7 +142,7 @@
                 and
             </p>
             <p style="font-size: 10pt; margin-bottom: 0.25in;">
-                <strong>Noah Wilson</strong> ("Owner-Operator"), an independent contractor with Driver ID DRV-010, located at 110 W Adams St, Chicago, IL 60603, Phone: 582-987-2387
+                <strong>{{DRIVER_NAME}}</strong> ("Owner-Operator"), an independent contractor with Driver ID {{DRIVER_ID}}, located at {{DRIVER_ADDRESS}}, Phone: {{DRIVER_PHONE}}
             </p>
         </div>
 
@@ -165,43 +165,43 @@
             <div class="equipment-grid">
                 <div class="equipment-item">
                     <span class="equipment-label">Vehicle Type:</span>
-                    <span>Class A Tractor</span>
+                    <span>{{EQUIPMENT_TYPE}}</span>
                 </div>
                 <div class="equipment-item">
                     <span class="equipment-label">Year:</span>
-                    <span>2021</span>
+                    <span>{{EQUIPMENT_YEAR}}</span>
                 </div>
                 <div class="equipment-item">
                     <span class="equipment-label">Make:</span>
-                    <span>Peterbilt</span>
+                    <span>{{EQUIPMENT_MAKE}}</span>
                 </div>
                 <div class="equipment-item">
                     <span class="equipment-label">Model:</span>
-                    <span>389</span>
+                    <span>{{EQUIPMENT_MODEL}}</span>
                 </div>
                 <div class="equipment-item">
                     <span class="equipment-label">VIN:</span>
-                    <span>1XP5DB9X1MD567890</span>
+                    <span>{{EQUIPMENT_VIN}}</span>
                 </div>
                 <div class="equipment-item">
                     <span class="equipment-label">License Plate:</span>
-                    <span>IL-9A8B7C</span>
+                    <span>{{EQUIPMENT_LICENSE_PLATE}}</span>
                 </div>
                 <div class="equipment-item">
                     <span class="equipment-label">Engine:</span>
-                    <span>Cummins X15</span>
+                    <span>{{EQUIPMENT_ENGINE}}</span>
                 </div>
                 <div class="equipment-item">
                     <span class="equipment-label">Transmission:</span>
-                    <span>Eaton-Fuller 13-Speed</span>
+                    <span>{{EQUIPMENT_TRANSMISSION}}</span>
                 </div>
                 <div class="equipment-item">
                     <span class="equipment-label">Sleeper Berth:</span>
-                    <span>Yes</span>
+                    <span>{{EQUIPMENT_SLEEPER}}</span>
                 </div>
                 <div class="equipment-item">
                     <span class="equipment-label">DOT Number:</span>
-                    <span>DOT-2345678</span>
+                    <span>{{EQUIPMENT_DOT_NUMBER}}</span>
                 </div>
             </div>
         </div>
@@ -241,13 +241,13 @@
             <div class="subsection">
                 <div class="subsection-title">6.1 Weekly Lease Payment</div>
                 <p style="font-size: 10pt; margin-bottom: 0.25in;">
-                    Company shall pay Owner-Operator a weekly lease payment of $800.00 for use of the Equipment.
+                    Company shall pay Owner-Operator a weekly lease payment of ${{WEEKLY_LEASE_PAYMENT}}.00 for use of the Equipment.
                 </p>
             </div>
             <div class="subsection">
                 <div class="subsection-title">6.2 Payment Schedule</div>
                 <p style="font-size: 10pt; margin-bottom: 0.25in;">
-                    Weekly payments shall be made via Weekly Direct Deposit every Friday for the preceding week's services.
+                    Weekly payments shall be made via {{PAYMENT_METHOD}} every Friday for the preceding week's services.
                 </p>
             </div>
             <div class="subsection">
@@ -402,20 +402,20 @@
                         <strong>Delta Advanced Trucking, Inc.</strong>
                     </p>
                     <div class="signature-line"></div>
-                    <p style="font-size: 9pt; margin-bottom: 0.125in;">Printed Name: John Smith</p>
-                    <p style="font-size: 9pt; margin-bottom: 0.125in;">Title: Operations Manager</p>
+                    <p style="font-size: 9pt; margin-bottom: 0.125in;">Printed Name: {{COMPANY_REP_NAME}}</p>
+                    <p style="font-size: 9pt; margin-bottom: 0.125in;">Title: {{COMPANY_REP_TITLE}}</p>
                     <p style="font-size: 9pt; margin-bottom: 0.125in;">Signature</p>
-                    <p style="font-size: 9pt; margin-bottom: 0.125in;">Date: October 14, 2025</p>
+                    <p style="font-size: 9pt; margin-bottom: 0.125in;">Date: {{SIGNATURE_DATE}}</p>
                 </div>
                 <div style="width: 45%;">
                     <p style="font-size: 10pt; margin-bottom: 0.25in;">
-                        <strong>Noah Wilson (DRV-010)</strong>
+                        <strong>{{DRIVER_NAME}} ({{DRIVER_ID}})</strong>
                     </p>
                     <div class="signature-line"></div>
-                    <p style="font-size: 9pt; margin-bottom: 0.125in;">Printed Name: Noah Wilson</p>
-                    <p style="font-size: 9pt; margin-bottom: 0.125in;">Driver ID: DRV-010</p>
+                    <p style="font-size: 9pt; margin-bottom: 0.125in;">Printed Name: {{DRIVER_NAME}}</p>
+                    <p style="font-size: 9pt; margin-bottom: 0.125in;">Driver ID: {{DRIVER_ID}}</p>
                     <p style="font-size: 9pt; margin-bottom: 0.125in;">Signature</p>
-                    <p style="font-size: 9pt; margin-bottom: 0.125in;">Date: October 14, 2025</p>
+                    <p style="font-size: 9pt; margin-bottom: 0.125in;">Date: {{SIGNATURE_DATE}}</p>
                 </div>
             </div>
         </div>
