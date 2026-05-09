@@ -64,29 +64,68 @@ function AssessmentPageContent() {
 
       {/* Assessment Cards */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          {ASSESSMENT_TRACKS.map((track: AssessmentTrack) => (
-            <div
-              key={track.id}
-              className="bg-white rounded-lg shadow-lg border border-gray-200 hover:shadow-xl transition-shadow duration-200"
-            >
+        {/* BOF Vault - Separate Section */}
+        <div className="mb-12">
+          <div className="text-center mb-8">
+            <h2 className="text-2xl font-bold text-gray-900 mb-4">For Individual Drivers</h2>
+            <p className="text-gray-600 max-w-2xl mx-auto">
+              BOF Vault is your personal document management system. Create a secure vault for your CDL, medical card, MVR, and other driving credentials.
+            </p>
+          </div>
+          <div className="max-w-2xl mx-auto">
+            <div className="bg-gradient-to-r from-teal-50 to-blue-50 rounded-lg shadow-lg border border-teal-200 hover:shadow-xl transition-shadow duration-200">
               <div className="p-8">
-                <h2 className="text-2xl font-bold text-gray-900 mb-4">
-                  {track.title}
-                </h2>
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="text-2xl font-bold text-gray-900">BOF Vault</h3>
+                  <span className="bg-teal-100 text-teal-800 text-sm font-medium px-3 py-1 rounded-full">Individual Driver</span>
+                </div>
                 <p className="text-gray-600 mb-6 leading-relaxed">
-                  {track.description}
+                  For individual drivers to organize and maintain their driving credentials. Upload once, access anywhere, and stay ready for your next opportunity.
                 </p>
-                <Link href={track.route}>
+                <Link href="/assessment/bof-vault">
                   <button
                     className="w-full bg-teal-600 text-white font-semibold py-3 px-6 rounded-lg hover:bg-teal-700 transition-colors duration-200"
                   >
-                    {track.ctaLabel}
+                    Create My Driver Vault
                   </button>
                 </Link>
               </div>
             </div>
-          ))}
+          </div>
+        </div>
+
+        {/* Fleet Assessments */}
+        <div>
+          <div className="text-center mb-8">
+            <h2 className="text-2xl font-bold text-gray-900 mb-4">For Fleet Operations</h2>
+            <p className="text-gray-600 max-w-2xl mx-auto">
+              Choose the assessment that matches your fleet type. BOF will identify where operations, documents, compliance, cash flow, and back-office controls are creating risk or lost margin.
+            </p>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {ASSESSMENT_TRACKS.filter(track => track.id !== 'bof-vault').map((track: AssessmentTrack) => (
+              <div
+                key={track.id}
+                className="bg-white rounded-lg shadow-lg border border-gray-200 hover:shadow-xl transition-shadow duration-200"
+              >
+                <div className="p-8">
+                  <h3 className="text-xl font-bold text-gray-900 mb-4">
+                    {track.title}
+                  </h3>
+                  <p className="text-gray-600 mb-6 leading-relaxed text-sm">
+                    {track.description}
+                  </p>
+                  <Link href={track.route}>
+                    <button
+                      className="w-full bg-gray-800 text-white font-semibold py-3 px-6 rounded-lg hover:bg-gray-900 transition-colors duration-200"
+                    >
+                      {track.ctaLabel}
+                    </button>
+                  </Link>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
 

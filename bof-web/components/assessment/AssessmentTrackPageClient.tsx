@@ -103,6 +103,36 @@ export default function AssessmentTrackPageClient({ trackId }: AssessmentTrackPa
     setShowResults(true);
   };
 
+  const skipSection = () => {
+    nextSection();
+  };
+
+  const getSkipButtonText = (sectionId: string) => {
+    const skipTexts: Record<string, string> = {
+      'hr-workforce': 'Skip HR',
+      'settlements-pay-visibility': 'Skip Settlements',
+      'fleet-financials': 'Skip Finance',
+      'workforce-records': 'Skip Workforce',
+      'cost-visibility': 'Skip Finance',
+      'budget-visibility': 'Skip Budget',
+      'procurement-vendor': 'Skip Budget'
+    };
+    return skipTexts[sectionId] || 'Skip Section';
+  };
+
+  const getContinueButtonText = (sectionId: string) => {
+    const continueTexts: Record<string, string> = {
+      'hr-workforce': 'Continue HR Questions',
+      'settlements-pay-visibility': 'Continue Settlements Questions',
+      'fleet-financials': 'Continue Finance Questions',
+      'workforce-records': 'Continue Workforce Questions',
+      'cost-visibility': 'Continue Finance Questions',
+      'budget-visibility': 'Continue Budget Questions',
+      'procurement-vendor': 'Continue Budget Questions'
+    };
+    return continueTexts[sectionId] || 'Next Section';
+  };
+
   const renderQuestion = (question: Question) => {
     const answer = answers.find(a => a.questionId === question.id)?.value;
 
@@ -498,12 +528,22 @@ export default function AssessmentTrackPageClient({ trackId }: AssessmentTrackPa
               >
                 Previous Section
               </button>
-              <button
-                onClick={nextSection}
-                className="bg-teal-600 text-white font-semibold py-3 px-6 rounded-lg hover:bg-teal-700 transition-colors duration-200"
-              >
-                {currentSection === selectedSections.length - 1 ? 'Complete Assessment' : 'Next Section'}
-              </button>
+              <div className="flex space-x-3">
+                {!currentSectionData.required && (
+                  <button
+                    onClick={skipSection}
+                    className="bg-gray-500 text-white font-semibold py-3 px-6 rounded-lg hover:bg-gray-600 transition-colors duration-200"
+                  >
+                    {getSkipButtonText(currentSectionData.id)}
+                  </button>
+                )}
+                <button
+                  onClick={nextSection}
+                  className="bg-teal-600 text-white font-semibold py-3 px-6 rounded-lg hover:bg-teal-700 transition-colors duration-200"
+                >
+                  {currentSection === selectedSections.length - 1 ? 'Complete Assessment' : getContinueButtonText(currentSectionData.id)}
+                </button>
+              </div>
             </div>
           </div>
         </div>

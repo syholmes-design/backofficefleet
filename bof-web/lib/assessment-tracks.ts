@@ -248,11 +248,11 @@ export const ASSESSMENT_TRACKS: AssessmentTrack[] = [
         ]
       },
       {
-        id: 'hr-payroll',
-        title: 'HR / Payroll / Settlements',
-        description: 'Payroll processing and settlement methods',
-        estimatedQuestions: 4,
-        required: true,
+        id: 'hr-workforce',
+        title: 'HR / Workforce',
+        description: 'Human resources and workforce management',
+        estimatedQuestions: 2,
+        required: false,
         questions: [
           {
             id: 'pay-calculation',
@@ -267,18 +267,6 @@ export const ASSESSMENT_TRACKS: AssessmentTrack[] = [
             ]
           },
           {
-            id: 'settlement-methods',
-            type: 'multiple_choice',
-            question: 'What settlement methods do you support?',
-            required: true,
-            options: [
-              { value: 'cents-per-mile', label: 'Cents per mile' },
-              { value: 'percentage-load', label: 'Percentage of load' },
-              { value: 'flat-trip', label: 'Flat trip rate' },
-              { value: 'hybrid', label: 'Hybrid methods' }
-            ]
-          },
-          {
             id: 'deductions-tracking',
             type: 'multiple_choice',
             question: 'Do you track deductions, reimbursements, advances, chargebacks, and family support withholding?',
@@ -288,6 +276,27 @@ export const ASSESSMENT_TRACKS: AssessmentTrack[] = [
               { value: 'some-deductions', label: 'Some of these' },
               { value: 'basic-deductions', label: 'Basic deductions only' },
               { value: 'no-deductions', label: 'No deductions tracking' }
+            ]
+          }
+        ]
+      },
+      {
+        id: 'settlements-pay-visibility',
+        title: 'Settlements & Pay Visibility',
+        description: 'Settlement methods and pay transparency',
+        estimatedQuestions: 2,
+        required: true,
+        questions: [
+          {
+            id: 'settlement-methods',
+            type: 'multiple_choice',
+            question: 'What settlement methods do you support?',
+            required: true,
+            options: [
+              { value: 'cents-per-mile', label: 'Cents per mile' },
+              { value: 'percentage-load', label: 'Percentage of load' },
+              { value: 'flat-trip', label: 'Flat trip rate' },
+              { value: 'hybrid', label: 'Hybrid methods' }
             ]
           },
           {
@@ -303,7 +312,7 @@ export const ASSESSMENT_TRACKS: AssessmentTrack[] = [
         title: 'Fleet Financials & Cash Flow',
         description: 'Financial visibility and cash flow management',
         estimatedQuestions: 5,
-        required: true,
+        required: false,
         questions: [
           {
             id: 'load-profitability',
@@ -1175,7 +1184,7 @@ export const ASSESSMENT_TRACKS: AssessmentTrack[] = [
         title: 'Budget / Cost Visibility',
         description: 'Cost tracking and budget management',
         estimatedQuestions: 4,
-        required: true,
+        required: false,
         questions: [
           {
             id: 'cost-tracking',
@@ -1291,288 +1300,300 @@ export const ASSESSMENT_TRACKS: AssessmentTrack[] = [
   {
     id: 'bof-vault',
     title: 'BOF Vault',
-    description: 'For drivers, owner-operators, and fleets focused on document readiness. Assess CDL, medical card, MVR, I-9/W-9 separation, emergency contacts, owner-operator packets, templates, uploads, and policy acknowledgments.',
-    ctaLabel: 'Start BOF Vault Assessment',
+    description: 'For individual drivers to organize and maintain their driving credentials. Assess document storage, retrieval, expiration tracking, and Driver Qualification File readiness.',
+    ctaLabel: 'Create My Driver Vault',
     route: '/assessment/bof-vault',
     scoreType: 'BOF Vault Document Readiness Score',
     recommendedModules: [
       'BOF Vault',
       'Driver Documents',
-      'Owner-Operator Packets',
-      'Company Operations Vault',
+      'Document Readiness Analysis',
       'Driver Portal'
     ],
     sections: [
       {
         id: 'driver-profile',
-        title: 'Driver / Fleet Profile',
-        description: 'Basic information about your operation',
+        title: 'Your Driving Profile',
+        description: 'Tell us about your current driving situation',
         estimatedQuestions: 3,
         required: true,
         questions: [
           {
-            id: 'operation-type',
+            id: 'driving-status',
             type: 'single_choice',
-            question: 'What type of operation are you?',
+            question: 'Are you currently driving for a carrier, operating independently, or preparing for a new driving opportunity?',
             required: true,
             options: [
-              { value: 'individual-driver', label: 'Individual driver' },
-              { value: 'owner-operator', label: 'Owner-operator' },
-              { value: 'small-fleet', label: 'Small fleet (1-10 trucks)' },
-              { value: 'fleet-admin', label: 'Fleet administrator' }
+              { value: 'company-driver', label: 'Currently driving for a carrier' },
+              { value: 'owner-operator', label: 'Operating as an owner-operator' },
+              { value: 'independent', label: 'Independent contractor' },
+              { value: 'job-seeking', label: 'Preparing for a new driving opportunity' },
+              { value: 'between-jobs', label: 'Between driving jobs' }
             ]
           },
           {
-            id: 'driver-count',
-            type: 'number',
-            question: 'How many drivers do you manage (if applicable)?',
-            required: false,
-            min: 1,
-            max: 50
-          },
-          {
-            id: 'driver-types',
-            type: 'multiple_choice',
-            question: 'Do you manage company drivers, owner-operators, or both?',
+            id: 'document-organization',
+            type: 'single_choice',
+            question: 'How do you currently keep track of your driving documents?',
             required: true,
             options: [
-              { value: 'company-drivers', label: 'Company drivers' },
-              { value: 'owner-operators', label: 'Owner-operators' },
-              { value: 'mixed', label: 'Both company drivers and owner-operators' }
+              { value: 'digital-folder', label: 'Digital folder on my computer/phone' },
+              { value: 'paper-files', label: 'Paper files in a folder' },
+              { value: 'cloud-storage', label: 'Cloud storage (Google Drive, Dropbox, etc.)' },
+              { value: 'email-attachments', label: 'Email attachments' },
+              { value: 'no-system', label: 'No organized system' }
+            ]
+          },
+          {
+            id: 'sharing-needs',
+            type: 'multiple_choice',
+            question: 'Who do you need to share your documents with?',
+            required: true,
+            options: [
+              { value: 'current-employer', label: 'Current employer/carrier' },
+              { value: 'recruiters', label: 'Recruiters for new opportunities' },
+              { value: 'compliance-reviewers', label: 'Compliance reviewers' },
+              { value: 'insurance-providers', label: 'Insurance providers' },
+              { value: 'self-only', label: 'Just for my own records' }
             ]
           }
         ]
       },
       {
         id: 'core-documents',
-        title: 'Core Driver Documents',
-        description: 'Essential driver qualification documents',
+        title: 'Your Essential Documents',
+        description: 'The key documents you need for driving',
         estimatedQuestions: 3,
         required: true,
         questions: [
           {
-            id: 'current-documents',
+            id: 'document-availability',
+            type: 'multiple_choice',
+            question: 'Which driver documents do you currently have copies of?',
+            required: true,
+            options: [
+              { value: 'cdl', label: 'Commercial Driver License (CDL)' },
+              { value: 'medical-card', label: 'Medical certificate/card' },
+              { value: 'mvr', label: 'Motor Vehicle Record (MVR)' },
+              { value: 'employment-eligibility', label: 'Employment/onboarding documents, if applicable' },
+              { value: 'fmcsa-forms', label: 'FMCSA compliance forms' },
+              { value: 'w9', label: 'W-9 or payment setup documents, if you operate as an independent contractor or owner-operator' }
+            ]
+          },
+          {
+            id: 'expiration-awareness',
             type: 'yes_no',
-            question: 'Do you have current CDL, medical card, and MVR records?',
+            question: 'Do you know when your CDL or medical card expires?',
             required: true
           },
           {
-            id: 'expiration-tracking',
+            id: 'recent-mvr',
             type: 'yes_no',
-            question: 'Are expiration dates tracked?',
+            question: 'Do you have a recent MVR available?',
+            required: true
+          }
+        ]
+      },
+      {
+        id: 'additional-documents',
+        title: 'Additional Supporting Documents',
+        description: 'Other important documents for your driving career',
+        estimatedQuestions: 3,
+        required: true,
+        questions: [
+          {
+            id: 'payment-documents',
+            type: 'multiple_choice',
+            question: 'Do you have documents for payment and banking setup?',
+            required: true,
+            options: [
+              { value: 'bank-info', label: 'Bank account information' },
+              { value: 'payment-setup', label: 'Direct deposit/payment setup' },
+              { value: 'w9-form', label: 'W-9 or bank/payment information, if you need to provide it for settlement or contractor payment setup' },
+              { value: 'payment-history', label: 'Payment/settlement records' }
+            ]
+          },
+          {
+            id: 'emergency-info',
+            type: 'yes_no',
+            question: 'Do you have emergency contact information readily available?',
             required: true
           },
           {
-            id: 'document-storage',
+            id: 'owner-operator-papers',
+            type: 'multiple_choice',
+            question: 'If you are an owner-operator, which documents do you have?',
+            required: false,
+            options: [
+              { value: 'insurance', label: 'Vehicle insurance' },
+              { value: 'registration', label: 'Vehicle registration' },
+              { value: 'lease-agreement', label: 'Truck lease agreement' },
+              { value: 'maintenance-records', label: 'Maintenance records' }
+            ]
+          }
+        ]
+      },
+      {
+        id: 'document-readiness',
+        title: 'Document Readiness Analysis',
+        description: 'How BOF can help analyze your document readiness',
+        estimatedQuestions: 3,
+        required: true,
+        questions: [
+          {
+            id: 'readiness-checks',
+            type: 'yes_no',
+            question: 'Would you like BOF to check whether your documents appear ready for a Driver Qualification File?',
+            required: true
+          },
+          {
+            id: 'expiration-alerts',
+            type: 'yes_no',
+            question: 'Do you want reminders before your documents expire?',
+            required: true
+          },
+          {
+            id: 'compliance-issues',
+            type: 'multiple_choice',
+            question: 'What document issues do you worry about most?',
+            required: true,
+            options: [
+              { value: 'missing-documents', label: 'Missing required documents' },
+              { value: 'expired-documents', label: 'Expired documents' },
+              { value: 'expiring-soon', label: 'Documents expiring soon' },
+              { value: 'incomplete-forms', label: 'Incomplete or incorrect forms' },
+              { value: 'finding-documents', label: 'Finding documents when needed' }
+            ]
+          }
+        ]
+      },
+      {
+        id: 'vault-access',
+        title: 'Secure Vault Access & Sharing',
+        description: 'How you need to access and share your documents',
+        estimatedQuestions: 3,
+        required: true,
+        questions: [
+          {
+            id: 'secure-storage',
+            type: 'yes_no',
+            question: 'Do you need a secure place to upload and retrieve your documents?',
+            required: true
+          },
+          {
+            id: 'mobile-access',
+            type: 'yes_no',
+            question: 'Do you need to access your documents from your phone while on the road?',
+            required: true
+          },
+          {
+            id: 'sharing-needs',
+            type: 'multiple_choice',
+            question: 'How do you need to share your documents?',
+            required: true,
+            options: [
+              { value: 'download-pdf', label: 'Download as PDF for email' },
+              { value: 'share-link', label: 'Secure share link for recruiters' },
+              { value: 'carrier-portal', label: 'Upload to carrier portal' },
+              { value: 'compliance-review', label: 'Share with compliance reviewers' },
+              { value: 'self-view', label: 'Just view for my own reference' }
+            ]
+          }
+        ]
+      },
+      {
+        id: 'dqf-readiness',
+        title: 'Driver Qualification File Readiness',
+        description: 'Making sure your documents are ready for DQF use',
+        estimatedQuestions: 3,
+        required: true,
+        questions: [
+          {
+            id: 'dqf-understanding',
+            type: 'yes_no',
+            question: 'Do you know what documents are required for a complete Driver Qualification File?',
+            required: true
+          },
+          {
+            id: 'compliance-concerns',
+            type: 'multiple_choice',
+            question: 'What compliance issues keep you up at night?',
+            required: true,
+            options: [
+              { value: 'missing-cdl', label: 'CDL not current or available' },
+              { value: 'medical-expired', label: 'Medical card expired or expiring' },
+              { value: 'mvr-issues', label: 'MVR problems or violations' },
+              { value: 'incomplete-paperwork', label: 'Incomplete paperwork' },
+              { value: 'audit-preparedness', label: 'Not prepared for audits' }
+            ]
+          },
+          {
+            id: 'readiness-status',
             type: 'single_choice',
-            question: 'Are documents stored in one place?',
+            question: 'How would you describe your current document readiness?',
             required: true,
             options: [
-              { value: 'centralized-digital', label: 'Centralized digital storage' },
-              { value: 'multiple-locations', label: 'Multiple digital locations' },
-              { value: 'paper-files', label: 'Paper files only' },
-              { value: 'no-systematic-storage', label: 'No systematic storage' }
+              { value: 'ready', label: 'Ready - all documents current and available' },
+              { value: 'needs-review', label: 'Needs Review - have documents but need to check them' },
+              { value: 'expiring-soon', label: 'Expiring Soon - some documents will expire soon' },
+              { value: 'expired', label: 'Expired - some documents are expired' },
+              { value: 'missing-items', label: 'Missing Items - don\'t have all required documents' }
             ]
           }
         ]
       },
       {
-        id: 'employment-documents',
-        title: 'Employment vs Owner-Operator Documents',
-        description: 'Worker classification document separation',
-        estimatedQuestions: 3,
+        id: 'account-setup',
+        title: 'Set Up Your Driver Vault Account',
+        description: 'Create your personal account and get started',
+        estimatedQuestions: 6,
         required: true,
         questions: [
           {
-            id: 'document-separation',
+            id: 'create-account',
             type: 'yes_no',
-            question: 'Do you separate I-9/W-4 employee forms from W-9/contractor forms?',
+            question: 'Are you ready to create your personal driver vault account?',
             required: true
           },
           {
-            id: 'owner-operator-documents',
+            id: 'username-setup',
+            type: 'short_text',
+            question: 'What username would you prefer for your account?',
+            required: true,
+            placeholder: 'Enter your preferred username'
+          },
+          {
+            id: 'password-setup',
+            type: 'short_text',
+            question: 'Create a password for your account',
+            required: true,
+            placeholder: 'Enter your password'
+          },
+          {
+            id: 'email-phone',
+            type: 'short_text',
+            question: 'Confirm your email or phone number for account access',
+            required: true,
+            placeholder: 'Enter your email or phone number'
+          },
+          {
+            id: 'first-upload',
             type: 'multiple_choice',
-            question: 'Do owner-operators have which documents?',
+            question: 'What document do you want to upload first?',
             required: true,
             options: [
-              { value: 'contractor-agreement', label: 'Contractor agreement' },
-              { value: 'lease-agreement', label: 'Lease agreement' },
-              { value: 'insurance-verification', label: 'Insurance verification' },
-              { value: 'equipment-schedule', label: 'Equipment schedule' },
-              { value: 'settlement-authorization', label: 'Settlement authorization' }
+              { value: 'cdl', label: 'Commercial Driver License (CDL)' },
+              { value: 'medical-card', label: 'Medical certificate/card' },
+              { value: 'mvr', label: 'Motor Vehicle Record (MVR)' },
+              { value: 'w9', label: 'W-9 or payment setup' },
+              { value: 'other', label: 'Other document' }
             ]
           },
           {
-            id: 'classification-compliance',
+            id: 'readiness-check',
             type: 'yes_no',
-            question: 'Are you confident in your worker classification documentation?',
+            question: 'Would you like BOF to check if your documents are ready for a Driver Qualification File?',
             required: true
-          }
-        ]
-      },
-      {
-        id: 'emergency-contacts',
-        title: 'Emergency Contacts & Profile Data',
-        description: 'Driver contact and profile information',
-        estimatedQuestions: 3,
-        required: true,
-        questions: [
-          {
-            id: 'emergency-contacts',
-            type: 'yes_no',
-            question: 'Do you have primary and secondary emergency contacts?',
-            required: true
-          },
-          {
-            id: 'profile-current',
-            type: 'yes_no',
-            question: 'Are driver addresses, phone numbers, and payment info current?',
-            required: true
-          },
-          {
-            id: 'data-protection',
-            type: 'yes_no',
-            question: 'Are sensitive fields masked where needed?',
-            required: true
-          }
-        ]
-      },
-      {
-        id: 'policy-acknowledgments',
-        title: 'Policy Acknowledgments',
-        description: 'Policy acknowledgment tracking',
-        estimatedQuestions: 3,
-        required: true,
-        questions: [
-          {
-            id: 'acknowledgment-tracking',
-            type: 'multiple_choice',
-            question: 'Do drivers acknowledge which policies?',
-            required: true,
-            options: [
-              { value: 'handbook', label: 'Employee handbook' },
-              { value: 'safety', label: 'Safety policies' },
-              { value: 'acceptable-use', label: 'Acceptable use policies' },
-              { value: 'ai-tool-use', label: 'AI/tool usage policies' },
-              { value: 'owner-operator', label: 'Owner-operator policies' }
-            ]
-          },
-          {
-            id: 'missing-acknowledgments',
-            type: 'yes_no',
-            question: 'Can you see who is missing acknowledgments?',
-            required: true
-          },
-          {
-            id: 'acknowledgment-reminders',
-            type: 'yes_no',
-            question: 'Do you send acknowledgment reminders?',
-            required: true
-          }
-        ]
-      },
-      {
-        id: 'templates-uploads',
-        title: 'Templates / Autofill / Uploads',
-        description: 'Document generation and upload workflows',
-        estimatedQuestions: 3,
-        required: true,
-        questions: [
-          {
-            id: 'form-generation',
-            type: 'yes_no',
-            question: 'Do you need forms generated from driver profile data?',
-            required: true
-          },
-          {
-            id: 'upload-workflows',
-            type: 'yes_no',
-            question: 'Do you need upload review and autofill workflows?',
-            required: true
-          },
-          {
-            id: 'driver-vault',
-            type: 'yes_no',
-            question: 'Do you need a driver-controlled document vault?',
-            required: true
-          }
-        ]
-      },
-      {
-        id: 'readiness-score',
-        title: 'Readiness Score',
-        description: 'Document readiness assessment',
-        estimatedQuestions: 3,
-        required: true,
-        questions: [
-          {
-            id: 'missing-documents',
-            type: 'number',
-            question: 'How many required documents are missing?',
-            required: true,
-            min: 0,
-            max: 50
-          },
-          {
-            id: 'expiring-documents',
-            type: 'multiple_choice',
-            question: 'How many documents expire in the next periods?',
-            required: true,
-            options: [
-              { value: '30-days', label: 'Next 30 days' },
-              { value: '60-days', label: 'Next 60 days' },
-              { value: '90-days', label: 'Next 90 days' },
-              { value: 'none', label: 'None expiring' }
-            ]
-          },
-          {
-            id: 'organization-needs',
-            type: 'yes_no',
-            question: 'Do you need BOF to organize and generate missing packets?',
-            required: true
-          }
-        ]
-      },
-      // Optional sections for BOF Vault
-      {
-        id: 'dispatch-operations',
-        title: 'Dispatch & Operations',
-        description: 'Basic dispatch and operations',
-        estimatedQuestions: 2,
-        required: false,
-        questions: [
-          {
-            id: 'dispatch-needs',
-            type: 'yes_no',
-            question: 'Do you need dispatch capabilities?',
-            required: false
-          },
-          {
-            id: 'load-tracking',
-            type: 'yes_no',
-            question: 'Do you need load tracking?',
-            required: false
-          }
-        ]
-      },
-      {
-        id: 'company-vault',
-        title: 'Company Operations Vault / Policies',
-        description: 'Company policy and document management',
-        estimatedQuestions: 2,
-        required: false,
-        questions: [
-          {
-            id: 'policy-management',
-            type: 'yes_no',
-            question: 'Do you need company policy management?',
-            required: false
-          },
-          {
-            id: 'document-governance',
-            type: 'yes_no',
-            question: 'Do you need document governance?',
-            required: false
           }
         ]
       }
