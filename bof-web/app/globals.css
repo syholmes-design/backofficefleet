@@ -101,6 +101,25 @@ body {
   flex-wrap: wrap;
 }
 
+/* Enhanced marketing header padding */
+@media (min-width: 640px) {
+  .bof-global-header-inner {
+    padding: 1.25rem 1.5rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .bof-global-header-inner {
+    padding: 1.25rem 2.5rem;
+  }
+}
+
+@media (min-width: 1280px) {
+  .bof-global-header-inner {
+    padding: 1.25rem 3rem;
+  }
+}
+
 .bof-global-header-logo {
   display: inline-flex;
   align-items: center;
@@ -505,11 +524,6 @@ body {
 /* Homepage hero — keep full marketing art visible (headline + monitor in frame); letterbox with BOF slate */
 .bof-home-tight-hero .bof-mkt-home-hero-integrated__image-wrap {
   background: #0f172a;
-}
-
-.bof-home-tight-hero .bof-mkt-home-hero-integrated__image {
-  object-fit: contain;
-  object-position: center center;
 }
 
 /* Homepage-only desktop tightening:
