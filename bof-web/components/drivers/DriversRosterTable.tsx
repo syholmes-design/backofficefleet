@@ -15,7 +15,6 @@ import {
 } from "@/lib/drivers/drivers-command-metrics";
 import { getDriverWorkerType, getDriverReadinessSummary, getDriverPolicyAcknowledgments, getDriverSettlementSummary } from "@/lib/driver-readiness-ui";
 import type { WorkerType } from "@/lib/driver-pay-settlement-methods";
-import type { BofData } from "@/lib/load-bof-data";
 
 type DriverStatusFilter =
   | "all"
@@ -74,46 +73,34 @@ function compactSentence(text: string): string {
   return first.endsWith(".") ? first : `${first}.`;
 }
 
-// Emma Brown Hero Card Component
-function EmmaBrownHeroCard({ data }: { data: BofData }) {
-  const emmaDriver = data.drivers.find((d: { id: string }) => d.id === 'DRV-009');
-  if (!emmaDriver) return null;
-  
-  const readinessSummary = getDriverReadinessSummary('DRV-009', data);
-  const workerType = getDriverWorkerType('DRV-009', data);
-  const acknowledgments = getDriverPolicyAcknowledgments('DRV-009', data);
-  const settlement = getDriverSettlementSummary('DRV-009', data);
-  
-  const missingAcks = acknowledgments.filter(ack => ack.status === 'missing').length;
-  
+// Drivers Hero Component with full-span Emma Brown background
+function DriversHero() {
   return (
-    <div className="bof-emma-hero-card" style={{
+    <div className="bof-drivers-hero" style={{
       position: 'relative',
       borderRadius: '12px',
       overflow: 'hidden',
-      height: '280px',
-      boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
-      display: 'flex',
-      flexDirection: 'column',
-      justifyContent: 'flex-end'
+      height: '320px',
+      boxShadow: '0 4px 20px rgba(0, 0, 0, 0.15)',
+      marginBottom: '2rem'
     }}>
-      {/* Hero Background Image */}
+      {/* Full-span Background Image */}
       <div style={{
         position: 'absolute',
         top: 0,
         left: 0,
         right: 0,
         bottom: 0,
-        background: 'linear-gradient(135deg, rgba(11, 165, 164, 0.9) 0%, rgba(11, 165, 164, 0.7) 50%, rgba(11, 165, 164, 0.5) 100%)',
+        background: 'linear-gradient(90deg, rgba(11, 165, 164, 0.85) 0%, rgba(11, 165, 164, 0.6) 40%, rgba(11, 165, 164, 0.3) 70%, rgba(11, 165, 164, 0.1) 100%)',
         zIndex: 1
       }} />
       <Image 
         src="/images/drivers-emma-brown-hero.png" 
-        alt="Emma Brown" 
+        alt="Professional driver team" 
         fill
         style={{ 
           objectFit: 'cover',
-          objectPosition: 'top center',
+          objectPosition: 'center 20%',
           zIndex: 0
         }}
         onError={(e) => {
@@ -122,86 +109,62 @@ function EmmaBrownHeroCard({ data }: { data: BofData }) {
         }}
       />
       
-      {/* Content Overlay */}
+      {/* Right-side Content Overlay */}
       <div style={{
-        position: 'relative',
+        position: 'absolute',
+        top: 0,
+        right: 0,
+        bottom: 0,
+        width: '50%',
         zIndex: 2,
-        padding: '2rem',
-        color: 'white',
-        background: 'linear-gradient(to top, rgba(0, 0, 0, 0.8) 0%, rgba(0, 0, 0, 0.4) 50%, transparent 100%)'
+        padding: '3rem',
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'center',
+        background: 'linear-gradient(to left, rgba(0, 0, 0, 0.7) 0%, rgba(0, 0, 0, 0.4) 50%, transparent 100%)'
       }}>
-        <div style={{ marginBottom: '1rem' }}>
-          <h3 style={{ margin: 0, fontSize: '1.5rem', fontWeight: '700', color: 'white', lineHeight: '1.2' }}>
-            Emma Brown
-          </h3>
-          <p style={{ margin: '0.25rem 0', fontSize: '1rem', color: 'rgba(255, 255, 255, 0.9)' }}>
-            DRV-009 • {workerType}
-          </p>
-          <div style={{
-            display: 'inline-block',
-            padding: '0.375rem 1rem',
-            backgroundColor: 'rgba(255, 255, 255, 0.2)',
-            color: 'white',
-            borderRadius: '9999px',
-            fontSize: '0.875rem',
-            fontWeight: '600',
+        <div style={{ maxWidth: '400px' }}>
+          <p style={{ 
+            color: '#0BA5A4', 
+            fontSize: '0.875rem', 
+            fontWeight: '600', 
             textTransform: 'uppercase',
-            backdropFilter: 'blur(10px)',
-            border: '1px solid rgba(255, 255, 255, 0.3)'
+            letterSpacing: '0.05em',
+            margin: '0 0 0.5rem 0'
           }}>
-            {readinessSummary.status}
-          </div>
-        </div>
-        
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', fontSize: '0.875rem', marginBottom: '1.5rem' }}>
-          <div>
-            <span style={{ color: 'rgba(255, 255, 255, 0.8)', fontWeight: '500' }}>Documents:</span>
-            <span style={{ marginLeft: '0.5rem', color: 'white', fontWeight: '600' }}>
-              {readinessSummary.status === 'ready' ? 'Complete' : 'Action Needed'}
-            </span>
-          </div>
-          <div>
-            <span style={{ color: 'rgba(255, 255, 255, 0.8)', fontWeight: '500' }}>Acknowledgments:</span>
-            <span style={{ marginLeft: '0.5rem', color: missingAcks > 0 ? '#FCA5A5' : 'white', fontWeight: '600' }}>
-              {missingAcks > 0 ? `${missingAcks} missing` : 'Complete'}
-            </span>
-          </div>
-          <div>
-            <span style={{ color: 'rgba(255, 255, 255, 0.8)', fontWeight: '500' }}>Settlement:</span>
-            <span style={{ marginLeft: '0.5rem', color: 'white', fontWeight: '600' }}>
-              {settlement.status}
-            </span>
-          </div>
-          <div>
-            <span style={{ color: 'rgba(255, 255, 255, 0.8)', fontWeight: '500' }}>Dispatch:</span>
-            <span style={{ marginLeft: '0.5rem', color: readinessSummary.status === 'ready' ? 'white' : '#FCA5A5', fontWeight: '600' }}>
-              {readinessSummary.status === 'ready' ? 'Eligible' : 'Not Eligible'}
-            </span>
-          </div>
-        </div>
-        
-        <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
-          <Link href="/drivers/DRV-009" style={{
-            padding: '0.625rem 1.25rem',
-            backgroundColor: 'rgba(255, 255, 255, 0.95)',
-            color: '#0BA5A4',
-            textDecoration: 'none',
-            borderRadius: '8px',
-            fontSize: '0.875rem',
-            fontWeight: '600',
-            display: 'inline-flex',
-            alignItems: 'center',
-            transition: 'all 0.2s ease',
-            backdropFilter: 'blur(10px)'
+            Driver Operations
+          </p>
+          <h1 style={{ 
+            fontSize: '2.5rem', 
+            fontWeight: '700', 
+            color: 'white',
+            margin: '0 0 1rem 0',
+            lineHeight: '1.1'
           }}>
-            View Driver
-          </Link>
-          {readinessSummary.status !== 'ready' && (
-            <Link href="/drivers/DRV-009/vault" style={{
-              padding: '0.625rem 1.25rem',
-              backgroundColor: 'rgba(255, 255, 255, 0.2)',
-              color: 'white',
-              border: '1px solid rgba(255, 255, 255, 0.4)',
+            Drivers Command Center
+          </h1>
+          <p style={{ 
+            fontSize: '1.125rem', 
+            color: 'rgba(255, 255, 255, 0.9)',
+            lineHeight: '1.6',
+            margin: '0 0 1.5rem 0'
+          }}>
+            Track driver readiness, documents, acknowledgments, eligibility, and fix paths from one source-of-truth view.
+          </p>
+          <p style={{ 
+            fontSize: '0.875rem', 
+            color: 'rgba(255, 255, 255, 0.7)',
+            lineHeight: '1.5',
+            margin: '0 0 2rem 0',
+            fontStyle: 'italic'
+          }}>
+            Every review item should explain what changed, why it matters, and what action resolves it.
+          </p>
+          <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
+            <Link href="/documents" style={{
+              padding: '0.75rem 1.5rem',
+              backgroundColor: 'rgba(255, 255, 255, 0.95)',
+              color: '#0BA5A4',
               textDecoration: 'none',
               borderRadius: '8px',
               fontSize: '0.875rem',
@@ -211,11 +174,59 @@ function EmmaBrownHeroCard({ data }: { data: BofData }) {
               transition: 'all 0.2s ease',
               backdropFilter: 'blur(10px)'
             }}>
-              Fix Issues
+              Review Driver Files
             </Link>
-          )}
+            <Link href="/documents/vault" style={{
+              padding: '0.75rem 1.5rem',
+              backgroundColor: 'rgba(255, 255, 255, 0.1)',
+              color: 'white',
+              border: '1px solid rgba(255, 255, 255, 0.3)',
+              textDecoration: 'none',
+              borderRadius: '8px',
+              fontSize: '0.875rem',
+              fontWeight: '600',
+              display: 'inline-flex',
+              alignItems: 'center',
+              transition: 'all 0.2s ease',
+              backdropFilter: 'blur(10px)'
+            }}>
+              View Documents
+            </Link>
+            <Link href="/drivers?driverStatusFilter=needs_review" style={{
+              padding: '0.75rem 1.5rem',
+              backgroundColor: 'rgba(220, 38, 38, 0.9)',
+              color: 'white',
+              textDecoration: 'none',
+              borderRadius: '8px',
+              fontSize: '0.875rem',
+              fontWeight: '600',
+              display: 'inline-flex',
+              alignItems: 'center',
+              transition: 'all 0.2s ease',
+              backdropFilter: 'blur(10px)'
+            }}>
+              Fix Attention Items
+            </Link>
+          </div>
         </div>
       </div>
+      
+      {/* Mobile Responsive */}
+      <style jsx>{`
+        @media (max-width: 768px) {
+          .bof-drivers-hero {
+            height: 400px;
+          }
+          .bof-drivers-hero > div:last-child {
+            width: 100%;
+            background: linear-gradient(to top, rgba(0, 0, 0, 0.8) 0%, rgba(0, 0, 0, 0.4) 50%, transparent 100%);
+            padding: 2rem;
+          }
+          .bof-drivers-hero h1 {
+            font-size: 2rem;
+          }
+        }
+      `}</style>
     </div>
   );
 }
@@ -323,84 +334,8 @@ export function DriversRosterTable() {
 
   return (
     <div className="bof-page bof-cc-page">
-      {/* Mini Hero Section */}
-      <section className="bof-drivers-mini-hero" aria-labelledby="bof-drivers-title" style={{
-        background: 'linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%)',
-        padding: '2rem',
-        borderRadius: '12px',
-        marginBottom: '2rem',
-        border: '1px solid #e2e8f0'
-      }}>
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '2rem', alignItems: 'center' }}>
-          {/* Left Side: Title and CTAs */}
-          <div>
-            <p style={{ 
-              color: '#0BA5A4', 
-              fontSize: '0.875rem', 
-              fontWeight: '600', 
-              textTransform: 'uppercase',
-              letterSpacing: '0.05em',
-              margin: '0 0 0.5rem 0'
-            }}>
-              Driver Operations
-            </p>
-            <h1 id="bof-drivers-title" style={{ 
-              fontSize: '2rem', 
-              fontWeight: '700', 
-              color: '#1a202c',
-              margin: '0 0 1rem 0',
-              lineHeight: '1.2'
-            }}>
-              Drivers
-            </h1>
-            <p style={{ 
-              fontSize: '1.125rem', 
-              color: '#475569',
-              lineHeight: '1.6',
-              margin: '0 0 1.5rem 0',
-              maxWidth: '500px'
-            }}>
-              Manage driver readiness, documents, worker type, dispatch eligibility, acknowledgments, and fix paths from one manager view.
-            </p>
-            <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
-              <Link href="/documents" style={{
-                padding: '0.75rem 1.5rem',
-                backgroundColor: '#0BA5A4',
-                color: 'white',
-                textDecoration: 'none',
-                borderRadius: '6px',
-                fontSize: '0.875rem',
-                fontWeight: '500',
-                display: 'inline-flex',
-                alignItems: 'center',
-                transition: 'all 0.2s ease'
-              }}>
-                View Document Readiness
-              </Link>
-              <Link href="/documents/vault" style={{
-                padding: '0.75rem 1.5rem',
-                backgroundColor: 'white',
-                color: '#0BA5A4',
-                border: '1px solid #0BA5A4',
-                textDecoration: 'none',
-                borderRadius: '6px',
-                fontSize: '0.875rem',
-                fontWeight: '500',
-                display: 'inline-flex',
-                alignItems: 'center',
-                transition: 'all 0.2s ease'
-              }}>
-                Open Driver Vault
-              </Link>
-            </div>
-          </div>
-          
-          {/* Right Side: Emma Brown Hero Card */}
-          <div>
-            <EmmaBrownHeroCard data={data} />
-          </div>
-        </div>
-      </section>
+      {/* Full-span Hero Section */}
+      <DriversHero />
 
       {/* Filter and Search Section */}
       <section className="bof-drivers-command-header" aria-labelledby="bof-drivers-filters-title" style={{ marginBottom: '1rem' }}>
@@ -479,7 +414,7 @@ export function DriversRosterTable() {
                       )}
                     </div>
                   </div>
-                  <StatusChip label={row.status} />
+                  <StatusChip label={row.status} driverId={row.driverId} />
                 </div>
 
                 {/* Primary Issue - Visible without clicking */}
@@ -516,39 +451,49 @@ export function DriversRosterTable() {
                         Dispatch: {row.readinessSummary.status === 'blocked' ? 'Not Eligible' : 'Review Required'}
                       </span>
                     </div>
-                    <p className="bof-driver-card-issue-text" style={{
-                      margin: '0 0 0.5rem 0',
-                      fontSize: '0.875rem',
-                      fontWeight: '500',
-                      color: '#374151',
-                      lineHeight: '1.4'
+                    
+                    {/* Enhanced specific reason display */}
+                    <div style={{
+                      background: 'rgba(255, 255, 255, 0.6)',
+                      padding: '0.75rem',
+                      borderRadius: '6px',
+                      marginBottom: '0.75rem',
+                      border: '1px solid rgba(0, 0, 0, 0.1)'
                     }}>
-                      {row.readinessSummary.primaryReason}
-                    </p>
-                    {row.readinessSummary.businessImpact && (
-                      <p style={{
-                        margin: '0 0 0.5rem 0',
-                        fontSize: '0.75rem',
-                        color: '#6B7280',
-                        fontStyle: 'italic'
-                      }}>
-                        Impact: {row.readinessSummary.businessImpact}
-                      </p>
-                    )}
-                    {row.readinessSummary.dueDate && (
-                      <p className="bof-driver-card-issue-due" style={{
-                        margin: '0 0 0.75rem 0',
-                        fontSize: '0.75rem',
+                      <div style={{
+                        fontSize: '0.875rem',
                         fontWeight: '600',
-                        color: row.readinessSummary.status === 'blocked' ? '#DC2626' : '#D97706'
+                        color: '#374151',
+                        marginBottom: '0.25rem'
                       }}>
-                        Due: {row.readinessSummary.dueDate}
-                      </p>
-                    )}
+                        Issue: {row.readinessSummary.primaryReason}
+                      </div>
+                      {row.readinessSummary.businessImpact && (
+                        <div style={{
+                          fontSize: '0.75rem',
+                          color: '#6B7280',
+                          marginBottom: '0.5rem'
+                        }}>
+                          Why it matters: {row.readinessSummary.businessImpact}
+                        </div>
+                      )}
+                      {row.readinessSummary.dueDate && (
+                        <div style={{
+                          fontSize: '0.75rem',
+                          fontWeight: '600',
+                          color: row.readinessSummary.status === 'blocked' ? '#DC2626' : '#D97706'
+                        }}>
+                          Due: {row.readinessSummary.dueDate}
+                        </div>
+                      )}
+                    </div>
+                    
+                    {/* Fix action with clear explanation */}
                     <div style={{
                       display: 'flex',
                       gap: '0.5rem',
-                      alignItems: 'center'
+                      alignItems: 'center',
+                      flexWrap: 'wrap'
                     }}>
                       {row.readinessSummary.fixAction?.href && (
                         <Link href={row.readinessSummary.fixAction.href} style={{
@@ -563,7 +508,7 @@ export function DriversRosterTable() {
                           alignItems: 'center',
                           transition: 'all 0.2s ease'
                         }}>
-                          {row.readinessSummary.fixAction.label}
+                          Fix: {row.readinessSummary.fixAction.label}
                         </Link>
                       )}
                       <Link href={`/drivers/${row.driverId}/vault`} style={{
@@ -678,24 +623,43 @@ export function DriversRosterTable() {
   );
 }
 
-function StatusChip({ label, onClick }: { label: string; onClick?: () => void }) {
+function StatusChip({ label, onClick, driverId }: { label: string; onClick?: () => void; driverId?: string }) {
+  // Enhanced status labels with specific explanations
+  const enhancedLabel = (() => {
+    switch (label) {
+      case "At Risk":
+        return "Document expiring soon";
+      case "Hold / Review":
+        return "Review required";
+      case "Review":
+        return "Needs attention";
+      case "Pending Review":
+        return "Pending review";
+      case "Attention Required":
+        return "Action needed";
+      default:
+        return label;
+    }
+  })();
+
   const cls =
     label === "Active" || label === "Elite" || label === "Paid"
       ? "bof-cc-chip bof-cc-chip-ok"
       : label === "Blocked" || label === "At Risk" || label === "Hold / Review"
         ? "bof-cc-chip bof-cc-chip-danger"
         : "bof-cc-chip bof-cc-chip-warn";
+  
   if (onClick) {
     return (
       <button
         type="button"
         className={`${cls} bof-cc-chip-action`}
         onClick={onClick}
-        title="Open driver review"
+        title={`Open driver review for ${driverId || 'driver'}`}
       >
-        {label}
+        {enhancedLabel}
       </button>
     );
   }
-  return <span className={cls}>{label}</span>;
+  return <span className={cls}>{enhancedLabel}</span>;
 }
