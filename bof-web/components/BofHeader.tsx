@@ -1,7 +1,9 @@
 "use client";
 
+import React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useState } from "react";
 import { BookDemoLink } from "@/components/BookDemoLink";
 import { BofLogo } from "@/components/BofLogo";
 import { getSectorLinks } from "@/lib/site-links";
@@ -15,6 +17,99 @@ const productNav = [
   { href: "/safety", label: "Safety" },
   { href: "/dispatch", label: "Dispatch" },
 ];
+
+const portalsNav = [
+  {
+    href: "/portals/manager",
+    label: "Owner Portal",
+    description: "Executive visibility, operations control, settlements, compliance, and accountability."
+  },
+  {
+    href: "/portals/customer",
+    label: "Customer Portal", 
+    description: "Shipment visibility, proof of delivery, load documents, and service accountability."
+  },
+  {
+    href: "/portals/driver",
+    label: "Driver Portal",
+    description: "Assignments, documents, settlement visibility, and readiness."
+  }
+];
+
+function PortalsDropdown() {
+  const [isOpen, setIsOpen] = useState(false);
+  const pathname = usePathname();
+  const isPortalsActive = pathname.startsWith('/portals');
+  const dropdownRef = React.useRef<HTMLDivElement>(null);
+
+  React.useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setIsOpen(false);
+      }
+    }
+
+    function handleEscape(event: KeyboardEvent) {
+      if (event.key === 'Escape') {
+        setIsOpen(false);
+      }
+    }
+
+    if (isOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+      document.addEventListener('keydown', handleEscape);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('keydown', handleEscape);
+    };
+  }, [isOpen]);
+
+  return (
+    <div className="relative" ref={dropdownRef}>
+      <button
+        onClick={() => setIsOpen(!isOpen)}
+        className={[
+          "rounded-lg border px-4 py-2 font-medium transition-all duration-200 flex items-center gap-2",
+          isPortalsActive
+            ? "border-teal-600/50 bg-teal-900/40 text-teal-50 shadow-sm"
+            : "border-transparent bg-transparent text-slate-300 hover:border-slate-600 hover:bg-slate-800/50 hover:text-white hover:shadow-sm"
+        ].join(" ")}
+        aria-expanded={isOpen}
+        aria-haspopup="true"
+      >
+        Portals
+        <svg
+          className={`w-4 h-4 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`}
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+        </svg>
+      </button>
+
+      {isOpen && (
+        <div className="absolute top-full left-0 mt-1 w-80 bg-slate-900 border border-slate-700 rounded-lg shadow-lg z-50">
+          <div className="py-2">
+            {portalsNav.map((portal) => (
+              <Link
+                key={portal.href}
+                href={portal.href}
+                className="block px-4 py-3 hover:bg-slate-800 transition-colors duration-200"
+                onClick={() => setIsOpen(false)}
+              >
+                <div className="font-medium text-white mb-1">{portal.label}</div>
+                <div className="text-sm text-slate-400 leading-relaxed">{portal.description}</div>
+              </Link>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
 
 export function BofHeader() {
   const pathname = usePathname();
@@ -60,6 +155,7 @@ export function BofHeader() {
                 </Link>
               );
             })}
+            <PortalsDropdown />
           </nav>
         </div>
       </header>
