@@ -85,119 +85,136 @@ function EmmaBrownHeroCard({ data }: { data: BofData }) {
   const settlement = getDriverSettlementSummary('DRV-009', data);
   
   const missingAcks = acknowledgments.filter(ack => ack.status === 'missing').length;
-  const statusColor = readinessSummary.status === 'ready' ? '#0BA5A4' : 
-                      readinessSummary.status === 'needs_review' ? '#F59E0B' : '#EF4444';
   
   return (
     <div className="bof-emma-hero-card" style={{
-      background: 'white',
-      border: '1px solid #e2e8f0',
+      position: 'relative',
       borderRadius: '12px',
-      padding: '1.5rem',
-      boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)',
+      overflow: 'hidden',
+      height: '280px',
+      boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
       display: 'flex',
       flexDirection: 'column',
-      gap: '1rem'
+      justifyContent: 'flex-end'
     }}>
-      <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-        <Image 
-          src="/images/drivers-emma-brown-hero.png" 
-          alt="Emma Brown" 
-          width={80}
-          height={80}
-          style={{ 
-            borderRadius: '50%', 
-            objectFit: 'cover',
-            border: '3px solid #0BA5A4'
-          }}
-          onError={(e) => {
-            const target = e.target as HTMLImageElement;
-            target.src = driverPhotoPath('DRV-009');
-          }}
-        />
-        <div>
-          <h3 style={{ margin: 0, fontSize: '1.25rem', fontWeight: '600', color: '#1a202c' }}>
+      {/* Hero Background Image */}
+      <div style={{
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        background: 'linear-gradient(135deg, rgba(11, 165, 164, 0.9) 0%, rgba(11, 165, 164, 0.7) 50%, rgba(11, 165, 164, 0.5) 100%)',
+        zIndex: 1
+      }} />
+      <Image 
+        src="/images/drivers-emma-brown-hero.png" 
+        alt="Emma Brown" 
+        fill
+        style={{ 
+          objectFit: 'cover',
+          objectPosition: 'top center',
+          zIndex: 0
+        }}
+        onError={(e) => {
+          const target = e.target as HTMLImageElement;
+          target.src = driverPhotoPath('DRV-009');
+        }}
+      />
+      
+      {/* Content Overlay */}
+      <div style={{
+        position: 'relative',
+        zIndex: 2,
+        padding: '2rem',
+        color: 'white',
+        background: 'linear-gradient(to top, rgba(0, 0, 0, 0.8) 0%, rgba(0, 0, 0, 0.4) 50%, transparent 100%)'
+      }}>
+        <div style={{ marginBottom: '1rem' }}>
+          <h3 style={{ margin: 0, fontSize: '1.5rem', fontWeight: '700', color: 'white', lineHeight: '1.2' }}>
             Emma Brown
           </h3>
-          <p style={{ margin: '0.25rem 0', fontSize: '0.875rem', color: '#64748b' }}>
+          <p style={{ margin: '0.25rem 0', fontSize: '1rem', color: 'rgba(255, 255, 255, 0.9)' }}>
             DRV-009 • {workerType}
           </p>
           <div style={{
             display: 'inline-block',
-            padding: '0.25rem 0.75rem',
-            backgroundColor: statusColor,
+            padding: '0.375rem 1rem',
+            backgroundColor: 'rgba(255, 255, 255, 0.2)',
             color: 'white',
             borderRadius: '9999px',
-            fontSize: '0.75rem',
-            fontWeight: '500',
-            textTransform: 'uppercase'
+            fontSize: '0.875rem',
+            fontWeight: '600',
+            textTransform: 'uppercase',
+            backdropFilter: 'blur(10px)',
+            border: '1px solid rgba(255, 255, 255, 0.3)'
           }}>
             {readinessSummary.status}
           </div>
         </div>
-      </div>
-      
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem', fontSize: '0.875rem' }}>
-        <div>
-          <span style={{ color: '#64748b', fontWeight: '500' }}>Documents:</span>
-          <span style={{ marginLeft: '0.5rem', color: '#1a202c' }}>
-            {readinessSummary.status === 'ready' ? 'Complete' : 'Action Needed'}
-          </span>
+        
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', fontSize: '0.875rem', marginBottom: '1.5rem' }}>
+          <div>
+            <span style={{ color: 'rgba(255, 255, 255, 0.8)', fontWeight: '500' }}>Documents:</span>
+            <span style={{ marginLeft: '0.5rem', color: 'white', fontWeight: '600' }}>
+              {readinessSummary.status === 'ready' ? 'Complete' : 'Action Needed'}
+            </span>
+          </div>
+          <div>
+            <span style={{ color: 'rgba(255, 255, 255, 0.8)', fontWeight: '500' }}>Acknowledgments:</span>
+            <span style={{ marginLeft: '0.5rem', color: missingAcks > 0 ? '#FCA5A5' : 'white', fontWeight: '600' }}>
+              {missingAcks > 0 ? `${missingAcks} missing` : 'Complete'}
+            </span>
+          </div>
+          <div>
+            <span style={{ color: 'rgba(255, 255, 255, 0.8)', fontWeight: '500' }}>Settlement:</span>
+            <span style={{ marginLeft: '0.5rem', color: 'white', fontWeight: '600' }}>
+              {settlement.status}
+            </span>
+          </div>
+          <div>
+            <span style={{ color: 'rgba(255, 255, 255, 0.8)', fontWeight: '500' }}>Dispatch:</span>
+            <span style={{ marginLeft: '0.5rem', color: readinessSummary.status === 'ready' ? 'white' : '#FCA5A5', fontWeight: '600' }}>
+              {readinessSummary.status === 'ready' ? 'Eligible' : 'Not Eligible'}
+            </span>
+          </div>
         </div>
-        <div>
-          <span style={{ color: '#64748b', fontWeight: '500' }}>Acknowledgments:</span>
-          <span style={{ marginLeft: '0.5rem', color: missingAcks > 0 ? '#EF4444' : '#1a202c' }}>
-            {missingAcks > 0 ? `${missingAcks} missing` : 'Complete'}
-          </span>
-        </div>
-        <div>
-          <span style={{ color: '#64748b', fontWeight: '500' }}>Settlement:</span>
-          <span style={{ marginLeft: '0.5rem', color: '#1a202c' }}>
-            {settlement.status}
-          </span>
-        </div>
-        <div>
-          <span style={{ color: '#64748b', fontWeight: '500' }}>Dispatch:</span>
-          <span style={{ marginLeft: '0.5rem', color: '#1a202c' }}>
-            {readinessSummary.status === 'ready' ? 'Eligible' : 'Not Eligible'}
-          </span>
-        </div>
-      </div>
-      
-      <div style={{ display: 'flex', gap: '0.5rem', marginTop: '0.5rem' }}>
-        <Link 
-          href="/drivers/DRV-009" 
-          style={{
-            flex: 1,
-            padding: '0.5rem 1rem',
-            backgroundColor: '#0BA5A4',
-            color: 'white',
-            textDecoration: 'none',
-            borderRadius: '6px',
-            textAlign: 'center',
-            fontSize: '0.875rem',
-            fontWeight: '500'
-          }}
-        >
-          View Driver
-        </Link>
-        <Link 
-          href="/portals/driver/DRV-009" 
-          style={{
-            flex: 1,
-            padding: '0.5rem 1rem',
-            backgroundColor: '#f8fafc',
+        
+        <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
+          <Link href="/drivers/DRV-009" style={{
+            padding: '0.625rem 1.25rem',
+            backgroundColor: 'rgba(255, 255, 255, 0.95)',
             color: '#0BA5A4',
-            border: '1px solid #0BA5A4',
             textDecoration: 'none',
-            borderRadius: '6px',
-            textAlign: 'center',
+            borderRadius: '8px',
             fontSize: '0.875rem',
-            fontWeight: '500'
-          }}
-        >
-          Open Driver Portal
-        </Link>
+            fontWeight: '600',
+            display: 'inline-flex',
+            alignItems: 'center',
+            transition: 'all 0.2s ease',
+            backdropFilter: 'blur(10px)'
+          }}>
+            View Driver
+          </Link>
+          {readinessSummary.status !== 'ready' && (
+            <Link href="/drivers/DRV-009/vault" style={{
+              padding: '0.625rem 1.25rem',
+              backgroundColor: 'rgba(255, 255, 255, 0.2)',
+              color: 'white',
+              border: '1px solid rgba(255, 255, 255, 0.4)',
+              textDecoration: 'none',
+              borderRadius: '8px',
+              fontSize: '0.875rem',
+              fontWeight: '600',
+              display: 'inline-flex',
+              alignItems: 'center',
+              transition: 'all 0.2s ease',
+              backdropFilter: 'blur(10px)'
+            }}>
+              Fix Issues
+            </Link>
+          )}
+        </div>
       </div>
     </div>
   );
@@ -467,14 +484,104 @@ export function DriversRosterTable() {
 
                 {/* Primary Issue - Visible without clicking */}
                 {row.readinessSummary && row.readinessSummary.status !== 'ready' && (
-                  <div className="bof-driver-card-issue">
-                    <div className="bof-driver-card-issue-header">
-                      <span className="bof-driver-card-issue-label">{row.readinessSummary.status === 'blocked' ? 'Blocked' : 'Needs Review'}</span>
+                  <div className="bof-driver-card-issue" style={{
+                    background: row.readinessSummary.status === 'blocked' ? '#FEF2F2' : '#FFFBEB',
+                    border: `1px solid ${row.readinessSummary.status === 'blocked' ? '#FCA5A5' : '#FCD34D'}`,
+                    borderRadius: '8px',
+                    padding: '1rem',
+                    marginBottom: '1rem'
+                  }}>
+                    <div className="bof-driver-card-issue-header" style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '0.5rem',
+                      marginBottom: '0.5rem'
+                    }}>
+                      <span className="bof-driver-card-issue-label" style={{
+                        background: row.readinessSummary.status === 'blocked' ? '#DC2626' : '#D97706',
+                        color: 'white',
+                        padding: '0.25rem 0.75rem',
+                        borderRadius: '9999px',
+                        fontSize: '0.75rem',
+                        fontWeight: '600',
+                        textTransform: 'uppercase'
+                      }}>
+                        {row.readinessSummary.status === 'blocked' ? 'Blocked' : 'Needs Review'}
+                      </span>
+                      <span style={{
+                        fontSize: '0.875rem',
+                        fontWeight: '600',
+                        color: row.readinessSummary.status === 'blocked' ? '#DC2626' : '#D97706'
+                      }}>
+                        Dispatch: {row.readinessSummary.status === 'blocked' ? 'Not Eligible' : 'Review Required'}
+                      </span>
                     </div>
-                    <p className="bof-driver-card-issue-text">{row.readinessSummary.primaryReason}</p>
-                    {row.readinessSummary.dueDate && (
-                      <p className="bof-driver-card-issue-due">Due: {row.readinessSummary.dueDate}</p>
+                    <p className="bof-driver-card-issue-text" style={{
+                      margin: '0 0 0.5rem 0',
+                      fontSize: '0.875rem',
+                      fontWeight: '500',
+                      color: '#374151',
+                      lineHeight: '1.4'
+                    }}>
+                      {row.readinessSummary.primaryReason}
+                    </p>
+                    {row.readinessSummary.businessImpact && (
+                      <p style={{
+                        margin: '0 0 0.5rem 0',
+                        fontSize: '0.75rem',
+                        color: '#6B7280',
+                        fontStyle: 'italic'
+                      }}>
+                        Impact: {row.readinessSummary.businessImpact}
+                      </p>
                     )}
+                    {row.readinessSummary.dueDate && (
+                      <p className="bof-driver-card-issue-due" style={{
+                        margin: '0 0 0.75rem 0',
+                        fontSize: '0.75rem',
+                        fontWeight: '600',
+                        color: row.readinessSummary.status === 'blocked' ? '#DC2626' : '#D97706'
+                      }}>
+                        Due: {row.readinessSummary.dueDate}
+                      </p>
+                    )}
+                    <div style={{
+                      display: 'flex',
+                      gap: '0.5rem',
+                      alignItems: 'center'
+                    }}>
+                      {row.readinessSummary.fixAction?.href && (
+                        <Link href={row.readinessSummary.fixAction.href} style={{
+                          padding: '0.375rem 0.75rem',
+                          backgroundColor: row.readinessSummary.status === 'blocked' ? '#DC2626' : '#D97706',
+                          color: 'white',
+                          textDecoration: 'none',
+                          borderRadius: '6px',
+                          fontSize: '0.75rem',
+                          fontWeight: '500',
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          transition: 'all 0.2s ease'
+                        }}>
+                          {row.readinessSummary.fixAction.label}
+                        </Link>
+                      )}
+                      <Link href={`/drivers/${row.driverId}/vault`} style={{
+                        padding: '0.375rem 0.75rem',
+                        backgroundColor: 'white',
+                        color: row.readinessSummary.status === 'blocked' ? '#DC2626' : '#D97706',
+                        border: `1px solid ${row.readinessSummary.status === 'blocked' ? '#DC2626' : '#D97706'}`,
+                        textDecoration: 'none',
+                        borderRadius: '6px',
+                        fontSize: '0.75rem',
+                        fontWeight: '500',
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        transition: 'all 0.2s ease'
+                      }}>
+                        Review Driver File
+                      </Link>
+                    </div>
                   </div>
                 )}
 

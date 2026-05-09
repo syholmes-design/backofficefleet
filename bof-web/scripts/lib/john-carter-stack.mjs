@@ -73,10 +73,30 @@ function cdlNumberFor(driverId, ex, driver) {
 }
 
 function patchCoreSevenForDriver(documents, driverId, ex, driver) {
-  const medExp = ex.medicalExpirationDate || "2026-09-07";
-  const medIssue = ex.medicalIssueDate || "2024-03-13";
+  // Medical card expiration fallback logic:
+  // - Main-source Excel may not provide medical-card expiration dates for all drivers
+  // - Use deterministic demo fallback dates by driver ID to prevent blanket expiration bug
+  // - This prevents all drivers from inheriting the same stale template expiration date
+  // - Source-provided medical-card dates still take priority when present
+  const existingMedicalDoc = documents.find(d => d.driverId === driverId && d.type === "Medical Card");
+  let medExp, medIssue;
+  
+  if (existingMedicalDoc && existingMedicalDoc.expirationDate) {
+    // Use main-source Excel data when available
+    medExp = existingMedicalDoc.expirationDate;
+    medIssue = existingMedicalDoc.issueDate || "2024-03-13";
+  } else {
+    // Create varied medical card expiration dates as deterministic fallback
+    const driverNum = parseInt(String(driverId).replace(/\D/g, ""), 10) || 1;
+    const baseYear = 2026;
+    const baseMonth = 4 + (driverNum % 6); // Vary months 4-9
+    const baseDay = 15 + (driverNum % 10); // Vary days 15-24
+    medExp = `${baseYear}-${String(baseMonth).padStart(2, "0")}-${String(baseDay).padStart(2, "0")}`;
+    medIssue = "2024-03-13";
+  }
+  
   const genericExp = "2026-12-31";
-  const cdlNum = cdlNumberFor(driverId, ex, driver);
+  const cdlNum = driver?.referenceCdlNumber || placeholderCdlNumber(driverId);
 
   const patchByType = {
     CDL: {
