@@ -1,9 +1,8 @@
 "use client";
 
-import React from "react";
+import React, { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState } from "react";
 import { BookDemoLink } from "@/components/BookDemoLink";
 import { BofLogo } from "@/components/BofLogo";
 import { getSectorLinks } from "@/lib/site-links";
@@ -40,9 +39,9 @@ function PortalsDropdown() {
   const [isOpen, setIsOpen] = useState(false);
   const pathname = usePathname();
   const isPortalsActive = pathname.startsWith('/portals');
-  const dropdownRef = React.useRef<HTMLDivElement>(null);
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
-  React.useEffect(() => {
+  useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
         setIsOpen(false);
