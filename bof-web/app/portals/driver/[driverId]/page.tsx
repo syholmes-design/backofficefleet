@@ -5,6 +5,7 @@ import {
   getSettlementTermsLabel,
   getSettlementMethodBadge
 } from '@/lib/driver-pay-settlement-methods';
+import { getDriverDocumentByType } from '@/lib/driver-doc-registry';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 
@@ -99,22 +100,43 @@ export default async function DriverPortalDetailPage({ params }: PageProps) {
             </h2>
             
             <div className="space-y-3">
-              {driverDocuments.slice(0, 6).map((doc) => (
-                <div key={doc.driverId + doc.type} className="flex items-center justify-between p-3 bg-gray-50 rounded border border-gray-200">
-                  <div>
-                    <div className="font-medium text-gray-900">{doc.type}</div>
-                    <div className="text-sm text-gray-600">
-                          Status: <span className={`font-medium ${
-                            doc.status === 'Valid' ? 'text-green-600' : 
-                            doc.status === 'Expiring Soon' ? 'text-yellow-600' : 'text-red-600'
-                          }`}>{doc.status}</span>
+              {driverDocuments.slice(0, 6).map((doc) => {
+                const docUrl = getDriverDocumentByType(driverId, doc.type);
+                return (
+                  <div key={doc.driverId + doc.type} className="flex items-center justify-between p-3 bg-gray-50 rounded border border-gray-200">
+                    <div className="flex-1">
+                      <div className="font-medium text-slate-900">{doc.type}</div>
+                      <div className="text-sm text-slate-600">
+                            Status: <span className={`font-medium ${
+                              doc.status === 'Valid' ? 'text-emerald-700' : 
+                              doc.status === 'Expiring Soon' ? 'text-amber-700' : 'text-red-700'
+                            }`}>{doc.status}</span>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <div className="text-sm text-slate-500">
+                            {doc.expirationDate && `Expires: ${doc.expirationDate}`}
+                      </div>
+                      {docUrl ? (
+                        <Link
+                          href={docUrl}
+                          target="_blank"
+                          className="inline-flex items-center px-3 py-1 text-sm font-medium text-teal-700 bg-teal-50 rounded hover:bg-teal-100 transition-colors"
+                        >
+                          <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                          </svg>
+                          Open
+                        </Link>
+                      ) : (
+                        <span className="inline-flex items-center px-3 py-1 text-sm font-medium text-slate-500 bg-slate-100 rounded">
+                          Pending
+                        </span>
+                      )}
                     </div>
                   </div>
-                  <div className="text-sm text-gray-500">
-                        {doc.expirationDate && `Expires: ${doc.expirationDate}`}
-                  </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </div>
 
@@ -169,68 +191,96 @@ export default async function DriverPortalDetailPage({ params }: PageProps) {
             
             {currentLoad ? (
               <div className="space-y-2">
-                    <div className="flex items-center p-3 bg-gray-50 rounded border border-gray-200">
-                          <input type="checkbox" className="mr-3" readOnly checked={currentLoad.podStatus === 'verified'} />
-                          <div>
-                                <div className="font-medium">Bill of Lading (BOL)</div>
-                                <div className="text-sm text-gray-600">
-                                      {currentLoad.podStatus === 'verified' ? 'Verified' : 'Required'}
+                    <div className="flex items-center justify-between p-3 bg-gray-50 rounded border border-gray-200">
+                          <div className="flex items-center">
+                                <input type="checkbox" className="mr-3" readOnly checked={currentLoad.podStatus === 'verified'} />
+                                <div>
+                                      <div className="font-medium text-slate-900">Bill of Lading (BOL)</div>
+                                      <div className="text-sm text-slate-600">
+                                            {currentLoad.podStatus === 'verified' ? 'Verified' : 'Required'}
+                                      </div>
                                 </div>
                           </div>
+                          {currentLoad.podStatus === 'verified' && (
+                            <Link
+                              href={`/generated/loads/${currentLoad.id}/bol.html`}
+                              target="_blank"
+                              className="inline-flex items-center px-3 py-1 text-sm font-medium text-teal-700 bg-teal-50 rounded hover:bg-teal-100 transition-colors"
+                            >
+                              <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                              </svg>
+                              View
+                            </Link>
+                          )}
                     </div>
                     
-                    <div className="flex items-center p-3 bg-gray-50 rounded border border-gray-200">
-                          <input type="checkbox" className="mr-3" readOnly checked={currentLoad.podStatus === 'verified'} />
-                          <div>
-                                <div className="font-medium">Signed BOL / POD</div>
-                                <div className="text-sm text-gray-600">
-                                      {currentLoad.podStatus === 'verified' ? 'Verified' : 'Required'}
+                    <div className="flex items-center justify-between p-3 bg-gray-50 rounded border border-gray-200">
+                          <div className="flex items-center">
+                                <input type="checkbox" className="mr-3" readOnly checked={currentLoad.podStatus === 'verified'} />
+                                <div>
+                                      <div className="font-medium text-slate-900">Signed BOL / POD</div>
+                                      <div className="text-sm text-slate-600">
+                                            {currentLoad.podStatus === 'verified' ? 'Verified' : 'Required'}
+                                      </div>
                                 </div>
                           </div>
+                          {currentLoad.podStatus === 'verified' && (
+                            <Link
+                              href={`/generated/loads/${currentLoad.id}/pod.html`}
+                              target="_blank"
+                              className="inline-flex items-center px-3 py-1 text-sm font-medium text-teal-700 bg-teal-50 rounded hover:bg-teal-100 transition-colors"
+                            >
+                              <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                              </svg>
+                              View
+                            </Link>
+                          )}
                     </div>
                     
                     <div className="flex items-center p-3 bg-gray-50 rounded border border-gray-200">
                           <input type="checkbox" className="mr-3" readOnly />
                           <div>
-                                <div className="font-medium">Delivery Photo</div>
-                                <div className="text-sm text-gray-600">Required</div>
+                                <div className="font-medium text-slate-900">Delivery Photo</div>
+                                <div className="text-sm text-slate-600">Required</div>
                           </div>
                     </div>
                     
                     <div className="flex items-center p-3 bg-gray-50 rounded border border-gray-200">
                           <input type="checkbox" className="mr-3" readOnly />
                           <div>
-                                <div className="font-medium">Seal Photo</div>
-                                <div className="text-sm text-gray-600">Required if applicable</div>
+                                <div className="font-medium text-slate-900">Seal Photo</div>
+                                <div className="text-sm text-slate-600">Required if applicable</div>
                           </div>
                     </div>
                     
                     <div className="flex items-center p-3 bg-gray-50 rounded border border-gray-200">
                           <input type="checkbox" className="mr-3" readOnly />
                           <div>
-                                <div className="font-medium">Cargo Photo</div>
-                                <div className="text-sm text-gray-600">Required if applicable</div>
+                                <div className="font-medium text-slate-900">Cargo Photo</div>
+                                <div className="text-sm text-slate-600">Required if applicable</div>
                           </div>
                     </div>
                     
                     <div className="flex items-center p-3 bg-gray-50 rounded border border-gray-200">
                           <input type="checkbox" className="mr-3" readOnly />
                           <div>
-                                <div className="font-medium">Lumper Receipt</div>
-                                <div className="text-sm text-gray-600">Required if applicable</div>
+                                <div className="font-medium text-slate-900">Lumper Receipt</div>
+                                <div className="text-sm text-slate-600">Required if applicable</div>
                           </div>
                     </div>
                     
                     <div className="flex items-center p-3 bg-gray-50 rounded border border-gray-200">
                           <input type="checkbox" className="mr-3" readOnly />
                           <div>
-                                <div className="font-medium">Damage/Claim Photos</div>
-                                <div className="text-sm text-gray-600">Required if applicable</div>
+                                <div className="font-medium text-slate-900">Damage/Claim Photos</div>
+                                <div className="text-sm text-slate-600">Required if applicable</div>
                           </div>
                     </div>
               </div>
             ) : (
-              <div className="text-center text-gray-500 py-8">
+              <div className="text-center text-slate-500 py-8">
                     No active load requiring proof
               </div>
             )}
@@ -291,38 +341,88 @@ export default async function DriverPortalDetailPage({ params }: PageProps) {
             </h2>
             
             <div className="space-y-2">
-              <div className="flex items-center p-3 bg-gray-50 rounded border border-gray-200">
-                    <input type="checkbox" className="mr-3" readOnly checked />
-                    <div>
-                          <div className="font-medium">Employee Handbook / Code of Conduct</div>
-                          <div className="text-sm text-gray-600">
-                                {driverProfile.workerType === 'Employee Driver' ? 'Acknowledged' : 'Not applicable'}
+              <div className="flex items-center justify-between p-3 bg-gray-50 rounded border border-gray-200">
+                    <div className="flex items-center">
+                          <input type="checkbox" className="mr-3" readOnly checked />
+                          <div>
+                                <div className="font-medium text-slate-900">Employee Handbook / Code of Conduct</div>
+                                <div className="text-sm text-slate-600">
+                                      {driverProfile.workerType === 'Employee Driver' ? 'Acknowledged' : 'Not applicable'}
+                                </div>
                           </div>
                     </div>
+                    {driverProfile.workerType === 'Employee Driver' && (
+                      <Link
+                        href={`/generated/drivers/${driverId}/hr-payroll/employee-handbook-acknowledgment.html`}
+                        target="_blank"
+                        className="inline-flex items-center px-3 py-1 text-sm font-medium text-teal-700 bg-teal-50 rounded hover:bg-teal-100 transition-colors"
+                      >
+                        <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                        </svg>
+                        View
+                      </Link>
+                    )}
               </div>
               
-              <div className="flex items-center p-3 bg-gray-50 rounded border border-gray-200">
-                    <input type="checkbox" className="mr-3" readOnly checked />
-                    <div>
-                          <div className="font-medium">Acceptable Use Policy</div>
-                          <div className="text-sm text-green-600">Acknowledged</div>
+              <div className="flex items-center justify-between p-3 bg-gray-50 rounded border border-gray-200">
+                    <div className="flex items-center">
+                          <input type="checkbox" className="mr-3" readOnly checked />
+                          <div>
+                                <div className="font-medium text-slate-900">Acceptable Use Policy</div>
+                                <div className="text-sm text-emerald-700">Acknowledged</div>
+                          </div>
                     </div>
+                    <Link
+                      href={`/generated/company-operations-vault/12-acceptable-use-of-company-systems-policy.html`}
+                      target="_blank"
+                      className="inline-flex items-center px-3 py-1 text-sm font-medium text-teal-700 bg-teal-50 rounded hover:bg-teal-100 transition-colors"
+                    >
+                      <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                      </svg>
+                      View
+                    </Link>
               </div>
               
-              <div className="flex items-center p-3 bg-gray-50 rounded border border-gray-200">
-                    <input type="checkbox" className="mr-3" readOnly checked />
-                    <div>
-                          <div className="font-medium">Safety and Compliance Policy</div>
-                          <div className="text-sm text-green-600">Acknowledged</div>
+              <div className="flex items-center justify-between p-3 bg-gray-50 rounded border border-gray-200">
+                    <div className="flex items-center">
+                          <input type="checkbox" className="mr-3" readOnly checked />
+                          <div>
+                                <div className="font-medium text-slate-900">Safety and Compliance Policy</div>
+                                <div className="text-sm text-emerald-700">Acknowledged</div>
+                          </div>
                     </div>
+                    <Link
+                      href={`/generated/company-operations-vault/10-safety-compliance-governance-policy.html`}
+                      target="_blank"
+                      className="inline-flex items-center px-3 py-1 text-sm font-medium text-teal-700 bg-teal-50 rounded hover:bg-teal-100 transition-colors"
+                    >
+                      <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                      </svg>
+                      View
+                    </Link>
               </div>
               
-              <div className="flex items-center p-3 bg-gray-50 rounded border border-gray-200">
-                    <input type="checkbox" className="mr-3" readOnly checked />
-                    <div>
-                          <div className="font-medium">AI Use and Automation Governance Policy</div>
-                          <div className="text-sm text-green-600">Acknowledged</div>
+              <div className="flex items-center justify-between p-3 bg-gray-50 rounded border border-gray-200">
+                    <div className="flex items-center">
+                          <input type="checkbox" className="mr-3" readOnly checked />
+                          <div>
+                                <div className="font-medium text-slate-900">AI Use and Automation Governance Policy</div>
+                                <div className="text-sm text-emerald-700">Acknowledged</div>
+                          </div>
                     </div>
+                    <Link
+                      href={`/generated/company-operations-vault/17-ai-use-and-automation-governance-policy.html`}
+                      target="_blank"
+                      className="inline-flex items-center px-3 py-1 text-sm font-medium text-teal-700 bg-teal-50 rounded hover:bg-teal-100 transition-colors"
+                    >
+                      <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                      </svg>
+                      View
+                    </Link>
               </div>
             </div>
           </div>
@@ -345,28 +445,29 @@ export default async function DriverPortalDetailPage({ params }: PageProps) {
               
               <div className="grid grid-cols-1 gap-2">
                     {[
-                      'Independent Contractor Agreement',
-                      'Owner-Operator Lease Agreement',
-                      'Certificate of Insurance Verification',
-                      'Occupational Accident Coverage Acknowledgment',
-                      'Equipment Schedule',
-                      'Maintenance Responsibility Acknowledgment',
-                      'Fuel/Toll/Advance/Chargeback Policy Acknowledgment',
-                      'Settlement/Payment Authorization',
-                      'Safety and Compliance Acknowledgment',
-                      'Worker Classification Review Summary'
-                    ].map((docName) => (
+                      { name: 'Independent Contractor Agreement', path: 'independent-contractor-agreement' },
+                      { name: 'Owner-Operator Lease Agreement', path: 'owner-operator-lease-agreement' },
+                      { name: 'Certificate of Insurance Verification', path: 'certificate-of-insurance-verification' },
+                      { name: 'Occupational Accident Coverage Acknowledgment', path: 'occupational-accident-coverage-acknowledgment' },
+                      { name: 'Equipment Schedule', path: 'equipment-schedule' },
+                      { name: 'Maintenance Responsibility Acknowledgment', path: 'maintenance-responsibility-acknowledgment' },
+                      { name: 'Fuel/Toll/Advance/Chargeback Policy Acknowledgment', path: 'fuel-toll-advance-chargeback-policy-acknowledgment' },
+                      { name: 'Settlement/Payment Authorization', path: 'settlement-payment-authorization' },
+                      { name: 'Safety and Compliance Acknowledgment', path: 'safety-and-compliance-acknowledgment' },
+                      { name: 'Worker Classification Review Summary', path: 'worker-classification-review-summary' }
+                    ].map((doc) => (
                       <Link
-                        key={docName}
-                        href={`/generated/drivers/${driverId}/owner-operator/${docName.toLowerCase().replace(/\s+/g, '-').replace(/\//g, '-').replace(/[^a-z0-9-]/g, '')}.html`}
+                        key={doc.name}
+                        href={`/generated/drivers/${driverId}/owner-operator/${doc.path}.html`}
+                        target="_blank"
                         className="flex items-center p-3 bg-gray-50 rounded border border-gray-200 hover:bg-gray-100 transition-colors"
                       >
                             <svg className="w-4 h-4 mr-2 text-teal-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 00-2-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01-.707-.293H9z" />
                             </svg>
                             <div className="flex-1">
-                                  <div className="font-medium text-gray-900">{docName}</div>
-                                  <div className="text-sm text-gray-600">View document</div>
+                                  <div className="font-medium text-slate-900">{doc.name}</div>
+                                  <div className="text-sm text-slate-600">View document</div>
                             </div>
                       </Link>
                     ))}
