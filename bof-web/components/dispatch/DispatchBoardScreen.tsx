@@ -11,7 +11,6 @@ import { getMockBackhaulOpportunities } from "@/lib/backhaul-opportunity-engine"
 import { useBofDemoData } from "@/lib/bof-demo-data-context";
 import { getLoadRiskExplanation } from "@/lib/load-risk-explanation";
 import { getDispatchCommandSummary } from "@/lib/dispatch/dispatch-command-metrics";
-import { DispatchAttentionQueue } from "@/components/dispatch/DispatchAttentionQueue";
 import { LoadReviewDrawer } from "@/components/review/LoadReviewDrawer";
 import {
   formatMoney,
@@ -21,6 +20,124 @@ import {
   sealChipClass,
 } from "./dispatch-ui";
 import { DispatchRouteMapClient } from "./DispatchRouteMapClient";
+
+function DispatchCommandBoardTable({ 
+  loads, 
+  onSelectLoad, 
+  selectedLoadId 
+}: { 
+  loads: Load[]; 
+  onSelectLoad: (loadId: string) => void; 
+  selectedLoadId: string | null;
+}) {
+  const { data, demoRiskOverrides } = useBofDemoData();
+  const drivers = useDispatchDashboardStore((s) => s.drivers);
+  
+  return (
+    <section className="rounded-lg border border-slate-800 bg-slate-900/30 p-4">
+      <div className="mb-3 flex items-center justify-between">
+        <h2 className="text-sm font-semibold text-slate-100">Command Board - Exception Elimination</h2>
+        <p className="text-xs text-slate-400">Click any row to open load details and resolve exceptions</p>
+      </div>
+      <div className="overflow-x-auto rounded-lg border border-slate-800">
+        <table className="min-w-[1200px] w-full border-collapse text-left text-sm">
+          <thead className="sticky top-0 z-10 bg-slate-900/95 text-xs uppercase tracking-wide text-slate-500">
+            <tr>
+              <th className="border-b border-slate-800 px-3 py-2 font-medium">Load</th>
+              <th className="border-b border-slate-800 px-3 py-2 font-medium">Route / Customer</th>
+              <th className="border-b border-slate-800 px-3 py-2 font-medium">Status</th>
+              <th className="border-b border-slate-800 px-3 py-2 font-medium">Driver / Equipment</th>
+              <th className="border-b border-slate-800 px-3 py-2 font-medium">Dispatch Readiness</th>
+              <th className="border-b border-slate-800 px-3 py-2 font-medium">Proof Status</th>
+              <th className="border-b border-slate-800 px-3 py-2 font-medium">Risk / Exception</th>
+              <th className="border-b border-slate-800 px-3 py-2 font-medium">Financial Impact</th>
+              <th className="border-b border-slate-800 px-3 py-2 font-medium">Next Action</th>
+            </tr>
+          </thead>
+          <tbody className="text-slate-200">
+            {loads.map((l) => {
+              const risk = getLoadRiskExplanation(data, l.load_id, demoRiskOverrides);
+              const readinessBadge = risk.riskStatus === "clean" ? 
+                { label: "Ready", class: "bg-green-900/30 text-green-300 ring-1 ring-green-700/50" } :
+                risk.riskStatus === "blocked" ?
+                { label: "Blocked", class: "bg-red-900/30 text-red-300 ring-1 ring-red-700/50" } :
+                { label: "Needs Action", class: "bg-amber-900/30 text-amber-300 ring-1 ring-amber-700/50" };
+              
+              const proofBadge = String(l.proof_status) === "verified" ?
+                { label: "Proof OK", class: "bg-green-900/30 text-green-300 ring-1 ring-green-700/50" } :
+                String(l.proof_status) === "pending" ?
+                { label: "Proof Gap", class: "bg-amber-900/30 text-amber-300 ring-1 ring-amber-700/50" } :
+                { label: "Missing", class: "bg-red-900/30 text-red-300 ring-1 ring-red-700/50" };
+
+              
+              return (
+                <tr
+                  key={l.load_id}
+                  className={[
+                    "cursor-pointer border-b border-slate-800/80 hover:bg-slate-900/80",
+                    l.load_id === selectedLoadId ? "bg-slate-900/70 ring-1 ring-teal-700/40" : "",
+                  ].join(" ")}
+                  onClick={() => onSelectLoad(l.load_id)}
+                >
+                  <td className="whitespace-nowrap px-3 py-2 font-mono text-xs text-teal-300">
+                    {l.load_id}
+                  </td>
+                  <td className="max-w-[200px] truncate px-3 py-2 text-xs">
+                    <div className="font-medium">{l.customer_name}</div>
+                    <div className="text-slate-400">{l.origin} → {l.destination}</div>
+                  </td>
+                  <td className="px-3 py-2">
+                    <span className={`inline-flex rounded px-2 py-0.5 text-[11px] font-semibold ${loadStatusChipClass(l.status)}`}>
+                      {l.status}
+                    </span>
+                  </td>
+                  <td className="whitespace-nowrap px-3 py-2 text-xs">
+                    <div className="font-medium">{driverNameById(drivers, l.driver_id)}</div>
+                    <div className="text-slate-400">{l.tractor_id} / {l.trailer_id}</div>
+                  </td>
+                  <td className="px-3 py-2">
+                    <span className={`inline-flex rounded px-2 py-0.5 text-[11px] font-semibold ${readinessBadge.class}`}>
+                      {readinessBadge.label}
+                    </span>
+                  </td>
+                  <td className="px-3 py-2">
+                    <span className={`inline-flex rounded px-2 py-0.5 text-[11px] font-semibold ${proofBadge.class}`}>
+                      {proofBadge.label}
+                    </span>
+                  </td>
+                  <td className="max-w-[300px] truncate px-3 py-2 text-xs">
+                    {risk.riskStatus !== "clean" ? (
+                      <div>
+                        <div className="font-medium text-amber-300">{risk.primaryReasonLabel}</div>
+                        <div className="text-slate-400">Review load details for resolution</div>
+                      </div>
+                    ) : (
+                      <span className="text-green-400">No exceptions</span>
+                    )}
+                  </td>
+                  <td className="px-3 py-2 text-xs">
+                    {l.settlement_hold ? (
+                      <span className="text-red-400">Settlement hold</span>
+                    ) : (
+                      <span className="text-green-400">Clear</span>
+                    )}
+                  </td>
+                  <td className="px-3 py-2 text-xs">
+                    {risk.riskStatus !== "clean" ? (
+                      <span className="text-teal-300">{risk.recommendedNextStep}</span>
+                    ) : (
+                      <span className="text-slate-400">No action needed</span>
+                    )}
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
+    </section>
+  );
+}
 
 function applyBoardFilters(
   loads: Load[],
@@ -114,48 +231,62 @@ export function DispatchBoardScreen() {
       <header className="flex flex-wrap items-start justify-between gap-3">
         <div>
           <h1 className="text-lg font-semibold tracking-tight text-white">
-            Dispatch board
+            Dispatch Command Board
           </h1>
           <p className="mt-1 max-w-3xl text-sm text-slate-400">
-            Load readiness and assignment — canonical loads merged with driver eligibility. Row opens load detail.
+            Prioritize active loads, dispatch readiness, proof gaps, settlement blockers, and customer-impacting exceptions from one source-of-truth view.
+          </p>
+          <p className="mt-1 max-w-3xl text-xs text-slate-500">
+            The board surfaces only true exceptions — not every load as &quot;at risk.&quot;
           </p>
         </div>
         <Link
           href="/dispatch/intake"
-          className="shrink-0 rounded-md border border-teal-700/60 bg-teal-950/40 px-3 py-2 text-xs font-semibold text-teal-100 hover:bg-teal-900/45"
+          className="shrink-0 rounded-md border border-slate-700/60 bg-slate-950/40 px-3 py-2 text-xs font-semibold text-slate-400 hover:bg-slate-900/45"
         >
-          Start load (intake)
+          Load Intake
         </Link>
       </header>
 
       <section
-        className="grid gap-2 rounded-lg border border-slate-800 bg-slate-900/50 p-3 sm:grid-cols-2 lg:grid-cols-7"
+        className="grid gap-2 rounded-lg border border-slate-800 bg-slate-900/50 p-3 sm:grid-cols-2 lg:grid-cols-8"
         aria-label="Fleet dispatch summary"
       >
         {[
-          { k: "Active loads", v: fleetDispatchSummary.activeLoads },
-          { k: "Loads at risk", v: fleetDispatchSummary.loadsAtRisk },
-          { k: "Blocked driver on load", v: fleetDispatchSummary.loadsWithDispatchBlockedDriver },
-          { k: "Delivered + proof OK", v: fleetDispatchSummary.proofCompleteLoads },
-          { k: "Proof gap (active/delivered)", v: fleetDispatchSummary.missingOrWeakProofLoads },
-          { k: "Settlement / exception holds", v: fleetDispatchSummary.settlementOrClaimHolds },
+          { k: "Loads ready", v: fleetDispatchSummary.activeLoads - fleetDispatchSummary.loadsAtRisk },
+          { k: "Needs action", v: fleetDispatchSummary.loadsAtRisk },
+          { k: "Proof gaps", v: fleetDispatchSummary.missingOrWeakProofLoads },
+          { k: "Dispatch blockers", v: fleetDispatchSummary.loadsWithDispatchBlockedDriver },
+          { k: "Settlement holds", v: fleetDispatchSummary.settlementOrClaimHolds },
+          { k: "Proof complete", v: fleetDispatchSummary.proofCompleteLoads },
         ].map((row) => (
           <div key={row.k} className="rounded border border-slate-800/80 bg-slate-950/40 px-2 py-2">
             <p className="text-[10px] font-semibold uppercase tracking-wide text-slate-500">{row.k}</p>
-            <p className="text-lg font-bold text-teal-200">{row.v}</p>
+            <p className={`text-lg font-bold ${
+              row.k === "Needs action" ? "text-red-400" : 
+              row.k === "Loads ready" ? "text-green-400" : 
+              "text-teal-200"
+            }`}>{row.v}</p>
           </div>
         ))}
-        <div className="flex items-center justify-center rounded border border-teal-900/50 bg-teal-950/20 px-2 py-2 sm:col-span-2 lg:col-span-1">
+        <div className="flex items-center justify-center rounded border border-teal-900/50 bg-teal-950/20 px-2 py-2 sm:col-span-2 lg:col-span-2">
           <Link
             href="/command-center"
             className="text-center text-xs font-semibold text-teal-200 underline-offset-2 hover:underline"
           >
-            Command Center →
+            Full Exception Queue →
           </Link>
         </div>
       </section>
 
-      <DispatchAttentionQueue variant="dark" />
+      <DispatchCommandBoardTable 
+        loads={filtered} 
+        onSelectLoad={(loadId) => {
+          selectLoad(loadId);
+          openLoadDrawer(loadId);
+        }}
+        selectedLoadId={selectedLoadId}
+      />
 
       <section className="rounded-lg border border-slate-800 bg-slate-900/30 p-4">
         <div className="mb-3 flex flex-wrap items-center gap-2 text-slate-300">

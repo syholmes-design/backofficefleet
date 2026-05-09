@@ -14,6 +14,7 @@ const activeStatuses = new Set(["Pending", "En Route", "In Transit", "Assigned",
 
 /**
  * Fleet-wide dispatch / proof posture from canonical `data.loads` + driver eligibility.
+ * Only counts true exceptions that require action, not every active load.
  */
 export function getDispatchCommandSummary(data: BofData): DispatchCommandSummary {
   let activeLoads = 0;
@@ -28,12 +29,17 @@ export function getDispatchCommandSummary(data: BofData): DispatchCommandSummary
       activeLoads += 1;
     }
 
-    const atRisk =
-      Boolean(load.dispatchExceptionFlag) ||
-      String(load.sealStatus ?? "").toUpperCase() !== "OK" ||
-      String(load.podStatus ?? "").toLowerCase() === "pending" ||
-      String(load.podStatus ?? "").toLowerCase() === "missing";
-    if (atRisk) loadsAtRisk += 1;
+    // Only count true exceptions that require action
+    const hasCriticalException = Boolean(load.dispatchExceptionFlag) && 
+      (load.status === "In Transit" || load.status === "En Route" || load.status === "Assigned");
+    const hasSealMismatch = String(load.sealStatus ?? "").toUpperCase() === "MISMATCH" &&
+      (load.status === "Delivered" || load.status === "In Transit");
+    const hasPodIssue = (String(load.podStatus ?? "").toLowerCase() === "pending" ||
+      String(load.podStatus ?? "").toLowerCase() === "missing") &&
+      load.status === "Delivered";
+
+    const hasTrueException = hasCriticalException || hasSealMismatch || hasPodIssue;
+    if (hasTrueException) loadsAtRisk += 1;
 
     if (load.driverId) {
       const m = getDriverTableRowModel(data, load.driverId);
@@ -46,11 +52,9 @@ export function getDispatchCommandSummary(data: BofData): DispatchCommandSummary
       missingOrWeakProofLoads += 1;
     }
 
-    const holdish =
-      String(load.podStatus ?? "").toLowerCase() === "pending" ||
-      Boolean(load.dispatchExceptionFlag) ||
-      String(load.sealStatus ?? "").toUpperCase() === "MISMATCH";
-    if (holdish && activeStatuses.has(load.status)) {
+    // Only count holds for active loads with true exceptions
+    const hasHold = hasCriticalException || hasSealMismatch || hasPodIssue;
+    if (hasHold && activeStatuses.has(load.status)) {
       settlementOrClaimHolds += 1;
     }
   }
