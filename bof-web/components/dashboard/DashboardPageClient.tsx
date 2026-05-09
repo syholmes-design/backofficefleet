@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { useMemo, useState } from "react";
 import { useBofDemoData } from "@/lib/bof-demo-data-context";
 import { formatUsd } from "@/lib/format-money";
@@ -150,161 +151,246 @@ export function DashboardPageClient() {
           zIndex: 1
         }} />
         <div style={{
-          maxWidth: '1200px',
+          maxWidth: '1400px',
           margin: '0 auto',
           position: 'relative',
-          zIndex: 2
+          zIndex: 2,
+          display: 'grid',
+          gridTemplateColumns: '1fr 1fr',
+          gap: '3rem',
+          alignItems: 'center'
         }}>
-          <div style={{ marginBottom: '2rem' }}>
-            <p style={{
-              fontSize: '0.875rem',
-              fontWeight: '600',
-              textTransform: 'uppercase',
-              letterSpacing: '0.05em',
-              color: '#14b8a6',
-              margin: '0 0 1rem 0'
-            }}>
-              BOF Demo Command Center
-            </p>
-            <h1 style={{
-              fontSize: 'clamp(2.5rem, 5vw, 3.5rem)',
-              fontWeight: '700',
-              lineHeight: '1.1',
-              margin: '0 0 1.5rem 0',
-              background: 'linear-gradient(135deg, #ffffff 0%, #94a3b8 100%)',
-              WebkitBackgroundClip: 'text',
-              WebkitTextFillColor: 'transparent',
-              backgroundClip: 'text'
-            }}>
-              See How BOF Takes Over Back-Office Operations
-            </h1>
-            <p style={{
-              fontSize: '1.25rem',
-              lineHeight: '1.6',
-              color: 'rgba(255, 255, 255, 0.9)',
-              margin: '0 0 1.5rem 0',
-              maxWidth: '800px'
-            }}>
-              Dispatch, compliance, documents, HR, payroll, finance, settlements, maintenance, procurement, RFID proof, exception management, and customer visibility in one accountable operating system.
-            </p>
-            <p style={{
-              fontSize: '1rem',
-              lineHeight: '1.5',
-              color: 'rgba(255, 255, 255, 0.7)',
-              margin: '0 0 2.5rem 0',
-              maxWidth: '700px'
-            }}>
-              Built for fleet owners who want world-class service, measurable savings, fewer exceptions, stronger compliance, and better operational control without adding internal headcount.
-            </p>
-          </div>
-
-          <div style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
-            gap: '1.5rem',
-            marginBottom: '2.5rem'
-          }}>
-            {[
-              { title: 'World-Class Service', desc: 'Dedicated back-office operations team' },
-              { title: 'Exception Management', desc: 'Proactive issue resolution and prevention' },
-              { title: 'Savings & Procurement', desc: 'Group buying power and cost optimization' },
-              { title: 'Maintenance Programs', desc: 'Preventive maintenance and fleet readiness' },
-              { title: 'RFID & Proof', desc: 'Automated workflows and customer visibility' }
-            ].map((proof, idx) => (
-              <div key={idx} style={{
-                background: 'rgba(255, 255, 255, 0.05)',
-                border: '1px solid rgba(255, 255, 255, 0.1)',
-                borderRadius: '12px',
-                padding: '1.5rem',
-                backdropFilter: 'blur(10px)'
+          {/* Left side: Text content */}
+          <div>
+            <div style={{ marginBottom: '2rem' }}>
+              <p style={{
+                fontSize: '0.875rem',
+                fontWeight: '600',
+                textTransform: 'uppercase',
+                letterSpacing: '0.05em',
+                color: '#14b8a6',
+                margin: '0 0 1rem 0'
               }}>
-                <h3 style={{
-                  fontSize: '1.125rem',
-                  fontWeight: '600',
-                  color: '#14b8a6',
-                  margin: '0 0 0.5rem 0'
+                BOF Demo Command Center
+              </p>
+              <h1 style={{
+                fontSize: 'clamp(2.5rem, 5vw, 3.5rem)',
+                fontWeight: '700',
+                lineHeight: '1.1',
+                margin: '0 0 1.5rem 0',
+                background: 'linear-gradient(135deg, #ffffff 0%, #94a3b8 100%)',
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
+                backgroundClip: 'text'
+              }}>
+                See How BOF Takes Over Back-Office Operations
+              </h1>
+              <p style={{
+                fontSize: '1.25rem',
+                lineHeight: '1.6',
+                color: 'rgba(255, 255, 255, 0.9)',
+                margin: '0 0 1.5rem 0',
+                maxWidth: '600px'
+              }}>
+                Dispatch, compliance, documents, HR, payroll, finance, settlements, maintenance, procurement, RFID proof, exception management, and customer visibility in one accountable operating system.
+              </p>
+              <p style={{
+                fontSize: '1rem',
+                lineHeight: '1.5',
+                color: 'rgba(255, 255, 255, 0.7)',
+                margin: '0 0 2.5rem 0',
+                maxWidth: '550px'
+              }}>
+                Built for fleet owners who want world-class service, measurable savings, fewer exceptions, stronger compliance, and better operational control without adding internal headcount.
+              </p>
+            </div>
+
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+              gap: '1rem',
+              marginBottom: '2.5rem'
+            }}>
+              {[
+                { title: 'World-Class Service', desc: 'Dedicated back-office operations team', href: '/command-center' },
+                { title: 'Exception Management', desc: 'Proactive issue resolution and prevention', href: '/command-center' },
+                { title: 'Savings & Procurement', desc: 'Group buying power and cost optimization', href: '/fleet-savings' },
+                { title: 'Maintenance Programs', desc: 'Preventive maintenance and fleet readiness', href: '/maintenance' },
+                { title: 'RFID & Proof', desc: 'Automated workflows and customer visibility', href: '/loads' }
+              ].map((proof, idx) => (
+                <Link key={idx} href={proof.href} style={{
+                  textDecoration: 'none',
+                  color: 'inherit',
+                  display: 'block'
                 }}>
-                  {proof.title}
-                </h3>
-                <p style={{
-                  fontSize: '0.875rem',
-                  color: 'rgba(255, 255, 255, 0.8)',
-                  margin: '0',
-                  lineHeight: '1.4'
-                }}>
-                  {proof.desc}
-                </p>
-              </div>
-            ))}
+                  <div style={{
+                    background: 'rgba(255, 255, 255, 0.05)',
+                    border: '1px solid rgba(255, 255, 255, 0.1)',
+                    borderRadius: '12px',
+                    padding: '1.25rem',
+                    backdropFilter: 'blur(10px)',
+                    transition: 'all 0.2s ease',
+                    cursor: 'pointer'
+                  }}>
+                    <h3 style={{
+                      fontSize: '1rem',
+                      fontWeight: '600',
+                      color: '#14b8a6',
+                      margin: '0 0 0.5rem 0'
+                    }}>
+                      {proof.title}
+                    </h3>
+                    <p style={{
+                      fontSize: '0.875rem',
+                      color: 'rgba(255, 255, 255, 0.8)',
+                      margin: '0',
+                      lineHeight: '1.4'
+                    }}>
+                      {proof.desc}
+                    </p>
+                    <div style={{
+                      marginTop: '0.75rem',
+                      fontSize: '0.75rem',
+                      color: '#14b8a6',
+                      fontWeight: '500',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '0.25rem'
+                    }}>
+                      Explore →
+                    </div>
+                  </div>
+                </Link>
+              ))}
+            </div>
+
+            <div style={{
+              display: 'flex',
+              gap: '1rem',
+              flexWrap: 'wrap',
+              alignItems: 'center'
+            }}>
+              <Link href="/command-center" style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                padding: '0.875rem 1.75rem',
+                backgroundColor: '#14b8a6',
+                color: 'white',
+                textDecoration: 'none',
+                borderRadius: '8px',
+                fontSize: '1rem',
+                fontWeight: '600',
+                transition: 'all 0.2s ease',
+                border: 'none',
+                cursor: 'pointer'
+              }}>
+                Open Command Center
+              </Link>
+              <Link href="/drivers" style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                padding: '0.875rem 1.75rem',
+                backgroundColor: 'rgba(255, 255, 255, 0.1)',
+                color: 'white',
+                textDecoration: 'none',
+                borderRadius: '8px',
+                fontSize: '1rem',
+                fontWeight: '600',
+                transition: 'all 0.2s ease',
+                border: '1px solid rgba(255, 255, 255, 0.2)'
+              }}>
+                Review Driver Readiness
+              </Link>
+              <Link href="/settlements" style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                padding: '0.875rem 1.75rem',
+                backgroundColor: 'rgba(255, 255, 255, 0.1)',
+                color: 'white',
+                textDecoration: 'none',
+                borderRadius: '8px',
+                fontSize: '1rem',
+                fontWeight: '600',
+                transition: 'all 0.2s ease',
+                border: '1px solid rgba(255, 255, 255, 0.2)'
+              }}>
+                View Settlements
+              </Link>
+              <Link href="/dispatch" style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                padding: '0.875rem 1.75rem',
+                backgroundColor: 'rgba(255, 255, 255, 0.1)',
+                color: 'white',
+                textDecoration: 'none',
+                borderRadius: '8px',
+                fontSize: '1rem',
+                fontWeight: '600',
+                transition: 'all 0.2s ease',
+                border: '1px solid rgba(255, 255, 255, 0.2)'
+              }}>
+                Explore Dispatch Proof
+              </Link>
+            </div>
           </div>
 
+          {/* Right side: Premium visual */}
           <div style={{
+            position: 'relative',
             display: 'flex',
-            gap: '1rem',
-            flexWrap: 'wrap',
+            justifyContent: 'center',
             alignItems: 'center'
           }}>
-            <Link href="/command-center" style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              padding: '0.875rem 1.75rem',
-              backgroundColor: '#14b8a6',
-              color: 'white',
-              textDecoration: 'none',
-              borderRadius: '8px',
-              fontSize: '1rem',
-              fontWeight: '600',
-              transition: 'all 0.2s ease',
-              border: 'none',
-              cursor: 'pointer'
+            <div style={{
+              background: 'rgba(15, 23, 42, 0.8)',
+              border: '1px solid rgba(20, 184, 166, 0.2)',
+              borderRadius: '16px',
+              padding: '1.5rem',
+              backdropFilter: 'blur(20px)',
+              boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5)',
+              maxWidth: '100%',
+              height: 'auto'
             }}>
-              Open Command Center
-            </Link>
-            <Link href="/drivers" style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              padding: '0.875rem 1.75rem',
-              backgroundColor: 'rgba(255, 255, 255, 0.1)',
-              color: 'white',
-              textDecoration: 'none',
-              borderRadius: '8px',
-              fontSize: '1rem',
-              fontWeight: '600',
-              transition: 'all 0.2s ease',
-              border: '1px solid rgba(255, 255, 255, 0.2)'
-            }}>
-              Review Driver Readiness
-            </Link>
-            <Link href="/settlements" style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              padding: '0.875rem 1.75rem',
-              backgroundColor: 'rgba(255, 255, 255, 0.1)',
-              color: 'white',
-              textDecoration: 'none',
-              borderRadius: '8px',
-              fontSize: '1rem',
-              fontWeight: '600',
-              transition: 'all 0.2s ease',
-              border: '1px solid rgba(255, 255, 255, 0.2)'
-            }}>
-              View Settlements
-            </Link>
-            <Link href="/dispatch" style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              padding: '0.875rem 1.75rem',
-              backgroundColor: 'rgba(255, 255, 255, 0.1)',
-              color: 'white',
-              textDecoration: 'none',
-              borderRadius: '8px',
-              fontSize: '1rem',
-              fontWeight: '600',
-              transition: 'all 0.2s ease',
-              border: '1px solid rgba(255, 255, 255, 0.2)'
-            }}>
-              Explore Dispatch Proof
-            </Link>
+              <div style={{
+                position: 'relative',
+                width: '100%',
+                height: 'auto',
+                borderRadius: '8px',
+                overflow: 'hidden'
+              }}>
+                <Image
+                  src="/images/bof-command-dashboard-hero.png"
+                  alt="BOF Command Center Dashboard - Complete back-office operations including dispatch, compliance, documents, finance, settlements, maintenance, and RFID proof workflows"
+                  width={600}
+                  height={400}
+                  style={{
+                    width: '100%',
+                    height: 'auto',
+                    borderRadius: '8px'
+                  }}
+                  priority
+                />
+                <div style={{
+                  position: 'absolute',
+                  top: 0,
+                  left: 0,
+                  right: 0,
+                  bottom: 0,
+                  background: 'linear-gradient(135deg, rgba(15, 23, 42, 0.1) 0%, transparent 50%)',
+                  pointerEvents: 'none',
+                  borderRadius: '8px'
+                }} />
+              </div>
+              <div style={{
+                marginTop: '1rem',
+                textAlign: 'center',
+                fontSize: '0.875rem',
+                color: 'rgba(255, 255, 255, 0.6)',
+                fontStyle: 'italic'
+              }}>
+                Complete BOF operating system with real-time exception management, dispatch optimization, and customer visibility
+              </div>
+            </div>
           </div>
         </div>
       </section>
