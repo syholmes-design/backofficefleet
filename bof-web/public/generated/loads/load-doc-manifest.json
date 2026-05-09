@@ -38,7 +38,8 @@
     "sealDeliveryPhoto": "/evidence/loads/L002/seal-delivery-photo.svg",
     "equipmentPhoto": "/evidence/loads/L002/equipment-photo.svg",
     "pickupPhoto": "/evidence/loads/L002/pickup-photo.svg",
-    "deliveryPhoto": "/evidence/loads/L002/delivery-photo.svg"
+    "deliveryPhoto": "/evidence/loads/L002/delivery-photo.svg",
+    "damageClaimPhoto": "/evidence/loads/L002/damage-photo.jpg"
   },
   "L003": {
     "rateConfirmation": "/generated/loads/L003/rate-confirmation.html",
@@ -104,7 +105,8 @@
     "sealDeliveryPhoto": "/evidence/loads/L005/seal-delivery-photo.svg",
     "equipmentPhoto": "/evidence/loads/L005/equipment-photo.svg",
     "pickupPhoto": "/evidence/loads/L005/pickup-photo.svg",
-    "deliveryPhoto": "/evidence/loads/L005/delivery-photo.svg"
+    "deliveryPhoto": "/evidence/loads/L005/delivery-photo.svg",
+    "damageClaimPhoto": "/evidence/loads/L005/damage-photo.jpg"
   },
   "L006": {
     "rateConfirmation": "/generated/loads/L006/rate-confirmation.html",
@@ -170,6 +172,7 @@
     "pickupPhoto": "/evidence/loads/L008/pickup-photo.svg",
     "deliveryPhoto": "/evidence/loads/L008/delivery-photo.svg",
     "lumperReceipt": "/evidence/loads/L008/lumper-receipt.png",
+    "damageClaimPhoto": "/evidence/loads/L008/damage-photo.jpg",
     "safetyViolationPhoto": "/evidence/safety/l405-hos-eld-violation.png"
   },
   "L009": {
@@ -234,7 +237,8 @@
     "sealDeliveryPhoto": "/evidence/loads/L011/seal-delivery-photo.svg",
     "equipmentPhoto": "/evidence/loads/L011/equipment-photo.svg",
     "pickupPhoto": "/evidence/loads/L011/pickup-photo.svg",
-    "deliveryPhoto": "/evidence/loads/L011/delivery-photo.svg"
+    "deliveryPhoto": "/evidence/loads/L011/delivery-photo.svg",
+    "damageClaimPhoto": "/evidence/loads/L011/damage-photo.jpg"
   },
   "L012": {
     "rateConfirmation": "/generated/loads/L012/rate-confirmation.html",
