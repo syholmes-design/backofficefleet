@@ -7,25 +7,23 @@
  * Edit this file only for route-level layout/wiring.
  */
 import { Suspense } from "react";
-import { SettlementsPayrollPageClient } from "@/components/settlements-payroll/SettlementsPayrollPageClient";
+import { SettlementsCommandCenter } from "@/components/settlements-premium/SettlementsCommandCenter";
 
 export const metadata = {
-  title: "Settlements | BOF",
-  description: "Payroll operations, export readiness, and settlement detail",
+  title: "Settlements Command Center | BOF",
+  description: "Driver pay, deductions, reimbursements, and settlement readiness from source-of-truth data",
 };
 
 export default function SettlementsPage() {
   return (
-    <div className="bof-page">
-      <Suspense
-        fallback={
-          <div className="flex min-h-[40vh] items-center justify-center text-sm text-slate-400">
-            Loading settlements…
-          </div>
-        }
-      >
-        <SettlementsPayrollPageClient />
-      </Suspense>
-    </div>
+    <Suspense
+      fallback={
+        <div className="flex min-h-[40vh] items-center justify-center text-sm text-slate-400">
+          Loading settlements…
+        </div>
+      }
+    >
+      <SettlementsCommandCenter />
+    </Suspense>
   );
 }
