@@ -73,26 +73,55 @@ function cdlNumberFor(driverId, ex, driver) {
 }
 
 function patchCoreSevenForDriver(documents, driverId, ex, driver) {
-  // Medical card expiration fallback logic:
+  // BOF demo document-date rule:
   // - Main-source Excel may not provide medical-card expiration dates for all drivers
   // - Use deterministic demo fallback dates by driver ID to prevent blanket expiration bug
-  // - This prevents all drivers from inheriting the same stale template expiration date
+  // - Apply BOF demo rule: expired core documents move to 2027 for demo purposes
   // - Source-provided medical-card dates still take priority when present
   const existingMedicalDoc = documents.find(d => d.driverId === driverId && d.type === "Medical Card");
   let medExp, medIssue;
   
   if (existingMedicalDoc && existingMedicalDoc.expirationDate) {
-    // Use main-source Excel data when available
-    medExp = existingMedicalDoc.expirationDate;
-    medIssue = existingMedicalDoc.issueDate || "2024-03-13";
+    // Use main-source Excel data when available, but apply demo rule for expired dates
+    const sourceExp = existingMedicalDoc.expirationDate;
+    const sourceStatus = docStatusFromExpiry(sourceExp);
+    
+    if (sourceStatus === "EXPIRED") {
+      // BOF demo rule: move expired core documents to 2027
+      medExp = "2027-08-22"; // Use established 2027 fallback date
+      medIssue = existingMedicalDoc.issueDate || "2024-03-13";
+    } else {
+      // Keep valid source dates
+      medExp = sourceExp;
+      medIssue = existingMedicalDoc.issueDate || "2024-03-13";
+    }
   } else {
     // Create varied medical card expiration dates as deterministic fallback
     const driverNum = parseInt(String(driverId).replace(/\D/g, ""), 10) || 1;
     const baseYear = 2026;
     const baseMonth = 4 + (driverNum % 6); // Vary months 4-9
     const baseDay = 15 + (driverNum % 10); // Vary days 15-24
-    medExp = `${baseYear}-${String(baseMonth).padStart(2, "0")}-${String(baseDay).padStart(2, "0")}`;
+    const fallbackExp = `${baseYear}-${String(baseMonth).padStart(2, "0")}-${String(baseDay).padStart(2, "0")}`;
+    
+    // Apply demo rule to fallback dates as well
+    if (docStatusFromExpiry(fallbackExp) === "EXPIRED") {
+      medExp = "2027-08-22"; // Move expired fallbacks to 2027
+    } else {
+      medExp = fallbackExp; // Keep valid fallback dates
+    }
     medIssue = "2024-03-13";
+  }
+  
+  // Create specific demo scenarios for better demo purposes
+  if (driverId === "DRV-003") {
+    // DRV-003: Medical card expiring soon (within 30 days) for demo
+    medExp = "2026-06-08"; // ~30 days from current date (May 9, 2026)
+  } else if (driverId === "DRV-007") {
+    // DRV-007: Medical card expiring soon (within 60 days) for demo
+    medExp = "2026-07-08"; // ~60 days from current date
+  } else if (driverId === "DRV-011") {
+    // DRV-011: Medical card expiring soon (within 90 days) for demo
+    medExp = "2026-08-08"; // ~90 days from current date
   }
   
   const genericExp = "2026-12-31";
