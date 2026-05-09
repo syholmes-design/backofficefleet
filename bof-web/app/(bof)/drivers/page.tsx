@@ -9,8 +9,8 @@
 import { DriversListPageClient } from "@/components/drivers/DriversListPageClient";
 
 export const metadata = {
-  title: "Drivers Command Center | BOF",
-  description: "Driver readiness, compliance, safety, dispatch eligibility, and settlement signals",
+  title: "Drivers | BOF",
+  description: "Manage driver readiness, documents, worker type, dispatch eligibility, acknowledgments, and fix paths from one manager view",
 };
 
 export default function DriversIndexPage() {

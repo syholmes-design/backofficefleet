@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { Fragment, useMemo, useState } from "react";
 import { DriverAvatar } from "@/components/DriverAvatar";
 import { DriverReviewInlinePanel } from "@/components/drivers/DriverReviewInlinePanel";
@@ -14,6 +15,7 @@ import {
 } from "@/lib/drivers/drivers-command-metrics";
 import { getDriverWorkerType, getDriverReadinessSummary, getDriverPolicyAcknowledgments, getDriverSettlementSummary } from "@/lib/driver-readiness-ui";
 import type { WorkerType } from "@/lib/driver-pay-settlement-methods";
+import type { BofData } from "@/lib/load-bof-data";
 
 type DriverStatusFilter =
   | "all"
@@ -70,6 +72,135 @@ function compactSentence(text: string): string {
   const first = text.split(".")[0]?.trim() ?? text.trim();
   if (!first) return text.trim();
   return first.endsWith(".") ? first : `${first}.`;
+}
+
+// Emma Brown Hero Card Component
+function EmmaBrownHeroCard({ data }: { data: BofData }) {
+  const emmaDriver = data.drivers.find((d: { id: string }) => d.id === 'DRV-009');
+  if (!emmaDriver) return null;
+  
+  const readinessSummary = getDriverReadinessSummary('DRV-009', data);
+  const workerType = getDriverWorkerType('DRV-009', data);
+  const acknowledgments = getDriverPolicyAcknowledgments('DRV-009', data);
+  const settlement = getDriverSettlementSummary('DRV-009', data);
+  
+  const missingAcks = acknowledgments.filter(ack => ack.status === 'missing').length;
+  const statusColor = readinessSummary.status === 'ready' ? '#0BA5A4' : 
+                      readinessSummary.status === 'needs_review' ? '#F59E0B' : '#EF4444';
+  
+  return (
+    <div className="bof-emma-hero-card" style={{
+      background: 'white',
+      border: '1px solid #e2e8f0',
+      borderRadius: '12px',
+      padding: '1.5rem',
+      boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)',
+      display: 'flex',
+      flexDirection: 'column',
+      gap: '1rem'
+    }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+        <Image 
+          src="/images/drivers-emma-brown-hero.png" 
+          alt="Emma Brown" 
+          width={80}
+          height={80}
+          style={{ 
+            borderRadius: '50%', 
+            objectFit: 'cover',
+            border: '3px solid #0BA5A4'
+          }}
+          onError={(e) => {
+            const target = e.target as HTMLImageElement;
+            target.src = driverPhotoPath('DRV-009');
+          }}
+        />
+        <div>
+          <h3 style={{ margin: 0, fontSize: '1.25rem', fontWeight: '600', color: '#1a202c' }}>
+            Emma Brown
+          </h3>
+          <p style={{ margin: '0.25rem 0', fontSize: '0.875rem', color: '#64748b' }}>
+            DRV-009 • {workerType}
+          </p>
+          <div style={{
+            display: 'inline-block',
+            padding: '0.25rem 0.75rem',
+            backgroundColor: statusColor,
+            color: 'white',
+            borderRadius: '9999px',
+            fontSize: '0.75rem',
+            fontWeight: '500',
+            textTransform: 'uppercase'
+          }}>
+            {readinessSummary.status}
+          </div>
+        </div>
+      </div>
+      
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem', fontSize: '0.875rem' }}>
+        <div>
+          <span style={{ color: '#64748b', fontWeight: '500' }}>Documents:</span>
+          <span style={{ marginLeft: '0.5rem', color: '#1a202c' }}>
+            {readinessSummary.status === 'ready' ? 'Complete' : 'Action Needed'}
+          </span>
+        </div>
+        <div>
+          <span style={{ color: '#64748b', fontWeight: '500' }}>Acknowledgments:</span>
+          <span style={{ marginLeft: '0.5rem', color: missingAcks > 0 ? '#EF4444' : '#1a202c' }}>
+            {missingAcks > 0 ? `${missingAcks} missing` : 'Complete'}
+          </span>
+        </div>
+        <div>
+          <span style={{ color: '#64748b', fontWeight: '500' }}>Settlement:</span>
+          <span style={{ marginLeft: '0.5rem', color: '#1a202c' }}>
+            {settlement.status}
+          </span>
+        </div>
+        <div>
+          <span style={{ color: '#64748b', fontWeight: '500' }}>Dispatch:</span>
+          <span style={{ marginLeft: '0.5rem', color: '#1a202c' }}>
+            {readinessSummary.status === 'ready' ? 'Eligible' : 'Not Eligible'}
+          </span>
+        </div>
+      </div>
+      
+      <div style={{ display: 'flex', gap: '0.5rem', marginTop: '0.5rem' }}>
+        <Link 
+          href="/drivers/DRV-009" 
+          style={{
+            flex: 1,
+            padding: '0.5rem 1rem',
+            backgroundColor: '#0BA5A4',
+            color: 'white',
+            textDecoration: 'none',
+            borderRadius: '6px',
+            textAlign: 'center',
+            fontSize: '0.875rem',
+            fontWeight: '500'
+          }}
+        >
+          View Driver
+        </Link>
+        <Link 
+          href="/portals/driver/DRV-009" 
+          style={{
+            flex: 1,
+            padding: '0.5rem 1rem',
+            backgroundColor: '#f8fafc',
+            color: '#0BA5A4',
+            border: '1px solid #0BA5A4',
+            textDecoration: 'none',
+            borderRadius: '6px',
+            textAlign: 'center',
+            fontSize: '0.875rem',
+            fontWeight: '500'
+          }}
+        >
+          Open Driver Portal
+        </Link>
+      </div>
+    </div>
+  );
 }
 
 export function DriversRosterTable() {
@@ -175,25 +306,87 @@ export function DriversRosterTable() {
 
   return (
     <div className="bof-page bof-cc-page">
-      <section className="bof-drivers-command-header" aria-labelledby="bof-drivers-command-title">
-        <div className="bof-drivers-command-header__intro">
-          <p className="bof-cc-hero-eyebrow">Driver Document Center</p>
-          <h1 id="bof-drivers-command-title" className="bof-cc-hero-title">Driver Document Center</h1>
-          <p className="bof-cc-panel-sub">
-            Qualification, HR, payroll-support, and administrative documents for every driver.
-          </p>
-          <p className="bof-cc-panel-sub" style={{ fontSize: "0.875rem", opacity: 0.8, marginTop: "0.5rem" }}>
-            Safety, settlement, and dispatch exceptions are managed in Command Center, Safety, Settlements, and Dispatch. This page focuses on driver documents.
-          </p>
-          <div className="bof-drivers-lead-ctas" style={{ marginTop: "1rem" }}>
-            <Link href="/documents" className="bof-cc-action-btn" style={{ marginRight: "0.5rem" }}>
-              View document readiness
-            </Link>
-            <Link href="/documents/vault" className="bof-cc-action-btn">
-              Open driver vault workspace
-            </Link>
+      {/* Mini Hero Section */}
+      <section className="bof-drivers-mini-hero" aria-labelledby="bof-drivers-title" style={{
+        background: 'linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%)',
+        padding: '2rem',
+        borderRadius: '12px',
+        marginBottom: '2rem',
+        border: '1px solid #e2e8f0'
+      }}>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '2rem', alignItems: 'center' }}>
+          {/* Left Side: Title and CTAs */}
+          <div>
+            <p style={{ 
+              color: '#0BA5A4', 
+              fontSize: '0.875rem', 
+              fontWeight: '600', 
+              textTransform: 'uppercase',
+              letterSpacing: '0.05em',
+              margin: '0 0 0.5rem 0'
+            }}>
+              Driver Operations
+            </p>
+            <h1 id="bof-drivers-title" style={{ 
+              fontSize: '2rem', 
+              fontWeight: '700', 
+              color: '#1a202c',
+              margin: '0 0 1rem 0',
+              lineHeight: '1.2'
+            }}>
+              Drivers
+            </h1>
+            <p style={{ 
+              fontSize: '1.125rem', 
+              color: '#475569',
+              lineHeight: '1.6',
+              margin: '0 0 1.5rem 0',
+              maxWidth: '500px'
+            }}>
+              Manage driver readiness, documents, worker type, dispatch eligibility, acknowledgments, and fix paths from one manager view.
+            </p>
+            <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
+              <Link href="/documents" style={{
+                padding: '0.75rem 1.5rem',
+                backgroundColor: '#0BA5A4',
+                color: 'white',
+                textDecoration: 'none',
+                borderRadius: '6px',
+                fontSize: '0.875rem',
+                fontWeight: '500',
+                display: 'inline-flex',
+                alignItems: 'center',
+                transition: 'all 0.2s ease'
+              }}>
+                View Document Readiness
+              </Link>
+              <Link href="/documents/vault" style={{
+                padding: '0.75rem 1.5rem',
+                backgroundColor: 'white',
+                color: '#0BA5A4',
+                border: '1px solid #0BA5A4',
+                textDecoration: 'none',
+                borderRadius: '6px',
+                fontSize: '0.875rem',
+                fontWeight: '500',
+                display: 'inline-flex',
+                alignItems: 'center',
+                transition: 'all 0.2s ease'
+              }}>
+                Open Driver Vault
+              </Link>
+            </div>
+          </div>
+          
+          {/* Right Side: Emma Brown Hero Card */}
+          <div>
+            <EmmaBrownHeroCard data={data} />
           </div>
         </div>
+      </section>
+
+      {/* Filter and Search Section */}
+      <section className="bof-drivers-command-header" aria-labelledby="bof-drivers-filters-title" style={{ marginBottom: '1rem' }}>
         <div className="bof-drivers-credential-window" aria-label="Driver roster controls">
           <label className="bof-drivers-credential-window__label" htmlFor="bof-drivers-search">Search driver</label>
           <input
@@ -333,6 +526,9 @@ export function DriversRosterTable() {
                 <div className="bof-driver-card-actions">
                   <Link href={`/documents/vault/${row.driverId}`} className="bof-driver-card-action-btn bof-driver-card-action-btn-secondary">
                     Open Driver Vault
+                  </Link>
+                  <Link href={`/portals/driver/${row.driverId}`} className="bof-driver-card-action-btn bof-driver-card-action-btn-secondary" style={{ marginLeft: '0.5rem' }}>
+                    Open Driver Portal
                   </Link>
                   {row.eligibilityStatus === "blocked" && row.primaryDispatchBlockerId ? (
                     <button
