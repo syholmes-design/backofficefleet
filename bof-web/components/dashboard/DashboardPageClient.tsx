@@ -1,23 +1,18 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo, useState, type ReactNode } from "react";
-import { BookDemoLink } from "@/components/BookDemoLink";
+import { useMemo, useState } from "react";
 import { useBofDemoData } from "@/lib/bof-demo-data-context";
-import { sectorLinks } from "@/lib/site-links";
 import { formatUsd } from "@/lib/format-money";
 import {
   getDashboardTodayChanges,
-  getMainDashboardSummary,
   getSettlementStatusChartData,
   type BreakdownPoint,
   type DashboardKpi,
 } from "@/lib/dashboard-insights";
 import {
   buildExecutiveDashboardModel,
-  type DashboardBreakdownPoint,
   type ExecutiveDashboardOwnerItem,
-  type ExecutiveDashboardTopSummary,
 } from "@/lib/dashboard-command-summary";
 import { settlementTotals } from "@/lib/executive-layer";
 import { getPayrollMonthlyTrend } from "@/lib/demo-trends";
@@ -37,7 +32,6 @@ export function DashboardPageClient() {
   const intakeCommandCenterItems = useIntakeEngineStore((s) => s.commandCenterIntakeItems);
 
   const st = useMemo(() => settlementTotals(data), [data]);
-  const summary = useMemo(() => getMainDashboardSummary(data), [data]);
   const exec = useMemo(
     () => buildExecutiveDashboardModel(data, intakeCommandCenterItems),
     [data, intakeCommandCenterItems]
@@ -138,85 +132,249 @@ export function DashboardPageClient() {
 
   return (
     <div className="bof-page bof-cc-page bof-dashboard-page">
-      <section className="bof-dashboard-hero bof-dashboard-hero--product bof-cc-hero">
-        <div className="bof-dashboard-hero__productGrid">
-          <div className="bof-dashboard-hero__introWrap">
-            <div className="bof-dashboard-hero__intro bof-cc-hero-left">
-              <p className="bof-cc-kicker">Executive Operations Cockpit</p>
-              <h1 className="bof-title bof-cc-title">
-                The Back Office Platform Built for Freight Operations
-              </h1>
-              <p className="bof-lead bof-cc-lead">
-                BOF unifies dispatch, drivers, documents, compliance, proof, settlements, and revenue risk in one
-                operating view.
-              </p>
-              <div className="bof-dashboard-hero__ctaRow" aria-label="Dashboard actions">
-                <BookDemoLink className="bof-cc-btn bof-cc-btn-primary" ariaLabel="Book a BOF demo appointment">
-                  Book a Demo
-                </BookDemoLink>
-                <Link href="/dispatch" prefetch={false} className="bof-cc-btn">
-                  Open Dispatch Board
-                </Link>
-                <Link href="/dashboard#attention-queue" prefetch={false} className="bof-cc-btn">
-                  Review Attention Queue
-                </Link>
-              </div>
-              <nav className="bof-dashboard-hero__sectorRow" aria-label="Solutions by fleet type">
-                {sectorLinks.map((item) => (
-                  <Link key={item.href} href={item.href} className="bof-dashboard-hero__sectorLink" prefetch={false}>
-                    {item.label}
-                  </Link>
-                ))}
-              </nav>
-            </div>
+      <section className="bof-dashboard-hero bof-dashboard-hero--premium" style={{
+        background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%)',
+        color: 'white',
+        padding: '4rem 2rem 3rem',
+        borderRadius: '0 0 2rem 2rem',
+        position: 'relative',
+        overflow: 'hidden'
+      }}>
+        <div style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          background: 'radial-gradient(circle at 30% 20%, rgba(20, 184, 166, 0.1) 0%, transparent 50%)',
+          zIndex: 1
+        }} />
+        <div style={{
+          maxWidth: '1200px',
+          margin: '0 auto',
+          position: 'relative',
+          zIndex: 2
+        }}>
+          <div style={{ marginBottom: '2rem' }}>
+            <p style={{
+              fontSize: '0.875rem',
+              fontWeight: '600',
+              textTransform: 'uppercase',
+              letterSpacing: '0.05em',
+              color: '#14b8a6',
+              margin: '0 0 1rem 0'
+            }}>
+              BOF Demo Command Center
+            </p>
+            <h1 style={{
+              fontSize: 'clamp(2.5rem, 5vw, 3.5rem)',
+              fontWeight: '700',
+              lineHeight: '1.1',
+              margin: '0 0 1.5rem 0',
+              background: 'linear-gradient(135deg, #ffffff 0%, #94a3b8 100%)',
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent',
+              backgroundClip: 'text'
+            }}>
+              See How BOF Takes Over Back-Office Operations
+            </h1>
+            <p style={{
+              fontSize: '1.25rem',
+              lineHeight: '1.6',
+              color: 'rgba(255, 255, 255, 0.9)',
+              margin: '0 0 1.5rem 0',
+              maxWidth: '800px'
+            }}>
+              Dispatch, compliance, documents, HR, payroll, finance, settlements, maintenance, procurement, RFID proof, exception management, and customer visibility in one accountable operating system.
+            </p>
+            <p style={{
+              fontSize: '1rem',
+              lineHeight: '1.5',
+              color: 'rgba(255, 255, 255, 0.7)',
+              margin: '0 0 2.5rem 0',
+              maxWidth: '700px'
+            }}>
+              Built for fleet owners who want world-class service, measurable savings, fewer exceptions, stronger compliance, and better operational control without adding internal headcount.
+            </p>
           </div>
-          <DashboardHeroProductPreview
-            topSummary={exec.topSummary}
-            driverReadiness={exec.driverReadiness}
-            attentionSample={snapshotAlert}
-            proofPendingLoads={proofPendingLoads}
-          />
+
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
+            gap: '1.5rem',
+            marginBottom: '2.5rem'
+          }}>
+            {[
+              { title: 'World-Class Service', desc: 'Dedicated back-office operations team' },
+              { title: 'Exception Management', desc: 'Proactive issue resolution and prevention' },
+              { title: 'Savings & Procurement', desc: 'Group buying power and cost optimization' },
+              { title: 'Maintenance Programs', desc: 'Preventive maintenance and fleet readiness' },
+              { title: 'RFID & Proof', desc: 'Automated workflows and customer visibility' }
+            ].map((proof, idx) => (
+              <div key={idx} style={{
+                background: 'rgba(255, 255, 255, 0.05)',
+                border: '1px solid rgba(255, 255, 255, 0.1)',
+                borderRadius: '12px',
+                padding: '1.5rem',
+                backdropFilter: 'blur(10px)'
+              }}>
+                <h3 style={{
+                  fontSize: '1.125rem',
+                  fontWeight: '600',
+                  color: '#14b8a6',
+                  margin: '0 0 0.5rem 0'
+                }}>
+                  {proof.title}
+                </h3>
+                <p style={{
+                  fontSize: '0.875rem',
+                  color: 'rgba(255, 255, 255, 0.8)',
+                  margin: '0',
+                  lineHeight: '1.4'
+                }}>
+                  {proof.desc}
+                </p>
+              </div>
+            ))}
+          </div>
+
+          <div style={{
+            display: 'flex',
+            gap: '1rem',
+            flexWrap: 'wrap',
+            alignItems: 'center'
+          }}>
+            <Link href="/command-center" style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              padding: '0.875rem 1.75rem',
+              backgroundColor: '#14b8a6',
+              color: 'white',
+              textDecoration: 'none',
+              borderRadius: '8px',
+              fontSize: '1rem',
+              fontWeight: '600',
+              transition: 'all 0.2s ease',
+              border: 'none',
+              cursor: 'pointer'
+            }}>
+              Open Command Center
+            </Link>
+            <Link href="/drivers" style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              padding: '0.875rem 1.75rem',
+              backgroundColor: 'rgba(255, 255, 255, 0.1)',
+              color: 'white',
+              textDecoration: 'none',
+              borderRadius: '8px',
+              fontSize: '1rem',
+              fontWeight: '600',
+              transition: 'all 0.2s ease',
+              border: '1px solid rgba(255, 255, 255, 0.2)'
+            }}>
+              Review Driver Readiness
+            </Link>
+            <Link href="/settlements" style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              padding: '0.875rem 1.75rem',
+              backgroundColor: 'rgba(255, 255, 255, 0.1)',
+              color: 'white',
+              textDecoration: 'none',
+              borderRadius: '8px',
+              fontSize: '1rem',
+              fontWeight: '600',
+              transition: 'all 0.2s ease',
+              border: '1px solid rgba(255, 255, 255, 0.2)'
+            }}>
+              View Settlements
+            </Link>
+            <Link href="/dispatch" style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              padding: '0.875rem 1.75rem',
+              backgroundColor: 'rgba(255, 255, 255, 0.1)',
+              color: 'white',
+              textDecoration: 'none',
+              borderRadius: '8px',
+              fontSize: '1rem',
+              fontWeight: '600',
+              transition: 'all 0.2s ease',
+              border: '1px solid rgba(255, 255, 255, 0.2)'
+            }}>
+              Explore Dispatch Proof
+            </Link>
+          </div>
         </div>
       </section>
 
-      <section className="bof-dashboard-route-snapshot" aria-label="Route and alert snapshot">
-        <RouteSnapshotCard
-          priorityAlert={snapshotAlert}
-          loadsAtRisk={exec.topSummary.loadsAtRisk}
-          topRiskLoads={topRiskLoads}
-        />
-      </section>
-
-      <ActionableSummary title="Demo Actionability Queue" issues={actionabilityIssues} />
-
-      <section className="bof-cc-kpi-sections" aria-label="Command center summary">
-        <article className="bof-cc-panel">
-          <div className="bof-cc-kpi-group-head">
-            <h2 className="bof-h2">Fleet command summary</h2>
-            <p className="bof-cc-panel-sub" style={{ marginTop: "0.35rem" }}>
-              Metrics below use the same merged Command Center queue as{" "}
-              <Link href="/command-center" className="bof-link-secondary">
-                Command Center
-              </Link>{" "}
-              plus canonical BOF registers (loads, settlements, money-at-risk, driver review).
-            </p>
-          </div>
-          <div className="bof-cc-kpi-grid">
-            {commandKpis.map((kpi) => (
-              <KpiCard key={kpi.label} kpi={kpi} />
-            ))}
-          </div>
-        </article>
-      </section>
-
-      <section className="bof-cc-panel bof-cc-attention-priority" aria-label="Priority owner actions" id="attention-queue">
+      <section className="bof-cc-panel" style={{ margin: '2rem 0' }} aria-label="Executive Operating Snapshot">
         <div className="bof-cc-panel-head">
-          <h2 className="bof-h2">What needs attention</h2>
+          <h2 className="bof-h2">Executive Operating Snapshot</h2>
+          <p className="bof-cc-panel-sub" style={{ marginTop: "0.35rem" }}>
+            Comprehensive BOF operating metrics across all service lanes
+          </p>
+        </div>
+        <div className="bof-cc-kpi-grid">
+          {commandKpis.map((kpi) => (
+            <KpiCard key={kpi.label} kpi={kpi} />
+          ))}
+          {/* Additional executive metrics */}
+          <div className="bof-cc-kpi-card">
+            <div className="bof-cc-kpi-card-header">
+              <h3 className="bof-cc-kpi-label">Settlement Velocity</h3>
+            </div>
+            <div className="bof-cc-kpi-card-value">
+              <span className="bof-cc-kpi-number">{st.totalGross > 0 ? 'Ready' : '0'}</span>
+            </div>
+            <div className="bof-cc-kpi-card-hint">
+              Ready for immediate processing
+            </div>
+            <div className="bof-cc-kpi-card-delta">
+              <Link href="/settlements" className="bof-link-secondary">View settlements →</Link>
+            </div>
+          </div>
+          <div className="bof-cc-kpi-card">
+            <div className="bof-cc-kpi-card-header">
+              <h3 className="bof-cc-kpi-label">Driver Readiness</h3>
+            </div>
+            <div className="bof-cc-kpi-card-value">
+              <span className="bof-cc-kpi-number">{exec.driverReadiness.find(r => r.label === 'Ready')?.value || 0}</span>
+              <span className="bof-cc-kpi-unit">ready</span>
+            </div>
+            <div className="bof-cc-kpi-card-hint">
+              Fully compliant and dispatch-eligible
+            </div>
+            <div className="bof-cc-kpi-card-delta">
+              <Link href="/drivers" className="bof-link-secondary">Review drivers →</Link>
+            </div>
+          </div>
+          <div className="bof-cc-kpi-card">
+            <div className="bof-cc-kpi-card-header">
+              <h3 className="bof-cc-kpi-label">Proof Completion</h3>
+            </div>
+            <div className="bof-cc-kpi-card-value">
+              <span className="bof-cc-kpi-number">{data.loads.length - proofPendingLoads}</span>
+              <span className="bof-cc-kpi-unit">completed</span>
+            </div>
+            <div className="bof-cc-kpi-card-hint">
+              Load proof and customer visibility
+            </div>
+            <div className="bof-cc-kpi-card-delta">
+              <Link href="/dispatch" className="bof-link-secondary">View dispatch →</Link>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="bof-cc-panel bof-cc-attention-priority" aria-label="Exception Management Queue" id="attention-queue">
+        <div className="bof-cc-panel-head">
+          <h2 className="bof-h2">Exception Management Queue</h2>
           <Link href="/command-center" className="bof-link-secondary">Open full queue →</Link>
         </div>
         <p className="bof-cc-panel-sub">
-          Sourced from <code className="text-xs opacity-90">buildCommandCenterItems</code> merged with intake CC
-          rows — severity matches the canonical queue, not cosmetic labels.
+          BOF&apos;s proactive exception management across all service lanes — severity matches canonical queue priority
         </p>
         {criticalQueue.length > 0 ? (
           <div className="bof-cc-critical-banner">
@@ -260,7 +418,217 @@ export function DashboardPageClient() {
         </div>
       </section>
 
-      <section className="bof-cc-chart-grid" aria-label="Fleet breakdown charts">
+      <section className="bof-cc-panel" style={{ margin: '2rem 0' }} aria-label="Back-Office Service Coverage">
+        <div className="bof-cc-panel-head">
+          <h2 className="bof-h2">Back-Office Service Coverage</h2>
+          <p className="bof-cc-panel-sub" style={{ marginTop: "0.35rem" }}>
+            Complete BOF operating system service lanes for mid-sized fleets
+          </p>
+        </div>
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+          gap: '1.5rem'
+        }}>
+          {[
+            {
+              title: 'Dispatch & Load Management',
+              description: 'Real-time dispatch, load optimization, and customer proof workflows',
+              href: '/dispatch',
+              icon: '🚚'
+            },
+            {
+              title: 'Documents & Compliance',
+              description: 'Driver credentials, regulatory compliance, and document automation',
+              href: '/documents',
+              icon: '📋'
+            },
+            {
+              title: 'Driver Readiness / HR Support',
+              description: 'Driver onboarding, HR policies, payroll integration, and readiness tracking',
+              href: '/drivers',
+              icon: '👥'
+            },
+            {
+              title: 'Payroll / Settlements',
+              description: 'Settlement processing, payroll deductions, and cash flow management',
+              href: '/settlements',
+              icon: '💰'
+            },
+            {
+              title: 'Finance / Cash Flow',
+              description: 'Revenue tracking, factoring support, and audit-ready financial records',
+              href: '/fleet-financials',
+              icon: '📊'
+            },
+            {
+              title: 'Maintenance Programs',
+              description: 'Preventive maintenance scheduling, asset tracking, and fleet readiness',
+              href: '/maintenance',
+              icon: '🔧'
+            },
+            {
+              title: 'Procurement / Buying Consortium',
+              description: 'Group purchasing power, vendor management, and cost optimization',
+              href: '/fleet-savings',
+              icon: '🛒'
+            },
+            {
+              title: 'RFID / Proof / Customer Visibility',
+              description: 'Automated proof workflows, RFID tracking, and customer portal access',
+              href: '/dispatch',
+              icon: '📡'
+            },
+            {
+              title: 'Insurance / Claims Support',
+              description: 'Claims management, insurance coordination, and risk mitigation',
+              href: '/money-at-risk',
+              icon: '🛡️'
+            }
+          ].map((service, idx) => (
+            <div key={idx} style={{
+              background: '#f8fafc',
+              border: '1px solid #e2e8f0',
+              borderRadius: '12px',
+              padding: '1.5rem',
+              transition: 'all 0.2s ease',
+              cursor: 'pointer'
+            }}>
+              <Link href={service.href} style={{
+                textDecoration: 'none',
+                color: 'inherit',
+                display: 'block'
+              }}>
+                <div style={{
+                  fontSize: '2rem',
+                  marginBottom: '0.75rem'
+                }}>
+                  {service.icon}
+                </div>
+                <h3 style={{
+                  fontSize: '1.125rem',
+                  fontWeight: '600',
+                  color: '#1e293b',
+                  margin: '0 0 0.5rem 0'
+                }}>
+                  {service.title}
+                </h3>
+                <p style={{
+                  fontSize: '0.875rem',
+                  color: '#64748b',
+                  margin: '0',
+                  lineHeight: '1.4'
+                }}>
+                  {service.description}
+                </p>
+                <div style={{
+                  marginTop: '1rem',
+                  fontSize: '0.875rem',
+                  color: '#14b8a6',
+                  fontWeight: '500',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.25rem'
+                }}>
+                  Explore service →
+                </div>
+              </Link>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <section className="bof-cc-panel" style={{ margin: '2rem 0' }} aria-label="Savings & Operational Leverage">
+        <div className="bof-cc-panel-head">
+          <h2 className="bof-h2">Savings & Operational Leverage</h2>
+          <p className="bof-cc-panel-sub" style={{ marginTop: "0.35rem" }}>
+            Measurable value creation across BOF service lanes
+          </p>
+        </div>
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
+          gap: '1.5rem'
+        }}>
+          {[
+            {
+              title: 'Procurement Savings',
+              value: 'Group Buying Power',
+              description: 'Leverage BOF&apos;s procurement consortium for fuel, tires, parts, and services'
+            },
+            {
+              title: 'Exception Reduction',
+              value: 'Proactive Management',
+              description: 'Reduce compliance issues, document gaps, and service failures through automation'
+            },
+            {
+              title: 'Settlement Velocity',
+              value: 'Faster Processing',
+              description: 'Accelerate settlement review and improve cash flow for carriers and drivers'
+            },
+            {
+              title: 'Document Readiness',
+              value: 'Automated Tracking',
+              description: 'Maintain 100% document compliance with automated expiration monitoring'
+            },
+            {
+              title: 'Maintenance Discipline',
+              value: 'Preventive Programs',
+              description: 'Reduce breakdowns and extend asset life through scheduled maintenance'
+            },
+            {
+              title: 'Headcount Leverage',
+              value: 'World-Class Service',
+              description: 'Access enterprise-level back-office operations without adding internal staff'
+            }
+          ].map((value, idx) => (
+            <div key={idx} style={{
+              background: 'linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%)',
+              border: '1px solid #bbf7d0',
+              borderRadius: '12px',
+              padding: '1.5rem'
+            }}>
+              <h3 style={{
+                fontSize: '1rem',
+                fontWeight: '600',
+                color: '#166534',
+                margin: '0 0 0.5rem 0'
+              }}>
+                {value.title}
+              </h3>
+              <div style={{
+                fontSize: '0.875rem',
+                color: '#15803d',
+                fontWeight: '500',
+                marginBottom: '0.5rem'
+              }}>
+                {value.value}
+              </div>
+              <p style={{
+                fontSize: '0.875rem',
+                color: '#166534',
+                margin: '0',
+                lineHeight: '1.4'
+              }}>
+                {value.description}
+              </p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* Existing operational sections moved to bottom */}
+      <section className="bof-dashboard-route-snapshot" aria-label="Route and alert snapshot" style={{ margin: '2rem 0' }}>
+        <RouteSnapshotCard
+          priorityAlert={snapshotAlert}
+          loadsAtRisk={exec.topSummary.loadsAtRisk}
+          topRiskLoads={topRiskLoads}
+        />
+      </section>
+
+      <ActionableSummary title="Demo Actionability Queue" issues={actionabilityIssues} />
+
+      <section className="bof-cc-chart-grid" aria-label="Fleet breakdown charts" style={{ margin: '2rem 0' }}>
         <DonutChartCard
           title="Fleet Risk Breakdown"
           subtitle="Counts of Command Center items by lane (same feed as the queue above)."
@@ -298,11 +666,7 @@ export function DashboardPageClient() {
                           <li key={`${row.driverId}-reason-${idx}`}>{line}</li>
                         ))
                       ) : (
-                        <li>
-                          <Link href={`/drivers/${row.driverId}#driver-review`} className="bof-cc-table-link">
-                            Open driver review
-                          </Link>
-                        </li>
+                        <li>No specific issues listed</li>
                       )}
                     </ul>
                   ) : null}
@@ -310,215 +674,99 @@ export function DashboardPageClient() {
               ))}
           </ul>
         </div>
-        <DonutChartCard
-          title="Load Status Breakdown"
-          subtitle="Partition of every load in `data.loads` (dispatch register)."
-          data={exec.loadStatus}
-        />
-        <BarChartCard title="Settlement Exposure" subtitle="Paid vs pending vs hold/review settlement posture." data={settlementStatus} />
-        <TrendCard
-          title="6-Month Payroll / Revenue Trend"
-          subtitle="Gross pay, safety bonus, backhaul pay, and net pay trendline."
-          rows={payrollTrend.map((row) => ({
-            label: row.month,
-            grossPay: row.grossPay,
-            safetyBonus: row.safetyBonus,
-            backhaulPay: row.backhaulPay,
-            netPay: row.netPay,
-          }))}
-        />
       </section>
 
-      <section className="bof-cc-panel" aria-label="Owner attention queue table">
+      <section className="bof-cc-panel" aria-label="Settlement status and trends" style={{ margin: '2rem 0' }}>
         <div className="bof-cc-panel-head">
-          <h3 className="bof-cc-panel-title">Queue detail</h3>
+          <h2 className="bof-h2">Settlement status and trends</h2>
         </div>
-        <div className="bof-cc-table-wrap">
-          <table className="bof-cc-table">
-            <thead>
-              <tr>
-                <th>Severity</th>
-                <th>Area</th>
-                <th>Entity</th>
-                <th>Entity ID</th>
-                <th>Driver / Load</th>
-                <th>Issue</th>
-                <th>Financial impact</th>
-                <th>Recommended fix</th>
-                <th>Action</th>
-              </tr>
-            </thead>
-            <tbody>
-              {prioritizedQueue.map((item) => (
-                <tr key={item.id} className={item.severity === "critical" ? "bof-cc-row-critical" : undefined}>
-                  <td><span className={`bof-cc-sev bof-cc-sev-${item.severity}`}>{item.severity}</span></td>
-                  <td><span className="bof-cc-chip bof-cc-chip-info">{item.area}</span></td>
-                  <td>{item.entityType}</td>
-                  <td>{item.entityId}</td>
-                  <td>{item.target}</td>
-                  <td>{item.issue}</td>
-                  <td>{item.financialImpact ? formatUsd(item.financialImpact) : "—"}</td>
-                  <td>{item.recommendedFix}</td>
-                  <td>
-                    <div style={{ display: "flex", flexDirection: "column", gap: "0.35rem" }}>
-                      {item.reviewDriverId ? (
-                        <Link href={`/drivers/${item.reviewDriverId}#driver-review`} className="bof-cc-table-link">
-                          Driver review details
-                        </Link>
-                      ) : null}
-                      {item.reviewLoadId ? (
-                        <Link href={`/loads/${item.reviewLoadId}#load-review`} className="bof-cc-table-link">
-                          Load review details
-                        </Link>
-                      ) : null}
-                      <Link href={item.actionHref} className="bof-cc-table-link">
-                        {item.actionLabel}
-                      </Link>
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+        <div className="bof-cc-panel-sub" style={{ marginTop: "0.35rem" }}>
+          Settlement register totals and monthly trend
         </div>
-      </section>
-
-      <section className="bof-cc-grid-2" aria-label="Financial and change summaries">
-        <article className="bof-cc-panel">
-          <h2 className="bof-h2">Settlement & Revenue Snapshot</h2>
-          <div className="bof-cc-fin-grid">
-            <div className="bof-cc-fin-pill">
-              <span>Total Gross Pay</span>
-              <strong>{formatUsd(st.totalGross)}</strong>
+        <div className="bof-cc-settlement-grid">
+          <div className="bof-cc-settlement-totals">
+            <div className="bof-cc-settlement-row">
+              <span className="bof-cc-settlement-label">Total Gross Pay</span>
+              <span className="bof-cc-settlement-value">{formatUsd(st.totalGross)}</span>
             </div>
-            <div className="bof-cc-fin-pill">
-              <span>Total Net Pay</span>
-              <strong>{formatUsd(st.totalNet)}</strong>
+            <div className="bof-cc-settlement-row">
+              <span className="bof-cc-settlement-label">Total Net Pay</span>
+              <span className="bof-cc-settlement-value">{formatUsd(st.totalNet)}</span>
             </div>
-            <div className="bof-cc-fin-pill">
-              <span>Backhaul Pay</span>
-              <strong>{formatUsd(st.totalBackhaul)}</strong>
+            <div className="bof-cc-settlement-row">
+              <span className="bof-cc-settlement-label">Backhaul Pay</span>
+              <span className="bof-cc-settlement-value">{formatUsd(st.totalBackhaul)}</span>
             </div>
-            <div className="bof-cc-fin-pill">
-              <span>Pending / Hold Drivers</span>
-              <strong>{st.pendingOrHold}</strong>
+            <div className="bof-cc-settlement-row">
+              <span className="bof-cc-settlement-label">Pending / Hold</span>
+              <span className="bof-cc-settlement-value">{st.pendingOrHold}</span>
             </div>
           </div>
-        </article>
-
-        <article className="bof-cc-panel">
-          <h2 className="bof-h2">What Changed Today</h2>
-          <div className="bof-cc-notes">
-            <ExecutiveNote label="Loads newly at risk" value={summary.loadsAtRisk} tone={summary.loadsAtRisk > 0 ? "danger" : "ok"} detail={todayChanges[0]} />
-            <ExecutiveNote label="Drivers dispatch-blocked" value={summary.complianceBlocked} tone={summary.complianceBlocked > 0 ? "warn" : "ok"} detail={`${summary.driversReady} drivers currently dispatch-ready · ${summary.openComplianceIncidents} open compliance incident(s) in queue.`} />
-            <ExecutiveNote label="Settlement holds changed" value={summary.settlementHolds} tone={summary.settlementHolds > 0 ? "warn" : "ok"} detail={todayChanges[1]} />
-            <ExecutiveNote label="Claim exposure changed" value={formatUsd(summary.claimExposure)} tone={summary.claimExposure > 0 ? "danger" : "ok"} detail={summary.claimExposure > 0 ? "Active claim-linked exposure remains open." : "No active claim-linked exposure."} />
-            <ExecutiveNote label="Documents / proof exceptions" value={`${summary.loadsAtRisk} open`} tone={summary.loadsAtRisk > 0 ? "warn" : "ok"} detail={todayChanges[4]} />
-            <ExecutiveNote
-              label="Client load requests pending"
-              value={pendingClientLoadRequests}
-              tone={pendingClientLoadRequests > 0 ? "warn" : "ok"}
-              detail={
-                pendingClientLoadRequests > 0
-                  ? "Internal BOF review queue has pending client submissions."
-                  : "No pending client submissions in load request queue."
-              }
+          <div className="bof-cc-settlement-chart">
+            <BarChartCard
+              title="Monthly settlement trend"
+              subtitle="Settlement counts by month (last 6 months)"
+              data={settlementStatus}
             />
           </div>
-        </article>
+        </div>
+      </section>
+
+      <section className="bof-cc-panel" aria-label="Payroll and financial trends" style={{ margin: '2rem 0' }}>
+        <div className="bof-cc-panel-head">
+          <h2 className="bof-h2">Payroll and financial trends</h2>
+        </div>
+        <div className="bof-cc-panel-sub" style={{ marginTop: "0.35rem" }}>
+          Monthly payroll trends and client load requests
+        </div>
+        <div className="bof-cc-payroll-grid">
+          <div className="bof-cc-payroll-chart">
+            <BarChartCard
+              title="Monthly payroll trend"
+              subtitle="Payroll amounts by month (last 6 months)"
+              data={payrollTrend.map(t => ({ label: t.month, value: t.baseEarnings + t.backhaulPay, tone: 'info' as const }))}
+            />
+          </div>
+          <div className="bof-cc-client-requests">
+            <div className="bof-cc-client-requests-header">
+              <h3 className="bof-h3">Client load requests</h3>
+            </div>
+            <div className="bof-cc-client-requests-content">
+              <div className="bof-cc-client-requests-row">
+                <span className="bof-cc-client-requests-label">Pending requests</span>
+                <span className="bof-cc-client-requests-value">{pendingClientLoadRequests}</span>
+              </div>
+              <div className="bof-cc-client-requests-row">
+                <span className="bof-cc-client-requests-label">Total requests</span>
+                <span className="bof-cc-client-requests-value">{getClientLoadRequests(data).length}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="bof-cc-panel" aria-label="Today's changes" style={{ margin: '2rem 0' }}>
+        <div className="bof-cc-panel-head">
+          <h2 className="bof-h2">Today&apos;s changes</h2>
+        </div>
+        <div className="bof-cc-panel-sub" style={{ marginTop: "0.35rem" }}>
+          Real-time updates from BOF registers and Command Center queue
+        </div>
+        <div className="bof-cc-today-changes">
+          {todayChanges.map((change, idx) => (
+            <div key={idx} className="bof-cc-today-change">
+              <span className="bof-cc-today-change-description">{change}</span>
+            </div>
+          ))}
+        </div>
       </section>
 
       <div className="bof-dashboard-bottom-spacer" aria-hidden />
     </div>
   );
 }
+            
 
-function readinessCount(rows: DashboardBreakdownPoint[], label: string): number {
-  return rows.find((r) => r.label === label)?.value ?? 0;
-}
-
-function DashboardHeroProductPreview({
-  topSummary,
-  driverReadiness,
-  attentionSample,
-  proofPendingLoads,
-}: {
-  topSummary: ExecutiveDashboardTopSummary;
-  driverReadiness: DashboardBreakdownPoint[];
-  attentionSample: ExecutiveDashboardOwnerItem | null;
-  proofPendingLoads: number;
-}) {
-  const ready = readinessCount(driverReadiness, "Ready");
-  const actionNeeded = readinessCount(driverReadiness, "Action needed");
-  const blocked = readinessCount(driverReadiness, "Dispatch blocked");
-
-  return (
-    <aside className="bof-dashboard-hero-preview" aria-label="Live operations preview">
-      <div className="bof-dashboard-hero-preview__chrome">
-        <span className="bof-dashboard-hero-preview__dot" aria-hidden />
-        Operations cockpit preview · live demo data
-      </div>
-      <div className="bof-dashboard-hero-preview__kpis">
-        <div className="bof-dashboard-hero-preview__kpi">
-          <span className="bof-dashboard-hero-preview__kpiLabel">Active loads</span>
-          <strong>{topSummary.activeLoads}</strong>
-        </div>
-        <div className="bof-dashboard-hero-preview__kpi">
-          <span className="bof-dashboard-hero-preview__kpiLabel">Loads at risk</span>
-          <strong>{topSummary.loadsAtRisk}</strong>
-        </div>
-        <div className="bof-dashboard-hero-preview__kpi">
-          <span className="bof-dashboard-hero-preview__kpiLabel">Docs need action</span>
-          <strong>{topSummary.documentsNeedingAction}</strong>
-        </div>
-      </div>
-      <div className="bof-dashboard-hero-preview__cards">
-        <div className="bof-dashboard-hero-preview__card">
-          <p className="bof-dashboard-hero-preview__cardTitle">Attention queue</p>
-          {attentionSample ? (
-            <>
-              <p className={`bof-dashboard-hero-preview__sev bof-dashboard-hero-preview__sev--${attentionSample.severity}`}>
-                {attentionSample.severity}
-              </p>
-              <p className="bof-dashboard-hero-preview__cardIssue">{attentionSample.issue}</p>
-              <Link href={attentionSample.actionHref} className="bof-dashboard-hero-preview__cardLink">
-                {attentionSample.actionLabel} →
-              </Link>
-            </>
-          ) : (
-            <p className="bof-dashboard-hero-preview__muted">No queued items.</p>
-          )}
-        </div>
-        <div className="bof-dashboard-hero-preview__card">
-          <p className="bof-dashboard-hero-preview__cardTitle">Driver readiness</p>
-          <div className="bof-dashboard-hero-preview__readinessRow">
-            <span>
-              Ready <strong>{ready}</strong>
-            </span>
-            <span>
-              Review <strong>{actionNeeded}</strong>
-            </span>
-            <span>
-              Blocked <strong>{blocked}</strong>
-            </span>
-          </div>
-          <Link href="/drivers" className="bof-dashboard-hero-preview__cardLink">
-            Open drivers →
-          </Link>
-        </div>
-      </div>
-      <div className="bof-dashboard-hero-preview__footer">
-        <div className="bof-dashboard-hero-preview__proof">
-          <span className="bof-dashboard-hero-preview__proofLabel">Loads with POD pending</span>
-          <strong>{proofPendingLoads}</strong>
-        </div>
-        <Link href="/loads" className="bof-dashboard-hero-preview__cardLink">
-          Review loads →
-        </Link>
-      </div>
-    </aside>
-  );
-}
 
 function RouteSnapshotCard({
   priorityAlert,
@@ -686,176 +934,6 @@ function BarChartCard({
   );
 }
 
-function TrendCard({
-  title,
-  subtitle,
-  rows,
-}: {
-  title: string;
-  subtitle: string;
-  rows: Array<{ label: string; grossPay: number; safetyBonus: number; backhaulPay: number; netPay: number }>;
-}) {
-  const validated = rows.filter(
-    (r) =>
-      Boolean(String(r.label ?? "").trim()) &&
-      Number.isFinite(r.grossPay) &&
-      Number.isFinite(r.netPay) &&
-      Number.isFinite(r.safetyBonus) &&
-      Number.isFinite(r.backhaulPay) &&
-      r.grossPay >= 0 &&
-      r.netPay >= 0 &&
-      r.safetyBonus >= 0 &&
-      r.backhaulPay >= 0
-  );
-
-  const maxYForBars = Math.max(...validated.map((row) => row.grossPay), 1);
-
-  const W = 640;
-  const H = 312;
-  const padL = 64;
-  const padR = 20;
-  const padT = 16;
-  const padB = 56;
-  const chartW = W - padL - padR;
-  const chartH = H - padT - padB;
-  const baselineY = padT + chartH;
-
-  const maxSeries = Math.max(
-    ...validated.flatMap((r) => [r.grossPay, r.netPay, r.safetyBonus, r.backhaulPay]),
-    1
-  );
-
-  function linePath(pts: Array<{ x: number; y: number }>): string {
-    if (!pts.length) return "";
-    return pts
-      .map((p, idx) => `${idx === 0 ? "M" : "L"} ${p.x.toFixed(2)} ${p.y.toFixed(2)}`)
-      .join(" ");
-  }
-
-  function xAt(i: number, n: number): number {
-    if (n <= 1) return padL + chartW / 2;
-    return padL + (i / (n - 1)) * chartW;
-  }
-
-  function yAt(v: number): number {
-    const clamped = Math.min(Math.max(v / maxSeries, 0), 1);
-    return baselineY - clamped * chartH;
-  }
-
-  let svgChart: ReactNode = null;
-
-  if (validated.length > 0) {
-    const n = validated.length;
-    const grossPts = validated.map((r, i) => ({ x: xAt(i, n), y: yAt(r.grossPay) }));
-    const netPts = validated.map((r, i) => ({ x: xAt(i, n), y: yAt(r.netPay) }));
-    const safetyPts = validated.map((r, i) => ({ x: xAt(i, n), y: yAt(r.safetyBonus) }));
-    const backhaulPts = validated.map((r, i) => ({ x: xAt(i, n), y: yAt(r.backhaulPay) }));
-
-    const netLine = linePath(netPts);
-    const lastNet = netPts[n - 1];
-    const firstNet = netPts[0];
-    const netAreaD =
-      netLine && lastNet && firstNet
-        ? `${netLine} L ${lastNet.x.toFixed(2)} ${baselineY.toFixed(2)} L ${firstNet.x.toFixed(2)} ${baselineY.toFixed(2)} Z`
-        : "";
-
-    const tickVals = [0, 0.25, 0.5, 0.75, 1].map((t) => Math.round(maxSeries * t));
-
-    svgChart = (
-      <div className="bof-cc-trend-chart-wrap">
-        <svg
-          viewBox={`0 0 ${W} ${H}`}
-          className="bof-cc-trend-svg-chart"
-          role="img"
-          aria-label={`${title}: gross, net, safety bonus, and backhaul by month`}
-          preserveAspectRatio="xMidYMid meet"
-        >
-          <rect x={padL} y={padT} width={chartW} height={chartH} className="bof-cc-trend-plot-bg" rx={6} />
-
-          {tickVals.map((tv) => {
-            const yy = yAt(tv);
-            return (
-              <g key={`g-${tv}`}>
-                <line x1={padL} x2={padL + chartW} y1={yy} y2={yy} className="bof-cc-trend-grid-line" />
-                <text x={padL - 8} y={yy + 4} textAnchor="end" className="bof-cc-trend-axis-text">
-                  {formatUsd(tv)}
-                </text>
-              </g>
-            );
-          })}
-
-          <line
-            x1={padL}
-            x2={padL + chartW}
-            y1={baselineY}
-            y2={baselineY}
-            className="bof-cc-trend-axis-line"
-          />
-
-          {netAreaD ? <path d={netAreaD} className="bof-cc-trend-area-net" /> : null}
-
-          <path d={linePath(grossPts)} className="bof-cc-trend-line-gross" fill="none" />
-          <path d={linePath(backhaulPts)} className="bof-cc-trend-line-backhaul" fill="none" />
-          <path d={linePath(safetyPts)} className="bof-cc-trend-line-safety" fill="none" />
-          <path d={netLine} className="bof-cc-trend-line-net" fill="none" />
-
-          {validated.map((row, i) => (
-            <text key={row.label} x={xAt(i, n)} y={H - 14} textAnchor="middle" className="bof-cc-trend-month-label">
-              {row.label}
-            </text>
-          ))}
-        </svg>
-
-        <div className="bof-cc-trend-legend" aria-hidden="true">
-          <span className="bof-cc-trend-legend-item">
-            <span className="bof-cc-trend-legend-swatch bof-cc-trend-legend-swatch--net" /> Net pay
-          </span>
-          <span className="bof-cc-trend-legend-item">
-            <span className="bof-cc-trend-legend-swatch bof-cc-trend-legend-swatch--gross" /> Gross pay
-          </span>
-          <span className="bof-cc-trend-legend-item">
-            <span className="bof-cc-trend-legend-swatch bof-cc-trend-legend-swatch--safety" /> Safety bonus
-          </span>
-          <span className="bof-cc-trend-legend-item">
-            <span className="bof-cc-trend-legend-swatch bof-cc-trend-legend-swatch--backhaul" /> Backhaul pay
-          </span>
-        </div>
-      </div>
-    );
-  }
-
-  return (
-    <article className="bof-cc-panel bof-cc-panel-wide">
-      <h3 className="bof-cc-panel-title">{title}</h3>
-      <p className="bof-cc-panel-sub">{subtitle}</p>
-      {validated.length === 0 ? (
-        <p className="bof-cc-trend-empty">
-          Payroll trend data is missing or invalid — chart hidden until demo series is available.
-        </p>
-      ) : (
-        svgChart
-      )}
-      <div className="bof-cc-trend-list">
-        {validated.map((row) => (
-          <div key={row.label} className="bof-cc-trend-row">
-            <div className="bof-cc-trend-head">
-              <span>{row.label}</span>
-              <strong>{formatUsd(row.netPay)}</strong>
-            </div>
-            <div className="bof-cc-trend-track">
-              <div className="bof-cc-trend-gross" style={{ width: `${(row.grossPay / maxYForBars) * 100}%` }} />
-              <div className="bof-cc-trend-net" style={{ width: `${(row.netPay / maxYForBars) * 100}%` }} />
-            </div>
-            <p className="bof-cc-trend-meta">
-              Gross {formatUsd(row.grossPay)} · Safety {formatUsd(row.safetyBonus)} · Backhaul{" "}
-              {formatUsd(row.backhaulPay)}
-            </p>
-          </div>
-        ))}
-      </div>
-    </article>
-  );
-}
 
 function RouteSummaryPanel({
   loadsAtRisk,
@@ -894,27 +972,5 @@ function RouteSummaryPanel({
         )}
       </div>
     </div>
-  );
-}
-
-function ExecutiveNote({
-  label,
-  value,
-  tone,
-  detail,
-}: {
-  label: string;
-  value: string | number;
-  tone: "ok" | "warn" | "danger";
-  detail: string;
-}) {
-  return (
-    <article className={`bof-cc-note bof-cc-note-${tone}`}>
-      <div className="bof-cc-note-head">
-        <span>{label}</span>
-        <strong>{value}</strong>
-      </div>
-      <p>{detail}</p>
-    </article>
   );
 }
