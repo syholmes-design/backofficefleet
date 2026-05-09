@@ -2,9 +2,8 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { Fragment, useMemo, useState } from "react";
+import { useState, useMemo } from "react";
 import { DriverAvatar } from "@/components/DriverAvatar";
-import { DriverReviewInlinePanel } from "@/components/drivers/DriverReviewInlinePanel";
 import { useBofDemoData } from "@/lib/bof-demo-data-context";
 import { driverPhotoPath } from "@/lib/driver-photo";
 import { getDriverReviewExplanation, type DriverReviewExplanation, type DriverReviewIssueCategory } from "@/lib/driver-review-explanation";
@@ -80,7 +79,8 @@ function DriversHero() {
       position: 'relative',
       borderRadius: '12px',
       overflow: 'hidden',
-      height: '320px',
+      minHeight: '480px',
+      height: 'clamp(420px, 25vw, 520px)',
       boxShadow: '0 4px 20px rgba(0, 0, 0, 0.15)',
       marginBottom: '2rem'
     }}>
@@ -91,7 +91,7 @@ function DriversHero() {
         left: 0,
         right: 0,
         bottom: 0,
-        background: 'linear-gradient(90deg, rgba(11, 165, 164, 0.85) 0%, rgba(11, 165, 164, 0.6) 40%, rgba(11, 165, 164, 0.3) 70%, rgba(11, 165, 164, 0.1) 100%)',
+        background: 'linear-gradient(90deg, rgba(0, 0, 0, 0.15) 0%, rgba(0, 0, 0, 0.2) 40%, rgba(2, 6, 23, 0.65) 70%, rgba(2, 6, 23, 0.75) 100%)',
         zIndex: 1
       }} />
       <Image 
@@ -100,7 +100,7 @@ function DriversHero() {
         fill
         style={{ 
           objectFit: 'cover',
-          objectPosition: 'center 20%',
+          objectPosition: 'left center',
           zIndex: 0
         }}
         onError={(e) => {
@@ -115,13 +115,13 @@ function DriversHero() {
         top: 0,
         right: 0,
         bottom: 0,
-        width: '50%',
+        width: '55%',
         zIndex: 2,
-        padding: '3rem',
+        padding: '2.5rem 3rem',
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'center',
-        background: 'linear-gradient(to left, rgba(0, 0, 0, 0.7) 0%, rgba(0, 0, 0, 0.4) 50%, transparent 100%)'
+        background: 'linear-gradient(to left, rgba(2, 6, 23, 0.85) 0%, rgba(2, 6, 23, 0.6) 40%, rgba(2, 6, 23, 0.3) 70%, transparent 100%)'
       }}>
         <div style={{ maxWidth: '400px' }}>
           <p style={{ 
@@ -232,11 +232,7 @@ function DriversHero() {
 }
 
 export function DriversRosterTable() {
-  const {
-    data,
-    resolveDriverDispatchBlocker,
-  } = useBofDemoData();
-  const [expandedDriverId, setExpandedDriverId] = useState<string | null>(null);
+  const { data } = useBofDemoData();
   const [driverStatusFilter, setDriverStatusFilter] = useState<DriverStatusFilter>("all");
   const [credentialWindowDays, setCredentialWindowDays] = useState<90 | 60 | 30>(90);
   const [searchText, setSearchText] = useState("");
@@ -392,234 +388,141 @@ export function DriversRosterTable() {
         <div className="bof-cc-panel-head">
           <h2 className="bof-h2">Driver Document Center ({filteredDriverRows.length} of {driverRows.length})</h2>
         </div>
-        <div className="bof-driver-cards-grid" style={{ paddingBottom: "6rem" }}>
-          {filteredDriverRows.map((row) => (
-            <Fragment key={row.driverId}>
-              <div className="bof-driver-card">
-                {/* Driver Header */}
-                <div className="bof-driver-card-header">
-                  <div className="bof-driver-card-info">
-                    <DriverAvatar name={row.name} photoUrl={row.avatar} size={48} />
-                    <div className="bof-driver-card-details">
-                      <h3 className="bof-driver-card-name">{row.name}</h3>
-                      <p className="bof-driver-card-id">{row.driverId}</p>
-                      <p className="bof-driver-card-contact">{row.email ?? row.phone ?? "No contact on file"}</p>
-                      {/* Worker Type Badge */}
-                      {row.workerType && (
-                        <span 
-                          className={`bof-driver-card-worker-type ${row.workerType === 'Employee Driver' ? 'employee' : 'owner-operator'}`}
-                        >
-                          {row.workerType}
-                        </span>
-                      )}
+        {/* Horizontal Driver Roster Table */}
+        <div className="bof-driver-roster-table" style={{ paddingBottom: "6rem" }}>
+          <table style={{
+            width: '100%',
+            borderCollapse: 'collapse',
+            background: 'white',
+            borderRadius: '12px',
+            overflow: 'hidden',
+            boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)'
+          }}>
+            <thead>
+              <tr style={{
+                background: '#F8FAFC',
+                borderBottom: '1px solid #E2E8F0'
+              }}>
+                <th style={{ padding: '1rem', textAlign: 'left', fontSize: '0.875rem', fontWeight: '600', color: '#475569' }}>Driver</th>
+                <th style={{ padding: '1rem', textAlign: 'left', fontSize: '0.875rem', fontWeight: '600', color: '#475569' }}>ID</th>
+                <th style={{ padding: '1rem', textAlign: 'left', fontSize: '0.875rem', fontWeight: '600', color: '#475569' }}>Role</th>
+                <th style={{ padding: '1rem', textAlign: 'left', fontSize: '0.875rem', fontWeight: '600', color: '#475569' }}>Status</th>
+                <th style={{ padding: '1rem', textAlign: 'left', fontSize: '0.875rem', fontWeight: '600', color: '#475569' }}>Attention Item</th>
+                <th style={{ padding: '1rem', textAlign: 'left', fontSize: '0.875rem', fontWeight: '600', color: '#475569' }}>Due Date</th>
+                <th style={{ padding: '1rem', textAlign: 'left', fontSize: '0.875rem', fontWeight: '600', color: '#475569' }}>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              {filteredDriverRows.map((row) => (
+                <tr key={row.driverId} style={{
+                  borderBottom: '1px solid #F1F5F9',
+                  transition: 'background-color 0.2s ease'
+                }}>
+                  <td style={{ padding: '1rem' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                      <DriverAvatar name={row.name} photoUrl={row.avatar} size={40} />
+                      <div>
+                        <div style={{ fontWeight: '600', color: '#1E293B', fontSize: '0.875rem' }}>{row.name}</div>
+                        <div style={{ fontSize: '0.75rem', color: '#64748B' }}>{row.email ?? row.phone ?? "No contact"}</div>
+                      </div>
                     </div>
-                  </div>
-                  <StatusChip label={row.status} driverId={row.driverId} />
-                </div>
-
-                {/* Primary Issue - Visible without clicking */}
-                {row.readinessSummary && row.readinessSummary.status !== 'ready' && (
-                  <div className="bof-driver-card-issue" style={{
-                    background: row.readinessSummary.status === 'blocked' ? '#FEF2F2' : '#FFFBEB',
-                    border: `1px solid ${row.readinessSummary.status === 'blocked' ? '#FCA5A5' : '#FCD34D'}`,
-                    borderRadius: '8px',
-                    padding: '1rem',
-                    marginBottom: '1rem'
-                  }}>
-                    <div className="bof-driver-card-issue-header" style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '0.5rem',
-                      marginBottom: '0.5rem'
-                    }}>
-                      <span className="bof-driver-card-issue-label" style={{
-                        background: row.readinessSummary.status === 'blocked' ? '#DC2626' : '#D97706',
-                        color: 'white',
+                  </td>
+                  <td style={{ padding: '1rem', fontSize: '0.875rem', color: '#475569', fontFamily: 'monospace' }}>{row.driverId}</td>
+                  <td style={{ padding: '1rem' }}>
+                    {row.workerType && (
+                      <span style={{
+                        background: row.workerType === 'Employee Driver' ? '#DBEAFE' : '#F3E8FF',
+                        color: row.workerType === 'Employee Driver' ? '#1E40AF' : '#6B21A8',
                         padding: '0.25rem 0.75rem',
                         borderRadius: '9999px',
                         fontSize: '0.75rem',
-                        fontWeight: '600',
-                        textTransform: 'uppercase'
+                        fontWeight: '600'
                       }}>
-                        {row.readinessSummary.status === 'blocked' ? 'Blocked' : 'Needs Review'}
+                        {row.workerType === 'Employee Driver' ? 'Employee' : 'Owner-Op'}
                       </span>
-                      <span style={{
-                        fontSize: '0.875rem',
-                        fontWeight: '600',
-                        color: row.readinessSummary.status === 'blocked' ? '#DC2626' : '#D97706'
-                      }}>
-                        Dispatch: {row.readinessSummary.status === 'blocked' ? 'Not Eligible' : 'Review Required'}
-                      </span>
-                    </div>
-                    
-                    {/* Enhanced specific reason display */}
-                    <div style={{
-                      background: 'rgba(255, 255, 255, 0.6)',
-                      padding: '0.75rem',
-                      borderRadius: '6px',
-                      marginBottom: '0.75rem',
-                      border: '1px solid rgba(0, 0, 0, 0.1)'
-                    }}>
-                      <div style={{
-                        fontSize: '0.875rem',
-                        fontWeight: '600',
-                        color: '#374151',
-                        marginBottom: '0.25rem'
-                      }}>
-                        Issue: {row.readinessSummary.primaryReason}
+                    )}
+                  </td>
+                  <td style={{ padding: '1rem' }}>
+                    <StatusChip label={row.status} driverId={row.driverId} />
+                  </td>
+                  <td style={{ padding: '1rem', fontSize: '0.875rem' }}>
+                    {row.readinessSummary && row.readinessSummary.status !== 'ready' ? (
+                      <div>
+                        <div style={{ 
+                          fontWeight: '600', 
+                          color: row.readinessSummary.status === 'blocked' ? '#DC2626' : '#D97706',
+                          marginBottom: '0.25rem',
+                          fontSize: '0.875rem'
+                        }}>
+                          {row.readinessSummary.primaryReason}
+                        </div>
+                        {row.readinessSummary.businessImpact && (
+                          <div style={{ fontSize: '0.75rem', color: '#6B7280' }}>
+                            {row.readinessSummary.businessImpact}
+                          </div>
+                        )}
                       </div>
-                      {row.readinessSummary.businessImpact && (
-                        <div style={{
-                          fontSize: '0.75rem',
-                          color: '#6B7280',
-                          marginBottom: '0.5rem'
-                        }}>
-                          Why it matters: {row.readinessSummary.businessImpact}
-                        </div>
-                      )}
-                      {row.readinessSummary.dueDate && (
-                        <div style={{
-                          fontSize: '0.75rem',
-                          fontWeight: '600',
-                          color: row.readinessSummary.status === 'blocked' ? '#DC2626' : '#D97706'
-                        }}>
-                          Due: {row.readinessSummary.dueDate}
-                        </div>
-                      )}
-                    </div>
-                    
-                    {/* Fix action with clear explanation */}
-                    <div style={{
-                      display: 'flex',
-                      gap: '0.5rem',
-                      alignItems: 'center',
-                      flexWrap: 'wrap'
-                    }}>
-                      {row.readinessSummary.fixAction?.href && (
-                        <Link href={row.readinessSummary.fixAction.href} style={{
+                    ) : (
+                      <span style={{ color: '#10B981', fontWeight: '500' }}>Ready</span>
+                    )}
+                  </td>
+                  <td style={{ padding: '1rem', fontSize: '0.875rem' }}>
+                    {row.readinessSummary?.dueDate || '-'}
+                  </td>
+                  <td style={{ padding: '1rem' }}>
+                    {row.readinessSummary && row.readinessSummary.status !== 'ready' ? (
+                      <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+                        {row.readinessSummary.fixAction?.href && (
+                          <Link href={row.readinessSummary.fixAction.href} style={{
+                            padding: '0.375rem 0.75rem',
+                            backgroundColor: row.readinessSummary.status === 'blocked' ? '#DC2626' : '#D97706',
+                            color: 'white',
+                            textDecoration: 'none',
+                            borderRadius: '6px',
+                            fontSize: '0.75rem',
+                            fontWeight: '500',
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            transition: 'all 0.2s ease'
+                          }}>
+                            {row.readinessSummary.fixAction.label}
+                          </Link>
+                        )}
+                        <Link href={`/drivers/${row.driverId}/vault`} style={{
                           padding: '0.375rem 0.75rem',
-                          backgroundColor: row.readinessSummary.status === 'blocked' ? '#DC2626' : '#D97706',
-                          color: 'white',
+                          backgroundColor: '#F3F4F6',
+                          color: '#374151',
                           textDecoration: 'none',
                           borderRadius: '6px',
                           fontSize: '0.75rem',
                           fontWeight: '500',
-                          display: 'inline-flex',
-                          alignItems: 'center',
-                          transition: 'all 0.2s ease'
+                          border: '1px solid #D1D5DB'
                         }}>
-                          Fix: {row.readinessSummary.fixAction.label}
+                          Review File
                         </Link>
-                      )}
+                      </div>
+                    ) : (
                       <Link href={`/drivers/${row.driverId}/vault`} style={{
                         padding: '0.375rem 0.75rem',
-                        backgroundColor: 'white',
-                        color: row.readinessSummary.status === 'blocked' ? '#DC2626' : '#D97706',
-                        border: `1px solid ${row.readinessSummary.status === 'blocked' ? '#DC2626' : '#D97706'}`,
+                        backgroundColor: '#F0FDF4',
+                        color: '#166534',
                         textDecoration: 'none',
                         borderRadius: '6px',
                         fontSize: '0.75rem',
                         fontWeight: '500',
-                        display: 'inline-flex',
-                        alignItems: 'center',
-                        transition: 'all 0.2s ease'
+                        border: '1px solid #BBF7D0'
                       }}>
-                        Review Driver File
+                        View Documents
                       </Link>
-                    </div>
-                  </div>
-                )}
-
-                {/* Document Status */}
-                <div className="bof-driver-card-status">
-                  <div className="bof-driver-card-status-row">
-                    <span className="bof-driver-card-status-label">Qualification Documents:</span>
-                    <span className="bof-driver-card-status-value">{row.documentSummary}</span>
-                  </div>
-                  <div className="bof-driver-card-status-row">
-                    <span className="bof-driver-card-status-label">Compliance Status:</span>
-                    <button
-                      type="button"
-                      className="bof-driver-card-status-link"
-                      onClick={() => setExpandedDriverId((prev) => (prev === row.driverId ? null : row.driverId))}
-                    >
-                      {row.compliance}
-                    </button>
-                  </div>
-                </div>
-
-                {/* Document Links */}
-                <div className="bof-driver-card-docs">
-                  <div className="bof-driver-card-doc-section">
-                    <h4 className="bof-driver-card-doc-title">HR / Employment Admin</h4>
-                    <div className="bof-driver-card-doc-chips">
-                      <Link href={`/generated/drivers/${row.driverId}/hr-payroll/benefits-enrollment.html`} className="bof-driver-card-doc-chip">
-                        Benefits Enrollment
-                      </Link>
-                      <Link href={`/generated/drivers/${row.driverId}/hr-payroll/life-insurance-beneficiary-election.html`} className="bof-driver-card-doc-chip">
-                        Life Insurance Election
-                      </Link>
-                    </div>
-                  </div>
-                  <div className="bof-driver-card-doc-section">
-                    <h4 className="bof-driver-card-doc-title">Payroll / Deduction Support</h4>
-                    <div className="bof-driver-card-doc-chips">
-                      <Link href={`/generated/drivers/${row.driverId}/hr-payroll/flexible-spending-account-election.html`} className="bof-driver-card-doc-chip">
-                        FSA Election
-                      </Link>
-                      <Link href={`/generated/drivers/${row.driverId}/hr-payroll/garnishment-withholding-summary.html`} className="bof-driver-card-doc-chip">
-                        Garnishment Summary
-                      </Link>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Actions */}
-                <div className="bof-driver-card-actions">
-                  <Link href={`/documents/vault/${row.driverId}`} className="bof-driver-card-action-btn bof-driver-card-action-btn-secondary">
-                    Open Driver Vault
-                  </Link>
-                  <Link href={`/portals/driver/${row.driverId}`} className="bof-driver-card-action-btn bof-driver-card-action-btn-secondary" style={{ marginLeft: '0.5rem' }}>
-                    Open Driver Portal
-                  </Link>
-                  {row.eligibilityStatus === "blocked" && row.primaryDispatchBlockerId ? (
-                    <button
-                      type="button"
-                      className="bof-driver-card-action-btn bof-driver-card-action-btn-danger"
-                      onClick={() =>
-                        resolveDriverDispatchBlocker(
-                          row.driverId,
-                          row.primaryDispatchBlockerId!,
-                          "Primary dispatch blocker — demo override"
-                        )
-                      }
-                    >
-                      Fix Issue
-                    </button>
-                  ) : (
-                    <Link href={`/drivers/${row.driverId}`} className="bof-driver-card-action-btn bof-driver-card-action-btn-primary">
-                      View Driver
-                    </Link>
-                  )}
-                </div>
-              </div>
-
-              {/* Expanded Issue Panel */}
-              {expandedDriverId === row.driverId ? (
-                <div className="bof-driver-card-expanded">
-                  <DriverReviewInlinePanel 
-                    explanation={row.reviewExplanation} 
-                    driverId={row.driverId} 
-                    driverName={row.name} 
-                  />
-                </div>
-              ) : null}
-            </Fragment>
-          ))}
+                    )}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
       </section>
-
-          </div>
+    </div>
   );
 }
 
