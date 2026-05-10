@@ -160,14 +160,15 @@ export function DashboardPageClient() {
           {/* Full-width hero image spanning entire page width */}
           <div style={{
             width: '100%',
-            height: '560px',
+            height: 'clamp(280px, 25vw, 480px)',
+            maxHeight: '500px',
             position: 'relative',
-            marginBottom: '4rem',
+            marginBottom: '3rem',
             borderRadius: '0 0 1rem 1rem',
             overflow: 'hidden'
           }}>
             <Image
-              src="/marketing/bof-hero-fleet-command-1440x900.png"
+              src="/images/bof-command-dashboard-hero.png"
               alt="BackOfficeFleet Command Center Dashboard - Complete back-office operations including dispatch, compliance, documents, finance, settlements, maintenance, and RFID proof workflows"
               fill
               style={{
@@ -184,26 +185,9 @@ export function DashboardPageClient() {
               left: 0,
               right: 0,
               bottom: 0,
-              background: 'linear-gradient(135deg, rgba(15, 23, 42, 0.4) 0%, rgba(15, 23, 42, 0.1) 50%, transparent 100%)',
+              background: 'linear-gradient(135deg, rgba(15, 23, 42, 0.3) 0%, rgba(15, 23, 42, 0.1) 50%, transparent 100%)',
               pointerEvents: 'none'
             }} />
-            {/* BackOfficeFleet logo overlay */}
-            <div style={{
-              position: 'absolute',
-              top: '2rem',
-              left: '2rem',
-              zIndex: 3
-            }}>
-              <Image
-                src="/logo/boflogo-light.png"
-                alt="BackOfficeFleet"
-                width={120}
-                height={40}
-                style={{
-                  filter: 'brightness(1) contrast(1.1)'
-                }}
-              />
-            </div>
           </div>
 
           {/* Hero title and subtitle - positioned below image with clear spacing */}
