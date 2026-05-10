@@ -146,11 +146,21 @@ export function BofDemoDataProvider({
             return !hasDeductionData && grossMinusNet; // Has gross-net diff but no deduction data
           });
 
-          if (hasStaleDeductions) {
-            console.log("🔄 BOF: Detected stale deduction data in localStorage, refreshing from seed");
-            // Use fresh seed data instead of stale cache
-            setData(normalizeBofData(deepClone(seed)));
-            persistToStorage(normalizeBofData(deepClone(seed)));
+          // Always prefer seed settlement data to ensure v2 data integrity
+          const hasSettlements = parsed.settlements && parsed.settlements.length > 0;
+          const seedHasSettlements = seed.settlements && seed.settlements.length > 0;
+          
+          if (hasStaleDeductions || (hasSettlements && seedHasSettlements)) {
+            console.log("🔄 BOF: Using fresh seed settlement data to ensure v2 data integrity");
+            // Use fresh seed data instead of stale cache for settlements
+            const freshData = normalizeBofData(deepClone(seed));
+            // Preserve any non-settlement user overrides from cache
+            if (parsed && Array.isArray(parsed.drivers) && Array.isArray(parsed.documents)) {
+              freshData.drivers = parsed.drivers;
+              freshData.documents = parsed.documents;
+            }
+            setData(freshData);
+            persistToStorage(freshData);
           } else {
             const { data: migrated, mutated } = migrateLegacySharedMedicalExpiration(parsed, seed);
             const next = mutated || legacyHydratedFrom ? migrated : parsed;

@@ -16,6 +16,7 @@ interface DemoSettlement {
   grossPay?: number;
   fuelReimbursement?: number;
   totalDeductions?: number;
+  deductions?: number;
   netPay?: number;
   status?: string;
   pendingReason?: string;
@@ -23,6 +24,20 @@ interface DemoSettlement {
   baseEarnings?: number;
   backhaulPay?: number;
   safetyBonus?: number;
+  // Deduction components from v2 Excel Payroll
+  fica?: number;
+  oasdi?: number;
+  federalWithholding?: number;
+  stateWithholding?: number;
+  sdi?: number;
+  fmLeave?: number;
+  familySupport?: number;
+  insurancePremiums?: number;
+  creditUnionSavingsClub?: number;
+  contribution401k?: number;
+  hsaFsaHealthDeduction?: number;
+  healthInsurancePremiums?: number;
+  lifeInsuranceAbove50k?: number;
 }
 
 export type DriverSettlementRow = {
@@ -39,6 +54,20 @@ export type DriverSettlementRow = {
   backhaulPay?: number;
   safetyBonus?: number;
   fuelReimbursement?: number;
+  // Deduction components from v2 Excel Payroll
+  fica?: number;
+  oasdi?: number;
+  federalWithholding?: number;
+  stateWithholding?: number;
+  sdi?: number;
+  fmLeave?: number;
+  familySupport?: number;
+  insurancePremiums?: number;
+  creditUnionSavingsClub?: number;
+  contribution401k?: number;
+  hsaFsaHealthDeduction?: number;
+  healthInsurancePremiums?: number;
+  lifeInsuranceAbove50k?: number;
 };
 
 
@@ -46,14 +75,31 @@ function normalizeSettlementStatus(status: string, pendingReason?: string): Sett
   const normalized = status.toLowerCase().trim();
   if (normalized === "paid") return "Paid";
   if (normalized === "pending") {
-    // Only mark as Needs Review if there's a specific hold/review reason
-    // Otherwise keep as Pending which is a valid operational status
-    if (pendingReason && (pendingReason.toLowerCase().includes("hold") || 
-                         pendingReason.toLowerCase().includes("review") ||
-                         pendingReason.toLowerCase().includes("block"))) {
-      return "Needs Review";
+    // Only mark as Needs Review for actual blocking issues
+    // Normal operational statuses should be Ready
+    if (pendingReason) {
+      const reason = pendingReason.toLowerCase();
+      // These are normal operational statuses, not holds/review issues
+      const normalStatuses = [
+        "awaiting receipts", "load verification", "awaiting load", 
+        "in progress", "processing", "scheduled", "n/a", "none", ""
+      ];
+      
+      // These are actual blocking issues that need review
+      const blockingIssues = [
+        "hold", "review", "block", "dispute", "error", "missing", 
+        "rejected", "failed", "overdue", "exception", "investigation"
+      ];
+      
+      if (blockingIssues.some(issue => reason.includes(issue))) {
+        return "Needs Review";
+      }
+      
+      if (normalStatuses.some(status => reason.includes(status) || reason === status)) {
+        return "Ready";
+      }
     }
-    return "Ready"; // Pending with valid reason is operationally ready
+    return "Ready"; // Default to Ready for pending without specific blocking issues
   }
   if (normalized === "on hold") return "Needs Review";
   if (normalized === "draft") return "Ready";
@@ -61,21 +107,40 @@ function normalizeSettlementStatus(status: string, pendingReason?: string): Sett
 }
 
 function mapDemoSettlementsToDriverRows(settlements: DemoSettlement[]): DriverSettlementRow[] {
-  return settlements.map(settlement => ({
-    driverId: settlement.driverId || "",
-    driverName: settlement.driverId, // Will be resolved from drivers data
-    grossPay: settlement.grossPay || 0,
-    reimbursements: settlement.fuelReimbursement || 0,
-    deductions: settlement.totalDeductions || 0,
-    netPay: settlement.netPay || 0,
-    status: normalizeSettlementStatus(settlement.status || "", settlement.pendingReason),
-    holds: settlement.pendingReason ? [settlement.pendingReason] : [],
-    settlementId: settlement.settlementId || "",
-    baseEarnings: settlement.baseEarnings,
-    backhaulPay: settlement.backhaulPay,
-    safetyBonus: settlement.safetyBonus,
-    fuelReimbursement: settlement.fuelReimbursement,
-  }));
+  return settlements.map(settlement => {
+    // Use totalDeductions from the v2 Excel Payroll data
+    const prioritizedDeductions = settlement.totalDeductions || settlement.deductions || 0;
+    
+    return {
+      driverId: settlement.driverId || "",
+      driverName: settlement.driverId, // Will be resolved from drivers data
+      grossPay: settlement.grossPay || 0,
+      reimbursements: settlement.fuelReimbursement || 0,
+      deductions: prioritizedDeductions,
+      netPay: settlement.netPay || 0,
+      status: normalizeSettlementStatus(settlement.status || "", settlement.pendingReason),
+      holds: settlement.pendingReason ? [settlement.pendingReason] : [],
+      settlementId: settlement.settlementId || "",
+      baseEarnings: settlement.baseEarnings,
+      backhaulPay: settlement.backhaulPay,
+      safetyBonus: settlement.safetyBonus,
+      fuelReimbursement: settlement.fuelReimbursement,
+      // Pass through deduction components for detail panel
+      fica: settlement.fica,
+      oasdi: settlement.oasdi,
+      federalWithholding: settlement.federalWithholding,
+      stateWithholding: settlement.stateWithholding,
+      sdi: settlement.sdi,
+      fmLeave: settlement.fmLeave,
+      familySupport: settlement.familySupport,
+      insurancePremiums: settlement.insurancePremiums,
+      creditUnionSavingsClub: settlement.creditUnionSavingsClub,
+      contribution401k: settlement.contribution401k,
+      hsaFsaHealthDeduction: settlement.hsaFsaHealthDeduction,
+      healthInsurancePremiums: settlement.healthInsurancePremiums,
+      lifeInsuranceAbove50k: settlement.lifeInsuranceAbove50k,
+    };
+  });
 }
 
 export function SettlementsCommandCenter() {
@@ -96,13 +161,16 @@ export function SettlementsCommandCenter() {
 
   // Process settlement data
   const settlementRows = useMemo(() => {
-    const rows = mapDemoSettlementsToDriverRows(data.settlements || []);
+    const rawSettlements = data.settlements || [];
+    const rows = mapDemoSettlementsToDriverRows(rawSettlements);
     
     // Enrich with driver names
-    return rows.map(row => ({
+    const enrichedRows = rows.map(row => ({
       ...row,
       driverName: driverMap.get(row.driverId) || row.driverId,
     }));
+    
+    return enrichedRows;
   }, [data.settlements, driverMap]);
 
   // Filter by selected driver
@@ -151,13 +219,15 @@ export function SettlementsCommandCenter() {
               Review driver pay, deductions, reimbursements, settlement holds, and period-level payout readiness from the source-of-truth payroll file.
             </p>
             <div className="mt-4 text-sm text-slate-400">
-              Source: main-source-v2_enhanced_bof_aligned.xlsx
+              Source: main-source-v2_enhanced_bof_aligned.xlsx / Payroll sheet
             </div>
           </div>
-
-          {/* KPI Cards */}
-          <SettlementsKPICards kpis={kpis} />
         </div>
+      </div>
+
+      {/* KPI Cards */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        <SettlementsKPICards kpis={kpis} />
       </div>
 
       {/* Control Bar */}

@@ -134,31 +134,85 @@ export function SettlementDetailPanel({ driverSettlement, period }: SettlementDe
       <div className="px-6 py-4 border-b border-slate-700">
         <h4 className="font-medium text-slate-100 mb-3">Deductions</h4>
         <div className="space-y-2">
-          {/* Individual deduction components */}
-          <div className="flex justify-between text-sm">
-            <span className="text-slate-400">FICA</span>
-            <span className="font-medium text-slate-200">{formatCurrency(141.98)}</span>
-          </div>
-          <div className="flex justify-between text-sm">
-            <span className="text-slate-400">OASDI</span>
-            <span className="font-medium text-slate-200">{formatCurrency(33.21)}</span>
-          </div>
-          <div className="flex justify-between text-sm">
-            <span className="text-slate-400">Federal Withholding</span>
-            <span className="font-medium text-slate-200">{formatCurrency(412.20)}</span>
-          </div>
-          <div className="flex justify-between text-sm">
-            <span className="text-slate-400">State Withholding</span>
-            <span className="font-medium text-slate-200">{formatCurrency(80.15)}</span>
-          </div>
-          <div className="flex justify-between text-sm">
-            <span className="text-slate-400">401(k)</span>
-            <span className="font-medium text-slate-200">{formatCurrency(0)}</span>
-          </div>
-          <div className="flex justify-between text-sm">
-            <span className="text-slate-400">Health Insurance</span>
-            <span className="font-medium text-slate-200">{formatCurrency(0)}</span>
-          </div>
+          {/* Individual deduction components from v2 Excel Payroll */}
+          {driverSettlement.fica && driverSettlement.fica > 0 && (
+            <div className="flex justify-between text-sm">
+              <span className="text-slate-400">FICA</span>
+              <span className="font-medium text-slate-200">{formatCurrency(driverSettlement.fica)}</span>
+            </div>
+          )}
+          {driverSettlement.oasdi && driverSettlement.oasdi > 0 && (
+            <div className="flex justify-between text-sm">
+              <span className="text-slate-400">OASDI</span>
+              <span className="font-medium text-slate-200">{formatCurrency(driverSettlement.oasdi)}</span>
+            </div>
+          )}
+          {driverSettlement.federalWithholding && driverSettlement.federalWithholding > 0 && (
+            <div className="flex justify-between text-sm">
+              <span className="text-slate-400">Federal Withholding</span>
+              <span className="font-medium text-slate-200">{formatCurrency(driverSettlement.federalWithholding)}</span>
+            </div>
+          )}
+          {driverSettlement.stateWithholding && driverSettlement.stateWithholding > 0 && (
+            <div className="flex justify-between text-sm">
+              <span className="text-slate-400">State Withholding</span>
+              <span className="font-medium text-slate-200">{formatCurrency(driverSettlement.stateWithholding)}</span>
+            </div>
+          )}
+          {driverSettlement.sdi && driverSettlement.sdi > 0 && (
+            <div className="flex justify-between text-sm">
+              <span className="text-slate-400">SDI</span>
+              <span className="font-medium text-slate-200">{formatCurrency(driverSettlement.sdi)}</span>
+            </div>
+          )}
+          {driverSettlement.fmLeave && driverSettlement.fmLeave > 0 && (
+            <div className="flex justify-between text-sm">
+              <span className="text-slate-400">FM Leave</span>
+              <span className="font-medium text-slate-200">{formatCurrency(driverSettlement.fmLeave)}</span>
+            </div>
+          )}
+          {driverSettlement.familySupport && driverSettlement.familySupport > 0 && (
+            <div className="flex justify-between text-sm">
+              <span className="text-slate-400">Family Support</span>
+              <span className="font-medium text-slate-200">{formatCurrency(driverSettlement.familySupport)}</span>
+            </div>
+          )}
+          {driverSettlement.insurancePremiums && driverSettlement.insurancePremiums > 0 && (
+            <div className="flex justify-between text-sm">
+              <span className="text-slate-400">Insurance Premiums</span>
+              <span className="font-medium text-slate-200">{formatCurrency(driverSettlement.insurancePremiums)}</span>
+            </div>
+          )}
+          {driverSettlement.creditUnionSavingsClub && driverSettlement.creditUnionSavingsClub > 0 && (
+            <div className="flex justify-between text-sm">
+              <span className="text-slate-400">Credit Union Savings Club</span>
+              <span className="font-medium text-slate-200">{formatCurrency(driverSettlement.creditUnionSavingsClub)}</span>
+            </div>
+          )}
+          {driverSettlement.contribution401k && driverSettlement.contribution401k > 0 && (
+            <div className="flex justify-between text-sm">
+              <span className="text-slate-400">401(k)</span>
+              <span className="font-medium text-slate-200">{formatCurrency(driverSettlement.contribution401k)}</span>
+            </div>
+          )}
+          {driverSettlement.hsaFsaHealthDeduction && driverSettlement.hsaFsaHealthDeduction > 0 && (
+            <div className="flex justify-between text-sm">
+              <span className="text-slate-400">HSA/FSA Health Deduction</span>
+              <span className="font-medium text-slate-200">{formatCurrency(driverSettlement.hsaFsaHealthDeduction)}</span>
+            </div>
+          )}
+          {driverSettlement.healthInsurancePremiums && driverSettlement.healthInsurancePremiums > 0 && (
+            <div className="flex justify-between text-sm">
+              <span className="text-slate-400">Health Insurance Premiums</span>
+              <span className="font-medium text-slate-200">{formatCurrency(driverSettlement.healthInsurancePremiums)}</span>
+            </div>
+          )}
+          {driverSettlement.lifeInsuranceAbove50k && driverSettlement.lifeInsuranceAbove50k > 0 && (
+            <div className="flex justify-between text-sm">
+              <span className="text-slate-400">Life Insurance Above 50k</span>
+              <span className="font-medium text-slate-200">{formatCurrency(driverSettlement.lifeInsuranceAbove50k)}</span>
+            </div>
+          )}
           <div className="border-t border-slate-600 pt-2 mt-2">
             <div className="flex justify-between text-sm font-medium">
               <span className="text-slate-100">Total Deductions</span>
