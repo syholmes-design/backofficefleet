@@ -160,10 +160,10 @@ export function DashboardPageClient() {
           {/* Full-width hero image spanning entire page width */}
           <div style={{
             width: '100%',
-            height: 'clamp(280px, 25vw, 480px)',
-            maxHeight: '500px',
+            height: 'clamp(360px, 42vw, 620px)',
+            maxHeight: '640px',
             position: 'relative',
-            marginBottom: '3rem',
+            marginBottom: '2rem',
             borderRadius: '0 0 1rem 1rem',
             overflow: 'hidden'
           }}>
@@ -173,7 +173,7 @@ export function DashboardPageClient() {
               fill
               style={{
                 objectFit: 'cover',
-                objectPosition: 'center',
+                objectPosition: 'center 35%',
                 width: '100%',
                 height: '100%'
               }}
@@ -194,10 +194,10 @@ export function DashboardPageClient() {
           <div style={{
             textAlign: 'center',
             marginBottom: '3rem',
-            paddingTop: '2rem'
+            paddingTop: '1rem'
           }}>
             <h1 style={{
-              fontSize: 'clamp(2.5rem, 6vw, 4rem)',
+              fontSize: 'clamp(2.75rem, 5vw, 4.5rem)',
               fontWeight: '700',
               lineHeight: '1.1',
               margin: '0 0 1.5rem 0',
