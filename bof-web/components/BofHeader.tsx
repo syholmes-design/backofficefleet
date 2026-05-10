@@ -15,6 +15,7 @@ const productNav = [
   { href: "/settlements", label: "Settlements" },
   { href: "/safety", label: "Safety" },
   { href: "/dispatch", label: "Dispatch" },
+  { href: "/portals", label: "Portals" },
 ];
 
 const portalsNav = [
@@ -209,6 +210,7 @@ export function BofHeader() {
             ))}
             <Link href="/bof-vault">BOF Vault</Link>
             <Link href="/dashboard" className="bof-global-header-nav-link">Product Demo</Link>
+            <Link href="/portals" className="bof-global-header-nav-link">Portals</Link>
             <Link href="/book-assessment?source=header-marketing">Fleet Assessment</Link>
           </div>
           <div className="bof-global-header-ctas">

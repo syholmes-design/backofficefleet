@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { BofHeader } from "@/components/BofHeader";
+import { BofDebugBanner } from "@/components/debug/BofDebugBanner";
 import "./globals.css";
 import "mapbox-gl/dist/mapbox-gl.css";
 
@@ -22,6 +23,7 @@ export default function RootLayout({
       <body>
         <BofHeader />
         {children}
+        <BofDebugBanner />
       </body>
     </html>
   );
