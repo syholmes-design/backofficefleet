@@ -1,7 +1,18 @@
 #!/usr/bin/env node
 
 /**
- * Compare v2 Excel deductions to current demo-data.json
+ * PERMANENT AUDIT TOOL - Compare Excel vs Demo Data Deductions
+ * 
+ * Purpose: Performs detailed comparison between v2 Excel payroll data and demo-data.json.
+ * Use during troubleshooting, data validation, or after source file updates.
+ * 
+ * Usage: node scripts/compare-deductions-v2-vs-demo.mjs
+ * 
+ * Provides:
+ * - Driver-by-driver deduction comparison table
+ * - Component-level analysis (FICA, OASDI, Federal/State WH, etc.)
+ * - Match/mismatch statistics and data integrity reports
+ * - Identification of data discrepancies requiring attention
  */
 
 import fs from "fs";

@@ -1,7 +1,19 @@
 #!/usr/bin/env node
 
 /**
- * Comprehensive inspection of v2 Excel workbook for payroll/settlement data and deductions
+ * PERMANENT AUDIT TOOL - Inspect v2 Excel Payroll Structure
+ * 
+ * Purpose: Audits the v2 Excel workbook structure to identify all payroll-related sheets and columns.
+ * Use when adding new deduction types, updating Excel structure, or troubleshooting data mapping.
+ * 
+ * Usage: node scripts/inspect-v2-excel-deductions.mjs
+ * 
+ * Provides:
+ * - Complete sheet inventory and structure analysis
+ * - Column mapping for payroll and settlement data
+ * - Sample data rows for verification
+ * - Identification of available deduction components
+ * - Data type and format validation
  */
 
 import fs from "fs";

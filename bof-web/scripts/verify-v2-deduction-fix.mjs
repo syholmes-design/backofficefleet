@@ -1,7 +1,17 @@
 #!/usr/bin/env node
 
 /**
- * Verify that v2 Excel deductions are now correctly in demo data
+ * PERMANENT AUDIT TOOL - Verify v2 Excel Deduction Integration
+ * 
+ * Purpose: Validates that settlement deductions in demo-data.json match the v2 Excel source.
+ * Use after any changes to payroll mapping, Excel source updates, or demo data regeneration.
+ * 
+ * Usage: node scripts/verify-v2-deduction-fix.mjs
+ * 
+ * Verifies:
+ * - All 12 drivers have matching deduction totals
+ * - Component-level accuracy (FICA, OASDI, Federal/State WH, etc.)
+ * - 100% data integrity between Excel source and demo data
  */
 
 import fs from "fs";
