@@ -139,16 +139,30 @@ export function BofDemoDataProvider({
       if (raw) {
         const parsed = JSON.parse(raw) as BofData;
         if (parsed && Array.isArray(parsed.drivers) && Array.isArray(parsed.documents)) {
-          const { data: migrated, mutated } = migrateLegacySharedMedicalExpiration(parsed, seed);
-          const next = mutated || legacyHydratedFrom ? migrated : parsed;
-          setData(normalizeBofData(next));
-          if (mutated || legacyHydratedFrom) {
-            persistToStorage(next);
-            if (legacyHydratedFrom) {
-              try {
-                localStorage.removeItem(BOF_DEMO_DATA_LEGACY_STORAGE_KEY);
-              } catch {
-                /* ignore */
+          // Check if cached data has stale deduction values (Issue 1 fix)
+          const hasStaleDeductions = parsed.settlements && parsed.settlements.some((s: { deductions?: number; totalDeductions?: number; grossPay?: number; netPay?: number }) => {
+            const hasDeductionData = (s.deductions && s.deductions > 0) || (s.totalDeductions && s.totalDeductions > 0);
+            const grossMinusNet = s.grossPay && s.netPay ? (s.grossPay - s.netPay) > 0 : false;
+            return !hasDeductionData && grossMinusNet; // Has gross-net diff but no deduction data
+          });
+
+          if (hasStaleDeductions) {
+            console.log("🔄 BOF: Detected stale deduction data in localStorage, refreshing from seed");
+            // Use fresh seed data instead of stale cache
+            setData(normalizeBofData(deepClone(seed)));
+            persistToStorage(normalizeBofData(deepClone(seed)));
+          } else {
+            const { data: migrated, mutated } = migrateLegacySharedMedicalExpiration(parsed, seed);
+            const next = mutated || legacyHydratedFrom ? migrated : parsed;
+            setData(normalizeBofData(next));
+            if (mutated || legacyHydratedFrom) {
+              persistToStorage(next);
+              if (legacyHydratedFrom) {
+                try {
+                  localStorage.removeItem(BOF_DEMO_DATA_LEGACY_STORAGE_KEY);
+                } catch {
+                  /* ignore */
+                }
               }
             }
           }

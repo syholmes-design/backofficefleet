@@ -134,9 +134,36 @@ export function SettlementDetailPanel({ driverSettlement, period }: SettlementDe
       <div className="px-6 py-4 border-b border-slate-700">
         <h4 className="font-medium text-slate-100 mb-3">Deductions</h4>
         <div className="space-y-2">
+          {/* Individual deduction components */}
           <div className="flex justify-between text-sm">
-            <span className="text-slate-400">Total Deductions</span>
-            <span className="font-medium text-slate-300">{formatCurrency(driverSettlement.deductions)}</span>
+            <span className="text-slate-400">FICA</span>
+            <span className="font-medium text-slate-200">{formatCurrency(141.98)}</span>
+          </div>
+          <div className="flex justify-between text-sm">
+            <span className="text-slate-400">OASDI</span>
+            <span className="font-medium text-slate-200">{formatCurrency(33.21)}</span>
+          </div>
+          <div className="flex justify-between text-sm">
+            <span className="text-slate-400">Federal Withholding</span>
+            <span className="font-medium text-slate-200">{formatCurrency(412.20)}</span>
+          </div>
+          <div className="flex justify-between text-sm">
+            <span className="text-slate-400">State Withholding</span>
+            <span className="font-medium text-slate-200">{formatCurrency(80.15)}</span>
+          </div>
+          <div className="flex justify-between text-sm">
+            <span className="text-slate-400">401(k)</span>
+            <span className="font-medium text-slate-200">{formatCurrency(0)}</span>
+          </div>
+          <div className="flex justify-between text-sm">
+            <span className="text-slate-400">Health Insurance</span>
+            <span className="font-medium text-slate-200">{formatCurrency(0)}</span>
+          </div>
+          <div className="border-t border-slate-600 pt-2 mt-2">
+            <div className="flex justify-between text-sm font-medium">
+              <span className="text-slate-100">Total Deductions</span>
+              <span className="font-medium text-amber-400">{formatCurrency(driverSettlement.deductions)}</span>
+            </div>
           </div>
           <div className="border-t border-slate-600 pt-2 mt-2">
             <div className="flex justify-between text-sm font-medium">

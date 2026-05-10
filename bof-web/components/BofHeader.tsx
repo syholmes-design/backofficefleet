@@ -111,7 +111,8 @@ function PortalsDropdown() {
 
       {isOpen && (
         <div 
-          className="absolute top-full left-0 mt-1 w-80 bg-slate-900 border border-slate-700 rounded-lg shadow-lg z-50"
+          className="absolute top-full left-0 mt-1 w-80 bg-slate-900 border border-slate-700 rounded-lg shadow-lg"
+          style={{ zIndex: 9999 }}
           onMouseEnter={openDropdown}
           onMouseLeave={closeDropdown}
         >
