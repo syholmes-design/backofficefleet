@@ -136,10 +136,11 @@ export function DashboardPageClient() {
       <section className="bof-dashboard-hero bof-dashboard-hero--premium" style={{
         background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%)',
         color: 'white',
-        padding: '6rem 2rem 4rem',
+        padding: '8rem 2rem 4rem',
         borderRadius: '0 0 2rem 2rem',
         position: 'relative',
-        overflow: 'hidden'
+        overflow: 'hidden',
+        marginTop: '0'
       }}>
         <div style={{
           position: 'absolute',
@@ -151,64 +152,65 @@ export function DashboardPageClient() {
           zIndex: 1
         }} />
         <div style={{
-          maxWidth: '1400px',
+          maxWidth: '100%',
           margin: '0 auto',
           position: 'relative',
           zIndex: 2
         }}>
-          {/* Full-width hero image at top */}
+          {/* Full-width hero image spanning entire page width */}
           <div style={{
-            marginBottom: '3rem',
-            textAlign: 'center'
+            width: '100%',
+            height: '560px',
+            position: 'relative',
+            marginBottom: '4rem',
+            borderRadius: '0 0 1rem 1rem',
+            overflow: 'hidden'
           }}>
-            <div style={{
-              background: 'rgba(15, 23, 42, 0.8)',
-              border: '1px solid rgba(20, 184, 166, 0.2)',
-              borderRadius: '16px',
-              padding: '2rem',
-              backdropFilter: 'blur(20px)',
-              boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5)',
-              maxWidth: '1000px',
-              margin: '0 auto',
-              position: 'relative'
-            }}>
-              <div style={{
-                position: 'relative',
+            <Image
+              src="/marketing/bof-hero-fleet-command-1440x900.png"
+              alt="BackOfficeFleet Command Center Dashboard - Complete back-office operations including dispatch, compliance, documents, finance, settlements, maintenance, and RFID proof workflows"
+              fill
+              style={{
+                objectFit: 'cover',
+                objectPosition: 'center',
                 width: '100%',
-                height: 'auto',
-                borderRadius: '12px',
-                overflow: 'hidden'
-              }}>
-                <Image
-                  src="/images/bof-command-dashboard-hero.png"
-                  alt="BOF Command Center Dashboard - Complete back-office operations including dispatch, compliance, documents, finance, settlements, maintenance, and RFID proof workflows"
-                  width={1000}
-                  height={600}
-                  style={{
-                    width: '100%',
-                    height: 'auto',
-                    borderRadius: '12px'
-                  }}
-                  priority
-                />
-                <div style={{
-                  position: 'absolute',
-                  top: 0,
-                  left: 0,
-                  right: 0,
-                  bottom: 0,
-                  background: 'linear-gradient(135deg, rgba(15, 23, 42, 0.2) 0%, transparent 50%)',
-                  pointerEvents: 'none',
-                  borderRadius: '12px'
-                }} />
-              </div>
+                height: '100%'
+              }}
+              priority
+            />
+            <div style={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              background: 'linear-gradient(135deg, rgba(15, 23, 42, 0.4) 0%, rgba(15, 23, 42, 0.1) 50%, transparent 100%)',
+              pointerEvents: 'none'
+            }} />
+            {/* BackOfficeFleet logo overlay */}
+            <div style={{
+              position: 'absolute',
+              top: '2rem',
+              left: '2rem',
+              zIndex: 3
+            }}>
+              <Image
+                src="/logo/boflogo-light.png"
+                alt="BackOfficeFleet"
+                width={120}
+                height={40}
+                style={{
+                  filter: 'brightness(1) contrast(1.1)'
+                }}
+              />
             </div>
           </div>
 
-          {/* Hero title and subtitle */}
+          {/* Hero title and subtitle - positioned below image with clear spacing */}
           <div style={{
             textAlign: 'center',
-            marginBottom: '2rem'
+            marginBottom: '3rem',
+            paddingTop: '2rem'
           }}>
             <h1 style={{
               fontSize: 'clamp(2.5rem, 6vw, 4rem)',
@@ -231,7 +233,7 @@ export function DashboardPageClient() {
               marginLeft: 'auto',
               marginRight: 'auto'
             }}>
-              See how BOF takes over dispatch, compliance, documents, HR, payroll, finance, settlements, maintenance, procurement, RFID proof, and exception management in one accountable operating system.
+              See how BackOfficeFleet takes over dispatch, compliance, documents, HR, payroll, finance, settlements, maintenance, procurement, RFID proof, and exception management in one accountable operating system.
             </p>
           </div>
 
