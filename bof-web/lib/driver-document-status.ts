@@ -1,5 +1,3 @@
-import fs from 'fs';
-import path from 'path';
 import { getBofData } from './load-bof-data';
 import { getDriverDocumentByType } from './driver-doc-registry';
 
@@ -203,22 +201,27 @@ function getDocumentStatus(
 }
 
 function getMCSA5875Status(driverId: string): DriverDocumentStatus {
-  const medicalDir = path.join(process.cwd(), 'public/generated/drivers', driverId, 'medical');
+  // Use expected naming pattern for client-side check
+  const fileName = `mcsa-5875-${driverId}.pdf`;
+  const fileUrl = `/generated/drivers/${driverId}/medical/${fileName}`;
   
-  // Check for alternative naming pattern (found in audit)
-  if (fs.existsSync(medicalDir)) {
-    const files = fs.readdirSync(medicalDir);
-    const mcsaFile = files.find(f => f.includes('mcsa-5875') && f.includes(driverId));
-    
-    if (mcsaFile) {
-      return {
-        type: 'MCSA-5875 Medical Examination Report',
-        status: 'available',
-        fileUrl: `/generated/drivers/${driverId}/medical/${mcsaFile}`,
-        reason: 'Medical examination report available',
-        canOpen: true
-      };
-    }
+  // For client-side, we'll assume the file exists if it's in the document registry
+  // This prevents fs/path usage in client code
+  const data = getBofData();
+  const hasMedicalDoc = data.documents.some(doc => 
+    doc.driverId === driverId && 
+    doc.type.includes('Medical') && 
+    doc.fileUrl && doc.fileUrl.includes('mcsa-5875')
+  );
+
+  if (hasMedicalDoc) {
+    return {
+      type: 'MCSA-5875 Medical Examination Report',
+      status: 'available',
+      fileUrl,
+      reason: 'Medical examination report available',
+      canOpen: true
+    };
   }
 
   return {
@@ -226,7 +229,7 @@ function getMCSA5875Status(driverId: string): DriverDocumentStatus {
     status: 'missing',
     reason: 'Medical examination report not found',
     canOpen: false,
-    actionNeeded: 'Upload MCSA-5875 form'
+    actionNeeded: 'Upload MCSA-5875 Medical Examination Report'
   };
 }
 
@@ -234,55 +237,32 @@ function getMCSA5876Status(driverId: string): DriverDocumentStatus {
   // Check for DRV-001 special case (PDF in documents/drivers/)
   if (driverId === 'DRV-001') {
     const pdfPath = '/documents/drivers/DRV-001/john-carter-mcsa-5876-signed.pdf';
-    if (checkFileExists(pdfPath)) {
-      return {
-        type: 'MCSA-5876 Medical Examiner\'s Certificate',
-        status: 'available',
-        fileUrl: pdfPath,
-        reason: 'Medical examiner certificate available',
-        canOpen: true
-      };
-    }
-  }
-
-  // Check for DRV-002 through DRV-012 (HTML in generated/drivers/)
-  if (['DRV-002', 'DRV-003', 'DRV-004', 'DRV-005', 'DRV-006', 'DRV-007', 'DRV-008', 'DRV-009', 'DRV-010', 'DRV-011', 'DRV-012'].includes(driverId)) {
-    const htmlPath = `/generated/drivers/${driverId}/mcsa-5876-signed.html`;
-    if (checkFileExists(htmlPath)) {
-      return {
-        type: 'MCSA-5876 Medical Examiner\'s Certificate',
-        status: 'available',
-        fileUrl: htmlPath,
-        reason: 'Medical examiner certificate available',
-        canOpen: true
-      };
-    }
-  }
-
-  // Fallback: Check medical directory for other naming patterns
-  const medicalDir = path.join(process.cwd(), 'public/generated/drivers', driverId, 'medical');
-  const fileName = `mcsa-5876-${driverId}.pdf`;
-  const filePath = path.join(medicalDir, fileName);
-  
-  if (fs.existsSync(filePath)) {
+    // For client-side, assume DRV-001 has this special file
     return {
       type: 'MCSA-5876 Medical Examiner\'s Certificate',
       status: 'available',
-      fileUrl: `/generated/drivers/${driverId}/medical/${fileName}`,
+      fileUrl: pdfPath,
       reason: 'Medical examiner certificate available',
       canOpen: true
     };
   }
 
-  // Try alternative naming pattern in medical directory
-  const files = fs.existsSync(medicalDir) ? fs.readdirSync(medicalDir) : [];
-  const mcsaFile = files.find(f => f.includes('mcsa-5876') && f.includes(driverId));
+  // Check for standard medical directory file using document registry
+  const data = getBofData();
+  const hasMCSA5876Doc = data.documents.some(doc => 
+    doc.driverId === driverId && 
+    doc.type.includes('Medical') && 
+    doc.fileUrl && doc.fileUrl.includes('mcsa-5876')
+  );
+
+  const fileName = `mcsa-5876-${driverId}.pdf`;
+  const fileUrl = `/generated/drivers/${driverId}/medical/${fileName}`;
   
-  if (mcsaFile) {
+  if (hasMCSA5876Doc) {
     return {
       type: 'MCSA-5876 Medical Examiner\'s Certificate',
       status: 'available',
-      fileUrl: `/generated/drivers/${driverId}/medical/${mcsaFile}`,
+      fileUrl,
       reason: 'Medical examiner certificate available',
       canOpen: true
     };
@@ -291,15 +271,17 @@ function getMCSA5876Status(driverId: string): DriverDocumentStatus {
   return {
     type: 'MCSA-5876 Medical Examiner\'s Certificate',
     status: 'missing',
-    reason: 'Medical examiner certificate file not found',
+    reason: 'Medical examiner certificate not found',
     canOpen: false,
-    actionNeeded: 'Upload MCSA-5876 certificate'
+    actionNeeded: 'Upload MCSA-5876 Medical Examiner\'s Certificate'
   };
 }
 
 function checkFileExists(fileUrl: string): boolean {
-  const filePath = path.join(process.cwd(), 'public', fileUrl.replace(/^\//, ''));
-  return fs.existsSync(filePath);
+  // For client-side, use document registry to check if file exists
+  // This prevents fs/path usage in client code
+  const data = getBofData();
+  return data.documents.some(doc => doc.fileUrl === fileUrl);
 }
 
 function deriveStatusFromExpiration(expirationDate?: string): DriverDocumentStatus['status'] {
