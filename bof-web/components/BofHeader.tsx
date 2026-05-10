@@ -40,6 +40,21 @@ function PortalsDropdown() {
   const pathname = usePathname();
   const isPortalsActive = pathname.startsWith('/portals');
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  const openDropdown = () => {
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+      timeoutRef.current = null;
+    }
+    setIsOpen(true);
+  };
+
+  const closeDropdown = () => {
+    timeoutRef.current = setTimeout(() => {
+      setIsOpen(false);
+    }, 150);
+  };
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -62,6 +77,9 @@ function PortalsDropdown() {
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
       document.removeEventListener('keydown', handleEscape);
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
     };
   }, [isOpen]);
 
@@ -69,8 +87,10 @@ function PortalsDropdown() {
     <div className="relative" ref={dropdownRef}>
       <button
         onClick={() => setIsOpen(!isOpen)}
+        onMouseEnter={openDropdown}
+        onMouseLeave={closeDropdown}
         className={[
-          "rounded-lg border px-4 py-2 font-medium transition-all duration-200 flex items-center gap-2",
+          "rounded-lg border px-4 py-2 font-medium transition-all duration-200 flex items-center gap-2 text-sm whitespace-nowrap",
           isPortalsActive
             ? "border-teal-600/50 bg-teal-900/40 text-teal-50 shadow-sm"
             : "border-transparent bg-transparent text-slate-300 hover:border-slate-600 hover:bg-slate-800/50 hover:text-white hover:shadow-sm"
@@ -90,17 +110,25 @@ function PortalsDropdown() {
       </button>
 
       {isOpen && (
-        <div className="absolute top-full left-0 mt-1 w-80 bg-slate-900 border border-slate-700 rounded-lg shadow-lg z-50">
+        <div 
+          className="absolute top-full left-0 mt-1 w-80 bg-slate-900 border border-slate-700 rounded-lg shadow-lg z-50"
+          onMouseEnter={openDropdown}
+          onMouseLeave={closeDropdown}
+        >
           <div className="py-2">
             {portalsNav.map((portal) => (
               <Link
                 key={portal.href}
                 href={portal.href}
-                className="block px-4 py-3 hover:bg-slate-800 transition-colors duration-200"
+                className="block px-4 py-3 hover:bg-slate-800 transition-colors duration-200 group"
                 onClick={() => setIsOpen(false)}
               >
-                <div className="font-medium text-white mb-1">{portal.label}</div>
-                <div className="text-sm text-slate-400 leading-relaxed">{portal.description}</div>
+                <div className="font-medium text-white mb-1 group-hover:text-teal-400 transition-colors duration-200">
+                  {portal.label}
+                </div>
+                <div className="text-sm text-slate-400 leading-relaxed group-hover:text-slate-300 transition-colors duration-200">
+                  {portal.description}
+                </div>
               </Link>
             ))}
           </div>
