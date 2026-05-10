@@ -16,7 +16,7 @@ Purpose: prevent edits from landing in stale or non-rendered files by mapping ea
 
 | URL | Route File | Primary Component | Page Type | Hero/Image Source | Data Source | Status | Notes |
 |---|---|---|---|---|---|---|---|
-| `/` | `app/(marketing)/page.tsx` | `components/marketing/MarketingHomeAccountable.tsx` | MARKETING | `Image src="/generated/marketing/demoheroimage-v2.png"` in `MarketingHomeAccountable` | Marketing/static copy; no `getBofData()` | ACTIVE_ROUTE | Public marketing homepage route entrypoint is a re-export. |
+| `/` | `app/(marketing)/page.tsx` | `components/marketing/MarketingHomeAccountable.tsx` | MARKETING | `Image src="/generated/marketing/bof-back-office-operating-system-hero.png"` in `MarketingHomeAccountable` | Marketing/static copy; no `getBofData()` | ACTIVE_ROUTE | Public marketing homepage route entrypoint is a re-export. |
 | `/for-hire-carriers` | `app/(marketing)/for-hire-carriers/page.tsx` | `ForHireCarriersPage` | MARKETING | No hero image component | Marketing funnel links only | ACTIVE_ROUTE | Lightweight entry page. |
 | `/private-fleets` | `app/(marketing)/private-fleets/page.tsx` | `PrivateFleetsPage` + `MarketingPrivateFleetsHero` | MARKETING | `imageSrc="/assets/images/private-fleets-hero-new.png"` passed from route | Marketing/static + funnel clients | ACTIVE_ROUTE | Hero image is page-owned via props (good separation). |
 | `/government` | `app/(marketing)/government/page.tsx` | `GovernmentPage` + `MarketingGovernmentHero` | MARKETING | `imageSrc="/assets/images/government-hero2.png"` passed from route | Marketing/static + funnel clients | ACTIVE_ROUTE | Hero image is page-owned via props. |
@@ -130,7 +130,7 @@ All discovered routes are active Next.js routes unless marked legacy redirect.
 - `/` uses `app/(marketing)/page.tsx` -> `MarketingHomeAccountable`.
 - `/dashboard` uses `app/(bof)/dashboard/page.tsx` -> `DashboardPageClient`.
 - They are different routes and different top-level components.
-- Homepage hero uses image asset `/generated/marketing/demoheroimage-v2.png`.
+- Homepage hero uses image asset `/generated/marketing/bof-back-office-operating-system-hero.png`.
 - Dashboard hero is in-code product preview (`DashboardHeroProductPreview`) and does not use that marketing hero image path.
 
 ## Route Debugging Aid (Development Only)

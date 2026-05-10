@@ -537,10 +537,7 @@ body {
   }
 }
 
-/* Homepage hero — keep full marketing art visible (headline + monitor in frame); letterbox with BOF slate */
-.bof-home-tight-hero .bof-mkt-home-hero-integrated__image-wrap {
-  background: #0f172a;
-}
+/* Homepage hero — ensure full marketing art is visible without background interference */
 
 /* Homepage-only desktop tightening:
    keep existing premium look while pulling copy and visual composition together. */

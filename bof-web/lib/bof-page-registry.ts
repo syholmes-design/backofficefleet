@@ -23,7 +23,7 @@ export const BOF_PAGE_REGISTRY: Record<string, BofPageRegistryItem> = {
     type: "MARKETING",
     routeFile: "app/(marketing)/page.tsx",
     primaryComponent: "MarketingHomeAccountable",
-    heroImage: "/generated/marketing/demoheroimage-v2.png",
+    heroImage: "/generated/marketing/bof-back-office-operating-system-hero.png",
   },
   forHireCarriers: {
     label: "For-Hire Carriers",

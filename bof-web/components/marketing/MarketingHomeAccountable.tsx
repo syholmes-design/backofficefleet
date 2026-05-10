@@ -127,15 +127,15 @@ export default function MarketingHomeAccountable() {
             {/* Background art only — do not use bof-mkt-home-hero-integrated__image here:
                 globals force object-fit:contain under .bof-home-tight-hero and expose baked-in screenshot chrome. */}
             <Image
-              src="/generated/marketing/demoheroimage-v2.png"
-              alt="BOF command center and truck operations visual"
+              src="/generated/marketing/bof-back-office-operating-system-hero.png"
+              alt="BackOfficeFleet command center and truck operations visual"
               fill
               priority
               sizes="100vw"
               style={{
                 zIndex: 0,
                 objectFit: "cover",
-                objectPosition: "center 30%",
+                objectPosition: "center 35%",
               }}
             />
 

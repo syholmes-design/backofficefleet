@@ -5,8 +5,9 @@ import {
   getSettlementTermsLabel,
   getSettlementMethodBadge
 } from '@/lib/driver-pay-settlement-methods';
-import { getDriverDocumentByType } from '@/lib/driver-doc-registry';
-import { getAcknowledgmentSummary } from '@/lib/driver-acknowledgment-details';
+import { getDriverDocumentStatus, DriverDocumentStatus } from '@/lib/driver-document-status';
+import { getAcknowledgmentSummary } from '@/lib/driver-acknowledgment-status';
+import { getDriverLoadContext, getLoadProofItems } from '@/lib/driver-load-context';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 
@@ -23,6 +24,310 @@ export async function generateStaticParams(): Promise<{ driverId: string }[]> {
   }));
 }
 
+// Component for displaying individual document status
+function DocumentRow({ document }: { document: DriverDocumentStatus }) {
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case 'valid': return 'text-emerald-700 bg-emerald-50';
+      case 'expiring_soon': return 'text-amber-700 bg-amber-50';
+      case 'expired': return 'text-red-700 bg-red-50';
+      case 'available': return 'text-blue-700 bg-blue-50';
+      case 'pending_signature': return 'text-amber-700 bg-amber-50';
+      case 'pending_review': return 'text-amber-700 bg-amber-50';
+      case 'missing': return 'text-red-700 bg-red-50';
+      case 'not_required': return 'text-slate-500 bg-slate-50';
+      default: return 'text-slate-500 bg-slate-50';
+    }
+  };
+
+  const getStatusText = (status: string) => {
+    switch (status) {
+      case 'valid': return 'Valid';
+      case 'expiring_soon': return 'Expiring Soon';
+      case 'expired': return 'Expired';
+      case 'available': return 'Available';
+      case 'pending_signature': return 'Pending Signature';
+      case 'pending_review': return 'Pending Review';
+      case 'missing': return 'Missing';
+      case 'not_required': return 'Not Required';
+      default: return 'Unknown';
+    }
+  };
+
+  return (
+    <div className="flex items-center justify-between p-3 bg-gray-50 rounded border border-gray-200">
+      <div className="flex-1">
+        <div className="font-medium text-slate-900">{document.type}</div>
+        <div className="text-sm text-slate-600">
+          Status: <span className={`font-medium ${getStatusColor(document.status)}`}>
+            {getStatusText(document.status)}
+          </span>
+          {document.expirationDate && (
+            <span className="ml-2 text-slate-500">
+              (Expires: {document.expirationDate})
+            </span>
+          )}
+        </div>
+        {document.reason && (
+          <div className="text-xs text-slate-500 mt-1">{document.reason}</div>
+        )}
+        {document.actionNeeded && (
+          <div className="text-xs text-amber-600 mt-1">Action: {document.actionNeeded}</div>
+        )}
+      </div>
+      <div className="flex items-center gap-3">
+        {document.canOpen && document.fileUrl ? (
+          <Link
+            href={document.fileUrl}
+            target="_blank"
+            className="inline-flex items-center px-3 py-1 text-sm font-medium text-blue-700 bg-blue-100 rounded hover:bg-blue-200 transition-colors"
+          >
+            <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+            </svg>
+            Open
+          </Link>
+        ) : (
+          <span className="inline-flex items-center px-3 py-1 text-sm font-medium text-slate-500 bg-slate-100 rounded">
+            {document.canOpen ? 'Processing' : 'Not Available'}
+          </span>
+        )}
+      </div>
+    </div>
+  );
+}
+
+// Component for load context section
+function LoadContextSection({ driverId }: { driverId: string }) {
+  const loadContext = getDriverLoadContext(driverId);
+
+  if (!loadContext.hasActiveLoad && loadContext.recentLoads.length === 0) {
+    return (
+      <div className="text-center text-gray-500 py-8">
+        No current or recent assignments
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-4">
+      {/* Active Load */}
+      {loadContext.activeLoad && (
+        <div className="bg-blue-50 rounded border border-blue-200 p-4">
+          <div className="flex items-center justify-between mb-2">
+            <div className="text-sm font-medium text-blue-900">
+              Active Load: {loadContext.activeLoad.loadId}
+            </div>
+            <Link
+              href={loadContext.activeLoad.dispatchLink}
+              className="inline-flex items-center px-3 py-1 text-sm font-medium text-blue-700 bg-blue-100 rounded hover:bg-blue-200 transition-colors"
+            >
+              <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+              </svg>
+              View Load
+            </Link>
+          </div>
+          <div className="grid grid-cols-2 gap-4 text-sm">
+            <div>
+              <span className="text-gray-600">Route:</span>
+              <div className="font-medium">{loadContext.activeLoad.route}</div>
+            </div>
+            <div>
+              <span className="text-gray-600">Customer:</span>
+              <div className="font-medium">{loadContext.activeLoad.customer}</div>
+            </div>
+            <div>
+              <span className="text-gray-600">Status:</span>
+              <div className="font-medium text-blue-600">{loadContext.activeLoad.status}</div>
+            </div>
+            <div>
+              <span className="text-gray-600">Equipment:</span>
+              <div className="font-medium">{loadContext.activeLoad.equipment}</div>
+            </div>
+            {loadContext.activeLoad.pickupDate && (
+              <div>
+                <span className="text-gray-600">Pickup:</span>
+                <div className="font-medium">{loadContext.activeLoad.pickupDate}</div>
+              </div>
+            )}
+            {loadContext.activeLoad.deliveryDate && (
+              <div>
+                <span className="text-gray-600">Delivery:</span>
+                <div className="font-medium">{loadContext.activeLoad.deliveryDate}</div>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* Recent Loads */}
+      {loadContext.recentLoads.length > 0 && (
+        <div>
+          <h3 className="text-md font-semibold text-slate-800 mb-3">Recent Loads</h3>
+          <div className="space-y-2">
+            {loadContext.recentLoads.map((load) => (
+              <div key={load.loadId} className="flex items-center justify-between p-3 bg-gray-50 rounded border border-gray-200">
+                <div className="flex-1">
+                  <div className="font-medium text-slate-900">{load.loadId}</div>
+                  <div className="text-sm text-slate-600">{load.route}</div>
+                  <div className="text-xs text-slate-500">
+                    {load.pickupDate && `Pickup: ${load.pickupDate}`}
+                    {load.deliveryDate && ` • Delivery: ${load.deliveryDate}`}
+                  </div>
+                </div>
+                <div className="flex items-center gap-3">
+                  <span className={`inline-flex items-center px-2 py-1 text-xs font-medium rounded ${
+                    load.status === 'Delivered' ? 'bg-green-100 text-green-800' : 
+                    load.status === 'Active' ? 'bg-blue-100 text-blue-800' : 
+                    'bg-gray-100 text-gray-800'
+                  }`}>
+                    {load.status}
+                  </span>
+                  <Link
+                    href={load.dispatchLink}
+                    className="inline-flex items-center px-3 py-1 text-sm font-medium text-teal-700 bg-teal-50 rounded hover:bg-teal-100 transition-colors"
+                  >
+                    <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                    </svg>
+                    View
+                  </Link>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+// Component for load proof section
+function LoadProofSection({ driverId }: { driverId: string }) {
+  const loadContext = getDriverLoadContext(driverId);
+  
+  if (!loadContext.hasActiveLoad) {
+    return (
+      <div className="text-center text-slate-500 py-8">
+        No active load requiring proof
+      </div>
+    );
+  }
+
+  const activeLoad = loadContext.activeLoad!;
+  const proofItems = getLoadProofItems(activeLoad.loadId);
+
+  return (
+    <div className="space-y-2">
+      {proofItems.map((item) => (
+        <div key={item.type} className="flex items-center justify-between p-3 bg-gray-50 rounded border border-gray-200">
+          <div className="flex items-center">
+            <input 
+              type="checkbox" 
+              className="mr-3" 
+              readOnly 
+              checked={item.status === 'available'} 
+            />
+            <div>
+              <div className="font-medium text-slate-900">{item.type}</div>
+              <div className="text-sm text-slate-600">
+                {item.status === 'available' ? 'Available' : 
+                 item.status === 'required_missing' ? 'Required - Missing' : 
+                 item.status === 'not_required' ? 'Not Required' :
+                 item.status === 'required_if_applicable' ? 'Required if Applicable' :
+                 'Unknown'}
+              </div>
+              <div className="text-xs text-slate-500 mt-1">{item.reason}</div>
+            </div>
+          </div>
+          {item.canOpen && item.fileUrl ? (
+            <Link
+              href={item.fileUrl}
+              target="_blank"
+              className="inline-flex items-center px-3 py-1 text-sm font-medium text-teal-700 bg-teal-50 rounded hover:bg-teal-100 transition-colors"
+            >
+              <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+              </svg>
+              View
+            </Link>
+          ) : (
+            <span className="inline-flex items-center px-3 py-1 text-sm font-medium text-slate-500 bg-slate-100 rounded">
+              {item.status === 'required_missing' ? 'Missing' : 'Not Available'}
+            </span>
+          )}
+        </div>
+      ))}
+    </div>
+  );
+}
+
+// Component for acknowledgment section
+function AcknowledgmentSection({ driverId }: { driverId: string }) {
+  const acknowledgmentSummary = getAcknowledgmentSummary(driverId);
+
+  return (
+    <div className="space-y-2">
+      {acknowledgmentSummary.details.map((ack) => (
+        <div key={ack.type} className="flex items-center justify-between p-3 bg-gray-50 rounded border border-gray-200">
+          <div className="flex items-center">
+            <input 
+              type="checkbox" 
+              className="mr-3" 
+              readOnly 
+              checked={ack.status === 'acknowledged'} 
+            />
+            <div>
+              <div className="font-medium text-slate-900">{ack.type}</div>
+              <div className="text-sm text-slate-600">
+                Status: <span className={`font-medium ${
+                  ack.status === 'acknowledged' ? 'text-emerald-700' : 
+                  ack.status === 'pending_signature' ? 'text-amber-700' : 
+                  ack.status === 'pending_review' ? 'text-amber-700' :
+                  ack.status === 'missing_file' ? 'text-red-700' :
+                  ack.status === 'not_required' ? 'text-slate-500' : 'text-red-700'
+                }`}>
+                  {ack.status === 'acknowledged' ? 'Acknowledged' :
+                   ack.status === 'pending_signature' ? 'Pending Signature' :
+                   ack.status === 'pending_review' ? 'Pending Review' :
+                   ack.status === 'missing_file' ? 'Missing File' :
+                   ack.status === 'not_required' ? 'Not Required' : 'Missing'}
+                </span>
+              </div>
+              {ack.reason && (
+                <div className="text-xs text-slate-500 mt-1">{ack.reason}</div>
+              )}
+              {ack.actionNeeded && (
+                <div className="text-xs text-amber-600 mt-1">Action: {ack.actionNeeded}</div>
+              )}
+              {ack.signedDate && (
+                <div className="text-xs text-slate-500 mt-1">Signed: {ack.signedDate}</div>
+              )}
+            </div>
+          </div>
+          {ack.canOpen && ack.filePath ? (
+            <Link
+              href={ack.filePath}
+              target="_blank"
+              className="inline-flex items-center px-3 py-1 text-sm font-medium text-teal-700 bg-teal-50 rounded hover:bg-teal-100 transition-colors"
+            >
+              <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+              </svg>
+              View
+            </Link>
+          ) : (
+            <span className="inline-flex items-center px-3 py-1 text-sm font-medium text-slate-500 bg-slate-100 rounded">
+              {ack.canOpen ? 'Processing' : 'Not Available'}
+            </span>
+          )}
+        </div>
+      ))}
+    </div>
+  );
+}
+
 export default async function DriverPortalDetailPage({ params }: PageProps) {
   const { driverId } = await params;
   const data = getBofData();
@@ -32,7 +337,6 @@ export default async function DriverPortalDetailPage({ params }: PageProps) {
     notFound();
   }
 
-  const driverDocuments = data.documents.filter(doc => doc.driverId === driverId);
   const driverLoads = data.loads.filter(load => load.driverId === driverId);
   const driverSettlements = data.settlements.filter(settlement => settlement.driverId === driverId);
   const currentLoad = driverLoads.find(load => load.status !== 'Delivered');
@@ -100,257 +404,36 @@ export default async function DriverPortalDetailPage({ params }: PageProps) {
               My Documents
             </h2>
             
-            {/* Driver Qualification Documents */}
-            <div className="mb-6">
-              <h3 className="text-md font-semibold text-slate-800 mb-3 flex items-center">
-                <svg className="w-4 h-4 mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-                Driver Qualification
-              </h3>
-              <div className="space-y-2">
-                {[
-                  { type: 'CDL', path: 'cdl.html' },
-                  { type: 'Medical Card / Medical Certification', path: 'medical-card.html' },
-                  { type: 'MVR', path: 'mvr.html' },
-                  { type: 'FMCSA Compliance', path: 'fmcsa-compliance.html' }
-                ].map((doc) => {
-                  // Try multiple path variations for bank and FMCSA files
-                  let docUrl = getDriverDocumentByType(driverId, doc.type);
-                  
-                  // Special handling for FMCSA files
-                  if (doc.type === 'FMCSA Compliance' && !docUrl) {
-                    const fmcsaPaths = [
-                      `/generated/drivers/${driverId}/fmcsa.html`,
-                      `/generated/drivers/${driverId}/fmcsa-compliance.html`,
-                      `/generated/drivers/${driverId}/fmcsa_clearinghouse.html`
-                    ];
-                    docUrl = fmcsaPaths.find(path => {
-                      // For demo, assume the first path exists
-                      return path;
-                    });
-                  }
-                  
-                  const existingDoc = driverDocuments.find(d => d.type === doc.type);
-                  return (
-                    <div key={doc.type} className="flex items-center justify-between p-3 bg-blue-50 rounded border border-blue-200">
-                      <div className="flex-1">
-                        <div className="font-medium text-slate-900">{doc.type}</div>
-                        <div className="text-sm text-slate-600">
-                          Status: <span className={`font-medium ${
-                            existingDoc?.status === 'Valid' ? 'text-emerald-700' : 
-                            existingDoc?.status === 'Expiring Soon' ? 'text-amber-700' : 
-                            existingDoc?.status === 'Expired' ? 'text-red-700' : 'text-slate-500'
-                          }`}>{existingDoc?.status || 'Available'}</span>
-                        </div>
-                      </div>
-                      <div className="flex items-center gap-3">
-                        <div className="text-sm text-slate-500">
-                          {existingDoc?.expirationDate && `Expires: ${existingDoc.expirationDate}`}
-                        </div>
-                        {docUrl ? (
-                          <Link
-                            href={docUrl}
-                            target="_blank"
-                            className="inline-flex items-center px-3 py-1 text-sm font-medium text-blue-700 bg-blue-100 rounded hover:bg-blue-200 transition-colors"
-                          >
-                            <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                            </svg>
-                            Open
-                          </Link>
-                        ) : (
-                          <span className="inline-flex items-center px-3 py-1 text-sm font-medium text-slate-500 bg-slate-100 rounded">
-                            Pending
-                          </span>
-                        )}
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-
-            {/* Contact/Profile Documents */}
-            <div className="mb-6">
-              <h3 className="text-md font-semibold text-slate-800 mb-3 flex items-center">
-                <svg className="w-4 h-4 mr-2 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                </svg>
-                Contact / Profile
-              </h3>
-              <div className="space-y-2">
-                {[
-                  { type: 'Emergency Contact', path: 'emergency-contact.html' },
-                  { type: 'Driver Profile', path: 'driver-profile.html' }
-                ].map((doc) => {
-                  // Special handling for emergency contact - try both hyphenated and underscore versions
-                  let docUrl = getDriverDocumentByType(driverId, doc.type);
-                  
-                  if (doc.type === 'Emergency Contact' && !docUrl) {
-                    const emergencyPaths = [
-                      `/generated/drivers/${driverId}/emergency-contact.html`,
-                      `/generated/drivers/${driverId}/emergency_contact.html`
-                    ];
-                    docUrl = emergencyPaths.find(path => {
-                      // For demo, assume the first path exists
-                      return path;
-                    });
-                  }
-                  
-                  return (
-                    <div key={doc.type} className="flex items-center justify-between p-3 bg-green-50 rounded border border-green-200">
-                      <div className="flex-1">
-                        <div className="font-medium text-slate-900">{doc.type}</div>
-                        <div className="text-sm text-slate-600">
-                          Status: <span className="font-medium text-emerald-700">Available</span>
-                        </div>
-                      </div>
-                      <div className="flex items-center gap-3">
-                        {docUrl ? (
-                          <Link
-                            href={docUrl}
-                            target="_blank"
-                            className="inline-flex items-center px-3 py-1 text-sm font-medium text-green-700 bg-green-100 rounded hover:bg-green-200 transition-colors"
-                          >
-                            <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                            </svg>
-                            Open
-                          </Link>
-                        ) : (
-                          <span className="inline-flex items-center px-3 py-1 text-sm font-medium text-slate-500 bg-slate-100 rounded">
-                            Pending
-                          </span>
-                        )}
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-
-            {/* Employee Driver Documents */}
-            {driverProfile.workerType === 'Employee Driver' && (
-              <div className="mb-6">
+            {getDriverDocumentStatus(driverId).map((group) => (
+              <div key={group.title} className="mb-6">
                 <h3 className="text-md font-semibold text-slate-800 mb-3 flex items-center">
-                  <svg className="w-4 h-4 mr-2 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                  </svg>
-                  Employee Documents
+                  {group.title === 'Driver Qualification' && (
+                    <svg className="w-4 h-4 mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                  )}
+                  {group.title === 'Contact / Profile' && (
+                    <svg className="w-4 h-4 mr-2 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                    </svg>
+                  )}
+                  {(group.title === 'Employment / Payroll' || group.title === 'Owner-Operator Documents') && (
+                    <svg className="w-4 h-4 mr-2 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                    </svg>
+                  )}
+                  {group.title}
                 </h3>
                 <div className="space-y-2">
-                  {[
-                    { type: 'I-9', path: 'i-9.html' },
-                    { type: 'Bank / Direct Deposit', path: 'bank-info.html' },
-                    { type: 'Employee Handbook / Code of Conduct', path: 'hr-payroll/employee-handbook-acknowledgment.html' },
-                    { type: 'Benefits Enrollment', path: 'hr-payroll/benefits-enrollment.html' },
-                    { type: 'Family Support Withholding Summary', path: 'hr-payroll/garnishment-withholding-summary.html' }
-                  ].map((doc) => {
-                    // Special handling for bank files - try multiple variations
-                    let docUrl = getDriverDocumentByType(driverId, doc.type);
-                    
-                    if (doc.type === 'Bank / Direct Deposit' && !docUrl) {
-                      const bankPaths = [
-                        `/generated/drivers/${driverId}/bank-info.html`,
-                        `/generated/drivers/${driverId}/bank-information.html`,
-                        `/generated/drivers/${driverId}/bank_information.html`
-                      ];
-                      docUrl = bankPaths.find(path => {
-                        // For demo, assume the first path exists
-                        return path;
-                      });
-                    }
-                    
-                    return (
-                      <div key={doc.type} className="flex items-center justify-between p-3 bg-purple-50 rounded border border-purple-200">
-                        <div className="flex-1">
-                          <div className="font-medium text-slate-900">{doc.type}</div>
-                          <div className="text-sm text-slate-600">
-                            Status: <span className="font-medium text-emerald-700">Available</span>
-                          </div>
-                        </div>
-                        <div className="flex items-center gap-3">
-                          {docUrl ? (
-                            <Link
-                              href={docUrl}
-                              target="_blank"
-                              className="inline-flex items-center px-3 py-1 text-sm font-medium text-purple-700 bg-purple-100 rounded hover:bg-purple-200 transition-colors"
-                            >
-                              <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                              </svg>
-                              Open
-                            </Link>
-                          ) : (
-                            <span className="inline-flex items-center px-3 py-1 text-sm font-medium text-slate-500 bg-slate-100 rounded">
-                              Pending
-                            </span>
-                          )}
-                        </div>
-                      </div>
-                    );
-                  })}
+                  {group.documents.map((doc) => (
+                    <DocumentRow key={doc.type} document={doc} />
+                  ))}
                 </div>
               </div>
-            )}
+            ))}
 
-            {/* Owner-Operator Documents */}
-            {driverProfile.workerType === 'Independent Contractor / Owner-Operator' && (
-              <div className="mb-6">
-                <h3 className="text-md font-semibold text-slate-800 mb-3 flex items-center">
-                  <svg className="w-4 h-4 mr-2 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 00-2-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01-.707-.293H9z" />
-                  </svg>
-                  Owner-Operator Documents
-                </h3>
-                <div className="space-y-2">
-                  {[
-                    { type: 'W-9', path: 'w-9.html' },
-                    { type: 'Independent Contractor Agreement', path: 'owner-operator/independent-contractor-agreement.html' },
-                    { type: 'Owner-Operator Lease Agreement', path: 'owner-operator/owner-operator-lease-agreement.html' },
-                    { type: 'Certificate of Insurance Verification', path: 'owner-operator/certificate-of-insurance-verification.html' },
-                    { type: 'Occupational Accident Coverage Acknowledgment', path: 'owner-operator/occupational-accident-coverage-acknowledgment.html' },
-                    { type: 'Equipment Schedule', path: 'owner-operator/equipment-schedule.html' },
-                    { type: 'Maintenance Responsibility Acknowledgment', path: 'owner-operator/maintenance-responsibility-acknowledgment.html' },
-                    { type: 'Fuel/Toll/Advance/Chargeback Policy Acknowledgment', path: 'owner-operator/fuel-toll-advance-chargeback-policy-acknowledgment.html' },
-                    { type: 'Settlement/Payment Authorization', path: 'owner-operator/settlement-payment-authorization.html' },
-                    { type: 'Safety and Compliance Acknowledgment', path: 'owner-operator/safety-and-compliance-acknowledgment.html' },
-                    { type: 'Worker Classification Review Summary', path: 'owner-operator/worker-classification-review-summary.html' }
-                  ].map((doc) => {
-                    const docUrl = getDriverDocumentByType(driverId, doc.type);
-                    return (
-                      <div key={doc.type} className="flex items-center justify-between p-3 bg-orange-50 rounded border border-orange-200">
-                        <div className="flex-1">
-                          <div className="font-medium text-slate-900">{doc.type}</div>
-                          <div className="text-sm text-slate-600">
-                            Status: <span className="font-medium text-emerald-700">Available</span>
-                          </div>
-                        </div>
-                        <div className="flex items-center gap-3">
-                          {docUrl ? (
-                            <Link
-                              href={docUrl}
-                              target="_blank"
-                              className="inline-flex items-center px-3 py-1 text-sm font-medium text-orange-700 bg-orange-100 rounded hover:bg-orange-200 transition-colors"
-                            >
-                              <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                              </svg>
-                              Open
-                            </Link>
-                          ) : (
-                            <span className="inline-flex items-center px-3 py-1 text-sm font-medium text-slate-500 bg-slate-100 rounded">
-                              Pending
-                            </span>
-                          )}
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-            )}
+
+
           </div>
 
           {/* My Current Load / Assignments */}
@@ -359,38 +442,10 @@ export default async function DriverPortalDetailPage({ params }: PageProps) {
               <svg className="w-5 h-5 mr-2 text-teal-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 012-2v2a2 2 0 002 2h2a2 2 0 002-2V7a2 2 0 00-2-2z" />
               </svg>
-              My Current Load / Assignments
+              Current & Recent Loads
             </h2>
             
-            {currentLoad ? (
-              <div className="bg-blue-50 rounded border border-blue-200 p-4">
-                    <div className="text-sm font-medium text-blue-900 mb-2">
-                          Load {currentLoad.id}
-                    </div>
-                    <div className="grid grid-cols-2 gap-4 text-sm">
-                          <div>
-                                <span className="text-gray-600">Origin:</span>
-                                <div className="font-medium">{currentLoad.origin}</div>
-                          </div>
-                          <div>
-                                <span className="text-gray-600">Destination:</span>
-                                <div className="font-medium">{currentLoad.destination}</div>
-                          </div>
-                          <div>
-                                <span className="text-gray-600">Status:</span>
-                                <div className="font-medium text-blue-600">{currentLoad.status}</div>
-                          </div>
-                          <div>
-                                <span className="text-gray-600">Equipment:</span>
-                                <div className="font-medium">{currentLoad.assetId}</div>
-                          </div>
-                    </div>
-              </div>
-            ) : (
-              <div className="text-center text-gray-500 py-8">
-                    No current assignments
-              </div>
-            )}
+            <LoadContextSection driverId={driverId} />
           </div>
 
           {/* Proof Upload Checklist */}
@@ -399,104 +454,10 @@ export default async function DriverPortalDetailPage({ params }: PageProps) {
               <svg className="w-5 h-5 mr-2 text-teal-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0M12 15V7m0 0a3 3 0 00-6h3a3 3 0 006 0v8a3 3 0 00-6zm0 0a9 9 0 11-18 0 9 9 0 0118 0" />
               </svg>
-              Proof Upload Checklist
+              Load Proof & Documents
             </h2>
             
-            {currentLoad ? (
-              <div className="space-y-2">
-                    <div className="flex items-center justify-between p-3 bg-gray-50 rounded border border-gray-200">
-                          <div className="flex items-center">
-                                <input type="checkbox" className="mr-3" readOnly checked={currentLoad.podStatus === 'verified'} />
-                                <div>
-                                      <div className="font-medium text-slate-900">Bill of Lading (BOL)</div>
-                                      <div className="text-sm text-slate-600">
-                                            {currentLoad.podStatus === 'verified' ? 'Verified' : 'Required'}
-                                      </div>
-                                </div>
-                          </div>
-                          {currentLoad.podStatus === 'verified' && (
-                            <Link
-                              href={`/generated/loads/${currentLoad.id}/bol.html`}
-                              target="_blank"
-                              className="inline-flex items-center px-3 py-1 text-sm font-medium text-teal-700 bg-teal-50 rounded hover:bg-teal-100 transition-colors"
-                            >
-                              <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                              </svg>
-                              View
-                            </Link>
-                          )}
-                    </div>
-                    
-                    <div className="flex items-center justify-between p-3 bg-gray-50 rounded border border-gray-200">
-                          <div className="flex items-center">
-                                <input type="checkbox" className="mr-3" readOnly checked={currentLoad.podStatus === 'verified'} />
-                                <div>
-                                      <div className="font-medium text-slate-900">Signed BOL / POD</div>
-                                      <div className="text-sm text-slate-600">
-                                            {currentLoad.podStatus === 'verified' ? 'Verified' : 'Required'}
-                                      </div>
-                                </div>
-                          </div>
-                          {currentLoad.podStatus === 'verified' && (
-                            <Link
-                              href={`/generated/loads/${currentLoad.id}/pod.html`}
-                              target="_blank"
-                              className="inline-flex items-center px-3 py-1 text-sm font-medium text-teal-700 bg-teal-50 rounded hover:bg-teal-100 transition-colors"
-                            >
-                              <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                              </svg>
-                              View
-                            </Link>
-                          )}
-                    </div>
-                    
-                    <div className="flex items-center p-3 bg-gray-50 rounded border border-gray-200">
-                          <input type="checkbox" className="mr-3" readOnly />
-                          <div>
-                                <div className="font-medium text-slate-900">Delivery Photo</div>
-                                <div className="text-sm text-slate-600">Required</div>
-                          </div>
-                    </div>
-                    
-                    <div className="flex items-center p-3 bg-gray-50 rounded border border-gray-200">
-                          <input type="checkbox" className="mr-3" readOnly />
-                          <div>
-                                <div className="font-medium text-slate-900">Seal Photo</div>
-                                <div className="text-sm text-slate-600">Required if applicable</div>
-                          </div>
-                    </div>
-                    
-                    <div className="flex items-center p-3 bg-gray-50 rounded border border-gray-200">
-                          <input type="checkbox" className="mr-3" readOnly />
-                          <div>
-                                <div className="font-medium text-slate-900">Cargo Photo</div>
-                                <div className="text-sm text-slate-600">Required if applicable</div>
-                          </div>
-                    </div>
-                    
-                    <div className="flex items-center p-3 bg-gray-50 rounded border border-gray-200">
-                          <input type="checkbox" className="mr-3" readOnly />
-                          <div>
-                                <div className="font-medium text-slate-900">Lumper Receipt</div>
-                                <div className="text-sm text-slate-600">Required if applicable</div>
-                          </div>
-                    </div>
-                    
-                    <div className="flex items-center p-3 bg-gray-50 rounded border border-gray-200">
-                          <input type="checkbox" className="mr-3" readOnly />
-                          <div>
-                                <div className="font-medium text-slate-900">Damage/Claim Photos</div>
-                                <div className="text-sm text-slate-600">Required if applicable</div>
-                          </div>
-                    </div>
-              </div>
-            ) : (
-              <div className="text-center text-slate-500 py-8">
-                    No active load requiring proof
-              </div>
-            )}
+            <LoadProofSection driverId={driverId} />
           </div>
 
           {/* My Settlements */}
@@ -553,49 +514,7 @@ export default async function DriverPortalDetailPage({ params }: PageProps) {
               Policy Acknowledgments
             </h2>
             
-            <div className="space-y-2">
-              {(() => {
-                const acknowledgmentSummary = getAcknowledgmentSummary(driverId);
-                return acknowledgmentSummary.details.map((ack) => (
-                  <div key={ack.type} className="flex items-center justify-between p-3 bg-gray-50 rounded border border-gray-200">
-                    <div className="flex items-center">
-                      <input 
-                        type="checkbox" 
-                        className="mr-3" 
-                        readOnly 
-                        checked={ack.status === 'acknowledged'} 
-                      />
-                      <div>
-                        <div className="font-medium text-slate-900">{ack.type}</div>
-                        <div className="text-sm text-slate-600">
-                          Status: <span className={`font-medium ${
-                            ack.status === 'acknowledged' ? 'text-emerald-700' : 
-                            ack.status === 'pending' ? 'text-amber-700' : 
-                            ack.status === 'not_required' ? 'text-slate-500' : 'text-red-700'
-                          }`}>
-                            {ack.status === 'acknowledged' ? 'Acknowledged' :
-                             ack.status === 'pending' ? 'Pending' :
-                             ack.status === 'not_required' ? 'Not required' : 'Missing'}
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-                    {ack.filePath && (
-                      <Link
-                        href={ack.filePath}
-                        target="_blank"
-                        className="inline-flex items-center px-3 py-1 text-sm font-medium text-teal-700 bg-teal-50 rounded hover:bg-teal-100 transition-colors"
-                      >
-                        <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                        </svg>
-                        View
-                      </Link>
-                    )}
-                  </div>
-                ));
-              })()}
-            </div>
+            <AcknowledgmentSection driverId={driverId} />
           </div>
 
           {/* Owner-Operator Packet - Only for owner-operators */}
