@@ -42,10 +42,20 @@ export type DriverSettlementRow = {
 };
 
 
-function normalizeSettlementStatus(status: string): SettlementStatus {
+function normalizeSettlementStatus(status: string, pendingReason?: string): SettlementStatus {
   const normalized = status.toLowerCase().trim();
   if (normalized === "paid") return "Paid";
-  if (normalized === "pending" || normalized === "on hold") return "Needs Review";
+  if (normalized === "pending") {
+    // Only mark as Needs Review if there's a specific hold/review reason
+    // Otherwise keep as Pending which is a valid operational status
+    if (pendingReason && (pendingReason.toLowerCase().includes("hold") || 
+                         pendingReason.toLowerCase().includes("review") ||
+                         pendingReason.toLowerCase().includes("block"))) {
+      return "Needs Review";
+    }
+    return "Ready"; // Pending with valid reason is operationally ready
+  }
+  if (normalized === "on hold") return "Needs Review";
   if (normalized === "draft") return "Ready";
   return "Missing Source Data";
 }
@@ -58,7 +68,7 @@ function mapDemoSettlementsToDriverRows(settlements: DemoSettlement[]): DriverSe
     reimbursements: settlement.fuelReimbursement || 0,
     deductions: settlement.totalDeductions || 0,
     netPay: settlement.netPay || 0,
-    status: normalizeSettlementStatus(settlement.status || ""),
+    status: normalizeSettlementStatus(settlement.status || "", settlement.pendingReason),
     holds: settlement.pendingReason ? [settlement.pendingReason] : [],
     settlementId: settlement.settlementId || "",
     baseEarnings: settlement.baseEarnings,
@@ -129,7 +139,7 @@ export function SettlementsCommandCenter() {
   }, [selectedDriver, filteredRows]);
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-slate-950">
       {/* Premium Hero Section */}
       <div className="bg-gradient-to-r from-slate-900 to-slate-800 text-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -141,7 +151,7 @@ export function SettlementsCommandCenter() {
               Review driver pay, deductions, reimbursements, settlement holds, and period-level payout readiness from the source-of-truth payroll file.
             </p>
             <div className="mt-4 text-sm text-slate-400">
-              Source: consolidated BOF main-source Excel
+              Source: consolidated BOF main-source Excel v2
             </div>
           </div>
 
@@ -151,20 +161,20 @@ export function SettlementsCommandCenter() {
       </div>
 
       {/* Control Bar */}
-      <div className="bg-white border-b border-gray-200 shadow-sm">
+      <div className="bg-slate-900 border-b border-slate-800 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex flex-wrap items-center gap-4">
             {/* Period Selector */}
             <div className="flex items-center gap-2">
-              <Calendar className="h-4 w-4 text-gray-500" />
-              <label className="text-sm font-medium text-gray-700">Period:</label>
+              <Calendar className="h-4 w-4 text-slate-400" />
+              <label className="text-sm font-medium text-slate-300">Period:</label>
               <select
                 value={selectedPeriod.id}
                 onChange={(e) => {
                   const period = canonicalPeriods.find(p => p.id === e.target.value);
                   if (period) setSelectedPeriod(period);
                 }}
-                className="block w-64 rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+                className="block w-64 rounded-md border-slate-600 bg-slate-800 text-slate-100 shadow-sm focus:border-teal-500 focus:ring-teal-500 sm:text-sm"
               >
                 {canonicalPeriods.map(period => (
                   <option key={period.id} value={period.id}>
@@ -176,12 +186,12 @@ export function SettlementsCommandCenter() {
 
             {/* Driver Selector */}
             <div className="flex items-center gap-2">
-              <Users className="h-4 w-4 text-gray-500" />
-              <label className="text-sm font-medium text-gray-700">Driver:</label>
+              <Users className="h-4 w-4 text-slate-400" />
+              <label className="text-sm font-medium text-slate-300">Driver:</label>
               <select
                 value={selectedDriver}
                 onChange={(e) => setSelectedDriver(e.target.value)}
-                className="block w-48 rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+                className="block w-48 rounded-md border-slate-600 bg-slate-800 text-slate-100 shadow-sm focus:border-teal-500 focus:ring-teal-500 sm:text-sm"
               >
                 <option value="">All Drivers</option>
                 {data.drivers.map(driver => (
@@ -194,12 +204,12 @@ export function SettlementsCommandCenter() {
 
             {/* Status Filter */}
             <div className="flex items-center gap-2">
-              <Filter className="h-4 w-4 text-gray-500" />
-              <label className="text-sm font-medium text-gray-700">Status:</label>
+              <Filter className="h-4 w-4 text-slate-400" />
+              <label className="text-sm font-medium text-slate-300">Status:</label>
               <select
                 value={statusFilter}
                 onChange={(e) => setStatusFilter(e.target.value as SettlementStatus | "")}
-                className="block w-40 rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+                className="block w-40 rounded-md border-slate-600 bg-slate-800 text-slate-100 shadow-sm focus:border-teal-500 focus:ring-teal-500 sm:text-sm"
               >
                 <option value="">All Status</option>
                 <option value="Ready">Ready</option>

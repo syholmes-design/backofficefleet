@@ -44,10 +44,20 @@ const DRIVER_ID_FROM_SHORT_NAME = {
   "R. JOHNSON": "DRV-012",
 };
 
+// Handle DVR-001 format from v2 Excel
+function normalizeDriverId(rawDriverId) {
+  const id = str(rawDriverId).trim();
+  // Convert DVR-001 to DRV-001 format
+  if (id.startsWith("DVR-")) {
+    return id.replace("DVR-", "DRV-");
+  }
+  return id;
+}
+
 const HEADER_ALIASES = {
   settlementId: ["Settlement ID", "Settlement", "Payroll ID"],
-  driverId: ["Driver ID", "Legacy Driver ID"],
-  driverName: ["Full Name", "Driver Name", "Driver"],
+  driverId: ["Driver", "Driver ID", "Legacy Driver ID"], // "Driver" is the v2 column name
+  driverName: ["Name", "Full Name", "Driver Name", "Driver"], // "Name" is the v2 column name
   status: ["Status"],
   pendingReason: ["Pending Reason", "Hold Reason"],
   baseEarnings: ["Base Earnings", "Base Pay", "Base"],
@@ -68,7 +78,7 @@ const HEADER_ALIASES = {
   healthInsurancePremiums: ["Health Insurance Premiums", "Health Ins. Prem.", "Health Insurance Premium"],
   lifeInsuranceAbove50k: ["Life Insurance Above 50k", "Life Ins. >50k", "Life Insurance Over 50k"],
   deductions: ["Total Deductions", "Deductions"],
-  fuelReimbursement: ["Fuel Reimb.", "Fuel Reimbursement", "Fuel Reimb"],
+  fuelReimbursement: ["Fuel Reimb.", "Fuel Reimbursement", "Fuel Reimb"], // "Fuel Reimb." is the v2 column name
   netPay: ["Net Pay", "Net"],
   rate401k: ["401(k) Rate", "401k Rate"],
   exportStatus: ["Export Status", "Export"],
@@ -183,7 +193,7 @@ function rowToSettlement(r) {
   const rawDriverId = str(r.driverId);
   const rawDriverName = str(r.driverName);
   const driverId =
-    rawDriverId ||
+    normalizeDriverId(rawDriverId) ||
     DRIVER_ID_FROM_SHORT_NAME[rawDriverName.toUpperCase()] ||
     "";
   const safetyBonus =
@@ -191,6 +201,7 @@ function rowToSettlement(r) {
   const baseEarnings = num(r.baseEarnings);
   const backhaulPay = num(r.backhaulPay);
 
+  // Use v2 source values directly when available
   const grossPay = hasNumericValue(r.grossPay)
     ? Math.round(num(r.grossPay) * 100) / 100
     : Math.round((baseEarnings + backhaulPay + safetyBonus) * 100) / 100;
