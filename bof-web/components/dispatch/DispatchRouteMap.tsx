@@ -107,13 +107,17 @@ export function DispatchRouteMap({
   mode = "all",
   compact = false,
 }: Props) {
-  const mapboxToken = process.env.NEXT_PUBLIC_MAPBOX_TOKEN;
+  // Support both NEXT_PUBLIC_MAPBOX_TOKEN and NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN
+  const mapboxToken = process.env.NEXT_PUBLIC_MAPBOX_TOKEN || process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN;
   const mapRef = useRef<MapRef | null>(null);
   const [popup, setPopup] = useState<{ load: Load; event?: LoadProofEvent } | null>(null);
 
   useEffect(() => {
-    console.log("Mapbox token configured:", Boolean(process.env.NEXT_PUBLIC_MAPBOX_TOKEN));
-  }, []);
+    const tokenSource = process.env.NEXT_PUBLIC_MAPBOX_TOKEN ? 'NEXT_PUBLIC_MAPBOX_TOKEN' : 
+                       process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN ? 'NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN' : 
+                       'none';
+    console.log(`Mapbox token configured: ${Boolean(mapboxToken)} (source: ${tokenSource})`);
+  }, [mapboxToken]);
 
   const scopedLoads = useMemo(() => {
     if (mode === "selected" && selectedLoadId) {
@@ -198,7 +202,7 @@ export function DispatchRouteMap({
         <div className={compact ? "mb-2" : "mb-3"}>
           <h3 className="text-sm font-semibold text-slate-100">Dispatch route map</h3>
           <p className="text-xs text-slate-400">
-            Map token not configured - route data available in demo mode.
+            Mapbox token not configured. Add NEXT_PUBLIC_MAPBOX_TOKEN to .env.local and restart the dev server.
           </p>
         </div>
         <div className={compact ? "h-44" : "h-72"}>{fallbackSvg(scopedLoads)}</div>
