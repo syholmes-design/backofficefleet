@@ -37,7 +37,7 @@ export function SettlementsWorkbookGrid() {
         <code className="bof-code">Payroll</code>, then{" "}
         <code className="bof-code">Payroll_Clean</code>, then{" "}
         <code className="bof-code">Vercel_Settlements</code>; default{" "}
-        <code className="bof-code">public/data/main-source_enhanced_bof_aligned.xlsx</code>
+        <code className="bof-code">public/data/main-source-v2_enhanced_bof_aligned.xlsx</code>
         , or override with env <code className="bof-code">BOF_MAIN_SOURCE_XLSX</code>
         ), merged into <code className="bof-code">lib/demo-data.json</code> when you
         run <code className="bof-code">npm run build:data</code> (or{" "}

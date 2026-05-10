@@ -155,7 +155,7 @@ function loadWorkbookSnapshot(): WorkbookSnapshot | null {
     const root = process.cwd();
     const dataDir = path.join(root, "data", "source-workbooks");
 
-    const enhancedPath = path.join(dataDir, "main-source_enhanced_bof_aligned.xlsx");
+    const enhancedPath = path.join(dataDir, "main-source-v2_enhanced_bof_aligned.xlsx");
     const templateUntruncatedPath = path.join(dataDir, "driver_templates_expanded_untruncated.xlsx");
     const templateFallbackPath = path.join(dataDir, "driver_templates_expanded.xlsx");
 
