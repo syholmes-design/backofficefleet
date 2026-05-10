@@ -70,7 +70,7 @@ export function BofDebugBanner() {
     try {
       // This would need to be injected at build time
       gitCommit = process.env.NEXT_PUBLIC_GIT_COMMIT || "unknown";
-    } catch (error) {
+    } catch {
       gitCommit = "unknown";
     }
 
