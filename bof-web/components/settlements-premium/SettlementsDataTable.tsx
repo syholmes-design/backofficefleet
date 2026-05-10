@@ -182,7 +182,7 @@ export function SettlementsDataTable({ rows, selectedDriverId, onDriverSelect }:
       {/* Footer with data provenance */}
       <div className="px-6 py-3 bg-slate-800 border-t border-slate-700">
         <div className="text-xs text-slate-400">
-          Data source: consolidated BOF main-source Excel v2 • Values are source-provided where available
+          Data source: main-source-v2_enhanced_bof_aligned.xlsx • Values are source-provided where available
         </div>
       </div>
     </div>

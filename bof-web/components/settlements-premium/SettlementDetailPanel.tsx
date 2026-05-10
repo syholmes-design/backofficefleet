@@ -201,7 +201,7 @@ export function SettlementDetailPanel({ driverSettlement, period }: SettlementDe
           <div>
             <p className="text-xs font-medium text-slate-300">Data Source</p>
             <p className="text-xs text-slate-500 mt-1">
-              Values provided by consolidated BOF main-source Excel v2
+              Values provided by main-source-v2_enhanced_bof_aligned.xlsx
             </p>
           </div>
         </div>

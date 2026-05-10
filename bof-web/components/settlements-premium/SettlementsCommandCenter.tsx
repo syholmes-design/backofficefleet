@@ -151,7 +151,7 @@ export function SettlementsCommandCenter() {
               Review driver pay, deductions, reimbursements, settlement holds, and period-level payout readiness from the source-of-truth payroll file.
             </p>
             <div className="mt-4 text-sm text-slate-400">
-              Source: consolidated BOF main-source Excel v2
+              Source: main-source-v2_enhanced_bof_aligned.xlsx
             </div>
           </div>
 
