@@ -179,12 +179,37 @@ async function processDriver(driverId) {
   const requiredCategories = ['CDL', 'Medical Certification', 'MVR', 'Driver Application', 'I-9', 'W-9'];
   const foundCategories = new Set(processedFiles.map(f => f.category));
   
+  // Check for existing generated files that might satisfy requirements
+  const existingFiles = fs.existsSync(targetDir) ? fs.readdirSync(targetDir) : [];
+  
   for (const required of requiredCategories) {
-    if (!foundCategories.has(required)) {
+    // Check if category is found in processed files OR if there's an existing generated file
+    const hasProcessedFile = foundCategories.has(required);
+    const hasExistingFile = existingFiles.some(file => {
+      const fileName = file.toLowerCase();
+      if (required === 'W-9') {
+        return fileName === 'w-9.html' || fileName === 'w9.html';
+      } else if (required === 'I-9') {
+        return fileName === 'i-9.html' || fileName === 'i9.html';
+      } else if (required === 'CDL') {
+        return fileName === 'cdl.html';
+      } else if (required === 'Medical Certification') {
+        return fileName === 'medical-card.html';
+      } else if (required === 'MVR') {
+        return fileName === 'mvr.html';
+      } else if (required === 'Driver Application') {
+        return fileName === 'driver-application.html';
+      }
+      return false;
+    });
+    
+    if (!hasProcessedFile && !hasExistingFile) {
       missingDocuments.push(required);
       const placeholderPath = path.join(targetDir, `${required.toLowerCase().replace(/\s+/g, '_')}.html`);
       createMissingDocumentPlaceholder(placeholderPath, required, `${required.toLowerCase().replace(/\s+/g, '_')}.html`);
       console.log(`  🚫 ${required} - Missing (placeholder created)`);
+    } else if (hasExistingFile && !hasProcessedFile) {
+      console.log(`  ✅ ${required} - Found existing generated file`);
     }
   }
   

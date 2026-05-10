@@ -374,11 +374,19 @@ export function resolveDriverIdFromCdlColumn(rowObj, normHeader, validIds) {
 export function patchDriversForJohnCarter(drivers) {
   return drivers.map((d) => {
     if (d.id !== JOHN_CARTER_DRIVER_ID) return d;
+    
+    // Preserve Master Driver Data emergency contact fields if they exist
+    const hasMasterPrimaryData = d.primaryEmergencyName && d.primaryEmergencyName.trim() !== '';
+    const hasMasterSecondaryData = d.secondaryEmergencyName && d.secondaryEmergencyName.trim() !== '';
+    
     return {
       ...d,
-      emergencyContactName: "Jane Carter",
-      emergencyContactRelationship: "Spouse",
-      emergencyContactPhone: "216-555-0198",
+      // Only override old emergency contact fields if no Master Data exists
+      ...(hasMasterPrimaryData ? {} : {
+        emergencyContactName: "Jane Carter",
+        emergencyContactRelationship: "Spouse",
+        emergencyContactPhone: "216-555-0198",
+      }),
       referenceCdlNumber: JOHN_CARTER_CDL_NUMBER,
     };
   });
@@ -396,14 +404,28 @@ export function augmentDriversWithFleetDemoFields(drivers, driverMedicalExpanded
       String(ex.cdlNumber ?? "").trim() ||
       String(d.referenceCdlNumber ?? "").trim() ||
       placeholderCdlNumber(d.id);
-    const first = String(d.name ?? "Driver").trim().split(/\s+/)[0] || "Driver";
     const n = parseInt(String(d.id).replace(/\D/g, ""), 10) || 1;
+    
+    // Preserve Master Driver Data emergency contact information if available
+    const hasPrimaryEmergencyData = d.primaryEmergencyName && d.primaryEmergencyName.trim() !== '';
+    const hasSecondaryEmergencyData = d.secondaryEmergencyName && d.secondaryEmergencyName.trim() !== '';
+    const hasMasterEmergencyData = hasPrimaryEmergencyData || hasSecondaryEmergencyData;
+    
+    // Check if it looks like demo fallback data for the old format
+    const isOldDemoData = d.emergencyContactName && (
+      d.emergencyContactName.includes('demo') || 
+      d.emergencyContactName.includes('— emergency contact')
+    );
+    
     return {
       ...d,
       referenceCdlNumber: ref,
-      emergencyContactName: `${first} — emergency contact (demo)`,
-      emergencyContactRelationship: "Family",
-      emergencyContactPhone: `555-01${String(n).padStart(2, "0")}`,
+      // Only use demo emergency contact data if no Master Driver Data exists and old data looks like demo
+      ...(hasMasterEmergencyData ? {} : {
+        emergencyContactName: isOldDemoData ? d.emergencyContactName : `${String(d.name ?? "Driver").trim().split(/\s+/)[0] || "Driver"} — emergency contact (demo)`,
+        emergencyContactRelationship: isOldDemoData ? d.emergencyContactRelationship : "Family",
+        emergencyContactPhone: isOldDemoData ? d.emergencyContactPhone : `555-01${String(n).padStart(2, "0")}`,
+      }),
     };
   });
 }

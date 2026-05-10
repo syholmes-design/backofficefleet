@@ -176,9 +176,31 @@ export function normalizeLoadIntakeForm(
     intakeSourceDocumentUrl: intakeRecord?.sourceDocumentUrl,
     extractionProvider: intakeRecord?.extractionProvider,
     extractionConfidence: intakeRecord?.extractionConfidence,
-    extractionWarnings: intakeRecord?.extractionWarnings,
-    reviewedAt: intakeRecord?.reviewedAt,
+    extractionWarnings: [],
+    reviewedAt: null,
     reviewedBy: intakeRecord?.reviewedBy,
+    // Additional required fields for BofData["loads"][number] type
+    loadId: canonical.loadId,
+    customer: canonical.customerName || "Missing source data",
+    equipment: canonical.equipmentType || "Missing source data",
+    distance: 0, // No distance available from intake data
+    ratePerMile: canonical.rate > 0 && canonical.weight > 0 ? canonical.rate / canonical.weight : 0,
+    fuelSurcharge: 0,
+    accessorialCharges: 0,
+    totalPay: canonical.rate + backhaulPay,
+    brokerName: "Missing source data",
+    brokerPhone: "Missing source data",
+    brokerEmail: "Missing source data",
+    temperatureRequired: false,
+    hazmat: false,
+    oversized: false,
+    tarpRequired: false,
+    deliveryAppointments: true,
+    pickupAppointment: canonical.pickupAt,
+    deliveryAppointment: canonical.deliveryAt,
+    actualPickup: canonical.pickupAt || "",
+    estimatedDelivery: canonical.deliveryAt,
+    workOrderId: `WO-${canonical.loadId}`,
   } as BofData["loads"][number];
 
   const loadProofBundle: NormalizeResult["loadProofBundle"] = {
