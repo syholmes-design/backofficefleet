@@ -673,6 +673,10 @@ function generateEmployeeHandbookAcknowledgment(driverInfo) {
             border-bottom: 1px solid #1a202c;
             width: 3in;
             margin-bottom: 0.125in;
+            font-family: "Brush Script MT", "Segoe Script", cursive;
+            font-size: 18px;
+            padding: 5px 0;
+            height: 30px;
         }
         .signature-label {
             font-size: 9pt;
@@ -757,24 +761,24 @@ function generateEmployeeHandbookAcknowledgment(driverInfo) {
 
         <div class="signature-area">
             <div class="signature-block">
-                <div class="signature-line"></div>
+                <div class="signature-line">${driverInfo.name}</div>
                 <div class="signature-label">Employee Signature</div>
             </div>
             <div class="signature-block">
-                <div class="signature-line"></div>
-                <div class="signature-label">Date: ${acknowledgmentDate}</div>
+                <div class="signature-line">${acknowledgmentDate}</div>
+                <div class="signature-label">Date</div>
             </div>
         </div>
 
         <div class="signature-area">
             <div class="section-title">HR Review</div>
             <div class="signature-block">
-                <div class="signature-line"></div>
+                <div class="signature-line">M. Torres</div>
                 <div class="signature-label">HR Representative Signature</div>
             </div>
             <div class="signature-block">
-                <div class="signature-line"></div>
-                <div class="signature-label">Date: ${reviewDate}</div>
+                <div class="signature-line">${reviewDate}</div>
+                <div class="signature-label">Date</div>
             </div>
         </div>
 
