@@ -88,17 +88,19 @@ body {
   top: 0;
   z-index: 200;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05), 0 1px 2px rgba(0, 0, 0, 0.02);
+  height: 88px;
 }
 
 .bof-global-header-inner {
-  max-width: 80rem;
+  max-width: 100rem; /* 1600px */
   margin: 0 auto;
   padding: 1.25rem 1.25rem;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 2rem;
-  flex-wrap: wrap;
+  height: 100%;
+  flex-wrap: nowrap;
 }
 
 /* Enhanced marketing header padding */
@@ -120,6 +122,12 @@ body {
   }
 }
 
+@media (min-width: 1536px) {
+  .bof-global-header-inner {
+    padding: 1.25rem 4rem;
+  }
+}
+
 .bof-global-header-logo {
   display: inline-flex;
   align-items: center;
@@ -137,24 +145,25 @@ body {
   align-items: center;
   flex-wrap: wrap;
   gap: 0.75rem 1.5rem;
-  font-size: 1.21875rem;
-  font-weight: 500;
+  font-size: 0.9375rem; /* 15px */
+  font-weight: 600;
   color: #374151;
-  justify-content: flex-end;
+  justify-content: center;
   flex: 1;
   min-width: 0;
 }
 
 .bof-global-header-nav a {
-  color: #4b5563;
+  color: #475569;
   text-decoration: none;
   white-space: nowrap;
   padding: 0.5rem 1rem;
   border-radius: 8px;
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-  font-weight: 500;
+  font-weight: 600;
   position: relative;
   border: 1px solid transparent;
+  font-size: 0.9375rem; /* 15px */
 }
 
 .bof-global-header-nav a::before {
@@ -228,16 +237,17 @@ body {
   
   .bof-global-header-nav {
     gap: 0.5rem 1rem;
-    font-size: 1.1rem;
+    font-size: 0.875rem; /* 14px */
   }
   
   .bof-global-header-nav a {
     padding: 0.4rem 0.8rem;
+    font-size: 0.875rem; /* 14px */
   }
   
   .bof-global-header-cta {
     padding: 0.75rem 1.5rem;
-    font-size: 0.875rem;
+    font-size: 0.9375rem; /* 15px */
     height: 2.75rem;
     letter-spacing: 0.025em;
   }
@@ -247,20 +257,25 @@ body {
   .bof-global-header-inner {
     padding: 0.875rem 1rem;
     gap: 1rem;
+    flex-wrap: wrap;
   }
   
   .bof-global-header-nav {
     gap: 0.4rem 0.8rem;
-    font-size: 1rem;
+    font-size: 0.8125rem; /* 13px */
+    order: 3;
+    width: 100%;
+    justify-content: center;
   }
   
   .bof-global-header-nav a {
     padding: 0.35rem 0.6rem;
+    font-size: 0.8125rem; /* 13px */
   }
   
   .bof-global-header-cta {
     padding: 0.625rem 1.125rem;
-    font-size: 0.825rem;
+    font-size: 0.875rem; /* 14px */
     height: 2.5rem;
     letter-spacing: 0.025em;
   }
@@ -268,6 +283,7 @@ body {
   .bof-global-header-ctas {
     gap: 0.5rem;
     margin-left: 0.5rem;
+    order: 2;
   }
   
   .bof-global-header-logo-enhanced {
@@ -278,8 +294,8 @@ body {
 .bof-global-header-cta {
   padding: 0.875rem 1.75rem;
   border-radius: 14px;
-  font-weight: 600;
-  font-size: 0.9rem;
+  font-weight: 700;
+  font-size: 1rem; /* 16px */
   text-decoration: none;
   position: relative;
   overflow: hidden;

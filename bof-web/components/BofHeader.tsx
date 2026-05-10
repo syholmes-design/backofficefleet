@@ -207,10 +207,8 @@ export function BofHeader() {
               </Link>
             ))}
             <Link href="/bof-vault">BOF Vault</Link>
-          </div>
-          <div className="bof-global-header-nav-group" aria-label="Demo">
             <Link href="/dashboard" className="bof-global-header-nav-link">Product Demo</Link>
-            <Link href="/book-assessment?source=header-marketing">Fleet assessment</Link>
+            <Link href="/book-assessment?source=header-marketing">Fleet Assessment</Link>
           </div>
           <div className="bof-global-header-ctas">
             <Link href="/apply" className="bof-global-header-cta bof-global-header-cta--primary">
