@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { useMemo, useState } from "react";
 import { Filter, Search } from "lucide-react";
@@ -228,17 +229,44 @@ export function DispatchBoardScreen() {
 
   return (
     <div className="flex min-h-0 flex-1 flex-col gap-4 p-5">
-      <header className="flex flex-wrap items-start justify-between gap-3">
-        <div>
-          <h1 className="text-lg font-semibold tracking-tight text-white">
-            Dispatch Command Board
-          </h1>
-          <p className="mt-1 max-w-3xl text-sm text-slate-400">
-            Prioritize active loads, dispatch readiness, proof gaps, settlement blockers, and customer-impacting exceptions from one source-of-truth view.
-          </p>
-          <p className="mt-1 max-w-3xl text-xs text-slate-500">
-            The board surfaces only true exceptions — not every load as &quot;at risk.&quot;
-          </p>
+      {/* Hero Section */}
+      <section className="relative w-full overflow-hidden rounded-lg">
+        <div className="relative h-[360px] md:h-[420px]">
+          <Image
+            src="/generated/marketing/dispatch-command-center-hero.png"
+            alt="Dispatch Command Center"
+            fill
+            className="object-cover object-center"
+            priority
+          />
+          <div className="absolute inset-0 bg-gradient-to-r from-slate-900/95 via-slate-900/80 to-slate-900/95" />
+          <div className="absolute inset-0 flex items-center justify-center">
+            <div className="max-w-4xl px-6 text-center">
+              <h1 className="mb-4 text-3xl font-bold tracking-tight text-white md:text-4xl lg:text-5xl">
+                Dispatch Command Board
+              </h1>
+              <p className="mb-3 text-lg text-slate-200 md:text-xl">
+                Prioritize active loads, proof gaps, settlement blockers, and customer-impacting exceptions from one source-of-truth view.
+              </p>
+              <p className="text-sm text-slate-300 md:text-base">
+                BOF surfaces only the exceptions that need action — not every load as &quot;at risk.&quot;
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Action Bar */}
+      <div className="flex items-center justify-between">
+        <div className="text-sm text-slate-400">
+          <span className="font-medium text-white">{filtered.length}</span> loads •{" "}
+          <span className="font-medium text-amber-300">
+            {filtered.filter(l => {
+              const risk = getLoadRiskExplanation(data, l.load_id, demoRiskOverrides);
+              return risk.riskStatus !== "clean";
+            }).length}
+          </span>{" "}
+          exceptions
         </div>
         <Link
           href="/dispatch/intake"
@@ -246,7 +274,7 @@ export function DispatchBoardScreen() {
         >
           Load Intake
         </Link>
-      </header>
+      </div>
 
       <section
         className="grid gap-2 rounded-lg border border-slate-800 bg-slate-900/50 p-3 sm:grid-cols-2 lg:grid-cols-8"
