@@ -136,7 +136,7 @@ export function DashboardPageClient() {
       <section className="bof-dashboard-hero bof-dashboard-hero--premium" style={{
         background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%)',
         color: 'white',
-        padding: '8rem 2rem 4rem',
+        padding: '4rem 2rem 4rem',
         borderRadius: '0 0 2rem 2rem',
         position: 'relative',
         overflow: 'hidden',
@@ -318,11 +318,11 @@ export function DashboardPageClient() {
             margin: '0 auto'
           }}>
             {[
-              { title: 'World-Class Service', desc: 'Dedicated back-office operations team', href: '/command-center' },
-              { title: 'Exception Management', desc: 'Proactive issue resolution and prevention', href: '/command-center' },
-              { title: 'Savings & Procurement', desc: 'Group buying power and cost optimization', href: '/fleet-savings' },
-              { title: 'Maintenance Programs', desc: 'Preventive maintenance and fleet readiness', href: '/maintenance' },
-              { title: 'RFID & Proof', desc: 'Automated workflows and customer visibility', href: '/loads' }
+              { title: 'World-Class Service', desc: 'Dedicated back-office operators, not just software dashboards', href: '/command-center' },
+              { title: 'Exception Management', desc: 'BOF catches issues early and gives every exception an owner, impact, and fix path', href: '/command-center#exception-management' },
+              { title: 'Savings & Procurement', desc: 'Use operational data and buying leverage to reduce preventable spend', href: '/fleet-savings' },
+              { title: 'Maintenance Programs', desc: 'Keep tractors, trailers, inspections, and PM readiness tied to dispatch decisions', href: '/maintenance' },
+              { title: 'RFID & Proof', desc: 'Reduce fraud, fuel leakage, and disputes with RFID-backed proof and fuel/asset monitoring', href: '/portals/customer' }
             ].map((proof, idx) => (
               <Link key={idx} href={proof.href} style={{
                 textDecoration: 'none',
