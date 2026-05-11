@@ -105,6 +105,63 @@ export function LoadsPageClient() {
         </div>
       </section>
 
+      {/* RFID & Proof Section */}
+      <section className="bof-oper-panel" aria-labelledby="rfid-proof-heading">
+        <div className="bof-cc-panel-head">
+          <h2 id="rfid-proof-heading" className="bof-h2">RFID & Proof</h2>
+          <p className="bof-cc-panel-sub">RFID-backed proof and fuel/equipment monitoring help reduce loss, fraud, dispute risk, and operational uncertainty</p>
+        </div>
+        
+        <div className="bof-cc-story-grid">
+          <div className="bof-cc-story-card">
+            <h3 className="bof-cc-story-title">RFID-Backed Chain of Custody</h3>
+            <p className="bof-cc-story-text">
+              RFID tags provide automated proof of custody throughout the delivery journey. From pickup to drop-off, every scan creates an auditable record of asset movement, reducing disputes and improving accountability.
+            </p>
+          </div>
+          
+          <div className="bof-cc-story-card">
+            <h3 className="bof-cc-story-title">Fuel & Tank Monitoring</h3>
+            <p className="bof-cc-story-text">
+              Fuel theft and misuse can represent a meaningful leakage point for fleets. BOF&apos;s RFID and fuel-monitoring workflows help reduce that risk by tying fuel, asset, driver, and route events to an auditable operating record.
+            </p>
+          </div>
+          
+          <div className="bof-cc-story-card">
+            <h3 className="bof-cc-story-title">Fraud and Leakage Reduction</h3>
+            <p className="bof-cc-story-text">
+              Some fleet operators estimate fuel leakage/theft exposure can reach double-digit percentages without controls. RFID monitoring provides the visibility needed to prevent unauthorized fuel usage and equipment misuse.
+            </p>
+          </div>
+        </div>
+        
+        <div className="bof-cc-benefits">
+          <h4 className="bof-cc-section-subtitle">Key Benefits</h4>
+          <div className="bof-cc-benefit-grid">
+            <div className="bof-cc-benefit-item">
+              <span className="bof-cc-benefit-icon">✓</span>
+              <span className="bof-cc-benefit-text">Customer Proof and Dispute Defense</span>
+            </div>
+            <div className="bof-cc-benefit-item">
+              <span className="bof-cc-benefit-icon">✓</span>
+              <span className="bof-cc-benefit-text">Faster Settlement Release</span>
+            </div>
+            <div className="bof-cc-benefit-item">
+              <span className="bof-cc-benefit-icon">✓</span>
+              <span className="bof-cc-benefit-text">Better Audit Trail</span>
+            </div>
+            <div className="bof-cc-benefit-item">
+              <span className="bof-cc-benefit-icon">✓</span>
+              <span className="bof-cc-benefit-text">Reduced Fuel Theft Risk</span>
+            </div>
+            <div className="bof-cc-benefit-item">
+              <span className="bof-cc-benefit-icon">✓</span>
+              <span className="bof-cc-benefit-text">Equipment Location Verification</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
       <DispatchAttentionQueue variant="light" limit={6} className="bof-oper-panel bof-oper-panel-tight" />
 
       <section className="bof-oper-panel bof-oper-panel-tight" aria-label="Dispatch table">

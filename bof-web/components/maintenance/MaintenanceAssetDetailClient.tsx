@@ -245,8 +245,7 @@ export function MaintenanceAssetDetailClient({ assetId }: { assetId: string }) {
             </ul>
           )}
           <p className="bof-muted bof-small" style={{ marginTop: "0.5rem" }}>
-            Power loads: {summary.loads_as_power.map((l) => l.id).join(", ") || "—"} · Trailer-linked loads:{" "}
-            {summary.loads_as_trailer.map((l) => l.id).join(", ") || "—"}
+            Associated loads: {summary.associated_loads.map((l) => l.id).join(", ") || "—"}
           </p>
         </section>
       </div>

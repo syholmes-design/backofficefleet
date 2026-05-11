@@ -542,8 +542,9 @@ export function createSeedDrivers(): Driver[] {
 }
 
 export function createSeedTractors(): Tractor[] {
+  // Use v2 Excel assets T-101 through T-125
   const nums = [
-    101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112,
+    101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125,
   ];
   return nums.map((n) => {
     const id = `T-${n}`;
@@ -555,13 +556,15 @@ export function createSeedTractors(): Tractor[] {
           : "Available";
     return {
       tractor_id: id,
-      unit_number: `TRK-${n}`,
+      unit_number: `T-${n}`, // Use T- prefix instead of TRK-
       status,
     };
   });
 }
 
 export function createSeedTrailers(): Trailer[] {
+  // Use legacy TL-201 through TL-220 for dispatch operations
+  // Maintenance will use canonical v2 assets separately
   const out: Trailer[] = [];
   for (let n = 201; n <= 220; n++) {
     const i = n - 201;
@@ -572,6 +575,19 @@ export function createSeedTrailers(): Trailer[] {
     });
   }
   return out;
+}
+
+export function createCanonicalV2Assets(): Array<{asset_id: string; unit_number: string; kind: "Equipment"}> {
+  // Single canonical asset list from v2 Excel (T-101 through T-125)
+  // No tractor/trailer duplication - labeled as "Equipment" pending classification
+  const nums = [
+    101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125,
+  ];
+  return nums.map((n) => ({
+    asset_id: `T-${n}`,
+    unit_number: `T-${n}`,
+    kind: "Equipment" as const, // Conservative labeling - no invented tractor/trailer classification
+  }));
 }
 
 export function driverNameById(

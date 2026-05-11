@@ -7,16 +7,15 @@
 import type { BofData } from "./load-bof-data";
 import {
   buildDispatchLoadsFromBofData,
-  createSeedTractors,
-  createSeedTrailers,
+  createCanonicalV2Assets,
 } from "./dispatch-dashboard-seed";
-import type { Load, Trailer, Tractor } from "@/types/dispatch";
+import type { Load } from "@/types/dispatch";
 
 export type MoneyAtRiskRow = NonNullable<BofData["moneyAtRisk"]>[number];
 
 export type EquipmentReadiness = "Ready" | "At Risk" | "Blocked" | "Out of Service";
 
-export type AssetKind = "tractor" | "trailer";
+export type AssetKind = "tractor" | "trailer" | "Equipment";
 
 export type MaintenanceAssetSummary = {
   asset_id: string;
@@ -35,10 +34,8 @@ export type MaintenanceAssetSummary = {
   current_terminal: string;
   /** MAR rows referencing this asset */
   mar_rows: MoneyAtRiskRow[];
-  /** Loads where this tractor is assetId (power unit) */
-  loads_as_power: BofData["loads"][number][];
-  /** Loads where dispatch trailer_id matches this trailer */
-  loads_as_trailer: BofData["loads"][number][];
+  /** Loads where this asset is referenced */
+  associated_loads: BofData["loads"][number][];
 };
 
 export type MaintenanceKpis = {
@@ -118,7 +115,7 @@ export function dispatchImpactForAsset(
 ): { load_id: string; impact_status: string; message: string }[] {
   const out: { load_id: string; impact_status: string; message: string }[] = [];
   const active = new Set(["Pending", "En Route"]);
-  const consider = [...summary.loads_as_power, ...summary.loads_as_trailer];
+  const consider = summary.associated_loads;
   const seen = new Set<string>();
   for (const load of consider) {
     if (seen.has(load.id)) continue;
@@ -200,43 +197,21 @@ function computeReadiness(
   return { readiness: "Ready", reason: "No blocking MAR and unit is available/in service." };
 }
 
-function buildTractorSummary(data: BofData, t: Tractor): MaintenanceAssetSummary {
-  const mars = marsForAsset(data, t.tractor_id);
-  const loadsP = loadsUsingTractor(data, t.tractor_id);
-  const { readiness, reason } = computeReadiness("tractor", t.status, mars);
-  const insp = inspectionPlaceholder();
-  const pm = pmLabelsForAsset(mars);
-  return {
-    asset_id: t.tractor_id,
-    kind: "tractor",
-    unit_number: t.unit_number,
-    fleet_status: t.status,
-    readiness,
-    readiness_reason: reason,
-    pm_status_label: pm.status,
-    pm_due_display: pm.due,
-    inspection_status_label: insp.status,
-    inspection_expiration_display: insp.exp,
-    open_mar_count: mars.filter((m) => isOpenMar(m) || isAtRiskMar(m)).length,
-    oos: t.status === "Unavailable",
-    current_terminal: "Not in BOF fleet JSON",
-    mar_rows: mars,
-    loads_as_power: loadsP,
-    loads_as_trailer: [],
-  };
-}
 
-function buildTrailerSummary(data: BofData, tr: Trailer): MaintenanceAssetSummary {
-  const mars = marsForAsset(data, tr.trailer_id);
-  const loadsT = loadsUsingTrailer(data, tr.trailer_id);
-  const { readiness, reason } = computeReadiness("trailer", tr.status, mars);
+function buildCanonicalAssetSummary(data: BofData, asset: {asset_id: string; unit_number: string; kind: "Equipment"}): MaintenanceAssetSummary {
+  const mars = marsForAsset(data, asset.asset_id);
+  const associatedLoads = [
+    ...loadsUsingTractor(data, asset.asset_id),
+    ...loadsUsingTrailer(data, asset.asset_id)
+  ];
+  const { readiness, reason } = computeReadiness("Equipment", "Available", mars);
   const insp = inspectionPlaceholder();
   const pm = pmLabelsForAsset(mars);
   return {
-    asset_id: tr.trailer_id,
-    kind: "trailer",
-    unit_number: tr.unit_number,
-    fleet_status: tr.status,
+    asset_id: asset.asset_id,
+    kind: "Equipment",
+    unit_number: asset.unit_number,
+    fleet_status: "Available",
     readiness,
     readiness_reason: reason,
     pm_status_label: pm.status,
@@ -244,21 +219,17 @@ function buildTrailerSummary(data: BofData, tr: Trailer): MaintenanceAssetSummar
     inspection_status_label: insp.status,
     inspection_expiration_display: insp.exp,
     open_mar_count: mars.filter((m) => isOpenMar(m) || isAtRiskMar(m)).length,
-    oos: tr.status === "Unavailable",
+    oos: false,
     current_terminal: "Not in BOF fleet JSON",
     mar_rows: mars,
-    loads_as_power: [],
-    loads_as_trailer: loadsT,
+    associated_loads: associatedLoads,
   };
 }
 
 export function listMaintenanceAssetSummaries(data: BofData): MaintenanceAssetSummary[] {
-  const tractors = createSeedTractors();
-  const trailers = createSeedTrailers();
-  return [
-    ...tractors.map((t) => buildTractorSummary(data, t)),
-    ...trailers.map((tr) => buildTrailerSummary(data, tr)),
-  ];
+  // Use canonical v2 assets only - no duplication
+  const canonicalAssets = createCanonicalV2Assets();
+  return canonicalAssets.map((asset) => buildCanonicalAssetSummary(data, asset));
 }
 
 export function getMaintenanceAssetSummary(
@@ -269,10 +240,9 @@ export function getMaintenanceAssetSummary(
 }
 
 export function allMaintenanceAssetIds(): string[] {
-  return [
-    ...createSeedTractors().map((t) => t.tractor_id),
-    ...createSeedTrailers().map((t) => t.trailer_id),
-  ];
+  // Use canonical v2 assets only - no duplication
+  const canonicalAssets = createCanonicalV2Assets();
+  return canonicalAssets.map((asset) => asset.asset_id);
 }
 
 export function computeMaintenanceKpis(
