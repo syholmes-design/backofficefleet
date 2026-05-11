@@ -1,15 +1,10 @@
 import { getBofData } from './load-bof-data';
-import fs from 'fs';
 
 function checkFileExists(fileUrl: string): boolean {
-  try {
-    const fullPath = fileUrl.startsWith('/') ? 
-      `public${fileUrl}` : 
-      `public/${fileUrl}`;
-    return fs.existsSync(fullPath);
-  } catch {
-    return false;
-  }
+  // For client-side, use document registry to check if file exists
+  // This prevents fs/path usage in client code
+  const data = getBofData();
+  return data.documents.some(doc => doc.fileUrl === fileUrl);
 }
 
 export interface LoadContext {

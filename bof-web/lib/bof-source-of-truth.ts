@@ -141,12 +141,17 @@ function recordDocDate(map: Map<string, TemplateDateMap>, driverId: string, doc:
 
 function loadWorkbookSnapshot(): WorkbookSnapshot | null {
   if (workbookSnapshotCache !== undefined) return workbookSnapshotCache;
+  
+  // For client-side, skip Excel file reading and return null
+  // This prevents fs/path usage in client code
+  // The demo data will be loaded from the JSON file instead
   if (typeof window !== "undefined") {
     workbookSnapshotCache = null;
     return workbookSnapshotCache;
   }
 
   try {
+    // Server-side only - this will only run on the server
     const req: (id: string) => unknown = eval("require");
     const fs = req("fs") as typeof import("fs");
     const path = req("path") as typeof import("path");

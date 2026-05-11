@@ -70,8 +70,15 @@ function isPlaceholderUrl(url?: string): boolean {
 function publicUrlExists(url?: string): boolean {
   const normalized = String(url ?? "").trim();
   if (!normalized.startsWith("/")) return false;
-  if (typeof window !== "undefined") return true;
+  
+  // For client-side, assume file exists if it has a valid URL format
+  // This prevents fs/path usage in client code
+  if (typeof window !== "undefined") {
+    return normalized.length > 0;
+  }
+  
   try {
+    // Server-side only - this will only run on the server
     const req: (id: string) => unknown = eval("require");
     const fs = req("fs") as typeof import("fs");
     const path = req("path") as typeof import("path");
