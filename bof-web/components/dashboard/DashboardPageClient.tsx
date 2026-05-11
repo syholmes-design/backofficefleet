@@ -133,19 +133,19 @@ export function DashboardPageClient() {
 
   return (
     <div className="bof-page bof-cc-page bof-dashboard-page">
-      {/* Full-bleed hero section */}
+      {/* Full-bleed hero section with clean layout */}
       <section
         style={{
           position: "relative",
           width: "100vw",
           marginLeft: "calc(50% - 50vw)",
           marginRight: "calc(50% - 50vw)",
-          height: "clamp(520px, 52vw, 760px)",
+          minHeight: "clamp(460px, 48vw, 680px)",
           overflow: "hidden",
-          background: "#0f172a",
+          background: "#020617",
         }}
       >
-        {/* Hero image - full-bleed */}
+        {/* Hero image - full-bleed with better positioning to hide baked text */}
         <div
           style={{
             position: "absolute",
@@ -162,7 +162,7 @@ export function DashboardPageClient() {
             fill
             style={{
               objectFit: "cover",
-              objectPosition: "center 35%",
+              objectPosition: "70% center",
               width: "100%",
               height: "100%",
             }}
@@ -170,7 +170,7 @@ export function DashboardPageClient() {
           />
         </div>
 
-        {/* Gradient overlay for text readability */}
+        {/* Strong gradient overlay to suppress baked-in text */}
         <div
           style={{
             position: "absolute",
@@ -178,29 +178,46 @@ export function DashboardPageClient() {
             left: 0,
             right: 0,
             bottom: 0,
-            background: "linear-gradient(135deg, rgba(15, 23, 42, 0.85) 0%, rgba(15, 23, 42, 0.6) 40%, rgba(15, 23, 42, 0.3) 70%, rgba(15, 23, 42, 0.2) 100%)",
+            background: "linear-gradient(90deg, rgba(2,6,23,0.92) 0%, rgba(2,6,23,0.72) 40%, rgba(2,6,23,0.35) 70%, rgba(2,6,23,0.2) 100%)",
             zIndex: 2,
           }}
         />
 
-        {/* Interactive overlay content */}
+        {/* Clickable hero overlay linking to command center */}
+        <Link
+          href="/command-center"
+          style={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            zIndex: 3,
+            textDecoration: "none",
+          }}
+        />
+
+        {/* Hero content overlay */}
         <div
           style={{
             position: "relative",
-            zIndex: 3,
-            height: "100%",
+            zIndex: 4,
+            minHeight: "clamp(460px, 48vw, 680px)",
             display: "flex",
             flexDirection: "column",
-            justifyContent: "space-between",
-            padding: "4rem 2rem 2rem",
+            justifyContent: "center",
+            alignItems: "center",
+            padding: "6rem 2rem 4rem",
+            pointerEvents: "none",
           }}
         >
           {/* Title and subtitle section */}
           <div
             style={{
               textAlign: "center",
-              maxWidth: "1200px",
+              maxWidth: "900px",
               margin: "0 auto",
+              pointerEvents: "auto",
             }}
           >
             <h1
@@ -208,9 +225,9 @@ export function DashboardPageClient() {
                 fontSize: "clamp(2.5rem, 5vw, 4rem)",
                 fontWeight: "700",
                 lineHeight: "1.1",
-                margin: "0 0 1rem 0",
+                margin: "0 0 1.5rem 0",
                 color: "#ffffff",
-                textShadow: "0 2px 4px rgba(0,0,0,0.3)",
+                textShadow: "0 2px 4px rgba(0,0,0,0.4)",
               }}
             >
               BOF Demo Command Center
@@ -220,11 +237,11 @@ export function DashboardPageClient() {
                 fontSize: "clamp(1.1rem, 2.5vw, 1.4rem)",
                 lineHeight: "1.6",
                 color: "rgba(255, 255, 255, 0.95)",
-                margin: "0 0 2rem 0",
+                margin: "0 0 2.5rem 0",
                 maxWidth: "800px",
                 marginLeft: "auto",
                 marginRight: "auto",
-                textShadow: "0 1px 2px rgba(0,0,0,0.3)",
+                textShadow: "0 1px 2px rgba(0,0,0,0.4)",
               }}
             >
               See how BackOfficeFleet takes over dispatch, compliance, documents, HR, payroll, finance, settlements, maintenance, procurement, RFID proof, and exception management in one accountable operating system.
@@ -237,7 +254,7 @@ export function DashboardPageClient() {
                 gap: "1rem",
                 flexWrap: "wrap",
                 justifyContent: "center",
-                marginBottom: "1rem",
+                pointerEvents: "auto",
               }}
             >
               <Link
@@ -256,6 +273,7 @@ export function DashboardPageClient() {
                   border: "none",
                   cursor: "pointer",
                   boxShadow: "0 4px 6px rgba(0,0,0,0.1)",
+                  pointerEvents: "auto",
                 }}
               >
                 Open Command Center →
@@ -275,234 +293,326 @@ export function DashboardPageClient() {
                   transition: "all 0.2s ease",
                   border: "1px solid rgba(255, 255, 255, 0.3)",
                   backdropFilter: "blur(10px)",
+                  pointerEvents: "auto",
                 }}
               >
                 Review Driver Readiness →
               </Link>
+              <Link
+                href="/settlements"
+                style={{
+                  display: "inline-flex",
+                  alignItems: "center",
+                  padding: "1rem 2rem",
+                  backgroundColor: "rgba(255, 255, 255, 0.15)",
+                  color: "white",
+                  textDecoration: "none",
+                  borderRadius: "8px",
+                  fontSize: "1.1rem",
+                  fontWeight: "600",
+                  transition: "all 0.2s ease",
+                  border: "1px solid rgba(255, 255, 255, 0.3)",
+                  backdropFilter: "blur(10px)",
+                  pointerEvents: "auto",
+                }}
+              >
+                View Settlements →
+              </Link>
+              <Link
+                href="/loads"
+                style={{
+                  display: "inline-flex",
+                  alignItems: "center",
+                  padding: "1rem 2rem",
+                  backgroundColor: "rgba(255, 255, 255, 0.15)",
+                  color: "white",
+                  textDecoration: "none",
+                  borderRadius: "8px",
+                  fontSize: "1.1rem",
+                  fontWeight: "600",
+                  transition: "all 0.2s ease",
+                  border: "1px solid rgba(255, 255, 255, 0.3)",
+                  backdropFilter: "blur(10px)",
+                  pointerEvents: "auto",
+                }}
+              >
+                Explore Dispatch Proof →
+              </Link>
             </div>
           </div>
+        </div>
+      </section>
 
-          {/* Interactive hotspots section */}
-          <div style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
-            gap: '1rem',
-            maxWidth: '1200px',
-            margin: '0 auto',
-            paddingBottom: '2rem'
-          }}>
-            {/* Exception Management hotspot */}
-            <Link href="/command-center#exception-management" style={{
-              display: 'block',
-              padding: '1.5rem',
-              backgroundColor: 'rgba(20, 184, 166, 0.15)',
-              border: '1px solid rgba(20, 184, 166, 0.3)',
-              borderRadius: '12px',
+      {/* Five clickable proof cards below hero image */}
+      <section
+        style={{
+          maxWidth: "1200px",
+          margin: "0 auto",
+          padding: "3rem 2rem",
+        }}
+        aria-label="Quick access to BOF services"
+      >
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
+            gap: "1.5rem",
+          }}
+        >
+          {/* Exception Management card */}
+          <Link
+            href="/command-center#exception-management"
+            style={{
+              display: "block",
+              padding: "1.5rem",
+              backgroundColor: "rgba(20, 184, 166, 0.08)",
+              border: "1px solid rgba(20, 184, 166, 0.2)",
+              borderRadius: "12px",
+              textDecoration: "none",
+              color: "white",
+              transition: "all 0.3s ease",
+              backdropFilter: "blur(10px)",
+            }}
+          >
+            <h3
+              style={{
+                fontSize: "1.2rem",
+                fontWeight: "600",
+                margin: "0 0 0.5rem 0",
+                color: "#14b8a6",
+              }}
+            >
+              Exception Management
+            </h3>
+            <p
+              style={{
+                fontSize: "0.9rem",
+                lineHeight: "1.5",
+                margin: "0",
+                color: "rgba(255, 255, 255, 0.9)",
+              }}
+            >
+              Catch issues early and assign every exception an owner, impact, and fix path.
+            </p>
+          </Link>
+
+          {/* Driver Readiness card */}
+          <Link
+            href="/drivers"
+            style={{
+              display: "block",
+              padding: "1.5rem",
+              backgroundColor: "rgba(59, 130, 246, 0.08)",
+              border: "1px solid rgba(59, 130, 246, 0.2)",
+              borderRadius: "12px",
+              textDecoration: "none",
+              color: "white",
+              transition: "all 0.3s ease",
+              backdropFilter: "blur(10px)",
+            }}
+          >
+            <h3
+              style={{
+                fontSize: "1.2rem",
+                fontWeight: "600",
+                margin: "0 0 0.5rem 0",
+                color: "#3b82f6",
+              }}
+            >
+              Driver Readiness
+            </h3>
+            <p
+              style={{
+                fontSize: "0.9rem",
+                lineHeight: "1.5",
+                margin: "0",
+                color: "rgba(255, 255, 255, 0.9)",
+              }}
+            >
+              See document readiness, acknowledgments, and dispatch eligibility.
+            </p>
+          </Link>
+
+          {/* Settlements card */}
+          <Link
+            href="/settlements"
+            style={{
+              display: "block",
+              padding: "1.5rem",
+              backgroundColor: "rgba(168, 85, 247, 0.08)",
+              border: "1px solid rgba(168, 85, 247, 0.2)",
+              borderRadius: "12px",
+              textDecoration: "none",
+              color: "white",
+              transition: "all 0.3s ease",
+              backdropFilter: "blur(10px)",
+            }}
+          >
+            <h3
+              style={{
+                fontSize: "1.2rem",
+                fontWeight: "600",
+                margin: "0 0 0.5rem 0",
+                color: "#a855f7",
+              }}
+            >
+              Settlements
+            </h3>
+            <p
+              style={{
+                fontSize: "0.9rem",
+                lineHeight: "1.5",
+                margin: "0",
+                color: "rgba(255, 255, 255, 0.9)",
+              }}
+            >
+              Review source-backed pay, deductions, holds, and payout readiness.
+            </p>
+          </Link>
+
+          {/* Dispatch Proof card */}
+          <Link
+            href="/loads"
+            style={{
+              display: "block",
+              padding: "1.5rem",
+              backgroundColor: "rgba(251, 146, 60, 0.08)",
+              border: "1px solid rgba(251, 146, 60, 0.2)",
+              borderRadius: "12px",
+              textDecoration: "none",
+              color: "white",
+              transition: "all 0.3s ease",
+              backdropFilter: "blur(10px)",
+            }}
+          >
+            <h3
+              style={{
+                fontSize: "1.2rem",
+                fontWeight: "600",
+                margin: "0 0 0.5rem 0",
+                color: "#fb923c",
+              }}
+            >
+              Dispatch Proof
+            </h3>
+            <p
+              style={{
+                fontSize: "0.9rem",
+                lineHeight: "1.5",
+                margin: "0",
+                color: "rgba(255, 255, 255, 0.9)",
+              }}
+            >
+              Open proof gaps, POD/BOL status, RFID workflows, and customer visibility.
+            </p>
+          </Link>
+
+          {/* Maintenance Programs card */}
+          <Link
+            href="/maintenance"
+            style={{
+              display: "block",
+              padding: "1.5rem",
+              backgroundColor: "rgba(34, 197, 94, 0.08)",
+              border: "1px solid rgba(34, 197, 94, 0.2)",
+              borderRadius: "12px",
+              textDecoration: "none",
+              color: "white",
+              transition: "all 0.3s ease",
+              backdropFilter: "blur(10px)",
+            }}
+          >
+            <h3
+              style={{
+                fontSize: "1.2rem",
+                fontWeight: "600",
+                margin: "0 0 0.5rem 0",
+                color: "#22c55e",
+              }}
+            >
+              Maintenance Programs
+            </h3>
+            <p
+              style={{
+                fontSize: "0.9rem",
+                lineHeight: "1.5",
+                margin: "0",
+                color: "rgba(255, 255, 255, 0.9)",
+              }}
+            >
+              View PM readiness and v2 source-backed assets.
+            </p>
+          </Link>
+        </div>
+      </section>
+
+      {/* Proof boxes */}
+      <section className="bof-cc-panel" style={{ margin: '2rem 0' }} aria-label="Service Coverage">
+        <div className="bof-cc-panel-head">
+          <h2 className="bof-h2">Service Coverage</h2>
+          <p className="bof-cc-panel-sub" style={{ marginTop: "0.35rem" }}>
+            Complete BOF operating system service lanes for mid-sized fleets
+          </p>
+        </div>
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
+          gap: '1.5rem',
+          maxWidth: '1200px',
+          margin: '0 auto'
+        }}>
+          {[
+            { title: 'World-Class Service', desc: 'Dedicated back-office operators, not just software dashboards', href: '/command-center' },
+            { title: 'Exception Management', desc: 'BOF catches issues early and gives every exception an owner, impact, and fix path', href: '/command-center#exception-management' },
+            { title: 'Savings & Procurement', desc: 'Use operational data and buying leverage to reduce preventable spend', href: '/fleet-savings' },
+            { title: 'Maintenance Programs', desc: 'Keep tractors, trailers, inspections, and PM readiness tied to dispatch decisions', href: '/maintenance' },
+            { title: 'RFID & Proof', desc: 'Reduce fraud, fuel leakage, and disputes with RFID-backed proof and fuel/asset monitoring', href: '/portals/customer' }
+          ].map((proof, idx) => (
+            <Link key={idx} href={proof.href} style={{
               textDecoration: 'none',
-              color: 'white',
-              transition: 'all 0.3s ease',
-              backdropFilter: 'blur(10px)'
+              color: 'inherit',
+              display: 'block'
             }}>
-              <h3 style={{
-                fontSize: '1.2rem',
-                fontWeight: '600',
-                margin: '0 0 0.5rem 0',
-                color: '#14b8a6'
+              <div style={{
+                background: 'rgba(255, 255, 255, 0.05)',
+                border: '1px solid rgba(255, 255, 255, 0.1)',
+                borderRadius: '12px',
+                padding: '1.5rem',
+                backdropFilter: 'blur(10px)',
+                transition: 'all 0.2s ease',
+                cursor: 'pointer',
+                height: '100%'
               }}>
-                Exception Management
-              </h3>
-              <p style={{
-                fontSize: '0.9rem',
-                lineHeight: '1.5',
-                margin: '0',
-                color: 'rgba(255, 255, 255, 0.9)'
-              }}>
-                Catch issues early and assign every exception an owner, impact, and fix path.
-              </p>
-            </Link>
-
-            {/* Driver Readiness hotspot */}
-            <Link href="/drivers" style={{
-              display: 'block',
-              padding: '1.5rem',
-              backgroundColor: 'rgba(59, 130, 246, 0.15)',
-              border: '1px solid rgba(59, 130, 246, 0.3)',
-              borderRadius: '12px',
-              textDecoration: 'none',
-              color: 'white',
-              transition: 'all 0.3s ease',
-              backdropFilter: 'blur(10px)'
-            }}>
-              <h3 style={{
-                fontSize: '1.2rem',
-                fontWeight: '600',
-                margin: '0 0 0.5rem 0',
-                color: '#3b82f6'
-              }}>
-                Driver Readiness
-              </h3>
-              <p style={{
-                fontSize: '0.9rem',
-                lineHeight: '1.5',
-                margin: '0',
-                color: 'rgba(255, 255, 255, 0.9)'
-              }}>
-                See document readiness, acknowledgments, and dispatch eligibility.
-              </p>
-            </Link>
-
-            {/* Settlements hotspot */}
-            <Link href="/settlements" style={{
-              display: 'block',
-              padding: '1.5rem',
-              backgroundColor: 'rgba(168, 85, 247, 0.15)',
-              border: '1px solid rgba(168, 85, 247, 0.3)',
-              borderRadius: '12px',
-              textDecoration: 'none',
-              color: 'white',
-              transition: 'all 0.3s ease',
-              backdropFilter: 'blur(10px)'
-            }}>
-              <h3 style={{
-                fontSize: '1.2rem',
-                fontWeight: '600',
-                margin: '0 0 0.5rem 0',
-                color: '#a855f7'
-              }}>
-                Settlements
-              </h3>
-              <p style={{
-                fontSize: '0.9rem',
-                lineHeight: '1.5',
-                margin: '0',
-                color: 'rgba(255, 255, 255, 0.9)'
-              }}>
-                Review source-backed pay, deductions, holds, and payout readiness.
-              </p>
-            </Link>
-
-            {/* Dispatch Proof hotspot */}
-            <Link href="/loads" style={{
-              display: 'block',
-              padding: '1.5rem',
-              backgroundColor: 'rgba(251, 146, 60, 0.15)',
-              border: '1px solid rgba(251, 146, 60, 0.3)',
-              borderRadius: '12px',
-              textDecoration: 'none',
-              color: 'white',
-              transition: 'all 0.3s ease',
-              backdropFilter: 'blur(10px)'
-            }}>
-              <h3 style={{
-                fontSize: '1.2rem',
-                fontWeight: '600',
-                margin: '0 0 0.5rem 0',
-                color: '#fb923c'
-              }}>
-                Dispatch Proof
-              </h3>
-              <p style={{
-                fontSize: '0.9rem',
-                lineHeight: '1.5',
-                margin: '0',
-                color: 'rgba(255, 255, 255, 0.9)'
-              }}>
-                Open proof gaps, POD/BOL status, RFID workflows, and customer visibility.
-              </p>
-            </Link>
-
-            {/* Maintenance Programs hotspot */}
-            <Link href="/maintenance" style={{
-              display: 'block',
-              padding: '1.5rem',
-              backgroundColor: 'rgba(34, 197, 94, 0.15)',
-              border: '1px solid rgba(34, 197, 94, 0.3)',
-              borderRadius: '12px',
-              textDecoration: 'none',
-              color: 'white',
-              transition: 'all 0.3s ease',
-              backdropFilter: 'blur(10px)'
-            }}>
-              <h3 style={{
-                fontSize: '1.2rem',
-                fontWeight: '600',
-                margin: '0 0 0.5rem 0',
-                color: '#22c55e'
-              }}>
-                Maintenance Programs
-              </h3>
-              <p style={{
-                fontSize: '0.9rem',
-                lineHeight: '1.5',
-                margin: '0',
-                color: 'rgba(255, 255, 255, 0.9)'
-              }}>
-                View PM readiness and v2 source-backed assets.
-              </p>
-            </Link>
-          </div>
-
-          {/* Proof boxes */}
-          <div style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
-            gap: '1.5rem',
-            maxWidth: '1200px',
-            margin: '0 auto'
-          }}>
-            {[
-              { title: 'World-Class Service', desc: 'Dedicated back-office operators, not just software dashboards', href: '/command-center' },
-              { title: 'Exception Management', desc: 'BOF catches issues early and gives every exception an owner, impact, and fix path', href: '/command-center#exception-management' },
-              { title: 'Savings & Procurement', desc: 'Use operational data and buying leverage to reduce preventable spend', href: '/fleet-savings' },
-              { title: 'Maintenance Programs', desc: 'Keep tractors, trailers, inspections, and PM readiness tied to dispatch decisions', href: '/maintenance' },
-              { title: 'RFID & Proof', desc: 'Reduce fraud, fuel leakage, and disputes with RFID-backed proof and fuel/asset monitoring', href: '/portals/customer' }
-            ].map((proof, idx) => (
-              <Link key={idx} href={proof.href} style={{
-                textDecoration: 'none',
-                color: 'inherit',
-                display: 'block'
-              }}>
-                <div style={{
-                  background: 'rgba(255, 255, 255, 0.05)',
-                  border: '1px solid rgba(255, 255, 255, 0.1)',
-                  borderRadius: '12px',
-                  padding: '1.5rem',
-                  backdropFilter: 'blur(10px)',
-                  transition: 'all 0.2s ease',
-                  cursor: 'pointer',
-                  height: '100%'
+                <h3 style={{
+                  fontSize: '1.1rem',
+                  fontWeight: '600',
+                  color: '#14b8a6',
+                  margin: '0 0 0.75rem 0'
                 }}>
-                  <h3 style={{
-                    fontSize: '1.1rem',
-                    fontWeight: '600',
-                    color: '#14b8a6',
-                    margin: '0 0 0.75rem 0'
-                  }}>
-                    {proof.title}
-                  </h3>
-                  <p style={{
-                    fontSize: '0.95rem',
-                    color: 'rgba(255, 255, 255, 0.8)',
-                    margin: '0',
-                    lineHeight: '1.4'
-                  }}>
-                    {proof.desc}
-                  </p>
-                  <div style={{
-                    marginTop: '1rem',
-                    fontSize: '0.8rem',
-                    color: '#14b8a6',
-                    fontWeight: '500',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '0.25rem'
-                  }}>
-                    Explore →
-                  </div>
+                  {proof.title}
+                </h3>
+                <p style={{
+                  fontSize: '0.95rem',
+                  color: 'rgba(255, 255, 255, 0.8)',
+                  margin: '0',
+                  lineHeight: '1.4'
+                }}>
+                  {proof.desc}
+                </p>
+                <div style={{
+                  marginTop: '1rem',
+                  fontSize: '0.8rem',
+                  color: '#14b8a6',
+                  fontWeight: '500',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.25rem'
+                }}>
+                  Explore →
                 </div>
-              </Link>
-            ))}
-          </div>
+              </div>
+            </Link>
+          ))}
         </div>
       </section>
 
