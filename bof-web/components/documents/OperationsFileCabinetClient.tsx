@@ -46,8 +46,9 @@ export function OperationsFileCabinetClient() {
   const categorySummary = useMemo(() => {
     return categories.map(category => {
       const items = allItems.filter(item => item.category === category);
-      const availableCount = items.filter(item => item.status === "available").length;
+      const availableCount = items.filter(item => item.status === "available" || item.status === "available_route").length;
       const templateCount = items.filter(item => item.status === "template").length;
+      const externalCount = items.filter(item => item.status === "external_resource").length;
       const comingSoonCount = items.filter(item => item.status === "coming_soon").length;
       
       return {
@@ -56,6 +57,7 @@ export function OperationsFileCabinetClient() {
         totalItems: items.length,
         availableCount,
         templateCount,
+        externalCount,
         comingSoonCount,
         primaryHref: getCategoryPrimaryHref(category),
         primaryCta: getCategoryPrimaryCta(category),
@@ -160,10 +162,14 @@ export function OperationsFileCabinetClient() {
     switch (status) {
       case "available":
         return "rgba(34, 197, 94, 0.2)";
+      case "available_route":
+        return "rgba(34, 197, 94, 0.3)";
       case "template":
         return "rgba(59, 130, 246, 0.2)";
       case "needs_review":
         return "rgba(251, 146, 60, 0.2)";
+      case "external_resource":
+        return "rgba(168, 85, 247, 0.2)";
       case "coming_soon":
         return "rgba(107, 114, 128, 0.2)";
       default:
@@ -175,10 +181,14 @@ export function OperationsFileCabinetClient() {
     switch (status) {
       case "available":
         return "#22c55e";
+      case "available_route":
+        return "#22c55e";
       case "template":
         return "#3b82f6";
       case "needs_review":
         return "#fb923c";
+      case "external_resource":
+        return "#a855f7";
       case "coming_soon":
         return "#6b7280";
       default:
@@ -268,13 +278,17 @@ export function OperationsFileCabinetClient() {
               display: "flex",
               gap: "1rem",
               marginBottom: "1rem",
-              fontSize: "0.8rem"
+              fontSize: "0.8rem",
+              flexWrap: "wrap"
             }}>
               <span style={{ color: "#22c55e" }}>
                 {summary.availableCount} available
               </span>
               <span style={{ color: "#3b82f6" }}>
                 {summary.templateCount} templates
+              </span>
+              <span style={{ color: "#a855f7" }}>
+                {summary.externalCount} external
               </span>
               <span style={{ color: "#6b7280" }}>
                 {summary.comingSoonCount} coming soon
@@ -577,6 +591,21 @@ export function OperationsFileCabinetClient() {
                 >
                   {getItemCta(item)} →
                 </Link>
+              ) : item.status === "external_resource" ? (
+                <span
+                  style={{
+                    display: "inline-block",
+                    padding: "0.5rem 1rem",
+                    backgroundColor: "rgba(168, 85, 247, 0.2)",
+                    border: "1px solid rgba(168, 85, 247, 0.3)",
+                    borderRadius: "6px",
+                    color: "#a855f7",
+                    fontSize: "0.8rem",
+                    fontWeight: "500"
+                  }}
+                >
+                  External link →
+                </span>
               ) : (
                 <span
                   style={{
