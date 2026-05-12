@@ -56,7 +56,7 @@ export const OPERATIONS_FILE_CABINET_REGISTRY: OperationsFileCabinetItem[] = [
     audience: ["driver", "manager", "hr", "safety"],
     status: "available",
     description: "Driver CDL verification and compliance tracking",
-    href: "/drivers",
+    href: "/generated/drivers/DRV-057/cdl.html",
     source: "generated"
   },
   {
@@ -67,7 +67,7 @@ export const OPERATIONS_FILE_CABINET_REGISTRY: OperationsFileCabinetItem[] = [
     audience: ["driver", "manager", "hr", "safety"],
     status: "available",
     description: "DOT medical certificate and physical examination records",
-    href: "/drivers",
+    href: "/generated/drivers/DRV-057/medical-card.html",
     source: "generated"
   },
   {
@@ -78,7 +78,7 @@ export const OPERATIONS_FILE_CABINET_REGISTRY: OperationsFileCabinetItem[] = [
     audience: ["driver", "manager", "hr", "safety"],
     status: "available",
     description: "Annual driving record review and monitoring",
-    href: "/drivers",
+    href: "/generated/drivers/DRV-057/mvr.html",
     source: "generated"
   },
   {
@@ -89,7 +89,7 @@ export const OPERATIONS_FILE_CABINET_REGISTRY: OperationsFileCabinetItem[] = [
     audience: ["driver", "manager", "hr", "safety"],
     status: "available",
     description: "Drug and alcohol clearinghouse compliance tracking",
-    href: "/drivers",
+    href: "/generated/drivers/DRV-057/fmcsa-compliance.html",
     source: "generated"
   },
   {
@@ -100,7 +100,7 @@ export const OPERATIONS_FILE_CABINET_REGISTRY: OperationsFileCabinetItem[] = [
     audience: ["driver", "manager", "hr"],
     status: "available",
     description: "Employment eligibility verification documentation",
-    href: "/drivers",
+    href: "/generated/drivers/DRV-057/i9.html",
     source: "generated"
   },
   {
@@ -111,7 +111,7 @@ export const OPERATIONS_FILE_CABINET_REGISTRY: OperationsFileCabinetItem[] = [
     audience: ["driver", "manager", "finance"],
     status: "available",
     description: "Taxpayer identification for contractor payments",
-    href: "/drivers",
+    href: "/generated/drivers/DRV-057/w9.html",
     source: "generated"
   },
   {
@@ -164,7 +164,7 @@ export const OPERATIONS_FILE_CABINET_REGISTRY: OperationsFileCabinetItem[] = [
     audience: ["driver", "manager", "dispatcher"],
     status: "available",
     description: "Emergency contact information and notification procedures",
-    href: "/emergency-contacts",
+    href: "/generated/drivers/DRV-057/emergency-contact.html",
     source: "generated"
   },
   {
@@ -186,7 +186,7 @@ export const OPERATIONS_FILE_CABINET_REGISTRY: OperationsFileCabinetItem[] = [
     audience: ["driver", "manager", "finance"],
     status: "available",
     description: "Bank account information for direct deposit payments",
-    href: "/drivers",
+    href: "/generated/drivers/DRV-057/bank-information.html",
     source: "generated"
   },
   {
@@ -382,7 +382,7 @@ export const OPERATIONS_FILE_CABINET_REGISTRY: OperationsFileCabinetItem[] = [
     audience: ["dispatcher", "manager", "customer", "finance"],
     status: "template",
     description: "Standard rate confirmation and pricing agreement template",
-    href: "/loads",
+    href: "/generated/loads/L001/rate-confirmation.html",
     source: "generated"
   },
   {
@@ -393,7 +393,7 @@ export const OPERATIONS_FILE_CABINET_REGISTRY: OperationsFileCabinetItem[] = [
     audience: ["dispatcher", "driver", "customer", "finance"],
     status: "template",
     description: "Standard bill of lading document template",
-    href: "/loads",
+    href: "/generated/loads/L001/bol.html",
     source: "generated"
   },
   {
@@ -404,7 +404,7 @@ export const OPERATIONS_FILE_CABINET_REGISTRY: OperationsFileCabinetItem[] = [
     audience: ["dispatcher", "driver", "customer", "finance"],
     status: "template",
     description: "Proof of delivery form with signature capture",
-    href: "/loads",
+    href: "/generated/loads/L001/pod.html",
     source: "generated"
   },
   {
@@ -1086,7 +1086,7 @@ export const OPERATIONS_FILE_CABINET_REGISTRY: OperationsFileCabinetItem[] = [
     audience: ["manager", "customer", "legal", "owner"],
     status: "template",
     description: "Master agreement reference template for customer relationships",
-    href: "/loads",
+    href: "/generated/loads/L001/master-agreement-reference.html",
     source: "generated"
   },
   {
@@ -1108,7 +1108,7 @@ export const OPERATIONS_FILE_CABINET_REGISTRY: OperationsFileCabinetItem[] = [
     audience: ["manager", "customer", "dispatcher"],
     status: "template",
     description: "Standard work order and service agreement template",
-    href: "/loads",
+    href: "/generated/loads/L001/work-order.html",
     source: "generated"
   },
   {

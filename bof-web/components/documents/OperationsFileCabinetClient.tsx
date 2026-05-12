@@ -28,6 +28,38 @@ export function OperationsFileCabinetClient() {
   const audiences = useMemo(() => getOperationsFileCabinetAudiences(), []);
   const statuses = useMemo(() => getOperationsFileCabinetStatuses(), []);
 
+  // Featured items - curated list of high-value documents with actual links
+  const featuredItems = useMemo(() => {
+    return allItems.filter(item => 
+      item.status !== "coming_soon" && 
+      item.href && 
+      [
+        // Driver Qualification Files
+        "driver-cdl", "driver-medical", "driver-mvr", "driver-clearinghouse", 
+        "driver-i9", "driver-w9", "driver-emergency-contacts", "driver-bank-info",
+        "driver-policy-acknowledgment", "driver-road-test", "driver-employment-verification",
+        
+        // Company Policies & SOPs
+        "policy-employee-handbook", "policy-code-of-conduct", "policy-hr-onboarding",
+        "policy-payroll-compensation", "policy-accounting-finance", "policy-factoring-receivables",
+        "policy-insurance-risk-claims", "policy-vendor-maintenance", "policy-safety-compliance",
+        "policy-information-security", "policy-privacy-data", "policy-ai-governance",
+        "policy-tax-audit-readiness", "policy-cash-flow-management",
+        
+        // Dispatch & Load Documents
+        "contract-master-agreement", "contract-work-order", "dispatch-rate-confirmation",
+        "dispatch-bol", "dispatch-pod", "dispatch-posttrip-protocol",
+        
+        // Safety / Claims / Training
+        "safety-evidence", "safety-incident-report", "training-cvsa-inspection",
+        "training-fmcsa-cargo", "training-fmcsa-hos",
+        
+        // Finance / Settlements
+        "settlement-route", "finance-factoring-packet", "finance-invoice-template"
+      ].includes(item.id)
+    );
+  }, [allItems]);
+
   const filteredItems = useMemo(() => {
     return allItems.filter(item => {
       const matchesSearch = searchTerm === "" || 
@@ -42,6 +74,10 @@ export function OperationsFileCabinetClient() {
       return matchesSearch && matchesCategory && matchesType && matchesAudience && matchesStatus;
     });
   }, [allItems, searchTerm, selectedCategory, selectedType, selectedAudience, selectedStatus]);
+
+  const comingSoonItems = useMemo(() => {
+    return allItems.filter(item => item.status === "coming_soon");
+  }, [allItems]);
 
   const categorySummary = useMemo(() => {
     return categories.map(category => {
@@ -155,6 +191,20 @@ export function OperationsFileCabinetClient() {
         return "View contract";
       default:
         return "Open";
+    }
+  }
+
+  function getSourceChip(item: OperationsFileCabinetItem): { text: string; color: string } {
+    if (item.source === "generated") {
+      return { text: "Generated document", color: "#22c55e" };
+    } else if (item.source === "template") {
+      return { text: "Template", color: "#3b82f6" };
+    } else if (item.source === "external") {
+      return { text: "External resource", color: "#a855f7" };
+    } else if (item.href?.startsWith("/")) {
+      return { text: "App route", color: "#f59e0b" };
+    } else {
+      return { text: "Document", color: "#6b7280" };
     }
   }
 
@@ -471,174 +521,434 @@ export function OperationsFileCabinetClient() {
         </div>
       </div>
 
-      {/* Document Cards */}
+      {/* Featured File Cabinet */}
       <div style={{
-        display: "grid",
-        gridTemplateColumns: "repeat(auto-fit, minmax(350px, 1fr))",
-        gap: "1rem"
+        marginBottom: "3rem"
       }}>
-        {filteredItems.map(item => (
-          <div
-            key={item.id}
-            style={{
-              backgroundColor: "rgba(255, 255, 255, 0.05)",
-              border: "1px solid rgba(255, 255, 255, 0.1)",
-              borderRadius: "12px",
-              padding: "1.5rem"
-            }}
-          >
-            <div style={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "flex-start",
-              marginBottom: "1rem"
-            }}>
-              <h3 style={{
-                fontSize: "1rem",
-                fontWeight: "600",
-                color: "#ffffff",
-                margin: "0",
-                flex: 1
-              }}>
-                {item.title}
-              </h3>
-              <span
-                style={{
-                  padding: "0.25rem 0.5rem",
-                  backgroundColor: getStatusColor(item.status),
-                  border: `1px solid ${getStatusTextColor(item.status)}33`,
-                  borderRadius: "4px",
-                  fontSize: "0.7rem",
-                  color: getStatusTextColor(item.status),
-                  fontWeight: "500",
-                  textTransform: "capitalize",
-                  marginLeft: "0.5rem"
-                }}
-              >
-                {item.status.replace("_", " ")}
-              </span>
-            </div>
-
-            <div style={{
-              marginBottom: "1rem"
-            }}>
+        <h2 style={{
+          fontSize: "1.5rem",
+          fontWeight: "600",
+          color: "#ffffff",
+          margin: "0 0 1.5rem 0"
+        }}>
+          Featured File Cabinet
+        </h2>
+        <p style={{
+          fontSize: "1rem",
+          color: "rgba(255, 255, 255, 0.7)",
+          margin: "0 0 2rem 0",
+          lineHeight: "1.5"
+        }}>
+          Essential documents, policies, and templates with actual links to real files.
+        </p>
+        
+        <div style={{
+          display: "grid",
+          gridTemplateColumns: "repeat(auto-fit, minmax(350px, 1fr))",
+          gap: "1rem"
+        }}>
+          {featuredItems.map(item => (
+            <div
+              key={item.id}
+              style={{
+                backgroundColor: "rgba(255, 255, 255, 0.05)",
+                border: "1px solid rgba(255, 255, 255, 0.1)",
+                borderRadius: "12px",
+                padding: "1.5rem"
+              }}
+            >
               <div style={{
-                fontSize: "0.8rem",
-                color: "rgba(255, 255, 255, 0.7)",
-                marginBottom: "0.5rem"
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "flex-start",
+                marginBottom: "1rem"
               }}>
-                {item.category}
-              </div>
-              <div style={{
-                fontSize: "0.9rem",
-                color: "rgba(255, 255, 255, 0.8)",
-                lineHeight: "1.4",
-                marginBottom: "0.5rem"
-              }}>
-                {item.description}
-              </div>
-            </div>
-
-            <div style={{
-              display: "flex",
-              gap: "0.5rem",
-              flexWrap: "wrap",
-              marginBottom: "1rem"
-            }}>
-              {item.audience.map(audience => (
+                <h3 style={{
+                  fontSize: "1rem",
+                  fontWeight: "600",
+                  color: "#ffffff",
+                  margin: "0",
+                  flex: 1
+                }}>
+                  {item.title}
+                </h3>
                 <span
-                  key={audience}
+                  style={{
+                    padding: "0.25rem 0.5rem",
+                    backgroundColor: getStatusColor(item.status),
+                    border: `1px solid ${getStatusTextColor(item.status)}33`,
+                    borderRadius: "4px",
+                    fontSize: "0.7rem",
+                    color: getStatusTextColor(item.status),
+                    fontWeight: "500",
+                    textTransform: "capitalize",
+                    marginLeft: "0.5rem"
+                  }}
+                >
+                  {item.status.replace("_", " ")}
+                </span>
+              </div>
+
+              <div style={{
+                marginBottom: "1rem"
+              }}>
+                <div style={{
+                  fontSize: "0.8rem",
+                  color: "rgba(255, 255, 255, 0.7)",
+                  marginBottom: "0.5rem"
+                }}>
+                  {item.category}
+                </div>
+                <div style={{
+                  fontSize: "0.9rem",
+                  color: "rgba(255, 255, 255, 0.8)",
+                  lineHeight: "1.4",
+                  marginBottom: "0.5rem"
+                }}>
+                  {item.description}
+                </div>
+              </div>
+
+              <div style={{
+                display: "flex",
+                gap: "0.5rem",
+                flexWrap: "wrap",
+                marginBottom: "1rem"
+              }}>
+                {item.audience.map(audience => (
+                  <span
+                    key={audience}
+                    style={{
+                      padding: "0.2rem 0.5rem",
+                      backgroundColor: "rgba(255, 255, 255, 0.1)",
+                      border: "1px solid rgba(255, 255, 255, 0.2)",
+                      borderRadius: "12px",
+                      fontSize: "0.7rem",
+                      color: "rgba(255, 255, 255, 0.7)"
+                    }}
+                  >
+                    {audience}
+                  </span>
+                ))}
+              </div>
+
+              <div style={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+                marginBottom: "0.5rem"
+              }}>
+                <span
                   style={{
                     padding: "0.2rem 0.5rem",
-                    backgroundColor: "rgba(255, 255, 255, 0.1)",
-                    border: "1px solid rgba(255, 255, 255, 0.2)",
-                    borderRadius: "12px",
+                    backgroundColor: `${getSourceChip(item).color}20`,
+                    border: `1px solid ${getSourceChip(item).color}33`,
+                    borderRadius: "4px",
                     fontSize: "0.7rem",
-                    color: "rgba(255, 255, 255, 0.7)"
+                    color: getSourceChip(item).color,
+                    fontWeight: "500"
                   }}
                 >
-                  {audience}
+                  {getSourceChip(item).text}
                 </span>
-              ))}
+                {item.href ? (
+                  <Link
+                    href={item.href}
+                    style={{
+                      display: "inline-block",
+                      padding: "0.5rem 1rem",
+                      backgroundColor: "rgba(59, 130, 246, 0.2)",
+                      border: "1px solid rgba(59, 130, 246, 0.3)",
+                      borderRadius: "6px",
+                      color: "#3b82f6",
+                      textDecoration: "none",
+                      fontSize: "0.8rem",
+                      fontWeight: "500"
+                    }}
+                  >
+                    {getItemCta(item)} →
+                  </Link>
+                ) : item.status === "external_resource" ? (
+                  <span
+                    style={{
+                      display: "inline-block",
+                      padding: "0.5rem 1rem",
+                      backgroundColor: "rgba(168, 85, 247, 0.2)",
+                      border: "1px solid rgba(168, 85, 247, 0.3)",
+                      borderRadius: "6px",
+                      color: "#a855f7",
+                      fontSize: "0.8rem",
+                      fontWeight: "500"
+                    }}
+                  >
+                    External link →
+                  </span>
+                ) : (
+                  <span
+                    style={{
+                      display: "inline-block",
+                      padding: "0.5rem 1rem",
+                      backgroundColor: "rgba(107, 114, 128, 0.2)",
+                      border: "1px solid rgba(107, 114, 128, 0.3)",
+                      borderRadius: "6px",
+                      color: "#6b7280",
+                      fontSize: "0.8rem",
+                      fontWeight: "500"
+                    }}
+                  >
+                    Coming soon
+                  </span>
+                )}
+              </div>
             </div>
+          ))}
+        </div>
+      </div>
 
-            <div style={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center"
-            }}>
-              <span style={{
-                fontSize: "0.8rem",
-                color: "rgba(255, 255, 255, 0.6)",
-                fontStyle: "italic"
-              }}>
-                {item.type}
-              </span>
-              {item.href ? (
-                <Link
-                  href={item.href}
-                  style={{
-                    display: "inline-block",
-                    padding: "0.5rem 1rem",
-                    backgroundColor: "rgba(59, 130, 246, 0.2)",
-                    border: "1px solid rgba(59, 130, 246, 0.3)",
-                    borderRadius: "6px",
-                    color: "#3b82f6",
-                    textDecoration: "none",
-                    fontSize: "0.8rem",
-                    fontWeight: "500"
-                  }}
-                >
-                  {getItemCta(item)} →
-                </Link>
-              ) : item.status === "external_resource" ? (
+      {/* Planned Cabinet Additions */}
+      <div style={{
+        marginBottom: "2rem"
+      }}>
+        <h2 style={{
+          fontSize: "1.2rem",
+          fontWeight: "600",
+          color: "rgba(255, 255, 255, 0.9)",
+          margin: "0 0 1rem 0"
+        }}>
+          Planned Cabinet Additions
+        </h2>
+        <p style={{
+          fontSize: "0.9rem",
+          color: "rgba(255, 255, 255, 0.6)",
+          margin: "0 0 1.5rem 0",
+          lineHeight: "1.4"
+        }}>
+          These items are planned for future implementation.
+        </p>
+        
+        <div style={{
+          backgroundColor: "rgba(255, 255, 255, 0.02)",
+          border: "1px solid rgba(255, 255, 255, 0.05)",
+          borderRadius: "8px",
+          padding: "1rem"
+        }}>
+          <div style={{
+            display: "grid",
+            gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
+            gap: "0.75rem"
+          }}>
+            {comingSoonItems.map(item => (
+              <div
+                key={item.id}
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "0.75rem",
+                  padding: "0.5rem",
+                  backgroundColor: "rgba(255, 255, 255, 0.03)",
+                  borderRadius: "6px"
+                }}
+              >
                 <span
                   style={{
-                    display: "inline-block",
-                    padding: "0.5rem 1rem",
-                    backgroundColor: "rgba(168, 85, 247, 0.2)",
-                    border: "1px solid rgba(168, 85, 247, 0.3)",
-                    borderRadius: "6px",
-                    color: "#a855f7",
-                    fontSize: "0.8rem",
-                    fontWeight: "500"
-                  }}
-                >
-                  External link →
-                </span>
-              ) : (
-                <span
-                  style={{
-                    display: "inline-block",
-                    padding: "0.5rem 1rem",
+                    padding: "0.2rem 0.4rem",
                     backgroundColor: "rgba(107, 114, 128, 0.2)",
                     border: "1px solid rgba(107, 114, 128, 0.3)",
-                    borderRadius: "6px",
+                    borderRadius: "4px",
+                    fontSize: "0.6rem",
                     color: "#6b7280",
-                    fontSize: "0.8rem",
-                    fontWeight: "500"
+                    fontWeight: "500",
+                    textTransform: "capitalize",
+                    whiteSpace: "nowrap"
                   }}
                 >
                   Coming soon
                 </span>
-              )}
-            </div>
+                <div style={{ flex: 1 }}>
+                  <div style={{
+                    fontSize: "0.85rem",
+                    color: "rgba(255, 255, 255, 0.8)",
+                    fontWeight: "500"
+                  }}>
+                    {item.title}
+                  </div>
+                  <div style={{
+                    fontSize: "0.75rem",
+                    color: "rgba(255, 255, 255, 0.5)"
+                  }}>
+                    {item.category}
+                  </div>
+                </div>
+              </div>
+            ))}
           </div>
-        ))}
+        </div>
       </div>
 
-      {filteredItems.length === 0 && (
-        <div style={{
-          textAlign: "center",
-          padding: "3rem",
-          color: "rgba(255, 255, 255, 0.6)"
-        }}>
-          <p style={{ fontSize: "1.1rem", marginBottom: "0.5rem" }}>
-            No documents found matching your criteria
-          </p>
-          <p style={{ fontSize: "0.9rem" }}>
-            Try adjusting your search or filters to see more results
-          </p>
+      {/* Browse All Documents (when searching/filtering) */}
+      {(searchTerm || selectedCategory !== "all" || selectedType !== "all" || selectedAudience !== "all" || selectedStatus !== "all") && (
+        <div>
+          <h2 style={{
+            fontSize: "1.2rem",
+            fontWeight: "600",
+            color: "#ffffff",
+            margin: "0 0 1.5rem 0"
+          }}>
+            Browse All Documents
+          </h2>
+          
+          <div style={{
+            display: "grid",
+            gridTemplateColumns: "repeat(auto-fit, minmax(350px, 1fr))",
+            gap: "1rem"
+          }}>
+            {filteredItems.map(item => (
+              <div
+                key={item.id}
+                style={{
+                  backgroundColor: "rgba(255, 255, 255, 0.05)",
+                  border: "1px solid rgba(255, 255, 255, 0.1)",
+                  borderRadius: "12px",
+                  padding: "1.5rem"
+                }}
+              >
+                <div style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "flex-start",
+                  marginBottom: "1rem"
+                }}>
+                  <h3 style={{
+                    fontSize: "1rem",
+                    fontWeight: "600",
+                    color: "#ffffff",
+                    margin: "0",
+                    flex: 1
+                  }}>
+                    {item.title}
+                  </h3>
+                  <span
+                    style={{
+                      padding: "0.25rem 0.5rem",
+                      backgroundColor: getStatusColor(item.status),
+                      border: `1px solid ${getStatusTextColor(item.status)}33`,
+                      borderRadius: "4px",
+                      fontSize: "0.7rem",
+                      color: getStatusTextColor(item.status),
+                      fontWeight: "500",
+                      textTransform: "capitalize",
+                      marginLeft: "0.5rem"
+                    }}
+                  >
+                    {item.status.replace("_", " ")}
+                  </span>
+                </div>
+
+                <div style={{
+                  marginBottom: "1rem"
+                }}>
+                  <div style={{
+                    fontSize: "0.8rem",
+                    color: "rgba(255, 255, 255, 0.7)",
+                    marginBottom: "0.5rem"
+                  }}>
+                    {item.category}
+                  </div>
+                  <div style={{
+                    fontSize: "0.9rem",
+                    color: "rgba(255, 255, 255, 0.8)",
+                    lineHeight: "1.4",
+                    marginBottom: "0.5rem"
+                  }}>
+                    {item.description}
+                  </div>
+                </div>
+
+                <div style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center"
+                }}>
+                  <span
+                    style={{
+                      padding: "0.2rem 0.5rem",
+                      backgroundColor: `${getSourceChip(item).color}20`,
+                      border: `1px solid ${getSourceChip(item).color}33`,
+                      borderRadius: "4px",
+                      fontSize: "0.7rem",
+                      color: getSourceChip(item).color,
+                      fontWeight: "500"
+                    }}
+                  >
+                    {getSourceChip(item).text}
+                  </span>
+                  {item.href ? (
+                    <Link
+                      href={item.href}
+                      style={{
+                        display: "inline-block",
+                        padding: "0.5rem 1rem",
+                        backgroundColor: "rgba(59, 130, 246, 0.2)",
+                        border: "1px solid rgba(59, 130, 246, 0.3)",
+                        borderRadius: "6px",
+                        color: "#3b82f6",
+                        textDecoration: "none",
+                        fontSize: "0.8rem",
+                        fontWeight: "500"
+                      }}
+                    >
+                      {getItemCta(item)} →
+                    </Link>
+                  ) : item.status === "external_resource" ? (
+                    <span
+                      style={{
+                        display: "inline-block",
+                        padding: "0.5rem 1rem",
+                        backgroundColor: "rgba(168, 85, 247, 0.2)",
+                        border: "1px solid rgba(168, 85, 247, 0.3)",
+                        borderRadius: "6px",
+                        color: "#a855f7",
+                        fontSize: "0.8rem",
+                        fontWeight: "500"
+                      }}
+                    >
+                      External link →
+                    </span>
+                  ) : (
+                    <span
+                      style={{
+                        display: "inline-block",
+                        padding: "0.5rem 1rem",
+                        backgroundColor: "rgba(107, 114, 128, 0.2)",
+                        border: "1px solid rgba(107, 114, 128, 0.3)",
+                        borderRadius: "6px",
+                        color: "#6b7280",
+                        fontSize: "0.8rem",
+                        fontWeight: "500"
+                      }}
+                    >
+                      Coming soon
+                    </span>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {filteredItems.length === 0 && (
+            <div style={{
+              textAlign: "center",
+              padding: "3rem",
+              color: "rgba(255, 255, 255, 0.6)"
+            }}>
+              <p style={{ fontSize: "1.1rem", marginBottom: "0.5rem" }}>
+                No documents found matching your criteria
+              </p>
+              <p style={{ fontSize: "0.9rem" }}>
+                Try adjusting your search or filters to see more results
+              </p>
+            </div>
+          )}
         </div>
       )}
     </div>
