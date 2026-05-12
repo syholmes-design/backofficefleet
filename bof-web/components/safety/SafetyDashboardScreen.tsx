@@ -30,6 +30,11 @@ import {
   type SafetyCommandStatusFilter,
 } from "@/lib/safety-command-feed";
 import { getDriverSafetyBonusRows } from "@/lib/safety-bonus";
+import { 
+  getTrainingResourcesForIncident, 
+  getCoachingActionLink,
+  type SafetyTrainingResource 
+} from "@/lib/safety-training-resources";
 import { SafetyCommandHero } from "@/components/safety/SafetyCommandHero";
 import { SafetyCommandFiltersBar } from "@/components/safety/SafetyCommandFiltersBar";
 import { SafetyCommandEventList } from "@/components/safety/SafetyCommandEventList";
@@ -893,39 +898,158 @@ export function SafetyDashboardScreen() {
                           {evidenceItem.location ? ` · ${evidenceItem.location}` : ""}
                         </div>
                         
-                        {getSafetyEvidenceOpenHref(evidenceItem.url) ? (
-                          <a
-                            href={getSafetyEvidenceOpenHref(evidenceItem.url)!}
-                            target="_blank"
-                            rel="noopener noreferrer"
+                        {/* Required Training Section */}
+                        <div style={{
+                          marginBottom: '1rem'
+                        }}>
+                          <div style={{
+                            fontSize: '0.8rem',
+                            fontWeight: '600',
+                            color: 'rgba(255, 255, 255, 0.9)',
+                            marginBottom: '0.5rem'
+                          }}>
+                            Required Training
+                          </div>
+                          {(() => {
+                            const trainingResources = getTrainingResourcesForIncident(evidenceItem.label);
+                            const coachingAction = getCoachingActionLink();
+                            
+                            if (trainingResources.length > 0) {
+                              return trainingResources.slice(0, 2).map((resource, index) => (
+                                <div key={index} style={{
+                                  marginBottom: '0.5rem'
+                                }}>
+                                  <div style={{
+                                    fontSize: '0.75rem',
+                                    color: 'rgba(255, 255, 255, 0.7)',
+                                    marginBottom: '0.25rem'
+                                  }}>
+                                    {resource.type === 'Training resource' && 'Vehicle inspection and defect criteria refresher'}
+                                    {resource.type === 'Official guidance' && 'Cargo securement and damage prevention refresher'}
+                                  </div>
+                                  {resource.external ? (
+                                    <a
+                                      href={resource.href}
+                                      target="_blank"
+                                      rel="noopener noreferrer"
+                                      style={{
+                                        display: 'inline-block',
+                                        padding: '0.25rem 0.75rem',
+                                        backgroundColor: 'rgba(59, 130, 246, 0.2)',
+                                        border: '1px solid rgba(59, 130, 246, 0.3)',
+                                        borderRadius: '4px',
+                                        color: '#3b82f6',
+                                        textDecoration: 'none',
+                                        fontSize: '0.75rem',
+                                        fontWeight: '500',
+                                        marginRight: '0.5rem'
+                                      }}
+                                    >
+                                      {resource.type === 'Training resource' ? 'Open training' : 'View guidance'} →
+                                    </a>
+                                  ) : (
+                                    <Link
+                                      href={resource.href}
+                                      style={{
+                                        display: 'inline-block',
+                                        padding: '0.25rem 0.75rem',
+                                        backgroundColor: 'rgba(34, 197, 94, 0.2)',
+                                        border: '1px solid rgba(34, 197, 94, 0.3)',
+                                        borderRadius: '4px',
+                                        color: '#22c55e',
+                                        textDecoration: 'none',
+                                        fontSize: '0.75rem',
+                                        fontWeight: '500',
+                                        marginRight: '0.5rem'
+                                      }}
+                                    >
+                                      Prepare coaching note →
+                                    </Link>
+                                  )}
+                                  <span style={{
+                                    fontSize: '0.65rem',
+                                    color: 'rgba(255, 255, 255, 0.5)',
+                                    fontStyle: 'italic'
+                                  }}>
+                                    ({resource.source})
+                                  </span>
+                                </div>
+                              ));
+                            } else {
+                              return (
+                                <div>
+                                  <div style={{
+                                    fontSize: '0.75rem',
+                                    color: 'rgba(255, 255, 255, 0.7)',
+                                    marginBottom: '0.25rem'
+                                  }}>
+                                    Review corrective action
+                                  </div>
+                                  <Link
+                                    href={coachingAction.href}
+                                    style={{
+                                      display: 'inline-block',
+                                      padding: '0.25rem 0.75rem',
+                                      backgroundColor: 'rgba(168, 85, 247, 0.2)',
+                                      border: '1px solid rgba(168, 85, 247, 0.3)',
+                                      borderRadius: '4px',
+                                      color: '#a855f7',
+                                      textDecoration: 'none',
+                                      fontSize: '0.75rem',
+                                      fontWeight: '500'
+                                    }}
+                                  >
+                                    {coachingAction.label} →
+                                  </Link>
+                                </div>
+                              );
+                            }
+                          })()}
+                        </div>
+                        
+                        {/* Secondary Actions */}
+                        <div style={{
+                          display: 'flex',
+                          gap: '0.5rem',
+                          flexWrap: 'wrap'
+                        }}>
+                          <Link
+                            href="/safety#at-risk-drivers"
                             style={{
                               display: 'inline-block',
-                              padding: '0.5rem 1rem',
-                              backgroundColor: 'rgba(34, 197, 94, 0.2)',
-                              border: '1px solid rgba(34, 197, 94, 0.3)',
-                              borderRadius: '6px',
-                              color: '#22c55e',
+                              padding: '0.25rem 0.75rem',
+                              backgroundColor: 'rgba(239, 68, 68, 0.2)',
+                              border: '1px solid rgba(239, 68, 68, 0.3)',
+                              borderRadius: '4px',
+                              color: '#ef4444',
                               textDecoration: 'none',
-                              fontSize: '0.85rem',
+                              fontSize: '0.75rem',
                               fontWeight: '500'
                             }}
                           >
-                            Open Evidence →
-                          </a>
-                        ) : (
-                          <span style={{
-                            display: 'inline-block',
-                            padding: '0.5rem 1rem',
-                            backgroundColor: 'rgba(107, 114, 128, 0.2)',
-                            border: '1px solid rgba(107, 114, 128, 0.3)',
-                            borderRadius: '6px',
-                            color: '#6b7280',
-                            fontSize: '0.85rem',
-                            fontWeight: '500'
-                          }}>
-                            Evidence Unavailable
-                          </span>
-                        )}
+                            Assign training →
+                          </Link>
+                          {getSafetyEvidenceOpenHref(evidenceItem.url) && (
+                            <a
+                              href={getSafetyEvidenceOpenHref(evidenceItem.url)!}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              style={{
+                                display: 'inline-block',
+                                padding: '0.25rem 0.75rem',
+                                backgroundColor: 'rgba(107, 114, 128, 0.2)',
+                                border: '1px solid rgba(107, 114, 128, 0.3)',
+                                borderRadius: '4px',
+                                color: '#6b7280',
+                                textDecoration: 'none',
+                                fontSize: '0.75rem',
+                                fontWeight: '500'
+                              }}
+                            >
+                              View original →
+                            </a>
+                          )}
+                        </div>
                       </div>
                     </div>
                   )})}
