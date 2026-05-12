@@ -3,14 +3,15 @@
 import Link from "next/link";
 import Image from "next/image";
 
-// Helper array for action card configuration
+// Helper array for action card configuration with premium cropping
 const ACTION_CARDS = [
   {
     title: "Command Center",
     subtitle: "Operations & exceptions",
     href: "/command-center",
     cta: "Open →",
-    imagePosition: "10% 68%",
+    imagePosition: "8% 66%",
+    backgroundSize: "300%",
     color: "#14b8a6",
   },
   {
@@ -18,7 +19,8 @@ const ACTION_CARDS = [
     subtitle: "Readiness & compliance",
     href: "/drivers",
     cta: "Review →",
-    imagePosition: "22% 68%",
+    imagePosition: "22% 66%",
+    backgroundSize: "300%",
     color: "#3b82f6",
   },
   {
@@ -26,7 +28,8 @@ const ACTION_CARDS = [
     subtitle: "Dispatch, proof, and load lifecycle",
     href: "/dispatch",
     cta: "Explore →",
-    imagePosition: "40% 68%",
+    imagePosition: "40% 66%",
+    backgroundSize: "300%",
     color: "#a855f7",
   },
   {
@@ -34,7 +37,8 @@ const ACTION_CARDS = [
     subtitle: "Driver, company, and proof vaults",
     href: "/documents",
     cta: "View →",
-    imagePosition: "52% 68%",
+    imagePosition: "55% 66%",
+    backgroundSize: "300%",
     color: "#fb923c",
   },
   {
@@ -42,7 +46,8 @@ const ACTION_CARDS = [
     subtitle: "Pay, deductions, and finance",
     href: "/settlements",
     cta: "View →",
-    imagePosition: "64% 68%",
+    imagePosition: "68% 66%",
+    backgroundSize: "300%",
     color: "#22c55e",
   },
   {
@@ -50,7 +55,8 @@ const ACTION_CARDS = [
     subtitle: "Incidents, scorecards, and risk",
     href: "/safety",
     cta: "View →",
-    imagePosition: "78% 68%",
+    imagePosition: "80% 66%",
+    backgroundSize: "300%",
     color: "#ef4444",
   },
   {
@@ -58,7 +64,8 @@ const ACTION_CARDS = [
     subtitle: "Manager, driver, and customer views",
     href: "/portals",
     cta: "Access →",
-    imagePosition: "92% 68%",
+    imagePosition: "95% 66%",
+    backgroundSize: "300%",
     color: "#6366f1",
   },
 ];
@@ -95,7 +102,7 @@ export function DashboardPageClient() {
             fill
             style={{
               objectFit: "cover",
-              objectPosition: "40% 35%",
+              objectPosition: "45% 22%",
               width: "100%",
               height: "100%",
             }}
@@ -301,7 +308,7 @@ export function DashboardPageClient() {
                 fill
                 style={{
                   objectFit: "cover",
-                  objectPosition: "80% 18%",
+                  objectPosition: "88% 10%",
                 }}
               />
             </div>
@@ -489,23 +496,18 @@ export function DashboardPageClient() {
               }}
               aria-label={`Navigate to ${card.title}: ${card.subtitle}`}
             >
-              {/* Card thumbnail from Command_Image.png */}
+              {/* Card thumbnail from Command_Image.png with premium cropping */}
               <div
                 style={{
                   position: "relative",
                   height: "120px",
                   overflow: "hidden",
+                  backgroundImage: `url("/generated/marketing/Command_Image.png")`,
+                  backgroundSize: card.backgroundSize,
+                  backgroundPosition: card.imagePosition,
+                  backgroundRepeat: "no-repeat",
                 }}
               >
-                <Image
-                  src="/generated/marketing/Command_Image.png"
-                  alt={`${card.title} interface preview`}
-                  fill
-                  style={{
-                    objectFit: "cover",
-                    objectPosition: card.imagePosition,
-                  }}
-                />
                 {/* Overlay gradient for text readability */}
                 <div
                   style={{
