@@ -65,11 +65,25 @@ export function SafetyDashboardScreen() {
     [data.drivers]
   );
 
-  const evidenceByDriverId = useMemo(() => {
-    const out = new Map<string, ReturnType<typeof getSafetyEvidenceByDriverId>>();
+  const safetyEvidenceByDriver = useMemo(() => {
+    const out = new Map<string, unknown[]>();
     for (const row of safetyScorecardRows) out.set(row.driverId, getSafetyEvidenceByDriverId(row.driverId));
     return out;
   }, [safetyScorecardRows]);
+
+  // Calculate dynamic values for hero cards
+  const safetySummary = useMemo(() => getSafetyScorecardSummary(), []);
+  const atRiskDrivers = useMemo(() => getAtRiskSafetyDrivers(), []);
+  const totalEvidenceItems = useMemo(() => {
+    let total = 0;
+    for (const evidence of safetyEvidenceByDriver.values()) {
+      total += evidence.length;
+    }
+    return total;
+  }, [safetyEvidenceByDriver]);
+
+  const eliteDriversCount = safetyScorecardRows.filter((row) => row.performanceTier === 'Elite').length;
+  const eliteDriversPercentage = safetyScorecardRows.length > 0 ? Math.round((eliteDriversCount / safetyScorecardRows.length) * 100) : 0;
 
   return (
     <div className="flex min-h-0 flex-1 flex-col gap-6 p-5" style={{ paddingBottom: '6rem' }}>
@@ -77,10 +91,11 @@ export function SafetyDashboardScreen() {
       <section style={{
         position: 'relative',
         background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 100%)',
-        padding: '3rem 2rem 2rem',
+        padding: '1.5rem 2rem 2rem',
         margin: '-1.25rem -1.25rem 2rem -1.25rem',
         borderRadius: '0 0 12px 12px',
-        overflow: 'hidden'
+        overflow: 'hidden',
+        minHeight: '320px'
       }}>
         <div style={{
           position: 'absolute',
@@ -96,7 +111,7 @@ export function SafetyDashboardScreen() {
             fill
             style={{
               objectFit: 'cover',
-              objectPosition: 'center 30%'
+              objectPosition: 'center 20%'
             }}
           />
         </div>
@@ -132,62 +147,214 @@ export function SafetyDashboardScreen() {
           </p>
           
           <div style={{
-            display: 'flex',
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
             gap: '1rem',
-            flexWrap: 'wrap'
+            maxWidth: '1200px'
           }}>
-            <span style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              padding: '0.5rem 1rem',
-              backgroundColor: 'rgba(34, 197, 94, 0.2)',
-              border: '1px solid rgba(34, 197, 94, 0.3)',
-              borderRadius: '20px',
-              fontSize: '0.85rem',
-              color: '#22c55e',
-              fontWeight: '500'
+            {/* Driver Scorecards */}
+            <Link href="/drivers" style={{
+              textDecoration: 'none',
+              color: 'inherit'
             }}>
-              Driver scorecards
-            </span>
-            <span style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              padding: '0.5rem 1rem',
-              backgroundColor: 'rgba(251, 146, 60, 0.2)',
-              border: '1px solid rgba(251, 146, 60, 0.3)',
-              borderRadius: '20px',
-              fontSize: '0.85rem',
-              color: '#fb923c',
-              fontWeight: '500'
+              <div style={{
+                backgroundColor: 'rgba(34, 197, 94, 0.15)',
+                border: '1px solid rgba(34, 197, 94, 0.3)',
+                borderRadius: '12px',
+                padding: '1.25rem',
+                cursor: 'pointer',
+                transition: 'all 0.2s ease',
+                height: '100%'
+              }}>
+                <div style={{
+                  fontSize: '0.9rem',
+                  fontWeight: '600',
+                  color: '#22c55e',
+                  marginBottom: '0.5rem'
+                }}>
+                  Driver Scorecards
+                </div>
+                <div style={{
+                  fontSize: '1.5rem',
+                  fontWeight: '700',
+                  color: '#ffffff',
+                  marginBottom: '0.5rem'
+                }}>
+                  {safetyScorecardRows.length} drivers
+                </div>
+                <div style={{
+                  fontSize: '0.8rem',
+                  color: 'rgba(255, 255, 255, 0.8)',
+                  lineHeight: '1.4',
+                  marginBottom: '0.75rem'
+                }}>
+                  {eliteDriversPercentage}% elite tier. BOF uses driver scorecards to surface HOS, inspection, safety bonus, and eligibility patterns before they become dispatch blockers.
+                </div>
+                <div style={{
+                  fontSize: '0.85rem',
+                  color: '#22c55e',
+                  fontWeight: '500',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.25rem'
+                }}>
+                  Review scorecards →
+                </div>
+              </div>
+            </Link>
+
+            {/* Evidence Review */}
+            <Link href="/safety#safety-evidence" style={{
+              textDecoration: 'none',
+              color: 'inherit'
             }}>
-              Evidence review
-            </span>
-            <span style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              padding: '0.5rem 1rem',
-              backgroundColor: 'rgba(168, 85, 247, 0.2)',
-              border: '1px solid rgba(168, 85, 247, 0.3)',
-              borderRadius: '20px',
-              fontSize: '0.85rem',
-              color: '#a855f7',
-              fontWeight: '500'
+              <div style={{
+                backgroundColor: 'rgba(251, 146, 60, 0.15)',
+                border: '1px solid rgba(251, 146, 60, 0.3)',
+                borderRadius: '12px',
+                padding: '1.25rem',
+                cursor: 'pointer',
+                transition: 'all 0.2s ease',
+                height: '100%'
+              }}>
+                <div style={{
+                  fontSize: '0.9rem',
+                  fontWeight: '600',
+                  color: '#fb923c',
+                  marginBottom: '0.5rem'
+                }}>
+                  Evidence Review
+                </div>
+                <div style={{
+                  fontSize: '1.5rem',
+                  fontWeight: '700',
+                  color: '#ffffff',
+                  marginBottom: '0.5rem'
+                }}>
+                  {totalEvidenceItems} items
+                </div>
+                <div style={{
+                  fontSize: '0.8rem',
+                  color: 'rgba(255, 255, 255, 0.8)',
+                  lineHeight: '1.4',
+                  marginBottom: '0.75rem'
+                }}>
+                  Open evidence items show where safety photos, HOS proof, cargo damage, or inspection records need review. These items support coaching, claims defense, and payment readiness.
+                </div>
+                <div style={{
+                  fontSize: '0.85rem',
+                  color: '#fb923c',
+                  fontWeight: '500',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.25rem'
+                }}>
+                  Open evidence →
+                </div>
+              </div>
+            </Link>
+
+            {/* Coaching Required */}
+            <Link href="/safety#at-risk-drivers" style={{
+              textDecoration: 'none',
+              color: 'inherit'
             }}>
-              Coaching required
-            </span>
-            <span style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              padding: '0.5rem 1rem',
-              backgroundColor: 'rgba(239, 68, 68, 0.2)',
-              border: '1px solid rgba(239, 68, 68, 0.3)',
-              borderRadius: '20px',
-              fontSize: '0.85rem',
-              color: '#ef4444',
-              fontWeight: '500'
+              <div style={{
+                backgroundColor: 'rgba(168, 85, 247, 0.15)',
+                border: '1px solid rgba(168, 85, 247, 0.3)',
+                borderRadius: '12px',
+                padding: '1.25rem',
+                cursor: 'pointer',
+                transition: 'all 0.2s ease',
+                height: '100%'
+              }}>
+                <div style={{
+                  fontSize: '0.9rem',
+                  fontWeight: '600',
+                  color: '#a855f7',
+                  marginBottom: '0.5rem'
+                }}>
+                  Coaching Required
+                </div>
+                <div style={{
+                  fontSize: '1.5rem',
+                  fontWeight: '700',
+                  color: '#ffffff',
+                  marginBottom: '0.5rem'
+                }}>
+                  {atRiskDrivers.length} drivers
+                </div>
+                <div style={{
+                  fontSize: '0.8rem',
+                  color: 'rgba(255, 255, 255, 0.8)',
+                  lineHeight: '1.4',
+                  marginBottom: '0.75rem'
+                }}>
+                  Drivers with repeated or high-severity issues should be routed to coaching before the next dispatch cycle. Coaching notes should explain the issue, why it matters, and the required corrective action.
+                </div>
+                <div style={{
+                  fontSize: '0.85rem',
+                  color: '#a855f7',
+                  fontWeight: '500',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.25rem'
+                }}>
+                  Review coaching →
+                </div>
+              </div>
+            </Link>
+
+            {/* Dispatch Impact */}
+            <Link href="/safety#at-risk-drivers" style={{
+              textDecoration: 'none',
+              color: 'inherit'
             }}>
-              Dispatch impact
-            </span>
+              <div style={{
+                backgroundColor: 'rgba(239, 68, 68, 0.15)',
+                border: '1px solid rgba(239, 68, 68, 0.3)',
+                borderRadius: '12px',
+                padding: '1.25rem',
+                cursor: 'pointer',
+                transition: 'all 0.2s ease',
+                height: '100%'
+              }}>
+                <div style={{
+                  fontSize: '0.9rem',
+                  fontWeight: '600',
+                  color: '#ef4444',
+                  marginBottom: '0.5rem'
+                }}>
+                  Dispatch Impact
+                </div>
+                <div style={{
+                  fontSize: '1.5rem',
+                  fontWeight: '700',
+                  color: '#ffffff',
+                  marginBottom: '0.5rem'
+                }}>
+                  {safetySummary.atRiskDrivers} at-risk
+                </div>
+                <div style={{
+                  fontSize: '0.8rem',
+                  color: 'rgba(255, 255, 255, 0.8)',
+                  lineHeight: '1.4',
+                  marginBottom: '0.75rem'
+                }}>
+                  Safety issues can affect dispatch readiness when they create compliance risk, missing proof, equipment concerns, or unresolved incident exposure.
+                </div>
+                <div style={{
+                  fontSize: '0.85rem',
+                  color: '#ef4444',
+                  fontWeight: '500',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.25rem'
+                }}>
+                  Check dispatch impact →
+                </div>
+              </div>
+            </Link>
           </div>
         </div>
       </section>
@@ -313,7 +480,7 @@ export function SafetyDashboardScreen() {
               color: '#3b82f6',
               marginBottom: '0.25rem'
             }}>
-              {Array.from(evidenceByDriverId.values()).reduce((sum, evidence) => sum + evidence.length, 0)}
+              {totalEvidenceItems}
             </div>
             <div style={{
               fontSize: '0.75rem',
@@ -511,7 +678,7 @@ export function SafetyDashboardScreen() {
       </section>
 
       {/* At-Risk Drivers Section */}
-      <section>
+      <section id="at-risk-drivers">
         <h2 style={{
           fontSize: '1.5rem',
           fontWeight: '600',
@@ -621,7 +788,7 @@ export function SafetyDashboardScreen() {
       </section>
 
       {/* Safety Evidence Section */}
-      <section>
+      <section id="safety-evidence">
         <h2 style={{
           fontSize: '1.5rem',
           fontWeight: '600',
@@ -635,7 +802,7 @@ export function SafetyDashboardScreen() {
           gap: '1rem'
         }}>
           {["DRV-004", "DRV-008"].map((driverId) => {
-            const evidence = evidenceByDriverId.get(driverId) ?? [];
+            const evidence = safetyEvidenceByDriver.get(driverId) ?? [];
             if (evidence.length === 0) return null;
             
             return (
@@ -651,7 +818,7 @@ export function SafetyDashboardScreen() {
                   color: '#ffffff',
                   margin: '0 0 1rem 0'
                 }}>
-                  {evidence[0]?.driverName} ({driverId})
+                  {(evidence[0] as { driverName?: string })?.driverName} ({driverId})
                 </h3>
                 
                 <div style={{
@@ -659,8 +826,10 @@ export function SafetyDashboardScreen() {
                   gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
                   gap: '1rem'
                 }}>
-                  {evidence.map((item) => (
-                    <div key={item.id} style={{
+                  {evidence.map((item: unknown) => {
+                  const evidenceItem = item as { id: string; url: string; label: string; note: string; date: string; location?: string; severity: string };
+                  return (
+                    <div key={evidenceItem.id} style={{
                       backgroundColor: 'rgba(255, 255, 255, 0.05)',
                       border: '1px solid rgba(255, 255, 255, 0.1)',
                       borderRadius: '8px',
@@ -672,8 +841,8 @@ export function SafetyDashboardScreen() {
                         overflow: 'hidden'
                       }}>
                         <Image
-                          src={item.url}
-                          alt={item.label}
+                          src={evidenceItem.url}
+                          alt={evidenceItem.label}
                           fill
                           className="object-cover"
                           style={{
@@ -685,14 +854,14 @@ export function SafetyDashboardScreen() {
                           top: '0.5rem',
                           right: '0.5rem',
                           padding: '0.25rem 0.5rem',
-                          backgroundColor: item.severity === 'high' ? 'rgba(239, 68, 68, 0.9)' : 'rgba(251, 146, 60, 0.9)',
+                          backgroundColor: evidenceItem.severity === 'high' ? 'rgba(239, 68, 68, 0.9)' : 'rgba(251, 146, 60, 0.9)',
                           borderRadius: '4px',
                           fontSize: '0.7rem',
                           color: '#ffffff',
                           fontWeight: '500',
                           textTransform: 'uppercase'
                         }}>
-                          {item.severity === 'high' ? 'High' : 'Medium'}
+                          {evidenceItem.severity === 'high' ? 'High' : 'Medium'}
                         </div>
                       </div>
                       
@@ -703,7 +872,7 @@ export function SafetyDashboardScreen() {
                           color: '#ffffff',
                           margin: '0 0 0.5rem 0'
                         }}>
-                          {item.label}
+                          {evidenceItem.label}
                         </h4>
                         
                         <p style={{
@@ -712,7 +881,7 @@ export function SafetyDashboardScreen() {
                           margin: '0 0 0.5rem 0',
                           lineHeight: '1.4'
                         }}>
-                          {item.note}
+                          {evidenceItem.note}
                         </p>
                         
                         <div style={{
@@ -720,13 +889,13 @@ export function SafetyDashboardScreen() {
                           color: 'rgba(255, 255, 255, 0.5)',
                           marginBottom: '1rem'
                         }}>
-                          {item.date}
-                          {item.location ? ` · ${item.location}` : ""}
+                          {evidenceItem.date}
+                          {evidenceItem.location ? ` · ${evidenceItem.location}` : ""}
                         </div>
                         
-                        {getSafetyEvidenceOpenHref(item.url) ? (
+                        {getSafetyEvidenceOpenHref(evidenceItem.url) ? (
                           <a
-                            href={getSafetyEvidenceOpenHref(item.url)!}
+                            href={getSafetyEvidenceOpenHref(evidenceItem.url)!}
                             target="_blank"
                             rel="noopener noreferrer"
                             style={{
@@ -759,7 +928,7 @@ export function SafetyDashboardScreen() {
                         )}
                       </div>
                     </div>
-                  ))}
+                  )})}
                 </div>
               </div>
             );
