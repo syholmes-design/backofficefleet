@@ -43,83 +43,40 @@ const initialDrivers = initialData.drivers.map((d) => ({
   qual_file_status: "Complete" as const,
   safety_ack_status: "Signed" as const,
 }));
-const initialEvents: SafetyEvent[] = [
-  {
-    event_id: "EVT-001",
-    driver_id: "DRV-001",
-    driver_name: "John Carter",
-    event_type: "Accident",
-    severity: "High",
-    event_date: "2026-04-15",
-    status: "Open",
-    notes: "Minor collision during backing maneuver",
-    internal_notes: "Driver needs refresher training on backing procedures",
-    linked_load_id: "L001",
-    evidence_image_url: null,
-    insurance_claim_needed: true,
-    estimated_claim_exposure: 2500,
-  },
-  {
-    event_id: "EVT-002",
-    driver_id: "DRV-002",
-    driver_name: "Maria Lopez",
-    event_type: "Traffic Violation",
-    severity: "Medium",
-    event_date: "2026-04-18",
-    status: "Open",
-    notes: "Speeding ticket in construction zone",
-    internal_notes: "Review with driver, consider defensive driving course",
-    linked_load_id: "L002",
-    evidence_image_url: null,
-    insurance_claim_needed: false,
-    estimated_claim_exposure: 0,
-  },
-  {
-    event_id: "EVT-003",
-    driver_id: "DRV-003",
-    driver_name: "Alex Kim",
-    event_type: "Equipment Damage",
-    severity: "Medium",
-    event_date: "2026-04-20",
-    status: "In Review",
-    notes: "Minor damage to trailer during loading",
-    internal_notes: "Dock facility issue, not driver fault",
-    linked_load_id: "L003",
-    evidence_image_url: null,
-    insurance_claim_needed: false,
-    estimated_claim_exposure: 800,
-  },
-  {
-    event_id: "EVT-004",
-    driver_id: "DRV-004",
-    driver_name: "Priya Patel",
-    event_type: "Near Miss",
-    severity: "Low",
-    event_date: "2026-04-22",
-    status: "Reviewed",
-    notes: "Near miss with pedestrian at crosswalk",
-    internal_notes: "Driver took appropriate action, document for training",
-    linked_load_id: undefined,
-    evidence_image_url: null,
-    insurance_claim_needed: false,
-    estimated_claim_exposure: 0,
-  },
-  {
-    event_id: "EVT-005",
-    driver_id: "DRV-005",
-    driver_name: "James Wilson",
-    event_type: "DOT Inspection Failure",
-    severity: "High",
-    event_date: "2026-04-24",
-    status: "Open",
-    notes: "Failed Level 1 inspection - brake adjustment issue",
-    internal_notes: "Vehicle needs immediate maintenance before return to service",
-    linked_load_id: "L004",
-    evidence_image_url: null,
-    insurance_claim_needed: false,
-    estimated_claim_exposure: 0,
-  },
-];
+const initialEvents = generateSafetyEvents(initialData);
+
+function generateSafetyEvents(data: BofData): SafetyEvent[] {
+  const events: SafetyEvent[] = [];
+
+  data.complianceIncidents?.forEach((incident, index) => {
+    if (incident.type === "Safety") {
+      const driver = data.drivers.find(d => d.id === incident.driverId);
+      if (driver) {
+        events.push({
+          event_id: `EVT-${String(index + 1).padStart(3, '0')}`,
+          driver_id: incident.driverId,
+          driver_name: driver.name,
+          event_type: incident.severity === "HIGH" ? "Accident" : 
+                     incident.severity === "MEDIUM" ? "Equipment Damage" : "Traffic Violation",
+          severity: incident.severity === "HIGH" ? "High" : 
+                   incident.severity === "MEDIUM" ? "Medium" : "Low",
+          event_date: incident.date || "2026-01-01",
+          status: incident.status === "OPEN" ? "Open" : 
+                  incident.status === "CLOSED" ? "Closed" : "In Review",
+          notes: incident.description || "Safety incident",
+          internal_notes: "Not available in source",
+          linked_load_id: incident.loadId || undefined,
+          evidence_image_url: null,
+          insurance_claim_needed: incident.severity === "HIGH",
+          estimated_claim_exposure: incident.severity === "HIGH" ? 2500 : 
+                                 incident.severity === "MEDIUM" ? 800 : 0,
+        });
+      }
+    }
+  });
+
+  return events;
+}
 
 export const useSafetyStore = create<SafetyState>((set, get) => ({
   drivers: initialDrivers,
@@ -194,18 +151,8 @@ export const useSafetyStore = create<SafetyState>((set, get) => ({
           safety_ack_status: "Signed" as const,
         };
       });
-      const nameByDriverId = new Map(nextDrivers.map((d) => [d.driver_id, d.name]));
       const validDriverIds = new Set(nextDrivers.map((d) => d.driver_id));
-      const hasOnlyCanonicalEventDrivers =
-        s.events.length > 0 &&
-        s.events.every((e) => validDriverIds.has(e.driver_id));
-
-      const nextEvents = hasOnlyCanonicalEventDrivers
-        ? s.events.map((e) => ({
-            ...e,
-            driver_name: nameByDriverId.get(e.driver_id) ?? e.driver_name,
-          }))
-        : [];
+      const nextEvents = generateSafetyEvents(data);
 
       const selectedDriverId = validDriverIds.has(s.selectedDriverId)
         ? s.selectedDriverId

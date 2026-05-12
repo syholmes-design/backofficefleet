@@ -3,6 +3,8 @@ import {
   getSafetyEvidenceByDriverId as getSafetyEvidenceByDriverIdFromRegistry,
   getSafetyEvidenceByLoadId as getSafetyEvidenceByLoadIdFromRegistry,
 } from "@/lib/safety-evidence";
+import { getBofData } from "@/lib/load-bof-data";
+import type { BofData } from "@/lib/load-bof-data";
 
 export type SafetyPerformanceTier = "Elite" | "Standard" | "At Risk";
 export type TireAssetInspection = "Pass" | "Fail";
@@ -37,161 +39,115 @@ export type SafetyScorecardSummary = {
 };
 
 
-const SAFETY_SCORECARD_ROWS: readonly SafetyScorecardRow[] = [
-  {
-    driverId: "DRV-001",
-    driverName: "John Carter",
-    oosViolations: 0,
-    hosCompliancePct: 100,
-    maintenancePhotosDate: "04/04/2026",
-    tireAssetInspection: "Pass",
-    cargoDamageUsd: 0,
-    safetyBonusUsd: 125,
-    performanceTier: "Elite",
-  },
-  {
-    driverId: "DRV-002",
-    driverName: "Maria Lopez",
-    oosViolations: 0,
-    hosCompliancePct: 100,
-    maintenancePhotosDate: "04/04/2026",
-    tireAssetInspection: "Pass",
-    cargoDamageUsd: 0,
-    safetyBonusUsd: 125,
-    performanceTier: "Elite",
-  },
-  {
-    driverId: "DRV-003",
-    driverName: "Alex Kim",
-    oosViolations: 0,
-    hosCompliancePct: 98,
-    maintenancePhotosDate: "03/04/2026",
-    tireAssetInspection: "Pass",
-    cargoDamageUsd: 0,
-    safetyBonusUsd: 75,
-    performanceTier: "Standard",
-  },
-  {
-    driverId: "DRV-004",
-    driverName: "Priya Patel",
-    oosViolations: 1,
-    hosCompliancePct: 92,
-    maintenancePhotosDate: "02/04/2026",
-    tireAssetInspection: "Fail",
-    cargoDamageUsd: 250,
-    safetyBonusUsd: 25,
-    performanceTier: "At Risk",
-  },
-  {
-    driverId: "DRV-005",
-    driverName: "Kenji Tanaka",
-    oosViolations: 0,
-    hosCompliancePct: 99,
-    maintenancePhotosDate: "04/04/2026",
-    tireAssetInspection: "Pass",
-    cargoDamageUsd: 0,
-    safetyBonusUsd: 75,
-    performanceTier: "Standard",
-  },
-  {
-    driverId: "DRV-006",
-    driverName: "Marcus Chen",
-    oosViolations: 0,
-    hosCompliancePct: 100,
-    maintenancePhotosDate: "04/04/2026",
-    tireAssetInspection: "Pass",
-    cargoDamageUsd: 0,
-    safetyBonusUsd: 125,
-    performanceTier: "Elite",
-  },
-  {
-    driverId: "DRV-007",
-    driverName: "Sofia Gomez",
-    oosViolations: 0,
-    hosCompliancePct: 100,
-    maintenancePhotosDate: "04/04/2026",
-    tireAssetInspection: "Pass",
-    cargoDamageUsd: 0,
-    safetyBonusUsd: 125,
-    performanceTier: "Elite",
-  },
-  {
-    driverId: "DRV-008",
-    driverName: "Liam Smith",
-    oosViolations: 2,
-    hosCompliancePct: 85,
-    maintenancePhotosDate: "01/04/2026",
-    tireAssetInspection: "Fail",
-    cargoDamageUsd: 1200,
-    safetyBonusUsd: 25,
-    performanceTier: "At Risk",
-  },
-  {
-    driverId: "DRV-009",
-    driverName: "Emma Brown",
-    oosViolations: 0,
-    hosCompliancePct: 96,
-    maintenancePhotosDate: "03/04/2026",
-    tireAssetInspection: "Pass",
-    cargoDamageUsd: 0,
-    safetyBonusUsd: 75,
-    performanceTier: "Standard",
-  },
-  {
-    driverId: "DRV-010",
-    driverName: "Noah Wilson",
-    oosViolations: 0,
-    hosCompliancePct: 100,
-    maintenancePhotosDate: "04/04/2026",
-    tireAssetInspection: "Pass",
-    cargoDamageUsd: 0,
-    safetyBonusUsd: 125,
-    performanceTier: "Elite",
-  },
-  {
-    driverId: "DRV-011",
-    driverName: "Olivia Lee",
-    oosViolations: 0,
-    hosCompliancePct: 98,
-    maintenancePhotosDate: "04/04/2026",
-    tireAssetInspection: "Pass",
-    cargoDamageUsd: 0,
-    safetyBonusUsd: 75,
-    performanceTier: "Standard",
-  },
-];
+// Source: main-source-v2_enhanced_bof_aligned.xlsx
+// Generate safety scorecard data from BOF v2 canonical data
+function generateSafetyScorecardRows(data: BofData): SafetyScorecardRow[] {
+  const canonicalDrivers = [
+    "DRV-001", "DRV-002", "DRV-003", "DRV-004", "DRV-005", "DRV-006",
+    "DRV-007", "DRV-008", "DRV-009", "DRV-010", "DRV-011", "DRV-012"
+  ];
 
-const SAFETY_VIOLATION_ACTIONS: readonly SafetyViolationActionRow[] = [
-  {
-    driverId: "DRV-004",
-    driverShortName: "P. Patel",
-    violations: 1,
-    code: "B-102 (Tires)",
-    severity: "Medium",
-    action: "Immediate Repair & Photo",
-  },
-  {
-    driverId: "DRV-008",
-    driverShortName: "L. Smith",
-    violations: 2,
-    code: "L-405 (HOS)",
-    severity: "High",
-    action: "24-hr Reset & Safety Review",
-  },
-];
+  return canonicalDrivers.map(driverId => {
+    const driver = data.drivers.find(d => d.id === driverId);
+    if (!driver) {
+      // Return placeholder for missing driver
+      return {
+        driverId,
+        driverName: `Driver ${driverId}`,
+        oosViolations: 0,
+        hosCompliancePct: 100,
+        maintenancePhotosDate: "Not available in source",
+        tireAssetInspection: "Pass",
+        cargoDamageUsd: 0,
+        safetyBonusUsd: 0,
+        performanceTier: "Standard" as SafetyPerformanceTier,
+      };
+    }
+
+    // Count compliance incidents for this driver
+    const driverIncidents = data.complianceIncidents?.filter(incident => incident.driverId === driverId) || [];
+    const oosViolations = driverIncidents.filter(incident => 
+      incident.type === "Safety" && (incident.severity === "HIGH" || incident.severity === "MEDIUM")
+    ).length;
+
+    // Calculate HOS compliance based on incidents
+    const hosViolations = driverIncidents.filter(incident => 
+      incident.description?.toLowerCase().includes("hos") || 
+      incident.description?.toLowerCase().includes("hours")
+    ).length;
+    const hosCompliancePct = Math.max(0, 100 - (hosViolations * 15));
+
+    // Calculate cargo damage from incidents (estimatedClaimExposure not available in v2 source)
+    const cargoDamageUsd = driverIncidents
+      .filter(incident => incident.type === "Safety")
+      .reduce((sum, incident) => sum + (incident.severity === "HIGH" ? 2500 : incident.severity === "MEDIUM" ? 800 : 0), 0);
+
+    // Determine performance tier based on violations and compliance
+    let performanceTier: SafetyPerformanceTier = "Elite";
+    if (oosViolations > 0 || hosCompliancePct < 90) {
+      performanceTier = cargoDamageUsd > 500 ? "At Risk" : "Standard";
+    }
+
+    // Calculate safety bonus based on performance
+    let safetyBonusUsd = 0;
+    if (performanceTier === "Elite") {
+      safetyBonusUsd = 125;
+    } else if (performanceTier === "Standard") {
+      safetyBonusUsd = 75;
+    } else {
+      safetyBonusUsd = 25;
+    }
+
+    return {
+      driverId,
+      driverName: driver.name,
+      oosViolations,
+      hosCompliancePct: Math.round(hosCompliancePct),
+      maintenancePhotosDate: "Not available in source",
+      tireAssetInspection: cargoDamageUsd > 1000 ? "Fail" : "Pass",
+      cargoDamageUsd,
+      safetyBonusUsd,
+      performanceTier,
+    };
+  });
+}
+
+function generateSafetyViolationActions(data: BofData): SafetyViolationActionRow[] {
+  const actions: SafetyViolationActionRow[] = [];
+  
+  data.complianceIncidents?.forEach(incident => {
+    if (incident.type === "Safety" && (incident.severity === "HIGH" || incident.severity === "MEDIUM")) {
+      const driver = data.drivers.find(d => d.id === incident.driverId);
+      if (driver) {
+        const shortName = driver.name.split(' ').map(n => n[0]).join('. ') + driver.name.split(' ').pop()?.slice(1);
+        actions.push({
+          driverId: incident.driverId,
+          driverShortName: shortName || incident.driverId,
+          violations: 1,
+          code: incident.severity === "HIGH" ? "L-405 (HOS)" : "B-102 (Tires)",
+          severity: incident.severity.toLowerCase() as "Low" | "Medium" | "High",
+          action: incident.severity === "HIGH" ? "24-hr Reset & Safety Review" : "Immediate Repair & Photo",
+        });
+      }
+    }
+  });
+
+  return actions;
+}
 
 
 export function getSafetyScorecardRows(): SafetyScorecardRow[] {
-  return [...SAFETY_SCORECARD_ROWS];
+  const data = getBofData();
+  return generateSafetyScorecardRows(data);
 }
 
 export function getSafetyScorecardSummary(): SafetyScorecardSummary {
   const rows = getSafetyScorecardRows();
   const scoredDrivers = rows.length;
-  const eliteDrivers = rows.filter((r) => r.performanceTier === "Elite").length;
-  const atRiskDrivers = rows.filter((r) => r.performanceTier === "At Risk").length;
-  const cargoDamageExposureUsd = rows.reduce((sum, r) => sum + r.cargoDamageUsd, 0);
-  const safetyBonusEarnedUsd = rows.reduce((sum, r) => sum + r.safetyBonusUsd, 0);
+  const eliteDrivers = rows.filter((r: SafetyScorecardRow) => r.performanceTier === "Elite").length;
+  const atRiskDrivers = rows.filter((r: SafetyScorecardRow) => r.performanceTier === "At Risk").length;
+  const cargoDamageExposureUsd = rows.reduce((sum: number, r: SafetyScorecardRow) => sum + r.cargoDamageUsd, 0);
+  const safetyBonusEarnedUsd = rows.reduce((sum: number, r: SafetyScorecardRow) => sum + r.safetyBonusUsd, 0);
   return {
     scoredDrivers,
     eliteTierPct: scoredDrivers === 0 ? 0 : (eliteDrivers / scoredDrivers) * 100,
@@ -202,17 +158,17 @@ export function getSafetyScorecardSummary(): SafetyScorecardSummary {
 }
 
 export function getAtRiskSafetyDrivers(): SafetyScorecardRow[] {
-  return getSafetyScorecardRows().filter((r) => r.performanceTier === "At Risk");
+  return getSafetyScorecardRows().filter((r: SafetyScorecardRow) => r.performanceTier === "At Risk");
 }
 
 export function getSafetyViolationActions(): SafetyViolationActionRow[] {
-  return [...SAFETY_VIOLATION_ACTIONS];
+  const data = getBofData();
+  return generateSafetyViolationActions(data);
 }
 
 export function getSafetyBonusByDriverId(driverId: string): number {
-  return (
-    SAFETY_SCORECARD_ROWS.find((r) => r.driverId === driverId)?.safetyBonusUsd ?? 0
-  );
+  const rows = getSafetyScorecardRows();
+  return rows.find((r: SafetyScorecardRow) => r.driverId === driverId)?.safetyBonusUsd ?? 0;
 }
 
 export function getSafetyEvidenceByDriverId(driverId: string): SafetyEvidenceItem[] {

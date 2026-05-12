@@ -35,6 +35,7 @@ import { SafetyCommandEventList } from "@/components/safety/SafetyCommandEventLi
 import { SafetyBonusPanel } from "@/components/safety/SafetyBonusPanel";
 
 export function SafetyDashboardScreen() {
+  // Source: main-source-v2_enhanced_bof_aligned.xlsx
   const { data } = useBofDemoData();
   const storeEvents = useSafetyStore((s) => s.events);
   const openEventDrawer = useSafetyStore((s) => s.openEventDrawer);

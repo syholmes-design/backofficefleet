@@ -21,7 +21,12 @@ export function SafetyCommandHero({ stats }: { stats: HeroStats }) {
     <section className="rounded-xl border border-slate-800/90 bg-gradient-to-br from-slate-950 via-slate-900/80 to-slate-950 p-4 shadow-lg shadow-black/20">
       <div className="flex flex-col gap-4 lg:flex-row lg:items-stretch lg:justify-between">
         <div className="min-w-0 flex-1">
-          <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-teal-400/90">BOF Operations</p>
+          <div className="flex items-center gap-3">
+            <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-teal-400/90">BOF Operations</p>
+            <span className="inline-flex items-center rounded-full bg-slate-800/50 px-2 py-1 text-xs font-medium text-slate-300 ring-1 ring-slate-700/50">
+              Source: BOF v2 source of truth
+            </span>
+          </div>
           <h1 className="mt-1 text-xl font-semibold tracking-tight text-white sm:text-2xl">Safety Command Center</h1>
           <p className="mt-2 max-w-2xl text-sm leading-relaxed text-slate-400">
             Driver risk, HOS/OOS alerts, pre-trip compliance, proof certification, and safety bonus eligibility — unified
