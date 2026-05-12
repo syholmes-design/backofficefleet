@@ -56,7 +56,7 @@ export const OPERATIONS_FILE_CABINET_REGISTRY: OperationsFileCabinetItem[] = [
     audience: ["driver", "manager", "hr", "safety"],
     status: "available",
     description: "Driver CDL verification and compliance tracking",
-    href: "/generated/drivers/DRV-057/cdl.html",
+    href: "/generated/drivers/DRV-001/cdl.html",
     source: "generated"
   },
   {
@@ -67,7 +67,7 @@ export const OPERATIONS_FILE_CABINET_REGISTRY: OperationsFileCabinetItem[] = [
     audience: ["driver", "manager", "hr", "safety"],
     status: "available",
     description: "DOT medical certificate and physical examination records",
-    href: "/generated/drivers/DRV-057/medical-card.html",
+    href: "/generated/drivers/DRV-001/medical-card.html",
     source: "generated"
   },
   {
@@ -78,7 +78,7 @@ export const OPERATIONS_FILE_CABINET_REGISTRY: OperationsFileCabinetItem[] = [
     audience: ["driver", "manager", "hr", "safety"],
     status: "available",
     description: "Annual driving record review and monitoring",
-    href: "/generated/drivers/DRV-057/mvr.html",
+    href: "/generated/drivers/DRV-001/mvr.html",
     source: "generated"
   },
   {
@@ -89,7 +89,7 @@ export const OPERATIONS_FILE_CABINET_REGISTRY: OperationsFileCabinetItem[] = [
     audience: ["driver", "manager", "hr", "safety"],
     status: "available",
     description: "Drug and alcohol clearinghouse compliance tracking",
-    href: "/generated/drivers/DRV-057/fmcsa-compliance.html",
+    href: "/generated/drivers/DRV-001/fmcsa-compliance.html",
     source: "generated"
   },
   {
@@ -100,7 +100,7 @@ export const OPERATIONS_FILE_CABINET_REGISTRY: OperationsFileCabinetItem[] = [
     audience: ["driver", "manager", "hr"],
     status: "available",
     description: "Employment eligibility verification documentation",
-    href: "/generated/drivers/DRV-057/i9.html",
+    href: "/generated/drivers/DRV-001/i9.html",
     source: "generated"
   },
   {
@@ -111,7 +111,7 @@ export const OPERATIONS_FILE_CABINET_REGISTRY: OperationsFileCabinetItem[] = [
     audience: ["driver", "manager", "finance"],
     status: "available",
     description: "Taxpayer identification for contractor payments",
-    href: "/generated/drivers/DRV-057/w9.html",
+    href: "/generated/drivers/DRV-001/w9.html",
     source: "generated"
   },
   {
@@ -164,7 +164,7 @@ export const OPERATIONS_FILE_CABINET_REGISTRY: OperationsFileCabinetItem[] = [
     audience: ["driver", "manager", "dispatcher"],
     status: "available",
     description: "Emergency contact information and notification procedures",
-    href: "/generated/drivers/DRV-057/emergency-contact.html",
+    href: "/generated/drivers/DRV-001/emergency-contact.html",
     source: "generated"
   },
   {
@@ -186,7 +186,7 @@ export const OPERATIONS_FILE_CABINET_REGISTRY: OperationsFileCabinetItem[] = [
     audience: ["driver", "manager", "finance"],
     status: "available",
     description: "Bank account information for direct deposit payments",
-    href: "/generated/drivers/DRV-057/bank-information.html",
+    href: "/generated/drivers/DRV-001/bank-information.html",
     source: "generated"
   },
   {
