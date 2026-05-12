@@ -14,6 +14,7 @@ import {
 } from "@/lib/drivers/drivers-command-metrics";
 import { getDriverWorkerType, getDriverReadinessSummary, getDriverPolicyAcknowledgments, getDriverSettlementSummary } from "@/lib/driver-readiness-ui";
 import type { WorkerType } from "@/lib/driver-pay-settlement-methods";
+import { getDriverActionIssues, type DriverActionIssue } from "@/lib/driver-action-issues";
 
 type DriverStatusFilter =
   | "all"
@@ -64,6 +65,7 @@ type DriverRow = {
   };
   settlementSummary?: string;
   ownerOperatorPacketStatus?: string;
+  actionIssues: DriverActionIssue[];
 };
 
 function compactSentence(text: string): string {
@@ -255,6 +257,7 @@ export function DriversRosterTable() {
         );
         const workerType = getDriverWorkerType(driver.id, data);
         const readinessSummary = getDriverReadinessSummary(driver.id, data);
+        const actionIssues = getDriverActionIssues(driver.id, data);
         
         return {
           driverId: m.driverId,
@@ -281,6 +284,7 @@ export function DriversRosterTable() {
           reviewExplanation,
           workerType,
           readinessSummary,
+          actionIssues,
         };
       }),
     [data]
@@ -386,7 +390,7 @@ export function DriversRosterTable() {
 
       <section id="primary-driver-table" className="bof-cc-panel" aria-label="Driver document center">
         <div className="bof-cc-panel-head">
-          <h2 className="bof-h2">Driver Document Center ({filteredDriverRows.length} of {driverRows.length})</h2>
+          <h2 className="bof-h2">Drivers needing attention ({filteredDriverRows.length} of {driverRows.length})</h2>
         </div>
         {/* Horizontal Driver Roster Table */}
         <div className="bof-driver-roster-table" style={{ paddingBottom: "6rem" }}>
@@ -488,7 +492,7 @@ export function DriversRosterTable() {
                             {row.readinessSummary.fixAction.label}
                           </Link>
                         )}
-                        <Link href={`/drivers/${row.driverId}/vault`} style={{
+                        <Link href={row.actionIssues.length > 0 ? row.actionIssues[0].primaryActionHref : `/drivers/${row.driverId}/vault`} style={{
                           padding: '0.375rem 0.75rem',
                           backgroundColor: '#F3F4F6',
                           color: '#374151',
@@ -498,7 +502,7 @@ export function DriversRosterTable() {
                           fontWeight: '500',
                           border: '1px solid #D1D5DB'
                         }}>
-                          Review File
+                          Review issue
                         </Link>
                       </div>
                     ) : (
