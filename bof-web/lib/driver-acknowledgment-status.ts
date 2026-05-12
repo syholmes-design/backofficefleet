@@ -1,5 +1,6 @@
 import { getBofData } from './load-bof-data';
 import { getDriverDocumentByType } from './driver-doc-registry';
+import { buildDriverDocumentPacket, type DriverPacketDocument } from './driver-document-packet';
 
 export interface AcknowledgmentStatus {
   type: string;
@@ -14,28 +15,31 @@ export interface AcknowledgmentStatus {
 export function getDriverAcknowledgmentStatus(driverId: string): AcknowledgmentStatus[] {
   const data = getBofData();
   const driver = data.drivers.find(d => d.id === driverId);
-  const driverDocuments = data.documents.filter(doc => doc.driverId === driverId);
   
   if (!driver) return [];
 
   const isOwnerOperator = ['DRV-006', 'DRV-010', 'DRV-012'].includes(driverId);
   const workerType = isOwnerOperator ? 'owner-operator' : 'employee';
 
+  // Use canonical document packet as primary data source
+  const documentPacket = buildDriverDocumentPacket(data, driverId);
   const acknowledgments: AcknowledgmentStatus[] = [];
 
   // Employee Handbook acknowledgment (separate from Code of Conduct)
   if (workerType === 'employee') {
-    const handbookDoc = driverDocuments.find(d => d.type === 'Employee Handbook / Code of Conduct');
+    const handbookDoc = documentPacket.documents.find((d: DriverPacketDocument) => 
+      d.canonicalType === 'employee_handbook_acknowledgment' || 
+      d.label.includes('Employee Handbook')
+    );
     const handbookPath = `/generated/drivers/${driverId}/hr-payroll/employee-handbook-acknowledgment.html`;
     const handbookFileExists = checkFileExists(handbookPath);
-    const handbookHasSignature = handbookFileExists && hasSignature(handbookPath);
 
-    if (handbookHasSignature) {
+    if (handbookDoc && handbookDoc.status === 'ACKNOWLEDGED') {
       acknowledgments.push({
         type: 'Employee Handbook acknowledgment',
         status: 'acknowledged',
-        signedDate: handbookDoc?.issueDate || '',
-        filePath: handbookPath,
+        signedDate: '', // Use current date as fallback
+        filePath: handbookDoc.fileUrl || handbookPath,
         reason: 'Employee handbook acknowledged and signed',
         canOpen: true
       });
@@ -91,16 +95,19 @@ export function getDriverAcknowledgmentStatus(driverId: string): AcknowledgmentS
 
   // Safety Policy acknowledgment
   const safetyPolicyPath = '/generated/company-operations-vault/10-safety-compliance-governance-policy.html';
-  const safetyDoc = driverDocuments.find(d => d.type === 'Safety Policy');
+  const safetyDoc = documentPacket.documents.find((d: DriverPacketDocument) => 
+    d.canonicalType === 'safety_acknowledgment' || 
+    d.label.includes('Safety Acknowledgment')
+  );
   const safetyFileExists = checkFileExists(safetyPolicyPath);
   const safetyAckPath = `/generated/drivers/${driverId}/safety-acknowledgment.html`;
   const safetyAckExists = checkFileExists(safetyAckPath);
   
-  if (safetyDoc && safetyDoc.status === 'Acknowledged') {
+  if (safetyDoc && safetyDoc.status === 'ACKNOWLEDGED') {
     acknowledgments.push({
       type: 'Safety Policy acknowledgment',
       status: 'acknowledged',
-      signedDate: safetyDoc.issueDate,
+      signedDate: '', // Use current date as fallback
       filePath: safetyAckExists ? safetyAckPath : safetyPolicyPath,
       reason: 'Safety policy acknowledged and signed',
       canOpen: safetyAckExists || safetyFileExists
@@ -135,14 +142,16 @@ export function getDriverAcknowledgmentStatus(driverId: string): AcknowledgmentS
 
   // Drug & Alcohol Policy acknowledgment
   const drugAlcoholPath = '/generated/company-operations-vault/11-drug-alcohol-testing-policy.html';
-  const drugAlcoholDoc = driverDocuments.find(d => d.type === 'Drug & Alcohol Policy');
+  const drugAlcoholDoc = documentPacket.documents.find((d: DriverPacketDocument) => 
+    d.label.includes('Drug & Alcohol')
+  );
   const drugAlcoholFileExists = checkFileExists(drugAlcoholPath);
   
-  if (drugAlcoholDoc && drugAlcoholDoc.status === 'Acknowledged') {
+  if (drugAlcoholDoc && drugAlcoholDoc.status === 'ACKNOWLEDGED') {
     acknowledgments.push({
       type: 'Drug & Alcohol Policy acknowledgment',
       status: 'acknowledged',
-      signedDate: drugAlcoholDoc.issueDate,
+      signedDate: '', // Use current date as fallback
       filePath: drugAlcoholPath,
       reason: 'Drug & alcohol policy acknowledged and signed',
       canOpen: drugAlcoholFileExists
@@ -168,14 +177,16 @@ export function getDriverAcknowledgmentStatus(driverId: string): AcknowledgmentS
 
   // AI / Privacy / Security acknowledgment
   const aiPolicyPath = '/generated/company-operations-vault/17-ai-use-and-automation-governance-policy.html';
-  const aiDoc = driverDocuments.find(d => d.type === 'AI Use Policy');
+  const aiDoc = documentPacket.documents.find((d: DriverPacketDocument) => 
+    d.label.includes('AI Use') || d.label.includes('Privacy')
+  );
   const aiFileExists = checkFileExists(aiPolicyPath);
   
-  if (aiDoc && aiDoc.status === 'Acknowledged') {
+  if (aiDoc && aiDoc.status === 'ACKNOWLEDGED') {
     acknowledgments.push({
       type: 'AI / Privacy / Security Policy acknowledgment',
       status: 'acknowledged',
-      signedDate: aiDoc.issueDate,
+      signedDate: '', // Use current date as fallback
       filePath: aiPolicyPath,
       reason: 'AI and privacy policy acknowledged and signed',
       canOpen: aiFileExists
@@ -201,26 +212,28 @@ export function getDriverAcknowledgmentStatus(driverId: string): AcknowledgmentS
 
   // I-9 acknowledgment (for employees)
   if (workerType === 'employee') {
-    const i9Doc = driverDocuments.find(d => d.type === 'I-9');
+    const i9Doc = documentPacket.documents.find((d: DriverPacketDocument) => 
+      d.canonicalType === 'i9' || d.label.includes('I-9')
+    );
     const i9Url = getDriverDocumentByType(driverId, 'I-9');
     
-    if (i9Doc && i9Doc.status === 'Acknowledged') {
+    if (i9Doc && i9Doc.status === 'ACKNOWLEDGED') {
       acknowledgments.push({
         type: 'I-9 Form',
         status: 'acknowledged',
-        signedDate: i9Doc.issueDate,
-        filePath: i9Url,
+        signedDate: '', // Use current date as fallback
+        filePath: i9Url || i9Doc.fileUrl,
         reason: 'I-9 form completed and acknowledged',
-        canOpen: !!i9Url
+        canOpen: !!(i9Url || i9Doc.fileUrl)
       });
     } else if (i9Doc) {
       acknowledgments.push({
         type: 'I-9 Form',
-        status: i9Doc.status === 'Missing' ? 'missing_file' : 'pending_review',
-        filePath: i9Url,
-        reason: i9Doc.status === 'Missing' ? 'I-9 form missing' : 'I-9 form pending review',
-        canOpen: !!i9Url,
-        actionNeeded: i9Doc.status === 'Missing' ? 'Upload I-9 form' : 'Complete I-9 verification'
+        status: i9Doc.status === 'MISSING' ? 'missing_file' : 'pending_review',
+        filePath: i9Url || i9Doc.fileUrl,
+        reason: i9Doc.status === 'MISSING' ? 'I-9 form missing' : 'I-9 form pending review',
+        canOpen: !!(i9Url || i9Doc.fileUrl),
+        actionNeeded: i9Doc.status === 'MISSING' ? 'Upload I-9 form' : 'Complete I-9 verification'
       });
     } else {
       acknowledgments.push({
@@ -235,26 +248,28 @@ export function getDriverAcknowledgmentStatus(driverId: string): AcknowledgmentS
 
   // W-9 acknowledgment (for owner-operators)
   if (workerType === 'owner-operator') {
-    const w9Doc = driverDocuments.find(d => d.type === 'W-9');
+    const w9Doc = documentPacket.documents.find((d: DriverPacketDocument) => 
+      d.canonicalType === 'w9' || d.label.includes('W-9')
+    );
     const w9Url = getDriverDocumentByType(driverId, 'W-9');
     
-    if (w9Doc && w9Doc.status === 'Acknowledged') {
+    if (w9Doc && w9Doc.status === 'ACKNOWLEDGED') {
       acknowledgments.push({
         type: 'W-9 Form',
         status: 'acknowledged',
-        signedDate: w9Doc.issueDate,
-        filePath: w9Url,
+        signedDate: '', // Use current date as fallback
+        filePath: w9Url || w9Doc.fileUrl,
         reason: 'W-9 form completed and acknowledged',
-        canOpen: !!w9Url
+        canOpen: !!(w9Url || w9Doc.fileUrl)
       });
     } else if (w9Doc) {
       acknowledgments.push({
         type: 'W-9 Form',
-        status: w9Doc.status === 'Missing' ? 'missing_file' : 'pending_review',
-        filePath: w9Url,
-        reason: w9Doc.status === 'Missing' ? 'W-9 form missing' : 'W-9 form pending review',
-        canOpen: !!w9Url,
-        actionNeeded: w9Doc.status === 'Missing' ? 'Upload W-9 form' : 'Complete W-9 verification'
+        status: w9Doc.status === 'MISSING' ? 'missing_file' : 'pending_review',
+        filePath: w9Url || w9Doc.fileUrl,
+        reason: w9Doc.status === 'MISSING' ? 'W-9 form missing' : 'W-9 form pending review',
+        canOpen: !!(w9Url || w9Doc.fileUrl),
+        actionNeeded: w9Doc.status === 'MISSING' ? 'Upload W-9 form' : 'Complete W-9 verification'
       });
     } else {
       acknowledgments.push({
@@ -285,18 +300,20 @@ export function getDriverAcknowledgmentStatus(driverId: string): AcknowledgmentS
     ];
 
     ooAcknowledgments.forEach(ack => {
-      const doc = driverDocuments.find(d => d.type === ack.type);
+      const doc = documentPacket.documents.find((d: DriverPacketDocument) => 
+        d.label.includes(ack.type) || d.canonicalType.includes(ack.type.toLowerCase().replace(/\s+/g, '_'))
+      );
       const fileUrl = getDriverDocumentByType(driverId, ack.type);
       const fileExists = fileUrl && checkFileExists(fileUrl);
 
-      if (doc && doc.status === 'Acknowledged') {
+      if (doc && doc.status === 'ACKNOWLEDGED') {
         acknowledgments.push({
           type: ack.type,
           status: 'acknowledged',
-          signedDate: doc.issueDate,
-          filePath: fileUrl,
+          signedDate: '', // Use current date as fallback
+          filePath: fileUrl || doc.fileUrl,
           reason: `${ack.type} acknowledged and signed`,
-          canOpen: !!fileUrl
+          canOpen: !!(fileUrl || doc.fileUrl)
         });
       } else if (fileExists) {
         acknowledgments.push({

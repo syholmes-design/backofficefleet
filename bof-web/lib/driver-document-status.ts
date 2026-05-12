@@ -1,5 +1,7 @@
 import { getBofData } from './load-bof-data';
 import { getDriverDocumentByType } from './driver-doc-registry';
+import { buildDriverDocumentPacket, type DriverPacketDocument } from './driver-document-packet';
+import { getDriverCredentialStatus } from './driver-credential-status';
 
 export interface DriverDocumentStatus {
   type: string;
@@ -19,186 +21,112 @@ export interface DriverDocumentGroup {
 export function getDriverDocumentStatus(driverId: string): DriverDocumentGroup[] {
   const data = getBofData();
   const driver = data.drivers.find(d => d.id === driverId);
-  const driverDocuments = data.documents.filter(doc => doc.driverId === driverId);
   
   if (!driver) return [];
 
+  // Use canonical document packet as the primary data source
+  const documentPacket = buildDriverDocumentPacket(data, driverId);
+  const credentialStatus = getDriverCredentialStatus(data, driverId);
+  
+  const groups: DriverDocumentGroup[] = [];
+
+  // Driver Qualification Documents - use canonical credential data
+  groups.push({
+    title: 'Driver Qualification',
+    documents: [
+      mapCanonicalToPortalStatus('CDL', credentialStatus.cdl),
+      mapCanonicalToPortalStatus('Medical Card / Medical Certification', credentialStatus.medicalCard),
+      mapCanonicalToPortalStatus('MVR', credentialStatus.mvr),
+      mapCanonicalToPortalStatus('FMCSA Compliance', credentialStatus.fmcsa),
+      // Find MCSA documents in packet
+      ...documentPacket.documents
+        .filter(doc => doc.canonicalType.includes('mcsa') || doc.label.includes('MCSA'))
+        .map(doc => mapPacketToPortalStatus(doc))
+    ]
+  });
+
+  // Contact/Profile Documents - use canonical packet data
+  groups.push({
+    title: 'Contact / Profile',
+    documents: documentPacket.documents
+      .filter(doc => 
+        doc.canonicalType === 'emergency_contact' || 
+        doc.canonicalType === 'driver_profile_html' ||
+        doc.label.includes('Emergency Contact') ||
+        doc.label.includes('Driver Profile')
+      )
+      .map(doc => mapPacketToPortalStatus(doc))
+  });
+
+  // Employment/Payroll Documents - use canonical packet data
   const isOwnerOperator = ['DRV-006', 'DRV-010', 'DRV-012'].includes(driverId);
   const workerType = isOwnerOperator ? 'owner-operator' : 'employee';
 
-  const groups: DriverDocumentGroup[] = [];
-
-  // Driver Qualification Documents
-  const qualificationDocs = [
-    { type: 'CDL', required: true },
-    { type: 'Medical Card / Medical Certification', required: true },
-    { type: 'MCSA-5875 Medical Examination Report', required: true },
-    { type: 'MCSA-5876 Medical Examiner\'s Certificate', required: false },
-    { type: 'MVR', required: true },
-    { type: 'FMCSA Compliance', required: true }
-  ];
-
-  groups.push({
-    title: 'Driver Qualification',
-    documents: qualificationDocs.map(doc => {
-      const status = getDocumentStatus(driverId, doc.type, driverDocuments, doc.required);
-      return status;
-    })
-  });
-
-  // Contact/Profile Documents
-  const contactDocs = [
-    { type: 'Emergency Contact', required: true },
-    { type: 'Driver Profile', required: true }
-  ];
-
-  groups.push({
-    title: 'Contact / Profile',
-    documents: contactDocs.map(doc => {
-      const status = getDocumentStatus(driverId, doc.type, driverDocuments, doc.required);
-      return status;
-    })
-  });
-
-  // Employment/Payroll Documents
-  const employmentDocs = [];
-  
   if (workerType === 'employee') {
-    employmentDocs.push(
-      { type: 'I-9 / onboarding', required: true },
-      { type: 'Bank / Direct Deposit', required: true },
-      { type: 'Employee Handbook / Code of Conduct', required: true },
-      { type: 'Benefits Enrollment', required: false }
-    );
+    groups.push({
+      title: 'Employment / Payroll',
+      documents: documentPacket.documents
+        .filter(doc => 
+          doc.canonicalType === 'i9' ||
+          doc.canonicalType === 'bank_information' ||
+          doc.canonicalType === 'employee_handbook_acknowledgment' ||
+          doc.canonicalType === 'benefits_enrollment' ||
+          doc.label.includes('I-9') ||
+          doc.label.includes('Bank') ||
+          doc.label.includes('Employee Handbook') ||
+          doc.label.includes('Benefits')
+        )
+        .map(doc => mapPacketToPortalStatus(doc))
+    });
   } else {
-    employmentDocs.push(
-      { type: 'W-9', required: true },
-      { type: 'Independent Contractor Agreement', required: true },
-      { type: 'Owner-Operator Lease Agreement', required: true },
-      { type: 'Certificate of Insurance Verification', required: true },
-      { type: 'Occupational Accident Coverage Acknowledgment', required: true },
-      { type: 'Equipment Schedule', required: true },
-      { type: 'Maintenance Responsibility Acknowledgment', required: true },
-      { type: 'Fuel/Toll/Advance/Chargeback Policy Acknowledgment', required: true },
-      { type: 'Settlement/Payment Authorization', required: true },
-      { type: 'Safety and Compliance Acknowledgment', required: true },
-      { type: 'Worker Classification Review Summary', required: true }
-    );
+    groups.push({
+      title: 'Owner-Operator Documents',
+      documents: documentPacket.documents
+        .filter(doc => 
+          doc.canonicalType === 'w9' ||
+          doc.label.includes('W-9') ||
+          doc.label.includes('Independent Contractor') ||
+          doc.label.includes('Owner-Operator') ||
+          doc.label.includes('Lease Agreement') ||
+          doc.label.includes('Certificate of Insurance') ||
+          doc.label.includes('Occupational Accident') ||
+          doc.label.includes('Equipment') ||
+          doc.label.includes('Fuel') ||
+          doc.label.includes('Settlement') ||
+          doc.label.includes('Safety and Compliance') ||
+          doc.label.includes('Worker Classification')
+        )
+        .map(doc => mapPacketToPortalStatus(doc))
+    });
   }
 
-  // Add Family Support Withholding Summary only if applicable
+  // Add Family Support Withholding Summary if applicable
   const driverSettlements = data.settlements.filter(s => s.driverId === driverId);
   const hasFamilySupport = driverSettlements.some(s => 
     s.familySupport && s.familySupport > 0
   );
 
   if (hasFamilySupport) {
-    employmentDocs.push({ type: 'Family Support Withholding Summary', required: true });
+    const familySupportDoc: DriverDocumentStatus = {
+      type: 'Family Support Withholding Summary',
+      status: 'available',
+      reason: 'Family support withholding active',
+      canOpen: true,
+      fileUrl: `/generated/drivers/${driverId}/family-support-withholding.html`
+    };
+    
+    // Add to the appropriate group
+    const targetGroup = groups.find(g => 
+      g.title === 'Employment / Payroll' || g.title === 'Owner-Operator Documents'
+    );
+    if (targetGroup) {
+      targetGroup.documents.push(familySupportDoc);
+    }
   }
-
-  groups.push({
-    title: workerType === 'employee' ? 'Employment / Payroll' : 'Owner-Operator Documents',
-    documents: employmentDocs.map(doc => {
-      const status = getDocumentStatus(driverId, doc.type, driverDocuments, doc.required);
-      return status;
-    })
-  });
 
   return groups;
 }
 
-function getDocumentStatus(
-  driverId: string, 
-  docType: string, 
-  driverDocuments: Array<{type: string, status: string, expirationDate?: string, fileUrl?: string}>, 
-  required: boolean
-): DriverDocumentStatus {
-  // Check for MCSA-5875 special case
-  if (docType === 'MCSA-5875 Medical Examination Report') {
-    return getMCSA5875Status(driverId);
-  }
-
-  // Check for MCSA-5876 special case
-  if (docType === 'MCSA-5876 Medical Examiner\'s Certificate') {
-    return getMCSA5876Status(driverId);
-  }
-
-  // Get document record
-  const docRecord = driverDocuments.find(d => d.type === docType);
-  const fileUrl = getDriverDocumentByType(driverId, docType);
-  const fileExists = fileUrl && checkFileExists(fileUrl);
-
-  // If no record and no file
-  if (!docRecord && !fileUrl) {
-    return {
-      type: docType,
-      status: required ? 'missing' : 'not_required',
-      reason: required ? 'Document record and file missing' : 'Not applicable for this worker type',
-      canOpen: false,
-      actionNeeded: required ? 'Upload document' : undefined
-    };
-  }
-
-  // If file exists but no record
-  if (!docRecord && fileUrl && fileExists) {
-    return {
-      type: docType,
-      status: 'available',
-      fileUrl,
-      reason: 'Document available - needs record verification',
-      canOpen: true,
-      actionNeeded: 'Verify document record'
-    };
-  }
-
-  // If record exists but no file
-  if (docRecord && (!fileUrl || !fileExists)) {
-    return {
-      type: docType,
-      status: 'missing',
-      reason: `Document recorded but file missing`,
-      canOpen: false,
-      actionNeeded: 'Upload document file',
-      expirationDate: docRecord.expirationDate
-    };
-  }
-
-  // Both record and file exist
-  if (docRecord && fileUrl && fileExists) {
-    const expirationDate = docRecord.expirationDate;
-    const status = deriveStatusFromExpiration(expirationDate);
-    
-    return {
-      type: docType,
-      status,
-      fileUrl,
-      expirationDate,
-      reason: getStatusReason(status, expirationDate),
-      canOpen: true,
-      actionNeeded: status === 'expired' ? 'Update document' : undefined
-    };
-  }
-
-  // Special handling for Emergency Contact (exists in audit)
-  if (docType === 'Emergency Contact' && fileUrl && fileExists) {
-    return {
-      type: docType,
-      status: 'available',
-      fileUrl,
-      reason: 'Document file exists and accessible',
-      canOpen: true
-    };
-  }
-
-  // Fallback - most documents are missing based on audit
-  return {
-    type: docType,
-    status: 'missing',
-    reason: 'Document file not found',
-    canOpen: false,
-    actionNeeded: required ? 'Upload document' : undefined
-  };
-}
 
 function getMCSA5875Status(driverId: string): DriverDocumentStatus {
   // Use expected naming pattern for client-side check
@@ -299,6 +227,43 @@ function deriveStatusFromExpiration(expirationDate?: string): DriverDocumentStat
   if (exp <= sixtyDays) return 'expiring_soon';
   
   return 'valid';
+}
+
+// Helper functions to map canonical data to portal format
+function mapCanonicalToPortalStatus(label: string, credential: { status: string; fileUrl?: string; expirationDate?: string }): DriverDocumentStatus {
+  const status = credential.status === 'valid' ? 'valid' : 
+                credential.status === 'expiring_soon' ? 'expiring_soon' :
+                credential.status === 'expired' ? 'expired' :
+                credential.status === 'missing' ? 'missing' : 'available';
+  
+  return {
+    type: label,
+    status,
+    fileUrl: credential.fileUrl,
+    expirationDate: credential.expirationDate,
+    reason: getStatusReason(status, credential.expirationDate),
+    canOpen: !!credential.fileUrl,
+    actionNeeded: status === 'missing' ? 'Upload document' : 
+                   status === 'expired' ? 'Update document' : undefined
+  };
+}
+
+function mapPacketToPortalStatus(doc: DriverPacketDocument): DriverDocumentStatus {
+  const status = doc.status === 'VALID' ? 'valid' :
+                doc.status === 'EXPIRING_SOON' ? 'expiring_soon' :
+                doc.status === 'EXPIRED' ? 'expired' :
+                doc.status === 'MISSING' ? 'missing' : 'available';
+  
+  return {
+    type: doc.label,
+    status,
+    fileUrl: doc.fileUrl || doc.previewUrl,
+    expirationDate: doc.expirationDate,
+    reason: getStatusReason(status, doc.expirationDate),
+    canOpen: !!(doc.fileUrl || doc.previewUrl),
+    actionNeeded: status === 'missing' ? 'Upload document' : 
+                   status === 'expired' ? 'Update document' : undefined
+  };
 }
 
 function getStatusReason(status: DriverDocumentStatus['status'], expirationDate?: string): string {

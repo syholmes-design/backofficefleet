@@ -1,5 +1,8 @@
 import type { BofData } from '@/lib/load-bof-data';
 import { getBofData } from '@/lib/load-bof-data';
+import { getDriverReadinessSummary } from '@/lib/driver-readiness-ui';
+import { getDriverDocumentStatus } from '@/lib/driver-document-status';
+import { getAcknowledgmentSummary } from '@/lib/driver-acknowledgment-status';
 
 export interface PortalCard {
   id: string;
@@ -88,25 +91,32 @@ function generateDriverPortalProfiles(): DriverPortalProfile[] {
       new Date(b.settlementId).getTime() - new Date(a.settlementId).getTime()
     )[0];
     
-    // Calculate document status
-    const driverDocuments = data.documents.filter(doc => doc.driverId === driver.id);
-    const expiringDocuments = driverDocuments.filter(doc => 
-      doc.status === 'Expiring Soon' || doc.status === 'Expired'
-    );
-    const documentStatusSummary = expiringDocuments.length > 0 
-      ? `${expiringDocuments.length} document(s) expiring soon`
-      : 'All documents current';
+    // Use canonical readiness calculation
+    const readinessSummary = getDriverReadinessSummary(driver.id, data);
+    const documentStatus = getDriverDocumentStatus(driver.id);
+    const acknowledgmentSummary = getAcknowledgmentSummary(driver.id);
     
-    // Calculate pending acknowledgments
-    const pendingAcknowledgments = driverDocuments.filter(doc => 
-      (doc.type === 'I-9' || doc.type === 'W-9') && doc.status !== 'Acknowledged'
-    ).length;
+    // Calculate document status from canonical data
+    const allDocuments = documentStatus.flatMap(group => group.documents);
+    const expiringDocuments = allDocuments.filter(doc => 
+      doc.status === 'expiring_soon' || doc.status === 'expired'
+    );
+    const missingDocuments = allDocuments.filter(doc => doc.status === 'missing');
+    
+    const documentStatusSummary = missingDocuments.length > 0 
+      ? `${missingDocuments.length} document(s) missing`
+      : expiringDocuments.length > 0 
+        ? `${expiringDocuments.length} document(s) expiring soon`
+        : 'All documents current';
+    
+    // Calculate pending acknowledgments from canonical data
+    const pendingAcknowledgments = acknowledgmentSummary.pending;
     
     profiles.push({
       driverId: driver.id,
       name: driver.name,
       workerType,
-      readinessStatus: 'Ready', // Simplified for demo
+      readinessStatus: readinessSummary.status === 'ready' ? 'Ready' : 'Needs Attention',
       currentLoadId: currentLoad?.id,
       currentLoadStatus: currentLoad?.status,
       documentStatusSummary,
