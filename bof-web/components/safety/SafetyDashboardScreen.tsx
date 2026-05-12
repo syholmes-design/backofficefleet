@@ -672,11 +672,11 @@ export function SafetyDashboardScreen() {
                         overflow: 'hidden'
                       }}>
                         <Image
-                          src="/generated/marketing/safety/Safety_image.png"
+                          src={item.url}
                           alt={item.label}
                           fill
+                          className="object-cover"
                           style={{
-                            objectFit: 'cover',
                             objectPosition: 'center'
                           }}
                         />
@@ -829,7 +829,7 @@ export function SafetyDashboardScreen() {
         </div>
       </section>
 
-      {/* Source Note */}
+      {/* Data Provenance Note */}
       <section style={{
         padding: '1rem',
         backgroundColor: 'rgba(255, 255, 255, 0.05)',
@@ -839,9 +839,9 @@ export function SafetyDashboardScreen() {
         color: 'rgba(255, 255, 255, 0.6)'
       }}>
         <p style={{ margin: '0' }}>
-          <strong>Note:</strong> Maintenance photo data is not available in this demo source. 
-          Scorecard data comes from <code style={{ color: '#22c55e' }}>lib/safety-scorecard.ts</code>. 
-          Live signals join compliance incidents, loads (POD/seal), evidence, and coaching data.
+          <strong>Data Source:</strong> Safety bonus and incident data sourced from 
+          <code style={{ color: '#22c55e' }}>public/data/main-source-v2_enhanced_bof_aligned.xlsx</code>. 
+          Evidence photos linked to specific safety incidents. Some maintenance-photo fields not present in v2 source.
         </p>
       </section>
     </div>
