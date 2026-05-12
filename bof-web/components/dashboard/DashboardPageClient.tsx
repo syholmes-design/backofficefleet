@@ -3,15 +3,15 @@
 import Link from "next/link";
 import Image from "next/image";
 
-// Helper array for action card configuration with premium cropping
+// Helper array for action card configuration with distinct images and proper cropping
 const ACTION_CARDS = [
   {
     title: "Command Center",
     subtitle: "Operations & exceptions",
     href: "/command-center",
     cta: "Open →",
-    imagePosition: "8% 66%",
-    backgroundSize: "300%",
+    imageSrc: "/generated/marketing/dispatch-command-center-hero.png",
+    imagePosition: "center 40%",
     color: "#14b8a6",
   },
   {
@@ -19,8 +19,8 @@ const ACTION_CARDS = [
     subtitle: "Readiness & compliance",
     href: "/drivers",
     cta: "Review →",
-    imagePosition: "22% 66%",
-    backgroundSize: "300%",
+    imageSrc: "/assets/images/bof-landing-hero-clean.png",
+    imagePosition: "center 35%",
     color: "#3b82f6",
   },
   {
@@ -28,8 +28,8 @@ const ACTION_CARDS = [
     subtitle: "Dispatch, proof, and load lifecycle",
     href: "/dispatch",
     cta: "Explore →",
-    imagePosition: "40% 66%",
-    backgroundSize: "300%",
+    imageSrc: "/evidence/loads/L001/trailer-loaded.jpg",
+    imagePosition: "center 50%",
     color: "#a855f7",
   },
   {
@@ -37,8 +37,8 @@ const ACTION_CARDS = [
     subtitle: "Driver, company, and proof vaults",
     href: "/documents",
     cta: "View →",
-    imagePosition: "55% 66%",
-    backgroundSize: "300%",
+    imageSrc: "/assets/images/hero-bof-vault.png",
+    imagePosition: "center 45%",
     color: "#fb923c",
   },
   {
@@ -46,8 +46,8 @@ const ACTION_CARDS = [
     subtitle: "Pay, deductions, and finance",
     href: "/settlements",
     cta: "View →",
-    imagePosition: "68% 66%",
-    backgroundSize: "300%",
+    imageSrc: "/assets/images/bof-back-office-operating-system-hero.png",
+    imagePosition: "center 40%",
     color: "#22c55e",
   },
   {
@@ -55,8 +55,8 @@ const ACTION_CARDS = [
     subtitle: "Incidents, scorecards, and risk",
     href: "/safety",
     cta: "View →",
-    imagePosition: "80% 66%",
-    backgroundSize: "300%",
+    imageSrc: "/assets/images/safety_event_evidence_1.png",
+    imagePosition: "center 60%",
     color: "#ef4444",
   },
   {
@@ -64,15 +64,15 @@ const ACTION_CARDS = [
     subtitle: "Manager, driver, and customer views",
     href: "/portals",
     cta: "Access →",
-    imagePosition: "95% 66%",
-    backgroundSize: "300%",
+    imageSrc: "/assets/images/private-fleets-hero-new.png",
+    imagePosition: "center 50%",
     color: "#6366f1",
   },
 ];
 
 export function DashboardPageClient() {
   return (
-    <div className="bof-page bof-cc-page bof-dashboard-page">
+    <div className="bof-page bof-cc-page bof-dashboard-page" style={{ paddingBottom: '6rem' }}>
       {/* Full-bleed hero section with premium Command_Image.png background */}
       <section
         style={{
@@ -85,7 +85,7 @@ export function DashboardPageClient() {
           background: "#020617",
         }}
       >
-        {/* Premium hero image with Command_Image.png */}
+        {/* Premium hero image with dispatch-command-center-hero.png (no baked-in text) */}
         <div
           style={{
             position: "absolute",
@@ -97,12 +97,12 @@ export function DashboardPageClient() {
           }}
         >
           <Image
-            src="/generated/marketing/Command_Image.png"
+            src="/generated/marketing/dispatch-command-center-hero.png"
             alt="BackOfficeFleet Command Center Dashboard - Complete back-office operations including dispatch, compliance, documents, finance, settlements, maintenance, and RFID proof workflows"
             fill
             style={{
               objectFit: "cover",
-              objectPosition: "45% 22%",
+              objectPosition: "center 40%",
               width: "100%",
               height: "100%",
             }}
@@ -110,7 +110,7 @@ export function DashboardPageClient() {
           />
         </div>
 
-        {/* Dark gradient overlay for readability */}
+        {/* Stronger dark gradient overlay for better text readability */}
         <div
           style={{
             position: "absolute",
@@ -118,7 +118,7 @@ export function DashboardPageClient() {
             left: 0,
             right: 0,
             bottom: 0,
-            background: "linear-gradient(135deg, rgba(2,6,23,0.85) 0%, rgba(2,6,23,0.6) 50%, rgba(2,6,23,0.4) 100%)",
+            background: "linear-gradient(135deg, rgba(2,6,23,0.95) 0%, rgba(2,6,23,0.85) 40%, rgba(2,6,23,0.7) 70%, rgba(2,6,23,0.5) 100%)",
             zIndex: 2,
           }}
         />
@@ -294,7 +294,7 @@ export function DashboardPageClient() {
               minHeight: "200px",
             }}
           >
-            {/* Manager visual from Command_Image.png */}
+            {/* Manager visual from dispatch-command-center-hero.png */}
             <div
               style={{
                 position: "relative",
@@ -303,12 +303,12 @@ export function DashboardPageClient() {
               }}
             >
               <Image
-                src="/generated/marketing/Command_Image.png"
+                src="/generated/marketing/dispatch-command-center-hero.png"
                 alt="Fleet Operations Manager reviewing dispatch and compliance data"
                 fill
                 style={{
                   objectFit: "cover",
-                  objectPosition: "88% 10%",
+                  objectPosition: "center 30%",
                 }}
               />
             </div>
@@ -496,18 +496,23 @@ export function DashboardPageClient() {
               }}
               aria-label={`Navigate to ${card.title}: ${card.subtitle}`}
             >
-              {/* Card thumbnail from Command_Image.png with premium cropping */}
+              {/* Card thumbnail with individual images and proper cropping */}
               <div
                 style={{
                   position: "relative",
                   height: "120px",
                   overflow: "hidden",
-                  backgroundImage: `url("/generated/marketing/Command_Image.png")`,
-                  backgroundSize: card.backgroundSize,
-                  backgroundPosition: card.imagePosition,
-                  backgroundRepeat: "no-repeat",
                 }}
               >
+                <Image
+                  src={card.imageSrc}
+                  alt={`${card.title} - ${card.subtitle}`}
+                  fill
+                  style={{
+                    objectFit: "cover",
+                    objectPosition: card.imagePosition,
+                  }}
+                />
                 {/* Overlay gradient for text readability */}
                 <div
                   style={{
