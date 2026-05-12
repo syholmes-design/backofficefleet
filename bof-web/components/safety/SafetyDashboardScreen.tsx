@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { AlertOctagon, FileWarning, ShieldAlert, UserX } from "lucide-react";
 import { formatExposure } from "./safety-ui";
 import {
@@ -71,214 +72,692 @@ export function SafetyDashboardScreen() {
   }, [safetyScorecardRows]);
 
   return (
-    <div className="flex min-h-0 flex-1 flex-col gap-6 p-5">
-      <SafetyCommandHero stats={heroStats} />
-
-      <SafetyCommandFiltersBar
-        driverIds={driverIds}
-        eventType={eventType}
-        driverId={driverFilter}
-        severity={severity}
-        status={status}
-        onEventType={setEventType}
-        onDriverId={setDriverFilter}
-        onSeverity={setSeverity}
-        onStatus={setStatus}
-      />
-
-      <section>
-        <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
-          <h2 className="text-sm font-semibold text-slate-200">Live safety signals</h2>
-          <span className="text-[10px] text-slate-500">
-            Compliance + protocol + loads + evidence + coaching queue ({filteredFeed.length} shown)
-          </span>
+    <div className="flex min-h-0 flex-1 flex-col gap-6 p-5" style={{ paddingBottom: '6rem' }}>
+      {/* Safety Command Center Hero */}
+      <section style={{
+        position: 'relative',
+        background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 100%)',
+        padding: '3rem 2rem 2rem',
+        margin: '-1.25rem -1.25rem 2rem -1.25rem',
+        borderRadius: '0 0 12px 12px',
+        overflow: 'hidden'
+      }}>
+        <div style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          zIndex: 1
+        }}>
+          <Image
+            src="/generated/marketing/safety/Safety_image.png"
+            alt="Safety Command Center"
+            fill
+            style={{
+              objectFit: 'cover',
+              objectPosition: 'center 30%'
+            }}
+          />
         </div>
-        <SafetyCommandEventList
-          data={data}
-          rows={filteredFeed}
-          storeEvents={storeEvents}
-          onOpenDrawer={openEventDrawer}
-          onAdvanceEvent={(eventId, next) => setEventStatus(eventId, next)}
-        />
+        
+        <div style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          background: 'linear-gradient(135deg, rgba(2,6,23,0.95) 0%, rgba(2,6,23,0.85) 40%, rgba(2,6,23,0.7) 70%, rgba(2,6,23,0.5) 100%)',
+          zIndex: 2
+        }} />
+        
+        <div style={{ position: 'relative', zIndex: 3 }}>
+          <h1 style={{
+            fontSize: '2.5rem',
+            fontWeight: '700',
+            color: '#ffffff',
+            margin: '0 0 1rem 0',
+            textShadow: '0 2px 4px rgba(0,0,0,0.3)'
+          }}>
+            Safety Command Center
+          </h1>
+          <p style={{
+            fontSize: '1.1rem',
+            color: 'rgba(255, 255, 255, 0.9)',
+            margin: '0 0 2rem 0',
+            maxWidth: '800px',
+            lineHeight: '1.6'
+          }}>
+            Monitor driver safety scorecards, evidence, violations, readiness impacts, and coaching actions before they become dispatch, claims, or settlement problems.
+          </p>
+          
+          <div style={{
+            display: 'flex',
+            gap: '1rem',
+            flexWrap: 'wrap'
+          }}>
+            <span style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              padding: '0.5rem 1rem',
+              backgroundColor: 'rgba(34, 197, 94, 0.2)',
+              border: '1px solid rgba(34, 197, 94, 0.3)',
+              borderRadius: '20px',
+              fontSize: '0.85rem',
+              color: '#22c55e',
+              fontWeight: '500'
+            }}>
+              Driver scorecards
+            </span>
+            <span style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              padding: '0.5rem 1rem',
+              backgroundColor: 'rgba(251, 146, 60, 0.2)',
+              border: '1px solid rgba(251, 146, 60, 0.3)',
+              borderRadius: '20px',
+              fontSize: '0.85rem',
+              color: '#fb923c',
+              fontWeight: '500'
+            }}>
+              Evidence review
+            </span>
+            <span style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              padding: '0.5rem 1rem',
+              backgroundColor: 'rgba(168, 85, 247, 0.2)',
+              border: '1px solid rgba(168, 85, 247, 0.3)',
+              borderRadius: '20px',
+              fontSize: '0.85rem',
+              color: '#a855f7',
+              fontWeight: '500'
+            }}>
+              Coaching required
+            </span>
+            <span style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              padding: '0.5rem 1rem',
+              backgroundColor: 'rgba(239, 68, 68, 0.2)',
+              border: '1px solid rgba(239, 68, 68, 0.3)',
+              borderRadius: '20px',
+              fontSize: '0.85rem',
+              color: '#ef4444',
+              fontWeight: '500'
+            }}>
+              Dispatch impact
+            </span>
+          </div>
+        </div>
       </section>
 
-      <SafetyBonusPanel data={data} rows={bonusRows} />
-
+      {/* KPI Cards */}
       <section>
-        <h2 className="mb-2 text-sm font-semibold text-slate-200">Driver safety scorecard</h2>
-        <div className="overflow-x-auto rounded-lg border border-slate-800">
-          <table className="w-full min-w-[1120px] border-collapse text-left text-sm">
-            <thead className="bg-slate-900/90 text-[10px] uppercase tracking-wide text-slate-500">
-              <tr>
-                <th className="border-b border-slate-800 px-3 py-2 font-medium">Driver</th>
-                <th className="border-b border-slate-800 px-3 py-2 font-medium">Driver ID</th>
-                <th className="border-b border-slate-800 px-3 py-2 font-medium">OOS Violations</th>
-                <th className="border-b border-slate-800 px-3 py-2 font-medium">HOS Compliance</th>
-                <th className="border-b border-slate-800 px-3 py-2 font-medium">Maintenance Photos</th>
-                <th className="border-b border-slate-800 px-3 py-2 font-medium">Tire/Asset Insp.</th>
-                <th className="border-b border-slate-800 px-3 py-2 font-medium">Cargo Damage</th>
-                <th className="border-b border-slate-800 px-3 py-2 font-medium">Safety Bonus</th>
-                <th className="border-b border-slate-800 px-3 py-2 font-medium">Performance Tier</th>
-                <th className="border-b border-slate-800 px-3 py-2 font-medium">Action</th>
-              </tr>
-            </thead>
-            <tbody className="text-slate-200">
-              {safetyScorecardRows.map((row) => (
-                <tr key={row.driverId} className="border-b border-slate-800/80 hover:bg-slate-900/60">
-                  <td className="px-3 py-2 text-xs">
-                    <Link href={`/drivers/${row.driverId}/profile`} className="font-medium text-teal-300 hover:text-teal-200">
-                      {row.driverName}
-                    </Link>
-                  </td>
-                  <td className="px-3 py-2 font-mono text-[11px] text-slate-500">{row.driverId}</td>
-                  <td className="px-3 py-2 text-xs">{row.oosViolations}</td>
-                  <td className={["px-3 py-2 text-xs font-medium", row.hosCompliancePct < 90 ? "text-rose-300" : "text-slate-200"].join(" ")}>
-                    {row.hosCompliancePct}%
-                  </td>
-                  <td className="px-3 py-2 text-xs">{row.maintenancePhotosDate}</td>
-                  <td className="px-3 py-2 text-xs">
-                    <span
-                      className={[
-                        "inline-flex rounded px-2 py-0.5 text-[11px] font-semibold",
-                        row.tireAssetInspection === "Fail"
-                          ? "bg-rose-900/40 text-rose-300 ring-1 ring-rose-700/60"
-                          : "bg-emerald-900/35 text-emerald-300 ring-1 ring-emerald-700/50",
-                      ].join(" ")}
-                    >
+        <h2 style={{
+          fontSize: '1.5rem',
+          fontWeight: '600',
+          color: '#ffffff',
+          margin: '0 0 1rem 0'
+        }}>
+          Safety Metrics Overview
+        </h2>
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+          gap: '1rem'
+        }}>
+          <div style={{
+            backgroundColor: 'rgba(34, 197, 94, 0.1)',
+            border: '1px solid rgba(34, 197, 94, 0.2)',
+            borderRadius: '8px',
+            padding: '1rem'
+          }}>
+            <div style={{
+              fontSize: '0.85rem',
+              color: 'rgba(255, 255, 255, 0.7)',
+              marginBottom: '0.25rem'
+            }}>
+              Scored Drivers
+            </div>
+            <div style={{
+              fontSize: '1.8rem',
+              fontWeight: '700',
+              color: '#22c55e',
+              marginBottom: '0.25rem'
+            }}>
+              {safetyScoreSummary.scoredDrivers}
+            </div>
+            <div style={{
+              fontSize: '0.75rem',
+              color: 'rgba(255, 255, 255, 0.6)'
+            }}>
+              Active safety monitoring
+            </div>
+          </div>
+
+          <div style={{
+            backgroundColor: 'rgba(251, 146, 60, 0.1)',
+            border: '1px solid rgba(251, 146, 60, 0.2)',
+            borderRadius: '8px',
+            padding: '1rem'
+          }}>
+            <div style={{
+              fontSize: '0.85rem',
+              color: 'rgba(255, 255, 255, 0.7)',
+              marginBottom: '0.25rem'
+            }}>
+              Elite Tier %
+            </div>
+            <div style={{
+              fontSize: '1.8rem',
+              fontWeight: '700',
+              color: '#fb923c',
+              marginBottom: '0.25rem'
+            }}>
+              {Math.round(safetyScoreSummary.eliteTierPct)}%
+            </div>
+            <div style={{
+              fontSize: '0.75rem',
+              color: 'rgba(255, 255, 255, 0.6)'
+            }}>
+              Top performers
+            </div>
+          </div>
+
+          <div style={{
+            backgroundColor: 'rgba(239, 68, 68, 0.1)',
+            border: '1px solid rgba(239, 68, 68, 0.2)',
+            borderRadius: '8px',
+            padding: '1rem'
+          }}>
+            <div style={{
+              fontSize: '0.85rem',
+              color: 'rgba(255, 255, 255, 0.7)',
+              marginBottom: '0.25rem'
+            }}>
+              At-Risk Drivers
+            </div>
+            <div style={{
+              fontSize: '1.8rem',
+              fontWeight: '700',
+              color: '#ef4444',
+              marginBottom: '0.25rem'
+            }}>
+              {safetyScoreSummary.atRiskDrivers}
+            </div>
+            <div style={{
+              fontSize: '0.75rem',
+              color: 'rgba(255, 255, 255, 0.6)'
+            }}>
+              Require immediate attention
+            </div>
+          </div>
+
+          <div style={{
+            backgroundColor: 'rgba(59, 130, 246, 0.1)',
+            border: '1px solid rgba(59, 130, 246, 0.2)',
+            borderRadius: '8px',
+            padding: '1rem'
+          }}>
+            <div style={{
+              fontSize: '0.85rem',
+              color: 'rgba(255, 255, 255, 0.7)',
+              marginBottom: '0.25rem'
+            }}>
+              Open Safety Evidence
+            </div>
+            <div style={{
+              fontSize: '1.8rem',
+              fontWeight: '700',
+              color: '#3b82f6',
+              marginBottom: '0.25rem'
+            }}>
+              {Array.from(evidenceByDriverId.values()).reduce((sum, evidence) => sum + evidence.length, 0)}
+            </div>
+            <div style={{
+              fontSize: '0.75rem',
+              color: 'rgba(255, 255, 255, 0.6)'
+            }}>
+              Items requiring review
+            </div>
+          </div>
+
+          <div style={{
+            backgroundColor: 'rgba(168, 85, 247, 0.1)',
+            border: '1px solid rgba(168, 85, 247, 0.2)',
+            borderRadius: '8px',
+            padding: '1rem'
+          }}>
+            <div style={{
+              fontSize: '0.85rem',
+              color: 'rgba(255, 255, 255, 0.7)',
+              marginBottom: '0.25rem'
+            }}>
+              Cargo Damage Exposure
+            </div>
+            <div style={{
+              fontSize: '1.8rem',
+              fontWeight: '700',
+              color: '#a855f7',
+              marginBottom: '0.25rem'
+            }}>
+              {formatExposure(safetyScoreSummary.cargoDamageExposureUsd)}
+            </div>
+            <div style={{
+              fontSize: '0.75rem',
+              color: 'rgba(255, 255, 255, 0.6)'
+            }}>
+              Financial risk
+            </div>
+          </div>
+
+          <div style={{
+            backgroundColor: 'rgba(16, 185, 129, 0.1)',
+            border: '1px solid rgba(16, 185, 129, 0.2)',
+            borderRadius: '8px',
+            padding: '1rem'
+          }}>
+            <div style={{
+              fontSize: '0.85rem',
+              color: 'rgba(255, 255, 255, 0.7)',
+              marginBottom: '0.25rem'
+            }}>
+              Safety Bonus Earned
+            </div>
+            <div style={{
+              fontSize: '1.8rem',
+              fontWeight: '700',
+              color: '#10b981',
+              marginBottom: '0.25rem'
+            }}>
+              {formatExposure(safetyScoreSummary.safetyBonusEarnedUsd)}
+            </div>
+            <div style={{
+              fontSize: '0.75rem',
+              color: 'rgba(255, 255, 255, 0.6)'
+            }}>
+              Performance rewards
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Compact Driver Safety Roster */}
+      <section>
+        <h2 style={{
+          fontSize: '1.5rem',
+          fontWeight: '600',
+          color: '#ffffff',
+          margin: '0 0 1rem 0'
+        }}>
+          Driver Safety Roster
+        </h2>
+        <div style={{
+          backgroundColor: 'rgba(255, 255, 255, 0.05)',
+          border: '1px solid rgba(255, 255, 255, 0.1)',
+          borderRadius: '8px',
+          overflow: 'hidden'
+        }}>
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+            gap: '1rem',
+            padding: '1rem'
+          }}>
+            {safetyScorecardRows.map((row) => (
+              <div key={row.driverId} style={{
+                backgroundColor: 'rgba(255, 255, 255, 0.05)',
+                border: '1px solid rgba(255, 255, 255, 0.1)',
+                borderRadius: '8px',
+                padding: '1rem'
+              }}>
+                <div style={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  marginBottom: '0.5rem'
+                }}>
+                  <Link href={`/drivers/${row.driverId}/profile`} style={{
+                    fontSize: '1rem',
+                    fontWeight: '600',
+                    color: '#22c55e',
+                    textDecoration: 'none'
+                  }}>
+                    {row.driverName}
+                  </Link>
+                  <TierChip tier={row.performanceTier} />
+                </div>
+                
+                <div style={{
+                  fontSize: '0.8rem',
+                  color: 'rgba(255, 255, 255, 0.6)',
+                  marginBottom: '0.75rem'
+                }}>
+                  {row.driverId}
+                </div>
+
+                <div style={{
+                  display: 'grid',
+                  gridTemplateColumns: '1fr 1fr',
+                  gap: '0.5rem',
+                  fontSize: '0.85rem',
+                  marginBottom: '0.75rem'
+                }}>
+                  <div>
+                    <span style={{ color: 'rgba(255, 255, 255, 0.7)' }}>HOS: </span>
+                    <span style={{ color: row.hosCompliancePct < 90 ? '#ef4444' : '#22c55e' }}>
+                      {row.hosCompliancePct}%
+                    </span>
+                  </div>
+                  <div>
+                    <span style={{ color: 'rgba(255, 255, 255, 0.7)' }}>OOS: </span>
+                    <span>{row.oosViolations}</span>
+                  </div>
+                  <div>
+                    <span style={{ color: 'rgba(255, 255, 255, 0.7)' }}>Inspection: </span>
+                    <span style={{
+                      color: row.tireAssetInspection === 'Fail' ? '#ef4444' : '#22c55e'
+                    }}>
                       {row.tireAssetInspection}
                     </span>
-                  </td>
-                  <td className={["px-3 py-2 font-mono text-xs", row.cargoDamageUsd > 0 ? "font-semibold text-rose-300" : "text-slate-400"].join(" ")}>
-                    {formatExposure(row.cargoDamageUsd)}
-                  </td>
-                  <td className="px-3 py-2 font-mono text-xs text-emerald-300">{formatExposure(row.safetyBonusUsd)}</td>
-                  <td className="px-3 py-2 text-xs">
-                    <TierChip tier={row.performanceTier} />
-                  </td>
-                  <td className="px-3 py-2 text-xs">
-                    <div className="flex flex-wrap gap-2">
-                      <Link
-                        href={`/drivers/${row.driverId}/safety`}
-                        className="inline-flex rounded border border-teal-700/50 bg-teal-900/25 px-2 py-1 text-[11px] font-semibold text-teal-200 hover:bg-teal-900/40"
-                      >
-                        Open Safety
-                      </Link>
-                      {(evidenceByDriverId.get(row.driverId)?.length ?? 0) > 0 && (
-                        <a
-                          href={`#evidence-${row.driverId}`}
-                          className="inline-flex rounded border border-slate-700 bg-slate-900 px-2 py-1 text-[11px] font-semibold text-slate-200 hover:bg-slate-800"
-                        >
-                          Evidence ({evidenceByDriverId.get(row.driverId)!.length})
-                        </a>
-                      )}
-                    </div>
-                  </td>
-                </tr>
-              ))}
-              <tr className="border-b border-slate-800/80">
-                <td className="px-3 py-2 text-xs text-slate-400" colSpan={10}>
-                  DRV-012 (Robert Johnson): No safety score on file.
-                </td>
-              </tr>
-            </tbody>
-          </table>
+                  </div>
+                  <div>
+                    <span style={{ color: 'rgba(255, 255, 255, 0.7)' }}>Damage: </span>
+                    <span style={{ color: row.cargoDamageUsd > 0 ? '#ef4444' : '#22c55e' }}>
+                      {formatExposure(row.cargoDamageUsd)}
+                    </span>
+                  </div>
+                </div>
+
+                <div style={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  fontSize: '0.85rem'
+                }}>
+                  <span style={{ color: '#10b981' }}>
+                    Bonus: {formatExposure(row.safetyBonusUsd)}
+                  </span>
+                  <Link
+                    href={`/drivers/${row.driverId}/safety`}
+                    style={{
+                      padding: '0.25rem 0.75rem',
+                      backgroundColor: 'rgba(34, 197, 94, 0.2)',
+                      border: '1px solid rgba(34, 197, 94, 0.3)',
+                      borderRadius: '4px',
+                      color: '#22c55e',
+                      textDecoration: 'none',
+                      fontSize: '0.75rem',
+                      fontWeight: '500'
+                    }}
+                  >
+                    Review →
+                  </Link>
+                </div>
+              </div>
+            ))}
+          </div>
+          
+          <div style={{
+            padding: '0.5rem 1rem',
+            fontSize: '0.75rem',
+            color: 'rgba(255, 255, 255, 0.5)',
+            borderTop: '1px solid rgba(255, 255, 255, 0.1)'
+          }}>
+            DRV-012 (Robert Johnson): No safety score on file.
+          </div>
         </div>
       </section>
 
-      <div className="grid gap-6 lg:grid-cols-2">
-        <section>
-          <h2 className="mb-2 text-sm font-semibold text-slate-200">At-Risk Drivers / Required Actions</h2>
-          <ul className="space-y-2 text-xs">
+      {/* At-Risk Drivers Section */}
+      <section>
+        <h2 style={{
+          fontSize: '1.5rem',
+          fontWeight: '600',
+          color: '#ffffff',
+          margin: '0 0 1rem 0'
+        }}>
+          At-Risk Drivers / Required Actions
+        </h2>
+        {atRiskSafetyDrivers.length > 0 ? (
+          <div style={{
+            display: 'grid',
+            gap: '1rem'
+          }}>
             {atRiskSafetyDrivers.map((row) => (
-              <li key={row.driverId} className="rounded border border-rose-900/40 bg-rose-950/20 px-3 py-2">
-                <div className="font-semibold text-rose-200">{row.driverName}</div>
-                <div className="mt-0.5 text-slate-300">
+              <div key={row.driverId} style={{
+                backgroundColor: 'rgba(239, 68, 68, 0.1)',
+                border: '1px solid rgba(239, 68, 68, 0.2)',
+                borderRadius: '8px',
+                padding: '1rem'
+              }}>
+                <div style={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'flex-start',
+                  marginBottom: '0.5rem'
+                }}>
+                  <h3 style={{
+                    fontSize: '1.1rem',
+                    fontWeight: '600',
+                    color: '#ef4444',
+                    margin: '0'
+                  }}>
+                    {row.driverName}
+                  </h3>
+                  <span style={{
+                    padding: '0.25rem 0.5rem',
+                    backgroundColor: 'rgba(239, 68, 68, 0.2)',
+                    border: '1px solid rgba(239, 68, 68, 0.4)',
+                    borderRadius: '4px',
+                    fontSize: '0.7rem',
+                    color: '#ef4444',
+                    fontWeight: '500',
+                    textTransform: 'uppercase'
+                  }}>
+                    High Risk
+                  </span>
+                </div>
+                
+                <p style={{
+                  fontSize: '0.9rem',
+                  color: 'rgba(255, 255, 255, 0.8)',
+                  margin: '0 0 1rem 0',
+                  lineHeight: '1.4'
+                }}>
                   {row.driverId === "DRV-004"
                     ? "Failed tire/asset inspection and cargo damage."
                     : "HOS compliance below standard, failed tire/asset inspection, and high cargo damage."}
-                </div>
-              </li>
-            ))}
-          </ul>
-        </section>
-        <section>
-          <h2 className="mb-2 text-sm font-semibold text-slate-200">Recent Violations &amp; Required Actions</h2>
-          <ul className="space-y-2 text-xs">
-            {safetyViolationActions.map((row) => (
-              <li key={row.driverId} className="rounded border border-slate-800 bg-slate-900/40 px-3 py-2">
-                <div className="flex items-center justify-between gap-2">
-                  <span className="font-semibold text-slate-100">
-                    {row.driverShortName} — {row.code?.replace(/[()]/g, "")}
-                  </span>
-                  <span
-                    className={[
-                      "inline-flex rounded px-2 py-0.5 text-[11px] font-semibold",
-                      row.severity === "High"
-                        ? "bg-rose-900/40 text-rose-300 ring-1 ring-rose-700/50"
-                        : "bg-amber-900/30 text-amber-300 ring-1 ring-amber-700/40",
-                    ].join(" ")}
-                  >
-                    {row.severity}
-                  </span>
-                </div>
-                <div className="mt-1 text-slate-400">{row.action}</div>
-              </li>
-            ))}
-          </ul>
-        </section>
-      </div>
+                </p>
 
+                <div style={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center'
+                }}>
+                  <div style={{
+                    fontSize: '0.85rem',
+                    color: 'rgba(255, 255, 255, 0.7)'
+                  }}>
+                    <strong>Recommended Action:</strong> Immediate coaching and inspection review
+                  </div>
+                  <Link
+                    href={`/drivers/${row.driverId}/safety`}
+                    style={{
+                      padding: '0.5rem 1rem',
+                      backgroundColor: 'rgba(239, 68, 68, 0.2)',
+                      border: '1px solid rgba(239, 68, 68, 0.3)',
+                      borderRadius: '6px',
+                      color: '#ef4444',
+                      textDecoration: 'none',
+                      fontSize: '0.85rem',
+                      fontWeight: '500'
+                    }}
+                  >
+                    Take Action →
+                  </Link>
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div style={{
+            padding: '2rem',
+            backgroundColor: 'rgba(34, 197, 94, 0.1)',
+            border: '1px solid rgba(34, 197, 94, 0.2)',
+            borderRadius: '8px',
+            textAlign: 'center'
+          }}>
+            <p style={{
+              fontSize: '1rem',
+              color: '#22c55e',
+              margin: '0'
+            }}>
+              No active at-risk drivers. Continue monitoring evidence and coaching completion.
+            </p>
+          </div>
+        )}
+      </section>
+
+      {/* Safety Evidence Section */}
       <section>
-        <h2 className="mb-2 text-sm font-semibold text-slate-200">Safety evidence</h2>
-        <div className="grid gap-3 lg:grid-cols-2">
+        <h2 style={{
+          fontSize: '1.5rem',
+          fontWeight: '600',
+          color: '#ffffff',
+          margin: '0 0 1rem 0'
+        }}>
+          Safety Evidence Review
+        </h2>
+        <div style={{
+          display: 'grid',
+          gap: '1rem'
+        }}>
           {["DRV-004", "DRV-008"].map((driverId) => {
             const evidence = evidenceByDriverId.get(driverId) ?? [];
             if (evidence.length === 0) return null;
+            
             return (
-              <div
-                key={driverId}
-                id={`evidence-${driverId}`}
-                className="rounded-lg border border-slate-800 bg-slate-900/35 p-3"
-              >
-                <p className="text-xs font-semibold text-slate-100">
+              <div key={driverId} style={{
+                backgroundColor: 'rgba(255, 255, 255, 0.05)',
+                border: '1px solid rgba(255, 255, 255, 0.1)',
+                borderRadius: '8px',
+                padding: '1rem'
+              }}>
+                <h3 style={{
+                  fontSize: '1.1rem',
+                  fontWeight: '600',
+                  color: '#ffffff',
+                  margin: '0 0 1rem 0'
+                }}>
                   {evidence[0]?.driverName} ({driverId})
-                </p>
-                <div className="mt-2 space-y-2">
+                </h3>
+                
+                <div style={{
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+                  gap: '1rem'
+                }}>
                   {evidence.map((item) => (
-                    <div key={item.id} className="rounded border border-slate-800 bg-slate-950/50 px-2 py-2 text-xs">
-                      <SafetyEvidenceThumb rawUrl={item.url} alt={item.label} driverId={driverId} />
-                      <div className="flex items-center justify-between gap-2">
-                        <span className="font-medium text-slate-100">{item.label}</span>
-                        <span
-                          className={[
-                            "inline-flex rounded px-2 py-0.5 text-[10px] font-semibold",
-                            item.severity === "high"
-                              ? "bg-rose-900/40 text-rose-300 ring-1 ring-rose-700/50"
-                              : "bg-amber-900/30 text-amber-300 ring-1 ring-amber-700/40",
-                          ].join(" ")}
-                        >
-                          {item.severity === "high" ? "High" : "Medium"}
-                        </span>
+                    <div key={item.id} style={{
+                      backgroundColor: 'rgba(255, 255, 255, 0.05)',
+                      border: '1px solid rgba(255, 255, 255, 0.1)',
+                      borderRadius: '8px',
+                      overflow: 'hidden'
+                    }}>
+                      <div style={{
+                        position: 'relative',
+                        height: '150px',
+                        overflow: 'hidden'
+                      }}>
+                        <Image
+                          src="/generated/marketing/safety/Safety_image.png"
+                          alt={item.label}
+                          fill
+                          style={{
+                            objectFit: 'cover',
+                            objectPosition: 'center'
+                          }}
+                        />
+                        <div style={{
+                          position: 'absolute',
+                          top: '0.5rem',
+                          right: '0.5rem',
+                          padding: '0.25rem 0.5rem',
+                          backgroundColor: item.severity === 'high' ? 'rgba(239, 68, 68, 0.9)' : 'rgba(251, 146, 60, 0.9)',
+                          borderRadius: '4px',
+                          fontSize: '0.7rem',
+                          color: '#ffffff',
+                          fontWeight: '500',
+                          textTransform: 'uppercase'
+                        }}>
+                          {item.severity === 'high' ? 'High' : 'Medium'}
+                        </div>
                       </div>
-                      <p className="mt-1 text-slate-400">{item.note}</p>
-                      <p className="mt-1 text-[10px] text-slate-500">
-                        {item.date}
-                        {item.location ? ` · ${item.location}` : ""}
-                      </p>
-                      {getSafetyEvidenceOpenHref(item.url) ? (
-                        <a
-                          href={getSafetyEvidenceOpenHref(item.url)!}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="mt-1 inline-flex text-[11px] font-semibold text-teal-300 hover:text-teal-200"
-                        >
-                          Open evidence
-                        </a>
-                      ) : (
-                        <span className="mt-1 inline-flex text-[11px] font-semibold text-slate-500">
-                          Open evidence unavailable
-                        </span>
-                      )}
+                      
+                      <div style={{ padding: '1rem' }}>
+                        <h4 style={{
+                          fontSize: '0.9rem',
+                          fontWeight: '600',
+                          color: '#ffffff',
+                          margin: '0 0 0.5rem 0'
+                        }}>
+                          {item.label}
+                        </h4>
+                        
+                        <p style={{
+                          fontSize: '0.8rem',
+                          color: 'rgba(255, 255, 255, 0.7)',
+                          margin: '0 0 0.5rem 0',
+                          lineHeight: '1.4'
+                        }}>
+                          {item.note}
+                        </p>
+                        
+                        <div style={{
+                          fontSize: '0.75rem',
+                          color: 'rgba(255, 255, 255, 0.5)',
+                          marginBottom: '1rem'
+                        }}>
+                          {item.date}
+                          {item.location ? ` · ${item.location}` : ""}
+                        </div>
+                        
+                        {getSafetyEvidenceOpenHref(item.url) ? (
+                          <a
+                            href={getSafetyEvidenceOpenHref(item.url)!}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            style={{
+                              display: 'inline-block',
+                              padding: '0.5rem 1rem',
+                              backgroundColor: 'rgba(34, 197, 94, 0.2)',
+                              border: '1px solid rgba(34, 197, 94, 0.3)',
+                              borderRadius: '6px',
+                              color: '#22c55e',
+                              textDecoration: 'none',
+                              fontSize: '0.85rem',
+                              fontWeight: '500'
+                            }}
+                          >
+                            Open Evidence →
+                          </a>
+                        ) : (
+                          <span style={{
+                            display: 'inline-block',
+                            padding: '0.5rem 1rem',
+                            backgroundColor: 'rgba(107, 114, 128, 0.2)',
+                            border: '1px solid rgba(107, 114, 128, 0.3)',
+                            borderRadius: '6px',
+                            color: '#6b7280',
+                            fontSize: '0.85rem',
+                            fontWeight: '500'
+                          }}>
+                            Evidence Unavailable
+                          </span>
+                        )}
+                      </div>
                     </div>
                   ))}
                 </div>
@@ -288,79 +767,81 @@ export function SafetyDashboardScreen() {
         </div>
       </section>
 
-      <section className="grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
-        <KpiCard
-          label="Scored Drivers"
-          value={safetyScoreSummary.scoredDrivers}
-          icon={<ShieldAlert className="h-4 w-4 text-teal-500" />}
-        />
-        <KpiCard
-          label="Elite Tier %"
-          value={`${Math.round(safetyScoreSummary.eliteTierPct)}%`}
-          icon={<AlertOctagon className="h-4 w-4 text-orange-400" />}
-        />
-        <KpiCard
-          label="At-Risk Drivers"
-          value={safetyScoreSummary.atRiskDrivers}
-          icon={<FileWarning className="h-4 w-4 text-amber-400" />}
-        />
-        <KpiCard
-          label="Cargo Damage Exposure"
-          value={formatExposure(safetyScoreSummary.cargoDamageExposureUsd)}
-          icon={<UserX className="h-4 w-4 text-red-400" />}
-        />
-        <KpiCard
-          label="Safety Bonus Earned"
-          value={formatExposure(safetyScoreSummary.safetyBonusEarnedUsd)}
-          icon={<ShieldAlert className="h-4 w-4 text-rose-400" />}
-        />
+      {/* 6-Month Safety Trend */}
+      <section>
+        <h2 style={{
+          fontSize: '1.5rem',
+          fontWeight: '600',
+          color: '#ffffff',
+          margin: '0 0 1rem 0'
+        }}>
+          6-Month Safety Trend
+        </h2>
+        <div style={{
+          backgroundColor: 'rgba(255, 255, 255, 0.05)',
+          border: '1px solid rgba(255, 255, 255, 0.1)',
+          borderRadius: '8px',
+          padding: '1rem',
+          overflowX: 'auto'
+        }}>
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(120px, 1fr))',
+            gap: '1rem'
+          }}>
+            {safetyMonthlyTrend.map((row) => (
+              <div key={row.month} style={{
+                textAlign: 'center',
+                padding: '1rem',
+                backgroundColor: 'rgba(255, 255, 255, 0.05)',
+                borderRadius: '8px'
+              }}>
+                <div style={{
+                  fontSize: '0.8rem',
+                  color: 'rgba(255, 255, 255, 0.7)',
+                  marginBottom: '0.5rem'
+                }}>
+                  {row.month}
+                </div>
+                <div style={{
+                  fontSize: '1.2rem',
+                  fontWeight: '700',
+                  color: '#22c55e',
+                  marginBottom: '0.25rem'
+                }}>
+                  {row.safetyScore}
+                </div>
+                <div style={{
+                  fontSize: '0.7rem',
+                  color: 'rgba(255, 255, 255, 0.5)'
+                }}>
+                  HOS: {row.avgHosCompliance}%
+                </div>
+                <div style={{
+                  fontSize: '0.7rem',
+                  color: 'rgba(255, 255, 255, 0.5)'
+                }}>
+                  At Risk: {row.atRiskDrivers}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
       </section>
 
-      <section className="rounded-lg border border-slate-800 bg-slate-900/30 p-4">
-        <div className="mb-2 flex items-center justify-between gap-2">
-          <h2 className="text-sm font-semibold text-slate-100">6-Month Safety Trend</h2>
-          <span className="rounded bg-slate-900 px-2 py-0.5 text-[11px] text-slate-400">Demo trend data</span>
-        </div>
-        <div className="overflow-x-auto rounded border border-slate-800">
-          <table className="w-full min-w-[860px] border-collapse text-left text-xs">
-            <thead className="bg-slate-900/90 text-[10px] uppercase tracking-wide text-slate-500">
-              <tr>
-                <th className="border-b border-slate-800 px-2 py-2 font-medium">Month</th>
-                <th className="border-b border-slate-800 px-2 py-2 font-medium">Safety Score</th>
-                <th className="border-b border-slate-800 px-2 py-2 font-medium">Avg HOS</th>
-                <th className="border-b border-slate-800 px-2 py-2 font-medium">At-Risk Drivers</th>
-                <th className="border-b border-slate-800 px-2 py-2 font-medium">OOS Violations</th>
-                <th className="border-b border-slate-800 px-2 py-2 font-medium">Cargo Damage Exposure</th>
-                <th className="border-b border-slate-800 px-2 py-2 font-medium">Safety Bonus Paid</th>
-              </tr>
-            </thead>
-            <tbody className="text-slate-200">
-              {safetyMonthlyTrend.map((row) => (
-                <tr key={row.month} className="border-b border-slate-800/80">
-                  <td className="px-2 py-1.5 font-medium text-slate-100">{row.month}</td>
-                  <td className="px-2 py-1.5 font-mono text-teal-300">{row.safetyScore}</td>
-                  <td className="px-2 py-1.5 font-mono">{row.avgHosCompliance}%</td>
-                  <td className="px-2 py-1.5 font-mono">{row.atRiskDrivers}</td>
-                  <td className="px-2 py-1.5 font-mono">{row.oosViolations}</td>
-                  <td className="px-2 py-1.5 font-mono text-rose-300">{formatExposure(row.cargoDamageExposure)}</td>
-                  <td className="px-2 py-1.5 font-mono text-emerald-300">{formatExposure(row.safetyBonusPaid)}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </section>
-
-      <section className="rounded-lg border border-slate-800 bg-slate-900/20 p-3">
-        <h3 className="text-xs font-semibold uppercase tracking-wide text-slate-400">Source details</h3>
-        <p className="mt-1 text-xs text-slate-500">
-          Scorecard rows and violation actions come from <code className="text-slate-400">lib/safety-scorecard.ts</code>. Live
-          signals join <code className="text-slate-400">complianceIncidents</code>, <code className="text-slate-400">loads</code>{" "}
-          (POD/seal), <code className="text-slate-400">load-evidence-manifest</code> via{" "}
-          <code className="text-slate-400">getLoadEvidenceUrl</code>, registry safety evidence, coaching tier rows, and the
-          interactive safety event store. Dispatch impact uses <code className="text-slate-400">getDriverDispatchEligibility</code>{" "}
-          without changing its rules. Credential status/date labels come from{" "}
-          <code className="text-slate-400">getDriverCredentialStatus</code> for CDL, Medical Card, MVR, and FMCSA.
+      {/* Source Note */}
+      <section style={{
+        padding: '1rem',
+        backgroundColor: 'rgba(255, 255, 255, 0.05)',
+        border: '1px solid rgba(255, 255, 255, 0.1)',
+        borderRadius: '8px',
+        fontSize: '0.8rem',
+        color: 'rgba(255, 255, 255, 0.6)'
+      }}>
+        <p style={{ margin: '0' }}>
+          <strong>Note:</strong> Maintenance photo data is not available in this demo source. 
+          Scorecard data comes from <code style={{ color: '#22c55e' }}>lib/safety-scorecard.ts</code>. 
+          Live signals join compliance incidents, loads (POD/seal), evidence, and coaching data.
         </p>
       </section>
     </div>
