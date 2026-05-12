@@ -88,15 +88,9 @@ function generateSafetyScorecardRows(data: BofData): SafetyScorecardRow[] {
       performanceTier = cargoDamageUsd > 500 ? "At Risk" : "Standard";
     }
 
-    // Calculate safety bonus based on performance
-    let safetyBonusUsd = 0;
-    if (performanceTier === "Elite") {
-      safetyBonusUsd = 125;
-    } else if (performanceTier === "Standard") {
-      safetyBonusUsd = 75;
-    } else {
-      safetyBonusUsd = 25;
-    }
+    // Get actual safety bonus from Payroll data
+    const settlement = data.settlements?.find(s => s.driverId === driverId);
+    const safetyBonusUsd = settlement?.safetyBonus || 0;
 
     return {
       driverId,
