@@ -6,13 +6,13 @@
  * Route map: docs/BOF_ROUTE_MAP.md
  * Edit this file only for route-level layout/wiring.
  */
-import { DocumentsPageClient } from "@/components/documents/DocumentsPageClient";
+import { OperationsFileCabinetClient } from "@/components/documents/OperationsFileCabinetClient";
 
 export const metadata = {
-  title: "Document Vault | BOF",
-  description: "Fleet-wide driver credentials and compliance documents",
+  title: "Operations File Cabinet | BOF",
+  description: "Driver files, company policies, dispatch forms, training materials, SOPs, claims documents, and back-office templates in one organized operating library",
 };
 
 export default function DocumentsPage() {
-  return <DocumentsPageClient />;
+  return <OperationsFileCabinetClient />;
 }
