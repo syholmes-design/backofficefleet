@@ -346,20 +346,6 @@ function checkFileExists(fileUrl: string): boolean {
   return data.documents.some(doc => doc.fileUrl === fileUrl);
 }
 
-function hasSignature(filePath: string): boolean {
-  // For client-side, assume signature exists if file exists in document registry
-  // This prevents fs/path usage in client code
-  // In a real implementation, signature data would be stored in the document metadata
-  const data = getBofData();
-  const hasFile = data.documents.some(doc => doc.fileUrl === filePath);
-  
-  // Assume signature exists for Employee Handbook files
-  if (hasFile && filePath.includes('employee-handbook-acknowledgment')) {
-    return true;
-  }
-  
-  return false;
-}
 
 export function getAcknowledgmentSummary(driverId: string): {
   total: number;

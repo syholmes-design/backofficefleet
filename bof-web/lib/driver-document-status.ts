@@ -1,5 +1,4 @@
 import { getBofData } from './load-bof-data';
-import { getDriverDocumentByType } from './driver-doc-registry';
 import { buildDriverDocumentPacket, type DriverPacketDocument } from './driver-document-packet';
 import { getDriverCredentialStatus } from './driver-credential-status';
 
@@ -128,106 +127,6 @@ export function getDriverDocumentStatus(driverId: string): DriverDocumentGroup[]
 }
 
 
-function getMCSA5875Status(driverId: string): DriverDocumentStatus {
-  // Use expected naming pattern for client-side check
-  const fileName = `mcsa-5875-${driverId}.pdf`;
-  const fileUrl = `/generated/drivers/${driverId}/medical/${fileName}`;
-  
-  // For client-side, we'll assume the file exists if it's in the document registry
-  // This prevents fs/path usage in client code
-  const data = getBofData();
-  const hasMedicalDoc = data.documents.some(doc => 
-    doc.driverId === driverId && 
-    doc.type.includes('Medical') && 
-    doc.fileUrl && doc.fileUrl.includes('mcsa-5875')
-  );
-
-  if (hasMedicalDoc) {
-    return {
-      type: 'MCSA-5875 Medical Examination Report',
-      status: 'available',
-      fileUrl,
-      reason: 'Medical examination report available',
-      canOpen: true
-    };
-  }
-
-  return {
-    type: 'MCSA-5875 Medical Examination Report',
-    status: 'missing',
-    reason: 'Medical examination report not found',
-    canOpen: false,
-    actionNeeded: 'Upload MCSA-5875 Medical Examination Report'
-  };
-}
-
-function getMCSA5876Status(driverId: string): DriverDocumentStatus {
-  // Check for DRV-001 special case (PDF in documents/drivers/)
-  if (driverId === 'DRV-001') {
-    const pdfPath = '/documents/drivers/DRV-001/john-carter-mcsa-5876-signed.pdf';
-    // For client-side, assume DRV-001 has this special file
-    return {
-      type: 'MCSA-5876 Medical Examiner\'s Certificate',
-      status: 'available',
-      fileUrl: pdfPath,
-      reason: 'Medical examiner certificate available',
-      canOpen: true
-    };
-  }
-
-  // Check for standard medical directory file using document registry
-  const data = getBofData();
-  const hasMCSA5876Doc = data.documents.some(doc => 
-    doc.driverId === driverId && 
-    doc.type.includes('Medical') && 
-    doc.fileUrl && doc.fileUrl.includes('mcsa-5876')
-  );
-
-  const fileName = `mcsa-5876-${driverId}.pdf`;
-  const fileUrl = `/generated/drivers/${driverId}/medical/${fileName}`;
-  
-  if (hasMCSA5876Doc) {
-    return {
-      type: 'MCSA-5876 Medical Examiner\'s Certificate',
-      status: 'available',
-      fileUrl,
-      reason: 'Medical examiner certificate available',
-      canOpen: true
-    };
-  }
-
-  return {
-    type: 'MCSA-5876 Medical Examiner\'s Certificate',
-    status: 'missing',
-    reason: 'Medical examiner certificate not found',
-    canOpen: false,
-    actionNeeded: 'Upload MCSA-5876 Medical Examiner\'s Certificate'
-  };
-}
-
-function checkFileExists(fileUrl: string): boolean {
-  // For client-side, use document registry to check if file exists
-  // This prevents fs/path usage in client code
-  const data = getBofData();
-  return data.documents.some(doc => doc.fileUrl === fileUrl);
-}
-
-function deriveStatusFromExpiration(expirationDate?: string): DriverDocumentStatus['status'] {
-  if (!expirationDate) return 'available';
-  
-  const exp = new Date(expirationDate);
-  const now = new Date();
-  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-  
-  if (exp < today) return 'expired';
-  
-  const sixtyDays = new Date(today);
-  sixtyDays.setDate(today.getDate() + 60);
-  
-  if (exp <= sixtyDays) return 'expiring_soon';
-  
-  return 'valid';
-}
 
 // Helper functions to map canonical data to portal format
 function mapCanonicalToPortalStatus(label: string, credential: { status: string; fileUrl?: string; expirationDate?: string }): DriverDocumentStatus {
