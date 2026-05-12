@@ -73,7 +73,7 @@ const ACTION_CARDS = [
 export function DashboardPageClient() {
   return (
     <div className="bof-page bof-cc-page bof-dashboard-page" style={{ paddingBottom: '6rem' }}>
-      {/* Full-bleed hero section with premium Command_Image.png background */}
+      {/* Full-bleed hero section with premium dispatch-command-center-hero.png background */}
       <section
         style={{
           position: "relative",
