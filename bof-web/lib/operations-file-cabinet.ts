@@ -44,75 +44,203 @@ export type OperationsFileCabinetItem = {
   description: string;
   href?: string;
   source?: "generated" | "template" | "external" | "demo";
+  group?: "Blank Templates" | "Company Policies & SOPs" | "BOF Dispatch Templates" | "External Resources" | "Completed Demo Samples" | "Needs Review / Coming Later";
 };
 
 export const OPERATIONS_FILE_CABINET_REGISTRY: OperationsFileCabinetItem[] = [
-  // Driver Qualification Files
+  // Driver Qualification Files - Blank Templates
   {
-    id: "driver-cdl",
-    title: "Commercial Driver License (CDL)",
+    id: "driver-cdl-template",
+    title: "CDL Verification Template",
     category: "Driver Qualification Files",
-    type: "driver-file",
+    type: "template",
     audience: ["driver", "manager", "hr", "safety"],
-    status: "available",
-    description: "Driver CDL verification and compliance tracking",
-    href: "/generated/drivers/DRV-001/cdl.html",
-    source: "generated"
+    status: "template",
+    description: "Blank CDL verification template for new driver qualification",
+    href: "/generated/templates/driver-docs/cdl-template.html",
+    source: "template",
+    group: "Blank Templates"
   },
   {
-    id: "driver-medical",
-    title: "Medical Card",
+    id: "driver-medical-template",
+    title: "Medical Card Template",
     category: "Driver Qualification Files",
-    type: "driver-file",
+    type: "template",
     audience: ["driver", "manager", "hr", "safety"],
-    status: "available",
-    description: "DOT medical certificate and physical examination records",
-    href: "/generated/drivers/DRV-001/medical-card.html",
-    source: "generated"
+    status: "template",
+    description: "Blank medical card template for DOT physical examination",
+    href: "/generated/templates/driver-docs/medical-card-template.html",
+    source: "template",
+    group: "Blank Templates"
   },
   {
-    id: "driver-mvr",
-    title: "Motor Vehicle Record (MVR)",
+    id: "driver-mvr-template",
+    title: "MVR Template",
     category: "Driver Qualification Files",
-    type: "driver-file",
+    type: "template",
     audience: ["driver", "manager", "hr", "safety"],
-    status: "available",
-    description: "Annual driving record review and monitoring",
-    href: "/generated/drivers/DRV-001/mvr.html",
-    source: "generated"
+    status: "template",
+    description: "Blank motor vehicle record template for driving history review",
+    href: "/generated/templates/driver-docs/mvr-template.html",
+    source: "template",
+    group: "Blank Templates"
   },
   {
-    id: "driver-clearinghouse",
-    title: "FMCSA Clearinghouse",
+    id: "driver-clearinghouse-template",
+    title: "FMCSA Compliance Template",
     category: "Driver Qualification Files",
-    type: "driver-file",
+    type: "template",
     audience: ["driver", "manager", "hr", "safety"],
-    status: "available",
-    description: "Drug and alcohol clearinghouse compliance tracking",
-    href: "/generated/drivers/DRV-001/fmcsa-compliance.html",
-    source: "generated"
+    status: "template",
+    description: "Blank FMCSA clearinghouse compliance template",
+    href: "/generated/templates/driver-docs/fmcsa-compliance-template.html",
+    source: "template",
+    group: "Blank Templates"
   },
   {
-    id: "driver-i9",
-    title: "I-9 Employment Eligibility",
+    id: "driver-i9-template",
+    title: "I-9 Template",
     category: "Driver Qualification Files",
-    type: "driver-file",
+    type: "template",
     audience: ["driver", "manager", "hr"],
-    status: "available",
-    description: "Employment eligibility verification documentation",
-    href: "/generated/drivers/DRV-001/i9.html",
-    source: "generated"
+    status: "template",
+    description: "Blank I-9 employment eligibility verification template",
+    href: "/generated/templates/driver-docs/i9-template.html",
+    source: "template",
+    group: "Blank Templates"
   },
   {
-    id: "driver-w9",
-    title: "W-9 for Owner-Operators",
+    id: "driver-w9-template",
+    title: "W-9 Template",
+    category: "Driver Qualification Files",
+    type: "template",
+    audience: ["driver", "manager", "finance"],
+    status: "template",
+    description: "Blank W-9 tax form template for owner-operators",
+    href: "/generated/templates/driver-docs/w9-template.html",
+    source: "template",
+    group: "Blank Templates"
+  },
+  {
+    id: "driver-emergency-contact-template",
+    title: "Emergency Contact Template",
+    category: "Driver Qualification Files",
+    type: "template",
+    audience: ["driver", "manager", "hr", "safety"],
+    status: "template",
+    description: "Blank emergency contact information template",
+    href: "/generated/templates/driver-docs/emergency-contact-template.html",
+    source: "template",
+    group: "Blank Templates"
+  },
+  {
+    id: "driver-bank-info-template",
+    title: "Bank Information Template",
+    category: "Driver Qualification Files",
+    type: "template",
+    audience: ["driver", "manager", "finance"],
+    status: "template",
+    description: "Blank bank information template for direct deposit",
+    href: "/generated/templates/driver-docs/bank-information-template.html",
+    source: "template",
+    group: "Blank Templates"
+  },
+  {
+    id: "driver-road-test-template",
+    title: "Road Test Certificate Template",
+    category: "Driver Qualification Files",
+    type: "template",
+    audience: ["driver", "manager", "hr", "safety"],
+    status: "template",
+    description: "Blank road test evaluation and certification template",
+    href: "/generated/templates/driver-docs/road-test-certificate-template.html",
+    source: "template",
+    group: "Blank Templates"
+  },
+  {
+    id: "driver-employment-verification-template",
+    title: "Employment Verification Template",
+    category: "Driver Qualification Files",
+    type: "template",
+    audience: ["driver", "manager", "hr"],
+    status: "template",
+    description: "Blank employment verification and history template",
+    href: "/generated/templates/driver-docs/employment-verification-template.html",
+    source: "template",
+    group: "Blank Templates"
+  },
+  {
+    id: "driver-safety-policy-template",
+    title: "Safety Policy Acknowledgment Template",
+    category: "Driver Qualification Files",
+    type: "template",
+    audience: ["driver", "manager", "hr", "safety"],
+    status: "template",
+    description: "Blank safety policy acknowledgment and certification template",
+    href: "/generated/templates/driver-docs/safety-policy-acknowledgment-template.html",
+    source: "template",
+    group: "Blank Templates"
+  },
+  // Driver Qualification Files - Completed Demo Samples
+  {
+    id: "driver-cdl-sample",
+    title: "CDL Completed Sample — John Carter",
+    category: "Driver Qualification Files",
+    type: "driver-file",
+    audience: ["driver", "manager", "hr", "safety"],
+    status: "available",
+    description: "Completed CDL verification sample for demonstration purposes",
+    href: "/generated/drivers/DRV-001/cdl.html",
+    source: "demo",
+    group: "Completed Demo Samples"
+  },
+  {
+    id: "driver-medical-sample",
+    title: "Medical Card Completed Sample — John Carter",
+    category: "Driver Qualification Files",
+    type: "driver-file",
+    audience: ["driver", "manager", "hr", "safety"],
+    status: "available",
+    description: "Completed medical card sample for demonstration purposes",
+    href: "/generated/drivers/DRV-001/medical-card.html",
+    source: "demo",
+    group: "Completed Demo Samples"
+  },
+  {
+    id: "driver-mvr-sample",
+    title: "MVR Completed Sample — John Carter",
+    category: "Driver Qualification Files",
+    type: "driver-file",
+    audience: ["driver", "manager", "hr", "safety"],
+    status: "available",
+    description: "Completed MVR sample for demonstration purposes",
+    href: "/generated/drivers/DRV-001/mvr.html",
+    source: "demo",
+    group: "Completed Demo Samples"
+  },
+  {
+    id: "driver-clearinghouse-sample",
+    title: "FMCSA Completed Sample — John Carter",
+    category: "Driver Qualification Files",
+    type: "driver-file",
+    audience: ["driver", "manager", "hr", "safety"],
+    status: "available",
+    description: "Completed FMCSA clearinghouse sample for demonstration purposes",
+    href: "/generated/drivers/DRV-001/fmcsa-compliance.html",
+    source: "demo",
+    group: "Completed Demo Samples"
+  },
+  {
+    id: "driver-w9-sample",
+    title: "W-9 Completed Sample — John Carter",
     category: "Driver Qualification Files",
     type: "driver-file",
     audience: ["driver", "manager", "finance"],
     status: "available",
-    description: "Taxpayer identification for contractor payments",
+    description: "Completed W-9 sample for demonstration purposes",
     href: "/generated/drivers/DRV-001/w9.html",
-    source: "generated"
+    source: "demo",
+    group: "Completed Demo Samples"
   },
   {
     id: "driver-application",
@@ -120,31 +248,34 @@ export const OPERATIONS_FILE_CABINET_REGISTRY: OperationsFileCabinetItem[] = [
     category: "Driver Qualification Files",
     type: "form",
     audience: ["driver", "manager", "hr"],
-    status: "coming_soon",
+    status: "needs_review",
     description: "Standard driver employment application form",
-    source: "demo"
+    source: "demo",
+    group: "Needs Review / Coming Later"
   },
   {
-    id: "driver-road-test",
-    title: "Road Test Certificate",
+    id: "driver-road-test-sample",
+    title: "Road Test Completed Sample — John Carter",
     category: "Driver Qualification Files",
     type: "form",
     audience: ["driver", "manager", "hr", "safety"],
     status: "available",
-    description: "Comprehensive road test scoring and evaluation",
+    description: "Completed road test sample for demonstration purposes",
     href: "/generated/drivers/DRV-001/road-test-certificate.html",
-    source: "generated"
+    source: "demo",
+    group: "Completed Demo Samples"
   },
   {
-    id: "driver-employment-verification",
-    title: "Employment Verification",
+    id: "driver-employment-verification-sample",
+    title: "Employment Verification Completed Sample — John Carter",
     category: "Driver Qualification Files",
     type: "form",
     audience: ["driver", "manager", "hr"],
     status: "available",
-    description: "Employment verification and prior work history documentation",
+    description: "Completed employment verification sample for demonstration purposes",
     href: "/generated/drivers/DRV-001/employment_verification.html",
-    source: "generated"
+    source: "demo",
+    group: "Completed Demo Samples"
   },
   {
     id: "driver-annual-review",
@@ -152,20 +283,22 @@ export const OPERATIONS_FILE_CABINET_REGISTRY: OperationsFileCabinetItem[] = [
     category: "Driver Qualification Files",
     type: "form",
     audience: ["driver", "manager", "hr"],
-    status: "coming_soon",
+    status: "needs_review",
     description: "Annual driver performance and compliance review",
-    source: "demo"
+    source: "demo",
+    group: "Needs Review / Coming Later"
   },
   {
-    id: "driver-emergency-contacts",
-    title: "Emergency Contacts",
+    id: "driver-emergency-contacts-sample",
+    title: "Emergency Contacts Completed Sample — John Carter",
     category: "Driver Qualification Files",
     type: "driver-file",
     audience: ["driver", "manager", "dispatcher"],
     status: "available",
-    description: "Emergency contact information and notification procedures",
+    description: "Completed emergency contacts sample for demonstration purposes",
     href: "/generated/drivers/DRV-001/emergency-contact.html",
-    source: "generated"
+    source: "demo",
+    group: "Completed Demo Samples"
   },
   {
     id: "driver-profile",
@@ -176,18 +309,20 @@ export const OPERATIONS_FILE_CABINET_REGISTRY: OperationsFileCabinetItem[] = [
     status: "needs_review",
     description: "Complete driver profile and documentation access",
     href: "/generated/drivers/DRV-001/john-carter-profile-dashboard.html",
-    source: "generated"
+    source: "demo",
+    group: "Needs Review / Coming Later"
   },
   {
-    id: "driver-bank-info",
-    title: "Bank / Direct Deposit",
+    id: "driver-bank-info-sample",
+    title: "Bank Information Completed Sample — John Carter",
     category: "Driver Qualification Files",
     type: "driver-file",
     audience: ["driver", "manager", "finance"],
     status: "available",
-    description: "Bank account information for direct deposit payments",
+    description: "Completed bank information sample for demonstration purposes",
     href: "/generated/drivers/DRV-001/bank-information.html",
-    source: "generated"
+    source: "demo",
+    group: "Completed Demo Samples"
   },
   {
     id: "driver-benefits",
@@ -195,9 +330,10 @@ export const OPERATIONS_FILE_CABINET_REGISTRY: OperationsFileCabinetItem[] = [
     category: "Driver Qualification Files",
     type: "form",
     audience: ["driver", "manager", "hr"],
-    status: "coming_soon",
+    status: "needs_review",
     description: "Employee benefits enrollment and management",
-    source: "demo"
+    source: "demo",
+    group: "Needs Review / Coming Later"
   },
   {
     id: "driver-withholding",
@@ -208,18 +344,20 @@ export const OPERATIONS_FILE_CABINET_REGISTRY: OperationsFileCabinetItem[] = [
     status: "available",
     description: "Family support withholding and deduction documentation",
     href: "/generated/company-operations-vault/04-payroll-compensation-and-deductions-policy.html",
-    source: "generated"
+    source: "generated",
+    group: "Company Policies & SOPs"
   },
   {
-    id: "driver-policy-acknowledgment",
-    title: "Safety Policy Acknowledgment",
+    id: "driver-policy-acknowledgment-sample",
+    title: "Safety Policy Acknowledgment Completed Sample — John Carter",
     category: "Driver Qualification Files",
     type: "form",
     audience: ["driver", "manager", "hr", "safety"],
     status: "available",
-    description: "Safety policy acknowledgment and compliance documentation",
+    description: "Completed safety policy acknowledgment sample for demonstration purposes",
     href: "/generated/drivers/DRV-001/hr-payroll/employee-handbook-acknowledgment.html",
-    source: "generated"
+    source: "demo",
+    group: "Completed Demo Samples"
   },
 
   // Secondary Driver Documents

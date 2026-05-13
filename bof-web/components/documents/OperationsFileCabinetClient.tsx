@@ -94,6 +94,43 @@ export function OperationsFileCabinetClient() {
     scrollToResults();
   };
 
+  // Group items by their group property
+  const groupItems = (items: typeof filteredItems) => {
+    const groups = items.reduce((acc, item) => {
+      const group = item.group || "Other";
+      if (!acc[group]) {
+        acc[group] = [];
+      }
+      acc[group].push(item);
+      return acc;
+    }, {} as Record<string, typeof filteredItems>);
+
+    // Define group order
+    const groupOrder = [
+      "Blank Templates",
+      "Company Policies & SOPs", 
+      "BOF Dispatch Templates",
+      "External Resources",
+      "Completed Demo Samples",
+      "Needs Review / Coming Later"
+    ];
+
+    // Sort groups according to predefined order, then alphabetically for any others
+    return Object.keys(groups)
+      .sort((a, b) => {
+        const aIndex = groupOrder.indexOf(a);
+        const bIndex = groupOrder.indexOf(b);
+        if (aIndex !== -1 && bIndex !== -1) return aIndex - bIndex;
+        if (aIndex !== -1) return -1;
+        if (bIndex !== -1) return 1;
+        return a.localeCompare(b);
+      })
+      .map(group => ({
+        name: group,
+        items: groups[group]
+      }));
+  };
+
   // Featured items - curated list of high-value documents with actual links only
   const featuredItems = useMemo(() => {
     return allItems.filter(item => 
@@ -227,27 +264,52 @@ export function OperationsFileCabinetClient() {
   }
 
   function getItemCta(item: OperationsFileCabinetItem): string {
+    // Handle completed demo samples
+    if (item.group === "Completed Demo Samples") {
+      return "View completed sample →";
+    }
+    
+    // Handle blank templates
+    if (item.group === "Blank Templates") {
+      return "Open blank template →";
+    }
+    
+    // Handle company policies
+    if (item.group === "Company Policies & SOPs") {
+      return "View policy →";
+    }
+    
+    // Handle BOF dispatch templates
+    if (item.group === "BOF Dispatch Templates") {
+      return "View template →";
+    }
+    
+    // Handle external resources
+    if (item.group === "External Resources") {
+      return "Open guidance →";
+    }
+    
+    // Fallback to type-based CTA
     switch (item.type) {
-      case "driver-file":
-        return "Open document";
       case "template":
-        return "View template";
+        return "Open blank template →";
       case "policy":
-        return "View policy";
-      case "checklist":
-        return "View checklist";
-      case "form":
-        return "Open form";
-      case "video":
-        return "Watch video";
-      case "article":
-        return "Read article";
       case "sop":
-        return "View SOP";
+        return "View policy →";
+      case "form":
+        return "Fill out form →";
+      case "driver-file":
+        return "View document →";
+      case "video":
+        return "Watch video →";
+      case "article":
+        return "Read article →";
+      case "checklist":
+        return "Use checklist →";
       case "contract":
-        return "View agreement";
+        return "View contract →";
       default:
-        return "Open";
+        return "View →";
     }
   }
 
@@ -502,217 +564,244 @@ export function OperationsFileCabinetClient() {
             ? "Filtered Documents" 
             : "Featured Documents & Templates"}
         </h2>
-        <div style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
-          gap: "1rem"
-        }}>
-          {(quickFilter !== "all" || selectedCategory !== "all" || searchTerm !== "") ? (
-            // Show filtered items when any filter is applied
-            filteredItems.map(item => {
-              const sourceChip = getSourceChip(item);
-              const cta = getItemCta(item);
+        {(quickFilter !== "all" || selectedCategory !== "all" || searchTerm !== "") ? (
+            // Show grouped filtered items when any filter is applied
+            (() => {
+              const groupedItems = groupItems(filteredItems);
               return (
-                <div
-                  key={item.id}
-                  style={{
-                    backgroundColor: "rgba(255, 255, 255, 0.05)",
-                    border: "1px solid rgba(255, 255, 255, 0.1)",
-                    borderRadius: "12px",
-                    padding: "1.5rem",
-                    transition: "all 0.2s ease"
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.backgroundColor = "rgba(255, 255, 255, 0.08)";
-                    e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.2)";
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.backgroundColor = "rgba(255, 255, 255, 0.05)";
-                    e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.1)";
-                  }}
-                >
-                  <div style={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    alignItems: "flex-start",
-                    marginBottom: "0.75rem"
-                  }}>
-                    <h3 style={{
-                      fontSize: "1rem",
-                      fontWeight: "600",
-                      color: "#ffffff",
-                      margin: "0",
-                      lineHeight: "1.4"
-                    }}>
-                      {item.title}
-                    </h3>
-                    {sourceChip && (
-                      <span style={{
-                        fontSize: "0.7rem",
-                        padding: "0.2rem 0.5rem",
-                        borderRadius: "12px",
-                        backgroundColor: `${sourceChip.color}20`,
-                        color: sourceChip.color,
-                        fontWeight: "500",
-                        whiteSpace: "nowrap"
-                      }}>
-                        {sourceChip.text}
-                      </span>
-                    )}
-                  </div>
-                  <p style={{
-                    fontSize: "0.875rem",
-                    color: "#94a3b8",
-                    margin: "0 0 1rem 0",
-                    lineHeight: "1.5"
-                  }}>
-                    {item.description}
-                  </p>
-                  {item.href ? (
-                    <Link
-                      href={item.href}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      style={{
-                        display: "inline-flex",
-                        alignItems: "center",
-                        gap: "0.5rem",
-                        fontSize: "0.875rem",
-                        fontWeight: "500",
+                <div>
+                  {groupedItems.map(group => (
+                    <div key={group.name} style={{ marginBottom: "2rem" }}>
+                      <h3 style={{
+                        fontSize: "1.1rem",
+                        fontWeight: "600",
                         color: "#14b8a6",
-                        textDecoration: "none",
-                        transition: "color 0.2s ease"
-                      }}
-                      onMouseEnter={(e) => {
-                        e.currentTarget.style.color = "#0d9488";
-                      }}
-                      onMouseLeave={(e) => {
-                        e.currentTarget.style.color = "#14b8a6";
-                      }}
-                    >
-                      {cta}
-                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                        <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
-                        <polyline points="15,3 21,3 21,9"></polyline>
-                        <line x1="10" y1="14" x2="21" y2="3"></line>
-                      </svg>
-                    </Link>
-                  ) : (
-                    <span style={{
-                      fontSize: "0.875rem",
-                      color: "#64748b",
-                      fontStyle: "italic"
-                    }}>
-                      {item.status === "coming_soon" ? "Coming soon" : "Not available"}
-                    </span>
-                  )}
+                        margin: "0 0 1rem 0",
+                        paddingBottom: "0.5rem",
+                        borderBottom: "1px solid rgba(20, 184, 166, 0.3)"
+                      }}>
+                        {group.name}
+                      </h3>
+                      <div style={{
+                        display: "grid",
+                        gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
+                        gap: "1rem"
+                      }}>
+                        {group.items.map(item => {
+                          const sourceChip = getSourceChip(item);
+                          const cta = getItemCta(item);
+                          return (
+                            <div
+                              key={item.id}
+                              style={{
+                                backgroundColor: "rgba(255, 255, 255, 0.05)",
+                                border: "1px solid rgba(255, 255, 255, 0.1)",
+                                borderRadius: "12px",
+                                padding: "1.5rem",
+                                transition: "all 0.2s ease"
+                              }}
+                              onMouseEnter={(e) => {
+                                e.currentTarget.style.backgroundColor = "rgba(255, 255, 255, 0.08)";
+                                e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.2)";
+                              }}
+                              onMouseLeave={(e) => {
+                                e.currentTarget.style.backgroundColor = "rgba(255, 255, 255, 0.05)";
+                                e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.1)";
+                              }}
+                            >
+                              <div style={{
+                                display: "flex",
+                                justifyContent: "space-between",
+                                alignItems: "flex-start",
+                                marginBottom: "0.75rem"
+                              }}>
+                                <h3 style={{
+                                  fontSize: "1rem",
+                                  fontWeight: "600",
+                                  color: "#ffffff",
+                                  margin: "0",
+                                  lineHeight: "1.4"
+                                }}>
+                                  {item.title}
+                                </h3>
+                                {sourceChip && (
+                                  <span style={{
+                                    fontSize: "0.7rem",
+                                    padding: "0.2rem 0.5rem",
+                                    borderRadius: "12px",
+                                    backgroundColor: `${sourceChip.color}20`,
+                                    color: sourceChip.color,
+                                    fontWeight: "500",
+                                    whiteSpace: "nowrap"
+                                  }}>
+                                    {sourceChip.text}
+                                  </span>
+                                )}
+                              </div>
+                              <p style={{
+                                fontSize: "0.875rem",
+                                color: "#94a3b8",
+                                margin: "0 0 1rem 0",
+                                lineHeight: "1.5"
+                              }}>
+                                {item.description}
+                              </p>
+                              {item.href ? (
+                                <Link
+                                  href={item.href}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  style={{
+                                    display: "inline-flex",
+                                    alignItems: "center",
+                                    gap: "0.5rem",
+                                    fontSize: "0.875rem",
+                                    fontWeight: "500",
+                                    color: "#14b8a6",
+                                    textDecoration: "none",
+                                    transition: "color 0.2s ease"
+                                  }}
+                                  onMouseEnter={(e) => {
+                                    e.currentTarget.style.color = "#0d9488";
+                                  }}
+                                  onMouseLeave={(e) => {
+                                    e.currentTarget.style.color = "#14b8a6";
+                                  }}
+                                >
+                                  {cta}
+                                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                    <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+                                    <polyline points="15,3 21,3 21,9"></polyline>
+                                    <line x1="10" y1="14" x2="21" y2="3"></line>
+                                  </svg>
+                                </Link>
+                              ) : (
+                                <span style={{
+                                  fontSize: "0.875rem",
+                                  color: "#64748b",
+                                  fontStyle: "italic"
+                                }}>
+                                  {item.status === "coming_soon" ? "Coming soon" : "Not available"}
+                                </span>
+                              )}
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  ))}
                 </div>
               );
-            })
+            })()
           ) : (
             // Show featured items when no filters are applied
-            featuredItems.map(item => {
-              const sourceChip = getSourceChip(item);
-              const cta = getItemCta(item);
-              return (
-                <div
-                  key={item.id}
-                  style={{
-                    backgroundColor: "rgba(255, 255, 255, 0.05)",
-                    border: "1px solid rgba(255, 255, 255, 0.1)",
-                    borderRadius: "12px",
-                    padding: "1.5rem",
-                    transition: "all 0.2s ease"
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.backgroundColor = "rgba(255, 255, 255, 0.08)";
-                    e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.2)";
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.backgroundColor = "rgba(255, 255, 255, 0.05)";
-                    e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.1)";
-                  }}
-                >
-                  <div style={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    alignItems: "flex-start",
-                    marginBottom: "0.75rem"
-                  }}>
-                    <h3 style={{
-                      fontSize: "1rem",
-                      fontWeight: "600",
-                      color: "#ffffff",
-                      margin: "0",
-                      lineHeight: "1.4"
+            <div style={{
+              display: "grid",
+              gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
+              gap: "1rem"
+            }}>
+              {featuredItems.map(item => {
+                const sourceChip = getSourceChip(item);
+                const cta = getItemCta(item);
+                return (
+                  <div
+                    key={item.id}
+                    style={{
+                      backgroundColor: "rgba(255, 255, 255, 0.05)",
+                      border: "1px solid rgba(255, 255, 255, 0.1)",
+                      borderRadius: "12px",
+                      padding: "1.5rem",
+                      transition: "all 0.2s ease"
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.backgroundColor = "rgba(255, 255, 255, 0.08)";
+                      e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.2)";
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.backgroundColor = "rgba(255, 255, 255, 0.05)";
+                      e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.1)";
+                    }}
+                  >
+                    <div style={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                      alignItems: "flex-start",
+                      marginBottom: "0.75rem"
                     }}>
-                      {item.title}
-                    </h3>
-                    {sourceChip && (
-                      <span style={{
-                        fontSize: "0.7rem",
-                        padding: "0.2rem 0.5rem",
-                        borderRadius: "12px",
-                        backgroundColor: `${sourceChip.color}20`,
-                        color: sourceChip.color,
-                        fontWeight: "500",
-                        whiteSpace: "nowrap"
+                      <h3 style={{
+                        fontSize: "1rem",
+                        fontWeight: "600",
+                        color: "#ffffff",
+                        margin: "0",
+                        lineHeight: "1.4"
                       }}>
-                        {sourceChip.text}
+                        {item.title}
+                      </h3>
+                      {sourceChip && (
+                        <span style={{
+                          fontSize: "0.7rem",
+                          padding: "0.2rem 0.5rem",
+                          borderRadius: "12px",
+                          backgroundColor: `${sourceChip.color}20`,
+                          color: sourceChip.color,
+                          fontWeight: "500",
+                          whiteSpace: "nowrap"
+                        }}>
+                          {sourceChip.text}
+                        </span>
+                      )}
+                    </div>
+                    <p style={{
+                      fontSize: "0.875rem",
+                      color: "#94a3b8",
+                      margin: "0 0 1rem 0",
+                      lineHeight: "1.5"
+                    }}>
+                      {item.description}
+                    </p>
+                    {item.href ? (
+                      <Link
+                        href={item.href}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        style={{
+                          display: "inline-flex",
+                          alignItems: "center",
+                          gap: "0.5rem",
+                          fontSize: "0.875rem",
+                          fontWeight: "500",
+                          color: "#14b8a6",
+                          textDecoration: "none",
+                          transition: "color 0.2s ease"
+                        }}
+                        onMouseEnter={(e) => {
+                          e.currentTarget.style.color = "#0d9488";
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.color = "#14b8a6";
+                        }}
+                      >
+                        {cta}
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                          <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+                          <polyline points="15,3 21,3 21,9"></polyline>
+                          <line x1="10" y1="14" x2="21" y2="3"></line>
+                        </svg>
+                      </Link>
+                    ) : (
+                      <span style={{
+                        fontSize: "0.875rem",
+                        color: "#64748b",
+                        fontStyle: "italic"
+                      }}>
+                        Coming soon
                       </span>
                     )}
                   </div>
-                  <p style={{
-                    fontSize: "0.875rem",
-                    color: "#94a3b8",
-                    margin: "0 0 1rem 0",
-                    lineHeight: "1.5"
-                  }}>
-                    {item.description}
-                  </p>
-                  {item.href ? (
-                    <Link
-                      href={item.href}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      style={{
-                        display: "inline-flex",
-                        alignItems: "center",
-                        gap: "0.5rem",
-                        fontSize: "0.875rem",
-                        fontWeight: "500",
-                        color: "#14b8a6",
-                        textDecoration: "none",
-                        transition: "color 0.2s ease"
-                      }}
-                      onMouseEnter={(e) => {
-                        e.currentTarget.style.color = "#0d9488";
-                      }}
-                      onMouseLeave={(e) => {
-                        e.currentTarget.style.color = "#14b8a6";
-                      }}
-                    >
-                      {cta}
-                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                        <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
-                        <polyline points="15,3 21,3 21,9"></polyline>
-                        <line x1="10" y1="14" x2="21" y2="3"></line>
-                      </svg>
-                    </Link>
-                  ) : (
-                    <span style={{
-                      fontSize: "0.875rem",
-                      color: "#64748b",
-                      fontStyle: "italic"
-                    }}>
-                      Coming soon
-                    </span>
-                  )}
-                </div>
-              );
-            })
+                );
+              })}
+            </div>
           )}
-        </div>
       </div>
 
       {/* Search and Filters */}
