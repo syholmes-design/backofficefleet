@@ -1264,6 +1264,76 @@ export const OPERATIONS_FILE_CABINET_REGISTRY: OperationsFileCabinetItem[] = [
     documentOwner: "external",
     employerName: "Delta Advanced Trucking, Inc.",
     tags: ["dot", "training", "external"]
+  },
+
+  // Accounting Templates - Finance / Settlements / Back Office
+  {
+    id: "driver-settlement-statement",
+    title: "Driver Settlement Statement",
+    cabinet: "Finance / Settlements / Back Office",
+    section: "Blank Templates",
+    category: "Finance / Settlements / Back Office",
+    type: "template",
+    audience: ["driver", "manager", "finance", "dispatcher"],
+    status: "template",
+    description: "Multi-section settlement statement with earnings, deductions, and YTD totals",
+    href: "/documents/accounting-templates/driver-settlement-statement.html",
+    sourceAuthenticity: "official_template",
+    documentOwner: "employer",
+    employerName: "Delta Advanced Trucking, Inc.",
+    isBlankTemplate: true,
+    tags: ["settlement", "statement", "accounting", "template"]
+  },
+  {
+    id: "fuel-card-reconciliation-worksheet",
+    title: "Fuel Card Reconciliation Worksheet",
+    cabinet: "Finance / Settlements / Back Office",
+    section: "Blank Templates",
+    category: "Finance / Settlements / Back Office",
+    type: "template",
+    audience: ["driver", "manager", "finance", "dispatcher"],
+    status: "template",
+    description: "Weekly fuel reconciliation with 14-column table and exception escalation matrix",
+    href: "/documents/accounting-templates/fuel-card-reconciliation-worksheet.html",
+    sourceAuthenticity: "official_template",
+    documentOwner: "employer",
+    employerName: "Delta Advanced Trucking, Inc.",
+    isBlankTemplate: true,
+    tags: ["fuel", "reconciliation", "accounting", "template"]
+  },
+  {
+    id: "fleet-asset-register",
+    title: "Fleet Asset Register",
+    cabinet: "Finance / Settlements / Back Office",
+    section: "Blank Templates",
+    category: "Finance / Settlements / Back Office",
+    type: "template",
+    audience: ["manager", "finance", "maintenance", "admin"],
+    status: "template",
+    description: "23-column scrollable asset register with fleet summary and capitalization policy",
+    href: "/documents/accounting-templates/fleet-asset-register.html",
+    sourceAuthenticity: "official_template",
+    documentOwner: "employer",
+    employerName: "Delta Advanced Trucking, Inc.",
+    isBlankTemplate: true,
+    tags: ["fleet", "assets", "register", "accounting", "template"]
+  },
+  {
+    id: "ifta-quarterly-mileage-fuel-log",
+    title: "IFTA Quarterly Mileage & Fuel Log",
+    cabinet: "Finance / Settlements / Back Office",
+    section: "Blank Templates",
+    category: "Finance / Settlements / Back Office",
+    type: "template",
+    audience: ["driver", "manager", "finance", "dispatcher"],
+    status: "template",
+    description: "Quarterly IFTA reporting with all 58 jurisdictions and filing deadline reminders",
+    href: "/documents/accounting-templates/ifta-quarterly-mileage-fuel-log.html",
+    sourceAuthenticity: "official_template",
+    documentOwner: "employer",
+    employerName: "Delta Advanced Trucking, Inc.",
+    isBlankTemplate: true,
+    tags: ["ifta", "mileage", "fuel", "quarterly", "compliance", "template"]
   }
 ];
 

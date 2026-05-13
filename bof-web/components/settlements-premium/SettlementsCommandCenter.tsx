@@ -7,6 +7,7 @@ import { SettlementsDataTable } from "./SettlementsDataTable";
 import { SettlementDetailPanel } from "./SettlementDetailPanel";
 import { EnhancedSettlementKPICards } from "./EnhancedSettlementKPICards";
 import { SettlementExceptionReview } from "./SettlementExceptionReview";
+import { AccountingTemplates } from "./AccountingTemplates";
 import { getSettlementPeriods, type SettlementPeriodOption } from "@/lib/settlement-periods";
 
 export type SettlementStatus = "Ready" | "Needs Review" | "Hold" | "Paid" | "Missing Source Data";
@@ -306,6 +307,9 @@ export function SettlementsCommandCenter() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
         <SettlementExceptionReview settlementRows={filteredRows} />
       </div>
+
+      {/* Accounting Templates Section */}
+      <AccountingTemplates />
 
       {/* Main Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
