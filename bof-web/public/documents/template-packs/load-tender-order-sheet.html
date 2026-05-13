@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BOF Load Tender/Order Sheet - Load Intake Template Pack v3</title>
+    <style>
+        body {
+            font-family: 'Calibri', sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #ffffff;
+        }
+        .document {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border: 1px solid #e5e7eb;
+            padding: 30px;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .header h1 {
+            font-size: 24px;
+            font-weight: bold;
+            color: #1f2937;
+            margin: 0;
+        }
+        .header p {
+            font-size: 14px;
+            color: #6b7280;
+            margin: 5px 0;
+        }
+        .form-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        .form-table td {
+            padding: 8px;
+            border: 1px solid #e5e7eb;
+            vertical-align: top;
+        }
+        .form-table .label {
+            background: #f9fafb;
+            font-weight: bold;
+            width: 25%;
+        }
+        .checkbox {
+            margin-right: 10px;
+        }
+        .section-title {
+            font-weight: bold;
+            margin: 20px 0 10px 0;
+            padding: 10px;
+            background: #f3f4f6;
+            border-left: 4px solid #3b82f6;
+        }
+        .signature-line {
+            border-bottom: 1px solid #374151;
+            height: 30px;
+            margin: 5px 0;
+        }
+        .status-box {
+            border: 1px solid #d1d5db;
+            padding: 10px;
+            margin: 10px 0;
+        }
+        .two-column {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        .column {
+            flex: 1;
+        }
+    </style>
+</head>
+<body>
+    <div class="document">
+        <div class="header">
+            <h1>BOF LOAD TENDER / ORDER SHEET</h1>
+            <p>BackOfficeFleet (BOF) — Load Intake Operations • Template Pack v3</p>
+            <p>Core BOF intake control sheet — assigns load, tracks requirements, dispatch readiness</p>
+        </div>
+
+        <table class="form-table">
+            <tr>
+                <td class="label">BOF Intake ID</td>
+                <td colspan="3">________________</td>
+            </tr>
+            <tr>
+                <td class="label">Load / Trip Number</td>
+                <td colspan="3">________________</td>
+            </tr>
+            <tr>
+                <td class="label">Driver ID</td>
+                <td colspan="3">________________</td>
+            </tr>
+            <tr>
+                <td class="label">Source Email / Packet Ref</td>
+                <td colspan="3">________________</td>
+            </tr>
+            <tr>
+                <td class="label">Document Type</td>
+                <td colspan="3">
+                    <input type="checkbox" class="checkbox" checked> Editable Template
+                    <input type="checkbox" class="checkbox"> Generated / Autofill Output
+                </td>
+            </tr>
+            <tr>
+                <td class="label">Approval Status</td>
+                <td colspan="3">
+                    <input type="checkbox" class="checkbox"> Draft
+                    <input type="checkbox" class="checkbox"> Pending Review
+                    <input type="checkbox" class="checkbox"> Approved
+                    <input type="checkbox" class="checkbox"> Rejected
+                </td>
+            </tr>
+            <tr>
+                <td class="label">Command Center Status</td>
+                <td colspan="3">
+                    <input type="checkbox" class="checkbox"> Proceed
+                    <input type="checkbox" class="checkbox"> At Risk
+                    <input type="checkbox" class="checkbox"> Blocked
+                </td>
+            </tr>
+        </table>
+
+        <div class="section-title">Customer Information</div>
+        <table class="form-table">
+            <tr>
+                <td class="label">Customer Name</td>
+                <td colspan="3">________________</td>
+            </tr>
+            <tr>
+                <td class="label">Contact Person</td>
+                <td>________________</td>
+                <td class="label">Phone</td>
+                <td>________________</td>
+            </tr>
+            <tr>
+                <td class="label">Email</td>
+                <td colspan="3">________________</td>
+            </tr>
+        </table>
+
+        <div class="two-column">
+            <div class="column">
+                <div class="section-title">Origin Information</div>
+                <table class="form-table">
+                    <tr>
+                        <td class="label">Shipper Name</td>
+                        <td>________________</td>
+                    </tr>
+                    <tr>
+                        <td class="label">Pickup Address</td>
+                        <td>________________</td>
+                    </tr>
+                    <tr>
+                        <td class="label">City/State/ZIP</td>
+                        <td>________________</td>
+                    </tr>
+                    <tr>
+                        <td class="label">Pickup Date</td>
+                        <td>________________</td>
+                    </tr>
+                    <tr>
+                        <td class="label">Pickup Time</td>
+                        <td>________________</td>
+                    </tr>
+                    <tr>
+                        <td class="label">Appointment</td>
+                        <td>
+                            <input type="checkbox" class="checkbox"> Yes
+                            <input type="checkbox" class="checkbox"> No
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <div class="column">
+                <div class="section-title">Destination Information</div>
+                <table class="form-table">
+                    <tr>
+                        <td class="label">Consignee Name</td>
+                        <td>________________</td>
+                    </tr>
+                    <tr>
+                        <td class="label">Delivery Address</td>
+                        <td>________________</td>
+                    </tr>
+                    <tr>
+                        <td class="label">City/State/ZIP</td>
+                        <td>________________</td>
+                    </tr>
+                    <tr>
+                        <td class="label">Delivery Date</td>
+                        <td>________________</td>
+                    </tr>
+                    <tr>
+                        <td class="label">Delivery Time</td>
+                        <td>________________</td>
+                    </tr>
+                    <tr>
+                        <td class="label">Appointment</td>
+                        <td>
+                            <input type="checkbox" class="checkbox"> Yes
+                            <input type="checkbox" class="checkbox"> No
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+
+        <div class="section-title">Freight Details</div>
+        <table class="form-table">
+            <tr>
+                <td class="label">Commodity</td>
+                <td>________________</td>
+                <td class="label">Weight</td>
+                <td>________________</td>
+                <td class="label">Pieces</td>
+                <td>________________</td>
+            </tr>
+            <tr>
+                <td class="label">Equipment Type</td>
+                <td>________________</td>
+                <td class="label">Temperature</td>
+                <td>________________</td>
+                <td class="label">Hazmat</td>
+                <td>
+                    <input type="checkbox" class="checkbox"> Yes
+                    <input type="checkbox" class="checkbox"> No
+                </td>
+            </tr>
+            <tr>
+                <td class="label">Dimensions</td>
+                <td colspan="5">________________</td>
+            </tr>
+            <tr>
+                <td class="label">Special Requirements</td>
+                <td colspan="5">________________</td>
+            </tr>
+        </table>
+
+        <div class="section-title">Rate & Payment</div>
+        <table class="form-table">
+            <tr>
+                <td class="label">Rate Type</td>
+                <td>
+                    <input type="checkbox" class="checkbox"> Flat Rate
+                    <input type="checkbox" class="checkbox"> Per Mile
+                    <input type="checkbox" class="checkbox"> Per Hour
+                </td>
+                <td class="label">Rate Amount</td>
+                <td>$________________</td>
+                <td class="label">Total Revenue</td>
+                <td>$________________</td>
+            </tr>
+            <tr>
+                <td class="label">Fuel Surcharge</td>
+                <td>$________________</td>
+                <td class="label">Accessorial</td>
+                <td>$________________</td>
+                <td class="label">Payment Terms</td>
+                <td>________________</td>
+            </tr>
+        </table>
+
+        <div class="section-title">Driver Assignment</div>
+        <table class="form-table">
+            <tr>
+                <td class="label">Assigned Driver</td>
+                <td>________________</td>
+                <td class="label">Driver Contact</td>
+                <td>________________</td>
+                <td class="label">Equipment</td>
+                <td>________________</td>
+            </tr>
+            <tr>
+                <td class="label">Tractor Number</td>
+                <td>________________</td>
+                <td class="label">Trailer Number</td>
+                <td>________________</td>
+                <td class="label">Seal Number</td>
+                <td>________________</td>
+            </tr>
+        </table>
+
+        <div class="section-title">Dispatch Readiness Checklist</div>
+        <table class="form-table">
+            <tr>
+                <td>
+                    <input type="checkbox" class="checkbox"> Driver availability confirmed
+                </td>
+                <td>
+                    <input type="checkbox" class="checkbox"> Equipment inspection complete
+                </td>
+                <td>
+                    <input type="checkbox" class="checkbox"> Route planning completed
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <input type="checkbox" class="checkbox"> Permits and authorizations obtained
+                </td>
+                <td>
+                    <input type="checkbox" class="checkbox"> Insurance coverage verified
+                </td>
+                <td>
+                    <input type="checkbox" class="checkbox"> Compliance requirements met
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <input type="checkbox" class="checkbox"> Customer requirements confirmed
+                </td>
+                <td>
+                    <input type="checkbox" class="checkbox"> Documentation prepared
+                </td>
+                <td>
+                    <input type="checkbox" class="checkbox"> Emergency contacts updated
+                </td>
+            </tr>
+        </table>
+
+        <div class="section-title">Special Instructions</div>
+        <table class="form-table">
+            <tr>
+                <td colspan="6">
+                    __________________________________________________________<br>
+                    __________________________________________________________<br>
+                    __________________________________________________________
+                </td>
+            </tr>
+        </table>
+
+        <div class="section-title">Approvals</div>
+        <table class="form-table">
+            <tr>
+                <td class="label">Dispatcher</td>
+                <td>
+                    <div class="signature-line"></div>
+                    <small>Name & Signature</small>
+                </td>
+                <td class="label">Date</td>
+                <td>
+                    <div class="signature-line"></div>
+                    <small>MM/DD/YYYY</small>
+                </td>
+                <td class="label">Time</td>
+                <td>
+                    <div class="signature-line"></div>
+                    <small>HH:MM</small>
+                </td>
+            </tr>
+            <tr>
+                <td class="label">Operations Manager</td>
+                <td>
+                    <div class="signature-line"></div>
+                    <small>Name & Signature</small>
+                </td>
+                <td class="label">Date</td>
+                <td>
+                    <div class="signature-line"></div>
+                    <small>MM/DD/YYYY</small>
+                </td>
+                <td class="label">Time</td>
+                <td>
+                    <div class="signature-line"></div>
+                    <small>HH:MM</small>
+                </td>
+            </tr>
+        </table>
+
+        <div class="status-box">
+            <strong>BOF Workflow Triggers:</strong><br>
+            ☐ Load assigned to driver<br>
+            ☐ Equipment check required<br>
+            ☐ Route planning initiated<br>
+            ☐ Proof requirements generated<br>
+            ☐ Command center alert set<br>
+            ☐ Customer notification sent
+        </div>
+
+        <div style="margin-top: 30px; text-align: center; font-size: 12px; color: #6b7280;">
+            BOF Load Tender/Order Sheet Template v3.0 • Generated: __________________ • Valid until: __________________
+        </div>
+    </div>
+</body>
+</html>

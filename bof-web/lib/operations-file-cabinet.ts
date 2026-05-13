@@ -312,9 +312,9 @@ export const OPERATIONS_FILE_CABINET_REGISTRY: OperationsFileCabinetItem[] = [
     category: "Dispatch & Load Operations",
     type: "form",
     audience: ["dispatcher", "manager"],
-    status: "template",
+    status: "available",
     description: "Standard load booking and information collection form",
-    href: "/documents/template-packs",
+    href: "/documents/template-packs/load-tender-order-sheet.html",
     source: "template"
   },
   {
@@ -323,9 +323,8 @@ export const OPERATIONS_FILE_CABINET_REGISTRY: OperationsFileCabinetItem[] = [
     category: "Dispatch & Load Operations",
     type: "checklist",
     audience: ["dispatcher", "driver", "safety"],
-    status: "template",
+    status: "needs_review",
     description: "Comprehensive pre-trip planning and route preparation checklist",
-    href: "/documents/template-packs",
     source: "template"
   },
   {
@@ -374,10 +373,10 @@ export const OPERATIONS_FILE_CABINET_REGISTRY: OperationsFileCabinetItem[] = [
     category: "Dispatch & Load Operations",
     type: "template",
     audience: ["dispatcher", "manager", "customer", "finance"],
-    status: "template",
+    status: "available",
     description: "Standard rate confirmation and pricing agreement template",
-    href: "/generated/loads/L001/rate-confirmation.html",
-    source: "generated"
+    href: "/documents/template-packs/rate-confirmation.html",
+    source: "template"
   },
   {
     id: "dispatch-bol",
@@ -385,10 +384,10 @@ export const OPERATIONS_FILE_CABINET_REGISTRY: OperationsFileCabinetItem[] = [
     category: "Dispatch & Load Operations",
     type: "template",
     audience: ["dispatcher", "driver", "customer", "finance"],
-    status: "template",
+    status: "available",
     description: "Standard bill of lading document template",
-    href: "/generated/loads/L001/bol.html",
-    source: "generated"
+    href: "/documents/template-packs/bill-of-lading.html",
+    source: "template"
   },
   {
     id: "dispatch-pod",
@@ -396,10 +395,10 @@ export const OPERATIONS_FILE_CABINET_REGISTRY: OperationsFileCabinetItem[] = [
     category: "Dispatch & Load Operations",
     type: "template",
     audience: ["dispatcher", "driver", "customer", "finance"],
-    status: "template",
+    status: "available",
     description: "Proof of delivery form with signature capture",
-    href: "/generated/loads/L001/pod.html",
-    source: "generated"
+    href: "/documents/template-packs/proof-of-delivery.html",
+    source: "template"
   },
   {
     id: "dispatch-posttrip-protocol",
@@ -470,9 +469,8 @@ export const OPERATIONS_FILE_CABINET_REGISTRY: OperationsFileCabinetItem[] = [
     category: "Safety / Claims / Insurance",
     type: "form",
     audience: ["driver", "manager", "safety", "legal"],
-    status: "template",
+    status: "needs_review",
     description: "Comprehensive accident reporting and documentation form",
-    href: "/documents/template-packs",
     source: "template"
   },
   {
@@ -486,15 +484,15 @@ export const OPERATIONS_FILE_CABINET_REGISTRY: OperationsFileCabinetItem[] = [
     source: "demo"
   },
   {
-    id: "claims-cargo-intake",
-    title: "Cargo Claim Intake Form",
+    id: "claims-intake",
+    title: "Claim Intake Form",
     category: "Safety / Claims / Insurance",
     type: "form",
     audience: ["manager", "safety", "customer", "legal"],
-    status: "template",
+    status: "available",
     description: "Standard cargo damage claim intake and documentation",
-    href: "/generated/loads/L001/claim-intake.html",
-    source: "generated"
+    href: "/documents/template-packs/claim-intake-form.html",
+    source: "template"
   },
   {
     id: "claims-insurance-claim",
@@ -517,14 +515,13 @@ export const OPERATIONS_FILE_CABINET_REGISTRY: OperationsFileCabinetItem[] = [
     source: "demo"
   },
   {
-    id: "claims-driver-statement",
-    title: "Driver Accident Statement",
+    id: "safety-driver-statement",
+    title: "Driver Statement Form",
     category: "Safety / Claims / Insurance",
     type: "form",
     audience: ["driver", "manager", "safety", "legal"],
-    status: "template",
+    status: "needs_review",
     description: "Driver statement form for accident and incident reporting",
-    href: "/documents/template-packs",
     source: "template"
   },
   {
@@ -558,14 +555,13 @@ export const OPERATIONS_FILE_CABINET_REGISTRY: OperationsFileCabinetItem[] = [
     source: "demo"
   },
   {
-    id: "claims-demand-letter",
-    title: "Demand Letter to Potential Defendant",
+    id: "claims-collection-demand",
+    title: "Collection & Demand Letter Templates",
     category: "Safety / Claims / Insurance",
     type: "template",
     audience: ["manager", "legal", "customer"],
-    status: "template",
+    status: "needs_review",
     description: "Collection and demand letter templates for claims",
-    href: "/documents/template-packs",
     source: "template"
   },
   {
@@ -1093,14 +1089,13 @@ export const OPERATIONS_FILE_CABINET_REGISTRY: OperationsFileCabinetItem[] = [
     source: "generated"
   },
   {
-    id: "contract-customer-onboarding",
-    title: "Customer Onboarding Packet",
+    id: "contracts-customer-setup",
+    title: "Customer Setup Packet",
     category: "Contracts / Customer / Legal",
     type: "template",
     audience: ["manager", "customer", "legal"],
-    status: "template",
+    status: "needs_review",
     description: "Complete customer onboarding documentation packet",
-    href: "/documents/template-packs",
     source: "template"
   },
   {
@@ -1109,9 +1104,8 @@ export const OPERATIONS_FILE_CABINET_REGISTRY: OperationsFileCabinetItem[] = [
     category: "Contracts / Customer / Legal",
     type: "template",
     audience: ["manager", "customer", "legal"],
-    status: "template",
+    status: "needs_review",
     description: "Carrier qualification and agreement packet",
-    href: "/documents/template-packs",
     source: "template"
   },
   {
@@ -1125,14 +1119,13 @@ export const OPERATIONS_FILE_CABINET_REGISTRY: OperationsFileCabinetItem[] = [
     source: "demo"
   },
   {
-    id: "contract-demand-letter",
-    title: "Demand Letter Templates",
+    id: "contracts-collection-templates",
+    title: "Collection Templates",
     category: "Contracts / Customer / Legal",
     type: "template",
     audience: ["manager", "legal", "customer"],
-    status: "template",
+    status: "needs_review",
     description: "Collection and demand letter templates",
-    href: "/documents/template-packs",
     source: "template"
   },
   {

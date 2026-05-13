@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BOF Rate Confirmation - Load Intake Template Pack v3</title>
+    <style>
+        body {
+            font-family: 'Calibri', sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #ffffff;
+        }
+        .document {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border: 1px solid #e5e7eb;
+            padding: 30px;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .header h1 {
+            font-size: 24px;
+            font-weight: bold;
+            color: #1f2937;
+            margin: 0;
+        }
+        .header p {
+            font-size: 14px;
+            color: #6b7280;
+            margin: 5px 0;
+        }
+        .form-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        .form-table td {
+            padding: 8px;
+            border: 1px solid #e5e7eb;
+            vertical-align: top;
+        }
+        .form-table .label {
+            background: #f9fafb;
+            font-weight: bold;
+            width: 25%;
+        }
+        .checkbox {
+            margin-right: 10px;
+        }
+        .section-title {
+            font-weight: bold;
+            margin: 20px 0 10px 0;
+            padding: 10px;
+            background: #f3f4f6;
+            border-left: 4px solid #3b82f6;
+        }
+        .signature-line {
+            border-bottom: 1px solid #374151;
+            height: 30px;
+            margin: 5px 0;
+        }
+        .status-box {
+            border: 1px solid #d1d5db;
+            padding: 10px;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="document">
+        <div class="header">
+            <h1>BOF RATE CONFIRMATION</h1>
+            <p>BackOfficeFleet (BOF) — Load Intake Operations • Template Pack v3</p>
+            <p>Confirms agreed rate between carrier and broker/shipper</p>
+        </div>
+
+        <table class="form-table">
+            <tr>
+                <td class="label">BOF Intake ID</td>
+                <td colspan="3">________________</td>
+            </tr>
+            <tr>
+                <td class="label">Load / Trip Number</td>
+                <td colspan="3">________________</td>
+            </tr>
+            <tr>
+                <td class="label">Driver ID</td>
+                <td colspan="3">________________</td>
+            </tr>
+            <tr>
+                <td class="label">Source Email / Packet Ref</td>
+                <td colspan="3">________________</td>
+            </tr>
+            <tr>
+                <td class="label">Document Type</td>
+                <td colspan="3">
+                    <input type="checkbox" class="checkbox"> Editable Template
+                    <input type="checkbox" class="checkbox" checked> Generated / Autofill Output
+                </td>
+            </tr>
+            <tr>
+                <td class="label">Approval Status</td>
+                <td colspan="3">
+                    <input type="checkbox" class="checkbox"> Draft
+                    <input type="checkbox" class="checkbox"> Pending Review
+                    <input type="checkbox" class="checkbox"> Approved
+                    <input type="checkbox" class="checkbox"> Rejected
+                </td>
+            </tr>
+            <tr>
+                <td class="label">Owner / Reviewer</td>
+                <td colspan="3">________________</td>
+            </tr>
+            <tr>
+                <td class="label">Document Status</td>
+                <td colspan="3">
+                    <input type="checkbox" class="checkbox"> Open
+                    <input type="checkbox" class="checkbox"> In Progress
+                    <input type="checkbox" class="checkbox"> Complete
+                    <input type="checkbox" class="checkbox"> Void
+                </td>
+            </tr>
+            <tr>
+                <td class="label">Command Center Status</td>
+                <td colspan="3">
+                    <input type="checkbox" class="checkbox"> Proceed
+                    <input type="checkbox" class="checkbox"> At Risk
+                    <input type="checkbox" class="checkbox"> Blocked
+                </td>
+            </tr>
+        </table>
+
+        <div class="section-title">Carrier / Broker Information</div>
+        <table class="form-table">
+            <tr>
+                <td class="label">Carrier Name</td>
+                <td>________________</td>
+                <td class="label">MC / DOT Number</td>
+                <td>________________</td>
+            </tr>
+            <tr>
+                <td class="label">Contact Person</td>
+                <td>________________</td>
+                <td class="label">Phone</td>
+                <td>________________</td>
+            </tr>
+            <tr>
+                <td class="label">Email</td>
+                <td colspan="3">________________</td>
+            </tr>
+        </table>
+
+        <div class="section-title">Load Details</div>
+        <table class="form-table">
+            <tr>
+                <td class="label">Origin</td>
+                <td>________________</td>
+                <td class="label">Destination</td>
+                <td>________________</td>
+            </tr>
+            <tr>
+                <td class="label">Equipment Type</td>
+                <td>________________</td>
+                <td class="label">Weight/Volume</td>
+                <td>________________</td>
+            </tr>
+            <tr>
+                <td class="label">Pickup Date/Time</td>
+                <td>________________</td>
+                <td class="label">Delivery Date/Time</td>
+                <td>________________</td>
+            </tr>
+        </table>
+
+        <div class="section-title">Rate Information</div>
+        <table class="form-table">
+            <tr>
+                <td class="label">Rate Type</td>
+                <td>
+                    <input type="checkbox" class="checkbox"> Flat Rate
+                    <input type="checkbox" class="checkbox"> Per Mile
+                    <input type="checkbox" class="checkbox"> Per Hour
+                    <input type="checkbox" class="checkbox"> Percentage
+                </td>
+                <td class="label">Rate Amount</td>
+                <td>$________________</td>
+            </tr>
+            <tr>
+                <td class="label">Fuel Surcharge</td>
+                <td>$________________</td>
+                <td class="label">Accessorial Charges</td>
+                <td>$________________</td>
+            </tr>
+            <tr>
+                <td class="label">Total Revenue</td>
+                <td colspan="3">$________________</td>
+            </tr>
+        </table>
+
+        <div class="section-title">Terms & Conditions</div>
+        <table class="form-table">
+            <tr>
+                <td class="label">Payment Terms</td>
+                <td colspan="3">
+                    <input type="checkbox" class="checkbox"> Net 30
+                    <input type="checkbox" class="checkbox"> Net 45
+                    <input type="checkbox" class="checkbox"> Net 60
+                    <input type="checkbox" class="checkbox"> Other: ________________
+                </td>
+            </tr>
+            <tr>
+                <td class="label">Special Instructions</td>
+                <td colspan="3">__________________________________________________________</td>
+            </tr>
+        </table>
+
+        <div class="section-title">Approvals</div>
+        <table class="form-table">
+            <tr>
+                <td class="label">Carrier Representative</td>
+                <td>
+                    <div class="signature-line"></div>
+                    <small>Name & Signature</small>
+                </td>
+                <td class="label">Date</td>
+                <td>
+                    <div class="signature-line"></div>
+                    <small>MM/DD/YYYY</small>
+                </td>
+            </tr>
+            <tr>
+                <td class="label">BOF Representative</td>
+                <td>
+                    <div class="signature-line"></div>
+                    <small>Name & Signature</small>
+                </td>
+                <td class="label">Date</td>
+                <td>
+                    <div class="signature-line"></div>
+                    <small>MM/DD/YYYY</small>
+                </td>
+            </tr>
+        </table>
+
+        <div class="status-box">
+            <strong>BOF Workflow Triggers:</strong><br>
+            ☐ Load assigned to driver<br>
+            ☐ Equipment check required<br>
+            ☐ Route planning initiated<br>
+            ☐ Proof requirements generated<br>
+            ☐ Command center alert set
+        </div>
+
+        <div style="margin-top: 30px; text-align: center; font-size: 12px; color: #6b7280;">
+            BOF Rate Confirmation Template v3.0 • Generated: __________________ • Valid until: __________________
+        </div>
+    </div>
+</body>
+</html>
