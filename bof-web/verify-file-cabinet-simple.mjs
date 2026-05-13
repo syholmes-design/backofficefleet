@@ -36,7 +36,7 @@ function verifyFileCabinet() {
   let failCount = 0;
   
   for (const doc of keyDocuments) {
-    const filePath = path.join(ROOT, doc.href);
+    const filePath = path.join(ROOT, 'public', doc.href);
     const fileExists = fs.existsSync(filePath);
     const isModuleRoute = ["/drivers", "/safety", "/settlements", "/dispatch", "/loads", "/documents"].includes(doc.href);
     const isForbiddenPath = doc.href.startsWith("/public/") || doc.href.includes("/scripts/") || doc.href.includes("/templates/") || doc.href.includes("/source-assets/");
