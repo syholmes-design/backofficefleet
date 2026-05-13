@@ -193,7 +193,7 @@ export function SettlementsCommandCenter() {
   }, [selectedDriver, filteredRows]);
 
   return (
-    <div className="min-h-screen bg-slate-950 pb-24">
+    <div className="min-h-screen bg-slate-950 pb-32">
       {/* Hero Section */}
       <div className="bg-slate-900 border-b border-slate-800">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">

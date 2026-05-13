@@ -8,6 +8,13 @@ interface SettlementExceptionReviewProps {
   settlementRows: DriverSettlementRow[];
 }
 
+interface PolicyReference {
+  title: string;
+  path: string;
+  section?: string;
+  description: string;
+}
+
 interface SettlementException {
   id: string;
   type: "family-support" | "missing-proof" | "large-deduction" | "settlement-hold" | "low-net" | "data-mismatch";
@@ -20,6 +27,7 @@ interface SettlementException {
   nextAction: string;
   cta: string;
   ctaLink?: string;
+  policyReference?: PolicyReference;
 }
 
 export function SettlementExceptionReview({ settlementRows }: SettlementExceptionReviewProps) {
@@ -43,7 +51,12 @@ export function SettlementExceptionReview({ settlementRows }: SettlementExceptio
         severity: "medium",
         status: "pending",
         nextAction: "Review withholding compliance and documentation",
-        cta: "Review Withholding"
+        cta: "Review Withholding",
+        policyReference: {
+          title: "Payroll, Compensation and Deductions Policy",
+          path: "/generated/company-operations-vault/04-payroll-compensation-and-deductions-policy.html",
+          description: "Confirm withholding amount, support order documentation, and pay-period treatment."
+        }
       });
     }
 
@@ -62,7 +75,12 @@ export function SettlementExceptionReview({ settlementRows }: SettlementExceptio
         severity: "high",
         status: "under-review",
         nextAction: "Clear holds and approve settlements for payment",
-        cta: "Review Holds"
+        cta: "Review Holds",
+        policyReference: {
+          title: "Accounting / Finance Close / AP / AR SOP",
+          path: "/generated/company-operations-vault/05-accounting-finance-close-ap-ar-sop.html",
+          description: "Confirm settlement should not release until required proof and reconciliation records are complete."
+        }
       });
     }
 
@@ -83,7 +101,12 @@ export function SettlementExceptionReview({ settlementRows }: SettlementExceptio
         severity: "medium",
         status: "pending",
         nextAction: "Verify deduction accuracy and approve if correct",
-        cta: "Review Deductions"
+        cta: "Review Deductions",
+        policyReference: {
+          title: "Payroll, Compensation and Deductions Policy",
+          path: "/generated/company-operations-vault/04-payroll-compensation-and-deductions-policy.html",
+          description: "Verify deduction source, authorization, and approval before payment."
+        }
       });
     }
 
@@ -102,7 +125,12 @@ export function SettlementExceptionReview({ settlementRows }: SettlementExceptio
         severity: "low",
         status: "pending",
         nextAction: "Verify if low pay is correct or if there are missing components",
-        cta: "Review Low Pay"
+        cta: "Review Low Pay",
+        policyReference: {
+          title: "Payroll, Compensation and Deductions Policy",
+          path: "/generated/company-operations-vault/04-payroll-compensation-and-deductions-policy.html",
+          description: "Review deduction authorization, family support withholding, and approval documentation before settlement release."
+        }
       });
     }
 
@@ -121,7 +149,12 @@ export function SettlementExceptionReview({ settlementRows }: SettlementExceptio
         severity: "low",
         status: "pending",
         nextAction: "Check for missing expense receipts or reimbursement requests",
-        cta: "Check Expenses"
+        cta: "Check Expenses",
+        policyReference: {
+          title: "Accounting / Finance Close / AP / AR SOP",
+          path: "/generated/company-operations-vault/05-accounting-finance-close-ap-ar-sop.html",
+          description: "Confirm settlement should not release until required proof and reconciliation records are complete."
+        }
       });
     }
 
@@ -256,10 +289,40 @@ export function SettlementExceptionReview({ settlementRows }: SettlementExceptio
                         <strong>Next step:</strong> {exception.nextAction}
                       </p>
                     </div>
+
+                    {/* Internal Policy Check Section */}
+                    {exception.policyReference && (
+                      <div className="bg-blue-900/20 border border-blue-700/50 rounded p-3 mb-3">
+                        <div className="flex items-center gap-2 mb-2">
+                          <FileText className="h-4 w-4 text-blue-400" />
+                          <h5 className="text-sm font-medium text-blue-300">Internal policy check</h5>
+                        </div>
+                        <p className="text-blue-200 text-sm font-medium mb-1">{exception.policyReference.title}</p>
+                        <p className="text-blue-300 text-xs mb-3">{exception.policyReference.description}</p>
+                        <a 
+                          href={exception.policyReference.path}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center gap-1 text-blue-400 hover:text-blue-300 text-xs font-medium transition-colors"
+                        >
+                          Open policy →
+                        </a>
+                      </div>
+                    )}
                   </div>
                 </div>
                 
-                <div className="flex justify-end">
+                <div className="flex justify-end gap-2">
+                  {exception.policyReference && (
+                    <a 
+                      href={exception.policyReference.path}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="bg-slate-700 hover:bg-slate-600 text-slate-300 px-3 py-2 rounded text-sm font-medium transition-colors"
+                    >
+                      Review policy
+                    </a>
+                  )}
                   <button className="bg-teal-600 hover:bg-teal-700 text-white px-4 py-2 rounded text-sm font-medium transition-colors">
                     {exception.cta}
                   </button>
