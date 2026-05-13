@@ -63,6 +63,7 @@ export type OperationsFileCabinetItem = {
     | "admin"
     | "compliance"
     | "billing"
+    | "sales"
   >;
   status: "available" | "available_route" | "template" | "needs_review" | "external_resource" | "coming_soon";
   description: string;
@@ -1334,6 +1335,228 @@ export const OPERATIONS_FILE_CABINET_REGISTRY: OperationsFileCabinetItem[] = [
     employerName: "Delta Advanced Trucking, Inc.",
     isBlankTemplate: true,
     tags: ["ifta", "mileage", "fuel", "quarterly", "compliance", "template"]
+  },
+
+  // Dispatch & Load Operations - BOF Dispatch Templates
+  {
+    id: "dispatch-load-intake-form",
+    title: "Load Intake Form",
+    cabinet: "Dispatch & Load Operations",
+    section: "BOF Dispatch Templates",
+    category: "Dispatch & Load Operations",
+    type: "template",
+    audience: ["dispatcher", "manager", "customer"],
+    status: "template",
+    description: "Standard load intake form for customer load requests",
+    href: "/documents/template-packs/load-intake-form.html",
+    sourceAuthenticity: "official_template",
+    documentOwner: "employer",
+    employerName: "Delta Advanced Trucking, Inc.",
+    isBlankTemplate: true,
+    tags: ["dispatch", "load", "intake", "template"]
+  },
+  {
+    id: "dispatch-rate-confirmation",
+    title: "Rate Confirmation Template",
+    cabinet: "Dispatch & Load Operations",
+    section: "BOF Dispatch Templates",
+    category: "Dispatch & Load Operations",
+    type: "template",
+    audience: ["dispatcher", "manager", "customer", "finance"],
+    status: "template",
+    description: "Rate confirmation and load agreement template",
+    href: "/documents/template-packs/rate-confirmation.html",
+    sourceAuthenticity: "official_template",
+    documentOwner: "employer",
+    employerName: "Delta Advanced Trucking, Inc.",
+    isBlankTemplate: true,
+    tags: ["dispatch", "rate", "confirmation", "template"]
+  },
+  {
+    id: "dispatch-pretrip-planning",
+    title: "Pre-Trip Planning Checklist",
+    cabinet: "Dispatch & Load Operations",
+    section: "Needs Review / Coming Later",
+    category: "Dispatch & Load Operations",
+    type: "checklist",
+    audience: ["dispatcher", "driver", "safety"],
+    status: "needs_review",
+    description: "Comprehensive pre-trip planning and route preparation checklist",
+    sourceAuthenticity: "coming_soon",
+    documentOwner: "employer",
+    employerName: "Delta Advanced Trucking, Inc.",
+    tags: ["pretrip", "planning", "coming"]
+  },
+  {
+    id: "dispatch-schedule",
+    title: "Schedule Template",
+    cabinet: "Dispatch & Load Operations",
+    section: "Needs Review / Coming Later",
+    category: "Dispatch & Load Operations",
+    type: "template",
+    audience: ["dispatcher", "manager", "customer"],
+    status: "needs_review",
+    description: "Service schedule and delivery timeline template",
+    sourceAuthenticity: "coming_soon",
+    documentOwner: "employer",
+    employerName: "Delta Advanced Trucking, Inc.",
+    tags: ["schedule", "delivery", "coming"]
+  },
+
+  // Contracts / Customer / Legal - Legal / Contracts
+  {
+    id: "contract-carrier-agreement",
+    title: "Carrier Agreement Template",
+    cabinet: "Contracts / Customer / Legal",
+    section: "Legal / Contracts",
+    category: "Contracts / Customer / Legal",
+    type: "contract",
+    audience: ["manager", "legal", "customer", "owner"],
+    status: "template",
+    description: "Standard carrier service agreement template",
+    href: "/documents/template-packs/carrier-agreement.html",
+    sourceAuthenticity: "official_template",
+    documentOwner: "employer",
+    employerName: "Delta Advanced Trucking, Inc.",
+    isBlankTemplate: true,
+    tags: ["contract", "carrier", "agreement", "template"]
+  },
+  {
+    id: "contract-customer-agreement",
+    title: "Customer Service Agreement",
+    cabinet: "Contracts / Customer / Legal",
+    section: "Legal / Contracts",
+    category: "Contracts / Customer / Legal",
+    type: "contract",
+    audience: ["manager", "legal", "customer", "sales"],
+    status: "template",
+    description: "Customer service agreement and terms template",
+    href: "/documents/template-packs/customer-agreement.html",
+    sourceAuthenticity: "official_template",
+    documentOwner: "employer",
+    employerName: "Delta Advanced Trucking, Inc.",
+    isBlankTemplate: true,
+    tags: ["contract", "customer", "agreement", "template"]
+  },
+  {
+    id: "contract-bill-of-lading",
+    title: "Bill of Lading Template",
+    cabinet: "Contracts / Customer / Legal",
+    section: "Legal / Contracts",
+    category: "Contracts / Customer / Legal",
+    type: "template",
+    audience: ["dispatcher", "driver", "customer", "finance"],
+    status: "template",
+    description: "Standard bill of lading template for freight shipments",
+    href: "/documents/template-packs/bill-of-lading.html",
+    sourceAuthenticity: "official_template",
+    documentOwner: "employer",
+    employerName: "Delta Advanced Trucking, Inc.",
+    isBlankTemplate: true,
+    tags: ["contract", "bol", "freight", "template"]
+  },
+
+  // HR / Talent / Performance - Blank Templates
+  {
+    id: "hr-employee-handbook",
+    title: "Employee Handbook Template",
+    cabinet: "HR / Talent / Performance",
+    section: "Blank Templates",
+    category: "HR / Talent / Performance",
+    type: "template",
+    audience: ["manager", "hr", "driver", "admin"],
+    status: "template",
+    description: "Comprehensive employee handbook template",
+    href: "/generated/templates/hr-docs/employee-handbook.html",
+    sourceAuthenticity: "official_template",
+    documentOwner: "employer",
+    employerName: "Delta Advanced Trucking, Inc.",
+    isBlankTemplate: true,
+    tags: ["hr", "handbook", "policy", "template"]
+  },
+  {
+    id: "hr-performance-review",
+    title: "Performance Review Template",
+    cabinet: "HR / Talent / Performance",
+    section: "Blank Templates",
+    category: "HR / Talent / Performance",
+    type: "template",
+    audience: ["manager", "hr", "driver"],
+    status: "template",
+    description: "Driver performance review and evaluation template",
+    href: "/generated/templates/hr-docs/performance-review.html",
+    sourceAuthenticity: "official_template",
+    documentOwner: "employer",
+    employerName: "Delta Advanced Trucking, Inc.",
+    isBlankTemplate: true,
+    tags: ["hr", "performance", "review", "template"]
+  },
+  {
+    id: "hr-training-record",
+    title: "Training Record Template",
+    cabinet: "HR / Talent / Performance",
+    section: "Blank Templates",
+    category: "HR / Talent / Performance",
+    type: "template",
+    audience: ["manager", "hr", "driver", "safety"],
+    status: "template",
+    description: "Training completion and certification tracking template",
+    href: "/generated/templates/hr-docs/training-record.html",
+    sourceAuthenticity: "official_template",
+    documentOwner: "employer",
+    employerName: "Delta Advanced Trucking, Inc.",
+    isBlankTemplate: true,
+    tags: ["hr", "training", "record", "template"]
+  },
+
+  // Training & Knowledge Base - Policy-Based Training
+  {
+    id: "training-safety-orientation",
+    title: "Safety Orientation Training",
+    cabinet: "Training & Knowledge Base",
+    section: "Policy-Based Training",
+    category: "Training & Knowledge Base",
+    type: "training",
+    audience: ["driver", "manager", "safety", "hr"],
+    status: "available",
+    description: "New driver safety orientation and policy training",
+    href: "/generated/company-operations-vault/02-safety-compliance-policy.html",
+    sourceAuthenticity: "official_template",
+    documentOwner: "employer",
+    employerName: "Delta Advanced Trucking, Inc.",
+    tags: ["training", "safety", "orientation", "policy"]
+  },
+  {
+    id: "training-hazmat-certification",
+    title: "HAZMAT Certification Training",
+    cabinet: "Training & Knowledge Base",
+    section: "Policy-Based Training",
+    category: "Training & Knowledge Base",
+    type: "training",
+    audience: ["driver", "manager", "safety"],
+    status: "available",
+    description: "HAZMAT handling and certification training program",
+    href: "/generated/company-operations-vault/02-safety-compliance-policy.html",
+    sourceAuthenticity: "official_template",
+    documentOwner: "employer",
+    employerName: "Delta Advanced Trucking, Inc.",
+    tags: ["training", "hazmat", "certification", "safety"]
+  },
+  {
+    id: "training-dispatch-procedures",
+    title: "Dispatch Procedures Training",
+    cabinet: "Training & Knowledge Base",
+    section: "Policy-Based Training",
+    category: "Training & Knowledge Base",
+    type: "training",
+    audience: ["dispatcher", "manager", "driver"],
+    status: "available",
+    description: "Dispatch operations and procedures training",
+    href: "/generated/company-operations-vault/01-dispatch-operations-policy.html",
+    sourceAuthenticity: "official_template",
+    documentOwner: "employer",
+    employerName: "Delta Advanced Trucking, Inc.",
+    tags: ["training", "dispatch", "procedures", "policy"]
   }
 ];
 
