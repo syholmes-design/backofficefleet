@@ -61,13 +61,12 @@ export function SettlementLineItems({ driverSettlement }: SettlementLineItemsPro
     });
   }
 
-  // Add other reimbursements if any
-  const otherReimbursements = driverSettlement.reimbursements - (driverSettlement.fuelReimbursement || 0);
-  if (otherReimbursements > 0) {
+  // Add reimbursements if any
+  if (driverSettlement.reimbursements && driverSettlement.reimbursements > 0) {
     lineItems.push({
-      description: "Other Reimbursements",
+      description: "Reimbursements",
       category: "Reimbursement",
-      amount: otherReimbursements,
+      amount: driverSettlement.reimbursements,
       chargeType: "Add"
     });
   }
@@ -129,8 +128,8 @@ export function SettlementLineItems({ driverSettlement }: SettlementLineItemsPro
 
   if (driverSettlement.familySupport && driverSettlement.familySupport > 0) {
     lineItems.push({
-      description: "Family Support",
-      category: "Withholding",
+      description: "Family Support / Court-Ordered Withholding",
+      category: "Court-Ordered Withholding",
       amount: driverSettlement.familySupport,
       chargeType: "Deduct"
     });
@@ -190,6 +189,32 @@ export function SettlementLineItems({ driverSettlement }: SettlementLineItemsPro
     });
   }
 
+  // Calculate other deductions that aren't broken down into individual fields
+  const calculatedDeductions = 
+    (driverSettlement.fica || 0) +
+    (driverSettlement.oasdi || 0) +
+    (driverSettlement.federalWithholding || 0) +
+    (driverSettlement.stateWithholding || 0) +
+    (driverSettlement.sdi || 0) +
+    (driverSettlement.fmLeave || 0) +
+    (driverSettlement.familySupport || 0) +
+    (driverSettlement.insurancePremiums || 0) +
+    (driverSettlement.creditUnionSavingsClub || 0) +
+    (driverSettlement.contribution401k || 0) +
+    (driverSettlement.hsaFsaHealthDeduction || 0) +
+    (driverSettlement.healthInsurancePremiums || 0) +
+    (driverSettlement.lifeInsuranceAbove50k || 0);
+
+  const otherDeductions = driverSettlement.deductions - calculatedDeductions;
+  if (otherDeductions > 0.01) { // Only show if there's a meaningful difference
+    lineItems.push({
+      description: "Other Deductions",
+      category: "Deduction",
+      amount: otherDeductions,
+      chargeType: "Deduct"
+    });
+  }
+
   // Add net pay summary
   lineItems.push({
     description: "Net Pay",
@@ -222,8 +247,16 @@ export function SettlementLineItems({ driverSettlement }: SettlementLineItemsPro
         return "bg-red-900/30 text-red-300";
       case "Withholding":
         return "bg-orange-900/30 text-orange-300";
+      case "Court-Ordered Withholding":
+        return "bg-orange-900/30 text-orange-300";
       case "Insurance":
         return "bg-blue-900/30 text-blue-300";
+      case "Health":
+        return "bg-cyan-900/30 text-cyan-300";
+      case "Retirement":
+        return "bg-indigo-900/30 text-indigo-300";
+      case "Savings":
+        return "bg-violet-900/30 text-violet-300";
       case "Summary":
         return "bg-slate-900/30 text-slate-300";
       default:
@@ -237,48 +270,34 @@ export function SettlementLineItems({ driverSettlement }: SettlementLineItemsPro
         <h4 className="font-medium text-slate-100">Line Item Breakdown</h4>
       </div>
       
-      <div className="overflow-x-auto">
-        <table className="w-full">
-          <thead className="bg-slate-800 border-b border-slate-700">
-            <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium text-slate-300 uppercase tracking-wider">
-                Description
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-slate-300 uppercase tracking-wider">
-                Category
-              </th>
-              <th className="px-6 py-3 text-right text-xs font-medium text-slate-300 uppercase tracking-wider">
-                Amount
-              </th>
-              <th className="px-6 py-3 text-center text-xs font-medium text-slate-300 uppercase tracking-wider">
-                Type
-              </th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-slate-700">
-            {lineItems.map((item, index) => (
-              <tr key={index} className="hover:bg-slate-800/50">
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-200">
-                  {item.description}
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap">
+      <div className="max-h-96 overflow-y-auto">
+        <div className="px-6 py-4 space-y-3">
+          {lineItems.map((item, index) => (
+            <div key={index} className="flex items-center justify-between p-3 bg-slate-800/50 rounded-lg hover:bg-slate-800 transition-colors">
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-3 mb-2">
+                  <div className="flex items-center gap-1">
+                    {getChargeTypeIcon(item.chargeType)}
+                    <span className={`text-sm font-medium ${getChargeTypeColor(item.chargeType)}`}>
+                      {item.description}
+                    </span>
+                  </div>
                   <span className={`inline-flex px-2 py-1 text-xs font-medium rounded-full ${getCategoryColor(item.category)}`}>
                     {item.category}
                   </span>
-                </td>
-                <td className={`px-6 py-4 whitespace-nowrap text-sm font-medium text-right ${getChargeTypeColor(item.chargeType)}`}>
+                </div>
+              </div>
+              <div className="flex items-center gap-2 ml-4">
+                <span className={`text-sm font-bold ${getChargeTypeColor(item.chargeType)}`}>
                   {formatCurrency(item.amount)}
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-center">
-                  <div className="flex items-center justify-center gap-1">
-                    {getChargeTypeIcon(item.chargeType)}
-                    <span className="text-xs text-slate-400">{item.chargeType}</span>
-                  </div>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+                </span>
+                <span className="text-xs text-slate-400">
+                  {item.chargeType}
+                </span>
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );
