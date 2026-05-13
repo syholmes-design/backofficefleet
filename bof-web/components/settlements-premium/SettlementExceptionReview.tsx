@@ -1,7 +1,7 @@
 "use client";
 
-import { useMemo } from "react";
-import { AlertTriangle, Users, DollarSign, FileText, Clock, CheckCircle } from "lucide-react";
+import { useMemo, useState } from "react";
+import { AlertTriangle, Users, DollarSign, FileText, Clock, CheckCircle, ChevronDown, ChevronUp } from "lucide-react";
 import type { DriverSettlementRow } from "./SettlementsCommandCenter";
 
 interface SettlementExceptionReviewProps {
@@ -30,6 +30,82 @@ interface SettlementException {
   policyReference?: PolicyReference;
 }
 
+interface PolicyAccordionProps {
+  policyReference: PolicyReference;
+  exceptionType: string;
+}
+
+function PolicyAccordion({ policyReference, exceptionType }: PolicyAccordionProps) {
+  const [isExpanded, setIsExpanded] = useState(false);
+  
+  const getBorderColor = (type: string) => {
+    switch (type) {
+      case "family-support": return "border-orange-600";
+      case "large-deduction": return "border-red-600";
+      case "missing-proof": return "border-blue-600";
+      case "settlement-hold": return "border-purple-600";
+      default: return "border-slate-600";
+    }
+  };
+  
+  const getBgColor = (type: string) => {
+    switch (type) {
+      case "family-support": return "bg-orange-900/10";
+      case "large-deduction": return "bg-red-900/10";
+      case "missing-proof": return "bg-blue-900/10";
+      case "settlement-hold": return "bg-purple-900/10";
+      default: return "bg-slate-900/10";
+    }
+  };
+  
+  return (
+    <div className={`mt-4 border-l-4 ${getBorderColor(exceptionType)} ${getBgColor(exceptionType)} rounded-r-lg`}>
+      <button
+        onClick={() => setIsExpanded(!isExpanded)}
+        className="w-full px-4 py-3 text-left flex items-center justify-between hover:bg-slate-700/50 transition-colors"
+      >
+        <span className="text-xs font-medium text-amber-400">
+          {isExpanded ? "Hide relevant policy" : "Show relevant policy"}
+        </span>
+        {isExpanded ? (
+          <ChevronUp className="h-3 w-3 text-amber-400" />
+        ) : (
+          <ChevronDown className="h-3 w-3 text-amber-400" />
+        )}
+      </button>
+      
+      {isExpanded && (
+        <div className="px-4 pb-3 border-t border-slate-700/50">
+          <div className="pt-3">
+            <h5 className="text-xs font-medium text-white mb-2">{policyReference.title}</h5>
+            <p className="text-xs text-slate-400 mb-3">{policyReference.description}</p>
+            
+            <div className="space-y-2">
+              <a
+                href={policyReference.path}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-xs text-amber-400 underline hover:text-amber-300 block"
+              >
+                {policyReference.section ? `§${policyReference.section.split('-')[1]}.${policyReference.section.split('-')[2]} — Quick Jump` : "View Full Policy"}
+              </a>
+              
+              <a
+                href={policyReference.path.split('#')[0]}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-xs text-slate-400 hover:text-slate-300 block"
+              >
+                Full policy document →
+              </a>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
 export function SettlementExceptionReview({ settlementRows }: SettlementExceptionReviewProps) {
   const exceptions = useMemo(() => {
     const exceptionList: SettlementException[] = [];
@@ -54,7 +130,8 @@ export function SettlementExceptionReview({ settlementRows }: SettlementExceptio
         cta: "Review Withholding",
         policyReference: {
           title: "Payroll, Compensation and Deductions Policy",
-          path: "/generated/company-operations-vault/04-payroll-compensation-and-deductions-policy.html",
+          path: "/generated/company-operations-vault/04-payroll-compensation-and-deductions-policy.html#section-4-2",
+          section: "section-4-2",
           description: "Confirm withholding amount, support order documentation, and pay-period treatment."
         }
       });
@@ -104,7 +181,8 @@ export function SettlementExceptionReview({ settlementRows }: SettlementExceptio
         cta: "Review Deductions",
         policyReference: {
           title: "Payroll, Compensation and Deductions Policy",
-          path: "/generated/company-operations-vault/04-payroll-compensation-and-deductions-policy.html",
+          path: "/generated/company-operations-vault/04-payroll-compensation-and-deductions-policy.html#section-4-5",
+          section: "section-4-5",
           description: "Verify deduction source, authorization, and approval before payment."
         }
       });
@@ -148,12 +226,13 @@ export function SettlementExceptionReview({ settlementRows }: SettlementExceptio
         affectedDrivers: noReimbursementDrivers.map(row => row.driverName),
         severity: "low",
         status: "pending",
-        nextAction: "Check for missing expense receipts or reimbursement requests",
-        cta: "Check Expenses",
+        nextAction: "Review fuel receipts and expense claims",
+        cta: "Review Reimbursements",
         policyReference: {
           title: "Accounting / Finance Close / AP / AR SOP",
-          path: "/generated/company-operations-vault/05-accounting-finance-close-ap-ar-sop.html",
-          description: "Confirm settlement should not release until required proof and reconciliation records are complete."
+          path: "/generated/company-operations-vault/05-accounting-finance-close-ap-ar-sop.html#section-5-2",
+          section: "section-5-2",
+          description: "Verify fuel receipt documentation and reimbursement processing procedures."
         }
       });
     }
@@ -308,6 +387,14 @@ export function SettlementExceptionReview({ settlementRows }: SettlementExceptio
                           Open policy →
                         </a>
                       </div>
+                    )}
+
+                    {/* Policy Accordion */}
+                    {exception.policyReference && (
+                      <PolicyAccordion 
+                        policyReference={exception.policyReference} 
+                        exceptionType={exception.type}
+                      />
                     )}
                   </div>
                 </div>

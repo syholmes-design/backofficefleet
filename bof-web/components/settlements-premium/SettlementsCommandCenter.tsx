@@ -8,6 +8,7 @@ import { SettlementDetailPanel } from "./SettlementDetailPanel";
 import { EnhancedSettlementKPICards } from "./EnhancedSettlementKPICards";
 import { SettlementExceptionReview } from "./SettlementExceptionReview";
 import { AccountingTemplates } from "./AccountingTemplates";
+import { PolicyQuickLinks } from "./PolicyQuickLinks";
 import { getSettlementPeriods, type SettlementPeriodOption } from "@/lib/settlement-periods";
 
 export type SettlementStatus = "Ready" | "Needs Review" | "Hold" | "Paid" | "Missing Source Data";
@@ -308,8 +309,14 @@ export function SettlementsCommandCenter() {
         <SettlementExceptionReview settlementRows={filteredRows} />
       </div>
 
+      {/* Policy Quick Links Section */}
+      <PolicyQuickLinks />
+
       {/* Accounting Templates Section */}
-      <AccountingTemplates />
+      <AccountingTemplates 
+        selectedDriver={selectedDriverData} 
+        settlementDate={selectedPeriod.label}
+      />
 
       {/* Main Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
