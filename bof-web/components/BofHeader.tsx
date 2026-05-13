@@ -15,7 +15,6 @@ const productNav = [
   { href: "/settlements", label: "Settlements" },
   { href: "/safety", label: "Safety" },
   { href: "/dispatch", label: "Dispatch" },
-  { href: "/portals", label: "Portals" },
 ];
 
 const portalsNav = [
