@@ -239,20 +239,6 @@ export function DispatchBoardScreen() {
             className="object-cover object-center"
             priority
           />
-          <div className="absolute inset-0 bg-gradient-to-r from-slate-900/95 via-slate-900/80 to-slate-900/95" />
-          <div className="absolute inset-0 flex items-center justify-center">
-            <div className="max-w-4xl px-6 text-center">
-              <h1 className="mb-4 text-3xl font-bold tracking-tight text-white md:text-4xl lg:text-5xl">
-                Dispatch Command Board
-              </h1>
-              <p className="mb-3 text-lg text-slate-200 md:text-xl">
-                Prioritize active loads, proof gaps, settlement blockers, and customer-impacting exceptions from one source-of-truth view.
-              </p>
-              <p className="text-sm text-slate-300 md:text-base">
-                BOF surfaces only the exceptions that need action — not every load as &quot;at risk.&quot;
-              </p>
-            </div>
-          </div>
         </div>
       </section>
 
