@@ -38,8 +38,8 @@ export function OperationsFileCabinetClient() {
   const audiences = useMemo(() => getOperationsFileCabinetAudiences(), []);
   const statuses = useMemo(() => getOperationsFileCabinetStatuses(), []);
 
-  // Quick filter to categories mapping
-  const getCategoriesForQuickFilter = useCallback((filter: QuickFilter): OperationsFileCabinetCategory[] => {
+  // Quick filter to cabinets mapping
+  const getCabinetsForQuickFilter = useCallback((filter: QuickFilter): OperationsFileCabinetCategory[] => {
     switch (filter) {
       case "all":
         return categories;
@@ -56,7 +56,7 @@ export function OperationsFileCabinetClient() {
       case "finance":
         return ["Finance / Settlements / Back Office"];
       default:
-        return categories;
+        return [];
     }
   }, [categories]);
 
@@ -94,10 +94,10 @@ export function OperationsFileCabinetClient() {
     scrollToResults();
   };
 
-  // Group items by their group property
+  // Group items by their section property
   const groupItems = (items: typeof filteredItems) => {
     const groups = items.reduce((acc, item) => {
-      const group = item.group || "Other";
+      const group = item.section || "Other";
       if (!acc[group]) {
         acc[group] = [];
       }
@@ -164,7 +164,7 @@ export function OperationsFileCabinetClient() {
   }, [allItems]);
 
   const filteredItems = useMemo(() => {
-    const quickFilterCategories = getCategoriesForQuickFilter(quickFilter);
+    const quickFilterCategories = getCabinetsForQuickFilter(quickFilter);
     
     return allItems.filter(item => {
       const matchesSearch = searchTerm === "" || 
@@ -180,7 +180,7 @@ export function OperationsFileCabinetClient() {
 
       return matchesSearch && matchesCategory && matchesType && matchesAudience && matchesStatus;
     });
-  }, [allItems, searchTerm, selectedCategory, selectedType, selectedAudience, selectedStatus, quickFilter, getCategoriesForQuickFilter]);
+  }, [allItems, searchTerm, selectedCategory, selectedType, selectedAudience, selectedStatus, quickFilter, getCabinetsForQuickFilter]);
 
   const comingSoonItems = useMemo(() => {
     return allItems.filter(item => item.status === "coming_soon");
@@ -265,27 +265,27 @@ export function OperationsFileCabinetClient() {
 
   function getItemCta(item: OperationsFileCabinetItem): string {
     // Handle completed demo samples
-    if (item.group === "Completed Demo Samples") {
+    if (item.section === "Completed Demo Samples") {
       return "View completed sample →";
     }
     
     // Handle blank templates
-    if (item.group === "Blank Templates") {
+    if (item.section === "Blank Templates") {
       return "Open blank template →";
     }
     
     // Handle company policies
-    if (item.group === "Company Policies & SOPs") {
+    if (item.section === "Company Policies & SOPs") {
       return "View policy →";
     }
     
     // Handle BOF dispatch templates
-    if (item.group === "BOF Dispatch Templates") {
+    if (item.section === "BOF Dispatch Templates") {
       return "View template →";
     }
     
     // Handle external resources
-    if (item.group === "External Resources") {
+    if (item.section === "External Resources") {
       return "Open guidance →";
     }
     
@@ -314,12 +314,14 @@ export function OperationsFileCabinetClient() {
   }
 
   function getSourceChip(item: OperationsFileCabinetItem): { text: string; color: string } {
-    if (item.source === "generated") {
+    if (item.sourceAuthenticity === "generated_from_template") {
       return { text: "Generated document", color: "#22c55e" };
-    } else if (item.source === "template") {
+    } else if (item.sourceAuthenticity === "official_template") {
       return { text: "Template", color: "#3b82f6" };
-    } else if (item.source === "external") {
+    } else if (item.sourceAuthenticity === "external_resource") {
       return { text: "External resource", color: "#a855f7" };
+    } else if (item.sourceAuthenticity === "coming_soon") {
+      return { text: "Coming soon", color: "#f59e0b" };
     } else if (item.href?.startsWith("/")) {
       return { text: "App route", color: "#f59e0b" };
     } else {
@@ -391,7 +393,7 @@ export function OperationsFileCabinetClient() {
         <div style={{ position: "relative", zIndex: 1 }}>
           <h1 className="bof-title">Operations File Cabinet</h1>
           <p className="bof-lead">
-            Driver files, company policies, dispatch forms, training materials, SOPs, claims documents, and back-office templates in one organized operating library.
+            Delta Advanced Trucking, Inc.'s driver files, company policies, dispatch forms, SOPs, claims documents, training resources, and back-office templates organized in one operating library through BOF.
           </p>
           
           {/* Hero Chips */}

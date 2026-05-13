@@ -1,6 +1,28 @@
 export type OperationsFileCabinetItem = {
   id: string;
   title: string;
+  cabinet:
+    | "Driver Qualification Files"
+    | "Secondary Driver Documents"
+    | "Dispatch & Load Operations"
+    | "Contracts / Customer / Legal"
+    | "Safety / Claims / Insurance"
+    | "HR / Talent / Performance"
+    | "Policies & SOPs"
+    | "Finance / Settlements / Back Office"
+    | "Training & Knowledge Base";
+  section:
+    | "Blank Templates"
+    | "Completed Demo Samples"
+    | "Company Policies & SOPs"
+    | "BOF Dispatch Templates"
+    | "Claims Forms"
+    | "Legal / Contracts"
+    | "External Resources"
+    | "Needs Review / Coming Later"
+    | "Related Policies / Acknowledgments"
+    | "Finance Templates"
+    | "Policy-Based Training";
   category:
     | "Driver Qualification Files"
     | "Secondary Driver Documents"
@@ -43,8 +65,14 @@ export type OperationsFileCabinetItem = {
   status: "available" | "available_route" | "template" | "needs_review" | "external_resource" | "coming_soon";
   description: string;
   href?: string;
-  source?: "generated" | "template" | "external" | "demo";
-  group?: "Blank Templates" | "Company Policies & SOPs" | "BOF Dispatch Templates" | "External Resources" | "Completed Demo Samples" | "Needs Review / Coming Later";
+  sourceAuthenticity: "official_template" | "generated_from_template" | "external_resource" | "coming_soon";
+  documentOwner: "employer" | "platform" | "external";
+  employerName: string;
+  isBlankTemplate?: boolean;
+  isCompletedSample?: boolean;
+  tags?: string[];
+  sampleHref?: string;
+  templateHref?: string;
 };
 
 export const OPERATIONS_FILE_CABINET_REGISTRY: OperationsFileCabinetItem[] = [
@@ -52,1239 +80,995 @@ export const OPERATIONS_FILE_CABINET_REGISTRY: OperationsFileCabinetItem[] = [
   {
     id: "driver-cdl-template",
     title: "CDL Verification Template",
+    cabinet: "Driver Qualification Files",
+    section: "Blank Templates",
     category: "Driver Qualification Files",
-    type: "template",
+    type: "driver-file",
     audience: ["driver", "manager", "hr", "safety"],
     status: "template",
     description: "Blank CDL verification template for new driver qualification",
     href: "/generated/templates/driver-docs/cdl-template.html",
-    source: "template",
-    group: "Blank Templates"
+    sourceAuthenticity: "official_template",
+    documentOwner: "employer",
+    employerName: "Delta Advanced Trucking, Inc.",
+    isBlankTemplate: true,
+    tags: ["qualification", "license", "compliance"]
   },
   {
     id: "driver-medical-template",
     title: "Medical Card Template",
+    cabinet: "Driver Qualification Files",
+    section: "Blank Templates",
     category: "Driver Qualification Files",
-    type: "template",
+    type: "driver-file",
     audience: ["driver", "manager", "hr", "safety"],
     status: "template",
     description: "Blank medical card template for DOT physical examination",
     href: "/generated/templates/driver-docs/medical-card-template.html",
-    source: "template",
-    group: "Blank Templates"
+    sourceAuthenticity: "official_template",
+    documentOwner: "employer",
+    employerName: "Delta Advanced Trucking, Inc.",
+    isBlankTemplate: true,
+    tags: ["medical", "dot", "physical"]
   },
   {
     id: "driver-mvr-template",
     title: "MVR Template",
+    cabinet: "Driver Qualification Files",
+    section: "Blank Templates",
     category: "Driver Qualification Files",
-    type: "template",
+    type: "driver-file",
     audience: ["driver", "manager", "hr", "safety"],
     status: "template",
     description: "Blank motor vehicle record template for driving history review",
     href: "/generated/templates/driver-docs/mvr-template.html",
-    source: "template",
-    group: "Blank Templates"
+    sourceAuthenticity: "official_template",
+    documentOwner: "employer",
+    employerName: "Delta Advanced Trucking, Inc.",
+    isBlankTemplate: true,
+    tags: ["driving", "record", "mvr"]
   },
   {
     id: "driver-clearinghouse-template",
     title: "FMCSA Compliance Template",
+    cabinet: "Driver Qualification Files",
+    section: "Blank Templates",
     category: "Driver Qualification Files",
-    type: "template",
+    type: "driver-file",
     audience: ["driver", "manager", "hr", "safety"],
     status: "template",
     description: "Blank FMCSA clearinghouse compliance template",
     href: "/generated/templates/driver-docs/fmcsa-compliance-template.html",
-    source: "template",
-    group: "Blank Templates"
+    sourceAuthenticity: "official_template",
+    documentOwner: "employer",
+    employerName: "Delta Advanced Trucking, Inc.",
+    isBlankTemplate: true,
+    tags: ["fmcsa", "clearinghouse", "drug", "alcohol"]
   },
   {
     id: "driver-i9-template",
     title: "I-9 Template",
+    cabinet: "Driver Qualification Files",
+    section: "Blank Templates",
     category: "Driver Qualification Files",
-    type: "template",
+    type: "form",
     audience: ["driver", "manager", "hr"],
     status: "template",
     description: "Blank I-9 employment eligibility verification template",
     href: "/generated/templates/driver-docs/i9-template.html",
-    source: "template",
-    group: "Blank Templates"
+    sourceAuthenticity: "official_template",
+    documentOwner: "employer",
+    employerName: "Delta Advanced Trucking, Inc.",
+    isBlankTemplate: true,
+    tags: ["employment", "eligibility", "i9"]
   },
   {
     id: "driver-w9-template",
     title: "W-9 Template",
+    cabinet: "Driver Qualification Files",
+    section: "Blank Templates",
     category: "Driver Qualification Files",
-    type: "template",
+    type: "form",
     audience: ["driver", "manager", "finance"],
     status: "template",
     description: "Blank W-9 tax form template for owner-operators",
     href: "/generated/templates/driver-docs/w9-template.html",
-    source: "template",
-    group: "Blank Templates"
+    sourceAuthenticity: "official_template",
+    documentOwner: "employer",
+    employerName: "Delta Advanced Trucking, Inc.",
+    isBlankTemplate: true,
+    tags: ["tax", "w9", "contractor"]
   },
   {
     id: "driver-emergency-contact-template",
     title: "Emergency Contact Template",
+    cabinet: "Driver Qualification Files",
+    section: "Blank Templates",
     category: "Driver Qualification Files",
-    type: "template",
+    type: "form",
     audience: ["driver", "manager", "hr", "safety"],
     status: "template",
     description: "Blank emergency contact information template",
     href: "/generated/templates/driver-docs/emergency-contact-template.html",
-    source: "template",
-    group: "Blank Templates"
+    sourceAuthenticity: "official_template",
+    documentOwner: "employer",
+    employerName: "Delta Advanced Trucking, Inc.",
+    isBlankTemplate: true,
+    tags: ["emergency", "contact", "medical"]
   },
   {
     id: "driver-bank-info-template",
     title: "Bank Information Template",
+    cabinet: "Driver Qualification Files",
+    section: "Blank Templates",
     category: "Driver Qualification Files",
-    type: "template",
+    type: "form",
     audience: ["driver", "manager", "finance"],
     status: "template",
     description: "Blank bank information template for direct deposit",
     href: "/generated/templates/driver-docs/bank-information-template.html",
-    source: "template",
-    group: "Blank Templates"
+    sourceAuthenticity: "official_template",
+    documentOwner: "employer",
+    employerName: "Delta Advanced Trucking, Inc.",
+    isBlankTemplate: true,
+    tags: ["banking", "direct", "deposit"]
   },
   {
     id: "driver-road-test-template",
     title: "Road Test Certificate Template",
+    cabinet: "Driver Qualification Files",
+    section: "Blank Templates",
     category: "Driver Qualification Files",
-    type: "template",
+    type: "form",
     audience: ["driver", "manager", "hr", "safety"],
     status: "template",
     description: "Blank road test evaluation and certification template",
     href: "/generated/templates/driver-docs/road-test-certificate-template.html",
-    source: "template",
-    group: "Blank Templates"
+    sourceAuthenticity: "official_template",
+    documentOwner: "employer",
+    employerName: "Delta Advanced Trucking, Inc.",
+    isBlankTemplate: true,
+    tags: ["road", "test", "evaluation"]
   },
   {
     id: "driver-employment-verification-template",
     title: "Employment Verification Template",
+    cabinet: "Driver Qualification Files",
+    section: "Blank Templates",
     category: "Driver Qualification Files",
-    type: "template",
+    type: "form",
     audience: ["driver", "manager", "hr"],
     status: "template",
     description: "Blank employment verification and history template",
     href: "/generated/templates/driver-docs/employment-verification-template.html",
-    source: "template",
-    group: "Blank Templates"
+    sourceAuthenticity: "official_template",
+    documentOwner: "employer",
+    employerName: "Delta Advanced Trucking, Inc.",
+    isBlankTemplate: true,
+    tags: ["employment", "verification", "history"]
   },
   {
     id: "driver-safety-policy-template",
     title: "Safety Policy Acknowledgment Template",
+    cabinet: "Driver Qualification Files",
+    section: "Blank Templates",
     category: "Driver Qualification Files",
-    type: "template",
+    type: "form",
     audience: ["driver", "manager", "hr", "safety"],
     status: "template",
     description: "Blank safety policy acknowledgment and certification template",
     href: "/generated/templates/driver-docs/safety-policy-acknowledgment-template.html",
-    source: "template",
-    group: "Blank Templates"
+    sourceAuthenticity: "official_template",
+    documentOwner: "employer",
+    employerName: "Delta Advanced Trucking, Inc.",
+    isBlankTemplate: true,
+    tags: ["safety", "policy", "acknowledgment"]
   },
   // Driver Qualification Files - Completed Demo Samples
   {
-    id: "driver-cdl-sample",
+    id: "driver-cdl-sample-john-carter",
     title: "CDL Completed Sample — John Carter",
+    cabinet: "Driver Qualification Files",
+    section: "Completed Demo Samples",
     category: "Driver Qualification Files",
     type: "driver-file",
     audience: ["driver", "manager", "hr", "safety"],
     status: "available",
     description: "Completed CDL verification sample for demonstration purposes",
     href: "/generated/drivers/DRV-001/cdl.html",
-    source: "demo",
-    group: "Completed Demo Samples"
+    sourceAuthenticity: "generated_from_template",
+    documentOwner: "employer",
+    employerName: "Delta Advanced Trucking, Inc.",
+    isCompletedSample: true,
+    templateHref: "/generated/templates/driver-docs/cdl-template.html",
+    tags: ["sample", "completed", "demo"]
   },
   {
-    id: "driver-medical-sample",
+    id: "driver-medical-sample-john-carter",
     title: "Medical Card Completed Sample — John Carter",
+    cabinet: "Driver Qualification Files",
+    section: "Completed Demo Samples",
     category: "Driver Qualification Files",
     type: "driver-file",
     audience: ["driver", "manager", "hr", "safety"],
     status: "available",
     description: "Completed medical card sample for demonstration purposes",
     href: "/generated/drivers/DRV-001/medical-card.html",
-    source: "demo",
-    group: "Completed Demo Samples"
+    sourceAuthenticity: "generated_from_template",
+    documentOwner: "employer",
+    employerName: "Delta Advanced Trucking, Inc.",
+    isCompletedSample: true,
+    templateHref: "/generated/templates/driver-docs/medical-card-template.html",
+    tags: ["sample", "completed", "demo"]
   },
   {
-    id: "driver-mvr-sample",
+    id: "driver-mvr-sample-john-carter",
     title: "MVR Completed Sample — John Carter",
+    cabinet: "Driver Qualification Files",
+    section: "Completed Demo Samples",
     category: "Driver Qualification Files",
     type: "driver-file",
     audience: ["driver", "manager", "hr", "safety"],
     status: "available",
     description: "Completed MVR sample for demonstration purposes",
     href: "/generated/drivers/DRV-001/mvr.html",
-    source: "demo",
-    group: "Completed Demo Samples"
+    sourceAuthenticity: "generated_from_template",
+    documentOwner: "employer",
+    employerName: "Delta Advanced Trucking, Inc.",
+    isCompletedSample: true,
+    templateHref: "/generated/templates/driver-docs/mvr-template.html",
+    tags: ["sample", "completed", "demo"]
   },
   {
-    id: "driver-clearinghouse-sample",
+    id: "driver-clearinghouse-sample-john-carter",
     title: "FMCSA Completed Sample — John Carter",
+    cabinet: "Driver Qualification Files",
+    section: "Completed Demo Samples",
     category: "Driver Qualification Files",
     type: "driver-file",
     audience: ["driver", "manager", "hr", "safety"],
     status: "available",
     description: "Completed FMCSA clearinghouse sample for demonstration purposes",
     href: "/generated/drivers/DRV-001/fmcsa-compliance.html",
-    source: "demo",
-    group: "Completed Demo Samples"
+    sourceAuthenticity: "generated_from_template",
+    documentOwner: "employer",
+    employerName: "Delta Advanced Trucking, Inc.",
+    isCompletedSample: true,
+    templateHref: "/generated/templates/driver-docs/fmcsa-compliance-template.html",
+    tags: ["sample", "completed", "demo"]
   },
   {
-    id: "driver-w9-sample",
+    id: "driver-w9-sample-john-carter",
     title: "W-9 Completed Sample — John Carter",
+    cabinet: "Driver Qualification Files",
+    section: "Completed Demo Samples",
     category: "Driver Qualification Files",
     type: "driver-file",
     audience: ["driver", "manager", "finance"],
     status: "available",
     description: "Completed W-9 sample for demonstration purposes",
     href: "/generated/drivers/DRV-001/w9.html",
-    source: "demo",
-    group: "Completed Demo Samples"
+    sourceAuthenticity: "generated_from_template",
+    documentOwner: "employer",
+    employerName: "Delta Advanced Trucking, Inc.",
+    isCompletedSample: true,
+    templateHref: "/generated/templates/driver-docs/w9-template.html",
+    tags: ["sample", "completed", "demo"]
   },
   {
     id: "driver-application",
     title: "Driver Application",
+    cabinet: "Driver Qualification Files",
+    section: "Needs Review / Coming Later",
     category: "Driver Qualification Files",
     type: "form",
     audience: ["driver", "manager", "hr"],
     status: "needs_review",
     description: "Standard driver employment application form",
-    source: "demo",
-    group: "Needs Review / Coming Later"
+    sourceAuthenticity: "coming_soon",
+    documentOwner: "employer",
+    employerName: "Delta Advanced Trucking, Inc.",
+    tags: ["application", "employment", "coming"]
   },
   {
-    id: "driver-road-test-sample",
+    id: "driver-road-test-sample-john-carter",
     title: "Road Test Completed Sample — John Carter",
+    cabinet: "Driver Qualification Files",
+    section: "Completed Demo Samples",
     category: "Driver Qualification Files",
     type: "form",
     audience: ["driver", "manager", "hr", "safety"],
     status: "available",
     description: "Completed road test sample for demonstration purposes",
     href: "/generated/drivers/DRV-001/road-test-certificate.html",
-    source: "demo",
-    group: "Completed Demo Samples"
+    sourceAuthenticity: "generated_from_template",
+    documentOwner: "employer",
+    employerName: "Delta Advanced Trucking, Inc.",
+    isCompletedSample: true,
+    templateHref: "/generated/templates/driver-docs/road-test-certificate-template.html",
+    tags: ["sample", "completed", "demo"]
   },
   {
-    id: "driver-employment-verification-sample",
+    id: "driver-employment-verification-sample-john-carter",
     title: "Employment Verification Completed Sample — John Carter",
+    cabinet: "Driver Qualification Files",
+    section: "Completed Demo Samples",
     category: "Driver Qualification Files",
     type: "form",
     audience: ["driver", "manager", "hr"],
     status: "available",
     description: "Completed employment verification sample for demonstration purposes",
     href: "/generated/drivers/DRV-001/employment_verification.html",
-    source: "demo",
-    group: "Completed Demo Samples"
+    sourceAuthenticity: "generated_from_template",
+    documentOwner: "employer",
+    employerName: "Delta Advanced Trucking, Inc.",
+    isCompletedSample: true,
+    templateHref: "/generated/templates/driver-docs/employment-verification-template.html",
+    tags: ["sample", "completed", "demo"]
   },
   {
     id: "driver-annual-review",
     title: "Annual Review",
+    cabinet: "Driver Qualification Files",
+    section: "Needs Review / Coming Later",
     category: "Driver Qualification Files",
     type: "form",
     audience: ["driver", "manager", "hr"],
     status: "needs_review",
     description: "Annual driver performance and compliance review",
-    source: "demo",
-    group: "Needs Review / Coming Later"
+    sourceAuthenticity: "coming_soon",
+    documentOwner: "employer",
+    employerName: "Delta Advanced Trucking, Inc.",
+    tags: ["annual", "review", "performance"]
   },
   {
-    id: "driver-emergency-contacts-sample",
+    id: "driver-emergency-contacts-sample-john-carter",
     title: "Emergency Contacts Completed Sample — John Carter",
+    cabinet: "Driver Qualification Files",
+    section: "Completed Demo Samples",
     category: "Driver Qualification Files",
     type: "driver-file",
     audience: ["driver", "manager", "dispatcher"],
     status: "available",
     description: "Completed emergency contacts sample for demonstration purposes",
     href: "/generated/drivers/DRV-001/emergency-contact.html",
-    source: "demo",
-    group: "Completed Demo Samples"
+    sourceAuthenticity: "generated_from_template",
+    documentOwner: "employer",
+    employerName: "Delta Advanced Trucking, Inc.",
+    isCompletedSample: true,
+    templateHref: "/generated/templates/driver-docs/emergency-contact-template.html",
+    tags: ["sample", "completed", "demo"]
   },
   {
     id: "driver-profile",
     title: "Driver Profile",
+    cabinet: "Driver Qualification Files",
+    section: "Needs Review / Coming Later",
     category: "Driver Qualification Files",
     type: "driver-file",
     audience: ["driver", "manager", "hr"],
     status: "needs_review",
     description: "Complete driver profile and documentation access",
     href: "/generated/drivers/DRV-001/john-carter-profile-dashboard.html",
-    source: "demo",
-    group: "Needs Review / Coming Later"
+    sourceAuthenticity: "coming_soon",
+    documentOwner: "employer",
+    employerName: "Delta Advanced Trucking, Inc.",
+    tags: ["profile", "dashboard", "coming"]
   },
   {
-    id: "driver-bank-info-sample",
+    id: "driver-bank-info-sample-john-carter",
     title: "Bank Information Completed Sample — John Carter",
+    cabinet: "Driver Qualification Files",
+    section: "Completed Demo Samples",
     category: "Driver Qualification Files",
     type: "driver-file",
     audience: ["driver", "manager", "finance"],
     status: "available",
     description: "Completed bank information sample for demonstration purposes",
     href: "/generated/drivers/DRV-001/bank-information.html",
-    source: "demo",
-    group: "Completed Demo Samples"
+    sourceAuthenticity: "generated_from_template",
+    documentOwner: "employer",
+    employerName: "Delta Advanced Trucking, Inc.",
+    isCompletedSample: true,
+    templateHref: "/generated/templates/driver-docs/bank-information-template.html",
+    tags: ["sample", "completed", "demo"]
   },
   {
     id: "driver-benefits",
     title: "Benefits Enrollment",
+    cabinet: "Driver Qualification Files",
+    section: "Needs Review / Coming Later",
     category: "Driver Qualification Files",
     type: "form",
     audience: ["driver", "manager", "hr"],
     status: "needs_review",
     description: "Employee benefits enrollment and management",
-    source: "demo",
-    group: "Needs Review / Coming Later"
-  },
-  {
-    id: "driver-withholding",
-    title: "Family Support Withholding Summary",
-    category: "Driver Qualification Files",
-    type: "policy",
-    audience: ["driver", "manager", "hr", "finance"],
-    status: "available",
-    description: "Family support withholding and deduction documentation",
-    href: "/generated/company-operations-vault/04-payroll-compensation-and-deductions-policy.html",
-    source: "generated",
-    group: "Company Policies & SOPs"
-  },
-  {
-    id: "driver-policy-acknowledgment-sample",
-    title: "Safety Policy Acknowledgment Completed Sample — John Carter",
-    category: "Driver Qualification Files",
-    type: "form",
-    audience: ["driver", "manager", "hr", "safety"],
-    status: "available",
-    description: "Completed safety policy acknowledgment sample for demonstration purposes",
-    href: "/generated/drivers/DRV-001/hr-payroll/employee-handbook-acknowledgment.html",
-    source: "demo",
-    group: "Completed Demo Samples"
+    sourceAuthenticity: "coming_soon",
+    documentOwner: "employer",
+    employerName: "Delta Advanced Trucking, Inc.",
+    tags: ["benefits", "enrollment", "coming"]
   },
 
   // Secondary Driver Documents
   {
     id: "driver-coaching-notes",
     title: "Coaching Notes",
+    cabinet: "Secondary Driver Documents",
+    section: "Needs Review / Coming Later",
     category: "Secondary Driver Documents",
     type: "driver-file",
     audience: ["driver", "manager", "safety"],
     status: "needs_review",
     description: "Driver coaching documentation and follow-up records",
-    source: "demo"
+    sourceAuthenticity: "coming_soon",
+    documentOwner: "employer",
+    employerName: "Delta Advanced Trucking, Inc.",
+    tags: ["coaching", "documentation", "coming"]
   },
   {
     id: "driver-safety-scorecards",
     title: "Safety Scorecards",
+    cabinet: "Secondary Driver Documents",
+    section: "Needs Review / Coming Later",
     category: "Secondary Driver Documents",
     type: "driver-file",
     audience: ["driver", "manager", "safety"],
     status: "needs_review",
     description: "Monthly safety performance metrics and trends",
-    source: "demo"
+    sourceAuthenticity: "coming_soon",
+    documentOwner: "employer",
+    employerName: "Delta Advanced Trucking, Inc.",
+    tags: ["safety", "performance", "coming"]
   },
   {
-    id: "driver-incident-history",
-    title: "Incident History",
+    id: "driver-incident-history-john-carter",
+    title: "Incident History — John Carter Sample",
+    cabinet: "Secondary Driver Documents",
+    section: "Completed Demo Samples",
     category: "Secondary Driver Documents",
     type: "driver-file",
     audience: ["driver", "manager", "safety"],
     status: "available",
-    description: "Complete incident and violation history tracking",
+    description: "Complete incident and violation history tracking sample",
     href: "/generated/drivers/DRV-001/incident-report.html",
-    source: "generated"
+    sourceAuthenticity: "generated_from_template",
+    documentOwner: "employer",
+    employerName: "Delta Advanced Trucking, Inc.",
+    isCompletedSample: true,
+    tags: ["sample", "incident", "history"]
   },
   {
     id: "driver-training-completions",
     title: "Training Completion Records",
+    cabinet: "Secondary Driver Documents",
+    section: "Needs Review / Coming Later",
     category: "Secondary Driver Documents",
     type: "driver-file",
     audience: ["driver", "manager", "hr", "safety"],
-    status: "coming_soon",
+    status: "needs_review",
     description: "Training course completion certificates and records",
-    source: "demo"
+    sourceAuthenticity: "coming_soon",
+    documentOwner: "employer",
+    employerName: "Delta Advanced Trucking, Inc.",
+    tags: ["training", "completion", "coming"]
   },
   {
     id: "driver-performance-reviews",
     title: "Performance Reviews",
+    cabinet: "Secondary Driver Documents",
+    section: "Needs Review / Coming Later",
     category: "Secondary Driver Documents",
     type: "form",
     audience: ["driver", "manager", "hr"],
-    status: "coming_soon",
+    status: "needs_review",
     description: "Annual performance evaluation forms and documentation",
-    source: "demo"
+    sourceAuthenticity: "coming_soon",
+    documentOwner: "employer",
+    employerName: "Delta Advanced Trucking, Inc.",
+    tags: ["performance", "review", "coming"]
   },
   {
     id: "driver-disciplinary-notices",
     title: "Disciplinary Notices",
+    cabinet: "Secondary Driver Documents",
+    section: "Needs Review / Coming Later",
     category: "Secondary Driver Documents",
     type: "form",
     audience: ["driver", "manager", "hr"],
-    status: "coming_soon",
+    status: "needs_review",
     description: "Disciplinary action notices and documentation",
-    source: "demo"
+    sourceAuthenticity: "coming_soon",
+    documentOwner: "employer",
+    employerName: "Delta Advanced Trucking, Inc.",
+    tags: ["disciplinary", "notices", "coming"]
   },
   {
     id: "driver-corrective-action",
     title: "Corrective Action Plans",
+    cabinet: "Secondary Driver Documents",
+    section: "Needs Review / Coming Later",
     category: "Secondary Driver Documents",
     type: "form",
     audience: ["driver", "manager", "hr", "safety"],
-    status: "coming_soon",
+    status: "needs_review",
     description: "Performance improvement and corrective action plans",
-    source: "demo"
+    sourceAuthenticity: "coming_soon",
+    documentOwner: "employer",
+    employerName: "Delta Advanced Trucking, Inc.",
+    tags: ["corrective", "action", "coming"]
   },
   {
     id: "driver-communication-logs",
     title: "Driver Communication Logs",
+    cabinet: "Secondary Driver Documents",
+    section: "Needs Review / Coming Later",
     category: "Secondary Driver Documents",
     type: "form",
     audience: ["driver", "manager", "dispatcher"],
-    status: "coming_soon",
+    status: "needs_review",
     description: "Driver communication and interaction documentation logs",
-    source: "demo"
+    sourceAuthenticity: "coming_soon",
+    documentOwner: "employer",
+    employerName: "Delta Advanced Trucking, Inc.",
+    tags: ["communication", "logs", "coming"]
   },
 
   // Dispatch & Load Operations
   {
     id: "dispatch-load-intake",
-    title: "Load Intake Form",
+    title: "Load Tender / Order Sheet",
+    cabinet: "Dispatch & Load Operations",
+    section: "BOF Dispatch Templates",
     category: "Dispatch & Load Operations",
     type: "form",
     audience: ["dispatcher", "manager"],
     status: "available",
     description: "Standard load booking and information collection form",
     href: "/documents/template-packs/load-tender-order-sheet.html",
-    source: "template"
+    sourceAuthenticity: "official_template",
+    documentOwner: "platform",
+    employerName: "Delta Advanced Trucking, Inc.",
+    tags: ["load", "intake", "booking"]
   },
   {
     id: "dispatch-pretrip-planning",
     title: "Pre-Trip Planning Checklist",
+    cabinet: "Dispatch & Load Operations",
+    section: "Needs Review / Coming Later",
     category: "Dispatch & Load Operations",
     type: "checklist",
     audience: ["dispatcher", "driver", "safety"],
     status: "needs_review",
     description: "Comprehensive pre-trip planning and route preparation checklist",
-    source: "template"
+    sourceAuthenticity: "coming_soon",
+    documentOwner: "employer",
+    employerName: "Delta Advanced Trucking, Inc.",
+    tags: ["pretrip", "planning", "coming"]
   },
   {
-    id: "dispatch-pretrip-inspection",
-    title: "Pre-Trip Inspection Checklist",
+    id: "dispatch-vehicle-inspection",
+    title: "Vehicle Inspection Checklist",
+    cabinet: "Dispatch & Load Operations",
+    section: "Needs Review / Coming Later",
     category: "Dispatch & Load Operations",
     type: "checklist",
     audience: ["dispatcher", "driver", "safety"],
     status: "needs_review",
     description: "Vehicle inspection and safety check before departure",
-    source: "demo"
+    sourceAuthenticity: "coming_soon",
+    documentOwner: "employer",
+    employerName: "Delta Advanced Trucking, Inc.",
+    tags: ["vehicle", "inspection", "coming"]
   },
   {
     id: "dispatch-route-readiness",
     title: "Route / Dispatch Readiness Checklist",
+    cabinet: "Dispatch & Load Operations",
+    section: "Completed Demo Samples",
     category: "Dispatch & Load Operations",
     type: "checklist",
     audience: ["dispatcher", "driver", "manager"],
-    status: "needs_review",
-    description: "Route planning and dispatch readiness verification checklist",
-    source: "demo"
-  },
-  {
-    id: "dispatch-cargo-photo",
-    title: "Cargo Photo Checklist",
-    category: "Dispatch & Load Operations",
-    type: "checklist",
-    audience: ["dispatcher", "driver", "safety"],
-    status: "needs_review",
-    description: "Required cargo photography documentation and damage prevention",
-    source: "demo"
-  },
-  {
-    id: "dispatch-seal-verification",
-    title: "Seal Verification Checklist",
-    category: "Dispatch & Load Operations",
-    type: "checklist",
-    audience: ["dispatcher", "driver", "safety"],
-    status: "needs_review",
-    description: "Trailer seal verification and security procedures",
-    source: "demo"
+    status: "available",
+    description: "Comprehensive pre-trip planning and route assessment checklist sample",
+    href: "/generated/loads/L001/pretrip-planning.html",
+    sourceAuthenticity: "generated_from_template",
+    documentOwner: "employer",
+    employerName: "Delta Advanced Trucking, Inc.",
+    isCompletedSample: true,
+    tags: ["sample", "pretrip", "planning"]
   },
   {
     id: "dispatch-rate-confirmation",
-    title: "Rate Confirmation Template",
-    category: "Dispatch & Load Operations",
-    type: "template",
-    audience: ["dispatcher", "manager", "customer", "finance"],
-    status: "available",
-    description: "Standard rate confirmation and pricing agreement template",
-    href: "/documents/template-packs/rate-confirmation.html",
-    source: "template"
-  },
-  {
-    id: "dispatch-bol",
-    title: "BOL Template",
-    category: "Dispatch & Load Operations",
-    type: "template",
-    audience: ["dispatcher", "driver", "customer", "finance"],
-    status: "available",
-    description: "Standard bill of lading document template",
-    href: "/documents/template-packs/bill-of-lading.html",
-    source: "template"
-  },
-  {
-    id: "dispatch-pod",
-    title: "POD Template",
-    category: "Dispatch & Load Operations",
-    type: "template",
-    audience: ["dispatcher", "driver", "customer", "finance"],
-    status: "available",
-    description: "Proof of delivery form with signature capture",
-    href: "/documents/template-packs/proof-of-delivery.html",
-    source: "template"
-  },
-  {
-    id: "dispatch-posttrip-protocol",
-    title: "Post-Trip Closeout Protocol",
-    category: "Dispatch & Load Operations",
-    type: "sop",
-    audience: ["dispatcher", "driver", "manager"],
-    status: "needs_review",
-    description: "Standard post-trip documentation and closeout procedures",
-    source: "demo"
-  },
-  {
-    id: "dispatch-lumper-receipt",
-    title: "Lumper Receipt Form",
-    category: "Dispatch & Load Operations",
-    type: "form",
-    audience: ["dispatcher", "driver", "manager", "finance"],
-    status: "needs_review",
-    description: "Lumper service receipt and reimbursement documentation",
-    source: "demo"
-  },
-  {
-    id: "dispatch-detention",
-    title: "Detention Form",
-    category: "Dispatch & Load Operations",
-    type: "form",
-    audience: ["dispatcher", "driver", "manager", "finance"],
-    status: "needs_review",
-    description: "Detention time tracking and charge documentation",
-    source: "demo"
-  },
-  {
-    id: "dispatch-accessorial",
-    title: "Accessorial Approval Form",
-    category: "Dispatch & Load Operations",
-    type: "form",
-    audience: ["dispatcher", "manager", "finance"],
-    status: "needs_review",
-    description: "Accessorial charges approval and documentation form",
-    source: "demo"
-  },
-  {
-    id: "dispatch-work-order",
-    title: "Work Order Template",
+    title: "Rate Confirmation",
+    cabinet: "Dispatch & Load Operations",
+    section: "BOF Dispatch Templates",
     category: "Dispatch & Load Operations",
     type: "template",
     audience: ["dispatcher", "manager", "customer"],
-    status: "template",
-    description: "Service work order and operational scope template",
+    status: "available",
+    description: "Rate confirmation and pricing agreement documentation",
+    href: "/documents/template-packs/rate-confirmation.html",
+    sourceAuthenticity: "official_template",
+    documentOwner: "platform",
+    employerName: "Delta Advanced Trucking, Inc.",
+    tags: ["rate", "confirmation", "pricing"]
+  },
+  {
+    id: "dispatch-bill-of-lading",
+    title: "Bill of Lading",
+    cabinet: "Dispatch & Load Operations",
+    section: "BOF Dispatch Templates",
+    category: "Dispatch & Load Operations",
+    type: "template",
+    audience: ["dispatcher", "driver", "customer"],
+    status: "available",
+    description: "Standard bill of lading for freight documentation",
+    href: "/documents/template-packs/bill-of-lading.html",
+    sourceAuthenticity: "official_template",
+    documentOwner: "platform",
+    employerName: "Delta Advanced Trucking, Inc.",
+    tags: ["bill", "lading", "freight"]
+  },
+  {
+    id: "dispatch-proof-delivery",
+    title: "Proof of Delivery",
+    cabinet: "Dispatch & Load Operations",
+    section: "BOF Dispatch Templates",
+    category: "Dispatch & Load Operations",
+    type: "template",
+    audience: ["dispatcher", "driver", "customer"],
+    status: "available",
+    description: "Proof of delivery documentation and signature collection",
+    href: "/documents/template-packs/proof-of-delivery.html",
+    sourceAuthenticity: "official_template",
+    documentOwner: "platform",
+    employerName: "Delta Advanced Trucking, Inc.",
+    tags: ["proof", "delivery", "signature"]
+  },
+  {
+    id: "dispatch-work-order-sample",
+    title: "Work Order — L001 Sample",
+    cabinet: "Dispatch & Load Operations",
+    section: "Completed Demo Samples",
+    category: "Dispatch & Load Operations",
+    type: "template",
+    audience: ["dispatcher", "driver", "customer"],
+    status: "available",
+    description: "Work order sample for specialized services and requirements",
     href: "/generated/loads/L001/work-order.html",
-    source: "generated"
+    sourceAuthenticity: "generated_from_template",
+    documentOwner: "employer",
+    employerName: "Delta Advanced Trucking, Inc.",
+    isCompletedSample: true,
+    tags: ["sample", "work", "order"]
+  },
+  {
+    id: "dispatch-insurance-notice-sample",
+    title: "Insurance Notice — L001 Sample",
+    cabinet: "Dispatch & Load Operations",
+    section: "Completed Demo Samples",
+    category: "Dispatch & Load Operations",
+    type: "template",
+    audience: ["dispatcher", "customer", "legal"],
+    status: "available",
+    description: "Insurance coverage and claims notice sample",
+    href: "/generated/loads/L001/insurance-notification.html",
+    sourceAuthenticity: "generated_from_template",
+    documentOwner: "employer",
+    employerName: "Delta Advanced Trucking, Inc.",
+    isCompletedSample: true,
+    tags: ["sample", "insurance", "notice"]
+  },
+  {
+    id: "dispatch-invoice-sample",
+    title: "Invoice — L001 Sample",
+    cabinet: "Dispatch & Load Operations",
+    section: "Completed Demo Samples",
+    category: "Dispatch & Load Operations",
+    type: "template",
+    audience: ["dispatcher", "finance", "customer"],
+    status: "available",
+    description: "Standard invoice sample for billing and settlements",
+    href: "/generated/loads/L001/invoice.html",
+    sourceAuthenticity: "generated_from_template",
+    documentOwner: "employer",
+    employerName: "Delta Advanced Trucking, Inc.",
+    isCompletedSample: true,
+    tags: ["sample", "invoice", "billing"]
+  },
+  {
+    id: "dispatch-claim-intake",
+    title: "Claim Intake Form",
+    cabinet: "Dispatch & Load Operations",
+    section: "BOF Dispatch Templates",
+    category: "Dispatch & Load Operations",
+    type: "form",
+    audience: ["dispatcher", "safety", "legal"],
+    status: "available",
+    description: "Initial claim reporting and information collection form",
+    href: "/documents/template-packs/claim-intake-form.html",
+    sourceAuthenticity: "official_template",
+    documentOwner: "platform",
+    employerName: "Delta Advanced Trucking, Inc.",
+    tags: ["claim", "intake", "reporting"]
+  },
+  {
+    id: "dispatch-master-agreement-sample",
+    title: "Master Agreement — L001 Sample",
+    cabinet: "Dispatch & Load Operations",
+    section: "Completed Demo Samples",
+    category: "Dispatch & Load Operations",
+    type: "contract",
+    audience: ["dispatcher", "manager", "customer", "legal"],
+    status: "available",
+    description: "Master service agreement sample for customer relationships",
+    href: "/generated/loads/L001/master-agreement-reference.html",
+    sourceAuthenticity: "generated_from_template",
+    documentOwner: "employer",
+    employerName: "Delta Advanced Trucking, Inc.",
+    isCompletedSample: true,
+    tags: ["sample", "master", "agreement"]
   },
   {
     id: "dispatch-schedule",
     title: "Schedule Template",
+    cabinet: "Dispatch & Load Operations",
+    section: "Needs Review / Coming Later",
     category: "Dispatch & Load Operations",
     type: "template",
     audience: ["dispatcher", "manager", "customer"],
     status: "needs_review",
     description: "Service schedule and delivery timeline template",
-    source: "demo"
+    sourceAuthenticity: "coming_soon",
+    documentOwner: "employer",
+    employerName: "Delta Advanced Trucking, Inc.",
+    tags: ["schedule", "delivery", "coming"]
   },
 
   // Safety / Claims / Insurance
   {
     id: "safety-accident-report",
     title: "Accident Report Form",
+    cabinet: "Safety / Claims / Insurance",
+    section: "Claims Forms",
     category: "Safety / Claims / Insurance",
     type: "form",
     audience: ["driver", "manager", "safety", "legal"],
     status: "needs_review",
     description: "Comprehensive accident reporting and documentation form",
-    source: "template"
+    sourceAuthenticity: "coming_soon",
+    documentOwner: "employer",
+    employerName: "Delta Advanced Trucking, Inc.",
+    tags: ["accident", "report", "coming"]
   },
   {
     id: "safety-incident-response",
     title: "Incident Response Checklist",
+    cabinet: "Safety / Claims / Insurance",
+    section: "Needs Review / Coming Later",
     category: "Safety / Claims / Insurance",
     type: "checklist",
     audience: ["driver", "manager", "safety", "legal"],
     status: "needs_review",
     description: "Step-by-step incident response and documentation checklist",
-    source: "demo"
+    sourceAuthenticity: "coming_soon",
+    documentOwner: "employer",
+    employerName: "Delta Advanced Trucking, Inc.",
+    tags: ["incident", "response", "coming"]
   },
   {
-    id: "claims-intake",
+    id: "claims-intake-safety",
     title: "Claim Intake Form",
+    cabinet: "Safety / Claims / Insurance",
+    section: "Claims Forms",
     category: "Safety / Claims / Insurance",
     type: "form",
     audience: ["manager", "safety", "customer", "legal"],
     status: "available",
     description: "Standard cargo damage claim intake and documentation",
     href: "/documents/template-packs/claim-intake-form.html",
-    source: "template"
+    sourceAuthenticity: "official_template",
+    documentOwner: "platform",
+    employerName: "Delta Advanced Trucking, Inc.",
+    tags: ["claim", "intake", "cargo"]
   },
   {
     id: "claims-insurance-claim",
     title: "Insurance Claim Form",
+    cabinet: "Safety / Claims / Insurance",
+    section: "Needs Review / Coming Later",
     category: "Safety / Claims / Insurance",
     type: "form",
     audience: ["manager", "safety", "legal"],
     status: "needs_review",
     description: "Insurance claim submission and documentation form",
-    source: "demo"
+    sourceAuthenticity: "coming_soon",
+    documentOwner: "employer",
+    employerName: "Delta Advanced Trucking, Inc.",
+    tags: ["insurance", "claim", "coming"]
   },
   {
     id: "claims-police-report",
     title: "Police Report Request Form",
+    cabinet: "Safety / Claims / Insurance",
+    section: "Needs Review / Coming Later",
     category: "Safety / Claims / Insurance",
     type: "form",
     audience: ["driver", "manager", "safety", "legal"],
-    status: "coming_soon",
+    status: "needs_review",
     description: "Police incident report request and documentation template",
-    source: "demo"
+    sourceAuthenticity: "coming_soon",
+    documentOwner: "employer",
+    employerName: "Delta Advanced Trucking, Inc.",
+    tags: ["police", "report", "coming"]
   },
   {
     id: "safety-driver-statement",
     title: "Driver Statement Form",
+    cabinet: "Safety / Claims / Insurance",
+    section: "Claims Forms",
     category: "Safety / Claims / Insurance",
     type: "form",
     audience: ["driver", "manager", "safety", "legal"],
     status: "needs_review",
     description: "Driver statement form for accident and incident reporting",
-    source: "template"
+    sourceAuthenticity: "coming_soon",
+    documentOwner: "employer",
+    employerName: "Delta Advanced Trucking, Inc.",
+    tags: ["driver", "statement", "coming"]
   },
   {
     id: "claims-witness-statement",
     title: "Witness Statement Form",
+    cabinet: "Safety / Claims / Insurance",
+    section: "Needs Review / Coming Later",
     category: "Safety / Claims / Insurance",
     type: "form",
     audience: ["driver", "manager", "safety", "legal"],
-    status: "coming_soon",
+    status: "needs_review",
     description: "Witness statement collection and documentation form",
-    source: "demo"
+    sourceAuthenticity: "coming_soon",
+    documentOwner: "employer",
+    employerName: "Delta Advanced Trucking, Inc.",
+    tags: ["witness", "statement", "coming"]
+  },
+  {
+    id: "claims-damage-estimate",
+    title: "Damage Estimate Form",
+    cabinet: "Safety / Claims / Insurance",
+    section: "Needs Review / Coming Later",
+    category: "Safety / Claims / Insurance",
+    type: "form",
+    audience: ["manager", "safety", "customer"],
+    status: "needs_review",
+    description: "Damage assessment and cost estimate documentation form",
+    sourceAuthenticity: "coming_soon",
+    documentOwner: "employer",
+    employerName: "Delta Advanced Trucking, Inc.",
+    tags: ["damage", "estimate", "coming"]
   },
   {
     id: "claims-photo-documentation",
     title: "Photo Documentation Checklist",
+    cabinet: "Safety / Claims / Insurance",
+    section: "Needs Review / Coming Later",
     category: "Safety / Claims / Insurance",
     type: "checklist",
-    audience: ["driver", "manager", "safety", "legal"],
+    audience: ["driver", "manager", "safety"],
     status: "needs_review",
-    description: "Required photo documentation for claims and incidents",
-    source: "demo"
+    description: "Photo documentation and evidence collection checklist for claims",
+    sourceAuthenticity: "coming_soon",
+    documentOwner: "employer",
+    employerName: "Delta Advanced Trucking, Inc.",
+    tags: ["photo", "documentation", "coming"]
   },
   {
-    id: "claims-preservation-letter",
-    title: "Preservation of Evidence Letter",
+    id: "claims-claim-packet",
+    title: "Claim Packet Template",
+    cabinet: "Safety / Claims / Insurance",
+    section: "Needs Review / Coming Later",
     category: "Safety / Claims / Insurance",
     type: "template",
-    audience: ["manager", "safety", "legal"],
-    status: "coming_soon",
-    description: "Evidence preservation and legal hold documentation",
-    source: "demo"
+    audience: ["manager", "safety", "customer", "legal"],
+    status: "needs_review",
+    description: "Complete claim packet template with all required documentation",
+    sourceAuthenticity: "coming_soon",
+    documentOwner: "employer",
+    employerName: "Delta Advanced Trucking, Inc.",
+    tags: ["claim", "packet", "coming"]
   },
   {
     id: "claims-collection-demand",
     title: "Collection & Demand Letter Templates",
+    cabinet: "Safety / Claims / Insurance",
+    section: "Needs Review / Coming Later",
     category: "Safety / Claims / Insurance",
     type: "template",
     audience: ["manager", "legal", "customer"],
     status: "needs_review",
     description: "Collection and demand letter templates for claims",
-    source: "template"
+    sourceAuthenticity: "coming_soon",
+    documentOwner: "employer",
+    employerName: "Delta Advanced Trucking, Inc.",
+    tags: ["collection", "demand", "coming"]
   },
   {
     id: "claims-insurance-notice",
     title: "Insurance Notice Letter",
+    cabinet: "Safety / Claims / Insurance",
+    section: "Claims Forms",
     category: "Safety / Claims / Insurance",
     type: "template",
     audience: ["manager", "safety", "legal"],
-    status: "template",
+    status: "available",
     description: "Insurance notification and claim reporting documentation",
     href: "/generated/loads/L001/insurance-notification.html",
-    source: "generated"
+    sourceAuthenticity: "generated_from_template",
+    documentOwner: "employer",
+    employerName: "Delta Advanced Trucking, Inc.",
+    isCompletedSample: true,
+    tags: ["insurance", "notice", "sample"]
   },
   {
     id: "claims-escalation-sop",
-    title: "Claims Escalation SOP",
+    title: "Delta Advanced Trucking, Inc. Insurance, Risk and Claims SOP",
+    cabinet: "Safety / Claims / Insurance",
+    section: "Company Policies & SOPs",
     category: "Safety / Claims / Insurance",
     type: "sop",
     audience: ["manager", "safety", "legal", "finance"],
     status: "available",
     description: "Standard operating procedures for claims escalation and resolution",
     href: "/generated/company-operations-vault/07-insurance-risk-and-claims-sop.html",
-    source: "generated"
+    sourceAuthenticity: "generated_from_template",
+    documentOwner: "employer",
+    employerName: "Delta Advanced Trucking, Inc.",
+    tags: ["claims", "escalation", "sop"]
   },
   {
     id: "safety-evidence-photos",
     title: "Safety Evidence Photos",
+    cabinet: "Safety / Claims / Insurance",
+    section: "Needs Review / Coming Later",
     category: "Safety / Claims / Insurance",
     type: "form",
     audience: ["driver", "manager", "safety"],
     status: "needs_review",
     description: "Individual safety evidence photos and documentation",
-    source: "demo"
-  },
-
-  // HR / Talent / Performance
-  {
-    id: "hr-recruiting-protocol",
-    title: "Recruiting Protocol",
-    category: "HR / Talent / Performance",
-    type: "sop",
-    audience: ["manager", "hr"],
-    status: "coming_soon",
-    description: "Standard driver recruiting and hiring procedures",
-    source: "demo"
+    sourceAuthenticity: "coming_soon",
+    documentOwner: "employer",
+    employerName: "Delta Advanced Trucking, Inc.",
+    tags: ["evidence", "photos", "coming"]
   },
   {
-    id: "hr-interview-scorecard",
-    title: "Interview Scorecard",
-    category: "HR / Talent / Performance",
-    type: "form",
-    audience: ["manager", "hr"],
-    status: "coming_soon",
-    description: "Structured interview evaluation and scoring form",
-    source: "demo"
-  },
-  {
-    id: "hr-onboarding-checklist",
-    title: "HR Onboarding and Offboarding Checklist",
-    category: "HR / Talent / Performance",
-    type: "checklist",
-    audience: ["driver", "manager", "hr"],
-    status: "available",
-    description: "Comprehensive new driver onboarding and employee offboarding procedures",
-    href: "/generated/company-operations-vault/03-hr-onboarding-and-offboarding-checklist.html",
-    source: "generated"
-  },
-  {
-    id: "hr-onboarding-videos",
-    title: "Onboarding Video Links",
-    category: "HR / Talent / Performance",
-    type: "video",
-    audience: ["driver", "manager", "hr"],
-    status: "external_resource",
-    description: "External onboarding video training resources and links",
-    source: "external"
-  },
-  {
-    id: "hr-training-completion",
-    title: "Training Completion Logs",
-    category: "HR / Talent / Performance",
-    type: "form",
-    audience: ["driver", "manager", "hr"],
-    status: "coming_soon",
-    description: "Training course completion tracking and certification logs",
-    source: "demo"
-  },
-  {
-    id: "hr-employee-handbook",
-    title: "Employee Handbook",
-    category: "HR / Talent / Performance",
-    type: "policy",
-    audience: ["driver", "manager", "hr", "owner"],
-    status: "available",
-    description: "Complete employee policies and procedures handbook",
-    href: "/generated/company-operations-vault/01-employee-handbook-template.html",
-    source: "generated"
-  },
-  {
-    id: "hr-performance-review",
-    title: "Performance Review Form",
-    category: "HR / Talent / Performance",
-    type: "form",
-    audience: ["driver", "manager", "hr"],
-    status: "coming_soon",
-    description: "Annual performance evaluation forms and documentation",
-    source: "demo"
-  },
-  {
-    id: "hr-performance-improvement",
-    title: "Performance Improvement Plan",
-    category: "HR / Talent / Performance",
-    type: "form",
-    audience: ["driver", "manager", "hr"],
-    status: "coming_soon",
-    description: "Structured performance improvement plan template",
-    source: "demo"
-  },
-  {
-    id: "hr-coaching-template",
-    title: "Coaching Template",
-    category: "HR / Talent / Performance",
-    type: "form",
-    audience: ["manager", "hr", "safety"],
-    status: "needs_review",
-    description: "Driver coaching documentation and action plan template",
-    source: "demo"
-  },
-  {
-    id: "hr-termination-checklist",
-    title: "Termination/Offboarding Checklist",
-    category: "HR / Talent / Performance",
-    type: "checklist",
-    audience: ["manager", "hr"],
-    status: "available",
-    description: "Driver termination and offboarding procedures",
-    href: "/generated/company-operations-vault/03-hr-onboarding-and-offboarding-checklist.html",
-    source: "generated"
-  },
-
-  // Policies & SOPs
-  {
-    id: "policy-operations-sop",
-    title: "Operations SOP",
-    category: "Policies & SOPs",
-    type: "sop",
-    audience: ["manager", "dispatcher", "driver", "owner"],
-    status: "coming_soon",
-    description: "Core fleet operations standard operating procedures",
-    source: "demo"
-  },
-  {
-    id: "policy-dispatch-sop",
-    title: "Dispatch SOP",
-    category: "Policies & SOPs",
-    type: "sop",
-    audience: ["dispatcher", "manager", "owner"],
-    status: "coming_soon",
-    description: "Dispatch department standard operating procedures",
-    source: "demo"
-  },
-  {
-    id: "policy-safety-sop",
-    title: "Safety Compliance Governance Policy",
-    category: "Policies & SOPs",
-    type: "policy",
-    audience: ["driver", "manager", "safety", "owner"],
-    status: "available",
-    description: "Comprehensive safety policies, compliance procedures, and governance framework",
-    href: "/generated/company-operations-vault/10-safety-compliance-governance-policy.html",
-    source: "generated"
-  },
-  {
-    id: "policy-claims-sop",
-    title: "Insurance, Risk and Claims SOP",
-    category: "Policies & SOPs",
-    type: "sop",
-    audience: ["manager", "safety", "legal", "finance"],
-    status: "available",
-    description: "Standard operating procedures for insurance claims processing, risk assessment, and claim resolution",
-    href: "/generated/company-operations-vault/07-insurance-risk-and-claims-sop.html",
-    source: "generated"
-  },
-  {
-    id: "policy-payroll-sop",
-    title: "Payroll, Compensation and Deductions Policy",
-    category: "Policies & SOPs",
-    type: "policy",
-    audience: ["driver", "manager", "hr", "finance"],
-    status: "available",
-    description: "Comprehensive payroll policy covering compensation structures, pay schedules, and deduction types",
-    href: "/generated/company-operations-vault/04-payroll-compensation-and-deductions-policy.html",
-    source: "generated"
-  },
-  {
-    id: "policy-accounting-sop",
-    title: "Accounting, Finance Close, AP, and AR SOP",
-    category: "Policies & SOPs",
-    type: "sop",
-    audience: ["manager", "finance", "dispatch"],
-    status: "available",
-    description: "Standard operating procedures for accounting close, accounts payable/receivable management, and financial reporting",
-    href: "/generated/company-operations-vault/05-accounting-finance-close-ap-ar-sop.html",
-    source: "generated"
-  },
-  {
-    id: "policy-factoring-receivables",
-    title: "Factoring and Receivables Policy",
-    category: "Policies & SOPs",
-    type: "policy",
-    audience: ["manager", "finance", "dispatch"],
-    status: "available",
-    description: "Policy governing factoring arrangements, receivables management, and collection procedures",
-    href: "/generated/company-operations-vault/06-factoring-and-receivables-policy.html",
-    source: "generated"
-  },
-  {
-    id: "policy-vendor-procurement",
-    title: "Vendor, Maintenance and Purchasing Policy",
-    category: "Policies & SOPs",
-    type: "policy",
-    audience: ["manager", "maintenance", "procurement"],
-    status: "available",
-    description: "Policy governing vendor relationships, maintenance procedures, and purchasing workflows",
-    href: "/generated/company-operations-vault/08-vendor-maintenance-and-purchasing-policy.html",
-    source: "generated"
-  },
-  {
-    id: "policy-code-of-conduct",
-    title: "Code of Conduct and Workplace Policies",
-    category: "Policies & SOPs",
-    type: "policy",
-    audience: ["driver", "manager", "hr", "owner"],
-    status: "available",
-    description: "Company code of conduct, workplace policies, and behavioral standards",
-    href: "/generated/company-operations-vault/02-code-of-conduct-and-workplace-policies.html",
-    source: "generated"
-  },
-  {
-    id: "policy-drug-alcohol",
-    title: "Drug and Alcohol Testing Policy",
-    category: "Policies & SOPs",
-    type: "policy",
-    audience: ["driver", "manager", "hr", "safety"],
-    status: "coming_soon",
-    description: "Drug and alcohol testing and compliance policy",
-    source: "demo"
-  },
-  {
-    id: "policy-it-security",
-    title: "Information Security Governance Policy",
-    category: "Policies & SOPs",
-    type: "policy",
-    audience: ["manager", "it", "admin"],
-    status: "available",
-    description: "Enterprise-grade information security governance policy establishing comprehensive security management framework",
-    href: "/generated/company-operations-vault/11-information-security-governance-policy.html",
-    source: "generated"
-  },
-  {
-    id: "policy-ai-usage",
-    title: "AI Use and Automation Governance Policy",
-    category: "Policies & SOPs",
-    type: "policy",
-    audience: ["driver", "manager", "it", "admin"],
-    status: "available",
-    description: "Enterprise-grade AI use and automation governance policy establishing framework for responsible AI deployment",
-    href: "/generated/company-operations-vault/17-ai-use-and-automation-governance-policy.html",
-    source: "generated"
-  },
-  {
-    id: "policy-privacy-security",
-    title: "Privacy and Employee Data Handling Policy",
-    category: "Policies & SOPs",
-    type: "policy",
-    audience: ["driver", "manager", "hr", "it"],
-    status: "available",
-    description: "Enterprise-grade privacy and employee data handling policy for protecting personal information",
-    href: "/generated/company-operations-vault/15-privacy-and-employee-data-handling-policy.html",
-    source: "generated"
-  },
-  {
-    id: "policy-records-retention",
-    title: "Tax and Regulatory Audit Readiness Policy",
-    category: "Policies & SOPs",
-    type: "policy",
-    audience: ["manager", "finance", "compliance"],
-    status: "available",
-    description: "Tax and regulatory audit readiness policy for maintaining audit-ready records and documentation",
-    href: "/generated/company-operations-vault/19-tax-and-regulatory-audit-readiness-policy.html",
-    source: "generated"
-  },
-
-  // Finance / Settlements / Back Office
-  {
-    id: "finance-settlement-review",
-    title: "Settlement Review Form",
-    category: "Finance / Settlements / Back Office",
-    type: "form",
-    audience: ["manager", "finance", "driver"],
-    status: "needs_review",
-    description: "Settlement review and approval documentation",
-    source: "demo"
-  },
-  {
-    id: "finance-payroll-adjustment",
-    title: "Payroll Adjustment Request",
-    category: "Finance / Settlements / Back Office",
-    type: "form",
-    audience: ["manager", "finance", "driver"],
-    status: "coming_soon",
-    description: "Payroll correction and adjustment request form",
-    source: "demo"
-  },
-  {
-    id: "finance-reimbursement",
-    title: "Reimbursement Request",
-    category: "Finance / Settlements / Back Office",
-    type: "form",
-    audience: ["driver", "manager", "finance"],
-    status: "coming_soon",
-    description: "Expense reimbursement request and approval form",
-    source: "demo"
-  },
-  {
-    id: "finance-fuel-advance",
-    title: "Fuel Advance Policy",
-    category: "Finance / Settlements / Back Office",
-    type: "policy",
-    audience: ["driver", "manager", "finance", "dispatcher"],
-    status: "coming_soon",
-    description: "Fuel advance request and repayment policy",
-    source: "demo"
-  },
-  {
-    id: "finance-deduction-authorization",
-    title: "Deduction Authorization",
-    category: "Finance / Settlements / Back Office",
-    type: "form",
-    audience: ["driver", "manager", "finance"],
-    status: "available",
-    description: "Payroll deduction authorization and management documentation",
-    href: "/generated/company-operations-vault/04-payroll-compensation-and-deductions-policy.html",
-    source: "generated"
-  },
-  {
-    id: "finance-factoring-packet",
-    title: "Factoring Packet",
-    category: "Finance / Settlements / Back Office",
-    type: "template",
-    audience: ["manager", "finance", "customer"],
-    status: "needs_review",
-    description: "Complete factoring documentation packet",
-    source: "demo"
-  },
-  {
-    id: "finance-invoice-template",
-    title: "Invoice Template",
-    category: "Finance / Settlements / Back Office",
-    type: "template",
-    audience: ["manager", "finance", "customer"],
-    status: "template",
-    description: "Standard customer invoice template",
-    href: "/generated/loads/L001/invoice.html",
-    source: "generated"
-  },
-  {
-    id: "finance-receivables-sop",
-    title: "Cash Flow Management and Receivables Acceleration Policy",
-    category: "Finance / Settlements / Back Office",
-    type: "policy",
-    audience: ["manager", "finance", "dispatch"],
-    status: "available",
-    description: "Cash flow management and receivables acceleration policy for optimizing financial operations",
-    href: "/generated/company-operations-vault/21-cash-flow-management-and-receivables-acceleration-policy.html",
-    source: "generated"
-  },
-  {
-    id: "finance-ap-ar-checklist",
-    title: "AP/AR Checklist",
-    category: "Finance / Settlements / Back Office",
-    type: "checklist",
-    audience: ["manager", "finance", "billing"],
-    status: "available",
-    description: "Accounts payable and receivable management procedures and checklist",
-    href: "/generated/company-operations-vault/05-accounting-finance-close-ap-ar-sop.html",
-    source: "generated"
-  },
-
-  // Training & Knowledge Base
-  {
-    id: "training-onboarding-videos",
-    title: "Onboarding Videos",
-    category: "Training & Knowledge Base",
-    type: "video",
-    audience: ["driver", "manager", "hr"],
-    status: "external_resource",
-    description: "New driver onboarding video training series",
-    source: "external"
-  },
-  {
-    id: "training-safety-videos",
-    title: "Safety Training Videos",
-    category: "Training & Knowledge Base",
-    type: "video",
-    audience: ["driver", "manager", "safety"],
-    status: "external_resource",
-    description: "Safety procedures and compliance video training",
-    source: "external"
-  },
-  {
-    id: "training-dispatch-videos",
-    title: "Dispatch Training Videos",
-    category: "Training & Knowledge Base",
-    type: "video",
-    audience: ["dispatcher", "manager"],
-    status: "external_resource",
-    description: "Dispatch operations and system training videos",
-    source: "external"
-  },
-  {
-    id: "training-blog-articles",
-    title: "Blog Articles",
-    category: "Training & Knowledge Base",
-    type: "article",
-    audience: ["driver", "manager", "hr"],
-    status: "external_resource",
-    description: "Industry blog articles and knowledge resources",
-    source: "external"
-  },
-  {
-    id: "training-sop-walkthroughs",
-    title: "SOP Walkthroughs",
-    category: "Training & Knowledge Base",
-    type: "article",
-    audience: ["manager", "driver", "hr"],
-    status: "coming_soon",
-    description: "Step-by-step SOP walkthroughs and implementation guides",
-    source: "demo"
-  },
-  {
-    id: "training-safety-links",
-    title: "CVSA Vehicle Inspection Training Resources",
-    category: "Training & Knowledge Base",
-    type: "article",
-    audience: ["driver", "manager", "safety"],
-    status: "external_resource",
-    description: "CVSA vehicle inspection training resources and reference materials",
-    href: "/safety",
-    source: "external"
-  },
-  {
-    id: "training-dispatch-links",
-    title: "Dispatch Training Links",
-    category: "Training & Knowledge Base",
-    type: "article",
-    audience: ["dispatcher", "manager"],
-    status: "external_resource",
-    description: "External dispatch operations and system training resources",
-    source: "external"
-  },
-  {
-    id: "training-claims-handling",
-    title: "Claims Handling Training",
-    category: "Training & Knowledge Base",
-    type: "article",
-    audience: ["manager", "safety", "legal"],
-    status: "external_resource",
-    description: "External claims handling and processing training resources",
-    source: "external"
-  },
-  {
-    id: "training-ai-security",
-    title: "AI/Data Security Training",
-    category: "Training & Knowledge Base",
-    type: "article",
-    audience: ["manager", "it", "admin"],
-    status: "available",
-    description: "AI governance and data security training requirements and resources",
-    href: "/generated/company-operations-vault/17-ai-use-and-automation-governance-policy.html",
-    source: "generated"
-  },
-  {
-    id: "training-manager-playbooks",
-    title: "Manager Playbooks",
-    category: "Training & Knowledge Base",
-    type: "article",
-    audience: ["manager", "owner"],
-    status: "coming_soon",
-    description: "Management decision-making and procedure playbooks",
-    source: "demo"
-  },
-
-  // Contracts / Customer / Legal
-  {
-    id: "contract-master-agreement",
-    title: "Master Agreement",
-    category: "Contracts / Customer / Legal",
+    id: "claims-settlement-agreement",
+    title: "Settlement Agreement Template",
+    cabinet: "Safety / Claims / Insurance",
+    section: "Needs Review / Coming Later",
+    category: "Safety / Claims / Insurance",
     type: "contract",
-    audience: ["manager", "customer", "legal", "owner"],
-    status: "template",
-    description: "Master agreement reference template for customer relationships",
-    href: "/generated/loads/L001/master-agreement-reference.html",
-    source: "generated"
-  },
-  {
-    id: "contract-schedule",
-    title: "Schedule Template",
-    category: "Contracts / Customer / Legal",
-    type: "template",
-    audience: ["manager", "customer", "dispatcher"],
+    audience: ["manager", "safety", "customer", "legal"],
     status: "needs_review",
-    description: "Service schedule and delivery timeline template",
-    source: "demo"
-  },
-  {
-    id: "contract-work-order",
-    title: "Work Order Template",
-    category: "Contracts / Customer / Legal",
-    type: "template",
-    audience: ["manager", "customer", "dispatcher"],
-    status: "template",
-    description: "Standard work order and service agreement template",
-    href: "/generated/loads/L001/work-order.html",
-    source: "generated"
-  },
-  {
-    id: "contracts-customer-setup",
-    title: "Customer Setup Packet",
-    category: "Contracts / Customer / Legal",
-    type: "template",
-    audience: ["manager", "customer", "legal"],
-    status: "needs_review",
-    description: "Complete customer onboarding documentation packet",
-    source: "template"
-  },
-  {
-    id: "contract-carrier-packet",
-    title: "Carrier Packet",
-    category: "Contracts / Customer / Legal",
-    type: "template",
-    audience: ["manager", "customer", "legal"],
-    status: "needs_review",
-    description: "Carrier qualification and agreement packet",
-    source: "template"
-  },
-  {
-    id: "contract-vendor-agreement",
-    title: "Vendor Agreement",
-    category: "Contracts / Customer / Legal",
-    type: "contract",
-    audience: ["manager", "vendor", "legal"],
-    status: "needs_review",
-    description: "Standard vendor services agreement template",
-    source: "demo"
-  },
-  {
-    id: "contracts-collection-templates",
-    title: "Collection Templates",
-    category: "Contracts / Customer / Legal",
-    type: "template",
-    audience: ["manager", "legal", "customer"],
-    status: "needs_review",
-    description: "Collection and demand letter templates",
-    source: "template"
-  },
-  {
-    id: "contract-legal-hold",
-    title: "Legal Hold Notice",
-    category: "Contracts / Customer / Legal",
-    type: "template",
-    audience: ["manager", "legal", "customer"],
-    status: "coming_soon",
-    description: "Legal hold and document preservation notice template",
-    source: "demo"
+    description: "Claim settlement agreement and release template",
+    sourceAuthenticity: "coming_soon",
+    documentOwner: "employer",
+    employerName: "Delta Advanced Trucking, Inc.",
+    tags: ["settlement", "agreement", "coming"]
   },
   {
     id: "contract-document-preservation",
     title: "Document Preservation Notice",
+    cabinet: "Contracts / Customer / Legal",
+    section: "Legal / Contracts",
     category: "Contracts / Customer / Legal",
     type: "template",
-    audience: ["manager", "legal", "customer"],
-    status: "coming_soon",
+    audience: ["manager", "legal", "hr"],
+    status: "needs_review",
     description: "Document preservation and retention notice template",
-    source: "demo"
+    sourceAuthenticity: "coming_soon",
+    documentOwner: "employer",
+    employerName: "Delta Advanced Trucking, Inc.",
+    tags: ["document", "preservation", "coming"]
   }
 ];
 

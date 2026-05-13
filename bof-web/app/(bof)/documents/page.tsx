@@ -9,8 +9,8 @@
 import { OperationsFileCabinetClient } from "@/components/documents/OperationsFileCabinetClient";
 
 export const metadata = {
-  title: "Operations File Cabinet | BOF",
-  description: "Driver files, company policies, dispatch forms, training materials, SOPs, claims documents, and back-office templates in one organized operating library",
+  title: "Operations File Cabinet",
+  description: "Delta Advanced Trucking, Inc.'s driver files, company policies, dispatch forms, SOPs, claims documents, training resources, and back-office templates organized in one operating library through BOF",
 };
 
 export default function DocumentsPage() {

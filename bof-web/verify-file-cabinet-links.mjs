@@ -14,7 +14,7 @@ if (!registryMatch) {
 
 // Parse the registry (simple approach)
 const items = [];
-const itemMatches = registryContent.matchAll(/{\s*id:\s*"([^"]+)"[\s\S]*?title:\s*"([^"]+)"[\s\S]*?status:\s*"([^"]+)"[\s\S]*?href:\s*"?([^"]*)"?\s*,?[\s\S]*?source:\s*"?([^"]*)"?\s*,?[\s\S]*?}/g);
+const itemMatches = registryContent.matchAll(/{\s*id:\s*"([^"]+)"[\s\S]*?title:\s*"([^"]+)"[\s\S]*?status:\s*"([^"]+)"[\s\S]*?href:\s*"?([^"]*)"?\s*,?[\s\S]*?sourceAuthenticity:\s*"?([^"]*)"?\s*,?[\s\S]*?}/g);
 
 for (const match of itemMatches) {
   items.push({
@@ -22,7 +22,7 @@ for (const match of itemMatches) {
     title: match[2],
     status: match[3],
     href: match[4] || null,
-    source: match[5] || null
+    sourceAuthenticity: match[5] || null
   });
 }
 
@@ -50,9 +50,9 @@ const featuredItems = items
       "policy-tax-audit-readiness", "policy-cash-flow-management",
       
       // Dispatch & Load Documents (real generated files only)
-      "contract-master-agreement", "dispatch-work-order", "dispatch-rate-confirmation",
-      "dispatch-bol", "dispatch-pod",
-      "claims-cargo-intake", "claims-insurance-notice",
+      "dispatch-work-order", "dispatch-rate-confirmation",
+      "dispatch-bill-of-lading", "dispatch-proof-delivery",
+      "claims-insurance-notice",
       
       // HR Documents (real files only)
       "hr-termination-checklist"
@@ -161,7 +161,7 @@ for (const item of items) {
 
   // Check for broad module routes on document cards (allow for external_resource)
   if (item.href && ['/drivers', '/safety', '/settlements', '/documents', '/loads', '/evidence'].includes(item.href)) {
-    if (item.type !== 'app-route' && item.status !== 'external_resource') {
+    if (item.sourceAuthenticity !== 'external_resource') {
       issues.push('Document card uses broad module route');
       passed = false;
     }
