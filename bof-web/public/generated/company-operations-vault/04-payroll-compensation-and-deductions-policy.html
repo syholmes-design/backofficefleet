@@ -3,8 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Payroll, Compensation, and Deductions Policy</title>
+    <title>Delta Advanced Trucking, Inc. Payroll, Compensation, and Deductions Policy</title>
     <style>
+        @media print {
+            .no-print { display: none !important; }
+            body { margin: 0; padding: 0.25in; }
+            .paper { box-shadow: none; border: none; margin: 0; }
+        }
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
             line-height: 1.6;
@@ -24,13 +29,19 @@
         .header {
             text-align: center;
             margin-bottom: 0.5in;
-            border-bottom: 2px solid #0BA5A4;
+            border-bottom: 2px solid #1a365d;
             padding-bottom: 0.25in;
+        }
+        .company-name {
+            font-size: 14pt;
+            font-weight: bold;
+            color: #1a365d;
+            margin-bottom: 0.125in;
         }
         .title {
             font-size: 18pt;
             font-weight: bold;
-            color: #0BA5A4;
+            color: #1a365d;
             margin-bottom: 0.125in;
         }
         .subtitle {
@@ -38,266 +49,437 @@
             color: #4a5568;
             margin-bottom: 0.5in;
         }
+        .policy-info {
+            background: #f7fafc;
+            border: 1px solid #e2e8f0;
+            padding: 0.25in;
+            margin-bottom: 0.5in;
+            font-size: 9pt;
+        }
         .section {
             margin-bottom: 0.5in;
+            page-break-inside: avoid;
         }
         .section-title {
             font-size: 11pt;
             font-weight: bold;
-            color: #0BA5A4;
+            color: #1a365d;
             margin-bottom: 0.125in;
             border-bottom: 1px solid #e2e8f0;
             padding-bottom: 0.0625in;
         }
-        .policy-list {
-            list-style: none;
+        .subsection-title {
+            font-size: 10pt;
+            font-weight: bold;
+            color: #2d3748;
+            margin: 0.25in 0 0.125in 0;
+        }
+        p {
+            font-size: 10pt;
+            margin-bottom: 0.25in;
+            text-align: justify;
+        }
+        ul, ol {
+            font-size: 10pt;
+            margin-bottom: 0.25in;
             padding-left: 0.25in;
         }
-        .policy-list li {
-            margin-bottom: 0.125in;
-            font-size: 9pt;
+        li {
+            margin-bottom: 0.0625in;
         }
-        .policy-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 0.125in;
-        }
-        .policy-name {
-            font-weight: 600;
-            color: #1a202c;
-            min-width: 3in;
-        }
-        .policy-value {
-            color: #4a5568;
-            font-style: italic;
-        }
-        .deduction-table {
+        table {
             width: 100%;
             border-collapse: collapse;
             margin-bottom: 0.25in;
             font-size: 9pt;
         }
-        .deduction-table th {
-            background-color: #f1f5f9;
-            color: white;
-            font-weight: bold;
-            padding: 0.0625in;
-            text-align: left;
+        th, td {
             border: 1px solid #e2e8f0;
+            padding: 0.0625in 0.125in;
+            text-align: left;
+            vertical-align: top;
         }
-        .deduction-table td {
-            border: 1px solid #e2e8f0;
-            padding: 0.0625in;
-            text-align: left;
+        th {
+            background: #f7fafc;
+            font-weight: bold;
+            color: #2d3748;
         }
         .note-box {
-            background-color: #f8fafc;
+            background: #fef5e7;
+            border: 1px solid #f6e05e;
+            padding: 0.125in;
+            margin: 0.125in 0;
+            font-size: 9pt;
+        }
+        .warning-box {
+            background: #fed7d7;
+            border: 1px solid #fc8181;
+            padding: 0.125in;
+            margin: 0.125in 0;
+            font-size: 9pt;
+        }
+        .signature-section {
+            margin-top: 1in;
+            page-break-inside: avoid;
+        }
+        .signature-line {
+            border-bottom: 1px solid #4a5568;
+            width: 3in;
+            margin-bottom: 0.125in;
+        }
+        .signature-label {
+            font-size: 9pt;
+            color: #4a5568;
+            margin-bottom: 0.25in;
+        }
+        .internal-use {
+            background: #e6fffa;
+            border: 1px solid #4fd1c5;
+            padding: 0.125in;
+            margin: 0.25in 0;
+            font-size: 8pt;
+            text-align: center;
+        }
+        .part-divider {
+            text-align: center;
+            margin: 0.75in 0;
             border: 1px solid #e2e8f0;
             padding: 0.125in;
-            margin-bottom: 0.25in;
-            font-size: 8pt;
+            font-weight: bold;
+            color: #1a365d;
         }
         .footer {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: #f7fafc;
+            margin-top: 1in;
+            padding-top: 0.25in;
             border-top: 1px solid #e2e8f0;
-            padding: 0.125in;
-            text-align: center;
             font-size: 8pt;
-            color: #4a5568;
+            color: #718096;
+            text-align: center;
+        }
+        .no-print {
+            background: #e6fffa;
+            border: 1px solid #4fd1c5;
+            padding: 0.125in;
+            margin: 0.25in 0;
+            font-size: 9pt;
+            text-align: center;
         }
     </style>
 </head>
 <body>
     <div class="paper">
+        <!-- Internal Use Label -->
+        <div class="internal-use">
+            INTERNAL USE - CONFIDENTIAL - DELTA ADVANCED TRUCKING, INC. POLICY
+        </div>
+
+        <!-- Document Header -->
         <div class="header">
-            <div class="title">Delta Advanced Trucking, Inc.</div>
-            <div class="subtitle">Payroll, Compensation, and Deductions Policy</div>
+            <div class="company-name">Delta Advanced Trucking, Inc.</div>
+            <div class="title">Payroll, Compensation, and Deductions Policy</div>
+            <div class="subtitle">Human Resources Policy HR-PAY-001</div>
         </div>
 
-        <div class="section">
-            <div class="section-title">Policy Overview</div>
-            <p style="font-size: 10pt; margin-bottom: 0.25in;">
-                This Payroll, Compensation, and Deductions Policy establishes the framework for compensation structures, payroll processing, and deduction administration across BOF. It ensures compliance with federal and state regulations while providing clear guidelines for all payroll-related transactions.
-            </p>
-        </div>
-
-        <div class="section">
-            <div class="section-title">Compensation Structure</div>
-            <p style="font-size: 10pt; margin-bottom: 0.25in;">
-                BOF offers competitive compensation packages based on experience, performance, and market conditions. All compensation decisions follow established pay scales and are documented in driver agreements.
-            </p>
-        </div>
-
-        <div class="section">
-            <div class="section-title">Pay Schedule</div>
-            <p style="font-size: 10pt; margin-bottom: 0.25in;">
-                Drivers are paid bi-weekly on Fridays via direct deposit. Pay periods run from Monday through Sunday, with payroll processing completed by Wednesday each week.
-            </p>
-        </div>
-
-        <div class="section">
-            <div class="section-title">Overtime Policy</div>
-            <p style="font-size: 10pt; margin-bottom: 0.25in;">
-                Overtime is paid at 1.5 times the regular hourly rate for hours worked over 40 in a workweek. All overtime must be pre-approved by dispatch and documented in payroll records.
-            </p>
-        </div>
-
-        <div class="section">
-            <div class="section-title">Deduction Administration</div>
-            <p style="font-size: 10pt; margin-bottom: 0.25in;">
-                All payroll deductions require proper authorization and documentation. Deductions are processed per federal and state guidelines, with detailed records maintained for each pay period.
-            </p>
-        </div>
-
-        <div class="section" id="section-4-5">
-            <div class="section-title">Deduction Limits and Review</div>
-            <p style="font-size: 10pt; margin-bottom: 0.25in;">
-                Deductions exceeding 30% of gross pay require additional review and approval. Large deduction ratios may indicate calculation errors, unauthorized deductions, or special circumstances that need verification before settlement release.
-            </p>
-            <div class="note-box">
-                <strong>Review Required:</strong> Any deduction total greater than 30% of gross pay must be reviewed by payroll management to ensure accuracy and proper authorization.
-            </div>
-        </div>
-
-        <div class="section">
-            <div class="section-title">Required Deductions</div>
-            <table class="deduction-table">
-                <thead>
-                    <tr>
-                        <th>Deduction Type</th>
-                        <th>Authorization Required</th>
-                        <th>Processing Schedule</th>
-                        <th>Legal Basis</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>Federal Withholding</td>
-                        <td>Yes - W-4 Form</td>
-                        <td>Each pay period</td>
-                        <td>IRS Publication 15, Circular E</td>
-                    </tr>
-                    <tr>
-                        <td>State Withholding</td>
-                        <td>Yes - State Form</td>
-                        <td>Each pay period</td>
-                        <td>State Revenue Department</td>
-                    </tr>
-                    <tr>
-                        <td>FICA (Social Security/Medicare)</td>
-                        <td>Yes - Employee Share</td>
-                        <td>Each pay period</td>
-                        <td>Federal Insurance Contributions Act</td>
-                    </tr>
-                    <tr>
-                        <td>State Disability Insurance (SDI)</td>
-                        <td>Yes - Employee Share</td>
-                        <td>Each pay period</td>
-                        <td>State Disability Insurance Fund</td>
-                    </tr>
-                    <tr>
-                        <td>Family Support / Child Support</td>
-                        <td>Yes - Court Order</td>
-                        <td>Each pay period</td>
-                        <td>State Child Support Enforcement Agency</td>
-                    </tr>
-                    <tr>
-                        <td>Health Insurance Premiums</td>
-                        <td>Yes - Employee Election</td>
-                        <td>Each pay period</td>
-                        <td>Company Benefits Plan</td>
-                    </tr>
-                    <tr>
-                        <td>Dental/Vision Insurance</td>
-                        <td>Yes - Employee Election</td>
-                        <td>Each pay period</td>
-                        <td>Company Benefits Plan</td>
-                    </tr>
-                    <tr>
-                        <td>Flexible Spending Account (FSA)</td>
-                        <td>Yes - Employee Election</td>
-                        <td>Each pay period</td>
-                        <td>IRS Publication 220, Cafeteria Plan</td>
-                    </tr>
-                    <tr>
-                        <td>401(k) Contributions</td>
-                        <td>Yes - Employee Election</td>
-                        <td>Each pay period</td>
-                        <td>IRS Revenue Procedure 2021-40</td>
-                    </tr>
-                    <tr>
-                        <td>Life Insurance Premiums</td>
-                        <td>Yes - Employee Election</td>
-                        <td>Each pay period</td>
-                        <td>Company Benefits Plan</td>
-                    </tr>
-                    <tr>
-                        <td>Credit Union/Other Deductions</td>
-                        <td>Yes - Written Authorization</td>
-                        <td>Each pay period</td>
-                        <td>Employee Agreement or Court Order</td>
-                    </tr>
-                </tbody>
+        <!-- Policy Information -->
+        <div class="policy-info">
+            <table>
+                <tr>
+                    <td><strong>Policy Number:</strong></td>
+                    <td>HR-PAY-001</td>
+                    <td><strong>Effective Date:</strong></td>
+                    <td>January 1, 2026</td>
+                </tr>
+                <tr>
+                    <td><strong>Revision Date:</strong></td>
+                    <td>May 13, 2026</td>
+                    <td><strong>Approved By:</strong></td>
+                    <td>Debra Sanders, Director, HR</td>
+                </tr>
+                <tr>
+                    <td><strong>Department:</strong></td>
+                    <td>Human Resources</td>
+                    <td><strong>Applies To:</strong></td>
+                    <td>All Drivers, Employees, Owner-Operators</td>
+                </tr>
             </table>
         </div>
 
-        <div class="section" id="section-4-2">
-            <div class="section-title">Family Support Withholding</div>
-            <p style="font-size: 10pt; margin-bottom: 0.25in;">
-                Family support and child support withholding is processed per court orders and state agency requirements. Amounts are calculated based on court-ordered percentages and may vary by state. All family support withholdings are documented in Phase 5 Payroll Garnishment Withholding Summaries.
+        <!-- Part I - Full Policy -->
+        <div class="part-divider">
+            PART I — FULL PAYROLL, COMPENSATION, AND DEDUCTIONS POLICY
+        </div>
+
+        <!-- Table of Contents -->
+        <div class="section">
+            <div class="section-title">Table of Contents</div>
+            <ol>
+                <li>Policy Purpose and Scope</li>
+                <li>Compensation Structure</li>
+                <li>Pay Periods and Payment Methods</li>
+                <li>Mandatory Deductions</li>
+                <li>Voluntary Deductions</li>
+                <li>Owner-Operator Settlements</li>
+                <li>Benefits Administration</li>
+                <li>Payroll Processing and Records</li>
+                <li>Compliance and Reporting</li>
+                <li>Policy Acknowledgment</li>
+            </ol>
+        </div>
+
+        <!-- Section 1 -->
+        <div class="section">
+            <div class="section-title">1. Policy Purpose and Scope</div>
+            <p>
+                This policy establishes the framework for payroll processing, compensation administration, and deduction management at Delta Advanced Trucking, Inc. It ensures compliance with federal and state regulations while providing clear guidelines for all compensation-related activities managed through the BackOfficeFleet operating system.
+            </p>
+            <p>
+                This policy applies to all company employees, company drivers, and owner-operators contracted with Delta Advanced Trucking, Inc. All payroll activities are organized and managed through BackOfficeFleet to ensure consistency, accuracy, and audit readiness.
+            </p>
+        </div>
+
+        <!-- Section 2 -->
+        <div class="section">
+            <div class="section-title">2. Compensation Structure</div>
+            <div class="subsection-title">2.1 Company Driver Compensation</div>
+            <p>
+                Company drivers are compensated based on established pay structures including percentage-of-load rates, mileage rates, hourly rates, or combinations thereof. All compensation rates are documented in individual driver agreements and maintained in BackOfficeFleet.
+            </p>
+            
+            <div class="subsection-title">2.2 Owner-Operator Compensation</div>
+            <p>
+                Owner-operators receive settlement payments based on load revenue minus applicable deductions and chargebacks. Settlement calculations are processed through BackOfficeFleet with detailed breakdowns provided for each settlement period.
+            </p>
+            
+            <div id="section-4-2" class="subsection-title">2.3 Percentage-of-Load Pay Structure</div>
+            <p>
+                For drivers compensated on a percentage-of-load basis, compensation is calculated as a percentage of the gross revenue generated by assigned loads. Percentage rates vary based on experience, equipment type, and route complexity as outlined in individual driver agreements.
             </p>
             <div class="note-box">
-                <strong>Important:</strong> Family support withholdings take priority over other deductions and are protected by federal law. Changes to withholding amounts require updated court orders.
+                <strong>Note:</strong> Percentage-of-load calculations are automatically processed through BackOfficeFleet to ensure accuracy and consistency across all settlements.
             </div>
         </div>
 
+        <!-- Section 3 -->
         <div class="section">
-            <div class="section-title">Benefits Administration</div>
-            <p style="font-size: 10pt; margin-bottom: 0.25in;">
-                BOF offers comprehensive benefits including health, dental, vision, life insurance, and flexible spending accounts. Benefits administration follows ERISA guidelines and includes annual enrollment periods.
+            <div class="section-title">3. Pay Periods and Payment Methods</div>
+            <div class="subsection-title">3.1 Pay Periods</div>
+            <p>
+                Delta Advanced Trucking, Inc. processes payroll on a weekly basis. Pay periods run from Monday through Sunday, with payments issued on the following Friday. Owner-operator settlements follow the same weekly schedule.
+            </p>
+            
+            <div class="subsection-title">3.2 Payment Methods</div>
+            <p>
+                Company employees receive payment via direct deposit. Owner-operators receive settlement payments via direct deposit or check, as specified in their contracts. All payment information is maintained securely in BackOfficeFleet.
+            </p>
+            
+            <div class="subsection-title">3.3 Pay Statements</div>
+            <p>
+                Detailed pay statements and settlement summaries are available through BackOfficeFleet for all drivers and owner-operators. These documents provide comprehensive breakdowns of earnings, deductions, and net pay.
+            </p>
+        </div>
+
+        <!-- Section 4 -->
+        <div class="section">
+            <div class="section-title">4. Mandatory Deductions</div>
+            <div id="section-6-1" class="subsection-title">4.1 Federal and State Taxes</div>
+            <p>
+                All required federal and state payroll taxes are withheld in accordance with current tax laws and regulations. This includes federal income tax, Social Security, Medicare, and applicable state taxes. Tax withholding calculations are processed through BackOfficeFleet using current tax tables.
+            </p>
+            
+            <div class="subsection-title">4.2 Family Support Withholding</div>
+            <p>
+                Family support and child support withholdings are processed per court orders and state agency requirements. Amounts are calculated based on court-ordered percentages and may vary by state. All family support withholdings are documented in settlement summaries and processed with priority over other deductions.
+            </p>
+            <div class="warning-box">
+                <strong>Important:</strong> Family support withholdings take priority over other deductions and are protected by federal law. Changes to withholding amounts require updated court orders and must be submitted to HR immediately.
+            </div>
+            
+            <div class="subsection-title">4.3 Garnishments and Levies</div>
+            <p>
+                Court-ordered wage garnishments and tax levies are processed in accordance with applicable laws. These deductions are processed with priority and may affect net pay calculations. All garnishment orders are maintained confidentially in employee files.
+            </p>
+        </div>
+
+        <!-- Section 5 -->
+        <div class="section">
+            <div class="section-title">5. Voluntary Deductions</div>
+            <div class="subsection-title">5.1 Insurance Premiums</div>
+            <p>
+                Employees may elect to participate in company-sponsored insurance programs including health, dental, vision, and life insurance. Premium contributions are deducted on a pre-tax or post-tax basis as applicable and documented in enrollment forms.
+            </p>
+            
+            <div class="subsection-title">5.2 Retirement Contributions</div>
+            <p>
+                Eligible employees may contribute to 401(k) retirement plans. Contributions are deducted on a pre-tax basis (traditional 401(k)) or post-tax basis (Roth 401(k)) as elected by the employee. Company matching contributions are processed according to plan provisions.
+            </p>
+            
+            <div class="subsection-title">5.3 Other Voluntary Deductions</div>
+            <p>
+                Additional voluntary deductions may include flexible spending accounts (FSA), health savings accounts (HSA), credit union payments, and other employee-elected deductions. All voluntary deductions require written authorization from the employee.
+            </p>
+        </div>
+
+        <!-- Section 6 -->
+        <div class="section">
+            <div class="section-title">6. Owner-Operator Settlements</div>
+            <div id="section-4-5" class="subsection-title">6.1 Settlement Calculations</div>
+            <p>
+                Owner-operator settlements are calculated based on load revenue minus applicable deductions. Settlement calculations include fuel advances, insurance premiums, lease payments, and other authorized chargebacks. All settlement calculations are processed through BackOfficeFleet with detailed documentation.
+            </p>
+            
+            <div id="section-6-3" class="subsection-title">6.2 Deduction Limits and Controls</div>
+            <p>
+                Deductions exceeding 30% of gross revenue require additional review and approval. Large deduction ratios may indicate calculation errors, unauthorized deductions, or special circumstances that need verification before settlement release. All settlements exceeding deduction thresholds are reviewed by the finance department.
+            </p>
+            <div class="warning-box">
+                <strong>Warning:</strong> Settlements with deductions exceeding 30% of gross revenue are automatically flagged for review and may require additional documentation before payment release.
+            </div>
+            
+            <div class="subsection-title">6.3 Chargeback Policies</div>
+            <p>
+                Owner-operators are responsible for various chargebacks including fuel usage beyond allocated amounts, insurance deductibles, equipment damage, and other authorized deductions. All chargebacks are documented and communicated to owner-operators through BackOfficeFleet.
+            </p>
+        </div>
+
+        <!-- Section 7 -->
+        <div class="section">
+            <div class="section-title">7. Benefits Administration</div>
+            <div class="subsection-title">7.1 Health and Welfare Benefits</div>
+            <p>
+                Delta Advanced Trucking, Inc. offers comprehensive benefits including medical, dental, vision, and life insurance. Benefits administration follows ERISA guidelines and includes annual enrollment periods. All benefit elections are maintained in BackOfficeFleet.
+            </p>
+            
+            <div class="subsection-title">7.2 Retirement Benefits</div>
+            <p>
+                The company 401(k) plan allows employees to save for retirement with pre-tax contributions. Company matching contributions are available according to plan provisions. All retirement plan activity is tracked through BackOfficeFleet.
+            </p>
+        </div>
+
+        <!-- Section 8 -->
+        <div class="section">
+            <div class="section-title">8. Payroll Processing and Records</div>
+            <div class="subsection-title">8.1 Processing Systems</div>
+            <p>
+                All payroll processing is conducted through BackOfficeFleet with proper segregation of duties and internal controls. Payroll data is backed up regularly and maintained for compliance purposes.
+            </p>
+            
+            <div class="subsection-title">8.2 Record Keeping</div>
+            <p>
+                Payroll records are maintained for a minimum of 7 years in accordance with federal and state requirements. Records include pay registers, tax filings, deduction authorizations, and employee acknowledgments. All records are available for audit and employee review.
+            </p>
+            
+            <div id="section-8" class="subsection-title">8.3 Settlement Statement Review and Disputes</div>
+            <p>
+                Drivers and owner-operators may review their settlement statements through BackOfficeFleet. Any disputes or questions regarding settlements must be submitted in writing within 5 business days of payment receipt. The finance department will review and respond to all disputes within 10 business days.
+            </p>
+        </div>
+
+        <!-- Section 9 -->
+        <div class="section">
+            <div class="section-title">9. Compliance and Reporting</div>
+            <div class="subsection-title">9.1 Regulatory Compliance</div>
+            <p>
+                This policy complies with all applicable federal and state labor laws including the Fair Labor Standards Act, state wage and hour laws, and tax regulations. Regular audits ensure continued compliance and accuracy of payroll processing.
+            </p>
+            
+            <div class="subsection-title">9.2 Reporting Requirements</div>
+            <p>
+                Required payroll tax filings including Form 941, state unemployment tax returns, and W-2/W-1099 forms are processed timely through BackOfficeFleet. All reporting deadlines are monitored and met by the payroll department.
+            </p>
+        </div>
+
+        <!-- Section 10 -->
+        <div class="section">
+            <div class="section-title">10. Policy Contact and Administration</div>
+            <div class="subsection-title">10.1 Policy Administration</div>
+            <p>
+                This policy is administered by the Human Resources Department in coordination with the Finance Department. Questions regarding compensation, deductions, or payroll processing should be directed to HR.
+            </p>
+            
+            <div class="subsection-title">10.2 Contact Information</div>
+            <p>
+                <strong>Payroll Questions:</strong> HR Department at hr@deltatrucking.com<br>
+                <strong>Settlement Disputes:</strong> Finance Department at finance@deltatrucking.com<br>
+                <strong>Benefits Inquiries:</strong> HR Benefits at benefits@deltatrucking.com
+            </p>
+        </div>
+
+        <!-- Part II - Settlement Focused Extract -->
+        <div class="part-divider">
+            PART II — SETTLEMENT-FOCUSED EXTRACT
+        </div>
+
+        <div class="section">
+            <div class="section-title">Settlement Processing Guidelines</div>
+            <p>
+                This section provides specific guidance for settlement processing and review procedures relevant to driver and owner-operator compensation. These guidelines supplement the full policy and focus on settlement-specific requirements.
             </p>
         </div>
 
         <div class="section">
-            <div class="section-title">Payroll Processing</div>
-            <p style="font-size: 10pt; margin-bottom: 0.25in;">
-                Payroll is processed through secure systems with proper segregation of duties. All payroll records are maintained for 7 years and available for employee review upon request.
+            <div class="section-title">Settlement Review Procedures</div>
+            <div class="subsection-title">Automated Review Triggers</div>
+            <ul>
+                <li>Net pay below $500 triggers automatic review</li>
+                <li>Deductions exceeding 30% of gross revenue require approval</li>
+                <li>Family support withholdings are automatically prioritized</li>
+                <li>Large deduction ratios trigger financial review</li>
+            </ul>
+            
+            <div id="section-5-2" class="subsection-title">Accessorial Charges and Driver Share</div>
+            <p>
+                Accessorial charges including detention, layover, and special handling fees are included in settlement calculations. Driver share percentages are applied according to individual agreements and documented in settlement summaries.
+            </p>
+            
+            <div class="subsection-title">Settlement Reimbursement Requirements</div>
+            <p>
+                Reimbursements for fuel, tolls, and other authorized expenses are processed through BackOfficeFleet with proper documentation. All reimbursement requests require receipts or supporting documentation and are reviewed for compliance with company policies.
             </p>
         </div>
 
-        <div class="section">
-            <div class="section-title">Compliance and Reporting</div>
-            <p style="font-size: 10pt; margin-bottom: 0.25in;">
-                This policy complies with all applicable federal and state labor laws. Regular audits ensure continued compliance and accuracy of payroll processing.
+        <!-- Signature Section -->
+        <div class="signature-section">
+            <div class="section-title">Policy Acknowledgment</div>
+            <p>
+                I acknowledge that I have received, read, and understood the Delta Advanced Trucking, Inc. Payroll, Compensation, and Deductions Policy. I agree to comply with all provisions outlined in this policy and understand that my compensation and deductions will be processed in accordance with these guidelines.
             </p>
+            
+            <div style="margin-top: 0.5in;">
+                <div class="signature-label">Employee/Driver Signature:</div>
+                <div class="signature-line"></div>
+                
+                <div class="signature-label" style="margin-top: 0.25in;">Printed Name:</div>
+                <div class="signature-line"></div>
+                
+                <div class="signature-label" style="margin-top: 0.25in;">Date:</div>
+                <div class="signature-line"></div>
+                
+                <div class="signature-label" style="margin-top: 0.25in;">Employee ID/Driver ID:</div>
+                <div class="signature-line"></div>
+            </div>
+            
+            <div style="margin-top: 0.5in;">
+                <div class="signature-label">Company Representative:</div>
+                <div class="signature-line"></div>
+                
+                <div class="signature-label" style="margin-top: 0.25in;">Debra Sanders, Director, HR</div>
+                <div class="signature-line"></div>
+                
+                <div class="signature-label" style="margin-top: 0.25in;">Date:</div>
+                <div class="signature-line"></div>
+            </div>
         </div>
 
-        <div class="section">
-            <div class="section-title">Policy Contact</div>
-            <p style="font-size: 10pt; margin-bottom: 0.25in;">
-                <strong>Questions:</strong> Contact Payroll Department at payroll@bof-demo.com<br>
-                <strong>Emergencies:</strong> Contact Payroll Supervisor immediately at ext. 555-1234
-            </p>
-        </div>
-
-        <div class="section">
-            <div class="section-title">Policy Version</div>
-            <p style="font-size: 10pt; margin-bottom: 0.25in;">
-                <strong>Version 1.0</strong><br>
-                <strong>Effective:</strong> October 15, 2025<br>
-                <strong>Last Reviewed:</strong> October 15, 2025<br>
-                <strong>Next Review Due:</strong> January 15, 2026<br>
-                <strong>Applies to:</strong> Drivers, Employees, Payroll, Finance, Dispatch
-            </p>
-        </div>
-
+        <!-- Footer -->
         <div class="footer">
-            BOF Demo Document — For demonstration and internal workflow preview only. Review before operational use.
+            <p><strong>Delta Advanced Trucking, Inc.</strong> | Human Resources Policy HR-PAY-001 | Managed through BackOfficeFleet Operating System</p>
+            <p>Effective: January 1, 2026 | Revision: May 13, 2026 | Next Review: January 1, 2027</p>
+            <p>For internal use only - Confidential company policy</p>
+        </div>
+
+        <!-- No Print Message -->
+        <div class="no-print">
+            <p><strong>Document Information:</strong> This policy is managed through BackOfficeFleet. For the most current version, contact Human Resources.</p>
         </div>
     </div>
 </body>
