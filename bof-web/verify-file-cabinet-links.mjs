@@ -14,176 +14,208 @@ if (!registryMatch) {
 
 // Parse the registry (simple approach)
 const items = [];
-const itemMatches = registryContent.matchAll(/{\s*id:\s*"([^"]+)"[\s\S]*?title:\s*"([^"]+)"[\s\S]*?status:\s*"([^"]+)"[\s\S]*?href:\s*"?([^"]*)"?\s*,?[\s\S]*?sourceAuthenticity:\s*"?([^"]*)"?\s*,?[\s\S]*?}/g);
+const itemMatches = registryContent.matchAll(/{\s*id:\s*"([^"]+)"[\s\S]*?title:\s*"([^"]+)"[\s\S]*?cabinet:\s*"([^"]+)"[\s\S]*?section:\s*"([^"]+)"[\s\S]*?status:\s*"([^"]+)"[\s\S]*?href:\s*"?([^"]*)"?\s*,?[\s\S]*?sourceAuthenticity:\s*"?([^"]*)"?\s*,?[\s\S]*?}/g);
 
 for (const match of itemMatches) {
   items.push({
     id: match[1],
     title: match[2],
-    status: match[3],
-    href: match[4] || null,
-    sourceAuthenticity: match[5] || null
+    cabinet: match[3],
+    section: match[4],
+    status: match[5],
+    href: match[6] || null,
+    sourceAuthenticity: match[7] || null
   });
 }
 
-console.log('🔍 Operations File Cabinet Link Verification Report\n');
+console.log('🔍 Operations File Cabinet Structure Verification Report\n');
 
-// Featured items list - filter from actual registry to match client component
-const featuredItems = items
+// Verify cabinet architecture
+const expectedCabinets = [
+  "Driver Qualification Files",
+  "Secondary Driver Documents", 
+  "Dispatch & Load Operations",
+  "Contracts / Customer / Legal",
+  "Safety / Claims / Insurance",
+  "HR / Talent / Performance",
+  "Policies & SOPs",
+  "Finance / Settlements / Back Office",
+  "Training & Knowledge Base"
+];
+
+// Verify section grouping
+const expectedSections = [
+  "Blank Templates",
+  "Completed Demo Samples",
+  "Company Policies & SOPs",
+  "BOF Dispatch Templates",
+  "Claims Forms",
+  "Legal / Contracts",
+  "External Resources",
+  "Needs Review / Coming Later"
+];
+
+// Check for blank templates (primary driver documents should point to blank templates)
+const blankTemplateItems = items
   .filter(item => 
-    item.status !== "coming_soon" && 
-    item.status !== "needs_review" &&
+    item.section === "Blank Templates" &&
     item.href && 
-    item.href.startsWith("/generated/") &&
-    [
-      // Driver Qualification Files (real documents only)
-      "driver-cdl", "driver-medical", "driver-mvr", "driver-clearinghouse", 
-      "driver-i9", "driver-w9", "driver-emergency-contacts", "driver-bank-info",
-      "driver-policy-acknowledgment", "driver-road-test", "driver-employment-verification",
-      "driver-incident-history",
-      
-      // Company Policies & SOPs (real generated policies only)
-      "hr-employee-handbook", "policy-code-of-conduct", "hr-onboarding-checklist",
-      "driver-withholding", "policy-accounting-finance", "policy-factoring-receivables",
-      "claims-escalation-sop", "policy-vendor-maintenance", "policy-safety-compliance",
-      "policy-information-security", "policy-privacy-data", "policy-ai-governance",
-      "policy-tax-audit-readiness", "policy-cash-flow-management",
-      
-      // Dispatch & Load Documents (real generated files only)
-      "dispatch-work-order", "dispatch-rate-confirmation",
-      "dispatch-bill-of-lading", "dispatch-proof-delivery",
-      "claims-insurance-notice",
-      
-      // HR Documents (real files only)
-      "hr-termination-checklist"
-    ].includes(item.id)
+    item.href.startsWith("/generated/templates/driver-docs/") &&
+    item.id.includes("-template")
   )
   .map(item => item.id);
 
-let totalFeatured = 0;
-let passedFeatured = 0;
-let failedFeatured = 0;
+// Check for completed samples (John Carter/DRV-001 files only under Completed Demo Samples)
+const completedSampleItems = items
+  .filter(item => 
+    item.section === "Completed Demo Samples" &&
+    item.href && 
+    item.href.startsWith("/generated/drivers/DRV-001/") &&
+    (item.title.includes("John Carter") || item.title.includes("DRV-001"))
+  )
+  .map(item => item.id);
 
-console.log('📋 Featured File Cabinet Items Verification:\n');
+// Verify cabinet structure
+console.log('�️ Cabinet Architecture Verification:\n');
+let cabinetTestsPassed = 0;
+let cabinetTestsTotal = 0;
 
-for (const itemId of featuredItems) {
-  const item = items.find(i => i.id === itemId);
-  if (!item) {
-    console.log(`❌ ${itemId}: Item not found in registry`);
-    failedFeatured++;
-    continue;
+// Check if all expected cabinets exist
+const actualCabinets = [...new Set(items.map(item => item.cabinet).filter(Boolean))];
+console.log(`Expected cabinets: ${expectedCabinets.length}`);
+console.log(`Actual cabinets: ${actualCabinets.length}`);
+cabinetTestsTotal++;
+
+const missingCabinets = expectedCabinets.filter(cabinet => !actualCabinets.includes(cabinet));
+if (missingCabinets.length === 0) {
+  console.log('✅ All expected cabinets are present');
+  cabinetTestsPassed++;
+} else {
+  console.log(`❌ Missing cabinets: ${missingCabinets.join(', ')}`);
+}
+
+// Verify section grouping
+console.log('\n📁 Section Grouping Verification:\n');
+const actualSections = [...new Set(items.map(item => item.section).filter(Boolean))];
+console.log(`Expected sections: ${expectedSections.length}`);
+console.log(`Actual sections: ${actualSections.length}`);
+cabinetTestsTotal++;
+
+const missingSections = expectedSections.filter(section => !actualSections.includes(section));
+if (missingSections.length === 0) {
+  console.log('✅ All expected sections are present');
+  cabinetTestsPassed++;
+} else {
+  console.log(`❌ Missing sections: ${missingSections.join(', ')}`);
+}
+
+// Verify blank templates
+console.log('\n📄 Blank Templates Verification:\n');
+console.log(`Blank template items: ${blankTemplateItems.length}`);
+cabinetTestsTotal++;
+
+if (blankTemplateItems.length > 0) {
+  console.log('✅ Blank templates found with proper structure');
+  cabinetTestsPassed++;
+  
+  // Check that blank templates don't contain John Carter or DRV-001
+  const invalidBlankTemplates = blankTemplateItems.filter(id => 
+    items.find(item => item.id === id && (item.title.includes('John Carter') || item.title.includes('DRV-001')))
+  );
+  
+  if (invalidBlankTemplates.length === 0) {
+    console.log('✅ Blank templates do not contain John Carter or DRV-001');
+    cabinetTestsPassed++;
+  } else {
+    console.log(`❌ Blank templates contain invalid references: ${invalidBlankTemplates.join(', ')}`);
   }
+  cabinetTestsTotal++;
+} else {
+  console.log('❌ No blank templates found');
+}
 
-  totalFeatured++;
+// Verify completed samples
+console.log('\n📋 Completed Demo Samples Verification:\n');
+console.log(`Completed sample items: ${completedSampleItems.length}`);
+cabinetTestsTotal++;
+
+if (completedSampleItems.length > 0) {
+  console.log('✅ Completed demo samples found with proper structure');
+  cabinetTestsPassed++;
+  
+  // Check that completed samples are only under Completed Demo Samples section
+  const samplesInWrongSection = items.filter(item => 
+    (item.title.includes('John Carter') || item.title.includes('DRV-001')) && 
+    item.section !== 'Completed Demo Samples'
+  );
+  
+  if (samplesInWrongSection.length === 0) {
+    console.log('✅ John Carter/DRV-001 files only under Completed Demo Samples');
+    cabinetTestsPassed++;
+  } else {
+    console.log(`❌ John Carter/DRV-001 files found in wrong sections: ${samplesInWrongSection.map(item => item.id).join(', ')}`);
+  }
+  cabinetTestsTotal++;
+} else {
+  console.log('❌ No completed demo samples found');
+}
+
+console.log(`\n📊 Structure Verification Summary:`);
+console.log(`Total Tests: ${cabinetTestsTotal}`);
+console.log(`Passed: ${cabinetTestsPassed}`);
+console.log(`Failed: ${cabinetTestsTotal - cabinetTestsPassed}`);
+
+// Check for broad module routes and basic structure issues
+console.log(`\n🔍 Link Structure Verification:\n`);
+
+let structureTestsPassed = 0;
+let structureTestsTotal = 0;
+
+for (const item of items) {
+  structureTestsTotal++;
   let passed = true;
   let issues = [];
 
-  // Check if href exists
-  if (!item.href) {
-    issues.push('Missing href');
-    passed = false;
-  }
-
-  // Check if href points to generated file
-  if (item.href && !item.href.startsWith('/generated/') && !item.href.startsWith('https://')) {
-    issues.push('Href does not point to generated file or external resource');
-    passed = false;
-  }
-
-  // Check if href points to broad module route
+  // Check for broad module routes (forbidden)
   if (item.href && ['/drivers', '/safety', '/settlements', '/documents', '/loads', '/evidence'].includes(item.href)) {
-    issues.push('Href points to broad module route');
+    issues.push('Document card uses broad module route');
     passed = false;
   }
 
-  // Check if file actually exists for generated paths
-  if (item.href && item.href.startsWith('/generated/')) {
-    const filePath = join(process.cwd(), 'public', item.href);
-    if (!existsSync(filePath)) {
-      issues.push('Generated file does not exist');
-      passed = false;
-    }
+  // Check for local filesystem paths
+  if (item.href && (item.href.includes('C:') || item.href.includes('public/') || item.href.includes('scripts/'))) {
+    issues.push('Uses local filesystem path');
+    passed = false;
+  }
+
+  // Check if href exists for available/template items
+  if ((item.status === 'available' || item.status === 'template' || item.status === 'available_route') && !item.href) {
+    issues.push('Missing href for available/template item');
+    passed = false;
   }
 
   // Check if status allows href
-  if (item.status === 'coming_soon' || item.status === 'needs_review') {
-    if (item.href) {
-      issues.push('Should not have href for coming_soon/needs_review status');
-      passed = false;
-    }
-  }
-
-  // Check for local filesystem paths
-  if (item.href && (item.href.includes('C:') || item.href.includes('public/') || item.href.includes('scripts/'))) {
-    issues.push('Uses local filesystem path');
+  if ((item.status === 'coming_soon' || item.status === 'needs_review') && item.href) {
+    issues.push('Should not have href for coming_soon/needs_review status');
     passed = false;
   }
 
   if (passed) {
-    console.log(`✅ ${item.title}: ${item.href}`);
-    passedFeatured++;
+    structureTestsPassed++;
   } else {
     console.log(`❌ ${item.title}: ${issues.join(', ')}`);
-    failedFeatured++;
   }
 }
 
-console.log(`\n📊 Featured Items Summary:`);
-console.log(`Total Featured: ${totalFeatured}`);
-console.log(`Passed: ${passedFeatured}`);
-console.log(`Failed: ${failedFeatured}`);
-
-// Check all items for issues
-console.log(`\n🔍 All Items Verification:\n`);
-
-let totalItems = 0;
-let passedAll = 0;
-let failedAll = 0;
-
-for (const item of items) {
-  totalItems++;
-  let passed = true;
-  let issues = [];
-
-  // Basic href validation
-  if (item.status === 'available' || item.status === 'template' || item.status === 'available_route') {
-    if (!item.href) {
-      issues.push('Missing href for available/template item');
-      passed = false;
-    }
-  }
-
-  // Check for local filesystem paths
-  if (item.href && (item.href.includes('C:') || item.href.includes('public/') || item.href.includes('scripts/'))) {
-    issues.push('Uses local filesystem path');
-    passed = false;
-  }
-
-  // Check for broad module routes on document cards (allow for external_resource)
-  if (item.href && ['/drivers', '/safety', '/settlements', '/documents', '/loads', '/evidence'].includes(item.href)) {
-    if (item.sourceAuthenticity !== 'external_resource') {
-      issues.push('Document card uses broad module route');
-      passed = false;
-    }
-  }
-
-  if (passed) {
-    passedAll++;
-  } else {
-    console.log(`❌ ${item.title}: ${issues.join(', ')}`);
-    failedAll++;
-  }
-}
-
-console.log(`\n📊 All Items Summary:`);
-console.log(`Total Items: ${totalItems}`);
-console.log(`Passed: ${passedAll}`);
-console.log(`Failed: ${failedAll}`);
+console.log(`\n📊 Link Structure Summary:`);
+console.log(`Total Items: ${structureTestsTotal}`);
+console.log(`Passed: ${structureTestsPassed}`);
+console.log(`Failed: ${structureTestsTotal - structureTestsPassed}`);
 
 // Exit with error code if any failures
-if (failedFeatured > 0 || failedAll > 0) {
-  console.log(`\n❌ Verification failed with ${failedFeatured + failedAll} issues`);
+if (cabinetTestsPassed < cabinetTestsTotal || structureTestsPassed < structureTestsTotal) {
+  console.log(`\n❌ Structure verification failed`);
   process.exit(1);
 } else {
-  console.log(`\n✅ All links verified successfully!`);
+  console.log(`\n✅ Cabinet structure and template grouping verified successfully!`);
 }

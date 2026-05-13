@@ -393,7 +393,7 @@ export function OperationsFileCabinetClient() {
         <div style={{ position: "relative", zIndex: 1 }}>
           <h1 className="bof-title">Operations File Cabinet</h1>
           <p className="bof-lead">
-            Delta Advanced Trucking, Inc.'s driver files, company policies, dispatch forms, SOPs, claims documents, training resources, and back-office templates organized in one operating library through BOF.
+            Driver files, company policies, dispatch forms, SOPs, claims documents, training resources, and back-office templates organized in one operating library for Delta Advanced Trucking, Inc.
           </p>
           
           {/* Hero Chips */}
