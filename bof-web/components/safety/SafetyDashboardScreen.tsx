@@ -33,6 +33,7 @@ import { getDriverSafetyBonusRows } from "@/lib/safety-bonus";
 import { 
   getTrainingResourcesForIncident, 
   getCoachingActionLink,
+  mapIncidentToTrainingCategory,
   type SafetyTrainingResource 
 } from "@/lib/safety-training-resources";
 import { SafetyCommandHero } from "@/components/safety/SafetyCommandHero";
@@ -51,6 +52,9 @@ export function SafetyDashboardScreen() {
   const [driverFilter, setDriverFilter] = useState<SafetyCommandDriverFilter>("all");
   const [severity, setSeverity] = useState<SafetyCommandSeverityFilter>("all");
   const [status, setStatus] = useState<SafetyCommandStatusFilter>("all");
+
+  // Local state for training decisions by evidence ID
+  const [trainingDecisionByEvidenceId, setTrainingDecisionByEvidenceId] = useState<Record<string, "yes" | "no" | undefined>>({});
 
   const safetyScorecardRows = useMemo(() => getSafetyScorecardRows(), []);
   const safetyScoreSummary = useMemo(() => getSafetyScorecardSummary(), []);
@@ -89,6 +93,52 @@ export function SafetyDashboardScreen() {
 
   const eliteDriversCount = safetyScorecardRows.filter((row) => row.performanceTier === 'Elite').length;
   const eliteDriversPercentage = safetyScorecardRows.length > 0 ? Math.round((eliteDriversCount / safetyScorecardRows.length) * 100) : 0;
+
+  // Helper functions for training decision workflow
+  const getEvidenceId = (driverId: string, label: string, url: string) => {
+    return `${driverId}-${label}-${url}`;
+  };
+
+  const getTrainingDecision = (driverId: string, label: string, url: string) => {
+    const evidenceId = getEvidenceId(driverId, label, url);
+    return trainingDecisionByEvidenceId[evidenceId];
+  };
+
+  const setTrainingDecision = (driverId: string, label: string, url: string, decision: "yes" | "no") => {
+    const evidenceId = getEvidenceId(driverId, label, url);
+    setTrainingDecisionByEvidenceId(prev => ({
+      ...prev,
+      [evidenceId]: decision
+    }));
+  };
+
+  const getTrainingTypeText = (label: string) => {
+    const category = mapIncidentToTrainingCategory(label);
+    switch (category) {
+      case 'vehicleInspection':
+        return 'Vehicle inspection and defect criteria refresher';
+      case 'cargoSecurement':
+        return 'Cargo securement and damage prevention refresher';
+      case 'hosLogbook':
+        return 'HOS/logbook compliance refresher';
+      default:
+        return 'Safety refresher training';
+    }
+  };
+
+  const getTrainingReason = (label: string) => {
+    const category = mapIncidentToTrainingCategory(label);
+    switch (category) {
+      case 'vehicleInspection':
+        return 'Equipment issue may affect vehicle safety and roadworthiness.';
+      case 'cargoSecurement':
+        return 'Cargo issue may affect load security and prevent damage claims.';
+      case 'hosLogbook':
+        return 'Hours-of-service issue may affect dispatch readiness and compliance posture.';
+      default:
+        return 'Safety issue requires review to prevent recurrence.';
+    }
+  };
 
   return (
     <div className="flex min-h-0 flex-1 flex-col gap-6 p-5" style={{ paddingBottom: '6rem' }}>
@@ -924,8 +974,7 @@ export function SafetyDashboardScreen() {
                                     color: 'rgba(255, 255, 255, 0.7)',
                                     marginBottom: '0.25rem'
                                   }}>
-                                    {resource.type === 'Training resource' && 'Vehicle inspection and defect criteria refresher'}
-                                    {resource.type === 'Official guidance' && 'Cargo securement and damage prevention refresher'}
+                                    {getTrainingTypeText(evidenceItem.label)}
                                   </div>
                                   {resource.external ? (
                                     <a
@@ -1007,28 +1056,149 @@ export function SafetyDashboardScreen() {
                           })()}
                         </div>
                         
+                        {/* Training Decision Workflow */}
+                        <div style={{
+                          marginBottom: '1rem'
+                        }}>
+                          <div style={{
+                            fontSize: '0.8rem',
+                            fontWeight: '600',
+                            color: 'rgba(255, 255, 255, 0.9)',
+                            marginBottom: '0.5rem'
+                          }}>
+                            Training Required?
+                          </div>
+                          <div style={{
+                            display: 'flex',
+                            gap: '0.5rem',
+                            marginBottom: '0.5rem'
+                          }}>
+                            <button
+                              onClick={() => setTrainingDecision(driverId, evidenceItem.label, evidenceItem.url, 'yes')}
+                              style={{
+                                display: 'inline-block',
+                                padding: '0.25rem 0.75rem',
+                                backgroundColor: getTrainingDecision(driverId, evidenceItem.label, evidenceItem.url) === 'yes' ? 'rgba(34, 197, 94, 0.3)' : 'rgba(239, 68, 68, 0.2)',
+                                border: getTrainingDecision(driverId, evidenceItem.label, evidenceItem.url) === 'yes' ? '1px solid rgba(34, 197, 94, 0.4)' : '1px solid rgba(239, 68, 68, 0.3)',
+                                borderRadius: '4px',
+                                color: getTrainingDecision(driverId, evidenceItem.label, evidenceItem.url) === 'yes' ? '#22c55e' : '#ef4444',
+                                textDecoration: 'none',
+                                fontSize: '0.75rem',
+                                fontWeight: '500',
+                                cursor: 'pointer',
+                                transition: 'all 0.2s ease'
+                              }}
+                            >
+                              Yes — assign refresher
+                            </button>
+                            <button
+                              onClick={() => setTrainingDecision(driverId, evidenceItem.label, evidenceItem.url, 'no')}
+                              style={{
+                                display: 'inline-block',
+                                padding: '0.25rem 0.75rem',
+                                backgroundColor: getTrainingDecision(driverId, evidenceItem.label, evidenceItem.url) === 'no' ? 'rgba(59, 130, 246, 0.3)' : 'rgba(107, 114, 128, 0.2)',
+                                border: getTrainingDecision(driverId, evidenceItem.label, evidenceItem.url) === 'no' ? '1px solid rgba(59, 130, 246, 0.4)' : '1px solid rgba(107, 114, 128, 0.3)',
+                                borderRadius: '4px',
+                                color: getTrainingDecision(driverId, evidenceItem.label, evidenceItem.url) === 'no' ? '#3b82f6' : '#6b7280',
+                                textDecoration: 'none',
+                                fontSize: '0.75rem',
+                                fontWeight: '500',
+                                cursor: 'pointer',
+                                transition: 'all 0.2s ease'
+                              }}
+                            >
+                              No — mark reviewed
+                            </button>
+                          </div>
+                          
+                          {/* Decision Result Panel */}
+                          {getTrainingDecision(driverId, evidenceItem.label, evidenceItem.url) === 'yes' && (
+                            <div style={{
+                              backgroundColor: 'rgba(34, 197, 94, 0.1)',
+                              border: '1px solid rgba(34, 197, 94, 0.2)',
+                              borderRadius: '4px',
+                              padding: '0.75rem',
+                              marginTop: '0.5rem'
+                            }}>
+                              <div style={{
+                                fontSize: '0.75rem',
+                                fontWeight: '600',
+                                color: '#22c55e',
+                                marginBottom: '0.25rem'
+                              }}>
+                                Training assignment draft
+                              </div>
+                              <div style={{
+                                fontSize: '0.7rem',
+                                color: 'rgba(255, 255, 255, 0.8)',
+                                marginBottom: '0.25rem'
+                              }}>
+                                <strong>Recommended refresher:</strong> {getTrainingTypeText(evidenceItem.label)}
+                              </div>
+                              <div style={{
+                                fontSize: '0.7rem',
+                                color: 'rgba(255, 255, 255, 0.8)',
+                                marginBottom: '0.25rem'
+                              }}>
+                                <strong>Reason:</strong> {getTrainingReason(evidenceItem.label)}
+                              </div>
+                              <div style={{
+                                fontSize: '0.7rem',
+                                color: 'rgba(255, 255, 255, 0.8)',
+                                marginBottom: '0.5rem'
+                              }}>
+                                <strong>Next step:</strong> Manager should review the incident with the driver before the next dispatch cycle.
+                              </div>
+                              <div style={{
+                                fontSize: '0.65rem',
+                                color: 'rgba(34, 197, 94, 0.8)',
+                                fontStyle: 'italic'
+                              }}>
+                                Coaching note prepared
+                              </div>
+                            </div>
+                          )}
+                          
+                          {getTrainingDecision(driverId, evidenceItem.label, evidenceItem.url) === 'no' && (
+                            <div style={{
+                              backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                              border: '1px solid rgba(59, 130, 246, 0.2)',
+                              borderRadius: '4px',
+                              padding: '0.75rem',
+                              marginTop: '0.5rem'
+                            }}>
+                              <div style={{
+                                fontSize: '0.75rem',
+                                fontWeight: '600',
+                                color: '#3b82f6',
+                                marginBottom: '0.25rem'
+                              }}>
+                                Reviewed without training assignment
+                              </div>
+                              <div style={{
+                                fontSize: '0.7rem',
+                                color: 'rgba(255, 255, 255, 0.8)',
+                                marginBottom: '0.25rem'
+                              }}>
+                                No refresher assigned. Keep evidence on file for safety history and audit support.
+                              </div>
+                              <div style={{
+                                fontSize: '0.65rem',
+                                color: 'rgba(59, 130, 246, 0.8)',
+                                fontStyle: 'italic'
+                              }}>
+                                Marked as reviewed
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                        
                         {/* Secondary Actions */}
                         <div style={{
                           display: 'flex',
                           gap: '0.5rem',
                           flexWrap: 'wrap'
                         }}>
-                          <Link
-                            href="/safety#at-risk-drivers"
-                            style={{
-                              display: 'inline-block',
-                              padding: '0.25rem 0.75rem',
-                              backgroundColor: 'rgba(239, 68, 68, 0.2)',
-                              border: '1px solid rgba(239, 68, 68, 0.3)',
-                              borderRadius: '4px',
-                              color: '#ef4444',
-                              textDecoration: 'none',
-                              fontSize: '0.75rem',
-                              fontWeight: '500'
-                            }}
-                          >
-                            Assign training →
-                          </Link>
                           {getSafetyEvidenceOpenHref(evidenceItem.url) && (
                             <a
                               href={getSafetyEvidenceOpenHref(evidenceItem.url)!}
