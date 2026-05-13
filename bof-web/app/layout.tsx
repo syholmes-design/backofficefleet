@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { BofHeader } from "@/components/BofHeader";
+import { ConditionalHeader } from "@/components/ConditionalHeader";
 import { BofDebugBanner } from "@/components/debug/BofDebugBanner";
 import "./globals.css";
 import "mapbox-gl/dist/mapbox-gl.css";
@@ -21,7 +21,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        <BofHeader />
+        <ConditionalHeader />
         {children}
         <BofDebugBanner />
       </body>
