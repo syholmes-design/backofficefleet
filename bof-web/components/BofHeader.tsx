@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useRef, useEffect } from "react";
+import React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { BookDemoLink } from "@/components/BookDemoLink";
@@ -15,8 +15,11 @@ const productNav = [
   { href: "/settlements", label: "Settlements" },
   { href: "/safety", label: "Safety" },
   { href: "/dispatch", label: "Dispatch" },
+  { href: "/portals", label: "Portals" },
 ];
 
+// Portals navigation - currently unused but preserved for potential future use
+/*
 const portalsNav = [
   {
     href: "/portals/manager",
@@ -34,7 +37,10 @@ const portalsNav = [
     description: "Assignments, documents, settlement visibility, and readiness."
   }
 ];
+*/
 
+// PortalsDropdown component - currently unused but preserved for potential future use
+/*
 function PortalsDropdown() {
   const [isOpen, setIsOpen] = useState(false);
   const pathname = usePathname();
@@ -138,6 +144,7 @@ function PortalsDropdown() {
     </div>
   );
 }
+*/
 
 export function BofHeader() {
   const pathname = usePathname();
@@ -183,7 +190,6 @@ export function BofHeader() {
                 </Link>
               );
             })}
-            <PortalsDropdown />
           </nav>
         </div>
       </header>
