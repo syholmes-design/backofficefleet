@@ -130,10 +130,10 @@ export const OPERATIONS_FILE_CABINET_REGISTRY: OperationsFileCabinetItem[] = [
     category: "Driver Qualification Files",
     type: "form",
     audience: ["driver", "manager", "hr", "safety"],
-    status: "template",
+    status: "available",
     description: "Comprehensive road test scoring and evaluation",
-    href: "/documents/template-packs",
-    source: "template"
+    href: "/generated/drivers/DRV-001/road-test-certificate.html",
+    source: "generated"
   },
   {
     id: "driver-employment-verification",
@@ -141,10 +141,10 @@ export const OPERATIONS_FILE_CABINET_REGISTRY: OperationsFileCabinetItem[] = [
     category: "Driver Qualification Files",
     type: "form",
     audience: ["driver", "manager", "hr"],
-    status: "template",
+    status: "available",
     description: "Employment verification and prior work history documentation",
-    href: "/documents/template-packs",
-    source: "template"
+    href: "/generated/drivers/DRV-001/employment_verification.html",
+    source: "generated"
   },
   {
     id: "driver-annual-review",
@@ -173,9 +173,9 @@ export const OPERATIONS_FILE_CABINET_REGISTRY: OperationsFileCabinetItem[] = [
     category: "Driver Qualification Files",
     type: "driver-file",
     audience: ["driver", "manager", "hr"],
-    status: "available",
+    status: "needs_review",
     description: "Complete driver profile and documentation access",
-    href: "/drivers",
+    href: "/generated/drivers/DRV-001/john-carter-profile-dashboard.html",
     source: "generated"
   },
   {
@@ -216,10 +216,10 @@ export const OPERATIONS_FILE_CABINET_REGISTRY: OperationsFileCabinetItem[] = [
     category: "Driver Qualification Files",
     type: "form",
     audience: ["driver", "manager", "hr", "safety"],
-    status: "template",
+    status: "available",
     description: "Safety policy acknowledgment and compliance documentation",
-    href: "/documents/template-packs",
-    source: "template"
+    href: "/generated/drivers/DRV-001/hr-payroll/employee-handbook-acknowledgment.html",
+    source: "generated"
   },
 
   // Secondary Driver Documents
@@ -229,10 +229,9 @@ export const OPERATIONS_FILE_CABINET_REGISTRY: OperationsFileCabinetItem[] = [
     category: "Secondary Driver Documents",
     type: "driver-file",
     audience: ["driver", "manager", "safety"],
-    status: "available",
+    status: "needs_review",
     description: "Driver coaching documentation and follow-up records",
-    href: "/safety",
-    source: "generated"
+    source: "demo"
   },
   {
     id: "driver-safety-scorecards",
@@ -240,10 +239,9 @@ export const OPERATIONS_FILE_CABINET_REGISTRY: OperationsFileCabinetItem[] = [
     category: "Secondary Driver Documents",
     type: "driver-file",
     audience: ["driver", "manager", "safety"],
-    status: "available",
+    status: "needs_review",
     description: "Monthly safety performance metrics and trends",
-    href: "/safety",
-    source: "generated"
+    source: "demo"
   },
   {
     id: "driver-incident-history",
@@ -253,7 +251,7 @@ export const OPERATIONS_FILE_CABINET_REGISTRY: OperationsFileCabinetItem[] = [
     audience: ["driver", "manager", "safety"],
     status: "available",
     description: "Complete incident and violation history tracking",
-    href: "/safety",
+    href: "/generated/drivers/DRV-001/incident-report.html",
     source: "generated"
   },
   {
@@ -336,10 +334,9 @@ export const OPERATIONS_FILE_CABINET_REGISTRY: OperationsFileCabinetItem[] = [
     category: "Dispatch & Load Operations",
     type: "checklist",
     audience: ["dispatcher", "driver", "safety"],
-    status: "available",
+    status: "needs_review",
     description: "Vehicle inspection and safety check before departure",
-    href: "/evidence",
-    source: "generated"
+    source: "demo"
   },
   {
     id: "dispatch-route-readiness",
@@ -347,10 +344,9 @@ export const OPERATIONS_FILE_CABINET_REGISTRY: OperationsFileCabinetItem[] = [
     category: "Dispatch & Load Operations",
     type: "checklist",
     audience: ["dispatcher", "driver", "manager"],
-    status: "template",
+    status: "needs_review",
     description: "Route planning and dispatch readiness verification checklist",
-    href: "/documents/template-packs",
-    source: "template"
+    source: "demo"
   },
   {
     id: "dispatch-cargo-photo",
@@ -358,10 +354,9 @@ export const OPERATIONS_FILE_CABINET_REGISTRY: OperationsFileCabinetItem[] = [
     category: "Dispatch & Load Operations",
     type: "checklist",
     audience: ["dispatcher", "driver", "safety"],
-    status: "template",
+    status: "needs_review",
     description: "Required cargo photography documentation and damage prevention",
-    href: "/loads",
-    source: "generated"
+    source: "demo"
   },
   {
     id: "dispatch-seal-verification",
@@ -369,10 +364,9 @@ export const OPERATIONS_FILE_CABINET_REGISTRY: OperationsFileCabinetItem[] = [
     category: "Dispatch & Load Operations",
     type: "checklist",
     audience: ["dispatcher", "driver", "safety"],
-    status: "template",
+    status: "needs_review",
     description: "Trailer seal verification and security procedures",
-    href: "/loads",
-    source: "generated"
+    source: "demo"
   },
   {
     id: "dispatch-rate-confirmation",
@@ -413,10 +407,9 @@ export const OPERATIONS_FILE_CABINET_REGISTRY: OperationsFileCabinetItem[] = [
     category: "Dispatch & Load Operations",
     type: "sop",
     audience: ["dispatcher", "driver", "manager"],
-    status: "available",
+    status: "needs_review",
     description: "Standard post-trip documentation and closeout procedures",
-    href: "/loads",
-    source: "generated"
+    source: "demo"
   },
   {
     id: "dispatch-lumper-receipt",
@@ -424,10 +417,9 @@ export const OPERATIONS_FILE_CABINET_REGISTRY: OperationsFileCabinetItem[] = [
     category: "Dispatch & Load Operations",
     type: "form",
     audience: ["dispatcher", "driver", "manager", "finance"],
-    status: "template",
+    status: "needs_review",
     description: "Lumper service receipt and reimbursement documentation",
-    href: "/loads",
-    source: "generated"
+    source: "demo"
   },
   {
     id: "dispatch-detention",
@@ -435,10 +427,9 @@ export const OPERATIONS_FILE_CABINET_REGISTRY: OperationsFileCabinetItem[] = [
     category: "Dispatch & Load Operations",
     type: "form",
     audience: ["dispatcher", "driver", "manager", "finance"],
-    status: "available",
+    status: "needs_review",
     description: "Detention time tracking and charge documentation",
-    href: "/loads",
-    source: "generated"
+    source: "demo"
   },
   {
     id: "dispatch-accessorial",
@@ -446,10 +437,9 @@ export const OPERATIONS_FILE_CABINET_REGISTRY: OperationsFileCabinetItem[] = [
     category: "Dispatch & Load Operations",
     type: "form",
     audience: ["dispatcher", "manager", "finance"],
-    status: "available",
+    status: "needs_review",
     description: "Accessorial charges approval and documentation form",
-    href: "/loads",
-    source: "generated"
+    source: "demo"
   },
   {
     id: "dispatch-work-order",
@@ -459,7 +449,7 @@ export const OPERATIONS_FILE_CABINET_REGISTRY: OperationsFileCabinetItem[] = [
     audience: ["dispatcher", "manager", "customer"],
     status: "template",
     description: "Service work order and operational scope template",
-    href: "/loads",
+    href: "/generated/loads/L001/work-order.html",
     source: "generated"
   },
   {
@@ -468,10 +458,9 @@ export const OPERATIONS_FILE_CABINET_REGISTRY: OperationsFileCabinetItem[] = [
     category: "Dispatch & Load Operations",
     type: "template",
     audience: ["dispatcher", "manager", "customer"],
-    status: "template",
+    status: "needs_review",
     description: "Service schedule and delivery timeline template",
-    href: "/loads",
-    source: "generated"
+    source: "demo"
   },
 
   // Safety / Claims / Insurance
@@ -492,10 +481,9 @@ export const OPERATIONS_FILE_CABINET_REGISTRY: OperationsFileCabinetItem[] = [
     category: "Safety / Claims / Insurance",
     type: "checklist",
     audience: ["driver", "manager", "safety", "legal"],
-    status: "available",
+    status: "needs_review",
     description: "Step-by-step incident response and documentation checklist",
-    href: "/safety",
-    source: "generated"
+    source: "demo"
   },
   {
     id: "claims-cargo-intake",
@@ -505,7 +493,7 @@ export const OPERATIONS_FILE_CABINET_REGISTRY: OperationsFileCabinetItem[] = [
     audience: ["manager", "safety", "customer", "legal"],
     status: "template",
     description: "Standard cargo damage claim intake and documentation",
-    href: "/loads",
+    href: "/generated/loads/L001/claim-intake.html",
     source: "generated"
   },
   {
@@ -514,10 +502,9 @@ export const OPERATIONS_FILE_CABINET_REGISTRY: OperationsFileCabinetItem[] = [
     category: "Safety / Claims / Insurance",
     type: "form",
     audience: ["manager", "safety", "legal"],
-    status: "template",
+    status: "needs_review",
     description: "Insurance claim submission and documentation form",
-    href: "/loads",
-    source: "generated"
+    source: "demo"
   },
   {
     id: "claims-police-report",
@@ -551,15 +538,14 @@ export const OPERATIONS_FILE_CABINET_REGISTRY: OperationsFileCabinetItem[] = [
     source: "demo"
   },
   {
-    id: "claims-photo-evidence",
-    title: "Photo Evidence Checklist",
+    id: "claims-photo-documentation",
+    title: "Photo Documentation Checklist",
     category: "Safety / Claims / Insurance",
     type: "checklist",
     audience: ["driver", "manager", "safety", "legal"],
-    status: "available",
+    status: "needs_review",
     description: "Required photo documentation for claims and incidents",
-    href: "/safety",
-    source: "generated"
+    source: "demo"
   },
   {
     id: "claims-preservation-letter",
@@ -590,7 +576,7 @@ export const OPERATIONS_FILE_CABINET_REGISTRY: OperationsFileCabinetItem[] = [
     audience: ["manager", "safety", "legal"],
     status: "template",
     description: "Insurance notification and claim reporting documentation",
-    href: "/loads",
+    href: "/generated/loads/L001/insurance-notification.html",
     source: "generated"
   },
   {
@@ -610,10 +596,9 @@ export const OPERATIONS_FILE_CABINET_REGISTRY: OperationsFileCabinetItem[] = [
     category: "Safety / Claims / Insurance",
     type: "form",
     audience: ["driver", "manager", "safety"],
-    status: "available",
+    status: "needs_review",
     description: "Individual safety evidence photos and documentation",
-    href: "/evidence",
-    source: "generated"
+    source: "demo"
   },
 
   // HR / Talent / Performance
@@ -705,10 +690,9 @@ export const OPERATIONS_FILE_CABINET_REGISTRY: OperationsFileCabinetItem[] = [
     category: "HR / Talent / Performance",
     type: "form",
     audience: ["manager", "hr", "safety"],
-    status: "available",
+    status: "needs_review",
     description: "Driver coaching documentation and action plan template",
-    href: "/safety",
-    source: "generated"
+    source: "demo"
   },
   {
     id: "hr-termination-checklist",
@@ -882,10 +866,9 @@ export const OPERATIONS_FILE_CABINET_REGISTRY: OperationsFileCabinetItem[] = [
     category: "Finance / Settlements / Back Office",
     type: "form",
     audience: ["manager", "finance", "driver"],
-    status: "available",
+    status: "needs_review",
     description: "Settlement review and approval documentation",
-    href: "/settlements",
-    source: "generated"
+    source: "demo"
   },
   {
     id: "finance-payroll-adjustment",
@@ -934,10 +917,9 @@ export const OPERATIONS_FILE_CABINET_REGISTRY: OperationsFileCabinetItem[] = [
     category: "Finance / Settlements / Back Office",
     type: "template",
     audience: ["manager", "finance", "customer"],
-    status: "available",
+    status: "needs_review",
     description: "Complete factoring documentation packet",
-    href: "/documents",
-    source: "generated"
+    source: "demo"
   },
   {
     id: "finance-invoice-template",
@@ -947,7 +929,7 @@ export const OPERATIONS_FILE_CABINET_REGISTRY: OperationsFileCabinetItem[] = [
     audience: ["manager", "finance", "customer"],
     status: "template",
     description: "Standard customer invoice template",
-    href: "/loads",
+    href: "/generated/loads/L001/invoice.html",
     source: "generated"
   },
   {
@@ -1095,10 +1077,9 @@ export const OPERATIONS_FILE_CABINET_REGISTRY: OperationsFileCabinetItem[] = [
     category: "Contracts / Customer / Legal",
     type: "template",
     audience: ["manager", "customer", "dispatcher"],
-    status: "template",
+    status: "needs_review",
     description: "Service schedule and delivery timeline template",
-    href: "/loads",
-    source: "generated"
+    source: "demo"
   },
   {
     id: "contract-work-order",
@@ -1139,10 +1120,9 @@ export const OPERATIONS_FILE_CABINET_REGISTRY: OperationsFileCabinetItem[] = [
     category: "Contracts / Customer / Legal",
     type: "contract",
     audience: ["manager", "vendor", "legal"],
-    status: "template",
+    status: "needs_review",
     description: "Standard vendor services agreement template",
-    href: "/scripts/templates/owner-operator-lease-template.html",
-    source: "template"
+    source: "demo"
   },
   {
     id: "contract-demand-letter",

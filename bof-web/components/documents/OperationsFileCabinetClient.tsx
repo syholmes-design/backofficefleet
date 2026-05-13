@@ -28,34 +28,34 @@ export function OperationsFileCabinetClient() {
   const audiences = useMemo(() => getOperationsFileCabinetAudiences(), []);
   const statuses = useMemo(() => getOperationsFileCabinetStatuses(), []);
 
-  // Featured items - curated list of high-value documents with actual links
+  // Featured items - curated list of high-value documents with actual links only
   const featuredItems = useMemo(() => {
     return allItems.filter(item => 
       item.status !== "coming_soon" && 
+      item.status !== "needs_review" &&
       item.href && 
+      item.href.startsWith("/generated/") &&
       [
-        // Driver Qualification Files
+        // Driver Qualification Files (real documents only)
         "driver-cdl", "driver-medical", "driver-mvr", "driver-clearinghouse", 
         "driver-i9", "driver-w9", "driver-emergency-contacts", "driver-bank-info",
         "driver-policy-acknowledgment", "driver-road-test", "driver-employment-verification",
+        "driver-incident-history",
         
-        // Company Policies & SOPs
-        "policy-employee-handbook", "policy-code-of-conduct", "policy-hr-onboarding",
-        "policy-payroll-compensation", "policy-accounting-finance", "policy-factoring-receivables",
-        "policy-insurance-risk-claims", "policy-vendor-maintenance", "policy-safety-compliance",
+        // Company Policies & SOPs (real generated policies only)
+        "hr-employee-handbook", "policy-code-of-conduct", "hr-onboarding-checklist",
+        "driver-withholding", "policy-accounting-finance", "policy-factoring-receivables",
+        "claims-escalation-sop", "policy-vendor-maintenance", "policy-safety-compliance",
         "policy-information-security", "policy-privacy-data", "policy-ai-governance",
         "policy-tax-audit-readiness", "policy-cash-flow-management",
         
-        // Dispatch & Load Documents
-        "contract-master-agreement", "contract-work-order", "dispatch-rate-confirmation",
-        "dispatch-bol", "dispatch-pod", "dispatch-posttrip-protocol",
+        // Dispatch & Load Documents (real generated files only)
+        "contract-master-agreement", "dispatch-work-order", "dispatch-rate-confirmation",
+        "dispatch-bol", "dispatch-pod",
+        "claims-cargo-intake", "claims-insurance-notice",
         
-        // Safety / Claims / Training
-        "safety-evidence", "safety-incident-report", "training-cvsa-inspection",
-        "training-fmcsa-cargo", "training-fmcsa-hos",
-        
-        // Finance / Settlements
-        "settlement-route", "finance-factoring-packet", "finance-invoice-template"
+        // HR Documents (real files only)
+        "hr-termination-checklist"
       ].includes(item.id)
     );
   }, [allItems]);
@@ -172,7 +172,7 @@ export function OperationsFileCabinetClient() {
   function getItemCta(item: OperationsFileCabinetItem): string {
     switch (item.type) {
       case "driver-file":
-        return "View file";
+        return "Open document";
       case "template":
         return "View template";
       case "policy":
@@ -180,7 +180,7 @@ export function OperationsFileCabinetClient() {
       case "checklist":
         return "View checklist";
       case "form":
-        return "View form";
+        return "Open form";
       case "video":
         return "Watch video";
       case "article":
@@ -188,7 +188,7 @@ export function OperationsFileCabinetClient() {
       case "sop":
         return "View SOP";
       case "contract":
-        return "View contract";
+        return "View agreement";
       default:
         return "Open";
     }
@@ -247,7 +247,7 @@ export function OperationsFileCabinetClient() {
   }
 
   return (
-    <div className="bof-page">
+    <div className="bof-page" style={{ paddingBottom: "6rem" }}>
       {/* Hero Section */}
       <div style={{
         marginBottom: "2rem"
@@ -523,7 +523,11 @@ export function OperationsFileCabinetClient() {
 
       {/* Featured File Cabinet */}
       <div style={{
-        marginBottom: "3rem"
+        minHeight: "100vh",
+        backgroundColor: "#1a1a1a",
+        color: "#ffffff",
+        padding: "2rem",
+        paddingBottom: "6rem"
       }}>
         <h2 style={{
           fontSize: "1.5rem",
