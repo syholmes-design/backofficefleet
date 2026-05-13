@@ -1240,6 +1240,134 @@ export function SafetyDashboardScreen() {
         }}>
           6-Month Safety Trend
         </h2>
+        
+        {/* Safety Trend Chart */}
+        <div style={{
+          backgroundColor: 'rgba(255, 255, 255, 0.05)',
+          border: '1px solid rgba(255, 255, 255, 0.1)',
+          borderRadius: '8px',
+          padding: '1.5rem',
+          marginBottom: '1.5rem'
+        }}>
+          {/* Accessibility Caption */}
+          <div style={{
+            fontSize: '0.8rem',
+            color: 'rgba(255, 255, 255, 0.6)',
+            marginBottom: '1rem',
+            fontStyle: 'italic'
+          }}>
+            Safety score improved from 86 to 92 over six months while at-risk drivers declined from 4 to 2.
+          </div>
+          
+          {/* Chart Container */}
+          <div style={{
+            position: 'relative',
+            height: '280px',
+            width: '100%',
+            backgroundColor: 'rgba(0, 0, 0, 0.2)',
+            borderRadius: '6px',
+            padding: '1rem'
+          }}>
+            <svg
+              width="100%"
+              height="100%"
+              viewBox="0 0 800 240"
+              preserveAspectRatio="xMidYMid meet"
+              style={{ overflow: 'visible' }}
+            >
+              {/* Grid Lines */}
+              {[80, 60, 40, 20].map((y) => (
+                <g key={y}>
+                  <line
+                    x1="60"
+                    y1={y * 2}
+                    x2="740"
+                    y2={y * 2}
+                    stroke="rgba(255, 255, 255, 0.1)"
+                    strokeWidth="1"
+                  />
+                  <text
+                    x="45"
+                    y={y * 2 + 4}
+                    fill="rgba(255, 255, 255, 0.5)"
+                    fontSize="12"
+                    textAnchor="end"
+                  >
+                    {y}
+                  </text>
+                </g>
+              ))}
+              
+              {/* X-axis labels */}
+              {safetyMonthlyTrend.map((row, index) => (
+                <text
+                  key={row.month}
+                  x={60 + (index * 136)}
+                  y="220"
+                  fill="rgba(255, 255, 255, 0.7)"
+                  fontSize="12"
+                  textAnchor="middle"
+                >
+                  {row.month.split(' ')[0]}
+                </text>
+              ))}
+              
+              {/* At-Risk Drivers Bars */}
+              {safetyMonthlyTrend.map((row, index) => (
+                <rect
+                  key={`bar-${row.month}`}
+                  x={60 + (index * 136) - 15}
+                  y={200 - (row.atRiskDrivers * 15)}
+                  width="30"
+                  height={row.atRiskDrivers * 15}
+                  fill="rgba(239, 68, 68, 0.3)"
+                  stroke="rgba(239, 68, 68, 0.5)"
+                  strokeWidth="1"
+                  rx="2"
+                />
+              ))}
+              
+              {/* Safety Score Line */}
+              <polyline
+                points={safetyMonthlyTrend.map((row, index) => 
+                  `${60 + (index * 136)},${200 - (row.safetyScore * 2)}`
+                ).join(' ')}
+                fill="none"
+                stroke="#22c55e"
+                strokeWidth="3"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+              
+              {/* Safety Score Points */}
+              {safetyMonthlyTrend.map((row, index) => (
+                <circle
+                  key={`point-${row.month}`}
+                  cx={60 + (index * 136)}
+                  cy={200 - (row.safetyScore * 2)}
+                  r="5"
+                  fill="#22c55e"
+                  stroke="rgba(255, 255, 255, 0.8)"
+                  strokeWidth="2"
+                />
+              ))}
+              
+              {/* Legend */}
+              <g>
+                <rect x="600" y="10" width="12" height="12" fill="#22c55e" rx="2" />
+                <text x="618" y="20" fill="rgba(255, 255, 255, 0.8)" fontSize="12">
+                  Safety Score
+                </text>
+                <rect x="600" y="28" width="12" height="12" fill="rgba(239, 68, 68, 0.3)" stroke="rgba(239, 68, 68, 0.5)" strokeWidth="1" rx="2" />
+                <text x="618" y="38" fill="rgba(255, 255, 255, 0.8)" fontSize="12">
+                  At-Risk Drivers
+                </text>
+              </g>
+            </svg>
+          </div>
+        </div>
+        
+        {/* Monthly Detail Cards */}
         <div style={{
           backgroundColor: 'rgba(255, 255, 255, 0.05)',
           border: '1px solid rgba(255, 255, 255, 0.1)',
@@ -1247,6 +1375,14 @@ export function SafetyDashboardScreen() {
           padding: '1rem',
           overflowX: 'auto'
         }}>
+          <div style={{
+            fontSize: '1rem',
+            fontWeight: '600',
+            color: 'rgba(255, 255, 255, 0.9)',
+            marginBottom: '1rem'
+          }}>
+            Monthly Details
+          </div>
           <div style={{
             display: 'grid',
             gridTemplateColumns: 'repeat(auto-fit, minmax(120px, 1fr))',
