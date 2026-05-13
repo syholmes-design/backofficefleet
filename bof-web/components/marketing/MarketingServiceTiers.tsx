@@ -23,7 +23,7 @@ const TIERS: readonly Tier[] = [
       "Command Center alerts and operating scorecards",
     ],
     ctaLabel: "Explore Core Operations",
-    href: "/for-hire-carriers",
+    href: "/command-center",
   },
   {
     tierLabel: "Tier 2",
@@ -38,7 +38,7 @@ const TIERS: readonly Tier[] = [
       "BOF Vault integration for driver-controlled document readiness",
     ],
     ctaLabel: "Review HR Readiness",
-    href: "/bof-vault",
+    href: "/drivers",
   },
   {
     tierLabel: "Tier 3",
