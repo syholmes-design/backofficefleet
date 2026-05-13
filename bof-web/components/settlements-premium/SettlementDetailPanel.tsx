@@ -33,10 +33,51 @@ export function SettlementDetailPanel({ driverSettlement, period }: SettlementDe
   if (!driverSettlement) {
     return (
       <div className="bg-slate-900 rounded-lg shadow-lg border border-slate-700 p-6">
-        <div className="text-center text-slate-400">
-          <User className="h-12 w-12 mx-auto mb-4 text-slate-500" />
-          <p className="text-lg font-medium mb-2">No Driver Selected</p>
-          <p className="text-sm">Select a driver from the table to view settlement details.</p>
+        <div className="text-center">
+          <div className="bg-slate-800 rounded-full p-3 w-16 h-16 mx-auto mb-4 flex items-center justify-center">
+            <User className="h-8 w-8 text-slate-400" />
+          </div>
+          <h3 className="text-lg font-semibold text-slate-100 mb-2">Select a Driver</h3>
+          <p className="text-slate-400 text-sm mb-6">
+            Choose a driver from the table to view detailed settlement information and take action.
+          </p>
+          
+          {/* Example Review Checklist */}
+          <div className="bg-slate-800/50 rounded-lg p-4 mb-6 text-left">
+            <h4 className="text-sm font-medium text-slate-300 mb-3">What you&apos;ll see:</h4>
+            <ul className="space-y-2 text-xs text-slate-400">
+              <li className="flex items-start gap-2">
+                <div className="w-1.5 h-1.5 rounded-full bg-teal-400 mt-1.5 flex-shrink-0" />
+                <span>Gross pay breakdown (base, backhaul, safety bonus)</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <div className="w-1.5 h-1.5 rounded-full bg-teal-400 mt-1.5 flex-shrink-0" />
+                <span>All deductions and withholding details</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <div className="w-1.5 h-1.5 rounded-full bg-teal-400 mt-1.5 flex-shrink-0" />
+                <span>Reimbursements and expense payments</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <div className="w-1.5 h-1.5 rounded-full bg-teal-400 mt-1.5 flex-shrink-0" />
+                <span>Family support or garnishment details</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <div className="w-1.5 h-1.5 rounded-full bg-teal-400 mt-1.5 flex-shrink-0" />
+                <span>Payment readiness and approval status</span>
+              </li>
+            </ul>
+          </div>
+          
+          {/* Quick Actions */}
+          <div className="space-y-2">
+            <button className="w-full bg-teal-600 hover:bg-teal-700 text-white px-4 py-2 rounded text-sm font-medium transition-colors">
+              Review First Exception
+            </button>
+            <button className="w-full bg-slate-700 hover:bg-slate-600 text-slate-300 px-4 py-2 rounded text-sm font-medium transition-colors">
+              View Settlement Guidelines
+            </button>
+          </div>
         </div>
       </div>
     );

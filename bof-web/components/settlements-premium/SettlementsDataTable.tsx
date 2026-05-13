@@ -1,7 +1,6 @@
 "use client";
 
 import { useMemo } from "react";
-import { Eye, ExternalLink } from "lucide-react";
 import type { DriverSettlementRow, SettlementStatus } from "./SettlementsCommandCenter";
 
 interface SettlementsDataTableProps {
@@ -47,38 +46,35 @@ export function SettlementsDataTable({ rows, selectedDriverId, onDriverSelect }:
         <h2 className="text-lg font-semibold text-slate-100">
           Driver Settlements ({rows.length} drivers)
         </h2>
+        <p className="text-slate-400 text-sm mt-1">
+          Click any row to view detailed settlement information
+        </p>
       </div>
       
       <div className="overflow-x-auto">
         <table className="min-w-full divide-y divide-slate-700">
           <thead className="bg-slate-800">
             <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium text-slate-400 uppercase tracking-wider">
+              <th className="px-4 py-3 text-left text-xs font-medium text-slate-400 uppercase tracking-wider">
                 Driver
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-slate-400 uppercase tracking-wider">
-                Driver ID
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-slate-400 uppercase tracking-wider">
+              <th className="px-4 py-3 text-right text-xs font-medium text-slate-400 uppercase tracking-wider">
                 Gross
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-slate-400 uppercase tracking-wider">
-                Reimbursements
+              <th className="px-4 py-3 text-right text-xs font-medium text-slate-400 uppercase tracking-wider">
+                Reimb.
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-slate-400 uppercase tracking-wider">
+              <th className="px-4 py-3 text-right text-xs font-medium text-slate-400 uppercase tracking-wider">
                 Deductions
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-slate-400 uppercase tracking-wider">
+              <th className="px-4 py-3 text-right text-xs font-medium text-slate-400 uppercase tracking-wider">
                 Net
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-slate-400 uppercase tracking-wider">
+              <th className="px-4 py-3 text-center text-xs font-medium text-slate-400 uppercase tracking-wider">
                 Status
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-slate-400 uppercase tracking-wider">
-                Holds/Issues
-              </th>
-              <th className="px-6 py-3 text-center text-xs font-medium text-slate-400 uppercase tracking-wider">
-                Actions
+              <th className="px-4 py-3 text-center text-xs font-medium text-slate-400 uppercase tracking-wider">
+                Action
               </th>
             </tr>
           </thead>
@@ -86,91 +82,75 @@ export function SettlementsDataTable({ rows, selectedDriverId, onDriverSelect }:
             {sortedRows.map((row) => {
               const statusInfo = statusConfig[row.status];
               const isSelected = selectedDriverId === row.driverId;
+              const hasIssues = row.holds.length > 0 || (row.familySupport && row.familySupport > 0) || (row.grossPay > 0 && (row.deductions / row.grossPay) > 0.3);
               
               return (
                 <tr
                   key={row.driverId}
                   className={`hover:bg-slate-800 cursor-pointer transition-colors ${
-                    isSelected ? 'bg-teal-900/20' : ''
+                    isSelected ? 'bg-teal-900/30 border-l-4 border-l-teal-500' : ''
                   }`}
                   onClick={() => onDriverSelect(row.driverId)}
                 >
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm font-medium text-slate-100">
-                      {row.driverName}
+                  <td className="px-4 py-3 whitespace-nowrap">
+                    <div className="flex items-center gap-3">
+                      <div className="flex-shrink-0">
+                        <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-medium ${
+                          isSelected ? 'bg-teal-600 text-white' : 'bg-slate-700 text-slate-300'
+                        }`}>
+                          {row.driverName.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2)}
+                        </div>
+                      </div>
+                      <div>
+                        <div className="text-sm font-medium text-slate-100">
+                          {row.driverName}
+                        </div>
+                        <div className="text-xs text-slate-500">
+                          {row.driverId}
+                        </div>
+                      </div>
+                      {hasIssues && (
+                        <div className="flex-shrink-0">
+                          <div className="w-2 h-2 rounded-full bg-amber-400"></div>
+                        </div>
+                      )}
                     </div>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm text-slate-400">
-                      {row.driverId}
-                    </div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-right">
+                  <td className="px-4 py-3 whitespace-nowrap text-right">
                     <div className="text-sm font-medium text-slate-100">
                       {formatCurrency(row.grossPay)}
                     </div>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-right">
+                  <td className="px-4 py-3 whitespace-nowrap text-right">
                     <div className="text-sm text-slate-300">
                       {formatCurrency(row.reimbursements)}
                     </div>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-right">
+                  <td className="px-4 py-3 whitespace-nowrap text-right">
                     <div className="text-sm text-slate-300">
                       {formatCurrency(row.deductions)}
                     </div>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-right">
+                  <td className="px-4 py-3 whitespace-nowrap text-right">
                     <div className="text-sm font-medium text-teal-400">
                       {formatCurrency(row.netPay)}
                     </div>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
+                  <td className="px-4 py-3 whitespace-nowrap text-center">
                     <span className={`inline-flex px-2 py-1 text-xs font-medium rounded-full ${statusInfo.className}`}>
                       {statusInfo.label}
                     </span>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    {row.holds.length > 0 ? (
-                      <div className="text-sm text-amber-400">
-                        {row.holds[0]}
-                        {row.holds.length > 1 && (
-                          <span className="text-xs text-slate-500">
-                            {' '}+{row.holds.length - 1} more
-                          </span>
-                        )}
-                      </div>
-                    ) : (
-                      <div className="text-sm text-emerald-400">
-                        No holds
-                      </div>
-                    )}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-center">
-                    <div className="flex items-center justify-center space-x-2">
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          onDriverSelect(row.driverId);
-                        }}
-                        className="text-teal-400 hover:text-teal-300 transition-colors"
-                        title="View settlement details"
-                      >
-                        <Eye className="h-4 w-4" />
-                      </button>
-                      {row.settlementId && (
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            // TODO: Navigate to settlement document
-                          }}
-                          className="text-slate-400 hover:text-slate-300 transition-colors"
-                          title="View settlement document"
-                        >
-                          <ExternalLink className="h-4 w-4" />
-                        </button>
-                      )}
-                    </div>
+                  <td className="px-4 py-3 whitespace-nowrap text-center">
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onDriverSelect(row.driverId);
+                      }}
+                      className="inline-flex items-center gap-1 px-3 py-1 bg-teal-600 hover:bg-teal-700 text-white text-xs font-medium rounded transition-colors"
+                    >
+                      {isSelected ? 'Selected' : 'Review'}
+                    </button>
                   </td>
                 </tr>
               );

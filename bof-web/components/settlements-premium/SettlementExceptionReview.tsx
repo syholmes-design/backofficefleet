@@ -1,0 +1,274 @@
+"use client";
+
+import { useMemo } from "react";
+import { AlertTriangle, Users, DollarSign, FileText, Clock, CheckCircle } from "lucide-react";
+import type { DriverSettlementRow } from "./SettlementsCommandCenter";
+
+interface SettlementExceptionReviewProps {
+  settlementRows: DriverSettlementRow[];
+}
+
+interface SettlementException {
+  id: string;
+  type: "family-support" | "missing-proof" | "large-deduction" | "settlement-hold" | "low-net" | "data-mismatch";
+  title: string;
+  description: string;
+  affectedDrivers: string[];
+  amount?: number;
+  severity: "high" | "medium" | "low";
+  status: "pending" | "under-review" | "resolved";
+  nextAction: string;
+  cta: string;
+  ctaLink?: string;
+}
+
+export function SettlementExceptionReview({ settlementRows }: SettlementExceptionReviewProps) {
+  const exceptions = useMemo(() => {
+    const exceptionList: SettlementException[] = [];
+    
+    // Family Support / Withholding exceptions
+    const familySupportDrivers = settlementRows.filter(row => 
+      row.familySupport && row.familySupport > 0
+    );
+    
+    if (familySupportDrivers.length > 0) {
+      const totalFamilySupport = familySupportDrivers.reduce((sum, row) => sum + (row.familySupport || 0), 0);
+      exceptionList.push({
+        id: "family-support",
+        type: "family-support",
+        title: "Family Support Withholding Active",
+        description: "Drivers have active family support, child support, or garnishment deductions requiring review",
+        affectedDrivers: familySupportDrivers.map(row => row.driverName),
+        amount: totalFamilySupport,
+        severity: "medium",
+        status: "pending",
+        nextAction: "Review withholding compliance and documentation",
+        cta: "Review Withholding"
+      });
+    }
+
+    // Settlement holds / needs review
+    const holdDrivers = settlementRows.filter(row => 
+      row.status === "Needs Review" || row.status === "Hold"
+    );
+    
+    if (holdDrivers.length > 0) {
+      exceptionList.push({
+        id: "settlement-holds",
+        type: "settlement-hold",
+        title: "Settlement Holds / Payment Issues",
+        description: "Driver settlements require review before payment processing",
+        affectedDrivers: holdDrivers.map(row => row.driverName),
+        severity: "high",
+        status: "under-review",
+        nextAction: "Clear holds and approve settlements for payment",
+        cta: "Review Holds"
+      });
+    }
+
+    // Large deduction exceptions (deductions > 30% of gross)
+    const largeDeductionDrivers = settlementRows.filter(row => 
+      row.grossPay > 0 && (row.deductions / row.grossPay) > 0.3
+    );
+    
+    if (largeDeductionDrivers.length > 0) {
+      const totalLargeDeductions = largeDeductionDrivers.reduce((sum, row) => sum + row.deductions, 0);
+      exceptionList.push({
+        id: "large-deduction",
+        type: "large-deduction",
+        title: "Large Deduction Review Required",
+        description: "Drivers with deductions exceeding 30% of gross pay need verification",
+        affectedDrivers: largeDeductionDrivers.map(row => row.driverName),
+        amount: totalLargeDeductions,
+        severity: "medium",
+        status: "pending",
+        nextAction: "Verify deduction accuracy and approve if correct",
+        cta: "Review Deductions"
+      });
+    }
+
+    // Low net pay exceptions (net pay < $500)
+    const lowNetDrivers = settlementRows.filter(row => 
+      row.netPay > 0 && row.netPay < 500
+    );
+    
+    if (lowNetDrivers.length > 0) {
+      exceptionList.push({
+        id: "low-net",
+        type: "low-net",
+        title: "Low Net Pay Alert",
+        description: "Drivers with unusually low net payments may need review",
+        affectedDrivers: lowNetDrivers.map(row => row.driverName),
+        severity: "low",
+        status: "pending",
+        nextAction: "Verify if low pay is correct or if there are missing components",
+        cta: "Review Low Pay"
+      });
+    }
+
+    // Missing reimbursement opportunities
+    const noReimbursementDrivers = settlementRows.filter(row => 
+      row.grossPay > 2000 && (!row.fuelReimbursement || row.fuelReimbursement === 0)
+    );
+    
+    if (noReimbursementDrivers.length > 0) {
+      exceptionList.push({
+        id: "missing-reimbursement",
+        type: "missing-proof",
+        title: "Potential Missing Reimbursements",
+        description: "High-earning drivers with no fuel reimbursements may have missing expense claims",
+        affectedDrivers: noReimbursementDrivers.map(row => row.driverName),
+        severity: "low",
+        status: "pending",
+        nextAction: "Check for missing expense receipts or reimbursement requests",
+        cta: "Check Expenses"
+      });
+    }
+
+    return exceptionList;
+  }, [settlementRows]);
+
+  const formatCurrency = (amount: number) => {
+    return new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: 'USD',
+    }).format(amount);
+  };
+
+  const getSeverityIcon = (severity: string) => {
+    switch (severity) {
+      case "high": return <AlertTriangle className="h-4 w-4 text-red-400" />;
+      case "medium": return <Clock className="h-4 w-4 text-amber-400" />;
+      case "low": return <FileText className="h-4 w-4 text-blue-400" />;
+      default: return <FileText className="h-4 w-4 text-gray-400" />;
+    }
+  };
+
+  const getSeverityBadge = (severity: string) => {
+    switch (severity) {
+      case "high": return "bg-red-900/30 text-red-300 border border-red-700/50";
+      case "medium": return "bg-amber-900/30 text-amber-300 border border-amber-700/50";
+      case "low": return "bg-blue-900/30 text-blue-300 border border-blue-700/50";
+      default: return "bg-gray-900/30 text-gray-300 border border-gray-700/50";
+    }
+  };
+
+  const getStatusBadge = (status: string) => {
+    switch (status) {
+      case "pending": return "bg-slate-900/30 text-slate-300 border border-slate-700/50";
+      case "under-review": return "bg-blue-900/30 text-blue-300 border border-blue-700/50";
+      case "resolved": return "bg-green-900/30 text-green-300 border border-green-700/50";
+      default: return "bg-gray-900/30 text-gray-300 border border-gray-700/50";
+    }
+  };
+
+  if (exceptions.length === 0) {
+    return (
+      <div className="bg-slate-900 rounded-lg shadow-lg border border-slate-700 p-6">
+        <div className="flex items-center gap-3 mb-4">
+          <CheckCircle className="h-5 w-5 text-green-400" />
+          <h3 className="text-lg font-semibold text-slate-100">Settlement Exceptions</h3>
+        </div>
+        <div className="text-center py-8">
+          <div className="text-green-400 mb-2">
+            <CheckCircle className="h-12 w-12 mx-auto" />
+          </div>
+          <p className="text-slate-300 font-medium">No exceptions found</p>
+          <p className="text-slate-400 text-sm mt-1">All settlements are ready for processing</p>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="bg-slate-900 rounded-lg shadow-lg border border-slate-700">
+      <div className="px-6 py-4 border-b border-slate-700">
+        <div className="flex items-center gap-3">
+          <AlertTriangle className="h-5 w-5 text-amber-400" />
+          <h3 className="text-lg font-semibold text-slate-100">Settlement Exceptions / Required Review</h3>
+          <span className="bg-amber-900/30 text-amber-300 border border-amber-700/50 px-2 py-1 rounded text-xs font-medium">
+            {exceptions.length} issues
+          </span>
+        </div>
+        <p className="text-slate-400 text-sm mt-1">
+          Review these items before settlement approval
+        </p>
+      </div>
+
+      <div className="divide-y divide-slate-700">
+        {exceptions.map((exception) => (
+          <div key={exception.id} className="p-6 hover:bg-slate-800/50 transition-colors">
+            <div className="flex items-start gap-4">
+              <div className="flex-shrink-0 mt-1">
+                {getSeverityIcon(exception.severity)}
+              </div>
+              
+              <div className="flex-1 min-w-0">
+                <div className="flex items-start justify-between gap-4">
+                  <div className="flex-1">
+                    <h4 className="text-slate-100 font-medium mb-1">{exception.title}</h4>
+                    <p className="text-slate-400 text-sm mb-3">{exception.description}</p>
+                    
+                    <div className="flex flex-wrap items-center gap-4 mb-3">
+                      <div className="flex items-center gap-2">
+                        <Users className="h-3 w-3 text-slate-400" />
+                        <span className="text-slate-300 text-sm">
+                          {exception.affectedDrivers.length} driver{exception.affectedDrivers.length !== 1 ? 's' : ''}
+                        </span>
+                      </div>
+                      
+                      {exception.amount && (
+                        <div className="flex items-center gap-2">
+                          <DollarSign className="h-3 w-3 text-slate-400" />
+                          <span className="text-slate-300 text-sm">{formatCurrency(exception.amount)}</span>
+                        </div>
+                      )}
+                      
+                      <span className={`px-2 py-1 rounded text-xs font-medium border ${getSeverityBadge(exception.severity)}`}>
+                        {exception.severity.charAt(0).toUpperCase() + exception.severity.slice(1)}
+                      </span>
+                      
+                      <span className={`px-2 py-1 rounded text-xs font-medium border ${getStatusBadge(exception.status)}`}>
+                        {exception.status.replace('-', ' ').charAt(0).toUpperCase() + exception.status.replace('-', ' ').slice(1)}
+                      </span>
+                    </div>
+
+                    {exception.affectedDrivers.length > 0 && (
+                      <div className="mb-3">
+                        <p className="text-slate-400 text-xs mb-1">Affected drivers:</p>
+                        <div className="flex flex-wrap gap-1">
+                          {exception.affectedDrivers.slice(0, 3).map((driver, index) => (
+                            <span key={index} className="bg-slate-800 text-slate-300 px-2 py-1 rounded text-xs">
+                              {driver}
+                            </span>
+                          ))}
+                          {exception.affectedDrivers.length > 3 && (
+                            <span className="bg-slate-800 text-slate-400 px-2 py-1 rounded text-xs">
+                              +{exception.affectedDrivers.length - 3} more
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                    )}
+
+                    <div className="bg-slate-800/50 rounded p-3 mb-3">
+                      <p className="text-slate-300 text-sm mb-1">
+                        <strong>Next step:</strong> {exception.nextAction}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="flex justify-end">
+                  <button className="bg-teal-600 hover:bg-teal-700 text-white px-4 py-2 rounded text-sm font-medium transition-colors">
+                    {exception.cta}
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}

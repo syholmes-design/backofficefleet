@@ -5,7 +5,8 @@ import { useBofDemoData } from "@/lib/bof-demo-data-context";
 import { Users, Calendar, Filter } from "lucide-react";
 import { SettlementsDataTable } from "./SettlementsDataTable";
 import { SettlementDetailPanel } from "./SettlementDetailPanel";
-import { SettlementsKPICards } from "./SettlementsKPICards";
+import { EnhancedSettlementKPICards } from "./EnhancedSettlementKPICards";
+import { SettlementExceptionReview } from "./SettlementExceptionReview";
 import { getSettlementPeriods, type SettlementPeriodOption } from "@/lib/settlement-periods";
 
 export type SettlementStatus = "Ready" | "Needs Review" | "Hold" | "Paid" | "Missing Source Data";
@@ -185,49 +186,57 @@ export function SettlementsCommandCenter() {
     return filteredByDriver.filter(row => row.status === statusFilter);
   }, [filteredByDriver, statusFilter]);
 
-  // Calculate KPIs
-  const kpis = useMemo(() => {
-    const totalGross = filteredRows.reduce((sum, row) => sum + row.grossPay, 0);
-    const totalDeductions = filteredRows.reduce((sum, row) => sum + row.deductions, 0);
-    const totalNet = filteredRows.reduce((sum, row) => sum + row.netPay, 0);
-    const holdsCount = filteredRows.filter(row => row.holds.length > 0).length;
-
-    return {
-      totalGross,
-      totalDeductions,
-      totalNet,
-      holdsCount,
-      driverCount: filteredRows.length,
-    };
-  }, [filteredRows]);
-
+  
   const selectedDriverData = useMemo(() => {
     if (!selectedDriver) return null;
     return filteredRows.find(row => row.driverId === selectedDriver) || null;
   }, [selectedDriver, filteredRows]);
 
   return (
-    <div className="min-h-screen bg-slate-950">
-      {/* Premium Hero Section */}
-      <div className="bg-gradient-to-r from-slate-900 to-slate-800 text-white">
+    <div className="min-h-screen bg-slate-950" style={{ paddingBottom: '6rem' }}>
+      {/* Settlement Review Center Hero */}
+      <div className="bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 text-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <div className="mb-8">
-            <h1 className="text-3xl font-bold text-white mb-2">
-              Settlements Command Center
-            </h1>
-            <p className="text-slate-300 text-lg">
-              Review driver pay, deductions, reimbursements, settlement holds, and period-level payout readiness from the source-of-truth payroll file.
-            </p>
-            <div className="mt-4 text-sm text-slate-400">
-              Source: main-source-v2_enhanced_bof_aligned.xlsx / Payroll sheet
+          <div className="mb-6">
+            <div className="inline-flex items-center gap-2 px-3 py-1 bg-teal-900/30 border border-teal-700/50 rounded-full text-xs font-medium text-teal-300 mb-4">
+              Payroll review
             </div>
+            <h1 className="text-3xl font-bold text-white mb-2">
+              Settlement Review Center
+            </h1>
+            <p className="text-slate-300 text-lg max-w-3xl">
+              Review driver pay, reimbursements, deductions, holds, family support, proof issues, and payment exceptions before settlement approval.
+            </p>
+          </div>
+          
+          {/* Status Chips */}
+          <div className="flex flex-wrap gap-2 mt-4">
+            <span className="inline-flex items-center gap-1 px-3 py-1 bg-blue-900/30 border border-blue-700/50 rounded-full text-xs font-medium text-blue-300">
+              Deductions
+            </span>
+            <span className="inline-flex items-center gap-1 px-3 py-1 bg-purple-900/30 border border-purple-700/50 rounded-full text-xs font-medium text-purple-300">
+              Reimbursements
+            </span>
+            <span className="inline-flex items-center gap-1 px-3 py-1 bg-orange-900/30 border border-orange-700/50 rounded-full text-xs font-medium text-orange-300">
+              Family support
+            </span>
+            <span className="inline-flex items-center gap-1 px-3 py-1 bg-amber-900/30 border border-amber-700/50 rounded-full text-xs font-medium text-amber-300">
+              Proof holds
+            </span>
+            <span className="inline-flex items-center gap-1 px-3 py-1 bg-green-900/30 border border-green-700/50 rounded-full text-xs font-medium text-green-300">
+              Ready to pay
+            </span>
+          </div>
+          
+          <div className="mt-4 text-xs text-slate-400">
+            Source: main-source-v2_enhanced_bof_aligned.xlsx / Payroll sheet
           </div>
         </div>
       </div>
 
-      {/* KPI Cards */}
+      {/* Enhanced KPI Cards */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-        <SettlementsKPICards kpis={kpis} />
+        <EnhancedSettlementKPICards settlementRows={filteredRows} />
       </div>
 
       {/* Control Bar */}
@@ -293,8 +302,13 @@ export function SettlementsCommandCenter() {
         </div>
       </div>
 
+      {/* Exception Review Section */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        <SettlementExceptionReview settlementRows={filteredRows} />
+      </div>
+
       {/* Main Content */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Settlements Table */}
           <div className="lg:col-span-2">
