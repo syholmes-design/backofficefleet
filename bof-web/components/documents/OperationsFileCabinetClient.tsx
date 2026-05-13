@@ -126,46 +126,33 @@ export function OperationsFileCabinetClient() {
     }
   }
 
-  function getCategoryPrimaryHref(category: OperationsFileCabinetCategory): string {
-    switch (category) {
-      case "Driver Qualification Files":
-      case "Secondary Driver Documents":
-        return "/drivers";
-      case "Dispatch & Load Operations":
-        return "/dispatch";
-      case "Safety / Claims / Insurance":
-        return "/safety";
-      case "Finance / Settlements / Back Office":
-        return "/settlements";
-      case "Training & Knowledge Base":
-        return "/safety";
-      default:
-        return "/documents";
-    }
+  function getCategoryPrimaryHref(_category: OperationsFileCabinetCategory): string {
+    // Return "#" for in-page filtering/jumping instead of module navigation
+    return "#";
   }
 
   function getCategoryPrimaryCta(category: OperationsFileCabinetCategory): string {
     switch (category) {
       case "Driver Qualification Files":
-        return "View driver files";
+        return "Browse documents →";
       case "Secondary Driver Documents":
-        return "View driver records";
+        return "Show files →";
       case "Dispatch & Load Operations":
-        return "Open dispatch forms";
+        return "Show templates →";
       case "Safety / Claims / Insurance":
-        return "View safety resources";
+        return "Show forms →";
       case "HR / Talent / Performance":
-        return "View HR resources";
+        return "Show policies →";
       case "Policies & SOPs":
-        return "View policies";
+        return "Show policies →";
       case "Finance / Settlements / Back Office":
-        return "View finance forms";
+        return "Show forms →";
       case "Training & Knowledge Base":
-        return "View training";
+        return "Show resources →";
       case "Contracts / Customer / Legal":
-        return "View contracts";
+        return "Show agreements →";
       default:
-        return "View documents";
+        return "Browse documents →";
     }
   }
 
@@ -247,47 +234,66 @@ export function OperationsFileCabinetClient() {
   }
 
   return (
-    <div className="bof-page" style={{ paddingBottom: "6rem" }}>
-      {/* Hero Section */}
+    <div className="bof-page" style={{ paddingBottom: "8rem" }}>
+      {/* Hero Section with Watermark */}
       <div style={{
-        marginBottom: "2rem"
+        marginBottom: "2rem",
+        position: "relative"
       }}>
-        <h1 className="bof-title">Operations File Cabinet</h1>
-        <p className="bof-lead">
-          Driver files, company policies, dispatch forms, training materials, SOPs, claims documents, and back-office templates in one organized operating library.
-        </p>
-        
-        {/* Hero Chips */}
+        {/* Hero Watermark */}
         <div style={{
-          display: "flex",
-          gap: "0.5rem",
-          flexWrap: "wrap",
-          marginTop: "1rem"
-        }}>
-          {[
-            "Driver files",
-            "Dispatch forms", 
-            "Policies & SOPs",
-            "Claims & legal",
-            "Training library",
-            "Finance back office"
-          ].map(chip => (
-            <span
-              key={chip}
-              style={{
-                display: "inline-block",
-                padding: "0.25rem 0.75rem",
-                backgroundColor: "rgba(59, 130, 246, 0.1)",
-                border: "1px solid rgba(59, 130, 246, 0.2)",
-                borderRadius: "16px",
-                fontSize: "0.8rem",
-                color: "#3b82f6",
-                fontWeight: "500"
-              }}
-            >
-              {chip}
-            </span>
-          ))}
+          position: "absolute",
+          top: "-2rem",
+          right: "-2rem",
+          width: "300px",
+          height: "200px",
+          opacity: 0.15,
+          pointerEvents: "none",
+          zIndex: 0,
+          background: `url("/generated/marketing/operations-file-cabinet-watermark.png") no-repeat center center`,
+          backgroundSize: "contain",
+          filter: "brightness(0.8) contrast(1.2)"
+        }} />
+        
+        {/* Hero Content */}
+        <div style={{ position: "relative", zIndex: 1 }}>
+          <h1 className="bof-title">Operations File Cabinet</h1>
+          <p className="bof-lead">
+            Driver files, company policies, dispatch forms, training materials, SOPs, claims documents, and back-office templates in one organized operating library.
+          </p>
+          
+          {/* Hero Chips */}
+          <div style={{
+            display: "flex",
+            gap: "0.5rem",
+            flexWrap: "wrap",
+            marginTop: "1rem"
+          }}>
+            {[
+              "Driver files",
+              "Dispatch forms", 
+              "Policies & SOPs",
+              "Claims & legal",
+              "Training library",
+              "Finance back office"
+            ].map(chip => (
+              <span
+                key={chip}
+                style={{
+                  display: "inline-block",
+                  padding: "0.25rem 0.75rem",
+                  backgroundColor: "rgba(59, 130, 246, 0.1)",
+                  border: "1px solid rgba(59, 130, 246, 0.2)",
+                  borderRadius: "16px",
+                  fontSize: "0.8rem",
+                  color: "#3b82f6",
+                  fontWeight: "500"
+                }}
+              >
+                {chip}
+              </span>
+            ))}
+          </div>
         </div>
       </div>
 
@@ -344,8 +350,8 @@ export function OperationsFileCabinetClient() {
                 {summary.comingSoonCount} coming soon
               </span>
             </div>
-            <Link
-              href={summary.primaryHref}
+            <button
+              onClick={() => setSelectedCategory(summary.category)}
               style={{
                 display: "inline-block",
                 padding: "0.5rem 1rem",
@@ -355,13 +361,119 @@ export function OperationsFileCabinetClient() {
                 color: "#3b82f6",
                 textDecoration: "none",
                 fontSize: "0.9rem",
-                fontWeight: "500"
+                fontWeight: "500",
+                cursor: "pointer"
               }}
             >
-              {summary.primaryCta} →
-            </Link>
+              {summary.primaryCta}
+            </button>
           </div>
         ))}
+      </div>
+
+      {/* Featured Documents & Templates */}
+      <div style={{
+        marginBottom: "2rem"
+      }}>
+        <h2 style={{
+          fontSize: "1.5rem",
+          fontWeight: "600",
+          color: "#ffffff",
+          margin: "0 0 1rem 0"
+        }}>
+          Featured Documents & Templates
+        </h2>
+        <div style={{
+          display: "grid",
+          gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
+          gap: "1rem"
+        }}>
+          {featuredItems.map(item => {
+            const sourceChip = getSourceChip(item);
+            const cta = getItemCta(item);
+            return (
+              <div
+                key={item.id}
+                style={{
+                  backgroundColor: "rgba(255, 255, 255, 0.05)",
+                  border: "1px solid rgba(255, 255, 255, 0.1)",
+                  borderRadius: "12px",
+                  padding: "1.5rem"
+                }}
+              >
+                <div style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "flex-start",
+                  marginBottom: "0.75rem"
+                }}>
+                  <h3 style={{
+                    fontSize: "1rem",
+                    fontWeight: "600",
+                    color: "#ffffff",
+                    margin: "0",
+                    lineHeight: "1.3"
+                  }}>
+                    {item.title}
+                  </h3>
+                  <span style={{
+                    display: "inline-block",
+                    padding: "0.25rem 0.5rem",
+                    backgroundColor: sourceChip.color + "20",
+                    border: `1px solid ${sourceChip.color}40`,
+                    borderRadius: "12px",
+                    fontSize: "0.7rem",
+                    color: sourceChip.color,
+                    fontWeight: "500"
+                  }}>
+                    {sourceChip.text}
+                  </span>
+                </div>
+                <p style={{
+                  fontSize: "0.85rem",
+                  color: "rgba(255, 255, 255, 0.7)",
+                  margin: "0 0 1rem 0",
+                  lineHeight: "1.4"
+                }}>
+                  {item.description}
+                </p>
+                {item.href ? (
+                  <Link
+                    href={item.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{
+                      display: "inline-block",
+                      padding: "0.5rem 1rem",
+                      backgroundColor: "rgba(59, 130, 246, 0.2)",
+                      border: "1px solid rgba(59, 130, 246, 0.3)",
+                      borderRadius: "6px",
+                      color: "#3b82f6",
+                      textDecoration: "none",
+                      fontSize: "0.85rem",
+                      fontWeight: "500"
+                    }}
+                  >
+                    {cta} →
+                  </Link>
+                ) : (
+                  <span style={{
+                    display: "inline-block",
+                    padding: "0.5rem 1rem",
+                    backgroundColor: "rgba(107, 114, 128, 0.2)",
+                    border: "1px solid rgba(107, 114, 128, 0.3)",
+                    borderRadius: "6px",
+                    color: "#6b7280",
+                    fontSize: "0.85rem",
+                    fontWeight: "500"
+                  }}>
+                    Coming soon
+                  </span>
+                )}
+              </div>
+            );
+          })}
+        </div>
       </div>
 
       {/* Search and Filters */}
