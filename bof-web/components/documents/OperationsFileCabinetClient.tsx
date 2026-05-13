@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useCallback } from "react";
 import Link from "next/link";
 import {
   getOperationsFileCabinetItems,
@@ -15,18 +15,84 @@ import {
   type OperationsFileCabinetStatus,
 } from "@/lib/operations-file-cabinet";
 
+type QuickFilter =
+  | "all"
+  | "driver"
+  | "dispatch"
+  | "policies"
+  | "claims-legal"
+  | "training"
+  | "finance";
+
 export function OperationsFileCabinetClient() {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<OperationsFileCabinetCategory | "all">("all");
   const [selectedType, setSelectedType] = useState<OperationsFileCabinetType | "all">("all");
   const [selectedAudience, setSelectedAudience] = useState<OperationsFileCabinetAudience | "all">("all");
   const [selectedStatus, setSelectedStatus] = useState<OperationsFileCabinetStatus | "all">("all");
+  const [quickFilter, setQuickFilter] = useState<QuickFilter>("all");
 
   const allItems = useMemo(() => getOperationsFileCabinetItems(), []);
   const categories = useMemo(() => getOperationsFileCabinetCategories(), []);
   const types = useMemo(() => getOperationsFileCabinetTypes(), []);
   const audiences = useMemo(() => getOperationsFileCabinetAudiences(), []);
   const statuses = useMemo(() => getOperationsFileCabinetStatuses(), []);
+
+  // Quick filter to categories mapping
+  const getCategoriesForQuickFilter = useCallback((filter: QuickFilter): OperationsFileCabinetCategory[] => {
+    switch (filter) {
+      case "all":
+        return categories;
+      case "driver":
+        return ["Driver Qualification Files", "Secondary Driver Documents"];
+      case "dispatch":
+        return ["Dispatch & Load Operations"];
+      case "policies":
+        return ["Policies & SOPs"];
+      case "claims-legal":
+        return ["Safety / Claims / Insurance", "Contracts / Customer / Legal"];
+      case "training":
+        return ["Training & Knowledge Base"];
+      case "finance":
+        return ["Finance / Settlements / Back Office"];
+      default:
+        return categories;
+    }
+  }, [categories]);
+
+  const getQuickFilterLabel = (filter: QuickFilter): string => {
+    switch (filter) {
+      case "all":
+        return "All documents";
+      case "driver":
+        return "Driver Files";
+      case "dispatch":
+        return "Dispatch Forms";
+      case "policies":
+        return "Policies & SOPs";
+      case "claims-legal":
+        return "Claims & Legal";
+      case "training":
+        return "Training Library";
+      case "finance":
+        return "Finance Back Office";
+      default:
+        return "All documents";
+    }
+  };
+
+  const scrollToResults = () => {
+    const element = document.getElementById("featured-documents");
+    if (element) {
+      element.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  };
+
+  const handleQuickFilterClick = (filter: QuickFilter) => {
+    setQuickFilter(filter);
+    setSelectedCategory("all"); // Reset category filter when using quick filter
+    scrollToResults();
+  };
 
   // Featured items - curated list of high-value documents with actual links only
   const featuredItems = useMemo(() => {
@@ -61,19 +127,23 @@ export function OperationsFileCabinetClient() {
   }, [allItems]);
 
   const filteredItems = useMemo(() => {
+    const quickFilterCategories = getCategoriesForQuickFilter(quickFilter);
+    
     return allItems.filter(item => {
       const matchesSearch = searchTerm === "" || 
         item.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
         item.description.toLowerCase().includes(searchTerm.toLowerCase());
       
-      const matchesCategory = selectedCategory === "all" || item.category === selectedCategory;
+      const matchesCategory = (selectedCategory === "all" && quickFilter === "all") || 
+        (selectedCategory !== "all" && item.category === selectedCategory) ||
+        (selectedCategory === "all" && quickFilter !== "all" && quickFilterCategories.includes(item.category));
       const matchesType = selectedType === "all" || item.type === selectedType;
       const matchesAudience = selectedAudience === "all" || item.audience.includes(selectedAudience);
       const matchesStatus = selectedStatus === "all" || item.status === selectedStatus;
 
       return matchesSearch && matchesCategory && matchesType && matchesAudience && matchesStatus;
     });
-  }, [allItems, searchTerm, selectedCategory, selectedType, selectedAudience, selectedStatus]);
+  }, [allItems, searchTerm, selectedCategory, selectedType, selectedAudience, selectedStatus, quickFilter, getCategoriesForQuickFilter]);
 
   const comingSoonItems = useMemo(() => {
     return allItems.filter(item => item.status === "coming_soon");
@@ -270,29 +340,53 @@ export function OperationsFileCabinetClient() {
             marginTop: "1rem"
           }}>
             {[
-              "Driver files",
-              "Dispatch forms", 
-              "Policies & SOPs",
-              "Claims & legal",
-              "Training library",
-              "Finance back office"
-            ].map(chip => (
-              <span
-                key={chip}
-                style={{
-                  display: "inline-block",
-                  padding: "0.25rem 0.75rem",
-                  backgroundColor: "rgba(59, 130, 246, 0.1)",
-                  border: "1px solid rgba(59, 130, 246, 0.2)",
-                  borderRadius: "16px",
-                  fontSize: "0.8rem",
-                  color: "#3b82f6",
-                  fontWeight: "500"
-                }}
-              >
-                {chip}
-              </span>
-            ))}
+              "all",
+              "driver",
+              "dispatch", 
+              "policies",
+              "claims-legal",
+              "training",
+              "finance"
+            ].map(filter => {
+              const isActive = quickFilter === filter;
+              return (
+                <button
+                  key={filter}
+                  onClick={() => handleQuickFilterClick(filter as QuickFilter)}
+                  style={{
+                    display: "inline-block",
+                    padding: "0.25rem 0.75rem",
+                    backgroundColor: isActive 
+                      ? "rgba(20, 184, 166, 0.2)" 
+                      : "rgba(59, 130, 246, 0.1)",
+                    border: isActive 
+                      ? "1px solid rgba(20, 184, 166, 0.4)" 
+                      : "1px solid rgba(59, 130, 246, 0.2)",
+                    borderRadius: "16px",
+                    fontSize: "0.8rem",
+                    color: isActive ? "#14b8a6" : "#3b82f6",
+                    fontWeight: "500",
+                    cursor: "pointer",
+                    transition: "all 0.2s ease",
+                    outline: "none"
+                  }}
+                  onMouseEnter={(e) => {
+                    if (!isActive) {
+                      e.currentTarget.style.backgroundColor = "rgba(59, 130, 246, 0.2)";
+                      e.currentTarget.style.borderColor = "rgba(59, 130, 246, 0.4)";
+                    }
+                  }}
+                  onMouseLeave={(e) => {
+                    if (!isActive) {
+                      e.currentTarget.style.backgroundColor = "rgba(59, 130, 246, 0.1)";
+                      e.currentTarget.style.borderColor = "rgba(59, 130, 246, 0.2)";
+                    }
+                  }}
+                >
+                  {getQuickFilterLabel(filter as QuickFilter)}
+                </button>
+              );
+            })}
           </div>
         </div>
       </div>
@@ -371,8 +465,31 @@ export function OperationsFileCabinetClient() {
         ))}
       </div>
 
+      {/* Filtered Results Heading */}
+      {(quickFilter !== "all" || selectedCategory !== "all" || searchTerm !== "") && (
+        <div style={{
+          marginBottom: "1.5rem"
+        }}>
+          <h2 style={{
+            fontSize: "1.25rem",
+            fontWeight: "600",
+            color: "#14b8a6",
+            margin: "0 0 0.5rem 0"
+          }}>
+            Showing {quickFilter !== "all" ? getQuickFilterLabel(quickFilter) : selectedCategory !== "all" ? selectedCategory : searchTerm ? "Search Results" : "All Documents"}
+          </h2>
+          <p style={{
+            fontSize: "0.9rem",
+            color: "#64748b",
+            margin: "0"
+          }}>
+            {filteredItems.length} document{filteredItems.length !== 1 ? "s" : ""} found
+          </p>
+        </div>
+      )}
+
       {/* Featured Documents & Templates */}
-      <div style={{
+      <div id="featured-documents" style={{
         marginBottom: "2rem"
       }}>
         <h2 style={{
@@ -381,98 +498,220 @@ export function OperationsFileCabinetClient() {
           color: "#ffffff",
           margin: "0 0 1rem 0"
         }}>
-          Featured Documents & Templates
+          {quickFilter !== "all" || selectedCategory !== "all" || searchTerm !== "" 
+            ? "Filtered Documents" 
+            : "Featured Documents & Templates"}
         </h2>
         <div style={{
           display: "grid",
           gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
           gap: "1rem"
         }}>
-          {featuredItems.map(item => {
-            const sourceChip = getSourceChip(item);
-            const cta = getItemCta(item);
-            return (
-              <div
-                key={item.id}
-                style={{
-                  backgroundColor: "rgba(255, 255, 255, 0.05)",
-                  border: "1px solid rgba(255, 255, 255, 0.1)",
-                  borderRadius: "12px",
-                  padding: "1.5rem"
-                }}
-              >
-                <div style={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "flex-start",
-                  marginBottom: "0.75rem"
-                }}>
-                  <h3 style={{
-                    fontSize: "1rem",
-                    fontWeight: "600",
-                    color: "#ffffff",
-                    margin: "0",
-                    lineHeight: "1.3"
-                  }}>
-                    {item.title}
-                  </h3>
-                  <span style={{
-                    display: "inline-block",
-                    padding: "0.25rem 0.5rem",
-                    backgroundColor: sourceChip.color + "20",
-                    border: `1px solid ${sourceChip.color}40`,
+          {(quickFilter !== "all" || selectedCategory !== "all" || searchTerm !== "") ? (
+            // Show filtered items when any filter is applied
+            filteredItems.map(item => {
+              const sourceChip = getSourceChip(item);
+              const cta = getItemCta(item);
+              return (
+                <div
+                  key={item.id}
+                  style={{
+                    backgroundColor: "rgba(255, 255, 255, 0.05)",
+                    border: "1px solid rgba(255, 255, 255, 0.1)",
                     borderRadius: "12px",
-                    fontSize: "0.7rem",
-                    color: sourceChip.color,
-                    fontWeight: "500"
+                    padding: "1.5rem",
+                    transition: "all 0.2s ease"
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.backgroundColor = "rgba(255, 255, 255, 0.08)";
+                    e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.2)";
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.backgroundColor = "rgba(255, 255, 255, 0.05)";
+                    e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.1)";
+                  }}
+                >
+                  <div style={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "flex-start",
+                    marginBottom: "0.75rem"
                   }}>
-                    {sourceChip.text}
-                  </span>
+                    <h3 style={{
+                      fontSize: "1rem",
+                      fontWeight: "600",
+                      color: "#ffffff",
+                      margin: "0",
+                      lineHeight: "1.4"
+                    }}>
+                      {item.title}
+                    </h3>
+                    {sourceChip && (
+                      <span style={{
+                        fontSize: "0.7rem",
+                        padding: "0.2rem 0.5rem",
+                        borderRadius: "12px",
+                        backgroundColor: `${sourceChip.color}20`,
+                        color: sourceChip.color,
+                        fontWeight: "500",
+                        whiteSpace: "nowrap"
+                      }}>
+                        {sourceChip.text}
+                      </span>
+                    )}
+                  </div>
+                  <p style={{
+                    fontSize: "0.875rem",
+                    color: "#94a3b8",
+                    margin: "0 0 1rem 0",
+                    lineHeight: "1.5"
+                  }}>
+                    {item.description}
+                  </p>
+                  {item.href ? (
+                    <Link
+                      href={item.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      style={{
+                        display: "inline-flex",
+                        alignItems: "center",
+                        gap: "0.5rem",
+                        fontSize: "0.875rem",
+                        fontWeight: "500",
+                        color: "#14b8a6",
+                        textDecoration: "none",
+                        transition: "color 0.2s ease"
+                      }}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.color = "#0d9488";
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.color = "#14b8a6";
+                      }}
+                    >
+                      {cta}
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+                        <polyline points="15,3 21,3 21,9"></polyline>
+                        <line x1="10" y1="14" x2="21" y2="3"></line>
+                      </svg>
+                    </Link>
+                  ) : (
+                    <span style={{
+                      fontSize: "0.875rem",
+                      color: "#64748b",
+                      fontStyle: "italic"
+                    }}>
+                      {item.status === "coming_soon" ? "Coming soon" : "Not available"}
+                    </span>
+                  )}
                 </div>
-                <p style={{
-                  fontSize: "0.85rem",
-                  color: "rgba(255, 255, 255, 0.7)",
-                  margin: "0 0 1rem 0",
-                  lineHeight: "1.4"
-                }}>
-                  {item.description}
-                </p>
-                {item.href ? (
-                  <Link
-                    href={item.href}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    style={{
-                      display: "inline-block",
-                      padding: "0.5rem 1rem",
-                      backgroundColor: "rgba(59, 130, 246, 0.2)",
-                      border: "1px solid rgba(59, 130, 246, 0.3)",
-                      borderRadius: "6px",
-                      color: "#3b82f6",
-                      textDecoration: "none",
-                      fontSize: "0.85rem",
-                      fontWeight: "500"
-                    }}
-                  >
-                    {cta} →
-                  </Link>
-                ) : (
-                  <span style={{
-                    display: "inline-block",
-                    padding: "0.5rem 1rem",
-                    backgroundColor: "rgba(107, 114, 128, 0.2)",
-                    border: "1px solid rgba(107, 114, 128, 0.3)",
-                    borderRadius: "6px",
-                    color: "#6b7280",
-                    fontSize: "0.85rem",
-                    fontWeight: "500"
+              );
+            })
+          ) : (
+            // Show featured items when no filters are applied
+            featuredItems.map(item => {
+              const sourceChip = getSourceChip(item);
+              const cta = getItemCta(item);
+              return (
+                <div
+                  key={item.id}
+                  style={{
+                    backgroundColor: "rgba(255, 255, 255, 0.05)",
+                    border: "1px solid rgba(255, 255, 255, 0.1)",
+                    borderRadius: "12px",
+                    padding: "1.5rem",
+                    transition: "all 0.2s ease"
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.backgroundColor = "rgba(255, 255, 255, 0.08)";
+                    e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.2)";
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.backgroundColor = "rgba(255, 255, 255, 0.05)";
+                    e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.1)";
+                  }}
+                >
+                  <div style={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "flex-start",
+                    marginBottom: "0.75rem"
                   }}>
-                    Coming soon
-                  </span>
-                )}
-              </div>
-            );
-          })}
+                    <h3 style={{
+                      fontSize: "1rem",
+                      fontWeight: "600",
+                      color: "#ffffff",
+                      margin: "0",
+                      lineHeight: "1.4"
+                    }}>
+                      {item.title}
+                    </h3>
+                    {sourceChip && (
+                      <span style={{
+                        fontSize: "0.7rem",
+                        padding: "0.2rem 0.5rem",
+                        borderRadius: "12px",
+                        backgroundColor: `${sourceChip.color}20`,
+                        color: sourceChip.color,
+                        fontWeight: "500",
+                        whiteSpace: "nowrap"
+                      }}>
+                        {sourceChip.text}
+                      </span>
+                    )}
+                  </div>
+                  <p style={{
+                    fontSize: "0.875rem",
+                    color: "#94a3b8",
+                    margin: "0 0 1rem 0",
+                    lineHeight: "1.5"
+                  }}>
+                    {item.description}
+                  </p>
+                  {item.href ? (
+                    <Link
+                      href={item.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      style={{
+                        display: "inline-flex",
+                        alignItems: "center",
+                        gap: "0.5rem",
+                        fontSize: "0.875rem",
+                        fontWeight: "500",
+                        color: "#14b8a6",
+                        textDecoration: "none",
+                        transition: "color 0.2s ease"
+                      }}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.color = "#0d9488";
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.color = "#14b8a6";
+                      }}
+                    >
+                      {cta}
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+                        <polyline points="15,3 21,3 21,9"></polyline>
+                        <line x1="10" y1="14" x2="21" y2="3"></line>
+                      </svg>
+                    </Link>
+                  ) : (
+                    <span style={{
+                      fontSize: "0.875rem",
+                      color: "#64748b",
+                      fontStyle: "italic"
+                    }}>
+                      Coming soon
+                    </span>
+                  )}
+                </div>
+              );
+            })
+          )}
         </div>
       </div>
 
