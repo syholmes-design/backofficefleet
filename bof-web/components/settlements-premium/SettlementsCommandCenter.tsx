@@ -193,9 +193,9 @@ export function SettlementsCommandCenter() {
   }, [selectedDriver, filteredRows]);
 
   return (
-    <div className="min-h-screen bg-slate-950" style={{ paddingBottom: '6rem' }}>
-      {/* Settlement Review Center Hero */}
-      <div className="bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 text-white">
+    <div className="min-h-screen bg-slate-950 pb-24">
+      {/* Hero Section */}
+      <div className="bg-slate-900 border-b border-slate-800">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="mb-6">
             <div className="inline-flex items-center gap-2 px-3 py-1 bg-teal-900/30 border border-teal-700/50 rounded-full text-xs font-medium text-teal-300 mb-4">
