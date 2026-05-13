@@ -14,17 +14,22 @@ if (!registryMatch) {
 
 // Parse the registry (simple approach)
 const items = [];
-const itemMatches = registryContent.matchAll(/{\s*id:\s*"([^"]+)"[\s\S]*?title:\s*"([^"]+)"[\s\S]*?cabinet:\s*"([^"]+)"[\s\S]*?section:\s*"([^"]+)"[\s\S]*?status:\s*"([^"]+)"[\s\S]*?href:\s*"?([^"]*)"?\s*,?[\s\S]*?sourceAuthenticity:\s*"?([^"]*)"?\s*,?[\s\S]*?}/g);
+const itemMatches = registryContent.matchAll(/{\s*id:\s*"([^"]+)"[\s\S]*?title:\s*"([^"]+)"[\s\S]*?cabinet:\s*"([^"]+)"[\s\S]*?section:\s*"([^"]+)"[\s\S]*?status:\s*"([^"]+)"[\s\S]*?sourceAuthenticity:\s*"?([^"]*)"?\s*,?[\s\S]*?}/g);
 
 for (const match of itemMatches) {
+  // Extract href separately since it's optional
+  const itemText = match[0];
+  const hrefMatch = itemText.match(/href:\s*"([^"]*)"/);
+  const href = hrefMatch ? hrefMatch[1] : null;
+  
   items.push({
     id: match[1],
     title: match[2],
     cabinet: match[3],
     section: match[4],
     status: match[5],
-    href: match[6] || null,
-    sourceAuthenticity: match[7] || null
+    href: href,
+    sourceAuthenticity: match[6] || null
   });
 }
 

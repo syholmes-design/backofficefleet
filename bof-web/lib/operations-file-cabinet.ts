@@ -42,7 +42,9 @@ export type OperationsFileCabinetItem = {
     | "video"
     | "article"
     | "sop"
-    | "contract";
+    | "contract"
+    | "training"
+    | "external_resource";
   audience: Array<
     | "driver"
     | "manager"
@@ -449,7 +451,6 @@ export const OPERATIONS_FILE_CABINET_REGISTRY: OperationsFileCabinetItem[] = [
     audience: ["driver", "manager", "hr"],
     status: "needs_review",
     description: "Complete driver profile and documentation access",
-    href: "/generated/drivers/DRV-001/john-carter-profile-dashboard.html",
     sourceAuthenticity: "coming_soon",
     documentOwner: "employer",
     employerName: "Delta Advanced Trucking, Inc.",
@@ -1069,6 +1070,200 @@ export const OPERATIONS_FILE_CABINET_REGISTRY: OperationsFileCabinetItem[] = [
     documentOwner: "employer",
     employerName: "Delta Advanced Trucking, Inc.",
     tags: ["document", "preservation", "coming"]
+  },
+
+  // HR / Talent / Performance Cabinet - Add missing cabinet
+  {
+    id: "hr-employee-handbook",
+    title: "Employee Handbook",
+    cabinet: "HR / Talent / Performance",
+    section: "Company Policies & SOPs",
+    category: "HR / Talent / Performance",
+    type: "policy",
+    audience: ["driver", "manager", "hr"],
+    status: "needs_review",
+    description: "Comprehensive employee handbook and company policies",
+    sourceAuthenticity: "coming_soon",
+    documentOwner: "employer",
+    employerName: "Delta Advanced Trucking, Inc.",
+    tags: ["handbook", "policy", "coming"]
+  },
+  {
+    id: "hr-performance-review",
+    title: "Performance Review Template",
+    cabinet: "HR / Talent / Performance",
+    section: "Needs Review / Coming Later",
+    category: "HR / Talent / Performance",
+    type: "form",
+    audience: ["manager", "hr", "driver"],
+    status: "needs_review",
+    description: "Employee performance evaluation and review template",
+    sourceAuthenticity: "coming_soon",
+    documentOwner: "employer",
+    employerName: "Delta Advanced Trucking, Inc.",
+    tags: ["performance", "review", "coming"]
+  },
+
+  // Policies & SOPs Cabinet - Add missing cabinet
+  {
+    id: "policy-code-of-conduct",
+    title: "Code of Conduct Policy",
+    cabinet: "Policies & SOPs",
+    section: "Company Policies & SOPs",
+    category: "Policies & SOPs",
+    type: "policy",
+    audience: ["driver", "manager", "hr", "safety"],
+    status: "needs_review",
+    description: "Company code of conduct and ethical guidelines",
+    sourceAuthenticity: "coming_soon",
+    documentOwner: "employer",
+    employerName: "Delta Advanced Trucking, Inc.",
+    tags: ["conduct", "ethics", "policy"]
+  },
+  {
+    id: "policy-information-security",
+    title: "Information Security Policy",
+    cabinet: "Policies & SOPs",
+    section: "Company Policies & SOPs",
+    category: "Policies & SOPs",
+    type: "policy",
+    audience: ["manager", "hr", "admin"],
+    status: "needs_review",
+    description: "Information security and data protection policies",
+    sourceAuthenticity: "coming_soon",
+    documentOwner: "employer",
+    employerName: "Delta Advanced Trucking, Inc.",
+    tags: ["security", "data", "policy"]
+  },
+
+  // Finance / Settlements / Back Office Cabinet - Add missing cabinet
+  {
+    id: "finance-invoice-template",
+    title: "Invoice Template",
+    cabinet: "Finance / Settlements / Back Office",
+    section: "Needs Review / Coming Later",
+    category: "Finance / Settlements / Back Office",
+    type: "template",
+    audience: ["manager", "finance", "customer"],
+    status: "needs_review",
+    description: "Standard invoice template for billing and settlements",
+    sourceAuthenticity: "coming_soon",
+    documentOwner: "employer",
+    employerName: "Delta Advanced Trucking, Inc.",
+    tags: ["invoice", "billing", "finance"]
+  },
+  {
+    id: "finance-expense-report",
+    title: "Expense Report Form",
+    cabinet: "Finance / Settlements / Back Office",
+    section: "Needs Review / Coming Later",
+    category: "Finance / Settlements / Back Office",
+    type: "form",
+    audience: ["driver", "manager", "finance"],
+    status: "needs_review",
+    description: "Employee expense reporting and reimbursement form",
+    sourceAuthenticity: "coming_soon",
+    documentOwner: "employer",
+    employerName: "Delta Advanced Trucking, Inc.",
+    tags: ["expense", "reimbursement", "finance"]
+  },
+
+  // Training & Knowledge Base Cabinet - Add missing cabinet
+  {
+    id: "training-safety-program",
+    title: "Safety Training Program",
+    cabinet: "Training & Knowledge Base",
+    section: "Needs Review / Coming Later",
+    category: "Training & Knowledge Base",
+    type: "training",
+    audience: ["driver", "manager", "safety"],
+    status: "needs_review",
+    description: "Comprehensive safety training program and materials",
+    sourceAuthenticity: "coming_soon",
+    documentOwner: "employer",
+    employerName: "Delta Advanced Trucking, Inc.",
+    tags: ["training", "safety", "program"]
+  },
+  {
+    id: "training-compliance-courses",
+    title: "Compliance Training Courses",
+    cabinet: "Training & Knowledge Base",
+    section: "External Resources",
+    category: "Training & Knowledge Base",
+    type: "external_resource",
+    audience: ["driver", "manager", "hr"],
+    status: "needs_review",
+    description: "External compliance training resources and courses",
+    sourceAuthenticity: "external_resource",
+    documentOwner: "external",
+    employerName: "Delta Advanced Trucking, Inc.",
+    tags: ["training", "compliance", "external"]
+  },
+
+  // Add missing Claims Forms section
+  {
+    id: "claims-accident-report",
+    title: "Accident Report Form",
+    cabinet: "Safety / Claims / Insurance",
+    section: "Claims Forms",
+    category: "Safety / Claims / Insurance",
+    type: "form",
+    audience: ["driver", "manager", "safety", "legal"],
+    status: "needs_review",
+    description: "Comprehensive accident reporting and documentation form",
+    sourceAuthenticity: "coming_soon",
+    documentOwner: "employer",
+    employerName: "Delta Advanced Trucking, Inc.",
+    tags: ["accident", "report", "claims"]
+  },
+  {
+    id: "claims-damage-report",
+    title: "Cargo Damage Report Form",
+    cabinet: "Safety / Claims / Insurance",
+    section: "Claims Forms",
+    category: "Safety / Claims / Insurance",
+    type: "form",
+    audience: ["driver", "manager", "safety", "customer"],
+    status: "needs_review",
+    description: "Cargo damage assessment and reporting form",
+    sourceAuthenticity: "coming_soon",
+    documentOwner: "employer",
+    employerName: "Delta Advanced Trucking, Inc.",
+    tags: ["damage", "cargo", "claims"]
+  },
+
+  // Add missing External Resources section items
+  {
+    id: "external-fmcsa-regulations",
+    title: "FMCSA Regulations Portal",
+    cabinet: "Safety / Claims / Insurance",
+    section: "External Resources",
+    category: "Safety / Claims / Insurance",
+    type: "external_resource",
+    audience: ["driver", "manager", "safety", "compliance"],
+    status: "available",
+    description: "Link to FMCSA regulations and compliance resources",
+    href: "https://www.fmcsa.dot.gov",
+    sourceAuthenticity: "external_resource",
+    documentOwner: "external",
+    employerName: "Delta Advanced Trucking, Inc.",
+    tags: ["fmcsa", "regulations", "external"]
+  },
+  {
+    id: "external-dot-resources",
+    title: "DOT Resource Center",
+    cabinet: "Training & Knowledge Base",
+    section: "External Resources",
+    category: "Training & Knowledge Base",
+    type: "external_resource",
+    audience: ["driver", "manager", "safety"],
+    status: "available",
+    description: "Department of Transportation training and resource center",
+    href: "https://www.transportation.gov",
+    sourceAuthenticity: "external_resource",
+    documentOwner: "external",
+    employerName: "Delta Advanced Trucking, Inc.",
+    tags: ["dot", "training", "external"]
   }
 ];
 
