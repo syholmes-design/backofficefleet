@@ -10,11 +10,12 @@ import {
   LayoutGrid,
   Link2,
   UserPlus,
+  Zap,
 } from "lucide-react";
 import type { DispatchNavId } from "@/types/dispatch";
 
 type NavItem = {
-  id: DispatchNavId | "intake";
+  id: DispatchNavId | "intake" | "dispatch-v2";
   label: string;
   icon: typeof LayoutGrid;
   href: string;
@@ -29,6 +30,7 @@ const PRIMARY_ITEMS: NavItem[] = [
 ];
 
 const SECONDARY_ITEMS: NavItem[] = [
+  { id: "dispatch-v2", label: "Dispatch Board v2", icon: Zap, href: "/dispatch-v2" },
   { id: "intake", label: "Load Intake", icon: FileInput, href: "/dispatch/intake" },
 ];
 
