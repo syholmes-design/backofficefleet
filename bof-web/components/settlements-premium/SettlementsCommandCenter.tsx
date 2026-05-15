@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { useBofDemoData } from "@/lib/bof-demo-data-context";
-import { Users, Calendar, Filter } from "lucide-react";
+import { Users, Calendar, Filter, ExternalLink } from "lucide-react";
 import { SettlementsDataTable } from "./SettlementsDataTable";
 import { SettlementDetailPanel } from "./SettlementDetailPanel";
 import { EnhancedSettlementKPICards } from "./EnhancedSettlementKPICards";
@@ -230,8 +230,17 @@ export function SettlementsCommandCenter() {
             </span>
           </div>
           
-          <div className="mt-4 text-xs text-slate-400">
-            Source: main-source-v2_enhanced_bof_aligned.xlsx / Payroll sheet
+          <div className="mt-4 flex items-center justify-between">
+            <div className="text-xs text-slate-400">
+              Source: main-source-v2_enhanced_bof_aligned.xlsx / Payroll sheet
+            </div>
+            <a
+              href="/settlements-v2"
+              className="flex items-center gap-1 text-xs text-blue-400 hover:text-blue-300 transition-colors"
+            >
+              <ExternalLink className="h-3 w-3" />
+              Preview Settlements v2
+            </a>
           </div>
         </div>
       </div>
