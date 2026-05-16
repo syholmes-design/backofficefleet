@@ -167,23 +167,22 @@ export function SettlementsV2Page() {
   }, [settlementRows, selectedDriver]);
 
   return (
-    <div className="min-h-screen bg-slate-950">
-      {/* Header */}
-      <div className="bg-slate-900 border-b border-slate-800">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-          <div className="flex items-center justify-between">
-            <div>
-              <div className="inline-flex items-center gap-2 px-3 py-1 bg-blue-900/30 border border-blue-700/50 rounded-full text-xs font-medium text-blue-300 mb-3">
-                Preview
-              </div>
-              <h1 className="text-2xl font-bold text-white mb-2">
-                Settlements v2
-              </h1>
-              <p className="text-slate-400">
-                Unified settlements page with accounting templates, driver table, and preview sidebar
-              </p>
+    <div className="bof-page">
+      {/* BOF App Shell - Navigation */}
+      <nav className="relative z-50 h-16 bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 border-b border-blue-500/20 shadow-2xl">
+        <div className="h-full px-6 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            {/* Logo */}
+            <div className="flex items-center justify-center w-10 h-10 bg-blue-600 rounded-lg">
+              <Calendar className="w-6 h-6 text-white" />
             </div>
-            
+            <div>
+              <div className="text-xl font-bold text-white">Settlements v2</div>
+              <div className="text-xs text-blue-300">Preview • Unified settlements command center</div>
+            </div>
+          </div>
+          
+          <div className="flex items-center gap-6">
             {/* Period Selector */}
             <div className="flex items-center gap-2">
               <Calendar className="h-4 w-4 text-slate-400" />
@@ -204,34 +203,65 @@ export function SettlementsV2Page() {
               </select>
             </div>
           </div>
-          
-          <div className="mt-4 text-xs text-slate-500">
-            Source: main-source-v2_enhanced_bof_aligned.xlsx / Payroll sheet • {settlementRows.length} drivers
-          </div>
         </div>
+      </nav>
+
+      {/* Background */}
+      <div className="fixed inset-0 bg-slate-950">
+        <div className="absolute inset-0 bg-gradient-to-br from-blue-900/10 via-transparent to-emerald-900/5" />
+        <div className="absolute inset-0" style={{
+          backgroundImage: 'radial-gradient(rgba(255,255,255,0.04) 1px, transparent 1px)',
+          backgroundSize: '28px 28px'
+        }} />
       </div>
 
-      {/* Accounting Templates Section */}
-      <AccountingTemplates selectedDriver={selectedDriverData} />
-
-      {/* Main Content: Table + Sidebar */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Settlements Table */}
-          <div className="lg:col-span-2">
-            <SettlementTable 
-              rows={settlementRows}
-              selectedDriverId={selectedDriver}
-              onDriverSelect={setSelectedDriver}
-            />
+      {/* Main Content */}
+      <div className="relative z-10">
+        {/* Page Header */}
+        <div className="bg-slate-900/80 backdrop-blur-sm border-b border-slate-800">
+          <div className="max-w-7xl mx-auto px-6 py-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <div className="inline-flex items-center gap-2 px-3 py-1 bg-blue-900/30 border border-blue-700/50 rounded-full text-xs font-medium text-blue-300 mb-3">
+                  Preview
+                </div>
+                <h1 className="text-3xl font-bold text-white mb-2">
+                  Settlements v2
+                </h1>
+                <p className="text-slate-300 text-lg">
+                  Unified settlements preview with accounting templates, driver table, and settlement sidebar
+                </p>
+              </div>
+            </div>
+            
+            <div className="mt-4 text-sm text-slate-400">
+              Source: main-source-v2_enhanced_bof_aligned.xlsx / Payroll sheet • {settlementRows.length} drivers
+            </div>
           </div>
+        </div>
 
-          {/* Settlement Preview Sidebar */}
-          <div className="lg:col-span-1">
-            <SettlementSidebar 
-              driverSettlement={selectedDriverData}
-              period={selectedPeriod}
-            />
+        {/* Accounting Templates Section */}
+        <AccountingTemplates selectedDriver={selectedDriverData} />
+
+        {/* Main Content: Table + Sidebar */}
+        <div className="max-w-7xl mx-auto px-6 py-6">
+          <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
+            {/* Settlements Table */}
+            <div className="xl:col-span-2">
+              <SettlementTable 
+                rows={settlementRows}
+                selectedDriverId={selectedDriver}
+                onDriverSelect={setSelectedDriver}
+              />
+            </div>
+
+            {/* Settlement Preview Sidebar */}
+            <div className="xl:col-span-1">
+              <SettlementSidebar 
+                driverSettlement={selectedDriverData}
+                period={selectedPeriod}
+              />
+            </div>
           </div>
         </div>
       </div>

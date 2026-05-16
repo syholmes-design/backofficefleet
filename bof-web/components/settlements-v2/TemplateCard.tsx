@@ -39,51 +39,54 @@ export function TemplateCard({ template, selectedDriver, onPreview }: TemplateCa
 
   return (
     <div className={`
-      rounded-lg border transition-all duration-200
+      rounded-xl border transition-all duration-200 hover:shadow-lg
       ${template.primary 
-        ? 'bg-slate-700 border-teal-600 hover:bg-slate-600 hover:border-teal-500' 
-        : 'bg-slate-700/50 border-slate-600 hover:bg-slate-700 hover:border-slate-500'
+        ? 'bg-slate-800 border-teal-600/50 hover:bg-slate-750 hover:border-teal-500' 
+        : 'bg-slate-800/50 border-slate-600/50 hover:bg-slate-800 hover:border-slate-500'
       }
     `}>
-      <div className="p-4">
-        <div className="flex items-start gap-3">
-          <div className={`
-            p-2 rounded-lg
-            ${template.primary ? 'bg-teal-600/20 text-teal-400' : 'bg-slate-600/50 text-slate-400'}
-          `}>
-            <Icon className="h-5 w-5" />
-          </div>
-          <div className="flex-1">
-            <h3 className="font-medium text-white mb-1">
-              {template.title}
-            </h3>
-            <p className="text-sm text-slate-400">
-              {template.description}
-            </p>
-          </div>
+      <div className="p-6">
+        {/* Icon */}
+        <div className={`
+          w-12 h-12 rounded-lg flex items-center justify-center mb-4
+          ${template.primary ? 'bg-teal-600/20 text-teal-400' : 'bg-slate-700/50 text-slate-400'}
+        `}>
+          <Icon className="h-6 w-6" />
         </div>
         
-        <div className="mt-3 flex items-center justify-between">
+        {/* Content */}
+        <div className="mb-6">
+          <h3 className="font-semibold text-white mb-2 text-lg">
+            {template.title}
+          </h3>
+          <p className="text-sm text-slate-300 leading-relaxed">
+            {template.description}
+          </p>
+        </div>
+        
+        {/* Actions */}
+        <div className="space-y-3">
           <a
             href={template.href}
             target="_blank"
             rel="noopener noreferrer"
-            className="text-xs text-teal-400 font-medium hover:text-teal-300"
+            className="block w-full bg-teal-600 hover:bg-teal-700 text-white font-medium py-2 px-4 rounded-lg text-center transition-colors duration-200"
           >
-            Open Template →
+            Open Template
           </a>
+          
           <button
             onClick={toggleExpanded}
-            className="text-xs text-slate-400 hover:text-slate-300 flex items-center gap-1"
+            className="w-full bg-slate-700 hover:bg-slate-600 text-slate-300 font-medium py-2 px-4 rounded-lg text-center transition-colors duration-200 flex items-center justify-center gap-2"
           >
             {isExpanded ? (
               <>
-                <ChevronUp className="h-3 w-3" />
+                <ChevronUp className="h-4 w-4" />
                 Hide Preview
               </>
             ) : (
               <>
-                <ChevronDown className="h-3 w-3" />
+                <ChevronDown className="h-4 w-4" />
                 Show Preview
               </>
             )}

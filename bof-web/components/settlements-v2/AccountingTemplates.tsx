@@ -45,32 +45,34 @@ export function AccountingTemplates({ selectedDriver }: AccountingTemplatesProps
   ];
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-      <div className="bg-slate-800 rounded-lg border border-slate-700 p-6">
-        <h2 className="text-xl font-semibold text-white mb-4">
+    <div className="max-w-7xl mx-auto px-6 py-8">
+      {/* Section Header */}
+      <div className="mb-8">
+        <h2 className="text-2xl font-bold text-white mb-3">
           Accounting Templates & Workpapers
         </h2>
-        <p className="text-slate-400 mb-6">
+        <p className="text-slate-300 text-lg">
           Standardized templates for settlement processing, fuel reconciliation, and compliance reporting.
         </p>
-        
-        {/* Template Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-          {templates.map((template) => (
-            <TemplateCard
-              key={template.id}
-              template={template}
-              selectedDriver={selectedDriver}
-            />
-          ))}
-        </div>
-        
-        <div className="mt-6 pt-4 border-t border-slate-700">
-          <p className="text-xs text-slate-500">
-            Templates are provided as blank workpapers. Complete with actual settlement data as needed.
-            All templates include print functionality and are optimized for accounting workflows.
-          </p>
-        </div>
+      </div>
+      
+      {/* Template Cards Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        {templates.map((template) => (
+          <TemplateCard
+            key={template.id}
+            template={template}
+            selectedDriver={selectedDriver}
+          />
+        ))}
+      </div>
+      
+      {/* Footer Note */}
+      <div className="bg-slate-800/50 rounded-lg border border-slate-700/50 p-4">
+        <p className="text-sm text-slate-400">
+          Templates are provided as blank workpapers. Complete with actual settlement data as needed.
+          All templates include print functionality and are optimized for accounting workflows.
+        </p>
       </div>
     </div>
   );

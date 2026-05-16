@@ -50,24 +50,24 @@ export function SettlementSidebar({ driverSettlement, period }: SettlementSideba
 
   if (!driverSettlement) {
     return (
-      <div className="bg-slate-800 rounded-lg border border-slate-700 p-6">
+      <div className="bg-slate-800/50 backdrop-blur-sm rounded-xl border border-slate-700/50 shadow-xl p-6">
         <div className="text-center">
-          <div className="bg-slate-700 rounded-full p-3 w-16 h-16 mx-auto mb-4 flex items-center justify-center">
-            <User className="h-8 w-8 text-slate-400" />
+          <div className="bg-slate-700/50 rounded-full p-4 w-20 h-20 mx-auto mb-6 flex items-center justify-center">
+            <User className="h-10 w-10 text-slate-400" />
           </div>
-          <h3 className="text-lg font-semibold text-slate-100 mb-2">Select a Driver</h3>
-          <p className="text-slate-400 text-sm mb-6">
+          <h3 className="text-xl font-bold text-white mb-3">Select a Driver</h3>
+          <p className="text-slate-300 mb-8">
             Choose a driver from the table to view detailed settlement information.
           </p>
           
-          <div className="space-y-2">
+          <div className="space-y-3">
             <button 
               disabled
-              className="w-full bg-slate-700 text-slate-500 px-4 py-2 rounded text-sm font-medium cursor-not-allowed"
+              className="w-full bg-slate-700/50 text-slate-500 px-4 py-3 rounded-lg text-sm font-medium cursor-not-allowed border border-slate-600/50"
             >
               Review First Exception
             </button>
-            <button className="w-full bg-slate-700 hover:bg-slate-600 text-slate-300 px-4 py-2 rounded text-sm font-medium transition-colors">
+            <button className="w-full bg-slate-700 hover:bg-slate-600 text-white px-4 py-3 rounded-lg text-sm font-medium transition-colors border border-slate-600/50">
               View Settlement Guidelines
             </button>
           </div>
@@ -79,15 +79,15 @@ export function SettlementSidebar({ driverSettlement, period }: SettlementSideba
   const firstException = getFirstException();
 
   return (
-    <div className="bg-slate-800 rounded-lg border border-slate-700 p-6">
+    <div className="bg-slate-800/50 backdrop-blur-sm rounded-xl border border-slate-700/50 shadow-xl p-6">
       {/* Header */}
       <div className="mb-6">
         <div className="flex items-center justify-between mb-4">
-          <h3 className="text-lg font-semibold text-white">Settlement Preview</h3>
+          <h3 className="text-xl font-bold text-white">Settlement Preview</h3>
           <StatusBadge status={driverSettlement.status} />
         </div>
         
-        <div className="space-y-2 text-sm">
+        <div className="space-y-3">
           <div className="flex justify-between">
             <span className="text-slate-400">Driver:</span>
             <span className="text-white font-medium">{driverSettlement.driverName}</span>
