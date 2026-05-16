@@ -13,13 +13,16 @@ export function DispatchV2Page() {
   const [filteredLoads, setFilteredLoads] = useState<LoadV2[]>(loadsV2);
   const [selectedLoad, setSelectedLoad] = useState<LoadV2 | null>(null);
   const [preTripLoad, setPreTripLoad] = useState<LoadV2 | null>(null);
-  const [currentTime, setCurrentTime] = useState(new Date());
+  const [currentTime, setCurrentTime] = useState<Date | null>(null);
 
   // Update clock every second
   useEffect(() => {
-    const timer = setInterval(() => {
+    const updateTime = () => {
       setCurrentTime(new Date());
-    }, 1000);
+    };
+
+    updateTime();
+    const timer = setInterval(updateTime, 1000);
     return () => clearInterval(timer);
   }, []);
 
@@ -74,10 +77,10 @@ export function DispatchV2Page() {
             {/* Clock */}
             <div className="text-right">
               <div className="text-lg font-bold text-white font-mono">
-                {currentTime.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit' })}
+                {currentTime ? currentTime.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit' }) : '--:--:--'}
               </div>
               <div className="text-xs text-slate-400">
-                {currentTime.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' })}
+                {currentTime ? currentTime.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' }) : 'Loading...'}
               </div>
             </div>
             
