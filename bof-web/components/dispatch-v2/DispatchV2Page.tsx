@@ -10,6 +10,7 @@ import { LoadDetailModal } from "./LoadDetailModal";
 import { PreTripPacketModal } from "./PreTripPacketModal";
 import { PreTripChecklist } from "./PreTripChecklist";
 import { PreDispatchModal } from "./PreDispatchModal";
+import { RouteFuelIntelligence } from "./RouteFuelIntelligence";
 import { sendPreTripInstructions } from "@/lib/driver/sendPreTripInstructions";
 import { logDispatchEvent } from "@/lib/audit/logDispatchEvent";
 import type { PreTripChecklistState, PreDispatchVerificationState } from "./types";
@@ -121,6 +122,18 @@ export function DispatchV2Page() {
     }
   };
 
+  // Get the focused load for Route + Fuel Intelligence
+  const getFocusedLoad = (): LoadV2 | null => {
+    // Use selected load if available, otherwise use first active/in-transit load
+    if (selectedLoad) return selectedLoad;
+    
+    const activeLoad = filteredLoads.find(load => 
+      load.status === 'IN_TRANSIT' || load.status === 'PENDING'
+    );
+    
+    return activeLoad || filteredLoads[0] || null;
+  };
+
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100">
       {/* Background gradient */}
@@ -181,6 +194,9 @@ export function DispatchV2Page() {
           loads={loadsV2}
           onFilter={setFilteredLoads}
         />
+
+        {/* Route + Fuel Intelligence */}
+        <RouteFuelIntelligence load={getFocusedLoad()} />
 
         {/* Pre-Trip Compliance Checklist */}
         <PreTripChecklist 
