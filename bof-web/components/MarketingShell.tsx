@@ -1,9 +1,11 @@
 import Link from "next/link";
+import { MarketingNavigation } from "@/components/marketing/MarketingNavigation";
 
 /** Marketing layout: no duplicate header — {@link BofHeader} in root layout. */
 export function MarketingShell({ children }: { children: React.ReactNode }) {
   return (
     <div className="bof-mkt-root">
+      <MarketingNavigation />
       <main className="bof-mkt-main">{children}</main>
       <footer className="bof-mkt-footer">
         <div className="bof-mkt-footer-inner">
