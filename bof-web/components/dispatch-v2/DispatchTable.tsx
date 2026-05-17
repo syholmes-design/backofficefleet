@@ -3,16 +3,21 @@
 import { useState } from "react";
 import { ChevronUp, ChevronDown, FileText } from "lucide-react";
 import type { LoadV2 } from "@/lib/dispatch-v2-demo-data";
+import { DispatchButton } from "./DispatchButton";
+import type { PreTripChecklistState } from "./types";
 
 interface DispatchTableProps {
   loads: LoadV2[];
   onOpenDetail: (load: LoadV2) => void;
   onOpenPreTrip: (load: LoadV2) => void;
+  onDispatch: (load: LoadV2) => void;
+  checklistState: PreTripChecklistState;
+  dispatchInProgress: boolean;
 }
 
 type SortField = 'id' | 'driver' | 'customer' | 'origin' | 'commodity' | 'weight' | 'miles' | 'revenue' | 'status';
 
-export function DispatchTable({ loads, onOpenDetail, onOpenPreTrip }: DispatchTableProps) {
+export function DispatchTable({ loads, onOpenDetail, onOpenPreTrip, onDispatch, checklistState, dispatchInProgress }: DispatchTableProps) {
   const [sortField, setSortField] = useState<SortField>('id');
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
 
@@ -142,6 +147,9 @@ export function DispatchTable({ loads, onOpenDetail, onOpenPreTrip }: DispatchTa
               <th className="px-4 py-3 text-left text-xs font-semibold text-slate-400 uppercase tracking-wider">
                 Pre-Trip
               </th>
+              <th className="px-4 py-3 text-left text-xs font-semibold text-slate-400 uppercase tracking-wider">
+                Dispatch
+              </th>
             </tr>
           </thead>
           <tbody>
@@ -192,6 +200,14 @@ export function DispatchTable({ loads, onOpenDetail, onOpenPreTrip }: DispatchTa
                     <FileText className="w-3 h-3" />
                     Pre-Trip
                   </button>
+                </td>
+                <td className="px-4 py-3">
+                  <DispatchButton
+                    load={load}
+                    checklistState={checklistState}
+                    onDispatch={onDispatch}
+                    dispatchInProgress={dispatchInProgress}
+                  />
                 </td>
               </tr>
             ))}

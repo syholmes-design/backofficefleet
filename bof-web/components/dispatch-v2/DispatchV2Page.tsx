@@ -8,12 +8,32 @@ import { DispatchFilterBar } from "./DispatchFilterBar";
 import { DispatchTable } from "./DispatchTable";
 import { LoadDetailModal } from "./LoadDetailModal";
 import { PreTripPacketModal } from "./PreTripPacketModal";
+import { PreTripChecklist } from "./PreTripChecklist";
+import { PreDispatchModal } from "./PreDispatchModal";
+import { sendPreTripInstructions } from "@/lib/driver/sendPreTripInstructions";
+import { logDispatchEvent } from "@/lib/audit/logDispatchEvent";
+import type { PreTripChecklistState, PreDispatchVerificationState } from "./types";
 
 export function DispatchV2Page() {
   const [filteredLoads, setFilteredLoads] = useState<LoadV2[]>(loadsV2);
   const [selectedLoad, setSelectedLoad] = useState<LoadV2 | null>(null);
   const [preTripLoad, setPreTripLoad] = useState<LoadV2 | null>(null);
   const [currentTime, setCurrentTime] = useState<Date | null>(null);
+
+  // Pre-trip compliance state
+  const [checklistState, setChecklistState] = useState<PreTripChecklistState>({
+    hosVerified: false,
+    equipmentConditionVerified: false,
+    trailerNumberConfirmed: false,
+    ppeConfirmed: false,
+    loadInstructionsReviewed: false,
+    sealRequirementsUnderstood: false,
+    pickupAppointmentConfirmed: false,
+    trackingActivated: false
+  });
+
+  const [preDispatchLoad, setPreDispatchLoad] = useState<LoadV2 | null>(null);
+  const [dispatchInProgress, setDispatchInProgress] = useState(false);
 
   // Update clock every second
   useEffect(() => {
@@ -40,6 +60,65 @@ export function DispatchV2Page() {
 
   const handleClosePreTrip = () => {
     setPreTripLoad(null);
+  };
+
+  const handleDispatch = (load: LoadV2) => {
+    setPreDispatchLoad(load);
+  };
+
+  const handleClosePreDispatch = () => {
+    setPreDispatchLoad(null);
+  };
+
+  const handlePreDispatchConfirm = async (verificationState: PreDispatchVerificationState) => {
+    if (!preDispatchLoad) return;
+
+    setDispatchInProgress(true);
+
+    try {
+      // Send pre-trip instructions to driver
+      sendPreTripInstructions(
+        preDispatchLoad.id,
+        preDispatchLoad.driverId,
+        checklistState
+      );
+
+      // Log dispatch event to audit trail
+      const auditEvent = logDispatchEvent({
+        dispatcherId: "DS-001", // Current dispatcher
+        timestamp: new Date().toISOString(),
+        loadId: preDispatchLoad.id,
+        driverId: preDispatchLoad.driverId,
+        checklistState,
+        modalVerification: verificationState,
+        trackingActivated: checklistState.trackingActivated,
+        dispatchSuccess: true
+      });
+
+      // Show success message
+      alert(`✅ Driver Dispatched Successfully!\n\nLoad: ${preDispatchLoad.id}\nDriver: ${preDispatchLoad.driver}\nTime: ${new Date().toLocaleString()}\n\nAudit ID: ${auditEvent.timestamp}`);
+
+      // Close modal and reset state
+      handleClosePreDispatch();
+      
+      // Reset checklist after successful dispatch
+      setChecklistState({
+        hosVerified: false,
+        equipmentConditionVerified: false,
+        trailerNumberConfirmed: false,
+        ppeConfirmed: false,
+        loadInstructionsReviewed: false,
+        sealRequirementsUnderstood: false,
+        pickupAppointmentConfirmed: false,
+        trackingActivated: false
+      });
+
+    } catch (error) {
+      console.error('Dispatch failed:', error);
+      alert('❌ Dispatch failed. Please try again.');
+    } finally {
+      setDispatchInProgress(false);
+    }
   };
 
   return (
@@ -103,11 +182,20 @@ export function DispatchV2Page() {
           onFilter={setFilteredLoads}
         />
 
+        {/* Pre-Trip Compliance Checklist */}
+        <PreTripChecklist 
+          checklistState={checklistState}
+          onChecklistChange={setChecklistState}
+        />
+
         {/* Dispatch Table */}
         <DispatchTable 
           loads={filteredLoads}
           onOpenDetail={handleOpenDetail}
           onOpenPreTrip={handleOpenPreTrip}
+          onDispatch={handleDispatch}
+          checklistState={checklistState}
+          dispatchInProgress={dispatchInProgress}
         />
       </div>
 
@@ -124,6 +212,15 @@ export function DispatchV2Page() {
         <PreTripPacketModal 
           load={preTripLoad}
           onClose={handleClosePreTrip}
+        />
+      )}
+
+      {/* Pre-Dispatch Verification Modal */}
+      {preDispatchLoad && (
+        <PreDispatchModal 
+          load={preDispatchLoad}
+          onClose={handleClosePreDispatch}
+          onDispatch={handlePreDispatchConfirm}
         />
       )}
     </div>
