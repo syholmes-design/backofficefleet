@@ -11,6 +11,7 @@ import { ExceptionViewScreen } from "./ExceptionViewScreen";
 import { SettlementReadinessScreen } from "./SettlementReadinessScreen";
 import { RfidProofChainV4 } from "@/components/rfid-v4/RfidProofChainV4";
 import { RouteIntelligenceV4 } from "@/components/route-intelligence-v4/RouteIntelligenceV4";
+import { DispatchAssetCards } from "@/components/dispatch/DispatchAssetCards";
 import { useDispatchDashboardStore } from "@/lib/stores/dispatch-dashboard-store";
 import { useBofDemoData } from "@/lib/bof-demo-data-context";
 import { buildDispatchLoadsFromBofData } from "@/lib/dispatch-dashboard-seed";
@@ -130,6 +131,12 @@ export function DispatchShell() {
                   loadId={selectedLoad.load_id}
                   driverId={selectedLoad.driver_id || undefined}
                   showAllData={false}
+                />
+                
+                {/* Dispatch Asset Cards */}
+                <DispatchAssetCards 
+                  loadId={selectedLoad.load_id}
+                  driverId={selectedLoad.driver_id || undefined}
                 />
                 
                 {/* RFID Proof Chain */}

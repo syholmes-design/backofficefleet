@@ -18,6 +18,7 @@ import {
 } from "lucide-react";
 import { getV3OperationalData, isV3DataAvailable } from "@/lib/v3-operational-loader";
 import { formatDisplayDate } from "@/lib/date-utils";
+import { SafetyAssetCards } from "@/components/safety-v4/SafetyAssetCards";
 import type { MainSafety, SafetyEvent, SafetyKpiSource } from "@/lib/v3-operational-types";
 
 export function SafetyDashboardV4() {
@@ -420,6 +421,13 @@ export function SafetyDashboardV4() {
           </div>
         </div>
       )}
+
+      {/* Safety Asset Cards */}
+      <SafetyAssetCards 
+        driverId={safetyEvents.length > 0 ? safetyEvents[0].driverId : "DRV-001"}
+        safetyEventId={safetyEvents.length > 0 ? safetyEvents[0].eventId : undefined}
+        relatedLoadId={safetyEvents.length > 0 ? safetyEvents[0].linkedLoadId : undefined}
+      />
     </div>
   );
 }

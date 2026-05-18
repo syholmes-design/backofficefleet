@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { DollarSign, Users, Calendar, Filter, TrendingUp, AlertTriangle, CheckCircle, Clock } from "lucide-react";
 import { getV3OperationalData, isV3DataAvailable } from "@/lib/v3-operational-loader";
 import { formatDisplayDate } from "@/lib/date-utils";
+import { SettlementsAssetCards } from "@/components/settlements-v3/SettlementsAssetCards";
 import type { WeeklySettlement, SettlementHold } from "@/lib/v3-operational-types";
 
 export function SettlementsV3Simple() {
@@ -524,6 +525,12 @@ export function SettlementsV3Simple() {
           </div>
         </div>
       )}
+
+      {/* Settlement Asset Cards */}
+      <SettlementsAssetCards 
+        loadId="L003" // Default to a load that has settlement data
+        settlementWeek={latestWeek}
+      />
     </div>
   );
 }
