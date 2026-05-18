@@ -2,7 +2,9 @@
 
 import { useEffect, useMemo, useRef, useState, type ReactElement } from "react";
 import Map, { Layer, Marker, NavigationControl, Popup, Source, type MapRef } from "react-map-gl/mapbox";
+import { getV3OperationalData, isV3DataAvailable } from "@/lib/v3-operational-loader";
 import type { Load, LoadProofEvent, RouteStatus } from "@/types/dispatch";
+import type { RouteIntelligence, DieselPricing, RestStopLocation, RfidEvent } from "@/lib/v3-operational-types";
 
 type Mode = "all" | "selected";
 
@@ -37,10 +39,22 @@ function proofStatus(load: Load): string {
   return "Proof missing";
 }
 
-function popupHtml(load: Load, event?: LoadProofEvent): string {
-  const detail = event
-    ? `<div class="bof-map-popup-line">Event: ${event.label}</div><div class="bof-map-popup-line">Status: ${event.status}</div>`
-    : `<div class="bof-map-popup-line">ETA: ${load.eta ?? "—"}</div><div class="bof-map-popup-line">Current: ${load.currentLocationLabel ?? "—"}</div>`;
+function popupHtml(load: Load, event?: LoadProofEvent, markerType?: string, markerData?: any): string {
+  let detail = "";
+  
+  if (event) {
+    detail = `<div class="bof-map-popup-line">Event: ${event.label}</div><div class="bof-map-popup-line">Status: ${event.status}</div>`;
+  } else if (markerType === "fuel" && markerData) {
+    detail = `<div class="bof-map-popup-line">Station: ${markerData.location}</div><div class="bof-map-popup-line">Price: $${markerData.dieselPrice}/gal</div><div class="bof-map-popup-line">Est. Gallons: ${markerData.estimatedGallons}</div><div class="bof-map-popup-line">Est. Cost: $${markerData.estimatedFuelCost.toFixed(2)}</div>`;
+  } else if (markerType === "rest" && markerData) {
+    detail = `<div class="bof-map-popup-line">Stop: ${markerData.location}</div><div class="bof-map-popup-line">Parking: ${markerData.parkingAvailable ? "Available" : "Unavailable"}</div><div class="bof-map-popup-line">Amenities: ${markerData.amenities.join(", ")}</div>`;
+  } else if (markerType === "rfid" && markerData) {
+    const positionNote = markerData.isApproximate ? `<div class="bof-map-popup-line text-amber-400">⚠️ Approximate position along route</div>` : '';
+    detail = `<div class="bof-map-popup-line">Event: ${markerData.eventType}</div><div class="bof-map-popup-line">Status: ${markerData.scanStatus}</div><div class="bof-map-popup-line">Seal Match: ${markerData.sealMatchStatus}</div><div class="bof-map-popup-line">Location: ${markerData.scanLocation}</div>${positionNote}`;
+  } else {
+    detail = `<div class="bof-map-popup-line">ETA: ${load.eta ?? "—"}</div><div class="bof-map-popup-line">Current: ${load.currentLocationLabel ?? "—"}</div>`;
+  }
+  
   const docLink = event?.documentUrl
     ? `<a class="bof-map-popup-link" href="${event.documentUrl}" target="_blank" rel="noopener noreferrer">Open event document</a>`
     : "";
@@ -48,7 +62,12 @@ function popupHtml(load: Load, event?: LoadProofEvent): string {
     ? `<a class="bof-map-popup-link" href="${load.pod_url}" target="_blank" rel="noopener noreferrer">Open POD</a>`
     : "";
   const packetLink = `/loads/${load.load_id}`;
-  return `<div class="bof-map-popup"><div class="bof-map-popup-title">${load.load_id} · ${load.customer_name}</div><div class="bof-map-popup-line">Driver: ${load.driver_id ?? "Unassigned"}</div><div class="bof-map-popup-line">Status: ${statusLabel(load.routeStatus)}</div>${detail}<div class="bof-map-popup-line">${proofStatus(load)}</div><div class="bof-map-popup-line">Settlement hold: ${load.settlement_hold ? "Yes" : "No"}</div>${podLink}${docLink}<a class="bof-map-popup-link" href="${packetLink}" target="_blank" rel="noopener noreferrer">Open Load Proof Packet</a></div>`;
+  
+  const markerLabel = markerType 
+    ? `<div class="bof-map-popup-line">Type: ${markerType.charAt(0).toUpperCase() + markerType.slice(1)} Marker</div>`
+    : "";
+  
+  return `<div class="bof-map-popup"><div class="bof-map-popup-title">${load.load_id} · ${load.customer_name}</div><div class="bof-map-popup-line">Driver: ${load.driver_id ?? "Unassigned"}</div><div class="bof-map-popup-line">Status: ${statusLabel(load.routeStatus)}</div>${markerLabel}${detail}<div class="bof-map-popup-line">${proofStatus(load)}</div><div class="bof-map-popup-line">Settlement hold: ${load.settlement_hold ? "Yes" : "No"}</div>${podLink}${docLink}<a class="bof-map-popup-link" href="${packetLink}" target="_blank" rel="noopener noreferrer">Open Load Proof Packet</a></div>`;
 }
 
 function fallbackSvg(loads: Load[]) {
@@ -110,7 +129,40 @@ export function DispatchRouteMap({
   // Support both NEXT_PUBLIC_MAPBOX_TOKEN and NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN
   const mapboxToken = process.env.NEXT_PUBLIC_MAPBOX_TOKEN || process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN;
   const mapRef = useRef<MapRef | null>(null);
-  const [popup, setPopup] = useState<{ load: Load; event?: LoadProofEvent } | null>(null);
+  const [popup, setPopup] = useState<{ load: Load; event?: LoadProofEvent; markerType?: string; markerData?: any } | null>(null);
+  const [v4Data, setV4Data] = useState<{
+    routeIntelligence: RouteIntelligence[];
+    dieselPricing: DieselPricing[];
+    restStopLocations: RestStopLocation[];
+    rfidEvents: RfidEvent[];
+  }>({
+    routeIntelligence: [],
+    dieselPricing: [],
+    restStopLocations: [],
+    rfidEvents: [],
+  });
+
+  // Load V4 workbook data
+  useEffect(() => {
+    const loadV4Data = async () => {
+      try {
+        const v4Available = await isV3DataAvailable();
+        if (v4Available) {
+          const v4Data = await getV3OperationalData();
+          setV4Data({
+            routeIntelligence: v4Data.routeIntelligence,
+            dieselPricing: v4Data.dieselPricing,
+            restStopLocations: v4Data.restStopLocations,
+            rfidEvents: v4Data.rfidEvents,
+          });
+        }
+      } catch (error) {
+        console.error('Failed to load V4 data for map:', error);
+      }
+    };
+    
+    loadV4Data();
+  }, []);
 
   useEffect(() => {
     const tokenSource = process.env.NEXT_PUBLIC_MAPBOX_TOKEN ? 'NEXT_PUBLIC_MAPBOX_TOKEN' : 
@@ -215,7 +267,7 @@ export function DispatchRouteMap({
       <div className={compact ? "mb-2" : "mb-3"}>
         <h3 className="text-sm font-semibold text-slate-100">Dispatch route map</h3>
         <p className="text-xs text-slate-400">
-          Delivered, in-transit, and scheduled lanes with proof markers.
+          Live routes with fuel stops, rest stops, RFID proof markers, and operational data.
         </p>
       </div>
       <div className={compact ? "h-44 rounded-md overflow-hidden" : "h-72 rounded-md overflow-hidden"}>
@@ -343,6 +395,99 @@ export function DispatchRouteMap({
                 </Marker>
               );
             }
+
+            // Enhanced V4 workbook data markers
+            const routeInfo = v4Data.routeIntelligence.find(r => r.loadId === load.load_id);
+            if (routeInfo) {
+              // Fuel stop markers
+              const fuelStops = v4Data.dieselPricing.filter(fuel => 
+                routeInfo.fuelStops.includes(fuel.location)
+              );
+              
+              fuelStops.forEach((fuel, index) => {
+                if (Number.isFinite(fuel.coordinates[1]) && Number.isFinite(fuel.coordinates[0])) {
+                  markers.push(
+                    <Marker key={`${load.load_id}-fuel-${index}`} latitude={fuel.coordinates[1]} longitude={fuel.coordinates[0]}>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          onSelectLoad?.(load.load_id);
+                          setPopup({ load, markerType: "fuel", markerData: fuel });
+                        }}
+                        title={`${load.load_id} fuel stop: ${fuel.location}`}
+                        style={{
+                          width: 10,
+                          height: 10,
+                          borderRadius: "999px",
+                          border: "2px solid #0f172a",
+                          background: "#10b981",
+                        }}
+                      />
+                    </Marker>
+                  );
+                }
+              });
+
+              // Rest stop markers
+              const restStops = v4Data.restStopLocations.filter(rest => 
+                routeInfo.recommendedRestStops.includes(rest.location)
+              );
+              
+              restStops.forEach((rest, index) => {
+                if (Number.isFinite(rest.coordinates[1]) && Number.isFinite(rest.coordinates[0])) {
+                  markers.push(
+                    <Marker key={`${load.load_id}-rest-${index}`} latitude={rest.coordinates[1]} longitude={rest.coordinates[0]}>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          onSelectLoad?.(load.load_id);
+                          setPopup({ load, markerType: "rest", markerData: rest });
+                        }}
+                        title={`${load.load_id} rest stop: ${rest.location}`}
+                        style={{
+                          width: 10,
+                          height: 10,
+                          borderRadius: "999px",
+                          border: "2px solid #0f172a",
+                          background: "#f59e0b",
+                        }}
+                      />
+                    </Marker>
+                  );
+                }
+              });
+            }
+
+            // RFID event markers (approximate route positions - not exact coordinates)
+            const rfidEvents = v4Data.rfidEvents.filter(rfid => rfid.loadId === load.load_id);
+            rfidEvents.forEach((rfid, index) => {
+              const routeInfo = v4Data.routeIntelligence.find(r => r.loadId === load.load_id);
+              if (routeInfo) {
+                // Use approximate positions along the route (not exact RFID coordinates)
+                const coords = index % 2 === 0 ? routeInfo.originCoordinates : routeInfo.destinationCoordinates;
+                markers.push(
+                  <Marker key={`${load.load_id}-rfid-${index}`} latitude={coords[1]} longitude={coords[0]}>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        onSelectLoad?.(load.load_id);
+                        setPopup({ load, markerType: "rfid", markerData: { ...rfid, isApproximate: true } });
+                      }}
+                      title={`${load.load_id} RFID event (approximate position): ${rfid.eventType}`}
+                      style={{
+                        width: 8,
+                        height: 8,
+                        borderRadius: "999px",
+                        border: "1px solid #0f172a",
+                        background: "#ef4444",
+                        opacity: 0.7, // Reduced opacity to indicate approximate position
+                      }}
+                    />
+                  </Marker>
+                );
+              }
+            });
+
             return markers;
           })}
 
@@ -355,7 +500,7 @@ export function DispatchRouteMap({
               closeOnClick={false}
               maxWidth="320px"
             >
-              <div dangerouslySetInnerHTML={{ __html: popupHtml(popup.load, popup.event) }} />
+              <div dangerouslySetInnerHTML={{ __html: popupHtml(popup.load, popup.event, popup.markerType, popup.markerData) }} />
             </Popup>
           )}
         </Map>

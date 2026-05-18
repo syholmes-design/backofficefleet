@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { DispatchNav } from "./DispatchNav";
 import { DispatchBoardScreen } from "./DispatchBoardScreen";
+import { DispatchRouteMapEnhanced } from "./DispatchRouteMapEnhanced";
 import { LoadDetailDrawer } from "./LoadDetailDrawer";
 import { LoadDetailContent } from "./LoadDetailContent";
 import { AssignDriverEquipmentModal } from "./AssignDriverEquipmentModal";

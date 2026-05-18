@@ -407,11 +407,10 @@ export function DispatchBoardScreen() {
         <DispatchRouteMapClient
           loads={filtered}
           selectedLoadId={selectedLoadId ?? undefined}
-          onSelectLoad={(loadId) => {
+          onSelectLoad={(loadId: string) => {
             selectLoad(loadId);
             openLoadDrawer(loadId);
           }}
-          mode="all"
         />
       </section>
 
