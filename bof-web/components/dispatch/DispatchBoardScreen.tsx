@@ -13,6 +13,7 @@ import { useBofDemoData } from "@/lib/bof-demo-data-context";
 import { getLoadRiskExplanation } from "@/lib/load-risk-explanation";
 import { getDispatchCommandSummary } from "@/lib/dispatch/dispatch-command-metrics";
 import { LoadReviewDrawer } from "@/components/review/LoadReviewDrawer";
+import { LoadRequestIntakePanel } from "./LoadRequestIntakePanel";
 import {
   formatMoney,
   loadStatusChipClass,
@@ -261,6 +262,9 @@ export function DispatchBoardScreen() {
           Load Intake
         </Link>
       </div>
+
+      {/* Pending Load Requests Panel */}
+      <LoadRequestIntakePanel />
 
       <section
         className="grid gap-2 rounded-lg border border-slate-800 bg-slate-900/50 p-3 sm:grid-cols-2 lg:grid-cols-8"

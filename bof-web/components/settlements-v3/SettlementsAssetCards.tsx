@@ -152,6 +152,24 @@ export function SettlementsAssetCards({ loadId, driverId, settlementWeek }: Sett
           fileSize: "~8 KB",
           lastUpdated: "Today",
         });
+
+        // Post-Trip Factoring Packet
+        assetCards.push({
+          title: "Post-Trip Factoring Packet",
+          status: loadId === "L011" ? "ready" : "missing",
+          thumbnail: "/evidence/support/document-support/factoring-packet-preview.png",
+          openLink: loadId === "L011" 
+            ? `/generated/factoring/${loadId}/post-trip-factoring-packet.html`
+            : undefined,
+          relatedEntity: {
+            type: "load",
+            id: loadId,
+            name: loadId,
+          },
+          description: "Complete factoring packet with all required documents",
+          fileSize: "~45 KB",
+          lastUpdated: "Today",
+        });
       }
 
       setAssets(assetCards);

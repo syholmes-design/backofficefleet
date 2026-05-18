@@ -1,0 +1,226 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>{{title}}</title>
+  <style>
+    @page { size: letter; margin: 0.5in; }
+    body { font-family: Arial, sans-serif; color: #111; margin: 0; background: #fff; }
+    .paper { max-width: 8.5in; margin: 0 auto; border: 1px solid #222; padding: 18px; }
+    h1 { margin: 0 0 6px; font-size: 20px; text-transform: uppercase; letter-spacing: .05em; }
+    .sub { margin: 0 0 12px; font-size: 12px; color: #333; }
+    table { width: 100%; border-collapse: collapse; margin-top: 8px; }
+    th, td { border: 1px solid #999; padding: 6px; font-size: 12px; text-align: left; vertical-align: top; }
+    th { background: #f3f6f9; text-transform: uppercase; font-size: 10px; letter-spacing: .05em; }
+    .status-ready { background: #d4edda; color: #155724; font-weight: bold; }
+    .status-missing { background: #f8d7da; color: #721c24; font-weight: bold; }
+    .status-pending { background: #fff3cd; color: #856404; font-weight: bold; }
+    .status-complete { background: #d1ecf1; color: #0c5460; font-weight: bold; }
+    .sig-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 14px; }
+    .sig { border-top: 1px solid #111; padding-top: 4px; font-size: 11px; min-height: 30px; }
+    .checklist { margin: 8px 0; }
+    .checklist-item { display: flex; align-items: center; margin: 4px 0; font-size: 11px; }
+    .checklist-item input { margin-right: 8px; }
+    .notes { background: #f9f9f9; padding: 8px; font-size: 11px; border: 1px solid #ddd; margin: 8px 0; }
+  </style>
+</head>
+<body>
+  <div class="paper">
+    <h1>Post-Trip Factoring Packet</h1>
+    <p class="sub">Complete Accounts Receivable Submission Package - {{carrier}}</p>
+    
+    <table>
+      <tr><th>Load ID</th><th>Customer / Broker</th><th>Invoice #</th><th>Invoice Amount</th><th>Delivery Date</th></tr>
+      <tr>
+        <td>{{loadId}}</td>
+        <td>{{customer}}</td>
+        <td>{{invoiceNumber}}</td>
+        <td>${{invoiceAmount}}</td>
+        <td>{{deliveryDate}}</td>
+      </tr>
+    </table>
+
+    <table>
+      <tr><th>Document Reference</th><th>File Location</th><th>Status</th><th>Notes</th></tr>
+      <tr>
+        <td>Invoice / Freight Bill</td>
+        <td>/generated/loads/{{loadId}}/invoice.html</td>
+        <td class="status-complete">Complete</td>
+        <td>Signed and dated</td>
+      </tr>
+      <tr>
+        <td>Rate Confirmation</td>
+        <td>/generated/loads/{{loadId}}/rate-confirmation.html</td>
+        <td class="status-complete">Complete</td>
+        <td>Customer signed</td>
+      </tr>
+      <tr>
+        <td>Bill of Lading</td>
+        <td>/generated/loads/{{loadId}}/bol.html</td>
+        <td class="status-complete">Complete</td>
+        <td>Signed by shipper and carrier</td>
+      </tr>
+      <tr>
+        <td>Proof of Delivery (POD)</td>
+        <td>/generated/loads/{{loadId}}/pod.html</td>
+        <td class="status-complete">Complete</td>
+        <td>Customer signature and timestamp</td>
+      </tr>
+      <tr>
+        <td>Seal Verification</td>
+        <td>/generated/loads/{{loadId}}/seal-verification.html</td>
+        <td class="status-complete">Complete</td>
+        <td>Seal numbers verified</td>
+      </tr>
+      <tr>
+        <td>RFID Proof</td>
+        <td>/generated/loads/{{loadId}}/rfid-proof.html</td>
+        <td class="status-complete">Complete</td>
+        <td>Dock proof captured</td>
+      </tr>
+    </table>
+
+    <h3 style="margin-top: 16px; margin-bottom: 4px; font-size: 14px;">Accessorial Support Documents</h3>
+    <table>
+      <tr><th>Support Type</th><th>Document</th><th>Status</th><th>Amount</th></tr>
+      <tr>
+        <td>Lumper Receipt</td>
+        <td>/generated/loads/{{loadId}}/lumper-receipt.html</td>
+        <td class="{{lumperStatusClass}}">{{lumperStatus}}</td>
+        <td>{{lumperAmount}}</td>
+      </tr>
+      <tr>
+        <td>Detention Time</td>
+        <td>Time records attached</td>
+        <td class="{{detentionStatusClass}}">{{detentionStatus}}</td>
+        <td>{{detentionAmount}}</td>
+      </tr>
+      <tr>
+        <td>Layover Time</td>
+        <td>Time records attached</td>
+        <td class="{{layoverStatusClass}}">{{layoverStatus}}</td>
+        <td>{{layoverAmount}}</td>
+      </tr>
+      <tr>
+        <td>Toll Reimbursement</td>
+        <td>Toll receipts attached</td>
+        <td class="{{tollStatusClass}}">{{tollStatus}}</td>
+        <td>{{tollAmount}}</td>
+      </tr>
+      <tr>
+        <td>Fuel Reimbursement</td>
+        <td>Fuel receipts attached</td>
+        <td class="{{fuelStatusClass}}">{{fuelStatus}}</td>
+        <td>{{fuelAmount}}</td>
+      </tr>
+    </table>
+
+    <h3 style="margin-top: 16px; margin-bottom: 4px; font-size: 14px;">Exception and Claim Status</h3>
+    <table>
+      <tr><th>Exception Type</th><th>Document</th><th>Status</th><th>Impact</th></tr>
+      <tr>
+        <td>Claims / Damage</td>
+        <td>/generated/loads/{{loadId}}/claim-packet.html</td>
+        <td class="{{claimStatusClass}}">{{claimStatus}}</td>
+        <td>{{claimImpact}}</td>
+      </tr>
+      <tr>
+        <td>Safety Violations</td>
+        <td>Safety report attached</td>
+        <td class="{{safetyStatusClass}}">{{safetyStatus}}</td>
+        <td>{{safetyImpact}}</td>
+      </tr>
+      <tr>
+        <td>Compliance Issues</td>
+        <td>Compliance report attached</td>
+        <td class="{{complianceStatusClass}}">{{complianceStatus}}</td>
+        <td>{{complianceImpact}}</td>
+      </tr>
+    </table>
+
+    <h3 style="margin-top: 16px; margin-bottom: 4px; font-size: 14px;">Settlement and Hold Status</h3>
+    <table>
+      <tr><th>Hold Type</th><th>Document</th><th>Status</th><th>Reason</th></tr>
+      <tr>
+        <td>Settlement Hold</td>
+        <td>/generated/loads/{{loadId}}/settlement-hold-notice.html</td>
+        <td class="{{settlementHoldStatusClass}}">{{settlementHoldStatus}}</td>
+        <td>{{settlementHoldReason}}</td>
+      </tr>
+      <tr>
+        <td>Factoring Assignment</td>
+        <td>/generated/factoring/{{loadId}}/factoring-notification.html</td>
+        <td class="{{factoringAssignmentStatusClass}}">{{factoringAssignmentStatus}}</td>
+        <td>{{factoringAssignmentReason}}</td>
+      </tr>
+    </table>
+
+    <h3 style="margin-top: 16px; margin-bottom: 4px; font-size: 14px;">Submission Readiness Checklist</h3>
+    <div class="checklist">
+      <div class="checklist-item">
+        <input type="checkbox" {{invoiceCompleteChecked}} disabled>
+        <span>Invoice complete with all required signatures</span>
+      </div>
+      <div class="checklist-item">
+        <input type="checkbox" {{bolCompleteChecked}} disabled>
+        <span>Bill of Lading signed by shipper and carrier</span>
+      </div>
+      <div class="checklist-item">
+        <input type="checkbox" {{podCompleteChecked}} disabled>
+        <span>Proof of Delivery with customer signature</span>
+      </div>
+      <div class="checklist-item">
+        <input type="checkbox" {{rateConfirmationCompleteChecked}} disabled>
+        <span>Rate Confirmation attached and verified</span>
+      </div>
+      <div class="checklist-item">
+        <input type="checkbox" {{accessorialCompleteChecked}} disabled>
+        <span>All accessorial documents attached (if applicable)</span>
+      </div>
+      <div class="checklist-item">
+        <input type="checkbox" {{claimCompleteChecked}} disabled>
+        <span>Claim/damage documentation attached (if applicable)</span>
+      </div>
+      <div class="checklist-item">
+        <input type="checkbox" {{proofCompleteChecked}} disabled>
+        <span>Seal/RFID proof documentation complete</span>
+      </div>
+      <div class="checklist-item">
+        <input type="checkbox" {{settlementClearChecked}} disabled>
+        <span>No settlement holds or all holds resolved</span>
+      </div>
+    </div>
+
+    <div class="notes">
+      <strong>Submission Notes:</strong> {{submissionNotes}}
+    </div>
+
+    <h3 style="margin-top: 16px; margin-bottom: 4px; font-size: 14px;">Manager Approval</h3>
+    <table>
+      <tr><th>Prepared By</th><th>Date</th><th>Reviewed By</th><th>Approval Date</th><th>Status</th></tr>
+      <tr>
+        <td>{{preparedBy}}</td>
+        <td>{{preparedDate}}</td>
+        <td>{{reviewedBy}}</td>
+        <td>{{reviewDate}}</td>
+        <td class="{{overallStatusClass}}">{{overallStatus}}</td>
+      </tr>
+    </table>
+
+    <div class="sig-row">
+      <div class="sig">AR Specialist Signature / Date</div>
+      <div class="sig">Finance Manager Signature / Date</div>
+    </div>
+
+    <div class="notes" style="margin-top: 16px;">
+      <strong>Important Notes:</strong>
+      <ul style="margin: 4px 0; padding-left: 16px;">
+        <li>This packet represents the complete documentation required for factoring submission</li>
+        <li>All documents must be properly signed and dated before submission</li>
+        <li>Any exceptions or holds must be resolved prior to factoring submission</li>
+        <li>Submit to factoring company within 24 hours of delivery completion</li>
+      </ul>
+    </div>
+  </div>
+</body>
+</html>

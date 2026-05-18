@@ -2115,6 +2115,23 @@ export const OPERATIONS_FILE_CABINET_REGISTRY: OperationsFileCabinetItem[] = [
     employerName: "Delta Advanced Trucking, Inc.",
     isCompletedSample: true,
     tags: ["factoring", "notification", "sample", "L011"]
+  },
+  {
+    id: "post-trip-factoring-packet-l011",
+    title: "Post-Trip Factoring Packet - L011",
+    cabinet: "Finance / Settlements / Back Office",
+    section: "Completed Demo Samples",
+    category: "Finance / Settlements / Back Office",
+    type: "form",
+    audience: ["manager", "finance", "billing"],
+    status: "available",
+    description: "Complete post-trip factoring packet with all required documents for load L011",
+    href: "/generated/factoring/L011/post-trip-factoring-packet.html",
+    sourceAuthenticity: "generated_from_template",
+    documentOwner: "employer",
+    employerName: "Delta Advanced Trucking, Inc.",
+    isCompletedSample: true,
+    tags: ["factoring", "packet", "post-trip", "sample", "L011"]
   }
 ];
 

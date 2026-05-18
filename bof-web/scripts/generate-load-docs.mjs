@@ -40,6 +40,7 @@ const FILE_MAP = {
   damagePhotoPacket: "damage-photo-packet.html",
   claimPacket: "claim-packet.html",
   lumperReceipt: "lumper-receipt.html",
+  postTripFactoringPacket: "post-trip-factoring-packet.html",
 };
 
 function ensureDir(dir) {
@@ -641,6 +642,82 @@ function main() {
     }
 
     writePacketBundlePages(ctx.loadId, entry);
+
+    // Generate post-trip factoring packet for delivered loads
+    if (load.status === "Delivered") {
+      const factoringPacketTemplate = templateBodies.postTripFactoringPacket;
+      if (factoringPacketTemplate) {
+        const factoringPacketData = {
+          title: `Post-Trip Factoring Packet - ${ctx.loadId}`,
+          carrier: "Delta Advanced Trucking, Inc.",
+          loadId: ctx.loadId,
+          customer: load.customerName || "Unknown",
+          invoiceNumber: `INV-${ctx.generatedOn.replace(/[- :]/g, "").slice(0, 8)}-${ctx.loadId.slice(-3)}`,
+          invoiceAmount: load.rate || "0.00",
+          deliveryDate: load.actualDeliveryDate || load.deliveryDate || "Unknown",
+          lumperStatus: fileExists(evidencePathForLoad(ctx.loadId, "lumper-receipt.jpg")) ? "Complete" : "Not Applicable",
+          lumperStatusClass: fileExists(evidencePathForLoad(ctx.loadId, "lumper-receipt.jpg")) ? "status-complete" : "status-missing",
+          lumperAmount: fileExists(evidencePathForLoad(ctx.loadId, "lumper-receipt.jpg")) ? "$150.00" : "$0.00",
+          detentionStatus: "Not Applicable",
+          detentionStatusClass: "status-missing",
+          detentionAmount: "$0.00",
+          layoverStatus: "Not Applicable",
+          layoverStatusClass: "status-missing",
+          layoverAmount: "$0.00",
+          tollStatus: "Not Applicable",
+          tollStatusClass: "status-missing",
+          tollAmount: "$0.00",
+          fuelStatus: "Not Applicable",
+          fuelStatusClass: "status-missing",
+          fuelAmount: "$0.00",
+          claimStatus: fileExists(evidencePathForLoad(ctx.loadId, "damage-photo.jpg")) ? "Claim Filed" : "No Claim",
+          claimStatusClass: fileExists(evidencePathForLoad(ctx.loadId, "damage-photo.jpg")) ? "status-pending" : "status-complete",
+          claimImpact: fileExists(evidencePathForLoad(ctx.loadId, "damage-photo.jpg")) ? "Under Review" : "No Impact",
+          safetyStatus: "Clear",
+          safetyStatusClass: "status-complete",
+          safetyImpact: "No Impact",
+          complianceStatus: "Clear",
+          complianceStatusClass: "status-complete",
+          complianceImpact: "No Impact",
+          settlementHoldStatus: load.settlementHold ? "On Hold" : "Clear",
+          settlementHoldStatusClass: load.settlementHold ? "status-pending" : "status-complete",
+          settlementHoldReason: load.settlementHold ? "Customer dispute" : "No holds",
+          factoringAssignmentStatus: "Ready",
+          factoringAssignmentStatusClass: "status-ready",
+          factoringAssignmentReason: "All documents complete",
+          invoiceCompleteChecked: "checked",
+          bolCompleteChecked: "checked",
+          podCompleteChecked: "checked",
+          rateConfirmationCompleteChecked: "checked",
+          accessorialsCompleteChecked: fileExists(evidencePathForLoad(ctx.loadId, "lumper-receipt.jpg")) ? "checked" : "",
+          claimCompleteChecked: fileExists(evidencePathForLoad(ctx.loadId, "damage-photo.jpg")) ? "" : "checked",
+          proofCompleteChecked: "checked",
+          settlementClearChecked: load.settlementHold ? "" : "checked",
+          submissionNotes: "All required documents attached and verified. Ready for factoring submission.",
+          preparedBy: "AR Specialist",
+          preparedDate: ctx.generatedOn,
+          reviewedBy: "Finance Manager",
+          reviewDate: ctx.generatedOn,
+          overallStatus: load.settlementHold ? "Pending" : "Ready",
+          overallStatusClass: load.settlementHold ? "status-pending" : "status-ready",
+        };
+        
+        const factoringPacketHtml = renderTemplate(factoringPacketTemplate.html, {
+          ...factoringPacketData,
+          styles: sharedStyles,
+        });
+        
+        const factoringPacketDir = path.join(ROOT, "public", "generated", "factoring", ctx.loadId);
+        ensureDir(factoringPacketDir);
+        const factoringPacketPath = path.join(factoringPacketDir, "post-trip-factoring-packet.html");
+        fs.writeFileSync(factoringPacketPath, factoringPacketHtml, "utf8");
+        
+        const factoringPacketUrl = `/generated/factoring/${ctx.loadId}/post-trip-factoring-packet.html`;
+        entry.postTripFactoringPacket = factoringPacketUrl;
+        
+        console.log(`[generate-load-docs] Generated post-trip factoring packet: ${path.relative(ROOT, factoringPacketPath)}`);
+      }
+    }
 
     manifest[ctx.loadId] = entry;
   }
