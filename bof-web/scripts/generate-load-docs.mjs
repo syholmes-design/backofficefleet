@@ -123,7 +123,7 @@ function deriveLoadContext(data, load, now = new Date()) {
     loadId: load.id,
     loadNumber: load.number,
     customer,
-    carrier: "BackOfficeFleet Carrier Group",
+    carrier: "Delta Advanced Trucking, Inc.",
     driverId: load.driverId,
     driverName: driver?.name ?? load.driverId,
     truckNumber: load.assetId,
