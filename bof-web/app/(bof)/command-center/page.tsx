@@ -6,7 +6,7 @@
  * Route map: docs/BOF_ROUTE_MAP.md
  * Edit this file only for route-level layout/wiring.
  */
-import { CommandCenterPageClient } from "@/components/command-center/CommandCenterPageClient";
+import { CommandCenterV4 } from "@/components/command-center-v4/CommandCenterV4";
 
 export const metadata = {
   title: "Command Center | BOF",
@@ -14,5 +14,5 @@ export const metadata = {
 };
 
 export default function CommandCenterPage() {
-  return <CommandCenterPageClient />;
+  return <CommandCenterV4 />;
 }

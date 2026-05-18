@@ -6,12 +6,12 @@
  * Route map: docs/BOF_ROUTE_MAP.md
  * Edit this file only for route-level layout/wiring.
  */
-import { MaintenanceDashboardClient } from "@/components/maintenance/MaintenanceDashboardClient";
+import { MaintenanceDashboardV4 } from "@/components/maintenance-v4/MaintenanceDashboardV4";
 
 export const metadata = {
   title: "Maintenance | BOF",
 };
 
 export default function MaintenanceDashboardPage() {
-  return <MaintenanceDashboardClient />;
+  return <MaintenanceDashboardV4 />;
 }

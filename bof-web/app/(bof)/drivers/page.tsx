@@ -6,7 +6,7 @@
  * Route map: docs/BOF_ROUTE_MAP.md
  * Edit this file only for route-level layout/wiring.
  */
-import { DriversListPageClient } from "@/components/drivers/DriversListPageClient";
+import { DriversCommandCenterV4 } from "@/components/drivers-v4/DriversCommandCenterV4";
 
 export const metadata = {
   title: "Drivers | BOF",
@@ -14,5 +14,5 @@ export const metadata = {
 };
 
 export default function DriversIndexPage() {
-  return <DriversListPageClient />;
+  return <DriversCommandCenterV4 />;
 }

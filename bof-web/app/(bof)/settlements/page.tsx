@@ -7,7 +7,7 @@
  * Edit this file only for route-level layout/wiring.
  */
 import { Suspense } from "react";
-import { SettlementsCommandCenter } from "@/components/settlements-premium/SettlementsCommandCenter";
+import { SettlementsV3Simple } from "@/components/settlements-v3/SettlementsV3Simple";
 
 export const metadata = {
   title: "Settlements Command Center | BOF",
@@ -23,7 +23,7 @@ export default function SettlementsPage() {
         </div>
       }
     >
-      <SettlementsCommandCenter />
+      <SettlementsV3Simple />
     </Suspense>
   );
 }

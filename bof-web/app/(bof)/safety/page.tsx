@@ -6,7 +6,7 @@
  * Route map: docs/BOF_ROUTE_MAP.md
  * Edit this file only for route-level layout/wiring.
  */
-import { SafetyShell } from "@/components/safety/SafetyShell";
+import { SafetyDashboardV4 } from "@/components/safety-v4/SafetyDashboardV4";
 
 export const metadata = {
   title: "Safety Command Center | BOF",
@@ -17,7 +17,7 @@ export const metadata = {
 export default function SafetyPage() {
   return (
     <div className="bof-page bof-safety-page-wrap">
-      <SafetyShell />
+      <SafetyDashboardV4 />
     </div>
   );
 }

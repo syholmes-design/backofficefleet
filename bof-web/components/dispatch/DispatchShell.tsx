@@ -9,6 +9,8 @@ import { LoadDetailContent } from "./LoadDetailContent";
 import { AssignDriverEquipmentModal } from "./AssignDriverEquipmentModal";
 import { ExceptionViewScreen } from "./ExceptionViewScreen";
 import { SettlementReadinessScreen } from "./SettlementReadinessScreen";
+import { RfidProofChainV4 } from "@/components/rfid-v4/RfidProofChainV4";
+import { RouteIntelligenceV4 } from "@/components/route-intelligence-v4/RouteIntelligenceV4";
 import { useDispatchDashboardStore } from "@/lib/stores/dispatch-dashboard-store";
 import { useBofDemoData } from "@/lib/bof-demo-data-context";
 import { buildDispatchLoadsFromBofData } from "@/lib/dispatch-dashboard-seed";
@@ -118,8 +120,25 @@ export function DispatchShell() {
               </button>
             </div>
             {selectedLoad && (
-              <div className="mt-6 max-h-[calc(100vh-16rem)] overflow-y-auto rounded-lg border border-slate-800">
-                <LoadDetailContent load={selectedLoad} />
+              <div className="mt-6 space-y-6">
+                <div className="max-h-[calc(100vh-16rem)] overflow-y-auto rounded-lg border border-slate-800">
+                  <LoadDetailContent load={selectedLoad} />
+                </div>
+                
+                {/* Route Intelligence */}
+                <RouteIntelligenceV4 
+                  loadId={selectedLoad.load_id}
+                  driverId={selectedLoad.driver_id || undefined}
+                  showAllData={false}
+                />
+                
+                {/* RFID Proof Chain */}
+                <RfidProofChainV4 
+                  loadId={selectedLoad.load_id}
+                  driverId={selectedLoad.driver_id || undefined}
+                  showAllEvents={false}
+                  maxEvents={5}
+                />
               </div>
             )}
           </div>
