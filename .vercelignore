@@ -1,9 +1,9 @@
 .git/
 .vercel/
 .vscode/
-assets/
-demo/
-drivers/
+/assets/
+/demo/
+/drivers/
 /*.html
 /*.css
 /*.js
