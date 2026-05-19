@@ -90,7 +90,7 @@ export function BofTemplatePacksWorkspaceClient({
           standardized metadata (including demo gates such as{" "}
           <code className="bof-code">dispatch_hold_active</code>), editable HTML drafts, and in-browser
           artifacts stored in this session.{" "}
-          <strong>Not part of the client-facing load intake workflow</strong> — canonical intake runs
+          <strong>Not part of the client-facing load intake workflow</strong> — dispatch intake runs
           through Load Intake / Intake Engine and BOF demo JSON; fleet credential and load evidence files
           are produced by the document engines and <code className="bof-code">npm</code> generators, not
           this page.
@@ -98,7 +98,7 @@ export function BofTemplatePacksWorkspaceClient({
         <p className="bof-muted bof-small" style={{ marginTop: 10 }}>
           Quick links:{" "}
           <Link href="/dispatch/intake" className="bof-link-secondary">
-            Canonical load intake
+            Dispatch load intake
           </Link>
           {" · "}
           <Link href="/documents" className="bof-link-secondary">

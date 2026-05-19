@@ -20,7 +20,7 @@ export default function DispatchPage() {
       <Suspense
         fallback={
           <div className="flex min-h-[calc(100vh-3.5rem)] items-center justify-center bg-slate-950 text-sm text-slate-400">
-            Loading dispatch…
+            Loading dispatch...
           </div>
         }
       >

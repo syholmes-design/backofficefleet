@@ -45,7 +45,7 @@ export function LoadsPageClient() {
           <strong className="bof-oper-metric-value">{totals.complete}</strong>
         </div>
         <div className="bof-oper-metric">
-          <span className="bof-oper-metric-label">Active (canonical)</span>
+          <span className="bof-oper-metric-label">Active loads</span>
           <strong className="bof-oper-metric-value">{dispatchFleet.activeLoads}</strong>
         </div>
         <div className="bof-oper-metric">

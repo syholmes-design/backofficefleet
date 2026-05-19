@@ -235,11 +235,11 @@ export function SettlementsCommandCenter() {
               Source: main-source-v2_enhanced_bof_aligned.xlsx / Payroll sheet
             </div>
             <a
-              href="/settlements-v2"
+              href="/settlements"
               className="flex items-center gap-1 text-xs text-blue-400 hover:text-blue-300 transition-colors"
             >
               <ExternalLink className="h-3 w-3" />
-              Preview Settlements v2
+              Open settlements command center
             </a>
           </div>
         </div>

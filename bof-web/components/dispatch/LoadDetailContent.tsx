@@ -195,7 +195,7 @@ export function LoadDetailContent({ load, onClose }: Props) {
             <RfidPodStatusCard loadId={load.load_id} />
             <section className="rounded-lg border border-slate-800 bg-slate-900/40 p-4">
               <h3 className="mb-3 text-xs font-semibold uppercase tracking-wide text-slate-500">
-                Canonical proof &amp; evidence
+                Load proof &amp; evidence
               </h3>
               <LoadCanonicalEvidencePanel loadId={load.load_id} />
             </section>

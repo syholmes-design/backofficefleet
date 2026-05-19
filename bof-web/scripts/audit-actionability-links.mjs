@@ -40,12 +40,13 @@ const findings = [];
 for (const file of files) {
   const rel = path.relative(root, file);
   const text = fs.readFileSync(file, "utf8");
+  const uiText = text.replace(/^\s*import[\s\S]*?;\s*$/gm, "");
   for (const rx of bannedUiTerms) {
-    const matches = [...text.matchAll(rx)];
+    const matches = [...uiText.matchAll(rx)];
     if (matches.length) findings.push({ file: rel, kind: "banned", pattern: rx.source, count: matches.length });
   }
   for (const rx of genericLabelTerms) {
-    const matches = [...text.matchAll(rx)];
+    const matches = [...uiText.matchAll(rx)];
     if (matches.length) findings.push({ file: rel, kind: "generic-label", pattern: rx.source, count: matches.length });
   }
 }

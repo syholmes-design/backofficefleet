@@ -47,8 +47,8 @@ function statusPresentation(ev: BofLoadEvidence): {
   if (ev.status === "placeholder") {
     return {
       chip: "Pending review",
-      headline: `${title} — placeholder document`,
-      sub: "Replace with canonical scan or upload.",
+      headline: `${title} — document pending`,
+      sub: "Replace with approved scan or upload.",
       tone: "warn",
     };
   }
@@ -156,7 +156,7 @@ export function LoadCanonicalEvidencePanel({ loadId }: Props) {
 
   if (rows.length === 0) {
     return (
-      <p className="text-sm text-slate-500">No canonical evidence rows for this load.</p>
+      <p className="text-sm text-slate-500">No approved evidence rows for this load.</p>
     );
   }
 

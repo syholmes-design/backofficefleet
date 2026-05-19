@@ -91,7 +91,7 @@ export function LoadLifecyclePacket({ load }: Props) {
       action: getActionForDocumentType("rate_confirmation")
     });
     
-    // Work Order (not in canonical evidence, conditional)
+    // Work Order (conditional)
     preTripItems.push({
       title: "Work Order / Dispatch Sheet",
       status: "conditional",
@@ -219,7 +219,7 @@ export function LoadLifecyclePacket({ load }: Props) {
     // 4. Settlement / Billing / Factoring
     const settlementItems: LifecycleItem[] = [];
     
-    // Invoice (conditional - not in canonical evidence)
+    // Invoice (conditional)
     settlementItems.push({
       title: "Invoice",
       status: "conditional",

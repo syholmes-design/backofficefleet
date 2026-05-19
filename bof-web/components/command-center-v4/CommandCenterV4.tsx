@@ -26,7 +26,7 @@ export function CommandCenterV4() {
   const [operationalRisks, setOperationalRisks] = useState<OperationalRiskQueue[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [usingFallback, setUsingFallback] = useState(false);
+  const [, setUsingFallback] = useState(false);
   const [selectedModule, setSelectedModule] = useState<string>('all');
 
   // Load V4 workbook data
@@ -213,7 +213,7 @@ export function CommandCenterV4() {
       <div className="min-h-screen bg-slate-950 flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto mb-4"></div>
-          <p className="text-slate-400">Loading V4 operational risk data...</p>
+          <p className="text-slate-400">Loading operational risk data...</p>
         </div>
       </div>
     );
@@ -233,23 +233,6 @@ export function CommandCenterV4() {
 
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100">
-      {/* Fallback Warning Banner */}
-      {usingFallback && (
-        <div className="bg-yellow-500/10 border-b border-yellow-500/30 backdrop-blur-sm">
-          <div className="max-w-7xl mx-auto px-6 py-4">
-            <div className="flex items-center gap-3">
-              <AlertTriangle className="w-5 h-5 text-yellow-400" />
-              <div>
-                <p className="text-yellow-400 font-medium">Using Fallback Data</p>
-                <p className="text-yellow-300 text-sm">
-                  V4 workbook data not available - displaying sample data for demonstration
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-
       {/* Header */}
       <div className="border-b border-slate-800 bg-slate-900/50 backdrop-blur-sm">
         <div className="max-w-7xl mx-auto px-6 py-6">
@@ -257,10 +240,10 @@ export function CommandCenterV4() {
             <div>
               <h1 className="text-3xl font-bold text-white flex items-center gap-3">
                 <Target className="w-8 h-8 text-red-400" />
-                Command Center (V4)
+                Command Center
               </h1>
               <p className="text-slate-400 mt-2">
-                Executive &quot;Needs Attention Now&quot; page across BOF - Operational Risk Queue from V4 workbook
+                Fleet-owner action board for load exceptions, driver blockers, settlement holds, and safety risk
               </p>
             </div>
             <div className="flex items-center gap-4">

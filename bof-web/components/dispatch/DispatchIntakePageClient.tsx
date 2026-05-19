@@ -5,7 +5,7 @@ import { DispatchNav } from "@/components/dispatch/DispatchNav";
 import { LoadRequirementsWizard } from "@/components/load-intake/LoadRequirementsWizard";
 
 /**
- * Canonical BOF load intake under the Dispatch module (`/dispatch/intake`).
+ * Primary BOF load intake under the Dispatch module (`/dispatch/intake`).
  * Renders the same `LoadRequirementsWizard` as the legacy load-intake route (now redirects here).
  */
 export function DispatchIntakePageClient() {
@@ -24,7 +24,7 @@ export function DispatchIntakePageClient() {
           <h1 className="mt-2 text-lg font-semibold text-white">Load intake</h1>
           <p className="mt-1 max-w-3xl text-sm text-slate-400">
             First operational step before a load appears on the dispatch board — same wizard as the
-            canonical BOF pipeline (manual entry, upload/parser when configured, client request import,
+            BOF dispatch pipeline (manual entry, upload/parser when configured, client request import,
             normalize/review/save, dispatch sync, proof bundle).
           </p>
         </header>

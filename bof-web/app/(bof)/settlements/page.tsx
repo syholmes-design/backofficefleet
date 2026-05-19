@@ -19,7 +19,7 @@ export default function SettlementsPage() {
     <Suspense
       fallback={
         <div className="flex min-h-[40vh] items-center justify-center text-sm text-slate-400">
-          Loading settlements…
+          Loading settlements...
         </div>
       }
     >

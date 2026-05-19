@@ -105,8 +105,8 @@ export function DriverDocumentPacketSection({
         Driver document summary
       </h2>
       <p className="bof-doc-section-lead">
-        Canonical packet grouped by DQF, HR workflow, and generated summaries. Duplicate source rows
-        are deduplicated by canonical type and only one primary entry remains visible.
+        Driver packet grouped by DQF, HR workflow, and generated summaries. Duplicate source rows
+        are deduplicated by document type and only one primary entry remains visible.
       </p>
       <div className="bof-driver-doc-summary-chips">
         <span className="bof-status-pill bof-status-pill-ok">Ready: {counts.ready}</span>
@@ -126,7 +126,7 @@ export function DriverDocumentPacketSection({
 
       {packet.duplicates.length > 0 ? (
         <p className="bof-small bof-muted">
-          Deduped canonical rows:{" "}
+          Deduped document rows:{" "}
           {packet.duplicates.map((d) => d.canonicalType).join(", ")}
         </p>
       ) : null}
@@ -152,19 +152,19 @@ export function DriverDocumentPacketSection({
               <span className="bof-driver-doc-col bof-driver-doc-col-action">{actionLabel(row)}</span>
               {/* Qualification document notes */}
               {row.canonicalType === "cdl" && (
-                <span className="bof-driver-doc-relationship">Qualification document — may affect dispatch eligibility</span>
+                <span className="bof-driver-doc-relationship">Qualification document - may affect dispatch eligibility</span>
               )}
               {row.canonicalType === "medical_card" && (
-                <span className="bof-driver-doc-relationship">Qualification document — may affect dispatch eligibility</span>
+                <span className="bof-driver-doc-relationship">Qualification document - may affect dispatch eligibility</span>
               )}
               {row.canonicalType === "mvr" && (
-                <span className="bof-driver-doc-relationship">Qualification document — may affect dispatch eligibility</span>
+                <span className="bof-driver-doc-relationship">Qualification document - may affect dispatch eligibility</span>
               )}
               {row.canonicalType === "fmcsa_clearinghouse" && (
-                <span className="bof-driver-doc-relationship">Qualification document — may affect dispatch eligibility</span>
+                <span className="bof-driver-doc-relationship">Qualification document - may affect dispatch eligibility</span>
               )}
               {row.canonicalType === "road_test_certificate" && (
-                <span className="bof-driver-doc-relationship">Qualification document — may affect dispatch eligibility</span>
+                <span className="bof-driver-doc-relationship">Qualification document - may affect dispatch eligibility</span>
               )}
             </button>
           ))}
@@ -192,31 +192,31 @@ export function DriverDocumentPacketSection({
               <span className="bof-driver-doc-col bof-driver-doc-col-action">{actionLabel(row)}</span>
               {/* HR/Admin document notes */}
               {row.canonicalType === "benefits_enrollment" && (
-                <span className="bof-driver-doc-relationship">Administrative document — does not block dispatch</span>
+                <span className="bof-driver-doc-relationship">Administrative document - does not block dispatch</span>
               )}
               {row.canonicalType === "employee_handbook_acknowledgment" && (
-                <span className="bof-driver-doc-relationship">Administrative document — does not block dispatch</span>
+                <span className="bof-driver-doc-relationship">Administrative document - does not block dispatch</span>
               )}
               {row.canonicalType === "life_insurance_beneficiary_election" && (
-                <span className="bof-driver-doc-relationship">Administrative document — does not block dispatch</span>
+                <span className="bof-driver-doc-relationship">Administrative document - does not block dispatch</span>
               )}
               {row.canonicalType === "flexible_spending_account_election" && (
-                <span className="bof-driver-doc-relationship">Administrative document — does not block dispatch</span>
+                <span className="bof-driver-doc-relationship">Administrative document - does not block dispatch</span>
               )}
               {row.canonicalType === "handbook_acknowledgment" && (
-                <span className="bof-driver-doc-relationship">Administrative document — does not block dispatch</span>
+                <span className="bof-driver-doc-relationship">Administrative document - does not block dispatch</span>
               )}
               {row.canonicalType === "policy_acknowledgment" && (
-                <span className="bof-driver-doc-relationship">Administrative document — does not block dispatch</span>
+                <span className="bof-driver-doc-relationship">Administrative document - does not block dispatch</span>
               )}
               {row.canonicalType === "training_acknowledgment" && (
-                <span className="bof-driver-doc-relationship">Administrative document — does not block dispatch</span>
+                <span className="bof-driver-doc-relationship">Administrative document - does not block dispatch</span>
               )}
               {row.canonicalType === "direct_deposit_authorization" && (
-                <span className="bof-driver-doc-relationship">Administrative document — does not block dispatch</span>
+                <span className="bof-driver-doc-relationship">Administrative document - does not block dispatch</span>
               )}
               {row.canonicalType === "w4_withholding" && (
-                <span className="bof-driver-doc-relationship">Administrative document — does not block dispatch</span>
+                <span className="bof-driver-doc-relationship">Administrative document - does not block dispatch</span>
               )}
             </button>
           ))}
@@ -244,7 +244,7 @@ export function DriverDocumentPacketSection({
               <span className="bof-driver-doc-col bof-driver-doc-col-action">{actionLabel(row)}</span>
               {/* Payroll document notes */}
               {row.canonicalType === "garnishment_withholding_summary" && (
-                <span className="bof-driver-doc-relationship">Payroll/admin summary only — not for compliance review</span>
+                <span className="bof-driver-doc-relationship">Payroll/admin summary only - not for compliance review</span>
               )}
             </button>
           ))}
@@ -272,19 +272,19 @@ export function DriverDocumentPacketSection({
               <span className="bof-driver-doc-col bof-driver-doc-col-action">{actionLabel(row)}</span>
               {/* Qualification document notes */}
               {row.canonicalType === "cdl" && (
-                <span className="bof-driver-doc-relationship">Qualification document — may affect dispatch eligibility</span>
+                <span className="bof-driver-doc-relationship">Qualification document - may affect dispatch eligibility</span>
               )}
               {row.canonicalType === "medical_card" && (
-                <span className="bof-driver-doc-relationship">Qualification document — may affect dispatch eligibility</span>
+                <span className="bof-driver-doc-relationship">Qualification document - may affect dispatch eligibility</span>
               )}
               {row.canonicalType === "mvr" && (
-                <span className="bof-driver-doc-relationship">Qualification document — may affect dispatch eligibility</span>
+                <span className="bof-driver-doc-relationship">Qualification document - may affect dispatch eligibility</span>
               )}
               {row.canonicalType === "fmcsa_clearinghouse" && (
-                <span className="bof-driver-doc-relationship">Qualification document — may affect dispatch eligibility</span>
+                <span className="bof-driver-doc-relationship">Qualification document - may affect dispatch eligibility</span>
               )}
               {row.canonicalType === "road_test_certificate" && (
-                <span className="bof-driver-doc-relationship">Qualification document — may affect dispatch eligibility</span>
+                <span className="bof-driver-doc-relationship">Qualification document - may affect dispatch eligibility</span>
               )}
             </button>
           ))}
@@ -319,7 +319,7 @@ export function DriverDocumentPacketSection({
                 isCanonicalDqfComplianceSummaryPdf(selected.previewUrl || selected.fileUrl || "") ? (
                   <div className="mt-3 rounded border border-slate-600/40 bg-slate-900/40 p-4 text-sm">
                     <p className="font-medium text-slate-100">{selected.label}</p>
-                    <p className="mt-1 text-slate-400">Canonical PDF on file</p>
+                    <p className="mt-1 text-slate-400">PDF on file</p>
                     <a
                       href={selected.fileUrl}
                       target="_blank"

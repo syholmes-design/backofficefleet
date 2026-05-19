@@ -8,7 +8,7 @@ type Props = {
   entityId: string;
   /** Slightly smaller copy for detail pages */
   compact?: boolean;
-  /** When set, canonical intake opens prefilled from this intake engine record */
+  /** When set, dispatch intake opens prefilled from this intake engine record */
   intakeId?: string;
 };
 
@@ -18,7 +18,7 @@ function canonicalDispatchIntakeHref(intakeId?: string): string {
 }
 
 /**
- * Primary CTA to canonical BOF load intake (`/dispatch/intake`).
+ * Primary CTA to BOF load intake (`/dispatch/intake`).
  * Optional link to the load tender in the document viewer for template-style editing.
  */
 export function BofIntakeFormPrimaryPanel({ entityId, compact, intakeId }: Props) {
@@ -44,7 +44,7 @@ export function BofIntakeFormPrimaryPanel({ entityId, compact, intakeId }: Props
           </h2>
           <p className="bof-intake-form-primary-lead">
             {compact
-              ? "Canonical Dispatch Load Intake: shipper & facility, requirements, compliance & proof, review & packet, then save to the BOF dispatch pipeline."
+              ? "Dispatch Load Intake: shipper & facility, requirements, compliance & proof, review & packet, then save to the BOF dispatch pipeline."
               : "The primary path is Dispatch → Load Intake — one wizard for manual entry, upload/parser, or client request. What you save flows into loads, assignments, proof, billing, and claims. Use the load tender in the document viewer only when you need template-style field editing for the same entity."}
           </p>
           <ol className="bof-intake-form-primary-steps" aria-label="What happens next in BOF">

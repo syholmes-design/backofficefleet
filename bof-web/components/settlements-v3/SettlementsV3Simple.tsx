@@ -12,7 +12,7 @@ export function SettlementsV3Simple() {
   const [holds, setHolds] = useState<SettlementHold[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [usingFallback, setUsingFallback] = useState(false);
+  const [, setUsingFallback] = useState(false);
 
   // Load real workbook data
   useEffect(() => {
@@ -185,23 +185,6 @@ export function SettlementsV3Simple() {
 
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100">
-      {/* Fallback Warning Banner */}
-      {usingFallback && (
-        <div className="bg-yellow-500/10 border-b border-yellow-500/30 backdrop-blur-sm">
-          <div className="max-w-7xl mx-auto px-6 py-4">
-            <div className="flex items-center gap-3">
-              <AlertTriangle className="w-5 h-5 text-yellow-400" />
-              <div>
-                <p className="text-yellow-400 font-medium">Using Fallback Data</p>
-                <p className="text-yellow-300 text-sm">
-                  Workbook data not available - displaying sample data for demonstration
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-
       {/* Header */}
       <div className="border-b border-slate-800 bg-slate-900/50 backdrop-blur-sm">
         <div className="max-w-7xl mx-auto px-6 py-6">
@@ -209,7 +192,7 @@ export function SettlementsV3Simple() {
             <div>
               <h1 className="text-3xl font-bold text-white flex items-center gap-3">
                 <DollarSign className="w-8 h-8 text-green-400" />
-                Settlements Command Center (V3)
+                Settlements Command Center
               </h1>
               <p className="text-slate-400 mt-2">
                 Driver pay, deductions, reimbursements, and settlement readiness from source-of-truth data

@@ -702,7 +702,7 @@ export function SettlementsDashboardScreen() {
                                 className="text-left text-sm font-semibold text-amber-300 hover:text-amber-200"
                                 onClick={() => openDrawer(s.settlementId)}
                               >
-                                View review
+                                Review settlement
                               </button>
                             )}
                             <Link

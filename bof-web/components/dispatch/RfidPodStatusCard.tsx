@@ -119,7 +119,7 @@ export function RfidPodStatusCard({ loadId }: Props) {
         </span>
         <span className="inline-flex items-center gap-1">
           <Link2 className="h-3 w-3 text-teal-500" aria-hidden />
-          Canonical POD: {canonicalLoad?.podStatus ?? "—"}
+          POD status: {canonicalLoad?.podStatus ?? "—"}
         </span>
       </div>
     </section>

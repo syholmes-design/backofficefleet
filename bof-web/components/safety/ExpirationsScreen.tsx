@@ -89,7 +89,7 @@ export function ExpirationsScreen() {
           Credential expirations
         </h1>
         <p className="mt-1 max-w-3xl text-sm text-slate-400">
-          CDL, med card, and MVR windows (60-day horizon). Rows below use the same canonical credential
+          CDL, med card, and MVR windows (60-day horizon). Rows below use the same driver credential
           resolver as dispatch eligibility and driver documents. Medical Card gaps hard-block dispatch;
           MVR-only issues follow soft-review policy for this configuration.
         </p>
@@ -238,7 +238,7 @@ export function ExpirationsScreen() {
                       {r.status === "Needs review" ||
                       dispatchEligibilityLabel(data, r.driver_id, shell, events).toLowerCase().includes("review") ? (
                         <Link href={`/drivers/${r.driver_id}#driver-review`} className="text-teal-300 hover:text-teal-200">
-                          View review details
+                          Review driver details
                         </Link>
                       ) : (
                         "—"

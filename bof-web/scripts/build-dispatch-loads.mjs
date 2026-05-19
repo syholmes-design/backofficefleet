@@ -101,6 +101,98 @@ function parseExceptionFlag(v) {
   );
 }
 
+function cellText(row, header, patterns) {
+  const idx = findCol(header, patterns);
+  return idx >= 0 ? String(row[idx] ?? "").trim() : "";
+}
+
+function parseOptionalNumber(row, header, patterns) {
+  const raw = cellText(row, header, patterns);
+  if (!raw) return undefined;
+  const n = Number(String(raw).replace(/[$,]/g, "").trim());
+  return Number.isFinite(n) ? n : undefined;
+}
+
+function parseExcelDate(value) {
+  if (value instanceof Date && !Number.isNaN(value.getTime())) return value;
+  if (typeof value === "number" && Number.isFinite(value)) {
+    const epoch = Date.UTC(1899, 11, 30);
+    return new Date(epoch + value * 24 * 60 * 60 * 1000);
+  }
+  const raw = String(value ?? "").trim();
+  if (!raw) return null;
+  const parsed = new Date(raw);
+  return Number.isNaN(parsed.getTime()) ? null : parsed;
+}
+
+function isoFromDateAndWindow(row, header, datePatterns, windowPatterns, fallbackHour) {
+  const dateIdx = findCol(header, datePatterns);
+  const date = dateIdx >= 0 ? parseExcelDate(row[dateIdx]) : null;
+  if (!date) return "";
+  const windowRaw = cellText(row, header, windowPatterns);
+  const timeMatch = windowRaw.match(/(\d{1,2}):(\d{2})/);
+  const hour = timeMatch ? Number(timeMatch[1]) : fallbackHour;
+  const minute = timeMatch ? Number(timeMatch[2]) : 0;
+  date.setHours(hour, minute, 0, 0);
+  return date.toISOString();
+}
+
+function statusForLoad(raw) {
+  const mapped = mapLoadStatus(raw);
+  return mapped === "En Route" ? "En Route" : mapped;
+}
+
+function cleanSeal(value) {
+  const s = String(value ?? "").trim();
+  return s === "—" || s === "-" ? "" : s;
+}
+
+function proofStatusFromPod(podStatus) {
+  return podStatus === "verified" ? "Complete" : podStatus === "pending" ? "Incomplete" : "Missing";
+}
+
+function documentStatusFromLoad(load) {
+  if (load.status === "Delivered" && load.podStatus === "verified") return "Complete";
+  if (load.dispatchExceptionFlag) return "Needs Review";
+  return "Pending";
+}
+
+function buildProofBundle(load) {
+  const delivered = load.status === "Delivered";
+  const claimApplicable =
+    Boolean(load.dispatchExceptionFlag) || String(load.sealStatus).toUpperCase() === "MISMATCH";
+  const podComplete = load.podStatus === "verified";
+  const hasPickupSeal = Boolean(cleanSeal(load.pickupSeal));
+  const hasDeliverySeal = Boolean(cleanSeal(load.deliverySeal));
+  const complete = {
+    status: "Complete",
+    blocksPayment: false,
+    disputeExposure: false,
+  };
+  const pending = {
+    status: delivered ? "Missing" : "Pending",
+    blocksPayment: delivered,
+    disputeExposure: delivered,
+  };
+  return {
+    claimApplicable,
+    items: {
+      "Rate Confirmation": complete,
+      BOL: claimApplicable ? { status: "Disputed", blocksPayment: false, disputeExposure: true } : complete,
+      "Signed BOL": claimApplicable ? { status: "Disputed", blocksPayment: false, disputeExposure: true } : complete,
+      POD: podComplete ? complete : pending,
+      "Pickup Seal Photo": hasPickupSeal ? complete : pending,
+      "Delivery Seal Photo": hasDeliverySeal ? complete : pending,
+      "Pre-Trip Cargo Photo": complete,
+      "Delivery / Empty-Trailer Photo": delivered ? complete : { status: "Pending", blocksPayment: false, disputeExposure: false },
+      "RFID / Dock Validation Record": complete,
+      "Lumper Receipt": Number(load.lumperAmount || 0) > 0 ? complete : { status: "Not required", blocksPayment: false, disputeExposure: false },
+      "Cargo Damage Photos": claimApplicable ? { status: "Pending", blocksPayment: false, disputeExposure: true } : { status: "Not required", blocksPayment: false, disputeExposure: false },
+      "Claim Support Docs": claimApplicable ? { status: "Pending", blocksPayment: delivered, disputeExposure: true } : { status: "Not required", blocksPayment: false, disputeExposure: false },
+    },
+  };
+}
+
 function mapLoadStatus(raw) {
   const t = String(raw ?? "").trim();
   if (!t) return "";
@@ -185,9 +277,10 @@ function buildDispatchOpsNotes(row, header) {
 }
 
 function readDispatchLoads(workbook, validIds, nameToId) {
-  const sheet = workbook.Sheets["Dispatch_Clean"];
+  const sheetName = workbook.Sheets["Dispatch_Clean"] ? "Dispatch_Clean" : "Dispatch";
+  const sheet = workbook.Sheets[sheetName];
   if (!sheet) {
-    throw new Error('Workbook must contain sheet "Dispatch_Clean".');
+    throw new Error('Workbook must contain sheet "Dispatch_Clean" or "Dispatch".');
   }
   const rows = XLSX.utils.sheet_to_json(sheet, {
     header: 1,
@@ -196,7 +289,7 @@ function readDispatchLoads(workbook, validIds, nameToId) {
     blankrows: false,
   });
   if (!rows.length) {
-    throw new Error("Dispatch_Clean: empty sheet");
+    throw new Error(`${sheetName}: empty sheet`);
   }
   const header = rows[0].map((h) => String(h ?? "").trim());
 
@@ -227,7 +320,7 @@ function readDispatchLoads(workbook, validIds, nameToId) {
   ];
   for (const [label, idx] of required) {
     if (idx < 0) {
-      throw new Error(`Dispatch_Clean: missing required column (${label})`);
+      throw new Error(`${sheetName}: missing required column (${label})`);
     }
   }
 
@@ -235,7 +328,7 @@ function readDispatchLoads(workbook, validIds, nameToId) {
     iExportStatus >= 0 ? iExportStatus : iLoadStatus;
   if (statusCol < 0) {
     throw new Error(
-      "Dispatch_Clean: missing Load Status or Export Load Status column"
+      `${sheetName}: missing Load Status or Export Load Status column`
     );
   }
 
@@ -246,7 +339,7 @@ function readDispatchLoads(workbook, validIds, nameToId) {
     const row = rows[r];
     if (!row || !row.some((c) => String(c ?? "").trim() !== "")) continue;
 
-    const rowLabel = `Dispatch_Clean row ${r + 1}`;
+    const rowLabel = `${sheetName} row ${r + 1}`;
     const loadIdCell = String(row[iLoadId] ?? "").trim();
     if (!loadIdCell) throw new Error(`${rowLabel}: empty Load ID`);
 
@@ -271,15 +364,15 @@ function readDispatchLoads(workbook, validIds, nameToId) {
     if (!statusRaw) {
       throw new Error(`${rowLabel}: empty status (export/load status)`);
     }
-    const status = mapLoadStatus(statusRaw);
+    const status = statusForLoad(statusRaw);
     if (!status) {
       throw new Error(`${rowLabel}: could not map status`);
     }
 
     const podStatus = normalizePodStatus(row[iPod]);
 
-    const pickupSeal = String(row[iPickupSeal] ?? "").trim();
-    const deliverySeal = String(row[iDelSeal] ?? "").trim();
+    const pickupSeal = cleanSeal(row[iPickupSeal]);
+    const deliverySeal = cleanSeal(row[iDelSeal]);
     const sealStatus = sealStatusFromSeals(pickupSeal, deliverySeal);
 
     const exceptionCol = iExc >= 0 ? parseExceptionFlag(row[iExc]) : false;
@@ -307,11 +400,27 @@ function readDispatchLoads(workbook, validIds, nameToId) {
 
     const load = {
       id,
+      loadId: id,
       number,
       driverId,
       assetId,
       origin,
       destination,
+      customerName: cellText(row, header, ["shipper name", "customer", "customer name"]) || cellText(row, header, ["broker name"]) || origin,
+      consigneeName: cellText(row, header, ["consignee name"]) || destination,
+      brokerName: cellText(row, header, ["broker name"]),
+      brokerMcNumber: cellText(row, header, ["broker mc number"]),
+      dispatcherName: cellText(row, header, ["dispatcher name"]),
+      commodity: cellText(row, header, ["commodity"]) || "Mixed Dry Goods",
+      weight: parseOptionalNumber(row, header, ["weight (lbs)", "weight"]) ?? 42000,
+      pallets: parseOptionalNumber(row, header, ["pallet count", "pallets"]) ?? undefined,
+      pieces: parseOptionalNumber(row, header, ["piece count", "pieces"]) ?? undefined,
+      miles: parseOptionalNumber(row, header, ["miles"]) ?? undefined,
+      trailerNumber: cellText(row, header, ["trailer number"]),
+      pickupAt: isoFromDateAndWindow(row, header, ["pickup date"], ["pickup time window"], 8),
+      deliveryAt: isoFromDateAndWindow(row, header, ["delivery date"], ["delivery time window"], 16),
+      pickupAppointment: cellText(row, header, ["pickup appointment"]),
+      deliveryAppointment: cellText(row, header, ["delivery appointment"]),
       revenue,
       backhaulPay,
       status,
@@ -320,7 +429,33 @@ function readDispatchLoads(workbook, validIds, nameToId) {
       deliverySeal,
       sealStatus,
       dispatchExceptionFlag,
+      proofStatus: proofStatusFromPod(podStatus),
+      documentStatus: "",
+      settlementHold: cellText(row, header, ["settlement hold?"]).toUpperCase() === "YES",
+      settlementHoldReason: cellText(row, header, ["settlement hold reason"]),
+      claimStatus: cellText(row, header, ["claim status"]) || (dispatchExceptionFlag ? "OPEN" : "None"),
+      claimAmount: parseOptionalNumber(row, header, ["claim amount"]) ?? 0,
+      linehaulRate: parseOptionalNumber(row, header, ["linehaul rate"]) ?? undefined,
+      fuelSurcharge: parseOptionalNumber(row, header, ["fuel surcharge"]) ?? undefined,
+      detentionPay: parseOptionalNumber(row, header, ["detention pay"]) ?? undefined,
+      accessorialPay: parseOptionalNumber(row, header, ["accessorial pay"]) ?? undefined,
+      lumperAmount: parseOptionalNumber(row, header, ["lumper amount"]) ?? 0,
+      rateConfirmationNumber: cellText(row, header, ["rate confirmation number"]),
+      bolNumber: cellText(row, header, ["bol number"]),
+      invoiceNumber: `INV-${id}`,
+      workOrderId: `WO-${id}-${number}`,
+      equipmentType: "53' Dry Van",
+      intakeStatus: status,
+      settlementStatus: cellText(row, header, ["settlement hold?"]).toUpperCase() === "YES" ? "Hold" : "Ready",
+      sealNumber: pickupSeal,
+      intakeSourceType: "workbook",
+      intakeSourceDocumentUrl: "",
+      extractionProvider: "BOF workbook",
+      extractionConfidence: 1,
+      extractionWarnings: [],
+      reviewedAt: null,
     };
+    load.documentStatus = documentStatusFromLoad(load);
     if (dispatchOpsNotes) load.dispatchOpsNotes = dispatchOpsNotes;
     loads.push(load);
   }
@@ -366,9 +501,53 @@ function main() {
     }
   }
 
+  const loadProofBundles = {};
+  for (const load of loads) {
+    loadProofBundles[load.id] = buildProofBundle(load);
+  }
+
+  const moneyAtRisk = loads
+    .filter((load) => load.dispatchExceptionFlag || load.settlementHold || load.podStatus !== "verified")
+    .slice(0, 8)
+    .map((load, idx) => ({
+      id: `MAR-${String(idx + 1).padStart(3, "0")}`,
+      driverId: load.driverId,
+      amount: Number(load.claimAmount || 0) || Math.max(750, Math.round(load.revenue * 0.35)),
+      status: "OPEN",
+      date: "2026-07-15",
+      description: load.dispatchExceptionFlag ? "Proof or seal exception blocking clean closeout" : "Settlement release needs proof review",
+      rootCause: load.dispatchExceptionFlag ? "Seal/proof discrepancy" : "Missing POD or payment release support",
+      loadId: load.id,
+      reportedDate: "2026-07-15",
+      resolvedDate: null,
+      category: load.dispatchExceptionFlag ? "Claims / proof" : "Settlement hold",
+      owner: load.dispatchExceptionFlag ? "Claims desk" : "Finance",
+      driver: load.driverId,
+      assetId: load.assetId,
+      nextBestAction: load.dispatchExceptionFlag
+        ? "Open claim packet and reconcile BOL, POD, seal photos, and RFID scans"
+        : "Complete trip packet proof and release settlement hold",
+    }));
+
   const out = {
     ...demo,
     loads,
+    loadProofBundles,
+    moneyAtRisk,
+    moneyAtRiskSummary: {
+      totalAtRisk: moneyAtRisk.reduce((sum, row) => sum + Number(row.amount || 0), 0),
+      totalItems: moneyAtRisk.length,
+      openItems: moneyAtRisk.filter((row) => row.status === "OPEN").length,
+      closedItems: 0,
+      payrollPending: loads.filter((load) => load.settlementHold).length,
+      settlementHolds: loads.filter((load) => load.settlementHold).length,
+      claimsExposure: moneyAtRisk
+        .filter((row) => /claim/i.test(row.category))
+        .reduce((sum, row) => sum + Number(row.amount || 0), 0),
+      complianceDrivenRisk: 0,
+      complianceRisk: 0,
+      maintenanceRisk: 0,
+    },
   };
 
   fs.writeFileSync(DEMO_PATH, JSON.stringify(out, null, 2), "utf8");

@@ -15,14 +15,14 @@ interface LoadProofItemWithFiles {
   previewUrl: string;
   blocksPayment: boolean;
   disputeExposure: boolean;
-  notes: string;
+  notes?: string;
 }
 
 interface LoadProofItemNoFiles {
   status: string;
   blocksPayment: boolean;
   disputeExposure: boolean;
-  notes: string;
+  notes?: string;
   riskNote?: string;
 }
 
@@ -115,6 +115,8 @@ export function buildDispatchDocumentRows(data: BofData): DispatchDocumentRow[] 
         disputeExposure = itemNoFiles.disputeExposure;
       }
       
+      const notes = (docItem as { notes?: string }).notes;
+
       const dispatchDoc: DispatchDocumentRow = {
         driverId: "", // Load documents don't belong to specific drivers
         type: docType,
@@ -127,7 +129,7 @@ export function buildDispatchDocumentRows(data: BofData): DispatchDocumentRow[] 
         dispatchSortOrder: DISPATCH_SORT_ORDER[category],
         blocksPayment,
         disputeExposure,
-        notes: docItem.notes,
+        notes,
       };
       
       dispatchDocuments.push(dispatchDoc);

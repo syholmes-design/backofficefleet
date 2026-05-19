@@ -105,7 +105,7 @@ export function DocumentsPageClient() {
         <Link href="/documents/template-packs" className="bof-link-secondary">
           Template packs workspace
         </Link>{" "}
-        (inspect mappings, demo statuses, and in-browser artifacts; not the canonical intake or npm
+        (inspect mappings, demo statuses, and in-browser artifacts; not the dispatch intake or npm
         document pipeline). Use the{" "}
         <Link href="/documents/template-packs/view" className="bof-link-secondary">
           BOF document viewer
@@ -130,7 +130,7 @@ export function DocumentsPageClient() {
         <section className="bof-oper-panel bof-oper-panel-tight" aria-label="Operating document links">
           <h2 className="bof-h2">Generated operating documents</h2>
           <p className="bof-muted bof-small">
-            Manifest-backed P1 operating documents available in existing BOF flows.
+            Manifest-backed operating documents available in existing BOF flows.
           </p>
           <div className="bof-driver-vault-actions">
             {previewOperatingDocs.map((doc) => (

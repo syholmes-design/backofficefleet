@@ -46,7 +46,7 @@ export function BofWorkflowFormShortcuts({
   context: WorkflowShortcutContext;
   /** For settlement_billing, entityId may be settlement id; pass for claim-style copy */
   settlementId?: string;
-  /** Prefill canonical `/dispatch/intake` from an intake engine record */
+  /** Prefill `/dispatch/intake` from an intake engine record */
   intakeId?: string;
   title?: string;
   className?: string;
@@ -69,7 +69,7 @@ export function BofWorkflowFormShortcuts({
     shortcuts.push(
       {
         label: "Open Dispatch Load Intake",
-        sub: "Canonical wizard · manual, upload, or client request",
+        sub: "Dispatch wizard · manual, upload, or client request",
         href: dispatchIntakeHref,
         kind: "editable",
         gate: "Saves into BOF dispatch pipeline",

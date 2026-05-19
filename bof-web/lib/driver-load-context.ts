@@ -43,8 +43,8 @@ export function getDriverLoadContext(driverId: string): DriverLoadContext {
   // Get recent loads (last 2-3)
   const recentLoads = sortedLoads.slice(0, 3).map(load => ({
     loadId: load.id,
-    route: `${load.origin} → ${load.destination}`,
-    customer: load.customer || 'Customer',
+    route: `${load.origin} -> ${load.destination}`,
+    customer: load.customerName || 'Customer',
     status: load.status,
     pickupDate: load.pickupAt,
     deliveryDate: load.deliveryAt,
@@ -124,7 +124,7 @@ export function getLoadProofItems(loadId: string): LoadProofItem[] {
   });
 
   // Seal Photo (conditional)
-  const requiresSeal = load.hazmat || false; // Check if seal is required
+  const requiresSeal = Boolean(load.sealNumber);
   proofItems.push({
     type: 'Seal Photo',
     status: requiresSeal ? 'required_missing' : 'not_required',
@@ -134,7 +134,7 @@ export function getLoadProofItems(loadId: string): LoadProofItem[] {
   });
 
   // Cargo Photo (conditional)
-  const requiresCargoPhoto = false; // Check if cargo photo is needed
+  const requiresCargoPhoto = true;
   proofItems.push({
     type: 'Cargo Photo',
     status: requiresCargoPhoto ? 'required_missing' : 'not_required',
@@ -144,7 +144,7 @@ export function getLoadProofItems(loadId: string): LoadProofItem[] {
   });
 
   // Lumper Receipt (conditional)
-  const hasLumper = false; // Check if lumper was used
+  const hasLumper = Number(load.lumperAmount ?? 0) > 0;
   proofItems.push({
     type: 'Lumper Receipt',
     status: hasLumper ? 'required_missing' : 'not_required',
@@ -154,7 +154,7 @@ export function getLoadProofItems(loadId: string): LoadProofItem[] {
   });
 
   // Damage/Claim Photos (conditional)
-  const hasDamage = false; // Check if damage occurred
+  const hasDamage = String(load.claimStatus ?? "").toLowerCase() !== "none";
   proofItems.push({
     type: 'Damage/Claim Photos',
     status: hasDamage ? 'required_missing' : 'not_required',

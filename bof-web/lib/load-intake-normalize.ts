@@ -151,7 +151,7 @@ export function normalizeLoadIntakeForm(
       `Intake generated load from ${state.loadRequirement.load_requirement_id}.`,
       req.special_handling?.trim() ? `Special handling: ${req.special_handling.trim()}` : "",
       canonical.documentStatus === "Pending Generation"
-        ? "Pending generation — run npm run generate:load-docs && npm run generate:load-evidence."
+        ? "Pending generation - run npm run generate:load-docs && npm run generate:load-evidence."
         : "",
     ]
       .filter(Boolean)
@@ -201,7 +201,7 @@ export function normalizeLoadIntakeForm(
     actualPickup: canonical.pickupAt || "",
     estimatedDelivery: canonical.deliveryAt,
     workOrderId: `WO-${canonical.loadId}`,
-  } as BofData["loads"][number];
+  } as unknown as BofData["loads"][number];
 
   const loadProofBundle: NormalizeResult["loadProofBundle"] = {
     claimApplicable: claim,

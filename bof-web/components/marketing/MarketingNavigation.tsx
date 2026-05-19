@@ -121,26 +121,48 @@ export function MarketingNavigation() {
                 <div className="absolute left-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-50">
                   <div className="py-1">
                     <Link
-                      href="/dispatch-v2"
+                      href="/command-center"
                       className={`block px-4 py-2 text-sm transition-colors ${
-                        isActive("/dispatch-v2")
+                        isActive("/command-center")
                           ? "bg-blue-50 text-blue-600"
                           : "text-gray-700 hover:bg-gray-100"
                       }`}
                       onClick={() => setIsDemoDropdownOpen(false)}
                     >
-                      Dispatch v2
+                      Command Center
                     </Link>
                     <Link
-                      href="/settlements-v2"
+                      href="/dispatch"
                       className={`block px-4 py-2 text-sm transition-colors ${
-                        isActive("/settlements-v2")
+                        isActive("/dispatch")
                           ? "bg-blue-50 text-blue-600"
                           : "text-gray-700 hover:bg-gray-100"
                       }`}
                       onClick={() => setIsDemoDropdownOpen(false)}
                     >
-                      Settlements v2
+                      Dispatch
+                    </Link>
+                    <Link
+                      href="/settlements"
+                      className={`block px-4 py-2 text-sm transition-colors ${
+                        isActive("/settlements")
+                          ? "bg-blue-50 text-blue-600"
+                          : "text-gray-700 hover:bg-gray-100"
+                      }`}
+                      onClick={() => setIsDemoDropdownOpen(false)}
+                    >
+                      Settlements
+                    </Link>
+                    <Link
+                      href="/safety"
+                      className={`block px-4 py-2 text-sm transition-colors ${
+                        isActive("/safety")
+                          ? "bg-blue-50 text-blue-600"
+                          : "text-gray-700 hover:bg-gray-100"
+                      }`}
+                      onClick={() => setIsDemoDropdownOpen(false)}
+                    >
+                      Safety
                     </Link>
                   </div>
                 </div>
@@ -243,26 +265,48 @@ export function MarketingNavigation() {
                   Demo Preview
                 </div>
                 <Link
-                  href="/dispatch-v2"
+                  href="/command-center"
                   className={`block px-3 py-2 rounded-md text-sm font-medium transition-colors ${
-                    isActive("/dispatch-v2")
+                    isActive("/command-center")
                       ? "bg-blue-50 text-blue-600"
                       : "text-gray-700 hover:bg-gray-100"
                   }`}
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
-                  Dispatch v2
+                  Command Center
                 </Link>
                 <Link
-                  href="/settlements-v2"
+                  href="/dispatch"
                   className={`block px-3 py-2 rounded-md text-sm font-medium transition-colors ${
-                    isActive("/settlements-v2")
+                    isActive("/dispatch")
                       ? "bg-blue-50 text-blue-600"
                       : "text-gray-700 hover:bg-gray-100"
                   }`}
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
-                  Settlements v2
+                  Dispatch
+                </Link>
+                <Link
+                  href="/settlements"
+                  className={`block px-3 py-2 rounded-md text-sm font-medium transition-colors ${
+                    isActive("/settlements")
+                      ? "bg-blue-50 text-blue-600"
+                      : "text-gray-700 hover:bg-gray-100"
+                  }`}
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  Settlements
+                </Link>
+                <Link
+                  href="/safety"
+                  className={`block px-3 py-2 rounded-md text-sm font-medium transition-colors ${
+                    isActive("/safety")
+                      ? "bg-blue-50 text-blue-600"
+                      : "text-gray-700 hover:bg-gray-100"
+                  }`}
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  Safety
                 </Link>
               </div>
 
