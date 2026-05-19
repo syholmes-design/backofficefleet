@@ -70,6 +70,52 @@ const ACTION_CARDS = [
   },
 ];
 
+const HERO_CTA_LINKS = [
+  { label: "Open Command Center", href: "/command-center", primary: true },
+  { label: "Review Driver Readiness", href: "/drivers" },
+  { label: "View Settlements", href: "/settlements" },
+  { label: "Explore Dispatch Proof", href: "/dispatch" },
+];
+
+const HERO_KPI_LINKS = [
+  {
+    label: "Loads Ready",
+    value: "24",
+    href: "/dispatch",
+    helper: "Dispatch-ready loads with route, proof, and driver checks.",
+  },
+  {
+    label: "Needs Action",
+    value: "8",
+    href: "/command-center",
+    helper: "Open operational risks across dispatch, safety, settlement, and compliance.",
+  },
+  {
+    label: "Documents Ready",
+    value: "15",
+    href: "/documents",
+    helper: "Driver, load, finance, and company-operation documents available.",
+  },
+  {
+    label: "Settlement Blockers",
+    value: "6",
+    href: "/settlements",
+    helper: "Holds tied to proof, safety, claims, or compliance gaps.",
+  },
+  {
+    label: "Proof Complete",
+    value: "43",
+    href: "/dispatch",
+    helper: "BOL, POD, RFID, seal, cargo, and delivery proof records.",
+  },
+  {
+    label: "Dispatch Readiness",
+    value: "82%",
+    href: "/dispatch",
+    helper: "Loads that pass readiness, route, compliance, and proof checks.",
+  },
+];
+
 export function DashboardPageClient() {
   return (
     <div className="bof-page bof-cc-page bof-dashboard-page" style={{ paddingBottom: '6rem' }}>
@@ -80,7 +126,7 @@ export function DashboardPageClient() {
           width: "100vw",
           marginLeft: "calc(50% - 50vw)",
           marginRight: "calc(50% - 50vw)",
-          minHeight: "clamp(460px, 48vw, 680px)",
+          minHeight: "clamp(720px, 70vw, 900px)",
           overflow: "hidden",
           background: "#020617",
         }}
@@ -118,7 +164,7 @@ export function DashboardPageClient() {
             left: 0,
             right: 0,
             bottom: 0,
-            background: "linear-gradient(135deg, rgba(2,6,23,0.95) 0%, rgba(2,6,23,0.85) 40%, rgba(2,6,23,0.7) 70%, rgba(2,6,23,0.5) 100%)",
+            background: "linear-gradient(180deg, rgba(2,6,23,0.96) 0%, rgba(2,6,23,0.86) 42%, rgba(2,6,23,0.97) 100%)",
             zIndex: 2,
           }}
         />
@@ -128,19 +174,19 @@ export function DashboardPageClient() {
           style={{
             position: "relative",
             zIndex: 4,
-            minHeight: "clamp(460px, 48vw, 680px)",
+            minHeight: "clamp(720px, 70vw, 900px)",
             display: "flex",
             flexDirection: "column",
             justifyContent: "center",
             alignItems: "center",
-            padding: "6rem 2rem 4rem",
+            padding: "6rem 2rem 5rem",
           }}
         >
           {/* Title and subtitle section */}
           <div
             style={{
               textAlign: "center",
-              maxWidth: "900px",
+              maxWidth: "1100px",
               margin: "0 auto",
             }}
           >
@@ -180,86 +226,146 @@ export function DashboardPageClient() {
                 justifyContent: "center",
               }}
             >
-              <Link
-                href="/command-center"
-                style={{
-                  display: "inline-flex",
-                  alignItems: "center",
-                  padding: "1rem 2rem",
-                  backgroundColor: "#14b8a6",
-                  color: "white",
-                  textDecoration: "none",
-                  borderRadius: "8px",
-                  fontSize: "1.1rem",
-                  fontWeight: "600",
-                  transition: "all 0.2s ease",
-                  border: "none",
-                  cursor: "pointer",
-                  boxShadow: "0 4px 6px rgba(0,0,0,0.1)",
-                }}
-              >
-                Open Command Center →
-              </Link>
-              <Link
-                href="/drivers"
-                style={{
-                  display: "inline-flex",
-                  alignItems: "center",
-                  padding: "1rem 2rem",
-                  backgroundColor: "rgba(255, 255, 255, 0.15)",
-                  color: "white",
-                  textDecoration: "none",
-                  borderRadius: "8px",
-                  fontSize: "1.1rem",
-                  fontWeight: "600",
-                  transition: "all 0.2s ease",
-                  border: "1px solid rgba(255, 255, 255, 0.3)",
-                  backdropFilter: "blur(10px)",
-                }}
-              >
-                Review Driver Readiness →
-              </Link>
-              <Link
-                href="/settlements"
-                style={{
-                  display: "inline-flex",
-                  alignItems: "center",
-                  padding: "1rem 2rem",
-                  backgroundColor: "rgba(255, 255, 255, 0.15)",
-                  color: "white",
-                  textDecoration: "none",
-                  borderRadius: "8px",
-                  fontSize: "1.1rem",
-                  fontWeight: "600",
-                  transition: "all 0.2s ease",
-                  border: "1px solid rgba(255, 255, 255, 0.3)",
-                  backdropFilter: "blur(10px)",
-                }}
-              >
-                View Settlements →
-              </Link>
-              <Link
-                href="/dispatch"
-                style={{
-                  display: "inline-flex",
-                  alignItems: "center",
-                  padding: "1rem 2rem",
-                  backgroundColor: "rgba(255, 255, 255, 0.15)",
-                  color: "white",
-                  textDecoration: "none",
-                  borderRadius: "8px",
-                  fontSize: "1.1rem",
-                  fontWeight: "600",
-                  transition: "all 0.2s ease",
-                  border: "1px solid rgba(255, 255, 255, 0.3)",
-                  backdropFilter: "blur(10px)",
-                }}
-              >
-                Explore Dispatch Proof →
-              </Link>
+              {HERO_CTA_LINKS.map((cta) => (
+                <Link
+                  key={cta.href}
+                  href={cta.href}
+                  className="bof-dashboard-hero-cta"
+                  style={{
+                    display: "inline-flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    minHeight: "56px",
+                    padding: "1rem 1.45rem",
+                    backgroundColor: cta.primary ? "#14b8a6" : "rgba(255, 255, 255, 0.15)",
+                    color: "white",
+                    textDecoration: "none",
+                    borderRadius: "8px",
+                    fontSize: "1.05rem",
+                    fontWeight: "700",
+                    transition: "all 0.2s ease",
+                    border: cta.primary ? "1px solid rgba(153, 246, 228, 0.55)" : "1px solid rgba(255, 255, 255, 0.3)",
+                    cursor: "pointer",
+                    boxShadow: cta.primary ? "0 18px 36px rgba(20, 184, 166, 0.22)" : "0 12px 26px rgba(0,0,0,0.18)",
+                    backdropFilter: "blur(10px)",
+                  }}
+                >
+                  {cta.label} &rarr;
+                </Link>
+              ))}
             </div>
           </div>
+
+          <div
+            style={{
+              display: "grid",
+              gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))",
+              gap: "1rem",
+              width: "100%",
+              maxWidth: "1120px",
+              marginTop: "3rem",
+            }}
+          >
+            {HERO_KPI_LINKS.map((card) => (
+              <Link
+                key={card.label}
+                href={card.href}
+                className="bof-dashboard-hero-kpi"
+                aria-label={`${card.label}: ${card.helper}`}
+                style={{
+                  display: "block",
+                  minHeight: "150px",
+                  padding: "1.25rem",
+                  color: "white",
+                  textAlign: "left",
+                  textDecoration: "none",
+                  borderRadius: "14px",
+                  border: "1px solid rgba(255, 255, 255, 0.14)",
+                  backgroundColor: "rgba(2, 6, 23, 0.72)",
+                  boxShadow: "0 20px 40px rgba(0, 0, 0, 0.28)",
+                  backdropFilter: "blur(14px)",
+                  cursor: "pointer",
+                  transition: "all 0.2s ease",
+                }}
+              >
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "flex-start",
+                    justifyContent: "space-between",
+                    gap: "1rem",
+                  }}
+                >
+                  <div>
+                    <div
+                      style={{
+                        color: "rgba(226, 232, 240, 0.88)",
+                        fontSize: "0.95rem",
+                        fontWeight: 700,
+                      }}
+                    >
+                      {card.label}
+                    </div>
+                    <div
+                      style={{
+                        color: "#ffffff",
+                        fontSize: "2.4rem",
+                        fontWeight: 800,
+                        letterSpacing: "0",
+                        lineHeight: 1.1,
+                        marginTop: "0.55rem",
+                      }}
+                    >
+                      {card.value}
+                    </div>
+                  </div>
+                  <span
+                    style={{
+                      border: "1px solid rgba(45, 212, 191, 0.32)",
+                      borderRadius: "999px",
+                      color: "#ccfbf1",
+                      backgroundColor: "rgba(20, 184, 166, 0.12)",
+                      fontSize: "0.78rem",
+                      fontWeight: 700,
+                      padding: "0.35rem 0.65rem",
+                    }}
+                  >
+                    Open
+                  </span>
+                </div>
+                <p
+                  style={{
+                    color: "rgba(203, 213, 225, 0.9)",
+                    fontSize: "0.92rem",
+                    lineHeight: 1.55,
+                    margin: "1rem 0 0",
+                  }}
+                >
+                  {card.helper}
+                </p>
+              </Link>
+            ))}
+          </div>
         </div>
+        <style jsx>{`
+          .bof-dashboard-hero-cta:hover {
+            transform: translateY(-2px);
+            border-color: rgba(153, 246, 228, 0.82) !important;
+            background-color: rgba(20, 184, 166, 0.82) !important;
+          }
+
+          .bof-dashboard-hero-cta:focus-visible,
+          .bof-dashboard-hero-kpi:focus-visible {
+            outline: 3px solid rgba(153, 246, 228, 0.95);
+            outline-offset: 3px;
+          }
+
+          .bof-dashboard-hero-kpi:hover {
+            transform: translateY(-4px);
+            border-color: rgba(153, 246, 228, 0.68) !important;
+            background-color: rgba(15, 23, 42, 0.88) !important;
+          }
+        `}</style>
       </section>
 
       {/* Fleet Operations Manager Card */}
