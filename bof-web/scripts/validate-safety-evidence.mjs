@@ -44,13 +44,20 @@ for (const u of manifest.files) {
   assertFileFromPublicUrl(u);
 }
 
-const safetyTs = path.join(ROOT, "lib", "safety-evidence.ts");
-const src = fs.readFileSync(safetyTs, "utf8");
-const urls = [...src.matchAll(/url:\s*"(\/evidence\/safety\/[^"]+)"/g)].map((m) => m[1]);
-if (urls.length === 0) die(`No url: "/evidence/safety/..." entries found in ${path.relative(ROOT, safetyTs)}`);
-for (const u of urls) {
-  assertFileFromPublicUrl(u);
+const registryPaths = [
+  path.join(ROOT, "lib", "safety-evidence.ts"),
+  path.join(ROOT, "lib", "safety-event-evidence.ts"),
+];
+let registryUrlCount = 0;
+for (const registryPath of registryPaths) {
+  const src = fs.readFileSync(registryPath, "utf8");
+  const urls = [...src.matchAll(/url:\s*"(\/evidence\/safety\/[^"]+)"/g)].map((m) => m[1]);
+  registryUrlCount += urls.length;
+  for (const u of urls) {
+    assertFileFromPublicUrl(u);
+  }
 }
+if (registryUrlCount === 0) die("No /evidence/safety/ URLs found in safety evidence registries");
 
 const evidenceRoot = path.join(PUBLIC, "evidence");
 walkSvgFiles(evidenceRoot, (full) => {

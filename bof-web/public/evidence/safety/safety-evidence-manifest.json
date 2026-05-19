@@ -1,14 +1,26 @@
 {
-  "version": 1,
-  "description": "Committed demo safety stills (PNG + SVG). Referenced by lib/safety-evidence.ts and load-doc manifests.",
+  "version": 2,
+  "description": "Committed demo safety stills (PNG + SVG). Referenced by safety evidence registries and load-doc manifests.",
   "files": [
     "/evidence/safety/b102-tires-irregular-wear.png",
-    "/evidence/safety/pre-trip-tire-tread-depth.png",
     "/evidence/safety/cargo-damage-punctured-box.png",
-    "/evidence/safety/safety-equipment-fire-extinguisher-tag.png",
+    "/evidence/safety/cargo-damage-wrapped-pallet.png",
+    "/evidence/safety/evt-001-hos-eld.png",
+    "/evidence/safety/evt-002-harsh-braking-dashcam.png",
+    "/evidence/safety/evt-003-speeding-telematics.png",
+    "/evidence/safety/evt-004-geofence-yard-exit.png",
+    "/evidence/safety/evt-005-break-hos-violation.png",
+    "/evidence/safety/evt-006-maintenance-photo-missing.png",
+    "/evidence/safety/evt-007-following-distance.png",
+    "/evidence/safety/evt-008-lane-departure.png",
+    "/evidence/safety/evt-009-tire-inspection-failure.png",
+    "/evidence/safety/evt-010-fatigue-alert.png",
+    "/evidence/safety/evt-011-backing-dock-contact.png",
+    "/evidence/safety/evt-012-speeding-threshold.png",
     "/evidence/safety/l405-hos-eld-violation.png",
     "/evidence/safety/logbook-review-reset-violation.png",
-    "/evidence/safety/trailer-brake-lining-worn.png",
-    "/evidence/safety/cargo-damage-wrapped-pallet.png"
+    "/evidence/safety/pre-trip-tire-tread-depth.png",
+    "/evidence/safety/safety-equipment-fire-extinguisher-tag.png",
+    "/evidence/safety/trailer-brake-lining-worn.png"
   ]
 }

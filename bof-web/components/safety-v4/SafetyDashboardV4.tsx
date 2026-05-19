@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useState, useEffect, useMemo } from "react";
 import { 
   AlertTriangle, 
@@ -19,6 +20,7 @@ import {
 import { getV3OperationalData, isV3DataAvailable } from "@/lib/v3-operational-loader";
 import { formatDisplayDate } from "@/lib/date-utils";
 import { SafetyAssetCards } from "@/components/safety-v4/SafetyAssetCards";
+import { getSafetyEventEvidence } from "@/lib/safety-event-evidence";
 import type { MainSafety, SafetyEvent, SafetyKpiSource } from "@/lib/v3-operational-types";
 
 export function SafetyDashboardV4() {
@@ -336,7 +338,10 @@ export function SafetyDashboardV4() {
               Recent Safety Events
             </h3>
             <div className="space-y-3">
-              {recentEvents.map((event) => (
+              {recentEvents.map((event) => {
+                const evidence = getSafetyEventEvidence(event);
+
+                return (
                 <div key={event.eventId} className="bg-slate-800/50 border border-slate-700 rounded-lg p-4">
                   <div className="flex items-start justify-between">
                     <div className="flex-1">
@@ -364,7 +369,32 @@ export function SafetyDashboardV4() {
                         <span className="text-slate-400 text-sm">{event.eventType}</span>
                       </div>
                       
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-3">
+                      <div className="grid grid-cols-1 md:grid-cols-[180px_1fr_1fr] gap-4 mb-3">
+                        {evidence ? (
+                          <a
+                            href={evidence.url}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="group block overflow-hidden rounded-lg border border-slate-700 bg-slate-950/70"
+                            aria-label={`Review evidence for ${event.eventType}`}
+                          >
+                            <Image
+                              src={evidence.url}
+                              alt={evidence.label}
+                              width={360}
+                              height={192}
+                              className="h-24 w-full object-cover transition duration-200 group-hover:scale-[1.02]"
+                            />
+                            <div className="border-t border-slate-700 px-3 py-2">
+                              <div className="text-xs font-semibold text-blue-300">Review evidence</div>
+                              <div className="mt-0.5 text-[11px] text-slate-500">{evidence.label}</div>
+                            </div>
+                          </a>
+                        ) : (
+                          <div className="flex h-36 items-center justify-center rounded-lg border border-dashed border-slate-700 bg-slate-950/50 text-xs text-slate-500">
+                            Evidence pending
+                          </div>
+                        )}
                         <div>
                           <div className="text-white font-medium mb-1">{event.driverName} ({event.driverId})</div>
                           <div className="text-slate-400 text-sm">
@@ -382,6 +412,9 @@ export function SafetyDashboardV4() {
                               Claim: {event.claimStatus} • ${event.claimAmount.toLocaleString()}
                             </div>
                           )}
+                          {evidence ? (
+                            <div className="mt-2 text-xs text-slate-500">{evidence.note}</div>
+                          ) : null}
                         </div>
                       </div>
 
@@ -399,7 +432,8 @@ export function SafetyDashboardV4() {
                     </div>
                   </div>
                 </div>
-              ))}
+                );
+              })}
             </div>
           </div>
         </div>
