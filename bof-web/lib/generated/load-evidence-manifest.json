@@ -153,15 +153,14 @@
       "reason": "Not required for this load context"
     },
     "weightTicketPhoto": {
-      "url": "",
+      "url": "/evidence/loads/L001/trailer-loaded.jpg",
       "label": "Weight ticket photo",
       "basename": "weight-ticket-photo",
-      "source": "missing",
+      "source": "real",
       "generatedAt": "2026-05-01T22:30:04.195Z",
       "required": false,
       "conditional": true,
-      "applicable": false,
-      "reason": "Not required for this load context"
+      "applicable": false
     },
     "detentionProofPhoto": {
       "url": "",
@@ -258,10 +257,10 @@
       "applicable": true
     },
     "sealDeliveryPhoto": {
-      "url": "/evidence/loads/L002/seal-delivery-photo.png",
+      "url": "/evidence/loads/L002/seal-delivery-photo.svg",
       "label": "Seal delivery photo",
       "basename": "seal-delivery-photo",
-      "source": "real",
+      "source": "svg_demo",
       "generatedAt": "2026-05-01T22:30:04.196Z",
       "required": true,
       "conditional": false,
@@ -354,15 +353,14 @@
       "reason": "Not required for this load context"
     },
     "weightTicketPhoto": {
-      "url": "",
+      "url": "/evidence/loads/L002/trailer-loaded.jpg",
       "label": "Weight ticket photo",
       "basename": "weight-ticket-photo",
-      "source": "missing",
+      "source": "real",
       "generatedAt": "2026-05-01T22:30:04.196Z",
       "required": false,
       "conditional": true,
-      "applicable": false,
-      "reason": "Not required for this load context"
+      "applicable": false
     },
     "detentionProofPhoto": {
       "url": "",
@@ -552,15 +550,14 @@
       "reason": "Not required for this load context"
     },
     "weightTicketPhoto": {
-      "url": "",
+      "url": "/evidence/loads/L003/trailer-loaded.jpg",
       "label": "Weight ticket photo",
       "basename": "weight-ticket-photo",
-      "source": "missing",
+      "source": "real",
       "generatedAt": "2026-05-01T22:30:04.198Z",
       "required": false,
       "conditional": true,
-      "applicable": false,
-      "reason": "Not required for this load context"
+      "applicable": false
     },
     "detentionProofPhoto": {
       "url": "",
@@ -749,15 +746,14 @@
       "reason": "Not required for this load context"
     },
     "weightTicketPhoto": {
-      "url": "",
+      "url": "/evidence/loads/L004/trailer-loaded.jpg",
       "label": "Weight ticket photo",
       "basename": "weight-ticket-photo",
-      "source": "missing",
+      "source": "real",
       "generatedAt": "2026-05-01T22:30:04.201Z",
       "required": false,
       "conditional": true,
-      "applicable": false,
-      "reason": "Not required for this load context"
+      "applicable": false
     },
     "detentionProofPhoto": {
       "url": "",
@@ -950,15 +946,14 @@
       "reason": "Not required for this load context"
     },
     "weightTicketPhoto": {
-      "url": "",
+      "url": "/evidence/loads/L005/trailer-loaded.jpg",
       "label": "Weight ticket photo",
       "basename": "weight-ticket-photo",
-      "source": "missing",
+      "source": "real",
       "generatedAt": "2026-05-01T22:30:04.203Z",
       "required": false,
       "conditional": true,
-      "applicable": false,
-      "reason": "Not required for this load context"
+      "applicable": false
     },
     "detentionProofPhoto": {
       "url": "",
@@ -1148,15 +1143,14 @@
       "reason": "Not required for this load context"
     },
     "weightTicketPhoto": {
-      "url": "",
+      "url": "/evidence/loads/L006/trailer-loaded.jpg",
       "label": "Weight ticket photo",
       "basename": "weight-ticket-photo",
-      "source": "missing",
+      "source": "real",
       "generatedAt": "2026-05-01T22:30:04.205Z",
       "required": false,
       "conditional": true,
-      "applicable": false,
-      "reason": "Not required for this load context"
+      "applicable": false
     },
     "detentionProofPhoto": {
       "url": "",
@@ -1294,7 +1288,7 @@
       "reason": "Not required for this load context"
     },
     "damagePhoto": {
-      "url": "/evidence/loads/L007/cargo-damage-photo.png",
+      "url": "/evidence/loads/L007/damage-photo.jpg",
       "label": "Damage / claim photo",
       "basename": "damage-photo",
       "source": "real",
@@ -1304,10 +1298,10 @@
       "applicable": true
     },
     "cargoDamagePhoto": {
-      "url": "/evidence/loads/L007/cargo-damage-photo.png",
+      "url": "/evidence/loads/L007/cargo-damage-photo.svg",
       "label": "Cargo damage photo",
       "basename": "cargo-damage-photo",
-      "source": "real",
+      "source": "svg_demo",
       "generatedAt": "2026-05-01T22:30:04.206Z",
       "required": false,
       "conditional": true,
@@ -1345,15 +1339,14 @@
       "reason": "Not required for this load context"
     },
     "weightTicketPhoto": {
-      "url": "",
+      "url": "/evidence/loads/L007/trailer-loaded.jpg",
       "label": "Weight ticket photo",
       "basename": "weight-ticket-photo",
-      "source": "missing",
+      "source": "real",
       "generatedAt": "2026-05-01T22:30:04.206Z",
       "required": false,
       "conditional": true,
-      "applicable": false,
-      "reason": "Not required for this load context"
+      "applicable": false
     },
     "detentionProofPhoto": {
       "url": "",
@@ -1450,10 +1443,10 @@
       "applicable": true
     },
     "sealDeliveryPhoto": {
-      "url": "/evidence/loads/L008/seal-delivery-photo.png",
+      "url": "/evidence/loads/L008/seal-delivery-photo.svg",
       "label": "Seal delivery photo",
       "basename": "seal-delivery-photo",
-      "source": "real",
+      "source": "svg_demo",
       "generatedAt": "2026-05-01T22:30:04.207Z",
       "required": true,
       "conditional": false,
@@ -1546,15 +1539,14 @@
       "reason": "Not required for this load context"
     },
     "weightTicketPhoto": {
-      "url": "",
+      "url": "/evidence/loads/L008/trailer-loaded.jpg",
       "label": "Weight ticket photo",
       "basename": "weight-ticket-photo",
-      "source": "missing",
+      "source": "real",
       "generatedAt": "2026-05-01T22:30:04.207Z",
       "required": false,
       "conditional": true,
-      "applicable": false,
-      "reason": "Not required for this load context"
+      "applicable": false
     },
     "detentionProofPhoto": {
       "url": "",
@@ -1693,7 +1685,7 @@
       "reason": "Not required for this load context"
     },
     "damagePhoto": {
-      "url": "/evidence/loads/L009/cargo-damage-photo.png",
+      "url": "/evidence/loads/L009/damage-photo.jpg",
       "label": "Damage / claim photo",
       "basename": "damage-photo",
       "source": "real",
@@ -1703,10 +1695,10 @@
       "applicable": true
     },
     "cargoDamagePhoto": {
-      "url": "/evidence/loads/L009/cargo-damage-photo.png",
+      "url": "/evidence/loads/L009/cargo-damage-photo.svg",
       "label": "Cargo damage photo",
       "basename": "cargo-damage-photo",
-      "source": "real",
+      "source": "svg_demo",
       "generatedAt": "2026-05-01T22:30:04.210Z",
       "required": false,
       "conditional": true,
@@ -1744,15 +1736,14 @@
       "reason": "Not required for this load context"
     },
     "weightTicketPhoto": {
-      "url": "",
+      "url": "/evidence/loads/L009/trailer-loaded.jpg",
       "label": "Weight ticket photo",
       "basename": "weight-ticket-photo",
-      "source": "missing",
+      "source": "real",
       "generatedAt": "2026-05-01T22:30:04.210Z",
       "required": false,
       "conditional": true,
-      "applicable": false,
-      "reason": "Not required for this load context"
+      "applicable": false
     },
     "detentionProofPhoto": {
       "url": "/evidence/support/document-support/accessorial-receipt-preview.png",
@@ -1940,15 +1931,14 @@
       "reason": "Not required for this load context"
     },
     "weightTicketPhoto": {
-      "url": "",
+      "url": "/evidence/loads/L010/trailer-loaded.jpg",
       "label": "Weight ticket photo",
       "basename": "weight-ticket-photo",
-      "source": "missing",
+      "source": "real",
       "generatedAt": "2026-05-01T22:30:04.211Z",
       "required": false,
       "conditional": true,
-      "applicable": false,
-      "reason": "Not required for this load context"
+      "applicable": false
     },
     "detentionProofPhoto": {
       "url": "",
@@ -2045,10 +2035,10 @@
       "applicable": true
     },
     "sealDeliveryPhoto": {
-      "url": "/evidence/loads/L011/seal-delivery-photo.png",
+      "url": "/evidence/loads/L011/seal-delivery-photo.svg",
       "label": "Seal delivery photo",
       "basename": "seal-delivery-photo",
-      "source": "real",
+      "source": "svg_demo",
       "generatedAt": "2026-05-01T22:30:04.213Z",
       "required": true,
       "conditional": false,
@@ -2141,15 +2131,14 @@
       "reason": "Not required for this load context"
     },
     "weightTicketPhoto": {
-      "url": "",
+      "url": "/evidence/loads/L011/trailer-loaded.jpg",
       "label": "Weight ticket photo",
       "basename": "weight-ticket-photo",
-      "source": "missing",
+      "source": "real",
       "generatedAt": "2026-05-01T22:30:04.213Z",
       "required": false,
       "conditional": true,
-      "applicable": false,
-      "reason": "Not required for this load context"
+      "applicable": false
     },
     "detentionProofPhoto": {
       "url": "",
@@ -2339,15 +2328,14 @@
       "reason": "Not required for this load context"
     },
     "weightTicketPhoto": {
-      "url": "",
+      "url": "/evidence/loads/L012/trailer-loaded.jpg",
       "label": "Weight ticket photo",
       "basename": "weight-ticket-photo",
-      "source": "missing",
+      "source": "real",
       "generatedAt": "2026-05-01T22:30:04.215Z",
       "required": false,
       "conditional": true,
-      "applicable": false,
-      "reason": "Not required for this load context"
+      "applicable": false
     },
     "detentionProofPhoto": {
       "url": "",

@@ -46,7 +46,7 @@ const ACTION_CARDS = [
     subtitle: "Pay, deductions, and finance",
     href: "/settlements",
     cta: "View →",
-    imageSrc: "/assets/images/bof-back-office-operating-system-hero.png",
+    imageSrc: "/generated/marketing/bof-back-office-operating-system-hero.png",
     imagePosition: "center 40%",
     color: "#22c55e",
   },

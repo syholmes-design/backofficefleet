@@ -44,9 +44,9 @@
     "validate:dashboard-attention-queue": "node scripts/validate-dashboard-attention-queue.mjs",
     "audit:actionability-links": "node scripts/audit-actionability-links.mjs",
     "generate:driver-docs": "node scripts/generate-driver-docs.mjs && node scripts/patch-medical-card-html-demo.mjs && npm run validate:driver-medical-status",
-    "deploy:full": "npm run generate:driver-docs && git add . && (git commit -m \"Auto deploy: regenerate docs + sync\" || node -e \"process.exit(0)\") && git push && vercel --prod --cwd ..",
+    "deploy:full": "npm run generate:driver-docs && git add . && (git commit -m \"Auto deploy: regenerate docs + sync\" || node -e \"process.exit(0)\") && git push && npx --yes vercel --prod",
     "demo:reset": "node scripts/reset-demo.mjs",
-    "demo:reset:deploy": "npm run demo:reset && git add . && (git commit -m \"Demo reset\" || node -e \"process.exit(0)\") && git push && vercel --prod --cwd .."
+    "demo:reset:deploy": "npm run demo:reset && git add . && (git commit -m \"Demo reset\" || node -e \"process.exit(0)\") && git push && npx --yes vercel --prod"
   },
   "dependencies": {
     "@types/leaflet": "^1.9.21",

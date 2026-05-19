@@ -107,7 +107,7 @@ export function SettlementsAssetCards({ loadId, driverId, settlementWeek }: Sett
         assetCards.push({
           title: "Hold Evidence",
           status: "pending",
-          thumbnail: "/evidence/loads/${loadId}/claim-evidence.png",
+          thumbnail: `/evidence/loads/${loadId}/claim-evidence.png`,
           openLink: `/generated/loads/${loadId}/claim-packet.html`,
           relatedEntity: {
             type: "load",
@@ -141,7 +141,7 @@ export function SettlementsAssetCards({ loadId, driverId, settlementWeek }: Sett
         assetCards.push({
           title: "Claim Evidence",
           status: "pending",
-          thumbnail: "/evidence/loads/${loadId}/damage-photo.png",
+          thumbnail: `/evidence/loads/${loadId}/damage-photo.png`,
           openLink: `/generated/loads/${loadId}/damage-photo-packet.html`,
           relatedEntity: {
             type: "load",
@@ -157,7 +157,7 @@ export function SettlementsAssetCards({ loadId, driverId, settlementWeek }: Sett
         assetCards.push({
           title: "Post-Trip Factoring Packet",
           status: loadId === "L011" ? "ready" : "missing",
-          thumbnail: "/evidence/support/document-support/factoring-packet-preview.png",
+          thumbnail: "/evidence/support/document-support/rate-confirmation-preview.png",
           openLink: loadId === "L011" 
             ? `/generated/factoring/${loadId}/post-trip-factoring-packet.html`
             : undefined,

@@ -7,6 +7,16 @@ import type { Load, LoadProofEvent, RouteStatus } from "@/types/dispatch";
 import type { RouteIntelligence, DieselPricing, RestStopLocation, RfidEvent } from "@/lib/v3-operational-types";
 
 type Mode = "all" | "selected";
+type DispatchMarkerType = "fuel" | "rest" | "rfid";
+type DispatchMarkerData = (DieselPricing | RestStopLocation | RfidEvent) & {
+  isApproximate?: boolean;
+};
+type DispatchPopupState = {
+  load: Load;
+  event?: LoadProofEvent;
+  markerType?: DispatchMarkerType;
+  markerData?: DispatchMarkerData;
+};
 
 type Props = {
   loads: Load[];
@@ -39,18 +49,26 @@ function proofStatus(load: Load): string {
   return "Proof missing";
 }
 
-function popupHtml(load: Load, event?: LoadProofEvent, markerType?: string, markerData?: any): string {
+function popupHtml(
+  load: Load,
+  event?: LoadProofEvent,
+  markerType?: DispatchMarkerType,
+  markerData?: DispatchMarkerData
+): string {
   let detail = "";
   
   if (event) {
     detail = `<div class="bof-map-popup-line">Event: ${event.label}</div><div class="bof-map-popup-line">Status: ${event.status}</div>`;
   } else if (markerType === "fuel" && markerData) {
-    detail = `<div class="bof-map-popup-line">Station: ${markerData.location}</div><div class="bof-map-popup-line">Price: $${markerData.dieselPrice}/gal</div><div class="bof-map-popup-line">Est. Gallons: ${markerData.estimatedGallons}</div><div class="bof-map-popup-line">Est. Cost: $${markerData.estimatedFuelCost.toFixed(2)}</div>`;
+    const fuel = markerData as DieselPricing;
+    detail = `<div class="bof-map-popup-line">Station: ${fuel.location}</div><div class="bof-map-popup-line">Price: $${fuel.dieselPrice}/gal</div><div class="bof-map-popup-line">Est. Gallons: ${fuel.estimatedGallons}</div><div class="bof-map-popup-line">Est. Cost: $${fuel.estimatedFuelCost.toFixed(2)}</div>`;
   } else if (markerType === "rest" && markerData) {
-    detail = `<div class="bof-map-popup-line">Stop: ${markerData.location}</div><div class="bof-map-popup-line">Parking: ${markerData.parkingAvailable ? "Available" : "Unavailable"}</div><div class="bof-map-popup-line">Amenities: ${markerData.amenities.join(", ")}</div>`;
+    const rest = markerData as RestStopLocation;
+    detail = `<div class="bof-map-popup-line">Stop: ${rest.location}</div><div class="bof-map-popup-line">Parking: ${rest.parkingAvailable ? "Available" : "Unavailable"}</div><div class="bof-map-popup-line">Amenities: ${rest.amenities.join(", ")}</div>`;
   } else if (markerType === "rfid" && markerData) {
+    const rfid = markerData as RfidEvent & { isApproximate?: boolean };
     const positionNote = markerData.isApproximate ? `<div class="bof-map-popup-line text-amber-400">⚠️ Approximate position along route</div>` : '';
-    detail = `<div class="bof-map-popup-line">Event: ${markerData.eventType}</div><div class="bof-map-popup-line">Status: ${markerData.scanStatus}</div><div class="bof-map-popup-line">Seal Match: ${markerData.sealMatchStatus}</div><div class="bof-map-popup-line">Location: ${markerData.scanLocation}</div>${positionNote}`;
+    detail = `<div class="bof-map-popup-line">Event: ${rfid.eventType}</div><div class="bof-map-popup-line">Status: ${rfid.scanStatus}</div><div class="bof-map-popup-line">Seal Match: ${rfid.sealMatchStatus}</div><div class="bof-map-popup-line">Location: ${rfid.scanLocation}</div>${positionNote}`;
   } else {
     detail = `<div class="bof-map-popup-line">ETA: ${load.eta ?? "—"}</div><div class="bof-map-popup-line">Current: ${load.currentLocationLabel ?? "—"}</div>`;
   }
@@ -129,7 +147,7 @@ export function DispatchRouteMap({
   // Support both NEXT_PUBLIC_MAPBOX_TOKEN and NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN
   const mapboxToken = process.env.NEXT_PUBLIC_MAPBOX_TOKEN || process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN;
   const mapRef = useRef<MapRef | null>(null);
-  const [popup, setPopup] = useState<{ load: Load; event?: LoadProofEvent; markerType?: string; markerData?: any } | null>(null);
+  const [popup, setPopup] = useState<DispatchPopupState | null>(null);
   const [v4Data, setV4Data] = useState<{
     routeIntelligence: RouteIntelligence[];
     dieselPricing: DieselPricing[];
