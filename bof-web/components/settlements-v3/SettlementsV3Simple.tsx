@@ -1,15 +1,24 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import Link from "next/link";
+import { useState, useEffect, useMemo } from "react";
 import { DollarSign, Users, Calendar, TrendingUp, AlertTriangle, CheckCircle, Clock } from "lucide-react";
 import { getV3OperationalData, isV3DataAvailable } from "@/lib/v3-operational-loader";
 import { formatDisplayDate } from "@/lib/date-utils";
 import { SettlementsAssetCards } from "@/components/settlements-v3/SettlementsAssetCards";
 import type { WeeklySettlement, SettlementHold } from "@/lib/v3-operational-types";
 
+function getLatestSettlementWeek(rows: WeeklySettlement[]) {
+  return Array.from(new Set(rows.map((row) => row.weekEnding)))
+    .filter(Boolean)
+    .sort()
+    .pop() ?? "";
+}
+
 export function SettlementsV3Simple() {
   const [settlements, setSettlements] = useState<WeeklySettlement[]>([]);
   const [holds, setHolds] = useState<SettlementHold[]>([]);
+  const [selectedWeek, setSelectedWeek] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [, setUsingFallback] = useState(false);
@@ -33,6 +42,7 @@ export function SettlementsV3Simple() {
         
         setSettlements(v3Data.weeklySettlements);
         setHolds(v3Data.settlementHolds);
+        setSelectedWeek((current) => current || getLatestSettlementWeek(v3Data.weeklySettlements));
         
         console.log(`✅ Loaded ${v3Data.weeklySettlements.length} settlements and ${v3Data.settlementHolds.length} holds from workbook`);
       } else {
@@ -121,35 +131,56 @@ export function SettlementsV3Simple() {
 
     setSettlements(fallbackSettlements);
     setHolds(fallbackHolds);
+    setSelectedWeek((current) => current || getLatestSettlementWeek(fallbackSettlements));
   };
 
-  // Calculate summary statistics and get latest week
+  const availableWeeks = useMemo(() => {
+    return Array.from(new Set(settlements.map((settlement) => settlement.weekEnding)))
+      .filter(Boolean)
+      .sort((a, b) => b.localeCompare(a));
+  }, [settlements]);
+
+  const activeWeek = selectedWeek || availableWeeks[0] || "N/A";
+
+  const selectedWeekSettlements = useMemo(() => {
+    const byDriver = new Map<string, WeeklySettlement>();
+
+    settlements
+      .filter((settlement) => settlement.weekEnding === activeWeek)
+      .forEach((settlement) => {
+        if (!byDriver.has(settlement.driverId)) {
+          byDriver.set(settlement.driverId, settlement);
+        }
+      });
+
+    return Array.from(byDriver.values()).sort((a, b) => a.driverName.localeCompare(b.driverName));
+  }, [activeWeek, settlements]);
+
+  const selectedWeekHolds = useMemo(() => {
+    return holds.filter((hold) => hold.weekEnding === activeWeek);
+  }, [activeWeek, holds]);
+
+  // Calculate summary statistics for the selected settlement week
   const summary = {
-    totalGrossPay: settlements.reduce((sum, s) => sum + s.grossPay, 0),
-    totalNetPay: settlements.reduce((sum, s) => sum + s.netPay, 0),
-    totalDeductions: settlements.reduce((sum, s) => sum + s.totalDeductions, 0),
-    totalFleetOwnerProfit: settlements.reduce((sum, s) => sum + s.fleetOwnerProfit, 0),
-    averageProfitabilityScore: settlements.length > 0
-      ? settlements.reduce((sum, s) => sum + s.driverProfitabilityScore, 0) / settlements.length
+    totalGrossPay: selectedWeekSettlements.reduce((sum, s) => sum + s.grossPay, 0),
+    totalNetPay: selectedWeekSettlements.reduce((sum, s) => sum + s.netPay, 0),
+    totalDeductions: selectedWeekSettlements.reduce((sum, s) => sum + s.totalDeductions, 0),
+    totalFleetOwnerProfit: selectedWeekSettlements.reduce((sum, s) => sum + s.fleetOwnerProfit, 0),
+    averageProfitabilityScore: selectedWeekSettlements.length > 0
+      ? selectedWeekSettlements.reduce((sum, s) => sum + s.driverProfitabilityScore, 0) / selectedWeekSettlements.length
       : 0,
-    completedPackets: settlements.filter(s => s.settlementPacketComplete).length,
-    approvedSettlements: settlements.filter(s => s.settlementStatus === "Approved").length,
-    totalHolds: holds.filter(h => h.status === "Open").length,
-    totalHoldAmount: holds.filter(h => h.status === "Open").reduce((sum, h) => sum + h.holdAmount, 0),
-    settlementCount: settlements.length,
+    completedPackets: selectedWeekSettlements.filter(s => s.settlementPacketComplete).length,
+    approvedSettlements: selectedWeekSettlements.filter(s => s.settlementStatus === "Approved").length,
+    totalHolds: selectedWeekHolds.filter(h => h.status === "Open").length,
+    totalHoldAmount: selectedWeekHolds.filter(h => h.status === "Open").reduce((sum, h) => sum + h.holdAmount, 0),
+    settlementCount: selectedWeekSettlements.length,
   };
 
-  // Get latest week ending from actual data
-  const latestWeek = settlements.length > 0
-    ? Array.from(new Set(settlements.map(s => s.weekEnding))).sort().pop()
-    : "N/A";
-
-  // Format latest week for display
-  const latestWeekDisplay = latestWeek !== "N/A" ? formatDisplayDate(latestWeek) : "N/A";
+  const activeWeekDisplay = activeWeek !== "N/A" ? formatDisplayDate(activeWeek) : "N/A";
 
   // Get distinct drivers count
-  const distinctDrivers = settlements.length > 0 
-    ? new Set(settlements.map(s => s.driverId)).size
+  const distinctDrivers = selectedWeekSettlements.length > 0
+    ? new Set(selectedWeekSettlements.map(s => s.driverId)).size
     : 0;
 
   // Format currency
@@ -322,10 +353,10 @@ export function SettlementsV3Simple() {
               <Calendar className="w-4 h-4 text-purple-400" />
             </div>
             <div className="text-lg font-bold text-white">
-              Latest Week
+              Selected Week
             </div>
             <div className="text-xs text-slate-500 mt-1">
-              {latestWeekDisplay}
+              {activeWeekDisplay}
             </div>
           </div>
 
@@ -345,6 +376,36 @@ export function SettlementsV3Simple() {
       {/* Settlements Table */}
       <div className="max-w-7xl mx-auto px-6 pb-6">
         <div className="bg-slate-900/50 backdrop-blur-sm border border-slate-800 rounded-xl overflow-hidden">
+          <div className="flex flex-col gap-4 border-b border-slate-800 px-6 py-5 lg:flex-row lg:items-center lg:justify-between">
+            <div>
+              <h2 className="text-xl font-semibold text-white">Driver Settlement Queue</h2>
+              <p className="mt-1 text-sm text-slate-400">
+                Showing one settlement row per driver for {activeWeekDisplay}. Use the week menu to review earlier settlement periods.
+              </p>
+            </div>
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+              <label className="flex flex-col gap-1 text-xs font-medium uppercase tracking-wide text-slate-500">
+                Settlement week
+                <select
+                  value={activeWeek === "N/A" ? "" : activeWeek}
+                  onChange={(event) => setSelectedWeek(event.target.value)}
+                  className="min-w-56 rounded-lg border border-slate-700 bg-slate-950 px-3 py-2 text-sm font-medium normal-case tracking-normal text-white outline-none transition focus:border-teal-400 focus:ring-2 focus:ring-teal-400/30"
+                >
+                  {availableWeeks.map((week) => (
+                    <option key={week} value={week}>
+                      {formatDisplayDate(week)}
+                    </option>
+                  ))}
+                </select>
+              </label>
+              <Link
+                href="/documents"
+                className="inline-flex min-h-10 items-center justify-center rounded-lg border border-teal-400/40 bg-teal-400/10 px-4 py-2 text-sm font-semibold text-teal-100 transition hover:border-teal-300 hover:bg-teal-400/20 focus:outline-none focus:ring-2 focus:ring-teal-300"
+              >
+                Open settlement documents
+              </Link>
+            </div>
+          </div>
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead>
@@ -357,11 +418,12 @@ export function SettlementsV3Simple() {
                   <th className="text-center px-6 py-4 text-sm font-medium text-slate-400">Packet</th>
                   <th className="text-center px-6 py-4 text-sm font-medium text-slate-400">Status</th>
                   <th className="text-center px-6 py-4 text-sm font-medium text-slate-400">Holds</th>
+                  <th className="text-left px-6 py-4 text-sm font-medium text-slate-400">Actions</th>
                 </tr>
               </thead>
               <tbody>
-                {settlements.map((settlement) => {
-                  const settlementHolds = holds.filter(h => 
+                {selectedWeekSettlements.map((settlement) => {
+                  const settlementHolds = selectedWeekHolds.filter(h => 
                     h.driverId === settlement.driverId && h.weekEnding === settlement.weekEnding
                   );
                   const holdCount = settlementHolds.length;
@@ -371,7 +433,12 @@ export function SettlementsV3Simple() {
                     <tr key={`${settlement.driverId}-${settlement.weekEnding}`} className="border-b border-slate-800 hover:bg-slate-800/50 transition-colors">
                       <td className="px-6 py-4">
                         <div>
-                          <div className="text-white font-medium">{settlement.driverName}</div>
+                          <Link
+                            href={`/drivers/${settlement.driverId}`}
+                            className="font-medium text-white underline-offset-4 transition hover:text-teal-200 hover:underline focus:outline-none focus:ring-2 focus:ring-teal-300"
+                          >
+                            {settlement.driverName}
+                          </Link>
                           <div className="text-slate-400 text-sm">{settlement.driverId}</div>
                           <div className="text-slate-500 text-xs">{settlement.weekEnding}</div>
                         </div>
@@ -417,18 +484,52 @@ export function SettlementsV3Simple() {
                       </td>
                       <td className="text-center px-6 py-4">
                         {holdCount > 0 ? (
-                          <div className="flex items-center justify-center gap-1">
+                          <Link
+                            href="/money-at-risk"
+                            className="inline-flex items-center justify-center gap-1 rounded-full px-2 py-1 transition hover:bg-red-500/10 focus:outline-none focus:ring-2 focus:ring-red-300"
+                          >
                             <AlertTriangle className="w-4 h-4 text-red-400" />
                             <span className="text-red-400 font-medium">{holdCount}</span>
                             <span className="text-slate-400 text-xs">({formatCurrency(totalHoldAmount)})</span>
-                          </div>
+                          </Link>
                         ) : (
                           <CheckCircle className="w-5 h-5 text-green-400 mx-auto" />
                         )}
                       </td>
+                      <td className="px-6 py-4">
+                        <div className="flex min-w-48 flex-wrap gap-2">
+                          <Link
+                            href={`/drivers/${settlement.driverId}/settlements`}
+                            className="rounded-md border border-teal-400/40 bg-teal-400/10 px-3 py-1.5 text-xs font-semibold text-teal-100 transition hover:border-teal-300 hover:bg-teal-400/20 focus:outline-none focus:ring-2 focus:ring-teal-300"
+                          >
+                            Review pay
+                          </Link>
+                          <Link
+                            href={`/drivers/${settlement.driverId}/vault`}
+                            className="rounded-md border border-slate-600 px-3 py-1.5 text-xs font-semibold text-slate-200 transition hover:border-slate-400 hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-slate-300"
+                          >
+                            Open vault
+                          </Link>
+                          {holdCount > 0 && (
+                            <Link
+                              href="/money-at-risk"
+                              className="rounded-md border border-red-400/40 bg-red-500/10 px-3 py-1.5 text-xs font-semibold text-red-100 transition hover:border-red-300 hover:bg-red-500/20 focus:outline-none focus:ring-2 focus:ring-red-300"
+                            >
+                              Clear hold
+                            </Link>
+                          )}
+                        </div>
+                      </td>
                     </tr>
                   );
                 })}
+                {selectedWeekSettlements.length === 0 && (
+                  <tr>
+                    <td colSpan={9} className="px-6 py-10 text-center text-sm text-slate-400">
+                      No driver settlements are available for this week.
+                    </td>
+                  </tr>
+                )}
               </tbody>
             </table>
           </div>
@@ -436,15 +537,15 @@ export function SettlementsV3Simple() {
       </div>
 
       {/* Settlement Holds Panel */}
-      {holds.length > 0 && (
+      {selectedWeekHolds.length > 0 && (
         <div className="max-w-7xl mx-auto px-6 pb-6">
           <div className="bg-slate-900/50 backdrop-blur-sm border border-slate-800 rounded-xl p-6">
             <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
               <AlertTriangle className="w-5 h-5 text-red-400" />
-              Settlement Holds
+              Settlement Holds for {activeWeekDisplay}
             </h3>
             <div className="space-y-3">
-              {holds.map((hold) => (
+              {selectedWeekHolds.map((hold) => (
                 <div key={hold.holdId} className="bg-slate-800/50 border border-slate-700 rounded-lg p-4">
                   <div className="flex items-start justify-between">
                     <div className="flex-1">
@@ -464,11 +565,23 @@ export function SettlementsV3Simple() {
                         <div>
                           <div className="text-white font-medium mb-1">{hold.holdReason}</div>
                           <div className="text-slate-400 text-sm">
-                            Driver: {hold.driverId}
+                            Driver:{" "}
+                            <Link
+                              href={`/drivers/${hold.driverId}`}
+                              className="text-teal-200 underline-offset-4 hover:underline focus:outline-none focus:ring-2 focus:ring-teal-300"
+                            >
+                              {hold.driverId}
+                            </Link>
                           </div>
                           {hold.loadId && (
                             <div className="text-slate-400 text-sm">
-                              Load: {hold.loadId}
+                              Load:{" "}
+                              <Link
+                                href={`/loads/${hold.loadId}`}
+                                className="text-teal-200 underline-offset-4 hover:underline focus:outline-none focus:ring-2 focus:ring-teal-300"
+                              >
+                                {hold.loadId}
+                              </Link>
                             </div>
                           )}
                           <div className="text-slate-400 text-sm">
@@ -498,6 +611,20 @@ export function SettlementsV3Simple() {
                           <div className="text-slate-300 text-sm">
                             This hold requires manager review and approval before release.
                           </div>
+                          <div className="mt-3 flex flex-wrap gap-2">
+                            <Link
+                              href={`/drivers/${hold.driverId}/settlements`}
+                              className="rounded-md border border-yellow-400/40 bg-yellow-400/10 px-3 py-1.5 text-xs font-semibold text-yellow-100 transition hover:border-yellow-300 hover:bg-yellow-400/20 focus:outline-none focus:ring-2 focus:ring-yellow-300"
+                            >
+                              Review driver pay
+                            </Link>
+                            <Link
+                              href="/money-at-risk"
+                              className="rounded-md border border-red-400/40 bg-red-500/10 px-3 py-1.5 text-xs font-semibold text-red-100 transition hover:border-red-300 hover:bg-red-500/20 focus:outline-none focus:ring-2 focus:ring-red-300"
+                            >
+                              Open risk queue
+                            </Link>
+                          </div>
                         </div>
                       )}
                     </div>
@@ -512,7 +639,7 @@ export function SettlementsV3Simple() {
       {/* Settlement Asset Cards */}
       <SettlementsAssetCards 
         loadId="L003" // Default to a load that has settlement data
-        settlementWeek={latestWeek}
+        settlementWeek={activeWeek}
       />
     </div>
   );
