@@ -1025,19 +1025,19 @@ export const OPERATIONS_FILE_CABINET_REGISTRY: OperationsFileCabinetItem[] = [
   },
   {
     id: "claims-escalation-sop",
-    title: "Delta Advanced Trucking, Inc. Insurance, Risk and Claims SOP",
+    title: "Delta Advanced Trucking, Inc. Claims, Proof Packet & Insurance Escalation SOP",
     cabinet: "Safety / Claims / Insurance",
     section: "Company Policies & SOPs",
     category: "Safety / Claims / Insurance",
-    type: "sop",
+    type: "policy",
     audience: ["manager", "safety", "legal", "finance"],
     status: "available",
-    description: "Standard operating procedures for claims escalation and resolution",
+    description: "Standard operating procedures for claims escalation, proof packet documentation, and insurance workflow",
     href: "/generated/company-operations-vault/07-insurance-risk-and-claims-sop.html",
     sourceAuthenticity: "generated_from_template",
     documentOwner: "employer",
     employerName: "Delta Advanced Trucking, Inc.",
-    tags: ["claims", "escalation", "sop"]
+    tags: ["claims", "insurance", "risk", "sop", "procedures", "proof-packet"]
   },
   {
     id: "safety-evidence-photos",
