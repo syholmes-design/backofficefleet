@@ -1,7 +1,7 @@
 "use client";
 
 import NextImage from "next/image";
-import { FileText, Download, ExternalLink, AlertCircle, CheckCircle, Clock, Image as ImageIcon } from "lucide-react";
+import { FileText, Download, ExternalLink, AlertCircle, CheckCircle, Clock } from "lucide-react";
 
 export interface AssetCardProps {
   title: string;

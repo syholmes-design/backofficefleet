@@ -712,16 +712,6 @@ function parseOperationalRiskQueue(data: string[][]): OperationalRiskQueue[] {
 /**
  * Helper functions for parsing complex fields
  */
-function parseCoordinates(coordString: string): [number, number] {
-  if (!coordString) return [0, 0];
-  const parts = coordString.split(',').map(s => parseFloat(s.trim()));
-  return [parts[0] || 0, parts[1] || 0];
-}
-
-function parseStringArray(arrayString: string): string[] {
-  if (!arrayString) return [];
-  return arrayString.split(',').map(s => s.trim()).filter(s => s.length > 0);
-}
 
 /**
  * Main API functions
@@ -769,7 +759,7 @@ export async function isV3DataAvailable(): Promise<boolean> {
   try {
     await getV3OperationalData();
     return true;
-  } catch (error) {
+  } catch {
     return false;
   }
 }

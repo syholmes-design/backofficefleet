@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { DollarSign, Users, Calendar, Filter, TrendingUp, AlertTriangle, CheckCircle, Clock } from "lucide-react";
+import { DollarSign, Users, Calendar, TrendingUp, AlertTriangle, CheckCircle, Clock } from "lucide-react";
 import { getV3OperationalData, isV3DataAvailable } from "@/lib/v3-operational-loader";
 import { formatDisplayDate } from "@/lib/date-utils";
 import { SettlementsAssetCards } from "@/components/settlements-v3/SettlementsAssetCards";
