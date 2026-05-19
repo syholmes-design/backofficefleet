@@ -1479,7 +1479,7 @@ export const OPERATIONS_FILE_CABINET_REGISTRY: OperationsFileCabinetItem[] = [
     audience: ["manager", "hr", "driver", "admin"],
     status: "template",
     description: "Comprehensive employee handbook template",
-    href: "/generated/templates/hr-docs/employee-handbook.html",
+    href: "/generated/company-operations-vault/01-employee-handbook-template.html",
     sourceAuthenticity: "official_template",
     documentOwner: "employer",
     employerName: "Delta Advanced Trucking, Inc.",
