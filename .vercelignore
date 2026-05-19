@@ -1,0 +1,8 @@
+*
+!bof-web/
+!bof-web/**
+
+bof-web/.env*
+bof-web/.next/
+bof-web/.vercel/
+bof-web/node_modules/
