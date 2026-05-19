@@ -1590,7 +1590,7 @@ export const OPERATIONS_FILE_CABINET_REGISTRY: OperationsFileCabinetItem[] = [
   },
   {
     id: "employee-handbook",
-    title: "Employee Handbook",
+    title: "Delta Advanced Trucking, Inc. Employee Handbook",
     cabinet: "Policies & SOPs",
     section: "Company Policies & SOPs",
     category: "Policies & SOPs",
