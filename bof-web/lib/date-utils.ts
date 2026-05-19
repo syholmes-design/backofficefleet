@@ -72,7 +72,7 @@ export function parseToDate(dateValue: string | number | null | undefined): stri
   if (!dateValue) return '';
   
   // Handle Excel serial numbers
-  if (typeof dateValue === 'number' || (typeof dateValue === 'string' && /^\d+$/.test(dateValue))) {
+  if (typeof dateValue === 'number' || (typeof dateValue === 'string' && /^\d+(\.\d+)?$/.test(dateValue))) {
     return excelSerialToIsoDate(dateValue);
   }
   

@@ -7,21 +7,48 @@ import {
   Shield, 
   TrendingUp, 
   Users, 
-  Calendar, 
   Clock, 
-  CheckCircle, 
-  XCircle,
   AlertOctagon,
-  FileText,
-  DollarSign,
-  MapPin,
-  Camera
+  Ban,
+  Camera,
+  ClipboardCheck,
+  FileWarning,
+  Siren
 } from "lucide-react";
 import { getV3OperationalData, isV3DataAvailable } from "@/lib/v3-operational-loader";
 import { formatDisplayDate } from "@/lib/date-utils";
 import { SafetyAssetCards } from "@/components/safety-v4/SafetyAssetCards";
 import { getSafetyEventEvidence } from "@/lib/safety-event-evidence";
 import type { MainSafety, SafetyEvent, SafetyKpiSource } from "@/lib/v3-operational-types";
+
+function normalizeToken(value: string) {
+  return value.trim().toLowerCase().replace(/[_-]+/g, " ");
+}
+
+function isOpenWorkflow(value: string) {
+  const status = normalizeToken(value);
+  return status === "open" || status === "in progress" || status === "under review";
+}
+
+function isCriticalSeverity(value: string) {
+  return normalizeToken(value) === "critical";
+}
+
+function titleize(value: string) {
+  return value
+    .split(/[_\s-]+/)
+    .filter(Boolean)
+    .map((part) => part.charAt(0).toUpperCase() + part.slice(1).toLowerCase())
+    .join(" ");
+}
+
+function formatMoney(value: number) {
+  return new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: "USD",
+    maximumFractionDigits: 0,
+  }).format(value);
+}
 
 export function SafetyDashboardV4() {
   const [mainSafety, setMainSafety] = useState<MainSafety[]>([]);
@@ -78,15 +105,17 @@ export function SafetyDashboardV4() {
   // Calculate safety statistics
   const safetyStats = useMemo(() => {
     const totalDrivers = mainSafety.length;
-    const criticalDrivers = mainSafety.filter(d => d.criticalEvents > 0).length;
-    const openEvents = safetyEvents.filter(e => e.status === "Open").length;
-    const criticalEvents = safetyEvents.filter(e => e.severity === "Critical").length;
-    const eventsThisWeek = safetyEvents.filter(e => {
-      const eventDate = new Date(e.timestamp);
-      const weekAgo = new Date();
-      weekAgo.setDate(weekAgo.getDate() - 7);
-      return eventDate >= weekAgo;
-    }).length;
+    const criticalDrivers = mainSafety.filter(d => d.criticalEvents > 0 || d.safetyScore < 80).length;
+    const openEvents = safetyEvents.filter(e => isOpenWorkflow(e.status)).length;
+    const criticalEvents = safetyEvents.filter(e => isCriticalSeverity(e.severity)).length;
+    const dispatchBlocks = safetyEvents.filter(e => e.dispatchBlock).length;
+    const settlementHolds = safetyEvents.filter(e => e.settlementHold).length;
+    const insuranceClaimsNeeded = safetyEvents.filter(e => e.insuranceClaimNeeded).length;
+    const evidencePacketsComplete = safetyEvents.filter(e => e.evidencePacketComplete).length;
+    const driverAcknowledgmentsPending = safetyEvents.filter(e => isOpenWorkflow(e.status) && !e.driverAcknowledged).length;
+    const openClaimExposure = safetyEvents
+      .filter(e => isOpenWorkflow(e.claimStatus) || e.insuranceClaimNeeded)
+      .reduce((sum, e) => sum + e.claimAmount, 0);
     
     const avgSafetyScore = totalDrivers > 0 
       ? mainSafety.reduce((sum, d) => sum + d.safetyScore, 0) / totalDrivers 
@@ -97,26 +126,59 @@ export function SafetyDashboardV4() {
       criticalDrivers,
       openEvents,
       criticalEvents,
-      eventsThisWeek,
+      dispatchBlocks,
+      settlementHolds,
+      insuranceClaimsNeeded,
+      evidencePacketsComplete,
+      driverAcknowledgmentsPending,
+      openClaimExposure,
+      totalEvents: safetyEvents.length,
       avgSafetyScore,
     };
   }, [mainSafety, safetyEvents]);
 
-  // Get KPI summary
-  const kpiSummary = useMemo(() => {
-    const categories = [...new Set(safetyKpiSource.map(k => k.kpiCategory))];
-    return categories.map(category => {
-      const categoryKpis = safetyKpiSource.filter(k => k.kpiCategory === category);
-      const avgPerformance = categoryKpis.reduce((sum, k) => sum + (k.kpiValue / k.kpiTarget) * 100, 0) / categoryKpis.length;
-      
-      return {
-        category,
-        kpiCount: categoryKpis.length,
-        avgPerformance: avgPerformance || 0,
-        kpis: categoryKpis,
-      };
-    });
-  }, [safetyKpiSource]);
+  const watchlistMetrics = useMemo(() => {
+    const metricValue = (name: string, fallback: number) =>
+      safetyKpiSource.find(kpi => kpi.kpiName === name)?.kpiValue ?? fallback;
+
+    return [
+      {
+        label: "Dispatch Blocks",
+        value: metricValue("Dispatch Blocks", safetyStats.dispatchBlocks),
+        detail: "Events holding release until coaching or proof is complete",
+        icon: Ban,
+        tone: "text-red-300",
+      },
+      {
+        label: "Settlement Holds",
+        value: metricValue("Settlement Holds", safetyStats.settlementHolds),
+        detail: "Driver pay items held for safety review or claim reserve",
+        icon: AlertTriangle,
+        tone: "text-yellow-300",
+      },
+      {
+        label: "Claims Needing Review",
+        value: metricValue("Insurance Claims Needed", safetyStats.insuranceClaimsNeeded),
+        detail: `${formatMoney(safetyStats.openClaimExposure)} open claim exposure`,
+        icon: FileWarning,
+        tone: "text-orange-300",
+      },
+      {
+        label: "Evidence Packets Complete",
+        value: metricValue("Evidence Packets Complete", safetyStats.evidencePacketsComplete),
+        detail: `${safetyStats.totalEvents} events monitored in this safety period`,
+        icon: ClipboardCheck,
+        tone: "text-emerald-300",
+      },
+      {
+        label: "Driver Acknowledgments Pending",
+        value: metricValue("Driver Acknowledgments Pending", safetyStats.driverAcknowledgmentsPending),
+        detail: "Statements or coaching acknowledgments still required",
+        icon: Camera,
+        tone: "text-blue-300",
+      },
+    ];
+  }, [safetyKpiSource, safetyStats]);
 
   // Get recent events
   const recentEvents = useMemo(() => {
@@ -128,8 +190,8 @@ export function SafetyDashboardV4() {
   // Get drivers needing attention
   const driversNeedingAttention = useMemo(() => {
     return mainSafety
-      .filter(d => d.criticalEvents > 0 || d.openSafetyEvents > 0 || d.safetyScore < 70)
-      .sort((a, b) => a.safetyScore - b.safetyScore)
+      .filter(d => d.criticalEvents > 0 || d.openSafetyEvents > 0 || d.safetyScore < 85)
+      .sort((a, b) => (b.criticalEvents - a.criticalEvents) || (b.openSafetyEvents - a.openSafetyEvents) || (a.safetyScore - b.safetyScore))
       .slice(0, 8);
   }, [mainSafety]);
 
@@ -159,26 +221,47 @@ export function SafetyDashboardV4() {
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100">
       {/* Header */}
-      <div className="border-b border-slate-800 bg-slate-900/50 backdrop-blur-sm">
-        <div className="max-w-7xl mx-auto px-6 py-6">
-          <div className="flex items-center justify-between">
+      <div className="relative overflow-hidden border-b border-slate-800 bg-slate-950">
+        <Image
+          src="/generated/marketing/safety-command-hero.png"
+          alt=""
+          fill
+          priority
+          className="object-cover opacity-45"
+          sizes="100vw"
+        />
+        <div className="absolute inset-0 bg-gradient-to-r from-slate-950 via-slate-950/92 to-slate-950/35" />
+        <div className="relative mx-auto max-w-7xl px-6 py-10">
+          <div className="grid gap-8 lg:grid-cols-[1.1fr_0.9fr] lg:items-end">
             <div>
-              <h1 className="text-3xl font-bold text-white flex items-center gap-3">
-                <Shield className="w-8 h-8 text-blue-400" />
+              <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-blue-400/30 bg-blue-500/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.16em] text-blue-200">
+                <Siren className="h-3.5 w-3.5" />
+                Live Safety Desk
+              </div>
+              <h1 className="flex items-center gap-3 text-4xl font-bold text-white">
+                <Shield className="h-9 w-9 text-blue-300" />
                 Safety Command Center
               </h1>
-              <p className="text-slate-400 mt-2">
-                Driver safety performance, events, KPIs, and compliance for active fleet operations
+              <p className="mt-3 max-w-2xl text-base leading-7 text-slate-300">
+                Safety events, dispatch blocks, coaching actions, claims exposure, and evidence packets for the active fleet.
               </p>
             </div>
-            <div className="flex items-center gap-4">
-              <div className="text-right">
-                <div className="text-red-400 font-medium">{safetyStats.openEvents}</div>
-                <div className="text-slate-400 text-xs">Open Events</div>
+            <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 lg:justify-self-end">
+              <div className="rounded-lg border border-slate-700/80 bg-slate-950/75 p-4">
+                <div className="text-2xl font-bold text-red-300">{safetyStats.openEvents}</div>
+                <div className="mt-1 text-xs text-slate-400">Open Events</div>
               </div>
-              <div className="text-right">
-                <div className="text-orange-400 font-medium">{safetyStats.criticalDrivers}</div>
-                <div className="text-slate-400 text-xs">Critical Drivers</div>
+              <div className="rounded-lg border border-slate-700/80 bg-slate-950/75 p-4">
+                <div className="text-2xl font-bold text-orange-300">{safetyStats.criticalEvents}</div>
+                <div className="mt-1 text-xs text-slate-400">Critical Events</div>
+              </div>
+              <div className="rounded-lg border border-slate-700/80 bg-slate-950/75 p-4">
+                <div className="text-2xl font-bold text-yellow-300">{safetyStats.dispatchBlocks}</div>
+                <div className="mt-1 text-xs text-slate-400">Dispatch Blocks</div>
+              </div>
+              <div className="rounded-lg border border-slate-700/80 bg-slate-950/75 p-4">
+                <div className="text-2xl font-bold text-emerald-300">{Math.round(safetyStats.avgSafetyScore)}</div>
+                <div className="mt-1 text-xs text-slate-400">Avg Score</div>
               </div>
             </div>
           </div>
@@ -223,50 +306,37 @@ export function SafetyDashboardV4() {
 
           <div className="bg-slate-900/50 backdrop-blur-sm border border-slate-800 rounded-xl p-6">
             <div className="flex items-center justify-between mb-2">
-              <span className="text-slate-400 text-sm">Events This Week</span>
-              <Calendar className="w-4 h-4 text-purple-400" />
+              <span className="text-slate-400 text-sm">Events Monitored</span>
+              <Clock className="w-4 h-4 text-purple-400" />
             </div>
             <div className="text-2xl font-bold text-white">
-              {safetyStats.eventsThisWeek}
+              {safetyStats.totalEvents}
             </div>
-            <div className="text-xs text-slate-500 mt-1">Last 7 days</div>
+            <div className="text-xs text-slate-500 mt-1">Current safety period</div>
           </div>
         </div>
 
-        {/* KPI Performance by Category */}
-        {kpiSummary.length > 0 && (
+        {/* Safety Operations Watchlist */}
+        {watchlistMetrics.length > 0 && (
           <div className="mt-6">
-            <h3 className="text-lg font-semibold text-white mb-4">KPI Performance by Category</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {kpiSummary.map((category) => (
-                <div key={category.category} className="bg-slate-900/50 backdrop-blur-sm border border-slate-800 rounded-xl p-6">
-                  <div className="flex items-center justify-between mb-4">
-                    <h4 className="text-white font-medium">{category.category}</h4>
-                    <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                      category.avgPerformance >= 90 
-                        ? 'bg-green-500/20 text-green-400 border border-green-500/30'
-                        : category.avgPerformance >= 70
-                        ? 'bg-yellow-500/20 text-yellow-400 border border-yellow-500/30'
-                        : 'bg-red-500/20 text-red-400 border border-red-500/30'
-                    }`}>
-                      {category.avgPerformance.toFixed(1)}%
-                    </span>
+            <h3 className="text-lg font-semibold text-white mb-4">Safety Operations Watchlist</h3>
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-5">
+              {watchlistMetrics.map((metric) => {
+                const Icon = metric.icon;
+
+                return (
+                <div key={metric.label} className="rounded-xl border border-slate-800 bg-slate-900/50 p-5">
+                  <div className="flex items-start justify-between gap-3">
+                    <div>
+                      <div className="text-sm text-slate-400">{metric.label}</div>
+                      <div className="mt-2 text-3xl font-bold text-white">{metric.value}</div>
+                    </div>
+                    <Icon className={`h-5 w-5 ${metric.tone}`} />
                   </div>
-                  <div className="space-y-2">
-                    {category.kpis.slice(0, 3).map((kpi) => (
-                      <div key={kpi.kpiName} className="flex justify-between items-center">
-                        <span className="text-slate-400 text-sm">{kpi.kpiName}</span>
-                        <span className="text-white text-sm font-medium">
-                          {kpi.kpiValue} / {kpi.kpiTarget} {kpi.kpiUnit}
-                        </span>
-                      </div>
-                    ))}
-                    {category.kpis.length > 3 && (
-                      <div className="text-slate-500 text-xs">+{category.kpis.length - 3} more KPIs</div>
-                    )}
-                  </div>
+                  <p className="mt-4 text-sm leading-5 text-slate-400">{metric.detail}</p>
                 </div>
-              ))}
+                );
+              })}
             </div>
           </div>
         )}
@@ -286,7 +356,8 @@ export function SafetyDashboardV4() {
                   <div className="flex items-center justify-between">
                     <div className="flex-1">
                       <div className="flex items-center gap-3 mb-2">
-                        <span className="text-white font-medium">{driver.driverId}</span>
+                        <span className="text-white font-medium">{driver.driverName || driver.driverId}</span>
+                        <span className="text-slate-500 text-sm">{driver.driverId}</span>
                         <span className={`px-2 py-1 rounded-full text-xs font-medium ${
                           driver.safetyScore >= 80 
                             ? 'bg-green-500/20 text-green-400 border border-green-500/30'
@@ -309,17 +380,22 @@ export function SafetyDashboardV4() {
                         </div>
                         <div>
                           <span className="text-slate-400">Last Event:</span>
-                          <span className="text-white ml-2">{driver.lastSafetyEventType}</span>
+                          <span className="text-white ml-2">{driver.lastSafetyEventType || "None"}</span>
                         </div>
                         <div>
                           <span className="text-slate-400">Coaching:</span>
-                          <span className="text-white ml-2">{driver.coachingStatus}</span>
+                          <span className="text-white ml-2">{driver.coachingStatus || "Current"}</span>
                         </div>
                         <div>
                           <span className="text-slate-400">Action Due:</span>
-                          <span className="text-white ml-2">{driver.correctiveActionDue}</span>
+                          <span className="text-white ml-2">{driver.correctiveActionDue ? formatDisplayDate(driver.correctiveActionDue) : "No immediate action"}</span>
                         </div>
                       </div>
+                      {driver.safetyActionStatus && (
+                        <div className="mt-3 rounded-md border border-slate-700 bg-slate-950/40 px-3 py-2 text-sm text-slate-300">
+                          {driver.safetyActionStatus}
+                        </div>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -347,24 +423,24 @@ export function SafetyDashboardV4() {
                     <div className="flex-1">
                       <div className="flex items-center gap-3 mb-2">
                         <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                          event.severity === 'Critical'
+                          normalizeToken(event.severity) === 'critical'
                             ? 'bg-red-500/20 text-red-400 border border-red-500/30'
-                            : event.severity === 'High'
+                            : normalizeToken(event.severity) === 'high'
                             ? 'bg-orange-500/20 text-orange-400 border border-orange-500/30'
-                            : event.severity === 'Medium'
+                            : normalizeToken(event.severity) === 'medium'
                             ? 'bg-yellow-500/20 text-yellow-400 border border-yellow-500/30'
                             : 'bg-blue-500/20 text-blue-400 border border-blue-500/30'
                         }`}>
-                          {event.severity}
+                          {titleize(event.severity)}
                         </span>
                         <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                          event.status === 'Open'
+                          normalizeToken(event.status) === 'open'
                             ? 'bg-red-500/20 text-red-400 border border-red-500/30'
-                            : event.status === 'In Progress'
+                            : normalizeToken(event.status) === 'in progress' || normalizeToken(event.status) === 'under review'
                             ? 'bg-yellow-500/20 text-yellow-400 border border-yellow-500/30'
                             : 'bg-green-500/20 text-green-400 border border-green-500/30'
                         }`}>
-                          {event.status}
+                          {titleize(event.status)}
                         </span>
                         <span className="text-slate-400 text-sm">{event.eventType}</span>
                       </div>
@@ -409,7 +485,7 @@ export function SafetyDashboardV4() {
                           <div className="text-slate-300 text-sm mb-1">{event.details}</div>
                           {event.claimStatus && (
                             <div className="text-slate-400 text-sm">
-                              Claim: {event.claimStatus} • ${event.claimAmount.toLocaleString()}
+                              Claim: {titleize(event.claimStatus)} • ${event.claimAmount.toLocaleString()}
                             </div>
                           )}
                           {evidence ? (

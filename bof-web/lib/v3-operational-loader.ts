@@ -368,21 +368,22 @@ function parseMainSafety(data: string[][]): MainSafety[] {
     const driverId = String(obj['Driver ID'] || '').trim();
     
     return {
-      driverId: driverId,
-      safetyScore: Number(obj['SafetyScore']) || 0,
-      openSafetyEvents: Number(obj['OpenSafetyEvents']) || 0,
-      criticalEvents: Number(obj['CriticalEvents']) || 0,
-      lastSafetyEventDate: parseToDate(String(obj['LastSafetyEventDate'])),
-      lastSafetyEventType: String(obj['LastSafetyEventType'] || ''),
-      coachingStatus: String(obj['CoachingStatus'] || ''),
-      lastCoachingDate: parseToDate(String(obj['LastCoachingDate'])),
-      correctiveActionDue: parseToDate(String(obj['CorrectiveActionDue'])),
-      dispatchEligibilityImpact: String(obj['DispatchEligibilityImpact'] || ''),
-      settlementImpact: String(obj['SettlementImpact'] || ''),
-      insuranceRiskBand: String(obj['InsuranceRiskBand'] || ''),
-      evidencePacketStatus: String(obj['EvidencePacketStatus'] || ''),
-      managerActionRequired: Boolean(obj['ManagerActionRequired']),
-      safetyActionStatus: String(obj['SafetyActionStatus'] || ''),
+      driverId,
+      driverName: String(obj['Driver'] || ''),
+      safetyScore: Number(obj['Safety Score']) || 0,
+      openSafetyEvents: Number(obj['Open Safety Events']) || 0,
+      criticalEvents: Number(obj['Critical Events']) || 0,
+      lastSafetyEventDate: parseToDate(String(obj['Last Safety Event Date'])),
+      lastSafetyEventType: String(obj['Last Safety Event Type'] || ''),
+      coachingStatus: String(obj['Coaching Status'] || ''),
+      lastCoachingDate: parseToDate(String(obj['Last Coaching Date'])),
+      correctiveActionDue: parseToDate(String(obj['Corrective Action Due'])),
+      dispatchEligibilityImpact: String(obj['Dispatch Eligibility Impact'] || ''),
+      settlementImpact: String(obj['Settlement Impact'] || ''),
+      insuranceRiskBand: String(obj['Insurance Risk Band'] || ''),
+      evidencePacketStatus: String(obj['Evidence Packet Status'] || ''),
+      managerActionRequired: parseBoolean(obj['Manager Action Required']),
+      safetyActionStatus: String(obj['Safety Action Status'] || ''),
     };
   }).filter(record => record.driverId && validDrivers.includes(record.driverId));
 }
@@ -418,18 +419,18 @@ function parseSafetyEvents(data: string[][]): SafetyEvent[] {
       insurerName: String(obj['Insurer Name'] || ''),
       policyNumber: String(obj['Policy Number'] || ''),
       claimNotes: String(obj['Claim Notes'] || ''),
-      rfidRelated: Boolean(obj['RFID Related?']),
+      rfidRelated: parseBoolean(obj['RFID Related?']),
       linkedLoadId: String(obj['Linked Load ID'] || ''),
       linkedDriverDocument: String(obj['Linked Driver Document'] || ''),
       claimExposureBand: String(obj['Claim Exposure Band'] || ''),
-      insuranceClaimNeeded: Boolean(obj['Insurance Claim Needed?']),
-      preventable: Boolean(obj['Preventable?']),
+      insuranceClaimNeeded: parseBoolean(obj['Insurance Claim Needed?']),
+      preventable: parseBoolean(obj['Preventable?']),
       rootCause: String(obj['Root Cause'] || ''),
       csaBasicCategory: String(obj['CSA BASIC Category'] || ''),
-      dotRecordable: Boolean(obj['DOT Recordable?']),
-      policeReportRequired: Boolean(obj['Police Report Required?']),
-      driverStatementRequired: Boolean(obj['Driver Statement Required?']),
-      coachingRequired: Boolean(obj['Coaching Required?']),
+      dotRecordable: parseBoolean(obj['DOT Recordable?']),
+      policeReportRequired: parseBoolean(obj['Police Report Required?']),
+      driverStatementRequired: parseBoolean(obj['Driver Statement Required?']),
+      coachingRequired: parseBoolean(obj['Coaching Required?']),
       coachingAssignedTo: String(obj['Coaching Assigned To'] || ''),
       correctiveAction: String(obj['Corrective Action'] || ''),
       correctiveActionStatus: String(obj['Corrective Action Status'] || ''),
@@ -437,12 +438,12 @@ function parseSafetyEvents(data: string[][]): SafetyEvent[] {
       closedDate: parseToDate(String(obj['Closed Date'])),
       reviewedBy: String(obj['Reviewed By'] || ''),
       reviewTimestamp: parseToDate(String(obj['Review Timestamp'])),
-      driverAcknowledged: Boolean(obj['Driver Acknowledged?']),
+      driverAcknowledged: parseBoolean(obj['Driver Acknowledged?']),
       driverAcknowledgmentTimestamp: parseToDate(String(obj['Driver Acknowledgment Timestamp'])),
-      settlementHold: Boolean(obj['Settlement Hold?']),
+      settlementHold: parseBoolean(obj['Settlement Hold?']),
       settlementHoldAmount: Number(obj['Settlement Hold Amount']) || 0,
-      dispatchBlock: Boolean(obj['Dispatch Block?']),
-      evidencePacketComplete: Boolean(obj['Evidence Packet Complete?']),
+      dispatchBlock: parseBoolean(obj['Dispatch Block?']),
+      evidencePacketComplete: parseBoolean(obj['Evidence Packet Complete?']),
       dashcamClipUrl: String(obj['Dashcam Clip URL'] || ''),
       telematicsSource: String(obj['Telematics Source'] || ''),
       safetyActionStatus: String(obj['Safety Action Status'] || ''),
@@ -452,6 +453,24 @@ function parseSafetyEvents(data: string[][]): SafetyEvent[] {
 
 function parseSafetyKpiSource(data: string[][]): SafetyKpiSource[] {
   const [headers, ...rows] = data;
+  const metricHeaderIndex = data.findIndex(row => String(row[0] || '').trim() === 'Metric' && String(row[1] || '').trim() === 'Value');
+  if (metricHeaderIndex >= 0) {
+    return data.slice(metricHeaderIndex + 1)
+      .filter(row => String(row[0] || '').trim())
+      .map(row => ({
+        kpiCategory: 'Safety Operations',
+        kpiName: String(row[0] || ''),
+        kpiValue: Number(row[1]) || 0,
+        kpiTarget: Number(row[1]) || 1,
+        kpiTrend: '',
+        kpiUnit: '',
+        kpiDescription: String(row[3] || ''),
+        driverId: undefined,
+        loadId: undefined,
+        period: 'Current demo period',
+      }));
+  }
+
   return rows.map(row => {
     const obj: Record<string, unknown> = {};
     headers.forEach((header, index) => {
@@ -712,6 +731,10 @@ function parseOperationalRiskQueue(data: string[][]): OperationalRiskQueue[] {
 /**
  * Helper functions for parsing complex fields
  */
+function parseBoolean(value: unknown): boolean {
+  const normalized = String(value ?? '').trim().toLowerCase();
+  return normalized === 'yes' || normalized === 'true' || normalized === '1' || normalized === 'complete';
+}
 
 /**
  * Main API functions

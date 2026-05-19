@@ -41,6 +41,7 @@ export type SettlementHold = {
 // Main Safety (driver-level rollup)
 export type MainSafety = {
   driverId: string;
+  driverName: string;
   safetyScore: number;
   openSafetyEvents: number;
   criticalEvents: number;
