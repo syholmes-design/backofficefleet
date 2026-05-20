@@ -17,7 +17,7 @@ export const metadata: Metadata = {
     template: "%s | BackOfficeFleet",
   },
   description:
-    "Compliance and operations command center for trucking — dispatch, proof, settlements, and revenue protection.",
+    "Compliance and operations command center for trucking - dispatch, proof, settlements, and revenue protection.",
 };
 
 export default function RootLayout({

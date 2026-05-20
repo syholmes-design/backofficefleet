@@ -12,7 +12,7 @@ const DEFAULT_ROWS: readonly CcMockRow[] = [
   {
     label: "Attention queue",
     title: "Drivers at risk",
-    meta: "Expired med card · 2 dispatch blocks",
+    meta: "Expired med card / 2 dispatch blocks",
     val: "7",
     valClass: "",
   },
@@ -56,7 +56,7 @@ export function MarketingCommandCenterPreview({
   title = "What Needs Attention Right Now",
   lead = "BOF gives operations leaders a real-time command center for compliance, proof, settlements, and financial risk.",
   demoHref = "/command-center",
-  demoLabel = "Explore the command center in the demo →",
+  demoLabel = "Explore the command center in the demo ->",
 }: {
   rows?: readonly CcMockRow[];
   /** For `aria-labelledby` on the wrapping section. */
@@ -111,7 +111,7 @@ export function MarketingCommandCenterPreview({
                 </div>
               ))}
               <p className="bof-mkt-cc-mock-foot">
-                Illustrative metrics — your operation surfaces its own queue, owners, and next actions.
+                Live-style metrics for the current walkthrough. Your operation surfaces its own queue, owners, and next actions.
               </p>
             </div>
           </div>

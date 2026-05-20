@@ -95,7 +95,7 @@ export function MarketingServiceTiers() {
                 href={tier.href}
                 className="mt-4 inline-flex text-sm font-semibold text-teal-700 hover:text-teal-800"
               >
-                {tier.ctaLabel} →
+                {tier.ctaLabel} &rarr;
               </Link>
             </article>
           ))}

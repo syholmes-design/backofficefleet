@@ -6,6 +6,7 @@ import { getBofPageRegistryItem } from "@/lib/bof-page-registry";
 export function BofRouteBadge() {
   const pathname = usePathname();
   if (process.env.NODE_ENV !== "development") return null;
+  if (process.env.NEXT_PUBLIC_BOF_SHOW_ROUTE_BADGE !== "1") return null;
   const item = getBofPageRegistryItem(pathname);
   if (!item) return null;
 
