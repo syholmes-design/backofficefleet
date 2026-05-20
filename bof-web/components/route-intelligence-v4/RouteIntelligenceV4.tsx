@@ -103,21 +103,37 @@ export function RouteIntelligenceV4({
 
   const filteredDieselData = useMemo(() => {
     if (!showAllData && filteredRouteData.length > 0) {
-      // Get diesel stops for the selected routes
+      const routeIds = new Set(filteredRouteData.map((r) => r.routeId));
+      const loadIds = new Set(filteredRouteData.map((r) => r.loadId));
       const routeFuelStops = filteredRouteData.flatMap(r => r.fuelStops);
-      return dieselData.filter(d => routeFuelStops.includes(d.location));
+      return dieselData.filter((d) => {
+        if (d.routeId && routeIds.has(d.routeId)) return true;
+        if (d.loadId && loadIds.has(d.loadId)) return true;
+        return routeFuelStops.includes(d.location);
+      });
+    }
+    if (!showAllData && loadId) {
+      return dieselData.filter((d) => d.loadId === loadId);
     }
     return dieselData;
-  }, [dieselData, filteredRouteData, showAllData]);
+  }, [dieselData, filteredRouteData, loadId, showAllData]);
 
   const filteredRestStopData = useMemo(() => {
     if (!showAllData && filteredRouteData.length > 0) {
-      // Get rest stops for the selected routes
+      const routeIds = new Set(filteredRouteData.map((r) => r.routeId));
+      const loadIds = new Set(filteredRouteData.map((r) => r.loadId));
       const routeRestStops = filteredRouteData.flatMap(r => r.recommendedRestStops);
-      return restStopData.filter(r => routeRestStops.includes(r.location));
+      return restStopData.filter((r) => {
+        if (r.routeId && routeIds.has(r.routeId)) return true;
+        if (r.loadId && loadIds.has(r.loadId)) return true;
+        return routeRestStops.includes(r.location);
+      });
+    }
+    if (!showAllData && loadId) {
+      return restStopData.filter((r) => r.loadId === loadId);
     }
     return restStopData;
-  }, [restStopData, filteredRouteData, showAllData]);
+  }, [restStopData, filteredRouteData, loadId, showAllData]);
 
   // Get risk badge color
   const getRiskBadgeClass = (risk: string) => {
@@ -221,8 +237,8 @@ export function RouteIntelligenceV4({
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
                   <div>
                     <div className="text-slate-400 text-xs mb-1">Route</div>
-                    <div className="text-white font-medium">{route.origin} → {route.destination}</div>
-                    <div className="text-slate-400 text-sm">{route.loadId} • {route.driverId}</div>
+                    <div className="text-white font-medium">{route.origin} to {route.destination}</div>
+                    <div className="text-slate-400 text-sm">{route.loadId} - {route.driverId}</div>
                   </div>
                   
                   <div>
@@ -286,7 +302,7 @@ export function RouteIntelligenceV4({
                 <div className="flex items-start justify-between mb-3">
                   <div>
                     <div className="text-white font-medium">{diesel.location}</div>
-                    <div className="text-slate-400 text-sm">Position: {diesel.routePosition}</div>
+                    <div className="text-slate-400 text-sm">Stop {diesel.routePosition}</div>
                   </div>
                   {diesel.preferredStop && (
                     <span className="px-2 py-1 rounded-full text-xs font-medium bg-green-500/20 text-green-400 border border-green-500/30">
@@ -358,7 +374,7 @@ export function RouteIntelligenceV4({
                 <div className="flex items-start justify-between mb-3">
                   <div>
                     <div className="text-white font-medium">{restStop.location}</div>
-                    <div className="text-slate-400 text-sm">{restStop.distanceFromRoute} miles from route</div>
+                    <div className="text-slate-400 text-sm">{restStop.distanceFromRoute} miles from origin</div>
                   </div>
                   {restStop.recommendedForHos && (
                     <span className="px-2 py-1 rounded-full text-xs font-medium bg-blue-500/20 text-blue-400 border border-blue-500/30">

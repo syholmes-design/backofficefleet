@@ -19,6 +19,64 @@ export type WeeklySettlement = {
   settlementApprovalTimestamp: string;
 };
 
+// Payroll sheet detail for the current settlement run
+export type PayrollSettlementDetail = {
+  driverId: string;
+  driverName: string;
+  baseEarnings: number;
+  backhaulPay: number;
+  safetyBonus: number;
+  grossPay: number;
+  fica: number;
+  oasdi: number;
+  federalWithholding: number;
+  stateWithholding: number;
+  sdi: number;
+  fmLeave: number;
+  familySupport: number;
+  insurancePremiums: number;
+  creditUnionSavingsClub: number;
+  contribution401k: number;
+  hsaFsaHealthDeduction: number;
+  healthInsurancePremiums: number;
+  lifeInsuranceAbove50k: number;
+  totalDeductions: number;
+  fuelReimbursement: number;
+  netPay: number;
+  status: string;
+  pendingReason: string;
+  rate401k: number;
+  payModelType: string;
+  percentageRate: number;
+  cpmRateLoaded: number;
+  cpmRateEmpty: number;
+  hourlyRate: number;
+  minimumWeeklyGuarantee: number;
+  detentionRate: number;
+  layoverRate: number;
+  breakdownPayRate: number;
+  stopPay: number;
+  tarpPay: number;
+  hazmatPremium: number;
+  tankerPremium: number;
+  twicPremium: number;
+  safetyBonusEligible: string;
+  safetyBonusTier: string;
+  safetyBonusAmount: number;
+  fuelBonusEligible: string;
+  fuelBonusRate: number;
+  inspectionBonus: number;
+  adminExcellenceBonus: number;
+  assetCareBonus: number;
+  advanceTaken: number;
+  advanceRepayment: number;
+  chargebacksItemized: string;
+  chargebackTotal: number;
+  garnishmentAmount: number;
+  escrowContribution: number;
+  escrowBalance: number;
+};
+
 // Settlement Holds
 export type SettlementHold = {
   holdId: string;
@@ -244,7 +302,10 @@ export type RouteIntelligence = {
 // Diesel Pricing
 export type DieselPricing = {
   pricingId: string;
+  routeId?: string;
+  loadId?: string;
   location: string;
+  brand?: string;
   coordinates: [number, number];
   dieselPrice: number;
   currency: string;
@@ -262,6 +323,8 @@ export type DieselPricing = {
 // Rest Stop Locations
 export type RestStopLocation = {
   stopId: string;
+  routeId?: string;
+  loadId?: string;
   location: string;
   coordinates: [number, number];
   distanceFromRoute: number;
@@ -303,6 +366,7 @@ export type OperationalRiskQueue = {
 // V3 Operational Data Container
 export type V3OperationalData = {
   weeklySettlements: WeeklySettlement[];
+  payrollSettlements: PayrollSettlementDetail[];
   settlementHolds: SettlementHold[];
   mainSafety: MainSafety[];
   safetyEvents: SafetyEvent[];

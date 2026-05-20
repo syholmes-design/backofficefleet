@@ -20,7 +20,7 @@ import {
 } from "@/lib/driver-pay-settlement-methods";
 import { getV3OperationalData, isV3DataAvailable } from "@/lib/v3-operational-loader";
 import { formatDisplayDate } from "@/lib/date-utils";
-import type { SettlementHold, WeeklySettlement } from "@/lib/v3-operational-types";
+import type { PayrollSettlementDetail, SettlementHold, WeeklySettlement } from "@/lib/v3-operational-types";
 
 type Props = {
   params: Promise<{ id: string }>;
@@ -60,6 +60,81 @@ function splitAmount(total: number, specs: Array<Omit<MoneyLine, "amount"> & { r
       amount,
     };
   });
+}
+
+function roundMoney(value: number) {
+  return Math.round(value * 100) / 100;
+}
+
+function addLine(lines: MoneyLine[], label: string, amount: number, detail: string) {
+  if (Math.abs(amount) < 0.005) return;
+  lines.push({ label, amount: roundMoney(amount), detail });
+}
+
+function payrollEarningsLines(payroll: PayrollSettlementDetail): MoneyLine[] {
+  const lines: MoneyLine[] = [];
+
+  addLine(lines, "Base earnings", payroll.baseEarnings, "Base mileage, hourly, salary, or settlement earnings from the Payroll sheet.");
+  addLine(lines, "Backhaul pay", payroll.backhaulPay, "Backhaul incentive pay tied to route utilization.");
+  addLine(lines, "Safety bonus", payroll.safetyBonus, "Safety or performance bonus for the payroll run.");
+  addLine(
+    lines,
+    "Premium and special pay",
+    payroll.tarpPay +
+      payroll.hazmatPremium +
+      payroll.tankerPremium +
+      payroll.twicPremium +
+      payroll.inspectionBonus +
+      payroll.adminExcellenceBonus +
+      payroll.assetCareBonus,
+    "Tarp, hazmat, tanker, TWIC, inspection, admin excellence, and asset-care premiums."
+  );
+
+  const lineTotal = lines.reduce((sum, line) => sum + line.amount, 0);
+  addLine(
+    lines,
+    "Payroll gross adjustment",
+    payroll.grossPay - lineTotal,
+    "Balances named earnings lines to the Payroll sheet gross pay."
+  );
+
+  return lines;
+}
+
+function payrollDeductionLines(payroll: PayrollSettlementDetail): MoneyLine[] {
+  const lines: MoneyLine[] = [];
+
+  addLine(lines, "FICA / Medicare", payroll.fica, "Payroll tax withholding from the Payroll sheet.");
+  addLine(lines, "OASDI / Social Security", payroll.oasdi, "Social Security withholding from the Payroll sheet.");
+  addLine(lines, "Federal withholding", payroll.federalWithholding, "Federal income tax withholding.");
+  addLine(lines, "State withholding", payroll.stateWithholding, "State income tax withholding.");
+  addLine(lines, "State disability and FM leave", payroll.sdi + payroll.fmLeave, "SDI and family/medical leave withholding.");
+  addLine(lines, "Family support / garnishment", payroll.familySupport + payroll.garnishmentAmount, "Family support and garnishment withholding.");
+  addLine(
+    lines,
+    "Insurance and benefits",
+    payroll.insurancePremiums + payroll.healthInsurancePremiums + payroll.lifeInsuranceAbove50k,
+    "Insurance premiums, health insurance, and life-insurance taxable benefit deductions."
+  );
+  addLine(
+    lines,
+    "Savings, 401(k), and HSA/FSA",
+    payroll.creditUnionSavingsClub + payroll.contribution401k + payroll.hsaFsaHealthDeduction,
+    "Credit union savings, retirement, and health-account deductions."
+  );
+  addLine(lines, "Advance repayment", payroll.advanceRepayment, "Repayment of driver advances from the payroll register.");
+  addLine(lines, "Chargebacks", payroll.chargebackTotal, payroll.chargebacksItemized || "Payroll chargeback total.");
+  addLine(lines, "Escrow contribution", payroll.escrowContribution, "Escrow contribution or reserve deduction.");
+
+  const itemizedTotal = lines.reduce((sum, line) => sum + line.amount, 0);
+  addLine(
+    lines,
+    "Other payroll deductions",
+    payroll.totalDeductions - itemizedTotal,
+    "Balances named deduction columns to the Payroll sheet total deductions."
+  );
+
+  return lines;
 }
 
 function earningsLines(settlement: WeeklySettlement, method: DriverPaySettlementMethod): MoneyLine[] {
@@ -224,6 +299,7 @@ export default function DriverSettlementsPage({ params, searchParams }: Props) {
   const { week } = use(searchParams);
   const { data } = useBofDemoData();
   const [weeklySettlements, setWeeklySettlements] = useState<WeeklySettlement[]>([]);
+  const [payrollSettlements, setPayrollSettlements] = useState<PayrollSettlementDetail[]>([]);
   const [settlementHolds, setSettlementHolds] = useState<SettlementHold[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -244,6 +320,7 @@ export default function DriverSettlementsPage({ params, searchParams }: Props) {
         const v3Data = await getV3OperationalData();
         if (!alive) return;
         setWeeklySettlements(v3Data.weeklySettlements);
+        setPayrollSettlements(v3Data.payrollSettlements);
         setSettlementHolds(v3Data.settlementHolds);
       } finally {
         if (alive) setLoading(false);
@@ -266,17 +343,33 @@ export default function DriverSettlementsPage({ params, searchParams }: Props) {
       .sort((a, b) => b.weekEnding.localeCompare(a.weekEnding));
   }, [id, weeklySettlements]);
 
-  const selectedWeek = week || latestWeek(driverWeeks);
-  const settlement = driverWeeks.find((row) => row.weekEnding === selectedWeek) ?? driverWeeks[0] ?? null;
+  const latestDriverWeek = latestWeek(driverWeeks);
+  const selectedWeek = week || latestDriverWeek;
+  const baseSettlement = driverWeeks.find((row) => row.weekEnding === selectedWeek) ?? driverWeeks[0] ?? null;
+  const payrollDetail = payrollSettlements.find((row) => row.driverId === id) ?? null;
+  const payrollApplies = Boolean(baseSettlement && payrollDetail && baseSettlement.weekEnding === latestDriverWeek);
+  const settlement = useMemo(() => {
+    if (!baseSettlement) return null;
+    if (!payrollDetail || baseSettlement.weekEnding !== latestDriverWeek) return baseSettlement;
+
+    return {
+      ...baseSettlement,
+      grossPay: payrollDetail.grossPay,
+      totalDeductions: payrollDetail.totalDeductions,
+      netPay: payrollDetail.netPay,
+      settlementStatus: payrollDetail.status || baseSettlement.settlementStatus,
+    };
+  }, [baseSettlement, latestDriverWeek, payrollDetail]);
   const holdsForWeek = useMemo(() => {
     if (!settlement) return [];
     return settlementHolds.filter((hold) => hold.driverId === id && hold.weekEnding === settlement.weekEnding);
   }, [id, settlement, settlementHolds]);
 
-  const earnings = settlement ? earningsLines(settlement, method) : [];
-  const deductions = settlement ? deductionLines(settlement, method) : [];
+  const earnings = settlement ? (payrollApplies && payrollDetail ? payrollEarningsLines(payrollDetail) : earningsLines(settlement, method)) : [];
+  const deductions = settlement ? (payrollApplies && payrollDetail ? payrollDeductionLines(payrollDetail) : deductionLines(settlement, method)) : [];
   const earningsTotal = earnings.reduce((sum, line) => sum + line.amount, 0);
   const deductionsTotal = deductions.reduce((sum, line) => sum + line.amount, 0);
+  const payrollReimbursement = payrollApplies && payrollDetail ? payrollDetail.fuelReimbursement : 0;
 
   if (loading) {
     return (
@@ -299,7 +392,7 @@ export default function DriverSettlementsPage({ params, searchParams }: Props) {
               </Link>
               <h1 className="mt-3 text-3xl font-bold text-white">{driver.name} - Weekly Pay Review</h1>
               <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-400">
-                BOF ties this pay review to the exact weekly settlement row from the queue, explains gross-to-net math,
+                BOF ties this pay review to the exact settlement row from the queue, explains gross-to-net math from the active payroll source,
                 tracks proof or safety holds, and shows how different employee and owner-operator pay plans can be governed in one workflow.
               </p>
             </div>
@@ -350,7 +443,7 @@ export default function DriverSettlementsPage({ params, searchParams }: Props) {
               </div>
               <div className="rounded-xl border border-slate-800 bg-slate-900/70 p-5">
                 <div className="flex items-center justify-between text-slate-400">
-                  <span className="text-sm">Gross pay from queue</span>
+                  <span className="text-sm">{payrollApplies ? "Gross pay from Payroll" : "Gross pay from queue"}</span>
                   <DollarSign className="h-4 w-4 text-green-300" />
                 </div>
                 <div className="mt-3 text-3xl font-bold text-white">{currency(settlement.grossPay)}</div>
@@ -358,7 +451,7 @@ export default function DriverSettlementsPage({ params, searchParams }: Props) {
               </div>
               <div className="rounded-xl border border-slate-800 bg-slate-900/70 p-5">
                 <div className="flex items-center justify-between text-slate-400">
-                  <span className="text-sm">Deductions from queue</span>
+                  <span className="text-sm">{payrollApplies ? "Payroll deductions" : "Deductions from queue"}</span>
                   <AlertTriangle className="h-4 w-4 text-orange-300" />
                 </div>
                 <div className="mt-3 text-3xl font-bold text-orange-300">{currency(settlement.totalDeductions)}</div>
@@ -392,7 +485,7 @@ export default function DriverSettlementsPage({ params, searchParams }: Props) {
                 </div>
               </div>
               <p className="mt-4 text-sm text-teal-100/80">
-                Reconciliation check for {formatDisplayDate(settlement.weekEnding)}: this page uses the same weekly settlement row shown in the queue.
+                Reconciliation check for {formatDisplayDate(settlement.weekEnding)}: this page uses the same source values shown in the settlement queue.
               </p>
             </section>
 
@@ -403,7 +496,7 @@ export default function DriverSettlementsPage({ params, searchParams }: Props) {
                   <h2 className="text-xl font-semibold text-white">Weekly Gross-to-Net Explanation</h2>
                 </div>
                 <p className="mt-2 text-sm text-slate-400">
-                  These rows reconcile to the exact weekly settlement amount from the settlement queue.
+                  These rows reconcile to the exact gross, deduction, and net amounts shown in the settlement queue.
                 </p>
                 <div className="mt-5 grid gap-5 lg:grid-cols-2">
                   <div>
@@ -467,6 +560,12 @@ export default function DriverSettlementsPage({ params, searchParams }: Props) {
                       {currency(settlement.grossPay)} - {currency(settlement.totalDeductions)} = {currency(settlement.netPay)}
                     </div>
                   </div>
+                  {payrollReimbursement > 0 && (
+                    <div className="mt-3 rounded-lg border border-cyan-400/25 bg-cyan-400/10 p-3 text-sm text-cyan-100">
+                      Fuel reimbursement tracked in Payroll: <span className="font-semibold">{currency(payrollReimbursement)}</span>.
+                      The workbook net pay for this run is calculated from gross pay minus total deductions.
+                    </div>
+                  )}
                 </div>
               </div>
 

@@ -6,7 +6,7 @@ import { DollarSign, Users, Calendar, TrendingUp, AlertTriangle, CheckCircle, Cl
 import { getV3OperationalData, isV3DataAvailable } from "@/lib/v3-operational-loader";
 import { formatDisplayDate } from "@/lib/date-utils";
 import { SettlementsAssetCards } from "@/components/settlements-v3/SettlementsAssetCards";
-import type { WeeklySettlement, SettlementHold } from "@/lib/v3-operational-types";
+import type { PayrollSettlementDetail, WeeklySettlement, SettlementHold } from "@/lib/v3-operational-types";
 
 function getLatestSettlementWeek(rows: WeeklySettlement[]) {
   return Array.from(new Set(rows.map((row) => row.weekEnding)))
@@ -15,8 +15,124 @@ function getLatestSettlementWeek(rows: WeeklySettlement[]) {
     .pop() ?? "";
 }
 
+function settlementStatusFromPayroll(status: string, fallback: string) {
+  const normalized = status.trim().toLowerCase();
+  if (normalized === "paid") return "Paid";
+  if (normalized === "pending") return "Pending";
+  if (normalized === "on hold" || normalized === "hold") return "On Hold";
+  return fallback;
+}
+
+function mergePayrollIntoSettlement(
+  settlement: WeeklySettlement | undefined,
+  payroll: PayrollSettlementDetail,
+  weekEnding: string
+): WeeklySettlement {
+  return {
+    weekEnding: settlement?.weekEnding || weekEnding,
+    driverId: payroll.driverId,
+    driverName: settlement?.driverName || payroll.driverName,
+    grossPay: payroll.grossPay,
+    totalDeductions: payroll.totalDeductions,
+    netPay: payroll.netPay,
+    fleetOwnerProfit: settlement?.fleetOwnerProfit ?? 0,
+    driverProfitabilityScore: settlement?.driverProfitabilityScore ?? 0,
+    settlementStatus: settlementStatusFromPayroll(payroll.status, settlement?.settlementStatus || "Pending"),
+    settlementPacketComplete: settlement?.settlementPacketComplete ?? payroll.status.toLowerCase() === "paid",
+    settlementApprovedBy: settlement?.settlementApprovedBy ?? "",
+    settlementApprovalTimestamp: settlement?.settlementApprovalTimestamp ?? "",
+  };
+}
+
+function statusClass(status: string) {
+  const normalized = status.trim().toLowerCase();
+  if (["approved", "complete", "paid", "ready"].includes(normalized)) {
+    return "bg-green-500/20 text-green-400 border border-green-500/30";
+  }
+  if (["pending", "under review"].includes(normalized)) {
+    return "bg-yellow-500/20 text-yellow-400 border border-yellow-500/30";
+  }
+  return "bg-red-500/20 text-red-400 border border-red-500/30";
+}
+
+function payrollCategorySummary(rows: PayrollSettlementDetail[]) {
+  const sum = (pick: (row: PayrollSettlementDetail) => number) =>
+    rows.reduce((total, row) => total + pick(row), 0);
+
+  const taxWithholding = sum((row) =>
+    row.fica + row.oasdi + row.federalWithholding + row.stateWithholding + row.sdi + row.fmLeave
+  );
+  const benefitsAndSavings = sum((row) =>
+    row.insurancePremiums +
+    row.creditUnionSavingsClub +
+    row.contribution401k +
+    row.hsaFsaHealthDeduction +
+    row.healthInsurancePremiums +
+    row.lifeInsuranceAbove50k
+  );
+  const supportAndGarnishment = sum((row) => row.familySupport + row.garnishmentAmount);
+  const advancesChargebacksEscrow = sum((row) =>
+    row.advanceRepayment + row.chargebackTotal + row.escrowContribution
+  );
+  const totalDeductions = sum((row) => row.totalDeductions);
+  const itemizedDeductions =
+    taxWithholding + benefitsAndSavings + supportAndGarnishment + advancesChargebacksEscrow;
+
+  return [
+    {
+      label: "Base earnings",
+      value: sum((row) => row.baseEarnings),
+      hint: "Mileage, hourly, salary, or base settlement earnings.",
+      tone: "text-green-300",
+    },
+    {
+      label: "Backhaul and safety pay",
+      value: sum((row) => row.backhaulPay + row.safetyBonus),
+      hint: "Backhaul incentives and safety/performance bonuses.",
+      tone: "text-teal-300",
+    },
+    {
+      label: "Tax withholding",
+      value: taxWithholding,
+      hint: "FICA, OASDI, federal, state, SDI, and FM leave.",
+      tone: "text-orange-300",
+    },
+    {
+      label: "Benefits and savings",
+      value: benefitsAndSavings,
+      hint: "Insurance, 401(k), HSA/FSA, and credit union deductions.",
+      tone: "text-blue-300",
+    },
+    {
+      label: "Support / garnishment",
+      value: supportAndGarnishment,
+      hint: "Family support and garnishment withholding.",
+      tone: "text-red-300",
+    },
+    {
+      label: "Advances, chargebacks, escrow",
+      value: advancesChargebacksEscrow,
+      hint: "Repayments, chargebacks, and escrow contribution controls.",
+      tone: "text-purple-300",
+    },
+    {
+      label: "Fuel reimbursements tracked",
+      value: sum((row) => row.fuelReimbursement),
+      hint: "Approved fuel reimbursement amounts tracked outside gross pay.",
+      tone: "text-cyan-300",
+    },
+    {
+      label: "Other payroll deductions",
+      value: Math.max(0, totalDeductions - itemizedDeductions),
+      hint: "Workbook total-deduction balance not itemized by named columns.",
+      tone: "text-slate-200",
+    },
+  ];
+}
+
 export function SettlementsV3Simple() {
   const [settlements, setSettlements] = useState<WeeklySettlement[]>([]);
+  const [payrollSettlements, setPayrollSettlements] = useState<PayrollSettlementDetail[]>([]);
   const [holds, setHolds] = useState<SettlementHold[]>([]);
   const [selectedWeek, setSelectedWeek] = useState("");
   const [loading, setLoading] = useState(true);
@@ -41,6 +157,7 @@ export function SettlementsV3Simple() {
         const v3Data = await getV3OperationalData();
         
         setSettlements(v3Data.weeklySettlements);
+        setPayrollSettlements(v3Data.payrollSettlements);
         setHolds(v3Data.settlementHolds);
         setSelectedWeek((current) => current || getLatestSettlementWeek(v3Data.weeklySettlements));
         
@@ -130,6 +247,7 @@ export function SettlementsV3Simple() {
     ];
 
     setSettlements(fallbackSettlements);
+    setPayrollSettlements([]);
     setHolds(fallbackHolds);
     setSelectedWeek((current) => current || getLatestSettlementWeek(fallbackSettlements));
   };
@@ -141,6 +259,7 @@ export function SettlementsV3Simple() {
   }, [settlements]);
 
   const activeWeek = selectedWeek || availableWeeks[0] || "N/A";
+  const latestSettlementWeek = availableWeeks[0] || "";
 
   const selectedWeekSettlements = useMemo(() => {
     const byDriver = new Map<string, WeeklySettlement>();
@@ -153,8 +272,25 @@ export function SettlementsV3Simple() {
         }
       });
 
+    if (activeWeek === latestSettlementWeek && payrollSettlements.length > 0) {
+      payrollSettlements.forEach((payroll) => {
+        byDriver.set(
+          payroll.driverId,
+          mergePayrollIntoSettlement(byDriver.get(payroll.driverId), payroll, activeWeek)
+        );
+      });
+    }
+
     return Array.from(byDriver.values()).sort((a, b) => a.driverName.localeCompare(b.driverName));
-  }, [activeWeek, settlements]);
+  }, [activeWeek, latestSettlementWeek, payrollSettlements, settlements]);
+
+  const selectedPayrollRows = useMemo(() => {
+    if (activeWeek !== latestSettlementWeek) return [];
+    const selectedDriverIds = new Set(selectedWeekSettlements.map((settlement) => settlement.driverId));
+    return payrollSettlements.filter((row) => selectedDriverIds.has(row.driverId));
+  }, [activeWeek, latestSettlementWeek, payrollSettlements, selectedWeekSettlements]);
+
+  const payrollCategories = useMemo(() => payrollCategorySummary(selectedPayrollRows), [selectedPayrollRows]);
 
   const selectedWeekHolds = useMemo(() => {
     return holds.filter((hold) => hold.weekEnding === activeWeek);
@@ -373,6 +509,36 @@ export function SettlementsV3Simple() {
         </div>
       </div>
 
+      {/* Payroll category breakdown */}
+      {selectedPayrollRows.length > 0 && (
+        <div className="max-w-7xl mx-auto px-6 pb-6">
+          <section className="rounded-xl border border-slate-800 bg-slate-900/50 p-6">
+            <div className="flex flex-col gap-2 md:flex-row md:items-end md:justify-between">
+              <div>
+                <h2 className="text-xl font-semibold text-white">Payroll Expense Categories</h2>
+                <p className="mt-1 text-sm text-slate-400">
+                  Latest week gross-to-net detail is sourced from the V4 Payroll sheet. Earlier weeks remain available from Weekly_Settlements history.
+                </p>
+              </div>
+              <div className="text-sm text-slate-500">
+                {selectedPayrollRows.length} payroll rows reconciled
+              </div>
+            </div>
+            <div className="mt-5 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+              {payrollCategories.map((category) => (
+                <div key={category.label} className="rounded-lg border border-slate-800 bg-slate-950/55 p-4">
+                  <div className="text-sm text-slate-400">{category.label}</div>
+                  <div className={`mt-2 text-2xl font-bold ${category.tone}`}>
+                    {formatCurrency(category.value)}
+                  </div>
+                  <p className="mt-2 text-xs leading-5 text-slate-500">{category.hint}</p>
+                </div>
+              ))}
+            </div>
+          </section>
+        </div>
+      )}
+
       {/* Settlements Table */}
       <div className="max-w-7xl mx-auto px-6 pb-6">
         <div className="bg-slate-900/50 backdrop-blur-sm border border-slate-800 rounded-xl overflow-hidden">
@@ -473,11 +639,7 @@ export function SettlementsV3Simple() {
                       </td>
                       <td className="text-center px-6 py-4">
                         <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                          settlement.settlementStatus === "Approved" 
-                            ? "bg-green-500/20 text-green-400 border border-green-500/30"
-                            : settlement.settlementStatus === "Pending"
-                            ? "bg-yellow-500/20 text-yellow-400 border border-yellow-500/30"
-                            : "bg-red-500/20 text-red-400 border border-red-500/30"
+                          statusClass(settlement.settlementStatus)
                         }`}>
                           {settlement.settlementStatus}
                         </span>

@@ -11,6 +11,7 @@ import { parseToDate } from './date-utils';
 import type {
   V3OperationalData,
   WeeklySettlement,
+  PayrollSettlementDetail,
   SettlementHold,
   MainSafety,
   SafetyEvent,
@@ -79,6 +80,7 @@ async function parseV3Workbook(workbookPath: string): Promise<V3OperationalData>
     
     const data: V3OperationalData = {
       weeklySettlements: [],
+      payrollSettlements: [],
       settlementHolds: [],
       mainSafety: [],
       safetyEvents: [],
@@ -104,6 +106,7 @@ async function parseV3Workbook(workbookPath: string): Promise<V3OperationalData>
     
     // Parse each sheet
     const sheetParsers = {
+      'Payroll': parsePayrollSettlements,
       'Weekly_Settlements': parseWeeklySettlements,
       'Settlement_Holds': parseSettlementHolds,
       'Main Safety': parseMainSafety,
@@ -129,6 +132,7 @@ async function parseV3Workbook(workbookPath: string): Promise<V3OperationalData>
           const parsedData = parser(stringData);
           const propertyName = getPropertyName(sheetName);
     if (propertyName === 'weeklySettlements') data.weeklySettlements = parsedData as WeeklySettlement[];
+    else if (propertyName === 'payrollSettlements') data.payrollSettlements = parsedData as PayrollSettlementDetail[];
     else if (propertyName === 'settlementHolds') data.settlementHolds = parsedData as SettlementHold[];
     else if (propertyName === 'mainSafety') data.mainSafety = parsedData as MainSafety[];
     else if (propertyName === 'safetyEvents') data.safetyEvents = parsedData as SafetyEvent[];
@@ -165,6 +169,7 @@ async function parseV3Workbook(workbookPath: string): Promise<V3OperationalData>
     // Debug/validation logs
     console.log(`📊 ${workbookVersion} Operational Data Validation Report:`);
     console.log(`  Weekly_Settlements: ${data.weeklySettlements.length} rows`);
+    console.log(`  Payroll: ${data.payrollSettlements.length} rows`);
     console.log(`  Settlement_Holds: ${data.settlementHolds.length} rows`);
     console.log(`  Operational_Risk_Queue: ${data.operationalRiskQueue.length} rows`);
     console.log(`  Compliance_Action_Queue: ${data.complianceActionQueue.length} rows`);
@@ -278,6 +283,7 @@ async function parseV3Workbook(workbookPath: string): Promise<V3OperationalData>
 function getPropertyName(sheetName: string): string {
   const nameMap: Record<string, string> = {
     'Weekly_Settlements': 'weeklySettlements',
+    'Payroll': 'payrollSettlements',
     'Settlement_Holds': 'settlementHolds',
     'Main Safety': 'mainSafety',
     'Safety_Events': 'safetyEvents',
@@ -320,9 +326,80 @@ function parseWeeklySettlements(data: string[][]): WeeklySettlement[] {
       fleetOwnerProfit: Number(obj['FleetOwnerProfit']) || 0,
       driverProfitabilityScore: Number(obj['DriverProfitabilityScore']) || 0,
       settlementStatus: String(obj['SettlementStatus'] || ''),
-      settlementPacketComplete: Boolean(obj['SettlementPacketComplete']),
+      settlementPacketComplete: parseWorkbookBoolean(obj['SettlementPacketComplete']),
       settlementApprovedBy: String(obj['SettlementApprovedBy'] || ''),
       settlementApprovalTimestamp: parseToDate(String(obj['SettlementApprovalTimestamp'])),
+    };
+  }).filter(settlement => settlement.driverId && validDrivers.includes(settlement.driverId));
+}
+
+function parsePayrollSettlements(data: string[][]): PayrollSettlementDetail[] {
+  const [headers, ...rows] = data;
+  const validDrivers = ['DRV-001', 'DRV-002', 'DRV-003', 'DRV-004', 'DRV-005', 'DRV-006', 'DRV-007', 'DRV-008', 'DRV-009', 'DRV-010', 'DRV-011', 'DRV-012'];
+
+  return rows.map(row => {
+    const obj: Record<string, unknown> = {};
+    headers.forEach((header, index) => {
+      obj[String(header || '').trim()] = row[index];
+    });
+
+    const driverId = normalizePayrollDriverId(firstValue(obj, ['Driver', 'Driver ID', 'Legacy Driver ID']));
+
+    return {
+      driverId,
+      driverName: firstValue(obj, ['Name', 'Full Name', 'Driver Name']),
+      baseEarnings: firstNumber(obj, ['Base Earnings', 'Base Pay', 'Base']),
+      backhaulPay: firstNumber(obj, ['Backhaul Pay', 'Backhaul']),
+      safetyBonus: firstNumber(obj, ['Safety Bonus', 'Safety Bonus Pay']),
+      grossPay: firstNumber(obj, ['Gross Pay', 'Gross']),
+      fica: firstNumber(obj, ['FICA', 'Medicare/FICA', 'Medicare']),
+      oasdi: firstNumber(obj, ['OASDI', 'Social Security']),
+      federalWithholding: firstNumber(obj, ['Federal Withholding', 'Federal WH', 'Federal Tax']),
+      stateWithholding: firstNumber(obj, ['State Withholding', 'State WH', 'State Tax']),
+      sdi: firstNumber(obj, ['SDI', 'State Disability Insurance']),
+      fmLeave: firstNumber(obj, ['FM Leave', 'Paid Family Leave', 'Family Medical Leave']),
+      familySupport: firstNumber(obj, ['Family Support', 'Child Support']),
+      insurancePremiums: firstNumber(obj, ['Insurance Premiums', 'Insurance']),
+      creditUnionSavingsClub: firstNumber(obj, ['Credit Union Savings Club', 'Credit Union']),
+      contribution401k: firstNumber(obj, ['401(k) Contribution', '401(k) Contrib.', '401k Contribution']),
+      hsaFsaHealthDeduction: firstNumber(obj, ['HSA/FSA Health Deduction', 'HSA/FSA Health', 'HSA/FSA']),
+      healthInsurancePremiums: firstNumber(obj, ['Health Insurance Premiums', 'Health Ins. Prem.', 'Health Insurance Premium']),
+      lifeInsuranceAbove50k: firstNumber(obj, ['Life Insurance Above 50k', 'Life Ins. >50k', 'Life Insurance Over 50k']),
+      totalDeductions: firstNumber(obj, ['Total Deductions', 'Deductions']),
+      fuelReimbursement: firstNumber(obj, ['Fuel Reimb.', 'Fuel Reimbursement', 'Fuel Reimb']),
+      netPay: firstNumber(obj, ['Net Pay', 'Net']),
+      status: firstValue(obj, ['Status']),
+      pendingReason: firstValue(obj, ['Pending Reason', 'Hold Reason']),
+      rate401k: firstNumber(obj, ['401(k) Rate', '401k Rate']),
+      payModelType: firstValue(obj, ['Pay Model Type']),
+      percentageRate: firstNumber(obj, ['Percentage Rate', ' Percentage Rate']),
+      cpmRateLoaded: firstNumber(obj, ['CPM Rate (Loaded)', ' CPM Rate (Loaded)']),
+      cpmRateEmpty: firstNumber(obj, ['CPM Rate (Empty)', ' CPM Rate (Empty)']),
+      hourlyRate: firstNumber(obj, ['Hourly Rate', ' Hourly Rate']),
+      minimumWeeklyGuarantee: firstNumber(obj, ['Minimum Weekly Guarantee', ' Minimum Weekly Guarantee']),
+      detentionRate: firstNumber(obj, ['Detention Rate (per hour)', ' Detention Rate (per hour)']),
+      layoverRate: firstNumber(obj, ['Layover Rate (per day)', ' Layover Rate (per day)']),
+      breakdownPayRate: firstNumber(obj, ['Breakdown Pay Rate', ' Breakdown Pay Rate']),
+      stopPay: firstNumber(obj, ['Stop Pay (per stop)', ' Stop Pay (per stop)']),
+      tarpPay: firstNumber(obj, ['Tarp Pay', ' Tarp Pay']),
+      hazmatPremium: firstNumber(obj, ['Hazmat Premium', ' Hazmat Premium']),
+      tankerPremium: firstNumber(obj, ['Tanker Premium', ' Tanker Premium']),
+      twicPremium: firstNumber(obj, ['TWIC Premium', ' TWIC Premium']),
+      safetyBonusEligible: firstValue(obj, ['Safety Bonus Eligible (Y/N)', ' Safety Bonus Eligible (Y/N)']),
+      safetyBonusTier: firstValue(obj, ['Safety Bonus Tier', ' Safety Bonus Tier']),
+      safetyBonusAmount: firstNumber(obj, ['Safety Bonus Amount', ' Safety Bonus Amount']),
+      fuelBonusEligible: firstValue(obj, ['Fuel Bonus Eligible (Y/N)', ' Fuel Bonus Eligible (Y/N)']),
+      fuelBonusRate: firstNumber(obj, ['Fuel Bonus Rate', ' Fuel Bonus Rate']),
+      inspectionBonus: firstNumber(obj, ['Inspection Bonus', ' Inspection Bonus']),
+      adminExcellenceBonus: firstNumber(obj, ['Admin Excellence Bonus', ' Admin Excellence Bonus']),
+      assetCareBonus: firstNumber(obj, ['Asset Care Bonus', ' Asset Care Bonus']),
+      advanceTaken: firstNumber(obj, ['Advance Taken', ' Advance Taken']),
+      advanceRepayment: firstNumber(obj, ['Advance Repayment', ' Advance Repayment']),
+      chargebacksItemized: firstValue(obj, ['Chargebacks (Itemized)', ' Chargebacks (Itemized)']),
+      chargebackTotal: firstNumber(obj, ['Chargeback Total', ' Chargeback Total']),
+      garnishmentAmount: firstNumber(obj, ['Garnishment Amount', ' Garnishment Amount']),
+      escrowContribution: firstNumber(obj, ['Escrow Contribution', ' Escrow Contribution']),
+      escrowBalance: firstNumber(obj, ['Escrow Balance', ' Escrow Balance']),
     };
   }).filter(settlement => settlement.driverId && validDrivers.includes(settlement.driverId));
 }
@@ -616,6 +693,75 @@ function parseRfidEvents(data: string[][]): RfidEvent[] {
   });
 }
 
+function firstValue(obj: Record<string, unknown>, keys: string[]): string {
+  for (const key of keys) {
+    const value = obj[key];
+    if (value !== undefined && value !== null && String(value).trim() !== '') {
+      return String(value).trim();
+    }
+  }
+  return '';
+}
+
+function firstNumber(obj: Record<string, unknown>, keys: string[]): number {
+  for (const key of keys) {
+    const value = obj[key];
+    if (value !== undefined && value !== null && String(value).trim() !== '') {
+      const parsed = Number(value);
+      if (Number.isFinite(parsed)) return parsed;
+    }
+  }
+  return 0;
+}
+
+function splitList(value: string): string[] {
+  return value
+    .split(',')
+    .map((item) => item.trim())
+    .filter(Boolean);
+}
+
+function parseWorkbookBoolean(value: unknown): boolean {
+  const normalized = String(value ?? '').trim().toLowerCase();
+  return ['true', 'yes', 'y', '1', 'complete', 'ready', 'recommended', 'required'].includes(normalized);
+}
+
+function normalizePayrollDriverId(value: string): string {
+  const trimmed = value.trim().toUpperCase();
+  if (trimmed.startsWith('DVR-')) return trimmed.replace('DVR-', 'DRV-');
+  return trimmed;
+}
+
+function normalizeDemoLoadId(value: string): string {
+  const trimmed = value.trim();
+  const legacyMatch = trimmed.match(/^L-(\d{3})$/i);
+  if (!legacyMatch) return trimmed;
+
+  const sequence = Number(legacyMatch[1]) - 500;
+  if (!Number.isFinite(sequence) || sequence < 1 || sequence > 999) return trimmed;
+  return `L${String(sequence).padStart(3, '0')}`;
+}
+
+function riskLabelFromScore(score: number): string {
+  if (score >= 70) return 'High';
+  if (score >= 50) return 'Medium';
+  if (score > 0) return 'Low';
+  return '';
+}
+
+function safetyRatingFromText(value: string): number {
+  switch (value.trim().toLowerCase()) {
+    case 'high':
+      return 5;
+    case 'medium':
+      return 4;
+    case 'low':
+      return 3;
+    default:
+      return 0;
+  }
+}
+
 function parseRouteIntelligence(data: string[][]): RouteIntelligence[] {
   const [headers, ...rows] = data;
   return rows.map(row => {
@@ -623,24 +769,32 @@ function parseRouteIntelligence(data: string[][]): RouteIntelligence[] {
     headers.forEach((header, index) => {
       routeData[header] = row[index];
     });
+    const routeRiskScore = firstNumber(routeData, ['Route Risk Score']);
+    const restStopsPlanned = firstNumber(routeData, ['Rest Stops Planned']);
+    const fuelStopsPlanned = firstNumber(routeData, ['Fuel Stops Planned']);
+    const routeNotes = firstValue(routeData, ['Route Notes', 'Route Summary']);
     return {
-      routeId: String(routeData['Route ID'] || ''),
-      loadId: String(routeData['Load ID'] || ''),
-      driverId: String(routeData['Driver ID'] || ''),
-      origin: String(routeData['Origin'] || ''),
-      destination: String(routeData['Destination'] || ''),
-      originCoordinates: [Number(routeData['Origin Latitude']) || 0, Number(routeData['Origin Longitude']) || 0],
-      destinationCoordinates: [Number(routeData['Destination Latitude']) || 0, Number(routeData['Destination Longitude']) || 0],
-      mileage: Number(routeData['Mileage']) || 0,
-      estimatedDriveTime: Number(routeData['Estimated Drive Time']) || 0,
-      routeRisk: String(routeData['Route Risk'] || ''),
-      hosPlanningNotes: String(routeData['HOS Planning Notes'] || ''),
-      weatherRisk: String(routeData['Weather Risk'] || ''),
-      trafficRisk: String(routeData['Traffic Risk'] || ''),
-      recommendedRestStops: String(routeData['Recommended Rest Stops'] || '').split(',').map(s => s.trim()).filter(s => s),
-      fuelStops: String(routeData['Fuel Stops'] || '').split(',').map(s => s.trim()).filter(s => s),
-      routeSummary: String(routeData['Route Summary'] || ''),
-      managerActionRequired: Boolean(routeData['Manager Action Required']),
+      routeId: firstValue(routeData, ['Route ID']),
+      loadId: normalizeDemoLoadId(firstValue(routeData, ['Load ID'])),
+      driverId: firstValue(routeData, ['Driver ID']),
+      origin: firstValue(routeData, ['Origin']),
+      destination: firstValue(routeData, ['Destination']),
+      originCoordinates: [firstNumber(routeData, ['Origin Latitude']), firstNumber(routeData, ['Origin Longitude'])],
+      destinationCoordinates: [firstNumber(routeData, ['Destination Latitude']), firstNumber(routeData, ['Destination Longitude'])],
+      mileage: firstNumber(routeData, ['Mileage', 'Planned Miles']),
+      estimatedDriveTime:
+        firstNumber(routeData, ['Estimated Drive Time']) ||
+        Math.round(firstNumber(routeData, ['Estimated Drive Hours']) * 60),
+      routeRisk: firstValue(routeData, ['Route Risk']) || riskLabelFromScore(routeRiskScore),
+      hosPlanningNotes:
+        firstValue(routeData, ['HOS Planning Notes']) ||
+        `${restStopsPlanned} planned rest stop${restStopsPlanned === 1 ? '' : 's'} and ${fuelStopsPlanned} fuel stop${fuelStopsPlanned === 1 ? '' : 's'} on this route.`,
+      weatherRisk: firstValue(routeData, ['Weather Risk']),
+      trafficRisk: firstValue(routeData, ['Traffic Risk']),
+      recommendedRestStops: splitList(firstValue(routeData, ['Recommended Rest Stops'])),
+      fuelStops: splitList(firstValue(routeData, ['Fuel Stops'])),
+      routeSummary: routeNotes,
+      managerActionRequired: parseWorkbookBoolean(routeData['Manager Action Required']),
     };
   });
 }
@@ -652,21 +806,30 @@ function parseDieselPricing(data: string[][]): DieselPricing[] {
     headers.forEach((header, index) => {
       obj[header] = row[index];
     });
+    const stationName = firstValue(obj, ['Location', 'Station Name']);
+    const city = firstValue(obj, ['City']);
+    const state = firstValue(obj, ['State']);
+    const brand = firstValue(obj, ['Brand']);
+    const location = stationName && city && state ? `${stationName} - ${city}, ${state}` : stationName;
+    const recommended = firstValue(obj, ['Preferred Stop', 'Fuel Stop Recommended?']);
     return {
-      pricingId: String(obj['Pricing ID'] || ''),
-      location: String(obj['Location'] || ''),
-      coordinates: [Number(obj['Latitude']) || 0, Number(obj['Longitude']) || 0],
-      dieselPrice: Number(obj['Diesel Price']) || 0,
-      priceTimestamp: String(obj['Price Timestamp'] || ''),
-      source: String(obj['Source'] || ''),
-      routePosition: Number(obj['Route Position']) || 0,
-      preferredStop: Boolean(obj['Preferred Stop']),
-      estimatedGallons: Number(obj['Estimated Gallons']) || 0,
-      estimatedFuelCost: Number(obj['Estimated Fuel Cost']) || 0,
-      savingsOpportunity: Number(obj['Savings Opportunity']) || 0,
-      amenities: String(obj['Amenities'] || '').split(',').map(s => s.trim()).filter(s => s),
-      managerActionRequired: Boolean(obj['Manager Action Required']),
-      currency: String(obj['Currency'] || 'USD'),
+      pricingId: firstValue(obj, ['Pricing ID', 'Price ID']),
+      routeId: firstValue(obj, ['Route ID']),
+      loadId: normalizeDemoLoadId(firstValue(obj, ['Load ID'])),
+      location,
+      brand,
+      coordinates: [firstNumber(obj, ['Latitude']), firstNumber(obj, ['Longitude'])],
+      dieselPrice: firstNumber(obj, ['Diesel Price', 'Demo Diesel Price']),
+      priceTimestamp: firstValue(obj, ['Price Timestamp']),
+      source: firstValue(obj, ['Source', 'Source Type']),
+      routePosition: firstNumber(obj, ['Route Position', 'Stop Sequence']),
+      preferredStop: ['yes', 'preferred'].includes(recommended.trim().toLowerCase()),
+      estimatedGallons: firstNumber(obj, ['Estimated Gallons', 'Gallons Planned']),
+      estimatedFuelCost: firstNumber(obj, ['Estimated Fuel Cost']),
+      savingsOpportunity: firstNumber(obj, ['Savings Opportunity']),
+      amenities: splitList(firstValue(obj, ['Amenities'])),
+      managerActionRequired: parseWorkbookBoolean(obj['Manager Action Required']),
+      currency: firstValue(obj, ['Currency']) || 'USD',
     };
   });
 }
@@ -678,20 +841,34 @@ function parseRestStopLocations(data: string[][]): RestStopLocation[] {
     headers.forEach((header, index) => {
       obj[header] = row[index];
     });
+    const stopName = firstValue(obj, ['Location', 'Rest Stop Name']);
+    const city = firstValue(obj, ['City']);
+    const state = firstValue(obj, ['State']);
+    const location = stopName && city && state ? `${stopName} - ${city}, ${state}` : stopName;
+    const amenities = splitList(firstValue(obj, ['Amenities']));
+    const parkingConfidence = firstValue(obj, ['Parking Confidence']);
+    const safetyRating = firstNumber(obj, ['Safety Rating']) || safetyRatingFromText(firstValue(obj, ['Security Level', 'Parking Confidence']));
+    const parkingAvailable =
+      parseWorkbookBoolean(obj['Parking Available']) ||
+      ['high', 'medium'].includes(parkingConfidence.trim().toLowerCase());
     return {
-      stopId: String(obj['Stop ID'] || ''),
-      location: String(obj['Location'] || ''),
-      coordinates: [Number(obj['Latitude']) || 0, Number(obj['Longitude']) || 0],
-      distanceFromRoute: Number(obj['Distance from Route']) || 0,
-      parkingAvailable: Boolean(obj['Parking Available']),
-      parkingSpaces: Number(obj['Parking Spaces']) || 0,
-      showerAvailable: Boolean(obj['Shower Available']),
-      foodAvailable: Boolean(obj['Food Available']),
-      amenities: String(obj['Amenities'] || '').split(',').map(a => a.trim()).filter(a => a),
-      safetyRating: Number(obj['Safety Rating']) || 0,
-      recommendedForHos: Boolean(obj['Recommended for HOS']),
-      hosBreakRecommendation: String(obj['HOS Break Recommendation'] || ''),
-      managerActionRequired: Boolean(obj['Manager Action Required']),
+      stopId: firstValue(obj, ['Stop ID', 'Rest Stop ID']),
+      routeId: firstValue(obj, ['Route ID']),
+      loadId: normalizeDemoLoadId(firstValue(obj, ['Load ID'])),
+      location,
+      coordinates: [firstNumber(obj, ['Latitude']), firstNumber(obj, ['Longitude'])],
+      distanceFromRoute: firstNumber(obj, ['Distance from Route', 'Distance From Route', 'Distance From Origin']),
+      parkingAvailable,
+      parkingSpaces: firstNumber(obj, ['Parking Spaces']) || (parkingAvailable ? 25 : 0),
+      showerAvailable: parseWorkbookBoolean(obj['Shower Available']) || amenities.some((a) => /shower/i.test(a)),
+      foodAvailable: parseWorkbookBoolean(obj['Food Available']) || amenities.some((a) => /food/i.test(a)),
+      amenities,
+      safetyRating,
+      recommendedForHos:
+        parseWorkbookBoolean(obj['Recommended for HOS']) ||
+        firstValue(obj, ['HOS Break Fit', 'Stop Type']).trim().length > 0,
+      hosBreakRecommendation: firstValue(obj, ['HOS Break Recommendation', 'HOS Break Fit', 'Manager Note']),
+      managerActionRequired: parseWorkbookBoolean(obj['Manager Action Required']),
     };
   });
 }

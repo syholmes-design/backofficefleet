@@ -50,6 +50,7 @@ export function DispatchShell() {
 
   const loadIdParam = searchParams.get("loadId");
   const driverIdParam = searchParams.get("driverId");
+  const viewParam = searchParams.get("view");
 
   useEffect(() => {
     if (loads.length === 0) return;
@@ -58,7 +59,11 @@ export function DispatchShell() {
       setNav("board");
     }
     if (loadIdParam && loads.some((l) => l.load_id === loadIdParam)) {
-      setNav("board");
+      if (viewParam === "load-detail" || viewParam === "assign" || viewParam === "exceptions" || viewParam === "settlement") {
+        setNav(viewParam);
+      } else {
+        setNav("board");
+      }
       selectLoad(loadIdParam);
       openLoadDrawer(loadIdParam);
     }
@@ -66,6 +71,7 @@ export function DispatchShell() {
     loads,
     loadIdParam,
     driverIdParam,
+    viewParam,
     setBoardFilters,
     setNav,
     selectLoad,
@@ -73,13 +79,12 @@ export function DispatchShell() {
   ]);
 
   useEffect(() => {
-    const view = searchParams.get("view");
-    if (view === "load-detail" || view === "assign" || view === "exceptions" || view === "settlement") {
-      setNav(view);
+    if (viewParam === "load-detail" || viewParam === "assign" || viewParam === "exceptions" || viewParam === "settlement") {
+      setNav(viewParam);
     } else {
       setNav("board");
     }
-  }, [searchParams, setNav]);
+  }, [viewParam, setNav]);
 
   return (
     <div className="flex min-h-[calc(100vh-3.5rem)] bg-slate-950 text-slate-100">
