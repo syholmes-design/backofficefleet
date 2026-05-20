@@ -45,14 +45,14 @@ export function RouteSupportWidget({
       aria-labelledby={`route-support-${loadId}`}
     >
       <h2 id={`route-support-${loadId}`} className="route-support-title">
-        Route support · Next rest stop
+        Route support - Next rest stop
       </h2>
       <p className="route-support-lane bof-small">
         Lane: <span className="route-support-lane-text">{model.laneLabel}</span>
         {model.hasRoutePolyline ? (
-          <span className="route-support-meta"> · BOF route polyline on file</span>
+          <span className="route-support-meta"> - route polyline on file</span>
         ) : (
-          <span className="route-support-meta"> · Straight-line demo geometry only</span>
+          <span className="route-support-meta"> - lane planning geometry</span>
         )}
       </p>
 
@@ -64,9 +64,9 @@ export function RouteSupportWidget({
         <p className="route-support-name">{model.primary.name}</p>
         <p className="route-support-metrics">
           <strong>{model.primary.distanceMiles} mi</strong>
-          <span aria-hidden> · </span>
+          <span aria-hidden> - </span>
           <strong>~{model.primary.etaMinutes} min</strong>
-          <span className="route-support-metrics-hint"> (demo ETA from illustrative position)</span>
+          <span className="route-support-metrics-hint"> dispatch ETA</span>
         </p>
         <div className="route-support-amenities" aria-label="Amenities">
           {model.primary.amenities.map((a) => (
@@ -83,7 +83,7 @@ export function RouteSupportWidget({
               <li key={`${s.name}-${idx}`}>
                 <span className="route-support-list-name">{s.name}</span>
                 <span className="route-support-list-meta">
-                  {s.stopType} · {s.distanceMiles} mi · ~{s.etaMinutes} min ·{" "}
+                  {s.stopType} - {s.distanceMiles} mi - ~{s.etaMinutes} min -{" "}
                   <span className="route-support-list-parking">{s.parking}</span>
                 </span>
               </li>
@@ -103,7 +103,7 @@ export function RouteSupportWidget({
           <Link href={`/loads/${loadId}`} className="bof-link-secondary">
             Load detail
           </Link>
-          {" · "}
+          {" - "}
           <Link href={`/pretrip/${loadId}`} className="bof-link-secondary">
             Pre-trip tablet
           </Link>

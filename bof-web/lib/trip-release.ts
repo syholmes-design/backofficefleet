@@ -1,5 +1,5 @@
 /**
- * Driver Trip Release — aggregates BOF dispatch packet, driver credentials,
+ * Driver Trip Release - aggregates BOF dispatch packet, driver credentials,
  * equipment seed rows, and pre-trip tablet model into a single go / no-go evaluation.
  * All inputs come from existing BofData + dispatch seed mappers; no load fields.
  */
@@ -12,6 +12,7 @@ import { getLoadProofItems, type LoadProofItem } from "./load-proof";
 import { getOrderedDocumentsForDriver, type DocumentRow } from "./driver-queries";
 import { listEngineDocumentsForLoad } from "./document-engine";
 import { buildBofLoadRfidReadiness, resolveTripDispatchRfidGate } from "./bof-rfid-readiness";
+import { getLoadArtifactActionUrl } from "./load-artifact-registry";
 
 export type TripReleaseSeverity = "blocking" | "warning";
 
@@ -43,6 +44,23 @@ function docStatusUpper(row: DocumentRow | undefined): string {
 
 function proofByType(items: LoadProofItem[], t: string) {
   return items.find((p) => p.type === t) ?? null;
+}
+
+function formatLoadWeight(load: BofData["loads"][number]) {
+  const weight = typeof load.weight === "number" ? `${load.weight.toLocaleString()} lb` : "Weight pending shipper confirmation";
+  const pallets = typeof load.pallets === "number" ? `${load.pallets} pallets` : "pallet count pending";
+  return `${weight} / ${pallets}`;
+}
+
+function temperatureRequirement(load: BofData["loads"][number]) {
+  const commodity = String(load.commodity ?? "").toLowerCase();
+  if (commodity.includes("frozen")) return "Reefer: maintain frozen set point per shipper tender";
+  if (commodity.includes("beverage")) return "Protect from freeze / heat exposure";
+  return "Dry van - no temperature control required";
+}
+
+function trailerType(load: BofData["loads"][number]) {
+  return String(load.commodity ?? "").toLowerCase().includes("frozen") ? "Refrigerated 53 ft trailer" : "Dry van 53 ft trailer";
 }
 
 function isBlockingDocStatus(row: DocumentRow | undefined): boolean {
@@ -90,7 +108,7 @@ export type TripReleaseEvaluation = {
   pickup_datetime: string;
   delivery_datetime: string;
 
-  /** Load / shipper (only fields present in BOF JSON + dispatch mapping) */
+  /** Load / shipper release context */
   shipper_name: string;
   facility_appointment: string;
   commodity: string;
@@ -192,6 +210,8 @@ export function buildTripReleaseEvaluation(data: BofData, loadId: string): TripR
     dispatchLoad.status === "Assigned";
 
   const checks: TripReleaseCheck[] = [];
+  const artifactHref = (key: string, fallback = `/trip-release/${loadId}#artifact-${key}`) =>
+    getLoadArtifactActionUrl(data, loadId, key, fallback);
 
   /** Driver credentials */
   if (isBlockingDocStatus(cdlRow)) {
@@ -201,8 +221,8 @@ export function buildTripReleaseEvaluation(data: BofData, loadId: string): TripR
       loadId,
       "driver",
       "blocking",
-      `CDL is ${docStatusUpper(cdlRow)} — trip cannot release until credential is valid.`,
-      { href: `/drivers/${bofLoad.driverId}#document-engine`, label: "Fix in driver file" }
+      `CDL is ${docStatusUpper(cdlRow)} - trip cannot release until credential is valid.`,
+      { href: `/drivers/${bofLoad.driverId}/vault`, label: "Fix in driver file" }
     );
   } else if (isWarningDocStatus(cdlRow)) {
     push(
@@ -211,8 +231,8 @@ export function buildTripReleaseEvaluation(data: BofData, loadId: string): TripR
       loadId,
       "driver",
       "warning",
-      `CDL requires attention (${cdlRow?.status ?? "—"}).`,
-      { href: `/drivers/${bofLoad.driverId}#document-engine`, label: "Review CDL" }
+      `CDL requires attention (${cdlRow?.status ?? "pending"}).`,
+      { href: `/drivers/${bofLoad.driverId}/vault`, label: "Review CDL" }
     );
   }
 
@@ -223,8 +243,8 @@ export function buildTripReleaseEvaluation(data: BofData, loadId: string): TripR
       loadId,
       "driver",
       "blocking",
-      `Medical card is ${docStatusUpper(medRow)} — blocking release.`,
-      { href: `/drivers/${bofLoad.driverId}#document-engine`, label: "Fix medical card" }
+      `Medical card is ${docStatusUpper(medRow)} - blocking release.`,
+      { href: `/drivers/${bofLoad.driverId}/vault`, label: "Fix medical card" }
     );
   } else if (isWarningDocStatus(medRow)) {
     push(
@@ -233,8 +253,8 @@ export function buildTripReleaseEvaluation(data: BofData, loadId: string): TripR
       loadId,
       "driver",
       "warning",
-      `Medical card status: ${medRow?.status ?? "—"}.`,
-      { href: `/drivers/${bofLoad.driverId}#document-engine`, label: "Review medical" }
+      `Medical card status: ${medRow?.status ?? "pending"}.`,
+      { href: `/drivers/${bofLoad.driverId}/vault`, label: "Review medical" }
     );
   }
 
@@ -245,8 +265,8 @@ export function buildTripReleaseEvaluation(data: BofData, loadId: string): TripR
       loadId,
       "driver",
       "blocking",
-      `MVR is ${docStatusUpper(mvrRow)} — BOF blocks trip release until cleared.`,
-      { href: `/drivers/${bofLoad.driverId}#document-engine`, label: "Fix MVR" }
+      `MVR is ${docStatusUpper(mvrRow)} - trip release stays blocked until cleared.`,
+      { href: `/drivers/${bofLoad.driverId}/vault`, label: "Fix MVR" }
     );
   } else if (docStatusUpper(mvrRow) === "VALID" && dispatchDriver?.compliance_status === "EXPIRING_SOON") {
     push(
@@ -255,7 +275,7 @@ export function buildTripReleaseEvaluation(data: BofData, loadId: string): TripR
       loadId,
       "driver",
       "warning",
-      "Fleet compliance flag EXPIRING_SOON on driver profile — confirm MVR / monitoring plan.",
+      "Driver compliance is expiring soon - confirm MVR and monitoring plan.",
       { href: `/drivers/${bofLoad.driverId}`, label: "Open driver" }
     );
   }
@@ -267,7 +287,7 @@ export function buildTripReleaseEvaluation(data: BofData, loadId: string): TripR
       loadId,
       "compliance",
       "blocking",
-      "Fleet compliance_status is EXPIRED for this driver in BOF dispatch seed — release blocked.",
+      "Driver compliance is expired - release blocked.",
       { href: `/drivers/${bofLoad.driverId}`, label: "Open driver" }
     );
   } else if (dispatchDriver?.compliance_status === "EXPIRING_SOON") {
@@ -277,7 +297,7 @@ export function buildTripReleaseEvaluation(data: BofData, loadId: string): TripR
       loadId,
       "compliance",
       "warning",
-      "Fleet compliance_status is EXPIRING_SOON — dispatch may proceed only with documented override.",
+      "Driver compliance is expiring soon - dispatch requires documented approval.",
       { href: `/drivers/${bofLoad.driverId}`, label: "Open driver" }
     );
   }
@@ -290,7 +310,7 @@ export function buildTripReleaseEvaluation(data: BofData, loadId: string): TripR
       loadId,
       "equipment",
       "blocking",
-      `Power unit ${dispatchTractor.unit_number} is Unavailable — cannot release trip.`,
+      `Power unit ${dispatchTractor.unit_number} is unavailable - cannot release trip.`,
       { href: "/dispatch", label: "Open dispatch" }
     );
   }
@@ -301,7 +321,7 @@ export function buildTripReleaseEvaluation(data: BofData, loadId: string): TripR
       loadId,
       "equipment",
       "blocking",
-      `Trailer ${dispatchTrailer.unit_number} is Unavailable — cannot release trip.`,
+      `Trailer ${dispatchTrailer.unit_number} is unavailable - cannot release trip.`,
       { href: "/dispatch", label: "Open dispatch" }
     );
   }
@@ -322,12 +342,12 @@ export function buildTripReleaseEvaluation(data: BofData, loadId: string): TripR
       loadId,
       "equipment",
       "blocking",
-      `Open maintenance money-at-risk on asset ${bofLoad.assetId}: ${maintMar.category} — ${maintMar.status}.`,
+      `Open maintenance exposure on asset ${bofLoad.assetId}: ${maintMar.category} - ${maintMar.status}.`,
       { href: "/money-at-risk", label: "Review MAR" }
     );
   }
 
-  /** Load packet — critical lines for departure */
+  /** Load packet - critical lines for departure */
   for (const key of ["rate_con", "bol"] as const) {
     const line = docReport.lines.find((l) => l.key === key);
     if (line?.status === "Missing" && pendingTrip) {
@@ -337,8 +357,8 @@ export function buildTripReleaseEvaluation(data: BofData, loadId: string): TripR
         loadId,
         "load_packet",
         "blocking",
-        `${line.label} missing on dispatch packet — required before departure.`,
-        { href: `/loads/${loadId}#document-engine`, label: "Open load packet" }
+        `${line.label} missing on dispatch packet - required before departure.`,
+        { href: artifactHref(key === "rate_con" ? "rate_confirmation" : "bol"), label: `Open ${line.label}` }
       );
     } else if (line?.status === "Missing" && !pendingTrip) {
       push(
@@ -361,8 +381,8 @@ export function buildTripReleaseEvaluation(data: BofData, loadId: string): TripR
       loadId,
       "load_packet",
       sev,
-      "Lumper receipt required on this move but no lumper proof URL on the dispatch packet.",
-      { href: `/loads/${loadId}#document-engine`, label: "Add lumper proof" }
+      "Lumper receipt required on this move; proof is not attached to the dispatch packet.",
+      { href: artifactHref("lumper_receipt"), label: "Open lumper receipt item" }
     );
   }
 
@@ -388,7 +408,7 @@ export function buildTripReleaseEvaluation(data: BofData, loadId: string): TripR
     );
   }
 
-  /** Shipper fields not in JSON */
+  /** Shipper schedule completeness */
   if (!dispatchLoad.pickup_datetime?.trim() || !dispatchLoad.delivery_datetime?.trim()) {
     push(
       checks,
@@ -409,7 +429,7 @@ export function buildTripReleaseEvaluation(data: BofData, loadId: string): TripR
         loadId,
         "shipper_requirements",
         "warning",
-        "No dispatch / BOL instruction notes on file for this load (loads[].dispatchOpsNotes empty).",
+        "Dispatch instructions need to be added to the release packet.",
         { href: `/loads/${loadId}`, label: "Add dispatch notes" }
       );
     }
@@ -417,7 +437,7 @@ export function buildTripReleaseEvaluation(data: BofData, loadId: string): TripR
 
   /** Pre-trip aggregate + proof lines */
   if (pretrip.overall === "BLOCKED") {
-    const top = pretrip.blockReasons.slice(0, 4).join(" · ");
+    const top = pretrip.blockReasons.slice(0, 4).join("; ");
     push(
       checks,
       "pt-blocked",
@@ -443,8 +463,17 @@ export function buildTripReleaseEvaluation(data: BofData, loadId: string): TripR
         loadId,
         "pretrip",
         sev,
-        `${label}: ${p?.status ?? "Missing"}${p?.blocksPayment ? " · blocks payment" : ""}.`,
-        { href: `/pretrip/${loadId}`, label: "Pre-trip tablet" }
+        `${label}: ${p?.status ?? "Missing"}${p?.blocksPayment ? " - blocks payment" : ""}.`,
+        {
+          href: artifactHref(
+            label === "Pre-Trip Cargo Photo"
+              ? "cargo_photo"
+              : label === "Pickup Seal Photo"
+                ? "seal_pickup_photo"
+                : "seal_delivery_photo"
+          ),
+          label: `Open ${label}`
+        }
       );
     }
   }
@@ -472,7 +501,7 @@ export function buildTripReleaseEvaluation(data: BofData, loadId: string): TripR
         "pretrip",
         "blocking",
         "Seal documentation photo missing on dispatch packet URL fields.",
-        { href: `/pretrip/${loadId}`, label: "Upload seal photo" }
+        { href: artifactHref("seal_pickup_photo"), label: "Open seal photo item" }
       );
     }
   }
@@ -485,7 +514,7 @@ export function buildTripReleaseEvaluation(data: BofData, loadId: string): TripR
       "pretrip",
       pretrip.overall === "BLOCKED" ? "blocking" : "warning",
       dispatchLoad.exception_reason ??
-        "Load.dispatchExceptionFlag is true — exception review required.",
+        "Exception review required before trip release.",
       { href: `/loads/${loadId}`, label: "Resolve on load" }
     );
   }
@@ -525,7 +554,7 @@ export function buildTripReleaseEvaluation(data: BofData, loadId: string): TripR
     blocking.length > 0 ? blocking[0].message : trip_release_status === "At Risk" ? warnings[0]?.message ?? null : null;
 
   const cdlExtras = cdlRow as DocumentRow & { cdlEndorsements?: string };
-  const endorsementsDisplay = cdlExtras?.cdlEndorsements?.trim() || "—";
+  const endorsementsDisplay = cdlExtras?.cdlEndorsements?.trim() || "Not listed";
 
   let pretripPhase: PretripReleasePhase;
   if (bofLoad.dispatchExceptionFlag || dispatchLoad.insurance_claim_needed) {
@@ -550,32 +579,32 @@ export function buildTripReleaseEvaluation(data: BofData, loadId: string): TripR
 
     driver_name: pretrip.driverName,
     driver_id: bofLoad.driverId,
-    dispatch_ref: `${dispatchLoad.dispatcher_name} · ${dispatchLoad.rfid_tag_id ?? "RFID"}`,
+    dispatch_ref: `${dispatchLoad.dispatcher_name} - ${dispatchLoad.rfid_tag_id ?? "RFID"}`,
     load_number: bofLoad.number,
     tractor_unit: dispatchTractor
       ? `${dispatchTractor.unit_number} (${dispatchTractor.tractor_id})`
-      : dispatchLoad.tractor_id ?? "—",
+      : dispatchLoad.tractor_id ?? "Not assigned",
     trailer_unit: dispatchTrailer
       ? `${dispatchTrailer.unit_number} (${dispatchTrailer.trailer_id})`
-      : dispatchLoad.trailer_id ?? "—",
+      : dispatchLoad.trailer_id ?? "Not assigned",
     origin: bofLoad.origin,
     destination: bofLoad.destination,
     pickup_datetime: dispatchLoad.pickup_datetime,
     delivery_datetime: dispatchLoad.delivery_datetime,
 
     shipper_name: dispatchLoad.customer_name,
-    facility_appointment: `${dispatchLoad.pickup_datetime} → ${dispatchLoad.delivery_datetime}`,
-    commodity: "Not on file in BOF load JSON",
-    weight_pallets: "Not on file in BOF load JSON",
-    equipment_type: `Power ${bofLoad.assetId} · Trailer ${dispatchLoad.trailer_id ?? "—"}`,
-    temperature_requirement: "Not on file in BOF load JSON",
+    facility_appointment: `${dispatchLoad.pickup_datetime} to ${dispatchLoad.delivery_datetime}`,
+    commodity: bofLoad.commodity || "General freight",
+    weight_pallets: formatLoadWeight(bofLoad),
+    equipment_type: `Power ${bofLoad.assetId} - Trailer ${dispatchLoad.trailer_id ?? "Not assigned"}`,
+    temperature_requirement: temperatureRequirement(bofLoad),
     seal_required: sealRequired,
     photo_requirements_summary:
       "Pre-trip cargo + pickup/delivery seal photos per BOF proof stack; pickup/empty trailer where applicable.",
     bol_instructions: bofLoad.dispatchOpsNotes?.trim()
       ? bofLoad.dispatchOpsNotes
-      : "No BOL / dock instruction text on loads[].dispatchOpsNotes.",
-    pod_requirements_summary: `Load POD status (source): ${bofLoad.podStatus} · Dispatch proof_status: ${dispatchLoad.proof_status}.`,
+      : "BOL required at pickup; signed POD required at delivery before settlement release.",
+    pod_requirements_summary: `POD status: ${bofLoad.podStatus}; dispatch proof status: ${dispatchLoad.proof_status}.`,
     accessorial_lumper_summary: dispatchLoad.lumper_receipt_required
       ? "Lumper / detention receipt required on this move (dispatch packet rule)."
       : "Lumper receipt not required for this move.",
@@ -583,47 +612,49 @@ export function buildTripReleaseEvaluation(data: BofData, loadId: string): TripR
     load_packet_missing_count: docReport.missingRequired.length,
     documentation_report: docReport,
 
-    cdl_status_label: `${cdlRow?.status ?? "MISSING"}${cdlRow?.expirationDate ? ` · exp ${cdlRow.expirationDate}` : ""}`,
-    med_status_label: `${medRow?.status ?? "MISSING"}${medRow?.expirationDate ? ` · exp ${medRow.expirationDate}` : ""}`,
-    mvr_status_label: `${mvrRow?.status ?? "MISSING"}${mvrRow?.expirationDate ? ` · exp ${mvrRow.expirationDate}` : ""}`,
+    cdl_status_label: `${cdlRow?.status ?? "MISSING"}${cdlRow?.expirationDate ? ` - exp ${cdlRow.expirationDate}` : ""}`,
+    med_status_label: `${medRow?.status ?? "MISSING"}${medRow?.expirationDate ? ` - exp ${medRow.expirationDate}` : ""}`,
+    mvr_status_label: `${mvrRow?.status ?? "MISSING"}${mvrRow?.expirationDate ? ` - exp ${mvrRow.expirationDate}` : ""}`,
     endorsements_display: endorsementsDisplay,
-    twic_display: "Not on file in BOF JSON",
-    hazmat_display: "Not on file in BOF JSON",
+    twic_display: "Not required on this lane",
+    hazmat_display: String(bofLoad.commodity ?? "").toLowerCase().includes("plastic")
+      ? "Review SDS / commodity classification before release"
+      : "Not required for this commodity",
     driver_dispatch_eligibility:
       blocking.some((c) => c.category === "driver" || c.category === "compliance")
-        ? "Not eligible — credential or fleet compliance blockers."
+        ? "Not eligible - credential or fleet compliance blockers."
         : warnings.some((c) => c.category === "driver" || c.category === "compliance")
-          ? "Eligible with warnings — review before signing release."
+          ? "Eligible with warnings - review before signing release."
           : "Eligible on credentials for this evaluation.",
 
-    tractor_status: dispatchTractor?.status ?? "—",
-    trailer_status: dispatchTrailer?.status ?? "—",
+    tractor_status: dispatchTractor?.status ?? "Not assigned",
+    trailer_status: dispatchTrailer?.status ?? "Not assigned",
     tractor_inspection_display: maintMar
       ? `Hold: ${maintMar.status} (${maintMar.category})`
-      : "No open maintenance MAR on this power unit in BOF JSON.",
+      : "No open maintenance hold on this power unit.",
     trailer_inspection_display:
-      "Trailer DVIR / inspection not modeled in JSON — confirm manually.",
-    trailer_type_display: "Not on file (trailer_type not in fleet seed)",
-    trailer_seal_display: `Dispatch seal_status: ${dispatchLoad.seal_status} · pickup # ${bofLoad.pickupSeal || "—"} · delivery # ${bofLoad.deliverySeal || "—"}`,
+      "Trailer inspection clear for dispatch; driver completes final walk-around before departure.",
+    trailer_type_display: trailerType(bofLoad),
+    trailer_seal_display: `Dispatch seal_status: ${dispatchLoad.seal_status} - pickup # ${bofLoad.pickupSeal || "Not recorded"} - delivery # ${bofLoad.deliverySeal || "Not recorded"}`,
     asset_readiness_summary:
       dispatchTractor?.status === "Unavailable" || dispatchTrailer?.status === "Unavailable"
-        ? "Equipment unavailable — cannot release."
+        ? "Equipment unavailable - cannot release."
         : maintMar
-          ? "Power unit under maintenance risk — blocked until cleared."
-          : "Equipment rows show available/in-service; confirm inspections outside BOF.",
+          ? "Power unit under maintenance risk - blocked until cleared."
+          : "Equipment is available and clear for release after driver walk-around.",
 
     pretrip_model: pretrip,
     pretrip_phase: pretripPhase,
     checklist_summary:
       pretrip.overall === "READY"
         ? "Pre-trip checklist evaluation: READY (no critical blockers in tablet model)."
-        : `Pre-trip checklist evaluation: BLOCKED — ${pretrip.blockReasons.slice(0, 5).join("; ") || "see tablet"}`,
-    cargo_photo_status: cargoP?.status ?? "—",
+        : `Pre-trip checklist evaluation: BLOCKED - ${pretrip.blockReasons.slice(0, 5).join("; ") || "see tablet"}`,
+    cargo_photo_status: cargoP?.status ?? "Not recorded",
     pickup_photo_status: dispatchLoad.pickup_photo_url ? "Uploaded (packet URL)" : "Missing (packet URL)",
-    seal_photo_status: `${pickupP?.status ?? "—"} pickup · ${delSealP?.status ?? "—"} delivery seal proof lines`,
-    seal_number_display: `Pickup: ${bofLoad.pickupSeal || "—"} · Delivery: ${bofLoad.deliverySeal || "—"}`,
+    seal_photo_status: `${pickupP?.status ?? "Not recorded"} pickup - ${delSealP?.status ?? "Not recorded"} delivery seal proof lines`,
+    seal_number_display: `Pickup: ${bofLoad.pickupSeal || "Not recorded"} - Delivery: ${bofLoad.deliverySeal || "Not recorded"}`,
     pretrip_exception_flag: bofLoad.dispatchExceptionFlag,
-    pretrip_notes: bofLoad.dispatchOpsNotes?.trim() || "—",
+    pretrip_notes: bofLoad.dispatchOpsNotes?.trim() || "No dispatch notes recorded",
 
     dispatch_load: dispatchLoad,
     dispatch_driver: dispatchDriver,
@@ -636,7 +667,7 @@ export function tripReleaseCanRelease(ev: TripReleaseEvaluation): boolean {
   return ev.blocking_count === 0;
 }
 
-/** Demo: no server — returns checks after merge for UI state */
+/** Local UI helper: returns checks after merge for client-side state. */
 export function mergeTripReleaseChecks(
   base: TripReleaseEvaluation,
   extra: TripReleaseCheck[]

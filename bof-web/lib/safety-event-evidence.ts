@@ -1,4 +1,5 @@
 import type { SafetyEvent } from "@/lib/v3-operational-types";
+import { getLoadEvidenceUrl } from "@/lib/load-documents";
 
 export type SafetyEventEvidence = {
   url: string;
@@ -69,8 +70,46 @@ const SAFETY_EVENT_EVIDENCE: Record<string, SafetyEventEvidence> = {
   },
 };
 
-export function getSafetyEventEvidence(event: Pick<SafetyEvent, "eventId" | "eventPhotoUrl">): SafetyEventEvidence | null {
-  return SAFETY_EVENT_EVIDENCE[event.eventId] ?? null;
+function isClaimOrDamageEvent(event: Partial<Pick<SafetyEvent, "eventType" | "insuranceClaimNeeded" | "claimAmount">>) {
+  return Boolean(event.insuranceClaimNeeded) ||
+    Number(event.claimAmount ?? 0) > 0 ||
+    /claim|damage|accident|dock|seal|cargo|collision|tire/i.test(String(event.eventType ?? ""));
+}
+
+type SafetyEvidenceEventInput =
+  Pick<SafetyEvent, "eventId" | "eventPhotoUrl"> &
+  Partial<Pick<SafetyEvent, "linkedLoadId" | "eventType" | "insuranceClaimNeeded" | "claimAmount">>;
+
+export function getSafetyEventEvidence(event: SafetyEvidenceEventInput): SafetyEventEvidence | null {
+  const loadId = /^L\d{3}$/.test(String(event.linkedLoadId ?? "")) ? event.linkedLoadId : "";
+  if (loadId && isClaimOrDamageEvent(event)) {
+    const claimUrl =
+      getLoadEvidenceUrl(loadId, "cargoDamagePhoto") ??
+      getLoadEvidenceUrl(loadId, "claimEvidence") ??
+      getLoadEvidenceUrl(loadId, "damagePhoto") ??
+      getLoadEvidenceUrl(loadId, "sealMismatchPhoto");
+    if (claimUrl) {
+      return {
+        url: claimUrl,
+        label: `${loadId} claim / damage photo`,
+        note: "Load-linked claim evidence from the canonical proof folder.",
+      };
+    }
+  }
+
+  const registered = SAFETY_EVENT_EVIDENCE[event.eventId];
+  if (registered) return registered;
+
+  const eventPhotoUrl = String(event.eventPhotoUrl ?? "").trim();
+  if (eventPhotoUrl) {
+    return {
+      url: eventPhotoUrl,
+      label: "Safety event photo",
+      note: "Photo evidence attached to the safety event record.",
+    };
+  }
+
+  return null;
 }
 
 export function getSafetyEventEvidenceUrl(event: Pick<SafetyEvent, "eventId" | "eventPhotoUrl">): string | null {

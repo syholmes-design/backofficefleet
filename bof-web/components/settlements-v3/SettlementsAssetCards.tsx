@@ -1,7 +1,10 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useMemo } from "react";
+
 import { AssetCard, type AssetCardProps } from "@/components/shared/AssetCard";
+import { useBofDemoData } from "@/lib/bof-demo-data-context";
+import { buildLoadPacketRegistry, type LoadPacketItem } from "@/lib/load-artifact-registry";
 
 interface SettlementsAssetCardsProps {
   loadId?: string;
@@ -9,193 +12,191 @@ interface SettlementsAssetCardsProps {
   settlementWeek?: string;
 }
 
-export function SettlementsAssetCards({ loadId, driverId, settlementWeek }: SettlementsAssetCardsProps) {
-  const [assets, setAssets] = useState<AssetCardProps[]>([]);
-  const [loading, setLoading] = useState(true);
+type SettlementAssetDefinition = {
+  key: string;
+  fallbackTitle: string;
+  thumbnail: string;
+  description: string;
+  fileSize: string;
+  settlementOnly?: boolean;
+};
 
-  useEffect(() => {
-    loadSettlementAssets();
-  }, [loadId, driverId, settlementWeek]);
+const SETTLEMENT_DOCUMENT_PATH = "/evidence/support/settlement-documents";
 
-  const loadSettlementAssets = async () => {
-    try {
-      setLoading(true);
-      const assetCards: AssetCardProps[] = [];
-      const settlementDocumentPath = "/evidence/support/settlement-documents";
-      const hasLumperSupport = loadId === "L003" || loadId === "L008";
+const SETTLEMENT_ASSETS: SettlementAssetDefinition[] = [
+  {
+    key: "settlement_packet",
+    fallbackTitle: "Settlement Packet",
+    thumbnail: `${SETTLEMENT_DOCUMENT_PATH}/settlement-packet-preview.svg`,
+    description: "Driver gross-to-net settlement summary, deductions, holds, and release status.",
+    fileSize: "~50 KB",
+    settlementOnly: true,
+  },
+  {
+    key: "invoice",
+    fallbackTitle: "Invoice",
+    thumbnail: `${SETTLEMENT_DOCUMENT_PATH}/invoice-preview.svg`,
+    description: "Customer invoice with linehaul, accessorials, and billing status.",
+    fileSize: "~10 KB",
+  },
+  {
+    key: "bol",
+    fallbackTitle: "Bill of Lading",
+    thumbnail: `${SETTLEMENT_DOCUMENT_PATH}/bill-of-lading-preview.svg`,
+    description: "Signed BOL reference tied to load and settlement release.",
+    fileSize: "~25 KB",
+  },
+  {
+    key: "pod",
+    fallbackTitle: "Proof of Delivery",
+    thumbnail: `${SETTLEMENT_DOCUMENT_PATH}/proof-of-delivery-preview.svg`,
+    description: "Delivery signature and timestamp used for settlement release.",
+    fileSize: "~18 KB",
+  },
+  {
+    key: "pickup_photo",
+    fallbackTitle: "Pickup Photo",
+    thumbnail: "",
+    description: "Pickup facility proof tied to the load record.",
+    fileSize: "~250 KB",
+  },
+  {
+    key: "cargo_photo",
+    fallbackTitle: "Cargo Pickup Photo",
+    thumbnail: "",
+    description: "Cargo condition, count, and securement photo before departure.",
+    fileSize: "~300 KB",
+  },
+  {
+    key: "seal_pickup_photo",
+    fallbackTitle: "Pickup Seal Photo",
+    thumbnail: "",
+    description: "Seal photo captured before leaving shipper custody.",
+    fileSize: "~220 KB",
+  },
+  {
+    key: "seal_delivery_photo",
+    fallbackTitle: "Delivery Seal Photo",
+    thumbnail: "",
+    description: "Receiver-side seal proof for proof-chain continuity.",
+    fileSize: "~220 KB",
+  },
+  {
+    key: "delivery_empty_trailer",
+    fallbackTitle: "Delivery / Empty Trailer Proof",
+    thumbnail: "",
+    description: "Receiver-side delivery closeout and empty trailer proof.",
+    fileSize: "~300 KB",
+  },
+  {
+    key: "rate_confirmation",
+    fallbackTitle: "Rate Confirmation",
+    thumbnail: `${SETTLEMENT_DOCUMENT_PATH}/rate-confirmation-preview.svg`,
+    description: "Broker/customer rate confirmation and accessorial terms.",
+    fileSize: "~15 KB",
+  },
+  {
+    key: "settlement_hold_notice",
+    fallbackTitle: "Settlement Hold Notice",
+    thumbnail: `${SETTLEMENT_DOCUMENT_PATH}/settlement-hold-evidence-preview.svg`,
+    description: "Settlement hold evidence summary with reason, amount, and required fix.",
+    fileSize: "~20 KB",
+  },
+  {
+    key: "lumper_receipt",
+    fallbackTitle: "Lumper Receipt",
+    thumbnail: `${SETTLEMENT_DOCUMENT_PATH}/lumper-receipt-preview.svg`,
+    description: "Lumper receipt with vendor, amount, and reimbursement status.",
+    fileSize: "~900 KB",
+  },
+  {
+    key: "claim_packet",
+    fallbackTitle: "Claim Evidence",
+    thumbnail: `${SETTLEMENT_DOCUMENT_PATH}/claim-chargeback-preview.svg`,
+    description: "Chargeback/claim evidence packet tied to cargo condition and amount at risk.",
+    fileSize: "~8 KB",
+  },
+  {
+    key: "factoring_notification",
+    fallbackTitle: "Post-Trip Factoring Packet",
+    thumbnail: `${SETTLEMENT_DOCUMENT_PATH}/factoring-packet-preview.svg`,
+    description: "Invoice, BOL, POD, rate confirmation, and proof checklist for factoring.",
+    fileSize: "~45 KB",
+  },
+];
 
-      if (loadId) {
-        // Settlement Packet
-        assetCards.push({
-          title: "Settlement Packet",
-          status: "ready",
-          thumbnail: `${settlementDocumentPath}/settlement-packet-preview.svg`,
-          openLink: `/generated/settlements/${loadId}/settlement-summary.html`,
-          relatedEntity: {
-            type: "settlement",
-            id: loadId,
-            name: `Settlement ${loadId}`,
-          },
-          description: "Driver gross-to-net settlement summary, deductions, holds, and release status",
-          fileSize: "~50 KB",
-          lastUpdated: settlementWeek || "This week",
-        });
+function assetStatus(item?: LoadPacketItem): AssetCardProps["status"] {
+  if (!item) return "missing";
+  if (item.category === "exceptions" && item.status !== "not_applicable" && item.status !== "ready") return "exception";
+  if (item.status === "ready") return "ready";
+  if (item.status === "missing") return "missing";
+  return "pending";
+}
 
-        // Invoice
-        assetCards.push({
-          title: "Invoice",
-          status: "ready",
-          thumbnail: `${settlementDocumentPath}/invoice-preview.svg`,
-          openLink: `/generated/loads/${loadId}/invoice.html`,
-          relatedEntity: {
-            type: "load",
-            id: loadId,
-            name: loadId,
-          },
-          description: "Customer invoice with linehaul, accessorials, and billing status",
-          fileSize: "~10 KB",
-          lastUpdated: "Today",
-        });
+function isImageUrl(url?: string) {
+  return /\.(png|jpe?g|webp|gif|svg)$/i.test(String(url ?? "").split("?")[0]);
+}
 
-        // Bill of Lading (BOL)
-        assetCards.push({
-          title: "Bill of Lading",
-          status: "ready",
-          thumbnail: `${settlementDocumentPath}/bill-of-lading-preview.svg`,
-          openLink: `/generated/loads/${loadId}/bol.html`,
-          relatedEntity: {
-            type: "load",
-            id: loadId,
-            name: loadId,
-          },
-          description: "Signed BOL reference tied to load and settlement release",
-          fileSize: "~25 KB",
-          lastUpdated: "Today",
-        });
-
-        // Proof of Delivery (POD)
-        assetCards.push({
-          title: "Proof of Delivery",
-          status: "ready",
-          thumbnail: `${settlementDocumentPath}/proof-of-delivery-preview.svg`,
-          openLink: `/generated/loads/${loadId}/pod.html`,
-          relatedEntity: {
-            type: "load",
-            id: loadId,
-            name: loadId,
-          },
-          description: "Delivery signature and timestamp used for settlement release",
-          fileSize: "~18 KB",
-          lastUpdated: "Today",
-        });
-
-        // Rate Confirmation
-        assetCards.push({
-          title: "Rate Confirmation",
-          status: "ready",
-          thumbnail: `${settlementDocumentPath}/rate-confirmation-preview.svg`,
-          openLink: `/generated/loads/${loadId}/rate-confirmation.html`,
-          relatedEntity: {
-            type: "load",
-            id: loadId,
-            name: loadId,
-          },
-          description: "Broker/customer rate confirmation and accessorial terms",
-          fileSize: "~15 KB",
-          lastUpdated: "Today",
-        });
-
-        // Hold Reason Evidence
-        assetCards.push({
-          title: "Hold Evidence",
-          status: "pending",
-          thumbnail: `${settlementDocumentPath}/settlement-hold-evidence-preview.svg`,
-          openLink: `/generated/loads/${loadId}/claim-packet.html`,
-          relatedEntity: {
-            type: "load",
-            id: loadId,
-            name: loadId,
-          },
-          description: "Settlement hold evidence summary with reason, amount, and required fix",
-          fileSize: "~20 KB",
-          lastUpdated: "Today",
-        });
-
-        // Lumper Receipt (if relevant)
-        assetCards.push({
-          title: "Lumper Receipt",
-          status: hasLumperSupport ? "ready" : "pending",
-          thumbnail: `${settlementDocumentPath}/lumper-receipt-preview.svg`,
-          openLink: hasLumperSupport
-            ? `/generated/settlements/${loadId}/lumper-reimbursement-support.html`
-            : undefined,
-          relatedEntity: {
-            type: "load",
-            id: loadId,
-            name: loadId,
-          },
-          description: "Lumper receipt with vendor, amount, and reimbursement status",
-          fileSize: "~900 KB",
-          lastUpdated: "Today",
-        });
-
-        // Claim/Chargeback Evidence (if relevant)
-        assetCards.push({
-          title: "Claim Evidence",
-          status: "pending",
-          thumbnail: `${settlementDocumentPath}/claim-chargeback-preview.svg`,
-          openLink: `/generated/loads/${loadId}/damage-photo-packet.html`,
-          relatedEntity: {
-            type: "load",
-            id: loadId,
-            name: loadId,
-          },
-          description: "Chargeback/claim evidence packet tied to cargo condition and amount at risk",
-          fileSize: "~8 KB",
-          lastUpdated: "Today",
-        });
-
-        // Post-Trip Factoring Packet
-        assetCards.push({
-          title: "Post-Trip Factoring Packet",
-          status: loadId === "L011" ? "ready" : "missing",
-          thumbnail: `${settlementDocumentPath}/factoring-packet-preview.svg`,
-          openLink: loadId === "L011" 
-            ? `/generated/factoring/${loadId}/post-trip-factoring-packet.html`
-            : undefined,
-          relatedEntity: {
-            type: "load",
-            id: loadId,
-            name: loadId,
-          },
-          description: "Invoice, BOL, POD, rate-con, and proof checklist for factoring",
-          fileSize: "~45 KB",
-          lastUpdated: "Today",
-        });
-      }
-
-      setAssets(assetCards);
-    } catch (error) {
-      console.error("Failed to load settlement assets:", error);
-    } finally {
-      setLoading(false);
-    }
+function settlementPacketCard(loadId: string, driverId?: string, settlementWeek?: string): AssetCardProps {
+  return {
+    title: "Settlement Packet",
+    status: "ready",
+    thumbnail: `${SETTLEMENT_DOCUMENT_PATH}/settlement-packet-preview.svg`,
+    openLink: driverId ? `/drivers/${driverId}/settlements` : "/settlements",
+    openLabel: "Review pay",
+    relatedEntity: {
+      type: "settlement",
+      id: loadId,
+      name: loadId,
+    },
+    description: "Driver gross-to-net settlement summary, deductions, holds, and release status.",
+    fileSize: "~50 KB",
+    lastUpdated: settlementWeek || "This week",
   };
+}
 
-  if (loading) {
-    return (
-      <div className="bg-slate-900/50 backdrop-blur-sm border border-slate-800 rounded-xl p-6">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500 mx-auto mb-4"></div>
-          <p className="text-slate-400">Loading settlement assets...</p>
-        </div>
-      </div>
-    );
-  }
+function toAssetCard(
+  loadId: string,
+  definition: SettlementAssetDefinition,
+  item: LoadPacketItem | undefined,
+  driverId?: string,
+  settlementWeek?: string
+): AssetCardProps {
+  if (definition.settlementOnly) return settlementPacketCard(loadId, driverId, settlementWeek);
+  return {
+    title: item?.title ?? definition.fallbackTitle,
+    status: assetStatus(item),
+    thumbnail: isImageUrl(item?.canonicalUrl) ? item?.canonicalUrl : definition.thumbnail || undefined,
+    openLink: item?.actionUrl,
+    openLabel: item?.actionLabel,
+    relatedEntity: {
+      type: "load",
+      id: loadId,
+      name: loadId,
+    },
+    description: item?.description ?? definition.description,
+    fileSize: definition.fileSize,
+    lastUpdated: "Today",
+  };
+}
+
+export function SettlementsAssetCards({ loadId, settlementWeek }: SettlementsAssetCardsProps) {
+  const { data } = useBofDemoData();
+  const assets = useMemo(() => {
+    if (!loadId) return [];
+    const registry = buildLoadPacketRegistry(data, loadId);
+    if (!registry) return [];
+    return SETTLEMENT_ASSETS.flatMap((definition) => {
+      if (definition.settlementOnly) return [toAssetCard(loadId, definition, undefined, registry.load.driverId, settlementWeek)];
+      const item = registry.packetItemsByKey[definition.key];
+      if (!item || item.status === "not_applicable") return [];
+      return [toAssetCard(loadId, definition, item, registry.load.driverId, settlementWeek)];
+    });
+  }, [data, loadId, settlementWeek]);
 
   if (assets.length === 0) {
     return (
-      <div className="bg-slate-900/50 backdrop-blur-sm border border-slate-800 rounded-xl p-6">
+      <div className="rounded-xl border border-slate-800 bg-slate-900/50 p-6 backdrop-blur-sm">
         <div className="text-center">
           <p className="text-slate-400">No settlement assets available</p>
         </div>
@@ -205,11 +206,11 @@ export function SettlementsAssetCards({ loadId, driverId, settlementWeek }: Sett
 
   return (
     <div className="space-y-6">
-      <div className="bg-slate-900/50 backdrop-blur-sm border border-slate-800 rounded-xl p-6">
-        <h3 className="text-lg font-semibold text-white mb-6">Settlement Documents</h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {assets.map((asset, index) => (
-            <AssetCard key={index} {...asset} />
+      <div className="rounded-xl border border-slate-800 bg-slate-900/50 p-6 backdrop-blur-sm">
+        <h3 className="mb-6 text-lg font-semibold text-white">Settlement Documents</h3>
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+          {assets.map((asset) => (
+            <AssetCard key={`${asset.relatedEntity?.id}-${asset.title}`} {...asset} />
           ))}
         </div>
       </div>

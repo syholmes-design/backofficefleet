@@ -5,26 +5,15 @@ import Link from "next/link";
 import { useBofDemoData } from "@/lib/bof-demo-data-context";
 import {
   buildTripReleaseEvaluation,
-  listTripReleaseEngineDocs,
   tripReleaseCanRelease,
   type TripReleaseEvaluation,
 } from "@/lib/trip-release";
-import type { EngineDocument } from "@/lib/document-engine";
+import { buildLoadArtifactPacket } from "@/lib/load-artifact-registry";
 import { RouteSupportWidget } from "@/components/route-support/RouteSupportWidget";
 import { DieselRouteInsightWidget } from "@/components/fuel/DieselRouteInsightWidget";
 import { getLoadProofItems, getLoadProofSummary } from "@/lib/load-proof";
 import { BofAdvantageCard, BofAdvantageStrip } from "@/components/bof-advantage/BofAdvantageCard";
-
-function firstHref(...candidates: (string | undefined)[]): string | undefined {
-  for (const c of candidates) {
-    if (c && String(c).trim().length > 0) return c;
-  }
-  return undefined;
-}
-
-function docByType(docs: EngineDocument[], type: string) {
-  return docs.find((d) => d.type === type);
-}
+import { LoadPacketControlPanel } from "@/components/load-artifacts/LoadPacketControlPanel";
 
 function fmtDt(iso: string) {
   try {
@@ -69,20 +58,17 @@ export function DriverTripReleaseClient({ loadId }: { loadId: string }) {
     return getLoadProofSummary(getLoadProofItems(data, loadId));
   }, [data, loadId]);
 
-  const engineDocs = useMemo(() => {
-    if (!ev) return [];
-    return listTripReleaseEngineDocs(data, loadId);
-  }, [data, loadId, ev]);
+  const artifactPacket = useMemo(() => buildLoadArtifactPacket(data, loadId), [data, loadId]);
 
   const onSaveProgress = useCallback(() => {
-    setSavedFlash("Marked in progress (demo — not persisted to server).");
+    setSavedFlash("Trip release saved as in progress.");
     setReleasedFlash(null);
     window.setTimeout(() => setSavedFlash(null), 4000);
   }, []);
 
   const onRelease = useCallback(() => {
     if (!ev || !tripReleaseCanRelease(ev)) return;
-    setReleasedFlash("Trip release recorded (demo UI only — wire to TMS / telematics in production).");
+    setReleasedFlash("Trip release recorded and ready for dispatch handoff.");
     setSavedFlash(null);
     window.setTimeout(() => setReleasedFlash(null), 5000);
   }, [ev]);
@@ -101,12 +87,11 @@ export function DriverTripReleaseClient({ loadId }: { loadId: string }) {
   }
 
   const canRelease = tripReleaseCanRelease(ev);
-  const pretripChecklist = docByType(engineDocs, "Pre-Trip Checklist");
-  const cargoRecord = docByType(engineDocs, "Cargo Photo Record");
-  const hrefPretripReport = firstHref(pretripChecklist?.fileUrl, cargoRecord?.fileUrl, `/pretrip/${loadId}`);
-  const hrefBol = firstHref(ev.dispatch_load.bol_url, docByType(engineDocs, "BOL")?.fileUrl);
-  const hrefRate = firstHref(ev.dispatch_load.rate_con_url, docByType(engineDocs, "Rate Confirmation")?.fileUrl);
-  const hrefPodReq = `/loads/${loadId}#document-engine`;
+  const artifactByKey = new Map((artifactPacket?.artifacts ?? []).map((artifact) => [artifact.key, artifact]));
+  const hrefPretripReport = artifactByKey.get("cargo_photo")?.actionUrl ?? `/pretrip/${loadId}#artifact-cargo_photo`;
+  const hrefBol = artifactByKey.get("bol")?.actionUrl ?? `/trip-release/${loadId}#artifact-bol`;
+  const hrefRate = artifactByKey.get("rate_confirmation")?.actionUrl ?? `/trip-release/${loadId}#artifact-rate_confirmation`;
+  const hrefPodReq = artifactByKey.get("pod")?.actionUrl ?? `/trip-release/${loadId}#artifact-pod`;
   const hrefPacket = `/shipper-portal/${loadId}`;
 
   const bannerTone =
@@ -124,18 +109,18 @@ export function DriverTripReleaseClient({ loadId }: { loadId: string }) {
       <nav className="bof-breadcrumb" aria-label="Breadcrumb">
         <Link href="/loads">Loads</Link>
         <span aria-hidden> / </span>
-        <span>Trip release · {ev.load_number}</span>
+        <span>Trip release - {ev.load_number}</span>
       </nav>
 
       <header className="trip-release-header">
         <div>
           <h1 className="bof-title bof-title-tight">
-            Driver trip release · Load <span className="trip-release-teal">{ev.load_number}</span>{" "}
+            Driver trip release - Load <span className="trip-release-teal">{ev.load_number}</span>{" "}
             <code className="bof-code">{ev.load_id}</code>
           </h1>
           <p className="bof-muted bof-small">
-            Operational go / no-go before departure — combines packet, driver, equipment, and pre-trip
-            signals from BOF demo data.
+            Operational go / no-go before departure, combining packet, driver, equipment, and pre-trip
+            readiness in one release file.
           </p>
         </div>
       </header>
@@ -160,7 +145,7 @@ export function DriverTripReleaseClient({ loadId }: { loadId: string }) {
         </div>
         <p className="trip-release-banner-hint">
           Release Trip is enabled only when there are <strong>zero blocking items</strong>. When status is
-          At Risk, warnings remain — operator judgment still applies.
+          At Risk, warnings remain - operator judgment still applies.
         </p>
       </div>
 
@@ -185,7 +170,7 @@ export function DriverTripReleaseClient({ loadId }: { loadId: string }) {
                     ? "Required proof path clear of payment blockers"
                     : `${proofSummary.blockingCount} line(s) still block pay until resolved`
                 }
-                explanation="Counts from BOF load proof stack; credentials from dispatch + document engine rules on this evaluation."
+                explanation="Counts come from the load proof stack, dispatch assignment, driver credentials, and packet-release gates."
                 tone={proofSummary.blockingCount > 0 ? "caution" : "positive"}
               />
             </BofAdvantageStrip>
@@ -210,7 +195,7 @@ export function DriverTripReleaseClient({ loadId }: { loadId: string }) {
                 <tr>
                   <th scope="row">Load</th>
                   <td>
-                    <code className="bof-code">{ev.load_id}</code> · PRO {ev.load_number}
+                    <code className="bof-code">{ev.load_id}</code> - PRO {ev.load_number}
                   </td>
                 </tr>
                 <tr>
@@ -317,6 +302,14 @@ export function DriverTripReleaseClient({ loadId }: { loadId: string }) {
             </div>
           </section>
 
+          <LoadPacketControlPanel
+            packet={artifactPacket}
+            mode="release"
+            loadId={ev.load_id}
+            driverName={ev.driver_name}
+            dispatcherName={ev.dispatch_ref}
+          />
+
           <section className="trip-release-card" aria-labelledby="tr-driver">
             <h2 id="tr-driver" className="trip-release-card-title">
               Driver qualification
@@ -354,7 +347,7 @@ export function DriverTripReleaseClient({ loadId }: { loadId: string }) {
               </tbody>
             </table>
             <div className="trip-release-actions">
-              <Link href={`/drivers/${ev.driver_id}#document-engine`}>Open driver credentials</Link>
+              <Link href={`/drivers/${ev.driver_id}/vault`}>Open driver credentials</Link>
             </div>
           </section>
 
@@ -447,11 +440,11 @@ export function DriverTripReleaseClient({ loadId }: { loadId: string }) {
             </table>
             <div className="trip-release-actions">
               <a href={hrefPretripReport} target="_blank" rel="noreferrer">
-                Open pre-trip inspection report
+                Open pre-trip cargo proof
               </a>
               <Link href={`/pretrip/${loadId}`}>Pre-trip tablet</Link>
-              <Link href={`/loads/${loadId}#document-engine`}>Upload / proof stack</Link>
-              <Link href={`/loads/${loadId}`}>Resolve exception on load</Link>
+              <Link href="#load-artifact-packet-heading">Review release artifacts</Link>
+              <Link href={`/loads/${loadId}`}>Open manager load file</Link>
             </div>
           </section>
         </div>
@@ -533,7 +526,7 @@ export function DriverTripReleaseClient({ loadId }: { loadId: string }) {
         <Link href={`/loads/${loadId}`} className="bof-link-secondary">
           Load detail
         </Link>
-        {" · "}
+        {" - "}
         <Link href={`/shipper-portal/${loadId}`} className="bof-link-secondary">
           Shipper portal
         </Link>

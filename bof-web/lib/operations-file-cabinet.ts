@@ -796,20 +796,20 @@ export const OPERATIONS_FILE_CABINET_REGISTRY: OperationsFileCabinetItem[] = [
   },
   {
     id: "dispatch-master-agreement-sample",
-    title: "Master Agreement — L001 Sample",
+    title: "Delta Advanced Trucking, Inc. Master Services Agreement",
     cabinet: "Dispatch & Load Operations",
-    section: "Completed Demo Samples",
+    section: "Legal / Contracts",
     category: "Dispatch & Load Operations",
     type: "contract",
     audience: ["dispatcher", "manager", "customer", "legal"],
     status: "available",
-    description: "Master service agreement sample for customer relationships",
-    href: "/generated/loads/L001/master-agreement-reference.html",
-    sourceAuthenticity: "generated_from_template",
+    description: "Master services agreement governing tender, proof, payment, insurance, claims, and dispute handling for Delta Advanced Trucking, Inc.",
+    href: "/generated/agreements/DAT-MSA-001/delta-advanced-trucking-master-services-agreement.pdf",
+    sourceAuthenticity: "official_template",
     documentOwner: "employer",
     employerName: "Delta Advanced Trucking, Inc.",
     isCompletedSample: true,
-    tags: ["sample", "master", "agreement"]
+    tags: ["master services agreement", "contract", "customer", "dispatch"]
   },
   {
     id: "dispatch-schedule",

@@ -170,8 +170,8 @@ export function buildTripDocumentPacket(data: BofData, loadId: string): TripPack
   const workOrderUrl = gen("workOrder");
   const masterUrl = gen("masterAgreementReference");
 
-  const pickupPhotoUrl = canon("cargo_pickup_photo")?.url ?? ev("pickupPhoto");
-  const cargoPhotoUrl = canon("cargo_pickup_photo")?.url ?? ev("cargoPhoto") ?? gen("cargoPhoto");
+  const pickupPhotoUrl = ev("pickupPhoto") ?? canon("cargo_pickup_photo")?.url;
+  const cargoPhotoUrl = ev("cargoPhoto") ?? canon("cargo_pickup_photo")?.url ?? gen("cargoPhoto");
   const sealPickupUrl = canon("seal_pickup_photo")?.url ?? ev("sealPickupPhoto") ?? gen("sealPickupPhoto");
   const sealDeliveryUrl = canon("seal_delivery_photo")?.url ?? ev("sealDeliveryPhoto") ?? gen("sealDeliveryPhoto");
   const emptyTrailerUrl = ev("emptyTrailerProof");
@@ -438,11 +438,11 @@ export function buildTripDocumentPacket(data: BofData, loadId: string): TripPack
     },
     {
       key: "master_agreement_reference",
-      label: "Master agreement reference",
+      label: "Delta Advanced Trucking, Inc. Master Services Agreement",
       group: "reference",
       status: masterUrl ? "ready" : "missing",
       url: masterUrl,
-      note: masterUrl ? undefined : "Reference template not generated.",
+      note: masterUrl ? undefined : "Delta Master Services Agreement PDF not linked.",
       requiredForSettlementRelease: false,
       deliveredMinimum: false,
       loadEvidenceType: "master_agreement_reference",

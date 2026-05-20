@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { BookDemoLink } from "@/components/BookDemoLink";
@@ -148,6 +148,8 @@ function PortalsDropdown() {
 
 export function BofHeader() {
   const pathname = usePathname();
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
   const marketingOnlyPaths = new Set([
     "/",
     "/for-hire-carriers",
@@ -160,7 +162,7 @@ export function BofHeader() {
   ]);
   const marketingOnlyHeader = marketingOnlyPaths.has(pathname);
   const isActiveProductNav = (href: string) =>
-    pathname === href || pathname.startsWith(`${href}/`);
+    mounted && (pathname === href || pathname.startsWith(`${href}/`));
 
   if (!marketingOnlyHeader) {
     return (

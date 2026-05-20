@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useMemo, useState } from "react";
+
 import { useBofDemoData } from "@/lib/bof-demo-data-context";
 import {
   getClientLoadRequests,
@@ -72,10 +73,10 @@ export function ClientLoadRequestsReviewPageClient() {
   return (
     <div className="bof-page">
       <h1 className="bof-title">Client Load Requests</h1>
-      <p className="bof-lead">Internal BOF review queue for client-submitted load requests.</p>
+      <p className="bof-lead">Internal dispatch review queue for client-submitted load requests.</p>
       <p className="bof-muted bof-small">
-        Use <strong>Open in Load Intake</strong> to prefill the canonical BOF load intake wizard; save there
-        writes loads and syncs dispatch.
+        Use <strong>Build trip packet</strong> to move a request into the dispatch packet workspace for parser
+        review, document control, signatures, and role-based visibility.
       </p>
       <div className="bof-cc-table-wrap">
         <table className="bof-cc-table">
@@ -94,21 +95,29 @@ export function ClientLoadRequestsReviewPageClient() {
             {requests.map((request) => (
               <tr key={request.requestId}>
                 <td>{request.requestId}</td>
-                <td>{request.companyName} · {request.contactName}</td>
-                <td>{request.pickupCity}, {request.pickupState} → {request.deliveryCity}, {request.deliveryState}</td>
+                <td>{request.companyName} - {request.contactName}</td>
+                <td>
+                  {request.pickupCity}, {request.pickupState} to {request.deliveryCity}, {request.deliveryState}
+                </td>
                 <td>{request.pickupDate}</td>
                 <td>{request.missingRequiredFields.length} / {request.warnings.length}</td>
                 <td>{request.status}</td>
                 <td>
                   <div className="bof-cc-action-wrap">
-                    <button type="button" className="bof-cc-action-btn" onClick={() => setEditingId(request.requestId)}>Review</button>
-                    <button type="button" className="bof-cc-action-btn" onClick={() => updateRequest(request.requestId, { status: "approved" })}>Approve</button>
-                    <button type="button" className="bof-cc-action-btn bof-cc-action-btn-danger" onClick={() => updateRequest(request.requestId, { status: "rejected" })}>Reject</button>
+                    <button type="button" className="bof-cc-action-btn" onClick={() => setEditingId(request.requestId)}>
+                      Review
+                    </button>
+                    <button type="button" className="bof-cc-action-btn" onClick={() => updateRequest(request.requestId, { status: "approved" })}>
+                      Approve
+                    </button>
+                    <button type="button" className="bof-cc-action-btn bof-cc-action-btn-danger" onClick={() => updateRequest(request.requestId, { status: "rejected" })}>
+                      Reject
+                    </button>
                     <Link
                       href={`/dispatch/intake?clientRequestId=${encodeURIComponent(request.requestId)}`}
                       className="bof-cc-action-btn bof-cc-action-btn-primary"
                     >
-                      Open in Load Intake
+                      Build trip packet
                     </Link>
                   </div>
                 </td>
@@ -147,13 +156,15 @@ export function ClientLoadRequestsReviewPageClient() {
               href={`/dispatch/intake?clientRequestId=${encodeURIComponent(editing.requestId)}`}
               className="bof-load-intake-btn bof-load-intake-btn--primary"
             >
-              Open in Load Intake
+              Build trip packet
             </Link>
           </div>
         </section>
       ) : null}
       <p className="bof-muted bof-small">
-        <Link href="/load-request" className="bof-link-secondary">← New client request</Link>
+        <Link href="/load-request" className="bof-link-secondary">
+          New client request
+        </Link>
       </p>
     </div>
   );
@@ -177,4 +188,3 @@ function EditField({
     </div>
   );
 }
-

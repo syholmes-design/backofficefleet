@@ -38,6 +38,7 @@ type EvidenceDef = {
   title: string;
   resolve: (load: BofLoad) => string | undefined;
   required: (data: BofData, load: BofLoad) => boolean;
+  showWhenOptional?: boolean;
   notRequiredReason?: (data: BofData, load: BofLoad) => string;
 };
 
@@ -137,8 +138,11 @@ function resolveSealDeliveryUrl(load: BofLoad): string | undefined {
   if (load.id !== "L004") {
     return getLoadEvidenceUrl(load.id, "sealDeliveryPhoto") ?? getGeneratedLoadDocUrl(load.id, "sealDeliveryPhoto");
   }
-  const preferred = "/generated/evidence/l004-seal-delivery-photo-seal-61043.png";
-  return preferred;
+  return (
+    getLoadEvidenceUrl(load.id, "sealDeliveryPhoto") ??
+    getGeneratedLoadDocUrl(load.id, "sealDeliveryPhoto") ??
+    "/evidence/loads/L004/l004-seal-delivery-photo-seal-61043.png"
+  );
 }
 
 function firstExistingPublicUrl(candidates: string[]): string | undefined {
@@ -178,26 +182,36 @@ const EVIDENCE_DEFS: EvidenceDef[] = [
     title: "Seal Delivery Photo",
     resolve: (load) => resolveSealDeliveryUrl(load),
     required: (_, load) => requiresDeliverySealVerification(load),
+    showWhenOptional: true,
     notRequiredReason: (_, load) =>
       `Seal delivery verification is not required for ${load.id} because no delivery seal exception is active.`,
   },
   {
     evidenceType: "cargo_pickup_photo",
     title: "Cargo Pickup Photo",
-    resolve: (load) => getLoadEvidenceUrl(load.id, "cargoPhoto") ?? getGeneratedLoadDocUrl(load.id, "cargoPhoto"),
+    resolve: (load) =>
+      firstExistingPublicUrl([`/evidence/loads/${load.id}/cargo-pickup.jpg`]) ??
+      getLoadEvidenceUrl(load.id, "cargoPhoto") ??
+      getGeneratedLoadDocUrl(load.id, "cargoPhoto"),
     required: () => false,
+    showWhenOptional: true,
   },
   {
     evidenceType: "cargo_delivery_photo",
     title: "Cargo Delivery Photo",
-    resolve: (load) => getLoadEvidenceUrl(load.id, "deliveryPhoto"),
+    resolve: (load) =>
+      firstExistingPublicUrl([`/evidence/loads/${load.id}/cargo-delivery.jpg`]) ??
+      getLoadEvidenceUrl(load.id, "cargoDeliveryPhoto") ??
+      getLoadEvidenceUrl(load.id, "deliveryPhoto"),
     required: () => false,
+    showWhenOptional: true,
   },
   {
     evidenceType: "lumper_receipt",
     title: "Lumper Receipt",
     resolve: (load) =>
       firstExistingPublicUrl([
+        `/evidence/loads/${load.id}/lumper-receipt-photo.jpg`,
         `/evidence/loads/${load.id}/lumper-receipt.png`,
         `/evidence/loads/${load.id}/lumper-receipt.jpg`,
       ]) ??
@@ -213,6 +227,7 @@ const EVIDENCE_DEFS: EvidenceDef[] = [
     title: "RFID / Geo Proof",
     resolve: (load) => getLoadEvidenceUrl(load.id, "rfidDockProof") ?? getGeneratedLoadDocUrl(load.id, "rfidProof"),
     required: () => false,
+    showWhenOptional: true,
   },
   {
     evidenceType: "claim_photo",
@@ -222,6 +237,7 @@ const EVIDENCE_DEFS: EvidenceDef[] = [
         `/evidence/loads/${load.id}/cargo-damage-photo.png`,
         `/evidence/loads/${load.id}/claim-evidence.png`,
         `/evidence/loads/${load.id}/damage-photo.png`,
+        `/evidence/loads/${load.id}/damage-photo.jpg`,
       ]) ??
       getLoadEvidenceUrl(load.id, "damagePhoto") ??
       getLoadEvidenceUrl(load.id, "cargoDamagePhoto") ??
@@ -255,15 +271,19 @@ function buildEvidenceRecord(data: BofData, load: BofLoad, def: EvidenceDef): Bo
 
   let status: BofLoadEvidence["status"] = "missing";
   let reason: string | undefined;
-  if (!required) {
+  if (!required && !def.showWhenOptional) {
     status = "not_required";
     reason = def.notRequiredReason?.(data, load);
   } else if (!normalizedUrl) {
     status = "missing";
-    reason = "No generated evidence file exists yet for this load/evidence type.";
+    reason = required
+      ? "No generated evidence file exists yet for this load/evidence type."
+      : def.notRequiredReason?.(data, load) ?? "No optional evidence file exists yet for this load/evidence type.";
   } else if (!exists) {
     status = "missing";
-    reason = "No generated evidence file exists yet for this load/evidence type.";
+    reason = required
+      ? "No generated evidence file exists yet for this load/evidence type."
+      : def.notRequiredReason?.(data, load) ?? "No optional evidence file exists yet for this load/evidence type.";
   } else if (placeholder) {
     status = "placeholder";
     reason = "Evidence packet is routed for final proof review.";

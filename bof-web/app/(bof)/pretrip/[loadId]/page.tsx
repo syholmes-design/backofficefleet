@@ -10,7 +10,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getBofData } from "@/lib/load-bof-data";
 import { buildPretripTabletModel } from "@/lib/pretrip-tablet";
-import { listEngineDocumentsForLoad } from "@/lib/document-engine";
+import { buildLoadArtifactPacket } from "@/lib/load-artifact-registry";
 import { PretripTabletDashboard } from "@/components/PretripTabletDashboard";
 
 type Props = { params: Promise<{ loadId: string }> };
@@ -25,7 +25,7 @@ export async function generateMetadata({ params }: Props) {
   const data = getBofData();
   const load = data.loads.find((l) => l.id === loadId);
   return {
-    title: load ? `Pre-trip · Load ${load.number} | BOF` : "Pre-trip | BOF",
+    title: load ? `Pre-trip - Load ${load.number} | BOF` : "Pre-trip | BOF",
   };
 }
 
@@ -39,12 +39,17 @@ export default async function PretripTabletPage({ params }: Props) {
   const startDisabled =
     !pending || model.overall === "BLOCKED" || model.blockReasons.length > 0;
 
-  const pretripEngineDocs = listEngineDocumentsForLoad(data, loadId).filter(
-    (d) =>
-      /\bRF\b|dispatch|pretrip|seal|rate|bol|cargo|gps|weather|hos|camera|lumper|fuel|maintenance|tire|pod|empty/i.test(
-        d.type
-      )
-  );
+  const artifactPacket = buildLoadArtifactPacket(data, loadId);
+  const loadOptions = data.loads.map((load) => {
+    const driver = data.drivers.find((d) => d.id === load.driverId);
+    return {
+      loadId: load.id,
+      loadNumber: load.number,
+      status: load.status,
+      driverName: driver?.name ?? load.driverId,
+      routeLabel: `${load.origin} to ${load.destination}`,
+    };
+  });
 
   return (
     <div className="bof-page bof-tablet-page">
@@ -59,7 +64,8 @@ export default async function PretripTabletPage({ params }: Props) {
       <PretripTabletDashboard
         model={model}
         loadId={loadId}
-        pretripEngineDocs={pretripEngineDocs}
+        artifactPacket={artifactPacket}
+        loadOptions={loadOptions}
         startDisabled={startDisabled}
       />
     </div>

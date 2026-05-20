@@ -28,6 +28,7 @@ import { getLoadRiskExplanation } from "@/lib/load-risk-explanation";
 import { getDispatchCommandSummary } from "@/lib/dispatch/dispatch-command-metrics";
 import { buildTripDocumentPacket } from "@/lib/load-trip-packet";
 import { buildPretripTabletModel } from "@/lib/pretrip-tablet";
+import { buildLoadArtifactPacket } from "@/lib/load-artifact-registry";
 import { formatMoney, loadStatusChipClass } from "./dispatch-ui";
 
 type AudienceView = "dispatcher" | "driver" | "manager" | "insurance";
@@ -264,30 +265,109 @@ function LinkButton({
   );
 }
 
+function isExceptionActive(row: DispatchRow) {
+  return Boolean(
+    row.load.insurance_claim_needed ||
+      row.load.exception_flag ||
+      row.load.exception_reason ||
+      row.load.settlement_hold ||
+      row.missingLabels.length > 0
+  );
+}
+
+function TopCommandStrip({
+  selected,
+  selectedRow,
+  onOpenException,
+}: {
+  selected: Load;
+  selectedRow: DispatchRow;
+  onOpenException: () => void;
+}) {
+  const exceptionActive = isExceptionActive(selectedRow);
+  const links = [
+    { label: "Pre-trip packet", href: `/pretrip/${selected.load_id}`, primary: true },
+    { label: "Trip release", href: `/trip-release/${selected.load_id}` },
+    { label: "Driver view", href: `/portals/driver/${selected.driver_id ?? "DRV-001"}` },
+    { label: "Customer proof", href: `/shipper-portal/${selected.load_id}` },
+    { label: "Manager file", href: `/loads/${selected.load_id}` },
+    { label: "Settlement review", href: "/settlements" },
+  ];
+
+  return (
+    <section className="sticky top-0 z-30 rounded-xl border border-teal-800/55 bg-slate-950/95 p-3 shadow-2xl shadow-slate-950/40 backdrop-blur">
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <div className="flex min-w-[220px] items-center gap-3">
+          <div className="rounded-lg border border-teal-500/50 bg-teal-500/10 px-3 py-2">
+            <p className="font-mono text-sm font-black text-teal-200">{selected.load_id}</p>
+            <p className="text-xs font-semibold text-slate-200">{selectedRow.driverName}</p>
+          </div>
+          <div>
+            <p className="text-xs font-bold uppercase tracking-[0.18em] text-teal-300">Load command strip</p>
+            <p className="text-sm font-semibold text-white">{shortLane(selected.origin)} to {shortLane(selected.destination)}</p>
+          </div>
+        </div>
+
+        <div className="flex flex-1 flex-wrap justify-end gap-2">
+          {links.map((link) => (
+            <Link
+              key={link.label}
+              href={link.href}
+              className={`inline-flex min-h-10 items-center rounded-md border px-3 py-2 text-sm font-bold transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-300 ${
+                link.primary
+                  ? "border-teal-500 bg-teal-500 text-slate-950 hover:bg-teal-300"
+                  : "border-slate-700 bg-slate-900 text-slate-100 hover:border-teal-500 hover:text-teal-100"
+              }`}
+            >
+              {link.label}
+            </Link>
+          ))}
+          {exceptionActive ? (
+            <button
+              type="button"
+              onClick={onOpenException}
+              className="inline-flex min-h-10 items-center rounded-md border border-rose-500/65 bg-rose-950/70 px-3 py-2 text-sm font-bold text-rose-50 transition hover:bg-rose-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-rose-300"
+            >
+              Open exception response
+            </button>
+          ) : (
+            <span className="inline-flex min-h-10 items-center rounded-md border border-emerald-700/50 bg-emerald-950/35 px-3 py-2 text-sm font-bold text-emerald-200">
+              No claim path active
+            </span>
+          )}
+        </div>
+      </div>
+    </section>
+  );
+}
+
 function LoadDocumentStrip({ selected }: { selected: Load }) {
+  const { data } = useBofDemoData();
+  const packet = useMemo(() => buildLoadArtifactPacket(data, selected.load_id), [data, selected.load_id]);
+  const artifacts = new Map((packet?.artifacts ?? []).map((artifact) => [artifact.key, artifact]));
   const docs = [
     {
       label: "Rate confirmation",
-      href: selected.rate_con_url,
+      href: artifacts.get("rate_confirmation")?.actionUrl ?? selected.rate_con_url,
       image: "/evidence/support/document-support/rate-confirmation-preview.png",
       action: "Open rate confirmation",
     },
     {
       label: "BOL",
-      href: selected.bol_url,
+      href: artifacts.get("bol")?.actionUrl ?? selected.bol_url,
       image: "/evidence/support/document-support/bol-preview.png",
       action: "Open BOL",
     },
     {
       label: "Pre-trip cargo photo",
-      href: selected.pickup_photo_url ?? selected.cargo_photo_url,
-      image: selected.pickup_photo_url ?? selected.cargo_photo_url,
+      href: artifacts.get("cargo_photo")?.actionUrl ?? selected.pickup_photo_url ?? selected.cargo_photo_url,
+      image: artifacts.get("cargo_photo")?.canonicalUrl ?? selected.pickup_photo_url ?? selected.cargo_photo_url,
       action: "View pickup proof",
     },
     {
       label: "Seal proof",
-      href: selected.seal_photo_url,
-      image: selected.seal_photo_url,
+      href: artifacts.get("seal_pickup_photo")?.actionUrl ?? selected.seal_photo_url,
+      image: artifacts.get("seal_pickup_photo")?.canonicalUrl ?? selected.seal_photo_url,
       action: "View seal proof",
     },
   ];
@@ -323,12 +403,153 @@ function LoadDocumentStrip({ selected }: { selected: Load }) {
   );
 }
 
+function ExceptionResponsePanel({
+  selected,
+  selectedRow,
+  open,
+  onToggle,
+}: {
+  selected: Load;
+  selectedRow: DispatchRow;
+  open: boolean;
+  onToggle: () => void;
+}) {
+  const { data } = useBofDemoData();
+  const packet = useMemo(() => buildLoadArtifactPacket(data, selected.load_id), [data, selected.load_id]);
+  const artifactMap = new Map((packet?.artifacts ?? []).map((artifact) => [artifact.key, artifact]));
+  const active = isExceptionActive(selectedRow);
+  const exceptionDocs = [
+    {
+      key: "claim_intake",
+      title: "Claim intake report",
+      detail: "Initial facts, parties, claimed amount, and claim owner.",
+    },
+    {
+      key: "insurance_notification",
+      title: "Insurance notice",
+      detail: "Carrier/insurance notification for cargo, liability, or safety exposure.",
+    },
+    {
+      key: "claim_packet",
+      title: "Claim proof packet",
+      detail: "Proof bundle for insurer, broker, customer, and manager review.",
+    },
+    {
+      key: "damage_photo_packet",
+      title: "Damage photo packet",
+      detail: "Cargo, seal, trailer, or incident photos tied to the exception.",
+    },
+    {
+      key: "seal_mismatch_photo",
+      title: "Seal mismatch proof",
+      detail: "Seal discrepancy evidence when the seal chain does not match.",
+    },
+    {
+      key: "settlement_hold_notice",
+      title: "Settlement hold notice",
+      detail: "Settlement impact and release conditions while the exception is open.",
+    },
+  ]
+    .map((item) => ({ ...item, artifact: artifactMap.get(item.key) }))
+    .filter((item) => item.artifact?.status !== "not_applicable");
+
+  return (
+    <section className={`rounded-xl border p-5 ${active ? "border-rose-700/50 bg-rose-950/20" : "border-slate-800 bg-slate-900/45"}`}>
+      <div className="flex flex-wrap items-start justify-between gap-4">
+        <div>
+          <p className={`text-xs font-bold uppercase tracking-[0.2em] ${active ? "text-rose-200" : "text-emerald-300"}`}>
+            Exception / insurance response
+          </p>
+          <h2 className="mt-2 text-2xl font-black text-white">
+            {active ? `${selected.load_id} has an exception response file` : `${selected.load_id} has no active claim path`}
+          </h2>
+          <p className="mt-2 max-w-3xl text-base leading-7 text-slate-200">
+            Claims, insurance notices, damage photos, seal variance, and settlement holds stay out of the clean dispatch
+            packet until something goes wrong. When the load has an exception, this button reveals the response file.
+          </p>
+        </div>
+        <button
+          type="button"
+          onClick={onToggle}
+          disabled={!active}
+          className={`inline-flex min-h-11 items-center justify-center rounded-md border px-4 py-2 text-sm font-bold transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 ${
+            active
+              ? "border-rose-500/70 bg-rose-950/70 text-rose-50 hover:bg-rose-900 focus-visible:outline-rose-300"
+              : "border-emerald-700/50 bg-emerald-950/30 text-emerald-200 opacity-80"
+          }`}
+        >
+          {active ? (open ? "Hide exception file" : "Open exception response") : "No claim path active"}
+        </button>
+      </div>
+
+      {active && open ? (
+        <div className="mt-5 grid gap-4 lg:grid-cols-[0.75fr_1.25fr]">
+          <div className="rounded-lg border border-rose-800/45 bg-slate-950/70 p-4">
+            <p className="text-sm font-black text-white">Why this is outside the regular packet</p>
+            <div className="mt-3 space-y-3 text-sm text-slate-200">
+              <p>
+                <span className="font-bold text-rose-200">Exception:</span>{" "}
+                {selected.exception_reason || selectedRow.riskLabel || "Insurance or settlement review is active."}
+              </p>
+              <p>
+                <span className="font-bold text-rose-200">Dispatch action:</span>{" "}
+                {selectedRow.recommendedAction}
+              </p>
+              <p>
+                <span className="font-bold text-rose-200">Settlement impact:</span>{" "}
+                {selected.settlement_hold ? selected.settlement_hold_reason || "Settlement hold active until proof is cleared." : "No settlement hold recorded."}
+              </p>
+            </div>
+            <div className="mt-4 flex flex-col gap-2">
+              <LinkButton href={`/loads/${selected.load_id}`} variant="danger">Open manager claim file</LinkButton>
+              <LinkButton href="/documents" variant="secondary">Open operations cabinet</LinkButton>
+            </div>
+          </div>
+
+          <div className="grid gap-3 md:grid-cols-2">
+            {exceptionDocs.map(({ key, title, detail, artifact }) => {
+              const href = artifact?.actionUrl || artifact?.canonicalUrl;
+              const ready = artifact?.status === "ready" && Boolean(href);
+              return (
+                <a
+                  key={key}
+                  href={ready ? href : `/loads/${selected.load_id}`}
+                  target={ready ? "_blank" : undefined}
+                  rel={ready ? "noreferrer" : undefined}
+                  className={`rounded-lg border p-4 transition hover:-translate-y-0.5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-rose-300 ${
+                    ready
+                      ? "border-rose-700/45 bg-slate-950/75 hover:border-rose-400"
+                      : "border-amber-700/45 bg-amber-950/20 hover:border-amber-400"
+                  }`}
+                >
+                  <div className="flex items-start justify-between gap-3">
+                    <div>
+                      <p className="text-base font-black text-white">{title}</p>
+                      <p className="mt-2 text-sm leading-6 text-slate-200">{detail}</p>
+                    </div>
+                    <span className={`rounded-full border px-2 py-1 text-xs font-bold ${ready ? statusTone("ready") : statusTone("warning")}`}>
+                      {ready ? "Ready" : "Needs file"}
+                    </span>
+                  </div>
+                  <p className={`mt-3 text-xs font-bold ${ready ? "text-rose-200" : "text-amber-200"}`}>
+                    {ready ? artifact?.actionLabel || "Open evidence" : "Route to manager file"}
+                  </p>
+                </a>
+              );
+            })}
+          </div>
+        </div>
+      ) : null}
+    </section>
+  );
+}
+
 function LoadWorkspacePanel({ selected }: { selected: Load }) {
   const driverId = selected.driver_id ?? "DRV-001";
   const workspaces = [
     {
       label: "Manager load file",
-      detail: "Internal load record, packet, proof, risk, and finance context.",
+      detail: "Manager load file with packet, proof, risk, and finance context.",
       href: `/loads/${selected.load_id}`,
       icon: FileText,
     },
@@ -370,7 +591,7 @@ function LoadWorkspacePanel({ selected }: { selected: Load }) {
             {selected.load_id} has its own manager, driver, release, and customer pages
           </h2>
           <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-300">
-            Selecting a row changes the command file above. These links open the separate pages for the active load.
+            Selecting a row changes the command file above. These links open the operating pages for the active load.
           </p>
         </div>
         <LinkButton href={`/pretrip/${selected.load_id}`}>Open {selected.load_id} pre-trip packet</LinkButton>
@@ -494,7 +715,7 @@ function PretripPacketPanel({ selected }: { selected: Load }) {
 function RouteOperationsPanel({ selected }: { selected: Load }) {
   const ops = routeOpsForLoad(selected);
   return (
-    <section className="grid gap-4 xl:grid-cols-[1.15fr_0.85fr]">
+    <section id="route-control" className="grid gap-4 xl:grid-cols-[1.15fr_0.85fr]">
       <div className="rounded-xl border border-slate-800 bg-slate-900/45 p-5">
         <div className="flex items-center justify-between gap-4">
           <div>
@@ -646,6 +867,7 @@ export function DispatchBoardScreen() {
   const selectedLoadId = useDispatchDashboardStore((s) => s.selectedLoadId);
   const selectLoad = useDispatchDashboardStore((s) => s.selectLoad);
   const [audienceView, setAudienceView] = useState<AudienceView>("dispatcher");
+  const [exceptionOpen, setExceptionOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -661,6 +883,10 @@ export function DispatchBoardScreen() {
   const selected = selectedRow?.load ?? null;
   const actionRows = rows.filter((row) => row.needsAction);
   const readyRows = rows.filter((row) => !row.needsAction);
+
+  useEffect(() => {
+    setExceptionOpen(false);
+  }, [selectedLoadId]);
 
   if (!mounted || !selected || !selectedRow) {
     return (
@@ -697,15 +923,44 @@ export function DispatchBoardScreen() {
             <div className="mt-7 flex flex-wrap gap-3">
               <LinkButton href={`/pretrip/${selected.load_id}`}>Open pre-trip packet</LinkButton>
               <LinkButton href={`/trip-release/${selected.load_id}`} variant="secondary">Review trip release</LinkButton>
-              <LinkButton href="/dispatch/intake" variant="secondary">Create load request</LinkButton>
+              <LinkButton href="/dispatch/intake" variant="secondary">Open trip packet workspace</LinkButton>
+            </div>
+            <div className="mt-5 rounded-xl border border-white/10 bg-slate-950/80 p-3 shadow-2xl backdrop-blur">
+              <div className="flex flex-wrap items-center gap-2">
+                <span className="rounded-md border border-teal-500/40 bg-teal-500/10 px-3 py-2 font-mono text-sm font-black text-teal-200">
+                  {selected.load_id}
+                </span>
+                <Link href={`/loads/${selected.load_id}`} className="rounded-md border border-slate-700 bg-slate-900 px-3 py-2 text-sm font-bold text-slate-100 hover:border-teal-500 hover:text-teal-100">
+                  Manager file
+                </Link>
+                <Link href={`/pretrip/${selected.load_id}`} className="rounded-md border border-slate-700 bg-slate-900 px-3 py-2 text-sm font-bold text-slate-100 hover:border-teal-500 hover:text-teal-100">
+                  Pre-trip docs
+                </Link>
+                <Link href={`/shipper-portal/${selected.load_id}`} className="rounded-md border border-slate-700 bg-slate-900 px-3 py-2 text-sm font-bold text-slate-100 hover:border-teal-500 hover:text-teal-100">
+                  Customer proof
+                </Link>
+                {isExceptionActive(selectedRow) ? (
+                  <button
+                    type="button"
+                    onClick={() => setExceptionOpen(true)}
+                    className="rounded-md border border-rose-500/60 bg-rose-950/80 px-3 py-2 text-sm font-bold text-rose-50 hover:bg-rose-900"
+                  >
+                    Exception response
+                  </button>
+                ) : (
+                  <span className="rounded-md border border-emerald-700/45 bg-emerald-950/50 px-3 py-2 text-sm font-bold text-emerald-200">
+                    No claim path active
+                  </span>
+                )}
+              </div>
             </div>
           </div>
           <div className="grid gap-3 sm:grid-cols-2">
             {heroMetrics.map((metric) => (
-              <div key={metric.label} className="rounded-lg border border-white/10 bg-slate-950/72 p-4 shadow-2xl backdrop-blur">
-                <p className="text-xs font-bold uppercase tracking-wide text-slate-400">{metric.label}</p>
+              <div key={metric.label} className="rounded-lg border border-white/15 bg-slate-950/88 p-4 shadow-2xl backdrop-blur">
+                <p className="text-xs font-bold uppercase tracking-wide text-slate-300">{metric.label}</p>
                 <p className="mt-2 text-3xl font-black text-white">{metric.value}</p>
-                <p className="mt-1 text-sm text-slate-300">{metric.detail}</p>
+                <p className="mt-1 text-sm font-semibold text-slate-100">{metric.detail}</p>
               </div>
             ))}
           </div>
@@ -713,9 +968,15 @@ export function DispatchBoardScreen() {
       </section>
 
       <div className="mx-auto flex max-w-7xl flex-col gap-6 px-6 py-6 lg:px-8">
+        <TopCommandStrip
+          selected={selected}
+          selectedRow={selectedRow}
+          onOpenException={() => setExceptionOpen(true)}
+        />
+
         <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
           <MetricCard icon={Truck} label="Loads on board" value={rows.length} detail={`${readyRows.length} operating cleanly, ${actionRows.length} with named action items.`} tone="ready" />
-          <MetricCard icon={AlertTriangle} label="Action queue" value={actionRows.length} detail="Only the top exceptions are shown as problems; no wall of fake missing rows." tone={actionRows.length ? "warning" : "ready"} />
+          <MetricCard icon={AlertTriangle} label="Action queue" value={actionRows.length} detail="Only named exceptions are shown as problems; routine loads stay clean." tone={actionRows.length ? "warning" : "ready"} />
           <MetricCard icon={PackageCheck} label="Proof posture" value={`${summary.proofCompleteLoads || 9}/${rows.length}`} detail="BOL, POD, seal, cargo, RFID, and delivery proof tracked by load." tone="info" />
           <MetricCard icon={ShieldCheck} label="Release readiness" value="82%" detail="Driver, route, equipment, packet, and settlement gates aligned." tone="ready" />
         </section>
@@ -776,6 +1037,16 @@ export function DispatchBoardScreen() {
               <LinkButton href={`/loads/${selected.load_id}`} variant="secondary">Open load file</LinkButton>
               <LinkButton href={`/drivers/${selected.driver_id ?? "DRV-001"}`} variant="secondary">Open driver file</LinkButton>
               <LinkButton href={`/shipper-portal/${selected.load_id}`} variant="secondary">Customer proof view</LinkButton>
+              {isExceptionActive(selectedRow) ? (
+                <button
+                  type="button"
+                  onClick={() => setExceptionOpen(true)}
+                  className="inline-flex min-h-11 items-center justify-center gap-2 rounded-md border border-rose-500/60 bg-rose-950/70 px-4 py-2 text-sm font-bold text-rose-50 transition hover:bg-rose-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-rose-300"
+                >
+                  Open exception response
+                  <ChevronRight className="h-4 w-4" aria-hidden />
+                </button>
+              ) : null}
             </div>
           </div>
 
@@ -797,6 +1068,12 @@ export function DispatchBoardScreen() {
           </div>
         </section>
 
+        <ExceptionResponsePanel
+          selected={selected}
+          selectedRow={selectedRow}
+          open={exceptionOpen}
+          onToggle={() => setExceptionOpen((current) => !current)}
+        />
         <LoadWorkspacePanel selected={selected} />
         <PretripPacketPanel selected={selected} />
         <RouteOperationsPanel selected={selected} />

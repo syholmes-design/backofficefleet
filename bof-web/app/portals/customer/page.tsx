@@ -1,6 +1,7 @@
 import { Metadata } from 'next';
 import { getBofData } from '@/lib/load-bof-data';
 import { getCustomerPortalProfile, getCustomerVisibleLoads } from '@/lib/demo-portals';
+import { buildLoadPacketRegistry } from '@/lib/load-artifact-registry';
 import Link from 'next/link';
 
 export const metadata: Metadata = {
@@ -140,54 +141,44 @@ export default function CustomerPortalPage() {
             </h2>
             
             <div className="space-y-4">
-              {visibleLoads.filter(load => load.status === 'Delivered').slice(0, 3).map((load) => (
-                <div key={load.loadId} className="border border-gray-200 rounded-lg p-4">
-                  <div className="font-medium text-gray-900 mb-3">
-                    {load.loadId} - Proof Bundle
+              {visibleLoads.filter(load => load.status === 'Delivered').slice(0, 3).map((load) => {
+                const registry = buildLoadPacketRegistry(data, load.loadId);
+                const proofLinks = [
+                  { key: 'bol', label: 'BOL' },
+                  { key: 'pod', label: 'Signed BOL / POD' },
+                  { key: 'delivery_empty_trailer', label: 'Delivery Proof' },
+                  { key: 'seal_delivery_photo', label: 'Seal Records' },
+                ].flatMap((proof) => {
+                  const item = registry?.packetItemsByKey[proof.key];
+                  if (!item || item.status === 'not_applicable') return [];
+                  return [{ ...proof, href: item.actionUrl, status: item.status }];
+                });
+
+                return (
+                  <div key={load.loadId} className="border border-gray-200 rounded-lg p-4">
+                    <div className="font-medium text-gray-900 mb-3">
+                      {load.loadId} - Proof Bundle
+                    </div>
+                    <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                      {proofLinks.map((proof) => (
+                        <Link
+                          key={`${load.loadId}-${proof.key}`}
+                          href={proof.href}
+                          className="flex items-center p-2 bg-gray-50 rounded border border-gray-200 hover:bg-gray-100 transition-colors"
+                        >
+                          <svg className="w-4 h-4 mr-2 text-teal-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 7h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 00-2-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01-.707-.293H9z" />
+                          </svg>
+                          <div>
+                            <div className="text-sm">{proof.label}</div>
+                            <div className="text-xs text-gray-500">{proof.status.replace('_', ' ')}</div>
+                          </div>
+                        </Link>
+                      ))}
+                    </div>
                   </div>
-                  <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-                    <Link
-                      href={`/generated/loads/${load.loadId}/bol.html`}
-                      className="flex items-center p-2 bg-gray-50 rounded border border-gray-200 hover:bg-gray-100 transition-colors"
-                    >
-                      <svg className="w-4 h-4 mr-2 text-teal-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 7h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 00-2-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01-.707-.293H9z" />
-                      </svg>
-                      <div className="text-sm">BOL</div>
-                    </Link>
-                    
-                    <Link
-                      href={`/generated/loads/${load.loadId}/pod.html`}
-                      className="flex items-center p-2 bg-gray-50 rounded border border-gray-200 hover:bg-gray-100 transition-colors"
-                    >
-                      <svg className="w-4 h-4 mr-2 text-teal-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 00-2-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01-.707-.293H9z" />
-                      </svg>
-                      <div className="text-sm">Signed BOL / POD</div>
-                    </Link>
-                    
-                    <Link
-                      href={`/generated/loads/${load.loadId}/delivery-photo.html`}
-                      className="flex items-center p-2 bg-gray-50 rounded border border-gray-200 hover:bg-gray-100 transition-colors"
-                    >
-                      <svg className="w-4 h-4 mr-2 text-teal-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 9a9 9 0 114.292 0 5.708 0 4 4 0 00-4 4 4 00-4-4zm0 0a9 9 0 11-18 0 9 9 0 0118 0" />
-                      </svg>
-                      <div className="text-sm">Delivery Photo</div>
-                    </Link>
-                    
-                    <Link
-                      href={`/generated/loads/${load.loadId}/seal-records.html`}
-                      className="flex items-center p-2 bg-gray-50 rounded border border-gray-200 hover:bg-gray-100 transition-colors"
-                    >
-                      <svg className="w-4 h-4 mr-2 text-teal-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 7l-8-4-8 4M5 7v10a2 2 0 002 2h10a2 2 0 002 2V7a2 2 0 00-2-2h-2m2 4a2 2 0 012-2v6a2 2 0 01-2 2h6a2 2 0 012-2V9a2 2 0 01-2-2z" />
-                      </svg>
-                      <div className="text-sm">Seal Records</div>
-                    </Link>
-                  </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </div>
 

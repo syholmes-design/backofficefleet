@@ -2,6 +2,7 @@ import evidenceManifestRaw from "@/lib/generated/load-evidence-manifest.json";
 
 export type LoadEvidenceKey =
   | "cargoPhoto"
+  | "cargoDeliveryPhoto"
   | "sealPhoto"
   | "sealPickupPhoto"
   | "sealDeliveryPhoto"

@@ -1,4 +1,8 @@
 import type { BofData } from "./load-bof-data";
+import {
+  buildLoadPacketRegistry,
+  type LoadPacketRegistry,
+} from "./load-artifact-registry";
 import { buildTripDocumentPacket } from "./load-trip-packet";
 import type { TripPacketRow } from "./load-trip-packet";
 
@@ -83,6 +87,19 @@ function sealMismatchApplicable(rows: TripPacketRow[]): boolean {
   return sm != null && sm.status !== "not_applicable";
 }
 
+function firstRegistryActionUrl(
+  registry: LoadPacketRegistry | null,
+  keys: string[]
+): string | undefined {
+  if (!registry) return undefined;
+  for (const key of keys) {
+    const item = registry.packetItemsByKey[key];
+    const url = item?.actionUrl?.trim();
+    if (url && item.status !== "not_applicable") return url;
+  }
+  return undefined;
+}
+
 /**
  * Manifest-backed readiness for shipper, billing, insurance, and claim packet bundles.
  * Uses the same trip packet rows as the load detail / proof UI (`buildTripDocumentPacket`).
@@ -105,8 +122,7 @@ export function evaluateLoadPacketReadiness(
     ];
   }
   const rows = trip.rows;
-  const id = trip.loadId;
-  const base = `/generated/loads/${id}`;
+  const registry = buildLoadPacketRegistry(data, loadId);
   const claimOk = claimApplicableFromRows(rows);
   const mismatch = sealMismatchApplicable(rows);
 
@@ -152,7 +168,13 @@ export function evaluateLoadPacketReadiness(
     "shipper",
     rows,
     shipperKeys,
-    `${base}/shipper-packet.html`,
+    firstRegistryActionUrl(registry, [
+      "bol",
+      "rate_confirmation",
+      "work_order",
+      "cargo_photo",
+      "seal_pickup_photo",
+    ]),
     false,
     ""
   );
@@ -160,7 +182,13 @@ export function evaluateLoadPacketReadiness(
     "billing",
     rows,
     billingKeys,
-    `${base}/billing-packet.html`,
+    firstRegistryActionUrl(registry, [
+      "invoice",
+      "pod",
+      "bol",
+      "lumper_receipt",
+      "factoring_notification",
+    ]),
     false,
     ""
   );
@@ -168,7 +196,14 @@ export function evaluateLoadPacketReadiness(
     "insurance",
     rows,
     insuranceKeys,
-    `${base}/insurance-packet.html`,
+    firstRegistryActionUrl(registry, [
+      "insurance_notification",
+      "claim_packet",
+      "damage_photo_packet",
+      "claim_intake",
+      "pod",
+      "bol",
+    ]),
     !claimOk,
     "No active claim / exception workflow for this load."
   );
@@ -176,7 +211,13 @@ export function evaluateLoadPacketReadiness(
     "claim",
     rows,
     claimKeys,
-    `${base}/claim-packet-bundle.html`,
+    firstRegistryActionUrl(registry, [
+      "claim_packet",
+      "damage_photo_packet",
+      "claim_intake",
+      "insurance_notification",
+      "cargo_photo",
+    ]),
     !claimOk,
     "No active claim / exception workflow for this load."
   );

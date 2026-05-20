@@ -4,6 +4,8 @@ import type { LoadIntakeDocumentType } from "@/lib/load-intake/types";
 import { getLoadEvidenceUrl } from "@/lib/load-documents";
 
 const generatedManifest = (generatedLoadManifest ?? {}) as Record<string, GeneratedLoadDocEntry>;
+const DELTA_MSA_URL =
+  "/generated/agreements/DAT-MSA-001/delta-advanced-trucking-master-services-agreement.pdf";
 
 const TEMPLATE_PATHS: Partial<Record<LoadIntakeDocumentType, string>> = {
   rate_confirmation: "scripts/templates/load-docs/rate-confirmation.template.html",
@@ -35,7 +37,7 @@ export function getExpectedOutputPath(
   if (documentType === "invoice") return loadDocOutputPath(loadId, "invoice.html");
   if (documentType === "bill_of_lading") return loadDocOutputPath(loadId, "bol.html");
   if (documentType === "trip_schedule") return loadDocOutputPath(loadId, "work-order.html");
-  if (documentType === "master_agreement") return loadDocOutputPath(loadId, "master-agreement-reference.html");
+  if (documentType === "master_agreement") return DELTA_MSA_URL;
   if (documentType === "seal_cargo_photo_sheet") return loadDocOutputPath(loadId, "seal-verification.html");
   if (documentType === "pod") return loadDocOutputPath(loadId, "pod.html");
   if (documentType === "lumper_receipt") return loadDocOutputPath(loadId, "lumper-receipt.html");
@@ -54,7 +56,7 @@ export function getResolvedOutputPath(
   if (documentType === "invoice") return row.invoice;
   if (documentType === "bill_of_lading") return row.bol;
   if (documentType === "trip_schedule") return row.workOrder;
-  if (documentType === "master_agreement") return row.masterAgreementReference;
+  if (documentType === "master_agreement") return row.masterAgreementReference ?? DELTA_MSA_URL;
   if (documentType === "seal_cargo_photo_sheet") {
     return getLoadEvidenceUrl(loadId, "cargoPhoto") ?? row.sealVerification;
   }

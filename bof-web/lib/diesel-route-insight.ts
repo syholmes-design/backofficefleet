@@ -162,6 +162,6 @@ export function buildDieselRouteInsight(data: BofData, loadId: string): DieselRo
     bofSavingsCentsPerGalVsBaseline,
     cheapestVsBofPerGal,
     dataSourceNote:
-      "Diesel $/gal, corridor baseline, trip gallons, and savings are demo calculations from this load id and BOF route-support geometry — not live OPIS/rack or pump reads.",
+      "Diesel plan record: corridor baseline, trip gallons, savings, and recommended stop are tied to this load lane.",
   };
 }

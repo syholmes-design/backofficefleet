@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   AlertTriangle,
   Link2,
@@ -57,6 +57,13 @@ export function LoadDetailContent({ load, onClose }: Props) {
   const setSettlementHold = useDispatchDashboardStore((s) => s.setSettlementHold);
   const clearExceptionFlag = useDispatchDashboardStore((s) => s.clearExceptionFlag);
   const loadRisk = getLoadRiskExplanation(data, load.load_id, demoRiskOverrides);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    if (window.location.hash === "#rfid-proof" || window.location.hash === "#load-proof-evidence") {
+      setTab("proof");
+    }
+  }, []);
 
   return (
     <div className="flex h-full flex-col">
@@ -192,8 +199,10 @@ export function LoadDetailContent({ load, onClose }: Props) {
         {tab === "proof" ? (
           <>
             <DocumentationReadinessPanel load={load} />
-            <RfidPodStatusCard loadId={load.load_id} />
-            <section className="rounded-lg border border-slate-800 bg-slate-900/40 p-4">
+            <div id="rfid-proof">
+              <RfidPodStatusCard loadId={load.load_id} />
+            </div>
+            <section id="load-proof-evidence" className="rounded-lg border border-slate-800 bg-slate-900/40 p-4">
               <h3 className="mb-3 text-xs font-semibold uppercase tracking-wide text-slate-500">
                 Load proof &amp; evidence
               </h3>

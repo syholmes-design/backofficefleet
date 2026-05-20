@@ -10,6 +10,7 @@ import {
   getLoadProofItems,
   proofBlockingCount,
 } from "./load-proof";
+import { getLoadArtifactActionUrl } from "./load-artifact-registry";
 
 export type PretripLineStatus = "OK" | "Missing" | "Warning";
 
@@ -50,7 +51,7 @@ export type PretripTabletModel = {
   blockReasons: string[];
   sections: PretripSection[];
   routeMapModel: LoadRouteMapModel | null;
-  /** Shown when load is not Pending — Start Load is not offered. */
+  /** Shown when load is not Pending - Start Load is not offered. */
   dispatchPhaseMessage: string | null;
 };
 
@@ -118,7 +119,7 @@ function weatherTraffic(loadId: string): { weather: PretripLine; traffic: Pretri
       critical: false,
       href: "/command-center",
       actionKind: w === "OK" ? "view" : "resolve",
-      actionLabel: w === "OK" ? "View" : "Resolve",
+      actionLabel: w === "OK" ? "Open route weather" : "Review weather plan",
     },
     traffic: {
       id: "traffic",
@@ -127,7 +128,7 @@ function weatherTraffic(loadId: string): { weather: PretripLine; traffic: Pretri
       critical: false,
       href: "/command-center",
       actionKind: t === "OK" ? "view" : "resolve",
-      actionLabel: t === "OK" ? "View" : "Resolve",
+      actionLabel: t === "OK" ? "Open traffic plan" : "Review traffic plan",
     },
   };
 }
@@ -146,6 +147,8 @@ export function buildPretripTabletModel(
   const driverName = driver?.name ?? load.driverId;
   const driverHref = `/drivers/${load.driverId}`;
   const loadHref = `/loads/${loadId}`;
+  const artifactHref = (key: string, fallback = loadHref) =>
+    getLoadArtifactActionUrl(data, loadId, key, fallback);
   const docs = getOrderedDocumentsForDriver(data, load.driverId);
   const docMap = new Map(docs.map((d) => [d.type, d]));
   const proofs = getLoadProofItems(data, loadId);
@@ -178,10 +181,10 @@ export function buildPretripTabletModel(
           ? "Missing"
           : "Warning",
     critical: pendingAssign && !delivered,
-    href: `${loadHref}#document-engine`,
+    href: artifactHref("work_order", `${loadHref}#artifact-work_order`),
     actionKind: dispatchNotes.length > 0 ? "view" : "upload",
     actionLabel:
-      dispatchNotes.length > 0 ? "View" : "Upload / add on load",
+      dispatchNotes.length > 0 ? "Open work order" : "Add dispatch instructions",
   };
 
   const sealOk =
@@ -197,9 +200,9 @@ export function buildPretripTabletModel(
         ? "Warning"
         : "Missing",
     critical: !delivered && !sealOk,
-    href: `${loadHref}#document-engine`,
+    href: artifactHref("seal_pickup_photo", `${loadHref}#artifact-seal_pickup_photo`),
     actionKind: sealOk ? undefined : "resolve",
-    actionLabel: sealOk ? undefined : "Resolve",
+    actionLabel: sealOk ? "Open seal proof" : "Resolve seal proof",
   };
 
   const pretripSt = proofDocStatus(pretripPhoto);
@@ -217,9 +220,9 @@ export function buildPretripTabletModel(
               ? "Warning"
               : "Missing",
     critical: !delivered && pretripSt !== "OK",
-    href: `${loadHref}#document-engine`,
+    href: artifactHref("cargo_photo", `${loadHref}#artifact-cargo_photo`),
     actionKind: pretripSt === "OK" ? undefined : "upload",
-    actionLabel: pretripSt === "OK" ? undefined : "Upload",
+    actionLabel: pretripSt === "OK" ? "Open cargo photo" : "Attach cargo photo",
   };
 
   const mar = maintenanceMarForAsset(data, load.assetId);
@@ -230,7 +233,7 @@ export function buildPretripTabletModel(
     critical: Boolean(mar) && !delivered,
     href: "/money-at-risk",
     actionKind: mar ? "resolve" : "view",
-    actionLabel: mar ? "Resolve" : "View",
+    actionLabel: mar ? "Review maintenance hold" : "Open maintenance status",
   };
 
   const tireLine: PretripLine = {
@@ -240,7 +243,7 @@ export function buildPretripTabletModel(
     critical: false,
     href: "/money-at-risk",
     actionKind: "view",
-    actionLabel: "View",
+    actionLabel: "Open tire status",
   };
 
   const fuelLine: PretripLine = {
@@ -248,9 +251,9 @@ export function buildPretripTabletModel(
     label: "Fuel check",
     status: "OK",
     critical: false,
-    href: `${loadHref}#document-engine`,
+    href: `/dispatch?loadId=${loadId}#route-control`,
     actionKind: "view",
-    actionLabel: "View",
+    actionLabel: "Open fuel plan",
   };
 
   const trailerLine: PretripLine = {
@@ -260,7 +263,7 @@ export function buildPretripTabletModel(
     critical: false,
     href: loadHref,
     actionKind: "view",
-    actionLabel: "View",
+    actionLabel: "Open trailer status",
   };
 
   const incidents = openComplianceForDriver(data, load.driverId);
@@ -284,7 +287,7 @@ export function buildPretripTabletModel(
     critical: complianceBlocksDispatch && !delivered,
     href: `${driverHref}#document-engine`,
     actionKind: incidents.length ? "resolve" : "view",
-    actionLabel: incidents.length ? "Resolve" : "View",
+    actionLabel: incidents.length ? "Resolve compliance item" : "Open compliance file",
   };
 
   const cameraLine: PretripLine = {
@@ -294,7 +297,7 @@ export function buildPretripTabletModel(
     critical: false,
     href: `${driverHref}#document-engine`,
     actionKind: "view",
-    actionLabel: "View",
+    actionLabel: "Open camera status",
   };
 
   const cdl = docMap.get("CDL");
@@ -307,7 +310,7 @@ export function buildPretripTabletModel(
     critical: !delivered && (!cdl || docRowStatus(cdl) !== "OK"),
     href: `${driverHref}#document-engine`,
     actionKind: cdl && docRowStatus(cdl) === "OK" ? "view" : "resolve",
-    actionLabel: cdl && docRowStatus(cdl) === "OK" ? "View" : "Resolve",
+    actionLabel: cdl && docRowStatus(cdl) === "OK" ? "Open CDL" : "Resolve CDL",
   };
   const medLine: PretripLine = {
     id: "med",
@@ -316,7 +319,7 @@ export function buildPretripTabletModel(
     critical: !delivered && (!med || docRowStatus(med) !== "OK"),
     href: `${driverHref}#document-engine`,
     actionKind: med && docRowStatus(med) === "OK" ? "view" : "resolve",
-    actionLabel: med && docRowStatus(med) === "OK" ? "View" : "Resolve",
+    actionLabel: med && docRowStatus(med) === "OK" ? "Open medical card" : "Resolve medical card",
   };
   const mvrLine: PretripLine = {
     id: "mvr",
@@ -325,7 +328,7 @@ export function buildPretripTabletModel(
     critical: !delivered && (!mvr || docRowStatus(mvr) !== "OK"),
     href: `${driverHref}#document-engine`,
     actionKind: mvr && docRowStatus(mvr) === "OK" ? "view" : "resolve",
-    actionLabel: mvr && docRowStatus(mvr) === "OK" ? "View" : "Resolve",
+    actionLabel: mvr && docRowStatus(mvr) === "OK" ? "Open MVR" : "Resolve MVR",
   };
 
   const lumperSt = proofDocStatus(lumper);
@@ -339,35 +342,35 @@ export function buildPretripTabletModel(
           ? "OK"
           : "Warning",
     critical: false,
-    href: `${loadHref}#document-engine`,
+    href: artifactHref("lumper_receipt", `${loadHref}#artifact-lumper_receipt`),
     actionKind:
       lumper?.status === "Not required" ? "view" : lumperSt === "OK" ? "view" : "resolve",
     actionLabel:
       lumper?.status === "Not required"
-        ? "View"
+        ? "View lumper context"
         : lumperSt === "OK"
-          ? "View"
-          : "Resolve",
+          ? "Open lumper receipt"
+          : "Resolve lumper receipt",
   };
 
   const payLine: PretripLine = {
     id: "payment-flags",
-    label: "Payment / proof blockers",
+    label: "Payment proof packet",
     status: proofBlockers > 0 ? "Missing" : "OK",
     critical: proofBlockers > 0 && pendingAssign && !delivered,
-    href: `${loadHref}#document-engine`,
+    href: artifactHref("settlement_hold_notice", `${loadHref}#artifact-settlement_hold_notice`),
     actionKind: proofBlockers > 0 ? "resolve" : "view",
-    actionLabel: proofBlockers > 0 ? "Resolve" : "View",
+    actionLabel: proofBlockers > 0 ? "Review proof packet" : "Open payment packet",
   };
 
   const rfLine: PretripLine = {
     id: "rf-actions",
-    label: "RF actions (this load)",
+    label: "RFID / proof chain",
     status: rfBlocking ? "Missing" : rfForLoad.length ? "Warning" : "OK",
     critical: rfBlocking && pendingAssign && !delivered,
-    href: "/rf-actions",
+    href: `${loadHref}#rfid-proof`,
     actionKind: rfForLoad.length ? "resolve" : "view",
-    actionLabel: rfForLoad.length ? "Resolve" : "View",
+    actionLabel: rfForLoad.length ? "Review load proof chain" : "Open proof chain",
   };
 
   const pod = proofByType(data, loadId, "POD");
@@ -377,10 +380,10 @@ export function buildPretripTabletModel(
     label: "POD stack (readiness)",
     status: podSt,
     critical: Boolean(pod?.blocksPayment) && pendingAssign && !delivered,
-    href: `${loadHref}#document-engine`,
+    href: artifactHref("pod", `${loadHref}#artifact-pod`),
     actionKind: podSt === "OK" || pod?.status === "Not required" ? "view" : "resolve",
     actionLabel:
-      podSt === "OK" || pod?.status === "Not required" ? "View" : "Resolve",
+      podSt === "OK" || pod?.status === "Not required" ? "Open POD" : "Resolve POD readiness",
   };
 
   const settlementRow = data.settlements?.find(
@@ -394,9 +397,9 @@ export function buildPretripTabletModel(
       ? "Warning"
       : "OK",
     critical: false,
-    href: "/settlements",
+    href: `${driverHref}/settlements`,
     actionKind: "view",
-    actionLabel: "View",
+    actionLabel: "Open settlement status",
   };
 
   const { weather, traffic } = weatherTraffic(loadId);
@@ -411,18 +414,18 @@ export function buildPretripTabletModel(
         label: "Rate Confirmation",
         status: rateSt,
         critical: !delivered && rateSt !== "OK",
-        href: `${loadHref}#document-engine`,
+        href: artifactHref("rate_confirmation", `${loadHref}#artifact-rate_confirmation`),
         actionKind: rateSt === "OK" ? "view" : "upload",
-        actionLabel: rateSt === "OK" ? "View" : "Upload",
+        actionLabel: rateSt === "OK" ? "Open rate confirmation" : "Attach rate confirmation",
       },
       {
         id: "bol",
         label: "BOL",
         status: bolSt,
         critical: !delivered && bolSt !== "OK",
-        href: `${loadHref}#document-engine`,
+        href: artifactHref("bol", `${loadHref}#artifact-bol`),
         actionKind: bolSt === "OK" ? "view" : "upload",
-        actionLabel: bolSt === "OK" ? "View" : "Upload",
+        actionLabel: bolSt === "OK" ? "Open BOL" : "Attach BOL",
       },
       dispatchLine,
     ],
@@ -484,10 +487,10 @@ export function buildPretripTabletModel(
   let dispatchPhaseMessage: string | null = null;
   if (enRoute) {
     dispatchPhaseMessage =
-      "This load is already active (En Route). Start Load is disabled.";
+      "This load is already active (En Route). The packet remains available for driver, dispatch, and manager review.";
   } else if (delivered) {
     dispatchPhaseMessage =
-      "Trip completed. Start Load is disabled; items below are historical.";
+      "Trip completed. The packet remains available as the historical trip file.";
   }
 
   const overall: "READY" | "BLOCKED" =

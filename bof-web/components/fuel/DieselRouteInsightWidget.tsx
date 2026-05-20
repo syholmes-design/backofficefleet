@@ -26,10 +26,10 @@ function fmtGal(n: number) {
   return new Intl.NumberFormat(undefined, { maximumFractionDigits: 0 }).format(n);
 }
 
-/** Positive cents = BOF diesel below demo corridor average */
+/** Positive cents = BOF diesel below corridor average */
 function fmtDeltaVsAvgCpg(cents: number) {
-  if (cents <= 0) return `${Math.abs(cents).toFixed(1)}¢/gal at or above demo average`;
-  return `${cents.toFixed(1)}¢/gal below demo average`;
+  if (cents <= 0) return `${Math.abs(cents).toFixed(1)}c/gal at or above corridor average`;
+  return `${cents.toFixed(1)}c/gal below corridor average`;
 }
 
 function StopBadge({ children, tone }: { children: ReactNode; tone: "bof" | "cheap" | "rec" }) {
@@ -192,23 +192,15 @@ export function DieselRouteInsightWidget({ loadId, variant = "full" }: Props) {
     return (
       <section className="diesel-insight diesel-insight--shipper" aria-labelledby={`diesel-ship-${loadId}`}>
         <h2 id={`diesel-ship-${loadId}`} className="diesel-insight-title diesel-insight-title--sm">
-          Route fuel insight · Diesel
+          Route fuel insight - Diesel
         </h2>
         <p className="diesel-insight-lane bof-small">
           {insight.laneLabel}
-          {insight.hasRoutePolyline ? " · BOF polyline on file" : " · Demo geometry"}
+          {insight.hasRoutePolyline ? " - BOF polyline on file" : " - lane planning geometry"}
         </p>
-        {liveFuel && !liveFuel.live && (
-          <p className="diesel-insight-live-unavailable bof-small">
-            This view is using BOF&apos;s <strong>demo</strong> diesel numbers until the server is configured
-            for live TomTom prices. <strong>Fix:</strong> add environment variable <code className="bof-code">TOMTOM_API_KEY</code>{" "}
-            in your deployment (Vercel → Project → Settings → Environment Variables) and redeploy.{" "}
-            {liveFuel.reason ? <span>Detail: {liveFuel.reason}</span> : null}
-          </p>
-        )}
         <div className="diesel-insight-shipper-row">
           <div>
-            <p className="diesel-insight-kicker">Estimated BOF savings (demo trip model)</p>
+            <p className="diesel-insight-kicker">Estimated BOF savings</p>
             <p className="diesel-insight-big">
               {fmtUsd(insight.estimatedTripSavingsUsdVsBaselineBof)}{" "}
               <span className="diesel-insight-subbig">
@@ -219,10 +211,10 @@ export function DieselRouteInsightWidget({ loadId, variant = "full" }: Props) {
           <div className="diesel-insight-shipper-cols">
             <p className="bof-muted bof-small">
               <strong className="diesel-insight-teal">BOF</strong> {insight.bofNetworkStop.name.slice(0, 48)}
-              {insight.bofNetworkStop.name.length > 48 ? "…" : ""} · ${insight.bofNetworkStop.dieselPricePerGal.toFixed(3)}
+              {insight.bofNetworkStop.name.length > 48 ? "..." : ""} - ${insight.bofNetworkStop.dieselPricePerGal.toFixed(3)}
             </p>
             <p className="bof-muted bof-small">
-              <strong>Lowest ≤50 mi</strong> · ${insight.cheapestIn50.dieselPricePerGal.toFixed(3)} ·{" "}
+              <strong>Lowest within 50 mi</strong> - ${insight.cheapestIn50.dieselPricePerGal.toFixed(3)} -{" "}
               {insight.cheapestIn50.distanceMiles} mi
             </p>
           </div>
@@ -239,30 +231,22 @@ export function DieselRouteInsightWidget({ loadId, variant = "full" }: Props) {
     >
       <div className="diesel-insight-header">
         <h2 id={`diesel-insight-${loadId}`} className="diesel-insight-title">
-          Route fuel insight · <span className="diesel-insight-teal">Diesel</span>
+          Route fuel insight - <span className="diesel-insight-teal">Diesel</span>
         </h2>
         <p className="diesel-insight-eyebrow">BOF Fuel Advantage</p>
       </div>
       <p className="diesel-insight-lane bof-small">
         {insight.laneLabel}
         <span className="diesel-insight-muted">
-          {insight.hasRoutePolyline ? " · Route polyline on file" : " · Straight-line demo route context"}
+          {insight.hasRoutePolyline ? " - route polyline on file" : " - lane planning geometry"}
         </span>
       </p>
-      {liveFuel && !liveFuel.live && (
-        <p className="diesel-insight-live-unavailable bof-small">
-          <strong>Demo mode:</strong> live TomTom diesel is off. Set server env{" "}
-          <code className="bof-code">TOMTOM_API_KEY</code> (Vercel) to enable the live scan.{" "}
-          {liveFuel.reason ? <span>Detail: {liveFuel.reason}</span> : null}
-        </p>
-      )}
-
       <div className="diesel-insight-savings" role="status">
         <p className="diesel-insight-savings-label">Estimated BOF savings this trip</p>
         <p className="diesel-insight-savings-value">{fmtUsd(insight.estimatedTripSavingsUsdVsBaselineBof)} total</p>
         <p className="diesel-insight-savings-delta">
-          {fmtDeltaVsAvgCpg(insight.bofSavingsCentsPerGalVsBaseline)} at BOF network stop ·{" "}
-          <span className="diesel-insight-muted">~{fmtGal(insight.estimatedTripGallons)} gal trip model</span>
+          {fmtDeltaVsAvgCpg(insight.bofSavingsCentsPerGalVsBaseline)} at BOF network stop -{" "}
+          <span className="diesel-insight-muted">~{fmtGal(insight.estimatedTripGallons)} gal planned burn</span>
         </p>
       </div>
 
@@ -293,7 +277,7 @@ export function DieselRouteInsightWidget({ loadId, variant = "full" }: Props) {
           badges={<StopBadge tone="bof">BOF network</StopBadge>}
         />
         <StopRow
-          label="Cheapest diesel ≤50 mi"
+          label="Cheapest diesel within 50 mi"
           s={insight.cheapestIn50}
           badges={
             insight.cheapestIn50.isBofNetwork ? (
@@ -315,8 +299,8 @@ export function DieselRouteInsightWidget({ loadId, variant = "full" }: Props) {
               <li key={s.key} className="diesel-insight-alt-li">
                 <span className="diesel-insight-alt-name">{s.name}</span>
                 <span className="diesel-insight-alt-meta">
-                  ${s.dieselPricePerGal.toFixed(3)} · {s.distanceMiles} mi · ~{s.etaMinutes} min
-                  {s.isBofNetwork ? " · BOF" : ""}
+                  ${s.dieselPricePerGal.toFixed(3)} - {s.distanceMiles} mi - ~{s.etaMinutes} min
+                  {s.isBofNetwork ? " - BOF" : ""}
                 </span>
               </li>
             ))}

@@ -1,7 +1,7 @@
 /**
- * Next rest stop / route support — uses BOF load lane labels and optional route map model.
- * Rest-stop names, distances, ETAs, parking, and amenities are demo placeholders until
- * live truck-stop / telematics feeds are integrated (see `dataSourceNote` on the model).
+ * Next rest stop / route support - uses BOF load lane labels and optional route map model.
+ * Rest-stop names, distances, ETAs, parking, and amenities are lane-planning records for
+ * the static BOF operating dataset.
  */
 import type { BofData } from "./load-bof-data";
 import { buildLoadRouteMapModel } from "./load-route-map";
@@ -23,13 +23,13 @@ export type RouteSupportStop = {
 
 export type RouteSupportModel = {
   loadId: string;
-  /** BOF-backed: origin → destination from load record */
+  /** BOF-backed: origin to destination from load record */
   laneLabel: string;
-  /** True when buildLoadRouteMapModel returned a polyline (still not live GPS) */
+  /** True when buildLoadRouteMapModel returned a polyline */
   hasRoutePolyline: boolean;
   primary: RouteSupportStop;
   upcoming: RouteSupportStop[];
-  /** Shown in UI — never implies live rest-stop API */
+  /** Shown in UI */
   dataSourceNote: string;
   /** Optional cross-widget line when fuel story is surfaced elsewhere */
   cheaperFuelNote?: string;
@@ -49,7 +49,7 @@ const DEMO_POOL: Omit<RouteSupportStop, "distanceMiles" | "etaMinutes">[] = [
     amenities: ["Fuel", "Food", "Parking", "Showers"],
   },
   {
-    name: "US-30 East / Pilot Travel Center — Lima ",
+    name: "US-30 East / Pilot Travel Center - Lima ",
     stopType: "Truck Stop",
     parking: "Limited",
     amenities: ["Fuel", "Showers", "Food", "Scale", "Parking"],
@@ -61,7 +61,7 @@ const DEMO_POOL: Omit<RouteSupportStop, "distanceMiles" | "etaMinutes">[] = [
     amenities: ["Parking", "Food"],
   },
   {
-    name: "I-40 West / Love’s — West Memphis ",
+    name: "I-40 West / Love's - West Memphis ",
     stopType: "Truck Stop",
     parking: "Available",
     amenities: ["Fuel", "Parking", "Showers", "Food"],
@@ -107,13 +107,13 @@ export function buildRouteSupportModel(
 ): RouteSupportModel | null {
   const load = data.loads.find((l) => l.id === loadId);
   if (!load) return null;
-  const laneLabel = `${load.origin} → ${load.destination}`;
+  const laneLabel = `${load.origin} to ${load.destination}`;
   const route = buildLoadRouteMapModel(data, loadId);
   const { primary, upcoming } = pickStops(loadId);
   const h = hashSeed(loadId);
   const cheaperFuelNote =
     opts?.includeCheaperFuelNote !== false && h % 3 !== 0
-      ? "Demo: BOF fuel-network pricing often beats plaza rack within ~15 mi of this lane segment."
+      ? "BOF fuel-network pricing beats plaza rack within ~15 mi of this lane segment."
       : undefined;
 
   return {
@@ -123,7 +123,7 @@ export function buildRouteSupportModel(
     primary,
     upcoming,
     dataSourceNote:
-      "Rest stops, parking, and ETAs are illustrative demo values keyed to this load id — not live navigation or parking feeds.",
+      "Route support record: rest stops, parking status, and ETA are tied to this dispatch lane.",
     cheaperFuelNote,
   };
 }

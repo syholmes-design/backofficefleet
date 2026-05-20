@@ -8,6 +8,7 @@ export interface AssetCardProps {
   status: "ready" | "pending" | "missing" | "exception";
   thumbnail?: string;
   openLink?: string;
+  openLabel?: string;
   downloadLink?: string;
   relatedEntity?: {
     type: "load" | "driver" | "settlement" | "safety-event";
@@ -24,6 +25,7 @@ export function AssetCard({
   status,
   thumbnail,
   openLink,
+  openLabel,
   downloadLink,
   relatedEntity,
   description,
@@ -141,7 +143,7 @@ export function AssetCard({
             className="flex items-center gap-1 px-3 py-1.5 bg-blue-500/20 text-blue-400 rounded-lg hover:bg-blue-500/30 transition-colors text-xs font-medium"
           >
             <ExternalLink className="w-3 h-3" />
-            Open
+            {openLabel ?? "Open"}
           </a>
         )}
         {downloadLink && (
