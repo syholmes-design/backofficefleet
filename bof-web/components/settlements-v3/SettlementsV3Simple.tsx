@@ -499,7 +499,7 @@ export function SettlementsV3Simple() {
                       <td className="px-6 py-4">
                         <div className="flex min-w-48 flex-wrap gap-2">
                           <Link
-                            href={`/drivers/${settlement.driverId}/settlements`}
+                            href={`/drivers/${settlement.driverId}/settlements?week=${encodeURIComponent(settlement.weekEnding)}`}
                             className="rounded-md border border-teal-400/40 bg-teal-400/10 px-3 py-1.5 text-xs font-semibold text-teal-100 transition hover:border-teal-300 hover:bg-teal-400/20 focus:outline-none focus:ring-2 focus:ring-teal-300"
                           >
                             Review pay
@@ -613,7 +613,7 @@ export function SettlementsV3Simple() {
                           </div>
                           <div className="mt-3 flex flex-wrap gap-2">
                             <Link
-                              href={`/drivers/${hold.driverId}/settlements`}
+                              href={`/drivers/${hold.driverId}/settlements?week=${encodeURIComponent(hold.weekEnding)}`}
                               className="rounded-md border border-yellow-400/40 bg-yellow-400/10 px-3 py-1.5 text-xs font-semibold text-yellow-100 transition hover:border-yellow-300 hover:bg-yellow-400/20 focus:outline-none focus:ring-2 focus:ring-yellow-300"
                             >
                               Review driver pay
