@@ -21,11 +21,11 @@ type NavItem = {
 };
 
 const PRIMARY_ITEMS: NavItem[] = [
-  { id: "board", label: "Dispatch Board", icon: LayoutGrid, href: "/dispatch" },
-  { id: "exceptions", label: "Exception View", icon: AlertTriangle, href: "/dispatch?view=exceptions" },
-  { id: "load-detail", label: "Load Detail", icon: ClipboardList, href: "/dispatch?view=load-detail" },
+  { id: "board", label: "Command Workspace", icon: LayoutGrid, href: "/dispatch" },
+  { id: "exceptions", label: "Exception Queue", icon: AlertTriangle, href: "/dispatch?view=exceptions" },
+  { id: "load-detail", label: "Load File", icon: ClipboardList, href: "/dispatch?view=load-detail" },
   { id: "assign", label: "Assign Driver & Equipment", icon: UserPlus, href: "/dispatch?view=assign" },
-  { id: "settlement", label: "Settlement Readiness", icon: Banknote, href: "/dispatch?view=settlement" },
+  { id: "settlement", label: "Settlement Release", icon: Banknote, href: "/dispatch?view=settlement" },
 ];
 
 const SECONDARY_ITEMS: NavItem[] = [
@@ -49,14 +49,14 @@ export function DispatchNav() {
 
   return (
     <nav
-      className="flex w-56 shrink-0 flex-col gap-0.5 border-r border-slate-800 bg-slate-950/80 p-3"
+      className="hidden w-56 shrink-0 flex-col gap-0.5 border-r border-slate-800 bg-slate-950/80 p-3 lg:flex"
       aria-label="Dispatch module"
     >
       <div className="mb-3 border-b border-slate-800 pb-3">
         <p className="text-[10px] font-semibold uppercase tracking-wider text-slate-500">
-          BOF Dispatch
+          Delta Advanced Trucking
         </p>
-        <p className="text-sm font-semibold text-teal-500">Command Board</p>
+        <p className="text-sm font-semibold text-teal-500">Dispatch Control</p>
       </div>
       
       <div className="mb-4">
@@ -107,10 +107,10 @@ export function DispatchNav() {
         })}
       </div>
 
-      <div className="mt-auto border-t border-slate-800 pt-3 text-[10px] text-slate-600">
+      <div className="mt-auto border-t border-slate-800 pt-3 text-[10px] text-slate-500">
         <span className="inline-flex items-center gap-1">
           <Link2 className="h-3 w-3" aria-hidden />
-          Linked to BOF demo fleet JSON
+          Release packets, proof, route, and settlement
         </span>
       </div>
     </nav>

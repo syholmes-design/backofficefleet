@@ -87,7 +87,7 @@ export function DispatchShell() {
   }, [viewParam, setNav]);
 
   return (
-    <div className="flex min-h-[calc(100vh-3.5rem)] bg-slate-950 text-slate-100">
+    <div className="flex min-h-[calc(100vh-3.5rem)] flex-col bg-slate-950 text-slate-100 lg:flex-row">
       <DispatchNav />
       <div className="flex min-h-0 min-w-0 flex-1 flex-col">
         {nav === "board" && <DispatchBoardScreen />}
