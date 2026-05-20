@@ -1033,8 +1033,8 @@ export const OPERATIONS_FILE_CABINET_REGISTRY: OperationsFileCabinetItem[] = [
     audience: ["manager", "safety", "legal", "finance"],
     status: "available",
     description: "Standard operating procedures for claims escalation, proof packet documentation, and insurance workflow",
-    href: "/generated/company-operations-vault/07-insurance-risk-and-claims-sop.html",
-    sourceAuthenticity: "generated_from_template",
+    href: "/generated/company-operations-vault/DAT_SOP_CLM_001_Rev3_1.pdf",
+    sourceAuthenticity: "official_template",
     documentOwner: "employer",
     employerName: "Delta Advanced Trucking, Inc.",
     tags: ["claims", "insurance", "risk", "sop", "procedures", "proof-packet"]
