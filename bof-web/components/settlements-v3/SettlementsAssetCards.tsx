@@ -21,20 +21,22 @@ export function SettlementsAssetCards({ loadId, driverId, settlementWeek }: Sett
     try {
       setLoading(true);
       const assetCards: AssetCardProps[] = [];
+      const settlementDocumentPath = "/evidence/support/settlement-documents";
+      const hasLumperSupport = loadId === "L003" || loadId === "L008";
 
       if (loadId) {
         // Settlement Packet
         assetCards.push({
           title: "Settlement Packet",
           status: "ready",
-          thumbnail: "/evidence/support/document-support/settlement-statement-preview.png",
+          thumbnail: `${settlementDocumentPath}/settlement-packet-preview.svg`,
           openLink: `/generated/settlements/${loadId}/settlement-summary.html`,
           relatedEntity: {
             type: "settlement",
             id: loadId,
             name: `Settlement ${loadId}`,
           },
-          description: "Complete settlement packet with all documentation",
+          description: "Driver gross-to-net settlement summary, deductions, holds, and release status",
           fileSize: "~50 KB",
           lastUpdated: settlementWeek || "This week",
         });
@@ -43,14 +45,14 @@ export function SettlementsAssetCards({ loadId, driverId, settlementWeek }: Sett
         assetCards.push({
           title: "Invoice",
           status: "ready",
-          thumbnail: "/evidence/support/document-support/invoice-paid-preview.png",
+          thumbnail: `${settlementDocumentPath}/invoice-preview.svg`,
           openLink: `/generated/loads/${loadId}/invoice.html`,
           relatedEntity: {
             type: "load",
             id: loadId,
             name: loadId,
           },
-          description: "Load invoice and billing details",
+          description: "Customer invoice with linehaul, accessorials, and billing status",
           fileSize: "~10 KB",
           lastUpdated: "Today",
         });
@@ -59,14 +61,14 @@ export function SettlementsAssetCards({ loadId, driverId, settlementWeek }: Sett
         assetCards.push({
           title: "Bill of Lading",
           status: "ready",
-          thumbnail: "/evidence/support/document-support/bol-preview.png",
+          thumbnail: `${settlementDocumentPath}/bill-of-lading-preview.svg`,
           openLink: `/generated/loads/${loadId}/bol.html`,
           relatedEntity: {
             type: "load",
             id: loadId,
             name: loadId,
           },
-          description: "Official bill of lading document",
+          description: "Signed BOL reference tied to load and settlement release",
           fileSize: "~25 KB",
           lastUpdated: "Today",
         });
@@ -75,14 +77,14 @@ export function SettlementsAssetCards({ loadId, driverId, settlementWeek }: Sett
         assetCards.push({
           title: "Proof of Delivery",
           status: "ready",
-          thumbnail: "/evidence/support/document-support/delivery-pod-photo.png",
+          thumbnail: `${settlementDocumentPath}/proof-of-delivery-preview.svg`,
           openLink: `/generated/loads/${loadId}/pod.html`,
           relatedEntity: {
             type: "load",
             id: loadId,
             name: loadId,
           },
-          description: "Signed proof of delivery confirmation",
+          description: "Delivery signature and timestamp used for settlement release",
           fileSize: "~18 KB",
           lastUpdated: "Today",
         });
@@ -91,14 +93,14 @@ export function SettlementsAssetCards({ loadId, driverId, settlementWeek }: Sett
         assetCards.push({
           title: "Rate Confirmation",
           status: "ready",
-          thumbnail: "/evidence/support/document-support/rate-confirmation-preview.png",
+          thumbnail: `${settlementDocumentPath}/rate-confirmation-preview.svg`,
           openLink: `/generated/loads/${loadId}/rate-confirmation.html`,
           relatedEntity: {
             type: "load",
             id: loadId,
             name: loadId,
           },
-          description: "Confirmed rate and terms for this load",
+          description: "Broker/customer rate confirmation and accessorial terms",
           fileSize: "~15 KB",
           lastUpdated: "Today",
         });
@@ -107,14 +109,14 @@ export function SettlementsAssetCards({ loadId, driverId, settlementWeek }: Sett
         assetCards.push({
           title: "Hold Evidence",
           status: "pending",
-          thumbnail: `/evidence/loads/${loadId}/claim-evidence.png`,
+          thumbnail: `${settlementDocumentPath}/settlement-hold-evidence-preview.svg`,
           openLink: `/generated/loads/${loadId}/claim-packet.html`,
           relatedEntity: {
             type: "load",
             id: loadId,
             name: loadId,
           },
-          description: "Documentation for settlement holds",
+          description: "Settlement hold evidence summary with reason, amount, and required fix",
           fileSize: "~20 KB",
           lastUpdated: "Today",
         });
@@ -122,17 +124,17 @@ export function SettlementsAssetCards({ loadId, driverId, settlementWeek }: Sett
         // Lumper Receipt (if relevant)
         assetCards.push({
           title: "Lumper Receipt",
-          status: loadId === "L003" || loadId === "L004" ? "ready" : "pending",
-          thumbnail: "/evidence/support/document-support/lumper-receipt-preview.png",
-          openLink: loadId === "L003" || loadId === "L004" 
-            ? `/evidence/loads/${loadId}/lumper-receipt-photo.jpg`
+          status: hasLumperSupport ? "ready" : "pending",
+          thumbnail: `${settlementDocumentPath}/lumper-receipt-preview.svg`,
+          openLink: hasLumperSupport
+            ? `/generated/settlements/${loadId}/lumper-reimbursement-support.html`
             : undefined,
           relatedEntity: {
             type: "load",
             id: loadId,
             name: loadId,
           },
-          description: "Lumper service receipt and reimbursement",
+          description: "Lumper receipt with vendor, amount, and reimbursement status",
           fileSize: "~900 KB",
           lastUpdated: "Today",
         });
@@ -141,14 +143,14 @@ export function SettlementsAssetCards({ loadId, driverId, settlementWeek }: Sett
         assetCards.push({
           title: "Claim Evidence",
           status: "pending",
-          thumbnail: `/evidence/loads/${loadId}/damage-photo.png`,
+          thumbnail: `${settlementDocumentPath}/claim-chargeback-preview.svg`,
           openLink: `/generated/loads/${loadId}/damage-photo-packet.html`,
           relatedEntity: {
             type: "load",
             id: loadId,
             name: loadId,
           },
-          description: "Claim and chargeback documentation",
+          description: "Chargeback/claim evidence packet tied to cargo condition and amount at risk",
           fileSize: "~8 KB",
           lastUpdated: "Today",
         });
@@ -157,7 +159,7 @@ export function SettlementsAssetCards({ loadId, driverId, settlementWeek }: Sett
         assetCards.push({
           title: "Post-Trip Factoring Packet",
           status: loadId === "L011" ? "ready" : "missing",
-          thumbnail: "/evidence/support/document-support/rate-confirmation-preview.png",
+          thumbnail: `${settlementDocumentPath}/factoring-packet-preview.svg`,
           openLink: loadId === "L011" 
             ? `/generated/factoring/${loadId}/post-trip-factoring-packet.html`
             : undefined,
@@ -166,7 +168,7 @@ export function SettlementsAssetCards({ loadId, driverId, settlementWeek }: Sett
             id: loadId,
             name: loadId,
           },
-          description: "Complete factoring packet with all required documents",
+          description: "Invoice, BOL, POD, rate-con, and proof checklist for factoring",
           fileSize: "~45 KB",
           lastUpdated: "Today",
         });

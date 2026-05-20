@@ -74,6 +74,7 @@ export function AssetCard({
         return "Unknown";
     }
   };
+  const isSvgThumbnail = thumbnail?.toLowerCase().endsWith(".svg") ?? false;
 
   return (
     <div className="bg-slate-900/50 backdrop-blur-sm border border-slate-800 rounded-xl p-4 hover:border-slate-700 transition-colors">
@@ -96,6 +97,7 @@ export function AssetCard({
             alt={`${title} preview`}
             width={320}
             height={160}
+            unoptimized={isSvgThumbnail}
             className="h-32 w-full object-cover"
             onError={(event) => {
               event.currentTarget.style.display = "none";
