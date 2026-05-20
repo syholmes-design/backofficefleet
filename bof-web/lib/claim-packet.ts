@@ -186,7 +186,7 @@ export function buildClaimDraft(
   kind: ClaimDraftKind,
   ctx: ClaimPacketContext
 ): string {
-  const header = `[BOF CLAIM WORKSPACE — ${kind.toUpperCase()} — DEMO DRAFT ONLY]`;
+  const header = `[BOF CLAIM WORKSPACE — ${kind.toUpperCase()} — WORKSPACE DRAFT]`;
   const incidents =
     ctx.incidentIds.length > 0
       ? ctx.incidentIds.join(", ")

@@ -1,6 +1,6 @@
 import type { BofTemplatePackId } from "@/lib/bof-template-system";
 
-/** Deep-link into the BOF operational document viewer (demo). */
+/** Deep-link into the BOF operational document viewer . */
 export function buildBofDocumentViewerHref(args: {
   templateId: string;
   entityId: string;

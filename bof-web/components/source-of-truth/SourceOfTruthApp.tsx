@@ -420,7 +420,7 @@ export function SourceOfTruthApp() {
                   />
                 </div>
                 <div className="bof-sot-field">
-                  <label htmlFor="sot-comp">Compliance status (demo)</label>
+                  <label htmlFor="sot-comp">Compliance status </label>
                   <input
                     id="sot-comp"
                     value={driverDraft.complianceStatus}
@@ -430,7 +430,7 @@ export function SourceOfTruthApp() {
                   />
                 </div>
                 <div className="bof-sot-field">
-                  <label htmlFor="sot-asset">Assigned asset id (demo)</label>
+                  <label htmlFor="sot-asset">Assigned asset id </label>
                   <input
                     id="sot-asset"
                     value={driverDraft.assignedAssetId}

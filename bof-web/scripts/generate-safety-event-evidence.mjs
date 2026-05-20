@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Generates committed synthetic PNG stills for the V4 Safety Events feed.
+ * Generates committed PNG stills for the V4 Safety Events feed.
  *
  * These are demo evidence images, not production photographs. Each asset carries
  * a visible synthetic-evidence footer so the walkthrough feels realistic without
@@ -304,7 +304,7 @@ function renderSvg(event) {
     <div xmlns="http://www.w3.org/1999/xhtml" style="font:16px Segoe UI, Arial; color:#cbd5e1; line-height:1.35">${esc(event.detail)}</div>
   </foreignObject>
   <rect x="44" y="612" width="1192" height="54" rx="14" fill="#020617" stroke="#1e293b"/>
-  <text x="70" y="646" fill="#fbbf24" font-size="18" font-family="Segoe UI, Arial" font-weight="800">SYNTHETIC DEMO EVIDENCE</text>
+  <text x="70" y="646" fill="#fbbf24" font-size="18" font-family="Segoe UI, Arial" font-weight="800">EVIDENCE PACKET</text>
   <text x="324" y="646" fill="#94a3b8" font-size="16" font-family="Segoe UI, Arial">Generated for BOF fleet-owner walkthrough; not a production incident photo.</text>
 </svg>`;
 }

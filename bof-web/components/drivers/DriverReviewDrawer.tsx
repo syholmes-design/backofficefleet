@@ -129,10 +129,10 @@ export function DriverReviewDrawer({
           resolveDriverDispatchBlocker(
             driverId,
             issue.dispatchBlockerId,
-            "Driver review — resolve blocker (demo)"
+            "Driver review — resolve blocker "
           );
         } else {
-          resolveDriverReviewIssue(driverId, issue.id, "Driver review — mark reviewed (demo)");
+          resolveDriverReviewIssue(driverId, issue.id, "Driver review — mark reviewed ");
         }
       }}
       headerExtra={

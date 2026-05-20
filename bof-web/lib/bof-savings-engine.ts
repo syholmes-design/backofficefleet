@@ -263,7 +263,7 @@ export function buildSavingsEngineScorecard(data: BofData): SavingsEngineScoreca
   };
 }
 
-/** Marketing / synthetic fleets: full scorecard without iterating demo loads for recovered revenue. */
+/** Marketing / fleets: full scorecard without iterating demo loads for recovered revenue. */
 export function buildSavingsEngineScorecardFromBase(base: SavingsEngineBaseInputs): SavingsEngineScorecard {
   return {
     base,

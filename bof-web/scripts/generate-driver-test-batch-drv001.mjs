@@ -63,7 +63,7 @@ function wrapPage(pageTitle, inner) {
 <body>
   <div class="sheet">
     ${inner}
-    <footer>BackOfficeFleet · DRV-001 compliance test batch · Demo — not a legal filing</footer>
+    <footer>BackOfficeFleet · DRV-001 compliance test batch · Internal compliance file</footer>
   </div>
 </body>
 </html>`;

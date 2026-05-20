@@ -12,7 +12,7 @@ const PUBLIC_ROOT = path.join(ROOT, "public");
 const EVIDENCE_ROOT = path.join(PUBLIC_ROOT, "evidence", "loads");
 const PUBLIC_MANIFEST_PATH = path.join(EVIDENCE_ROOT, "load-evidence-manifest.json");
 const LIB_MANIFEST_PATH = path.join(ROOT, "lib", "generated", "load-evidence-manifest.json");
-const SOURCE_HINT = "Generated demo evidence";
+const SOURCE_HINT = "BackOfficeFleet evidence record";
 const EVIDENCE_CATALOG = [
   { key: "cargoPhoto", label: "Cargo photo", baseName: "cargo-photo", required: true, conditional: false },
   { key: "equipmentPhoto", label: "Equipment photo", baseName: "equipment-photo", required: true, conditional: false },
@@ -126,7 +126,7 @@ function renderEvidenceSvg({
   </defs>
   <rect x="0" y="0" width="1280" height="720" fill="url(#bg)"/>
   <rect x="22" y="22" width="1236" height="676" rx="14" fill="none" stroke="#14b8a6" stroke-width="2"/>
-  <text x="24" y="56" fill="#14b8a6" font-size="22" font-family="Segoe UI, Arial" font-weight="700">BOF Demo Evidence</text>
+  <text x="24" y="56" fill="#14b8a6" font-size="22" font-family="Segoe UI, Arial" font-weight="700">BackOfficeFleet Evidence</text>
   <text x="24" y="86" fill="#94a3b8" font-size="14" font-family="Consolas, monospace">${sanitizeSvgText(evidenceType)} · ${sanitizeSvgText(loadId)}</text>
   <text x="24" y="124" fill="#e2e8f0" font-size="28" font-family="Segoe UI, Arial" font-weight="600">${sanitizeSvgText(title)}</text>
   <text x="24" y="162" fill="#cbd5e1" font-size="18" font-family="Segoe UI, Arial">Work order: ${sanitizeSvgText(workOrderId)}</text>
@@ -581,7 +581,7 @@ async function main() {
             evidenceType: "claim_evidence",
             location: `${load.origin} → ${load.destination}`,
             facility: "Claims desk queue",
-            status: "Structured claim evidence placeholder (demo)",
+            status: "Structured claim evidence packet ",
             sealNumber: load.sealStatus || "",
             warning: warning || undefined,
           }), options, stats)

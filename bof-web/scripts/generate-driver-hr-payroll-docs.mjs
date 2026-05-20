@@ -21,7 +21,7 @@ const PROJECT_ROOT = join(__dirname, "..");
 const BOF_CONFIG = {
   company: "Delta Advanced Trucking, Inc.",
   address: "2475 Laver Rd., Mansfield, OH 44905",
-  disclaimer: "BOF Demo Document — Not for legal filing, payroll processing, benefits enrollment, or employee use.",
+  disclaimer: "BackOfficeFleet operations document.",
   tealColor: "#0BA5A4",
   payPeriodsPerYear: 26
 };
@@ -1077,7 +1077,7 @@ function generatePayrollGarnishmentWithholdingSummary(driverInfo, settlementData
                 </div>
                 <div class="info-row">
                     <div class="info-label">Group:</div>
-                    <div class="info-value">BOF Demo Group</div>
+                    <div class="info-value">BackOfficeFleet Group</div>
                 </div>
             </div>
         </div>
@@ -1192,7 +1192,7 @@ function generatePayrollGarnishmentWithholdingSummary(driverInfo, settlementData
     </div>
 
     <div class="footer">
-        BOF Demo Document — Not for legal filing, payroll processing, benefits enrollment, or employee use.
+        BackOfficeFleet operations document.
     </div>
 </body>
 </html>`;
@@ -1384,7 +1384,7 @@ function generateLifeInsuranceBeneficiaryElection(driverInfo, settlementData) {
                 </div>
                 <div class="info-row">
                     <div class="info-label">Group:</div>
-                    <div class="info-value">BOF Demo Group</div>
+                    <div class="info-value">BackOfficeFleet Group</div>
                 </div>
                 <div class="info-row">
                     <div class="info-label">Policy Reference:</div>
@@ -1568,7 +1568,7 @@ function generateLifeInsuranceBeneficiaryElection(driverInfo, settlementData) {
     </div>
 
     <div class="footer">
-        BOF Demo Document — Not for legal filing, payroll processing, benefits enrollment, or employee use.
+        BackOfficeFleet operations document.
     </div>
 </body>
 </html>`;
@@ -1880,7 +1880,7 @@ function generateFlexibleSpendingAccountElection(driverInfo, settlementData) {
     </div>
 
     <div class="footer">
-        BOF Demo Document — Not for legal filing, payroll processing, benefits enrollment, or employee use.
+        BackOfficeFleet operations document.
     </div>
 </body>
 </html>`;

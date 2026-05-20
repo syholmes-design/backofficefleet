@@ -58,7 +58,7 @@ for (let i = 0; i < drivers.length; i += 1) {
     driverName: driver.name,
     driverAddress: driver.address,
     driverPhone: driver.phone || "555-0100",
-    driverEmail: driver.email || `${driver.id.toLowerCase()}@boftransport.demo`,
+    driverEmail: driver.email || `${driver.id.toLowerCase()}@boftransport.com`,
     cdlNumber,
     licenseState: state,
     licenseClass,

@@ -62,7 +62,7 @@ function realismFor(title, exists, relPath, sample) {
   if (!exists) return { rating: "broken/missing", reason: "Linked file is missing on disk." };
   const lower = String(sample || "").toLowerCase();
   if (lower.includes("demo workflow shell") || lower.includes("status: template generated")) {
-    return { rating: "unrealistic", reason: "Template shell placeholder language; not a realistic compliance form." };
+    return { rating: "unrealistic", reason: "Template shell language; requires completion before filing." };
   }
   if (lower.includes("not a legal filing")) {
     return { rating: "weak", reason: "Explicitly marked as demo shell with minimal legal form structure." };

@@ -366,7 +366,7 @@ export function getDriverMedicalCardStatus(
         status: "missing",
         rowStatus: "MISSING",
         source: "missing",
-        reason: "No Medical Card row in demo documents and no indexed file URL",
+        reason: "No Medical Card row in operations documents and no indexed file URL",
       };
     }
     return {
@@ -575,7 +575,7 @@ export function getDriverMvrStatus(data: BofData, driverId: string): DriverMvrSt
         status: "missing",
         rowStatus: "MISSING",
         source: "missing",
-        reason: "No MVR row in demo documents and no indexed file URL",
+        reason: "No MVR row in operations documents and no indexed file URL",
       };
     }
     return {

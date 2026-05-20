@@ -80,7 +80,7 @@ function MiniEldPanel() {
           Review
         </text>
       </svg>
-      <p className="mt-auto text-[9px] leading-snug text-slate-600">Synthetic panel — ties HOS trend to coaching queue.</p>
+      <p className="mt-auto text-[9px] leading-snug text-slate-600">panel — ties HOS trend to coaching queue.</p>
     </div>
   );
 }

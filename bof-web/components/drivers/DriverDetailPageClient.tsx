@@ -803,7 +803,7 @@ export function DriverDetailPageClient({ driverId }: { driverId: string }) {
               </div>
               <div className="bof-driver-ops-row">
                 <span className="bof-driver-ops-k">Trailer</span>
-                <span className="bof-driver-ops-v">Not on load record (demo)</span>
+                <span className="bof-driver-ops-v">Not on load record </span>
               </div>
               <div className="bof-driver-ops-row">
                 <span className="bof-driver-ops-k">Current load</span>

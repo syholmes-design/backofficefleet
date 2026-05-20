@@ -242,7 +242,7 @@ export function PretripTabletDashboard({
               ))}
             </ul>
             <p className="bof-tablet-map-lead bof-muted bof-small">
-              Route risk overlay — same map as load detail (demo).
+              Route risk overlay — same map as load detail .
             </p>
             {model.routeMapModel ? (
               <LoadRouteMapClient model={model.routeMapModel} />

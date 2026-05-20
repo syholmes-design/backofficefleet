@@ -21,7 +21,7 @@ function mergeIsoDateTime(dateStr: string | undefined, timeHHMM: string): string
 
 /**
  * Maps Intake Engine extraction + intake metadata into the load intake wizard shape.
- * Only copies fields that exist on the intake record — no synthetic lane data.
+ * Only copies fields that exist on the intake record — no lane data.
  */
 export function mergeIntakeEngineRecordIntoWizardState(intake: IntakeRecord): IntakeWizardState {
   const s = createLoadIntakeWizardState();

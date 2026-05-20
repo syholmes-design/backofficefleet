@@ -67,7 +67,7 @@ export function buildBofLoadRfidReadiness(
     Boolean(String(load.deliverySeal ?? "").trim());
 
   const n = loadNumericSuffix(loadId);
-  /** ~1 in 9 loads: RFID capability off for this movement (demo). */
+  /** ~1 in 9 loads: RFID capability off for this movement . */
   const rfidEnabled = n % 9 !== 0;
 
   const highValue = load.revenue >= 4200;
@@ -252,7 +252,7 @@ export function resolveRfidTemplateGate(
   }
   if (!rfid.rfidEnabled) {
     return gateAdvisory(
-      "RFID inactive on this movement (demo). Human proof and documents remain authoritative."
+      "RFID inactive on this movement . Human proof and documents remain authoritative."
     );
   }
 
@@ -332,7 +332,7 @@ export function resolveBillingPacketRfidGate(rfid: BofLoadRfidReadiness | null):
 
 export function describeRfidSurfacePosture(rfid: BofLoadRfidReadiness | null): string | null {
   if (!rfid) return null;
-  if (!rfid.rfidEnabled) return "RFID inactive (demo) — human proof remains primary.";
+  if (!rfid.rfidEnabled) return "RFID inactive  — human proof remains primary.";
   const parts = [`mode ${rfid.rfidMode.replace(/_/g, " ")}`];
   if (rfid.rfidRequiredBeforeRelease) parts.push("release-sensitive");
   if (rfid.rfidRequiredBeforeBilling) parts.push("billing-sensitive");
@@ -376,7 +376,7 @@ export function rfidHintsForTemplateRow(
     out.push("RFID required before release — checkpoint / seal events incomplete");
   }
   if (rfid.rfidTrailerVerified && id.includes("driver-assignment")) {
-    out.push("RFID trailer / tag verified (demo)");
+    out.push("RFID trailer / tag verified ");
   }
   if (id.includes("claim-support") && rfid.rfidCheckpointVerified) {
     out.push("RFID checkpoint history available");

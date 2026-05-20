@@ -89,7 +89,7 @@ export function LoadRfidSection({
             <dd>
               <code className="bof-code">{fuel.assetId}</code>
             </dd>
-            <dt>Service zone verified (demo)</dt>
+            <dt>Service zone verified </dt>
             <dd>
               {fuel.routeCheckpointMatch && !fuel.unauthorizedFuelingFlag
                 ? "Likely on-network"

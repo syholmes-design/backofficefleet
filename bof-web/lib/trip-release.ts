@@ -1,7 +1,7 @@
 /**
  * Driver Trip Release — aggregates BOF dispatch packet, driver credentials,
  * equipment seed rows, and pre-trip tablet model into a single go / no-go evaluation.
- * All inputs come from existing BofData + dispatch seed mappers; no synthetic load fields.
+ * All inputs come from existing BofData + dispatch seed mappers; no load fields.
  */
 import type { BofData } from "./load-bof-data";
 import type { Driver, Load, Trailer, Tractor } from "@/types/dispatch";

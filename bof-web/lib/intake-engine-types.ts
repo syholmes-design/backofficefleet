@@ -111,7 +111,7 @@ export type IntakeRecord = {
   bol_requirements: string;
   pod_requirements: string;
   finalized_at: string | null;
-  /** Load IDs appended to dispatch store after finalize (demo). */
+  /** Load IDs appended to dispatch store after finalize . */
   derived_load_ids: string[];
   /** Readiness language for driver-doc intakes */
   readiness_impact?: "clears_block" | "expiring_soon" | "missing_review" | "neutral";

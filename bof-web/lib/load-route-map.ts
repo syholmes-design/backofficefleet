@@ -196,7 +196,7 @@ export function buildLoadRouteMapModel(
       tier: "issue",
       label: "Delay point",
       lines: [
-        "Operational exception checkpoint (demo)",
+        "Operational exception checkpoint ",
         "Dispatch exception flag set while en route",
         moneyLine(load, blockCount),
         `Next: ${primaryNextAction(items)}`,

@@ -213,7 +213,7 @@ function getHtmlQuality(absPath, type, category) {
       priority: category === "loads" ? "P2 credibility/polish" : "P1 demo-critical",
     };
   }
-  if (lower.includes("demo generated") || lower.includes("generated demo document")) {
+  if (lower.includes("demo generated") || lower.includes("generated operations document")) {
     return {
       realism: "acceptable",
       reason: "Document is structured but includes obvious demo phrasing.",

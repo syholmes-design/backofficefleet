@@ -450,7 +450,7 @@ export function listRepairIssueRows(
         status: m.status ?? "—",
         out_of_service: s?.oos ?? false,
         linked_load_id: m.loadId ?? null,
-        reported_display: "Not in MAR row (demo)",
+        reported_display: "Not in MAR row ",
       } satisfies RepairIssueRow;
     });
 }

@@ -14,7 +14,7 @@ const OWNER_OPERATORS = [
     name: 'Marcus Chen',
     address: '500 Pacific Ave, Dallas, TX 75202',
     phone: '283-876-4322',
-    email: 'marcus.chen@boftransport.demo',
+    email: 'marcus.chen@boftransport.com',
     equipment: {
       type: 'Class A Tractor',
       year: '2022',
@@ -35,7 +35,7 @@ const OWNER_OPERATORS = [
     name: 'Noah Wilson',
     address: '110 W Adams St, Chicago, IL 60603',
     phone: '582-987-2387',
-    email: 'noah.wilson@boftransport.demo',
+    email: 'noah.wilson@boftransport.com',
     equipment: {
       type: 'Class A Tractor',
       year: '2021',
@@ -56,7 +56,7 @@ const OWNER_OPERATORS = [
     name: 'Robert Johnson',
     address: '88 S Main St, Akron, OH 44308',
     phone: '618-623-9317',
-    email: 'robert.johnson@boftransport.demo',
+    email: 'robert.johnson@boftransport.com',
     equipment: {
       type: 'Class A Tractor',
       year: '2023',

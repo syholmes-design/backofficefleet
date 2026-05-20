@@ -97,12 +97,6 @@ export default function PortalsPage() {
           ))}
         </div>
 
-        {/* Footer Info */}
-        <div className="text-center text-gray-500 text-sm">
-          <p>
-            BOF Demo — Enterprise fleet management system with role-based access
-          </p>
-        </div>
       </div>
     </div>
   );

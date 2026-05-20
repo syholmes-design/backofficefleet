@@ -1,11 +1,16 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import { useState, useEffect, useMemo } from "react";
 import { 
+  ArrowRight,
   AlertTriangle, 
+  DollarSign,
+  FileText,
   Shield, 
   TrendingUp, 
+  Truck,
   Users, 
   Clock, 
   AlertOctagon,
@@ -47,6 +52,71 @@ function formatMoney(value: number) {
     currency: "USD",
     maximumFractionDigits: 0,
   }).format(value);
+}
+
+function getScoreTone(score: number) {
+  if (score >= 90) return "bg-emerald-500/15 text-emerald-300 border-emerald-500/30";
+  if (score >= 80) return "bg-green-500/15 text-green-300 border-green-500/30";
+  if (score >= 70) return "bg-yellow-500/15 text-yellow-300 border-yellow-500/30";
+  return "bg-red-500/15 text-red-300 border-red-500/30";
+}
+
+function getEventPriority(event: SafetyEvent) {
+  let priority = 0;
+  if (isCriticalSeverity(event.severity)) priority += 100;
+  if (event.dispatchBlock) priority += 75;
+  if (event.settlementHold) priority += 60;
+  if (event.insuranceClaimNeeded) priority += 50;
+  if (event.coachingRequired) priority += 30;
+  if (!event.evidencePacketComplete) priority += 20;
+  if (isOpenWorkflow(event.status)) priority += 10;
+  return priority;
+}
+
+function getDriverPrimaryAction(driver: MainSafety, event?: SafetyEvent) {
+  if (event?.dispatchBlock) {
+    return { label: "Release dispatch hold", href: "/dispatch" };
+  }
+
+  if (event?.settlementHold) {
+    return { label: "Review pay hold", href: `/drivers/${driver.driverId}/settlements` };
+  }
+
+  if (event && !event.evidencePacketComplete) {
+    return { label: "Complete evidence packet", href: "#recent-safety-events" };
+  }
+
+  if (event?.coachingRequired || normalizeToken(driver.coachingStatus) === "required") {
+    return { label: "Open coaching file", href: `/drivers/${driver.driverId}/safety` };
+  }
+
+  return { label: "Review safety profile", href: `/drivers/${driver.driverId}/safety` };
+}
+
+function getDriverBlockerLabels(driver: MainSafety, events: SafetyEvent[]) {
+  const labels = new Set<string>();
+
+  if (events.some(event => event.dispatchBlock) || normalizeToken(driver.dispatchEligibilityImpact).includes("block")) {
+    labels.add("Dispatch hold");
+  }
+
+  if (events.some(event => event.settlementHold) || normalizeToken(driver.settlementImpact).includes("hold")) {
+    labels.add("Settlement hold");
+  }
+
+  if (events.some(event => event.insuranceClaimNeeded || event.claimAmount > 0)) {
+    labels.add("Claim review");
+  }
+
+  if (events.some(event => !event.evidencePacketComplete) || normalizeToken(driver.evidencePacketStatus).includes("await")) {
+    labels.add("Evidence needed");
+  }
+
+  if (events.some(event => event.coachingRequired) || normalizeToken(driver.coachingStatus).includes("required")) {
+    labels.add("Coaching");
+  }
+
+  return Array.from(labels);
 }
 
 export function SafetyDashboardV4() {
@@ -181,7 +251,7 @@ export function SafetyDashboardV4() {
 
   // Get recent events
   const recentEvents = useMemo(() => {
-    return safetyEvents
+    return [...safetyEvents]
       .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())
       .slice(0, 10);
   }, [safetyEvents]);
@@ -193,6 +263,35 @@ export function SafetyDashboardV4() {
       .sort((a, b) => (b.criticalEvents - a.criticalEvents) || (b.openSafetyEvents - a.openSafetyEvents) || (a.safetyScore - b.safetyScore))
       .slice(0, 8);
   }, [mainSafety]);
+
+  const driverAttentionRows = useMemo(() => {
+    return driversNeedingAttention.map((driver) => {
+      const activeEvents = safetyEvents
+        .filter(event => event.driverId === driver.driverId)
+        .filter(event =>
+          isOpenWorkflow(event.status) ||
+          event.dispatchBlock ||
+          event.settlementHold ||
+          event.coachingRequired ||
+          event.insuranceClaimNeeded ||
+          !event.evidencePacketComplete
+        )
+        .sort((a, b) => getEventPriority(b) - getEventPriority(a));
+      const leadingEvent = activeEvents[0] ?? safetyEvents.find(event => event.driverId === driver.driverId);
+      const claimExposure = activeEvents.reduce((sum, event) => sum + event.claimAmount, 0);
+      const blockers = getDriverBlockerLabels(driver, activeEvents);
+      const primaryAction = getDriverPrimaryAction(driver, leadingEvent);
+
+      return {
+        driver,
+        activeEvents,
+        leadingEvent,
+        claimExposure,
+        blockers,
+        primaryAction,
+      };
+    });
+  }, [driversNeedingAttention, safetyEvents]);
 
   if (loading) {
     return (
@@ -341,64 +440,152 @@ export function SafetyDashboardV4() {
         )}
       </div>
 
-      {/* Drivers Needing Attention */}
-      {driversNeedingAttention.length > 0 && (
+      {/* Driver Safety Work Queue */}
+      {driverAttentionRows.length > 0 && (
         <div className="max-w-7xl mx-auto px-6 pb-6">
           <div className="bg-slate-900/50 backdrop-blur-sm border border-slate-800 rounded-xl p-6">
-            <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
-              <AlertTriangle className="w-5 h-5 text-orange-400" />
-              Drivers Needing Attention
-            </h3>
+            <div className="mb-5 flex flex-col gap-3 lg:flex-row lg:items-end lg:justify-between">
+              <div>
+                <h3 className="flex items-center gap-2 text-lg font-semibold text-white">
+                  <AlertTriangle className="w-5 h-5 text-orange-400" />
+                  Driver Safety Work Queue
+                </h3>
+                <p className="mt-1 max-w-3xl text-sm text-slate-400">
+                  Each row is tied to the next operational action: release dispatch, clear settlement holds,
+                  complete evidence, or open the driver safety file.
+                </p>
+              </div>
+              <Link
+                href="/money-at-risk"
+                className="inline-flex items-center justify-center gap-2 rounded-lg border border-orange-400/30 bg-orange-500/10 px-4 py-2 text-sm font-semibold text-orange-200 transition hover:border-orange-300/60 hover:bg-orange-500/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-300"
+              >
+                Review claims exposure
+                <ArrowRight className="h-4 w-4" />
+              </Link>
+            </div>
             <div className="space-y-3">
-              {driversNeedingAttention.map((driver) => (
-                <div key={driver.driverId} className="bg-slate-800/50 border border-slate-700 rounded-lg p-4">
-                  <div className="flex items-center justify-between">
-                    <div className="flex-1">
-                      <div className="flex items-center gap-3 mb-2">
-                        <span className="text-white font-medium">{driver.driverName || driver.driverId}</span>
-                        <span className="text-slate-500 text-sm">{driver.driverId}</span>
-                        <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                          driver.safetyScore >= 80 
-                            ? 'bg-green-500/20 text-green-400 border border-green-500/30'
-                            : driver.safetyScore >= 60
-                            ? 'bg-yellow-500/20 text-yellow-400 border border-yellow-500/30'
-                            : 'bg-red-500/20 text-red-400 border border-red-500/30'
-                        }`}>
-                          Score: {driver.safetyScore}
+              {driverAttentionRows.map(({ driver, activeEvents, leadingEvent, claimExposure, blockers, primaryAction }) => {
+                const evidence = leadingEvent ? getSafetyEventEvidence(leadingEvent) : undefined;
+                const linkedLoadHref = leadingEvent?.linkedLoadId && /^L\d{3}$/.test(leadingEvent.linkedLoadId)
+                  ? `/loads/${leadingEvent.linkedLoadId}`
+                  : "/dispatch";
+
+                return (
+                <div
+                  key={driver.driverId}
+                  className="group rounded-xl border border-slate-700 bg-slate-800/50 p-4 transition hover:border-blue-400/40 hover:bg-slate-800/75"
+                >
+                  <div className="grid gap-4 xl:grid-cols-[minmax(220px,0.9fr)_minmax(0,1.4fr)_minmax(290px,0.9fr)] xl:items-center">
+                    <div>
+                      <div className="mb-3 flex flex-wrap items-center gap-2">
+                        <Link
+                          href={`/drivers/${driver.driverId}/safety`}
+                          className="text-base font-semibold text-white underline-offset-4 transition hover:text-blue-200 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-300"
+                        >
+                          {driver.driverName || driver.driverId}
+                        </Link>
+                        <span className="text-sm text-slate-500">{driver.driverId}</span>
+                        <span className={`rounded-full border px-2 py-1 text-xs font-semibold ${getScoreTone(driver.safetyScore)}`}>
+                          Score {driver.safetyScore}
                         </span>
                         {driver.criticalEvents > 0 && (
-                          <span className="px-2 py-1 rounded-full text-xs font-medium bg-red-500/20 text-red-400 border border-red-500/30">
-                            {driver.criticalEvents} Critical
+                          <span className="rounded-full border border-red-500/30 bg-red-500/20 px-2 py-1 text-xs font-semibold text-red-300">
+                            {driver.criticalEvents} critical
                           </span>
                         )}
                       </div>
-                      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+                      <div className="grid gap-2 text-sm text-slate-300 sm:grid-cols-2">
                         <div>
-                          <span className="text-slate-400">Open Events:</span>
-                          <span className="text-white ml-2">{driver.openSafetyEvents}</span>
+                          <span className="text-slate-500">Active items</span>
+                          <div className="font-semibold text-white">{activeEvents.length || driver.openSafetyEvents}</div>
                         </div>
                         <div>
-                          <span className="text-slate-400">Last Event:</span>
-                          <span className="text-white ml-2">{driver.lastSafetyEventType || "None"}</span>
-                        </div>
-                        <div>
-                          <span className="text-slate-400">Coaching:</span>
-                          <span className="text-white ml-2">{driver.coachingStatus || "Current"}</span>
-                        </div>
-                        <div>
-                          <span className="text-slate-400">Action Due:</span>
-                          <span className="text-white ml-2">{driver.correctiveActionDue ? formatDisplayDate(driver.correctiveActionDue) : "No immediate action"}</span>
+                          <span className="text-slate-500">Claim exposure</span>
+                          <div className="font-semibold text-white">{claimExposure > 0 ? formatMoney(claimExposure) : "No reserve"}</div>
                         </div>
                       </div>
-                      {driver.safetyActionStatus && (
-                        <div className="mt-3 rounded-md border border-slate-700 bg-slate-950/40 px-3 py-2 text-sm text-slate-300">
-                          {driver.safetyActionStatus}
+                    </div>
+
+                    <div className="rounded-lg border border-slate-700/70 bg-slate-950/40 p-4">
+                      <div className="mb-3 flex flex-wrap items-center gap-2">
+                        {blockers.length > 0 ? blockers.map((blocker) => (
+                          <span key={blocker} className="rounded-full border border-slate-600 bg-slate-900 px-2.5 py-1 text-xs font-semibold text-slate-200">
+                            {blocker}
+                          </span>
+                        )) : (
+                          <span className="rounded-full border border-emerald-500/30 bg-emerald-500/10 px-2.5 py-1 text-xs font-semibold text-emerald-300">
+                            Monitoring
+                          </span>
+                        )}
+                      </div>
+                      <div className="grid gap-3 text-sm md:grid-cols-3">
+                        <div>
+                          <span className="text-slate-500">Last event</span>
+                          <div className="mt-1 font-semibold text-white">{leadingEvent?.eventType || driver.lastSafetyEventType || "Safety review"}</div>
                         </div>
-                      )}
+                        <div>
+                          <span className="text-slate-500">Coaching</span>
+                          <div className="mt-1 font-semibold text-white">{driver.coachingStatus || "Current"}</div>
+                        </div>
+                        <div>
+                          <span className="text-slate-500">Action due</span>
+                          <div className="mt-1 font-semibold text-white">
+                            {driver.correctiveActionDue ? formatDisplayDate(driver.correctiveActionDue) : "No immediate action"}
+                          </div>
+                        </div>
+                      </div>
+                      <p className="mt-3 text-sm leading-5 text-slate-400">
+                        {leadingEvent?.correctiveAction || driver.safetyActionStatus || "Review driver safety profile and confirm the next operational action."}
+                      </p>
+                    </div>
+
+                    <div className="flex flex-col gap-2 sm:flex-row xl:flex-col">
+                      <Link
+                        href={primaryAction.href}
+                        className="inline-flex items-center justify-center gap-2 rounded-lg bg-blue-500/15 px-4 py-2.5 text-sm font-semibold text-blue-100 transition hover:bg-blue-500/25 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-300"
+                      >
+                        {primaryAction.label}
+                        <ArrowRight className="h-4 w-4" />
+                      </Link>
+                      <Link
+                        href={`/drivers/${driver.driverId}/safety`}
+                        className="inline-flex items-center justify-center gap-2 rounded-lg border border-slate-600 px-4 py-2.5 text-sm font-semibold text-slate-200 transition hover:border-slate-400 hover:bg-slate-700/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-300"
+                      >
+                        <FileText className="h-4 w-4" />
+                        Driver safety file
+                      </Link>
+                      <div className="grid grid-cols-2 gap-2">
+                        <Link
+                          href={linkedLoadHref}
+                          className="inline-flex items-center justify-center gap-1.5 rounded-lg border border-slate-700 bg-slate-950/40 px-3 py-2 text-xs font-semibold text-slate-300 transition hover:border-blue-400/50 hover:text-blue-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-300"
+                        >
+                          <Truck className="h-3.5 w-3.5" />
+                          Dispatch
+                        </Link>
+                        <Link
+                          href={`/drivers/${driver.driverId}/settlements`}
+                          className="inline-flex items-center justify-center gap-1.5 rounded-lg border border-slate-700 bg-slate-950/40 px-3 py-2 text-xs font-semibold text-slate-300 transition hover:border-emerald-400/50 hover:text-emerald-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-300"
+                        >
+                          <DollarSign className="h-3.5 w-3.5" />
+                          Pay
+                        </Link>
+                      </div>
+                      {evidence ? (
+                        <a
+                          href={evidence.url}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="inline-flex items-center justify-center gap-2 rounded-lg border border-slate-700 bg-slate-950/40 px-4 py-2.5 text-sm font-semibold text-slate-300 transition hover:border-cyan-400/50 hover:text-cyan-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-300"
+                        >
+                          Review evidence
+                          <ArrowRight className="h-4 w-4" />
+                        </a>
+                      ) : null}
                     </div>
                   </div>
                 </div>
-              ))}
+                );
+              })}
             </div>
           </div>
         </div>
@@ -406,7 +593,7 @@ export function SafetyDashboardV4() {
 
       {/* Recent Safety Events */}
       {recentEvents.length > 0 && (
-        <div className="max-w-7xl mx-auto px-6 pb-6">
+        <div id="recent-safety-events" className="max-w-7xl mx-auto px-6 pb-6 scroll-mt-24">
           <div className="bg-slate-900/50 backdrop-blur-sm border border-slate-800 rounded-xl p-6">
             <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
               <Clock className="w-5 h-5 text-blue-400" />

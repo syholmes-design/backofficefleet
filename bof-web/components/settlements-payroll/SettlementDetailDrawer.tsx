@@ -523,7 +523,7 @@ export function SettlementDetailDrawer({ settlementId, open, onClose }: Props) {
                   }}
                   className="rounded border border-slate-500 px-3 py-2 text-sm text-slate-200 hover:bg-slate-900"
                 >
-                  Mark reviewed (demo)
+                  Mark reviewed
                 </button>
               </div>
             </section>

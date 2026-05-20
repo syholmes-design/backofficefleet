@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 /**
- * BOF DEMO INTEGRITY AUDIT
+ * BOF OPS INTEGRITY AUDIT
  * Purpose: Central verification of demo data integrity and runtime state
  */
 
@@ -13,7 +13,7 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(__dirname, "..");
 
 function auditDemoIntegrity() {
-  console.log("=== BOF DEMO INTEGRITY AUDIT ===\n");
+  console.log("=== BOF OPS INTEGRITY AUDIT ===\n");
   
   // Check data source
   const v2SourcePath = path.join(ROOT, "public", "data", "main-source-v2_enhanced_bof_aligned.xlsx");

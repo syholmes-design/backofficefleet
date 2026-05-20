@@ -73,7 +73,7 @@ function cdlNumberFor(driverId, ex, driver) {
 }
 
 function patchCoreSevenForDriver(documents, driverId, ex, driver) {
-  // BOF demo document-date rule:
+  // BOF operations document-date rule:
   // - Main-source Excel may not provide medical-card expiration dates for all drivers
   // - Use deterministic demo fallback dates by driver ID to prevent blanket expiration bug
   // - Apply BOF demo rule: expired core documents move to 2027 for demo purposes
@@ -422,7 +422,7 @@ export function augmentDriversWithFleetDemoFields(drivers, driverMedicalExpanded
       referenceCdlNumber: ref,
       // Only use demo emergency contact data if no Master Driver Data exists and old data looks like demo
       ...(hasMasterEmergencyData ? {} : {
-        emergencyContactName: isOldDemoData ? d.emergencyContactName : `${String(d.name ?? "Driver").trim().split(/\s+/)[0] || "Driver"} — emergency contact (demo)`,
+        emergencyContactName: isOldDemoData ? d.emergencyContactName : `${String(d.name ?? "Driver").trim().split(/\s+/)[0] || "Driver"} — emergency contact `,
         emergencyContactRelationship: isOldDemoData ? d.emergencyContactRelationship : "Family",
         emergencyContactPhone: isOldDemoData ? d.emergencyContactPhone : `555-01${String(n).padStart(2, "0")}`,
       }),

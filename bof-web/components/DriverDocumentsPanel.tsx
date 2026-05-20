@@ -198,8 +198,8 @@ export function DriverDocumentsPanel({
                 </dd>
                 {modalDoc.demoPlaceholder === true && (
                   <>
-                    <dt>Demo</dt>
-                    <dd>Synthetic placeholder shell (not a production scan).</dd>
+                    <dt>Document status</dt>
+                    <dd>Structured document shell awaiting uploaded scan.</dd>
                   </>
                 )}
                 <dt>Preview URL</dt>

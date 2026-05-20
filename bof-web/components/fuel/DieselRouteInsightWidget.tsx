@@ -308,7 +308,7 @@ export function DieselRouteInsightWidget({ loadId, variant = "full" }: Props) {
       {!compact && insight.nearbyAlternates.length > 0 && (
         <div className="diesel-insight-alt">
           <h3 className="diesel-insight-subtitle">
-            Nearby options {liveFuel?.live ? "(live)" : "(demo)"}
+            Nearby options {liveFuel?.live ? "(live)" : ""}
           </h3>
           <ul className="diesel-insight-alt-list">
             {insight.nearbyAlternates.map((s) => (

@@ -36,7 +36,7 @@ export type DocumentRow = {
   blocksPayment?: boolean;
   /** Demo: primary vs secondary stack (fleet document layout). */
   docTier?: DocumentTier;
-  /** Synthetic demo shell — not a production scan */
+  /** demo shell — not a production scan */
   demoPlaceholder?: boolean;
   /** License / CDL identifier from spreadsheet (display) */
   sourceLicenseNumber?: string;

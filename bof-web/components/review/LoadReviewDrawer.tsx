@@ -65,9 +65,9 @@ export function LoadReviewDrawer({
     const reason = explanation.issues.find((i) => i.id === issueId);
     if (!reason || !load?.driverId) return;
     if (loadRiskReasonUsesDriverOverride(issueId)) {
-      resolveDriverRiskReason(load.driverId, issueId, "Load review — clear driver-linked risk (demo)");
+      resolveDriverRiskReason(load.driverId, issueId, "Load review — clear driver-linked risk ");
     } else {
-      resolveLoadRiskReason(loadId, issueId, "Load review — clear load risk (demo)");
+      resolveLoadRiskReason(loadId, issueId, "Load review — clear load risk ");
     }
   };
 

@@ -52,7 +52,7 @@ export function BofDocumentViewerClient() {
 
   const [tab, setTab] = useState<ViewerTab>("form");
   const [editor, setEditor] = useState("");
-  const [reviewer, setReviewer] = useState("BOF Ops Review (demo)");
+  const [reviewer, setReviewer] = useState("BOF Ops Review ");
   const [selectedStakeholders, setSelectedStakeholders] = useState<BofDocumentStakeholder[]>([]);
 
   const template = useMemo(() => findBofTemplateById(templateId), [templateId]);
@@ -102,7 +102,7 @@ export function BofDocumentViewerClient() {
       rows.push({ label: "Facility context", value: "Resolved via load / facility rules in BOF demo" });
     }
     if (template?.contextType === "customer") {
-      rows.push({ label: "Customer context", value: "Commercial / customer controls (demo)" });
+      rows.push({ label: "Customer context", value: "Commercial / customer controls " });
     }
     return rows;
   }, [data, entityId, template]);

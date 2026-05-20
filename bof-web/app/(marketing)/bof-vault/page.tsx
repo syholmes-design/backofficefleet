@@ -135,7 +135,7 @@ const CONTROL_ITEMS: MarketingIconCardItem[] = [
   {
     title: "Audit readiness by construction",
     description:
-      "Evidence packets stay structured for regulators, customers, and internal audit—mirroring the BOF demo document vault.",
+      "Evidence packets stay structured for regulators, customers, and internal audit—mirroring the BOF operations document vault.",
     icon: <IconAuditReadiness />,
   },
 ];

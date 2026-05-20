@@ -39,7 +39,7 @@ function seedIntakeCommandCenterQueue(): CommandCenterItem[] {
 
 type IntakeEngineState = {
   intakes: IntakeRecord[];
-  /** Intake-derived rows merged into Command Center (demo). */
+  /** Intake-derived rows merged into Command Center . */
   commandCenterIntakeItems: CommandCenterItem[];
   /** Driver doc finalizations (demo audit trail). */
   driverReadinessLog: DriverReadinessLogEntry[];

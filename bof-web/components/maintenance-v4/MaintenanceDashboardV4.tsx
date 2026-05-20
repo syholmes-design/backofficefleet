@@ -226,7 +226,7 @@ export function MaintenanceDashboardV4() {
               <div>
                 <p className="text-yellow-400 font-medium">Using Fallback Data</p>
                 <p className="text-yellow-300 text-sm">
-                  V4 workbook data not available - displaying sample data for demonstration
+                  V4 workbook data not available - displaying sample operating data
                 </p>
               </div>
             </div>

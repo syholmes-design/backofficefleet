@@ -104,7 +104,7 @@ function emailFromName(name) {
     (parts.length > 1 ? parts[parts.length - 1] : "unknown")
       .toLowerCase()
       .replace(/[^a-z0-9]/g, "") || "unknown";
-  return `${first}.${last}@boftransport.demo`;
+  return `${first}.${last}@boftransport.com`;
 }
 
 function canonicalDocType(raw) {

@@ -41,7 +41,7 @@ function clamp01(n: number) {
 }
 
 /**
- * Builds synthetic base metrics from marketing inputs. Ratios are intentionally
+ * Builds base metrics from marketing inputs. Ratios are intentionally
  * conservative so the calculator reads as directional, not a promise.
  */
 export function marketingInputsToSavingsBase(

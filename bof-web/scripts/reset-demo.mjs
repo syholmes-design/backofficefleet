@@ -1,5 +1,5 @@
 /**
- * BOF Demo Reset — single command for a clean, presentation-ready demo.
+ * BackOfficeFleet Reset — single command for a clean, presentation-ready demo.
  *
  * Order:
  * 1. Snapshot JSON keys not produced by build-demo-data (load proof, settlements, MAR).
@@ -52,7 +52,7 @@ function readDemo() {
   }
 }
 
-function snapshotPreserve(demo) {
+function snapshotPreserve {
   if (!demo || typeof demo !== "object") return {};
   const snap = {};
   for (const k of PRESERVE_KEYS) {
@@ -65,7 +65,7 @@ function mergePreserve(demo, snap) {
   return { ...demo, ...snap };
 }
 
-function writeDemo(demo) {
+function writeDemo {
   fs.mkdirSync(path.dirname(DEMO_PATH), { recursive: true });
   fs.writeFileSync(DEMO_PATH, JSON.stringify(demo, null, 2) + "\n", "utf8");
 }
@@ -190,7 +190,7 @@ function main() {
     process.exit(1);
   }
   demo = mergePreserve(demo, snap);
-  writeDemo(demo);
+  writeDemo;
   console.log("[reset-demo] Merged preserved load/settlement/MAR blocks into demo-data.json");
 
   runNodeScript("scripts/build-dispatch-loads.mjs", "build:loads (Dispatch_Clean → loads[])");

@@ -160,7 +160,7 @@ function sliceBankInformation(data: BofData, driverId: string): CredentialRecord
   };
 }
 
-/** Maps canonical resolver status to demo document row status strings (matches legacy `rowStatus`). */
+/** Maps canonical resolver status to operations document row status strings (matches legacy `rowStatus`). */
 export function credentialRecordToLegacyRowStatus(record: CredentialRecord): string {
   return canonicalCredentialBadgeLabel(record);
 }

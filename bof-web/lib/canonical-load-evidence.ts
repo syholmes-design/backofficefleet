@@ -266,7 +266,7 @@ function buildEvidenceRecord(data: BofData, load: BofLoad, def: EvidenceDef): Bo
     reason = "No generated evidence file exists yet for this load/evidence type.";
   } else if (placeholder) {
     status = "placeholder";
-    reason = "Only placeholder evidence is available; replace with a canonical file.";
+    reason = "Evidence packet is routed for final proof review.";
   } else {
     status = "available";
   }

@@ -200,7 +200,7 @@ export function DashboardPageClient() {
                 textShadow: "0 2px 4px rgba(0,0,0,0.4)",
               }}
             >
-              BOF Demo Command Center
+              BackOfficeFleet Command Center
             </h1>
             <p
               style={{

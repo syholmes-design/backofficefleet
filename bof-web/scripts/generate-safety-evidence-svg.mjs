@@ -36,12 +36,12 @@ function renderSafetyEvidenceSvg(p) {
   const annotationFill = isPatel ? "#fca5a5" : "#fda4af";
   const bgEnd = isPatel ? "#111827" : "#1e1b4b";
 
-  const header = sanitizeSvgText("BOF Demo — Safety evidence");
+  const header = sanitizeSvgText("BackOfficeFleet Safety Evidence");
   const mono = sanitizeSvgText(p.monoLabel);
   const headline = sanitizeSvgText(p.headline);
   const driver = sanitizeSvgText(p.driverLine);
   const annotation = sanitizeSvgText(p.annotation);
-  const synthetic = sanitizeSvgText(p.syntheticLine);
+  const = sanitizeSvgText(p.syntheticLine);
   const location = sanitizeSvgText(p.locationLine);
   const footer = sanitizeSvgText(p.publicPath);
 
@@ -76,7 +76,7 @@ const DEFINITIONS = [
     headline: "B-102 tire irregular wear",
     driverLine: "Driver: Priya Patel (DRV-004) · Load L004",
     annotation: "Inspection: irregular wear pattern (demo still)",
-    syntheticLine: "Synthetic demo asset — not a production photograph.",
+    syntheticLine: "demo asset — not a production photograph.",
     locationLine: "Location: Atlanta, GA · 2026-04-02",
     publicPath: "/evidence/safety/p_patel_b102_tire_irregular_wear.svg",
   },
@@ -87,7 +87,7 @@ const DEFINITIONS = [
     headline: "Pre-trip tire tread depth",
     driverLine: "Driver: Priya Patel (DRV-004) · Load L004",
     annotation: "Tread below minimum (demo still)",
-    syntheticLine: "Synthetic demo asset — not a production photograph.",
+    syntheticLine: "demo asset — not a production photograph.",
     locationLine: "Location: Atlanta, GA · 2026-04-02",
     publicPath: "/evidence/safety/p_patel_pretrip_tire_tread_depth.svg",
   },
@@ -98,7 +98,7 @@ const DEFINITIONS = [
     headline: "Cargo damage — box puncture",
     driverLine: "Driver: Priya Patel (DRV-004) · Load L004",
     annotation: "Product / packaging damage (demo still)",
-    syntheticLine: "Synthetic demo asset — not a production photograph.",
+    syntheticLine: "demo asset — not a production photograph.",
     locationLine: "Location: Atlanta, GA · 2026-04-02",
     publicPath: "/evidence/safety/p_patel_cargo_damage_box_puncture.svg",
   },
@@ -109,7 +109,7 @@ const DEFINITIONS = [
     headline: "Safety equipment — extinguisher tag",
     driverLine: "Driver: Priya Patel (DRV-004) · Load L004",
     annotation: "Inspection tag expired (demo still)",
-    syntheticLine: "Synthetic demo asset — not a production photograph.",
+    syntheticLine: "demo asset — not a production photograph.",
     locationLine: "Location: Atlanta, GA · 2026-04-02",
     publicPath: "/evidence/safety/p_patel_safety_equipment_extinguisher.svg",
   },
@@ -120,7 +120,7 @@ const DEFINITIONS = [
     headline: "L-405 HOS violation — ELD excerpt",
     driverLine: "Driver: Liam Smith (DRV-008) · Load L008",
     annotation: "Daily driving limit exceeded (demo still)",
-    syntheticLine: "Synthetic demo asset — not production ELD output.",
+    syntheticLine: "demo asset — not production ELD output.",
     locationLine: "Location: Memphis, TN · 2026-04-01",
     publicPath: "/evidence/safety/l_smith_l405_hos_violation_eld.svg",
   },
@@ -131,7 +131,7 @@ const DEFINITIONS = [
     headline: "Logbook review violation",
     driverLine: "Driver: Liam Smith (DRV-008) · Load L008",
     annotation: "Reset / violation noted (demo still)",
-    syntheticLine: "Synthetic demo asset — not a production scan.",
+    syntheticLine: "demo asset — not a production scan.",
     locationLine: "Location: Memphis, TN · 2026-04-01",
     publicPath: "/evidence/safety/l_smith_logbook_review_violation.svg",
   },
@@ -142,7 +142,7 @@ const DEFINITIONS = [
     headline: "Trailer brake inspection",
     driverLine: "Driver: Liam Smith (DRV-008) · Load L008",
     annotation: "Lining below minimum (demo still)",
-    syntheticLine: "Synthetic demo asset — not a production photograph.",
+    syntheticLine: "demo asset — not a production photograph.",
     locationLine: "Location: Memphis, TN · 2026-04-01",
     publicPath: "/evidence/safety/l_smith_trailer_brake_inspection.svg",
   },
@@ -153,7 +153,7 @@ const DEFINITIONS = [
     headline: "Cargo damage — pallet wrap",
     driverLine: "Driver: Liam Smith (DRV-008) · Load L008",
     annotation: "Significant cargo damage / damaged wrapped pallet (demo still)",
-    syntheticLine: "Synthetic demo asset — not a production photograph.",
+    syntheticLine: "demo asset — not a production photograph.",
     locationLine: "Location: Memphis, TN · 2026-04-01",
     publicPath: "/evidence/safety/l_smith_cargo_damage_pallet_wrap.svg",
   },

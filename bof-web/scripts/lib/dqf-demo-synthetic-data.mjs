@@ -1,5 +1,5 @@
 /**
- * Deterministic synthetic reviewer / signature metadata for DQF compliance summary (demo only).
+ * Deterministic reviewer / signature metadata for DQF compliance summary (demo only).
  * No Math.random / no Date.now — derive from driverId string only.
  */
 

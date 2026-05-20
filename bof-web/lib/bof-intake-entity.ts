@@ -16,7 +16,7 @@ export function fromBofIntakeEntityId(entityId: string): string {
   return entityId.slice(PREFIX.length);
 }
 
-/** Stable intake-scoped synthetic key for pre-load contexts (customer/facility/etc.). */
+/** Stable intake-scoped key for pre-load contexts (customer/facility/etc.). */
 export function intakeScopedSyntheticKey(
   kind: "customer" | "facility" | "destination" | "contract",
   intakeEntityId: string,

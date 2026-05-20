@@ -136,7 +136,7 @@ export class DocumentPlacementService {
   }
 
   /**
-   * Generate missing document placeholders
+   * Generate missing document shells
    */
   private async generateMissing(action: PlacementAction): Promise<PlacementActionResult> {
     if (!Array.isArray(action.files)) {
@@ -167,7 +167,7 @@ export class DocumentPlacementService {
 
     return {
       success: processedCount > 0,
-      message: `Generated ${processedCount} missing document placeholders`,
+      message: `Generated ${processedCount} missing document shells`,
       filesProcessed: processedCount
     };
   }

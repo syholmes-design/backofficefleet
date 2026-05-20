@@ -140,7 +140,7 @@ export class CanonicalMappingService {
       
       const canonicalPath = this.getCanonicalFilePath(doc.driverId, doc.type);
       if (canonicalPath && !processedTypes.has(doc.type)) {
-        // Create a synthetic document row for the canonical file
+        // Create a document row for the canonical file
         canonicalDocs.push({
           driverId: doc.driverId,
           type: doc.type,

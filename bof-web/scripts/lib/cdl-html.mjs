@@ -354,7 +354,7 @@ export function buildStateCdlHtml(driver, doc, state) {
 </head>
 <body>
   <div class="sheet">
-    <div class="cdl-card ${tc}" aria-label="Synthetic ${headline} CDL demo">
+    <div class="cdl-card ${tc}" aria-label="${headline} CDL demo">
       <div class="cdl-watermark" aria-hidden="true"></div>
       <div class="cdl-micro" aria-hidden="true">${wm}</div>
       <header class="cdl-head">
@@ -424,7 +424,7 @@ export function buildStateCdlHtml(driver, doc, state) {
       <div class="cdl-footer">
         <div class="cdl-sig">
           <div class="line">${name}</div>
-          <small>Holder signature (synthetic)</small>
+          <small>Holder signature</small>
         </div>
         <div class="cdl-bc" aria-hidden="true">
           <svg width="140" height="36" xmlns="http://www.w3.org/2000/svg">
@@ -456,7 +456,7 @@ export function buildStateCdlHtml(driver, doc, state) {
         </div>
       </div>
     </div>
-    <p class="legal">Demo document — not government-issued</p>
+    <p class="legal">operations document — not government-issued</p>
   </div>
 </body>
 </html>`;

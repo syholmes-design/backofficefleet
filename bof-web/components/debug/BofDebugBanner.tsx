@@ -19,11 +19,10 @@ export function BofDebugBanner() {
   const pathname = usePathname();
 
   useEffect(() => {
-    // Only show in development or when flag is set
-    const isDevelopment = process.env.NODE_ENV === "development";
+    // Keep the debug panel out of normal demos unless explicitly requested.
     const showDebug = process.env.NEXT_PUBLIC_BOF_SHOW_DEBUG === "1";
     
-    if (!isDevelopment && !showDebug) {
+    if (!showDebug) {
       return;
     }
 
@@ -75,7 +74,7 @@ export function BofDebugBanner() {
     }
 
     setDebugInfo({
-      buildSource: isDevelopment ? "local/dev" : "production",
+      buildSource: process.env.NODE_ENV === "development" ? "local/dev" : "production",
       gitCommit,
       dataSource: "main-source-v2_enhanced_bof_aligned.xlsx",
       localStorageActive,
@@ -91,10 +90,9 @@ export function BofDebugBanner() {
     return null;
   }
 
-  const isDevelopment = process.env.NODE_ENV === "development";
   const showDebug = process.env.NEXT_PUBLIC_BOF_SHOW_DEBUG === "1";
   
-  if (!isDevelopment && !showDebug) {
+  if (!showDebug) {
     return null;
   }
 

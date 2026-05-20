@@ -1,5 +1,5 @@
 /**
- * Route-aware diesel pricing insight (demo).
+ * Route-aware diesel pricing insight .
  * Anchors stops to `buildRouteSupportModel` (same lane / distances / ETAs as route support).
  * Dollar and ¢/gal values are illustrative until a live fuel-price API is integrated.
  */

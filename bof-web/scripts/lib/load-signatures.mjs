@@ -212,7 +212,7 @@ export function buildLoadSignaturePlaceholders(load, driver, now = new Date()) {
       title: `${baseDriverTitle} — lumper acknowledgment`,
       signedAt: pickupAt,
     }),
-    /** Rate con: broker line uses shipper-side customer acceptance (demo). */
+    /** Rate con: broker line uses shipper-side customer acceptance . */
     ...rolePlaceholders("broker", {
       signed: pickupComplete,
       displayName: shipperSigner,

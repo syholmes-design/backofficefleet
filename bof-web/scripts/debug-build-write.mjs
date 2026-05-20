@@ -82,7 +82,7 @@ function buildDrivers(rows) {
     const address = iAddr >= 0 ? String(row[iAddr] ?? "").trim() : "";
     const phone = iPhone >= 0 ? String(row[iPhone] ?? "").trim() : "";
     let email = iEmail >= 0 ? String(row[iEmail] ?? "").trim() : "";
-    if (!email) email = `${name.toLowerCase().replace(/\s+/g, '.')}@boftransport.demo`;
+    if (!email) email = `${name.toLowerCase().replace(/\s+/g, '.')}@boftransport.com`;
     
     // Add emergency contact data
     const emergencyContactName = iEmergencyName >= 0 ? String(row[iEmergencyName] ?? "").trim() : "";

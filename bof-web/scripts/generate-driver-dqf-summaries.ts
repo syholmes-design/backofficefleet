@@ -6,7 +6,7 @@
  * (Also invoked via scripts/generate-driver-dqf-summaries.mjs.)
  *
  * Credential statuses and dates come only from canonical BOF helpers keyed by driverId.
- * No wall-clock timestamps or nondeterministic RNG — synthetic reviewer fields use deterministic helpers only.
+ * No wall-clock timestamps or nondeterministic RNG — reviewer fields use deterministic helpers only.
  */
 import fs from "node:fs";
 import path from "node:path";
@@ -287,7 +287,7 @@ function buildSafetyRows(
       : "—",
     row ? "canonical" : "missing"
   );
-  push("Recent load POD / seal snapshot (demo)", loadProof.value, loadProof.source);
+  push("Recent load POD / seal snapshot ", loadProof.value, loadProof.source);
   push("Dispatch hard gates (safety-related)", eligibility.hardBlockers.join("; ") || "None", "derived");
   return lines.join("\n");
 }
@@ -330,7 +330,7 @@ function main() {
     const driverAckAt = getDqfDeterministicTimestamp(driverId, 2);
     const reviewNotes = getDqfSyntheticReviewNotes(driverId, eligibility.status);
 
-    const carrierDisplay = "BackOffice Fleet — BOF demo carrier (synthetic display name)";
+    const carrierDisplay = "BackOffice Fleet — BOF demo carrier (display name)";
     const mvrForAnnual = docByType(core, "MVR");
     const annualMvrNotes = mvrRowHasPull(mvrForAnnual)
       ? "Annual cadence: align next review with MVR pull date on file (synthetic_demo checklist note)."
@@ -420,7 +420,7 @@ function main() {
       ),
       driverSignatureTextOrPending: esc("— Pending —"),
       driverAckSignedAt: esc(driverAckAt),
-      driverAckLabel: esc("Awaiting driver sign-off (demo)"),
+      driverAckLabel: esc("Awaiting driver sign-off "),
       dqfStatus: esc(dqfStatus),
       dispatchEligibility: esc(eligibility.label),
       hardBlockers: esc(eligibility.hardBlockers.join("; ") || "None"),

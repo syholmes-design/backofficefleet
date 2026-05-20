@@ -19,7 +19,7 @@
         padding: 26px;
         box-shadow: 0 8px 30px rgba(15, 23, 42, 0.08);
       }
-      .demo-banner {
+      .ops-banner {
         background: #0f172a;
         color: #e2e8f0;
         padding: 10px 12px;
@@ -161,7 +161,7 @@
   </head>
   <body>
     <div class="paper">
-      <div class="demo-banner">
+      <div class="ops-banner">
         <strong>BOF demo compliance summary.</strong> This is a generated BOF support worksheet — not an official FMCSA
         form. Credential statuses below are derived from canonical BOF document records keyed by
         <code>{{driverId}}</code>.
@@ -318,7 +318,7 @@
           <div class="sig-meta">{{reviewerName}} — {{reviewerTitle}}</div>
           <div class="sig-line"></div>
           <div class="sig-date">{{reviewerSignedAt}}</div>
-          <div class="sig-status">Signed (demo)</div>
+          <div class="sig-status">Signed </div>
         </div>
         <div class="sig-block">
           <div class="sig-role">Driver acknowledgment</div>
@@ -333,7 +333,7 @@
       <footer>
         <p>{{syntheticDemoFieldsNote}}</p>
         <p>
-          Demo-generated summary. Synthetic reviewer/signature fields may be used where BOF source data is
+          Demo-generated summary. reviewer/signature fields may be used where BOF source data is
           unavailable. Credential statuses are derived from canonical BOF document records.
         </p>
       </footer>

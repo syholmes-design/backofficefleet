@@ -43,31 +43,31 @@ function hashSeed(s: string) {
 
 const DEMO_POOL: Omit<RouteSupportStop, "distanceMiles" | "etaMinutes">[] = [
   {
-    name: "I-71 North / Medway Service Plaza (demo)",
+    name: "I-71 North / Medway Service Plaza ",
     stopType: "Service Plaza",
     parking: "Available",
     amenities: ["Fuel", "Food", "Parking", "Showers"],
   },
   {
-    name: "US-30 East / Pilot Travel Center — Lima (demo)",
+    name: "US-30 East / Pilot Travel Center — Lima ",
     stopType: "Truck Stop",
     parking: "Limited",
     amenities: ["Fuel", "Showers", "Food", "Scale", "Parking"],
   },
   {
-    name: "OH Turnpike Rest Area MM 142 (demo)",
+    name: "OH Turnpike Rest Area MM 142 ",
     stopType: "Rest Area",
     parking: "Unknown",
     amenities: ["Parking", "Food"],
   },
   {
-    name: "I-40 West / Love’s — West Memphis (demo)",
+    name: "I-40 West / Love’s — West Memphis ",
     stopType: "Truck Stop",
     parking: "Available",
     amenities: ["Fuel", "Parking", "Showers", "Food"],
   },
   {
-    name: "I-55 South / Welcome Center (demo)",
+    name: "I-55 South / Welcome Center ",
     stopType: "Rest Area",
     parking: "Limited",
     amenities: ["Parking", "Food"],

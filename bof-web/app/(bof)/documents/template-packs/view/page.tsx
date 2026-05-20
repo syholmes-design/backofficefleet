@@ -11,7 +11,7 @@ import { BofDocumentViewerClient } from "@/components/documents/BofDocumentViewe
 
 export const metadata = {
   title: "Document Viewer | BOF",
-  description: "BOF operational document viewer — drafts, finals, metadata, and stakeholder routing (demo).",
+  description: "BOF operational document viewer — drafts, finals, metadata, and stakeholder routing .",
 };
 
 export default function BofDocumentViewerPage() {

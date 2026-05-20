@@ -41,7 +41,7 @@ export interface DocumentationReadinessReport {
   overallDetail: string;
   /** Claim packet: attachments present enough to send internally (demo heuristic). */
   claimPacketReady: boolean;
-  /** Recommend settlement hold when packet cannot support release (demo). */
+  /** Recommend settlement hold when packet cannot support release . */
   suggestedSettlementHold: boolean;
   suggestedSettlementHoldReason?: string;
 }
