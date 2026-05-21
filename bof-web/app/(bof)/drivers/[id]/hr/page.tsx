@@ -19,6 +19,7 @@ import {
   getExpectedBankCardPublicPath,
 } from "@/lib/driver-doc-registry";
 import { getDriverOperationalProfile } from "@/lib/driver-operational-profile";
+import { getDriverHrHistory } from "@/lib/driver-hr-history";
 import { DemoBackButton } from "@/components/navigation/DemoBackButton";
 import { DriverHubReviewLink, DriverVaultReviewLink } from "@/components/review/ReviewDeepLinks";
 
@@ -60,6 +61,13 @@ function chipClass(status: string) {
   return "border border-emerald-700/60 bg-emerald-950/35 text-emerald-200";
 }
 
+function impactChipClass(impact: string) {
+  if (impact === "Safety bonus") return "border border-amber-700/60 bg-amber-950/40 text-amber-200";
+  if (impact === "Settlement") return "border border-orange-700/60 bg-orange-950/40 text-orange-200";
+  if (impact === "Dispatch") return "border border-rose-700/60 bg-rose-950/40 text-rose-200";
+  return "border border-slate-700/70 bg-slate-900/70 text-slate-300";
+}
+
 function sourceLabel(href?: string): string {
   if (!href) return "No file";
   const ext = href.split(".").pop()?.toLowerCase();
@@ -84,6 +92,7 @@ export default function DriverHRPage({ params }: Props) {
   const driver = data.drivers.find((d) => d.id === id);
   const profile = getDriverOperationalProfile(data, id);
   const packet = getDriverDocumentPacket(id);
+  const hrHistory = getDriverHrHistory(id);
 
   if (!driver) {
     notFound();
@@ -185,6 +194,50 @@ export default function DriverHRPage({ params }: Props) {
             Canonical HR, emergency, and document readiness details keyed by{" "}
             <span className="font-mono">{id}</span>.
           </p>
+        </section>
+
+        <section className="rounded-lg border border-slate-800 bg-slate-900/45 p-4">
+          <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
+            <div>
+              <h2 className="text-base font-semibold text-slate-100">HR Operations History</h2>
+              <p className="mt-1 text-xs text-slate-400">
+                Driver file entries tied to operations, safety, settlement, training, and HR review.
+              </p>
+            </div>
+            <span className={`rounded px-2 py-0.5 text-xs font-semibold ${chipClass(hrHistory[0]?.status ?? "Complete")}`}>
+              {hrHistory.filter((row) => row.status === "Open" || row.status === "In Progress").length} active
+            </span>
+          </div>
+          <div className="space-y-2">
+            {hrHistory.map((row) => (
+              <div
+                key={row.id}
+                className="grid gap-3 rounded border border-slate-800 bg-slate-950/55 px-3 py-3 md:grid-cols-[140px_1fr_auto]"
+              >
+                <div>
+                  <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">{row.date}</p>
+                  <p className="mt-1 text-xs font-semibold text-teal-300">{row.category}</p>
+                </div>
+                <div>
+                  <p className="text-sm font-semibold text-slate-100">{row.title}</p>
+                  <p className="mt-1 text-xs leading-5 text-slate-400">{row.detail}</p>
+                  {row.href ? (
+                    <Link href={row.href} className="mt-2 inline-flex text-xs font-semibold text-teal-300 hover:text-teal-200 hover:underline">
+                      Open related workspace
+                    </Link>
+                  ) : null}
+                </div>
+                <div className="flex flex-wrap items-start gap-2 md:justify-end">
+                  <span className={`rounded px-2 py-0.5 text-xs font-semibold ${chipClass(row.status)}`}>
+                    {row.status}
+                  </span>
+                  <span className={`rounded px-2 py-0.5 text-xs font-semibold ${impactChipClass(row.impact)}`}>
+                    {row.impact}
+                  </span>
+                </div>
+              </div>
+            ))}
+          </div>
         </section>
 
       <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">

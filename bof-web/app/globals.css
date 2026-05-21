@@ -12328,6 +12328,161 @@ body {
   grid-column: 1 / -1;
 }
 
+.shipper-portal-story {
+  margin-top: 1rem;
+  border-color: rgba(45, 212, 191, 0.4);
+  background:
+    radial-gradient(circle at top left, rgba(20, 184, 166, 0.16), transparent 34rem),
+    rgba(15, 23, 42, 0.72);
+}
+
+.shipper-portal-story-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+
+.shipper-portal-story-step {
+  display: flex;
+  min-height: 142px;
+  flex-direction: column;
+  gap: 0.45rem;
+  border: 1px solid rgba(148, 163, 184, 0.22);
+  border-radius: 8px;
+  background: rgba(2, 6, 23, 0.4);
+  padding: 0.85rem;
+  color: #dbeafe;
+  text-decoration: none;
+  transition: border-color 160ms ease, transform 160ms ease, background 160ms ease;
+}
+
+.shipper-portal-story-step strong {
+  color: #ffffff;
+  font-size: 0.95rem;
+}
+
+.shipper-portal-story-step span:last-child {
+  color: #a8c7e8;
+  font-size: 0.78rem;
+  line-height: 1.45;
+}
+
+.shipper-portal-story-label {
+  color: var(--bof-teal-bright);
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+a.shipper-portal-story-step:hover,
+a.shipper-portal-story-step:focus-visible,
+.shipper-portal-actions a:focus-visible,
+.shipper-portal-evidence-tile:focus-visible {
+  border-color: var(--bof-teal-bright);
+  background: rgba(13, 148, 136, 0.18);
+  outline: 2px solid rgba(45, 212, 191, 0.3);
+  outline-offset: 2px;
+  transform: translateY(-1px);
+}
+
+.shipper-portal-evidence-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+  gap: 0.8rem;
+  margin-top: 0.85rem;
+}
+
+.shipper-portal-evidence-tile {
+  display: grid;
+  grid-template-rows: 118px 1fr;
+  overflow: hidden;
+  border: 1px solid rgba(148, 163, 184, 0.2);
+  border-radius: 8px;
+  background: rgba(2, 6, 23, 0.42);
+  color: inherit;
+  text-decoration: none;
+  transition: border-color 160ms ease, transform 160ms ease, background 160ms ease;
+}
+
+.shipper-portal-evidence-tile img,
+.shipper-portal-evidence-empty {
+  width: 100%;
+  height: 118px;
+}
+
+.shipper-portal-evidence-tile img {
+  display: block;
+  object-fit: cover;
+}
+
+.shipper-portal-evidence-empty {
+  display: grid;
+  place-items: center;
+  color: var(--bof-muted);
+  background: rgba(15, 23, 42, 0.7);
+  font-size: 0.78rem;
+}
+
+.shipper-portal-evidence-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 0.28rem;
+  padding: 0.75rem;
+}
+
+.shipper-portal-evidence-meta strong {
+  color: #ffffff;
+  font-size: 0.86rem;
+}
+
+.shipper-portal-evidence-meta span {
+  color: #a8c7e8;
+  font-size: 0.75rem;
+  line-height: 1.35;
+}
+
+.shipper-portal-evidence-meta em {
+  color: var(--bof-teal-bright);
+  font-size: 0.72rem;
+  font-style: normal;
+  font-weight: 800;
+  margin-top: 0.2rem;
+}
+
+.shipper-portal-evidence-tile-ok {
+  border-color: rgba(34, 197, 94, 0.28);
+}
+
+.shipper-portal-evidence-tile-warning {
+  border-color: rgba(245, 158, 11, 0.34);
+}
+
+.shipper-portal-evidence-tile-danger {
+  border-color: rgba(248, 113, 113, 0.45);
+}
+
+.shipper-portal-evidence-tile.is-disabled {
+  opacity: 0.72;
+}
+
+@media (max-width: 900px) {
+  .shipper-portal-story-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 640px) {
+  .shipper-portal-story-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .shipper-portal-dl {
+    grid-template-columns: 1fr;
+  }
+}
+
 /* Driver trip release — operational go / no-go (teal-600 + slate) */
 .trip-release-page {
   max-width: 1180px;

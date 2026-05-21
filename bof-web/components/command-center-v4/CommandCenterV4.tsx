@@ -234,26 +234,40 @@ export function CommandCenterV4() {
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100">
       {/* Header */}
-      <div className="border-b border-slate-800 bg-slate-900/50 backdrop-blur-sm">
-        <div className="max-w-7xl mx-auto px-6 py-6">
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-3xl font-bold text-white flex items-center gap-3">
-                <Target className="w-8 h-8 text-red-400" />
-                Command Center
+      <div
+        className="relative overflow-hidden border-b border-slate-800 bg-slate-950"
+        style={{
+          backgroundImage:
+            "linear-gradient(90deg, rgba(2, 6, 23, 0.97) 0%, rgba(2, 6, 23, 0.88) 45%, rgba(2, 6, 23, 0.42) 100%), url('/generated/marketing/dispatch-command-center-hero.png')",
+          backgroundPosition: "center right",
+          backgroundSize: "cover",
+        }}
+      >
+        <div className="max-w-7xl mx-auto px-6 py-10">
+          <div className="flex flex-col gap-8 lg:flex-row lg:items-end lg:justify-between">
+            <div className="max-w-3xl">
+              <div className="inline-flex items-center gap-2 rounded-full border border-teal-400/30 bg-teal-400/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.14em] text-teal-200">
+                <Activity className="h-3.5 w-3.5" />
+                Fleet-owner action board
+              </div>
+              <h1 className="mt-5 flex items-center gap-3 text-4xl font-bold text-white">
+                <Target className="h-9 w-9 text-red-400" />
+                Fleet Operations Control Tower
               </h1>
-              <p className="text-slate-400 mt-2">
-                Fleet-owner action board for load exceptions, driver blockers, settlement holds, and safety risk
+              <p className="mt-3 max-w-2xl text-base leading-7 text-slate-300">
+                One operating view for load exceptions, driver blockers, settlement holds,
+                safety risk, claims exposure, and the manager actions needed to keep Delta
+                Advanced Trucking moving.
               </p>
             </div>
-            <div className="flex items-center gap-4">
-              <div className="text-right">
-                <div className="text-red-400 font-medium">{riskStats.criticalRisks}</div>
-                <div className="text-slate-400 text-xs">Critical Risks</div>
+            <div className="grid grid-cols-2 gap-3 sm:min-w-[280px]">
+              <div className="rounded-xl border border-red-400/25 bg-slate-950/70 p-4 text-right shadow-lg shadow-slate-950/30">
+                <div className="text-2xl font-bold text-red-300">{riskStats.criticalRisks}</div>
+                <div className="text-xs font-medium uppercase tracking-wide text-slate-400">Critical risks</div>
               </div>
-              <div className="text-right">
-                <div className="text-orange-400 font-medium">{riskStats.dispatchBlockingRisks}</div>
-                <div className="text-slate-400 text-xs">Dispatch Blocking</div>
+              <div className="rounded-xl border border-orange-400/25 bg-slate-950/70 p-4 text-right shadow-lg shadow-slate-950/30">
+                <div className="text-2xl font-bold text-orange-300">{riskStats.dispatchBlockingRisks}</div>
+                <div className="text-xs font-medium uppercase tracking-wide text-slate-400">Dispatch blocks</div>
               </div>
             </div>
           </div>

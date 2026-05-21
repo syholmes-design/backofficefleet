@@ -44,9 +44,9 @@ function formatApptWindow(pickupIso: string, deliveryIso: string): string {
       dateStyle: "medium",
       timeStyle: "short",
     };
-    return `${a.toLocaleString(undefined, o)} → ${b.toLocaleString(undefined, o)}`;
+    return `${a.toLocaleString(undefined, o)} -> ${b.toLocaleString(undefined, o)}`;
   } catch {
-    return "—";
+    return "-";
   }
 }
 
@@ -60,7 +60,7 @@ function dispatchEligibility(dispatchLoad: Load, pretrip: PretripTabletModel) {
   if (pretrip.overall === "BLOCKED") {
     return {
       level: "Blocked" as const,
-      detail: pretrip.blockReasons.slice(0, 6).join(" · ") || "Pre-trip gate blocked",
+      detail: pretrip.blockReasons.slice(0, 6).join(" | ") || "Pre-trip gate blocked",
     };
   }
   if (dispatchLoad.exception_flag && dispatchLoad.seal_status === "Mismatch") {
@@ -68,14 +68,14 @@ function dispatchEligibility(dispatchLoad: Load, pretrip: PretripTabletModel) {
       level: "Blocked" as const,
       detail:
         dispatchLoad.exception_reason ??
-        "Active exception with seal mismatch — dispatch blocked until resolved",
+        "Active exception with seal mismatch - dispatch blocked until resolved",
     };
   }
   const doc = computeDocumentationReadiness(dispatchLoad);
   if (dispatchLoad.insurance_claim_needed && !doc.claimPacketReady) {
     return {
       level: "At Risk" as const,
-      detail: "Insurance / claim path — packet attachments incomplete",
+      detail: "Insurance / claim path - packet attachments incomplete",
     };
   }
   if (
@@ -173,6 +173,77 @@ function ActionLink({
   );
 }
 
+function StoryStep({
+  label,
+  title,
+  body,
+  href,
+}: {
+  label: string;
+  title: string;
+  body: string;
+  href?: string;
+}) {
+  const content = (
+    <>
+      <span className="shipper-portal-story-label">{label}</span>
+      <strong>{title}</strong>
+      <span>{body}</span>
+    </>
+  );
+
+  if (!href) {
+    return <div className="shipper-portal-story-step">{content}</div>;
+  }
+
+  return (
+    <a className="shipper-portal-story-step" href={href} target="_blank" rel="noreferrer">
+      {content}
+    </a>
+  );
+}
+
+function EvidenceTile({
+  label,
+  detail,
+  url,
+  tone = "neutral",
+}: {
+  label: string;
+  detail: string;
+  url?: string;
+  tone?: "ok" | "warning" | "danger" | "neutral";
+}) {
+  const className = `shipper-portal-evidence-tile shipper-portal-evidence-tile-${tone}`;
+  const content = (
+    <>
+      {url ? (
+        <>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src={url} alt="" />
+        </>
+      ) : (
+        <div className="shipper-portal-evidence-empty">No proof file</div>
+      )}
+      <div className="shipper-portal-evidence-meta">
+        <strong>{label}</strong>
+        <span>{detail}</span>
+        {url ? <em>Open proof</em> : <em>Needs upload</em>}
+      </div>
+    </>
+  );
+
+  if (!url) {
+    return <div className={`${className} is-disabled`}>{content}</div>;
+  }
+
+  return (
+    <a className={className} href={url} target="_blank" rel="noreferrer">
+      {content}
+    </a>
+  );
+}
+
 export function ShipperLoadPortalClient({ loadId }: { loadId: string }) {
   const { data } = useBofDemoData();
   const storeLoads = useDispatchDashboardStore((s) => s.loads);
@@ -246,10 +317,10 @@ export function ShipperLoadPortalClient({ loadId }: { loadId: string }) {
     Boolean(bofLoad.pickupSeal?.trim()) || Boolean(bofLoad.deliverySeal?.trim());
 
   const sealVerifySummary = [
-    `Pickup seal photo: ${pickupProof?.status ?? "—"}`,
-    `Delivery seal photo: ${deliveryProof?.status ?? "—"}`,
+    `Pickup seal photo: ${pickupProof?.status ?? "-"}`,
+    `Delivery seal photo: ${deliveryProof?.status ?? "-"}`,
     `Recorded seal state: ${bofLoad.sealStatus}`,
-  ].join(" · ");
+  ].join(" | ");
 
   const complianceSummary =
     openCompliance.length === 0
@@ -306,23 +377,117 @@ export function ShipperLoadPortalClient({ loadId }: { loadId: string }) {
       !hrefPretripInspectionReport.startsWith("/pretrip")
   );
 
+  const pickupSeal = bofLoad.pickupSeal?.trim() || dispatchLoad.pickup_seal_number || "not recorded";
+  const deliverySeal = bofLoad.deliverySeal?.trim() || dispatchLoad.delivery_seal_number || "not recorded";
+  const sealMismatchActive = dispatchLoad.seal_status === "Mismatch" || bofLoad.sealStatus === "Mismatch";
+  const hrefPickupSealPhoto = firstHref(
+    pickupProof?.fileUrl,
+    pickupProof?.previewUrl,
+    `/evidence/loads/${loadId}/seal-pickup-photo.png`
+  );
+  const hrefDeliverySealPhoto = firstHref(
+    deliveryProof?.fileUrl,
+    deliveryProof?.previewUrl,
+    dispatchLoad.seal_photo_url,
+    `/evidence/loads/${loadId}/seal-delivery-photo.png`
+  );
+  const hrefCargoPickup = firstHref(
+    dispatchLoad.pickup_photo_url,
+    `/evidence/loads/${loadId}/cargo-pickup.jpg`
+  );
+  const hrefCargoDelivery = firstHref(
+    dispatchLoad.delivery_photo_url,
+    `/evidence/loads/${loadId}/cargo-delivery.jpg`
+  );
+  const hrefRfidDock = `/evidence/loads/${loadId}/rfid-dock-proof.png`;
+  const portalHeadline = sealMismatchActive
+    ? "Exception response"
+    : bofLoad.settlementHold
+      ? "Settlement packet review"
+      : "Shipper load packet";
+  const issueNarrative = sealMismatchActive
+    ? `BOF captured pickup seal ${pickupSeal} before departure and later detected delivery seal ${deliverySeal}. That variance does not mean the pre-trip gate failed; it means the gate created the baseline that let BOF catch a downstream seal change, re-seal, or recording error before the load closed.`
+    : bofLoad.settlementHold
+      ? `BOF is holding this post-trip packet because ${bofLoad.settlementHoldReason || "settlement support needs review"}. The load can stay operationally clean while settlement waits for the specific receipt, proof item, or dispatcher approval required to release payment.`
+    : "BOF is showing the same trip packet, proof photos, and closeout documents across shipper, dispatch, claims, and settlement review.";
+  const resolutionPlan = [
+    "Compare pickup seal photo, delivery seal photo, BOL, POD, and RFID dock proof.",
+    "Confirm whether the facility or receiver opened and re-sealed the trailer after pickup.",
+    "Hold clean closeout until dispatch or claims marks the seal chain reconciled.",
+  ];
+  const storySteps = sealMismatchActive
+    ? [
+        {
+          label: "1. Pickup baseline",
+          title: `Pickup seal ${pickupSeal}`,
+          body: "Driver and dispatch captured the starting seal and cargo condition before the trip moved.",
+          href: hrefPickupSealPhoto,
+        },
+        {
+          label: "2. Custody trail",
+          title: "RFID and dock proof monitored",
+          body: "BOF keeps the dock scan, document packet, and route context attached to the same load.",
+          href: hrefRfidDock,
+        },
+        {
+          label: "3. Delivery variance",
+          title: `Delivery seal ${deliverySeal}`,
+          body: "The delivery seal does not match the pickup baseline, so BOF escalates instead of closing silently.",
+          href: hrefDeliverySealPhoto,
+        },
+        {
+          label: "4. Closeout control",
+          title: "Exception packet staged",
+          body: "Dispatch, claims, settlement, and the customer all review the same packet before release.",
+          href: hrefClaimExceptionPacket,
+        },
+      ]
+    : [
+        {
+          label: "1. Trip delivered",
+          title: "Operational proof on file",
+          body: "BOL, POD, cargo photos, and seal records stay attached to this load record.",
+          href: hrefPod ?? hrefBol,
+        },
+        {
+          label: "2. Settlement check",
+          title: bofLoad.settlementHold ? "Receipt hold detected" : "Packet clear",
+          body: bofLoad.settlementHold
+            ? bofLoad.settlementHoldReason || "A settlement support item needs review before release."
+            : "No active settlement blocker is attached to this load.",
+          href: "/settlements",
+        },
+        {
+          label: "3. Document workspace",
+          title: "Packet docs available",
+          body: "The same load documents are available to dispatch, customer review, and settlement.",
+          href: "/documents",
+        },
+        {
+          label: "4. Manager view",
+          title: "Load file remains linked",
+          body: "Fleet managers can jump from the customer-facing packet back to the internal load record.",
+          href: `/loads/${loadId}`,
+        },
+      ];
+
   return (
     <div className="bof-page shipper-portal">
       <nav className="bof-breadcrumb" aria-label="Breadcrumb">
         <Link href="/loads">Loads</Link>
         <span aria-hidden> / </span>
-        <span>Shipper view · {bofLoad.number}</span>
+        <span>{portalHeadline} - {bofLoad.number}</span>
       </nav>
 
       <header className="bof-load-header">
         <div>
           <h1 className="bof-title bof-title-tight">
-            Shipper portal · Load {bofLoad.number}{" "}
+            {portalHeadline} - Load {bofLoad.number}{" "}
             <code className="bof-code">{bofLoad.id}</code>
           </h1>
           <p className="bof-muted bof-small">
-            {bofLoad.origin} → {bofLoad.destination} · Readiness, proof, and packet links (review-only;
-            edits stay in BOF operations tools).
+            {bofLoad.origin} to {bofLoad.destination}. BOF ties the shipper view to
+            dispatch, proof, claims, and settlement actions so the exception has one source of truth.
           </p>
         </div>
         <div className="bof-load-header-badges">
@@ -330,6 +495,32 @@ export function ShipperLoadPortalClient({ loadId }: { loadId: string }) {
           {eligChip(elig.level)}
         </div>
       </header>
+
+      <section className="shipper-portal-card shipper-portal-story" aria-labelledby="sp-story-title">
+        <h2 id="sp-story-title">What happened on this load</h2>
+        <p className="lead">{issueNarrative}</p>
+        <div className="shipper-portal-story-grid">
+          {storySteps.map((step) => (
+            <StoryStep key={step.label} {...step} />
+          ))}
+        </div>
+        <div className="shipper-portal-actions">
+          {sealMismatchActive ? (
+            <>
+              <ActionLink label="Review pickup seal" href={hrefPickupSealPhoto} newTab />
+              <ActionLink label="Review delivery seal" href={hrefDeliverySealPhoto} newTab />
+              <ActionLink label="Open exception packet" href={hrefClaimExceptionPacket} newTab />
+            </>
+          ) : (
+            <>
+              <ActionLink label="Open settlement review" href="/settlements" />
+              <ActionLink label="Open packet documents" href="/documents" />
+              <ActionLink label="Review POD" href={hrefPod} newTab />
+            </>
+          )}
+          <ActionLink label="Open BOF load record" href={`/loads/${loadId}`} />
+        </div>
+      </section>
 
       <DieselRouteInsightWidget loadId={loadId} variant="shipper" />
 
@@ -344,7 +535,7 @@ export function ShipperLoadPortalClient({ loadId }: { loadId: string }) {
               ? `${docReport.missingRequired.length} required packet line(s) still open in ops tools`
               : "Required packet lines satisfied on this readiness snapshot"
           }
-          explanation="Link count is BOF-backed from the document engine list. Time savings are a demo illustration until activity logging is wired."
+          explanation="Customer, dispatch, settlement, and claims teams use the same load record instead of rebuilding the packet from emails."
           tone={docReport.missingRequired.length ? "neutral" : "positive"}
         />
         <BofAdvantageCard
@@ -353,7 +544,7 @@ export function ShipperLoadPortalClient({ loadId }: { loadId: string }) {
           subtitle={`Packet headline: ${packetLabel}`}
           value={`${missingProofDedup.length} open proof / required gap label(s) in combined view`}
           delta="Single shipper-facing surface reduces back-and-forth vs. scattered email threads"
-          explanation="Gap list merges documentation readiness + missing proof rows (deduped). Not a legal determination — operational visibility only."
+          explanation="The exception view merges document readiness, proof photos, seal chain, and closeout action into one review surface."
           tone={missingProofDedup.length >= 3 ? "caution" : "positive"}
         />
       </BofAdvantageStrip>
@@ -362,26 +553,24 @@ export function ShipperLoadPortalClient({ loadId }: { loadId: string }) {
         <section className="shipper-portal-card" aria-labelledby="sp-pretrip-title">
           <h2 id="sp-pretrip-title">Pre-trip &amp; proof</h2>
           <p className="lead">
-            BOF pre-trip gate and dispatch eligibility for this shipment. Internal teams use the
-            pre-trip tablet; this card mirrors status for shipper visibility.
+            {sealMismatchActive
+              ? "The pre-trip gate captured the starting proof baseline. The current risk is the downstream variance against that baseline, not a missing pre-trip process."
+              : "The pre-trip gate and delivery proof stay visible while settlement resolves the specific packet item holding release."}
           </p>
           <dl className="shipper-portal-dl">
             <dt>Pre-trip status</dt>
             <dd>{pretripChip(preStatus)}</dd>
             <dt>Dispatch eligibility</dt>
             <dd>{eligChip(elig.level)}</dd>
-            <dt>Block / risk detail</dt>
-            <dd>{elig.level === "Cleared" ? "—" : elig.detail}</dd>
-            <dt>Pre-trip blockers (raw)</dt>
+            <dt>Current risk detail</dt>
+            <dd>{elig.level === "Cleared" ? "-" : elig.detail}</dd>
+            <dt>Pre-trip proof baseline</dt>
             <dd>
-              {pretrip.blockReasons.length
-                ? pretrip.blockReasons.slice(0, 8).join(" · ")
-                : "None recorded on this evaluation"}
+              Pickup seal {pickupSeal}; cargo and pickup proof on file for comparison.
             </dd>
-            <dt>Last updated</dt>
+            <dt>BOF action</dt>
             <dd className="bof-small" style={{ color: "var(--bof-muted)" }}>
-              Session snapshot — the demo dataset does not include a dedicated proof-review timestamp;
-              values refresh when Source of Truth edits apply on this device.
+              Hold clean closeout, reconcile the seal chain, and stage the claim / exception packet.
             </dd>
             <dt>Target window</dt>
             <dd>{formatApptWindow(dispatchLoad.pickup_datetime, dispatchLoad.delivery_datetime)}</dd>
@@ -391,17 +580,25 @@ export function ShipperLoadPortalClient({ loadId }: { loadId: string }) {
         <section className="shipper-portal-card" aria-labelledby="sp-seal-title">
           <h2 id="sp-seal-title">Seal &amp; compliance snapshot</h2>
           <p className="lead">
-            Seal chain of custody and driver compliance signals tied to this move.
+            {sealMismatchActive
+              ? "A clean pre-trip can still produce a later seal variance if a facility opens and re-seals the trailer, a receiver records a replacement seal, or a manual entry is wrong. BOF is designed to catch that variance before closeout."
+              : "Seal chain, driver compliance, and appointment details remain attached to the packet even when the active issue is settlement support rather than cargo custody."}
           </p>
           <dl className="shipper-portal-dl">
             <dt>Seal required</dt>
             <dd>{sealRequired ? "Yes" : "Not indicated on load record"}</dd>
             <dt>Pickup seal #</dt>
-            <dd>{bofLoad.pickupSeal?.trim() || "—"}</dd>
+            <dd>{pickupSeal}</dd>
             <dt>Delivery seal #</dt>
-            <dd>{bofLoad.deliverySeal?.trim() || "—"}</dd>
+            <dd>{deliverySeal}</dd>
             <dt>Seal verification</dt>
             <dd>{sealVerifySummary}</dd>
+            <dt>Why this matters</dt>
+            <dd>
+              {sealMismatchActive
+                ? "Settlement and billing stay held until the seal chain is reconciled."
+                : "Settlement can be held for one missing support item without turning the whole load into a claims event."}
+            </dd>
             <dt>Driver compliance</dt>
             <dd>{complianceSummary}</dd>
             <dt>Appointment window</dt>
@@ -410,51 +607,57 @@ export function ShipperLoadPortalClient({ loadId }: { loadId: string }) {
         </section>
 
         <section className="shipper-portal-card shipper-portal-wide" aria-labelledby="sp-photo-title">
-          <h2 id="sp-photo-title">Cargo photo verification</h2>
+          <h2 id="sp-photo-title">Proof stack tied to the exception</h2>
           <p className="lead">
-            Before / after loading, cargo, and seal imagery as surfaced on the dispatch packet.
-            Thumbnails appear when a browser path exists on the record.
+            Each tile opens the evidence BOF uses to reconcile the seal variance, cargo condition,
+            and dock custody trail for this load.
           </p>
           <dl className="shipper-portal-dl">
-            <dt>Before loading photo</dt>
-            <dd>{photoBadge(Boolean(dispatchLoad.pickup_photo_url))}</dd>
-            <dt>After loading photo</dt>
-            <dd>{photoBadge(Boolean(dispatchLoad.delivery_photo_url))}</dd>
-            <dt>Cargo photo</dt>
+            <dt>Pickup cargo condition</dt>
+            <dd>{photoBadge(Boolean(hrefCargoPickup))}</dd>
+            <dt>Delivery cargo condition</dt>
+            <dd>{photoBadge(Boolean(hrefCargoDelivery))}</dd>
+            <dt>Cargo proof line</dt>
             <dd>
-              {photoBadge(Boolean(dispatchLoad.cargo_photo_url))} {proofLineBadge(cargoProof)}
+              {proofLineBadge(cargoProof)}
             </dd>
-            <dt>Seal photo</dt>
+            <dt>Seal proof line</dt>
             <dd>
-              {photoBadge(Boolean(dispatchLoad.seal_photo_url))}{" "}
               <span className="shipper-portal-chip shipper-portal-chip-muted">
-                Pickup {pickupProof?.status ?? "—"} · Delivery {deliveryProof?.status ?? "—"}
+                Pickup {pickupProof?.status ?? "-"} | Delivery {deliveryProof?.status ?? "-"}
               </span>
             </dd>
           </dl>
-          <div className="shipper-portal-photo-grid" aria-label="Photo thumbnails">
-            {[
-              { label: "Before load", url: dispatchLoad.pickup_photo_url },
-              { label: "After load", url: dispatchLoad.delivery_photo_url },
-              { label: "Cargo", url: dispatchLoad.cargo_photo_url },
-              { label: "Seal", url: dispatchLoad.seal_photo_url },
-            ].map((row) =>
-              row.url ? (
-                <div key={row.label} className="shipper-portal-photo-tile">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={row.url} alt="" />
-                  <div className="meta">{row.label}</div>
-                </div>
-              ) : (
-                <div key={row.label} className="shipper-portal-photo-tile">
-                  <div className="meta" style={{ padding: "1.5rem 0.5rem", textAlign: "center" }}>
-                    {row.label}
-                    <br />
-                    <span className="shipper-portal-chip shipper-portal-chip-muted">No preview</span>
-                  </div>
-                </div>
-              )
-            )}
+          <div className="shipper-portal-evidence-grid" aria-label="Clickable exception evidence">
+            <EvidenceTile
+              label={`Pickup seal ${pickupSeal}`}
+              detail="Pre-trip baseline captured before departure"
+              url={hrefPickupSealPhoto}
+              tone="ok"
+            />
+            <EvidenceTile
+              label={`Delivery seal ${deliverySeal}`}
+              detail="Delivery seal differs from pickup baseline"
+              url={hrefDeliverySealPhoto}
+              tone={sealMismatchActive ? "danger" : "ok"}
+            />
+            <EvidenceTile
+              label="Pickup cargo condition"
+              detail="Before-departure cargo and trailer condition"
+              url={hrefCargoPickup}
+              tone="ok"
+            />
+            <EvidenceTile
+              label="Delivery cargo condition"
+              detail="Cargo condition available for customer and claims review"
+              url={hrefCargoDelivery}
+              tone="warning"
+            />
+            <EvidenceTile
+              label="RFID / dock custody"
+              detail="Dock proof attached to the same load record"
+              url={hrefRfidDock}
+            />
           </div>
         </section>
 
@@ -506,8 +709,8 @@ export function ShipperLoadPortalClient({ loadId }: { loadId: string }) {
           <section className="shipper-portal-card shipper-portal-wide" aria-labelledby="sp-ex-title">
             <h2 id="sp-ex-title">Exception &amp; claims visibility</h2>
             <p className="lead">
-              This shipment is flagged for operational exception and/or insurer claim review in the
-              BOF demo storyline.
+              This shipment is flagged for dispatch, customer, settlement, and claims review because
+              the seal chain changed after the pickup baseline was captured.
             </p>
             <dl className="shipper-portal-dl">
               <dt>Exception on file</dt>
@@ -515,34 +718,35 @@ export function ShipperLoadPortalClient({ loadId }: { loadId: string }) {
               <dt>Claim review needed</dt>
               <dd>{dispatchLoad.insurance_claim_needed ? "Yes" : "No"}</dd>
               <dt>Exception reason</dt>
-              <dd>{dispatchLoad.exception_reason ?? "—"}</dd>
-              <dt>Missing proof (packet + lines)</dt>
-              <dd>{missingProofDedup.length ? missingProofDedup.join(", ") : "—"}</dd>
+              <dd>{dispatchLoad.exception_reason ?? "-"}</dd>
+              <dt>Resolution plan</dt>
+              <dd>{resolutionPlan.join(" ")}</dd>
               {claimCtx && (
                 <>
                   <dt>Claim workspace (summary)</dt>
                   <dd className="bof-small" style={{ color: "#e2e8f0" }}>
-                    Issues: {claimCtx.issueTypes.join("; ") || "—"}
+                    Issues: {claimCtx.issueTypes.join("; ") || "-"}
                   </dd>
                 </>
               )}
             </dl>
             <div className="shipper-portal-actions">
               <ActionLink
-                label="Carrier claim form (if on file)"
+                label="Open exception packet"
                 href={dispatchLoad.claim_form_url}
                 newTab
               />
               <ActionLink
-                label="Damage / cargo stills"
-                href={dispatchLoad.damage_photo_url}
+                label="Review pickup seal"
+                href={hrefPickupSealPhoto}
                 newTab
               />
               <ActionLink
-                label="Supporting attachment"
-                href={dispatchLoad.supporting_attachment_url}
+                label="Review delivery seal"
+                href={hrefDeliverySealPhoto}
                 newTab
               />
+              <ActionLink label="Review BOL / POD" href={hrefPod ?? hrefBol} newTab />
               <ActionLink label="Money at risk (BOF)" href="/money-at-risk" />
               <ActionLink label="Document vault" href="/documents" />
             </div>
@@ -579,8 +783,8 @@ export function ShipperLoadPortalClient({ loadId }: { loadId: string }) {
         <section className="shipper-portal-card shipper-portal-wide" aria-labelledby="sp-actions-title">
           <h2 id="sp-actions-title">Linked documents &amp; actions</h2>
           <p className="lead">
-            Opens supporting materials in a new browser tab when the asset is a file; BOF routes
-            stay in-app unless you middle-click.
+            Supporting materials used by dispatch, claims, shipper review, and settlements to move
+            the exception from detection to resolution.
           </p>
           <div className="shipper-portal-actions">
             <ActionLink
