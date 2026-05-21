@@ -53,6 +53,8 @@ export type DriverCredentialStatus = {
   insuranceCard: CredentialRecord;
 };
 
+const DEFAULT_DRIVER_INSURANCE_EXPIRATION = "2027-05-31";
+
 function fromDateAndFile(
   expirationDate: string | undefined,
   fileUrl: string | undefined,
@@ -236,8 +238,10 @@ export function getDriverCredentialStatus(data: BofData, driverId: string): Driv
   const w9File = getDriverDocumentByType(driverId, "W-9");
 
   const insRow = byType.get("Insurance Card");
-  const insExp = insRow?.expirationDate?.trim() || undefined;
   const insFile = getDriverDocumentByType(driverId, "Insurance Card");
+  const insExp =
+    insRow?.expirationDate?.trim() ||
+    (insFile ? DEFAULT_DRIVER_INSURANCE_EXPIRATION : undefined);
 
   return {
     driverId,

@@ -9,7 +9,7 @@
  * Safeguards: SSN masking, date range validation, BOF branding.
  */
 
-import { readFileSync, writeFileSync, existsSync, mkdirSync } from "fs";
+import { readFileSync, writeFileSync, existsSync, mkdirSync, unlinkSync } from "fs";
 import { join, dirname } from "path";
 import { fileURLToPath } from "url";
 
@@ -30,6 +30,8 @@ const DATE_RANGE = {
   start: "2025-10-10",
   end: "2025-12-28"
 };
+
+const HR_REPRESENTATIVE = "M. Torres";
 
 const CANONICAL_DRIVERS = [
   { id: "DRV-001", name: "John Carter" },
@@ -74,6 +76,15 @@ function getDriverSettlement(bofData, driverId) {
   return settlement || {};
 }
 
+function hasActivePayrollWithholding(settlementData) {
+  return [
+    settlementData.familySupport,
+    settlementData.garnishmentAmount,
+    settlementData.garnishmentWithholding,
+    settlementData.childSupportWithholding,
+  ].some((value) => (parseFloat(value) || 0) > 0);
+}
+
 // Validate date is within allowed range
 function validateDate(dateString) {
   const date = new Date(dateString);
@@ -95,10 +106,21 @@ function generateRandomDate() {
   return new Date(randomTime).toISOString().split('T')[0];
 }
 
+function driverNumber(driverId) {
+  const value = Number(String(driverId).replace(/\D/g, ""));
+  return Number.isFinite(value) && value > 0 ? value : 1;
+}
+
+function controlledSignatureDate(driverId, offsetDays = 0) {
+  const base = new Date("2025-11-03T12:00:00Z");
+  base.setUTCDate(base.getUTCDate() + driverNumber(driverId) + offsetDays);
+  return base.toISOString().split("T")[0];
+}
+
 // Generate Benefits Enrollment HTML
 function generateBenefitsEnrollment(driverInfo, settlementData) {
-  const enrollmentDate = generateRandomDate();
-  const reviewDate = generateRandomDate();
+  const enrollmentDate = controlledSignatureDate(driverInfo.id, 0);
+  const reviewDate = controlledSignatureDate(driverInfo.id, 1);
   
   // Calculate coverage based on settlement data
   const healthPremium = parseFloat(settlementData.healthInsurancePremiums) || 0;
@@ -268,6 +290,10 @@ function generateBenefitsEnrollment(driverInfo, settlementData) {
             border-bottom: 1px solid #1a202c;
             width: 2.5in;
             margin-bottom: 0.0625in;
+            min-height: 0.28in;
+            font-family: "Brush Script MT", "Segoe Script", cursive;
+            font-size: 14pt;
+            color: #111827;
         }
         .signature-label {
             font-size: 8pt;
@@ -527,7 +553,7 @@ function generateBenefitsEnrollment(driverInfo, settlementData) {
         <div class="signature-area">
             <div class="section-title">Employee Signature</div>
             <div class="signature-block">
-                <div class="signature-line"></div>
+                <div class="signature-line">${driverInfo.name}</div>
                 <div class="signature-label">Employee Signature</div>
             </div>
             <div class="signature-block">
@@ -539,7 +565,7 @@ function generateBenefitsEnrollment(driverInfo, settlementData) {
         <div class="signature-area">
             <div class="section-title">HR/Benefits Review</div>
             <div class="signature-block">
-                <div class="signature-line"></div>
+                <div class="signature-line">${HR_REPRESENTATIVE}</div>
                 <div class="signature-label">HR Representative Signature</div>
             </div>
             <div class="signature-block">
@@ -562,8 +588,8 @@ function generateBenefitsEnrollment(driverInfo, settlementData) {
 
 // Generate Employee Handbook Acknowledgment HTML
 function generateEmployeeHandbookAcknowledgment(driverInfo) {
-  const acknowledgmentDate = generateRandomDate();
-  const reviewDate = generateRandomDate();
+  const acknowledgmentDate = controlledSignatureDate(driverInfo.id, 2);
+  const reviewDate = controlledSignatureDate(driverInfo.id, 3);
   
   return `<!DOCTYPE html>
 <html lang="en">
@@ -773,7 +799,7 @@ function generateEmployeeHandbookAcknowledgment(driverInfo) {
         <div class="signature-area">
             <div class="section-title">HR Review</div>
             <div class="signature-block">
-                <div class="signature-line">M. Torres</div>
+                <div class="signature-line">${HR_REPRESENTATIVE}</div>
                 <div class="signature-label">HR Representative Signature</div>
             </div>
             <div class="signature-block">
@@ -883,17 +909,22 @@ function generateDocuments() {
       const garnishmentPath = join(PROJECT_ROOT, "public", "generated", "drivers", driver.id, "hr-payroll", "garnishment-withholding-summary.html");
       ensureDirectoryExists(garnishmentPath);
       
-      const garnishmentContent = generatePayrollGarnishmentWithholdingSummary(driverInfo, settlementData);
-      writeFileSync(garnishmentPath, garnishmentContent, "utf8");
-      
-      generatedFiles.push({
-        driverId: driver.id,
-        driverName: driverInfo.name,
-        path: garnishmentPath,
-        type: "garnishment-withholding-summary"
-      });
-      
-      console.log(`✅ Generated Garnishment: ${driver.id} - ${driverInfo.name}`);
+      if (hasActivePayrollWithholding(settlementData)) {
+        const garnishmentContent = generatePayrollGarnishmentWithholdingSummary(driverInfo, settlementData);
+        writeFileSync(garnishmentPath, garnishmentContent, "utf8");
+        
+        generatedFiles.push({
+          driverId: driver.id,
+          driverName: driverInfo.name,
+          path: garnishmentPath,
+          type: "garnishment-withholding-summary"
+        });
+        
+        console.log(`Generated Garnishment: ${driver.id} - ${driverInfo.name}`);
+      } else {
+        if (existsSync(garnishmentPath)) unlinkSync(garnishmentPath);
+        console.log(`Skipped Garnishment: ${driver.id} - no active withholding`);
+      }
       
     } catch (error) {
       errors.push({
@@ -918,8 +949,8 @@ function generateDocuments() {
 
 // Generate Payroll Garnishment Withholding Summary
 function generatePayrollGarnishmentWithholdingSummary(driverInfo, settlementData) {
-  const summaryDate = generateRandomDate();
-  const reviewDate = generateRandomDate();
+  const summaryDate = controlledSignatureDate(driverInfo.id, 4);
+  const reviewDate = controlledSignatureDate(driverInfo.id, 5);
   
   // Check for family support / child support withholding
   const familySupportAmount = parseFloat(settlementData.familySupport) || 0;
@@ -1200,8 +1231,8 @@ function generatePayrollGarnishmentWithholdingSummary(driverInfo, settlementData
 
 // Generate Life Insurance Beneficiary Election
 function generateLifeInsuranceBeneficiaryElection(driverInfo, settlementData) {
-  const electionDate = generateRandomDate();
-  const reviewDate = generateRandomDate();
+  const electionDate = controlledSignatureDate(driverInfo.id, 4);
+  const reviewDate = controlledSignatureDate(driverInfo.id, 5);
   
   // Calculate life insurance election based on settlement data
   const lifeInsuranceAbove50k = parseFloat(settlementData.lifeInsuranceAbove50k) || 0;
@@ -1346,6 +1377,12 @@ function generateLifeInsuranceBeneficiaryElection(driverInfo, settlementData) {
             width: 3in;
             border-bottom: 1px solid #4a5568;
             height: 0.5in;
+            font-family: "Brush Script MT", "Segoe Script", cursive;
+            font-size: 15pt;
+            color: #111827;
+            display: flex;
+            align-items: end;
+            padding-left: 0.08in;
         }
         .date-box {
             width: 2in;
@@ -1384,11 +1421,11 @@ function generateLifeInsuranceBeneficiaryElection(driverInfo, settlementData) {
                 </div>
                 <div class="info-row">
                     <div class="info-label">Group:</div>
-                    <div class="info-value">BackOfficeFleet Group</div>
+                    <div class="info-value">Delta Advanced Trucking Benefits Plan</div>
                 </div>
                 <div class="info-row">
                     <div class="info-label">Policy Reference:</div>
-                    <div class="info-value">Demo Policy Reference #2025-LIFE</div>
+                    <div class="info-value">DAT-2025-LIFE</div>
                 </div>
             </div>
         </div>
@@ -1537,7 +1574,7 @@ function generateLifeInsuranceBeneficiaryElection(driverInfo, settlementData) {
         <div class="signature-section">
             <div class="section-title">Employee Signature</div>
             <div class="signature-line">
-                <div class="signature-box"></div>
+                <div class="signature-box">${driverInfo.name}</div>
                 <div class="date-box">
                     <div style="font-weight: 600;">Date:</div>
                     <div>${electionDate}</div>
@@ -1551,14 +1588,14 @@ function generateLifeInsuranceBeneficiaryElection(driverInfo, settlementData) {
         <div class="signature-section">
             <div class="section-title">HR/Benefits Review</div>
             <div class="signature-line">
-                <div class="signature-box"></div>
+                <div class="signature-box">${HR_REPRESENTATIVE}</div>
                 <div class="date-box">
                     <div style="font-weight: 600;">Date:</div>
                     <div>${reviewDate}</div>
                 </div>
             </div>
             <div style="font-size: 8pt; margin-top: 0.25in;">
-                <strong>HR Representative:</strong> _________________________
+                <strong>HR Representative:</strong> ${HR_REPRESENTATIVE}
             </div>
         </div>
 
@@ -1576,8 +1613,8 @@ function generateLifeInsuranceBeneficiaryElection(driverInfo, settlementData) {
 
 // Generate Flexible Spending Account Election
 function generateFlexibleSpendingAccountElection(driverInfo, settlementData) {
-  const electionDate = generateRandomDate();
-  const reviewDate = generateRandomDate();
+  const electionDate = controlledSignatureDate(driverInfo.id, 6);
+  const reviewDate = controlledSignatureDate(driverInfo.id, 7);
   
   // Calculate FSA election based on settlement data
   const hsaFsaDeduction = parseFloat(settlementData.hsaFsaHealthDeduction) || 0;
@@ -1713,6 +1750,12 @@ function generateFlexibleSpendingAccountElection(driverInfo, settlementData) {
             width: 3in;
             border-bottom: 1px solid #4a5568;
             height: 0.5in;
+            font-family: "Brush Script MT", "Segoe Script", cursive;
+            font-size: 15pt;
+            color: #111827;
+            display: flex;
+            align-items: end;
+            padding-left: 0.08in;
         }
         .date-box {
             width: 2in;
@@ -1849,7 +1892,7 @@ function generateFlexibleSpendingAccountElection(driverInfo, settlementData) {
         <div class="signature-section">
             <div class="section-title">Employee Signature</div>
             <div class="signature-line">
-                <div class="signature-box"></div>
+                <div class="signature-box">${driverInfo.name}</div>
                 <div class="date-box">
                     <div style="font-weight: 600;">Date:</div>
                     <div>${electionDate}</div>
@@ -1863,14 +1906,14 @@ function generateFlexibleSpendingAccountElection(driverInfo, settlementData) {
         <div class="signature-section">
             <div class="section-title">HR/Benefits Review</div>
             <div class="signature-line">
-                <div class="signature-box"></div>
+                <div class="signature-box">${HR_REPRESENTATIVE}</div>
                 <div class="date-box">
                     <div style="font-weight: 600;">Date:</div>
                     <div>${reviewDate}</div>
                 </div>
             </div>
             <div style="font-size: 8pt; margin-top: 0.25in;">
-                <strong>HR Representative:</strong> _________________________
+                <strong>HR Representative:</strong> ${HR_REPRESENTATIVE}
             </div>
         </div>
 

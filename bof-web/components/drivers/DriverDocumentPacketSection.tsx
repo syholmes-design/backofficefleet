@@ -38,6 +38,21 @@ function groupTitle(group: DriverPacketDocument["group"]) {
   return "Supporting Documents";
 }
 
+const BENEFITS_SIGNATURE_DOCS = new Set([
+  "benefits_enrollment",
+  "employee_handbook_acknowledgment",
+  "life_insurance_beneficiary_election",
+  "flexible_spending_account_election",
+]);
+
+function signatureSummary(row: DriverPacketDocument) {
+  if (!BENEFITS_SIGNATURE_DOCS.has(row.canonicalType) || !row.fileUrl) return null;
+  if (row.canonicalType === "employee_handbook_acknowledgment") {
+    return "Employee signed; HR received";
+  }
+  return "Employee signed; HR countersigned";
+}
+
 function actionLabel(row: DriverPacketDocument) {
   if (row.fileUrl) {
     // Specific action labels based on document type
@@ -48,13 +63,13 @@ function actionLabel(row: DriverPacketDocument) {
     if (row.canonicalType === "road_test_certificate") return "Open Road Test";
     if (row.canonicalType === "employment_application") return "Open Employment Application";
     if (row.canonicalType === "i9") return "Open I-9";
-    if (row.canonicalType === "w9") return "Open W-4";
+    if (row.canonicalType === "w9") return "Open W-9";
     if (row.canonicalType === "emergency_contact") return "Open Emergency Contact";
     if (row.canonicalType === "bank_information") return "Open Bank Information";
-    if (row.canonicalType === "benefits_enrollment") return "Open Benefits Enrollment";
-    if (row.canonicalType === "employee_handbook_acknowledgment") return "Open Employee Handbook Acknowledgment";
-    if (row.canonicalType === "life_insurance_beneficiary_election") return "Open Life Insurance Beneficiary Election";
-    if (row.canonicalType === "flexible_spending_account_election") return "Open Flexible Spending Account Election";
+    if (row.canonicalType === "benefits_enrollment") return "View signed benefits form";
+    if (row.canonicalType === "employee_handbook_acknowledgment") return "View signed handbook acknowledgment";
+    if (row.canonicalType === "life_insurance_beneficiary_election") return "View signed beneficiary election";
+    if (row.canonicalType === "flexible_spending_account_election") return "View signed FSA election";
     if (row.canonicalType === "garnishment_withholding_summary") return "Open Garnishment Withholding Summary";
     if (row.canonicalType === "handbook_acknowledgment") return "Open Handbook";
     if (row.canonicalType === "policy_acknowledgment") return "Open Policy";
@@ -84,20 +99,29 @@ export function DriverDocumentPacketSection({
 }: {
   packet: DriverDocumentPacket;
 }) {
-  const [selectedCanonicalType, setSelectedCanonicalType] = useState<string | null>(
-    packet.documents[0]?.canonicalType ?? null
+  const visibleDocuments = useMemo(
+    () =>
+      packet.documents.filter(
+        (row) =>
+          row.canonicalType !== "fmcsa_compliance" &&
+          row.canonicalType !== "emergency_contact_sheet"
+      ),
+    [packet.documents]
   );
-  const selected = packet.documents.find((d) => d.canonicalType === selectedCanonicalType) ?? null;
+  const [selectedCanonicalType, setSelectedCanonicalType] = useState<string | null>(
+    visibleDocuments[0]?.canonicalType ?? null
+  );
+  const selected = visibleDocuments.find((d) => d.canonicalType === selectedCanonicalType) ?? null;
 
   const groups = useMemo(() => {
     return {
-      core: packet.documents.filter((d) => d.group === "core_dqf"),
-      workflow: packet.documents.filter((d) => d.group === "hr_workflow"),
-      payroll: packet.documents.filter((d) => d.group === "payroll_deduction_support"),
-      summaries: packet.documents.filter((d) => d.group === "generated_summaries"),
+      core: visibleDocuments.filter((d) => d.group === "core_dqf"),
+      workflow: visibleDocuments.filter((d) => d.group === "hr_workflow"),
+      payroll: visibleDocuments.filter((d) => d.group === "payroll_deduction_support"),
+      summaries: visibleDocuments.filter((d) => d.group === "generated_summaries"),
     };
-  }, [packet.documents]);
-  const counts = useMemo(() => statusCounts(packet.documents), [packet.documents]);
+  }, [visibleDocuments]);
+  const counts = useMemo(() => statusCounts(visibleDocuments), [visibleDocuments]);
 
   return (
     <section className="bof-doc-section" aria-labelledby="driver-document-packet-heading">
@@ -189,7 +213,12 @@ export function DriverDocumentPacketSection({
                 {row.expirationDate || describeCredentialExpiration(row.expirationDate)}
               </span>
               <span className="bof-driver-doc-col">{row.sourceLabel}</span>
-              <span className="bof-driver-doc-col bof-driver-doc-col-action">{actionLabel(row)}</span>
+              <span className="bof-driver-doc-col bof-driver-doc-col-action">
+                {actionLabel(row)}
+                {signatureSummary(row) ? (
+                  <span className="bof-driver-doc-signature-pill">{signatureSummary(row)}</span>
+                ) : null}
+              </span>
               {/* HR/Admin document notes */}
               {row.canonicalType === "benefits_enrollment" && (
                 <span className="bof-driver-doc-relationship">Administrative document - does not block dispatch</span>
@@ -307,6 +336,12 @@ export function DriverDocumentPacketSection({
             <p className="bof-small bof-muted">
               Source: {selected.needsMapping ? "Needs mapping" : selected.sourceLabel}
             </p>
+            {signatureSummary(selected) ? (
+              <div className="bof-driver-doc-signature-card">
+                <strong>Signature control complete</strong>
+                <span>{signatureSummary(selected)}</span>
+              </div>
+            ) : null}
             {selected.fileUrl ? (
               <>
                 <p className="bof-small">

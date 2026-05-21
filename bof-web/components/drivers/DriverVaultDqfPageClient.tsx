@@ -60,10 +60,42 @@ function rowNeedsExplain(row: DriverDqfDocumentRow): boolean {
   );
 }
 
+const BENEFITS_SIGNATURE_DOCS = new Set([
+  "benefits_enrollment",
+  "employee_handbook_acknowledgment",
+  "life_insurance_beneficiary_election",
+  "flexible_spending_account_election",
+]);
+
+function signatureSummary(row: DriverDqfDocumentRow): string | null {
+  if (!BENEFITS_SIGNATURE_DOCS.has(row.canonicalType) || !row.fileUrl) return null;
+  if (row.canonicalType === "employee_handbook_acknowledgment") {
+    return "Employee signed; HR received";
+  }
+  return "Employee signed; HR countersigned";
+}
+
+function documentActionLabel(row: DriverDqfDocumentRow): string {
+  if (row.canonicalType === "benefits_enrollment") return "View signed benefits form";
+  if (row.canonicalType === "employee_handbook_acknowledgment") return "View signed handbook acknowledgment";
+  if (row.canonicalType === "life_insurance_beneficiary_election") return "View signed beneficiary election";
+  if (row.canonicalType === "flexible_spending_account_election") return "View signed FSA election";
+  return row.actionLabel ?? "Open document";
+}
+
 export function DriverVaultDqfPageClient({ driverId }: Props) {
   const { data, resetDocumentReviewOverrides } = useBofDemoData();
   const summary = useMemo(() => getDriverDqfReadinessSummary(data, driverId), [data, driverId]);
-  const grouped = useMemo(() => groupDqfRowsByVaultUi(summary.documents), [summary.documents]);
+  const visibleDocuments = useMemo(
+    () =>
+      summary.documents.filter(
+        (row) =>
+          row.canonicalType !== "fmcsa_compliance" &&
+          row.canonicalType !== "emergency_contact_sheet"
+      ),
+    [summary.documents]
+  );
+  const grouped = useMemo(() => groupDqfRowsByVaultUi(visibleDocuments), [visibleDocuments]);
 
   const firstSelectable = useMemo(() => {
     for (const g of DRIVER_VAULT_UI_GROUP_ORDER) {
@@ -83,8 +115,8 @@ export function DriverVaultDqfPageClient({ driverId }: Props) {
   const effectiveCanonical = selected ?? firstSelectable;
 
   const selectedRow = useMemo(
-    () => summary.documents.find((d) => d.canonicalType === effectiveCanonical) ?? null,
-    [summary.documents, effectiveCanonical]
+    () => visibleDocuments.find((d) => d.canonicalType === effectiveCanonical) ?? null,
+    [visibleDocuments, effectiveCanonical]
   );
 
   const resolvedDocIds = useMemo(
@@ -199,7 +231,7 @@ function getDocumentReviewExplanation(row: DriverDqfDocumentRow): {
           {(summary.overallStatus === "needs_review" || summary.overallStatus === "blocked") && (
             <div className="rounded border border-slate-800 bg-slate-950/60 p-3 text-sm mb-4">
               <h4 className="font-medium text-slate-100 mb-3">Document Review Items</h4>
-              {summary.documents
+              {visibleDocuments
                 .filter(row => row.status !== "ready")
                 .map(row => {
                   const explanation = getDocumentReviewExplanation(row);
@@ -236,7 +268,7 @@ function getDocumentReviewExplanation(row: DriverDqfDocumentRow): {
                     </div>
                   );
                 })}
-              {summary.documents.filter(row => row.status !== "ready").length === 0 && (
+              {visibleDocuments.filter(row => row.status !== "ready").length === 0 && (
                 <div>
                   <span className="font-medium text-slate-100">Issue:</span>
                   <span className="ml-2 text-slate-300">Review reason needs clarification</span>
@@ -394,11 +426,14 @@ function getDocumentReviewExplanation(row: DriverDqfDocumentRow): {
                               >
                                 {row.actionHref ? (
                                   <Link href={row.actionHref} className="bof-dqf-vault-link">
-                                    {row.actionLabel ?? "Open"}
+                                    {documentActionLabel(row)}
                                   </Link>
                                 ) : (
                                   "—"
                                 )}
+                                {signatureSummary(row) ? (
+                                  <span className="bof-driver-doc-signature-pill">{signatureSummary(row)}</span>
+                                ) : null}
                                 {rowNeedsExplain(row) ? (
                                   <button
                                     type="button"
@@ -443,35 +478,56 @@ function getDocumentReviewExplanation(row: DriverDqfDocumentRow): {
             })}
           </div>
 
-          <aside className="bof-dqf-vault-preview" aria-label="Selected document preview">
-            {selectedRow?.fileUrl && /\.pdf(\?|$)/i.test(selectedRow.fileUrl) ? (
+          <aside className="bof-dqf-vault-preview" aria-label="Selected document action panel">
+            {selectedRow ? (
               <div>
+                <p className="bof-dqf-vault-kicker">Selected document</p>
                 <h3 className="bof-dqf-vault-h3">{selectedRow.label}</h3>
-                <p className="bof-dqf-vault-muted">PDF preview is not embedded — open the file to view at full resolution.</p>
-                <a href={selectedRow.fileUrl} target="_blank" rel="noopener noreferrer" className="bof-dqf-vault-btn">
-                  Open file
-                </a>
-              </div>
-            ) : selectedRow?.fileUrl ? (
-              <div>
-                <h3 className="bof-dqf-vault-h3">{selectedRow.label}</h3>
-                <div className={`bof-dqf-doc-preview bof-dqf-doc-preview--thumb bof-dqf-doc-preview--${previewVariant(selectedRow)}`}>
-                  <div className="bof-dqf-doc-preview-frame bof-dqf-doc-preview-frame--thumb">
-                    <iframe src={selectedRow.fileUrl} className="bof-dqf-doc-preview-iframe" title={selectedRow.label} />
+                <dl className="bof-dqf-vault-selected-list">
+                  <div>
+                    <dt>Status</dt>
+                    <dd><span className={rowStatusPill(selectedRow.status)}>{selectedRow.status.replace(/_/g, " ")}</span></dd>
                   </div>
-                </div>
-                <a
-                  href={selectedRow.fileUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="bof-dqf-vault-btn"
-                  style={{ marginTop: "0.75rem", display: "inline-block" }}
-                >
-                  Open file
-                </a>
+                  <div>
+                    <dt>Expiration / review</dt>
+                    <dd>{selectedRow.expirationDate ?? "Not date-controlled"}</dd>
+                  </div>
+                  <div>
+                    <dt>Source</dt>
+                    <dd>{formatSource(selectedRow.source)}</dd>
+                  </div>
+                </dl>
+                {selectedRow.fileUrl ? (
+                  <a
+                    href={selectedRow.fileUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="bof-dqf-vault-btn"
+                    style={{ marginTop: "0.75rem", display: "inline-block" }}
+                  >
+                    {documentActionLabel(selectedRow)}
+                  </a>
+                ) : (
+                  <p className="bof-dqf-vault-muted">
+                    This item is listed for record control, but it does not have an active file link yet.
+                  </p>
+                )}
+                {signatureSummary(selectedRow) ? (
+                  <div className="bof-driver-doc-signature-card">
+                    <strong>Signature control complete</strong>
+                    <span>{signatureSummary(selectedRow)}</span>
+                  </div>
+                ) : null}
+                {selectedRow.fileUrl && selectedRow.canonicalType !== "cdl" && !/\.pdf(\?|$)/i.test(selectedRow.fileUrl) ? (
+                  <div className={`bof-dqf-doc-preview bof-dqf-doc-preview--thumb bof-dqf-doc-preview--${previewVariant(selectedRow)}`}>
+                    <div className="bof-dqf-doc-preview-frame bof-dqf-doc-preview-frame--thumb">
+                      <iframe src={selectedRow.fileUrl} className="bof-dqf-doc-preview-iframe" title={selectedRow.label} />
+                    </div>
+                  </div>
+                ) : null}
               </div>
             ) : (
-              <p className="bof-dqf-vault-muted">Select a document with a preview URL, or open actions from the table.</p>
+              <p className="bof-dqf-vault-muted">Select a document row to see status and available actions.</p>
             )}
 
             {selectedRow && selectedRow.status !== "ready" ? (

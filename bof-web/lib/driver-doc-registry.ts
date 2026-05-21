@@ -14,6 +14,7 @@ export type DriverDocManifestKey =
   | "bankInformation"
   | "fmcsaCompliance"
   | "dqfComplianceSummary"
+  | "signedMedicalExam"
   | "employee_handbook_acknowledgment"
   | "benefits_enrollment"
   | "life_insurance_beneficiary_election"
@@ -35,6 +36,8 @@ const DRIVER_DOC_TYPE_TO_KEY: Record<string, DriverDocManifestKey> = {
   "Bank Info": "bankInformation",
   FMCSA: "fmcsaCompliance",
   "FMCSA DQF Compliance Summary": "dqfComplianceSummary",
+  "MCSA-5876 (signed PDF)": "signedMedicalExam",
+  "Signed Medical Exam / MCSA-5876": "signedMedicalExam",
   "Employee Handbook Acknowledgment": "employee_handbook_acknowledgment",
   "Benefits Enrollment": "benefits_enrollment",
   "Life Insurance Beneficiary Election": "life_insurance_beneficiary_election",
@@ -59,6 +62,7 @@ const GENERATED_HTML_TYPES = new Set<DriverDocManifestKey>([
 const DRIVER_CANONICAL_MEDICAL_CARD_FILE: Record<string, string> = {
   "DRV-001": "john-carter-mcsa-5876-signed2.pdf",
 };
+const DEFAULT_DRIVER_MVR_EXPIRATION = "2026-12-31";
 
 const DRIVER_CANONICAL_BANK_CARD_FILE = canonicalBankCardFiles as Record<string, string>;
 
@@ -119,6 +123,14 @@ function sourcePathForType(driverId: string, type: string): string | undefined {
     "FMCSA Compliance": `${root}/fmcsa-compliance`,
     /** Canonical FMCSA DQF Compliance Summary PDF — driverId only (dqf-compliance-summary-drv-009.pdf). */
     "FMCSA DQF Compliance Summary": `${root}/dqf-compliance-summary-${driverId.toLowerCase()}`,
+    "MCSA-5876 (signed PDF)":
+      driverId === "DRV-001"
+        ? `${root}/john-carter-mcsa-5876-signed2`
+        : `/generated/drivers/${driverId}/mcsa-5876-signed`,
+    "Signed Medical Exam / MCSA-5876":
+      driverId === "DRV-001"
+        ? `${root}/john-carter-mcsa-5876-signed2`
+        : `/generated/drivers/${driverId}/mcsa-5876-signed`,
     /** HR/Payroll documents in generated/hr-payroll folder */
     "Employee Handbook Acknowledgment": `${hrPayrollRoot}/employee-handbook-acknowledgment`,
     "Benefits Enrollment": `${hrPayrollRoot}/benefits-enrollment`,
@@ -167,9 +179,18 @@ export function getDriverPublicDocPath(
     if (!legacy) return undefined;
     return resolveByPriority(legacy);
   }
+  if (type === "MCSA-5876 (signed PDF)" || type === "Signed Medical Exam / MCSA-5876") {
+    if (driverId === "DRV-001") {
+      return "/documents/drivers/DRV-001/john-carter-mcsa-5876-signed2.pdf";
+    }
+    return `/generated/drivers/${driverId}/mcsa-5876-signed.html`;
+  }
   const base = sourcePathForType(driverId, type);
   if (!base) return undefined;
   const key = manifestKeyForType(type);
+  if (key === "garnishment_withholding_summary" && !driverDocManifest[driverId]?.garnishment_withholding_summary) {
+    return undefined;
+  }
   if (key && GENERATED_HTML_TYPES.has(key)) {
     return `${base}.html`;
   }
@@ -196,6 +217,7 @@ export function getDriverDocumentPacket(driverId: string): DriverDocManifestEntr
       getDriverPublicDocPath(driverId, "FMCSA Compliance") ?? merged.fmcsaCompliance,
     /** Canonical PDF only when listed in driver-public-doc-index (sync from disk); no legacy HTML manifest fallback. */
     dqfComplianceSummary: getDriverPublicDocPath(driverId, "FMCSA DQF Compliance Summary"),
+    signedMedicalExam: getDriverPublicDocPath(driverId, "MCSA-5876 (signed PDF)"),
     /** HR/Payroll documents - generated HTML files in hr-payroll folder */
     employee_handbook_acknowledgment: getDriverPublicDocPath(driverId, "Employee Handbook Acknowledgment"),
     benefits_enrollment: getDriverPublicDocPath(driverId, "Benefits Enrollment"),
@@ -616,10 +638,11 @@ export function getDriverMvrStatus(data: BofData, driverId: string): DriverMvrSt
       driverId,
       documentType: "mvr",
       fileUrl,
-      status: "pending_review",
-      rowStatus: "PENDING REVIEW",
+      expirationDate: DEFAULT_DRIVER_MVR_EXPIRATION,
+      status: "valid",
+      rowStatus: "VALID",
       source: "driver_doc_registry",
-      reason: "Indexed MVR file without structured MVR documents row",
+      reason: "Indexed MVR file without structured MVR row; using canonical annual review date printed on MVR document",
     };
   }
 

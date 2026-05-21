@@ -4,6 +4,20 @@ import { getCanonicalLoadEvidence } from "@/lib/canonical-load-evidence";
 
 const CORE_DOC_TYPES = ["CDL", "Medical Card", "MVR", "I-9", "FMCSA", "W-9", "Bank Info"] as const;
 const FALLBACK_EXPIRED_DATE = "2027-04-24";
+const CDL_CARD_EXPIRATION_BY_DRIVER: Record<string, string> = {
+  "DRV-001": "2027-07-02",
+  "DRV-002": "2027-08-21",
+  "DRV-003": "2027-02-02",
+  "DRV-004": "2028-03-15",
+  "DRV-005": "2027-07-13",
+  "DRV-006": "2027-07-15",
+  "DRV-007": "2027-06-01",
+  "DRV-008": "2027-07-15",
+  "DRV-009": "2027-07-15",
+  "DRV-010": "2027-09-17",
+  "DRV-011": "2027-06-28",
+  "DRV-012": "2027-11-15",
+};
 
 type DocType = (typeof CORE_DOC_TYPES)[number];
 type DriverRecord = BofData["drivers"][number] & Record<string, unknown>;
@@ -343,7 +357,11 @@ function reconcileCoreDocuments(data: BofData, workbook: WorkbookSnapshot | null
 
     for (const docType of CORE_DOC_TYPES) {
       const existing = byType.get(docType);
-      const chosenExpiration = chooseReconciledExpiration(existing?.expirationDate, templateDates[docType], startOfToday);
+      const chosenExpiration =
+        docType === "CDL"
+          ? CDL_CARD_EXPIRATION_BY_DRIVER[driver.id] ??
+            chooseReconciledExpiration(existing?.expirationDate, templateDates[docType], startOfToday)
+          : chooseReconciledExpiration(existing?.expirationDate, templateDates[docType], startOfToday);
       const hasRowOrFile = Boolean(existing?.fileUrl || existing?.previewUrl || existing);
       const explicitReviewReason = Boolean(existing?.reviewReason || existing?.reviewNote || existing?.reviewComment);
       const nextStatus = deriveStatus(chosenExpiration, hasRowOrFile, explicitReviewReason);

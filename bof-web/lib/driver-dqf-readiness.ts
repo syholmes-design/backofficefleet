@@ -178,12 +178,11 @@ function explainRow(row: DriverDqfDocumentRow, driverId: string): DriverDqfDocum
 const SUPPLEMENTAL_FILES: Array<{ canonicalType: string; label: string; file: string }> = [
   { canonicalType: "road_test_certificate", label: "Road Test Certificate", file: "road-test-certificate.html" },
   { canonicalType: "prior_employer_inquiry", label: "Prior Employer Inquiry", file: "prior_employer_inquiry.html" },
-  { canonicalType: "annual_review_qual_file", label: "Annual Review (Qualification File)", file: "qualification-file.html" },
   { canonicalType: "drug_test_result", label: "Drug Test Result", file: "drug_test_result.html" },
 ];
 
 function supplementalRows(driverId: string): DriverDqfDocumentRow[] {
-  return SUPPLEMENTAL_FILES.map((s) => {
+  const rows: DriverDqfDocumentRow[] = SUPPLEMENTAL_FILES.map((s) => {
     const url = `/generated/drivers/${driverId}/${s.file}`;
     return {
       canonicalType: s.canonicalType,
@@ -198,6 +197,18 @@ function supplementalRows(driverId: string): DriverDqfDocumentRow[] {
       optionalForReadiness: true,
     };
   });
+
+  rows.push({
+    canonicalType: "annual_review_qual_file",
+    label: "Annual Review (Qualification File)",
+    group: "vault_supplemental",
+    status: "pending_review",
+    source: "structured_record",
+    notes: "Annual review is tracked but not opened from the demo vault until a full review packet is attached.",
+    optionalForReadiness: true,
+  });
+
+  return rows;
 }
 
 /**

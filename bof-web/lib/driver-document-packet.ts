@@ -117,11 +117,6 @@ const PAYROLL_TYPES: Array<{ canonicalType: string; label: string; sourceType: s
 
 const SUMMARY_TYPES: Array<{ canonicalType: string; label: string; sourceType: string }> = [
   {
-    canonicalType: "emergency_contact_sheet",
-    label: "Emergency Contact Sheet",
-    sourceType: "Emergency Contact Sheet",
-  },
-  {
     canonicalType: "credential_register",
     label: "Credential Register",
     sourceType: "Credential Register",
@@ -138,10 +133,8 @@ const NON_EXPIRING_PACKET_TYPES = new Set([
   "w9",
   "bank_information",
   "emergency_contact",
-  "insurance_card",
   "driver_application",
   "safety_acknowledgment",
-  "signed_medical_exam",
   "driver_profile_html",
   "qualification_file_status",
   "incident_report",
@@ -154,6 +147,18 @@ const NON_EXPIRING_PACKET_TYPES = new Set([
   "credential_register",
   "dqf_compliance_summary",
 ]);
+
+function hasActivePayrollWithholding(data: BofData, driverId: string): boolean {
+  const settlement = data.settlements?.find((row) => row.driverId === driverId);
+  if (!settlement) return false;
+  const withholdings = [
+    (settlement as { familySupport?: number | string }).familySupport,
+    (settlement as { garnishmentAmount?: number | string }).garnishmentAmount,
+    (settlement as { garnishmentWithholding?: number | string }).garnishmentWithholding,
+    (settlement as { childSupportWithholding?: number | string }).childSupportWithholding,
+  ];
+  return withholdings.some((value) => Number(value ?? 0) > 0);
+}
 
 function inferSourceKind(doc: Pick<DriverPacketDocument, "fileUrl">): DriverDocumentSourceKind {
   const url = doc.fileUrl?.trim();
@@ -189,6 +194,21 @@ function toPacketDoc(
   group: DriverDocumentGroupKey,
   driverId: string
 ): DriverPacketDocument {
+  if (row.canonicalType === "signed_medical_exam" && driverId === "DRV-001") {
+    const fileUrl = "/documents/drivers/DRV-001/john-carter-mcsa-5876-signed2.pdf";
+    return {
+      canonicalType: row.canonicalType,
+      label: row.label,
+      group,
+      status: "VALID",
+      expirationDate: "2027-06-15",
+      fileUrl,
+      previewUrl: fileUrl,
+      sourceKind: "public_file",
+      sourceLabel: "Public file",
+    };
+  }
+
   const registryUrl = getDriverDocumentByType(driverId, row.sourceType);
   const effectiveDoc = doc ?? (registryUrl
     ? {
@@ -313,6 +333,9 @@ export function buildDriverDocumentPacket(data: BofData, driverId: string): Driv
   }
 
   for (const row of PAYROLL_TYPES) {
+    if (row.canonicalType === "garnishment_withholding_summary" && !hasActivePayrollWithholding(data, driverId)) {
+      continue;
+    }
     docs.push(toPacketDoc(row, docByType(secondary, row.sourceType), "payroll_deduction_support", driverId));
   }
 

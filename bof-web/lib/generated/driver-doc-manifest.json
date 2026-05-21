@@ -13,8 +13,7 @@
     "employee_handbook_acknowledgment": "/generated/drivers/DRV-001/hr-payroll/employee-handbook-acknowledgment.html",
     "benefits_enrollment": "/generated/drivers/DRV-001/hr-payroll/benefits-enrollment.html",
     "life_insurance_beneficiary_election": "/generated/drivers/DRV-001/hr-payroll/life-insurance-beneficiary-election.html",
-    "flexible_spending_account_election": "/generated/drivers/DRV-001/hr-payroll/flexible-spending-account-election.html",
-    "garnishment_withholding_summary": "/generated/drivers/DRV-001/hr-payroll/garnishment-withholding-summary.html"
+    "flexible_spending_account_election": "/generated/drivers/DRV-001/hr-payroll/flexible-spending-account-election.html"
   },
   "DRV-002": {
     "cdl": "/documents/drivers/DRV-002/cdlnew-002.png",
@@ -47,8 +46,7 @@
     "employee_handbook_acknowledgment": "/generated/drivers/DRV-003/hr-payroll/employee-handbook-acknowledgment.html",
     "benefits_enrollment": "/generated/drivers/DRV-003/hr-payroll/benefits-enrollment.html",
     "life_insurance_beneficiary_election": "/generated/drivers/DRV-003/hr-payroll/life-insurance-beneficiary-election.html",
-    "flexible_spending_account_election": "/generated/drivers/DRV-003/hr-payroll/flexible-spending-account-election.html",
-    "garnishment_withholding_summary": "/generated/drivers/DRV-003/hr-payroll/garnishment-withholding-summary.html"
+    "flexible_spending_account_election": "/generated/drivers/DRV-003/hr-payroll/flexible-spending-account-election.html"
   },
   "DRV-004": {
     "cdl": "/documents/drivers/DRV-004/cdlnew-004.jpg",
@@ -64,8 +62,7 @@
     "employee_handbook_acknowledgment": "/generated/drivers/DRV-004/hr-payroll/employee-handbook-acknowledgment.html",
     "benefits_enrollment": "/generated/drivers/DRV-004/hr-payroll/benefits-enrollment.html",
     "life_insurance_beneficiary_election": "/generated/drivers/DRV-004/hr-payroll/life-insurance-beneficiary-election.html",
-    "flexible_spending_account_election": "/generated/drivers/DRV-004/hr-payroll/flexible-spending-account-election.html",
-    "garnishment_withholding_summary": "/generated/drivers/DRV-004/hr-payroll/garnishment-withholding-summary.html"
+    "flexible_spending_account_election": "/generated/drivers/DRV-004/hr-payroll/flexible-spending-account-election.html"
   },
   "DRV-005": {
     "cdl": "/documents/drivers/DRV-005/cdlnew-005.jpg",
@@ -98,8 +95,7 @@
     "employee_handbook_acknowledgment": "/generated/drivers/DRV-006/hr-payroll/employee-handbook-acknowledgment.html",
     "benefits_enrollment": "/generated/drivers/DRV-006/hr-payroll/benefits-enrollment.html",
     "life_insurance_beneficiary_election": "/generated/drivers/DRV-006/hr-payroll/life-insurance-beneficiary-election.html",
-    "flexible_spending_account_election": "/generated/drivers/DRV-006/hr-payroll/flexible-spending-account-election.html",
-    "garnishment_withholding_summary": "/generated/drivers/DRV-006/hr-payroll/garnishment-withholding-summary.html"
+    "flexible_spending_account_election": "/generated/drivers/DRV-006/hr-payroll/flexible-spending-account-election.html"
   },
   "DRV-007": {
     "cdl": "/documents/drivers/DRV-007/cdlnew-007.jpg",
@@ -132,8 +128,7 @@
     "employee_handbook_acknowledgment": "/generated/drivers/DRV-008/hr-payroll/employee-handbook-acknowledgment.html",
     "benefits_enrollment": "/generated/drivers/DRV-008/hr-payroll/benefits-enrollment.html",
     "life_insurance_beneficiary_election": "/generated/drivers/DRV-008/hr-payroll/life-insurance-beneficiary-election.html",
-    "flexible_spending_account_election": "/generated/drivers/DRV-008/hr-payroll/flexible-spending-account-election.html",
-    "garnishment_withholding_summary": "/generated/drivers/DRV-008/hr-payroll/garnishment-withholding-summary.html"
+    "flexible_spending_account_election": "/generated/drivers/DRV-008/hr-payroll/flexible-spending-account-election.html"
   },
   "DRV-009": {
     "cdl": "/documents/drivers/DRV-009/cdlnew-009.jpg",
@@ -166,8 +161,7 @@
     "employee_handbook_acknowledgment": "/generated/drivers/DRV-010/hr-payroll/employee-handbook-acknowledgment.html",
     "benefits_enrollment": "/generated/drivers/DRV-010/hr-payroll/benefits-enrollment.html",
     "life_insurance_beneficiary_election": "/generated/drivers/DRV-010/hr-payroll/life-insurance-beneficiary-election.html",
-    "flexible_spending_account_election": "/generated/drivers/DRV-010/hr-payroll/flexible-spending-account-election.html",
-    "garnishment_withholding_summary": "/generated/drivers/DRV-010/hr-payroll/garnishment-withholding-summary.html"
+    "flexible_spending_account_election": "/generated/drivers/DRV-010/hr-payroll/flexible-spending-account-election.html"
   },
   "DRV-011": {
     "cdl": "/documents/drivers/DRV-011/cdlnew-011.jpg",
@@ -200,7 +194,6 @@
     "employee_handbook_acknowledgment": "/generated/drivers/DRV-012/hr-payroll/employee-handbook-acknowledgment.html",
     "benefits_enrollment": "/generated/drivers/DRV-012/hr-payroll/benefits-enrollment.html",
     "life_insurance_beneficiary_election": "/generated/drivers/DRV-012/hr-payroll/life-insurance-beneficiary-election.html",
-    "flexible_spending_account_election": "/generated/drivers/DRV-012/hr-payroll/flexible-spending-account-election.html",
-    "garnishment_withholding_summary": "/generated/drivers/DRV-012/hr-payroll/garnishment-withholding-summary.html"
+    "flexible_spending_account_election": "/generated/drivers/DRV-012/hr-payroll/flexible-spending-account-election.html"
   }
 }

@@ -36,10 +36,14 @@ export function getDriverDocumentStatus(driverId: string): DriverDocumentGroup[]
       mapCanonicalToPortalStatus('CDL', credentialStatus.cdl),
       mapCanonicalToPortalStatus('Medical Card / Medical Certification', credentialStatus.medicalCard),
       mapCanonicalToPortalStatus('MVR', credentialStatus.mvr),
-      mapCanonicalToPortalStatus('FMCSA Compliance', credentialStatus.fmcsa),
+      mapCanonicalToPortalStatus('Insurance Card', credentialStatus.insuranceCard),
       // Find MCSA documents in packet
       ...documentPacket.documents
-        .filter(doc => doc.canonicalType === 'signed_medical_exam' || /^MCSA\b/i.test(doc.label))
+        .filter(doc => 
+          doc.canonicalType === 'dqf_compliance_summary' ||
+          doc.canonicalType === 'signed_medical_exam' ||
+          /^MCSA\b/i.test(doc.label)
+        )
         .map(doc => mapPacketToPortalStatus(doc))
     ]
   });
