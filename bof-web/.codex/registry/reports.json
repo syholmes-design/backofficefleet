@@ -1,0 +1,29 @@
+{
+  "reports": [
+    {
+      "id": "demo-completion-report",
+      "path": ".codex/reports/demo-completion-report.md",
+      "ownerFacing": true
+    },
+    {
+      "id": "visual-polish-report",
+      "path": ".codex/reports/visual-polish-report.md",
+      "ownerFacing": true
+    },
+    {
+      "id": "broken-link-report",
+      "path": ".codex/reports/broken-link-report.md",
+      "ownerFacing": true
+    },
+    {
+      "id": "agent-installation-log",
+      "path": ".codex/reports/agent-installation-log.md",
+      "ownerFacing": false
+    }
+  ],
+  "requiredOwnerFacingSections": [
+    "Plain-English Summary",
+    "Highest Priority Fixes",
+    "Technical Appendix"
+  ]
+}

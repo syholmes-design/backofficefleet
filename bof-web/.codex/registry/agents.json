@@ -1,0 +1,44 @@
+{
+  "agents": [
+    {
+      "id": "layman-project-companion",
+      "path": ".codex/agents/layman-project-companion.md",
+      "trigger": "Owner-facing explanation, blocker, or next-step request"
+    },
+    {
+      "id": "demo-completion-inspector",
+      "path": ".codex/agents/demo-completion-inspector.md",
+      "trigger": "Before demos and after visible workflow changes"
+    },
+    {
+      "id": "bof-route-cartographer",
+      "path": ".codex/agents/bof-route-cartographer.md",
+      "trigger": "Navigation, routing, page, portal, or marketing-funnel work"
+    },
+    {
+      "id": "website-polish-director",
+      "path": ".codex/agents/website-polish-director.md",
+      "trigger": "Visual polish or presentation readiness"
+    },
+    {
+      "id": "document-proof-packet-verifier",
+      "path": ".codex/agents/document-proof-packet-verifier.md",
+      "trigger": "Driver, load, settlement, proof, vault, or generated document work"
+    },
+    {
+      "id": "environment-stability-guardian",
+      "path": ".codex/agents/environment-stability-guardian.md",
+      "trigger": "Build, lint, typecheck, dependency, filesystem, or Git instability"
+    },
+    {
+      "id": "dynamic-agent-installer",
+      "path": ".codex/agents/dynamic-agent-installer.md",
+      "trigger": "Repeated issue patterns or missing validation capability"
+    },
+    {
+      "id": "source-of-truth-mapper",
+      "path": ".codex/agents/source-of-truth-mapper.md",
+      "trigger": "Data, generated artifact, workbook, localStorage, or store changes"
+    }
+  ]
+}

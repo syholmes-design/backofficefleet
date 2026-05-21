@@ -1,0 +1,30 @@
+{
+  "name": "BackOfficeFleet Codex Project Environment",
+  "version": "1.0.0",
+  "autoLoad": {
+    "rootInstructions": "AGENTS.md",
+    "fallbackInstructions": "CODEX.md",
+    "sessionBrief": ".codex/session-brief.md",
+    "readme": ".codex/README.md",
+    "ignore": ".codexignore"
+  },
+  "registries": {
+    "agents": ".codex/registry/agents.json",
+    "skills": ".codex/registry/skills.json",
+    "scripts": ".codex/registry/scripts.json",
+    "routes": ".codex/registry/route-ownership.json",
+    "reports": ".codex/registry/reports.json"
+  },
+  "entrypointCommands": {
+    "bootstrap": "npm run codex:bootstrap",
+    "registrySync": "npm run codex:registry-sync",
+    "beforeDemo": "npm run codex:before-demo",
+    "staticCompletenessAudit": "npm run audit:demo-completeness",
+    "installAuditBrowsers": "npm run audit:install-browsers"
+  },
+  "environmentWarnings": [
+    "This folder may be cloud-synced. Move or clone to a non-cloud path if Node reports UNKNOWN read errors.",
+    "Restore or initialize Git before serious implementation work.",
+    "Browser audits require installed Playwright browsers and a running Next dev server."
+  ]
+}

@@ -49,7 +49,7 @@ export const COMPANY_OPERATIONS_VAULT_DOCUMENTS: CompanyOperationsVaultDocument[
   },
   {
     id: '01-employee-handbook-template',
-    title: 'Employee Handbook Template',
+    title: 'Employee Handbook',
     category: 'HR & Employment Operations',
     businessFunction: 'HR Management & Employee Relations',
     ownerTeam: 'HR / Admin',
@@ -60,7 +60,7 @@ export const COMPANY_OPERATIONS_VAULT_DOCUMENTS: CompanyOperationsVaultDocument[
     acknowledgmentRequired: true,
     acknowledgmentSummary: '9 of 12 drivers acknowledged; 3 missing',
     filePath: '01-employee-handbook-template.html',
-    description: 'Comprehensive employee handbook template covering company policies, workplace conduct, benefits information, and acknowledgment requirements. Includes sections on employment policies, code of conduct, benefits eligibility, and employee rights.',
+    description: 'Comprehensive employee handbook covering workplace policies, trucking-specific dispatch eligibility, driver document readiness, proof packet standards, settlement holds, safety obligations, and acknowledgment requirements.',
     tags: ['hr', 'handbook', 'policies', 'employment'],
     effectiveDate: '2025-10-15',
     reviewDate: '2025-10-15',

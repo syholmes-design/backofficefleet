@@ -1,0 +1,48 @@
+{
+  "auditScripts": [
+    {
+      "id": "audit-install-browsers",
+      "command": "npm run audit:install-browsers",
+      "requiresDevServer": false,
+      "purpose": "Install the Chromium browser binary needed by Playwright audit scripts."
+    },
+    {
+      "id": "audit-demo-clickability",
+      "command": "npm run audit:demo-clickability",
+      "requiresDevServer": true,
+      "purpose": "Crawl priority routes and report inert controls, broken internal links, and route response failures."
+    },
+    {
+      "id": "audit-demo-completeness",
+      "command": "npm run audit:demo-completeness",
+      "requiresDevServer": false,
+      "purpose": "Static scan for placeholder copy, missing hrefs, weak trucking identifiers, and empty UI patterns."
+    },
+    {
+      "id": "audit-bof-links",
+      "command": "npm run audit:bof-links",
+      "requiresDevServer": true,
+      "purpose": "Check priority route links plus public/generated artifact links."
+    },
+    {
+      "id": "audit-visual-smoke",
+      "command": "npm run audit:visual-smoke",
+      "requiresDevServer": true,
+      "purpose": "Capture screenshots and flag blank pages or horizontal overflow."
+    },
+    {
+      "id": "agent-registry-sync",
+      "command": "npm run codex:registry-sync",
+      "requiresDevServer": false,
+      "purpose": "Validate .codex registry entries and recommend missing capabilities."
+    }
+  ],
+  "existingValidationScripts": [
+    "npm run validate:driver-docs",
+    "npm run validate:load-docs",
+    "npm run validate:load-evidence",
+    "npm run validate:safety-evidence",
+    "npm run validate:dashboard-attention-queue",
+    "npm run validate:compliance-incident-reconciliation"
+  ]
+}

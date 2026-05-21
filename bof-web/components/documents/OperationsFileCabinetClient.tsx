@@ -264,11 +264,19 @@ export function OperationsFileCabinetClient() {
   }
 
   function getItemCta(item: OperationsFileCabinetItem): string {
+    if (item.id === "claims-insurance-notice") {
+      return "Open insurance notice â†’";
+    }
+
     // Handle completed demo samples
-    if (item.section === "Completed Demo Samples") {
+    if (item.section === "Completed Demo Samples" || item.isCompletedSample) {
       return "View completed sample →";
     }
     
+    if (item.sourceAuthenticity === "generated_from_template" && item.status === "available" && !item.isBlankTemplate) {
+      return "Open document â†’";
+    }
+
     // Handle blank templates
     if (item.section === "Blank Templates") {
       return "Open blank template →";
@@ -317,6 +325,9 @@ export function OperationsFileCabinetClient() {
     if (item.sourceAuthenticity === "generated_from_template") {
       return { text: "Generated document", color: "#22c55e" };
     } else if (item.sourceAuthenticity === "official_template") {
+      if (!item.isBlankTemplate && item.status === "available") {
+        return { text: "Company document", color: "#22c55e" };
+      }
       return { text: "Template", color: "#3b82f6" };
     } else if (item.sourceAuthenticity === "external_resource") {
       return { text: "External resource", color: "#a855f7" };
