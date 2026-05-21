@@ -296,12 +296,16 @@ export function getLoadProofItems(data: BofData, loadId: string): LoadProofItem[
       rfAction: delivered ? "Confirm empty trailer / delivery condition" : undefined,
     },
     {
-      type: "Lumper Receipt",
+      type: "Lumper QR Closeout",
       status: lumperHold ? "Missing" : delivered ? "Not required" : "Pending",
       blocksPayment: lumperHold,
       disputeExposure: lumperHold,
-      rfAction: lumperHold ? "Upload lumper receipt to clear payroll hold" : undefined,
-      riskNote: lumperHold ? "Payroll flagged missing lumper documentation" : undefined,
+      rfAction: lumperHold
+        ? "Confirm dock QR authorization, empty-trailer proof, and Zelle payment record"
+        : undefined,
+      riskNote: lumperHold
+        ? "Settlement is waiting on BOF-controlled lumper closeout, not driver paperwork"
+        : undefined,
     },
     {
       type: "RFID / Dock Validation Record",
@@ -313,7 +317,7 @@ export function getLoadProofItems(data: BofData, loadId: string): LoadProofItem[
       disputeExposure: false,
       rfAction: "Confirm dock scan / RFID handoff where equipped",
       riskNote:
-        "RFID verifies checkpoint / attribution — does not replace BOL, POD, or lumper receipt where required",
+        "RFID verifies checkpoint / attribution and supports BOF-controlled lumper authorization where equipped",
     },
     {
       type: "Cargo Damage Photos",
@@ -489,3 +493,4 @@ export function getLoadEvidenceForSettlement(data: BofData, loadIds: string[]) {
 }
 
 export { getLoadEvidenceManifest };
+

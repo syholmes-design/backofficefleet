@@ -349,8 +349,8 @@ export function buildPretripTabletModel(
       lumper?.status === "Not required"
         ? "View lumper context"
         : lumperSt === "OK"
-          ? "Open lumper receipt"
-          : "Resolve lumper receipt",
+          ? "Open QR lumper closeout"
+          : "Resolve QR lumper closeout",
   };
 
   const payLine: PretripLine = {

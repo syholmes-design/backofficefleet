@@ -334,11 +334,15 @@ export function buildTripDocumentPacket(data: BofData, loadId: string): TripPack
     },
     {
       key: "lumper_receipt",
-      label: "Lumper receipt",
+      label: "Lumper QR closeout",
       group: "proof",
       status: !lumperRequired ? "not_applicable" : lumperUrl ? "ready" : "missing",
       url: lumperRequired ? lumperUrl : undefined,
-      note: !lumperRequired ? "Not required for this trip." : lumperUrl ? undefined : "Lumper receipt required.",
+      note: !lumperRequired
+        ? "No lumper authorization required for this trip."
+        : lumperUrl
+          ? "Dock authorization and payment support attached."
+          : "Dock QR authorization, empty-trailer proof, or payment support required.",
       requiredForSettlementRelease: lumperRequired,
       deliveredMinimum: lumperRequired,
       loadEvidenceType: "lumper_receipt",

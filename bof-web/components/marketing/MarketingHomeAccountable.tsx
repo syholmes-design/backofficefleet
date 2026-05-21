@@ -18,10 +18,10 @@ export const metadata: Metadata = {
 };
 
 const HERO_METRICS = [
-  { label: "Loads Ready", value: "24", href: "/dispatch" },
-  { label: "Needs Action", value: "8", href: "/command-center" },
-  { label: "Settlement Holds", value: "6", href: "/settlements" },
-  { label: "Readiness", value: "82%", href: "/dispatch" },
+  { label: "Critical Risks", value: "2", href: "/command-center" },
+  { label: "QR Lumper Closeout", value: "$315", href: "/shipper-portal/L007#lumper-workflow" },
+  { label: "Storm Reroute", value: "Live", href: "/command-center" },
+  { label: "Settlement Hold", value: "1", href: "/settlements" },
 ] as const;
 
 const OPERATING_FLOW = [
@@ -156,7 +156,7 @@ export default function MarketingHomeAccountable() {
 
           <aside className="bof-home-hero__panel" aria-label="BOF operating snapshot">
             <div className="bof-home-hero__panel-head">
-              <span>Live operating queue</span>
+              <span>Control tower snapshot</span>
               <strong>May 20</strong>
             </div>
             <div className="bof-home-hero__metric-grid">
@@ -168,8 +168,8 @@ export default function MarketingHomeAccountable() {
               ))}
             </div>
             <p>
-              Every number opens the workflow that owns it: dispatch proof, driver blockers, settlement holds, safety
-              exposure, and cash at risk.
+              Each tile opens the workflow that owns it: exception triage, lumper QR payment, reroute response, or
+              settlement release.
             </p>
           </aside>
         </div>

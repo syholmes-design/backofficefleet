@@ -71,7 +71,7 @@ export function DocumentsPageClient() {
         .
       </p>
       <p className="bof-muted bof-small bof-oper-sublead">
-        Open each driver&apos;s canonical document packet from the{" "}
+        Open each driver&apos;s approved document packet from the{" "}
         <Link href="/documents/vault" className="bof-link-secondary">
           Driver Document Vault
         </Link>

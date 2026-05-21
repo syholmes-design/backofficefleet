@@ -46,15 +46,15 @@ const DRIVER_SPECIFIC_HISTORY: Record<string, DriverHrHistoryRecord[]> = {
   ],
   "DRV-007": [
     {
-      id: "lumper-receipt-l007",
+      id: "lumper-qr-closeout-l007",
       date: "2026-05-18",
       category: "Settlement",
-      title: "Post-trip receipt hold - Load L007",
+      title: "QR lumper closeout - Load L007",
       detail:
-        "Lumper receipt is missing from the post-trip packet. Payroll can release once the receipt is uploaded or the accessorial is marked not required.",
+        "Driver is not responsible for chasing paper. BOF is waiting on dock-side QR authorization, empty-trailer proof, and Zelle payment confirmation before settlement closeout.",
       status: "Open",
       impact: "Settlement",
-      href: "/settlements",
+      href: "/shipper-portal/L007#lumper-workflow",
     },
   ],
   "DRV-010": [

@@ -59,17 +59,19 @@ function lumperLine(load: Load): DocumentationReadinessLine {
   if (!required) {
     return {
       key: "lumper",
-      label: "Lumper receipt",
+      label: "Lumper QR closeout",
       status: "Not applicable",
-      detail: "Not required on this move",
+      detail: "No lumper authorization required on this move",
     };
   }
   const ok = Boolean(load.lumper_photo_url?.trim());
   return {
     key: "lumper",
-    label: "Lumper receipt",
+    label: "Lumper QR closeout",
     status: ok ? "Ready" : "Missing",
-    detail: ok ? undefined : "Detention / lumper documentation required",
+    detail: ok
+      ? "Dock authorization and payment support attached"
+      : "Dock QR authorization, empty-trailer proof, or payment support required",
   };
 }
 
@@ -119,7 +121,7 @@ function requiredMissingLabels(
     lumper?.status === "Missing" &&
     load.lumper_receipt_required === true
   ) {
-    missing.push("Lumper receipt");
+    missing.push("Lumper QR closeout");
   }
   return missing;
 }

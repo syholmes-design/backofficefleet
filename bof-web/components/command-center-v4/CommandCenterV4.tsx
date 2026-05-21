@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useMemo } from "react";
+import Link from "next/link";
 import { 
   AlertTriangle, 
   Shield, 
@@ -21,6 +22,107 @@ import {
 import { getV3OperationalData, isV3DataAvailable } from "@/lib/v3-operational-loader";
 import { formatDisplayDate } from "@/lib/date-utils";
 import type { OperationalRiskQueue } from "@/lib/v3-operational-types";
+
+type RiskAction = {
+  label: string;
+  href: string;
+  tone?: "primary" | "warning" | "danger";
+};
+
+function normalizeLoadId(loadId: string) {
+  const trimmed = String(loadId || "").trim();
+  const legacyMatch = trimmed.match(/^L-(\d{3})$/i);
+  if (legacyMatch) {
+    const canonicalNumber = Number(legacyMatch[1]) - 500;
+    if (canonicalNumber > 0 && canonicalNumber < 100) {
+      return `L${String(canonicalNumber).padStart(3, "0")}`;
+    }
+  }
+  return trimmed.replace(/^L-(\d+)$/i, "L$1");
+}
+
+function getRiskStory(risk: OperationalRiskQueue) {
+  const loadId = normalizeLoadId(risk.loadId);
+  const type = `${risk.riskType} ${risk.module}`.toLowerCase();
+
+  if (type.includes("seal")) {
+    return {
+      headline: "Seal exception needs manager closeout",
+      urgency: "Blocks settlement release until pickup seal, delivery seal, POD, BOL, and RFID scans are reviewed.",
+      primaryLabel: "Open seal exception packet",
+      primaryHref: `/shipper-portal/${loadId}`,
+      actions: [
+        { label: "Open seal exception packet", href: `/shipper-portal/${loadId}`, tone: "danger" },
+        { label: "Review load record", href: `/loads/${loadId}` },
+        { label: "Driver HR note", href: `/drivers/${risk.driverId}/hr` },
+        { label: "Money at risk", href: "/money-at-risk", tone: "warning" },
+      ] satisfies RiskAction[],
+    };
+  }
+
+  if (type.includes("hos") || type.includes("safety") || type.includes("coaching")) {
+    return {
+      headline: "Safety coaching is blocking release",
+      urgency: "Driver acknowledgment, HOS review, and safety-manager release are required before the hold clears.",
+      primaryLabel: "Open safety action",
+      primaryHref: "/safety",
+      actions: [
+        { label: "Open safety action", href: "/safety", tone: "danger" },
+        { label: "Driver HR action", href: `/drivers/${risk.driverId}/hr` },
+        { label: "Driver portal", href: `/portals/driver/${risk.driverId}` },
+        { label: "Review settlement hold", href: "/settlements", tone: "warning" },
+      ] satisfies RiskAction[],
+    };
+  }
+
+  if (type.includes("lumper") || type.includes("settlement") || type.includes("receipt")) {
+    return {
+      headline: "Lumper QR closeout needs review",
+      urgency: "The driver is not chasing paper. BOF needs dock-side QR authorization, empty-trailer proof, and Zelle payment confirmation tied to the load before settlement closes.",
+      primaryLabel: "Open QR lumper workflow",
+      primaryHref: `/shipper-portal/${loadId}#lumper-workflow`,
+      actions: [
+        { label: "Open QR lumper workflow", href: `/shipper-portal/${loadId}#lumper-workflow`, tone: "warning" },
+        { label: "Review settlement closeout", href: "/settlements", tone: "warning" },
+        { label: "Open load packet", href: `/shipper-portal/${loadId}` },
+        { label: "Driver HR note", href: `/drivers/${risk.driverId}/hr` },
+      ] satisfies RiskAction[],
+    };
+  }
+
+  return {
+    headline: risk.riskType,
+    urgency: risk.businessImpact,
+    primaryLabel: "Open risk workspace",
+    primaryHref: "/money-at-risk",
+    actions: [
+      { label: "Open risk workspace", href: "/money-at-risk", tone: "warning" },
+      { label: "Review load record", href: `/loads/${loadId}` },
+      { label: "Driver HR note", href: `/drivers/${risk.driverId}/hr` },
+    ] satisfies RiskAction[],
+  };
+}
+
+function actionClass(tone: RiskAction["tone"] = "primary") {
+  if (tone === "danger") {
+    return "border-red-400/40 bg-red-500/15 text-red-100 hover:border-red-300 hover:bg-red-500/25";
+  }
+  if (tone === "warning") {
+    return "border-amber-300/40 bg-amber-400/15 text-amber-100 hover:border-amber-200 hover:bg-amber-400/25";
+  }
+  return "border-teal-300/40 bg-teal-400/15 text-teal-100 hover:border-teal-200 hover:bg-teal-400/25";
+}
+
+function moduleHref(module: string) {
+  const normalized = module.toLowerCase();
+  if (normalized.includes("dispatch") || normalized.includes("rfid")) return "/dispatch";
+  if (normalized.includes("settlement")) return "/settlements";
+  if (normalized.includes("safety")) return "/safety";
+  if (normalized.includes("maintenance")) return "/maintenance";
+  if (normalized.includes("driver") || normalized.includes("compliance")) return "/drivers";
+  if (normalized.includes("claim")) return "/money-at-risk";
+  return "/documents";
+}
 
 export function CommandCenterV4() {
   const [operationalRisks, setOperationalRisks] = useState<OperationalRiskQueue[]>([]);
@@ -73,9 +175,9 @@ export function CommandCenterV4() {
     const openRisks = operationalRisks.filter(r => r.status === "Open" || r.status === "In Progress").length;
     const criticalRisks = operationalRisks.filter(r => r.severity === "Critical").length;
     const dispatchBlockingRisks = operationalRisks.filter(r => r.dispatchImpact === "Blocked").length;
-    const settlementImpactingRisks = operationalRisks.filter(r => r.settlementImpact === "Hold" || r.settlementImpact === "Delayed").length;
-    const complianceImpactingRisks = operationalRisks.filter(r => r.complianceImpact === "Violation" || r.complianceImpact === "Audit Required").length;
-    const insuranceImpactingRisks = operationalRisks.filter(r => r.insuranceImpact === "Claim Required" || r.insuranceImpact === "Premium Impact").length;
+    const settlementImpactingRisks = operationalRisks.filter(r => /hold|delayed|\$/i.test(r.settlementImpact)).length;
+    const complianceImpactingRisks = operationalRisks.filter(r => /violation|audit|hos|review|required/i.test(r.complianceImpact)).length;
+    const insuranceImpactingRisks = operationalRisks.filter(r => /claim|required|premium|medium|high/i.test(r.insuranceImpact)).length;
     const managerActionRequired = operationalRisks.filter(r => r.managerActionRequired).length;
     
     // Calculate overdue/soon due risks
@@ -150,6 +252,14 @@ export function CommandCenterV4() {
       })
       .slice(0, 20);
   }, [filteredRisks]);
+
+  const criticalRisk = risksNeedingAttention.find((risk) => risk.severity === "Critical");
+  const dispatchBlockRisk = risksNeedingAttention.find((risk) => risk.dispatchImpact === "Blocked");
+  const settlementHoldRisk = risksNeedingAttention.find((risk) => /hold/i.test(risk.settlementImpact));
+  const actionStories = risksNeedingAttention.slice(0, 3).map((risk) => ({
+    risk,
+    story: getRiskStory(risk),
+  }));
 
   // Get severity badge color
   const getSeverityBadgeClass = (severity: string) => {
@@ -261,14 +371,20 @@ export function CommandCenterV4() {
               </p>
             </div>
             <div className="grid grid-cols-2 gap-3 sm:min-w-[280px]">
-              <div className="rounded-xl border border-red-400/25 bg-slate-950/70 p-4 text-right shadow-lg shadow-slate-950/30">
+              <Link
+                href={criticalRisk ? getRiskStory(criticalRisk).primaryHref : "/money-at-risk"}
+                className="rounded-xl border border-red-400/25 bg-slate-950/70 p-4 text-right shadow-lg shadow-slate-950/30 transition hover:-translate-y-0.5 hover:border-red-300/60 hover:bg-red-950/40 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-300"
+              >
                 <div className="text-2xl font-bold text-red-300">{riskStats.criticalRisks}</div>
                 <div className="text-xs font-medium uppercase tracking-wide text-slate-400">Critical risks</div>
-              </div>
-              <div className="rounded-xl border border-orange-400/25 bg-slate-950/70 p-4 text-right shadow-lg shadow-slate-950/30">
+              </Link>
+              <Link
+                href={dispatchBlockRisk ? getRiskStory(dispatchBlockRisk).primaryHref : "/dispatch"}
+                className="rounded-xl border border-orange-400/25 bg-slate-950/70 p-4 text-right shadow-lg shadow-slate-950/30 transition hover:-translate-y-0.5 hover:border-orange-300/60 hover:bg-orange-950/40 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange-300"
+              >
                 <div className="text-2xl font-bold text-orange-300">{riskStats.dispatchBlockingRisks}</div>
                 <div className="text-xs font-medium uppercase tracking-wide text-slate-400">Dispatch blocks</div>
-              </div>
+              </Link>
             </div>
           </div>
         </div>
@@ -276,8 +392,69 @@ export function CommandCenterV4() {
 
       {/* Risk KPI Cards */}
       <div className="max-w-7xl mx-auto px-6 py-6">
+        {actionStories.length > 0 && (
+          <div className="mb-6 grid grid-cols-1 gap-4 lg:grid-cols-3">
+            {actionStories.map(({ risk, story }) => (
+              <Link
+                key={risk.riskId}
+                href={story.primaryHref}
+                className="group rounded-xl border border-teal-400/25 bg-slate-900/75 p-5 shadow-lg shadow-slate-950/25 transition hover:-translate-y-0.5 hover:border-teal-300/70 hover:bg-slate-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-300"
+              >
+                <div className="mb-4 flex items-start justify-between gap-3">
+                  <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.14em] text-teal-200">
+                    {getModuleIcon(risk.module)}
+                    {risk.module}
+                  </div>
+                  <span className={`rounded-full border px-2 py-1 text-xs font-semibold ${getSeverityBadgeClass(risk.severity)}`}>
+                    {risk.severity}
+                  </span>
+                </div>
+                <div className="text-lg font-semibold text-white group-hover:text-teal-100">{story.headline}</div>
+                <p className="mt-2 text-sm leading-6 text-slate-300">{story.urgency}</p>
+                <div className="mt-4 flex items-center justify-between text-sm">
+                  <span className="font-mono text-teal-200">{normalizeLoadId(risk.loadId)} · {risk.driverId}</span>
+                  <span className="font-semibold text-teal-200 group-hover:text-white">{story.primaryLabel}</span>
+                </div>
+              </Link>
+            ))}
+          </div>
+        )}
+
+        <section className="mb-6 rounded-xl border border-cyan-300/25 bg-slate-900/75 p-5 shadow-lg shadow-slate-950/25">
+          <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+            <div>
+              <div className="mb-2 inline-flex items-center gap-2 rounded-full border border-cyan-300/30 bg-cyan-400/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.14em] text-cyan-100">
+                <Truck className="h-3.5 w-3.5" />
+                Route intervention exercise
+              </div>
+              <h2 className="text-xl font-semibold text-white">
+                I-40 storm cell and traffic backup - reroute before service failure
+              </h2>
+              <p className="mt-2 max-w-4xl text-sm leading-6 text-slate-300">
+                Control Tower flags a weather and congestion pocket ahead of DRV-010 / L010.
+                Dispatch can move from the risk queue into the live dispatch board, compare the alternate route,
+                and preserve HOS, fuel, and appointment timing before the driver hits the slowdown.
+              </p>
+            </div>
+            <div className="flex flex-wrap gap-2">
+              <Link className={`rounded-lg border px-4 py-2 text-sm font-semibold transition ${actionClass("primary")}`} href="/dispatch">
+                Open dispatch reroute
+              </Link>
+              <Link className={`rounded-lg border px-4 py-2 text-sm font-semibold transition ${actionClass("warning")}`} href="/safety">
+                Check HOS impact
+              </Link>
+              <Link className={`rounded-lg border px-4 py-2 text-sm font-semibold transition ${actionClass("primary")}`} href="/portals/driver/DRV-010">
+                Driver view
+              </Link>
+            </div>
+          </div>
+        </section>
+
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          <div className="bg-slate-900/50 backdrop-blur-sm border border-slate-800 rounded-xl p-6">
+          <Link
+            href="/money-at-risk"
+            className="bg-slate-900/50 backdrop-blur-sm border border-slate-800 rounded-xl p-6 transition hover:-translate-y-0.5 hover:border-teal-300/50 hover:bg-slate-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-300"
+          >
             <div className="flex items-center justify-between mb-2">
               <span className="text-slate-400 text-sm">Total Open Risks</span>
               <AlertTriangle className="w-4 h-4 text-orange-400" />
@@ -286,9 +463,12 @@ export function CommandCenterV4() {
               {riskStats.openRisks}
             </div>
             <div className="text-xs text-slate-500 mt-1">of {riskStats.totalRisks} total risks</div>
-          </div>
+          </Link>
 
-          <div className="bg-slate-900/50 backdrop-blur-sm border border-slate-800 rounded-xl p-6">
+          <Link
+            href={criticalRisk ? getRiskStory(criticalRisk).primaryHref : "/money-at-risk"}
+            className="bg-slate-900/50 backdrop-blur-sm border border-slate-800 rounded-xl p-6 transition hover:-translate-y-0.5 hover:border-red-300/50 hover:bg-slate-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-300"
+          >
             <div className="flex items-center justify-between mb-2">
               <span className="text-slate-400 text-sm">Critical Risks</span>
               <AlertOctagon className="w-4 h-4 text-red-400" />
@@ -297,9 +477,12 @@ export function CommandCenterV4() {
               {riskStats.criticalRisks}
             </div>
             <div className="text-xs text-slate-500 mt-1">Immediate attention required</div>
-          </div>
+          </Link>
 
-          <div className="bg-slate-900/50 backdrop-blur-sm border border-slate-800 rounded-xl p-6">
+          <Link
+            href={dispatchBlockRisk ? getRiskStory(dispatchBlockRisk).primaryHref : "/dispatch"}
+            className="bg-slate-900/50 backdrop-blur-sm border border-slate-800 rounded-xl p-6 transition hover:-translate-y-0.5 hover:border-orange-300/50 hover:bg-slate-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange-300"
+          >
             <div className="flex items-center justify-between mb-2">
               <span className="text-slate-400 text-sm">Dispatch Blocking</span>
               <Truck className="w-4 h-4 text-red-400" />
@@ -308,9 +491,12 @@ export function CommandCenterV4() {
               {riskStats.dispatchBlockingRisks}
             </div>
             <div className="text-xs text-slate-500 mt-1">Operations blocked</div>
-          </div>
+          </Link>
 
-          <div className="bg-slate-900/50 backdrop-blur-sm border border-slate-800 rounded-xl p-6">
+          <Link
+            href={settlementHoldRisk ? getRiskStory(settlementHoldRisk).primaryHref : "/settlements"}
+            className="bg-slate-900/50 backdrop-blur-sm border border-slate-800 rounded-xl p-6 transition hover:-translate-y-0.5 hover:border-yellow-300/50 hover:bg-slate-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-yellow-300"
+          >
             <div className="flex items-center justify-between mb-2">
               <span className="text-slate-400 text-sm">Manager Action</span>
               <User className="w-4 h-4 text-yellow-400" />
@@ -319,7 +505,7 @@ export function CommandCenterV4() {
               {riskStats.managerActionRequired}
             </div>
             <div className="text-xs text-slate-500 mt-1">Owner review required</div>
-          </div>
+          </Link>
         </div>
 
         {/* Finance Summary - Factoring Packets */}
@@ -332,30 +518,39 @@ export function CommandCenterV4() {
             <span className="text-xs text-slate-500">Post-trip AR workflow status</span>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div className="bg-slate-950/50 border border-slate-700 rounded-lg p-4">
+            <Link
+              href="/settlements"
+              className="bg-slate-950/50 border border-slate-700 rounded-lg p-4 transition hover:border-green-300/50 hover:bg-slate-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-300"
+            >
               <div className="flex items-center justify-between mb-2">
                 <span className="text-slate-400 text-sm">Ready to Submit</span>
                 <div className="w-2 h-2 bg-green-400 rounded-full"></div>
               </div>
-              <div className="text-xl font-bold text-green-400">1</div>
-              <div className="text-xs text-slate-500 mt-1">L011 packet complete</div>
-            </div>
-            <div className="bg-slate-950/50 border border-slate-700 rounded-lg p-4">
+              <div className="text-xl font-bold text-green-400">9</div>
+              <div className="text-xs text-slate-500 mt-1">Clean packets ready for weekly closeout</div>
+            </Link>
+            <Link
+              href="/documents"
+              className="bg-slate-950/50 border border-slate-700 rounded-lg p-4 transition hover:border-red-300/50 hover:bg-slate-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-300"
+            >
               <div className="flex items-center justify-between mb-2">
                 <span className="text-slate-400 text-sm">Missing POD/BOL</span>
                 <div className="w-2 h-2 bg-red-400 rounded-full"></div>
               </div>
               <div className="text-xl font-bold text-red-400">0</div>
               <div className="text-xs text-slate-500 mt-1">No critical proof gaps</div>
-            </div>
-            <div className="bg-slate-950/50 border border-slate-700 rounded-lg p-4">
+            </Link>
+            <Link
+              href="/settlements"
+              className="bg-slate-950/50 border border-slate-700 rounded-lg p-4 transition hover:border-yellow-300/50 hover:bg-slate-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-yellow-300"
+            >
               <div className="flex items-center justify-between mb-2">
                 <span className="text-slate-400 text-sm">Held Due to Issues</span>
                 <div className="w-2 h-2 bg-yellow-400 rounded-full"></div>
               </div>
-              <div className="text-xl font-bold text-yellow-400">1</div>
-              <div className="text-xs text-slate-500 mt-1">L011 settlement hold</div>
-            </div>
+              <div className="text-xl font-bold text-yellow-400">{riskStats.settlementImpactingRisks}</div>
+              <div className="text-xs text-slate-500 mt-1">L001, L007, and L010 require action</div>
+            </Link>
           </div>
           <div className="mt-4 text-xs text-slate-500">
             <div className="flex items-center gap-2">
@@ -475,7 +670,11 @@ export function CommandCenterV4() {
               </span>
             </h3>
             <div className="space-y-4">
-              {risksNeedingAttention.map((risk) => (
+              {risksNeedingAttention.map((risk) => {
+                const story = getRiskStory(risk);
+                const loadId = normalizeLoadId(risk.loadId);
+
+                return (
                 <div key={risk.riskId} className="bg-slate-800/50 border border-slate-700 rounded-lg p-4">
                   <div className="flex items-start justify-between mb-3">
                     <div className="flex items-center gap-3">
@@ -508,12 +707,35 @@ export function CommandCenterV4() {
                     </div>
                   </div>
 
+                  <div className="mb-4 rounded-lg border border-teal-400/20 bg-slate-950/60 p-4">
+                    <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
+                      <div>
+                        <div className="text-lg font-semibold text-white">{story.headline}</div>
+                        <p className="mt-1 max-w-3xl text-sm leading-6 text-slate-300">{story.urgency}</p>
+                      </div>
+                      <Link
+                        href={story.primaryHref}
+                        className={`inline-flex shrink-0 items-center justify-center rounded-lg border px-4 py-2 text-sm font-semibold transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-300 ${actionClass(story.actions[0]?.tone)}`}
+                      >
+                        {story.primaryLabel}
+                      </Link>
+                    </div>
+                  </div>
+
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-3">
                     <div>
                       <div className="text-white font-medium mb-1">Affected Entities</div>
                       <div className="text-slate-400 text-sm">
-                        {risk.driverId && <div>Driver: {risk.driverId}</div>}
-                        {risk.loadId && <div>Load: {risk.loadId}</div>}
+                        {risk.driverId && (
+                          <Link className="block text-teal-200 underline-offset-4 hover:underline" href={`/drivers/${risk.driverId}/hr`}>
+                            Driver: {risk.driverId}
+                          </Link>
+                        )}
+                        {risk.loadId && (
+                          <Link className="block text-teal-200 underline-offset-4 hover:underline" href={`/loads/${loadId}`}>
+                            Load: {loadId}
+                          </Link>
+                        )}
                         {risk.assetId && <div>Asset: {risk.assetId}</div>}
                         {risk.relatedEventId && <div>Event: {risk.relatedEventId}</div>}
                       </div>
@@ -539,9 +761,21 @@ export function CommandCenterV4() {
                   <div className="bg-slate-900/50 border border-slate-700 rounded p-3">
                     <div className="text-white font-medium mb-2">Recommended Action</div>
                     <div className="text-slate-300 text-sm">{risk.recommendedAction}</div>
+                    <div className="mt-3 flex flex-wrap gap-2">
+                      {story.actions.map((action) => (
+                        <Link
+                          key={`${risk.riskId}-${action.href}-${action.label}`}
+                          href={action.href}
+                          className={`inline-flex items-center rounded-lg border px-3 py-2 text-xs font-semibold transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-300 ${actionClass(action.tone)}`}
+                        >
+                          {action.label}
+                        </Link>
+                      ))}
+                    </div>
                   </div>
                 </div>
-              ))}
+                );
+              })}
             </div>
           </div>
         </div>
@@ -562,7 +796,11 @@ export function CommandCenterV4() {
                 const managerActionCount = moduleRisks.filter(r => r.managerActionRequired).length;
                 
                 return (
-                  <div key={module} className="bg-slate-800/50 border border-slate-700 rounded-lg p-4">
+                  <Link
+                    key={module}
+                    href={moduleHref(module)}
+                    className="bg-slate-800/50 border border-slate-700 rounded-lg p-4 transition hover:-translate-y-0.5 hover:border-teal-300/50 hover:bg-slate-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-300"
+                  >
                     <div className="flex items-center gap-3 mb-3">
                       {getModuleIcon(module)}
                       <div className="text-white font-medium">{module}</div>
@@ -581,7 +819,8 @@ export function CommandCenterV4() {
                         <span className="text-yellow-400">{managerActionCount}</span>
                       </div>
                     </div>
-                  </div>
+                    <div className="mt-3 text-xs font-semibold text-teal-200">Open {module} workspace</div>
+                  </Link>
                 );
               })}
             </div>

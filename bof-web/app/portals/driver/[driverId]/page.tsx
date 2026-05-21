@@ -17,6 +17,32 @@ interface PageProps {
   }>;
 }
 
+const DRIVER_ROUTE_ALERTS: Record<string, {
+  loadId: string;
+  title: string;
+  status: string;
+  reason: string;
+  exitInstruction: string;
+  rejoinInstruction: string;
+  etaImpact: string;
+  hosNote: string;
+  dispatcher: string;
+  updatedAt: string;
+}> = {
+  "DRV-010": {
+    loadId: "L010",
+    title: "I-40 weather and traffic reroute",
+    status: "Driver action requested",
+    reason: "Storm cell and stopped traffic reported west of Jackson, TN. Control Tower is moving Noah around the backup before the HOS window tightens.",
+    exitInstruction: "Exit I-40 W at Exit 82A for US-45 Bypass / Jackson.",
+    rejoinInstruction: "Follow the BOF-approved US-45 Bypass to US-412 W corridor, then re-enter I-40 W at Exit 56 near Brownsville.",
+    etaImpact: "+18 minutes vs. staying in traffic; protects the Memphis delivery window by an estimated 52 minutes.",
+    hosNote: "HOS check remains green with 1 hr 42 min projected drive buffer after the reroute.",
+    dispatcher: "Nina Harris",
+    updatedAt: "May 20, 2026, 2:18 PM CT",
+  },
+};
+
 export async function generateStaticParams(): Promise<{ driverId: string }[]> {
   const data = getBofData();
   return data.drivers.map(driver => ({
@@ -263,6 +289,76 @@ function LoadProofSection({ driverId }: { driverId: string }) {
   );
 }
 
+function RouteInstructionCard({ driverId }: { driverId: string }) {
+  const alert = DRIVER_ROUTE_ALERTS[driverId];
+
+  if (!alert) {
+    return null;
+  }
+
+  return (
+    <section className="mb-8 rounded-lg border border-amber-200 bg-amber-50 p-5 shadow-sm">
+      <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+        <div className="max-w-3xl">
+          <div className="mb-2 inline-flex items-center rounded-full bg-amber-100 px-3 py-1 text-xs font-bold uppercase tracking-wide text-amber-800">
+            {alert.status}
+          </div>
+          <h2 className="text-xl font-bold text-slate-950">{alert.title}</h2>
+          <p className="mt-2 text-sm leading-6 text-slate-700">{alert.reason}</p>
+        </div>
+        <div className="rounded-md border border-amber-200 bg-white px-4 py-3 text-sm text-slate-700">
+          <div className="font-semibold text-slate-950">Dispatch owner</div>
+          <div>{alert.dispatcher}</div>
+          <div className="mt-2 text-xs text-slate-500">Updated {alert.updatedAt}</div>
+        </div>
+      </div>
+
+      <div className="mt-5 grid gap-3 md:grid-cols-2">
+        <div className="rounded-md border border-amber-200 bg-white p-4">
+          <div className="text-xs font-bold uppercase tracking-wide text-amber-700">Exit instruction</div>
+          <p className="mt-2 text-base font-semibold text-slate-950">{alert.exitInstruction}</p>
+        </div>
+        <div className="rounded-md border border-emerald-200 bg-white p-4">
+          <div className="text-xs font-bold uppercase tracking-wide text-emerald-700">Pick I-40 back up</div>
+          <p className="mt-2 text-base font-semibold text-slate-950">{alert.rejoinInstruction}</p>
+        </div>
+      </div>
+
+      <div className="mt-4 grid gap-3 md:grid-cols-2">
+        <div className="rounded-md bg-slate-950 p-4 text-white">
+          <div className="text-xs font-bold uppercase tracking-wide text-cyan-200">ETA impact</div>
+          <p className="mt-2 text-sm leading-6">{alert.etaImpact}</p>
+        </div>
+        <div className="rounded-md bg-slate-950 p-4 text-white">
+          <div className="text-xs font-bold uppercase tracking-wide text-emerald-200">HOS check</div>
+          <p className="mt-2 text-sm leading-6">{alert.hosNote}</p>
+        </div>
+      </div>
+
+      <div className="mt-5 flex flex-wrap gap-2">
+        <Link
+          href={`/loads/${alert.loadId}`}
+          className="inline-flex items-center rounded-md bg-slate-950 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-slate-800"
+        >
+          Open load detail
+        </Link>
+        <Link
+          href="/dispatch"
+          className="inline-flex items-center rounded-md bg-teal-700 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-teal-800"
+        >
+          View dispatch route
+        </Link>
+        <Link
+          href="/safety"
+          className="inline-flex items-center rounded-md border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-800 transition-colors hover:bg-slate-50"
+        >
+          Check HOS impact
+        </Link>
+      </div>
+    </section>
+  );
+}
+
 // Component for acknowledgment section
 function AcknowledgmentSection({ driverId }: { driverId: string }) {
   const acknowledgmentSummary = getAcknowledgmentSummary(driverId);
@@ -391,6 +487,8 @@ export default async function DriverPortalDetailPage({ params }: PageProps) {
             </div>
           )}
         </div>
+
+        <RouteInstructionCard driverId={driverId} />
 
         {/* Main Content Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">

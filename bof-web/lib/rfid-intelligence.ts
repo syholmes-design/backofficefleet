@@ -113,7 +113,7 @@ export function buildRfidDockRowForLoad(
 
   const proofs = getLoadProofItems(data, loadId);
   const rfid = proofs.find((p) => p.type === "RFID / Dock Validation Record");
-  const lumper = proofs.find((p) => p.type === "Lumper Receipt");
+  const lumper = proofs.find((p) => p.type === "Lumper QR Closeout" || p.type === "Lumper Receipt");
 
   const trailerConfirmedAtDock =
     rfid?.status === "Complete" ||
@@ -134,12 +134,12 @@ export function buildRfidDockRowForLoad(
     lumper.status !== "Complete";
 
   const bofNote =
-    "RFID supports trailer presence and dock workflow timing; itemized lumper receipt and photos remain authoritative for payroll and claims.";
+    "RFID supports trailer presence, QR lumper authorization, empty-trailer proof, and payment closeout for payroll and claims.";
 
   const nextAction = receiptStillRequired
-    ? "Collect lumper receipt + match to RFID dock timestamp"
+    ? "Confirm lumper QR authorization, empty-trailer proof, and Zelle payment timestamp"
     : trailerConfirmedAtDock
-      ? "Archive dock RFID trace with POD bundle"
+      ? "Archive dock RFID trace with POD and lumper closeout bundle"
       : "Complete dock RFID validation before releasing trailer";
 
   return {

@@ -6,48 +6,52 @@ export type CcMockRow = {
   meta: string;
   val: string;
   valClass?: string;
+  href?: string;
 };
 
 const DEFAULT_ROWS: readonly CcMockRow[] = [
   {
-    label: "Attention queue",
-    title: "Drivers at risk",
-    meta: "Expired med card / 2 dispatch blocks",
-    val: "7",
-    valClass: "",
-  },
-  {
-    label: "Loads",
-    title: "Loads at risk",
-    meta: "Open POD · seal mismatch",
-    val: "4",
-    valClass: "",
-  },
-  {
-    label: "Claims",
-    title: "Claim exposure",
-    meta: "Dispute-ready packet in progress",
-    val: "$42K",
-    valClass: "bof-mkt-cc-mock-kpi-val--warn",
-  },
-  {
-    label: "Compliance",
-    title: "Compliance violations",
-    meta: "Auditable enforcement events",
-    val: "11",
-    valClass: "",
-  },
-  {
-    label: "Finance",
-    title: "Money at risk",
-    meta: "Held pay · settlement blocks",
-    val: "$128K",
+    label: "Control tower",
+    title: "Critical risks",
+    meta: "Seal exception / HOS coaching",
+    val: "2",
     valClass: "bof-mkt-cc-mock-kpi-val--risk",
+    href: "/command-center",
+  },
+  {
+    label: "Dispatch / RFID",
+    title: "Seal exception",
+    meta: "L001 proof packet needs closeout",
+    val: "L001",
+    valClass: "bof-mkt-cc-mock-kpi-val--warn",
+    href: "/shipper-portal/L001",
+  },
+  {
+    label: "Settlement",
+    title: "QR lumper closeout",
+    meta: "L007 dock proof / Zelle confirmation",
+    val: "$180",
+    valClass: "bof-mkt-cc-mock-kpi-val--warn",
+    href: "/shipper-portal/L007#lumper-workflow",
+  },
+  {
+    label: "Safety",
+    title: "HOS coaching hold",
+    meta: "DRV-010 release and bonus impact",
+    val: "L010",
+    href: "/safety",
+  },
+  {
+    label: "Route control",
+    title: "Storm reroute exercise",
+    meta: "I-40 weather cell / dispatch workaround",
+    val: "LIVE",
+    href: "/dispatch",
   },
 ];
 
 /**
- * Marketing-only command center mock — same chrome as the home page block.
+ * Marketing-only control tower mock - same chrome as the home page block.
  * Demo navigation uses `demoHref` (defaults to command center).
  */
 export function MarketingCommandCenterPreview({
@@ -56,7 +60,7 @@ export function MarketingCommandCenterPreview({
   title = "What Needs Attention Right Now",
   lead = "BOF gives operations leaders a real-time command center for compliance, proof, settlements, and financial risk.",
   demoHref = "/command-center",
-  demoLabel = "Explore the command center in the demo ->",
+  demoLabel = "Explore the control tower in the demo ->",
 }: {
   rows?: readonly CcMockRow[];
   /** For `aria-labelledby` on the wrapping section. */
@@ -81,7 +85,7 @@ export function MarketingCommandCenterPreview({
           </div>
         </div>
         <div className="bof-mkt-cc-mock-wrap">
-          <div className="bof-mkt-cc-mock" aria-label="Command center preview">
+          <div className="bof-mkt-cc-mock" aria-label="Control tower preview">
             <div className="bof-mkt-cc-mock-head">
               <div className="bof-mkt-cc-mock-head-left">
                 <div className="bof-mkt-cc-mock-dots" aria-hidden>
@@ -89,29 +93,44 @@ export function MarketingCommandCenterPreview({
                   <span className="bof-mkt-cc-mock-dot" />
                   <span className="bof-mkt-cc-mock-dot" />
                 </div>
-                <span className="bof-mkt-cc-mock-title">BOF Command Center</span>
+                <span className="bof-mkt-cc-mock-title">BOF Control Tower</span>
               </div>
               <span className="bof-mkt-cc-mock-live">Live priority</span>
             </div>
             <div className="bof-mkt-cc-mock-body">
-              {rows.map((row) => (
-                <div key={row.title} className="bof-mkt-cc-mock-kpi">
-                  <div>
-                    <div className="bof-mkt-cc-mock-kpi-label">{row.label}</div>
-                    <p className="bof-mkt-cc-mock-kpi-title">{row.title}</p>
-                    <p className="bof-mkt-cc-mock-kpi-meta">{row.meta}</p>
+              {rows.map((row) => {
+                const content = (
+                  <>
+                    <div>
+                      <div className="bof-mkt-cc-mock-kpi-label">{row.label}</div>
+                      <p className="bof-mkt-cc-mock-kpi-title">{row.title}</p>
+                      <p className="bof-mkt-cc-mock-kpi-meta">{row.meta}</p>
+                    </div>
+                    <div
+                      className={
+                        row.valClass
+                          ? `bof-mkt-cc-mock-kpi-val ${row.valClass}`
+                          : "bof-mkt-cc-mock-kpi-val"
+                      }
+                    >
+                      {row.val}
+                    </div>
+                  </>
+                );
+
+                return row.href ? (
+                  <Link key={row.title} href={row.href} className="bof-mkt-cc-mock-kpi">
+                    {content}
+                  </Link>
+                ) : (
+                  <div key={row.title} className="bof-mkt-cc-mock-kpi">
+                    {content}
                   </div>
-                  <div
-                    className={
-                      row.valClass ? `bof-mkt-cc-mock-kpi-val ${row.valClass}` : "bof-mkt-cc-mock-kpi-val"
-                    }
-                  >
-                    {row.val}
-                  </div>
-                </div>
-              ))}
+                );
+              })}
               <p className="bof-mkt-cc-mock-foot">
-                Live-style metrics for the current walkthrough. Your operation surfaces its own queue, owners, and next actions.
+                Clickable demo paths mirror the live Control Tower: owners, proof, route response,
+                payment holds, and next actions.
               </p>
             </div>
           </div>
