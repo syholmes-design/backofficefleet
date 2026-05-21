@@ -5,6 +5,7 @@ import {
   getDriverCredentialStatus,
   type CredentialRecord,
 } from "@/lib/driver-credential-status";
+import { getDriverDocumentByType } from "@/lib/driver-doc-registry";
 import {
   getOrderedDocumentsForDriver,
   getPrimaryStackExtraDocuments,
@@ -126,21 +127,33 @@ const SUMMARY_TYPES: Array<{ canonicalType: string; label: string; sourceType: s
     sourceType: "Credential Register",
   },
   {
-    canonicalType: "hr_administrative_record",
-    label: "HR Administrative Record",
-    sourceType: "__needs_mapping__",
-  },
-  {
     canonicalType: "dqf_compliance_summary",
     label: "FMCSA DQF Compliance Summary",
     sourceType: "FMCSA DQF Compliance Summary",
   },
-  {
-    canonicalType: "bof_medical_summary",
-    label: "BOF Medical Summary",
-    sourceType: "BOF Medical Summary",
-  },
 ];
+
+const NON_EXPIRING_PACKET_TYPES = new Set([
+  "i9",
+  "w9",
+  "bank_information",
+  "emergency_contact",
+  "insurance_card",
+  "driver_application",
+  "safety_acknowledgment",
+  "signed_medical_exam",
+  "driver_profile_html",
+  "qualification_file_status",
+  "incident_report",
+  "employee_handbook_acknowledgment",
+  "benefits_enrollment",
+  "life_insurance_beneficiary_election",
+  "flexible_spending_account_election",
+  "garnishment_withholding_summary",
+  "emergency_contact_sheet",
+  "credential_register",
+  "dqf_compliance_summary",
+]);
 
 function inferSourceKind(doc: Pick<DriverPacketDocument, "fileUrl">): DriverDocumentSourceKind {
   const url = doc.fileUrl?.trim();
@@ -173,9 +186,21 @@ function docByType(docs: DocumentRow[], type: string): DocumentRow | undefined {
 function toPacketDoc(
   row: { canonicalType: string; label: string; sourceType: string },
   doc: DocumentRow | undefined,
-  group: DriverDocumentGroupKey
+  group: DriverDocumentGroupKey,
+  driverId: string
 ): DriverPacketDocument {
-  if (!doc) {
+  const registryUrl = getDriverDocumentByType(driverId, row.sourceType);
+  const effectiveDoc = doc ?? (registryUrl
+    ? {
+        driverId,
+        type: row.sourceType,
+        status: "VALID",
+        fileUrl: registryUrl,
+        previewUrl: registryUrl,
+      }
+    : undefined);
+
+  if (!effectiveDoc) {
     return {
       canonicalType: row.canonicalType,
       label: row.label,
@@ -186,15 +211,16 @@ function toPacketDoc(
       needsMapping: row.sourceType === "__needs_mapping__",
     };
   }
-  const fileUrl = doc.fileUrl?.trim() || undefined;
-  const previewUrl = doc.previewUrl?.trim() || fileUrl;
+  const fileUrl = effectiveDoc.fileUrl?.trim() || registryUrl || undefined;
+  const previewUrl = effectiveDoc.previewUrl?.trim() || fileUrl;
   const sourceKind = inferSourceKind({ fileUrl });
+  const clearAdministrativeDate = NON_EXPIRING_PACKET_TYPES.has(row.canonicalType);
   return {
     canonicalType: row.canonicalType,
     label: row.label,
     group,
-    status: doc.status || "MISSING",
-    expirationDate: doc.expirationDate || undefined,
+    status: clearAdministrativeDate && fileUrl ? "VALID" : effectiveDoc.status || "MISSING",
+    expirationDate: clearAdministrativeDate ? undefined : effectiveDoc.expirationDate || undefined,
     fileUrl,
     previewUrl,
     sourceKind,
@@ -222,6 +248,22 @@ function mergeCredentialResolverIntoCorePacket(
   };
 
   const documents = packet.documents.map((doc) => {
+    if (doc.canonicalType === "i9") {
+      const fileUrl = getDriverDocumentByType(driverId, "I-9") ?? doc.fileUrl;
+      const previewUrl = fileUrl || doc.previewUrl;
+      const sourceKind = inferSourceKind({ fileUrl });
+
+      return {
+        ...doc,
+        status: fileUrl ? "VALID" : "MISSING",
+        expirationDate: undefined,
+        fileUrl,
+        previewUrl,
+        sourceKind,
+        sourceLabel: sourceLabelFromKind(sourceKind),
+      };
+    }
+
     if (doc.group !== "core_dqf") return doc;
     const slice = sliceByCanonical[doc.canonicalType];
     if (!slice) return doc;
@@ -230,6 +272,7 @@ function mergeCredentialResolverIntoCorePacket(
       doc.canonicalType === "fmcsa_compliance"
         ? slice.reviewDate?.trim() || slice.expirationDate?.trim()
         : slice.expirationDate?.trim() || slice.reviewDate?.trim();
+    const clearAdministrativeDate = NON_EXPIRING_PACKET_TYPES.has(doc.canonicalType);
 
     const nextStatus = canonicalCredentialBadgeLabel(slice);
     const fileUrl = slice.fileUrl?.trim() || doc.fileUrl;
@@ -239,7 +282,7 @@ function mergeCredentialResolverIntoCorePacket(
     return {
       ...doc,
       status: nextStatus,
-      expirationDate: primaryDate || doc.expirationDate,
+      expirationDate: clearAdministrativeDate ? undefined : primaryDate || doc.expirationDate,
       fileUrl,
       previewUrl,
       sourceKind,
@@ -262,20 +305,20 @@ export function buildDriverDocumentPacket(data: BofData, driverId: string): Driv
     const fromCore = docByType(primaryCore, row.sourceType);
     const fromPrimaryExtra = docByType(primaryExtra, row.sourceType);
     const fromSecondary = docByType(secondary, row.sourceType);
-    docs.push(toPacketDoc(row, fromCore ?? fromPrimaryExtra ?? fromSecondary, "core_dqf"));
+    docs.push(toPacketDoc(row, fromCore ?? fromPrimaryExtra ?? fromSecondary, "core_dqf", driverId));
   }
 
   for (const row of WORKFLOW_TYPES) {
-    docs.push(toPacketDoc(row, docByType(secondary, row.sourceType), "hr_workflow"));
+    docs.push(toPacketDoc(row, docByType(secondary, row.sourceType), "hr_workflow", driverId));
   }
 
   for (const row of PAYROLL_TYPES) {
-    docs.push(toPacketDoc(row, docByType(secondary, row.sourceType), "payroll_deduction_support"));
+    docs.push(toPacketDoc(row, docByType(secondary, row.sourceType), "payroll_deduction_support", driverId));
   }
 
   for (const row of SUMMARY_TYPES) {
     if (row.sourceType === "__needs_mapping__") {
-      docs.push(toPacketDoc(row, undefined, "generated_summaries"));
+      docs.push(toPacketDoc(row, undefined, "generated_summaries", driverId));
       continue;
     }
     const engineDoc = engine.find((d) => d.type === row.sourceType);
@@ -290,7 +333,7 @@ export function buildDriverDocumentPacket(data: BofData, driverId: string): Driv
           expirationDate: undefined,
         }
       : secondaryRow;
-    docs.push(toPacketDoc(row, fromEngine, "generated_summaries"));
+    docs.push(toPacketDoc(row, fromEngine, "generated_summaries", driverId));
   }
 
   const deduped = new Map<string, DriverPacketDocument>();

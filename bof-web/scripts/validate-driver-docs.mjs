@@ -60,11 +60,10 @@ function run() {
     for (const tpl of REQUIRED) {
       const base = tpl.replace("{n}", n);
       if (tpl.includes("medical-card-drv")) {
+        const medPdf = path.join(dir, `${base}.pdf`);
         const medPng = path.join(dir, `${base}.png`);
-        if (!exists(medPng)) {
-          fail(
-            `Missing canonical medical card PNG for ${driverId}: ${base}.png — add Downloads/medcard_${driverId.toLowerCase()}*.png and run npm run sync:driver-hr-docs (or copy legacy Medical Card-${n}.png to this path)`
-          );
+        if (!exists(medPdf) && !exists(medPng)) {
+          fail(`Missing canonical medical card file for ${driverId}: ${base}.pdf or ${base}.png`);
         }
         continue;
       }
@@ -121,8 +120,9 @@ function run() {
         fail(`Index missing canonical FMCSA DQF Compliance Summary URL for ${driverId}: ${dqfUrl}`);
       }
       const medCanon = `/documents/drivers/${driverId}/medical-card-drv-${n}.png`;
-      if (!fileSet.has(medCanon)) {
-        fail(`Index missing canonical Medical Card PNG URL for ${driverId}: ${medCanon}`);
+      const medPdfCanon = `/documents/drivers/${driverId}/medical-card-drv-${n}.pdf`;
+      if (!fileSet.has(medPdfCanon) && !fileSet.has(medCanon)) {
+        fail(`Index missing canonical Medical Card URL for ${driverId}: ${medPdfCanon} or ${medCanon}`);
       }
     }
     for (const file of files) {

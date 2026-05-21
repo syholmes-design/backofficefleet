@@ -49,6 +49,16 @@ const publicDocIndex = (publicDocIndexRaw ?? { files: [] }) as {
 };
 const PUBLIC_FILES = new Set((publicDocIndex.files ?? []).map((x) => x.trim()));
 const EXT_PRIORITY = [".pdf", ".png", ".jpg", ".jpeg", ".html"] as const;
+const GENERATED_HTML_TYPES = new Set<DriverDocManifestKey>([
+  "employee_handbook_acknowledgment",
+  "benefits_enrollment",
+  "life_insurance_beneficiary_election",
+  "flexible_spending_account_election",
+  "garnishment_withholding_summary",
+]);
+const DRIVER_CANONICAL_MEDICAL_CARD_FILE: Record<string, string> = {
+  "DRV-001": "john-carter-mcsa-5876-signed2.pdf",
+};
 
 const DRIVER_CANONICAL_BANK_CARD_FILE = canonicalBankCardFiles as Record<string, string>;
 
@@ -65,13 +75,29 @@ function resolveByPriority(basePath: string): string | undefined {
   return undefined;
 }
 
-/** Canonical DOT medical card image — driverId-keyed PNG under public/documents/drivers (sync from Downloads `medcard_drv-XXX*.png` or legacy `Medical Card-XXX.png`). */
+/** Canonical DOT medical card file: driverId-keyed PDF first, then PNG preview under public/documents/drivers. */
 export function getCanonicalMedicalCardPublicPath(driverId: string): string {
-  return `/documents/drivers/${driverId}/medical-card-${driverId.toLowerCase()}.png`;
+  const overrideFile = DRIVER_CANONICAL_MEDICAL_CARD_FILE[driverId];
+  if (overrideFile) {
+    const overridePath = `/documents/drivers/${driverId}/${overrideFile}`;
+    if (PUBLIC_FILES.has(overridePath)) return overridePath;
+  }
+  const base = `/documents/drivers/${driverId}/medical-card-${driverId.toLowerCase()}`;
+  const pdf = `${base}.pdf`;
+  if (PUBLIC_FILES.has(pdf)) return pdf;
+  return `${base}.png`;
 }
 
 export function isCanonicalMedicalCardPngUrl(url: string | undefined, driverId: string): boolean {
-  return String(url ?? "").trim() === getCanonicalMedicalCardPublicPath(driverId);
+  return String(url ?? "").trim() === `/documents/drivers/${driverId}/medical-card-${driverId.toLowerCase()}.png`;
+}
+
+export function isCanonicalMedicalCardUrl(url: string | undefined, driverId: string): boolean {
+  const value = String(url ?? "").trim();
+  const overrideFile = DRIVER_CANONICAL_MEDICAL_CARD_FILE[driverId];
+  if (overrideFile && value === `/documents/drivers/${driverId}/${overrideFile}`) return true;
+  const base = `/documents/drivers/${driverId}/medical-card-${driverId.toLowerCase()}`;
+  return value === `${base}.pdf` || value === `${base}.png`;
 }
 
 function sourcePathForType(driverId: string, type: string): string | undefined {
@@ -101,6 +127,10 @@ function sourcePathForType(driverId: string, type: string): string | undefined {
     "Garnishment Withholding Summary": `${hrPayrollRoot}/garnishment-withholding-summary`,
   };
   return byType[type];
+}
+
+function manifestKeyForType(type: string): DriverDocManifestKey | undefined {
+  return DRIVER_DOC_TYPE_TO_KEY[type];
 }
 
 /** Expected public URL for the canonical bank-card HTML (may not be on disk / in index yet). */
@@ -139,6 +169,10 @@ export function getDriverPublicDocPath(
   }
   const base = sourcePathForType(driverId, type);
   if (!base) return undefined;
+  const key = manifestKeyForType(type);
+  if (key && GENERATED_HTML_TYPES.has(key)) {
+    return `${base}.html`;
+  }
   return resolveByPriority(base);
 }
 
@@ -225,7 +259,7 @@ export type DriverMedicalCardCanonicalStatus =
 
 export type DriverMedicalCardStatusSource =
   | "runtime_override"
-  | "canonical_medcard_png"
+  | "canonical_medcard_file"
   | "structured_demo_data"
   | "public_doc_index"
   | "missing";
@@ -275,7 +309,7 @@ function medicalStatusSource(
   driverId: string,
   structuredDatesPresent: boolean
 ): DriverMedicalCardStatusSource {
-  if (isCanonicalMedicalCardPngUrl(fileUrl, driverId)) return "canonical_medcard_png";
+  if (isCanonicalMedicalCardUrl(fileUrl, driverId)) return "canonical_medcard_file";
   if (structuredDatesPresent) return "structured_demo_data";
   if (fileUrl) return "public_doc_index";
   return "missing";
@@ -337,7 +371,7 @@ export function getDriverMedicalCardStatus(
     if (expandedExp) {
       const derived = deriveCredentialStatusFromExpiration(expandedExp);
       let { status, rowStatus } = medicalStatusFromDerived(derived);
-      if (isCanonicalMedicalCardPngUrl(fileUrl, driverId) && status === "expired") {
+      if (isCanonicalMedicalCardUrl(fileUrl, driverId) && status === "expired") {
         status = "valid";
         rowStatus = "VALID";
       }
@@ -352,8 +386,8 @@ export function getDriverMedicalCardStatus(
         rowStatus,
         source: medicalStatusSource(fileUrl, driverId, true),
         reason:
-          status === "valid" && isCanonicalMedicalCardPngUrl(fileUrl, driverId)
-            ? "Canonical medical card image indexed — legacy expanded expiration ignored for roster posture"
+          status === "valid" && isCanonicalMedicalCardUrl(fileUrl, driverId)
+            ? "Canonical medical card file indexed - legacy expanded expiration ignored for roster posture"
             : "driverMedicalExpanded.medicalExpirationDate (no documents[] Medical Card row)",
       };
     }
@@ -388,7 +422,7 @@ export function getDriverMedicalCardStatus(
     const derived = deriveCredentialStatusFromExpiration(expirationDate);
     let { status, rowStatus } = medicalStatusFromDerived(derived);
     /** Canonical DOT med-card art on file — demo seed row expirations can lag; do not hard-block roster as expired. */
-    if (isCanonicalMedicalCardPngUrl(fileUrl, driverId) && status === "expired") {
+    if (isCanonicalMedicalCardUrl(fileUrl, driverId) && status === "expired") {
       status = "valid";
       rowStatus = "VALID";
     }
@@ -403,8 +437,8 @@ export function getDriverMedicalCardStatus(
       rowStatus,
       source: medicalStatusSource(fileUrl, driverId, true),
       reason:
-        status === "valid" && isCanonicalMedicalCardPngUrl(fileUrl, driverId)
-          ? "Canonical medical card image indexed for this driverId — treating as current despite legacy expiration row"
+        status === "valid" && isCanonicalMedicalCardUrl(fileUrl, driverId)
+          ? "Canonical medical card file indexed for this driverId - treating as current despite legacy expiration row"
           : "expirationDate on structured Medical Card row for this driverId (status derived from date, not stale row.status)",
     };
   }
@@ -412,7 +446,7 @@ export function getDriverMedicalCardStatus(
   if (expandedExp) {
     const derived = deriveCredentialStatusFromExpiration(expandedExp);
     let { status, rowStatus } = medicalStatusFromDerived(derived);
-    if (isCanonicalMedicalCardPngUrl(fileUrl, driverId) && status === "expired") {
+    if (isCanonicalMedicalCardUrl(fileUrl, driverId) && status === "expired") {
       status = "valid";
       rowStatus = "VALID";
     }
@@ -427,8 +461,8 @@ export function getDriverMedicalCardStatus(
       rowStatus,
       source: medicalStatusSource(fileUrl, driverId, true),
       reason:
-        status === "valid" && isCanonicalMedicalCardPngUrl(fileUrl, driverId)
-          ? "Canonical medical card image indexed — legacy expanded date ignored when structured row lacks expirationDate"
+        status === "valid" && isCanonicalMedicalCardUrl(fileUrl, driverId)
+          ? "Canonical medical card file indexed - legacy expanded date ignored when structured row lacks expirationDate"
           : "driverMedicalExpanded.medicalExpirationDate — documents row missing expirationDate",
     };
   }

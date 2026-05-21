@@ -231,6 +231,8 @@ export function getDriverDqfReadinessSummary(data: BofData, driverId: string): D
           reviewDate: undefined,
           source: src,
           notes: doc.notes,
+          actionLabel: doc.fileUrl || doc.previewUrl ? "Open document" : undefined,
+          actionHref: doc.fileUrl ?? doc.previewUrl,
           optionalForReadiness: optional,
         },
         driverId

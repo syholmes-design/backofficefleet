@@ -71,16 +71,12 @@ export function DocumentsPageClient() {
         .
       </p>
       <p className="bof-muted bof-small bof-oper-sublead">
-        BOF also builds{" "}
-        <strong>generated credential SVGs</strong> from the same JSON on each{" "}
-        <Link
-          href={`/drivers/${DEFAULT_PREVIEW_DRIVER_ID}`}
-          className="bof-link-secondary"
-        >
-          driver profile
-        </Link>{" "}
-        (open &quot;Generated driver forms&quot;). Load, settlement, and
-        exception packets link from load detail, settlements, and money at risk.
+        Open each driver&apos;s canonical document packet from the{" "}
+        <Link href="/documents/vault" className="bof-link-secondary">
+          Driver Document Vault
+        </Link>
+        . Load, settlement, and exception packets link from load detail,
+        settlements, and money at risk.
         {previewDriver ? (
           <>
             {" "}
@@ -89,28 +85,9 @@ export function DocumentsPageClient() {
         ) : null}
       </p>
       <p className="bof-muted bof-small bof-oper-sublead">
-        Need guided per-driver document assembly? Open{" "}
-        <Link href="/documents/vault" className="bof-link-secondary">
-          BOF Vault Driver Workspace
-        </Link>{" "}
-        for category-level uploads, shared autofill fields, and generated BOF preview output.
-      </p>
-      <p className="bof-muted bof-small bof-oper-sublead">
         Vault view order: <strong>Vault-owned driver core</strong> first, then{" "}
         <strong>dispatch references</strong>, then <strong>workflow references</strong> (load / billing /
         claims owned).
-      </p>
-      <p className="bof-muted bof-small bof-oper-sublead">
-        <strong>Internal:</strong> Cross-pack template registry + draft workspace —{" "}
-        <Link href="/documents/template-packs" className="bof-link-secondary">
-          Template packs workspace
-        </Link>{" "}
-        (inspect mappings, demo statuses, and in-browser artifacts; not the dispatch intake or npm
-        document pipeline). Use the{" "}
-        <Link href="/documents/template-packs/view" className="bof-link-secondary">
-          BOF document viewer
-        </Link>{" "}
-        from template rows for save/review flows.
       </p>
 
       <BofWorkflowFormShortcuts
@@ -159,3 +136,4 @@ export function DocumentsPageClient() {
     </div>
   );
 }
+

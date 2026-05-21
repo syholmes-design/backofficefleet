@@ -78,6 +78,28 @@ function fromDateAndFile(
   return { status: "missing", expirationDate, fileUrl, source, slot };
 }
 
+function nonExpiringFileCredential(
+  fileUrl: string | undefined,
+  source: string,
+  label: string
+): CredentialRecord {
+  if (fileUrl) {
+    return {
+      status: "valid",
+      fileUrl,
+      source,
+      label,
+      reason: `${label} is a non-expiring administrative document; file presence controls demo readiness.`,
+    };
+  }
+  return {
+    status: "missing",
+    source,
+    label,
+    reason: `${label} file is missing from the canonical driver packet.`,
+  };
+}
+
 function medicalExpanded(data: BofData, driverId: string) {
   const dm = (
     data as BofData & {
@@ -211,8 +233,6 @@ export function getDriverCredentialStatus(data: BofData, driverId: string): Driv
   const fmcsaFile = getDriverDocumentByType(driverId, "FMCSA");
   const fmcsaBase = fromDateAndFile(fmcsaReview, fmcsaFile, "driver_doc_registry", "fmcsa");
 
-  const w9Row = byType.get("W-9");
-  const w9Exp = w9Row?.expirationDate?.trim() || undefined;
   const w9File = getDriverDocumentByType(driverId, "W-9");
 
   const insRow = byType.get("Insurance Card");
@@ -248,13 +268,12 @@ export function getDriverCredentialStatus(data: BofData, driverId: string): Driv
       label: "FMCSA Compliance",
       reviewDate: fmcsaReview,
     },
-    w9: { ...fromDateAndFile(w9Exp, w9File, "driver_doc_registry"), label: "W-9" },
+    w9: nonExpiringFileCredential(w9File, "driver_doc_registry", "W-9"),
     bankInformation: sliceBankInformation(data, driverId),
     emergencyContact: sliceEmergencyContact(data, driverId),
-    insuranceCard: {
-      ...fromDateAndFile(insExp, insFile, "driver_doc_registry"),
-      label: "Insurance Card",
-    },
+    insuranceCard: insExp
+      ? { ...fromDateAndFile(insExp, insFile, "driver_doc_registry"), label: "Insurance Card" }
+      : nonExpiringFileCredential(insFile, "driver_doc_registry", "Insurance Card"),
   };
 }
 
@@ -269,7 +288,7 @@ export function getCanonicalDriverDocuments(data: BofData, driverId: string) {
     data.documents.filter((d) => d.driverId === driverId).map((d) => [d.type, d])
   );
 
-  const i9Row = byType.get("I-9");
+  const i9File = getDriverDocumentByType(driverId, "I-9");
 
   return [
     {
@@ -302,10 +321,9 @@ export function getCanonicalDriverDocuments(data: BofData, driverId: string) {
     },
     {
       type: "I-9" as const,
-      status: packet.i9 ? i9Row?.status ?? "VALID" : "MISSING",
-      expirationDate: i9Row?.expirationDate,
-      fileUrl: packet.i9,
-      previewUrl: packet.i9,
+      status: i9File ? "VALID" : "MISSING",
+      fileUrl: i9File,
+      previewUrl: i9File,
     },
     {
       type: "FMCSA" as const,

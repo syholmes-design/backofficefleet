@@ -39,7 +39,7 @@ export function getDriverDocumentStatus(driverId: string): DriverDocumentGroup[]
       mapCanonicalToPortalStatus('FMCSA Compliance', credentialStatus.fmcsa),
       // Find MCSA documents in packet
       ...documentPacket.documents
-        .filter(doc => doc.canonicalType.includes('mcsa') || doc.label.includes('MCSA'))
+        .filter(doc => doc.canonicalType === 'signed_medical_exam' || /^MCSA\b/i.test(doc.label))
         .map(doc => mapPacketToPortalStatus(doc))
     ]
   });
