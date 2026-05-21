@@ -73,6 +73,10 @@ function settlementLumperFlag(data: BofData, driverId: string) {
   return /lumper/i.test(s?.pendingReason ?? "");
 }
 
+function hasLumperInvolvement(load: NonNullable<ReturnType<typeof loadRecord>>): boolean {
+  return Number((load as { lumperAmount?: number }).lumperAmount || 0) > 0;
+}
+
 function settlementHoldApplicable(data: BofData, driverId: string) {
   if (!("settlements" in data) || !Array.isArray(data.settlements)) return false;
   const s = data.settlements.find((x) => x.driverId === driverId);
@@ -149,9 +153,8 @@ export function buildTripDocumentPacket(data: BofData, loadId: string): TripPack
   const requiredSeal = Boolean(
     String(load.pickupSeal ?? "").trim() || String(load.deliverySeal ?? "").trim()
   );
-  const lumperRequired = Boolean(
-    delivered && (settlementLumperFlag(data, load.driverId) || false)
-  );
+  const lumperInvolved = hasLumperInvolvement(load) || settlementLumperFlag(data, load.driverId);
+  const lumperRequired = Boolean(delivered && lumperInvolved);
   const sealMismatch = String(load.sealStatus ?? "").toUpperCase() === "MISMATCH";
   const holdApplicable = settlementHoldApplicable(data, load.driverId);
 
@@ -336,13 +339,15 @@ export function buildTripDocumentPacket(data: BofData, loadId: string): TripPack
       key: "lumper_receipt",
       label: "Lumper QR closeout",
       group: "proof",
-      status: !lumperRequired ? "not_applicable" : lumperUrl ? "ready" : "missing",
-      url: lumperRequired ? lumperUrl : undefined,
-      note: !lumperRequired
+      status: !lumperInvolved ? "not_applicable" : lumperUrl ? "ready" : delivered ? "missing" : "pending",
+      url: lumperInvolved ? lumperUrl : undefined,
+      note: !lumperInvolved
         ? "No lumper authorization required for this trip."
         : lumperUrl
-          ? "Dock authorization and payment support attached."
-          : "Dock QR authorization, empty-trailer proof, or payment support required.",
+          ? "Dock QR authorization, empty-trailer proof, and payment support attached."
+          : delivered
+            ? "Dock QR authorization, empty-trailer proof, or payment support required."
+            : "QR lumper authorization will be captured at the dock if unloading support is used.",
       requiredForSettlementRelease: lumperRequired,
       deliveredMinimum: lumperRequired,
       loadEvidenceType: "lumper_receipt",

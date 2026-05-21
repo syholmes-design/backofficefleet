@@ -162,6 +162,10 @@ function settlementLumperFlag(data: BofData, driverId: string) {
   return /lumper/i.test(s?.pendingReason ?? "");
 }
 
+function hasLumperInvolvement(load: NonNullable<ReturnType<typeof loadRecord>>): boolean {
+  return Number((load as { lumperAmount?: number }).lumperAmount || 0) > 0;
+}
+
 function claimApplicable(load: NonNullable<ReturnType<typeof loadRecord>>, bundle: LoadProofBundle | null) {
   if (bundle?.claimApplicable != null) return bundle.claimApplicable;
   return (
@@ -180,6 +184,7 @@ export function getLoadProofItems(data: BofData, loadId: string): LoadProofItem[
   const delivered = load.status === "Delivered";
   const pendingAssign = load.status === "Pending";
   const lumperHold = settlementLumperFlag(data, load.driverId);
+  const lumperInvolved = hasLumperInvolvement(load) || lumperHold;
   const showClaim = claimApplicable(load, bundle);
 
   const pod = load.podStatus?.toLowerCase() ?? "";
@@ -297,15 +302,19 @@ export function getLoadProofItems(data: BofData, loadId: string): LoadProofItem[
     },
     {
       type: "Lumper QR Closeout",
-      status: lumperHold ? "Missing" : delivered ? "Not required" : "Pending",
+      status: lumperHold ? "Missing" : lumperInvolved && delivered ? "Complete" : lumperInvolved ? "Pending" : "Not required",
       blocksPayment: lumperHold,
       disputeExposure: lumperHold,
       rfAction: lumperHold
         ? "Confirm dock QR authorization, empty-trailer proof, and Zelle payment record"
-        : undefined,
+        : lumperInvolved
+          ? "Archive QR dock authorization, empty-trailer proof, and payment timestamp"
+          : undefined,
       riskNote: lumperHold
         ? "Settlement is waiting on BOF-controlled lumper closeout, not driver paperwork"
-        : undefined,
+        : lumperInvolved
+          ? "BOF-controlled lumper closeout keeps the driver out of receipt collection"
+          : undefined,
     },
     {
       type: "RFID / Dock Validation Record",

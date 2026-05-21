@@ -106,8 +106,8 @@ function statusPresentation(ev: BofLoadEvidence): {
     case "lumper_receipt":
       return {
         chip: "Verified",
-        headline: "Lumper receipt on file",
-        sub: "Unload payment documentation available.",
+        headline: "QR lumper closeout on file",
+        sub: "Dock authorization, empty-trailer proof, and payment support available.",
         tone: "ok",
       };
     case "rfid_geo_proof":

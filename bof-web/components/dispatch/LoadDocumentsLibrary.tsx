@@ -70,7 +70,7 @@ function proofAndMediaDocs(load: Load): DocLinkItem[] {
   pushIfUrl(
     items,
     "lumper",
-    "Lumper receipt",
+    "QR lumper closeout",
     load.lumper_photo_url,
     "image"
   );

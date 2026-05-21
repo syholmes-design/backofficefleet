@@ -468,11 +468,16 @@ export function ShipperLoadPortalClient({ loadId }: { loadId: string }) {
   const pickupSeal = bofLoad.pickupSeal?.trim() || dispatchLoad.pickup_seal_number || "not recorded";
   const deliverySeal = bofLoad.deliverySeal?.trim() || dispatchLoad.delivery_seal_number || "not recorded";
   const sealMismatchActive = dispatchLoad.seal_status === "Mismatch" || bofLoad.sealStatus === "Mismatch";
-  const lumperAutomationActive =
-    !sealMismatchActive &&
+  const lumperInvolvement =
+    Number(bofLoad.lumperAmount || 0) > 0 ||
+    dispatchLoad.lumper_receipt_required === true ||
+    Boolean(dispatchLoad.lumper_photo_url?.trim());
+  const lumperCloseoutNeedsReview =
+    lumperInvolvement &&
     /lumper|qr|zelle|dock|accessorial/i.test(
       `${bofLoad.settlementHoldReason ?? ""} ${dispatchLoad.settlement_hold_reason ?? ""}`
     );
+  const lumperAutomationActive = lumperInvolvement;
   const hrefPickupSealPhoto = firstHref(
     pickupProof?.fileUrl,
     pickupProof?.previewUrl,
@@ -504,7 +509,9 @@ export function ShipperLoadPortalClient({ loadId }: { loadId: string }) {
   const issueNarrative = sealMismatchActive
     ? `BOF captured pickup seal ${pickupSeal} before departure and later detected delivery seal ${deliverySeal}. That variance does not mean the pre-trip gate failed; it means the gate created the baseline that let BOF catch a downstream seal change, re-seal, or recording error before the load closed.`
     : lumperAutomationActive
-      ? "BOF keeps the driver out of the paper chase. The lumper scans the QR code on the trailer, confirms presence at the dock, empty-trailer proof is captured, and BOF holds settlement only until the Zelle payment record and dock proof are tied back to this load."
+      ? lumperCloseoutNeedsReview
+        ? "BOF keeps the driver out of the paper chase. The lumper scans the QR code on the trailer, confirms presence at the dock, empty-trailer proof is captured, and BOF holds settlement only until the Zelle payment record and dock proof are tied back to this load."
+        : "BOF keeps the driver out of the paper chase. The lumper scans the trailer QR code, dock and empty-trailer proof stay attached to the load, and the Zelle/payment record supports accessorial closeout without a paper receipt handoff."
     : bofLoad.settlementHold
       ? `BOF is holding this post-trip packet because ${bofLoad.settlementHoldReason || "settlement support needs review"}. The load can stay operationally clean while settlement waits for the specific receipt, proof item, or dispatcher approval required to release payment.`
     : "BOF is showing the same trip packet, proof photos, and closeout documents across shipper, dispatch, claims, and settlement review.";
@@ -562,8 +569,10 @@ export function ShipperLoadPortalClient({ loadId }: { loadId: string }) {
           },
           {
             label: "4. Settlement closeout",
-            title: "Accessorial clears",
-            body: "Settlement releases when QR authorization, empty proof, and payment confirmation are matched.",
+            title: lumperCloseoutNeedsReview ? "Accessorial needs closeout" : "Accessorial cleared",
+            body: lumperCloseoutNeedsReview
+              ? "Settlement releases when QR authorization, empty proof, and payment confirmation are matched."
+              : "QR authorization, empty proof, and payment confirmation stay attached to the load for settlement support.",
             href: "/settlements",
           },
         ]

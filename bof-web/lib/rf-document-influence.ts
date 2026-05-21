@@ -105,7 +105,7 @@ export function mergeRfidIntoLoadScopedDocument(
   }
 
   // --- Lumper ---
-  if (type === "Lumper Receipt" && dock) {
+  if ((type === "Lumper Receipt" || type === "Lumper QR Closeout" || type === "QR Lumper Closeout") && dock) {
     rfEventId = dock.id;
     if (dock.lumperWorkflowStatus === "confirmed" && proof?.status === "Complete") {
       status = `${proof.status} · RF dock: unload/lumper validated`;

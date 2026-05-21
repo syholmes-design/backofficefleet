@@ -65,7 +65,7 @@ function getActionForDocumentType(docType: string): string {
     "seal_delivery_photo": "View seal delivery photo",
     "cargo_pickup_photo": "View cargo photo",
     "rfid_geo_proof": "View RFID proof",
-    "lumper_receipt": "View lumper receipt",
+    "lumper_receipt": "Open QR lumper closeout",
     "claim_photo": "Open claim packet",
     "insurance_packet": "Open insurance notification"
   };
@@ -196,11 +196,11 @@ export function LoadLifecyclePacket({ load }: Props) {
       });
     }
     
-    // Lumper receipt
+    // QR lumper closeout
     const lumper = evidence.find(e => e.evidenceType === "lumper_receipt");
     if (lumper) {
       deliveryItems.push({
-        title: "Lumper Receipt",
+        title: "QR Lumper Closeout",
         status: lumper.status === "available" ? "ready" : "conditional",
         audience: getAudienceForDocumentType("lumper_receipt"),
         action: getActionForDocumentType("lumper_receipt")

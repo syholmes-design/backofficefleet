@@ -381,8 +381,8 @@ export function buildTripReleaseEvaluation(data: BofData, loadId: string): TripR
       loadId,
       "load_packet",
       sev,
-      "Lumper receipt required on this move; proof is not attached to the dispatch packet.",
-      { href: artifactHref("lumper_receipt"), label: "Open lumper receipt item" }
+      "Lumper QR closeout is required on this move; dock authorization, empty-trailer proof, or payment support is not attached to the dispatch packet.",
+      { href: artifactHref("lumper_receipt"), label: "Open QR lumper closeout" }
     );
   }
 
@@ -606,8 +606,8 @@ export function buildTripReleaseEvaluation(data: BofData, loadId: string): TripR
       : "BOL required at pickup; signed POD required at delivery before settlement release.",
     pod_requirements_summary: `POD status: ${bofLoad.podStatus}; dispatch proof status: ${dispatchLoad.proof_status}.`,
     accessorial_lumper_summary: dispatchLoad.lumper_receipt_required
-      ? "Lumper / detention receipt required on this move (dispatch packet rule)."
-      : "Lumper receipt not required for this move.",
+      ? "BOF QR lumper closeout applies: trailer QR authorization, dock/empty-trailer proof, and payment support stay with the load."
+      : "No lumper authorization required for this move.",
     load_packet_status: docReport.overall,
     load_packet_missing_count: docReport.missingRequired.length,
     documentation_report: docReport,

@@ -117,7 +117,7 @@ export function getLoadProofItems(loadId: string): LoadProofItem[] {
     proofItem(registry, "delivery_empty_trailer", "Delivery / Empty Trailer Proof", "Delivery photo required for load completion."),
     proofItem(registry, "seal_delivery_photo", "Delivery Seal Photo", "Seal photo required for sealed loads."),
     proofItem(registry, "cargo_photo", "Cargo Photo", "Cargo condition photo required for load proof."),
-    proofItem(registry, "lumper_receipt", "Lumper Receipt", "Lumper receipt required when lumper services are used."),
+    proofItem(registry, "lumper_receipt", "QR Lumper Closeout", "QR dock authorization, empty-trailer proof, and payment support required when lumper services are used."),
     proofItem(registry, "damage_photo_packet", "Damage / Claim Photos", "Damage photos required when damage is reported."),
   ];
 }

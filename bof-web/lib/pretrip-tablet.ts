@@ -165,7 +165,7 @@ export function buildPretripTabletModel(
   const rate = proofByType(data, loadId, "Rate Confirmation");
   const bol = proofByType(data, loadId, "BOL");
   const pretripPhoto = proofByType(data, loadId, "Pre-Trip Cargo Photo");
-  const lumper = proofByType(data, loadId, "Lumper Receipt");
+  const lumper = proofByType(data, loadId, "Lumper QR Closeout") ?? proofByType(data, loadId, "Lumper Receipt");
 
   const rateSt = proofDocStatus(rate);
   const bolSt = proofDocStatus(bol);
@@ -334,7 +334,7 @@ export function buildPretripTabletModel(
   const lumperSt = proofDocStatus(lumper);
   const lumperLine: PretripLine = {
     id: "lumper-setup",
-    label: "Lumper setup",
+    label: "QR lumper closeout",
     status:
       lumper?.status === "Not required"
         ? "OK"

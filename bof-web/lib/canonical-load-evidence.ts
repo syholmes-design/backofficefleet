@@ -95,6 +95,7 @@ function isClaimContext(load: BofLoad): boolean {
 }
 
 function hasLumperContext(data: BofData, load: BofLoad): boolean {
+  if (Number((load as { lumperAmount?: number }).lumperAmount || 0) > 0) return true;
   const bundle = (data.loadProofBundles as Record<string, { items?: Record<string, { status?: string; notes?: string }> }> | undefined)?.[
     load.id
   ]?.items?.["Lumper Receipt"];
@@ -208,7 +209,7 @@ const EVIDENCE_DEFS: EvidenceDef[] = [
   },
   {
     evidenceType: "lumper_receipt",
-    title: "Lumper Receipt",
+    title: "QR Lumper Closeout",
     resolve: (load) =>
       firstExistingPublicUrl([
         `/evidence/loads/${load.id}/lumper-receipt-photo.jpg`,
@@ -220,7 +221,7 @@ const EVIDENCE_DEFS: EvidenceDef[] = [
       `/evidence/loads/${load.id}/lumper-receipt.png`,
     required: (data, load) => hasLumperContext(data, load),
     notRequiredReason: () =>
-      "Lumper receipt is not required because no lumper/unload payment context is present on the load settlement trail.",
+      "QR lumper closeout is not required because no lumper/unload payment context is present on the load settlement trail.",
   },
   {
     evidenceType: "rfid_geo_proof",

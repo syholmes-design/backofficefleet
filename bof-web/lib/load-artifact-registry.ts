@@ -233,12 +233,12 @@ const PACKET_RULES: Record<string, PacketRule> = {
     informationalOnly: true,
   },
   lumper_receipt: {
-    title: "Lumper / accessorial receipt",
-    description: "Lumper, detention, layover, extra-stop, or other accessorial backup for billing and settlement.",
+    title: "QR lumper closeout",
+    description: "Trailer QR authorization, dock/empty-trailer proof, and BOF payment support for lumper or accessorial settlement.",
     category: "post_trip",
     criticality: "post_trip",
     visibility: ALL_ROLES,
-    signatureRequiredBy: ["driver", "dispatcher"],
+    signatureRequiredBy: ["dispatcher"],
   },
   factoring_notification: {
     title: "Factoring packet",

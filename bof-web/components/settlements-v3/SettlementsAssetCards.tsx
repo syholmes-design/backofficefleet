@@ -104,9 +104,9 @@ const SETTLEMENT_ASSETS: SettlementAssetDefinition[] = [
   },
   {
     key: "lumper_receipt",
-    fallbackTitle: "Lumper Receipt",
+    fallbackTitle: "QR Lumper Closeout",
     thumbnail: `${SETTLEMENT_DOCUMENT_PATH}/lumper-receipt-preview.svg`,
-    description: "Lumper receipt with vendor, amount, and reimbursement status.",
+    description: "Trailer QR authorization, empty-trailer proof, and BOF payment support.",
     fileSize: "~900 KB",
   },
   {

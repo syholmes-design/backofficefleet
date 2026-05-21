@@ -73,6 +73,7 @@ type DemoLoad = {
   masterAgreementId?: string;
   masterAgreementDate?: string;
   workOrderId?: string;
+  lumperAmount?: number;
 };
 
 function mapDemoStatusToLoadStatus(
@@ -189,6 +190,10 @@ function hydrateClaimUrlsForDemoLoad(l: DemoLoad, load: Load): Partial<Load> {
   };
 }
 
+function hasLumperInvolvement(l: DemoLoad): boolean {
+  return Number(l.lumperAmount || 0) > 0;
+}
+
 function applyDocumentationDemos(load: Load, l: DemoLoad): Load {
   if (l.id === "L002") {
     return {
@@ -198,14 +203,14 @@ function applyDocumentationDemos(load: Load, l: DemoLoad): Load {
       delivery_photo_url: undefined,
       cargo_photo_url: undefined,
       seal_photo_url: undefined,
-      lumper_receipt_required: true,
+      lumper_receipt_required: hasLumperInvolvement(l),
       lumper_photo_url: undefined,
       settlement_hold: true,
       settlement_hold_reason:
         "Shipper packet incomplete — POD, seal documentation, and cargo proof outstanding.",
     };
   }
-  if (l.id === "L003") {
+  if (hasLumperInvolvement(l) && l.id !== "L001") {
     return {
       ...load,
       lumper_receipt_required: true,
@@ -216,7 +221,8 @@ function applyDocumentationDemos(load: Load, l: DemoLoad): Load {
     const gen = getGeneratedLoadDocEntry(l.id);
     return {
       ...load,
-      lumper_receipt_required: false,
+      lumper_receipt_required: hasLumperInvolvement(l),
+      lumper_photo_url: getLoadEvidenceUrl(l.id, "lumperReceipt"),
       claim_form_url: gen.claimPacket,
       damage_photo_url: getLoadEvidenceUrl(l.id, "damagePhoto"),
       supporting_attachment_url: gen.bol ?? load.supporting_attachment_url,
@@ -224,7 +230,7 @@ function applyDocumentationDemos(load: Load, l: DemoLoad): Load {
   }
   return {
     ...load,
-    lumper_receipt_required: load.lumper_receipt_required ?? false,
+    lumper_receipt_required: hasLumperInvolvement(l) || load.lumper_receipt_required === true,
   };
 }
 
