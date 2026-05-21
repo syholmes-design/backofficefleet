@@ -127,6 +127,85 @@ function credentialHref(driverId: string, kind: "vault" | "hr" | "safety" | "set
   return `${base}/settlements`;
 }
 
+function isActiveMoneyAtRisk(row: BofData["moneyAtRisk"][number]): boolean {
+  const status = String(row.status ?? "").trim().toUpperCase();
+  return !["", "PAID", "CLOSED", "RESOLVED"].includes(status);
+}
+
+function normalizeLoadHref(loadId: string | undefined, fallbackDriverId: string): string {
+  if (!loadId) return `/drivers/${fallbackDriverId}/settlements`;
+  return `/shipper-portal/${loadId}`;
+}
+
+function moneyAtRiskIssue(row: BofData["moneyAtRisk"][number], driverId: string): DriverReviewIssue {
+  const text = `${row.description ?? ""} ${row.rootCause ?? ""} ${row.nextBestAction ?? ""} ${row.category ?? ""}`;
+  const loadHref = normalizeLoadHref(row.loadId, driverId);
+
+  if (/lumper|zelle|accessorial/i.test(text)) {
+    return {
+      id: `money-at-risk:${row.id}`,
+      severity: "high",
+      category: "settlement",
+      title: "QR lumper closeout hold",
+      detail: `Load ${row.loadId}: ${row.description}`,
+      whyItMatters:
+        "Settlement should stay held until the dock QR authorization, empty-trailer proof, and Zelle payment record are matched to the load.",
+      recommendedFix:
+        row.nextBestAction || "Match QR dock authorization, empty-trailer proof, and payment confirmation before releasing the hold.",
+      actionHref: `${loadHref}#lumper-workflow`,
+      actionLabel: "Open QR lumper closeout",
+      canResolveInDemo: false,
+    };
+  }
+
+  if (/seal|proof|claim/i.test(text)) {
+    return {
+      id: `money-at-risk:${row.id}`,
+      severity: "critical",
+      category: "dispatch",
+      title: "Seal mismatch proof hold",
+      detail: `Load ${row.loadId}: ${row.description}`,
+      whyItMatters:
+        "Claims, customer closeout, and settlement release should remain held until pickup seal, delivery seal, BOL, POD, and RFID proof agree.",
+      recommendedFix:
+        row.nextBestAction || "Compare the pickup and delivery seal proof stack before releasing the load closeout.",
+      actionHref: loadHref,
+      actionLabel: "Review seal proof stack",
+      canResolveInDemo: false,
+    };
+  }
+
+  if (/safety|hos|coaching|fatigue/i.test(text)) {
+    return {
+      id: `money-at-risk:${row.id}`,
+      severity: "high",
+      category: "safety",
+      title: "Safety coaching hold",
+      detail: `Load ${row.loadId}: ${row.description}`,
+      whyItMatters:
+        "Safety, HR, and payroll should not clear this driver until coaching, driver acknowledgment, and manager review are complete.",
+      recommendedFix:
+        row.nextBestAction || "Complete coaching, collect the driver acknowledgment, and release the safety hold.",
+      actionHref: `/portals/driver/${driverId}`,
+      actionLabel: "Open driver follow-up",
+      canResolveInDemo: false,
+    };
+  }
+
+  return {
+    id: `money-at-risk:${row.id}`,
+    severity: "high",
+    category: "settlement",
+    title: "Money-at-risk hold",
+    detail: `Load ${row.loadId}: ${row.description}`,
+    whyItMatters: "This open operational risk can block settlement release or customer closeout.",
+    recommendedFix: row.nextBestAction || "Review the linked load proof and clear the open risk.",
+    actionHref: loadHref,
+    actionLabel: "Open linked load",
+    canResolveInDemo: false,
+  };
+}
+
 function complianceSeverityToIssueSev(sev: string): DriverReviewIssueSeverity {
   const u = sev.toUpperCase();
   if (u === "CRITICAL") return "critical";
@@ -293,6 +372,17 @@ function normalizeIssueForDispatchers(
     severityLabel: toSeverityLabel(issue.severity),
   });
 
+  if (issue.id.startsWith("money-at-risk:")) {
+    return set(
+      issue.title,
+      issue.detail,
+      issue.whyItMatters,
+      issue.recommendedFix,
+      issue.actionLabel ?? "Open linked workflow",
+      issue.actionHref
+    );
+  }
+
   if (/cdl/.test(text) && /expired/.test(text)) {
     return set(
       "CDL expired",
@@ -432,6 +522,7 @@ function normalizeIssueForDispatchers(
 
 function guidancePriorityRank(i: DriverReviewIssue): number {
   const txt = `${i.title} ${i.detail}`.toLowerCase();
+  if (i.id.startsWith("money-at-risk:")) return 0;
   if (/cdl/.test(txt) && /expired/.test(txt)) return 1;
   if (/medical/.test(txt) && /expired/.test(txt)) return 2;
   if (/fmcsa|mvr|compliance/.test(txt) && /expired/.test(txt)) return 3;
@@ -540,6 +631,10 @@ export function getDriverReviewExplanation(data: BofData, driverId: string): Dri
       continue;
     }
 
+    if (/Settlement \/ pay hold active/i.test(sw)) {
+      continue;
+    }
+
     const idBase = `dispatch_soft:${hashString(sw)}`;
     let category: DriverReviewIssueCategory = "dispatch";
     let href = credentialHref(driverId, "vault");
@@ -609,10 +704,12 @@ export function getDriverReviewExplanation(data: BofData, driverId: string): Dri
   const settlementHold =
     String(settlement?.status ?? "").toLowerCase().includes("hold") ||
     String(settlement?.status ?? "").toLowerCase().includes("review");
-  const hasHold =
-    data.moneyAtRisk.some(
-      (m) => m.driverId === driverId && String(m.status ?? "").toUpperCase() === "BLOCKED"
-    ) || settlementHold;
+  const activeMoneyRisk = data.moneyAtRisk.find((m) => m.driverId === driverId && isActiveMoneyAtRisk(m));
+  if (activeMoneyRisk) {
+    pushUnique(issues, moneyAtRiskIssue(activeMoneyRisk, driverId), resolved);
+  }
+
+  const hasHold = Boolean(activeMoneyRisk) || settlementHold;
 
   if (hasHold && !issues.some((i) => /Settlement|pay hold/i.test(i.title))) {
     pushUnique(
@@ -823,7 +920,7 @@ export function getDriverReviewExplanation(data: BofData, driverId: string): Dri
       }
     : fallbackGuidance;
 
-  if (reviewStatus === "blocked" && activeIssues.length > 1) {
+  if (reviewStatus === "blocked" && activeIssues.length > 1 && !first?.id.startsWith("money-at-risk:")) {
     primaryGuidance = {
       ...primaryGuidance,
       headline: "Driver blocked",

@@ -80,6 +80,14 @@ export function getDriverWorkerType(driverId: string, data: BofData): WorkerType
   return method.workerType;
 }
 
+function issuePriority(issue: ReturnType<typeof getDriverReviewExplanation>["issues"][number]): number {
+  if (issue.id.startsWith("money-at-risk:")) return 0;
+  if (issue.severity === "critical") return 1;
+  if (issue.severity === "high") return 2;
+  if (issue.severity === "warning") return 3;
+  return 4;
+}
+
 export function getDriverReadinessSummary(driverId: string, data: BofData): DriverReadinessSummary {
   const driver = getDriverById(data, driverId);
   if (!driver) {
@@ -94,7 +102,9 @@ export function getDriverReadinessSummary(driverId: string, data: BofData): Driv
 
   const review = getDriverReviewExplanation(data, driverId);
   const eligibility = getDriverDispatchEligibility(data, driverId);
-  const openIssues = review.issues.filter(issue => !issue.resolved);
+  const openIssues = review.issues
+    .filter(issue => !issue.resolved)
+    .sort((a, b) => issuePriority(a) - issuePriority(b));
   
   // Determine primary issue and status
   const primaryIssue = openIssues.length > 0 ? openIssues[0] : null;

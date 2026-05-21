@@ -34,6 +34,11 @@ function issueSeverityRank(s: DriverReviewIssue["severity"]) {
   return s === "critical" ? 0 : s === "high" ? 1 : s === "warning" ? 2 : 3;
 }
 
+function isActiveMoneyAtRisk(row: BofData["moneyAtRisk"][number]): boolean {
+  const status = String(row.status ?? "").trim().toUpperCase();
+  return !["", "PAID", "CLOSED", "RESOLVED"].includes(status);
+}
+
 function compactFix(text: string | undefined): string {
   const raw = (text ?? "").trim();
   if (!raw) return "review and resolve";
@@ -88,9 +93,7 @@ export function getDriverTableRowModel(data: BofData, driverId: string): DriverT
     "Standard") as DriverTableRowModel["safetyLabel"];
 
   const settlement = data.settlements.find((row) => row.driverId === driverId);
-  const hasHold = data.moneyAtRisk.some(
-    (item) => item.driverId === driverId && String(item.status ?? "").toUpperCase() === "BLOCKED"
-  );
+  const hasHold = data.moneyAtRisk.some((item) => item.driverId === driverId && isActiveMoneyAtRisk(item));
   const settlementHold =
     String(settlement?.status ?? "").toLowerCase().includes("hold") ||
     String(settlement?.status ?? "").toLowerCase().includes("review");
@@ -98,7 +101,7 @@ export function getDriverTableRowModel(data: BofData, driverId: string): DriverT
     hasHold || settlementHold ? "Hold / Review" : settlement?.status === "Paid" ? "Paid" : "Pending";
 
   const pendingPay = data.moneyAtRisk
-    .filter((item) => item.driverId === driverId && String(item.status ?? "").toUpperCase() !== "PAID")
+    .filter((item) => item.driverId === driverId && isActiveMoneyAtRisk(item))
     .reduce((sum, item) => sum + item.amount, 0);
 
   const activeLoad = data.loads.find(

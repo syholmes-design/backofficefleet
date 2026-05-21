@@ -222,6 +222,16 @@ export function ComplianceDashboardV4() {
     }
   };
 
+  const getActionLinkLabel = (action: ComplianceActionQueue) => {
+    const text = `${action.driverId} ${action.complianceArea} ${action.documentType} ${action.issueType}`.toLowerCase();
+    if (text.includes("seal")) return "Review seal proof stack";
+    if (text.includes("lumper") || text.includes("zelle")) return "Open QR lumper closeout";
+    if (text.includes("hos") || text.includes("coaching")) return "Open driver follow-up";
+    if (text.includes("pre-trip") || text.includes("photo")) return "Open proof workflow";
+    if (text.includes("medical")) return "Open medical verification";
+    return "Open fix path";
+  };
+
   // Get compliance area icon
   const getComplianceAreaIcon = (area: string) => {
     switch (area.toLowerCase()) {
@@ -523,7 +533,7 @@ export function ComplianceDashboardV4() {
                         className="inline-flex items-center gap-2 text-blue-400 hover:text-blue-300 text-sm"
                       >
                         <ExternalLink className="w-4 h-4" />
-                        Action Link / Fix Path
+                        {getActionLinkLabel(action)}
                       </a>
                     </div>
                   )}

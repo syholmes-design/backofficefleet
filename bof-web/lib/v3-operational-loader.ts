@@ -415,7 +415,7 @@ function parseSettlementHolds(data: string[][]): SettlementHold[] {
       holdId: String(obj['Hold ID'] || ''),
       weekEnding: parseToDate(String(obj['Week Ending'])),
       driverId: String(obj['Driver ID'] || ''),
-      loadId: String(obj['Load ID'] || ''),
+      loadId: normalizeDemoLoadId(String(obj['Load ID'] || '')),
       holdType: String(obj['Hold Type'] || ''),
       holdReason: String(obj['Hold Reason'] || ''),
       relatedModule: String(obj['Related Module'] || ''),
@@ -497,7 +497,7 @@ function parseSafetyEvents(data: string[][]): SafetyEvent[] {
       policyNumber: String(obj['Policy Number'] || ''),
       claimNotes: String(obj['Claim Notes'] || ''),
       rfidRelated: parseBoolean(obj['RFID Related?']),
-      linkedLoadId: String(obj['Linked Load ID'] || ''),
+      linkedLoadId: normalizeDemoLoadId(String(obj['Linked Load ID'] || '')),
       linkedDriverDocument: String(obj['Linked Driver Document'] || ''),
       claimExposureBand: String(obj['Claim Exposure Band'] || ''),
       insuranceClaimNeeded: parseBoolean(obj['Insurance Claim Needed?']),
@@ -638,13 +638,42 @@ function parseComplianceActionQueue(data: string[][]): ComplianceActionQueue[] {
     headers.forEach((header, index) => {
       obj[header] = row[index];
     });
+    const driverId = String(obj['Driver ID'] || '');
+    let documentType = String(obj['Document Type'] || '');
+    let issueType = String(obj['Issue Type'] || '');
+    let requiredFix = String(obj['Required Fix'] || '');
+    let fixLink = String(obj['Fix Link'] || '');
+    let complianceArea = String(obj['Compliance Area'] || '');
+
+    if (driverId === 'DRV-001') {
+      fixLink = '/shipper-portal/L001';
+      complianceArea = 'Dispatch Proof';
+      documentType = 'Seal Exception Packet';
+      issueType = 'Seal mismatch review required';
+      requiredFix = 'Review pickup seal, delivery seal, BOL, POD, and RFID proof before releasing the hold';
+    } else if (driverId === 'DRV-007') {
+      fixLink = '/shipper-portal/L007#lumper-workflow';
+      complianceArea = 'Settlement Proof';
+      documentType = 'QR Lumper Closeout';
+      issueType = 'QR lumper authorization and Zelle payment closeout pending';
+      requiredFix = 'Match QR dock authorization, empty-trailer proof, and Zelle payment confirmation before releasing accessorial closeout';
+    } else if (driverId === 'DRV-010') {
+      fixLink = '/portals/driver/DRV-010';
+      complianceArea = 'Safety/HOS';
+      documentType = 'HOS Coaching Acknowledgment';
+      issueType = 'HOS coaching acknowledgment missing';
+      requiredFix = 'Complete HOS coaching, collect driver acknowledgment, and confirm the reroute/fatigue follow-up is documented';
+    } else {
+      fixLink = normalizeLegacyLoadPath(fixLink);
+    }
+
     return {
       actionId: String(obj['Action ID'] || ''),
-      driverId: String(obj['Driver ID'] || ''),
+      driverId,
       driverName: String(obj['Driver Name'] || ''),
-      complianceArea: String(obj['Compliance Area'] || ''),
-      documentType: String(obj['Document Type'] || ''),
-      issueType: String(obj['Issue Type'] || ''),
+      complianceArea,
+      documentType,
+      issueType,
       severity: String(obj['Severity'] || ''),
       status: String(obj['Status'] || ''),
       dueDate: String(obj['Due Date'] || ''),
@@ -654,8 +683,8 @@ function parseComplianceActionQueue(data: string[][]): ComplianceActionQueue[] {
       assignedTo: String(obj['Assigned To'] || ''),
       lastReviewedBy: String(obj['Last Reviewed By'] || ''),
       lastReviewedDate: String(obj['Last Reviewed Date'] || ''),
-      requiredFix: String(obj['Required Fix'] || ''),
-      fixLink: String(obj['Fix Link'] || ''),
+      requiredFix,
+      fixLink,
       managerActionRequired: Boolean(obj['Manager Action Required']),
     };
   });
@@ -740,6 +769,15 @@ function normalizeDemoLoadId(value: string): string {
   const sequence = Number(legacyMatch[1]) - 500;
   if (!Number.isFinite(sequence) || sequence < 1 || sequence > 999) return trimmed;
   return `L${String(sequence).padStart(3, '0')}`;
+}
+
+function normalizeLegacyLoadPath(value: string): string {
+  const trimmed = value.trim();
+  const match = trimmed.match(/L-(\d{3})/i);
+  if (!match) return trimmed;
+  const canonicalLoadId = normalizeDemoLoadId(`L-${match[1]}`);
+  if (/^\/dispatch\//i.test(trimmed) || /\/proof\b/i.test(trimmed)) return `/shipper-portal/${canonicalLoadId}`;
+  return trimmed.replace(match[0], canonicalLoadId);
 }
 
 function riskLabelFromScore(score: number): string {

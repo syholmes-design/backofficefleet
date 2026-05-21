@@ -59,6 +59,11 @@ function statusU(doc: DocumentRow | undefined): string {
   return (doc?.status ?? "MISSING").toUpperCase();
 }
 
+function isActiveMoneyAtRisk(row: BofData["moneyAtRisk"][number]): boolean {
+  const status = String(row.status ?? "").trim().toUpperCase();
+  return !["", "PAID", "CLOSED", "RESOLVED"].includes(status);
+}
+
 function isHardDocMissingOrExpired(doc: DocumentRow | undefined): boolean {
   const s = statusU(doc);
   return s === "MISSING" || s === "EXPIRED";
@@ -283,12 +288,12 @@ export function getDriverDispatchEligibility(data: BofData, driverId: string): D
   }
 
   const hasSettlementOrPayBlock = data.moneyAtRisk.some(
-    (m) => m.driverId === driverId && String(m.status ?? "").toUpperCase() === "BLOCKED"
+    (m) => m.driverId === driverId && isActiveMoneyAtRisk(m)
   );
   const hasDispatchSpecificMoneyBlock = data.moneyAtRisk.some(
     (m) =>
       m.driverId === driverId &&
-      String(m.status ?? "").toUpperCase() === "BLOCKED" &&
+      isActiveMoneyAtRisk(m) &&
       /dispatch|out[- ]of[- ]service|oos|safety hold/i.test(
         `${m.category ?? ""} ${m.rootCause ?? ""} ${m.nextBestAction ?? ""}`
       )
@@ -317,11 +322,6 @@ export function getDriverDispatchEligibility(data: BofData, driverId: string): D
     softWarnings.push("Bank / direct deposit info incomplete");
   } else if (statusU(bank) !== "VALID") {
     softWarnings.push(`Bank info: ${bank.status}`);
-  }
-
-  const settlement = data.settlements.find((s) => s.driverId === driverId);
-  if (settlement?.status?.toUpperCase() === "PENDING") {
-    softWarnings.push("Settlement pending review");
   }
 
   const reasons = [...hardBlockers, ...softWarnings];
