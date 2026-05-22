@@ -19,6 +19,14 @@
     {
       "id": "source-of-truth-mapping",
       "path": ".codex/skills/source-of-truth-mapping.md"
+    },
+    {
+      "id": "instruction-quality-gate",
+      "path": ".codex/skills/instruction-quality-gate.md"
+    },
+    {
+      "id": "low-intelligence-budget",
+      "path": ".agents/skills/low-intelligence-budget/SKILL.md"
     }
   ]
 }

@@ -1,0 +1,9 @@
+# Low Intelligence Budget Rule
+
+BackOfficeFleet should run in low-effort mode by default.
+
+Use compact responses, focused file reads, existing registries, existing agents, and scripts instead of long explanations or broad scans.
+
+Escalate only when the user explicitly asks for deeper analysis.
+
+Never suppress safety warnings for overwrites, rollback risk, backup failures, destructive edits, source-of-truth conflicts, validation integrity, or obvious demo-breaking problems.

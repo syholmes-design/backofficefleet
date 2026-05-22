@@ -25,9 +25,13 @@ if (missing.length) {
   process.exit(0);
 }
 
+const budgetMessage = "[codex] Shared Intelligence Budget Rule is active: use compact low-effort handling by default while preserving safety warnings.";
+
 if (!fs.existsSync(SENTINEL)) {
   fs.mkdirSync(path.dirname(SENTINEL), { recursive: true });
   fs.writeFileSync(SENTINEL, new Date().toISOString());
   console.log("[codex] BackOfficeFleet project-local Codex setup is available. See AGENTS.md and .codex/session-brief.md.");
   console.log("[codex] Run `npm run codex:bootstrap` for the full environment summary when needed.");
 }
+
+console.log(budgetMessage);

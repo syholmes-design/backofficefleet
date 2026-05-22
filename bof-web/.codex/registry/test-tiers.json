@@ -1,0 +1,37 @@
+{
+  "tiers": {
+    "fast-smoke": {
+      "purpose": "Quick confidence during ordinary development.",
+      "examples": [
+        "priority route render checks",
+        "main nav smoke",
+        "app startup check"
+      ],
+      "expected_runtime": "short",
+      "required_before_every_small_change": true
+    },
+    "before-demo": {
+      "purpose": "Protect the owner from showing an incomplete or broken demo.",
+      "examples": [
+        "priority route checks",
+        "important links",
+        "proof packet links",
+        "placeholder scan",
+        "visual smoke screenshots"
+      ],
+      "expected_runtime": "moderate",
+      "required_before_showing_demo": true
+    },
+    "deep-audit": {
+      "purpose": "Broad quality scan for large route and artifact coverage.",
+      "examples": [
+        "all route crawl",
+        "all document artifact checks",
+        "all generated fallback checks",
+        "large visual scan"
+      ],
+      "expected_runtime": "slow",
+      "required_before_every_small_change": false
+    }
+  }
+}

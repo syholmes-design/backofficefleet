@@ -36,11 +36,18 @@ const required = [
 ];
 
 const missing = required.filter((rel) => !exists(rel));
-const cloudPath = /OneDrive|Dropbox|Google Drive|iCloud/i.test(ROOT);
+const sharedCloudPath = /OneDrive|Dropbox|Google Drive|iCloud/i.test(ROOT);
 const gitPresent = exists(".git");
 
 const output = [
   "# BackOfficeFleet Codex Bootstrap",
+  "",
+  "## Shared Usage Budget",
+  `Default effort: ${manifest.sharedUsageBudget?.defaultEffort ?? "low"}`,
+  `Rule: ${manifest.sharedUsageBudget?.rootRule ?? "AGENTS.md#Shared Intelligence Budget Rule"}`,
+  `Agent: ${manifest.sharedUsageBudget?.agent ?? ".codex/agents/intelligence-budget-controller.md"}`,
+  `Skill: ${manifest.sharedUsageBudget?.skill ?? ".agents/skills/low-intelligence-budget/SKILL.md"}`,
+  manifest.sharedUsageBudget?.summary ?? "Use compact, low-effort handling by default while preserving safety warnings.",
   "",
   "## Auto-Load Files",
   `Root instructions: ${manifest.autoLoad.rootInstructions}`,
@@ -61,13 +68,13 @@ const output = [
   "",
   "## Environment Status",
   `Workspace: ${ROOT}`,
-  `Cloud-sync path detected: ${cloudPath ? "yes" : "no"}`,
+  `Shared cloud folder detected: ${sharedCloudPath ? "yes" : "no"}`,
   `Git metadata present: ${gitPresent ? "yes" : "no"}`,
   missing.length ? `Missing required files:\n${oneLineList(missing)}` : "Required Codex files: OK",
   "",
   "## Next Step",
-  cloudPath
-    ? "Because this is a cloud-shared folder, move or clone to a non-cloud local path before trusting build/lint/typecheck if Node read errors appear."
+  sharedCloudPath
+    ? "This shared cloud folder is supported. If Node read errors appear, check hydration, file locks, dependency install state, and build caches in place."
     : "Run npm run codex:registry-sync, then the audit command relevant to the task.",
   ""
 ].join("\n");

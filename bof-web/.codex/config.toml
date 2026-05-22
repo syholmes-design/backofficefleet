@@ -1,0 +1,4 @@
+# BackOfficeFleet project preference.
+# Keep this project on low-effort behavior by default.
+# Do not voluntarily escalate reasoning unless the user explicitly asks.
+# Root AGENTS.md remains the primary shared instruction surface.
