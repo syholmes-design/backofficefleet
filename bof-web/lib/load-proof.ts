@@ -102,7 +102,8 @@ export type LoadEvidenceType =
   | "settlement_hold_notice"
   | "damage_photo_packet"
   | "claim_packet"
-  | "insurance_notice";
+  | "insurance_notice"
+  | "proof_card_composite";
 
 export type LoadEvidenceStatus =
   | "ready"
