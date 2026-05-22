@@ -236,7 +236,7 @@ function LoadProofSection({ driverId }: { driverId: string }) {
   if (!loadContext.hasActiveLoad) {
     return (
       <div className="text-center text-slate-500 py-8">
-        No active load requiring proof
+        No active load proof packet is assigned to this driver.
       </div>
     );
   }

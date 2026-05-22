@@ -234,7 +234,7 @@ export function buildPretripTabletModel(
     label: "Maintenance report",
     status: mar || canonicalPretripBlock ? "Warning" : "OK",
     critical: Boolean(mar || canonicalPretripBlock) && !delivered,
-    href: canonicalPretripBlock ? "/maintenance/work-orders/WO-003" : "/money-at-risk",
+    href: canonicalPretripBlock ? "/maintenance" : "/money-at-risk",
     actionKind: mar || canonicalPretripBlock ? "resolve" : "view",
     actionLabel: mar || canonicalPretripBlock ? "Review maintenance hold" : "Open maintenance status",
   };
@@ -244,7 +244,7 @@ export function buildPretripTabletModel(
     label: "Tire check",
     status: mar || canonicalPretripBlock ? "Warning" : "OK",
     critical: canonicalPretripBlock,
-    href: canonicalPretripBlock ? "/maintenance/work-orders/WO-003" : "/money-at-risk",
+    href: canonicalPretripBlock ? "/maintenance" : "/money-at-risk",
     actionKind: canonicalPretripBlock ? "resolve" : "view",
     actionLabel: canonicalPretripBlock ? "Clear tire defect" : "Open tire status",
   };

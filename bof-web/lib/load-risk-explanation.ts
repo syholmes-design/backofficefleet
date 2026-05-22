@@ -190,8 +190,8 @@ export function getLoadRiskExplanation(
         "The load should not move until the tire defect is repaired, the work order is closed, and pre-trip proof is rechecked.",
       recommendedFix:
         "Clear maintenance work order WO-003, upload repair proof, and rerun the pre-trip release check.",
-      actionHref: "/maintenance/work-orders/WO-003",
-      actionLabel: "Open Work Order",
+      actionHref: "/maintenance",
+      actionLabel: "Open Maintenance Board",
       clearableInDemo: true,
     });
   }

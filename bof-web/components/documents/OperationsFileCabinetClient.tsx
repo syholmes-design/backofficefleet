@@ -1162,7 +1162,7 @@ export function OperationsFileCabinetClient() {
         </div>
       </div>
 
-      {/* Planned Cabinet Additions */}
+      {/* Operations Expansion Queue */}
       <div style={{
         marginBottom: "2rem"
       }}>
@@ -1172,7 +1172,7 @@ export function OperationsFileCabinetClient() {
           color: "rgba(255, 255, 255, 0.9)",
           margin: "0 0 1rem 0"
         }}>
-          Planned Cabinet Additions
+          Operations Expansion Queue
         </h2>
         <p style={{
           fontSize: "0.9rem",
@@ -1180,7 +1180,7 @@ export function OperationsFileCabinetClient() {
           margin: "0 0 1.5rem 0",
           lineHeight: "1.4"
         }}>
-          These items are planned for future implementation.
+          Additional cabinets are tracked for rollout as roadmap-ready modules for HR, finance, safety, and compliance expansion.
         </p>
         
         <div style={{

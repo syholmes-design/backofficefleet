@@ -603,6 +603,14 @@ export function SafetyDashboardV4() {
               {recentEvents.map((event) => {
                 const evidence = getSafetyEventEvidence(event);
 
+                const eventStoryText = `${event.eventType} ${event.details}`.toLowerCase();
+                const showClaimLine = Boolean(
+                  event.claimStatus &&
+                  (event.driverId === "DRV-008" ||
+                    eventStoryText.includes("claim") ||
+                    eventStoryText.includes("damage") ||
+                    eventStoryText.includes("cargo"))
+                );
                 return (
                 <div key={event.eventId} className="bg-slate-800/50 border border-slate-700 rounded-lg p-4">
                   <div className="flex items-start justify-between">
@@ -669,7 +677,7 @@ export function SafetyDashboardV4() {
                         
                         <div>
                           <div className="text-slate-300 text-sm mb-1">{event.details}</div>
-                          {event.claimStatus && (
+                          {showClaimLine && (
                             <div className="text-slate-400 text-sm">
                               Claim: {titleize(event.claimStatus)} • ${event.claimAmount.toLocaleString()}
                             </div>

@@ -31,8 +31,17 @@ export function getDriverLoadContext(driverId: string): DriverLoadContext {
     return dateB.getTime() - dateA.getTime();
   });
 
-  // Find active load (not delivered)
-  const activeLoad = sortedLoads.find(load => load.status !== 'Delivered');
+  const canonicalActiveLoadIds: Record<string, string> = {
+    "DRV-008": "L008",
+    "DRV-009": "L009",
+  };
+
+  // Find active load. Canonical exception loads can remain driver-facing after delivery
+  // when BOF is still managing claim review or pre-trip release work.
+  const canonicalActiveLoad = canonicalActiveLoadIds[driverId]
+    ? sortedLoads.find(load => load.id === canonicalActiveLoadIds[driverId])
+    : undefined;
+  const activeLoad = sortedLoads.find(load => load.status !== 'Delivered') ?? canonicalActiveLoad;
   
   // Get recent loads (last 2-3)
   const recentLoads = sortedLoads.slice(0, 3).map(load => ({
@@ -110,6 +119,29 @@ export function getLoadProofItems(loadId: string): LoadProofItem[] {
 
   const registry = buildLoadPacketRegistry(data, loadId);
   if (!registry) return [];
+
+  if (loadId === "L009") {
+    return [
+      proofItem(registry, "work_order", "Pre-trip work order", "Maintenance work order required before dispatch release."),
+      proofItem(registry, "rate_confirmation", "Rate confirmation", "Rate confirmation must be reviewed before trip release."),
+      proofItem(registry, "bol", "Bill of Lading (BOL)", "BOL required for load release and pickup."),
+      proofItem(registry, "cargo_photo", "Pre-trip cargo photo", "Pre-trip cargo condition photo required before dispatch."),
+      proofItem(registry, "seal_pickup_photo", "Pickup seal proof", "Pickup seal photo required before dispatch."),
+      proofItem(registry, "rfid_geo", "RFID / yard proof", "RFID yard proof required to clear the pre-trip exception."),
+    ];
+  }
+
+  if (loadId === "L008") {
+    return [
+      proofItem(registry, "bol", "Bill of Lading (BOL)", "BOL required for claim review."),
+      proofItem(registry, "pod", "Signed BOL / POD", "POD required for delivered loads."),
+      proofItem(registry, "cargo_photo", "Cargo condition photo", "Cargo condition photo required for the claim file."),
+      proofItem(registry, "delivery_empty_trailer", "Delivery / Empty Trailer Proof", "Delivery photo required for load completion."),
+      proofItem(registry, "seal_delivery_photo", "Delivery seal proof", "Delivery seal proof required for claim review."),
+      proofItem(registry, "damage_photo_packet", "Damage / claim evidence", "Damage photos required for the open claim review."),
+      proofItem(registry, "claim_packet", "Claim packet", "Claim packet required for safety and cargo-damage escalation."),
+    ];
+  }
 
   return [
     proofItem(registry, "bol", "Bill of Lading (BOL)", "BOL required for load completion."),

@@ -107,7 +107,9 @@ function generateDriverPortalProfiles(): DriverPortalProfile[] {
       ? `${missingDocuments.length} document(s) missing`
       : expiringDocuments.length > 0 
         ? `${expiringDocuments.length} document(s) expiring soon`
-        : 'All documents current';
+        : readinessSummary.status !== 'ready'
+          ? `Readiness action: ${readinessSummary.primaryReason}`
+          : 'Document vault clear';
     
     // Calculate pending acknowledgments from canonical data
     const pendingAcknowledgments = acknowledgmentSummary.pending;

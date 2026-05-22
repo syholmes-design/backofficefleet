@@ -99,7 +99,7 @@ function getRiskStory(risk: OperationalRiskQueue) {
       primaryHref: `/pretrip/${loadId}`,
       actions: [
         { label: "Open pre-trip block", href: `/pretrip/${loadId}`, tone: "danger" },
-        { label: "Review work order", href: "/maintenance/work-orders/WO-003", tone: "warning" },
+        { label: "Open maintenance board", href: "/maintenance", tone: "warning" },
         { label: "Open load record", href: `/loads/${loadId}` },
         { label: "Driver HR note", href: `/drivers/${risk.driverId}/hr` },
       ] satisfies RiskAction[],
