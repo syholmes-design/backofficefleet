@@ -20,7 +20,8 @@ export type LoadEvidenceKey =
   | "tempCheckPhoto"
   | "weightTicketPhoto"
   | "detentionProofPhoto"
-  | "safetyViolationPhoto";
+  | "safetyViolationPhoto"
+  | "proofCardComposite";
 
 export type LoadEvidenceSource = "real" | "ai_generated" | "svg_demo" | "missing";
 export type LoadEvidenceManifestValue =
