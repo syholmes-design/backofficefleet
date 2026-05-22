@@ -11,6 +11,7 @@ import {
   proofBlockingCount,
 } from "./load-proof";
 import { getLoadArtifactActionUrl } from "./load-artifact-registry";
+import { getCanonicalLoadStory } from "./canonical-load-stories";
 
 export type PretripLineStatus = "OK" | "Missing" | "Warning";
 
@@ -161,6 +162,8 @@ export function buildPretripTabletModel(
   const pendingAssign = load.status === "Pending";
   const delivered = load.status === "Delivered";
   const enRoute = load.status === "En Route";
+  const canonicalStory = getCanonicalLoadStory(loadId);
+  const canonicalPretripBlock = canonicalStory?.loadId === "L009" && !delivered;
 
   const rate = proofByType(data, loadId, "Rate Confirmation");
   const bol = proofByType(data, loadId, "BOL");
@@ -229,21 +232,21 @@ export function buildPretripTabletModel(
   const maintLine: PretripLine = {
     id: "maint-report",
     label: "Maintenance report",
-    status: mar ? "Warning" : "OK",
-    critical: Boolean(mar) && !delivered,
-    href: "/money-at-risk",
-    actionKind: mar ? "resolve" : "view",
-    actionLabel: mar ? "Review maintenance hold" : "Open maintenance status",
+    status: mar || canonicalPretripBlock ? "Warning" : "OK",
+    critical: Boolean(mar || canonicalPretripBlock) && !delivered,
+    href: canonicalPretripBlock ? "/maintenance/work-orders/WO-003" : "/money-at-risk",
+    actionKind: mar || canonicalPretripBlock ? "resolve" : "view",
+    actionLabel: mar || canonicalPretripBlock ? "Review maintenance hold" : "Open maintenance status",
   };
 
   const tireLine: PretripLine = {
     id: "tire-check",
     label: "Tire check",
-    status: mar ? "Warning" : "OK",
-    critical: false,
-    href: "/money-at-risk",
-    actionKind: "view",
-    actionLabel: "Open tire status",
+    status: mar || canonicalPretripBlock ? "Warning" : "OK",
+    critical: canonicalPretripBlock,
+    href: canonicalPretripBlock ? "/maintenance/work-orders/WO-003" : "/money-at-risk",
+    actionKind: canonicalPretripBlock ? "resolve" : "view",
+    actionLabel: canonicalPretripBlock ? "Clear tire defect" : "Open tire status",
   };
 
   const fuelLine: PretripLine = {

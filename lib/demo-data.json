@@ -2366,7 +2366,7 @@
       "pickupSeal": "SEAL-26790",
       "deliverySeal": "SEAL-26790",
       "sealStatus": "OK",
-      "dispatchExceptionFlag": false,
+      "dispatchExceptionFlag": true,
       "proofStatus": "Complete",
       "documentStatus": "Needs Review",
       "settlementHold": false,
@@ -2392,7 +2392,7 @@
       "extractionConfidence": 1,
       "extractionWarnings": [],
       "reviewedAt": null,
-      "dispatchOpsNotes": "Customer hold | Carrier note logged"
+      "dispatchOpsNotes": "BOF dispatch block: pre-trip tire / asset defect requires manager review, WO-003 repair proof, and RFID readiness recheck before release."
     },
     {
       "id": "L010",
@@ -3788,7 +3788,7 @@
       }
     },
     "L009": {
-      "claimApplicable": true,
+      "claimApplicable": false,
       "items": {
         "Rate Confirmation": {
           "status": "Complete",
@@ -3796,14 +3796,14 @@
           "disputeExposure": false
         },
         "BOL": {
-          "status": "Disputed",
+          "status": "Complete",
           "blocksPayment": false,
-          "disputeExposure": true
+          "disputeExposure": false
         },
         "Signed BOL": {
-          "status": "Disputed",
+          "status": "Complete",
           "blocksPayment": false,
-          "disputeExposure": true
+          "disputeExposure": false
         },
         "POD": {
           "status": "Complete",
@@ -3841,14 +3841,14 @@
           "disputeExposure": false
         },
         "Cargo Damage Photos": {
-          "status": "Pending",
+          "status": "Not required",
           "blocksPayment": false,
-          "disputeExposure": true
+          "disputeExposure": false
         },
         "Claim Support Docs": {
-          "status": "Pending",
+          "status": "Not required",
           "blocksPayment": false,
-          "disputeExposure": true
+          "disputeExposure": false
         }
       }
     },

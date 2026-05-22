@@ -21,6 +21,7 @@ import {
   isLoadProofCompositeException,
   resolveLoadProofAsset,
 } from "./load-proof-asset-resolver";
+import { canonicalLoadHasClaim, canonicalLoadHasFactoring } from "./canonical-load-stories";
 
 export type TripPacketGroupId = "core" | "proof" | "exceptions" | "reference";
 
@@ -95,6 +96,8 @@ function claimApplicable(
   load: NonNullable<ReturnType<typeof loadRecord>>,
   bundle: LoadProofBundle | null
 ) {
+  const canonicalClaim = canonicalLoadHasClaim(load.id);
+  if (canonicalClaim === false) return false;
   if (bundle?.claimApplicable != null) return bundle.claimApplicable;
   return (
     Boolean(load.dispatchExceptionFlag) ||
@@ -200,7 +203,8 @@ export function buildTripDocumentPacket(data: BofData, loadId: string): TripPack
   const damagePhotoPacketUrl = gen("damagePhotoPacket");
   const insuranceUrl = canon("insurance_packet")?.url ?? gen("insuranceNotification");
   const settlementHoldNoticeUrl = gen("settlementHoldNotice");
-  const factoringUrl = gen("factoringNotification");
+  const factoringOk = canonicalLoadHasFactoring(loadId) !== false;
+  const factoringUrl = factoringOk ? gen("factoringNotification") : undefined;
   const sealMismatchPhotoUrl = ev("sealMismatchPhoto");
 
   const rowsUncached: TripPacketRow[] = [

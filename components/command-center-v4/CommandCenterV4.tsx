@@ -21,7 +21,8 @@ import {
 } from "lucide-react";
 import { getV3OperationalData, isV3DataAvailable } from "@/lib/v3-operational-loader";
 import { formatDisplayDate } from "@/lib/date-utils";
-import type { OperationalRiskQueue } from "@/lib/v3-operational-types";
+import type { OperationalRiskQueue, V3OperationalData } from "@/lib/v3-operational-types";
+import { L009_CANONICAL_STORY } from "@/lib/canonical-load-stories";
 
 type RiskAction = {
   label: string;
@@ -75,6 +76,21 @@ function getRiskStory(risk: OperationalRiskQueue) {
     };
   }
 
+  if (type.includes("tire") || type.includes("asset defect") || type.includes("maintenance") || type.includes("pre-trip")) {
+    return {
+      headline: "Pre-trip asset defect blocks dispatch",
+      urgency: "BOF is holding the load before departure until the tire defect is repaired, the work order is closed, and RFID/pre-trip proof is rechecked.",
+      primaryLabel: "Open pre-trip block",
+      primaryHref: `/pretrip/${loadId}`,
+      actions: [
+        { label: "Open pre-trip block", href: `/pretrip/${loadId}`, tone: "danger" },
+        { label: "Review work order", href: "/maintenance/work-orders/WO-003", tone: "warning" },
+        { label: "Open load record", href: `/loads/${loadId}` },
+        { label: "Driver HR note", href: `/drivers/${risk.driverId}/hr` },
+      ] satisfies RiskAction[],
+    };
+  }
+
   if (type.includes("lumper") || type.includes("settlement") || type.includes("receipt")) {
     return {
       headline: "Lumper QR closeout needs review",
@@ -124,6 +140,51 @@ function moduleHref(module: string) {
   return "/documents";
 }
 
+function withCanonicalL009Risk(data: V3OperationalData): OperationalRiskQueue[] {
+  const existing = data.operationalRiskQueue;
+  if (existing.some((risk) => normalizeLoadId(risk.loadId) === L009_CANONICAL_STORY.loadId)) {
+    return existing;
+  }
+
+  const workOrder = data.maintenanceWorkOrders.find(
+    (wo) =>
+      wo.workOrderId === L009_CANONICAL_STORY.maintenanceWorkOrderId ||
+      (wo.driverId === L009_CANONICAL_STORY.driverId && /tire|asset/i.test(`${wo.issueType} ${wo.defectDescription}`))
+  );
+  const rfid = data.rfidEvents.find(
+    (event) =>
+      event.rfidEventId === L009_CANONICAL_STORY.rfidEventId ||
+      (normalizeLoadId(event.loadId) === L009_CANONICAL_STORY.loadId && event.driverId === L009_CANONICAL_STORY.driverId)
+  );
+
+  if (!workOrder && !rfid) return existing;
+
+  const l009Risk: OperationalRiskQueue = {
+    riskId: "ORQ-L009-PRETRIP-ASSET",
+    module: "Dispatch/RFID",
+    driverId: L009_CANONICAL_STORY.driverId,
+    loadId: L009_CANONICAL_STORY.loadId,
+    assetId: L009_CANONICAL_STORY.assetId,
+    relatedEventId: [workOrder?.workOrderId, rfid?.rfidEventId].filter(Boolean).join(" / "),
+    riskType: "Pre-trip tire / asset defect",
+    severity: "Critical",
+    status: "Open",
+    businessImpact: "Dispatch is blocked before pickup until the tire defect is repaired and pre-trip proof is cleared.",
+    dispatchImpact: "Blocked",
+    settlementImpact: "None",
+    complianceImpact: "DOT / maintenance review required",
+    insuranceImpact: "None",
+    dueDate: "2026-05-23",
+    assignedTo: "Maintenance Lead",
+    recommendedAction: "Repair tire, upload closeout photo, confirm RFID/pre-trip readiness, then release dispatch.",
+    resolutionStatus: "Open",
+    resolvedDate: "",
+    managerActionRequired: true,
+  };
+
+  return [l009Risk, ...existing];
+}
+
 export function CommandCenterV4() {
   const [operationalRisks, setOperationalRisks] = useState<OperationalRiskQueue[]>([]);
   const [loading, setLoading] = useState(true);
@@ -149,7 +210,7 @@ export function CommandCenterV4() {
         console.log('📊 Loading V4 operational risk data...');
         const v3Data = await getV3OperationalData();
         
-        setOperationalRisks(v3Data.operationalRiskQueue);
+        setOperationalRisks(withCanonicalL009Risk(v3Data));
         
         console.log(`✅ Loaded ${v3Data.operationalRiskQueue.length} Operational Risks from V4 workbook`);
       } else {
