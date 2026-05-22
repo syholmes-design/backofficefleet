@@ -13,6 +13,7 @@ export type BofLoadEvidenceType =
   | "lumper_receipt"
   | "rfid_geo_proof"
   | "claim_photo"
+  | "proof_card_composite"
   | "insurance_packet";
 
 export type BofLoadEvidence = {
