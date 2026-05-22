@@ -42,7 +42,7 @@ function getHeroMetrics() {
   ] as const;
 }
 
-const FOUNDING_FLEET_HREF = "#founding-fleet";
+const FOUNDING_FLEET_HREF = "/founding-fleet";
 
 const PAIN_POINTS = [
   "Drivers aren’t ready when loads are ready",
@@ -138,9 +138,18 @@ const COMMAND_CENTER_SIGNALS = [
 ] as const;
 
 const BLOG_PREVIEWS = [
-  "Why trucking back offices need enforcement, not more dashboards",
-  "Why proof packets control settlement and cash flow",
-  "How driver readiness prevents dispatch failure",
+  {
+    title: "Why trucking back offices need enforcement, not more dashboards",
+    href: "/blog/enforcement-engine-trucking-back-office",
+  },
+  {
+    title: "Why proof packets control settlement and cash flow",
+    href: "/blog/proof-packets-settlements-cash-flow",
+  },
+  {
+    title: "How driver readiness prevents dispatch failure",
+    href: "/blog/driver-readiness-dispatch-failure",
+  },
 ] as const;
 
 export default function MarketingHomeAccountable() {
@@ -447,22 +456,23 @@ export default function MarketingHomeAccountable() {
       <section id="blog-preview" className="bof-home-section bof-home-section--white" aria-labelledby="bof-home-blog-heading">
         <div className="bof-mkt-container">
           <div className="bof-home-section-head">
-            <p className="bof-home-eyebrow">Fleet Intelligence preview</p>
+            <p className="bof-home-eyebrow">Fleet Intelligence</p>
             <h2 id="bof-home-blog-heading">Fleet Intelligence: Insights from the Enforcement Engine</h2>
             <p>
-              These editorial cards preview the thinking behind BOF. Blog routes are intentionally not linked until the
-              articles are published.
+              Read the operating philosophy behind BOF: enforcement, proof control, driver readiness, and back-office
+              modernization for serious fleets.
             </p>
           </div>
           <div className="bof-home-capability-grid">
-            {BLOG_PREVIEWS.map((title) => (
-              <article key={title} className="bof-home-capability-card">
+            {BLOG_PREVIEWS.map((article) => (
+              <Link key={article.href} href={article.href} className="bof-home-capability-card">
                 <span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-bold uppercase tracking-wide text-slate-600">
-                  Coming soon
+                  Fleet Intelligence
                 </span>
-                <h3>{title}</h3>
-                <p>Fleet Intelligence preview. No broken blog link is exposed.</p>
-              </article>
+                <h3>{article.title}</h3>
+                <p>Read the full article in the Fleet Intelligence library.</p>
+                <strong>Read article &rarr;</strong>
+              </Link>
             ))}
           </div>
         </div>
