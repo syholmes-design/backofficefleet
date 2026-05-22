@@ -15,6 +15,12 @@ import type {
 import { getGeneratedLoadDocUrl } from "./load-doc-manifest";
 import { getLoadEvidenceMeta, getLoadEvidenceUrl } from "./load-documents";
 import { getCanonicalLoadEvidenceByType } from "./canonical-load-evidence";
+import {
+  getLoadProofCompositeKind,
+  getLoadProofCompositeLabel,
+  isLoadProofCompositeException,
+  resolveLoadProofAsset,
+} from "./load-proof-asset-resolver";
 
 export type TripPacketGroupId = "core" | "proof" | "exceptions" | "reference";
 
@@ -173,17 +179,21 @@ export function buildTripDocumentPacket(data: BofData, loadId: string): TripPack
   const workOrderUrl = gen("workOrder");
   const masterUrl = gen("masterAgreementReference");
 
-  const pickupPhotoUrl = ev("pickupPhoto") ?? canon("cargo_pickup_photo")?.url;
-  const cargoPhotoUrl = ev("cargoPhoto") ?? canon("cargo_pickup_photo")?.url ?? gen("cargoPhoto");
-  const sealPickupUrl = canon("seal_pickup_photo")?.url ?? ev("sealPickupPhoto") ?? gen("sealPickupPhoto");
-  const sealDeliveryUrl = canon("seal_delivery_photo")?.url ?? ev("sealDeliveryPhoto") ?? gen("sealDeliveryPhoto");
-  const emptyTrailerUrl = ev("emptyTrailerProof");
-  const deliveryPhotoUrl = ev("deliveryPhoto");
+  const pickupPhotoUrl = resolveLoadProofAsset(loadId, "pickupPhoto") ?? ev("pickupPhoto") ?? canon("cargo_pickup_photo")?.url;
+  const cargoPhotoUrl = resolveLoadProofAsset(loadId, "cargoPickup") ?? ev("cargoPhoto") ?? canon("cargo_pickup_photo")?.url ?? gen("cargoPhoto");
+  const sealPickupUrl = resolveLoadProofAsset(loadId, "sealPickup") ?? canon("seal_pickup_photo")?.url ?? ev("sealPickupPhoto") ?? gen("sealPickupPhoto");
+  const sealDeliveryUrl = resolveLoadProofAsset(loadId, "sealDelivery") ?? canon("seal_delivery_photo")?.url ?? ev("sealDeliveryPhoto") ?? gen("sealDeliveryPhoto");
+  const emptyTrailerUrl = resolveLoadProofAsset(loadId, "emptyTrailer") ?? ev("emptyTrailerProof");
+  const deliveryPhotoUrl = resolveLoadProofAsset(loadId, "deliveryPhoto") ?? ev("deliveryPhoto");
   const deliveryMergedUrl = emptyTrailerUrl || deliveryPhotoUrl;
-  const rfidDockProofUrl = canon("rfid_geo_proof")?.url ?? ev("rfidDockProof");
+  const rfidDockProofUrl = resolveLoadProofAsset(loadId, "rfidDockProof") ?? canon("rfid_geo_proof")?.url ?? ev("rfidDockProof");
   const rfidUrl = rfidDockProofUrl || gen("rfidProof");
   const rfidEvidenceType: LoadEvidenceType = rfidDockProofUrl ? "rfid_dock_proof" : "rfid_proof";
-  const lumperUrl = canon("lumper_receipt")?.url ?? ev("lumperReceipt") ?? gen("lumperReceipt");
+  const lumperUrl = resolveLoadProofAsset(loadId, "lumperReceipt") ?? canon("lumper_receipt")?.url ?? ev("lumperReceipt") ?? gen("lumperReceipt");
+  const proofCardCompositeUrl = resolveLoadProofAsset(loadId, "proofCardComposite") ?? canon("proof_card_composite")?.url;
+  const proofCardCompositeKind = getLoadProofCompositeKind(loadId, proofCardCompositeUrl);
+  const proofCardCompositeIsException = isLoadProofCompositeException(proofCardCompositeKind);
+  const proofCardCompositeIsClaim = proofCardCompositeKind === "claim";
 
   const claimIntakeUrl = gen("claimIntake");
   const claimPacketUrl = gen("claimPacket");
@@ -334,6 +344,21 @@ export function buildTripDocumentPacket(data: BofData, loadId: string): TripPack
       source:
         srcFromEvidence(loadId, "rfidDockProof") ??
         (rfidUrl ? srcFromUrl(rfidUrl) : "rfid"),
+    },
+    {
+      key: "proof_card_composite",
+      label: getLoadProofCompositeLabel(loadId, proofCardCompositeUrl),
+      group: proofCardCompositeIsException ? "exceptions" : "proof",
+      status: proofCardCompositeUrl ? "ready" : "not_applicable",
+      url: proofCardCompositeUrl,
+      note: proofCardCompositeUrl
+        ? "Visual proof-card summary. Individual BOL, POD, rate, seal, cargo, RFID, and closeout records remain the source of truth."
+        : "No optional proof-card preview composite is attached for this load.",
+      requiredForSettlementRelease: false,
+      requiredForClaimRelease: proofCardCompositeIsClaim,
+      deliveredMinimum: false,
+      loadEvidenceType: "proof_card_composite",
+      source: proofCardCompositeUrl ? srcFromUrl(proofCardCompositeUrl) : undefined,
     },
     {
       key: "lumper_receipt",

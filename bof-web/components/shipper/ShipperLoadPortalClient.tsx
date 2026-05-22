@@ -21,6 +21,7 @@ import {
 } from "@/lib/claim-packet";
 import { reconcileCredentialIncident } from "@/lib/compliance/credential-incident-reconciliation";
 import { getGeneratedCrossLinksForLoad } from "@/lib/generated-documents";
+import { getLoadProofCompositeLabel, resolveLoadProofAsset } from "@/lib/load-proof-asset-resolver";
 import type { Load } from "@/types/dispatch";
 import { BofAdvantageCard, BofAdvantageStrip } from "@/components/bof-advantage/BofAdvantageCard";
 import { DieselRouteInsightWidget } from "@/components/fuel/DieselRouteInsightWidget";
@@ -481,24 +482,25 @@ export function ShipperLoadPortalClient({ loadId }: { loadId: string }) {
   const hrefPickupSealPhoto = firstHref(
     pickupProof?.fileUrl,
     pickupProof?.previewUrl,
-    `/evidence/loads/${loadId}/seal-pickup-photo.png`
+    resolveLoadProofAsset(loadId, "sealPickup")
   );
   const hrefDeliverySealPhoto = firstHref(
     deliveryProof?.fileUrl,
     deliveryProof?.previewUrl,
     dispatchLoad.seal_photo_url,
-    `/evidence/loads/${loadId}/seal-delivery-photo.png`
+    resolveLoadProofAsset(loadId, "sealDelivery")
   );
   const hrefCargoPickup = firstHref(
     dispatchLoad.pickup_photo_url,
-    `/evidence/loads/${loadId}/cargo-pickup.jpg`
+    resolveLoadProofAsset(loadId, "cargoPickup")
   );
   const hrefCargoDelivery = firstHref(
     dispatchLoad.delivery_photo_url,
-    `/evidence/loads/${loadId}/cargo-delivery.jpg`
+    resolveLoadProofAsset(loadId, "cargoDelivery")
   );
-  const hrefRfidDock = `/evidence/loads/${loadId}/rfid-dock-proof.png`;
-  const hrefEmptyTrailerProof = `/evidence/loads/${loadId}/empty-trailer-proof.png`;
+  const hrefRfidDock = resolveLoadProofAsset(loadId, "rfidDockProof") ?? `/evidence/loads/${loadId}/rfid-dock-proof.png`;
+  const hrefEmptyTrailerProof = resolveLoadProofAsset(loadId, "emptyTrailer") ?? `/evidence/loads/${loadId}/empty-trailer-proof.png`;
+  const hrefProofCardComposite = resolveLoadProofAsset(loadId, "proofCardComposite");
   const portalHeadline = sealMismatchActive
     ? "Exception response"
     : lumperAutomationActive
@@ -773,6 +775,14 @@ export function ShipperLoadPortalClient({ loadId }: { loadId: string }) {
             </dd>
           </dl>
           <div className="shipper-portal-evidence-grid" aria-label="Clickable exception evidence">
+            {hrefProofCardComposite ? (
+              <EvidenceTile
+                label={getLoadProofCompositeLabel(loadId, hrefProofCardComposite)}
+                detail="Visual packet summary; individual source records remain below."
+                url={hrefProofCardComposite}
+                tone="warning"
+              />
+            ) : null}
             <EvidenceTile
               label={`Pickup seal ${pickupSeal}`}
               detail="Pre-trip baseline captured before departure"

@@ -20,7 +20,6 @@
     "pickupPhoto": "/evidence/loads/L001/pickup-photo.png",
     "deliveryPhoto": "/evidence/loads/L001/delivery-photo.png",
     "damageClaimPhoto": "/evidence/loads/L001/damage-photo.png",
-    "claimEvidence": "/evidence/loads/L001/claim-evidence.png",
     "lumperReceipt": "/evidence/loads/L001/lumper-receipt-photo.jpg"
   },
   "L002": {
@@ -36,13 +35,12 @@
     "settlementHoldNotice": "/generated/loads/L002/settlement-hold-notice.html",
     "cargoPhoto": "/evidence/loads/L002/cargo-pickup.jpg",
     "sealPickupPhoto": "/evidence/loads/L002/seal-pickup-photo.png",
-    "sealDeliveryPhoto": "/evidence/loads/L002/seal-delivery.jpg",
+    "sealDeliveryPhoto": "/evidence/loads/L002/seal-delivery-photo.png",
     "equipmentPhoto": "/evidence/loads/L002/equipment-photo.svg",
     "pickupPhoto": "/evidence/loads/L002/pickup-photo.png",
     "deliveryPhoto": "/evidence/loads/L002/delivery-photo.png",
     "damageClaimPhoto": "/evidence/loads/L002/damage-photo.jpg",
     "lumperReceipt": "/evidence/loads/L002/lumper-receipt-photo.jpg",
-    "claimEvidence": "/evidence/loads/L002/damage-photo.jpg",
     "damagePhotoPacket": "/evidence/loads/L002/damage-photo.jpg"
   },
   "L003": {
@@ -65,9 +63,8 @@
     "equipmentPhoto": "/evidence/loads/L003/equipment-photo.svg",
     "pickupPhoto": "/evidence/loads/L003/pickup-photo.png",
     "deliveryPhoto": "/evidence/loads/L003/delivery-photo.png",
-    "lumperReceipt": "/evidence/loads/L003/lumper-receipt.png",
-    "damageClaimPhoto": "/evidence/loads/L003/damage-photo.png",
-    "claimEvidence": "/evidence/loads/L003/claim-evidence.png"
+    "lumperReceipt": "/evidence/loads/L003/lumper-receipt-photo.jpg",
+    "damageClaimPhoto": "/evidence/loads/L003/damage-photo.png"
   },
   "L004": {
     "rateConfirmation": "/generated/loads/L004/rate-confirmation.html",
@@ -90,7 +87,6 @@
     "pickupPhoto": "/evidence/loads/L004/pickup-photo.png",
     "deliveryPhoto": "/evidence/loads/L004/delivery-photo.png",
     "damageClaimPhoto": "/evidence/loads/L004/damage-photo.png",
-    "claimEvidence": "/evidence/loads/L004/claim-evidence.png",
     "safetyViolationPhoto": "/evidence/safety/b102-tires-irregular-wear.png",
     "lumperReceipt": "/evidence/loads/L004/lumper-receipt-photo.jpg"
   },
@@ -113,7 +109,6 @@
     "deliveryPhoto": "/evidence/loads/L005/delivery-photo.png",
     "damageClaimPhoto": "/evidence/loads/L005/damage-photo.jpg",
     "lumperReceipt": "/evidence/loads/L005/lumper-receipt-photo.jpg",
-    "claimEvidence": "/evidence/loads/L005/damage-photo.jpg",
     "damagePhotoPacket": "/evidence/loads/L005/damage-photo.jpg"
   },
   "L006": {
@@ -137,7 +132,6 @@
     "pickupPhoto": "/evidence/loads/L006/pickup-photo.png",
     "deliveryPhoto": "/evidence/loads/L006/delivery-photo.png",
     "damageClaimPhoto": "/evidence/loads/L006/damage-photo.png",
-    "claimEvidence": "/evidence/loads/L006/claim-evidence.png",
     "lumperReceipt": "/evidence/loads/L006/lumper-receipt-photo.jpg"
   },
   "L007": {
@@ -161,7 +155,6 @@
     "pickupPhoto": "/evidence/loads/L007/pickup-photo.png",
     "deliveryPhoto": "/evidence/loads/L007/delivery-photo.png",
     "damageClaimPhoto": "/evidence/loads/L007/damage-photo.jpg",
-    "claimEvidence": "/evidence/loads/L007/claim-evidence.png",
     "lumperReceipt": "/evidence/loads/L007/lumper-receipt-photo.jpg"
   },
   "L008": {
@@ -177,14 +170,14 @@
     "settlementHoldNotice": "/generated/loads/L008/settlement-hold-notice.html",
     "cargoPhoto": "/evidence/loads/L008/cargo-pickup.jpg",
     "sealPickupPhoto": "/evidence/loads/L008/seal-pickup-photo.png",
-    "sealDeliveryPhoto": "/evidence/loads/L008/seal-delivery.jpg",
+    "sealDeliveryPhoto": "/evidence/loads/L008/seal-delivery-photo.png",
     "equipmentPhoto": "/evidence/loads/L008/equipment-photo.svg",
     "pickupPhoto": "/evidence/loads/L008/pickup-photo.png",
     "deliveryPhoto": "/evidence/loads/L008/delivery-photo.png",
-    "lumperReceipt": "/evidence/loads/L008/lumper-receipt.png",
+    "lumperReceipt": "/evidence/loads/L008/lumper-receipt-photo.jpg",
     "damageClaimPhoto": "/evidence/loads/L008/damage-photo.jpg",
     "safetyViolationPhoto": "/evidence/safety/l405-hos-eld-violation.png",
-    "claimEvidence": "/evidence/loads/L008/damage-photo.jpg",
+    "claimEvidence": "/evidence/loads/L008/claim-evidence.png",
     "damagePhotoPacket": "/evidence/loads/L008/cargo-damage-photo.png"
   },
   "L009": {
@@ -203,7 +196,7 @@
     "claimPacket": "/generated/loads/L009/claim-packet.html",
     "cargoPhoto": "/evidence/loads/L009/cargo-pickup.jpg",
     "sealPickupPhoto": "/evidence/loads/L009/seal-pickup-photo.png",
-    "sealDeliveryPhoto": "/evidence/loads/L009/seal-delivery.jpg",
+    "sealDeliveryPhoto": "/evidence/loads/L009/seal-delivery-photo.png",
     "equipmentPhoto": "/evidence/loads/L009/equipment-photo.svg",
     "pickupPhoto": "/evidence/loads/L009/pickup-photo.png",
     "deliveryPhoto": "/evidence/loads/L009/delivery-photo.png",
@@ -232,7 +225,6 @@
     "pickupPhoto": "/evidence/loads/L010/pickup-photo.png",
     "deliveryPhoto": "/evidence/loads/L010/delivery-photo.png",
     "damageClaimPhoto": "/evidence/loads/L010/damage-photo.png",
-    "claimEvidence": "/evidence/loads/L010/claim-evidence.png",
     "lumperReceipt": "/evidence/loads/L010/lumper-receipt-photo.jpg"
   },
   "L011": {
@@ -248,13 +240,10 @@
     "settlementHoldNotice": "/generated/loads/L011/settlement-hold-notice.html",
     "cargoPhoto": "/evidence/loads/L011/cargo-pickup.jpg",
     "sealPickupPhoto": "/evidence/loads/L011/seal-pickup-photo.png",
-    "sealDeliveryPhoto": "/evidence/loads/L011/seal-delivery.jpg",
+    "sealDeliveryPhoto": "/evidence/loads/L011/seal-delivery-photo.png",
     "equipmentPhoto": "/evidence/loads/L011/equipment-photo.svg",
     "pickupPhoto": "/evidence/loads/L011/pickup-photo.png",
     "deliveryPhoto": "/evidence/loads/L011/delivery-photo.png",
-    "damageClaimPhoto": "/evidence/loads/L011/damage-photo.jpg",
-    "lumperReceipt": "/evidence/loads/L011/lumper-receipt-photo.jpg",
-    "claimEvidence": "/evidence/loads/L011/damage-photo.jpg",
     "damagePhotoPacket": "/evidence/loads/L011/damage-photo.jpg"
   },
   "L012": {
