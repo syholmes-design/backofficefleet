@@ -5,6 +5,7 @@ import {
   getLoadProofItems,
   type LoadProofItem,
 } from "./load-proof";
+import { canonicalLoadHasClaim } from "./canonical-load-stories";
 
 function loadRecord(data: BofData, loadId: string) {
   return data.loads.find((l) => l.id === loadId) ?? null;
@@ -25,6 +26,9 @@ function bundleClaimApplicable(data: BofData, loadId: string): boolean | null {
 export function isClaimPacketEligible(data: BofData, loadId: string): boolean {
   const load = loadRecord(data, loadId);
   if (!load) return false;
+
+  const canonicalClaim = canonicalLoadHasClaim(loadId);
+  if (canonicalClaim === false) return false;
 
   const bundleFlag = bundleClaimApplicable(data, loadId);
   if (bundleFlag === false) return false;

@@ -5,6 +5,7 @@ import {
 } from "./load-documents";
 import { getCanonicalLoadEvidenceForLoad, type BofLoadEvidence } from "./canonical-load-evidence";
 import { tripPacketToLoadDocumentPacket } from "./load-trip-packet";
+import { canonicalLoadHasClaim } from "./canonical-load-stories";
 
 export const LOAD_PROOF_TYPES = [
   "Rate Confirmation",
@@ -168,6 +169,8 @@ function hasLumperInvolvement(load: NonNullable<ReturnType<typeof loadRecord>>):
 }
 
 function claimApplicable(load: NonNullable<ReturnType<typeof loadRecord>>, bundle: LoadProofBundle | null) {
+  const canonicalClaim = canonicalLoadHasClaim(load.id);
+  if (canonicalClaim === false) return false;
   if (bundle?.claimApplicable != null) return bundle.claimApplicable;
   return (
     load.dispatchExceptionFlag ||

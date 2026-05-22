@@ -8,6 +8,7 @@
 
 import * as XLSX from 'xlsx';
 import { parseToDate } from './date-utils';
+import { L009_CANONICAL_STORY, normalizeCanonicalLoadId } from './canonical-load-stories';
 import type {
   V3OperationalData,
   WeeklySettlement,
@@ -39,6 +40,49 @@ let v3DataCache: V3OperationalData | null = null;
 let isLoading = false;
 let lastLoadAttempt = 0;
 const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
+
+function applyCanonicalOperationalStoryCorrections(data: V3OperationalData): void {
+  data.maintenanceWorkOrders = data.maintenanceWorkOrders.map((wo) => {
+    const isL009TireDefect =
+      wo.driverId === L009_CANONICAL_STORY.driverId &&
+      (wo.workOrderId === L009_CANONICAL_STORY.maintenanceWorkOrderId ||
+        /tire|asset/i.test(`${wo.issueType} ${wo.defectDescription}`));
+    return isL009TireDefect
+      ? { ...wo, assetId: L009_CANONICAL_STORY.assetId }
+      : wo;
+  });
+
+  data.rfidEvents = data.rfidEvents.map((event) => {
+    const isL009Pretrip =
+      normalizeCanonicalLoadId(event.loadId) === L009_CANONICAL_STORY.loadId &&
+      event.driverId === L009_CANONICAL_STORY.driverId;
+    return isL009Pretrip
+      ? {
+          ...event,
+          assetId: L009_CANONICAL_STORY.assetId,
+          trailerId: L009_CANONICAL_STORY.trailerId,
+          scanLocation: "Cleveland Yard Gate 2",
+          expectedLocation: "Cleveland Yard Gate 2",
+          proofImpact: "Pre-trip proof blocked until tire repair closeout is uploaded",
+          dispatchImpact: "Blocked",
+          settlementImpact: "None",
+        }
+      : event;
+  });
+
+  data.routeIntelligence = data.routeIntelligence.map((route) => {
+    const isL009 = normalizeCanonicalLoadId(route.loadId) === L009_CANONICAL_STORY.loadId;
+    return isL009
+      ? {
+          ...route,
+          origin: L009_CANONICAL_STORY.origin,
+          destination: L009_CANONICAL_STORY.destination,
+          routeSummary: "Route, fuel, and rest planning are available, but BOF holds dispatch until the tire / asset defect is cleared.",
+          managerActionRequired: true,
+        }
+      : route;
+  });
+}
 
 /**
  * Get the workbook path to use (v4 preferred, v3 fallback, v2 last resort)
@@ -151,6 +195,8 @@ async function parseV3Workbook(workbookPath: string): Promise<V3OperationalData>
         console.warn(`⚠️ Sheet not found: ${sheetName}`);
       }
     }
+
+    applyCanonicalOperationalStoryCorrections(data);
     
     // Calculate metadata
     data.metadata.totalRecords = Object.values(data).reduce((sum, arr) => {

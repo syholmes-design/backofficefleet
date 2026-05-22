@@ -164,69 +164,6 @@
       "path": "/generated/claims/L008/photo-evidence-log.html"
     },
     {
-      "id": "L009:insurance-notification.html",
-      "kind": "promoted_from_loads",
-      "category": "claims",
-      "loadId": "L009",
-      "path": "/generated/claims/L009/insurance-notification.html"
-    },
-    {
-      "id": "L009:claim-intake.html",
-      "kind": "promoted_from_loads",
-      "category": "claims",
-      "loadId": "L009",
-      "path": "/generated/claims/L009/claim-intake.html"
-    },
-    {
-      "id": "L009:claim-packet.html",
-      "kind": "promoted_from_loads",
-      "category": "claims",
-      "loadId": "L009",
-      "path": "/generated/claims/L009/claim-packet.html"
-    },
-    {
-      "id": "L009:damage-photo-packet.html",
-      "kind": "promoted_from_loads",
-      "category": "claims",
-      "loadId": "L009",
-      "path": "/generated/claims/L009/damage-photo-packet.html"
-    },
-    {
-      "id": "L009:seal-verification.html",
-      "kind": "promoted_from_loads",
-      "category": "claims",
-      "loadId": "L009",
-      "path": "/generated/claims/L009/seal-verification.html"
-    },
-    {
-      "id": "L009:accident-report.html",
-      "kind": "generated",
-      "category": "claims",
-      "loadId": "L009",
-      "path": "/generated/claims/L009/accident-report.html"
-    },
-    {
-      "id": "L009:incident-report.html",
-      "kind": "generated",
-      "category": "claims",
-      "loadId": "L009",
-      "path": "/generated/claims/L009/incident-report.html"
-    },
-    {
-      "id": "L009:driver-statement.html",
-      "kind": "generated",
-      "category": "claims",
-      "loadId": "L009",
-      "path": "/generated/claims/L009/driver-statement.html"
-    },
-    {
-      "id": "L009:photo-evidence-log.html",
-      "kind": "generated",
-      "category": "claims",
-      "loadId": "L009",
-      "path": "/generated/claims/L009/photo-evidence-log.html"
-    },
-    {
       "id": "L003:lumper-reimbursement-support",
       "kind": "generated",
       "category": "settlements",

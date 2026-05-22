@@ -2,6 +2,7 @@ import type { BofData } from "@/lib/load-bof-data";
 import { reconcileCredentialIncident } from "@/lib/compliance/credential-incident-reconciliation";
 import { getDriverDispatchEligibility } from "@/lib/driver-dispatch-eligibility";
 import { getLoadDocumentPacket } from "@/lib/load-proof";
+import { getCanonicalLoadStory } from "@/lib/canonical-load-stories";
 
 export type LoadRiskReasonSeverity = "critical" | "high" | "warning" | "info";
 export type LoadRiskReasonCategory =
@@ -85,6 +86,7 @@ export function getLoadRiskExplanation(
 
   const reasons: LoadRiskReason[] = [];
   const eligibility = getDriverDispatchEligibility(data, load.driverId);
+  const canonicalStory = getCanonicalLoadStory(load.id);
 
   for (const hard of eligibility.hardBlockers) {
     const hardId = `driver-hard:${load.driverId}:${hard}`;
@@ -172,6 +174,24 @@ export function getLoadRiskExplanation(
       recommendedFix: "Resolve dispatch exception and verify proof package completeness.",
       actionHref: `/loads/${load.id}`,
       actionLabel: "Open Load",
+      clearableInDemo: true,
+    });
+  }
+
+  if (canonicalStory?.loadId === "L009") {
+    reasons.push({
+      id: `pretrip:tire-asset-defect:${load.id}`,
+      severity: "critical",
+      category: "route",
+      title: "Tire / asset defect blocks dispatch",
+      detail:
+        "BOF stopped dispatch before departure because the pre-trip inspection and RFID yard read flagged an unresolved tire / asset defect.",
+      whyItMatters:
+        "The load should not move until the tire defect is repaired, the work order is closed, and pre-trip proof is rechecked.",
+      recommendedFix:
+        "Clear maintenance work order WO-003, upload repair proof, and rerun the pre-trip release check.",
+      actionHref: "/maintenance/work-orders/WO-003",
+      actionLabel: "Open Work Order",
       clearableInDemo: true,
     });
   }
