@@ -291,23 +291,23 @@ export function ComplianceDashboardV4() {
 
       {/* Header */}
       <div className="border-b border-slate-800 bg-slate-900/50 backdrop-blur-sm">
-        <div className="max-w-7xl mx-auto px-6 py-6">
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-3xl font-bold text-white flex items-center gap-3">
+        <div className="max-w-7xl mx-auto px-4 py-6 sm:px-6">
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <div className="min-w-0">
+              <h1 className="flex items-center gap-3 text-2xl font-bold text-white sm:text-3xl">
                 <Shield className="w-8 h-8 text-blue-400" />
-                Compliance & Document Action Center (V4)
+                <span className="min-w-0 break-words">Compliance & Document Action Center (V4)</span>
               </h1>
-              <p className="text-slate-400 mt-2">
+              <p className="mt-2 max-w-3xl text-slate-400">
                 Fix the &quot;Needs Review but why?&quot; problem - Clear compliance actions and document requirements from V4 workbook
               </p>
             </div>
-            <div className="flex items-center gap-4">
-              <div className="text-right">
+            <div className="flex shrink-0 items-center gap-4">
+              <div className="text-left sm:text-right">
                 <div className="text-red-400 font-medium">{complianceStats.criticalActions}</div>
                 <div className="text-slate-400 text-xs">Critical Actions</div>
               </div>
-              <div className="text-right">
+              <div className="text-left sm:text-right">
                 <div className="text-orange-400 font-medium">{complianceStats.dispatchBlockingActions}</div>
                 <div className="text-slate-400 text-xs">Dispatch Blocking</div>
               </div>
@@ -317,7 +317,7 @@ export function ComplianceDashboardV4() {
       </div>
 
       {/* Compliance KPI Cards */}
-      <div className="max-w-7xl mx-auto px-6 py-6">
+      <div className="max-w-7xl mx-auto px-4 py-6 sm:px-6">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           <div className="bg-slate-900/50 backdrop-blur-sm border border-slate-800 rounded-xl p-6">
             <div className="flex items-center justify-between mb-2">
@@ -402,18 +402,18 @@ export function ComplianceDashboardV4() {
       </div>
 
       {/* Filters */}
-      <div className="max-w-7xl mx-auto px-6 pb-6">
+      <div className="max-w-7xl mx-auto px-4 pb-6 sm:px-6">
         <div className="bg-slate-900/50 backdrop-blur-sm border border-slate-800 rounded-xl p-4">
           <div className="flex items-center gap-4 flex-wrap">
             <Filter className="w-5 h-5 text-slate-400" />
             <span className="text-slate-400 text-sm">Filter:</span>
             
-            <div className="flex items-center gap-2">
+            <div className="flex min-w-0 flex-wrap items-center gap-2">
               <span className="text-slate-400 text-sm">Driver:</span>
               <select
                 value={selectedDriver}
                 onChange={(e) => setSelectedDriver(e.target.value)}
-                className="bg-slate-800 border border-slate-700 rounded px-3 py-1 text-sm text-white"
+                className="min-w-0 max-w-full bg-slate-800 border border-slate-700 rounded px-3 py-1 text-sm text-white"
               >
                 <option value="all">All Drivers ({complianceStats.totalActions})</option>
                 {Object.entries(complianceStats.actionsByDriver).map(([driverId, count]) => (
@@ -424,12 +424,12 @@ export function ComplianceDashboardV4() {
               </select>
             </div>
             
-            <div className="flex items-center gap-2">
+            <div className="flex min-w-0 flex-wrap items-center gap-2">
               <span className="text-slate-400 text-sm">Area:</span>
               <select
                 value={selectedComplianceArea}
                 onChange={(e) => setSelectedComplianceArea(e.target.value)}
-                className="bg-slate-800 border border-slate-700 rounded px-3 py-1 text-sm text-white"
+                className="min-w-0 max-w-full bg-slate-800 border border-slate-700 rounded px-3 py-1 text-sm text-white"
               >
                 <option value="all">All Areas ({complianceStats.totalActions})</option>
                 {Object.entries(complianceStats.actionsByComplianceArea).map(([area, count]) => (
@@ -445,9 +445,9 @@ export function ComplianceDashboardV4() {
 
       {/* Actions Needing Attention */}
       {actionsNeedingAttention.length > 0 && (
-        <div className="max-w-7xl mx-auto px-6 pb-6">
-          <div className="bg-slate-900/50 backdrop-blur-sm border border-slate-800 rounded-xl p-6">
-            <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+        <div className="max-w-7xl mx-auto px-4 pb-6 sm:px-6">
+          <div className="bg-slate-900/50 backdrop-blur-sm border border-slate-800 rounded-xl p-4 sm:p-6">
+            <h3 className="mb-4 flex flex-wrap items-center gap-2 text-lg font-semibold text-white">
               <Eye className="w-5 h-5 text-orange-400" />
               Compliance Actions Requiring Attention
               <span className="text-sm text-slate-400 font-normal">
@@ -457,8 +457,8 @@ export function ComplianceDashboardV4() {
             <div className="space-y-4">
               {actionsNeedingAttention.map((action) => (
                 <div key={action.actionId} className="bg-slate-800/50 border border-slate-700 rounded-lg p-4">
-                  <div className="flex items-start justify-between mb-3">
-                    <div className="flex items-center gap-3">
+                  <div className="mb-3 flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
+                    <div className="flex min-w-0 flex-wrap items-center gap-2">
                       <span className={`px-2 py-1 rounded-full text-xs font-medium border ${getSeverityBadgeClass(action.severity)}`}>
                         {action.severity}
                       </span>
@@ -477,11 +477,11 @@ export function ComplianceDashboardV4() {
                         </span>
                       )}
                     </div>
-                    <div className="flex items-center gap-2 text-slate-400 text-sm">
+                    <div className="flex min-w-0 flex-wrap items-center gap-2 text-sm text-slate-400">
                       {getComplianceAreaIcon(action.complianceArea)}
-                      <span>{action.complianceArea}</span>
+                      <span className="min-w-0 break-words">{action.complianceArea}</span>
                       <span>•</span>
-                      <span>{action.issueType}</span>
+                      <span className="min-w-0 break-words">{action.issueType}</span>
                     </div>
                   </div>
 
@@ -489,8 +489,8 @@ export function ComplianceDashboardV4() {
                     <div>
                       <div className="text-white font-medium mb-1">Driver Information</div>
                       <div className="text-slate-400 text-sm">
-                        <div>Driver: {action.driverName} ({action.driverId})</div>
-                        <div>Document: {action.documentType}</div>
+                        <div className="break-words">Driver: {action.driverName} ({action.driverId})</div>
+                        <div className="break-words">Document: {action.documentType}</div>
                       </div>
                     </div>
                     
@@ -508,9 +508,9 @@ export function ComplianceDashboardV4() {
                     <div>
                       <div className="text-white font-medium mb-1">Assignment</div>
                       <div className="text-slate-400 text-sm">
-                        <div>Assigned to: {action.assignedTo}</div>
+                        <div className="break-words">Assigned to: {action.assignedTo}</div>
                         {action.lastReviewedBy && (
-                          <div>Reviewed by: {action.lastReviewedBy}</div>
+                          <div className="break-words">Reviewed by: {action.lastReviewedBy}</div>
                         )}
                       </div>
                     </div>
@@ -518,19 +518,19 @@ export function ComplianceDashboardV4() {
 
                   <div className="bg-slate-900/50 border border-slate-700 rounded p-3 mb-3">
                     <div className="text-white font-medium mb-2">Required Fix</div>
-                    <div className="text-slate-300 text-sm">{action.requiredFix}</div>
+                    <div className="break-words text-slate-300 text-sm">{action.requiredFix}</div>
                   </div>
 
                   {action.fixLink && (
-                    <div className="flex items-center gap-2">
+                    <div className="flex min-w-0 items-center gap-2">
                       <a 
                         href={action.fixLink}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="inline-flex items-center gap-2 text-blue-400 hover:text-blue-300 text-sm"
+                        className="inline-flex min-w-0 items-center gap-2 text-sm text-blue-400 hover:text-blue-300"
                       >
                         <ExternalLink className="w-4 h-4" />
-                        {getActionLinkLabel(action)}
+                        <span className="min-w-0 break-words">{getActionLinkLabel(action)}</span>
                       </a>
                     </div>
                   )}
