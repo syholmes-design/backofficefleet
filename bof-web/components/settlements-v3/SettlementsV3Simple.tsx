@@ -800,7 +800,7 @@ export function SettlementsV3Simple() {
 
       {/* Settlement Asset Cards */}
       <SettlementsAssetCards 
-        loadId="L003" // Default to a load that has settlement data
+        loadId="L011"
         settlementWeek={activeWeek}
       />
     </div>

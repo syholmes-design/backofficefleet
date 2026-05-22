@@ -59,9 +59,26 @@ export const L009_CANONICAL_STORY: CanonicalLoadStory = {
   factoringActive: false,
 };
 
+export const L011_CANONICAL_STORY: CanonicalLoadStory = {
+  loadId: "L011",
+  driverId: "DRV-011",
+  driverName: "Olivia Lee",
+  assetId: "T-112",
+  trailerId: "TRL-2584",
+  origin: "Rapid Parts - Indianapolis, IN",
+  destination: "Delta Retail DC - Atlanta, GA",
+  theme: "Factoring / Settlement Readiness",
+  status: "Delivered / proof packet under finance review / factoring packet ready",
+  primaryIssue: "Post-trip proof packet and factoring submission readiness",
+  claimActive: false,
+  factoringActive: true,
+  evidenceStatus: "Ready",
+};
+
 const LOAD_STORIES: Record<string, CanonicalLoadStory> = {
   [L008_CANONICAL_STORY.loadId]: L008_CANONICAL_STORY,
   [L009_CANONICAL_STORY.loadId]: L009_CANONICAL_STORY,
+  [L011_CANONICAL_STORY.loadId]: L011_CANONICAL_STORY,
 };
 
 export function normalizeCanonicalLoadId(loadId: string): string {
