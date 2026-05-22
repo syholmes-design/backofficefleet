@@ -7,6 +7,6 @@ The visual smoke audit loaded the priority pages on desktop and mobile without o
 - None found by smoke checks.
 
 ## Technical Appendix
-Base URL: http://localhost:3000
-Routes checked: 12
+Base URL: http://localhost:3018
+Routes checked: 3
 Screenshots: .codex/reports/visual-smoke

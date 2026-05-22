@@ -22,7 +22,7 @@ export async function generateMetadata({ params }: Props) {
   const data = getBofData();
   const load = data.loads.find((l) => l.id === loadId);
   return {
-    title: load ? `Shipper portal · Load ${load.number} | BOF` : "Shipper portal | BOF",
+    title: load ? `Shipper portal | Load ${load.number} | BOF` : "Shipper portal | BOF",
   };
 }
 

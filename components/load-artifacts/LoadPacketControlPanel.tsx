@@ -287,14 +287,14 @@ export function LoadPacketControlPanel({
           <div className="flex flex-wrap gap-2">
             <button
               type="button"
-              className="rounded-md border border-slate-700 px-3 py-2 text-sm font-bold text-slate-200 hover:border-teal-400 hover:text-teal-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-300"
+              className="min-w-max whitespace-nowrap rounded-md border border-slate-700 px-3 py-2 text-sm font-bold text-slate-200 hover:border-teal-400 hover:text-teal-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-300"
               onClick={() => setSelectedKeys(allSelected ? [] : signableKeys)}
             >
               {allSelected ? "Clear selection" : "Select all ready docs"}
             </button>
             <button
               type="button"
-              className="rounded-md bg-teal-500 px-4 py-2 text-sm font-black text-slate-950 hover:bg-teal-300 disabled:cursor-not-allowed disabled:bg-slate-700 disabled:text-slate-400"
+              className="min-w-max whitespace-nowrap rounded-md bg-teal-500 px-4 py-2 text-sm font-black text-slate-950 hover:bg-teal-300 disabled:cursor-not-allowed disabled:bg-slate-700 disabled:text-slate-400"
               disabled={signableKeys.length === 0}
               onClick={() => {
                 setSelectedKeys(signableKeys);
@@ -462,7 +462,7 @@ export function LoadPacketControlPanel({
 
           <DocumentViewer artifact={activeArtifact} />
 
-          <div className="mt-5 grid gap-4 lg:grid-cols-[minmax(0,1fr)_360px]">
+          <div className="mt-5 grid gap-4">
             <div className="rounded-lg border border-slate-800 bg-slate-900/60 p-4">
               <p className="text-sm font-black text-white">Packet signoff</p>
               <p className="mt-1 text-sm leading-6 text-slate-300">
@@ -481,7 +481,7 @@ export function LoadPacketControlPanel({
               <div className="mt-4 flex flex-wrap gap-2">
                 <button
                   type="button"
-                  className="rounded-md bg-teal-500 px-4 py-2 text-sm font-black text-slate-950 hover:bg-teal-300 disabled:cursor-not-allowed disabled:bg-slate-700 disabled:text-slate-400"
+                  className="min-w-max whitespace-nowrap rounded-md bg-teal-500 px-4 py-2 text-sm font-black text-slate-950 hover:bg-teal-300 disabled:cursor-not-allowed disabled:bg-slate-700 disabled:text-slate-400"
                   disabled={selectedSignableKeys.length === 0}
                   onClick={() => signKeys(selectedSignableKeys)}
                 >
@@ -489,7 +489,7 @@ export function LoadPacketControlPanel({
                 </button>
                 <button
                   type="button"
-                  className="rounded-md border border-teal-500/60 bg-teal-500/10 px-4 py-2 text-sm font-black text-teal-100 hover:bg-teal-500/20 disabled:cursor-not-allowed disabled:border-slate-700 disabled:text-slate-500"
+                  className="min-w-max whitespace-nowrap rounded-md border border-teal-500/60 bg-teal-500/10 px-4 py-2 text-sm font-black text-teal-100 hover:bg-teal-500/20 disabled:cursor-not-allowed disabled:border-slate-700 disabled:text-slate-500"
                   disabled={signableKeys.length === 0}
                   onClick={() => {
                     setSelectedKeys(signableKeys);

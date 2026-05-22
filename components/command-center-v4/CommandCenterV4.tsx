@@ -22,7 +22,7 @@ import {
 import { getV3OperationalData, isV3DataAvailable } from "@/lib/v3-operational-loader";
 import { formatDisplayDate } from "@/lib/date-utils";
 import type { OperationalRiskQueue, V3OperationalData } from "@/lib/v3-operational-types";
-import { L009_CANONICAL_STORY, L011_CANONICAL_STORY } from "@/lib/canonical-load-stories";
+import { L008_CANONICAL_STORY, L009_CANONICAL_STORY, L011_CANONICAL_STORY } from "@/lib/canonical-load-stories";
 
 type RiskAction = {
   label: string;
@@ -45,6 +45,21 @@ function normalizeLoadId(loadId: string) {
 function getRiskStory(risk: OperationalRiskQueue) {
   const loadId = normalizeLoadId(risk.loadId);
   const type = `${risk.riskType} ${risk.module}`.toLowerCase();
+
+  if (loadId === L008_CANONICAL_STORY.loadId || type.includes("cargo-damage claim") || type.includes("claim escalation")) {
+    return {
+      headline: "Safety claim evidence needs manager review",
+      urgency: "HOS review, driver statement, cargo-damage photos, and claim packet support must be completed before the claim file is ready.",
+      primaryLabel: "Open claim evidence workspace",
+      primaryHref: `/loads/${loadId}`,
+      actions: [
+        { label: "Open claim evidence workspace", href: `/loads/${loadId}`, tone: "danger" },
+        { label: "Review safety action", href: "/safety", tone: "warning" },
+        { label: "Driver HR action", href: `/drivers/${risk.driverId}/hr` },
+        { label: "Claim exposure", href: "/money-at-risk", tone: "warning" },
+      ] satisfies RiskAction[],
+    };
+  }
 
   if (type.includes("seal")) {
     return {
@@ -140,6 +155,50 @@ function moduleHref(module: string) {
   return "/documents";
 }
 
+function withCanonicalL008Risk(data: V3OperationalData, risks = data.operationalRiskQueue): OperationalRiskQueue[] {
+  const existing = risks;
+  if (existing.some((risk) => normalizeLoadId(risk.loadId) === L008_CANONICAL_STORY.loadId)) {
+    return existing;
+  }
+
+  const event = data.safetyEvents.find(
+    (safetyEvent) =>
+      safetyEvent.eventId === L008_CANONICAL_STORY.safetyEventId ||
+      (safetyEvent.driverId === L008_CANONICAL_STORY.driverId &&
+        normalizeLoadId(safetyEvent.linkedLoadId) === L008_CANONICAL_STORY.loadId)
+  );
+
+  if (!event && !L008_CANONICAL_STORY.claimActive) return existing;
+
+  const l008Risk: OperationalRiskQueue = {
+    riskId: "ORQ-L008-SAFETY-CLAIM",
+    module: "Claims/Safety",
+    driverId: L008_CANONICAL_STORY.driverId,
+    loadId: L008_CANONICAL_STORY.loadId,
+    assetId: L008_CANONICAL_STORY.assetId,
+    relatedEventId: [event?.eventId ?? L008_CANONICAL_STORY.safetyEventId, L008_CANONICAL_STORY.claimId]
+      .filter(Boolean)
+      .join(" / "),
+    riskType: "HOS violation / cargo-damage claim escalation",
+    severity: "Critical",
+    status: "Open",
+    businessImpact: "Cargo-damage claim review remains open with partial evidence and manager approval required.",
+    dispatchImpact: "Delivered / claim review",
+    settlementImpact: "Claim review; no settlement hold",
+    complianceImpact: "HOS coaching and driver statement required",
+    insuranceImpact: "Open cargo-damage claim",
+    dueDate: "2026-05-23",
+    assignedTo: "Claims / Safety Manager",
+    recommendedAction:
+      "Complete driver statement, HOS coaching acknowledgment, cargo-damage evidence, and claim packet review.",
+    resolutionStatus: "Open",
+    resolvedDate: "",
+    managerActionRequired: true,
+  };
+
+  return [l008Risk, ...existing];
+}
+
 function withCanonicalL009Risk(data: V3OperationalData): OperationalRiskQueue[] {
   const existing = data.operationalRiskQueue;
   if (existing.some((risk) => normalizeLoadId(risk.loadId) === L009_CANONICAL_STORY.loadId)) {
@@ -185,6 +244,10 @@ function withCanonicalL009Risk(data: V3OperationalData): OperationalRiskQueue[] 
   return [l009Risk, ...existing];
 }
 
+function withCanonicalFlagshipRisks(data: V3OperationalData): OperationalRiskQueue[] {
+  return withCanonicalL008Risk(data, withCanonicalL009Risk(data));
+}
+
 export function CommandCenterV4() {
   const [operationalRisks, setOperationalRisks] = useState<OperationalRiskQueue[]>([]);
   const [loading, setLoading] = useState(true);
@@ -210,7 +273,7 @@ export function CommandCenterV4() {
         console.log('📊 Loading V4 operational risk data...');
         const v3Data = await getV3OperationalData();
         
-        setOperationalRisks(withCanonicalL009Risk(v3Data));
+        setOperationalRisks(withCanonicalFlagshipRisks(v3Data));
         
         console.log(`✅ Loaded ${v3Data.operationalRiskQueue.length} Operational Risks from V4 workbook`);
       } else {
@@ -405,7 +468,7 @@ export function CommandCenterV4() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100">
+    <div className="bof-command-center-v4 min-h-screen bg-slate-950 text-slate-100">
       {/* Header */}
       <div
         className="relative overflow-hidden border-b border-slate-800 bg-slate-950"
@@ -475,7 +538,7 @@ export function CommandCenterV4() {
                 <div className="text-lg font-semibold text-white group-hover:text-teal-100">{story.headline}</div>
                 <p className="mt-2 text-sm leading-6 text-slate-300">{story.urgency}</p>
                 <div className="mt-4 flex items-center justify-between text-sm">
-                  <span className="font-mono text-teal-200">{normalizeLoadId(risk.loadId)} · {risk.driverId}</span>
+                  <span className="font-mono text-teal-200">{normalizeLoadId(risk.loadId)} - {risk.driverId}</span>
                   <span className="font-semibold text-teal-200 group-hover:text-white">{story.primaryLabel}</span>
                 </div>
               </Link>

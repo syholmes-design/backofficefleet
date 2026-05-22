@@ -380,9 +380,9 @@ export function ComplianceFlowDashboard() {
                         >
                           {showDetails === profile.driverId ? "Hide" : "Details"}
                         </button>
-                        <button className="bof-btn bof-btn-sm bof-btn-primary">
+                        <DriverLink driverId={profile.driverId} className="bof-btn bof-btn-sm bof-btn-primary">
                           Review
-                        </button>
+                        </DriverLink>
                       </div>
                     </td>
                   </tr>

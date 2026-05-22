@@ -44,13 +44,14 @@ Activate this agent when:
 
 Shared rollback checkpoints are separate from the main project backups.
 
-- Main project backups stay in `../BackOfficeFleet-Backups/`.
+- Main project backups stay in local machine storage, defaulting to `%LOCALAPPDATA%\BackOfficeFleet\Backups`.
 - Main project backups use `bof-backup-*.zip`.
 - Main project backups keep their existing 20-backup and 15 GB limits.
-- Shared rollback checkpoints stay in `../BackOfficeFleet-Shared-Rollback/`.
+- Shared rollback checkpoints stay in local machine storage, defaulting to `%LOCALAPPDATA%\BackOfficeFleet\SharedRollback`.
 - Shared rollback checkpoints use `bof-shared-checkpoint-*.zip`.
 - Shared rollback checkpoints have no retained-count limit.
 - Shared rollback checkpoints are constrained only by total storage size, defaulting to 15 GB.
+- Use `BOF_BACKUP_ROOT` or `BOF_SHARED_CHECKPOINT_ROOT` only when a Codex machine needs a custom non-cloud location.
 
 The main backup count must never prune shared rollback checkpoints, and shared rollback pruning must never prune main backups.
 

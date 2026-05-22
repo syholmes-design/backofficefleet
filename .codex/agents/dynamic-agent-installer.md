@@ -32,3 +32,6 @@ Files to add/update:
 
 ## New Agent Efficiency Gate
 Before adding a new agent, consult the Quiet Token and Rate Limit Steward. Only add a new agent if it will reduce future work instead of adding unnecessary process overhead.
+
+## Instruction Quality Gate
+If the proposed agent, skill, or rule comes from pasted ChatGPT advice or another generic instruction source, consult the Instruction Quality Gatekeeper before adding it. Preserve useful ideas, but rewrite them into BackOfficeFleet-specific triggers, boundaries, outputs, and success criteria.

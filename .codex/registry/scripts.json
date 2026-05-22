@@ -47,6 +47,12 @@
       "command": "npm run codex:change-memory",
       "requiresDevServer": false,
       "purpose": "Save a focused change-memory record with patch, reverse instructions, and reconstruction notes after meaningful Codex edits."
+    },
+    {
+      "id": "codex-collision-check",
+      "command": "npm run codex:collision-check",
+      "requiresDevServer": false,
+      "purpose": "Warn before edits, restores, reverse patches, Git operations, or generators may overwrite another Codex session's changes."
     }
   ],
   "existingValidationScripts": [

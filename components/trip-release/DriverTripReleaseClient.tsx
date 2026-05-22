@@ -115,12 +115,12 @@ export function DriverTripReleaseClient({ loadId }: { loadId: string }) {
       <header className="trip-release-header">
         <div>
           <h1 className="bof-title bof-title-tight">
-            Driver trip release - Load <span className="trip-release-teal">{ev.load_number}</span>{" "}
+            Driver release proof - Load <span className="trip-release-teal">{ev.load_number}</span>{" "}
             <code className="bof-code">{ev.load_id}</code>
           </h1>
           <p className="bof-muted bof-small">
-            Operational go / no-go before departure, combining packet, driver, equipment, and pre-trip
-            readiness in one release file.
+            This is the driver-facing payoff: BOF turns the manager load file into a clear go / no-go release
+            packet with route context, proof requirements, equipment status, and required acknowledgments.
           </p>
         </div>
       </header>
@@ -144,8 +144,8 @@ export function DriverTripReleaseClient({ loadId }: { loadId: string }) {
           </div>
         </div>
         <p className="trip-release-banner-hint">
-          Release Trip is enabled only when there are <strong>zero blocking items</strong>. When status is
-          At Risk, warnings remain - operator judgment still applies.
+          Release Trip is enabled only when there are <strong>zero blocking items</strong>. Warnings stay visible
+          so dispatch can decide with the facts instead of sending a driver into a paper chase.
         </p>
       </div>
 
@@ -178,7 +178,7 @@ export function DriverTripReleaseClient({ loadId }: { loadId: string }) {
 
           <section className="trip-release-card" aria-labelledby="tr-overview">
             <h2 id="tr-overview" className="trip-release-card-title">
-              Driver trip release overview
+              What the driver can trust
             </h2>
             <table className="trip-release-table">
               <tbody>

@@ -60,7 +60,7 @@ export function CommandCenterPageClient() {
             margin: '0 0 1rem 0',
             textShadow: '0 2px 4px rgba(0,0,0,0.3)'
           }}>
-            Command Center
+            Command Center: what needs an owner now
           </h1>
           <p style={{
             fontSize: '1.1rem',
@@ -69,7 +69,7 @@ export function CommandCenterPageClient() {
             maxWidth: '800px',
             lineHeight: '1.6'
           }}>
-            Monitoring exceptions that can delay dispatch, block payment, raise claims exposure, or require owner review. BOF surfaces critical operational risks with clear next actions.
+            This is the live triage view for the demo. It shows which work is blocked, how much money is exposed, who owns the next action, and which workflow proves the fix.
           </p>
           
           {/* Signal Chips */}
@@ -90,7 +90,7 @@ export function CommandCenterPageClient() {
               color: '#22c55e',
               fontWeight: '500'
             }}>
-              Exception-led workflow
+              Blocked work first
             </span>
             <span style={{
               display: 'inline-flex',
@@ -103,7 +103,7 @@ export function CommandCenterPageClient() {
               color: '#fb923c',
               fontWeight: '500'
             }}>
-              Operational risk visibility
+              Money at risk visible
             </span>
             <span style={{
               display: 'inline-flex',
@@ -116,7 +116,7 @@ export function CommandCenterPageClient() {
               color: '#a855f7',
               fontWeight: '500'
             }}>
-              Clear next-action framing
+              Every issue has an owner
             </span>
           </div>
         </div>

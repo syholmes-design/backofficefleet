@@ -39,7 +39,7 @@ export function MarketingNavigation() {
           {/* Logo */}
           <div className="flex items-center">
             <Link href="/" className="flex items-center">
-              <BofLogo variant="dark" className="mr-3" />
+              <BofLogo variant="light" size="demoLarge" className="mr-3" />
             </Link>
           </div>
 

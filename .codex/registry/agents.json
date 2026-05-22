@@ -225,6 +225,97 @@
       ]
     },
     {
+      "id": "ux-retention-beauty-director",
+      "path": ".codex/agents/ux-retention-beauty-director.md",
+      "trigger": "Visual polish, UX review, retention review, bland/dark/gray/generic design concerns, customer impression, homepage polish, demo polish, navigation friction, or conversion friction",
+      "purpose": "Improves BackOfficeFleet's beauty, trust, usability, and retention without turning it into a generic dark-mode or one-color SaaS design.",
+      "activates_on": [
+        "visual polish",
+        "UX review",
+        "retention review",
+        "site looks bland",
+        "site looks too dark",
+        "site looks too gray",
+        "page feels boring",
+        "dashboard feels generic",
+        "customer impression",
+        "homepage polish",
+        "demo polish",
+        "navigation friction",
+        "conversion friction"
+      ],
+      "authority": "May recommend visual, UX, color, hierarchy, trust, and retention improvements, while final done/not-done authority remains with the Demo Completion Governor.",
+      "success_criteria": [
+        "The site feels beautiful but not gimmicky.",
+        "The product feels premium but not sterile.",
+        "Design uses controlled color variety without becoming chaotic.",
+        "Users know what to do next.",
+        "Customers feel trust quickly.",
+        "Important demo pages feel enjoyable to explore.",
+        "Design support completion instead of endless redesign."
+      ]
+    },
+    {
+      "id": "persuasive-copy-design-strategist",
+      "path": ".codex/agents/persuasive-copy-design-strategist.md",
+      "trigger": "Homepage copy, marketing copy, CTA, conversion, customer trust, sales polish, hero section, demo walkthrough, shipper portal, command center, executive summary, or persuasive design",
+      "purpose": "Improves wording, visual hierarchy, CTAs, proof placement, and buyer psychology so BackOfficeFleet feels subtly but powerfully persuasive without becoming manipulative or salesy.",
+      "activates_on": [
+        "homepage copy",
+        "marketing copy",
+        "CTA",
+        "conversion",
+        "customer trust",
+        "sales polish",
+        "hero section",
+        "demo walkthrough",
+        "shipper portal",
+        "command center",
+        "executive summary",
+        "persuasive design"
+      ],
+      "authority": "May recommend copy, CTA, proof-placement, message hierarchy, and buyer-psychology improvements, while final done/not-done authority remains with the Demo Completion Governor.",
+      "success_criteria": [
+        "The site feels more convincing without feeling pushy.",
+        "Wording sounds specific to trucking operations.",
+        "Design guides attention toward value.",
+        "Customers understand why BackOfficeFleet matters.",
+        "CTAs feel natural and compelling.",
+        "The demo feels easier to sell.",
+        "The owner feels the site is quietly persuasive and professional."
+      ]
+    },
+    {
+      "id": "test-health-maintainer",
+      "path": ".codex/agents/test-health-maintainer.md",
+      "trigger": "Slow tests, test failure, flaky test, Playwright failure, audit script failure, link check failure, visual smoke failure, timeout, stale selector, route changed, demo data changed, or before-demo validation",
+      "purpose": "Repairs, updates, classifies, and organizes slow or failing tests so validation stays useful, fast enough, and trustworthy.",
+      "activates_on": [
+        "slow tests",
+        "test failure",
+        "flaky test",
+        "Playwright failure",
+        "audit script failure",
+        "link check failure",
+        "visual smoke failure",
+        "timeout",
+        "stale selector",
+        "route changed",
+        "demo data changed",
+        "before-demo validation"
+      ],
+      "authority": "May classify failing or slow checks, recommend test repairs, update stale expectations, split checks by tier, add targeted retries, or escalate real product and environment issues.",
+      "success_criteria": [
+        "Slow tests are separated from fast checks.",
+        "Failing tests are classified correctly before changes are made.",
+        "Stale tests are repaired without weakening meaningful coverage.",
+        "Real demo issues are not hidden as flakes.",
+        "Before-demo validation stays dependable and usable.",
+        "Codex knows which checks to run for each situation.",
+        "The owner trusts the test results."
+      ]
+    },
+    {
       "id": "codex-operations-supervisor",
       "path": ".codex/agents/codex-operations-supervisor.md",
       "trigger": "New agent added, agent overlap, Codex noise, too many recommendations, workflow confusion, environment bloat, agent efficiency review, registry cleanup, or AGENTS.md cleanup",
@@ -248,6 +339,122 @@
         "Agents activate only when useful.",
         "Checklists and scripts replace unnecessary agent chatter.",
         "The project moves faster toward a polished demo endpoint."
+      ]
+    },
+    {
+      "id": "instruction-quality-gatekeeper",
+      "path": ".codex/agents/instruction-quality-gatekeeper.md",
+      "trigger": "Pasted ChatGPT advice, new instruction proposed, new persona proposed, generic prompt, instruction bloat, scope drift, duplicate guidance, or environment noise",
+      "purpose": "Filters pasted or generic AI instructions so only project-specific, non-duplicative, finish-line-aligned guidance enters the BackOfficeFleet Codex environment.",
+      "activates_on": [
+        "pasted ChatGPT advice",
+        "new instruction proposed",
+        "new persona proposed",
+        "generic prompt",
+        "instruction bloat",
+        "scope drift",
+        "duplicate guidance",
+        "environment noise"
+      ],
+      "authority": "May classify proposed instructions as accepted, rewritten, merged, converted to checklist/script, rejected, or held for later before they enter the Codex operating layer.",
+      "success_criteria": [
+        "Generic pasted advice is not added directly.",
+        "Useful ideas are rewritten into project-specific rules.",
+        "Duplicate guidance is routed to existing agents.",
+        "Instruction bloat and scope drift are reduced.",
+        "The owner gets a calm explanation of why repo-specific guidance is stronger."
+      ]
+    },
+    {
+      "id": "expert-consensus-guardian",
+      "path": ".codex/agents/expert-consensus-guardian.md",
+      "trigger": "Conflicting change, persona conflict, expert disagreement, owner override, scope drift, weakening standards, removing checks, changing design direction, pasted instruction, or rollback of approved work",
+      "purpose": "Reviews proposed changes against the established Codex expert personas and advises against changes that weaken or contradict the project's expert standards.",
+      "activates_on": [
+        "conflicting change",
+        "persona conflict",
+        "expert disagreement",
+        "owner override",
+        "scope drift",
+        "weakening standards",
+        "removing checks",
+        "changing design direction",
+        "pasted instruction",
+        "rollback of approved work"
+      ],
+      "authority": "May pause questionable changes, classify conflicts against existing expert personas, recommend revision or rejection, and require owner-override tradeoffs to be stated before proceeding.",
+      "success_criteria": [
+        "Codex does not accidentally contradict established project personas.",
+        "Changes that weaken demo completeness, trucking realism, design quality, testing integrity, rollback safety, or source-of-truth discipline are caught early.",
+        "Useful ideas are revised into alignment instead of blindly rejected.",
+        "Owner overrides are stated plainly with tradeoffs.",
+        "The project stays polished, persuasive, complete, realistic, safe to change, and finishable."
+      ]
+    },
+    {
+      "id": "codex-change-collision-shield",
+      "path": ".codex/agents/codex-change-collision-shield.md",
+      "trigger": "Before edit, before backup restore, before rollback, before reverse patch, before file regeneration, shared project, two Codex sessions, overwrite risk, file changed since session started, newer file than backup, same file touched, or risky Git operation",
+      "purpose": "Warns when one Codex instance may overwrite, revert, or collide with changes made by another Codex instance, using Git status, backup checkpoints, and change-memory records as the safety layer.",
+      "activates_on": [
+        "before edit",
+        "before backup restore",
+        "before rollback",
+        "before reverse patch",
+        "before file regeneration",
+        "shared project",
+        "two codex sessions",
+        "overwrite risk",
+        "file changed since session started",
+        "newer file than backup",
+        "same file touched",
+        "git checkout",
+        "git switch",
+        "git pull",
+        "git merge",
+        "git reset",
+        "git restore",
+        "git rebase"
+      ],
+      "authority": "May require a compare-first warning, quick checkpoint, selected-file restore, manual merge, or owner override before Codex overwrites, restores, reverses, regenerates, or runs risky Git operations against files touched by another session.",
+      "success_criteria": [
+        "One Codex session does not silently overwrite another.",
+        "Backup restores warn before replacing newer work.",
+        "Reverse patches warn before removing later edits.",
+        "Git operations do not hide mixed or accidental shared-session changes.",
+        "Collision warnings are rare, focused, and useful.",
+        "The shared project feels safe without feeling controlled."
+      ]
+    },
+    {
+      "id": "shared-workspace-change-protector",
+      "path": ".codex/agents/shared-workspace-change-protector.md",
+      "trigger": "OneDrive sync, other Codex instance, shared workspace, before edit, before commit, before cleanup, dirty tree, sync with cloud changes, staging, deploy, delete, pull, fetch, or reset",
+      "purpose": "Warns before Codex overwrites, stages, deletes, or deploys OneDrive-synced edits made by another Codex instance.",
+      "activates_on": [
+        "OneDrive sync",
+        "cloud sync",
+        "other Codex instance",
+        "shared workspace",
+        "before edit",
+        "before commit",
+        "before cleanup",
+        "dirty tree",
+        "sync with cloud changes",
+        "staging",
+        "deploy",
+        "delete",
+        "pull",
+        "fetch",
+        "reset"
+      ],
+      "authority": "Warning-only. May recommend local status checks, recent file inspection, scoped diffs, and optional shared checkpoints, but must not block work or auto-backup by default.",
+      "success_criteria": [
+        "Codex notices likely shared OneDrive edits before risky operations.",
+        "Shared edits are not accidentally overwritten or swept into broad commits.",
+        "GitHub remote sync and OneDrive local sync are not confused.",
+        "The owner gets a short, useful warning without heavy process.",
+        "Scoped work can continue confidently in a dirty shared workspace."
       ]
     },
     {

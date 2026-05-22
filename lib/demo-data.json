@@ -2310,12 +2310,12 @@
       "deliverySeal": "SEAL-18542",
       "sealStatus": "OK",
       "dispatchExceptionFlag": false,
-      "proofStatus": "Incomplete",
-      "documentStatus": "Pending",
+      "proofStatus": "Partial",
+      "documentStatus": "Needs Review",
       "settlementHold": false,
       "settlementHoldReason": "",
       "claimStatus": "OPEN",
-      "claimAmount": 6722.38,
+      "claimAmount": 1200,
       "linehaulRate": 1435,
       "fuelSurcharge": 210,
       "detentionPay": 75,
@@ -2327,14 +2327,15 @@
       "workOrderId": "WO-L008-508",
       "equipmentType": "53' Dry Van",
       "intakeStatus": "Delivered",
-      "settlementStatus": "Ready",
+      "settlementStatus": "Review",
       "sealNumber": "SEAL-18542",
       "intakeSourceType": "workbook",
       "intakeSourceDocumentUrl": "",
       "extractionProvider": "BOF workbook",
       "extractionConfidence": 1,
       "extractionWarnings": [],
-      "reviewedAt": null
+      "reviewedAt": null,
+      "dispatchOpsNotes": "Safety / cargo-damage claim review open: HOS event, driver statement, cargo damage evidence, and proof packet review required."
     },
     {
       "id": "L009",
@@ -2377,7 +2378,7 @@
       "fuelSurcharge": 288,
       "detentionPay": 0,
       "accessorialPay": 145,
-      "lumperAmount": 125,
+      "lumperAmount": 0,
       "rateConfirmationNumber": "RC-509-878",
       "bolNumber": "BOL-509-9727",
       "invoiceNumber": "INV-L009",
@@ -3723,7 +3724,7 @@
       }
     },
     "L008": {
-      "claimApplicable": false,
+      "claimApplicable": true,
       "items": {
         "Rate Confirmation": {
           "status": "Complete",
@@ -3776,14 +3777,22 @@
           "disputeExposure": false
         },
         "Cargo Damage Photos": {
-          "status": "Not required",
+          "status": "Pending",
           "blocksPayment": false,
-          "disputeExposure": false
+          "disputeExposure": true,
+          "fileUrl": "/evidence/loads/L008/cargo-damage-photo.png",
+          "previewUrl": "/evidence/loads/L008/cargo-damage-photo.png",
+          "rfAction": "Attach timestamped cargo-damage photos to the claim packet.",
+          "riskNote": "Active cargo-damage claim; evidence packet remains partial."
         },
         "Claim Support Docs": {
-          "status": "Not required",
+          "status": "Pending",
           "blocksPayment": false,
-          "disputeExposure": false
+          "disputeExposure": true,
+          "fileUrl": "/evidence/loads/L008/cargo-damage-photo.png",
+          "previewUrl": "/evidence/loads/L008/cargo-damage-photo.png",
+          "rfAction": "Assemble claim file with driver statement, HOS review, BOL/POD, and damage photos.",
+          "riskNote": "Manager review required before claim exposure can be closed."
         }
       }
     },

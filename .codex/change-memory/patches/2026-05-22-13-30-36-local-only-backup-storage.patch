@@ -1,0 +1,953 @@
+diff --git a/.codex/agents/backup-restore-specialist.md b/.codex/agents/backup-restore-specialist.md
+index 842874f..31bc874 100644
+--- a/.codex/agents/backup-restore-specialist.md
++++ b/.codex/agents/backup-restore-specialist.md
+@@ -65,13 +65,15 @@ Backups should not include:
+ Generated artifacts are included by default so a restored demo is usable. Use the backup script's generated-artifact exclusion switch only when the owner explicitly wants a smaller regenerable-artifacts backup.
+ 
+ ## Preferred Backup Location
+-Use a sibling folder outside the project:
++Use local machine storage outside the project and outside OneDrive-synced folders:
+ 
+ ```text
+-../BackOfficeFleet-Backups/
++%LOCALAPPDATA%\BackOfficeFleet\Backups
+ ```
+ 
+-This keeps backups out of the active project and prevents recursive backup growth.
++The scripts use this path automatically on each Codex machine. If a machine needs a custom non-cloud location, set `BOF_BACKUP_ROOT` or pass `-BackupRoot`.
++
++This keeps backups out of the active project, prevents recursive backup growth, and avoids forcing large zip files through OneDrive sync.
+ 
+ ## Backup Naming
+ Use this format:
+@@ -127,6 +129,7 @@ This agent must:
+ - never restore over current work silently;
+ - never include `node_modules` or `.next`;
+ - never store backups inside the project root;
++- never default backups into OneDrive-synced folders;
+ - never exceed 20 retained backup iterations;
+ - never exceed 15 GB total backup storage;
+ - never spend tokens listing thousands of files;
+diff --git a/.codex/agents/quiet-backup-rollback-steward.md b/.codex/agents/quiet-backup-rollback-steward.md
+index 6ee44c6..c867ae0 100644
+--- a/.codex/agents/quiet-backup-rollback-steward.md
++++ b/.codex/agents/quiet-backup-rollback-steward.md
+@@ -44,13 +44,14 @@ Activate this agent when:
+ 
+ Shared rollback checkpoints are separate from the main project backups.
+ 
+-- Main project backups stay in `../BackOfficeFleet-Backups/`.
++- Main project backups stay in local machine storage, defaulting to `%LOCALAPPDATA%\BackOfficeFleet\Backups`.
+ - Main project backups use `bof-backup-*.zip`.
+ - Main project backups keep their existing 20-backup and 15 GB limits.
+-- Shared rollback checkpoints stay in `../BackOfficeFleet-Shared-Rollback/`.
++- Shared rollback checkpoints stay in local machine storage, defaulting to `%LOCALAPPDATA%\BackOfficeFleet\SharedRollback`.
+ - Shared rollback checkpoints use `bof-shared-checkpoint-*.zip`.
+ - Shared rollback checkpoints have no retained-count limit.
+ - Shared rollback checkpoints are constrained only by total storage size, defaulting to 15 GB.
++- Use `BOF_BACKUP_ROOT` or `BOF_SHARED_CHECKPOINT_ROOT` only when a Codex machine needs a custom non-cloud location.
+ 
+ The main backup count must never prune shared rollback checkpoints, and shared rollback pruning must never prune main backups.
+ 
+diff --git a/.codex/reports/quiet-backup-log.md b/.codex/reports/quiet-backup-log.md
+index 2babf2d..dd64c0f 100644
+--- a/.codex/reports/quiet-backup-log.md
++++ b/.codex/reports/quiet-backup-log.md
+@@ -32,3 +32,18 @@ Quiet Backup Rollback Steward operating-layer setup and shared rollback scripts.
+ Yes. This checkpoint is separate from the main `../BackOfficeFleet-Backups/` backup set and does not count toward the main 20-backup limit.
+ 
+ ---
++
++### Date:
++2026-05-22
++
++### Session/person:
++Codex
++
++### Backup checkpoint:
++`C:\Users\slyme\AppData\Local\BackOfficeFleet\SharedRollback\bof-shared-checkpoint-2026-05-22-082858.zip`
++
++### Files changed:
++Backup and shared rollback scripts now default to local app-data folders instead of OneDrive-synced sibling folders.
++
++### Rollback available:
++Yes. Main backups now default to `%LOCALAPPDATA%\BackOfficeFleet\Backups`; shared checkpoints now default to `%LOCALAPPDATA%\BackOfficeFleet\SharedRollback`; both can still be overridden with explicit script parameters or environment variables.
+diff --git a/.codex/reports/shared-handoff-log.md b/.codex/reports/shared-handoff-log.md
+index f9477e4..a7dd774 100644
+--- a/.codex/reports/shared-handoff-log.md
++++ b/.codex/reports/shared-handoff-log.md
+@@ -139,6 +139,318 @@ Build, browser audits, and document validators because this is a Codex operating
+ ### Recommended next step:
+ Run `npm run codex:registry-sync` and keep future task reviews focused by default.
+ 
++### Parking-lot items:
++None.
++---
++
++### Date:
++2026-05-22
++
++### Contributor:
++Codex
++
++### Area:
++Local-only backup storage
++
++### Files changed:
++`scripts/bof-backup.ps1`, `scripts/bof-list-backups.ps1`, `scripts/bof-restore.ps1`, `scripts/bof-shared-checkpoint.ps1`, `scripts/bof-list-shared-checkpoints.ps1`, `scripts/bof-restore-shared-checkpoint.ps1`, `AGENTS.md`, `.codex/agents/backup-restore-specialist.md`, `.codex/agents/quiet-backup-rollback-steward.md`, `.codex/reports/quiet-backup-log.md`
++
++### Completed:
++Changed main backups and shared rollback checkpoints to default to local app-data storage instead of OneDrive-synced sibling folders. Moved existing local backup zip/report files from `C:\Users\slyme\OneDrive\BackOfficeFleet-Backups` and `C:\Users\slyme\OneDrive\BackOfficeFleet-Shared-Rollback` into `C:\Users\slyme\AppData\Local\BackOfficeFleet\Backups` and `C:\Users\slyme\AppData\Local\BackOfficeFleet\SharedRollback`, then removed the empty old OneDrive folders.
++
++### Still incomplete:
++The other Codex computer cannot be physically migrated from here; once it receives these script changes, new backups there will default to that machine's own `%LOCALAPPDATA%` path. Existing old backup folders on that machine may need the same one-time move if they already exist.
++
++### Known risks:
++Backups are now machine-local by default, so they will not automatically appear on the other computer through OneDrive. This is intentional to avoid upload delays.
++
++### Validation run:
++`powershell -ExecutionPolicy Bypass -File scripts/bof-list-backups.ps1`; `powershell -ExecutionPolicy Bypass -File scripts/bof-list-shared-checkpoints.ps1`; `npm run codex:registry-sync`; created one fresh main backup and one fresh shared rollback checkpoint in local app-data storage.
++
++### Validation not run:
++No build, browser audit, or document validation was run because this only changes backup tooling and Codex operating guidance.
++
++### Recommended next step:
++On the other machine, run the two list scripts once; if old OneDrive backup folders still exist there, move their files into that machine's local app-data backup folders.
++
++### Parking-lot items:
++Consider adding a small migration script later if both machines need repeated cleanup of old cloud-synced backup folders.
++---
++
++### Date:
++2026-05-22
++
++### Contributor:
++Codex
++
++### Area:
++Expert Consensus Guardian integration
++
++### Files changed:
++`.codex/agents/expert-consensus-guardian.md`, `.codex/registry/agents.json`, `AGENTS.md`, `.codex/session-brief.md`, `.codex/instruction-requests/index.md`, `.codex/instruction-requests/raw/2026-05-22-075953-expert-consensus-guardian.md`
++
++### Completed:
++Added the Expert Consensus Guardian as a project-local agent, registered it for automatic discovery, added a root `AGENTS.md` rule for shared Codex sessions, listed it in the session brief, and archived the source ODT request as a neutral instruction record.
++
++### Still incomplete:
++No product code, routes, data, generated artifacts, or validation scripts were changed.
++
++### Known risks:
++The helper system now has another agent, so future additions should continue using the Codex Operations Supervisor and Instruction Quality Gatekeeper to avoid helper bloat.
++
++### Validation run:
++`npm run codex:registry-sync`
++
++### Validation not run:
++No build, browser audit, or document validation was run because this only changes the Codex operating layer.
++
++### Recommended next step:
++Use the Expert Consensus Guardian only when a proposed change conflicts with established project personas or would weaken approved standards.
++
++### Parking-lot items:
++None.
++---
++
++### Date:
++2026-05-22
++
++### Contributor:
++Codex
++
++### Area:
++Layout squeeze sweep
++
++### Files changed:
++`components/trip-packet/TripPacketWorkspace.tsx`, `components/load-artifacts/LoadPacketControlPanel.tsx`, `components/drivers/DriversRosterTable.tsx`, `app/globals.css`, `.codex/reports/layout-squeeze-sweep.md`
++
++### Completed:
++Fixed the dispatch intake Packet documents squeeze, trip-release signing button clipping, and driver roster mobile squeeze. Added mobile driver attention cards so the phone view no longer depends on a cramped wide table.
++
++### Still incomplete:
++No broad redesign or full before-demo gate was run in this focused pass.
++
++### Known risks:
++The temporary dev server hit stale `.next` chunk errors during hot reload; a full `.next` cleanup and production rebuild cleared the issue.
++
++### Validation run:
++`npm run typecheck`; `npm run lint`; full `.next` cleanup; `npm run build`; targeted production `npm run audit:visual-smoke` for `/drivers`, `/trip-release/L001`, and `/dispatch/intake`; focused Playwright squeeze check for those routes.
++
++### Validation not run:
++Full `npm run codex:before-demo` was not rerun because this was a targeted layout pass after build and focused browser checks passed.
++
++### Recommended next step:
++Continue the owner walkthrough and treat any newly spotted squished cards, clipped CTAs, or hidden document/page links as required-before-demo polish.
++
++### Parking-lot items:
++None.
++
++---
++
++### Date:
++2026-05-22
++
++### Contributor:
++Codex
++
++### Area:
++Codex helper efficiency audit and loading discipline
++
++### Files changed:
++`.codex/agents/instruction-quality-gatekeeper.md`, `AGENTS.md`, `.codex/session-brief.md`, `.codex/reports/codex-helper-efficiency-audit.md`, `.codex/registry/reports.json`, `.codex/reports/shared-handoff-log.md`
++
++### Completed:
++Audited project helper size and overlap, confirmed registry sync passes, added explicit lazy-loading guidance so shared Codex setups use registries/session brief before reading full agent files, narrowed design-helper activation guidance, trimmed the Instruction Quality Gatekeeper canonical agent, and added a discoverable helper-efficiency audit report.
++
++### Still incomplete:
++No broad merge/retire action was taken because the current helpers have distinct triggers and useful ownership when lazy-loaded.
++
++### Known risks:
++Long-running Codex sessions on another machine may need to reread `AGENTS.md` or run `npm run codex:registry-sync` before the new loading discipline is reflected in their context.
++
++### Validation run:
++`powershell -ExecutionPolicy Bypass -File scripts/bof-shared-checkpoint.ps1`; `npm run codex:registry-sync`; JSON parse check for `.codex/registry/agents.json`, `.codex/registry/skills.json`, and `.codex/registry/reports.json`; helper size scan.
++
++### Validation not run:
++Build, browser audits, and document validators because this touched Codex operating-layer guidance only.
++
++### Recommended next step:
++Use `.codex/reports/codex-helper-efficiency-audit.md` as the reference when deciding whether to add, tighten, merge, or retire future helpers.
++
++### Parking-lot items:
++Consider trimming the longest design/test helpers later only if a real session shows they are being loaded too often despite the new lazy-loading rule.
++
++---
++
++### Date:
++2026-05-22
++
++### Contributor:
++Codex
++
++### Area:
++Website and owner demo design-forward pass
++
++### Files changed:
++`components/marketing/MarketingHomeAccountable.tsx`, `app/globals.css`, `components/BofHeader.tsx`, `components/DemoWalkthroughRibbon.tsx`, `components/dashboard/DashboardPageClient.tsx`, `components/command-center/CommandCenterPageClient.tsx`, `components/dispatch/DispatchBoardScreen.tsx`, `components/drivers-v4/DriversCommandCenterV4.tsx`, `components/documents/DocumentsPageClient.tsx`, `components/loads/LoadsPageClient.tsx`, `app/(bof)/maintenance/layout.tsx`, `components/safety-v4/SafetyDashboardV4.tsx`, `components/settlements-payroll/SettlementsDashboardScreen.tsx`, `components/trip-release/DriverTripReleaseClient.tsx`, `components/shipper/ShipperLoadPortalClient.tsx`, `scripts/clear-next-cache.mjs`, `.codex/reports/shared-handoff-log.md`
++
++### Completed:
++Polished the Founding Fleet homepage copy and visual rhythm, added an owner demo path ribbon across priority demo routes, tightened top-of-page trucking value copy on the main demo workflow pages, improved the trip-release and shipper-portal payoff language, fixed mobile product-header wrapping, stacked the dashboard manager card on small screens, and hardened `.next` cache clearing with retries for shared-folder stability.
++
++### Still incomplete:
++No additional feature expansion was done. Existing uncommitted operating-layer/test/UX agent work remains separate and intact.
++
++### Known risks:
++The worktree still contains unrelated uncommitted Codex operating-layer files and the generated homepage reference image. Treat those as separate work unless the owner asks to package everything together.
++
++### Validation run:
++`powershell -ExecutionPolicy Bypass -File scripts/bof-shared-checkpoint.ps1`; `npm run codex:registry-sync`; `npm run typecheck`; `npm run lint`; `node --check scripts/clear-next-cache.mjs`; `npm run build`; `npm run codex:before-demo`. Final before-demo passed: registry, completeness, typecheck, lint, build, driver docs, load docs, load evidence, safety evidence, clickability, BOF links/artifacts, and visual smoke.
++
++### Validation not run:
++No manual live owner rehearsal with a human presenter.
++
++### Recommended next step:
++Have the owner walk the demo once from `/` to `/shipper-portal/L001` and park any new ideas unless they fix a visible confidence issue.
++
++### Parking-lot items:
++Potential future polish can focus on deeper mobile refinement of individual dense data tables, but no high or medium automated findings remain.
++
++---
++
++### Date:
++2026-05-22
++
++### Contributor:
++Codex
++
++### Area:
++Instruction Quality Gatekeeper operating-layer setup
++
++### Files changed:
++`.codex/agents/instruction-quality-gatekeeper.md`, `.codex/registry/agents.json`, `AGENTS.md`, `.codex/session-brief.md`, `.codex/agents/dynamic-agent-installer.md`, `.codex/skills/instruction-quality-gate.md`, `.codex/registry/skills.json`, `.agents/skills/instruction-quality-gatekeeper/SKILL.md`, `.codex/reports/shared-handoff-log.md`
++
++### Completed:
++Added the Instruction Quality Gatekeeper from the ODT as a canonical project agent, wired it into the agent registry, added a root `AGENTS.md` rule for automatic shared-session discovery, listed it in the session brief, connected it to Dynamic Agent Installer, and added both `.codex/skills` and `.agents/skills` compatibility paths so shared environments can discover the behavior even if they load different local guidance systems.
++
++### Still incomplete:
++No product UI, routes, data, generated artifacts, or validation scripts were changed.
++
++### Known risks:
++The other shared environment may need to reread root `AGENTS.md` or run `npm run codex:registry-sync` if it already has a long-running session with stale context.
++
++### Validation run:
++`powershell -ExecutionPolicy Bypass -File scripts/bof-shared-checkpoint.ps1`; `npm run codex:registry-sync`; JSON parse check for `.codex/registry/agents.json` and `.codex/registry/skills.json`; file existence checks for the canonical agent and compatibility skill.
++
++### Validation not run:
++Build, browser audits, and document/proof validators because this is a Codex operating-layer guidance change only.
++
++### Recommended next step:
++Use the gatekeeper whenever new pasted AI advice, personas, or instructions are proposed. Prefer rewriting useful ideas into existing BackOfficeFleet agents, skills, playbooks, or rules.
++
++### Parking-lot items:
++None.
++
++---
++
++### Date:
++2026-05-22
++
++### Contributor:
++Codex
++
++### Area:
++Test Health Maintainer operating-layer setup
++
++### Files changed:
++`.codex/agents/test-health-maintainer.md`, `.codex/registry/agents.json`, `.codex/registry/test-tiers.json`, `AGENTS.md`, `.codex/session-brief.md`, `.codex/reports/shared-handoff-log.md`
++
++### Completed:
++Added the Test Health Maintainer, wired it into project-local discovery, added a test-tier registry for fast smoke, before-demo, and deep-audit checks, and added root guidance so shared Codex sessions classify slow or failing tests before changing tests, product behavior, or validation assumptions.
++
++### Still incomplete:
++No existing tests or audit scripts were reviewed, repaired, moved between tiers, or changed as part of this operating-layer setup.
++
++### Known risks:
++Unrelated homepage and product/data work remains uncommitted in the worktree and was not touched by this setup.
++
++### Validation run:
++`npm run codex:registry-sync` passed.
++
++### Validation not run:
++Build, browser audits, visual smoke, and document validators because this is a Codex operating-layer change only.
++
++### Recommended next step:
++Use this agent the next time `npm run codex:before-demo`, Playwright audits, link checks, visual smoke, or validation scripts fail or slow down.
++
++### Parking-lot items:
++Optional future executable commands for test tiers if the owner wants separate `fast-smoke`, `before-demo`, and `deep-audit` npm scripts.
++
++---
++
++### Date:
++2026-05-22
++
++### Contributor:
++Codex
++
++### Area:
++Persuasive Copy & Design Strategist operating-layer setup
++
++### Files changed:
++`.codex/agents/persuasive-copy-design-strategist.md`, `.codex/registry/agents.json`, `AGENTS.md`, `.codex/session-brief.md`, `.codex/reports/shared-handoff-log.md`
++
++### Completed:
++Added the Persuasive Copy & Design Strategist, wired it into project-local discovery, mapped design/copy finish-line discipline to the existing Demo Completion Governor, and added root guidance so shared Codex sessions activate it for wording, CTAs, customer trust, conversion flow, demo walkthroughs, buyer impression, hero sections, shipper portal messaging, command center messaging, and executive summaries.
++
++### Still incomplete:
++No product screens or marketing copy were reviewed or changed as part of this operating-layer setup.
++
++### Known risks:
++Unrelated homepage and product/data work remains uncommitted in the worktree and was not touched by this setup.
++
++### Validation run:
++`npm run codex:registry-sync` passed.
++
++### Validation not run:
++Build, browser audits, visual smoke, and document validators because this is a Codex operating-layer change only.
++
++### Recommended next step:
++Use this agent for future copy, CTA, trust, and persuasive design reviews, then let the Demo Completion Governor classify any proposed work before implementation.
++
++### Parking-lot items:
++None.
++
++---
++
++### Date:
++2026-05-22
++
++### Contributor:
++Codex
++
++### Area:
++UX Retention & Beauty Director operating-layer setup
++
++### Files changed:
++`.codex/agents/ux-retention-beauty-director.md`, `.codex/registry/agents.json`, `AGENTS.md`, `.codex/session-brief.md`, `.codex/reports/shared-handoff-log.md`
++
++### Completed:
++Added the UX Retention & Beauty Director, wired it into project-local discovery, mapped design finish-line discipline to the existing Demo Completion Governor, and added root guidance so shared Codex sessions activate it for visual design, trust, retention, homepage polish, demo polish, and bland/dark/generic design concerns.
++
++### Still incomplete:
++No product screens were reviewed or changed as part of this operating-layer setup.
++
++### Known risks:
++Unrelated homepage and product/data work remains uncommitted in the worktree and was not touched by this setup.
++
++### Validation run:
++`npm run codex:registry-sync` passed.
++
++### Validation not run:
++Build, browser audits, visual smoke, and document validators because this is a Codex operating-layer change only.
++
++### Recommended next step:
++Use this agent for future beauty, retention, customer trust, and UX polish reviews, then let the Demo Completion Governor classify any proposed work before implementation.
++
+ ### Parking-lot items:
+ None.
+ 
+@@ -351,3 +663,207 @@ Use the architect for future executive demo polish or wow-factor reviews, then l
+ 
+ ### Parking-lot items:
+ None.
++---
++
++### Date:
++2026-05-22
++
++### Contributor:
++Codex
++
++### Area:
++Website and BOF demo design sweep
++
++### Files changed:
++`app/globals.css`, `components/BofHeader.tsx`, `components/dashboard/DashboardPageClient.tsx`, `components/documents/OperationsFileCabinetClient.tsx`, `.codex/reports/before-demo-readiness.md`, `.codex/reports/broken-link-report.md`, `.codex/reports/demo-completion-report.md`
++
++### Completed:
++Created a shared rollback checkpoint, polished the public homepage/global visual system, upgraded the BOF product header and dashboard lobby/card styling, tightened the documents proof shelf, and removed odd encoded CTA text from the document cabinet.
++
++### Still incomplete:
++No broad redesign was attempted. Deeper route-by-route copy and layout polish can continue later if the owner wants another focused pass.
++
++### Known risks:
++The workspace still has many pre-existing uncommitted Codex operating-layer and product files. This sweep did not revert or stage unrelated work.
++
++### Validation run:
++`powershell -ExecutionPolicy Bypass -File scripts/bof-shared-checkpoint.ps1`; `npm run codex:registry-sync`; `npm run typecheck`; `npm run lint`; `npm run build`; `npm run codex:before-demo`.
++
++### Validation not run:
++No separate manual browser walkthrough beyond reviewing the refreshed visual-smoke screenshots.
++
++### Recommended next step:
++Have the owner walk the demo path live and only mark visible confidence issues as required-before-demo fixes.
++
++### Parking-lot items:
++Optional future polish can target individual route copy density and mobile rhythm, but the automated demo gate is clean.
++---
++
++### Date:
++2026-05-22
++
++### Contributor:
++Codex
++
++### Area:
++Neutral AI instruction request archive
++
++### Files changed:
++`.codex/instruction-requests/index.md`, `.codex/instruction-requests/.gitkeep`, `.codex/instruction-requests/raw/.gitkeep`, `.codex/agents/instruction-quality-gatekeeper.md`, `.codex/skills/instruction-quality-gate.md`, `.agents/skills/instruction-quality-gatekeeper/SKILL.md`, `.codex/registry/reports.json`, `.codex/session-brief.md`, `AGENTS.md`, `.codex/reports/shared-handoff-log.md`
++
++### Completed:
++Added a neutral capture-first archive for long pasted AI suggestions and proposed instructions. The archive is discoverable from the root instructions, gatekeeper agent, mirrored skill, session brief, and reports registry.
++
++### Still incomplete:
++No historical pasted requests were backfilled. Future long pasted instruction requests should be saved when available in chat or explicitly provided.
++
++### Known risks:
++The archive is intentionally neutral and visible inside the project folder. It should not be used to label or characterize any person.
++
++### Validation run:
++`powershell -ExecutionPolicy Bypass -File scripts/bof-shared-checkpoint.ps1`; `npm run codex:registry-sync`; JSON parse check for `.codex/registry/reports.json`; file existence checks for `.codex/instruction-requests/`; wording check for avoided personal-label language.
++
++### Validation not run:
++Build, browser audits, and document validators because this only changes Codex operating-layer guidance and archive files.
++
++### Recommended next step:
++When future long AI-generated instruction suggestions are pasted, save the raw request in `.codex/instruction-requests/raw/`, add a compact index row, then run the normal Instruction Quality Gatekeeper review.
++
++### Parking-lot items:
++Add a capture script later only if manual archive entries become repetitive.
++---
++
++### Date:
++2026-05-22
++
++### Contributor:
++Codex
++
++### Area:
++BackOfficeFleet client-demo visual polish pass
++
++### Files changed:
++`components/marketing/MarketingHomeAccountable.tsx`, `components/dashboard/DashboardPageClient.tsx`, `components/documents/OperationsFileCabinetClient.tsx`, `components/command-center-v4/CommandCenterV4.tsx`, `components/dispatch/DispatchBoardScreen.tsx`, `app/(bof)/shipper-portal/[loadId]/page.tsx`, `app/(bof)/trip-release/[loadId]/page.tsx`, `app/globals.css`, `.codex/reports/before-demo-readiness.md`, `.codex/reports/broken-link-report.md`, `.codex/reports/demo-completion-report.md`, `.codex/reports/visual-polish-report.md`
++
++### Completed:
++Created a shared rollback checkpoint, tightened the Founding Fleet homepage copy and mobile rhythm, shortened the dashboard lobby, improved dashboard card media loading, hid the empty documents queue area, and added scoped scanability/spacing polish to command center, dispatch, shipper portal, and trip release surfaces.
++
++### Still incomplete:
++No broad redesign, data change, generated-artifact edit, or route architecture change was attempted. Remaining improvements should be handled as focused page-level polish only if the owner sees a live-demo confidence issue.
++
++### Known risks:
++The shared folder still contains many pre-existing uncommitted changes from earlier operating-layer and product work. A transient OneDrive file-read issue appeared during validation and was resolved in place by rehydrating/restoring the touched command-center file before reapplying the small polish change.
++
++### Validation run:
++`powershell -ExecutionPolicy Bypass -File scripts/bof-shared-checkpoint.ps1`; `npm run codex:registry-sync`; `npm run typecheck`; `npm run lint`; `npm run build`; `npm run codex:before-demo`; refreshed desktop/mobile visual-smoke screenshot review for homepage, dashboard, documents, shipper portal, and trip release.
++
++### Validation not run:
++No separate manual click-by-click owner rehearsal outside the automated before-demo browser audits and screenshot review.
++
++### Recommended next step:
++Run a live owner walkthrough from `/` through the BOF demo path and only fix visible issues that the Demo Completion Governor would classify as required before demo.
++
++### Parking-lot items:
++Trip release still has dense proof-packet content by design; a future pass could make that payoff more guided if the live walkthrough feels heavy.
++---
++
++### Date:
++2026-05-22
++
++### Contributor:
++Codex
++
++### Area:
++Logo transparency and dark visual correction
++
++### Files changed:
++`components/BofLogo.tsx`, `components/BofHeader.tsx`, `components/marketing/MarketingNavigation.tsx`, `app/globals.css`, `public/logo/boflogo-light-transparent.png`, `public/logo/boflogo-dark-transparent.png`
++
++### Completed:
++Restored the original BackOfficeFleet logo design, generated transparent-background logo assets from the original PNGs, fixed the public header to use the light-background logo, fixed the product header to use the dark-background logo, and removed the broad light-mode override block that clashed with the existing large demo imagery.
++
++### Still incomplete:
++No full redesign was attempted. Future color work should be route-scoped and checked against the existing image assets before changing the global theme.
++
++### Known risks:
++The public marketing shell uses `MarketingNavigation`, while the shared root header uses `BofHeader`; both now route through the same transparent `BofLogo` component, but future header edits should check both places.
++
++### Validation run:
++`npm run typecheck`; `npm run lint`; `npm run build`; targeted `npm run audit:visual-smoke` for `/` and `/dashboard` on a temporary local server.
++
++### Validation not run:
++Full `npm run codex:before-demo` was not rerun because this was a focused branding/theme correction after build and targeted visual smoke passed.
++
++### Recommended next step:
++Preview the site normally and judge any remaining color mismatch page by page instead of returning the whole project to a broad light-mode pass.
++
++### Parking-lot items:
++If a future light theme is still desired, regenerate or recolor the large dark hero/demo images first so the site does not look mismatched.
++---
++
++### Date:
++2026-05-22
++
++### Contributor:
++Codex
++
++### Area:
++No fake buttons demo pass
++
++### Files changed:
++`app/assessment/page.tsx`, `components/assessment/AssessmentTrackPageClient.tsx`, `components/compliance-flow-pro/ComplianceFlowDashboard.tsx`, `components/dispatch-v2/PreTripPacketModal.tsx`, `components/settlements-premium/SettlementDetailPanel.tsx`, `components/settlements-premium/SettlementExceptionReview.tsx`, `components/settlements-premium/AccountingTemplates.tsx`, `components/settlements-v2/SettlementSidebar.tsx`, `components/settlements-v2/TemplateCard.tsx`
++
++### Completed:
++Replaced nested Link/button patterns with real links, changed settlement guideline/review/preview controls into actual anchors that open the relevant page or generated artifact, made unavailable settlement review actions visibly disabled, and added a visible draft-save response to an older pre-trip modal action.
++
++### Still incomplete:
++This pass focused on source-visible fake controls and priority route link audits. It did not manually click every secondary modal in the app.
++
++### Known risks:
++Some older secondary routes remain outside the main owner demo path, but their obvious button-looking document/page actions are now wired or disabled.
++
++### Validation run:
++Shared rollback checkpoint; source scan for plain buttons without handlers/disabled state; `npm run typecheck`; `npm run lint`; `npm run build`; `npm run audit:demo-clickability`; `npm run audit:bof-links`.
++
++### Validation not run:
++Full visual smoke and full before-demo gate were not rerun because this was a focused clickability/link-control pass.
++
++### Recommended next step:
++During the owner walkthrough, treat any newly noticed “View/Open/Review” control as a required-before-demo fix if it does not navigate, open a document, open a drawer/modal, or clearly present itself as disabled.
++
++### Parking-lot items:
++The older assessment and settlement preview routes could still use visual polish later, but they no longer have obvious fake page/document buttons from this scan.
++---
++
++### Date:
++2026-05-22
++
++### Contributor:
++Codex
++
++### Area:
++Dispatch intake packet document spacing
++
++### Files changed:
++`components/trip-packet/TripPacketWorkspace.tsx`
++
++### Completed:
++Adjusted the dispatch intake trip-packet workspace so the three-column layout does not activate until there is enough screen width, kept packet document cards from splitting into cramped columns inside a narrow center panel, and gave the packet shortcut links stable grid widths.
++
++### Still incomplete:
++No broader dispatch redesign was attempted.
++
++### Known risks:
++The first build attempt hit transient shared-folder `.next` cache errors, then passed on retry after cache clear.
++
++### Validation run:
++`npm run typecheck`; `npm run lint`; targeted browser screenshot of `/dispatch/intake`; `npm run build`.
++
++### Validation not run:
++Full before-demo gate was not rerun because this was a focused layout fix.
++
++### Recommended next step:
++Preview `/dispatch/intake` in the owner browser and scroll to Packet documents; if any card still feels cramped at the owner’s exact window size, make that document grid single-column for one more breakpoint.
++
++### Parking-lot items:
++None.
+diff --git a/AGENTS.md b/AGENTS.md
+index 9f7245f..ac0db26 100644
+--- a/AGENTS.md
++++ b/AGENTS.md
+@@ -18,6 +18,19 @@ This repository contains a project-local Codex operating layer in `.codex/`. Any
+ - Use the Trucking Operations Domain Expert before planning trucking-specific page content, fields, documents, demo completeness, or marketing claims.
+ - Avoid sweeping generated asset folders into default context unless the task explicitly targets documents or proof packets.
+ 
++## Helper Loading Discipline
++
++Use `.codex/session-brief.md` and `.codex/registry/*.json` as the normal discovery layer. Do not read every full file in `.codex/agents` by default.
++
++Load a full agent file only when its trigger clearly matches the current task or when auditing that specific helper. For most tasks, one specialist is enough; use two or three only when the work genuinely crosses ownership boundaries. For design work, choose the narrow owner first:
++
++- UX Retention & Beauty Director for usability, trust, visual hierarchy, and retention.
++- Persuasive Copy & Design Strategist for copy, CTA, message clarity, and buyer psychology.
++- Enterprise Demo Experience Architect for executive demo impact and memorable walkthrough moments.
++- Website Polish Director for general visual consistency.
++
++Do not activate all design helpers together unless the owner asks for a broad design review. Prefer checklists and scripts over loading long agent bodies when a mechanical check will answer the question.
++
+ ## Demo Completion Governor Rule
+ 
+ When reviewing BackOfficeFleet for demo readiness, Codex must activate the Demo Completion Governor.
+@@ -62,7 +75,7 @@ Backup limits:
+ - Maximum 20 retained backup iterations
+ - Maximum 15 GB total retained backup storage
+ 
+-Backups should be stored outside the project root, preferably in `../BackOfficeFleet-Backups/`.
++Backups should be stored outside both the project root and OneDrive-synced folders. By default, the scripts use the local machine folder `%LOCALAPPDATA%\BackOfficeFleet\Backups`, or `BOF_BACKUP_ROOT` when that environment variable is set.
+ 
+ Backup scripts must exclude disposable folders such as `node_modules`, `.next`, `.vercel`, coverage folders, test reports, and logs.
+ 
+@@ -76,8 +89,9 @@ Codex should avoid heavy collaboration process unless requested. Before meaningf
+ 
+ Shared rollback checkpoints are separate from main project backups:
+ 
+-- Main backups stay in `../BackOfficeFleet-Backups/` and keep the existing 20-backup / 15 GB retention rule.
+-- Shared rollback checkpoints stay in `../BackOfficeFleet-Shared-Rollback/`.
++- Main backups stay in local machine storage, defaulting to `%LOCALAPPDATA%\BackOfficeFleet\Backups`, and keep the existing 20-backup / 15 GB retention rule.
++- Shared rollback checkpoints stay in local machine storage, defaulting to `%LOCALAPPDATA%\BackOfficeFleet\SharedRollback`.
++- Set `BOF_BACKUP_ROOT` or `BOF_SHARED_CHECKPOINT_ROOT` only when a machine needs a custom non-cloud location.
+ - Shared rollback checkpoints use `bof-shared-checkpoint-*.zip`.
+ - Shared rollback checkpoints have no count limit.
+ - Shared rollback checkpoints are constrained only by total storage size, defaulting to 15 GB.
+@@ -160,6 +174,47 @@ When these agents disagree:
+ - Prefer memorable polish over feature quantity.
+ - Treat new ideas as parking-lot items unless they fix a visible demo-readiness gap.
+ 
++## UX Beauty and Retention Rule
++
++When work involves visual design, UX polish, user retention, customer impression, homepage polish, demo polish, navigation friction, conversion friction, or whether the site feels bland, activate the UX Retention & Beauty Director.
++
++Codex should not default to dark mode as the answer to making the product feel premium. Codex should not flatten the product into a single-color theme.
++
++Design changes should improve beauty, clarity, trust, hierarchy, accessibility, controlled color variety, and continued engagement while staying restrained.
++
++When design ambition risks becoming endless, coordinate with the Demo Completion Governor. When customer wow factor matters, coordinate with the Enterprise Demo Experience Architect. When general consistency matters, coordinate with the Website Polish Director.
++
++## Persuasive Copy and Design Rule
++
++When work involves wording, CTAs, marketing pages, customer trust, conversion flow, demo walkthroughs, buyer impression, hero sections, shipper portal messaging, command center messaging, or executive summaries, activate the Persuasive Copy & Design Strategist.
++
++Codex should make wording specific, credible, buyer-aware, and persuasive without using hype, false urgency, fake claims, fake testimonials, or manipulative design patterns.
++
++Persuasion should come from clarity, proof, operational pain, business outcomes, trucking-specific relevance, and confident design hierarchy.
++
++When persuasive copy affects trucking credibility, coordinate with the Trucking Operations Domain Expert. When design trust and usability matter, coordinate with the UX Retention & Beauty Director. When the copy/design work risks becoming endless, coordinate with the Demo Completion Governor.
++
++## Test Health Rule
++
++When tests, audits, Playwright checks, link checks, visual smoke checks, demo completeness checks, or validation scripts are slow or failing, activate the Test Health Maintainer.
++
++Codex must classify each failure before changing anything:
++
++1. Real product/demo issue
++2. Outdated test expectation
++3. Flaky timing issue
++4. Bad selector
++5. Bad test data
++6. Environment problem
++7. Generated-artifact noise
++8. Too broad / should be split
++9. Too slow / should move to deep audit
++10. No longer valuable
++
++Codex should not delete or weaken tests just to make the suite pass. It should repair tests, update assumptions, split slow checks, move deep audits to the correct tier, or escalate real product/environment issues while preserving meaningful demo protection.
++
++Use `.codex/registry/test-tiers.json` to choose between fast smoke checks, before-demo checks, and deep audit checks.
++
+ ## Codex Helper Efficiency Rule
+ 
+ When the Codex environment gains new agents, skills, playbooks, reports, or recurring workflows, activate the Codex Operations Supervisor.
+@@ -177,6 +232,58 @@ Codex should not add a new agent unless the Codex Operations Supervisor confirms
+ 
+ The supervisor should keep the helper system lean, useful, discoverable, and focused on finishing the BackOfficeFleet demo.
+ 
++## Instruction Quality Gate
++
++When the owner pastes advice from ChatGPT or another AI tool, or proposes new instructions, activate the Instruction Quality Gatekeeper before adding anything.
++
++Codex should not paste generic AI advice directly into this project environment.
++
++Before reviewing or rewriting a long pasted AI suggestion, generic prompt block, persona proposal, or proposed instruction, save the original text as a neutral project record:
++
++- Raw request: `.codex/instruction-requests/raw/YYYY-MM-DD-HHMMSS-short-topic.md`
++- Lookup index: `.codex/instruction-requests/index.md`
++
++Each raw request file should include date captured, source, captured by, gatekeeper status, and the original pasted content under `## Raw Request`. Use this archive only for instruction traceability, duplicate detection, scope-drift prevention, and helper cleanup. Do not use it to label or characterize any person. If the pasted content appears to contain secrets, credentials, or highly sensitive personal information, pause before saving and ask whether to redact or skip archival.
++
++New instructions must be reviewed for:
++
++1. Project-specific purpose
++2. Activation trigger
++3. Output format
++4. Boundaries
++5. Overlap with existing agents
++6. Effect on the finish line
++7. Risk of adding noise or scope drift
++
++Codex should explain that random ChatGPT advice is often less grounded than this project environment because it does not know BackOfficeFleet's existing agents, routes, demo-completion rules, rollback memory, test tiers, and finish-line constraints.
++
++Useful ideas should be rewritten into the existing system. Weak or duplicate ideas should be rejected.
++
++This gives Codex a firm but respectful filter for rapid instruction adding. It does not say ChatGPT is useless. It says generic output is often less grounded than a structured, repo-specific Codex operating system.
++
++## Expert Consensus Rule
++
++When a proposed change may conflict with an established persona, activate the Expert Consensus Guardian before applying it.
++
++Codex must check whether the change aligns with the project's expert standards for:
++
++1. Demo completeness.
++2. Trucking-domain realism.
++3. Finish-line discipline.
++4. Visual beauty and UX retention.
++5. Persuasive copy and design.
++6. Testing integrity.
++7. Rollback and change-memory safety.
++8. Source-of-truth discipline.
++9. Instruction quality.
++10. Collaboration safety.
++
++If the change conflicts with one or more expert personas, Codex should explain the conflict plainly and recommend a better alternative.
++
++If the owner insists, Codex may proceed only after clearly stating the tradeoff and recording that the change was an owner override when the work is meaningful.
++
++This gives the project a guardian of the expert system so Codex does not accidentally undo the standards already built into BackOfficeFleet.
++
+ ## Important Environment Warnings
+ 
+ - This folder is intentionally shared through the cloud. If Node reports `UNKNOWN: unknown error, read`, keep working in the shared folder and first check file hydration, Office lock files, dependency install state, and build caches.
+diff --git a/scripts/bof-backup.ps1 b/scripts/bof-backup.ps1
+index 042a5a2..d5148f4 100644
+--- a/scripts/bof-backup.ps1
++++ b/scripts/bof-backup.ps1
+@@ -15,6 +15,22 @@ function Format-Bytes {
+   return "$Bytes B"
+ }
+ 
++function Get-DefaultBackupRoot {
++  if ($env:BOF_BACKUP_ROOT) {
++    return $env:BOF_BACKUP_ROOT
++  }
++
++  $localAppData = $env:LOCALAPPDATA
++  if (-not $localAppData) {
++    $localAppData = [Environment]::GetFolderPath([Environment+SpecialFolder]::LocalApplicationData)
++  }
++  if (-not $localAppData) {
++    $localAppData = Join-Path $HOME "AppData\Local"
++  }
++
++  return (Join-Path (Join-Path $localAppData "BackOfficeFleet") "Backups")
++}
++
+ function Get-RelativePath {
+   param(
+     [string]$Root,
+@@ -80,7 +96,7 @@ function Invoke-PruneBackups {
+ 
+ $ProjectRoot = (Resolve-Path (Join-Path $PSScriptRoot "..")).Path
+ if (-not $BackupRoot) {
+-  $BackupRoot = Join-Path (Split-Path $ProjectRoot -Parent) "BackOfficeFleet-Backups"
++  $BackupRoot = Get-DefaultBackupRoot
+ }
+ $BackupRoot = [System.IO.Path]::GetFullPath($BackupRoot)
+ 
+diff --git a/scripts/bof-list-backups.ps1 b/scripts/bof-list-backups.ps1
+index 3c60f97..5c5cd25 100644
+--- a/scripts/bof-list-backups.ps1
++++ b/scripts/bof-list-backups.ps1
+@@ -14,9 +14,25 @@ function Format-Bytes {
+   return "$Bytes B"
+ }
+ 
++function Get-DefaultBackupRoot {
++  if ($env:BOF_BACKUP_ROOT) {
++    return $env:BOF_BACKUP_ROOT
++  }
++
++  $localAppData = $env:LOCALAPPDATA
++  if (-not $localAppData) {
++    $localAppData = [Environment]::GetFolderPath([Environment+SpecialFolder]::LocalApplicationData)
++  }
++  if (-not $localAppData) {
++    $localAppData = Join-Path $HOME "AppData\Local"
++  }
++
++  return (Join-Path (Join-Path $localAppData "BackOfficeFleet") "Backups")
++}
++
+ $ProjectRoot = (Resolve-Path (Join-Path $PSScriptRoot "..")).Path
+ if (-not $BackupRoot) {
+-  $BackupRoot = Join-Path (Split-Path $ProjectRoot -Parent) "BackOfficeFleet-Backups"
++  $BackupRoot = Get-DefaultBackupRoot
+ }
+ $BackupRoot = [System.IO.Path]::GetFullPath($BackupRoot)
+ 
+diff --git a/scripts/bof-list-shared-checkpoints.ps1 b/scripts/bof-list-shared-checkpoints.ps1
+index d26747e..fdfdd14 100644
+--- a/scripts/bof-list-shared-checkpoints.ps1
++++ b/scripts/bof-list-shared-checkpoints.ps1
+@@ -13,9 +13,25 @@ function Format-Bytes {
+   return "$Bytes B"
+ }
+ 
++function Get-DefaultCheckpointRoot {
++  if ($env:BOF_SHARED_CHECKPOINT_ROOT) {
++    return $env:BOF_SHARED_CHECKPOINT_ROOT
++  }
++
++  $localAppData = $env:LOCALAPPDATA
++  if (-not $localAppData) {
++    $localAppData = [Environment]::GetFolderPath([Environment+SpecialFolder]::LocalApplicationData)
++  }
++  if (-not $localAppData) {
++    $localAppData = Join-Path $HOME "AppData\Local"
++  }
++
++  return (Join-Path (Join-Path $localAppData "BackOfficeFleet") "SharedRollback")
++}
++
+ $ProjectRoot = (Resolve-Path (Join-Path $PSScriptRoot "..")).Path
+ if (-not $CheckpointRoot) {
+-  $CheckpointRoot = Join-Path (Split-Path $ProjectRoot -Parent) "BackOfficeFleet-Shared-Rollback"
++  $CheckpointRoot = Get-DefaultCheckpointRoot
+ }
+ $CheckpointRoot = [System.IO.Path]::GetFullPath($CheckpointRoot)
+ 
+diff --git a/scripts/bof-restore-shared-checkpoint.ps1 b/scripts/bof-restore-shared-checkpoint.ps1
+index a2b4370..ecfabbb 100644
+--- a/scripts/bof-restore-shared-checkpoint.ps1
++++ b/scripts/bof-restore-shared-checkpoint.ps1
+@@ -41,9 +41,25 @@ function Test-SelectedArchivePath {
+   return $false
+ }
+ 
++function Get-DefaultCheckpointRoot {
++  if ($env:BOF_SHARED_CHECKPOINT_ROOT) {
++    return $env:BOF_SHARED_CHECKPOINT_ROOT
++  }
++
++  $localAppData = $env:LOCALAPPDATA
++  if (-not $localAppData) {
++    $localAppData = [Environment]::GetFolderPath([Environment+SpecialFolder]::LocalApplicationData)
++  }
++  if (-not $localAppData) {
++    $localAppData = Join-Path $HOME "AppData\Local"
++  }
++
++  return (Join-Path (Join-Path $localAppData "BackOfficeFleet") "SharedRollback")
++}
++
+ $ProjectRoot = (Resolve-Path (Join-Path $PSScriptRoot "..")).Path
+ if (-not $CheckpointRoot) {
+-  $CheckpointRoot = Join-Path (Split-Path $ProjectRoot -Parent) "BackOfficeFleet-Shared-Rollback"
++  $CheckpointRoot = Get-DefaultCheckpointRoot
+ }
+ $CheckpointRoot = [System.IO.Path]::GetFullPath($CheckpointRoot)
+ 
+diff --git a/scripts/bof-restore.ps1 b/scripts/bof-restore.ps1
+index 38e1373..0b2f666 100644
+--- a/scripts/bof-restore.ps1
++++ b/scripts/bof-restore.ps1
+@@ -15,9 +15,25 @@ function Format-Bytes {
+   return "$Bytes B"
+ }
+ 
++function Get-DefaultBackupRoot {
++  if ($env:BOF_BACKUP_ROOT) {
++    return $env:BOF_BACKUP_ROOT
++  }
++
++  $localAppData = $env:LOCALAPPDATA
++  if (-not $localAppData) {
++    $localAppData = [Environment]::GetFolderPath([Environment+SpecialFolder]::LocalApplicationData)
++  }
++  if (-not $localAppData) {
++    $localAppData = Join-Path $HOME "AppData\Local"
++  }
++
++  return (Join-Path (Join-Path $localAppData "BackOfficeFleet") "Backups")
++}
++
+ $ProjectRoot = (Resolve-Path (Join-Path $PSScriptRoot "..")).Path
+ if (-not $BackupRoot) {
+-  $BackupRoot = Join-Path (Split-Path $ProjectRoot -Parent) "BackOfficeFleet-Backups"
++  $BackupRoot = Get-DefaultBackupRoot
+ }
+ $BackupRoot = [System.IO.Path]::GetFullPath($BackupRoot)
+ 
+diff --git a/scripts/bof-shared-checkpoint.ps1 b/scripts/bof-shared-checkpoint.ps1
+index 2446c3a..189e0e3 100644
+--- a/scripts/bof-shared-checkpoint.ps1
++++ b/scripts/bof-shared-checkpoint.ps1
+@@ -14,6 +14,22 @@ function Format-Bytes {
+   return "$Bytes B"
+ }
+ 
++function Get-DefaultCheckpointRoot {
++  if ($env:BOF_SHARED_CHECKPOINT_ROOT) {
++    return $env:BOF_SHARED_CHECKPOINT_ROOT
++  }
++
++  $localAppData = $env:LOCALAPPDATA
++  if (-not $localAppData) {
++    $localAppData = [Environment]::GetFolderPath([Environment+SpecialFolder]::LocalApplicationData)
++  }
++  if (-not $localAppData) {
++    $localAppData = Join-Path $HOME "AppData\Local"
++  }
++
++  return (Join-Path (Join-Path $localAppData "BackOfficeFleet") "SharedRollback")
++}
++
+ function Get-RelativePath {
+   param(
+     [string]$Root,
+@@ -82,7 +98,7 @@ function Invoke-PruneSharedCheckpoints {
+ 
+ $ProjectRoot = (Resolve-Path (Join-Path $PSScriptRoot "..")).Path
+ if (-not $CheckpointRoot) {
+-  $CheckpointRoot = Join-Path (Split-Path $ProjectRoot -Parent) "BackOfficeFleet-Shared-Rollback"
++  $CheckpointRoot = Get-DefaultCheckpointRoot
+ }
+ $CheckpointRoot = [System.IO.Path]::GetFullPath($CheckpointRoot)

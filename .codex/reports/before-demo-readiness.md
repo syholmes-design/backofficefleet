@@ -1,7 +1,7 @@
 # Before-Demo Readiness Report
 
 ## Plain-English Summary
-Before-demo checks passed, including browser route, link, artifact, and visual smoke audits.
+Core readiness checks passed. Browser route/link/visual audits were skipped because the dev server was not reachable.
 
 ## Gate Results
 | Status | Check | Command |
@@ -15,15 +15,15 @@ Before-demo checks passed, including browser route, link, artifact, and visual s
 | PASS | Load document validation | `npm run validate:load-docs` |
 | PASS | Load evidence validation | `npm run validate:load-evidence` |
 | PASS | Safety evidence validation | `npm run validate:safety-evidence` |
-| PASS | Demo clickability audit | `npm run audit:demo-clickability` |
-| PASS | BOF link and artifact audit | `npm run audit:bof-links` |
-| PASS | Visual smoke audit | `npm run audit:visual-smoke` |
+| SKIPPED | Demo clickability audit | `npm run audit:demo-clickability` |
+| SKIPPED | BOF link and artifact audit | `npm run audit:bof-links` |
+| SKIPPED | Visual smoke audit | `npm run audit:visual-smoke` |
 
 ## Owner Notes
-A temporary dev server was started for browser-based checks and stopped after the audits completed.
+Browser audits were skipped because http://localhost:3001 was not reachable and the temporary dev server did not become ready in time.
 
 ## Technical Appendix
-Base URL: http://localhost:3000
-Passed checks: 12
+Base URL: http://localhost:3001
+Passed checks: 9
 Failed checks: 0
-Generated at: 2026-05-22T08:34:21.858Z
+Generated at: 2026-05-22T10:50:13.341Z

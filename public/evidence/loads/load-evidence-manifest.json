@@ -1534,26 +1534,26 @@
       "reason": "Not required for this load context"
     },
     "damagePhoto": {
-      "url": "",
+      "url": "/evidence/loads/L008/damage-photo.jpg",
       "label": "Damage / claim photo",
       "basename": "damage-photo",
-      "source": "missing",
+      "source": "real",
       "generatedAt": "2026-05-22T01:00:07.242Z",
       "required": false,
       "conditional": true,
-      "applicable": false,
-      "reason": "Not required for this load context"
+      "applicable": true,
+      "reason": "Cargo-damage claim review is active for L008"
     },
     "cargoDamagePhoto": {
-      "url": "",
+      "url": "/evidence/loads/L008/cargo-damage-photo.png",
       "label": "Cargo damage photo",
       "basename": "cargo-damage-photo",
-      "source": "missing",
+      "source": "real",
       "generatedAt": "2026-05-22T01:00:07.242Z",
       "required": false,
       "conditional": true,
-      "applicable": false,
-      "reason": "Not required for this load context"
+      "applicable": true,
+      "reason": "Cargo-damage claim review is active for L008"
     },
     "damagedPalletPhoto": {
       "url": "",
@@ -1610,26 +1610,26 @@
       "reason": "Not required for this load context"
     },
     "safetyViolationPhoto": {
-      "url": "",
-      "label": "Safety violation photo",
-      "basename": "safety-violation-photo",
-      "source": "missing",
+      "url": "/evidence/safety/l405-hos-eld-violation.png",
+      "label": "HOS safety event evidence",
+      "basename": "l405-hos-eld-violation",
+      "source": "real",
       "generatedAt": "2026-05-22T01:00:07.242Z",
       "required": false,
       "conditional": true,
-      "applicable": false,
-      "reason": "Not required for this load context"
+      "applicable": true,
+      "reason": "L008 safety event is linked to Liam Smith / DRV-008"
     },
     "claimEvidence": {
-      "url": "",
+      "url": "/evidence/loads/L008/cargo-damage-photo.png",
       "label": "Claim evidence",
-      "basename": "claim-evidence",
-      "source": "missing",
+      "basename": "cargo-damage-photo",
+      "source": "real",
       "generatedAt": "2026-05-22T01:00:07.242Z",
       "required": false,
       "conditional": true,
-      "applicable": false,
-      "reason": "Not required for this load context"
+      "applicable": true,
+      "reason": "Claim evidence packet is partial and under manager review"
     },
     "proofCardComposite": {
       "url": "/evidence/loads/L008/load008-claim-proof-cards.png",
@@ -1639,7 +1639,7 @@
       "required": false,
       "conditional": true,
       "applicable": true,
-      "reason": "Optional visual proof-card preview; individual proof records remain authoritative"
+      "reason": "Claim proof-card preview; individual proof records remain authoritative"
     }
   },
   "L009": {

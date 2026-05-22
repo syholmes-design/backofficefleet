@@ -7,6 +7,6 @@ The link audit did not find broken priority-route links or artifact fallback fai
 - None found.
 
 ## Technical Appendix
-Base URL: http://localhost:3000
+Base URL: http://localhost:3016
 Routes checked: 12
-Links checked: 253
+Links checked: 196

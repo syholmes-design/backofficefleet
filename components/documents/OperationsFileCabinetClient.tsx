@@ -259,59 +259,59 @@ export function OperationsFileCabinetClient() {
 
   function getItemCta(item: OperationsFileCabinetItem): string {
     if (item.id === "claims-insurance-notice") {
-      return "Open insurance notice â†’";
+      return "Open insurance notice";
     }
 
     // Handle completed demo samples
     if (item.section === "Completed Demo Samples" || item.isCompletedSample) {
-      return "View completed sample →";
+      return "View completed sample";
     }
     
     if (item.sourceAuthenticity === "generated_from_template" && item.status === "available" && !item.isBlankTemplate) {
-      return "Open document â†’";
+      return "Open document";
     }
 
     // Handle blank templates
     if (item.section === "Blank Templates") {
-      return "Open blank template →";
+      return "Open blank template";
     }
     
     // Handle company policies
     if (item.section === "Company Policies & SOPs") {
-      return "View policy →";
+      return "View policy";
     }
     
     // Handle BOF dispatch templates
     if (item.section === "BOF Dispatch Templates") {
-      return "View template →";
+      return "View template";
     }
     
     // Handle external resources
     if (item.section === "External Resources") {
-      return "Open guidance →";
+      return "Open guidance";
     }
     
     // Fallback to type-based CTA
     switch (item.type) {
       case "template":
-        return "Open blank template →";
+        return "Open blank template";
       case "policy":
       case "sop":
-        return "View policy →";
+        return "View policy";
       case "form":
-        return "Fill out form →";
+        return "Fill out form";
       case "driver-file":
-        return "View document →";
+        return "View document";
       case "video":
-        return "Watch video →";
+        return "Watch video";
       case "article":
-        return "Read article →";
+        return "Read article";
       case "checklist":
-        return "Use checklist →";
+        return "Use checklist";
       case "contract":
-        return "View contract →";
+        return "View contract";
       default:
-        return "View →";
+        return "View";
     }
   }
 
@@ -373,7 +373,7 @@ export function OperationsFileCabinetClient() {
   }
 
   return (
-    <div className="bof-page" style={{ paddingBottom: "8rem" }}>
+    <div className="bof-page bof-operations-file-cabinet" style={{ paddingBottom: "8rem" }}>
       {/* Hero Section with Watermark */}
       <div style={{
         marginBottom: "2rem",
@@ -969,29 +969,70 @@ export function OperationsFileCabinetClient() {
       </div>
 
       {/* Featured File Cabinet */}
-      <div style={{
-        minHeight: "100vh",
-        backgroundColor: "#1a1a1a",
+      <div className="bof-file-cabinet-proof-shelf" style={{
+        background: "linear-gradient(135deg, rgba(15, 23, 42, 0.92), rgba(8, 20, 28, 0.92))",
+        border: "1px solid rgba(45, 212, 191, 0.14)",
+        borderRadius: "14px",
         color: "#ffffff",
-        padding: "2rem",
-        paddingBottom: "6rem"
+        marginTop: "1.75rem",
+        marginBottom: "2rem",
+        padding: "1.6rem",
+        boxShadow: "0 22px 60px rgba(0, 0, 0, 0.28)"
       }}>
-        <h2 style={{
-          fontSize: "1.5rem",
-          fontWeight: "600",
-          color: "#ffffff",
-          margin: "0 0 1.5rem 0"
+        <div style={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "flex-start",
+          gap: "1rem",
+          flexWrap: "wrap",
+          marginBottom: "1.4rem"
         }}>
-          Featured File Cabinet
-        </h2>
-        <p style={{
-          fontSize: "1rem",
-          color: "rgba(255, 255, 255, 0.7)",
-          margin: "0 0 2rem 0",
-          lineHeight: "1.5"
-        }}>
-          Essential documents, policies, and templates with actual links to real files.
-        </p>
+          <div style={{ maxWidth: "48rem" }}>
+            <div style={{
+              color: "#2dd4bf",
+              fontSize: "0.72rem",
+              fontWeight: 800,
+              letterSpacing: "0.08em",
+              textTransform: "uppercase",
+              marginBottom: "0.45rem"
+            }}>
+              Demo proof shelf
+            </div>
+            <h2 style={{
+              fontSize: "clamp(1.35rem, 2vw, 1.85rem)",
+              fontWeight: "700",
+              color: "#ffffff",
+              margin: "0 0 0.65rem 0"
+            }}>
+              Featured File Cabinet
+            </h2>
+            <p style={{
+              fontSize: "0.98rem",
+              color: "rgba(226, 232, 240, 0.78)",
+              margin: 0,
+              lineHeight: "1.55"
+            }}>
+              The most demo-relevant policies, claims packets, and operating templates are surfaced first so the owner can prove the workflow without digging through a file dump.
+            </p>
+          </div>
+          <div style={{
+            display: "grid",
+            gap: "0.35rem",
+            minWidth: "10rem",
+            padding: "0.85rem 1rem",
+            backgroundColor: "rgba(45, 212, 191, 0.09)",
+            border: "1px solid rgba(45, 212, 191, 0.18)",
+            borderRadius: "10px",
+            color: "rgba(226, 232, 240, 0.8)"
+          }}>
+            <strong style={{ color: "#ffffff", fontSize: "1.35rem", lineHeight: 1 }}>
+              {featuredItems.length}
+            </strong>
+            <span style={{ fontSize: "0.78rem", lineHeight: 1.35 }}>
+              ready links in the curated proof shelf
+            </span>
+          </div>
+        </div>
         
         <div style={{
           display: "grid",
@@ -1002,10 +1043,11 @@ export function OperationsFileCabinetClient() {
             <div
               key={item.id}
               style={{
-                backgroundColor: "rgba(255, 255, 255, 0.05)",
-                border: "1px solid rgba(255, 255, 255, 0.1)",
+                background: "linear-gradient(180deg, rgba(255, 255, 255, 0.075), rgba(255, 255, 255, 0.045))",
+                border: "1px solid rgba(148, 163, 184, 0.18)",
                 borderRadius: "12px",
-                padding: "1.5rem"
+                padding: "1.35rem",
+                boxShadow: "0 12px 30px rgba(0, 0, 0, 0.18)"
               }}
             >
               <div style={{
@@ -1157,6 +1199,7 @@ export function OperationsFileCabinetClient() {
       </div>
 
       {/* Planned Cabinet Additions */}
+      {comingSoonItems.length > 0 && (
       <div style={{
         marginBottom: "2rem"
       }}>
@@ -1235,6 +1278,7 @@ export function OperationsFileCabinetClient() {
           </div>
         </div>
       </div>
+      )}
 
       {/* Browse All Documents (when searching/filtering) */}
       {(searchTerm || selectedCategory !== "all" || selectedType !== "all" || selectedAudience !== "all" || selectedStatus !== "all") && (

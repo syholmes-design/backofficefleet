@@ -65,13 +65,15 @@ Backups should not include:
 Generated artifacts are included by default so a restored demo is usable. Use the backup script's generated-artifact exclusion switch only when the owner explicitly wants a smaller regenerable-artifacts backup.
 
 ## Preferred Backup Location
-Use a sibling folder outside the project:
+Use local machine storage outside the project and outside OneDrive-synced folders:
 
 ```text
-../BackOfficeFleet-Backups/
+%LOCALAPPDATA%\BackOfficeFleet\Backups
 ```
 
-This keeps backups out of the active project and prevents recursive backup growth.
+The scripts use this path automatically on each Codex machine. If a machine needs a custom non-cloud location, set `BOF_BACKUP_ROOT` or pass `-BackupRoot`.
+
+This keeps backups out of the active project, prevents recursive backup growth, and avoids forcing large zip files through OneDrive sync.
 
 ## Backup Naming
 Use this format:
@@ -127,6 +129,7 @@ This agent must:
 - never restore over current work silently;
 - never include `node_modules` or `.next`;
 - never store backups inside the project root;
+- never default backups into OneDrive-synced folders;
 - never exceed 20 retained backup iterations;
 - never exceed 15 GB total backup storage;
 - never spend tokens listing thousands of files;

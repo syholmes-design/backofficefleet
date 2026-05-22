@@ -691,7 +691,12 @@ export function PreTripPacketModal({ load, onClose }: PreTripPacketModalProps) {
 
               {/* Action Buttons */}
               <div className="flex gap-3">
-                <button className="px-6 py-2 border border-blue-500 text-blue-400 rounded-lg font-medium hover:bg-blue-500/10 transition-colors">
+                <button
+                  onClick={() => {
+                    alert(`Draft saved for ${load.id} · ${new Date().toLocaleString()}`);
+                  }}
+                  className="px-6 py-2 border border-blue-500 text-blue-400 rounded-lg font-medium hover:bg-blue-500/10 transition-colors"
+                >
                   💾 Save Draft
                 </button>
                 <button 

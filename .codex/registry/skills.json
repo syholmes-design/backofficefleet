@@ -19,6 +19,10 @@
     {
       "id": "source-of-truth-mapping",
       "path": ".codex/skills/source-of-truth-mapping.md"
+    },
+    {
+      "id": "instruction-quality-gate",
+      "path": ".codex/skills/instruction-quality-gate.md"
     }
   ]
 }

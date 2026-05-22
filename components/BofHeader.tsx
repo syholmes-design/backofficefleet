@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { BookDemoLink } from "@/components/BookDemoLink";
 import { BofLogo } from "@/components/BofLogo";
+import { DemoWalkthroughRibbon } from "@/components/DemoWalkthroughRibbon";
 import { getSectorLinks } from "@/lib/site-links";
 
 const productNav = [
@@ -166,13 +167,13 @@ export function BofHeader() {
 
   if (!marketingOnlyHeader) {
     return (
-      <header className="sticky top-0 z-40 w-full border-b border-slate-800 bg-slate-950 backdrop-blur-sm shadow-sm">
-        <div className="mx-auto flex max-w-[1600px] flex-wrap items-center justify-between gap-6 px-6 py-3.5 sm:px-8 lg:px-12 xl:px-16">
-          <Link href="/dashboard" className="inline-flex shrink-0 items-center text-slate-100">
-            <BofLogo variant="light" size="demoLarge" priority />
+      <header className="bof-product-header sticky top-0 z-40 w-full border-b border-slate-800 bg-slate-950 backdrop-blur-sm shadow-sm">
+        <div className="mx-auto flex max-w-[1600px] flex-col items-start gap-3 px-4 py-3 sm:px-8 lg:flex-row lg:items-center lg:justify-between lg:gap-6 lg:px-12 xl:px-16">
+          <Link href="/dashboard" className="inline-flex shrink-0 items-center text-slate-100 no-underline">
+            <BofLogo variant="dark" size="demoLarge" priority />
           </Link>
           <nav
-            className="flex min-w-0 flex-1 flex-wrap items-center gap-3 overflow-x-auto text-sm"
+            className="bof-product-nav flex w-full min-w-0 flex-nowrap items-center gap-2 overflow-x-auto pb-1 text-sm lg:flex-1 lg:flex-wrap lg:gap-3 lg:pb-0"
             aria-label="Product demo"
           >
             {productNav.map((item) => {
@@ -182,7 +183,7 @@ export function BofHeader() {
                   key={item.href}
                   href={item.href}
                   className={[
-                    "rounded-lg border px-4 py-2 font-medium transition-all duration-200",
+                    "shrink-0 rounded-lg border px-4 py-2 font-medium no-underline transition-all duration-200",
                     selected
                       ? "border-teal-600/50 bg-teal-900/40 text-teal-50 shadow-sm"
                       : "border-transparent bg-transparent text-slate-300 hover:border-slate-600 hover:bg-slate-800/50 hover:text-white hover:shadow-sm",
@@ -194,6 +195,7 @@ export function BofHeader() {
             })}
           </nav>
         </div>
+        <DemoWalkthroughRibbon />
       </header>
     );
   }
@@ -202,7 +204,7 @@ export function BofHeader() {
     <header className="bof-global-header">
       <div className="bof-global-header-inner">
         <Link href="/" className="bof-global-header-logo">
-          <BofLogo variant="light" priority className="bof-global-header-logo-enhanced" />
+          <BofLogo variant="light" size="demoLarge" priority className="bof-global-header-logo-enhanced" />
         </Link>
 
         <nav

@@ -443,10 +443,11 @@ export default function AssessmentTrackPageClient({ trackId }: AssessmentTrackPa
                 >
                   Retake Assessment
                 </button>
-                <Link href="/assessment">
-                  <button className="bg-teal-600 text-white font-semibold py-3 px-6 rounded-lg hover:bg-teal-700 transition-colors duration-200">
-                    Back to Assessment Selection
-                  </button>
+                <Link
+                  href="/assessment"
+                  className="rounded-lg bg-teal-600 px-6 py-3 font-semibold text-white transition-colors duration-200 hover:bg-teal-700"
+                >
+                  Back to Assessment Selection
                 </Link>
               </div>
 

@@ -208,9 +208,14 @@ return (
                             </div>
                             
                             <div className="flex gap-2 mt-3">
-                              <button className="text-xs bg-teal-600 hover:bg-teal-700 text-white px-3 py-1 rounded transition-colors">
+                              <a
+                                href={`/generated/settlements/${selectedDriver.settlementId}/settlement-summary.svg`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="rounded bg-teal-600 px-3 py-1 text-xs text-white transition-colors hover:bg-teal-700"
+                              >
                                 Preview Selected Driver →
-                              </button>
+                              </a>
                               <span className="text-xs text-slate-400 flex items-center px-3 py-1">
                                 PDF export — planned
                               </span>

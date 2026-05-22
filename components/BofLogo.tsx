@@ -18,11 +18,11 @@ export function BofLogo({
 }: Props) {
   const src =
     variant === "dark"
-      ? "/logo/boflogo-dark.png"
-      : "/logo/boflogo-light.png";
+      ? "/logo/boflogo-dark-transparent.png"
+      : "/logo/boflogo-light-transparent.png";
 
   const heightPx = size === "demoLarge" ? 60 : 40;
-  const widthPx = Math.round(heightPx * 4.5);
+  const widthPx = Math.round(heightPx * 5);
 
   return (
     <div className={["bof-logo-wrap", className].filter(Boolean).join(" ")}>

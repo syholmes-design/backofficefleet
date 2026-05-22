@@ -509,7 +509,7 @@ export function ShipperLoadPortalClient({ loadId }: { loadId: string }) {
       ? "Settlement packet review"
       : "Shipper load packet";
   const issueNarrative = sealMismatchActive
-    ? `BOF captured pickup seal ${pickupSeal} before departure and later detected delivery seal ${deliverySeal}. That variance does not mean the pre-trip gate failed; it means the gate created the baseline that let BOF catch a downstream seal change, re-seal, or recording error before the load closed.`
+    ? `BOF captured pickup seal ${pickupSeal} before departure and later detected delivery seal ${deliverySeal}. The customer can see the same baseline, variance, and proof chain the internal team uses before billing or claims closeout.`
     : lumperAutomationActive
       ? lumperCloseoutNeedsReview
         ? "BOF keeps the driver out of the paper chase. The lumper scans the QR code on the trailer, confirms presence at the dock, empty-trailer proof is captured, and BOF holds settlement only until the Zelle payment record and dock proof are tied back to this load."
@@ -622,8 +622,8 @@ export function ShipperLoadPortalClient({ loadId }: { loadId: string }) {
             <code className="bof-code">{bofLoad.id}</code>
           </h1>
           <p className="bof-muted bof-small">
-            {bofLoad.origin} to {bofLoad.destination}. BOF ties the shipper view to
-            dispatch, proof, claims, and settlement actions so the exception has one source of truth.
+            {bofLoad.origin} to {bofLoad.destination}. This is the customer-facing payoff: BOF turns internal
+            dispatch, proof, claims, and settlement records into one transparent shipment packet.
           </p>
         </div>
         <div className="bof-load-header-badges">
@@ -633,7 +633,7 @@ export function ShipperLoadPortalClient({ loadId }: { loadId: string }) {
       </header>
 
       <section className="shipper-portal-card shipper-portal-story" aria-labelledby="sp-story-title">
-        <h2 id="sp-story-title">What happened on this load</h2>
+        <h2 id="sp-story-title">The proof chain the customer can trust</h2>
         <p className="lead">{issueNarrative}</p>
         <div className="shipper-portal-story-grid">
           {storySteps.map((step) => (

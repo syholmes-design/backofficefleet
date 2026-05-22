@@ -13,9 +13,25 @@ function Format-Bytes {
   return "$Bytes B"
 }
 
+function Get-DefaultCheckpointRoot {
+  if ($env:BOF_SHARED_CHECKPOINT_ROOT) {
+    return $env:BOF_SHARED_CHECKPOINT_ROOT
+  }
+
+  $localAppData = $env:LOCALAPPDATA
+  if (-not $localAppData) {
+    $localAppData = [Environment]::GetFolderPath([Environment+SpecialFolder]::LocalApplicationData)
+  }
+  if (-not $localAppData) {
+    $localAppData = Join-Path $HOME "AppData\Local"
+  }
+
+  return (Join-Path (Join-Path $localAppData "BackOfficeFleet") "SharedRollback")
+}
+
 $ProjectRoot = (Resolve-Path (Join-Path $PSScriptRoot "..")).Path
 if (-not $CheckpointRoot) {
-  $CheckpointRoot = Join-Path (Split-Path $ProjectRoot -Parent) "BackOfficeFleet-Shared-Rollback"
+  $CheckpointRoot = Get-DefaultCheckpointRoot
 }
 $CheckpointRoot = [System.IO.Path]::GetFullPath($CheckpointRoot)
 

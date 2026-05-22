@@ -9,7 +9,7 @@ const ACTION_CARDS = [
     title: "Command Center",
     subtitle: "Operations & exceptions",
     href: "/command-center",
-    cta: "Open →",
+    cta: "Open",
     imageSrc: "/generated/marketing/dispatch-command-center-hero.png",
     imagePosition: "center 40%",
     color: "#14b8a6",
@@ -18,7 +18,7 @@ const ACTION_CARDS = [
     title: "Drivers",
     subtitle: "Readiness & compliance",
     href: "/drivers",
-    cta: "Review →",
+    cta: "Review",
     imageSrc: "/assets/images/bof-landing-hero-clean.png",
     imagePosition: "center 35%",
     color: "#3b82f6",
@@ -27,7 +27,7 @@ const ACTION_CARDS = [
     title: "Dispatch / Loads",
     subtitle: "Dispatch, proof, and load lifecycle",
     href: "/dispatch",
-    cta: "Explore →",
+    cta: "Explore",
     imageSrc: "/evidence/loads/L001/trailer-loaded.jpg",
     imagePosition: "center 50%",
     color: "#a855f7",
@@ -36,7 +36,7 @@ const ACTION_CARDS = [
     title: "Documents",
     subtitle: "Driver, company, and proof vaults",
     href: "/documents",
-    cta: "View →",
+    cta: "View",
     imageSrc: "/assets/images/hero-bof-vault.png",
     imagePosition: "center 45%",
     color: "#fb923c",
@@ -45,7 +45,7 @@ const ACTION_CARDS = [
     title: "Settlements",
     subtitle: "Pay, deductions, and finance",
     href: "/settlements",
-    cta: "View →",
+    cta: "View",
     imageSrc: "/generated/marketing/bof-back-office-operating-system-hero.png",
     imagePosition: "center 40%",
     color: "#22c55e",
@@ -54,7 +54,7 @@ const ACTION_CARDS = [
     title: "Safety",
     subtitle: "Incidents, scorecards, and risk",
     href: "/safety",
-    cta: "View →",
+    cta: "View",
     imageSrc: "/assets/images/safety_event_evidence_1.png",
     imagePosition: "center 60%",
     color: "#ef4444",
@@ -63,7 +63,7 @@ const ACTION_CARDS = [
     title: "Portals",
     subtitle: "Manager, driver, and customer views",
     href: "/portals",
-    cta: "Access →",
+    cta: "Access",
     imageSrc: "/assets/images/private-fleets-hero-new.png",
     imagePosition: "center 50%",
     color: "#6366f1",
@@ -119,14 +119,15 @@ const HERO_KPI_LINKS = [
 export function DashboardPageClient() {
   return (
     <div className="bof-page bof-cc-page bof-dashboard-page" style={{ paddingBottom: '6rem' }}>
-      {/* Full-bleed hero section with premium dispatch-command-center-hero.png background */}
+      {/* Full-bleed demo lobby hero with premium dispatch-command-center-hero.png background */}
       <section
+        className="bof-dashboard-lobby-hero"
         style={{
           position: "relative",
           width: "100vw",
           marginLeft: "calc(50% - 50vw)",
           marginRight: "calc(50% - 50vw)",
-          minHeight: "clamp(720px, 70vw, 900px)",
+          minHeight: "clamp(600px, 58vw, 760px)",
           overflow: "hidden",
           background: "#020617",
         }}
@@ -174,16 +175,17 @@ export function DashboardPageClient() {
           style={{
             position: "relative",
             zIndex: 4,
-            minHeight: "clamp(720px, 70vw, 900px)",
+            minHeight: "clamp(600px, 58vw, 760px)",
             display: "flex",
             flexDirection: "column",
             justifyContent: "center",
             alignItems: "center",
-            padding: "6rem 2rem 5rem",
+            padding: "4.5rem 2rem 4rem",
           }}
         >
           {/* Title and subtitle section */}
           <div
+            className="bof-dashboard-lobby-copy"
             style={{
               textAlign: "center",
               maxWidth: "1100px",
@@ -192,29 +194,29 @@ export function DashboardPageClient() {
           >
             <h1
               style={{
-                fontSize: "clamp(2.5rem, 5vw, 4rem)",
+                fontSize: "clamp(2.25rem, 4.4vw, 3.65rem)",
                 fontWeight: "700",
                 lineHeight: "1.1",
-                margin: "0 0 1.5rem 0",
+                margin: "0 0 1.15rem 0",
                 color: "#ffffff",
                 textShadow: "0 2px 4px rgba(0,0,0,0.4)",
               }}
             >
-              BackOfficeFleet Command Center
+              Start the BackOfficeFleet demo
             </h1>
             <p
               style={{
-                fontSize: "clamp(1.1rem, 2.5vw, 1.4rem)",
-                lineHeight: "1.6",
+                fontSize: "clamp(1rem, 2vw, 1.22rem)",
+                lineHeight: "1.5",
                 color: "rgba(255, 255, 255, 0.95)",
-                margin: "0 0 2.5rem 0",
+                margin: "0 0 2rem 0",
                 maxWidth: "800px",
                 marginLeft: "auto",
                 marginRight: "auto",
                 textShadow: "0 1px 2px rgba(0,0,0,0.4)",
               }}
             >
-              See how BackOfficeFleet manages dispatch, compliance, documents, HR, payroll, finance, settlements, maintenance, procurement, RFID proof, and exception management in one accountable operating system.
+              Begin with the owner view, then follow the live demo path through blocked work, driver readiness, proof, settlement holds, safety exposure, maintenance blocks, and customer-facing transparency.
             </p>
 
             {/* Primary CTA buttons */}
@@ -227,9 +229,9 @@ export function DashboardPageClient() {
               }}
             >
               {HERO_CTA_LINKS.map((cta) => (
-                <Link
-                  key={cta.href}
-                  href={cta.href}
+              <Link
+                key={cta.href}
+                href={cta.href}
                   className="bof-dashboard-hero-cta"
                   style={{
                     display: "inline-flex",
@@ -263,7 +265,7 @@ export function DashboardPageClient() {
               gap: "1rem",
               width: "100%",
               maxWidth: "1120px",
-              marginTop: "3rem",
+              marginTop: "2.25rem",
             }}
           >
             {HERO_KPI_LINKS.map((card) => (
@@ -370,6 +372,7 @@ export function DashboardPageClient() {
 
       {/* Fleet Operations Manager Card */}
       <section
+        className="bof-dashboard-section"
         style={{
           maxWidth: "1200px",
           margin: "0 auto",
@@ -378,6 +381,7 @@ export function DashboardPageClient() {
         aria-label="Fleet Operations Manager"
       >
         <Link
+          className="bof-dashboard-manager-card"
           href="/command-center"
           style={{
             display: "block",
@@ -393,15 +397,16 @@ export function DashboardPageClient() {
           }}
         >
           <div
+            className="bof-dashboard-manager-card__grid"
             style={{
               display: "grid",
-              gridTemplateColumns: "1fr 2fr",
               gap: "2rem",
               minHeight: "200px",
             }}
           >
             {/* Manager visual from dispatch-command-center-hero.png */}
             <div
+              className="bof-dashboard-manager-card__image"
               style={{
                 position: "relative",
                 overflow: "hidden",
@@ -425,7 +430,7 @@ export function DashboardPageClient() {
                 display: "flex",
                 flexDirection: "column",
                 justifyContent: "center",
-                padding: "2rem",
+                padding: "clamp(1rem, 4vw, 2rem)",
               }}
             >
               <h2
@@ -451,6 +456,7 @@ export function DashboardPageClient() {
 
               {/* Status chips */}
               <div
+                className="bof-dashboard-action-card__media"
                 style={{
                   display: "flex",
                   flexWrap: "wrap",
@@ -531,7 +537,7 @@ export function DashboardPageClient() {
                   fontSize: "1rem",
                 }}
               >
-                Open Command Center →
+                Open Command Center
               </div>
             </div>
           </div>
@@ -540,6 +546,7 @@ export function DashboardPageClient() {
 
       {/* Premium action card grid with cropped thumbnails */}
       <section
+        className="bof-dashboard-section bof-dashboard-action-section"
         style={{
           maxWidth: "1200px",
           margin: "0 auto",
@@ -588,6 +595,7 @@ export function DashboardPageClient() {
             <Link
               key={index}
               href={card.href}
+              className="bof-dashboard-action-card"
               style={{
                 display: "block",
                 textDecoration: "none",
@@ -614,6 +622,8 @@ export function DashboardPageClient() {
                   src={card.imageSrc}
                   alt={`${card.title} - ${card.subtitle}`}
                   fill
+                  loading="eager"
+                  sizes="(max-width: 700px) 100vw, 33vw"
                   style={{
                     objectFit: "cover",
                     objectPosition: card.imagePosition,

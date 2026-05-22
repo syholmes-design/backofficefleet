@@ -6,6 +6,15 @@ import { ComplianceDashboardV4 } from "@/components/compliance-v4/ComplianceDash
 export function DriversCommandCenterV4() {
   return (
     <div className="space-y-6">
+      <header className="rounded-lg border border-slate-800 bg-slate-950/70 p-5">
+        <p className="text-xs font-semibold uppercase tracking-wide text-cyan-300">Driver readiness</p>
+        <h1 className="mt-2 text-3xl font-bold tracking-tight text-white">Who can safely take the next load?</h1>
+        <p className="mt-3 max-w-3xl text-sm leading-6 text-slate-300">
+          This view turns driver files into dispatch decisions: expired credentials, missing documents,
+          acknowledgments, compliance incidents, and eligibility blockers are visible before a planner assigns work.
+        </p>
+      </header>
+
       {/* Driver Roster Section */}
       <section>
         <div className="mb-4">

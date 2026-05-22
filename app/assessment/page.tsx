@@ -81,12 +81,11 @@ function AssessmentPageContent() {
                 <p className="text-gray-600 mb-6 leading-relaxed">
                   For individual drivers to organize and maintain their driving credentials. Upload once, access anywhere, and stay ready for your next opportunity.
                 </p>
-                <Link href="/assessment/bof-vault">
-                  <button
-                    className="w-full bg-teal-600 text-white font-semibold py-3 px-6 rounded-lg hover:bg-teal-700 transition-colors duration-200"
-                  >
-                    Create My Driver Vault
-                  </button>
+                <Link
+                  href="/assessment/bof-vault"
+                  className="block w-full rounded-lg bg-teal-600 px-6 py-3 text-center font-semibold text-white transition-colors duration-200 hover:bg-teal-700"
+                >
+                  Create My Driver Vault
                 </Link>
               </div>
             </div>
@@ -114,12 +113,11 @@ function AssessmentPageContent() {
                   <p className="text-gray-600 mb-6 leading-relaxed text-sm">
                     {track.description}
                   </p>
-                  <Link href={track.route}>
-                    <button
-                      className="w-full bg-gray-800 text-white font-semibold py-3 px-6 rounded-lg hover:bg-gray-900 transition-colors duration-200"
-                    >
-                      {track.ctaLabel}
-                    </button>
+                  <Link
+                    href={track.route}
+                    className="block w-full rounded-lg bg-gray-800 px-6 py-3 text-center font-semibold text-white transition-colors duration-200 hover:bg-gray-900"
+                  >
+                    {track.ctaLabel}
                   </Link>
                 </div>
               </div>

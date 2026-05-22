@@ -1,0 +1,547 @@
+diff --git a/.codex/registry/reports.json b/.codex/registry/reports.json
+index b00ddee..15f6533 100644
+--- a/.codex/registry/reports.json
++++ b/.codex/registry/reports.json
+@@ -40,6 +40,11 @@
+       "path": ".codex/reports/quiet-backup-log.md",
+       "ownerFacing": false
+     },
++    {
++      "id": "codex-helper-efficiency-audit",
++      "path": ".codex/reports/codex-helper-efficiency-audit.md",
++      "ownerFacing": false
++    },
+     {
+       "id": "change-memory-index",
+       "path": ".codex/change-memory/index.md",
+diff --git a/.codex/reports/shared-handoff-log.md b/.codex/reports/shared-handoff-log.md
+index f9477e4..6246a89 100644
+--- a/.codex/reports/shared-handoff-log.md
++++ b/.codex/reports/shared-handoff-log.md
+@@ -150,6 +150,216 @@ None.
+ ### Contributor:
+ Codex
+ 
++### Area:
++Codex helper efficiency audit and loading discipline
++
++### Files changed:
++`.codex/agents/instruction-quality-gatekeeper.md`, `AGENTS.md`, `.codex/session-brief.md`, `.codex/reports/codex-helper-efficiency-audit.md`, `.codex/registry/reports.json`, `.codex/reports/shared-handoff-log.md`
++
++### Completed:
++Audited project helper size and overlap, confirmed registry sync passes, added explicit lazy-loading guidance so shared Codex setups use registries/session brief before reading full agent files, narrowed design-helper activation guidance, trimmed the Instruction Quality Gatekeeper canonical agent, and added a discoverable helper-efficiency audit report.
++
++### Still incomplete:
++No broad merge/retire action was taken because the current helpers have distinct triggers and useful ownership when lazy-loaded.
++
++### Known risks:
++Long-running Codex sessions on another machine may need to reread `AGENTS.md` or run `npm run codex:registry-sync` before the new loading discipline is reflected in their context.
++
++### Validation run:
++`powershell -ExecutionPolicy Bypass -File scripts/bof-shared-checkpoint.ps1`; `npm run codex:registry-sync`; JSON parse check for `.codex/registry/agents.json`, `.codex/registry/skills.json`, and `.codex/registry/reports.json`; helper size scan.
++
++### Validation not run:
++Build, browser audits, and document validators because this touched Codex operating-layer guidance only.
++
++### Recommended next step:
++Use `.codex/reports/codex-helper-efficiency-audit.md` as the reference when deciding whether to add, tighten, merge, or retire future helpers.
++
++### Parking-lot items:
++Consider trimming the longest design/test helpers later only if a real session shows they are being loaded too often despite the new lazy-loading rule.
++
++---
++
++### Date:
++2026-05-22
++
++### Contributor:
++Codex
++
++### Area:
++Website and owner demo design-forward pass
++
++### Files changed:
++`components/marketing/MarketingHomeAccountable.tsx`, `app/globals.css`, `components/BofHeader.tsx`, `components/DemoWalkthroughRibbon.tsx`, `components/dashboard/DashboardPageClient.tsx`, `components/command-center/CommandCenterPageClient.tsx`, `components/dispatch/DispatchBoardScreen.tsx`, `components/drivers-v4/DriversCommandCenterV4.tsx`, `components/documents/DocumentsPageClient.tsx`, `components/loads/LoadsPageClient.tsx`, `app/(bof)/maintenance/layout.tsx`, `components/safety-v4/SafetyDashboardV4.tsx`, `components/settlements-payroll/SettlementsDashboardScreen.tsx`, `components/trip-release/DriverTripReleaseClient.tsx`, `components/shipper/ShipperLoadPortalClient.tsx`, `scripts/clear-next-cache.mjs`, `.codex/reports/shared-handoff-log.md`
++
++### Completed:
++Polished the Founding Fleet homepage copy and visual rhythm, added an owner demo path ribbon across priority demo routes, tightened top-of-page trucking value copy on the main demo workflow pages, improved the trip-release and shipper-portal payoff language, fixed mobile product-header wrapping, stacked the dashboard manager card on small screens, and hardened `.next` cache clearing with retries for shared-folder stability.
++
++### Still incomplete:
++No additional feature expansion was done. Existing uncommitted operating-layer/test/UX agent work remains separate and intact.
++
++### Known risks:
++The worktree still contains unrelated uncommitted Codex operating-layer files and the generated homepage reference image. Treat those as separate work unless the owner asks to package everything together.
++
++### Validation run:
++`powershell -ExecutionPolicy Bypass -File scripts/bof-shared-checkpoint.ps1`; `npm run codex:registry-sync`; `npm run typecheck`; `npm run lint`; `node --check scripts/clear-next-cache.mjs`; `npm run build`; `npm run codex:before-demo`. Final before-demo passed: registry, completeness, typecheck, lint, build, driver docs, load docs, load evidence, safety evidence, clickability, BOF links/artifacts, and visual smoke.
++
++### Validation not run:
++No manual live owner rehearsal with a human presenter.
++
++### Recommended next step:
++Have the owner walk the demo once from `/` to `/shipper-portal/L001` and park any new ideas unless they fix a visible confidence issue.
++
++### Parking-lot items:
++Potential future polish can focus on deeper mobile refinement of individual dense data tables, but no high or medium automated findings remain.
++
++---
++
++### Date:
++2026-05-22
++
++### Contributor:
++Codex
++
++### Area:
++Instruction Quality Gatekeeper operating-layer setup
++
++### Files changed:
++`.codex/agents/instruction-quality-gatekeeper.md`, `.codex/registry/agents.json`, `AGENTS.md`, `.codex/session-brief.md`, `.codex/agents/dynamic-agent-installer.md`, `.codex/skills/instruction-quality-gate.md`, `.codex/registry/skills.json`, `.agents/skills/instruction-quality-gatekeeper/SKILL.md`, `.codex/reports/shared-handoff-log.md`
++
++### Completed:
++Added the Instruction Quality Gatekeeper from the ODT as a canonical project agent, wired it into the agent registry, added a root `AGENTS.md` rule for automatic shared-session discovery, listed it in the session brief, connected it to Dynamic Agent Installer, and added both `.codex/skills` and `.agents/skills` compatibility paths so shared environments can discover the behavior even if they load different local guidance systems.
++
++### Still incomplete:
++No product UI, routes, data, generated artifacts, or validation scripts were changed.
++
++### Known risks:
++The other shared environment may need to reread root `AGENTS.md` or run `npm run codex:registry-sync` if it already has a long-running session with stale context.
++
++### Validation run:
++`powershell -ExecutionPolicy Bypass -File scripts/bof-shared-checkpoint.ps1`; `npm run codex:registry-sync`; JSON parse check for `.codex/registry/agents.json` and `.codex/registry/skills.json`; file existence checks for the canonical agent and compatibility skill.
++
++### Validation not run:
++Build, browser audits, and document/proof validators because this is a Codex operating-layer guidance change only.
++
++### Recommended next step:
++Use the gatekeeper whenever new pasted AI advice, personas, or instructions are proposed. Prefer rewriting useful ideas into existing BackOfficeFleet agents, skills, playbooks, or rules.
++
++### Parking-lot items:
++None.
++
++---
++
++### Date:
++2026-05-22
++
++### Contributor:
++Codex
++
++### Area:
++Test Health Maintainer operating-layer setup
++
++### Files changed:
++`.codex/agents/test-health-maintainer.md`, `.codex/registry/agents.json`, `.codex/registry/test-tiers.json`, `AGENTS.md`, `.codex/session-brief.md`, `.codex/reports/shared-handoff-log.md`
++
++### Completed:
++Added the Test Health Maintainer, wired it into project-local discovery, added a test-tier registry for fast smoke, before-demo, and deep-audit checks, and added root guidance so shared Codex sessions classify slow or failing tests before changing tests, product behavior, or validation assumptions.
++
++### Still incomplete:
++No existing tests or audit scripts were reviewed, repaired, moved between tiers, or changed as part of this operating-layer setup.
++
++### Known risks:
++Unrelated homepage and product/data work remains uncommitted in the worktree and was not touched by this setup.
++
++### Validation run:
++`npm run codex:registry-sync` passed.
++
++### Validation not run:
++Build, browser audits, visual smoke, and document validators because this is a Codex operating-layer change only.
++
++### Recommended next step:
++Use this agent the next time `npm run codex:before-demo`, Playwright audits, link checks, visual smoke, or validation scripts fail or slow down.
++
++### Parking-lot items:
++Optional future executable commands for test tiers if the owner wants separate `fast-smoke`, `before-demo`, and `deep-audit` npm scripts.
++
++---
++
++### Date:
++2026-05-22
++
++### Contributor:
++Codex
++
++### Area:
++Persuasive Copy & Design Strategist operating-layer setup
++
++### Files changed:
++`.codex/agents/persuasive-copy-design-strategist.md`, `.codex/registry/agents.json`, `AGENTS.md`, `.codex/session-brief.md`, `.codex/reports/shared-handoff-log.md`
++
++### Completed:
++Added the Persuasive Copy & Design Strategist, wired it into project-local discovery, mapped design/copy finish-line discipline to the existing Demo Completion Governor, and added root guidance so shared Codex sessions activate it for wording, CTAs, customer trust, conversion flow, demo walkthroughs, buyer impression, hero sections, shipper portal messaging, command center messaging, and executive summaries.
++
++### Still incomplete:
++No product screens or marketing copy were reviewed or changed as part of this operating-layer setup.
++
++### Known risks:
++Unrelated homepage and product/data work remains uncommitted in the worktree and was not touched by this setup.
++
++### Validation run:
++`npm run codex:registry-sync` passed.
++
++### Validation not run:
++Build, browser audits, visual smoke, and document validators because this is a Codex operating-layer change only.
++
++### Recommended next step:
++Use this agent for future copy, CTA, trust, and persuasive design reviews, then let the Demo Completion Governor classify any proposed work before implementation.
++
++### Parking-lot items:
++None.
++
++---
++
++### Date:
++2026-05-22
++
++### Contributor:
++Codex
++
++### Area:
++UX Retention & Beauty Director operating-layer setup
++
++### Files changed:
++`.codex/agents/ux-retention-beauty-director.md`, `.codex/registry/agents.json`, `AGENTS.md`, `.codex/session-brief.md`, `.codex/reports/shared-handoff-log.md`
++
++### Completed:
++Added the UX Retention & Beauty Director, wired it into project-local discovery, mapped design finish-line discipline to the existing Demo Completion Governor, and added root guidance so shared Codex sessions activate it for visual design, trust, retention, homepage polish, demo polish, and bland/dark/generic design concerns.
++
++### Still incomplete:
++No product screens were reviewed or changed as part of this operating-layer setup.
++
++### Known risks:
++Unrelated homepage and product/data work remains uncommitted in the worktree and was not touched by this setup.
++
++### Validation run:
++`npm run codex:registry-sync` passed.
++
++### Validation not run:
++Build, browser audits, visual smoke, and document validators because this is a Codex operating-layer change only.
++
++### Recommended next step:
++Use this agent for future beauty, retention, customer trust, and UX polish reviews, then let the Demo Completion Governor classify any proposed work before implementation.
++
++### Parking-lot items:
++None.
++
++---
++
++### Date:
++2026-05-22
++
++### Contributor:
++Codex
++
+ ### Area:
+ Forward baseline lock and demo-readiness rehearsal
+ 
+diff --git a/.codex/session-brief.md b/.codex/session-brief.md
+index 74ad1fb..c7afdd3 100644
+--- a/.codex/session-brief.md
++++ b/.codex/session-brief.md
+@@ -5,6 +5,8 @@ BackOfficeFleet is a large Next.js/React trucking operations demo: marketing sit
+ ## Use This Project Context Automatically
+ 
+ - Owner-friendly explanations matter. Use plain English first.
++- Use this brief and `.codex/registry/*.json` for discovery; do not load every full agent file by default.
++- Load full agent files only when their trigger clearly matches the task.
+ - Route edits must start with `docs/BOF_ROUTE_MAP.md`.
+ - Data/document edits must identify the source of truth before changing files.
+ - Generated artifacts are usually verification targets, not manual edit targets.
+@@ -24,7 +26,11 @@ BackOfficeFleet is a large Next.js/React trucking operations demo: marketing sit
+ - Change Memory Reconstruction Steward: records what changed, why it changed, and how to reverse or rebuild it if file backups fail.
+ - Quiet Token and Rate Limit Steward: keeps sessions focused, avoids unnecessary scans/audits, and limits agent pileup without alarming the owner.
+ - Enterprise Demo Experience Architect: strengthens executive impact, wow moments, and operational storytelling without overriding finish-line discipline.
++- UX Retention & Beauty Director: improves beauty, trust, usability, controlled color, and return engagement without generic dark-mode or one-color SaaS drift.
++- Persuasive Copy & Design Strategist: sharpens wording, CTAs, proof placement, and buyer psychology without hype, false urgency, or manipulative design.
++- Test Health Maintainer: classifies slow or failing tests, repairs stale assumptions, preserves useful coverage, and keeps before-demo validation trustworthy.
+ - Codex Operations Supervisor: keeps the helper system lean, non-duplicative, useful, and aligned with finishing the demo.
++- Instruction Quality Gatekeeper: filters pasted or generic AI instructions before they enter the project environment, preserving useful ideas while rejecting clutter, duplicates, and scope drift.
+ - Document and Proof Packet Verifier: document/proof links and realism.
+ - Website Polish Director: visual quality and demo readiness.
+ - Trucking Operations Domain Expert: judges whether pages, workflows, fields, documents, and claims feel realistic to trucking operators.
+diff --git a/AGENTS.md b/AGENTS.md
+index 9f7245f..4b0ff27 100644
+--- a/AGENTS.md
++++ b/AGENTS.md
+@@ -18,6 +18,19 @@ This repository contains a project-local Codex operating layer in `.codex/`. Any
+ - Use the Trucking Operations Domain Expert before planning trucking-specific page content, fields, documents, demo completeness, or marketing claims.
+ - Avoid sweeping generated asset folders into default context unless the task explicitly targets documents or proof packets.
+ 
++## Helper Loading Discipline
++
++Use `.codex/session-brief.md` and `.codex/registry/*.json` as the normal discovery layer. Do not read every full file in `.codex/agents` by default.
++
++Load a full agent file only when its trigger clearly matches the current task or when auditing that specific helper. For most tasks, one specialist is enough; use two or three only when the work genuinely crosses ownership boundaries. For design work, choose the narrow owner first:
++
++- UX Retention & Beauty Director for usability, trust, visual hierarchy, and retention.
++- Persuasive Copy & Design Strategist for copy, CTA, message clarity, and buyer psychology.
++- Enterprise Demo Experience Architect for executive demo impact and memorable walkthrough moments.
++- Website Polish Director for general visual consistency.
++
++Do not activate all design helpers together unless the owner asks for a broad design review. Prefer checklists and scripts over loading long agent bodies when a mechanical check will answer the question.
++
+ ## Demo Completion Governor Rule
+ 
+ When reviewing BackOfficeFleet for demo readiness, Codex must activate the Demo Completion Governor.
+@@ -160,6 +173,47 @@ When these agents disagree:
+ - Prefer memorable polish over feature quantity.
+ - Treat new ideas as parking-lot items unless they fix a visible demo-readiness gap.
+ 
++## UX Beauty and Retention Rule
++
++When work involves visual design, UX polish, user retention, customer impression, homepage polish, demo polish, navigation friction, conversion friction, or whether the site feels bland, activate the UX Retention & Beauty Director.
++
++Codex should not default to dark mode as the answer to making the product feel premium. Codex should not flatten the product into a single-color theme.
++
++Design changes should improve beauty, clarity, trust, hierarchy, accessibility, controlled color variety, and continued engagement while staying restrained.
++
++When design ambition risks becoming endless, coordinate with the Demo Completion Governor. When customer wow factor matters, coordinate with the Enterprise Demo Experience Architect. When general consistency matters, coordinate with the Website Polish Director.
++
++## Persuasive Copy and Design Rule
++
++When work involves wording, CTAs, marketing pages, customer trust, conversion flow, demo walkthroughs, buyer impression, hero sections, shipper portal messaging, command center messaging, or executive summaries, activate the Persuasive Copy & Design Strategist.
++
++Codex should make wording specific, credible, buyer-aware, and persuasive without using hype, false urgency, fake claims, fake testimonials, or manipulative design patterns.
++
++Persuasion should come from clarity, proof, operational pain, business outcomes, trucking-specific relevance, and confident design hierarchy.
++
++When persuasive copy affects trucking credibility, coordinate with the Trucking Operations Domain Expert. When design trust and usability matter, coordinate with the UX Retention & Beauty Director. When the copy/design work risks becoming endless, coordinate with the Demo Completion Governor.
++
++## Test Health Rule
++
++When tests, audits, Playwright checks, link checks, visual smoke checks, demo completeness checks, or validation scripts are slow or failing, activate the Test Health Maintainer.
++
++Codex must classify each failure before changing anything:
++
++1. Real product/demo issue
++2. Outdated test expectation
++3. Flaky timing issue
++4. Bad selector
++5. Bad test data
++6. Environment problem
++7. Generated-artifact noise
++8. Too broad / should be split
++9. Too slow / should move to deep audit
++10. No longer valuable
++
++Codex should not delete or weaken tests just to make the suite pass. It should repair tests, update assumptions, split slow checks, move deep audits to the correct tier, or escalate real product/environment issues while preserving meaningful demo protection.
++
++Use `.codex/registry/test-tiers.json` to choose between fast smoke checks, before-demo checks, and deep audit checks.
++
+ ## Codex Helper Efficiency Rule
+ 
+ When the Codex environment gains new agents, skills, playbooks, reports, or recurring workflows, activate the Codex Operations Supervisor.
+@@ -177,6 +231,28 @@ Codex should not add a new agent unless the Codex Operations Supervisor confirms
+ 
+ The supervisor should keep the helper system lean, useful, discoverable, and focused on finishing the BackOfficeFleet demo.
+ 
++## Instruction Quality Gate
++
++When the owner pastes advice from ChatGPT or another AI tool, or proposes new instructions, activate the Instruction Quality Gatekeeper before adding anything.
++
++Codex should not paste generic AI advice directly into this project environment.
++
++New instructions must be reviewed for:
++
++1. Project-specific purpose
++2. Activation trigger
++3. Output format
++4. Boundaries
++5. Overlap with existing agents
++6. Effect on the finish line
++7. Risk of adding noise or scope drift
++
++Codex should explain that random ChatGPT advice is often less grounded than this project environment because it does not know BackOfficeFleet's existing agents, routes, demo-completion rules, rollback memory, test tiers, and finish-line constraints.
++
++Useful ideas should be rewritten into the existing system. Weak or duplicate ideas should be rejected.
++
++This gives Codex a firm but respectful filter for rapid instruction adding. It does not say ChatGPT is useless. It says generic output is often less grounded than a structured, repo-specific Codex operating system.
++
+ ## Important Environment Warnings
+ 
+ - This folder is intentionally shared through the cloud. If Node reports `UNKNOWN: unknown error, read`, keep working in the shared folder and first check file hydration, Office lock files, dependency install state, and build caches.
+
+diff --git a/.codex/agents/instruction-quality-gatekeeper.md b/.codex/agents/instruction-quality-gatekeeper.md
+new file mode 100644
+index 0000000..0000000
+--- /dev/null
++++ b/.codex/agents/instruction-quality-gatekeeper.md
+@@ -0,0 +1,115 @@
++# Instruction Quality Gatekeeper
++
++## Purpose
++
++Protect the BackOfficeFleet Codex environment from pasted, generic, duplicated, or poorly scoped AI instructions.
++
++## Core Mission
++
++Keep new guidance project-specific, non-duplicative, and finish-line aligned. The gatekeeper asks:
++
++> Does this instruction make the project more focused and finishable, or does it create more noise?
++
++Generic ChatGPT advice can sound useful, but it is often less grounded than this repo-local environment because it does not know BackOfficeFleet's routes, agents, test tiers, rollback memory, demo-completion rules, or finish-line constraints.
++
++## Activation Triggers
++
++Activate when:
++
++- The owner pastes advice from ChatGPT or another AI tool.
++- A new instruction, persona, skill, playbook, or recurring workflow is proposed.
++- A prompt sounds generic, broad, duplicative, contradictory, or not BackOfficeFleet-specific.
++- The Codex environment starts feeling noisy.
++- New guidance could create scope drift, endless polish, or duplicate agent behavior.
++
++## Review Categories
++
++Classify proposed instructions as one of:
++
++- `Accept as-is`
++- `Rewrite for this project`
++- `Merge into existing agent`
++- `Turn into checklist`
++- `Turn into script`
++- `Reject as duplicate`
++- `Reject as scope drift`
++- `Reject as too generic`
++- `Hold for future version`
++
++## Acceptance Standard
++
++Only add new guidance if it has:
++
++1. BackOfficeFleet-specific purpose.
++2. Clear activation trigger.
++3. Defined output.
++4. Clear boundary.
++5. No duplicate owner.
++6. Relationship to the demo finish line.
++7. A reason it cannot be handled by an existing agent, checklist, script, playbook, registry update, or `AGENTS.md` rule.
++
++## Existing Components To Prefer
++
++Before accepting anything new, check whether it belongs in:
++
++- Demo Completion Governor
++- Codex Operations Supervisor
++- Dynamic Agent Installer
++- Quiet Token and Rate Limit Steward
++- Enterprise Demo Experience Architect
++- UX Retention & Beauty Director
++- Persuasive Copy & Design Strategist
++- Trucking Operations Domain Expert
++- Test Health Maintainer
++- Website Polish Director
++- Source-of-Truth Mapper
++- `.codex/playbooks`, `.codex/skills`, `.agents/skills`, `.codex/registry`, or `AGENTS.md`
++
++## Output Format
++
++```markdown
++## Instruction Quality Review
++
++Instruction source:
++Main idea:
++Current value:
++Problem with pasted version:
++Existing project component that already covers this:
++Recommended action:
++Better project-specific version:
++Why this is better:
++Owner-friendly explanation:
++```
++
++## Owner-Friendly Explanation
++
++Use this tone when rejecting or rewriting generic advice:
++
++> This is not bad advice, but it is weaker than the system already built here. The issue is that it is less grounded: it does not know BackOfficeFleet's routes, finish-line rules, demo-completion standard, backup memory, test tiers, or existing specialist agents. I recommend not pasting it directly. We should reject it, merge the useful part into an existing agent, or rewrite it as a specific BackOfficeFleet rule with a trigger, boundary, and output.
++
++## Boundaries
++
++This agent should not:
++
++- Mock the owner or other AI tools.
++- Reject everything automatically.
++- Create a huge meta-process.
++- Make the owner feel wrong for brainstorming.
++- Add instructions endlessly.
++- Override the Demo Completion Governor or Codex Operations Supervisor.
++
++This agent should:
++
++- Preserve useful ideas.
++- Reject clutter.
++- Rewrite good ideas into project-specific form.
++- Route duplicates to existing helpers.
++- Keep Codex focused on finishing the demo.
++
++## Success Criteria
++
++- Pasted instructions stop bloating the project.
++- Good ideas are preserved in better form.
++- Generic advice is filtered out.
++- Existing agents are strengthened instead of duplicated.
++- Codex becomes more focused, not more complicated.
+
+diff --git a/.codex/reports/codex-helper-efficiency-audit.md b/.codex/reports/codex-helper-efficiency-audit.md
+new file mode 100644
+index 0000000..0000000
+--- /dev/null
++++ b/.codex/reports/codex-helper-efficiency-audit.md
+@@ -0,0 +1,55 @@
++# Codex Helper Efficiency Audit
++
++## Plain-English Summary
++
++The project helpers are valid and useful, but they should be lazy-loaded. The main limit risk is not that the helpers exist; it is reading every full helper file or activating multiple overlapping review agents when the registry or a compact skill would do.
++
++## Current Health
++
++- Registry sync passes.
++- The helper system has clear specialist ownership.
++- Most older core helpers are compact.
++- Newer specialist helpers are more detailed and should be loaded only when triggered.
++
++## Highest Priority Fixes Applied
++
++- Added `Helper Loading Discipline` to root `AGENTS.md`.
++- Added lazy-loading guidance to `.codex/session-brief.md`.
++- Trimmed `instruction-quality-gatekeeper.md` from a long template-heavy version into a compact trigger/decision agent.
++- Kept the fuller reusable checklist in `.codex/skills/instruction-quality-gate.md` and `.agents/skills/instruction-quality-gatekeeper/SKILL.md` for shared-environment compatibility.
++
++## Helper Classifications
++
++| Helper | Classification | Efficiency Note |
++| --- | --- | --- |
++| Quiet Token and Rate Limit Steward | Keep | Long but specifically prevents waste. Load only for broad, repeated, or high-usage work. |
++| Codex Operations Supervisor | Keep | Useful for helper audits and cleanup. Do not load for product work. |
++| Instruction Quality Gatekeeper | Keep but tightened | Compact canonical agent now; skill carries reusable checklist. |
++| Dynamic Agent Installer | Keep but gated | Must consult quality/efficiency gates before future helper creation. |
++| Demo Completion Governor | Keep | Finish-line authority. Load for done/not-done and scope decisions. |
++| Enterprise Demo Experience Architect | Keep but trigger narrowly | Use for executive demo impact, not ordinary polish. |
++| UX Retention & Beauty Director | Keep but trigger narrowly | Use for UX, beauty, trust, retention. |
++| Persuasive Copy & Design Strategist | Keep but trigger narrowly | Use for copy, CTAs, buyer psychology. |
++| Website Polish Director | Keep | Use for lightweight visual consistency when broad design agents are unnecessary. |
++| Test Health Maintainer | Keep | Load for failing, flaky, or slow tests only. |
++| Backup/rollback/change-memory helpers | Keep | Script-driven and useful for shared folder safety; keep reports short. |
++| Route, source-of-truth, document, domain helpers | Keep | Compact and task-specific. |
++
++## Agent Activation Budget
++
++- Small task: 0-1 helpers.
++- Medium task: 1-3 helpers.
++- Large task: 3-5 helpers only when ownership truly crosses routes, data, design, tests, and owner readiness.
++- Do not load all design helpers together unless the owner asks for a broad design review.
++
++## What To Avoid
++
++- Reading all `.codex/agents/*.md` files at session start.
++- Loading full helper files when a registry entry is enough.
++- Running broad audits when files did not change.
++- Repeating visual smoke screenshots for non-visual edits.
++- Creating new agents when an existing agent, skill, playbook, checklist, or script can own the idea.
++
++## Technical Appendix
++
++Largest helper bodies at audit time were the quiet steward, instruction gatekeeper, persuasive strategist, test maintainer, UX director, enterprise architect, operations supervisor, and demo governor. The newest gatekeeper was the most obvious trim candidate because the detailed reusable wording already exists in skill form.

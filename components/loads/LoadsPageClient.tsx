@@ -25,8 +25,10 @@ export function LoadsPageClient() {
 
   return (
     <div className="bof-page">
-      <h1 className="bof-title">Loads / dispatch</h1>
-      <p className="bof-lead">{OPS_COPY.loadsLead}</p>
+      <h1 className="bof-title">Load lifecycle control</h1>
+      <p className="bof-lead">
+        Each load shows the operating trail from assignment to proof to settlement confidence. {OPS_COPY.loadsLead}
+      </p>
       <section className="bof-oper-metrics" aria-label="Dispatch summary">
         <div className="bof-oper-metric">
           <span className="bof-oper-metric-label">Total loads</span>

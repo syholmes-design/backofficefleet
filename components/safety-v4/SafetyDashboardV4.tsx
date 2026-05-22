@@ -340,10 +340,10 @@ export function SafetyDashboardV4() {
               </div>
               <h1 className="flex items-center gap-3 text-4xl font-bold text-white">
                 <Shield className="h-9 w-9 text-blue-300" />
-                Safety Command Center
+                Safety risk and claims control
               </h1>
               <p className="mt-3 max-w-2xl text-base leading-7 text-slate-300">
-                Safety events, dispatch blocks, coaching actions, claims exposure, and evidence packets for the active fleet.
+                See which safety events block dispatch, hold settlements, create claim exposure, or need proof before the fleet keeps moving.
               </p>
             </div>
             <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 lg:justify-self-end">

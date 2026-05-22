@@ -8,7 +8,7 @@
 
 import * as XLSX from 'xlsx';
 import { parseToDate } from './date-utils';
-import { L009_CANONICAL_STORY, normalizeCanonicalLoadId } from './canonical-load-stories';
+import { L008_CANONICAL_STORY, L009_CANONICAL_STORY, normalizeCanonicalLoadId } from './canonical-load-stories';
 import type {
   V3OperationalData,
   WeeklySettlement,
@@ -42,6 +42,64 @@ let lastLoadAttempt = 0;
 const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
 
 function applyCanonicalOperationalStoryCorrections(data: V3OperationalData): void {
+  data.mainSafety = data.mainSafety.map((row) => {
+    if (row.driverId !== L008_CANONICAL_STORY.driverId) return row;
+    return {
+      ...row,
+      driverName: L008_CANONICAL_STORY.driverName,
+      openSafetyEvents: Math.max(row.openSafetyEvents, 1),
+      criticalEvents: Math.max(row.criticalEvents, 1),
+      lastSafetyEventType: "HOS Violation / Cargo Damage Claim",
+      coachingStatus: "Required",
+      dispatchEligibilityImpact: "Manager review required",
+      settlementImpact: "Claim review; no settlement hold",
+      insuranceRiskBand: L008_CANONICAL_STORY.claimExposureBand ?? "Medium",
+      evidencePacketStatus: L008_CANONICAL_STORY.evidenceStatus ?? "Partial",
+      managerActionRequired: true,
+      requiredFix: "Complete claim evidence packet, driver statement, and HOS coaching acknowledgment.",
+      fixLink: "/safety#recent-safety-events",
+      safetyActionStatus: "Claim review open / evidence partial",
+    };
+  });
+
+  data.safetyEvents = data.safetyEvents.map((event) => {
+    const isL008SafetyEvent =
+      event.eventId === L008_CANONICAL_STORY.safetyEventId ||
+      (event.driverId === L008_CANONICAL_STORY.driverId &&
+        normalizeCanonicalLoadId(event.linkedLoadId) === L008_CANONICAL_STORY.loadId);
+
+    return isL008SafetyEvent
+      ? {
+          ...event,
+          driverId: L008_CANONICAL_STORY.driverId,
+          driverName: L008_CANONICAL_STORY.driverName,
+          unit: L008_CANONICAL_STORY.assetId,
+          status: "UNDER_REVIEW",
+          severity: "CRITICAL",
+          eventType: "HOS Violation / Cargo Damage Claim",
+          details:
+            "HOS break violation surfaced during delivery review; cargo shifted and claim evidence packet is partial.",
+          insuranceClaimId: L008_CANONICAL_STORY.claimId ?? event.insuranceClaimId,
+          claimStatus: "OPEN",
+          claimType: "Cargo Damage",
+          claimAmount: L008_CANONICAL_STORY.claimAmount ?? event.claimAmount,
+          claimNotes: "Cargo shift noted; reserve pending manager review and complete photo evidence.",
+          linkedLoadId: L008_CANONICAL_STORY.loadId,
+          claimExposureBand: L008_CANONICAL_STORY.claimExposureBand ?? event.claimExposureBand,
+          insuranceClaimNeeded: true,
+          preventable: true,
+          rootCause: "HOS planning / break management; cargo condition review",
+          driverStatementRequired: true,
+          coachingRequired: true,
+          settlementHold: false,
+          settlementHoldAmount: 0,
+          dispatchBlock: false,
+          evidencePacketComplete: false,
+          safetyActionStatus: "Claim review open / evidence partial",
+        }
+      : event;
+  });
+
   data.maintenanceWorkOrders = data.maintenanceWorkOrders.map((wo) => {
     const isL009TireDefect =
       wo.driverId === L009_CANONICAL_STORY.driverId &&
@@ -71,6 +129,19 @@ function applyCanonicalOperationalStoryCorrections(data: V3OperationalData): voi
   });
 
   data.routeIntelligence = data.routeIntelligence.map((route) => {
+    const isL008 = normalizeCanonicalLoadId(route.loadId) === L008_CANONICAL_STORY.loadId;
+    if (isL008) {
+      return {
+        ...route,
+        driverId: L008_CANONICAL_STORY.driverId,
+        origin: L008_CANONICAL_STORY.origin,
+        destination: L008_CANONICAL_STORY.destination,
+        routeSummary:
+          "Route, fuel, and rest planning remain available, but BOF keeps the load in safety / claim review until cargo-damage evidence is complete.",
+        managerActionRequired: true,
+      };
+    }
+
     const isL009 = normalizeCanonicalLoadId(route.loadId) === L009_CANONICAL_STORY.loadId;
     return isL009
       ? {
@@ -82,6 +153,71 @@ function applyCanonicalOperationalStoryCorrections(data: V3OperationalData): voi
         }
       : route;
   });
+
+  if (!data.routeIntelligence.some((route) => normalizeCanonicalLoadId(route.loadId) === L008_CANONICAL_STORY.loadId)) {
+    data.routeIntelligence.push({
+      routeId: "RT-L008-CLAIM-REVIEW",
+      loadId: L008_CANONICAL_STORY.loadId,
+      driverId: L008_CANONICAL_STORY.driverId,
+      origin: L008_CANONICAL_STORY.origin,
+      destination: L008_CANONICAL_STORY.destination,
+      originCoordinates: [-86.7816, 36.1627],
+      destinationCoordinates: [-86.1581, 39.7684],
+      mileage: 289,
+      estimatedDriveTime: 5.2,
+      routeRisk: "Moderate",
+      hosPlanningNotes: "HOS break timing is under review after the safety event; route plan remains available for claim context.",
+      weatherRisk: "Low",
+      trafficRisk: "Moderate around Louisville / Indianapolis approach",
+      recommendedRestStops: ["Kentucky Welcome Center I-65 Northbound"],
+      fuelStops: ["Pilot Travel Center - Bowling Green, KY"],
+      routeSummary:
+        "Route, fuel, and rest planning are available, but BOF keeps L008 in safety / claim review until cargo-damage evidence and HOS coaching are complete.",
+      managerActionRequired: true,
+    });
+  }
+
+  if (!data.dieselPricing.some((fuel) => normalizeCanonicalLoadId(fuel.loadId ?? "") === L008_CANONICAL_STORY.loadId)) {
+    data.dieselPricing.push({
+      pricingId: "FUEL-L008-BGKY",
+      routeId: "RT-L008-CLAIM-REVIEW",
+      loadId: L008_CANONICAL_STORY.loadId,
+      location: "Pilot Travel Center - Bowling Green, KY",
+      brand: "Pilot",
+      coordinates: [-86.4436, 37.016],
+      dieselPrice: 3.49,
+      currency: "USD",
+      priceTimestamp: "2026-05-19",
+      source: "BOF route planning baseline",
+      routePosition: 92,
+      preferredStop: true,
+      estimatedGallons: 43,
+      estimatedFuelCost: 150.07,
+      savingsOpportunity: 18,
+      amenities: ["Diesel", "parking", "food", "showers"],
+      managerActionRequired: false,
+    });
+  }
+
+  if (!data.restStopLocations.some((stop) => normalizeCanonicalLoadId(stop.loadId ?? "") === L008_CANONICAL_STORY.loadId)) {
+    data.restStopLocations.push({
+      stopId: "REST-L008-KY-WELCOME",
+      routeId: "RT-L008-CLAIM-REVIEW",
+      loadId: L008_CANONICAL_STORY.loadId,
+      location: "Kentucky Welcome Center I-65 Northbound",
+      coordinates: [-86.577, 36.789],
+      distanceFromRoute: 1.2,
+      parkingAvailable: true,
+      parkingSpaces: 38,
+      showerAvailable: false,
+      foodAvailable: true,
+      amenities: ["parking", "restrooms", "food nearby"],
+      safetyRating: 4,
+      recommendedForHos: true,
+      hosBreakRecommendation: "Use as documented HOS recovery stop if route resumes after claim review.",
+      managerActionRequired: false,
+    });
+  }
 }
 
 /**

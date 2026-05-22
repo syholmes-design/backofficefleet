@@ -1,0 +1,1918 @@
+diff --git a/app/(bof)/shipper-portal/[loadId]/page.tsx b/app/(bof)/shipper-portal/[loadId]/page.tsx
+index c45b06e..65192a6 100644
+--- a/app/(bof)/shipper-portal/[loadId]/page.tsx
++++ b/app/(bof)/shipper-portal/[loadId]/page.tsx
+@@ -22,7 +22,7 @@ export async function generateMetadata({ params }: Props) {
+   const data = getBofData();
+   const load = data.loads.find((l) => l.id === loadId);
+   return {
+-    title: load ? `Shipper portal · Load ${load.number} | BOF` : "Shipper portal | BOF",
++    title: load ? `Shipper portal | Load ${load.number} | BOF` : "Shipper portal | BOF",
+   };
+ }
+ 
+diff --git a/app/(bof)/trip-release/[loadId]/page.tsx b/app/(bof)/trip-release/[loadId]/page.tsx
+index 5c1b905..87acaa8 100644
+--- a/app/(bof)/trip-release/[loadId]/page.tsx
++++ b/app/(bof)/trip-release/[loadId]/page.tsx
+@@ -22,7 +22,7 @@ export async function generateMetadata({ params }: Props) {
+   const data = getBofData();
+   const load = data.loads.find((l) => l.id === loadId);
+   return {
+-    title: load ? `Trip release · Load ${load.number} | BOF` : "Trip release | BOF",
++    title: load ? `Trip release | Load ${load.number} | BOF` : "Trip release | BOF",
+   };
+ }
+ 
+diff --git a/app/globals.css b/app/globals.css
+index 812e56d..acc7fa8 100644
+--- a/app/globals.css
++++ b/app/globals.css
+@@ -78,28 +78,49 @@ body {
+   flex-direction: column;
+ }
+ 
++.bof-product-header {
++  background:
++    linear-gradient(180deg, rgba(8, 13, 28, 0.98), rgba(6, 12, 24, 0.96)),
++    radial-gradient(circle at 15% 0%, rgba(20, 184, 166, 0.16), transparent 35%);
++  box-shadow: 0 16px 40px rgba(2, 6, 23, 0.28);
++}
++
++.bof-product-nav {
++  scrollbar-width: thin;
++  scrollbar-color: rgba(45, 212, 191, 0.45) rgba(15, 23, 42, 0.5);
++}
++
++.bof-product-nav a {
++  text-decoration: none;
++}
++
++.bof-product-nav a:hover,
++.bof-product-nav a:focus-visible {
++  text-decoration: none;
++}
++
+ /* Global app header (light bar) — logo + nav on every page */
+ .bof-global-header {
+   width: 100%;
+-  border-bottom: 1px solid rgba(229, 231, 235, 0.8);
+-  background: rgba(255, 255, 255, 0.98);
++  border-bottom: 1px solid rgba(203, 213, 225, 0.8);
++  background: rgba(255, 255, 255, 0.94);
+   backdrop-filter: blur(12px);
+   position: sticky;
+   top: 0;
+   z-index: 200;
+-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05), 0 1px 2px rgba(0, 0, 0, 0.02);
+-  height: 88px;
++  box-shadow: 0 16px 36px rgba(15, 23, 42, 0.08);
++  min-height: 74px;
+ }
+ 
+ .bof-global-header-inner {
+   max-width: 100rem; /* 1600px */
+   margin: 0 auto;
+-  padding: 1.25rem 1.25rem;
++  padding: 0.9rem 1.25rem;
+   display: flex;
+   align-items: center;
+   justify-content: space-between;
+   gap: 2rem;
+-  height: 100%;
++  min-height: 74px;
+   flex-wrap: nowrap;
+ }
+ 
+@@ -136,7 +157,7 @@ body {
+ }
+ 
+ .bof-global-header-logo-enhanced {
+-  transform: scale(1.955) translateY(-4px);
++  transform: scale(1.48) translateY(-2px);
+   margin-right: 0.25rem;
+ }
+ 
+@@ -144,8 +165,8 @@ body {
+   display: flex;
+   align-items: center;
+   flex-wrap: wrap;
+-  gap: 0.75rem 1.5rem;
+-  font-size: 0.9375rem; /* 15px */
++  gap: 0.55rem 0.9rem;
++  font-size: 0.88rem;
+   font-weight: 600;
+   color: #374151;
+   justify-content: center;
+@@ -157,13 +178,13 @@ body {
+   color: #475569;
+   text-decoration: none;
+   white-space: nowrap;
+-  padding: 0.5rem 1rem;
++  padding: 0.42rem 0.72rem;
+   border-radius: 8px;
+   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+   font-weight: 600;
+   position: relative;
+   border: 1px solid transparent;
+-  font-size: 0.9375rem; /* 15px */
++  font-size: 0.88rem;
+ }
+ 
+ .bof-global-header-nav a::before {
+@@ -210,7 +231,7 @@ body {
+   display: flex;
+   flex-wrap: wrap;
+   align-items: center;
+-  gap: 0.75rem 1.5rem;
++  gap: 0.45rem 0.75rem;
+ }
+ 
+ .bof-global-header-sep {
+@@ -223,8 +244,8 @@ body {
+ .bof-global-header-ctas {
+   display: flex;
+   align-items: center;
+-  gap: 1rem;
+-  margin-left: 2.5rem;
++  gap: 0.65rem;
++  margin-left: 1rem;
+   flex-shrink: 0;
+ }
+ 
+@@ -292,16 +313,16 @@ body {
+ }
+ 
+ .bof-global-header-cta {
+-  padding: 0.875rem 1.75rem;
+-  border-radius: 14px;
++  padding: 0.72rem 1.05rem;
++  border-radius: 999px;
+   font-weight: 700;
+-  font-size: 1rem; /* 16px */
++  font-size: 0.88rem;
+   text-decoration: none;
+   position: relative;
+   overflow: hidden;
+   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+   border: 1px solid transparent;
+-  height: 3rem;
++  min-height: 2.55rem;
+   display: inline-flex;
+   align-items: center;
+   justify-content: center;
+@@ -695,6 +716,12 @@ body {
+   padding-bottom: 3rem;
+ }
+ 
++.bof-main {
++  background:
++    radial-gradient(circle at top left, rgba(20, 184, 166, 0.1), transparent 34rem),
++    linear-gradient(180deg, #0c121b 0%, #111820 46%, #0f1419 100%);
++}
++
+ .bof-page,
+ .bof-page * {
+   min-width: 0;
+@@ -762,16 +789,19 @@ body {
+   flex-direction: column;
+   gap: 0.35rem;
+   padding: 1.15rem;
+-  background: var(--bof-surface);
+-  border: 1px solid var(--bof-border);
++  background: linear-gradient(180deg, rgba(31, 42, 59, 0.98), rgba(20, 29, 42, 0.98));
++  border: 1px solid rgba(82, 103, 132, 0.72);
+   border-radius: var(--bof-radius);
+   text-decoration: none;
+   color: inherit;
+-  transition: border-color 0.15s;
++  box-shadow: 0 14px 32px rgba(2, 6, 23, 0.18);
++  transition: border-color 0.15s, transform 0.15s, box-shadow 0.15s;
+ }
+ 
+ .bof-card:hover {
+-  border-color: var(--bof-accent-dim);
++  border-color: rgba(45, 212, 191, 0.68);
++  box-shadow: 0 18px 42px rgba(2, 6, 23, 0.28);
++  transform: translateY(-1px);
+ }
+ 
+ .bof-card-title {
+@@ -6874,13 +6904,13 @@ a.bof-mkt-cc-mock-kpi:focus-visible {
+ 
+ /* Homepage redesign: one premium story, no baked-in hero text collisions. */
+ .bof-home-redesign {
+-  background: #f3f6f8;
++  background: #eef3f6;
+   color: #0f172a;
+ }
+ 
+ .bof-home-hero {
+   position: relative;
+-  min-height: 680px;
++  min-height: 720px;
+   overflow: hidden;
+   background: #020617;
+   color: #f8fafc;
+@@ -6890,7 +6920,7 @@ a.bof-mkt-cc-mock-kpi:focus-visible {
+ .bof-home-hero__image {
+   object-fit: cover;
+   object-position: center center;
+-  filter: saturate(0.94) contrast(1.04) brightness(0.82);
++  filter: saturate(0.98) contrast(1.06) brightness(0.88);
+   z-index: 0;
+ }
+ 
+@@ -6899,14 +6929,15 @@ a.bof-mkt-cc-mock-kpi:focus-visible {
+   inset: 0;
+   z-index: 1;
+   background:
+-    linear-gradient(90deg, rgba(2, 6, 23, 0.94) 0%, rgba(2, 6, 23, 0.82) 34%, rgba(2, 6, 23, 0.42) 68%, rgba(2, 6, 23, 0.18) 100%),
+-    linear-gradient(0deg, rgba(2, 6, 23, 0.92) 0%, rgba(2, 6, 23, 0.08) 42%, rgba(2, 6, 23, 0.64) 100%);
++    radial-gradient(circle at 72% 28%, rgba(20, 184, 166, 0.18), transparent 26rem),
++    linear-gradient(90deg, rgba(2, 6, 23, 0.95) 0%, rgba(2, 6, 23, 0.8) 34%, rgba(2, 6, 23, 0.36) 68%, rgba(2, 6, 23, 0.12) 100%),
++    linear-gradient(0deg, rgba(2, 6, 23, 0.94) 0%, rgba(2, 6, 23, 0.06) 42%, rgba(2, 6, 23, 0.56) 100%);
+ }
+ 
+ .bof-home-hero__content {
+   position: relative;
+   z-index: 2;
+-  min-height: 680px;
++  min-height: 720px;
+   display: grid;
+   grid-template-columns: minmax(0, 1fr);
+   align-items: center;
+@@ -6937,9 +6968,9 @@ a.bof-mkt-cc-mock-kpi:focus-visible {
+ }
+ 
+ .bof-home-hero h1 {
+-  max-width: 12ch;
++  max-width: 13ch;
+   color: #ffffff;
+-  font-size: 2.9rem;
++  font-size: 3.05rem;
+   text-wrap: balance;
+ }
+ 
+@@ -6951,6 +6982,26 @@ a.bof-mkt-cc-mock-kpi:focus-visible {
+   line-height: 1.65;
+ }
+ 
++.bof-home-proof-list {
++  display: flex;
++  flex-wrap: wrap;
++  gap: 0.55rem;
++  list-style: none;
++  margin: 1.25rem 0 0;
++  padding: 0;
++}
++
++.bof-home-proof-list li {
++  border: 1px solid rgba(125, 211, 252, 0.3);
++  border-radius: 999px;
++  background: rgba(14, 116, 144, 0.22);
++  color: #e0f2fe;
++  font-size: 0.8rem;
++  font-weight: 800;
++  line-height: 1;
++  padding: 0.55rem 0.75rem;
++}
++
+ .bof-home-hero__ctas {
+   display: flex;
+   flex-wrap: wrap;
+@@ -6972,14 +7023,14 @@ a.bof-mkt-cc-mock-kpi:focus-visible {
+ }
+ 
+ .bof-home-hero__panel {
+-  width: min(100%, 360px);
++  width: min(100%, 390px);
+   justify-self: start;
+-  padding: 0.85rem;
+-  border: 1px solid rgba(148, 163, 184, 0.22);
+-  border-radius: 8px;
+-  background: rgba(8, 18, 35, 0.62);
+-  box-shadow: 0 18px 56px rgba(0, 0, 0, 0.24);
+-  backdrop-filter: blur(12px);
++  padding: 1rem;
++  border: 1px solid rgba(125, 211, 252, 0.28);
++  border-radius: 12px;
++  background: linear-gradient(180deg, rgba(9, 23, 43, 0.76), rgba(4, 12, 24, 0.86));
++  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.34), inset 0 1px 0 rgba(255, 255, 255, 0.05);
++  backdrop-filter: blur(16px);
+ }
+ 
+ .bof-home-hero__panel-head {
+@@ -7011,8 +7062,8 @@ a.bof-mkt-cc-mock-kpi:focus-visible {
+   min-height: 78px;
+   padding: 0.7rem;
+   border: 1px solid rgba(148, 163, 184, 0.18);
+-  border-radius: 8px;
+-  background: rgba(15, 23, 42, 0.78);
++  border-radius: 10px;
++  background: rgba(15, 23, 42, 0.82);
+   color: inherit;
+   text-decoration: none;
+   transition: border-color 0.15s ease, transform 0.15s ease, background 0.15s ease;
+@@ -7098,7 +7149,7 @@ a.bof-mkt-cc-mock-kpi:focus-visible {
+ }
+ 
+ .bof-home-section {
+-  padding: 4.5rem 0;
++  padding: 5.25rem 0;
+ }
+ 
+ .bof-home-section--white {
+@@ -7106,7 +7157,8 @@ a.bof-mkt-cc-mock-kpi:focus-visible {
+ }
+ 
+ .bof-home-section--soft {
+-  background: #f3f6f8;
++  background:
++    linear-gradient(180deg, #f6f9fb 0%, #edf3f6 100%);
+ }
+ 
+ .bof-home-section--ink {
+@@ -7131,7 +7183,7 @@ a.bof-mkt-cc-mock-kpi:focus-visible {
+ 
+ .bof-home-section-head h2 {
+   color: #0f172a;
+-  font-size: 2rem;
++  font-size: 2.14rem;
+ }
+ 
+ .bof-home-section-head p:not(.bof-home-eyebrow) {
+@@ -7164,15 +7216,21 @@ a.bof-mkt-cc-mock-kpi:focus-visible {
+ .bof-home-capability-card,
+ .bof-home-portal-card {
+   min-height: 100%;
+-  border: 1px solid #dbe5ef;
++  border: 1px solid #d7e3ee;
+   border-radius: 8px;
+-  background: #ffffff;
++  background: linear-gradient(180deg, #ffffff 0%, #fbfdff 100%);
+   color: inherit;
+   text-decoration: none;
+-  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
++  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04), 0 14px 32px rgba(15, 23, 42, 0.05);
+   transition: border-color 0.15s ease, box-shadow 0.15s ease, transform 0.15s ease;
+ }
+ 
++.bof-home-section--soft .bof-home-flow-card,
++.bof-home-section--soft .bof-home-capability-card,
++.bof-home-section--soft .bof-home-portal-card {
++  background: linear-gradient(180deg, #ffffff 0%, #f8fbfc 100%);
++}
++
+ .bof-home-flow-card:hover,
+ .bof-home-flow-card:focus-visible,
+ .bof-home-capability-card:hover,
+@@ -7189,6 +7247,21 @@ a.bof-mkt-cc-mock-kpi:focus-visible {
+   padding: 1.1rem;
+ }
+ 
++.bof-home-flow-card:nth-child(3n + 1) span {
++  background: rgba(14, 165, 233, 0.12);
++  color: #0369a1;
++}
++
++.bof-home-flow-card:nth-child(3n + 2) span {
++  background: rgba(245, 158, 11, 0.14);
++  color: #92400e;
++}
++
++.bof-home-flow-card:nth-child(3n) span {
++  background: rgba(20, 184, 166, 0.12);
++  color: #0f766e;
++}
++
+ .bof-home-flow-card span {
+   display: inline-flex;
+   align-items: center;
+@@ -15221,6 +15294,10 @@ a.shipper-portal-story-step:focus-visible,
+ /* Dashboard page: extra clearance above fixed / docked bottom UI (Queue Detail table, etc.) */
+ .bof-dashboard-page.bof-page.bof-cc-page {
+   padding-bottom: max(12.5rem, calc(10.5rem + env(safe-area-inset-bottom, 0px)));
++  background:
++    radial-gradient(circle at 20% 0%, rgba(20, 184, 166, 0.12), transparent 32rem),
++    radial-gradient(circle at 84% 18%, rgba(59, 130, 246, 0.1), transparent 30rem),
++    linear-gradient(180deg, #070d16 0%, #101820 44%, #0e151b 100%);
+ }
+ 
+ .bof-dashboard-bottom-spacer {
+@@ -15528,6 +15605,71 @@ a.shipper-portal-story-step:focus-visible,
+   font-size: 0.72rem;
+ }
+ 
++.bof-dashboard-manager-card__grid {
++  grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);
++}
++
++.bof-dashboard-manager-card__image {
++  min-height: 200px;
++}
++
++.bof-dashboard-section {
++  position: relative;
++}
++
++.bof-dashboard-manager-card,
++.bof-dashboard-action-card,
++.bof-dashboard-hero-kpi {
++  text-decoration: none !important;
++}
++
++.bof-dashboard-manager-card {
++  background:
++    linear-gradient(135deg, rgba(28, 38, 52, 0.94), rgba(18, 26, 36, 0.94)) !important;
++  border-color: rgba(100, 116, 139, 0.34) !important;
++  box-shadow: 0 20px 52px rgba(2, 6, 23, 0.26);
++}
++
++.bof-dashboard-manager-card:hover,
++.bof-dashboard-manager-card:focus-visible,
++.bof-dashboard-action-card:hover,
++.bof-dashboard-action-card:focus-visible {
++  border-color: rgba(45, 212, 191, 0.58) !important;
++  box-shadow: 0 24px 60px rgba(2, 6, 23, 0.34);
++  outline: none;
++  transform: translateY(-2px);
++}
++
++.bof-dashboard-action-card {
++  background:
++    linear-gradient(180deg, rgba(31, 41, 55, 0.98), rgba(22, 30, 41, 0.98)) !important;
++  border-color: rgba(100, 116, 139, 0.28) !important;
++  box-shadow: 0 18px 42px rgba(2, 6, 23, 0.22);
++}
++
++.bof-dashboard-action-card img {
++  filter: saturate(1.04) contrast(1.04);
++  transition: transform 0.28s ease, filter 0.28s ease;
++}
++
++.bof-dashboard-action-card:hover img,
++.bof-dashboard-action-card:focus-visible img {
++  transform: scale(1.035);
++  filter: saturate(1.12) contrast(1.08);
++}
++
++@media (max-width: 700px) {
++  .bof-dashboard-manager-card__grid {
++    grid-template-columns: 1fr;
++    gap: 0;
++  }
++
++  .bof-dashboard-manager-card__image {
++    min-height: 160px;
++    border-radius: 12px 12px 0 0 !important;
++  }
++}
++
+ .bof-cc-hero-left {
+   min-width: 0;
+ }
+@@ -16527,3 +16669,293 @@ a.shipper-portal-story-step:focus-visible,
+ .animate-fade-in {
+   animation: fadeInUp 0.4s ease forwards;
+ }
++
++/* Demo polish pass — scoped refinements for client/investor walkthroughs. */
++@media (max-width: 960px) {
++  .bof-home-hero__content {
++    gap: 1.25rem;
++    padding-top: 3rem;
++    padding-bottom: 2.25rem;
++  }
++
++  .bof-home-hero__copy {
++    max-width: 38rem;
++  }
++
++  .bof-home-hero__lead {
++    margin-top: 0.85rem;
++    line-height: 1.5;
++  }
++
++  .bof-home-proof-list {
++    margin-top: 1rem;
++  }
++
++  .bof-home-hero__ctas {
++    margin-top: 1.2rem;
++  }
++
++  .bof-home-hero__panel {
++    width: 100%;
++    padding: 0.85rem;
++  }
++
++  .bof-home-hero__metric-grid {
++    grid-template-columns: repeat(2, minmax(0, 1fr));
++  }
++
++  .bof-home-hero__metric {
++    min-height: 66px;
++    padding: 0.62rem;
++  }
++
++  .bof-home-section {
++    padding: 3.4rem 0;
++  }
++}
++
++@media (max-width: 640px) {
++  .bof-global-header {
++    min-height: 58px;
++  }
++
++  .bof-global-header-inner {
++    gap: 0.45rem;
++    padding: 0.45rem 0.65rem;
++  }
++
++  .bof-home-hero h1,
++  .bof-home-section-head h2,
++  .bof-home-section--soft .bof-mkt-title {
++    font-size: 2rem;
++    line-height: 1.07;
++  }
++
++  .bof-home-hero__lead {
++    font-size: 0.94rem;
++  }
++
++  .bof-home-proof-list li {
++    font-size: 0.72rem;
++    padding: 0.45rem 0.58rem;
++  }
++
++  .bof-home-demo-strip__inner {
++    gap: 0.65rem;
++    padding-top: 0.8rem;
++    padding-bottom: 0.8rem;
++  }
++
++  .bof-home-demo-strip a {
++    font-size: 0.78rem;
++    padding: 0.42rem 0.56rem;
++  }
++
++  .bof-home-flow-card,
++  .bof-home-capability-card,
++  .bof-home-portal-card {
++    padding: 0.95rem;
++  }
++}
++
++.bof-dashboard-lobby-hero {
++  box-shadow: inset 0 -1px 0 rgba(148, 163, 184, 0.14);
++}
++
++.bof-dashboard-action-card__media {
++  background:
++    linear-gradient(135deg, rgba(20, 184, 166, 0.12), rgba(15, 23, 42, 0.9)),
++    #101827;
++}
++
++.bof-dashboard-action-card__media::after {
++  content: "";
++  position: absolute;
++  inset: 0;
++  border-bottom: 1px solid rgba(148, 163, 184, 0.16);
++  background: linear-gradient(180deg, rgba(2, 6, 23, 0.05), rgba(2, 6, 23, 0.16));
++  pointer-events: none;
++}
++
++@media (max-width: 700px) {
++  .bof-product-header > div {
++    gap: 0.6rem;
++    padding-top: 0.55rem !important;
++    padding-bottom: 0.55rem !important;
++  }
++
++  .bof-product-nav {
++    gap: 0.38rem !important;
++    font-size: 0.78rem !important;
++  }
++
++  .bof-product-nav a {
++    padding: 0.42rem 0.58rem !important;
++  }
++
++  .bof-dashboard-lobby-hero,
++  .bof-dashboard-lobby-hero > div[style*="min-height"] {
++    min-height: auto !important;
++  }
++
++  .bof-dashboard-lobby-hero > div[style*="min-height"] {
++    padding: 3rem 1rem 2.6rem !important;
++  }
++
++  .bof-dashboard-lobby-copy h1 {
++    font-size: 2.08rem !important;
++    margin-bottom: 0.85rem !important;
++  }
++
++  .bof-dashboard-lobby-copy p {
++    font-size: 0.98rem !important;
++    line-height: 1.45 !important;
++    margin-bottom: 1.35rem !important;
++  }
++
++  .bof-dashboard-hero-cta {
++    width: min(100%, 19rem);
++    min-height: 44px !important;
++    padding: 0.72rem 1rem !important;
++    font-size: 0.9rem !important;
++  }
++
++  .bof-dashboard-hero-kpi {
++    min-height: 120px !important;
++    padding: 1rem !important;
++  }
++
++  .bof-dashboard-section {
++    padding-left: 1rem !important;
++    padding-right: 1rem !important;
++  }
++
++  .bof-dashboard-action-section h2 {
++    font-size: 1.55rem !important;
++  }
++
++  .bof-dashboard-action-card__media {
++    height: 86px !important;
++  }
++}
++
++.bof-command-center-v4 {
++  background:
++    radial-gradient(circle at 50% 0%, rgba(20, 184, 166, 0.08), transparent 26rem),
++    #020617;
++}
++
++.bof-command-center-v4 a,
++.bof-command-center-v4 section,
++.bof-command-center-v4 div[class*="rounded-xl"] {
++  text-decoration: none;
++}
++
++.bof-command-center-v4 div[class*="bg-slate-900/50"],
++.bof-command-center-v4 div[class*="bg-slate-900/75"],
++.bof-command-center-v4 a[class*="bg-slate-900/50"],
++.bof-command-center-v4 a[class*="bg-slate-900/75"] {
++  background-color: rgba(15, 23, 42, 0.68) !important;
++  border-color: rgba(71, 85, 105, 0.74) !important;
++  box-shadow: 0 16px 42px rgba(2, 6, 23, 0.18);
++}
++
++.bof-command-center-v4 section[class*="bg-slate-900/75"] {
++  background-color: rgba(12, 21, 36, 0.8) !important;
++  border-color: rgba(45, 212, 191, 0.18) !important;
++}
++
++@media (max-width: 700px) {
++  .bof-command-center-v4 .max-w-7xl,
++  .bof-dispatch-polish .max-w-7xl {
++    padding-left: 1rem !important;
++    padding-right: 1rem !important;
++  }
++
++  .bof-command-center-v4 h1,
++  .bof-dispatch-polish h1 {
++    font-size: 2rem !important;
++    line-height: 1.08 !important;
++  }
++
++  .bof-command-center-v4 h2,
++  .bof-dispatch-polish h2 {
++    line-height: 1.15 !important;
++  }
++}
++
++.bof-dispatch-polish section[class*="bg-slate-900/45"],
++.bof-dispatch-polish div[class*="bg-slate-900/45"] {
++  background-color: rgba(15, 23, 42, 0.64) !important;
++  border-color: rgba(71, 85, 105, 0.72) !important;
++}
++
++.bof-dispatch-polish section[id="route-control"] {
++  scroll-margin-top: 7rem;
++}
++
++@media (max-width: 700px) {
++  .bof-dispatch-polish > section:first-child .relative,
++  .bof-dispatch-polish > section:first-child .absolute {
++    min-height: auto;
++  }
++
++  .bof-dispatch-polish > section:first-child > div.relative {
++    padding-top: 2.6rem !important;
++    padding-bottom: 2.6rem !important;
++  }
++
++  .bof-dispatch-polish .sticky {
++    position: static !important;
++  }
++}
++
++.shipper-portal,
++.trip-release-page {
++  width: min(100%, 1160px);
++  max-width: 1160px;
++  margin-inline: auto;
++}
++
++.shipper-portal-card,
++.trip-release-card,
++.trip-release-side,
++.trip-release-banner {
++  box-shadow: 0 14px 36px rgba(2, 6, 23, 0.16);
++}
++
++.shipper-portal-actions a,
++.shipper-portal-button,
++.trip-release-actions a,
++.trip-release-btn {
++  min-height: 2.25rem;
++}
++
++@media (max-width: 640px) {
++  .shipper-portal,
++  .trip-release-page {
++    width: 100%;
++    padding-left: 1rem;
++    padding-right: 1rem;
++  }
++
++  .shipper-portal-card,
++  .trip-release-card,
++  .trip-release-side {
++    padding: 0.9rem;
++  }
++
++  .shipper-portal-actions,
++  .trip-release-actions,
++  .trip-release-footer {
++    gap: 0.45rem;
++  }
++
++  .trip-release-banner-row {
++    align-items: flex-start;
++  }
++
++  .trip-release-banner-counts {
++    width: 100%;
++  }
++}
+diff --git a/components/command-center-v4/CommandCenterV4.tsx b/components/command-center-v4/CommandCenterV4.tsx
+index 3ce5fbb..beb798b 100644
+--- a/components/command-center-v4/CommandCenterV4.tsx
++++ b/components/command-center-v4/CommandCenterV4.tsx
+@@ -22,7 +22,7 @@ import {
+ import { getV3OperationalData, isV3DataAvailable } from "@/lib/v3-operational-loader";
+ import { formatDisplayDate } from "@/lib/date-utils";
+ import type { OperationalRiskQueue, V3OperationalData } from "@/lib/v3-operational-types";
+-import { L009_CANONICAL_STORY } from "@/lib/canonical-load-stories";
++import { L008_CANONICAL_STORY, L009_CANONICAL_STORY } from "@/lib/canonical-load-stories";
+ 
+ type RiskAction = {
+   label: string;
+@@ -46,6 +46,21 @@ function getRiskStory(risk: OperationalRiskQueue) {
+   const loadId = normalizeLoadId(risk.loadId);
+   const type = `${risk.riskType} ${risk.module}`.toLowerCase();
+ 
++  if (loadId === L008_CANONICAL_STORY.loadId || type.includes("cargo-damage claim") || type.includes("claim escalation")) {
++    return {
++      headline: "Safety claim evidence needs manager review",
++      urgency: "HOS review, driver statement, cargo-damage photos, and claim packet support must be completed before the claim file is ready.",
++      primaryLabel: "Open claim evidence workspace",
++      primaryHref: `/loads/${loadId}`,
++      actions: [
++        { label: "Open claim evidence workspace", href: `/loads/${loadId}`, tone: "danger" },
++        { label: "Review safety action", href: "/safety", tone: "warning" },
++        { label: "Driver HR action", href: `/drivers/${risk.driverId}/hr` },
++        { label: "Claim exposure", href: "/money-at-risk", tone: "warning" },
++      ] satisfies RiskAction[],
++    };
++  }
++
+   if (type.includes("seal")) {
+     return {
+       headline: "Seal exception needs manager closeout",
+@@ -140,6 +155,50 @@ function moduleHref(module: string) {
+   return "/documents";
+ }
+ 
++function withCanonicalL008Risk(data: V3OperationalData, risks = data.operationalRiskQueue): OperationalRiskQueue[] {
++  const existing = risks;
++  if (existing.some((risk) => normalizeLoadId(risk.loadId) === L008_CANONICAL_STORY.loadId)) {
++    return existing;
++  }
++
++  const event = data.safetyEvents.find(
++    (safetyEvent) =>
++      safetyEvent.eventId === L008_CANONICAL_STORY.safetyEventId ||
++      (safetyEvent.driverId === L008_CANONICAL_STORY.driverId &&
++        normalizeLoadId(safetyEvent.linkedLoadId) === L008_CANONICAL_STORY.loadId)
++  );
++
++  if (!event && !L008_CANONICAL_STORY.claimActive) return existing;
++
++  const l008Risk: OperationalRiskQueue = {
++    riskId: "ORQ-L008-SAFETY-CLAIM",
++    module: "Claims/Safety",
++    driverId: L008_CANONICAL_STORY.driverId,
++    loadId: L008_CANONICAL_STORY.loadId,
++    assetId: L008_CANONICAL_STORY.assetId,
++    relatedEventId: [event?.eventId ?? L008_CANONICAL_STORY.safetyEventId, L008_CANONICAL_STORY.claimId]
++      .filter(Boolean)
++      .join(" / "),
++    riskType: "HOS violation / cargo-damage claim escalation",
++    severity: "Critical",
++    status: "Open",
++    businessImpact: "Cargo-damage claim review remains open with partial evidence and manager approval required.",
++    dispatchImpact: "Delivered / claim review",
++    settlementImpact: "Claim review; no settlement hold",
++    complianceImpact: "HOS coaching and driver statement required",
++    insuranceImpact: "Open cargo-damage claim",
++    dueDate: "2026-05-23",
++    assignedTo: "Claims / Safety Manager",
++    recommendedAction:
++      "Complete driver statement, HOS coaching acknowledgment, cargo-damage evidence, and claim packet review.",
++    resolutionStatus: "Open",
++    resolvedDate: "",
++    managerActionRequired: true,
++  };
++
++  return [l008Risk, ...existing];
++}
++
+ function withCanonicalL009Risk(data: V3OperationalData): OperationalRiskQueue[] {
+   const existing = data.operationalRiskQueue;
+   if (existing.some((risk) => normalizeLoadId(risk.loadId) === L009_CANONICAL_STORY.loadId)) {
+@@ -185,6 +244,10 @@ function withCanonicalL009Risk(data: V3OperationalData): OperationalRiskQueue[]
+   return [l009Risk, ...existing];
+ }
+ 
++function withCanonicalFlagshipRisks(data: V3OperationalData): OperationalRiskQueue[] {
++  return withCanonicalL008Risk(data, withCanonicalL009Risk(data));
++}
++
+ export function CommandCenterV4() {
+   const [operationalRisks, setOperationalRisks] = useState<OperationalRiskQueue[]>([]);
+   const [loading, setLoading] = useState(true);
+@@ -210,7 +273,7 @@ export function CommandCenterV4() {
+         console.log('📊 Loading V4 operational risk data...');
+         const v3Data = await getV3OperationalData();
+         
+-        setOperationalRisks(withCanonicalL009Risk(v3Data));
++        setOperationalRisks(withCanonicalFlagshipRisks(v3Data));
+         
+         console.log(`✅ Loaded ${v3Data.operationalRiskQueue.length} Operational Risks from V4 workbook`);
+       } else {
+@@ -405,7 +468,7 @@ export function CommandCenterV4() {
+   }
+ 
+   return (
+-    <div className="min-h-screen bg-slate-950 text-slate-100">
++    <div className="bof-command-center-v4 min-h-screen bg-slate-950 text-slate-100">
+       {/* Header */}
+       <div
+         className="relative overflow-hidden border-b border-slate-800 bg-slate-950"
+@@ -475,7 +538,7 @@ export function CommandCenterV4() {
+                 <div className="text-lg font-semibold text-white group-hover:text-teal-100">{story.headline}</div>
+                 <p className="mt-2 text-sm leading-6 text-slate-300">{story.urgency}</p>
+                 <div className="mt-4 flex items-center justify-between text-sm">
+-                  <span className="font-mono text-teal-200">{normalizeLoadId(risk.loadId)} · {risk.driverId}</span>
++                  <span className="font-mono text-teal-200">{normalizeLoadId(risk.loadId)} - {risk.driverId}</span>
+                   <span className="font-semibold text-teal-200 group-hover:text-white">{story.primaryLabel}</span>
+                 </div>
+               </Link>
+diff --git a/components/dashboard/DashboardPageClient.tsx b/components/dashboard/DashboardPageClient.tsx
+index dc82af6..eb1c77c 100644
+--- a/components/dashboard/DashboardPageClient.tsx
++++ b/components/dashboard/DashboardPageClient.tsx
+@@ -9,7 +9,7 @@ const ACTION_CARDS = [
+     title: "Command Center",
+     subtitle: "Operations & exceptions",
+     href: "/command-center",
+-    cta: "Open →",
++    cta: "Open",
+     imageSrc: "/generated/marketing/dispatch-command-center-hero.png",
+     imagePosition: "center 40%",
+     color: "#14b8a6",
+@@ -18,7 +18,7 @@ const ACTION_CARDS = [
+     title: "Drivers",
+     subtitle: "Readiness & compliance",
+     href: "/drivers",
+-    cta: "Review →",
++    cta: "Review",
+     imageSrc: "/assets/images/bof-landing-hero-clean.png",
+     imagePosition: "center 35%",
+     color: "#3b82f6",
+@@ -27,7 +27,7 @@ const ACTION_CARDS = [
+     title: "Dispatch / Loads",
+     subtitle: "Dispatch, proof, and load lifecycle",
+     href: "/dispatch",
+-    cta: "Explore →",
++    cta: "Explore",
+     imageSrc: "/evidence/loads/L001/trailer-loaded.jpg",
+     imagePosition: "center 50%",
+     color: "#a855f7",
+@@ -36,7 +36,7 @@ const ACTION_CARDS = [
+     title: "Documents",
+     subtitle: "Driver, company, and proof vaults",
+     href: "/documents",
+-    cta: "View →",
++    cta: "View",
+     imageSrc: "/assets/images/hero-bof-vault.png",
+     imagePosition: "center 45%",
+     color: "#fb923c",
+@@ -45,7 +45,7 @@ const ACTION_CARDS = [
+     title: "Settlements",
+     subtitle: "Pay, deductions, and finance",
+     href: "/settlements",
+-    cta: "View →",
++    cta: "View",
+     imageSrc: "/generated/marketing/bof-back-office-operating-system-hero.png",
+     imagePosition: "center 40%",
+     color: "#22c55e",
+@@ -54,7 +54,7 @@ const ACTION_CARDS = [
+     title: "Safety",
+     subtitle: "Incidents, scorecards, and risk",
+     href: "/safety",
+-    cta: "View →",
++    cta: "View",
+     imageSrc: "/assets/images/safety_event_evidence_1.png",
+     imagePosition: "center 60%",
+     color: "#ef4444",
+@@ -63,7 +63,7 @@ const ACTION_CARDS = [
+     title: "Portals",
+     subtitle: "Manager, driver, and customer views",
+     href: "/portals",
+-    cta: "Access →",
++    cta: "Access",
+     imageSrc: "/assets/images/private-fleets-hero-new.png",
+     imagePosition: "center 50%",
+     color: "#6366f1",
+@@ -119,14 +119,15 @@ const HERO_KPI_LINKS = [
+ export function DashboardPageClient() {
+   return (
+     <div className="bof-page bof-cc-page bof-dashboard-page" style={{ paddingBottom: '6rem' }}>
+-      {/* Full-bleed hero section with premium dispatch-command-center-hero.png background */}
++      {/* Full-bleed demo lobby hero with premium dispatch-command-center-hero.png background */}
+       <section
++        className="bof-dashboard-lobby-hero"
+         style={{
+           position: "relative",
+           width: "100vw",
+           marginLeft: "calc(50% - 50vw)",
+           marginRight: "calc(50% - 50vw)",
+-          minHeight: "clamp(720px, 70vw, 900px)",
++          minHeight: "clamp(600px, 58vw, 760px)",
+           overflow: "hidden",
+           background: "#020617",
+         }}
+@@ -174,16 +175,17 @@ export function DashboardPageClient() {
+           style={{
+             position: "relative",
+             zIndex: 4,
+-            minHeight: "clamp(720px, 70vw, 900px)",
++            minHeight: "clamp(600px, 58vw, 760px)",
+             display: "flex",
+             flexDirection: "column",
+             justifyContent: "center",
+             alignItems: "center",
+-            padding: "6rem 2rem 5rem",
++            padding: "4.5rem 2rem 4rem",
+           }}
+         >
+           {/* Title and subtitle section */}
+           <div
++            className="bof-dashboard-lobby-copy"
+             style={{
+               textAlign: "center",
+               maxWidth: "1100px",
+@@ -192,29 +194,29 @@ export function DashboardPageClient() {
+           >
+             <h1
+               style={{
+-                fontSize: "clamp(2.5rem, 5vw, 4rem)",
++                fontSize: "clamp(2.25rem, 4.4vw, 3.65rem)",
+                 fontWeight: "700",
+                 lineHeight: "1.1",
+-                margin: "0 0 1.5rem 0",
++                margin: "0 0 1.15rem 0",
+                 color: "#ffffff",
+                 textShadow: "0 2px 4px rgba(0,0,0,0.4)",
+               }}
+             >
+-              BackOfficeFleet Command Center
++              Start the BackOfficeFleet demo
+             </h1>
+             <p
+               style={{
+-                fontSize: "clamp(1.1rem, 2.5vw, 1.4rem)",
+-                lineHeight: "1.6",
++                fontSize: "clamp(1rem, 2vw, 1.22rem)",
++                lineHeight: "1.5",
+                 color: "rgba(255, 255, 255, 0.95)",
+-                margin: "0 0 2.5rem 0",
++                margin: "0 0 2rem 0",
+                 maxWidth: "800px",
+                 marginLeft: "auto",
+                 marginRight: "auto",
+                 textShadow: "0 1px 2px rgba(0,0,0,0.4)",
+               }}
+             >
+-              See how BackOfficeFleet manages dispatch, compliance, documents, HR, payroll, finance, settlements, maintenance, procurement, RFID proof, and exception management in one accountable operating system.
++              Begin with the owner view, then follow the live demo path through blocked work, driver readiness, proof, settlement holds, safety exposure, maintenance blocks, and customer-facing transparency.
+             </p>
+ 
+             {/* Primary CTA buttons */}
+@@ -227,9 +229,9 @@ export function DashboardPageClient() {
+               }}
+             >
+               {HERO_CTA_LINKS.map((cta) => (
+-                <Link
+-                  key={cta.href}
+-                  href={cta.href}
++              <Link
++                key={cta.href}
++                href={cta.href}
+                   className="bof-dashboard-hero-cta"
+                   style={{
+                     display: "inline-flex",
+@@ -263,7 +265,7 @@ export function DashboardPageClient() {
+               gap: "1rem",
+               width: "100%",
+               maxWidth: "1120px",
+-              marginTop: "3rem",
++              marginTop: "2.25rem",
+             }}
+           >
+             {HERO_KPI_LINKS.map((card) => (
+@@ -370,6 +372,7 @@ export function DashboardPageClient() {
+ 
+       {/* Fleet Operations Manager Card */}
+       <section
++        className="bof-dashboard-section"
+         style={{
+           maxWidth: "1200px",
+           margin: "0 auto",
+@@ -378,6 +381,7 @@ export function DashboardPageClient() {
+         aria-label="Fleet Operations Manager"
+       >
+         <Link
++          className="bof-dashboard-manager-card"
+           href="/command-center"
+           style={{
+             display: "block",
+@@ -393,15 +397,16 @@ export function DashboardPageClient() {
+           }}
+         >
+           <div
++            className="bof-dashboard-manager-card__grid"
+             style={{
+               display: "grid",
+-              gridTemplateColumns: "1fr 2fr",
+               gap: "2rem",
+               minHeight: "200px",
+             }}
+           >
+             {/* Manager visual from dispatch-command-center-hero.png */}
+             <div
++              className="bof-dashboard-manager-card__image"
+               style={{
+                 position: "relative",
+                 overflow: "hidden",
+@@ -425,7 +430,7 @@ export function DashboardPageClient() {
+                 display: "flex",
+                 flexDirection: "column",
+                 justifyContent: "center",
+-                padding: "2rem",
++                padding: "clamp(1rem, 4vw, 2rem)",
+               }}
+             >
+               <h2
+@@ -451,6 +456,7 @@ export function DashboardPageClient() {
+ 
+               {/* Status chips */}
+               <div
++                className="bof-dashboard-action-card__media"
+                 style={{
+                   display: "flex",
+                   flexWrap: "wrap",
+@@ -531,7 +537,7 @@ export function DashboardPageClient() {
+                   fontSize: "1rem",
+                 }}
+               >
+-                Open Command Center →
++                Open Command Center
+               </div>
+             </div>
+           </div>
+@@ -540,6 +546,7 @@ export function DashboardPageClient() {
+ 
+       {/* Premium action card grid with cropped thumbnails */}
+       <section
++        className="bof-dashboard-section bof-dashboard-action-section"
+         style={{
+           maxWidth: "1200px",
+           margin: "0 auto",
+@@ -588,6 +595,7 @@ export function DashboardPageClient() {
+             <Link
+               key={index}
+               href={card.href}
++              className="bof-dashboard-action-card"
+               style={{
+                 display: "block",
+                 textDecoration: "none",
+@@ -614,6 +622,8 @@ export function DashboardPageClient() {
+                   src={card.imageSrc}
+                   alt={`${card.title} - ${card.subtitle}`}
+                   fill
++                  loading="eager"
++                  sizes="(max-width: 700px) 100vw, 33vw"
+                   style={{
+                     objectFit: "cover",
+                     objectPosition: card.imagePosition,
+diff --git a/components/dispatch/DispatchBoardScreen.tsx b/components/dispatch/DispatchBoardScreen.tsx
+index 4d3dab0..b67502a 100644
+--- a/components/dispatch/DispatchBoardScreen.tsx
++++ b/components/dispatch/DispatchBoardScreen.tsx
+@@ -908,7 +908,7 @@ export function DispatchBoardScreen() {
+   }
+ 
+   return (
+-    <main className="min-h-0 flex-1 overflow-y-auto bg-slate-950 text-slate-100">
++    <main className="bof-dispatch-polish min-h-0 flex-1 overflow-y-auto bg-slate-950 text-slate-100">
+       <section className="relative overflow-hidden border-b border-slate-800">
+         <div className="absolute inset-0">
+           <Image
+@@ -925,11 +925,11 @@ export function DispatchBoardScreen() {
+           <div>
+             <p className="text-xs font-bold uppercase tracking-[0.24em] text-teal-300">Delta Advanced Trucking Inc.</p>
+             <h1 className="mt-4 max-w-3xl text-4xl font-black tracking-tight text-white md:text-6xl">
+-              Dispatch Command Center
++              Dispatch release control
+             </h1>
+             <p className="mt-5 max-w-3xl text-lg leading-8 text-slate-200">
+-              One dispatch workspace for load release, driver readiness, proof capture, route decisions,
+-              diesel cost, weather, traffic, settlement readiness, and insurance exceptions.
++              Decide what can move, what is blocked, and what proof must be captured before a driver, customer, or
++              settlement team depends on the load.
+             </p>
+             <div className="mt-7 flex flex-wrap gap-3">
+               <LinkButton href={`/pretrip/${selected.load_id}`}>Open pre-trip packet</LinkButton>
+diff --git a/components/documents/OperationsFileCabinetClient.tsx b/components/documents/OperationsFileCabinetClient.tsx
+index 2c8e419..1f813b9 100644
+--- a/components/documents/OperationsFileCabinetClient.tsx
++++ b/components/documents/OperationsFileCabinetClient.tsx
+@@ -259,59 +259,59 @@ export function OperationsFileCabinetClient() {
+ 
+   function getItemCta(item: OperationsFileCabinetItem): string {
+     if (item.id === "claims-insurance-notice") {
+-      return "Open insurance notice â†’";
++      return "Open insurance notice";
+     }
+ 
+     // Handle completed demo samples
+     if (item.section === "Completed Demo Samples" || item.isCompletedSample) {
+-      return "View completed sample →";
++      return "View completed sample";
+     }
+     
+     if (item.sourceAuthenticity === "generated_from_template" && item.status === "available" && !item.isBlankTemplate) {
+-      return "Open document â†’";
++      return "Open document";
+     }
+ 
+     // Handle blank templates
+     if (item.section === "Blank Templates") {
+-      return "Open blank template →";
++      return "Open blank template";
+     }
+     
+     // Handle company policies
+     if (item.section === "Company Policies & SOPs") {
+-      return "View policy →";
++      return "View policy";
+     }
+     
+     // Handle BOF dispatch templates
+     if (item.section === "BOF Dispatch Templates") {
+-      return "View template →";
++      return "View template";
+     }
+     
+     // Handle external resources
+     if (item.section === "External Resources") {
+-      return "Open guidance →";
++      return "Open guidance";
+     }
+     
+     // Fallback to type-based CTA
+     switch (item.type) {
+       case "template":
+-        return "Open blank template →";
++        return "Open blank template";
+       case "policy":
+       case "sop":
+-        return "View policy →";
++        return "View policy";
+       case "form":
+-        return "Fill out form →";
++        return "Fill out form";
+       case "driver-file":
+-        return "View document →";
++        return "View document";
+       case "video":
+-        return "Watch video →";
++        return "Watch video";
+       case "article":
+-        return "Read article →";
++        return "Read article";
+       case "checklist":
+-        return "Use checklist →";
++        return "Use checklist";
+       case "contract":
+-        return "View contract →";
++        return "View contract";
+       default:
+-        return "View →";
++        return "View";
+     }
+   }
+ 
+@@ -970,28 +970,69 @@ export function OperationsFileCabinetClient() {
+ 
+       {/* Featured File Cabinet */}
+       <div style={{
+-        minHeight: "100vh",
+-        backgroundColor: "#1a1a1a",
++        background: "linear-gradient(135deg, rgba(15, 23, 42, 0.92), rgba(8, 20, 28, 0.92))",
++        border: "1px solid rgba(45, 212, 191, 0.14)",
++        borderRadius: "14px",
+         color: "#ffffff",
+-        padding: "2rem",
+-        paddingBottom: "6rem"
++        marginTop: "1.75rem",
++        marginBottom: "2rem",
++        padding: "1.6rem",
++        boxShadow: "0 22px 60px rgba(0, 0, 0, 0.28)"
+       }}>
+-        <h2 style={{
+-          fontSize: "1.5rem",
+-          fontWeight: "600",
+-          color: "#ffffff",
+-          margin: "0 0 1.5rem 0"
+-        }}>
+-          Featured File Cabinet
+-        </h2>
+-        <p style={{
+-          fontSize: "1rem",
+-          color: "rgba(255, 255, 255, 0.7)",
+-          margin: "0 0 2rem 0",
+-          lineHeight: "1.5"
++        <div style={{
++          display: "flex",
++          justifyContent: "space-between",
++          alignItems: "flex-start",
++          gap: "1rem",
++          flexWrap: "wrap",
++          marginBottom: "1.4rem"
+         }}>
+-          Essential documents, policies, and templates with actual links to real files.
+-        </p>
++          <div style={{ maxWidth: "48rem" }}>
++            <div style={{
++              color: "#2dd4bf",
++              fontSize: "0.72rem",
++              fontWeight: 800,
++              letterSpacing: "0.08em",
++              textTransform: "uppercase",
++              marginBottom: "0.45rem"
++            }}>
++              Demo proof shelf
++            </div>
++            <h2 style={{
++              fontSize: "clamp(1.35rem, 2vw, 1.85rem)",
++              fontWeight: "700",
++              color: "#ffffff",
++              margin: "0 0 0.65rem 0"
++            }}>
++              Featured File Cabinet
++            </h2>
++            <p style={{
++              fontSize: "0.98rem",
++              color: "rgba(226, 232, 240, 0.78)",
++              margin: 0,
++              lineHeight: "1.55"
++            }}>
++              The most demo-relevant policies, claims packets, and operating templates are surfaced first so the owner can prove the workflow without digging through a file dump.
++            </p>
++          </div>
++          <div style={{
++            display: "grid",
++            gap: "0.35rem",
++            minWidth: "10rem",
++            padding: "0.85rem 1rem",
++            backgroundColor: "rgba(45, 212, 191, 0.09)",
++            border: "1px solid rgba(45, 212, 191, 0.18)",
++            borderRadius: "10px",
++            color: "rgba(226, 232, 240, 0.8)"
++          }}>
++            <strong style={{ color: "#ffffff", fontSize: "1.35rem", lineHeight: 1 }}>
++              {featuredItems.length}
++            </strong>
++            <span style={{ fontSize: "0.78rem", lineHeight: 1.35 }}>
++              ready links in the curated proof shelf
++            </span>
++          </div>
++        </div>
+         
+         <div style={{
+           display: "grid",
+@@ -1002,10 +1043,11 @@ export function OperationsFileCabinetClient() {
+             <div
+               key={item.id}
+               style={{
+-                backgroundColor: "rgba(255, 255, 255, 0.05)",
+-                border: "1px solid rgba(255, 255, 255, 0.1)",
++                background: "linear-gradient(180deg, rgba(255, 255, 255, 0.075), rgba(255, 255, 255, 0.045))",
++                border: "1px solid rgba(148, 163, 184, 0.18)",
+                 borderRadius: "12px",
+-                padding: "1.5rem"
++                padding: "1.35rem",
++                boxShadow: "0 12px 30px rgba(0, 0, 0, 0.18)"
+               }}
+             >
+               <div style={{
+@@ -1157,6 +1199,7 @@ export function OperationsFileCabinetClient() {
+       </div>
+ 
+       {/* Planned Cabinet Additions */}
++      {comingSoonItems.length > 0 && (
+       <div style={{
+         marginBottom: "2rem"
+       }}>
+@@ -1235,6 +1278,7 @@ export function OperationsFileCabinetClient() {
+           </div>
+         </div>
+       </div>
++      )}
+ 
+       {/* Browse All Documents (when searching/filtering) */}
+       {(searchTerm || selectedCategory !== "all" || selectedType !== "all" || selectedAudience !== "all" || selectedStatus !== "all") && (
+diff --git a/components/marketing/MarketingHomeAccountable.tsx b/components/marketing/MarketingHomeAccountable.tsx
+index f85dee9..558096c 100644
+--- a/components/marketing/MarketingHomeAccountable.tsx
++++ b/components/marketing/MarketingHomeAccountable.tsx
+@@ -6,123 +6,183 @@
+  */
+ import Link from "next/link";
+ import Image from "next/image";
+-import { MarketingCommandCenterPreview, MarketingCtaPanel, MarketingServiceTiers } from "@/components/marketing";
+-import { BookDemoLink } from "@/components/BookDemoLink";
++import { MarketingCommandCenterPreview, MarketingCtaPanel } from "@/components/marketing";
+ import { IconDispatch, IconLoadProof, IconShield } from "@/components/marketing/MarketingHomeIcons";
++import { getBofData } from "@/lib/load-bof-data";
+ import type { Metadata } from "next";
+ 
+ export const metadata: Metadata = {
+-  title: "BackOfficeFleet | The Complete Back-Office Operating System for Trucking",
++  title: "BackOfficeFleet | Founding Fleet Back-Office Operating System",
+   description:
+-    "BOF is the back-office operating system that unifies dispatch, driver management, fleet financials, compliance, customer communication, proof, and settlement workflows.",
++    "BackOfficeFleet is a clickable back-office operating demo for serious fleets, unifying readiness, dispatch, proof, settlements, compliance, and cash flow.",
+ };
+ 
+-const HERO_METRICS = [
+-  { label: "Critical Risks", value: "2", href: "/command-center" },
+-  { label: "QR Lumper Closeout", value: "$315", href: "/shipper-portal/L007#lumper-workflow" },
+-  { label: "Storm Reroute", value: "Live", href: "/command-center" },
+-  { label: "Settlement Hold", value: "1", href: "/settlements" },
+-] as const;
++function formatHomepageCurrency(value: number) {
++  return new Intl.NumberFormat("en-US", {
++    style: "currency",
++    currency: "USD",
++    maximumFractionDigits: 0,
++  }).format(value);
++}
+ 
+-const OPERATING_FLOW = [
++function getHeroMetrics() {
++  const data = getBofData();
++  const openMoneyRows = (data.moneyAtRisk ?? []).filter((row) => {
++    const status = String(row.status ?? "").trim().toLowerCase();
++    return status !== "closed" && status !== "resolved";
++  });
++  const driversAtRisk = new Set(openMoneyRows.map((row) => row.driverId).filter(Boolean)).size;
++  const loadsAtRisk = new Set(openMoneyRows.map((row) => row.loadId).filter(Boolean)).size;
++  const claimsExposure =
++    Number(data.moneyAtRiskSummary?.claimsExposure ?? 0) ||
++    openMoneyRows
++      .filter((row) => /claim/i.test(String(row.category ?? "")))
++      .reduce((sum, row) => sum + Number(row.amount ?? 0), 0);
++  const totalAtRisk =
++    Number(data.moneyAtRiskSummary?.totalAtRisk ?? 0) ||
++    openMoneyRows.reduce((sum, row) => sum + Number(row.amount ?? 0), 0);
++
++  return [
++    { label: "Drivers at Risk", value: String(driversAtRisk), href: "/drivers" },
++    { label: "Loads at Risk", value: String(loadsAtRisk), href: "/dispatch" },
++    { label: "Claims Exposure", value: formatHomepageCurrency(claimsExposure), href: "/safety" },
++    { label: "Money at Risk", value: formatHomepageCurrency(totalAtRisk), href: "/command-center" },
++  ] as const;
++}
++
++
++const FEATURE_STRIP = [
+   {
+-    step: "01",
+-    title: "Intake the load",
+-    body: "Capture customer requirements, route context, driver fit, equipment needs, and billing terms before dispatch commits.",
+-    href: "/dispatch/intake",
++    title: "Driver Readiness",
++    body: "Know who is ready, blocked, or missing proof before dispatch commits.",
+   },
+   {
+-    step: "02",
+-    title: "Release dispatch",
+-    body: "Validate driver readiness, route support, fuel planning, compliance blockers, and proof requirements.",
+-    href: "/dispatch",
++    title: "Load Proof",
++    body: "Tie BOL, POD, RFID, photos, and exceptions to the load lifecycle.",
+   },
+   {
+-    step: "03",
+-    title: "Control proof",
+-    body: "Tie BOL, POD, seal, RFID, photos, detention, and claims evidence to the load lifecycle.",
+-    href: "/documents",
++    title: "Settlement Holds",
++    body: "See what blocks pay, billing, factoring, or customer confidence.",
+   },
+   {
+-    step: "04",
+-    title: "Close settlement",
+-    body: "Review gross pay, deductions, reimbursements, holds, safety events, and final net pay from the same record.",
+-    href: "/settlements",
++    title: "Safety Exposure",
++    body: "Turn incidents, claims, and dispatch holds into owned action queues.",
+   },
+-] as const;
+-
+-const CAPABILITIES = [
+   {
+-    title: "Dispatch and Exceptions",
+-    body: "Load readiness, driver assignment, route support, fuel stops, rest stops, and exception ownership.",
+-    href: "/dispatch",
+-    icon: <IconDispatch />,
++    title: "Maintenance Blocks",
++    body: "Surface asset defects before they become roadside or release failures.",
+   },
+   {
+-    title: "Driver and HR Readiness",
+-    body: "Driver files, credentials, HR/payroll records, emergency contacts, compliance gaps, and dispatch eligibility.",
+-    href: "/drivers",
+-    icon: <IconShield />,
++    title: "Cash at Risk",
++    body: "Show the money tied up by missing proof, claims, and unresolved holds.",
+   },
++] as const;
++
++const PAIN_POINTS = [
++  "Loads look ready before the driver, equipment, and proof actually are",
++  "BOL, POD, seal, RFID, and photo evidence arrive late or live in the wrong place",
++  "Settlements sit on hold because nobody can see the missing requirement",
++  "Customers escalate because proof and exception history are scattered",
++  "Compliance and safety gaps surface after the load is already exposed",
++  "The back office relies on memory instead of owned release gates",
++] as const;
++
++const ENFORCEMENT_RULES = [
+   {
+-    title: "Documents and Proof",
+-    body: "BOL, POD, invoices, rate confirmations, claim packets, safety evidence, and operating vault records.",
+-    href: "/documents",
+-    icon: <IconLoadProof />,
++    step: "01",
++    title: "Load gates",
++    body: "Loads cannot progress without required proof, route context, and accountable ownership.",
++    href: "/dispatch/intake",
+   },
+   {
+-    title: "Settlements and Payroll",
+-    body: "Gross-to-net review, deductions, reimbursements, backhaul pay, bonuses, holds, and settlement release.",
+-    href: "/settlements",
+-    icon: <IconLoadProof />,
++    step: "02",
++    title: "Driver gates",
++    body: "Drivers cannot start work without compliance readiness, document clearance, and dispatch eligibility.",
++    href: "/drivers",
+   },
+   {
+-    title: "Safety and Risk",
+-    body: "Driver scorecards, event queues, corrective action, dispatch holds, claims exposure, and evidence review.",
+-    href: "/safety",
+-    icon: <IconShield />,
++    step: "03",
++    title: "Settlement gates",
++    body: "Settlements cannot release with unresolved proof gaps, holds, claims, or compliance exceptions.",
++    href: "/settlements",
+   },
+   {
+-    title: "Fleet Financials",
+-    body: "Cash at risk, profitability, factoring, receivables, debt timing, reserve releases, and management reporting.",
+-    href: "/fleet-financials",
+-    icon: <IconDispatch />,
++    step: "04",
++    title: "Compliance gates",
++    body: "Expirations, missing files, and safety events trigger action queues before drift becomes exposure.",
++    href: "/command-center",
+   },
+ ] as const;
+ 
++const FOUNDING_BENEFITS = [
++  "Locked-in lifetime pricing",
++  "Direct influence on workflows and release logic",
++  "Early access to unreleased modules",
++  "Priority onboarding and white-glove support",
++  "Co-development sessions with the product team",
++  "Operational data insights and reporting",
++  "Founding Fleet badge and logo placement",
++  "A competitive advantage other fleets will not have for years",
++] as const;
++
+ const PORTALS = [
+   {
+     title: "Manager Portal",
+-    body: "Control the back office with action queues, financial exposure, driver readiness, and operating proof.",
++    body: "Your command center for dispatch, compliance, settlements, exceptions, and cash flow. Real-time visibility. Zero drift. Full accountability.",
+     href: "/portals/manager",
++    icon: <IconDispatch />,
+   },
+   {
+     title: "Driver Portal",
+-    body: "Give drivers one place for dispatch, documents, trip release, pay review, and compliance tasks.",
++    body: "Assignments, documents, readiness, settlements, and communication - all enforced, all in one place.",
+     href: "/portals/driver",
++    icon: <IconShield />,
+   },
+   {
+     title: "Customer Portal",
+-    body: "Show shipment status, proof, exceptions, invoice readiness, and professional customer updates.",
++    body: "Shipment visibility, proof, exceptions, and invoice readiness. Professional. Transparent. Audit-ready.",
+     href: "/portals/customer",
++    icon: <IconLoadProof />,
++  },
++] as const;
++
++const OPERATING_LAYERS = [
++  {
++    title: "Company Operations Vault",
++    body: "Your entire operational brain - centralized, structured, and enforced. Policies, SOPs, HR records, payroll procedures, compliance controls, safety documentation, audit-ready records, AI governance, and vendor controls.",
++    href: "/documents",
++    icon: <IconLoadProof />,
++    cta: "Open the vault",
++  },
++  {
++    title: "Fleet Financials",
++    body: "A financial layer built for trucking: load-level profitability, cash-flow forecasting, factoring visibility, billing blockers, settlement timing, and asset and debt allocation.",
++    href: "/settlements",
++    icon: <IconDispatch />,
++    cta: "Review settlement controls",
+   },
+   {
+-    title: "Operations Vault",
+-    body: "Organize SOPs, policies, HR, payroll, finance, vendor, AI, insurance, and governance controls.",
+-    href: "/documents/company-operations-vault",
++    title: "Command Center",
++    body: "A real-time priority queue showing drivers at risk, loads at risk, claims exposure, compliance violations, and money at risk. Your entire operation - triaged and enforced.",
++    href: "/command-center",
++    icon: <IconShield />,
++    cta: "Open command center",
+   },
+ ] as const;
+ 
+-const DEMO_LINKS = [
++const DEMO_CARDS = [
+   { label: "Command Center", href: "/command-center" },
+-  { label: "Dispatch", href: "/dispatch" },
+-  { label: "Drivers", href: "/drivers" },
+-  { label: "Documents", href: "/documents" },
+-  { label: "Settlements", href: "/settlements" },
+-  { label: "Safety", href: "/safety" },
++  { label: "Dispatch Proof Workflow", href: "/dispatch" },
++  { label: "Settlements & Factoring", href: "/settlements" },
++  { label: "Safety & Claims", href: "/safety" },
++  { label: "Driver Readiness", href: "/drivers" },
++  { label: "Company Operations Vault", href: "/documents" },
++  { label: "Maintenance", href: "/maintenance" },
+ ] as const;
+ 
+ export default function MarketingHomeAccountable() {
++  const heroMetrics = getHeroMetrics();
++
+   return (
+     <main className="bof-home-redesign">
+       <section className="bof-home-hero" aria-labelledby="bof-mkt-hero-heading">
+@@ -137,30 +197,39 @@ export default function MarketingHomeAccountable() {
+         <div className="bof-home-hero__overlay" aria-hidden />
+         <div className="bof-mkt-container bof-home-hero__content">
+           <div className="bof-home-hero__copy">
+-            <p className="bof-home-eyebrow">Back-Office Operating System for Trucking</p>
+-            <h1 id="bof-mkt-hero-heading">BOF runs the back office behind every load.</h1>
++            <p className="bof-home-eyebrow">Founding Fleet access now open</p>
++            <h1 id="bof-mkt-hero-heading">Run the back office before it runs the fleet.</h1>
++            <p className="bof-home-hero__lead">
++              BackOfficeFleet shows which loads are ready, which drivers are blocked, which proof is missing, and
++              which issues are putting money at risk before dispatch commits.
++            </p>
+             <p className="bof-home-hero__lead">
+-              BackOfficeFleet connects dispatch, driver readiness, documents, HR, payroll, finance, settlements,
+-              maintenance, procurement, RFID proof, safety, and exception management in one accountable operating system.
++              The clickable demo follows readiness, proof, settlements, safety, maintenance, and customer visibility
++              from blocked work to release.
+             </p>
++            <ul className="bof-home-proof-list" aria-label="What the live demo proves">
++              <li>Driver blockers</li>
++              <li>Missing proof</li>
++              <li>Settlement holds</li>
++              <li>Claims exposure</li>
++            </ul>
+             <div className="bof-home-hero__ctas" aria-label="Primary actions">
+-              <Link href="/book-assessment" className="bof-mkt-btn-enterprise bof-mkt-btn-enterprise-primary">
+-                Take the Assessment
++              <Link href="/apply" className="bof-mkt-btn-enterprise bof-mkt-btn-enterprise-primary">
++                Apply to Become a Founding Fleet
+               </Link>
+-              <Link href="/command-center" className="bof-mkt-btn-enterprise bof-mkt-btn-enterprise-secondary">
++              <Link href="/dashboard" className="bof-mkt-btn-enterprise bof-mkt-btn-enterprise-secondary">
+                 Explore the Demo
+               </Link>
+-              <BookDemoLink className="bof-home-hero__text-link">Talk to BOF</BookDemoLink>
+             </div>
+           </div>
+ 
+-          <aside className="bof-home-hero__panel" aria-label="BOF operating snapshot">
++          <aside className="bof-home-hero__panel" aria-label="Founding Fleet operating snapshot">
+             <div className="bof-home-hero__panel-head">
+-              <span>Control tower snapshot</span>
+-              <strong>May 20</strong>
++              <span>Command Center</span>
++              <strong>Live</strong>
+             </div>
+             <div className="bof-home-hero__metric-grid">
+-              {HERO_METRICS.map((metric) => (
++              {heroMetrics.map((metric) => (
+                 <Link key={metric.label} href={metric.href} className="bof-home-hero__metric">
+                   <span>{metric.label}</span>
+                   <strong>{metric.value}</strong>
+@@ -168,18 +237,28 @@ export default function MarketingHomeAccountable() {
+               ))}
+             </div>
+             <p>
+-              Each tile opens the workflow that owns it: exception triage, lumper QR payment, reroute response, or
+-              settlement release.
++              Every number opens the workflow that owns it, so the demo moves from risk to proof to release.
+             </p>
+           </aside>
+         </div>
+       </section>
+ 
++      <section className="bg-[#071827] text-white" aria-label="BackOfficeFleet operating advantages">
++        <div className="bof-mkt-container grid gap-4 py-6 md:grid-cols-3 xl:grid-cols-6">
++          {FEATURE_STRIP.map((item) => (
++            <div key={item.title} className="border-white/10 md:border-r md:pr-4">
++              <p className="text-sm font-bold uppercase tracking-wide text-sky-300">{item.title}</p>
++              <p className="mt-1 text-sm leading-5 text-slate-200">{item.body}</p>
++            </div>
++          ))}
++        </div>
++      </section>
++
+       <section className="bof-home-demo-strip" aria-label="Demo entry points">
+         <div className="bof-mkt-container bof-home-demo-strip__inner">
+-          <span>Open a live workflow</span>
++          <span>Explore the BOF Demo</span>
+           <div>
+-            {DEMO_LINKS.map((link) => (
++            {DEMO_CARDS.slice(0, 6).map((link) => (
+               <Link key={link.href} href={link.href}>
+                 {link.label}
+               </Link>
+@@ -188,96 +267,172 @@ export default function MarketingHomeAccountable() {
+         </div>
+       </section>
+ 
+-      <section className="bof-home-section bof-home-section--white" aria-labelledby="bof-home-flow-heading">
++      <section className="bof-home-section bof-home-section--white" aria-labelledby="bof-home-why-heading">
++        <div className="bof-mkt-container">
++          <div className="bof-home-section-head">
++            <p className="bof-home-eyebrow">Why BackOfficeFleet Exists</p>
++            <h2 id="bof-home-why-heading">The back office should not depend on memory when the load is already moving.</h2>
++            <p>
++              Fleets lose time and money when proof, driver readiness, compliance, and settlement blockers live in
++              different places.
++            </p>
++          </div>
++          <div className="bof-home-flow-grid">
++            {PAIN_POINTS.map((item, index) => (
++              <article key={item} className="bof-home-flow-card">
++                <span>{String(index + 1).padStart(2, "0")}</span>
++                <h3>{item}</h3>
++                <p>BOF turns this gap into an owned workflow with visibility, evidence, and release logic.</p>
++              </article>
++            ))}
++          </div>
++          <div className="mt-8 rounded-2xl border border-teal-200 bg-teal-50 p-6 text-slate-900">
++            <p className="text-lg font-semibold">
++              BackOfficeFleet connects the full operating chain: driver readiness, load execution, proof, settlement,
++              and cash flow.
++            </p>
++            <p className="mt-4 text-sm font-semibold uppercase tracking-wide text-teal-800">
++              Open the demo and follow the proof from command center to customer portal.
++            </p>
++          </div>
++        </div>
++      </section>
++
++      <section className="bof-home-section bof-home-section--soft" aria-labelledby="bof-home-control-heading">
+         <div className="bof-mkt-container">
+           <div className="bof-home-section-head">
+-            <p className="bof-home-eyebrow">Operating Flow</p>
+-            <h2 id="bof-home-flow-heading">One record from load intake to pay release.</h2>
++            <p className="bof-home-eyebrow">Release gates</p>
++            <h2 id="bof-home-control-heading">Every important workflow gets a release gate and a next owner.</h2>
+             <p>
+-              BOF is not a collection of disconnected dashboards. The same operating record moves through dispatch,
+-              proof, documents, safety, settlement, and finance.
++              The demo shows how BOF turns vague back-office work into visible blockers, proof, owners, and release
++              decisions.
+             </p>
+           </div>
+           <div className="bof-home-flow-grid">
+-            {OPERATING_FLOW.map((item) => (
++            {ENFORCEMENT_RULES.map((item) => (
+               <Link key={item.title} href={item.href} className="bof-home-flow-card">
+                 <span>{item.step}</span>
+                 <h3>{item.title}</h3>
+                 <p>{item.body}</p>
++                <strong>Open release path &rarr;</strong>
+               </Link>
+             ))}
+           </div>
+         </div>
+       </section>
+ 
+-      <section className="bof-home-section bof-home-section--soft" aria-labelledby="bof-home-control-heading">
++      <section className="bof-home-section bof-home-section--white" aria-labelledby="bof-home-founding-heading">
+         <div className="bof-mkt-container">
+           <div className="bof-home-section-head">
+-            <p className="bof-home-eyebrow">Operational Control</p>
+-            <h2 id="bof-home-control-heading">The back office functions that keep a fleet moving.</h2>
++            <p className="bof-home-eyebrow">Why Founding Fleets Matter</p>
++            <h2 id="bof-home-founding-heading">Help shape the workflows serious fleets will expect from their back office.</h2>
+             <p>
+-              Each module is actionable. Operators can open the queue, review supporting records, resolve blockers, and
+-              move the next load, driver, or settlement forward.
++              Founding Fleets help sharpen the release gates, proof standards, and reporting logic before BOF becomes a
++              broader market product.
+             </p>
+           </div>
+-          <div className="bof-home-capability-grid">
+-            {CAPABILITIES.map((item) => (
+-              <Link key={item.title} href={item.href} className="bof-home-capability-card">
+-                <span className="bof-home-capability-card__icon">{item.icon}</span>
+-                <h3>{item.title}</h3>
+-                <p>{item.body}</p>
+-                <strong>Open workflow &rarr;</strong>
+-              </Link>
++          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
++            {FOUNDING_BENEFITS.map((benefit) => (
++              <div key={benefit} className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
++                <p className="text-sm font-semibold text-slate-900">{benefit}</p>
++              </div>
+             ))}
+           </div>
++          <div className="mt-8">
++            <Link href="/apply" className="bof-mkt-btn-enterprise bof-mkt-btn-enterprise-primary">
++              Apply to Become a Founding Fleet
++            </Link>
++          </div>
+         </div>
+       </section>
+ 
+-      <section className="bof-home-section bof-home-section--white" aria-labelledby="bof-home-portals-heading">
+-        <div className="bof-mkt-container bof-home-split">
++      <section className="bof-home-section bof-home-section--soft" aria-labelledby="bof-home-portals-heading">
++        <div className="bof-mkt-container">
+           <div className="bof-home-section-head">
+-            <p className="bof-home-eyebrow">Portals and Vault</p>
++            <p className="bof-home-eyebrow">The Three Portals</p>
+             <h2 id="bof-home-portals-heading">Every role sees the same operation through the right door.</h2>
+             <p>
+-              Managers, drivers, customers, and internal administrators work from one controlled source of truth, not
+-              side spreadsheets and message threads.
++              Managers, drivers, and customers work from one enforced operating record, with the financial and
++              operational visibility appropriate to each role.
+             </p>
+           </div>
+-          <div className="bof-home-portal-grid">
++          <div className="bof-home-capability-grid">
+             {PORTALS.map((portal) => (
+-              <Link key={portal.title} href={portal.href} className="bof-home-portal-card">
++              <Link key={portal.title} href={portal.href} className="bof-home-capability-card">
++                <span className="bof-home-capability-card__icon">{portal.icon}</span>
+                 <h3>{portal.title}</h3>
+                 <p>{portal.body}</p>
+-                <span>Open &rarr;</span>
++                <strong>Open portal &rarr;</strong>
+               </Link>
+             ))}
+           </div>
+         </div>
+       </section>
+ 
+-      <section className="bof-home-section bof-home-section--soft" aria-labelledby="bof-mkt-service-tiers-heading">
+-        <MarketingServiceTiers />
++      <section className="bof-home-section bof-home-section--white" aria-labelledby="bof-home-layers-heading">
++        <div className="bof-mkt-container">
++          <div className="bof-home-section-head">
++            <p className="bof-home-eyebrow">Operating Layers</p>
++            <h2 id="bof-home-layers-heading">Vault, financials, and command center in one enforced system.</h2>
++            <p>
++              BackOfficeFleet turns the back office into a structured, clickable system of record instead of a
++              collection of unmanaged files and conversations.
++            </p>
++          </div>
++          <div className="bof-home-capability-grid">
++            {OPERATING_LAYERS.map((item) => (
++              <Link key={item.title} href={item.href} className="bof-home-capability-card">
++                <span className="bof-home-capability-card__icon">{item.icon}</span>
++                <h3>{item.title}</h3>
++                <p>{item.body}</p>
++                <strong>{item.cta} &rarr;</strong>
++              </Link>
++            ))}
++          </div>
++        </div>
+       </section>
+ 
+       <section className="bof-home-section bof-home-section--ink" aria-labelledby="bof-mkt-cc-heading">
+         <MarketingCommandCenterPreview
+           headingId="bof-mkt-cc-heading"
+-          title="What needs attention right now"
+-          lead="The command center turns dispatch blockers, safety events, proof gaps, settlement holds, and money at risk into a single operating queue with owners and next actions."
++          title="Your entire operation - triaged and enforced."
++          lead="The command center shows drivers at risk, loads at risk, claims exposure, compliance violations, and money at risk in one real-time priority queue."
+           demoLabel="Open the command center &rarr;"
+         />
+       </section>
+ 
++      <section className="bof-home-section bof-home-section--soft" aria-labelledby="bof-home-demo-heading">
++        <div className="bof-mkt-container">
++          <div className="bof-home-section-head">
++            <p className="bof-home-eyebrow">Explore the BOF Demo</p>
++            <h2 id="bof-home-demo-heading">Open the workflows that show the operating system in motion.</h2>
++            <p>
++              Each card opens a real demo route for dispatch proof, settlements, safety, driver readiness, operating
++              documents, and fleet maintenance.
++            </p>
++          </div>
++          <div className="bof-home-capability-grid">
++            {DEMO_CARDS.map((card) => (
++              <Link key={card.href} href={card.href} className="bof-home-capability-card">
++                <h3>{card.label}</h3>
++                <p>Open the live BOF workflow for this part of the operating system.</p>
++                <strong>Explore &rarr;</strong>
++              </Link>
++            ))}
++          </div>
++        </div>
++      </section>
++
+       <MarketingCtaPanel
+         id="bof-mkt-final-cta-heading"
+-        title="Find the back-office gaps holding your fleet back"
+-        lead="Take the Fleet Back Office Assessment to see where dispatch, documents, driver readiness, financials, compliance, and customer proof can be tightened into one operating system."
++        title="Join the 10 Fleets Shaping the Future of Back-Office Operations"
++        lead="Founding Fleets will help define the proof standards, release logic, workflows, and operating reports serious trucking companies will rely on next."
+       >
+-        <Link href="/book-assessment" className="bof-mkt-btn-enterprise bof-mkt-btn-enterprise-primary">
+-          Take the Assessment
++        <Link href="/apply" className="bof-mkt-btn-enterprise bof-mkt-btn-enterprise-primary">
++          Apply to Become a Founding Fleet
+         </Link>
+-        <Link href="/command-center" className="bof-mkt-btn-enterprise bof-mkt-btn-enterprise-secondary">
+-          Explore System
++        <Link href="/dashboard" className="bof-mkt-btn-enterprise bof-mkt-btn-enterprise-secondary">
++          Explore the Demo
+         </Link>
+       </MarketingCtaPanel>
+     </main>

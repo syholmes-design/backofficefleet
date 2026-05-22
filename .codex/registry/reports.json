@@ -41,8 +41,23 @@
       "ownerFacing": false
     },
     {
+      "id": "codex-helper-efficiency-audit",
+      "path": ".codex/reports/codex-helper-efficiency-audit.md",
+      "ownerFacing": false
+    },
+    {
       "id": "change-memory-index",
       "path": ".codex/change-memory/index.md",
+      "ownerFacing": false
+    },
+    {
+      "id": "instruction-request-archive",
+      "path": ".codex/instruction-requests/index.md",
+      "ownerFacing": false
+    },
+    {
+      "id": "change-collision-log",
+      "path": ".codex/reports/change-collision-log.md",
       "ownerFacing": false
     }
   ],

@@ -410,9 +410,14 @@ export function SettlementExceptionReview({ settlementRows }: SettlementExceptio
                       Review policy
                     </a>
                   )}
-                  <button className="bg-teal-600 hover:bg-teal-700 text-white px-4 py-2 rounded text-sm font-medium transition-colors">
+                  <a
+                    href={exception.ctaLink ?? exception.policyReference?.path ?? "/settlements"}
+                    target={exception.policyReference?.path ? "_blank" : undefined}
+                    rel={exception.policyReference?.path ? "noopener noreferrer" : undefined}
+                    className="rounded bg-teal-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-teal-700"
+                  >
                     {exception.cta}
-                  </button>
+                  </a>
                 </div>
               </div>
             </div>

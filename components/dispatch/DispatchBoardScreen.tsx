@@ -908,7 +908,7 @@ export function DispatchBoardScreen() {
   }
 
   return (
-    <main className="min-h-0 flex-1 overflow-y-auto bg-slate-950 text-slate-100">
+    <main className="bof-dispatch-polish min-h-0 flex-1 overflow-y-auto bg-slate-950 text-slate-100">
       <section className="relative overflow-hidden border-b border-slate-800">
         <div className="absolute inset-0">
           <Image
@@ -925,11 +925,11 @@ export function DispatchBoardScreen() {
           <div>
             <p className="text-xs font-bold uppercase tracking-[0.24em] text-teal-300">Delta Advanced Trucking Inc.</p>
             <h1 className="mt-4 max-w-3xl text-4xl font-black tracking-tight text-white md:text-6xl">
-              Dispatch Command Center
+              Dispatch release control
             </h1>
             <p className="mt-5 max-w-3xl text-lg leading-8 text-slate-200">
-              One dispatch workspace for load release, driver readiness, proof capture, route decisions,
-              diesel cost, weather, traffic, settlement readiness, and insurance exceptions.
+              Decide what can move, what is blocked, and what proof must be captured before a driver, customer, or
+              settlement team depends on the load.
             </p>
             <div className="mt-7 flex flex-wrap gap-3">
               <LinkButton href={`/pretrip/${selected.load_id}`}>Open pre-trip packet</LinkButton>

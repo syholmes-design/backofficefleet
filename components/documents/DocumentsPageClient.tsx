@@ -62,9 +62,10 @@ export function DocumentsPageClient() {
 
   return (
     <div className="bof-page">
-      <h1 className="bof-title">Document Vault</h1>
+      <h1 className="bof-title">Proof and document control</h1>
       <p className="bof-lead">
-        {OPS_COPY.documentsLead} {OPS_COPY.documentsStory} Credential rows reflect edits from the{" "}
+        Open the records that keep dispatch, compliance, claims, billing, and settlement release from depending on
+        inbox searches. {OPS_COPY.documentsLead} Credential rows reflect edits from the{" "}
         <Link href="/source-of-truth" className="bof-link-secondary">
           Source of Truth
         </Link>

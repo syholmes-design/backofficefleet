@@ -273,11 +273,10 @@ export function SettlementsDashboardScreen() {
           Driver Pay Operations
         </p>
         <h1 className="relative mt-2 text-2xl font-semibold tracking-tight text-white sm:text-3xl">
-          Settlement Command Center
+          Settlement release control
         </h1>
         <p className="relative mt-2 max-w-3xl text-sm leading-relaxed text-slate-300 sm:text-base">
-          Review driver pay, backhaul recovery, safety bonuses, deductions, holds, and release
-          readiness across the fleet.
+          See what can be paid, what is held, what proof is missing, and which driver or load needs review before payroll export.
         </p>
         <div className="relative mt-5 flex flex-wrap gap-2">
           <button

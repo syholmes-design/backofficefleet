@@ -112,7 +112,7 @@ function DriversHero() {
       />
       
       {/* Right-side Content Overlay */}
-      <div style={{
+      <div className="bof-drivers-hero-content" style={{
         position: 'absolute',
         top: 0,
         right: 0,
@@ -125,7 +125,7 @@ function DriversHero() {
         justifyContent: 'center',
         background: 'linear-gradient(to left, rgba(2, 6, 23, 0.85) 0%, rgba(2, 6, 23, 0.6) 40%, rgba(2, 6, 23, 0.3) 70%, transparent 100%)'
       }}>
-        <div style={{ maxWidth: '400px' }}>
+        <div className="bof-drivers-hero-copy" style={{ maxWidth: '400px' }}>
           <p style={{ 
             color: '#0BA5A4', 
             fontSize: '0.875rem', 
@@ -162,8 +162,8 @@ function DriversHero() {
           }}>
             Every review item should explain what changed, why it matters, and what action resolves it.
           </p>
-          <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
-            <Link href="/documents" style={{
+          <div className="bof-drivers-hero-actions" style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
+            <Link href="/documents" className="bof-drivers-hero-action" style={{
               padding: '0.75rem 1.5rem',
               backgroundColor: 'rgba(255, 255, 255, 0.95)',
               color: '#0BA5A4',
@@ -178,7 +178,7 @@ function DriversHero() {
             }}>
               Review Driver Files
             </Link>
-            <Link href="/documents/vault" style={{
+            <Link href="/documents/vault" className="bof-drivers-hero-action" style={{
               padding: '0.75rem 1.5rem',
               backgroundColor: 'rgba(255, 255, 255, 0.1)',
               color: 'white',
@@ -194,7 +194,7 @@ function DriversHero() {
             }}>
               View Documents
             </Link>
-            <Link href="/drivers?driverStatusFilter=needs_review" style={{
+            <Link href="/drivers?driverStatusFilter=needs_review" className="bof-drivers-hero-action" style={{
               padding: '0.75rem 1.5rem',
               backgroundColor: 'rgba(220, 38, 38, 0.9)',
               color: 'white',
@@ -215,17 +215,33 @@ function DriversHero() {
       
       {/* Mobile Responsive */}
       <style jsx>{`
-        @media (max-width: 768px) {
+        @media (max-width: 900px) {
           .bof-drivers-hero {
-            height: 400px;
+            min-height: 560px !important;
+            height: auto !important;
           }
-          .bof-drivers-hero > div:last-child {
-            width: 100%;
+          .bof-drivers-hero-content {
+            width: 100% !important;
             background: linear-gradient(to top, rgba(0, 0, 0, 0.8) 0%, rgba(0, 0, 0, 0.4) 50%, transparent 100%);
-            padding: 2rem;
+            padding: 1.5rem !important;
+            justify-content: flex-end !important;
+          }
+          .bof-drivers-hero-copy {
+            max-width: none !important;
           }
           .bof-drivers-hero h1 {
-            font-size: 2rem;
+            font-size: 2rem !important;
+          }
+          .bof-drivers-hero-actions {
+            display: grid !important;
+            grid-template-columns: 1fr !important;
+            gap: 0.625rem !important;
+          }
+          .bof-drivers-hero-action {
+            width: 100% !important;
+            justify-content: center !important;
+            text-align: center !important;
+            white-space: normal !important;
           }
         }
       `}</style>
@@ -473,11 +489,11 @@ export function DriversRosterTable() {
                   <td style={{ padding: '1rem', fontSize: '0.875rem' }}>
                     {row.readinessSummary?.dueDate || '-'}
                   </td>
-                  <td style={{ padding: '1rem' }}>
+                  <td style={{ padding: '1rem', minWidth: '190px' }}>
                     {row.readinessSummary && row.readinessSummary.status !== 'ready' ? (
-                      <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+                      <div className="bof-driver-roster-actions">
                         {row.readinessSummary.fixAction?.href && (
-                          <Link href={row.readinessSummary.fixAction.href} style={{
+                          <Link href={row.readinessSummary.fixAction.href} className="bof-driver-roster-action" style={{
                             padding: '0.375rem 0.75rem',
                             backgroundColor: row.readinessSummary.status === 'blocked' ? '#DC2626' : '#D97706',
                             color: 'white',
@@ -485,14 +501,12 @@ export function DriversRosterTable() {
                             borderRadius: '6px',
                             fontSize: '0.75rem',
                             fontWeight: '500',
-                            display: 'inline-flex',
-                            alignItems: 'center',
                             transition: 'all 0.2s ease'
                           }}>
                             {row.readinessSummary.fixAction.label}
                           </Link>
                         )}
-                        <Link href={row.actionIssues.length > 0 ? row.actionIssues[0].primaryActionHref : `/drivers/${row.driverId}/vault`} style={{
+                        <Link href={row.actionIssues.length > 0 ? row.actionIssues[0].primaryActionHref : `/drivers/${row.driverId}/vault`} className="bof-driver-roster-action" style={{
                           padding: '0.375rem 0.75rem',
                           backgroundColor: '#F3F4F6',
                           color: '#374151',
@@ -506,7 +520,7 @@ export function DriversRosterTable() {
                         </Link>
                       </div>
                     ) : (
-                      <Link href={`/drivers/${row.driverId}/vault`} style={{
+                      <Link href={`/drivers/${row.driverId}/vault`} className="bof-driver-roster-action" style={{
                         padding: '0.375rem 0.75rem',
                         backgroundColor: '#F0FDF4',
                         color: '#166534',
@@ -524,6 +538,84 @@ export function DriversRosterTable() {
               ))}
             </tbody>
           </table>
+        </div>
+        <div className="bof-driver-roster-mobile-cards" aria-label="Driver attention cards">
+          {filteredDriverRows.map((row) => (
+            <article className="bof-driver-roster-card" key={`${row.driverId}-mobile`}>
+              <div className="bof-driver-roster-card__header">
+                <div className="bof-driver-roster-card__identity">
+                  <DriverAvatar name={row.name} photoUrl={row.avatar} size={42} />
+                  <div>
+                    <div className="bof-driver-roster-card__name">{row.name}</div>
+                    <div className="bof-driver-roster-card__meta">
+                      {row.driverId} - {row.email ?? row.phone ?? "No contact"}
+                    </div>
+                  </div>
+                </div>
+                <StatusChip label={row.status} driverId={row.driverId} />
+              </div>
+              <div className="bof-driver-roster-card__issue">
+                {row.readinessSummary && row.readinessSummary.status !== 'ready' ? (
+                  <>
+                    <strong>{row.readinessSummary.primaryReason}</strong>
+                    <span>{row.readinessSummary.businessImpact}</span>
+                    {row.readinessSummary.dueDate && (
+                      <div className="bof-driver-roster-card__meta">Due: {row.readinessSummary.dueDate}</div>
+                    )}
+                  </>
+                ) : (
+                  <>
+                    <strong>Ready for dispatch</strong>
+                    <span>No active driver file blockers.</span>
+                  </>
+                )}
+              </div>
+              {row.readinessSummary && row.readinessSummary.status !== 'ready' ? (
+                <div className="bof-driver-roster-actions">
+                  {row.readinessSummary.fixAction?.href && (
+                    <Link href={row.readinessSummary.fixAction.href} className="bof-driver-roster-action" style={{
+                      padding: '0.55rem 0.85rem',
+                      backgroundColor: row.readinessSummary.status === 'blocked' ? '#DC2626' : '#D97706',
+                      color: 'white',
+                      textDecoration: 'none',
+                      borderRadius: '6px',
+                      fontSize: '0.78rem',
+                      fontWeight: '700'
+                    }}>
+                      {row.readinessSummary.fixAction.label}
+                    </Link>
+                  )}
+                  <Link href={row.actionIssues.length > 0 ? row.actionIssues[0].primaryActionHref : `/drivers/${row.driverId}/vault`} className="bof-driver-roster-action" style={{
+                    padding: '0.55rem 0.85rem',
+                    backgroundColor: '#F8FAFC',
+                    color: '#334155',
+                    textDecoration: 'none',
+                    borderRadius: '6px',
+                    fontSize: '0.78rem',
+                    fontWeight: '700',
+                    border: '1px solid #CBD5E1'
+                  }}>
+                    Review issue
+                  </Link>
+                </div>
+              ) : (
+                <div className="bof-driver-roster-actions">
+                  <Link href={`/drivers/${row.driverId}/vault`} className="bof-driver-roster-action" style={{
+                    padding: '0.55rem 0.85rem',
+                    backgroundColor: '#F0FDF4',
+                    color: '#166534',
+                    textDecoration: 'none',
+                    borderRadius: '6px',
+                    fontSize: '0.78rem',
+                    fontWeight: '700',
+                    border: '1px solid #BBF7D0'
+                  }}>
+                    View Documents
+                  </Link>
+                </div>
+              )}
+            </article>
+          ))}
         </div>
       </section>
     </div>

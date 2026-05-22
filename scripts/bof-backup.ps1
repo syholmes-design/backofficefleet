@@ -15,6 +15,22 @@ function Format-Bytes {
   return "$Bytes B"
 }
 
+function Get-DefaultBackupRoot {
+  if ($env:BOF_BACKUP_ROOT) {
+    return $env:BOF_BACKUP_ROOT
+  }
+
+  $localAppData = $env:LOCALAPPDATA
+  if (-not $localAppData) {
+    $localAppData = [Environment]::GetFolderPath([Environment+SpecialFolder]::LocalApplicationData)
+  }
+  if (-not $localAppData) {
+    $localAppData = Join-Path $HOME "AppData\Local"
+  }
+
+  return (Join-Path (Join-Path $localAppData "BackOfficeFleet") "Backups")
+}
+
 function Get-RelativePath {
   param(
     [string]$Root,
@@ -80,7 +96,7 @@ function Invoke-PruneBackups {
 
 $ProjectRoot = (Resolve-Path (Join-Path $PSScriptRoot "..")).Path
 if (-not $BackupRoot) {
-  $BackupRoot = Join-Path (Split-Path $ProjectRoot -Parent) "BackOfficeFleet-Backups"
+  $BackupRoot = Get-DefaultBackupRoot
 }
 $BackupRoot = [System.IO.Path]::GetFullPath($BackupRoot)
 

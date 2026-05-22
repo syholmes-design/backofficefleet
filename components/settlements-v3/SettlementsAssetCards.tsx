@@ -179,6 +179,7 @@ function postTripFactoringPacketCard(loadId: string): AssetCardProps {
     lastUpdated: "Today",
   };
 }
+
 function toAssetCard(
   loadId: string,
   definition: SettlementAssetDefinition,

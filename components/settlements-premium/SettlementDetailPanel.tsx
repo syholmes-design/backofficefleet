@@ -57,12 +57,20 @@ export function SettlementDetailPanel({ driverSettlement, period }: SettlementDe
           
           {/* Quick Actions */}
           <div className="space-y-2">
-            <button className="w-full bg-teal-600 hover:bg-teal-700 text-white px-4 py-2 rounded text-sm font-medium transition-colors">
+            <button
+              disabled
+              className="w-full cursor-not-allowed rounded bg-slate-700 px-4 py-2 text-sm font-medium text-slate-500"
+            >
               Review First Exception
             </button>
-            <button className="w-full bg-slate-700 hover:bg-slate-600 text-slate-300 px-4 py-2 rounded text-sm font-medium transition-colors">
+            <a
+              href="/generated/company-operations-vault/05-accounting-finance-close-ap-ar-sop.html"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="block w-full rounded bg-slate-700 px-4 py-2 text-center text-sm font-medium text-slate-300 transition-colors hover:bg-slate-600"
+            >
               View Settlement Guidelines
-            </button>
+            </a>
           </div>
         </div>
       </div>
