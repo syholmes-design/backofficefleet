@@ -6,16 +6,8 @@
  */
 import Link from "next/link";
 import Image from "next/image";
-import { MarketingCommandCenterPreview, MarketingCtaPanel } from "@/components/marketing";
 import { IconDispatch, IconLoadProof, IconShield } from "@/components/marketing/MarketingHomeIcons";
 import { getBofData } from "@/lib/load-bof-data";
-import type { Metadata } from "next";
-
-export const metadata: Metadata = {
-  title: "BackOfficeFleet | Founding Fleet Back-Office Enforcement Engine",
-  description:
-    "BackOfficeFleet is the back-office enforcement engine for serious fleets, unifying readiness, dispatch, proof, settlements, compliance, and cash flow.",
-};
 
 function formatHomepageCurrency(value: number) {
   return new Intl.NumberFormat("en-US", {
@@ -50,68 +42,47 @@ function getHeroMetrics() {
   ] as const;
 }
 
-
-const FEATURE_STRIP = [
-  {
-    title: "Enforcement",
-    body: "Every workflow has a gate. Every gate has an owner.",
-  },
-  {
-    title: "Accountability",
-    body: "Every owner is accountable. Nothing falls through.",
-  },
-  {
-    title: "Visibility",
-    body: "Real-time visibility across your entire operation.",
-  },
-  {
-    title: "Profitability",
-    body: "Eliminate drift, disputes, and revenue leakage.",
-  },
-  {
-    title: "Compliance",
-    body: "Stay audit-ready. Stay ahead of risk.",
-  },
-  {
-    title: "Cash Flow",
-    body: "Protect cash flow and accelerate settlements.",
-  },
-] as const;
+const FOUNDING_FLEET_HREF = "#founding-fleet";
 
 const PAIN_POINTS = [
-  "Drivers are not ready when loads are ready",
+  "Drivers aren’t ready when loads are ready",
   "Proof is missing or late",
   "Settlements drift",
   "Customers escalate preventable issues",
-  "Customers cannot escalate without documented history",
   "Compliance gaps go unnoticed",
   "No one owns the workflow end-to-end",
 ] as const;
 
-const ENFORCEMENT_RULES = [
+const WORKFLOW_PANELS = [
   {
-    step: "01",
-    title: "Load gates",
-    body: "Loads cannot progress without required proof, route context, and accountable ownership.",
-    href: "/dispatch/intake",
+    title: "Driver Readiness",
+    body: "CDL, medical card, MVR, HR, safety, and settlement holds are checked before a driver is released.",
+    gate: "Drivers cannot start work without compliance readiness.",
+    icon: <IconShield />,
   },
   {
-    step: "02",
-    title: "Driver gates",
-    body: "Drivers cannot start work without compliance readiness, document clearance, and dispatch eligibility.",
-    href: "/drivers",
+    title: "Load Execution",
+    body: "Dispatch sees the route, customer requirements, equipment status, fuel plan, and rest-stop plan in one view.",
+    gate: "Loads cannot progress without required operating context.",
+    icon: <IconDispatch />,
   },
   {
-    step: "03",
-    title: "Settlement gates",
-    body: "Settlements cannot release with unresolved proof gaps, holds, claims, or compliance exceptions.",
-    href: "/settlements",
+    title: "Proof",
+    body: "BOL, POD, cargo photos, seal proof, RFID records, and exception evidence attach to the load record.",
+    gate: "Proof gaps become owned action items before they become disputes.",
+    icon: <IconLoadProof />,
   },
   {
-    step: "04",
-    title: "Compliance gates",
-    body: "Expirations, missing files, and safety events trigger action queues before drift becomes exposure.",
-    href: "/command-center",
+    title: "Settlement",
+    body: "Holds, deductions, accessorials, factoring readiness, and driver pay are reconciled against the proof packet.",
+    gate: "Settlements cannot release with unresolved exceptions.",
+    icon: <IconLoadProof />,
+  },
+  {
+    title: "Cash Flow",
+    body: "Billing blockers, claim exposure, factoring packets, and money at risk move into a priority queue.",
+    gate: "Every dollar has evidence, status, and an owner.",
+    icon: <IconDispatch />,
   },
 ] as const;
 
@@ -121,57 +92,34 @@ const FOUNDING_BENEFITS = [
   "Early access to unreleased modules",
   "Priority onboarding and white-glove support",
   "Co-development sessions with the product team",
-  "Operational data insights and reporting",
+  "Operational insights and reporting",
   "Founding Fleet badge and logo placement",
-  "A competitive advantage other fleets will not have for years",
+  "A competitive advantage other fleets won’t have for years",
 ] as const;
 
 const PORTALS = [
   {
     title: "Manager Portal",
-    body: "Your command center for dispatch, compliance, settlements, exceptions, and cash flow. Real-time visibility. Zero drift. Full accountability.",
+    body: "Command center for dispatch, compliance, settlements, exceptions, and cash flow.",
     href: "/portals/manager",
     icon: <IconDispatch />,
   },
   {
     title: "Driver Portal",
-    body: "Assignments, documents, readiness, settlements, and communication - all enforced, all in one place.",
+    body: "Assignments, documents, readiness, settlements, and communication in one enforced workflow.",
     href: "/portals/driver",
     icon: <IconShield />,
   },
   {
     title: "Customer Portal",
-    body: "Shipment visibility, proof, exceptions, and invoice readiness. Professional. Transparent. Audit-ready.",
+    body: "Shipment visibility, proof, exceptions, and invoice readiness.",
     href: "/portals/customer",
     icon: <IconLoadProof />,
   },
 ] as const;
 
-const OPERATING_LAYERS = [
-  {
-    title: "Company Operations Vault",
-    body: "Your entire operational brain - centralized, structured, and enforced. Policies, SOPs, HR records, payroll procedures, compliance controls, safety documentation, audit-ready records, AI governance, and vendor controls.",
-    href: "/documents",
-    icon: <IconLoadProof />,
-    cta: "Open the vault",
-  },
-  {
-    title: "Fleet Financials",
-    body: "A financial layer built for trucking: load-level profitability, cash-flow forecasting, factoring visibility, billing blockers, settlement timing, and asset and debt allocation.",
-    href: "/settlements",
-    icon: <IconDispatch />,
-    cta: "Review settlement controls",
-  },
-  {
-    title: "Command Center",
-    body: "A real-time priority queue showing drivers at risk, loads at risk, claims exposure, compliance violations, and money at risk. Your entire operation - triaged and enforced.",
-    href: "/command-center",
-    icon: <IconShield />,
-    cta: "Open command center",
-  },
-] as const;
-
 const DEMO_CARDS = [
+  { label: "Demo Dashboard", href: "/dashboard" },
   { label: "Command Center", href: "/command-center" },
   { label: "Dispatch Proof Workflow", href: "/dispatch" },
   { label: "Settlements & Factoring", href: "/settlements" },
@@ -181,12 +129,26 @@ const DEMO_CARDS = [
   { label: "Maintenance", href: "/maintenance" },
 ] as const;
 
+const COMMAND_CENTER_SIGNALS = [
+  "Drivers at risk",
+  "Loads at risk",
+  "Claims exposure",
+  "Compliance violations",
+  "Money at risk",
+] as const;
+
+const BLOG_PREVIEWS = [
+  "Why trucking back offices need enforcement, not more dashboards",
+  "Why proof packets control settlement and cash flow",
+  "How driver readiness prevents dispatch failure",
+] as const;
+
 export default function MarketingHomeAccountable() {
   const heroMetrics = getHeroMetrics();
 
   return (
-    <main className="bof-home-redesign">
-      <section className="bof-home-hero" aria-labelledby="bof-mkt-hero-heading">
+    <main className="bof-home-redesign bg-slate-50 text-slate-950">
+      <section id="hero" className="bof-home-hero" aria-labelledby="bof-mkt-hero-heading">
         <Image
           src="/generated/marketing/demoheroimage-v2.png"
           alt="Professional truck driver operating on the road at sunrise"
@@ -198,22 +160,24 @@ export default function MarketingHomeAccountable() {
         <div className="bof-home-hero__overlay" aria-hidden />
         <div className="bof-mkt-container bof-home-hero__content">
           <div className="bof-home-hero__copy">
-            <p className="bof-home-eyebrow">Become a Founding Fleet</p>
-            <h1 id="bof-mkt-hero-heading">Shape the Operating System That Will Run the Next Decade of Trucking</h1>
-            <p className="bof-home-hero__lead">
-              BackOfficeFleet is not a TMS, not a dispatch service, and not ordinary SaaS. It is the back-office
-              enforcement engine for serious fleets.
+            <p className="bof-home-eyebrow">Back-office operating system for trucking</p>
+            <h1 id="bof-mkt-hero-heading">Become a Founding Fleet</h1>
+            <p className="text-xl font-semibold leading-8 text-white md:text-2xl">
+              Shape the Operating System That Will Run the Next Decade of Trucking
             </p>
             <p className="bof-home-hero__lead">
-              The trucking back office is broken - scattered tools, manual processes, missing proof, settlement drift,
-              compliance gaps, and constant fire drills.
+              The trucking back office is broken. BackOfficeFleet enforces the entire operational lifecycle — from
+              driver readiness → load execution → proof → settlement → cash flow — and we’re inviting 10 fleets to
+              help shape it.
             </p>
-            <p className="bof-home-hero__lead">
-              BackOfficeFleet is the first enforcement-driven operating system that unifies the entire back-office
-              lifecycle - and we are inviting 10 fleets to help shape it.
-            </p>
+            <ul className="bof-home-proof-list" aria-label="What the live demo proves">
+              <li>Enterprise-grade</li>
+              <li>Enforcement-driven</li>
+              <li>Founding Fleet access</li>
+              <li>Premium partnership</li>
+            </ul>
             <div className="bof-home-hero__ctas" aria-label="Primary actions">
-              <Link href="/apply" className="bof-mkt-btn-enterprise bof-mkt-btn-enterprise-primary">
+              <Link href={FOUNDING_FLEET_HREF} className="bof-mkt-btn-enterprise bof-mkt-btn-enterprise-primary">
                 Apply to Become a Founding Fleet
               </Link>
               <Link href="/dashboard" className="bof-mkt-btn-enterprise bof-mkt-btn-enterprise-secondary">
@@ -224,8 +188,8 @@ export default function MarketingHomeAccountable() {
 
           <aside className="bof-home-hero__panel" aria-label="Founding Fleet operating snapshot">
             <div className="bof-home-hero__panel-head">
-              <span>Command Center</span>
-              <strong>Live</strong>
+              <span>Enforcement snapshot</span>
+              <strong>Live demo</strong>
             </div>
             <div className="bof-home-hero__metric-grid">
               {heroMetrics.map((metric) => (
@@ -243,20 +207,9 @@ export default function MarketingHomeAccountable() {
         </div>
       </section>
 
-      <section className="bg-[#071827] text-white" aria-label="BackOfficeFleet operating advantages">
-        <div className="bof-mkt-container grid gap-4 py-6 md:grid-cols-3 xl:grid-cols-6">
-          {FEATURE_STRIP.map((item) => (
-            <div key={item.title} className="border-white/10 md:border-r md:pr-4">
-              <p className="text-sm font-bold uppercase tracking-wide text-sky-300">{item.title}</p>
-              <p className="mt-1 text-sm leading-5 text-slate-200">{item.body}</p>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      <section className="bof-home-demo-strip" aria-label="Demo entry points">
+      <nav className="bof-home-demo-strip" aria-label="Demo entry points">
         <div className="bof-mkt-container bof-home-demo-strip__inner">
-          <span>Explore the BOF Demo</span>
+          <span>Explore the demo</span>
           <div>
             {DEMO_CARDS.slice(0, 6).map((link) => (
               <Link key={link.href} href={link.href}>
@@ -265,69 +218,90 @@ export default function MarketingHomeAccountable() {
             ))}
           </div>
         </div>
-      </section>
+      </nav>
 
-      <section className="bof-home-section bof-home-section--white" aria-labelledby="bof-home-why-heading">
-        <div className="bof-mkt-container">
-          <div className="bof-home-section-head">
+      <section id="why-exists" className="bof-home-section bof-home-section--white" aria-labelledby="bof-home-why-heading">
+        <div className="bof-mkt-container grid items-center gap-10 lg:grid-cols-[1.05fr_0.95fr]">
+          <div>
             <p className="bof-home-eyebrow">Why BackOfficeFleet Exists</p>
-            <h2 id="bof-home-why-heading">The back office is the last part of trucking still running on email, PDFs, and human memory.</h2>
-            <p>
-              Fleets lose money every week because work moves faster than the back office can enforce it.
+            <h2 id="bof-home-why-heading">
+              The trucking back office still runs on email, PDFs, spreadsheets, memory, disconnected dispatch tools,
+              and reactive cleanup.
+            </h2>
+            <p className="mt-5 text-lg leading-8 text-slate-600">
+              Fleets lose money every week because the operating record is scattered. BOF turns the chain of work into
+              one enforced lifecycle: driver readiness → load execution → proof → settlement → cash flow.
             </p>
+            <div className="mt-8 grid gap-3">
+              {PAIN_POINTS.map((item) => (
+                <div key={item} className="flex items-start gap-3 rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
+                  <span className="mt-1 h-2.5 w-2.5 rounded-full bg-cyan-500" aria-hidden />
+                  <p className="font-semibold text-slate-900">{item}</p>
+                </div>
+              ))}
+            </div>
           </div>
-          <div className="bof-home-flow-grid">
-            {PAIN_POINTS.map((item, index) => (
-              <article key={item} className="bof-home-flow-card">
-                <span>{String(index + 1).padStart(2, "0")}</span>
-                <h3>{item}</h3>
-                <p>BOF turns this gap into an owned workflow with visibility, evidence, and release logic.</p>
-              </article>
-            ))}
-          </div>
-          <div className="mt-8 rounded-2xl border border-teal-200 bg-teal-50 p-6 text-slate-900">
-            <p className="text-lg font-semibold">
-              BackOfficeFleet enforces the entire operational lifecycle - driver readiness → load execution → proof →
-              settlement → cash flow.
-            </p>
-            <p className="mt-4 text-sm font-semibold uppercase tracking-wide text-teal-800">
-              This is not a TMS. This is not a dispatch service. This is the back-office enforcement engine.
-            </p>
+          <div className="rounded-[2rem] border border-slate-200 bg-slate-950 p-4 shadow-2xl">
+            <Image
+              src="/generated/marketing/operations-file-cabinet-watermark.png"
+              alt="BackOfficeFleet operations file cabinet showing documents, proof packets, SOPs, and operating records"
+              width={980}
+              height={720}
+              sizes="(min-width: 1024px) 45vw, 100vw"
+              className="h-auto w-full rounded-[1.35rem] border border-white/10 object-cover"
+            />
+            <div className="grid gap-3 pt-4 sm:grid-cols-3">
+              {["Proof packets", "Driver files", "Settlement controls"].map((label) => (
+                <span key={label} className="rounded-full border border-cyan-300/30 bg-cyan-300/10 px-3 py-2 text-center text-xs font-bold uppercase tracking-wide text-cyan-100">
+                  {label}
+                </span>
+              ))}
+            </div>
           </div>
         </div>
       </section>
 
-      <section className="bof-home-section bof-home-section--soft" aria-labelledby="bof-home-control-heading">
+      <section id="enforcement-engine" className="bof-home-section bof-home-section--soft" aria-labelledby="bof-home-control-heading">
         <div className="bof-mkt-container">
           <div className="bof-home-section-head">
             <p className="bof-home-eyebrow">The Enforcement Engine</p>
-            <h2 id="bof-home-control-heading">BackOfficeFleet does not just help you manage your back office. It enforces it.</h2>
+            <h2 id="bof-home-control-heading">BackOfficeFleet doesn’t “help you manage” your back office — it enforces it.</h2>
             <p>
-              Every workflow has a gate. Every gate has an owner. Every owner is accountable. This is how fleets
-              eliminate drift, disputes, and revenue leakage.
+              Driver Readiness → Load Execution → Proof → Settlement → Cash Flow. Every workflow has a gate. Every
+              gate has an owner. Every owner is accountable.
             </p>
           </div>
-          <div className="bof-home-flow-grid">
-            {ENFORCEMENT_RULES.map((item) => (
-              <Link key={item.title} href={item.href} className="bof-home-flow-card">
-                <span>{item.step}</span>
+          <div className="grid gap-4 lg:grid-cols-5">
+            {WORKFLOW_PANELS.map((item, index) => (
+              <article key={item.title} className="relative rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+                <span className="mb-4 flex h-11 w-11 items-center justify-center rounded-xl bg-cyan-50 text-cyan-700">
+                  {item.icon}
+                </span>
                 <h3>{item.title}</h3>
-                <p>{item.body}</p>
-                <strong>Open enforcement path &rarr;</strong>
-              </Link>
+                <p className="mt-3 text-sm leading-6 text-slate-600">{item.body}</p>
+                <p className="mt-4 rounded-xl bg-slate-100 p-3 text-xs font-bold uppercase tracking-wide text-slate-700">
+                  {item.gate}
+                </p>
+                {index < WORKFLOW_PANELS.length - 1 ? (
+                  <span className="absolute -right-3 top-1/2 hidden h-7 w-7 -translate-y-1/2 items-center justify-center rounded-full bg-cyan-500 text-sm font-black text-white lg:flex" aria-hidden>
+                    →
+                  </span>
+                ) : null}
+              </article>
             ))}
           </div>
         </div>
       </section>
 
-      <section className="bof-home-section bof-home-section--white" aria-labelledby="bof-home-founding-heading">
+      <section id="founding-fleet" className="bof-home-section bof-home-section--white" aria-labelledby="bof-home-founding-heading">
         <div className="bof-mkt-container">
           <div className="bof-home-section-head">
-            <p className="bof-home-eyebrow">Why Founding Fleets Matter</p>
-            <h2 id="bof-home-founding-heading">Help shape the operating system that will define the next decade of trucking operations.</h2>
+            <p className="bof-home-eyebrow">Founding Fleet Program</p>
+            <h2 id="bof-home-founding-heading">Why Founding Fleets Matter</h2>
             <p>
-              We want the fleets who understand the stakes to help shape it. This is not a subscription. This is a
-              strategic partnership.
+              We’re building the operating system that will define the next decade of trucking operations — and we want
+              the fleets who understand the stakes to help shape it. This is not a subscription. This is a strategic
+              partnership.
             </p>
           </div>
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
@@ -338,14 +312,14 @@ export default function MarketingHomeAccountable() {
             ))}
           </div>
           <div className="mt-8">
-            <Link href="/apply" className="bof-mkt-btn-enterprise bof-mkt-btn-enterprise-primary">
+            <Link href={FOUNDING_FLEET_HREF} className="bof-mkt-btn-enterprise bof-mkt-btn-enterprise-primary">
               Apply to Become a Founding Fleet
             </Link>
           </div>
         </div>
       </section>
 
-      <section className="bof-home-section bof-home-section--soft" aria-labelledby="bof-home-portals-heading">
+      <section id="portals" className="bof-home-section bof-home-section--soft" aria-labelledby="bof-home-portals-heading">
         <div className="bof-mkt-container">
           <div className="bof-home-section-head">
             <p className="bof-home-eyebrow">The Three Portals</p>
@@ -368,43 +342,91 @@ export default function MarketingHomeAccountable() {
         </div>
       </section>
 
-      <section className="bof-home-section bof-home-section--white" aria-labelledby="bof-home-layers-heading">
+      <section id="vault" className="bof-home-section bof-home-section--white" aria-labelledby="bof-home-vault-heading">
         <div className="bof-mkt-container">
-          <div className="bof-home-section-head">
-            <p className="bof-home-eyebrow">Operating Layers</p>
-            <h2 id="bof-home-layers-heading">Vault, financials, and command center in one enforced system.</h2>
-            <p>
-              BackOfficeFleet turns the back office into a structured, clickable system of record instead of a
-              collection of unmanaged files and conversations.
-            </p>
-          </div>
-          <div className="bof-home-capability-grid">
-            {OPERATING_LAYERS.map((item) => (
-              <Link key={item.title} href={item.href} className="bof-home-capability-card">
-                <span className="bof-home-capability-card__icon">{item.icon}</span>
-                <h3>{item.title}</h3>
-                <p>{item.body}</p>
-                <strong>{item.cta} &rarr;</strong>
+          <div className="grid items-center gap-8 lg:grid-cols-[0.9fr_1.1fr]">
+            <div>
+              <p className="bof-home-eyebrow">Company Operations Vault</p>
+              <h2 id="bof-home-vault-heading">Your entire operational brain — centralized, structured, and enforced.</h2>
+              <p className="mt-5 text-lg leading-8 text-slate-600">
+                Centralized SOPs, HR records, payroll procedures, compliance controls, safety documentation,
+                audit-ready records, AI governance, and vendor controls.
+              </p>
+              <Link href="/documents" className="mt-8 inline-flex bof-mkt-btn-enterprise bof-mkt-btn-enterprise-primary">
+                Open Document Vault
               </Link>
+            </div>
+            <div className="grid gap-3 sm:grid-cols-2">
+              {["Policies & SOPs", "HR records", "Payroll procedures", "Compliance controls", "Safety documentation", "Audit-ready records", "AI governance", "Vendor controls"].map((item) => (
+                <div key={item} className="rounded-2xl border border-slate-200 bg-slate-50 p-5 font-semibold text-slate-900">
+                  {item}
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="financials" className="bof-home-section bof-home-section--soft" aria-labelledby="bof-home-financials-heading">
+        <div className="bof-mkt-container grid items-center gap-8 lg:grid-cols-[1fr_0.95fr]">
+          <div>
+            <p className="bof-home-eyebrow">Fleet Financials</p>
+            <h2 id="bof-home-financials-heading">A complete financial layer built for trucking.</h2>
+            <p className="mt-5 text-lg leading-8 text-slate-600">
+              Load-level profitability, billing blockers, factoring visibility, settlement timing, cash-flow
+              forecasting, and asset/debt allocation. Every dollar accounted for. Every exception enforced.
+            </p>
+            <Link href="/settlements" className="mt-8 inline-flex bof-mkt-btn-enterprise bof-mkt-btn-enterprise-primary">
+              View Settlements & Factoring
+            </Link>
+          </div>
+          <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-xl">
+            {[
+              ["Load-level profitability", "Margin and cost exposure by move"],
+              ["Factoring visibility", "Packet readiness and blockers"],
+              ["Settlement timing", "Driver pay, holds, and release status"],
+              ["Cash-flow forecasting", "Money at risk before it drifts"],
+            ].map(([title, body]) => (
+              <div key={title} className="border-b border-slate-200 py-4 last:border-b-0">
+                <p className="font-bold text-slate-950">{title}</p>
+                <p className="text-sm text-slate-600">{body}</p>
+              </div>
             ))}
           </div>
         </div>
       </section>
 
-      <section className="bof-home-section bof-home-section--ink" aria-labelledby="bof-mkt-cc-heading">
-        <MarketingCommandCenterPreview
-          headingId="bof-mkt-cc-heading"
-          title="Your entire operation - triaged and enforced."
-          lead="The command center shows drivers at risk, loads at risk, claims exposure, compliance violations, and money at risk in one real-time priority queue."
-          demoLabel="Open the command center &rarr;"
-        />
+      <section id="command-center" className="bof-home-section bof-home-section--ink" aria-labelledby="bof-mkt-cc-heading">
+        <div className="bof-mkt-container grid items-center gap-10 lg:grid-cols-[0.9fr_1.1fr]">
+          <div>
+            <p className="bof-home-eyebrow">Command Center</p>
+            <h2 id="bof-mkt-cc-heading">Your entire operation — triaged and enforced.</h2>
+            <p className="mt-5 text-lg leading-8 text-slate-300">
+              A real-time priority queue shows the operating risks that need ownership before they become lost money,
+              customer escalations, or compliance exposure.
+            </p>
+            <Link href="/command-center" className="mt-8 inline-flex bof-mkt-btn-enterprise bof-mkt-btn-enterprise-primary">
+              Open Command Center
+            </Link>
+          </div>
+          <div className="rounded-3xl border border-white/10 bg-white/5 p-6 shadow-2xl">
+            <div className="grid gap-4 sm:grid-cols-2">
+              {COMMAND_CENTER_SIGNALS.map((signal, index) => (
+                <Link key={signal} href="/command-center" className="rounded-2xl border border-white/10 bg-slate-950/70 p-5 transition hover:-translate-y-0.5 hover:border-cyan-300/60 hover:bg-cyan-300/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-300">
+                  <span className="text-xs font-bold uppercase tracking-wide text-cyan-200">Signal {index + 1}</span>
+                  <p className="mt-2 text-xl font-black text-white">{signal}</p>
+                </Link>
+              ))}
+            </div>
+          </div>
+        </div>
       </section>
 
-      <section className="bof-home-section bof-home-section--soft" aria-labelledby="bof-home-demo-heading">
+      <section id="demo-preview" className="bof-home-section bof-home-section--soft" aria-labelledby="bof-home-demo-heading">
         <div className="bof-mkt-container">
           <div className="bof-home-section-head">
             <p className="bof-home-eyebrow">Explore the BOF Demo</p>
-            <h2 id="bof-home-demo-heading">Open the workflows that show the enforcement engine in motion.</h2>
+            <h2 id="bof-home-demo-heading">Open the workflows that show the operating system in motion.</h2>
             <p>
               Each card opens a real demo route for dispatch proof, settlements, safety, driver readiness, operating
               documents, and fleet maintenance.
@@ -422,18 +444,48 @@ export default function MarketingHomeAccountable() {
         </div>
       </section>
 
-      <MarketingCtaPanel
-        id="bof-mkt-final-cta-heading"
-        title="Join the 10 Fleets Shaping the Future of Back-Office Operations"
-        lead="Founding Fleets will help define the enforcement logic, workflows, and operating standards that serious trucking companies will rely on next."
-      >
-        <Link href="/apply" className="bof-mkt-btn-enterprise bof-mkt-btn-enterprise-primary">
-          Apply to Become a Founding Fleet
-        </Link>
-        <Link href="/dashboard" className="bof-mkt-btn-enterprise bof-mkt-btn-enterprise-secondary">
-          Explore the Demo
-        </Link>
-      </MarketingCtaPanel>
+      <section id="blog-preview" className="bof-home-section bof-home-section--white" aria-labelledby="bof-home-blog-heading">
+        <div className="bof-mkt-container">
+          <div className="bof-home-section-head">
+            <p className="bof-home-eyebrow">Fleet Intelligence preview</p>
+            <h2 id="bof-home-blog-heading">Fleet Intelligence: Insights from the Enforcement Engine</h2>
+            <p>
+              These editorial cards preview the thinking behind BOF. Blog routes are intentionally not linked until the
+              articles are published.
+            </p>
+          </div>
+          <div className="bof-home-capability-grid">
+            {BLOG_PREVIEWS.map((title) => (
+              <article key={title} className="bof-home-capability-card">
+                <span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-bold uppercase tracking-wide text-slate-600">
+                  Coming soon
+                </span>
+                <h3>{title}</h3>
+                <p>Fleet Intelligence preview. No broken blog link is exposed.</p>
+              </article>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section id="final-cta" className="bof-home-section bof-home-section--ink" aria-labelledby="bof-mkt-final-cta-heading">
+        <div className="bof-mkt-container rounded-[2rem] border border-white/10 bg-white/5 p-8 text-center shadow-2xl md:p-12">
+          <p className="bof-home-eyebrow">Founding Fleet Program</p>
+          <h2 id="bof-mkt-final-cta-heading">Join the 10 Fleets Shaping the Future of Back-Office Operations</h2>
+          <p className="mx-auto mt-5 max-w-3xl text-lg leading-8 text-slate-300">
+            Founding Fleets will help define the proof standards, release logic, workflows, and operating reports
+            serious trucking companies will rely on next.
+          </p>
+          <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
+            <Link href={FOUNDING_FLEET_HREF} className="bof-mkt-btn-enterprise bof-mkt-btn-enterprise-primary">
+              Apply to Become a Founding Fleet
+            </Link>
+            <Link href="/dashboard" className="bof-mkt-btn-enterprise bof-mkt-btn-enterprise-secondary">
+              Explore the Demo
+            </Link>
+          </div>
+        </div>
+      </section>
     </main>
   );
 }
