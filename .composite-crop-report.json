@@ -1,0 +1,764 @@
+{
+  "source": "C:\\Users\\syhol\\Downloads\\lo01-011.png",
+  "dimensions": {
+    "w": 1535,
+    "h": 1024
+  },
+  "skippedTbd": [
+    {
+      "load": "L002",
+      "key": "sealDeliveryPhoto",
+      "reason": "composite_TBD_placeholder"
+    },
+    {
+      "load": "L004",
+      "key": "sealDeliveryPhoto",
+      "reason": "composite_TBD_placeholder"
+    },
+    {
+      "load": "L007",
+      "key": "sealDeliveryPhoto",
+      "reason": "composite_TBD_placeholder"
+    },
+    {
+      "load": "L007",
+      "key": "sealMismatchPhoto",
+      "reason": "composite_TBD_placeholder"
+    },
+    {
+      "load": "L007",
+      "key": "damagePhotoPacket",
+      "reason": "composite_TBD_placeholder"
+    },
+    {
+      "load": "L008",
+      "key": "sealDeliveryPhoto",
+      "reason": "composite_TBD_placeholder"
+    },
+    {
+      "load": "L009",
+      "key": "sealDeliveryPhoto",
+      "reason": "composite_TBD_placeholder"
+    },
+    {
+      "load": "L009",
+      "key": "sealMismatchPhoto",
+      "reason": "composite_TBD_placeholder"
+    },
+    {
+      "load": "L009",
+      "key": "damagePhotoPacket",
+      "reason": "composite_TBD_placeholder"
+    },
+    {
+      "load": "L011",
+      "key": "sealDeliveryPhoto",
+      "reason": "composite_TBD_placeholder"
+    }
+  ],
+  "filesWritten": {
+    "L001": [
+      "public\\evidence\\loads\\L001\\pickup-photo.png",
+      "public\\evidence\\loads\\L001\\cargo-photo.png",
+      "public\\evidence\\loads\\L001\\seal-pickup-photo.png",
+      "public\\evidence\\loads\\L001\\seal-delivery-photo.png",
+      "public\\evidence\\loads\\L001\\empty-trailer-proof.png",
+      "public\\evidence\\loads\\L001\\delivery-photo.png",
+      "public\\evidence\\loads\\L001\\rfid-dock-proof.png",
+      "public\\evidence\\loads\\L001\\seal-mismatch-photo.png",
+      "public\\evidence\\loads\\L001\\cargo-damage-photo.png",
+      "public\\evidence\\loads\\L001\\damage-photo.png",
+      "public\\evidence\\loads\\L001\\damage-photo-packet.png",
+      "public\\evidence\\loads\\L001\\equipment-photo.png",
+      "public\\evidence\\loads\\L001\\seal-photo.png"
+    ],
+    "L002": [
+      "public\\evidence\\loads\\L002\\pickup-photo.png",
+      "public\\evidence\\loads\\L002\\cargo-photo.png",
+      "public\\evidence\\loads\\L002\\seal-pickup-photo.png",
+      "public\\evidence\\loads\\L002\\empty-trailer-proof.png",
+      "public\\evidence\\loads\\L002\\delivery-photo.png",
+      "public\\evidence\\loads\\L002\\rfid-dock-proof.png",
+      "public\\evidence\\loads\\L002\\equipment-photo.png",
+      "public\\evidence\\loads\\L002\\seal-photo.png"
+    ],
+    "L003": [
+      "public\\evidence\\loads\\L003\\pickup-photo.png",
+      "public\\evidence\\loads\\L003\\cargo-photo.png",
+      "public\\evidence\\loads\\L003\\seal-pickup-photo.png",
+      "public\\evidence\\loads\\L003\\seal-delivery-photo.png",
+      "public\\evidence\\loads\\L003\\empty-trailer-proof.png",
+      "public\\evidence\\loads\\L003\\delivery-photo.png",
+      "public\\evidence\\loads\\L003\\rfid-dock-proof.png",
+      "public\\evidence\\loads\\L003\\seal-mismatch-photo.png",
+      "public\\evidence\\loads\\L003\\cargo-damage-photo.png",
+      "public\\evidence\\loads\\L003\\damage-photo.png",
+      "public\\evidence\\loads\\L003\\damage-photo-packet.png",
+      "public\\evidence\\loads\\L003\\equipment-photo.png",
+      "public\\evidence\\loads\\L003\\seal-photo.png"
+    ],
+    "L004": [
+      "public\\evidence\\loads\\L004\\pickup-photo.png",
+      "public\\evidence\\loads\\L004\\cargo-photo.png",
+      "public\\evidence\\loads\\L004\\seal-pickup-photo.png",
+      "public\\evidence\\loads\\L004\\empty-trailer-proof.png",
+      "public\\evidence\\loads\\L004\\delivery-photo.png",
+      "public\\evidence\\loads\\L004\\rfid-dock-proof.png",
+      "public\\evidence\\loads\\L004\\seal-mismatch-photo.png",
+      "public\\evidence\\loads\\L004\\cargo-damage-photo.png",
+      "public\\evidence\\loads\\L004\\damage-photo.png",
+      "public\\evidence\\loads\\L004\\damage-photo-packet.png",
+      "public\\evidence\\loads\\L004\\equipment-photo.png",
+      "public\\evidence\\loads\\L004\\seal-photo.png"
+    ],
+    "L005": [
+      "public\\evidence\\loads\\L005\\pickup-photo.png",
+      "public\\evidence\\loads\\L005\\cargo-photo.png",
+      "public\\evidence\\loads\\L005\\seal-pickup-photo.png",
+      "public\\evidence\\loads\\L005\\seal-delivery-photo.png",
+      "public\\evidence\\loads\\L005\\empty-trailer-proof.png",
+      "public\\evidence\\loads\\L005\\delivery-photo.png",
+      "public\\evidence\\loads\\L005\\rfid-dock-proof.png",
+      "public\\evidence\\loads\\L005\\equipment-photo.png",
+      "public\\evidence\\loads\\L005\\seal-photo.png"
+    ],
+    "L006": [
+      "public\\evidence\\loads\\L006\\pickup-photo.png",
+      "public\\evidence\\loads\\L006\\cargo-photo.png",
+      "public\\evidence\\loads\\L006\\seal-pickup-photo.png",
+      "public\\evidence\\loads\\L006\\seal-delivery-photo.png",
+      "public\\evidence\\loads\\L006\\empty-trailer-proof.png",
+      "public\\evidence\\loads\\L006\\delivery-photo.png",
+      "public\\evidence\\loads\\L006\\rfid-dock-proof.png",
+      "public\\evidence\\loads\\L006\\seal-mismatch-photo.png",
+      "public\\evidence\\loads\\L006\\cargo-damage-photo.png",
+      "public\\evidence\\loads\\L006\\damage-photo.png",
+      "public\\evidence\\loads\\L006\\damage-photo-packet.png",
+      "public\\evidence\\loads\\L006\\equipment-photo.png",
+      "public\\evidence\\loads\\L006\\seal-photo.png"
+    ],
+    "L007": [
+      "public\\evidence\\loads\\L007\\pickup-photo.png",
+      "public\\evidence\\loads\\L007\\cargo-photo.png",
+      "public\\evidence\\loads\\L007\\seal-pickup-photo.png",
+      "public\\evidence\\loads\\L007\\empty-trailer-proof.png",
+      "public\\evidence\\loads\\L007\\delivery-photo.png",
+      "public\\evidence\\loads\\L007\\rfid-dock-proof.png",
+      "public\\evidence\\loads\\L007\\equipment-photo.png",
+      "public\\evidence\\loads\\L007\\seal-photo.png"
+    ],
+    "L008": [
+      "public\\evidence\\loads\\L008\\pickup-photo.png",
+      "public\\evidence\\loads\\L008\\cargo-photo.png",
+      "public\\evidence\\loads\\L008\\seal-pickup-photo.png",
+      "public\\evidence\\loads\\L008\\empty-trailer-proof.png",
+      "public\\evidence\\loads\\L008\\delivery-photo.png",
+      "public\\evidence\\loads\\L008\\rfid-dock-proof.png",
+      "public\\evidence\\loads\\L008\\equipment-photo.png",
+      "public\\evidence\\loads\\L008\\seal-photo.png"
+    ],
+    "L009": [
+      "public\\evidence\\loads\\L009\\pickup-photo.png",
+      "public\\evidence\\loads\\L009\\cargo-photo.png",
+      "public\\evidence\\loads\\L009\\seal-pickup-photo.png",
+      "public\\evidence\\loads\\L009\\empty-trailer-proof.png",
+      "public\\evidence\\loads\\L009\\delivery-photo.png",
+      "public\\evidence\\loads\\L009\\rfid-dock-proof.png",
+      "public\\evidence\\loads\\L009\\equipment-photo.png",
+      "public\\evidence\\loads\\L009\\seal-photo.png"
+    ],
+    "L010": [
+      "public\\evidence\\loads\\L010\\pickup-photo.png",
+      "public\\evidence\\loads\\L010\\cargo-photo.png",
+      "public\\evidence\\loads\\L010\\seal-pickup-photo.png",
+      "public\\evidence\\loads\\L010\\seal-delivery-photo.png",
+      "public\\evidence\\loads\\L010\\empty-trailer-proof.png",
+      "public\\evidence\\loads\\L010\\delivery-photo.png",
+      "public\\evidence\\loads\\L010\\rfid-dock-proof.png",
+      "public\\evidence\\loads\\L010\\seal-mismatch-photo.png",
+      "public\\evidence\\loads\\L010\\cargo-damage-photo.png",
+      "public\\evidence\\loads\\L010\\damage-photo.png",
+      "public\\evidence\\loads\\L010\\damage-photo-packet.png",
+      "public\\evidence\\loads\\L010\\equipment-photo.png",
+      "public\\evidence\\loads\\L010\\seal-photo.png"
+    ],
+    "L011": [
+      "public\\evidence\\loads\\L011\\pickup-photo.png",
+      "public\\evidence\\loads\\L011\\cargo-photo.png",
+      "public\\evidence\\loads\\L011\\seal-pickup-photo.png",
+      "public\\evidence\\loads\\L011\\empty-trailer-proof.png",
+      "public\\evidence\\loads\\L011\\delivery-photo.png",
+      "public\\evidence\\loads\\L011\\rfid-dock-proof.png",
+      "public\\evidence\\loads\\L011\\equipment-photo.png",
+      "public\\evidence\\loads\\L011\\seal-photo.png"
+    ]
+  },
+  "coords": {
+    "L001": {
+      "pickupPhoto": {
+        "left": 12,
+        "top": 52,
+        "width": 80,
+        "height": 88,
+        "labelStripFrac": 0.26,
+        "tbd": false
+      },
+      "cargoPhoto": {
+        "left": 100,
+        "top": 52,
+        "width": 80,
+        "height": 88,
+        "labelStripFrac": 0.26,
+        "tbd": false
+      },
+      "sealPickupPhoto": {
+        "left": 188,
+        "top": 52,
+        "width": 80,
+        "height": 88,
+        "labelStripFrac": 0.26,
+        "tbd": false
+      },
+      "sealDeliveryPhoto": {
+        "left": 290,
+        "top": 52,
+        "width": 66,
+        "height": 88,
+        "labelStripFrac": 0.26,
+        "tbd": false
+      },
+      "deliveryEmpty": {
+        "left": 12,
+        "top": 152,
+        "width": 168,
+        "height": 86,
+        "tbd": false
+      },
+      "rfidDockProof": {
+        "left": 188,
+        "top": 152,
+        "width": 168,
+        "height": 86,
+        "labelStripFrac": 0.26,
+        "tbd": false
+      },
+      "sealMismatchPhoto": {
+        "left": 12,
+        "top": 248,
+        "width": 80,
+        "height": 62,
+        "labelStripFrac": 0.26,
+        "tbd": false
+      },
+      "cargoDamagePhoto": {
+        "left": 188,
+        "top": 248,
+        "width": 80,
+        "height": 62,
+        "tbd": false
+      }
+    },
+    "L002": {
+      "pickupPhoto": {
+        "left": 12,
+        "top": 52,
+        "width": 80,
+        "height": 88,
+        "labelStripFrac": 0.26,
+        "tbd": false
+      },
+      "cargoPhoto": {
+        "left": 100,
+        "top": 52,
+        "width": 80,
+        "height": 88,
+        "labelStripFrac": 0.26,
+        "tbd": false
+      },
+      "sealPickupPhoto": {
+        "left": 188,
+        "top": 52,
+        "width": 80,
+        "height": 88,
+        "labelStripFrac": 0.26,
+        "tbd": false
+      },
+      "deliveryEmpty": {
+        "left": 12,
+        "top": 152,
+        "width": 168,
+        "height": 86,
+        "tbd": false
+      },
+      "rfidDockProof": {
+        "left": 188,
+        "top": 152,
+        "width": 168,
+        "height": 86,
+        "labelStripFrac": 0.26,
+        "tbd": false
+      }
+    },
+    "L003": {
+      "pickupPhoto": {
+        "left": 12,
+        "top": 52,
+        "width": 80,
+        "height": 88,
+        "labelStripFrac": 0.26,
+        "tbd": false
+      },
+      "cargoPhoto": {
+        "left": 100,
+        "top": 52,
+        "width": 80,
+        "height": 88,
+        "labelStripFrac": 0.26,
+        "tbd": false
+      },
+      "sealPickupPhoto": {
+        "left": 188,
+        "top": 52,
+        "width": 80,
+        "height": 88,
+        "labelStripFrac": 0.26,
+        "tbd": false
+      },
+      "sealDeliveryPhoto": {
+        "left": 290,
+        "top": 52,
+        "width": 66,
+        "height": 88,
+        "labelStripFrac": 0.26,
+        "tbd": false
+      },
+      "deliveryEmpty": {
+        "left": 12,
+        "top": 152,
+        "width": 168,
+        "height": 86,
+        "tbd": false
+      },
+      "rfidDockProof": {
+        "left": 188,
+        "top": 152,
+        "width": 168,
+        "height": 86,
+        "labelStripFrac": 0.26,
+        "tbd": false
+      },
+      "sealMismatchPhoto": {
+        "left": 12,
+        "top": 248,
+        "width": 80,
+        "height": 62,
+        "labelStripFrac": 0.26,
+        "tbd": false
+      },
+      "cargoDamagePhoto": {
+        "left": 188,
+        "top": 248,
+        "width": 80,
+        "height": 62,
+        "tbd": false
+      }
+    },
+    "L004": {
+      "pickupPhoto": {
+        "left": 12,
+        "top": 52,
+        "width": 80,
+        "height": 88,
+        "labelStripFrac": 0.26,
+        "tbd": false
+      },
+      "cargoPhoto": {
+        "left": 100,
+        "top": 52,
+        "width": 80,
+        "height": 88,
+        "labelStripFrac": 0.26,
+        "tbd": false
+      },
+      "sealPickupPhoto": {
+        "left": 188,
+        "top": 52,
+        "width": 80,
+        "height": 88,
+        "labelStripFrac": 0.26,
+        "tbd": false
+      },
+      "deliveryEmpty": {
+        "left": 12,
+        "top": 152,
+        "width": 168,
+        "height": 86,
+        "tbd": false
+      },
+      "rfidDockProof": {
+        "left": 188,
+        "top": 152,
+        "width": 168,
+        "height": 86,
+        "labelStripFrac": 0.26,
+        "tbd": false
+      },
+      "sealMismatchPhoto": {
+        "left": 12,
+        "top": 248,
+        "width": 80,
+        "height": 62,
+        "labelStripFrac": 0.26,
+        "tbd": false
+      },
+      "cargoDamagePhoto": {
+        "left": 188,
+        "top": 248,
+        "width": 80,
+        "height": 62,
+        "tbd": false
+      }
+    },
+    "L005": {
+      "pickupPhoto": {
+        "left": 12,
+        "top": 52,
+        "width": 80,
+        "height": 88,
+        "labelStripFrac": 0.26,
+        "tbd": false
+      },
+      "cargoPhoto": {
+        "left": 100,
+        "top": 52,
+        "width": 80,
+        "height": 88,
+        "labelStripFrac": 0.26,
+        "tbd": false
+      },
+      "sealPickupPhoto": {
+        "left": 188,
+        "top": 52,
+        "width": 80,
+        "height": 88,
+        "labelStripFrac": 0.26,
+        "tbd": false
+      },
+      "sealDeliveryPhoto": {
+        "left": 290,
+        "top": 52,
+        "width": 66,
+        "height": 88,
+        "labelStripFrac": 0.26,
+        "tbd": false
+      },
+      "deliveryEmpty": {
+        "left": 12,
+        "top": 152,
+        "width": 168,
+        "height": 86,
+        "tbd": false
+      },
+      "rfidDockProof": {
+        "left": 188,
+        "top": 152,
+        "width": 168,
+        "height": 86,
+        "labelStripFrac": 0.26,
+        "tbd": false
+      }
+    },
+    "L006": {
+      "pickupPhoto": {
+        "left": 12,
+        "top": 52,
+        "width": 80,
+        "height": 88,
+        "labelStripFrac": 0.26,
+        "tbd": false
+      },
+      "cargoPhoto": {
+        "left": 100,
+        "top": 52,
+        "width": 80,
+        "height": 88,
+        "labelStripFrac": 0.26,
+        "tbd": false
+      },
+      "sealPickupPhoto": {
+        "left": 188,
+        "top": 52,
+        "width": 80,
+        "height": 88,
+        "labelStripFrac": 0.26,
+        "tbd": false
+      },
+      "sealDeliveryPhoto": {
+        "left": 290,
+        "top": 52,
+        "width": 66,
+        "height": 88,
+        "labelStripFrac": 0.26,
+        "tbd": false
+      },
+      "deliveryEmpty": {
+        "left": 12,
+        "top": 152,
+        "width": 168,
+        "height": 86,
+        "tbd": false
+      },
+      "rfidDockProof": {
+        "left": 188,
+        "top": 152,
+        "width": 168,
+        "height": 86,
+        "labelStripFrac": 0.26,
+        "tbd": false
+      },
+      "sealMismatchPhoto": {
+        "left": 12,
+        "top": 248,
+        "width": 80,
+        "height": 62,
+        "labelStripFrac": 0.26,
+        "tbd": false
+      },
+      "cargoDamagePhoto": {
+        "left": 188,
+        "top": 248,
+        "width": 80,
+        "height": 62,
+        "tbd": false
+      }
+    },
+    "L007": {
+      "pickupPhoto": {
+        "left": 12,
+        "top": 52,
+        "width": 80,
+        "height": 88,
+        "labelStripFrac": 0.26,
+        "tbd": false
+      },
+      "cargoPhoto": {
+        "left": 100,
+        "top": 52,
+        "width": 80,
+        "height": 88,
+        "labelStripFrac": 0.26,
+        "tbd": false
+      },
+      "sealPickupPhoto": {
+        "left": 188,
+        "top": 52,
+        "width": 80,
+        "height": 88,
+        "labelStripFrac": 0.26,
+        "tbd": false
+      },
+      "deliveryEmpty": {
+        "left": 12,
+        "top": 152,
+        "width": 168,
+        "height": 86,
+        "tbd": false
+      },
+      "rfidDockProof": {
+        "left": 188,
+        "top": 152,
+        "width": 168,
+        "height": 86,
+        "labelStripFrac": 0.26,
+        "tbd": false
+      }
+    },
+    "L008": {
+      "pickupPhoto": {
+        "left": 12,
+        "top": 52,
+        "width": 80,
+        "height": 88,
+        "labelStripFrac": 0.26,
+        "tbd": false
+      },
+      "cargoPhoto": {
+        "left": 100,
+        "top": 52,
+        "width": 80,
+        "height": 88,
+        "labelStripFrac": 0.26,
+        "tbd": false
+      },
+      "sealPickupPhoto": {
+        "left": 188,
+        "top": 52,
+        "width": 80,
+        "height": 88,
+        "labelStripFrac": 0.26,
+        "tbd": false
+      },
+      "deliveryEmpty": {
+        "left": 12,
+        "top": 152,
+        "width": 168,
+        "height": 86,
+        "tbd": false
+      },
+      "rfidDockProof": {
+        "left": 188,
+        "top": 152,
+        "width": 168,
+        "height": 86,
+        "labelStripFrac": 0.26,
+        "tbd": false
+      }
+    },
+    "L009": {
+      "pickupPhoto": {
+        "left": 12,
+        "top": 52,
+        "width": 80,
+        "height": 88,
+        "labelStripFrac": 0.26,
+        "tbd": false
+      },
+      "cargoPhoto": {
+        "left": 100,
+        "top": 52,
+        "width": 80,
+        "height": 88,
+        "labelStripFrac": 0.26,
+        "tbd": false
+      },
+      "sealPickupPhoto": {
+        "left": 188,
+        "top": 52,
+        "width": 80,
+        "height": 88,
+        "labelStripFrac": 0.26,
+        "tbd": false
+      },
+      "deliveryEmpty": {
+        "left": 12,
+        "top": 152,
+        "width": 168,
+        "height": 86,
+        "tbd": false
+      },
+      "rfidDockProof": {
+        "left": 188,
+        "top": 152,
+        "width": 168,
+        "height": 86,
+        "labelStripFrac": 0.26,
+        "tbd": false
+      }
+    },
+    "L010": {
+      "pickupPhoto": {
+        "left": 12,
+        "top": 52,
+        "width": 80,
+        "height": 88,
+        "labelStripFrac": 0.26,
+        "tbd": false
+      },
+      "cargoPhoto": {
+        "left": 100,
+        "top": 52,
+        "width": 80,
+        "height": 88,
+        "labelStripFrac": 0.26,
+        "tbd": false
+      },
+      "sealPickupPhoto": {
+        "left": 188,
+        "top": 52,
+        "width": 80,
+        "height": 88,
+        "labelStripFrac": 0.26,
+        "tbd": false
+      },
+      "sealDeliveryPhoto": {
+        "left": 290,
+        "top": 52,
+        "width": 66,
+        "height": 88,
+        "labelStripFrac": 0.26,
+        "tbd": false
+      },
+      "deliveryEmpty": {
+        "left": 12,
+        "top": 152,
+        "width": 168,
+        "height": 86,
+        "tbd": false
+      },
+      "rfidDockProof": {
+        "left": 188,
+        "top": 152,
+        "width": 168,
+        "height": 86,
+        "labelStripFrac": 0.26,
+        "tbd": false
+      },
+      "sealMismatchPhoto": {
+        "left": 12,
+        "top": 248,
+        "width": 80,
+        "height": 62,
+        "labelStripFrac": 0.26,
+        "tbd": false
+      },
+      "cargoDamagePhoto": {
+        "left": 188,
+        "top": 248,
+        "width": 80,
+        "height": 62,
+        "tbd": false
+      }
+    },
+    "L011": {
+      "pickupPhoto": {
+        "left": 12,
+        "top": 52,
+        "width": 80,
+        "height": 88,
+        "labelStripFrac": 0.26,
+        "tbd": false
+      },
+      "cargoPhoto": {
+        "left": 100,
+        "top": 52,
+        "width": 80,
+        "height": 88,
+        "labelStripFrac": 0.26,
+        "tbd": false
+      },
+      "sealPickupPhoto": {
+        "left": 188,
+        "top": 52,
+        "width": 80,
+        "height": 88,
+        "labelStripFrac": 0.26,
+        "tbd": false
+      },
+      "deliveryEmpty": {
+        "left": 12,
+        "top": 152,
+        "width": 168,
+        "height": 86,
+        "tbd": false
+      },
+      "rfidDockProof": {
+        "left": 188,
+        "top": 152,
+        "width": 168,
+        "height": 86,
+        "labelStripFrac": 0.26,
+        "tbd": false
+      }
+    }
+  }
+}

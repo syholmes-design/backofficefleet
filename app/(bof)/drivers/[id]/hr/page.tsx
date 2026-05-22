@@ -1,0 +1,402 @@
+/**
+ * BOF Route Owner:
+ * URL: /drivers/:id/hr
+ * Type: DEMO
+ * Primary component: DriverHRPage
+ * Route map: docs/BOF_ROUTE_MAP.md
+ * Edit this file only for route-level layout/wiring.
+ */
+"use client";
+
+import { use, useEffect, useMemo } from "react";
+import Link from "next/link";
+import { notFound } from "next/navigation";
+import { useBofDemoData } from "@/lib/bof-demo-data-context";
+import { getCanonicalDriverDocuments } from "@/lib/driver-credential-status";
+import {
+  getDriverDocumentByType,
+  getDriverDocumentPacket,
+  getExpectedBankCardPublicPath,
+} from "@/lib/driver-doc-registry";
+import { getDriverOperationalProfile } from "@/lib/driver-operational-profile";
+import { getDriverHrHistory } from "@/lib/driver-hr-history";
+import { DemoBackButton } from "@/components/navigation/DemoBackButton";
+import { DriverHubReviewLink, DriverVaultReviewLink } from "@/components/review/ReviewDeepLinks";
+
+type Props = {
+  params: Promise<{ id: string }>;
+};
+
+type HrDocRow = {
+  label: string;
+  type: string;
+  status: string;
+  href?: string;
+  source?: string;
+  /** Canonical bank-card path when the file is missing (Bank Information only). */
+  expectedCanonicalUrl?: string;
+};
+
+function humanizeStatus(raw?: string) {
+  const key = String(raw ?? "").trim().toUpperCase();
+  if (key === "VALID") return "Ready";
+  if (key === "EXPIRING_SOON") return "Expiring Soon";
+  if (key === "EXPIRED") return "Expired";
+  if (key === "MISSING") return "Missing / Needs Review";
+  if (key === "PENDING_REVIEW" || key === "PENDING") return "Pending Review";
+  if (!key) return "Missing / Needs Review";
+  return key
+    .toLowerCase()
+    .split("_")
+    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+    .join(" ");
+}
+
+function chipClass(status: string) {
+  const key = status.toUpperCase();
+  if (key.includes("EXPIRED")) return "border border-rose-700/60 bg-rose-950/40 text-rose-200";
+  if (key.includes("EXPIRING")) return "border border-amber-700/60 bg-amber-950/40 text-amber-200";
+  if (key.includes("MISSING")) return "border border-rose-700/60 bg-rose-950/35 text-rose-200";
+  if (key.includes("PENDING")) return "border border-amber-700/60 bg-amber-950/35 text-amber-200";
+  return "border border-emerald-700/60 bg-emerald-950/35 text-emerald-200";
+}
+
+function impactChipClass(impact: string) {
+  if (impact === "Safety bonus") return "border border-amber-700/60 bg-amber-950/40 text-amber-200";
+  if (impact === "Settlement") return "border border-orange-700/60 bg-orange-950/40 text-orange-200";
+  if (impact === "Dispatch") return "border border-rose-700/60 bg-rose-950/40 text-rose-200";
+  return "border border-slate-700/70 bg-slate-900/70 text-slate-300";
+}
+
+function sourceLabel(href?: string): string {
+  if (!href) return "No file";
+  const ext = href.split(".").pop()?.toLowerCase();
+  if (ext === "pdf") return "PDF";
+  if (ext === "png" || ext === "jpg" || ext === "jpeg") return "Image";
+  if (ext === "html") return "HTML";
+  return "File";
+}
+
+function Field({ label, value }: { label: string; value?: string }) {
+  return (
+    <div className="space-y-1">
+      <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">{label}</p>
+      <p className="text-sm text-slate-100">{value?.trim() ? value : "—"}</p>
+    </div>
+  );
+}
+
+export default function DriverHRPage({ params }: Props) {
+  const { id } = use(params);
+  const { data } = useBofDemoData();
+  const driver = data.drivers.find((d) => d.id === id);
+  const profile = getDriverOperationalProfile(data, id);
+  const packet = getDriverDocumentPacket(id);
+  const hrHistory = getDriverHrHistory(id);
+
+  if (!driver) {
+    notFound();
+  }
+
+  const hrDocs = useMemo<HrDocRow[]>(() => {
+    const canonical = getCanonicalDriverDocuments(data, id);
+    const byType = new Map<string, (typeof canonical)[number]>(
+      canonical.map((doc) => [doc.type, doc])
+    );
+    const rows: Array<{ label: string; type: string }> = [
+      { label: "Emergency Contact", type: "Emergency Contact" },
+      { label: "CDL", type: "CDL" },
+      { label: "Insurance Card", type: "Insurance Card" },
+      { label: "Medical Card", type: "Medical Card" },
+      { label: "Bank Information", type: "Bank Info" },
+      { label: "MVR", type: "MVR" },
+      { label: "I-9", type: "I-9" },
+      { label: "W-9", type: "W-9" },
+      { label: "FMCSA Compliance", type: "FMCSA" },
+      { label: "FMCSA DQF Compliance Summary", type: "FMCSA DQF Compliance Summary" },
+    ];
+    return rows.map((row) => {
+      const doc = byType.get(row.type);
+      const canonicalUrl = getDriverDocumentByType(id, row.type) ?? doc?.fileUrl;
+      const status = canonicalUrl
+        ? row.type === "FMCSA DQF Compliance Summary"
+          ? "Generated summary on file"
+          : humanizeStatus(doc?.status ?? "VALID")
+        : row.type === "FMCSA DQF Compliance Summary"
+          ? "Missing / Needs generation"
+          : "Missing / Needs Review";
+      const expectedCanonicalUrl =
+        row.type === "Bank Info" && !canonicalUrl ? getExpectedBankCardPublicPath(id) : undefined;
+      return {
+        label: row.label,
+        type: row.type,
+        status,
+        href: canonicalUrl,
+        source: sourceLabel(canonicalUrl),
+        expectedCanonicalUrl,
+      };
+    });
+  }, [data, id]);
+
+  useEffect(() => {
+    if (process.env.NODE_ENV === "production") return;
+    const keyToType: Array<[keyof typeof packet, string]> = [
+      ["i9", "I-9"],
+      ["emergencyContact", "Emergency Contact"],
+      ["fmcsaCompliance", "FMCSA"],
+      ["w9", "W-9"],
+      ["bankInformation", "Bank Info"],
+      ["medicalCard", "Medical Card"],
+      ["cdl", "CDL"],
+      ["insuranceCard", "Insurance Card"],
+      ["mvr", "MVR"],
+    ];
+    keyToType.forEach(([key, type]) => {
+      const packetUrl = packet[key];
+      const canonicalUrl = getDriverDocumentByType(id, type);
+      if (key === "bankInformation") {
+        const expected = getExpectedBankCardPublicPath(id);
+        if (expected && canonicalUrl && canonicalUrl !== expected) {
+          console.warn("[hr-doc-registry] Bank Information URL differs from canonical registry path", {
+            driverId: id,
+            expected,
+            canonicalUrl,
+          });
+        }
+        return;
+      }
+      if ((packetUrl ?? "") !== (canonicalUrl ?? "")) {
+        console.warn("[hr-doc-registry] URL mismatch between packet and canonical registry", {
+          driverId: id,
+          type,
+          packetUrl,
+          canonicalUrl,
+        });
+      }
+    });
+  }, [id, packet]);
+
+  return (
+    <>
+      <div className="bof-page bof-driver-sub-page space-y-5">
+        <DemoBackButton fallbackHref={`/drivers/${id}`} />
+        <section className="rounded-lg border border-slate-800 bg-slate-900/50 p-4">
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <h1 className="text-xl font-semibold text-white">{driver.name} - HR & Administrative Record</h1>
+            <Link
+              href={`/drivers/${id}/profile`}
+              className="text-sm font-medium text-teal-300 hover:text-teal-200 hover:underline"
+            >
+              Open Profile
+            </Link>
+          </div>
+          <p className="mt-1 text-sm text-slate-400">
+            Canonical HR, emergency, and document readiness details keyed by{" "}
+            <span className="font-mono">{id}</span>.
+          </p>
+        </section>
+
+        <section className="rounded-lg border border-slate-800 bg-slate-900/45 p-4">
+          <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
+            <div>
+              <h2 className="text-base font-semibold text-slate-100">HR Operations History</h2>
+              <p className="mt-1 text-xs text-slate-400">
+                Driver file entries tied to operations, safety, settlement, training, and HR review.
+              </p>
+            </div>
+            <span className={`rounded px-2 py-0.5 text-xs font-semibold ${chipClass(hrHistory[0]?.status ?? "Complete")}`}>
+              {hrHistory.filter((row) => row.status === "Open" || row.status === "In Progress").length} active
+            </span>
+          </div>
+          <div className="space-y-2">
+            {hrHistory.map((row) => (
+              <div
+                key={row.id}
+                className="grid gap-3 rounded border border-slate-800 bg-slate-950/55 px-3 py-3 md:grid-cols-[140px_1fr_auto]"
+              >
+                <div>
+                  <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">{row.date}</p>
+                  <p className="mt-1 text-xs font-semibold text-teal-300">{row.category}</p>
+                </div>
+                <div>
+                  <p className="text-sm font-semibold text-slate-100">{row.title}</p>
+                  <p className="mt-1 text-xs leading-5 text-slate-400">{row.detail}</p>
+                  {row.href ? (
+                    <Link href={row.href} className="mt-2 inline-flex text-xs font-semibold text-teal-300 hover:text-teal-200 hover:underline">
+                      Open related workspace
+                    </Link>
+                  ) : null}
+                </div>
+                <div className="flex flex-wrap items-start gap-2 md:justify-end">
+                  <span className={`rounded px-2 py-0.5 text-xs font-semibold ${chipClass(row.status)}`}>
+                    {row.status}
+                  </span>
+                  <span className={`rounded px-2 py-0.5 text-xs font-semibold ${impactChipClass(row.impact)}`}>
+                    {row.impact}
+                  </span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+
+      <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
+        <section className="rounded-lg border border-slate-800 bg-slate-900/40 p-4">
+          <h2 className="mb-3 text-base font-semibold text-slate-100">Emergency Contact (Primary)</h2>
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+            <Field label="Name" value={profile?.primaryEmergencyName} />
+            <Field label="Relationship" value={profile?.primaryEmergencyRelationship} />
+            <Field label="Phone" value={profile?.primaryEmergencyPhone} />
+            <Field label="Email" value={profile?.primaryEmergencyEmail} />
+            <Field label="Address" value={profile?.primaryEmergencyAddress} />
+          </div>
+        </section>
+
+        <section className="rounded-lg border border-slate-800 bg-slate-900/40 p-4">
+          <h2 className="mb-3 text-base font-semibold text-slate-100">Emergency Contact (Secondary)</h2>
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+            <Field label="Name" value={profile?.secondaryEmergencyName} />
+            <Field label="Relationship" value={profile?.secondaryEmergencyRelationship} />
+            <Field label="Phone" value={profile?.secondaryEmergencyPhone} />
+            <Field label="Email" value={profile?.secondaryEmergencyEmail} />
+            <Field label="Address" value={profile?.secondaryEmergencyAddress} />
+          </div>
+        </section>
+
+        <section className="rounded-lg border border-slate-800 bg-slate-900/40 p-4">
+          <h2 className="mb-3 text-base font-semibold text-slate-100">Bank & Direct Deposit</h2>
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+            <Field label="Bank Name" value={profile?.bankName} />
+            <Field label="Account Type" value={profile?.bankAccountType} />
+            <Field label="Last 4 Digits" value={profile?.bankAccountLast4} />
+            <Field label="Payment Preference" value={profile?.paymentPreference} />
+            <Field label="Submission Date" value={profile?.bankSubmissionDate} />
+            <div className="space-y-1">
+              <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">Status</p>
+              <p className="text-sm text-slate-100">Active</p>
+            </div>
+          </div>
+        </section>
+
+        <section className="rounded-lg border border-slate-800 bg-slate-900/40 p-4">
+          <h2 className="mb-3 text-base font-semibold text-slate-100">Recruitment & Pipeline</h2>
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+            <Field label="BOF Vault Roster Status" value="Active - Document Ready" />
+            <Field label="Worker Type Preference" value="Employee Driver" />
+            <Field label="Preferred Lanes" value="Regional OTR" />
+            <Field label="Availability Status" value="Open to Opportunities" />
+            <Field label="Document Readiness Profile" value="Complete - Dispatch Ready" />
+            <Field label="Specialized Trucking Job Boards" value="Connected - DAT & Truckstop" />
+            <Field label="Owner-Operator Networks" value="Regional Partnerships Active" />
+            <Field label="Referral Campaign Status" value="Employee Referral Program Live" />
+            <Field label="Social Media Recruiting" value="LinkedIn & Facebook Active" />
+            <Field label="Fleet Website Applicants" value="Career Portal Integration" />
+            <Field label="Recruiter-Entered Leads" value="3 Active Leads This Month" />
+            <Field label="Candidate-to-Dispatch Readiness" value="72-Hour Onboarding Pipeline" />
+          </div>
+        </section>
+
+        <section className="rounded-lg border border-slate-800 bg-slate-900/40 p-4">
+          <h2 className="mb-3 text-base font-semibold text-slate-100">BOF Vault Integration</h2>
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+            <Field label="Roster Management" value="BOF Vault Driver Roster Connected" />
+            <Field label="Document Pipeline" value="Automated Document Collection" />
+            <Field label="Readiness Scoring" value="Integrated Assessment Scores" />
+            <Field label="Opportunity Matching" value="Lane & Equipment Preference Matching" />
+            <Field label="Onboarding Workflow" value="Digital Document Onboarding" />
+          </div>
+        </section>
+
+        <section className="rounded-lg border border-slate-800 bg-slate-900/40 p-4">
+          <h2 className="mb-3 text-base font-semibold text-slate-100">Training & Development</h2>
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+            <Field label="Short-Form Video Training" value="Mobile-Optimized Micro-Lessons" />
+            <Field label="TikTok-Style Safety Clips" value="60-Second Safety Reminders" />
+            <Field label="Mobile Training Choices" value="iOS & Android Apps Available" />
+            <Field label="Policy Acknowledgment Tracking" value="Digital Acknowledgment System" />
+            <Field label="Proof-Upload Walkthroughs" value="Interactive Document Uploads" />
+            <Field label="Incident-Based Remediation" value="Targeted Training Assignments" />
+            <Field label="Safety Refreshers" value="Quarterly Safety Refreshers" />
+            <Field label="Customer Service Expectations" value="Service Standard Training" />
+            <Field label="Owner-Operator Compliance" value="OO Compliance Training Modules" />
+          </div>
+        </section>
+
+        <section className="rounded-lg border border-slate-800 bg-slate-900/40 p-4">
+          <h2 className="mb-3 text-base font-semibold text-slate-100">Training Delivery Methods</h2>
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+            <Field label="Video Platform" value="BOF Training Hub" />
+            <Field label="Mobile Access" value="Driver Mobile App" />
+            <Field label="In-Cab Training" value="Tablet-Based In-Cab System" />
+            <Field label="Manager Portal" value="Fleet Manager Training Dashboard" />
+            <Field label="Safety Quiz Integration" value="Knowledge Check Integration" />
+            <Field label="Progress Tracking" value="Individual Progress Monitoring" />
+          </div>
+        </section>
+      </div>
+    </div>
+
+      <section className="rounded-lg border border-slate-800 bg-slate-900/40 p-4">
+        <h2 className="mb-3 text-base font-semibold text-slate-100">Tax & Employment</h2>
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+          <Field label="Tax Classification" value={profile?.taxClassification} />
+          <Field label="TIN Type" value={profile?.tinType} />
+          <Field label="Employment Status" value="Onboarding Complete" />
+          <Field label="Handbook Acknowledgment" value="Signed" />
+          <Field label="Orientation Checklist" value="Complete" />
+        </div>
+      </section>
+
+      <section className="rounded-lg border border-slate-800 bg-slate-900/45 p-4">
+        <h2 className="mb-3 text-base font-semibold text-slate-100">HR Packet Documents</h2>
+        <div className="space-y-2">
+          {hrDocs.map((doc) => (
+            <div
+              key={doc.type}
+              className="flex flex-wrap items-center justify-between gap-2 rounded border border-slate-800 bg-slate-950/55 px-3 py-2"
+            >
+              <p className="text-sm font-medium text-slate-100">{doc.label}</p>
+              <div className="flex items-center gap-2">
+                <span className="inline-flex rounded border border-slate-700/70 bg-slate-900/70 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-slate-300">
+                  {doc.source}
+                </span>
+                <span className={`inline-flex rounded px-2 py-0.5 text-xs font-semibold ${chipClass(doc.status)}`}>
+                  {doc.status}
+                </span>
+                {doc.href ? (
+                  <a
+                    href={doc.href}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="text-sm font-medium text-teal-300 hover:text-teal-200 hover:underline"
+                  >
+                    Open
+                  </a>
+                ) : (
+                  <div className="text-right text-xs text-amber-300">
+                    <p>Missing / Needs Review</p>
+                    <div className="mt-1 flex flex-wrap justify-end gap-x-2 gap-y-1">
+                      <DriverHubReviewLink
+                        driverId={id}
+                        className="text-[10px] font-semibold text-teal-300 hover:text-teal-200"
+                      />
+                      <DriverVaultReviewLink
+                        driverId={id}
+                        className="text-[10px] font-semibold text-slate-400 hover:text-slate-200"
+                      />
+                    </div>
+                    {doc.expectedCanonicalUrl ? (
+                      <p className="mt-1 font-mono text-[10px] text-slate-400">
+                        Expected file: {doc.expectedCanonicalUrl}
+                      </p>
+                    ) : null}
+                  </div>
+                )}
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+    </>
+  );
+}

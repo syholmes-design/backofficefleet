@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Use and Automation Governance Policy</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            line-height: 1.6;
+            color: #1a202c;
+            background-color: #f8fafc;
+            margin: 0;
+            padding: 1in;
+        }
+        .paper {
+            max-width: 8.5in;
+            margin: 0 auto;
+            background: white;
+            padding: 0.5in;
+            box-shadow: 0 0.125in 0.25in rgba(0, 0, 0, 0.1);
+            border: 1px solid #e2e8f0;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 0.5in;
+            border-bottom: 2px solid #0BA5A4;
+            padding-bottom: 0.25in;
+        }
+        .title {
+            font-size: 18pt;
+            font-weight: bold;
+            color: #0BA5A4;
+            margin-bottom: 0.125in;
+        }
+        .subtitle {
+            font-size: 12pt;
+            color: #4a5568;
+            margin-bottom: 0.5in;
+        }
+        .metadata {
+            background: #f8fafc;
+            padding: 0.25in;
+            border: 1px solid #e2e8f0;
+            border-radius: 4px;
+            margin-bottom: 0.5in;
+            font-size: 9pt;
+        }
+        .metadata-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.125in;
+        }
+        .metadata-label {
+            font-weight: bold;
+            color: #4a5568;
+        }
+        .section {
+            margin-bottom: 0.5in;
+        }
+        .section-title {
+            font-size: 11pt;
+            font-weight: bold;
+            color: #0BA5A4;
+            margin-bottom: 0.125in;
+            border-bottom: 1px solid #e2e8f0;
+            padding-bottom: 0.0625in;
+        }
+        .policy-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        .policy-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            padding: 0.125in 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        .policy-name {
+            font-weight: bold;
+            color: #2d3748;
+            flex: 1;
+            margin-right: 0.5in;
+        }
+        .policy-value {
+            color: #4a5568;
+            flex: 2;
+        }
+        .signature-block {
+            margin-top: 1in;
+            border-top: 1px solid #e2e8f0;
+            padding-top: 0.5in;
+        }
+        .signature-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5in;
+        }
+        .signature-field {
+            width: 45%;
+        }
+        .signature-line {
+            border-bottom: 1px solid #2d3748;
+            margin-bottom: 0.125in;
+            height: 0.5in;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 1in;
+            padding-top: 0.5in;
+            border-top: 1px solid #e2e8f0;
+            font-size: 9pt;
+            color: #718096;
+        }
+    </style>
+</head>
+<body>
+    <div class="paper">
+        <div class="header">
+            <div class="title">AI Use and Automation Governance Policy</div>
+            <div class="subtitle">Enterprise AI Governance and Automation Management Framework</div>
+        </div>
+
+        <div class="metadata">
+            <div class="metadata-row">
+                <span class="metadata-label">Document ID:</span>
+                <span>BOF-AIG-007</span>
+            </div>
+            <div class="metadata-row">
+                <span class="metadata-label">Version:</span>
+                <span>2.0</span>
+            </div>
+            <div class="metadata-row">
+                <span class="metadata-label">Effective Date:</span>
+                <span>November 1, 2025</span>
+            </div>
+            <div class="metadata-row">
+                <span class="metadata-label">Owner Team:</span>
+                <span>Information Security & Innovation</span>
+            </div>
+            <div class="metadata-row">
+                <span class="metadata-label">Approved By:</span>
+                <span>Chief Technology Officer</span>
+            </div>
+            <div class="metadata-row">
+                <span class="metadata-label">Review Cadence:</span>
+                <span>Quarterly</span>
+            </div>
+            <div class="metadata-row">
+                <span class="metadata-label">Classification:</span>
+                <span>Internal Use</span>
+            </div>
+        </div>
+
+        <div class="section">
+            <div class="section-title">Policy Overview</div>
+            <p style="font-size: 10pt; margin-bottom: 0.25in;">
+                This AI Use and Automation Governance Policy establishes guidelines for responsible AI tool use, automation implementation, and data processing while maintaining security, privacy, and compliance with regulatory requirements.
+            </p>
+        </div>
+
+        <div class="section">
+            <div class="section-title">AI Use Principles</div>
+            <ul class="policy-list">
+                <li>
+                    <div class="policy-item">
+                        <span class="policy-name">Business Purpose</span>
+                        <span class="policy-value">AI tools used for legitimate business purposes only</span>
+                    </div>
+                </li>
+                <li>
+                    <div class="policy-item">
+                        <span class="policy-name">Human Oversight</span>
+                        <span class="policy-value">Human review required for all AI-generated decisions</span>
+                    </div>
+                </li>
+                <li>
+                    <div class="policy-item">
+                        <span class="policy-name">Data Privacy</span>
+                        <span class="policy-value">No public/personal AI tools for Restricted/Confidential data</span>
+                    </div>
+                </li>
+                <li>
+                    <div class="policy-item">
+                        <span class="policy-name">Transparency</span>
+                        <span class="policy-value">Clear disclosure of AI use and data processing</span>
+                    </div>
+                </li>
+                <li>
+                    <div class="policy-item">
+                        <span class="policy-name">Accountability</span>
+                        <span class="policy-value">Clear responsibility for AI systems and decisions</span>
+                    </div>
+                </li>
+            </ul>
+        </div>
+
+        <div class="section">
+            <div class="section-title">3. Approved AI Applications and Use Cases</div>
+            <p style="font-size: 10pt; margin-bottom: 0.25in;">
+                BOF maintains an approved inventory of AI tools and applications that have undergone security and compliance review.
+            </p>
+            <ul class="policy-list">
+                <li>
+                    <div class="policy-item">
+                        <span class="policy-name">Document Processing</span>
+                        <span class="policy-value">Company-approved document analysis, summarization, and classification tools</span>
+                    </div>
+                </li>
+                <li>
+                    <div class="policy-item">
+                        <span class="policy-name">Data Analysis</span>
+                        <span class="policy-value">Approved business intelligence, analytics, and reporting platforms</span>
+                    </div>
+                </li>
+                <li>
+                    <div class="policy-item">
+                        <span class="policy-name">Route Optimization</span>
+                        <span class="policy-value">Company-approved routing, logistics optimization, and fuel efficiency tools</span>
+                    </div>
+                </li>
+                <li>
+                    <div class="policy-item">
+                        <span class="policy-name">Predictive Maintenance</span>
+                        <span class="policy-value">Approved predictive maintenance, vehicle health monitoring, and scheduling systems</span>
+                    </div>
+                </li>
+                <li>
+                    <div class="policy-item">
+                        <span class="policy-name">Customer Service</span>
+                        <span class="policy-value">Approved customer communication, chatbots, and support automation</span>
+                    </div>
+                </li>
+                <li>
+                    <div class="policy-item">
+                        <span class="policy-name">Fraud Detection</span>
+                        <span class="policy-value">AI-powered fraud detection and anomaly identification systems</span>
+                    </div>
+                </li>
+            </ul>
+        </div>
+
+        <div class="section">
+            <div class="section-title">4. Prohibited AI Use and Restrictions</div>
+            <p style="font-size: 10pt; margin-bottom: 0.25in;">
+                Certain AI applications and use cases are prohibited due to security, privacy, or regulatory concerns.
+            </p>
+            <ul class="policy-list">
+                <li>
+                    <div class="policy-item">
+                        <span class="policy-name">Personal AI Tools</span>
+                        <span class="policy-value">No unauthorized personal AI tools on company systems or devices</span>
+                    </div>
+                </li>
+                <li>
+                    <div class="policy-item">
+                        <span class="policy-name">Public AI Services</span>
+                        <span class="policy-value">No public AI services for Restricted/Confidential data processing</span>
+                    </div>
+                </li>
+                <li>
+                    <div class="policy-item">
+                        <span class="policy-name">Unapproved Automation</span>
+                        <span class="policy-value">No automation without proper security review and approval</span>
+                    </div>
+                </li>
+                <li>
+                    <div class="policy-item">
+                        <span class="policy-name">Data Training</span>
+                        <span class="policy-value">No training AI models on company data without explicit authorization</span>
+                    </div>
+                </li>
+                <li>
+                    <div class="policy-item">
+                        <span class="policy-name">Vendor AI Tools</span>
+                        <span class="policy-value">No vendor AI tools without security assessment and approval</span>
+                    </div>
+                </li>
+                <li>
+                    <div class="policy-item">
+                        <span class="policy-name">Biometric AI</span>
+                        <span class="policy-value">No biometric data processing without explicit consent and compliance</span>
+                    </div>
+                </li>
+            </ul>
+        </div>
+
+        <div class="section">
+            <div class="section-title">5. Human Oversight and Decision Making</div>
+            <p style="font-size: 10pt; margin-bottom: 0.25in;">
+                Human oversight is required for all AI-generated decisions and recommendations to ensure accountability and accuracy.
+            </p>
+            <ul class="policy-list">
+                <li>
+                    <div class="policy-item">
+                        <span class="policy-name">Human Review Required</span>
+                        <span class="policy-value">All AI summaries, classifications, and recommendations require human review</span>
+                    </div>
+                </li>
+                <li>
+                    <div class="policy-item">
+                        <span class="policy-name">No Automated Decisions</span>
+                        <span class="policy-value">No final HR, payroll, safety, disciplinary, compliance, driver eligibility, dispatch-blocking, or financial decisions by AI alone</span>
+                    </div>
+                </li>
+                <li>
+                    <div class="policy-item">
+                        <span class="policy-name">Document Extraction</span>
+                        <span class="policy-value">Human verification of all AI-generated document extractions and classifications</span>
+                    </div>
+                </li>
+                <li>
+                    <div class="policy-item">
+                        <span class="policy-name">Calculation Verification</span>
+                        <span class="policy-value">Human verification of all AI-generated calculations and financial recommendations</span>
+                    </div>
+                </li>
+                <li>
+                    <div class="policy-item">
+                        <span class="policy-name">Critical Decision Review</span>
+                        <span class="policy-value">Multi-level human review for high-impact AI recommendations</span>
+                    </div>
+                </li>
+            </ul>
+        </div>
+
+        <div class="section">
+            <div class="section-title">6. Security and Privacy Controls</div>
+            <p style="font-size: 10pt; margin-bottom: 0.25in;">
+                Comprehensive security controls protect AI systems, data, and outputs from unauthorized access and misuse.
+            </p>
+            <ul class="policy-list">
+                <li>
+                    <div class="policy-item">
+                        <span class="policy-name">Access Controls</span>
+                        <span class="policy-value">Multi-factor authentication and least privilege for AI system access</span>
+                    </div>
+                </li>
+                <li>
+                    <div class="policy-item">
+                        <span class="policy-name">Data Encryption</span>
+                        <span class="policy-value">End-to-end encryption for all AI-processed data and outputs</span>
+                    </div>
+                </li>
+                <li>
+                    <div class="policy-item">
+                        <span class="policy-name">Audit Logging</span>
+                        <span class="policy-value">Comprehensive logging of AI system access, usage, and decisions</span>
+                    </div>
+                </li>
+                <li>
+                    <div class="policy-item">
+                        <span class="policy-name">Prompt Management</span>
+                        <span class="policy-value">Secure prompt storage, version control, and access logging</span>
+                    </div>
+                </li>
+                <li>
+                    <div class="policy-item">
+                        <span class="policy-name">Output Handling</span>
+                        <span class="policy-value">Secure handling, classification, and review of AI-generated outputs</span>
+                    </div>
+                </li>
+                <li>
+                    <div class="policy-item">
+                        <span class="policy-name">Model Security</span>
+                        <span class="policy-value">Secure model storage, versioning, and access controls</span>
+                    </div>
+                </li>
+            </ul>
+        </div>
+
+        <div class="section">
+            <div class="section-title">7. Cloud AI Services and SaaS Controls</div>
+            <p style="font-size: 10pt; margin-bottom: 0.25in;">
+                Cloud AI services must meet strict security and compliance requirements before being approved for use.
+            </p>
+            <ul class="policy-list">
+                <li>
+                    <div class="policy-item">
+                        <span class="policy-name">Access Management</span>
+                        <span class="policy-value">Centralized access control and identity management for cloud AI services</span>
+                    </div>
+                </li>
+                <li>
+                    <div class="policy-item">
+                        <span class="policy-name">Data Residency</span>
+                        <span class="policy-value">Controlled data residency and jurisdiction compliance for cloud AI</span>
+                    </div>
+                </li>
+                <li>
+                    <div class="policy-item">
+                        <span class="policy-name">Vendor Assessment</span>
+                        <span class="policy-value">Comprehensive security assessment for all AI service vendors</span>
+                    </div>
+                </li>
+                <li>
+                    <div class="policy-item">
+                        <span class="policy-name">Exit Planning</span>
+                        <span class="policy-value">Data extraction and migration planning for service termination</span>
+                    </div>
+                </li>
+                <li>
+                    <div class="policy-item">
+                        <span class="policy-name">Service Level Agreements</span>
+                        <span class="policy-value">SLAs with security, privacy, and availability requirements</span>
+                    </div>
+                </li>
+            </ul>
+        </div>
+
+        <div class="section">
+            <div class="section-title">8. Data Protection and Training Restrictions</div>
+            <p style="font-size: 10pt; margin-bottom: 0.25in;">
+                Strict controls govern how company data can be used for AI training and model development.
+            </p>
+            <ul class="policy-list">
+                <li>
+                    <div class="policy-item">
+                        <span class="policy-name">Data Training Prohibition</span>
+                        <span class="policy-value">No training AI models on company data without explicit authorization</span>
+                    </div>
+                </li>
+                <li>
+                    <div class="policy-item">
+                        <span class="policy-name">Vendor AI Restrictions</span>
+                        <span class="policy-value">Prohibit vendors from using company data for AI training without consent</span>
+                    </div>
+                </li>
+                <li>
+                    <div class="policy-item">
+                        <span class="policy-name">Data Sharing Limits</span>
+                        <span class="policy-value">Strict controls on data sharing with AI service providers</span>
+                    </div>
+                </li>
+                <li>
+                    <div class="policy-item">
+                        <span class="policy-name">Anonymization Requirements</span>
+                        <span class="policy-value">Data anonymization and pseudonymization for AI training datasets</span>
+                    </div>
+                </li>
+                <li>
+                    <div class="policy-item">
+                        <span class="policy-name">Consent Management</span>
+                        <span class="policy-value">Explicit consent requirements for data used in AI training</span>
+                    </div>
+                </li>
+            </ul>
+        </div>
+
+        <div class="section">
+            <div class="section-title">9. BOF System Integration and Use Cases</div>
+            <p style="font-size: 10pt; margin-bottom: 0.25in;">
+                AI applications are integrated with BOF systems to enhance operational efficiency and decision support.
+            </p>
+            <ul class="policy-list">
+                <li>
+                    <div class="policy-item">
+                        <span class="policy-name">Dispatch Integration</span>
+                        <span class="policy-value">AI tools for route optimization, fuel efficiency, and dispatch decision support</span>
+                    </div>
+                </li>
+                <li>
+                    <div class="policy-item">
+                        <span class="policy-name">Driver Data Protection</span>
+                        <span class="policy-value">AI-assisted driver data analysis with privacy controls and human oversight</span>
+                    </div>
+                </li>
+                <li>
+                    <div class="policy-item">
+                        <span class="policy-name">Document Management</span>
+                        <span class="policy-value">AI-powered document classification, extraction, and workflow automation</span>
+                    </div>
+                </li>
+                <li>
+                    <div class="policy-item">
+                        <span class="policy-name">Financial Analysis</span>
+                        <span class="policy-value">AI tools for financial data analysis with human verification</span>
+                    </div>
+                </li>
+                <li>
+                    <div class="policy-item">
+                        <span class="policy-name">Safety Monitoring</span>
+                        <span class="policy-value">AI-assisted safety monitoring and risk identification systems</span>
+                    </div>
+                </li>
+            </ul>
+        </div>
+
+        <div class="section">
+            <div class="section-title">10. Incident Management and Response</div>
+            <p style="font-size: 10pt; margin-bottom: 0.25in;">
+                Specific incident response procedures address AI-related security and privacy incidents.
+            </p>
+            <ul class="policy-list">
+                <li>
+                    <div class="policy-item">
+                        <span class="policy-name">AI Incidents</span>
+                        <span class="policy-value">Rapid reporting of AI-related security and privacy incidents</span>
+                    </div>
+                </li>
+                <li>
+                    <div class="policy-item">
+                        <span class="policy-name">Data Breaches</span>
+                        <span class="policy-value">Immediate reporting of AI-related data breaches and exposures</span>
+                    </div>
+                </li>
+                <li>
+                    <div class="policy-item">
+                        <span class="policy-name">Privacy Violations</span>
+                        <span class="policy-value">Reporting mechanisms for AI-related privacy violations</span>
+                    </div>
+                </li>
+                <li>
+                    <div class="policy-item">
+                        <span class="policy-name">Model Failures</span>
+                        <span class="policy-value">Procedures for AI model failures, bias detection, and corrections</span>
+                    </div>
+                </li>
+                <li>
+                    <div class="policy-item">
+                        <span class="policy-name">Security Issues</span>
+                        <span class="policy-value">Escalation procedures for AI-related security issues and vulnerabilities</span>
+                    </div>
+                </li>
+            </ul>
+        </div>
+
+        <div class="section">
+            <div class="section-title">11. Training and Awareness</div>
+            <p style="font-size: 10pt; margin-bottom: 0.25in;">
+                Regular training ensures employees understand AI governance requirements and responsible use practices.
+            </p>
+            <p style="font-size: 10pt; margin-bottom: 0.25in;">
+                <strong>Training Requirements:</strong>
+            </p>
+            <ul style="font-size: 10pt; margin-bottom: 0.25in; padding-left: 0.25in;">
+                <li>Annual AI governance and responsible use training for all employees</li>
+                <li>Role-specific training for AI system developers and operators</li>
+                <li>Security awareness training focused on AI-related risks and threats</li>
+                <li>Regular updates on new AI tools, policies, and procedures</li>
+                <li>Incident response training for AI-related security events</li>
+            </ul>
+        </div>
+
+        <div class="signature-block">
+            <div class="section-title">Policy Approval and Implementation</div>
+            <div class="signature-row">
+                <div class="signature-field">
+                    <div class="signature-line"></div>
+                    <p style="font-size: 9pt; text-align: center;">Chief Technology Officer</p>
+                    <p style="font-size: 8pt; text-align: center;">Date: November 1, 2025</p>
+                </div>
+                <div class="signature-field">
+                    <div class="signature-line"></div>
+                    <p style="font-size: 9pt; text-align: center;">Chief Information Security Officer</p>
+                    <p style="font-size: 8pt; text-align: center;">Date: November 1, 2025</p>
+                </div>
+            </div>
+            <div class="signature-row">
+                <div class="signature-field">
+                    <div class="signature-line"></div>
+                    <p style="font-size: 9pt; text-align: center;">Chief Innovation Officer</p>
+                    <p style="font-size: 8pt; text-align: center;">Date: November 1, 2025</p>
+                </div>
+                <div class="signature-field">
+                    <div class="signature-line"></div>
+                    <p style="font-size: 9pt; text-align: center;">Next Review Date</p>
+                    <p style="font-size: 8pt; text-align: center;">February 1, 2026</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer">
+            BackOfficeFleet operations document. Routed for internal workflow review.
+        </div>
+    </div>
+</body>
+</html>

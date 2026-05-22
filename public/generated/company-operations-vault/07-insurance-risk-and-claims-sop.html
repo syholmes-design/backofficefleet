@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Claims, Proof Packet & Insurance Escalation SOP</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            line-height: 1.6;
+            color: #1a202c;
+            background-color: #f8fafc;
+            margin: 0;
+            padding: 1in;
+        }
+        .paper {
+            max-width: 8.5in;
+            margin: 0 auto;
+            background: white;
+            padding: 0.5in;
+            box-shadow: 0 0.125in 0.25in rgba(0, 0, 0, 0.1);
+            border: 1px solid #e2e8f0;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 0.5in;
+            border-bottom: 2px solid #0BA5A4;
+            padding-bottom: 0.25in;
+        }
+        .title {
+            font-size: 18pt;
+            font-weight: bold;
+            color: #0BA5A4;
+            margin-bottom: 0.125in;
+        }
+        .subtitle {
+            font-size: 12pt;
+            color: #4a5568;
+            margin-bottom: 0.5in;
+        }
+        .section {
+            margin-bottom: 0.5in;
+        }
+        .section-title {
+            font-size: 11pt;
+            font-weight: bold;
+            color: #0BA5A4;
+            margin-bottom: 0.125in;
+            border-bottom: 1px solid #e2e8f0;
+            padding-bottom: 0.0625in;
+        }
+        .sop-list {
+            list-style: none;
+            padding-left: 0.25in;
+        }
+        .sop-list li {
+            margin-bottom: 0.125in;
+            font-size: 9pt;
+        }
+        .sop-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.125in;
+        }
+        .sop-name {
+            font-weight: 600;
+            color: #1a202c;
+            min-width: 3in;
+        }
+        .sop-value {
+            color: #4a5568;
+            font-style: italic;
+        }
+        .procedure-box {
+            background-color: #f8fafc;
+            border: 1px solid #e2e8f0;
+            padding: 0.125in;
+            margin-bottom: 0.25in;
+            font-size: 8pt;
+        }
+        .footer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: #f7fafc;
+            border-top: 1px solid #e2e8f0;
+            padding: 0.125in;
+            text-align: center;
+            font-size: 8pt;
+            color: #4a5568;
+        }
+    </style>
+</head>
+<body>
+    <div class="paper">
+        <div class="header">
+            <div class="title">Delta Advanced Trucking, Inc.</div>
+            <div class="subtitle">Claims, Proof Packet & Insurance Escalation SOP</div>
+        </div>
+
+        <div class="section">
+            <div class="section-title">SOP Overview</div>
+            <p style="font-size: 10pt; margin-bottom: 0.25in;">
+                This Claims, Proof Packet & Insurance Escalation SOP establishes the standard operating procedure for identifying, documenting, escalating, and resolving incidents that may affect cargo condition, delivery proof, insurance exposure, dispatch eligibility, settlement release, or factoring packet readiness.
+            </p>
+            <p style="font-size: 10pt; margin-bottom: 0.25in;">
+                The purpose of this SOP is to protect Delta Advanced Trucking, Inc.'s interests, preserve claim recovery rights, maintain insurance and regulatory readiness, and ensure that every claim-related event is supported by a complete operational proof packet.
+            </p>
+            <p style="font-size: 10pt; margin-bottom: 0.25in;">
+                BOF is used as the operating platform to connect dispatch, safety, maintenance, compliance, settlement, finance, and document workflows. BOF should be treated as the system of record for claim status, proof readiness, settlement holds, and manager action tracking.
+            </p>
+        </div>
+
+        <div class="section">
+            <div class="section-title">Incident Intake and Claim Trigger</div>
+            <p style="font-size: 10pt; margin-bottom: 0.25in;">
+                A claim review must be opened when any event creates possible exposure to cargo loss, cargo damage, delivery dispute, customer chargeback, insurance claim, safety violation, seal mismatch, missing proof, or settlement hold.
+            </p>
+            <table style="width: 100%; border-collapse: collapse; margin-top: 8px;">
+                <tbody>
+                    <tr>
+                        <th style="border: 1px solid #999; padding: 6px; font-size: 10pt; text-align: left; background: #f3f6f9;">Trigger</th>
+                        <th style="border: 1px solid #999; padding: 6px; font-size: 10pt; text-align: left; background: #f3f6f9;">Required Action</th>
+                    </tr>
+                    <tr>
+                        <td style="border: 1px solid #999; padding: 6px; font-size: 9pt;">Cargo damage reported</td>
+                        <td style="border: 1px solid #999; padding: 6px; font-size: 9pt;">Open claim review, photograph damage, preserve BOL/POD, and notify manager.</td>
+                    </tr>
+                    <tr>
+                        <td style="border: 1px solid #999; padding: 6px; font-size: 9pt;">Seal mismatch or broken seal</td>
+                        <td style="border: 1px solid #999; padding: 6px; font-size: 9pt;">Escalate to dispatch, safety, claims, and insurance review if cargo integrity is affected.</td>
+                    </tr>
+                    <tr>
+                        <td style="border: 1px solid #999; padding: 6px; font-size: 9pt;">Missing POD, BOL, or delivery signature</td>
+                        <td style="border: 1px solid #999; padding: 6px; font-size: 9pt;">Place settlement release on hold until required proof is recovered or approved by management.</td>
+                    </tr>
+                    <tr>
+                        <td style="border: 1px solid #999; padding: 6px; font-size: 9pt;">Accident, collision, theft, cargo shift, or safety event</td>
+                        <td style="border: 1px solid #999; padding: 6px; font-size: 9pt;">Open safety event, collect evidence, obtain driver statement, and determine insurance exposure.</td>
+                    </tr>
+                    <tr>
+                        <td style="border: 1px solid #999; padding: 6px; font-size: 9pt;">Customer dispute or short payment</td>
+                        <td style="border: 1px solid #999; padding: 6px; font-size: 9pt;">Attach invoice, rate confirmation, BOL, POD, accessorial support, and customer correspondence.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="section">
+            <div class="section-title">Required Claim Packet Contents</div>
+            <p style="font-size: 10pt; margin-bottom: 0.25in;">
+                A claim packet must be assembled before the claim is closed, submitted to insurance, released for settlement, or included in a factoring packet. The packet should include all documents reasonably available for the event.
+            </p>
+            <ul class="sop-list">
+                <li>
+                    <div class="sop-item">
+                        <span class="sop-name">Incident report</span>
+                        <span class="sop-value">Detailed incident documentation with timeline and location</span>
+                    </div>
+                </li>
+                <li>
+                    <div class="sop-item">
+                        <span class="sop-name">Driver statement</span>
+                        <span class="sop-value">First-hand account of events and immediate actions taken</span>
+                    </div>
+                </li>
+                <li>
+                    <div class="sop-item">
+                        <span class="sop-name">Witness statement, if available</span>
+                        <span class="sop-value">Third-party observations and contact information</span>
+                    </div>
+                </li>
+                <li>
+                    <div class="sop-item">
+                        <span class="sop-name">Photos, dashcam stills, or video evidence</span>
+                        <span class="sop-value">Time-stamped visual documentation of damage and conditions</span>
+                    </div>
+                </li>
+                <li>
+                    <div class="sop-item">
+                        <span class="sop-name">Bill of Lading</span>
+                        <span class="sop-value">Original signed BOL with condition notes</span>
+                    </div>
+                </li>
+                <li>
+                    <div class="sop-item">
+                        <span class="sop-name">Proof of Delivery</span>
+                        <span class="sop-value">Signed POD with delivery confirmation and any exceptions noted</span>
+                    </div>
+                </li>
+                <li>
+                    <div class="sop-item">
+                        <span class="sop-name">Rate confirmation</span>
+                        <span class="sop-value">Original rate confirmation with terms and conditions</span>
+                    </div>
+                </li>
+                <li>
+                    <div class="sop-item">
+                        <span class="sop-name">Customer invoice</span>
+                        <span class="sop-value">Invoice with charges and any disputed items highlighted</span>
+                    </div>
+                </li>
+                <li>
+                    <div class="sop-item">
+                        <span class="sop-name">Seal verification record</span>
+                        <span class="sop-value">Seal numbers and verification at pickup and delivery</span>
+                    </div>
+                </li>
+                <li>
+                    <div class="sop-item">
+                        <span class="sop-name">RFID or dock proof record, if available</span>
+                        <span class="sop-value">RFID scan logs and dock proof documentation</span>
+                    </div>
+                </li>
+                <li>
+                    <div class="sop-item">
+                        <span class="sop-name">Repair estimate or damage assessment</span>
+                        <span class="sop-value">Professional repair estimates and damage valuations</span>
+                    </div>
+                </li>
+                <li>
+                    <div class="sop-item">
+                        <span class="sop-name">Police report, if applicable</span>
+                        <span class="sop-value">Official police report for accidents or theft incidents</span>
+                    </div>
+                </li>
+                <li>
+                    <div class="sop-item">
+                        <span class="sop-name">Insurance notification</span>
+                        <span class="sop-value">Formal insurance notice and claim number assignment</span>
+                    </div>
+                </li>
+                <li>
+                    <div class="sop-item">
+                        <span class="sop-name">Claim notes and adjuster communication</span>
+                        <span class="sop-value">All correspondence with insurance adjusters and claim notes</span>
+                    </div>
+                </li>
+                <li>
+                    <div class="sop-item">
+                        <span class="sop-name">Settlement hold record</span>
+                        <span class="sop-value">Documentation of any settlement holds and release conditions</span>
+                    </div>
+                </li>
+                <li>
+                    <div class="sop-item">
+                        <span class="sop-name">Factoring packet exception note, if applicable</span>
+                        <span class="sop-value">Exception language for factoring packet submission</span>
+                    </div>
+                </li>
+            </ul>
+        </div>
+
+        <div class="section">
+            <div class="section-title">Cargo Damage and Proof Documentation</div>
+            <p style="font-size: 10pt; margin-bottom: 0.25in;">
+                Cargo damage must be documented with clear, time-stamped photos before cargo is moved, repaired, disposed of, or transferred. Whenever possible, photos should show the cargo, trailer condition, seal, pallet configuration, packaging damage, and identifying labels or shipment numbers.
+            </p>
+            <table style="width: 100%; border-collapse: collapse; margin-top: 8px;">
+                <tbody>
+                    <tr>
+                        <th style="border: 1px solid #999; padding: 6px; font-size: 10pt; text-align: left; background: #f3f6f9;">Evidence Type</th>
+                        <th style="border: 1px solid #999; padding: 6px; font-size: 10pt; text-align: left; background: #f3f6f9;">Purpose</th>
+                    </tr>
+                    <tr>
+                        <td style="border: 1px solid #999; padding: 6px; font-size: 9pt;">Pre-trip cargo photo</td>
+                        <td style="border: 1px solid #999; padding: 6px; font-size: 9pt;">Shows condition before departure or at pickup.</td>
+                    </tr>
+                    <tr>
+                        <td style="border: 1px solid #999; padding: 6px; font-size: 9pt;">Post-trip cargo photo</td>
+                        <td style="border: 1px solid #999; padding: 6px; font-size: 9pt;">Shows condition at delivery.</td>
+                    </tr>
+                    <tr>
+                        <td style="border: 1px solid #999; padding: 6px; font-size: 9pt;">Seal pickup photo</td>
+                        <td style="border: 1px solid #999; padding: 6px; font-size: 9pt;">Confirms seal number and trailer integrity at origin.</td>
+                    </tr>
+                    <tr>
+                        <td style="border: 1px solid #999; padding: 6px; font-size: 9pt;">Seal delivery photo</td>
+                        <td style="border: 1px solid #999; padding: 6px; font-size: 9pt;">Confirms seal number and trailer integrity at delivery.</td>
+                    </tr>
+                    <tr>
+                        <td style="border: 1px solid #999; padding: 6px; font-size: 9pt;">Empty trailer photo</td>
+                        <td style="border: 1px solid #999; padding: 6px; font-size: 9pt;">Confirms cargo was fully unloaded and no freight remained onboard.</td>
+                    </tr>
+                    <tr>
+                        <td style="border: 1px solid #999; padding: 6px; font-size: 9pt;">Damage photo packet</td>
+                        <td style="border: 1px solid #999; padding: 6px; font-size: 9pt;">Supports claim value, customer dispute review, and insurance submission.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="section">
+            <div class="section-title">RFID / Seal Mismatch Escalation</div>
+            <p style="font-size: 10pt; margin-bottom: 0.25in;">
+                Any RFID exception, missing scan, seal mismatch, or geofence irregularity must be reviewed before the load is treated as proof-complete. BOF should flag the event and connect it to the related load, driver, asset, settlement, and claim record.
+            </p>
+            <p style="font-size: 10pt; margin-bottom: 0.25in;">
+                A seal or RFID exception may require dispatch review, insurance review, customer notification, settlement hold, or factoring packet exception language.
+            </p>
+        </div>
+
+        <div class="section">
+            <div class="section-title">Dispatch Hold Rules</div>
+            <p style="font-size: 10pt; margin-bottom: 0.25in;">
+                Dispatch may be blocked or placed into manager review when an active claim, safety event, cargo proof gap, missing photo, maintenance issue, compliance issue, or RFID/seal exception affects the driver, load, or asset.
+            </p>
+            <p style="font-size: 10pt; margin-bottom: 0.25in;">
+                A dispatch hold should identify the affected load, driver, trailer or asset, reason for the hold, required fix, responsible owner, and release condition.
+            </p>
+        </div>
+
+        <div class="section">
+            <div class="section-title">Settlement Hold Rules</div>
+            <p style="font-size: 10pt; margin-bottom: 0.25in;">
+                Settlement release may be held when required proof is incomplete or when an unresolved incident affects payment accuracy, chargeback exposure, claim recovery, customer invoice approval, or factoring packet readiness.
+            </p>
+            <table style="width: 100%; border-collapse: collapse; margin-top: 8px;">
+                <tbody>
+                    <tr>
+                        <th style="border: 1px solid #999; padding: 6px; font-size: 10pt; text-align: left; background: #f3f6f9;">Settlement Hold Trigger</th>
+                        <th style="border: 1px solid #999; padding: 6px; font-size: 10pt; text-align: left; background: #f3f6f9;">Release Condition</th>
+                    </tr>
+                    <tr>
+                        <td style="border: 1px solid #999; padding: 6px; font-size: 9pt;">Missing POD or delivery signature</td>
+                        <td style="border: 1px solid #999; padding: 6px; font-size: 9pt;">POD recovered or manager override documented.</td>
+                    </tr>
+                    <tr>
+                        <td style="border: 1px solid #999; padding: 6px; font-size: 9pt;">Missing BOL</td>
+                        <td style="border: 1px solid #999; padding: 6px; font-size: 9pt;">BOL uploaded and matched to load record.</td>
+                    </tr>
+                    <tr>
+                        <td style="border: 1px solid #999; padding: 6px; font-size: 9pt;">Open cargo claim</td>
+                        <td style="border: 1px solid #999; padding: 6px; font-size: 9pt;">Claim exposure reviewed and hold amount approved.</td>
+                    </tr>
+                    <tr>
+                        <td style="border: 1px solid #999; padding: 6px; font-size: 9pt;">Seal mismatch</td>
+                        <td style="border: 1px solid #999; padding: 6px; font-size: 9pt;">Seal evidence reviewed and exception resolved.</td>
+                    </tr>
+                    <tr>
+                        <td style="border: 1px solid #999; padding: 6px; font-size: 9pt;">Accessorial dispute</td>
+                        <td style="border: 1px solid #999; padding: 6px; font-size: 9pt;">Lumper, detention, layover, or toll support attached.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="section">
+            <div class="section-title">Factoring Packet Impact</div>
+            <p style="font-size: 10pt; margin-bottom: 0.25in;">
+                A post-trip factoring packet should not be marked ready for submission unless the required invoice, rate confirmation, BOL, POD, delivery proof, and accessorial support are complete.
+            </p>
+            <p style="font-size: 10pt; margin-bottom: 0.25in;">
+                If a claim, cargo exception, missing POD, missing BOL, settlement hold, seal mismatch, or customer dispute exists, BOF should flag the factoring packet as pending review or on hold until the finance manager approves submission.
+            </p>
+        </div>
+
+        <div class="section">
+            <div class="section-title">Insurance Notice and Claim Exposure Bands</div>
+            <p style="font-size: 10pt; margin-bottom: 0.25in;">
+                Claims should be assigned an exposure band to help determine urgency, reporting requirements, settlement impact, and insurance escalation.
+            </p>
+            <table style="width: 100%; border-collapse: collapse; margin-top: 8px;">
+                <tbody>
+                    <tr>
+                        <th style="border: 1px solid #999; padding: 6px; font-size: 10pt; text-align: left; background: #f3f6f9;">Exposure Band</th>
+                        <th style="border: 1px solid #999; padding: 6px; font-size: 10pt; text-align: left; background: #f3f6f9;">Example</th>
+                        <th style="border: 1px solid #999; padding: 6px; font-size: 10pt; text-align: left; background: #f3f6f9;">Action</th>
+                    </tr>
+                    <tr>
+                        <td style="border: 1px solid #999; padding: 6px; font-size: 9pt;">Low</td>
+                        <td style="border: 1px solid #999; padding: 6px; font-size: 9pt;">Minor cargo scuff, no delivery refusal, no injury</td>
+                        <td style="border: 1px solid #999; padding: 6px; font-size: 9pt;">Document internally and monitor for customer dispute.</td>
+                    </tr>
+                    <tr>
+                        <td style="border: 1px solid #999; padding: 6px; font-size: 9pt;">Medium</td>
+                        <td style="border: 1px solid #999; padding: 6px; font-size: 9pt;">Documented cargo damage, accessorial dispute, late claim notice</td>
+                        <td style="border: 1px solid #999; padding: 6px; font-size: 9pt;">Open claim packet and manager review.</td>
+                    </tr>
+                    <tr>
+                        <td style="border: 1px solid #999; padding: 6px; font-size: 9pt;">High</td>
+                        <td style="border: 1px solid #999; padding: 6px; font-size: 9pt;">Rejected load, accident, major cargo damage, theft, injury, or possible litigation</td>
+                        <td style="border: 1px solid #999; padding: 6px; font-size: 9pt;">Notify insurance, preserve evidence, and escalate to management immediately.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="section">
+            <div class="section-title">Driver Statement and Corrective Action</div>
+            <p style="font-size: 10pt; margin-bottom: 0.25in;">
+                When a driver is involved in a safety event, cargo event, seal mismatch, claim, or customer dispute, a driver statement should be requested and linked to the claim record. The statement should describe what happened, timeline, location, parties involved, photos taken, and any immediate corrective action.
+            </p>
+            <p style="font-size: 10pt; margin-bottom: 0.25in;">
+                If the event is preventable or safety-related, BOF should create a coaching or corrective-action record and link it to the driver safety profile.
+            </p>
+        </div>
+
+        <div class="section">
+            <div class="section-title">BOF Workflow Integration</div>
+            <p style="font-size: 10pt; margin-bottom: 0.25in;">
+                BOF should connect each claim event across the operating workflow so managers can see the full effect on dispatch, safety, settlement, finance, and compliance.
+            </p>
+            <ol style="font-size: 10pt; margin-bottom: 0.25in; padding-left: 1in;">
+                <li>A safety event, cargo exception, seal mismatch, or customer dispute creates a claim review.</li>
+                <li>The claim review creates a proof packet requirement.</li>
+                <li>Missing POD, BOL, seal photo, cargo photo, or driver statement creates a settlement hold.</li>
+                <li>RFID or seal mismatch creates dispatch review and possible insurance escalation.</li>
+                <li>Approved evidence releases settlement or factoring packet submission.</li>
+                <li>Closed claim updates safety, dispatch, settlement, finance, and document records.</li>
+            </ol>
+        </div>
+
+        <div class="section">
+            <div class="section-title">Claim Closure and Record Updates</div>
+            <p style="font-size: 10pt; margin-bottom: 0.25in;">
+                A claim may be closed only after evidence has been reviewed, financial impact has been determined, required insurance or customer notices have been completed, settlement holds have been resolved or documented, and any driver corrective action has been closed or assigned.
+            </p>
+            <p style="font-size: 10pt; margin-bottom: 0.25in;">
+                The closing record should include claim outcome, amount paid or reserved, deductible impact, recovery/subrogation status, responsible manager, closure date, and any lessons learned.
+            </p>
+        </div>
+
+        <div class="section">
+            <div class="section-title">Policy Version</div>
+            <p style="font-size: 10pt; margin-bottom: 0.25in;">
+                <strong>Version:</strong> 2.0<br>
+                <strong>Effective:</strong> January 15, 2026<br>
+                <strong>Last Reviewed:</strong> January 15, 2026<br>
+                <strong>Next Review Due:</strong> July 15, 2026<br>
+                <strong>Applies To:</strong> Dispatch, Safety, Claims, Maintenance, Settlements, Finance, Documents<br>
+                <strong>System of Record:</strong> BOF operating platform
+            </p>
+        </div>
+
+        <div class="footer">
+            BackOfficeFleet operations document. Routed for internal workflow review.
+        </div>
+    </div>
+</body>
+</html>

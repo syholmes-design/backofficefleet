@@ -1,0 +1,90 @@
+<!doctype html>
+<html>
+  <head><meta charset="utf-8" /><title>BOL {{loadId}}</title><style>{{styles}}</style></head>
+  <body>
+    <div class="paper">
+      <header class="doc-header">
+        <div>
+          <h1 class="doc-title">Bill of Lading</h1>
+          <div class="generated-label">BOF demo generated paperwork</div>
+        </div>
+        <div class="status-stamp">{{statusStamp}}</div>
+      </header>
+
+      <div class="meta-grid">
+        <div class="meta-box"><div class="meta-label">BOL Number</div><div class="meta-value">{{bolNumber}}</div></div>
+        <div class="meta-box"><div class="meta-label">Load ID</div><div class="meta-value">{{loadId}}</div></div>
+        <div class="meta-box"><div class="meta-label">Shipper</div><div class="meta-value">{{pickupFacility}}</div></div>
+        <div class="meta-box"><div class="meta-label">Consignee</div><div class="meta-value">{{deliveryFacility}}</div></div>
+      </div>
+
+      <table>
+        <tr><th>Pickup Address</th><th>Delivery Address</th><th>Pickup Date</th><th>Delivery Date</th></tr>
+        <tr><td>{{pickupAddress}}</td><td>{{deliveryAddress}}</td><td>{{pickupDate}}</td><td>{{deliveryDate}}</td></tr>
+      </table>
+
+      <div class="section-title">Freight Description</div>
+      <table>
+        <tr><th>Commodity</th><th>Pieces/Pallets</th><th>Weight</th><th>NMFC / Class</th></tr>
+        <tr><td>{{commodity}}</td><td>{{piecesPallets}}</td><td>{{weight}} lbs</td><td>{{nmfcClass}}</td></tr>
+      </table>
+
+      <div class="section-title">Equipment & Seal</div>
+      <table>
+        <tr><th>Driver</th><th>Truck</th><th>Trailer</th><th>Pickup Seal</th><th>Delivery Seal</th></tr>
+        <tr><td>{{driverName}} ({{driverId}})</td><td>{{truckNumber}}</td><td>{{trailerNumber}}</td><td>{{sealPickup}}</td><td>{{sealDelivery}}</td></tr>
+      </table>
+
+      <div class="signature-section-title">Authorized signatures </div>
+      <div class="signature-grid">
+        <div class="signature-block {{shipperSignatureCssClass}}">
+          <div class="signature-role">Shipper — pickup</div>
+          {{shipperSignatureSvgHtml}}
+          <div class="signature-script">{{shipperSignatureText}}</div>
+          <div class="signature-meta">{{shipperSignatureName}}</div>
+          <div class="signature-title">{{shipperSignatureTitle}}</div>
+          <div class="signature-line"></div>
+          <div class="signature-datetime">{{shipperSignedAt}}</div>
+          <div class="signature-status" data-bof-sig-role="shipper_bol">{{shipperSignatureStatus}}</div>
+        </div>
+        <div class="signature-block {{driverBolPickupSignatureCssClass}}">
+          <div class="signature-role">Driver — pickup</div>
+          {{driverBolPickupSignatureSvgHtml}}
+          <div class="signature-script">{{driverBolPickupSignatureText}}</div>
+          <div class="signature-meta">{{driverBolPickupSignatureName}}</div>
+          <div class="signature-title">{{driverBolPickupSignatureTitle}}</div>
+          <div class="signature-line"></div>
+          <div class="signature-datetime">{{driverBolPickupSignedAt}}</div>
+          <div class="signature-status" data-bof-sig-role="driver_bol_pickup">{{driverBolPickupSignatureStatus}}</div>
+        </div>
+        <div class="signature-block {{receiverSignatureCssClass}}">
+          <div class="signature-role">Consignee / receiver — delivery</div>
+          {{receiverSignatureSvgHtml}}
+          <div class="signature-script">{{receiverSignatureText}}</div>
+          <div class="signature-meta">{{receiverSignatureName}}</div>
+          <div class="signature-title">{{receiverSignatureTitle}}</div>
+          <div class="signature-line"></div>
+          <div class="signature-datetime">{{receiverSignedAt}}</div>
+          <div class="signature-status" data-bof-sig-role="receiver_bol">{{receiverSignatureStatus}}</div>
+        </div>
+        <div class="signature-block {{carrierSignatureCssClass}}">
+          <div class="signature-role">Carrier representative — delivery</div>
+          {{carrierSignatureSvgHtml}}
+          <div class="signature-script">{{carrierSignatureText}}</div>
+          <div class="signature-meta">{{carrierSignatureName}}</div>
+          <div class="signature-title">{{carrierSignatureTitle}}</div>
+          <div class="signature-line"></div>
+          <div class="signature-datetime">{{carrierSignedAt}}</div>
+          <div class="signature-status" data-bof-sig-role="carrier_bol">{{carrierSignatureStatus}}</div>
+        </div>
+      </div>
+
+      <div class="barcode-ref">|| ||| | | {{loadId}} {{bolNumber}} | || ||</div>
+      {{signatureBolComment}}
+      <footer>
+        <span>Generated: {{generatedDate}}</span>
+        <span>BOF operations document packet</span>
+      </footer>
+    </div>
+  </body>
+</html>

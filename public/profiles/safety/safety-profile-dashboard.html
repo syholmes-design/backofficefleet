@@ -1,0 +1,827 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Safety Settlements — Driver UI Profiles</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+  <script src="https://cdn.plot.ly/plotly-2.35.2.min.js" crossorigin="anonymous"></script>
+  <style>
+    :root {
+      --primary: #814BE7;
+      --primary-light: #C17BFD;
+      --bg: #F7F7F7;
+      --card-bg: #FFFFFF;
+      --text: #1F1F24;
+      --text-muted: #6E7191;
+      --border: #E2E4ED;
+      --success: #34C563;
+      --danger: #E73B4F;
+      --warning: #D4A740;
+      --radius: 12px;
+      --shadow: 0 0 0 1px var(--border), 0 2px 8px rgba(7,2,23,0.05);
+      --shadow-hover: 0 0 0 1px var(--border), 0 4px 16px rgba(7,2,23,0.10);
+      --font: 'Open Sans', system-ui, -apple-system, sans-serif;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root:not(.light) {
+        --bg: #1E2235;
+        --card-bg: #2D3148;
+        --text: #E2E4ED;
+        --text-muted: #A2A7BD;
+        --border: #484D66;
+        --shadow: 0 0 0 1px var(--border), 0 2px 8px rgba(7,2,23,0.15);
+        --shadow-hover: 0 0 0 1px var(--border), 0 4px 16px rgba(7,2,23,0.25);
+      }
+    }
+    :root.dark {
+      --bg: #1E2235;
+      --card-bg: #2D3148;
+      --text: #E2E4ED;
+      --text-muted: #A2A7BD;
+      --border: #484D66;
+      --shadow: 0 0 0 1px var(--border), 0 2px 8px rgba(7,2,23,0.15);
+      --shadow-hover: 0 0 0 1px var(--border), 0 4px 16px rgba(7,2,23,0.25);
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: var(--font);
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+    }
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      height: 60vh;
+      background: radial-gradient(ellipse 60% 50% at 50% 0%, rgba(91,108,249,0.06), transparent 70%);
+      pointer-events: none;
+      z-index: 0;
+    }
+    .dashboard { max-width: 1400px; margin: 0 auto; padding: 24px; position: relative; z-index: 1; }
+
+    /* Header */
+    .header {
+      display: flex; flex-direction: column; align-items: center;
+      text-align: center; gap: 12px; margin-bottom: 32px;
+      padding-bottom: 24px; border-bottom: 1px solid var(--border);
+      position: relative;
+    }
+    .header .logo { height: 32px; width: auto; }
+    .title {
+      font-size: 1.75rem; font-weight: 700; line-height: 1.2;
+      background: linear-gradient(135deg, var(--text) 0%, var(--primary) 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .subtitle { font-size: 0.85rem; color: var(--text-muted); font-weight: 500; letter-spacing: 0.02em; }
+
+    /* Grid */
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(12, 1fr);
+      gap: 20px;
+    }
+    .col-2  { grid-column: span 2; }
+    .col-3  { grid-column: span 3; }
+    .col-4  { grid-column: span 4; }
+    .col-6  { grid-column: span 6; }
+    .col-8  { grid-column: span 8; }
+    .col-12 { grid-column: span 12; }
+    @media (max-width: 767.98px) {
+      .col-2,.col-3,.col-4,.col-6,.col-8,.col-12 { grid-column: span 12; }
+      .grid { gap: 12px; }
+      .dashboard { padding: 16px; }
+      .kpi-value { font-size: 1.5rem; }
+      .title { font-size: 1.35rem; }
+      .chart-container { min-height: 260px; }
+    }
+
+    /* Card base */
+    .card, .kpi-card, .chart-card, .text-card, .table-card {
+      background: var(--card-bg); border-radius: var(--radius);
+      padding: 20px; box-shadow: var(--shadow);
+      position: relative; overflow: hidden;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .card:hover, .kpi-card:hover, .chart-card:hover, .text-card:hover, .table-card:hover {
+      transform: translateY(-1px); box-shadow: var(--shadow-hover);
+    }
+    .card::before, .kpi-card::before, .chart-card::before, .text-card::before, .table-card::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+      background: linear-gradient(90deg, transparent, var(--primary-light), transparent);
+      opacity: 0.6;
+    }
+
+    /* KPI card */
+    .kpi-card { padding: 24px; }
+    .kpi-label { font-size: 0.8rem; font-weight: 500; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.03em; margin-bottom: 6px; }
+    .kpi-value { font-size: 2rem; font-weight: 700; color: var(--text); line-height: 1.2; }
+    .kpi-delta {
+      display: inline-block; font-size: 0.75rem; font-weight: 600;
+      margin-top: 8px; padding: 2px 8px; border-radius: 20px;
+    }
+    .kpi-delta.positive { color: var(--success); background: rgba(52,197,99,0.1); }
+    .kpi-delta.negative { color: var(--danger); background: rgba(231,59,79,0.1); }
+    .kpi-delta.neutral  { color: var(--warning); background: rgba(212,167,64,0.1); }
+
+    /* Chart card */
+    .card-title { font-size: 1rem; font-weight: 600; color: var(--text); margin-bottom: 12px; }
+    .chart-container { min-height: 320px; width: 100%; }
+    .chart-container-sm { min-height: 260px; width: 100%; }
+
+    /* Text card */
+    .text-card p { font-size: 0.9rem; color: var(--text); margin-bottom: 8px; line-height: 1.6; }
+    .text-card p:last-child { margin-bottom: 0; }
+
+    /* Table card */
+    .table-card { overflow-x: auto; }
+    .table-card table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+    .table-card th { text-align: left; padding: 10px 12px; border-bottom: 2px solid var(--border); font-weight: 600; color: var(--text); white-space: nowrap; }
+    .table-card td { padding: 10px 12px; border-bottom: 1px solid var(--border); color: var(--text); word-break: break-word; }
+    .table-card tr:last-child td { border-bottom: none; }
+    .table-card tbody tr:nth-child(even) td { background: rgba(91,108,249,0.02); }
+    .table-card tbody tr:hover td { background: rgba(91,108,249,0.06); }
+
+    /* Theme toggle */
+    .theme-toggle {
+      position: absolute; top: 24px; right: 0;
+      background: var(--card-bg); border: 1px solid var(--border);
+      border-radius: 8px; padding: 6px 10px; cursor: pointer;
+      color: var(--text-muted); font-size: 1rem; line-height: 1;
+      transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+      display: flex; align-items: center; gap: 4px;
+    }
+    .theme-toggle:hover { color: var(--text); border-color: var(--primary-light); }
+    .theme-toggle .icon-sun, .theme-toggle .icon-moon { display: none; }
+    .theme-toggle .icon-sun { display: inline; }
+    :root.dark .theme-toggle .icon-sun { display: none; }
+    :root.dark .theme-toggle .icon-moon { display: inline; }
+    @media (prefers-color-scheme: dark) {
+      :root:not(.light) .theme-toggle .icon-sun { display: none; }
+      :root:not(.light) .theme-toggle .icon-moon { display: inline; }
+    }
+
+    /* Footer */
+    .footer {
+      display: flex; align-items: center; justify-content: center;
+      gap: 8px; margin-top: 40px; padding-top: 20px;
+      border-top: 1px solid var(--border);
+      font-size: 0.75rem; color: var(--text-muted);
+    }
+    .footer .logo-sm { height: 18px; width: auto; }
+
+    /* ===== Profile Cards Section ===== */
+    .section-header {
+      font-size: 1.1rem; font-weight: 700; color: var(--text);
+      margin-bottom: 4px; display: flex; align-items: center; gap: 8px;
+    }
+    .section-subheader {
+      font-size: 0.8rem; color: var(--text-muted); margin-bottom: 20px;
+    }
+
+    /* Filter bar */
+    .filter-bar {
+      display: flex; flex-wrap: wrap; gap: 10px; align-items: center;
+      margin-bottom: 20px;
+    }
+    .filter-bar label { font-size: 0.8rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.03em; }
+    .filter-btn {
+      padding: 5px 14px; border-radius: 20px; border: 1px solid var(--border);
+      background: var(--card-bg); color: var(--text-muted);
+      font-size: 0.8rem; font-weight: 600; cursor: pointer;
+      transition: all 0.18s ease; font-family: var(--font);
+    }
+    .filter-btn:hover { border-color: var(--primary-light); color: var(--primary); }
+    .filter-btn.active { background: var(--primary); color: #fff; border-color: var(--primary); }
+
+    /* Profile cards grid */
+    .profiles-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 20px;
+    }
+    @media (max-width: 767.98px) {
+      .profiles-grid { grid-template-columns: 1fr; }
+    }
+
+    /* Individual profile card */
+    .profile-card {
+      background: var(--card-bg); border-radius: var(--radius);
+      box-shadow: var(--shadow); overflow: hidden;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      position: relative;
+    }
+    .profile-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-hover); }
+    .profile-card::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+      background: linear-gradient(90deg, transparent, var(--primary-light), transparent);
+      opacity: 0.7;
+    }
+    .profile-card.non-compliant::before {
+      background: linear-gradient(90deg, transparent, var(--danger), transparent);
+    }
+    .profile-card.compliant::before {
+      background: linear-gradient(90deg, transparent, var(--success), transparent);
+    }
+
+    .profile-header {
+      display: flex; align-items: center; gap: 14px;
+      padding: 16px 16px 12px;
+      border-bottom: 1px solid var(--border);
+    }
+    .driver-avatar {
+      width: 48px; height: 48px; border-radius: 50%;
+      background: linear-gradient(135deg, var(--primary) 0%, #6851FF 100%);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.1rem; font-weight: 700; color: #fff;
+      flex-shrink: 0; letter-spacing: 0.02em;
+      box-shadow: 0 2px 8px rgba(129,75,231,0.35);
+    }
+    .driver-avatar.non-compliant {
+      background: linear-gradient(135deg, #E73B4F 0%, #c02035 100%);
+      box-shadow: 0 2px 8px rgba(231,59,79,0.35);
+    }
+    .driver-avatar.compliant {
+      background: linear-gradient(135deg, #34C563 0%, #1d9e49 100%);
+      box-shadow: 0 2px 8px rgba(52,197,99,0.35);
+    }
+    .driver-info { flex: 1; min-width: 0; }
+    .driver-name { font-size: 0.95rem; font-weight: 700; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .driver-id { font-size: 0.75rem; color: var(--text-muted); font-weight: 500; margin-top: 1px; }
+    .driver-truck { font-size: 0.75rem; color: var(--text-muted); margin-top: 2px; }
+    .compliance-badge {
+      display: inline-flex; align-items: center; gap: 4px;
+      font-size: 0.7rem; font-weight: 700; padding: 3px 9px;
+      border-radius: 20px; white-space: nowrap; flex-shrink: 0;
+      letter-spacing: 0.02em;
+    }
+    .compliance-badge.compliant   { background: rgba(52,197,99,0.12);  color: var(--success); }
+    .compliance-badge.non-compliant { background: rgba(231,59,79,0.12); color: var(--danger); }
+
+    .profile-body { padding: 14px 16px 16px; display: flex; flex-direction: column; gap: 12px; }
+
+    .profile-section-title {
+      font-size: 0.7rem; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.05em; color: var(--text-muted); margin-bottom: 6px;
+      display: flex; align-items: center; gap: 5px;
+    }
+    .profile-section-title::after {
+      content: ''; flex: 1; height: 1px; background: var(--border);
+    }
+
+    .compliance-status-text {
+      font-size: 0.78rem; color: var(--text); line-height: 1.5;
+      background: rgba(231,59,79,0.05); border-radius: 6px;
+      padding: 6px 10px; border-left: 3px solid var(--danger);
+    }
+    .compliance-status-text.ok {
+      background: rgba(52,197,99,0.05); border-left-color: var(--success); color: var(--success);
+    }
+
+    .stat-row {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+    .stat-item { display: flex; flex-direction: column; gap: 2px; }
+    .stat-label { font-size: 0.68rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.03em; }
+    .stat-value { font-size: 0.88rem; font-weight: 700; color: var(--text); }
+    .stat-value.no-events { color: var(--text-muted); font-weight: 500; }
+    .stat-value.warning { color: var(--warning); }
+    .stat-value.critical { color: var(--danger); }
+
+    .severity-pill {
+      display: inline-block; font-size: 0.68rem; font-weight: 700;
+      padding: 2px 8px; border-radius: 12px; text-transform: uppercase; letter-spacing: 0.04em;
+    }
+    .severity-pill.none    { background: rgba(110,113,145,0.12); color: var(--text-muted); }
+    .severity-pill.warning { background: rgba(212,167,64,0.15);  color: var(--warning); }
+    .severity-pill.critical{ background: rgba(231,59,79,0.15);   color: var(--danger); }
+
+    .settlement-row {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 6px 0; border-bottom: 1px dashed var(--border);
+      font-size: 0.82rem;
+    }
+    .settlement-row:last-child { border-bottom: none; }
+    .settlement-key { color: var(--text-muted); font-weight: 500; }
+    .settlement-val { font-weight: 700; color: var(--text); }
+
+    .status-pill {
+      display: inline-flex; align-items: center; gap: 4px;
+      font-size: 0.72rem; font-weight: 700; padding: 3px 10px;
+      border-radius: 20px; text-transform: uppercase; letter-spacing: 0.04em;
+    }
+    .status-pill.paid    { background: rgba(52,197,99,0.12);  color: var(--success); }
+    .status-pill.pending { background: rgba(212,167,64,0.15); color: var(--warning); }
+
+    .pending-reason {
+      font-size: 0.72rem; color: var(--warning); font-style: italic; margin-top: 4px;
+    }
+
+    /* Section wrapper card (for filter + grid container) */
+    .profiles-wrapper {
+      background: var(--card-bg); border-radius: var(--radius);
+      padding: 24px; box-shadow: var(--shadow); position: relative; overflow: hidden;
+    }
+    .profiles-wrapper::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+      background: linear-gradient(90deg, transparent, var(--primary-light), transparent);
+      opacity: 0.6;
+    }
+
+    /* Hidden state for filtering */
+    .profile-card.hidden { display: none; }
+  </style>
+</head>
+<body>
+  <div class="dashboard">
+    <header class="header">
+      <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle dark mode">
+        <span class="icon-sun">&#9788;</span>
+        <span class="icon-moon">&#9790;</span>
+      </button>
+      <img class="logo" src="https://www.energent.ai/images/logos/svg/energent-logo.svg" alt="Energent logo">
+      <div>
+        <h1 class="title">Safety Settlements — Driver UI Profiles</h1>
+        <p class="subtitle">Safety Settlements Test Case &nbsp;|&nbsp; Generated by energent.ai</p>
+      </div>
+    </header>
+
+    <!-- ===== KPI Row ===== -->
+    <div class="grid">
+      <div class="col-3">
+        <div class="kpi-card">
+          <div class="kpi-label">Total Drivers</div>
+          <div class="kpi-value" id="kpi-total">12</div>
+          <div class="kpi-delta neutral">TC Dataset</div>
+        </div>
+      </div>
+      <div class="col-3">
+        <div class="kpi-card">
+          <div class="kpi-label">Compliant</div>
+          <div class="kpi-value" id="kpi-compliant" style="color: var(--success);">2</div>
+          <div class="kpi-delta negative">10 Non-Compliant</div>
+        </div>
+      </div>
+      <div class="col-3">
+        <div class="kpi-card">
+          <div class="kpi-label">Total Safety Events</div>
+          <div class="kpi-value" id="kpi-events">4</div>
+          <div class="kpi-delta negative">2 CRITICAL / 2 WARNING</div>
+        </div>
+      </div>
+      <div class="col-3">
+        <div class="kpi-card">
+          <div class="kpi-label">Total Claim Amount</div>
+          <div class="kpi-value" id="kpi-claims">$30.2K</div>
+          <div class="kpi-delta negative">Insurance Required: 3</div>
+        </div>
+      </div>
+
+      <!-- Settlement KPIs -->
+      <div class="col-3">
+        <div class="kpi-card">
+          <div class="kpi-label">Settlements Paid</div>
+          <div class="kpi-value" style="color: var(--success);">7</div>
+          <div class="kpi-delta positive">58.3% of all</div>
+        </div>
+      </div>
+      <div class="col-3">
+        <div class="kpi-card">
+          <div class="kpi-label">Settlements Pending</div>
+          <div class="kpi-value" style="color: var(--warning);">5</div>
+          <div class="kpi-delta neutral">41.7% of all</div>
+        </div>
+      </div>
+      <div class="col-3">
+        <div class="kpi-card">
+          <div class="kpi-label">Total Gross Pay</div>
+          <div class="kpi-value">$0</div>
+          <div class="kpi-delta neutral">Pending Settlement</div>
+        </div>
+      </div>
+      <div class="col-3">
+        <div class="kpi-card">
+          <div class="kpi-label">Total Net Pay</div>
+          <div class="kpi-value">$0</div>
+          <div class="kpi-delta neutral">Pending Settlement</div>
+        </div>
+      </div>
+
+      <!-- ===== Analytics Charts Row ===== -->
+      <div class="col-6">
+        <div class="chart-card">
+          <div class="card-title">Settlement Status Distribution</div>
+          <div class="chart-container-sm" id="chart-settlement-status"></div>
+        </div>
+      </div>
+      <div class="col-6">
+        <div class="chart-card">
+          <div class="card-title">Compliance Issue Breakdown</div>
+          <div class="chart-container-sm" id="chart-compliance-issues"></div>
+        </div>
+      </div>
+
+      <div class="col-6">
+        <div class="chart-card">
+          <div class="card-title">Safety Event Severities</div>
+          <div class="chart-container-sm" id="chart-severities"></div>
+        </div>
+      </div>
+      <div class="col-6">
+        <div class="chart-card">
+          <div class="card-title">Claim Amount by Driver</div>
+          <div class="chart-container-sm" id="chart-claims"></div>
+        </div>
+      </div>
+
+      <!-- ===== Driver Profile Cards ===== -->
+      <div class="col-12">
+        <div class="profiles-wrapper">
+          <div class="section-header">&#128101; Driver Profile Cards</div>
+          <div class="section-subheader">Click a filter to narrow by compliance or settlement status</div>
+          <div class="filter-bar" id="filter-bar">
+            <label>Filter:</label>
+            <button class="filter-btn active" data-filter="all" onclick="applyFilter('all', this)">All (12)</button>
+            <button class="filter-btn" data-filter="compliant" onclick="applyFilter('compliant', this)">&#9989; Compliant (2)</button>
+            <button class="filter-btn" data-filter="non-compliant" onclick="applyFilter('non-compliant', this)">&#10060; Non-Compliant (10)</button>
+            <button class="filter-btn" data-filter="paid" onclick="applyFilter('paid', this)">&#128176; Paid (7)</button>
+            <button class="filter-btn" data-filter="pending" onclick="applyFilter('pending', this)">&#9203; Pending (5)</button>
+            <button class="filter-btn" data-filter="has-events" onclick="applyFilter('has-events', this)">&#128680; Has Safety Events (4)</button>
+          </div>
+          <div class="profiles-grid" id="profiles-grid">
+            <!-- Cards injected by JS -->
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== Summary Table ===== -->
+      <div class="col-12">
+        <div class="table-card">
+          <div class="card-title">Driver Summary Table</div>
+          <table id="summary-table">
+            <thead>
+              <tr>
+                <th>Driver ID</th>
+                <th>Name</th>
+                <th>Truck</th>
+                <th>Compliance</th>
+                <th>Safety Events</th>
+                <th>Severity</th>
+                <th>Claim Amount</th>
+                <th>Settlement</th>
+                <th>Pending Reason</th>
+              </tr>
+            </thead>
+            <tbody id="table-body">
+              <!-- Rows injected by JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div><!-- end .grid -->
+
+    <footer class="footer">
+      <img class="logo-sm" src="https://www.energent.ai/images/logos/svg/energent-logo.svg" alt="Energent logo">
+      <a href="https://www.energent.ai" target="_blank" rel="noopener noreferrer"
+         style="color: var(--text-muted); text-decoration: none; transition: color 0.2s ease;"
+         onmouseover="this.style.color='var(--primary)'" onmouseout="this.style.color='var(--text-muted)'">
+        Powered by energent.ai
+      </a>
+    </footer>
+  </div>
+
+  <script>
+    // =============================================
+    // Theme helpers
+    // =============================================
+    function getEffectiveDark() {
+      const root = document.documentElement;
+      if (root.classList.contains('dark')) return true;
+      if (root.classList.contains('light')) return false;
+      return window.matchMedia('(prefers-color-scheme: dark)').matches;
+    }
+    function toggleTheme() {
+      const root = document.documentElement;
+      const currentlyDark = getEffectiveDark();
+      root.classList.remove('dark', 'light');
+      root.classList.add(currentlyDark ? 'light' : 'dark');
+      rebuildCharts();
+    }
+
+    // =============================================
+    // Plotly helpers
+    // =============================================
+    const COLORS = ['#814BE7','#6851FF','#E73B4F','#D4A740','#3FA881','#5BC8F5'];
+    const chartRegistry = [];
+
+    function getDefaultLayout() {
+      const dark = getEffectiveDark();
+      return {
+        font: { family: 'Open Sans, system-ui, sans-serif', color: dark ? '#E2E4ED' : '#1F1F24' },
+        paper_bgcolor: 'transparent',
+        plot_bgcolor: 'transparent',
+        autosize: true,
+        margin: { l: 50, r: 30, t: 50, b: 50 },
+        xaxis: { gridcolor: dark ? '#5A5F78' : '#E2E4ED', automargin: true },
+        yaxis: { gridcolor: dark ? '#5A5F78' : '#E2E4ED', automargin: true },
+        colorway: COLORS,
+        legend: { font: { family: 'Open Sans, system-ui, sans-serif', size: 12 } },
+        hoverlabel: {
+          font: { family: 'Open Sans, system-ui, sans-serif', size: 13 },
+          bgcolor: dark ? '#3D4260' : '#FFFFFF',
+          bordercolor: dark ? '#5A5F78' : '#E2E4ED',
+          namelength: -1,
+        },
+      };
+    }
+
+    const NESTED_LAYOUT_KEYS = ['xaxis','yaxis','yaxis2','margin','legend','font','hoverlabel'];
+    function mergeLayouts(base, overrides) {
+      const merged = { ...base, ...overrides };
+      for (const key of NESTED_LAYOUT_KEYS) {
+        if (base[key] && overrides[key] && typeof base[key] === 'object' && typeof overrides[key] === 'object') {
+          merged[key] = { ...base[key], ...overrides[key] };
+        }
+      }
+      return merged;
+    }
+
+    function createChart(id, traces, layoutOverrides) {
+      layoutOverrides = layoutOverrides || {};
+      chartRegistry.push({ id, traces, layoutOverrides });
+      Plotly.newPlot(id, traces, mergeLayouts(getDefaultLayout(), layoutOverrides), { responsive: true, displayModeBar: false });
+    }
+
+    function rebuildCharts() {
+      chartRegistry.forEach(function(c) {
+        Plotly.react(c.id, c.traces, mergeLayouts(getDefaultLayout(), c.layoutOverrides), { responsive: true, displayModeBar: false });
+      });
+    }
+
+    // =============================================
+    // Data
+    // =============================================
+    var DRIVERS = [{"id":"DRV-001","name":"John Carter","truck":"T-102","compliance_tier":"NON_COMPLIANT","compliance_status":"\u274c MED CARD EXPIRED | MVR EXPIRED | TRUCK NEEDS SERVICE","cdl_exp":"2027-08-22","med_exp":"2026-03-13","mvr_exp":"2026-02-27","total_safety_events":0,"event_severities":"None","total_claim_amount":0,"any_insurance":"None","total_settlements":1,"total_gross_pay":0,"total_net_pay":0,"settlement_statuses":"PAID","pending_reasons":""},{"id":"DRV-002","name":"Maria Lopez","truck":"T-122","compliance_tier":"NON_COMPLIANT","compliance_status":"\u274c TRUCK NEEDS SERVICE","cdl_exp":"2027-05-11","med_exp":"2027-07-28","mvr_exp":"2027-03-19","total_safety_events":1,"event_severities":"WARNING","total_claim_amount":11786.84,"any_insurance":"YES","total_settlements":1,"total_gross_pay":0,"total_net_pay":0,"settlement_statuses":"PENDING","pending_reasons":"Awaiting Receipts"},{"id":"DRV-003","name":"Alex Kim","truck":"T-107","compliance_tier":"NON_COMPLIANT","compliance_status":"\u274c TRUCK NEEDS SERVICE","cdl_exp":"2027-02-02","med_exp":"2027-09-29","mvr_exp":"2027-03-19","total_safety_events":0,"event_severities":"None","total_claim_amount":0,"any_insurance":"None","total_settlements":1,"total_gross_pay":0,"total_net_pay":0,"settlement_statuses":"PAID","pending_reasons":""},{"id":"DRV-004","name":"Priya Patel","truck":"T-108","compliance_tier":"NON_COMPLIANT","compliance_status":"\u274c TRUCK NEEDS SERVICE","cdl_exp":"2027-12-18","med_exp":"2027-04-09","mvr_exp":"2027-03-19","total_safety_events":1,"event_severities":"CRITICAL","total_claim_amount":10094.16,"any_insurance":"YES","total_settlements":1,"total_gross_pay":0,"total_net_pay":0,"settlement_statuses":"PENDING","pending_reasons":"Awaiting Receipts"},{"id":"DRV-005","name":"Kenji Tanaka","truck":"T-104","compliance_tier":"NON_COMPLIANT","compliance_status":"\u274c TRUCK NEEDS SERVICE","cdl_exp":"2027-07-09","med_exp":"2027-04-19","mvr_exp":"2027-03-19","total_safety_events":0,"event_severities":"None","total_claim_amount":0,"any_insurance":"None","total_settlements":1,"total_gross_pay":0,"total_net_pay":0,"settlement_statuses":"PENDING","pending_reasons":"Load Verification"},{"id":"DRV-006","name":"Marcus Chen","truck":"T-103","compliance_tier":"NON_COMPLIANT","compliance_status":"\u274c CDL EXPIRED | TRUCK NEEDS SERVICE","cdl_exp":"2025-06-18","med_exp":"2027-01-07","mvr_exp":"2027-03-19","total_safety_events":1,"event_severities":"WARNING","total_claim_amount":8332.57,"any_insurance":"YES","total_settlements":1,"total_gross_pay":0,"total_net_pay":0,"settlement_statuses":"PAID","pending_reasons":""},{"id":"DRV-007","name":"Sofia Gomez","truck":"T-111","compliance_tier":"NON_COMPLIANT","compliance_status":"\u274c MED CARD EXPIRED","cdl_exp":"2027-05-23","med_exp":"2025-03-23","mvr_exp":"2027-03-19","total_safety_events":0,"event_severities":"None","total_claim_amount":0,"any_insurance":"None","total_settlements":1,"total_gross_pay":0,"total_net_pay":0,"settlement_statuses":"PAID","pending_reasons":""},{"id":"DRV-008","name":"Liam Smith","truck":"T-106","compliance_tier":"NON_COMPLIANT","compliance_status":"\u274c TRUCK NEEDS SERVICE","cdl_exp":"2027-08-21","med_exp":"2027-10-10","mvr_exp":"2027-03-19","total_safety_events":0,"event_severities":"None","total_claim_amount":0,"any_insurance":"None","total_settlements":1,"total_gross_pay":0,"total_net_pay":0,"settlement_statuses":"PENDING","pending_reasons":"Load Verification"},{"id":"DRV-009","name":"Emma Brown","truck":"T-109","compliance_tier":"NON_COMPLIANT","compliance_status":"\u274c TRUCK NEEDS SERVICE","cdl_exp":"2027-02-06","med_exp":"2027-09-15","mvr_exp":"2027-03-19","total_safety_events":0,"event_severities":"None","total_claim_amount":0,"any_insurance":"None","total_settlements":1,"total_gross_pay":0,"total_net_pay":0,"settlement_statuses":"PAID","pending_reasons":""},{"id":"DRV-010","name":"Noah Wilson","truck":"T-105","compliance_tier":"COMPLIANT","compliance_status":"\u2705 COMPLIANT","cdl_exp":"2027-09-17","med_exp":"2027-12-31","mvr_exp":"2027-03-19","total_safety_events":1,"event_severities":"CRITICAL","total_claim_amount":0,"any_insurance":"NO","total_settlements":1,"total_gross_pay":0,"total_net_pay":0,"settlement_statuses":"PAID","pending_reasons":""},{"id":"DRV-011","name":"Olivia Lee","truck":"T-114","compliance_tier":"COMPLIANT","compliance_status":"\u2705 COMPLIANT","cdl_exp":"2027-06-28","med_exp":"2027-04-22","mvr_exp":"2027-03-19","total_safety_events":0,"event_severities":"None","total_claim_amount":0,"any_insurance":"None","total_settlements":1,"total_gross_pay":0,"total_net_pay":0,"settlement_statuses":"PAID","pending_reasons":""},{"id":"DRV-012","name":"Robert Johnson","truck":"T-106","compliance_tier":"NON_COMPLIANT","compliance_status":"\u274c MED CARD EXPIRED | MVR EXPIRED","cdl_exp":"2026-04-23","med_exp":"2026-01-20","mvr_exp":"2025-12-06","total_safety_events":0,"event_severities":"None","total_claim_amount":0,"any_insurance":"None","total_settlements":1,"total_gross_pay":0,"total_net_pay":0,"settlement_statuses":"PENDING","pending_reasons":"Document Review"}];
+
+    // =============================================
+    // Profile Card Rendering
+    // =============================================
+    function getInitials(name) {
+      var parts = name.trim().split(' ');
+      if (parts.length >= 2) return (parts[0][0] + parts[parts.length-1][0]).toUpperCase();
+      return parts[0].slice(0,2).toUpperCase();
+    }
+
+    function fmtCurrency(val) {
+      if (!val || val === 0) return '$0.00';
+      return '$' + val.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    }
+
+    function severityClass(sev) {
+      if (sev === 'CRITICAL') return 'critical';
+      if (sev === 'WARNING') return 'warning';
+      return 'none';
+    }
+
+    function buildProfileCard(d) {
+      var isCompliant = d.compliance_tier === 'COMPLIANT';
+      var tierClass = isCompliant ? 'compliant' : 'non-compliant';
+      var initials = getInitials(d.name);
+      var sevClass = severityClass(d.event_severities);
+      var isPaid = d.settlement_statuses === 'PAID';
+      var hasEvents = d.total_safety_events > 0;
+
+      var statusText = d.compliance_status;
+      var statusClass = isCompliant ? 'ok' : '';
+
+      var filterTags = [
+        tierClass,
+        isPaid ? 'paid' : 'pending',
+        hasEvents ? 'has-events' : ''
+      ].filter(Boolean).join(' ');
+
+      var card = document.createElement('div');
+      card.className = 'profile-card ' + tierClass;
+      card.dataset.filter = filterTags;
+
+      // Use textContent for user data to avoid XSS
+      var html = '<div class="profile-header">' +
+        '<div class="driver-avatar ' + tierClass + '">' + initials + '</div>' +
+        '<div class="driver-info">' +
+          '<div class="driver-name"></div>' +
+          '<div class="driver-id"></div>' +
+          '<div class="driver-truck"></div>' +
+        '</div>' +
+        '<span class="compliance-badge ' + tierClass + '">' + (isCompliant ? '&#9989;' : '&#10060;') + ' ' + (isCompliant ? 'COMPLIANT' : 'NON-COMPLIANT') + '</span>' +
+      '</div>' +
+      '<div class="profile-body">' +
+        '<div>' +
+          '<div class="profile-section-title">Compliance</div>' +
+          '<div class="compliance-status-text ' + statusClass + ' compliance-status-val"></div>' +
+        '</div>' +
+        '<div>' +
+          '<div class="profile-section-title">Safety Record</div>' +
+          '<div class="stat-row">' +
+            '<div class="stat-item"><span class="stat-label">Safety Events</span><span class="stat-value ' + (hasEvents ? sevClass : 'no-events') + '">' + (hasEvents ? d.total_safety_events : 'None') + '</span></div>' +
+            '<div class="stat-item"><span class="stat-label">Severity</span><span class="severity-pill ' + sevClass + '">' + (d.event_severities === 'None' ? 'N/A' : d.event_severities) + '</span></div>' +
+          '</div>' +
+          '<div class="stat-row" style="margin-top:8px">' +
+            '<div class="stat-item"><span class="stat-label">Claim Amount</span><span class="stat-value ' + (d.total_claim_amount > 0 ? 'critical' : 'no-events') + '">' + fmtCurrency(d.total_claim_amount) + '</span></div>' +
+            '<div class="stat-item"><span class="stat-label">Insurance Req.</span><span class="stat-value ' + (d.any_insurance === 'YES' ? 'warning' : 'no-events') + '">' + (d.any_insurance === 'YES' ? 'YES' : (d.any_insurance === 'NO' ? 'NO' : 'N/A')) + '</span></div>' +
+          '</div>' +
+        '</div>' +
+        '<div>' +
+          '<div class="profile-section-title">Settlement Summary</div>' +
+          '<div class="settlement-row"><span class="settlement-key">Gross Pay</span><span class="settlement-val">' + fmtCurrency(d.total_gross_pay) + '</span></div>' +
+          '<div class="settlement-row"><span class="settlement-key">Net Pay</span><span class="settlement-val">' + fmtCurrency(d.total_net_pay) + '</span></div>' +
+          '<div class="settlement-row"><span class="settlement-key">Status</span><span class="status-pill ' + (isPaid ? 'paid' : 'pending') + '">' + (isPaid ? '&#128176;' : '&#9203;') + ' ' + d.settlement_statuses + '</span></div>' +
+          (d.pending_reasons ? '<div class="pending-reason">&#9888; ' + '' + '</div>' : '') +
+        '</div>' +
+      '</div>';
+
+      card.innerHTML = html;
+
+      // Set text content safely
+      card.querySelector('.driver-name').textContent = d.name;
+      card.querySelector('.driver-id').textContent = d.id;
+      card.querySelector('.driver-truck').textContent = 'Truck: ' + d.truck;
+      card.querySelector('.compliance-status-val').textContent = d.compliance_status;
+
+      // Set pending reason safely
+      if (d.pending_reasons) {
+        card.querySelector('.pending-reason').textContent = '\u26a0 Reason: ' + d.pending_reasons;
+      }
+
+      return card;
+    }
+
+    function renderProfiles() {
+      var grid = document.getElementById('profiles-grid');
+      grid.innerHTML = '';
+      DRIVERS.forEach(function(d) {
+        grid.appendChild(buildProfileCard(d));
+      });
+    }
+
+    // =============================================
+    // Filter
+    // =============================================
+    function applyFilter(filter, btn) {
+      // Update button states
+      document.querySelectorAll('.filter-btn').forEach(function(b) { b.classList.remove('active'); });
+      btn.classList.add('active');
+
+      document.querySelectorAll('.profile-card').forEach(function(card) {
+        if (filter === 'all') {
+          card.classList.remove('hidden');
+        } else {
+          var tags = (card.dataset.filter || '').split(' ');
+          if (tags.indexOf(filter) >= 0) {
+            card.classList.remove('hidden');
+          } else {
+            card.classList.add('hidden');
+          }
+        }
+      });
+    }
+
+    // =============================================
+    // Table Rendering
+    // =============================================
+    function renderTable() {
+      var tbody = document.getElementById('table-body');
+      tbody.innerHTML = '';
+      DRIVERS.forEach(function(d) {
+        var tr = document.createElement('tr');
+        var isPaid = d.settlement_statuses === 'PAID';
+        var sevClass = severityClass(d.event_severities);
+        var isCompliant = d.compliance_tier === 'COMPLIANT';
+
+        var cells = [
+          d.id,
+          d.name,
+          d.truck,
+          null, // compliance badge — built below
+          d.total_safety_events > 0 ? String(d.total_safety_events) : '0',
+          null, // severity pill
+          fmtCurrency(d.total_claim_amount),
+          null, // status pill
+          d.pending_reasons || '—'
+        ];
+
+        cells.forEach(function(val, i) {
+          var td = document.createElement('td');
+          if (i === 3) {
+            var span = document.createElement('span');
+            span.className = 'compliance-badge ' + (isCompliant ? 'compliant' : 'non-compliant');
+            span.textContent = isCompliant ? 'COMPLIANT' : 'NON-COMPLIANT';
+            td.appendChild(span);
+          } else if (i === 5) {
+            var span = document.createElement('span');
+            span.className = 'severity-pill ' + sevClass;
+            span.textContent = d.event_severities === 'None' ? 'N/A' : d.event_severities;
+            td.appendChild(span);
+          } else if (i === 7) {
+            var span = document.createElement('span');
+            span.className = 'status-pill ' + (isPaid ? 'paid' : 'pending');
+            span.textContent = d.settlement_statuses;
+            td.appendChild(span);
+          } else {
+            td.textContent = val;
+          }
+          tr.appendChild(td);
+        });
+        tbody.appendChild(tr);
+      });
+    }
+
+    // =============================================
+    // Charts
+    // =============================================
+    function buildCharts() {
+      // --- Settlement Status Donut ---
+      createChart('chart-settlement-status', [{
+        type: 'pie',
+        hole: 0.55,
+        labels: ['PAID', 'PENDING'],
+        values: [7, 5],
+        marker: { colors: ['#34C563', '#D4A740'] },
+        textinfo: 'label+percent',
+        hovertemplate: '<b>%{label}</b><br>Count: %{value}<br>%{percent}<extra></extra>',
+        textfont: { size: 13 }
+      }], {
+        margin: { t: 30, b: 30, l: 20, r: 20 },
+        legend: { orientation: 'h', y: -0.15 },
+        annotations: [{ text: '<b>12</b><br>Settlements', x: 0.5, y: 0.5, font: { size: 13 }, showarrow: false }]
+      });
+
+      // --- Compliance Issues Horizontal Bar ---
+      createChart('chart-compliance-issues', [{
+        type: 'bar',
+        orientation: 'h',
+        x: [8, 3, 2, 1],
+        y: ['Truck Needs Service', 'Med Card Expired', 'MVR Expired', 'CDL Expired'],
+        marker: { color: ['#E73B4F','#D4A740','#814BE7','#6851FF'] },
+        text: [8, 3, 2, 1],
+        textposition: 'outside',
+        hovertemplate: '<b>%{y}</b><br>Drivers Affected: %{x}<extra></extra>',
+      }], {
+        margin: { l: 140, r: 50, t: 30, b: 40 },
+        xaxis: { title: 'Drivers Affected', dtick: 1 },
+        yaxis: { automargin: true },
+      });
+
+      // --- Severity Distribution Donut ---
+      createChart('chart-severities', [{
+        type: 'pie',
+        hole: 0.55,
+        labels: ['No Events', 'WARNING', 'CRITICAL'],
+        values: [8, 2, 2],
+        marker: { colors: ['#A2A7BD', '#D4A740', '#E73B4F'] },
+        textinfo: 'label+percent',
+        hovertemplate: '<b>%{label}</b><br>Drivers: %{value}<br>%{percent}<extra></extra>',
+        textfont: { size: 13 }
+      }], {
+        margin: { t: 30, b: 30, l: 20, r: 20 },
+        legend: { orientation: 'h', y: -0.15 },
+        annotations: [{ text: '<b>4</b><br>Events', x: 0.5, y: 0.5, font: { size: 13 }, showarrow: false }]
+      });
+
+      // --- Claim Amount by Driver ---
+      var claimDrivers = DRIVERS.filter(function(d) { return d.total_claim_amount > 0; });
+      var claimNames = claimDrivers.map(function(d) { return d.name; });
+      var claimAmts  = claimDrivers.map(function(d) { return d.total_claim_amount; });
+      var claimColors = claimAmts.map(function(a) {
+        return a > 10000 ? '#E73B4F' : '#D4A740';
+      });
+      createChart('chart-claims', [{
+        type: 'bar',
+        x: claimNames,
+        y: claimAmts,
+        marker: { color: claimColors, cornerradius: 4 },
+        text: claimAmts.map(function(a) { return '$' + a.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2}); }),
+        textposition: 'outside',
+        hovertemplate: '<b>%{x}</b><br>Claim: $%{y:,.2f}<extra></extra>',
+      }], {
+        margin: { t: 60, b: 60, l: 80, r: 30 },
+        yaxis: { title: 'Claim Amount ($)' },
+        xaxis: { automargin: true },
+      });
+    }
+
+    // =============================================
+    // Init
+    // =============================================
+    renderProfiles();
+    renderTable();
+    buildCharts();
+  </script>
+</body>
+</html>

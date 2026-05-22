@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bank/Payment Setup - Noah Wilson (DRV-010)</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            line-height: 1.6;
+            color: #1a202c;
+            background-color: #f8fafc;
+            margin: 0;
+            padding: 1in;
+        }
+        .paper {
+            max-width: 8.5in;
+            margin: 0 auto;
+            background: white;
+            padding: 0.5in;
+            box-shadow: 0 0.125in 0.25in rgba(0, 0, 0, 0.1);
+            border: 1px solid #e2e8f0;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 0.5in;
+            border-bottom: 2px solid #0BA5A4;
+            padding-bottom: 0.25in;
+        }
+        .title {
+            font-size: 18pt;
+            font-weight: bold;
+            color: #0BA5A4;
+            margin-bottom: 0.125in;
+        }
+        .subtitle {
+            font-size: 12pt;
+            color: #4a5568;
+            margin-bottom: 0.5in;
+        }
+        .section {
+            margin-bottom: 0.5in;
+        }
+        .section-title {
+            font-size: 11pt;
+            font-weight: bold;
+            color: #0BA5A4;
+            margin-bottom: 0.125in;
+            border-bottom: 1px solid #e2e8f0;
+            padding-bottom: 0.0625in;
+        }
+        .bank-info {
+            background: #f7fafc;
+            padding: 0.25in;
+            border-radius: 0.125in;
+            margin-bottom: 0.25in;
+            border: 1px solid #e2e8f0;
+        }
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.125in;
+            font-size: 10pt;
+        }
+        .info-label {
+            font-weight: bold;
+            color: #4a5568;
+        }
+        .info-value {
+            color: #1a202c;
+        }
+        .payment-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.25in;
+            margin-bottom: 0.25in;
+        }
+        .payment-item {
+            font-size: 9pt;
+            padding: 0.125in;
+            border: 1px solid #e2e8f0;
+            border-radius: 0.125in;
+        }
+        .payment-type {
+            font-weight: bold;
+            color: #0BA5A4;
+            margin-bottom: 0.0625in;
+        }
+        .payment-details {
+            font-size: 8pt;
+            color: #4a5568;
+            margin-top: 0.0625in;
+        }
+        .footer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: #f7fafc;
+            border-top: 1px solid #e2e8f0;
+            padding: 0.125in;
+            text-align: center;
+            font-size: 8pt;
+            color: #4a5568;
+        }
+    </style>
+</head>
+<body>
+    <div class="paper">
+        <div class="header">
+            <div class="title">Bank/Payment Setup</div>
+            <div class="subtitle">Noah Wilson (DRV-010) - Owner-Operator</div>
+        </div>
+
+        <div class="section">
+            <div class="section-title">Bank Information</div>
+            <div class="bank-info">
+                <div class="info-row">
+                    <span class="info-label">Bank Name:</span>
+                    <span class="info-value">Chase Bank</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Account Type:</span>
+                    <span class="info-value">Business Checking</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Account Number:</span>
+                    <span class="info-value">****-****-****-8901</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Routing Number:</span>
+                    <span class="info-value">071000013</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Account Holder:</span>
+                    <span class="info-value">Noah Wilson</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">DBA Name:</span>
+                    <span class="info-value">Wilson Hauling LLC</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Bank Address:</span>
+                    <span class="info-value">10 S LaSalle St, Chicago, IL 60603</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Phone:</span>
+                    <span class="info-value">(312) 555-5678</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <div class="section-title">Payment Processing</div>
+            <div class="payment-grid">
+                <div class="payment-item">
+                    <div class="payment-type">Direct Deposit</div>
+                    <div class="payment-details">
+                        Weekly settlements<br>
+                        Net 15 payment terms<br>
+                        Friday deposits<br>
+                        No processing fees
+                    </div>
+                </div>
+                <div class="payment-item">
+                    <div class="payment-type">ACH Processing</div>
+                    <div class="payment-details">
+                        Same-day ACH available<br>
+                        Batch processing at 2 PM CST<br>
+                        Confirmation emails sent<br>
+                        Transaction history online
+                    </div>
+                </div>
+                <div class="payment-item">
+                    <div class="payment-type">Wire Transfers</div>
+                    <div class="payment-details">
+                        Available for urgent payments<br>
+                        $25 wire fee<br>
+                        Same-day processing<br>
+                        International wire available
+                    </div>
+                </div>
+                <div class="payment-item">
+                    <div class="payment-type">Fuel Card Program</div>
+                    <div class="payment-details">
+                        Comdata fuel card<br>
+                        Weekly fuel advances<br>
+                        Discount network<br>
+                        Online account management
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <div class="section-title">Settlement Structure</div>
+            <p style="font-size: 10pt; margin-bottom: 0.25in;">
+                <strong>Payment Schedule:</strong> Weekly settlements processed every Friday for the previous week's completed loads.
+            </p>
+            <p style="font-size: 10pt; margin-bottom: 0.25in;">
+                <strong>Deductions:</strong>
+            </p>
+            <ul style="font-size: 9pt; margin-bottom: 0.25in; padding-left: 0.25in;">
+                <li>Fuel advances and charges</li>
+                <li>Toll reimbursements</li>
+                <li>Insurance premiums (quarterly)</li>
+                <li>Lease payments ($725/week)</li>
+                <li>Compliance fees</li>
+                <li>Administrative fees</li>
+            </ul>
+            <p style="font-size: 10pt; margin-bottom: 0.25in;">
+                <strong>Settlement Statement:</strong> Detailed settlement statements emailed every Friday with itemized revenue and deductions.
+            </p>
+        </div>
+
+        <div class="section">
+            <div class="section-title">Fuel Card Information</div>
+            <p style="font-size: 10pt; margin-bottom: 0.25in;">
+                <strong>Fuel Card Provider:</strong> Comdata<br>
+                <strong>Card Number:</strong> ****-****-****-8901<br>
+                <strong>Card Type:</strong> Mastercard Fleet Card<br>
+                <strong>Credit Limit:</strong> $2,000 per week<br>
+                <strong>Fuel Discounts:</strong> Up to $0.12 per gallon at participating locations
+            </p>
+            <p style="font-size: 10pt; margin-bottom: 0.25in;">
+                <strong>Accepted Locations:</strong> Major truck stops including Pilot, Flying J, TA, Petro, Love's, and independent locations.
+            </p>
+            <p style="font-size: 10pt; margin-bottom: 0.25in;">
+                <strong>Card Management:</strong> Online access at www.comdata.com or mobile app for real-time balances and transactions.
+            </p>
+        </div>
+
+        <div class="section">
+            <div class="section-title">Tax Information</div>
+            <p style="font-size: 10pt; margin-bottom: 0.25in;">
+                <strong>Tax Classification:</strong> Independent Contractor (1099)<br>
+                <strong>TIN Type:</strong> EIN<br>
+                <strong>Tax ID:</strong> **-**-**-8901<br>
+                <strong>Form 1099:</strong> Issued annually by January 31st
+            </p>
+            <p style="font-size: 10pt; margin-bottom: 0.25in;">
+                <strong>Quarterly Tax Payments:</strong> Owner-operator responsible for estimated tax payments to IRS and state tax authorities.
+            </p>
+            <p style="font-size: 10pt; margin-bottom: 0.25in;">
+                <strong>Year-End Documents:</strong> 1099-MISC and annual settlement summary provided by January 31st.
+            </p>
+        </div>
+
+        <div class="section">
+            <div class="section-title">Online Access</div>
+            <p style="font-size: 10pt; margin-bottom: 0.25in;">
+                <strong>Owner Portal:</strong> https://portal.boftransport.com/owner-operator<br>
+                <strong>Username:</strong> nwilson@drv-010<br>
+                <strong>Password:</strong> [Secure password set during onboarding]
+            </p>
+            <p style="font-size: 10pt; margin-bottom: 0.25in;">
+                <strong>Portal Features:</strong>
+            </p>
+            <ul style="font-size: 9pt; margin-bottom: 0.25in; padding-left: 0.25in;">
+                <li>Real-time settlement tracking</li>
+                <li>Load assignment history</li>
+                <li>Fuel card management</li>
+                <li>Document upload and storage</li>
+                <li>Performance analytics</li>
+                <li>Compliance status</li>
+            </ul>
+        </div>
+
+        <div class="section">
+            <div class="section-title">Contact Information</div>
+            <p style="font-size: 10pt; margin-bottom: 0.25in;">
+                <strong>Accounting Department:</strong><br>
+                Phone: (312) 555-0102<br>
+                Email: accounting@boftransport.com<br>
+                Hours: Monday-Friday, 8:00 AM - 5:00 PM CST
+            </p>
+            <p style="font-size: 10pt; margin-bottom: 0.25in;">
+                <strong>24/7 Support:</strong><br>
+                Emergency payment issues: (800) 555-HELP<br>
+                Fuel card issues: (800) 555-FUEL
+            </p>
+        </div>
+
+        <div class="section">
+            <div class="section-title">Setup Confirmation</div>
+            <p style="font-size: 10pt; margin-bottom: 0.25in;">
+                <strong>Setup Date:</strong> October 15, 2025<br>
+                <strong>First Deposit:</strong> October 24, 2025<br>
+                <strong>Setup Status:</strong> Complete<br>
+                <strong>Test Transaction:</strong> Successful ($0.01 test deposit on 10/15/2025)
+            </p>
+            <p style="font-size: 10pt; margin-bottom: 0.25in;">
+                All payment systems are active and ready for use. Please verify the test deposit has been received before first settlement.
+            </p>
+        </div>
+
+        <div class="footer">
+            BackOfficeFleet operations document. Routed for internal workflow review.
+        </div>
+    </div>
+</body>
+</html>

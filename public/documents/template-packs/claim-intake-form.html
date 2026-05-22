@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BOF Claim Intake Form - Insurance and Claims Template Pack v2</title>
+    <style>
+        body {
+            font-family: 'Calibri', sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #ffffff;
+        }
+        .document {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border: 2px solid #dc2626;
+            padding: 20px;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #dc2626;
+            padding-bottom: 15px;
+        }
+        .header h1 {
+            font-size: 20px;
+            font-weight: bold;
+            color: #dc2626;
+            margin: 0;
+        }
+        .header p {
+            font-size: 12px;
+            color: #6b7280;
+            margin: 5px 0;
+        }
+        .form-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 15px;
+        }
+        .form-table td {
+            padding: 6px;
+            border: 1px solid #d1d5db;
+            vertical-align: top;
+            font-size: 12px;
+        }
+        .form-table .label {
+            background: #fef2f2;
+            font-weight: bold;
+            width: 30%;
+        }
+        .section-title {
+            font-weight: bold;
+            margin: 15px 0 8px 0;
+            padding: 8px;
+            background: #fef2f2;
+            border-left: 4px solid #dc2626;
+            font-size: 14px;
+        }
+        .signature-line {
+            border-bottom: 1px solid #374151;
+            height: 25px;
+            margin: 3px 0;
+        }
+        .checkbox {
+            margin-right: 8px;
+        }
+        .urgent {
+            background: #fef2f2;
+            border: 2px solid #dc2626;
+            padding: 10px;
+            margin: 10px 0;
+            text-align: center;
+            font-weight: bold;
+            color: #dc2626;
+        }
+        .footer {
+            margin-top: 20px;
+            border-top: 2px solid #dc2626;
+            padding-top: 15px;
+            font-size: 11px;
+            color: #6b7280;
+        }
+        .priority-high {
+            color: #dc2626;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="document">
+        <div class="header">
+            <h1>CLAIM INTAKE FORM</h1>
+            <p>BackOfficeFleet (BOF) — Insurance and Claims Template Pack v2</p>
+            <p>Primary form for logging new cargo, equipment, property, or liability claims</p>
+        </div>
+
+        <div class="urgent">
+            ⚠️ URGENT CLAIM INTAKE - IMMEDIATE ATTENTION REQUIRED ⚠️
+        </div>
+
+        <table class="form-table">
+            <tr>
+                <td class="label">Claim ID</td>
+                <td>________________</td>
+                <td class="label">Date Reported</td>
+                <td>________________</td>
+                <td class="label">Time Reported</td>
+                <td>________________</td>
+            </tr>
+            <tr>
+                <td class="label">Load Number</td>
+                <td>________________</td>
+                <td class="label">BOL Number</td>
+                <td>________________</td>
+                <td class="label">Driver ID</td>
+                <td>________________</td>
+            </tr>
+            <tr>
+                <td class="label">Reporting Party</td>
+                <td colspan="3">________________</td>
+                <td class="label">Phone</td>
+                <td>________________</td>
+            </tr>
+        </table>
+
+        <div class="section-title">Claim Classification</div>
+        <table class="form-table">
+            <tr>
+                <td class="label">Claim Type</td>
+                <td colspan="5">
+                    <input type="checkbox" class="checkbox"> Cargo Damage
+                    <input type="checkbox" class="checkbox"> Equipment Damage
+                    <input type="checkbox" class="checkbox"> Property Damage
+                    <input type="checkbox" class="checkbox"> Liability Claim
+                    <input type="checkbox" class="checkbox"> Theft/Loss
+                    <input type="checkbox" class="checkbox"> Other: ________________
+                </td>
+            </tr>
+            <tr>
+                <td class="label">Priority Level</td>
+                <td colspan="5">
+                    <span class="priority-high">HIGH</span> - Immediate investigation required
+                    <input type="checkbox" class="checkbox"> Settles payment hold
+                    <input type="checkbox" class="checkbox"> Safety review triggered
+                    <input type="checkbox" class="checkbox"> Insurance notification required
+                </td>
+            </tr>
+        </table>
+
+        <div class="section-title">Incident Details</div>
+        <table class="form-table">
+            <tr>
+                <td class="label">Date of Incident</td>
+                <td>________________</td>
+                <td class="label">Time of Incident</td>
+                <td>________________</td>
+                <td class="label">Location</td>
+                <td>________________</td>
+            </tr>
+            <tr>
+                <td class="label">Incident Description</td>
+                <td colspan="5">
+                    __________________________________________________________<br>
+                    __________________________________________________________<br>
+                    __________________________________________________________
+                </td>
+            </tr>
+        </table>
+
+        <div class="section-title">Damage Assessment</div>
+        <table class="form-table">
+            <tr>
+                <td class="label">Items Damaged</td>
+                <td colspan="3">________________________________________________________</td>
+                <td class="label">Extent of Damage</td>
+                <td>________________</td>
+            </tr>
+            <tr>
+                <td class="label">Estimated Value</td>
+                <td>$________________</td>
+                <td class="label">Repair Cost Est.</td>
+                <td>$________________</td>
+                <td class="label">Replacement Cost</td>
+                <td>$________________</td>
+            </tr>
+            <tr>
+                <td class="label">Photos Taken</td>
+                <td colspan="5">
+                    <input type="checkbox" class="checkbox"> Yes - Number: ______
+                    <input type="checkbox" class="checkbox"> No
+                    <input type="checkbox" class="checkbox"> Uploaded to system
+                </td>
+            </tr>
+        </table>
+
+        <div class="section-title">Parties Involved</div>
+        <table class="form-table">
+            <tr>
+                <td class="label">BOF Driver</td>
+                <td>________________</td>
+                <td class="label">Third Party</td>
+                <td>________________</td>
+                <td class="label">Witnesses</td>
+                <td>________________</td>
+            </tr>
+            <tr>
+                <td class="label">Insurance Company</td>
+                <td colspan="3">________________</td>
+                <td class="label">Policy Number</td>
+                <td>________________</td>
+            </tr>
+        </table>
+
+        <div class="section-title">Immediate Actions Taken</div>
+        <table class="form-table">
+            <tr>
+                <td colspan="6">
+                    <input type="checkbox" class="checkbox"> Driver notified
+                    <input type="checkbox" class="checkbox"> Safety review initiated
+                    <input type="checkbox" class="checkbox"> Insurance carrier notified
+                    <input type="checkbox" class="checkbox"> Load secured
+                    <input type="checkbox" class="checkbox"> Police contacted
+                    <input type="checkbox" class="checkbox"> Medical attention provided
+                    <input type="checkbox" class="checkbox"> Settlement hold placed
+                </td>
+            </tr>
+            <tr>
+                <td class="label">Additional Actions</td>
+                <td colspan="5">
+                    __________________________________________________________<br>
+                    __________________________________________________________
+                </td>
+            </tr>
+        </table>
+
+        <div class="section-title">Investigation Requirements</div>
+        <table class="form-table">
+            <tr>
+                <td class="label">Investigator Assigned</td>
+                <td>________________</td>
+                <td class="label">Due Date</td>
+                <td>________________</td>
+                <td class="label">Priority</td>
+                <td class="priority-high">HIGH</td>
+            </tr>
+            <tr>
+                <td class="label">Evidence Required</td>
+                <td colspan="5">
+                    <input type="checkbox" class="checkbox"> Photos
+                    <input type="checkbox" class="checkbox"> Witness statements
+                    <input type="checkbox" class="checkbox"> Police report
+                    <input type="checkbox" class="checkbox"> Repair estimates
+                    <input type="checkbox" class="checkbox"> Video footage
+                    <input type="checkbox" class="checkbox"> Documentation review
+                </td>
+            </tr>
+        </table>
+
+        <div class="section-title">Financial Impact</div>
+        <table class="form-table">
+            <tr>
+                <td class="label">Direct Costs</td>
+                <td>$________________</td>
+                <td class="label">Indirect Costs</td>
+                <td>$________________</td>
+                <td class="label">Total Estimated</td>
+                <td>$________________</td>
+            </tr>
+            <tr>
+                <td class="label">Deductible</td>
+                <td>$________________</td>
+                <td class="label">Insurance Coverage</td>
+                <td>________________</td>
+                <td class="label">Net Exposure</td>
+                <td>$________________</td>
+            </tr>
+        </table>
+
+        <div class="section-title">Reporting & Signatures</div>
+        <table class="form-table">
+            <tr>
+                <td class="label">Reported By</td>
+                <td>
+                    <div class="signature-line"></div>
+                    <small>Name & Title</small>
+                </td>
+                <td class="label">Date</td>
+                <td>
+                    <div class="signature-line"></div>
+                    <small>MM/DD/YYYY</small>
+                </td>
+                <td class="label">Time</td>
+                <td>
+                    <div class="signature-line"></div>
+                    <small>HH:MM</small>
+                </td>
+            </tr>
+            <tr>
+                <td class="label">Supervisor Review</td>
+                <td>
+                    <div class="signature-line"></div>
+                    <small>Name & Title</small>
+                </td>
+                <td class="label">Date</td>
+                <td>
+                    <div class="signature-line"></div>
+                    <small>MM/DD/YYYY</small>
+                </td>
+                <td class="label">Time</td>
+                <td>
+                    <div class="signature-line"></div>
+                    <small>HH:MM</small>
+                </td>
+            </tr>
+        </table>
+
+        <div class="footer">
+            <div style="margin-bottom: 10px;">
+                <strong>BOF Workflow Triggers:</strong><br>
+                ⚠️ <strong>IMMEDIATE:</strong> Settlement hold on affected load<br>
+                ⚠️ <strong>IMMEDIATE:</strong> Safety review and corrective action<br>
+                ⚠️ <strong>IMMEDIATE:</strong> Insurance notification and potential claim filing<br>
+                ⚠️ <strong>IMMEDIATE:</strong> Command center alert set to HIGH priority<br>
+                ⚠️ <strong>IMMEDIATE:</strong> Investigation assignment required
+            </div>
+            <div>
+                BOF Claim Intake Form Template v2.0 • This form initiates formal claims process and triggers all required BOF workflows
+            </div>
+        </div>
+    </div>
+</body>
+</html>

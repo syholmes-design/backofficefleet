@@ -1,0 +1,144 @@
+{
+  "agents": [
+    {
+      "id": "layman-project-companion",
+      "path": ".codex/agents/layman-project-companion.md",
+      "trigger": "Owner-facing explanation, blocker, or next-step request"
+    },
+    {
+      "id": "demo-completion-inspector",
+      "path": ".codex/agents/demo-completion-inspector.md",
+      "trigger": "Before demos and after visible workflow changes"
+    },
+    {
+      "id": "demo-completion-governor",
+      "path": ".codex/agents/demo-completion-governor.md",
+      "trigger": "Demo readiness, final review, scope drift, owner satisfaction, or done/not-done decisions",
+      "purpose": "Acts as the finish-line authority for BackOfficeFleet, enforcing high demo completeness standards while preventing endless improvement loops and scope drift.",
+      "activates_on": [
+        "demo completion",
+        "website polish",
+        "final review",
+        "pre-demo readiness",
+        "owner satisfaction",
+        "scope drift",
+        "is this done",
+        "what else should we add",
+        "link checking",
+        "field completeness",
+        "visual polish"
+      ],
+      "authority": "May classify work as required, optional, parking-lot, or scope drift.",
+      "success_criteria": [
+        "Visible demo areas feel complete and professional.",
+        "Every major click has a meaningful result.",
+        "Remaining work is clearly separated into required versus optional.",
+        "Codex stops suggesting endless improvements once the finish line is met.",
+        "The owner is warned when new requests risk extending the project unnecessarily."
+      ]
+    },
+    {
+      "id": "project-integration-coordinator",
+      "path": ".codex/agents/project-integration-coordinator.md",
+      "trigger": "Multiple contributors, handoffs, merge review, route/data/document changes, demo readiness, validation review, or Codex environment changes",
+      "purpose": "Coordinates multiple people and Codex sessions so separate changes fit together, avoid conflicts, and move BackOfficeFleet toward completion.",
+      "activates_on": [
+        "multiple contributors",
+        "handoff",
+        "merge review",
+        "route changes",
+        "shared data changes",
+        "document workflow changes",
+        "demo readiness",
+        "validation review",
+        "codex environment changes"
+      ],
+      "authority": "May require handoff notes, conflict checks, and routing to specialist agents before work is considered integrated.",
+      "success_criteria": [
+        "Major changes include handoff notes.",
+        "Conflicting route, data, document, and UI changes are surfaced.",
+        "The next contributor can understand what happened and what remains.",
+        "Demo Completion Governor is used before declaring visible demo areas done."
+      ]
+    },
+    {
+      "id": "backup-restore-specialist",
+      "path": ".codex/agents/backup-restore-specialist.md",
+      "trigger": "Backup, restore, rollback, save version, before major change, after stable version, dependency changes, route restructuring, large CSS changes, generated document changes, or merge review",
+      "purpose": "Creates, verifies, prunes, lists, and restores BackOfficeFleet project backups using low-token script-based workflows.",
+      "activates_on": [
+        "backup",
+        "restore",
+        "rollback",
+        "save version",
+        "before major change",
+        "after stable version",
+        "dependency changes",
+        "route restructuring",
+        "large CSS changes",
+        "generated document changes",
+        "merge review"
+      ],
+      "limits": {
+        "max_total_backup_gb": 15,
+        "max_iterations": 5
+      },
+      "authority": "May require a backup before risky project-wide changes and may prune old backups according to the retention policy.",
+      "success_criteria": [
+        "Backups are created outside the project root.",
+        "Disposable folders are excluded.",
+        "No more than 5 backups are retained.",
+        "Total retained backups stay under 15 GB.",
+        "Restore actions create a safety backup first unless explicitly declined.",
+        "Reports remain short and token-efficient."
+      ]
+    },
+    {
+      "id": "bof-route-cartographer",
+      "path": ".codex/agents/bof-route-cartographer.md",
+      "trigger": "Navigation, routing, page, portal, or marketing-funnel work"
+    },
+    {
+      "id": "website-polish-director",
+      "path": ".codex/agents/website-polish-director.md",
+      "trigger": "Visual polish or presentation readiness"
+    },
+    {
+      "id": "document-proof-packet-verifier",
+      "path": ".codex/agents/document-proof-packet-verifier.md",
+      "trigger": "Driver, load, settlement, proof, vault, or generated document work"
+    },
+    {
+      "id": "environment-stability-guardian",
+      "path": ".codex/agents/environment-stability-guardian.md",
+      "trigger": "Build, lint, typecheck, dependency, filesystem, or Git instability"
+    },
+    {
+      "id": "dynamic-agent-installer",
+      "path": ".codex/agents/dynamic-agent-installer.md",
+      "trigger": "Repeated issue patterns or missing validation capability"
+    },
+    {
+      "id": "source-of-truth-mapper",
+      "path": ".codex/agents/source-of-truth-mapper.md",
+      "trigger": "Data, generated artifact, workbook, localStorage, or store changes"
+    },
+    {
+      "id": "trucking-operations-domain-expert",
+      "path": ".codex/agents/trucking-operations-domain-expert.md",
+      "trigger": "Dispatch, drivers, documents, loads, safety, settlements, maintenance, demo completeness, or field planning",
+      "activates_on": [
+        "dispatch",
+        "drivers",
+        "documents",
+        "loads",
+        "safety",
+        "settlements",
+        "maintenance",
+        "demo completeness",
+        "field planning"
+      ],
+      "purpose": "Judges whether BackOfficeFleet content is realistic and complete for trucking back-office operations."
+    }
+  ]
+}

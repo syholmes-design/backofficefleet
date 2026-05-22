@@ -1,0 +1,77 @@
+<!doctype html>
+<html>
+  <head><meta charset="utf-8" /><title>Claim Packet {{loadId}}</title><style>{{styles}}</style></head>
+  <body>
+    <div class="paper">
+      <header class="doc-header">
+        <div>
+          <h1 class="doc-title">Exception / Claim Packet</h1>
+          <div class="generated-label">BOF claims support worksheet</div>
+        </div>
+        <div class="status-stamp">{{claimStatus}}</div>
+      </header>
+      <div class="meta-grid">
+        <div class="meta-box"><div class="meta-label">Load ID</div><div class="meta-value">{{loadId}}</div></div>
+        <div class="meta-box"><div class="meta-label">BOL Number</div><div class="meta-value">{{bolNumber}}</div></div>
+        <div class="meta-box"><div class="meta-label">Customer</div><div class="meta-value">{{customer}}</div></div>
+        <div class="meta-box"><div class="meta-label">Driver</div><div class="meta-value">{{driverName}} ({{driverId}})</div></div>
+      </div>
+      <table>
+        <tr><th>Seal Status</th><th>POD Status</th><th>Settlement Status</th><th>Claim Exposure</th></tr>
+        <tr><td>{{sealStatus}}</td><td>{{podStatus}}</td><td>{{settlementStatus}}</td><td>{{claimExposure}}</td></tr>
+      </table>
+      <div class="section-title">Damage Description / Notes</div>
+      <div class="terms-box">{{exceptionNotes}}</div>
+      <div class="section-title">Evidence Links</div>
+      <table>
+        <tr><th>Cargo Photo</th><th>Seal Pickup</th><th>Seal Delivery</th><th>Damage Photo</th><th>Claim Evidence</th><th>Safety Photo</th></tr>
+        <tr>
+          <td>{{cargoPhotoRef}}</td>
+          <td>{{sealPickupPhotoRef}}</td>
+          <td>{{sealDeliveryPhotoRef}}</td>
+          <td>{{damageClaimPhotoRef}}</td>
+          <td>{{claimEvidencePhotoRef}}</td>
+          <td>{{safetyViolationPhotoRef}}</td>
+        </tr>
+      </table>
+      <div class="terms-box">Required next action: claims adjuster review, verify custody chain, finalize insurance notice status.</div>
+      <div class="signature-section-title">Claim packet signatures </div>
+      <div class="signature-grid">
+        <div class="signature-block {{claimsSignatureCssClass}}">
+          <div class="signature-role">BOF claims coordinator</div>
+          {{claimsSignatureSvgHtml}}
+          <div class="signature-script">{{claimsSignatureText}}</div>
+          <div class="signature-meta">{{claimsSignatureName}}</div>
+          <div class="signature-title">{{claimsSignatureTitle}}</div>
+          <div class="signature-line"></div>
+          <div class="signature-datetime">{{claimsSignedAt}}</div>
+          <div class="signature-status" data-bof-sig-role="claims_packet">{{claimsSignatureStatus}}</div>
+        </div>
+        <div class="signature-block {{driverClaimStatementSignatureCssClass}}">
+          <div class="signature-role">Driver statement</div>
+          {{driverClaimStatementSignatureSvgHtml}}
+          <div class="signature-script">{{driverClaimStatementSignatureText}}</div>
+          <div class="signature-meta">{{driverClaimStatementSignatureName}}</div>
+          <div class="signature-title">{{driverClaimStatementSignatureTitle}}</div>
+          <div class="signature-line"></div>
+          <div class="signature-datetime">{{driverClaimStatementSignedAt}}</div>
+          <div class="signature-status" data-bof-sig-role="driver_claim_packet">{{driverClaimStatementSignatureStatus}}</div>
+        </div>
+        <div class="signature-block {{receiverClaimAckSignatureCssClass}}">
+          <div class="signature-role">Receiver / customer acknowledgement</div>
+          {{receiverClaimAckSignatureSvgHtml}}
+          <div class="signature-script">{{receiverClaimAckSignatureText}}</div>
+          <div class="signature-meta">{{receiverClaimAckSignatureName}}</div>
+          <div class="signature-title">{{receiverClaimAckSignatureTitle}}</div>
+          <div class="signature-line"></div>
+          <div class="signature-datetime">{{receiverClaimAckSignedAt}}</div>
+          <div class="signature-status" data-bof-sig-role="receiver_claim_packet">{{receiverClaimAckSignatureStatus}}</div>
+        </div>
+      </div>
+      <footer>
+        <span>Generated: {{generatedDate}}</span>
+        <span>BOF operations document packet</span>
+      </footer>
+    </div>
+  </body>
+</html>

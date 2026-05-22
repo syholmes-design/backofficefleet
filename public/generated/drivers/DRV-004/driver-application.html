@@ -1,0 +1,989 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Driver Application for Employment &mdash; DRV-004 &mdash; Delta Advanced Trucking, Inc.</title>
+<style>
+
+:root {
+    --navy: #1B2A4A;
+    --blue: #2F5496;
+    --light-blue: #D6E4F0;
+    --green: #27AE60;
+    --green-bg: #EAFAF1;
+    --amber: #E67E22;
+    --amber-bg: #FEF5E7;
+    --gray-bg: #F4F6F8;
+    --border: #D5D8DC;
+    --text: #2C3E50;
+    --text-muted: #7F8C8D;
+    --white: #FFFFFF;
+    --red: #E74C3C;
+    --red-bg: #FDEDEC;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+    font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif;
+    background: var(--gray-bg);
+    color: var(--text);
+    padding: 24px;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+}
+.app-container {
+    width: 100%;
+    max-width: 860px;
+    background: var(--white);
+    border-radius: 12px;
+    box-shadow: 0 4px 24px rgba(27,42,74,0.12), 0 1px 4px rgba(27,42,74,0.08);
+    overflow: hidden;
+    border: 1px solid var(--border);
+}
+
+/* === TOP BAR === */
+.top-bar {
+    background: var(--navy);
+    padding: 20px 32px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.top-bar-left h1 {
+    color: var(--white);
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+}
+.top-bar-left .subtitle {
+    color: var(--light-blue);
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 1px;
+    margin-top: 3px;
+    text-transform: uppercase;
+}
+.form-id-badge {
+    background: var(--blue);
+    color: var(--white);
+    font-size: 12px;
+    font-weight: 700;
+    padding: 5px 14px;
+    border-radius: 20px;
+    letter-spacing: 1px;
+}
+
+/* === REGULATION BANNER === */
+.reg-banner {
+    background: var(--light-blue);
+    padding: 10px 32px;
+    font-size: 11px;
+    color: var(--navy);
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.reg-banner .reg-icon {
+    width: 16px; height: 16px; flex-shrink: 0;
+}
+
+/* === SECTION === */
+.section {
+    padding: 24px 32px 20px;
+    border-bottom: 1px solid var(--border);
+}
+.section:last-of-type { border-bottom: none; }
+.section-number {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px; height: 28px;
+    background: var(--navy);
+    color: var(--white);
+    font-size: 13px;
+    font-weight: 700;
+    border-radius: 50%;
+    margin-right: 10px;
+    flex-shrink: 0;
+}
+.section-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 18px;
+}
+.section-title {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--navy);
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+}
+.section-req {
+    font-size: 10px;
+    color: var(--text-muted);
+    font-weight: 500;
+    margin-left: auto;
+    font-style: italic;
+}
+
+/* === FORM GRID === */
+.form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px 28px;
+}
+.form-grid.three-col {
+    grid-template-columns: 1fr 1fr 1fr;
+}
+.form-grid.four-col {
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+}
+.form-grid.full-width {
+    grid-template-columns: 1fr;
+}
+.form-field {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+.form-field.span-2 { grid-column: span 2; }
+.form-field.span-3 { grid-column: span 3; }
+.form-field.span-4 { grid-column: span 4; }
+.field-label {
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+.field-value {
+    font-size: 14px;
+    color: var(--text);
+    font-weight: 500;
+    padding: 8px 12px;
+    background: var(--gray-bg);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    min-height: 36px;
+    display: flex;
+    align-items: center;
+}
+.field-value.empty {
+    color: var(--text-muted);
+    font-style: italic;
+    font-size: 12px;
+}
+
+/* === TABLE === */
+.app-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+    margin-top: 4px;
+}
+.app-table th {
+    text-align: left;
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 8px 10px;
+    border-bottom: 2px solid var(--border);
+    background: var(--gray-bg);
+}
+.app-table td {
+    padding: 10px 10px;
+    border-bottom: 1px solid var(--border);
+    color: var(--text);
+    font-weight: 500;
+    vertical-align: top;
+}
+.app-table tr:last-child td { border-bottom: none; }
+.table-empty {
+    text-align: center;
+    padding: 16px;
+    color: var(--text-muted);
+    font-size: 12px;
+    font-style: italic;
+}
+
+/* === CHECKBOX ROWS === */
+.check-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 10px 0;
+}
+.check-box {
+    width: 18px; height: 18px;
+    border: 2px solid var(--border);
+    border-radius: 4px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 1px;
+}
+.check-box.checked {
+    background: var(--green);
+    border-color: var(--green);
+}
+.check-box.checked::after {
+    content: '\2713';
+    color: white;
+    font-size: 12px;
+    font-weight: 700;
+}
+.check-text {
+    font-size: 13px;
+    color: var(--text);
+    line-height: 1.5;
+}
+
+/* === EXP GRID === */
+.exp-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+}
+.exp-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 14px;
+    background: var(--gray-bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+}
+.exp-type {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text);
+    flex: 1;
+}
+.exp-years {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--navy);
+    background: var(--light-blue);
+    padding: 3px 10px;
+    border-radius: 12px;
+}
+
+/* === SIGNATURE BLOCK === */
+.sig-block {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 24px;
+    margin-top: 40px;
+}
+.sig-line {
+    border-bottom: 2px solid var(--navy);
+    padding-bottom: 6px;
+    min-height: 42px;
+    display: flex;
+    align-items: flex-end;
+}
+.sig-value {
+    font-family: 'Segoe Script', 'Brush Script MT', cursive;
+    font-size: 22px;
+    color: var(--navy);
+}
+.sig-label {
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-top: 6px;
+}
+
+/* === CONSENT BOX === */
+.consent-box {
+    background: var(--amber-bg);
+    border: 1px solid #F5CBA7;
+    border-radius: 10px;
+    padding: 20px 24px;
+    margin-top: 22px;
+    margin-bottom: 10px;
+    position: relative;
+    overflow: hidden;
+}
+.consent-box::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 5px;
+    background: var(--amber);
+}
+.consent-title {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--amber);
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    margin-bottom: 8px;
+}
+.consent-text {
+    font-size: 12px;
+    color: var(--text);
+    line-height: 1.8;
+}
+
+.legal-box {
+    background: var(--red-bg);
+    border: 1px solid #F5B7B1;
+    border-radius: 10px;
+    padding: 20px 24px;
+    margin-top: 22px;
+    margin-bottom: 10px;
+    position: relative;
+    overflow: hidden;
+}
+.legal-box::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 5px;
+    background: var(--red);
+}
+.legal-title {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--red);
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    margin-bottom: 8px;
+}
+.legal-text {
+    font-size: 12px;
+    color: var(--text);
+    line-height: 1.8;
+}
+
+.cert-box {
+    background: var(--green-bg);
+    border: 1px solid #A9DFBF;
+    border-radius: 10px;
+    padding: 20px 24px;
+    margin-top: 22px;
+    margin-bottom: 10px;
+    position: relative;
+    overflow: hidden;
+}
+.cert-box::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 5px;
+    background: var(--green);
+}
+.cert-title {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--green);
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    margin-bottom: 8px;
+}
+.cert-text {
+    font-size: 12px;
+    color: var(--text);
+    line-height: 1.8;
+}
+
+/* === FOOTER === */
+.card-footer {
+    background: var(--gray-bg);
+    padding: 10px 32px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 1px solid var(--border);
+}
+.card-footer span {
+    font-size: 10px;
+    color: var(--text-muted);
+    letter-spacing: 0.5px;
+}
+.status-badge {
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--green);
+    background: #D5F5E3;
+    padding: 3px 10px;
+    border-radius: 10px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.divider { margin: 32px 0; border: none; border-top: 1px dashed var(--border); }
+
+@media print {
+    body { background: white; padding: 0; }
+    .app-container { box-shadow: none; border: 2px solid var(--navy); }
+    .section { page-break-inside: avoid; }
+}
+@media (max-width: 640px) {
+    .form-grid, .form-grid.three-col, .form-grid.four-col { grid-template-columns: 1fr; }
+    .form-field.span-2, .form-field.span-3, .form-field.span-4 { grid-column: span 1; }
+    .exp-grid { grid-template-columns: 1fr; }
+    .sig-block { grid-template-columns: 1fr; }
+}
+
+</style>
+</head>
+<body>
+
+<div class="app-container">
+
+  <!-- TOP BAR -->
+  <div class="top-bar">
+    <div class="top-bar-left">
+      <h1>Driver Application for Employment</h1>
+      <div class="subtitle">Driver Qualification File &mdash; DRV-004</div>
+    </div>
+    <span class="form-id-badge">DQF-APP-004</span>
+  </div>
+
+  <!-- REGULATION BANNER -->
+  <div class="reg-banner">
+    <svg class="reg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+    Required per 49 CFR &sect;391.21 &mdash; Must be completed and signed by applicant prior to driving assignment
+  </div>
+
+  <!-- SECTION 1: CARRIER INFORMATION -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-number">1</span>
+      <span class="section-title">Motor Carrier Information</span>
+      <span class="section-req">&sect;391.21(b)(1)</span>
+    </div>
+    <div class="form-grid">
+      <div class="form-field span-2">
+        <span class="field-label">Company Name</span>
+        <div class="field-value">Delta Advanced Trucking, Inc.</div>
+      </div>
+      <div class="form-field span-2">
+        <span class="field-label">Company Address</span>
+        <div class="field-value">2475 Laver Rd., Mansfield, OH 44905</div>
+      </div>
+      <div class="form-field">
+        <span class="field-label">USDOT Number</span>
+        <div class="field-value">3847291</div>
+      </div>
+      <div class="form-field">
+        <span class="field-label">MC Number</span>
+        <div class="field-value">MC-1284560</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION 2: APPLICANT INFORMATION -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-number">2</span>
+      <span class="section-title">Applicant Information</span>
+      <span class="section-req">&sect;391.21(b)(2)</span>
+    </div>
+    <div class="form-grid">
+      <div class="form-field">
+        <span class="field-label">Last Name</span>
+        <div class="field-value">Patel</div>
+      </div>
+      <div class="form-field">
+        <span class="field-label">First Name</span>
+        <div class="field-value">Priya</div>
+      </div>
+      <div class="form-field">
+        <span class="field-label">Middle Name</span>
+        <div class="field-value">Anand</div>
+      </div>
+      <div class="form-field">
+        <span class="field-label">Date of Birth</span>
+        <div class="field-value">08/12/1993</div>
+      </div>
+      <div class="form-field">
+        <span class="field-label">Social Security Number</span>
+        <div class="field-value">XXX-XX-3047</div>
+      </div>
+      <div class="form-field">
+        <span class="field-label">Phone Number</span>
+        <div class="field-value">359-469-5960</div>
+      </div>
+      <div class="form-field">
+        <span class="field-label">Email Address</span>
+        <div class="field-value">priyapatel@yahoo.com</div>
+      </div>
+      <div class="form-field">
+        <span class="field-label">Application Date</span>
+        <div class="field-value">07/12/2025</div>
+      </div>
+      <div class="form-field span-2">
+        <span class="field-label">Current Address</span>
+        <div class="field-value">2200 Superior Ave, Cleveland, OH 44114</div>
+      </div>
+    </div>
+
+    <hr class="divider">
+    <div class="section-header" style="margin-top:10px;">
+      <span class="section-title" style="font-size:12px; letter-spacing:1px;">Position Applied For</span>
+    </div>
+    <div class="form-grid three-col">
+      <div class="form-field">
+        <span class="field-label">Position</span>
+        <div class="field-value">OTR Driver</div>
+      </div>
+      <div class="form-field">
+        <span class="field-label">Type</span>
+        <div class="field-value">Full-Time</div>
+      </div>
+      <div class="form-field">
+        <span class="field-label">Date Available</span>
+        <div class="field-value">08/01/2025</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION 3: RESIDENCE HISTORY -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-number">3</span>
+      <span class="section-title">Residence History &mdash; Previous 3 Years</span>
+      <span class="section-req">&sect;391.21(b)(3)</span>
+    </div>
+    <table class="app-table">
+      <thead>
+        <tr>
+          <th style="width:45%">Address</th>
+          <th style="width:20%">City, State, ZIP</th>
+          <th>From</th>
+          <th>To</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>2200 Superior Ave</td>
+          <td>Cleveland, OH 44114</td>
+          <td>08/2021</td>
+          <td>Present</td>
+        </tr>
+        <tr>
+          <td>1735 E 12th St, Apt 6</td>
+          <td>Cleveland, OH 44114</td>
+          <td>01/2019</td>
+          <td>07/2021</td>
+        </tr>
+
+      </tbody>
+    </table>
+  </div>
+
+  <!-- SECTION 4: LICENSE INFORMATION -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-number">4</span>
+      <span class="section-title">License Information</span>
+      <span class="section-req">&sect;391.21(b)(5)</span>
+    </div>
+    <table class="app-table">
+      <thead>
+        <tr>
+          <th>Issuing State</th>
+          <th>License Number</th>
+          <th>Class</th>
+          <th>Endorsements</th>
+          <th>Restrictions</th>
+          <th>Expiration</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Ohio</td>
+          <td>OH8493496</td>
+          <td>Class A</td>
+          <td>T, N</td>
+          <td>None</td>
+          <td>03/14/2026</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- SECTION 5: DRIVING EXPERIENCE -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-number">5</span>
+      <span class="section-title">Driving Experience</span>
+      <span class="section-req">&sect;391.21(b)(6)</span>
+    </div>
+    <div class="exp-grid">
+      <div class="exp-item">
+        <span class="exp-type">Tractor-Semitrailer</span>
+        <span class="exp-years">4 yrs</span>
+      </div>
+      <div class="exp-item">
+        <span class="exp-type">Straight Truck</span>
+        <span class="exp-years">2 yrs</span>
+      </div>
+      <div class="exp-item">
+        <span class="exp-type">Reefer</span>
+        <span class="exp-years">3 yrs</span>
+      </div>
+      <div class="exp-item">
+        <span class="exp-type">Van / Dry</span>
+        <span class="exp-years">4 yrs</span>
+      </div>
+      <div class="exp-item">
+        <span class="exp-type">Flatbed</span>
+        <span class="exp-years">1 yr</span>
+      </div>
+      <div class="exp-item">
+        <span class="exp-type">Tanker</span>
+        <span class="exp-years">1 yr</span>
+      </div>
+
+    </div>
+    <div class="form-grid full-width" style="margin-top:14px;">
+      <div class="form-field">
+        <span class="field-label">Total Miles Driven (Approximate)</span>
+        <div class="field-value">~380,000 miles</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION 6: ACCIDENT RECORD -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-number">6</span>
+      <span class="section-title">Accident Record &mdash; Previous 3 Years</span>
+      <span class="section-req">&sect;391.21(b)(7)</span>
+    </div>
+    <table class="app-table">
+      <thead>
+        <tr>
+          <th>Date</th>
+          <th>Nature of Accident</th>
+          <th>Location</th>
+          <th>Fatalities</th>
+          <th>Injuries</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td colspan="5" class="table-empty">No reportable accidents in the preceding 3-year period.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- SECTION 7: TRAFFIC VIOLATIONS -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-number">7</span>
+      <span class="section-title">Traffic Violations &amp; Forfeitures &mdash; Previous 3 Years</span>
+      <span class="section-req">&sect;391.21(b)(8)</span>
+    </div>
+    <table class="app-table">
+      <thead>
+        <tr>
+          <th>Date</th>
+          <th>Violation</th>
+          <th>Location / State</th>
+          <th>Vehicle Operated</th>
+          <th>Disposition</th>
+        </tr>
+      </thead>
+      <tbody>
+<tr><td colspan="5" class="table-empty">No traffic violations or forfeitures in the preceding 3-year period.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- SECTION 8: LICENSE DENIAL / SUSPENSION -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-number">8</span>
+      <span class="section-title">License Denial, Revocation, or Suspension</span>
+      <span class="section-req">&sect;391.21(b)(9)</span>
+    </div>
+    <div class="check-row">
+      <div class="check-box checked"></div>
+      <span class="check-text">I certify that no license, permit, or privilege to operate a motor vehicle has ever been denied, revoked, or suspended.</span>
+    </div>
+    <div class="check-row">
+      <div class="check-box"></div>
+      <span class="check-text">I have had a license, permit, or privilege denied, revoked, or suspended. Details are provided below:</span>
+    </div>
+    <div class="form-grid full-width" style="margin-top:10px;">
+      <div class="form-field">
+        <span class="field-label">Details (if applicable)</span>
+        <div class="field-value empty">N/A</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION 9: EMPLOYMENT HISTORY (10-YEAR) -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-number">9</span>
+      <span class="section-title">Employment History &mdash; Previous 10 Years</span>
+      <span class="section-req">&sect;391.21(b)(10)</span>
+    </div>
+    <div style="background:var(--gray-bg); border:1px solid var(--border); border-radius:10px; padding:16px 20px; margin-bottom:14px;">
+      <div class="form-grid">
+        <div class="form-field span-2">
+          <span class="field-label">Employer Name</span>
+          <div class="field-value">North Coast Express, Inc.</div>
+        </div>
+        <div class="form-field span-2">
+          <span class="field-label">Employer Address</span>
+          <div class="field-value">3800 Lakeside Ave, Cleveland, OH 44114</div>
+        </div>
+        <div class="form-field">
+          <span class="field-label">Phone</span>
+          <div class="field-value">216-431-8500</div>
+        </div>
+        <div class="form-field">
+          <span class="field-label">Position Held</span>
+          <div class="field-value">OTR Driver</div>
+        </div>
+        <div class="form-field">
+          <span class="field-label">From</span>
+          <div class="field-value">06/2021</div>
+        </div>
+        <div class="form-field">
+          <span class="field-label">To</span>
+          <div class="field-value">07/2025</div>
+        </div>
+        <div class="form-field">
+          <span class="field-label">Reason for Leaving</span>
+          <div class="field-value">Seeking dedicated home time</div>
+        </div>
+        <div class="form-field">
+          <span class="field-label">Subject to FMCSRs?</span>
+          <div class="field-value">Yes</div>
+        </div>
+        <div class="form-field">
+          <span class="field-label">Subject to DOT Drug/Alcohol Testing? (49 CFR Part 40)</span>
+          <div class="field-value">Yes</div>
+        </div>
+        <div class="form-field">
+          <span class="field-label">May We Contact?</span>
+          <div class="field-value">Yes</div>
+        </div>
+      </div>
+    </div>
+    <div style="background:var(--gray-bg); border:1px solid var(--border); border-radius:10px; padding:16px 20px;">
+      <div class="form-grid">
+        <div class="form-field span-2">
+          <span class="field-label">Employer Name</span>
+          <div class="field-value">Buckeye Freight Group</div>
+        </div>
+        <div class="form-field span-2">
+          <span class="field-label">Employer Address</span>
+          <div class="field-value">5200 Transportation Blvd, Garfield Heights, OH 44125</div>
+        </div>
+        <div class="form-field">
+          <span class="field-label">Phone</span>
+          <div class="field-value">216-587-3100</div>
+        </div>
+        <div class="form-field">
+          <span class="field-label">Position Held</span>
+          <div class="field-value">Local / P&amp;D Driver</div>
+        </div>
+        <div class="form-field">
+          <span class="field-label">From</span>
+          <div class="field-value">03/2019</div>
+        </div>
+        <div class="form-field">
+          <span class="field-label">To</span>
+          <div class="field-value">05/2021</div>
+        </div>
+        <div class="form-field">
+          <span class="field-label">Reason for Leaving</span>
+          <div class="field-value">Promoted to OTR</div>
+        </div>
+        <div class="form-field">
+          <span class="field-label">Subject to FMCSRs?</span>
+          <div class="field-value">Yes</div>
+        </div>
+        <div class="form-field">
+          <span class="field-label">Subject to DOT Drug/Alcohol Testing? (49 CFR Part 40)</span>
+          <div class="field-value">Yes</div>
+        </div>
+        <div class="form-field">
+          <span class="field-label">May We Contact?</span>
+          <div class="field-value">Yes</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- SECTION 10: EDUCATION -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-number">10</span>
+      <span class="section-title">Education</span>
+      <span class="section-req">Industry Standard</span>
+    </div>
+    <table class="app-table">
+      <thead>
+        <tr>
+          <th>School / Institution</th>
+          <th>Location</th>
+          <th>Years Attended</th>
+          <th>Graduated?</th>
+          <th>Degree / Certificate</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>John Adams High School</td>
+          <td>Cleveland, OH</td>
+          <td>2007 &ndash; 2011</td>
+          <td>Yes</td>
+          <td>High School Diploma</td>
+        </tr>
+        <tr>
+          <td>Cuyahoga Community College</td>
+          <td>Cleveland, OH</td>
+          <td>2011 &ndash; 2013</td>
+          <td>Yes</td>
+          <td>Associate of Applied Science</td>
+        </tr>
+        <tr>
+          <td>Ohio CDL Training Academy</td>
+          <td>Parma, OH</td>
+          <td>2019</td>
+          <td>Yes</td>
+          <td>CDL Class A Certificate</td>
+        </tr>
+
+      </tbody>
+    </table>
+  </div>
+
+  <!-- SECTION 11: DOT DRUG & ALCOHOL TESTING HISTORY -->
+  <div class="section" style="padding: 30px 32px 28px;">
+    <div class="section-header">
+      <span class="section-number">11</span>
+      <span class="section-title">DOT Drug &amp; Alcohol Testing History</span>
+      <span class="section-req">&sect;391.21(b)(10) / 49 CFR Part 40</span>
+    </div>
+    <div class="check-row">
+      <div class="check-box checked"></div>
+      <span class="check-text">Have you ever tested positive or refused a DOT pre-employment, random, post-accident, reasonable suspicion, return-to-duty, or follow-up drug or alcohol test with any previous employer? <strong>No</strong></span>
+    </div>
+    <div class="check-row">
+      <div class="check-box checked"></div>
+      <span class="check-text">I authorize Delta Advanced Trucking, Inc. to obtain my drug and alcohol testing records from my previous DOT-regulated employers listed in Section 9, in compliance with 49 CFR &sect;40.25.</span>
+    </div>
+  </div>
+
+  <!-- SECTION 12: SAFETY PERFORMANCE HISTORY AUTHORIZATION -->
+  <div class="section" style="padding: 30px 32px 28px;">
+    <div class="section-header">
+      <span class="section-number">12</span>
+      <span class="section-title">Safety Performance History &mdash; Records Release Authorization</span>
+      <span class="section-req">&sect;391.23(d) / &sect;391.53</span>
+    </div>
+    <div class="consent-box">
+      <div class="consent-title">Pre-Employment Investigation Authorization</div>
+      <div class="consent-text">
+        I hereby authorize Delta Advanced Trucking, Inc. and its agents to investigate my safety performance history with all DOT-regulated employers listed in Section 9 of this application, for the 3-year period preceding the date of this application, in accordance with 49 CFR &sect;391.23. This investigation may include, but is not limited to: general driver identification and employment verification, accident history per &sect;390.15, any drug and alcohol test results, and any records of violations of motor vehicle laws.
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION 13: FCRA DISCLOSURE & BACKGROUND CHECK -->
+  <div class="section" style="padding: 30px 32px 28px;">
+    <div class="section-header">
+      <span class="section-number">13</span>
+      <span class="section-title">Fair Credit Reporting Act Disclosure &amp; Consent</span>
+      <span class="section-req">FCRA / Industry Standard</span>
+    </div>
+    <div class="legal-box">
+      <div class="legal-title">FCRA Disclosure</div>
+      <div class="legal-text">
+        In accordance with the Fair Credit Reporting Act (15 U.S.C. &sect;1681 et seq.), Delta Advanced Trucking, Inc. may obtain a consumer report and/or investigative consumer report on you for employment purposes. This may include information about your driving record, criminal history, previous employment, education, and other relevant background information. You have the right to request disclosure of the nature and scope of any investigative consumer report and to dispute the accuracy of information contained therein.
+      </div>
+    </div>
+    <div class="check-row" style="margin-top:20px;">
+      <div class="check-box checked"></div>
+      <span class="check-text">I acknowledge receipt of the FCRA disclosure above and authorize Delta Advanced Trucking, Inc. to obtain consumer reports and/or investigative consumer reports for employment purposes.</span>
+    </div>
+    <div class="check-row">
+      <div class="check-box checked"></div>
+      <span class="check-text">I authorize a pre-employment background check including criminal history records and MVR from all states in which I hold or have held a license.</span>
+    </div>
+  </div>
+
+  <!-- SECTION 14: APPLICANT CERTIFICATION & SIGNATURE -->
+  <div class="section" style="padding: 30px 32px 32px;">
+    <div class="section-header">
+      <span class="section-number">14</span>
+      <span class="section-title">Applicant Certification &amp; Signature</span>
+      <span class="section-req">&sect;391.21(b)(11)</span>
+    </div>
+    <div class="cert-box">
+      <div class="cert-title">Applicant Certification</div>
+      <div class="cert-text">
+        I certify that the information provided in this application is true and complete to the best of my knowledge. I understand that any falsification, misrepresentation, or omission of information on this application or any other required document may result in denial of employment or, if already employed, immediate termination. I authorize Delta Advanced Trucking, Inc. to verify all information provided and to contact all previous employers, references, and educational institutions listed herein. I understand that this application is not a contract of employment and that, if hired, my employment is at-will and may be terminated by either party at any time, with or without cause.
+      </div>
+    </div>
+
+    <div class="sig-block">
+      <div>
+        <div class="sig-line"><span class="sig-value">Priya A. Patel</span></div>
+        <div class="sig-label">Applicant Signature</div>
+      </div>
+      <div>
+        <div class="sig-line"><span class="field-value" style="background:transparent; border:none; padding:0; font-size:14px;">07/12/2025</span></div>
+        <div class="sig-label">Date</div>
+      </div>
+    </div>
+
+    <hr class="divider">
+
+    <!-- CARRIER USE ONLY -->
+    <div style="margin-top:20px;">
+      <div class="section-header">
+        <span class="section-title" style="font-size:11px; letter-spacing:1.5px; color:var(--text-muted);">For Carrier Use Only</span>
+      </div>
+      <div class="form-grid">
+        <div class="form-field">
+          <span class="field-label">Reviewed By</span>
+          <div class="field-value">T. Marchlen &mdash; Fleet Compliance</div>
+        </div>
+        <div class="form-field">
+          <span class="field-label">Review Date</span>
+          <div class="field-value">07/13/2025</div>
+        </div>
+        <div class="form-field">
+          <span class="field-label">Assigned Driver ID</span>
+          <div class="field-value">DRV-004</div>
+        </div>
+        <div class="form-field">
+          <span class="field-label">Application Status</span>
+          <div class="field-value" style="color:var(--green); font-weight:700;">APPROVED</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <div class="card-footer">
+    <span>Delta Advanced Trucking, Inc. &bull; Form DQF-APP-004 &bull; Confidential &mdash; Authorized Personnel Only &bull; Rev. 04/2026</span>
+    <span class="status-badge">Complete</span>
+  </div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Equipment Schedule - Robert Johnson (DRV-012)</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            line-height: 1.6;
+            color: #1a202c;
+            background-color: #f8fafc;
+            margin: 0;
+            padding: 1in;
+        }
+        .paper {
+            max-width: 8.5in;
+            margin: 0 auto;
+            background: white;
+            padding: 0.5in;
+            box-shadow: 0 0.125in 0.25in rgba(0, 0, 0, 0.1);
+            border: 1px solid #e2e8f0;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 0.5in;
+            border-bottom: 2px solid #0BA5A4;
+            padding-bottom: 0.25in;
+        }
+        .title {
+            font-size: 18pt;
+            font-weight: bold;
+            color: #0BA5A4;
+            margin-bottom: 0.125in;
+        }
+        .subtitle {
+            font-size: 12pt;
+            color: #4a5568;
+            margin-bottom: 0.5in;
+        }
+        .section {
+            margin-bottom: 0.5in;
+        }
+        .section-title {
+            font-size: 11pt;
+            font-weight: bold;
+            color: #0BA5A4;
+            margin-bottom: 0.125in;
+            border-bottom: 1px solid #e2e8f0;
+            padding-bottom: 0.0625in;
+        }
+        .equipment-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.25in;
+            margin-bottom: 0.25in;
+        }
+        .equipment-item {
+            font-size: 9pt;
+            padding: 0.125in;
+            border: 1px solid #e2e8f0;
+            border-radius: 0.125in;
+        }
+        .equipment-type {
+            font-weight: bold;
+            color: #0BA5A4;
+            margin-bottom: 0.0625in;
+        }
+        .equipment-details {
+            font-size: 8pt;
+            color: #4a5568;
+            margin-top: 0.0625in;
+        }
+        .maintenance-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 9pt;
+            margin-bottom: 0.25in;
+        }
+        .maintenance-table th,
+        .maintenance-table td {
+            border: 1px solid #e2e8f0;
+            padding: 0.125in;
+            text-align: left;
+        }
+        .maintenance-table th {
+            background-color: #f7fafc;
+            font-weight: bold;
+            color: #0BA5A4;
+        }
+        .footer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: #f7fafc;
+            border-top: 1px solid #e2e8f0;
+            padding: 0.125in;
+            text-align: center;
+            font-size: 8pt;
+            color: #4a5568;
+        }
+    </style>
+</head>
+<body>
+    <div class="paper">
+        <div class="header">
+            <div class="title">Equipment Schedule</div>
+            <div class="subtitle">Robert Johnson (DRV-012) - Owner-Operator</div>
+        </div>
+
+        <div class="section">
+            <div class="section-title">Primary Vehicle</div>
+            <div class="equipment-grid">
+                <div class="equipment-item">
+                    <div class="equipment-type">Vehicle Information</div>
+                    <div class="equipment-details">
+                        Year: 2023<br>
+                        Make: Kenworth<br>
+                        Model: T680<br>
+                        VIN: 1XKND49X3PJ234567<br>
+                        License: OH-8F7G6H<br>
+                        Color: Black<br>
+                        Odometer: 89,120 miles
+                    </div>
+                </div>
+                <div class="equipment-item">
+                    <div class="equipment-type">Engine & Transmission</div>
+                    <div class="equipment-details">
+                        Engine: PACCAR MX-13<br>
+                        Horsepower: 485 HP<br>
+                        Torque: 1,650 lb-ft<br>
+                        Transmission: Eaton-Fuller 13-Speed<br>
+                        Rear Axle Ratio: 3.36<br>
+                        Fuel Type: Diesel
+                    </div>
+                </div>
+                <div class="equipment-item">
+                    <div class="equipment-type">Dimensions & Capacity</div>
+                    <div class="equipment-details">
+                        Wheelbase: 186 in<br>
+                        Sleeper: 76 in High-Roof<br>
+                        Fuel Tanks: 2 x 150 gal<br>
+                    </div>
+                </div>
+                <div class="equipment-item">
+                    <div class="equipment-type">Safety Features</div>
+                    <div class="equipment-details">
+                        ABS: Yes<br>
+                        Airbags: Yes<br>
+                        Collision Mitigation: Yes<br>
+                        Lane Departure Warning: Yes<br>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <div class="section-title">Trailer Equipment</div>
+            <div class="equipment-grid">
+                <div class="equipment-item">
+                    <div class="equipment-type">Primary Trailer</div>
+                    <div class="equipment-details">
+                        Type: 53 ft Dry Van<br>
+                        Make: Wabash<br>
+                        Model: DuraPlate<br>
+                        Year: 2022<br>
+                        VIN: 1WABAT3212MN345678<br>
+                        License: OH-7D6E5F
+                    </div>
+                </div>
+                <div class="equipment-item">
+                    <div class="equipment-type">Trailer Features</div>
+                    <div class="equipment-details">
+                        Floor: Aluminum<br>
+                        Roof: Aluminum<br>
+                        Doors: Swing Doors<br>
+                        Logistics Posts: Yes<br>
+                        E-Track: Yes<br>
+                        Interior Height: 110 in
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <div class="section-title">Maintenance Schedule</div>
+            <table class="maintenance-table">
+                <thead>
+                    <tr>
+                        <th>Maintenance Type</th>
+                        <th>Interval</th>
+                        <th>Last Service</th>
+                        <th>Next Due</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Oil & Filter Change</td>
+                        <td>15,000 miles</td>
+                        <td>Oct 10, 2025 (87,200 mi)</td>
+                        <td>Nov 25, 2025 (102,200 mi)</td>
+                        <td>On Schedule</td>
+                    </tr>
+                    <tr>
+                        <td>Tire Rotation</td>
+                        <td>10,000 miles</td>
+                        <td>Sep 25, 2025 (79,200 mi)</td>
+                        <td>Nov 5, 2025 (89,200 mi)</td>
+                        <td>Due Soon</td>
+                    </tr>
+                    <tr>
+                        <td>Brake Inspection</td>
+                        <td>25,000 miles</td>
+                        <td>Sep 5, 2025 (69,200 mi)</td>
+                        <td>Jan 10, 2026 (94,200 mi)</td>
+                        <td>On Schedule</td>
+                    </tr>
+                    <tr>
+                        <td>DOT Inspection</td>
+                        <td>Annually</td>
+                        <td>Aug 20, 2025</td>
+                        <td>Aug 20, 2026</td>
+                        <td>Current</td>
+                    </tr>
+                    <tr>
+                        <td>PM Service A</td>
+                        <td>30,000 miles</td>
+                        <td>Jul 30, 2025 (59,200 mi)</td>
+                        <td>Feb 15, 2026 (89,200 mi)</td>
+                        <td>On Schedule</td>
+                    </tr>
+                    <tr>
+                        <tr>
+                        <td>PM Service B</td>
+                        <td>60,000 miles</td>
+                        <td>Apr 15, 2025 (29,200 mi)</td>
+                        <td>Sep 30, 2026 (89,200 mi)</td>
+                        <td>On Schedule</td>
+                    </tr>
+                    <tr>
+                        <td>Coolant Flush</td>
+                        <td>100,000 miles</td>
+                        <td>Mar 10, 2025 (19,200 mi)</td>
+                        <td>Mar 10, 2026 (119,200 mi)</td>
+                        <td>On Schedule</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="section">
+            <div class="section-title">Equipment Compliance</div>
+            <p style="font-size: 10pt; margin-bottom: 0.25in;">
+                <strong>FMCSA Requirements:</strong>
+            </p>
+            <ul style="font-size: 9pt; margin-bottom: 0.25in; padding-left: 0.25in;">
+                <li>ELD Device: Omnitracs ELD - Installed and operational</li>
+                <li>Pre-Trip Inspection: Daily logs maintained</li>
+                <li>Post-Trip Inspection: Daily logs maintained</li>
+                <li>HOS Compliance: Electronic monitoring active</li>
+                <li>Vehicle Inspection Report: Current and valid</li>
+            </ul>
+            <p style="font-size: 10pt; margin-bottom: 0.25in;">
+                <strong>Environmental Compliance:</strong>
+            </p>
+            <ul style="font-size: 9pt; margin-bottom: 0.25in; padding-left: 0.25in;">
+                <li>Emissions: EPA 2017 compliant</li>
+                <li>DEF System: Operational</li>
+                <li>Aftertreatment: DPF and SCR functional</li>
+                <li>Smoke Test: Passed (Oct 10, 2025)</li>
+            </ul>
+        </div>
+
+        <div class="section">
+            <div class="section-title">Equipment Insurance</div>
+            <p style="font-size: 10pt; margin-bottom: 0.25in;">
+                <strong>Physical Damage Coverage:</strong> Actual Cash Value - $125,000<br>
+                <strong>Deductible:</strong> $1,000 per incident<br>
+                <strong>Carrier:</strong> Nationwide Commercial<br>
+                <strong>Policy Number:</strong> PD-2025-0120<br>
+                <strong>Effective:</strong> October 15, 2025 - October 15, 2026
+            </p>
+        </div>
+
+        <div class="section">
+            <div class="section-title">Equipment Performance</div>
+            <p style="font-size: 10pt; margin-bottom: 0.25in;">
+                <strong>Fuel Efficiency:</strong> 7.3 MPG average (last 10,000 miles)<br>
+                <strong>Uptime:</strong> 99.1% (last 90 days)<br>
+                <strong>Breakdown Incidents:</strong> 0 in last 90 days<br>
+                <strong>Repair Costs:</strong> $890 (last 90 days)<br>
+                <strong>Inspection Score:</strong> 96/100 (last DOT inspection)
+            </p>
+        </div>
+
+        <div class="section">
+            <div class="section-title">Equipment Upgrades</div>
+            <p style="font-size: 10pt; margin-bottom: 0.25in;">
+                <strong>Recent Upgrades:</strong>
+            </p>
+            <ul style="font-size: 9pt; margin-bottom: 0.25in; padding-left: 0.25in;">
+                <li>Advanced telematics installation (Sep 2025)</li>
+                <li>LED lighting upgrade (Aug 2025)</li>
+                <li>Premium sound system (Jul 2025)</li>
+                <li>Upgraded refrigerator (Jun 2025)</li>
+            </ul>
+            <p style="font-size: 10pt; margin-bottom: 0.25in;">
+                <strong>Planned Upgrades:</strong>
+            </p>
+            <ul style="font-size: 9pt; margin-bottom: 0.25in; padding-left: 0.25in;">
+                <li>Solar panel installation (Q4 2025)</li>
+                <li>Advanced driver assistance system (Q1 2026)</li>
+            </ul>
+        </div>
+
+        <div class="section">
+            <div class="section-title">Contact Information</div>
+            <p style="font-size: 10pt; margin-bottom: 0.25in;">
+                <strong>Owner-Operator:</strong> Robert Johnson (DRV-012)<br>
+                <strong>Phone:</strong> 618-623-9317<br>
+                <strong>Email:</strong> robert.johnson@boftransport.com<br>
+                <strong>Preferred Service Provider:</strong> Akron Truck Service Center<br>
+                <strong>Service Provider Phone:</strong> (330) 555-7890
+            </p>
+        </div>
+
+        <div class="footer">
+            BackOfficeFleet operations document. Routed for internal workflow review.
+        </div>
+    </div>
+</body>
+</html>

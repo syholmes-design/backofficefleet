@@ -1,0 +1,2488 @@
+{
+  "L001": {
+    "cargoPhoto": {
+      "url": "/evidence/loads/L001/cargo-photo.png",
+      "label": "Cargo photo",
+      "basename": "cargo-photo",
+      "source": "real",
+      "generatedAt": "2026-05-22T01:00:06.694Z",
+      "required": true,
+      "conditional": false,
+      "applicable": true
+    },
+    "equipmentPhoto": {
+      "url": "/evidence/loads/L001/equipment-photo.png",
+      "label": "Equipment photo",
+      "basename": "equipment-photo",
+      "source": "real",
+      "generatedAt": "2026-05-22T01:00:06.694Z",
+      "required": true,
+      "conditional": false,
+      "applicable": true
+    },
+    "pickupPhoto": {
+      "url": "/evidence/loads/L001/pickup-photo.png",
+      "label": "Pickup photo",
+      "basename": "pickup-photo",
+      "source": "real",
+      "generatedAt": "2026-05-22T01:00:06.694Z",
+      "required": true,
+      "conditional": false,
+      "applicable": true
+    },
+    "deliveryPhoto": {
+      "url": "/evidence/loads/L001/delivery-photo.png",
+      "label": "Delivery photo",
+      "basename": "delivery-photo",
+      "source": "real",
+      "generatedAt": "2026-05-22T01:00:06.695Z",
+      "required": true,
+      "conditional": false,
+      "applicable": true
+    },
+    "sealPhoto": {
+      "url": "/evidence/loads/L001/seal-photo.png",
+      "label": "Seal photo",
+      "basename": "seal-photo",
+      "source": "real",
+      "generatedAt": "2026-05-22T01:00:06.694Z",
+      "required": true,
+      "conditional": false,
+      "applicable": true
+    },
+    "sealPickupPhoto": {
+      "url": "/evidence/loads/L001/seal-pickup-photo.png",
+      "label": "Seal pickup photo",
+      "basename": "seal-pickup-photo",
+      "source": "real",
+      "generatedAt": "2026-05-22T01:00:06.695Z",
+      "required": true,
+      "conditional": false,
+      "applicable": true
+    },
+    "sealDeliveryPhoto": {
+      "url": "/evidence/loads/L001/seal-delivery-photo.png",
+      "label": "Seal delivery photo",
+      "basename": "seal-delivery-photo",
+      "source": "real",
+      "generatedAt": "2026-05-22T01:00:06.695Z",
+      "required": true,
+      "conditional": false,
+      "applicable": true
+    },
+    "emptyTrailerProof": {
+      "url": "/evidence/loads/L001/empty-trailer-proof.png",
+      "label": "Empty trailer proof",
+      "basename": "empty-trailer-proof",
+      "source": "real",
+      "generatedAt": "2026-05-22T01:00:06.696Z",
+      "required": true,
+      "conditional": false,
+      "applicable": true
+    },
+    "rfidDockProof": {
+      "url": "/evidence/loads/L001/rfid-dock-proof.png",
+      "label": "RFID dock proof",
+      "basename": "rfid-dock-proof",
+      "source": "real",
+      "generatedAt": "2026-05-22T01:00:06.696Z",
+      "required": true,
+      "conditional": false,
+      "applicable": true
+    },
+    "lumperReceipt": {
+      "url": "",
+      "label": "Lumper receipt",
+      "basename": "lumper-receipt",
+      "source": "missing",
+      "generatedAt": "2026-05-22T01:00:06.698Z",
+      "required": false,
+      "conditional": true,
+      "applicable": false,
+      "reason": "Not required for this load context"
+    },
+    "damagePhoto": {
+      "url": "/evidence/loads/L001/cargo-damage-photo.png",
+      "label": "Damage / claim photo",
+      "basename": "damage-photo",
+      "source": "real",
+      "generatedAt": "2026-05-22T01:00:06.697Z",
+      "required": false,
+      "conditional": true,
+      "applicable": true
+    },
+    "cargoDamagePhoto": {
+      "url": "/evidence/loads/L001/cargo-damage-photo.png",
+      "label": "Cargo damage photo",
+      "basename": "cargo-damage-photo",
+      "source": "real",
+      "generatedAt": "2026-05-22T01:00:06.697Z",
+      "required": false,
+      "conditional": true,
+      "applicable": true
+    },
+    "damagedPalletPhoto": {
+      "url": "/evidence/loads/L001/damaged-pallet-photo.svg",
+      "label": "Damaged pallet photo",
+      "basename": "damaged-pallet-photo",
+      "source": "svg_demo",
+      "generatedAt": "2026-05-22T01:00:06.697Z",
+      "required": false,
+      "conditional": true,
+      "applicable": true
+    },
+    "sealMismatchPhoto": {
+      "url": "/evidence/loads/L001/seal-mismatch-photo.png",
+      "label": "Seal mismatch photo",
+      "basename": "seal-mismatch-photo",
+      "source": "real",
+      "generatedAt": "2026-05-22T01:00:06.696Z",
+      "required": false,
+      "conditional": true,
+      "applicable": true
+    },
+    "tempCheckPhoto": {
+      "url": "",
+      "label": "Temperature check photo",
+      "basename": "temp-check-photo",
+      "source": "missing",
+      "generatedAt": "2026-05-22T01:00:06.698Z",
+      "required": false,
+      "conditional": true,
+      "applicable": false,
+      "reason": "Not required for this load context"
+    },
+    "weightTicketPhoto": {
+      "url": "/evidence/loads/L001/weight-ticket-photo.svg",
+      "label": "Weight ticket photo",
+      "basename": "weight-ticket-photo",
+      "source": "svg_demo",
+      "generatedAt": "2026-05-22T01:00:06.696Z",
+      "required": false,
+      "conditional": true,
+      "applicable": true
+    },
+    "detentionProofPhoto": {
+      "url": "",
+      "label": "Detention proof photo",
+      "basename": "detention-proof-photo",
+      "source": "missing",
+      "generatedAt": "2026-05-22T01:00:06.698Z",
+      "required": false,
+      "conditional": true,
+      "applicable": false,
+      "reason": "Not required for this load context"
+    },
+    "safetyViolationPhoto": {
+      "url": "",
+      "label": "Safety violation photo",
+      "basename": "safety-violation-photo",
+      "source": "missing",
+      "generatedAt": "2026-05-22T01:00:06.698Z",
+      "required": false,
+      "conditional": true,
+      "applicable": false,
+      "reason": "Not required for this load context"
+    },
+    "claimEvidence": {
+      "url": "/evidence/loads/L001/claim-evidence.png",
+      "label": "Claim evidence",
+      "basename": "claim-evidence",
+      "source": "real",
+      "generatedAt": "2026-05-22T01:00:06.698Z",
+      "required": false,
+      "conditional": true,
+      "applicable": true
+    },
+    "proofCardComposite": {
+      "url": "/evidence/loads/L001/load001-seal-exception-proof-cards.png",
+      "label": "Seal Exception Proof Preview",
+      "basename": "load001-seal-exception-proof-cards",
+      "source": "real",
+      "required": false,
+      "conditional": true,
+      "applicable": true,
+      "reason": "Optional visual proof-card preview; individual proof records remain authoritative"
+    }
+  },
+  "L002": {
+    "cargoPhoto": {
+      "url": "/evidence/loads/L002/cargo-photo.png",
+      "label": "Cargo photo",
+      "basename": "cargo-photo",
+      "source": "real",
+      "generatedAt": "2026-05-22T01:00:06.698Z",
+      "required": true,
+      "conditional": false,
+      "applicable": true
+    },
+    "equipmentPhoto": {
+      "url": "/evidence/loads/L002/equipment-photo.png",
+      "label": "Equipment photo",
+      "basename": "equipment-photo",
+      "source": "real",
+      "generatedAt": "2026-05-22T01:00:06.699Z",
+      "required": true,
+      "conditional": false,
+      "applicable": true
+    },
+    "pickupPhoto": {
+      "url": "/evidence/loads/L002/pickup-photo.png",
+      "label": "Pickup photo",
+      "basename": "pickup-photo",
+      "source": "real",
+      "generatedAt": "2026-05-22T01:00:06.699Z",
+      "required": true,
+      "conditional": false,
+      "applicable": true
+    },
+    "deliveryPhoto": {
+      "url": "/evidence/loads/L002/delivery-photo.png",
+      "label": "Delivery photo",
+      "basename": "delivery-photo",
+      "source": "real",
+      "generatedAt": "2026-05-22T01:00:06.700Z",
+      "required": true,
+      "conditional": false,
+      "applicable": true
+    },
+    "sealPhoto": {
+      "url": "/evidence/loads/L002/seal-photo.png",
+      "label": "Seal photo",
+      "basename": "seal-photo",
+      "source": "real",
+      "generatedAt": "2026-05-22T01:00:06.699Z",
+      "required": true,
+      "conditional": false,
+      "applicable": true
+    },
+    "sealPickupPhoto": {
+      "url": "/evidence/loads/L002/seal-pickup-photo.png",
+      "label": "Seal pickup photo",
+      "basename": "seal-pickup-photo",
+      "source": "real",
+      "generatedAt": "2026-05-22T01:00:06.700Z",
+      "required": true,
+      "conditional": false,
+      "applicable": true
+    },
+    "sealDeliveryPhoto": {
+      "url": "/evidence/loads/L002/seal-delivery-photo.png",
+      "label": "Seal delivery photo",
+      "basename": "seal-delivery-photo",
+      "source": "real",
+      "generatedAt": "2026-05-22T01:00:06.700Z",
+      "required": true,
+      "conditional": false,
+      "applicable": true
+    },
+    "emptyTrailerProof": {
+      "url": "/evidence/loads/L002/empty-trailer-proof.png",
+      "label": "Empty trailer proof",
+      "basename": "empty-trailer-proof",
+      "source": "real",
+      "generatedAt": "2026-05-22T01:00:06.700Z",
+      "required": true,
+      "conditional": false,
+      "applicable": true
+    },
+    "rfidDockProof": {
+      "url": "/evidence/loads/L002/rfid-dock-proof.png",
+      "label": "RFID dock proof",
+      "basename": "rfid-dock-proof",
+      "source": "real",
+      "generatedAt": "2026-05-22T01:00:06.700Z",
+      "required": true,
+      "conditional": false,
+      "applicable": true
+    },
+    "lumperReceipt": {
+      "url": "",
+      "label": "Lumper receipt",
+      "basename": "lumper-receipt",
+      "source": "missing",
+      "generatedAt": "2026-05-22T01:00:06.701Z",
+      "required": false,
+      "conditional": true,
+      "applicable": false,
+      "reason": "Not required for this load context"
+    },
+    "damagePhoto": {
+      "url": "",
+      "label": "Damage / claim photo",
+      "basename": "damage-photo",
+      "source": "missing",
+      "generatedAt": "2026-05-22T01:00:06.701Z",
+      "required": false,
+      "conditional": true,
+      "applicable": false,
+      "reason": "Not required for this load context"
+    },
+    "cargoDamagePhoto": {
+      "url": "",
+      "label": "Cargo damage photo",
+      "basename": "cargo-damage-photo",
+      "source": "missing",
+      "generatedAt": "2026-05-22T01:00:06.701Z",
+      "required": false,
+      "conditional": true,
+      "applicable": false,
+      "reason": "Not required for this load context"
+    },
+    "damagedPalletPhoto": {
+      "url": "",
+      "label": "Damaged pallet photo",
+      "basename": "damaged-pallet-photo",
+      "source": "missing",
+      "generatedAt": "2026-05-22T01:00:06.701Z",
+      "required": false,
+      "conditional": true,
+      "applicable": false,
+      "reason": "Not required for this load context"
+    },
+    "sealMismatchPhoto": {
+      "url": "",
+      "label": "Seal mismatch photo",
+      "basename": "seal-mismatch-photo",
+      "source": "missing",
+      "generatedAt": "2026-05-22T01:00:06.701Z",
+      "required": false,
+      "conditional": true,
+      "applicable": false,
+      "reason": "Not required for this load context"
+    },
+    "tempCheckPhoto": {
+      "url": "",
+      "label": "Temperature check photo",
+      "basename": "temp-check-photo",
+      "source": "missing",
+      "generatedAt": "2026-05-22T01:00:06.701Z",
+      "required": false,
+      "conditional": true,
+      "applicable": false,
+      "reason": "Not required for this load context"
+    },
+    "weightTicketPhoto": {
+      "url": "/evidence/loads/L002/weight-ticket-photo.svg",
+      "label": "Weight ticket photo",
+      "basename": "weight-ticket-photo",
+      "source": "svg_demo",
+      "generatedAt": "2026-05-22T01:00:06.701Z",
+      "required": false,
+      "conditional": true,
+      "applicable": true
+    },
+    "detentionProofPhoto": {
+      "url": "",
+      "label": "Detention proof photo",
+      "basename": "detention-proof-photo",
+      "source": "missing",
+      "generatedAt": "2026-05-22T01:00:06.701Z",
+      "required": false,
+      "conditional": true,
+      "applicable": false,
+      "reason": "Not required for this load context"
+    },
+    "safetyViolationPhoto": {
+      "url": "",
+      "label": "Safety violation photo",
+      "basename": "safety-violation-photo",
+      "source": "missing",
+      "generatedAt": "2026-05-22T01:00:06.701Z",
+      "required": false,
+      "conditional": true,
+      "applicable": false,
+      "reason": "Not required for this load context"
+    },
+    "claimEvidence": {
+      "url": "",
+      "label": "Claim evidence",
+      "basename": "claim-evidence",
+      "source": "missing",
+      "generatedAt": "2026-05-22T01:00:06.701Z",
+      "required": false,
+      "conditional": true,
+      "applicable": false,
+      "reason": "Not required for this load context"
+    }
+  },
+  "L003": {
+    "cargoPhoto": {
+      "url": "/evidence/loads/L003/cargo-photo.png",
+      "label": "Cargo photo",
+      "basename": "cargo-photo",
+      "source": "real",
+      "generatedAt": "2026-05-22T01:00:06.701Z",
+      "required": true,
+      "conditional": false,
+      "applicable": true
+    },
+    "equipmentPhoto": {
+      "url": "/evidence/loads/L003/equipment-photo.png",
+      "label": "Equipment photo",
+      "basename": "equipment-photo",
+      "source": "real",
+      "generatedAt": "2026-05-22T01:00:06.702Z",
+      "required": true,
+      "conditional": false,
+      "applicable": true
+    },
+    "pickupPhoto": {
+      "url": "/evidence/loads/L003/pickup-photo.png",
+      "label": "Pickup photo",
+      "basename": "pickup-photo",
+      "source": "real",
+      "generatedAt": "2026-05-22T01:00:06.702Z",
+      "required": true,
+      "conditional": false,
+      "applicable": true
+    },
+    "deliveryPhoto": {
+      "url": "/evidence/loads/L003/delivery-photo.png",
+      "label": "Delivery photo",
+      "basename": "delivery-photo",
+      "source": "real",
+      "generatedAt": "2026-05-22T01:00:06.702Z",
+      "required": true,
+      "conditional": false,
+      "applicable": true
+    },
+    "sealPhoto": {
+      "url": "/evidence/loads/L003/seal-photo.png",
+      "label": "Seal photo",
+      "basename": "seal-photo",
+      "source": "real",
+      "generatedAt": "2026-05-22T01:00:06.701Z",
+      "required": true,
+      "conditional": false,
+      "applicable": true
+    },
+    "sealPickupPhoto": {
+      "url": "/evidence/loads/L003/seal-pickup-photo.png",
+      "label": "Seal pickup photo",
+      "basename": "seal-pickup-photo",
+      "source": "real",
+      "generatedAt": "2026-05-22T01:00:06.702Z",
+      "required": true,
+      "conditional": false,
+      "applicable": true
+    },
+    "sealDeliveryPhoto": {
+      "url": "/evidence/loads/L003/seal-delivery-photo.png",
+      "label": "Seal delivery photo",
+      "basename": "seal-delivery-photo",
+      "source": "real",
+      "generatedAt": "2026-05-22T01:00:06.702Z",
+      "required": true,
+      "conditional": false,
+      "applicable": true
+    },
+    "emptyTrailerProof": {
+      "url": "/evidence/loads/L003/empty-trailer-proof.png",
+      "label": "Empty trailer proof",
+      "basename": "empty-trailer-proof",
+      "source": "real",
+      "generatedAt": "2026-05-22T01:00:06.703Z",
+      "required": true,
+      "conditional": false,
+      "applicable": true
+    },
+    "rfidDockProof": {
+      "url": "/evidence/loads/L003/rfid-dock-proof.png",
+      "label": "RFID dock proof",
+      "basename": "rfid-dock-proof",
+      "source": "real",
+      "generatedAt": "2026-05-22T01:00:06.703Z",
+      "required": true,
+      "conditional": false,
+      "applicable": true
+    },
+    "lumperReceipt": {
+      "url": "",
+      "label": "Lumper receipt",
+      "basename": "lumper-receipt",
+      "source": "missing",
+      "generatedAt": "2026-05-22T01:00:06.703Z",
+      "required": false,
+      "conditional": true,
+      "applicable": false,
+      "reason": "Not required for this load context"
+    },
+    "damagePhoto": {
+      "url": "",
+      "label": "Damage / claim photo",
+      "basename": "damage-photo",
+      "source": "missing",
+      "generatedAt": "2026-05-22T01:00:06.703Z",
+      "required": false,
+      "conditional": true,
+      "applicable": false,
+      "reason": "Not required for this load context"
+    },
+    "cargoDamagePhoto": {
+      "url": "",
+      "label": "Cargo damage photo",
+      "basename": "cargo-damage-photo",
+      "source": "missing",
+      "generatedAt": "2026-05-22T01:00:06.703Z",
+      "required": false,
+      "conditional": true,
+      "applicable": false,
+      "reason": "Not required for this load context"
+    },
+    "damagedPalletPhoto": {
+      "url": "",
+      "label": "Damaged pallet photo",
+      "basename": "damaged-pallet-photo",
+      "source": "missing",
+      "generatedAt": "2026-05-22T01:00:06.703Z",
+      "required": false,
+      "conditional": true,
+      "applicable": false,
+      "reason": "Not required for this load context"
+    },
+    "sealMismatchPhoto": {
+      "url": "",
+      "label": "Seal mismatch photo",
+      "basename": "seal-mismatch-photo",
+      "source": "missing",
+      "generatedAt": "2026-05-22T01:00:06.703Z",
+      "required": false,
+      "conditional": true,
+      "applicable": false,
+      "reason": "Not required for this load context"
+    },
+    "tempCheckPhoto": {
+      "url": "",
+      "label": "Temperature check photo",
+      "basename": "temp-check-photo",
+      "source": "missing",
+      "generatedAt": "2026-05-22T01:00:06.703Z",
+      "required": false,
+      "conditional": true,
+      "applicable": false,
+      "reason": "Not required for this load context"
+    },
+    "weightTicketPhoto": {
+      "url": "/evidence/loads/L003/weight-ticket-photo.svg",
+      "label": "Weight ticket photo",
+      "basename": "weight-ticket-photo",
+      "source": "svg_demo",
+      "generatedAt": "2026-05-22T01:00:06.703Z",
+      "required": false,
+      "conditional": true,
+      "applicable": true
+    },
+    "detentionProofPhoto": {
+      "url": "",
+      "label": "Detention proof photo",
+      "basename": "detention-proof-photo",
+      "source": "missing",
+      "generatedAt": "2026-05-22T01:00:06.703Z",
+      "required": false,
+      "conditional": true,
+      "applicable": false,
+      "reason": "Not required for this load context"
+    },
+    "safetyViolationPhoto": {
+      "url": "",
+      "label": "Safety violation photo",
+      "basename": "safety-violation-photo",
+      "source": "missing",
+      "generatedAt": "2026-05-22T01:00:06.703Z",
+      "required": false,
+      "conditional": true,
+      "applicable": false,
+      "reason": "Not required for this load context"
+    },
+    "claimEvidence": {
+      "url": "",
+      "label": "Claim evidence",
+      "basename": "claim-evidence",
+      "source": "missing",
+      "generatedAt": "2026-05-22T01:00:06.703Z",
+      "required": false,
+      "conditional": true,
+      "applicable": false,
+      "reason": "Not required for this load context"
+    }
+  },
+  "L004": {
+    "cargoPhoto": {
+      "url": "/evidence/loads/L004/cargo-photo.png",
+      "label": "Cargo photo",
+      "basename": "cargo-photo",
+      "source": "real",
+      "generatedAt": "2026-05-22T01:00:06.704Z",
+      "required": true,
+      "conditional": false,
+      "applicable": true
+    },
+    "equipmentPhoto": {
+      "url": "/evidence/loads/L004/equipment-photo.png",
+      "label": "Equipment photo",
+      "basename": "equipment-photo",
+      "source": "real",
+      "generatedAt": "2026-05-22T01:00:06.704Z",
+      "required": true,
+      "conditional": false,
+      "applicable": true
+    },
+    "pickupPhoto": {
+      "url": "/evidence/loads/L004/pickup-photo.png",
+      "label": "Pickup photo",
+      "basename": "pickup-photo",
+      "source": "real",
+      "generatedAt": "2026-05-22T01:00:06.704Z",
+      "required": true,
+      "conditional": false,
+      "applicable": true
+    },
+    "deliveryPhoto": {
+      "url": "/evidence/loads/L004/delivery-photo.png",
+      "label": "Delivery photo",
+      "basename": "delivery-photo",
+      "source": "real",
+      "generatedAt": "2026-05-22T01:00:06.705Z",
+      "required": true,
+      "conditional": false,
+      "applicable": true
+    },
+    "sealPhoto": {
+      "url": "/evidence/loads/L004/seal-photo.png",
+      "label": "Seal photo",
+      "basename": "seal-photo",
+      "source": "real",
+      "generatedAt": "2026-05-22T01:00:06.704Z",
+      "required": true,
+      "conditional": false,
+      "applicable": true
+    },
+    "sealPickupPhoto": {
+      "url": "/evidence/loads/L004/seal-pickup-photo.png",
+      "label": "Seal pickup photo",
+      "basename": "seal-pickup-photo",
+      "source": "real",
+      "generatedAt": "2026-05-22T01:00:06.705Z",
+      "required": true,
+      "conditional": false,
+      "applicable": true
+    },
+    "sealDeliveryPhoto": {
+      "url": "/evidence/loads/L004/seal-delivery-photo.svg",
+      "label": "Seal delivery photo",
+      "basename": "seal-delivery-photo",
+      "source": "svg_demo",
+      "generatedAt": "2026-05-22T01:00:07.231Z",
+      "required": true,
+      "conditional": false,
+      "applicable": true
+    },
+    "emptyTrailerProof": {
+      "url": "/evidence/loads/L004/empty-trailer-proof.png",
+      "label": "Empty trailer proof",
+      "basename": "empty-trailer-proof",
+      "source": "real",
+      "generatedAt": "2026-05-22T01:00:07.232Z",
+      "required": true,
+      "conditional": false,
+      "applicable": true
+    },
+    "rfidDockProof": {
+      "url": "/evidence/loads/L004/rfid-dock-proof.png",
+      "label": "RFID dock proof",
+      "basename": "rfid-dock-proof",
+      "source": "real",
+      "generatedAt": "2026-05-22T01:00:07.232Z",
+      "required": true,
+      "conditional": false,
+      "applicable": true
+    },
+    "lumperReceipt": {
+      "url": "",
+      "label": "Lumper receipt",
+      "basename": "lumper-receipt",
+      "source": "missing",
+      "generatedAt": "2026-05-22T01:00:07.233Z",
+      "required": false,
+      "conditional": true,
+      "applicable": false,
+      "reason": "Not required for this load context"
+    },
+    "damagePhoto": {
+      "url": "",
+      "label": "Damage / claim photo",
+      "basename": "damage-photo",
+      "source": "missing",
+      "generatedAt": "2026-05-22T01:00:07.233Z",
+      "required": false,
+      "conditional": true,
+      "applicable": false,
+      "reason": "Not required for this load context"
+    },
+    "cargoDamagePhoto": {
+      "url": "",
+      "label": "Cargo damage photo",
+      "basename": "cargo-damage-photo",
+      "source": "missing",
+      "generatedAt": "2026-05-22T01:00:07.233Z",
+      "required": false,
+      "conditional": true,
+      "applicable": false,
+      "reason": "Not required for this load context"
+    },
+    "damagedPalletPhoto": {
+      "url": "",
+      "label": "Damaged pallet photo",
+      "basename": "damaged-pallet-photo",
+      "source": "missing",
+      "generatedAt": "2026-05-22T01:00:07.233Z",
+      "required": false,
+      "conditional": true,
+      "applicable": false,
+      "reason": "Not required for this load context"
+    },
+    "sealMismatchPhoto": {
+      "url": "",
+      "label": "Seal mismatch photo",
+      "basename": "seal-mismatch-photo",
+      "source": "missing",
+      "generatedAt": "2026-05-22T01:00:07.233Z",
+      "required": false,
+      "conditional": true,
+      "applicable": false,
+      "reason": "Not required for this load context"
+    },
+    "tempCheckPhoto": {
+      "url": "",
+      "label": "Temperature check photo",
+      "basename": "temp-check-photo",
+      "source": "missing",
+      "generatedAt": "2026-05-22T01:00:07.233Z",
+      "required": false,
+      "conditional": true,
+      "applicable": false,
+      "reason": "Not required for this load context"
+    },
+    "weightTicketPhoto": {
+      "url": "/evidence/loads/L004/weight-ticket-photo.svg",
+      "label": "Weight ticket photo",
+      "basename": "weight-ticket-photo",
+      "source": "svg_demo",
+      "generatedAt": "2026-05-22T01:00:07.233Z",
+      "required": false,
+      "conditional": true,
+      "applicable": true
+    },
+    "detentionProofPhoto": {
+      "url": "",
+      "label": "Detention proof photo",
+      "basename": "detention-proof-photo",
+      "source": "missing",
+      "generatedAt": "2026-05-22T01:00:07.233Z",
+      "required": false,
+      "conditional": true,
+      "applicable": false,
+      "reason": "Not required for this load context"
+    },
+    "safetyViolationPhoto": {
+      "url": "",
+      "label": "Safety violation photo",
+      "basename": "safety-violation-photo",
+      "source": "missing",
+      "generatedAt": "2026-05-22T01:00:07.233Z",
+      "required": false,
+      "conditional": true,
+      "applicable": false,
+      "reason": "Not required for this load context"
+    },
+    "claimEvidence": {
+      "url": "",
+      "label": "Claim evidence",
+      "basename": "claim-evidence",
+      "source": "missing",
+      "generatedAt": "2026-05-22T01:00:07.233Z",
+      "required": false,
+      "conditional": true,
+      "applicable": false,
+      "reason": "Not required for this load context"
+    },
+    "proofCardComposite": {
+      "url": "/evidence/loads/L004/load004-proof-cards.png",
+      "label": "Proof Packet Preview",
+      "basename": "load004-proof-cards",
+      "source": "real",
+      "required": false,
+      "conditional": true,
+      "applicable": true,
+      "reason": "Optional visual proof-card preview; individual proof records remain authoritative"
+    }
+  },
+  "L005": {
+    "cargoPhoto": {
+      "url": "/evidence/loads/L005/cargo-photo.png",
+      "label": "Cargo photo",
+      "basename": "cargo-photo",
+      "source": "real",
+      "generatedAt": "2026-05-22T01:00:07.233Z",
+      "required": true,
+      "conditional": false,
+      "applicable": true
+    },
+    "equipmentPhoto": {
+      "url": "/evidence/loads/L005/equipment-photo.png",
+      "label": "Equipment photo",
+      "basename": "equipment-photo",
+      "source": "real",
+      "generatedAt": "2026-05-22T01:00:07.234Z",
+      "required": true,
+      "conditional": false,
+      "applicable": true
+    },
+    "pickupPhoto": {
+      "url": "/evidence/loads/L005/pickup-photo.png",
+      "label": "Pickup photo",
+      "basename": "pickup-photo",
+      "source": "real",
+      "generatedAt": "2026-05-22T01:00:07.234Z",
+      "required": true,
+      "conditional": false,
+      "applicable": true
+    },
+    "deliveryPhoto": {
+      "url": "/evidence/loads/L005/delivery-photo.png",
+      "label": "Delivery photo",
+      "basename": "delivery-photo",
+      "source": "real",
+      "generatedAt": "2026-05-22T01:00:07.234Z",
+      "required": true,
+      "conditional": false,
+      "applicable": true
+    },
+    "sealPhoto": {
+      "url": "/evidence/loads/L005/seal-photo.png",
+      "label": "Seal photo",
+      "basename": "seal-photo",
+      "source": "real",
+      "generatedAt": "2026-05-22T01:00:07.234Z",
+      "required": true,
+      "conditional": false,
+      "applicable": true
+    },
+    "sealPickupPhoto": {
+      "url": "/evidence/loads/L005/seal-pickup-photo.png",
+      "label": "Seal pickup photo",
+      "basename": "seal-pickup-photo",
+      "source": "real",
+      "generatedAt": "2026-05-22T01:00:07.235Z",
+      "required": true,
+      "conditional": false,
+      "applicable": true
+    },
+    "sealDeliveryPhoto": {
+      "url": "/evidence/loads/L005/seal-delivery-photo.png",
+      "label": "Seal delivery photo",
+      "basename": "seal-delivery-photo",
+      "source": "real",
+      "generatedAt": "2026-05-22T01:00:07.235Z",
+      "required": true,
+      "conditional": false,
+      "applicable": true
+    },
+    "emptyTrailerProof": {
+      "url": "/evidence/loads/L005/empty-trailer-proof.png",
+      "label": "Empty trailer proof",
+      "basename": "empty-trailer-proof",
+      "source": "real",
+      "generatedAt": "2026-05-22T01:00:07.235Z",
+      "required": true,
+      "conditional": false,
+      "applicable": true
+    },
+    "rfidDockProof": {
+      "url": "/evidence/loads/L005/rfid-dock-proof.png",
+      "label": "RFID dock proof",
+      "basename": "rfid-dock-proof",
+      "source": "real",
+      "generatedAt": "2026-05-22T01:00:07.235Z",
+      "required": true,
+      "conditional": false,
+      "applicable": true
+    },
+    "lumperReceipt": {
+      "url": "",
+      "label": "Lumper receipt",
+      "basename": "lumper-receipt",
+      "source": "missing",
+      "generatedAt": "2026-05-22T01:00:07.236Z",
+      "required": false,
+      "conditional": true,
+      "applicable": false,
+      "reason": "Not required for this load context"
+    },
+    "damagePhoto": {
+      "url": "",
+      "label": "Damage / claim photo",
+      "basename": "damage-photo",
+      "source": "missing",
+      "generatedAt": "2026-05-22T01:00:07.236Z",
+      "required": false,
+      "conditional": true,
+      "applicable": false,
+      "reason": "Not required for this load context"
+    },
+    "cargoDamagePhoto": {
+      "url": "",
+      "label": "Cargo damage photo",
+      "basename": "cargo-damage-photo",
+      "source": "missing",
+      "generatedAt": "2026-05-22T01:00:07.236Z",
+      "required": false,
+      "conditional": true,
+      "applicable": false,
+      "reason": "Not required for this load context"
+    },
+    "damagedPalletPhoto": {
+      "url": "",
+      "label": "Damaged pallet photo",
+      "basename": "damaged-pallet-photo",
+      "source": "missing",
+      "generatedAt": "2026-05-22T01:00:07.236Z",
+      "required": false,
+      "conditional": true,
+      "applicable": false,
+      "reason": "Not required for this load context"
+    },
+    "sealMismatchPhoto": {
+      "url": "",
+      "label": "Seal mismatch photo",
+      "basename": "seal-mismatch-photo",
+      "source": "missing",
+      "generatedAt": "2026-05-22T01:00:07.236Z",
+      "required": false,
+      "conditional": true,
+      "applicable": false,
+      "reason": "Not required for this load context"
+    },
+    "tempCheckPhoto": {
+      "url": "",
+      "label": "Temperature check photo",
+      "basename": "temp-check-photo",
+      "source": "missing",
+      "generatedAt": "2026-05-22T01:00:07.236Z",
+      "required": false,
+      "conditional": true,
+      "applicable": false,
+      "reason": "Not required for this load context"
+    },
+    "weightTicketPhoto": {
+      "url": "/evidence/loads/L005/weight-ticket-photo.svg",
+      "label": "Weight ticket photo",
+      "basename": "weight-ticket-photo",
+      "source": "svg_demo",
+      "generatedAt": "2026-05-22T01:00:07.235Z",
+      "required": false,
+      "conditional": true,
+      "applicable": true
+    },
+    "detentionProofPhoto": {
+      "url": "",
+      "label": "Detention proof photo",
+      "basename": "detention-proof-photo",
+      "source": "missing",
+      "generatedAt": "2026-05-22T01:00:07.236Z",
+      "required": false,
+      "conditional": true,
+      "applicable": false,
+      "reason": "Not required for this load context"
+    },
+    "safetyViolationPhoto": {
+      "url": "",
+      "label": "Safety violation photo",
+      "basename": "safety-violation-photo",
+      "source": "missing",
+      "generatedAt": "2026-05-22T01:00:07.236Z",
+      "required": false,
+      "conditional": true,
+      "applicable": false,
+      "reason": "Not required for this load context"
+    },
+    "claimEvidence": {
+      "url": "",
+      "label": "Claim evidence",
+      "basename": "claim-evidence",
+      "source": "missing",
+      "generatedAt": "2026-05-22T01:00:07.236Z",
+      "required": false,
+      "conditional": true,
+      "applicable": false,
+      "reason": "Not required for this load context"
+    }
+  },
+  "L006": {
+    "cargoPhoto": {
+      "url": "/evidence/loads/L006/cargo-photo.png",
+      "label": "Cargo photo",
+      "basename": "cargo-photo",
+      "source": "real",
+      "generatedAt": "2026-05-22T01:00:07.236Z",
+      "required": true,
+      "conditional": false,
+      "applicable": true
+    },
+    "equipmentPhoto": {
+      "url": "/evidence/loads/L006/equipment-photo.png",
+      "label": "Equipment photo",
+      "basename": "equipment-photo",
+      "source": "real",
+      "generatedAt": "2026-05-22T01:00:07.236Z",
+      "required": true,
+      "conditional": false,
+      "applicable": true
+    },
+    "pickupPhoto": {
+      "url": "/evidence/loads/L006/pickup-photo.png",
+      "label": "Pickup photo",
+      "basename": "pickup-photo",
+      "source": "real",
+      "generatedAt": "2026-05-22T01:00:07.237Z",
+      "required": true,
+      "conditional": false,
+      "applicable": true
+    },
+    "deliveryPhoto": {
+      "url": "/evidence/loads/L006/delivery-photo.png",
+      "label": "Delivery photo",
+      "basename": "delivery-photo",
+      "source": "real",
+      "generatedAt": "2026-05-22T01:00:07.237Z",
+      "required": true,
+      "conditional": false,
+      "applicable": true
+    },
+    "sealPhoto": {
+      "url": "/evidence/loads/L006/seal-photo.png",
+      "label": "Seal photo",
+      "basename": "seal-photo",
+      "source": "real",
+      "generatedAt": "2026-05-22T01:00:07.236Z",
+      "required": true,
+      "conditional": false,
+      "applicable": true
+    },
+    "sealPickupPhoto": {
+      "url": "/evidence/loads/L006/seal-pickup-photo.png",
+      "label": "Seal pickup photo",
+      "basename": "seal-pickup-photo",
+      "source": "real",
+      "generatedAt": "2026-05-22T01:00:07.237Z",
+      "required": true,
+      "conditional": false,
+      "applicable": true
+    },
+    "sealDeliveryPhoto": {
+      "url": "/evidence/loads/L006/seal-delivery-photo.png",
+      "label": "Seal delivery photo",
+      "basename": "seal-delivery-photo",
+      "source": "real",
+      "generatedAt": "2026-05-22T01:00:07.237Z",
+      "required": true,
+      "conditional": false,
+      "applicable": true
+    },
+    "emptyTrailerProof": {
+      "url": "/evidence/loads/L006/empty-trailer-proof.png",
+      "label": "Empty trailer proof",
+      "basename": "empty-trailer-proof",
+      "source": "real",
+      "generatedAt": "2026-05-22T01:00:07.237Z",
+      "required": true,
+      "conditional": false,
+      "applicable": true
+    },
+    "rfidDockProof": {
+      "url": "/evidence/loads/L006/rfid-dock-proof.png",
+      "label": "RFID dock proof",
+      "basename": "rfid-dock-proof",
+      "source": "real",
+      "generatedAt": "2026-05-22T01:00:07.238Z",
+      "required": true,
+      "conditional": false,
+      "applicable": true
+    },
+    "lumperReceipt": {
+      "url": "",
+      "label": "Lumper receipt",
+      "basename": "lumper-receipt",
+      "source": "missing",
+      "generatedAt": "2026-05-22T01:00:07.238Z",
+      "required": false,
+      "conditional": true,
+      "applicable": false,
+      "reason": "Not required for this load context"
+    },
+    "damagePhoto": {
+      "url": "",
+      "label": "Damage / claim photo",
+      "basename": "damage-photo",
+      "source": "missing",
+      "generatedAt": "2026-05-22T01:00:07.238Z",
+      "required": false,
+      "conditional": true,
+      "applicable": false,
+      "reason": "Not required for this load context"
+    },
+    "cargoDamagePhoto": {
+      "url": "",
+      "label": "Cargo damage photo",
+      "basename": "cargo-damage-photo",
+      "source": "missing",
+      "generatedAt": "2026-05-22T01:00:07.238Z",
+      "required": false,
+      "conditional": true,
+      "applicable": false,
+      "reason": "Not required for this load context"
+    },
+    "damagedPalletPhoto": {
+      "url": "",
+      "label": "Damaged pallet photo",
+      "basename": "damaged-pallet-photo",
+      "source": "missing",
+      "generatedAt": "2026-05-22T01:00:07.238Z",
+      "required": false,
+      "conditional": true,
+      "applicable": false,
+      "reason": "Not required for this load context"
+    },
+    "sealMismatchPhoto": {
+      "url": "",
+      "label": "Seal mismatch photo",
+      "basename": "seal-mismatch-photo",
+      "source": "missing",
+      "generatedAt": "2026-05-22T01:00:07.238Z",
+      "required": false,
+      "conditional": true,
+      "applicable": false,
+      "reason": "Not required for this load context"
+    },
+    "tempCheckPhoto": {
+      "url": "",
+      "label": "Temperature check photo",
+      "basename": "temp-check-photo",
+      "source": "missing",
+      "generatedAt": "2026-05-22T01:00:07.238Z",
+      "required": false,
+      "conditional": true,
+      "applicable": false,
+      "reason": "Not required for this load context"
+    },
+    "weightTicketPhoto": {
+      "url": "/evidence/loads/L006/weight-ticket-photo.svg",
+      "label": "Weight ticket photo",
+      "basename": "weight-ticket-photo",
+      "source": "svg_demo",
+      "generatedAt": "2026-05-22T01:00:07.238Z",
+      "required": false,
+      "conditional": true,
+      "applicable": true
+    },
+    "detentionProofPhoto": {
+      "url": "",
+      "label": "Detention proof photo",
+      "basename": "detention-proof-photo",
+      "source": "missing",
+      "generatedAt": "2026-05-22T01:00:07.238Z",
+      "required": false,
+      "conditional": true,
+      "applicable": false,
+      "reason": "Not required for this load context"
+    },
+    "safetyViolationPhoto": {
+      "url": "",
+      "label": "Safety violation photo",
+      "basename": "safety-violation-photo",
+      "source": "missing",
+      "generatedAt": "2026-05-22T01:00:07.238Z",
+      "required": false,
+      "conditional": true,
+      "applicable": false,
+      "reason": "Not required for this load context"
+    },
+    "claimEvidence": {
+      "url": "",
+      "label": "Claim evidence",
+      "basename": "claim-evidence",
+      "source": "missing",
+      "generatedAt": "2026-05-22T01:00:07.238Z",
+      "required": false,
+      "conditional": true,
+      "applicable": false,
+      "reason": "Not required for this load context"
+    }
+  },
+  "L007": {
+    "cargoPhoto": {
+      "url": "/evidence/loads/L007/cargo-photo.png",
+      "label": "Cargo photo",
+      "basename": "cargo-photo",
+      "source": "real",
+      "generatedAt": "2026-05-22T01:00:07.238Z",
+      "required": true,
+      "conditional": false,
+      "applicable": true
+    },
+    "equipmentPhoto": {
+      "url": "/evidence/loads/L007/equipment-photo.png",
+      "label": "Equipment photo",
+      "basename": "equipment-photo",
+      "source": "real",
+      "generatedAt": "2026-05-22T01:00:07.238Z",
+      "required": true,
+      "conditional": false,
+      "applicable": true
+    },
+    "pickupPhoto": {
+      "url": "/evidence/loads/L007/pickup-photo.png",
+      "label": "Pickup photo",
+      "basename": "pickup-photo",
+      "source": "real",
+      "generatedAt": "2026-05-22T01:00:07.239Z",
+      "required": true,
+      "conditional": false,
+      "applicable": true
+    },
+    "deliveryPhoto": {
+      "url": "/evidence/loads/L007/delivery-photo.png",
+      "label": "Delivery photo",
+      "basename": "delivery-photo",
+      "source": "real",
+      "generatedAt": "2026-05-22T01:00:07.239Z",
+      "required": true,
+      "conditional": false,
+      "applicable": true
+    },
+    "sealPhoto": {
+      "url": "/evidence/loads/L007/seal-photo.png",
+      "label": "Seal photo",
+      "basename": "seal-photo",
+      "source": "real",
+      "generatedAt": "2026-05-22T01:00:07.238Z",
+      "required": true,
+      "conditional": false,
+      "applicable": true
+    },
+    "sealPickupPhoto": {
+      "url": "/evidence/loads/L007/seal-pickup-photo.png",
+      "label": "Seal pickup photo",
+      "basename": "seal-pickup-photo",
+      "source": "real",
+      "generatedAt": "2026-05-22T01:00:07.239Z",
+      "required": true,
+      "conditional": false,
+      "applicable": true
+    },
+    "sealDeliveryPhoto": {
+      "url": "/evidence/loads/L007/seal-delivery-photo.png",
+      "label": "Seal delivery photo",
+      "basename": "seal-delivery-photo",
+      "source": "real",
+      "generatedAt": "2026-05-22T01:00:07.239Z",
+      "required": true,
+      "conditional": false,
+      "applicable": true
+    },
+    "emptyTrailerProof": {
+      "url": "/evidence/loads/L007/empty-trailer-proof.png",
+      "label": "Empty trailer proof",
+      "basename": "empty-trailer-proof",
+      "source": "real",
+      "generatedAt": "2026-05-22T01:00:07.239Z",
+      "required": true,
+      "conditional": false,
+      "applicable": true
+    },
+    "rfidDockProof": {
+      "url": "/evidence/loads/L007/rfid-dock-proof.png",
+      "label": "RFID dock proof",
+      "basename": "rfid-dock-proof",
+      "source": "real",
+      "generatedAt": "2026-05-22T01:00:07.240Z",
+      "required": true,
+      "conditional": false,
+      "applicable": true
+    },
+    "lumperReceipt": {
+      "url": "",
+      "label": "Lumper receipt",
+      "basename": "lumper-receipt",
+      "source": "missing",
+      "generatedAt": "2026-05-22T01:00:07.240Z",
+      "required": false,
+      "conditional": true,
+      "applicable": false,
+      "reason": "Not required for this load context"
+    },
+    "damagePhoto": {
+      "url": "",
+      "label": "Damage / claim photo",
+      "basename": "damage-photo",
+      "source": "missing",
+      "generatedAt": "2026-05-22T01:00:07.240Z",
+      "required": false,
+      "conditional": true,
+      "applicable": false,
+      "reason": "Not required for this load context"
+    },
+    "cargoDamagePhoto": {
+      "url": "",
+      "label": "Cargo damage photo",
+      "basename": "cargo-damage-photo",
+      "source": "missing",
+      "generatedAt": "2026-05-22T01:00:07.240Z",
+      "required": false,
+      "conditional": true,
+      "applicable": false,
+      "reason": "Not required for this load context"
+    },
+    "damagedPalletPhoto": {
+      "url": "",
+      "label": "Damaged pallet photo",
+      "basename": "damaged-pallet-photo",
+      "source": "missing",
+      "generatedAt": "2026-05-22T01:00:07.240Z",
+      "required": false,
+      "conditional": true,
+      "applicable": false,
+      "reason": "Not required for this load context"
+    },
+    "sealMismatchPhoto": {
+      "url": "",
+      "label": "Seal mismatch photo",
+      "basename": "seal-mismatch-photo",
+      "source": "missing",
+      "generatedAt": "2026-05-22T01:00:07.240Z",
+      "required": false,
+      "conditional": true,
+      "applicable": false,
+      "reason": "Not required for this load context"
+    },
+    "tempCheckPhoto": {
+      "url": "",
+      "label": "Temperature check photo",
+      "basename": "temp-check-photo",
+      "source": "missing",
+      "generatedAt": "2026-05-22T01:00:07.240Z",
+      "required": false,
+      "conditional": true,
+      "applicable": false,
+      "reason": "Not required for this load context"
+    },
+    "weightTicketPhoto": {
+      "url": "/evidence/loads/L007/weight-ticket-photo.svg",
+      "label": "Weight ticket photo",
+      "basename": "weight-ticket-photo",
+      "source": "svg_demo",
+      "generatedAt": "2026-05-22T01:00:07.240Z",
+      "required": false,
+      "conditional": true,
+      "applicable": true
+    },
+    "detentionProofPhoto": {
+      "url": "",
+      "label": "Detention proof photo",
+      "basename": "detention-proof-photo",
+      "source": "missing",
+      "generatedAt": "2026-05-22T01:00:07.240Z",
+      "required": false,
+      "conditional": true,
+      "applicable": false,
+      "reason": "Not required for this load context"
+    },
+    "safetyViolationPhoto": {
+      "url": "",
+      "label": "Safety violation photo",
+      "basename": "safety-violation-photo",
+      "source": "missing",
+      "generatedAt": "2026-05-22T01:00:07.240Z",
+      "required": false,
+      "conditional": true,
+      "applicable": false,
+      "reason": "Not required for this load context"
+    },
+    "claimEvidence": {
+      "url": "",
+      "label": "Claim evidence",
+      "basename": "claim-evidence",
+      "source": "missing",
+      "generatedAt": "2026-05-22T01:00:07.240Z",
+      "required": false,
+      "conditional": true,
+      "applicable": false,
+      "reason": "Not required for this load context"
+    },
+    "proofCardComposite": {
+      "url": "/evidence/loads/L007/load007-proof-cards.png",
+      "label": "Proof Packet Preview",
+      "basename": "load007-proof-cards",
+      "source": "real",
+      "required": false,
+      "conditional": true,
+      "applicable": true,
+      "reason": "Optional visual proof-card preview; individual proof records remain authoritative"
+    }
+  },
+  "L008": {
+    "cargoPhoto": {
+      "url": "/evidence/loads/L008/cargo-photo.png",
+      "label": "Cargo photo",
+      "basename": "cargo-photo",
+      "source": "real",
+      "generatedAt": "2026-05-22T01:00:07.240Z",
+      "required": true,
+      "conditional": false,
+      "applicable": true
+    },
+    "equipmentPhoto": {
+      "url": "/evidence/loads/L008/equipment-photo.png",
+      "label": "Equipment photo",
+      "basename": "equipment-photo",
+      "source": "real",
+      "generatedAt": "2026-05-22T01:00:07.241Z",
+      "required": true,
+      "conditional": false,
+      "applicable": true
+    },
+    "pickupPhoto": {
+      "url": "/evidence/loads/L008/pickup-photo.png",
+      "label": "Pickup photo",
+      "basename": "pickup-photo",
+      "source": "real",
+      "generatedAt": "2026-05-22T01:00:07.241Z",
+      "required": true,
+      "conditional": false,
+      "applicable": true
+    },
+    "deliveryPhoto": {
+      "url": "/evidence/loads/L008/delivery-photo.png",
+      "label": "Delivery photo",
+      "basename": "delivery-photo",
+      "source": "real",
+      "generatedAt": "2026-05-22T01:00:07.241Z",
+      "required": true,
+      "conditional": false,
+      "applicable": true
+    },
+    "sealPhoto": {
+      "url": "/evidence/loads/L008/seal-photo.png",
+      "label": "Seal photo",
+      "basename": "seal-photo",
+      "source": "real",
+      "generatedAt": "2026-05-22T01:00:07.240Z",
+      "required": true,
+      "conditional": false,
+      "applicable": true
+    },
+    "sealPickupPhoto": {
+      "url": "/evidence/loads/L008/seal-pickup-photo.png",
+      "label": "Seal pickup photo",
+      "basename": "seal-pickup-photo",
+      "source": "real",
+      "generatedAt": "2026-05-22T01:00:07.241Z",
+      "required": true,
+      "conditional": false,
+      "applicable": true
+    },
+    "sealDeliveryPhoto": {
+      "url": "/evidence/loads/L008/seal-delivery-photo.png",
+      "label": "Seal delivery photo",
+      "basename": "seal-delivery-photo",
+      "source": "real",
+      "generatedAt": "2026-05-22T01:00:07.241Z",
+      "required": true,
+      "conditional": false,
+      "applicable": true
+    },
+    "emptyTrailerProof": {
+      "url": "/evidence/loads/L008/empty-trailer-proof.png",
+      "label": "Empty trailer proof",
+      "basename": "empty-trailer-proof",
+      "source": "real",
+      "generatedAt": "2026-05-22T01:00:07.242Z",
+      "required": true,
+      "conditional": false,
+      "applicable": true
+    },
+    "rfidDockProof": {
+      "url": "/evidence/loads/L008/rfid-dock-proof.png",
+      "label": "RFID dock proof",
+      "basename": "rfid-dock-proof",
+      "source": "real",
+      "generatedAt": "2026-05-22T01:00:07.242Z",
+      "required": true,
+      "conditional": false,
+      "applicable": true
+    },
+    "lumperReceipt": {
+      "url": "",
+      "label": "Lumper receipt",
+      "basename": "lumper-receipt",
+      "source": "missing",
+      "generatedAt": "2026-05-22T01:00:07.242Z",
+      "required": false,
+      "conditional": true,
+      "applicable": false,
+      "reason": "Not required for this load context"
+    },
+    "damagePhoto": {
+      "url": "",
+      "label": "Damage / claim photo",
+      "basename": "damage-photo",
+      "source": "missing",
+      "generatedAt": "2026-05-22T01:00:07.242Z",
+      "required": false,
+      "conditional": true,
+      "applicable": false,
+      "reason": "Not required for this load context"
+    },
+    "cargoDamagePhoto": {
+      "url": "",
+      "label": "Cargo damage photo",
+      "basename": "cargo-damage-photo",
+      "source": "missing",
+      "generatedAt": "2026-05-22T01:00:07.242Z",
+      "required": false,
+      "conditional": true,
+      "applicable": false,
+      "reason": "Not required for this load context"
+    },
+    "damagedPalletPhoto": {
+      "url": "",
+      "label": "Damaged pallet photo",
+      "basename": "damaged-pallet-photo",
+      "source": "missing",
+      "generatedAt": "2026-05-22T01:00:07.242Z",
+      "required": false,
+      "conditional": true,
+      "applicable": false,
+      "reason": "Not required for this load context"
+    },
+    "sealMismatchPhoto": {
+      "url": "",
+      "label": "Seal mismatch photo",
+      "basename": "seal-mismatch-photo",
+      "source": "missing",
+      "generatedAt": "2026-05-22T01:00:07.242Z",
+      "required": false,
+      "conditional": true,
+      "applicable": false,
+      "reason": "Not required for this load context"
+    },
+    "tempCheckPhoto": {
+      "url": "",
+      "label": "Temperature check photo",
+      "basename": "temp-check-photo",
+      "source": "missing",
+      "generatedAt": "2026-05-22T01:00:07.242Z",
+      "required": false,
+      "conditional": true,
+      "applicable": false,
+      "reason": "Not required for this load context"
+    },
+    "weightTicketPhoto": {
+      "url": "/evidence/loads/L008/weight-ticket-photo.svg",
+      "label": "Weight ticket photo",
+      "basename": "weight-ticket-photo",
+      "source": "svg_demo",
+      "generatedAt": "2026-05-22T01:00:07.242Z",
+      "required": false,
+      "conditional": true,
+      "applicable": true
+    },
+    "detentionProofPhoto": {
+      "url": "",
+      "label": "Detention proof photo",
+      "basename": "detention-proof-photo",
+      "source": "missing",
+      "generatedAt": "2026-05-22T01:00:07.242Z",
+      "required": false,
+      "conditional": true,
+      "applicable": false,
+      "reason": "Not required for this load context"
+    },
+    "safetyViolationPhoto": {
+      "url": "",
+      "label": "Safety violation photo",
+      "basename": "safety-violation-photo",
+      "source": "missing",
+      "generatedAt": "2026-05-22T01:00:07.242Z",
+      "required": false,
+      "conditional": true,
+      "applicable": false,
+      "reason": "Not required for this load context"
+    },
+    "claimEvidence": {
+      "url": "",
+      "label": "Claim evidence",
+      "basename": "claim-evidence",
+      "source": "missing",
+      "generatedAt": "2026-05-22T01:00:07.242Z",
+      "required": false,
+      "conditional": true,
+      "applicable": false,
+      "reason": "Not required for this load context"
+    },
+    "proofCardComposite": {
+      "url": "/evidence/loads/L008/load008-claim-proof-cards.png",
+      "label": "Claim Proof Preview",
+      "basename": "load008-claim-proof-cards",
+      "source": "real",
+      "required": false,
+      "conditional": true,
+      "applicable": true,
+      "reason": "Optional visual proof-card preview; individual proof records remain authoritative"
+    }
+  },
+  "L009": {
+    "cargoPhoto": {
+      "url": "/evidence/loads/L009/cargo-photo.png",
+      "label": "Cargo photo",
+      "basename": "cargo-photo",
+      "source": "real",
+      "generatedAt": "2026-05-22T01:00:07.242Z",
+      "required": true,
+      "conditional": false,
+      "applicable": true
+    },
+    "equipmentPhoto": {
+      "url": "/evidence/loads/L009/equipment-photo.png",
+      "label": "Equipment photo",
+      "basename": "equipment-photo",
+      "source": "real",
+      "generatedAt": "2026-05-22T01:00:07.243Z",
+      "required": true,
+      "conditional": false,
+      "applicable": true
+    },
+    "pickupPhoto": {
+      "url": "/evidence/loads/L009/pickup-photo.png",
+      "label": "Pickup photo",
+      "basename": "pickup-photo",
+      "source": "real",
+      "generatedAt": "2026-05-22T01:00:07.243Z",
+      "required": true,
+      "conditional": false,
+      "applicable": true
+    },
+    "deliveryPhoto": {
+      "url": "/evidence/loads/L009/delivery-photo.png",
+      "label": "Delivery photo",
+      "basename": "delivery-photo",
+      "source": "real",
+      "generatedAt": "2026-05-22T01:00:07.243Z",
+      "required": true,
+      "conditional": false,
+      "applicable": true
+    },
+    "sealPhoto": {
+      "url": "/evidence/loads/L009/seal-photo.png",
+      "label": "Seal photo",
+      "basename": "seal-photo",
+      "source": "real",
+      "generatedAt": "2026-05-22T01:00:07.242Z",
+      "required": true,
+      "conditional": false,
+      "applicable": true
+    },
+    "sealPickupPhoto": {
+      "url": "/evidence/loads/L009/seal-pickup-photo.png",
+      "label": "Seal pickup photo",
+      "basename": "seal-pickup-photo",
+      "source": "real",
+      "generatedAt": "2026-05-22T01:00:07.243Z",
+      "required": true,
+      "conditional": false,
+      "applicable": true
+    },
+    "sealDeliveryPhoto": {
+      "url": "/evidence/loads/L009/seal-delivery-photo.png",
+      "label": "Seal delivery photo",
+      "basename": "seal-delivery-photo",
+      "source": "real",
+      "generatedAt": "2026-05-22T01:00:07.244Z",
+      "required": true,
+      "conditional": false,
+      "applicable": true
+    },
+    "emptyTrailerProof": {
+      "url": "/evidence/loads/L009/empty-trailer-proof.png",
+      "label": "Empty trailer proof",
+      "basename": "empty-trailer-proof",
+      "source": "real",
+      "generatedAt": "2026-05-22T01:00:07.244Z",
+      "required": true,
+      "conditional": false,
+      "applicable": true
+    },
+    "rfidDockProof": {
+      "url": "/evidence/loads/L009/rfid-dock-proof.png",
+      "label": "RFID dock proof",
+      "basename": "rfid-dock-proof",
+      "source": "real",
+      "generatedAt": "2026-05-22T01:00:07.244Z",
+      "required": true,
+      "conditional": false,
+      "applicable": true
+    },
+    "lumperReceipt": {
+      "url": "",
+      "label": "Lumper receipt",
+      "basename": "lumper-receipt",
+      "source": "missing",
+      "generatedAt": "2026-05-22T01:00:07.245Z",
+      "required": false,
+      "conditional": true,
+      "applicable": false,
+      "reason": "Not required for this load context"
+    },
+    "damagePhoto": {
+      "url": "",
+      "label": "Damage / claim photo",
+      "basename": "damage-photo",
+      "source": "missing",
+      "generatedAt": "2026-05-22T01:00:07.245Z",
+      "required": false,
+      "conditional": true,
+      "applicable": false,
+      "reason": "Not required for this load context"
+    },
+    "cargoDamagePhoto": {
+      "url": "",
+      "label": "Cargo damage photo",
+      "basename": "cargo-damage-photo",
+      "source": "missing",
+      "generatedAt": "2026-05-22T01:00:07.245Z",
+      "required": false,
+      "conditional": true,
+      "applicable": false,
+      "reason": "Not required for this load context"
+    },
+    "damagedPalletPhoto": {
+      "url": "",
+      "label": "Damaged pallet photo",
+      "basename": "damaged-pallet-photo",
+      "source": "missing",
+      "generatedAt": "2026-05-22T01:00:07.245Z",
+      "required": false,
+      "conditional": true,
+      "applicable": false,
+      "reason": "Not required for this load context"
+    },
+    "sealMismatchPhoto": {
+      "url": "",
+      "label": "Seal mismatch photo",
+      "basename": "seal-mismatch-photo",
+      "source": "missing",
+      "generatedAt": "2026-05-22T01:00:07.245Z",
+      "required": false,
+      "conditional": true,
+      "applicable": false,
+      "reason": "Not required for this load context"
+    },
+    "tempCheckPhoto": {
+      "url": "",
+      "label": "Temperature check photo",
+      "basename": "temp-check-photo",
+      "source": "missing",
+      "generatedAt": "2026-05-22T01:00:07.245Z",
+      "required": false,
+      "conditional": true,
+      "applicable": false,
+      "reason": "Not required for this load context"
+    },
+    "weightTicketPhoto": {
+      "url": "/evidence/loads/L009/weight-ticket-photo.svg",
+      "label": "Weight ticket photo",
+      "basename": "weight-ticket-photo",
+      "source": "svg_demo",
+      "generatedAt": "2026-05-22T01:00:07.244Z",
+      "required": false,
+      "conditional": true,
+      "applicable": true
+    },
+    "detentionProofPhoto": {
+      "url": "/evidence/loads/L009/detention-proof-photo.svg",
+      "label": "Detention proof photo",
+      "basename": "detention-proof-photo",
+      "source": "svg_demo",
+      "generatedAt": "2026-05-22T01:00:07.244Z",
+      "required": false,
+      "conditional": true,
+      "applicable": true
+    },
+    "safetyViolationPhoto": {
+      "url": "",
+      "label": "Safety violation photo",
+      "basename": "safety-violation-photo",
+      "source": "missing",
+      "generatedAt": "2026-05-22T01:00:07.245Z",
+      "required": false,
+      "conditional": true,
+      "applicable": false,
+      "reason": "Not required for this load context"
+    },
+    "claimEvidence": {
+      "url": "",
+      "label": "Claim evidence",
+      "basename": "claim-evidence",
+      "source": "missing",
+      "generatedAt": "2026-05-22T01:00:07.245Z",
+      "required": false,
+      "conditional": true,
+      "applicable": false,
+      "reason": "Not required for this load context"
+    },
+    "proofCardComposite": {
+      "url": "/evidence/loads/L009/load009-exception-proof-cards.png",
+      "label": "Exception Proof Preview",
+      "basename": "load009-exception-proof-cards",
+      "source": "real",
+      "required": false,
+      "conditional": true,
+      "applicable": true,
+      "reason": "Optional visual proof-card preview; individual proof records remain authoritative"
+    }
+  },
+  "L010": {
+    "cargoPhoto": {
+      "url": "/evidence/loads/L010/cargo-photo.png",
+      "label": "Cargo photo",
+      "basename": "cargo-photo",
+      "source": "real",
+      "generatedAt": "2026-05-22T01:00:07.245Z",
+      "required": true,
+      "conditional": false,
+      "applicable": true
+    },
+    "equipmentPhoto": {
+      "url": "/evidence/loads/L010/equipment-photo.png",
+      "label": "Equipment photo",
+      "basename": "equipment-photo",
+      "source": "real",
+      "generatedAt": "2026-05-22T01:00:07.245Z",
+      "required": true,
+      "conditional": false,
+      "applicable": true
+    },
+    "pickupPhoto": {
+      "url": "/evidence/loads/L010/pickup-photo.png",
+      "label": "Pickup photo",
+      "basename": "pickup-photo",
+      "source": "real",
+      "generatedAt": "2026-05-22T01:00:07.245Z",
+      "required": true,
+      "conditional": false,
+      "applicable": true
+    },
+    "deliveryPhoto": {
+      "url": "/evidence/loads/L010/delivery-photo.png",
+      "label": "Delivery photo",
+      "basename": "delivery-photo",
+      "source": "real",
+      "generatedAt": "2026-05-22T01:00:07.246Z",
+      "required": true,
+      "conditional": false,
+      "applicable": true
+    },
+    "sealPhoto": {
+      "url": "/evidence/loads/L010/seal-photo.png",
+      "label": "Seal photo",
+      "basename": "seal-photo",
+      "source": "real",
+      "generatedAt": "2026-05-22T01:00:07.245Z",
+      "required": true,
+      "conditional": false,
+      "applicable": true
+    },
+    "sealPickupPhoto": {
+      "url": "/evidence/loads/L010/seal-pickup-photo.png",
+      "label": "Seal pickup photo",
+      "basename": "seal-pickup-photo",
+      "source": "real",
+      "generatedAt": "2026-05-22T01:00:07.246Z",
+      "required": true,
+      "conditional": false,
+      "applicable": true
+    },
+    "sealDeliveryPhoto": {
+      "url": "/evidence/loads/L010/seal-delivery-photo.png",
+      "label": "Seal delivery photo",
+      "basename": "seal-delivery-photo",
+      "source": "real",
+      "generatedAt": "2026-05-22T01:00:07.246Z",
+      "required": true,
+      "conditional": false,
+      "applicable": true
+    },
+    "emptyTrailerProof": {
+      "url": "/evidence/loads/L010/empty-trailer-proof.png",
+      "label": "Empty trailer proof",
+      "basename": "empty-trailer-proof",
+      "source": "real",
+      "generatedAt": "2026-05-22T01:00:07.246Z",
+      "required": true,
+      "conditional": false,
+      "applicable": true
+    },
+    "rfidDockProof": {
+      "url": "/evidence/loads/L010/rfid-dock-proof.png",
+      "label": "RFID dock proof",
+      "basename": "rfid-dock-proof",
+      "source": "real",
+      "generatedAt": "2026-05-22T01:00:07.246Z",
+      "required": true,
+      "conditional": false,
+      "applicable": true
+    },
+    "lumperReceipt": {
+      "url": "",
+      "label": "Lumper receipt",
+      "basename": "lumper-receipt",
+      "source": "missing",
+      "generatedAt": "2026-05-22T01:00:07.247Z",
+      "required": false,
+      "conditional": true,
+      "applicable": false,
+      "reason": "Not required for this load context"
+    },
+    "damagePhoto": {
+      "url": "",
+      "label": "Damage / claim photo",
+      "basename": "damage-photo",
+      "source": "missing",
+      "generatedAt": "2026-05-22T01:00:07.247Z",
+      "required": false,
+      "conditional": true,
+      "applicable": false,
+      "reason": "Not required for this load context"
+    },
+    "cargoDamagePhoto": {
+      "url": "",
+      "label": "Cargo damage photo",
+      "basename": "cargo-damage-photo",
+      "source": "missing",
+      "generatedAt": "2026-05-22T01:00:07.247Z",
+      "required": false,
+      "conditional": true,
+      "applicable": false,
+      "reason": "Not required for this load context"
+    },
+    "damagedPalletPhoto": {
+      "url": "",
+      "label": "Damaged pallet photo",
+      "basename": "damaged-pallet-photo",
+      "source": "missing",
+      "generatedAt": "2026-05-22T01:00:07.247Z",
+      "required": false,
+      "conditional": true,
+      "applicable": false,
+      "reason": "Not required for this load context"
+    },
+    "sealMismatchPhoto": {
+      "url": "",
+      "label": "Seal mismatch photo",
+      "basename": "seal-mismatch-photo",
+      "source": "missing",
+      "generatedAt": "2026-05-22T01:00:07.247Z",
+      "required": false,
+      "conditional": true,
+      "applicable": false,
+      "reason": "Not required for this load context"
+    },
+    "tempCheckPhoto": {
+      "url": "",
+      "label": "Temperature check photo",
+      "basename": "temp-check-photo",
+      "source": "missing",
+      "generatedAt": "2026-05-22T01:00:07.247Z",
+      "required": false,
+      "conditional": true,
+      "applicable": false,
+      "reason": "Not required for this load context"
+    },
+    "weightTicketPhoto": {
+      "url": "/evidence/loads/L010/weight-ticket-photo.svg",
+      "label": "Weight ticket photo",
+      "basename": "weight-ticket-photo",
+      "source": "svg_demo",
+      "generatedAt": "2026-05-22T01:00:07.247Z",
+      "required": false,
+      "conditional": true,
+      "applicable": true
+    },
+    "detentionProofPhoto": {
+      "url": "",
+      "label": "Detention proof photo",
+      "basename": "detention-proof-photo",
+      "source": "missing",
+      "generatedAt": "2026-05-22T01:00:07.247Z",
+      "required": false,
+      "conditional": true,
+      "applicable": false,
+      "reason": "Not required for this load context"
+    },
+    "safetyViolationPhoto": {
+      "url": "",
+      "label": "Safety violation photo",
+      "basename": "safety-violation-photo",
+      "source": "missing",
+      "generatedAt": "2026-05-22T01:00:07.247Z",
+      "required": false,
+      "conditional": true,
+      "applicable": false,
+      "reason": "Not required for this load context"
+    },
+    "claimEvidence": {
+      "url": "",
+      "label": "Claim evidence",
+      "basename": "claim-evidence",
+      "source": "missing",
+      "generatedAt": "2026-05-22T01:00:07.247Z",
+      "required": false,
+      "conditional": true,
+      "applicable": false,
+      "reason": "Not required for this load context"
+    },
+    "proofCardComposite": {
+      "url": "/evidence/loads/L010/load010-reroute-proof-cards.png",
+      "label": "Reroute / Weather Proof Preview",
+      "basename": "load010-reroute-proof-cards",
+      "source": "real",
+      "required": false,
+      "conditional": true,
+      "applicable": true,
+      "reason": "Optional visual proof-card preview; individual proof records remain authoritative"
+    }
+  },
+  "L011": {
+    "cargoPhoto": {
+      "url": "/evidence/loads/L011/cargo-photo.png",
+      "label": "Cargo photo",
+      "basename": "cargo-photo",
+      "source": "real",
+      "generatedAt": "2026-05-22T01:00:07.247Z",
+      "required": true,
+      "conditional": false,
+      "applicable": true
+    },
+    "equipmentPhoto": {
+      "url": "/evidence/loads/L011/equipment-photo.png",
+      "label": "Equipment photo",
+      "basename": "equipment-photo",
+      "source": "real",
+      "generatedAt": "2026-05-22T01:00:07.247Z",
+      "required": true,
+      "conditional": false,
+      "applicable": true
+    },
+    "pickupPhoto": {
+      "url": "/evidence/loads/L011/pickup-photo.png",
+      "label": "Pickup photo",
+      "basename": "pickup-photo",
+      "source": "real",
+      "generatedAt": "2026-05-22T01:00:07.248Z",
+      "required": true,
+      "conditional": false,
+      "applicable": true
+    },
+    "deliveryPhoto": {
+      "url": "/evidence/loads/L011/delivery-photo.png",
+      "label": "Delivery photo",
+      "basename": "delivery-photo",
+      "source": "real",
+      "generatedAt": "2026-05-22T01:00:07.248Z",
+      "required": true,
+      "conditional": false,
+      "applicable": true
+    },
+    "sealPhoto": {
+      "url": "/evidence/loads/L011/seal-photo.png",
+      "label": "Seal photo",
+      "basename": "seal-photo",
+      "source": "real",
+      "generatedAt": "2026-05-22T01:00:07.247Z",
+      "required": true,
+      "conditional": false,
+      "applicable": true
+    },
+    "sealPickupPhoto": {
+      "url": "/evidence/loads/L011/seal-pickup-photo.png",
+      "label": "Seal pickup photo",
+      "basename": "seal-pickup-photo",
+      "source": "real",
+      "generatedAt": "2026-05-22T01:00:07.248Z",
+      "required": true,
+      "conditional": false,
+      "applicable": true
+    },
+    "sealDeliveryPhoto": {
+      "url": "/evidence/loads/L011/seal-delivery-photo.png",
+      "label": "Seal delivery photo",
+      "basename": "seal-delivery-photo",
+      "source": "real",
+      "generatedAt": "2026-05-22T01:00:07.248Z",
+      "required": true,
+      "conditional": false,
+      "applicable": true
+    },
+    "emptyTrailerProof": {
+      "url": "/evidence/loads/L011/empty-trailer-proof.png",
+      "label": "Empty trailer proof",
+      "basename": "empty-trailer-proof",
+      "source": "real",
+      "generatedAt": "2026-05-22T01:00:07.249Z",
+      "required": true,
+      "conditional": false,
+      "applicable": true
+    },
+    "rfidDockProof": {
+      "url": "/evidence/loads/L011/rfid-dock-proof.png",
+      "label": "RFID dock proof",
+      "basename": "rfid-dock-proof",
+      "source": "real",
+      "generatedAt": "2026-05-22T01:00:07.249Z",
+      "required": true,
+      "conditional": false,
+      "applicable": true
+    },
+    "lumperReceipt": {
+      "url": "",
+      "label": "Lumper receipt",
+      "basename": "lumper-receipt",
+      "source": "missing",
+      "generatedAt": "2026-05-22T01:00:07.249Z",
+      "required": false,
+      "conditional": true,
+      "applicable": false,
+      "reason": "Not required for this load context"
+    },
+    "damagePhoto": {
+      "url": "",
+      "label": "Damage / claim photo",
+      "basename": "damage-photo",
+      "source": "missing",
+      "generatedAt": "2026-05-22T01:00:07.249Z",
+      "required": false,
+      "conditional": true,
+      "applicable": false,
+      "reason": "Not required for this load context"
+    },
+    "cargoDamagePhoto": {
+      "url": "",
+      "label": "Cargo damage photo",
+      "basename": "cargo-damage-photo",
+      "source": "missing",
+      "generatedAt": "2026-05-22T01:00:07.249Z",
+      "required": false,
+      "conditional": true,
+      "applicable": false,
+      "reason": "Not required for this load context"
+    },
+    "damagedPalletPhoto": {
+      "url": "",
+      "label": "Damaged pallet photo",
+      "basename": "damaged-pallet-photo",
+      "source": "missing",
+      "generatedAt": "2026-05-22T01:00:07.249Z",
+      "required": false,
+      "conditional": true,
+      "applicable": false,
+      "reason": "Not required for this load context"
+    },
+    "sealMismatchPhoto": {
+      "url": "",
+      "label": "Seal mismatch photo",
+      "basename": "seal-mismatch-photo",
+      "source": "missing",
+      "generatedAt": "2026-05-22T01:00:07.249Z",
+      "required": false,
+      "conditional": true,
+      "applicable": false,
+      "reason": "Not required for this load context"
+    },
+    "tempCheckPhoto": {
+      "url": "",
+      "label": "Temperature check photo",
+      "basename": "temp-check-photo",
+      "source": "missing",
+      "generatedAt": "2026-05-22T01:00:07.249Z",
+      "required": false,
+      "conditional": true,
+      "applicable": false,
+      "reason": "Not required for this load context"
+    },
+    "weightTicketPhoto": {
+      "url": "/evidence/loads/L011/weight-ticket-photo.svg",
+      "label": "Weight ticket photo",
+      "basename": "weight-ticket-photo",
+      "source": "svg_demo",
+      "generatedAt": "2026-05-22T01:00:07.249Z",
+      "required": false,
+      "conditional": true,
+      "applicable": true
+    },
+    "detentionProofPhoto": {
+      "url": "",
+      "label": "Detention proof photo",
+      "basename": "detention-proof-photo",
+      "source": "missing",
+      "generatedAt": "2026-05-22T01:00:07.249Z",
+      "required": false,
+      "conditional": true,
+      "applicable": false,
+      "reason": "Not required for this load context"
+    },
+    "safetyViolationPhoto": {
+      "url": "",
+      "label": "Safety violation photo",
+      "basename": "safety-violation-photo",
+      "source": "missing",
+      "generatedAt": "2026-05-22T01:00:07.249Z",
+      "required": false,
+      "conditional": true,
+      "applicable": false,
+      "reason": "Not required for this load context"
+    },
+    "claimEvidence": {
+      "url": "",
+      "label": "Claim evidence",
+      "basename": "claim-evidence",
+      "source": "missing",
+      "generatedAt": "2026-05-22T01:00:07.249Z",
+      "required": false,
+      "conditional": true,
+      "applicable": false,
+      "reason": "Not required for this load context"
+    },
+    "proofCardComposite": {
+      "url": "/evidence/loads/L011/load011-proof-packet-composite.png",
+      "label": "Factoring / Proof Packet Preview",
+      "basename": "load011-proof-packet-composite",
+      "source": "real",
+      "required": false,
+      "conditional": true,
+      "applicable": true,
+      "reason": "Optional visual proof-card preview; individual proof records remain authoritative"
+    }
+  },
+  "L012": {
+    "cargoPhoto": {
+      "url": "/evidence/loads/L012/cargo-photo.png",
+      "label": "Cargo photo",
+      "basename": "cargo-photo",
+      "source": "real",
+      "generatedAt": "2026-05-22T01:00:07.250Z",
+      "required": true,
+      "conditional": false,
+      "applicable": true
+    },
+    "equipmentPhoto": {
+      "url": "/evidence/loads/L012/equipment-photo.png",
+      "label": "Equipment photo",
+      "basename": "equipment-photo",
+      "source": "real",
+      "generatedAt": "2026-05-22T01:00:07.250Z",
+      "required": true,
+      "conditional": false,
+      "applicable": true
+    },
+    "pickupPhoto": {
+      "url": "/evidence/loads/L012/pickup-photo.png",
+      "label": "Pickup photo",
+      "basename": "pickup-photo",
+      "source": "real",
+      "generatedAt": "2026-05-22T01:00:07.251Z",
+      "required": true,
+      "conditional": false,
+      "applicable": true
+    },
+    "deliveryPhoto": {
+      "url": "/evidence/loads/L012/delivery-photo.png",
+      "label": "Delivery photo",
+      "basename": "delivery-photo",
+      "source": "real",
+      "generatedAt": "2026-05-22T01:00:07.251Z",
+      "required": true,
+      "conditional": false,
+      "applicable": true
+    },
+    "sealPhoto": {
+      "url": "/evidence/loads/L012/seal-photo.png",
+      "label": "Seal photo",
+      "basename": "seal-photo",
+      "source": "real",
+      "generatedAt": "2026-05-22T01:00:07.250Z",
+      "required": true,
+      "conditional": false,
+      "applicable": true
+    },
+    "sealPickupPhoto": {
+      "url": "/evidence/loads/L012/seal-pickup-photo.png",
+      "label": "Seal pickup photo",
+      "basename": "seal-pickup-photo",
+      "source": "real",
+      "generatedAt": "2026-05-22T01:00:07.251Z",
+      "required": true,
+      "conditional": false,
+      "applicable": true
+    },
+    "sealDeliveryPhoto": {
+      "url": "/evidence/loads/L012/seal-delivery-photo.png",
+      "label": "Seal delivery photo",
+      "basename": "seal-delivery-photo",
+      "source": "real",
+      "generatedAt": "2026-05-22T01:00:07.251Z",
+      "required": true,
+      "conditional": false,
+      "applicable": true
+    },
+    "emptyTrailerProof": {
+      "url": "/evidence/loads/L012/empty-trailer-proof.png",
+      "label": "Empty trailer proof",
+      "basename": "empty-trailer-proof",
+      "source": "real",
+      "generatedAt": "2026-05-22T01:00:07.252Z",
+      "required": true,
+      "conditional": false,
+      "applicable": true
+    },
+    "rfidDockProof": {
+      "url": "/evidence/loads/L012/rfid-dock-proof.png",
+      "label": "RFID dock proof",
+      "basename": "rfid-dock-proof",
+      "source": "real",
+      "generatedAt": "2026-05-22T01:00:07.252Z",
+      "required": true,
+      "conditional": false,
+      "applicable": true
+    },
+    "lumperReceipt": {
+      "url": "",
+      "label": "Lumper receipt",
+      "basename": "lumper-receipt",
+      "source": "missing",
+      "generatedAt": "2026-05-22T01:00:07.252Z",
+      "required": false,
+      "conditional": true,
+      "applicable": false,
+      "reason": "Not required for this load context"
+    },
+    "damagePhoto": {
+      "url": "",
+      "label": "Damage / claim photo",
+      "basename": "damage-photo",
+      "source": "missing",
+      "generatedAt": "2026-05-22T01:00:07.252Z",
+      "required": false,
+      "conditional": true,
+      "applicable": false,
+      "reason": "Not required for this load context"
+    },
+    "cargoDamagePhoto": {
+      "url": "",
+      "label": "Cargo damage photo",
+      "basename": "cargo-damage-photo",
+      "source": "missing",
+      "generatedAt": "2026-05-22T01:00:07.252Z",
+      "required": false,
+      "conditional": true,
+      "applicable": false,
+      "reason": "Not required for this load context"
+    },
+    "damagedPalletPhoto": {
+      "url": "",
+      "label": "Damaged pallet photo",
+      "basename": "damaged-pallet-photo",
+      "source": "missing",
+      "generatedAt": "2026-05-22T01:00:07.252Z",
+      "required": false,
+      "conditional": true,
+      "applicable": false,
+      "reason": "Not required for this load context"
+    },
+    "sealMismatchPhoto": {
+      "url": "",
+      "label": "Seal mismatch photo",
+      "basename": "seal-mismatch-photo",
+      "source": "missing",
+      "generatedAt": "2026-05-22T01:00:07.252Z",
+      "required": false,
+      "conditional": true,
+      "applicable": false,
+      "reason": "Not required for this load context"
+    },
+    "tempCheckPhoto": {
+      "url": "",
+      "label": "Temperature check photo",
+      "basename": "temp-check-photo",
+      "source": "missing",
+      "generatedAt": "2026-05-22T01:00:07.252Z",
+      "required": false,
+      "conditional": true,
+      "applicable": false,
+      "reason": "Not required for this load context"
+    },
+    "weightTicketPhoto": {
+      "url": "/evidence/loads/L012/weight-ticket-photo.svg",
+      "label": "Weight ticket photo",
+      "basename": "weight-ticket-photo",
+      "source": "svg_demo",
+      "generatedAt": "2026-05-22T01:00:07.252Z",
+      "required": false,
+      "conditional": true,
+      "applicable": true
+    },
+    "detentionProofPhoto": {
+      "url": "",
+      "label": "Detention proof photo",
+      "basename": "detention-proof-photo",
+      "source": "missing",
+      "generatedAt": "2026-05-22T01:00:07.252Z",
+      "required": false,
+      "conditional": true,
+      "applicable": false,
+      "reason": "Not required for this load context"
+    },
+    "safetyViolationPhoto": {
+      "url": "",
+      "label": "Safety violation photo",
+      "basename": "safety-violation-photo",
+      "source": "missing",
+      "generatedAt": "2026-05-22T01:00:07.252Z",
+      "required": false,
+      "conditional": true,
+      "applicable": false,
+      "reason": "Not required for this load context"
+    },
+    "claimEvidence": {
+      "url": "",
+      "label": "Claim evidence",
+      "basename": "claim-evidence",
+      "source": "missing",
+      "generatedAt": "2026-05-22T01:00:07.252Z",
+      "required": false,
+      "conditional": true,
+      "applicable": false,
+      "reason": "Not required for this load context"
+    },
+    "proofCardComposite": {
+      "url": "/evidence/loads/L012/load012-claim-proof-cards.png",
+      "label": "Claim Proof Preview",
+      "basename": "load012-claim-proof-cards",
+      "source": "real",
+      "required": false,
+      "conditional": true,
+      "applicable": true,
+      "reason": "Optional visual proof-card preview; individual proof records remain authoritative"
+    }
+  }
+}

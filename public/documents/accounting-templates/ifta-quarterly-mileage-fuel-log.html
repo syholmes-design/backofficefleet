@@ -1,0 +1,939 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IFTA Quarterly Mileage & Fuel Log - Delta Advanced Trucking, Inc.</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-size: 11px;
+            line-height: 1.3;
+            color: #333;
+            background: #fff;
+            padding: 20px;
+        }
+        
+        .header {
+            background-color: #003366;
+            color: white;
+            padding: 15px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .header .company {
+            font-size: 14px;
+            font-weight: bold;
+        }
+        
+        .header .address {
+            font-size: 11px;
+            margin-top: 2px;
+        }
+        
+        .quarter-info {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 20px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            background: #f9f9f9;
+        }
+        
+        .quarter-info div {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .quarter-info label {
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: #003366;
+        }
+        
+        .quarter-info input {
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 11px;
+        }
+        
+        .section {
+            margin-bottom: 25px;
+        }
+        
+        .section-header {
+            background-color: #003366;
+            color: white;
+            padding: 10px 15px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        
+        .table-container {
+            overflow-x: auto;
+            border: 1px solid #ddd;
+            max-height: 600px;
+        }
+        
+        .sticky-table {
+            position: relative;
+        }
+        
+        .sticky-table table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 900px;
+        }
+        
+        .sticky-table th:first-child,
+        .sticky-table td:first-child {
+            position: sticky;
+            left: 0;
+            background-color: #003366;
+            color: white;
+            z-index: 10;
+            min-width: 150px;
+        }
+        
+        .sticky-table td:first-child {
+            background-color: white;
+            color: #333;
+            border-right: 2px solid #003366;
+        }
+        
+        .sticky-table tr:nth-child(even) td:first-child {
+            background-color: #EEF4FF;
+        }
+        
+        th {
+            background-color: #003366;
+            color: white;
+            padding: 8px;
+            text-align: left;
+            font-weight: bold;
+            white-space: nowrap;
+            font-size: 10px;
+        }
+        
+        td {
+            padding: 6px 8px;
+            border-bottom: 1px solid #ddd;
+            white-space: nowrap;
+            font-size: 10px;
+        }
+        
+        tr:nth-child(even) {
+            background-color: #EEF4FF;
+        }
+        
+        tr:nth-child(odd) {
+            background-color: white;
+        }
+        
+        .amount {
+            text-align: right;
+            font-family: 'Courier New', monospace;
+        }
+        
+        .center {
+            text-align: center;
+        }
+        
+        .totals-row {
+            background-color: #003366 !important;
+            color: white !important;
+            font-weight: bold;
+        }
+        
+        .totals-row td:first-child {
+            background-color: #003366 !important;
+            color: white !important;
+        }
+        
+        .summary-box {
+            border: 1px solid #ddd;
+            padding: 15px;
+            margin-top: 20px;
+        }
+        
+        .summary-box h3 {
+            background-color: #003366;
+            color: white;
+            padding: 8px;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+        
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+        
+        .summary-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 5px 0;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .summary-item.total {
+            font-weight: bold;
+            border-top: 2px solid #003366;
+            padding-top: 8px;
+            margin-top: 5px;
+        }
+        
+        .deadline-notice {
+            background-color: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-left: 4px solid #856404;
+            padding: 15px;
+            margin: 20px 0;
+        }
+        
+        .deadline-notice h4 {
+            color: #856404;
+            margin-bottom: 10px;
+        }
+        
+        .deadline-notice ul {
+            margin-left: 20px;
+            margin-top: 10px;
+        }
+        
+        .deadline-notice li {
+            margin-bottom: 5px;
+        }
+        
+        .print-button {
+            background-color: #003366;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            margin-bottom: 20px;
+        }
+        
+        .print-button:hover {
+            background-color: #002244;
+        }
+        
+        @media print {
+            .print-button {
+                display: none;
+            }
+            
+            body {
+                padding: 0;
+            }
+            
+            .section {
+                page-break-inside: avoid;
+            }
+            
+            .table-container {
+                max-height: none;
+                overflow: visible;
+            }
+        }
+    </style>
+</head>
+<body>
+    <button class="print-button" onclick="window.print()">🖨️ Print IFTA Quarterly Log</button>
+    
+    <div class="header">
+        <h1>IFTA QUARTERLY MILEAGE & FUEL LOG</h1>
+        <div class="company">Delta Advanced Trucking, Inc.</div>
+        <div class="address">2475 Laver Rd. Mansfield, OH 44905</div>
+    </div>
+    
+    <div class="quarter-info">
+        <div>
+            <label for="quarter">Quarter:</label>
+            <input type="text" id="quarter" placeholder="[Quarter]">
+        </div>
+        <div>
+            <label for="year">Year:</label>
+            <input type="text" id="year" placeholder="[Year]">
+        </div>
+        <div>
+            <label for="prepared-by">Prepared By:</label>
+            <input type="text" id="prepared-by" placeholder="[Prepared By]">
+        </div>
+    </div>
+    
+    <div class="section">
+        <div class="section-header">IFTA JURISDICTION MILEAGE & FUEL REPORT</div>
+        <div class="table-container sticky-table">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Jurisdiction</th>
+                        <th>Miles Run</th>
+                        <th>Fuel Gallons</th>
+                        <th>Taxable Gallons</th>
+                        <th>Tax Rate</th>
+                        <th>Tax Due</th>
+                        <th>Credits</th>
+                        <th>Net Tax</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Alabama</td>
+                        <td class="amount"></td>
+                        <td class="amount"></td>
+                        <td class="amount"></td>
+                        <td class="amount">$0.00</td>
+                        <td class="amount">$0.00</td>
+                        <td class="amount">$0.00</td>
+                        <td class="amount">$0.00</td>
+                    </tr>
+                    <tr>
+                        <td>Alaska</td>
+                        <td class="amount"></td>
+                        <td class="amount"></td>
+                        <td class="amount"></td>
+                        <td class="amount">$0.00</td>
+                        <td class="amount">$0.00</td>
+                        <td class="amount">$0.00</td>
+                        <td class="amount">$0.00</td>
+                    </tr>
+                    <tr>
+                        <td>Arizona</td>
+                        <td class="amount"></td>
+                        <td class="amount"></td>
+                        <td class="amount"></td>
+                        <td class="amount">$0.00</td>
+                        <td class="amount">$0.00</td>
+                        <td class="amount">$0.00</td>
+                        <td class="amount">$0.00</td>
+                    </tr>
+                    <tr>
+                        <td>Arkansas</td>
+                        <td class="amount"></td>
+                        <td class="amount"></td>
+                        <td class="amount"></td>
+                        <td class="amount">$0.00</td>
+                        <td class="amount">$0.00</td>
+                        <td class="amount">$0.00</td>
+                        <td class="amount">$0.00</td>
+                    </tr>
+                    <tr>
+                        <td>California</td>
+                        <td class="amount"></td>
+                        <td class="amount"></td>
+                        <td class="amount"></td>
+                        <td class="amount">$0.00</td>
+                        <td class="amount">$0.00</td>
+                        <td class="amount">$0.00</td>
+                        <td class="amount">$0.00</td>
+                    </tr>
+                    <tr>
+                        <td>Colorado</td>
+                        <td class="amount"></td>
+                        <td class="amount"></td>
+                        <td class="amount"></td>
+                        <td class="amount">$0.00</td>
+                        <td class="amount">$0.00</td>
+                        <td class="amount">$0.00</td>
+                        <td class="amount">$0.00</td>
+                    </tr>
+                    <tr>
+                        <td>Connecticut</td>
+                        <td class="amount"></td>
+                        <td class="amount"></td>
+                        <td class="amount"></td>
+                        <td class="amount">$0.00</td>
+                        <td class="amount">$0.00</td>
+                        <td class="amount">$0.00</td>
+                        <td class="amount">$0.00</td>
+                    </tr>
+                    <tr>
+                        <td>Delaware</td>
+                        <td class="amount"></td>
+                        <td class="amount"></td>
+                        <td class="amount"></td>
+                        <td class="amount">$0.00</td>
+                        <td class="amount">$0.00</td>
+                        <td class="amount">$0.00</td>
+                        <td class="amount">$0.00</td>
+                    </tr>
+                    <tr>
+                        <td>District of Columbia</td>
+                        <td class="amount"></td>
+                        <td class="amount"></td>
+                        <td class="amount"></td>
+                        <td class="amount">$0.00</td>
+                        <td class="amount">$0.00</td>
+                        <td class="amount">$0.00</td>
+                        <td class="amount">$0.00</td>
+                    </tr>
+                    <tr>
+                        <td>Florida</td>
+                        <td class="amount"></td>
+                        <td class="amount"></td>
+                        <td class="amount"></td>
+                        <td class="amount">$0.00</td>
+                        <td class="amount">$0.00</td>
+                        <td class="amount">$0.00</td>
+                        <td class="amount">$0.00</td>
+                    </tr>
+                    <tr>
+                        <td>Georgia</td>
+                        <td class="amount"></td>
+                        <td class="amount"></td>
+                        <td class="amount"></td>
+                        <td class="amount">$0.00</td>
+                        <td class="amount">$0.00</td>
+                        <td class="amount">$0.00</td>
+                        <td class="amount">$0.00</td>
+                    </tr>
+                    <tr>
+                        <td>Hawaii</td>
+                        <td class="amount"></td>
+                        <td class="amount"></td>
+                        <td class="amount"></td>
+                        <td class="amount">$0.00</td>
+                        <td class="amount">$0.00</td>
+                        <td class="amount">$0.00</td>
+                        <td class="amount">$0.00</td>
+                    </tr>
+                    <tr>
+                        <td>Idaho</td>
+                        <td class="amount"></td>
+                        <td class="amount"></td>
+                        <td class="amount"></td>
+                        <td class="amount">$0.00</td>
+                        <td class="amount">$0.00</td>
+                        <td class="amount">$0.00</td>
+                        <td class="amount">$0.00</td>
+                    </tr>
+                    <tr>
+                        <td>Illinois</td>
+                        <td class="amount"></td>
+                        <td class="amount"></td>
+                        <td class="amount"></td>
+                        <td class="amount">$0.00</td>
+                        <td class="amount">$0.00</td>
+                        <td class="amount">$0.00</td>
+                        <td class="amount">$0.00</td>
+                    </tr>
+                    <tr>
+                        <td>Indiana</td>
+                        <td class="amount"></td>
+                        <td class="amount"></td>
+                        <td class="amount"></td>
+                        <td class="amount">$0.00</td>
+                        <td class="amount">$0.00</td>
+                        <td class="amount">$0.00</td>
+                        <td class="amount">$0.00</td>
+                    </tr>
+                    <tr>
+                        <td>Iowa</td>
+                        <td class="amount"></td>
+                        <td class="amount"></td>
+                        <td class="amount"></td>
+                        <td class="amount">$0.00</td>
+                        <td class="amount">$0.00</td>
+                        <td class="amount">$0.00</td>
+                        <td class="amount">$0.00</td>
+                    </tr>
+                    <tr>
+                        <td>Kansas</td>
+                        <td class="amount"></td>
+                        <td class="amount"></td>
+                        <td class="amount"></td>
+                        <td class="amount">$0.00</td>
+                        <td class="amount">$0.00</td>
+                        <td class="amount">$0.00</td>
+                        <td class="amount">$0.00</td>
+                    </tr>
+                    <tr>
+                        <td>Kentucky</td>
+                        <td class="amount"></td>
+                        <td class="amount"></td>
+                        <td class="amount"></td>
+                        <td class="amount">$0.00</td>
+                        <td class="amount">$0.00</td>
+                        <td class="amount">$0.00</td>
+                        <td class="amount">$0.00</td>
+                    </tr>
+                    <tr>
+                        <td>Louisiana</td>
+                        <td class="amount"></td>
+                        <td class="amount"></td>
+                        <td class="amount"></td>
+                        <td class="amount">$0.00</td>
+                        <td class="amount">$0.00</td>
+                        <td class="amount">$0.00</td>
+                        <td class="amount">$0.00</td>
+                    </tr>
+                    <tr>
+                        <td>Maine</td>
+                        <td class="amount"></td>
+                        <td class="amount"></td>
+                        <td class="amount"></td>
+                        <td class="amount">$0.00</td>
+                        <td class="amount">$0.00</td>
+                        <td class="amount">$0.00</td>
+                        <td class="amount">$0.00</td>
+                    </tr>
+                    <tr>
+                        <td>Maryland</td>
+                        <td class="amount"></td>
+                        <td class="amount"></td>
+                        <td class="amount"></td>
+                        <td class="amount">$0.00</td>
+                        <td class="amount">$0.00</td>
+                        <td class="amount">$0.00</td>
+                        <td class="amount">$0.00</td>
+                    </tr>
+                    <tr>
+                        <td>Massachusetts</td>
+                        <td class="amount"></td>
+                        <td class="amount"></td>
+                        <td class="amount"></td>
+                        <td class="amount">$0.00</td>
+                        <td class="amount">$0.00</td>
+                        <td class="amount">$0.00</td>
+                        <td class="amount">$0.00</td>
+                    </tr>
+                    <tr>
+                        <td>Michigan</td>
+                        <td class="amount"></td>
+                        <td class="amount"></td>
+                        <td class="amount"></td>
+                        <td class="amount">$0.00</td>
+                        <td class="amount">$0.00</td>
+                        <td class="amount">$0.00</td>
+                        <td class="amount">$0.00</td>
+                    </tr>
+                    <tr>
+                        <td>Minnesota</td>
+                        <td class="amount"></td>
+                        <td class="amount"></td>
+                        <td class="amount"></td>
+                        <td class="amount">$0.00</td>
+                        <td class="amount">$0.00</td>
+                        <td class="amount">$0.00</td>
+                        <td class="amount">$0.00</td>
+                    </tr>
+                    <tr>
+                        <td>Mississippi</td>
+                        <td class="amount"></td>
+                        <td class="amount"></td>
+                        <td class="amount"></td>
+                        <td class="amount">$0.00</td>
+                        <td class="amount">$0.00</td>
+                        <td class="amount">$0.00</td>
+                        <td class="amount">$0.00</td>
+                    </tr>
+                    <tr>
+                        <td>Missouri</td>
+                        <td class="amount"></td>
+                        <td class="amount"></td>
+                        <td class="amount"></td>
+                        <td class="amount">$0.00</td>
+                        <td class="amount">$0.00</td>
+                        <td class="amount">$0.00</td>
+                        <td class="amount">$0.00</td>
+                    </tr>
+                    <tr>
+                        <td>Montana</td>
+                        <td class="amount"></td>
+                        <td class="amount"></td>
+                        <td class="amount"></td>
+                        <td class="amount">$0.00</td>
+                        <td class="amount">$0.00</td>
+                        <td class="amount">$0.00</td>
+                        <td class="amount">$0.00</td>
+                    </tr>
+                    <tr>
+                        <td>Nebraska</td>
+                        <td class="amount"></td>
+                        <td class="amount"></td>
+                        <td class="amount"></td>
+                        <td class="amount">$0.00</td>
+                        <td class="amount">$0.00</td>
+                        <td class="amount">$0.00</td>
+                        <td class="amount">$0.00</td>
+                    </tr>
+                    <tr>
+                        <td>Nevada</td>
+                        <td class="amount"></td>
+                        <td class="amount"></td>
+                        <td class="amount"></td>
+                        <td class="amount">$0.00</td>
+                        <td class="amount">$0.00</td>
+                        <td class="amount">$0.00</td>
+                        <td class="amount">$0.00</td>
+                    </tr>
+                    <tr>
+                        <td>New Hampshire</td>
+                        <td class="amount"></td>
+                        <td class="amount"></td>
+                        <td class="amount"></td>
+                        <td class="amount">$0.00</td>
+                        <td class="amount">$0.00</td>
+                        <td class="amount">$0.00</td>
+                        <td class="amount">$0.00</td>
+                    </tr>
+                    <tr>
+                        <td>New Jersey</td>
+                        <td class="amount"></td>
+                        <td class="amount"></td>
+                        <td class="amount"></td>
+                        <td class="amount">$0.00</td>
+                        <td class="amount">$0.00</td>
+                        <td class="amount">$0.00</td>
+                        <td class="amount">$0.00</td>
+                    </tr>
+                    <tr>
+                        <td>New Mexico</td>
+                        <td class="amount"></td>
+                        <td class="amount"></td>
+                        <td class="amount"></td>
+                        <td class="amount">$0.00</td>
+                        <td class="amount">$0.00</td>
+                        <td class="amount">$0.00</td>
+                        <td class="amount">$0.00</td>
+                    </tr>
+                    <tr>
+                        <td>New York</td>
+                        <td class="amount"></td>
+                        <td class="amount"></td>
+                        <td class="amount"></td>
+                        <td class="amount">$0.00</td>
+                        <td class="amount">$0.00</td>
+                        <td class="amount">$0.00</td>
+                        <td class="amount">$0.00</td>
+                    </tr>
+                    <tr>
+                        <td>North Carolina</td>
+                        <td class="amount"></td>
+                        <td class="amount"></td>
+                        <td class="amount"></td>
+                        <td class="amount">$0.00</td>
+                        <td class="amount">$0.00</td>
+                        <td class="amount">$0.00</td>
+                        <td class="amount">$0.00</td>
+                    </tr>
+                    <tr>
+                        <td>North Dakota</td>
+                        <td class="amount"></td>
+                        <td class="amount"></td>
+                        <td class="amount"></td>
+                        <td class="amount">$0.00</td>
+                        <td class="amount">$0.00</td>
+                        <td class="amount">$0.00</td>
+                        <td class="amount">$0.00</td>
+                    </tr>
+                    <tr>
+                        <td>Ohio</td>
+                        <td class="amount"></td>
+                        <td class="amount"></td>
+                        <td class="amount"></td>
+                        <td class="amount">$0.00</td>
+                        <td class="amount">$0.00</td>
+                        <td class="amount">$0.00</td>
+                        <td class="amount">$0.00</td>
+                    </tr>
+                    <tr>
+                        <td>Oklahoma</td>
+                        <td class="amount"></td>
+                        <td class="amount"></td>
+                        <td class="amount"></td>
+                        <td class="amount">$0.00</td>
+                        <td class="amount">$0.00</td>
+                        <td class="amount">$0.00</td>
+                        <td class="amount">$0.00</td>
+                    </tr>
+                    <tr>
+                        <td>Oregon</td>
+                        <td class="amount"></td>
+                        <td class="amount"></td>
+                        <td class="amount"></td>
+                        <td class="amount">$0.00</td>
+                        <td class="amount">$0.00</td>
+                        <td class="amount">$0.00</td>
+                        <td class="amount">$0.00</td>
+                    </tr>
+                    <tr>
+                        <td>Pennsylvania</td>
+                        <td class="amount"></td>
+                        <td class="amount"></td>
+                        <td class="amount"></td>
+                        <td class="amount">$0.00</td>
+                        <td class="amount">$0.00</td>
+                        <td class="amount">$0.00</td>
+                        <td class="amount">$0.00</td>
+                    </tr>
+                    <tr>
+                        <td>Rhode Island</td>
+                        <td class="amount"></td>
+                        <td class="amount"></td>
+                        <td class="amount"></td>
+                        <td class="amount">$0.00</td>
+                        <td class="amount">$0.00</td>
+                        <td class="amount">$0.00</td>
+                        <td class="amount">$0.00</td>
+                    </tr>
+                    <tr>
+                        <td>South Carolina</td>
+                        <td class="amount"></td>
+                        <td class="amount"></td>
+                        <td class="amount"></td>
+                        <td class="amount">$0.00</td>
+                        <td class="amount">$0.00</td>
+                        <td class="amount">$0.00</td>
+                        <td class="amount">$0.00</td>
+                    </tr>
+                    <tr>
+                        <td>South Dakota</td>
+                        <td class="amount"></td>
+                        <td class="amount"></td>
+                        <td class="amount"></td>
+                        <td class="amount">$0.00</td>
+                        <td class="amount">$0.00</td>
+                        <td class="amount">$0.00</td>
+                        <td class="amount">$0.00</td>
+                    </tr>
+                    <tr>
+                        <td>Tennessee</td>
+                        <td class="amount"></td>
+                        <td class="amount"></td>
+                        <td class="amount"></td>
+                        <td class="amount">$0.00</td>
+                        <td class="amount">$0.00</td>
+                        <td class="amount">$0.00</td>
+                        <td class="amount">$0.00</td>
+                    </tr>
+                    <tr>
+                        <td>Texas</td>
+                        <td class="amount"></td>
+                        <td class="amount"></td>
+                        <td class="amount"></td>
+                        <td class="amount">$0.00</td>
+                        <td class="amount">$0.00</td>
+                        <td class="amount">$0.00</td>
+                        <td class="amount">$0.00</td>
+                    </tr>
+                    <tr>
+                        <td>Utah</td>
+                        <td class="amount"></td>
+                        <td class="amount"></td>
+                        <td class="amount"></td>
+                        <td class="amount">$0.00</td>
+                        <td class="amount">$0.00</td>
+                        <td class="amount">$0.00</td>
+                        <td class="amount">$0.00</td>
+                    </tr>
+                    <tr>
+                        <td>Vermont</td>
+                        <td class="amount"></td>
+                        <td class="amount"></td>
+                        <td class="amount"></td>
+                        <td class="amount">$0.00</td>
+                        <td class="amount">$0.00</td>
+                        <td class="amount">$0.00</td>
+                        <td class="amount">$0.00</td>
+                    </tr>
+                    <tr>
+                        <td>Virginia</td>
+                        <td class="amount"></td>
+                        <td class="amount"></td>
+                        <td class="amount"></td>
+                        <td class="amount">$0.00</td>
+                        <td class="amount">$0.00</td>
+                        <td class="amount">$0.00</td>
+                        <td class="amount">$0.00</td>
+                    </tr>
+                    <tr>
+                        <td>Washington</td>
+                        <td class="amount"></td>
+                        <td class="amount"></td>
+                        <td class="amount"></td>
+                        <td class="amount">$0.00</td>
+                        <td class="amount">$0.00</td>
+                        <td class="amount">$0.00</td>
+                        <td class="amount">$0.00</td>
+                    </tr>
+                    <tr>
+                        <td>West Virginia</td>
+                        <td class="amount"></td>
+                        <td class="amount"></td>
+                        <td class="amount"></td>
+                        <td class="amount">$0.00</td>
+                        <td class="amount">$0.00</td>
+                        <td class="amount">$0.00</td>
+                        <td class="amount">$0.00</td>
+                    </tr>
+                    <tr>
+                        <td>Wisconsin</td>
+                        <td class="amount"></td>
+                        <td class="amount"></td>
+                        <td class="amount"></td>
+                        <td class="amount">$0.00</td>
+                        <td class="amount">$0.00</td>
+                        <td class="amount">$0.00</td>
+                        <td class="amount">$0.00</td>
+                    </tr>
+                    <tr>
+                        <td>Wyoming</td>
+                        <td class="amount"></td>
+                        <td class="amount"></td>
+                        <td class="amount"></td>
+                        <td class="amount">$0.00</td>
+                        <td class="amount">$0.00</td>
+                        <td class="amount">$0.00</td>
+                        <td class="amount">$0.00</td>
+                    </tr>
+                    <tr class="totals-row">
+                        <td>TOTALS</td>
+                        <td class="amount">0</td>
+                        <td class="amount">0.00</td>
+                        <td class="amount">0.00</td>
+                        <td class="amount">-</td>
+                        <td class="amount">$0.00</td>
+                        <td class="amount">$0.00</td>
+                        <td class="amount">$0.00</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    
+    <div class="summary-box">
+        <h3>QUARTERLY SUMMARY</h3>
+        <div class="summary-grid">
+            <div class="summary-item">
+                <span>Total Miles Run:</span>
+                <span class="amount">0</span>
+            </div>
+            <div class="summary-item">
+                <span>Total Fuel Gallons:</span>
+                <span class="amount">0.00</span>
+            </div>
+            <div class="summary-item">
+                <span>Total Taxable Gallons:</span>
+                <span class="amount">0.00</span>
+            </div>
+            <div class="summary-item">
+                <span>Average MPG:</span>
+                <span class="amount">0.00</span>
+            </div>
+            <div class="summary-item">
+                <span>Total Tax Due:</span>
+                <span class="amount">$0.00</span>
+            </div>
+            <div class="summary-item">
+                <span>Total Credits:</span>
+                <span class="amount">$0.00</span>
+            </div>
+            <div class="summary-item">
+                <span>Net Tax Liability:</span>
+                <span class="amount">$0.00</span>
+            </div>
+            <div class="summary-item">
+                <span>Jurisdictions Operated:</span>
+                <span class="amount">0</span>
+            </div>
+        </div>
+    </div>
+    
+    <div class="deadline-notice">
+        <h4>IFTA FILING DEADLINE REMINDER</h4>
+        <p><strong>Important Deadlines:</strong></p>
+        <ul>
+            <li>Quarter 1 (Jan-Mar): File by April 30</li>
+            <li>Quarter 2 (Apr-Jun): File by July 31</li>
+            <li>Quarter 3 (Jul-Sep): File by October 31</li>
+            <li>Quarter 4 (Oct-Dec): File by January 31</li>
+        </ul>
+        <p style="margin-top: 10px;"><strong>Requirements:</strong></p>
+        <ul>
+            <li>Maintain detailed mileage records by jurisdiction</li>
+            <li>Keep all fuel receipts and purchase records</li>
+            <li>Supporting documents must be retained for 4 years</li>
+            <li>Electronic filing recommended for faster processing</li>
+        </ul>
+    </div>
+    
+    <div class="summary-box">
+        <h3>REPORT CERTIFICATION</h3>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 15px;">
+            <div>
+                <div style="margin-bottom: 10px;">
+                    <strong>Prepared By:</strong> _________________________
+                </div>
+                <div style="margin-bottom: 10px;">
+                    <strong>Date:</strong> _________________________
+                </div>
+                <div>
+                    <strong>Phone:</strong> _________________________
+                </div>
+            </div>
+            <div>
+                <div style="margin-bottom: 10px;">
+                    <strong>Reviewed By:</strong> _________________________
+                </div>
+                <div style="margin-bottom: 10px;">
+                    <strong>Date:</strong> _________________________
+                </div>
+                <div>
+                    <strong>IFTA License #:</strong> _________________________
+                </div>
+            </div>
+        </div>
+        <div style="margin-top: 15px; padding: 10px; background: #f8f9fa; border: 1px solid #dee2e6;">
+            <strong>Certification:</strong> I certify that this report is true and complete to the best of my knowledge. All mileage and fuel records have been accurately maintained according to IFTA requirements.
+        </div>
+    </div>
+    
+    <script>
+        // Auto-calculation functionality
+        function calculateTotals() {
+            // This would be implemented for dynamic calculations
+            // For now, keeping it as a static template
+        }
+        
+        // Print optimization
+        window.addEventListener('beforeprint', () => {
+            document.body.classList.add('printing');
+        });
+        
+        window.addEventListener('afterprint', () => {
+            document.body.classList.remove('printing');
+        });
+        
+        // Set default values
+        document.addEventListener('DOMContentLoaded', () => {
+            const today = new Date();
+            const currentYear = today.getFullYear();
+            const currentQuarter = Math.ceil((today.getMonth() + 1) / 3);
+            
+            document.getElementById('year').value = currentYear;
+            document.getElementById('quarter').value = `Q${currentQuarter}`;
+        });
+    </script>
+</body>
+</html>

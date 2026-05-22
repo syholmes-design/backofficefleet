@@ -1,0 +1,164 @@
+<!-- BOF_TEMPLATE_SOURCE: scripts/templates/load-docs/damage-photo-packet.template.html -->
+<!-- BOF_DOCUMENT_TYPE: damagePhotoPacket -->
+<!-- BOF_LOAD_ID: L006 -->
+<!doctype html>
+<html>
+  <head><meta charset="utf-8" /><title>Damage Photo Packet L006</title><style>@page { size: auto; margin: 0.5in; }
+* { box-sizing: border-box; }
+body { font-family: "Inter", "Segoe UI", Arial, Helvetica, sans-serif; margin: 0; background: #f3f4f6; color: #111827; }
+.paper { width: 8.5in; max-width: 100%; margin: 20px auto; background: #fff; border: 1px solid #d1d5db; padding: 26px; box-shadow: 0 8px 30px rgba(15, 23, 42, 0.08); }
+.doc-header { display: flex; justify-content: space-between; gap: 16px; border-bottom: 2px solid #111827; padding-bottom: 12px; margin-bottom: 14px; }
+.doc-title { margin: 0; font-size: 22px; letter-spacing: .2px; }
+.generated-label { margin-top: 4px; font-size: 11px; color: #4b5563; text-transform: uppercase; letter-spacing: .08em; }
+.status-stamp { border: 2px solid #111827; padding: 6px 10px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; }
+.meta-grid, .entity-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin-bottom: 12px; }
+.meta-box { border: 1px solid #d1d5db; background: #f9fafb; padding: 8px; }
+.meta-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; color: #4b5563; margin-bottom: 4px; }
+.meta-value { font-size: 13px; }
+table { width: 100%; border-collapse: collapse; margin-top: 8px; }
+th, td { border: 1px solid #d1d5db; padding: 7px 8px; vertical-align: top; text-align: left; font-size: 12px; }
+th { background: #f3f4f6; font-size: 11px; text-transform: uppercase; letter-spacing: .05em; color: #374151; }
+.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.section-title { margin: 14px 0 6px; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; color: #1f2937; }
+.sig-line { margin-top: 24px; display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+.sig-slot { border-top: 1px solid #1f2937; padding-top: 4px; font-size: 11px; color: #4b5563; }
+.signature-section-title { margin: 18px 0 8px; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; color: #1f2937; }
+.signature-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 10px; }
+.signature-block { border: 1px solid #e5e7eb; border-radius: 6px; padding: 10px 10px 8px; background: #fff; }
+.signature-role { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: #6b7280; margin-bottom: 6px; }
+.signature-script { font-family: "Brush Script MT", "Segoe Script", "Lucida Handwriting", cursive; font-size: 22px; color: #111827; line-height: 1.2; min-height: 28px; }
+.signature-meta { font-size: 12px; font-weight: 600; color: #111827; margin-top: 4px; }
+.signature-title { font-size: 10px; color: #4b5563; margin-top: 2px; }
+.signature-line { border-bottom: 1px solid #1f2937; margin: 8px 0 4px; height: 1px; }
+.signature-datetime { font-size: 10px; color: #374151; }
+.signature-status { font-size: 10px; margin-top: 4px; font-weight: 700; }
+.signature-signed .signature-status { color: #047857; }
+.signature-pending .signature-status { color: #b45309; }
+.signature-img { display: block; margin-top: 4px; max-width: 220px; height: auto; }
+.terms-box { border: 1px solid #d1d5db; background: #f9fafb; padding: 10px; font-size: 11px; color: #374151; }
+.barcode-ref { margin-top: 10px; display: inline-block; font-family: "Courier New", monospace; letter-spacing: 2px; font-size: 11px; border: 1px solid #111827; padding: 3px 8px; }
+footer { margin-top: 16px; padding-top: 8px; border-top: 1px dashed #9ca3af; display: flex; justify-content: space-between; font-size: 11px; color: #6b7280; }
+
+/* POD — freight-style section rails (shared tokens; used only by pod.template.html classes) */
+.pod-section-heading {
+  margin: 16px 0 8px;
+  padding: 8px 10px;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #fff;
+  background: #1e40af;
+  border-radius: 2px;
+}
+.meta-grid--pod-header { margin-bottom: 10px; }
+.entity-grid--parties {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  margin-bottom: 12px;
+}
+.party-block {
+  border: 1px solid #d1d5db;
+  background: #f9fafb;
+  padding: 10px;
+  font-size: 12px;
+}
+.party-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: #6b7280; margin-bottom: 4px; }
+.party-name { font-weight: 700; color: #111827; }
+.party-addr { margin-top: 4px; color: #374151; line-height: 1.45; }
+.party-contact { margin-top: 6px; font-size: 11px; color: #4b5563; }
+.pod-lead { font-size: 11px; color: #4b5563; margin: 0 0 8px; line-height: 1.5; }
+.pod-photo-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-top: 6px;
+}
+.pod-photo-cell { min-width: 0; }
+.pod-photo-frame {
+  border: 1px solid #d1d5db;
+  background: #f9fafb;
+  padding: 8px;
+  min-height: 100px;
+}
+.pod-photo-frame img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  border: 1px solid #e5e7eb;
+}
+.pod-photo-missing {
+  font-size: 11px;
+  color: #4b5563;
+  padding: 20px 8px;
+  text-align: center;
+  line-height: 1.45;
+}
+.pod-photo-label {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  margin-top: 6px;
+  color: #374151;
+  letter-spacing: 0.04em;
+}
+.pod-verify-panel {
+  margin-top: 12px;
+  border: 1px solid #1e40af;
+  background: #eff6ff;
+  padding: 10px 12px;
+  font-size: 12px;
+}
+.pod-verify-title {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #1e3a8a;
+  margin-bottom: 8px;
+}
+.pod-verify-row { display: flex; gap: 10px; padding: 4px 0; border-bottom: 1px solid #bfdbfe; }
+.pod-verify-row:last-child { border-bottom: none; }
+.pod-verify-row .k { flex: 0 0 38%; font-weight: 700; color: #1e3a8a; font-size: 11px; }
+.pod-verify-row .v { flex: 1; color: #111827; }
+.pod-rfid-lead { font-size: 11px; color: #374151; margin: 0 0 8px; line-height: 1.55; }
+.pod-ops-title { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 6px; color: #1f2937; }
+.pod-ops-body { margin: 0 0 8px; font-size: 12px; line-height: 1.5; }
+.pod-proof-list { margin: 0; padding-left: 18px; font-size: 11px; color: #374151; line-height: 1.5; }
+.signature-grid--pod { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.pod-audit-box {
+  margin-top: 16px;
+  padding: 10px 12px;
+  border: 1px dashed #94a3b8;
+  background: #f8fafc;
+  font-size: 11px;
+  color: #475569;
+  line-height: 1.5;
+}
+.pod-audit-title { font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 6px; color: #334155; }
+.pod-audit-id { margin: 0 0 6px; }
+.pod-audit-body { margin: 0; }
+@media (max-width: 960px) {
+  .entity-grid--parties { grid-template-columns: 1fr; }
+  .signature-grid--pod { grid-template-columns: 1fr; }
+  .pod-photo-grid { grid-template-columns: 1fr; }
+}
+</style></head>
+  <body>
+    <div class="paper">
+      <header class="doc-header">
+        <div><h1 class="doc-title">Damage Photo Packet</h1><div class="generated-label">Generated document</div></div>
+        <div class="status-stamp">Claim Required</div>
+      </header>
+      <table>
+        <tr><th>Load</th><th>Driver</th><th>Route</th><th>Exposure</th></tr>
+        <tr><td>L006</td><td>Marcus Chen</td><td>Prime Consumer Atlanta GA -> Union Crossdock Cleveland OH</td><td>$450.00</td></tr>
+      </table>
+      <div class="terms-box">
+        Linked evidence: /evidence/loads/L006/damage-photo.svg, /evidence/loads/L006/claim-evidence.png, /evidence/loads/L006/cargo-photo.svg, Not available.
+      </div>
+      <footer><span>5/19/2026, 2:46:40 PM</span><span>BOF operations document packet</span></footer>
+    </div>
+  </body>
+</html>

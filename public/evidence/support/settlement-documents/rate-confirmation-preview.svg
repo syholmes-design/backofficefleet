@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="540" viewBox="0 0 960 540" role="img" aria-label="Rate Confirmation preview">
+  <defs>
+    <linearGradient id="bg" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0%" stop-color="#07111f" />
+      <stop offset="100%" stop-color="#10243a" />
+    </linearGradient>
+    <filter id="paperShadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="18" stdDeviation="18" flood-color="#020617" flood-opacity="0.35" />
+    </filter>
+  </defs>
+  <style>
+    .paper { fill: #f8fafc; filter: url(#paperShadow); }
+    .topBand { fill: #0891b2; }
+    .mutedBand { fill: #e2e8f0; }
+    .chip { fill: #dcfce7; }
+    .chipText { fill: #166534; font: 700 22px Arial, sans-serif; }
+    .eyebrow { fill: #ccfbf1; font: 700 20px Arial, sans-serif; letter-spacing: 1px; }
+    .title { fill: #0f172a; font: 800 40px Arial, sans-serif; }
+    .subtitle { fill: #475569; font: 500 22px Arial, sans-serif; }
+    .label { fill: #64748b; font: 700 19px Arial, sans-serif; }
+    .value { fill: #0f172a; font: 800 22px Arial, sans-serif; }
+    .rule { stroke: #cbd5e1; stroke-width: 2; }
+    .tableRow { fill: #eef2f7; }
+    .tableAccent { fill: #dbeafe; }
+    .table { fill: #1e293b; font: 800 21px Arial, sans-serif; }
+    .right { font-weight: 900; }
+    .sidePanel { fill: #0f172a; }
+    .sideTitle { fill: #67e8f9; font: 800 24px Arial, sans-serif; }
+    .side { fill: #cbd5e1; font: 700 20px Arial, sans-serif; }
+    .footer { fill: #475569; font: 700 18px Arial, sans-serif; }
+    .stamp { fill: none; stroke: #0891b2; stroke-width: 6; }
+    .stampText { fill: #0891b2; font: 900 26px Arial, sans-serif; letter-spacing: 1px; }
+  </style>
+  <rect width="960" height="540" fill="url(#bg)" />
+  <rect x="48" y="38" width="864" height="464" rx="24" class="paper" />
+  <rect x="48" y="38" width="864" height="72" rx="24" class="topBand" />
+  <rect x="48" y="86" width="864" height="24" class="topBand" />
+  <text x="82" y="84" class="eyebrow" >RATE CONTROL</text>
+  <rect x="718" y="58" width="152" height="36" rx="18" class="chip" />
+  <text x="794" y="83" class="chipText" text-anchor="middle">Ready</text>
+  <text x="82" y="148" class="title" >Rate Confirmation</text>
+  <text x="84" y="180" class="subtitle" >Approved load terms</text>
+  <rect x="610" y="150" width="242" height="292" rx="18" class="sidePanel" />
+  <text x="642" y="186" class="sideTitle" >Terms checked</text>
+  <text x="642" y="214" class="side" >Lane matched</text><text x="642" y="248" class="side" >Accessorials</text><text x="642" y="282" class="side" >Pay basis</text><text x="642" y="316" class="side" >Factoring ok</text>
+  
+  <text x="88" y="166" class="label" >Rate con</text>
+  <text x="306" y="166" class="value" >RC-L003</text>
+  <line x1="88" y1="184" x2="548" y2="184" class="rule" />
+
+  <text x="88" y="210" class="label" >Broker</text>
+  <text x="306" y="210" class="value" >Summit Logistics</text>
+  <line x1="88" y1="228" x2="548" y2="228" class="rule" />
+
+  <text x="88" y="254" class="label" >Payment terms</text>
+  <text x="306" y="254" class="value" >Net 30</text>
+  <line x1="88" y1="272" x2="548" y2="272" class="rule" />
+
+  <rect x="80" y="324" width="480" height="132" rx="14" class="mutedBand" />
+  
+  <rect x="80" y="347" width="480" height="34" rx="8" class="tableRow" />
+  <text x="104" y="370" class="table" >Linehaul</text>
+  <text x="330" y="370" class="table right" text-anchor="end">$2,650.00</text>
+  <text x="532" y="370" class="table right" text-anchor="end">base</text>
+
+  <rect x="80" y="387" width="480" height="34" rx="8" class="tableRow" />
+  <text x="104" y="410" class="table" >Detention</text>
+  <text x="330" y="410" class="table right" text-anchor="end">$0.00</text>
+  <text x="532" y="410" class="table right" text-anchor="end">none</text>
+
+  <rect x="80" y="427" width="480" height="34" rx="8" class="tableAccent" />
+  <text x="104" y="450" class="table" >Lumper</text>
+  <text x="330" y="450" class="table right" text-anchor="end">$145.00</text>
+  <text x="532" y="450" class="table right" text-anchor="end">reimbursable</text>
+
+  <rect x="648" y="348" width="164" height="72" rx="12" class="stamp" transform="rotate(-7 730 384)" />
+  <text x="730" y="394" class="stampText" text-anchor="middle" transform="rotate(-7 730 394)">MATCHED</text>
+  <text x="82" y="480" class="footer" >Rate terms feed invoice, settlement, and margin controls.</text>
+</svg>

@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BOF Proof of Delivery - Field Operations Template Pack v3</title>
+    <style>
+        body {
+            font-family: 'Calibri', sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #ffffff;
+        }
+        .document {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border: 2px solid #374151;
+            padding: 20px;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #374151;
+            padding-bottom: 15px;
+        }
+        .header h1 {
+            font-size: 20px;
+            font-weight: bold;
+            color: #1f2937;
+            margin: 0;
+        }
+        .header p {
+            font-size: 12px;
+            color: #6b7280;
+            margin: 5px 0;
+        }
+        .form-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 15px;
+        }
+        .form-table td {
+            padding: 6px;
+            border: 1px solid #d1d5db;
+            vertical-align: top;
+            font-size: 12px;
+        }
+        .form-table .label {
+            background: #f9fafb;
+            font-weight: bold;
+            width: 30%;
+        }
+        .section-title {
+            font-weight: bold;
+            margin: 15px 0 8px 0;
+            padding: 8px;
+            background: #f3f4f6;
+            border-left: 4px solid #3b82f6;
+            font-size: 14px;
+        }
+        .signature-line {
+            border-bottom: 1px solid #374151;
+            height: 25px;
+            margin: 3px 0;
+        }
+        .checkbox {
+            margin-right: 8px;
+        }
+        .photo-area {
+            border: 1px dashed #d1d5db;
+            height: 120px;
+            margin: 10px 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #6b7280;
+            font-size: 12px;
+        }
+        .condition-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin: 10px 0;
+        }
+        .condition-item {
+            border: 1px solid #d1d5db;
+            padding: 8px;
+            text-align: center;
+        }
+        .footer {
+            margin-top: 20px;
+            border-top: 2px solid #374151;
+            padding-top: 15px;
+            font-size: 11px;
+            color: #6b7280;
+        }
+    </style>
+</head>
+<body>
+    <div class="document">
+        <div class="header">
+            <h1>PROOF OF DELIVERY</h1>
+            <p>BackOfficeFleet (BOF) — Field Operations Template Pack v3</p>
+            <p>Confirms freight delivery and documents condition</p>
+        </div>
+
+        <table class="form-table">
+            <tr>
+                <td class="label">POD Number</td>
+                <td>________________</td>
+                <td class="label">BOL Number</td>
+                <td>________________</td>
+                <td class="label">Load Number</td>
+                <td>________________</td>
+            </tr>
+            <tr>
+                <td class="label">Delivery Date</td>
+                <td>________________</td>
+                <td class="label">Delivery Time</td>
+                <td>________________</td>
+                <td class="label">Driver ID</td>
+                <td>________________</td>
+            </tr>
+        </table>
+
+        <div class="section-title">Delivery Information</div>
+        <table class="form-table">
+            <tr>
+                <td class="label">Consignee Name</td>
+                <td colspan="3">________________</td>
+                <td class="label">Received By</td>
+                <td>________________</td>
+            </tr>
+            <tr>
+                <td class="label">Delivery Address</td>
+                <td colspan="5">__________________________________________________________</td>
+            </tr>
+            <tr>
+                <td class="label">City/State/ZIP</td>
+                <td colspan="3">________________</td>
+                <td class="label">Phone</td>
+                <td>________________</td>
+            </tr>
+        </table>
+
+        <div class="section-title">Freight Condition Assessment</div>
+        <div class="condition-grid">
+            <div class="condition-item">
+                <strong>Overall Condition</strong><br>
+                <input type="checkbox" class="checkbox"> Excellent<br>
+                <input type="checkbox" class="checkbox"> Good<br>
+                <input type="checkbox" class="checkbox"> Fair<br>
+                <input type="checkbox" class="checkbox"> Poor
+            </div>
+            <div class="condition-item">
+                <strong>Delivery Status</strong><br>
+                <input type="checkbox" class="checkbox"> Complete<br>
+                <input type="checkbox" class="checkbox"> Partial<br>
+                <input type="checkbox" class="checkbox"> Refused<br>
+                <input type="checkbox" class="checkbox"> Damaged
+            </div>
+        </div>
+
+        <table class="form-table">
+            <tr>
+                <td class="label">Pieces Received</td>
+                <td>________________</td>
+                <td class="label">Pieces Expected</td>
+                <td>________________</td>
+                <td class="label">Shortage/Damage</td>
+                <td>________________</td>
+            </tr>
+        </table>
+
+        <div class="section-title">Delivery Photos</div>
+        <div class="photo-area">
+            [Delivery Location Photo - Front View]
+        </div>
+        <div class="photo-area">
+            [Freight Condition Photo - Close View]
+        </div>
+        <div class="photo-area">
+            [Signature/Documentation Photo - If Required]
+        </div>
+
+        <div class="section-title">Exceptions & Notes</div>
+        <table class="form-table">
+            <tr>
+                <td class="large-input" colspan="6">
+                    __________________________________________________________<br>
+                    __________________________________________________________<br>
+                    __________________________________________________________
+                </td>
+            </tr>
+        </table>
+
+        <div class="section-title">Time & Attendance</div>
+        <table class="form-table">
+            <tr>
+                <td class="label">Arrival Time</td>
+                <td>________________</td>
+                <td class="label">Start Unload</td>
+                <td>________________</td>
+                <td class="label">Complete Time</td>
+                <td>________________</td>
+            </tr>
+            <tr>
+                <td class="label">Total Time on Site</td>
+                <td>________________</td>
+                <td class="label">Detention Time</td>
+                <td>________________</td>
+                <td class="label">Layover Time</td>
+                <td>________________</td>
+            </tr>
+        </table>
+
+        <div class="section-title">Signatures</div>
+        <table class="form-table">
+            <tr>
+                <td class="label">Driver Signature</td>
+                <td>
+                    <div class="signature-line"></div>
+                    <small>Print Name</small>
+                </td>
+                <td class="label">Date</td>
+                <td>
+                    <div class="signature-line"></div>
+                    <small>MM/DD/YYYY</small>
+                </td>
+                <td class="label">Time</td>
+                <td>
+                    <div class="signature-line"></div>
+                    <small>HH:MM</small>
+                </td>
+            </tr>
+            <tr>
+                <td class="label">Consignee Signature</td>
+                <td>
+                    <div class="signature-line"></div>
+                    <small>Print Name & Title</small>
+                </td>
+                <td class="label">Date</td>
+                <td>
+                    <div class="signature-line"></div>
+                    <small>MM/DD/YYYY</small>
+                </td>
+                <td class="label">Time</td>
+                <td>
+                    <div class="signature-line"></div>
+                    <small>HH:MM</small>
+                </td>
+            </tr>
+            <tr>
+                <td class="label">Witness Signature</td>
+                <td>
+                    <div class="signature-line"></div>
+                    <small>Print Name</small>
+                </td>
+                <td class="label">Date</td>
+                <td>
+                    <div class="signature-line"></div>
+                    <small>MM/DD/YYYY</small>
+                </td>
+                <td class="label">Time</td>
+                <td>
+                    <div class="signature-line"></div>
+                    <small>HH:MM</small>
+                </td>
+            </tr>
+        </table>
+
+        <div class="section-title">BOF Verification Checklist</div>
+        <table class="form-table">
+            <tr>
+                <td>
+                    <input type="checkbox" class="checkbox"> All photos captured and clear
+                </td>
+                <td>
+                    <input type="checkbox" class="checkbox"> Signatures obtained
+                </td>
+                <td>
+                    <input type="checkbox" class="checkbox"> Time recorded accurately
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <input type="checkbox" class="checkbox"> Condition documented
+                </td>
+                <td>
+                    <input type="checkbox" class="checkbox"> Exceptions noted
+                </td>
+                <td>
+                    <input type="checkbox" class="checkbox"> POD uploaded to system
+                </td>
+            </tr>
+        </table>
+
+        <div class="footer">
+            <div style="margin-bottom: 10px;">
+                <strong>BOF Workflow Triggers:</strong>
+                <input type="checkbox" class="checkbox"> Delivery confirmed
+                <input type="checkbox" class="checkbox"> Payment processing initiated
+                <input type="checkbox" class="checkbox"> Exception flagged if shortage/damage
+                <input type="checkbox" class="checkbox"> Command center updated
+            </div>
+            <div>
+                BOF Proof of Delivery Template v3.0 • This document serves as legal proof of delivery and condition
+            </div>
+        </div>
+    </div>
+</body>
+</html>

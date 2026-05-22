@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BOF Bill of Lading - Field Operations Template Pack v3</title>
+    <style>
+        body {
+            font-family: 'Calibri', sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #ffffff;
+        }
+        .document {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border: 2px solid #374151;
+            padding: 20px;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #374151;
+            padding-bottom: 15px;
+        }
+        .header h1 {
+            font-size: 20px;
+            font-weight: bold;
+            color: #1f2937;
+            margin: 0;
+        }
+        .header p {
+            font-size: 12px;
+            color: #6b7280;
+            margin: 5px 0;
+        }
+        .two-column {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        .column {
+            flex: 1;
+        }
+        .form-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 15px;
+        }
+        .form-table td {
+            padding: 6px;
+            border: 1px solid #d1d5db;
+            vertical-align: top;
+            font-size: 12px;
+        }
+        .form-table .label {
+            background: #f9fafb;
+            font-weight: bold;
+            width: 30%;
+        }
+        .section-title {
+            font-weight: bold;
+            margin: 15px 0 8px 0;
+            padding: 8px;
+            background: #f3f4f6;
+            border-left: 4px solid #3b82f6;
+            font-size: 14px;
+        }
+        .signature-line {
+            border-bottom: 1px solid #374151;
+            height: 25px;
+            margin: 3px 0;
+        }
+        .checkbox {
+            margin-right: 8px;
+        }
+        .large-input {
+            height: 60px;
+            vertical-align: top;
+        }
+        .footer {
+            margin-top: 20px;
+            border-top: 2px solid #374151;
+            padding-top: 15px;
+            font-size: 11px;
+            color: #6b7280;
+        }
+    </style>
+</head>
+<body>
+    <div class="document">
+        <div class="header">
+            <h1>BILL OF LADING</h1>
+            <p>BackOfficeFleet (BOF) — Field Operations Template Pack v3</p>
+            <p>Primary shipping document — receipt, contract of carriage, document of title</p>
+        </div>
+
+        <div class="two-column">
+            <div class="column">
+                <table class="form-table">
+                    <tr>
+                        <td class="label">Shipper</td>
+                        <td colspan="2">________________</td>
+                    </tr>
+                    <tr>
+                        <td class="label">Address</td>
+                        <td colspan="2">________________</td>
+                    </tr>
+                    <tr>
+                        <td class="label">City/State/ZIP</td>
+                        <td colspan="2">________________</td>
+                    </tr>
+                </table>
+            </div>
+            <div class="column">
+                <table class="form-table">
+                    <tr>
+                        <td class="label">Consignee</td>
+                        <td colspan="2">________________</td>
+                    </tr>
+                    <tr>
+                        <td class="label">Address</td>
+                        <td colspan="2">________________</td>
+                    </tr>
+                    <tr>
+                        <td class="label">City/State/ZIP</td>
+                        <td colspan="2">________________</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+
+        <table class="form-table">
+            <tr>
+                <td class="label">BOL Number</td>
+                <td>________________</td>
+                <td class="label">Load Number</td>
+                <td>________________</td>
+                <td class="label">Date</td>
+                <td>________________</td>
+            </tr>
+            <tr>
+                <td class="label">Carrier Name</td>
+                <td colspan="3">________________</td>
+                <td class="label">MC/DOT #</td>
+                <td>________________</td>
+            </tr>
+            <tr>
+                <td class="label">Trailer #</td>
+                <td>________________</td>
+                <td class="label">Seal #</td>
+                <td>________________</td>
+                <td class="label">Driver ID</td>
+                <td>________________</td>
+            </tr>
+        </table>
+
+        <div class="section-title">Freight Description</div>
+        <table class="form-table">
+            <tr>
+                <td class="label" style="width: 15%">Pieces</td>
+                <td class="label" style="width: 25%">Description</td>
+                <td class="label" style="width: 15%">Weight</td>
+                <td class="label" style="width: 15%">HM Class</td>
+                <td class="label" style="width: 30%">Handling Units</td>
+            </tr>
+            <tr>
+                <td>________________</td>
+                <td>________________</td>
+                <td>________________</td>
+                <td>________________</td>
+                <td>________________</td>
+            </tr>
+            <tr>
+                <td>________________</td>
+                <td>________________</td>
+                <td>________________</td>
+                <td>________________</td>
+                <td>________________</td>
+            </tr>
+            <tr>
+                <td>________________</td>
+                <td>________________</td>
+                <td>________________</td>
+                <td>________________</td>
+                <td>________________</td>
+            </tr>
+        </table>
+
+        <div class="section-title">Routing</div>
+        <table class="form-table">
+            <tr>
+                <td class="label">From:</td>
+                <td colspan="5">________________</td>
+            </tr>
+            <tr>
+                <td class="label">To:</td>
+                <td colspan="5">________________</td>
+            </tr>
+            <tr>
+                <td class="label">Via:</td>
+                <td colspan="5">________________</td>
+            </tr>
+        </table>
+
+        <div class="section-title">Special Instructions & Exceptions</div>
+        <table class="form-table">
+            <tr>
+                <td class="large-input" colspan="6">__________________________________________________________</td>
+            </tr>
+            <tr>
+                <td class="large-input" colspan="6">__________________________________________________________</td>
+            </tr>
+        </table>
+
+        <div class="section-title">Declared Value</div>
+        <table class="form-table">
+            <tr>
+                <td class="label">Value per Article</td>
+                <td>$________________</td>
+                <td class="label">Total Value</td>
+                <td>$________________</td>
+                <td class="label">Rate</td>
+                <td>$________________</td>
+            </tr>
+            <tr>
+                <td class="label">Prepaid</td>
+                <td>$________________</td>
+                <td class="label">Collect</td>
+                <td>$________________</td>
+                <td class="label">Total Freight</td>
+                <td>$________________</td>
+            </tr>
+        </table>
+
+        <div class="section-title">Signatures</div>
+        <table class="form-table">
+            <tr>
+                <td class="label">Shipper Signature</td>
+                <td>
+                    <div class="signature-line"></div>
+                    <small>Print Name & Title</small>
+                </td>
+                <td class="label">Date</td>
+                <td>
+                    <div class="signature-line"></div>
+                    <small>MM/DD/YYYY</small>
+                </td>
+                <td class="label">Time</td>
+                <td>
+                    <div class="signature-line"></div>
+                    <small>HH:MM</small>
+                </td>
+            </tr>
+            <tr>
+                <td class="label">Carrier Signature</td>
+                <td>
+                    <div class="signature-line"></div>
+                    <small>Print Name & Title</small>
+                </td>
+                <td class="label">Date</td>
+                <td>
+                    <div class="signature-line"></div>
+                    <small>MM/DD/YYYY</small>
+                </td>
+                <td class="label">Time</td>
+                <td>
+                    <div class="signature-line"></div>
+                    <small>HH:MM</small>
+                </td>
+            </tr>
+        </table>
+
+        <div class="section-title">Receipt Confirmation</div>
+        <table class="form-table">
+            <tr>
+                <td class="label">Received By:</td>
+                <td colspan="2">
+                    <div class="signature-line"></div>
+                    <small>Consignee Signature</small>
+                </td>
+                <td class="label">Date</td>
+                <td colspan="2">
+                    <div class="signature-line"></div>
+                    <small>MM/DD/YYYY</small>
+                </td>
+            </tr>
+            <tr>
+                <td class="label">Number of Packages</td>
+                <td>________________</td>
+                <td class="label">Condition</td>
+                <td>
+                    <input type="checkbox" class="checkbox"> Good
+                    <input type="checkbox" class="checkbox"> Damaged
+                    <input type="checkbox" class="checkbox"> Shortage
+                </td>
+                <td class="label">Exceptions Noted</td>
+                <td>________________</td>
+            </tr>
+        </table>
+
+        <div class="footer">
+            <div style="margin-bottom: 10px;">
+                <strong>BOF Workflow Triggers:</strong>
+                <input type="checkbox" class="checkbox"> Load pickup confirmed
+                <input type="checkbox" class="checkbox"> Proof of delivery required
+                <input type="checkbox" class="checkbox"> Command center alert set
+                <input type="checkbox" class="checkbox"> Exception flagged if damaged/shortage
+            </div>
+            <div>
+                BOF Bill of Lading Template v3.0 • Non-Negotiable • This document serves as receipt for goods described above
+            </div>
+        </div>
+    </div>
+</body>
+</html>

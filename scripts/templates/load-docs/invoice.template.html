@@ -1,0 +1,56 @@
+<!doctype html>
+<html>
+  <head><meta charset="utf-8" /><title>Invoice {{loadId}}</title><style>{{styles}}</style></head>
+  <body>
+    <div class="paper">
+      <header class="doc-header">
+        <div>
+          <h1 class="doc-title">Invoice</h1>
+          <div class="generated-label">BOF Financial Packet · Generated</div>
+        </div>
+        <div class="status-stamp">{{statusStamp}}</div>
+      </header>
+
+      <div class="meta-grid">
+        <div class="meta-box"><div class="meta-label">Invoice #</div><div class="meta-value">{{invoiceNumber}}</div></div>
+        <div class="meta-box"><div class="meta-label">Load ID</div><div class="meta-value">{{loadId}}</div></div>
+        <div class="meta-box"><div class="meta-label">Bill To</div><div class="meta-value">{{customer}}</div></div>
+        <div class="meta-box"><div class="meta-label">Carrier</div><div class="meta-value">{{carrier}}</div></div>
+      </div>
+
+      <table>
+        <tr><th>Description</th><th>Reference</th><th style="text-align:right">Amount</th></tr>
+        <tr><td>Linehaul</td><td>{{pickupFacility}} → {{deliveryFacility}}</td><td style="text-align:right">{{rate}}</td></tr>
+        <tr><td>Fuel surcharge</td><td>FSC standard lane adjustment</td><td style="text-align:right">{{fuelSurcharge}}</td></tr>
+        <tr><td>Lumper reimbursement</td><td>Required: {{lumperRequired}}</td><td style="text-align:right">{{lumper}}</td></tr>
+        <tr><td>Detention / accessorial</td><td>Operational accessorials</td><td style="text-align:right">{{detention}}</td></tr>
+        <tr><td>Backhaul recovery</td><td>Backhaul opportunity linked</td><td style="text-align:right">{{backhaulPay}}</td></tr>
+        <tr><th colspan="2">Total Due</th><th style="text-align:right">{{invoiceTotal}}</th></tr>
+      </table>
+
+      <div class="section-title">Payment Terms</div>
+      <div class="terms-box">
+        {{paymentTerms}}.<br />
+        {{remittanceNote}}.<br />
+        BOF support: billing@backofficefleet.com
+      </div>
+
+      <div class="signature-section-title">Billing authorization </div>
+      <div class="signature-block {{billingSignatureCssClass}}" style="max-width: 420px">
+        <div class="signature-role">Generated / approved for issuance</div>
+        {{billingSignatureSvgHtml}}
+        <div class="signature-script">{{billingSignatureText}}</div>
+        <div class="signature-meta">{{billingSignatureName}}</div>
+        <div class="signature-title">{{billingSignatureTitle}}</div>
+        <div class="signature-line"></div>
+        <div class="signature-datetime">{{billingSignedAt}}</div>
+        <div class="signature-status" data-bof-sig-role="billing_invoice">{{billingSignatureStatus}}</div>
+      </div>
+
+      <footer>
+        <span>Generated: {{generatedDate}}</span>
+        <span>BOF operations document packet</span>
+      </footer>
+    </div>
+  </body>
+</html>

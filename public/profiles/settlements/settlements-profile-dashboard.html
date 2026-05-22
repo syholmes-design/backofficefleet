@@ -1,0 +1,827 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Settlement UI Profiles — Payroll Dashboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+  <script src="https://cdn.plot.ly/plotly-2.35.2.min.js" crossorigin="anonymous"></script>
+  <style>
+    :root {
+      --primary: #814BE7;
+      --primary-light: #C17BFD;
+      --bg: #F7F7F7;
+      --card-bg: #FFFFFF;
+      --text: #1F1F24;
+      --text-muted: #6E7191;
+      --border: #E2E4ED;
+      --success: #34C563;
+      --danger: #E73B4F;
+      --warning: #D4A740;
+      --radius: 12px;
+      --shadow: 0 0 0 1px var(--border), 0 2px 8px rgba(7,2,23,0.05);
+      --shadow-hover: 0 0 0 1px var(--border), 0 4px 16px rgba(7,2,23,0.10);
+      --font: 'Open Sans', system-ui, -apple-system, sans-serif;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root:not(.light) {
+        --bg: #1E2235;
+        --card-bg: #2D3148;
+        --text: #E2E4ED;
+        --text-muted: #A2A7BD;
+        --border: #484D66;
+        --shadow: 0 0 0 1px var(--border), 0 2px 8px rgba(7,2,23,0.15);
+        --shadow-hover: 0 0 0 1px var(--border), 0 4px 16px rgba(7,2,23,0.25);
+      }
+    }
+    :root.dark {
+      --bg: #1E2235;
+      --card-bg: #2D3148;
+      --text: #E2E4ED;
+      --text-muted: #A2A7BD;
+      --border: #484D66;
+      --shadow: 0 0 0 1px var(--border), 0 2px 8px rgba(7,2,23,0.15);
+      --shadow-hover: 0 0 0 1px var(--border), 0 4px 16px rgba(7,2,23,0.25);
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: var(--font);
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+    }
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      height: 60vh;
+      background: radial-gradient(ellipse 60% 50% at 50% 0%, rgba(91,108,249,0.06), transparent 70%);
+      pointer-events: none;
+      z-index: 0;
+    }
+    .dashboard { max-width: 1400px; margin: 0 auto; padding: 24px; position: relative; z-index: 1; }
+
+    /* --- Header --- */
+    .header {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      gap: 12px;
+      margin-bottom: 32px;
+      padding-bottom: 24px;
+      border-bottom: 1px solid var(--border);
+      position: relative;
+    }
+    .header .logo { height: 32px; width: auto; }
+    .title {
+      font-size: 1.75rem;
+      font-weight: 700;
+      line-height: 1.2;
+      background: linear-gradient(135deg, var(--text) 0%, var(--primary) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .subtitle {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      font-weight: 500;
+      letter-spacing: 0.02em;
+    }
+
+    /* --- Grid --- */
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(12, 1fr);
+      gap: 20px;
+    }
+    .col-2  { grid-column: span 2; }
+    .col-3  { grid-column: span 3; }
+    .col-4  { grid-column: span 4; }
+    .col-6  { grid-column: span 6; }
+    .col-8  { grid-column: span 8; }
+    .col-12 { grid-column: span 12; }
+    @media (max-width: 767.98px) {
+      .col-2,.col-3,.col-4,.col-6,.col-8,.col-12 { grid-column: span 12; }
+      .grid { gap: 12px; }
+      .dashboard { padding: 16px; }
+      .kpi-value { font-size: 1.5rem; }
+      .title { font-size: 1.35rem; }
+      .chart-container { min-height: 260px; }
+    }
+
+    /* --- Card base --- */
+    .card, .kpi-card, .chart-card, .text-card, .table-card {
+      background: var(--card-bg);
+      border-radius: var(--radius);
+      padding: 20px;
+      box-shadow: var(--shadow);
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .card:hover,.kpi-card:hover,.chart-card:hover,.text-card:hover,.table-card:hover {
+      transform: translateY(-1px);
+      box-shadow: var(--shadow-hover);
+    }
+    .card::before,.kpi-card::before,.chart-card::before,.text-card::before,.table-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--primary-light), transparent);
+      opacity: 0.6;
+    }
+
+    /* --- KPI card --- */
+    .kpi-card { padding: 24px; }
+    .kpi-label { font-size: 0.8rem; font-weight: 500; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.03em; margin-bottom: 6px; }
+    .kpi-value { font-size: 2rem; font-weight: 700; color: var(--text); line-height: 1.2; }
+    .kpi-delta {
+      display: inline-block;
+      font-size: 0.75rem;
+      font-weight: 600;
+      margin-top: 8px;
+      padding: 2px 8px;
+      border-radius: 20px;
+    }
+    .kpi-delta.positive { color: var(--success); background: rgba(52,197,99,0.1); }
+    .kpi-delta.negative { color: var(--danger); background: rgba(231,59,79,0.1); }
+    .kpi-delta.neutral  { color: var(--warning); background: rgba(212,167,64,0.1); }
+
+    /* --- Chart card --- */
+    .card-title { font-size: 1rem; font-weight: 600; color: var(--text); margin-bottom: 12px; }
+    .chart-container { min-height: 320px; width: 100%; }
+
+    /* --- Text card --- */
+    .text-card p { font-size: 0.9rem; color: var(--text); margin-bottom: 8px; line-height: 1.6; }
+    .text-card p:last-child { margin-bottom: 0; }
+
+    /* --- Table card --- */
+    .table-card { overflow-x: auto; }
+    .table-card table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+    .table-card th { text-align: left; padding: 10px 12px; border-bottom: 2px solid var(--border); font-weight: 600; color: var(--text); white-space: nowrap; }
+    .table-card td { padding: 10px 12px; border-bottom: 1px solid var(--border); color: var(--text); }
+    .table-card tr:last-child td { border-bottom: none; }
+    .table-card tbody tr:nth-child(even) td { background: rgba(91,108,249,0.02); }
+    .table-card tbody tr:hover td { background: rgba(91,108,249,0.06); }
+
+    /* --- Theme toggle --- */
+    .theme-toggle {
+      position: absolute;
+      top: 24px; right: 0;
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 6px 10px;
+      cursor: pointer;
+      color: var(--text-muted);
+      font-size: 1rem;
+      line-height: 1;
+      transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .theme-toggle:hover { color: var(--text); border-color: var(--primary-light); }
+    .theme-toggle .icon-sun { display: inline; }
+    .theme-toggle .icon-moon { display: none; }
+    :root.dark .theme-toggle .icon-sun { display: none; }
+    :root.dark .theme-toggle .icon-moon { display: inline; }
+    @media (prefers-color-scheme: dark) {
+      :root:not(.light) .theme-toggle .icon-sun { display: none; }
+      :root:not(.light) .theme-toggle .icon-moon { display: inline; }
+    }
+
+    /* --- Footer --- */
+    .footer {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      margin-top: 40px;
+      padding-top: 20px;
+      border-top: 1px solid var(--border);
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+    .footer .logo-sm { height: 18px; width: auto; }
+
+    /* ===== SETTLEMENT PROFILE CARDS ===== */
+    .section-label {
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 4px;
+    }
+    .section-heading {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 20px;
+    }
+
+    /* Filter bar */
+    .filter-bar {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+    .filter-btn {
+      padding: 6px 16px;
+      border-radius: 20px;
+      border: 1px solid var(--border);
+      background: var(--card-bg);
+      color: var(--text-muted);
+      font-family: var(--font);
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.18s ease;
+    }
+    .filter-btn:hover { border-color: var(--primary-light); color: var(--primary); }
+    .filter-btn.active { background: var(--primary); border-color: var(--primary); color: #fff; }
+
+    /* Profile card grid */
+    .profile-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 20px;
+    }
+
+    /* Individual profile card */
+    .profile-card {
+      background: var(--card-bg);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      position: relative;
+    }
+    .profile-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--primary-light), transparent);
+      opacity: 0.7;
+      z-index: 1;
+    }
+    .profile-card:hover {
+      transform: translateY(-3px);
+      box-shadow: var(--shadow-hover), 0 0 0 1px var(--primary-light), 0 8px 30px rgba(129,75,231,0.15);
+    }
+
+    /* Card header strip */
+    .pc-header {
+      padding: 16px 18px 12px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+    .pc-avatar {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--primary) 0%, #6851FF 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #fff;
+      flex-shrink: 0;
+      letter-spacing: 0.02em;
+    }
+    .pc-id-block { flex: 1; min-width: 0; }
+    .pc-name {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--text);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .pc-id {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      font-weight: 500;
+      margin-top: 2px;
+    }
+    .pc-status-badge {
+      flex-shrink: 0;
+      font-size: 0.72rem;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 20px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    .badge-paid    { background: rgba(52,197,99,0.12);  color: #27a650; }
+    .badge-pending { background: rgba(212,167,64,0.15); color: #b8892a; }
+
+    /* Card body */
+    .pc-body { padding: 16px 18px; }
+
+    /* Pay row */
+    .pc-pay-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+    .pc-pay-box {
+      background: rgba(129,75,231,0.05);
+      border: 1px solid rgba(129,75,231,0.12);
+      border-radius: 8px;
+      padding: 10px 12px;
+    }
+    .pc-pay-label {
+      font-size: 0.7rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      margin-bottom: 4px;
+    }
+    .pc-pay-value {
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--text);
+    }
+    .pc-pay-value.gross { color: var(--primary); }
+    .pc-pay-value.net   { color: var(--success); }
+
+    /* Metadata rows */
+    .pc-meta { display: flex; flex-direction: column; gap: 8px; }
+    .pc-meta-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      font-size: 0.82rem;
+    }
+    .pc-meta-key {
+      font-weight: 600;
+      color: var(--text-muted);
+      white-space: nowrap;
+      min-width: 110px;
+      flex-shrink: 0;
+    }
+    .pc-meta-val {
+      color: var(--text);
+      flex: 1;
+      word-break: break-word;
+    }
+    .pc-meta-val.empty { color: var(--text-muted); font-style: italic; }
+
+    /* Settlement count pip */
+    .pc-settlement-count {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--primary) 0%, #6851FF 100%);
+      color: #fff;
+      font-size: 0.7rem;
+      font-weight: 700;
+      margin-left: 4px;
+      vertical-align: middle;
+    }
+  </style>
+</head>
+<body>
+<div class="dashboard">
+  <header class="header">
+    <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle dark mode">
+      <span class="icon-sun">&#9788;</span>
+      <span class="icon-moon">&#9790;</span>
+    </button>
+    <img class="logo" src="https://www.energent.ai/images/logos/svg/energent-logo.svg" alt="Energent logo">
+    <div>
+      <h1 class="title">Settlement UI Profiles — Payroll</h1>
+      <p class="subtitle">Driver Settlement &amp; Payroll Records · Test Case</p>
+    </div>
+  </header>
+
+  <!-- KPI Summary Row -->
+  <div class="grid">
+    <div class="col-3">
+      <div class="kpi-card">
+        <div class="kpi-label">Total Drivers</div>
+        <div class="kpi-value" id="kpi-drivers">—</div>
+        <div class="kpi-delta neutral" id="kpi-drivers-sub">Settlement Records</div>
+      </div>
+    </div>
+    <div class="col-3">
+      <div class="kpi-card">
+        <div class="kpi-label">Total Gross Pay</div>
+        <div class="kpi-value" id="kpi-gross">—</div>
+        <div class="kpi-delta neutral">All Settlements</div>
+      </div>
+    </div>
+    <div class="col-3">
+      <div class="kpi-card">
+        <div class="kpi-label">Total Net Pay</div>
+        <div class="kpi-value" id="kpi-net">—</div>
+        <div class="kpi-delta positive">After Deductions</div>
+      </div>
+    </div>
+    <div class="col-3">
+      <div class="kpi-card">
+        <div class="kpi-label">Settlement Status</div>
+        <div class="kpi-value" id="kpi-paid">—</div>
+        <div class="kpi-delta negative" id="kpi-pending-lbl">— Pending</div>
+      </div>
+    </div>
+
+    <!-- Settlement Status Distribution Chart -->
+    <div class="col-12">
+      <div class="chart-card">
+        <div class="card-title">Settlement Status Distribution &amp; Gross Pay by Driver</div>
+        <div class="chart-container" id="chart-main"></div>
+      </div>
+    </div>
+
+    <!-- Profile Cards Section -->
+    <div class="col-12">
+      <div class="card" style="overflow: visible;">
+        <div class="card-title">Driver Settlement Profiles</div>
+        <div class="filter-bar" id="filter-bar">
+          <button class="filter-btn active" data-filter="ALL" onclick="applyFilter(this)">All Drivers</button>
+          <button class="filter-btn" data-filter="PAID" onclick="applyFilter(this)">Paid</button>
+          <button class="filter-btn" data-filter="PENDING" onclick="applyFilter(this)">Pending</button>
+        </div>
+        <div class="profile-grid" id="profile-grid"></div>
+      </div>
+    </div>
+
+    <!-- Payroll Summary Table -->
+    <div class="col-12">
+      <div class="table-card">
+        <div class="card-title">Payroll Summary Table</div>
+        <table>
+          <thead>
+            <tr>
+              <th>Driver ID</th>
+              <th>Full Name</th>
+              <th>Total Gross Pay</th>
+              <th>Total Net Pay</th>
+              <th>Total Settlements</th>
+              <th>Settlement Status</th>
+              <th>Pending Reason</th>
+            </tr>
+          </thead>
+          <tbody id="payroll-table-body"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <img class="logo-sm" src="https://www.energent.ai/images/logos/svg/energent-logo.svg" alt="Energent logo">
+    <a href="https://www.energent.ai" target="_blank" rel="noopener noreferrer"
+       style="color:var(--text-muted);text-decoration:none;transition:color 0.2s ease;"
+       onmouseover="this.style.color='var(--primary)'"
+       onmouseout="this.style.color='var(--text-muted)'">Powered by energent.ai</a>
+  </footer>
+</div>
+
+<script>
+// ── Theme ──────────────────────────────────────────────────────────────────
+function getEffectiveDark() {
+  const r = document.documentElement;
+  if (r.classList.contains('dark')) return true;
+  if (r.classList.contains('light')) return false;
+  return window.matchMedia('(prefers-color-scheme: dark)').matches;
+}
+function toggleTheme() {
+  const r = document.documentElement;
+  const dark = getEffectiveDark();
+  r.classList.remove('dark','light');
+  r.classList.add(dark ? 'light' : 'dark');
+  rebuildCharts();
+}
+
+// ── Plotly helpers ──────────────────────────────────────────────────────────
+const COLORS = ['#814BE7','#6851FF','#34C563','#D4A740','#E73B4F','#3FA881','#C17BFD'];
+const chartRegistry = [];
+
+function getDefaultLayout() {
+  const dark = getEffectiveDark();
+  return {
+    font: { family: 'Open Sans, system-ui, sans-serif', color: dark ? '#E2E4ED' : '#1F1F24' },
+    paper_bgcolor: 'transparent',
+    plot_bgcolor: 'transparent',
+    autosize: true,
+    margin: { l: 50, r: 30, t: 50, b: 80 },
+    xaxis: { gridcolor: dark ? '#5A5F78' : '#E2E4ED', automargin: true },
+    yaxis: { gridcolor: dark ? '#5A5F78' : '#E2E4ED', automargin: true },
+    colorway: COLORS,
+    legend: { font: { family: 'Open Sans, system-ui, sans-serif', size: 12 } },
+    hoverlabel: {
+      font: { family: 'Open Sans, system-ui, sans-serif', size: 13 },
+      bgcolor: dark ? '#3D4260' : '#FFFFFF',
+      bordercolor: dark ? '#5A5F78' : '#E2E4ED',
+      namelength: -1,
+    },
+  };
+}
+
+const NESTED = ['xaxis','yaxis','yaxis2','margin','legend','font','hoverlabel'];
+function mergeLayouts(base, ovr) {
+  const m = { ...base, ...ovr };
+  for (const k of NESTED) {
+    if (base[k] && ovr[k] && typeof base[k] === 'object' && typeof ovr[k] === 'object')
+      m[k] = { ...base[k], ...ovr[k] };
+  }
+  return m;
+}
+
+function createChart(id, traces, layoutOverrides) {
+  layoutOverrides = layoutOverrides || {};
+  chartRegistry.push({ id, traces, layoutOverrides });
+  Plotly.newPlot(id, traces, mergeLayouts(getDefaultLayout(), layoutOverrides),
+    { responsive: true, displayModeBar: false });
+}
+
+function rebuildCharts() {
+  chartRegistry.forEach(function(c) {
+    Plotly.react(c.id, c.traces, mergeLayouts(getDefaultLayout(), c.layoutOverrides),
+      { responsive: true, displayModeBar: false });
+  });
+}
+
+// ── Data ────────────────────────────────────────────────────────────────────
+var DRIVERS = [
+  { id:"DRV-001", name:"John Carter",     gross:2165,  net:2165,  settlements:1, status:"PAID",    pendingReason:"" },
+  { id:"DRV-002", name:"Maria Lopez",     gross:2005,  net:2125,  settlements:1, status:"PENDING", pendingReason:"Awaiting Receipts" },
+  { id:"DRV-003", name:"Alex Kim",        gross:2200,  net:2200,  settlements:1, status:"PAID",    pendingReason:"" },
+  { id:"DRV-004", name:"Priya Patel",     gross:2108,  net:2258,  settlements:1, status:"PENDING", pendingReason:"Awaiting Receipts" },
+  { id:"DRV-005", name:"Kenji Tanaka",    gross:2325,  net:2325,  settlements:1, status:"PENDING", pendingReason:"Load Verification" },
+  { id:"DRV-006", name:"Marcus Chen",     gross:2162,  net:2162,  settlements:1, status:"PAID",    pendingReason:"" },
+  { id:"DRV-007", name:"Sofia Gomez",     gross:2033,  net:2033,  settlements:1, status:"PAID",    pendingReason:"" },
+  { id:"DRV-008", name:"Liam Smith",      gross:2246,  net:2246,  settlements:1, status:"PENDING", pendingReason:"Load Verification" },
+  { id:"DRV-009", name:"Emma Brown",      gross:2159,  net:2159,  settlements:1, status:"PAID",    pendingReason:"" },
+  { id:"DRV-010", name:"Noah Wilson",     gross:2157,  net:2157,  settlements:1, status:"PAID",    pendingReason:"" },
+  { id:"DRV-011", name:"Olivia Lee",      gross:2073,  net:2073,  settlements:1, status:"PAID",    pendingReason:"" },
+  { id:"DRV-012", name:"Robert Johnson",  gross:2299,  net:2299,  settlements:1, status:"PENDING", pendingReason:"Document Review" }
+];
+
+// ── Formatters ──────────────────────────────────────────────────────────────
+function fmtCurrency(n) {
+  return '$' + Number(n).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+}
+function initials(name) {
+  return name.split(' ').map(function(p){ return p[0]; }).join('').slice(0,2).toUpperCase();
+}
+
+// ── KPI cards ───────────────────────────────────────────────────────────────
+(function buildKPIs() {
+  var totalGross = DRIVERS.reduce(function(s,d){ return s + d.gross; }, 0);
+  var totalNet   = DRIVERS.reduce(function(s,d){ return s + d.net; }, 0);
+  var paid       = DRIVERS.filter(function(d){ return d.status === 'PAID'; }).length;
+  var pending    = DRIVERS.filter(function(d){ return d.status === 'PENDING'; }).length;
+
+  document.getElementById('kpi-drivers').textContent = DRIVERS.length;
+  document.getElementById('kpi-gross').textContent   = fmtCurrency(totalGross);
+  document.getElementById('kpi-net').textContent     = fmtCurrency(totalNet);
+  document.getElementById('kpi-paid').textContent    = paid + ' Paid';
+  document.getElementById('kpi-pending-lbl').textContent = pending + ' Pending';
+})();
+
+// ── Main Chart ──────────────────────────────────────────────────────────────
+(function buildChart() {
+  var names  = DRIVERS.map(function(d){ return d.name.split(' ')[0] + ' ' + d.name.split(' ')[1][0] + '.'; });
+  var gross  = DRIVERS.map(function(d){ return d.gross; });
+  var net    = DRIVERS.map(function(d){ return d.net; });
+  var colors = DRIVERS.map(function(d){ return d.status === 'PAID' ? '#34C563' : '#D4A740'; });
+
+  createChart('chart-main', [
+    {
+      type: 'bar',
+      name: 'Gross Pay',
+      x: names,
+      y: gross,
+      marker: { color: colors, opacity: 0.85 },
+      hovertemplate: '<b>%{x}</b><br>Gross: $%{y:,.2f}<extra></extra>',
+      text: gross.map(function(v){ return '$'+(v/1000).toFixed(1)+'K'; }),
+      textposition: 'outside',
+    },
+    {
+      type: 'scatter',
+      mode: 'lines+markers',
+      name: 'Net Pay',
+      x: names,
+      y: net,
+      yaxis: 'y2',
+      line: { color: '#814BE7', width: 2.5 },
+      marker: { size: 7, color: '#814BE7' },
+      hovertemplate: '<b>%{x}</b><br>Net: $%{y:,.2f}<extra></extra>',
+    }
+  ], {
+    yaxis: {
+      title: { text: 'Gross Pay ($)', font: { size: 11 } },
+      gridcolor: getEffectiveDark() ? '#5A5F78' : '#E2E4ED',
+    },
+    yaxis2: {
+      title: { text: 'Net Pay ($)', font: { size: 11 } },
+      overlaying: 'y',
+      side: 'right',
+      showgrid: false,
+      automargin: true,
+    },
+    legend: { orientation: 'h', y: -0.25 },
+    margin: { t: 60, b: 100 },
+    xaxis: { tickangle: -30, automargin: true },
+    annotations: [
+      { text: '🟢 = PAID  🟡 = PENDING', xref: 'paper', yref: 'paper',
+        x: 1, y: 1.08, xanchor: 'right', yanchor: 'bottom',
+        showarrow: false, font: { size: 11, color: getEffectiveDark() ? '#A2A7BD' : '#6E7191' } }
+    ],
+  });
+})();
+
+// ── Profile Cards ───────────────────────────────────────────────────────────
+var currentFilter = 'ALL';
+
+function applyFilter(btn) {
+  document.querySelectorAll('.filter-btn').forEach(function(b){ b.classList.remove('active'); });
+  btn.classList.add('active');
+  currentFilter = btn.getAttribute('data-filter');
+  renderCards();
+}
+
+function renderCards() {
+  var grid = document.getElementById('profile-grid');
+  grid.innerHTML = '';
+
+  var filtered = currentFilter === 'ALL' ? DRIVERS : DRIVERS.filter(function(d){ return d.status === currentFilter; });
+
+  filtered.forEach(function(d) {
+    var isPaid = d.status === 'PAID';
+    var badgeClass = isPaid ? 'badge-paid' : 'badge-pending';
+    var badgeText  = isPaid ? 'PAID' : 'PENDING';
+
+    var card = document.createElement('div');
+    card.className = 'profile-card';
+
+    var grossStr = fmtCurrency(d.gross);
+    var netStr   = fmtCurrency(d.net);
+    var ini      = initials(d.name);
+
+    // Sanitize pending reason for textContent assignment (safe)
+    var pendingDisplay = d.pendingReason || '—';
+
+    var headerDiv = document.createElement('div');
+    headerDiv.className = 'pc-header';
+
+    var avatar = document.createElement('div');
+    avatar.className = 'pc-avatar';
+    avatar.textContent = ini;
+
+    var idBlock = document.createElement('div');
+    idBlock.className = 'pc-id-block';
+
+    var nameEl = document.createElement('div');
+    nameEl.className = 'pc-name';
+    nameEl.textContent = d.name;
+
+    var idEl = document.createElement('div');
+    idEl.className = 'pc-id';
+    idEl.textContent = d.id;
+
+    idBlock.appendChild(nameEl);
+    idBlock.appendChild(idEl);
+
+    var badge = document.createElement('span');
+    badge.className = 'pc-status-badge ' + badgeClass;
+    badge.textContent = badgeText;
+
+    headerDiv.appendChild(avatar);
+    headerDiv.appendChild(idBlock);
+    headerDiv.appendChild(badge);
+
+    // Body
+    var bodyDiv = document.createElement('div');
+    bodyDiv.className = 'pc-body';
+
+    // Pay boxes
+    var payRow = document.createElement('div');
+    payRow.className = 'pc-pay-row';
+
+    var grossBox = document.createElement('div');
+    grossBox.className = 'pc-pay-box';
+    var grossLabel = document.createElement('div');
+    grossLabel.className = 'pc-pay-label';
+    grossLabel.textContent = 'Total Gross Pay';
+    var grossVal = document.createElement('div');
+    grossVal.className = 'pc-pay-value gross';
+    grossVal.textContent = grossStr;
+    grossBox.appendChild(grossLabel);
+    grossBox.appendChild(grossVal);
+
+    var netBox = document.createElement('div');
+    netBox.className = 'pc-pay-box';
+    var netLabel = document.createElement('div');
+    netLabel.className = 'pc-pay-label';
+    netLabel.textContent = 'Total Net Pay';
+    var netVal = document.createElement('div');
+    netVal.className = 'pc-pay-value net';
+    netVal.textContent = netStr;
+    netBox.appendChild(netLabel);
+    netBox.appendChild(netVal);
+
+    payRow.appendChild(grossBox);
+    payRow.appendChild(netBox);
+
+    // Meta rows
+    var metaDiv = document.createElement('div');
+    metaDiv.className = 'pc-meta';
+
+    function metaRow(key, val, isEmpty) {
+      var row = document.createElement('div');
+      row.className = 'pc-meta-row';
+      var k = document.createElement('span');
+      k.className = 'pc-meta-key';
+      k.textContent = key;
+      var v = document.createElement('span');
+      v.className = isEmpty ? 'pc-meta-val empty' : 'pc-meta-val';
+      v.textContent = val;
+      row.appendChild(k);
+      row.appendChild(v);
+      return row;
+    }
+
+    // Settlement count with pip
+    var settlRow = document.createElement('div');
+    settlRow.className = 'pc-meta-row';
+    var sKey = document.createElement('span');
+    sKey.className = 'pc-meta-key';
+    sKey.textContent = 'Total Settlements';
+    var sVal = document.createElement('span');
+    sVal.className = 'pc-meta-val';
+    sVal.textContent = d.settlements;
+    var pip = document.createElement('span');
+    pip.className = 'pc-settlement-count';
+    pip.textContent = d.settlements;
+    sVal.textContent = '';
+    sVal.appendChild(pip);
+    settlRow.appendChild(sKey);
+    settlRow.appendChild(sVal);
+
+    metaDiv.appendChild(settlRow);
+    metaDiv.appendChild(metaRow('Settlement Status', badgeText, false));
+    metaDiv.appendChild(metaRow('Pending Reason', pendingDisplay, !d.pendingReason));
+
+    bodyDiv.appendChild(payRow);
+    bodyDiv.appendChild(metaDiv);
+
+    card.appendChild(headerDiv);
+    card.appendChild(bodyDiv);
+    grid.appendChild(card);
+  });
+}
+
+// ── Payroll Table ───────────────────────────────────────────────────────────
+(function buildTable() {
+  var tbody = document.getElementById('payroll-table-body');
+  DRIVERS.forEach(function(d) {
+    var tr = document.createElement('tr');
+    var cells = [
+      d.id,
+      d.name,
+      fmtCurrency(d.gross),
+      fmtCurrency(d.net),
+      d.settlements,
+      d.status,
+      d.pendingReason || '—'
+    ];
+    cells.forEach(function(val, idx) {
+      var td = document.createElement('td');
+      td.textContent = val;
+      if (idx === 5) {
+        td.style.fontWeight = '600';
+        td.style.color = d.status === 'PAID' ? 'var(--success)' : 'var(--warning)';
+      }
+      tr.appendChild(td);
+    });
+    tbody.appendChild(tr);
+  });
+})();
+
+// Initial render
+renderCards();
+</script>
+</body>
+</html>

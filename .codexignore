@@ -1,0 +1,28 @@
+# BackOfficeFleet Codex context exclusions
+node_modules/
+.next/
+.vercel/
+coverage/
+out/
+build/
+*.tsbuildinfo
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# Large generated/demo artifact zones. Include explicitly only when auditing documents.
+public/generated/
+public/documents/
+public/evidence/
+public/proof/
+public/reference/
+public/actual_docs/
+
+# Binary/source assets that should be inspected intentionally, not swept into default context.
+data/source-workbooks/
+source-assets/**/*.docx
+source-assets/**/*.xlsx
+*.odt
+*.docx
+*.xlsx
