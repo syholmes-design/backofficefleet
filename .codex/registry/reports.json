@@ -16,6 +16,11 @@
       "ownerFacing": true
     },
     {
+      "id": "demo-governor-completion-decision",
+      "path": ".codex/reports/demo-governor-completion-decision.md",
+      "ownerFacing": true
+    },
+    {
       "id": "agent-installation-log",
       "path": ".codex/reports/agent-installation-log.md",
       "ownerFacing": false

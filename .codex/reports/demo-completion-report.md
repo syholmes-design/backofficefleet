@@ -12,14 +12,14 @@ Drivers: 12, Loads: 12, Documents: 144, Settlements: 12
 ## Technical Appendix
 Files scanned: 495
 Domain term hits: {
-  "driver": 2743,
-  "load": 3459,
-  "dispatch": 1142,
-  "document": 638,
-  "settlement": 1049,
-  "safety": 782,
-  "maintenance": 223,
-  "proof": 846,
-  "BOL": 283,
-  "POD": 389
+  "driver": 2737,
+  "load": 3456,
+  "dispatch": 1137,
+  "document": 639,
+  "settlement": 1047,
+  "safety": 780,
+  "maintenance": 225,
+  "proof": 851,
+  "BOL": 281,
+  "POD": 387
 }

@@ -71,3 +71,38 @@ Use `scripts/bof-backup.ps1` before risky project-wide changes and run a full re
 
 ### Parking-lot items:
 Add an optional exact-restore mode later if the owner wants restores to delete files that are not present in the selected backup.
+
+---
+
+### Date:
+2026-05-22
+
+### Contributor:
+Codex
+
+### Area:
+Forward completion baseline and demo-readiness lock
+
+### Files changed:
+`.gitignore`, `scripts/codex-before-demo.mjs`, `.codex/reports/before-demo-readiness.md`, `.codex/reports/demo-completion-report.md`, `.codex/reports/broken-link-report.md`, `.codex/reports/visual-polish-report.md`, `.codex/reports/demo-governor-completion-decision.md`, `.codex/registry/reports.json`, `.codex/reports/shared-handoff-log.md`
+
+### Completed:
+Created a fresh backup, created the first Git baseline commit (`c505f40`), fixed the temporary dev-server audit path by clearing `.next` before browser checks, reran `npm run codex:before-demo` successfully, and marked the priority demo path as Done With Optional Future Improvements.
+
+### Still incomplete:
+No live owner rehearsal was performed in this session.
+
+### Known risks:
+The shared cloud folder can still produce transient Node read/cache failures if `.next` is stale or locked. The readiness script now clears `.next` before the temporary dev server to reduce that risk. A separate uncommitted homepage change is present in `components/marketing/MarketingHomeAccountable.tsx` with a new `public/generated/marketing/newpage-homepage-reference.png`; it was not part of this baseline/readiness-lock work and needs its own owner/review.
+
+### Validation run:
+`powershell -ExecutionPolicy Bypass -File scripts/bof-backup.ps1`; `powershell -ExecutionPolicy Bypass -File scripts/bof-list-backups.ps1`; `git status --short`; `git commit -m "Baseline BackOfficeFleet demo-ready workspace"`; `npm run codex:before-demo`.
+
+### Validation not run:
+Manual owner-led walkthrough with spoken sales/demo script.
+
+### Recommended next step:
+Use the baseline commit as the stable reference point, rehearse the demo path once, and only implement findings classified as Required before demo by the Demo Completion Governor.
+
+### Parking-lot items:
+Preference-based copy, pacing, or visual refinements that do not affect demo confidence.

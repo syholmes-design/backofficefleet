@@ -112,8 +112,15 @@ function stopDevServer(child) {
   child.kill("SIGTERM");
 }
 
+function clearDevBuildCache() {
+  const nextDir = path.join(ROOT, ".next");
+  fs.rmSync(nextDir, { recursive: true, force: true });
+  console.log("Cleared .next before starting temporary dev server.");
+}
+
 function startDevServer(port) {
   console.log(`\nStarting temporary dev server at http://localhost:${port} ...`);
+  clearDevBuildCache();
   return spawn("npm", ["run", "dev", "--", "--port", String(port), "--hostname", "127.0.0.1"], {
     cwd: ROOT,
     shell: true,
