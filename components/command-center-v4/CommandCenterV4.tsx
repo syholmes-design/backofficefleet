@@ -22,7 +22,7 @@ import {
 import { getV3OperationalData, isV3DataAvailable } from "@/lib/v3-operational-loader";
 import { formatDisplayDate } from "@/lib/date-utils";
 import type { OperationalRiskQueue, V3OperationalData } from "@/lib/v3-operational-types";
-import { L009_CANONICAL_STORY } from "@/lib/canonical-load-stories";
+import { L009_CANONICAL_STORY, L011_CANONICAL_STORY } from "@/lib/canonical-load-stories";
 
 type RiskAction = {
   label: string;
@@ -590,7 +590,7 @@ export function CommandCenterV4() {
                 <div className="w-2 h-2 bg-green-400 rounded-full"></div>
               </div>
               <div className="text-xl font-bold text-green-400">9</div>
-              <div className="text-xs text-slate-500 mt-1">Clean packets ready for weekly closeout</div>
+              <div className="text-xs text-slate-500 mt-1">{L011_CANONICAL_STORY.loadId} factoring packet ready for finance review</div>
             </Link>
             <Link
               href="/documents"

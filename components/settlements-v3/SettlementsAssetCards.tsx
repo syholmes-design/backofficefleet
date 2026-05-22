@@ -125,9 +125,9 @@ const SETTLEMENT_ASSETS: SettlementAssetDefinition[] = [
   },
   {
     key: "factoring_notification",
-    fallbackTitle: "Post-Trip Factoring Packet",
+    fallbackTitle: "Factoring Notification",
     thumbnail: `${SETTLEMENT_DOCUMENT_PATH}/factoring-packet-preview.svg`,
-    description: "Invoice, BOL, POD, rate confirmation, and proof checklist for factoring.",
+    description: "Finance notice that the load is moving through factoring review.",
     fileSize: "~45 KB",
   },
 ];
@@ -162,6 +162,23 @@ function settlementPacketCard(loadId: string, driverId?: string, settlementWeek?
   };
 }
 
+function postTripFactoringPacketCard(loadId: string): AssetCardProps {
+  return {
+    title: "Post-Trip Factoring Packet",
+    status: "ready",
+    thumbnail: `${SETTLEMENT_DOCUMENT_PATH}/factoring-packet-preview.svg`,
+    openLink: `/generated/factoring/${loadId}/post-trip-factoring-packet.html`,
+    openLabel: "Open packet",
+    relatedEntity: {
+      type: "load",
+      id: loadId,
+      name: loadId,
+    },
+    description: "Invoice, BOL, POD, rate confirmation, and proof checklist packaged for factoring submission.",
+    fileSize: "~45 KB",
+    lastUpdated: "Today",
+  };
+}
 function toAssetCard(
   loadId: string,
   definition: SettlementAssetDefinition,
@@ -193,12 +210,13 @@ export function SettlementsAssetCards({ loadId, settlementWeek }: SettlementsAss
     if (!loadId) return [];
     const registry = buildLoadPacketRegistry(data, loadId);
     if (!registry) return [];
-    return SETTLEMENT_ASSETS.flatMap((definition) => {
+    const baseAssets = SETTLEMENT_ASSETS.flatMap((definition) => {
       if (definition.settlementOnly) return [toAssetCard(loadId, definition, undefined, registry.load.driverId, settlementWeek)];
       const item = registry.packetItemsByKey[definition.key];
       if (!item || item.status === "not_applicable") return [];
       return [toAssetCard(loadId, definition, item, registry.load.driverId, settlementWeek)];
     });
+    return loadId === "L011" ? [...baseAssets, postTripFactoringPacketCard(loadId)] : baseAssets;
   }, [data, loadId, settlementWeek]);
 
   if (assets.length === 0) {

@@ -2476,14 +2476,14 @@
       "deliveryAppointment": "Fri Jul 25 2025 00:59:59 GMT-0400 (Eastern Daylight Time)",
       "revenue": 2250,
       "backhaulPay": 63,
-      "status": "En Route",
-      "podStatus": "pending",
+      "status": "Delivered",
+      "podStatus": "verified",
       "pickupSeal": "SEAL-91420",
       "deliverySeal": "SEAL-91420",
       "sealStatus": "OK",
       "dispatchExceptionFlag": false,
-      "proofStatus": "Incomplete",
-      "documentStatus": "Pending",
+      "proofStatus": "Complete",
+      "documentStatus": "Finance Review",
       "settlementHold": false,
       "settlementHoldReason": "",
       "claimStatus": "NO_CLAIM",
@@ -2492,14 +2492,14 @@
       "fuelSurcharge": 270,
       "detentionPay": 0,
       "accessorialPay": 135,
-      "lumperAmount": 125,
+      "lumperAmount": 0,
       "rateConfirmationNumber": "RC-511-926",
       "bolNumber": "BOL-511-7669",
       "invoiceNumber": "INV-L011",
       "workOrderId": "WO-L011-511",
       "equipmentType": "53' Dry Van",
-      "intakeStatus": "En Route",
-      "settlementStatus": "Hold",
+      "intakeStatus": "Delivered",
+      "settlementStatus": "Finance Review",
       "sealNumber": "SEAL-91420",
       "intakeSourceType": "workbook",
       "intakeSourceDocumentUrl": "",
@@ -3936,7 +3936,7 @@
           "disputeExposure": false
         },
         "POD": {
-          "status": "Pending",
+          "status": "Complete",
           "blocksPayment": false,
           "disputeExposure": false
         },
@@ -3956,7 +3956,7 @@
           "disputeExposure": false
         },
         "Delivery / Empty-Trailer Photo": {
-          "status": "Pending",
+          "status": "Complete",
           "blocksPayment": false,
           "disputeExposure": false
         },
@@ -3966,7 +3966,7 @@
           "disputeExposure": false
         },
         "Lumper Receipt": {
-          "status": "Complete",
+          "status": "Not required",
           "blocksPayment": false,
           "disputeExposure": false
         },

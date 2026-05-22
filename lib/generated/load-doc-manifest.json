@@ -230,14 +230,12 @@
     "sealVerification": "/generated/loads/L011/seal-verification.html",
     "rfidProof": "/generated/loads/L011/rfid-proof.html",
     "factoringNotification": "/generated/loads/L011/factoring-notification.html",
-    "settlementHoldNotice": "/generated/loads/L011/settlement-hold-notice.html",
     "cargoPhoto": "/evidence/loads/L011/cargo-pickup.jpg",
     "sealPickupPhoto": "/evidence/loads/L011/seal-pickup-photo.png",
     "sealDeliveryPhoto": "/evidence/loads/L011/seal-delivery-photo.png",
     "equipmentPhoto": "/evidence/loads/L011/equipment-photo.svg",
     "pickupPhoto": "/evidence/loads/L011/pickup-photo.png",
-    "deliveryPhoto": "/evidence/loads/L011/delivery-photo.png",
-    "damagePhotoPacket": "/evidence/loads/L011/damage-photo.jpg"
+    "deliveryPhoto": "/evidence/loads/L011/delivery-photo.png"
   },
   "L012": {
     "rateConfirmation": "/generated/loads/L012/rate-confirmation.html",
