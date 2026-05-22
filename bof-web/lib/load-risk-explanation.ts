@@ -196,6 +196,24 @@ export function getLoadRiskExplanation(
     });
   }
 
+  if (canonicalStory?.loadId === "L008") {
+    reasons.push({
+      id: `safety:claim-escalation:${load.id}`,
+      severity: "high",
+      category: "safety",
+      title: "Safety / cargo claim review open",
+      detail:
+        "Liam Smith's HOS violation is tied to an active cargo-damage claim; BOF has partial evidence and manager review is required.",
+      whyItMatters:
+        "Claim files need driver statements, damage photos, proof packet support, and safety coaching before the carrier can close the exposure cleanly.",
+      recommendedFix:
+        "Complete the claim evidence packet, driver statement, and HOS coaching acknowledgment in the safety workflow.",
+      actionHref: "/safety",
+      actionLabel: "Open Safety Claim",
+      clearableInDemo: true,
+    });
+  }
+
   const hold = data.moneyAtRisk.find(
     (m) =>
       m.loadId === load.id &&

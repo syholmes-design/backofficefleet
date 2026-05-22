@@ -97,7 +97,7 @@ function claimApplicable(
   bundle: LoadProofBundle | null
 ) {
   const canonicalClaim = canonicalLoadHasClaim(load.id);
-  if (canonicalClaim === false) return false;
+  if (canonicalClaim != null) return canonicalClaim;
   if (bundle?.claimApplicable != null) return bundle.claimApplicable;
   return (
     Boolean(load.dispatchExceptionFlag) ||

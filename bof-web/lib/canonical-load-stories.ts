@@ -11,8 +11,35 @@ export type CanonicalLoadStory = {
   primaryIssue: string;
   maintenanceWorkOrderId?: string;
   rfidEventId?: string;
+  safetyEventId?: string;
+  claimId?: string;
+  claimAmount?: number;
+  claimReserve?: number;
+  claimExposureBand?: string;
+  evidenceStatus?: string;
   claimActive: boolean;
   factoringActive: boolean;
+};
+
+export const L008_CANONICAL_STORY: CanonicalLoadStory = {
+  loadId: "L008",
+  driverId: "DRV-008",
+  driverName: "Liam Smith",
+  assetId: "T-110",
+  trailerId: "TRL-2208",
+  origin: "Midwest Foods - Nashville, TN",
+  destination: "South Hub DC - Indianapolis, IN",
+  theme: "Safety / Claim Escalation",
+  status: "Claim review open / evidence partial / manager review required",
+  primaryIssue: "HOS violation with cargo-damage claim",
+  safetyEventId: "EVT-005",
+  claimId: "CLM-005-3814",
+  claimAmount: 1200,
+  claimReserve: 1200,
+  claimExposureBand: "Medium",
+  evidenceStatus: "Partial",
+  claimActive: true,
+  factoringActive: false,
 };
 
 export const L009_CANONICAL_STORY: CanonicalLoadStory = {
@@ -33,6 +60,7 @@ export const L009_CANONICAL_STORY: CanonicalLoadStory = {
 };
 
 const LOAD_STORIES: Record<string, CanonicalLoadStory> = {
+  [L008_CANONICAL_STORY.loadId]: L008_CANONICAL_STORY,
   [L009_CANONICAL_STORY.loadId]: L009_CANONICAL_STORY,
 };
 

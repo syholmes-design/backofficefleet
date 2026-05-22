@@ -166,8 +166,6 @@
     "masterAgreementReference": "/generated/agreements/DAT-MSA-001/delta-advanced-trucking-master-services-agreement.pdf",
     "sealVerification": "/generated/loads/L008/seal-verification.html",
     "rfidProof": "/generated/loads/L008/rfid-proof.html",
-    "factoringNotification": "/generated/loads/L008/factoring-notification.html",
-    "settlementHoldNotice": "/generated/loads/L008/settlement-hold-notice.html",
     "cargoPhoto": "/evidence/loads/L008/cargo-pickup.jpg",
     "sealPickupPhoto": "/evidence/loads/L008/seal-pickup-photo.png",
     "sealDeliveryPhoto": "/evidence/loads/L008/seal-delivery-photo.png",
@@ -177,8 +175,10 @@
     "lumperReceipt": "/evidence/loads/L008/lumper-receipt-photo.jpg",
     "damageClaimPhoto": "/evidence/loads/L008/damage-photo.jpg",
     "safetyViolationPhoto": "/evidence/safety/l405-hos-eld-violation.png",
-    "claimEvidence": "/evidence/loads/L008/claim-evidence.png",
-    "damagePhotoPacket": "/evidence/loads/L008/cargo-damage-photo.png"
+    "claimEvidence": "/evidence/loads/L008/cargo-damage-photo.png",
+    "damagePhotoPacket": "/evidence/loads/L008/cargo-damage-photo.png",
+    "claimPacket": "/generated/loads/L008/claim-packet-bundle.html",
+    "insuranceNotification": "/generated/loads/L008/insurance-packet.html"
   },
   "L009": {
     "rateConfirmation": "/generated/loads/L009/rate-confirmation.html",

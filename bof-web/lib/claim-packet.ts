@@ -28,7 +28,7 @@ export function isClaimPacketEligible(data: BofData, loadId: string): boolean {
   if (!load) return false;
 
   const canonicalClaim = canonicalLoadHasClaim(loadId);
-  if (canonicalClaim === false) return false;
+  if (canonicalClaim != null) return canonicalClaim;
 
   const bundleFlag = bundleClaimApplicable(data, loadId);
   if (bundleFlag === false) return false;
