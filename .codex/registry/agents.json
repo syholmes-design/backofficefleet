@@ -81,16 +81,173 @@
       ],
       "limits": {
         "max_total_backup_gb": 15,
-        "max_iterations": 5
+        "max_iterations": 20
       },
       "authority": "May require a backup before risky project-wide changes and may prune old backups according to the retention policy.",
       "success_criteria": [
         "Backups are created outside the project root.",
         "Disposable folders are excluded.",
-        "No more than 5 backups are retained.",
+        "No more than 20 backups are retained.",
         "Total retained backups stay under 15 GB.",
         "Restore actions create a safety backup first unless explicitly declined.",
         "Reports remain short and token-efficient."
+      ]
+    },
+    {
+      "id": "quiet-backup-rollback-steward",
+      "path": ".codex/agents/quiet-backup-rollback-steward.md",
+      "trigger": "Shared project, backup before edit, rollback requested, undo other Codex changes, restore backup, compare to backup, or quiet collaboration",
+      "purpose": "Quietly tracks backup checkpoints around Codex changes so either user can revert the other Codex session using the separate shared rollback system without heavy collaboration process.",
+      "activates_on": [
+        "shared project",
+        "backup before edit",
+        "rollback requested",
+        "undo other codex changes",
+        "restore backup",
+        "compare to backup",
+        "quiet collaboration"
+      ],
+      "limits": {
+        "shared_checkpoint_max_total_gb": 15,
+        "shared_checkpoint_max_iterations": "none",
+        "main_backup_limits_apply": false
+      },
+      "authority": "May create, list, and restore separate shared rollback checkpoints, but must not prune or count main project backups.",
+      "success_criteria": [
+        "Shared rollback checkpoints stay separate from main backups.",
+        "The main 20-backup retention limit does not constrain shared rollback checkpoints.",
+        "Shared rollback checkpoints are pruned only by total storage size.",
+        "Either user can request a calm rollback of another Codex session.",
+        "Reports stay short and nonjudgmental."
+      ]
+    },
+    {
+      "id": "change-memory-reconstruction-steward",
+      "path": ".codex/agents/change-memory-reconstruction-steward.md",
+      "trigger": "Meaningful edit, change memory, backup failed, rebuild previous state, reverse change, rollback without file backup, patch record, or restore prior behavior",
+      "purpose": "Records what changed, why it changed, and how to reverse or reconstruct the previous state even if normal file backups fail.",
+      "activates_on": [
+        "meaningful edit",
+        "change memory",
+        "backup failed",
+        "rebuild previous state",
+        "reverse change",
+        "rollback without file backup",
+        "patch record",
+        "restore prior behavior"
+      ],
+      "authority": "May create patch records, session summaries, reverse instructions, reconstruction notes, and change-memory index entries, but must not copy whole files as backups or replace the normal backup system.",
+      "success_criteria": [
+        "Meaningful changes have enough context to reverse or rebuild them.",
+        "Patch records exist when available.",
+        "Reverse instructions are readable when patches cannot apply.",
+        "Change-memory entries stay short and avoid noisy folders.",
+        "Rollback does not depend entirely on copied backup files."
+      ]
+    },
+    {
+      "id": "quiet-token-and-rate-limit-steward",
+      "path": ".codex/agents/quiet-token-and-rate-limit-steward.md",
+      "trigger": "New session, large files, generated assets, long reports, full audits, backups, restores, route scans, visual screenshot audits, repeated validations, or token/rate-limit concerns",
+      "purpose": "Quietly controls Codex context usage, tool usage, repeated validations, and rate-limit consumption so BackOfficeFleet sessions stay efficient without alarming the owner or reducing quality.",
+      "activates_on": [
+        "new session",
+        "large file",
+        "generated assets",
+        "long report",
+        "full audit",
+        "backup",
+        "restore",
+        "multi-agent task",
+        "route scan",
+        "validation logs",
+        "token usage concern",
+        "rate limit concern",
+        "visual screenshot audit",
+        "repeated validation",
+        "demo-wide check"
+      ],
+      "authority": "May quietly require targeted reads, short reports, script-based validation, batching, report-file outputs, and limited agent activation.",
+      "limits": {
+        "small_task_agents": "0-1",
+        "medium_task_agents": "1-3",
+        "large_task_agents": "3-5 only if necessary"
+      },
+      "communication_style": {
+        "default": "quiet, calm, non-alarming",
+        "avoid": [
+          "warnings about token waste",
+          "warnings about rate limits",
+          "language that sounds restrictive",
+          "telling the owner something is too expensive unless truly necessary"
+        ],
+        "prefer": [
+          "focused path",
+          "targeted check",
+          "short summary",
+          "reuse existing report",
+          "save details to reports"
+        ]
+      },
+      "success_criteria": [
+        "Codex reads only task-relevant files.",
+        "Generated folders do not flood context.",
+        "Large outputs are saved to reports instead of pasted into chat.",
+        "Scripts are preferred for audits and backups.",
+        "Repeated audits are avoided unless files changed or a checkpoint requires them.",
+        "Only necessary agents are invoked.",
+        "The owner receives short, useful summaries.",
+        "The owner is not alarmed by usage-control language.",
+        "Codex stops once acceptance conditions are met."
+      ]
+    },
+    {
+      "id": "enterprise-demo-experience-architect",
+      "path": ".codex/agents/enterprise-demo-experience-architect.md",
+      "trigger": "Dashboard, command center, demo polish, executive walkthrough, customer impression, wow factor, enterprise presentation, or operational storytelling",
+      "purpose": "Transforms BackOfficeFleet into an impressive, enterprise-grade operational demo that creates strong customer impact.",
+      "activates_on": [
+        "dashboard",
+        "command-center",
+        "demo polish",
+        "executive walkthrough",
+        "customer impression",
+        "wow factor",
+        "enterprise presentation",
+        "operational storytelling"
+      ],
+      "authority": "May recommend high-impact demo moments, buyer-facing polish, and operational storytelling improvements, while final done/not-done authority remains with the Demo Completion Governor.",
+      "success_criteria": [
+        "Important demo routes feel operationally elite.",
+        "Executive and customer walkthroughs have memorable proof moments.",
+        "Every major page tells a clear trucking operations story.",
+        "Recommendations improve buyer confidence without creating endless scope expansion."
+      ]
+    },
+    {
+      "id": "codex-operations-supervisor",
+      "path": ".codex/agents/codex-operations-supervisor.md",
+      "trigger": "New agent added, agent overlap, Codex noise, too many recommendations, workflow confusion, environment bloat, agent efficiency review, registry cleanup, or AGENTS.md cleanup",
+      "purpose": "Audits and improves the Codex helper system so agents stay efficient, non-duplicative, and aligned with finishing a polished BackOfficeFleet demo.",
+      "activates_on": [
+        "new agent added",
+        "agent overlap",
+        "codex noise",
+        "too many recommendations",
+        "workflow confusion",
+        "environment bloat",
+        "agent efficiency review",
+        "registry cleanup",
+        "AGENTS.md cleanup"
+      ],
+      "authority": "May recommend tightening, merging, retiring, converting, or rewriting Codex operating-layer helpers, but must not edit product code or make product feature decisions.",
+      "success_criteria": [
+        "Every helper has a clear role.",
+        "Duplicate advice is reduced.",
+        "The owner receives fewer but better recommendations.",
+        "Agents activate only when useful.",
+        "Checklists and scripts replace unnecessary agent chatter.",
+        "The project moves faster toward a polished demo endpoint."
       ]
     },
     {

@@ -10,16 +10,16 @@ Drivers: 12, Loads: 12, Documents: 144, Settlements: 12
 - None found by static scan.
 
 ## Technical Appendix
-Files scanned: 495
+Files scanned: 496
 Domain term hits: {
-  "driver": 2737,
-  "load": 3456,
-  "dispatch": 1137,
+  "driver": 2738,
+  "load": 3471,
+  "dispatch": 1146,
   "document": 639,
   "settlement": 1047,
   "safety": 780,
-  "maintenance": 225,
-  "proof": 851,
+  "maintenance": 233,
+  "proof": 856,
   "BOL": 281,
   "POD": 387
 }

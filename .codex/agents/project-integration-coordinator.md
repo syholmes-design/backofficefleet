@@ -136,3 +136,6 @@ Raise a warning when:
 - Validation steps are visible.
 - Incomplete work is labeled instead of hidden.
 - The project does not drift because people are working in isolation.
+
+## Handoff Efficiency
+Handoff notes should be short and specific. Do not include long file lists, long logs, or repeated project explanations.

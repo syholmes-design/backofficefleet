@@ -1,11 +1,10 @@
 param(
-  [string]$BackupRoot,
+  [string]$CheckpointRoot,
+  [Int64]$MaxTotalBytes = 15GB,
   [switch]$ExcludeGeneratedArtifacts
 )
 
 $ErrorActionPreference = "Stop"
-$MaxBackups = 20
-$MaxTotalBytes = 15GB
 
 function Format-Bytes {
   param([long]$Bytes)
@@ -61,16 +60,19 @@ function Test-ExcludedPath {
   return $false
 }
 
-function Invoke-PruneBackups {
-  param([string]$Root)
+function Invoke-PruneSharedCheckpoints {
+  param(
+    [string]$Root,
+    [Int64]$StorageLimit
+  )
   $pruned = New-Object System.Collections.Generic.List[string]
 
   while ($true) {
-    $backups = @(Get-ChildItem -LiteralPath $Root -Filter "bof-backup-*.zip" -File -ErrorAction SilentlyContinue | Sort-Object LastWriteTime)
-    $total = [long](($backups | Measure-Object -Property Length -Sum).Sum)
-    if ($backups.Count -le $MaxBackups -and $total -le $MaxTotalBytes) { break }
-    if ($backups.Count -eq 0) { break }
-    $oldest = $backups[0]
+    $checkpoints = @(Get-ChildItem -LiteralPath $Root -Filter "bof-shared-checkpoint-*.zip" -File -ErrorAction SilentlyContinue | Sort-Object LastWriteTime)
+    $total = [long](($checkpoints | Measure-Object -Property Length -Sum).Sum)
+    if ($total -le $StorageLimit) { break }
+    if ($checkpoints.Count -eq 0) { break }
+    $oldest = $checkpoints[0]
     $pruned.Add($oldest.Name) | Out-Null
     Remove-Item -LiteralPath $oldest.FullName -Force
   }
@@ -79,22 +81,22 @@ function Invoke-PruneBackups {
 }
 
 $ProjectRoot = (Resolve-Path (Join-Path $PSScriptRoot "..")).Path
-if (-not $BackupRoot) {
-  $BackupRoot = Join-Path (Split-Path $ProjectRoot -Parent) "BackOfficeFleet-Backups"
+if (-not $CheckpointRoot) {
+  $CheckpointRoot = Join-Path (Split-Path $ProjectRoot -Parent) "BackOfficeFleet-Shared-Rollback"
 }
-$BackupRoot = [System.IO.Path]::GetFullPath($BackupRoot)
+$CheckpointRoot = [System.IO.Path]::GetFullPath($CheckpointRoot)
 
-if ($BackupRoot.TrimEnd('\', '/').StartsWith($ProjectRoot.TrimEnd('\', '/'), [System.StringComparison]::OrdinalIgnoreCase)) {
-  throw "BackupRoot must be outside the project root. Requested: $BackupRoot"
+if ($CheckpointRoot.TrimEnd('\', '/').StartsWith($ProjectRoot.TrimEnd('\', '/'), [System.StringComparison]::OrdinalIgnoreCase)) {
+  throw "CheckpointRoot must be outside the project root. Requested: $CheckpointRoot"
 }
 
-if (-not (Test-Path -LiteralPath $BackupRoot)) {
-  New-Item -ItemType Directory -Path $BackupRoot -Force | Out-Null
+if (-not (Test-Path -LiteralPath $CheckpointRoot)) {
+  New-Item -ItemType Directory -Path $CheckpointRoot -Force | Out-Null
 }
 
 $timestamp = Get-Date -Format "yyyy-MM-dd-HHmmss"
-$backupName = "bof-backup-$timestamp.zip"
-$archivePath = Join-Path $BackupRoot $backupName
+$checkpointName = "bof-shared-checkpoint-$timestamp.zip"
+$archivePath = Join-Path $CheckpointRoot $checkpointName
 $warnings = New-Object System.Collections.Generic.List[string]
 $skipped = 0
 $entryCount = 0
@@ -149,17 +151,17 @@ try {
   $verification = "Failed ($($_.Exception.Message))"
 }
 
-$backupItem = Get-Item -LiteralPath $archivePath
-if ($backupItem.Length -gt $MaxTotalBytes) {
+$checkpointItem = Get-Item -LiteralPath $archivePath
+if ($checkpointItem.Length -gt $MaxTotalBytes) {
   Remove-Item -LiteralPath $archivePath -Force
-  throw "Backup exceeded the 15 GB retention limit and was deleted: $backupName"
+  throw "Checkpoint exceeded the shared rollback storage limit and was deleted: $checkpointName"
 }
 
-$pruned = Invoke-PruneBackups -Root $BackupRoot
-$backups = @(Get-ChildItem -LiteralPath $BackupRoot -Filter "bof-backup-*.zip" -File -ErrorAction SilentlyContinue | Sort-Object LastWriteTime -Descending)
-$totalBytes = [long](($backups | Measure-Object -Property Length -Sum).Sum)
-$currentBackup = Get-Item -LiteralPath $archivePath -ErrorAction SilentlyContinue
-$backupSize = if ($currentBackup) { Format-Bytes $currentBackup.Length } else { "Pruned" }
+$pruned = Invoke-PruneSharedCheckpoints -Root $CheckpointRoot -StorageLimit $MaxTotalBytes
+$checkpoints = @(Get-ChildItem -LiteralPath $CheckpointRoot -Filter "bof-shared-checkpoint-*.zip" -File -ErrorAction SilentlyContinue | Sort-Object LastWriteTime -Descending)
+$totalBytes = [long](($checkpoints | Measure-Object -Property Length -Sum).Sum)
+$currentCheckpoint = Get-Item -LiteralPath $archivePath -ErrorAction SilentlyContinue
+$checkpointSize = if ($currentCheckpoint) { Format-Bytes $currentCheckpoint.Length } else { "Pruned" }
 $excluded = "node_modules, .next, .vercel, .git, tsconfig.tsbuildinfo, *.log, .codex/reports/visual-smoke, coverage, playwright-report, test-results"
 if ($ExcludeGeneratedArtifacts) {
   $excluded = "$excluded, public/generated, public/documents, public/proof, public/evidence, public/reference, public/actual_docs, lib/generated"
@@ -173,19 +175,19 @@ $warningText = if ($warnings.Count -or $skipped -gt 0) {
 $prunedText = if ($pruned.Count) { $pruned -join ", " } else { "None" }
 
 $report = @(
-  "## Backup Report",
-  "Action: Create backup",
-  "Backup created: $archivePath",
-  "Backup size: $backupSize",
-  "Backup count: $($backups.Count) / $MaxBackups",
-  "Total backup storage: $(Format-Bytes $totalBytes) / $(Format-Bytes $MaxTotalBytes)",
-  "Old backups pruned: $prunedText",
+  "## Shared Rollback Checkpoint Report",
+  "Action: Create shared rollback checkpoint",
+  "Checkpoint created: $archivePath",
+  "Checkpoint size: $checkpointSize",
+  "Total shared rollback storage: $(Format-Bytes $totalBytes) / $(Format-Bytes $MaxTotalBytes)",
+  "Retention count limit: None",
+  "Old checkpoints pruned by size: $prunedText",
   "Excluded folders: $excluded",
   "Verification: $verification",
   "Warnings: $warningText",
-  "Next recommended action: Run scripts/bof-list-backups.ps1 to confirm retained restore points."
+  "Next recommended action: Run scripts/bof-list-shared-checkpoints.ps1 to confirm available shared rollback checkpoints."
 )
 
 $reportText = $report -join [Environment]::NewLine
-Set-Content -LiteralPath (Join-Path $BackupRoot "last-backup-report.md") -Value $reportText -Encoding UTF8
+Set-Content -LiteralPath (Join-Path $CheckpointRoot "last-shared-checkpoint-report.md") -Value $reportText -Encoding UTF8
 Write-Output $reportText

@@ -9,4 +9,4 @@ The link audit did not find broken priority-route links or artifact fallback fai
 ## Technical Appendix
 Base URL: http://localhost:3000
 Routes checked: 12
-Links checked: 190
+Links checked: 253

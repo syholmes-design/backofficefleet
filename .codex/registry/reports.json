@@ -29,6 +29,21 @@
       "id": "shared-handoff-log",
       "path": ".codex/reports/shared-handoff-log.md",
       "ownerFacing": false
+    },
+    {
+      "id": "quiet-token-rate-limit-review",
+      "path": ".codex/reports/quiet-token-rate-limit-review.md",
+      "ownerFacing": false
+    },
+    {
+      "id": "quiet-backup-log",
+      "path": ".codex/reports/quiet-backup-log.md",
+      "ownerFacing": false
+    },
+    {
+      "id": "change-memory-index",
+      "path": ".codex/change-memory/index.md",
+      "ownerFacing": false
     }
   ],
   "requiredOwnerFacingSections": [

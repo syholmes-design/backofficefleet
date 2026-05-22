@@ -7,9 +7,9 @@ This agent creates, lists, verifies, prunes, and restores project backups withou
 
 ## Backup Policy
 - Maximum total backup storage: 15 GB.
-- Maximum backup iterations: 5.
+- Maximum backup iterations: 20.
 - Whichever limit is reached first controls pruning.
-- Automatically delete the oldest backup when there are more than 5 backups or total backup storage exceeds 15 GB.
+- Automatically delete the oldest backup when there are more than 20 backups or total backup storage exceeds 15 GB.
 
 ## Core Rule
 Never manually summarize the full project tree. Run or recommend scripts that produce short reports.
@@ -40,7 +40,7 @@ Also activate before:
 ## Responsibilities
 - Create timestamped backups.
 - Exclude heavy disposable folders.
-- Keep backups under the 15 GB / 5-version rule.
+- Keep backups under the 15 GB / 20-version rule.
 - Verify backup archives exist and are readable.
 - List available restore points.
 - Restore a chosen backup when asked.
@@ -127,7 +127,7 @@ This agent must:
 - never restore over current work silently;
 - never include `node_modules` or `.next`;
 - never store backups inside the project root;
-- never exceed 5 retained backup iterations;
+- never exceed 20 retained backup iterations;
 - never exceed 15 GB total backup storage;
 - never spend tokens listing thousands of files;
 - always produce a short report.
@@ -144,3 +144,6 @@ Report only:
 - warnings.
 
 Do not report every included file.
+
+## Backup Report Efficiency
+Backup and restore reports should never list archive contents. Report only backup name, size, count, total retained storage, verification result, warnings, and next step.

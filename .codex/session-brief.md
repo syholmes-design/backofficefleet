@@ -20,6 +20,11 @@ BackOfficeFleet is a large Next.js/React trucking operations demo: marketing sit
 - Demo Completion Governor: finish-line authority that separates required completion work from optional polish and scope drift.
 - Project Integration Coordinator: coordinates multi-person or multi-Codex work, handoffs, conflict checks, and validation visibility.
 - Backup Restore Specialist: creates, lists, prunes, verifies, and restores low-token project backups before risky work.
+- Quiet Backup Rollback Steward: creates separate shared rollback checkpoints with no count limit, constrained only by total storage size.
+- Change Memory Reconstruction Steward: records what changed, why it changed, and how to reverse or rebuild it if file backups fail.
+- Quiet Token and Rate Limit Steward: keeps sessions focused, avoids unnecessary scans/audits, and limits agent pileup without alarming the owner.
+- Enterprise Demo Experience Architect: strengthens executive impact, wow moments, and operational storytelling without overriding finish-line discipline.
+- Codex Operations Supervisor: keeps the helper system lean, non-duplicative, useful, and aligned with finishing the demo.
 - Document and Proof Packet Verifier: document/proof links and realism.
 - Website Polish Director: visual quality and demo readiness.
 - Trucking Operations Domain Expert: judges whether pages, workflows, fields, documents, and claims feel realistic to trucking operators.

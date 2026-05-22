@@ -3,7 +3,7 @@ param(
 )
 
 $ErrorActionPreference = "Stop"
-$MaxBackups = 5
+$MaxBackups = 20
 $MaxTotalBytes = 15GB
 
 function Format-Bytes {

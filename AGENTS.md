@@ -59,7 +59,7 @@ Backups must be script-driven and low-token. Codex should not inspect or summari
 
 Backup limits:
 
-- Maximum 5 retained backup iterations
+- Maximum 20 retained backup iterations
 - Maximum 15 GB total retained backup storage
 
 Backups should be stored outside the project root, preferably in `../BackOfficeFleet-Backups/`.
@@ -67,6 +67,115 @@ Backups should be stored outside the project root, preferably in `../BackOfficeF
 Backup scripts must exclude disposable folders such as `node_modules`, `.next`, `.vercel`, coverage folders, test reports, and logs.
 
 Before restoring, Codex must warn that current work may be overwritten and should create a safety backup unless explicitly told not to.
+
+## Quiet Shared-Backup Rule
+
+When multiple people are using Codex on this shared project, activate the Quiet Backup Rollback Steward silently before meaningful edits.
+
+Codex should avoid heavy collaboration process unless requested. Before meaningful changes, Codex should identify the latest usable shared rollback checkpoint and keep only a minimal note of files touched when a note is useful.
+
+Shared rollback checkpoints are separate from main project backups:
+
+- Main backups stay in `../BackOfficeFleet-Backups/` and keep the existing 20-backup / 15 GB retention rule.
+- Shared rollback checkpoints stay in `../BackOfficeFleet-Shared-Rollback/`.
+- Shared rollback checkpoints use `bof-shared-checkpoint-*.zip`.
+- Shared rollback checkpoints have no count limit.
+- Shared rollback checkpoints are constrained only by total storage size, defaulting to 15 GB.
+
+If one user dislikes changes made by another Codex session, Codex should first offer to restore from the shared rollback system, either fully or by selected files.
+
+Do not assign blame, require branches, or create long reports unless the rollback is risky.
+
+## Change Memory Backup Rule
+
+For meaningful edits, activate the Change Memory Reconstruction Steward.
+
+This project uses normal backups plus change-memory backups. A change-memory backup does not copy full files. It records what changed, where it changed, why it changed, and how Codex can reverse or reconstruct the previous state if normal backups fail.
+
+When possible, Codex should save a patch/diff record under:
+
+```text
+.codex/change-memory/patches/
+```
+
+Codex should also save a plain-English reverse instruction under:
+
+```text
+.codex/change-memory/reverse-instructions/
+```
+
+Use `npm run codex:change-memory` after meaningful edits, and pass `--files` for focused entries when unrelated work is already present.
+
+Do not create noisy change-memory entries for tiny typo fixes, generated build folders, `node_modules`, `.next`, or formatting-only changes.
+
+## Quiet Token and Rate Limit Steward Rule
+
+Codex must conserve both context tokens and usage/rate limits quietly.
+
+Use the Quiet Token and Rate Limit Steward when a task may involve:
+
+- large files,
+- generated assets,
+- full-project audits,
+- repeated validations,
+- screenshots,
+- backup or restore work,
+- multi-agent review,
+- long logs,
+- or broad route scanning.
+
+Default behavior:
+
+1. Classify the task internally as Small, Medium, or Large.
+2. Read `.codex/registry` before exploring.
+3. Prefer scripts over manual scanning.
+4. Read only task-relevant files.
+5. Avoid `node_modules`, `.next`, `.vercel`, backups, generated folders, and long logs unless directly required.
+6. Save large findings to `.codex/reports`.
+7. Return short plain-English summaries first.
+8. Invoke only necessary agents.
+9. Batch related checks when possible.
+10. Do not rerun broad validations unless files changed, the prior result is stale, the owner requests it, or this is a demo/release checkpoint.
+11. Stop once the acceptance condition is met.
+
+Communication rule:
+
+- Do not scare the owner with token or rate-limit warnings.
+- Do not say a task is too expensive unless there is a true blocker.
+- Phrase conservation choices as focused, efficient work.
+- Use calm language such as "I'll check the relevant files," "I'll use the focused path," or "I'll summarize only what matters."
+- Do not activate every persona for ordinary tasks.
+- Do not keep suggesting improvements after the Demo Completion Governor has marked an area done.
+
+## Demo Ambition Coordination Rule
+
+Use the Enterprise Demo Experience Architect when work involves dashboard impact, command-center polish, executive walkthroughs, customer impression, wow factor, enterprise presentation, or operational storytelling.
+
+The Enterprise Demo Experience Architect owns high-impact demo experience and buyer-facing operational storytelling. The Demo Completion Governor remains the finish-line authority for Done, Not Done, and Done With Optional Future Improvements decisions.
+
+When these agents disagree:
+
+- Prioritize high-visibility improvements.
+- Reject low-visibility perfectionism.
+- Prefer memorable polish over feature quantity.
+- Treat new ideas as parking-lot items unless they fix a visible demo-readiness gap.
+
+## Codex Helper Efficiency Rule
+
+When the Codex environment gains new agents, skills, playbooks, reports, or recurring workflows, activate the Codex Operations Supervisor.
+
+The supervisor must classify each helper as:
+
+1. Keep
+2. Keep but tighten
+3. Merge with another agent
+4. Retire
+5. Turn into a checklist
+6. Turn into a script
+
+Codex should not add a new agent unless the Codex Operations Supervisor confirms that the need cannot be better handled by an existing agent, a checklist, a script, a playbook, or a registry update.
+
+The supervisor should keep the helper system lean, useful, discoverable, and focused on finishing the BackOfficeFleet demo.
 
 ## Important Environment Warnings
 

@@ -29,3 +29,6 @@ Files to add/update:
 - Do not add specialists without clear triggers and success criteria.
 - Do not duplicate an existing agent or script.
 - Do not auto-expand for one-off tasks.
+
+## New Agent Efficiency Gate
+Before adding a new agent, consult the Quiet Token and Rate Limit Steward. Only add a new agent if it will reduce future work instead of adding unnecessary process overhead.

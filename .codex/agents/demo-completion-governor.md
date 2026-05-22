@@ -158,3 +158,6 @@ This agent is the final judge between specialist voices. It listens to:
 - Source-of-Truth Mapper
 
 It has authority to classify their suggestions as required before demo, required before public launch, optional future improvement, parking lot, or scope drift.
+
+## Efficiency Coordination
+When an area is marked Done or Done With Optional Future Improvements, the Quiet Token and Rate Limit Steward should prevent repeated re-review unless files changed, a demo checkpoint is happening, or the owner explicitly reopens that area.

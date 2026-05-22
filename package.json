@@ -13,6 +13,7 @@
     "codex:bootstrap": "node scripts/codex-bootstrap.mjs",
     "codex:registry-sync": "node scripts/agent-registry-sync.mjs",
     "codex:before-demo": "node scripts/codex-before-demo.mjs",
+    "codex:change-memory": "node scripts/save-change-memory.mjs",
     "audit:install-browsers": "npx --yes playwright install chromium",
     "audit:demo-clickability": "node scripts/audit-demo-clickability.mjs",
     "audit:demo-completeness": "node scripts/audit-demo-completeness.mjs",

@@ -11,6 +11,8 @@ const SHOT_DIR = path.join(ROOT, ".codex", "reports", "visual-smoke");
 const REGISTRY = JSON.parse(fs.readFileSync(path.join(ROOT, ".codex", "registry", "route-ownership.json"), "utf8"));
 const BASE_URL = process.env.BOF_AUDIT_BASE_URL || "http://localhost:3000";
 const ROUTES = (process.env.BOF_AUDIT_ROUTES?.split(",").map((s) => s.trim()).filter(Boolean)) || REGISTRY.priorityRoutes;
+const PAGE_LOAD_TIMEOUT_MS = 45000;
+const PAGE_LOAD_ATTEMPTS = 2;
 const VIEWPORTS = [
   { name: "desktop", width: 1440, height: 1000 },
   { name: "mobile", width: 390, height: 844 }
@@ -18,6 +20,21 @@ const VIEWPORTS = [
 
 function slug(route) {
   return route.replace(/^\//, "home").replace(/[^a-z0-9]+/gi, "-").replace(/^-|-$/g, "").toLowerCase();
+}
+
+async function gotoWithRetry(page, url) {
+  let lastError = null;
+  for (let attempt = 1; attempt <= PAGE_LOAD_ATTEMPTS; attempt++) {
+    try {
+      return await page.goto(url, { waitUntil: "domcontentloaded", timeout: PAGE_LOAD_TIMEOUT_MS });
+    } catch (error) {
+      lastError = error;
+      if (attempt < PAGE_LOAD_ATTEMPTS) {
+        await page.waitForTimeout(1000);
+      }
+    }
+  }
+  throw lastError;
 }
 
 fs.mkdirSync(SHOT_DIR, { recursive: true });
@@ -28,7 +45,7 @@ for (const viewport of VIEWPORTS) {
   const page = await browser.newPage({ viewport });
   for (const route of ROUTES) {
     const url = new URL(route, BASE_URL).toString();
-    const response = await page.goto(url, { waitUntil: "domcontentloaded", timeout: 20000 }).catch((error) => {
+    const response = await gotoWithRetry(page, url).catch((error) => {
       issues.push({ route, viewport: viewport.name, issue: "Page failed to load", detail: error.message, severity: "high" });
       return null;
     });

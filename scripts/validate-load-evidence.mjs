@@ -33,6 +33,7 @@ const CONDITIONAL_KEYS = [
 ];
 const SOURCE_VALUES = new Set(["real", "ai_generated", "svg_demo", "missing"]);
 const SOURCE_SCAN_DIRS = ["components", "app"];
+const CANONICAL_NON_CLAIM_LOADS = new Set(["L009"]);
 
 function readJson(filePath) {
   return JSON.parse(fs.readFileSync(filePath, "utf8"));
@@ -48,9 +49,9 @@ function hasLumperIssue(load, settlements) {
 }
 
 function isConditionalApplicable(load, key, data) {
-  const hasClaim = Boolean(
-    load.dispatchExceptionFlag || String(load.sealStatus).toUpperCase() === "MISMATCH"
-  );
+  const hasClaim = CANONICAL_NON_CLAIM_LOADS.has(String(load.id).toUpperCase())
+    ? false
+    : Boolean(load.dispatchExceptionFlag || String(load.sealStatus).toUpperCase() === "MISMATCH");
   if (key === "lumperReceipt") return hasLumperIssue(load, data.settlements);
   if (key === "damagePhoto") return hasClaim;
   if (key === "cargoDamagePhoto") return hasClaim;

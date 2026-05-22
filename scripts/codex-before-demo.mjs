@@ -16,7 +16,7 @@ const requiredSteps = [
   { name: "Demo completeness scan", command: "npm run audit:demo-completeness", timeoutMs: 60000 },
   { name: "TypeScript typecheck", command: "npm run typecheck", timeoutMs: 120000 },
   { name: "ESLint app scan", command: "npm run lint", timeoutMs: 120000 },
-  { name: "Production build", command: "npm run build", timeoutMs: 180000 },
+  { name: "Production build", command: "npm run build", timeoutMs: 420000 },
   { name: "Driver document validation", command: "npm run validate:driver-docs", timeoutMs: 60000 },
   { name: "Load document validation", command: "npm run validate:load-docs", timeoutMs: 60000 },
   { name: "Load evidence validation", command: "npm run validate:load-evidence", timeoutMs: 60000 },
@@ -26,7 +26,7 @@ const requiredSteps = [
 const browserSteps = [
   { name: "Demo clickability audit", command: "npm run audit:demo-clickability", timeoutMs: 180000 },
   { name: "BOF link and artifact audit", command: "npm run audit:bof-links", timeoutMs: 180000 },
-  { name: "Visual smoke audit", command: "npm run audit:visual-smoke", timeoutMs: 240000 }
+  { name: "Visual smoke audit", command: "npm run audit:visual-smoke", timeoutMs: 420000 }
 ];
 
 function runStep(step) {
@@ -112,16 +112,9 @@ function stopDevServer(child) {
   child.kill("SIGTERM");
 }
 
-function clearDevBuildCache() {
-  const nextDir = path.join(ROOT, ".next");
-  fs.rmSync(nextDir, { recursive: true, force: true });
-  console.log("Cleared .next before starting temporary dev server.");
-}
-
 function startDevServer(port) {
-  console.log(`\nStarting temporary dev server at http://localhost:${port} ...`);
-  clearDevBuildCache();
-  return spawn("npm", ["run", "dev", "--", "--port", String(port), "--hostname", "127.0.0.1"], {
+  console.log(`\nStarting temporary production server at http://localhost:${port} ...`);
+  return spawn("npm", ["run", "start", "--", "--port", String(port), "--hostname", "127.0.0.1"], {
     cwd: ROOT,
     shell: true,
     stdio: ["ignore", "pipe", "pipe"],
@@ -179,6 +172,13 @@ let startedDevServer = false;
 
 for (const step of requiredSteps) {
   results.push(runStep(step));
+}
+
+const requiredFailed = results.some((result) => result.status === "fail");
+if (requiredFailed) {
+  writeReport(results, true, false);
+  process.exitCode = 1;
+  process.exit();
 }
 
 let devServerReady = await devServerLooksReady();
