@@ -131,9 +131,20 @@ export default function CarrierRegistryPage() {
                   </div>
                 </div>
 
-                <div className="mt-4">
-                  <p className="text-sm font-semibold text-teal-200">Next action</p>
-                  <p className="mt-1 text-sm text-slate-300">{carrier.nextAction}</p>
+                <div className="mt-4 grid gap-3 lg:grid-cols-2">
+                  <div className="rounded-lg border border-slate-800 bg-slate-950/55 p-3">
+                    <p className="text-sm font-semibold text-teal-200">Operational reason</p>
+                    <p className="mt-1 text-sm leading-6 text-slate-300">{carrier.statusReason}</p>
+                  </div>
+                  <div className="rounded-lg border border-slate-800 bg-slate-950/55 p-3">
+                    <p className="text-sm font-semibold text-teal-200">Next action</p>
+                    <p className="mt-1 text-sm leading-6 text-slate-300">{carrier.nextAction}</p>
+                  </div>
+                </div>
+
+                <div className="mt-3 rounded-lg border border-slate-800 bg-slate-950/55 p-3">
+                  <p className="text-xs font-bold uppercase tracking-wide text-slate-500">Reload-qualified regions</p>
+                  <p className="mt-1 text-sm text-slate-300">{carrier.reloadQualifiedRegions.join(" / ")}</p>
                 </div>
               </Link>
             );

@@ -88,6 +88,10 @@ function findPacketStatus(items: CarrierPacketItem[], itemId: string): CarrierPa
   return items.find((item) => item.id === itemId)?.status ?? "review";
 }
 
+function findPacketItem(items: CarrierPacketItem[], itemId: string): CarrierPacketItem | undefined {
+  return items.find((item) => item.id === itemId);
+}
+
 function publicStatusLabel(status: CarrierPacketItem["status"]) {
   if (status === "ready") return "Included";
   if (status === "blocked") return "Blocked";
@@ -128,7 +132,8 @@ export default async function CarrierPacketPreviewPage({ params }: Props) {
             <p className="mt-2 text-lg text-slate-300">{carrier.legalName}</p>
             <p className="mt-4 max-w-3xl text-base leading-7 text-slate-300">
               BOF assembles a customer-safe packet view from carrier onboarding, insurance, authority, safety,
-              equipment, and lane controls. Sensitive tax and payment details remain internal.
+              equipment, and lane controls. Sensitive tax and payment details remain internal while dispatch can still see
+              whether the carrier is eligible, under review, or blocked.
             </p>
           </div>
 
@@ -165,7 +170,7 @@ export default async function CarrierPacketPreviewPage({ params }: Props) {
         <div className="rounded-xl border border-slate-700 bg-slate-900/80 p-4">
           <p className="text-sm text-slate-400">Dispatch eligibility</p>
           <strong className="mt-2 block text-lg text-white">{carrier.dispatchEligibility}</strong>
-          <p className="mt-1 text-sm text-slate-400">BOF gate status</p>
+          <p className="mt-1 text-sm text-slate-400">{carrier.statusReason}</p>
         </div>
       </section>
 
@@ -185,6 +190,7 @@ export default async function CarrierPacketPreviewPage({ params }: Props) {
         <div className="mt-5 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
           {customerSafeDocs.map((doc) => {
             const status = findPacketStatus(carrier.packetItems, doc.itemId);
+            const item = findPacketItem(carrier.packetItems, doc.itemId);
             return (
               <div key={doc.title} className="rounded-xl border border-slate-800 bg-slate-900/80 p-4">
                 <div className="flex items-start justify-between gap-3">
@@ -192,6 +198,15 @@ export default async function CarrierPacketPreviewPage({ params }: Props) {
                   <Pill className={itemTone[status]}>{publicStatusLabel(status)}</Pill>
                 </div>
                 <p className="mt-3 text-sm leading-6 text-slate-400">{doc.note}</p>
+                <div className="mt-3 rounded-lg border border-slate-800 bg-slate-950/60 p-3">
+                  <p className="text-xs font-bold uppercase tracking-wide text-slate-500">Readiness timing</p>
+                  <p className="mt-1 text-sm text-slate-300">
+                    {item?.timing ?? "Reviewed with equipment and lane qualification."}
+                  </p>
+                  <p className="mt-2 text-sm leading-6 text-slate-300">
+                    {item?.consequence ?? carrier.backhaulReadyStatus}
+                  </p>
+                </div>
               </div>
             );
           })}
@@ -222,6 +237,10 @@ export default async function CarrierPacketPreviewPage({ params }: Props) {
               <dt className="text-sm text-slate-500">Lanes</dt>
               <dd className="mt-1 font-semibold text-white">{carrier.lanes.join(", ")}</dd>
             </div>
+            <div className="rounded-xl border border-slate-800 bg-slate-900/80 p-4 md:col-span-2">
+              <dt className="text-sm text-slate-500">Backhaul-ready status</dt>
+              <dd className="mt-1 font-semibold text-white">{carrier.backhaulReadyStatus}</dd>
+            </div>
           </dl>
         </div>
 
@@ -242,19 +261,21 @@ export default async function CarrierPacketPreviewPage({ params }: Props) {
       <section className="mt-6 rounded-2xl border border-slate-700 bg-slate-950/70 p-5">
         <h2 className="text-2xl font-black text-white">Packet actions</h2>
         <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-400">
-          These actions demonstrate the BOF packet workflow. Export wiring can be connected later without changing the
-          customer-safe packet logic.
+          Packet actions keep customer release, dispatch eligibility, and finance review tied to the same readiness controls.
         </p>
         <div className="mt-4 flex flex-wrap gap-3">
           <a href="#customer-safe" className="rounded-lg border border-teal-300/50 bg-teal-400/10 px-4 py-2 text-sm font-bold text-teal-100 hover:bg-teal-300/10">
             Preview customer packet
           </a>
+          <Link href="/dispatch" className="rounded-lg border border-teal-300/50 px-4 py-2 text-sm font-bold text-teal-100 hover:bg-teal-300/10">
+            Review dispatch eligibility
+          </Link>
           <button
             type="button"
             className="cursor-not-allowed rounded-lg border border-slate-600 bg-slate-900 px-4 py-2 text-sm font-bold text-slate-300"
             aria-disabled="true"
           >
-            Export packet - demo placeholder
+            Queue export request
           </button>
         </div>
       </section>

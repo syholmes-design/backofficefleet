@@ -344,7 +344,11 @@ export function CommandCenterV4() {
       risksByModule,
     };
   }, [operationalRisks]);
-  const carrierStats = useMemo(() => getCarrierRegistryStats(getCarrierRegistry()), []);
+  const carrierRecords = useMemo(() => getCarrierRegistry(), []);
+  const carrierStats = useMemo(() => getCarrierRegistryStats(carrierRecords), [carrierRecords]);
+  const blockedCarrier = carrierRecords.find((carrier) => carrier.readinessStatus === "Blocked");
+  const watchCarrier = carrierRecords.find((carrier) => carrier.readinessStatus === "Watch");
+  const l011Carrier = carrierRecords.find((carrier) => carrier.recentLoads.includes("L011"));
 
   // Filter risks by module
   const filteredRisks = useMemo(() => {
@@ -687,7 +691,7 @@ export function CommandCenterV4() {
             </div>
             <div className="mt-2">
               <Link href="/carriers/CAR-001" className="font-semibold text-teal-300 hover:text-teal-200">
-                L011 carrier packet control: Delta Advanced Trucking readiness supports the factoring handoff.
+                L011 carrier packet control: {l011Carrier?.financeTieIn ?? "carrier readiness supports the factoring handoff."}
               </Link>
             </div>
           </div>
@@ -707,6 +711,12 @@ export function CommandCenterV4() {
               <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-400">
                 Carrier packet gates now sit beside driver, load, proof, and settlement controls. Dispatch cannot use
                 a carrier with expired insurance, missing W-9, unsigned agreement, or unresolved authority review.
+              </p>
+              <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-300">
+                {blockedCarrier
+                  ? `${blockedCarrier.dba}: ${blockedCarrier.statusReason}`
+                  : "No carrier is blocked from dispatch."}{" "}
+                {watchCarrier ? `${watchCarrier.dba}: ${watchCarrier.dispatchImpact}` : ""}
               </p>
             </div>
             <div className="grid min-w-full grid-cols-2 gap-3 sm:grid-cols-4 lg:min-w-[520px]">
@@ -728,7 +738,11 @@ export function CommandCenterV4() {
               </div>
             </div>
           </div>
-          <div className="mt-4 text-sm font-semibold text-teal-300">Open Carrier Registry</div>
+          <div className="mt-4 flex flex-wrap gap-2 text-sm font-semibold text-teal-300">
+            <span>Open Carrier Registry</span>
+            <span className="text-slate-500">/</span>
+            <span>Review packet holds before dispatch</span>
+          </div>
         </Link>
 
         {/* Impact Analysis */}

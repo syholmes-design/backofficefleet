@@ -89,6 +89,20 @@ export default async function CarrierDetailPage({ params }: Props) {
             <p className="mt-4 max-w-3xl text-base leading-7 text-slate-300">
               {getCarrierDispatchExplanation(carrier)}
             </p>
+            <div className="mt-5 grid gap-3 md:grid-cols-3">
+              <div className="rounded-xl border border-slate-800 bg-slate-900/75 p-4">
+                <p className="text-xs font-bold uppercase tracking-wide text-slate-500">Operational reason</p>
+                <p className="mt-2 text-sm leading-6 text-slate-200">{carrier.statusReason}</p>
+              </div>
+              <div className="rounded-xl border border-slate-800 bg-slate-900/75 p-4">
+                <p className="text-xs font-bold uppercase tracking-wide text-slate-500">Dispatch impact</p>
+                <p className="mt-2 text-sm leading-6 text-slate-200">{carrier.dispatchImpact}</p>
+              </div>
+              <div className="rounded-xl border border-slate-800 bg-slate-900/75 p-4">
+                <p className="text-xs font-bold uppercase tracking-wide text-slate-500">Packet consequence</p>
+                <p className="mt-2 text-sm leading-6 text-slate-200">{carrier.packetConsequence}</p>
+              </div>
+            </div>
           </div>
 
           <div className="grid min-w-64 grid-cols-2 gap-3 rounded-xl border border-slate-700 bg-slate-900/80 p-4">
@@ -143,6 +157,8 @@ export default async function CarrierDetailPage({ params }: Props) {
                   <div>
                     <h3 className="font-black text-white">{item.label}</h3>
                     <p className="mt-1 text-sm text-slate-400">{item.detail}</p>
+                    <p className="mt-1 text-xs font-semibold text-slate-500">{item.timing}</p>
+                    <p className="mt-2 text-sm leading-6 text-slate-300">{item.consequence}</p>
                     {item.dueDate && <p className="mt-1 text-xs text-slate-500">Due: {item.dueDate}</p>}
                   </div>
                   <div className="flex flex-col items-start gap-2 md:items-end">
@@ -244,6 +260,18 @@ export default async function CarrierDetailPage({ params }: Props) {
         </div>
 
         <div className="rounded-2xl border border-slate-700 bg-slate-950/70 p-5">
+          <h2 className="text-xl font-black text-white">Reload intelligence bridge</h2>
+          <p className="mt-2 text-sm leading-6 text-slate-300">{carrier.backhaulReadyStatus}</p>
+          <div className="mt-3 space-y-2">
+            {carrier.preferredReloadLanes.map((lane) => (
+              <p key={lane} className="rounded-lg bg-slate-900 px-3 py-2 text-sm text-slate-200">
+                {lane}
+              </p>
+            ))}
+          </div>
+        </div>
+
+        <div className="rounded-2xl border border-slate-700 bg-slate-950/70 p-5">
           <h2 className="text-xl font-black text-white">Risk flags</h2>
           <div className="mt-3 space-y-2">
             {carrier.riskFlags.length > 0 ? (
@@ -268,11 +296,11 @@ export default async function CarrierDetailPage({ params }: Props) {
             </p>
           </div>
           <div className="flex flex-wrap gap-2">
-            <Link href={`/carriers/${carrier.id}/packet`} className="rounded-lg border border-teal-300/50 px-4 py-2 text-sm font-bold text-teal-100 hover:bg-teal-300/10">
-              Preview customer packet
+              <Link href={`/carriers/${carrier.id}/packet`} className="rounded-lg border border-teal-300/50 px-4 py-2 text-sm font-bold text-teal-100 hover:bg-teal-300/10">
+              Review packet
             </Link>
             <Link href="/dispatch" className="rounded-lg border border-teal-300/50 px-4 py-2 text-sm font-bold text-teal-100 hover:bg-teal-300/10">
-              Check dispatch eligibility
+              Review dispatch eligibility
             </Link>
             <Link href="/settlements" className="rounded-lg border border-slate-500 px-4 py-2 text-sm font-bold text-slate-100 hover:bg-slate-800">
               Review settlement impact
@@ -310,15 +338,14 @@ export default async function CarrierDetailPage({ params }: Props) {
           <div className="mt-4 rounded-xl border border-emerald-400/30 bg-emerald-400/10 p-4">
             <p className="text-sm font-black uppercase tracking-[0.16em] text-emerald-200">L011 finance handoff</p>
             <p className="mt-2 max-w-3xl text-sm leading-6 text-emerald-50">
-              L011 shows why carrier packet control matters after delivery: finance needs the carrier agreement,
-              W-9, payment instructions, proof packet, and factoring support aligned before the packet can move cleanly.
+              {carrier.financeTieIn}
             </p>
             <div className="mt-3 flex flex-wrap gap-2">
               <Link href="/loads/L011" className="rounded-lg border border-emerald-300/50 px-4 py-2 text-sm font-bold text-emerald-100 hover:bg-emerald-300/10">
                 Open L011 load file
               </Link>
               <Link href="/settlements" className="rounded-lg border border-emerald-300/50 px-4 py-2 text-sm font-bold text-emerald-100 hover:bg-emerald-300/10">
-                Open factoring review
+                Prepare customer release
               </Link>
             </div>
           </div>
@@ -333,7 +360,7 @@ export default async function CarrierDetailPage({ params }: Props) {
             Open dispatch
           </Link>
           <Link href={`/carriers/${carrier.id}/packet`} className="rounded-lg border border-teal-300/50 px-4 py-2 text-sm font-bold text-teal-100 hover:bg-teal-300/10">
-            Preview carrier packet
+            Review packet
           </Link>
           <Link href="/documents" className="rounded-lg border border-slate-500 px-4 py-2 text-sm font-bold text-slate-100 hover:bg-slate-800">
             Open document cabinet

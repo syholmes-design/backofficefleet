@@ -929,7 +929,7 @@ export function DispatchBoardScreen() {
             <div className="mt-7 flex flex-wrap gap-3">
               <LinkButton href={`/pretrip/${selected.load_id}`}>Open pre-trip packet</LinkButton>
               <LinkButton href={`/trip-release/${selected.load_id}`} variant="secondary">Review trip release</LinkButton>
-              <LinkButton href={`/carriers/${selectedCarrier.id}`} variant="secondary">Carrier packet</LinkButton>
+              <LinkButton href={`/carriers/${selectedCarrier.id}/packet`} variant="secondary">Review carrier packet</LinkButton>
               <LinkButton href="/dispatch/intake" variant="secondary">Open trip packet workspace</LinkButton>
             </div>
             <div className="mt-5 rounded-xl border border-white/10 bg-slate-950/80 p-3 shadow-2xl backdrop-blur">
@@ -1036,6 +1036,9 @@ export function DispatchBoardScreen() {
                 <p className="text-sm text-slate-300">
                   {selectedCarrier.dispatchEligibility} · packet {selectedCarrierPacket.percent}%
                 </p>
+                <p className="mt-2 text-xs leading-5 text-teal-100/80">
+                  {selectedCarrier.dispatchImpact}
+                </p>
               </Link>
             </div>
 
@@ -1055,7 +1058,7 @@ export function DispatchBoardScreen() {
 
             <div className="mt-5 flex flex-wrap gap-3">
               <LinkButton href={`/loads/${selected.load_id}`} variant="secondary">Open load file</LinkButton>
-              <LinkButton href={`/carriers/${selectedCarrier.id}`} variant="secondary">Open carrier packet</LinkButton>
+              <LinkButton href={`/carriers/${selectedCarrier.id}/packet`} variant="secondary">Review carrier packet</LinkButton>
               <LinkButton href={`/drivers/${selected.driver_id ?? "DRV-001"}`} variant="secondary">Open driver file</LinkButton>
               <LinkButton href={`/shipper-portal/${selected.load_id}`} variant="secondary">Customer proof view</LinkButton>
               {isExceptionActive(selectedRow) ? (
@@ -1152,7 +1155,7 @@ export function DispatchBoardScreen() {
                   <Link href={`/trip-release/${row.load.load_id}`} className="rounded-md border border-slate-700 px-3 py-2 text-sm font-bold text-slate-100 hover:border-teal-500 hover:text-teal-100">Trip release page</Link>
                   <Link href={`/drivers/${row.load.driver_id ?? "DRV-001"}`} className="rounded-md border border-slate-700 px-3 py-2 text-sm font-bold text-slate-100 hover:border-teal-500 hover:text-teal-100">Driver page</Link>
                   <Link href={`/loads/${row.load.load_id}`} className="rounded-md border border-slate-700 px-3 py-2 text-sm font-bold text-slate-100 hover:border-teal-500 hover:text-teal-100">Manager load page</Link>
-                  <Link href={`/carriers/${getCarrierForLoad(row.load.load_id).id}`} className="rounded-md border border-slate-700 px-3 py-2 text-sm font-bold text-slate-100 hover:border-teal-500 hover:text-teal-100">Carrier packet</Link>
+                  <Link href={`/carriers/${getCarrierForLoad(row.load.load_id).id}/packet`} className="rounded-md border border-slate-700 px-3 py-2 text-sm font-bold text-slate-100 hover:border-teal-500 hover:text-teal-100">Review carrier packet</Link>
                   {row.load.insurance_claim_needed ? (
                     <Link href={`/loads/${row.load.load_id}`} className="rounded-md border border-rose-600/60 bg-rose-950/55 px-3 py-2 text-sm font-bold text-rose-100 hover:bg-rose-900">Insurance review</Link>
                   ) : null}
