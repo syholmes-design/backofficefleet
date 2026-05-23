@@ -24,6 +24,7 @@ import { formatDisplayDate } from "@/lib/date-utils";
 import type { OperationalRiskQueue, V3OperationalData } from "@/lib/v3-operational-types";
 import { L008_CANONICAL_STORY, L009_CANONICAL_STORY, L011_CANONICAL_STORY } from "@/lib/canonical-load-stories";
 import { getCarrierRegistry, getCarrierRegistryStats } from "@/lib/carrier-registry";
+import { getCarrierGateEscalations, getCarrierGateStats, type CarrierDispatchGateTone } from "@/lib/carrier-dispatch-gates";
 
 type RiskAction = {
   label: string;
@@ -346,6 +347,8 @@ export function CommandCenterV4() {
   }, [operationalRisks]);
   const carrierRecords = useMemo(() => getCarrierRegistry(), []);
   const carrierStats = useMemo(() => getCarrierRegistryStats(carrierRecords), [carrierRecords]);
+  const carrierGateStats = useMemo(() => getCarrierGateStats(carrierRecords), [carrierRecords]);
+  const carrierEscalations = useMemo(() => getCarrierGateEscalations(carrierRecords), [carrierRecords]);
   const blockedCarrier = carrierRecords.find((carrier) => carrier.readinessStatus === "Blocked");
   const watchCarrier = carrierRecords.find((carrier) => carrier.readinessStatus === "Watch");
   const l011Carrier = carrierRecords.find((carrier) => carrier.recentLoads.includes("L011"));
@@ -430,6 +433,13 @@ export function CommandCenterV4() {
       default:
         return 'bg-slate-500/20 text-slate-400 border-slate-500/30';
     }
+  };
+
+  const getCarrierGateClass = (tone: CarrierDispatchGateTone) => {
+    if (tone === "ready") return "border-emerald-400/30 bg-emerald-400/10 text-emerald-100";
+    if (tone === "blocked") return "border-red-400/35 bg-red-400/10 text-red-100";
+    if (tone === "watch") return "border-sky-400/35 bg-sky-400/10 text-sky-100";
+    return "border-amber-400/35 bg-amber-400/10 text-amber-100";
   };
 
   // Get module icon
@@ -698,19 +708,16 @@ export function CommandCenterV4() {
         </div>
 
         {/* Carrier Readiness */}
-        <Link
-          href="/carriers"
-          className="mt-6 block rounded-xl border border-slate-800 bg-slate-900/50 p-6 transition hover:-translate-y-0.5 hover:border-teal-300/50 hover:bg-slate-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-300"
-        >
+        <div className="mt-6 rounded-xl border border-slate-800 bg-slate-900/50 p-6">
           <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
             <div>
               <h3 className="flex items-center gap-2 text-lg font-semibold text-white">
                 <Truck className="h-5 w-5 text-teal-300" />
-                Carrier Readiness
+                Carrier Dispatch Gatekeeping
               </h3>
               <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-400">
-                Carrier packet gates now sit beside driver, load, proof, and settlement controls. Dispatch cannot use
-                a carrier with expired insurance, missing W-9, unsigned agreement, or unresolved authority review.
+                BOF now simulates carrier assignment gates before dispatch: clean carriers clear, renewal risk warns,
+                reefer watch items require operations review, and blocked packets prevent assignment.
               </p>
               <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-300">
                 {blockedCarrier
@@ -725,25 +732,39 @@ export function CommandCenterV4() {
                 <div className="text-xs text-slate-500">Carriers</div>
               </div>
               <div className="rounded-lg border border-emerald-400/30 bg-emerald-400/10 p-3">
-                <div className="text-2xl font-bold text-emerald-300">{carrierStats.dispatchEligible}</div>
-                <div className="text-xs text-emerald-100/70">Dispatch eligible</div>
+                <div className="text-2xl font-bold text-emerald-300">{carrierGateStats.allowed}</div>
+                <div className="text-xs text-emerald-100/70">Cleared</div>
               </div>
               <div className="rounded-lg border border-amber-400/30 bg-amber-400/10 p-3">
-                <div className="text-2xl font-bold text-amber-300">{carrierStats.watch + carrierStats.review}</div>
-                <div className="text-xs text-amber-100/70">Watch / review</div>
+                <div className="text-2xl font-bold text-amber-300">{carrierGateStats.warning + carrierGateStats.operationsReview}</div>
+                <div className="text-xs text-amber-100/70">Warning / review</div>
               </div>
               <div className="rounded-lg border border-red-400/30 bg-red-400/10 p-3">
-                <div className="text-2xl font-bold text-red-300">{carrierStats.blocked}</div>
+                <div className="text-2xl font-bold text-red-300">{carrierGateStats.blocked}</div>
                 <div className="text-xs text-red-100/70">Blocked</div>
               </div>
             </div>
           </div>
-          <div className="mt-4 flex flex-wrap gap-2 text-sm font-semibold text-teal-300">
-            <span>Open Carrier Registry</span>
-            <span className="text-slate-500">/</span>
-            <span>Review packet holds before dispatch</span>
+          <div className="mt-5 grid gap-3 md:grid-cols-2 xl:grid-cols-5">
+            {carrierEscalations.map((item) => (
+              <Link
+                key={item.id}
+                href={item.href}
+                className={`rounded-lg border p-3 transition hover:-translate-y-0.5 hover:border-teal-300/50 ${getCarrierGateClass(item.tone)}`}
+              >
+                <p className="text-xs font-black uppercase tracking-[0.14em] opacity-75">{item.title}</p>
+                <p className="mt-2 text-sm font-bold text-white">{item.carrierName}</p>
+                <p className="mt-2 text-xs leading-5 opacity-90">{item.impact}</p>
+                <p className="mt-2 text-xs leading-5 text-slate-200">Next: {item.nextAction}</p>
+              </Link>
+            ))}
           </div>
-        </Link>
+          <div className="mt-4 flex flex-wrap gap-3 text-sm font-semibold">
+            <Link href="/carriers" className="text-teal-300 hover:text-teal-200">Open Carrier Registry</Link>
+            <span className="text-slate-500">/</span>
+            <Link href="/dispatch" className="text-teal-300 hover:text-teal-200">Review packet holds before dispatch</Link>
+          </div>
+        </div>
 
         {/* Impact Analysis */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">

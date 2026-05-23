@@ -21,6 +21,7 @@ import {
   getCarrierPacketEvidence,
   type CarrierPacketEvidenceStatus,
 } from "@/lib/carrier-packet-evidence";
+import { getCarrierDispatchGate } from "@/lib/carrier-dispatch-gates";
 
 export const metadata = {
   title: "Carrier Packet Preview | BOF",
@@ -121,6 +122,7 @@ export default async function CarrierPacketPreviewPage({ params }: Props) {
   const packet = getCarrierPacketSummary(carrier);
   const readinessTone = getCarrierStatusTone(carrier.readinessStatus);
   const evidenceRecords = getCarrierPacketEvidence(carrier.id);
+  const gate = getCarrierDispatchGate(carrier);
 
   return (
     <div className="bof-page">
@@ -294,7 +296,13 @@ export default async function CarrierPacketPreviewPage({ params }: Props) {
 
         <aside className="rounded-2xl border border-teal-400/30 bg-teal-400/10 p-5">
           <h2 className="text-2xl font-black text-white">Dispatch eligibility</h2>
+          <p className="mt-3 text-lg font-black text-white">{gate.assignmentSimulation}</p>
+          <p className="mt-2 text-sm leading-6 text-teal-50">{gate.operationalRisk}</p>
           <p className="mt-3 text-sm leading-6 text-teal-50">{getCarrierDispatchExplanation(carrier)}</p>
+          <div className="mt-4 rounded-lg border border-teal-300/25 bg-slate-950/40 p-3">
+            <p className="text-xs font-bold uppercase tracking-wide text-teal-200">Next owner action</p>
+            <p className="mt-1 text-sm leading-6 text-teal-50">{gate.requiredNextAction}</p>
+          </div>
           <div className="mt-5 flex flex-wrap gap-3">
             <Link href="/dispatch" className="rounded-lg border border-teal-300/50 px-4 py-2 text-sm font-bold text-teal-100 hover:bg-teal-300/10">
               Open dispatch

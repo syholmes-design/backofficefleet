@@ -22,6 +22,7 @@ import {
   getCarrierPacketEvidence,
   type CarrierPacketEvidenceStatus,
 } from "@/lib/carrier-packet-evidence";
+import { getCarrierDispatchGate } from "@/lib/carrier-dispatch-gates";
 
 export const metadata = {
   title: "Carrier Profile | BOF",
@@ -80,6 +81,7 @@ export default async function CarrierDetailPage({ params }: Props) {
   const packet = getCarrierPacketSummary(carrier);
   const readinessTone = getCarrierStatusTone(carrier.readinessStatus);
   const evidenceRecords = getCarrierPacketEvidence(carrier.id);
+  const gate = getCarrierDispatchGate(carrier);
 
   return (
     <div className="bof-page">
@@ -114,6 +116,11 @@ export default async function CarrierDetailPage({ params }: Props) {
                 <p className="text-xs font-bold uppercase tracking-wide text-slate-500">Packet consequence</p>
                 <p className="mt-2 text-sm leading-6 text-slate-200">{carrier.packetConsequence}</p>
               </div>
+              <div className="rounded-xl border border-teal-400/30 bg-teal-400/10 p-4 md:col-span-3">
+                <p className="text-xs font-bold uppercase tracking-wide text-teal-200">Assignment simulation</p>
+                <p className="mt-2 text-lg font-black text-white">{gate.assignmentSimulation}</p>
+                <p className="mt-2 text-sm leading-6 text-teal-50">{gate.operationalRisk}</p>
+              </div>
             </div>
           </div>
 
@@ -128,7 +135,8 @@ export default async function CarrierDetailPage({ params }: Props) {
             </div>
             <div className="col-span-2 rounded-lg bg-slate-950/70 p-3">
               <p className="text-xs text-slate-500">Dispatch eligibility</p>
-              <strong className="text-sm text-white">{carrier.dispatchEligibility}</strong>
+              <strong className="text-sm text-white">{gate.indicator}</strong>
+              <p className="mt-1 text-xs text-slate-400">{carrier.dispatchEligibility}</p>
             </div>
           </div>
         </div>
@@ -401,6 +409,20 @@ export default async function CarrierDetailPage({ params }: Props) {
       <section className="mt-6 rounded-2xl border border-teal-400/30 bg-teal-400/10 p-5">
         <h2 className="text-xl font-black text-white">BOF dispatch eligibility explanation</h2>
         <p className="mt-2 text-sm leading-6 text-teal-50">{getCarrierDispatchExplanation(carrier)}</p>
+        <div className="mt-4 grid gap-3 md:grid-cols-3">
+          <div className="rounded-lg border border-teal-300/25 bg-slate-950/40 p-3">
+            <p className="text-xs font-bold uppercase tracking-wide text-teal-200">Required action</p>
+            <p className="mt-1 text-sm leading-6 text-teal-50">{gate.requiredNextAction}</p>
+          </div>
+          <div className="rounded-lg border border-teal-300/25 bg-slate-950/40 p-3">
+            <p className="text-xs font-bold uppercase tracking-wide text-teal-200">Customer consequence</p>
+            <p className="mt-1 text-sm leading-6 text-teal-50">{gate.customerConsequence}</p>
+          </div>
+          <div className="rounded-lg border border-teal-300/25 bg-slate-950/40 p-3">
+            <p className="text-xs font-bold uppercase tracking-wide text-teal-200">Finance consequence</p>
+            <p className="mt-1 text-sm leading-6 text-teal-50">{gate.financeConsequence}</p>
+          </div>
+        </div>
         <div className="mt-4 flex flex-wrap gap-3">
           <Link href="/dispatch" className="rounded-lg border border-teal-300/50 px-4 py-2 text-sm font-bold text-teal-100 hover:bg-teal-300/10">
             Open dispatch

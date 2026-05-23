@@ -30,6 +30,7 @@ import { buildTripDocumentPacket } from "@/lib/load-trip-packet";
 import { buildPretripTabletModel } from "@/lib/pretrip-tablet";
 import { buildLoadArtifactPacket } from "@/lib/load-artifact-registry";
 import { getCarrierForLoad, getCarrierPacketSummary } from "@/lib/carrier-registry";
+import { getCarrierDispatchGate, type CarrierDispatchGateTone } from "@/lib/carrier-dispatch-gates";
 import { formatMoney, loadStatusChipClass } from "./dispatch-ui";
 
 type AudienceView = "dispatcher" | "driver" | "manager" | "insurance";
@@ -211,6 +212,13 @@ function statusTone(status: "ready" | "warning" | "blocked" | "info") {
   if (status === "blocked") return "border-rose-700/55 bg-rose-950/40 text-rose-200";
   if (status === "warning") return "border-amber-700/50 bg-amber-950/35 text-amber-200";
   return "border-cyan-700/45 bg-cyan-950/30 text-cyan-100";
+}
+
+function carrierGateTone(tone: CarrierDispatchGateTone): "ready" | "warning" | "blocked" | "info" {
+  if (tone === "ready") return "ready";
+  if (tone === "blocked") return "blocked";
+  if (tone === "review") return "warning";
+  return "info";
 }
 
 function MetricCard({
@@ -889,12 +897,16 @@ export function DispatchBoardScreen() {
     () => (selectedCarrier ? getCarrierPacketSummary(selectedCarrier) : null),
     [selectedCarrier]
   );
+  const selectedCarrierGate = useMemo(
+    () => (selectedCarrier ? getCarrierDispatchGate(selectedCarrier) : null),
+    [selectedCarrier]
+  );
 
   useEffect(() => {
     setExceptionOpen(false);
   }, [selectedLoadId]);
 
-  if (!mounted || !selected || !selectedRow || !selectedCarrier || !selectedCarrierPacket) {
+  if (!mounted || !selected || !selectedRow || !selectedCarrier || !selectedCarrierPacket || !selectedCarrierGate) {
     return (
       <div className="flex min-h-[50vh] items-center justify-center p-8 text-slate-300">
         Loading dispatch command center...
@@ -1029,15 +1041,19 @@ export function DispatchBoardScreen() {
               </div>
               <Link
                 href={`/carriers/${selectedCarrier.id}`}
-                className="rounded-lg border border-teal-500/30 bg-teal-950/25 p-4 transition hover:border-teal-300/70 hover:bg-teal-950/45"
+                className={`rounded-lg border p-4 transition hover:border-teal-300/70 ${statusTone(carrierGateTone(selectedCarrierGate.tone))}`}
               >
                 <p className="text-xs font-bold uppercase tracking-wide text-teal-300">Carrier eligibility</p>
                 <p className="mt-2 text-lg font-bold text-white">{selectedCarrier.dba}</p>
                 <p className="text-sm text-slate-300">
-                  {selectedCarrier.dispatchEligibility} · packet {selectedCarrierPacket.percent}%
+                  {selectedCarrierGate.indicator} · packet {selectedCarrierPacket.percent}%
                 </p>
+                <p className="mt-1 text-sm font-bold text-white">{selectedCarrierGate.assignmentSimulation}</p>
                 <p className="mt-2 text-xs leading-5 text-teal-100/80">
-                  {selectedCarrier.dispatchImpact}
+                  {selectedCarrierGate.dispatchConsequence}
+                </p>
+                <p className="mt-2 text-xs leading-5 text-slate-300">
+                  Next: {selectedCarrierGate.requiredNextAction}
                 </p>
               </Link>
             </div>

@@ -13,6 +13,7 @@ import {
   getCarrierRegistryStats,
   getCarrierStatusTone,
 } from "@/lib/carrier-registry";
+import { getCarrierDispatchGate, getCarrierGateStats } from "@/lib/carrier-dispatch-gates";
 
 export const metadata = {
   title: "Carrier Registry | BOF",
@@ -37,6 +38,7 @@ function StatusPill({ tone, children }: { tone: keyof typeof toneClasses; childr
 export default function CarrierRegistryPage() {
   const carriers = getCarrierRegistry();
   const stats = getCarrierRegistryStats(carriers);
+  const gateStats = getCarrierGateStats(carriers);
 
   return (
     <div className="bof-page">
@@ -51,8 +53,8 @@ export default function CarrierRegistryPage() {
             </p>
           </div>
           <div className="rounded-xl border border-teal-400/30 bg-teal-400/10 p-4 text-sm text-teal-100">
-            <strong className="block text-lg text-white">{stats.dispatchEligible} dispatch eligible</strong>
-            <span>Out of {stats.total} carrier readiness records</span>
+            <strong className="block text-lg text-white">{gateStats.allowed} cleared / {gateStats.blocked} blocked</strong>
+            <span>Carrier assignment gates enforce packet readiness before dispatch.</span>
           </div>
         </div>
       </section>
@@ -89,6 +91,7 @@ export default function CarrierRegistryPage() {
           {carriers.map((carrier) => {
             const packet = getCarrierPacketSummary(carrier);
             const tone = getCarrierStatusTone(carrier.readinessStatus);
+            const gate = getCarrierDispatchGate(carrier);
 
             return (
               <Link
@@ -123,7 +126,8 @@ export default function CarrierRegistryPage() {
                   </div>
                   <div className="rounded-lg bg-slate-950/70 p-3">
                     <p className="text-xs text-slate-500">Dispatch eligibility</p>
-                    <strong className="text-sm text-white">{carrier.dispatchEligibility}</strong>
+                    <strong className="text-sm text-white">{gate.indicator}</strong>
+                    <p className="mt-1 text-xs text-slate-400">{gate.assignmentSimulation}</p>
                   </div>
                   <div className="rounded-lg bg-slate-950/70 p-3">
                     <p className="text-xs text-slate-500">Owner</p>
@@ -133,12 +137,12 @@ export default function CarrierRegistryPage() {
 
                 <div className="mt-4 grid gap-3 lg:grid-cols-2">
                   <div className="rounded-lg border border-slate-800 bg-slate-950/55 p-3">
-                    <p className="text-sm font-semibold text-teal-200">Operational reason</p>
-                    <p className="mt-1 text-sm leading-6 text-slate-300">{carrier.statusReason}</p>
+                    <p className="text-sm font-semibold text-teal-200">Dispatch gate</p>
+                    <p className="mt-1 text-sm leading-6 text-slate-300">{gate.operationalRisk}</p>
                   </div>
                   <div className="rounded-lg border border-slate-800 bg-slate-950/55 p-3">
                     <p className="text-sm font-semibold text-teal-200">Next action</p>
-                    <p className="mt-1 text-sm leading-6 text-slate-300">{carrier.nextAction}</p>
+                    <p className="mt-1 text-sm leading-6 text-slate-300">{gate.requiredNextAction}</p>
                   </div>
                 </div>
 
