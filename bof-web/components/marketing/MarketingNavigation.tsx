@@ -171,6 +171,17 @@ export function MarketingNavigation() {
 
             {/* CTA Links */}
             <Link
+              href="/demo"
+              className={`px-3 py-2 text-sm font-medium transition-colors ${
+                isActive("/demo")
+                  ? "text-blue-600"
+                  : "text-gray-700 hover:text-blue-600"
+              }`}
+            >
+              Explore BOF
+            </Link>
+
+            <Link
               href="/assessment"
               className={`px-3 py-2 text-sm font-medium transition-colors ${
                 isActive("/assessment")
@@ -312,6 +323,17 @@ export function MarketingNavigation() {
 
               {/* Mobile CTA Links */}
               <div className="px-4 py-2 space-y-2">
+                <Link
+                  href="/demo"
+                  className={`block px-3 py-2 rounded-md text-sm font-medium transition-colors ${
+                    isActive("/demo")
+                      ? "bg-blue-50 text-blue-600"
+                      : "text-gray-700 hover:bg-gray-100"
+                  }`}
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  Explore BOF
+                </Link>
                 <Link
                   href="/assessment"
                   className={`block px-3 py-2 rounded-md text-sm font-medium transition-colors ${
