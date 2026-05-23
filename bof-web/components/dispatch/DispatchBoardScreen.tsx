@@ -29,8 +29,9 @@ import { getDispatchCommandSummary } from "@/lib/dispatch/dispatch-command-metri
 import { buildTripDocumentPacket } from "@/lib/load-trip-packet";
 import { buildPretripTabletModel } from "@/lib/pretrip-tablet";
 import { buildLoadArtifactPacket } from "@/lib/load-artifact-registry";
-import { getCarrierForLoad, getCarrierPacketSummary } from "@/lib/carrier-registry";
+import { getCarrierById, getCarrierForLoad, getCarrierPacketSummary } from "@/lib/carrier-registry";
 import { getCarrierDispatchGate, type CarrierDispatchGateTone } from "@/lib/carrier-dispatch-gates";
+import { getReloadOpportunitiesForLoad, getTopReloadRecommendations } from "@/lib/carrier-reload-intelligence";
 import { formatMoney, loadStatusChipClass } from "./dispatch-ui";
 
 type AudienceView = "dispatcher" | "driver" | "manager" | "insurance";
@@ -901,6 +902,14 @@ export function DispatchBoardScreen() {
     () => (selectedCarrier ? getCarrierDispatchGate(selectedCarrier) : null),
     [selectedCarrier]
   );
+  const reloadRecommendations = useMemo(() => {
+    if (!selected) return getTopReloadRecommendations(4);
+    const selectedLoadReloads = getReloadOpportunitiesForLoad(selected.load_id);
+    const fallback = getTopReloadRecommendations(4).filter(
+      (opportunity) => !selectedLoadReloads.some((selectedOpportunity) => selectedOpportunity.id === opportunity.id)
+    );
+    return [...selectedLoadReloads, ...fallback].slice(0, 4);
+  }, [selected]);
 
   useEffect(() => {
     setExceptionOpen(false);
@@ -1105,6 +1114,67 @@ export function DispatchBoardScreen() {
             <div className="mt-5">
               <LoadDocumentStrip selected={selected} />
             </div>
+          </div>
+        </section>
+
+        <section className="rounded-xl border border-slate-800 bg-slate-900/45 p-5">
+          <div className="flex flex-wrap items-end justify-between gap-4">
+            <div>
+              <p className="text-xs font-bold uppercase tracking-[0.2em] text-teal-300">Reload intelligence</p>
+              <h2 className="mt-2 text-2xl font-bold text-white">Next-load recommendations with carrier gates</h2>
+              <p className="mt-2 max-w-4xl text-sm leading-6 text-slate-400">
+                BOF recommends reloads only when carrier packet readiness, dispatch gate status, equipment fit,
+                lane fit, proof posture, and finance release risk all point to a workable assignment.
+              </p>
+            </div>
+            <span className="rounded-full border border-cyan-500/35 bg-cyan-950/35 px-3 py-1 text-sm font-bold text-cyan-100">
+              {reloadRecommendations.length} curated opportunities
+            </span>
+          </div>
+          <div className="mt-5 grid gap-4 xl:grid-cols-2">
+            {reloadRecommendations.map((reload) => (
+              <article key={reload.id} className="rounded-xl border border-slate-800 bg-slate-950/65 p-4">
+                <div className="flex flex-wrap items-start justify-between gap-3">
+                  <div>
+                    <p className="font-mono text-xs font-black uppercase tracking-wide text-teal-300">{reload.id}</p>
+                    <h3 className="mt-2 text-lg font-black text-white">{reload.origin} to {reload.destination}</h3>
+                    <p className="mt-1 text-sm text-slate-400">
+                      {reload.trailerType} · source {reload.sourceLoadId} · {reload.deadheadMilesReduced} empty miles reduced
+                    </p>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-3xl font-black text-white">{reload.reloadScore}</p>
+                    <p className="text-xs uppercase tracking-wide text-slate-500">Reload score</p>
+                  </div>
+                </div>
+                <div className="mt-4 grid gap-3 md:grid-cols-3">
+                  <div className="rounded-lg border border-emerald-500/25 bg-emerald-950/25 p-3">
+                    <p className="text-xs font-bold uppercase tracking-wide text-emerald-200">Eligible</p>
+                    <p className="mt-1 text-sm text-emerald-50">
+                      {reload.eligibleCarrierIds.map((id) => getCarrierById(id)?.dba ?? id).join(", ") || "None"}
+                    </p>
+                  </div>
+                  <div className="rounded-lg border border-amber-500/25 bg-amber-950/25 p-3">
+                    <p className="text-xs font-bold uppercase tracking-wide text-amber-200">Review</p>
+                    <p className="mt-1 text-sm text-amber-50">
+                      {reload.reviewCarrierIds.map((id) => getCarrierById(id)?.dba ?? id).join(", ") || "None"}
+                    </p>
+                  </div>
+                  <div className="rounded-lg border border-rose-500/25 bg-rose-950/25 p-3">
+                    <p className="text-xs font-bold uppercase tracking-wide text-rose-200">Blocked</p>
+                    <p className="mt-1 text-sm text-rose-50">
+                      {reload.blockedCarrierIds.map((id) => getCarrierById(id)?.dba ?? id).join(", ") || "None"}
+                    </p>
+                  </div>
+                </div>
+                <p className="mt-4 text-sm leading-6 text-slate-300">{reload.operationalReasoning}</p>
+                <div className="mt-3 grid gap-3 md:grid-cols-3">
+                  <p className="rounded-lg bg-slate-900 px-3 py-2 text-xs leading-5 text-slate-300">{reload.dispatchConsequence}</p>
+                  <p className="rounded-lg bg-slate-900 px-3 py-2 text-xs leading-5 text-slate-300">{reload.financeConsequence}</p>
+                  <p className="rounded-lg bg-slate-900 px-3 py-2 text-xs leading-5 text-slate-300">{reload.customerConsequence}</p>
+                </div>
+              </article>
+            ))}
           </div>
         </section>
 

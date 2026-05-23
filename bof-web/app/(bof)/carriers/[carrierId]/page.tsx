@@ -23,6 +23,7 @@ import {
   type CarrierPacketEvidenceStatus,
 } from "@/lib/carrier-packet-evidence";
 import { getCarrierDispatchGate } from "@/lib/carrier-dispatch-gates";
+import { getCarrierReloadFits } from "@/lib/carrier-reload-intelligence";
 
 export const metadata = {
   title: "Carrier Profile | BOF",
@@ -82,6 +83,7 @@ export default async function CarrierDetailPage({ params }: Props) {
   const readinessTone = getCarrierStatusTone(carrier.readinessStatus);
   const evidenceRecords = getCarrierPacketEvidence(carrier.id);
   const gate = getCarrierDispatchGate(carrier);
+  const reloadFits = getCarrierReloadFits(carrier.id);
 
   return (
     <div className="bof-page">
@@ -304,6 +306,41 @@ export default async function CarrierDetailPage({ params }: Props) {
               <p className="rounded-lg bg-emerald-400/10 px-3 py-2 text-sm text-emerald-100">No active carrier packet flags.</p>
             )}
           </div>
+        </div>
+      </section>
+
+      <section className="mt-6 rounded-2xl border border-slate-700 bg-slate-950/70 p-5">
+        <div className="flex flex-col gap-2 md:flex-row md:items-end md:justify-between">
+          <div>
+            <h2 className="text-2xl font-black text-white">Reload fit analysis</h2>
+            <p className="mt-1 text-sm text-slate-400">
+              BOF compares this carrier against reload opportunities using equipment, lane fit, packet gates,
+              proof expectations, and finance release risk.
+            </p>
+          </div>
+          <Pill className={toneClasses[gate.tone]}>{gate.indicator}</Pill>
+        </div>
+        <div className="mt-5 grid gap-4 xl:grid-cols-2">
+          {reloadFits.map((fit) => (
+            <article key={fit.opportunity.id} className="rounded-xl border border-slate-800 bg-slate-900/80 p-4">
+              <div className="flex flex-wrap items-start justify-between gap-3">
+                <div>
+                  <p className="font-mono text-xs font-black uppercase tracking-wide text-teal-300">{fit.opportunity.id}</p>
+                  <h3 className="mt-2 font-black text-white">{fit.opportunity.origin} to {fit.opportunity.destination}</h3>
+                  <p className="mt-1 text-sm text-slate-400">
+                    {fit.opportunity.trailerType} · {fit.opportunity.deadheadMilesReduced} empty miles reduced · score {fit.opportunity.reloadScore}
+                  </p>
+                </div>
+                <Pill className={toneClasses[fit.tone]}>{fit.label}</Pill>
+              </div>
+              <p className="mt-3 text-sm leading-6 text-slate-300">{fit.reason}</p>
+              <div className="mt-3 grid gap-3 md:grid-cols-2">
+                <p className="rounded-lg bg-slate-950/70 px-3 py-2 text-xs leading-5 text-slate-300">{fit.opportunity.dispatchConsequence}</p>
+                <p className="rounded-lg bg-slate-950/70 px-3 py-2 text-xs leading-5 text-slate-300">{fit.opportunity.financeConsequence}</p>
+              </div>
+              <p className="mt-3 text-xs font-semibold text-slate-400">Next: {fit.nextAction}</p>
+            </article>
+          ))}
         </div>
       </section>
 

@@ -25,6 +25,7 @@ import type { OperationalRiskQueue, V3OperationalData } from "@/lib/v3-operation
 import { L008_CANONICAL_STORY, L009_CANONICAL_STORY, L011_CANONICAL_STORY } from "@/lib/canonical-load-stories";
 import { getCarrierRegistry, getCarrierRegistryStats } from "@/lib/carrier-registry";
 import { getCarrierGateEscalations, getCarrierGateStats, type CarrierDispatchGateTone } from "@/lib/carrier-dispatch-gates";
+import { getReloadEscalations } from "@/lib/carrier-reload-intelligence";
 
 type RiskAction = {
   label: string;
@@ -349,6 +350,7 @@ export function CommandCenterV4() {
   const carrierStats = useMemo(() => getCarrierRegistryStats(carrierRecords), [carrierRecords]);
   const carrierGateStats = useMemo(() => getCarrierGateStats(carrierRecords), [carrierRecords]);
   const carrierEscalations = useMemo(() => getCarrierGateEscalations(carrierRecords), [carrierRecords]);
+  const reloadEscalations = useMemo(() => getReloadEscalations(), []);
   const blockedCarrier = carrierRecords.find((carrier) => carrier.readinessStatus === "Blocked");
   const watchCarrier = carrierRecords.find((carrier) => carrier.readinessStatus === "Watch");
   const l011Carrier = carrierRecords.find((carrier) => carrier.recentLoads.includes("L011"));
@@ -763,6 +765,40 @@ export function CommandCenterV4() {
             <Link href="/carriers" className="text-teal-300 hover:text-teal-200">Open Carrier Registry</Link>
             <span className="text-slate-500">/</span>
             <Link href="/dispatch" className="text-teal-300 hover:text-teal-200">Review packet holds before dispatch</Link>
+          </div>
+        </div>
+
+        {/* Reload Intelligence */}
+        <div className="mt-6 rounded-xl border border-slate-800 bg-slate-900/50 p-6">
+          <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+            <div>
+              <h3 className="flex items-center gap-2 text-lg font-semibold text-white">
+                <Target className="h-5 w-5 text-cyan-300" />
+                Reload Intelligence
+              </h3>
+              <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-400">
+                Reload recommendations are filtered through carrier readiness, dispatch gates, equipment fit, lane fit,
+                proof timing, customer release, and finance risk before they appear as operational choices.
+              </p>
+            </div>
+            <Link href="/dispatch" className="rounded-lg border border-cyan-300/40 px-4 py-2 text-sm font-bold text-cyan-100 hover:bg-cyan-300/10">
+              Review reloads in dispatch
+            </Link>
+          </div>
+          <div className="mt-5 grid gap-3 md:grid-cols-2 xl:grid-cols-5">
+            {reloadEscalations.map((item) => (
+              <Link
+                key={item.id}
+                href={item.href}
+                className={`rounded-lg border p-3 transition hover:-translate-y-0.5 hover:border-cyan-300/50 ${getCarrierGateClass(item.tone)}`}
+              >
+                <p className="text-xs font-black uppercase tracking-[0.14em] opacity-75">{item.title}</p>
+                <p className="mt-2 text-sm font-bold text-white">{item.carrierName}</p>
+                <p className="mt-1 font-mono text-xs text-slate-300">{item.opportunityId}</p>
+                <p className="mt-2 text-xs leading-5 opacity-90">{item.impact}</p>
+                <p className="mt-2 text-xs leading-5 text-slate-200">Next: {item.nextAction}</p>
+              </Link>
+            ))}
           </div>
         </div>
 
