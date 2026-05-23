@@ -112,7 +112,7 @@ export function OperationsFileCabinetClient() {
       "BOF Dispatch Templates",
       "External Resources",
       "Completed Demo Samples",
-      "Needs Review / Coming Later"
+      "Needs Review / Roadmap Queue"
     ];
 
     // Sort groups according to predefined order, then alphabetically for any others
@@ -202,7 +202,6 @@ export function OperationsFileCabinetClient() {
         templateCount,
         externalCount,
         comingSoonCount,
-        primaryHref: getCategoryPrimaryHref(category),
         primaryCta: getCategoryPrimaryCta(category),
       };
     });
@@ -233,92 +232,95 @@ export function OperationsFileCabinetClient() {
     }
   }
 
-  function getCategoryPrimaryHref(_category: OperationsFileCabinetCategory): string {
-    // Return "#" for in-page filtering/jumping instead of module navigation
-    return "#";
-  }
-
   function getCategoryPrimaryCta(category: OperationsFileCabinetCategory): string {
     switch (category) {
       case "Driver Qualification Files":
-        return "Browse documents →";
+        return "Browse documents";
       case "Secondary Driver Documents":
-        return "Show files →";
+        return "Show files";
       case "Dispatch & Load Operations":
-        return "Show templates →";
+        return "Show templates";
       case "Safety / Claims / Insurance":
-        return "Show forms →";
+        return "Show forms";
       case "HR / Talent / Performance":
-        return "Show policies →";
+        return "Show policies";
       case "Policies & SOPs":
-        return "Show policies →";
+        return "Show policies";
       case "Finance / Settlements / Back Office":
-        return "Show forms →";
+        return "Show forms";
       case "Training & Knowledge Base":
-        return "Show resources →";
+        return "Show resources";
       case "Contracts / Customer / Legal":
-        return "Show agreements →";
+        return "Show agreements";
       default:
-        return "Browse documents →";
+        return "Browse documents";
     }
   }
 
   function getItemCta(item: OperationsFileCabinetItem): string {
     if (item.id === "claims-insurance-notice") {
-      return "Open insurance notice â†’";
+      return "Open insurance notice";
     }
 
     // Handle completed demo samples
     if (item.section === "Completed Demo Samples" || item.isCompletedSample) {
-      return "View completed sample →";
+      return "View completed sample";
     }
     
     if (item.sourceAuthenticity === "generated_from_template" && item.status === "available" && !item.isBlankTemplate) {
-      return "Open document â†’";
+      return "Open document";
     }
 
     // Handle blank templates
     if (item.section === "Blank Templates") {
-      return "Open blank template →";
+      return "Open blank template";
     }
     
     // Handle company policies
     if (item.section === "Company Policies & SOPs") {
-      return "View policy →";
+      return "View policy";
     }
     
     // Handle BOF dispatch templates
     if (item.section === "BOF Dispatch Templates") {
-      return "View template →";
+      return "View template";
     }
     
     // Handle external resources
     if (item.section === "External Resources") {
-      return "Open guidance →";
+      return "Open guidance";
     }
     
     // Fallback to type-based CTA
     switch (item.type) {
       case "template":
-        return "Open blank template →";
+        return "Open blank template";
       case "policy":
       case "sop":
-        return "View policy →";
+        return "View policy";
       case "form":
-        return "Fill out form →";
+        return "Fill out form";
       case "driver-file":
-        return "View document →";
+        return "View document";
       case "video":
-        return "Watch video →";
+        return "Watch video";
       case "article":
-        return "Read article →";
+        return "Read article";
       case "checklist":
-        return "Use checklist →";
+        return "Use checklist";
       case "contract":
-        return "View contract →";
+        return "View contract";
       default:
-        return "View →";
+        return "View";
     }
+  }
+
+  function isStaticDocumentHref(href: string): boolean {
+    return (
+      href.startsWith("/generated/") ||
+      href.startsWith("/evidence/") ||
+      /\.(?:pdf|html|png|jpe?g|svg)$/i.test(href)
+    );
   }
 
   function getSourceChip(item: OperationsFileCabinetItem): { text: string; color: string } {
@@ -332,7 +334,7 @@ export function OperationsFileCabinetClient() {
     } else if (item.sourceAuthenticity === "external_resource") {
       return { text: "External resource", color: "#a855f7" };
     } else if (item.sourceAuthenticity === "coming_soon") {
-      return { text: "Coming soon", color: "#f59e0b" };
+      return { text: "Build queued", color: "#f59e0b" };
     } else if (item.href?.startsWith("/")) {
       return { text: "App route", color: "#f59e0b" };
     } else {
@@ -379,7 +381,7 @@ export function OperationsFileCabinetClient() {
   }
 
   return (
-    <div className="bof-page" style={{ paddingBottom: "8rem" }}>
+    <div className="bof-page bof-operations-file-cabinet" style={{ paddingBottom: "8rem" }}>
       {/* Hero Section with Watermark */}
       <div style={{
         marginBottom: "2rem",
@@ -469,7 +471,7 @@ export function OperationsFileCabinetClient() {
       {/* Summary Cards */}
       <div style={{
         display: "grid",
-        gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
+        gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 280px), 1fr))",
         gap: "1rem",
         marginBottom: "2rem"
       }}>
@@ -515,9 +517,11 @@ export function OperationsFileCabinetClient() {
               <span style={{ color: "#a855f7" }}>
                 {summary.externalCount} external
               </span>
-              <span style={{ color: "#6b7280" }}>
-                {summary.comingSoonCount} coming soon
-              </span>
+              {summary.comingSoonCount > 0 && (
+                <span style={{ color: "#6b7280" }}>
+                  {summary.comingSoonCount} in expansion queue
+                </span>
+              )}
             </div>
             <button
               onClick={() => setSelectedCategory(summary.category)}
@@ -597,7 +601,7 @@ export function OperationsFileCabinetClient() {
                       </h3>
                       <div style={{
                         display: "grid",
-                        gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
+                        gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 280px), 1fr))",
                         gap: "1rem"
                       }}>
                         {group.items.map(item => {
@@ -660,41 +664,73 @@ export function OperationsFileCabinetClient() {
                                 {item.description}
                               </p>
                               {item.href ? (
+                                isStaticDocumentHref(item.href) ? (
+                                  <a
+                                    href={item.href}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    style={{
+                                      display: "inline-flex",
+                                      alignItems: "center",
+                                      gap: "0.5rem",
+                                      fontSize: "0.875rem",
+                                      fontWeight: "500",
+                                      color: "#14b8a6",
+                                      textDecoration: "none",
+                                      transition: "color 0.2s ease"
+                                    }}
+                                    onMouseEnter={(e) => {
+                                      e.currentTarget.style.color = "#0d9488";
+                                    }}
+                                    onMouseLeave={(e) => {
+                                      e.currentTarget.style.color = "#14b8a6";
+                                    }}
+                                  >
+                                    {cta}
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                      <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+                                      <polyline points="15,3 21,3 21,9"></polyline>
+                                      <line x1="10" y1="14" x2="21" y2="3"></line>
+                                    </svg>
+                                  </a>
+                                ) : (
                                 <Link
                                   href={item.href}
+                                  prefetch={!isStaticDocumentHref(item.href)}
                                   target="_blank"
                                   rel="noopener noreferrer"
-                                  style={{
-                                    display: "inline-flex",
-                                    alignItems: "center",
-                                    gap: "0.5rem",
-                                    fontSize: "0.875rem",
-                                    fontWeight: "500",
-                                    color: "#14b8a6",
-                                    textDecoration: "none",
-                                    transition: "color 0.2s ease"
-                                  }}
-                                  onMouseEnter={(e) => {
-                                    e.currentTarget.style.color = "#0d9488";
-                                  }}
-                                  onMouseLeave={(e) => {
-                                    e.currentTarget.style.color = "#14b8a6";
-                                  }}
-                                >
-                                  {cta}
-                                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                    <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
-                                    <polyline points="15,3 21,3 21,9"></polyline>
-                                    <line x1="10" y1="14" x2="21" y2="3"></line>
-                                  </svg>
-                                </Link>
+                                    style={{
+                                      display: "inline-flex",
+                                      alignItems: "center",
+                                      gap: "0.5rem",
+                                      fontSize: "0.875rem",
+                                      fontWeight: "500",
+                                      color: "#14b8a6",
+                                      textDecoration: "none",
+                                      transition: "color 0.2s ease"
+                                    }}
+                                    onMouseEnter={(e) => {
+                                      e.currentTarget.style.color = "#0d9488";
+                                    }}
+                                    onMouseLeave={(e) => {
+                                      e.currentTarget.style.color = "#14b8a6";
+                                    }}
+                                  >
+                                    {cta}
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                      <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+                                      <polyline points="15,3 21,3 21,9"></polyline>
+                                      <line x1="10" y1="14" x2="21" y2="3"></line>
+                                    </svg>
+                                  </Link>
+                                )
                               ) : (
                                 <span style={{
                                   fontSize: "0.875rem",
                                   color: "#64748b",
                                   fontStyle: "italic"
                                 }}>
-                                  {item.status === "coming_soon" ? "Coming soon" : "Not available"}
+                                  {item.status === "coming_soon" ? "Queued for build" : "Not available"}
                                 </span>
                               )}
                             </div>
@@ -710,7 +746,7 @@ export function OperationsFileCabinetClient() {
             // Show featured items when no filters are applied
             <div style={{
               display: "grid",
-              gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
+              gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 280px), 1fr))",
               gap: "1rem"
             }}>
               {featuredItems.map(item => {
@@ -773,41 +809,73 @@ export function OperationsFileCabinetClient() {
                       {item.description}
                     </p>
                     {item.href ? (
+                      isStaticDocumentHref(item.href) ? (
+                        <a
+                          href={item.href}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          style={{
+                            display: "inline-flex",
+                            alignItems: "center",
+                            gap: "0.5rem",
+                            fontSize: "0.875rem",
+                            fontWeight: "500",
+                            color: "#14b8a6",
+                            textDecoration: "none",
+                            transition: "color 0.2s ease"
+                          }}
+                          onMouseEnter={(e) => {
+                            e.currentTarget.style.color = "#0d9488";
+                          }}
+                          onMouseLeave={(e) => {
+                            e.currentTarget.style.color = "#14b8a6";
+                          }}
+                        >
+                          {cta}
+                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                            <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+                            <polyline points="15,3 21,3 21,9"></polyline>
+                            <line x1="10" y1="14" x2="21" y2="3"></line>
+                          </svg>
+                        </a>
+                      ) : (
                       <Link
                         href={item.href}
+                        prefetch={!isStaticDocumentHref(item.href)}
                         target="_blank"
                         rel="noopener noreferrer"
-                        style={{
-                          display: "inline-flex",
-                          alignItems: "center",
-                          gap: "0.5rem",
-                          fontSize: "0.875rem",
-                          fontWeight: "500",
-                          color: "#14b8a6",
-                          textDecoration: "none",
-                          transition: "color 0.2s ease"
-                        }}
-                        onMouseEnter={(e) => {
-                          e.currentTarget.style.color = "#0d9488";
-                        }}
-                        onMouseLeave={(e) => {
-                          e.currentTarget.style.color = "#14b8a6";
-                        }}
-                      >
-                        {cta}
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                          <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
-                          <polyline points="15,3 21,3 21,9"></polyline>
-                          <line x1="10" y1="14" x2="21" y2="3"></line>
-                        </svg>
-                      </Link>
+                          style={{
+                            display: "inline-flex",
+                            alignItems: "center",
+                            gap: "0.5rem",
+                            fontSize: "0.875rem",
+                            fontWeight: "500",
+                            color: "#14b8a6",
+                            textDecoration: "none",
+                            transition: "color 0.2s ease"
+                          }}
+                          onMouseEnter={(e) => {
+                            e.currentTarget.style.color = "#0d9488";
+                          }}
+                          onMouseLeave={(e) => {
+                            e.currentTarget.style.color = "#14b8a6";
+                          }}
+                        >
+                          {cta}
+                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                            <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+                            <polyline points="15,3 21,3 21,9"></polyline>
+                            <line x1="10" y1="14" x2="21" y2="3"></line>
+                          </svg>
+                        </Link>
+                      )
                     ) : (
                       <span style={{
                         fontSize: "0.875rem",
                         color: "#64748b",
                         fontStyle: "italic"
                       }}>
-                        Coming soon
+                        Queued for build
                       </span>
                     )}
                   </div>
@@ -827,7 +895,7 @@ export function OperationsFileCabinetClient() {
       }}>
         <div style={{
           display: "grid",
-          gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
+          gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 200px), 1fr))",
           gap: "1rem"
         }}>
           <div>
@@ -841,7 +909,7 @@ export function OperationsFileCabinetClient() {
             </label>
             <input
               type="text"
-              placeholder="Search documents..."
+              placeholder="Search driver, load, BOL, POD, policy, or settlement files"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               style={{
@@ -975,43 +1043,85 @@ export function OperationsFileCabinetClient() {
       </div>
 
       {/* Featured File Cabinet */}
-      <div style={{
-        minHeight: "100vh",
-        backgroundColor: "#1a1a1a",
+      <div className="bof-file-cabinet-proof-shelf" style={{
+        background: "linear-gradient(135deg, rgba(15, 23, 42, 0.92), rgba(8, 20, 28, 0.92))",
+        border: "1px solid rgba(45, 212, 191, 0.14)",
+        borderRadius: "14px",
         color: "#ffffff",
-        padding: "2rem",
-        paddingBottom: "6rem"
+        marginTop: "1.75rem",
+        marginBottom: "2rem",
+        padding: "1.6rem",
+        boxShadow: "0 22px 60px rgba(0, 0, 0, 0.28)"
       }}>
-        <h2 style={{
-          fontSize: "1.5rem",
-          fontWeight: "600",
-          color: "#ffffff",
-          margin: "0 0 1.5rem 0"
+        <div style={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "flex-start",
+          gap: "1rem",
+          flexWrap: "wrap",
+          marginBottom: "1.4rem"
         }}>
-          Featured File Cabinet
-        </h2>
-        <p style={{
-          fontSize: "1rem",
-          color: "rgba(255, 255, 255, 0.7)",
-          margin: "0 0 2rem 0",
-          lineHeight: "1.5"
-        }}>
-          Essential documents, policies, and templates with actual links to real files.
-        </p>
+          <div style={{ maxWidth: "48rem" }}>
+            <div style={{
+              color: "#2dd4bf",
+              fontSize: "0.72rem",
+              fontWeight: 800,
+              letterSpacing: "0.08em",
+              textTransform: "uppercase",
+              marginBottom: "0.45rem"
+            }}>
+              Demo proof shelf
+            </div>
+            <h2 style={{
+              fontSize: "clamp(1.35rem, 2vw, 1.85rem)",
+              fontWeight: "700",
+              color: "#ffffff",
+              margin: "0 0 0.65rem 0"
+            }}>
+              Featured File Cabinet
+            </h2>
+            <p style={{
+              fontSize: "0.98rem",
+              color: "rgba(226, 232, 240, 0.78)",
+              margin: 0,
+              lineHeight: "1.55"
+            }}>
+              The most demo-relevant policies, claims packets, and operating templates are surfaced first so the owner can prove the workflow without digging through a file dump.
+            </p>
+          </div>
+          <div style={{
+            display: "grid",
+            gap: "0.35rem",
+            minWidth: "10rem",
+            padding: "0.85rem 1rem",
+            backgroundColor: "rgba(45, 212, 191, 0.09)",
+            border: "1px solid rgba(45, 212, 191, 0.18)",
+            borderRadius: "10px",
+            color: "rgba(226, 232, 240, 0.8)"
+          }}>
+            <strong style={{ color: "#ffffff", fontSize: "1.35rem", lineHeight: 1 }}>
+              {featuredItems.length}
+            </strong>
+            <span style={{ fontSize: "0.78rem", lineHeight: 1.35 }}>
+              ready links in the curated proof shelf
+            </span>
+          </div>
+        </div>
         
         <div style={{
           display: "grid",
-          gridTemplateColumns: "repeat(auto-fit, minmax(350px, 1fr))",
+          gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 350px), 1fr))",
           gap: "1rem"
         }}>
           {featuredItems.map(item => (
             <div
               key={item.id}
               style={{
-                backgroundColor: "rgba(255, 255, 255, 0.05)",
-                border: "1px solid rgba(255, 255, 255, 0.1)",
+                background: "linear-gradient(180deg, rgba(255, 255, 255, 0.075), rgba(255, 255, 255, 0.045))",
+                border: "1px solid rgba(148, 163, 184, 0.18)",
                 borderRadius: "12px",
-                padding: "1.5rem"
+                padding: "1.35rem",
+                boxShadow: "0 12px 30px rgba(0, 0, 0, 0.18)"
               }}
             >
               <div style={{
@@ -1109,22 +1219,43 @@ export function OperationsFileCabinetClient() {
                   {getSourceChip(item).text}
                 </span>
                 {item.href ? (
-                  <Link
-                    href={item.href}
-                    style={{
-                      display: "inline-block",
-                      padding: "0.5rem 1rem",
-                      backgroundColor: "rgba(59, 130, 246, 0.2)",
-                      border: "1px solid rgba(59, 130, 246, 0.3)",
-                      borderRadius: "6px",
-                      color: "#3b82f6",
-                      textDecoration: "none",
-                      fontSize: "0.8rem",
-                      fontWeight: "500"
-                    }}
-                  >
-                    {getItemCta(item)} →
-                  </Link>
+                  isStaticDocumentHref(item.href) ? (
+                    <a
+                      href={item.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      style={{
+                        display: "inline-block",
+                        padding: "0.5rem 1rem",
+                        backgroundColor: "rgba(59, 130, 246, 0.2)",
+                        border: "1px solid rgba(59, 130, 246, 0.3)",
+                        borderRadius: "6px",
+                        color: "#3b82f6",
+                        textDecoration: "none",
+                        fontSize: "0.8rem",
+                        fontWeight: "500"
+                      }}
+                    >
+                      {getItemCta(item)}
+                    </a>
+                  ) : (
+                    <Link
+                      href={item.href}
+                      style={{
+                        display: "inline-block",
+                        padding: "0.5rem 1rem",
+                        backgroundColor: "rgba(59, 130, 246, 0.2)",
+                        border: "1px solid rgba(59, 130, 246, 0.3)",
+                        borderRadius: "6px",
+                        color: "#3b82f6",
+                        textDecoration: "none",
+                        fontSize: "0.8rem",
+                        fontWeight: "500"
+                      }}
+                    >
+                      {getItemCta(item)}
+                    </Link>
+                  )
                 ) : item.status === "external_resource" ? (
                   <span
                     style={{
@@ -1138,7 +1269,7 @@ export function OperationsFileCabinetClient() {
                       fontWeight: "500"
                     }}
                   >
-                    External link →
+                    External link
                   </span>
                 ) : (
                   <span
@@ -1153,7 +1284,7 @@ export function OperationsFileCabinetClient() {
                       fontWeight: "500"
                     }}
                   >
-                    Coming soon
+                    Queued for build
                   </span>
                 )}
               </div>
@@ -1163,6 +1294,7 @@ export function OperationsFileCabinetClient() {
       </div>
 
       {/* Operations Expansion Queue */}
+      {comingSoonItems.length > 0 && (
       <div style={{
         marginBottom: "2rem"
       }}>
@@ -1191,7 +1323,7 @@ export function OperationsFileCabinetClient() {
         }}>
           <div style={{
             display: "grid",
-            gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
+            gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 280px), 1fr))",
             gap: "0.75rem"
           }}>
             {comingSoonItems.map(item => (
@@ -1219,7 +1351,7 @@ export function OperationsFileCabinetClient() {
                     whiteSpace: "nowrap"
                   }}
                 >
-                  Coming soon
+                  Build queued
                 </span>
                 <div style={{ flex: 1 }}>
                   <div style={{
@@ -1241,6 +1373,7 @@ export function OperationsFileCabinetClient() {
           </div>
         </div>
       </div>
+      )}
 
       {/* Browse All Documents (when searching/filtering) */}
       {(searchTerm || selectedCategory !== "all" || selectedType !== "all" || selectedAudience !== "all" || selectedStatus !== "all") && (
@@ -1256,7 +1389,7 @@ export function OperationsFileCabinetClient() {
           
           <div style={{
             display: "grid",
-            gridTemplateColumns: "repeat(auto-fit, minmax(350px, 1fr))",
+            gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 350px), 1fr))",
             gap: "1rem"
           }}>
             {filteredItems.map(item => (
@@ -1340,22 +1473,43 @@ export function OperationsFileCabinetClient() {
                     {getSourceChip(item).text}
                   </span>
                   {item.href ? (
-                    <Link
-                      href={item.href}
-                      style={{
-                        display: "inline-block",
-                        padding: "0.5rem 1rem",
-                        backgroundColor: "rgba(59, 130, 246, 0.2)",
-                        border: "1px solid rgba(59, 130, 246, 0.3)",
-                        borderRadius: "6px",
-                        color: "#3b82f6",
-                        textDecoration: "none",
-                        fontSize: "0.8rem",
-                        fontWeight: "500"
-                      }}
-                    >
-                      {getItemCta(item)} →
-                    </Link>
+                    isStaticDocumentHref(item.href) ? (
+                      <a
+                        href={item.href}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        style={{
+                          display: "inline-block",
+                          padding: "0.5rem 1rem",
+                          backgroundColor: "rgba(59, 130, 246, 0.2)",
+                          border: "1px solid rgba(59, 130, 246, 0.3)",
+                          borderRadius: "6px",
+                          color: "#3b82f6",
+                          textDecoration: "none",
+                          fontSize: "0.8rem",
+                          fontWeight: "500"
+                        }}
+                      >
+                        {getItemCta(item)}
+                      </a>
+                    ) : (
+                      <Link
+                        href={item.href}
+                        style={{
+                          display: "inline-block",
+                          padding: "0.5rem 1rem",
+                          backgroundColor: "rgba(59, 130, 246, 0.2)",
+                          border: "1px solid rgba(59, 130, 246, 0.3)",
+                          borderRadius: "6px",
+                          color: "#3b82f6",
+                          textDecoration: "none",
+                          fontSize: "0.8rem",
+                          fontWeight: "500"
+                        }}
+                      >
+                        {getItemCta(item)}
+                      </Link>
+                    )
                   ) : item.status === "external_resource" ? (
                     <span
                       style={{
@@ -1369,7 +1523,7 @@ export function OperationsFileCabinetClient() {
                         fontWeight: "500"
                       }}
                     >
-                      External link →
+                      External link
                     </span>
                   ) : (
                     <span
@@ -1384,7 +1538,7 @@ export function OperationsFileCabinetClient() {
                         fontWeight: "500"
                       }}
                     >
-                      Coming soon
+                      Queued for build
                     </span>
                   )}
                 </div>
