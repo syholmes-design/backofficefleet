@@ -672,7 +672,7 @@ function PretripPacketPanel({ selected }: { selected: Load }) {
           <p className="mt-1 text-sm text-slate-400">Driver can see what is safe to proceed.</p>
         </div>
         <div className="rounded-lg border border-slate-800 bg-slate-950/65 p-4">
-          <p className="text-xs font-bold uppercase tracking-wide text-slate-500">Needs review</p>
+          <p className="text-xs font-bold uppercase tracking-wide text-slate-500">Open release items</p>
           <p className={`mt-2 text-lg font-black ${reviewCount ? "text-amber-300" : "text-emerald-300"}`}>{reviewCount}</p>
           <p className="mt-1 text-sm text-slate-400">Named blockers, not vague missing-document counts.</p>
         </div>

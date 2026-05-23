@@ -111,7 +111,7 @@ function getRiskStory(risk: OperationalRiskQueue) {
 
   if (type.includes("lumper") || type.includes("settlement") || type.includes("receipt")) {
     return {
-      headline: "Lumper QR closeout needs review",
+      headline: "Dock QR closeout missing payment proof",
       urgency: "The driver is not chasing paper. BOF needs dock-side QR authorization, empty-trailer proof, and Zelle payment confirmation tied to the load before settlement closes.",
       primaryLabel: "Open QR lumper workflow",
       primaryHref: `/shipper-portal/${loadId}#lumper-workflow`,

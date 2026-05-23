@@ -67,6 +67,49 @@ function riskStatusFromReasons(reasons: LoadRiskReason[]): LoadRiskStatus {
   return "needs_review";
 }
 
+function normalizeOperationalCopy(text: string): string {
+  return text.replace(/\s+â€”\s+/g, " - ").replace(/\s+—\s+/g, " - ").trim();
+}
+
+function driverHardBlockTitle(blocker: string): string {
+  const text = normalizeOperationalCopy(blocker);
+  if (/CDL/i.test(text)) return "CDL dispatch block";
+  if (/FMCSA|Clearinghouse/i.test(text)) return "FMCSA dispatch block";
+  if (/Medical/i.test(text)) return "Medical card dispatch block";
+  return `Driver dispatch block: ${text}`;
+}
+
+function driverSoftWarningTitle(warning: string): string {
+  const text = normalizeOperationalCopy(warning);
+  if (/Settlement|pay hold/i.test(text)) return "Settlement/pay hold affects dispatch";
+  if (/I-9/i.test(text)) return "I-9 missing from driver file";
+  if (/W-9/i.test(text)) return "W-9 missing from driver file";
+  if (/Bank|direct deposit|ACH/i.test(text)) return "Bank/payment setup incomplete";
+  if (/Safety tier/i.test(text)) return "Safety tier requires lane review";
+  if (/Open compliance/i.test(text)) return text.replace(/^Open compliance:\s*/i, "Compliance open: ");
+  if (/Medical/i.test(text)) return `Medical card ${text.replace(/^Medical\s*/i, "").toLowerCase()}`;
+  if (/MVR/i.test(text)) return "MVR requires dispatch verification";
+  if (/CDL expiring/i.test(text)) return "CDL expiration window approaching";
+  if (/FMCSA/i.test(text)) return "FMCSA status requires verification";
+  return `Driver file warning: ${text}`;
+}
+
+function driverSoftWarningFix(warning: string): string {
+  const text = normalizeOperationalCopy(warning);
+  if (/Settlement|pay hold/i.test(text)) {
+    return "Finance owner clears the pay/settlement hold or records an approved dispatch override.";
+  }
+  if (/I-9/i.test(text)) return "HR owner uploads the I-9 or records why it is not required before dispatch signoff.";
+  if (/W-9/i.test(text)) return "Finance owner uploads the W-9 before settlement or carrier payment release.";
+  if (/Bank|direct deposit|ACH/i.test(text)) {
+    return "Finance owner verifies payment instructions before settlement release.";
+  }
+  if (/Safety tier/i.test(text)) return "Safety owner reviews lane length and documents coaching status before long-haul assignment.";
+  if (/MVR/i.test(text)) return "Compliance owner verifies the MVR status before assigning premium or long-haul freight.";
+  if (/CDL|Medical|FMCSA|compliance/i.test(text)) return "Compliance owner verifies the credential and records disposition before assignment.";
+  return "Review the driver file warning and record the owner disposition before assigning restricted freight.";
+}
+
 export function getLoadRiskExplanation(
   data: BofData,
   loadId: string,
@@ -98,8 +141,8 @@ export function getLoadRiskExplanation(
         : hard.includes("compliance") || hard.includes("Medical") || hard.includes("MVR")
           ? "compliance"
           : "driver",
-      title: "Driver compliance block",
-      detail: `Assigned driver ${load.driverId}: ${hard}`,
+      title: driverHardBlockTitle(hard),
+      detail: `Assigned driver ${load.driverId}: ${normalizeOperationalCopy(hard)}`,
       whyItMatters:
         "Hard gates stop legal dispatch and revenue capture until the assigned driver record is brought current.",
       recommendedFix: "Open driver hub and clear hard blocker before dispatch.",
@@ -120,11 +163,11 @@ export function getLoadRiskExplanation(
         : soft.includes("compliance") || soft.includes("Card") || soft.includes("MVR")
           ? "compliance"
           : "driver",
-      title: "Driver needs review",
-      detail: `Assigned driver ${load.driverId}: ${soft}`,
+      title: driverSoftWarningTitle(soft),
+      detail: `Assigned driver ${load.driverId}: ${normalizeOperationalCopy(soft)}`,
       whyItMatters:
-        "Soft warnings often still block premium lanes and increase audit exposure until dispositioned.",
-      recommendedFix: "Review driver warning and clear before assigning premium lanes.",
+        "This does not always hard-stop dispatch, but it can block premium freight, settlement release, or customer-sensitive lanes until an owner signs off.",
+      recommendedFix: driverSoftWarningFix(soft),
       actionHref: `/drivers/${load.driverId}`,
       actionLabel: "Open Driver",
       clearableInDemo: true,
