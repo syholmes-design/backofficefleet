@@ -32,6 +32,7 @@ import { buildLoadArtifactPacket } from "@/lib/load-artifact-registry";
 import { getCarrierById, getCarrierForLoad, getCarrierPacketSummary } from "@/lib/carrier-registry";
 import { getCarrierDispatchGate, type CarrierDispatchGateTone } from "@/lib/carrier-dispatch-gates";
 import { getReloadOpportunitiesForLoad, getTopReloadRecommendations } from "@/lib/carrier-reload-intelligence";
+import { getOperationalThreadsForLoad, type DispatchOperationalThread, type DispatchThreadTone } from "@/lib/dispatch-operational-threads";
 import { formatMoney, loadStatusChipClass } from "./dispatch-ui";
 
 type AudienceView = "dispatcher" | "driver" | "manager" | "insurance";
@@ -216,6 +217,13 @@ function statusTone(status: "ready" | "warning" | "blocked" | "info") {
 }
 
 function carrierGateTone(tone: CarrierDispatchGateTone): "ready" | "warning" | "blocked" | "info" {
+  if (tone === "ready") return "ready";
+  if (tone === "blocked") return "blocked";
+  if (tone === "review") return "warning";
+  return "info";
+}
+
+function threadStatusTone(tone: DispatchThreadTone): "ready" | "warning" | "blocked" | "info" {
   if (tone === "ready") return "ready";
   if (tone === "blocked") return "blocked";
   if (tone === "review") return "warning";
@@ -548,6 +556,102 @@ function ExceptionResponsePanel({
               );
             })}
           </div>
+        </div>
+      ) : null}
+    </section>
+  );
+}
+
+function DispatchOperationalThreadPanel({
+  threads,
+  selected,
+}: {
+  threads: DispatchOperationalThread[];
+  selected: Load;
+}) {
+  const primary = threads[0];
+  const supporting = threads.slice(1, 4);
+
+  if (!primary) return null;
+
+  return (
+    <section className="rounded-xl border border-cyan-800/45 bg-slate-900/55 p-5">
+      <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+        <div>
+          <p className="text-xs font-bold uppercase tracking-[0.2em] text-cyan-300">Operational dispatch thread</p>
+          <h2 className="mt-2 text-2xl font-black text-white">{primary.title}</h2>
+          <p className="mt-2 max-w-4xl text-sm leading-6 text-slate-300">
+            BOF operating communication tied to load {selected.load_id}, carrier readiness, proof state, reload fit,
+            finance release, and customer consequences. Actions document the intended dispatch decision path.
+          </p>
+        </div>
+        <LinkButton href={primary.primaryAction.href} variant={primary.tone === "blocked" ? "danger" : "secondary"}>
+          {primary.primaryAction.label}
+        </LinkButton>
+      </div>
+
+      <div className="mt-5 grid gap-4 xl:grid-cols-[1.05fr_0.95fr]">
+        <article className={`rounded-xl border p-4 ${statusTone(threadStatusTone(primary.tone))}`}>
+          <div className="flex flex-wrap items-start justify-between gap-3">
+            <div>
+              <p className="font-mono text-xs font-black uppercase tracking-wide text-cyan-200">
+                {primary.reloadId ?? primary.loadId ?? primary.carrierId}
+              </p>
+              <h3 className="mt-2 text-lg font-black text-white">{primary.status}</h3>
+              <p className="mt-1 text-sm text-slate-200">Owner: {primary.nextOwner}</p>
+            </div>
+            <span className={`rounded-full border px-3 py-1 text-xs font-black ${statusTone(threadStatusTone(primary.tone))}`}>
+              {primary.type.replace(/_/g, " ")}
+            </span>
+          </div>
+          <div className="mt-4 grid gap-3 md:grid-cols-3">
+            <p className="rounded-lg bg-slate-950/60 px-3 py-2 text-xs leading-5 text-slate-200">{primary.dispatchConsequence}</p>
+            <p className="rounded-lg bg-slate-950/60 px-3 py-2 text-xs leading-5 text-slate-200">{primary.financeConsequence}</p>
+            <p className="rounded-lg bg-slate-950/60 px-3 py-2 text-xs leading-5 text-slate-200">{primary.customerConsequence}</p>
+          </div>
+          <div className="mt-4 flex flex-wrap gap-2">
+            {primary.simulatedActions.map((action) => (
+              <button
+                key={action}
+                type="button"
+                className="rounded-md border border-cyan-500/35 bg-cyan-950/30 px-3 py-2 text-xs font-bold text-cyan-100"
+              >
+                {action}
+              </button>
+            ))}
+          </div>
+        </article>
+
+        <div className="rounded-xl border border-slate-800 bg-slate-950/65 p-4">
+          <p className="text-xs font-bold uppercase tracking-[0.18em] text-slate-400">Thread log</p>
+          <div className="mt-3 space-y-3">
+            {primary.messages.map((message) => (
+              <div key={message.id} className="rounded-lg border border-slate-800 bg-slate-900/65 p-3">
+                <div className="flex items-center justify-between gap-3">
+                  <p className="text-xs font-bold text-cyan-200">{message.owner}</p>
+                  <p className="font-mono text-xs text-slate-500">{message.at}</p>
+                </div>
+                <p className="mt-2 text-sm leading-6 text-white">{message.message}</p>
+                <p className="mt-2 text-xs leading-5 text-slate-400">{message.consequence}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {supporting.length > 0 ? (
+        <div className="mt-4 grid gap-3 md:grid-cols-3">
+          {supporting.map((thread) => (
+            <Link
+              key={thread.id}
+              href={thread.primaryAction.href}
+              className={`rounded-lg border p-3 transition hover:-translate-y-0.5 hover:border-cyan-300/50 ${statusTone(threadStatusTone(thread.tone))}`}
+            >
+              <p className="text-xs font-black uppercase tracking-wide opacity-75">{thread.status}</p>
+              <p className="mt-2 text-sm font-bold text-white">{thread.title}</p>
+              <p className="mt-2 text-xs leading-5 opacity-90">{thread.messages[0]?.message}</p>
+            </Link>
+          ))}
         </div>
       ) : null}
     </section>
@@ -910,6 +1014,10 @@ export function DispatchBoardScreen() {
     );
     return [...selectedLoadReloads, ...fallback].slice(0, 4);
   }, [selected]);
+  const operationalThreads = useMemo(
+    () => (selected ? getOperationalThreadsForLoad(selected.load_id) : []),
+    [selected]
+  );
 
   useEffect(() => {
     setExceptionOpen(false);
@@ -1116,6 +1224,8 @@ export function DispatchBoardScreen() {
             </div>
           </div>
         </section>
+
+        <DispatchOperationalThreadPanel threads={operationalThreads} selected={selected} />
 
         <section className="rounded-xl border border-slate-800 bg-slate-900/45 p-5">
           <div className="flex flex-wrap items-end justify-between gap-4">

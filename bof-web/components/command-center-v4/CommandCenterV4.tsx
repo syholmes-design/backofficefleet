@@ -26,6 +26,7 @@ import { L008_CANONICAL_STORY, L009_CANONICAL_STORY, L011_CANONICAL_STORY } from
 import { getCarrierRegistry, getCarrierRegistryStats } from "@/lib/carrier-registry";
 import { getCarrierGateEscalations, getCarrierGateStats, type CarrierDispatchGateTone } from "@/lib/carrier-dispatch-gates";
 import { getReloadEscalations } from "@/lib/carrier-reload-intelligence";
+import { getCommandCenterOperationalActivity, type DispatchThreadTone } from "@/lib/dispatch-operational-threads";
 
 type RiskAction = {
   label: string;
@@ -351,6 +352,7 @@ export function CommandCenterV4() {
   const carrierGateStats = useMemo(() => getCarrierGateStats(carrierRecords), [carrierRecords]);
   const carrierEscalations = useMemo(() => getCarrierGateEscalations(carrierRecords), [carrierRecords]);
   const reloadEscalations = useMemo(() => getReloadEscalations(), []);
+  const operationalActivity = useMemo(() => getCommandCenterOperationalActivity(), []);
   const blockedCarrier = carrierRecords.find((carrier) => carrier.readinessStatus === "Blocked");
   const watchCarrier = carrierRecords.find((carrier) => carrier.readinessStatus === "Watch");
   const l011Carrier = carrierRecords.find((carrier) => carrier.recentLoads.includes("L011"));
@@ -442,6 +444,13 @@ export function CommandCenterV4() {
     if (tone === "blocked") return "border-red-400/35 bg-red-400/10 text-red-100";
     if (tone === "watch") return "border-sky-400/35 bg-sky-400/10 text-sky-100";
     return "border-amber-400/35 bg-amber-400/10 text-amber-100";
+  };
+
+  const getOperationalActivityClass = (tone: DispatchThreadTone) => {
+    if (tone === "ready") return "border-emerald-400/30 bg-emerald-400/10 text-emerald-100";
+    if (tone === "blocked") return "border-red-400/35 bg-red-400/10 text-red-100";
+    if (tone === "review") return "border-amber-400/35 bg-amber-400/10 text-amber-100";
+    return "border-cyan-400/35 bg-cyan-400/10 text-cyan-100";
   };
 
   // Get module icon
@@ -797,6 +806,44 @@ export function CommandCenterV4() {
                 <p className="mt-1 font-mono text-xs text-slate-300">{item.opportunityId}</p>
                 <p className="mt-2 text-xs leading-5 opacity-90">{item.impact}</p>
                 <p className="mt-2 text-xs leading-5 text-slate-200">Next: {item.nextAction}</p>
+              </Link>
+            ))}
+          </div>
+        </div>
+
+        {/* Operational Activity Feed */}
+        <div className="mt-6 rounded-xl border border-slate-800 bg-slate-900/50 p-6">
+          <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+            <div>
+              <h3 className="flex items-center gap-2 text-lg font-semibold text-white">
+                <Activity className="h-5 w-5 text-teal-300" />
+                Operational Activity Feed
+              </h3>
+              <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-400">
+                Dispatch communications are shown as operating decisions: reload releases, packet updates,
+                proof holds, finance clearance, and customer-release consequences.
+              </p>
+            </div>
+            <Link href="/dispatch" className="rounded-lg border border-teal-300/40 px-4 py-2 text-sm font-bold text-teal-100 hover:bg-teal-300/10">
+              Open dispatch thread
+            </Link>
+          </div>
+          <div className="mt-5 grid gap-3 lg:grid-cols-2">
+            {operationalActivity.map((item) => (
+              <Link
+                key={item.id}
+                href={item.href}
+                className={`rounded-lg border p-4 transition hover:-translate-y-0.5 hover:border-teal-300/50 ${getOperationalActivityClass(item.tone)}`}
+              >
+                <div className="flex flex-wrap items-start justify-between gap-3">
+                  <div>
+                    <p className="text-xs font-black uppercase tracking-[0.14em] opacity-75">{item.owner}</p>
+                    <p className="mt-2 text-base font-bold text-white">{item.title}</p>
+                  </div>
+                  <span className="rounded-full border border-white/15 px-2 py-1 text-xs font-bold">{item.tone}</span>
+                </div>
+                <p className="mt-3 text-sm leading-6 opacity-95">{item.summary}</p>
+                <p className="mt-2 text-xs leading-5 text-slate-200">Dispatch consequence: {item.consequence}</p>
               </Link>
             ))}
           </div>
