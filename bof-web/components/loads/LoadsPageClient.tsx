@@ -5,15 +5,12 @@ import { useMemo, useState } from "react";
 import { LoadsDispatchTable } from "@/components/LoadsDispatchTable";
 import { useBofDemoData } from "@/lib/bof-demo-data-context";
 import { OPS_COPY } from "@/lib/ops-copy";
-import { buildDispatchLoadsFromBofData } from "@/lib/dispatch-dashboard-seed";
 import { getDispatchCommandSummary } from "@/lib/dispatch/dispatch-command-metrics";
-import { DispatchRouteMapClient } from "@/components/dispatch/DispatchRouteMapClient";
 import { DispatchAttentionQueue } from "@/components/dispatch/DispatchAttentionQueue";
 
 export function LoadsPageClient() {
   const { data, resetDemoRiskOverrides } = useBofDemoData();
   const [selectedLoadId, setSelectedLoadId] = useState<string | undefined>();
-  const mapLoads = useMemo(() => buildDispatchLoadsFromBofData(data), [data]);
   const totals = useMemo(() => {
     const all = data.loads.length;
     const pending = data.loads.filter((l) => l.status === "Pending").length;
@@ -22,11 +19,17 @@ export function LoadsPageClient() {
     return { all, pending, inMotion, complete };
   }, [data.loads]);
   const dispatchFleet = useMemo(() => getDispatchCommandSummary(data), [data]);
+  const selectedLoad = useMemo(
+    () => data.loads.find((load) => load.id === selectedLoadId) ?? data.loads.find((load) => load.id === "L009") ?? data.loads[0],
+    [data.loads, selectedLoadId]
+  );
 
   return (
     <div className="bof-page">
-      <h1 className="bof-title">Loads / dispatch</h1>
-      <p className="bof-lead">{OPS_COPY.loadsLead}</p>
+      <h1 className="bof-title">Load lifecycle control</h1>
+      <p className="bof-lead">
+        Each load shows the operating trail from assignment to proof to settlement confidence. {OPS_COPY.loadsLead}
+      </p>
       <section className="bof-oper-metrics" aria-label="Dispatch summary">
         <div className="bof-oper-metric">
           <span className="bof-oper-metric-label">Total loads</span>
@@ -181,12 +184,34 @@ export function LoadsPageClient() {
             selectedLoadId={selectedLoadId}
             onSelectLoad={setSelectedLoadId}
           />
-          <DispatchRouteMapClient
-            loads={mapLoads}
-            selectedLoadId={selectedLoadId}
-            onSelectLoad={setSelectedLoadId}
-            mode="all"
-          />
+          <aside className="bof-oper-panel bof-oper-panel-tight" aria-label="Selected load route and proof review">
+            <div className="bof-cc-panel-head">
+              <h2 className="bof-h2">Route and proof review</h2>
+              <p className="bof-cc-panel-sub">
+                Select a load to open the operational record without loading the full dispatch map canvas.
+              </p>
+            </div>
+            {selectedLoad ? (
+              <div className="bof-cc-story-card">
+                <p className="bof-muted bof-small">Selected load</p>
+                <h3 className="bof-cc-story-title">{selectedLoad.id}</h3>
+                <p className="bof-cc-story-text">
+                  {selectedLoad.origin} to {selectedLoad.destination}. Status: {selectedLoad.status}.
+                </p>
+                <div style={{ display: "flex", flexWrap: "wrap", gap: "0.5rem", marginTop: "1rem" }}>
+                  <Link href={`/loads/${selectedLoad.id}`} className="bof-cc-action-btn">
+                    Open load record
+                  </Link>
+                  <Link href={`/pretrip/${selectedLoad.id}`} className="bof-cc-action-btn">
+                    Pre-trip packet
+                  </Link>
+                  <Link href="/dispatch" className="bof-cc-action-btn">
+                    Full dispatch map
+                  </Link>
+                </div>
+              </div>
+            ) : null}
+          </aside>
         </div>
       </section>
 

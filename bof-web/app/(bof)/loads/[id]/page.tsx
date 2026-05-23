@@ -133,7 +133,7 @@ export default async function LoadDetailPage({ params }: Props) {
             href={`/documents/template-packs?packId=driver-dispatch-readiness-v2&entityId=${load.id}`}
             className="bof-load-pretrip-link bof-link-secondary bof-small"
           >
-            Template packs
+            Packet controls
           </Link>
           <span className="bof-badge bof-badge-neutral">{load.status}</span>
           <span className="bof-badge bof-badge-neutral">POD: {load.podStatus}</span>
@@ -225,7 +225,7 @@ export default async function LoadDetailPage({ params }: Props) {
         context="dispatch_load"
         entityId={load.id}
         title="BOF Workflow Documents"
-        subtitle="Dispatch, intake, and field-operations templates for this load."
+        subtitle="Dispatch release, proof, claim, and finance documents tied to this load story."
       />
 
       {claimCtx && <ClaimPacketPanel ctx={claimCtx} />}

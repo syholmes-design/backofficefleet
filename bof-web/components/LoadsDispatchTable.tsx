@@ -189,16 +189,14 @@ export function LoadsDispatchTable({
       </table>
 
       {loadReviewId ? (
-        <tr>
-          <td colSpan={10}>
-            <LoadReviewInlinePanel
-              loadId={loadReviewId}
-              loadNumber={data.loads.find(l => l.id === loadReviewId)?.number || loadReviewId}
-              riskExplanation={getLoadRiskExplanation(data, loadReviewId)}
-              data={data}
-            />
-          </td>
-        </tr>
+        <div className="mt-4">
+          <LoadReviewInlinePanel
+            loadId={loadReviewId}
+            loadNumber={data.loads.find(l => l.id === loadReviewId)?.number || loadReviewId}
+            riskExplanation={getLoadRiskExplanation(data, loadReviewId)}
+            data={data}
+          />
+        </div>
       ) : null}
     </div>
   );

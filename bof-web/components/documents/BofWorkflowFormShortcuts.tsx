@@ -190,8 +190,8 @@ export function BofWorkflowFormShortcuts({
   }
 
   shortcuts.push({
-    label: "Internal Template Admin (full index)",
-    sub: "Browse every BOF form template — not the primary intake path",
+    label: "Packet Control Index",
+    sub: "Browse the supporting BOF forms tied to this workflow",
     href: `/documents/template-packs?entityId=${encodeURIComponent(eid)}`,
     kind: "workspace",
   });
@@ -200,11 +200,11 @@ export function BofWorkflowFormShortcuts({
   return (
     <section className={`${v} ${className}`.trim()} aria-label="BOF forms and packets">
       <div className="bof-wf-sh-head">
-        <h2 className="bof-wf-sh-title">{title ?? "BOF forms & packets — open and work here"}</h2>
+        <h2 className="bof-wf-sh-title">{title ?? "BOF forms & packets - open and work here"}</h2>
         <p className="bof-wf-sh-lead">
-          Start loads in <strong>Dispatch Load Intake</strong> (<code className="bof-code">/dispatch/intake</code>
-          ). Other cards open the BOF <strong>document viewer</strong> for generated packets and the load
-          tender. Internal template admin is labeled separately.
+          Start loads in <strong>Dispatch Packet Control</strong> (<code className="bof-code">/dispatch/intake</code>
+          ). Other cards open the BOF <strong>document viewer</strong> for packet records and the load
+          tender. Supporting controls are labeled separately.
         </p>
       </div>
       <ul className="bof-wf-sh-grid">

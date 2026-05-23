@@ -18,8 +18,8 @@ function canonicalDispatchIntakeHref(intakeId?: string): string {
 }
 
 /**
- * Primary CTA to BOF load intake (`/dispatch/intake`).
- * Optional link to the load tender in the document viewer for template-style editing.
+ * Primary CTA to BOF load packet control (`/dispatch/intake`).
+ * Optional link to the load tender in the document viewer for field review.
  */
 export function BofIntakeFormPrimaryPanel({ entityId, compact, intakeId }: Props) {
   const pathname = usePathname() ?? "";
@@ -40,12 +40,12 @@ export function BofIntakeFormPrimaryPanel({ entityId, compact, intakeId }: Props
       <div className="bof-intake-form-primary-inner">
         <div>
           <h2 id="bof-intake-form-primary-h" className="bof-intake-form-primary-title">
-            Load Intake Form
+            Load Packet Control
           </h2>
           <p className="bof-intake-form-primary-lead">
             {compact
-              ? "Dispatch Load Intake: shipper & facility, requirements, compliance & proof, review & packet, then save to the BOF dispatch pipeline."
-              : "The primary path is Dispatch → Load Intake — one wizard for manual entry, upload/parser, or client request. What you save flows into loads, assignments, proof, billing, and claims. Use the load tender in the document viewer only when you need template-style field editing for the same entity."}
+              ? "Dispatch packet control: shipper, facility, requirements, compliance, proof, release review, and packet ownership in one BOF workflow."
+              : "The primary path is Dispatch Packet Control — one workspace for manual entry, upload/parser review, or client request conversion. What you save flows into loads, assignments, proof, billing, and claims. Use the load tender in the document viewer when contract fields need review for the same entity."}
           </p>
           <ol className="bof-intake-form-primary-steps" aria-label="What happens next in BOF">
             <li>Shipper, facilities, lane, and equipment baseline</li>
@@ -63,9 +63,9 @@ export function BofIntakeFormPrimaryPanel({ entityId, compact, intakeId }: Props
               Load tender (document viewer)
             </Link>
             {" · "}
-            Internal template admin stays under{" "}
+            Supporting packet controls stay under{" "}
             <Link href="/documents/template-packs" className="bof-link-secondary">
-              Documents → Template packs
+              Documents
             </Link>
             .
           </p>

@@ -26,9 +26,11 @@ export function getDispatchAttentionItems(
   limit = 8
 ): DispatchAttentionRow[] {
   const items = buildCommandCenterItems(data);
-  const sorted = [...items].sort(
-    (a, b) => SEVERITY_ORDER[a.severity] - SEVERITY_ORDER[b.severity]
-  );
+  const sorted = [...items].sort((a, b) => {
+    const severityDelta = SEVERITY_ORDER[a.severity] - SEVERITY_ORDER[b.severity];
+    if (severityDelta !== 0) return severityDelta;
+    return `${a.bucket}:${a.id}:${a.title}`.localeCompare(`${b.bucket}:${b.id}:${b.title}`);
+  });
   return sorted.slice(0, limit).map((item) => ({
     id: item.id,
     bucket: item.bucket,

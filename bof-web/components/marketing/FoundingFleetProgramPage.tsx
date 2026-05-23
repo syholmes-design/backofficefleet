@@ -193,7 +193,7 @@ export default function FoundingFleetProgramPage() {
             <p className="bof-home-eyebrow">Apply Now</p>
             <h2>Request Founding Fleet Review</h2>
             <p className="mt-5 text-lg leading-8 text-[#2E3A45]">
-              This demo form is a front-end preview. Production submission handling can be connected later.
+              Share the operating profile your fleet wants BOF to enforce, then use the review with our team to scope the right founding-fleet partnership.
             </p>
           </div>
           <form className="rounded-3xl border border-slate-200 bg-slate-50 p-6 shadow-xl" aria-label="Demo Founding Fleet application form">
