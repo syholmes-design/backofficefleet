@@ -25,6 +25,8 @@ Purpose: prevent edits from landing in stale or non-rendered files by mapping ea
 | `/fleet-savings` | `app/(marketing)/fleet-savings/page.tsx` | `FleetSavingsPage` + `FleetSavingsCalculatorClient` | MARKETING | No hero image | Funnel calculator client | ACTIVE_ROUTE | Standalone tool page. |
 | `/apply` | `app/(marketing)/apply/page.tsx` | `ApplyPage` + `FleetApplicationWizardClient` | MARKETING | No hero image | Funnel application client | ACTIVE_ROUTE | Standalone qualification page. |
 | `/dashboard` | `app/(bof)/dashboard/page.tsx` | `DashboardPage` -> `DashboardPageClient` | DEMO | In-component product preview (`DashboardHeroProductPreview`), no hero image asset | `useBofDemoData()` from `BofDemoDataShell` seed; no direct `getBofData()` in route | ACTIVE_ROUTE | Demo app dashboard; separate from marketing home route. |
+| `/demo` | `app/(bof)/demo/page.tsx` | `DemoAccessPage` | DEMO | None | `lib/demo-access.ts` static guided demo metadata | ACTIVE_ROUTE | Role-based BOF demo entry and access tier framing. |
+| `/demo/walkthrough` | `app/(bof)/demo/walkthrough/page.tsx` | `DemoWalkthroughPage` | DEMO | None | `lib/demo-access.ts` static walkthrough metadata | ACTIVE_ROUTE | Guided operating-system walkthrough from triage to finance release. |
 | `/command-center` | `app/(bof)/command-center/page.tsx` | `CommandCenterPage` -> `CommandCenterPageClient` | DEMO | `CommandCenterExecutiveHeader` | `useBofDemoData()` | ACTIVE_ROUTE | Core demo operations queue. |
 | `/loads` | `app/(bof)/loads/page.tsx` | `LoadsPage` -> `LoadsPageClient` | DISPATCH | None | `useBofDemoData()` | ACTIVE_ROUTE | Dispatch/loads operational list. |
 | `/dispatch` | `app/(bof)/dispatch/page.tsx` | `DispatchPage` -> `DispatchShell` | DISPATCH | None | `useBofDemoData()` + dispatch store | ACTIVE_ROUTE | Canonical dispatch board shell. |
@@ -48,6 +50,8 @@ All discovered routes are active Next.js routes unless marked legacy redirect.
 | `/book-assessment` | `app/(marketing)/book-assessment/page.tsx` | `BookAssessmentPage` | MARKETING | ACTIVE_ROUTE |  |
 | `/command-center` | `app/(bof)/command-center/page.tsx` | `CommandCenterPage` | DEMO | ACTIVE_ROUTE |  |
 | `/dashboard` | `app/(bof)/dashboard/page.tsx` | `DashboardPage` | DEMO | ACTIVE_ROUTE |  |
+| `/demo` | `app/(bof)/demo/page.tsx` | `DemoAccessPage` | DEMO | ACTIVE_ROUTE | Role-based BOF demo entry and access tier framing. |
+| `/demo/walkthrough` | `app/(bof)/demo/walkthrough/page.tsx` | `DemoWalkthroughPage` | DEMO | ACTIVE_ROUTE | Guided operating-system walkthrough. |
 | `/dispatch` | `app/(bof)/dispatch/page.tsx` | `DispatchPage` | DISPATCH | ACTIVE_ROUTE |  |
 | `/dispatch/intake` | `app/(bof)/dispatch/intake/page.tsx` | `DispatchIntakePage` | DISPATCH | ACTIVE_ROUTE |  |
 | `/documents` | `app/(bof)/documents/page.tsx` | `DocumentsPage` | DRIVER_DOCS | ACTIVE_ROUTE |  |

@@ -8,6 +8,7 @@ import { BofLogo } from "@/components/BofLogo";
 import { getSectorLinks } from "@/lib/site-links";
 
 const productNav = [
+  { href: "/demo", label: "Demo" },
   { href: "/dashboard", label: "Dashboard" },
   { href: "/command-center", label: "Command Center" },
   { href: "/drivers", label: "Drivers" },
@@ -217,7 +218,7 @@ export function BofHeader() {
               </Link>
             ))}
             <Link href="/bof-vault">BOF Vault</Link>
-            <Link href="/dashboard" className="bof-global-header-nav-link">Product Demo</Link>
+            <Link href="/demo" className="bof-global-header-nav-link">Explore BOF</Link>
             <Link href="/portals" className="bof-global-header-nav-link">Portals</Link>
             <Link href="/book-assessment?source=header-marketing">Fleet Assessment</Link>
           </div>
