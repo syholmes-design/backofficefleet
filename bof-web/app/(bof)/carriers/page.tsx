@@ -52,7 +52,7 @@ export default function CarrierRegistryPage() {
           </div>
           <div className="rounded-xl border border-teal-400/30 bg-teal-400/10 p-4 text-sm text-teal-100">
             <strong className="block text-lg text-white">{stats.dispatchEligible} dispatch eligible</strong>
-            <span>Out of {stats.total} demo carrier records</span>
+            <span>Out of {stats.total} carrier readiness records</span>
           </div>
         </div>
       </section>

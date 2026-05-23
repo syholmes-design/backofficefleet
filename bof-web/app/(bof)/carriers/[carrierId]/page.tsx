@@ -17,7 +17,11 @@ import {
   type CarrierInsurancePolicy,
   type CarrierPacketItem,
 } from "@/lib/carrier-registry";
-import { formatEvidenceVisibility, getCarrierPacketEvidence } from "@/lib/carrier-packet-evidence";
+import {
+  formatEvidenceVisibility,
+  getCarrierPacketEvidence,
+  type CarrierPacketEvidenceStatus,
+} from "@/lib/carrier-packet-evidence";
 
 export const metadata = {
   title: "Carrier Profile | BOF",
@@ -57,6 +61,12 @@ function Pill({ className, children }: { className: string; children: React.Reac
 
 function formatInsuranceStatus(status: CarrierInsurancePolicy["status"]) {
   return status.replace(/_/g, " ");
+}
+
+function evidenceTone(status: CarrierPacketEvidenceStatus) {
+  if (status === "Blocked") return toneClasses.blocked;
+  if (status === "Renewal Watch" || status === "Review Required" || status === "Pending") return toneClasses.review;
+  return toneClasses.ready;
 }
 
 export default async function CarrierDetailPage({ params }: Props) {
@@ -376,11 +386,11 @@ export default async function CarrierDetailPage({ params }: Props) {
               >
                 <div className="flex items-start justify-between gap-3">
                   <h3 className="font-black text-white">{evidence.title}</h3>
-                  <Pill className={toneClasses.ready}>{evidence.status}</Pill>
+                  <Pill className={evidenceTone(evidence.status)}>{evidence.status}</Pill>
                 </div>
                 <p className="mt-2 text-sm leading-6 text-slate-400">{evidence.packetRole}</p>
                 <p className="mt-3 text-xs font-bold uppercase tracking-wide text-slate-500">
-                  {formatEvidenceVisibility(evidence.visibility)} · {evidence.expirationOrReview}
+                  {formatEvidenceVisibility(evidence.visibility)} - {evidence.expirationOrReview}
                 </p>
               </Link>
             ))}

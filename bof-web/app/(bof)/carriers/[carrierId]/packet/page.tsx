@@ -16,7 +16,11 @@ import {
   getCarrierStatusTone,
   type CarrierPacketItem,
 } from "@/lib/carrier-registry";
-import { formatEvidenceVisibility, getCarrierPacketEvidence } from "@/lib/carrier-packet-evidence";
+import {
+  formatEvidenceVisibility,
+  getCarrierPacketEvidence,
+  type CarrierPacketEvidenceStatus,
+} from "@/lib/carrier-packet-evidence";
 
 export const metadata = {
   title: "Carrier Packet Preview | BOF",
@@ -38,6 +42,12 @@ const itemTone: Record<CarrierPacketItem["status"], string> = {
   expiring: "border-orange-400/40 bg-orange-400/10 text-orange-200",
   blocked: "border-red-400/40 bg-red-400/10 text-red-200",
 };
+
+function evidenceTone(status: CarrierPacketEvidenceStatus) {
+  if (status === "Blocked") return toneClasses.blocked;
+  if (status === "Renewal Watch" || status === "Review Required" || status === "Pending") return toneClasses.review;
+  return toneClasses.ready;
+}
 
 const customerSafeDocs = [
   {
@@ -235,7 +245,7 @@ export default async function CarrierPacketPreviewPage({ params }: Props) {
               >
                 <div className="flex items-start justify-between gap-3">
                   <h3 className="font-black text-white">{evidence.title}</h3>
-                  <Pill className={itemTone.ready}>{evidence.status}</Pill>
+                  <Pill className={evidenceTone(evidence.status)}>{evidence.status}</Pill>
                 </div>
                 <p className="mt-3 text-sm leading-6 text-slate-400">{evidence.customerSafeSummary}</p>
                 <div className="mt-3 rounded-lg border border-slate-800 bg-slate-950/60 p-3">

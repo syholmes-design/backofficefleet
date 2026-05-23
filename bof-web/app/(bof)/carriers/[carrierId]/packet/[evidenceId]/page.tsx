@@ -13,6 +13,7 @@ import {
   formatEvidenceVisibility,
   getAllCarrierPacketEvidenceParams,
   getCarrierPacketEvidenceById,
+  type CarrierPacketEvidenceStatus,
 } from "@/lib/carrier-packet-evidence";
 
 export const metadata = {
@@ -22,15 +23,21 @@ export const metadata = {
 
 type Props = { params: Promise<{ carrierId: string; evidenceId: string }> };
 
-const statusClass = "border-emerald-400/40 bg-emerald-400/10 text-emerald-200";
+function evidenceStatusClass(status: CarrierPacketEvidenceStatus) {
+  if (status === "Blocked") return "border-red-400/40 bg-red-400/10 text-red-200";
+  if (status === "Renewal Watch" || status === "Review Required" || status === "Pending") {
+    return "border-amber-400/40 bg-amber-400/10 text-amber-200";
+  }
+  return "border-emerald-400/40 bg-emerald-400/10 text-emerald-200";
+}
 
 export function generateStaticParams() {
   return getAllCarrierPacketEvidenceParams();
 }
 
-function Pill({ children }: { children: React.ReactNode }) {
+function Pill({ children, className }: { children: React.ReactNode; className: string }) {
   return (
-    <span className={`inline-flex rounded-full border px-3 py-1 text-xs font-bold uppercase tracking-[0.14em] ${statusClass}`}>
+    <span className={`inline-flex rounded-full border px-3 py-1 text-xs font-bold uppercase tracking-[0.14em] ${className}`}>
       {children}
     </span>
   );
@@ -61,7 +68,7 @@ export default async function CarrierPacketEvidencePage({ params }: Props) {
           <div>
             <div className="flex flex-wrap items-center gap-2">
               <p className="text-xs font-black uppercase tracking-[0.28em] text-teal-300">{carrier.id} packet evidence</p>
-              <Pill>{evidence.status}</Pill>
+              <Pill className={evidenceStatusClass(evidence.status)}>{evidence.status}</Pill>
             </div>
             <h1 className="mt-3 text-4xl font-black tracking-tight text-white md:text-5xl">{evidence.title}</h1>
             <p className="mt-3 text-lg text-slate-300">{carrier.legalName}</p>
@@ -94,7 +101,7 @@ export default async function CarrierPacketEvidencePage({ params }: Props) {
           <div className="border-b border-slate-200 pb-4">
             <p className="text-xs font-black uppercase tracking-[0.24em] text-teal-700">Delta Advanced Trucking, Inc.</p>
             <h2 className="mt-2 text-3xl font-black">{evidence.title}</h2>
-            <p className="mt-2 text-sm text-slate-600">Static BOF carrier packet preview record</p>
+            <p className="mt-2 text-sm text-slate-600">Controlled BOF carrier packet record</p>
           </div>
 
           <dl className="mt-5 grid gap-3 md:grid-cols-2">
@@ -131,8 +138,8 @@ export default async function CarrierPacketEvidencePage({ params }: Props) {
           <div className="rounded-2xl border border-teal-400/30 bg-teal-400/10 p-5">
             <h2 className="text-xl font-black text-white">BOF packet control</h2>
             <p className="mt-2 text-sm leading-6 text-teal-50">
-              This preview ties one carrier document to dispatch eligibility, customer release, and L011 finance readiness
-              without exposing live integrations, uploads, or production credentials.
+              This preview ties one carrier document to dispatch eligibility, customer release, and finance readiness
+              while keeping sensitive carrier controls separated from customer-safe evidence.
             </p>
             <div className="mt-4 flex flex-wrap gap-2">
               <Link href="/dispatch" className="rounded-lg border border-teal-300/50 px-4 py-2 text-sm font-bold text-teal-100 hover:bg-teal-300/10">
