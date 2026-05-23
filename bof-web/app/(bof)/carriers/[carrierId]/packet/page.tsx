@@ -16,6 +16,7 @@ import {
   getCarrierStatusTone,
   type CarrierPacketItem,
 } from "@/lib/carrier-registry";
+import { formatEvidenceVisibility, getCarrierPacketEvidence } from "@/lib/carrier-packet-evidence";
 
 export const metadata = {
   title: "Carrier Packet Preview | BOF",
@@ -109,6 +110,7 @@ export default async function CarrierPacketPreviewPage({ params }: Props) {
 
   const packet = getCarrierPacketSummary(carrier);
   const readinessTone = getCarrierStatusTone(carrier.readinessStatus);
+  const evidenceRecords = getCarrierPacketEvidence(carrier.id);
 
   return (
     <div className="bof-page">
@@ -212,6 +214,42 @@ export default async function CarrierPacketPreviewPage({ params }: Props) {
           })}
         </div>
       </section>
+
+      {evidenceRecords.length > 0 ? (
+        <section className="mt-6 rounded-2xl border border-slate-700 bg-slate-950/70 p-5">
+          <div className="flex flex-col gap-2 md:flex-row md:items-end md:justify-between">
+            <div>
+              <h2 className="text-2xl font-black text-white">Packet evidence previews</h2>
+              <p className="mt-1 text-sm text-slate-400">
+                Document-level evidence behind this customer-safe carrier packet. Sensitive fields remain masked or internal.
+              </p>
+            </div>
+            <Pill className={toneClasses.ready}>{evidenceRecords.length} records</Pill>
+          </div>
+          <div className="mt-5 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+            {evidenceRecords.map((evidence) => (
+              <Link
+                key={evidence.id}
+                href={`/carriers/${carrier.id}/packet/${evidence.id}`}
+                className="rounded-xl border border-slate-800 bg-slate-900/80 p-4 transition hover:border-teal-400/60 hover:bg-slate-900"
+              >
+                <div className="flex items-start justify-between gap-3">
+                  <h3 className="font-black text-white">{evidence.title}</h3>
+                  <Pill className={itemTone.ready}>{evidence.status}</Pill>
+                </div>
+                <p className="mt-3 text-sm leading-6 text-slate-400">{evidence.customerSafeSummary}</p>
+                <div className="mt-3 rounded-lg border border-slate-800 bg-slate-950/60 p-3">
+                  <p className="text-xs font-bold uppercase tracking-wide text-slate-500">
+                    {formatEvidenceVisibility(evidence.visibility)}
+                  </p>
+                  <p className="mt-1 text-sm text-slate-300">{evidence.expirationOrReview}</p>
+                  <p className="mt-2 text-xs leading-5 text-teal-100/80">{evidence.dispatchRelevance}</p>
+                </div>
+              </Link>
+            ))}
+          </div>
+        </section>
+      ) : null}
 
       <section id="customer-safe" className="mt-6 grid gap-6 xl:grid-cols-[1fr_0.8fr]">
         <div className="rounded-2xl border border-slate-700 bg-slate-950/70 p-5">

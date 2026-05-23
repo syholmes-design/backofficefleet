@@ -17,6 +17,7 @@ import {
   type CarrierInsurancePolicy,
   type CarrierPacketItem,
 } from "@/lib/carrier-registry";
+import { formatEvidenceVisibility, getCarrierPacketEvidence } from "@/lib/carrier-packet-evidence";
 
 export const metadata = {
   title: "Carrier Profile | BOF",
@@ -68,6 +69,7 @@ export default async function CarrierDetailPage({ params }: Props) {
 
   const packet = getCarrierPacketSummary(carrier);
   const readinessTone = getCarrierStatusTone(carrier.readinessStatus);
+  const evidenceRecords = getCarrierPacketEvidence(carrier.id);
 
   return (
     <div className="bof-page">
@@ -351,6 +353,40 @@ export default async function CarrierDetailPage({ params }: Props) {
           </div>
         )}
       </section>
+
+      {evidenceRecords.length > 0 ? (
+        <section className="mt-6 rounded-2xl border border-slate-700 bg-slate-950/70 p-5">
+          <div className="flex flex-col gap-2 md:flex-row md:items-end md:justify-between">
+            <div>
+              <h2 className="text-2xl font-black text-white">Carrier packet evidence</h2>
+              <p className="mt-1 text-sm text-slate-400">
+                Static packet previews used by dispatch, finance, compliance, and customer release review.
+              </p>
+            </div>
+            <Link href={`/carriers/${carrier.id}/packet`} className="rounded-lg border border-teal-300/50 px-4 py-2 text-sm font-bold text-teal-100 hover:bg-teal-300/10">
+              Review full packet
+            </Link>
+          </div>
+          <div className="mt-5 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+            {evidenceRecords.map((evidence) => (
+              <Link
+                key={evidence.id}
+                href={`/carriers/${carrier.id}/packet/${evidence.id}`}
+                className="rounded-xl border border-slate-800 bg-slate-900/80 p-4 transition hover:border-teal-400/60 hover:bg-slate-900"
+              >
+                <div className="flex items-start justify-between gap-3">
+                  <h3 className="font-black text-white">{evidence.title}</h3>
+                  <Pill className={toneClasses.ready}>{evidence.status}</Pill>
+                </div>
+                <p className="mt-2 text-sm leading-6 text-slate-400">{evidence.packetRole}</p>
+                <p className="mt-3 text-xs font-bold uppercase tracking-wide text-slate-500">
+                  {formatEvidenceVisibility(evidence.visibility)} · {evidence.expirationOrReview}
+                </p>
+              </Link>
+            ))}
+          </div>
+        </section>
+      ) : null}
 
       <section className="mt-6 rounded-2xl border border-teal-400/30 bg-teal-400/10 p-5">
         <h2 className="text-xl font-black text-white">BOF dispatch eligibility explanation</h2>
