@@ -259,6 +259,69 @@ export default async function CarrierDetailPage({ params }: Props) {
         </div>
       </section>
 
+      <section id="carrier-loads" className="mt-6 rounded-2xl border border-slate-700 bg-slate-950/70 p-5">
+        <div className="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
+          <div>
+            <h2 className="text-2xl font-black text-white">Carrier packet action links</h2>
+            <p className="mt-1 text-sm text-slate-400">
+              Dispatch, finance, and document teams use this packet before assigning freight or releasing payment.
+            </p>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            <Link href="/dispatch" className="rounded-lg border border-teal-300/50 px-4 py-2 text-sm font-bold text-teal-100 hover:bg-teal-300/10">
+              Check dispatch eligibility
+            </Link>
+            <Link href="/settlements" className="rounded-lg border border-slate-500 px-4 py-2 text-sm font-bold text-slate-100 hover:bg-slate-800">
+              Review settlement impact
+            </Link>
+          </div>
+        </div>
+
+        <div className="mt-4 grid gap-3 md:grid-cols-3">
+          {carrier.recentLoads.length > 0 ? (
+            carrier.recentLoads.map((loadId) => (
+              <Link
+                key={loadId}
+                href={`/loads/${loadId}`}
+                className="rounded-xl border border-slate-800 bg-slate-900/80 p-4 transition hover:border-teal-400/60 hover:bg-slate-900"
+              >
+                <p className="font-mono text-sm font-black text-teal-300">{loadId}</p>
+                <p className="mt-2 text-sm font-semibold text-white">
+                  {loadId === "L011" ? "Finance / factoring packet tie-in" : "Recent dispatch packet"}
+                </p>
+                <p className="mt-1 text-xs leading-5 text-slate-400">
+                  {loadId === "L011"
+                    ? "Carrier readiness supports invoice, BOL, POD, proof packet, and factoring review."
+                    : "Open the load record tied to this carrier readiness profile."}
+                </p>
+              </Link>
+            ))
+          ) : (
+            <div className="rounded-xl border border-slate-800 bg-slate-900/80 p-4 text-sm text-slate-300">
+              No recent BOF demo loads are assigned to this carrier yet.
+            </div>
+          )}
+        </div>
+
+        {carrier.recentLoads.includes("L011") && (
+          <div className="mt-4 rounded-xl border border-emerald-400/30 bg-emerald-400/10 p-4">
+            <p className="text-sm font-black uppercase tracking-[0.16em] text-emerald-200">L011 finance handoff</p>
+            <p className="mt-2 max-w-3xl text-sm leading-6 text-emerald-50">
+              L011 shows why carrier packet control matters after delivery: finance needs the carrier agreement,
+              W-9, payment instructions, proof packet, and factoring support aligned before the packet can move cleanly.
+            </p>
+            <div className="mt-3 flex flex-wrap gap-2">
+              <Link href="/loads/L011" className="rounded-lg border border-emerald-300/50 px-4 py-2 text-sm font-bold text-emerald-100 hover:bg-emerald-300/10">
+                Open L011 load file
+              </Link>
+              <Link href="/settlements" className="rounded-lg border border-emerald-300/50 px-4 py-2 text-sm font-bold text-emerald-100 hover:bg-emerald-300/10">
+                Open factoring review
+              </Link>
+            </div>
+          </div>
+        )}
+      </section>
+
       <section className="mt-6 rounded-2xl border border-teal-400/30 bg-teal-400/10 p-5">
         <h2 className="text-xl font-black text-white">BOF dispatch eligibility explanation</h2>
         <p className="mt-2 text-sm leading-6 text-teal-50">{getCarrierDispatchExplanation(carrier)}</p>

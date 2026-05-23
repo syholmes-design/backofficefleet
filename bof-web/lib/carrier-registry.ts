@@ -350,6 +350,10 @@ export function getCarrierById(carrierId: string): CarrierRecord | undefined {
   return carrierRegistry.find((carrier) => carrier.id.toLowerCase() === carrierId.toLowerCase());
 }
 
+export function getCarrierForLoad(loadId: string): CarrierRecord {
+  return carrierRegistry.find((carrier) => carrier.recentLoads.includes(loadId)) ?? carrierRegistry[0]!;
+}
+
 export function getCarrierPacketSummary(carrier: CarrierRecord) {
   const total = carrier.packetItems.length;
   const ready = carrier.packetItems.filter((item) => item.status === "ready").length;

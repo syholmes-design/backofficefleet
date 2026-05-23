@@ -11,6 +11,7 @@ const productNav = [
   { href: "/dashboard", label: "Dashboard" },
   { href: "/command-center", label: "Command Center" },
   { href: "/drivers", label: "Drivers" },
+  { href: "/carriers", label: "Carriers" },
   { href: "/documents", label: "Documents" },
   { href: "/settlements", label: "Settlements" },
   { href: "/safety", label: "Safety" },

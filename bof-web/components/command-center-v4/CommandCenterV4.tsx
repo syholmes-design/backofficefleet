@@ -23,6 +23,7 @@ import { getV3OperationalData, isV3DataAvailable } from "@/lib/v3-operational-lo
 import { formatDisplayDate } from "@/lib/date-utils";
 import type { OperationalRiskQueue, V3OperationalData } from "@/lib/v3-operational-types";
 import { L008_CANONICAL_STORY, L009_CANONICAL_STORY, L011_CANONICAL_STORY } from "@/lib/canonical-load-stories";
+import { getCarrierRegistry, getCarrierRegistryStats } from "@/lib/carrier-registry";
 
 type RiskAction = {
   label: string;
@@ -343,6 +344,7 @@ export function CommandCenterV4() {
       risksByModule,
     };
   }, [operationalRisks]);
+  const carrierStats = useMemo(() => getCarrierRegistryStats(getCarrierRegistry()), []);
 
   // Filter risks by module
   const filteredRisks = useMemo(() => {
@@ -683,8 +685,51 @@ export function CommandCenterV4() {
               <FileText className="w-3 h-3" />
               <span>Post-trip factoring packets include invoice, rate confirmation, BOL, POD, seal verification, and accessorial support documents</span>
             </div>
+            <div className="mt-2">
+              <Link href="/carriers/CAR-001" className="font-semibold text-teal-300 hover:text-teal-200">
+                L011 carrier packet control: Delta Advanced Trucking readiness supports the factoring handoff.
+              </Link>
+            </div>
           </div>
         </div>
+
+        {/* Carrier Readiness */}
+        <Link
+          href="/carriers"
+          className="mt-6 block rounded-xl border border-slate-800 bg-slate-900/50 p-6 transition hover:-translate-y-0.5 hover:border-teal-300/50 hover:bg-slate-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-300"
+        >
+          <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+            <div>
+              <h3 className="flex items-center gap-2 text-lg font-semibold text-white">
+                <Truck className="h-5 w-5 text-teal-300" />
+                Carrier Readiness
+              </h3>
+              <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-400">
+                Carrier packet gates now sit beside driver, load, proof, and settlement controls. Dispatch cannot use
+                a carrier with expired insurance, missing W-9, unsigned agreement, or unresolved authority review.
+              </p>
+            </div>
+            <div className="grid min-w-full grid-cols-2 gap-3 sm:grid-cols-4 lg:min-w-[520px]">
+              <div className="rounded-lg border border-slate-700 bg-slate-950/50 p-3">
+                <div className="text-2xl font-bold text-white">{carrierStats.total}</div>
+                <div className="text-xs text-slate-500">Carriers</div>
+              </div>
+              <div className="rounded-lg border border-emerald-400/30 bg-emerald-400/10 p-3">
+                <div className="text-2xl font-bold text-emerald-300">{carrierStats.dispatchEligible}</div>
+                <div className="text-xs text-emerald-100/70">Dispatch eligible</div>
+              </div>
+              <div className="rounded-lg border border-amber-400/30 bg-amber-400/10 p-3">
+                <div className="text-2xl font-bold text-amber-300">{carrierStats.watch + carrierStats.review}</div>
+                <div className="text-xs text-amber-100/70">Watch / review</div>
+              </div>
+              <div className="rounded-lg border border-red-400/30 bg-red-400/10 p-3">
+                <div className="text-2xl font-bold text-red-300">{carrierStats.blocked}</div>
+                <div className="text-xs text-red-100/70">Blocked</div>
+              </div>
+            </div>
+          </div>
+          <div className="mt-4 text-sm font-semibold text-teal-300">Open Carrier Registry</div>
+        </Link>
 
         {/* Impact Analysis */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">

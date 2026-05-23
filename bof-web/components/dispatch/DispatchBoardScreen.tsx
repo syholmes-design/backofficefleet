@@ -29,6 +29,7 @@ import { getDispatchCommandSummary } from "@/lib/dispatch/dispatch-command-metri
 import { buildTripDocumentPacket } from "@/lib/load-trip-packet";
 import { buildPretripTabletModel } from "@/lib/pretrip-tablet";
 import { buildLoadArtifactPacket } from "@/lib/load-artifact-registry";
+import { getCarrierForLoad, getCarrierPacketSummary } from "@/lib/carrier-registry";
 import { formatMoney, loadStatusChipClass } from "./dispatch-ui";
 
 type AudienceView = "dispatcher" | "driver" | "manager" | "insurance";
@@ -883,12 +884,17 @@ export function DispatchBoardScreen() {
   const selected = selectedRow?.load ?? null;
   const actionRows = rows.filter((row) => row.needsAction);
   const readyRows = rows.filter((row) => !row.needsAction);
+  const selectedCarrier = useMemo(() => (selected ? getCarrierForLoad(selected.load_id) : null), [selected]);
+  const selectedCarrierPacket = useMemo(
+    () => (selectedCarrier ? getCarrierPacketSummary(selectedCarrier) : null),
+    [selectedCarrier]
+  );
 
   useEffect(() => {
     setExceptionOpen(false);
   }, [selectedLoadId]);
 
-  if (!mounted || !selected || !selectedRow) {
+  if (!mounted || !selected || !selectedRow || !selectedCarrier || !selectedCarrierPacket) {
     return (
       <div className="flex min-h-[50vh] items-center justify-center p-8 text-slate-300">
         Loading dispatch command center...
@@ -923,6 +929,7 @@ export function DispatchBoardScreen() {
             <div className="mt-7 flex flex-wrap gap-3">
               <LinkButton href={`/pretrip/${selected.load_id}`}>Open pre-trip packet</LinkButton>
               <LinkButton href={`/trip-release/${selected.load_id}`} variant="secondary">Review trip release</LinkButton>
+              <LinkButton href={`/carriers/${selectedCarrier.id}`} variant="secondary">Carrier packet</LinkButton>
               <LinkButton href="/dispatch/intake" variant="secondary">Open trip packet workspace</LinkButton>
             </div>
             <div className="mt-5 rounded-xl border border-white/10 bg-slate-950/80 p-3 shadow-2xl backdrop-blur">
@@ -938,6 +945,9 @@ export function DispatchBoardScreen() {
                 </Link>
                 <Link href={`/shipper-portal/${selected.load_id}`} className="rounded-md border border-slate-700 bg-slate-900 px-3 py-2 text-sm font-bold text-slate-100 hover:border-teal-500 hover:text-teal-100">
                   Customer proof
+                </Link>
+                <Link href={`/carriers/${selectedCarrier.id}`} className="rounded-md border border-slate-700 bg-slate-900 px-3 py-2 text-sm font-bold text-slate-100 hover:border-teal-500 hover:text-teal-100">
+                  Carrier readiness
                 </Link>
                 {isExceptionActive(selectedRow) ? (
                   <button
@@ -1017,6 +1027,16 @@ export function DispatchBoardScreen() {
                 <p className="text-xs font-bold uppercase tracking-wide text-slate-500">Next action</p>
                 <p className="mt-2 text-base font-bold text-white">{selectedRow.recommendedAction}</p>
               </div>
+              <Link
+                href={`/carriers/${selectedCarrier.id}`}
+                className="rounded-lg border border-teal-500/30 bg-teal-950/25 p-4 transition hover:border-teal-300/70 hover:bg-teal-950/45"
+              >
+                <p className="text-xs font-bold uppercase tracking-wide text-teal-300">Carrier eligibility</p>
+                <p className="mt-2 text-lg font-bold text-white">{selectedCarrier.dba}</p>
+                <p className="text-sm text-slate-300">
+                  {selectedCarrier.dispatchEligibility} · packet {selectedCarrierPacket.percent}%
+                </p>
+              </Link>
             </div>
 
             {selectedRow.missingLabels.length > 0 ? (
@@ -1035,6 +1055,7 @@ export function DispatchBoardScreen() {
 
             <div className="mt-5 flex flex-wrap gap-3">
               <LinkButton href={`/loads/${selected.load_id}`} variant="secondary">Open load file</LinkButton>
+              <LinkButton href={`/carriers/${selectedCarrier.id}`} variant="secondary">Open carrier packet</LinkButton>
               <LinkButton href={`/drivers/${selected.driver_id ?? "DRV-001"}`} variant="secondary">Open driver file</LinkButton>
               <LinkButton href={`/shipper-portal/${selected.load_id}`} variant="secondary">Customer proof view</LinkButton>
               {isExceptionActive(selectedRow) ? (
@@ -1131,6 +1152,7 @@ export function DispatchBoardScreen() {
                   <Link href={`/trip-release/${row.load.load_id}`} className="rounded-md border border-slate-700 px-3 py-2 text-sm font-bold text-slate-100 hover:border-teal-500 hover:text-teal-100">Trip release page</Link>
                   <Link href={`/drivers/${row.load.driver_id ?? "DRV-001"}`} className="rounded-md border border-slate-700 px-3 py-2 text-sm font-bold text-slate-100 hover:border-teal-500 hover:text-teal-100">Driver page</Link>
                   <Link href={`/loads/${row.load.load_id}`} className="rounded-md border border-slate-700 px-3 py-2 text-sm font-bold text-slate-100 hover:border-teal-500 hover:text-teal-100">Manager load page</Link>
+                  <Link href={`/carriers/${getCarrierForLoad(row.load.load_id).id}`} className="rounded-md border border-slate-700 px-3 py-2 text-sm font-bold text-slate-100 hover:border-teal-500 hover:text-teal-100">Carrier packet</Link>
                   {row.load.insurance_claim_needed ? (
                     <Link href={`/loads/${row.load.load_id}`} className="rounded-md border border-rose-600/60 bg-rose-950/55 px-3 py-2 text-sm font-bold text-rose-100 hover:bg-rose-900">Insurance review</Link>
                   ) : null}
