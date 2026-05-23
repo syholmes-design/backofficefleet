@@ -268,6 +268,9 @@ export default async function CarrierDetailPage({ params }: Props) {
             </p>
           </div>
           <div className="flex flex-wrap gap-2">
+            <Link href={`/carriers/${carrier.id}/packet`} className="rounded-lg border border-teal-300/50 px-4 py-2 text-sm font-bold text-teal-100 hover:bg-teal-300/10">
+              Preview customer packet
+            </Link>
             <Link href="/dispatch" className="rounded-lg border border-teal-300/50 px-4 py-2 text-sm font-bold text-teal-100 hover:bg-teal-300/10">
               Check dispatch eligibility
             </Link>
@@ -328,6 +331,9 @@ export default async function CarrierDetailPage({ params }: Props) {
         <div className="mt-4 flex flex-wrap gap-3">
           <Link href="/dispatch" className="rounded-lg border border-teal-300/50 px-4 py-2 text-sm font-bold text-teal-100 hover:bg-teal-300/10">
             Open dispatch
+          </Link>
+          <Link href={`/carriers/${carrier.id}/packet`} className="rounded-lg border border-teal-300/50 px-4 py-2 text-sm font-bold text-teal-100 hover:bg-teal-300/10">
+            Preview carrier packet
           </Link>
           <Link href="/documents" className="rounded-lg border border-slate-500 px-4 py-2 text-sm font-bold text-slate-100 hover:bg-slate-800">
             Open document cabinet
