@@ -17,6 +17,9 @@ export const metadata = {
 export default function DemoWalkthroughPage() {
   const steps = getDemoWalkthroughSteps();
   const personas = getDemoPersonas();
+  const configuredCalendlyUrl = process.env.NEXT_PUBLIC_CALENDLY_URL?.trim();
+  const calendlyUrl =
+    configuredCalendlyUrl && configuredCalendlyUrl.startsWith("https://") ? configuredCalendlyUrl : "";
 
   return (
     <div className="bof-page">
@@ -45,7 +48,82 @@ export default function DemoWalkthroughPage() {
               <Link href="/demo" className="rounded-lg border border-teal-300/50 px-4 py-2 text-sm font-black text-teal-100 hover:bg-teal-400/10">
                 Back to demo paths
               </Link>
+              <Link href="#schedule" className="rounded-lg border border-sky-300/50 px-4 py-2 text-sm font-black text-sky-100 hover:bg-sky-400/10">
+                Schedule walkthrough
+              </Link>
             </div>
+          </div>
+        </div>
+      </section>
+
+      <section
+        id="schedule"
+        className="mt-8 overflow-hidden rounded-2xl border border-sky-400/30 bg-slate-950/80 shadow-2xl shadow-black/20"
+        aria-labelledby="schedule-heading"
+      >
+        <div className="grid gap-0 lg:grid-cols-[0.85fr_1.15fr]">
+          <div className="p-6 md:p-8">
+            <p className="text-xs font-black uppercase tracking-[0.24em] text-sky-300">Guided scheduling</p>
+            <h2 id="schedule-heading" className="mt-3 text-3xl font-black text-white">
+              Schedule Guided BOF Operations Walkthrough
+            </h2>
+            <p className="mt-4 text-sm leading-7 text-slate-300">
+              Use this session to walk through the operating story in order: command-center escalations, dispatch
+              workflow, carrier readiness, reload intelligence, finance and factoring release, and packet evidence.
+            </p>
+            <div className="mt-5 grid gap-3">
+              {[
+                "Dispatch workflow and proof gates",
+                "Carrier readiness and packet consequences",
+                "Reload intelligence and assignment risk",
+                "Finance, factoring, and customer release readiness",
+                "Command-center escalation ownership",
+              ].map((item) => (
+                <div key={item} className="rounded-xl border border-slate-800 bg-slate-900/70 p-3 text-sm font-semibold text-slate-200">
+                  {item}
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="border-t border-slate-800 bg-slate-900/70 p-5 lg:border-l lg:border-t-0 md:p-6">
+            {calendlyUrl ? (
+              <div className="overflow-hidden rounded-2xl border border-slate-700 bg-white">
+                <iframe
+                  src={calendlyUrl}
+                  title="Schedule Guided BOF Operations Walkthrough"
+                  className="h-[680px] w-full"
+                  loading="lazy"
+                />
+              </div>
+            ) : (
+              <div className="flex min-h-[420px] flex-col justify-between rounded-2xl border border-sky-400/30 bg-sky-400/10 p-6">
+                <div>
+                  <p className="text-sm font-black uppercase tracking-[0.18em] text-sky-200">Calendar-ready CTA</p>
+                  <h3 className="mt-4 text-2xl font-black text-white">
+                    Request an operations walkthrough with BOF.
+                  </h3>
+                  <p className="mt-4 text-sm leading-7 text-sky-50">
+                    The walkthrough is framed around operating decisions, not a generic sales call. BOF can connect the
+                    live calendar through the public Calendly configuration when scheduling opens.
+                  </p>
+                </div>
+                <div className="mt-6 flex flex-wrap gap-3">
+                  <Link
+                    href="/founding-fleet#ff-apply"
+                    className="rounded-xl bg-sky-300 px-5 py-3 text-sm font-black text-slate-950 transition hover:bg-sky-200"
+                  >
+                    Schedule Guided BOF Operations Walkthrough
+                  </Link>
+                  <Link
+                    href="/demo"
+                    className="rounded-xl border border-sky-200/50 px-5 py-3 text-sm font-black text-sky-50 transition hover:bg-sky-300/10"
+                  >
+                    Review demo paths
+                  </Link>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </section>

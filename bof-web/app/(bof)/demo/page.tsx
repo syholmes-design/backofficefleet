@@ -58,7 +58,7 @@ export default function DemoAccessPage() {
                 Experience BOF Operations
               </Link>
               <Link
-                href="/founding-fleet"
+                href="/demo/walkthrough#schedule"
                 className="rounded-xl border border-sky-400/50 px-5 py-3 text-sm font-black text-sky-100 transition hover:bg-sky-400/10"
               >
                 Request Guided Walkthrough
