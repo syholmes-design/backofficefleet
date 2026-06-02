@@ -6,6 +6,7 @@
  */
 import Link from "next/link";
 import Image from "next/image";
+import { FreightCompliancePulse } from "@/components/marketing/FreightCompliancePulse";
 import { IconDispatch, IconLoadProof, IconShield } from "@/components/marketing/MarketingHomeIcons";
 import { getBofData } from "@/lib/load-bof-data";
 
@@ -228,6 +229,8 @@ export default function MarketingHomeAccountable() {
           </div>
         </div>
       </nav>
+
+      <FreightCompliancePulse />
 
       <section id="why-exists" className="bof-home-section bof-home-section--white" aria-labelledby="bof-home-why-heading">
         <div className="bof-mkt-container grid items-center gap-10 lg:grid-cols-[1.05fr_0.95fr]">
