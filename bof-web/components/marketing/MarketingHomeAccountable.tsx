@@ -230,7 +230,7 @@ export default function MarketingHomeAccountable() {
         </div>
       </nav>
 
-      <FreightCompliancePulse />
+      <FreightCompliancePulse variant="compact" />
 
       <section id="why-exists" className="bof-home-section bof-home-section--white" aria-labelledby="bof-home-why-heading">
         <div className="bof-mkt-container grid items-center gap-10 lg:grid-cols-[1.05fr_0.95fr]">
