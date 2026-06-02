@@ -1,6 +1,9 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { FreightCompliancePulse } from "@/components/marketing/FreightCompliancePulse";
+import { getRegulatoryFeedItems } from "@/lib/regulatory-feed/live-feed";
+
+export const revalidate = 21600;
 
 const WORKFLOW_STEPS = [
   {
@@ -31,7 +34,9 @@ export const metadata: Metadata = {
     "BackOfficeFleet connects driver documents, dispatch eligibility, safety workflows, public-source regulatory updates, and audit-ready evidence into one operational compliance layer.",
 };
 
-export default function CompliancePage() {
+export default async function CompliancePage() {
+  const feedItems = await getRegulatoryFeedItems();
+
   return (
     <main className="bg-slate-50 text-slate-950">
       <section className="bg-[#07111f] text-white">
@@ -75,7 +80,7 @@ export default function CompliancePage() {
         </div>
       </section>
 
-      <FreightCompliancePulse variant="full" />
+      <FreightCompliancePulse variant="full" items={feedItems} />
     </main>
   );
 }

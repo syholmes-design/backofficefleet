@@ -2,6 +2,7 @@ import Link from "next/link";
 import { getBofRegulatoryFeedDemoItems, type BofRegulatoryFeedItem } from "@/lib/regulatory-feed-demo";
 
 type FreightCompliancePulseProps = {
+  items?: BofRegulatoryFeedItem[];
   variant?: "compact" | "full";
 };
 
@@ -29,10 +30,10 @@ function formatFeedDate(value: string) {
   }).format(new Date(`${value}T00:00:00Z`));
 }
 
-export function FreightCompliancePulse({ variant = "full" }: FreightCompliancePulseProps) {
+export function FreightCompliancePulse({ items, variant = "full" }: FreightCompliancePulseProps) {
   const isCompact = variant === "compact";
-  const items = getBofRegulatoryFeedDemoItems();
-  const visibleItems = isCompact ? items.slice(0, 3) : items;
+  const feedItems = items?.length ? items : getBofRegulatoryFeedDemoItems();
+  const visibleItems = isCompact ? feedItems.slice(0, 3) : feedItems;
 
   if (isCompact) {
     return (
@@ -60,7 +61,10 @@ export function FreightCompliancePulse({ variant = "full" }: FreightCompliancePu
 
           <div className="mt-7 grid gap-4 lg:grid-cols-3">
             {visibleItems.map((item) => (
-              <article key={item.id} className="rounded-2xl border border-slate-200 bg-white p-5 shadow-lg shadow-slate-900/5">
+              <article
+                key={item.id}
+                className="min-w-0 rounded-2xl border border-slate-200 bg-white p-5 shadow-lg shadow-slate-900/5 [overflow-wrap:anywhere]"
+              >
                 <div className="flex flex-wrap items-center gap-2">
                   <span className={`rounded-full px-3 py-1 text-xs font-black ${categoryTone[item.category]}`}>
                     {item.category}
@@ -129,6 +133,7 @@ export function FreightCompliancePulse({ variant = "full" }: FreightCompliancePu
                   key={item.id}
                   className={[
                     "flex min-h-[320px] flex-col rounded-2xl border border-slate-200 bg-white p-5 shadow-lg shadow-slate-900/5",
+                    "min-w-0 [overflow-wrap:anywhere]",
                     index === 0 ? "md:col-span-2 xl:col-span-1" : "",
                   ].join(" ")}
                 >

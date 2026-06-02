@@ -168,7 +168,7 @@ export function BofHeader() {
 
   if (!marketingOnlyHeader) {
     return (
-      <header className="sticky top-0 z-40 w-full border-b border-slate-800 bg-slate-950 backdrop-blur-sm shadow-sm">
+      <header className="sticky top-0 z-40 w-full overflow-x-hidden border-b border-slate-800 bg-slate-950 backdrop-blur-sm shadow-sm">
         <div className="mx-auto flex max-w-[1600px] flex-wrap items-center justify-between gap-6 px-6 py-3.5 sm:px-8 lg:px-12 xl:px-16">
           <Link href="/dashboard" className="inline-flex shrink-0 items-center text-slate-100">
             <BofLogo variant="light" size="demoLarge" priority />
