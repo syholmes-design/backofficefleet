@@ -1,18 +1,529 @@
 <!doctype html>
-<html><head><meta charset="utf-8"/><title>CDL Template - Driver Qualification</title><style>body{font-family:Arial,sans-serif;margin:20px;line-height:1.6}header{border-bottom:2px solid #14b8a6;padding-bottom:10px;margin-bottom:20px}h1{color:#14b8a6;margin:0}h2{color:#333;margin:20px 0 10px}table{border-collapse:collapse;width:100%;margin:20px 0}td{border:1px solid #ddd;padding:8px}td:first-child{font-weight:bold;background:#f5f5f5;width:30%}.placeholder{color:#999;font-style:italic}</style></head><body>
-<header><h1>BackOfficeFleet - CDL Verification Template</h1><p>Blank template for driver qualification documentation</p></header>
-<h2>[Driver Name] ([Driver ID])</h2>
-<table>
-<tr><td>License Number</td><td class="placeholder">[License Number]</td></tr>
-<tr><td>Class / State</td><td class="placeholder">[License Class] / [License State]</td></tr>
-<tr><td>Expiration Date</td><td class="placeholder">[Expiration Date]</td></tr>
-<tr><td>Status</td><td class="placeholder">[CDL Status]</td></tr>
-<tr><td>Address</td><td class="placeholder">[Driver Address]</td></tr>
-</table>
-<div style="margin-top:30px;">
-<p><strong>Verification:</strong></p>
-<p>Verified by: <span class="placeholder">[Verifier Name]</span></p>
-<p>Date: <span class="placeholder">[Verification Date]</span></p>
-<p>Signature: <span class="placeholder">[Signature]</span></p>
-</div>
-</body></html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>BackOfficeFleet CDL Verification Certificate Template</title>
+  <style>
+    :root {
+      --bof-navy: #07111f;
+      --bof-slate: #334155;
+      --bof-muted: #64748b;
+      --bof-line: #dbe7ee;
+      --bof-soft: #f4fbfa;
+      --bof-teal: #0f9f8f;
+      --bof-teal-dark: #0f766e;
+      --bof-white: #ffffff;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background: #eef4f7;
+      color: var(--bof-navy);
+      font-family: Arial, Helvetica, sans-serif;
+      line-height: 1.5;
+    }
+
+    .page {
+      width: min(980px, calc(100% - 32px));
+      margin: 32px auto;
+      background: var(--bof-white);
+      border: 1px solid var(--bof-line);
+      border-radius: 18px;
+      box-shadow: 0 18px 50px rgba(7, 17, 31, 0.12);
+      overflow: hidden;
+    }
+
+    .hero {
+      background: linear-gradient(135deg, #07111f 0%, #10283d 58%, #0f766e 100%);
+      color: var(--bof-white);
+      padding: 34px 38px;
+    }
+
+    .brand-row {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 24px;
+      margin-bottom: 26px;
+    }
+
+    .brand {
+      font-size: 14px;
+      font-weight: 800;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: #70f0df;
+    }
+
+    h1 {
+      margin: 8px 0 0;
+      font-size: 30px;
+      line-height: 1.15;
+      letter-spacing: -0.02em;
+    }
+
+    .carrier-badge {
+      min-width: 260px;
+      border: 1px solid rgba(255, 255, 255, 0.22);
+      border-radius: 14px;
+      padding: 16px 18px;
+      background: rgba(255, 255, 255, 0.08);
+    }
+
+    .eyebrow {
+      margin: 0 0 4px;
+      color: #b7d7df;
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+    }
+
+    .carrier-badge strong {
+      display: block;
+      font-size: 18px;
+    }
+
+    .meta-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .meta-card {
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      border-radius: 12px;
+      padding: 12px;
+      background: rgba(255, 255, 255, 0.07);
+    }
+
+    .meta-card span {
+      display: block;
+      color: #b7d7df;
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    .meta-card strong {
+      display: block;
+      margin-top: 5px;
+      color: var(--bof-white);
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .content {
+      padding: 30px 38px 38px;
+    }
+
+    .status-strip {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+      margin-bottom: 28px;
+    }
+
+    .status-card {
+      border: 1px solid var(--bof-line);
+      border-radius: 14px;
+      padding: 16px;
+      background: var(--bof-soft);
+    }
+
+    .status-card span {
+      display: block;
+      color: var(--bof-muted);
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    .status-card strong {
+      display: block;
+      margin-top: 7px;
+      color: var(--bof-teal-dark);
+      font-size: 17px;
+    }
+
+    section {
+      margin-top: 28px;
+      break-inside: avoid;
+    }
+
+    h2 {
+      margin: 0 0 12px;
+      color: var(--bof-navy);
+      font-size: 18px;
+      letter-spacing: -0.01em;
+    }
+
+    .section-note {
+      margin: 0 0 14px;
+      color: var(--bof-slate);
+      font-size: 14px;
+    }
+
+    .field-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      border: 1px solid var(--bof-line);
+      border-radius: 14px;
+      overflow: hidden;
+    }
+
+    .field {
+      min-height: 68px;
+      padding: 13px 15px;
+      border-right: 1px solid var(--bof-line);
+      border-bottom: 1px solid var(--bof-line);
+      background: #ffffff;
+    }
+
+    .field:nth-child(2n) {
+      border-right: 0;
+    }
+
+    .field:nth-last-child(-n + 2) {
+      border-bottom: 0;
+    }
+
+    .field.full {
+      grid-column: 1 / -1;
+      border-right: 0;
+    }
+
+    .label {
+      display: block;
+      margin-bottom: 5px;
+      color: var(--bof-muted);
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    .value {
+      color: var(--bof-navy);
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .checklist {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+      padding: 16px;
+      border: 1px solid var(--bof-line);
+      border-radius: 14px;
+      background: #fbfdfe;
+    }
+
+    .check-item {
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+      min-height: 38px;
+      color: var(--bof-slate);
+      font-size: 14px;
+    }
+
+    .box {
+      width: 16px;
+      height: 16px;
+      flex: 0 0 16px;
+      margin-top: 2px;
+      border: 1.6px solid var(--bof-teal);
+      border-radius: 4px;
+      background: #ffffff;
+    }
+
+    .impact {
+      border: 1px solid #b7efe7;
+      border-left: 5px solid var(--bof-teal);
+      border-radius: 14px;
+      padding: 18px 20px;
+      background: #ecfffc;
+      color: #123233;
+      font-size: 14px;
+    }
+
+    .sign-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .signature-card {
+      min-height: 108px;
+      border: 1px solid var(--bof-line);
+      border-radius: 14px;
+      padding: 14px;
+      background: #ffffff;
+    }
+
+    .signature-line {
+      margin-top: 28px;
+      border-top: 1px solid #9fb0bd;
+      padding-top: 8px;
+      color: var(--bof-muted);
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .disclaimer {
+      margin-top: 30px;
+      border-top: 1px solid var(--bof-line);
+      padding-top: 16px;
+      color: var(--bof-muted);
+      font-size: 12px;
+    }
+
+    @media (max-width: 760px) {
+      .page {
+        width: calc(100% - 20px);
+        margin: 10px auto;
+        border-radius: 14px;
+      }
+
+      .hero,
+      .content {
+        padding: 24px 20px;
+      }
+
+      .brand-row,
+      .meta-grid,
+      .status-strip,
+      .field-grid,
+      .checklist,
+      .sign-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .brand-row {
+        display: block;
+      }
+
+      .carrier-badge {
+        min-width: 0;
+        margin-top: 18px;
+      }
+
+      .field,
+      .field:nth-child(2n),
+      .field:nth-last-child(-n + 2) {
+        border-right: 0;
+        border-bottom: 1px solid var(--bof-line);
+      }
+
+      .field:last-child {
+        border-bottom: 0;
+      }
+    }
+
+    @media print {
+      body {
+        background: #ffffff;
+      }
+
+      .page {
+        width: 100%;
+        margin: 0;
+        border: 0;
+        border-radius: 0;
+        box-shadow: none;
+      }
+
+      .hero {
+        background: #07111f !important;
+        color: #ffffff !important;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <header class="hero">
+      <div class="brand-row">
+        <div>
+          <div class="brand">BackOfficeFleet</div>
+          <h1>CDL Verification Certificate | Driver Qualification File Support</h1>
+        </div>
+        <div class="carrier-badge">
+          <p class="eyebrow">Carrier</p>
+          <strong>Delta Advanced Trucking</strong>
+        </div>
+      </div>
+
+      <div class="meta-grid" aria-label="Document metadata">
+        <div class="meta-card">
+          <span>Document Type</span>
+          <strong>CDL Verification</strong>
+        </div>
+        <div class="meta-card">
+          <span>Driver ID</span>
+          <strong>[Driver ID]</strong>
+        </div>
+        <div class="meta-card">
+          <span>Generated Date</span>
+          <strong>[Generated Date]</strong>
+        </div>
+        <div class="meta-card">
+          <span>Template Version</span>
+          <strong>[Template Version]</strong>
+        </div>
+      </div>
+    </header>
+
+    <div class="content">
+      <div class="status-strip" aria-label="CDL verification status summary">
+        <div class="status-card">
+          <span>Driver</span>
+          <strong>[Driver Full Legal Name]</strong>
+        </div>
+        <div class="status-card">
+          <span>Verification Status</span>
+          <strong>[Verification Status]</strong>
+        </div>
+        <div class="status-card">
+          <span>Dispatch Eligibility Impact</span>
+          <strong>[Dispatch Eligibility Impact]</strong>
+        </div>
+      </div>
+
+      <section>
+        <h2>1. Driver Identification</h2>
+        <div class="field-grid">
+          <div class="field">
+            <span class="label">Driver Name</span>
+            <span class="value">[Driver Full Legal Name]</span>
+          </div>
+          <div class="field">
+            <span class="label">Driver ID</span>
+            <span class="value">[Driver ID]</span>
+          </div>
+          <div class="field">
+            <span class="label">Address</span>
+            <span class="value">[Driver Address]</span>
+          </div>
+          <div class="field">
+            <span class="label">Phone / Email</span>
+            <span class="value">[Driver Phone] / [Driver Email]</span>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2>2. CDL Information Verified</h2>
+        <div class="field-grid">
+          <div class="field">
+            <span class="label">CDL Number</span>
+            <span class="value">[License Number]</span>
+          </div>
+          <div class="field">
+            <span class="label">License Class / State</span>
+            <span class="value">[License Class] / [Issuing State]</span>
+          </div>
+          <div class="field">
+            <span class="label">Issue Date</span>
+            <span class="value">[Issue Date]</span>
+          </div>
+          <div class="field">
+            <span class="label">Expiration Date</span>
+            <span class="value">[Expiration Date]</span>
+          </div>
+          <div class="field">
+            <span class="label">Endorsements</span>
+            <span class="value">[Endorsements]</span>
+          </div>
+          <div class="field">
+            <span class="label">Restrictions</span>
+            <span class="value">[Restrictions]</span>
+          </div>
+          <div class="field full">
+            <span class="label">Uploaded CDL File Reference</span>
+            <span class="value">[Uploaded CDL File Reference]</span>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2>3. BOF Verification Checklist</h2>
+        <div class="checklist">
+          <div class="check-item"><span class="box" aria-hidden="true"></span><span>CDL image or document uploaded to driver vault</span></div>
+          <div class="check-item"><span class="box" aria-hidden="true"></span><span>Name matches driver profile</span></div>
+          <div class="check-item"><span class="box" aria-hidden="true"></span><span>License number captured</span></div>
+          <div class="check-item"><span class="box" aria-hidden="true"></span><span>Issuing state captured</span></div>
+          <div class="check-item"><span class="box" aria-hidden="true"></span><span>Expiration date reviewed</span></div>
+          <div class="check-item"><span class="box" aria-hidden="true"></span><span>Class and endorsements reviewed</span></div>
+          <div class="check-item"><span class="box" aria-hidden="true"></span><span>Restrictions reviewed for dispatch impact</span></div>
+          <div class="check-item"><span class="box" aria-hidden="true"></span><span>Dispatch eligibility status updated</span></div>
+        </div>
+      </section>
+
+      <section>
+        <h2>4. Operational Impact</h2>
+        <div class="impact">
+          BOF Review Note: This CDL verification supports driver qualification, dispatch gating, and compliance-readiness review. Any expired, missing, mismatched, or restricted CDL information should be resolved before assigning the driver to a regulated dispatch.
+        </div>
+      </section>
+
+      <section>
+        <h2>5. Exceptions / Follow-Up Required</h2>
+        <div class="field-grid">
+          <div class="field">
+            <span class="label">Exception Status</span>
+            <span class="value">[Exception Status]</span>
+          </div>
+          <div class="field">
+            <span class="label">Resolution Deadline</span>
+            <span class="value">[Resolution Deadline]</span>
+          </div>
+          <div class="field">
+            <span class="label">Issue Description</span>
+            <span class="value">[Issue Description]</span>
+          </div>
+          <div class="field">
+            <span class="label">Required Action</span>
+            <span class="value">[Required Action]</span>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2>6. Verification Sign-Off</h2>
+        <div class="sign-grid">
+          <div class="signature-card">
+            <span class="label">Verified By</span>
+            <span class="value">[Verifier Name / Title]</span>
+            <div class="signature-line">Verifier name / title</div>
+          </div>
+          <div class="signature-card">
+            <span class="label">Date Verified</span>
+            <span class="value">[Verification Date]</span>
+            <div class="signature-line">Verification date</div>
+          </div>
+          <div class="signature-card">
+            <span class="label">Signature</span>
+            <span class="value">[Signature]</span>
+            <div class="signature-line">Authorized signature</div>
+          </div>
+        </div>
+      </section>
+
+      <p class="disclaimer">
+        This BackOfficeFleet verification template is generated for driver qualification and operational-readiness review for Delta Advanced Trucking. It does not replace the carrier's obligation to maintain legally required Driver Qualification File records or verify compliance through official sources where required.
+      </p>
+    </div>
+  </main>
+</body>
+</html>
