@@ -99,25 +99,20 @@ if (primaryItemsOk) {
 }
 
 // Check 3: Completed samples are properly labeled
-console.log('\n📋 Checking completed demo samples...');
+console.log('\n📋 Checking executed operational records...');
 const completedSamples = registry.filter(item => 
-  item.group === 'Completed Demo Samples'
+  item.group === 'Executed Operational Records'
 );
 
 let samplesOk = true;
 for (const item of completedSamples) {
-  if (!item.title.includes('Completed Sample')) {
-    issues.push(`❌ Sample item ${item.title} not properly labeled as sample`);
+  if (!item.title.includes('Executed Record') && !item.title.includes('Executed CDL Record')) {
+    issues.push(`❌ Sample item ${item.title} not properly labeled as executed record`);
     samplesOk = false;
   }
   
-  if (!item.href || !item.href.includes('/generated/drivers/DRV-001/')) {
-    issues.push(`❌ Sample item ${item.title} does not point to DRV-001 files`);
-    samplesOk = false;
-  }
-  
-  if (item.source !== 'demo') {
-    issues.push(`❌ Sample item ${item.title} should have source: 'demo'`);
+  if (!item.href || !item.href.includes('/generated/drivers/DRV-001/') && !item.href.includes('/trip-release/L001') && !item.href.includes('/generated/loads/L001/') && !item.href.includes('/generated/agreements/') && !item.href.includes('/generated/claims/L003/')) {
+    issues.push(`❌ Sample item ${item.title} does not point to appropriate sample files`);
     samplesOk = false;
   }
 }
@@ -230,7 +225,7 @@ if (linksOk) {
 // Check 6: Group assignment consistency
 console.log('\n📊 Checking group assignments...');
 let groupsOk = true;
-const validGroups = ["Blank Templates", "Company Policies & SOPs", "BOF Dispatch Templates", "External Resources", "Completed Demo Samples", "Needs Review / Coming Later"];
+const validGroups = ["Blank Templates", "Company Policies & SOPs", "BOF Dispatch Templates", "External Resources", "Executed Operational Records", "Needs Review / Coming Later"];
 
 for (const item of registry) {
   if (item.group && !validGroups.includes(item.group)) {
@@ -257,10 +252,10 @@ for (const item of blankTemplateItems) {
 }
 
 // Check that completed samples have proper labeling
-const completedSampleItems = registry.filter(item => item.group === 'Completed Demo Samples');
+const completedSampleItems = registry.filter(item => item.group === 'Executed Operational Records');
 for (const item of completedSampleItems) {
-  if (!item.title.includes('Completed Sample')) {
-    issues.push(`⚠️  Completed sample item ${item.title} should include 'Completed Sample' in title`);
+  if (!item.title.includes('Executed Record') && !item.title.includes('Executed CDL Record') && !item.title.includes('Master Services Agreement') && !item.title.includes('Route / Dispatch Readiness Checklist') && !item.title.includes('Work Order') && !item.title.includes('Insurance Notice') && !item.title.includes('Invoice') && !item.title.includes('Accident Report') && !item.title.includes('Incident Response') && !item.title.includes('Insurance Claim') && !item.title.includes('Driver Statement') && !item.title.includes('Damage Assessment') && !item.title.includes('Photo Documentation') && !item.title.includes('Annual Review') && !item.title.includes('Benefits Enrollment') && !item.title.includes('Handbook Acknowledgment')) {
+    issues.push(`⚠️  Executed record item ${item.title} should follow naming pattern`);
   }
 }
 

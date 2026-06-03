@@ -28,7 +28,7 @@ const EXPECTED_CABINETS = [
 // Expected grouped sections
 const EXPECTED_SECTIONS = [
   "Blank Templates",
-  "Completed Demo Samples",
+  "Executed Operational Records",
   "Company Policies & SOPs",
   "BOF Dispatch Templates",
   "Claims Forms",

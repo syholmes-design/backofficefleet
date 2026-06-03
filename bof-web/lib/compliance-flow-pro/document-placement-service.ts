@@ -217,7 +217,7 @@ export class DocumentPlacementService {
 <body>
     <div class="header">
         <h1>Commercial Driver's License</h1>
-        <p>BOF Generated Document</p>
+        <p>Operational Record</p>
     </div>
     <div class="cdl-image">
         <img src="${imagePath}" alt="CDL" style="width: 100%;" />
@@ -245,7 +245,7 @@ export class DocumentPlacementService {
 <body>
     <div class="header">
         <h1>Medical Certification</h1>
-        <p>BOF Generated Document</p>
+        <p>Operational Record</p>
     </div>
     <div class="medical-image">
         <img src="${imagePath}" alt="Medical Certification" style="width: 100%;" />
@@ -273,7 +273,7 @@ export class DocumentPlacementService {
 <body>
     <div class="header">
         <h1>Motor Vehicle Record</h1>
-        <p>BOF Generated Document</p>
+        <p>Operational Record</p>
     </div>
     <div class="mvr-image">
         <img src="${imagePath}" alt="MVR" style="width: 100%;" />
@@ -301,7 +301,7 @@ export class DocumentPlacementService {
 <body>
     <div class="header">
         <h1>Driver Application</h1>
-        <p>BOF Generated Document</p>
+        <p>Operational Record</p>
     </div>
     <div class="app-image">
         <img src="${imagePath}" alt="Driver Application" style="width: 100%;" />

@@ -4,7 +4,7 @@
   <body>
     <div class="paper">
       <header class="doc-header">
-        <div><h1 class="doc-title">Insurance Company Notification</h1><div class="generated-label">BOF approved template output (demo/test)</div></div>
+        <div><h1 class="doc-title">Insurance & Claims Notification</h1><div class="generated-label">Delta Advanced Trucking, Inc. — Operational Record</div></div>
         <div class="status-stamp">{{insuranceNotificationStatus}}</div>
       </header>
       <table>
@@ -15,12 +15,12 @@
         <tr><th>Description</th><th>Exposure</th><th>Claim Packet Link</th><th>Evidence Link</th></tr>
         <tr><td>{{exceptionNotes}}</td><td>{{claimExposure}}</td><td>{{claimPacketLink}}</td><td>{{damageClaimPhotoRef}}</td></tr>
       </table>
-      <div class="terms-box">BOF demo/test notice generated from the approved insurance notification template. Validate incident details, exposure, and linked claim evidence before external send.</div>
+      <div class="terms-box">This document serves as formal notification of an insurance/claims event. Please refer to the attached claim packet and evidence links for comprehensive incident details. All records are maintained within the Delta Advanced Trucking compliance system.</div>
       <div class="sig-line">
-        <div class="sig-slot">Ops signature: <em>{{opsSignature}}</em> / {{generatedDate}}</div>
-        <div class="sig-slot">Claims signature: <em>{{opsSignature}}</em> / {{generatedDate}}</div>
+        <div class="sig-slot">Operations Representative: <em>{{opsSignature}}</em> / {{generatedDate}}</div>
+        <div class="sig-slot">Claims Administrator: <em>{{opsSignature}}</em> / {{generatedDate}}</div>
       </div>
-      <footer><span>{{generatedDate}}</span><span>BOF operations document packet</span></footer>
+      <footer><span>{{generatedDate}}</span><span>Delta Advanced Trucking, Inc. — Fleet Operations</span></footer>
     </div>
   </body>
 </html>
