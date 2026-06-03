@@ -120,7 +120,7 @@ export default function DriverHRPage({ params }: Props) {
       const canonicalUrl = getDriverDocumentByType(id, row.type) ?? doc?.fileUrl;
       const status = canonicalUrl
         ? row.type === "FMCSA DQF Compliance Summary"
-          ? "Generated summary on file"
+          ? "Summary report on file"
           : humanizeStatus(doc?.status ?? "VALID")
         : row.type === "FMCSA DQF Compliance Summary"
           ? "Missing / Needs generation"

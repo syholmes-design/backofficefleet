@@ -325,7 +325,7 @@ export function OperationsFileCabinetClient() {
 
   function getSourceChip(item: OperationsFileCabinetItem): { text: string; color: string } {
     if (item.sourceAuthenticity === "generated_from_template") {
-      return { text: "Generated document", color: "#22c55e" };
+      return { text: "Operational Record", color: "#22c55e" };
     } else if (item.sourceAuthenticity === "official_template") {
       if (!item.isBlankTemplate && item.status === "available") {
         return { text: "Company document", color: "#22c55e" };
