@@ -42,7 +42,7 @@ const MANIFEST_PUBLIC = path.join(ROOT, "public/generated/drivers/driver-doc-man
 const DRIVER_IDS = Array.from({ length: 12 }, (_, i) => `DRV-${String(i + 1).padStart(3, "0")}`);
 
 const SYNTHETIC_FIELD_LIST =
-  "reviewerName, reviewerTitle, reviewerSignatureText, reviewerSignedAt, reviewDate, reviewNotes, carrierDisplay, driverAcknowledgmentStatus, driverSignatureTextOrPending, driverAckSignedAt, driverAckLabel, annualMvrNotes, syntheticDemoFieldsNote";
+  "reviewerName, reviewerTitle, reviewerSignatureText, reviewerSignedAt, reviewDate, reviewNotes, carrierDisplay, driverAcknowledgmentStatus, driverSignatureTextOrPending, driverAckSignedAt, driverAckLabel, annualMvrNotes, systemGeneratedFieldsNote";
 
 function esc(s: string) {
   return String(s ?? "")
@@ -330,10 +330,10 @@ function main() {
     const driverAckAt = getDqfDeterministicTimestamp(driverId, 2);
     const reviewNotes = getDqfSyntheticReviewNotes(driverId, eligibility.status);
 
-    const carrierDisplay = "BackOffice Fleet — BOF demo carrier (display name)";
+    const carrierDisplay = "Delta Advanced Trucking, Inc.";
     const mvrForAnnual = docByType(core, "MVR");
     const annualMvrNotes = mvrRowHasPull(mvrForAnnual)
-      ? "Annual cadence: align next review with MVR pull date on file (synthetic_demo checklist note)."
+      ? "Annual cadence: align next review with MVR pull date on file (system-generated checklist note)."
       : "Missing / Needs review — MVR not established for annual cycle.";
 
     const cdlNum =
@@ -385,7 +385,7 @@ function main() {
     } else if (eligibility.status === "needs_review") {
       dqfStatus = "DQF substantively complete — follow-up required (soft warnings)";
     } else {
-      dqfStatus = "DQF complete relative to BOF demo credential stack";
+      dqfStatus = "DQF complete relative to carrier credential stack in BOF";
     }
 
     const determinationSummary =
@@ -397,11 +397,11 @@ function main() {
             ? "Missing required DQF item — upload or generate canonical vault record."
             : eligibility.status === "needs_review"
               ? "File usable with documented follow-ups per soft warnings."
-              : "No blocking DQF gaps detected in BOF canonical data for this driverId.";
+              : "No blocking DQF gaps detected in BOF document data for this driverId.";
 
     const chk = (on: boolean) => (on ? "☑" : "☐");
     const fileComplete = !missingCore && !expiredCore && eligibility.status === "ready";
-    const determinationFileComplete = `${chk(fileComplete)} File complete (demo criteria)`;
+    const determinationFileComplete = `${chk(fileComplete)} File complete (carrier criteria)`;
     const determinationFollowUp = `${chk(eligibility.status === "needs_review" && !missingCore && !expiredCore)} File complete with follow-up required`;
     const determinationMissing = `${chk(missingCore)} Missing required document`;
     const determinationExpired = `${chk(expiredCore)} Expired credential`;
@@ -416,7 +416,7 @@ function main() {
       reviewerSignatureText: esc(reviewer.name),
       reviewerSignedAt: esc(reviewSignedAt),
       driverAcknowledgmentStatus: esc(
-        "Pending — driver acknowledgment not stored in BOF demo JSON (synthetic_demo)."
+        "Pending — driver acknowledgment not stored in BOF source data."
       ),
       driverSignatureTextOrPending: esc("— Pending —"),
       driverAckSignedAt: esc(driverAckAt),
@@ -460,14 +460,14 @@ function main() {
       determinationExpired,
       determinationDispatch,
       syntheticDemoFieldsNote: esc(
-        `Synthetic/demo fields used: ${SYNTHETIC_FIELD_LIST}. Credential columns use canonical | derived | missing flags only.`
+        `System-generated supplemental fields used: ${SYNTHETIC_FIELD_LIST}. Credential columns use canonical | derived | missing flags only.`
       ),
     });
 
     const provenance = `<!-- BOF_TEMPLATE_SOURCE: scripts/templates/driver-docs/dqf-compliance-summary.template.html -->
 <!-- BOF_DOCUMENT_TYPE: dqf_compliance_summary -->
 <!-- BOF_DRIVER_ID: ${driverId} -->
-<!-- BOF_SYNTHETIC_DEMO_FIELDS: ${SYNTHETIC_FIELD_LIST} -->
+<!-- BOF_SYSTEM_GENERATED_FIELDS: ${SYNTHETIC_FIELD_LIST} -->
 `;
 
     const outHtml = htmlBody.replace("<!doctype html>", `<!doctype html>\n${provenance}`);
