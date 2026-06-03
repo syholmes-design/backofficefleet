@@ -111,7 +111,7 @@ export function OperationsFileCabinetClient() {
       "Company Policies & SOPs", 
       "BOF Dispatch Templates",
       "External Resources",
-      "Completed Demo Samples",
+      "Executed Operational Records",
       "Needs Review / Roadmap Queue"
     ];
 
@@ -263,8 +263,8 @@ export function OperationsFileCabinetClient() {
     }
 
     // Handle completed demo samples
-    if (item.section === "Completed Demo Samples" || item.isCompletedSample) {
-      return "View completed sample";
+    if (item.section === "Executed Operational Records" || item.isCompletedSample) {
+      return "View executed record";
     }
     
     if (item.sourceAuthenticity === "generated_from_template" && item.status === "available" && !item.isBlankTemplate) {
@@ -325,7 +325,7 @@ export function OperationsFileCabinetClient() {
 
   function getSourceChip(item: OperationsFileCabinetItem): { text: string; color: string } {
     if (item.sourceAuthenticity === "generated_from_template") {
-      return { text: "Generated document", color: "#22c55e" };
+      return { text: "Operational Record", color: "#22c55e" };
     } else if (item.sourceAuthenticity === "official_template") {
       if (!item.isBlankTemplate && item.status === "available") {
         return { text: "Company document", color: "#22c55e" };
@@ -1070,7 +1070,7 @@ export function OperationsFileCabinetClient() {
               textTransform: "uppercase",
               marginBottom: "0.45rem"
             }}>
-              Demo proof shelf
+              Operational proof shelf
             </div>
             <h2 style={{
               fontSize: "clamp(1.35rem, 2vw, 1.85rem)",
@@ -1086,7 +1086,7 @@ export function OperationsFileCabinetClient() {
               margin: 0,
               lineHeight: "1.55"
             }}>
-              The most demo-relevant policies, claims packets, and operating templates are surfaced first so the owner can prove the workflow without digging through a file dump.
+              The most critical policies, claims packets, and operating templates are surfaced first so the carrier can verify the workflow without digging through a file dump.
             </p>
           </div>
           <div style={{

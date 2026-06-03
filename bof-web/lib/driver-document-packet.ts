@@ -174,9 +174,9 @@ function sourceLabelFromKind(kind: DriverDocumentSourceKind): string {
     case "public_file":
       return "Public file";
     case "generated_summary":
-      return "Generated summary";
+      return "Summary Report";
     case "template_output":
-      return "Template output";
+      return "Standard Template";
     case "status_only":
       return "Status only";
     default:

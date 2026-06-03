@@ -51,7 +51,7 @@ const expectedCabinets = [
 // Verify section grouping
 const expectedSections = [
   "Blank Templates",
-  "Completed Demo Samples",
+  "Executed Operational Records",
   "Company Policies & SOPs",
   "BOF Dispatch Templates",
   "Claims Forms",
@@ -70,10 +70,10 @@ const blankTemplateItems = items
   )
   .map(item => item.id);
 
-// Check for completed samples (John Carter/DRV-001 files only under Completed Demo Samples)
+// Check for completed samples (John Carter/DRV-001 files only under Executed Operational Records)
 const completedSampleItems = items
   .filter(item => 
-    item.section === "Completed Demo Samples" &&
+    item.section === "Executed Operational Records" &&
     item.href && 
     item.href.startsWith("/generated/drivers/DRV-001/") &&
     (item.title.includes("John Carter") || item.title.includes("DRV-001"))
@@ -140,7 +140,7 @@ if (blankTemplateItems.length > 0) {
 }
 
 // Verify completed samples
-console.log('\n📋 Completed Demo Samples Verification:\n');
+console.log('\n📋 Executed Operational Records Verification:\n');
 console.log(`Completed sample items: ${completedSampleItems.length}`);
 cabinetTestsTotal++;
 
@@ -148,14 +148,14 @@ if (completedSampleItems.length > 0) {
   console.log('✅ Completed demo samples found with proper structure');
   cabinetTestsPassed++;
   
-  // Check that completed samples are only under Completed Demo Samples section
+  // Check that completed samples are only under Executed Operational Records section
   const samplesInWrongSection = items.filter(item => 
     (item.title.includes('John Carter') || item.title.includes('DRV-001')) && 
-    item.section !== 'Completed Demo Samples'
+    item.section !== 'Executed Operational Records'
   );
   
   if (samplesInWrongSection.length === 0) {
-    console.log('✅ John Carter/DRV-001 files only under Completed Demo Samples');
+    console.log('✅ John Carter/DRV-001 files only under Executed Operational Records');
     cabinetTestsPassed++;
   } else {
     console.log(`❌ John Carter/DRV-001 files found in wrong sections: ${samplesInWrongSection.map(item => item.id).join(', ')}`);
