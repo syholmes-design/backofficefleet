@@ -137,6 +137,9 @@ function main() {
       bankStatus: driver.bankInfoStatus,
       taxClassification: driver.taxClassification,
       tinType: driver.tinType,
+      requesterName: "Delta Advanced Trucking, Inc.",
+      requesterAddress: "1234 Fleet Ave, Cleveland, OH 44113",
+      carrierName: "Delta Advanced Trucking, Inc.",
     };
 
     warnMissing(driverId, "secondary emergency name", payload.secondaryEmergencyName);
