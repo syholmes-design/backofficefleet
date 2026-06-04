@@ -2,10 +2,12 @@
 
 import { DriversRosterTable } from "@/components/drivers/DriversRosterTable";
 import { ComplianceDashboardV4 } from "@/components/compliance-v4/ComplianceDashboardV4";
+import { DemoPageExplainerById } from "@/components/demo/DemoPageExplainerById";
 
 export function DriversCommandCenterV4() {
   return (
     <div className="space-y-6">
+      <DemoPageExplainerById pageId="drivers" />
       {/* Driver Roster Section */}
       <section>
         <div className="mb-4">

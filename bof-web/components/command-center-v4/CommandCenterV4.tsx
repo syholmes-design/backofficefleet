@@ -23,6 +23,7 @@ import { getV3OperationalData, isV3DataAvailable } from "@/lib/v3-operational-lo
 import { formatDisplayDate } from "@/lib/date-utils";
 import type { OperationalRiskQueue, V3OperationalData } from "@/lib/v3-operational-types";
 import { L008_CANONICAL_STORY, L009_CANONICAL_STORY, L011_CANONICAL_STORY } from "@/lib/canonical-load-stories";
+import { DemoPageExplainerById } from "@/components/demo/DemoPageExplainerById";
 import { getCarrierRegistry, getCarrierRegistryStats } from "@/lib/carrier-registry";
 import { getCarrierGateEscalations, getCarrierGateStats, type CarrierDispatchGateTone } from "@/lib/carrier-dispatch-gates";
 import { getReloadEscalations } from "@/lib/carrier-reload-intelligence";
@@ -541,6 +542,10 @@ export function CommandCenterV4() {
             </div>
           </div>
         </div>
+      </div>
+
+      <div className="max-w-7xl mx-auto px-6 pt-4">
+        <DemoPageExplainerById pageId="command-center" />
       </div>
 
       {/* Risk KPI Cards */}

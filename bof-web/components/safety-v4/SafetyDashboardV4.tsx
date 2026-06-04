@@ -24,6 +24,7 @@ import { getV3OperationalData, isV3DataAvailable } from "@/lib/v3-operational-lo
 import { formatDisplayDate } from "@/lib/date-utils";
 import { getSafetyEventEvidence } from "@/lib/safety-event-evidence";
 import type { MainSafety, SafetyEvent, SafetyKpiSource } from "@/lib/v3-operational-types";
+import { DemoPageExplainerById } from "@/components/demo/DemoPageExplainerById";
 
 function normalizeToken(value: string) {
   return value.trim().toLowerCase().replace(/[_-]+/g, " ");
@@ -364,6 +365,10 @@ export function SafetyDashboardV4() {
             </div>
           </div>
         </div>
+      </div>
+
+      <div className="max-w-7xl mx-auto px-6 pt-4">
+        <DemoPageExplainerById pageId="safety" />
       </div>
 
       {/* Safety KPI Cards */}

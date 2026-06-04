@@ -14,6 +14,7 @@ import {
   type OperationsFileCabinetAudience,
   type OperationsFileCabinetStatus,
 } from "@/lib/operations-file-cabinet";
+import { DemoPageExplainerById } from "@/components/demo/DemoPageExplainerById";
 
 type QuickFilter =
   | "all"
@@ -467,6 +468,8 @@ export function OperationsFileCabinetClient() {
           </div>
         </div>
       </div>
+
+      <DemoPageExplainerById pageId="documents" />
 
       {/* Summary Cards */}
       <div style={{
