@@ -7,7 +7,7 @@
       "kind": "promoted_from_loads",
       "category": "claims",
       "loadId": "L003",
-      "path": "/generated/claims/L003/insurance-notification.html"
+      "path": "/generated/loads/L001/insurance-notification.html"
     },
     {
       "id": "L003:claim-intake.html",
@@ -70,7 +70,7 @@
       "kind": "promoted_from_loads",
       "category": "claims",
       "loadId": "L004",
-      "path": "/generated/claims/L004/insurance-notification.html"
+      "path": "/generated/loads/L001/insurance-notification.html"
     },
     {
       "id": "L004:claim-intake.html",

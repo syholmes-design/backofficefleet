@@ -19,6 +19,9 @@ const LIB_MANIFEST = path.join(ROOT, "lib", "generated", "load-doc-manifest.json
 const CANONICAL_DELTA_MSA_URL =
   "/generated/agreements/DAT-MSA-001/delta-advanced-trucking-master-services-agreement.pdf";
 
+const CANONICAL_INSURANCE_NOTICE_URL =
+  "/generated/loads/L001/insurance-notification.html";
+
 const CORE_DOCS = ["rateConfirmation", "bol", "pod", "invoice"];
 
 /** Primary safety still image per load (matches `lib/safety-evidence.ts` URLs). */
@@ -63,6 +66,14 @@ function yesNo(v) {
   return v ? "Yes" : "No";
 }
 
+function formatUsDate(iso) {
+  const raw = String(iso ?? "").trim();
+  if (!raw) return "";
+  const d = new Date(raw);
+  if (Number.isNaN(d.getTime())) return "";
+  return `${d.getUTCMonth() + 1}/${d.getUTCDate()}/${d.getUTCFullYear()}`;
+}
+
 function renderTemplate(template, values) {
   return template.replace(/\{\{(\w+)\}\}/g, (_, key) => String(values[key] ?? ""));
 }
@@ -93,7 +104,11 @@ function deriveLoadContext(data, load, now = new Date()) {
   const dateKey = now.toISOString().slice(0, 10).replaceAll("-", "");
   const loadDate = `${now.getUTCMonth() + 1}/${now.getUTCDate()}/${now.getUTCFullYear()}`;
   const totalAmount = rate + fuelSurcharge + backhaulPay + (lumperCharge > 0 ? lumperCharge : 0) + detention;
-  const customer = laneOrigin.split(" ")[0] || "BOF Customer";
+  const customer =
+    sanitizeSegment(load.customerName) ||
+    sanitizeSegment(load.brokerName) ||
+    sanitizeSegment(load.consigneeName) ||
+    "Customer not on file";
 
   const rawMaId = load.masterAgreementId != null ? String(load.masterAgreementId).trim() : "";
   const hasFormalMasterAgreement = Boolean(rawMaId);
@@ -165,7 +180,13 @@ function deriveLoadContext(data, load, now = new Date()) {
     sealStatus: load.sealStatus,
     loadStatus: load.status,
     rfidTag: `RFID-${load.id}`,
-    exceptionNotes: load.dispatchOpsNotes || "Dispatch exception workflow in review.",
+    exceptionNotes:
+      (load.settlementHoldReason && String(load.settlementHoldReason).trim()) ||
+      (load.sealStatus === "Mismatch"
+        ? "Delivery seal mismatch requires manager review"
+        : "") ||
+      (load.dispatchOpsNotes && String(load.dispatchOpsNotes).trim()) ||
+      "Carrier incident under claims review per operating procedure.",
     hasSealData,
     hasClaim,
     rfidWorkflow: true,
@@ -189,7 +210,7 @@ function deriveLoadContext(data, load, now = new Date()) {
     workOrderId,
     claimRequired: yesNo(claimRequired),
     settlementHold: yesNo(settlementHold),
-    claimDate: loadDate,
+    claimDate: formatUsDate(load.deliveryAt || load.pickupAt) || loadDate,
     claimPacketLink,
     insuranceNotificationStatus,
     hasFormalMasterAgreement: yesNo(hasFormalMasterAgreement),
@@ -530,6 +551,7 @@ function safetyPhotoUrlForLoad(loadId) {
 
 function shouldEmit(docKey, ctx) {
   if (docKey === "masterAgreementReference") return false;
+  if (docKey === "insuranceNotification") return ctx.hasClaim && ctx.loadId === "L001";
   if (docKey === "sealVerification") return ctx.hasSealData;
   if (docKey === "claimPacket") return ctx.hasClaim;
   if (docKey === "claimIntake") return ctx.hasClaim;
@@ -646,6 +668,9 @@ function main() {
     }
 
     entry.masterAgreementReference = CANONICAL_DELTA_MSA_URL;
+    if (ctx.hasClaim) {
+      entry.insuranceNotification = CANONICAL_INSURANCE_NOTICE_URL;
+    }
 
     writePacketBundlePages(ctx.loadId, entry);
 

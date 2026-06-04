@@ -1,5 +1,6 @@
 import rawManifest from "@/lib/generated/load-doc-manifest.json";
 import { resolveCanonicalMsaUrl } from "@/lib/canonical-documents";
+import { resolveCanonicalInsuranceNoticeUrl } from "@/lib/canonical-insurance-notice";
 import { resolveSafetyEvidencePublicUrl } from "@/lib/safety-evidence-url";
 
 export type GeneratedLoadDocKey =
@@ -53,6 +54,10 @@ export function getGeneratedLoadDocUrl(
   if (key === "masterAgreementReference") {
     const raw = getGeneratedLoadDocEntry(loadId)[key];
     return resolveCanonicalMsaUrl(raw);
+  }
+  if (key === "insuranceNotification") {
+    const raw = getGeneratedLoadDocEntry(loadId)[key];
+    return resolveCanonicalInsuranceNoticeUrl(raw);
   }
   const raw = getGeneratedLoadDocEntry(loadId)[key];
   if (!raw) return undefined;

@@ -3,6 +3,7 @@ import {
   CANONICAL_DELTA_MSA_URL,
   resolveOperationsFileCabinetId,
 } from "@/lib/canonical-documents";
+import { CANONICAL_INSURANCE_NOTICE_URL } from "@/lib/canonical-insurance-notice";
 
 export type OperationsFileCabinetItem = {
   id: string;
@@ -684,7 +685,7 @@ export const OPERATIONS_FILE_CABINET_REGISTRY: OperationsFileCabinetItem[] = [
     audience: ["dispatcher", "customer", "legal"],
     status: "available",
     description: "Insurance coverage and claims notice sample",
-    href: "/generated/loads/L001/insurance-notification.html",
+    href: CANONICAL_INSURANCE_NOTICE_URL,
     sourceAuthenticity: "generated_from_template",
     documentOwner: "employer",
     employerName: "Delta Advanced Trucking, Inc.",
@@ -802,7 +803,7 @@ export const OPERATIONS_FILE_CABINET_REGISTRY: OperationsFileCabinetItem[] = [
     audience: ["manager", "safety", "legal"],
     status: "available",
     description: "Insurance claim submission and documentation form",
-    href: "/generated/claims/L003/insurance-notification.html",
+    href: CANONICAL_INSURANCE_NOTICE_URL,
     sourceAuthenticity: "generated_from_template",
     documentOwner: "employer",
     employerName: "Delta Advanced Trucking, Inc.",
@@ -930,7 +931,7 @@ export const OPERATIONS_FILE_CABINET_REGISTRY: OperationsFileCabinetItem[] = [
     audience: ["manager", "safety", "legal"],
     status: "available",
     description: "Insurance notification and claim reporting documentation",
-    href: "/generated/loads/L001/insurance-notification.html",
+    href: CANONICAL_INSURANCE_NOTICE_URL,
     sourceAuthenticity: "generated_from_template",
     documentOwner: "employer",
     employerName: "Delta Advanced Trucking, Inc.",
@@ -1946,7 +1947,7 @@ export const OPERATIONS_FILE_CABINET_REGISTRY: OperationsFileCabinetItem[] = [
     audience: ["driver", "manager", "safety", "legal"],
     status: "available",
     description: "Insurance notification for load L003",
-    href: "/generated/claims/L003/insurance-notification.html",
+    href: CANONICAL_INSURANCE_NOTICE_URL,
     sourceAuthenticity: "generated_from_template",
     documentOwner: "employer",
     employerName: "Delta Advanced Trucking, Inc.",
