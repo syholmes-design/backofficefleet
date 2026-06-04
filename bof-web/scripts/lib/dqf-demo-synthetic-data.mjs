@@ -4,10 +4,10 @@
  */
 
 const REVIEWER_POOL = [
-  { name: "Alicia Morgan", title: "BOF Compliance Coordinator" },
-  { name: "Marcus Reed", title: "BOF Safety & Compliance Reviewer" },
-  { name: "Danielle Brooks", title: "BOF Driver Qualification Specialist" },
-  { name: "Ethan Wallace", title: "BOF Operations Compliance Lead" },
+  { name: "Alicia Morgan", title: "Carrier Compliance Coordinator" },
+  { name: "Marcus Reed", title: "Safety & Compliance Reviewer" },
+  { name: "Danielle Brooks", title: "Driver Qualification Specialist" },
+  { name: "Ethan Wallace", title: "Operations Compliance Lead" },
 ];
 
 function driverOrdinal(driverId) {
@@ -21,7 +21,7 @@ function driverOrdinal(driverId) {
 export function getDqfReviewerForDriver(driverId) {
   const ord = driverOrdinal(driverId);
   const idx = (ord - 1) % REVIEWER_POOL.length;
-  return { ...REVIEWER_POOL[idx], source: "synthetic_demo" };
+  return { ...REVIEWER_POOL[idx], source: "system_generated" };
 }
 
 /**
@@ -54,8 +54,8 @@ export function getDqfSyntheticReviewNotes(driverId, eligibilityStatus) {
       ? "DQF review held — resolve hard blockers before next dispatch assignment."
       : eligibilityStatus === "needs_review"
         ? "DQF file substantively complete; soft warnings require documented follow-up."
-        : "DQF credential stack aligned with BOF canonical document index for this driverId.";
-  return `${base} (demo note #${ord})`;
+        : "DQF credential stack aligned with BOF document index for this driverId.";
+  return `${base} (review note #${ord})`;
 }
 
 /**
