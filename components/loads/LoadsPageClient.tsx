@@ -9,6 +9,7 @@ import { buildDispatchLoadsFromBofData } from "@/lib/dispatch-dashboard-seed";
 import { getDispatchCommandSummary } from "@/lib/dispatch/dispatch-command-metrics";
 import { DispatchRouteMapClient } from "@/components/dispatch/DispatchRouteMapClient";
 import { DispatchAttentionQueue } from "@/components/dispatch/DispatchAttentionQueue";
+import { DemoPageExplainerById } from "@/components/demo/DemoPageExplainerById";
 
 export function LoadsPageClient() {
   const { data, resetDemoRiskOverrides } = useBofDemoData();
@@ -29,6 +30,7 @@ export function LoadsPageClient() {
       <p className="bof-lead">
         Each load shows the operating trail from assignment to proof to settlement confidence. {OPS_COPY.loadsLead}
       </p>
+      <DemoPageExplainerById pageId="loads" />
       <section className="bof-oper-metrics" aria-label="Dispatch summary">
         <div className="bof-oper-metric">
           <span className="bof-oper-metric-label">Total loads</span>

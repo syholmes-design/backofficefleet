@@ -1,6 +1,7 @@
 import { Metadata } from 'next';
 import { getPortalCards } from '@/lib/demo-portals';
 import Link from 'next/link';
+import { DemoPageExplainerById } from '@/components/demo/DemoPageExplainerById';
 
 export const metadata: Metadata = {
   title: 'Three Portals. One Operating System',
@@ -21,6 +22,9 @@ export default function PortalsPage() {
           <p className="text-xl text-gray-600 max-w-3xl mx-auto">
             BOF gives every stakeholder the view they need — managers control operation, drivers execute work, and customers see status, proof, and documents.
           </p>
+          <div className="mt-6 max-w-2xl mx-auto text-left">
+            <DemoPageExplainerById pageId="portals" className="bof-demo-page-explainer--light" />
+          </div>
         </div>
 
         {/* Portal Cards */}

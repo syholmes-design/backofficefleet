@@ -7,6 +7,7 @@ import { getV3OperationalData, isV3DataAvailable } from "@/lib/v3-operational-lo
 import { formatDisplayDate } from "@/lib/date-utils";
 import { SettlementsAssetCards } from "@/components/settlements-v3/SettlementsAssetCards";
 import type { PayrollSettlementDetail, WeeklySettlement, SettlementHold } from "@/lib/v3-operational-types";
+import { DemoPageExplainerById } from "@/components/demo/DemoPageExplainerById";
 
 function getLatestSettlementWeek(rows: WeeklySettlement[]) {
   return Array.from(new Set(rows.map((row) => row.weekEnding)))
@@ -375,6 +376,10 @@ export function SettlementsV3Simple() {
             </div>
           </div>
         </div>
+      </div>
+
+      <div className="max-w-7xl mx-auto px-6 pt-4">
+        <DemoPageExplainerById pageId="settlements" />
       </div>
 
       {/* KPI Cards */}

@@ -2,6 +2,7 @@
 
 import { DriversRosterTable } from "@/components/drivers/DriversRosterTable";
 import { ComplianceDashboardV4 } from "@/components/compliance-v4/ComplianceDashboardV4";
+import { DemoPageExplainerById } from "@/components/demo/DemoPageExplainerById";
 
 export function DriversCommandCenterV4() {
   return (
@@ -13,6 +14,9 @@ export function DriversCommandCenterV4() {
           This view turns driver files into dispatch decisions: expired credentials, missing documents,
           acknowledgments, compliance incidents, and eligibility blockers are visible before a planner assigns work.
         </p>
+        <div className="mt-4">
+          <DemoPageExplainerById pageId="drivers" />
+        </div>
       </header>
 
       {/* Driver Roster Section */}

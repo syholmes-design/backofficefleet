@@ -15,6 +15,7 @@ import { DispatchAssetCards } from "@/components/dispatch/DispatchAssetCards";
 import { useDispatchDashboardStore } from "@/lib/stores/dispatch-dashboard-store";
 import { useBofDemoData } from "@/lib/bof-demo-data-context";
 import { buildDispatchLoadsFromBofData } from "@/lib/dispatch-dashboard-seed";
+import { DemoPageExplainerById } from "@/components/demo/DemoPageExplainerById";
 
 export function DispatchShell() {
   const { data } = useBofDemoData();
@@ -90,6 +91,9 @@ export function DispatchShell() {
     <div className="flex min-h-[calc(100vh-3.5rem)] flex-col bg-slate-950 text-slate-100 lg:flex-row">
       <DispatchNav />
       <div className="flex min-h-0 min-w-0 flex-1 flex-col">
+        <div className="px-4 pt-3">
+          <DemoPageExplainerById pageId="dispatch" />
+        </div>
         {nav === "board" && <DispatchBoardScreen />}
         {nav === "load-detail" && (
           <div className="flex min-h-0 flex-1 flex-col p-5">

@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
+import { DemoPageExplainerById } from "@/components/demo/DemoPageExplainerById";
 
 // Helper array for action card configuration with distinct images and proper cropping
 const ACTION_CARDS = [
@@ -369,6 +370,10 @@ export function DashboardPageClient() {
           }
         `}</style>
       </section>
+
+      <div style={{ maxWidth: "1200px", margin: "0 auto", padding: "0 2rem 1rem" }}>
+        <DemoPageExplainerById pageId="dashboard" />
+      </div>
 
       {/* Fleet Operations Manager Card */}
       <section

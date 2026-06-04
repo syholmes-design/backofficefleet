@@ -15964,6 +15964,93 @@ a.shipper-portal-story-step:focus-visible,
   color: var(--bof-cc-muted);
 }
 
+/* Demo page explainers — collapsible, closed by default, minimal footprint */
+.bof-demo-page-explainer {
+  margin: 0 0 0.75rem;
+  border: 1px solid rgba(148, 163, 184, 0.22);
+  border-radius: 10px;
+  background: rgba(15, 23, 42, 0.55);
+  font-size: 0.82rem;
+  line-height: 1.45;
+  color: #cbd5e1;
+}
+
+.bof-demo-page-explainer__summary {
+  cursor: pointer;
+  list-style: none;
+  padding: 0.5rem 0.75rem;
+  font-weight: 600;
+  color: #e2e8f0;
+  user-select: none;
+}
+
+.bof-demo-page-explainer__summary::-webkit-details-marker {
+  display: none;
+}
+
+.bof-demo-page-explainer__summary::before {
+  content: "▸ ";
+  color: #5eead4;
+  font-size: 0.75rem;
+}
+
+.bof-demo-page-explainer[open] .bof-demo-page-explainer__summary::before {
+  content: "▾ ";
+}
+
+.bof-demo-page-explainer__body {
+  padding: 0 0.75rem 0.65rem;
+  border-top: 1px solid rgba(148, 163, 184, 0.12);
+}
+
+.bof-demo-page-explainer__dl {
+  margin: 0.5rem 0 0;
+  display: grid;
+  gap: 0.45rem;
+}
+
+.bof-demo-page-explainer__row dt {
+  margin: 0;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: #94a3b8;
+}
+
+.bof-demo-page-explainer__row dd {
+  margin: 0.15rem 0 0;
+  color: #e2e8f0;
+}
+
+@media (max-width: 640px) {
+  .bof-demo-page-explainer {
+    font-size: 0.8rem;
+  }
+
+  .bof-demo-page-explainer__summary {
+    padding: 0.45rem 0.65rem;
+  }
+}
+
+.bof-demo-page-explainer--light {
+  background: rgba(255, 255, 255, 0.92);
+  border-color: rgba(148, 163, 184, 0.35);
+  color: #334155;
+}
+
+.bof-demo-page-explainer--light .bof-demo-page-explainer__summary {
+  color: #0f172a;
+}
+
+.bof-demo-page-explainer--light .bof-demo-page-explainer__row dt {
+  color: #64748b;
+}
+
+.bof-demo-page-explainer--light .bof-demo-page-explainer__row dd {
+  color: #1e293b;
+}
+
 .bof-cc-bars {
   display: grid;
   gap: 0.45rem;
