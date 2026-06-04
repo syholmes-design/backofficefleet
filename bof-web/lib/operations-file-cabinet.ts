@@ -1,3 +1,9 @@
+import {
+  CANONICAL_DELTA_MSA_LABEL,
+  CANONICAL_DELTA_MSA_URL,
+  resolveOperationsFileCabinetId,
+} from "@/lib/canonical-documents";
+
 export type OperationsFileCabinetItem = {
   id: string;
   title: string;
@@ -720,7 +726,7 @@ export const OPERATIONS_FILE_CABINET_REGISTRY: OperationsFileCabinetItem[] = [
   },
   {
     id: "dispatch-master-agreement-sample",
-    title: "Delta Advanced Trucking, Inc. Master Services Agreement",
+    title: CANONICAL_DELTA_MSA_LABEL,
     cabinet: "Dispatch & Load Operations",
     section: "Legal / Contracts",
     category: "Dispatch & Load Operations",
@@ -728,7 +734,7 @@ export const OPERATIONS_FILE_CABINET_REGISTRY: OperationsFileCabinetItem[] = [
     audience: ["dispatcher", "manager", "customer", "legal"],
     status: "available",
     description: "Master services agreement governing tender, proof, payment, insurance, claims, and dispute handling for Delta Advanced Trucking, Inc.",
-    href: "/generated/agreements/DAT-MSA-001/delta-advanced-trucking-master-services-agreement.pdf",
+    href: CANONICAL_DELTA_MSA_URL,
     sourceAuthenticity: "official_template",
     documentOwner: "employer",
     employerName: "Delta Advanced Trucking, Inc.",
@@ -1254,7 +1260,7 @@ export const OPERATIONS_FILE_CABINET_REGISTRY: OperationsFileCabinetItem[] = [
     audience: ["manager", "legal", "customer", "owner"],
     status: "template",
     description: "Standard carrier service agreement template",
-    href: "/generated/agreements/DAT-MSA-001/delta-advanced-trucking-master-services-agreement.pdf",
+    href: CANONICAL_DELTA_MSA_URL,
     sourceAuthenticity: "official_template",
     documentOwner: "employer",
     employerName: "Delta Advanced Trucking, Inc.",
@@ -2060,6 +2066,11 @@ export type OperationsFileCabinetStatus = OperationsFileCabinetItem["status"];
 
 export function getOperationsFileCabinetItems(): OperationsFileCabinetItem[] {
   return OPERATIONS_FILE_CABINET_REGISTRY;
+}
+
+export function getOperationsFileCabinetItemById(id: string): OperationsFileCabinetItem | undefined {
+  const resolvedId = resolveOperationsFileCabinetId(id);
+  return OPERATIONS_FILE_CABINET_REGISTRY.find((item) => item.id === resolvedId);
 }
 
 export function getOperationsFileCabinetItemsByCategory(category: OperationsFileCabinetCategory): OperationsFileCabinetItem[] {

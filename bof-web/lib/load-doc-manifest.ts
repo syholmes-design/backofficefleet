@@ -1,4 +1,5 @@
 import rawManifest from "@/lib/generated/load-doc-manifest.json";
+import { resolveCanonicalMsaUrl } from "@/lib/canonical-documents";
 import { resolveSafetyEvidencePublicUrl } from "@/lib/safety-evidence-url";
 
 export type GeneratedLoadDocKey =
@@ -49,6 +50,10 @@ export function getGeneratedLoadDocUrl(
   loadId: string,
   key: GeneratedLoadDocKey
 ): string | undefined {
+  if (key === "masterAgreementReference") {
+    const raw = getGeneratedLoadDocEntry(loadId)[key];
+    return resolveCanonicalMsaUrl(raw);
+  }
   const raw = getGeneratedLoadDocEntry(loadId)[key];
   if (!raw) return undefined;
   const normalized = String(raw).trim();

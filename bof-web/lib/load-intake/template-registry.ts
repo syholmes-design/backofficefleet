@@ -1,3 +1,4 @@
+import { CANONICAL_DELTA_MSA_LABEL } from "@/lib/canonical-documents";
 import {
   getExpectedOutputPath,
   getResolvedOutputPath,
@@ -25,7 +26,7 @@ const SEEDS: RegistrySeed[] = [
   { documentType: "invoice", displayName: "Invoice", vaultCategory: "core_documents", canPreview: true, canDownload: true },
   { documentType: "bill_of_lading", displayName: "Bill of Lading (BOL)", vaultCategory: "core_documents", canPreview: true, canDownload: true },
   { documentType: "trip_schedule", displayName: "Trip Schedule / Work Order", vaultCategory: "core_documents", canPreview: true, canDownload: true },
-  { documentType: "master_agreement", displayName: "Delta Master Services Agreement", vaultCategory: "core_documents", canPreview: true, canDownload: true },
+  { documentType: "master_agreement", displayName: CANONICAL_DELTA_MSA_LABEL, vaultCategory: "core_documents", canPreview: true, canDownload: true },
   { documentType: "seal_cargo_photo_sheet", displayName: "Seal / Cargo Photo Sheet", vaultCategory: "proof_media", canPreview: true, canDownload: true },
   { documentType: "pod", displayName: "Proof of Delivery (POD)", vaultCategory: "proof_media", canPreview: true, canDownload: true },
   { documentType: "lumper_receipt", displayName: "Lumper Receipt", vaultCategory: "proof_media", canPreview: true, canDownload: true },

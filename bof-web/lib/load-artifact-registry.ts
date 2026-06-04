@@ -1,3 +1,4 @@
+import { CANONICAL_DELTA_MSA_LABEL } from "@/lib/canonical-documents";
 import type { BofData } from "@/lib/load-bof-data";
 import {
   buildTripDocumentPacket,
@@ -297,7 +298,7 @@ const PACKET_RULES: Record<string, PacketRule> = {
     signatureRequiredBy: ["dispatcher"],
   },
   master_agreement_reference: {
-    title: "Delta Advanced Trucking, Inc. Master Services Agreement",
+    title: CANONICAL_DELTA_MSA_LABEL,
     description: "Executed customer operating agreement for shipment terms, payment rules, claims, insurance, and dispute support.",
     category: "shipper_customer",
     criticality: "informational",

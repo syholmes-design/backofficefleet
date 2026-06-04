@@ -16,6 +16,9 @@ const PUBLIC_DIR = path.join(ROOT, "public");
 const PUBLIC_MANIFEST = path.join(OUT_DIR, "load-doc-manifest.json");
 const LIB_MANIFEST = path.join(ROOT, "lib", "generated", "load-doc-manifest.json");
 
+const CANONICAL_DELTA_MSA_URL =
+  "/generated/agreements/DAT-MSA-001/delta-advanced-trucking-master-services-agreement.pdf";
+
 const CORE_DOCS = ["rateConfirmation", "bol", "pod", "invoice"];
 
 /** Primary safety still image per load (matches `lib/safety-evidence.ts` URLs). */
@@ -105,8 +108,8 @@ function deriveLoadContext(data, load, now = new Date()) {
         : "—";
   const masterAgreementStamp = hasFormalMasterAgreement ? "Active MA" : "Draft ref";
   const masterAgreementLegalNote = hasFormalMasterAgreement
-    ? `This movement is executed under Master Agreement ${rawMaId} (effective ${masterAgreementDate}). The Schedule / Work Order for load ${load.id} supplements that agreement for this shipment only.`
-    : `No executed master agreement ID is on file for this customer in demo data. This page is a draft reference generated only from the approved BOF master-agreement reference template — obtain countersigned MA before production dispatch.`;
+    ? `This movement is executed under the Delta Advanced Trucking, Inc. Master Services Agreement ${rawMaId} (effective ${masterAgreementDate}). The Schedule / Work Order for load ${load.id} supplements that agreement for this shipment only.`
+    : `No executed Master Services Agreement ID is on file for this customer in demo data. Use the canonical DAT-MSA-001 agreement PDF before production dispatch.`;
 
   const workOrderId = load.workOrderId != null && String(load.workOrderId).trim()
     ? String(load.workOrderId).trim()
@@ -526,6 +529,7 @@ function safetyPhotoUrlForLoad(loadId) {
 }
 
 function shouldEmit(docKey, ctx) {
+  if (docKey === "masterAgreementReference") return false;
   if (docKey === "sealVerification") return ctx.hasSealData;
   if (docKey === "claimPacket") return ctx.hasClaim;
   if (docKey === "claimIntake") return ctx.hasClaim;
@@ -640,6 +644,8 @@ function main() {
     if (fileExists(damagePacketPng)) {
       entry.damagePhotoPacket = publicUrlFromAbsolute(damagePacketPng);
     }
+
+    entry.masterAgreementReference = CANONICAL_DELTA_MSA_URL;
 
     writePacketBundlePages(ctx.loadId, entry);
 

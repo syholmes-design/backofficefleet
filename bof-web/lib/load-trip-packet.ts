@@ -12,6 +12,7 @@ import type {
   LoadEvidenceType,
   LoadProofBundle,
 } from "./load-proof";
+import { CANONICAL_DELTA_MSA_LABEL } from "@/lib/canonical-documents";
 import { getGeneratedLoadDocUrl } from "./load-doc-manifest";
 import { getLoadEvidenceMeta, getLoadEvidenceUrl } from "./load-documents";
 import { getCanonicalLoadEvidenceByType } from "./canonical-load-evidence";
@@ -476,11 +477,11 @@ export function buildTripDocumentPacket(data: BofData, loadId: string): TripPack
     },
     {
       key: "master_agreement_reference",
-      label: "Delta Advanced Trucking, Inc. Master Services Agreement",
+      label: CANONICAL_DELTA_MSA_LABEL,
       group: "reference",
       status: masterUrl ? "ready" : "missing",
       url: masterUrl,
-      note: masterUrl ? undefined : "Delta Master Services Agreement PDF not linked.",
+      note: masterUrl ? undefined : `${CANONICAL_DELTA_MSA_LABEL} PDF not linked.`,
       requiredForSettlementRelease: false,
       deliveredMinimum: false,
       loadEvidenceType: "master_agreement_reference",

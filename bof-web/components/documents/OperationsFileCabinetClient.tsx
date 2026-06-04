@@ -153,7 +153,7 @@ export function OperationsFileCabinetClient() {
         "policy-tax-audit-readiness", "policy-cash-flow-management",
         
         // Dispatch & Load Documents (real generated files only)
-        "contract-master-agreement", "dispatch-work-order", "dispatch-rate-confirmation",
+        "dispatch-master-agreement-sample", "dispatch-work-order", "dispatch-rate-confirmation",
         "dispatch-bol", "dispatch-pod",
         "claims-cargo-intake", "claims-insurance-notice",
         
