@@ -70,7 +70,7 @@ function createImageHtmlWrapper(sourcePath, targetPath, documentType, fileName) 
 <body>
     <div class="header">
         <h1>${documentType}</h1>
-        <p>BOF Generated Document</p>
+        <p>Operational Record</p>
     </div>
     <div class="doc-image">
         <img src="${imageRelativePath}" alt="${documentType}" style="width: 100%;" />

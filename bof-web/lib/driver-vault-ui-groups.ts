@@ -20,9 +20,9 @@ export const DRIVER_VAULT_UI_GROUP_ORDER: DriverVaultUiGroup[] = [
 ];
 
 export const DRIVER_VAULT_UI_GROUP_LABEL: Record<DriverVaultUiGroup, string> = {
-  core_compliance: "Core Compliance",
-  employment_qualification: "Employment / Qualification",
-  safety_training: "Safety / Training",
+  core_compliance: "Driver Qualification File Documents",
+  employment_qualification: "Driver Compliance Records",
+  safety_training: "Supporting Driver Records",
   emergency_contacts: "Emergency Contacts",
   financial_admin: "Financial / Admin",
 };
@@ -37,7 +37,7 @@ export const DRIVER_VAULT_UI_GROUP_DESCRIPTION: Record<DriverVaultUiGroup, strin
   emergency_contacts:
     "Reach-back contacts for dispatch and HR — primary sheets and extended emergency documentation.",
   financial_admin:
-    "Payroll and back-office — W-9, banking instructions, credential registers, and generated administrative summaries.",
+    "Payroll and back-office — W-9, banking instructions, credential registers, and administrative records.",
 };
 
 const BY_CANONICAL: Record<string, DriverVaultUiGroup> = {

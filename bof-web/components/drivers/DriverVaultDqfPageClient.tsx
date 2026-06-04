@@ -37,8 +37,8 @@ function rowStatusPill(status: DriverDqfDocumentRow["status"]): string {
 function formatSource(s: DriverDqfDocumentRow["source"]): string {
   const m: Record<string, string> = {
     public_file: "Public file",
-    generated_summary: "Generated",
-    template_output: "Template",
+    generated_summary: "Operational Record",
+    template_output: "Standard Template",
     structured_record: "Record",
     missing: "—",
   };
@@ -315,10 +315,10 @@ function getDocumentReviewExplanation(row: DriverDqfDocumentRow): {
               className="bof-dqf-vault-btn bof-dqf-vault-btn--ghost"
               onClick={() => resetDocumentReviewOverrides(driverId)}
             >
-              Reset DQF demo marks
+              Reset Compliance Overrides
             </button>
             <Link href="/source-of-truth" className="bof-dqf-vault-btn bof-dqf-vault-btn--ghost">
-              Regenerate (fleet source)
+              Refresh Fleet Records
             </Link>
           </div>
         </header>
@@ -409,7 +409,7 @@ function getDocumentReviewExplanation(row: DriverDqfDocumentRow): {
                               <span className={rowStatusPill(row.status)}>{row.status.replace(/_/g, " ")}</span>
                               {resolvedDocIds.has(dqfDocumentIssueId(row.canonicalType)) ? (
                                 <span className="bof-dqf-vault-pill bof-dqf-vault-pill--ok" style={{ marginLeft: 6 }}>
-                                  Demo resolved
+                                  Resolved
                                 </span>
                               ) : null}
                             </td>
