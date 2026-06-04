@@ -3,7 +3,7 @@
 <!-- BOF_LOAD_ID: L001 -->
 <!doctype html>
 <html>
-  <head><meta charset="utf-8" /><title>Insurance Notification L001</title><style>@page { size: auto; margin: 0.5in; }
+  <head><meta charset="utf-8" /><title>Insurance Incident Notification L001</title><style>@page { size: auto; margin: 0.5in; }
 * { box-sizing: border-box; }
 body { font-family: "Inter", "Segoe UI", Arial, Helvetica, sans-serif; margin: 0; background: #f3f4f6; color: #111827; }
 .paper { width: 8.5in; max-width: 100%; margin: 20px auto; background: #fff; border: 1px solid #d1d5db; padding: 26px; box-shadow: 0 8px 30px rgba(15, 23, 42, 0.08); }
@@ -148,23 +148,50 @@ footer { margin-top: 16px; padding-top: 8px; border-top: 1px dashed #9ca3af; dis
   <body>
     <div class="paper">
       <header class="doc-header">
-        <div><h1 class="doc-title">Insurance Company Notification</h1><div class="generated-label">BOF approved template output (demo/test)</div></div>
+        <div>
+          <h1 class="doc-title">Insurance Incident Notification</h1>
+          <div class="generated-label">Delta Advanced Trucking, Inc. — Carrier notification to insurer / claims administrator</div>
+        </div>
         <div class="status-stamp">Queued for carrier/insurance review</div>
       </header>
+      <div class="meta-grid">
+        <div class="meta-box">
+          <div class="meta-label">Carrier</div>
+          <div class="meta-value">Delta Advanced Trucking, Inc.</div>
+        </div>
+        <div class="meta-box">
+          <div class="meta-label">Load ID</div>
+          <div class="meta-value">L001</div>
+        </div>
+        <div class="meta-box">
+          <div class="meta-label">Driver</div>
+          <div class="meta-value">John Carter</div>
+        </div>
+        <div class="meta-box">
+          <div class="meta-label">Customer</div>
+          <div class="meta-value">Peachtree Foods</div>
+        </div>
+      </div>
       <table>
-        <tr><th>Load ID</th><th>Driver</th><th>Customer</th><th>Incident Date</th></tr>
-        <tr><td>L001</td><td>John Carter</td><td>Acme</td><td>5/19/2026</td></tr>
+        <tr><th>Incident date</th><th>Incident summary</th><th>Estimated exposure</th><th>Claim packet</th></tr>
+        <tr>
+          <td>5/19/2026</td>
+          <td>Delivery seal mismatch at destination; carrier safety and claims staff notified per operating procedure.</td>
+          <td>$450.00</td>
+          <td>/generated/loads/L001/claim-packet.html</td>
+        </tr>
       </table>
-      <table>
-        <tr><th>Description</th><th>Exposure</th><th>Claim Packet Link</th><th>Evidence Link</th></tr>
-        <tr><td>Dispatch exception workflow in review.</td><td>$450.00</td><td>/generated/loads/L001/claim-packet.html</td><td>/evidence/loads/L001/damage-photo.svg</td></tr>
-      </table>
-      <div class="terms-box">BOF demo/test notice generated from the approved insurance notification template. Validate incident details, exposure, and linked claim evidence before external send.</div>
+      <div class="terms-box">
+        This notice documents a reportable incident for Delta Advanced Trucking, Inc. load L001. Supporting photographs,
+        intake forms, and dispatch records are maintained in the linked claim packet. BackOfficeFleet indexes carrier
+        workflow records only; Delta Advanced Trucking, Inc. remains the insured motor carrier and responsible notifier
+        to its insurance partners.
+      </div>
       <div class="sig-line">
         <div class="sig-slot">Ops signature: <em></em> / 5/19/2026, 2:46:40 PM</div>
         <div class="sig-slot">Claims signature: <em></em> / 5/19/2026, 2:46:40 PM</div>
       </div>
-      <footer><span>5/19/2026, 2:46:40 PM</span><span>BOF operations document packet</span></footer>
+      <footer><span>5/19/2026, 2:46:40 PM</span><span>Delta Advanced Trucking, Inc. — Fleet Operations</span></footer>
     </div>
   </body>
 </html>
