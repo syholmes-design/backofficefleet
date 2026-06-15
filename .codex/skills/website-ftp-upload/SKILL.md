@@ -54,6 +54,14 @@ To save the credential-file passphrase for unattended uploads across synced comp
 .\.codex\skills\website-ftp-upload\scripts\save-website-ftp-passphrase.ps1
 ```
 
+If launching from File Explorer or a normal Windows double-click workflow, use the `.cmd` wrappers so Windows does not open the PowerShell script in Notepad:
+
+```text
+.codex/skills/website-ftp-upload/scripts/save-website-ftp-passphrase.cmd
+.codex/skills/website-ftp-upload/scripts/upload-website-ftp-dry-run.cmd
+.codex/skills/website-ftp-upload/scripts/upload-website-ftp.cmd
+```
+
 ## Rules
 
 - Prefer upload-only behavior. Do not delete remote files unless the user explicitly asks and a separate deletion-safe workflow exists.
@@ -74,6 +82,8 @@ Use:
 
 ```text
 .codex/skills/website-ftp-upload/scripts/upload-website-ftp.ps1
+.codex/skills/website-ftp-upload/scripts/upload-website-ftp-dry-run.cmd
+.codex/skills/website-ftp-upload/scripts/upload-website-ftp.cmd
 ```
 
 Credential helpers:
@@ -81,6 +91,7 @@ Credential helpers:
 ```text
 .codex/skills/website-ftp-upload/scripts/save-website-ftp-credential.ps1
 .codex/skills/website-ftp-upload/scripts/save-website-ftp-passphrase.ps1
+.codex/skills/website-ftp-upload/scripts/save-website-ftp-passphrase.cmd
 .codex/skills/website-ftp-upload/scripts/remove-website-ftp-credential.ps1
 ```
 
