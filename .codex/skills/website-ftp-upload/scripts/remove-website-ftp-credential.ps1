@@ -1,6 +1,7 @@
 [CmdletBinding()]
 param(
-    [string]$CredentialPath
+    [string]$CredentialPath,
+    [string]$CredentialPassphrasePath
 )
 
 Set-StrictMode -Version Latest
@@ -16,16 +17,30 @@ if ([string]::IsNullOrWhiteSpace($CredentialPath)) {
     $CredentialPath = Join-Path $projectRoot ".codex\secrets\website-ftps-credential.json"
 }
 
+if ([string]::IsNullOrWhiteSpace($CredentialPassphrasePath)) {
+    $CredentialPassphrasePath = Join-Path $projectRoot ".codex\secrets\website-ftps-passphrase.txt"
+}
+
 if (Test-Path -LiteralPath $CredentialPath) {
     Remove-Item -LiteralPath $CredentialPath -Force
-    $removed = $true
+    $credentialRemoved = $true
 }
 else {
-    $removed = $false
+    $credentialRemoved = $false
+}
+
+if (Test-Path -LiteralPath $CredentialPassphrasePath) {
+    Remove-Item -LiteralPath $CredentialPassphrasePath -Force
+    $passphraseRemoved = $true
+}
+else {
+    $passphraseRemoved = $false
 }
 
 [pscustomobject]@{
     Mode = "Removed"
     CredentialPath = $CredentialPath
-    Removed = $removed
+    CredentialRemoved = $credentialRemoved
+    CredentialPassphrasePath = $CredentialPassphrasePath
+    CredentialPassphraseRemoved = $passphraseRemoved
 } | Format-List

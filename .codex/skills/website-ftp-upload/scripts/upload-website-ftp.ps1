@@ -6,6 +6,7 @@ param(
     [string]$Password = $env:BOF_FTP_PASSWORD,
     [string]$CredentialPath,
     [string]$CredentialPassphrase = $env:BOF_FTP_CREDENTIAL_PASSPHRASE,
+    [string]$CredentialPassphrasePath,
     [string]$RemoteRoot = "/",
     [string]$LocalRoot,
     [string]$ManifestName = ".bof-deploy-manifest.json",
@@ -22,6 +23,7 @@ $ProtocolLabel = "Explicit FTPS (FTP over TLS)"
 $EffectiveUsername = $Username
 $EffectivePassword = $Password
 $CredentialSource = if ([string]::IsNullOrWhiteSpace($Password)) { "None" } else { "Runtime" }
+$CredentialPassphraseSource = if ([string]::IsNullOrWhiteSpace($CredentialPassphrase)) { "None" } else { "Runtime" }
 $EnsuredRemoteDirectories = @{}
 
 if ($AllowInvalidCertificate) {
@@ -131,6 +133,22 @@ function Read-EncryptedCredential {
     return ($plainJson | ConvertFrom-Json)
 }
 
+function Resolve-CredentialPassphrase {
+    if (-not [string]::IsNullOrWhiteSpace($CredentialPassphrase)) {
+        return
+    }
+
+    if (-not [string]::IsNullOrWhiteSpace($CredentialPassphrasePath) -and (Test-Path -LiteralPath $CredentialPassphrasePath)) {
+        $storedPassphrase = Get-Content -LiteralPath $CredentialPassphrasePath -Raw
+        $storedPassphrase = $storedPassphrase.TrimEnd([char[]]@("`r", "`n"))
+        if (-not [string]::IsNullOrWhiteSpace($storedPassphrase)) {
+            $script:CredentialPassphrase = $storedPassphrase
+            $script:CredentialPassphraseSource = "Passphrase file"
+            return
+        }
+    }
+}
+
 function Resolve-UploadCredential {
     if (-not [string]::IsNullOrWhiteSpace($EffectiveUsername) -and -not [string]::IsNullOrWhiteSpace($EffectivePassword)) {
         return
@@ -140,9 +158,12 @@ function Resolve-UploadCredential {
         return
     }
 
+    Resolve-CredentialPassphrase
+
     if ([string]::IsNullOrWhiteSpace($CredentialPassphrase)) {
         $securePassphrase = Read-Host -Prompt "Enter BOF encrypted FTP credential passphrase" -AsSecureString
         $script:CredentialPassphrase = Convert-SecureStringToPlainText -SecureString $securePassphrase
+        $script:CredentialPassphraseSource = "Prompt"
     }
 
     $credential = Read-EncryptedCredential -Path $CredentialPath -Passphrase $CredentialPassphrase
@@ -155,6 +176,8 @@ function Test-HasRuntimeCredential {
     if (-not [string]::IsNullOrWhiteSpace($EffectiveUsername) -and -not [string]::IsNullOrWhiteSpace($EffectivePassword)) {
         return $true
     }
+
+    Resolve-CredentialPassphrase
 
     if (-not [string]::IsNullOrWhiteSpace($CredentialPath) -and
         (Test-Path -LiteralPath $CredentialPath) -and
@@ -578,6 +601,10 @@ if ([string]::IsNullOrWhiteSpace($CredentialPath)) {
     $CredentialPath = Join-Path $projectRoot ".codex\secrets\website-ftps-credential.json"
 }
 
+if ([string]::IsNullOrWhiteSpace($CredentialPassphrasePath)) {
+    $CredentialPassphrasePath = Join-Path $projectRoot ".codex\secrets\website-ftps-passphrase.txt"
+}
+
 if ([string]::IsNullOrWhiteSpace($LocalRoot)) {
     $LocalRoot = $expectedWebsiteRoot
 }
@@ -645,6 +672,9 @@ if ($DryRun) {
         ForceFullUpload = [bool]$ForceFullUpload
         CredentialFile = $CredentialPath
         CredentialFileExists = (Test-Path -LiteralPath $CredentialPath)
+        CredentialPassphraseFile = $CredentialPassphrasePath
+        CredentialPassphraseFileExists = (Test-Path -LiteralPath $CredentialPassphrasePath)
+        CredentialPassphraseSource = $CredentialPassphraseSource
         FileCount = @($files).Count
         ExcludedFileCount = @($excludedFiles).Count
         ExcludedFiles = (($excludedFiles | ForEach-Object { $_.RelativePath }) -join ", ")
@@ -699,6 +729,7 @@ if ($shouldUploadManifest) {
     ForceFullUpload = [bool]$ForceFullUpload
     ManifestUploaded = $manifestUploaded
     CredentialSource = $CredentialSource
+    CredentialPassphraseSource = $CredentialPassphraseSource
     LocalFileCount = @($files).Count
     UploadedFileCount = $uploaded
     SkippedFileCount = @($skippedFiles).Count
