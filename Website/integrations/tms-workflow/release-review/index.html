@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>TMS Release Readiness Workflow | BackOfficeFleet</title>
+  <meta name="description" content="Review imported TMS loads through BOF driver matching, readiness checks, release decisions, and a simulated partner handoff.">
+  <link rel="stylesheet" href="/assets/css/styles.css?v=1.40">
+</head>
+<body>
+  <header class="site-header">
+    <a class="brand" href="/" aria-label="BackOfficeFleet home"><img src="/assets/images/logo/boflogo-original.png" alt="BackOfficeFleet"></a>
+    <button class="nav-toggle" type="button" data-nav-toggle aria-expanded="false" aria-label="Toggle navigation">&#9776;</button>
+    <nav class="site-nav" data-nav aria-label="Main navigation">
+      <a href="/">Home</a>
+      <a class="active" href="/solutions/">Solutions</a>
+      <a href="/demo/">Partner Workflow</a>
+      <a href="/interactive-demo/start/">Try Demo</a>
+      <a href="/documents/">Documents</a>
+      <a href="/book-demo/">Book Demo</a>
+    </nav>
+    <a class="header-cta" href="/book-demo/">Book demo</a>
+  </header>
+
+  <main data-tms-workflow>
+    <section class="section page-hero">
+      <div class="reveal">
+        <p class="eyebrow">Release readiness workflow</p>
+        <h1>Imported TMS loads become BOF release decisions.</h1>
+        <p>Select a partner import record and see how BOF matches the driver, checks readiness, reviews documents, creates the release decision, and prepares a simulated handoff message.</p>
+        <div class="actions"><a class="button secondary" href="/integrations/partner-tms/">Back to TMS overview</a></div>
+      </div>
+      <div class="summary-card reveal">
+        <span class="route-chip">Imported from TMS</span>
+        <h2 data-tms-target="tmsLoadId">Loading partner import</h2>
+        <div data-tms-target="decisionBadge"><span class="status watch">Review</span></div>
+        <dl>
+          <div><dt>BOF Release File</dt><dd data-tms-target="bofReleaseFile">-</dd></div>
+          <div><dt>Customer</dt><dd data-tms-target="customerName">-</dd></div>
+          <div><dt>Carrier</dt><dd data-tms-target="carrierName">-</dd></div>
+          <div><dt>Driver</dt><dd data-tms-target="driverName">-</dd></div>
+          <div><dt>Equipment</dt><dd data-tms-target="equipment">-</dd></div>
+          <div><dt>TMS Status</dt><dd data-tms-target="tmsStatus">-</dd></div>
+          <div><dt>BOF Status</dt><dd data-tms-target="bofStatus">-</dd></div>
+        </dl>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-head reveal">
+        <p class="eyebrow">Sample partner imports</p>
+        <h2>Switch between ready, hold, conditional release, and unmatched-driver scenarios.</h2>
+      </div>
+      <div class="tms-load-selector reveal" data-tms-load-selector aria-label="TMS import records"></div>
+      <div data-tms-target="workflowError"></div>
+    </section>
+
+    <section class="section">
+      <div class="workflow-steps reveal" aria-label="Release readiness steps">
+        <span>TMS load imported</span>
+        <span>Driver matched to BOF record</span>
+        <span>Documents reviewed</span>
+        <span>Compliance and carrier packet checked</span>
+        <span>BOF release decision produced</span>
+      </div>
+      <div class="tms-review-grid">
+        <article class="review-card reveal">
+          <span class="route-chip">Imported</span>
+          <h3>TMS Data</h3>
+          <div class="paper-grid" data-tms-target="importedData"></div>
+        </article>
+        <article class="review-card reveal">
+          <span class="route-chip warning">BOF Match</span>
+          <h3>Driver Match</h3>
+          <div class="paper-grid" data-tms-target="driverMatch"></div>
+        </article>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-head reveal">
+        <p class="eyebrow">BOF readiness review</p>
+        <h2>BOF keeps the compliance and release decision records.</h2>
+      </div>
+      <div class="readiness-grid">
+        <article class="review-card reveal">
+          <h3>Driver Readiness</h3>
+          <p data-tms-target="driverReadinessTitle">Loading driver readiness.</p>
+          <ul class="readiness-list" data-tms-target="driverReadiness"></ul>
+        </article>
+        <article class="review-card reveal">
+          <h3>Carrier Packet</h3>
+          <p data-tms-target="carrierPacketTitle">Loading carrier packet.</p>
+          <ul class="readiness-list" data-tms-target="carrierPacket"></ul>
+        </article>
+        <article class="review-card reveal">
+          <h3>Load Documents</h3>
+          <p data-tms-target="loadDocumentTitle">Loading load documents.</p>
+          <ul class="readiness-list" data-tms-target="loadDocuments"></ul>
+        </article>
+      </div>
+    </section>
+
+    <section class="section split">
+      <article class="decision-panel reveal">
+        <span class="route-chip">BOF release decision</span>
+        <h2 data-tms-target="decisionLabel">Loading decision</h2>
+        <p data-tms-target="decisionReason">BOF is preparing the release decision.</p>
+        <div class="paper-grid">
+          <div class="field"><span>Owner of fix</span><strong data-tms-target="decisionOwner">-</strong></div>
+          <div class="field"><span>Reviewed at</span><strong data-tms-target="decisionTimestamp">-</strong></div>
+          <div class="field"><span>Next action</span><strong data-tms-target="decisionNext">-</strong></div>
+          <div class="field"><span>Audit note</span><strong data-tms-target="decisionAudit">-</strong></div>
+        </div>
+        <h3>Blocking or watch items</h3>
+        <ul class="check-list compact-list" data-tms-target="decisionBlockingItems"><li>Loading items.</li></ul>
+      </article>
+      <article class="handoff-panel reveal">
+        <span class="route-chip warning">Simulated handoff</span>
+        <h2>Prepared for the demo handoff.</h2>
+        <p>This panel shows the simulated Phase 1 handoff: BOF explains the decision, blocker, owner, next action, and audit note while TMS remains the load workflow.</p>
+        <div class="field"><span>Handoff status</span><strong data-tms-target="handoffStatus">-</strong></div>
+        <pre data-tms-target="handoffPayload">{}</pre>
+      </article>
+    </section>
+  </main>
+
+  <section class="cta-band"><div class="cta-inner"><div><p class="eyebrow">Partner workflow</p><h2>TMS manages the load. BOF manages the release decision.</h2><p>The workflow keeps both systems in their lane while showing the audit-ready decision BOF adds before release.</p></div><a class="button light" href="/integrations/partner-tms/">Back to overview &rarr;</a></div></section>
+  <footer class="site-footer"><div class="footer-inner"><strong>BackOfficeFleet</strong><span>TMS release readiness workflow.</span><a href="/trust-governance/">Trust &amp; Governance</a></div></footer>
+  <script src="/assets/js/site.js?v=1.38"></script>
+  <script src="/assets/js/partner-tms.js?v=1.11"></script>
+</body>
+</html>
+
+
