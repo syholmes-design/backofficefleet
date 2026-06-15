@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Safety Command Center | BackOfficeFleet</title>
+  <meta name="description" content="BOF safety command page for driver risk, dispatch blocks, credential status, evidence packets, settlement holds, claims exposure, and coaching actions.">
+  <link rel="stylesheet" href="/assets/css/styles.css?v=1.40">
+</head>
+<body>
+  <header class="site-header">
+    <a class="brand" href="/" aria-label="BackOfficeFleet home"><img src="/assets/images/logo/boflogo-original.png" alt="BackOfficeFleet"></a>
+    <button class="nav-toggle" type="button" data-nav-toggle aria-expanded="false" aria-label="Toggle navigation">&#9776;</button>
+    <nav class="site-nav" data-nav aria-label="Main navigation">
+      <a href="/">Home</a>
+      <a href="/solutions/">Solutions</a>
+      <a href="/demo/">Partner Workflow</a>
+      <a href="/interactive-demo/start/">Try Demo</a>
+      <a href="/documents/">Documents</a>
+      <a href="/book-demo/">Book Demo</a>
+    </nav>
+    <a class="header-cta" href="/book-demo/">Book Demo</a>
+  </header>
+  <main>
+    <section class="section page-hero">
+      <div class="reveal">
+        <p class="eyebrow">Safety command center</p>
+        <h1>BOF safety records show which drivers can move, which loads are blocked, and which evidence is still missing.</h1>
+        <p>Safety events, credential status, dispatch blocks, coaching actions, claims exposure, and settlement holds stay visible in one operating view. That gives dispatch and finance the same reason for a clear, watch, or hold decision.</p>
+        <div class="actions"><a class="button primary" href="/drivers/">Open driver records &rarr;</a><a class="button secondary" href="/settlements/">Review settlement holds</a></div>
+      </div>
+      <div class="demo-panel reveal">
+        <p class="eyebrow">Safety operations watchlist</p>
+        <h2>Three signals determine what happens next.</h2>
+        <ul class="mini-list">
+          <li><span>Dispatch blocks</span><span class="status blocked">1</span></li>
+          <li><span>Settlement holds tied to safety</span><span class="status review">1</span></li>
+          <li><span>Evidence packets complete</span><span class="status ready">4</span></li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="metric-grid">
+        <article class="metric reveal"><span>Avg safety score</span><strong>88</strong><p>driver readiness and current event status across active records</p></article>
+        <article class="metric reveal"><span>Critical events</span><strong>1</strong><p>credential hold that blocks assignment until the safety lead clears it</p></article>
+        <article class="metric reveal"><span>Claim exposure</span><strong>$0</strong><p>no current cargo claim reserve on the selected release records</p></article>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-head reveal">
+        <p class="eyebrow">Driver safety queue</p>
+        <h2>Safety work is useful when it names the driver, blocker, owner, and dispatch consequence.</h2>
+        <p>BOF keeps safety from becoming a separate checklist. Every item explains whether it blocks dispatch, holds settlement, needs coaching, or simply remains part of the audit trail.</p>
+      </div>
+      <div class="table-wrap reveal">
+        <table class="small-table">
+          <thead><tr><th>Driver</th><th>Safety signal</th><th>Dispatch impact</th><th>Settlement impact</th><th>Evidence</th><th>Action</th></tr></thead>
+          <tbody>
+            <tr><td>M. Alvarez</td><td><span class="status ready">Current</span></td><td>No safety blocker</td><td>No pay hold</td><td><a class="proof-link" href="/operations-record/#medical-card-2048">Medical card reviewed</a></td><td>Confirm BOL gate</td></tr>
+            <tr><td>J. Carter</td><td><span class="status review">Watch</span></td><td>Planned, pending packet review</td><td>Wait for BOL proof</td><td><a class="proof-link" href="/operations-record/#bol-review-1907">BOL image review</a></td><td>Complete document check</td></tr>
+            <tr><td>T. Brooks</td><td><span class="status blocked">Credential hold</span></td><td>Do not assign</td><td>Hold until safety clears</td><td><a class="proof-link" href="/operations-record/#medical-card-3301">Medical card update missing</a></td><td>Safety lead review</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="section split">
+      <div class="paper reveal">
+        <h3>Safety Hold Evidence &middot; <a class="proof-link" href="/operations-record/#bof-1931">BOF-1931</a></h3>
+        <div class="paper-grid">
+          <div class="field"><span>Driver</span><strong><a class="proof-link" href="/operations-record/#driver-3301">T. Brooks &middot; DRV-3301</a></strong></div>
+          <div class="field"><span>Hold reason</span><strong><a class="proof-link" href="/operations-record/#medical-card-3301">Medical card update missing</a></strong></div>
+          <div class="field"><span>Lane</span><strong>St. Louis, MO to Nashville, TN</strong></div>
+          <div class="field"><span>Dispatch result</span><strong>Do not assign until credential record clears</strong></div>
+          <div class="field"><span>Settlement result</span><strong>Pay remains held until safety clears</strong></div>
+          <div class="field"><span>Next owner</span><strong>Safety lead</strong></div>
+        </div>
+      </div>
+      <div class="proof-grid">
+        <article class="proof-card reveal"><h3>Why dispatch waits</h3><p>The safety record names the missing credential and prevents the load from being treated like a normal assignment with a generic red label.</p><a class="route-chip" href="/operations-record/#hold-resolution-1931">Open hold plan</a></article>
+        <article class="proof-card reveal"><h3>Why finance waits</h3><p>The settlement hold uses the same evidence trail, so pay release and dispatch readiness are not argued from different records.</p><a class="route-chip warning" href="/settlements/">Open settlements</a></article>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="doc-list">
+        <article class="doc reveal"><span class="icon">A</span><div><h3><a class="proof-link" href="/operations-record/#medical-card-3301">Credential hold</a></h3><p class="doc-owner">Owner: Safety lead &middot; Driver: T. Brooks</p><p>Updated medical card must be attached and reviewed before BOF-1931 leaves hold status.</p></div><span class="status blocked">Hold</span></article>
+        <article class="doc reveal"><span class="icon">B</span><div><h3><a class="proof-link" href="/operations-record/#bol-review-1907">Document watch item</a></h3><p class="doc-owner">Owner: Dispatcher &middot; Driver: J. Carter</p><p>Safety does not block the driver, but the packet still needs a readable BOL image before release.</p></div><span class="status review">Watch</span></article>
+        <article class="doc reveal"><span class="icon">C</span><div><h3><a class="proof-link" href="/operations-record/#drv-2048">Clear driver file</a></h3><p class="doc-owner">Owner: Operations &middot; Driver: M. Alvarez</p><p>CDL, MVR, DQF, and medical status support the assignment once document review clears.</p></div><span class="status ready">Ready</span></article>
+      </div>
+    </section>
+
+    <section class="section website-photo-section">
+      <div class="section-head reveal">
+        <p class="eyebrow">Safety records in the office</p>
+        <h2>Safety review should be visible enough for dispatch, ownership, and finance to trust.</h2>
+        <p>Credential dates, coaching notes, packet proof, and review outcomes stay connected to the operational decision instead of living in separate folders.</p>
+      </div>
+      <div class="website-photo-grid">
+        <article class="website-photo-card reveal"><img loading="lazy" decoding="async" src="/assets/images/photos/site-pass/26-safety-meeting-record-review.webp" alt="Safety meeting with driver and managers reviewing records"><div><h3>Safety meeting record review</h3><p>Driver coaching and corrective actions remain attached to the next operating decision.</p></div></article>
+        <article class="website-photo-card reveal"><img loading="lazy" decoding="async" src="/assets/images/photos/site-pass/09-safety-compliance-wall-board.webp" alt="Fleet safety compliance board with review reminders"><div><h3>Compliance board</h3><p>Credential expirations and review dates become visible before they block dispatch.</p></div></article>
+        <article class="website-photo-card reveal"><img loading="lazy" decoding="async" src="/assets/images/photos/site-pass/05-driver-file-audit-tabletop.webp" alt="Driver file audit folders and compliance paperwork on a table"><div><h3>Driver file audit</h3><p>DQF status, medical card, and safety acknowledgements are organized around readiness.</p></div></article>
+      </div>
+    </section>
+  </main>
+  <section class="cta-band"><div class="cta-inner"><div><p class="eyebrow">Next step</p><h2>Turn one safety blocker into a clear operating decision.</h2><p>Bring a credential issue, driver event, missing safety form, dispatch block, or settlement hold into a BOF working session.</p></div><a class="button light" href="/book-demo/">Book the session &rarr;</a></div></section>
+  <footer class="site-footer"><div class="footer-inner"><strong>BackOfficeFleet</strong><span>Safety command center.</span><a href="/trust-governance/">Trust &amp; Governance</a></div></footer>
+  <script src="/assets/js/site.js?v=1.38"></script>
+</body>
+</html>
