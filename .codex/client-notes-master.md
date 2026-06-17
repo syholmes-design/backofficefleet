@@ -10,6 +10,8 @@ This document summarizes client notes. It is not a request to add backend system
 
 For detailed instructions from the 2026-06-08 `work2.txt` client call, also read `.codex/client-call-work2-instructions.md`.
 
+For the isolated actual-work requirements from the 2026-06-17 `recordings/Work2.txt` transcript, also read `.codex/client-work-requirements-20260617.md`. This newer reference focuses on settlements, safety, demo walkthrough, working-demo wording, Founding Fleet positioning, pain-point framing, 20-50 truck target customers, FMCSA-style targeting, and trucking-experienced go-to-market support.
+
 For driver/DQF/document realism instructions from the 2026-06-09 client note, also read `.codex/driver-document-realism-instructions.md`.
 
 For detailed instructions from the 2026-06-11 audio client notes, read `.codex/client-notes-20260611-audio-reference.md` and use `.codex/checklists/active/20260611-150329-june11-audio-client-notes.md`. For the related TMS/vendor simulation boundary, also read `.codex/tms-vendor-simulation-planning-20260611.md`.
@@ -21,11 +23,13 @@ For the active work2 completion ledger, use `.codex/checklists/active/20260608-0
 - `Client Suggestions/ShowRecords.txt`
 - `recordings/work.txt`
 - `Client Suggestions/work2.txt`
+- `recordings/Work2.txt`
 - `Client Suggestions/1.odt`
 - `Client Suggestions/Ascend-TMS.odt`
 - `New Documents/Client-Suggestions.odt`
 - `.codex/reference-demo-robustness-gap-note.md`
 - `.codex/client-call-work2-instructions.md`
+- `.codex/client-work-requirements-20260617.md`
 - `.codex/driver-document-realism-instructions.md`
 - `.codex/client-notes-20260611-audio-reference.md`
 - `.codex/tms-vendor-simulation-planning-20260611.md`
