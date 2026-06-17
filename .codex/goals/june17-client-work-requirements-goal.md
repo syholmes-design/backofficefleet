@@ -1,8 +1,10 @@
 # Goal: Complete the June 17 Client Work Requirements Checklist
 
 Created: 2026-06-17
-Checklist: `.codex/checklists/active/20260617-113935-june17-client-work-requirements.md`
+Checklist: `.codex/checklists/completed/20260617-113935-june17-client-work-requirements.md`
 Source reference: `.codex/client-work-requirements-20260617.md`
+
+Status: complete
 
 ## Objective
 
@@ -32,6 +34,16 @@ This goal is complete only when:
 - Static/shared-hosting boundaries are preserved.
 - No live Mapbox, RFID, GPS, traffic, weather, telematics, API, auth, database, backend, framework, or portal scope is introduced without explicit user approval.
 - The checklist closeout explains what was completed, what remains, what was deferred, and where evidence lives.
+
+Completion evidence, 2026-06-17:
+
+- Completed checklist: `.codex/checklists/completed/20260617-113935-june17-client-work-requirements.md`.
+- Demo flow audit: `.codex/june17-demo-flow-audit.md`.
+- Presenter walkthrough: `.codex/june17-fleet-owner-demo-walkthrough.md`.
+- Go-to-market and future-product planning notes: `.codex/june17-go-to-market-notes.md`.
+- Client review packet: `.codex/june17-client-review-packet.md`.
+- Website copy and boundary cleanup: `Website/index.html`, `Website/founding-fleet/index.html`, `Website/founding-fleet/apply/index.html`, `Website/drivers/index.html`, and renamed driver image asset.
+- Validation: syntax checks, route checks, browser flow check, stale-copy scans, Founding Fleet boundary audit, static/scope guardrail, and runtime cleanup audit recorded in the completed checklist.
 
 ## Scope Boundary
 
