@@ -1,0 +1,231 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Operational Intelligence | BackOfficeFleet</title>
+  <meta name="description" content="BOF Operational Intelligence demonstrates in-route visibility, monitoring, exception management, and operational awareness using demo scenario records.">
+  <link rel="stylesheet" href="/assets/css/styles.css?v=1.41">
+  <style>
+    .oi-hero { background: linear-gradient(135deg, rgba(12,95,67,0.98), rgba(37,111,148,0.94) 54%, rgba(20,33,31,0.98)); color: #fff; overflow: hidden; position: relative; }
+    .oi-hero::after { background-image: linear-gradient(rgba(255,255,255,0.08) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.08) 1px, transparent 1px); background-size: 42px 42px; content: ""; inset: 0; pointer-events: none; position: absolute; }
+    .oi-hero-inner { display: grid; gap: 30px; grid-template-columns: minmax(0, 0.92fr) minmax(360px, 1.08fr); margin: 0 auto; max-width: var(--max); min-height: 650px; padding: 64px 24px 54px; position: relative; z-index: 1; }
+    .oi-hero-copy { align-content: center; display: grid; gap: 18px; }
+    .oi-hero-copy .eyebrow, .oi-hero-copy p { color: rgba(255,255,255,0.84); }
+    .oi-hero-copy h1 { color: #fff; font-size: clamp(2.45rem, 5vw, 4.8rem); line-height: 1.02; margin: 0; }
+    .oi-hero-copy > p { font-size: 1.08rem; line-height: 1.68; margin: 0; max-width: 720px; }
+    .oi-command-panel { align-self: center; background: rgba(255,255,255,0.94); border: 1px solid rgba(255,255,255,0.56); border-radius: 8px; box-shadow: 0 26px 70px rgba(0,0,0,0.22); color: var(--ink); display: grid; gap: 14px; padding: 18px; }
+    .oi-command-top { align-items: center; border-bottom: 1px solid rgba(20,33,31,0.1); display: flex; gap: 12px; justify-content: space-between; padding-bottom: 12px; }
+    .oi-command-top h2 { font-size: 1.08rem; margin: 0; }
+    .oi-command-top span { color: var(--muted); font-size: 0.78rem; font-weight: 900; text-transform: uppercase; }
+    .oi-kpi-grid { display: grid; gap: 10px; grid-template-columns: repeat(4, minmax(0, 1fr)); }
+    .oi-kpi { background: linear-gradient(180deg, #fff, #f4f8f5); border: 1px solid rgba(20,33,31,0.1); border-radius: 8px; min-height: 112px; padding: 13px; }
+    .oi-kpi span { color: var(--muted); display: block; font-size: 0.73rem; font-weight: 900; min-height: 32px; text-transform: uppercase; }
+    .oi-kpi strong { color: var(--green-dark); display: block; font-size: 1.86rem; line-height: 1; margin: 8px 0 6px; }
+    .oi-kpi small { color: var(--muted); display: block; font-size: 0.76rem; line-height: 1.35; }
+    .oi-demo-path { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 6px; }
+    .oi-demo-path a { background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.24); border-radius: 8px; color: #fff; font-size: 0.78rem; font-weight: 900; padding: 9px 11px; text-transform: uppercase; }
+    .oi-grid-5, .oi-grid-4, .oi-grid-3, .oi-insight-grid { display: grid; gap: 16px; }
+    .oi-grid-5 { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+    .oi-grid-4, .oi-insight-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+    .oi-grid-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .oi-card, .oi-source-card, .oi-score-card, .oi-insight { background: #fff; border: 1px solid var(--line); border-radius: 8px; box-shadow: var(--shadow-soft); padding: 18px; }
+    .oi-card h3, .oi-source-card h3, .oi-score-card h3, .oi-insight h3 { font-size: 1.02rem; margin: 0 0 8px; }
+    .oi-card p, .oi-source-card p, .oi-score-card p, .oi-insight p { color: var(--muted); line-height: 1.52; margin: 0; }
+    .oi-source-card ul, .oi-card ul { display: grid; gap: 7px; list-style: none; margin: 12px 0 0; padding: 0; }
+    .oi-source-card li, .oi-card li { background: rgba(232,241,236,0.62); border: 1px solid rgba(20,33,31,0.08); border-radius: 8px; color: var(--ink); font-size: 0.86rem; font-weight: 800; padding: 9px 10px; }
+    .oi-flow, .oi-lifecycle, .oi-exception-flow { display: grid; gap: 10px; overflow-x: auto; padding-bottom: 2px; }
+    .oi-flow { grid-template-columns: repeat(4, minmax(180px, 1fr)); }
+    .oi-lifecycle { grid-template-columns: repeat(8, minmax(132px, 1fr)); }
+    .oi-exception-flow { grid-template-columns: repeat(4, minmax(160px, 1fr)); }
+    .oi-flow-step { background: #fff; border: 1px solid var(--line); border-radius: 8px; box-shadow: var(--shadow-soft); min-height: 118px; padding: 14px; position: relative; }
+    .oi-flow-step::after { color: var(--green-dark); content: "->"; font-size: 1.2rem; font-weight: 900; position: absolute; right: -14px; top: 45%; z-index: 2; }
+    .oi-flow-step:last-child::after { display: none; }
+    .oi-flow-step span { color: var(--green-dark); font-size: 0.72rem; font-weight: 950; text-transform: uppercase; }
+    .oi-flow-step strong { display: block; font-size: 0.96rem; line-height: 1.25; margin-top: 10px; }
+    .oi-flow-step p { color: var(--muted); font-size: 0.8rem; line-height: 1.42; margin: 8px 0 0; }
+    .oi-score-row { display: grid; gap: 5px; margin-top: 10px; }
+    .oi-score-label { align-items: center; color: var(--muted); display: flex; font-size: 0.78rem; font-weight: 850; justify-content: space-between; }
+    .oi-bar { background: #e6eee9; border-radius: 999px; height: 8px; overflow: hidden; }
+    .oi-bar span { background: linear-gradient(90deg, var(--green), var(--blue)); border-radius: inherit; display: block; height: 100%; width: var(--score); }
+    .oi-alert-list { display: grid; gap: 10px; }
+    .oi-alert { align-items: start; background: #fff; border: 1px solid var(--line); border-radius: 8px; box-shadow: var(--shadow-soft); display: grid; gap: 6px; grid-template-columns: auto 1fr; padding: 14px; }
+    .oi-alert h3 { font-size: 0.98rem; margin: 0; }
+    .oi-alert p { color: var(--muted); line-height: 1.45; margin: 0; }
+    .oi-note { background: rgba(255,255,255,0.86); border: 1px solid rgba(20,33,31,0.1); border-radius: 8px; box-shadow: var(--shadow-soft); color: var(--muted); line-height: 1.6; padding: 18px; }
+    @media (max-width: 1180px) { .oi-hero-inner { grid-template-columns: 1fr; } .oi-kpi-grid, .oi-grid-5, .oi-grid-4, .oi-grid-3, .oi-insight-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+    @media (max-width: 720px) { .oi-hero-inner { min-height: auto; padding: 42px 16px; } .oi-kpi-grid, .oi-grid-5, .oi-grid-4, .oi-grid-3, .oi-insight-grid { grid-template-columns: 1fr; } .oi-command-panel { padding: 12px; } .oi-command-top { align-items: flex-start; flex-direction: column; } .oi-demo-path { display: grid; grid-template-columns: 1fr; } .oi-demo-path a { text-align: center; } .oi-flow-step::after { display: none; } }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <a class="brand" href="/" aria-label="BackOfficeFleet home"><img src="/assets/images/logo/boflogo-original.png" alt="BackOfficeFleet"></a>
+    <button class="nav-toggle" type="button" data-nav-toggle aria-expanded="false" aria-label="Toggle navigation">&#9776;</button>
+    <nav class="site-nav" data-nav aria-label="Main navigation">
+      <a href="/">Home</a>
+      <a href="/solutions/">Solutions</a>
+      <a href="/capacity-intelligence/">Capacity Intelligence</a>
+      <a class="active" href="/operational-intelligence/">Operational Intelligence</a>
+      <a href="/executive-demo/">Executive Demo</a>
+      <a href="/demo/">Partner Workflow</a>
+      <a href="/interactive-demo/start/">Try Demo</a>
+      <a href="/documents/">Documents</a>
+      <a href="/book-demo/">Book Demo</a>
+    </nav>
+    <a class="header-cta" href="/book-demo/">Book demo</a>
+  </header>
+  <main>
+    <section class="oi-hero" id="operational-intelligence-command">
+      <div class="oi-hero-inner">
+        <div class="oi-hero-copy reveal">
+          <p class="eyebrow">Operational Intelligence</p>
+          <h1>Operational Intelligence Command Center</h1>
+          <p>BOF converts operational data into actionable readiness and operational intelligence during the trip.</p>
+          <p>BOF provides visibility across fleets, carriers, drivers, assets, and operational workflows by integrating information from telematics, RFID, driver systems, documentation systems, and operating records. BOF consumes these signals; it does not replace telematics systems, RFID platforms, dispatch services, freight brokerage, transportation arrangement, or motor carrier operations.</p>
+          <div class="actions"><a class="button light" href="#in-route-monitoring">View in-route monitoring</a><a class="button secondary" href="#exception-management">Review exceptions</a></div>
+          <nav class="oi-demo-path" aria-label="Operational Intelligence demo links">
+            <a href="/executive-demo/">Executive Demo</a>
+            <a href="/customer-portal/">Customer Portal</a>
+            <a href="/capacity-intelligence/">Capacity Intelligence</a>
+            <a href="/carrier-readiness/">Carrier Readiness</a>
+            <a href="/documents/">Documents</a>
+            <a href="/settlements/">Settlements</a>
+            <a href="/dashboard/">Dashboard</a>
+          </nav>
+        </div>
+        <aside class="oi-command-panel reveal" aria-label="Operational Intelligence executive KPI dashboard">
+          <div class="oi-command-top"><div><span>Command center</span><h2>In-route operating snapshot</h2></div><span>Demo scenario</span></div>
+          <div class="oi-kpi-grid">
+            <article class="oi-kpi"><span>Active Loads</span><strong>42</strong><small>Loads under BOF operating visibility</small></article>
+            <article class="oi-kpi"><span>Loads In Transit</span><strong>29</strong><small>Currently moving through monitored lanes</small></article>
+            <article class="oi-kpi"><span>On-Time Performance</span><strong>94%</strong><small>ETA confidence and appointment adherence</small></article>
+            <article class="oi-kpi"><span>Safety Events</span><strong>7</strong><small>Open driver or asset safety signals</small></article>
+            <article class="oi-kpi"><span>Route Exceptions</span><strong>5</strong><small>Off-route, dwell, or appointment risk</small></article>
+            <article class="oi-kpi"><span>Fuel Efficiency</span><strong>7.2</strong><small>Average MPG across monitored trips</small></article>
+            <article class="oi-kpi"><span>Active Driver Alerts</span><strong>4</strong><small>Coaching, compliance, or inspection signals</small></article>
+            <article class="oi-kpi"><span>Active Asset Alerts</span><strong>6</strong><small>Trailer, seal, dock, or equipment checks</small></article>
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <section class="section" id="data-sources">
+      <div class="section-head reveal"><p class="eyebrow">Operational data sources</p><h2>BOF turns outside operating signals into readiness intelligence.</h2><p>BOF is not positioned here as a telematics provider or RFID provider. The platform consumes operational information and converts it into executive visibility, exception context, and readiness scores.</p></div>
+      <div class="oi-grid-5">
+        <article class="oi-source-card reveal"><span class="status ready">Telematics</span><h3>Fleet movement signals</h3><p>Telematics systems provide position, movement, route, driver, and vehicle context.</p><ul><li>Samsara</li><li>Motive</li><li>Geotab</li><li>Verizon Connect</li></ul></article>
+        <article class="oi-source-card reveal"><span class="status review">RFID &amp; Asset Verification</span><h3>Physical event checks</h3><p>RFID and verification signals supplement operational visibility.</p><ul><li>Trailer verification</li><li>Seal verification</li><li>Dock verification</li><li>Yard tracking</li></ul></article>
+        <article class="oi-source-card reveal"><span class="status ready">Driver Systems</span><h3>Driver-submitted signals</h3><p>Driver systems help BOF connect compliance and trip progress.</p><ul><li>ELD</li><li>Driver app</li><li>Inspection forms</li></ul></article>
+        <article class="oi-source-card reveal"><span class="status ready">Customer Systems</span><h3>Demand and appointment context</h3><p>Customer systems keep status and appointment context visible.</p><ul><li>Load status</li><li>Appointment schedules</li><li>Delivery confirmations</li></ul></article>
+        <article class="oi-source-card reveal"><span class="status ready">Documentation Systems</span><h3>Proof and closeout records</h3><p>Document systems connect trip events to proof, claims, and payment readiness.</p><ul><li>BOL</li><li>POD</li><li>Claims</li><li>Settlement packets</li></ul></article>
+      </div>
+      <div class="section-head reveal"><p class="eyebrow">Signal flow</p><h2>From operational source data to executive visibility.</h2></div>
+      <div class="oi-flow reveal" aria-label="Operational data source flow">
+        <article class="oi-flow-step"><span>01</span><strong>Operational Data Sources</strong><p>Telematics, RFID, driver, customer, and document signals enter the review layer.</p></article>
+        <article class="oi-flow-step"><span>02</span><strong>BOF Operational Intelligence Engine</strong><p>BOF organizes the signals into readiness, risk, owner, and next-action context.</p></article>
+        <article class="oi-flow-step"><span>03</span><strong>Readiness Scores</strong><p>Trip, driver, carrier, asset, safety, fuel, and documentation posture become visible.</p></article>
+        <article class="oi-flow-step"><span>04</span><strong>Executive Visibility</strong><p>Leadership sees what is moving, what is at risk, and what needs follow-up.</p></article>
+      </div>
+    </section>
+
+    <section class="section" id="in-route-monitoring">
+      <div class="section-head reveal"><p class="eyebrow">In-route monitoring</p><h2>BOF answers what happens during the trip.</h2><p>Scenario records show how route, geofence, ETA, dwell, fuel, and driver behavior signals become operational awareness.</p></div>
+      <div class="table-wrap reveal">
+        <table>
+          <thead><tr><th>Load</th><th>Status</th><th>Route compliance</th><th>Geofence events</th><th>Arrival / departure</th><th>Dwell time</th><th>ETA confidence</th><th>Fuel efficiency</th><th>Driver behavior</th></tr></thead>
+          <tbody>
+            <tr><td>BOF-LD-86240</td><td><span class="status ready">On Route</span></td><td>96%</td><td>All planned</td><td>Pickup departed 08:42</td><td>34 min</td><td>High</td><td>7.4 MPG</td><td>Normal</td></tr>
+            <tr><td>BOF-LD-10482</td><td><span class="status review">Delayed</span></td><td>91%</td><td>Dock queue entered</td><td>Arrival late by 22 min</td><td>78 min</td><td>Medium</td><td>7.0 MPG</td><td>One hard brake</td></tr>
+            <tr><td>BOF-LD-1907</td><td><span class="status review">At Risk</span></td><td>88%</td><td>Missed terminal geofence</td><td>Departure pending</td><td>126 min</td><td>Low</td><td>6.6 MPG</td><td>Following distance alert</td></tr>
+            <tr><td>BOF-LD-1931</td><td><span class="status blocked">Exception</span></td><td>73%</td><td>Off-route event</td><td>Arrival not confirmed</td><td>42 min</td><td>Low</td><td>6.1 MPG</td><td>Camera review</td></tr>
+            <tr><td>BOF-LD-7726</td><td><span class="status ready">Delivered</span></td><td>98%</td><td>Delivery geofence confirmed</td><td>Dock departed 13:12</td><td>29 min</td><td>Closed</td><td>7.6 MPG</td><td>Clean</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="section" id="safety-monitoring">
+      <div class="section-head reveal"><p class="eyebrow">Safety monitoring</p><h2>Safety events become coaching, compliance, and operational awareness.</h2><p>BOF keeps the event, score, owner, and next review visible without becoming a camera, ELD, or telematics product.</p></div>
+      <div class="oi-grid-4">
+        <article class="oi-score-card reveal"><span class="status ready">Safety score</span><h3>Network average</h3><p>91 / 100 across active in-route records.</p><div class="oi-score-row"><div class="oi-score-label"><span>Speed event control</span><strong>93</strong></div><div class="oi-bar"><span style="--score:93%"></span></div></div><div class="oi-score-row"><div class="oi-score-label"><span>Following distance</span><strong>88</strong></div><div class="oi-bar"><span style="--score:88%"></span></div></div></article>
+        <article class="oi-card reveal"><h3>Driver behavior events</h3><ul><li>Speed events: 3 open</li><li>Harsh braking: 2 open</li><li>Rapid acceleration: 1 coaching note</li><li>Following distance alerts: 2 review items</li></ul></article>
+        <article class="oi-card reveal"><h3>Compliance and camera review</h3><ul><li>Lane departure alerts: 1 open</li><li>Seatbelt compliance: 98%</li><li>Camera review events: 2 queued</li><li>Safety owner: S. Turner</li></ul></article>
+        <article class="oi-card reveal"><h3>Operational consequence</h3><p>Two drivers require safety coaching review before the next high-scrutiny assignment is considered ready for executive review.</p></article>
+      </div>
+    </section>
+
+    <section class="section" id="fuel-intelligence">
+      <div class="section-head reveal"><p class="eyebrow">Fuel intelligence</p><h2>Fuel signals show operating efficiency and exception risk.</h2><p>BOF connects purchase, MPG, idle, and exception signals to the same trip view leadership uses for readiness.</p></div>
+      <div class="oi-grid-4">
+        <article class="oi-score-card reveal"><span class="status ready">Fuel efficiency score</span><h3>86 / 100</h3><p>Fuel efficiency improved 6% week over week.</p><div class="oi-score-row"><div class="oi-score-label"><span>MPG target</span><strong>7.2</strong></div><div class="oi-bar"><span style="--score:86%"></span></div></div></article>
+        <article class="oi-card reveal"><h3>Fuel purchases</h3><ul><li>$18,420 monitored this week</li><li>42 fuel stops matched to trips</li><li>3 purchases need review</li></ul></article>
+        <article class="oi-card reveal"><h3>Idle time</h3><ul><li>Average idle: 41 min / trip</li><li>Target: 35 min / trip</li><li>Two high-idle assets flagged</li></ul></article>
+        <article class="oi-card reveal"><h3>Fuel exceptions</h3><ul><li>Fuel anomaly: BOF-LD-1931</li><li>Out-of-route purchase: 1</li><li>Missing odometer check: 2</li></ul></article>
+      </div>
+    </section>
+
+    <section class="section" id="rfid-verification">
+      <div class="section-head reveal"><p class="eyebrow">RFID &amp; verification</p><h2>RFID supplements operational visibility.</h2><p>RFID supports trailer, dock, seal, and asset verification. It does not replace telematics systems; it gives BOF another evidence signal in the operational intelligence ecosystem.</p></div>
+      <div class="table-wrap reveal">
+        <table>
+          <thead><tr><th>Verification event</th><th>Asset / load</th><th>Location</th><th>Status</th><th>BOF use</th></tr></thead>
+          <tbody>
+            <tr><td>Trailer check-in</td><td>TRL-8832 / BOF-LD-86240</td><td>Dallas yard</td><td><span class="status ready">Confirmed</span></td><td>Validates asset readiness before route monitoring.</td></tr>
+            <tr><td>Trailer check-out</td><td>TRL-4419 / BOF-LD-10482</td><td>Kansas City dock</td><td><span class="status ready">Confirmed</span></td><td>Supports departure status and documentation timing.</td></tr>
+            <tr><td>Dock arrival</td><td>BOF-LD-1907</td><td>Tulsa DC</td><td><span class="status review">Review</span></td><td>Feeds dwell and missed appointment risk.</td></tr>
+            <tr><td>Dock departure</td><td>BOF-LD-7726</td><td>Memphis receiver</td><td><span class="status ready">Confirmed</span></td><td>Supports delivery and settlement readiness.</td></tr>
+            <tr><td>Seal verification</td><td>SEAL-771204</td><td>Retail grocery dock</td><td><span class="status ready">Matched</span></td><td>Supports POD and claims defensibility.</td></tr>
+            <tr><td>Asset verification</td><td>AST-NSH-341</td><td>Project freight yard</td><td><span class="status blocked">Exception</span></td><td>Blocks clean readiness until investigation is documented.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="section" id="exception-management">
+      <div class="section-head reveal"><p class="eyebrow">Exception management</p><h2>Alerts become investigation, resolution, and documentation.</h2><p>BOF keeps the exception path visible so the trip record does not end as disconnected alerts.</p></div>
+      <div class="oi-alert-list">
+        <article class="oi-alert reveal"><span class="status blocked">Exception</span><div><h3>Off-route event</h3><p>BOF-LD-1931 departed planned corridor; operations owner reviews route evidence and driver note.</p></div></article>
+        <article class="oi-alert reveal"><span class="status review">At Risk</span><div><h3>Excessive dwell time</h3><p>BOF-LD-1907 is above target dwell and may become detention risk without dock confirmation.</p></div></article>
+        <article class="oi-alert reveal"><span class="status review">At Risk</span><div><h3>Missed appointment risk</h3><p>Low ETA confidence creates customer-facing timing and documentation risk.</p></div></article>
+        <article class="oi-alert reveal"><span class="status review">Review</span><div><h3>Driver compliance risk</h3><p>Inspection form delay needs driver follow-up before readiness score can close.</p></div></article>
+        <article class="oi-alert reveal"><span class="status blocked">Exception</span><div><h3>Fuel anomaly</h3><p>Out-of-route fuel purchase needs trip and odometer review.</p></div></article>
+        <article class="oi-alert reveal"><span class="status review">Review</span><div><h3>Documentation exception</h3><p>POD image is missing receiver signature and remains open before settlement readiness.</p></div></article>
+      </div>
+      <div class="oi-exception-flow reveal" aria-label="Exception escalation workflow">
+        <article class="oi-flow-step"><span>01</span><strong>Exception</strong><p>An alert is tied to a load, driver, asset, or document record.</p></article>
+        <article class="oi-flow-step"><span>02</span><strong>Investigation</strong><p>BOF reviews event evidence, owner, consequence, and next action.</p></article>
+        <article class="oi-flow-step"><span>03</span><strong>Resolution</strong><p>The team clears, watches, holds, or escalates the operational record.</p></article>
+        <article class="oi-flow-step"><span>04</span><strong>Documentation</strong><p>The resolution supports delivery proof, claims, or settlement packet readiness.</p></article>
+      </div>
+    </section>
+
+    <section class="section" id="trip-lifecycle">
+      <div class="section-head reveal"><p class="eyebrow">Trip lifecycle</p><h2>Operational Intelligence bridges demand, readiness, delivery, documentation, and settlement.</h2><p>The lifecycle connects this module back to Customer Portal, Capacity Intelligence, Carrier Readiness, Documents, Settlements, and the Dashboard.</p></div>
+      <div class="oi-lifecycle reveal" aria-label="BOF trip lifecycle">
+        <article class="oi-flow-step"><span>01</span><strong>Pre-Trip</strong><p><a class="proof-link" href="/customer-portal/">Customer demand</a> and appointment context are visible.</p></article>
+        <article class="oi-flow-step"><span>02</span><strong>Driver Ready</strong><p>Driver readiness and compliance signals support trip review.</p></article>
+        <article class="oi-flow-step"><span>03</span><strong>Asset Ready</strong><p><a class="proof-link" href="/capacity-intelligence/">Capacity Intelligence</a> shows equipment readiness.</p></article>
+        <article class="oi-flow-step"><span>04</span><strong>In Route</strong><p>Telematics, driver, and verification events become operating signals.</p></article>
+        <article class="oi-flow-step"><span>05</span><strong>Monitoring</strong><p>Exceptions, ETA, dwell, fuel, safety, and documents are watched.</p></article>
+        <article class="oi-flow-step"><span>06</span><strong>Delivery</strong><p>Dock, seal, POD, and customer confirmation support closeout.</p></article>
+        <article class="oi-flow-step"><span>07</span><strong>Documentation</strong><p><a class="proof-link" href="/documents/">Documents</a> connect proof to the operating record.</p></article>
+        <article class="oi-flow-step"><span>08</span><strong>Settlement</strong><p><a class="proof-link" href="/settlements/">Settlements</a> can review proof and exceptions without rebuilding the trip.</p></article>
+      </div>
+    </section>
+
+    <section class="section" id="executive-insights">
+      <div class="section-head reveal"><p class="eyebrow">Executive insights</p><h2>Operational signals become plain executive observations.</h2></div>
+      <div class="oi-insight-grid">
+        <article class="oi-insight reveal"><span class="status review">Detention risk</span><h3>Three loads currently at risk of detention.</h3><p>Dwell and appointment data show dock timing needs follow-up before closeout.</p></article>
+        <article class="oi-insight reveal"><span class="status ready">Utilization</span><h3>Midwest reefer fleet operating above target utilization.</h3><p>Capacity Intelligence and in-route visibility show strong use without hiding readiness risk.</p></article>
+        <article class="oi-insight reveal"><span class="status ready">Fuel</span><h3>Fuel efficiency improved 6% week over week.</h3><p>MPG and idle indicators improved across monitored trips.</p></article>
+        <article class="oi-insight reveal"><span class="status review">Safety</span><h3>Two drivers require safety coaching review.</h3><p>Following distance and camera review events need owner follow-up.</p></article>
+        <article class="oi-insight reveal"><span class="status ready">Documentation</span><h3>Documentation readiness exceeds 95%.</h3><p>BOL, POD, seal, and settlement packet readiness remain strong across closed trips.</p></article>
+      </div>
+      <div class="oi-note reveal">BOF converts operational data into actionable readiness and operational intelligence. BOF provides visibility across fleets, carriers, drivers, assets, and operational workflows. BOF integrates information from telematics, RFID, driver systems, documentation systems, and operational workflows while staying focused on administrative readiness and executive visibility.</div>
+    </section>
+  </main>
+  <section class="cta-band"><div class="cta-inner"><div><p class="eyebrow">Operational story</p><h2>Use Operational Intelligence to answer what happened during the trip.</h2><p>Move from customer demand, to readiness, to in-route monitoring, to documentation, to settlement without dispatch, freight brokerage, freight matching, or transportation arrangement claims.</p></div><a class="button light" href="/executive-demo/">Back to Executive Demo &rarr;</a></div></section>
+  <footer class="site-footer"><div class="footer-inner"><strong>BackOfficeFleet</strong><span>Operational intelligence and readiness visibility.</span><a href="/trust-governance/">Trust &amp; Governance</a></div></footer>
+  <script src="/assets/js/site.js?v=1.38"></script>
+</body>
+</html>
