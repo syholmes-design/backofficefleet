@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Tracking | Customer Portal | BackOfficeFleet</title>
+  <meta name="description" content="Track shipment submitted, quoted, approved, assigned, picked up, in transit, delivered, and settlement complete stages.">
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="/assets/css/styles.css?v=1.40">
+  <link rel="stylesheet" href="/assets/css/customer-portal.css?v=2.7">
+</head>
+<body class="customer-portal-body" data-portal-page="tracking">
+  <main class="customer-portal-shell" data-customer-portal>
+    <aside class="portal-rail"><a class="portal-brand" href="/"><img src="/assets/images/logo/boflogo-original.png" alt="BackOfficeFleet"></a><nav class="portal-nav"><a href="/customer-portal/"><span>01</span>Portal Home</a><a href="/customer-portal/load-intake/"><span>02</span>Load Intake</a><a href="/customer-portal/quotes/"><span>03</span>Quotes</a><a href="/customer-portal/shipments/"><span>04</span>Active Shipments</a><a href="/customer-portal/documents/"><span>05</span>Documents</a><a class="is-active" href="/customer-portal/tracking/"><span>06</span>Tracking</a><a href="/customer-portal/billing/"><span>07</span>Billing</a></nav><div class="portal-rail-card"><span>Tracking</span><strong data-portal-text="trackingCurrent">In Transit</strong><p data-portal-text="trackingNext">Delivery proof will control settlement release.</p></div></aside>
+    <section class="portal-workspace">
+      <header class="portal-topbar"><div><span class="portal-kicker">Tracking</span><h1>Follow the shipment from submitted request through settlement complete.</h1></div><div class="portal-topbar-actions"><a class="portal-link-button" href="/customer-portal/shipments/">Active shipments</a><a class="portal-link-button" href="/customer-portal/documents/">Documents</a></div></header>
+      <div class="portal-grid">
+        <section class="portal-panel"><div class="portal-panel-head"><div><span class="portal-kicker">Shipment timeline</span><h2>Submitted to settlement</h2></div><span class="portal-status ready">Live record view</span></div><div class="tracking-timeline" data-portal-render="trackingTimeline"></div></section>
+        <aside class="portal-review-column"><section class="portal-panel"><div class="portal-panel-head"><div><span class="portal-kicker">Stage detail</span><h2 data-portal-text="trackingStageTitle">In Transit</h2></div><span class="portal-status watch" data-portal-text="trackingStageStatus">Watch</span></div><div data-portal-render="trackingDetail"></div></section><section class="portal-panel"><div class="portal-panel-head"><div><span class="portal-kicker">Approved quote</span><h2 data-portal-text="quoteTotal">Calculating</h2></div><span class="portal-status ready">Carried forward</span></div><p class="portal-note">The same approved quote follows the shipment through assignment, documents, tracking, billing, and factoring review.</p></section><section class="portal-panel"><div class="portal-panel-head"><div><span class="portal-kicker">Proof dependency</span><h2>Delivery closeout</h2></div><span class="portal-status review">Pending</span></div><p class="portal-note">Signed BOL, POD, receiver detail, dock photo, empty cargo proof, and lumper receipt when used control billing and settlement closeout.</p></section></aside>
+      </div>
+      <section class="portal-panel"><div class="portal-panel-head"><div><span class="portal-kicker">BOF managed lifecycle</span><h2>Dispatch, proof, settlement, and factoring stay connected</h2></div><span class="portal-status ready">Workflow map</span></div><div class="lifecycle-grid" data-portal-render="lifecycleGrid"></div></section>
+    </section>
+  </main>
+  <script src="/assets/js/customer-portal.js?v=2.7"></script>
+</body>
+</html>

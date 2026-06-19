@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Customer Load Intake | Customer Portal | BackOfficeFleet</title>
+  <meta name="description" content="Submit a customer load intake request through the BackOfficeFleet portal and prepare the quote review, shipment packet, and dispatch handoff.">
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="/assets/css/styles.css?v=1.40">
+  <link rel="stylesheet" href="/assets/css/customer-portal.css?v=2.7">
+</head>
+<body class="customer-portal-body" data-portal-page="request">
+  <main class="customer-portal-shell" data-customer-portal>
+    <aside class="portal-rail" aria-label="Customer Portal sections">
+      <a class="portal-brand" href="/" aria-label="BackOfficeFleet home"><img src="/assets/images/logo/boflogo-original.png" alt="BackOfficeFleet"></a>
+      <nav class="portal-nav" aria-label="Customer Portal navigation">
+        <a href="/customer-portal/"><span>01</span>Portal Home</a>
+        <a class="is-active" href="/customer-portal/load-intake/"><span>02</span>Load Intake</a>
+        <a href="/customer-portal/quotes/"><span>03</span>Quotes</a>
+        <a href="/customer-portal/shipments/"><span>04</span>Active Shipments</a>
+        <a href="/customer-portal/documents/"><span>05</span>Documents</a>
+        <a href="/customer-portal/tracking/"><span>06</span>Tracking</a>
+        <a href="/customer-portal/billing/"><span>07</span>Billing</a>
+      </nav>
+      <div class="portal-rail-card"><span>Request state</span><strong data-portal-text="requestStatus">Ready for review</strong><p data-portal-text="nextAction">Complete shipment details and calculate the temporary quote.</p></div>
+    </aside>
+    <section class="portal-workspace">
+      <header class="portal-topbar">
+        <div><span class="portal-kicker">Customer Load Intake</span><h1>Enter the shipment details BOF needs before quote review and dispatch assignment.</h1></div>
+        <div class="portal-topbar-actions"><a class="portal-link-button" href="/customer-portal/quotes/">Quote Review</a><button type="button" data-portal-action="load-sample">Load sample</button><button type="button" data-portal-action="reset-request">Reset</button></div>
+      </header>
+      <div class="portal-grid">
+        <form class="portal-form" data-load-form>
+          <section class="portal-panel">
+            <div class="portal-panel-head"><div><span class="portal-kicker">Load intake</span><h2>Customer, lane, freight, proof, and terms</h2></div><span class="portal-status review" data-portal-text="requestStatus">Required review open</span></div>
+            <div class="form-section">
+              <h3>Customer contact</h3>
+              <div class="field-grid three">
+                <label><span>Company</span><input name="companyName" required value="Prairie View Foods"></label>
+                <label><span>Contact</span><input name="contactName" required value="Elena Brooks"></label>
+                <label><span>Work email</span><input name="contactEmail" type="email" required value="ops@pvfoods.example"></label>
+                <label><span>Phone or role line</span><input name="contactPhone" required value="214-782-1184"></label>
+                <label><span>Customer reference / PO</span><input name="poNumber" value="PVF-86240"></label>
+                <label><span>Billing terms</span><select name="paymentTerms"><option>Net 30</option><option>Net 15</option><option>Prepaid review</option><option>Carrier review</option></select></label>
+              </div>
+            </div>
+            <div class="form-section">
+              <h3>Origin and destination</h3>
+              <div class="field-grid two">
+                <label><span>Origin facility</span><input name="pickupFacility" required value="Prairie View Cold Dock"></label>
+                <label><span>Destination facility</span><input name="deliveryFacility" required value="Riverbend Grocery DC"></label>
+                <label><span>Origin</span><input name="pickupAddress" required value="1420 Commerce Loop, Dallas, TX 75212"></label>
+                <label><span>Destination</span><input name="deliveryAddress" required value="3100 Distribution Way, Memphis, TN 38118"></label>
+                <label><span>Pickup date / window</span><input name="pickupWindow" required value="Jun 19, 2026 08:00-10:00 CT"></label>
+                <label><span>Delivery date / window</span><input name="deliveryWindow" required value="Jun 20, 2026 13:00-15:00 CT"></label>
+                <label class="field-wide"><span>Pickup instructions</span><textarea name="pickupNotes">Dock 3, appointment required, check in with shipping office</textarea></label>
+                <label class="field-wide"><span>Delivery instructions</span><textarea name="deliveryNotes">Receiver requires seal match, signed BOL, and dock photo</textarea></label>
+              </div>
+            </div>
+            <div class="form-section">
+              <h3>Commodity and equipment</h3>
+              <div class="field-grid four">
+                <label><span>Load type</span><select name="loadType"><option>Refrigerated food</option><option>Dry van palletized</option><option>Flatbed machinery</option><option>High-value retail</option><option>Hazmat review</option></select></label>
+                <label><span>Commodity</span><textarea name="commodity" required>Packaged refrigerated grocery freight</textarea></label>
+                <label><span>Weight</span><input name="weight" type="number" min="1" max="45000" required value="34200"></label>
+                <label><span>Equipment</span><select name="equipmentType"><option>53 ft reefer</option><option>53 ft dry van</option><option>48 ft flatbed</option><option>26 ft box truck</option><option>Step deck</option><option>Power-only review</option></select></label>
+                <label><span>Pallets</span><input name="palletCount" type="number" min="1" value="22"></label>
+                <label><span>Pieces / cases</span><input name="pieceCount" type="number" min="1" value="1840"></label>
+                <label><span>Dimensions / details</span><textarea name="dimensions">Standard 48x40 pallets</textarea></label>
+                <label><span>Temperature</span><input name="temperature" value="34-38 F continuous"></label>
+                <label><span>Number of stops</span><input name="stopCount" type="number" min="2" value="2"></label>
+                <label><span>Lumper expected</span><select name="lumper"><option>Possible receiver lumper, receipt required</option><option>No lumper expected</option><option>Yes, lumper receipt required</option><option>Unknown - BOF to confirm</option></select></label>
+                <label class="field-wide"><span>Cargo handling notes</span><textarea name="accessorials">Detention, reefer pre-cool, seal record, cargo photos</textarea></label>
+              </div>
+              <div class="toggle-row">
+                <label><input name="sealRequired" type="checkbox" checked> Seal required</label>
+                <label><input name="cargoPhotoRequired" type="checkbox" checked> Cargo photo required</label>
+                <label><input name="highValue" type="checkbox"> High-value review</label>
+                <label><input name="fragile" type="checkbox"> Fragile freight</label>
+                <label><input name="hazmat" type="checkbox"> Hazmat review</label>
+                <label><input name="insuranceRequired" type="checkbox" checked> Cargo insurance review</label>
+              </div>
+            </div>
+            <div class="form-section">
+              <h3>Quote assumptions and accessorials</h3>
+              <div class="field-grid three">
+                <label><span>Lane miles</span><input name="laneMiles" type="number" min="1" value="452"></label>
+                <label><span>Cargo value / insurance minimum</span><input name="insuranceMinimum" value="$100,000 cargo"></label>
+                <label><span>Detention threshold</span><input name="detention" value="2 hours free, billable after"></label>
+                <label><span>Layover / TONU note</span><input name="layoverTonu" value="Reviewed if appointment cancels after dispatch commitment"></label>
+                <label class="field-wide"><span>Special instructions</span><textarea name="specialInstructions">Call shipping office 30 minutes before arrival; keep reefer set point on paperwork.</textarea></label>
+                <label><span>Fuel surcharge note</span><input name="fuelSurcharge" value="Current BOF review fuel line"></label>
+              </div>
+            </div>
+            <div class="form-section">
+              <h3>Cargo photo</h3>
+              <div class="cargo-photo-grid">
+                <div class="photo-drop"><input id="cargoPhoto" name="cargoPhoto" type="file" accept="image/*" data-cargo-photo><label for="cargoPhoto"><strong>Select cargo photo</strong><span data-portal-text="photoStatus">Using BOF sample cargo image until a review photo is selected.</span></label></div>
+                <figure><img src="/assets/images/documents/load-proof/pretrip-10482-loaded-cargo.webp" alt="Cargo loaded in trailer for pre-trip review" data-portal-image="photoPreview"><figcaption data-portal-text="photoCaption">Sample cargo image attached to the intake packet preview.</figcaption></figure>
+              </div>
+            </div>
+            <div class="portal-actions">
+              <button class="primary" type="button" data-portal-action="calculate-quote">Calculate temporary quote</button>
+              <button type="button" data-portal-action="prepare-packet">Prepare shipment packet</button>
+              <a class="portal-link-button" href="/customer-portal/quotes/">Continue to quote review</a>
+            </div>
+          </section>
+        </form>
+        <aside class="portal-review-column">
+          <section class="portal-panel quote-panel">
+            <div class="portal-panel-head"><div><span class="portal-kicker">Temporary quote</span><h2 data-portal-text="quoteTotal">Calculating</h2></div><span class="portal-status review" data-portal-text="quoteStatus">Review estimate</span></div>
+            <div class="quote-lines" data-portal-render="quoteLines"></div>
+            <p class="portal-note">This is configurable demo pricing, not proprietary production logic. BOF still reviews lane, equipment, appointment, cargo, and proof requirements before release.</p>
+          </section>
+          <section class="portal-panel"><div class="portal-panel-head"><div><span class="portal-kicker">Dispatch gate</span><h2 data-portal-text="dispatchGateStatus">Dispatch-ready blocked</h2></div><span class="portal-status review">Gated</span></div><div class="portal-checklist" data-portal-render="dispatchGateList"></div><p class="portal-note">A load cannot become dispatch-ready until required fields, quote approval, assignment, compliance, equipment, and pre-trip packet gates are clear.</p></section>
+          <section class="portal-panel"><div class="portal-panel-head"><div><span class="portal-kicker">Generated IDs</span><h2>Shipment record</h2></div><span class="portal-status ready">Prepared</span></div><dl class="summary-dl" data-portal-render="idSummary"></dl></section>
+        </aside>
+      </div>
+    </section>
+  </main>
+  <script src="/assets/js/customer-portal.js?v=2.7"></script>
+</body>
+</html>

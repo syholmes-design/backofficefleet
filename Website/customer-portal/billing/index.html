@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Billing | Customer Portal | BackOfficeFleet</title>
+  <meta name="description" content="Review invoice preview, billing lines, payment terms, POD requirements, lumper receipt dependency, and settlement status.">
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="/assets/css/styles.css?v=1.40">
+  <link rel="stylesheet" href="/assets/css/customer-portal.css?v=2.7">
+</head>
+<body class="customer-portal-body" data-portal-page="billing">
+  <main class="customer-portal-shell" data-customer-portal>
+    <aside class="portal-rail"><a class="portal-brand" href="/"><img src="/assets/images/logo/boflogo-original.png" alt="BackOfficeFleet"></a><nav class="portal-nav"><a href="/customer-portal/"><span>01</span>Portal Home</a><a href="/customer-portal/load-intake/"><span>02</span>Load Intake</a><a href="/customer-portal/quotes/"><span>03</span>Quotes</a><a href="/customer-portal/shipments/"><span>04</span>Active Shipments</a><a href="/customer-portal/documents/"><span>05</span>Documents</a><a href="/customer-portal/tracking/"><span>06</span>Tracking</a><a class="is-active" href="/customer-portal/billing/"><span>07</span>Billing</a></nav><div class="portal-rail-card"><span>Billing</span><strong data-portal-text="invoiceId">INV-86240-PVF</strong><p>Invoice and factoring packet wait on POD and post-trip proof before settlement closeout.</p></div></aside>
+    <section class="portal-workspace">
+      <header class="portal-topbar"><div><span class="portal-kicker">Billing</span><h1>Review invoice preview, payment terms, shipment proof, and settlement dependencies.</h1></div><div class="portal-topbar-actions"><a class="portal-link-button" href="/customer-portal/documents/">Documents</a><a class="portal-link-button" href="/customer-portal/tracking/">Tracking</a></div></header>
+      <div class="portal-grid">
+        <section class="portal-panel"><div class="portal-panel-head"><div><span class="portal-kicker">Invoice preview</span><h2 data-portal-text="invoiceId">INV-86240-PVF</h2></div><span class="portal-status watch">Waits on POD</span></div><div class="quote-lines" data-portal-render="billingLines"></div><p class="portal-note">No payment is collected here. Billing review stays tied to proof of delivery, signed BOL, lumper receipt when used, and settlement release.</p></section>
+        <aside class="portal-review-column"><section class="portal-panel"><div class="portal-panel-head"><div><span class="portal-kicker">Billing documents</span><h2>Required support</h2></div><span class="portal-status review">Proof needed</span></div><div class="portal-mini-list"><span>Invoice preview</span><span>Rate confirmation</span><span>Signed BOL and POD</span><span>Lumper receipt if used</span><span>Dock and empty trailer proof</span><span>Settlement and claim notes</span><span>Factoring packet support</span></div></section><section class="portal-panel"><div class="portal-panel-head"><div><span class="portal-kicker">Factoring packet</span><h2>Built after POD</h2></div><span class="portal-status watch">Waits on proof</span></div><p class="portal-note">BOF keeps the rate confirmation, invoice, signed BOL/POD, lumper support, proof photos, and settlement notes together so billing and factoring review do not become a separate chase.</p></section><section class="portal-panel"><div class="portal-panel-head"><div><span class="portal-kicker">Terms</span><h2>Net 30</h2></div><span class="portal-status ready">On file</span></div><p class="portal-note">Payment terms are visible for review only. Sensitive banking, tax, and account values are not shown in this customer portal surface.</p></section></aside>
+      </div>
+    </section>
+  </main>
+  <script src="/assets/js/customer-portal.js?v=2.7"></script>
+</body>
+</html>
