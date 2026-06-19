@@ -62,8 +62,8 @@ export const PORTAL_CARDS: PortalCard[] = [
     id: 'customer',
     title: 'Customer Portal',
     description: 'Give customers, brokers, and shippers controlled visibility into load status, delivery proof, exceptions, claims, documents, and invoice readiness.',
-    cta: 'Open Customer Portal',
-    href: '/portals/customer',
+    cta: 'Open Load Intake',
+    href: '/customer-portal/load-intake',
     icon: 'eye-check'
   }
 ];

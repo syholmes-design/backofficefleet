@@ -114,7 +114,7 @@ const PORTALS = [
   {
     title: "Customer Portal",
     body: "Shipment visibility, proof, exceptions, and invoice readiness.",
-    href: "/portals/customer",
+    href: "/customer-portal/load-intake",
     icon: <IconLoadProof />,
   },
 ] as const;
