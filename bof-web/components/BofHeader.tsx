@@ -29,7 +29,7 @@ const portalsNav = [
     description: "Executive visibility, operations control, settlements, compliance, and accountability."
   },
   {
-    href: "/portals/customer",
+    href: "/customer-portal/load-intake",
     label: "Customer Portal", 
     description: "Shipment visibility, proof of delivery, load documents, and service accountability."
   },

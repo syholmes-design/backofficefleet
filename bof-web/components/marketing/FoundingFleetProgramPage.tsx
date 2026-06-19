@@ -28,7 +28,7 @@ const INCLUDED = [
   {
     title: "Customer Portal",
     body: "Shipment visibility, proof, exceptions, and invoice readiness in a customer-safe view.",
-    href: "/portals/customer",
+    href: "/customer-portal/load-intake",
     icon: <IconLoadProof />,
   },
   {

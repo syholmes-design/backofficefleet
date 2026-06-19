@@ -6,7 +6,7 @@ import { BofHeader } from "@/components/BofHeader";
 export function ConditionalHeader() {
   const pathname = usePathname();
   
-  // Don't show header on marketing routes
+  // Don't show the global product header on routes with their own controlled shell.
   const isMarketingRoute = pathname === '/' || 
     pathname.startsWith('/apply') ||
     pathname.startsWith('/bof-vault') ||
@@ -14,7 +14,8 @@ export function ConditionalHeader() {
     pathname.startsWith('/fleet-savings') ||
     pathname.startsWith('/for-hire-carriers') ||
     pathname.startsWith('/government') ||
-    pathname.startsWith('/private-fleets');
+    pathname.startsWith('/private-fleets') ||
+    pathname.startsWith('/customer-portal');
   
   if (isMarketingRoute) {
     return null;
