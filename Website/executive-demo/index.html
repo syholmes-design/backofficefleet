@@ -31,7 +31,7 @@
     .demo-card h3, .value-card h3, .network-support-card h3 { font-size: 1.06rem; margin: 0; }
     .demo-card p, .value-card p, .network-support-card p, .presenter-guide p, .presenter-guide li { color: var(--muted); line-height: 1.55; margin: 0; }
     .demo-card a { align-self: end; color: var(--green-dark); font-size: 0.84rem; font-weight: 950; margin-top: 6px; text-transform: uppercase; }
-    .workflow-track { display: grid; gap: 10px; grid-template-columns: repeat(11, minmax(118px, 1fr)); overflow-x: auto; padding-bottom: 4px; }
+    .workflow-track { display: grid; gap: 10px; grid-template-columns: repeat(12, minmax(118px, 1fr)); overflow-x: auto; padding-bottom: 4px; }
     .workflow-step { background: #fff; border: 1px solid var(--line); border-radius: 8px; box-shadow: var(--shadow-soft); min-height: 132px; padding: 14px; position: relative; }
     .workflow-step::after { color: var(--green-dark); content: "->"; font-size: 1.25rem; font-weight: 900; position: absolute; right: -14px; top: 47%; z-index: 2; }
     .workflow-step:last-child::after { display: none; }
@@ -85,7 +85,8 @@
             <a href="/customer-portal/">Customer Portal</a>
             <a href="/capacity-intelligence/">Capacity Intelligence</a>
             <a href="/operational-intelligence/">Operational Intelligence</a>
-      <a href="/business-operations/">Business Operations</a>
+            <a href="/business-operations/">Business Operations</a>
+            <a href="/sectors/">Sectors</a>
             <a href="/carrier-readiness/">Carrier Registry</a>
             <a href="/carrier-readiness/">Carrier Readiness</a>
             <a href="/interactive-demo/start/">Command Center</a>
@@ -112,12 +113,13 @@
         <article class="demo-card reveal"><span>02</span><h3>Capacity Intelligence</h3><p>Gives executives a readiness view across carriers, drivers, trucks, equipment, documentation, and network health.</p><a href="/capacity-intelligence/">Open Capacity Intelligence</a></article>
         <article class="demo-card reveal"><span>03</span><h3>Operational Intelligence</h3><p>Shows how in-route signals, safety events, fuel indicators, RFID verification, and exceptions become executive visibility.</p><a href="/operational-intelligence/">Open Operational Intelligence</a></article>
         <article class="demo-card reveal"><span>04</span><h3>Business Operations</h3><p>Shows the administrative infrastructure behind the company: payroll, HR, insurance, factoring readiness, accounting coordination, and executive financial visibility.</p><a href="/business-operations/">Open Business Operations</a></article>
-        <article class="demo-card reveal"><span>05</span><h3>Carrier Readiness</h3><p>Shows packet status, authority, insurance, network relationship, and operating consequence before deeper review.</p><a href="/carrier-readiness/">Open Carrier Readiness</a></article>
-        <article class="demo-card reveal"><span>06</span><h3>Driver Readiness</h3><p>Connects driver files, qualification dates, documents, and missing evidence to the readiness conversation.</p><a href="/drivers/">Open Drivers</a></article>
-        <article class="demo-card reveal"><span>07</span><h3>Documentation</h3><p>Proves BOF is not just a dashboard by keeping policies, document packets, proof records, and evidence close to the workflow.</p><a href="/documents/">Open Documents</a></article>
-        <article class="demo-card reveal"><span>08</span><h3>Safety</h3><p>Frames safety and compliance as operating controls that reduce confusion before work is cleared for review.</p><a href="/safety/">Open Safety</a></article>
-        <article class="demo-card reveal"><span>09</span><h3>Settlements</h3><p>Shows how closeout, proof, holds, and settlement readiness stay connected to the same operating record.</p><a href="/settlements/">Open Settlements</a></article>
-        <article class="demo-card reveal"><span>10</span><h3>Executive Command Center</h3><p>Brings the story back to the command layer where records, holds, documents, and next actions stay visible.</p><a href="/interactive-demo/start/">Open Command Center</a></article>
+        <article class="demo-card reveal"><span>05</span><h3>Sectors</h3><p>Shows how the same BOF operating layer supports trucking fleets, carrier networks, aggregators, government contractors, and field-service operations.</p><a href="/sectors/">Open Sectors</a></article>
+        <article class="demo-card reveal"><span>06</span><h3>Carrier Readiness</h3><p>Shows packet status, authority, insurance, network relationship, and operating consequence before deeper review.</p><a href="/carrier-readiness/">Open Carrier Readiness</a></article>
+        <article class="demo-card reveal"><span>07</span><h3>Driver Readiness</h3><p>Connects driver files, qualification dates, documents, and missing evidence to the readiness conversation.</p><a href="/drivers/">Open Drivers</a></article>
+        <article class="demo-card reveal"><span>08</span><h3>Documentation</h3><p>Proves BOF is not just a dashboard by keeping policies, document packets, proof records, and evidence close to the workflow.</p><a href="/documents/">Open Documents</a></article>
+        <article class="demo-card reveal"><span>09</span><h3>Safety</h3><p>Frames safety and compliance as operating controls that reduce confusion before work is cleared for review.</p><a href="/safety/">Open Safety</a></article>
+        <article class="demo-card reveal"><span>10</span><h3>Settlements</h3><p>Shows how closeout, proof, holds, and settlement readiness stay connected to the same operating record.</p><a href="/settlements/">Open Settlements</a></article>
+        <article class="demo-card reveal"><span>11</span><h3>Executive Command Center</h3><p>Brings the story back to the command layer where records, holds, documents, and next actions stay visible.</p><a href="/interactive-demo/start/">Open Command Center</a></article>
       </div>
     </section>
 
@@ -129,12 +131,13 @@
         <article class="workflow-step"><span>03</span><strong>Capacity Intelligence</strong><p>Network readiness and availability are summarized.</p></article>
         <article class="workflow-step"><span>04</span><strong>Operational Intelligence</strong><p>Trip, safety, fuel, RFID, and exception signals stay visible.</p></article>
         <article class="workflow-step"><span>05</span><strong>Business Operations</strong><p>Payroll, HR, insurance, factoring, and accounting readiness stay visible.</p></article>
-        <article class="workflow-step"><span>06</span><strong>Carrier Readiness</strong><p>Carrier packet and relationship status are checked.</p></article>
-        <article class="workflow-step"><span>07</span><strong>Driver Readiness</strong><p>Driver qualification and documents are visible.</p></article>
-        <article class="workflow-step"><span>08</span><strong>Documentation Ready</strong><p>Proof and packet evidence support review.</p></article>
-        <article class="workflow-step"><span>09</span><strong>Safety Verification</strong><p>Safety status reduces avoidable risk.</p></article>
-        <article class="workflow-step"><span>10</span><strong>Assignment Ready</strong><p>Records show whether administrative gates are clear.</p></article>
-        <article class="workflow-step"><span>11</span><strong>Settlement Ready</strong><p>Closeout evidence is ready to support payment review.</p></article>
+        <article class="workflow-step"><span>06</span><strong>Sector Path</strong><p>The presenter chooses the industry story that fits the prospect.</p></article>
+        <article class="workflow-step"><span>07</span><strong>Carrier Readiness</strong><p>Carrier packet and relationship status are checked.</p></article>
+        <article class="workflow-step"><span>08</span><strong>Driver Readiness</strong><p>Driver qualification and documents are visible.</p></article>
+        <article class="workflow-step"><span>09</span><strong>Documentation Ready</strong><p>Proof and packet evidence support review.</p></article>
+        <article class="workflow-step"><span>10</span><strong>Safety Verification</strong><p>Safety status reduces avoidable risk.</p></article>
+        <article class="workflow-step"><span>11</span><strong>Assignment Ready</strong><p>Records show whether administrative gates are clear.</p></article>
+        <article class="workflow-step"><span>12</span><strong>Settlement Ready</strong><p>Closeout evidence is ready to support payment review.</p></article>
       </div>
     </section>
 
@@ -165,9 +168,10 @@
         <article class="proof-card reveal"><h3>2. Capacity Intelligence</h3><p>Move into executive visibility across network health, capacity readiness, and equipment coverage.</p><a class="route-chip" href="/capacity-intelligence/">Open Capacity Intelligence</a></article>
         <article class="proof-card reveal"><h3>3. Operational Intelligence</h3><p>Show what happens during the trip: route status, safety events, fuel signals, verification evidence, and exceptions.</p><a class="route-chip" href="/operational-intelligence/">Open Operational Intelligence</a></article>
         <article class="proof-card reveal"><h3>4. Business Operations</h3><p>Show payroll, HR, insurance, factoring readiness, settlement support, and accounting coordination behind the fleet.</p><a class="route-chip" href="/business-operations/">Open Business Operations</a></article>
-        <article class="proof-card reveal"><h3>5. Carrier Registry</h3><p>Show network relationship, carrier status, insurance, authority, and packet ownership.</p><a class="route-chip" href="/carrier-readiness/">Open Carrier Registry</a></article>
-        <article class="proof-card reveal"><h3>6. Carrier Readiness</h3><p>Explain which packets are ready, at risk, held, or waiting on administrative follow-up.</p><a class="route-chip" href="/carrier-readiness/">Open Carrier Readiness</a></article>
-        <article class="proof-card reveal"><h3>7. Command Center</h3><p>End with the app-like control surface where records, documents, holds, and next actions come together.</p><a class="route-chip" href="/interactive-demo/start/">Open Command Center</a></article>
+        <article class="proof-card reveal"><h3>5. Sectors</h3><p>Choose the industry path that matches the prospect: for-hire fleet, private fleet, carrier network, aggregator, government, or field services.</p><a class="route-chip" href="/sectors/">Open Sectors</a></article>
+        <article class="proof-card reveal"><h3>6. Carrier Registry</h3><p>Show network relationship, carrier status, insurance, authority, and packet ownership.</p><a class="route-chip" href="/carrier-readiness/">Open Carrier Registry</a></article>
+        <article class="proof-card reveal"><h3>7. Carrier Readiness</h3><p>Explain which packets are ready, at risk, held, or waiting on administrative follow-up.</p><a class="route-chip" href="/carrier-readiness/">Open Carrier Readiness</a></article>
+        <article class="proof-card reveal"><h3>8. Command Center</h3><p>End with the app-like control surface where records, documents, holds, and next actions come together.</p><a class="route-chip" href="/interactive-demo/start/">Open Command Center</a></article>
       </div>
     </section>
 
@@ -175,10 +179,10 @@
       <details class="presenter-guide reveal">
         <summary><span class="status review demo-mode-label">Demo mode</span> Presenter Guide</summary>
         <div class="presenter-grid">
-          <article class="presenter-note"><h3>What to show first</h3><ul><li>Start on this page and explain the complete operating story.</li><li>Open Customer Portal to show demand context.</li><li>Move to Capacity Intelligence, Operational Intelligence, then Business Operations for readiness, trip visibility, and company infrastructure.</li></ul></article>
+          <article class="presenter-note"><h3>What to show first</h3><ul><li>Start on this page and explain the complete operating story.</li><li>Open Customer Portal to show demand context.</li><li>Move to Capacity Intelligence, Operational Intelligence, Business Operations, then Sectors to match the prospect's industry lens.</li></ul></article>
           <article class="presenter-note"><h3>What to explain</h3><ul><li>BOF reduces administrative burden by connecting proof, readiness, owner, and consequence.</li><li>Modules are separate surfaces but one operating narrative.</li><li>Network visibility is readiness management, not freight arrangement.</li></ul></article>
           <article class="presenter-note"><h3>Suggested talking points</h3><ul><li>What is ready, what is at risk, and what needs follow-up?</li><li>Which records support the decision?</li><li>How does the team avoid rebuilding the file by hand?</li></ul></article>
-          <article class="presenter-note"><h3>Recommended demo order</h3><ol><li>Executive Demo</li><li>Customer Portal</li><li>Capacity Intelligence</li><li>Operational Intelligence</li><li>Business Operations</li><li>Carrier Registry</li><li>Command Center</li></ol></article>
+          <article class="presenter-note"><h3>Recommended demo order</h3><ol><li>Executive Demo</li><li>Customer Portal</li><li>Capacity Intelligence</li><li>Operational Intelligence</li><li>Business Operations</li><li>Sectors</li><li>Carrier Registry</li><li>Command Center</li></ol></article>
         </div>
       </details>
     </section>

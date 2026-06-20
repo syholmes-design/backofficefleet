@@ -1,0 +1,835 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Animated Demo | BackOfficeFleet</title>
+  <meta name="description" content="A self-running BOF Operations Lifecycle presentation from customer demand to settlement readiness.">
+  <link rel="stylesheet" href="/assets/css/styles.css?v=1.45">
+  <style>
+    .ad-page {
+      background:
+        linear-gradient(135deg, rgba(247,250,247,0.98), rgba(231,241,238,0.94) 50%, rgba(250,244,234,0.96)),
+        linear-gradient(rgba(20,33,31,0.055) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(20,33,31,0.055) 1px, transparent 1px);
+      background-size: auto, 42px 42px, 42px 42px;
+      min-height: calc(100vh - 78px);
+      overflow-x: hidden;
+    }
+
+    .ad-shell {
+      display: grid;
+      gap: 22px;
+      margin: 0 auto;
+      max-width: 1440px;
+      padding: 34px 24px 58px;
+    }
+
+    .ad-landing {
+      align-items: center;
+      display: grid;
+      gap: 24px;
+      grid-template-columns: minmax(0, 0.78fr) minmax(560px, 1.22fr);
+    }
+
+    .ad-title-card {
+      display: grid;
+      gap: 18px;
+    }
+
+    .ad-title-card h1 {
+      font-size: clamp(3rem, 6vw, 6.8rem);
+      letter-spacing: 0;
+      line-height: 0.96;
+      margin: 0;
+      max-width: 820px;
+    }
+
+    .ad-title-card > p {
+      color: var(--muted);
+      font-size: 1.08rem;
+      line-height: 1.62;
+      margin: 0;
+      max-width: 680px;
+    }
+
+    .ad-controls,
+    .ad-inline-controls,
+    .ad-demo-links {
+      align-items: center;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .ad-control {
+      border: 0;
+      cursor: pointer;
+      font-family: inherit;
+    }
+
+    .ad-control:disabled {
+      cursor: not-allowed;
+      opacity: 0.52;
+    }
+
+    .ad-duration {
+      align-items: center;
+      background: rgba(255,255,255,0.78);
+      border: 1px solid rgba(20,33,31,0.1);
+      border-radius: 8px;
+      color: var(--muted);
+      display: inline-flex;
+      font-size: 0.82rem;
+      font-weight: 900;
+      gap: 8px;
+      padding: 10px 12px;
+      text-transform: uppercase;
+    }
+
+    .ad-duration strong {
+      color: var(--green-dark);
+    }
+
+    .ad-demo-links {
+      margin-top: 6px;
+    }
+
+    .ad-demo-links a {
+      background: rgba(255,255,255,0.82);
+      border: 1px solid rgba(20,33,31,0.13);
+      border-radius: 8px;
+      color: var(--green-dark);
+      font-size: 0.78rem;
+      font-weight: 950;
+      padding: 9px 11px;
+      text-transform: uppercase;
+    }
+
+    .ad-stage {
+      background: rgba(255,255,255,0.94);
+      border: 1px solid rgba(20,33,31,0.1);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+      display: grid;
+      min-height: 650px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .ad-stage-top {
+      align-items: center;
+      border-bottom: 1px solid rgba(20,33,31,0.1);
+      display: flex;
+      gap: 14px;
+      justify-content: space-between;
+      padding: 14px 16px;
+    }
+
+    .ad-stage-title {
+      display: grid;
+      gap: 2px;
+    }
+
+    .ad-stage-title span {
+      color: var(--muted);
+      font-size: 0.72rem;
+      font-weight: 950;
+      text-transform: uppercase;
+    }
+
+    .ad-stage-title strong {
+      color: var(--ink);
+      font-size: 1rem;
+    }
+
+    .ad-play-state {
+      background: #e8f1ec;
+      border: 1px solid rgba(22,143,98,0.16);
+      border-radius: 8px;
+      color: var(--green-dark);
+      font-size: 0.76rem;
+      font-weight: 950;
+      padding: 7px 9px;
+      text-transform: uppercase;
+    }
+
+    .ad-progress {
+      background: #e5ede8;
+      height: 7px;
+      overflow: hidden;
+    }
+
+    .ad-progress span {
+      background: linear-gradient(90deg, var(--green), var(--blue));
+      display: block;
+      height: 100%;
+      transition: width 140ms linear;
+      width: 0%;
+    }
+
+    .ad-scene-stack {
+      display: grid;
+      min-height: 520px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .ad-scene {
+      display: grid;
+      gap: 22px;
+      grid-template-columns: minmax(0, 0.96fr) minmax(360px, 1.04fr);
+      inset: 0;
+      opacity: 0;
+      padding: 22px;
+      pointer-events: none;
+      position: absolute;
+      transform: translateX(28px);
+      transition: opacity 520ms ease, transform 520ms ease;
+      visibility: hidden;
+    }
+
+    .ad-scene.is-before {
+      transform: translateX(-28px);
+    }
+
+    .ad-scene.is-active {
+      opacity: 1;
+      pointer-events: auto;
+      position: relative;
+      transform: translateX(0);
+      visibility: visible;
+    }
+
+    .ad-copy {
+      align-content: center;
+      display: grid;
+      gap: 14px;
+    }
+
+    .ad-copy h2 {
+      font-size: clamp(2rem, 4vw, 4rem);
+      line-height: 1;
+      margin: 0;
+    }
+
+    .ad-copy p {
+      color: var(--muted);
+      font-size: 1.02rem;
+      line-height: 1.58;
+      margin: 0;
+      max-width: 680px;
+    }
+
+    .ad-narration {
+      background: linear-gradient(135deg, #10211e, #173b35);
+      border-radius: 8px;
+      color: #f8fbf8;
+      display: grid;
+      gap: 7px;
+      padding: 16px;
+    }
+
+    .ad-narration span {
+      color: rgba(255,255,255,0.68);
+      font-size: 0.72rem;
+      font-weight: 950;
+      text-transform: uppercase;
+    }
+
+    .ad-narration strong {
+      font-size: 1.04rem;
+      line-height: 1.45;
+    }
+
+    .ad-visual {
+      align-content: center;
+      display: grid;
+      gap: 14px;
+      min-width: 0;
+    }
+
+    .ad-panel,
+    .ad-mini-card,
+    .ad-kpi,
+    .ad-proof,
+    .ad-module-card {
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: var(--shadow-soft);
+    }
+
+    .ad-panel {
+      display: grid;
+      gap: 14px;
+      min-width: 0;
+      padding: 16px;
+    }
+
+    .ad-panel-head {
+      align-items: center;
+      border-bottom: 1px solid rgba(20,33,31,0.1);
+      display: flex;
+      justify-content: space-between;
+      padding-bottom: 11px;
+    }
+
+    .ad-panel-head h3,
+    .ad-mini-card h3,
+    .ad-module-card h3 {
+      font-size: 1rem;
+      margin: 0;
+    }
+
+    .ad-panel-head span,
+    .ad-mini-card span,
+    .ad-module-card span {
+      color: var(--muted);
+      font-size: 0.72rem;
+      font-weight: 950;
+      text-transform: uppercase;
+    }
+
+    .ad-kpi-grid {
+      display: grid;
+      gap: 10px;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .ad-kpi {
+      min-height: 104px;
+      padding: 13px;
+    }
+
+    .ad-kpi span {
+      color: var(--muted);
+      display: block;
+      font-size: 0.72rem;
+      font-weight: 950;
+      min-height: 30px;
+      text-transform: uppercase;
+    }
+
+    .ad-kpi strong {
+      color: var(--green-dark);
+      display: block;
+      font-size: 2rem;
+      line-height: 1;
+      margin-top: 8px;
+    }
+
+    .ad-flow {
+      display: grid;
+      gap: 8px;
+      grid-template-columns: repeat(4, minmax(92px, 1fr));
+      min-width: 0;
+    }
+
+    .ad-flow.step-3 {
+      grid-template-columns: repeat(3, minmax(130px, 1fr));
+    }
+
+    .ad-flow-step {
+      background: #f8faf8;
+      border: 1px solid rgba(20,33,31,0.1);
+      border-radius: 8px;
+      color: var(--ink);
+      display: grid;
+      gap: 8px;
+      min-height: 98px;
+      padding: 12px;
+      position: relative;
+    }
+
+    .ad-flow-step::after {
+      color: var(--green-dark);
+      content: "->";
+      font-weight: 950;
+      position: absolute;
+      right: -12px;
+      top: 40%;
+      z-index: 2;
+    }
+
+    .ad-flow-step:last-child::after {
+      display: none;
+    }
+
+    .ad-flow-step span {
+      color: var(--muted);
+      font-size: 0.68rem;
+      font-weight: 950;
+      text-transform: uppercase;
+    }
+
+    .ad-flow-step strong {
+      line-height: 1.2;
+    }
+
+    .ad-scene.is-active .ad-flow-step,
+    .ad-scene.is-active .ad-mini-card,
+    .ad-scene.is-active .ad-kpi {
+      animation: ad-pop 700ms ease both;
+      animation-delay: calc(var(--i, 0) * 100ms);
+    }
+
+    .ad-readiness-grid,
+    .ad-module-grid,
+    .ad-proof-grid {
+      display: grid;
+      gap: 10px;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .ad-mini-card,
+    .ad-module-card {
+      display: grid;
+      gap: 8px;
+      padding: 13px;
+    }
+
+    .ad-mini-card p,
+    .ad-module-card p {
+      color: var(--muted);
+      font-size: 0.82rem;
+      line-height: 1.42;
+      margin: 0;
+    }
+
+    .ad-readiness-list {
+      display: grid;
+      gap: 8px;
+    }
+
+    .ad-readiness-row {
+      align-items: center;
+      background: #f8faf8;
+      border: 1px solid rgba(20,33,31,0.09);
+      border-radius: 8px;
+      display: flex;
+      gap: 10px;
+      justify-content: space-between;
+      padding: 10px 11px;
+    }
+
+    .ad-readiness-row strong {
+      font-size: 0.9rem;
+    }
+
+    .ad-route-map {
+      background:
+        linear-gradient(rgba(20,33,31,0.06) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(20,33,31,0.06) 1px, transparent 1px),
+        linear-gradient(135deg, #eef6f2, #f9fbf8);
+      background-size: 24px 24px, 24px 24px, auto;
+      border: 1px solid rgba(20,33,31,0.1);
+      border-radius: 8px;
+      min-height: 260px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .ad-route-map svg {
+      display: block;
+      height: 100%;
+      min-height: 260px;
+      width: 100%;
+    }
+
+    .ad-route-line {
+      stroke-dasharray: 12 10;
+      animation: ad-route 1800ms linear infinite;
+    }
+
+    .ad-proof {
+      display: grid;
+      gap: 8px;
+      overflow: hidden;
+    }
+
+    .ad-proof img {
+      aspect-ratio: 16 / 9;
+      display: block;
+      height: auto;
+      object-fit: cover;
+      width: 100%;
+    }
+
+    .ad-proof div {
+      padding: 12px;
+    }
+
+    .ad-proof h3 {
+      font-size: 0.98rem;
+      margin: 0 0 6px;
+    }
+
+    .ad-proof p {
+      color: var(--muted);
+      font-size: 0.82rem;
+      line-height: 1.42;
+      margin: 0;
+    }
+
+    .ad-stage-footer {
+      align-items: center;
+      border-top: 1px solid rgba(20,33,31,0.1);
+      display: flex;
+      gap: 12px;
+      justify-content: space-between;
+      padding: 14px 16px;
+    }
+
+    .ad-note {
+      color: var(--muted);
+      font-size: 0.82rem;
+      line-height: 1.45;
+      margin: 0;
+      max-width: 760px;
+    }
+
+    @keyframes ad-pop {
+      from { opacity: 0; transform: translateY(12px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes ad-route {
+      to { stroke-dashoffset: -44; }
+    }
+
+    @media (max-width: 1180px) {
+      .ad-landing,
+      .ad-scene {
+        grid-template-columns: 1fr;
+      }
+
+      .ad-stage {
+        min-height: auto;
+      }
+
+      .ad-scene-stack {
+        min-height: auto;
+      }
+    }
+
+    @media (max-width: 760px) {
+      .ad-shell {
+        padding: 28px 16px 44px;
+      }
+
+      .ad-title-card h1 {
+        font-size: clamp(2.5rem, 16vw, 4rem);
+      }
+
+      .ad-controls,
+      .ad-inline-controls,
+      .ad-demo-links,
+      .ad-stage-footer,
+      .ad-stage-top {
+        align-items: stretch;
+        flex-direction: column;
+      }
+
+      .ad-controls .button,
+      .ad-inline-controls .button,
+      .ad-demo-links a {
+        justify-content: center;
+        text-align: center;
+        width: 100%;
+      }
+
+      .ad-scene {
+        gap: 18px;
+        padding: 16px;
+      }
+
+      .ad-scene-stack {
+        min-height: auto;
+      }
+
+      .ad-kpi-grid,
+      .ad-readiness-grid,
+      .ad-module-grid,
+      .ad-proof-grid,
+      .ad-flow,
+      .ad-flow.step-3 {
+        grid-template-columns: 1fr;
+      }
+
+      .ad-flow-step::after {
+        bottom: -18px;
+        content: "↓";
+        right: 50%;
+        top: auto;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .ad-progress span,
+      .ad-route-line,
+      .ad-scene,
+      .ad-scene.is-active .ad-flow-step,
+      .ad-scene.is-active .ad-mini-card,
+      .ad-scene.is-active .ad-kpi {
+        animation: none;
+        transition: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <a class="brand" href="/" aria-label="BackOfficeFleet home"><img src="/assets/images/logo/boflogo-original.png" alt="BackOfficeFleet"></a>
+    <button class="nav-toggle" type="button" data-nav-toggle aria-expanded="false" aria-label="Toggle navigation">&#9776;</button>
+    <nav class="site-nav" data-nav aria-label="Main navigation">
+      <a href="/">Home</a>
+      <a href="/solutions/">Solutions</a>
+      <a href="/capacity-intelligence/">Capacity Intelligence</a>
+      <a href="/operational-intelligence/">Operational Intelligence</a>
+      <a href="/business-operations/">Business Operations</a>
+      <a href="/executive-demo/">Executive Demo</a>
+      <a href="/demo/">Partner Workflow</a>
+      <a href="/interactive-demo/start/">Try Demo</a>
+      <a href="/documents/">Documents</a>
+      <a href="/book-demo/">Book Demo</a>
+    </nav>
+    <a class="header-cta" href="/book-demo/">Book demo</a>
+  </header>
+  <main class="ad-page" data-animated-demo tabindex="-1">
+    <section class="ad-shell">
+      <div class="ad-landing">
+        <div class="ad-title-card reveal">
+          <p class="eyebrow">Animated Demo Engine</p>
+          <h1>BOF Operations Lifecycle</h1>
+          <p>"From customer demand to settlement readiness."</p>
+          <p>This self-running presentation shows how BOF connects customer demand, readiness review, trip visibility, exception management, proof, settlement preparation, and executive oversight across fleets and carrier networks.</p>
+          <div class="ad-controls" aria-label="Animated demo controls">
+            <button class="button primary ad-control" type="button" data-demo-action="start">Start Demo</button>
+            <button class="button secondary ad-control" type="button" data-demo-action="pause">Pause</button>
+            <button class="button secondary ad-control" type="button" data-demo-action="restart">Restart</button>
+            <span class="ad-duration">Estimated duration <strong>2-3 minutes</strong></span>
+          </div>
+          <nav class="ad-demo-links" aria-label="Animated demo related modules">
+            <a href="/executive-demo/">Executive Demo</a>
+            <a href="/capacity-intelligence/">Capacity Intelligence</a>
+            <a href="/operational-intelligence/">Operational Intelligence</a>
+            <a href="/business-operations/">Business Operations</a>
+            <a href="/sectors/">Sectors</a>
+            <a href="/dashboard/">Dashboard</a>
+          </nav>
+        </div>
+
+        <section class="ad-stage reveal" aria-label="BOF Operations Lifecycle animated scenes">
+          <div class="ad-stage-top">
+            <div class="ad-stage-title">
+              <span data-scene-progress>Scene 1 of 8</span>
+              <strong>BOF Operations Lifecycle</strong>
+            </div>
+            <span class="ad-play-state" data-play-status>Auto-running</span>
+          </div>
+          <div class="ad-progress" aria-hidden="true"><span data-progress-fill></span></div>
+
+          <div class="ad-scene-stack">
+            <article class="ad-scene is-active" data-scene="customer-demand">
+              <div class="ad-copy">
+                <p class="eyebrow">Scene 1</p>
+                <h2>Customer Demand</h2>
+                <p>Customer Portal activity becomes an operations record: shipment request, quote generation, quote approval, and next-review visibility.</p>
+                <div class="ad-narration"><span>Narration</span><strong>Customer demand enters the BOF workflow.</strong></div>
+              </div>
+              <div class="ad-visual">
+                <div class="ad-panel">
+                  <div class="ad-panel-head"><h3>Customer Portal</h3><span>Quote approved</span></div>
+                  <div class="ad-flow">
+                    <div class="ad-flow-step" style="--i:0"><span>01</span><strong>Shipment request</strong></div>
+                    <div class="ad-flow-step" style="--i:1"><span>02</span><strong>Quote generation</strong></div>
+                    <div class="ad-flow-step" style="--i:2"><span>03</span><strong>Quote approval</strong></div>
+                    <div class="ad-flow-step" style="--i:3"><span>04</span><strong>Operations record</strong></div>
+                  </div>
+                  <div class="ad-kpi-grid">
+                    <article class="ad-kpi" style="--i:0"><span>Requests</span><strong data-count="18">0</strong></article>
+                    <article class="ad-kpi" style="--i:1"><span>Quotes ready</span><strong data-count="11">0</strong></article>
+                    <article class="ad-kpi" style="--i:2"><span>Approvals</span><strong data-count="7">0</strong></article>
+                  </div>
+                </div>
+              </div>
+            </article>
+
+            <article class="ad-scene" data-scene="pre-trip-readiness">
+              <div class="ad-copy">
+                <p class="eyebrow">Scene 2</p>
+                <h2>Pre-Trip Readiness</h2>
+                <p>BOF checks the record before resources are committed: people, equipment, documents, insurance, and compliance readiness.</p>
+                <div class="ad-narration"><span>Narration</span><strong>BOF determines what can move and what is blocked before resources are committed.</strong></div>
+              </div>
+              <div class="ad-visual">
+                <div class="ad-panel">
+                  <div class="ad-panel-head"><h3>Readiness review</h3><span>Pre-trip control</span></div>
+                  <div class="ad-readiness-list">
+                    <div class="ad-readiness-row"><strong>Driver qualification</strong><span class="status ready">Ready</span></div>
+                    <div class="ad-readiness-row"><strong>CDL verification</strong><span class="status ready">Ready</span></div>
+                    <div class="ad-readiness-row"><strong>Medical card</strong><span class="status review">At Risk</span></div>
+                    <div class="ad-readiness-row"><strong>Training</strong><span class="status ready">Ready</span></div>
+                    <div class="ad-readiness-row"><strong>Equipment readiness</strong><span class="status ready">Ready</span></div>
+                    <div class="ad-readiness-row"><strong>Insurance verification</strong><span class="status blocked">Blocked</span></div>
+                    <div class="ad-readiness-row"><strong>Document readiness</strong><span class="status review">At Risk</span></div>
+                  </div>
+                </div>
+              </div>
+            </article>
+
+            <article class="ad-scene" data-scene="capacity-intelligence">
+              <div class="ad-copy">
+                <p class="eyebrow">Scene 3</p>
+                <h2>Capacity Intelligence</h2>
+                <p>BOF surfaces available capacity by carrier, network, asset, driver, equipment type, and sharing status without creating a freight marketplace.</p>
+                <div class="ad-narration"><span>Narration</span><strong>BOF provides visibility into operationally ready capacity.</strong></div>
+              </div>
+              <div class="ad-visual">
+                <div class="ad-panel">
+                  <div class="ad-panel-head"><h3>Capacity visibility</h3><span>Network view</span></div>
+                  <div class="ad-kpi-grid">
+                    <article class="ad-kpi" style="--i:0"><span>Carrier readiness</span><strong data-count="93" data-count-suffix="%">0%</strong></article>
+                    <article class="ad-kpi" style="--i:1"><span>Available assets</span><strong data-count="71">0</strong></article>
+                    <article class="ad-kpi" style="--i:2"><span>Available drivers</span><strong data-count="84">0</strong></article>
+                  </div>
+                  <div class="ad-readiness-grid">
+                    <article class="ad-mini-card" style="--i:0"><span>Network readiness</span><h3>Great Lakes Owner-Operator Network</h3><p>Dry van and reefer capacity is documented and opted in for visibility.</p></article>
+                    <article class="ad-mini-card" style="--i:1"><span>Capacity view</span><h3>Midwest reefer capacity</h3><p>Ready assets exceed current projected administrative demand.</p></article>
+                  </div>
+                </div>
+              </div>
+            </article>
+
+            <article class="ad-scene" data-scene="operational-intelligence">
+              <div class="ad-copy">
+                <p class="eyebrow">Scene 4</p>
+                <h2>Operational Intelligence</h2>
+                <p>BOF stays engaged through route monitoring, fuel monitoring, weather, traffic, safety events, RFID checkpoints, and ETA confidence.</p>
+                <div class="ad-narration"><span>Narration</span><strong>BOF remains engaged throughout the trip lifecycle.</strong></div>
+              </div>
+              <div class="ad-visual">
+                <div class="ad-route-map" aria-label="Operational intelligence route visualization">
+                  <svg viewBox="0 0 620 300" role="img" aria-label="Route, checkpoints, traffic, weather, safety, and ETA confidence">
+                    <path d="M52 226 C142 136 226 174 304 112 S462 72 560 52" fill="none" stroke="#1f6aa5" stroke-width="4" class="ad-route-line"/>
+                    <path d="M70 236 L170 174 L300 120 L432 82 L560 54" fill="none" stroke="#168f62" stroke-width="2" stroke-dasharray="3 8"/>
+                    <circle cx="52" cy="226" r="14" fill="#168f62"/><circle cx="304" cy="112" r="14" fill="#e19a1a"/><circle cx="560" cy="52" r="14" fill="#1f6aa5"/>
+                    <text x="38" y="260" fill="#14211f" font-size="18" font-weight="800">Origin</text>
+                    <text x="248" y="150" fill="#14211f" font-size="18" font-weight="800">RFID + ETA</text>
+                    <text x="504" y="88" fill="#14211f" font-size="18" font-weight="800">Delivery</text>
+                  </svg>
+                </div>
+                <div class="ad-kpi-grid">
+                  <article class="ad-kpi" style="--i:0"><span>ETA confidence</span><strong data-count="91" data-count-suffix="%">0%</strong></article>
+                  <article class="ad-kpi" style="--i:1"><span>Fuel variance</span><strong data-count="4" data-count-suffix="%">0%</strong></article>
+                  <article class="ad-kpi" style="--i:2"><span>Checkpoints</span><strong data-count="6">0</strong></article>
+                </div>
+              </div>
+            </article>
+
+            <article class="ad-scene" data-scene="exception-management">
+              <div class="ad-copy">
+                <p class="eyebrow">Scene 5</p>
+                <h2>Exception Management</h2>
+                <p>Delays, fuel anomalies, safety alerts, and documentation exceptions are moved from vague issue lists into assigned administrative resolution.</p>
+                <div class="ad-narration"><span>Narration</span><strong>Exceptions are identified, investigated, and resolved through visible administrative ownership.</strong></div>
+              </div>
+              <div class="ad-visual">
+                <div class="ad-panel">
+                  <div class="ad-panel-head"><h3>Exception workflow</h3><span>Owner assigned</span></div>
+                  <div class="ad-flow step-3">
+                    <div class="ad-flow-step" style="--i:0"><span>01</span><strong>Exception</strong></div>
+                    <div class="ad-flow-step" style="--i:1"><span>02</span><strong>Investigation</strong></div>
+                    <div class="ad-flow-step" style="--i:2"><span>03</span><strong>Resolution</strong></div>
+                  </div>
+                  <div class="ad-readiness-grid">
+                    <article class="ad-mini-card" style="--i:0"><span>Delay</span><h3>Weather delay flagged</h3><p>ETA confidence updated and customer confirmation queued.</p></article>
+                    <article class="ad-mini-card" style="--i:1"><span>Fuel anomaly</span><h3>Variance above plan</h3><p>Fuel record routed for administrative review.</p></article>
+                    <article class="ad-mini-card" style="--i:2"><span>Safety alert</span><h3>Follow-up required</h3><p>Safety event attached to driver record.</p></article>
+                    <article class="ad-mini-card" style="--i:3"><span>Documentation</span><h3>Missing scan</h3><p>Document request assigned before settlement review.</p></article>
+                  </div>
+                </div>
+              </div>
+            </article>
+
+            <article class="ad-scene" data-scene="delivery-proof">
+              <div class="ad-copy">
+                <p class="eyebrow">Scene 6</p>
+                <h2>Delivery &amp; Proof</h2>
+                <p>Delivery proof is organized around POD, delivery photos, seal verification, and customer confirmation so post-trip workflows do not start blind.</p>
+                <div class="ad-narration"><span>Narration</span><strong>BOF tracks proof and delivery readiness.</strong></div>
+              </div>
+              <div class="ad-visual">
+                <div class="ad-proof-grid">
+                  <article class="ad-proof" style="--i:0"><img src="/assets/images/photos/pod-bol-proof-packet.webp" alt="POD and BOL packet on a dispatch desk"><div><h3>POD</h3><p>Signed delivery proof attached to the record.</p></div></article>
+                  <article class="ad-proof" style="--i:1"><img src="/assets/images/documents/load-proof/pod-1907-dock-photo.webp" alt="Dock delivery photo used as proof evidence"><div><h3>Delivery photos</h3><p>Dock evidence supports post-trip review.</p></div></article>
+                  <article class="ad-mini-card" style="--i:2"><span>Seal verification</span><h3>Seal matched</h3><p>Seal photo and recorded seal number are aligned.</p></article>
+                  <article class="ad-mini-card" style="--i:3"><span>Customer confirmation</span><h3>Delivery accepted</h3><p>Customer confirmation is visible for settlement preparation.</p></article>
+                </div>
+              </div>
+            </article>
+
+            <article class="ad-scene" data-scene="settlement-readiness">
+              <div class="ad-copy">
+                <p class="eyebrow">Scene 7</p>
+                <h2>Settlement Readiness</h2>
+                <p>BOF organizes settlement packet status, factoring packet readiness, documentation review, and driver settlement inputs after the trip is complete.</p>
+                <div class="ad-narration"><span>Narration</span><strong>BOF prepares post-trip operational workflows.</strong></div>
+              </div>
+              <div class="ad-visual">
+                <div class="ad-panel">
+                  <div class="ad-panel-head"><h3>Post-trip packet</h3><span>Settlement prep</span></div>
+                  <div class="ad-flow">
+                    <div class="ad-flow-step" style="--i:0"><span>01</span><strong>Settlement packet</strong></div>
+                    <div class="ad-flow-step" style="--i:1"><span>02</span><strong>Factoring packet</strong></div>
+                    <div class="ad-flow-step" style="--i:2"><span>03</span><strong>Documentation review</strong></div>
+                    <div class="ad-flow-step" style="--i:3"><span>04</span><strong>Driver settlement</strong></div>
+                  </div>
+                  <div class="ad-kpi-grid">
+                    <article class="ad-kpi" style="--i:0"><span>Packets ready</span><strong data-count="38">0</strong></article>
+                    <article class="ad-kpi" style="--i:1"><span>Review holds</span><strong data-count="6">0</strong></article>
+                    <article class="ad-kpi" style="--i:2"><span>Driver settlements</span><strong data-count="41">0</strong></article>
+                  </div>
+                </div>
+              </div>
+            </article>
+
+            <article class="ad-scene" data-scene="executive-visibility">
+              <div class="ad-copy">
+                <p class="eyebrow">Scene 8</p>
+                <h2>Executive Visibility</h2>
+                <p>BOF gives leadership an operational infrastructure story across the transportation lifecycle: capacity, operations, business administration, and executive command.</p>
+                <div class="ad-narration"><span>Narration</span><strong>BOF provides operational infrastructure across the transportation lifecycle.</strong></div>
+              </div>
+              <div class="ad-visual">
+                <div class="ad-panel">
+                  <div class="ad-panel-head"><h3>Executive dashboard</h3><span>Lifecycle view</span></div>
+                  <div class="ad-module-grid">
+                    <article class="ad-module-card" style="--i:0"><span>Capacity Intelligence</span><h3>Ready capacity</h3><p>Carrier networks, assets, drivers, and equipment availability.</p></article>
+                    <article class="ad-module-card" style="--i:1"><span>Operational Intelligence</span><h3>Trip lifecycle</h3><p>Route, fuel, weather, safety, checkpoints, and ETA confidence.</p></article>
+                    <article class="ad-module-card" style="--i:2"><span>Business Operations</span><h3>Company infrastructure</h3><p>Payroll, HR, insurance, factoring readiness, and accounting coordination.</p></article>
+                    <article class="ad-module-card" style="--i:3"><span>Executive Dashboard</span><h3>Command view</h3><p>Owner-level visibility into what is ready, blocked, and assigned.</p></article>
+                  </div>
+                </div>
+              </div>
+            </article>
+          </div>
+
+          <div class="ad-stage-footer">
+            <div class="ad-inline-controls" aria-label="Scene controls">
+              <button class="button secondary ad-control" type="button" data-demo-action="previous">Previous</button>
+              <button class="button secondary ad-control" type="button" data-demo-action="next">Next</button>
+              <button class="button secondary ad-control" type="button" data-demo-action="pause">Pause</button>
+              <button class="button secondary ad-control" type="button" data-demo-action="resume">Resume</button>
+            </div>
+            <p class="ad-note">This is a static BOF demo presentation. BOF does not act as a broker, dispatcher, freight marketplace, or motor carrier in this demo workflow.</p>
+          </div>
+        </section>
+      </div>
+    </section>
+  </main>
+  <script src="/assets/js/site.js?v=1.42"></script>
+  <script src="/assets/js/animated-demo.js?v=1.0"></script>
+</body>
+</html>

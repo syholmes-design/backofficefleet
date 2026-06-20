@@ -1,0 +1,203 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Sector Intelligence | BackOfficeFleet</title>
+  <meta name="description" content="BOF Sector Intelligence shows how one operational infrastructure platform supports trucking fleets, carrier networks, aggregators, government contractors, and field-service operations.">
+  <link rel="stylesheet" href="/assets/css/styles.css?v=1.45">
+  <style>
+    .sector-hero { background: linear-gradient(135deg, rgba(246,248,244,0.98), rgba(232,241,236,0.96) 56%, rgba(251,243,231,0.96)); overflow: hidden; position: relative; }
+    .sector-hero::after { background-image: linear-gradient(rgba(20,33,31,0.06) 1px, transparent 1px), linear-gradient(90deg, rgba(20,33,31,0.06) 1px, transparent 1px); background-size: 42px 42px; content: ""; inset: 0; pointer-events: none; position: absolute; }
+    .sector-hero-inner { display: grid; gap: 34px; grid-template-columns: minmax(0, 0.9fr) minmax(380px, 1.1fr); margin: 0 auto; max-width: var(--max); min-height: 640px; padding: 70px 24px 56px; position: relative; z-index: 1; }
+    .sector-copy { align-content: center; display: grid; gap: 18px; }
+    .sector-copy h1 { font-size: clamp(2.5rem, 5vw, 4.8rem); line-height: 1.02; margin: 0; }
+    .sector-copy > p { color: var(--muted); font-size: 1.1rem; line-height: 1.68; margin: 0; max-width: 720px; }
+    .sector-path { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 4px; }
+    .sector-path a { background: rgba(255,255,255,0.82); border: 1px solid rgba(20,33,31,0.14); border-radius: 8px; color: var(--green-dark); font-size: 0.78rem; font-weight: 950; padding: 10px 12px; text-transform: uppercase; }
+    .sector-board { align-self: center; background: rgba(255,255,255,0.94); border: 1px solid rgba(20,33,31,0.1); border-radius: 8px; box-shadow: var(--shadow); display: grid; gap: 14px; padding: 18px; }
+    .sector-board-head { align-items: center; border-bottom: 1px solid rgba(20,33,31,0.1); display: flex; gap: 12px; justify-content: space-between; padding-bottom: 12px; }
+    .sector-board-head h2 { font-size: 1.08rem; margin: 0; }
+    .sector-board-head span { color: var(--muted); font-size: 0.76rem; font-weight: 900; text-transform: uppercase; }
+    .sector-card-grid { display: grid; gap: 10px; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .sector-card { background: linear-gradient(180deg, #fff, #f6f9f6); border: 1px solid rgba(20,33,31,0.1); border-radius: 8px; display: grid; gap: 7px; min-height: 118px; padding: 14px; }
+    .sector-card span, .sector-detail span, .demo-path-card span, .market-card span { color: var(--green-dark); font-size: 0.72rem; font-weight: 950; text-transform: uppercase; }
+    .sector-card h3, .sector-detail h3, .demo-path-card h3, .market-card h3 { font-size: 1rem; margin: 0; }
+    .sector-card p, .sector-detail p, .demo-path-card p, .market-card p { color: var(--muted); line-height: 1.5; margin: 0; }
+    .sector-detail-grid { display: grid; gap: 16px; grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .sector-detail, .demo-path-card, .market-card, .sector-note { background: #fff; border: 1px solid var(--line); border-radius: 8px; box-shadow: var(--shadow-soft); padding: 20px; }
+    .sector-detail { display: grid; gap: 14px; }
+    .sector-list { display: grid; gap: 8px; list-style: none; margin: 0; padding: 0; }
+    .sector-list li { background: rgba(232,241,236,0.62); border: 1px solid rgba(20,33,31,0.08); border-radius: 8px; color: var(--ink); font-size: 0.88rem; font-weight: 850; padding: 10px 11px; }
+    .module-row { display: flex; flex-wrap: wrap; gap: 8px; }
+    .module-row a, .module-row span { background: #f8faf8; border: 1px solid rgba(20,33,31,0.12); border-radius: 8px; color: var(--green-dark); font-size: 0.74rem; font-weight: 950; padding: 8px 9px; text-transform: uppercase; }
+    .comparison-table td { min-width: 132px; }
+    .value-dot { align-items: center; background: #e0f2ea; border: 1px solid rgba(22,143,98,0.18); border-radius: 999px; color: #07593f; display: inline-flex; font-size: 0.72rem; font-weight: 950; justify-content: center; min-width: 74px; padding: 6px 8px; text-transform: uppercase; }
+    .value-dot.secondary { background: #e8eef6; border-color: rgba(31,106,165,0.18); color: #17436a; }
+    .value-dot.watch { background: #fff0d8; border-color: rgba(225,154,26,0.22); color: #7a4d07; }
+    .demo-path-grid { display: grid; gap: 16px; grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .demo-path-card { display: grid; gap: 12px; min-height: 250px; }
+    .demo-path-card a { align-self: end; color: var(--green-dark); font-size: 0.82rem; font-weight: 950; text-transform: uppercase; }
+    .market-grid { display: grid; gap: 16px; grid-template-columns: repeat(5, minmax(0, 1fr)); }
+    .market-card strong { color: var(--green-dark); display: block; font-size: 2rem; line-height: 1; margin: 10px 0 8px; }
+    .sector-note { background: rgba(255,255,255,0.88); color: var(--muted); line-height: 1.62; }
+    @media (max-width: 1180px) { .sector-hero-inner { grid-template-columns: 1fr; } .sector-detail-grid, .demo-path-grid, .market-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+    @media (max-width: 760px) { .sector-hero-inner { min-height: auto; padding: 46px 16px; } .sector-card-grid, .sector-detail-grid, .demo-path-grid, .market-grid { grid-template-columns: 1fr; } .sector-board { padding: 12px; } .sector-board-head { align-items: flex-start; flex-direction: column; } .sector-path { display: grid; grid-template-columns: 1fr; } .sector-path a { text-align: center; } .comparison-table td, .comparison-table th { min-width: 142px; } }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <a class="brand" href="/" aria-label="BackOfficeFleet home"><img src="/assets/images/logo/boflogo-original.png" alt="BackOfficeFleet"></a>
+    <button class="nav-toggle" type="button" data-nav-toggle aria-expanded="false" aria-label="Toggle navigation">&#9776;</button>
+    <nav class="site-nav" data-nav aria-label="Main navigation">
+      <a href="/">Home</a>
+      <a href="/solutions/">Solutions</a>
+      <a href="/capacity-intelligence/">Capacity Intelligence</a>
+      <a href="/operational-intelligence/">Operational Intelligence</a>
+      <a href="/business-operations/">Business Operations</a>
+      <a href="/executive-demo/">Executive Demo</a>
+      <a href="/demo/">Partner Workflow</a>
+      <a href="/interactive-demo/start/">Try Demo</a>
+      <a href="/documents/">Documents</a>
+      <a href="/book-demo/">Book Demo</a>
+    </nav>
+    <a class="header-cta" href="/book-demo/">Book demo</a>
+  </header>
+
+  <main>
+    <section class="sector-hero" id="sector-overview">
+      <div class="sector-hero-inner">
+        <div class="sector-copy reveal">
+          <p class="eyebrow">Sector Intelligence</p>
+          <h1>Operational Infrastructure Across Multiple Industries</h1>
+          <p>One platform. Multiple operational environments.</p>
+          <p>BOF supports the operating layer behind transportation-heavy and field-service organizations: readiness, records, documentation, compliance visibility, business administration, and executive oversight without creating separate products for every sector.</p>
+          <div class="actions"><a class="button primary" href="#industry-demo-paths">Choose a demo path</a><a class="button secondary" href="#sector-comparison">Compare sectors</a></div>
+          <nav class="sector-path" aria-label="Sector Intelligence demo links">
+            <a href="/executive-demo/">Executive Demo</a>
+            <a href="/animated-demo/">Animated Demo</a>
+            <a href="/capacity-intelligence/">Capacity Intelligence</a>
+            <a href="/operational-intelligence/">Operational Intelligence</a>
+            <a href="/business-operations/">Business Operations</a>
+            <a href="/dashboard/">Dashboard</a>
+          </nav>
+        </div>
+        <aside class="sector-board reveal" aria-label="Sector overview cards">
+          <div class="sector-board-head"><div><span>Sector map</span><h2>One BOF operating model</h2></div><span>Demo scenario</span></div>
+          <div class="sector-card-grid">
+            <article class="sector-card"><span>Fleet</span><h3>For-Hire Trucking Fleets</h3><p>Driver, document, safety, and settlement readiness.</p></article>
+            <article class="sector-card"><span>Fleet</span><h3>Private Fleets</h3><p>Internal accountability, asset utilization, and audit trails.</p></article>
+            <article class="sector-card"><span>Network</span><h3>Carrier Networks</h3><p>Readiness scoring across participating carriers.</p></article>
+            <article class="sector-card"><span>Network</span><h3>Aggregators</h3><p>Operationally ready capacity visibility across networks.</p></article>
+            <article class="sector-card"><span>Public sector</span><h3>Government Contractors</h3><p>Documentation, compliance, and record retention discipline.</p></article>
+            <article class="sector-card"><span>Field service</span><h3>Field Service Operations</h3><p>Worker, vehicle, payroll, and documentation readiness.</p></article>
+            <article class="sector-card"><span>Service network</span><h3>Cable Installation Networks</h3><p>Technician readiness and proof of completed work.</p></article>
+            <article class="sector-card"><span>Service network</span><h3>Utility Service Providers</h3><p>Vehicle readiness, certifications, and work documentation.</p></article>
+            <article class="sector-card"><span>Cold chain</span><h3>Refrigerated Distribution</h3><p>Equipment readiness, safety, proof, and exception visibility.</p></article>
+            <article class="sector-card"><span>Project freight</span><h3>Construction Logistics</h3><p>Equipment, jobsite documentation, and administrative closeout.</p></article>
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <section class="section" id="sector-detail">
+      <div class="section-head reveal"><p class="eyebrow">Sector paths</p><h2>Each sector sees the same BOF infrastructure through its own operating pressure.</h2><p>These cards frame what a prospect should understand first: the work they already chase, the BOF modules that make it visible, and the operational outcome BOF is demonstrating.</p></div>
+      <div class="sector-detail-grid">
+        <article class="sector-detail reveal" id="for-hire-trucking">
+          <span>For-Hire Trucking Fleets</span>
+          <h3>Control the records behind revenue movement.</h3>
+          <p>For-hire fleets need clean driver, safety, documentation, and settlement records before a routine lane becomes a preventable back-office problem.</p>
+          <ul class="sector-list"><li>Compliance</li><li>Driver onboarding</li><li>Settlements</li><li>Safety</li><li>Documentation</li></ul>
+          <div class="module-row"><a href="/capacity-intelligence/">Capacity Intelligence</a><a href="/operational-intelligence/">Operational Intelligence</a><a href="/settlements/">Settlements</a><a href="/drivers/">Driver Readiness</a></div>
+        </article>
+
+        <article class="sector-detail reveal" id="private-fleets">
+          <span>Private Fleets</span>
+          <h3>Give internal fleet teams operational accountability.</h3>
+          <p>Manufacturing, food distribution, and retail distribution teams can use BOF to understand asset utilization, driver readiness, internal ownership, and audit trails.</p>
+          <ul class="sector-list"><li>Manufacturing fleet operations</li><li>Food distribution readiness</li><li>Retail distribution accountability</li><li>Asset utilization</li><li>Audit trails</li></ul>
+          <div class="module-row"><a href="/capacity-intelligence/">Capacity Intelligence</a><a href="/operational-intelligence/">Operational Intelligence</a><a href="/business-operations/">Business Operations</a></div>
+        </article>
+
+        <article class="sector-detail reveal" id="carrier-networks">
+          <span>Carrier Networks</span>
+          <h3>Show readiness across participating carriers.</h3>
+          <p>Carrier networks need visibility without exposing private customer relationships or turning the system into a marketplace.</p>
+          <ul class="sector-list"><li>Multi-carrier visibility</li><li>Capacity visibility</li><li>Documentation consistency</li><li>Readiness scoring</li></ul>
+          <div class="module-row"><a href="/capacity-intelligence/">Capacity Intelligence</a><a href="/carrier-readiness/">Carrier Readiness</a><a href="/operational-intelligence/">Operational Intelligence</a></div>
+        </article>
+
+        <article class="sector-detail reveal" id="aggregators">
+          <span>Aggregators</span>
+          <h3>Identify ready capacity across networks.</h3>
+          <p>BOF helps identify operationally ready capacity across carrier networks while keeping the focus on readiness, documentation, and administrative visibility.</p>
+          <ul class="sector-list"><li>Asset visibility</li><li>Carrier onboarding</li><li>Network readiness</li><li>Capacity management</li></ul>
+          <div class="module-row"><a href="/capacity-intelligence/">Capacity Intelligence</a><a href="/operational-intelligence/">Operational Intelligence</a><a href="/executive-demo/">Executive Demo</a></div>
+        </article>
+
+        <article class="sector-detail reveal" id="government-contractors">
+          <span>Government Contractors</span>
+          <h3>Keep contract records inspection-ready.</h3>
+          <p>Government contractors need proof that documentation, audit trail, compliance, and retention work are visible before a review becomes a scramble.</p>
+          <ul class="sector-list"><li>Documentation</li><li>Audit trails</li><li>Compliance</li><li>Records retention</li></ul>
+          <div class="module-row"><a href="/documents/">Documents</a><a href="/operational-intelligence/">Operational Intelligence</a><a href="/business-operations/">Business Operations</a></div>
+        </article>
+
+        <article class="sector-detail reveal" id="field-services">
+          <span>Field Services</span>
+          <h3>Run worker and vehicle readiness outside trucking.</h3>
+          <p>Cable installers, utility contractors, and service technicians face the same operational burden: readiness, proof, documentation, payroll administration, and accountability.</p>
+          <ul class="sector-list"><li>Cable installer readiness</li><li>Utility contractor oversight</li><li>Service technician documentation</li><li>Worker readiness</li><li>Vehicle readiness</li><li>Payroll administration</li></ul>
+          <div class="module-row"><a href="/business-operations/">Business Operations</a><a href="/operational-intelligence/">Operational Intelligence</a><a href="/capacity-intelligence/">Capacity Intelligence</a></div>
+        </article>
+      </div>
+    </section>
+
+    <section class="section" id="sector-comparison">
+      <div class="section-head reveal"><p class="eyebrow">Sector comparison matrix</p><h2>BOF creates value wherever readiness, records, and operating visibility matter.</h2><p>The same operating infrastructure can be emphasized differently depending on the buyer's sector. The goal is not a separate product; it is a clearer demonstration path.</p></div>
+      <div class="table-wrap reveal">
+        <table class="comparison-table">
+          <thead><tr><th>Sector</th><th>Compliance</th><th>Operations</th><th>Capacity</th><th>Documentation</th><th>Payroll</th><th>Insurance</th><th>Settlements</th></tr></thead>
+          <tbody>
+            <tr><td>For-Hire Trucking Fleets</td><td><span class="value-dot">High</span></td><td><span class="value-dot">High</span></td><td><span class="value-dot secondary">Medium</span></td><td><span class="value-dot">High</span></td><td><span class="value-dot watch">Support</span></td><td><span class="value-dot">High</span></td><td><span class="value-dot">High</span></td></tr>
+            <tr><td>Private Fleets</td><td><span class="value-dot">High</span></td><td><span class="value-dot">High</span></td><td><span class="value-dot">High</span></td><td><span class="value-dot">High</span></td><td><span class="value-dot secondary">Medium</span></td><td><span class="value-dot">High</span></td><td><span class="value-dot secondary">Medium</span></td></tr>
+            <tr><td>Carrier Networks</td><td><span class="value-dot">High</span></td><td><span class="value-dot">High</span></td><td><span class="value-dot">High</span></td><td><span class="value-dot">High</span></td><td><span class="value-dot watch">Support</span></td><td><span class="value-dot">High</span></td><td><span class="value-dot secondary">Medium</span></td></tr>
+            <tr><td>Aggregators</td><td><span class="value-dot">High</span></td><td><span class="value-dot">High</span></td><td><span class="value-dot">High</span></td><td><span class="value-dot">High</span></td><td><span class="value-dot watch">Support</span></td><td><span class="value-dot">High</span></td><td><span class="value-dot secondary">Medium</span></td></tr>
+            <tr><td>Government Contractors</td><td><span class="value-dot">High</span></td><td><span class="value-dot secondary">Medium</span></td><td><span class="value-dot watch">Support</span></td><td><span class="value-dot">High</span></td><td><span class="value-dot watch">Support</span></td><td><span class="value-dot secondary">Medium</span></td><td><span class="value-dot watch">Support</span></td></tr>
+            <tr><td>Field Service Operations</td><td><span class="value-dot secondary">Medium</span></td><td><span class="value-dot">High</span></td><td><span class="value-dot secondary">Medium</span></td><td><span class="value-dot">High</span></td><td><span class="value-dot">High</span></td><td><span class="value-dot secondary">Medium</span></td><td><span class="value-dot watch">Support</span></td></tr>
+            <tr><td>Cable Installation Networks</td><td><span class="value-dot secondary">Medium</span></td><td><span class="value-dot">High</span></td><td><span class="value-dot secondary">Medium</span></td><td><span class="value-dot">High</span></td><td><span class="value-dot">High</span></td><td><span class="value-dot secondary">Medium</span></td><td><span class="value-dot watch">Support</span></td></tr>
+            <tr><td>Utility Service Providers</td><td><span class="value-dot">High</span></td><td><span class="value-dot">High</span></td><td><span class="value-dot secondary">Medium</span></td><td><span class="value-dot">High</span></td><td><span class="value-dot">High</span></td><td><span class="value-dot">High</span></td><td><span class="value-dot watch">Support</span></td></tr>
+            <tr><td>Refrigerated Distribution</td><td><span class="value-dot">High</span></td><td><span class="value-dot">High</span></td><td><span class="value-dot">High</span></td><td><span class="value-dot">High</span></td><td><span class="value-dot secondary">Medium</span></td><td><span class="value-dot">High</span></td><td><span class="value-dot secondary">Medium</span></td></tr>
+            <tr><td>Construction Logistics</td><td><span class="value-dot secondary">Medium</span></td><td><span class="value-dot">High</span></td><td><span class="value-dot secondary">Medium</span></td><td><span class="value-dot">High</span></td><td><span class="value-dot secondary">Medium</span></td><td><span class="value-dot">High</span></td><td><span class="value-dot watch">Support</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="section" id="industry-demo-paths">
+      <div class="section-head reveal"><p class="eyebrow">Industry demo paths</p><h2>Start each prospect with the path that matches their operating pressure.</h2><p>Each path points into existing BOF modules so the story stays unified: customer demand, readiness, capacity, operations, documents, administration, and executive visibility.</p></div>
+      <div class="demo-path-grid">
+        <article class="demo-path-card reveal"><span>For-Hire Fleet Demo</span><h3>Readiness and settlement control</h3><p>Begin with driver readiness, documents, operational intelligence, and settlement preparation for a fleet that needs fewer loose ends before and after trips.</p><div class="module-row"><a href="/drivers/">Drivers</a><a href="/documents/">Documents</a><a href="/settlements/">Settlements</a></div><a href="/executive-demo/">Open executive path</a></article>
+        <article class="demo-path-card reveal"><span>Private Fleet Demo</span><h3>Internal accountability</h3><p>Show how private fleets use capacity and operational views to manage assets, driver readiness, and audit trails without treating BOF as a separate product.</p><div class="module-row"><a href="/capacity-intelligence/">Capacity</a><a href="/operational-intelligence/">Operations</a><a href="/business-operations/">Business</a></div><a href="/private-fleets/">Open private fleet context</a></article>
+        <article class="demo-path-card reveal"><span>Carrier Network Demo</span><h3>Network readiness</h3><p>Lead with carrier readiness, network visibility, documentation consistency, and capacity intelligence for participating carriers.</p><div class="module-row"><a href="/carrier-readiness/">Carrier Readiness</a><a href="/capacity-intelligence/">Capacity</a><a href="/operational-intelligence/">Operations</a></div><a href="/capacity-intelligence/">Open capacity view</a></article>
+        <article class="demo-path-card reveal"><span>Aggregator Demo</span><h3>Operationally ready capacity</h3><p>Frame BOF around network readiness, asset visibility, carrier onboarding, and executive visibility across participating capacity records.</p><div class="module-row"><a href="/capacity-intelligence/">Capacity</a><a href="/executive-demo/">Executive</a><a href="/animated-demo/">Animated Demo</a></div><a href="/capacity-intelligence/">Open aggregator view</a></article>
+        <article class="demo-path-card reveal"><span>Government Demo</span><h3>Records and audit visibility</h3><p>Start with documents, compliance posture, retention, and operational evidence for teams that need an inspection-ready administrative trail.</p><div class="module-row"><a href="/government/">Government</a><a href="/documents/">Documents</a><a href="/business-operations/">Business</a></div><a href="/government/">Open government context</a></article>
+        <article class="demo-path-card reveal"><span>Field Services Demo</span><h3>Worker and vehicle readiness</h3><p>Translate BOF's trucking operating model into technician readiness, vehicle readiness, proof collection, payroll administration, and management visibility.</p><div class="module-row"><a href="/business-operations/">Business</a><a href="/operational-intelligence/">Operations</a><a href="/capacity-intelligence/">Capacity</a></div><a href="/business-operations/">Open business operations</a></article>
+      </div>
+    </section>
+
+    <section class="section" id="market-opportunity">
+      <div class="section-head reveal"><p class="eyebrow">Future market opportunity</p><h2>The same operating infrastructure can support adjacent markets.</h2><p>The same operational infrastructure can support multiple industries where readiness, documentation, visibility, compliance, and business operations matter.</p></div>
+      <div class="market-grid">
+        <article class="market-card reveal"><span>Trucking</span><strong>Core</strong><p>For-hire and private fleets need readiness, records, safety, documents, and settlements visibility.</p></article>
+        <article class="market-card reveal"><span>Carrier Networks</span><strong>Network</strong><p>Multi-carrier operations need capacity visibility and readiness scoring without exposing private relationships.</p></article>
+        <article class="market-card reveal"><span>Private Fleets</span><strong>Owned</strong><p>Manufacturing, food, and retail distribution teams need internal operating accountability.</p></article>
+        <article class="market-card reveal"><span>Government</span><strong>Audit</strong><p>Contractors need documentation, compliance, retention, and operating evidence.</p></article>
+        <article class="market-card reveal"><span>Field Services</span><strong>Adjacent</strong><p>Technician and vehicle networks need readiness, payroll, proof, and administrative visibility.</p></article>
+      </div>
+      <p class="sector-note reveal">BOF is positioned as operational infrastructure. This sector view does not turn BOF into a broker, dispatcher, freight marketplace, or motor carrier; it shows how the same readiness, documentation, visibility, compliance, and business operations layer can be demonstrated across different operating environments.</p>
+    </section>
+  </main>
+  <script src="/assets/js/site.js?v=1.42"></script>
+</body>
+</html>
