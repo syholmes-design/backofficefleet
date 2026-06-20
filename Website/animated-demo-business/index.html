@@ -1,0 +1,1166 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Business Operations Animated Demo | BackOfficeFleet</title>
+  <meta name="description" content="A self-running BOF business operations presentation focused on payroll, HR, insurance administration, driver onboarding, factoring readiness, accounting coordination, and executive financial visibility.">
+  <link rel="stylesheet" href="/assets/css/styles.css?v=1.45">
+  <style>
+    .ad-page {
+      background:
+        linear-gradient(135deg, rgba(247,250,247,0.98), rgba(230,240,237,0.95) 52%, rgba(250,244,234,0.97)),
+        linear-gradient(rgba(20,33,31,0.055) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(20,33,31,0.055) 1px, transparent 1px);
+      background-size: auto, 42px 42px, 42px 42px;
+      min-height: calc(100vh - 78px);
+      overflow-x: hidden;
+    }
+
+    .ad-shell {
+      display: grid;
+      gap: 22px;
+      margin: 0 auto;
+      max-width: 1440px;
+      padding: 34px 24px 58px;
+    }
+
+    .ad-landing {
+      align-items: center;
+      display: grid;
+      gap: 24px;
+      grid-template-columns: minmax(0, 0.8fr) minmax(560px, 1.2fr);
+    }
+
+    .ad-title-card {
+      display: grid;
+      gap: 18px;
+    }
+
+    .ad-title-card h1 {
+      font-size: clamp(3rem, 5.6vw, 6.2rem);
+      letter-spacing: 0;
+      line-height: 0.98;
+      margin: 0;
+      max-width: 840px;
+    }
+
+    .ad-title-card > p {
+      color: var(--muted);
+      font-size: 1.08rem;
+      line-height: 1.62;
+      margin: 0;
+      max-width: 710px;
+    }
+
+    .ad-controls,
+    .ad-inline-controls,
+    .ad-demo-links {
+      align-items: center;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .ad-control {
+      border: 0;
+      cursor: pointer;
+      font-family: inherit;
+    }
+
+    .ad-control:disabled {
+      cursor: not-allowed;
+      opacity: 0.52;
+    }
+
+    .ad-duration {
+      align-items: center;
+      background: rgba(255,255,255,0.78);
+      border: 1px solid rgba(20,33,31,0.1);
+      border-radius: 8px;
+      color: var(--muted);
+      display: inline-flex;
+      font-size: 0.82rem;
+      font-weight: 900;
+      gap: 8px;
+      padding: 10px 12px;
+      text-transform: uppercase;
+    }
+
+    .ad-duration strong {
+      color: var(--green-dark);
+    }
+
+    .ad-demo-links {
+      margin-top: 6px;
+    }
+
+    .ad-demo-links a {
+      background: rgba(255,255,255,0.82);
+      border: 1px solid rgba(20,33,31,0.13);
+      border-radius: 8px;
+      color: var(--green-dark);
+      font-size: 0.78rem;
+      font-weight: 950;
+      padding: 9px 11px;
+      text-transform: uppercase;
+    }
+
+    .ad-stage {
+      background: rgba(255,255,255,0.94);
+      border: 1px solid rgba(20,33,31,0.1);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+      display: grid;
+      min-height: 650px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .ad-stage-top {
+      align-items: center;
+      border-bottom: 1px solid rgba(20,33,31,0.1);
+      display: flex;
+      gap: 14px;
+      justify-content: space-between;
+      padding: 14px 16px;
+    }
+
+    .ad-stage-title {
+      display: grid;
+      gap: 2px;
+    }
+
+    .ad-stage-title span {
+      color: var(--muted);
+      font-size: 0.72rem;
+      font-weight: 950;
+      text-transform: uppercase;
+    }
+
+    .ad-stage-title strong {
+      color: var(--ink);
+      font-size: 1rem;
+    }
+
+    .ad-play-state {
+      background: #e8f1ec;
+      border: 1px solid rgba(22,143,98,0.16);
+      border-radius: 8px;
+      color: var(--green-dark);
+      font-size: 0.76rem;
+      font-weight: 950;
+      padding: 7px 9px;
+      text-transform: uppercase;
+    }
+
+    .ad-engine-message {
+      background: #fff0d8;
+      border: 1px solid rgba(225,154,26,0.25);
+      border-radius: 8px;
+      color: #7a4d07;
+      display: block;
+      font-size: 0.88rem;
+      font-weight: 850;
+      line-height: 1.45;
+      margin: 12px 16px 0;
+      padding: 11px 12px;
+    }
+
+    .ad-engine-message[hidden] {
+      display: none;
+    }
+
+    .ad-progress {
+      background: #e5ede8;
+      height: 7px;
+      overflow: hidden;
+    }
+
+    .ad-progress span {
+      background: linear-gradient(90deg, var(--green), var(--blue));
+      display: block;
+      height: 100%;
+      transition: width 140ms linear;
+      width: 0%;
+    }
+
+    .ad-scene-rail {
+      background: rgba(255,255,255,0.72);
+      border-bottom: 1px solid rgba(20,33,31,0.1);
+      display: grid;
+      gap: 6px;
+      grid-template-columns: repeat(auto-fit, minmax(104px, 1fr));
+      padding: 10px 12px;
+    }
+
+    .ad-scene-jump {
+      align-items: center;
+      background: #f8faf8;
+      border: 1px solid rgba(20,33,31,0.1);
+      border-radius: 8px;
+      color: var(--muted);
+      cursor: pointer;
+      display: grid;
+      font-family: inherit;
+      gap: 4px;
+      min-height: 62px;
+      min-width: 0;
+      padding: 8px 7px;
+      text-align: left;
+    }
+
+    .ad-scene-jump span {
+      color: var(--green-dark);
+      font-size: 0.68rem;
+      font-weight: 950;
+      line-height: 1;
+      text-transform: uppercase;
+    }
+
+    .ad-scene-jump strong {
+      font-size: 0.75rem;
+      line-height: 1.18;
+    }
+
+    .ad-scene-jump.is-active {
+      background: var(--green-dark);
+      border-color: var(--green-dark);
+      color: #fff;
+    }
+
+    .ad-scene-jump.is-active span,
+    .ad-scene-jump.is-active strong {
+      color: #fff;
+    }
+
+    .ad-scene-stack {
+      min-height: 476px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .ad-scene {
+      display: grid;
+      gap: 26px;
+      grid-template-columns: minmax(0, 0.92fr) minmax(420px, 1.08fr);
+      inset: 0;
+      opacity: 0;
+      padding: 34px 28px;
+      pointer-events: none;
+      position: absolute;
+      transform: translateX(32px);
+      transition: opacity 420ms ease, transform 520ms ease;
+    }
+
+    .ad-scene.is-active {
+      opacity: 1;
+      pointer-events: auto;
+      position: relative;
+      transform: translateX(0);
+    }
+
+    .ad-scene.is-before {
+      transform: translateX(-32px);
+    }
+
+    .ad-copy {
+      align-content: center;
+      display: grid;
+      gap: 16px;
+      min-width: 0;
+    }
+
+    .ad-copy > span {
+      color: var(--muted);
+      font-size: 0.82rem;
+      font-weight: 950;
+      text-transform: uppercase;
+    }
+
+    .ad-copy h2 {
+      font-size: clamp(2.2rem, 3.25vw, 3.9rem);
+      line-height: 0.98;
+      margin: 0;
+      overflow-wrap: break-word;
+    }
+
+    .ad-copy p {
+      color: var(--muted);
+      font-size: 1.02rem;
+      line-height: 1.65;
+      margin: 0;
+      max-width: 720px;
+    }
+
+    .ad-narration {
+      background: var(--green-dark);
+      border-radius: 8px;
+      color: #fff;
+      display: grid;
+      gap: 8px;
+      max-width: 620px;
+      padding: 18px 20px;
+    }
+
+    .ad-narration span {
+      color: rgba(255,255,255,0.74);
+      font-size: 0.78rem;
+      font-weight: 950;
+      text-transform: uppercase;
+    }
+
+    .ad-narration strong {
+      font-size: 1.1rem;
+      line-height: 1.44;
+    }
+
+    .ad-panel {
+      align-self: center;
+      background: #fff;
+      border: 1px solid rgba(20,33,31,0.1);
+      border-radius: 8px;
+      box-shadow: var(--shadow-soft);
+      display: grid;
+      gap: 14px;
+      min-width: 0;
+      padding: 20px;
+    }
+
+    .ad-panel-head {
+      align-items: center;
+      border-bottom: 1px solid rgba(20,33,31,0.1);
+      display: flex;
+      gap: 12px;
+      justify-content: space-between;
+      padding-bottom: 12px;
+    }
+
+    .ad-panel-head h3 {
+      font-size: 1.02rem;
+      margin: 0;
+    }
+
+    .ad-panel-head span {
+      color: var(--muted);
+      font-size: 0.72rem;
+      font-weight: 950;
+      text-transform: uppercase;
+    }
+
+    .ad-kpi-grid,
+    .ad-mini-grid,
+    .ad-ledger-grid,
+    .ad-risk-grid {
+      display: grid;
+      gap: 10px;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .ad-kpi,
+    .ad-mini-card,
+    .ad-ledger-card,
+    .ad-risk-card {
+      background: linear-gradient(180deg, #fff, #f7faf8);
+      border: 1px solid rgba(20,33,31,0.1);
+      border-radius: 8px;
+      min-height: 112px;
+      padding: 14px;
+    }
+
+    .ad-kpi span,
+    .ad-mini-card span,
+    .ad-ledger-card span,
+    .ad-risk-card span {
+      color: var(--muted);
+      display: block;
+      font-size: 0.72rem;
+      font-weight: 950;
+      line-height: 1.3;
+      text-transform: uppercase;
+    }
+
+    .ad-kpi strong,
+    .ad-ledger-card strong {
+      color: var(--green-dark);
+      display: block;
+      font-size: 2rem;
+      line-height: 1;
+      margin-top: 12px;
+    }
+
+    .ad-kpi small,
+    .ad-mini-card small,
+    .ad-ledger-card small,
+    .ad-risk-card small {
+      color: var(--muted);
+      display: block;
+      font-size: 0.78rem;
+      line-height: 1.42;
+      margin-top: 8px;
+    }
+
+    .ad-flow,
+    .ad-stack-flow {
+      display: grid;
+      gap: 10px;
+    }
+
+    .ad-flow {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+
+    .ad-stack-flow {
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+    }
+
+    .ad-flow-step {
+      background: #f8faf8;
+      border: 1px solid rgba(20,33,31,0.1);
+      border-radius: 8px;
+      min-height: 92px;
+      padding: 13px;
+      position: relative;
+    }
+
+    .ad-flow-step::after {
+      color: var(--green-dark);
+      content: "->";
+      font-size: 1.05rem;
+      font-weight: 950;
+      position: absolute;
+      right: -14px;
+      top: 38%;
+      z-index: 2;
+    }
+
+    .ad-flow-step:last-child::after {
+      display: none;
+    }
+
+    .ad-flow-step span {
+      color: var(--green-dark);
+      display: block;
+      font-size: 0.68rem;
+      font-weight: 950;
+      text-transform: uppercase;
+    }
+
+    .ad-flow-step strong {
+      display: block;
+      font-size: 0.95rem;
+      line-height: 1.22;
+      margin-top: 8px;
+    }
+
+    .ad-score-row {
+      display: grid;
+      gap: 5px;
+      margin-top: 12px;
+    }
+
+    .ad-score-label {
+      align-items: center;
+      color: var(--muted);
+      display: flex;
+      font-size: 0.78rem;
+      font-weight: 850;
+      justify-content: space-between;
+    }
+
+    .ad-bar {
+      background: #e6eee9;
+      border-radius: 999px;
+      height: 8px;
+      overflow: hidden;
+    }
+
+    .ad-bar span {
+      background: linear-gradient(90deg, var(--green), var(--blue));
+      border-radius: inherit;
+      display: block;
+      height: 100%;
+      width: var(--score);
+    }
+
+    .ad-stage-footer {
+      align-items: center;
+      border-top: 1px solid rgba(20,33,31,0.1);
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px;
+      justify-content: space-between;
+      padding: 16px 28px;
+    }
+
+    .ad-disclaimer {
+      color: var(--muted);
+      font-size: 0.86rem;
+      line-height: 1.45;
+      margin: 0;
+      max-width: 720px;
+    }
+
+    .ad-script-guide {
+      background: rgba(255,255,255,0.94);
+      border: 1px solid rgba(20,33,31,0.1);
+      border-radius: 8px;
+      box-shadow: var(--shadow-soft);
+      display: grid;
+      gap: 18px;
+      padding: 22px;
+    }
+
+    .ad-script-head {
+      align-items: start;
+      display: grid;
+      gap: 14px;
+      grid-template-columns: minmax(0, 1fr) auto;
+    }
+
+    .ad-script-head h2 {
+      font-size: clamp(2rem, 4vw, 3.8rem);
+      line-height: 1;
+      margin: 0;
+    }
+
+    .ad-script-head p {
+      color: var(--muted);
+      line-height: 1.6;
+      margin: 8px 0 0;
+      max-width: 760px;
+    }
+
+    .ad-segmented,
+    .ad-script-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .ad-segmented button,
+    .ad-script-actions button {
+      background: #f8faf8;
+      border: 1px solid rgba(20,33,31,0.13);
+      border-radius: 8px;
+      color: var(--ink);
+      cursor: pointer;
+      font-family: inherit;
+      font-size: 0.82rem;
+      font-weight: 950;
+      padding: 9px 11px;
+      text-transform: uppercase;
+    }
+
+    .ad-segmented button.is-active {
+      background: var(--green-dark);
+      border-color: var(--green-dark);
+      color: #fff;
+    }
+
+    .ad-review-mode-panel {
+      background: #f8faf8;
+      border: 1px solid rgba(20,33,31,0.1);
+      border-radius: 8px;
+      display: grid;
+      gap: 14px;
+      padding: 16px;
+    }
+
+    .ad-script-guide[data-review-mode="presentation"] .ad-review-mode-panel {
+      display: none;
+    }
+
+    .ad-metrics-grid,
+    .ad-audience-grid {
+      display: grid;
+      gap: 10px;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+
+    .ad-metric,
+    .ad-audience-card {
+      background: #fff;
+      border: 1px solid rgba(20,33,31,0.1);
+      border-radius: 8px;
+      padding: 13px;
+    }
+
+    .ad-metric span,
+    .ad-audience-card span {
+      color: var(--muted);
+      display: block;
+      font-size: 0.72rem;
+      font-weight: 950;
+      text-transform: uppercase;
+    }
+
+    .ad-metric strong,
+    .ad-audience-card strong {
+      color: var(--green-dark);
+      display: block;
+      font-size: 1.35rem;
+      line-height: 1.1;
+      margin-top: 7px;
+    }
+
+    .ad-audience-card p {
+      color: var(--muted);
+      font-size: 0.84rem;
+      line-height: 1.45;
+      margin: 8px 0 0;
+    }
+
+    .ad-script-grid {
+      display: grid;
+      gap: 12px;
+    }
+
+    .ad-script-card {
+      background: #fff;
+      border: 1px solid rgba(20,33,31,0.1);
+      border-radius: 8px;
+      padding: 16px;
+    }
+
+    .ad-script-card h3 {
+      font-size: 1rem;
+      margin: 0 0 12px;
+    }
+
+    .ad-script-card dl {
+      display: grid;
+      gap: 8px;
+      margin: 0;
+    }
+
+    .ad-script-card dt {
+      color: var(--green-dark);
+      font-size: 0.72rem;
+      font-weight: 950;
+      text-transform: uppercase;
+    }
+
+    .ad-script-card dd {
+      color: var(--muted);
+      line-height: 1.52;
+      margin: 0;
+    }
+
+    .ad-script-card [contenteditable="true"] {
+      background: #f8faf8;
+      border: 1px solid rgba(20,33,31,0.1);
+      border-radius: 8px;
+      color: var(--ink);
+      padding: 10px;
+    }
+
+    .ad-script-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .ad-script-meta span {
+      background: #edf4ef;
+      border-radius: 999px;
+      color: var(--green-dark);
+      font-size: 0.76rem;
+      font-weight: 950;
+      padding: 6px 9px;
+      text-transform: uppercase;
+    }
+
+    .ad-script-meta .too-long {
+      background: #fff0d8;
+      color: #7a4d07;
+    }
+
+    .ad-script-meta .too-short {
+      background: #eef2f7;
+      color: #2b5f86;
+    }
+
+    .ad-script-meta .good-pace {
+      background: #e5f4ed;
+      color: var(--green-dark);
+    }
+
+    .ad-copy-status {
+      color: var(--green-dark);
+      font-size: 0.86rem;
+      font-weight: 900;
+      margin: 0;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .ad-scene,
+      .ad-progress span {
+        transition: none;
+      }
+    }
+
+    @media (max-width: 1180px) {
+      .ad-landing,
+      .ad-scene {
+        grid-template-columns: 1fr;
+      }
+
+      .ad-scene {
+        position: relative;
+      }
+
+      .ad-scene:not(.is-active) {
+        display: none;
+      }
+
+      .ad-stage {
+        min-height: auto;
+      }
+
+      .ad-kpi-grid,
+      .ad-mini-grid,
+      .ad-ledger-grid,
+      .ad-risk-grid,
+      .ad-metrics-grid,
+      .ad-audience-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 760px) {
+      .ad-shell {
+        padding: 24px 14px 44px;
+      }
+
+      .ad-title-card h1,
+      .ad-copy h2 {
+        font-size: clamp(2.5rem, 15vw, 4rem);
+      }
+
+      .ad-stage-top,
+      .ad-stage-footer,
+      .ad-script-head {
+        align-items: start;
+        grid-template-columns: 1fr;
+      }
+
+      .ad-stage-top,
+      .ad-stage-footer {
+        flex-direction: column;
+      }
+
+      .ad-scene,
+      .ad-stage-footer {
+        padding: 22px 16px;
+      }
+
+      .ad-scene-rail,
+      .ad-flow,
+      .ad-stack-flow,
+      .ad-kpi-grid,
+      .ad-mini-grid,
+      .ad-ledger-grid,
+      .ad-risk-grid,
+      .ad-metrics-grid,
+      .ad-audience-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .ad-flow-step::after {
+        display: none;
+      }
+
+      .ad-controls,
+      .ad-inline-controls,
+      .ad-script-actions,
+      .ad-demo-links {
+        display: grid;
+        grid-template-columns: 1fr;
+      }
+
+      .ad-controls a,
+      .ad-controls button,
+      .ad-inline-controls button,
+      .ad-script-actions button,
+      .ad-demo-links a {
+        justify-content: center;
+        text-align: center;
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <a class="brand" href="/" aria-label="BackOfficeFleet home"><img src="/assets/images/logo/boflogo-original.png" alt="BackOfficeFleet"></a>
+    <button class="nav-toggle" type="button" data-nav-toggle aria-expanded="false" aria-label="Toggle navigation">&#9776;</button>
+    <nav class="site-nav" data-nav aria-label="Main navigation">
+      <a href="/">Home</a>
+      <a href="/solutions/">Solutions</a>
+      <a href="/capacity-intelligence/">Capacity Intelligence</a>
+      <a href="/operational-intelligence/">Operational Intelligence</a>
+      <a href="/business-operations/">Business Operations</a>
+      <a href="/executive-demo/">Executive Demo</a>
+      <a href="/animated-demo/">Operations Animation</a>
+      <a class="active" href="/animated-demo-business/">Business Animation</a>
+      <a href="/book-demo/">Book Demo</a>
+    </nav>
+    <a class="header-cta" href="/book-demo/">Book demo</a>
+  </header>
+
+  <main class="ad-page" data-animated-demo>
+    <script type="application/json" data-audience-labels>{
+      "fleet": "Fleet owner view emphasizes administrative control, payroll readiness, driver onboarding, and fewer ownership surprises.",
+      "network": "Carrier network view emphasizes consistent administrative records, insurance visibility, claims follow-up, and network-level readiness.",
+      "aggregator": "CEO/CFO view emphasizes cash flow visibility, settlement exposure, receivables, and administrative readiness across the company."
+    }</script>
+
+    <section class="ad-shell" aria-label="BOF Business Operations animated demo">
+      <div class="ad-landing">
+        <div class="ad-title-card">
+          <p class="eyebrow">Animated Demo Track B</p>
+          <h1>BOF Business Operations Lifecycle</h1>
+          <p>How BOF helps organize the company behind the fleet: payroll, HR, insurance administration, onboarding, claims records, factoring readiness, accounting coordination, and executive financial visibility.</p>
+          <div class="ad-controls" aria-label="Demo controls">
+            <button class="button primary ad-control" type="button" data-demo-action="start">Start Demo</button>
+            <a class="button secondary" href="/animated-demo/">View Operations Lifecycle Demo</a>
+            <button class="button secondary ad-control" type="button" data-demo-action="pause">Pause</button>
+            <button class="button secondary ad-control" type="button" data-demo-action="resume">Resume</button>
+            <button class="button secondary ad-control" type="button" data-demo-action="restart">Restart</button>
+            <span class="ad-duration">Estimated duration <strong>2-3 minutes</strong></span>
+          </div>
+          <nav class="ad-demo-links" aria-label="Related BOF demo links">
+            <a href="/executive-demo/">Executive Demo</a>
+            <a href="/animated-demo/">Operations Lifecycle Demo</a>
+            <a href="/business-operations/">Business Operations</a>
+            <a href="/operational-intelligence/">Operational Intelligence</a>
+            <a href="/capacity-intelligence/">Capacity Intelligence</a>
+            <a href="/dashboard/">Dashboard</a>
+          </nav>
+        </div>
+
+        <div class="ad-stage" tabindex="0" aria-label="Business operations animated presentation">
+          <div class="ad-stage-top">
+            <div class="ad-stage-title">
+              <span data-scene-progress>Scene 1 of 9</span>
+              <strong>BOF Business Operations Lifecycle</strong>
+            </div>
+            <span class="ad-play-state" data-play-status>Ready</span>
+          </div>
+          <div class="ad-progress" aria-hidden="true"><span data-progress-fill></span></div>
+          <p class="ad-engine-message" data-engine-message hidden></p>
+          <div class="ad-scene-rail" data-scene-rail aria-label="Scene navigation"></div>
+
+          <div class="ad-scene-stack">
+            <article class="ad-scene is-active" data-scene="administrative-burden">
+              <div class="ad-copy">
+                <span>Scene 1</span>
+                <h2>The Administrative Burden</h2>
+                <p>Growth adds more than trucks. Payroll questions, benefit records, driver files, insurance renewals, claims follow-up, and settlement packets begin competing for the same leadership attention.</p>
+                <div class="ad-narration"><span>Narration</span><strong>Growing fleets often discover that administrative complexity grows faster than truck count.</strong></div>
+              </div>
+              <div class="ad-panel">
+                <div class="ad-panel-head"><h3>Administrative workload</h3><span>Company view</span></div>
+                <div class="ad-kpi-grid">
+                  <article class="ad-kpi"><span>Payroll items</span><strong data-count="148">0</strong><small>Entries queued for review</small></article>
+                  <article class="ad-kpi"><span>Benefits records</span><strong data-count="58">0</strong><small>Employee elections and waivers</small></article>
+                  <article class="ad-kpi"><span>Driver files</span><strong data-count="64">0</strong><small>Active DQ and HR files</small></article>
+                  <article class="ad-kpi"><span>Insurance renewals</span><strong data-count="6">0</strong><small>Renewals due in 45 days</small></article>
+                  <article class="ad-kpi"><span>Settlement packets</span><strong data-count="41">0</strong><small>Post-trip packets in process</small></article>
+                  <article class="ad-kpi"><span>Claims records</span><strong data-count="7">0</strong><small>Open claim files</small></article>
+                </div>
+              </div>
+            </article>
+
+            <article class="ad-scene" data-scene="driver-onboarding">
+              <div class="ad-copy">
+                <span>Scene 2</span>
+                <h2>Recruiting &amp; Driver Onboarding</h2>
+                <p>BOF gives leadership a clear path from candidate interest to active driver status, with each administrative requirement visible before the record moves forward.</p>
+                <div class="ad-narration"><span>Narration</span><strong>BOF helps support onboarding from recruitment through activation.</strong></div>
+              </div>
+              <div class="ad-panel">
+                <div class="ad-panel-head"><h3>Driver activation workflow</h3><span>Readiness path</span></div>
+                <div class="ad-flow">
+                  <div class="ad-flow-step"><span>Step 1</span><strong>Recruit</strong></div>
+                  <div class="ad-flow-step"><span>Step 2</span><strong>Application</strong></div>
+                  <div class="ad-flow-step"><span>Step 3</span><strong>Background Review</strong></div>
+                  <div class="ad-flow-step"><span>Step 4</span><strong>Document Collection</strong></div>
+                  <div class="ad-flow-step"><span>Step 5</span><strong>DQ File</strong></div>
+                  <div class="ad-flow-step"><span>Step 6</span><strong>Payroll Setup</strong></div>
+                  <div class="ad-flow-step"><span>Step 7</span><strong>Benefits Enrollment</strong></div>
+                  <div class="ad-flow-step"><span>Step 8</span><strong>Active Driver</strong></div>
+                </div>
+                <div class="ad-mini-grid">
+                  <article class="ad-mini-card"><span>Applications</span><strong>14 in pipeline</strong><small>Seven need manager review.</small></article>
+                  <article class="ad-mini-card"><span>DQ readiness</span><strong>86%</strong><small>Missing items stay visible.</small></article>
+                  <article class="ad-mini-card"><span>Activation blockers</span><strong>5 records</strong><small>Payroll or document follow-up required.</small></article>
+                </div>
+              </div>
+            </article>
+
+            <article class="ad-scene" data-scene="payroll-hr">
+              <div class="ad-copy">
+                <span>Scene 3</span>
+                <h2>Payroll &amp; HR Administration</h2>
+                <p>Payroll and HR records stay connected to the people, documents, benefits, and settlement questions that affect the next payroll cycle.</p>
+                <div class="ad-narration"><span>Narration</span><strong>BOF helps organize payroll and employee administration workflows.</strong></div>
+              </div>
+              <div class="ad-panel">
+                <div class="ad-panel-head"><h3>Payroll readiness snapshot</h3><span>June cycle</span></div>
+                <div class="ad-ledger-grid">
+                  <article class="ad-ledger-card"><span>Payroll processed</span><strong data-count="418" data-count-prefix="$" data-count-suffix="K">0</strong><small>Monthly payroll cycle</small></article>
+                  <article class="ad-ledger-card"><span>Active employees</span><strong data-count="82">0</strong><small>Drivers and office staff</small></article>
+                  <article class="ad-ledger-card"><span>Benefits enrollment</span><strong data-count="91" data-count-suffix="%">0</strong><small>Eligible employee completion</small></article>
+                </div>
+                <div class="ad-score-row">
+                  <div class="ad-score-label"><span>Payroll readiness</span><strong>92%</strong></div>
+                  <div class="ad-bar"><span style="--score:92%"></span></div>
+                </div>
+              </div>
+            </article>
+
+            <article class="ad-scene" data-scene="insurance-risk">
+              <div class="ad-copy">
+                <span>Scene 4</span>
+                <h2>Insurance &amp; Risk Administration</h2>
+                <p>Insurance records, certificates, renewals, and open claim follow-up remain visible so leaders can see what needs attention before an administrative issue turns into a surprise.</p>
+                <div class="ad-narration"><span>Narration</span><strong>Insurance administration remains visible throughout the organization.</strong></div>
+              </div>
+              <div class="ad-panel">
+                <div class="ad-panel-head"><h3>Risk administration board</h3><span>Policy view</span></div>
+                <div class="ad-risk-grid">
+                  <article class="ad-risk-card"><span>Policy tracking</span><strong>19 policies</strong><small>Auto liability, cargo, general liability, workers comp, and umbrella records.</small></article>
+                  <article class="ad-risk-card"><span>Renewal alerts</span><strong>6 upcoming</strong><small>Renewals due inside the next 45 days.</small></article>
+                  <article class="ad-risk-card"><span>Certificates</span><strong>32 active</strong><small>Certificate records tied to customer and network requirements.</small></article>
+                  <article class="ad-risk-card"><span>Claims monitoring</span><strong>7 open</strong><small>Administrative follow-up is grouped by owner and evidence need.</small></article>
+                </div>
+              </div>
+            </article>
+
+            <article class="ad-scene" data-scene="claims-risk-response">
+              <div class="ad-copy">
+                <span>Scene 5</span>
+                <h2>Claims &amp; Risk Response</h2>
+                <p>When claims or incidents appear, BOF helps the team organize what happened, what evidence exists, who owns the next action, and what still needs review.</p>
+                <div class="ad-narration"><span>Narration</span><strong>BOF helps organize claim documentation and operational records.</strong></div>
+              </div>
+              <div class="ad-panel">
+                <div class="ad-panel-head"><h3>Claim response record</h3><span>Evidence view</span></div>
+                <div class="ad-flow">
+                  <div class="ad-flow-step"><span>Open claim</span><strong>Incident logged</strong></div>
+                  <div class="ad-flow-step"><span>Evidence</span><strong>Photos and records</strong></div>
+                  <div class="ad-flow-step"><span>Review</span><strong>Investigation workflow</strong></div>
+                  <div class="ad-flow-step"><span>Follow-up</span><strong>Admin packet</strong></div>
+                </div>
+                <div class="ad-mini-grid">
+                  <article class="ad-mini-card"><span>Supporting evidence</span><strong>18 files</strong><small>Photos, forms, notes, and document references.</small></article>
+                  <article class="ad-mini-card"><span>Incident records</span><strong>7 open</strong><small>Each record has an owner and next action.</small></article>
+                  <article class="ad-mini-card"><span>Response readiness</span><strong>81%</strong><small>Two claim packets need supporting details.</small></article>
+                </div>
+              </div>
+            </article>
+
+            <article class="ad-scene" data-scene="factoring-readiness">
+              <div class="ad-copy">
+                <span>Scene 6</span>
+                <h2>Factoring Readiness</h2>
+                <p>BOF helps coordinate the paperwork that supports funding workflows, from delivery proof through invoice and packet review.</p>
+                <div class="ad-narration"><span>Narration</span><strong>BOF helps prepare the documentation required for funding workflows.</strong></div>
+              </div>
+              <div class="ad-panel">
+                <div class="ad-panel-head"><h3>Funding packet path</h3><span>Document flow</span></div>
+                <div class="ad-stack-flow">
+                  <div class="ad-flow-step"><span>Stage 1</span><strong>POD Received</strong></div>
+                  <div class="ad-flow-step"><span>Stage 2</span><strong>Invoice Generated</strong></div>
+                  <div class="ad-flow-step"><span>Stage 3</span><strong>Packet Complete</strong></div>
+                  <div class="ad-flow-step"><span>Stage 4</span><strong>Submitted</strong></div>
+                  <div class="ad-flow-step"><span>Stage 5</span><strong>Funded</strong></div>
+                </div>
+                <div class="ad-score-row">
+                  <div class="ad-score-label"><span>Factoring packet readiness</span><strong>88%</strong></div>
+                  <div class="ad-bar"><span style="--score:88%"></span></div>
+                </div>
+              </div>
+            </article>
+
+            <article class="ad-scene" data-scene="accounting-coordination">
+              <div class="ad-copy">
+                <span>Scene 7</span>
+                <h2>Accounting Coordination</h2>
+                <p>BOF does not replace accounting judgment. It helps organize the operating information that accounting, ownership, and administrative teams need to review together.</p>
+                <div class="ad-narration"><span>Narration</span><strong>BOF helps organize financial and operational information.</strong></div>
+              </div>
+              <div class="ad-panel">
+                <div class="ad-panel-head"><h3>Financial coordination view</h3><span>Month to date</span></div>
+                <div class="ad-ledger-grid">
+                  <article class="ad-ledger-card"><span>Revenue</span><strong data-count="924" data-count-prefix="$" data-count-suffix="K">0</strong><small>Operating revenue summary</small></article>
+                  <article class="ad-ledger-card"><span>Expenses</span><strong data-count="611" data-count-prefix="$" data-count-suffix="K">0</strong><small>Operating expense records</small></article>
+                  <article class="ad-ledger-card"><span>Receivables</span><strong data-count="286" data-count-prefix="$" data-count-suffix="K">0</strong><small>Open receivables to review</small></article>
+                  <article class="ad-ledger-card"><span>Settlements</span><strong data-count="74">0</strong><small>Driver and carrier settlement records</small></article>
+                  <article class="ad-ledger-card"><span>Admin readiness</span><strong data-count="89" data-count-suffix="%">0</strong><small>Records ready for accounting review</small></article>
+                  <article class="ad-ledger-card"><span>Exceptions</span><strong data-count="11">0</strong><small>Items needing follow-up</small></article>
+                </div>
+              </div>
+            </article>
+
+            <article class="ad-scene" data-scene="executive-financial-visibility">
+              <div class="ad-copy">
+                <span>Scene 8</span>
+                <h2>Executive Financial Visibility</h2>
+                <p>Executives see where money, administrative readiness, and operating follow-up connect, without digging through scattered spreadsheets, email threads, and document folders.</p>
+                <div class="ad-narration"><span>Narration</span><strong>Executives gain visibility across operational and administrative workflows.</strong></div>
+              </div>
+              <div class="ad-panel">
+                <div class="ad-panel-head"><h3>Executive finance pulse</h3><span>Leadership view</span></div>
+                <div class="ad-kpi-grid">
+                  <article class="ad-kpi"><span>Monthly revenue</span><strong data-count="924" data-count-prefix="$" data-count-suffix="K">0</strong><small>Visible by operating category</small></article>
+                  <article class="ad-kpi"><span>Cash flow trend</span><strong data-count="14" data-count-suffix="%">0</strong><small>Improvement over prior period</small></article>
+                  <article class="ad-kpi"><span>Settlement exposure</span><strong data-count="132" data-count-prefix="$" data-count-suffix="K">0</strong><small>Open settlement obligations</small></article>
+                  <article class="ad-kpi"><span>Receivables</span><strong data-count="286" data-count-prefix="$" data-count-suffix="K">0</strong><small>Open receivables</small></article>
+                  <article class="ad-kpi"><span>Growth indicators</span><strong data-count="12" data-count-suffix="%">0</strong><small>Administrative capacity trend</small></article>
+                  <article class="ad-kpi"><span>Ready records</span><strong data-count="89" data-count-suffix="%">0</strong><small>Ready for executive review</small></article>
+                </div>
+              </div>
+            </article>
+
+            <article class="ad-scene" data-scene="business-infrastructure">
+              <div class="ad-copy">
+                <span>Scene 9</span>
+                <h2>Business Infrastructure</h2>
+                <p>BOF connects operations, payroll, HR, insurance, factoring readiness, accounting coordination, and executive visibility so the company behind the fleet can be managed with fewer blind spots.</p>
+                <div class="ad-narration"><span>Narration</span><strong>BOF provides administrative infrastructure behind fleets and carrier networks.</strong></div>
+              </div>
+              <div class="ad-panel">
+                <div class="ad-panel-head"><h3>Company operating layer</h3><span>Executive visibility</span></div>
+                <div class="ad-flow">
+                  <div class="ad-flow-step"><span>Operations</span><strong>Work in motion</strong></div>
+                  <div class="ad-flow-step"><span>Payroll + HR</span><strong>People readiness</strong></div>
+                  <div class="ad-flow-step"><span>Insurance</span><strong>Risk records</strong></div>
+                  <div class="ad-flow-step"><span>Factoring</span><strong>Funding packets</strong></div>
+                  <div class="ad-flow-step"><span>Accounting</span><strong>Financial review</strong></div>
+                  <div class="ad-flow-step"><span>Executive view</span><strong>Company clarity</strong></div>
+                </div>
+                <div class="ad-score-row">
+                  <div class="ad-score-label"><span>Administrative infrastructure readiness</span><strong>91%</strong></div>
+                  <div class="ad-bar"><span style="--score:91%"></span></div>
+                </div>
+              </div>
+            </article>
+          </div>
+
+          <div class="ad-stage-footer">
+            <div class="ad-inline-controls" aria-label="Scene controls">
+              <button class="button secondary ad-control" type="button" data-demo-action="previous">Previous</button>
+              <button class="button secondary ad-control" type="button" data-demo-action="next">Next</button>
+              <button class="button secondary ad-control" type="button" data-demo-action="pause">Pause</button>
+              <button class="button secondary ad-control" type="button" data-demo-action="resume">Resume</button>
+            </div>
+            <p class="ad-disclaimer">BOF supports administrative coordination in this walkthrough; it does not act as an accounting firm, insurance carrier, bank, factoring company, payroll provider of record, broker, dispatcher, freight marketplace, or motor carrier.</p>
+          </div>
+        </div>
+      </div>
+
+      <section class="ad-script-guide" id="speaking-script" data-review-mode="presentation" data-audience="fleet" aria-label="Speaking script and narration review">
+        <div class="ad-script-head">
+          <div>
+            <p class="eyebrow">Narration Review Mode</p>
+            <h2>Speaking Script</h2>
+            <p>Review the business-operations narration before adding any voice playback. The script can be adjusted by audience without changing the animation.</p>
+          </div>
+          <div class="ad-segmented" aria-label="Narration mode">
+            <button type="button" class="is-active" data-mode-option="presentation" aria-pressed="true">Presentation Mode</button>
+            <button type="button" data-mode-option="review" aria-pressed="false">Narration Review Mode</button>
+          </div>
+        </div>
+
+        <div class="ad-review-mode-panel">
+          <div class="ad-segmented" aria-label="Audience script view">
+            <button type="button" class="is-active" data-audience-option="fleet" aria-pressed="true">Fleet Owner</button>
+            <button type="button" data-audience-option="aggregator" aria-pressed="false">CEO/CFO</button>
+            <button type="button" data-audience-option="network" aria-pressed="false">Carrier Network</button>
+          </div>
+          <p class="ad-copy-status" data-audience-summary>Fleet owner view emphasizes administrative control, payroll readiness, driver onboarding, and fewer ownership surprises.</p>
+          <div class="ad-metrics-grid" aria-label="Speaking metrics">
+            <article class="ad-metric"><span>Word count</span><strong data-total-words>0</strong></article>
+            <article class="ad-metric"><span>Estimated narration</span><strong data-total-speaking>0 sec</strong></article>
+            <article class="ad-metric"><span>Total demo duration</span><strong data-total-demo-duration>0 sec</strong></article>
+            <article class="ad-metric"><span>Current scene pace</span><strong data-current-pace>Good Pace</strong></article>
+          </div>
+          <div class="ad-audience-grid">
+            <article class="ad-audience-card"><span>Fleet Owner</span><strong>Control the back office</strong><p>Focus on fewer surprises, clearer owner follow-up, and cleaner driver, payroll, and document readiness.</p></article>
+            <article class="ad-audience-card"><span>CEO/CFO</span><strong>See the business picture</strong><p>Focus on cash flow, receivables, settlement exposure, and administrative readiness.</p></article>
+            <article class="ad-audience-card"><span>Carrier Network</span><strong>Standardize the network</strong><p>Focus on consistent records, claims documentation, insurance tracking, and multi-carrier administration.</p></article>
+          </div>
+          <div class="ad-script-actions">
+            <button type="button" data-copy-script>Copy Full Script</button>
+            <button type="button" data-copy-current-script>Copy Current Scene Script</button>
+          </div>
+          <p class="ad-copy-status" data-copy-status aria-live="polite"></p>
+        </div>
+
+        <div class="ad-script-grid" data-script-copy-source>
+          <article class="ad-script-card" data-review-scene="administrative-burden" data-suggested-seconds="13" data-voiceover-fleet="Growing fleets often discover that administrative complexity grows faster than truck count. Payroll, benefits, driver files, insurance renewals, settlement packets, and claims all compete for attention. BOF gives ownership a single operating view of what needs review, what is ready, and what still needs follow-up." data-voiceover-aggregator="As the company grows, administrative work can become harder to see than equipment or revenue. BOF helps leadership connect payroll, benefits, insurance, claims, settlements, and records into a clearer executive picture so financial and administrative risks do not hide in separate folders." data-voiceover-network="Carrier networks grow through many operators, records, and administrative standards. BOF helps the network see where payroll support, driver files, insurance renewals, claims, and settlement records need attention across participating carriers.">
+            <h3>Scene 1: The Administrative Burden</h3>
+            <dl><dt>On-screen narration</dt><dd>Growing fleets often discover that administrative complexity grows faster than truck count.</dd><dt>Full voiceover script</dt><dd data-voiceover-display contenteditable="true">Growing fleets often discover that administrative complexity grows faster than truck count. Payroll, benefits, driver files, insurance renewals, settlement packets, and claims all compete for attention. BOF gives ownership a single operating view of what needs review, what is ready, and what still needs follow-up.</dd><dt>Presenter note</dt><dd>Open by naming the real back-office pressure: growth creates more records, more owners, and more places for details to fall through.</dd></dl>
+            <div class="ad-script-meta"><span data-word-count>0 words</span><span data-speaking-duration>0 sec</span><span data-pace-indicator>Good Pace</span><span>Suggested timing: 13 sec</span></div>
+          </article>
+
+          <article class="ad-script-card" data-review-scene="driver-onboarding" data-suggested-seconds="14" data-voiceover-fleet="BOF helps support onboarding from recruitment through activation. The fleet can see where each driver sits, which documents are missing, whether payroll setup is ready, and what has to be resolved before the driver becomes active." data-voiceover-aggregator="Driver growth affects payroll, benefits, compliance records, and operating capacity. BOF gives leadership a structured onboarding path from recruitment through activation so administrative readiness can be reviewed before the driver enters the active roster." data-voiceover-network="Across a carrier network, onboarding consistency matters. BOF helps each participating carrier see the same activation path, from application and background review to DQ file, payroll setup, benefits enrollment, and active driver status.">
+            <h3>Scene 2: Recruiting &amp; Driver Onboarding</h3>
+            <dl><dt>On-screen narration</dt><dd>BOF helps support onboarding from recruitment through activation.</dd><dt>Full voiceover script</dt><dd data-voiceover-display contenteditable="true">BOF helps support onboarding from recruitment through activation. The fleet can see where each driver sits, which documents are missing, whether payroll setup is ready, and what has to be resolved before the driver becomes active.</dd><dt>Presenter note</dt><dd>Emphasize that BOF makes the administrative path visible; it does not replace the fleet's hiring judgment.</dd></dl>
+            <div class="ad-script-meta"><span data-word-count>0 words</span><span data-speaking-duration>0 sec</span><span data-pace-indicator>Good Pace</span><span>Suggested timing: 14 sec</span></div>
+          </article>
+
+          <article class="ad-script-card" data-review-scene="payroll-hr" data-suggested-seconds="12" data-voiceover-fleet="BOF helps organize payroll and employee administration workflows. The owner can see payroll calendar deadlines, active employee records, benefits enrollment, and payroll readiness before the next cycle locks." data-voiceover-aggregator="Payroll and HR activity affects cash planning, employee obligations, and administrative workload. BOF gives leadership a clearer view of payroll readiness, employee records, benefits enrollment, and open items before payroll is finalized." data-voiceover-network="For carrier networks, payroll and HR support often varies by carrier. BOF helps organize employee and driver administration records so each operation can see readiness, blockers, and follow-up needs before deadlines arrive.">
+            <h3>Scene 3: Payroll &amp; HR Administration</h3>
+            <dl><dt>On-screen narration</dt><dd>BOF helps organize payroll and employee administration workflows.</dd><dt>Full voiceover script</dt><dd data-voiceover-display contenteditable="true">BOF helps organize payroll and employee administration workflows. The owner can see payroll calendar deadlines, active employee records, benefits enrollment, and payroll readiness before the next cycle locks.</dd><dt>Presenter note</dt><dd>Point out the practical value: fewer payroll surprises because the calendar, records, and readiness status are together.</dd></dl>
+            <div class="ad-script-meta"><span data-word-count>0 words</span><span data-speaking-duration>0 sec</span><span data-pace-indicator>Good Pace</span><span>Suggested timing: 12 sec</span></div>
+          </article>
+
+          <article class="ad-script-card" data-review-scene="insurance-risk" data-suggested-seconds="12" data-voiceover-fleet="Insurance administration remains visible throughout the organization. BOF helps the fleet track policies, renewal alerts, certificates, and claims monitoring so important risk records stay in front of the right people." data-voiceover-aggregator="Insurance visibility matters to financial planning and operating risk. BOF helps executives see policy records, renewal alerts, certificate status, and open claims in one administrative view instead of chasing separate insurance files." data-voiceover-network="Carrier networks need consistent insurance visibility across multiple participating carriers. BOF helps organize policy tracking, renewal alerts, certificate management, and claims monitoring so the network can see administrative readiness.">
+            <h3>Scene 4: Insurance &amp; Risk Administration</h3>
+            <dl><dt>On-screen narration</dt><dd>Insurance administration remains visible throughout the organization.</dd><dt>Full voiceover script</dt><dd data-voiceover-display contenteditable="true">Insurance administration remains visible throughout the organization. BOF helps the fleet track policies, renewal alerts, certificates, and claims monitoring so important risk records stay in front of the right people.</dd><dt>Presenter note</dt><dd>Clarify that BOF coordinates visibility and records; it does not act as an insurance carrier or broker.</dd></dl>
+            <div class="ad-script-meta"><span data-word-count>0 words</span><span data-speaking-duration>0 sec</span><span data-pace-indicator>Good Pace</span><span>Suggested timing: 12 sec</span></div>
+          </article>
+
+          <article class="ad-script-card" data-review-scene="claims-risk-response" data-suggested-seconds="13" data-voiceover-fleet="BOF helps organize claim documentation and operational records. When a claim or incident appears, the fleet can capture the record, group the evidence, assign follow-up, and keep the response visible until the file is ready for review." data-voiceover-aggregator="Claims affect cash flow, insurance conversations, operating risk, and executive visibility. BOF helps organize the facts, evidence, incident records, and investigation workflow so leadership can see what happened and what still needs attention." data-voiceover-network="In a network, claim response depends on clear records and consistent follow-up. BOF helps organize open claims, supporting evidence, incident records, and investigation steps across participating carriers.">
+            <h3>Scene 5: Claims &amp; Risk Response</h3>
+            <dl><dt>On-screen narration</dt><dd>BOF helps organize claim documentation and operational records.</dd><dt>Full voiceover script</dt><dd data-voiceover-display contenteditable="true">BOF helps organize claim documentation and operational records. When a claim or incident appears, the fleet can capture the record, group the evidence, assign follow-up, and keep the response visible until the file is ready for review.</dd><dt>Presenter note</dt><dd>Connect claims to administrative discipline: evidence, ownership, and next action matter more than a dashboard number.</dd></dl>
+            <div class="ad-script-meta"><span data-word-count>0 words</span><span data-speaking-duration>0 sec</span><span data-pace-indicator>Good Pace</span><span>Suggested timing: 13 sec</span></div>
+          </article>
+
+          <article class="ad-script-card" data-review-scene="factoring-readiness" data-suggested-seconds="12" data-voiceover-fleet="BOF helps prepare the documentation required for funding workflows. The team can see whether the POD arrived, the invoice was generated, the packet is complete, and the funding submission is ready for review." data-voiceover-aggregator="Funding readiness depends on complete documents and clean handoffs. BOF helps leadership see where each packet stands, from POD received to invoice generated, packet complete, submitted, and funded." data-voiceover-network="Carrier networks often need packet consistency before funding conversations move forward. BOF helps organize PODs, invoices, packet completeness, submissions, and funding status across the network's administrative workflow.">
+            <h3>Scene 6: Factoring Readiness</h3>
+            <dl><dt>On-screen narration</dt><dd>BOF helps prepare the documentation required for funding workflows.</dd><dt>Full voiceover script</dt><dd data-voiceover-display contenteditable="true">BOF helps prepare the documentation required for funding workflows. The team can see whether the POD arrived, the invoice was generated, the packet is complete, and the funding submission is ready for review.</dd><dt>Presenter note</dt><dd>Say plainly that BOF supports document coordination; it is not a bank or factoring company.</dd></dl>
+            <div class="ad-script-meta"><span data-word-count>0 words</span><span data-speaking-duration>0 sec</span><span data-pace-indicator>Good Pace</span><span>Suggested timing: 12 sec</span></div>
+          </article>
+
+          <article class="ad-script-card" data-review-scene="accounting-coordination" data-suggested-seconds="12" data-voiceover-fleet="BOF helps organize financial and operational information. Revenue, expenses, receivables, settlements, and administrative readiness sit together so the fleet can prepare cleaner handoffs for accounting review." data-voiceover-aggregator="BOF helps leadership connect financial context to operational records. Revenue, expenses, receivables, settlements, and administrative readiness become easier to review because the underlying operating details stay organized." data-voiceover-network="For carrier networks, accounting coordination depends on consistent records from multiple carriers. BOF helps organize revenue context, expenses, receivables, settlement records, and administrative readiness for review.">
+            <h3>Scene 7: Accounting Coordination</h3>
+            <dl><dt>On-screen narration</dt><dd>BOF helps organize financial and operational information.</dd><dt>Full voiceover script</dt><dd data-voiceover-display contenteditable="true">BOF helps organize financial and operational information. Revenue, expenses, receivables, settlements, and administrative readiness sit together so the fleet can prepare cleaner handoffs for accounting review.</dd><dt>Presenter note</dt><dd>Make the boundary clear: BOF organizes records for review; it does not provide accounting services.</dd></dl>
+            <div class="ad-script-meta"><span data-word-count>0 words</span><span data-speaking-duration>0 sec</span><span data-pace-indicator>Good Pace</span><span>Suggested timing: 12 sec</span></div>
+          </article>
+
+          <article class="ad-script-card" data-review-scene="executive-financial-visibility" data-suggested-seconds="13" data-voiceover-fleet="Executives gain visibility across operational and administrative workflows. Monthly revenue, cash flow, settlement exposure, receivables, and growth indicators can be reviewed alongside the records that explain them." data-voiceover-aggregator="The CEO and CFO need more than isolated totals. BOF connects monthly revenue, cash flow, settlement exposure, receivables, and growth indicators to the administrative records behind each number." data-voiceover-network="Network operators need visibility across participating carriers without creating separate products for every operation. BOF brings revenue context, receivables, settlement exposure, and administrative readiness into one executive view.">
+            <h3>Scene 8: Executive Financial Visibility</h3>
+            <dl><dt>On-screen narration</dt><dd>Executives gain visibility across operational and administrative workflows.</dd><dt>Full voiceover script</dt><dd data-voiceover-display contenteditable="true">Executives gain visibility across operational and administrative workflows. Monthly revenue, cash flow, settlement exposure, receivables, and growth indicators can be reviewed alongside the records that explain them.</dd><dt>Presenter note</dt><dd>Frame this as executive clarity, not financial advice or an accounting system replacement.</dd></dl>
+            <div class="ad-script-meta"><span data-word-count>0 words</span><span data-speaking-duration>0 sec</span><span data-pace-indicator>Good Pace</span><span>Suggested timing: 13 sec</span></div>
+          </article>
+
+          <article class="ad-script-card" data-review-scene="business-infrastructure" data-suggested-seconds="14" data-voiceover-fleet="BOF provides administrative infrastructure behind fleets and carrier networks. Operations, payroll, HR, insurance, factoring readiness, and accounting coordination connect into executive visibility so the business behind the fleet is easier to run." data-voiceover-aggregator="BOF helps leadership see the company behind the transportation operation. Payroll, HR, insurance, factoring readiness, accounting coordination, and executive visibility become connected administrative disciplines instead of separate blind spots." data-voiceover-network="BOF gives carrier networks an administrative infrastructure layer. Operations, payroll support, HR records, insurance administration, factoring readiness, accounting coordination, and executive visibility can be reviewed across participating carriers.">
+            <h3>Scene 9: Business Infrastructure</h3>
+            <dl><dt>On-screen narration</dt><dd>BOF provides administrative infrastructure behind fleets and carrier networks.</dd><dt>Full voiceover script</dt><dd data-voiceover-display contenteditable="true">BOF provides administrative infrastructure behind fleets and carrier networks. Operations, payroll, HR, insurance, factoring readiness, and accounting coordination connect into executive visibility so the business behind the fleet is easier to run.</dd><dt>Presenter note</dt><dd>Close by positioning Track B as the companion to Operations Lifecycle: this is how BOF helps run the company behind the fleet.</dd></dl>
+            <div class="ad-script-meta"><span data-word-count>0 words</span><span data-speaking-duration>0 sec</span><span data-pace-indicator>Good Pace</span><span>Suggested timing: 14 sec</span></div>
+          </article>
+        </div>
+      </section>
+    </section>
+  </main>
+
+  <script src="/assets/js/site.js?v=1.45"></script>
+  <script src="/assets/js/animated-demo.js?v=1.5"></script>
+</body>
+</html>

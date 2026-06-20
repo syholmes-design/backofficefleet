@@ -41,7 +41,21 @@
     network: "Carrier network view emphasizes readiness scoring, documentation consistency, and multi-carrier visibility.",
     aggregator: "Aggregator view emphasizes operationally ready capacity across carrier networks without freight matching."
   };
+  var audienceLabelSource = root.querySelector("[data-audience-labels]");
   var wordsPerMinute = 150;
+
+  if (audienceLabelSource) {
+    try {
+      var pageAudienceLabels = JSON.parse(audienceLabelSource.textContent || "{}");
+      Object.keys(pageAudienceLabels).forEach(function (key) {
+        audienceLabels[key] = pageAudienceLabels[key];
+      });
+    } catch (error) {
+      if (window.console && window.console.warn) {
+        window.console.warn("BOF animated demo audience labels could not be parsed.", error);
+      }
+    }
+  }
 
   function showEngineMessage(message) {
     if (!engineMessage) return;
