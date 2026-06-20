@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Animated Demo | BackOfficeFleet</title>
-  <meta name="description" content="A self-running BOF Operations Lifecycle presentation from customer demand to settlement readiness.">
+  <meta name="description" content="A self-running BOF Operations Lifecycle presentation from customer demand to settlement, claims response, and backhaul readiness.">
   <link rel="stylesheet" href="/assets/css/styles.css?v=1.45">
   <style>
     .ad-page {
@@ -154,6 +154,23 @@
       text-transform: uppercase;
     }
 
+    .ad-engine-message {
+      background: #fff0d8;
+      border: 1px solid rgba(225,154,26,0.25);
+      border-radius: 8px;
+      color: #7a4d07;
+      display: block;
+      font-size: 0.88rem;
+      font-weight: 850;
+      line-height: 1.45;
+      margin: 12px 16px 0;
+      padding: 11px 12px;
+    }
+
+    .ad-engine-message[hidden] {
+      display: none;
+    }
+
     .ad-progress {
       background: #e5ede8;
       height: 7px;
@@ -168,7 +185,53 @@
       width: 0%;
     }
 
+    .ad-scene-rail {
+      background: rgba(255,255,255,0.72);
+      border-bottom: 1px solid rgba(20,33,31,0.1);
+      display: grid;
+      gap: 6px;
+      grid-template-columns: repeat(auto-fit, minmax(104px, 1fr));
+      padding: 10px 12px;
+    }
+
+    .ad-scene-jump {
+      align-items: center;
+      background: #f8faf8;
+      border: 1px solid rgba(20,33,31,0.1);
+      border-radius: 8px;
+      color: var(--muted);
+      cursor: pointer;
+      display: grid;
+      font-family: inherit;
+      gap: 4px;
+      min-height: 62px;
+      min-width: 0;
+      padding: 8px 7px;
+      text-align: left;
+    }
+
+    .ad-scene-jump span {
+      color: var(--green-dark);
+      font-size: 0.68rem;
+      font-weight: 950;
+      line-height: 1;
+      text-transform: uppercase;
+    }
+
+    .ad-scene-jump strong {
+      font-size: clamp(0.62rem, 0.72vw, 0.76rem);
+      line-height: 1.16;
+    }
+
+    .ad-scene-jump.is-active {
+      background: #e8f1ec;
+      border-color: rgba(22,143,98,0.28);
+      color: var(--ink);
+      box-shadow: inset 0 0 0 1px rgba(22,143,98,0.08);
+    }
+
     .ad-scene-stack {
+      contain: layout paint;
       display: grid;
       min-height: 520px;
       overflow: hidden;
@@ -322,12 +385,12 @@
     .ad-flow {
       display: grid;
       gap: 8px;
-      grid-template-columns: repeat(4, minmax(92px, 1fr));
+      grid-template-columns: repeat(4, minmax(80px, 1fr));
       min-width: 0;
     }
 
     .ad-flow.step-3 {
-      grid-template-columns: repeat(3, minmax(130px, 1fr));
+      grid-template-columns: repeat(3, minmax(108px, 1fr));
     }
 
     .ad-flow-step {
@@ -489,6 +552,262 @@
       max-width: 760px;
     }
 
+    .ad-script-guide {
+      background: rgba(255,255,255,0.94);
+      border: 1px solid rgba(20,33,31,0.1);
+      border-radius: 8px;
+      box-shadow: var(--shadow-soft);
+      padding: 20px;
+    }
+
+    .ad-script-guide summary {
+      align-items: center;
+      color: var(--ink);
+      cursor: pointer;
+      display: flex;
+      gap: 12px;
+      justify-content: space-between;
+      list-style: none;
+    }
+
+    .ad-script-guide summary::-webkit-details-marker {
+      display: none;
+    }
+
+    .ad-script-title {
+      display: grid;
+      gap: 5px;
+    }
+
+    .ad-script-title span {
+      color: var(--green-dark);
+      font-size: 0.74rem;
+      font-weight: 950;
+      text-transform: uppercase;
+    }
+
+    .ad-script-title strong {
+      font-size: clamp(1.55rem, 3vw, 2.3rem);
+      line-height: 1.05;
+    }
+
+    .ad-script-body {
+      display: grid;
+      gap: 18px;
+      margin-top: 18px;
+    }
+
+    .ad-script-actions {
+      align-items: center;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: space-between;
+    }
+
+    .ad-copy-status {
+      color: var(--muted);
+      font-size: 0.82rem;
+      font-weight: 850;
+    }
+
+    .ad-audience-grid,
+    .ad-script-grid {
+      display: grid;
+      gap: 14px;
+    }
+
+    .ad-audience-grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .ad-script-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .ad-audience-note,
+    .ad-script-card {
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: var(--shadow-soft);
+      display: grid;
+      gap: 10px;
+      padding: 16px;
+    }
+
+    .ad-audience-note span,
+    .ad-script-card span {
+      color: var(--green-dark);
+      font-size: 0.72rem;
+      font-weight: 950;
+      text-transform: uppercase;
+    }
+
+    .ad-audience-note h3,
+    .ad-script-card h3 {
+      font-size: 1.02rem;
+      margin: 0;
+    }
+
+    .ad-audience-note p,
+    .ad-script-card p {
+      color: var(--muted);
+      font-size: 0.88rem;
+      line-height: 1.5;
+      margin: 0;
+    }
+
+    .ad-review-mode-panel {
+      align-items: center;
+      background: #f8faf8;
+      border: 1px solid rgba(20,33,31,0.1);
+      border-radius: 8px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      justify-content: space-between;
+      padding: 12px;
+    }
+
+    .ad-segmented {
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      display: inline-flex;
+      gap: 4px;
+      padding: 4px;
+    }
+
+    .ad-segmented button {
+      background: transparent;
+      border: 0;
+      border-radius: 6px;
+      color: var(--muted);
+      cursor: pointer;
+      font-family: inherit;
+      font-size: 0.78rem;
+      font-weight: 950;
+      padding: 9px 11px;
+      text-transform: uppercase;
+    }
+
+    .ad-segmented button.is-active {
+      background: #e8f1ec;
+      color: var(--green-dark);
+    }
+
+    .ad-review-mode-panel p {
+      color: var(--muted);
+      font-size: 0.84rem;
+      line-height: 1.45;
+      margin: 0;
+    }
+
+    .ad-script-guide[data-review-mode="presentation"] .ad-review-only {
+      display: none;
+    }
+
+    .ad-metrics-grid {
+      display: grid;
+      gap: 10px;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+
+    .ad-metric-card {
+      background: linear-gradient(180deg, #fff, #f6f9f6);
+      border: 1px solid rgba(20,33,31,0.1);
+      border-radius: 8px;
+      padding: 13px;
+    }
+
+    .ad-metric-card span {
+      color: var(--muted);
+      display: block;
+      font-size: 0.72rem;
+      font-weight: 950;
+      min-height: 28px;
+      text-transform: uppercase;
+    }
+
+    .ad-metric-card strong {
+      color: var(--green-dark);
+      display: block;
+      font-size: 1.65rem;
+      line-height: 1;
+      margin-top: 8px;
+    }
+
+    .ad-script-card textarea {
+      background: #f8faf8;
+      border: 1px solid rgba(20,33,31,0.12);
+      border-radius: 8px;
+      color: var(--ink);
+      font: inherit;
+      line-height: 1.5;
+      min-height: 132px;
+      padding: 11px;
+      resize: vertical;
+      width: 100%;
+    }
+
+    .ad-card-metrics {
+      align-items: center;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 2px;
+    }
+
+    .ad-card-metrics span {
+      background: #f8faf8;
+      border: 1px solid rgba(20,33,31,0.1);
+      border-radius: 999px;
+      color: var(--muted);
+      display: inline-flex;
+      font-size: 0.72rem;
+      font-weight: 900;
+      padding: 6px 8px;
+      text-transform: uppercase;
+    }
+
+    .ad-pace {
+      background: #e8eef6 !important;
+      border-color: rgba(31,106,165,0.16) !important;
+      color: #17436a !important;
+    }
+
+    .ad-pace.too-short {
+      background: #fff0d8 !important;
+      border-color: rgba(225,154,26,0.22) !important;
+      color: #7a4d07 !important;
+    }
+
+    .ad-pace.too-long {
+      background: #fde5e3 !important;
+      border-color: rgba(189,58,45,0.18) !important;
+      color: #8b1c14 !important;
+    }
+
+    .ad-script-card dl {
+      display: grid;
+      gap: 9px;
+      margin: 0;
+    }
+
+    .ad-script-card dt {
+      color: var(--ink);
+      font-size: 0.72rem;
+      font-weight: 950;
+      text-transform: uppercase;
+    }
+
+    .ad-script-card dd {
+      color: var(--muted);
+      line-height: 1.52;
+      margin: 0;
+    }
+
     @keyframes ad-pop {
       from { opacity: 0; transform: translateY(12px); }
       to { opacity: 1; transform: translateY(0); }
@@ -511,6 +830,10 @@
       .ad-scene-stack {
         min-height: auto;
       }
+
+      .ad-scene-rail {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
     }
 
     @media (max-width: 760px) {
@@ -525,6 +848,8 @@
       .ad-controls,
       .ad-inline-controls,
       .ad-demo-links,
+      .ad-script-actions,
+      .ad-scene-rail,
       .ad-stage-footer,
       .ad-stage-top {
         align-items: stretch;
@@ -552,6 +877,10 @@
       .ad-readiness-grid,
       .ad-module-grid,
       .ad-proof-grid,
+      .ad-audience-grid,
+      .ad-script-grid,
+      .ad-metrics-grid,
+      .ad-scene-rail,
       .ad-flow,
       .ad-flow.step-3 {
         grid-template-columns: 1fr;
@@ -603,7 +932,7 @@
           <p class="eyebrow">Animated Demo Engine</p>
           <h1>BOF Operations Lifecycle</h1>
           <p>"From customer demand to settlement readiness."</p>
-          <p>This self-running presentation shows how BOF connects customer demand, readiness review, trip visibility, exception management, proof, settlement preparation, and executive oversight across fleets and carrier networks.</p>
+          <p>This self-running presentation shows how BOF connects customer demand, readiness review, trip visibility, exception management, delivery proof, claims response, backhaul readiness, and executive oversight across fleets and carrier networks.</p>
           <div class="ad-controls" aria-label="Animated demo controls">
             <button class="button primary ad-control" type="button" data-demo-action="start">Start Demo</button>
             <button class="button secondary ad-control" type="button" data-demo-action="pause">Pause</button>
@@ -623,12 +952,15 @@
         <section class="ad-stage reveal" aria-label="BOF Operations Lifecycle animated scenes">
           <div class="ad-stage-top">
             <div class="ad-stage-title">
-              <span data-scene-progress>Scene 1 of 8</span>
+              <span data-scene-progress>Scene 1</span>
               <strong>BOF Operations Lifecycle</strong>
             </div>
-            <span class="ad-play-state" data-play-status>Auto-running</span>
+            <span class="ad-play-state" data-play-status>Ready</span>
           </div>
+          <p class="ad-engine-message" data-engine-message role="status" hidden></p>
+          <noscript><p class="ad-engine-message">Animated demo controls require JavaScript. The scene content remains available below for review.</p></noscript>
           <div class="ad-progress" aria-hidden="true"><span data-progress-fill></span></div>
+          <div class="ad-scene-rail" data-scene-rail aria-label="Animated demo scene list"></div>
 
           <div class="ad-scene-stack">
             <article class="ad-scene is-active" data-scene="customer-demand">
@@ -757,8 +1089,8 @@
               <div class="ad-copy">
                 <p class="eyebrow">Scene 6</p>
                 <h2>Delivery &amp; Proof</h2>
-                <p>Delivery proof is organized around POD, delivery photos, seal verification, and customer confirmation so post-trip workflows do not start blind.</p>
-                <div class="ad-narration"><span>Narration</span><strong>BOF tracks proof and delivery readiness.</strong></div>
+                <p>BOF organizes POD, delivery photos, seal verification, customer confirmation, lumper receipts, detention records, and supporting delivery documentation into one delivery record.</p>
+                <div class="ad-narration"><span>Narration</span><strong>BOF builds a complete delivery record for settlement, invoicing, claims, and post-trip processing.</strong></div>
               </div>
               <div class="ad-visual">
                 <div class="ad-proof-grid">
@@ -766,30 +1098,57 @@
                   <article class="ad-proof" style="--i:1"><img src="/assets/images/documents/load-proof/pod-1907-dock-photo.webp" alt="Dock delivery photo used as proof evidence"><div><h3>Delivery photos</h3><p>Dock evidence supports post-trip review.</p></div></article>
                   <article class="ad-mini-card" style="--i:2"><span>Seal verification</span><h3>Seal matched</h3><p>Seal photo and recorded seal number are aligned.</p></article>
                   <article class="ad-mini-card" style="--i:3"><span>Customer confirmation</span><h3>Delivery accepted</h3><p>Customer confirmation is visible for settlement preparation.</p></article>
+                  <article class="ad-mini-card" style="--i:4"><span>Lumper receipt</span><h3>Receipt captured</h3><p>Lumper charge proof is attached for invoicing review.</p></article>
+                  <article class="ad-mini-card" style="--i:5"><span>Detention record</span><h3>Dock wait documented</h3><p>Arrival, release, and support notes stay with the delivery packet.</p></article>
+                </div>
+              </div>
+            </article>
+
+            <article class="ad-scene" data-scene="claims-incident-response">
+              <div class="ad-copy">
+                <p class="eyebrow">Scene 7</p>
+                <h2>Claims &amp; Incident Response</h2>
+                <p>BOF helps teams capture accident events, cargo claims, seal breaches, theft events, damage reports, safety incidents, and supporting evidence before details scatter.</p>
+                <div class="ad-narration"><span>Narration</span><strong>Capture the facts quickly, preserve the evidence, and support a complete response.</strong></div>
+              </div>
+              <div class="ad-visual">
+                <div class="ad-panel">
+                  <div class="ad-panel-head"><h3>Incident response record</h3><span>Evidence preserved</span></div>
+                  <div class="ad-flow step-3">
+                    <div class="ad-flow-step" style="--i:0"><span>01</span><strong>Capture facts</strong></div>
+                    <div class="ad-flow-step" style="--i:1"><span>02</span><strong>Preserve evidence</strong></div>
+                    <div class="ad-flow-step" style="--i:2"><span>03</span><strong>Prepare response</strong></div>
+                  </div>
+                  <div class="ad-readiness-grid">
+                    <article class="ad-mini-card" style="--i:0"><span>Incident evidence</span><h3>Photos + video</h3><p>Damage photos, cargo condition evidence, and video clips stay with the incident record.</p></article>
+                    <article class="ad-mini-card" style="--i:1"><span>Field details</span><h3>Witness + police report</h3><p>Witness information and police-report details are captured for review.</p></article>
+                    <article class="ad-mini-card" style="--i:2"><span>Seal record</span><h3>Breach review</h3><p>Seal verification records support cargo claim and theft investigation.</p></article>
+                    <article class="ad-mini-card" style="--i:3"><span>Claim packet</span><h3>Insurance notified</h3><p>Insurance notifications, investigative records, and operational reports are organized for response.</p></article>
+                  </div>
                 </div>
               </div>
             </article>
 
             <article class="ad-scene" data-scene="settlement-readiness">
               <div class="ad-copy">
-                <p class="eyebrow">Scene 7</p>
-                <h2>Settlement Readiness</h2>
-                <p>BOF organizes settlement packet status, factoring packet readiness, documentation review, and driver settlement inputs after the trip is complete.</p>
-                <div class="ad-narration"><span>Narration</span><strong>BOF prepares post-trip operational workflows.</strong></div>
+                <p class="eyebrow">Scene 8</p>
+                <h2>Settlement &amp; Backhaul Readiness</h2>
+                <p>BOF organizes settlement packet status, factoring packet readiness, supporting documents, driver settlement inputs, and readiness for the next assignment.</p>
+                <div class="ad-narration"><span>Narration</span><strong>BOF prepares the closeout packet and confirms driver, asset, and document readiness for what comes next.</strong></div>
               </div>
               <div class="ad-visual">
                 <div class="ad-panel">
-                  <div class="ad-panel-head"><h3>Post-trip packet</h3><span>Settlement prep</span></div>
+                  <div class="ad-panel-head"><h3>Post-trip packet</h3><span>Settlement + backhaul</span></div>
                   <div class="ad-flow">
                     <div class="ad-flow-step" style="--i:0"><span>01</span><strong>Settlement packet</strong></div>
                     <div class="ad-flow-step" style="--i:1"><span>02</span><strong>Factoring packet</strong></div>
-                    <div class="ad-flow-step" style="--i:2"><span>03</span><strong>Documentation review</strong></div>
-                    <div class="ad-flow-step" style="--i:3"><span>04</span><strong>Driver settlement</strong></div>
+                    <div class="ad-flow-step" style="--i:2"><span>03</span><strong>Supporting documents</strong></div>
+                    <div class="ad-flow-step" style="--i:3"><span>04</span><strong>Backhaul readiness</strong></div>
                   </div>
                   <div class="ad-kpi-grid">
                     <article class="ad-kpi" style="--i:0"><span>Packets ready</span><strong data-count="38">0</strong></article>
-                    <article class="ad-kpi" style="--i:1"><span>Review holds</span><strong data-count="6">0</strong></article>
-                    <article class="ad-kpi" style="--i:2"><span>Driver settlements</span><strong data-count="41">0</strong></article>
+                    <article class="ad-kpi" style="--i:1"><span>Drivers available</span><strong data-count="29">0</strong></article>
+                    <article class="ad-kpi" style="--i:2"><span>Assets available</span><strong data-count="34">0</strong></article>
                   </div>
                 </div>
               </div>
@@ -797,9 +1156,9 @@
 
             <article class="ad-scene" data-scene="executive-visibility">
               <div class="ad-copy">
-                <p class="eyebrow">Scene 8</p>
+                <p class="eyebrow">Scene 9</p>
                 <h2>Executive Visibility</h2>
-                <p>BOF gives leadership an operational infrastructure story across the transportation lifecycle: capacity, operations, business administration, and executive command.</p>
+                <p>BOF gives leadership an operational infrastructure story across the transportation lifecycle: capacity, operations, proof, incident response, business administration, and executive command.</p>
                 <div class="ad-narration"><span>Narration</span><strong>BOF provides operational infrastructure across the transportation lifecycle.</strong></div>
               </div>
               <div class="ad-visual">
@@ -823,13 +1182,183 @@
               <button class="button secondary ad-control" type="button" data-demo-action="pause">Pause</button>
               <button class="button secondary ad-control" type="button" data-demo-action="resume">Resume</button>
             </div>
-            <p class="ad-note">This is a static BOF demo presentation. BOF does not act as a broker, dispatcher, freight marketplace, or motor carrier in this demo workflow.</p>
+            <p class="ad-note">This BOF presentation does not make BOF a broker, dispatcher, freight marketplace, or motor carrier in this demo workflow.</p>
           </div>
         </section>
       </div>
+
+      <details class="ad-script-guide reveal" id="speaking-script" data-review-mode="presentation" data-audience="fleet">
+        <summary>
+          <span class="ad-script-title"><span>Presenter support</span><strong>Speaking Script</strong></span>
+          <span class="ad-play-state">Script guide</span>
+        </summary>
+        <div class="ad-script-body">
+          <div class="ad-review-mode-panel">
+            <div>
+              <p class="eyebrow">Narration Mode</p>
+              <div class="ad-segmented" role="group" aria-label="Narration mode">
+                <button class="is-active" type="button" data-mode-option="presentation" aria-pressed="true">Presentation Mode</button>
+                <button type="button" data-mode-option="review" aria-pressed="false">Narration Review Mode</button>
+              </div>
+            </div>
+            <p>Review mode exposes editable scene scripts, pacing indicators, and audience-specific variants without changing the animation.</p>
+          </div>
+
+          <div class="ad-review-mode-panel ad-review-only">
+            <div>
+              <p class="eyebrow">Audience Script View</p>
+              <div class="ad-segmented" role="group" aria-label="Audience script view">
+                <button class="is-active" type="button" data-audience-option="fleet" aria-pressed="true">Fleet Owner</button>
+                <button type="button" data-audience-option="network" aria-pressed="false">Carrier Network</button>
+                <button type="button" data-audience-option="aggregator" aria-pressed="false">Aggregator</button>
+              </div>
+            </div>
+            <p data-audience-summary>Fleet owner view emphasizes control, blockers, ownership, and reduced document chasing.</p>
+          </div>
+
+          <div class="ad-metrics-grid ad-review-only" aria-label="Narration metrics">
+            <article class="ad-metric-card"><span>Word count</span><strong data-total-words>0</strong></article>
+            <article class="ad-metric-card"><span>Estimated narration length</span><strong data-total-speaking>0 sec</strong></article>
+            <article class="ad-metric-card"><span>Total demo duration</span><strong data-total-demo-duration>80 sec</strong></article>
+            <article class="ad-metric-card"><span>Current scene pace</span><strong data-current-pace>Good</strong></article>
+          </div>
+
+          <div class="ad-script-actions">
+            <p class="ad-note">Use this layer when recording the BOF Operations Lifecycle or walking a prospect through the animated demo. The notes use active voice and keep BOF positioned as operational infrastructure.</p>
+            <button class="button secondary ad-control" type="button" data-copy-script>Copy Full Script</button>
+            <button class="button secondary ad-control ad-review-only" type="button" data-copy-current-script>Copy Current Scene Script</button>
+            <span class="ad-copy-status" data-copy-status aria-live="polite"></span>
+          </div>
+
+          <div class="ad-audience-grid" aria-label="Audience framing notes">
+            <article class="ad-audience-note"><span>Fleet owner</span><h3>Lead with control.</h3><p>Emphasize what can move, what is blocked, who owns the next action, and how BOF reduces daily document chasing.</p></article>
+            <article class="ad-audience-note"><span>Carrier network</span><h3>Lead with readiness.</h3><p>Emphasize carrier, driver, asset, documentation, and compliance visibility across participating network records.</p></article>
+            <article class="ad-audience-note"><span>Aggregator</span><h3>Lead with operational capacity.</h3><p>Emphasize that BOF helps identify operationally ready capacity across carrier networks without acting as a marketplace.</p></article>
+          </div>
+
+          <div class="ad-script-grid" data-script-copy-source>
+            <article class="ad-script-card" data-review-scene="customer-demand" data-suggested-seconds="10" data-voiceover-fleet="Customer demand starts the BOF operating record. BOF captures the shipment request, quote context, approval status, and proof expectations so the team can see the work before it turns into a back-office chase." data-voiceover-network="Customer demand starts the BOF network record. BOF captures the request, quote context, approval status, and proof expectations so participating carriers can be reviewed against readiness before work moves forward." data-voiceover-aggregator="Customer demand starts the BOF capacity review. BOF captures the request, quote context, approval status, and proof expectations so an aggregator can see which network records may be operationally ready.">
+              <span>Scene 1</span>
+              <h3>Customer Demand</h3>
+              <dl>
+                <dt>On-screen narration</dt><dd>Customer demand enters the BOF workflow.</dd>
+                <dt>Full voiceover script</dt><dd data-voiceover-display contenteditable="true">Customer demand starts the BOF operating record. BOF captures the shipment request, quote context, approval status, and proof expectations so the team can see the work before it turns into a back-office chase.</dd>
+                <dt>Presenter note</dt><dd>Point to the customer portal and explain that BOF starts with demand context, not with a disconnected dashboard.</dd>
+                <dt>Suggested timing</dt><dd>10 seconds</dd>
+                <dt class="ad-review-only">Estimated speaking duration</dt><dd class="ad-review-only" data-speaking-duration>0 seconds</dd>
+              </dl>
+              <div class="ad-card-metrics ad-review-only"><span data-word-count>0 words</span><span class="ad-pace" data-pace-indicator>Good Pace</span></div>
+            </article>
+
+            <article class="ad-script-card" data-review-scene="pre-trip-readiness" data-suggested-seconds="12" data-voiceover-fleet="BOF verifies the driver, asset, documents, insurance, and readiness before the trip begins. The team sees what is ready, what is at risk, and what must stay blocked until someone clears the record." data-voiceover-network="BOF verifies driver, asset, document, insurance, and readiness records before a carrier network depends on them. The team sees what is ready, what is at risk, and what must stay blocked until someone clears the record." data-voiceover-aggregator="BOF verifies the driver, asset, document, insurance, and readiness records before capacity is treated as available. The aggregator sees what is ready, what is at risk, and what must stay restricted.">
+              <span>Scene 2</span>
+              <h3>Pre-Trip Readiness</h3>
+              <dl>
+                <dt>On-screen narration</dt><dd>BOF determines what can move and what is blocked before resources are committed.</dd>
+                <dt>Full voiceover script</dt><dd data-voiceover-display contenteditable="true">BOF verifies the driver, asset, documents, insurance, and readiness before the trip begins. The team sees what is ready, what is at risk, and what must stay blocked until someone clears the record.</dd>
+                <dt>Presenter note</dt><dd>Use this scene to show BOF as a control layer before operational risk spreads across dispatch, safety, documents, and settlements.</dd>
+                <dt>Suggested timing</dt><dd>12 seconds</dd>
+                <dt class="ad-review-only">Estimated speaking duration</dt><dd class="ad-review-only" data-speaking-duration>0 seconds</dd>
+              </dl>
+              <div class="ad-card-metrics ad-review-only"><span data-word-count>0 words</span><span class="ad-pace" data-pace-indicator>Good Pace</span></div>
+            </article>
+
+            <article class="ad-script-card" data-review-scene="capacity-intelligence" data-suggested-seconds="12" data-voiceover-fleet="BOF shows which carriers, assets, drivers, and equipment records are operationally ready. Fleet leaders can see available capacity by readiness, region, and equipment type without turning BOF into freight matching or brokerage." data-voiceover-network="BOF shows which carriers, assets, drivers, and equipment records are operationally ready across the network. Network leaders can compare capacity by readiness, region, and equipment type without exposing private relationship details." data-voiceover-aggregator="BOF shows which carrier networks, assets, drivers, and equipment records are operationally ready. Aggregators can compare capacity by readiness, region, and equipment type without turning BOF into freight matching or brokerage.">
+              <span>Scene 3</span>
+              <h3>Capacity Intelligence</h3>
+              <dl>
+                <dt>On-screen narration</dt><dd>BOF provides visibility into operationally ready capacity.</dd>
+                <dt>Full voiceover script</dt><dd data-voiceover-display contenteditable="true">BOF shows which carriers, assets, drivers, and equipment records are operationally ready. Network operators can see available capacity by readiness, region, and equipment type without turning BOF into freight matching or brokerage.</dd>
+                <dt>Presenter note</dt><dd>For networks and aggregators, stress that BOF identifies readiness and visibility; it does not arrange freight.</dd>
+                <dt>Suggested timing</dt><dd>12 seconds</dd>
+                <dt class="ad-review-only">Estimated speaking duration</dt><dd class="ad-review-only" data-speaking-duration>0 seconds</dd>
+              </dl>
+              <div class="ad-card-metrics ad-review-only"><span data-word-count>0 words</span><span class="ad-pace" data-pace-indicator>Good Pace</span></div>
+            </article>
+
+            <article class="ad-script-card" data-review-scene="operational-intelligence" data-suggested-seconds="12" data-voiceover-fleet="BOF keeps route status, fuel variance, weather, traffic, safety events, RFID checkpoints, and ETA confidence in view. The team can see trip signals while the operation is still moving, not after the issue becomes a surprise." data-voiceover-network="BOF keeps route status, fuel variance, weather, traffic, safety events, RFID checkpoints, and ETA confidence in view across participating records. The network sees trip signals while the operation is still moving." data-voiceover-aggregator="BOF keeps route status, fuel variance, weather, traffic, safety events, RFID checkpoints, and ETA confidence in view. Aggregators can review operational signals without taking transportation responsibility.">
+              <span>Scene 4</span>
+              <h3>Operational Intelligence</h3>
+              <dl>
+                <dt>On-screen narration</dt><dd>BOF remains engaged throughout the trip lifecycle.</dd>
+                <dt>Full voiceover script</dt><dd data-voiceover-display contenteditable="true">BOF keeps route status, fuel variance, weather, traffic, safety events, RFID checkpoints, and ETA confidence in view. The team can see trip signals while the operation is still moving, not after the issue becomes a surprise.</dd>
+                <dt>Presenter note</dt><dd>Connect this scene to the executive need for visibility during the trip, while keeping the language away from dispatch services.</dd>
+                <dt>Suggested timing</dt><dd>12 seconds</dd>
+                <dt class="ad-review-only">Estimated speaking duration</dt><dd class="ad-review-only" data-speaking-duration>0 seconds</dd>
+              </dl>
+              <div class="ad-card-metrics ad-review-only"><span data-word-count>0 words</span><span class="ad-pace" data-pace-indicator>Good Pace</span></div>
+            </article>
+
+            <article class="ad-script-card" data-review-scene="exception-management" data-suggested-seconds="10" data-voiceover-fleet="BOF turns delays, fuel anomalies, safety alerts, and documentation exceptions into visible follow-up. The team investigates the issue, assigns ownership, and moves the record toward resolution instead of letting the problem sit in email or memory." data-voiceover-network="BOF turns delays, fuel anomalies, safety alerts, and documentation exceptions into visible follow-up across network records. The team investigates the issue, assigns ownership, and moves the record toward resolution." data-voiceover-aggregator="BOF turns delays, fuel anomalies, safety alerts, and documentation exceptions into visible follow-up. The aggregator sees which records need review before capacity is treated as ready.">
+              <span>Scene 5</span>
+              <h3>Exception Management</h3>
+              <dl>
+                <dt>On-screen narration</dt><dd>BOF assigns exceptions to investigation and resolution.</dd>
+                <dt>Full voiceover script</dt><dd data-voiceover-display contenteditable="true">BOF turns delays, fuel anomalies, safety alerts, and documentation exceptions into visible follow-up. The team investigates the issue, assigns ownership, and moves the record toward resolution instead of letting the problem sit in email or memory.</dd>
+                <dt>Presenter note</dt><dd>Emphasize ownership: BOF shows who handles the next action and why it matters.</dd>
+                <dt>Suggested timing</dt><dd>10 seconds</dd>
+                <dt class="ad-review-only">Estimated speaking duration</dt><dd class="ad-review-only" data-speaking-duration>0 seconds</dd>
+              </dl>
+              <div class="ad-card-metrics ad-review-only"><span data-word-count>0 words</span><span class="ad-pace" data-pace-indicator>Good Pace</span></div>
+            </article>
+
+            <article class="ad-script-card" data-review-scene="delivery-proof" data-suggested-seconds="14" data-voiceover-fleet="BOF builds the delivery record before closeout begins. The team captures the POD, delivery photos, seal verification, customer confirmation, lumper receipts, detention records, and supporting delivery documentation so settlement, invoicing, claims, and post-trip processing start with the facts." data-voiceover-network="BOF builds the delivery record before closeout begins. The network captures POD, delivery photos, seal verification, customer confirmation, lumper receipts, detention records, and supporting delivery documentation so participating carriers maintain consistent post-trip records." data-voiceover-aggregator="BOF builds the delivery record before closeout begins. Aggregators can review POD, delivery photos, seal verification, customer confirmation, lumper receipts, detention records, and supporting delivery documentation without turning the platform into a freight marketplace.">
+              <span>Scene 6</span>
+              <h3>Delivery &amp; Proof</h3>
+              <dl>
+                <dt>On-screen narration</dt><dd>BOF builds a complete delivery record for settlement, invoicing, claims, and post-trip processing.</dd>
+                <dt>Full voiceover script</dt><dd data-voiceover-display contenteditable="true">BOF builds the delivery record before closeout begins. The team captures the POD, delivery photos, seal verification, customer confirmation, lumper receipts, detention records, and supporting delivery documentation so settlement, invoicing, claims, and post-trip processing start with the facts.</dd>
+                <dt>Presenter note</dt><dd>Show that BOF connects delivery proof to settlement, invoicing, claims, and post-trip processing instead of treating documents as a separate folder.</dd>
+                <dt>Suggested timing</dt><dd>14 seconds</dd>
+                <dt class="ad-review-only">Estimated speaking duration</dt><dd class="ad-review-only" data-speaking-duration>0 seconds</dd>
+              </dl>
+              <div class="ad-card-metrics ad-review-only"><span data-word-count>0 words</span><span class="ad-pace" data-pace-indicator>Good Pace</span></div>
+            </article>
+
+            <article class="ad-script-card" data-review-scene="claims-incident-response" data-suggested-seconds="16" data-voiceover-fleet="BOF helps the team capture the facts quickly, preserve the evidence, and support a complete response. Accident events, cargo claims, seal breaches, theft events, damage reports, safety incidents, photos, videos, witness information, police-report details, cargo condition evidence, insurance notifications, claim packets, investigative records, and operational reports stay organized around the incident." data-voiceover-network="BOF helps the network capture the facts quickly, preserve the evidence, and support a complete response across participating records. Accident events, cargo claims, seal breaches, theft events, damage reports, safety incidents, photos, videos, witness information, police-report details, cargo condition evidence, insurance notifications, claim packets, investigative records, and operational reports stay organized for review." data-voiceover-aggregator="BOF helps aggregators capture the facts quickly, preserve the evidence, and support a complete response without taking transportation responsibility. Accident events, cargo claims, seal breaches, theft events, damage reports, safety incidents, photos, videos, witness information, police-report details, cargo condition evidence, insurance notifications, claim packets, investigative records, and operational reports stay visible for network review.">
+              <span>Scene 7</span>
+              <h3>Claims &amp; Incident Response</h3>
+              <dl>
+                <dt>On-screen narration</dt><dd>Capture the facts quickly, preserve the evidence, and support a complete response.</dd>
+                <dt>Full voiceover script</dt><dd data-voiceover-display contenteditable="true">BOF helps the team capture the facts quickly, preserve the evidence, and support a complete response. Accident events, cargo claims, seal breaches, theft events, damage reports, safety incidents, photos, videos, witness information, police-report details, cargo condition evidence, insurance notifications, claim packets, investigative records, and operational reports stay organized around the incident.</dd>
+                <dt>Presenter note</dt><dd>Use this scene to show that BOF protects the incident record and administrative response without becoming an insurer, law firm, or motor carrier.</dd>
+                <dt>Suggested timing</dt><dd>16 seconds</dd>
+                <dt class="ad-review-only">Estimated speaking duration</dt><dd class="ad-review-only" data-speaking-duration>0 seconds</dd>
+              </dl>
+              <div class="ad-card-metrics ad-review-only"><span data-word-count>0 words</span><span class="ad-pace" data-pace-indicator>Good Pace</span></div>
+            </article>
+
+            <article class="ad-script-card" data-review-scene="settlement-readiness" data-suggested-seconds="14" data-voiceover-fleet="BOF organizes the settlement packet, factoring packet, supporting documents, and driver settlement inputs after delivery. The team also checks backhaul readiness: driver availability, asset availability, and document readiness for the next assignment before the next operational commitment." data-voiceover-network="BOF organizes the settlement packet, factoring packet, supporting documents, and driver settlement inputs after delivery. Network leaders also see backhaul readiness across driver availability, asset availability, and document readiness for the next assignment." data-voiceover-aggregator="BOF organizes settlement packet status, factoring packet readiness, supporting documents, and closeout inputs after delivery. Aggregators also see backhaul readiness across driver availability, asset availability, and document readiness for the next assignment.">
+              <span>Scene 8</span>
+              <h3>Settlement &amp; Backhaul Readiness</h3>
+              <dl>
+                <dt>On-screen narration</dt><dd>BOF prepares the closeout packet and confirms driver, asset, and document readiness for what comes next.</dd>
+                <dt>Full voiceover script</dt><dd data-voiceover-display contenteditable="true">BOF organizes the settlement packet, factoring packet, supporting documents, and driver settlement inputs after delivery. The team also checks backhaul readiness: driver availability, asset availability, and document readiness for the next assignment before the next operational commitment.</dd>
+                <dt>Presenter note</dt><dd>Explain that BOF supports settlement readiness and next-assignment readiness; it does not act as a bank, factoring company, payroll provider of record, dispatcher, or broker.</dd>
+                <dt>Suggested timing</dt><dd>14 seconds</dd>
+                <dt class="ad-review-only">Estimated speaking duration</dt><dd class="ad-review-only" data-speaking-duration>0 seconds</dd>
+              </dl>
+              <div class="ad-card-metrics ad-review-only"><span data-word-count>0 words</span><span class="ad-pace" data-pace-indicator>Good Pace</span></div>
+            </article>
+
+            <article class="ad-script-card" data-review-scene="executive-visibility" data-suggested-seconds="12" data-voiceover-fleet="BOF gives leadership one operating story across demand, readiness, capacity, trip visibility, exceptions, delivery proof, claims response, settlement readiness, backhaul readiness, and business operations. Executives can see where work stands, what is blocked, and where the team needs follow-through." data-voiceover-network="BOF gives network leadership one operating story across demand, readiness, capacity, trip visibility, exceptions, delivery proof, claims response, settlement readiness, backhaul readiness, and business operations. Leaders can see where participating records stand and where follow-up belongs." data-voiceover-aggregator="BOF gives aggregator leadership one operating story across demand, readiness, capacity, trip visibility, exceptions, delivery proof, claims response, settlement readiness, backhaul readiness, and business operations. Executives can see which capacity records are ready, restricted, or waiting on follow-up.">
+              <span>Scene 9</span>
+              <h3>Executive Visibility</h3>
+              <dl>
+                <dt>On-screen narration</dt><dd>BOF provides operational infrastructure across the transportation lifecycle.</dd>
+                <dt>Full voiceover script</dt><dd data-voiceover-display contenteditable="true">BOF gives leadership one operating story across demand, readiness, capacity, trip visibility, exceptions, delivery proof, claims response, settlement readiness, backhaul readiness, and business operations. Executives can see where work stands, what is blocked, and where the team needs follow-through.</dd>
+                <dt>Presenter note</dt><dd>Close by naming BOF as operational infrastructure: one platform view, multiple operating environments, and clearer administrative follow-through.</dd>
+                <dt>Suggested timing</dt><dd>12 seconds</dd>
+                <dt class="ad-review-only">Estimated speaking duration</dt><dd class="ad-review-only" data-speaking-duration>0 seconds</dd>
+              </dl>
+              <div class="ad-card-metrics ad-review-only"><span data-word-count>0 words</span><span class="ad-pace" data-pace-indicator>Good Pace</span></div>
+            </article>
+          </div>
+        </div>
+      </details>
     </section>
   </main>
   <script src="/assets/js/site.js?v=1.42"></script>
-  <script src="/assets/js/animated-demo.js?v=1.0"></script>
+  <script src="/assets/js/animated-demo.js?v=1.4"></script>
 </body>
 </html>
