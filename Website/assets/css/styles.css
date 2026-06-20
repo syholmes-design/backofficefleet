@@ -263,6 +263,7 @@ main > .section:last-child::before {
   max-width: 780px;
   min-height: 0;
   padding: clamp(8px, 1vw, 12px);
+  top: -245px;
   width: min(100%, 780px);
 }
 .hero-dashboard-stage::before {
@@ -5341,6 +5342,7 @@ td { font-weight: 750; }
   .header-cta { display: none; }
   .hero-inner, .page-hero, .split, .scenario-layout, .outcome-panel { grid-template-columns: 1fr; }
   .hero-inner { min-height: auto; padding-top: 52px; }
+  .hero-dashboard-stage { top: 0; }
   .metric-grid, .card-grid, .role-grid, .proof-grid, .stats-grid, .feature-grid, .governance-library, .scenario-grid, .gate-grid, .operating-proof-showcase, .artifact-proof-grid, .proof-photo-card, .proof-motion-card { grid-template-columns: 1fr; }
   .website-photo-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .artifact-photo-card { grid-column: auto; }
