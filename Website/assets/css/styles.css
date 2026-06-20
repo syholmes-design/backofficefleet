@@ -79,7 +79,19 @@ main > * {
   z-index: 20;
   backdrop-filter: blur(14px);
 }
-.brand img { height: 44px; width: auto; }
+.brand {
+  align-items: center;
+  display: inline-flex;
+  flex-shrink: 0;
+}
+.brand img {
+  display: block;
+  flex-shrink: 0;
+  height: auto;
+  max-height: 44px;
+  object-fit: contain;
+  width: clamp(160px, 15vw, 216px);
+}
 .site-nav { align-items: center; display: flex; gap: 4px; justify-content: center; }
 .site-nav a {
   border-radius: 8px;
@@ -5362,7 +5374,7 @@ td { font-weight: 750; }
   .website-photo-grid { grid-template-columns: 1fr; }
   html,
   body { max-width: 100%; overflow-x: hidden; }
-  .brand img { height: 34px; }
+  .brand img { max-height: 34px; width: min(167px, 46vw); }
   .section, .hero-inner, .cta-inner { padding-left: 16px; padding-right: 16px; }
   .hero,
   .hero-inner {
