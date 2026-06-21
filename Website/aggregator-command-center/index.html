@@ -1,0 +1,209 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Aggregator Command Center | BackOfficeFleet</title>
+  <meta name="description" content="BOF Aggregator Command Center shows readiness, documentation, claims, settlement, onboarding, backhaul, and business operations visibility across carrier networks and multi-fleet operations.">
+  <link rel="stylesheet" href="/assets/css/styles.css?v=1.45">
+  <style>
+    .agg-hero { background: linear-gradient(135deg, rgba(10,84,67,0.97), rgba(31,103,143,0.94) 55%, rgba(20,33,31,0.98)); color: #fff; overflow: hidden; position: relative; }
+    .agg-hero::after { background-image: linear-gradient(rgba(255,255,255,0.08) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.08) 1px, transparent 1px); background-size: 42px 42px; content: ""; inset: 0; pointer-events: none; position: absolute; }
+    .agg-hero-inner { display: grid; gap: 28px; grid-template-columns: minmax(0, 0.9fr) minmax(380px, 1.1fr); margin: 0 auto; max-width: var(--max); min-height: 650px; padding: 58px 24px 48px; position: relative; z-index: 1; }
+    .agg-hero-copy { align-content: center; display: grid; gap: 18px; }
+    .agg-hero-copy .eyebrow, .agg-hero-copy p { color: rgba(255,255,255,0.86); }
+    .agg-hero-copy h1 { color: #fff; font-size: clamp(2.5rem, 5vw, 4.8rem); line-height: 1.02; margin: 0; }
+    .agg-hero-copy > p { font-size: 1.08rem; line-height: 1.68; margin: 0; max-width: 760px; }
+    .agg-command-panel { align-self: center; background: rgba(255,255,255,0.95); border: 1px solid rgba(255,255,255,0.56); border-radius: 8px; box-shadow: 0 26px 70px rgba(0,0,0,0.22); color: var(--ink); display: grid; gap: 14px; padding: 18px; }
+    .agg-command-top { align-items: center; border-bottom: 1px solid rgba(20,33,31,0.1); display: flex; gap: 12px; justify-content: space-between; padding-bottom: 12px; }
+    .agg-command-top h2 { font-size: 1.08rem; margin: 0; }
+    .agg-command-top span { color: var(--muted); font-size: 0.78rem; font-weight: 900; text-transform: uppercase; }
+    .agg-kpi-grid { display: grid; gap: 10px; grid-template-columns: repeat(5, minmax(0, 1fr)); }
+    .agg-kpi { background: linear-gradient(180deg, #fff, #f4f8f5); border: 1px solid rgba(20,33,31,0.1); border-radius: 8px; min-height: 112px; padding: 13px; }
+    .agg-kpi span { color: var(--muted); display: block; font-size: 0.7rem; font-weight: 900; min-height: 32px; text-transform: uppercase; }
+    .agg-kpi strong { color: var(--green-dark); display: block; font-size: 1.7rem; line-height: 1; margin: 8px 0 6px; }
+    .agg-kpi small { color: var(--muted); display: block; font-size: 0.75rem; line-height: 1.35; }
+    .agg-demo-path, .agg-route-list { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 6px; }
+    .agg-demo-path a, .agg-route-list a { background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.24); border-radius: 8px; color: #fff; font-size: 0.78rem; font-weight: 900; padding: 9px 11px; text-transform: uppercase; }
+    .agg-question-grid, .agg-value-grid { display: grid; gap: 16px; grid-template-columns: repeat(4, minmax(0, 1fr)); }
+    .agg-question, .agg-value-card, .agg-protection-card, .agg-path-card { background: #fff; border: 1px solid var(--line); border-radius: 8px; box-shadow: var(--shadow-soft); padding: 18px; }
+    .agg-question strong, .agg-value-card strong { color: var(--green-dark); display: block; font-size: 1.75rem; line-height: 1; margin: 8px 0 6px; }
+    .agg-question p, .agg-value-card p, .agg-protection-card p, .agg-path-card p { color: var(--muted); line-height: 1.52; margin: 0; }
+    .agg-question span, .agg-path-card span { color: var(--green-dark); display: block; font-size: 0.74rem; font-weight: 950; margin-bottom: 10px; text-transform: uppercase; }
+    .agg-protection-grid, .agg-path-grid { display: grid; gap: 16px; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .agg-path-card h3, .agg-protection-card h3 { font-size: 1.08rem; margin: 0 0 8px; }
+    .agg-path-card .route-chip { margin-top: 12px; }
+    @media (max-width: 1180px) { .agg-hero-inner { grid-template-columns: 1fr; } .agg-kpi-grid, .agg-question-grid, .agg-value-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+    @media (max-width: 720px) { .agg-hero-inner { min-height: auto; padding: 42px 16px; } .agg-kpi-grid, .agg-question-grid, .agg-value-grid, .agg-protection-grid, .agg-path-grid { grid-template-columns: 1fr; } .agg-command-panel { padding: 12px; } .agg-command-top { align-items: flex-start; flex-direction: column; } .agg-demo-path, .agg-route-list { display: grid; grid-template-columns: 1fr; } .agg-demo-path a, .agg-route-list a { text-align: center; } }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <a class="brand" href="/" aria-label="BackOfficeFleet home"><img src="/assets/images/logo/boflogo-original.png" alt="BackOfficeFleet"></a>
+    <button class="nav-toggle" type="button" data-nav-toggle aria-expanded="false" aria-label="Toggle navigation">&#9776;</button>
+    <nav class="site-nav" data-nav aria-label="Main navigation">
+      <a href="/">Home</a>
+      <a href="/solutions/">Solutions</a>
+      <a href="/capacity-intelligence/">Capacity Intelligence</a>
+      <a href="/operational-intelligence/">Operational Intelligence</a>
+      <a href="/business-operations/">Business Operations</a>
+      <a href="/executive-demo/">Executive Demo</a>
+      <a href="/demo/">Partner Workflow</a>
+      <a href="/interactive-demo/start/">Try Demo</a>
+      <a href="/documents/">Documents</a>
+      <a href="/book-demo/">Book Demo</a>
+    </nav>
+    <a class="header-cta" href="/book-demo/">Book demo</a>
+  </header>
+
+  <main>
+    <section class="agg-hero" id="aggregator-command-center">
+      <div class="agg-hero-inner">
+        <div class="agg-hero-copy reveal">
+          <p class="eyebrow">Aggregator Command Center</p>
+          <h1>Aggregator Command Center</h1>
+          <p>Operational visibility across fleets, drivers, assets, documents, claims, settlements, and customer workflows.</p>
+          <p>BOF gives aggregators a centralized operating system for managing fleets, drivers, compliance, documents, loads, settlements, claims, and customer workflows across their entire network.</p>
+          <p>Instead of building a large internal back-office team and custom system from scratch, aggregators can use BOF as operational infrastructure.</p>
+          <div class="actions"><a class="button light" href="#fleet-network-view">Review network</a><a class="button secondary" href="#aggregator-demo-path">Follow demo path</a></div>
+          <nav class="agg-demo-path" aria-label="Aggregator command center related links">
+            <a href="/sectors/">Sectors</a>
+            <a href="/capacity-intelligence/">Capacity Intelligence</a>
+            <a href="/carrier-readiness/">Carrier Readiness</a>
+            <a href="/operational-intelligence/">Operational Intelligence</a>
+            <a href="/business-operations/">Business Operations</a>
+            <a href="/executive-demo/">Executive Demo</a>
+          </nav>
+        </div>
+        <aside class="agg-command-panel reveal" aria-label="Aggregator command center KPI dashboard">
+          <div class="agg-command-top"><div><span>Executive overview</span><h2>Network operating snapshot</h2></div><span>Demo data</span></div>
+          <div class="agg-kpi-grid">
+            <article class="agg-kpi"><span>Fleets Under Management</span><strong>12</strong><small>active network participants</small></article>
+            <article class="agg-kpi"><span>Total Trucks</span><strong>100</strong><small>tractors and equipment units</small></article>
+            <article class="agg-kpi"><span>Active Drivers</span><strong>118</strong><small>driver records in view</small></article>
+            <article class="agg-kpi"><span>Compliance-Ready Drivers</span><strong>94</strong><small>drivers clear for review</small></article>
+            <article class="agg-kpi"><span>Blocked Drivers</span><strong>8</strong><small>drivers held by readiness gates</small></article>
+            <article class="agg-kpi"><span>Expiring Documents</span><strong>23</strong><small>items inside renewal window</small></article>
+            <article class="agg-kpi"><span>Active Loads</span><strong>41</strong><small>records monitored for proof and risk</small></article>
+            <article class="agg-kpi"><span>Settlement Holds</span><strong>$84.6K</strong><small>holds waiting on proof review</small></article>
+            <article class="agg-kpi"><span>Claims / Proof Exceptions</span><strong>6</strong><small>open evidence packets</small></article>
+            <article class="agg-kpi"><span>Backhaul-Ready Assets</span><strong>19</strong><small>assets clear after delivery</small></article>
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <section class="section" id="fleet-network-view">
+      <div class="section-head reveal"><p class="eyebrow">Fleet Network View</p><h2>BOF turns multi-fleet records into a readiness conversation.</h2><p>The command center summarizes which fleets are ready, at risk, or blocked, then attaches the next BOF administrative action.</p></div>
+      <div class="table-wrap reveal">
+        <table>
+          <thead><tr><th>Fleet</th><th>Trucks</th><th>Drivers</th><th>Readiness Status</th><th>Key Issues</th><th>BOF Recommended Action</th></tr></thead>
+          <tbody>
+            <tr><td>Fleet A</td><td>18</td><td>22</td><td><span class="status ready">Ready</span></td><td>2 expiring docs</td><td>Schedule document renewal review</td></tr>
+            <tr><td>Fleet B</td><td>9</td><td>11</td><td><span class="status review">At Risk</span></td><td>Insurance expiring</td><td>Request updated certificate</td></tr>
+            <tr><td>Fleet C</td><td>14</td><td>16</td><td><span class="status blocked">Blocked</span></td><td>Missing DQFs</td><td>Complete driver qualification files</td></tr>
+            <tr><td>Fleet D</td><td>25</td><td>29</td><td><span class="status ready">Ready</span></td><td>None</td><td>Eligible for new assignment review</td></tr>
+            <tr><td>Fleet E</td><td>11</td><td>13</td><td><span class="status review">At Risk</span></td><td>Settlement holds</td><td>Review proof packet</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="section" id="driver-onboarding-queue">
+      <div class="section-head reveal"><p class="eyebrow">Driver Onboarding Queue</p><h2>New drivers move through document, qualification, and activation review.</h2><p>The queue shows where BOF can help aggregators identify missing driver paperwork before the record becomes an operational blocker.</p></div>
+      <div class="table-wrap reveal">
+        <table>
+          <thead><tr><th>Driver</th><th>Fleet</th><th>Missing Item</th><th>Status</th><th>Next BOF Action</th></tr></thead>
+          <tbody>
+            <tr><td>Marcus Ellis</td><td>Fleet A</td><td>New drivers pending documents</td><td><span class="status review">Review</span></td><td>Send onboarding packet reminder</td></tr>
+            <tr><td>Denise Turner</td><td>Fleet B</td><td>Missing CDL</td><td><span class="status blocked">Blocked</span></td><td>Collect CDL image and expiration date</td></tr>
+            <tr><td>Owen Mills</td><td>Fleet C</td><td>Missing medical card</td><td><span class="status blocked">Blocked</span></td><td>Request current medical certificate</td></tr>
+            <tr><td>Leah Watkins</td><td>Fleet D</td><td>Missing MVR</td><td><span class="status review">At Risk</span></td><td>Order and attach MVR review</td></tr>
+            <tr><td>Rafael King</td><td>Fleet E</td><td>Documents needing review</td><td><span class="status review">Review</span></td><td>Verify DQF and insurance packet</td></tr>
+            <tr><td>Priya Nair</td><td>Fleet D</td><td>Drivers ready for activation</td><td><span class="status ready">Ready</span></td><td>Move driver to active network view</td></tr>
+            <tr><td>Owner-Operator Packet 414</td><td>Fleet B</td><td>Owner-operator packets incomplete</td><td><span class="status review">At Risk</span></td><td>Request W-9, insurance, and equipment schedule</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="section" id="fleet-onboarding-queue">
+      <div class="section-head reveal"><p class="eyebrow">Fleet Onboarding Queue</p><h2>Aggregator growth becomes an organized onboarding pipeline.</h2><p>BOF helps show where each fleet sits before it becomes part of the broader network view.</p></div>
+      <div class="table-wrap reveal">
+        <table>
+          <thead><tr><th>Fleet</th><th>Trucks Imported</th><th>Insurance Status</th><th>Customer / Lane Info</th><th>Compliance Readiness</th><th>Onboarding Stage</th></tr></thead>
+          <tbody>
+            <tr><td>Fleet F</td><td>6</td><td><span class="status review">Certificate requested</span></td><td>Retail Midwest lanes pending</td><td><span class="status review">74%</span></td><td>Documents Requested</td></tr>
+            <tr><td>Fleet G</td><td>10</td><td><span class="status ready">Current</span></td><td>Reefer grocery routes imported</td><td><span class="status ready">91%</span></td><td>Approved</td></tr>
+            <tr><td>Fleet H</td><td>4</td><td><span class="status blocked">Expired</span></td><td>Prospect lanes not validated</td><td><span class="status blocked">52%</span></td><td>Prospect</td></tr>
+            <tr><td>Fleet I</td><td>12</td><td><span class="status review">Renewal review</span></td><td>Construction materials coverage</td><td><span class="status review">83%</span></td><td>Reviewing</td></tr>
+            <tr><td>Fleet J</td><td>8</td><td><span class="status ready">Current</span></td><td>Regional dry van lanes ready</td><td><span class="status ready">94%</span></td><td>Active</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="section" id="monthly-value">
+      <div class="section-head reveal"><p class="eyebrow">BOF Value Delivered This Month</p><h2>BOF helps aggregators turn administrative work into measurable operational value.</h2><p>These static demo metrics show the operating value that becomes visible when onboarding, documentation, claims, settlement, and backhaul readiness are managed as a network operating layer.</p></div>
+      <div class="agg-value-grid">
+        <article class="agg-value-card reveal"><span>Drivers Onboarded</span><strong>37</strong><p>driver records moved through activation review</p></article>
+        <article class="agg-value-card reveal"><span>Documents Processed</span><strong>412</strong><p>driver, fleet, proof, insurance, and settlement files</p></article>
+        <article class="agg-value-card reveal"><span>Expiring Docs Caught</span><strong>28</strong><p>renewal items surfaced before becoming blockers</p></article>
+        <article class="agg-value-card reveal"><span>Settlement Holds Resolved</span><strong>$42K</strong><p>proof and packet issues cleared for review</p></article>
+        <article class="agg-value-card reveal"><span>Loads Protected From Compliance Issue</span><strong>9</strong><p>records flagged before compliance exposure expanded</p></article>
+        <article class="agg-value-card reveal"><span>Admin Hours Saved</span><strong>160</strong><p>estimated back-office coordination time avoided</p></article>
+        <article class="agg-value-card reveal"><span>Claims Packets Organized</span><strong>7</strong><p>incident, photo, proof, and investigation records assembled</p></article>
+        <article class="agg-value-card reveal"><span>Backhaul-Ready Assets Identified</span><strong>19</strong><p>assets clear for review after delivery closeout</p></article>
+      </div>
+    </section>
+
+    <section class="section" id="aggregator-questions">
+      <div class="section-head reveal"><p class="eyebrow">Questions BOF Helps Aggregators Answer</p><h2>The command center makes the next operating question visible.</h2><p>These are the questions aggregator owners and network operators need answered before they trust the next administrative or operational step.</p></div>
+      <div class="agg-question-grid">
+        <article class="agg-question reveal"><span>Carrier readiness</span><p>Which carriers are ready?</p></article>
+        <article class="agg-question reveal"><span>Driver availability</span><p>Which drivers are available?</p></article>
+        <article class="agg-question reveal"><span>Asset compliance</span><p>Which assets are compliant?</p></article>
+        <article class="agg-question reveal"><span>Document gaps</span><p>Which documents are missing?</p></article>
+        <article class="agg-question reveal"><span>Risk posture</span><p>Which carriers are at risk?</p></article>
+        <article class="agg-question reveal"><span>Exposure</span><p>Which loads have claim or documentation exposure?</p></article>
+        <article class="agg-question reveal"><span>Backhaul</span><p>Which assets are ready for backhaul?</p></article>
+        <article class="agg-question reveal"><span>Onboarding</span><p>Which fleets need onboarding support?</p></article>
+        <article class="agg-question reveal"><span>Settlements</span><p>Which settlement holds are blocking payment?</p></article>
+        <article class="agg-question reveal"><span>Claims</span><p>Which claims need evidence organized?</p></article>
+      </div>
+    </section>
+
+    <section class="section" id="protected-network-relationships">
+      <div class="section-head reveal"><p class="eyebrow">Protected Network Relationships</p><h2>BOF supports the aggregator's network without taking over the relationship.</h2><p>Aggregators own their carrier relationships. BOF helps organize readiness, documentation, compliance, claims, settlements, and administrative workflows while preserving participant boundaries.</p></div>
+      <div class="agg-protection-grid">
+        <article class="agg-protection-card reveal"><h3>Relationship ownership stays with the aggregator.</h3><p>BOF does not need to expose private BOF customer relationships to create value. The command center focuses on readiness, documentation, status, evidence, and next-action visibility.</p></article>
+        <article class="agg-protection-card reveal"><h3>Capacity visibility stays administrative.</h3><p>BOF can support capacity visibility and readiness while preserving participant boundaries. The demo does not create freight placement, freight matching, load-board, dispatch, or brokerage functionality.</p></article>
+      </div>
+      <div class="paper reveal">
+        <div class="document-status-line"><span class="status blocked">Boundary</span><span>Aggregator workflow</span><span>No freight arrangement</span></div>
+        <h3>Operating guardrail</h3>
+        <p>BOF supports readiness, visibility, documentation, claims coordination, settlements, business operations, and administrative workflows. BOF does not act as a broker, dispatcher, freight marketplace, or motor carrier in this demo workflow.</p>
+      </div>
+    </section>
+
+    <section class="section" id="aggregator-demo-path">
+      <div class="section-head reveal"><p class="eyebrow">Aggregator Demo Path</p><h2>Use this guided path to show BOF as operational infrastructure for a carrier network.</h2><p>Each step links to an existing BOF surface. The route packages the aggregator story without creating a separate product, portal, or transportation arrangement workflow.</p></div>
+      <div class="agg-path-grid">
+        <article class="agg-path-card reveal"><span>01</span><h3>Aggregator Command Center</h3><p><strong>What to show:</strong> network KPIs, fleet readiness, onboarding, holds, claims, and backhaul readiness.<br><strong>Why it matters:</strong> aggregators see the operating picture before opening deeper modules.</p><a class="route-chip" href="/aggregator-command-center/">Open command center</a></article>
+        <article class="agg-path-card reveal"><span>02</span><h3>Sectors</h3><p><strong>What to show:</strong> aggregator readiness and industry use-case framing.<br><strong>Why it matters:</strong> the buyer sees BOF as one platform across multiple operating environments.</p><a class="route-chip" href="/sectors/">Open sectors</a></article>
+        <article class="agg-path-card reveal"><span>03</span><h3>Capacity Intelligence</h3><p><strong>What to show:</strong> carrier network readiness, ready assets, at-risk assets, and backhaul-ready capacity.<br><strong>Why it matters:</strong> aggregators can see readiness before commitments are made.</p><a class="route-chip" href="/capacity-intelligence/">Open capacity intelligence</a></article>
+        <article class="agg-path-card reveal"><span>04</span><h3>Carrier Readiness</h3><p><strong>What to show:</strong> carrier records, packet status, insurance, authority, and documentation gaps.<br><strong>Why it matters:</strong> participating carriers become reviewable operating records.</p><a class="route-chip" href="/carrier-readiness/">Open carrier readiness</a></article>
+        <article class="agg-path-card reveal"><span>05</span><h3>Operational Intelligence</h3><p><strong>What to show:</strong> weather, fuel, seal, claim, and backhaul signals across carriers.<br><strong>Why it matters:</strong> operational risk is visible without BOF becoming a dispatcher.</p><a class="route-chip" href="/operational-intelligence/">Open operational intelligence</a></article>
+        <article class="agg-path-card reveal"><span>06</span><h3>Business Operations</h3><p><strong>What to show:</strong> onboarding support, claims documentation, settlement coordination, insurance tracking, and factoring readiness.<br><strong>Why it matters:</strong> aggregators can scale administration without building every department internally.</p><a class="route-chip" href="/business-operations/">Open business operations</a></article>
+        <article class="agg-path-card reveal"><span>07</span><h3>Settlements</h3><p><strong>What to show:</strong> settlement holds, proof packets, and closeout readiness.<br><strong>Why it matters:</strong> payment blockers stay tied to documents and ownership.</p><a class="route-chip" href="/settlements/">Open settlements</a></article>
+        <article class="agg-path-card reveal"><span>08</span><h3>Animated Operations Demo</h3><p><strong>What to show:</strong> the narrated operations lifecycle from demand through claims and backhaul readiness.<br><strong>Why it matters:</strong> prospects see the operating story in under three minutes.</p><a class="route-chip" href="/animated-demo/">Open operations animation</a></article>
+        <article class="agg-path-card reveal"><span>09</span><h3>Animated Business Operations Demo</h3><p><strong>What to show:</strong> payroll, HR, insurance, claims, factoring, accounting, and executive financial visibility.<br><strong>Why it matters:</strong> BOF explains the company infrastructure behind the fleet network.</p><a class="route-chip" href="/animated-demo-business/">Open business animation</a></article>
+        <article class="agg-path-card reveal"><span>10</span><h3>Executive Demo</h3><p><strong>What to show:</strong> the full executive story and guided presentation order.<br><strong>Why it matters:</strong> leadership sees how all modules fit into one BOF operating narrative.</p><a class="route-chip" href="/executive-demo/">Open executive demo</a></article>
+      </div>
+    </section>
+  </main>
+  <section class="cta-band"><div class="cta-inner"><div><p class="eyebrow">Aggregator operating infrastructure</p><h2>Use the command center when the buyer needs the whole multi-carrier story first.</h2><p>The route packages BOF's readiness, documentation, claims, settlement, backhaul, onboarding, and business operations story without creating dispatch, brokerage, marketplace, or motor-carrier functionality.</p></div><a class="button light" href="/capacity-intelligence/">Open Capacity Intelligence &rarr;</a></div></section>
+  <footer class="site-footer"><div class="footer-inner"><strong>BackOfficeFleet</strong><span>Operational infrastructure for fleets, carrier networks, and aggregators.</span><a href="/trust-governance/">Trust &amp; Governance</a></div></footer>
+  <script src="/assets/js/site.js?v=1.42"></script>
+</body>
+</html>
