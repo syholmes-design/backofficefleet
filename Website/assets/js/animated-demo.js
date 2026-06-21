@@ -16,6 +16,8 @@
   var playStatus = root.querySelector("[data-play-status]");
   var engineMessage = root.querySelector("[data-engine-message]");
   var startButtons = Array.prototype.slice.call(root.querySelectorAll("[data-demo-action='start']"));
+  var startWithNarrationButtons = Array.prototype.slice.call(root.querySelectorAll("[data-demo-action='start-narration']"));
+  var startWithoutAudioButtons = Array.prototype.slice.call(root.querySelectorAll("[data-demo-action='start-silent']"));
   var pauseButtons = Array.prototype.slice.call(root.querySelectorAll("[data-demo-action='pause']"));
   var resumeButtons = Array.prototype.slice.call(root.querySelectorAll("[data-demo-action='resume']"));
   var restartButtons = Array.prototype.slice.call(root.querySelectorAll("[data-demo-action='restart']"));
@@ -52,6 +54,7 @@
   var narrationAudio = new Audio();
   var narrationEnabled = false;
   var narrationUserActivated = false;
+  var silentDemoRunning = false;
   var audioUnlocked = false;
   var directPlaybackAttempted = false;
   var currentAudioSrc = "";
@@ -182,9 +185,11 @@
     if (message === "Click Enable Audio before starting narration.") return "locked";
     if (message === "Narration audio unlocked. Click Start Demo.") return "unlocked";
     if (message === "Audio file missing") return "missing";
+    if (message === "Browser blocked narration. Click Replay Current Scene or try Chrome/Edge.") return "blocked";
     if (message === "Browser blocked playback. Click Replay Current Scene or use Chrome/Edge.") return "blocked";
     if (message === "Browser blocked playback. Narration unavailable, using timed playback.") return "blocked";
     if (message === "Narration unavailable, using timed playback") return "blocked";
+    if (message === "Silent demo running.") return "off";
     if (message === "Advancing after narration") return "unlocked";
     if (message === "Narration paused") return "paused";
     if (message === "Narration stopped") return "stopped";
@@ -245,7 +250,7 @@
       setAudioStatus("Narration stopped", "stopped");
       return;
     }
-    useTimedPlayback("Browser blocked playback. Narration unavailable, using timed playback.", "blocked");
+    useTimedPlayback("Browser blocked narration. Click Replay Current Scene or try Chrome/Edge.", "blocked");
   }
 
   function checkAudioFileAvailable(src) {
@@ -280,7 +285,28 @@
       button.textContent = narrationEnabled ? "Narration Off" : "Narration On";
       button.setAttribute("aria-pressed", String(narrationEnabled));
     });
-    if (!narrationEnabled) setAudioStatus("Narration off", "off");
+    if (!narrationEnabled) setAudioStatus(silentDemoRunning && isPlaying ? "Silent demo running." : "Narration off", "off");
+  }
+
+  function startDemo(withNarration) {
+    narrationUserActivated = true;
+    silentDemoRunning = !withNarration;
+    if (withNarration) {
+      narrationEnabled = true;
+      updateAudioControls();
+      activateScene(0, "start-demo-narration");
+      setPlayState(true);
+      playSceneAudio({ directStart: true });
+    } else {
+      narrationEnabled = false;
+      directPlaybackAttempted = false;
+      stopNarrationAudio();
+      updateAudioControls();
+      activateScene(0, "start-demo-silent");
+      setPlayState(true);
+      useTimedPlayback("Silent demo running.", "off");
+    }
+    bringStageIntoView();
   }
 
   function getCurrentAudioSrc() {
@@ -314,7 +340,7 @@
   function playSceneAudio(options) {
     options = options || {};
     if (!narrationEnabled) {
-      setAudioStatus("Narration off", "off");
+      setAudioStatus(silentDemoRunning && isPlaying ? "Silent demo running." : "Narration off", "off");
       return;
     }
     if (!narrationUserActivated) {
@@ -395,7 +421,7 @@
 
   function resumeNarrationAudio() {
     if (!narrationEnabled) {
-      setAudioStatus("Narration off", "off");
+      setAudioStatus(silentDemoRunning && isPlaying ? "Silent demo running." : "Narration off", "off");
       return;
     }
     if (!currentAudioSrc || narrationAudio.ended) {
@@ -659,11 +685,19 @@
 
   startButtons.forEach(function (button) {
     button.addEventListener("click", function () {
-      narrationUserActivated = true;
-      activateScene(0, "start-demo");
-      setPlayState(true);
-      playSceneAudio({ directStart: true });
-      bringStageIntoView();
+      startDemo(true);
+    });
+  });
+
+  startWithNarrationButtons.forEach(function (button) {
+    button.addEventListener("click", function () {
+      startDemo(true);
+    });
+  });
+
+  startWithoutAudioButtons.forEach(function (button) {
+    button.addEventListener("click", function () {
+      startDemo(false);
     });
   });
 
@@ -686,6 +720,7 @@
   restartButtons.forEach(function (button) {
     button.addEventListener("click", function () {
       narrationUserActivated = true;
+      silentDemoRunning = false;
       stopNarrationAudio(narrationEnabled ? "Narration ready" : "Narration off");
       activateScene(0, "restart-demo");
       setPlayState(false, "Ready");
@@ -725,6 +760,7 @@
   audioToggleButtons.forEach(function (button) {
     button.addEventListener("click", function () {
       narrationUserActivated = true;
+      silentDemoRunning = false;
       narrationEnabled = !narrationEnabled;
       if (narrationEnabled) {
         setAudioStatus("Narration ready", "ready");
@@ -746,6 +782,7 @@
   audioStopButtons.forEach(function (button) {
     button.addEventListener("click", function () {
       narrationUserActivated = true;
+      silentDemoRunning = false;
       stopNarrationAudio(narrationEnabled ? "Narration stopped" : "Narration off");
     });
   });

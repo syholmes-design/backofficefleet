@@ -53,6 +53,13 @@
       max-width: 710px;
     }
 
+    .ad-start-helper {
+      color: var(--green-dark);
+      font-size: 0.95rem;
+      font-weight: 950;
+      margin: 0;
+    }
+
     .ad-controls,
     .ad-inline-controls,
     .ad-demo-links {
@@ -906,8 +913,10 @@
           <p class="eyebrow">Animated Demo Track B</p>
           <h1>BOF Business Operations Lifecycle</h1>
           <p>How BOF helps organize the company behind the fleet: payroll, HR, insurance administration, onboarding, claims records, factoring readiness, accounting coordination, and executive financial visibility.</p>
-          <div class="ad-controls" aria-label="Demo controls">
-            <button class="button primary ad-control" type="button" data-demo-action="start">Start Demo</button>
+          <p class="ad-start-helper">Recommended: start with narration for the full guided walkthrough.</p>
+          <div class="ad-controls ad-start-controls" aria-label="Demo controls">
+            <button class="button primary ad-control" type="button" data-demo-action="start-narration">Start Demo With Narration</button>
+            <button class="button secondary ad-control" type="button" data-demo-action="start-silent">Start Without Audio</button>
             <a class="button secondary" href="/animated-demo/">View Operations Lifecycle Demo</a>
             <button class="button secondary ad-control" type="button" data-demo-action="pause">Pause</button>
             <button class="button secondary ad-control" type="button" data-demo-action="resume">Resume</button>
@@ -1252,6 +1261,6 @@
   </main>
 
   <script src="/assets/js/site.js?v=1.45"></script>
-  <script src="/assets/js/animated-demo.js?v=1.12"></script>
+  <script src="/assets/js/animated-demo.js?v=1.13"></script>
 </body>
 </html>
