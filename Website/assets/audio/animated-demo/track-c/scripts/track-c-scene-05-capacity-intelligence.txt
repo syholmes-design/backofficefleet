@@ -1,1 +1,0 @@
-﻿BOF does not simply show available trucks. BOF shows operationally ready capacity by ready assets, at-risk assets, backhaul-ready assets, region, and equipment type so aggregators can understand capacity quality, not just quantity.

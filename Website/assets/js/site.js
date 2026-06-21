@@ -145,17 +145,25 @@
           var related = doc.relatedAreas.map(function (area) {
             return "<span>" + area + "</span>";
           }).join("");
-          var action = doc.visibility === "demo"
-            ? '<a class="button secondary" href="' + doc.file + '">Open policy PDF</a>'
-            : '<span class="route-chip warning">Available during security review</span>';
+          var access = doc.access || "Summary only";
+          var availability = doc.availability || "Available upon request";
+          var previewType = doc.previewType || "Summary only";
+          var requestPath = doc.requestPath || "/book-demo/";
+          var statusClass = access === "Restricted" ? "watch" : "ready";
+          var action = '<div class="governance-actions">' +
+            '<span class="route-chip">' + previewType + '</span>' +
+            '<span class="route-chip warning">' + availability + '</span>' +
+            '<a class="button secondary" href="' + requestPath + '">Request full policy</a>' +
+            '</div>';
           return '<article class="governance-card card">' +
-            '<span class="status ' + (doc.visibility === "demo" ? "ready" : "watch") + '">' + doc.visibility + '</span>' +
+            '<span class="status ' + statusClass + '">' + access + '</span>' +
             '<h3>' + doc.title + '</h3>' +
             '<p class="doc-owner">' + doc.policyNumber + ' &middot; Version ' + doc.version + ' &middot; ' + doc.effectiveDate + '</p>' +
             '<p>' + doc.summary + '</p>' +
             '<div class="paper-grid">' +
             '<div class="field"><span>Classification</span><strong>' + doc.classification + '</strong></div>' +
             '<div class="field"><span>Category</span><strong>' + doc.category + '</strong></div>' +
+            '<div class="field"><span>Access</span><strong>' + previewType + '</strong></div>' +
             '</div>' +
             '<div class="governance-tags">' + related + '</div>' +
             action +
@@ -3842,7 +3850,6 @@
     setInspectorOpen(true);
   }
 })();
-
 
 
 

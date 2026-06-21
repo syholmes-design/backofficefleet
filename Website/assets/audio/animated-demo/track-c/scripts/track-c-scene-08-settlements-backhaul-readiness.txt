@@ -1,1 +1,0 @@
-﻿BOF helps aggregators reduce payment friction and identify which assets are ready for the next opportunity. Settlement holds, proof packets, factoring readiness, backhaul-ready assets, driver availability, and asset availability stay visible after delivery.

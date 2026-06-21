@@ -1,1 +1,0 @@
-﻿BOF helps aggregators see which drivers and assets are ready before commitments are made. CDL, medical card, MVR, DQ file, tax forms, equipment readiness, and owner-operator packet status can be reviewed before the network depends on the record.
