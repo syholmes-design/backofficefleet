@@ -1,6 +1,6 @@
 ﻿{
     "schemaVersion":  1,
-    "generatedAtUtc":  "2026-06-21T02:53:02.4560076Z",
+    "generatedAtUtc":  "2026-06-21T16:55:18.1340186Z",
     "purpose":  "BOF animated demo narration audio production manifest",
     "audioRoot":  "assets/audio/animated-demo",
     "tracks":  [
@@ -14,6 +14,12 @@
                        "track":  "B",
                        "title":  "BOF Business Operations",
                        "expectedFolder":  "assets/audio/animated-demo/track-b",
+                       "sceneCount":  9
+                   },
+                   {
+                       "track":  "C",
+                       "title":  "BOF Aggregator Network Lifecycle",
+                       "expectedFolder":  "assets/audio/animated-demo/track-c",
                        "sceneCount":  9
                    }
                ],
@@ -215,6 +221,105 @@
                        "voiceDirection":  "CEO/CFO style. Confident executive close.",
                        "mp3Exists":  true,
                        "mp3SizeBytes":  273807
+                   },
+                   {
+                       "track":  "C",
+                       "sceneNumber":  1,
+                       "sceneTitle":  "Aggregator Complexity",
+                       "scriptTextFilePath":  "assets/audio/animated-demo/track-c/scripts/track-c-scene-01-aggregator-complexity.txt",
+                       "expectedMp3FilePath":  "assets/audio/animated-demo/track-c/track-c-scene-01-aggregator-complexity.mp3",
+                       "estimatedDuration":  "13 sec",
+                       "voiceDirection":  "Aggregator strategist. Network-focused, operationally sophisticated, clear.",
+                       "mp3Exists":  true,
+                       "mp3SizeBytes":  305572
+                   },
+                   {
+                       "track":  "C",
+                       "sceneNumber":  2,
+                       "sceneTitle":  "Fleet Network View",
+                       "scriptTextFilePath":  "assets/audio/animated-demo/track-c/scripts/track-c-scene-02-fleet-network-view.txt",
+                       "expectedMp3FilePath":  "assets/audio/animated-demo/track-c/track-c-scene-02-fleet-network-view.mp3",
+                       "estimatedDuration":  "12 sec",
+                       "voiceDirection":  "Aggregator strategist. Executive, comparative, practical.",
+                       "mp3Exists":  true,
+                       "mp3SizeBytes":  261268
+                   },
+                   {
+                       "track":  "C",
+                       "sceneNumber":  3,
+                       "sceneTitle":  "Carrier Readiness",
+                       "scriptTextFilePath":  "assets/audio/animated-demo/track-c/scripts/track-c-scene-03-carrier-readiness.txt",
+                       "expectedMp3FilePath":  "assets/audio/animated-demo/track-c/track-c-scene-03-carrier-readiness.mp3",
+                       "estimatedDuration":  "13 sec",
+                       "voiceDirection":  "Aggregator strategist. Risk-aware, readiness-focused, direct.",
+                       "mp3Exists":  true,
+                       "mp3SizeBytes":  275061
+                   },
+                   {
+                       "track":  "C",
+                       "sceneNumber":  4,
+                       "sceneTitle":  "Driver \u0026 Asset Readiness",
+                       "scriptTextFilePath":  "assets/audio/animated-demo/track-c/scripts/track-c-scene-04-driver-asset-readiness.txt",
+                       "expectedMp3FilePath":  "assets/audio/animated-demo/track-c/track-c-scene-04-driver-asset-readiness.mp3",
+                       "estimatedDuration":  "12 sec",
+                       "voiceDirection":  "Aggregator strategist. Operational, practical, clear.",
+                       "mp3Exists":  true,
+                       "mp3SizeBytes":  274643
+                   },
+                   {
+                       "track":  "C",
+                       "sceneNumber":  5,
+                       "sceneTitle":  "Capacity Intelligence",
+                       "scriptTextFilePath":  "assets/audio/animated-demo/track-c/scripts/track-c-scene-05-capacity-intelligence.txt",
+                       "expectedMp3FilePath":  "assets/audio/animated-demo/track-c/track-c-scene-05-capacity-intelligence.mp3",
+                       "estimatedDuration":  "12 sec",
+                       "voiceDirection":  "Aggregator strategist. Capacity-focused, confident, precise.",
+                       "mp3Exists":  true,
+                       "mp3SizeBytes":  268373
+                   },
+                   {
+                       "track":  "C",
+                       "sceneNumber":  6,
+                       "sceneTitle":  "Multi-Carrier Trip Intelligence",
+                       "scriptTextFilePath":  "assets/audio/animated-demo/track-c/scripts/track-c-scene-06-multi-carrier-trip-intelligence.txt",
+                       "expectedMp3FilePath":  "assets/audio/animated-demo/track-c/track-c-scene-06-multi-carrier-trip-intelligence.mp3",
+                       "estimatedDuration":  "13 sec",
+                       "voiceDirection":  "Aggregator strategist. Calm, in-motion, risk-aware.",
+                       "mp3Exists":  true,
+                       "mp3SizeBytes":  285510
+                   },
+                   {
+                       "track":  "C",
+                       "sceneNumber":  7,
+                       "sceneTitle":  "Claims \u0026 Proof Exceptions",
+                       "scriptTextFilePath":  "assets/audio/animated-demo/track-c/scripts/track-c-scene-07-claims-proof-exceptions.txt",
+                       "expectedMp3FilePath":  "assets/audio/animated-demo/track-c/track-c-scene-07-claims-proof-exceptions.mp3",
+                       "estimatedDuration":  "13 sec",
+                       "voiceDirection":  "Aggregator strategist. Serious, evidence-focused, steady.",
+                       "mp3Exists":  true,
+                       "mp3SizeBytes":  255835
+                   },
+                   {
+                       "track":  "C",
+                       "sceneNumber":  8,
+                       "sceneTitle":  "Settlements \u0026 Backhaul Readiness",
+                       "scriptTextFilePath":  "assets/audio/animated-demo/track-c/scripts/track-c-scene-08-settlements-backhaul-readiness.txt",
+                       "expectedMp3FilePath":  "assets/audio/animated-demo/track-c/track-c-scene-08-settlements-backhaul-readiness.mp3",
+                       "estimatedDuration":  "13 sec",
+                       "voiceDirection":  "Aggregator strategist. Closeout-focused, forward-looking.",
+                       "mp3Exists":  true,
+                       "mp3SizeBytes":  277568
+                   },
+                   {
+                       "track":  "C",
+                       "sceneNumber":  9,
+                       "sceneTitle":  "Executive Network Visibility",
+                       "scriptTextFilePath":  "assets/audio/animated-demo/track-c/scripts/track-c-scene-09-executive-network-visibility.txt",
+                       "expectedMp3FilePath":  "assets/audio/animated-demo/track-c/track-c-scene-09-executive-network-visibility.mp3",
+                       "estimatedDuration":  "13 sec",
+                       "voiceDirection":  "Aggregator strategist. Executive, confident close.",
+                       "mp3Exists":  true,
+                       "mp3SizeBytes":  298466
                    }
                ]
 }

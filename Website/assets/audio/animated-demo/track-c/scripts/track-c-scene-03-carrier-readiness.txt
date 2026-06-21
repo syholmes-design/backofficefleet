@@ -1,0 +1,1 @@
+﻿BOF helps identify which carriers are ready, which are at risk, and which require action before they can support new work. Insurance status, compliance score, documentation score, onboarding stage, and restricted carrier status become visible in one readiness view.

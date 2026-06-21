@@ -1,0 +1,1 @@
+﻿BOF gives aggregators a network-level view across participating fleets. Fleet A may be ready, Fleet B may be at risk, Fleet C may be blocked, and Fleet D may be ready for review. The value is seeing the status and next action together.

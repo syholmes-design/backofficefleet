@@ -1,0 +1,1 @@
+﻿Across a carrier network, the issue is not only movement. The issue is visibility into risk while work is underway. BOF surfaces weather delay, fuel anomaly, seal verification issue, route exception, dwell risk, and ETA confidence in one operating view.

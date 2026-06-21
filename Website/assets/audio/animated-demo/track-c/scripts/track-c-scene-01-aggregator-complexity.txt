@@ -1,0 +1,1 @@
+﻿Aggregators grow by building carrier relationships. But every new carrier adds operational complexity across fleets, drivers, documents, claims, settlements, and customer workflows. BOF gives the network one place to see what is ready, what is blocked, and what needs administrative follow-up.

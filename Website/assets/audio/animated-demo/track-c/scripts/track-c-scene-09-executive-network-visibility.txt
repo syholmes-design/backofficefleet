@@ -1,0 +1,1 @@
+﻿BOF helps aggregators scale without building every back-office function from scratch. Fleets under management, total trucks, active drivers, compliance-ready drivers, claims exceptions, settlement holds, and admin hours saved become part of one executive network view.
