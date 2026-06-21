@@ -1013,9 +1013,14 @@
     }
   });
 
+  var defaultAudienceButton = audienceButtons.find(function (button) {
+    return button.classList.contains("is-active") || button.getAttribute("aria-pressed") === "true";
+  });
+  var defaultAudience = defaultAudienceButton ? defaultAudienceButton.getAttribute("data-audience-option") : "fleet";
+
   activateScene(0);
   setNarrationMode("presentation");
-  setAudience("fleet");
+  setAudience(defaultAudience || "fleet");
   setPlayState(false, "Ready");
   updateAudioControls();
   window.requestAnimationFrame(tick);
