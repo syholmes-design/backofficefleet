@@ -21,6 +21,12 @@
   var restartButtons = Array.prototype.slice.call(root.querySelectorAll("[data-demo-action='restart']"));
   var previousButtons = Array.prototype.slice.call(root.querySelectorAll("[data-demo-action='previous']"));
   var nextButtons = Array.prototype.slice.call(root.querySelectorAll("[data-demo-action='next']"));
+  var audioUnlockButtons = Array.prototype.slice.call(root.querySelectorAll("[data-audio-unlock]"));
+  var audioToggleButtons = Array.prototype.slice.call(root.querySelectorAll("[data-audio-toggle]"));
+  var audioReplayButtons = Array.prototype.slice.call(root.querySelectorAll("[data-audio-replay]"));
+  var audioStopButtons = Array.prototype.slice.call(root.querySelectorAll("[data-audio-stop]"));
+  var audioVolumeControls = Array.prototype.slice.call(root.querySelectorAll("[data-audio-volume]"));
+  var audioStatus = root.querySelector("[data-audio-status]");
   var sceneRail = root.querySelector("[data-scene-rail]");
   var jumpButtons = [];
   var copyScriptButton = root.querySelector("[data-copy-script]");
@@ -43,6 +49,20 @@
   };
   var audienceLabelSource = root.querySelector("[data-audience-labels]");
   var wordsPerMinute = 150;
+  var narrationAudio = new Audio();
+  var narrationEnabled = false;
+  var narrationUserActivated = false;
+  var audioUnlocked = false;
+  var directPlaybackAttempted = false;
+  var currentAudioSrc = "";
+  var audioRequestToken = 0;
+  var audioTimingMode = "timed";
+  var audioEndedAt = 0;
+  var audioAdvanceDelay = 1200;
+  var scenePlaybackToken = 0;
+  var activeAudioSceneToken = 0;
+  var pendingAdvanceTimer = 0;
+  narrationAudio.preload = "none";
 
   if (audienceLabelSource) {
     try {
@@ -67,6 +87,403 @@
     if (!engineMessage) return;
     engineMessage.hidden = true;
     engineMessage.textContent = "";
+  }
+
+  function setAudioStatus(message, state) {
+    if (!audioStatus) return;
+    audioStatus.textContent = message;
+    if (state) audioStatus.setAttribute("data-audio-state", state);
+  }
+
+  function logAudioDebug(eventName, details) {
+    if (!window.console || !window.console.info) return;
+    var scene = scenes[activeIndex];
+    var debugDetails = {
+      sceneNumber: activeIndex + 1,
+      audioSrc: scene ? scene.getAttribute("data-audio-src") : "",
+      event: eventName
+    };
+    Object.keys(details || {}).forEach(function (key) {
+      debugDetails[key] = details[key];
+    });
+    window.console.info("BOF animated demo audio " + JSON.stringify(debugDetails));
+  }
+
+  function clearPendingAdvance(reason) {
+    if (!pendingAdvanceTimer) return;
+    window.clearTimeout(pendingAdvanceTimer);
+    pendingAdvanceTimer = 0;
+    logAudioDebug("advance-timer-cleared", {
+      reason: reason || "unspecified",
+      timingMode: audioTimingMode
+    });
+  }
+
+  function getAudioDurationSeconds() {
+    return Number.isFinite(narrationAudio.duration) && narrationAudio.duration > 0 ? Math.round(narrationAudio.duration * 10) / 10 : null;
+  }
+
+  function resetSceneAdvanceState(reason) {
+    scenePlaybackToken += 1;
+    activeAudioSceneToken = 0;
+    audioEndedAt = 0;
+    clearPendingAdvance(reason || "scene-reset");
+    audioTimingMode = "timed";
+    logAudioDebug("scene-timing-reset", {
+      reason: reason || "scene-reset",
+      timingMode: audioTimingMode,
+      sceneToken: scenePlaybackToken
+    });
+  }
+
+  function scheduleAudioEndedAdvance(sceneToken) {
+    clearPendingAdvance("audio-ended-reschedule");
+    audioTimingMode = "audio-ended";
+    audioEndedAt = window.performance.now();
+    if (progressFill) progressFill.style.width = "100%";
+    logAudioDebug("audio-ended", {
+      nextAction: "advance-after-delay",
+      timingMode: audioTimingMode,
+      audioDuration: getAudioDurationSeconds(),
+      sceneToken: sceneToken
+    });
+    setAudioStatus("Advancing after narration", "unlocked");
+    if (playStatus) playStatus.textContent = "Advancing after narration";
+
+    pendingAdvanceTimer = window.setTimeout(function () {
+      pendingAdvanceTimer = 0;
+      if (!isPlaying || sceneToken !== scenePlaybackToken || audioTimingMode !== "audio-ended") {
+        logAudioDebug("advance-ignored", {
+          reason: "stale-or-paused",
+          timingMode: audioTimingMode,
+          sceneToken: sceneToken,
+          currentToken: scenePlaybackToken
+        });
+        return;
+      }
+
+      logAudioDebug("advance-fired", {
+        timingMode: "audio-driven",
+        sceneToken: sceneToken
+      });
+      audioTimingMode = "timed";
+      nextScene("audio-ended");
+    }, audioAdvanceDelay);
+
+    logAudioDebug("next-scene-scheduled", {
+      timingMode: "audio-driven",
+      delayMs: audioAdvanceDelay,
+      sceneToken: sceneToken
+    });
+  }
+
+  function getAudioStatusState(message) {
+    if (message === "Narration off") return "off";
+    if (message === "Click Enable Audio before starting narration.") return "locked";
+    if (message === "Narration audio unlocked. Click Start Demo.") return "unlocked";
+    if (message === "Audio file missing") return "missing";
+    if (message === "Browser blocked playback. Click Replay Current Scene or use Chrome/Edge.") return "blocked";
+    if (message === "Browser blocked playback. Narration unavailable, using timed playback.") return "blocked";
+    if (message === "Narration unavailable, using timed playback") return "blocked";
+    if (message === "Advancing after narration") return "unlocked";
+    if (message === "Narration paused") return "paused";
+    if (message === "Narration stopped") return "stopped";
+    return "ready";
+  }
+
+  function useTimedPlayback(statusMessage, state) {
+    clearPendingAdvance("fixed-timer-mode");
+    activeAudioSceneToken = 0;
+    audioTimingMode = "timed";
+    audioEndedAt = 0;
+    resetTimer();
+    logAudioDebug("timing-mode", {
+      timingMode: "fixed-timer",
+      sceneDurationMs: sceneDuration,
+      sceneToken: scenePlaybackToken
+    });
+    if (statusMessage) {
+      setAudioStatus(statusMessage, state || getAudioStatusState(statusMessage));
+    }
+    if (isPlaying && playStatus) {
+      playStatus.textContent = "Auto-running";
+    }
+  }
+
+  function useAudioPlayback(sceneToken) {
+    clearPendingAdvance("audio-playback-started");
+    activeAudioSceneToken = sceneToken;
+    audioTimingMode = "audio";
+    audioEndedAt = 0;
+    logAudioDebug("timing-mode", {
+      timingMode: "audio-driven",
+      audioDuration: getAudioDurationSeconds(),
+      sceneToken: sceneToken
+    });
+    if (playStatus) playStatus.textContent = "Waiting for narration to finish";
+  }
+
+  function classifyAudioFailure(error) {
+    var errorName = error && error.name ? error.name : "";
+    if (errorName === "NotAllowedError") return "blocked";
+    if (errorName === "AbortError") return "interrupted";
+    if (narrationAudio.error) return "missing";
+    return "blocked";
+  }
+
+  function reportPlaybackFailure(error) {
+    var failureType = classifyAudioFailure(error);
+    logAudioDebug("playback-failed", {
+      failureType: failureType,
+      errorName: error && error.name ? error.name : "unknown"
+    });
+    if (failureType === "missing") {
+      useTimedPlayback("Audio file missing", "missing");
+      return;
+    }
+    if (failureType === "interrupted") {
+      setAudioStatus("Narration stopped", "stopped");
+      return;
+    }
+    useTimedPlayback("Browser blocked playback. Narration unavailable, using timed playback.", "blocked");
+  }
+
+  function checkAudioFileAvailable(src) {
+    if (!window.fetch) {
+      return Promise.resolve({ available: true, status: "unchecked" });
+    }
+    return window.fetch(src, {
+      method: "HEAD",
+      cache: "no-store"
+    }).then(function (response) {
+      return {
+        available: response.ok,
+        status: response.status
+      };
+    }).catch(function () {
+      return {
+        available: true,
+        status: "unverified"
+      };
+    });
+  }
+
+  function setAudioElementVolumeFromControls() {
+    var control = audioVolumeControls[0];
+    var volume = control ? Number(control.value) : 80;
+    if (Number.isNaN(volume)) volume = 80;
+    narrationAudio.volume = Math.max(0, Math.min(volume / 100, 1));
+  }
+
+  function updateAudioControls() {
+    audioToggleButtons.forEach(function (button) {
+      button.textContent = narrationEnabled ? "Narration Off" : "Narration On";
+      button.setAttribute("aria-pressed", String(narrationEnabled));
+    });
+    if (!narrationEnabled) setAudioStatus("Narration off", "off");
+  }
+
+  function getCurrentAudioSrc() {
+    var activeScene = scenes[activeIndex];
+    return activeScene ? activeScene.getAttribute("data-audio-src") : "";
+  }
+
+  function stopNarrationAudio(nextStatus) {
+    audioRequestToken += 1;
+    clearPendingAdvance("stop-narration");
+    narrationAudio.pause();
+    try {
+      narrationAudio.currentTime = 0;
+    } catch (error) {
+      // Some browsers prevent currentTime changes before metadata loads.
+    }
+    currentAudioSrc = "";
+    activeAudioSceneToken = 0;
+    audioTimingMode = "timed";
+    audioEndedAt = 0;
+    if (nextStatus) setAudioStatus(nextStatus, getAudioStatusState(nextStatus));
+  }
+
+  function pauseNarrationAudio() {
+    if (!narrationEnabled) return;
+    clearPendingAdvance("pause");
+    if (!narrationAudio.paused) narrationAudio.pause();
+    setAudioStatus("Narration paused", "paused");
+  }
+
+  function playSceneAudio(options) {
+    options = options || {};
+    if (!narrationEnabled) {
+      setAudioStatus("Narration off", "off");
+      return;
+    }
+    if (!narrationUserActivated) {
+      setAudioStatus("Narration ready", "ready");
+      return;
+    }
+    if (!audioUnlocked && !directPlaybackAttempted && !options.unlockAttempt && !options.directStart) {
+      setAudioStatus("Click Enable Audio before starting narration.", "locked");
+      logAudioDebug("audio-locked");
+      return;
+    }
+
+    var nextSrc = getCurrentAudioSrc();
+    if (!nextSrc) {
+      useTimedPlayback("Audio file missing", "missing");
+      logAudioDebug("missing-src");
+      return;
+    }
+
+    var requestToken = ++audioRequestToken;
+    var playbackSceneToken = scenePlaybackToken;
+    var playbackSceneIndex = activeIndex;
+    if (options.directStart) directPlaybackAttempted = true;
+    var shouldRestart = options.restart !== false || currentAudioSrc !== nextSrc || narrationAudio.ended;
+    if (shouldRestart) {
+      narrationAudio.pause();
+      currentAudioSrc = nextSrc;
+      narrationAudio.src = nextSrc;
+      setAudioElementVolumeFromControls();
+      narrationAudio.load();
+      try {
+        narrationAudio.currentTime = 0;
+      } catch (error) {
+        // Metadata may not be loaded yet.
+      }
+    }
+
+    logAudioDebug("play-requested", {
+      restart: shouldRestart,
+      directStart: Boolean(options.directStart),
+      timingMode: "audio-requested",
+      sceneToken: playbackSceneToken
+    });
+    setAudioStatus(options.directStart ? "Narration ready" : "Click Start Demo to begin narration.", "ready");
+    var playAttempt = narrationAudio.play();
+    if (playAttempt && typeof playAttempt.then === "function") {
+      playAttempt
+        .then(function () {
+          if (requestToken !== audioRequestToken || playbackSceneToken !== scenePlaybackToken || playbackSceneIndex !== activeIndex) {
+            logAudioDebug("playback-start-ignored", {
+              reason: "stale-scene",
+              requestToken: requestToken,
+              sceneToken: playbackSceneToken,
+              currentToken: scenePlaybackToken
+            });
+            return;
+          }
+          logAudioDebug("playback-started", {
+            loadResult: "ok",
+            audioDuration: getAudioDurationSeconds()
+          });
+          useAudioPlayback(playbackSceneToken);
+          setAudioStatus("Playing narration", "playing");
+        })
+        .catch(function (error) {
+          if (requestToken !== audioRequestToken) return;
+          reportPlaybackFailure(error);
+        });
+    } else {
+      logAudioDebug("playback-started", {
+        loadResult: "ok",
+        audioDuration: getAudioDurationSeconds()
+      });
+      useAudioPlayback(playbackSceneToken);
+      setAudioStatus("Playing narration", "playing");
+    }
+  }
+
+  function resumeNarrationAudio() {
+    if (!narrationEnabled) {
+      setAudioStatus("Narration off", "off");
+      return;
+    }
+    if (!currentAudioSrc || narrationAudio.ended) {
+      if (audioTimingMode === "audio-ended") {
+        scheduleAudioEndedAdvance(scenePlaybackToken);
+        return;
+      }
+      playSceneAudio();
+      return;
+    }
+    playSceneAudio({ restart: false });
+  }
+
+  function unlockNarrationAudio() {
+    narrationUserActivated = true;
+    var nextSrc = getCurrentAudioSrc();
+    if (!nextSrc) {
+      stopNarrationAudio("Audio file missing");
+      logAudioDebug("unlock-missing-src");
+      return;
+    }
+
+    var requestToken = ++audioRequestToken;
+    logAudioDebug("unlock-requested");
+    setAudioStatus("Audio locked", "locked");
+    checkAudioFileAvailable(nextSrc).then(function (result) {
+      if (requestToken !== audioRequestToken) return;
+      logAudioDebug("audio-load-check", {
+        loadResult: result.available ? "ok" : "missing",
+        status: result.status
+      });
+      if (!result.available) {
+        stopNarrationAudio("Audio file missing");
+        return;
+      }
+
+      var priorMuted = narrationAudio.muted;
+      var priorVolume = narrationAudio.volume;
+      currentAudioSrc = nextSrc;
+      narrationAudio.src = nextSrc;
+      narrationAudio.muted = true;
+      narrationAudio.volume = 0;
+      narrationAudio.load();
+
+      try {
+        narrationAudio.currentTime = 0;
+      } catch (error) {
+        // Metadata may not be loaded yet.
+      }
+
+      var unlockAttempt = narrationAudio.play();
+      if (unlockAttempt && typeof unlockAttempt.then === "function") {
+        unlockAttempt
+          .then(function () {
+            if (requestToken !== audioRequestToken) return;
+            narrationAudio.pause();
+            try {
+              narrationAudio.currentTime = 0;
+            } catch (error) {
+              // Metadata may not be loaded yet.
+            }
+            narrationAudio.muted = priorMuted;
+            narrationAudio.volume = priorVolume || 0.8;
+            setAudioElementVolumeFromControls();
+            audioUnlocked = true;
+            logAudioDebug("unlock-succeeded", {
+              loadResult: "ok"
+            });
+            setAudioStatus("Narration audio unlocked. Click Start Demo.", "unlocked");
+          })
+          .catch(function (error) {
+            if (requestToken !== audioRequestToken) return;
+            narrationAudio.muted = priorMuted;
+            narrationAudio.volume = priorVolume || 0.8;
+            reportPlaybackFailure(error);
+          });
+      } else {
+        narrationAudio.pause();
+        narrationAudio.muted = priorMuted;
+        narrationAudio.volume = priorVolume || 0.8;
+        setAudioElementVolumeFromControls();
+        audioUnlocked = true;
+        logAudioDebug("unlock-succeeded", {
+          loadResult: "ok"
+        });
+        setAudioStatus("Narration audio unlocked. Click Start Demo.", "unlocked");
+      }
+    });
   }
 
   if (!scenes.length || !progressLabel || !playStatus) {
@@ -178,8 +595,9 @@
     });
   }
 
-  function activateScene(index) {
+  function activateScene(index, reason) {
     activeIndex = (index + scenes.length) % scenes.length;
+    resetSceneAdvanceState(reason || "activate-scene");
     scenes.forEach(function (scene, sceneIndex) {
       scene.classList.toggle("is-active", sceneIndex === activeIndex);
       scene.classList.toggle("is-before", sceneIndex < activeIndex);
@@ -204,24 +622,35 @@
     resetTimer();
   }
 
-  function goToScene(index) {
-    activateScene(index);
+  function goToScene(index, reason) {
+    stopNarrationAudio();
+    activateScene(index, reason || "go-to-scene");
   }
 
-  function nextScene() {
-    goToScene(activeIndex + 1);
+  function nextScene(reason) {
+    goToScene(activeIndex + 1, reason || "next-scene");
+    playSceneAudio();
   }
 
-  function previousScene() {
-    goToScene(activeIndex - 1);
+  function previousScene(reason) {
+    goToScene(activeIndex - 1, reason || "previous-scene");
+    playSceneAudio();
   }
 
   function tick(now) {
     if (isPlaying) {
-      var elapsed = now - sceneStartedAt;
-      var ratio = Math.min(elapsed / sceneDuration, 1);
-      if (progressFill) progressFill.style.width = Math.round(ratio * 100) + "%";
-      if (elapsed >= sceneDuration) nextScene();
+      if (audioTimingMode === "audio") {
+        var duration = Number.isFinite(narrationAudio.duration) && narrationAudio.duration > 0 ? narrationAudio.duration : 0;
+        var audioRatio = duration ? Math.min(narrationAudio.currentTime / duration, 1) : 0;
+        if (progressFill) progressFill.style.width = Math.round(audioRatio * 100) + "%";
+      } else if (audioTimingMode === "audio-ended") {
+        if (progressFill) progressFill.style.width = "100%";
+      } else {
+        var elapsed = now - sceneStartedAt;
+        var ratio = Math.min(elapsed / sceneDuration, 1);
+        if (progressFill) progressFill.style.width = Math.round(ratio * 100) + "%";
+        if (elapsed >= sceneDuration) nextScene();
+      }
     }
     window.requestAnimationFrame(tick);
   }
@@ -230,8 +659,10 @@
 
   startButtons.forEach(function (button) {
     button.addEventListener("click", function () {
-      activateScene(0);
+      narrationUserActivated = true;
+      activateScene(0, "start-demo");
       setPlayState(true);
+      playSceneAudio({ directStart: true });
       bringStageIntoView();
     });
   });
@@ -239,20 +670,25 @@
   pauseButtons.forEach(function (button) {
     button.addEventListener("click", function () {
       setPlayState(false, "Paused");
+      pauseNarrationAudio();
     });
   });
 
   resumeButtons.forEach(function (button) {
     button.addEventListener("click", function () {
+      narrationUserActivated = true;
       setPlayState(true);
+      resumeNarrationAudio();
       bringStageIntoView();
     });
   });
 
   restartButtons.forEach(function (button) {
     button.addEventListener("click", function () {
-      activateScene(0);
-      setPlayState(true);
+      narrationUserActivated = true;
+      stopNarrationAudio(narrationEnabled ? "Narration ready" : "Narration off");
+      activateScene(0, "restart-demo");
+      setPlayState(false, "Ready");
       bringStageIntoView();
     });
   });
@@ -273,10 +709,80 @@
     button.addEventListener("click", function () {
       var index = Number(button.getAttribute("data-scene-jump"));
       if (!Number.isNaN(index)) {
-        goToScene(index);
+        goToScene(index, "scene-jump");
+        playSceneAudio();
         bringStageIntoView();
       }
     });
+  });
+
+  audioUnlockButtons.forEach(function (button) {
+    button.addEventListener("click", function () {
+      unlockNarrationAudio();
+    });
+  });
+
+  audioToggleButtons.forEach(function (button) {
+    button.addEventListener("click", function () {
+      narrationUserActivated = true;
+      narrationEnabled = !narrationEnabled;
+      if (narrationEnabled) {
+        setAudioStatus("Narration ready", "ready");
+        if (isPlaying) playSceneAudio();
+      } else {
+        stopNarrationAudio("Narration off");
+      }
+      updateAudioControls();
+    });
+  });
+
+  audioReplayButtons.forEach(function (button) {
+    button.addEventListener("click", function () {
+      narrationUserActivated = true;
+      playSceneAudio({ restart: true });
+    });
+  });
+
+  audioStopButtons.forEach(function (button) {
+    button.addEventListener("click", function () {
+      narrationUserActivated = true;
+      stopNarrationAudio(narrationEnabled ? "Narration stopped" : "Narration off");
+    });
+  });
+
+  audioVolumeControls.forEach(function (control) {
+    setAudioElementVolumeFromControls();
+    control.addEventListener("input", function () {
+      setAudioElementVolumeFromControls();
+    });
+  });
+
+  narrationAudio.addEventListener("error", function () {
+    if (narrationEnabled) {
+      logAudioDebug("media-error", {
+        loadResult: "error"
+      });
+      useTimedPlayback("Audio file missing", "missing");
+    }
+  });
+
+  narrationAudio.addEventListener("ended", function () {
+    var endedToken = activeAudioSceneToken;
+    if (narrationEnabled && audioTimingMode === "audio" && endedToken === scenePlaybackToken) {
+      scheduleAudioEndedAdvance(endedToken);
+      return;
+    }
+
+    logAudioDebug("audio-ended-ignored", {
+      reason: "stale-or-not-audio-driven",
+      timingMode: audioTimingMode,
+      sceneToken: endedToken,
+      currentToken: scenePlaybackToken
+    });
+
+    if (narrationEnabled) {
+      setAudioStatus("Narration ready", "ready");
+    }
   });
 
   function copyTextToClipboard(text) {
@@ -459,7 +965,14 @@
     if (event.key === "ArrowLeft") previousScene();
     if (event.key === " ") {
       event.preventDefault();
-      setPlayState(!isPlaying);
+      if (isPlaying) {
+        setPlayState(false, "Paused");
+        pauseNarrationAudio();
+      } else {
+        narrationUserActivated = true;
+        setPlayState(true);
+        resumeNarrationAudio();
+      }
     }
   });
 
@@ -467,6 +980,7 @@
   setNarrationMode("presentation");
   setAudience("fleet");
   setPlayState(false, "Ready");
+  updateAudioControls();
   window.requestAnimationFrame(tick);
   } catch (error) {
     var fallbackRoot = document.querySelector("[data-animated-demo]");

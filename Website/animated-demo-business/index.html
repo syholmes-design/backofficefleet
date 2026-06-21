@@ -91,6 +91,81 @@
       color: var(--green-dark);
     }
 
+    .ad-audio-controls {
+      align-items: center;
+      background: rgba(248,250,248,0.92);
+      border: 1px solid rgba(20,33,31,0.1);
+      border-radius: 8px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      padding: 10px;
+    }
+
+    .ad-audio-status {
+      background: #e8f1ec;
+      border: 1px solid rgba(22,143,98,0.16);
+      border-radius: 8px;
+      color: var(--green-dark);
+      font-size: 0.78rem;
+      font-weight: 950;
+      min-width: 142px;
+      padding: 8px 10px;
+      text-transform: uppercase;
+    }
+
+    .ad-audio-status[data-audio-state="missing"] {
+      background: #fff0d8;
+      border-color: rgba(225,154,26,0.25);
+      color: #7a4d07;
+      text-transform: none;
+    }
+
+    .ad-audio-status[data-audio-state="paused"] {
+      background: #eef2f7;
+      color: #2b5f86;
+    }
+
+    .ad-audio-status[data-audio-state="locked"] {
+      background: #fff7e6;
+      border-color: rgba(225,154,26,0.3);
+      color: #7a4d07;
+      text-transform: none;
+    }
+
+    .ad-audio-status[data-audio-state="unlocked"] {
+      background: #e8f1ec;
+      color: var(--green-dark);
+      text-transform: none;
+    }
+
+    .ad-audio-status[data-audio-state="blocked"] {
+      background: #fff7e6;
+      border-color: rgba(225,154,26,0.3);
+      color: #7a4d07;
+      text-transform: none;
+    }
+
+    .ad-audio-status[data-audio-state="stopped"] {
+      background: #eef2f7;
+      color: #53645f;
+    }
+
+    .ad-audio-volume {
+      align-items: center;
+      color: var(--muted);
+      display: inline-flex;
+      font-size: 0.76rem;
+      font-weight: 950;
+      gap: 8px;
+      text-transform: uppercase;
+    }
+
+    .ad-audio-volume input {
+      accent-color: var(--green);
+      width: 112px;
+    }
+
     .ad-demo-links {
       margin-top: 6px;
     }
@@ -774,6 +849,7 @@
 
       .ad-controls,
       .ad-inline-controls,
+      .ad-audio-controls,
       .ad-script-actions,
       .ad-demo-links {
         display: grid;
@@ -783,10 +859,17 @@
       .ad-controls a,
       .ad-controls button,
       .ad-inline-controls button,
+      .ad-audio-controls button,
       .ad-script-actions button,
       .ad-demo-links a {
         justify-content: center;
         text-align: center;
+        width: 100%;
+      }
+
+      .ad-audio-status,
+      .ad-audio-volume,
+      .ad-audio-volume input {
         width: 100%;
       }
     }
@@ -854,7 +937,7 @@
           <div class="ad-scene-rail" data-scene-rail aria-label="Scene navigation"></div>
 
           <div class="ad-scene-stack">
-            <article class="ad-scene is-active" data-scene="administrative-burden">
+            <article class="ad-scene is-active" data-scene="administrative-burden" data-audio-src="/assets/audio/animated-demo/track-b/track-b-scene-01-administrative-burden.mp3">
               <div class="ad-copy">
                 <span>Scene 1</span>
                 <h2>The Administrative Burden</h2>
@@ -874,7 +957,7 @@
               </div>
             </article>
 
-            <article class="ad-scene" data-scene="driver-onboarding">
+            <article class="ad-scene" data-scene="driver-onboarding" data-audio-src="/assets/audio/animated-demo/track-b/track-b-scene-02-recruiting-driver-onboarding.mp3">
               <div class="ad-copy">
                 <span>Scene 2</span>
                 <h2>Recruiting &amp; Driver Onboarding</h2>
@@ -901,7 +984,7 @@
               </div>
             </article>
 
-            <article class="ad-scene" data-scene="payroll-hr">
+            <article class="ad-scene" data-scene="payroll-hr" data-audio-src="/assets/audio/animated-demo/track-b/track-b-scene-03-payroll-hr-administration.mp3">
               <div class="ad-copy">
                 <span>Scene 3</span>
                 <h2>Payroll &amp; HR Administration</h2>
@@ -922,7 +1005,7 @@
               </div>
             </article>
 
-            <article class="ad-scene" data-scene="insurance-risk">
+            <article class="ad-scene" data-scene="insurance-risk" data-audio-src="/assets/audio/animated-demo/track-b/track-b-scene-04-insurance-risk-administration.mp3">
               <div class="ad-copy">
                 <span>Scene 4</span>
                 <h2>Insurance &amp; Risk Administration</h2>
@@ -940,7 +1023,7 @@
               </div>
             </article>
 
-            <article class="ad-scene" data-scene="claims-risk-response">
+            <article class="ad-scene" data-scene="claims-risk-response" data-audio-src="/assets/audio/animated-demo/track-b/track-b-scene-05-claims-risk-response.mp3">
               <div class="ad-copy">
                 <span>Scene 5</span>
                 <h2>Claims &amp; Risk Response</h2>
@@ -963,7 +1046,7 @@
               </div>
             </article>
 
-            <article class="ad-scene" data-scene="factoring-readiness">
+            <article class="ad-scene" data-scene="factoring-readiness" data-audio-src="/assets/audio/animated-demo/track-b/track-b-scene-06-factoring-readiness.mp3">
               <div class="ad-copy">
                 <span>Scene 6</span>
                 <h2>Factoring Readiness</h2>
@@ -986,7 +1069,7 @@
               </div>
             </article>
 
-            <article class="ad-scene" data-scene="accounting-coordination">
+            <article class="ad-scene" data-scene="accounting-coordination" data-audio-src="/assets/audio/animated-demo/track-b/track-b-scene-07-accounting-coordination.mp3">
               <div class="ad-copy">
                 <span>Scene 7</span>
                 <h2>Accounting Coordination</h2>
@@ -1006,7 +1089,7 @@
               </div>
             </article>
 
-            <article class="ad-scene" data-scene="executive-financial-visibility">
+            <article class="ad-scene" data-scene="executive-financial-visibility" data-audio-src="/assets/audio/animated-demo/track-b/track-b-scene-08-executive-financial-visibility.mp3">
               <div class="ad-copy">
                 <span>Scene 8</span>
                 <h2>Executive Financial Visibility</h2>
@@ -1026,7 +1109,7 @@
               </div>
             </article>
 
-            <article class="ad-scene" data-scene="business-infrastructure">
+            <article class="ad-scene" data-scene="business-infrastructure" data-audio-src="/assets/audio/animated-demo/track-b/track-b-scene-09-business-infrastructure.mp3">
               <div class="ad-copy">
                 <span>Scene 9</span>
                 <h2>Business Infrastructure</h2>
@@ -1057,6 +1140,14 @@
               <button class="button secondary ad-control" type="button" data-demo-action="next">Next</button>
               <button class="button secondary ad-control" type="button" data-demo-action="pause">Pause</button>
               <button class="button secondary ad-control" type="button" data-demo-action="resume">Resume</button>
+            </div>
+            <div class="ad-audio-controls" aria-label="Narration audio controls">
+              <button class="button primary ad-control" type="button" data-audio-unlock>Enable Audio</button>
+              <button class="button secondary ad-control" type="button" data-audio-toggle aria-pressed="false">Narration On</button>
+              <button class="button secondary ad-control" type="button" data-audio-replay>Replay Current Scene</button>
+              <button class="button secondary ad-control" type="button" data-audio-stop>Stop Narration</button>
+              <label class="ad-audio-volume">Volume <input type="range" min="0" max="100" value="80" data-audio-volume aria-label="Narration volume"></label>
+              <span class="ad-audio-status" data-audio-status data-audio-state="off">Narration off</span>
             </div>
             <p class="ad-disclaimer">BOF supports administrative coordination in this walkthrough; it does not act as an accounting firm, insurance carrier, bank, factoring company, payroll provider of record, broker, dispatcher, freight marketplace, or motor carrier.</p>
           </div>
@@ -1161,6 +1252,6 @@
   </main>
 
   <script src="/assets/js/site.js?v=1.45"></script>
-  <script src="/assets/js/animated-demo.js?v=1.5"></script>
+  <script src="/assets/js/animated-demo.js?v=1.12"></script>
 </body>
 </html>

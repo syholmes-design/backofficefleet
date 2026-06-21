@@ -91,6 +91,81 @@
       color: var(--green-dark);
     }
 
+    .ad-audio-controls {
+      align-items: center;
+      background: rgba(248,250,248,0.92);
+      border: 1px solid rgba(20,33,31,0.1);
+      border-radius: 8px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      padding: 10px;
+    }
+
+    .ad-audio-status {
+      background: #e8f1ec;
+      border: 1px solid rgba(22,143,98,0.16);
+      border-radius: 8px;
+      color: var(--green-dark);
+      font-size: 0.78rem;
+      font-weight: 950;
+      min-width: 142px;
+      padding: 8px 10px;
+      text-transform: uppercase;
+    }
+
+    .ad-audio-status[data-audio-state="missing"] {
+      background: #fff0d8;
+      border-color: rgba(225,154,26,0.25);
+      color: #7a4d07;
+      text-transform: none;
+    }
+
+    .ad-audio-status[data-audio-state="paused"] {
+      background: #eef2f7;
+      color: #2b5f86;
+    }
+
+    .ad-audio-status[data-audio-state="locked"] {
+      background: #fff7e6;
+      border-color: rgba(225,154,26,0.3);
+      color: #7a4d07;
+      text-transform: none;
+    }
+
+    .ad-audio-status[data-audio-state="unlocked"] {
+      background: #e8f1ec;
+      color: var(--green-dark);
+      text-transform: none;
+    }
+
+    .ad-audio-status[data-audio-state="blocked"] {
+      background: #fff7e6;
+      border-color: rgba(225,154,26,0.3);
+      color: #7a4d07;
+      text-transform: none;
+    }
+
+    .ad-audio-status[data-audio-state="stopped"] {
+      background: #eef2f7;
+      color: #53645f;
+    }
+
+    .ad-audio-volume {
+      align-items: center;
+      color: var(--muted);
+      display: inline-flex;
+      font-size: 0.76rem;
+      font-weight: 950;
+      gap: 8px;
+      text-transform: uppercase;
+    }
+
+    .ad-audio-volume input {
+      accent-color: var(--green);
+      width: 112px;
+    }
+
     .ad-demo-links {
       margin-top: 6px;
     }
@@ -847,6 +922,7 @@
 
       .ad-controls,
       .ad-inline-controls,
+      .ad-audio-controls,
       .ad-demo-links,
       .ad-script-actions,
       .ad-scene-rail,
@@ -858,9 +934,16 @@
 
       .ad-controls .button,
       .ad-inline-controls .button,
+      .ad-audio-controls .button,
       .ad-demo-links a {
         justify-content: center;
         text-align: center;
+        width: 100%;
+      }
+
+      .ad-audio-status,
+      .ad-audio-volume,
+      .ad-audio-volume input {
         width: 100%;
       }
 
@@ -965,7 +1048,7 @@
           <div class="ad-scene-rail" data-scene-rail aria-label="Animated demo scene list"></div>
 
           <div class="ad-scene-stack">
-            <article class="ad-scene is-active" data-scene="customer-demand">
+            <article class="ad-scene is-active" data-scene="customer-demand" data-audio-src="/assets/audio/animated-demo/track-a/track-a-scene-01-customer-demand.mp3">
               <div class="ad-copy">
                 <p class="eyebrow">Scene 1</p>
                 <h2>Customer Demand</h2>
@@ -990,7 +1073,7 @@
               </div>
             </article>
 
-            <article class="ad-scene" data-scene="pre-trip-readiness">
+            <article class="ad-scene" data-scene="pre-trip-readiness" data-audio-src="/assets/audio/animated-demo/track-a/track-a-scene-02-pretrip-readiness.mp3">
               <div class="ad-copy">
                 <p class="eyebrow">Scene 2</p>
                 <h2>Pre-Trip Readiness</h2>
@@ -1013,7 +1096,7 @@
               </div>
             </article>
 
-            <article class="ad-scene" data-scene="capacity-intelligence">
+            <article class="ad-scene" data-scene="capacity-intelligence" data-audio-src="/assets/audio/animated-demo/track-a/track-a-scene-03-capacity-intelligence.mp3">
               <div class="ad-copy">
                 <p class="eyebrow">Scene 3</p>
                 <h2>Capacity Intelligence</h2>
@@ -1036,7 +1119,7 @@
               </div>
             </article>
 
-            <article class="ad-scene" data-scene="operational-intelligence">
+            <article class="ad-scene" data-scene="operational-intelligence" data-audio-src="/assets/audio/animated-demo/track-a/track-a-scene-04-operational-intelligence.mp3">
               <div class="ad-copy">
                 <p class="eyebrow">Scene 4</p>
                 <h2>Operational Intelligence</h2>
@@ -1062,7 +1145,7 @@
               </div>
             </article>
 
-            <article class="ad-scene" data-scene="exception-management">
+            <article class="ad-scene" data-scene="exception-management" data-audio-src="/assets/audio/animated-demo/track-a/track-a-scene-05-exception-management.mp3">
               <div class="ad-copy">
                 <p class="eyebrow">Scene 5</p>
                 <h2>Exception Management</h2>
@@ -1087,7 +1170,7 @@
               </div>
             </article>
 
-            <article class="ad-scene" data-scene="delivery-proof">
+            <article class="ad-scene" data-scene="delivery-proof" data-audio-src="/assets/audio/animated-demo/track-a/track-a-scene-06-delivery-proof.mp3">
               <div class="ad-copy">
                 <p class="eyebrow">Scene 6</p>
                 <h2>Delivery &amp; Proof</h2>
@@ -1106,7 +1189,7 @@
               </div>
             </article>
 
-            <article class="ad-scene" data-scene="claims-incident-response">
+            <article class="ad-scene" data-scene="claims-incident-response" data-audio-src="/assets/audio/animated-demo/track-a/track-a-scene-07-claims-incident-response.mp3">
               <div class="ad-copy">
                 <p class="eyebrow">Scene 7</p>
                 <h2>Claims &amp; Incident Response</h2>
@@ -1131,7 +1214,7 @@
               </div>
             </article>
 
-            <article class="ad-scene" data-scene="settlement-readiness">
+            <article class="ad-scene" data-scene="settlement-readiness" data-audio-src="/assets/audio/animated-demo/track-a/track-a-scene-08-settlement-backhaul-readiness.mp3">
               <div class="ad-copy">
                 <p class="eyebrow">Scene 8</p>
                 <h2>Settlement &amp; Backhaul Readiness</h2>
@@ -1156,7 +1239,7 @@
               </div>
             </article>
 
-            <article class="ad-scene" data-scene="executive-visibility">
+            <article class="ad-scene" data-scene="executive-visibility" data-audio-src="/assets/audio/animated-demo/track-a/track-a-scene-09-executive-visibility.mp3">
               <div class="ad-copy">
                 <p class="eyebrow">Scene 9</p>
                 <h2>Executive Visibility</h2>
@@ -1183,6 +1266,14 @@
               <button class="button secondary ad-control" type="button" data-demo-action="next">Next</button>
               <button class="button secondary ad-control" type="button" data-demo-action="pause">Pause</button>
               <button class="button secondary ad-control" type="button" data-demo-action="resume">Resume</button>
+            </div>
+            <div class="ad-audio-controls" aria-label="Narration audio controls">
+              <button class="button primary ad-control" type="button" data-audio-unlock>Enable Audio</button>
+              <button class="button secondary ad-control" type="button" data-audio-toggle aria-pressed="false">Narration On</button>
+              <button class="button secondary ad-control" type="button" data-audio-replay>Replay Current Scene</button>
+              <button class="button secondary ad-control" type="button" data-audio-stop>Stop Narration</button>
+              <label class="ad-audio-volume">Volume <input type="range" min="0" max="100" value="80" data-audio-volume aria-label="Narration volume"></label>
+              <span class="ad-audio-status" data-audio-status data-audio-state="off">Narration off</span>
             </div>
             <p class="ad-note">This BOF presentation does not make BOF a broker, dispatcher, freight marketplace, or motor carrier in this demo workflow.</p>
           </div>
@@ -1361,6 +1452,6 @@
     </section>
   </main>
   <script src="/assets/js/site.js?v=1.42"></script>
-  <script src="/assets/js/animated-demo.js?v=1.4"></script>
+  <script src="/assets/js/animated-demo.js?v=1.12"></script>
 </body>
 </html>
