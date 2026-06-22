@@ -4,7 +4,8 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Aggregator Animated Demo | BackOfficeFleet</title>
-  <meta name="description" content="A self-running BOF aggregator presentation focused on multi-fleet readiness, carrier onboarding, capacity intelligence, claims, settlements, backhaul readiness, and executive network visibility.">
+  <meta name="description" content="A self-running BOF aggregator presentation focused on carrier roster rules, driver readiness, customer requirements, proof packets, capacity intelligence, claims, settlements, backhaul readiness, and executive network visibility.">
+  <link rel="icon" href="/assets/images/logo/boflogo-original.png">
   <link rel="stylesheet" href="/assets/css/styles.css?v=1.48">
   <style>
     .ad-page {
@@ -462,6 +463,114 @@
     .ad-table strong, .ad-table span, .ad-table em { font-style: normal; }
     .ad-table span { color: var(--muted); font-size: 0.82rem; font-weight: 750; }
 
+    .ad-roster-table {
+      border: 1px solid rgba(20,33,31,0.1);
+      border-radius: 8px;
+      display: grid;
+      overflow: hidden;
+    }
+
+    .ad-roster-table > div {
+      align-items: center;
+      background: #fff;
+      border-bottom: 1px solid rgba(20,33,31,0.08);
+      display: grid;
+      gap: 10px;
+      grid-template-columns: 0.72fr 1fr auto 1.25fr;
+      min-width: 0;
+      padding: 11px 12px;
+    }
+
+    .ad-roster-table > div:last-child {
+      border-bottom: 0;
+    }
+
+    .ad-roster-table strong,
+    .ad-roster-table span,
+    .ad-roster-table small {
+      min-width: 0;
+    }
+
+    .ad-roster-table span,
+    .ad-roster-table small {
+      color: var(--muted);
+      font-size: 0.78rem;
+      font-weight: 800;
+      line-height: 1.38;
+    }
+
+    .ad-rule-cluster,
+    .ad-outcome-grid,
+    .ad-proof-strip {
+      display: grid;
+      gap: 10px;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .ad-rule-card,
+    .ad-outcome-card,
+    .ad-proof-card {
+      background: linear-gradient(180deg, #fff, #f7faf8);
+      border: 1px solid rgba(20,33,31,0.1);
+      border-radius: 8px;
+      display: grid;
+      gap: 7px;
+      min-height: 112px;
+      min-width: 0;
+      padding: 13px;
+    }
+
+    .ad-rule-card span,
+    .ad-outcome-card span,
+    .ad-proof-card span {
+      color: var(--green-dark);
+      font-size: 0.68rem;
+      font-weight: 950;
+      text-transform: uppercase;
+    }
+
+    .ad-rule-card strong,
+    .ad-outcome-card strong,
+    .ad-proof-card strong {
+      color: var(--ink);
+      font-size: 0.98rem;
+      line-height: 1.24;
+    }
+
+    .ad-rule-card small,
+    .ad-outcome-card small,
+    .ad-proof-card small {
+      color: var(--muted);
+      font-size: 0.78rem;
+      line-height: 1.4;
+    }
+
+    .ad-fit-card {
+      background: linear-gradient(135deg, rgba(9,98,75,0.96), rgba(18,118,91,0.9));
+      border-radius: 8px;
+      color: #fff;
+      display: grid;
+      gap: 8px;
+      padding: 16px;
+    }
+
+    .ad-fit-card span {
+      color: rgba(255,255,255,0.76);
+      font-size: 0.72rem;
+      font-weight: 950;
+      text-transform: uppercase;
+    }
+
+    .ad-fit-card strong {
+      font-size: 1.15rem;
+      line-height: 1.24;
+    }
+
+    .ad-fit-card small {
+      color: rgba(255,255,255,0.8);
+      line-height: 1.42;
+    }
+
     .ad-check-grid span,
     .ad-alert-grid article {
       background: linear-gradient(180deg, #fff, #f7faf8);
@@ -845,9 +954,17 @@
       .ad-risk-grid,
       .ad-check-grid,
       .ad-alert-grid,
+      .ad-rule-cluster,
+      .ad-outcome-grid,
+      .ad-proof-strip,
       .ad-metrics-grid,
       .ad-audience-grid {
         grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .ad-roster-table > div {
+        align-items: flex-start;
+        grid-template-columns: 1fr;
       }
     }
 
@@ -887,6 +1004,9 @@
       .ad-risk-grid,
       .ad-check-grid,
       .ad-alert-grid,
+      .ad-rule-cluster,
+      .ad-outcome-grid,
+      .ad-proof-strip,
       .ad-metrics-grid,
       .ad-audience-grid {
         grid-template-columns: 1fr;
@@ -1015,8 +1135,8 @@
 
   <main class="ad-page" data-animated-demo>
     <script type="application/json" data-audience-labels>{
-      "aggregator": "Aggregator view emphasizes network readiness, backhaul capacity, claims exposure, and administrative follow-up across many participating fleets.",
-      "network": "Carrier network view emphasizes consistent readiness standards, carrier packet discipline, driver and asset visibility, and protected participant boundaries.",
+      "aggregator": "Aggregator view emphasizes roster rules, readiness-fit review, backhaul capacity, claims exposure, and administrative follow-up across many participating fleets.",
+      "network": "Carrier network view emphasizes carrier-specific rule profiles, driver and asset readiness, proof packet discipline, and protected participant boundaries.",
       "fleet": "Founder / CEO view emphasizes scale, administrative leverage, settlement exposure, claims response, and executive network visibility."
     }</script>
 
@@ -1025,7 +1145,7 @@
         <div class="ad-title-card reveal">
           <p class="eyebrow">Animated Demo Track C</p>
           <h1>BOF Aggregator Network Lifecycle</h1>
-          <p>BOF gives aggregators a centralized operating system for managing fleets, drivers, assets, documents, claims, settlements, onboarding, and readiness workflows across their network.</p>
+          <p>BOF gives aggregators a centralized operating system for managing carrier rosters, driver readiness, asset rules, customer requirements, proof packets, claims, settlements, onboarding, and readiness workflows across their network.</p>
           <p class="ad-start-helper">Recommended: start with narration for the full guided walkthrough.</p>
           <div class="ad-controls ad-start-controls" aria-label="Demo controls">
             <button class="button primary ad-control" type="button" data-demo-action="start-narration">Start Demo With Narration</button>
@@ -1047,7 +1167,8 @@
             <a href="/animated-demo-business/">Business Demo</a>
             <a href="/executive-demo/">Executive Demo</a>
             <a href="/scenario-walkthrough/">Scenario Walkthrough</a>
-          <a href="/demo-paths/">Assessment Paths</a>
+            <a href="/interactive-demo/drivers/document-intake/">BOF Vault Rules Demo</a>
+            <a href="/demo-paths/">Assessment Paths</a>
           </nav>
           <p class="ad-start-helper">No MP3 files are attached yet for this track. Narration controls stay visible and the animation continues if audio is unavailable.</p>
         </div>
@@ -1071,23 +1192,23 @@
             </article>
 
             <article class="ad-scene" data-scene="fleet-network-view" data-audio-src="/assets/audio/animated-demo/track-c/track-c-scene-02-fleet-network-view.mp3">
-              <div class="ad-copy"><span>Scene 2</span><h2>Fleet Network View</h2><p>BOF gives aggregators a network-level view across participating fleets, with readiness status and key issues visible together.</p><div class="ad-narration"><span>Narration</span><strong>BOF gives aggregators a network-level view across participating fleets.</strong></div></div>
-              <div class="ad-panel"><div class="ad-panel-head"><h3>Participating fleets</h3><span>Readiness board</span></div><div class="ad-table"><div><strong>Fleet A</strong><span>18 trucks / 22 drivers</span><em class="status ready">Ready</em></div><div><strong>Fleet B</strong><span>9 trucks / 11 drivers</span><em class="status review">At Risk</em></div><div><strong>Fleet C</strong><span>14 trucks / 16 drivers</span><em class="status blocked">Blocked</em></div><div><strong>Fleet D</strong><span>25 trucks / 29 drivers</span><em class="status ready">Ready</em></div></div><div class="ad-mini-grid"><article class="ad-mini-card"><span>Key issues</span><strong>Insurance, DQFs, expiring docs</strong><small>BOF attaches a recommended next action.</small></article><article class="ad-mini-card"><span>Network posture</span><strong>71% ready</strong><small>Readiness improves as blockers clear.</small></article></div></div>
+              <div class="ad-copy"><span>Scene 2</span><h2>Carrier Roster View</h2><p>An aggregator may have carriers in the roster, but BOF checks whether each specific carrier, driver, equipment record, contract term, customer requirement, and proof packet is ready for this opportunity.</p><div class="ad-narration"><span>Narration</span><strong>BOF does not treat the aggregator roster as one generic fleet.</strong></div></div>
+              <div class="ad-panel"><div class="ad-panel-head"><h3>Aggregator carrier roster</h3><span>Roster rules</span></div><div class="ad-roster-table"><div><strong>Carrier A</strong><span>Reefer / Midwest</span><em class="status ready">Eligible</em><small>Approved, documents current.</small></div><div><strong>Carrier B</strong><span>Dry van / Great Lakes</span><em class="status blocked">Blocked</em><small>Insurance limit below customer requirement.</small></div><div><strong>Carrier C</strong><span>Reefer / Ohio Valley</span><em class="status review">Needs Review</em><small>Assigned driver's medical card expires soon.</small></div><div><strong>Carrier D</strong><span>Flatbed / Southeast</span><em class="status review">Customer Approval Needed</em><small>Correct equipment, approval not on file.</small></div><div><strong>Carrier E</strong><span>Dry van ready</span><em class="status blocked">Blocked</em><small>Not eligible for reefer requirement.</small></div><div><strong>Carrier F</strong><span>Specialty capacity</span><em class="status review">Missing Documents</em><small>MVR and DQF packet incomplete.</small></div></div></div>
             </article>
 
             <article class="ad-scene" data-scene="carrier-readiness" data-audio-src="/assets/audio/animated-demo/track-c/track-c-scene-03-carrier-readiness.mp3">
-              <div class="ad-copy"><span>Scene 3</span><h2>Carrier Readiness</h2><p>Insurance status, compliance score, documentation score, fleet onboarding stage, and restricted carriers stay visible before the network depends on the record.</p><div class="ad-narration"><span>Narration</span><strong>BOF helps identify which carriers are ready, which are at risk, and which require action before they can support new work.</strong></div></div>
-              <div class="ad-panel"><div class="ad-panel-head"><h3>Carrier readiness snapshot</h3><span>Packet view</span></div><div class="ad-risk-grid"><article class="ad-risk-card"><span>Insurance status</span><strong>8 renewals</strong><small>Certificates due inside 45 days.</small></article><article class="ad-risk-card"><span>Compliance score</span><strong>89%</strong><small>Authority, insurance, and admin posture.</small></article><article class="ad-risk-card"><span>Documentation score</span><strong>91%</strong><small>Packet evidence coverage.</small></article><article class="ad-risk-card"><span>Restricted carriers</span><strong>3</strong><small>Held until follow-up clears.</small></article></div><div class="ad-score-row"><div class="ad-score-label"><span>Fleet onboarding readiness</span><strong>87%</strong></div><div class="ad-bar"><span style="--score:87%"></span></div></div></div>
+              <div class="ad-copy"><span>Scene 3</span><h2>Carrier Rule Profiles</h2><p>BOF checks carrier-specific rules before the roster becomes usable capacity: authority, insurance limits, cargo coverage, lane eligibility, equipment type, safety status, open exceptions, customer approval, and subcontract terms.</p><div class="ad-narration"><span>Narration</span><strong>BOF checks each carrier's rule profile before capacity is treated as ready.</strong></div></div>
+              <div class="ad-panel"><div class="ad-panel-head"><h3>Carrier rule profile</h3><span>Eligibility checks</span></div><div class="ad-rule-cluster"><article class="ad-rule-card"><span>Authority and coverage</span><strong>Authority active</strong><small>Insurance and cargo coverage checked against customer limits.</small></article><article class="ad-rule-card"><span>Lane and region</span><strong>Midwest eligible</strong><small>Lane, region, commodity, and equipment rules match the request.</small></article><article class="ad-rule-card"><span>Safety posture</span><strong>Score: 94</strong><small>Safety status, open exceptions, and restricted-carrier flags reviewed.</small></article><article class="ad-rule-card"><span>Customer approval</span><strong>Approved carrier</strong><small>Customer-specific approval status is attached to the record.</small></article><article class="ad-rule-card"><span>Contract terms</span><strong>Subcontract current</strong><small>Contract profile and proof requirements remain visible.</small></article><article class="ad-rule-card"><span>Next action</span><strong>Eligible with conditions</strong><small>Condition: seal photo and lumper receipt required.</small></article></div></div>
             </article>
 
             <article class="ad-scene" data-scene="driver-asset-readiness" data-audio-src="/assets/audio/animated-demo/track-c/track-c-scene-04-driver-asset-readiness.mp3">
-              <div class="ad-copy"><span>Scene 4</span><h2>Driver &amp; Asset Readiness</h2><p>Driver and asset records show CDL, medical card, MVR, DQ file, W-9/I-9, equipment readiness, and owner-operator packet status.</p><div class="ad-narration"><span>Narration</span><strong>BOF helps aggregators see which drivers and assets are ready before commitments are made.</strong></div></div>
-              <div class="ad-panel"><div class="ad-panel-head"><h3>Readiness checklist</h3><span>Driver and asset view</span></div><div class="ad-check-grid"><span>CDL verified</span><span>Medical card current</span><span>MVR reviewed</span><span>DQ file complete</span><span>W-9/I-9 recorded</span><span>Equipment ready</span><span>Owner-operator packet</span><span>Insurance attached</span></div><div class="ad-mini-grid"><article class="ad-mini-card"><span>Ready drivers</span><strong>94</strong><small>Compliance-ready for review.</small></article><article class="ad-mini-card"><span>Blocked drivers</span><strong>8</strong><small>Held by missing paperwork.</small></article><article class="ad-mini-card"><span>Ready assets</span><strong>73</strong><small>Equipment records clear.</small></article></div></div>
+              <div class="ad-copy"><span>Scene 4</span><h2>Driver Readiness Rules</h2><p>The carrier may be eligible while a specific driver still needs review. BOF checks CDL status, medical card status, MVR, DQF completeness, HOS availability, training, packet readiness, and driver restrictions.</p><div class="ad-narration"><span>Narration</span><strong>A ready carrier does not automatically mean every driver is ready.</strong></div></div>
+              <div class="ad-panel"><div class="ad-panel-head"><h3>Driver rule checks</h3><span>Driver record</span></div><div class="ad-check-grid"><span>CDL active</span><span>Medical card expires in 18 days</span><span>MVR reviewed</span><span>DQF complete</span><span>HOS availability clear</span><span>Training required for reefer</span><span>Packet readiness: review</span><span>Restriction: no hazmat</span></div><div class="ad-outcome-grid"><article class="ad-outcome-card"><span>Ready</span><strong>Driver A-14</strong><small>CDL, medical, MVR, DQF, HOS, and packet evidence are current.</small></article><article class="ad-outcome-card"><span>At Risk</span><strong>Driver C-09</strong><small>Medical card is close to expiration and needs follow-up.</small></article><article class="ad-outcome-card"><span>Blocked</span><strong>Driver F-22</strong><small>MVR and DQF packet are incomplete.</small></article></div></div>
             </article>
 
             <article class="ad-scene" data-scene="capacity-intelligence" data-audio-src="/assets/audio/animated-demo/track-c/track-c-scene-05-capacity-intelligence.mp3">
-              <div class="ad-copy"><span>Scene 5</span><h2>Capacity Intelligence</h2><p>Capacity is grouped by ready assets, at-risk assets, backhaul-ready assets, region, and equipment type.</p><div class="ad-narration"><span>Narration</span><strong>BOF does not simply show available trucks. BOF shows operationally ready capacity.</strong></div></div>
-              <div class="ad-panel"><div class="ad-panel-head"><h3>Operational capacity</h3><span>Network view</span></div><div class="ad-kpi-grid"><article class="ad-kpi"><span>Ready assets</span><strong data-count="73">0</strong><small>Clear for review</small></article><article class="ad-kpi"><span>At-risk assets</span><strong data-count="19">0</strong><small>Need follow-up</small></article><article class="ad-kpi"><span>Backhaul-ready</span><strong data-count="19">0</strong><small>Clear after delivery</small></article><article class="ad-kpi"><span>Midwest reefer</span><strong data-count="18">0</strong><small>Ready units</small></article><article class="ad-kpi"><span>Great Lakes dry van</span><strong data-count="24">0</strong><small>Ready units</small></article><article class="ad-kpi"><span>Southeast flatbed</span><strong data-count="11">0</strong><small>At-risk units</small></article></div></div>
+              <div class="ad-copy"><span>Scene 5</span><h2>Roster Rules: From Available Carriers to Usable Capacity</h2><p>BOF checks equipment, load, customer, contract, and proof requirements so the aggregator can see which capacity is eligible, blocked, missing documents, customer approval needed, or eligible with conditions.</p><div class="ad-narration"><span>Narration</span><strong>BOF surfaces the best readiness fit without acting as a broker, dispatcher, or marketplace.</strong></div></div>
+              <div class="ad-panel"><div class="ad-panel-head"><h3>Capacity rule outcome</h3><span>Readiness fit</span></div><div class="ad-rule-cluster"><article class="ad-rule-card"><span>Equipment/load</span><strong>Reefer required</strong><small>Trailer availability, inspection readiness, commodity restrictions, and temperature proof checked.</small></article><article class="ad-rule-card"><span>Customer requirements</span><strong>Grocery customer</strong><small>Insurance limit, approved carrier status, BOL/POD/photo proof, and seal photo rules checked.</small></article><article class="ad-rule-card"><span>Contract/proof</span><strong>Packet follows record</strong><small>Terms and required proof attach to the carrier, driver, customer, and equipment combination.</small></article></div><div class="ad-fit-card"><span>Best readiness fit surfaced</span><strong>Carrier A / Driver A-14 / Reefer 221 / Midwest grocery requirement</strong><small>Eligible with conditions: seal photos, pickup photos, POD, and lumper receipt if required.</small></div></div>
             </article>
 
             <article class="ad-scene" data-scene="multi-carrier-trip-intelligence" data-audio-src="/assets/audio/animated-demo/track-c/track-c-scene-06-multi-carrier-trip-intelligence.mp3">
@@ -1101,8 +1222,8 @@
             </article>
 
             <article class="ad-scene" data-scene="settlements-backhaul-readiness" data-audio-src="/assets/audio/animated-demo/track-c/track-c-scene-08-settlements-backhaul-readiness.mp3">
-              <div class="ad-copy"><span>Scene 8</span><h2>Settlements &amp; Backhaul Readiness</h2><p>Settlement holds, proof packets, factoring readiness, backhaul-ready assets, driver availability, and asset availability connect after delivery.</p><div class="ad-narration"><span>Narration</span><strong>BOF helps aggregators reduce payment friction and identify which assets are ready for the next opportunity.</strong></div></div>
-              <div class="ad-panel"><div class="ad-panel-head"><h3>Closeout and next-use view</h3><span>Post-trip readiness</span></div><div class="ad-ledger-grid"><article class="ad-ledger-card"><span>Settlement holds</span><strong data-count="84" data-count-prefix="$" data-count-suffix="K">0</strong><small>Waiting on proof</small></article><article class="ad-ledger-card"><span>Proof packets</span><strong data-count="31">0</strong><small>Ready for review</small></article><article class="ad-ledger-card"><span>Factoring readiness</span><strong data-count="88" data-count-suffix="%">0</strong><small>Packet completeness</small></article><article class="ad-ledger-card"><span>Backhaul assets</span><strong data-count="19">0</strong><small>Ready after delivery</small></article><article class="ad-ledger-card"><span>Drivers available</span><strong data-count="27">0</strong><small>Next-use candidates</small></article><article class="ad-ledger-card"><span>Assets available</span><strong data-count="22">0</strong><small>Document-ready units</small></article></div></div>
+              <div class="ad-copy"><span>Scene 8</span><h2>Proof Rules &amp; Backhaul Readiness</h2><p>Required documents and proof rules follow the selected carrier, driver, customer, and equipment record through delivery, settlement support, billing, and next-use review.</p><div class="ad-narration"><span>Narration</span><strong>Once BOF surfaces a readiness fit, the proof rules follow the record.</strong></div></div>
+              <div class="ad-panel"><div class="ad-panel-head"><h3>Proof packet follow-through</h3><span>Post-trip readiness</span></div><div class="ad-proof-strip"><article class="ad-proof-card"><span>Pickup proof</span><strong>BOL, pickup photos, seal photos</strong><small>Customer and commodity rules define the evidence required.</small></article><article class="ad-proof-card"><span>Delivery proof</span><strong>POD and lumper receipt</strong><small>Lumper receipt appears only when the customer/location rule requires it.</small></article><article class="ad-proof-card"><span>Closeout packet</span><strong>Settlement support and billing packet</strong><small>Proof status supports factoring, billing, and settlement review.</small></article></div><div class="ad-ledger-grid"><article class="ad-ledger-card"><span>Settlement holds</span><strong data-count="84" data-count-prefix="$" data-count-suffix="K">0</strong><small>Waiting on proof</small></article><article class="ad-ledger-card"><span>Proof packets</span><strong data-count="31">0</strong><small>Ready for review</small></article><article class="ad-ledger-card"><span>Backhaul assets</span><strong data-count="19">0</strong><small>Ready after delivery</small></article></div></div>
             </article>
 
             <article class="ad-scene" data-scene="executive-network-visibility" data-audio-src="/assets/audio/animated-demo/track-c/track-c-scene-09-executive-network-visibility.mp3">
@@ -1121,7 +1242,7 @@
 
       <section class="ad-script-guide" id="speaking-script" data-review-mode="presentation" data-audience="aggregator" aria-label="Speaking script and narration review">
         <div class="ad-script-head"><div><p class="eyebrow">Narration Review Mode</p><h2>Speaking Script</h2><p>Review the aggregator narration before adding voice playback. The script can be adjusted by audience without changing the animation.</p></div><div class="ad-segmented" aria-label="Narration mode"><button type="button" class="is-active" data-mode-option="presentation" aria-pressed="true">Presentation Mode</button><button type="button" data-mode-option="review" aria-pressed="false">Narration Review Mode</button></div></div>
-        <div class="ad-review-mode-panel"><div class="ad-segmented" aria-label="Audience script view"><button type="button" class="is-active" data-audience-option="aggregator" aria-pressed="true">Aggregator</button><button type="button" data-audience-option="network" aria-pressed="false">Carrier Network</button><button type="button" data-audience-option="fleet" aria-pressed="false">Founder / CEO</button></div><p class="ad-copy-status" data-audience-summary>Aggregator view emphasizes network readiness, backhaul capacity, claims exposure, and administrative follow-up across many participating fleets.</p><div class="ad-metrics-grid" aria-label="Speaking metrics"><article class="ad-metric"><span>Word count</span><strong data-total-words>0</strong></article><article class="ad-metric"><span>Estimated narration</span><strong data-total-speaking>0 sec</strong></article><article class="ad-metric"><span>Total demo duration</span><strong data-total-demo-duration>0 sec</strong></article><article class="ad-metric"><span>Current scene pace</span><strong data-current-pace>Good Pace</strong></article></div><div class="ad-audience-grid"><article class="ad-audience-card"><span>Aggregator</span><strong>Manage the network</strong><p>Focus on readiness, backhaul capacity, claims exposure, and administrative follow-up across many participating fleets.</p></article><article class="ad-audience-card"><span>Carrier Network</span><strong>Standardize readiness</strong><p>Focus on consistent carrier packets, protected relationship boundaries, and network-level visibility.</p></article><article class="ad-audience-card"><span>Founder / CEO</span><strong>Scale the business</strong><p>Focus on administrative leverage, settlement exposure, claims response, and executive visibility.</p></article></div><div class="ad-script-actions"><button type="button" data-copy-script>Copy Full Script</button><button type="button" data-copy-current-script>Copy Current Scene Script</button></div><p class="ad-copy-status" data-copy-status aria-live="polite"></p></div>
+        <div class="ad-review-mode-panel"><div class="ad-segmented" aria-label="Audience script view"><button type="button" class="is-active" data-audience-option="aggregator" aria-pressed="true">Aggregator</button><button type="button" data-audience-option="network" aria-pressed="false">Carrier Network</button><button type="button" data-audience-option="fleet" aria-pressed="false">Founder / CEO</button></div><p class="ad-copy-status" data-audience-summary>Aggregator view emphasizes roster rules, readiness-fit review, backhaul capacity, claims exposure, and administrative follow-up across many participating fleets.</p><div class="ad-metrics-grid" aria-label="Speaking metrics"><article class="ad-metric"><span>Word count</span><strong data-total-words>0</strong></article><article class="ad-metric"><span>Estimated narration</span><strong data-total-speaking>0 sec</strong></article><article class="ad-metric"><span>Total demo duration</span><strong data-total-demo-duration>0 sec</strong></article><article class="ad-metric"><span>Current scene pace</span><strong data-current-pace>Good Pace</strong></article></div><div class="ad-audience-grid"><article class="ad-audience-card"><span>Aggregator</span><strong>Manage the roster</strong><p>Focus on carrier-specific rules, driver readiness, customer requirements, proof packets, and best readiness fit.</p></article><article class="ad-audience-card"><span>Carrier Network</span><strong>Standardize readiness</strong><p>Focus on consistent carrier packets, protected relationship boundaries, and record-specific eligibility checks.</p></article><article class="ad-audience-card"><span>Founder / CEO</span><strong>Scale the business</strong><p>Focus on administrative leverage, settlement exposure, claims response, and executive visibility.</p></article></div><div class="ad-script-actions"><button type="button" data-copy-script>Copy Full Script</button><button type="button" data-copy-current-script>Copy Current Scene Script</button></div><p class="ad-copy-status" data-copy-status aria-live="polite"></p></div>
 
         <div class="ad-script-grid" data-script-copy-source>          <article class="ad-script-card" data-review-scene="aggregator-complexity" data-suggested-seconds="13" data-voiceover-aggregator="Aggregators grow by building carrier relationships. But every new carrier adds operational complexity across fleets, drivers, documents, claims, settlements, and customer workflows. BOF gives the network one place to see what is ready, what is blocked, and what needs administrative follow-up." data-voiceover-network="Carrier networks grow by adding participating operators. BOF helps the network see carrier records, driver readiness, proof files, claims, settlements, and customer workflow context without turning the platform into a marketplace." data-voiceover-fleet="Growth is useful only when the operating record keeps up. BOF gives founders and executives a clearer view of fleet readiness, documents, claims, settlements, and administrative pressure before complexity becomes invisible.">
             <h3>Scene 1: Aggregator Complexity</h3>
@@ -1129,34 +1250,34 @@
             <div class="ad-script-meta"><span data-word-count>0 words</span><span data-speaking-duration>0 sec</span><span data-pace-indicator>Good Pace</span><span>Suggested timing: 13 sec</span></div>
           </article>
 
-          <article class="ad-script-card" data-review-scene="fleet-network-view" data-suggested-seconds="12" data-voiceover-aggregator="BOF gives aggregators a network-level view across participating fleets. Fleet A may be ready, Fleet B may be at risk, Fleet C may be blocked, and Fleet D may be ready for review. The value is seeing the status and next action together." data-voiceover-network="BOF helps carrier networks compare readiness across participating fleets. Leaders can see trucks, drivers, fleet status, key issues, and the recommended administrative action before a record gets lost in email." data-voiceover-fleet="Executives need the network picture quickly. BOF shows which fleets are ready, which are at risk, and which are blocked so leadership can focus on the operational consequence.">
-            <h3>Scene 2: Fleet Network View</h3>
-            <dl><dt>On-screen narration</dt><dd>BOF gives aggregators a network-level view across participating fleets.</dd><dt>Full voiceover script</dt><dd data-voiceover-display contenteditable="true">BOF gives aggregators a network-level view across participating fleets. Fleet A may be ready, Fleet B may be at risk, Fleet C may be blocked, and Fleet D may be ready for review. The value is seeing the status and next action together.</dd><dt>Presenter note</dt><dd>Point to the statuses and explain that BOF turns scattered updates into a reviewable queue.</dd></dl>
-            <div class="ad-script-meta"><span data-word-count>0 words</span><span data-speaking-duration>0 sec</span><span data-pace-indicator>Good Pace</span><span>Suggested timing: 12 sec</span></div>
+          <article class="ad-script-card" data-review-scene="fleet-network-view" data-suggested-seconds="14" data-voiceover-aggregator="An aggregator may have carriers in the roster, but BOF does not treat that roster as one generic fleet. BOF checks the specific carrier, driver, equipment record, contract term, customer requirement, and proof packet before capacity is treated as usable." data-voiceover-network="Carrier networks need a roster view that respects each participant's rules. BOF shows which carriers are eligible, blocked, missing documents, waiting on customer approval, or eligible with conditions." data-voiceover-fleet="Executives need more than a list of available carriers. BOF shows the operating consequence of each carrier record so leadership can see usable capacity, not just roster count.">
+            <h3>Scene 2: Carrier Roster View</h3>
+            <dl><dt>On-screen narration</dt><dd>BOF does not treat the aggregator roster as one generic fleet.</dd><dt>Full voiceover script</dt><dd data-voiceover-display contenteditable="true">An aggregator may have carriers in the roster, but BOF does not treat that roster as one generic fleet. BOF checks the specific carrier, driver, equipment record, contract term, customer requirement, and proof packet before capacity is treated as usable.</dd><dt>Presenter note</dt><dd>Point to Carrier A through Carrier F and show how a carrier can be eligible, blocked, review-needed, missing documents, or customer approval needed.</dd></dl>
+            <div class="ad-script-meta"><span data-word-count>0 words</span><span data-speaking-duration>0 sec</span><span data-pace-indicator>Good Pace</span><span>Suggested timing: 14 sec</span></div>
           </article>
 
-          <article class="ad-script-card" data-review-scene="carrier-readiness" data-suggested-seconds="13" data-voiceover-aggregator="BOF helps identify which carriers are ready, which are at risk, and which require action before they can support new work. Insurance status, compliance score, documentation score, onboarding stage, and restricted carrier status become visible in one readiness view." data-voiceover-network="Carrier readiness depends on consistent evidence. BOF helps the network track insurance, compliance, documentation, onboarding stage, and restrictions before a participating carrier is treated as ready." data-voiceover-fleet="For leadership, carrier readiness is risk control. BOF shows where the network has usable capacity and where paperwork, insurance, or onboarding gaps need attention first.">
-            <h3>Scene 3: Carrier Readiness</h3>
-            <dl><dt>On-screen narration</dt><dd>BOF helps identify which carriers are ready, which are at risk, and which require action before they can support new work.</dd><dt>Full voiceover script</dt><dd data-voiceover-display contenteditable="true">BOF helps identify which carriers are ready, which are at risk, and which require action before they can support new work. Insurance status, compliance score, documentation score, onboarding stage, and restricted carrier status become visible in one readiness view.</dd><dt>Presenter note</dt><dd>Keep the boundary clear: readiness review, not freight placement.</dd></dl>
+          <article class="ad-script-card" data-review-scene="carrier-readiness" data-suggested-seconds="14" data-voiceover-aggregator="BOF checks each carrier's rule profile before capacity is treated as ready. Authority status, insurance limits, cargo coverage, lane eligibility, equipment type, safety status, open exceptions, customer-approved carrier status, and subcontract terms stay connected to that carrier record." data-voiceover-network="Carrier readiness depends on consistent evidence and carrier-specific rules. BOF helps the network review authority, insurance, cargo coverage, lane eligibility, safety posture, open exceptions, customer approval, and contract status." data-voiceover-fleet="For leadership, carrier readiness is risk control. BOF shows why one carrier is eligible, why another is blocked, and why another can move forward only after a condition is satisfied.">
+            <h3>Scene 3: Carrier Rule Profiles</h3>
+            <dl><dt>On-screen narration</dt><dd>BOF checks each carrier's rule profile before capacity is treated as ready.</dd><dt>Full voiceover script</dt><dd data-voiceover-display contenteditable="true">BOF checks each carrier's rule profile before capacity is treated as ready. Authority status, insurance limits, cargo coverage, lane eligibility, equipment type, safety status, open exceptions, customer-approved carrier status, and subcontract terms stay connected to that carrier record.</dd><dt>Presenter note</dt><dd>Keep the boundary clear: BOF surfaces readiness evidence and conditions, not freight placement.</dd></dl>
+            <div class="ad-script-meta"><span data-word-count>0 words</span><span data-speaking-duration>0 sec</span><span data-pace-indicator>Good Pace</span><span>Suggested timing: 14 sec</span></div>
+          </article>
+
+          <article class="ad-script-card" data-review-scene="driver-asset-readiness" data-suggested-seconds="13" data-voiceover-aggregator="A ready carrier does not automatically mean every driver is ready. BOF checks CDL status, medical card status, MVR status, DQF completeness, HOS availability, required training, packet readiness, and driver restrictions before the network relies on that driver record." data-voiceover-network="Driver readiness gives the carrier network a practical filter. BOF shows which drivers are ready, which are at risk, and which are blocked because a document, qualification, training item, or restriction needs attention." data-voiceover-fleet="Driver readiness is where roster scale can break down. BOF helps executives see the difference between carrier availability and driver-level readiness before the operation depends on the wrong record.">
+            <h3>Scene 4: Driver Readiness Rules</h3>
+            <dl><dt>On-screen narration</dt><dd>A ready carrier does not automatically mean every driver is ready.</dd><dt>Full voiceover script</dt><dd data-voiceover-display contenteditable="true">A ready carrier does not automatically mean every driver is ready. BOF checks CDL status, medical card status, MVR status, DQF completeness, HOS availability, required training, packet readiness, and driver restrictions before the network relies on that driver record.</dd><dt>Presenter note</dt><dd>Call out the difference between ready, at-risk, and blocked driver records.</dd></dl>
             <div class="ad-script-meta"><span data-word-count>0 words</span><span data-speaking-duration>0 sec</span><span data-pace-indicator>Good Pace</span><span>Suggested timing: 13 sec</span></div>
           </article>
 
-          <article class="ad-script-card" data-review-scene="driver-asset-readiness" data-suggested-seconds="12" data-voiceover-aggregator="BOF helps aggregators see which drivers and assets are ready before commitments are made. CDL, medical card, MVR, DQ file, tax forms, equipment readiness, and owner-operator packet status can be reviewed before the network depends on the record." data-voiceover-network="Driver and asset readiness gives the network a practical operating filter. BOF shows which drivers and equipment records are complete, at risk, or blocked by missing evidence." data-voiceover-fleet="Commitments get risky when driver and equipment records are unclear. BOF helps executives see readiness before the network promises what the back office cannot support.">
-            <h3>Scene 4: Driver & Asset Readiness</h3>
-            <dl><dt>On-screen narration</dt><dd>BOF helps aggregators see which drivers and assets are ready before commitments are made.</dd><dt>Full voiceover script</dt><dd data-voiceover-display contenteditable="true">BOF helps aggregators see which drivers and assets are ready before commitments are made. CDL, medical card, MVR, DQ file, tax forms, equipment readiness, and owner-operator packet status can be reviewed before the network depends on the record.</dd><dt>Presenter note</dt><dd>Emphasize that readiness prevents avoidable surprises.</dd></dl>
-            <div class="ad-script-meta"><span data-word-count>0 words</span><span data-speaking-duration>0 sec</span><span data-pace-indicator>Good Pace</span><span>Suggested timing: 12 sec</span></div>
-          </article>
-
-          <article class="ad-script-card" data-review-scene="capacity-intelligence" data-suggested-seconds="12" data-voiceover-aggregator="BOF does not simply show available trucks. BOF shows operationally ready capacity by ready assets, at-risk assets, backhaul-ready assets, region, and equipment type so aggregators can understand capacity quality, not just quantity." data-voiceover-network="Capacity intelligence helps carrier networks compare availability with readiness. The network can see what is ready, what is at risk, and where backhaul-ready assets exist by region and equipment type." data-voiceover-fleet="A truck count is not enough for leadership. BOF helps executives understand whether available capacity is compliant, documented, and ready to support the next operating decision.">
-            <h3>Scene 5: Capacity Intelligence</h3>
-            <dl><dt>On-screen narration</dt><dd>BOF does not simply show available trucks. BOF shows operationally ready capacity.</dd><dt>Full voiceover script</dt><dd data-voiceover-display contenteditable="true">BOF does not simply show available trucks. BOF shows operationally ready capacity by ready assets, at-risk assets, backhaul-ready assets, region, and equipment type so aggregators can understand capacity quality, not just quantity.</dd><dt>Presenter note</dt><dd>This is the central value distinction: ready capacity, not a load board.</dd></dl>
-            <div class="ad-script-meta"><span data-word-count>0 words</span><span data-speaking-duration>0 sec</span><span data-pace-indicator>Good Pace</span><span>Suggested timing: 12 sec</span></div>
+          <article class="ad-script-card" data-review-scene="capacity-intelligence" data-suggested-seconds="15" data-voiceover-aggregator="BOF turns available carriers into a readiness-fit view. The platform checks equipment type, trailer availability, inspection readiness, commodity restrictions, customer proof requirements, insurance requirements, customer approval, and contract terms. BOF surfaces the best readiness fit without acting as a broker, dispatcher, or marketplace." data-voiceover-network="Capacity intelligence helps carrier networks compare availability with rule-based readiness. The network can see eligible capacity, blocked capacity, missing documents, customer approval needed, and eligible-with-conditions records before follow-up begins." data-voiceover-fleet="A roster count is not enough for leadership. BOF shows whether the specific carrier, driver, equipment, customer, and proof combination is ready enough to support an operating decision.">
+            <h3>Scene 5: Roster Rules: From Available Carriers to Usable Capacity</h3>
+            <dl><dt>On-screen narration</dt><dd>BOF surfaces the best readiness fit without acting as a broker, dispatcher, or marketplace.</dd><dt>Full voiceover script</dt><dd data-voiceover-display contenteditable="true">BOF turns available carriers into a readiness-fit view. The platform checks equipment type, trailer availability, inspection readiness, commodity restrictions, customer proof requirements, insurance requirements, customer approval, and contract terms. BOF surfaces the best readiness fit without acting as a broker, dispatcher, or marketplace.</dd><dt>Presenter note</dt><dd>This is the central value distinction: usable capacity, not a load board or dispatch decision.</dd></dl>
+            <div class="ad-script-meta"><span data-word-count>0 words</span><span data-speaking-duration>0 sec</span><span data-pace-indicator>Good Pace</span><span>Suggested timing: 15 sec</span></div>
           </article>
 
           <article class="ad-script-card" data-review-scene="multi-carrier-trip-intelligence" data-suggested-seconds="13" data-voiceover-aggregator="Across a carrier network, the issue is not only movement. The issue is visibility into risk while work is underway. BOF surfaces weather delay, fuel anomaly, seal verification issue, route exception, dwell risk, and ETA confidence in one operating view." data-voiceover-network="Network operators need to see risk signals across carriers. BOF helps organize trip-level events so follow-up is visible while the work is still active." data-voiceover-fleet="Executives should not learn about network risk after the fact. BOF turns weather, fuel, seal, dwell, route, and ETA signals into an operating view leadership can understand.">
             <h3>Scene 6: Multi-Carrier Trip Intelligence</h3>
             <dl><dt>On-screen narration</dt><dd>Across a carrier network, the issue is not only movement. The issue is visibility into risk while work is underway.</dd><dt>Full voiceover script</dt><dd data-voiceover-display contenteditable="true">Across a carrier network, the issue is not only movement. The issue is visibility into risk while work is underway. BOF surfaces weather delay, fuel anomaly, seal verification issue, route exception, dwell risk, and ETA confidence in one operating view.</dd><dt>Presenter note</dt><dd>Say clearly that BOF monitors visibility and follow-up; it does not dispatch.</dd></dl>
-            <div class="ad-script-meta"><span data-word-count>0 words</span><span data-speaking-duration>0 sec</span><span data-pace-indicator>Good Pace</span><span>Suggested timing: 13 sec</span></div>
+            <div class="ad-script-meta"><span data-word-count>0 words</span><span data-speaking-duration>0 sec</span><span data-pace-indicator>Good Pace</span><span>Suggested timing: 14 sec</span></div>
           </article>
 
           <article class="ad-script-card" data-review-scene="claims-proof-exceptions" data-suggested-seconds="13" data-voiceover-aggregator="When something goes wrong, BOF helps organize evidence, documentation, notifications, and operational records. Cargo claim, seal breach, damage photo, police-report details, insurance notification, and claim packet status stay connected." data-voiceover-network="Claims and proof exceptions need fast, consistent record handling. BOF helps the network preserve evidence, organize documentation, track notifications, and prepare the claim packet for review." data-voiceover-fleet="Claims create financial, insurance, and relationship risk. BOF helps leadership see what evidence exists, what is missing, and who owns the next administrative step.">
@@ -1165,9 +1286,9 @@
             <div class="ad-script-meta"><span data-word-count>0 words</span><span data-speaking-duration>0 sec</span><span data-pace-indicator>Good Pace</span><span>Suggested timing: 13 sec</span></div>
           </article>
 
-          <article class="ad-script-card" data-review-scene="settlements-backhaul-readiness" data-suggested-seconds="13" data-voiceover-aggregator="BOF helps aggregators reduce payment friction and identify which assets are ready for the next opportunity. Settlement holds, proof packets, factoring readiness, backhaul-ready assets, driver availability, and asset availability stay visible after delivery." data-voiceover-network="For a carrier network, closeout and next-use readiness belong together. BOF helps show which proof packets can move, which holds block payment, and which assets are backhaul-ready." data-voiceover-fleet="Payment friction and unused capacity both hurt scale. BOF gives executives a way to see settlement exposure and next-use readiness in the same operating story.">
-            <h3>Scene 8: Settlements & Backhaul Readiness</h3>
-            <dl><dt>On-screen narration</dt><dd>BOF helps aggregators reduce payment friction and identify which assets are ready for the next opportunity.</dd><dt>Full voiceover script</dt><dd data-voiceover-display contenteditable="true">BOF helps aggregators reduce payment friction and identify which assets are ready for the next opportunity. Settlement holds, proof packets, factoring readiness, backhaul-ready assets, driver availability, and asset availability stay visible after delivery.</dd><dt>Presenter note</dt><dd>Use this scene to bridge post-trip administration and the next operating review.</dd></dl>
+          <article class="ad-script-card" data-review-scene="settlements-backhaul-readiness" data-suggested-seconds="14" data-voiceover-aggregator="Once BOF surfaces a readiness fit, the proof rules follow the carrier, driver, customer, and equipment record. Rate confirmation, BOL, pickup photos, seal photos, POD, lumper receipt when required, settlement support document, and billing packet stay tied to that operating record." data-voiceover-network="For a carrier network, proof rules and closeout readiness belong together. BOF helps show which records need BOLs, photos, seal proof, PODs, lumper receipts, settlement support, and billing packet follow-through." data-voiceover-fleet="Payment friction and unused capacity both hurt scale. BOF gives executives a way to see proof status, settlement exposure, billing readiness, and next-use readiness in the same operating story.">
+            <h3>Scene 8: Proof Rules & Backhaul Readiness</h3>
+            <dl><dt>On-screen narration</dt><dd>Once BOF surfaces a readiness fit, the proof rules follow the record.</dd><dt>Full voiceover script</dt><dd data-voiceover-display contenteditable="true">Once BOF surfaces a readiness fit, the proof rules follow the carrier, driver, customer, and equipment record. Rate confirmation, BOL, pickup photos, seal photos, POD, lumper receipt when required, settlement support document, and billing packet stay tied to that operating record.</dd><dt>Presenter note</dt><dd>Use this scene to connect readiness-fit review to proof, settlement support, billing, and next-use readiness.</dd></dl>
             <div class="ad-script-meta"><span data-word-count>0 words</span><span data-speaking-duration>0 sec</span><span data-pace-indicator>Good Pace</span><span>Suggested timing: 13 sec</span></div>
           </article>
 
