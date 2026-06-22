@@ -162,7 +162,8 @@
       hasGarnishment: true,
       summary: "Driver record with complete DQF, HR, settlement, emergency contact, and payroll withholding surfaces.",
       exception: "No active driver blocker; settlement documents are ready for owner review.",
-      photo: "/assets/images/profiles/drivers/driver-ref-007.jpg?v=2"
+      initials: "MR",
+      photo: ""
     },
     "drv-008": {
       id: "DRV-008",
@@ -1267,8 +1268,26 @@
     ].join("");
   }
 
+  function driverInitials(driver) {
+    if (driver.initials) return driver.initials;
+    return String(driver.name || "BOF Driver")
+      .split(/\s+/)
+      .filter(Boolean)
+      .slice(0, 2)
+      .map(function (part) { return part.charAt(0); })
+      .join("")
+      .toUpperCase();
+  }
+
+  function driverPhotoHtml(driver, className) {
+    if (driver.photo) {
+      return '<img class="' + esc(className) + '" src="' + esc(driver.photo) + '" alt="' + esc(driver.name) + ' profile photo">';
+    }
+    return '<div class="' + esc(className) + ' driver-initials-photo" role="img" aria-label="' + esc(driver.name) + ' profile initials">' + esc(driverInitials(driver)) + '</div>';
+  }
+
   function driverCardHtml(driver) {
-    return '<article class="route-record-card driver-route-card"><img src="' + esc(driver.photo) + '" alt="' + esc(driver.name) + ' profile photo"><div><span>' + esc(driver.id) + '</span><h2>' + esc(driver.name) + '</h2><p>' + esc(driver.summary) + '</p></div><dl><div><dt>Load</dt><dd>' + esc(driver.load) + '</dd></div><div><dt>Route</dt><dd>' + esc(driver.route) + '</dd></div><div><dt>State</dt><dd><span class="mini-status ' + statusClass(driver.state) + '">' + esc(driver.state) + '</span></dd></div><div><dt>DQF Readiness</dt><dd>' + dqfScore(driver) + '%</dd></div><div><dt>Priority</dt><dd>' + esc(driver.priority) + '</dd></div></dl><a href="/interactive-demo/drivers/' + esc(driver.id.toLowerCase()) + '/">Open driver page</a></article>';
+    return '<article class="route-record-card driver-route-card">' + driverPhotoHtml(driver, "driver-route-photo") + '<div><span>' + esc(driver.id) + '</span><h2>' + esc(driver.name) + '</h2><p>' + esc(driver.summary) + '</p></div><dl><div><dt>Load</dt><dd>' + esc(driver.load) + '</dd></div><div><dt>Route</dt><dd>' + esc(driver.route) + '</dd></div><div><dt>State</dt><dd><span class="mini-status ' + statusClass(driver.state) + '">' + esc(driver.state) + '</span></dd></div><div><dt>DQF Readiness</dt><dd>' + dqfScore(driver) + '%</dd></div><div><dt>Priority</dt><dd>' + esc(driver.priority) + '</dd></div></dl><a href="/interactive-demo/drivers/' + esc(driver.id.toLowerCase()) + '/">Open driver page</a></article>';
   }
 
   function driversIndex() {
@@ -1287,7 +1306,7 @@
     }).join("");
     shell(driver.id + " Driver File", "Driver record", [
       '<section class="driver-record-hero">',
-      '  <img class="driver-record-photo" src="' + esc(driver.photo) + '" alt="' + esc(driver.name) + ' profile photo">',
+      '  ' + driverPhotoHtml(driver, "driver-record-photo"),
       '  <div><span class="mini-status ' + statusClass(driver.state) + '">' + esc(driver.state) + '</span><h2>' + esc(driver.name) + '</h2><p>' + esc(driver.summary) + '</p></div>',
       '  <dl><div><dt>Load</dt><dd>' + esc(driver.load) + '</dd></div><div><dt>Route</dt><dd>' + esc(driver.route) + '</dd></div><div><dt>Owner</dt><dd>' + esc(driver.owner) + '</dd></div><div><dt>DQF readiness</dt><dd>' + dqfScore(driver) + '%</dd></div><div><dt>Priority reason</dt><dd>' + esc(driver.exception) + '</dd></div></dl>',
       '</section>',
@@ -1447,4 +1466,3 @@
     genericPage(currentPath());
   }
 })();
-

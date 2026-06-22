@@ -6358,10 +6358,12 @@ td { font-weight: 750; }
 .route-table a:focus-visible {
   text-decoration: underline;
 }
-.driver-route-card img {
+.driver-route-card img,
+.driver-route-card .driver-route-photo {
   align-self: start;
   aspect-ratio: 1 / 1;
   background: #fff;
+  box-sizing: border-box;
   border: 1px solid var(--app-line);
   border-radius: 5px;
   display: block;
@@ -6374,6 +6376,7 @@ td { font-weight: 750; }
 }
 
 .product-demo-body .driver-route-card img,
+.product-demo-body .driver-route-card .driver-route-photo,
 .product-demo-body .driver-record-photo,
 .product-demo-body .profile-avatar img {
   object-fit: cover;
@@ -6471,6 +6474,7 @@ td { font-weight: 750; }
   background: #fff;
   border: 1px solid var(--app-line);
   border-radius: 5px;
+  box-sizing: border-box;
   display: block;
   flex: 0 0 120px;
   height: 120px;
@@ -6478,6 +6482,23 @@ td { font-weight: 750; }
   object-fit: cover;
   object-position: center top;
   width: 120px;
+}
+.driver-initials-photo {
+  align-items: center;
+  background:
+    radial-gradient(circle at 32% 22%, rgba(255, 255, 255, 0.9), transparent 32%),
+    linear-gradient(145deg, #0e6f5c, #17443b 62%, #102b27);
+  color: #fff;
+  display: inline-flex;
+  font-size: 1.45rem;
+  font-weight: 900;
+  justify-content: center;
+  letter-spacing: 0;
+  line-height: 1;
+  text-align: center;
+}
+.driver-route-card .driver-initials-photo {
+  font-size: 1.15rem;
 }
 .driver-document-viewer {
   background: #f8fbfd;
