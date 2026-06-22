@@ -163,7 +163,7 @@
       hasGarnishment: true,
       summary: "Driver record with complete DQF, HR, settlement, emergency contact, and payroll withholding surfaces.",
       exception: "No active driver blocker; settlement documents are ready for owner review.",
-      photo: "/assets/images/profiles/drivers/driver-ref-007.jpg"
+      photo: "/assets/images/profiles/drivers/driver-ref-010.jpg"
     },
     "drv-008": {
       id: "DRV-008",
@@ -211,7 +211,7 @@
       hasGarnishment: false,
       summary: "Driver file is complete with DQF, HR, emergency, bank, and compliance categories represented.",
       exception: "No active document blocker.",
-      photo: "/assets/images/profiles/drivers/driver-ref-010.jpg"
+      photo: "/assets/images/profiles/drivers/driver-ref-007.jpg"
     },
     "drv-011": {
       id: "DRV-011",
@@ -1296,13 +1296,15 @@
   function driversIndex() {
     var cards = Object.keys(drivers).map(function (key) { return driverCardHtml(drivers[key]); }).join("");
     shell("Driver Records", "Drivers", [
-      '<section class="route-grid">',
+      '<section class="driver-vault-intake-row" aria-label="BOF Vault document intake workbench">',
       '  <article class="route-record-card driver-vault-intake-card">',
       '    <span>BOF Vault</span><h2>Document intake workbench</h2>',
       '    <p>Simulate how new driver, carrier, load, and settlement documents enter the Vault before they update readiness.</p>',
       '    <dl><div><dt>Workflow</dt><dd>Classify, verify, route, resolve, update readiness</dd></div><div><dt>Boundary</dt><dd>Review-only simulation; no file is transmitted or stored.</dd></div></dl>',
       '    <a href="/interactive-demo/drivers/document-intake/">Open document intake</a>',
       '  </article>',
+      '</section>',
+      '<section class="route-grid driver-record-grid" aria-label="Driver record cards">',
       cards,
       '</section>'
     ].join(""), "Open fleet driver records with photos, DQF readiness, ready/watch/hold state, dispatch consequence, and complete document packets.");
