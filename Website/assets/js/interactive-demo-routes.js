@@ -1284,9 +1284,9 @@
 
   function driverPhotoHtml(driver, className) {
     if (driver.photo) {
-      return '<img class="' + esc(className) + '" src="' + esc(driver.photo) + '" alt="' + esc(driver.name) + ' profile photo">';
+      return '<span class="' + esc(className) + ' driver-photo-frame"><img class="driver-photo-image" src="' + esc(driver.photo) + '" alt="' + esc(driver.name) + ' profile photo"></span>';
     }
-    return '<div class="' + esc(className) + ' driver-initials-photo" role="img" aria-label="' + esc(driver.name) + ' profile initials">' + esc(driverInitials(driver)) + '</div>';
+    return '<span class="' + esc(className) + ' driver-photo-frame driver-initials-photo" role="img" aria-label="' + esc(driver.name) + ' profile initials">' + esc(driverInitials(driver)) + '</span>';
   }
 
   function driverCardHtml(driver) {

@@ -741,12 +741,14 @@ button.route-chip:focus-visible {
   min-height: 64px;
 }
 .driver-face-strip img {
-  aspect-ratio: 1;
+  aspect-ratio: 1 / 1;
   border: 3px solid #fff;
   border-radius: 50%;
   box-shadow: 0 10px 24px rgba(15, 23, 42, 0.18);
   height: 64px;
   object-fit: cover;
+  object-position: center top;
+  overflow: hidden;
   width: 64px;
 }
 .driver-face-strip img + img { margin-left: -14px; }
@@ -2416,11 +2418,10 @@ button.route-chip:focus-visible {
 .product-demo-body .profile-avatar img {
   aspect-ratio: 1 / 1;
   display: block;
-  flex: 0 0 100%;
   height: 100%;
   max-width: none;
-  min-height: 100%;
-  min-width: 100%;
+  min-height: 0;
+  min-width: 0;
   object-fit: cover;
   object-position: center top;
   width: 100%;
@@ -6358,7 +6359,6 @@ td { font-weight: 750; }
 .route-table a:focus-visible {
   text-decoration: underline;
 }
-.driver-route-card img,
 .driver-route-card .driver-route-photo {
   align-self: start;
   aspect-ratio: 1 / 1;
@@ -6370,17 +6370,18 @@ td { font-weight: 750; }
   flex: 0 0 92px;
   height: 92px;
   max-width: none;
-  object-fit: cover;
-  object-position: center top;
+  overflow: hidden;
   width: 92px;
 }
 
-.product-demo-body .driver-route-card img,
-.product-demo-body .driver-route-card .driver-route-photo,
-.product-demo-body .driver-record-photo,
+.product-demo-body .driver-photo-frame .driver-photo-image,
 .product-demo-body .profile-avatar img {
+  display: block;
+  height: 100%;
+  max-width: none;
   object-fit: cover;
   object-position: center top;
+  width: 100%;
 }
 
 .route-table-wrap {
@@ -6751,8 +6752,7 @@ td { font-weight: 750; }
   flex: 0 0 120px;
   height: 120px;
   max-width: none;
-  object-fit: cover;
-  object-position: center top;
+  overflow: hidden;
   width: 120px;
 }
 .driver-initials-photo {
@@ -6771,6 +6771,9 @@ td { font-weight: 750; }
 }
 .driver-route-card .driver-initials-photo {
   font-size: 1.15rem;
+}
+.driver-photo-frame.driver-initials-photo {
+  display: inline-flex;
 }
 .driver-document-viewer {
   background: #f8fbfd;
