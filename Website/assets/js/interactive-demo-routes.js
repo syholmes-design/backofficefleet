@@ -162,8 +162,7 @@
       hasGarnishment: true,
       summary: "Driver record with complete DQF, HR, settlement, emergency contact, and payroll withholding surfaces.",
       exception: "No active driver blocker; settlement documents are ready for owner review.",
-      initials: "MR",
-      photo: ""
+      photo: "/assets/images/profiles/optimized/driver-png.webp"
     },
     "drv-008": {
       id: "DRV-008",
