@@ -634,5 +634,564 @@
       "readinessEffect": "Carrier packet remains Ready for network visibility.",
       "reviewStatus": "No review required"
     }
+  ],
+  "aggregators": [
+    {
+      "id": "AGG-001",
+      "name": "Midwest Carrier Network",
+      "status": "Active",
+      "carrierCount": 4,
+      "operatingUnitCount": 5,
+      "driverCount": 12,
+      "readinessStatus": "At Risk",
+      "primaryException": "Five drivers have blocked or unresolved primary packet issues."
+    }
+  ],
+  "carriers": [
+    {
+      "id": "CAR-001",
+      "name": "Delta Advanced Trucking",
+      "aggregatorId": "AGG-001",
+      "readinessStatus": "Ready",
+      "driverCount": 4,
+      "primaryException": "No active carrier-level exception."
+    },
+    {
+      "id": "CAR-002",
+      "name": "ABC Trucking LLC",
+      "aggregatorId": "AGG-001",
+      "readinessStatus": "At Risk",
+      "driverCount": 3,
+      "primaryException": "Medical certificate and application review items open."
+    },
+    {
+      "id": "CAR-003",
+      "name": "North Coast Logistics",
+      "aggregatorId": "AGG-001",
+      "readinessStatus": "Needs Review",
+      "driverCount": 3,
+      "primaryException": "Owner-operator insurance and MVR review items open."
+    },
+    {
+      "id": "CAR-004",
+      "name": "Buckeye Refrigerated Transport",
+      "aggregatorId": "AGG-001",
+      "readinessStatus": "Blocked",
+      "driverCount": 2,
+      "primaryException": "Expired medical certificate blocks a refrigerated driver."
+    }
+  ],
+  "operatingUnits": [
+    {
+      "id": "UNIT-001",
+      "name": "Cleveland Refrigerated Division",
+      "aggregatorId": "AGG-001",
+      "carrierId": "CAR-001",
+      "readinessStatus": "Ready",
+      "driverCount": 3,
+      "primaryException": "No active unit-level blocker."
+    },
+    {
+      "id": "UNIT-002",
+      "name": "Columbus Dry Van Division",
+      "aggregatorId": "AGG-001",
+      "carrierId": "CAR-001",
+      "readinessStatus": "At Risk",
+      "driverCount": 2,
+      "primaryException": "One driver needs POD support review before next assignment."
+    },
+    {
+      "id": "UNIT-003",
+      "name": "Owner-Operator Group",
+      "aggregatorId": "AGG-001",
+      "carrierId": "CAR-003",
+      "readinessStatus": "Needs Review",
+      "driverCount": 3,
+      "primaryException": "Insurance and W-9 packet review required."
+    },
+    {
+      "id": "UNIT-004",
+      "name": "Regional Dedicated Fleet",
+      "aggregatorId": "AGG-001",
+      "carrierId": "CAR-002",
+      "readinessStatus": "Ready",
+      "driverCount": 2,
+      "primaryException": "No active unit-level blocker."
+    },
+    {
+      "id": "UNIT-005",
+      "name": "Long Haul Compliance Pool",
+      "aggregatorId": "AGG-001",
+      "carrierId": "CAR-004",
+      "readinessStatus": "Blocked",
+      "driverCount": 2,
+      "primaryException": "Expired medical certificate and incomplete clearinghouse evidence."
+    }
+  ],
+  "drivers": [
+    {
+      "id": "DRV-001",
+      "name": "John Carter",
+      "canonicalStatus": "Active",
+      "homeBase": "Cleveland, OH"
+    },
+    {
+      "id": "DRV-002",
+      "name": "Maria Lopez",
+      "canonicalStatus": "Active",
+      "homeBase": "Columbus, OH"
+    },
+    {
+      "id": "DRV-003",
+      "name": "Carlos Martinez",
+      "canonicalStatus": "Active",
+      "homeBase": "Toledo, OH"
+    },
+    {
+      "id": "DRV-004",
+      "name": "Mara Chen",
+      "canonicalStatus": "Active",
+      "homeBase": "Cleveland, OH"
+    },
+    {
+      "id": "DRV-005",
+      "name": "Marcus Reed",
+      "canonicalStatus": "Active",
+      "homeBase": "Dayton, OH"
+    },
+    {
+      "id": "DRV-006",
+      "name": "Priya Patel",
+      "canonicalStatus": "Active",
+      "homeBase": "Akron, OH"
+    },
+    {
+      "id": "DRV-007",
+      "name": "Daniel Kim",
+      "canonicalStatus": "Active",
+      "homeBase": "Cincinnati, OH"
+    },
+    {
+      "id": "DRV-008",
+      "name": "Olivia Lee",
+      "canonicalStatus": "Applicant",
+      "homeBase": "Columbus, OH"
+    },
+    {
+      "id": "DRV-009",
+      "name": "Frank Miller",
+      "canonicalStatus": "Active",
+      "homeBase": "Cleveland, OH"
+    },
+    {
+      "id": "DRV-010",
+      "name": "Emma Brown",
+      "canonicalStatus": "Active",
+      "homeBase": "Youngstown, OH"
+    },
+    {
+      "id": "DRV-011",
+      "name": "Noah Wilson",
+      "canonicalStatus": "Inactive",
+      "homeBase": "Canton, OH"
+    },
+    {
+      "id": "DRV-012",
+      "name": "Amir Khan",
+      "canonicalStatus": "Pending",
+      "homeBase": "Lima, OH"
+    }
+  ],
+  "driverAffiliations": [
+    {
+      "id": "AFF-001",
+      "aggregatorId": "AGG-001",
+      "carrierId": "CAR-001",
+      "operatingUnitId": "UNIT-001",
+      "driverId": "DRV-001",
+      "driverType": "company driver",
+      "status": "active",
+      "documentPacketStatus": "Complete",
+      "readinessStatus": "Ready",
+      "primaryException": "None"
+    },
+    {
+      "id": "AFF-002",
+      "aggregatorId": "AGG-001",
+      "carrierId": "CAR-001",
+      "operatingUnitId": "UNIT-002",
+      "driverId": "DRV-002",
+      "driverType": "company driver",
+      "status": "active",
+      "documentPacketStatus": "Medical card review",
+      "readinessStatus": "At Risk",
+      "primaryException": "Medical certificate needs human verification."
+    },
+    {
+      "id": "AFF-003",
+      "aggregatorId": "AGG-001",
+      "carrierId": "CAR-002",
+      "operatingUnitId": "UNIT-004",
+      "driverId": "DRV-003",
+      "driverType": "leased driver",
+      "status": "active",
+      "documentPacketStatus": "MVR mismatch",
+      "readinessStatus": "Needs Review",
+      "primaryException": "MVR matched to wrong driver name."
+    },
+    {
+      "id": "AFF-004",
+      "aggregatorId": "AGG-001",
+      "carrierId": "CAR-004",
+      "operatingUnitId": "UNIT-005",
+      "driverId": "DRV-004",
+      "driverType": "company driver",
+      "status": "active",
+      "documentPacketStatus": "Expired medical certificate",
+      "readinessStatus": "Blocked",
+      "primaryException": "Medical certificate expired."
+    },
+    {
+      "id": "AFF-005",
+      "aggregatorId": "AGG-001",
+      "carrierId": "CAR-003",
+      "operatingUnitId": "UNIT-003",
+      "driverId": "DRV-005",
+      "driverType": "owner-operator",
+      "status": "active",
+      "documentPacketStatus": "Insurance review",
+      "readinessStatus": "Needs Review",
+      "primaryException": "Insurance certificate needs producer verification."
+    },
+    {
+      "id": "AFF-006",
+      "aggregatorId": "AGG-001",
+      "carrierId": "CAR-003",
+      "operatingUnitId": "UNIT-003",
+      "driverId": "DRV-006",
+      "driverType": "contractor",
+      "status": "active",
+      "documentPacketStatus": "W-9 missing",
+      "readinessStatus": "At Risk",
+      "primaryException": "Settlement support setup missing W-9."
+    },
+    {
+      "id": "AFF-007",
+      "aggregatorId": "AGG-001",
+      "carrierId": "CAR-001",
+      "operatingUnitId": "UNIT-001",
+      "driverId": "DRV-007",
+      "driverType": "company driver",
+      "status": "active",
+      "documentPacketStatus": "Complete",
+      "readinessStatus": "Ready",
+      "primaryException": "None"
+    },
+    {
+      "id": "AFF-008",
+      "aggregatorId": "AGG-001",
+      "carrierId": "CAR-002",
+      "operatingUnitId": "UNIT-004",
+      "driverId": "DRV-008",
+      "driverType": "applicant",
+      "status": "active",
+      "documentPacketStatus": "Application incomplete",
+      "readinessStatus": "Blocked",
+      "primaryException": "Employment application and road test certificate missing."
+    },
+    {
+      "id": "AFF-009",
+      "aggregatorId": "AGG-001",
+      "carrierId": "CAR-001",
+      "operatingUnitId": "UNIT-002",
+      "driverId": "DRV-009",
+      "driverType": "leased driver",
+      "status": "active",
+      "documentPacketStatus": "POD support watch",
+      "readinessStatus": "At Risk",
+      "primaryException": "Prior delivery POD support needs review."
+    },
+    {
+      "id": "AFF-010",
+      "aggregatorId": "AGG-001",
+      "carrierId": "CAR-004",
+      "operatingUnitId": "UNIT-005",
+      "driverId": "DRV-010",
+      "driverType": "company driver",
+      "status": "active",
+      "documentPacketStatus": "Complete",
+      "readinessStatus": "Ready",
+      "primaryException": "None"
+    },
+    {
+      "id": "AFF-011",
+      "aggregatorId": "AGG-001",
+      "carrierId": "CAR-003",
+      "operatingUnitId": "UNIT-003",
+      "driverId": "DRV-011",
+      "driverType": "inactive/pending driver",
+      "status": "inactive",
+      "documentPacketStatus": "Inactive archive",
+      "readinessStatus": "Needs Review",
+      "primaryException": "Inactive driver should not affect active capacity."
+    },
+    {
+      "id": "AFF-012",
+      "aggregatorId": "AGG-001",
+      "carrierId": "CAR-002",
+      "operatingUnitId": "UNIT-004",
+      "driverId": "DRV-012",
+      "driverType": "inactive/pending driver",
+      "status": "pending",
+      "documentPacketStatus": "Clearinghouse proof pending",
+      "readinessStatus": "Blocked",
+      "primaryException": "Clearinghouse query proof missing."
+    }
+  ],
+  "driverDocumentPackets": [
+    {
+      "id": "PKT-001",
+      "aggregatorId": "AGG-001",
+      "carrierId": "CAR-001",
+      "driverId": "DRV-001",
+      "requiredDocuments": ["CDL", "Medical Examiner Certificate", "MVR / CDLIS MVR", "Clearinghouse Query Proof"],
+      "missingDocuments": [],
+      "expiredDocuments": [],
+      "documentsNeedingHumanReview": [],
+      "readinessResult": "Ready"
+    },
+    {
+      "id": "PKT-002",
+      "aggregatorId": "AGG-001",
+      "carrierId": "CAR-001",
+      "driverId": "DRV-002",
+      "requiredDocuments": ["CDL", "Medical Examiner Certificate", "MVR / CDLIS MVR", "Clearinghouse Query Proof"],
+      "missingDocuments": [],
+      "expiredDocuments": [],
+      "documentsNeedingHumanReview": ["Medical Examiner Certificate"],
+      "readinessResult": "At Risk"
+    },
+    {
+      "id": "PKT-003",
+      "aggregatorId": "AGG-001",
+      "carrierId": "CAR-002",
+      "driverId": "DRV-003",
+      "requiredDocuments": ["CDL", "Medical Examiner Certificate", "MVR / CDLIS MVR", "Road Test Certificate"],
+      "missingDocuments": [],
+      "expiredDocuments": [],
+      "documentsNeedingHumanReview": ["MVR / CDLIS MVR"],
+      "readinessResult": "Needs Review"
+    },
+    {
+      "id": "PKT-004",
+      "aggregatorId": "AGG-001",
+      "carrierId": "CAR-004",
+      "driverId": "DRV-004",
+      "requiredDocuments": ["CDL", "Medical Examiner Certificate", "MVR / CDLIS MVR", "Clearinghouse Query Proof"],
+      "missingDocuments": [],
+      "expiredDocuments": ["Medical Examiner Certificate"],
+      "documentsNeedingHumanReview": [],
+      "readinessResult": "Blocked"
+    },
+    {
+      "id": "PKT-005",
+      "aggregatorId": "AGG-001",
+      "carrierId": "CAR-003",
+      "driverId": "DRV-005",
+      "requiredDocuments": ["CDL", "Medical Examiner Certificate", "Insurance Certificate", "W-9"],
+      "missingDocuments": [],
+      "expiredDocuments": [],
+      "documentsNeedingHumanReview": ["Insurance Certificate"],
+      "readinessResult": "Needs Review"
+    },
+    {
+      "id": "PKT-006",
+      "aggregatorId": "AGG-001",
+      "carrierId": "CAR-003",
+      "driverId": "DRV-006",
+      "requiredDocuments": ["CDL", "Medical Examiner Certificate", "W-9", "Settlement Support Document"],
+      "missingDocuments": ["W-9"],
+      "expiredDocuments": [],
+      "documentsNeedingHumanReview": [],
+      "readinessResult": "At Risk"
+    },
+    {
+      "id": "PKT-007",
+      "aggregatorId": "AGG-001",
+      "carrierId": "CAR-001",
+      "driverId": "DRV-007",
+      "requiredDocuments": ["CDL", "Medical Examiner Certificate", "MVR / CDLIS MVR", "Clearinghouse Query Proof"],
+      "missingDocuments": [],
+      "expiredDocuments": [],
+      "documentsNeedingHumanReview": [],
+      "readinessResult": "Ready"
+    },
+    {
+      "id": "PKT-008",
+      "aggregatorId": "AGG-001",
+      "carrierId": "CAR-002",
+      "driverId": "DRV-008",
+      "requiredDocuments": ["Employment Application", "Road Test Certificate", "Medical Examiner Certificate", "Clearinghouse Query Proof"],
+      "missingDocuments": ["Employment Application", "Road Test Certificate"],
+      "expiredDocuments": [],
+      "documentsNeedingHumanReview": [],
+      "readinessResult": "Blocked"
+    },
+    {
+      "id": "PKT-009",
+      "aggregatorId": "AGG-001",
+      "carrierId": "CAR-001",
+      "driverId": "DRV-009",
+      "requiredDocuments": ["CDL", "Medical Examiner Certificate", "Proof of Delivery", "Settlement Support Document"],
+      "missingDocuments": [],
+      "expiredDocuments": [],
+      "documentsNeedingHumanReview": ["Proof of Delivery"],
+      "readinessResult": "At Risk"
+    },
+    {
+      "id": "PKT-010",
+      "aggregatorId": "AGG-001",
+      "carrierId": "CAR-004",
+      "driverId": "DRV-010",
+      "requiredDocuments": ["CDL", "Medical Examiner Certificate", "MVR / CDLIS MVR", "Clearinghouse Query Proof"],
+      "missingDocuments": [],
+      "expiredDocuments": [],
+      "documentsNeedingHumanReview": [],
+      "readinessResult": "Ready"
+    },
+    {
+      "id": "PKT-011",
+      "aggregatorId": "AGG-001",
+      "carrierId": "CAR-003",
+      "driverId": "DRV-011",
+      "requiredDocuments": ["Inactive archive record", "Prior employment closeout"],
+      "missingDocuments": [],
+      "expiredDocuments": [],
+      "documentsNeedingHumanReview": ["Inactive status confirmation"],
+      "readinessResult": "Needs Review"
+    },
+    {
+      "id": "PKT-012",
+      "aggregatorId": "AGG-001",
+      "carrierId": "CAR-002",
+      "driverId": "DRV-012",
+      "requiredDocuments": ["Employment Application", "Medical Examiner Certificate", "Clearinghouse Query Proof", "Road Test Certificate"],
+      "missingDocuments": ["Clearinghouse Query Proof"],
+      "expiredDocuments": [],
+      "documentsNeedingHumanReview": ["Applicant status"],
+      "readinessResult": "Blocked"
+    }
+  ],
+  "hierarchyReadiness": [
+    {
+      "level": "Aggregator",
+      "entityId": "AGG-001",
+      "entityName": "Midwest Carrier Network",
+      "ready": 3,
+      "atRisk": 3,
+      "blocked": 3,
+      "needsReview": 3
+    },
+    {
+      "level": "Carrier",
+      "entityId": "CAR-001",
+      "entityName": "Delta Advanced Trucking",
+      "ready": 2,
+      "atRisk": 2,
+      "blocked": 0,
+      "needsReview": 0
+    },
+    {
+      "level": "Carrier",
+      "entityId": "CAR-002",
+      "entityName": "ABC Trucking LLC",
+      "ready": 0,
+      "atRisk": 0,
+      "blocked": 2,
+      "needsReview": 1
+    },
+    {
+      "level": "Carrier",
+      "entityId": "CAR-003",
+      "entityName": "North Coast Logistics",
+      "ready": 0,
+      "atRisk": 1,
+      "blocked": 0,
+      "needsReview": 2
+    },
+    {
+      "level": "Carrier",
+      "entityId": "CAR-004",
+      "entityName": "Buckeye Refrigerated Transport",
+      "ready": 1,
+      "atRisk": 0,
+      "blocked": 1,
+      "needsReview": 0
+    }
+  ],
+  "hierarchyExceptions": [
+    {
+      "id": "HEX-001",
+      "level": "Driver",
+      "entityId": "DRV-004",
+      "entityName": "Mara Chen",
+      "exceptionType": "Expired medical certificate",
+      "owner": "Safety desk",
+      "readinessStatus": "Blocked"
+    },
+    {
+      "id": "HEX-002",
+      "level": "Operating Unit",
+      "entityId": "UNIT-005",
+      "entityName": "Long Haul Compliance Pool",
+      "exceptionType": "Clearinghouse proof missing",
+      "owner": "Compliance desk",
+      "readinessStatus": "Blocked"
+    },
+    {
+      "id": "HEX-003",
+      "level": "Carrier",
+      "entityId": "CAR-003",
+      "entityName": "North Coast Logistics",
+      "exceptionType": "Owner-operator packet review",
+      "owner": "Carrier readiness desk",
+      "readinessStatus": "Needs Review"
+    },
+    {
+      "id": "HEX-004",
+      "level": "Driver",
+      "entityId": "DRV-003",
+      "entityName": "Carlos Martinez",
+      "exceptionType": "Wrong-driver MVR match",
+      "owner": "Safety desk",
+      "readinessStatus": "Needs Review"
+    }
+  ],
+  "hierarchyWorkflowSteps": [
+    {
+      "id": "classify-network",
+      "label": "Classify Network",
+      "description": "Identify aggregator, carrier, operating unit, driver, and packet boundaries."
+    },
+    {
+      "id": "match-drivers",
+      "label": "Match Drivers to Carriers",
+      "description": "Connect canonical driver records to carrier and operating-unit affiliations."
+    },
+    {
+      "id": "build-packets",
+      "label": "Build Driver Packets",
+      "description": "Attach required, missing, expired, and review documents to each driver packet."
+    },
+    {
+      "id": "calculate-readiness",
+      "label": "Calculate Hierarchy Readiness",
+      "description": "Roll readiness up by driver, operating unit, carrier, and aggregator."
+    },
+    {
+      "id": "show-blocked",
+      "label": "Show Blocked Drivers",
+      "description": "Focus the driver list on blocked records and primary exceptions."
+    }
   ]
 }

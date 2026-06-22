@@ -11,7 +11,11 @@
     reviewTasks: [],
     readinessOutcomes: [],
     notice: "Select a sample document or run classification to begin the intake review.",
-    bulkNotice: "Aggregator package is staged. Run the simulated bulk workflow to see BOF convert messy files into clean Vault records."
+    bulkNotice: "Aggregator package is staged. Run the simulated bulk workflow to see BOF convert messy files into clean Vault records.",
+    hierarchyStage: 0,
+    selectedAffiliationId: "",
+    showBlockedHierarchy: false,
+    hierarchyNotice: "Hierarchy package is staged. Classify the network to see aggregator, carrier, operating unit, driver, and packet readiness."
   };
 
   function esc(value) {
@@ -59,6 +63,59 @@
 
   function metricCardHtml(label, value, detail, status) {
     return '<article class="vault-readiness-card"><span class="mini-status ' + statusClass(status || label) + '">' + esc(label) + '</span><strong>' + esc(value) + '</strong><p>' + esc(detail) + '</p></article>';
+  }
+
+  function findById(list, id) {
+    return (list || []).filter(function (item) {
+      return item.id === id;
+    })[0] || {};
+  }
+
+  function firstAggregator(data) {
+    return data.aggregators && data.aggregators[0] ? data.aggregators[0] : {};
+  }
+
+  function selectedAffiliation(data) {
+    return findById(data.driverAffiliations || [], state.selectedAffiliationId) || (data.driverAffiliations || [])[0] || {};
+  }
+
+  function driverForAffiliation(data, affiliation) {
+    return findById(data.drivers || [], affiliation.driverId);
+  }
+
+  function carrierForAffiliation(data, affiliation) {
+    return findById(data.carriers || [], affiliation.carrierId);
+  }
+
+  function unitForAffiliation(data, affiliation) {
+    return findById(data.operatingUnits || [], affiliation.operatingUnitId);
+  }
+
+  function packetForAffiliation(data, affiliation) {
+    return (data.driverDocumentPackets || []).filter(function (packet) {
+      return packet.driverId === affiliation.driverId && packet.carrierId === affiliation.carrierId && packet.aggregatorId === affiliation.aggregatorId;
+    })[0] || {};
+  }
+
+  function listText(list) {
+    return (list || []).length ? (list || []).join(", ") : "None";
+  }
+
+  function countByReadiness(records) {
+    return (records || []).reduce(function (counts, record) {
+      var key = record.readinessStatus || "Needs Review";
+      counts[key] = (counts[key] || 0) + 1;
+      return counts;
+    }, {});
+  }
+
+  function readinessCardsFromCounts(counts) {
+    return [
+      metricCardHtml("Ready", counts.Ready || 0, "Ready driver affiliations in the selected hierarchy.", "Ready"),
+      metricCardHtml("At Risk", counts["At Risk"] || 0, "Driver affiliations with open risk items but not fully blocked.", "At Risk"),
+      metricCardHtml("Blocked", counts.Blocked || 0, "Driver affiliations blocked by missing or expired evidence.", "Blocked"),
+      metricCardHtml("Needs Review", counts["Needs Review"] || 0, "Driver affiliations requiring reviewer confirmation.", "Needs Review")
+    ].join("");
   }
 
   function bulkStepHtml(data) {
@@ -113,6 +170,127 @@
       metricCardHtml("Review", batch.routedToReview || 0, "Files needing reviewer confirmation before readiness updates.", "Needs Review"),
       metricCardHtml("Blocked", batch.expiredDocuments || 0, "Expired records that can block readiness until corrected.", "Blocked"),
       metricCardHtml("Human verification", batch.needsHumanVerification || 0, "Records routed to BOF or fleet reviewers.", "Needs Review"),
+      '  </div>',
+      '</section>'
+    ].join("");
+  }
+
+  function hierarchyStepHtml(data) {
+    return '<div class="vault-workflow" aria-label="Aggregator hierarchy classification steps">' + (data.hierarchyWorkflowSteps || []).map(function (step, index) {
+      var active = index + 1 === state.hierarchyStage ? " is-active" : index + 1 < state.hierarchyStage ? " is-done" : "";
+      return '<button class="vault-step' + active + '" type="button" data-vault-hierarchy-step="' + (index + 1) + '"><span>' + String(index + 1).padStart(2, "0") + '</span><strong>' + esc(step.label) + '</strong><em>' + esc(step.description) + '</em></button>';
+    }).join("") + "</div>";
+  }
+
+  function affiliationRowsHtml(data, affiliations) {
+    return (affiliations || []).map(function (affiliation) {
+      var driver = driverForAffiliation(data, affiliation);
+      var carrier = carrierForAffiliation(data, affiliation);
+      var unit = unitForAffiliation(data, affiliation);
+      var active = affiliation.id === selectedAffiliation(data).id ? ' aria-current="true"' : "";
+      return [
+        '<tr' + active + '>',
+        '  <td><button type="button" data-vault-affiliation="' + esc(affiliation.id) + '">' + esc(driver.id) + ' / ' + esc(driver.name) + '</button></td>',
+        '  <td>' + esc(carrier.name) + '</td>',
+        '  <td>' + esc(unit.name) + '</td>',
+        '  <td>' + esc(affiliation.driverType) + '</td>',
+        '  <td>' + esc(affiliation.status) + '</td>',
+        '  <td>' + esc(affiliation.documentPacketStatus) + '</td>',
+        '  <td><span class="mini-status ' + statusClass(affiliation.readinessStatus) + '">' + esc(affiliation.readinessStatus) + '</span></td>',
+        '  <td>' + esc(affiliation.primaryException) + '</td>',
+        '</tr>'
+      ].join("");
+    }).join("");
+  }
+
+  function hierarchyClassificationHtml(data) {
+    var aggregator = firstAggregator(data);
+    var affiliations = data.driverAffiliations || [];
+    var visibleAffiliations = state.showBlockedHierarchy ? affiliations.filter(function (item) { return item.readinessStatus === "Blocked"; }) : affiliations;
+    var selected = selectedAffiliation(data);
+    var driver = driverForAffiliation(data, selected);
+    var carrier = carrierForAffiliation(data, selected);
+    var unit = unitForAffiliation(data, selected);
+    var packet = packetForAffiliation(data, selected);
+    var counts = countByReadiness(affiliations);
+    var carrierCards = (data.carriers || []).map(function (item) {
+      return metricCardHtml(item.name, item.readinessStatus, item.driverCount + " driver affiliations. " + item.primaryException, item.readinessStatus);
+    }).join("");
+    var unitCards = (data.operatingUnits || []).map(function (item) {
+      return metricCardHtml(item.name, item.readinessStatus, item.driverCount + " driver affiliations. " + item.primaryException, item.readinessStatus);
+    }).join("");
+
+    return [
+      '<section class="vault-section-block" id="aggregator-hierarchy-classification">',
+      '  <div class="vault-section-heading"><span>Aggregator hierarchy</span><h2>Aggregator Hierarchy Classification</h2><p>BOF uses hierarchical classification so aggregator uploads can be reviewed by network, carrier, operating unit, driver, and document packet instead of becoming one unstructured file dump.</p></div>',
+      '  <div class="vault-command-grid">',
+      '    <article class="vault-intake-panel">',
+      '      <div><span class="mini-status ' + statusClass(aggregator.readinessStatus) + '">' + esc(aggregator.readinessStatus) + '</span><h2>' + esc(aggregator.name) + '</h2><p>Classify each driver and document inside the aggregator network so BOF can determine readiness by aggregator, carrier, operating unit, driver, and document packet.</p></div>',
+      '      <dl class="selected-details">',
+      '        <div><dt>Aggregator ID</dt><dd>' + esc(aggregator.id) + '</dd></div>',
+      '        <div><dt>Carriers</dt><dd>' + esc(aggregator.carrierCount) + '</dd></div>',
+      '        <div><dt>Operating units</dt><dd>' + esc(aggregator.operatingUnitCount) + '</dd></div>',
+      '        <div><dt>Driver affiliations</dt><dd>' + esc(aggregator.driverCount) + '</dd></div>',
+      '        <div><dt>Primary exception</dt><dd>' + esc(aggregator.primaryException) + '</dd></div>',
+      '      </dl>',
+      '      <div class="vault-action-row">',
+      '        <button type="button" data-vault-hierarchy-action="classify-network">Classify Network</button>',
+      '        <button type="button" data-vault-hierarchy-action="match-drivers">Match Drivers to Carriers</button>',
+      '        <button type="button" data-vault-hierarchy-action="build-packets">Build Driver Packets</button>',
+      '        <button type="button" data-vault-hierarchy-action="calculate-readiness">Calculate Hierarchy Readiness</button>',
+      '        <button type="button" data-vault-hierarchy-action="show-blocked">Show Blocked Drivers</button>',
+      '        <button type="button" data-vault-hierarchy-action="reset">Reset Hierarchy Demo</button>',
+      '      </div>',
+      '      <p class="vault-notice" aria-live="polite">' + esc(state.hierarchyNotice) + '</p>',
+      '    </article>',
+      '    <article class="vault-selected-record">',
+      '      <span class="mini-status ' + statusClass(selected.readinessStatus) + '">' + esc(selected.readinessStatus || "Selected path") + '</span>',
+      '      <h2>Hierarchy drilldown path</h2>',
+      '      <p>' + esc(aggregator.name) + ' -> ' + esc(carrier.name) + ' -> ' + esc(unit.name) + ' -> ' + esc(driver.id) + ' ' + esc(driver.name) + ' -> ' + esc(listText(packet.requiredDocuments)) + ' -> ' + esc(packet.readinessStatus || selected.readinessStatus) + '</p>',
+      '      <dl>',
+      '        <div><dt>Aggregator</dt><dd>' + esc(aggregator.id) + ' / ' + esc(aggregator.name) + '</dd></div>',
+      '        <div><dt>Carrier</dt><dd>' + esc(selected.carrierId) + ' / ' + esc(carrier.name) + '</dd></div>',
+      '        <div><dt>Operating unit</dt><dd>' + esc(selected.operatingUnitId) + ' / ' + esc(unit.name) + '</dd></div>',
+      '        <div><dt>Driver</dt><dd>' + esc(selected.driverId) + ' / ' + esc(driver.name) + '</dd></div>',
+      '        <div><dt>Driver type</dt><dd>' + esc(selected.driverType) + '</dd></div>',
+      '        <div><dt>Packet status</dt><dd>' + esc(selected.documentPacketStatus) + '</dd></div>',
+      '      </dl>',
+      '    </article>',
+      '  </div>',
+      hierarchyStepHtml(data),
+      '  <div class="vault-readiness-grid">',
+      readinessCardsFromCounts(counts),
+      '  </div>',
+      '  <div class="vault-section-heading"><span>Carrier readiness</span><h2>Readiness by carrier</h2><p>Carrier-level rollups reveal whether issues sit with one carrier, one operating unit, or one driver packet.</p></div>',
+      '  <div class="vault-readiness-grid">' + carrierCards + '</div>',
+      '  <div class="vault-section-heading"><span>Operating units</span><h2>Readiness by operating unit</h2><p>Operating-unit views help aggregator teams isolate regional, equipment, and pooled-driver exceptions.</p></div>',
+      '  <div class="vault-readiness-grid">' + unitCards + '</div>',
+      '  <div class="vault-section-heading"><span>Driver affiliations</span><h2>Driver readiness list</h2><p>' + esc(state.showBlockedHierarchy ? "Showing blocked driver affiliations only." : "Showing all driver affiliations in the aggregator hierarchy.") + '</p></div>',
+      '  <div class="route-table-wrap"><table class="route-table"><thead><tr><th>Driver</th><th>Carrier</th><th>Operating unit</th><th>Driver type</th><th>Status</th><th>Document packet</th><th>Readiness</th><th>Primary exception</th></tr></thead><tbody>',
+      affiliationRowsHtml(data, visibleAffiliations),
+      '  </tbody></table></div>',
+      '  <div class="vault-command-grid">',
+      '    <article class="vault-selected-record">',
+      '      <span class="mini-status ' + statusClass(packet.readinessStatus) + '">' + esc(packet.readinessStatus || "Packet") + '</span>',
+      '      <h2>Selected driver document packet</h2>',
+      '      <p>' + esc(driver.name) + ' packet evidence for ' + esc(carrier.name) + ' inside ' + esc(aggregator.name) + '.</p>',
+      '      <dl>',
+      '        <div><dt>Packet ID</dt><dd>' + esc(packet.id) + '</dd></div>',
+      '        <div><dt>Required documents</dt><dd>' + esc(listText(packet.requiredDocuments)) + '</dd></div>',
+      '        <div><dt>Missing documents</dt><dd>' + esc(listText(packet.missingDocuments)) + '</dd></div>',
+      '        <div><dt>Expired documents</dt><dd>' + esc(listText(packet.expiredDocuments)) + '</dd></div>',
+      '        <div><dt>Human review</dt><dd>' + esc(listText(packet.humanReview)) + '</dd></div>',
+      '      </dl>',
+      '    </article>',
+      '    <article class="vault-selected-record">',
+      '      <span class="mini-status review">Exceptions by level</span>',
+      '      <h2>Document exceptions by hierarchy level</h2>',
+      '      <div class="vault-review-list">',
+      (data.hierarchyExceptions || []).map(function (item) {
+        return '<article class="vault-review-card"><span class="mini-status ' + statusClass(item.status) + '">' + esc(item.status) + '</span><strong>' + esc(item.level) + ' / ' + esc(item.entityId) + '</strong><em>' + esc(item.owner) + '</em><p>' + esc(item.exception) + '</p></article>';
+      }).join(""),
+      '      </div>',
+      '    </article>',
       '  </div>',
       '</section>'
     ].join("");
@@ -298,6 +476,7 @@
       '</section>',
       workflowHtml(data),
       bulkIntakeHtml(data),
+      hierarchyClassificationHtml(data),
       fileConversionHtml(data),
       manifestHtml(data),
       bulkReviewHtml(data),
@@ -400,6 +579,44 @@
     render(data);
   }
 
+  function handleHierarchyAction(action, data) {
+    var aggregator = firstAggregator(data);
+    if (action === "classify-network") {
+      state.hierarchyStage = 1;
+      state.showBlockedHierarchy = false;
+      state.hierarchyNotice = "Network classified: " + aggregator.id + " -> " + aggregator.carrierCount + " carriers -> " + aggregator.operatingUnitCount + " operating units -> " + aggregator.driverCount + " driver affiliations.";
+    }
+    if (action === "match-drivers") {
+      state.hierarchyStage = 2;
+      state.showBlockedHierarchy = false;
+      state.hierarchyNotice = (data.driverAffiliations || []).length + " canonical driver records matched to carrier and operating-unit affiliations.";
+    }
+    if (action === "build-packets") {
+      state.hierarchyStage = 3;
+      state.showBlockedHierarchy = false;
+      state.hierarchyNotice = (data.driverDocumentPackets || []).length + " driver document packets built from required, missing, expired, and human-review document lists.";
+    }
+    if (action === "calculate-readiness") {
+      state.hierarchyStage = 4;
+      state.showBlockedHierarchy = false;
+      state.hierarchyNotice = "Hierarchy readiness calculated by aggregator, carrier, operating unit, driver, and packet.";
+    }
+    if (action === "show-blocked") {
+      var blocked = (data.driverAffiliations || []).filter(function (item) { return item.readinessStatus === "Blocked"; });
+      state.hierarchyStage = 5;
+      state.showBlockedHierarchy = true;
+      if (blocked[0]) state.selectedAffiliationId = blocked[0].id;
+      state.hierarchyNotice = "Showing " + blocked.length + " blocked driver affiliations with packet-level exceptions.";
+    }
+    if (action === "reset") {
+      state.hierarchyStage = 0;
+      state.showBlockedHierarchy = false;
+      state.selectedAffiliationId = (data.driverAffiliations || [])[0] ? data.driverAffiliations[0].id : "";
+      state.hierarchyNotice = "Hierarchy package is staged. Classify the network to see aggregator, carrier, operating unit, driver, and packet readiness.";
+    }
+    render(data);
+  }
+
   function bind(data) {
     mount.querySelectorAll("[data-vault-doc]").forEach(function (button) {
       button.addEventListener("click", function () {
@@ -444,6 +661,29 @@
         render(data);
       });
     });
+    mount.querySelectorAll("[data-vault-hierarchy-action]").forEach(function (button) {
+      button.addEventListener("click", function () {
+        handleHierarchyAction(button.getAttribute("data-vault-hierarchy-action"), data);
+      });
+    });
+    mount.querySelectorAll("[data-vault-hierarchy-step]").forEach(function (button) {
+      button.addEventListener("click", function () {
+        state.hierarchyStage = Number(button.getAttribute("data-vault-hierarchy-step") || "0");
+        var step = (data.hierarchyWorkflowSteps || [])[state.hierarchyStage - 1];
+        state.hierarchyNotice = step ? "Hierarchy step selected: " + step.label + "." : state.hierarchyNotice;
+        render(data);
+      });
+    });
+    mount.querySelectorAll("[data-vault-affiliation]").forEach(function (button) {
+      button.addEventListener("click", function () {
+        state.selectedAffiliationId = button.getAttribute("data-vault-affiliation") || state.selectedAffiliationId;
+        state.showBlockedHierarchy = false;
+        var affiliation = selectedAffiliation(data);
+        var driver = driverForAffiliation(data, affiliation);
+        state.hierarchyNotice = "Opened " + driver.name + " inside the aggregator hierarchy.";
+        render(data);
+      });
+    });
   }
 
   fetch("/assets/data/vault-document-intake.json")
@@ -457,6 +697,7 @@
       state.readinessOutcomes = data.readinessOutcomes.slice();
       state.selectedDocumentId = state.documents[0] ? state.documents[0].id : "";
       state.selectedTaskId = state.reviewTasks[0] ? state.reviewTasks[0].id : "";
+      state.selectedAffiliationId = data.driverAffiliations && data.driverAffiliations[0] ? data.driverAffiliations[0].id : "";
       render(data);
     })
     .catch(function (error) {
