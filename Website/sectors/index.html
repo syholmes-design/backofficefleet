@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Sector Intelligence | BackOfficeFleet</title>
   <meta name="description" content="BOF Sector Intelligence shows how one operational infrastructure platform supports trucking fleets, carrier networks, aggregators, government contractors, and field-service operations.">
-  <link rel="stylesheet" href="/assets/css/styles.css?v=1.45">
+  <link rel="stylesheet" href="/assets/css/styles.css?v=1.46">
   <style>
     .sector-hero { background: linear-gradient(135deg, rgba(246,248,244,0.98), rgba(232,241,236,0.96) 56%, rgba(251,243,231,0.96)); overflow: hidden; position: relative; }
     .sector-hero::after { background-image: linear-gradient(rgba(20,33,31,0.06) 1px, transparent 1px), linear-gradient(90deg, rgba(20,33,31,0.06) 1px, transparent 1px); background-size: 42px 42px; content: ""; inset: 0; pointer-events: none; position: absolute; }
@@ -50,16 +50,77 @@
     <a class="brand" href="/" aria-label="BackOfficeFleet home"><img src="/assets/images/logo/boflogo-original.png" alt="BackOfficeFleet"></a>
     <button class="nav-toggle" type="button" data-nav-toggle aria-expanded="false" aria-label="Toggle navigation">&#9776;</button>
     <nav class="site-nav" data-nav aria-label="Main navigation">
-      <a href="/">Home</a>
-      <a href="/solutions/">Solutions</a>
-      <a href="/capacity-intelligence/">Capacity Intelligence</a>
-      <a href="/operational-intelligence/">Operational Intelligence</a>
-      <a href="/business-operations/">Business Operations</a>
-      <a href="/executive-demo/">Executive Demo</a>
-      <a href="/demo/">Partner Workflow</a>
-      <a href="/interactive-demo/start/">Try Demo</a>
-      <a href="/documents/">Documents</a>
-      <a href="/book-demo/">Book Demo</a>
+      <div class="nav-menu" data-nav-menu>
+        <button class="nav-menu-toggle" type="button" data-nav-menu-toggle aria-expanded="false" aria-haspopup="true">Platform</button>
+        <div class="nav-dropdown" aria-label="Platform">
+          <a href="/dashboard/">Command Center</a>
+          <a href="/operational-intelligence/">Operational Intelligence</a>
+          <a href="/capacity-intelligence/">Capacity Intelligence</a>
+          <a href="/business-operations/">Business Operations</a>
+          <a href="/customer-portal/">Customer Portal</a>
+          <a href="/scenario-walkthrough/">Scenario Walkthrough</a>
+        </div>
+      </div>
+      <div class="nav-menu" data-nav-menu>
+        <button class="nav-menu-toggle" type="button" data-nav-menu-toggle aria-expanded="false" aria-haspopup="true">Workflows</button>
+        <div class="nav-dropdown" aria-label="Workflows">
+          <a href="/customer-portal/load-intake/">Load Intake</a>
+          <a href="/customer-portal/quotes/">Quotes</a>
+          <a href="/customer-portal/shipments/">Shipments</a>
+          <a href="/customer-portal/assignment/">Assignment</a>
+          <a href="/documents/">Documents</a>
+          <a href="/customer-portal/tracking/">Tracking</a>
+          <a href="/customer-portal/billing/">Billing</a>
+          <a href="/settlements/">Settlements</a>
+          <a href="/operations-record/">Claims &amp; Records</a>
+        </div>
+      </div>
+      <div class="nav-menu" data-nav-menu>
+        <button class="nav-menu-toggle" type="button" data-nav-menu-toggle aria-expanded="false" aria-haspopup="true">Drivers &amp; Compliance</button>
+        <div class="nav-dropdown" aria-label="Drivers and Compliance">
+          <a href="/drivers/">Drivers</a>
+          <a href="/interactive-demo/drivers/">Driver Vault</a>
+          <a href="/carrier-readiness/">Carrier Readiness</a>
+          <a href="/documents/">Documents</a>
+          <a href="/safety/">Safety</a>
+          <a href="/safety-compliance/">Compliance Workflows</a>
+          <a href="/settlements/">Driver Settlements</a>
+        </div>
+      </div>
+      <div class="nav-menu" data-nav-menu>
+        <button class="nav-menu-toggle" type="button" data-nav-menu-toggle aria-expanded="false" aria-haspopup="true">Solutions</button>
+        <div class="nav-dropdown" aria-label="Solutions">
+          <a href="/fleet/">Fleet Operators</a>
+          <a href="/private-fleets/">Private Fleets</a>
+          <a href="/aggregator-command-center/">Aggregators</a>
+          <a href="/sectors/">Sectors</a>
+          <a href="/capacity-intelligence/">Backhaul &amp; Capacity Sharing</a>
+          <a href="/government/">Government Contractors</a>
+        </div>
+      </div>
+      <div class="nav-menu" data-nav-menu>
+        <button class="nav-menu-toggle" type="button" data-nav-menu-toggle aria-expanded="false" aria-haspopup="true">Demos</button>
+        <div class="nav-dropdown" aria-label="Demos">
+          <a href="/executive-demo/">Executive Demo</a>
+          <a href="/animated-demo/">Animated Demo</a>
+          <a href="/animated-demo-business/">Business Animated Demo</a>
+          <a href="/animated-demo-aggregator/">Aggregator Animated Demo</a>
+          <a href="/scenario-walkthrough/">Scenario Walkthrough</a>
+          <a href="/interactive-demo/start/">Try Demo</a>
+          <a href="/book-demo/">Book Demo</a>
+        </div>
+      </div>
+      <div class="nav-menu" data-nav-menu>
+        <button class="nav-menu-toggle" type="button" data-nav-menu-toggle aria-expanded="false" aria-haspopup="true">Company / Contact</button>
+        <div class="nav-dropdown" aria-label="Company and Contact">
+          <a href="/">Homepage</a>
+          <a href="/solutions/">Solutions Overview</a>
+          <a href="/trust-governance/">Trust &amp; Governance</a>
+          <a href="/founding-fleet/">Founding Fleet</a>
+          <a href="/demo-paths/">Demo Paths</a>
+          <a href="/book-demo/">Book Working Session</a>
+        </div>
+      </div>
     </nav>
     <a class="header-cta" href="/book-demo/">Book demo</a>
   </header>
@@ -212,6 +273,6 @@
       <p class="sector-note reveal">BOF is positioned as operational infrastructure. This sector view does not turn BOF into a broker, dispatcher, freight marketplace, or motor carrier; it shows how the same readiness, documentation, visibility, compliance, and business operations layer can be demonstrated across different operating environments.</p>
     </section>
   </main>
-  <script src="/assets/js/site.js?v=1.42"></script>
+  <script src="/assets/js/site.js?v=1.46"></script>
 </body>
 </html>
