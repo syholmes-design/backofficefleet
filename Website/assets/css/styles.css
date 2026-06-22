@@ -6679,6 +6679,85 @@ td { font-weight: 750; }
   display: grid;
   gap: 6px;
 }
+.vault-network-flow {
+  grid-template-columns: repeat(8, minmax(130px, 1fr));
+}
+.vault-capacity-flow {
+  display: grid;
+  gap: 8px;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+.vault-capacity-step {
+  background: #fff;
+  border: 1px solid var(--app-line);
+  border-radius: 5px;
+  display: grid;
+  gap: 7px;
+  min-width: 0;
+  padding: 12px;
+}
+.vault-capacity-step span {
+  color: #64748b;
+  font-size: 0.7rem;
+  font-weight: 900;
+}
+.vault-capacity-step strong {
+  color: #111827;
+  font-size: 0.92rem;
+}
+.vault-capacity-step p {
+  color: #475569;
+  font-size: 0.82rem;
+  line-height: 1.38;
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+.vault-flow-panel {
+  align-content: start;
+}
+.vault-network-stage-list {
+  display: grid;
+  gap: 8px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+.vault-network-stage {
+  background: #f8fbf9;
+  border: 1px solid var(--app-line-soft);
+  border-radius: 5px;
+  display: grid;
+  gap: 5px;
+  min-width: 0;
+  padding: 10px;
+}
+.vault-network-stage.is-active {
+  background: #e8f3ed;
+  border-color: rgba(22, 143, 98, 0.34);
+}
+.vault-network-stage span {
+  align-items: center;
+  background: #0f766e;
+  border-radius: 999px;
+  color: #fff;
+  display: inline-flex;
+  font-size: 0.72rem;
+  font-weight: 900;
+  height: 24px;
+  justify-content: center;
+  width: 24px;
+}
+.vault-network-stage strong {
+  color: #111827;
+}
+.vault-network-stage p {
+  color: #475569;
+  font-size: 0.82rem;
+  line-height: 1.35;
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+.vault-impact-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
 .dqf-command-panel {
   display: grid;
   gap: 10px;
@@ -8149,7 +8228,10 @@ td { font-weight: 750; }
   .vault-document-grid,
   .vault-review-list,
   .vault-readiness-grid,
-  .vault-check-grid {
+  .vault-check-grid,
+  .vault-capacity-flow,
+  .vault-network-stage-list,
+  .vault-impact-grid {
     grid-template-columns: minmax(0, 1fr);
   }
   .proof-lifecycle-strip {

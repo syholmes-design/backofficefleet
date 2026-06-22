@@ -1193,5 +1193,449 @@
       "label": "Show Blocked Drivers",
       "description": "Focus the driver list on blocked records and primary exceptions."
     }
+  ],
+  "standardRules": [
+    {
+      "id": "STD-001",
+      "ruleName": "BOF Default Document Rule",
+      "ruleLevel": "BOF Default Rule",
+      "description": "POD, BOL, rate confirmation, carrier packet, insurance COI, W-9, and driver qualification evidence are checked before readiness, billing, or settlement status changes."
+    },
+    {
+      "id": "STD-002",
+      "ruleName": "BOF Default Review Routing",
+      "ruleLevel": "BOF Default Rule",
+      "description": "Missing, expired, low-confidence, or mismatched documents route to the correct BOF review queue before they update an operating status."
+    },
+    {
+      "id": "STD-003",
+      "ruleName": "BOF Default Commercial Hold",
+      "ruleLevel": "BOF Default Rule",
+      "description": "Billing, settlement, factoring, reimbursement, and deduction statuses remain visible separately so one issue does not hide the next action."
+    }
+  ],
+  "aggregatorRules": [
+    {
+      "id": "AGG-RULE-001",
+      "aggregatorId": "AGG-001",
+      "aggregatorName": "Midwest Carrier Network",
+      "ruleName": "Aggregator readiness rollup",
+      "ruleLevel": "Aggregator Rule",
+      "description": "Carrier, driver, document packet, billing, and settlement exceptions roll up into the Midwest Carrier Network readiness view."
+    },
+    {
+      "id": "AGG-RULE-002",
+      "aggregatorId": "AGG-001",
+      "aggregatorName": "Midwest Carrier Network",
+      "ruleName": "Aggregator commercial review",
+      "ruleLevel": "Aggregator Rule",
+      "description": "Commercial holds are separated from driver readiness so the network can see when a driver remains usable but a payment, billing, or accessorial item still needs review."
+    }
+  ],
+  "aggregatorCarrierAgreements": [
+    {
+      "id": "AGR-001",
+      "aggregatorId": "AGG-001",
+      "aggregatorName": "Midwest Carrier Network",
+      "carrierId": "CAR-001",
+      "carrierName": "Delta Advanced Trucking",
+      "payScheduleId": "PAY-WEEKLY",
+      "settlementRuleId": "SETTLE-POD",
+      "billingRuleId": "BILL-RATECON",
+      "deductionRuleId": "DEDUCT-VERIFY-48",
+      "documentRequirementId": "DOC-DELTA-STANDARD",
+      "readinessImpact": "Ready when standard insurance, W-9, POD, rate confirmation, and factoring packet support are complete.",
+      "paymentImpact": "Weekly settlement can release after POD verification and open reimbursement checks are cleared.",
+      "billingFactoringImpact": "Billing release needs rate confirmation; factoring packet needs complete proof support.",
+      "reviewQueueImpact": "Missing POD, rate confirmation, or factoring support routes to settlement desk."
+    },
+    {
+      "id": "AGR-002",
+      "aggregatorId": "AGG-001",
+      "aggregatorName": "Midwest Carrier Network",
+      "carrierId": "CAR-002",
+      "carrierName": "ABC Trucking LLC",
+      "payScheduleId": "PAY-BIWEEKLY",
+      "settlementRuleId": "SETTLE-POD-RATECON",
+      "billingRuleId": "BILL-SETTLEMENT-PACKET",
+      "deductionRuleId": "DEDUCT-LUMPER-MANUAL",
+      "documentRequirementId": "DOC-ABC-OWNER-OP",
+      "readinessImpact": "At risk until owner-operator packet and higher insurance COI evidence are verified.",
+      "paymentImpact": "Biweekly settlement is blocked if POD or rate confirmation is missing.",
+      "billingFactoringImpact": "Billing release waits for complete settlement support and carrier agreement checks.",
+      "reviewQueueImpact": "Manual lumper review and missing proof items route to payment review."
+    },
+    {
+      "id": "AGR-003",
+      "aggregatorId": "AGG-001",
+      "aggregatorName": "Midwest Carrier Network",
+      "carrierId": "CAR-003",
+      "carrierName": "North Coast Logistics",
+      "payScheduleId": "PAY-WEEKLY",
+      "settlementRuleId": "SETTLE-DEDUCTION-SUPPORT",
+      "billingRuleId": "BILL-BOL-POD",
+      "deductionRuleId": "DEDUCT-CUSTOMER-APPROVAL",
+      "documentRequirementId": "DOC-NORTH-OWNER-OP",
+      "readinessImpact": "Needs review until owner-operator insurance, W-9, BOL, POD, and accessorial approvals are aligned.",
+      "paymentImpact": "Base settlement may proceed while customer approval controls accessorial payment.",
+      "billingFactoringImpact": "Billing release needs BOL and POD; missing customer approval routes accessorials to review.",
+      "reviewQueueImpact": "Customer approval tasks route to commercial review without blocking unrelated base settlement items."
+    },
+    {
+      "id": "AGR-004",
+      "aggregatorId": "AGG-001",
+      "aggregatorName": "Midwest Carrier Network",
+      "carrierId": "CAR-004",
+      "carrierName": "Buckeye Refrigerated Transport",
+      "payScheduleId": "PAY-TWICE-MONTHLY",
+      "settlementRuleId": "SETTLE-REEFER-PROOF",
+      "billingRuleId": "BILL-REEFER-PROOF",
+      "deductionRuleId": "DEDUCT-CLAIMS-PACKET",
+      "documentRequirementId": "DOC-BUCKEYE-REEFER",
+      "readinessImpact": "Blocked if refrigerated proof, temperature records, or claims evidence is missing for affected loads.",
+      "paymentImpact": "Settlement needs review when seal, cargo, or temperature proof creates a possible claim.",
+      "billingFactoringImpact": "Billing is held until refrigerated load proof and temperature documentation are verified.",
+      "reviewQueueImpact": "Claims packet, seal verification, cargo condition, and temperature evidence route to claims review."
+    }
+  ],
+  "contractTerms": [
+    {
+      "agreementId": "AGR-001",
+      "summary": "Weekly settlement with POD-controlled settlement release and rate-confirmation-controlled billing release.",
+      "commercialModel": "Standard carrier packet with verified lumper reimbursement."
+    },
+    {
+      "agreementId": "AGR-002",
+      "summary": "Biweekly settlement with stricter POD and rate confirmation requirements before settlement can release.",
+      "commercialModel": "Owner-operator packet, higher insurance COI, and manual lumper verification."
+    },
+    {
+      "agreementId": "AGR-003",
+      "summary": "Weekly settlement with accessorials controlled by customer approval and deduction support evidence.",
+      "commercialModel": "Owner-operator support model with separable base settlement and accessorial review."
+    },
+    {
+      "agreementId": "AGR-004",
+      "summary": "Twice-monthly settlement for refrigerated operations with temperature, seal, and claims packet controls.",
+      "commercialModel": "Refrigerated proof model with billing hold until reefer evidence is verified."
+    }
+  ],
+  "paySchedules": [
+    {
+      "id": "PAY-WEEKLY",
+      "label": "Weekly settlement schedule",
+      "cadence": "Weekly",
+      "releaseWindow": "Friday settlement batch after proof review"
+    },
+    {
+      "id": "PAY-BIWEEKLY",
+      "label": "Biweekly settlement schedule",
+      "cadence": "Biweekly",
+      "releaseWindow": "Every other Friday after POD and rate confirmation review"
+    },
+    {
+      "id": "PAY-TWICE-MONTHLY",
+      "label": "Twice-monthly settlement schedule",
+      "cadence": "Twice monthly",
+      "releaseWindow": "15th and month-end batch after refrigerated proof review"
+    }
+  ],
+  "settlementRules": [
+    {
+      "id": "SETTLE-POD",
+      "label": "POD required before settlement release",
+      "releaseRule": "Settlement is held until delivery proof is verified."
+    },
+    {
+      "id": "SETTLE-POD-RATECON",
+      "label": "POD and rate confirmation required before settlement release",
+      "releaseRule": "Settlement is blocked if POD or rate confirmation is missing."
+    },
+    {
+      "id": "SETTLE-DEDUCTION-SUPPORT",
+      "label": "Deduction support document required",
+      "releaseRule": "Settlement proceeds with deduction items routed to support review."
+    },
+    {
+      "id": "SETTLE-REEFER-PROOF",
+      "label": "Refrigerated proof required",
+      "releaseRule": "Settlement needs review when temperature, seal, cargo, or claim evidence is incomplete."
+    }
+  ],
+  "billingRules": [
+    {
+      "id": "BILL-RATECON",
+      "label": "Rate confirmation required before billing release",
+      "requiredDocuments": ["Rate Confirmation", "Proof of Delivery"],
+      "billingImpact": "Billing held until rate confirmation is attached."
+    },
+    {
+      "id": "BILL-SETTLEMENT-PACKET",
+      "label": "Settlement packet support required",
+      "requiredDocuments": ["POD", "Rate Confirmation", "Settlement Support Document"],
+      "billingImpact": "Billing review remains open until packet support is complete."
+    },
+    {
+      "id": "BILL-BOL-POD",
+      "label": "BOL and POD required for billing release",
+      "requiredDocuments": ["Bill of Lading", "Proof of Delivery"],
+      "billingImpact": "Billing release waits for complete BOL and POD support."
+    },
+    {
+      "id": "BILL-REEFER-PROOF",
+      "label": "Refrigerated load proof required",
+      "requiredDocuments": ["Proof of Delivery", "Temperature Record", "Seal Verification"],
+      "billingImpact": "Billing held until refrigerated proof is verified."
+    }
+  ],
+  "deductionRules": [
+    {
+      "id": "DEDUCT-VERIFY-48",
+      "label": "Verified lumper reimbursement within 48 hours",
+      "impact": "Lumper receipts are reimbursed within 48 hours when receipt and amount are verified."
+    },
+    {
+      "id": "DEDUCT-LUMPER-MANUAL",
+      "label": "Manual lumper review required",
+      "impact": "Lumper reimbursement is held until human verification clears the receipt."
+    },
+    {
+      "id": "DEDUCT-CUSTOMER-APPROVAL",
+      "label": "Customer approval controls accessorials",
+      "impact": "Accessorial payment is held if customer approval is missing, while base settlement may proceed."
+    },
+    {
+      "id": "DEDUCT-CLAIMS-PACKET",
+      "label": "Claims packet required for proof exceptions",
+      "impact": "Claims, seal, cargo, or temperature issues route to claims packet review before commercial release."
+    }
+  ],
+  "carrierDocumentRequirements": [
+    {
+      "id": "DOC-DELTA-STANDARD",
+      "agreementId": "AGR-001",
+      "requiredComplianceDocuments": ["Standard insurance COI", "W-9", "Factoring packet"],
+      "requiredBillingDocuments": ["POD", "Rate Confirmation"],
+      "specialDocuments": ["Verified lumper receipt when reimbursement is requested"]
+    },
+    {
+      "id": "DOC-ABC-OWNER-OP",
+      "agreementId": "AGR-002",
+      "requiredComplianceDocuments": ["Owner-operator packet", "Higher insurance COI", "W-9"],
+      "requiredBillingDocuments": ["POD", "Rate Confirmation", "Settlement Support Document"],
+      "specialDocuments": ["Manual lumper review packet"]
+    },
+    {
+      "id": "DOC-NORTH-OWNER-OP",
+      "agreementId": "AGR-003",
+      "requiredComplianceDocuments": ["Owner-operator insurance", "W-9", "Settlement support document"],
+      "requiredBillingDocuments": ["BOL", "POD"],
+      "specialDocuments": ["Customer approval for accessorials"]
+    },
+    {
+      "id": "DOC-BUCKEYE-REEFER",
+      "agreementId": "AGR-004",
+      "requiredComplianceDocuments": ["Refrigerated load proof", "Temperature documentation", "Standard insurance COI"],
+      "requiredBillingDocuments": ["POD", "Temperature Record", "Seal Verification"],
+      "specialDocuments": ["Claims packet when seal, cargo, or temperature issue appears"]
+    }
+  ],
+  "contractExceptions": [
+    {
+      "id": "CEX-001",
+      "agreementId": "AGR-001",
+      "issue": "Missing POD for Delta Advanced Trucking",
+      "statuses": ["billing held", "settlement held", "factoring incomplete", "payment review"],
+      "outcomes": ["billing held", "settlement held", "factoring packet incomplete", "review task created"]
+    },
+    {
+      "id": "CEX-002",
+      "agreementId": "AGR-002",
+      "issue": "Missing lumper receipt for ABC Trucking LLC",
+      "statuses": ["readiness unaffected", "payment review", "settlement held"],
+      "outcomes": ["driver readiness unaffected", "lumper reimbursement held", "settlement needs review", "human verification required"]
+    },
+    {
+      "id": "CEX-003",
+      "agreementId": "AGR-004",
+      "issue": "Missing temperature record for Buckeye Refrigerated Transport",
+      "statuses": ["blocked", "billing held", "payment review"],
+      "outcomes": ["refrigerated load exception", "billing held", "claims review possible", "settlement needs review"]
+    },
+    {
+      "id": "CEX-004",
+      "agreementId": "AGR-003",
+      "issue": "Missing customer approval for North Coast Logistics accessorial",
+      "statuses": ["payment review", "readiness unaffected", "carrier rule applied"],
+      "outcomes": ["accessorial payment held", "base settlement may proceed", "customer approval task created"]
+    }
+  ],
+  "ruleResolutionExamples": [
+    {
+      "id": "RRE-001",
+      "title": "Default rule plus carrier agreement rule",
+      "chain": ["BOF Default Rule", "Aggregator Rule", "Carrier Agreement Rule", "Load/Document Exception", "Final Operational Decision"],
+      "example": "A missing POD is first recognized as a default document exception, then Delta's agreement converts it into billing held, settlement held, and factoring incomplete."
+    },
+    {
+      "id": "RRE-002",
+      "title": "Commercial hold without driver readiness block",
+      "chain": ["BOF Default Rule", "Aggregator Rule", "Carrier Agreement Rule", "Load/Document Exception", "Final Operational Decision"],
+      "example": "A missing North Coast customer approval holds the accessorial payment while base settlement may proceed."
+    }
+  ],
+  "capacityRuleFlow": [
+    {
+      "id": "CRF-001",
+      "label": "Customer needs capacity",
+      "description": "The aggregator starts with a customer request or operating need that requires a documented capacity review.",
+      "status": "Capacity review"
+    },
+    {
+      "id": "CRF-002",
+      "label": "Aggregator opens roster",
+      "description": "Carrier, driver, equipment, agreement, and document packet records become visible in one BOF Vault path.",
+      "status": "Roster open"
+    },
+    {
+      "id": "CRF-003",
+      "label": "BOF checks each carrier's rule profile",
+      "description": "BOF applies the default model, aggregator rules, carrier agreement rules, and document exceptions.",
+      "status": "Carrier rule applied"
+    },
+    {
+      "id": "CRF-004",
+      "label": "Some carriers are eligible",
+      "description": "Eligible carriers have the required agreement, insurance, driver packet, equipment, and proof rules in good order.",
+      "status": "Eligible"
+    },
+    {
+      "id": "CRF-005",
+      "label": "Some carriers are blocked",
+      "description": "Blocked carriers have missing or expired readiness, proof, compliance, or agreement evidence.",
+      "status": "Blocked"
+    },
+    {
+      "id": "CRF-006",
+      "label": "Some need review",
+      "description": "Review carriers need a human decision on a document, accessorial, claim, billing, or settlement exception.",
+      "status": "Needs Review"
+    },
+    {
+      "id": "CRF-007",
+      "label": "BOF surfaces the best readiness fit",
+      "description": "BOF shows which carrier, driver, and equipment combination is most ready based on rules and evidence, without arranging freight or dispatching a load.",
+      "status": "Readiness fit"
+    },
+    {
+      "id": "CRF-008",
+      "label": "Proof rules follow the selected record",
+      "description": "Required documents and proof rules follow the carrier, driver, customer, equipment, and document packet combination.",
+      "status": "Proof rules attached"
+    }
+  ],
+  "aggregatorAnimationSteps": [
+    {
+      "id": "flow-submit",
+      "label": "Aggregator submits batch",
+      "description": "Midwest Carrier Network submits 842 documents for 100 drivers.",
+      "impact": "BOF receives the package as an unstructured operating queue."
+    },
+    {
+      "id": "flow-hierarchy",
+      "label": "BOF classifies hierarchy",
+      "description": "BOF maps documents to carriers, operating units, drivers, and document packets.",
+      "impact": "The network becomes searchable by aggregator, carrier, operating unit, driver, and packet."
+    },
+    {
+      "id": "flow-convert",
+      "label": "BOF converts files",
+      "description": "Messy file names become BOF Vault canonical records.",
+      "impact": "The same record can support readiness, billing, settlement, and review."
+    },
+    {
+      "id": "flow-default-rules",
+      "label": "BOF applies default rules",
+      "description": "Standard document, readiness, billing, and settlement rules are applied.",
+      "impact": "BOF keeps one internal operating model before carrier-specific rules modify outcomes."
+    },
+    {
+      "id": "flow-agreement-rules",
+      "label": "BOF applies carrier agreement rules",
+      "description": "Each carrier's contract terms modify settlement, billing, accessorial, and document requirements.",
+      "impact": "Different carrier agreements can produce different commercial outcomes from similar document issues."
+    },
+    {
+      "id": "flow-exceptions",
+      "label": "BOF routes exceptions",
+      "description": "Missing PODs, expired documents, wrong-driver matches, missing temperature records, and missing approvals go to review.",
+      "impact": "The right desk sees the next action instead of searching through a shared folder."
+    },
+    {
+      "id": "flow-readiness",
+      "label": "BOF updates readiness",
+      "description": "Driver, carrier, operating unit, and aggregator readiness summaries update.",
+      "impact": "The network sees readiness by level instead of guessing from isolated documents."
+    },
+    {
+      "id": "flow-commercial-impact",
+      "label": "BOF shows commercial impact",
+      "description": "Billing held, settlement held, factoring incomplete, reimbursement held, or readiness unaffected depending on the carrier agreement.",
+      "impact": "Operators see payment, billing, settlement, and readiness consequences separately."
+    }
+  ],
+  "networkFlowStages": [
+    {
+      "stage": 1,
+      "label": "Unstructured batch",
+      "summary": "842 submitted documents arrive across carriers, drivers, loads, and settlement support."
+    },
+    {
+      "stage": 2,
+      "label": "Classified hierarchy",
+      "summary": "BOF maps every file to a network, carrier, operating unit, driver, document packet, or load context."
+    },
+    {
+      "stage": 3,
+      "label": "Agreement-aware rules",
+      "summary": "BOF default rules combine with aggregator and carrier agreement rules before the final decision is shown."
+    },
+    {
+      "stage": 4,
+      "label": "Commercial impact",
+      "summary": "Readiness, billing, settlement, factoring, reimbursement, and review queues update independently."
+    }
+  ],
+  "operationalImpactEvents": [
+    {
+      "id": "OIE-001",
+      "label": "Billing held",
+      "count": 12,
+      "description": "Billing cannot release until required proof documents are verified."
+    },
+    {
+      "id": "OIE-002",
+      "label": "Settlement held",
+      "count": 9,
+      "description": "Settlement release waits for POD, rate confirmation, reefer proof, or supporting documents."
+    },
+    {
+      "id": "OIE-003",
+      "label": "Factoring incomplete",
+      "count": 6,
+      "description": "Factoring packets need proof or billing support before they can be marked ready."
+    },
+    {
+      "id": "OIE-004",
+      "label": "Payment review",
+      "count": 14,
+      "description": "Lumper, deduction, accessorial, or claims-related items need human verification."
+    },
+    {
+      "id": "OIE-005",
+      "label": "Readiness unaffected",
+      "count": 18,
+      "description": "Some commercial holds do not block driver or carrier readiness."
+    }
   ]
 }
