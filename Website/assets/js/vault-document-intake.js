@@ -6,10 +6,12 @@
     selectedDocumentId: "",
     selectedTaskId: "",
     workflowIndex: 0,
+    bulkStage: 0,
     documents: [],
     reviewTasks: [],
     readinessOutcomes: [],
-    notice: "Select a sample document or run classification to begin the intake review."
+    notice: "Select a sample document or run classification to begin the intake review.",
+    bulkNotice: "Aggregator package is staged. Run the simulated bulk workflow to see BOF convert messy files into clean Vault records."
   };
 
   function esc(value) {
@@ -20,9 +22,9 @@
 
   function statusClass(status) {
     var value = String(status || "").toLowerCase();
-    if (value.indexOf("ready") >= 0 || value.indexOf("complete") >= 0 || value.indexOf("resolved") >= 0) return "ready";
+    if (value.indexOf("ready") >= 0 || value.indexOf("complete") >= 0 || value.indexOf("resolved") >= 0 || value.indexOf("verified") >= 0) return "ready";
     if (value.indexOf("blocked") >= 0 || value.indexOf("expired") >= 0 || value.indexOf("mismatch") >= 0) return "blocked";
-    if (value.indexOf("risk") >= 0 || value.indexOf("review") >= 0 || value.indexOf("missing") >= 0 || value.indexOf("unclear") >= 0 || value.indexOf("conflict") >= 0) return "review";
+    if (value.indexOf("risk") >= 0 || value.indexOf("review") >= 0 || value.indexOf("missing") >= 0 || value.indexOf("unclear") >= 0 || value.indexOf("conflict") >= 0 || value.indexOf("open") >= 0) return "review";
     return "watch";
   }
 
@@ -49,6 +51,118 @@
       var active = index === state.workflowIndex ? " is-active" : index < state.workflowIndex ? " is-done" : "";
       return '<button class="vault-step' + active + '" type="button" data-vault-step="' + index + '"><span>' + String(index + 1).padStart(2, "0") + '</span><strong>' + esc(step.label) + '</strong><em>' + esc(step.description) + '</em></button>';
     }).join("") + "</section>";
+  }
+
+  function firstBulkBatch(data) {
+    return data.bulkBatches && data.bulkBatches[0] ? data.bulkBatches[0] : {};
+  }
+
+  function metricCardHtml(label, value, detail, status) {
+    return '<article class="vault-readiness-card"><span class="mini-status ' + statusClass(status || label) + '">' + esc(label) + '</span><strong>' + esc(value) + '</strong><p>' + esc(detail) + '</p></article>';
+  }
+
+  function bulkStepHtml(data) {
+    return '<div class="vault-workflow" aria-label="Aggregator bulk intake processing steps">' + (data.batchProcessingSteps || []).map(function (step, index) {
+      var active = index + 1 === state.bulkStage ? " is-active" : index + 1 < state.bulkStage ? " is-done" : "";
+      return '<button class="vault-step' + active + '" type="button" data-vault-bulk-step="' + (index + 1) + '"><span>' + String(index + 1).padStart(2, "0") + '</span><strong>' + esc(step.label) + '</strong><em>' + esc(step.description) + '</em></button>';
+    }).join("") + "</div>";
+  }
+
+  function bulkIntakeHtml(data) {
+    var batch = firstBulkBatch(data);
+    var reviewTotal = (data.bulkReviewSummary || []).reduce(function (sum, item) { return sum + Number(item.count || 0); }, 0);
+    return [
+      '<section class="vault-section-block" id="aggregator-bulk-intake">',
+      '  <div class="vault-section-heading"><span>Aggregator batch</span><h2>Aggregator Bulk Intake Simulation</h2><p>Simulate how BOF receives a large aggregator document package, classifies each file, converts it into the BOF Vault naming structure, routes exceptions, and updates readiness across the driver pool.</p></div>',
+      '  <div class="vault-command-grid">',
+      '    <article class="vault-intake-panel">',
+      '      <div><span class="mini-status review">' + esc(batch.batchStatus || "Batch staged") + '</span><h2>' + esc(batch.aggregatorName || "Aggregator batch") + '</h2><p>' + esc(batch.readinessEffect || "") + '</p></div>',
+      '      <dl class="selected-details">',
+      '        <div><dt>Fleet/customer</dt><dd>' + esc(batch.fleetCustomer) + '</dd></div>',
+      '        <div><dt>Drivers submitted</dt><dd>' + esc(batch.driversSubmitted) + '</dd></div>',
+      '        <div><dt>Documents submitted</dt><dd>' + esc(batch.documentsSubmitted) + '</dd></div>',
+      '        <div><dt>Auto-classified</dt><dd>' + esc(batch.autoClassified) + '</dd></div>',
+      '      </dl>',
+      '      <div class="vault-action-row">',
+      '        <button type="button" data-vault-bulk-action="simulate-upload">Simulate Bulk Upload</button>',
+      '        <button type="button" data-vault-bulk-action="run-classification">Run Batch Classification</button>',
+      '        <button type="button" data-vault-bulk-action="generate-review">Generate Review Queue</button>',
+      '        <button type="button" data-vault-bulk-action="update-readiness">Update Readiness</button>',
+      '        <button type="button" data-vault-bulk-action="reset">Reset Demo</button>',
+      '      </div>',
+      '      <p class="vault-notice" aria-live="polite">' + esc(state.bulkNotice) + '</p>',
+      '    </article>',
+      '    <article class="vault-selected-record">',
+      '      <span class="mini-status ' + statusClass(state.bulkStage >= 4 ? "Ready" : "Review") + '">' + esc(state.bulkStage >= 4 ? "Readiness updated" : "Batch review") + '</span>',
+      '      <h2>Batch outcome snapshot</h2>',
+      '      <p>BOF turns a messy aggregator submission into clear document counts, exception queues, readiness categories, and canonical Vault records.</p>',
+      '      <dl>',
+      '        <div><dt>Routed to review</dt><dd>' + esc(batch.routedToReview) + '</dd></div>',
+      '        <div><dt>Expired documents</dt><dd>' + esc(batch.expiredDocuments) + '</dd></div>',
+      '        <div><dt>Missing required fields</dt><dd>' + esc(batch.missingRequiredFields) + '</dd></div>',
+      '        <div><dt>Wrong-driver matches</dt><dd>' + esc(batch.wrongDriverMatches) + '</dd></div>',
+      '        <div><dt>Low confidence</dt><dd>' + esc(batch.lowConfidenceClassifications) + '</dd></div>',
+      '        <div><dt>Needs verification</dt><dd>' + esc(batch.needsHumanVerification) + '</dd></div>',
+      '        <div><dt>Open review total</dt><dd>' + esc(reviewTotal) + '</dd></div>',
+      '      </dl>',
+      '    </article>',
+      '  </div>',
+      bulkStepHtml(data),
+      '  <div class="vault-readiness-grid">',
+      metricCardHtml("Ready", batch.autoClassified || 0, "Files classified without human exception routing.", "Ready"),
+      metricCardHtml("Review", batch.routedToReview || 0, "Files needing reviewer confirmation before readiness updates.", "Needs Review"),
+      metricCardHtml("Blocked", batch.expiredDocuments || 0, "Expired records that can block readiness until corrected.", "Blocked"),
+      metricCardHtml("Human verification", batch.needsHumanVerification || 0, "Records routed to BOF or fleet reviewers.", "Needs Review"),
+      '  </div>',
+      '</section>'
+    ].join("");
+  }
+
+  function bulkReviewHtml(data) {
+    return [
+      '<section class="vault-section-block">',
+      '  <div class="vault-section-heading"><span>Batch exceptions</span><h2>Bulk review summary</h2><p>BOF groups exception types so aggregator submissions become manageable reviewer queues instead of a folder of ambiguous files.</p></div>',
+      '  <div class="vault-review-list">',
+      (data.bulkReviewSummary || []).map(function (item) {
+        return '<article class="vault-review-card"><span class="mini-status ' + statusClass(item.status) + '">' + esc(item.status) + '</span><strong>' + esc(item.type) + '</strong><em>' + esc(item.owner) + '</em><p>' + esc(item.count) + ' documents routed for follow-up.</p></article>';
+      }).join(""),
+      '  </div>',
+      '</section>',
+      '<section class="vault-section-block">',
+      '  <div class="vault-section-heading"><span>Driver pool</span><h2>Bulk readiness outcome</h2><p>After the simulated batch review, BOF summarizes readiness across the submitted driver pool.</p></div>',
+      '  <div class="vault-readiness-grid">',
+      (data.bulkReadinessSummary || []).map(function (outcome) {
+        return metricCardHtml(outcome.status, outcome.count, outcome.description, outcome.status);
+      }).join(""),
+      '  </div>',
+      '</section>'
+    ].join("");
+  }
+
+  function fileConversionHtml(data) {
+    return [
+      '<section class="vault-section-block">',
+      '  <div class="vault-section-heading"><span>BOF naming</span><h2>BOF Vault File Conversion</h2><p>Messy inbound filenames become canonical BOF Vault names that carry owner, document type, primary/secondary role, dates, and review status.</p></div>',
+      '  <div class="route-table-wrap"><table class="route-table"><thead><tr><th>Original file name</th><th>Detected type</th><th>Assigned entity</th><th>BOF canonical file name</th><th>Storage category</th><th>Primary / secondary</th><th>Compliance</th><th>Readiness effect</th><th>Review status</th></tr></thead><tbody>',
+      (data.fileConversions || []).map(function (item) {
+        return '<tr><td>' + esc(item.originalFileName) + '</td><td>' + esc(item.detectedDocumentType) + '</td><td>' + esc(item.assignedEntityType + " / " + item.assignedEntityId + " / " + item.assignedEntityName) + '</td><td>' + esc(item.canonicalFileName) + '</td><td>' + esc(item.storageCategory) + '</td><td>' + esc(item.primarySecondary) + '</td><td><span class="mini-status ' + statusClass(item.complianceStatus) + '">' + esc(item.complianceStatus) + '</span></td><td>' + esc(item.readinessEffect) + '</td><td>' + esc(item.reviewStatus) + '</td></tr>';
+      }).join(""),
+      '  </tbody></table></div>',
+      '</section>'
+    ].join("");
+  }
+
+  function manifestHtml(data) {
+    return [
+      '<section class="vault-section-block">',
+      '  <div class="vault-section-heading"><span>Aggregator manifest</span><h2>Aggregator Manifest</h2><p>The production MVP will support manifest-assisted matching for large uploads so BOF can connect submitted files to drivers, carriers, loads, dates, and notes more quickly.</p></div>',
+      '  <div class="route-table-wrap"><table class="route-table"><thead><tr><th>Manifest field</th><th>Example</th><th>How BOF uses it</th></tr></thead><tbody>',
+      (data.manifestFields || []).map(function (field) {
+        return '<tr><td>' + esc(field.field) + '</td><td>' + esc(field.example) + '</td><td>' + esc(field.purpose) + '</td></tr>';
+      }).join(""),
+      '  </tbody></table></div>',
+      '</section>'
+    ].join("");
   }
 
   function intakePanelHtml() {
@@ -172,7 +286,7 @@
       }).join(""),
       '  </div>',
       '</section>',
-      '<section class="vault-demo-boundary"><strong>BOF Vault demo workflow</strong><p>The production MVP will use secure storage, authentication, audit logs, backend processing, and controlled document access. This page is a controlled walkthrough of the intake workflow only.</p></section>'
+      '<section class="vault-demo-boundary"><strong>BOF Vault demo workflow</strong><p>This is a static BOF Vault demo. The production MVP will use secure storage, authentication, access controls, audit logs, backend processing, OCR/document extraction, and controlled document retention.</p></section>'
     ].join("");
   }
 
@@ -180,9 +294,13 @@
     mount.innerHTML = [
       '<section class="vault-intake-hero">',
       '  <div><span class="mini-status ready">BOF Vault</span><h1>Intake command view</h1><p>Upload, classify, verify, and route driver and fleet documents before they affect readiness.</p></div>',
-      '  <dl><div><dt>Documents modeled</dt><dd>' + esc(data.documentTypes.length) + '</dd></div><div><dt>Review tasks</dt><dd>' + esc(state.reviewTasks.length) + '</dd></div><div><dt>Workflow steps</dt><dd>' + esc(data.workflowSteps.length) + '</dd></div></dl>',
+      '  <dl><div><dt>Documents modeled</dt><dd>' + esc(data.documentTypes.length) + '</dd></div><div><dt>Review tasks</dt><dd>' + esc(state.reviewTasks.length) + '</dd></div><div><dt>Bulk documents</dt><dd>' + esc((firstBulkBatch(data).documentsSubmitted || 0)) + '</dd></div></dl>',
       '</section>',
       workflowHtml(data),
+      bulkIntakeHtml(data),
+      fileConversionHtml(data),
+      manifestHtml(data),
+      bulkReviewHtml(data),
       intakePanelHtml(),
       documentCardsHtml(),
       reviewQueueHtml(),
@@ -257,6 +375,31 @@
     render(data);
   }
 
+  function handleBulkAction(action, data) {
+    var batch = firstBulkBatch(data);
+    if (action === "simulate-upload") {
+      state.bulkStage = 1;
+      state.bulkNotice = batch.documentsSubmitted + " documents received from " + batch.aggregatorName + " for " + batch.driversSubmitted + " submitted drivers.";
+    }
+    if (action === "run-classification") {
+      state.bulkStage = 2;
+      state.bulkNotice = batch.autoClassified + " documents auto-classified; BOF canonical naming is ready for review.";
+    }
+    if (action === "generate-review") {
+      state.bulkStage = 3;
+      state.bulkNotice = batch.routedToReview + " documents routed into exception queues for expired, missing, wrong-driver, low-confidence, and verification issues.";
+    }
+    if (action === "update-readiness") {
+      state.bulkStage = 4;
+      state.bulkNotice = "Driver-pool readiness updated: 63 Ready, 21 At Risk, 5 Blocked, 11 Needs Review.";
+    }
+    if (action === "reset") {
+      state.bulkStage = 0;
+      state.bulkNotice = "Aggregator package is staged. Run the simulated bulk workflow to see BOF convert messy files into clean Vault records.";
+    }
+    render(data);
+  }
+
   function bind(data) {
     mount.querySelectorAll("[data-vault-doc]").forEach(function (button) {
       button.addEventListener("click", function () {
@@ -286,6 +429,19 @@
     mount.querySelectorAll("[data-vault-action]").forEach(function (button) {
       button.addEventListener("click", function () {
         handleAction(button.getAttribute("data-vault-action"), data);
+      });
+    });
+    mount.querySelectorAll("[data-vault-bulk-action]").forEach(function (button) {
+      button.addEventListener("click", function () {
+        handleBulkAction(button.getAttribute("data-vault-bulk-action"), data);
+      });
+    });
+    mount.querySelectorAll("[data-vault-bulk-step]").forEach(function (button) {
+      button.addEventListener("click", function () {
+        state.bulkStage = Number(button.getAttribute("data-vault-bulk-step") || "0");
+        var step = (data.batchProcessingSteps || [])[state.bulkStage - 1];
+        state.bulkNotice = step ? "Batch step selected: " + step.label + "." : state.bulkNotice;
+        render(data);
       });
     });
   }

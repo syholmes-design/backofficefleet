@@ -415,5 +415,224 @@
       "count": 3,
       "description": "A BOF or fleet reviewer must resolve a classification, match, or required-field issue."
     }
+  ],
+  "bulkBatches": [
+    {
+      "id": "BULK-MCN-20260622",
+      "aggregatorName": "Midwest Carrier Network",
+      "fleetCustomer": "Delta Advanced Trucking",
+      "submittedAt": "2026-06-22T09:15:00-04:00",
+      "driversSubmitted": 100,
+      "documentsSubmitted": 842,
+      "autoClassified": 711,
+      "routedToReview": 89,
+      "expiredDocuments": 26,
+      "missingRequiredFields": 12,
+      "wrongDriverMatches": 14,
+      "lowConfidenceClassifications": 8,
+      "needsHumanVerification": 29,
+      "batchStatus": "Review staged",
+      "readinessEffect": "Aggregator batch can be converted into BOF Vault records before documents affect readiness, dispatch, settlement, or compliance."
+    }
+  ],
+  "batchProcessingSteps": [
+    {
+      "id": "bulk-upload",
+      "label": "Simulate Bulk Upload",
+      "description": "Receive the aggregator package and manifest into the BOF Vault intake queue."
+    },
+    {
+      "id": "batch-classification",
+      "label": "Run Batch Classification",
+      "description": "Classify each file by document type and match it to driver, carrier, load, or settlement context."
+    },
+    {
+      "id": "review-queue",
+      "label": "Generate Review Queue",
+      "description": "Route expired records, missing fields, wrong-driver matches, low confidence, and verification needs to reviewers."
+    },
+    {
+      "id": "readiness-update",
+      "label": "Update Readiness",
+      "description": "Update the driver-pool readiness summary after the simulated batch review."
+    }
+  ],
+  "bulkReadinessSummary": [
+    {
+      "status": "Ready",
+      "count": 63,
+      "description": "Drivers with enough verified primary documents to remain operationally ready."
+    },
+    {
+      "status": "At Risk",
+      "count": 21,
+      "description": "Drivers usable for planning while one or more document issues remain visible."
+    },
+    {
+      "status": "Blocked",
+      "count": 5,
+      "description": "Drivers blocked by expired, missing, or unresolved primary readiness documents."
+    },
+    {
+      "status": "Needs Review",
+      "count": 11,
+      "description": "Drivers requiring BOF or fleet reviewer action before readiness can be trusted."
+    }
+  ],
+  "bulkReviewSummary": [
+    {
+      "type": "Expired documents",
+      "count": 26,
+      "owner": "Safety desk",
+      "status": "Open"
+    },
+    {
+      "type": "Missing required fields",
+      "count": 12,
+      "owner": "Document desk",
+      "status": "Open"
+    },
+    {
+      "type": "Wrong-driver matches",
+      "count": 14,
+      "owner": "Safety desk",
+      "status": "Open"
+    },
+    {
+      "type": "Low-confidence classifications",
+      "count": 8,
+      "owner": "Document desk",
+      "status": "Open"
+    },
+    {
+      "type": "Needs human verification",
+      "count": 29,
+      "owner": "BOF review desk",
+      "status": "Open"
+    }
+  ],
+  "manifestFields": [
+    {
+      "field": "Driver Name",
+      "example": "John Carter",
+      "purpose": "Supports person matching and canonical file naming."
+    },
+    {
+      "field": "Driver ID",
+      "example": "DRV-001",
+      "purpose": "Connects the submitted file to the BOF driver record."
+    },
+    {
+      "field": "CDL Number",
+      "example": "OH-CDL-7816-2043",
+      "purpose": "Supports license matching without exposing real credentials."
+    },
+    {
+      "field": "Document Type",
+      "example": "CDL",
+      "purpose": "Gives the classifier a manifest-assisted starting point."
+    },
+    {
+      "field": "Original File Name",
+      "example": "scan_0047.pdf",
+      "purpose": "Preserves the inbound filename for audit and conversion history."
+    },
+    {
+      "field": "Effective Date",
+      "example": "2025-04-24",
+      "purpose": "Starts readiness coverage when applicable."
+    },
+    {
+      "field": "Expiration Date",
+      "example": "2029-04-24",
+      "purpose": "Controls renewal watch and blocked readiness states."
+    },
+    {
+      "field": "Carrier",
+      "example": "RoadPro Desk",
+      "purpose": "Supports carrier packet and aggregator network visibility."
+    },
+    {
+      "field": "Load ID, if applicable",
+      "example": "LOAD-008",
+      "purpose": "Connects BOL, POD, rate confirmation, and settlement support documents to a load."
+    },
+    {
+      "field": "Notes",
+      "example": "Receiver signature unclear",
+      "purpose": "Captures aggregator context that may route the file to review."
+    }
+  ],
+  "fileConversions": [
+    {
+      "id": "CONV-001",
+      "originalFileName": "scan_0047.pdf",
+      "detectedDocumentType": "CDL",
+      "assignedEntityType": "Driver",
+      "assignedEntityId": "DRV-001",
+      "assignedEntityName": "Carter, John",
+      "canonicalFileName": "DRV-001_Carter-John_CDL_Primary_Eff-2025-04-24_Exp-2029-04-24_Verified.pdf",
+      "storageCategory": "Driver Qualification File",
+      "primarySecondary": "Primary",
+      "complianceStatus": "Verified",
+      "readinessEffect": "Driver remains Ready after license evidence is attached.",
+      "reviewStatus": "No review required"
+    },
+    {
+      "id": "CONV-002",
+      "originalFileName": "maria med card.jpeg",
+      "detectedDocumentType": "Medical Examiner Certificate",
+      "assignedEntityType": "Driver",
+      "assignedEntityId": "DRV-002",
+      "assignedEntityName": "Lopez, Maria",
+      "canonicalFileName": "DRV-002_Lopez-Maria_MED-CERT_Primary_Eff-2026-01-10_Exp-2027-01-10_NeedsReview.pdf",
+      "storageCategory": "Driver Qualification File",
+      "primarySecondary": "Primary",
+      "complianceStatus": "Needs Review",
+      "readinessEffect": "Driver moves to At Risk until medical-card verifier is confirmed.",
+      "reviewStatus": "Human verification required"
+    },
+    {
+      "id": "CONV-003",
+      "originalFileName": "ratecon-final-final-v2.pdf",
+      "detectedDocumentType": "Rate Confirmation",
+      "assignedEntityType": "Load",
+      "assignedEntityId": "LOAD-008",
+      "assignedEntityName": "Mobile to Atlanta",
+      "canonicalFileName": "LOAD-008_RATE-CON_Primary_Eff-2026-06-22_NoExp_Verified.pdf",
+      "storageCategory": "Load Release Packet",
+      "primarySecondary": "Primary",
+      "complianceStatus": "Verified",
+      "readinessEffect": "Load release and settlement support can reference the verified rate record.",
+      "reviewStatus": "No review required"
+    },
+    {
+      "id": "CONV-004",
+      "originalFileName": "pod pic.jpg",
+      "detectedDocumentType": "Proof of Delivery",
+      "assignedEntityType": "Load",
+      "assignedEntityId": "LOAD-008",
+      "assignedEntityName": "Mobile to Atlanta",
+      "canonicalFileName": "LOAD-008_POD_Primary_Delivery-2026-06-24_NoExp_Verified.jpg",
+      "storageCategory": "Delivery Proof",
+      "primarySecondary": "Primary",
+      "complianceStatus": "Verified",
+      "readinessEffect": "Settlement packet can move forward with delivery proof attached.",
+      "reviewStatus": "No review required"
+    },
+    {
+      "id": "CONV-005",
+      "originalFileName": "insurance cert abc trucking.pdf",
+      "detectedDocumentType": "Insurance Certificate",
+      "assignedEntityType": "Carrier",
+      "assignedEntityId": "CAR-003",
+      "assignedEntityName": "ABC Trucking",
+      "canonicalFileName": "CAR-003_ABC-Trucking_INSURANCE-COI_Primary_Eff-2026-01-01_Exp-2027-01-01_Verified.pdf",
+      "storageCategory": "Carrier Packet",
+      "primarySecondary": "Primary",
+      "complianceStatus": "Verified",
+      "readinessEffect": "Carrier packet remains Ready for network visibility.",
+      "reviewStatus": "No review required"
+    }
   ]
 }
