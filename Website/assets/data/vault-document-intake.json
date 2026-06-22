@@ -1,0 +1,419 @@
+{
+  "workflowSteps": [
+    {
+      "id": "intake",
+      "label": "Intake document",
+      "description": "Receive a driver, carrier, or load document into the BOF Vault intake queue."
+    },
+    {
+      "id": "classify",
+      "label": "Classify document type",
+      "description": "Identify whether the file is a CDL, medical card, insurance certificate, rate confirmation, POD, or another controlled document."
+    },
+    {
+      "id": "assign",
+      "label": "Assign to person/entity",
+      "description": "Match the document to the right driver, carrier, load, or settlement record before it affects readiness."
+    },
+    {
+      "id": "effective-date",
+      "label": "Extract effective date",
+      "description": "Record the effective date when the document creates coverage, qualification, or operational authority."
+    },
+    {
+      "id": "expiration-date",
+      "label": "Extract expiration date",
+      "description": "Record the expiration date or mark the document as non-expiring when appropriate."
+    },
+    {
+      "id": "primary-secondary",
+      "label": "Determine primary vs secondary",
+      "description": "Separate controlling readiness documents from supporting evidence and settlement backup."
+    },
+    {
+      "id": "required-fields",
+      "label": "Check required fields",
+      "description": "Compare the document against required field rules for its type."
+    },
+    {
+      "id": "verification-source",
+      "label": "Identify verification source",
+      "description": "Assign the correct verification source, such as a licensing agency, FMCSA-style verifier, insurer, customer, carrier, or internal reviewer."
+    },
+    {
+      "id": "compliance-status",
+      "label": "Assign compliance status",
+      "description": "Mark the document as ready, at risk, blocked, or needing review."
+    },
+    {
+      "id": "human-review",
+      "label": "Route exceptions to human review",
+      "description": "Send missing fields, expired records, wrong-driver matches, and low-confidence documents to the right BOF reviewer."
+    },
+    {
+      "id": "readiness",
+      "label": "Update driver readiness",
+      "description": "Update driver, carrier, load, settlement, or readiness status after review."
+    }
+  ],
+  "documentTypes": [
+    {
+      "type": "CDL",
+      "category": "Driver qualification",
+      "primary": true,
+      "readinessUse": "Controls driver eligibility before assignment."
+    },
+    {
+      "type": "Medical Examiner Certificate",
+      "category": "Driver qualification",
+      "primary": true,
+      "readinessUse": "Controls medical qualification and renewal watch."
+    },
+    {
+      "type": "MVR / CDLIS MVR",
+      "category": "Driver qualification",
+      "primary": true,
+      "readinessUse": "Supports safety review and DQF readiness."
+    },
+    {
+      "type": "Employment Application",
+      "category": "HR and driver onboarding",
+      "primary": false,
+      "readinessUse": "Supports onboarding completeness."
+    },
+    {
+      "type": "Road Test Certificate",
+      "category": "Driver qualification",
+      "primary": true,
+      "readinessUse": "Supports dispatch eligibility and annual review."
+    },
+    {
+      "type": "Safety Performance History",
+      "category": "Safety",
+      "primary": false,
+      "readinessUse": "Supports prior-employer safety review."
+    },
+    {
+      "type": "Clearinghouse Query Proof",
+      "category": "Compliance",
+      "primary": true,
+      "readinessUse": "Controls compliance clearance."
+    },
+    {
+      "type": "Insurance Certificate",
+      "category": "Carrier packet",
+      "primary": true,
+      "readinessUse": "Controls carrier readiness and renewal watch."
+    },
+    {
+      "type": "W-9",
+      "category": "Carrier or settlement setup",
+      "primary": false,
+      "readinessUse": "Supports payment setup and settlement readiness."
+    },
+    {
+      "type": "Rate Confirmation",
+      "category": "Load document",
+      "primary": true,
+      "readinessUse": "Controls release, billing, and settlement support."
+    },
+    {
+      "type": "Bill of Lading",
+      "category": "Load document",
+      "primary": true,
+      "readinessUse": "Controls release, delivery proof, claims, and settlement."
+    },
+    {
+      "type": "Proof of Delivery",
+      "category": "Delivery proof",
+      "primary": true,
+      "readinessUse": "Controls invoicing, settlement, and claims response."
+    },
+    {
+      "type": "Lumper Receipt",
+      "category": "Settlement support",
+      "primary": false,
+      "readinessUse": "Supports accessorial billing and driver settlement."
+    },
+    {
+      "type": "Settlement Support Document",
+      "category": "Settlement support",
+      "primary": false,
+      "readinessUse": "Supports payment packet completion."
+    }
+  ],
+  "requiredFieldsByType": {
+    "CDL": ["driverName", "licenseNumber", "state", "class", "endorsements", "expirationDate", "dateOfBirth"],
+    "Medical Examiner Certificate": ["driverName", "examinerName", "nationalRegistryReference", "issueDate", "expirationDate"],
+    "MVR / CDLIS MVR": ["driverName", "licenseNumber", "state", "reportDate", "reviewer"],
+    "Employment Application": ["applicantName", "signatureDate", "employmentHistory", "reviewer"],
+    "Road Test Certificate": ["driverName", "testDate", "certifier", "equipmentType"],
+    "Safety Performance History": ["driverName", "priorEmployer", "requestDate", "responseStatus"],
+    "Clearinghouse Query Proof": ["driverName", "queryDate", "queryType", "reviewer"],
+    "Insurance Certificate": ["carrierName", "producer", "policyNumber", "coverageType", "effectiveDate", "expirationDate"],
+    "W-9": ["entityName", "taxClassification", "signatureDate", "reviewer"],
+    "Rate Confirmation": ["loadNumber", "carrierName", "rateAmount", "pickupDate", "deliveryDate", "signer"],
+    "Bill of Lading": ["loadNumber", "shipper", "consignee", "pickupDate", "commodity", "signature"],
+    "Proof of Delivery": ["loadNumber", "deliveryDate", "receiverName", "receiverSignature", "condition"],
+    "Lumper Receipt": ["loadNumber", "vendorName", "amount", "receiptDate"],
+    "Settlement Support Document": ["loadNumber", "documentOwner", "settlementBatch", "reviewer"]
+  },
+  "verificationSources": {
+    "CDL": "State licensing agency or CDLIS-style verification",
+    "Medical Examiner Certificate": "FMCSA National Registry-style verifier",
+    "MVR / CDLIS MVR": "State licensing agency or CDLIS-style verification",
+    "Employment Application": "Internal BOF/fleet reviewer",
+    "Road Test Certificate": "Internal BOF/fleet safety reviewer",
+    "Safety Performance History": "Prior employer response and internal safety reviewer",
+    "Clearinghouse Query Proof": "FMCSA Clearinghouse-style verifier",
+    "Insurance Certificate": "Insurer or producer",
+    "W-9": "Internal BOF/fleet settlement reviewer",
+    "Rate Confirmation": "Customer, carrier, or load record validation",
+    "Bill of Lading": "Customer, carrier, or load record validation",
+    "Proof of Delivery": "Customer, carrier, receiver, or load record validation",
+    "Lumper Receipt": "Vendor receipt and internal BOF/fleet settlement reviewer",
+    "Settlement Support Document": "Internal BOF/fleet settlement reviewer"
+  },
+  "sampleDocuments": [
+    {
+      "id": "VDI-001",
+      "documentName": "John Carter CDL renewal image",
+      "assignedEntity": "DRV-001 / John Carter",
+      "entityType": "Driver",
+      "documentType": "CDL",
+      "effectiveDate": "2026-01-01",
+      "expirationDate": "2027-11-30",
+      "priority": "Primary",
+      "requiredFieldsStatus": "Complete",
+      "verificationSource": "State licensing agency or CDLIS-style verification",
+      "confidenceScore": 96,
+      "complianceStatus": "Ready",
+      "readinessEffect": "Driver remains Ready for assignment.",
+      "reviewReason": "No exception",
+      "loadOrPacket": "Driver qualification file",
+      "issuer": "State licensing agency"
+    },
+    {
+      "id": "VDI-002",
+      "documentName": "Mara Chen medical card scan",
+      "assignedEntity": "DRV-003 / Mara Chen",
+      "entityType": "Driver",
+      "documentType": "Medical Examiner Certificate",
+      "effectiveDate": "2024-06-01",
+      "expirationDate": "2026-05-31",
+      "priority": "Primary",
+      "requiredFieldsStatus": "Expiration conflict",
+      "verificationSource": "FMCSA National Registry-style verifier",
+      "confidenceScore": 89,
+      "complianceStatus": "Blocked",
+      "readinessEffect": "Driver remains Blocked until renewal evidence clears.",
+      "reviewReason": "Expired documents",
+      "loadOrPacket": "BOF-1931",
+      "issuer": "Medical examiner office"
+    },
+    {
+      "id": "VDI-003",
+      "documentName": "RoadPro Desk insurance certificate",
+      "assignedEntity": "CAR-118 / RoadPro Desk",
+      "entityType": "Carrier",
+      "documentType": "Insurance Certificate",
+      "effectiveDate": "2026-01-01",
+      "expirationDate": "2026-12-31",
+      "priority": "Primary",
+      "requiredFieldsStatus": "Complete",
+      "verificationSource": "Insurer or producer",
+      "confidenceScore": 94,
+      "complianceStatus": "Ready",
+      "readinessEffect": "Carrier packet remains Ready.",
+      "reviewReason": "No exception",
+      "loadOrPacket": "Carrier packet",
+      "issuer": "Insurance producer"
+    },
+    {
+      "id": "VDI-004",
+      "documentName": "BOF-2175 rate confirmation",
+      "assignedEntity": "BOF-2175 / Mobile to Atlanta",
+      "entityType": "Load",
+      "documentType": "Rate Confirmation",
+      "effectiveDate": "2026-06-12",
+      "expirationDate": "Non-expiring",
+      "priority": "Primary",
+      "requiredFieldsStatus": "Missing signer",
+      "verificationSource": "Customer, carrier, or load record validation",
+      "confidenceScore": 82,
+      "complianceStatus": "Needs Review",
+      "readinessEffect": "Release packet stays in Review until signer is confirmed.",
+      "reviewReason": "Missing required fields",
+      "loadOrPacket": "BOF-2175",
+      "issuer": "Customer load record"
+    },
+    {
+      "id": "VDI-005",
+      "documentName": "TMS-LD-10482 bill of lading",
+      "assignedEntity": "TMS-LD-10482 / Dallas to Memphis",
+      "entityType": "Load",
+      "documentType": "Bill of Lading",
+      "effectiveDate": "2026-06-14",
+      "expirationDate": "Non-expiring",
+      "priority": "Primary",
+      "requiredFieldsStatus": "Complete",
+      "verificationSource": "Customer, carrier, or load record validation",
+      "confidenceScore": 91,
+      "complianceStatus": "Ready",
+      "readinessEffect": "Release packet can move to owner review.",
+      "reviewReason": "No exception",
+      "loadOrPacket": "BOF-RR-10482",
+      "issuer": "Shipper load record"
+    },
+    {
+      "id": "VDI-006",
+      "documentName": "BOF-1907 delivery POD",
+      "assignedEntity": "BOF-1907 / Tulsa to Kansas City",
+      "entityType": "Load",
+      "documentType": "Proof of Delivery",
+      "effectiveDate": "2026-06-15",
+      "expirationDate": "Non-expiring",
+      "priority": "Primary",
+      "requiredFieldsStatus": "Receiver signature unclear",
+      "verificationSource": "Customer, carrier, receiver, or load record validation",
+      "confidenceScore": 76,
+      "complianceStatus": "At Risk",
+      "readinessEffect": "Settlement stays on watch until delivery proof is reviewed.",
+      "reviewReason": "Low-confidence classification",
+      "loadOrPacket": "BOF-1907",
+      "issuer": "Receiver dock record"
+    },
+    {
+      "id": "VDI-007",
+      "documentName": "Carlos Martinez MVR report",
+      "assignedEntity": "DRV-001 / John Carter",
+      "entityType": "Driver",
+      "documentType": "MVR / CDLIS MVR",
+      "effectiveDate": "2026-06-01",
+      "expirationDate": "2026-07-01",
+      "priority": "Primary",
+      "requiredFieldsStatus": "Driver mismatch",
+      "verificationSource": "State licensing agency or CDLIS-style verification",
+      "confidenceScore": 68,
+      "complianceStatus": "Needs Review",
+      "readinessEffect": "Document is held from readiness until the driver match is corrected.",
+      "reviewReason": "Wrong-driver match",
+      "loadOrPacket": "Driver qualification file",
+      "issuer": "State licensing agency"
+    },
+    {
+      "id": "VDI-008",
+      "documentName": "Lumper receipt - Memphis delivery",
+      "assignedEntity": "TMS-LD-10482 / Dallas to Memphis",
+      "entityType": "Load",
+      "documentType": "Lumper Receipt",
+      "effectiveDate": "2026-06-16",
+      "expirationDate": "Non-expiring",
+      "priority": "Secondary",
+      "requiredFieldsStatus": "Complete",
+      "verificationSource": "Vendor receipt and internal BOF/fleet settlement reviewer",
+      "confidenceScore": 88,
+      "complianceStatus": "Ready",
+      "readinessEffect": "Accessorial support is ready for settlement review.",
+      "reviewReason": "Needs human verification",
+      "loadOrPacket": "Settlement packet",
+      "issuer": "Warehouse vendor"
+    }
+  ],
+  "complianceChecks": [
+    {
+      "id": "check-required-fields",
+      "label": "Required fields",
+      "status": "Active",
+      "description": "Compare each document type to the required field list."
+    },
+    {
+      "id": "check-expiration",
+      "label": "Expiration and renewal",
+      "status": "Active",
+      "description": "Flag expired documents, missing dates, and renewal-watch items."
+    },
+    {
+      "id": "check-entity-match",
+      "label": "Person/entity match",
+      "status": "Active",
+      "description": "Hold documents when the named driver, carrier, load, or entity does not match the record."
+    },
+    {
+      "id": "check-confidence",
+      "label": "Classification confidence",
+      "status": "Active",
+      "description": "Route low-confidence classifications to human review."
+    },
+    {
+      "id": "check-verification-source",
+      "label": "Verification source",
+      "status": "Active",
+      "description": "Attach the correct verification source for driver, carrier, load, and settlement records."
+    }
+  ],
+  "reviewTasks": [
+    {
+      "id": "REV-101",
+      "documentId": "VDI-004",
+      "type": "missing required fields",
+      "owner": "Document desk",
+      "status": "Open",
+      "nextAction": "Confirm signer and match the rate amount to BOF-2175."
+    },
+    {
+      "id": "REV-102",
+      "documentId": "VDI-002",
+      "type": "expired documents",
+      "owner": "Safety desk",
+      "status": "Open",
+      "nextAction": "Request updated medical examiner certificate for DRV-003."
+    },
+    {
+      "id": "REV-103",
+      "documentId": "VDI-007",
+      "type": "wrong-driver match",
+      "owner": "Safety desk",
+      "status": "Open",
+      "nextAction": "Reassign MVR report to Carlos Martinez or request replacement."
+    },
+    {
+      "id": "REV-104",
+      "documentId": "VDI-006",
+      "type": "low-confidence classification",
+      "owner": "Settlement desk",
+      "status": "Open",
+      "nextAction": "Review receiver signature and delivery condition."
+    },
+    {
+      "id": "REV-105",
+      "documentId": "VDI-008",
+      "type": "needs human verification",
+      "owner": "Settlement desk",
+      "status": "Open",
+      "nextAction": "Confirm lumper amount before settlement support is accepted."
+    }
+  ],
+  "readinessOutcomes": [
+    {
+      "status": "Ready",
+      "count": 6,
+      "description": "Documents can support dispatch, compliance, settlement, or readiness without an open exception."
+    },
+    {
+      "status": "At Risk",
+      "count": 2,
+      "description": "Documents can remain visible for planning, but owner review is needed before the next operational step."
+    },
+    {
+      "status": "Blocked",
+      "count": 1,
+      "description": "Document issue blocks assignment, release, or readiness until corrected."
+    },
+    {
+      "status": "Needs Review",
+      "count": 3,
+      "description": "A BOF or fleet reviewer must resolve a classification, match, or required-field issue."
+    }
+  ]
+}

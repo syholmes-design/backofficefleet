@@ -7,6 +7,7 @@
     ["Load Queue", "/interactive-demo/load-queue/", "app-icon-list"],
     ["Dispatch Board", "/interactive-demo/dispatch/", "app-icon-calendar"],
     ["Drivers", "/interactive-demo/drivers/", "app-icon-user"],
+    ["Document Intake", "/interactive-demo/drivers/document-intake/", "app-icon-doc"],
     ["Carriers", "/interactive-demo/carriers/", "app-icon-truck"],
     ["Documents", "/interactive-demo/documents/", "app-icon-doc"],
     ["Safety & Compliance", "/interactive-demo/safety/", "app-icon-shield"],
@@ -333,7 +334,9 @@
   function navHtml() {
     var path = currentPath();
     return navItems.map(function (item) {
-      var active = path === item[1] || (item[1] !== "/interactive-demo/" && path.indexOf(item[1]) === 0);
+      var active = path === item[1] ||
+        (item[1] === "/interactive-demo/drivers/" && path.indexOf(item[1]) === 0 && path.indexOf("/interactive-demo/drivers/document-intake/") !== 0) ||
+        (item[1] !== "/interactive-demo/" && item[1] !== "/interactive-demo/drivers/" && path.indexOf(item[1]) === 0);
       return '<a class="' + (active ? "is-active" : "") + '" href="' + item[1] + '"' + (active ? ' aria-current="page"' : "") + '><svg><use href="#' + esc(item[2]) + '"></use></svg><span>' + esc(item[0]) + "</span>" + (item[0] === "Alerts" ? "<b>4</b>" : "") + "</a>";
     }).join("");
   }
@@ -358,6 +361,7 @@
   }
 
   function driverSlugFromPath() {
+    if (currentPath() === "/interactive-demo/drivers/document-intake/") return "";
     var match = currentPath().match(/\/interactive-demo\/drivers\/([^/]+)\//);
     return match ? match[1].toLowerCase() : "";
   }
@@ -1291,7 +1295,29 @@
 
   function driversIndex() {
     var cards = Object.keys(drivers).map(function (key) { return driverCardHtml(drivers[key]); }).join("");
-    shell("Driver Records", "Drivers", '<section class="route-grid">' + cards + '</section>', "Open fleet driver records with photos, DQF readiness, ready/watch/hold state, dispatch consequence, and complete document packets.");
+    shell("Driver Records", "Drivers", [
+      '<section class="route-grid">',
+      '  <article class="route-record-card driver-vault-intake-card">',
+      '    <span>BOF Vault</span><h2>Document intake workbench</h2>',
+      '    <p>Simulate how new driver, carrier, load, and settlement documents enter the Vault before they update readiness.</p>',
+      '    <dl><div><dt>Workflow</dt><dd>Classify, verify, route, resolve, update readiness</dd></div><div><dt>Boundary</dt><dd>Review-only simulation; no file is transmitted or stored.</dd></div></dl>',
+      '    <a href="/interactive-demo/drivers/document-intake/">Open document intake</a>',
+      '  </article>',
+      cards,
+      '</section>'
+    ].join(""), "Open fleet driver records with photos, DQF readiness, ready/watch/hold state, dispatch consequence, and complete document packets.");
+  }
+
+  function documentIntakePage() {
+    shell("BOF Vault Document Intake", "BOF Vault", [
+      '<section class="vault-intake-shell" data-vault-document-intake>',
+      '  <div class="vault-loading-card">',
+      '    <span class="mini-status review">Loading</span>',
+      '    <h2>Loading BOF Vault intake records</h2>',
+      '    <p>Preparing document types, verification sources, review queue, and readiness outcomes.</p>',
+      '  </div>',
+      '</section>'
+    ].join(""), "Upload, classify, verify, and route driver and fleet documents before they affect readiness.");
   }
 
   function driverPage() {
@@ -1453,7 +1479,9 @@
   }
 
   var slug = driverSlugFromPath();
-  if (slug) {
+  if (currentPath() === "/interactive-demo/drivers/document-intake/") {
+    documentIntakePage();
+  } else if (slug) {
     driverPage();
   } else if (currentPath() === "/interactive-demo/drivers/") {
     driversIndex();

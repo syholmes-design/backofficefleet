@@ -6406,6 +6406,278 @@ td { font-weight: 750; }
   font-weight: 900;
   text-transform: uppercase;
 }
+.vault-intake-shell {
+  display: grid;
+  gap: 12px;
+  min-width: 0;
+}
+.vault-loading-card,
+.vault-intake-hero,
+.vault-intake-panel,
+.vault-selected-record,
+.vault-section-block,
+.vault-demo-boundary {
+  background: var(--app-panel);
+  border: 1px solid var(--app-line);
+  border-radius: 5px;
+  box-shadow: 0 12px 26px rgba(15, 23, 42, 0.08);
+  min-width: 0;
+}
+.vault-loading-card,
+.vault-intake-panel,
+.vault-selected-record,
+.vault-section-block,
+.vault-demo-boundary {
+  padding: 16px;
+}
+.vault-intake-hero {
+  align-items: start;
+  display: grid;
+  gap: 14px;
+  grid-template-columns: minmax(0, 1.35fr) minmax(280px, 0.65fr);
+  padding: 18px;
+}
+.vault-intake-hero h1 {
+  color: #111827;
+  font-size: clamp(1.8rem, 3vw, 3rem);
+  line-height: 1.02;
+  margin: 8px 0;
+}
+.vault-intake-hero p,
+.vault-section-heading p,
+.vault-intake-panel p,
+.vault-selected-record p,
+.vault-demo-boundary p,
+.vault-check-grid p,
+.vault-readiness-card p {
+  color: #475569;
+  margin: 0;
+}
+.vault-intake-hero dl,
+.vault-selected-record dl,
+.vault-document-card dl {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+}
+.vault-intake-hero dl {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+.vault-intake-hero dl div,
+.vault-selected-record dl div,
+.vault-document-card dl div {
+  background: var(--app-panel-soft);
+  border: 1px solid var(--app-line-soft);
+  border-radius: 4px;
+  min-width: 0;
+  padding: 8px;
+}
+.vault-intake-hero dt,
+.vault-selected-record dt,
+.vault-document-card dt {
+  color: #64748b;
+  font-size: 0.7rem;
+  font-weight: 900;
+  margin: 0 0 3px;
+  text-transform: uppercase;
+}
+.vault-intake-hero dd,
+.vault-selected-record dd,
+.vault-document-card dd {
+  color: #111827;
+  font-size: 0.84rem;
+  font-weight: 780;
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+.vault-workflow {
+  display: grid;
+  gap: 8px;
+  grid-template-columns: repeat(11, minmax(120px, 1fr));
+  overflow-x: auto;
+  padding-bottom: 2px;
+}
+.vault-step,
+.vault-document-card,
+.vault-review-card,
+.vault-action-row button {
+  background: #fff;
+  border: 1px solid var(--app-line);
+  border-radius: 5px;
+  color: #334155;
+  cursor: pointer;
+  text-align: left;
+}
+.vault-step {
+  display: grid;
+  gap: 5px;
+  min-width: 120px;
+  padding: 10px;
+}
+.vault-step span,
+.vault-section-heading span,
+.vault-document-card header span,
+.vault-review-card em,
+.vault-review-card small {
+  color: #64748b;
+  font-size: 0.7rem;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+.vault-step strong,
+.vault-document-card strong,
+.vault-review-card strong {
+  color: #111827;
+  font-size: 0.9rem;
+}
+.vault-step em,
+.vault-review-card em,
+.vault-review-card small {
+  font-style: normal;
+  line-height: 1.35;
+}
+.vault-step.is-active,
+.vault-step:hover,
+.vault-step:focus-visible,
+.vault-document-card.is-active,
+.vault-document-card:hover,
+.vault-document-card:focus-visible,
+.vault-review-card.is-active,
+.vault-review-card:hover,
+.vault-review-card:focus-visible,
+.vault-action-row button:hover,
+.vault-action-row button:focus-visible {
+  background: #e8f3ed;
+  border-color: rgba(22, 143, 98, 0.34);
+  outline: none;
+}
+.vault-step.is-done {
+  background: #f2f8f5;
+}
+.vault-command-grid {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: minmax(0, 0.95fr) minmax(360px, 1.05fr);
+}
+.vault-intake-panel,
+.vault-selected-record {
+  display: grid;
+  gap: 13px;
+}
+.vault-upload-zone {
+  background:
+    linear-gradient(135deg, rgba(22, 143, 98, 0.08), rgba(37, 111, 148, 0.08)),
+    #f8fbf9;
+  border: 1px dashed rgba(22, 143, 98, 0.42);
+  border-radius: 5px;
+  display: grid;
+  gap: 5px;
+  padding: 14px;
+}
+.vault-upload-zone strong {
+  color: #111827;
+}
+.vault-upload-zone span,
+.vault-upload-zone em {
+  color: #475569;
+  font-size: 0.86rem;
+  font-style: normal;
+}
+.vault-action-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.vault-action-row button {
+  font-size: 0.82rem;
+  font-weight: 850;
+  min-height: 38px;
+  padding: 9px 11px;
+}
+.vault-action-row button:disabled {
+  cursor: not-allowed;
+  opacity: 0.52;
+}
+.vault-notice {
+  background: #0f2f2a;
+  border-radius: 5px;
+  color: #fff !important;
+  font-weight: 780;
+  padding: 12px;
+}
+.vault-section-block {
+  display: grid;
+  gap: 13px;
+}
+.vault-section-heading h2,
+.vault-selected-record h2,
+.vault-check-grid h3 {
+  color: #111827;
+  margin: 5px 0 7px;
+}
+.vault-document-grid,
+.vault-readiness-grid,
+.vault-check-grid {
+  display: grid;
+  gap: 10px;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+.vault-document-card {
+  display: grid;
+  gap: 10px;
+  min-width: 0;
+  padding: 12px;
+}
+.vault-document-card header {
+  align-items: start;
+  display: grid;
+  gap: 6px;
+  grid-template-columns: minmax(0, 1fr) auto;
+}
+.vault-document-card header span,
+.vault-document-card header strong {
+  grid-column: 1 / -1;
+}
+.vault-document-card p {
+  color: #475569;
+  margin: 0;
+}
+.vault-review-list {
+  display: grid;
+  gap: 10px;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+}
+.vault-review-card {
+  display: grid;
+  gap: 7px;
+  min-width: 0;
+  padding: 12px;
+}
+.vault-review-card p,
+.vault-review-card small {
+  margin: 0;
+}
+.vault-readiness-card,
+.vault-check-grid article {
+  background: var(--app-panel-soft);
+  border: 1px solid var(--app-line-soft);
+  border-radius: 5px;
+  display: grid;
+  gap: 8px;
+  min-width: 0;
+  padding: 13px;
+}
+.vault-readiness-card strong {
+  color: #111827;
+  font-size: 2rem;
+  line-height: 1;
+}
+.vault-demo-boundary {
+  background: #fffaf0;
+  border-color: rgba(181, 107, 16, 0.28);
+  display: grid;
+  gap: 6px;
+}
 .dqf-command-panel {
   display: grid;
   gap: 10px;
@@ -7867,7 +8139,14 @@ td { font-weight: 750; }
   .dispatch-primary-record dl,
   .dispatch-stage-grid,
   .consequence-summary-grid,
-  .driver-doc-grid {
+  .driver-doc-grid,
+  .vault-intake-hero,
+  .vault-command-grid,
+  .vault-intake-hero dl,
+  .vault-document-grid,
+  .vault-review-list,
+  .vault-readiness-grid,
+  .vault-check-grid {
     grid-template-columns: minmax(0, 1fr);
   }
   .proof-lifecycle-strip {
