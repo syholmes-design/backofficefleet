@@ -1,0 +1,206 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Scenario Walkthrough | BackOfficeFleet</title>
+  <meta name="description" content="Bring a real operating scenario to BOF and receive a structured walkthrough across readiness, documents, claims, settlements, operations, or business administration.">
+  <link rel="stylesheet" href="/assets/css/styles.css?v=1.45">
+  <style>
+    .scenario-hero { background: linear-gradient(135deg, rgba(5, 92, 72, 0.96), rgba(31, 103, 143, 0.92)); color: #fff; overflow: hidden; position: relative; }
+    .scenario-hero::after { background-image: linear-gradient(rgba(255,255,255,0.08) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.08) 1px, transparent 1px); background-size: 42px 42px; content: ""; inset: 0; pointer-events: none; position: absolute; }
+    .scenario-hero-inner { display: grid; gap: 28px; grid-template-columns: minmax(0, 0.95fr) minmax(340px, 0.75fr); margin: 0 auto; max-width: var(--max); padding: 72px 24px 56px; position: relative; z-index: 1; }
+    .scenario-hero h1 { color: #fff; font-size: clamp(2.7rem, 6vw, 5.3rem); line-height: 1; margin: 0; max-width: 920px; }
+    .scenario-hero p { color: rgba(255,255,255,0.88); font-size: 1.08rem; line-height: 1.65; margin: 0; max-width: 760px; }
+    .scenario-hero .eyebrow { color: rgba(255,255,255,0.76); }
+    .scenario-prompt-card { align-self: center; background: rgba(255,255,255,0.96); border: 1px solid rgba(255,255,255,0.54); border-radius: 8px; box-shadow: 0 24px 70px rgba(0,0,0,0.22); color: var(--ink); padding: 24px; }
+    .scenario-prompt-card h2 { font-size: 1.5rem; margin: 6px 0 12px; }
+    .scenario-prompt-card p { color: var(--muted); font-size: 0.98rem; }
+    .scenario-intake-layout { align-items: start; display: grid; gap: 22px; grid-template-columns: minmax(0, 1fr) minmax(360px, 0.72fr); }
+    .scenario-form-card, .scenario-summary-card, .scenario-path-card { background: #fff; border: 1px solid var(--line); border-radius: 8px; box-shadow: var(--shadow-soft); padding: 22px; }
+    .scenario-form-grid { display: grid; gap: 16px; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .scenario-field { display: grid; gap: 7px; }
+    .scenario-field.scenario-wide { grid-column: 1 / -1; }
+    .scenario-field label, .scenario-checkbox-title { color: var(--muted); font-size: 0.76rem; font-weight: 950; letter-spacing: 0.04em; text-transform: uppercase; }
+    .scenario-field input, .scenario-field select, .scenario-field textarea { background: #f8fbf8; border: 1px solid rgba(20,33,31,0.16); border-radius: 8px; color: var(--ink); min-height: 46px; padding: 11px 12px; width: 100%; }
+    .scenario-field textarea { min-height: 128px; resize: vertical; }
+    .scenario-field input:focus, .scenario-field select:focus, .scenario-field textarea:focus { border-color: var(--green); box-shadow: 0 0 0 3px rgba(18, 151, 110, 0.14); outline: none; }
+    .scenario-checkbox-grid { display: grid; gap: 8px; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .scenario-checkbox { align-items: center; background: #f8fbf8; border: 1px solid rgba(20,33,31,0.12); border-radius: 8px; display: flex; gap: 9px; min-height: 42px; padding: 9px 10px; }
+    .scenario-checkbox input { accent-color: var(--green); flex: 0 0 auto; min-height: auto; padding: 0; width: auto; }
+    .scenario-checkbox span { color: var(--ink); font-size: 0.88rem; font-weight: 800; line-height: 1.25; }
+    .scenario-honeypot { height: 1px; left: -10000px; overflow: hidden; position: absolute; top: auto; width: 1px; }
+    .scenario-summary-grid { display: grid; gap: 10px; grid-template-columns: repeat(2, minmax(0, 1fr)); margin-top: 16px; }
+    .scenario-summary-row { background: #f8fbf8; border: 1px solid rgba(20,33,31,0.1); border-radius: 8px; padding: 12px; }
+    .scenario-summary-row span { color: var(--muted); display: block; font-size: 0.7rem; font-weight: 950; letter-spacing: 0.04em; text-transform: uppercase; }
+    .scenario-summary-row strong { display: block; font-size: 0.92rem; line-height: 1.38; margin-top: 5px; overflow-wrap: anywhere; }
+    .scenario-summary-wide { grid-column: 1 / -1; }
+    .scenario-status { color: var(--muted); font-size: 0.9rem; font-weight: 800; line-height: 1.45; min-height: 24px; }
+    .scenario-status[data-status-type="success"] { color: var(--green-dark); }
+    .scenario-status[data-status-type="warning"] { color: #9a5a00; }
+    .scenario-status[data-status-type="error"] { color: #8e211b; }
+    .scenario-helper { background: #eef7f3; border: 1px solid rgba(18,151,110,0.18); border-radius: 8px; color: var(--green-dark); font-size: 0.92rem; font-weight: 800; line-height: 1.45; margin: 14px 0 0; padding: 12px; }
+    .scenario-recommended-links { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
+    .scenario-next-grid { display: grid; gap: 16px; grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    @media (max-width: 980px) { .scenario-hero-inner, .scenario-intake-layout, .scenario-next-grid { grid-template-columns: 1fr; } .scenario-prompt-card { align-self: auto; } }
+    @media (max-width: 680px) { .scenario-hero-inner { padding: 48px 16px 40px; } .scenario-form-grid, .scenario-checkbox-grid, .scenario-summary-grid { grid-template-columns: 1fr; } .scenario-form-card, .scenario-summary-card, .scenario-path-card { padding: 16px; } }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <a class="brand" href="/" aria-label="BackOfficeFleet home"><img src="/assets/images/logo/boflogo-original.png" alt="BackOfficeFleet"></a>
+    <button class="nav-toggle" type="button" data-nav-toggle aria-expanded="false" aria-label="Toggle navigation">&#9776;</button>
+    <nav class="site-nav" data-nav aria-label="Main navigation">
+      <a href="/">Home</a>
+      <a href="/solutions/">Solutions</a>
+      <a href="/capacity-intelligence/">Capacity Intelligence</a>
+      <a href="/operational-intelligence/">Operational Intelligence</a>
+      <a href="/business-operations/">Business Operations</a>
+      <a href="/executive-demo/">Executive Demo</a>
+      <a href="/demo/">Partner Workflow</a>
+      <a href="/interactive-demo/start/">Try Demo</a>
+      <a href="/documents/">Documents</a>
+      <a href="/book-demo/">Book Demo</a>
+    </nav>
+    <a class="header-cta" href="/book-demo/">Book Demo</a>
+  </header>
+
+  <main data-scenario-intake>
+    <section class="scenario-hero">
+      <div class="scenario-hero-inner">
+        <div class="reveal">
+          <p class="eyebrow">Scenario Walkthrough</p>
+          <h1>Book a Scenario Walkthrough</h1>
+          <p>Bring a real fleet, carrier network, claims, settlement, onboarding, compliance, or business operations scenario. BOF will walk through how the platform would manage the workflow.</p>
+          <div class="actions"><a class="button light" href="#scenario-intake">Describe your scenario below.</a><a class="button secondary" href="/book-demo/">Book Demo</a></div>
+        </div>
+        <aside class="scenario-prompt-card reveal">
+          <p class="eyebrow">Bring the real problem</p>
+          <h2>BOF will show how the workflow would be handled.</h2>
+          <p>Use this intake to summarize the operating pressure before the walkthrough: who is involved, what is blocked, how it is handled today, and which BOF path should be reviewed first.</p>
+          <div class="scenario-helper">Clicking Send Scenario to BOF sends this summary securely to demo@backofficefleet.com. No database or account is created.</div>
+        </aside>
+      </div>
+    </section>
+
+    <section class="section" id="scenario-intake">
+      <div class="section-head reveal">
+        <p class="eyebrow">Scenario intake</p>
+        <h2>Describe the operating problem you want BOF to walk through.</h2>
+        <p>The form creates a structured summary on this page only. BOF does not send, store, or submit the information to a server from this static page.</p>
+      </div>
+      <div class="scenario-intake-layout">
+        <form class="scenario-form-card reveal" data-scenario-form action="/scenario-walkthrough/submit.php" method="post" novalidate>
+          <div class="scenario-form-grid">
+            <div class="scenario-honeypot" aria-hidden="true">
+              <label for="scenario-website">Website</label>
+              <input id="scenario-website" name="website" type="text" tabindex="-1" autocomplete="off">
+              <input name="startedAt" type="hidden" data-started-at value="">
+            </div>
+            <div class="scenario-field"><label for="scenario-name">Name *</label><input id="scenario-name" name="name" type="text" autocomplete="name"></div>
+            <div class="scenario-field"><label for="scenario-company">Company *</label><input id="scenario-company" name="company" type="text" autocomplete="organization"></div>
+            <div class="scenario-field"><label for="scenario-email">Email *</label><input id="scenario-email" name="email" type="email" autocomplete="email"></div>
+            <div class="scenario-field"><label for="scenario-phone">Phone</label><input id="scenario-phone" name="phone" type="tel" autocomplete="tel"></div>
+            <div class="scenario-field scenario-wide">
+              <label for="scenario-organization-type">Organization Type *</label>
+              <select id="scenario-organization-type" name="organizationType">
+                <option value="">Select organization type</option>
+                <option>For-hire fleet</option>
+                <option>Private fleet</option>
+                <option>Aggregator</option>
+                <option>Carrier network</option>
+                <option>Owner-operator network</option>
+                <option>Government contractor</option>
+                <option>Field service operator</option>
+                <option>Other</option>
+              </select>
+            </div>
+            <div class="scenario-field"><label for="scenario-trucks">Number of trucks</label><input id="scenario-trucks" name="trucks" type="number" min="0" inputmode="numeric"></div>
+            <div class="scenario-field"><label for="scenario-drivers">Number of drivers</label><input id="scenario-drivers" name="drivers" type="number" min="0" inputmode="numeric"></div>
+            <div class="scenario-field scenario-wide"><label for="scenario-participating-carriers">Number of participating carriers or fleets, if applicable</label><input id="scenario-participating-carriers" name="participatingCarriers" type="number" min="0" inputmode="numeric"></div>
+            <div class="scenario-field scenario-wide">
+              <span class="scenario-checkbox-title">Scenario Category</span>
+              <div class="scenario-checkbox-grid">
+                <label class="scenario-checkbox"><input type="checkbox" name="scenarioCategory" value="Driver onboarding"><span>Driver onboarding</span></label>
+                <label class="scenario-checkbox"><input type="checkbox" name="scenarioCategory" value="Compliance readiness"><span>Compliance readiness</span></label>
+                <label class="scenario-checkbox"><input type="checkbox" name="scenarioCategory" value="Expiring documents"><span>Expiring documents</span></label>
+                <label class="scenario-checkbox"><input type="checkbox" name="scenarioCategory" value="Claims / proof documentation"><span>Claims / proof documentation</span></label>
+                <label class="scenario-checkbox"><input type="checkbox" name="scenarioCategory" value="Settlement holds"><span>Settlement holds</span></label>
+                <label class="scenario-checkbox"><input type="checkbox" name="scenarioCategory" value="Backhaul readiness"><span>Backhaul readiness</span></label>
+                <label class="scenario-checkbox"><input type="checkbox" name="scenarioCategory" value="Carrier network visibility"><span>Carrier network visibility</span></label>
+                <label class="scenario-checkbox"><input type="checkbox" name="scenarioCategory" value="Payroll / HR administration"><span>Payroll / HR administration</span></label>
+                <label class="scenario-checkbox"><input type="checkbox" name="scenarioCategory" value="Insurance tracking"><span>Insurance tracking</span></label>
+                <label class="scenario-checkbox"><input type="checkbox" name="scenarioCategory" value="Factoring packet readiness"><span>Factoring packet readiness</span></label>
+                <label class="scenario-checkbox"><input type="checkbox" name="scenarioCategory" value="Customer load intake"><span>Customer load intake</span></label>
+                <label class="scenario-checkbox"><input type="checkbox" name="scenarioCategory" value="Other"><span>Other</span></label>
+              </div>
+            </div>
+            <div class="scenario-field scenario-wide"><label for="scenario-description">Scenario Description *</label><textarea id="scenario-description" name="scenarioDescription" placeholder="Describe the operating problem you want BOF to walk through."></textarea></div>
+            <div class="scenario-field scenario-wide"><label for="scenario-current-process">Current Process</label><textarea id="scenario-current-process" name="currentProcess" placeholder="How do you handle this today?"></textarea></div>
+            <div class="scenario-field">
+              <label for="scenario-urgency">Urgency</label>
+              <select id="scenario-urgency" name="urgency">
+                <option>Exploring</option>
+                <option>Need help this quarter</option>
+                <option>Active operational pain</option>
+                <option>Urgent / blocking growth</option>
+              </select>
+            </div>
+            <div class="scenario-field">
+              <label for="scenario-demo-path">Preferred Demo Path</label>
+              <select id="scenario-demo-path" name="preferredDemoPath">
+                <option>Not sure</option>
+                <option>Operations Lifecycle</option>
+                <option>Business Operations</option>
+                <option>Aggregator / Carrier Network</option>
+                <option>Customer Load Intake</option>
+              </select>
+            </div>
+          </div>
+        </form>
+
+        <aside class="scenario-summary-card reveal">
+          <p class="eyebrow">Generated scenario summary</p>
+          <h2>Review the handoff before sending.</h2>
+          <p class="scenario-helper">After completing the scenario summary, send it to BOF or bring it to your walkthrough.</p>
+          <div class="scenario-summary-grid" data-scenario-summary></div>
+          <div class="actions">
+            <button class="button secondary" type="button" data-copy-summary>Copy Scenario Summary</button>
+            <button class="button secondary" type="button" data-clear-scenario>Clear Form</button>
+            <button class="button primary" type="button" data-send-scenario>Send Scenario to BOF</button>
+          </div>
+          <p class="scenario-status" data-scenario-status aria-live="polite"></p>
+        </aside>
+      </div>
+    </section>
+
+    <section class="section" id="recommended-demo-path">
+      <div class="scenario-path-card reveal">
+        <p class="eyebrow">Recommended demo path</p>
+        <h2>BOF will route the walkthrough toward the pressure you described.</h2>
+        <p>The recommended links update as the organization type, scenario category, and preferred demo path change.</p>
+        <div class="scenario-recommended-links" data-recommended-paths></div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-head reveal"><p class="eyebrow">What to bring</p><h2>A stronger walkthrough starts with one real operating question.</h2><p>You do not need a perfect packet before the call. The useful starting point is the current problem, the records involved, the follow-up owner, and what happens if the issue stays unresolved.</p></div>
+      <div class="scenario-next-grid">
+        <article class="proof-card reveal"><h3>Operations scenario</h3><p>Bring a load, document gate, driver readiness issue, proof packet, exception, or backhaul question that affects daily work.</p><a class="route-chip" href="/animated-demo/">Operations Demo</a></article>
+        <article class="proof-card reveal"><h3>Business operations scenario</h3><p>Bring onboarding, payroll, insurance, factoring, settlement, claims, or accounting coordination pressure.</p><a class="route-chip" href="/animated-demo-business/">Business Demo</a></article>
+        <article class="proof-card reveal"><h3>Carrier network scenario</h3><p>Bring a multi-carrier readiness, capacity visibility, claims, document, settlement, or network onboarding problem.</p><a class="route-chip" href="/animated-demo-aggregator/">Aggregator Demo</a></article>
+      </div>
+    </section>
+  </main>
+
+  <section class="cta-band">
+    <div class="cta-inner">
+      <div><p class="eyebrow">Next step</p><h2>Bring the scenario into a BOF walkthrough.</h2><p>After completing the summary, send it to BOF or bring it to your walkthrough so the conversation starts with the real workflow.</p></div>
+      <a class="button light" href="/book-demo/">Book Demo</a>
+    </div>
+  </section>
+  <footer class="site-footer"><div class="footer-inner"><strong>BackOfficeFleet</strong><span>Operational infrastructure for fleets, carrier networks, and aggregators.</span><a href="/trust-governance/">Trust &amp; Governance</a></div></footer>
+  <script src="/assets/js/site.js?v=1.38"></script>
+  <script src="/assets/js/scenario-walkthrough.js?v=1.0"></script>
+</body>
+</html>
