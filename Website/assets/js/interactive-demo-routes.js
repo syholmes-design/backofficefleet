@@ -67,7 +67,7 @@
       hasGarnishment: false,
       summary: "Fleet driver record with complete DQF, HR, tax, emergency, settlement, and compliance documents.",
       exception: "No driver document blocks the primary release review.",
-      photo: "/assets/images/profiles/drivers/driver-ref-001.jpg"
+      photo: "/assets/images/profiles/drivers/driver-ref-001.jpg?v=4"
     },
     "drv-002": {
       id: "DRV-002",
@@ -83,7 +83,7 @@
       hasGarnishment: true,
       summary: "Driver record with the extra payroll withholding summary present in the driver packet.",
       exception: "POD evidence controls the load watch state; driver file remains inspectable.",
-      photo: "/assets/images/profiles/drivers/driver-ref-002.jpg"
+      photo: "/assets/images/profiles/drivers/driver-ref-002.jpg?v=4"
     },
     "drv-003": {
       id: "DRV-003",
@@ -99,7 +99,7 @@
       hasGarnishment: false,
       summary: "Driver file used for the hold example so the medical-card gate and DQF packet remain visible.",
       exception: "Medical card must clear before dispatch assignment.",
-      photo: "/assets/images/profiles/drivers/driver-ref-003.jpg"
+      photo: "/assets/images/profiles/drivers/driver-ref-003.jpg?v=4"
     },
     "drv-004": {
       id: "DRV-004",
@@ -115,7 +115,7 @@
       hasGarnishment: false,
       summary: "Driver file is ready; the remaining queue item is normal equipment staging.",
       exception: "No safety document blocker.",
-      photo: "/assets/images/profiles/drivers/driver-ref-004.jpg"
+      photo: "/assets/images/profiles/drivers/driver-ref-004.jpg?v=4"
     },
     "drv-005": {
       id: "DRV-005",
@@ -131,7 +131,7 @@
       hasGarnishment: true,
       summary: "Driver record with payroll withholding summary represented alongside the DQF and HR packet.",
       exception: "Rate record controls release review; driver eligibility does not block.",
-      photo: "/assets/images/profiles/drivers/driver-ref-005.jpg"
+      photo: "/assets/images/profiles/drivers/driver-ref-005.jpg?v=4"
     },
     "drv-006": {
       id: "DRV-006",
@@ -147,7 +147,7 @@
       hasGarnishment: false,
       summary: "Driver file is usable for planning while renewal evidence remains visible before final assignment.",
       exception: "Renewal evidence controls assignment commitment.",
-      photo: "/assets/images/profiles/drivers/driver-ref-006.jpg"
+      photo: "/assets/images/profiles/drivers/driver-ref-006.jpg?v=4"
     },
     "drv-007": {
       id: "DRV-007",
@@ -163,7 +163,7 @@
       hasGarnishment: true,
       summary: "Driver record with complete DQF, HR, settlement, emergency contact, and payroll withholding surfaces.",
       exception: "No active driver blocker; settlement documents are ready for owner review.",
-      photo: "/assets/images/profiles/drivers/driver-ref-010.jpg"
+      photo: "/assets/images/profiles/drivers/driver-ref-010.jpg?v=4"
     },
     "drv-008": {
       id: "DRV-008",
@@ -179,7 +179,7 @@
       hasGarnishment: false,
       summary: "Driver file is complete for planning and owner inspection.",
       exception: "No active document blocker.",
-      photo: "/assets/images/profiles/drivers/driver-ref-008.jpg?v=2"
+      photo: "/assets/images/profiles/drivers/driver-ref-008.jpg?v=4"
     },
     "drv-009": {
       id: "DRV-009",
@@ -195,7 +195,7 @@
       hasGarnishment: true,
       summary: "Driver record with extra payroll withholding documentation and a watch-state review path.",
       exception: "Review payroll and HR packet visibility before final owner presentation.",
-      photo: "/assets/images/profiles/drivers/driver-ref-009.jpg"
+      photo: "/assets/images/profiles/drivers/driver-ref-009.jpg?v=4"
     },
     "drv-010": {
       id: "DRV-010",
@@ -211,7 +211,7 @@
       hasGarnishment: false,
       summary: "Driver file is complete with DQF, HR, emergency, bank, and compliance categories represented.",
       exception: "No active document blocker.",
-      photo: "/assets/images/profiles/drivers/driver-ref-007.jpg"
+      photo: "/assets/images/profiles/drivers/driver-ref-007.jpg?v=4"
     },
     "drv-011": {
       id: "DRV-011",
@@ -227,7 +227,7 @@
       hasGarnishment: true,
       summary: "Driver record with payroll withholding summary included and complete owner-review fields.",
       exception: "Payroll withholding summary is ready for buyer inspection.",
-      photo: "/assets/images/profiles/drivers/driver-ref-011.jpg"
+      photo: "/assets/images/profiles/drivers/driver-ref-011.jpg?v=4"
     },
     "drv-012": {
       id: "DRV-012",
@@ -243,7 +243,7 @@
       hasGarnishment: false,
       summary: "Driver file is complete and available for owner inspection.",
       exception: "No active document blocker.",
-      photo: "/assets/images/profiles/drivers/driver-ref-012.jpg"
+      photo: "/assets/images/profiles/drivers/driver-ref-012.jpg?v=4"
     }
   };
 

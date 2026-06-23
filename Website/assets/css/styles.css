@@ -6362,18 +6362,18 @@ td { font-weight: 750; }
 .driver-route-card .driver-route-photo {
   align-self: start;
   aspect-ratio: 1 / 1;
-  background: #fff;
+  background: #eef3f7;
   box-sizing: border-box;
   border: 1px solid var(--app-line);
-  border-radius: 5px;
+  border-radius: 8px;
   display: block;
-  flex: 0 0 92px;
-  height: 92px;
+  flex: 0 0 96px;
+  height: 96px;
   line-height: 0;
   max-width: none;
-  min-width: 92px;
+  min-width: 96px;
   overflow: hidden;
-  width: 92px;
+  width: 96px;
 }
 
 .product-demo-body .driver-photo-frame,
@@ -6830,24 +6830,24 @@ td { font-weight: 750; }
   align-items: start;
   display: grid;
   gap: 14px;
-  grid-template-columns: 120px minmax(0, 1.1fr) minmax(300px, 0.9fr);
+  grid-template-columns: 150px minmax(0, 1.1fr) minmax(300px, 0.9fr);
   padding: 16px;
 }
 .driver-record-photo {
   align-self: start;
   aspect-ratio: 1 / 1;
-  background: #fff;
+  background: #eef3f7;
   border: 1px solid var(--app-line);
-  border-radius: 5px;
+  border-radius: 8px;
   box-sizing: border-box;
   display: block;
-  flex: 0 0 120px;
-  height: 120px;
+  flex: 0 0 150px;
+  height: 150px;
   line-height: 0;
   max-width: none;
-  min-width: 120px;
+  min-width: 150px;
   overflow: hidden;
-  width: 120px;
+  width: 150px;
 }
 .driver-initials-photo {
   align-items: center;
