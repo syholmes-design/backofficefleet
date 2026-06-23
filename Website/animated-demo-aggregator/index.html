@@ -189,6 +189,115 @@
       text-transform: uppercase;
     }
 
+    .ad-outreach-section {
+      background: rgba(255,255,255,0.88);
+      border: 1px solid rgba(20,33,31,0.1);
+      border-radius: 8px;
+      box-shadow: 0 20px 50px rgba(20,33,31,0.08);
+      display: grid;
+      gap: 18px;
+      margin: 0 auto;
+      max-width: 1320px;
+      padding: 26px;
+      width: calc(100% - 48px);
+    }
+
+    .ad-outreach-head {
+      display: grid;
+      gap: 8px;
+      max-width: 820px;
+    }
+
+    .ad-outreach-head h2 {
+      font-size: clamp(1.8rem, 3vw, 3rem);
+      line-height: 1.05;
+      margin: 0;
+    }
+
+    .ad-outreach-head p {
+      color: var(--muted);
+      line-height: 1.62;
+      margin: 0;
+    }
+
+    .ad-outreach-grid,
+    .ad-path-grid {
+      display: grid;
+      gap: 14px;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .ad-outreach-card,
+    .ad-path-card {
+      background: rgba(248,250,248,0.94);
+      border: 1px solid rgba(20,33,31,0.1);
+      border-radius: 8px;
+      display: grid;
+      gap: 8px;
+      padding: 16px;
+    }
+
+    .ad-outreach-card span,
+    .ad-path-card span {
+      color: var(--green-dark);
+      font-size: 0.76rem;
+      font-weight: 950;
+      text-transform: uppercase;
+    }
+
+    .ad-outreach-card h3,
+    .ad-path-card h3 {
+      margin: 0;
+    }
+
+    .ad-outreach-card p,
+    .ad-path-card p {
+      color: var(--muted);
+      line-height: 1.52;
+      margin: 0;
+    }
+
+    .ad-path-card a {
+      color: var(--green-dark);
+      font-weight: 950;
+      text-decoration: none;
+    }
+
+    .ad-path-card a:hover,
+    .ad-path-card a:focus-visible {
+      text-decoration: underline;
+    }
+
+    .ad-cta-panel {
+      align-items: center;
+      background: #0f3d33;
+      border-radius: 8px;
+      color: #fff;
+      display: grid;
+      gap: 18px;
+      grid-template-columns: minmax(0, 1fr) auto;
+      padding: 24px;
+    }
+
+    .ad-cta-panel h2 {
+      color: #fff;
+      margin: 0 0 8px;
+    }
+
+    .ad-cta-panel p {
+      color: rgba(255,255,255,0.82);
+      line-height: 1.62;
+      margin: 0;
+      max-width: 820px;
+    }
+
+    .ad-cta-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: flex-end;
+    }
+
     .ad-stage {
       background: rgba(255,255,255,0.94);
       border: 1px solid rgba(20,33,31,0.1);
@@ -958,8 +1067,18 @@
       .ad-outcome-grid,
       .ad-proof-strip,
       .ad-metrics-grid,
-      .ad-audience-grid {
+      .ad-audience-grid,
+      .ad-outreach-grid,
+      .ad-path-grid {
         grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .ad-cta-panel {
+        grid-template-columns: 1fr;
+      }
+
+      .ad-cta-actions {
+        justify-content: flex-start;
       }
 
       .ad-roster-table > div {
@@ -1008,8 +1127,15 @@
       .ad-outcome-grid,
       .ad-proof-strip,
       .ad-metrics-grid,
-      .ad-audience-grid {
+      .ad-audience-grid,
+      .ad-outreach-grid,
+      .ad-path-grid {
         grid-template-columns: 1fr;
+      }
+
+      .ad-outreach-section {
+        border-radius: 0;
+        width: 100%;
       }
 
       .ad-table > div {
@@ -1025,7 +1151,8 @@
       .ad-inline-controls,
       .ad-audio-controls,
       .ad-script-actions,
-      .ad-demo-links {
+      .ad-demo-links,
+      .ad-cta-actions {
         display: grid;
         grid-template-columns: 1fr;
       }
@@ -1035,7 +1162,8 @@
       .ad-inline-controls button,
       .ad-audio-controls button,
       .ad-script-actions button,
-      .ad-demo-links a {
+      .ad-demo-links a,
+      .ad-cta-actions a {
         justify-content: center;
         text-align: center;
         width: 100%;
@@ -1163,6 +1291,7 @@
             <a href="/capacity-intelligence/">Capacity Intelligence</a>
             <a href="/operational-intelligence/">Operational Intelligence</a>
             <a href="/business-operations/">Business Operations</a>
+            <a href="/aggregator-outreach/">Aggregator Outreach</a>
             <a href="/animated-demo/">Operations Demo</a>
             <a href="/animated-demo-business/">Business Demo</a>
             <a href="/executive-demo/">Executive Demo</a>
@@ -1239,6 +1368,52 @@
           </div>
         </div>
       </div>
+
+      <section class="ad-outreach-section" id="who-this-is-for">
+        <div class="ad-outreach-head">
+          <p class="eyebrow">Who this is for</p>
+          <h2>Aggregator-facing groups that need a practical operating layer.</h2>
+          <p>BOF is useful when an organization already supports many fleets, carriers, or contractors and needs clearer readiness, documents, proof, compliance follow-through, and back-office coordination.</p>
+        </div>
+        <div class="ad-outreach-grid">
+          <article class="ad-outreach-card"><span>Associations</span><h3>Trucking associations</h3><p>Use BOF to give members a readiness and document-control path without building member software from scratch.</p></article>
+          <article class="ad-outreach-card"><span>Operators</span><h3>Dispatch and back-office operators</h3><p>Use BOF to organize customer intake, driver checks, document follow-up, proof collection, and settlement-support work.</p></article>
+          <article class="ad-outreach-card"><span>Finance</span><h3>Factoring companies</h3><p>Use BOF to help fleets prepare cleaner proof packets, billing support records, and funding-ready documentation.</p></article>
+          <article class="ad-outreach-card"><span>Risk</span><h3>Transportation insurance brokers</h3><p>Use BOF to surface policy, certificate, claims, incident, and evidence gaps before they become harder to resolve.</p></article>
+          <article class="ad-outreach-card"><span>Compliance</span><h3>DOT and compliance consultants</h3><p>Use BOF to keep driver qualification, carrier packet, safety, and renewal follow-up visible across client fleets.</p></article>
+          <article class="ad-outreach-card"><span>Services</span><h3>Fleet service providers</h3><p>Use BOF to connect service relationships to a structured readiness, documentation, and administrative workflow.</p></article>
+        </div>
+      </section>
+
+      <section class="ad-outreach-section" id="aggregator-demo-path">
+        <div class="ad-outreach-head">
+          <p class="eyebrow">Demo path</p>
+          <h2>A five-stop route for aggregator prospects.</h2>
+          <p>This path starts with the roster-rule story, then moves into the command center, driver records, document intake, and a real scenario submission.</p>
+        </div>
+        <div class="ad-path-grid">
+          <article class="ad-path-card"><span>01</span><h3>Aggregator roster-rule story</h3><p>Show how BOF turns available carriers into usable capacity through readiness rules.</p><a href="/animated-demo-aggregator/">Open Track C</a></article>
+          <article class="ad-path-card"><span>02</span><h3>Aggregator command center</h3><p>Review fleets, drivers, documents, claims, settlements, and backhaul readiness in one executive view.</p><a href="/aggregator-command-center/">Open command center</a></article>
+          <article class="ad-path-card"><span>03</span><h3>Driver roster and records</h3><p>Open the product-shell roster to show driver readiness, photos, DQF status, and record-level follow-up.</p><a href="/interactive-demo/drivers/">Open driver records</a></article>
+          <article class="ad-path-card"><span>04</span><h3>Document intake workbench</h3><p>Show how new driver, carrier, load, and settlement documents enter the Vault review path.</p><a href="/interactive-demo/drivers/document-intake/">Open document intake</a></article>
+          <article class="ad-path-card"><span>05</span><h3>Submit a real scenario</h3><p>Ask the prospect to bring one real network problem so BOF can map the readiness and follow-up workflow.</p><a href="/scenario-walkthrough/">Submit scenario</a></article>
+        </div>
+      </section>
+
+      <section class="ad-outreach-section" id="bring-a-scenario">
+        <div class="ad-cta-panel">
+          <div>
+            <p class="eyebrow">Aggregator working session</p>
+            <h2>Bring BOF a Real Fleet Scenario</h2>
+            <p>If you work with multiple fleets, BOF can map one real scenario through carrier readiness, driver checks, equipment status, customer requirements, document control, proof collection, and back-office follow-through. Submit a scenario and BOF will show how the workflow would operate inside the network.</p>
+          </div>
+          <div class="ad-cta-actions">
+            <a class="button light" href="/scenario-walkthrough/">Submit an Aggregator Scenario</a>
+            <a class="button secondary" href="/aggregator-command-center/">View Aggregator Command Center</a>
+            <a class="button secondary" href="/aggregator-outreach/">Aggregator Outreach Page</a>
+          </div>
+        </div>
+      </section>
 
       <section class="ad-script-guide" id="speaking-script" data-review-mode="presentation" data-audience="aggregator" aria-label="Speaking script and narration review">
         <div class="ad-script-head"><div><p class="eyebrow">Narration Review Mode</p><h2>Speaking Script</h2><p>Review the aggregator narration before adding voice playback. The script can be adjusted by audience without changing the animation.</p></div><div class="ad-segmented" aria-label="Narration mode"><button type="button" class="is-active" data-mode-option="presentation" aria-pressed="true">Presentation Mode</button><button type="button" data-mode-option="review" aria-pressed="false">Narration Review Mode</button></div></div>
