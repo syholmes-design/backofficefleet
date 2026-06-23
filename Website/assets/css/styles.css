@@ -6369,16 +6369,29 @@ td { font-weight: 750; }
   display: block;
   flex: 0 0 92px;
   height: 92px;
+  line-height: 0;
   max-width: none;
+  min-width: 92px;
   overflow: hidden;
   width: 92px;
 }
 
+.product-demo-body .driver-photo-frame,
+.product-demo-body .driver-route-photo,
+.product-demo-body .driver-record-photo {
+  flex-shrink: 0;
+}
+
 .product-demo-body .driver-photo-frame .driver-photo-image,
+.product-demo-body .driver-route-photo img,
+.product-demo-body .driver-record-photo img,
 .product-demo-body .profile-avatar img {
+  aspect-ratio: 1 / 1;
   display: block;
   height: 100%;
   max-width: none;
+  min-height: 100%;
+  min-width: 100%;
   object-fit: cover;
   object-position: center top;
   width: 100%;
@@ -6830,7 +6843,9 @@ td { font-weight: 750; }
   display: block;
   flex: 0 0 120px;
   height: 120px;
+  line-height: 0;
   max-width: none;
+  min-width: 120px;
   overflow: hidden;
   width: 120px;
 }
