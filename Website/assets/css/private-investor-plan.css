@@ -221,6 +221,7 @@
 .integration-flow,
 .funds-grid,
 .channel-grid,
+.model-comparison,
 .split-grid,
 .closing-grid {
   display: grid;
@@ -242,9 +243,11 @@
 .integration-flow article,
 .funds-grid article,
 .channel-grid article,
+.model-comparison article,
 .peel-card,
 .aggregator-copy,
 .strategy-note,
+.runway-note,
 .presenter-note {
   background: rgba(255,255,255,0.94);
   border: 1px solid rgba(20,33,31,0.1);
@@ -260,7 +263,8 @@
 .budget-grid article span,
 .integration-flow article span,
 .funds-grid article span,
-.channel-grid article span {
+.channel-grid article span,
+.model-comparison article span {
   color: var(--green-dark);
   display: block;
   font-size: 0.74rem;
@@ -286,9 +290,11 @@
 .integration-flow p,
 .funds-grid p,
 .channel-grid p,
+.model-comparison p,
 .peel-card li,
 .aggregator-copy p,
 .strategy-note li,
+.runway-note p,
 .presenter-note p {
   color: var(--muted);
   line-height: 1.5;
@@ -472,6 +478,29 @@
   margin: 0;
 }
 
+.technical-subtotal {
+  border-color: rgba(9,98,75,0.28) !important;
+  grid-column: span 3;
+}
+
+.technical-subtotal strong {
+  font-size: 1.3rem;
+}
+
+.model-comparison {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  margin-top: 14px;
+}
+
+.model-comparison article {
+  box-shadow: none;
+}
+
+.model-comparison .recommended {
+  background: #eef8f2;
+  border-color: rgba(9,98,75,0.24);
+}
+
 .role-grid ul,
 .peel-card ul {
   display: grid;
@@ -559,6 +588,16 @@
   grid-template-columns: repeat(6, minmax(0, 1fr));
 }
 
+.runway-note {
+  margin-top: 14px;
+}
+
+.runway-note strong {
+  color: var(--green-dark);
+  display: block;
+  margin-bottom: 8px;
+}
+
 .investor-closing {
   display: grid;
   gap: 20px;
@@ -611,11 +650,13 @@
   .budget-grid,
   .integration-flow,
   .channel-grid,
+  .model-comparison,
   .funds-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
-  .budget-total {
+  .budget-total,
+  .technical-subtotal {
     grid-column: span 2;
   }
 }
@@ -650,13 +691,15 @@
   .budget-grid,
   .integration-flow,
   .channel-grid,
+  .model-comparison,
   .split-grid,
   .funds-grid,
   .closing-grid {
     grid-template-columns: 1fr;
   }
 
-  .budget-total {
+  .budget-total,
+  .technical-subtotal {
     grid-column: auto;
   }
 
@@ -710,6 +753,7 @@
   .budget-grid,
   .integration-flow,
   .channel-grid,
+  .model-comparison,
   .split-grid,
   .funds-grid,
   .closing-grid,
