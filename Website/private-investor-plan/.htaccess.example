@@ -1,0 +1,6 @@
+# Example only. Do not deploy with real credentials until BOF chooses a hosting access policy.
+# For Apache/cPanel Basic Auth, create the password file outside the public web root.
+AuthType Basic
+AuthName "Private BOF Investor Plan"
+AuthUserFile /home/ACCOUNT_USER/.htpasswds/private-investor-plan/passwd
+Require valid-user
