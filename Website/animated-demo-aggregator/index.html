@@ -1115,6 +1115,179 @@
       box-shadow: 0 16px 36px rgba(9,98,75,0.16);
     }
 
+    .ad-motion-card.is-dimmed {
+      opacity: 0.38;
+      transform: translateX(8px) scale(0.98);
+    }
+
+    .ad-document-lift {
+      background: #fff;
+      border: 1px solid rgba(20,33,31,0.1);
+      border-radius: 8px;
+      display: grid;
+      gap: 12px;
+      grid-column: 1 / -1;
+      grid-template-columns: 1fr;
+      min-width: 0;
+      padding: 12px;
+      perspective: 1200px;
+    }
+
+    .ad-lift-source {
+      background: linear-gradient(135deg, rgba(9,98,75,0.09), rgba(31,103,143,0.08));
+      border: 1px solid rgba(9,98,75,0.18);
+      border-radius: 8px;
+      display: grid;
+      gap: 8px;
+      min-width: 0;
+      padding: 14px;
+      position: relative;
+    }
+
+    .ad-lift-source::after {
+      background: rgba(9,98,75,0.18);
+      border-radius: 999px;
+      bottom: 14px;
+      content: "";
+      height: 4px;
+      left: 14px;
+      position: absolute;
+      right: 14px;
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform 620ms ease;
+    }
+
+    .ad-motion-demo[data-motion-step="3"] .ad-lift-source::after,
+    .ad-motion-demo[data-motion-step="4"] .ad-lift-source::after,
+    .ad-motion-demo[data-motion-step="5"] .ad-lift-source::after {
+      transform: scaleX(1);
+    }
+
+    .ad-lift-source span,
+    .ad-rule-check-strip span {
+      color: var(--muted);
+      font-size: 0.68rem;
+      font-weight: 950;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    .ad-lift-source strong {
+      color: var(--ink);
+      line-height: 1.22;
+    }
+
+    .ad-lift-source small {
+      color: var(--muted);
+      line-height: 1.36;
+    }
+
+    .ad-lift-cards {
+      display: grid;
+      gap: 10px;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      min-width: 0;
+    }
+
+    .ad-lift-card {
+      background: #f8faf8;
+      border: 1px solid rgba(20,33,31,0.1);
+      border-radius: 8px;
+      box-shadow: 0 12px 26px rgba(20,33,31,0.06);
+      display: grid;
+      gap: 6px;
+      min-height: 106px;
+      min-width: 0;
+      opacity: 1;
+      padding: 11px;
+      transform: translateY(0) rotateX(0) scale(1);
+      transform-origin: center bottom;
+      transition: opacity 420ms ease, transform 620ms cubic-bezier(.2,.72,.2,1), border-color 320ms ease, box-shadow 320ms ease;
+    }
+
+    .ad-lift-card strong {
+      color: var(--ink);
+      font-size: 0.9rem;
+      line-height: 1.15;
+    }
+
+    .ad-lift-card small {
+      color: var(--muted);
+      line-height: 1.34;
+    }
+
+    .ad-motion-demo[data-motion-step="3"] .ad-lift-card,
+    .ad-motion-demo[data-motion-step="4"] .ad-lift-card,
+    .ad-motion-demo[data-motion-step="5"] .ad-lift-card {
+      opacity: 1;
+      transform: translateY(0) rotateX(0) scale(1);
+    }
+
+    .ad-motion-demo.is-flow-ready[data-motion-step="0"] .ad-lift-card,
+    .ad-motion-demo.is-flow-ready[data-motion-step="1"] .ad-lift-card,
+    .ad-motion-demo.is-flow-ready[data-motion-step="2"] .ad-lift-card {
+      opacity: 0.22;
+      transform: translateY(26px) rotateX(16deg) scale(0.96);
+    }
+
+    .ad-motion-demo[data-motion-step="3"] .ad-lift-card:nth-child(1),
+    .ad-motion-demo[data-motion-step="4"] .ad-lift-card:nth-child(1),
+    .ad-motion-demo[data-motion-step="5"] .ad-lift-card:nth-child(1) { transition-delay: 70ms; }
+
+    .ad-motion-demo[data-motion-step="3"] .ad-lift-card:nth-child(2),
+    .ad-motion-demo[data-motion-step="4"] .ad-lift-card:nth-child(2),
+    .ad-motion-demo[data-motion-step="5"] .ad-lift-card:nth-child(2) { transition-delay: 140ms; }
+
+    .ad-motion-demo[data-motion-step="3"] .ad-lift-card:nth-child(3),
+    .ad-motion-demo[data-motion-step="4"] .ad-lift-card:nth-child(3),
+    .ad-motion-demo[data-motion-step="5"] .ad-lift-card:nth-child(3) { transition-delay: 210ms; }
+
+    .ad-motion-demo[data-motion-step="3"] .ad-lift-card:nth-child(4),
+    .ad-motion-demo[data-motion-step="4"] .ad-lift-card:nth-child(4),
+    .ad-motion-demo[data-motion-step="5"] .ad-lift-card:nth-child(4) { transition-delay: 280ms; }
+
+    .ad-rule-check-strip {
+      display: grid;
+      gap: 8px;
+      grid-column: 1 / -1;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      min-width: 0;
+    }
+
+    .ad-rule-check-strip span {
+      background: #f8faf8;
+      border: 1px solid rgba(20,33,31,0.12);
+      border-radius: 999px;
+      color: #5c6d67;
+      padding: 8px 10px;
+      position: relative;
+      transition: background 260ms ease, border-color 260ms ease, color 260ms ease, transform 320ms ease;
+    }
+
+    .ad-rule-check-strip span::before {
+      background: rgba(83,100,95,0.38);
+      border-radius: 999px;
+      content: "";
+      display: inline-block;
+      height: 7px;
+      margin-right: 7px;
+      vertical-align: 1px;
+      width: 7px;
+    }
+
+    .ad-rule-check-strip span.is-lit {
+      background: #e1f5ea;
+      border-color: rgba(9,98,75,0.22);
+      color: #09624b;
+      transform: translateY(-2px);
+    }
+
+    .ad-rule-check-strip span.is-lit::before {
+      background: #12976e;
+      box-shadow: 0 0 0 5px rgba(18,151,110,0.1);
+    }
+
     .ad-motion-review-grid {
       display: grid;
       gap: 10px;
@@ -1138,6 +1311,12 @@
     .ad-motion-rule.is-checked .ad-motion-flip,
     .ad-motion-doc.is-checked .ad-motion-flip {
       transform: rotateY(180deg);
+    }
+
+    .ad-motion-rule.is-checked,
+    .ad-motion-doc.is-checked {
+      border-color: rgba(9,98,75,0.22);
+      box-shadow: 0 14px 30px rgba(9,98,75,0.11);
     }
 
     .ad-motion-face {
@@ -1177,6 +1356,16 @@
       width: 58px;
     }
 
+    .ad-motion-truck.is-visible {
+      animation: adTruckGlide 1200ms ease both;
+    }
+
+    @keyframes adTruckGlide {
+      0% { transform: translateX(-18px) scale(0.94); }
+      58% { transform: translateX(6px) scale(1.03); }
+      100% { transform: translateX(0) scale(1); }
+    }
+
     .ad-motion-fit strong,
     .ad-motion-fit small {
       color: #fff;
@@ -1194,7 +1383,67 @@
     }
 
     .ad-motion-proof-card {
+      opacity: 1;
       min-height: 86px;
+      transform: translateY(0) rotate(0);
+    }
+
+    .ad-motion-demo.is-flow-ready[data-motion-step="0"] .ad-motion-proof-card,
+    .ad-motion-demo.is-flow-ready[data-motion-step="1"] .ad-motion-proof-card,
+    .ad-motion-demo.is-flow-ready[data-motion-step="2"] .ad-motion-proof-card,
+    .ad-motion-demo.is-flow-ready[data-motion-step="3"] .ad-motion-proof-card,
+    .ad-motion-demo.is-flow-ready[data-motion-step="4"] .ad-motion-proof-card {
+      opacity: 0.24;
+      transform: translateY(24px) rotate(-1deg);
+    }
+
+    .ad-motion-proof-card.is-visible {
+      opacity: 1;
+      transform: translateY(0) rotate(0);
+    }
+
+    .ad-motion-proof-card.is-visible:nth-child(1) { transition-delay: 70ms; }
+    .ad-motion-proof-card.is-visible:nth-child(2) { transition-delay: 130ms; }
+    .ad-motion-proof-card.is-visible:nth-child(3) { transition-delay: 190ms; }
+    .ad-motion-proof-card.is-visible:nth-child(4) { transition-delay: 250ms; }
+    .ad-motion-proof-card.is-visible:nth-child(5) { transition-delay: 310ms; }
+    .ad-motion-proof-card.is-visible:nth-child(6) { transition-delay: 370ms; }
+    .ad-motion-proof-card.is-visible:nth-child(7) { transition-delay: 430ms; }
+    .ad-motion-proof-card.is-visible:nth-child(8) { transition-delay: 490ms; }
+
+    .ad-motion-final {
+      align-items: center;
+      background: #e8f1ec;
+      border: 1px solid rgba(9,98,75,0.18);
+      border-radius: 8px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      justify-content: space-between;
+      opacity: 1;
+      padding: 12px;
+      transform: translateY(0);
+      transition: opacity 360ms ease, transform 420ms ease;
+    }
+
+    .ad-motion-demo.is-flow-ready[data-motion-step="0"] .ad-motion-final,
+    .ad-motion-demo.is-flow-ready[data-motion-step="1"] .ad-motion-final,
+    .ad-motion-demo.is-flow-ready[data-motion-step="2"] .ad-motion-final,
+    .ad-motion-demo.is-flow-ready[data-motion-step="3"] .ad-motion-final,
+    .ad-motion-demo.is-flow-ready[data-motion-step="4"] .ad-motion-final {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+
+    .ad-motion-final.is-visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .ad-motion-final strong {
+      color: var(--green-dark);
+      font-size: 0.86rem;
+      text-transform: uppercase;
     }
 
     .ad-motion-note {
@@ -1463,8 +1712,14 @@
       .ad-motion-rail,
       .ad-motion-roster,
       .ad-motion-review-grid,
+      .ad-lift-cards,
+      .ad-rule-check-strip,
       .ad-motion-proof-stack {
         grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .ad-document-lift {
+        grid-template-columns: 1fr;
       }
     }
 
@@ -1501,6 +1756,8 @@
       .ad-motion-rail,
       .ad-motion-roster,
       .ad-motion-review-grid,
+      .ad-lift-cards,
+      .ad-rule-check-strip,
       .ad-motion-proof-stack,
       .ad-kpi-grid,
       .ad-mini-grid,
@@ -1579,8 +1836,10 @@
       .ad-motion-rule,
       .ad-motion-doc,
       .ad-motion-proof-card,
+      .ad-lift-card,
       .ad-motion-flip,
       .ad-motion-truck {
+        animation: none !important;
         transition: none !important;
       }
 
@@ -1594,6 +1853,13 @@
       }
 
       .ad-motion-face.back {
+        transform: none;
+      }
+
+      .ad-lift-card,
+      .ad-motion-proof-card,
+      .ad-motion-final {
+        opacity: 1;
         transform: none;
       }
     }
@@ -1865,7 +2131,30 @@
 
           <article class="ad-motion-lane" data-motion-group="3">
             <h3>Rule and readiness review</h3>
-            <p>Rule cards flip from submitted to checked, then BOF shows the driver, document, equipment, and customer conditions that affect readiness.</p>
+            <p>Document cards lift from the selected carrier, driver, and equipment record, then flip into classification while readiness checks light up.</p>
+            <div class="ad-document-lift" data-motion-group="3">
+              <div class="ad-lift-source">
+                <span>Selected readiness fit</span>
+                <strong>Carrier A / Driver A-14 / Reefer 221</strong>
+                <small>Proof rules follow the carrier, driver, customer, and equipment record.</small>
+              </div>
+              <div class="ad-lift-cards" aria-label="Lifted document cards">
+                <article class="ad-lift-card" data-motion-lift><span>01</span><strong>Authority + Insurance</strong><small>Carrier rule profile checked against customer limits.</small></article>
+                <article class="ad-lift-card" data-motion-lift><span>02</span><strong>CDL + Medical Card</strong><small>Driver qualification and renewal status classified.</small></article>
+                <article class="ad-lift-card" data-motion-lift><span>03</span><strong>MVR + DQF</strong><small>Safety record and packet completeness reviewed.</small></article>
+                <article class="ad-lift-card" data-motion-lift><span>04</span><strong>Equipment + Customer Approval</strong><small>Reefer readiness and customer-specific approval verified.</small></article>
+              </div>
+            </div>
+            <div class="ad-rule-check-strip" data-motion-group="3" aria-label="Rule checks">
+              <span data-motion-check>Authority</span>
+              <span data-motion-check>Insurance</span>
+              <span data-motion-check>CDL</span>
+              <span data-motion-check>Medical Card</span>
+              <span data-motion-check>MVR</span>
+              <span data-motion-check>DQF</span>
+              <span data-motion-check>Equipment</span>
+              <span data-motion-check>Customer Approval</span>
+            </div>
             <div class="ad-motion-review-grid">
               <article class="ad-motion-rule" data-motion-flip data-motion-group="3">
                 <div class="ad-motion-flip">
@@ -1930,6 +2219,10 @@
               <article class="ad-motion-proof-card" data-motion-group="5"><strong>Lumper Receipt</strong><small>Location rule if required</small></article>
               <article class="ad-motion-proof-card" data-motion-group="5"><strong>Settlement Support</strong><small>Closeout review</small></article>
               <article class="ad-motion-proof-card" data-motion-group="5"><strong>Billing Packet</strong><small>Back-office follow-through</small></article>
+            </div>
+            <div class="ad-motion-final" data-motion-group="5">
+              <strong>Readiness Fit Surfaced</strong>
+              <strong>Proof Packet Ready for Review</strong>
             </div>
           </article>
         </div>
@@ -2048,8 +2341,6 @@
 
   <script src="/assets/js/site.js?v=1.46"></script>
   <script src="/assets/js/animated-demo.js?v=1.13"></script>
-  <script src="/assets/js/aggregator-animation.js?v=1.0"></script>
+  <script src="/assets/js/aggregator-animation.js?v=1.1"></script>
 </body>
 </html>
-
-
