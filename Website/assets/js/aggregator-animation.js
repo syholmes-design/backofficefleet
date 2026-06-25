@@ -8,6 +8,7 @@
     var playTimer = 0;
     var reducedMotion = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     var status = motion.querySelector("[data-motion-status]");
+    var caption = motion.querySelector("[data-motion-caption]");
     var railItems = Array.prototype.slice.call(motion.querySelectorAll("[data-motion-rail]"));
     var groupedItems = Array.prototype.slice.call(motion.querySelectorAll("[data-motion-group]"));
     var flipItems = Array.prototype.slice.call(motion.querySelectorAll("[data-motion-flip]"));
@@ -27,9 +28,21 @@
       "Surfacing readiness fit",
       "Assembling proof packet"
     ];
+    var captions = [
+      "Press Play Animation or Play Flow to watch documents move from roster review into a proof-ready packet.",
+      "Customer capacity need enters the review lane with equipment, region, and proof rules attached.",
+      "The aggregator roster opens so eligible, blocked, and review-needed options separate visibly.",
+      "Required documents lift into the rule review lane and classify against carrier, driver, customer, and equipment requirements.",
+      "BOF surfaces the strongest carrier, driver, and equipment readiness fit while exceptions remain visible.",
+      "The required proof packet assembles for review, follow-through, settlement support, and customer documentation."
+    ];
 
     function setStatus(message) {
       if (status) status.textContent = message;
+    }
+
+    function setCaption(message) {
+      if (caption) caption.textContent = message;
     }
 
     function stopPlayback() {
@@ -74,6 +87,7 @@
       });
 
       setStatus(messages[currentStep] || messages[0]);
+      setCaption(captions[currentStep] || captions[0]);
     }
 
     function playFlow() {
@@ -86,6 +100,7 @@
         setStep(maxStep);
         motion.classList.remove("is-playing");
         setStatus("Reduced motion: full flow shown");
+        setCaption("Reduced motion is on, so BOF shows the completed roster, rule, readiness-fit, and proof-packet state without motion.");
         return;
       }
 
@@ -95,6 +110,7 @@
         if (currentStep >= maxStep) {
           stopPlayback();
           setStatus("Proof packet ready for review");
+          setCaption(captions[maxStep]);
           return;
         }
         setStep(currentStep + 1);
@@ -127,6 +143,7 @@
       motion.classList.add("is-flow-ready");
       motion.classList.add("is-cta-starting");
       setStatus("Starting document-flow animation");
+      setCaption("Launching the roster rules flow: watch documents move from demand to proof packet.");
       motion.scrollIntoView({
         behavior: reducedMotion ? "auto" : "smooth",
         block: "start"
