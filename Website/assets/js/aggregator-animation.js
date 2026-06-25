@@ -14,16 +14,18 @@
     var carrierCards = Array.prototype.slice.call(motion.querySelectorAll("[data-motion-card]"));
     var checkItems = Array.prototype.slice.call(motion.querySelectorAll("[data-motion-check]"));
     var controls = Array.prototype.slice.call(motion.querySelectorAll("[data-motion-action]"));
+    var jumpControls = Array.prototype.slice.call(document.querySelectorAll("[data-motion-jump-play]"));
+    var playButton = motion.querySelector('[data-motion-action="play"]');
 
     if (!status || !railItems.length || !controls.length) return;
 
     var messages = [
       "Ready for review",
-      "Capacity need received",
-      "Carrier roster opened",
-      "Rules and readiness checked",
-      "Best readiness fit surfaced",
-      "Proof packet assembled"
+      "Reviewing carrier rules",
+      "Opening carrier roster",
+      "Lifting documents and classifying readiness evidence",
+      "Surfacing readiness fit",
+      "Assembling proof packet"
     ];
 
     function setStatus(message) {
@@ -76,6 +78,7 @@
 
     function playFlow() {
       stopPlayback();
+      motion.classList.remove("is-cta-starting");
       motion.classList.add("is-flow-ready");
       motion.classList.add("is-playing");
 
@@ -91,7 +94,7 @@
       playTimer = window.setInterval(function () {
         if (currentStep >= maxStep) {
           stopPlayback();
-          setStatus("Flow complete");
+          setStatus("Proof packet ready for review");
           return;
         }
         setStep(currentStep + 1);
@@ -100,6 +103,7 @@
 
     function stepFlow() {
       stopPlayback();
+      motion.classList.remove("is-cta-starting");
       motion.classList.add("is-flow-ready");
       setStep(currentStep >= maxStep ? 0 : currentStep + 1);
     }
@@ -113,7 +117,31 @@
       stopPlayback();
       motion.classList.remove("is-flow-ready");
       motion.classList.remove("is-playing");
+      motion.classList.remove("is-cta-starting");
       setStep(0);
+    }
+
+    function jumpToAnimationAndPlay(event) {
+      if (event) event.preventDefault();
+      stopPlayback();
+      motion.classList.add("is-flow-ready");
+      motion.classList.add("is-cta-starting");
+      setStatus("Starting document-flow animation");
+      motion.scrollIntoView({
+        behavior: reducedMotion ? "auto" : "smooth",
+        block: "start"
+      });
+
+      window.setTimeout(function () {
+        if (playButton && typeof playButton.focus === "function") {
+          try {
+            playButton.focus({ preventScroll: true });
+          } catch (error) {
+            playButton.focus();
+          }
+        }
+        playFlow();
+      }, reducedMotion ? 0 : 520);
     }
 
     controls.forEach(function (control) {
@@ -124,6 +152,10 @@
         if (action === "pause") pauseFlow();
         if (action === "reset") resetFlow();
       });
+    });
+
+    jumpControls.forEach(function (control) {
+      control.addEventListener("click", jumpToAnimationAndPlay);
     });
 
     setStep(0);

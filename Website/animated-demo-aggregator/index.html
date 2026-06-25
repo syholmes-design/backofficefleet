@@ -65,6 +65,75 @@
       box-shadow: 0 14px 30px rgba(9,98,75,0.2);
     }
 
+    .ad-motion-preview {
+      background: rgba(255,255,255,0.94);
+      border: 1px solid rgba(9,98,75,0.18);
+      border-radius: 8px;
+      box-shadow: 0 18px 46px rgba(9,98,75,0.11);
+      display: grid;
+      gap: 12px;
+      max-width: 720px;
+      padding: 16px;
+    }
+
+    .ad-motion-preview h2 {
+      font-size: 1.25rem;
+      line-height: 1.15;
+      margin: 2px 0 0;
+    }
+
+    .ad-motion-preview p {
+      color: var(--muted);
+      line-height: 1.45;
+      margin: 4px 0 0;
+    }
+
+    .ad-motion-preview-steps {
+      display: grid;
+      gap: 8px;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .ad-motion-preview-steps span {
+      background: #f8fbf8;
+      border: 1px solid rgba(20,33,31,0.1);
+      border-radius: 8px;
+      display: grid;
+      gap: 5px;
+      min-width: 0;
+      padding: 10px;
+      position: relative;
+    }
+
+    .ad-motion-preview-steps span::before {
+      background: #12976e;
+      border-radius: 999px;
+      content: "";
+      height: 7px;
+      position: absolute;
+      right: 10px;
+      top: 10px;
+      width: 7px;
+    }
+
+    .ad-motion-preview-steps strong {
+      color: var(--ink);
+      font-size: 0.86rem;
+      line-height: 1.15;
+      padding-right: 12px;
+    }
+
+    .ad-motion-preview-steps small {
+      color: var(--muted);
+      line-height: 1.28;
+    }
+
+    .ad-motion-preview-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
     .ad-controls,
     .ad-inline-controls,
     .ad-demo-links {
@@ -863,6 +932,16 @@
       box-shadow: 0 24px 60px rgba(9,98,75,0.14);
     }
 
+    .ad-motion-demo.is-cta-starting {
+      animation: adMotionFocusRing 980ms ease both;
+    }
+
+    @keyframes adMotionFocusRing {
+      0% { box-shadow: 0 0 0 0 rgba(18,151,110,0), 0 20px 50px rgba(20,33,31,0.08); }
+      42% { box-shadow: 0 0 0 7px rgba(18,151,110,0.18), 0 26px 62px rgba(9,98,75,0.15); }
+      100% { box-shadow: 0 24px 60px rgba(9,98,75,0.14); }
+    }
+
     .ad-motion-head {
       align-items: end;
       display: grid;
@@ -947,6 +1026,14 @@
       min-width: 180px;
       padding: 10px 12px;
       text-transform: uppercase;
+    }
+
+    .ad-motion-demo.is-playing .ad-motion-rail span.is-active {
+      background: #09624b;
+      border-color: #09624b;
+      box-shadow: 0 12px 24px rgba(9,98,75,0.18);
+      color: #fff;
+      transform: translateY(-3px);
     }
 
     .ad-motion-rail {
@@ -1260,9 +1347,19 @@
     .ad-motion-demo[data-motion-step="4"] .ad-lift-card,
     .ad-motion-demo[data-motion-step="5"] .ad-lift-card {
       border-color: rgba(9,98,75,0.28);
-      box-shadow: 0 18px 38px rgba(9,98,75,0.15);
+      box-shadow: 0 24px 48px rgba(9,98,75,0.2);
       opacity: 1;
-      transform: translateY(-6px) rotateX(0) scale(1.02);
+      transform: translateY(-18px) rotateX(0) scale(1.04);
+    }
+
+    .ad-motion-demo.is-playing[data-motion-step="3"] .ad-lift-card {
+      animation: adDocumentLift 900ms cubic-bezier(.2,.72,.2,1) both;
+    }
+
+    @keyframes adDocumentLift {
+      0% { opacity: 0.22; transform: translateY(30px) rotateX(16deg) scale(0.95); }
+      58% { opacity: 1; transform: translateY(-24px) rotateX(0) scale(1.055); }
+      100% { opacity: 1; transform: translateY(-18px) rotateX(0) scale(1.04); }
     }
 
     .ad-motion-demo.is-flow-ready[data-motion-step="0"] .ad-lift-card,
@@ -1319,9 +1416,10 @@
 
     .ad-rule-check-strip span.is-lit {
       background: #e1f5ea;
-      border-color: rgba(9,98,75,0.22);
+      border-color: rgba(9,98,75,0.36);
+      box-shadow: 0 12px 24px rgba(9,98,75,0.12);
       color: #09624b;
-      transform: translateY(-2px);
+      transform: translateY(-4px);
     }
 
     .ad-rule-check-strip span.is-lit::before {
@@ -1356,8 +1454,8 @@
 
     .ad-motion-rule.is-checked,
     .ad-motion-doc.is-checked {
-      border-color: rgba(9,98,75,0.22);
-      box-shadow: 0 18px 36px rgba(9,98,75,0.15);
+      border-color: rgba(9,98,75,0.34);
+      box-shadow: 0 20px 42px rgba(9,98,75,0.18);
     }
 
     .ad-motion-face {
@@ -1439,10 +1537,20 @@
     }
 
     .ad-motion-proof-card.is-visible {
-      border-color: rgba(9,98,75,0.24);
-      box-shadow: 0 16px 34px rgba(9,98,75,0.13);
+      border-color: rgba(9,98,75,0.34);
+      box-shadow: 0 20px 40px rgba(9,98,75,0.17);
       opacity: 1;
-      transform: translateY(-4px) rotate(0);
+      transform: translateY(-10px) rotate(0);
+    }
+
+    .ad-motion-demo.is-playing[data-motion-step="5"] .ad-motion-proof-card.is-visible {
+      animation: adProofAssemble 820ms cubic-bezier(.2,.72,.2,1) both;
+    }
+
+    @keyframes adProofAssemble {
+      0% { opacity: 0.16; transform: translateY(32px) rotate(-1deg) scale(0.96); }
+      68% { opacity: 1; transform: translateY(-14px) rotate(0) scale(1.025); }
+      100% { opacity: 1; transform: translateY(-10px) rotate(0) scale(1); }
     }
 
     .ad-motion-proof-card.is-visible:nth-child(1) { transition-delay: 70ms; }
@@ -1479,8 +1587,9 @@
     }
 
     .ad-motion-final.is-visible {
-      border-color: rgba(9,98,75,0.34);
-      box-shadow: 0 16px 34px rgba(9,98,75,0.14);
+      background: #ddf2e8;
+      border-color: rgba(9,98,75,0.42);
+      box-shadow: 0 18px 38px rgba(9,98,75,0.17);
       opacity: 1;
       transform: translateY(0);
     }
@@ -1758,6 +1867,7 @@
       .ad-motion-roster,
       .ad-motion-review-grid,
       .ad-lift-cards,
+      .ad-motion-preview-steps,
       .ad-rule-check-strip,
       .ad-motion-proof-stack {
         grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -1802,6 +1912,7 @@
       .ad-motion-roster,
       .ad-motion-review-grid,
       .ad-lift-cards,
+      .ad-motion-preview-steps,
       .ad-rule-check-strip,
       .ad-motion-proof-stack,
       .ad-kpi-grid,
@@ -1883,7 +1994,8 @@
       .ad-motion-proof-card,
       .ad-lift-card,
       .ad-motion-flip,
-      .ad-motion-truck {
+      .ad-motion-truck,
+      .ad-motion-demo.is-cta-starting {
         animation: none !important;
         transition: none !important;
       }
@@ -2008,10 +2120,25 @@
           <h1>BOF Aggregator Network Lifecycle</h1>
           <p>BOF gives aggregators a centralized operating system for managing carrier rosters, driver readiness, asset rules, customer requirements, proof packets, claims, settlements, onboarding, and readiness workflows across their network.</p>
           <p class="ad-start-helper">Recommended: start with narration for the full guided walkthrough.</p>
+          <div class="ad-motion-preview" aria-label="Enhanced document-flow animation preview">
+            <div>
+              <p class="eyebrow">Enhanced document-flow animation</p>
+              <h2>Watch the roster rules become a proof-ready packet.</h2>
+              <p>Start here to see the carrier roster, document evidence, rule checks, readiness fit, and proof packet move together.</p>
+            </div>
+            <div class="ad-motion-preview-steps" aria-label="Animation highlights">
+              <span><strong>Documents Lift</strong><small>Carrier, driver, equipment, and customer evidence rise into review.</small></span>
+              <span><strong>Rules Classify</strong><small>Eligible, blocked, review-needed, and conditional records separate clearly.</small></span>
+              <span><strong>Proof Packet Assembles</strong><small>Required proof follows the selected carrier/driver/customer combination.</small></span>
+            </div>
+            <div class="ad-motion-preview-actions">
+              <button class="button primary ad-control ad-motion-jump" type="button" data-motion-jump-play>Play Animation</button>
+            </div>
+          </div>
           <div class="ad-controls ad-start-controls" aria-label="Demo controls">
             <button class="button primary ad-control" type="button" data-demo-action="start-narration">Start Demo With Narration</button>
             <button class="button secondary ad-control" type="button" data-demo-action="start-silent">Start Without Audio</button>
-            <a class="button primary ad-motion-jump" href="#roster-rules-in-motion">Play the document-flow animation</a>
+            <button class="button primary ad-control ad-motion-jump" type="button" data-motion-jump-play>Play the document-flow animation</button>
             <a class="button secondary" href="/aggregator-command-center/">Aggregator Command Center</a>
             <a class="button secondary" href="/scenario-walkthrough/">Describe Your Scenario</a>
             <button class="button secondary ad-control" type="button" data-demo-action="pause">Pause</button>
@@ -2388,6 +2515,6 @@
 
   <script src="/assets/js/site.js?v=1.46"></script>
   <script src="/assets/js/animated-demo.js?v=1.13"></script>
-  <script src="/assets/js/aggregator-animation.js?v=1.2"></script>
+  <script src="/assets/js/aggregator-animation.js?v=1.3"></script>
 </body>
 </html>
