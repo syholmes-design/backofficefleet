@@ -2061,6 +2061,584 @@
       }
     }
 
+    .ad-cinema-page .ad-shell > .ad-landing,
+    .ad-cinema-page .ad-shell > .ad-demo-frame,
+    .ad-cinema-page .ad-shell > .ad-motion-demo,
+    .ad-cinema-page .ad-shell > .ad-section,
+    .ad-cinema-page .ad-shell > .ad-cta-panel:not(.ad-cinema-cta),
+    .ad-cinema-page .ad-shell > .ad-script-section {
+      display: none;
+    }
+
+    .ad-cinema-shell {
+      gap: 22px;
+    }
+
+    .ad-cinema-hero {
+      align-items: stretch;
+      display: grid;
+      gap: 22px;
+      grid-template-columns: minmax(0, 1fr) minmax(280px, 0.36fr);
+      min-width: 0;
+    }
+
+    .ad-cinema-hero-actions,
+    .ad-cinema-controls,
+    .ad-cta-actions {
+      align-items: center;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .ad-cinema-side {
+      align-content: center;
+      background: #0b3b32;
+      border: 1px solid rgba(255,255,255,0.22);
+      border-radius: 8px;
+      box-shadow: var(--shadow-soft);
+      color: #fff;
+      display: grid;
+      gap: 12px;
+      padding: 24px;
+    }
+
+    .ad-cinema-side span {
+      color: rgba(255,255,255,0.72);
+      font-size: 0.78rem;
+      font-weight: 950;
+      text-transform: uppercase;
+    }
+
+    .ad-cinema-side strong {
+      color: #fff;
+      font-size: 1.45rem;
+      line-height: 1.12;
+    }
+
+    .ad-cinema-side p {
+      color: rgba(255,255,255,0.82);
+      line-height: 1.55;
+      margin: 0;
+    }
+
+    .ad-cinema-demo {
+      background: rgba(255,255,255,0.96);
+      border: 1px solid rgba(9,98,75,0.18);
+      border-radius: 8px;
+      box-shadow: 0 26px 80px rgba(20,33,31,0.14);
+      display: grid;
+      gap: 16px;
+      min-width: 0;
+      overflow: hidden;
+      padding: 18px;
+      position: relative;
+    }
+
+    .ad-cinema-demo.is-playing {
+      border-color: rgba(9,98,75,0.34);
+      box-shadow: 0 32px 90px rgba(9,98,75,0.18);
+    }
+
+    .ad-cinema-demo.is-cta-starting {
+      animation: adMotionFocusRing 980ms ease both;
+    }
+
+    .ad-cinema-head {
+      align-items: end;
+      display: grid;
+      gap: 14px;
+      grid-template-columns: minmax(0, 1fr) auto;
+      min-width: 0;
+    }
+
+    .ad-cinema-head h2 {
+      font-size: clamp(2rem, 4vw, 4rem);
+      line-height: 0.95;
+      margin: 0 0 8px;
+    }
+
+    .ad-cinema-head p {
+      color: var(--muted);
+      margin: 0;
+    }
+
+    .ad-cinema-controls {
+      justify-content: flex-end;
+    }
+
+    .ad-cinema-controls button,
+    .ad-cinema-timeline button {
+      background: #fff;
+      border: 1px solid rgba(20,33,31,0.13);
+      border-radius: 8px;
+      color: var(--ink);
+      cursor: pointer;
+      font: inherit;
+      font-weight: 950;
+      min-height: 40px;
+      padding: 10px 13px;
+    }
+
+    .ad-cinema-controls button:first-child,
+    .ad-cinema-demo.is-playing .ad-motion-status {
+      background: #09624b;
+      border-color: #09624b;
+      color: #fff;
+    }
+
+    .ad-motion-status {
+      background: #e8f4ee;
+      border: 1px solid rgba(9,98,75,0.18);
+      border-radius: 8px;
+      color: #09624b;
+      font-weight: 950;
+      min-height: 40px;
+      padding: 10px 12px;
+      text-transform: uppercase;
+    }
+
+    .ad-cinema-timeline {
+      display: grid;
+      gap: 8px;
+      grid-template-columns: repeat(8, minmax(0, 1fr));
+    }
+
+    .ad-cinema-timeline button {
+      color: var(--muted);
+      display: grid;
+      gap: 3px;
+      justify-items: start;
+      line-height: 1.1;
+      min-width: 0;
+      position: relative;
+      text-align: left;
+      text-transform: uppercase;
+    }
+
+    .ad-cinema-timeline button::after {
+      background: rgba(18,151,110,0.24);
+      border-radius: 999px;
+      bottom: -7px;
+      content: "";
+      height: 4px;
+      left: 10px;
+      position: absolute;
+      right: 10px;
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform 260ms ease;
+    }
+
+    .ad-cinema-timeline span {
+      color: #09624b;
+      font-size: 0.72rem;
+    }
+
+    .ad-cinema-timeline button.is-active {
+      background: #09624b;
+      border-color: #09624b;
+      color: #fff;
+    }
+
+    .ad-cinema-timeline button.is-active span,
+    .ad-cinema-timeline button.is-complete span {
+      color: inherit;
+    }
+
+    .ad-cinema-timeline button.is-complete::after,
+    .ad-cinema-timeline button.is-active::after {
+      transform: scaleX(1);
+    }
+
+    .ad-cinema-screen {
+      background:
+        radial-gradient(circle at 18% 22%, rgba(18,151,110,0.16), transparent 28%),
+        radial-gradient(circle at 82% 76%, rgba(31,103,143,0.13), transparent 26%),
+        linear-gradient(135deg, #f8fbf8, #eef6f2);
+      border: 1px solid rgba(20,33,31,0.1);
+      border-radius: 8px;
+      min-height: 520px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .ad-cinema-grid {
+      background-image:
+        linear-gradient(rgba(9,98,75,0.07) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(9,98,75,0.07) 1px, transparent 1px);
+      background-size: 34px 34px;
+      inset: 0;
+      position: absolute;
+    }
+
+    .ad-cinema-scan {
+      background: linear-gradient(90deg, transparent, rgba(18,151,110,0.18), transparent);
+      bottom: -20%;
+      opacity: 0;
+      position: absolute;
+      top: -20%;
+      transform: translateX(-140%) skewX(-16deg);
+      width: 24%;
+      z-index: 1;
+    }
+
+    .ad-cinema-demo.is-playing .ad-cinema-scan {
+      animation: adTheaterScan 1700ms ease-in-out infinite;
+      opacity: 1;
+    }
+
+    .ad-cinema-route {
+      background: rgba(9,98,75,0.15);
+      border-radius: 999px;
+      height: 6px;
+      left: 8%;
+      overflow: hidden;
+      position: absolute;
+      right: 8%;
+      top: 47%;
+      z-index: 1;
+    }
+
+    .ad-cinema-route span {
+      background: linear-gradient(90deg, #09624b, #12976e, #1f678f);
+      border-radius: inherit;
+      display: block;
+      height: 100%;
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform 720ms ease;
+    }
+
+    .ad-cinema-demo[data-motion-step="1"] .ad-cinema-route span { transform: scaleX(0.12); }
+    .ad-cinema-demo[data-motion-step="2"] .ad-cinema-route span { transform: scaleX(0.25); }
+    .ad-cinema-demo[data-motion-step="3"] .ad-cinema-route span { transform: scaleX(0.38); }
+    .ad-cinema-demo[data-motion-step="4"] .ad-cinema-route span { transform: scaleX(0.52); }
+    .ad-cinema-demo[data-motion-step="5"] .ad-cinema-route span { transform: scaleX(0.66); }
+    .ad-cinema-demo[data-motion-step="6"] .ad-cinema-route span { transform: scaleX(0.78); }
+    .ad-cinema-demo[data-motion-step="7"] .ad-cinema-route span { transform: scaleX(0.9); }
+    .ad-cinema-demo[data-motion-step="8"] .ad-cinema-route span { transform: scaleX(1); }
+
+    .ad-cinema-request,
+    .ad-cinema-roster article,
+    .ad-cinema-rules span,
+    .ad-cinema-docs article,
+    .ad-cinema-exceptions,
+    .ad-cinema-fit,
+    .ad-cinema-proof article,
+    .ad-cinema-impact article {
+      position: absolute;
+      transition: opacity 420ms ease, transform 720ms cubic-bezier(.2,.72,.2,1), border-color 320ms ease, box-shadow 320ms ease, background 320ms ease;
+      z-index: 2;
+    }
+
+    .ad-cinema-request,
+    .ad-cinema-roster article,
+    .ad-cinema-rules span,
+    .ad-cinema-docs article,
+    .ad-cinema-exceptions article,
+    .ad-cinema-fit,
+    .ad-cinema-proof article,
+    .ad-cinema-impact article {
+      background: #fff;
+      border: 1px solid rgba(20,33,31,0.12);
+      border-radius: 8px;
+      box-shadow: 0 14px 32px rgba(20,33,31,0.08);
+      display: grid;
+      gap: 5px;
+      padding: 12px;
+    }
+
+    .ad-cinema-request {
+      left: 5%;
+      max-width: 300px;
+      opacity: 0;
+      top: 38px;
+      transform: translate(-44px, 18px) scale(0.92);
+    }
+
+    .ad-cinema-request span,
+    .ad-cinema-fit span,
+    .ad-cinema-impact span,
+    .ad-cinema-exceptions span,
+    .ad-cinema-roster span {
+      color: #09624b;
+      font-size: 0.74rem;
+      font-weight: 950;
+      text-transform: uppercase;
+    }
+
+    .ad-cinema-request strong,
+    .ad-cinema-roster strong,
+    .ad-cinema-fit strong,
+    .ad-cinema-impact strong {
+      color: var(--ink);
+      line-height: 1.1;
+    }
+
+    .ad-cinema-request small,
+    .ad-cinema-roster small,
+    .ad-cinema-fit small,
+    .ad-cinema-impact small,
+    .ad-cinema-exceptions small {
+      color: var(--muted);
+      line-height: 1.28;
+    }
+
+    .ad-cinema-demo[data-motion-step="1"] .ad-cinema-request,
+    .ad-cinema-demo[data-motion-step="2"] .ad-cinema-request,
+    .ad-cinema-demo[data-motion-step="3"] .ad-cinema-request,
+    .ad-cinema-demo[data-motion-step="4"] .ad-cinema-request,
+    .ad-cinema-demo[data-motion-step="5"] .ad-cinema-request,
+    .ad-cinema-demo[data-motion-step="6"] .ad-cinema-request,
+    .ad-cinema-demo[data-motion-step="7"] .ad-cinema-request,
+    .ad-cinema-demo[data-motion-step="8"] .ad-cinema-request {
+      opacity: 1;
+      transform: translate(0, 0) scale(1);
+    }
+
+    .ad-cinema-roster article {
+      opacity: 0;
+      right: 6%;
+      top: 34px;
+      transform: translateX(60px) scale(0.92);
+      width: 180px;
+    }
+
+    .ad-cinema-roster article:nth-child(2) { top: 122px; transition-delay: 80ms; }
+    .ad-cinema-roster article:nth-child(3) { top: 210px; transition-delay: 160ms; }
+    .ad-cinema-roster article:nth-child(4) { top: 298px; transition-delay: 240ms; }
+
+    .ad-cinema-demo[data-motion-step="2"] .ad-cinema-roster article,
+    .ad-cinema-demo[data-motion-step="3"] .ad-cinema-roster article,
+    .ad-cinema-demo[data-motion-step="4"] .ad-cinema-roster article,
+    .ad-cinema-demo[data-motion-step="5"] .ad-cinema-roster article,
+    .ad-cinema-demo[data-motion-step="6"] .ad-cinema-roster article,
+    .ad-cinema-demo[data-motion-step="7"] .ad-cinema-roster article,
+    .ad-cinema-demo[data-motion-step="8"] .ad-cinema-roster article {
+      opacity: 1;
+      transform: translateX(0) scale(1);
+    }
+
+    .ad-cinema-demo[data-motion-step="5"] .ad-cinema-roster article:not(.is-selected),
+    .ad-cinema-demo[data-motion-step="6"] .ad-cinema-roster article:not(.is-selected),
+    .ad-cinema-demo[data-motion-step="7"] .ad-cinema-roster article:not(.is-selected),
+    .ad-cinema-demo[data-motion-step="8"] .ad-cinema-roster article:not(.is-selected) {
+      opacity: 0.36;
+      transform: translateX(18px) scale(0.94);
+    }
+
+    .ad-cinema-roster article.is-selected {
+      border-color: rgba(9,98,75,0.46);
+      box-shadow: 0 24px 52px rgba(9,98,75,0.24);
+      transform: translate(-34px, -8px) scale(1.08);
+    }
+
+    .ad-cinema-rules {
+      inset: auto auto auto 0;
+    }
+
+    .ad-cinema-rules span {
+      left: 36%;
+      opacity: 0;
+      top: 36px;
+      transform: translateY(28px) scale(0.92);
+      width: 142px;
+    }
+
+    .ad-cinema-rules span:nth-child(2) { top: 90px; transition-delay: 70ms; }
+    .ad-cinema-rules span:nth-child(3) { top: 144px; transition-delay: 140ms; }
+    .ad-cinema-rules span:nth-child(4) { top: 198px; transition-delay: 210ms; }
+    .ad-cinema-rules span:nth-child(5) { top: 252px; transition-delay: 280ms; }
+    .ad-cinema-rules span:nth-child(6) { top: 306px; transition-delay: 350ms; }
+
+    .ad-cinema-demo[data-motion-step="3"] .ad-cinema-rules span,
+    .ad-cinema-demo[data-motion-step="4"] .ad-cinema-rules span,
+    .ad-cinema-demo[data-motion-step="5"] .ad-cinema-rules span,
+    .ad-cinema-demo[data-motion-step="6"] .ad-cinema-rules span,
+    .ad-cinema-demo[data-motion-step="7"] .ad-cinema-rules span,
+    .ad-cinema-demo[data-motion-step="8"] .ad-cinema-rules span {
+      background: #e8f4ee;
+      border-color: rgba(9,98,75,0.28);
+      color: #09624b;
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+
+    .ad-cinema-docs article {
+      left: 9%;
+      opacity: 0;
+      top: 360px;
+      transform: translateY(46px) rotate(-2deg) scale(0.92);
+      width: 135px;
+    }
+
+    .ad-cinema-docs article:nth-child(2) { left: 22%; transition-delay: 55ms; }
+    .ad-cinema-docs article:nth-child(3) { left: 35%; transition-delay: 110ms; }
+    .ad-cinema-docs article:nth-child(4) { left: 48%; transition-delay: 165ms; }
+    .ad-cinema-docs article:nth-child(5) { left: 61%; transition-delay: 220ms; }
+    .ad-cinema-docs article:nth-child(6) { left: 74%; transition-delay: 275ms; }
+    .ad-cinema-docs article:nth-child(7) { left: 22%; top: 438px; transition-delay: 330ms; }
+    .ad-cinema-docs article:nth-child(8) { left: 48%; top: 438px; transition-delay: 385ms; }
+
+    .ad-cinema-demo[data-motion-step="4"] .ad-cinema-docs article,
+    .ad-cinema-demo[data-motion-step="5"] .ad-cinema-docs article,
+    .ad-cinema-demo[data-motion-step="6"] .ad-cinema-docs article,
+    .ad-cinema-demo[data-motion-step="7"] .ad-cinema-docs article,
+    .ad-cinema-demo[data-motion-step="8"] .ad-cinema-docs article {
+      border-color: rgba(9,98,75,0.3);
+      box-shadow: 0 22px 46px rgba(9,98,75,0.16);
+      opacity: 1;
+      transform: translateY(0) rotate(0deg) scale(1);
+    }
+
+    .ad-cinema-exceptions {
+      display: grid;
+      gap: 8px;
+      left: 6%;
+      opacity: 0;
+      position: absolute;
+      top: 216px;
+      transform: translateX(-46px);
+      width: 250px;
+      z-index: 3;
+    }
+
+    .ad-cinema-exceptions article {
+      position: relative;
+    }
+
+    .ad-cinema-demo[data-motion-step="5"] .ad-cinema-exceptions,
+    .ad-cinema-demo[data-motion-step="6"] .ad-cinema-exceptions,
+    .ad-cinema-demo[data-motion-step="7"] .ad-cinema-exceptions,
+    .ad-cinema-demo[data-motion-step="8"] .ad-cinema-exceptions {
+      opacity: 1;
+      transform: translateX(0);
+    }
+
+    .ad-cinema-fit {
+      left: 50%;
+      max-width: 330px;
+      opacity: 0;
+      top: 176px;
+      transform: translate(-50%, 34px) scale(0.86);
+    }
+
+    .ad-cinema-demo[data-motion-step="6"] .ad-cinema-fit,
+    .ad-cinema-demo[data-motion-step="7"] .ad-cinema-fit,
+    .ad-cinema-demo[data-motion-step="8"] .ad-cinema-fit {
+      background: #ddf2e8;
+      border-color: rgba(9,98,75,0.46);
+      box-shadow: 0 30px 72px rgba(9,98,75,0.26);
+      opacity: 1;
+      transform: translate(-50%, -16px) scale(1.08);
+    }
+
+    .ad-cinema-proof article {
+      opacity: 0;
+      right: 8%;
+      top: 364px;
+      transform: translateY(38px) rotate(-2deg) scale(0.92);
+      width: 140px;
+    }
+
+    .ad-cinema-proof article:nth-child(2) { right: 20%; transition-delay: 70ms; }
+    .ad-cinema-proof article:nth-child(3) { right: 32%; transition-delay: 140ms; }
+    .ad-cinema-proof article:nth-child(4) { right: 44%; transition-delay: 210ms; }
+    .ad-cinema-proof article:nth-child(5) { right: 8%; top: 438px; transition-delay: 280ms; }
+    .ad-cinema-proof article:nth-child(6) { right: 20%; top: 438px; transition-delay: 350ms; }
+    .ad-cinema-proof article:nth-child(7) { right: 32%; top: 438px; transition-delay: 420ms; }
+    .ad-cinema-proof article:nth-child(8) { right: 44%; top: 438px; transition-delay: 490ms; }
+
+    .ad-cinema-demo[data-motion-step="7"] .ad-cinema-proof article,
+    .ad-cinema-demo[data-motion-step="8"] .ad-cinema-proof article {
+      border-color: rgba(9,98,75,0.32);
+      opacity: 1;
+      transform: translateY(0) rotate(0deg) scale(1);
+    }
+
+    .ad-cinema-impact article {
+      opacity: 0;
+      transform: translateY(30px) scale(0.94);
+      width: 230px;
+    }
+
+    .ad-cinema-impact article:nth-child(1) { left: 7%; top: 70px; }
+    .ad-cinema-impact article:nth-child(2) { right: 7%; top: 70px; transition-delay: 90ms; }
+    .ad-cinema-impact article:nth-child(3) { left: 7%; bottom: 44px; transition-delay: 180ms; }
+    .ad-cinema-impact article:nth-child(4) { right: 7%; bottom: 44px; transition-delay: 270ms; }
+
+    .ad-cinema-demo[data-motion-step="8"] .ad-cinema-impact article {
+      background: #fff;
+      border-color: rgba(9,98,75,0.32);
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+
+    .ad-cinema-demo[data-motion-step="8"] .ad-cinema-request,
+    .ad-cinema-demo[data-motion-step="8"] .ad-cinema-roster article,
+    .ad-cinema-demo[data-motion-step="8"] .ad-cinema-rules span,
+    .ad-cinema-demo[data-motion-step="8"] .ad-cinema-docs article,
+    .ad-cinema-demo[data-motion-step="8"] .ad-cinema-exceptions,
+    .ad-cinema-demo[data-motion-step="8"] .ad-cinema-fit,
+    .ad-cinema-demo[data-motion-step="8"] .ad-cinema-proof article {
+      opacity: 0.18;
+      transform: scale(0.94);
+    }
+
+    .ad-cinema-caption {
+      background: #fff;
+      border: 1px solid rgba(20,33,31,0.1);
+      border-radius: 8px;
+      color: #09624b;
+      font-size: 1.02rem;
+      font-weight: 950;
+      line-height: 1.45;
+      margin: 0;
+      min-height: 54px;
+      padding: 14px 16px;
+    }
+
+    .ad-cinema-summary {
+      display: grid;
+      gap: 14px;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .ad-cinema-summary article,
+    .ad-cinema-details {
+      background: #fff;
+      border: 1px solid rgba(20,33,31,0.1);
+      border-radius: 8px;
+      box-shadow: var(--shadow-soft);
+      padding: 18px;
+    }
+
+    .ad-cinema-summary span {
+      color: #09624b;
+      font-size: 0.74rem;
+      font-weight: 950;
+      text-transform: uppercase;
+    }
+
+    .ad-cinema-summary strong {
+      display: block;
+      font-size: 1.14rem;
+      margin-top: 6px;
+    }
+
+    .ad-cinema-summary p,
+    .ad-cinema-details p {
+      color: var(--muted);
+      line-height: 1.55;
+      margin: 8px 0 0;
+    }
+
+    .ad-cinema-details summary {
+      cursor: pointer;
+      font-weight: 950;
+    }
+
     @media (max-width: 1180px) {
       .ad-landing,
       .ad-scene {
@@ -2196,6 +2774,21 @@
         width: 100%;
       }
 
+      .ad-cinema-hero,
+      .ad-cinema-head,
+      .ad-cinema-summary,
+      .ad-cta-panel.ad-cinema-cta {
+        grid-template-columns: 1fr;
+      }
+
+      .ad-cinema-controls {
+        justify-content: flex-start;
+      }
+
+      .ad-cinema-timeline {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+      }
+
       .ad-motion-fit {
         grid-template-columns: 1fr;
       }
@@ -2260,6 +2853,116 @@
         display: none;
       }
 
+      .ad-cinema-demo {
+        border-radius: 0;
+        padding: 14px;
+      }
+
+      .ad-cinema-timeline {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .ad-cinema-controls,
+      .ad-cinema-hero-actions {
+        display: grid;
+        grid-template-columns: 1fr;
+      }
+
+      .ad-cinema-controls button,
+      .ad-cinema-controls .ad-motion-status,
+      .ad-cinema-hero-actions .button {
+        justify-content: center;
+        text-align: center;
+        width: 100%;
+      }
+
+      .ad-cinema-screen {
+        min-height: 860px;
+      }
+
+      .ad-cinema-route {
+        left: 9%;
+        right: 9%;
+        top: 46%;
+      }
+
+      .ad-cinema-request {
+        left: 5%;
+        max-width: none;
+        right: 5%;
+        top: 24px;
+      }
+
+      .ad-cinema-roster article {
+        left: 5%;
+        right: auto;
+        width: 41%;
+      }
+
+      .ad-cinema-roster article:nth-child(1) { top: 136px; }
+      .ad-cinema-roster article:nth-child(2) { top: 136px; left: 54%; }
+      .ad-cinema-roster article:nth-child(3) { top: 228px; left: 5%; }
+      .ad-cinema-roster article:nth-child(4) { top: 228px; left: 54%; }
+
+      .ad-cinema-rules span {
+        left: 5%;
+        width: 41%;
+      }
+
+      .ad-cinema-rules span:nth-child(1) { top: 330px; }
+      .ad-cinema-rules span:nth-child(2) { top: 330px; left: 54%; }
+      .ad-cinema-rules span:nth-child(3) { top: 386px; left: 5%; }
+      .ad-cinema-rules span:nth-child(4) { top: 386px; left: 54%; }
+      .ad-cinema-rules span:nth-child(5) { top: 442px; left: 5%; }
+      .ad-cinema-rules span:nth-child(6) { top: 442px; left: 54%; }
+
+      .ad-cinema-docs article,
+      .ad-cinema-proof article {
+        left: 5%;
+        right: auto;
+        width: 41%;
+      }
+
+      .ad-cinema-docs article:nth-child(1),
+      .ad-cinema-proof article:nth-child(1) { top: 510px; left: 5%; }
+      .ad-cinema-docs article:nth-child(2),
+      .ad-cinema-proof article:nth-child(2) { top: 510px; left: 54%; }
+      .ad-cinema-docs article:nth-child(3),
+      .ad-cinema-proof article:nth-child(3) { top: 584px; left: 5%; }
+      .ad-cinema-docs article:nth-child(4),
+      .ad-cinema-proof article:nth-child(4) { top: 584px; left: 54%; }
+      .ad-cinema-docs article:nth-child(5),
+      .ad-cinema-proof article:nth-child(5) { top: 658px; left: 5%; }
+      .ad-cinema-docs article:nth-child(6),
+      .ad-cinema-proof article:nth-child(6) { top: 658px; left: 54%; }
+      .ad-cinema-docs article:nth-child(7),
+      .ad-cinema-proof article:nth-child(7) { top: 732px; left: 5%; }
+      .ad-cinema-docs article:nth-child(8),
+      .ad-cinema-proof article:nth-child(8) { top: 732px; left: 54%; }
+
+      .ad-cinema-exceptions {
+        left: 5%;
+        top: 508px;
+        width: 90%;
+      }
+
+      .ad-cinema-fit {
+        left: 50%;
+        top: 332px;
+        width: 84%;
+      }
+
+      .ad-cinema-impact article {
+        left: 5% !important;
+        right: auto !important;
+        width: 90%;
+      }
+
+      .ad-cinema-impact article:nth-child(1) { top: 130px; }
+      .ad-cinema-impact article:nth-child(2) { top: 250px; }
+      .ad-cinema-impact article:nth-child(3) { bottom: auto; top: 370px; }
+      .ad-cinema-impact article:nth-child(4) { bottom: auto; top: 490px; }
+
       .ad-controls,
       .ad-inline-controls,
       .ad-audio-controls,
@@ -2305,6 +3008,16 @@
       .ad-cine-node,
       .ad-cine-doc,
       .ad-cine-packet,
+      .ad-cinema-scan,
+      .ad-cinema-route span,
+      .ad-cinema-request,
+      .ad-cinema-roster article,
+      .ad-cinema-rules span,
+      .ad-cinema-docs article,
+      .ad-cinema-exceptions,
+      .ad-cinema-fit,
+      .ad-cinema-proof article,
+      .ad-cinema-impact article,
       .ad-motion-demo.is-cta-starting {
         animation: none !important;
         transition: none !important;
@@ -2416,7 +3129,7 @@
     <a class="header-cta" href="/book-demo/">Book demo</a>
   </header>
 
-  <main class="ad-page" data-animated-demo>
+  <main class="ad-page ad-cinema-page" data-animated-demo>
     <script type="application/json" data-audience-labels>{
       "aggregator": "Aggregator view emphasizes roster rules, readiness-fit review, backhaul capacity, claims exposure, and administrative follow-up across many participating fleets.",
       "network": "Carrier network view emphasizes carrier-specific rule profiles, driver and asset readiness, proof packet discipline, and protected participant boundaries.",
@@ -2424,6 +3137,164 @@
     }</script>
 
     <section class="ad-shell" aria-label="BOF Aggregator animated demo">
+      <div class="ad-cinema-hero">
+        <div class="ad-title-card reveal">
+          <p class="eyebrow">Animated Demo Track C</p>
+          <h1>Aggregator Readiness, Rules, and Proof</h1>
+          <p>Watch BOF separate usable capacity from unavailable or review-needed capacity across a carrier network. The sequence follows one customer request through roster rules, document evidence, readiness fit, proof packet assembly, and commercial impact.</p>
+          <div class="ad-cinema-hero-actions">
+            <button class="button primary ad-control" type="button" data-motion-jump-play>Play Cinematic Demo</button>
+            <a class="button secondary" href="/aggregator-command-center/">Aggregator Command Center</a>
+          </div>
+        </div>
+        <aside class="ad-cinema-side reveal">
+          <span>2-3 minute guided sequence</span>
+          <strong>BOF surfaces the best readiness fit.</strong>
+          <p>BOF checks readiness, rules, and proof requirements. BOF does not broker freight, dispatch loads, assign carriers, or control freight movement.</p>
+        </aside>
+      </div>
+
+      <section class="ad-cinema-demo" id="aggregator-cinematic-demo" data-aggregator-motion data-motion-step="0" aria-label="Guided aggregator readiness sequence">
+        <div class="ad-cinema-head">
+          <div>
+            <p class="eyebrow">Guided cinematic sequence</p>
+            <h2>From capacity request to proof-ready record</h2>
+            <p>One stage, eight scenes, fewer choices. Press Play Demo or step through the readiness story.</p>
+          </div>
+          <div class="ad-cinema-controls" aria-label="Cinematic demo controls">
+            <button type="button" data-motion-action="play">Play Demo</button>
+            <button type="button" data-motion-action="step">Step</button>
+            <button type="button" data-motion-action="pause">Pause</button>
+            <button type="button" data-motion-action="reset">Replay</button>
+            <button type="button" data-motion-action="summary">Show Summary</button>
+            <span class="ad-motion-status" data-motion-status aria-live="polite">Ready</span>
+          </div>
+        </div>
+
+        <div class="ad-cinema-timeline" aria-label="Scene timeline">
+          <button type="button" data-motion-rail="1"><span>01</span>Request</button>
+          <button type="button" data-motion-rail="2"><span>02</span>Roster</button>
+          <button type="button" data-motion-rail="3"><span>03</span>Rules</button>
+          <button type="button" data-motion-rail="4"><span>04</span>Documents</button>
+          <button type="button" data-motion-rail="5"><span>05</span>Exceptions</button>
+          <button type="button" data-motion-rail="6"><span>06</span>Readiness Fit</button>
+          <button type="button" data-motion-rail="7"><span>07</span>Proof Packet</button>
+          <button type="button" data-motion-rail="8"><span>08</span>Impact</button>
+        </div>
+
+        <div class="ad-cinema-screen">
+          <noscript>
+            <p class="ad-cinema-caption">JavaScript is unavailable. This BOF demo still shows the readiness fit, proof packet, exception, and commercial impact summaries below.</p>
+          </noscript>
+          <div class="ad-cinema-grid" aria-hidden="true"></div>
+          <div class="ad-cinema-scan" aria-hidden="true"></div>
+          <div class="ad-cinema-route" aria-hidden="true"><span></span></div>
+
+          <article class="ad-cinema-request" data-cinema-piece="request">
+            <span>Customer capacity request</span>
+            <strong>Midwest refrigerated load</strong>
+            <small>Insurance verified • Delivery window 07:00-10:00 • Seal photo + POD + lumper rule</small>
+          </article>
+
+          <div class="ad-cinema-roster" aria-label="Carrier roster cards">
+            <article data-motion-card data-outcome="eligible"><span>Eligible</span><strong>Carrier A</strong><small>Reefer / Midwest / docs current</small></article>
+            <article data-motion-card data-outcome="review"><span>Needs Review</span><strong>Carrier B</strong><small>Insurance limit mismatch</small></article>
+            <article data-motion-card data-outcome="blocked"><span>Blocked</span><strong>Carrier C</strong><small>Customer approval missing</small></article>
+            <article data-motion-card data-outcome="conditional"><span>Eligible with Conditions</span><strong>Carrier D</strong><small>Temperature + lumper proof</small></article>
+          </div>
+
+          <div class="ad-cinema-rules" aria-label="Readiness rule gates">
+            <span data-motion-rule>Authority</span>
+            <span data-motion-rule>Insurance</span>
+            <span data-motion-rule>Equipment</span>
+            <span data-motion-rule>Driver Readiness</span>
+            <span data-motion-rule>Customer Approval</span>
+            <span data-motion-rule>Proof Requirements</span>
+          </div>
+
+          <div class="ad-cinema-docs" aria-label="Document evidence cards">
+            <article data-motion-doc><strong>Authority</strong><small>Active profile</small></article>
+            <article data-motion-doc><strong>Insurance</strong><small>Customer limits checked</small></article>
+            <article data-motion-doc><strong>CDL</strong><small>Driver record current</small></article>
+            <article data-motion-doc><strong>Medical Card</strong><small>Renewal current</small></article>
+            <article data-motion-doc><strong>MVR</strong><small>Reviewed</small></article>
+            <article data-motion-doc><strong>DQF</strong><small>Complete</small></article>
+            <article data-motion-doc><strong>Equipment</strong><small>Reefer ready</small></article>
+            <article data-motion-doc><strong>Customer Approval</strong><small>Lane accepted</small></article>
+          </div>
+
+          <div class="ad-cinema-exceptions" aria-label="Blocked and review-needed capacity">
+            <article><span>Blocked</span><strong>Carrier C</strong><small>Customer approval missing</small></article>
+            <article><span>Needs Review</span><strong>Carrier B</strong><small>Insurance limit mismatch</small></article>
+            <article><span>Eligible with Conditions</span><strong>Carrier D</strong><small>Extra proof required</small></article>
+          </div>
+
+          <article class="ad-cinema-fit">
+            <span>Readiness Fit Surfaced</span>
+            <strong>Carrier A / Driver A-14 / Reefer 221</strong>
+            <small>Carrier, driver, equipment, customer, and proof rules align.</small>
+          </article>
+
+          <div class="ad-cinema-proof" aria-label="Proof packet requirements">
+            <article data-motion-proof>Rate Con</article>
+            <article data-motion-proof>BOL</article>
+            <article data-motion-proof>Pickup Photos</article>
+            <article data-motion-proof>Seal Photo</article>
+            <article data-motion-proof>POD</article>
+            <article data-motion-proof>Lumper Receipt</article>
+            <article data-motion-proof>Settlement Support</article>
+            <article data-motion-proof>Billing Packet</article>
+          </div>
+
+          <div class="ad-cinema-impact" aria-label="Commercial impact summary">
+            <article data-motion-impact><strong>Readiness Fit Surfaced</strong><small>Best fit is visible before risk increases.</small></article>
+            <article data-motion-impact><strong>Proof Packet Ready for Review</strong><small>Required documents are attached to the record.</small></article>
+            <article data-motion-impact><strong>Exceptions Visible Before Settlement</strong><small>Blocked and review-needed capacity stays separated.</small></article>
+            <article data-motion-impact><strong>Customer Proof Requirements Attached</strong><small>Proof rules follow the carrier, driver, customer, and equipment record.</small></article>
+          </div>
+        </div>
+
+        <p class="ad-cinema-caption" data-motion-caption aria-live="polite">Press Play Demo to watch BOF move from customer request to readiness fit and proof-ready record.</p>
+      </section>
+
+      <section class="ad-cinema-summary" id="cinematic-summary">
+        <article>
+          <span>Outcome</span>
+          <strong>Readiness Fit Surfaced</strong>
+          <p>BOF separates usable capacity from unavailable or review-needed capacity.</p>
+        </article>
+        <article>
+          <span>Proof</span>
+          <strong>Proof Packet Ready for Review</strong>
+          <p>Required proof follows the carrier, driver, customer, and equipment record.</p>
+        </article>
+        <article>
+          <span>Risk</span>
+          <strong>Exceptions Visible Before Settlement</strong>
+          <p>Blocked, conditional, and review-needed records remain visible.</p>
+        </article>
+      </section>
+
+      <section class="ad-cta-panel ad-cinema-cta">
+        <div>
+          <p class="eyebrow">Bring BOF a real network scenario</p>
+          <h2>Use one carrier-network problem as the working session.</h2>
+          <p>Bring a roster, proof packet, claims, settlement, or readiness issue and BOF will walk through how the operating layer keeps the record visible.</p>
+        </div>
+        <div class="ad-cta-actions">
+          <a class="button primary" href="/scenario-walkthrough/">Describe Your Scenario</a>
+          <a class="button secondary" href="/aggregator-command-center/">Open Aggregator Command Center</a>
+        </div>
+      </section>
+
+      <details class="ad-cinema-details">
+        <summary>Show deeper explanation</summary>
+        <div>
+          <p>BOF provides readiness, visibility, documentation, claims coordination, settlement support, business operations, and administrative workflow support for fleets and carrier networks.</p>
+          <p>BOF does not act as a broker, dispatcher, freight marketplace, or motor carrier in this demo workflow.</p>
+        </div>
+      </details>
+
       <div class="ad-landing">
         <div class="ad-title-card reveal">
           <p class="eyebrow">Animated Demo Track C</p>
@@ -2540,7 +3411,7 @@
         </div>
       </div>
 
-      <section class="ad-motion-demo" id="roster-rules-in-motion" data-aggregator-motion data-motion-step="0" aria-label="Roster rules in motion">
+      <section class="ad-motion-demo" id="roster-rules-in-motion" data-legacy-aggregator-motion data-motion-step="0" aria-label="Roster rules in motion">
         <div class="ad-motion-head">
           <div>
             <p class="eyebrow">Aggregator rules animation</p>
@@ -2840,7 +3711,6 @@
   </main>
 
   <script src="/assets/js/site.js?v=1.46"></script>
-  <script src="/assets/js/animated-demo.js?v=1.13"></script>
-  <script src="/assets/js/aggregator-animation.js?v=1.3"></script>
+  <script src="/assets/js/aggregator-animation.js?v=1.4"></script>
 </body>
 </html>

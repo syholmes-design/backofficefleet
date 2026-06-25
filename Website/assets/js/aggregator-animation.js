@@ -3,54 +3,71 @@
     var motion = document.querySelector("[data-aggregator-motion]");
     if (!motion) return;
 
-    var maxStep = 5;
+    var maxStep = 8;
     var currentStep = 0;
     var playTimer = 0;
     var reducedMotion = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     var status = motion.querySelector("[data-motion-status]");
     var caption = motion.querySelector("[data-motion-caption]");
     var railItems = Array.prototype.slice.call(motion.querySelectorAll("[data-motion-rail]"));
-    var groupedItems = Array.prototype.slice.call(motion.querySelectorAll("[data-motion-group]"));
-    var flipItems = Array.prototype.slice.call(motion.querySelectorAll("[data-motion-flip]"));
-    var carrierCards = Array.prototype.slice.call(motion.querySelectorAll("[data-motion-card]"));
-    var checkItems = Array.prototype.slice.call(motion.querySelectorAll("[data-motion-check]"));
     var controls = Array.prototype.slice.call(motion.querySelectorAll("[data-motion-action]"));
     var jumpControls = Array.prototype.slice.call(document.querySelectorAll("[data-motion-jump-play]"));
-    var playButton = motion.querySelector('[data-motion-action="play"]');
+    var carrierCards = Array.prototype.slice.call(motion.querySelectorAll("[data-motion-card]"));
+    var ruleItems = Array.prototype.slice.call(motion.querySelectorAll("[data-motion-rule]"));
+    var documentItems = Array.prototype.slice.call(motion.querySelectorAll("[data-motion-doc]"));
+    var proofItems = Array.prototype.slice.call(motion.querySelectorAll("[data-motion-proof]"));
+    var impactItems = Array.prototype.slice.call(motion.querySelectorAll("[data-motion-impact]"));
 
-    if (!status || !railItems.length || !controls.length) return;
+    if (!status || !caption || !railItems.length || !controls.length) return;
 
     var messages = [
-      "Ready for review",
-      "Reviewing carrier rules",
-      "Opening carrier roster",
-      "Lifting documents and classifying readiness evidence",
-      "Surfacing readiness fit",
-      "Assembling proof packet"
+      "Ready",
+      "Customer request entered",
+      "Aggregator roster opened",
+      "Roster rules active",
+      "Documents classified",
+      "Exceptions separated",
+      "Readiness fit surfaced",
+      "Proof packet assembling",
+      "Commercial impact visible"
     ];
+
     var captions = [
-      "Press Play Animation or Play Flow to watch documents move from roster review into a proof-ready packet.",
-      "Customer capacity need enters the review lane with equipment, region, and proof rules attached.",
-      "The aggregator roster opens so eligible, blocked, and review-needed options separate visibly.",
-      "Required documents lift into the rule review lane and classify against carrier, driver, customer, and equipment requirements.",
-      "BOF surfaces the strongest carrier, driver, and equipment readiness fit while exceptions remain visible.",
-      "The required proof packet assembles for review, follow-through, settlement support, and customer documentation."
+      "Press Play Demo to watch BOF move from customer request to readiness fit and proof-ready record.",
+      "Customer capacity request enters the BOF readiness layer.",
+      "BOF opens the aggregator roster without assuming every carrier is usable.",
+      "Carrier, driver, equipment, customer, and proof rules are checked together.",
+      "Documents lift from the record and classify into readiness evidence.",
+      "Blocked and review-needed capacity is separated before the load is exposed to risk.",
+      "BOF surfaces the best readiness fit.",
+      "Proof packet requirements assemble before billing and settlement.",
+      "Readiness fit, proof status, exceptions, and customer requirements are visible for review."
     ];
 
     function setStatus(message) {
-      if (status) status.textContent = message;
+      status.textContent = message;
     }
 
     function setCaption(message) {
-      if (caption) caption.textContent = message;
+      caption.textContent = message;
     }
 
-    function stopPlayback() {
+    function clearTimer() {
       if (playTimer) {
         window.clearInterval(playTimer);
         playTimer = 0;
       }
+    }
+
+    function stopPlayback() {
+      clearTimer();
       motion.classList.remove("is-playing");
+    }
+
+    function animateImpactCounters() {
+      impactItems.forEach(function (item, index) {
+        item.style.transitionDelay = currentStep >= 8 ? String(index * 90) + "ms" : "0ms";
+      });
     }
 
     function setStep(nextStep) {
@@ -61,104 +78,115 @@
         var railStep = Number(item.getAttribute("data-motion-rail") || "0");
         item.classList.toggle("is-active", railStep === currentStep);
         item.classList.toggle("is-complete", railStep < currentStep);
-      });
-
-      groupedItems.forEach(function (item) {
-        var groupStep = Number(item.getAttribute("data-motion-group") || "0");
-        item.classList.toggle("is-visible", groupStep > 0 && groupStep <= currentStep);
-      });
-
-      flipItems.forEach(function (item) {
-        var groupStep = Number(item.getAttribute("data-motion-group") || "0");
-        item.classList.toggle("is-checked", groupStep > 0 && groupStep <= currentStep);
+        item.setAttribute("aria-pressed", railStep === currentStep ? "true" : "false");
       });
 
       carrierCards.forEach(function (card) {
         var outcome = card.getAttribute("data-outcome") || "";
-        var isSelected = currentStep >= 4 && card.textContent.indexOf("Carrier A") !== -1;
-        var isDimmed = currentStep >= 3 && outcome !== "eligible";
-        card.classList.toggle("is-selected", isSelected);
-        card.classList.toggle("is-dimmed", isDimmed);
+        var selected = currentStep >= 6 && outcome === "eligible";
+        var dimmed = currentStep >= 5 && outcome !== "eligible";
+        card.classList.toggle("is-selected", selected);
+        card.classList.toggle("is-dimmed", dimmed);
       });
 
-      checkItems.forEach(function (item, index) {
+      ruleItems.forEach(function (item, index) {
         item.classList.toggle("is-lit", currentStep >= 3);
-        item.style.transitionDelay = currentStep >= 3 ? String(70 + index * 45) + "ms" : "0ms";
+        item.style.transitionDelay = currentStep >= 3 ? String(index * 70) + "ms" : "0ms";
       });
 
+      documentItems.forEach(function (item, index) {
+        item.classList.toggle("is-classified", currentStep >= 4);
+        item.style.transitionDelay = currentStep >= 4 ? String(index * 55) + "ms" : "0ms";
+      });
+
+      proofItems.forEach(function (item, index) {
+        item.classList.toggle("is-assembled", currentStep >= 7);
+        item.style.transitionDelay = currentStep >= 7 ? String(index * 70) + "ms" : "0ms";
+      });
+
+      impactItems.forEach(function (item) {
+        item.classList.toggle("is-visible", currentStep >= 8);
+      });
+
+      animateImpactCounters();
       setStatus(messages[currentStep] || messages[0]);
       setCaption(captions[currentStep] || captions[0]);
+    }
+
+    function finishReducedMotion() {
+      setStep(maxStep);
+      motion.classList.remove("is-playing");
+      setStatus("Reduced motion: complete sequence shown");
+      setCaption("Reduced motion is on, so BOF shows the completed readiness fit, proof packet, exception, and impact state without animated transitions.");
     }
 
     function playFlow() {
       stopPlayback();
       motion.classList.remove("is-cta-starting");
-      motion.classList.add("is-flow-ready");
       motion.classList.add("is-playing");
 
       if (reducedMotion) {
-        setStep(maxStep);
-        motion.classList.remove("is-playing");
-        setStatus("Reduced motion: full flow shown");
-        setCaption("Reduced motion is on, so BOF shows the completed roster, rule, readiness-fit, and proof-packet state without motion.");
+        finishReducedMotion();
         return;
       }
 
       if (currentStep >= maxStep) setStep(0);
       if (currentStep === 0) setStep(1);
+
       playTimer = window.setInterval(function () {
         if (currentStep >= maxStep) {
           stopPlayback();
-          setStatus("Proof packet ready for review");
+          setStatus("Commercial impact visible");
           setCaption(captions[maxStep]);
           return;
         }
         setStep(currentStep + 1);
-      }, 1350);
+      }, 1550);
     }
 
     function stepFlow() {
       stopPlayback();
       motion.classList.remove("is-cta-starting");
-      motion.classList.add("is-flow-ready");
       setStep(currentStep >= maxStep ? 0 : currentStep + 1);
     }
 
     function pauseFlow() {
       stopPlayback();
-      setStatus(currentStep ? "Flow paused" : "Ready for review");
+      setStatus(currentStep ? "Paused" : "Ready");
     }
 
     function resetFlow() {
       stopPlayback();
-      motion.classList.remove("is-flow-ready");
-      motion.classList.remove("is-playing");
       motion.classList.remove("is-cta-starting");
       setStep(0);
+    }
+
+    function showSummary() {
+      stopPlayback();
+      setStep(maxStep);
+      var summary = document.querySelector("#cinematic-summary");
+      if (summary && typeof summary.scrollIntoView === "function") {
+        summary.scrollIntoView({
+          behavior: reducedMotion ? "auto" : "smooth",
+          block: "nearest"
+        });
+      }
     }
 
     function jumpToAnimationAndPlay(event) {
       if (event) event.preventDefault();
       stopPlayback();
-      motion.classList.add("is-flow-ready");
       motion.classList.add("is-cta-starting");
-      setStatus("Starting document-flow animation");
-      setCaption("Launching the roster rules flow: watch documents move from demand to proof packet.");
+      setStatus("Launching cinematic sequence");
+      setCaption("Launching the guided roster, rules, readiness, and proof sequence.");
       motion.scrollIntoView({
         behavior: reducedMotion ? "auto" : "smooth",
         block: "start"
       });
 
       window.setTimeout(function () {
-        if (playButton && typeof playButton.focus === "function") {
-          try {
-            playButton.focus({ preventScroll: true });
-          } catch (error) {
-            playButton.focus();
-          }
-        }
         playFlow();
-      }, reducedMotion ? 0 : 520);
+      }, reducedMotion ? 0 : 420);
     }
 
     controls.forEach(function (control) {
@@ -167,7 +195,18 @@
         if (action === "play") playFlow();
         if (action === "step") stepFlow();
         if (action === "pause") pauseFlow();
-        if (action === "reset") resetFlow();
+        if (action === "reset") {
+          resetFlow();
+          playFlow();
+        }
+        if (action === "summary") showSummary();
+      });
+    });
+
+    railItems.forEach(function (item) {
+      item.addEventListener("click", function () {
+        stopPlayback();
+        setStep(Number(item.getAttribute("data-motion-rail") || "0"));
       });
     });
 
