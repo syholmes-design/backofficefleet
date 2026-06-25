@@ -61,6 +61,10 @@
       margin: 0;
     }
 
+    .ad-motion-jump {
+      box-shadow: 0 14px 30px rgba(9,98,75,0.2);
+    }
+
     .ad-controls,
     .ad-inline-controls,
     .ad-demo-links {
@@ -850,7 +854,13 @@
       max-width: 1320px;
       overflow: hidden;
       padding: 26px;
+      scroll-margin-top: 112px;
       width: calc(100% - 48px);
+    }
+
+    .ad-motion-demo.is-playing {
+      border-color: rgba(9,98,75,0.3);
+      box-shadow: 0 24px 60px rgba(9,98,75,0.14);
     }
 
     .ad-motion-head {
@@ -873,6 +883,20 @@
       max-width: 860px;
     }
 
+    .ad-motion-head .ad-motion-instruction {
+      background: #eef8f2;
+      border: 1px solid rgba(9,98,75,0.18);
+      border-radius: 8px;
+      color: var(--green-dark);
+      font-weight: 850;
+      margin-top: 12px;
+      padding: 10px 12px;
+    }
+
+    .ad-motion-head .ad-motion-instruction strong {
+      color: #063f31;
+    }
+
     .ad-motion-controls {
       align-items: center;
       display: flex;
@@ -892,6 +916,12 @@
       font-weight: 950;
       padding: 10px 12px;
       text-transform: uppercase;
+    }
+
+    .ad-motion-demo.is-playing .ad-motion-status {
+      background: #09624b;
+      border-color: #09624b;
+      color: #fff;
     }
 
     .ad-motion-controls button:first-child {
@@ -1131,6 +1161,15 @@
       min-width: 0;
       padding: 12px;
       perspective: 1200px;
+      transition: border-color 300ms ease, box-shadow 300ms ease, background 300ms ease;
+    }
+
+    .ad-motion-demo[data-motion-step="3"] .ad-document-lift,
+    .ad-motion-demo[data-motion-step="4"] .ad-document-lift,
+    .ad-motion-demo[data-motion-step="5"] .ad-document-lift {
+      background: linear-gradient(135deg, #fff, #f0f8f3);
+      border-color: rgba(9,98,75,0.34);
+      box-shadow: inset 0 0 0 1px rgba(9,98,75,0.08), 0 16px 36px rgba(9,98,75,0.12);
     }
 
     .ad-lift-source {
@@ -1220,8 +1259,10 @@
     .ad-motion-demo[data-motion-step="3"] .ad-lift-card,
     .ad-motion-demo[data-motion-step="4"] .ad-lift-card,
     .ad-motion-demo[data-motion-step="5"] .ad-lift-card {
+      border-color: rgba(9,98,75,0.28);
+      box-shadow: 0 18px 38px rgba(9,98,75,0.15);
       opacity: 1;
-      transform: translateY(0) rotateX(0) scale(1);
+      transform: translateY(-6px) rotateX(0) scale(1.02);
     }
 
     .ad-motion-demo.is-flow-ready[data-motion-step="0"] .ad-lift-card,
@@ -1316,7 +1357,7 @@
     .ad-motion-rule.is-checked,
     .ad-motion-doc.is-checked {
       border-color: rgba(9,98,75,0.22);
-      box-shadow: 0 14px 30px rgba(9,98,75,0.11);
+      box-shadow: 0 18px 36px rgba(9,98,75,0.15);
     }
 
     .ad-motion-face {
@@ -1398,8 +1439,10 @@
     }
 
     .ad-motion-proof-card.is-visible {
+      border-color: rgba(9,98,75,0.24);
+      box-shadow: 0 16px 34px rgba(9,98,75,0.13);
       opacity: 1;
-      transform: translateY(0) rotate(0);
+      transform: translateY(-4px) rotate(0);
     }
 
     .ad-motion-proof-card.is-visible:nth-child(1) { transition-delay: 70ms; }
@@ -1436,6 +1479,8 @@
     }
 
     .ad-motion-final.is-visible {
+      border-color: rgba(9,98,75,0.34);
+      box-shadow: 0 16px 34px rgba(9,98,75,0.14);
       opacity: 1;
       transform: translateY(0);
     }
@@ -1966,6 +2011,7 @@
           <div class="ad-controls ad-start-controls" aria-label="Demo controls">
             <button class="button primary ad-control" type="button" data-demo-action="start-narration">Start Demo With Narration</button>
             <button class="button secondary ad-control" type="button" data-demo-action="start-silent">Start Without Audio</button>
+            <a class="button primary ad-motion-jump" href="#roster-rules-in-motion">Play the document-flow animation</a>
             <a class="button secondary" href="/aggregator-command-center/">Aggregator Command Center</a>
             <a class="button secondary" href="/scenario-walkthrough/">Describe Your Scenario</a>
             <button class="button secondary ad-control" type="button" data-demo-action="pause">Pause</button>
@@ -2063,6 +2109,7 @@
             <p class="eyebrow">Aggregator rules animation</p>
             <h2>Roster Rules in Motion</h2>
             <p>The aggregator may have available carriers. BOF checks whether the specific carrier, driver, equipment, customer requirements, contract terms, and proof packet are ready for this opportunity.</p>
+            <p class="ad-motion-instruction">Click <strong>Play Flow</strong> to launch the document-lift animation, or use <strong>Step Flow</strong> to inspect each roster and document state.</p>
           </div>
           <div class="ad-motion-controls" aria-label="Roster rules animation controls">
             <button type="button" data-motion-action="play">Play Flow</button>
@@ -2130,7 +2177,7 @@
           </article>
 
           <article class="ad-motion-lane" data-motion-group="3">
-            <h3>Rule and readiness review</h3>
+            <h3>Document Lift and Rule Classification</h3>
             <p>Document cards lift from the selected carrier, driver, and equipment record, then flip into classification while readiness checks light up.</p>
             <div class="ad-document-lift" data-motion-group="3">
               <div class="ad-lift-source">
@@ -2341,6 +2388,6 @@
 
   <script src="/assets/js/site.js?v=1.46"></script>
   <script src="/assets/js/animated-demo.js?v=1.13"></script>
-  <script src="/assets/js/aggregator-animation.js?v=1.1"></script>
+  <script src="/assets/js/aggregator-animation.js?v=1.2"></script>
 </body>
 </html>

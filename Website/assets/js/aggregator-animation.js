@@ -35,6 +35,7 @@
         window.clearInterval(playTimer);
         playTimer = 0;
       }
+      motion.classList.remove("is-playing");
     }
 
     function setStep(nextStep) {
@@ -76,9 +77,11 @@
     function playFlow() {
       stopPlayback();
       motion.classList.add("is-flow-ready");
+      motion.classList.add("is-playing");
 
       if (reducedMotion) {
         setStep(maxStep);
+        motion.classList.remove("is-playing");
         setStatus("Reduced motion: full flow shown");
         return;
       }
@@ -109,6 +112,7 @@
     function resetFlow() {
       stopPlayback();
       motion.classList.remove("is-flow-ready");
+      motion.classList.remove("is-playing");
       setStep(0);
     }
 
