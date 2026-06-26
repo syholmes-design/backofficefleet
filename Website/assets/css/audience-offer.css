@@ -1,0 +1,319 @@
+.offer-page {
+  background:
+    linear-gradient(180deg, rgba(247, 250, 248, 0.96), #fff 46%),
+    #f8faf7;
+}
+
+.offer-hero {
+  background:
+    radial-gradient(circle at 82% 24%, rgba(22, 143, 98, 0.12), transparent 30%),
+    linear-gradient(180deg, #f6faf7 0%, #fff 100%);
+  border-bottom: 1px solid rgba(20, 33, 31, 0.08);
+  overflow: hidden;
+  position: relative;
+}
+
+.offer-hero::before,
+.offer-section::before {
+  background-image:
+    linear-gradient(rgba(20, 33, 31, 0.045) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(20, 33, 31, 0.045) 1px, transparent 1px);
+  background-size: 44px 44px;
+  content: "";
+  inset: 0;
+  opacity: 0.58;
+  pointer-events: none;
+  position: absolute;
+}
+
+.offer-hero-inner {
+  align-items: center;
+  display: grid;
+  gap: 46px;
+  grid-template-columns: minmax(0, 0.95fr) minmax(420px, 1.05fr);
+  margin: 0 auto;
+  max-width: 1240px;
+  padding: 86px 28px 70px;
+  position: relative;
+}
+
+.offer-hero-copy h1 {
+  color: var(--ink);
+  font-size: clamp(2.6rem, 5vw, 5.2rem);
+  letter-spacing: 0;
+  line-height: 0.98;
+  margin: 0;
+}
+
+.offer-hero-copy p:not(.eyebrow) {
+  color: #43534f;
+  font-size: clamp(1.02rem, 1.35vw, 1.22rem);
+  line-height: 1.68;
+  margin: 22px 0 0;
+  max-width: 720px;
+}
+
+.offer-actions,
+.offer-demo-links {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 26px;
+}
+
+.offer-hero-visual,
+.offer-image-card {
+  background: #fff;
+  border: 1px solid rgba(20, 33, 31, 0.12);
+  border-radius: 18px;
+  box-shadow: 0 30px 70px rgba(15, 38, 34, 0.14);
+  overflow: hidden;
+  position: relative;
+}
+
+.offer-hero-visual img,
+.offer-image-card img {
+  aspect-ratio: 16 / 9;
+  display: block;
+  height: auto;
+  object-fit: cover;
+  object-position: center;
+  width: 100%;
+}
+
+.offer-visual-caption {
+  background: rgba(255, 255, 255, 0.94);
+  border: 1px solid rgba(20, 33, 31, 0.12);
+  border-radius: 14px;
+  bottom: 18px;
+  box-shadow: 0 18px 36px rgba(15, 38, 34, 0.14);
+  display: grid;
+  gap: 4px;
+  left: 18px;
+  max-width: 310px;
+  padding: 14px 16px;
+  position: absolute;
+}
+
+.offer-visual-caption span {
+  color: var(--green-dark);
+  font-size: 0.72rem;
+  font-weight: 950;
+  text-transform: uppercase;
+}
+
+.offer-visual-caption strong {
+  color: var(--ink);
+  font-size: 1rem;
+}
+
+.offer-section {
+  margin: 0 auto;
+  max-width: 1240px;
+  padding: 76px 28px;
+  position: relative;
+}
+
+.offer-section > * {
+  position: relative;
+}
+
+.offer-section-head {
+  display: grid;
+  gap: 12px;
+  margin-bottom: 28px;
+  max-width: 860px;
+}
+
+.offer-section-head h2 {
+  color: var(--ink);
+  font-size: clamp(2rem, 3.5vw, 3.35rem);
+  line-height: 1.06;
+  margin: 0;
+}
+
+.offer-section-head p:not(.eyebrow) {
+  color: var(--muted);
+  font-size: 1.04rem;
+  line-height: 1.68;
+  margin: 0;
+}
+
+.offer-card-grid {
+  display: grid;
+  gap: 14px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.offer-card,
+.offer-pilot-card,
+.offer-table-card,
+.offer-image-card {
+  background: #fff;
+  border: 1px solid rgba(20, 33, 31, 0.1);
+  border-radius: 14px;
+  box-shadow: 0 18px 42px rgba(15, 38, 34, 0.06);
+  padding: 20px;
+}
+
+.offer-card h3,
+.offer-pilot-card h3,
+.offer-table-card h3 {
+  color: var(--ink);
+  margin: 0 0 8px;
+}
+
+.offer-card p,
+.offer-pilot-card p,
+.offer-table-card p,
+.offer-card li,
+.offer-pilot-card li {
+  color: var(--muted);
+  line-height: 1.58;
+}
+
+.offer-card ul,
+.offer-pilot-card ol,
+.offer-pilot-card ul {
+  margin: 10px 0 0;
+  padding-left: 20px;
+}
+
+.offer-split {
+  align-items: start;
+  display: grid;
+  gap: 18px;
+  grid-template-columns: minmax(0, 0.9fr) minmax(420px, 1.1fr);
+}
+
+.offer-pilot-grid {
+  display: grid;
+  gap: 14px;
+  grid-template-columns: minmax(0, 1.1fr) minmax(320px, 0.9fr);
+}
+
+.offer-pilot-card ol {
+  display: grid;
+  gap: 9px;
+}
+
+.offer-deliverables {
+  display: grid;
+  gap: 10px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  list-style: none;
+  padding: 0 !important;
+}
+
+.offer-deliverables li {
+  background: #f7faf8;
+  border: 1px solid rgba(20, 33, 31, 0.08);
+  border-radius: 10px;
+  color: var(--ink);
+  font-weight: 820;
+  padding: 12px;
+}
+
+.offer-commercial-table {
+  border: 1px solid rgba(20, 33, 31, 0.1);
+  border-radius: 14px;
+  overflow: hidden;
+}
+
+.offer-commercial-row {
+  display: grid;
+  gap: 16px;
+  grid-template-columns: 210px minmax(0, 1fr);
+  padding: 16px;
+}
+
+.offer-commercial-row + .offer-commercial-row {
+  border-top: 1px solid rgba(20, 33, 31, 0.08);
+}
+
+.offer-commercial-row strong {
+  color: var(--ink);
+}
+
+.offer-commercial-row span {
+  color: var(--muted);
+  line-height: 1.55;
+}
+
+.offer-demo-links .button {
+  min-width: 220px;
+}
+
+.offer-note {
+  background: #f2f8f4;
+  border: 1px solid rgba(22, 143, 98, 0.16);
+  border-radius: 14px;
+  color: var(--muted);
+  line-height: 1.65;
+  padding: 18px;
+}
+
+@media (max-width: 980px) {
+  .offer-hero-inner,
+  .offer-split,
+  .offer-pilot-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .offer-card-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 640px) {
+  .offer-hero-inner,
+  .offer-section {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+
+  .offer-card-grid,
+  .offer-deliverables {
+    grid-template-columns: 1fr;
+  }
+
+  .offer-commercial-row {
+    grid-template-columns: 1fr;
+  }
+
+  .offer-actions .button,
+  .offer-demo-links .button {
+    justify-content: center;
+    width: 100%;
+  }
+
+  .offer-visual-caption {
+    bottom: 12px;
+    left: 12px;
+    max-width: calc(100% - 24px);
+    padding: 12px;
+  }
+}
+
+@media print {
+  .offer-page .site-header,
+  .offer-page .site-footer,
+  .offer-page .cta-band,
+  .offer-page .offer-actions,
+  .offer-page .offer-demo-links {
+    display: none !important;
+  }
+
+  .offer-hero,
+  .offer-section {
+    break-inside: avoid;
+    padding: 24px 0;
+  }
+
+  .offer-card,
+  .offer-pilot-card,
+  .offer-table-card {
+    box-shadow: none;
+  }
+}

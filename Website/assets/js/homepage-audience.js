@@ -60,8 +60,8 @@
         ["Review", "Vehicle inspection watch"],
         ["Blocked", "Missing proof record"]
       ],
-      demoHref: "/scenario-walkthrough/",
-      demoLabel: "Submit private fleet scenario",
+      demoHref: "/private-fleet-offer/",
+      demoLabel: "Open private fleet path",
       scenarioHref: "/scenario-walkthrough/",
       scenarioLabel: "Book a working session"
     },
