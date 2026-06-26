@@ -1311,15 +1311,16 @@
   }
 
   function documentIntakePage() {
-    shell("BOF Vault Document Intake", "BOF Vault", [
+    shell("BOF Vault Intake Workbench", "BOF Vault", [
       '<section class="vault-intake-shell" data-vault-document-intake>',
-      '  <div class="vault-loading-card">',
-      '    <span class="mini-status review">Loading</span>',
-      '    <h2>Loading BOF Vault intake records</h2>',
-      '    <p>Preparing document types, verification sources, review queue, and readiness outcomes.</p>',
+      '  <div class="vault-workbench-fallback">',
+      '    <span class="mini-status review">BOF Vault</span>',
+      '    <h2>BOF Vault Intake Workbench</h2>',
+      '    <p>Receive a simulated document batch, classify files, match driver and carrier records, apply readiness rules, route exceptions to human review, and build onboarding profiles.</p>',
+      '    <p>If the workbench controls do not load, use this route as a static overview of the same intake flow: upload received, OCR/file read, document type classified, driver matched, rules applied, exceptions generated, human review queue, and readiness profile built.</p>',
       '  </div>',
       '</section>'
-    ].join(""), "Upload, classify, verify, and route driver and fleet documents before they affect readiness.");
+    ].join(""), "Review simulated driver, carrier, proof, and onboarding documents as they move through intake, classification, exception review, and readiness profile generation.");
   }
 
   function driverPage() {

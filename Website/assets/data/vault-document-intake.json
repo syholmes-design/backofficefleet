@@ -1,1641 +1,583 @@
 {
-  "workflowSteps": [
+  "updated": "2026-06-26",
+  "title": "BOF Vault Intake Workbench",
+  "disclaimer": "This workbench is a simulated intake review surface. BOF classifies, flags, routes, and records review outcomes; human review resolves uncertain or high-risk exceptions.",
+  "pipelineStages": [
     {
-      "id": "intake",
-      "label": "Intake document",
-      "description": "Receive a driver, carrier, or load document into the BOF Vault intake queue."
+      "id": "received",
+      "label": "Upload received",
+      "description": "Files arrive from drivers, fleet staff, partner carriers, email exports, or a structured intake bundle."
     },
     {
-      "id": "classify",
-      "label": "Classify document type",
-      "description": "Identify whether the file is a CDL, medical card, insurance certificate, rate confirmation, POD, or another controlled document."
+      "id": "ocr",
+      "label": "OCR / file read",
+      "description": "BOF reads filenames, pages, visible fields, issue dates, expiration dates, and record identifiers."
     },
     {
-      "id": "assign",
-      "label": "Assign to person/entity",
-      "description": "Match the document to the right driver, carrier, load, or settlement record before it affects readiness."
+      "id": "classified",
+      "label": "Document type classified",
+      "description": "Files are classified as CDL, medical card, MVR, insurance certificate, POD, settlement support, proof, or review-needed."
     },
     {
-      "id": "effective-date",
-      "label": "Extract effective date",
-      "description": "Record the effective date when the document creates coverage, qualification, or operational authority."
+      "id": "matched",
+      "label": "Driver matched",
+      "description": "Documents are matched to a driver, carrier, equipment record, customer, or operating profile."
     },
     {
-      "id": "expiration-date",
-      "label": "Extract expiration date",
-      "description": "Record the expiration date or mark the document as non-expiring when appropriate."
+      "id": "rules",
+      "label": "Rules applied",
+      "description": "Driver, carrier, customer, equipment, proof, and contract-specific rules determine readiness impact."
     },
     {
-      "id": "primary-secondary",
-      "label": "Determine primary vs secondary",
-      "description": "Separate controlling readiness documents from supporting evidence and settlement backup."
+      "id": "exceptions",
+      "label": "Exceptions generated",
+      "description": "Missing, expired, mismatched, duplicate, low-confidence, or conflicting records are routed to review."
     },
     {
-      "id": "required-fields",
-      "label": "Check required fields",
-      "description": "Compare the document against required field rules for its type."
+      "id": "review",
+      "label": "Human review queue",
+      "description": "Reviewers accept, request replacement, mark blocked, or assign uncertain items to the right owner."
     },
     {
-      "id": "verification-source",
-      "label": "Identify verification source",
-      "description": "Assign the correct verification source, such as a licensing agency, FMCSA-style verifier, insurer, customer, carrier, or internal reviewer."
-    },
-    {
-      "id": "compliance-status",
-      "label": "Assign compliance status",
-      "description": "Mark the document as ready, at risk, blocked, or needing review."
-    },
-    {
-      "id": "human-review",
-      "label": "Route exceptions to human review",
-      "description": "Send missing fields, expired records, wrong-driver matches, and low-confidence documents to the right BOF reviewer."
-    },
-    {
-      "id": "readiness",
-      "label": "Update driver readiness",
-      "description": "Update driver, carrier, load, settlement, or readiness status after review."
+      "id": "profiles",
+      "label": "Readiness profile built",
+      "description": "BOF updates driver onboarding profiles, carrier readiness, proof packets, and audit history."
     }
   ],
-  "documentTypes": [
-    {
-      "type": "CDL",
-      "category": "Driver qualification",
-      "primary": true,
-      "readinessUse": "Controls driver eligibility before assignment."
-    },
-    {
-      "type": "Medical Examiner Certificate",
-      "category": "Driver qualification",
-      "primary": true,
-      "readinessUse": "Controls medical qualification and renewal watch."
-    },
-    {
-      "type": "MVR / CDLIS MVR",
-      "category": "Driver qualification",
-      "primary": true,
-      "readinessUse": "Supports safety review and DQF readiness."
-    },
-    {
-      "type": "Employment Application",
-      "category": "HR and driver onboarding",
-      "primary": false,
-      "readinessUse": "Supports onboarding completeness."
-    },
-    {
-      "type": "Road Test Certificate",
-      "category": "Driver qualification",
-      "primary": true,
-      "readinessUse": "Supports dispatch eligibility and annual review."
-    },
-    {
-      "type": "Safety Performance History",
-      "category": "Safety",
-      "primary": false,
-      "readinessUse": "Supports prior-employer safety review."
-    },
-    {
-      "type": "Clearinghouse Query Proof",
-      "category": "Compliance",
-      "primary": true,
-      "readinessUse": "Controls compliance clearance."
-    },
-    {
-      "type": "Insurance Certificate",
-      "category": "Carrier packet",
-      "primary": true,
-      "readinessUse": "Controls carrier readiness and renewal watch."
-    },
-    {
-      "type": "W-9",
-      "category": "Carrier or settlement setup",
-      "primary": false,
-      "readinessUse": "Supports payment setup and settlement readiness."
-    },
-    {
-      "type": "Rate Confirmation",
-      "category": "Load document",
-      "primary": true,
-      "readinessUse": "Controls release, billing, and settlement support."
-    },
-    {
-      "type": "Bill of Lading",
-      "category": "Load document",
-      "primary": true,
-      "readinessUse": "Controls release, delivery proof, claims, and settlement."
-    },
-    {
-      "type": "Proof of Delivery",
-      "category": "Delivery proof",
-      "primary": true,
-      "readinessUse": "Controls invoicing, settlement, and claims response."
-    },
-    {
-      "type": "Lumper Receipt",
-      "category": "Settlement support",
-      "primary": false,
-      "readinessUse": "Supports accessorial billing and driver settlement."
-    },
-    {
-      "type": "Settlement Support Document",
-      "category": "Settlement support",
-      "primary": false,
-      "readinessUse": "Supports payment packet completion."
-    }
-  ],
-  "requiredFieldsByType": {
-    "CDL": ["driverName", "licenseNumber", "state", "class", "endorsements", "expirationDate", "dateOfBirth"],
-    "Medical Examiner Certificate": ["driverName", "examinerName", "nationalRegistryReference", "issueDate", "expirationDate"],
-    "MVR / CDLIS MVR": ["driverName", "licenseNumber", "state", "reportDate", "reviewer"],
-    "Employment Application": ["applicantName", "signatureDate", "employmentHistory", "reviewer"],
-    "Road Test Certificate": ["driverName", "testDate", "certifier", "equipmentType"],
-    "Safety Performance History": ["driverName", "priorEmployer", "requestDate", "responseStatus"],
-    "Clearinghouse Query Proof": ["driverName", "queryDate", "queryType", "reviewer"],
-    "Insurance Certificate": ["carrierName", "producer", "policyNumber", "coverageType", "effectiveDate", "expirationDate"],
-    "W-9": ["entityName", "taxClassification", "signatureDate", "reviewer"],
-    "Rate Confirmation": ["loadNumber", "carrierName", "rateAmount", "pickupDate", "deliveryDate", "signer"],
-    "Bill of Lading": ["loadNumber", "shipper", "consignee", "pickupDate", "commodity", "signature"],
-    "Proof of Delivery": ["loadNumber", "deliveryDate", "receiverName", "receiverSignature", "condition"],
-    "Lumper Receipt": ["loadNumber", "vendorName", "amount", "receiptDate"],
-    "Settlement Support Document": ["loadNumber", "documentOwner", "settlementBatch", "reviewer"]
-  },
-  "verificationSources": {
-    "CDL": "State licensing agency or CDLIS-style verification",
-    "Medical Examiner Certificate": "FMCSA National Registry-style verifier",
-    "MVR / CDLIS MVR": "State licensing agency or CDLIS-style verification",
-    "Employment Application": "Internal BOF/fleet reviewer",
-    "Road Test Certificate": "Internal BOF/fleet safety reviewer",
-    "Safety Performance History": "Prior employer response and internal safety reviewer",
-    "Clearinghouse Query Proof": "FMCSA Clearinghouse-style verifier",
-    "Insurance Certificate": "Insurer or producer",
-    "W-9": "Internal BOF/fleet settlement reviewer",
-    "Rate Confirmation": "Customer, carrier, or load record validation",
-    "Bill of Lading": "Customer, carrier, or load record validation",
-    "Proof of Delivery": "Customer, carrier, receiver, or load record validation",
-    "Lumper Receipt": "Vendor receipt and internal BOF/fleet settlement reviewer",
-    "Settlement Support Document": "Internal BOF/fleet settlement reviewer"
-  },
-  "sampleDocuments": [
-    {
-      "id": "VDI-001",
-      "documentName": "John Carter CDL renewal image",
-      "assignedEntity": "DRV-001 / John Carter",
-      "entityType": "Driver",
-      "documentType": "CDL",
-      "effectiveDate": "2026-01-01",
-      "expirationDate": "2027-11-30",
-      "priority": "Primary",
-      "requiredFieldsStatus": "Complete",
-      "verificationSource": "State licensing agency or CDLIS-style verification",
-      "confidenceScore": 96,
-      "complianceStatus": "Ready",
-      "readinessEffect": "Driver remains Ready for assignment.",
-      "reviewReason": "No exception",
-      "loadOrPacket": "Driver qualification file",
-      "issuer": "State licensing agency"
-    },
-    {
-      "id": "VDI-002",
-      "documentName": "Mara Chen medical card scan",
-      "assignedEntity": "DRV-003 / Mara Chen",
-      "entityType": "Driver",
-      "documentType": "Medical Examiner Certificate",
-      "effectiveDate": "2024-06-01",
-      "expirationDate": "2026-05-31",
-      "priority": "Primary",
-      "requiredFieldsStatus": "Expiration conflict",
-      "verificationSource": "FMCSA National Registry-style verifier",
-      "confidenceScore": 89,
-      "complianceStatus": "Blocked",
-      "readinessEffect": "Driver remains Blocked until renewal evidence clears.",
-      "reviewReason": "Expired documents",
-      "loadOrPacket": "BOF-1931",
-      "issuer": "Medical examiner office"
-    },
-    {
-      "id": "VDI-003",
-      "documentName": "RoadPro Desk insurance certificate",
-      "assignedEntity": "CAR-118 / RoadPro Desk",
-      "entityType": "Carrier",
-      "documentType": "Insurance Certificate",
-      "effectiveDate": "2026-01-01",
-      "expirationDate": "2026-12-31",
-      "priority": "Primary",
-      "requiredFieldsStatus": "Complete",
-      "verificationSource": "Insurer or producer",
-      "confidenceScore": 94,
-      "complianceStatus": "Ready",
-      "readinessEffect": "Carrier packet remains Ready.",
-      "reviewReason": "No exception",
-      "loadOrPacket": "Carrier packet",
-      "issuer": "Insurance producer"
-    },
-    {
-      "id": "VDI-004",
-      "documentName": "BOF-2175 rate confirmation",
-      "assignedEntity": "BOF-2175 / Mobile to Atlanta",
-      "entityType": "Load",
-      "documentType": "Rate Confirmation",
-      "effectiveDate": "2026-06-12",
-      "expirationDate": "Non-expiring",
-      "priority": "Primary",
-      "requiredFieldsStatus": "Missing signer",
-      "verificationSource": "Customer, carrier, or load record validation",
-      "confidenceScore": 82,
-      "complianceStatus": "Needs Review",
-      "readinessEffect": "Release packet stays in Review until signer is confirmed.",
-      "reviewReason": "Missing required fields",
-      "loadOrPacket": "BOF-2175",
-      "issuer": "Customer load record"
-    },
-    {
-      "id": "VDI-005",
-      "documentName": "TMS-LD-10482 bill of lading",
-      "assignedEntity": "TMS-LD-10482 / Dallas to Memphis",
-      "entityType": "Load",
-      "documentType": "Bill of Lading",
-      "effectiveDate": "2026-06-14",
-      "expirationDate": "Non-expiring",
-      "priority": "Primary",
-      "requiredFieldsStatus": "Complete",
-      "verificationSource": "Customer, carrier, or load record validation",
-      "confidenceScore": 91,
-      "complianceStatus": "Ready",
-      "readinessEffect": "Release packet can move to owner review.",
-      "reviewReason": "No exception",
-      "loadOrPacket": "BOF-RR-10482",
-      "issuer": "Shipper load record"
-    },
-    {
-      "id": "VDI-006",
-      "documentName": "BOF-1907 delivery POD",
-      "assignedEntity": "BOF-1907 / Tulsa to Kansas City",
-      "entityType": "Load",
-      "documentType": "Proof of Delivery",
-      "effectiveDate": "2026-06-15",
-      "expirationDate": "Non-expiring",
-      "priority": "Primary",
-      "requiredFieldsStatus": "Receiver signature unclear",
-      "verificationSource": "Customer, carrier, receiver, or load record validation",
-      "confidenceScore": 76,
-      "complianceStatus": "At Risk",
-      "readinessEffect": "Settlement stays on watch until delivery proof is reviewed.",
-      "reviewReason": "Low-confidence classification",
-      "loadOrPacket": "BOF-1907",
-      "issuer": "Receiver dock record"
-    },
-    {
-      "id": "VDI-007",
-      "documentName": "Carlos Martinez MVR report",
-      "assignedEntity": "DRV-001 / John Carter",
-      "entityType": "Driver",
-      "documentType": "MVR / CDLIS MVR",
-      "effectiveDate": "2026-06-01",
-      "expirationDate": "2026-07-01",
-      "priority": "Primary",
-      "requiredFieldsStatus": "Driver mismatch",
-      "verificationSource": "State licensing agency or CDLIS-style verification",
-      "confidenceScore": 68,
-      "complianceStatus": "Needs Review",
-      "readinessEffect": "Document is held from readiness until the driver match is corrected.",
-      "reviewReason": "Wrong-driver match",
-      "loadOrPacket": "Driver qualification file",
-      "issuer": "State licensing agency"
-    },
-    {
-      "id": "VDI-008",
-      "documentName": "Lumper receipt - Memphis delivery",
-      "assignedEntity": "TMS-LD-10482 / Dallas to Memphis",
-      "entityType": "Load",
-      "documentType": "Lumper Receipt",
-      "effectiveDate": "2026-06-16",
-      "expirationDate": "Non-expiring",
-      "priority": "Secondary",
-      "requiredFieldsStatus": "Complete",
-      "verificationSource": "Vendor receipt and internal BOF/fleet settlement reviewer",
-      "confidenceScore": 88,
-      "complianceStatus": "Ready",
-      "readinessEffect": "Accessorial support is ready for settlement review.",
-      "reviewReason": "Needs human verification",
-      "loadOrPacket": "Settlement packet",
-      "issuer": "Warehouse vendor"
-    }
-  ],
-  "complianceChecks": [
-    {
-      "id": "check-required-fields",
-      "label": "Required fields",
-      "status": "Active",
-      "description": "Compare each document type to the required field list."
-    },
-    {
-      "id": "check-expiration",
-      "label": "Expiration and renewal",
-      "status": "Active",
-      "description": "Flag expired documents, missing dates, and renewal-watch items."
-    },
-    {
-      "id": "check-entity-match",
-      "label": "Person/entity match",
-      "status": "Active",
-      "description": "Hold documents when the named driver, carrier, load, or entity does not match the record."
-    },
-    {
-      "id": "check-confidence",
-      "label": "Classification confidence",
-      "status": "Active",
-      "description": "Route low-confidence classifications to human review."
-    },
-    {
-      "id": "check-verification-source",
-      "label": "Verification source",
-      "status": "Active",
-      "description": "Attach the correct verification source for driver, carrier, load, and settlement records."
-    }
-  ],
-  "reviewTasks": [
-    {
-      "id": "REV-101",
-      "documentId": "VDI-004",
-      "type": "missing required fields",
-      "owner": "Document desk",
-      "status": "Open",
-      "nextAction": "Confirm signer and match the rate amount to BOF-2175."
-    },
-    {
-      "id": "REV-102",
-      "documentId": "VDI-002",
-      "type": "expired documents",
-      "owner": "Safety desk",
-      "status": "Open",
-      "nextAction": "Request updated medical examiner certificate for DRV-003."
-    },
-    {
-      "id": "REV-103",
-      "documentId": "VDI-007",
-      "type": "wrong-driver match",
-      "owner": "Safety desk",
-      "status": "Open",
-      "nextAction": "Reassign MVR report to Carlos Martinez or request replacement."
-    },
-    {
-      "id": "REV-104",
-      "documentId": "VDI-006",
-      "type": "low-confidence classification",
-      "owner": "Settlement desk",
-      "status": "Open",
-      "nextAction": "Review receiver signature and delivery condition."
-    },
-    {
-      "id": "REV-105",
-      "documentId": "VDI-008",
-      "type": "needs human verification",
-      "owner": "Settlement desk",
-      "status": "Open",
-      "nextAction": "Confirm lumper amount before settlement support is accepted."
-    }
-  ],
-  "readinessOutcomes": [
-    {
-      "status": "Ready",
-      "count": 6,
-      "description": "Documents can support dispatch, compliance, settlement, or readiness without an open exception."
-    },
-    {
-      "status": "At Risk",
-      "count": 2,
-      "description": "Documents can remain visible for planning, but owner review is needed before the next operational step."
-    },
-    {
-      "status": "Blocked",
-      "count": 1,
-      "description": "Document issue blocks assignment, release, or readiness until corrected."
-    },
-    {
-      "status": "Needs Review",
-      "count": 3,
-      "description": "A BOF or fleet reviewer must resolve a classification, match, or required-field issue."
-    }
-  ],
-  "bulkBatches": [
-    {
-      "id": "BULK-MCN-20260622",
-      "aggregatorName": "Midwest Carrier Network",
-      "fleetCustomer": "Delta Advanced Trucking",
-      "submittedAt": "2026-06-22T09:15:00-04:00",
-      "driversSubmitted": 100,
-      "documentsSubmitted": 842,
-      "autoClassified": 711,
-      "routedToReview": 89,
-      "expiredDocuments": 26,
-      "missingRequiredFields": 12,
-      "wrongDriverMatches": 14,
-      "lowConfidenceClassifications": 8,
-      "needsHumanVerification": 29,
-      "batchStatus": "Review staged",
-      "readinessEffect": "Aggregator batch can be converted into BOF Vault records before documents affect readiness, dispatch, settlement, or compliance."
-    }
-  ],
-  "batchProcessingSteps": [
-    {
-      "id": "bulk-upload",
-      "label": "Simulate Bulk Upload",
-      "description": "Receive the aggregator package and manifest into the BOF Vault intake queue."
-    },
-    {
-      "id": "batch-classification",
-      "label": "Run Batch Classification",
-      "description": "Classify each file by document type and match it to driver, carrier, load, or settlement context."
-    },
-    {
-      "id": "review-queue",
-      "label": "Generate Review Queue",
-      "description": "Route expired records, missing fields, wrong-driver matches, low confidence, and verification needs to reviewers."
-    },
-    {
-      "id": "readiness-update",
-      "label": "Update Readiness",
-      "description": "Update the driver-pool readiness summary after the simulated batch review."
-    }
-  ],
-  "bulkReadinessSummary": [
-    {
-      "status": "Ready",
-      "count": 63,
-      "description": "Drivers with enough verified primary documents to remain operationally ready."
-    },
-    {
-      "status": "At Risk",
-      "count": 21,
-      "description": "Drivers usable for planning while one or more document issues remain visible."
-    },
-    {
-      "status": "Blocked",
-      "count": 5,
-      "description": "Drivers blocked by expired, missing, or unresolved primary readiness documents."
-    },
-    {
-      "status": "Needs Review",
-      "count": 11,
-      "description": "Drivers requiring BOF or fleet reviewer action before readiness can be trusted."
-    }
-  ],
-  "bulkReviewSummary": [
-    {
-      "type": "Expired documents",
-      "count": 26,
-      "owner": "Safety desk",
-      "status": "Open"
-    },
-    {
-      "type": "Missing required fields",
-      "count": 12,
-      "owner": "Document desk",
-      "status": "Open"
-    },
-    {
-      "type": "Wrong-driver matches",
-      "count": 14,
-      "owner": "Safety desk",
-      "status": "Open"
-    },
-    {
-      "type": "Low-confidence classifications",
-      "count": 8,
-      "owner": "Document desk",
-      "status": "Open"
-    },
-    {
-      "type": "Needs human verification",
-      "count": 29,
-      "owner": "BOF review desk",
-      "status": "Open"
-    }
-  ],
-  "manifestFields": [
-    {
-      "field": "Driver Name",
-      "example": "John Carter",
-      "purpose": "Supports person matching and canonical file naming."
-    },
-    {
-      "field": "Driver ID",
-      "example": "DRV-001",
-      "purpose": "Connects the submitted file to the BOF driver record."
-    },
-    {
-      "field": "CDL Number",
-      "example": "OH-CDL-7816-2043",
-      "purpose": "Supports license matching without exposing real credentials."
-    },
-    {
-      "field": "Document Type",
-      "example": "CDL",
-      "purpose": "Gives the classifier a manifest-assisted starting point."
-    },
-    {
-      "field": "Original File Name",
-      "example": "scan_0047.pdf",
-      "purpose": "Preserves the inbound filename for audit and conversion history."
-    },
-    {
-      "field": "Effective Date",
-      "example": "2025-04-24",
-      "purpose": "Starts readiness coverage when applicable."
-    },
-    {
-      "field": "Expiration Date",
-      "example": "2029-04-24",
-      "purpose": "Controls renewal watch and blocked readiness states."
-    },
-    {
-      "field": "Carrier",
-      "example": "RoadPro Desk",
-      "purpose": "Supports carrier packet and aggregator network visibility."
-    },
-    {
-      "field": "Load ID, if applicable",
-      "example": "LOAD-008",
-      "purpose": "Connects BOL, POD, rate confirmation, and settlement support documents to a load."
-    },
-    {
-      "field": "Notes",
-      "example": "Receiver signature unclear",
-      "purpose": "Captures aggregator context that may route the file to review."
-    }
-  ],
-  "fileConversions": [
-    {
-      "id": "CONV-001",
-      "originalFileName": "scan_0047.pdf",
-      "detectedDocumentType": "CDL",
-      "assignedEntityType": "Driver",
-      "assignedEntityId": "DRV-001",
-      "assignedEntityName": "Carter, John",
-      "canonicalFileName": "DRV-001_Carter-John_CDL_Primary_Eff-2025-04-24_Exp-2029-04-24_Verified.pdf",
-      "storageCategory": "Driver Qualification File",
-      "primarySecondary": "Primary",
-      "complianceStatus": "Verified",
-      "readinessEffect": "Driver remains Ready after license evidence is attached.",
-      "reviewStatus": "No review required"
-    },
-    {
-      "id": "CONV-002",
-      "originalFileName": "maria med card.jpeg",
-      "detectedDocumentType": "Medical Examiner Certificate",
-      "assignedEntityType": "Driver",
-      "assignedEntityId": "DRV-002",
-      "assignedEntityName": "Lopez, Maria",
-      "canonicalFileName": "DRV-002_Lopez-Maria_MED-CERT_Primary_Eff-2026-01-10_Exp-2027-01-10_NeedsReview.pdf",
-      "storageCategory": "Driver Qualification File",
-      "primarySecondary": "Primary",
-      "complianceStatus": "Needs Review",
-      "readinessEffect": "Driver moves to At Risk until medical-card verifier is confirmed.",
-      "reviewStatus": "Human verification required"
-    },
-    {
-      "id": "CONV-003",
-      "originalFileName": "ratecon-final-final-v2.pdf",
-      "detectedDocumentType": "Rate Confirmation",
-      "assignedEntityType": "Load",
-      "assignedEntityId": "LOAD-008",
-      "assignedEntityName": "Mobile to Atlanta",
-      "canonicalFileName": "LOAD-008_RATE-CON_Primary_Eff-2026-06-22_NoExp_Verified.pdf",
-      "storageCategory": "Load Release Packet",
-      "primarySecondary": "Primary",
-      "complianceStatus": "Verified",
-      "readinessEffect": "Load release and settlement support can reference the verified rate record.",
-      "reviewStatus": "No review required"
-    },
-    {
-      "id": "CONV-004",
-      "originalFileName": "pod pic.jpg",
-      "detectedDocumentType": "Proof of Delivery",
-      "assignedEntityType": "Load",
-      "assignedEntityId": "LOAD-008",
-      "assignedEntityName": "Mobile to Atlanta",
-      "canonicalFileName": "LOAD-008_POD_Primary_Delivery-2026-06-24_NoExp_Verified.jpg",
-      "storageCategory": "Delivery Proof",
-      "primarySecondary": "Primary",
-      "complianceStatus": "Verified",
-      "readinessEffect": "Settlement packet can move forward with delivery proof attached.",
-      "reviewStatus": "No review required"
-    },
-    {
-      "id": "CONV-005",
-      "originalFileName": "insurance cert abc trucking.pdf",
-      "detectedDocumentType": "Insurance Certificate",
-      "assignedEntityType": "Carrier",
-      "assignedEntityId": "CAR-003",
-      "assignedEntityName": "ABC Trucking",
-      "canonicalFileName": "CAR-003_ABC-Trucking_INSURANCE-COI_Primary_Eff-2026-01-01_Exp-2027-01-01_Verified.pdf",
-      "storageCategory": "Carrier Packet",
-      "primarySecondary": "Primary",
-      "complianceStatus": "Verified",
-      "readinessEffect": "Carrier packet remains Ready for network visibility.",
-      "reviewStatus": "No review required"
-    }
-  ],
-  "aggregators": [
-    {
-      "id": "AGG-001",
-      "name": "Midwest Carrier Network",
-      "status": "Active",
-      "carrierCount": 4,
-      "operatingUnitCount": 5,
-      "driverCount": 12,
-      "readinessStatus": "At Risk",
-      "primaryException": "Five drivers have blocked or unresolved primary packet issues."
-    }
-  ],
-  "carriers": [
-    {
-      "id": "CAR-001",
-      "name": "Delta Advanced Trucking",
-      "aggregatorId": "AGG-001",
-      "readinessStatus": "Ready",
-      "driverCount": 4,
-      "primaryException": "No active carrier-level exception."
-    },
-    {
-      "id": "CAR-002",
-      "name": "ABC Trucking LLC",
-      "aggregatorId": "AGG-001",
-      "readinessStatus": "At Risk",
-      "driverCount": 3,
-      "primaryException": "Medical certificate and application review items open."
-    },
-    {
-      "id": "CAR-003",
-      "name": "North Coast Logistics",
-      "aggregatorId": "AGG-001",
-      "readinessStatus": "Needs Review",
-      "driverCount": 3,
-      "primaryException": "Owner-operator insurance and MVR review items open."
-    },
-    {
-      "id": "CAR-004",
-      "name": "Buckeye Refrigerated Transport",
-      "aggregatorId": "AGG-001",
-      "readinessStatus": "Blocked",
-      "driverCount": 2,
-      "primaryException": "Expired medical certificate blocks a refrigerated driver."
-    }
-  ],
-  "operatingUnits": [
-    {
-      "id": "UNIT-001",
-      "name": "Cleveland Refrigerated Division",
-      "aggregatorId": "AGG-001",
-      "carrierId": "CAR-001",
-      "readinessStatus": "Ready",
-      "driverCount": 3,
-      "primaryException": "No active unit-level blocker."
-    },
-    {
-      "id": "UNIT-002",
-      "name": "Columbus Dry Van Division",
-      "aggregatorId": "AGG-001",
-      "carrierId": "CAR-001",
-      "readinessStatus": "At Risk",
-      "driverCount": 2,
-      "primaryException": "One driver needs POD support review before next assignment."
-    },
-    {
-      "id": "UNIT-003",
-      "name": "Owner-Operator Group",
-      "aggregatorId": "AGG-001",
-      "carrierId": "CAR-003",
-      "readinessStatus": "Needs Review",
-      "driverCount": 3,
-      "primaryException": "Insurance and W-9 packet review required."
-    },
-    {
-      "id": "UNIT-004",
-      "name": "Regional Dedicated Fleet",
-      "aggregatorId": "AGG-001",
-      "carrierId": "CAR-002",
-      "readinessStatus": "Ready",
-      "driverCount": 2,
-      "primaryException": "No active unit-level blocker."
-    },
-    {
-      "id": "UNIT-005",
-      "name": "Long Haul Compliance Pool",
-      "aggregatorId": "AGG-001",
-      "carrierId": "CAR-004",
-      "readinessStatus": "Blocked",
-      "driverCount": 2,
-      "primaryException": "Expired medical certificate and incomplete clearinghouse evidence."
-    }
-  ],
-  "drivers": [
-    {
-      "id": "DRV-001",
-      "name": "John Carter",
-      "canonicalStatus": "Active",
-      "homeBase": "Cleveland, OH"
-    },
-    {
-      "id": "DRV-002",
-      "name": "Maria Lopez",
-      "canonicalStatus": "Active",
-      "homeBase": "Columbus, OH"
-    },
-    {
-      "id": "DRV-003",
-      "name": "Carlos Martinez",
-      "canonicalStatus": "Active",
-      "homeBase": "Toledo, OH"
-    },
-    {
-      "id": "DRV-004",
-      "name": "Mara Chen",
-      "canonicalStatus": "Active",
-      "homeBase": "Cleveland, OH"
-    },
-    {
-      "id": "DRV-005",
-      "name": "Marcus Reed",
-      "canonicalStatus": "Active",
-      "homeBase": "Dayton, OH"
-    },
-    {
-      "id": "DRV-006",
-      "name": "Priya Patel",
-      "canonicalStatus": "Active",
-      "homeBase": "Akron, OH"
-    },
-    {
-      "id": "DRV-007",
-      "name": "Daniel Kim",
-      "canonicalStatus": "Active",
-      "homeBase": "Cincinnati, OH"
-    },
-    {
-      "id": "DRV-008",
-      "name": "Olivia Lee",
-      "canonicalStatus": "Applicant",
-      "homeBase": "Columbus, OH"
-    },
-    {
-      "id": "DRV-009",
-      "name": "Frank Miller",
-      "canonicalStatus": "Active",
-      "homeBase": "Cleveland, OH"
-    },
-    {
-      "id": "DRV-010",
-      "name": "Emma Brown",
-      "canonicalStatus": "Active",
-      "homeBase": "Youngstown, OH"
-    },
-    {
-      "id": "DRV-011",
-      "name": "Noah Wilson",
-      "canonicalStatus": "Inactive",
-      "homeBase": "Canton, OH"
-    },
-    {
-      "id": "DRV-012",
-      "name": "Amir Khan",
-      "canonicalStatus": "Pending",
-      "homeBase": "Lima, OH"
-    }
-  ],
-  "driverAffiliations": [
-    {
-      "id": "AFF-001",
-      "aggregatorId": "AGG-001",
-      "carrierId": "CAR-001",
-      "operatingUnitId": "UNIT-001",
-      "driverId": "DRV-001",
-      "driverType": "company driver",
-      "status": "active",
-      "documentPacketStatus": "Complete",
-      "readinessStatus": "Ready",
-      "primaryException": "None"
-    },
-    {
-      "id": "AFF-002",
-      "aggregatorId": "AGG-001",
-      "carrierId": "CAR-001",
-      "operatingUnitId": "UNIT-002",
-      "driverId": "DRV-002",
-      "driverType": "company driver",
-      "status": "active",
-      "documentPacketStatus": "Medical card review",
-      "readinessStatus": "At Risk",
-      "primaryException": "Medical certificate needs human verification."
-    },
-    {
-      "id": "AFF-003",
-      "aggregatorId": "AGG-001",
-      "carrierId": "CAR-002",
-      "operatingUnitId": "UNIT-004",
-      "driverId": "DRV-003",
-      "driverType": "leased driver",
-      "status": "active",
-      "documentPacketStatus": "MVR mismatch",
-      "readinessStatus": "Needs Review",
-      "primaryException": "MVR matched to wrong driver name."
-    },
-    {
-      "id": "AFF-004",
-      "aggregatorId": "AGG-001",
-      "carrierId": "CAR-004",
-      "operatingUnitId": "UNIT-005",
-      "driverId": "DRV-004",
-      "driverType": "company driver",
-      "status": "active",
-      "documentPacketStatus": "Expired medical certificate",
-      "readinessStatus": "Blocked",
-      "primaryException": "Medical certificate expired."
-    },
-    {
-      "id": "AFF-005",
-      "aggregatorId": "AGG-001",
-      "carrierId": "CAR-003",
-      "operatingUnitId": "UNIT-003",
-      "driverId": "DRV-005",
-      "driverType": "owner-operator",
-      "status": "active",
-      "documentPacketStatus": "Insurance review",
-      "readinessStatus": "Needs Review",
-      "primaryException": "Insurance certificate needs producer verification."
-    },
-    {
-      "id": "AFF-006",
-      "aggregatorId": "AGG-001",
-      "carrierId": "CAR-003",
-      "operatingUnitId": "UNIT-003",
-      "driverId": "DRV-006",
-      "driverType": "contractor",
-      "status": "active",
-      "documentPacketStatus": "W-9 missing",
-      "readinessStatus": "At Risk",
-      "primaryException": "Settlement support setup missing W-9."
-    },
-    {
-      "id": "AFF-007",
-      "aggregatorId": "AGG-001",
-      "carrierId": "CAR-001",
-      "operatingUnitId": "UNIT-001",
-      "driverId": "DRV-007",
-      "driverType": "company driver",
-      "status": "active",
-      "documentPacketStatus": "Complete",
-      "readinessStatus": "Ready",
-      "primaryException": "None"
-    },
-    {
-      "id": "AFF-008",
-      "aggregatorId": "AGG-001",
-      "carrierId": "CAR-002",
-      "operatingUnitId": "UNIT-004",
-      "driverId": "DRV-008",
-      "driverType": "applicant",
-      "status": "active",
-      "documentPacketStatus": "Application incomplete",
-      "readinessStatus": "Blocked",
-      "primaryException": "Employment application and road test certificate missing."
-    },
-    {
-      "id": "AFF-009",
-      "aggregatorId": "AGG-001",
-      "carrierId": "CAR-001",
-      "operatingUnitId": "UNIT-002",
-      "driverId": "DRV-009",
-      "driverType": "leased driver",
-      "status": "active",
-      "documentPacketStatus": "POD support watch",
-      "readinessStatus": "At Risk",
-      "primaryException": "Prior delivery POD support needs review."
-    },
-    {
-      "id": "AFF-010",
-      "aggregatorId": "AGG-001",
-      "carrierId": "CAR-004",
-      "operatingUnitId": "UNIT-005",
-      "driverId": "DRV-010",
-      "driverType": "company driver",
-      "status": "active",
-      "documentPacketStatus": "Complete",
-      "readinessStatus": "Ready",
-      "primaryException": "None"
-    },
-    {
-      "id": "AFF-011",
-      "aggregatorId": "AGG-001",
-      "carrierId": "CAR-003",
-      "operatingUnitId": "UNIT-003",
-      "driverId": "DRV-011",
-      "driverType": "inactive/pending driver",
-      "status": "inactive",
-      "documentPacketStatus": "Inactive archive",
-      "readinessStatus": "Needs Review",
-      "primaryException": "Inactive driver should not affect active capacity."
-    },
-    {
-      "id": "AFF-012",
-      "aggregatorId": "AGG-001",
-      "carrierId": "CAR-002",
-      "operatingUnitId": "UNIT-004",
-      "driverId": "DRV-012",
-      "driverType": "inactive/pending driver",
-      "status": "pending",
-      "documentPacketStatus": "Clearinghouse proof pending",
-      "readinessStatus": "Blocked",
-      "primaryException": "Clearinghouse query proof missing."
-    }
-  ],
-  "driverDocumentPackets": [
-    {
-      "id": "PKT-001",
-      "aggregatorId": "AGG-001",
-      "carrierId": "CAR-001",
-      "driverId": "DRV-001",
-      "requiredDocuments": ["CDL", "Medical Examiner Certificate", "MVR / CDLIS MVR", "Clearinghouse Query Proof"],
-      "missingDocuments": [],
-      "expiredDocuments": [],
-      "documentsNeedingHumanReview": [],
-      "readinessResult": "Ready"
-    },
-    {
-      "id": "PKT-002",
-      "aggregatorId": "AGG-001",
-      "carrierId": "CAR-001",
-      "driverId": "DRV-002",
-      "requiredDocuments": ["CDL", "Medical Examiner Certificate", "MVR / CDLIS MVR", "Clearinghouse Query Proof"],
-      "missingDocuments": [],
-      "expiredDocuments": [],
-      "documentsNeedingHumanReview": ["Medical Examiner Certificate"],
-      "readinessResult": "At Risk"
-    },
-    {
-      "id": "PKT-003",
-      "aggregatorId": "AGG-001",
-      "carrierId": "CAR-002",
-      "driverId": "DRV-003",
-      "requiredDocuments": ["CDL", "Medical Examiner Certificate", "MVR / CDLIS MVR", "Road Test Certificate"],
-      "missingDocuments": [],
-      "expiredDocuments": [],
-      "documentsNeedingHumanReview": ["MVR / CDLIS MVR"],
-      "readinessResult": "Needs Review"
-    },
-    {
-      "id": "PKT-004",
-      "aggregatorId": "AGG-001",
-      "carrierId": "CAR-004",
-      "driverId": "DRV-004",
-      "requiredDocuments": ["CDL", "Medical Examiner Certificate", "MVR / CDLIS MVR", "Clearinghouse Query Proof"],
-      "missingDocuments": [],
-      "expiredDocuments": ["Medical Examiner Certificate"],
-      "documentsNeedingHumanReview": [],
-      "readinessResult": "Blocked"
-    },
-    {
-      "id": "PKT-005",
-      "aggregatorId": "AGG-001",
-      "carrierId": "CAR-003",
-      "driverId": "DRV-005",
-      "requiredDocuments": ["CDL", "Medical Examiner Certificate", "Insurance Certificate", "W-9"],
-      "missingDocuments": [],
-      "expiredDocuments": [],
-      "documentsNeedingHumanReview": ["Insurance Certificate"],
-      "readinessResult": "Needs Review"
-    },
-    {
-      "id": "PKT-006",
-      "aggregatorId": "AGG-001",
-      "carrierId": "CAR-003",
-      "driverId": "DRV-006",
-      "requiredDocuments": ["CDL", "Medical Examiner Certificate", "W-9", "Settlement Support Document"],
-      "missingDocuments": ["W-9"],
-      "expiredDocuments": [],
-      "documentsNeedingHumanReview": [],
-      "readinessResult": "At Risk"
-    },
-    {
-      "id": "PKT-007",
-      "aggregatorId": "AGG-001",
-      "carrierId": "CAR-001",
-      "driverId": "DRV-007",
-      "requiredDocuments": ["CDL", "Medical Examiner Certificate", "MVR / CDLIS MVR", "Clearinghouse Query Proof"],
-      "missingDocuments": [],
-      "expiredDocuments": [],
-      "documentsNeedingHumanReview": [],
-      "readinessResult": "Ready"
-    },
-    {
-      "id": "PKT-008",
-      "aggregatorId": "AGG-001",
-      "carrierId": "CAR-002",
-      "driverId": "DRV-008",
-      "requiredDocuments": ["Employment Application", "Road Test Certificate", "Medical Examiner Certificate", "Clearinghouse Query Proof"],
-      "missingDocuments": ["Employment Application", "Road Test Certificate"],
-      "expiredDocuments": [],
-      "documentsNeedingHumanReview": [],
-      "readinessResult": "Blocked"
-    },
-    {
-      "id": "PKT-009",
-      "aggregatorId": "AGG-001",
-      "carrierId": "CAR-001",
-      "driverId": "DRV-009",
-      "requiredDocuments": ["CDL", "Medical Examiner Certificate", "Proof of Delivery", "Settlement Support Document"],
-      "missingDocuments": [],
-      "expiredDocuments": [],
-      "documentsNeedingHumanReview": ["Proof of Delivery"],
-      "readinessResult": "At Risk"
-    },
-    {
-      "id": "PKT-010",
-      "aggregatorId": "AGG-001",
-      "carrierId": "CAR-004",
-      "driverId": "DRV-010",
-      "requiredDocuments": ["CDL", "Medical Examiner Certificate", "MVR / CDLIS MVR", "Clearinghouse Query Proof"],
-      "missingDocuments": [],
-      "expiredDocuments": [],
-      "documentsNeedingHumanReview": [],
-      "readinessResult": "Ready"
-    },
-    {
-      "id": "PKT-011",
-      "aggregatorId": "AGG-001",
-      "carrierId": "CAR-003",
-      "driverId": "DRV-011",
-      "requiredDocuments": ["Inactive archive record", "Prior employment closeout"],
-      "missingDocuments": [],
-      "expiredDocuments": [],
-      "documentsNeedingHumanReview": ["Inactive status confirmation"],
-      "readinessResult": "Needs Review"
-    },
-    {
-      "id": "PKT-012",
-      "aggregatorId": "AGG-001",
-      "carrierId": "CAR-002",
-      "driverId": "DRV-012",
-      "requiredDocuments": ["Employment Application", "Medical Examiner Certificate", "Clearinghouse Query Proof", "Road Test Certificate"],
-      "missingDocuments": ["Clearinghouse Query Proof"],
-      "expiredDocuments": [],
-      "documentsNeedingHumanReview": ["Applicant status"],
-      "readinessResult": "Blocked"
-    }
-  ],
-  "hierarchyReadiness": [
-    {
-      "level": "Aggregator",
-      "entityId": "AGG-001",
-      "entityName": "Midwest Carrier Network",
-      "ready": 3,
-      "atRisk": 3,
-      "blocked": 3,
-      "needsReview": 3
-    },
-    {
-      "level": "Carrier",
-      "entityId": "CAR-001",
-      "entityName": "Delta Advanced Trucking",
-      "ready": 2,
-      "atRisk": 2,
-      "blocked": 0,
-      "needsReview": 0
-    },
-    {
-      "level": "Carrier",
-      "entityId": "CAR-002",
-      "entityName": "ABC Trucking LLC",
-      "ready": 0,
-      "atRisk": 0,
-      "blocked": 2,
-      "needsReview": 1
-    },
-    {
-      "level": "Carrier",
-      "entityId": "CAR-003",
-      "entityName": "North Coast Logistics",
-      "ready": 0,
-      "atRisk": 1,
-      "blocked": 0,
-      "needsReview": 2
-    },
-    {
-      "level": "Carrier",
-      "entityId": "CAR-004",
-      "entityName": "Buckeye Refrigerated Transport",
-      "ready": 1,
-      "atRisk": 0,
-      "blocked": 1,
-      "needsReview": 0
-    }
-  ],
-  "hierarchyExceptions": [
-    {
-      "id": "HEX-001",
-      "level": "Driver",
-      "entityId": "DRV-004",
-      "entityName": "Mara Chen",
-      "exceptionType": "Expired medical certificate",
-      "owner": "Safety desk",
-      "readinessStatus": "Blocked"
-    },
-    {
-      "id": "HEX-002",
-      "level": "Operating Unit",
-      "entityId": "UNIT-005",
-      "entityName": "Long Haul Compliance Pool",
-      "exceptionType": "Clearinghouse proof missing",
-      "owner": "Compliance desk",
-      "readinessStatus": "Blocked"
-    },
-    {
-      "id": "HEX-003",
-      "level": "Carrier",
-      "entityId": "CAR-003",
-      "entityName": "North Coast Logistics",
-      "exceptionType": "Owner-operator packet review",
-      "owner": "Carrier readiness desk",
-      "readinessStatus": "Needs Review"
-    },
-    {
-      "id": "HEX-004",
-      "level": "Driver",
-      "entityId": "DRV-003",
-      "entityName": "Carlos Martinez",
-      "exceptionType": "Wrong-driver MVR match",
-      "owner": "Safety desk",
-      "readinessStatus": "Needs Review"
-    }
-  ],
-  "hierarchyWorkflowSteps": [
-    {
-      "id": "classify-network",
-      "label": "Classify Network",
-      "description": "Identify aggregator, carrier, operating unit, driver, and packet boundaries."
-    },
-    {
-      "id": "match-drivers",
-      "label": "Match Drivers to Carriers",
-      "description": "Connect canonical driver records to carrier and operating-unit affiliations."
-    },
-    {
-      "id": "build-packets",
-      "label": "Build Driver Packets",
-      "description": "Attach required, missing, expired, and review documents to each driver packet."
-    },
-    {
-      "id": "calculate-readiness",
-      "label": "Calculate Hierarchy Readiness",
-      "description": "Roll readiness up by driver, operating unit, carrier, and aggregator."
-    },
-    {
-      "id": "show-blocked",
-      "label": "Show Blocked Drivers",
-      "description": "Focus the driver list on blocked records and primary exceptions."
-    }
-  ],
-  "standardRules": [
-    {
-      "id": "STD-001",
-      "ruleName": "BOF Default Document Rule",
-      "ruleLevel": "BOF Default Rule",
-      "description": "POD, BOL, rate confirmation, carrier packet, insurance COI, W-9, and driver qualification evidence are checked before readiness, billing, or settlement status changes."
-    },
-    {
-      "id": "STD-002",
-      "ruleName": "BOF Default Review Routing",
-      "ruleLevel": "BOF Default Rule",
-      "description": "Missing, expired, low-confidence, or mismatched documents route to the correct BOF review queue before they update an operating status."
-    },
-    {
-      "id": "STD-003",
-      "ruleName": "BOF Default Commercial Hold",
-      "ruleLevel": "BOF Default Rule",
-      "description": "Billing, settlement, factoring, reimbursement, and deduction statuses remain visible separately so one issue does not hide the next action."
-    }
-  ],
-  "aggregatorRules": [
-    {
-      "id": "AGG-RULE-001",
-      "aggregatorId": "AGG-001",
-      "aggregatorName": "Midwest Carrier Network",
-      "ruleName": "Aggregator readiness rollup",
-      "ruleLevel": "Aggregator Rule",
-      "description": "Carrier, driver, document packet, billing, and settlement exceptions roll up into the Midwest Carrier Network readiness view."
-    },
-    {
-      "id": "AGG-RULE-002",
-      "aggregatorId": "AGG-001",
-      "aggregatorName": "Midwest Carrier Network",
-      "ruleName": "Aggregator commercial review",
-      "ruleLevel": "Aggregator Rule",
-      "description": "Commercial holds are separated from driver readiness so the network can see when a driver remains usable but a payment, billing, or accessorial item still needs review."
-    }
-  ],
-  "aggregatorCarrierAgreements": [
-    {
-      "id": "AGR-001",
-      "aggregatorId": "AGG-001",
-      "aggregatorName": "Midwest Carrier Network",
-      "carrierId": "CAR-001",
-      "carrierName": "Delta Advanced Trucking",
-      "payScheduleId": "PAY-WEEKLY",
-      "settlementRuleId": "SETTLE-POD",
-      "billingRuleId": "BILL-RATECON",
-      "deductionRuleId": "DEDUCT-VERIFY-48",
-      "documentRequirementId": "DOC-DELTA-STANDARD",
-      "readinessImpact": "Ready when standard insurance, W-9, POD, rate confirmation, and factoring packet support are complete.",
-      "paymentImpact": "Weekly settlement can release after POD verification and open reimbursement checks are cleared.",
-      "billingFactoringImpact": "Billing release needs rate confirmation; factoring packet needs complete proof support.",
-      "reviewQueueImpact": "Missing POD, rate confirmation, or factoring support routes to settlement desk."
-    },
-    {
-      "id": "AGR-002",
-      "aggregatorId": "AGG-001",
-      "aggregatorName": "Midwest Carrier Network",
-      "carrierId": "CAR-002",
-      "carrierName": "ABC Trucking LLC",
-      "payScheduleId": "PAY-BIWEEKLY",
-      "settlementRuleId": "SETTLE-POD-RATECON",
-      "billingRuleId": "BILL-SETTLEMENT-PACKET",
-      "deductionRuleId": "DEDUCT-LUMPER-MANUAL",
-      "documentRequirementId": "DOC-ABC-OWNER-OP",
-      "readinessImpact": "At risk until owner-operator packet and higher insurance COI evidence are verified.",
-      "paymentImpact": "Biweekly settlement is blocked if POD or rate confirmation is missing.",
-      "billingFactoringImpact": "Billing release waits for complete settlement support and carrier agreement checks.",
-      "reviewQueueImpact": "Manual lumper review and missing proof items route to payment review."
-    },
-    {
-      "id": "AGR-003",
-      "aggregatorId": "AGG-001",
-      "aggregatorName": "Midwest Carrier Network",
-      "carrierId": "CAR-003",
-      "carrierName": "North Coast Logistics",
-      "payScheduleId": "PAY-WEEKLY",
-      "settlementRuleId": "SETTLE-DEDUCTION-SUPPORT",
-      "billingRuleId": "BILL-BOL-POD",
-      "deductionRuleId": "DEDUCT-CUSTOMER-APPROVAL",
-      "documentRequirementId": "DOC-NORTH-OWNER-OP",
-      "readinessImpact": "Needs review until owner-operator insurance, W-9, BOL, POD, and accessorial approvals are aligned.",
-      "paymentImpact": "Base settlement may proceed while customer approval controls accessorial payment.",
-      "billingFactoringImpact": "Billing release needs BOL and POD; missing customer approval routes accessorials to review.",
-      "reviewQueueImpact": "Customer approval tasks route to commercial review without blocking unrelated base settlement items."
-    },
-    {
-      "id": "AGR-004",
-      "aggregatorId": "AGG-001",
-      "aggregatorName": "Midwest Carrier Network",
-      "carrierId": "CAR-004",
-      "carrierName": "Buckeye Refrigerated Transport",
-      "payScheduleId": "PAY-TWICE-MONTHLY",
-      "settlementRuleId": "SETTLE-REEFER-PROOF",
-      "billingRuleId": "BILL-REEFER-PROOF",
-      "deductionRuleId": "DEDUCT-CLAIMS-PACKET",
-      "documentRequirementId": "DOC-BUCKEYE-REEFER",
-      "readinessImpact": "Blocked if refrigerated proof, temperature records, or claims evidence is missing for affected loads.",
-      "paymentImpact": "Settlement needs review when seal, cargo, or temperature proof creates a possible claim.",
-      "billingFactoringImpact": "Billing is held until refrigerated load proof and temperature documentation are verified.",
-      "reviewQueueImpact": "Claims packet, seal verification, cargo condition, and temperature evidence route to claims review."
-    }
-  ],
-  "contractTerms": [
-    {
-      "agreementId": "AGR-001",
-      "summary": "Weekly settlement with POD-controlled settlement release and rate-confirmation-controlled billing release.",
-      "commercialModel": "Standard carrier packet with verified lumper reimbursement."
-    },
-    {
-      "agreementId": "AGR-002",
-      "summary": "Biweekly settlement with stricter POD and rate confirmation requirements before settlement can release.",
-      "commercialModel": "Owner-operator packet, higher insurance COI, and manual lumper verification."
-    },
-    {
-      "agreementId": "AGR-003",
-      "summary": "Weekly settlement with accessorials controlled by customer approval and deduction support evidence.",
-      "commercialModel": "Owner-operator support model with separable base settlement and accessorial review."
-    },
-    {
-      "agreementId": "AGR-004",
-      "summary": "Twice-monthly settlement for refrigerated operations with temperature, seal, and claims packet controls.",
-      "commercialModel": "Refrigerated proof model with billing hold until reefer evidence is verified."
-    }
-  ],
-  "paySchedules": [
-    {
-      "id": "PAY-WEEKLY",
-      "label": "Weekly settlement schedule",
-      "cadence": "Weekly",
-      "releaseWindow": "Friday settlement batch after proof review"
-    },
-    {
-      "id": "PAY-BIWEEKLY",
-      "label": "Biweekly settlement schedule",
-      "cadence": "Biweekly",
-      "releaseWindow": "Every other Friday after POD and rate confirmation review"
-    },
-    {
-      "id": "PAY-TWICE-MONTHLY",
-      "label": "Twice-monthly settlement schedule",
-      "cadence": "Twice monthly",
-      "releaseWindow": "15th and month-end batch after refrigerated proof review"
-    }
-  ],
-  "settlementRules": [
-    {
-      "id": "SETTLE-POD",
-      "label": "POD required before settlement release",
-      "releaseRule": "Settlement is held until delivery proof is verified."
-    },
-    {
-      "id": "SETTLE-POD-RATECON",
-      "label": "POD and rate confirmation required before settlement release",
-      "releaseRule": "Settlement is blocked if POD or rate confirmation is missing."
-    },
-    {
-      "id": "SETTLE-DEDUCTION-SUPPORT",
-      "label": "Deduction support document required",
-      "releaseRule": "Settlement proceeds with deduction items routed to support review."
-    },
-    {
-      "id": "SETTLE-REEFER-PROOF",
-      "label": "Refrigerated proof required",
-      "releaseRule": "Settlement needs review when temperature, seal, cargo, or claim evidence is incomplete."
-    }
-  ],
-  "billingRules": [
-    {
-      "id": "BILL-RATECON",
-      "label": "Rate confirmation required before billing release",
-      "requiredDocuments": ["Rate Confirmation", "Proof of Delivery"],
-      "billingImpact": "Billing held until rate confirmation is attached."
-    },
-    {
-      "id": "BILL-SETTLEMENT-PACKET",
-      "label": "Settlement packet support required",
-      "requiredDocuments": ["POD", "Rate Confirmation", "Settlement Support Document"],
-      "billingImpact": "Billing review remains open until packet support is complete."
-    },
-    {
-      "id": "BILL-BOL-POD",
-      "label": "BOL and POD required for billing release",
-      "requiredDocuments": ["Bill of Lading", "Proof of Delivery"],
-      "billingImpact": "Billing release waits for complete BOL and POD support."
-    },
-    {
-      "id": "BILL-REEFER-PROOF",
-      "label": "Refrigerated load proof required",
-      "requiredDocuments": ["Proof of Delivery", "Temperature Record", "Seal Verification"],
-      "billingImpact": "Billing held until refrigerated proof is verified."
-    }
-  ],
-  "deductionRules": [
-    {
-      "id": "DEDUCT-VERIFY-48",
-      "label": "Verified lumper reimbursement within 48 hours",
-      "impact": "Lumper receipts are reimbursed within 48 hours when receipt and amount are verified."
-    },
-    {
-      "id": "DEDUCT-LUMPER-MANUAL",
-      "label": "Manual lumper review required",
-      "impact": "Lumper reimbursement is held until human verification clears the receipt."
-    },
-    {
-      "id": "DEDUCT-CUSTOMER-APPROVAL",
-      "label": "Customer approval controls accessorials",
-      "impact": "Accessorial payment is held if customer approval is missing, while base settlement may proceed."
-    },
-    {
-      "id": "DEDUCT-CLAIMS-PACKET",
-      "label": "Claims packet required for proof exceptions",
-      "impact": "Claims, seal, cargo, or temperature issues route to claims packet review before commercial release."
-    }
-  ],
-  "carrierDocumentRequirements": [
-    {
-      "id": "DOC-DELTA-STANDARD",
-      "agreementId": "AGR-001",
-      "requiredComplianceDocuments": ["Standard insurance COI", "W-9", "Factoring packet"],
-      "requiredBillingDocuments": ["POD", "Rate Confirmation"],
-      "specialDocuments": ["Verified lumper receipt when reimbursement is requested"]
-    },
-    {
-      "id": "DOC-ABC-OWNER-OP",
-      "agreementId": "AGR-002",
-      "requiredComplianceDocuments": ["Owner-operator packet", "Higher insurance COI", "W-9"],
-      "requiredBillingDocuments": ["POD", "Rate Confirmation", "Settlement Support Document"],
-      "specialDocuments": ["Manual lumper review packet"]
-    },
-    {
-      "id": "DOC-NORTH-OWNER-OP",
-      "agreementId": "AGR-003",
-      "requiredComplianceDocuments": ["Owner-operator insurance", "W-9", "Settlement support document"],
-      "requiredBillingDocuments": ["BOL", "POD"],
-      "specialDocuments": ["Customer approval for accessorials"]
-    },
-    {
-      "id": "DOC-BUCKEYE-REEFER",
-      "agreementId": "AGR-004",
-      "requiredComplianceDocuments": ["Refrigerated load proof", "Temperature documentation", "Standard insurance COI"],
-      "requiredBillingDocuments": ["POD", "Temperature Record", "Seal Verification"],
-      "specialDocuments": ["Claims packet when seal, cargo, or temperature issue appears"]
-    }
-  ],
-  "contractExceptions": [
-    {
-      "id": "CEX-001",
-      "agreementId": "AGR-001",
-      "issue": "Missing POD for Delta Advanced Trucking",
-      "statuses": ["billing held", "settlement held", "factoring incomplete", "payment review"],
-      "outcomes": ["billing held", "settlement held", "factoring packet incomplete", "review task created"]
-    },
-    {
-      "id": "CEX-002",
-      "agreementId": "AGR-002",
-      "issue": "Missing lumper receipt for ABC Trucking LLC",
-      "statuses": ["readiness unaffected", "payment review", "settlement held"],
-      "outcomes": ["driver readiness unaffected", "lumper reimbursement held", "settlement needs review", "human verification required"]
-    },
-    {
-      "id": "CEX-003",
-      "agreementId": "AGR-004",
-      "issue": "Missing temperature record for Buckeye Refrigerated Transport",
-      "statuses": ["blocked", "billing held", "payment review"],
-      "outcomes": ["refrigerated load exception", "billing held", "claims review possible", "settlement needs review"]
-    },
-    {
-      "id": "CEX-004",
-      "agreementId": "AGR-003",
-      "issue": "Missing customer approval for North Coast Logistics accessorial",
-      "statuses": ["payment review", "readiness unaffected", "carrier rule applied"],
-      "outcomes": ["accessorial payment held", "base settlement may proceed", "customer approval task created"]
-    }
-  ],
-  "ruleResolutionExamples": [
-    {
-      "id": "RRE-001",
-      "title": "Default rule plus carrier agreement rule",
-      "chain": ["BOF Default Rule", "Aggregator Rule", "Carrier Agreement Rule", "Load/Document Exception", "Final Operational Decision"],
-      "example": "A missing POD is first recognized as a default document exception, then Delta's agreement converts it into billing held, settlement held, and factoring incomplete."
-    },
-    {
-      "id": "RRE-002",
-      "title": "Commercial hold without driver readiness block",
-      "chain": ["BOF Default Rule", "Aggregator Rule", "Carrier Agreement Rule", "Load/Document Exception", "Final Operational Decision"],
-      "example": "A missing North Coast customer approval holds the accessorial payment while base settlement may proceed."
-    }
-  ],
-  "capacityRuleFlow": [
-    {
-      "id": "CRF-001",
-      "label": "Customer needs capacity",
-      "description": "The aggregator starts with a customer request or operating need that requires a documented capacity review.",
-      "status": "Capacity review"
-    },
-    {
-      "id": "CRF-002",
-      "label": "Aggregator opens roster",
-      "description": "Carrier, driver, equipment, agreement, and document packet records become visible in one BOF Vault path.",
-      "status": "Roster open"
-    },
-    {
-      "id": "CRF-003",
-      "label": "BOF checks each carrier's rule profile",
-      "description": "BOF applies the default model, aggregator rules, carrier agreement rules, and document exceptions.",
-      "status": "Carrier rule applied"
-    },
-    {
-      "id": "CRF-004",
-      "label": "Some carriers are eligible",
-      "description": "Eligible carriers have the required agreement, insurance, driver packet, equipment, and proof rules in good order.",
-      "status": "Eligible"
-    },
-    {
-      "id": "CRF-005",
-      "label": "Some carriers are blocked",
-      "description": "Blocked carriers have missing or expired readiness, proof, compliance, or agreement evidence.",
-      "status": "Blocked"
-    },
-    {
-      "id": "CRF-006",
-      "label": "Some need review",
-      "description": "Review carriers need a human decision on a document, accessorial, claim, billing, or settlement exception.",
-      "status": "Needs Review"
-    },
-    {
-      "id": "CRF-007",
-      "label": "BOF surfaces the best readiness fit",
-      "description": "BOF shows which carrier, driver, and equipment combination is most ready based on rules and evidence, without arranging freight or dispatching a load.",
-      "status": "Readiness fit"
-    },
-    {
-      "id": "CRF-008",
-      "label": "Proof rules follow the selected record",
-      "description": "Required documents and proof rules follow the carrier, driver, customer, equipment, and document packet combination.",
-      "status": "Proof rules attached"
-    }
-  ],
-  "aggregatorAnimationSteps": [
-    {
-      "id": "flow-submit",
-      "label": "Aggregator submits batch",
-      "description": "Midwest Carrier Network submits 842 documents for 100 drivers.",
-      "impact": "BOF receives the package as an unstructured operating queue."
-    },
-    {
-      "id": "flow-hierarchy",
-      "label": "BOF classifies hierarchy",
-      "description": "BOF maps documents to carriers, operating units, drivers, and document packets.",
-      "impact": "The network becomes searchable by aggregator, carrier, operating unit, driver, and packet."
-    },
-    {
-      "id": "flow-convert",
-      "label": "BOF converts files",
-      "description": "Messy file names become BOF Vault canonical records.",
-      "impact": "The same record can support readiness, billing, settlement, and review."
-    },
-    {
-      "id": "flow-default-rules",
-      "label": "BOF applies default rules",
-      "description": "Standard document, readiness, billing, and settlement rules are applied.",
-      "impact": "BOF keeps one internal operating model before carrier-specific rules modify outcomes."
-    },
-    {
-      "id": "flow-agreement-rules",
-      "label": "BOF applies carrier agreement rules",
-      "description": "Each carrier's contract terms modify settlement, billing, accessorial, and document requirements.",
-      "impact": "Different carrier agreements can produce different commercial outcomes from similar document issues."
-    },
-    {
-      "id": "flow-exceptions",
-      "label": "BOF routes exceptions",
-      "description": "Missing PODs, expired documents, wrong-driver matches, missing temperature records, and missing approvals go to review.",
-      "impact": "The right desk sees the next action instead of searching through a shared folder."
-    },
-    {
-      "id": "flow-readiness",
-      "label": "BOF updates readiness",
-      "description": "Driver, carrier, operating unit, and aggregator readiness summaries update.",
-      "impact": "The network sees readiness by level instead of guessing from isolated documents."
-    },
-    {
-      "id": "flow-commercial-impact",
-      "label": "BOF shows commercial impact",
-      "description": "Billing held, settlement held, factoring incomplete, reimbursement held, or readiness unaffected depending on the carrier agreement.",
-      "impact": "Operators see payment, billing, settlement, and readiness consequences separately."
-    }
-  ],
-  "networkFlowStages": [
-    {
-      "stage": 1,
-      "label": "Unstructured batch",
-      "summary": "842 submitted documents arrive across carriers, drivers, loads, and settlement support."
-    },
-    {
-      "stage": 2,
-      "label": "Classified hierarchy",
-      "summary": "BOF maps every file to a network, carrier, operating unit, driver, document packet, or load context."
-    },
-    {
-      "stage": 3,
-      "label": "Agreement-aware rules",
-      "summary": "BOF default rules combine with aggregator and carrier agreement rules before the final decision is shown."
-    },
-    {
-      "stage": 4,
-      "label": "Commercial impact",
-      "summary": "Readiness, billing, settlement, factoring, reimbursement, and review queues update independently."
-    }
-  ],
-  "operationalImpactEvents": [
-    {
-      "id": "OIE-001",
-      "label": "Billing held",
-      "count": 12,
-      "description": "Billing cannot release until required proof documents are verified."
-    },
-    {
-      "id": "OIE-002",
-      "label": "Settlement held",
-      "count": 9,
-      "description": "Settlement release waits for POD, rate confirmation, reefer proof, or supporting documents."
-    },
-    {
-      "id": "OIE-003",
-      "label": "Factoring incomplete",
-      "count": 6,
-      "description": "Factoring packets need proof or billing support before they can be marked ready."
-    },
-    {
-      "id": "OIE-004",
-      "label": "Payment review",
-      "count": 14,
-      "description": "Lumper, deduction, accessorial, or claims-related items need human verification."
-    },
-    {
-      "id": "OIE-005",
-      "label": "Readiness unaffected",
-      "count": 18,
-      "description": "Some commercial holds do not block driver or carrier readiness."
+  "presets": [
+    {
+      "id": "single-driver",
+      "label": "Single Driver Onboarding",
+      "summary": "A new driver submits a CDL, medical card, application packet, and onboarding documents for first review.",
+      "batchId": "BVI-24018",
+      "source": "Driver mobile upload plus fleet admin email",
+      "receivedFiles": 24,
+      "drivers": 4,
+      "carriers": 1,
+      "autoClassified": 18,
+      "reviewItems": 6,
+      "readyProfiles": 2,
+      "blockedProfiles": 1,
+      "documents": [
+        {
+          "id": "doc-101",
+          "fileName": "john_carter_cdl_front_2026.jpg",
+          "documentType": "CDL image",
+          "owner": "John Carter",
+          "driverId": "DRV-001",
+          "carrier": "BackOfficeFleet Demo Fleet",
+          "confidence": 97,
+          "status": "Ready",
+          "ruleImpact": "Driver identity and CDL class confirmed for onboarding profile.",
+          "reviewReason": "High-confidence match.",
+          "requiredAction": "Attach to driver qualification file.",
+          "extracted": {
+            "name": "John Carter",
+            "expires": "2028-08-14",
+            "issuer": "OH BMV",
+            "record": "CDL class A"
+          }
+        },
+        {
+          "id": "doc-102",
+          "fileName": "john_carter_medical_card_page_1.pdf",
+          "documentType": "Medical card",
+          "owner": "John Carter",
+          "driverId": "DRV-001",
+          "carrier": "BackOfficeFleet Demo Fleet",
+          "confidence": 92,
+          "status": "Needs Review",
+          "ruleImpact": "Medical certification is usable only after reviewer verifies the provider signature.",
+          "reviewReason": "Signature area is faint on the scan.",
+          "requiredAction": "Review signature and expiration date.",
+          "extracted": {
+            "name": "John Carter",
+            "expires": "2026-10-31",
+            "issuer": "DOT medical examiner",
+            "record": "Medical examiner certificate"
+          }
+        },
+        {
+          "id": "doc-103",
+          "fileName": "onboarding_packet_missing_w9.pdf",
+          "documentType": "Onboarding packet",
+          "owner": "John Carter",
+          "driverId": "DRV-001",
+          "carrier": "BackOfficeFleet Demo Fleet",
+          "confidence": 88,
+          "status": "Missing",
+          "ruleImpact": "Payroll setup cannot be marked complete until missing W-9 page is returned.",
+          "reviewReason": "Packet is missing required tax setup page.",
+          "requiredAction": "Request replacement packet or missing W-9 page.",
+          "extracted": {
+            "name": "John Carter",
+            "expires": "Not applicable",
+            "issuer": "Fleet HR",
+            "record": "Incomplete onboarding packet"
+          }
+        }
+      ],
+      "exceptions": [
+        {
+          "id": "ex-101",
+          "type": "Missing required page",
+          "severity": "Blocked",
+          "item": "onboarding_packet_missing_w9.pdf",
+          "owner": "Fleet onboarding",
+          "impact": "Payroll setup remains blocked until the W-9 page is returned."
+        },
+        {
+          "id": "ex-102",
+          "type": "Low-confidence signature",
+          "severity": "Needs Review",
+          "item": "john_carter_medical_card_page_1.pdf",
+          "owner": "Safety review",
+          "impact": "Medical card is held for human review before readiness updates."
+        }
+      ],
+      "profiles": [
+        {
+          "id": "drv-001",
+          "name": "John Carter",
+          "status": "Needs Review",
+          "readiness": 82,
+          "packet": "DQF starter profile generated",
+          "nextAction": "Verify medical-card signature and request missing W-9 page."
+        },
+        {
+          "id": "drv-004",
+          "name": "Darius Hill",
+          "status": "Ready",
+          "readiness": 96,
+          "packet": "Onboarding profile generated",
+          "nextAction": "Attach profile to fleet readiness queue."
+        }
+      ],
+      "audit": [
+        "Batch BVI-24018 staged from driver onboarding intake.",
+        "18 files classified without review.",
+        "6 files routed to human review."
+      ]
+    },
+    {
+      "id": "founding-fleet",
+      "label": "Fleet Back-Office Bundle",
+      "summary": "A fleet uploads driver files, insurance certificates, settlement support, proof records, and onboarding packets.",
+      "batchId": "BVI-24041",
+      "source": "Fleet shared drive export and BOF intake mailbox",
+      "receivedFiles": 137,
+      "drivers": 42,
+      "carriers": 3,
+      "autoClassified": 104,
+      "reviewItems": 33,
+      "readyProfiles": 26,
+      "blockedProfiles": 5,
+      "documents": [
+        {
+          "id": "doc-201",
+          "fileName": "lopez_med_card_2026.pdf",
+          "documentType": "Medical card",
+          "owner": "Elena Lopez",
+          "driverId": "DRV-006",
+          "carrier": "BackOfficeFleet Demo Fleet",
+          "confidence": 95,
+          "status": "Ready",
+          "ruleImpact": "Medical card updates driver readiness and removes the expiring-document watch.",
+          "reviewReason": "Issuer, expiration, and driver match are clear.",
+          "requiredAction": "Accept and update DQF profile.",
+          "extracted": {
+            "name": "Elena Lopez",
+            "expires": "2026-12-19",
+            "issuer": "DOT medical examiner",
+            "record": "Medical examiner certificate"
+          }
+        },
+        {
+          "id": "doc-202",
+          "fileName": "johnson_cdl_scan_blurry.jpg",
+          "documentType": "CDL image",
+          "owner": "Marcus Reed",
+          "driverId": "DRV-007",
+          "carrier": "BackOfficeFleet Demo Fleet",
+          "confidence": 61,
+          "status": "Needs Review",
+          "ruleImpact": "CDL proof remains review-needed until the blurry scan is replaced.",
+          "reviewReason": "License number and expiration are partially unreadable.",
+          "requiredAction": "Request replacement scan.",
+          "extracted": {
+            "name": "Marcus Reed",
+            "expires": "Unreadable",
+            "issuer": "State licensing record",
+            "record": "CDL image needs replacement"
+          }
+        },
+        {
+          "id": "doc-203",
+          "fileName": "chen_insurance_cert.pdf",
+          "documentType": "Insurance certificate",
+          "owner": "Great Lakes Owner-Operator Network",
+          "driverId": "Carrier packet",
+          "carrier": "GL Owner-Operator Network",
+          "confidence": 94,
+          "status": "Eligible with Conditions",
+          "ruleImpact": "Carrier insurance is usable for review, but customer-specific certificate holder wording needs confirmation.",
+          "reviewReason": "Certificate holder text differs from the customer packet requirement.",
+          "requiredAction": "Assign certificate wording to carrier packet reviewer.",
+          "extracted": {
+            "name": "GL Owner-Operator Network",
+            "expires": "2027-01-01",
+            "issuer": "Regional Mutual",
+            "record": "Auto liability and cargo insurance"
+          }
+        },
+        {
+          "id": "doc-204",
+          "fileName": "pod_boF-2258_warehouse_signed.pdf",
+          "documentType": "POD",
+          "owner": "Noah Wilson",
+          "driverId": "DRV-008",
+          "carrier": "BackOfficeFleet Demo Fleet",
+          "confidence": 90,
+          "status": "Ready",
+          "ruleImpact": "POD can be attached to settlement and customer proof packet.",
+          "reviewReason": "Signed delivery record matched to load and driver.",
+          "requiredAction": "Attach to proof packet.",
+          "extracted": {
+            "name": "Noah Wilson",
+            "expires": "Not applicable",
+            "issuer": "Receiver",
+            "record": "Signed proof of delivery"
+          }
+        }
+      ],
+      "exceptions": [
+        {
+          "id": "ex-201",
+          "type": "Low-confidence document",
+          "severity": "Needs Review",
+          "item": "johnson_cdl_scan_blurry.jpg",
+          "owner": "Driver document review",
+          "impact": "Driver profile remains review-needed until replacement is uploaded."
+        },
+        {
+          "id": "ex-202",
+          "type": "Customer wording mismatch",
+          "severity": "Eligible with Conditions",
+          "item": "chen_insurance_cert.pdf",
+          "owner": "Carrier packet review",
+          "impact": "Carrier packet can stay visible, but customer-specific wording must be confirmed."
+        },
+        {
+          "id": "ex-203",
+          "type": "Duplicate proof candidate",
+          "severity": "Needs Review",
+          "item": "pod_boF-2258_warehouse_signed.pdf",
+          "owner": "Settlement support",
+          "impact": "Reviewer confirms which proof record should control the settlement packet."
+        }
+      ],
+      "profiles": [
+        {
+          "id": "drv-006",
+          "name": "Elena Lopez",
+          "status": "Ready",
+          "readiness": 94,
+          "packet": "DQF profile refreshed",
+          "nextAction": "Move from watch to ready after medical card acceptance."
+        },
+        {
+          "id": "drv-007",
+          "name": "Marcus Reed",
+          "status": "Needs Review",
+          "readiness": 71,
+          "packet": "Driver profile generated with CDL exception",
+          "nextAction": "Request cleaner CDL image."
+        },
+        {
+          "id": "carrier-gl",
+          "name": "Great Lakes Owner-Operator Network",
+          "status": "Eligible with Conditions",
+          "readiness": 86,
+          "packet": "Carrier packet profile generated",
+          "nextAction": "Confirm insurance certificate holder wording."
+        }
+      ],
+      "audit": [
+        "Batch BVI-24041 received from fleet document export.",
+        "104 files classified and matched to driver or carrier records.",
+        "33 files moved to review because the system could not safely resolve them automatically."
+      ]
+    },
+    {
+      "id": "aggregator-network",
+      "label": "Aggregator Network Intake",
+      "summary": "A carrier network submits mixed carrier packets, driver files, insurance records, proof photos, and customer-specific rules.",
+      "batchId": "BVI-24077",
+      "source": "Aggregator partner intake bundle",
+      "receivedFiles": 482,
+      "drivers": 119,
+      "carriers": 18,
+      "autoClassified": 362,
+      "reviewItems": 120,
+      "readyProfiles": 61,
+      "blockedProfiles": 17,
+      "documents": [
+        {
+          "id": "doc-301",
+          "fileName": "mra_carrier_packet_starline.pdf",
+          "documentType": "Carrier packet",
+          "owner": "Starline Freight LLC",
+          "driverId": "Carrier packet",
+          "carrier": "Midwest Reefer Alliance",
+          "confidence": 93,
+          "status": "Ready",
+          "ruleImpact": "Carrier packet meets Midwest Reefer Alliance onboarding rules.",
+          "reviewReason": "Authority, W-9, insurance, and contact sheet matched.",
+          "requiredAction": "Accept carrier packet and update network readiness.",
+          "extracted": {
+            "name": "Starline Freight LLC",
+            "expires": "2026-12-31",
+            "issuer": "Carrier packet",
+            "record": "Carrier onboarding bundle"
+          }
+        },
+        {
+          "id": "doc-302",
+          "fileName": "freightbrace_photo_set_missing_seal_10482.zip",
+          "documentType": "Cargo securement proof",
+          "owner": "Northern Line Transport",
+          "driverId": "DRV-NLT-044",
+          "carrier": "Midwest Reefer Alliance",
+          "confidence": 84,
+          "status": "Needs Review",
+          "ruleImpact": "Securement proof can be attached only after missing seal image is resolved.",
+          "reviewReason": "Photo set contains cargo brace images but no matching seal photo.",
+          "requiredAction": "Request missing seal photo or reviewer note.",
+          "extracted": {
+            "name": "Northern Line Transport",
+            "expires": "Not applicable",
+            "issuer": "Driver photo bundle",
+            "record": "Cargo securement proof"
+          }
+        },
+        {
+          "id": "doc-303",
+          "fileName": "carrier_renewal_cert_expired.pdf",
+          "documentType": "Insurance certificate",
+          "owner": "Buckeye Regional Carriers",
+          "driverId": "Carrier packet",
+          "carrier": "Ohio Valley Carrier Partners",
+          "confidence": 98,
+          "status": "Blocked",
+          "ruleImpact": "Carrier packet remains blocked until current insurance certificate is received.",
+          "reviewReason": "Expiration date is in the past.",
+          "requiredAction": "Request current certificate from carrier.",
+          "extracted": {
+            "name": "Buckeye Regional Carriers",
+            "expires": "2025-11-30",
+            "issuer": "Regional Mutual",
+            "record": "Expired insurance certificate"
+          }
+        },
+        {
+          "id": "doc-304",
+          "fileName": "customer_grocery_pod_lumper_receipt.pdf",
+          "documentType": "POD + lumper receipt",
+          "owner": "Sofia Ramirez",
+          "driverId": "DRV-MRA-032",
+          "carrier": "Midwest Reefer Alliance",
+          "confidence": 91,
+          "status": "Ready",
+          "ruleImpact": "Proof packet can support settlement, invoicing, and post-trip review.",
+          "reviewReason": "Signed POD and lumper receipt matched to the same customer record.",
+          "requiredAction": "Attach to proof packet.",
+          "extracted": {
+            "name": "Sofia Ramirez",
+            "expires": "Not applicable",
+            "issuer": "Receiver and lumper provider",
+            "record": "Delivery proof bundle"
+          }
+        }
+      ],
+      "exceptions": [
+        {
+          "id": "ex-301",
+          "type": "Expired policy",
+          "severity": "Blocked",
+          "item": "carrier_renewal_cert_expired.pdf",
+          "owner": "Carrier packet review",
+          "impact": "Carrier remains blocked for customer readiness until current certificate is provided."
+        },
+        {
+          "id": "ex-302",
+          "type": "Missing proof rule",
+          "severity": "Needs Review",
+          "item": "freightbrace_photo_set_missing_seal_10482.zip",
+          "owner": "Proof packet review",
+          "impact": "Securement proof needs a reviewer note or missing seal photo before packet completion."
+        },
+        {
+          "id": "ex-303",
+          "type": "Duplicate driver name",
+          "severity": "Needs Review",
+          "item": "mixed_driver_packet_113.pdf",
+          "owner": "Network onboarding",
+          "impact": "Two carriers submitted similar driver names; reviewer chooses the correct affiliation."
+        }
+      ],
+      "profiles": [
+        {
+          "id": "car-mra",
+          "name": "Midwest Reefer Alliance",
+          "status": "Ready",
+          "readiness": 91,
+          "packet": "Network readiness profile generated",
+          "nextAction": "Continue review of securement proof exceptions."
+        },
+        {
+          "id": "car-ovcp",
+          "name": "Ohio Valley Carrier Partners",
+          "status": "Blocked",
+          "readiness": 64,
+          "packet": "Carrier readiness profile blocked",
+          "nextAction": "Request current insurance certificate."
+        },
+        {
+          "id": "drv-mra-032",
+          "name": "Sofia Ramirez",
+          "status": "Ready",
+          "readiness": 93,
+          "packet": "Driver proof profile updated",
+          "nextAction": "Attach POD and lumper receipt to settlement support."
+        }
+      ],
+      "audit": [
+        "Batch BVI-24077 received from aggregator partner intake bundle.",
+        "Carrier, driver, proof, and customer rule records classified separately.",
+        "Expired policy and missing proof exceptions routed to human review."
+      ]
+    },
+    {
+      "id": "messy-bulk",
+      "label": "Messy Bulk Cleanup",
+      "summary": "A mixed folder contains duplicates, wrong-driver files, expired certificates, unclear images, and proof records with missing pages.",
+      "batchId": "BVI-24102",
+      "source": "Unstructured email attachment bundle",
+      "receivedFiles": 214,
+      "drivers": 63,
+      "carriers": 7,
+      "autoClassified": 128,
+      "reviewItems": 86,
+      "readyProfiles": 22,
+      "blockedProfiles": 14,
+      "documents": [
+        {
+          "id": "doc-401",
+          "fileName": "scan_000231_driver_unknown.pdf",
+          "documentType": "Unmatched driver document",
+          "owner": "Unknown driver",
+          "driverId": "Unmatched",
+          "carrier": "Mixed source",
+          "confidence": 45,
+          "status": "Needs Review",
+          "ruleImpact": "Document cannot update any readiness profile until ownership is confirmed.",
+          "reviewReason": "Name is cropped and driver ID is missing.",
+          "requiredAction": "Assign to reviewer for owner match.",
+          "extracted": {
+            "name": "Unreadable",
+            "expires": "Unreadable",
+            "issuer": "Unknown",
+            "record": "Unmatched scanned document"
+          }
+        },
+        {
+          "id": "doc-402",
+          "fileName": "expired_mvr_may_2025.pdf",
+          "documentType": "MVR",
+          "owner": "Tyrell Brooks",
+          "driverId": "DRV-011",
+          "carrier": "BackOfficeFleet Demo Fleet",
+          "confidence": 96,
+          "status": "Blocked",
+          "ruleImpact": "Driver readiness remains blocked until current MVR is received.",
+          "reviewReason": "MVR date is outside the accepted review window.",
+          "requiredAction": "Request current MVR.",
+          "extracted": {
+            "name": "Tyrell Brooks",
+            "expires": "2025-05-31",
+            "issuer": "State record",
+            "record": "Expired motor vehicle report"
+          }
+        },
+        {
+          "id": "doc-403",
+          "fileName": "duplicate_med_card_elena_v2.pdf",
+          "documentType": "Medical card duplicate",
+          "owner": "Elena Lopez",
+          "driverId": "DRV-006",
+          "carrier": "BackOfficeFleet Demo Fleet",
+          "confidence": 99,
+          "status": "Duplicate",
+          "ruleImpact": "Reviewer confirms whether the newer file should supersede the current medical card.",
+          "reviewReason": "Duplicate file is newer than the existing record.",
+          "requiredAction": "Compare and select controlling record.",
+          "extracted": {
+            "name": "Elena Lopez",
+            "expires": "2026-12-19",
+            "issuer": "DOT medical examiner",
+            "record": "Duplicate medical card"
+          }
+        }
+      ],
+      "exceptions": [
+        {
+          "id": "ex-401",
+          "type": "Unmatched owner",
+          "severity": "Needs Review",
+          "item": "scan_000231_driver_unknown.pdf",
+          "owner": "Document intake review",
+          "impact": "No readiness profile is updated until ownership is confirmed."
+        },
+        {
+          "id": "ex-402",
+          "type": "Expired MVR",
+          "severity": "Blocked",
+          "item": "expired_mvr_may_2025.pdf",
+          "owner": "Safety review",
+          "impact": "Driver is blocked from ready status until current MVR arrives."
+        },
+        {
+          "id": "ex-403",
+          "type": "Duplicate controlling record",
+          "severity": "Needs Review",
+          "item": "duplicate_med_card_elena_v2.pdf",
+          "owner": "Driver document review",
+          "impact": "Reviewer chooses which record controls the DQF profile."
+        }
+      ],
+      "profiles": [
+        {
+          "id": "drv-011",
+          "name": "Tyrell Brooks",
+          "status": "Blocked",
+          "readiness": 58,
+          "packet": "Driver readiness profile blocked",
+          "nextAction": "Request current MVR."
+        },
+        {
+          "id": "drv-006",
+          "name": "Elena Lopez",
+          "status": "Needs Review",
+          "readiness": 90,
+          "packet": "Duplicate document review profile",
+          "nextAction": "Select controlling medical card record."
+        }
+      ],
+      "audit": [
+        "Batch BVI-24102 staged from unstructured email attachments.",
+        "Unmatched, expired, and duplicate files routed to review.",
+        "No uncertain document automatically updated readiness."
+      ]
     }
   ]
 }
