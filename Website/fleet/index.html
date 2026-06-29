@@ -106,6 +106,84 @@
         <article class="proof-card reveal"><h3>Release result</h3><p><a class="proof-link" href="/operations-record/#dispatch-release-1842">The dispatch decision</a> shows whether the load can move or remains held for document review.</p></article>
       </div>
     </section>
+    <section class="section" id="readiness-lifecycle">
+      <div class="section-head reveal"><p class="eyebrow">Trip readiness doctrine</p><h2>BOF reviews the load at the start, middle, and end of the trip.</h2><p>Readiness is not just document storage. BOF keeps the release gate, active-trip watch items, closing packet, owner, and consequence visible so dispatch, safety, billing, and settlements are not guessing from disconnected uploads.</p></div>
+      <div class="demo-panel reveal">
+        <p class="eyebrow">Release control standard</p>
+        <h3>No load releases until the driver, carrier, equipment, cargo, route, facility, and commercial packet are ready. No load closes until delivery proof, asset return, claim review, settlement, billing, and archive are complete.</h3>
+      </div>
+      <div class="card-grid">
+        <article class="card reveal"><span class="status review">Start</span><h3>Start readiness review</h3><p>Before release, BOF checks commercial terms, driver, carrier, equipment, cargo, facility, route, accessorials, and the final release decision.</p></article>
+        <article class="card reveal"><span class="status watch">Middle</span><h3>Middle readiness review</h3><p>While the load is active, BOF watches pickup proof, securement, route/HOS risk, equipment exceptions, accessorial capture, and claim signals.</p></article>
+        <article class="card reveal"><span class="status ready">End</span><h3>End readiness review</h3><p>Before close, BOF checks POD quality, cargo outcome, asset return, defect status, billing support, settlement readiness, archive, and next-load availability.</p></article>
+      </div>
+    </section>
+    <section class="section" id="start-readiness-review">
+      <div class="section-head reveal"><p class="eyebrow">Start readiness review</p><h2>Before the load releases, every gate gets an operating consequence.</h2><p>Equipment readiness stays separate from driver readiness. Load packet readiness stays separate from equipment readiness. BOF shows which gate is ready, which gate needs review, and which gate holds the load.</p></div>
+      <div class="table-wrap reveal">
+        <table>
+          <thead><tr><th>Gate</th><th>Evidence</th><th>Consequence</th><th>Decision</th></tr></thead>
+          <tbody>
+            <tr><td>Commercial readiness</td><td>Rate confirmation, load terms, customer instructions</td><td>Release waits if pricing terms, pickup instructions, or customer requirements conflict.</td><td><span class="status ready">Ready</span></td></tr>
+            <tr><td>Driver readiness</td><td>CDL, medical card, DQF, HOS availability</td><td>Driver cannot be assigned if credential, qualification, or available-hours review blocks the lane.</td><td><span class="status ready">Ready</span></td></tr>
+            <tr><td>Carrier readiness</td><td>Authority, insurance, carrier packet</td><td>Carrier stays in review if authority, insurance, or packet terms do not support the assignment.</td><td><span class="status ready">Ready</span></td></tr>
+            <tr><td>Equipment readiness</td><td>Pre-trip equipment photo set, last DVIR review, open defect clearance</td><td>Truck/trailer cannot release until tire, light, coupling, trailer ID, and visible defect checks clear.</td><td><span class="status review">Review</span></td></tr>
+            <tr><td>Cargo readiness</td><td>Cargo photo, seal photo, securement, BOL match</td><td>Load stays in review until cargo condition, seal, securement, and BOL details match the packet.</td><td><span class="status review">Review</span></td></tr>
+            <tr><td>Facility readiness</td><td>Pickup appointment, delivery appointment, pickup number, dock rules</td><td>Dispatch holds release if the driver cannot enter, load, or deliver inside the required facility rules.</td><td><span class="status watch">Watch</span></td></tr>
+            <tr><td>Route readiness</td><td>HOS feasibility, ETA risk, weather, parking, restrictions</td><td>Route moves to watch if available hours, restrictions, weather, or parking make the appointment fragile.</td><td><span class="status watch">Watch</span></td></tr>
+            <tr><td>Accessorial readiness</td><td>Lumper, detention, layover, scale, tolls, washout</td><td>Cost and proof items get named before release so billing and settlement do not become a later chase.</td><td><span class="status ready">Ready</span></td></tr>
+            <tr><td>Release decision</td><td>Ready, review, watch, or hold readiness record</td><td>Dispatch receives a clear answer before committing the load.</td><td><span class="status review">Review</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="proof-grid">
+        <article class="proof-card reveal"><h3>DVIR handling</h3><p>BOF uses last DVIR review and open defect clearance in the start packet. A no-defect confirmation may be recorded by company policy, but BOF does not present a formal DVIR as a universal requirement for every property-carrying load.</p></article>
+        <article class="proof-card reveal"><h3>Load packet readiness</h3><p>The release packet carries commercial terms, customer instructions, BOL expectations, accessorial rules, and required proof. That packet is separate from the equipment condition check.</p></article>
+      </div>
+    </section>
+    <section class="section" id="middle-readiness-review">
+      <div class="section-head reveal"><p class="eyebrow">Middle readiness review</p><h2>While the load is active, BOF keeps watch items attached to the trip.</h2><p>Middle readiness turns in-transit signals into operating decisions: ready, watch, review, or hold. The goal is to capture proof while the facts are fresh, not rebuild the trip after delivery.</p></div>
+      <div class="table-wrap reveal">
+        <table>
+          <thead><tr><th>Gate</th><th>Evidence</th><th>Consequence</th><th>Decision</th></tr></thead>
+          <tbody>
+            <tr><td>Pickup proof</td><td>BOL image, cargo condition, seal photo, loaded trailer photo</td><td>Load remains in review if pickup proof does not support the trip record.</td><td><span class="status review">Review</span></td></tr>
+            <tr><td>Securement confirmation</td><td>Cargo securement, straps, chains, tarps, Freight Brace if applicable</td><td>Securement issues move the trip to review until the evidence supports the cargo plan.</td><td><span class="status watch">Watch</span></td></tr>
+            <tr><td>Route and HOS watch</td><td>Driver hours, ETA, appointment window, route conditions</td><td>Load moves to watch if appointment timing cannot be met within available HOS.</td><td><span class="status watch">Watch</span></td></tr>
+            <tr><td>Equipment watch</td><td>Tire issue, warning light, roadside inspection, maintenance exception</td><td>Equipment exception capture keeps the trip visible until the safety or maintenance question clears.</td><td><span class="status watch">Watch</span></td></tr>
+            <tr><td>Facility exception</td><td>Late arrival, appointment change, gate issue, dock delay</td><td>Facility delays stay tied to owner action and accessorial proof instead of becoming loose notes.</td><td><span class="status review">Review</span></td></tr>
+            <tr><td>Accessorial capture</td><td>Lumper, detention, layover, scale ticket, tolls, washout</td><td>Billing and settlement wait later if the proof is not captured while the event is active.</td><td><span class="status ready">Ready</span></td></tr>
+            <tr><td>Claim watch</td><td>Seal mismatch, shortage, damage, rejected freight, temperature issue</td><td>Claim indicators trigger review before delivery proof, billing, or settlement closes the record.</td><td><span class="status review">Review</span></td></tr>
+            <tr><td>Cargo readiness</td><td>Cargo condition photo, seal photo, securement photo, BOL match</td><td>Load stays in review until cargo condition, securement, seal, and BOL match are confirmed.</td><td><span class="status review">Review</span></td></tr>
+            <tr><td>Dispatch consequence</td><td>Ready, watch, review, or hold operating note</td><td>Operations knows whether the trip keeps moving, needs watch, needs owner review, or must hold.</td><td><span class="status watch">Watch</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+    <section class="section" id="end-readiness-review">
+      <div class="section-head reveal"><p class="eyebrow">End readiness review</p><h2>The load does not close just because it delivered.</h2><p>BOF treats delivery as the start of the closeout review, not the end of the work. The trip closes only after proof, claim, settlement, billing, asset, and archive records support the final answer.</p></div>
+      <div class="table-wrap reveal">
+        <table>
+          <thead><tr><th>Gate</th><th>Evidence</th><th>Consequence</th><th>Decision</th></tr></thead>
+          <tbody>
+            <tr><td>POD quality review</td><td>Signature, timestamp, receiver name, BOL match</td><td>Billing waits if the POD does not prove the delivery event clearly.</td><td><span class="status review">Review</span></td></tr>
+            <tr><td>Cargo outcome</td><td>Clear, damaged, short, rejected, temperature issue</td><td>Claim review opens before the load is treated as clean.</td><td><span class="status watch">Watch</span></td></tr>
+            <tr><td>Asset return</td><td>Empty trailer photo, trailer condition, drop/yard confirmation</td><td>Equipment is not available for the next load until return and condition are visible.</td><td><span class="status review">Review</span></td></tr>
+            <tr><td>Post-trip defect review</td><td>Driver defect report, DVIR if required, maintenance notes, equipment photos</td><td>Next load is blocked if a safety defect remains unresolved.</td><td><span class="status blocked">Hold</span></td></tr>
+            <tr><td>Accessorial proof</td><td>Lumper, detention, layover, washout, tolls</td><td>Unproven accessorials stay out of billing and settlement until support is attached.</td><td><span class="status review">Review</span></td></tr>
+            <tr><td>Claim review</td><td>Seal mismatch, cargo damage, facility damage, incident evidence</td><td>Settlement and billing stay in review until claim exposure is documented or cleared.</td><td><span class="status watch">Watch</span></td></tr>
+            <tr><td>Settlement packet</td><td>Driver/carrier pay, deductions, reimbursements</td><td>Driver or carrier settlement does not release until proof and exceptions are reconciled.</td><td><span class="status review">Review</span></td></tr>
+            <tr><td>Billing and factoring packet</td><td>Invoice, rate confirmation, signed POD, lumper/detention proof, claim clearance</td><td>Billing waits until POD, accessorial, claim, and settlement records clear.</td><td><span class="status review">Review</span></td></tr>
+            <tr><td>Archive</td><td>Final trip file and audit trail</td><td>The load closes only after the record is complete enough for later review.</td><td><span class="status ready">Ready</span></td></tr>
+            <tr><td>Next-load readiness</td><td>Driver and equipment availability after closeout</td><td>The next assignment waits if driver, equipment, defect, or document status is not clear.</td><td><span class="status watch">Watch</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="proof-grid">
+        <article class="proof-card reveal"><h3>Post-trip defect review</h3><p>BOF captures post-trip DVIR if a defect exists, plus maintenance notes and equipment photos. If no defect is reported, BOF can record that company-policy confirmation without turning it into a universal DVIR claim.</p></article>
+        <article class="proof-card reveal"><h3>Billing/factoring readiness</h3><p>The invoice, rate confirmation, signed POD, lumper or detention proof, settlement notes, and claim clearance stay together so billing does not outrun the operating record.</p></article>
+      </div>
+    </section>
     <section class="section">
       <div class="section-head reveal"><p class="eyebrow">Primary load packet</p><h2><a class="proof-link" href="/operations-record/#bof-1842">TMS-LD-10482</a> carries the complete TMS-to-BOF release picture.</h2><p>Your team can follow one imported load without asking where the supporting record lives. This packet keeps the lane, driver, carrier, required documents, release gate, owner, and next action in one readable view.</p></div>
       <div class="paper reveal">
@@ -234,5 +312,4 @@
   <script src="/assets/js/site.js?v=1.46"></script>
 </body>
 </html>
-
 
