@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Scenario Walkthrough | BackOfficeFleet</title>
-  <meta name="description" content="Bring a real operating scenario to BOF and receive a structured walkthrough across readiness, documents, claims, settlements, operations, or business administration.">
+  <title>Request a BOF Assessment | BackOfficeFleet</title>
+  <meta name="description" content="Request a BOF Assessment around a real fleet, carrier network, document, claims, settlement, readiness, or business operations workflow.">
   <link rel="stylesheet" href="/assets/css/styles.css?v=1.48">
   <style>
     .scenario-hero { background: linear-gradient(135deg, rgba(5, 92, 72, 0.96), rgba(31, 103, 143, 0.92)); color: #fff; overflow: hidden; position: relative; }
@@ -59,7 +59,7 @@
           <a href="/capacity-intelligence/">Capacity Intelligence</a>
           <a href="/business-operations/">Business Operations</a>
           <a href="/customer-portal/">Customer Portal</a>
-          <a href="/scenario-walkthrough/">Scenario Walkthrough</a>
+          <a href="/scenario-walkthrough/">BOF Assessment</a>
           <a href="/demo-paths/">Assessment Paths</a>
         </div>
       </div>
@@ -109,10 +109,10 @@
           <a href="/animated-demo/">Animated Demo</a>
           <a href="/animated-demo-business/">Business Animated Demo</a>
           <a href="/animated-demo-aggregator/">Aggregator Animated Demo</a>
-          <a href="/scenario-walkthrough/">Scenario Walkthrough</a>
+          <a href="/scenario-walkthrough/">BOF Assessment</a>
           <a href="/demo-paths/">Assessment Paths</a>
           <a href="/interactive-demo/start/">Try Demo</a>
-          <a href="/book-demo/">Book Demo</a>
+          <a href="/founding-fleet/apply/">Founding Member Application</a>
         </div>
       </div>
       <div class="nav-menu" data-nav-menu>
@@ -123,36 +123,43 @@
           <a href="/trust-governance/">Trust &amp; Governance</a>
           <a href="/founding-fleet/">Founding Fleet</a>
           <a href="/demo-paths/">Demo Paths</a>
-          <a href="/book-demo/">Book Working Session</a>
+          <a href="/scenario-walkthrough/">BOF Assessment</a>
         </div>
       </div>
     </nav>
-    <a class="header-cta" href="/book-demo/">Book Demo</a>
+    <a class="header-cta" href="/founding-fleet/apply/">Apply to Become a Founding Fleet Member</a>
   </header>
 
   <main data-scenario-intake>
     <section class="scenario-hero">
       <div class="scenario-hero-inner">
         <div class="reveal">
-          <p class="eyebrow">Scenario Walkthrough</p>
-          <h1>Book a Scenario Walkthrough</h1>
-          <p>Bring a real fleet, carrier network, claims, settlement, onboarding, compliance, or business operations scenario. BOF will walk through how the platform would manage the workflow.</p>
-          <div class="actions"><a class="button light" href="#scenario-intake">Describe your scenario below.</a><a class="button secondary" href="/book-demo/">Book Demo</a></div>
+          <p class="eyebrow">BOF Assessment</p>
+          <h1>Request a BOF Assessment</h1>
+          <p>Submit a real fleet, carrier network, claims, settlement, onboarding, compliance, or business operations workflow so BOF can review where the records, owners, blockers, and next actions need structure.</p>
+          <div class="actions"><a class="button light" href="#scenario-intake">Start your assessment request</a><a class="button secondary" href="/founding-fleet/apply/">Apply to Become a Founding Fleet Member</a></div>
         </div>
         <aside class="scenario-prompt-card reveal">
           <p class="eyebrow">Bring the real problem</p>
-          <h2>BOF will show how the workflow would be handled.</h2>
-          <p>Use this intake to summarize the operating pressure before the walkthrough: who is involved, what is blocked, how it is handled today, and which BOF path should be reviewed first.</p>
-          <div class="scenario-helper">Clicking Send Scenario to BOF sends this summary to demo@backofficefleet.com for review before your walkthrough. No database or account is created.</div>
+          <h2>BOF will review the workflow before the first conversation.</h2>
+          <p>Use this intake to summarize the operating pressure: who is involved, what is blocked, how it is handled today, and which BOF path should be reviewed first.</p>
+          <div class="scenario-helper">Clicking Request a BOF Assessment sends this summary to demo@backofficefleet.com for review before the first assessment conversation. No database or account is created.</div>
+          <ul class="check-list">
+            <li>Request a BOF Assessment.</li>
+            <li>Complete the assessment form.</li>
+            <li>BOF reviews the submission.</li>
+            <li>Qualified fleets may be invited to a BOF Assessment Review or Fleet Operations Review.</li>
+            <li>Strong candidates may apply or be invited to become Founding Fleet Members.</li>
+          </ul>
         </aside>
       </div>
     </section>
 
     <section class="section" id="scenario-intake">
       <div class="section-head reveal">
-        <p class="eyebrow">Scenario intake</p>
-        <h2>Describe the operating problem you want BOF to walk through.</h2>
-        <p>Submit your scenario to BOF so our team can review it before your walkthrough.</p>
+        <p class="eyebrow">Assessment intake</p>
+        <h2>Describe the operating problem you want BOF to assess.</h2>
+        <p>Request a BOF Assessment so our team can review your fleet workflow before the first conversation.</p>
       </div>
       <div class="scenario-intake-layout">
         <form class="scenario-form-card reveal" data-scenario-form action="/scenario-walkthrough/submit.php" method="post" novalidate>
@@ -184,7 +191,7 @@
             <div class="scenario-field"><label for="scenario-drivers">Number of drivers</label><input id="scenario-drivers" name="drivers" type="number" min="0" inputmode="numeric"></div>
             <div class="scenario-field scenario-wide"><label for="scenario-participating-carriers">Number of participating carriers or fleets, if applicable</label><input id="scenario-participating-carriers" name="participatingCarriers" type="number" min="0" inputmode="numeric"></div>
             <div class="scenario-field scenario-wide">
-              <span class="scenario-checkbox-title">Scenario Category</span>
+              <span class="scenario-checkbox-title">Assessment Focus</span>
               <div class="scenario-checkbox-grid">
                 <label class="scenario-checkbox"><input type="checkbox" name="scenarioCategory" value="Driver onboarding"><span>Driver onboarding</span></label>
                 <label class="scenario-checkbox"><input type="checkbox" name="scenarioCategory" value="Compliance readiness"><span>Compliance readiness</span></label>
@@ -200,7 +207,7 @@
                 <label class="scenario-checkbox"><input type="checkbox" name="scenarioCategory" value="Other"><span>Other</span></label>
               </div>
             </div>
-            <div class="scenario-field scenario-wide"><label for="scenario-description">Scenario Description *</label><textarea id="scenario-description" name="scenarioDescription" placeholder="Describe the operating problem you want BOF to walk through."></textarea></div>
+            <div class="scenario-field scenario-wide"><label for="scenario-description">Assessment Description *</label><textarea id="scenario-description" name="scenarioDescription" placeholder="Describe the operating problem you want BOF to assess."></textarea></div>
             <div class="scenario-field scenario-wide"><label for="scenario-current-process">Current Process</label><textarea id="scenario-current-process" name="currentProcess" placeholder="How do you handle this today?"></textarea></div>
             <div class="scenario-field">
               <label for="scenario-urgency">Urgency</label>
@@ -225,14 +232,14 @@
         </form>
 
         <aside class="scenario-summary-card reveal">
-          <p class="eyebrow">Generated scenario summary</p>
+          <p class="eyebrow">Generated assessment summary</p>
           <h2>Review the handoff before sending.</h2>
-          <p class="scenario-helper">Your scenario will be sent to BOF for review before the walkthrough. You can also copy the summary for your notes.</p>
+          <p class="scenario-helper">Your assessment request will be sent to BOF for review before the first conversation. You can also copy the summary for your notes.</p>
           <div class="scenario-summary-grid" data-scenario-summary></div>
           <div class="actions">
-            <button class="button secondary" type="button" data-copy-summary>Copy Scenario Summary</button>
+            <button class="button secondary" type="button" data-copy-summary>Copy Assessment Summary</button>
             <button class="button secondary" type="button" data-clear-scenario>Clear Form</button>
-            <button class="button primary" type="button" data-send-scenario>Send Scenario to BOF</button>
+            <button class="button primary" type="button" data-send-scenario>Request a BOF Assessment</button>
           </div>
           <p class="scenario-status" data-scenario-status aria-live="polite"></p>
         </aside>
@@ -242,26 +249,26 @@
     <section class="section" id="recommended-demo-path">
       <div class="scenario-path-card reveal">
         <p class="eyebrow">Recommended demo path</p>
-        <h2>BOF will route the walkthrough toward the pressure you described.</h2>
-        <p>The recommended links update as the organization type, scenario category, and preferred demo path change.</p>
+        <h2>BOF will route the assessment toward the pressure you described.</h2>
+        <p>The recommended links update as the organization type, assessment focus, and preferred demo path change.</p>
         <div class="scenario-recommended-links" data-recommended-paths></div>
       </div>
     </section>
 
     <section class="section">
-      <div class="section-head reveal"><p class="eyebrow">What to bring</p><h2>A stronger walkthrough starts with one real operating question.</h2><p>You do not need a perfect packet before the call. The useful starting point is the current problem, the records involved, the follow-up owner, and what happens if the issue stays unresolved.</p></div>
+      <div class="section-head reveal"><p class="eyebrow">What to bring</p><h2>A stronger assessment starts with one real operating question.</h2><p>You do not need a perfect packet before the call. The useful starting point is the current problem, the records involved, the follow-up owner, and what happens if the issue stays unresolved. After BOF reviews the form, qualified fleets may be invited to a focused BOF Assessment Review or Fleet Operations Review.</p></div>
       <div class="scenario-next-grid">
-        <article class="proof-card reveal"><h3>Operations scenario</h3><p>Bring a load, document gate, driver readiness issue, proof packet, exception, or backhaul question that affects daily work.</p><a class="route-chip" href="/animated-demo/">Operations Demo</a></article>
-        <article class="proof-card reveal"><h3>Business operations scenario</h3><p>Bring onboarding, payroll, insurance, factoring, settlement, claims, or accounting coordination pressure.</p><a class="route-chip" href="/animated-demo-business/">Business Demo</a></article>
-        <article class="proof-card reveal"><h3>Carrier network scenario</h3><p>Bring a multi-carrier readiness, capacity visibility, claims, document, settlement, or network onboarding problem.</p><a class="route-chip" href="/animated-demo-aggregator/">Aggregator Demo</a></article>
+        <article class="proof-card reveal"><h3>Operations workflow</h3><p>Bring a load, document gate, driver readiness issue, proof packet, exception, or backhaul question that affects daily work.</p><a class="route-chip" href="/animated-demo/">Operations Demo</a></article>
+        <article class="proof-card reveal"><h3>Business operations workflow</h3><p>Bring onboarding, payroll, insurance, factoring, settlement, claims, or accounting coordination pressure.</p><a class="route-chip" href="/animated-demo-business/">Business Demo</a></article>
+        <article class="proof-card reveal"><h3>Carrier network workflow</h3><p>Bring a multi-carrier readiness, capacity visibility, claims, document, settlement, or network onboarding problem.</p><a class="route-chip" href="/animated-demo-aggregator/">Aggregator Demo</a></article>
       </div>
     </section>
   </main>
 
   <section class="cta-band">
     <div class="cta-inner">
-      <div><p class="eyebrow">Next step</p><h2>Bring the scenario into a BOF walkthrough.</h2><p>After completing the summary, submit it to BOF so the conversation starts with the real workflow.</p></div>
-      <a class="button light" href="/book-demo/">Book Demo</a>
+      <div><p class="eyebrow">Next step</p><h2>Bring the assessment into BOF.</h2><p>After completing the summary, send it to BOF so the assessment starts with the real workflow.</p></div>
+      <a class="button light" href="/founding-fleet/apply/">Apply to Become a Founding Fleet Member</a>
     </div>
   </section>
   <footer class="site-footer"><div class="footer-inner"><strong>BackOfficeFleet</strong><span>Operational infrastructure for fleets, carrier networks, and aggregators.</span><a href="/trust-governance/">Trust &amp; Governance</a></div></footer>

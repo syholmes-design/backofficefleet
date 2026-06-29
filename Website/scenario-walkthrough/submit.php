@@ -44,7 +44,7 @@ function post_data(): array
     if (strlen($raw) > MAX_BODY_BYTES) {
         respond(413, [
             'ok' => false,
-            'message' => 'The scenario summary is too long. Please shorten the description and try again.'
+            'message' => 'The assessment summary is too long. Please shorten the assessment description and try again.'
         ]);
     }
 
@@ -54,7 +54,7 @@ function post_data(): array
         if (!is_array($decoded)) {
             respond(400, [
                 'ok' => false,
-                'message' => 'BOF could not read the scenario details. Please review the form and try again.'
+                'message' => 'BOF could not read the assessment details. Please review the assessment form and try again.'
             ]);
         }
         return $decoded;
@@ -80,7 +80,7 @@ function checked_categories(array $data): array
 function scenario_summary(array $data, array $categories): string
 {
     $lines = [
-        'BOF Scenario Walkthrough Request',
+        'BOF BOF Assessment Request',
         '',
         'Prospect name: ' . clean_text($data['name'] ?? '', 160),
         'Company: ' . clean_text($data['company'] ?? '', 180),
@@ -88,14 +88,14 @@ function scenario_summary(array $data, array $categories): string
         'Phone: ' . clean_text($data['phone'] ?? '', 80),
         'Organization type: ' . clean_text($data['organizationType'] ?? '', 120),
         'Size: ' . clean_text($data['trucks'] ?? 'Not provided', 40) . ' trucks / ' . clean_text($data['drivers'] ?? 'Not provided', 40) . ' drivers / ' . clean_text($data['participatingCarriers'] ?? 'Not applicable', 40) . ' participating carriers or fleets',
-        'Scenario category: ' . (count($categories) ? implode(', ', $categories) : 'Not selected'),
-        'Scenario description: ' . clean_text($data['scenarioDescription'] ?? '', 2200),
+        'Assessment focus: ' . (count($categories) ? implode(', ', $categories) : 'Not selected'),
+        'Assessment description: ' . clean_text($data['scenarioDescription'] ?? '', 2200),
         'Current process: ' . clean_text($data['currentProcess'] ?? '', 2200),
         'Urgency: ' . clean_text($data['urgency'] ?? '', 120),
         'Preferred demo path: ' . clean_text($data['preferredDemoPath'] ?? '', 120),
         'Recommended BOF demo path: ' . clean_text($data['recommendedDemoPath'] ?? '', 120),
         '',
-        'Requested next step: BOF should use this scenario for a walkthrough and show how the workflow would be handled.',
+        'Requested next step: BOF should use this assessment request to review how the workflow would be handled.',
         '',
         'Submission source: backofficefleet.com/scenario-walkthrough'
     ];
@@ -105,7 +105,7 @@ function scenario_summary(array $data, array $categories): string
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     respond(405, [
         'ok' => false,
-        'message' => 'Please submit the scenario from the BOF Scenario Walkthrough page.'
+        'message' => 'Please submit the request from the BOF Assessment page.'
     ]);
 }
 
@@ -114,7 +114,7 @@ $data = post_data();
 if (clean_text($data['website'] ?? '', 120) !== '') {
     respond(200, [
         'ok' => true,
-        'message' => 'Scenario received. Thank you.'
+        'message' => 'Assessment request received. Thank you.'
     ]);
 }
 
@@ -123,7 +123,7 @@ $elapsedSeconds = $startedAt > 0 ? (time() - ($startedAt / 1000)) : 0;
 if ($elapsedSeconds > 0 && $elapsedSeconds < MIN_FORM_AGE_SECONDS) {
     respond(429, [
         'ok' => false,
-        'message' => 'Please take a moment to review the scenario summary before sending.'
+        'message' => 'Please take a moment to review the assessment summary before sending.'
     ]);
 }
 if ($elapsedSeconds > MAX_FORM_AGE_SECONDS) {
@@ -138,7 +138,7 @@ $required = [
     'company' => 'company',
     'email' => 'email',
     'organizationType' => 'organization type',
-    'scenarioDescription' => 'scenario description'
+    'scenarioDescription' => 'assessment description'
 ];
 $missing = [];
 foreach ($required as $field => $label) {
@@ -149,7 +149,7 @@ foreach ($required as $field => $label) {
 if (count($missing)) {
     respond(422, [
         'ok' => false,
-        'message' => 'Please complete ' . implode(', ', $missing) . ' before sending the scenario.'
+        'message' => 'Please complete ' . implode(', ', $missing) . ' before sending the assessment request.'
     ]);
 }
 
@@ -157,20 +157,20 @@ $email = clean_email($data['email'] ?? '');
 if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
     respond(422, [
         'ok' => false,
-        'message' => 'Please enter a valid email address before sending the scenario.'
+        'message' => 'Please enter a valid email address before sending the assessment request.'
     ]);
 }
 
 $categories = checked_categories($data);
 $company = clean_text($data['company'] ?? 'Company', 120);
-$subject = 'BOF Scenario Walkthrough Request - ' . $company;
+$subject = 'BOF BOF Assessment Request - ' . $company;
 $body = scenario_summary($data, $categories);
 
 $headers = [
-    'From: BOF Scenario Walkthrough <' . SCENARIO_FROM . '>',
-    'Reply-To: ' . clean_text($data['name'] ?? 'Scenario Prospect', 120) . ' <' . $email . '>',
+    'From: BOF BOF Assessment <' . SCENARIO_FROM . '>',
+    'Reply-To: ' . clean_text($data['name'] ?? 'Assessment Prospect', 120) . ' <' . $email . '>',
     'Content-Type: text/plain; charset=UTF-8',
-    'X-Mailer: BOF Scenario Walkthrough'
+    'X-Mailer: BOF BOF Assessment'
 ];
 
 $sent = @mail(SCENARIO_RECIPIENT, $subject, wordwrap($body, 78), implode("\r\n", $headers));
@@ -178,11 +178,11 @@ $sent = @mail(SCENARIO_RECIPIENT, $subject, wordwrap($body, 78), implode("\r\n",
 if (!$sent) {
     respond(500, [
         'ok' => false,
-        'message' => 'BOF could not send the scenario right now. Your form data is still here; please try again or contact demo@backofficefleet.com.'
+        'message' => 'BOF could not send the assessment request right now. Your form data is still here; please try again or contact demo@backofficefleet.com.'
     ]);
 }
 
 respond(200, [
     'ok' => true,
-    'message' => 'Scenario sent to BOF. We will use it to prepare your walkthrough.'
+    'message' => 'Assessment request sent to BOF. We will review it before any BOF Assessment Review or Fleet Operations Review.'
 ]);

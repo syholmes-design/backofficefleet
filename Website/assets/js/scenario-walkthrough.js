@@ -111,7 +111,7 @@
     var categories = checkedValues("scenarioCategory");
     var pathKey = getPathKey();
     return [
-      "BOF Scenario Walkthrough Request",
+      "BOF BOF Assessment Request",
       "",
       "Prospect name: " + (field("name") || "Not provided"),
       "Company: " + (field("company") || "Not provided"),
@@ -119,14 +119,14 @@
       "Phone: " + (field("phone") || "Not provided"),
       "Organization type: " + (field("organizationType") || "Not provided"),
       "Size: " + getSizeLine(),
-      "Scenario category: " + (categories.length ? categories.join(", ") : "Not selected"),
-      "Scenario description: " + (field("scenarioDescription") || "Not provided"),
+      "Assessment focus: " + (categories.length ? categories.join(", ") : "Not selected"),
+      "Assessment description: " + (field("scenarioDescription") || "Not provided"),
       "Current process: " + (field("currentProcess") || "Not provided"),
       "Urgency: " + (field("urgency") || "Not provided"),
       "Preferred demo path: " + (field("preferredDemoPath") || "Not provided"),
       "Recommended BOF demo path: " + getPathLabel(pathKey),
       "",
-      "Requested next step: BOF should use this scenario for a walkthrough and show how the workflow would be handled."
+      "Requested next step: BOF should use this assessment request to review how the workflow would be handled."
     ].join("\n");
   }
 
@@ -165,8 +165,8 @@
       '<div class="scenario-summary-row"><span>Phone</span><strong>' + escapeHtml(field("phone") || "Not provided") + "</strong></div>",
       '<div class="scenario-summary-row"><span>Organization type</span><strong>' + escapeHtml(field("organizationType") || "Not provided") + "</strong></div>",
       '<div class="scenario-summary-row"><span>Size</span><strong>' + escapeHtml(sizeLine) + "</strong></div>",
-      '<div class="scenario-summary-row"><span>Scenario category</span><strong>' + escapeHtml(categories.length ? categories.join(", ") : "Not selected") + "</strong></div>",
-      '<div class="scenario-summary-row scenario-summary-wide"><span>Scenario description</span><strong>' + escapeHtml(field("scenarioDescription") || "Not provided") + "</strong></div>",
+      '<div class="scenario-summary-row"><span>Assessment focus</span><strong>' + escapeHtml(categories.length ? categories.join(", ") : "Not selected") + "</strong></div>",
+      '<div class="scenario-summary-row scenario-summary-wide"><span>Assessment description</span><strong>' + escapeHtml(field("scenarioDescription") || "Not provided") + "</strong></div>",
       '<div class="scenario-summary-row scenario-summary-wide"><span>Current process</span><strong>' + escapeHtml(field("currentProcess") || "Not provided") + "</strong></div>",
       '<div class="scenario-summary-row"><span>Urgency</span><strong>' + escapeHtml(field("urgency") || "Not provided") + "</strong></div>",
       '<div class="scenario-summary-row"><span>Preferred demo path</span><strong>' + escapeHtml(field("preferredDemoPath") || "Not provided") + "</strong></div>",
@@ -198,7 +198,7 @@
       ["company", "company"],
       ["email", "email"],
       ["organizationType", "organization type"],
-      ["scenarioDescription", "scenario description"]
+      ["scenarioDescription", "assessment description"]
     ];
     return required.filter(function (item) {
       return !field(item[0]);
@@ -210,11 +210,11 @@
   function validateRequired() {
     var missing = getMissingRequired();
     if (missing.length) {
-      setStatus("Please complete " + missing.join(", ") + " before sending the scenario.", "warning");
+      setStatus("Please complete " + missing.join(", ") + " before sending the assessment request.", "warning");
       return false;
     }
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(field("email"))) {
-      setStatus("Please enter a valid email address before sending the scenario.", "warning");
+      setStatus("Please enter a valid email address before sending the assessment request.", "warning");
       return false;
     }
     return true;
@@ -224,7 +224,7 @@
     var text = getSummaryText();
     if (navigator.clipboard && navigator.clipboard.writeText) {
       navigator.clipboard.writeText(text).then(function () {
-        setStatus("Scenario summary copied.", "success");
+        setStatus("Assessment summary copied.", "success");
       }).catch(function () {
         fallbackCopy(text);
       });
@@ -243,7 +243,7 @@
     textarea.select();
     try {
       document.execCommand("copy");
-      setStatus("Scenario summary copied.", "success");
+      setStatus("Assessment summary copied.", "success");
     } catch (error) {
       setStatus("Copy did not complete. Select the summary text and copy it manually.", "warning");
     }
@@ -253,13 +253,13 @@
   function setSending(isSending) {
     if (!sendButton) return;
     sendButton.disabled = !!isSending;
-    sendButton.textContent = isSending ? "Sending Scenario..." : "Send Scenario to BOF";
+    sendButton.textContent = isSending ? "Sending Assessment..." : "Request a BOF Assessment";
   }
 
   function sendScenario() {
     if (!validateRequired()) return;
     setSending(true);
-    setStatus("Sending scenario summary to BOF...", "neutral");
+    setStatus("Sending assessment request to BOF...", "neutral");
 
     fetch(endpointUrl, {
       method: "POST",
@@ -278,14 +278,14 @@
           data = { ok: false, message: "BOF could not read the server response. Please try again or email demo@backofficefleet.com." };
         }
         if (!response.ok || !data.ok) {
-          throw new Error(data.message || "BOF could not send the scenario. Please try again.");
+          throw new Error(data.message || "BOF could not send the assessment request. Please try again.");
         }
         return data;
       });
     }).then(function (data) {
-      setStatus(data.message || "Scenario sent to BOF. We will use it to prepare your walkthrough.", "success");
+      setStatus(data.message || "Assessment request sent to BOF. We will review it before any BOF Assessment Review or Fleet Operations Review.", "success");
     }).catch(function (error) {
-      setStatus(error.message || "BOF could not send the scenario. Your form data is still here; please try again.", "error");
+      setStatus(error.message || "BOF could not send the assessment request. Your form data is still here; please try again.", "error");
     }).finally(function () {
       setSending(false);
     });
@@ -294,7 +294,7 @@
   function clearForm() {
     form.reset();
     renderSummary();
-    setStatus("Form cleared. Add a real operating scenario when you are ready.", "neutral");
+    setStatus("Form cleared. Add the workflow you want BOF to assess when you are ready.", "neutral");
   }
 
   form.addEventListener("input", renderSummary);

@@ -28,9 +28,9 @@
     },
     {
       "step": 5,
-      "title": "Submit a real scenario",
+      "title": "Request an Aggregator Assessment",
       "route": "/scenario-walkthrough/",
-      "talkTrack": "Ask the prospect to bring one real network scenario so BOF can prepare a grounded walkthrough."
+      "talkTrack": "Ask the prospect to request an Aggregator Assessment around one real network workflow so BOF can prepare a focused review."
     }
   ],
   "pilot10FleetDescription": "Use a 10-fleet pilot when the aggregator already has a mature network and wants a broader readiness review across multiple carrier profiles, driver records, document packets, proof requirements, claims exposure, and settlement-support needs.",

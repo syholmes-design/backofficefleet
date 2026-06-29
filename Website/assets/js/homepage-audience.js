@@ -23,7 +23,7 @@
       demoHref: "/fleet-operator-offer/",
       demoLabel: "Open fleet path",
       scenarioHref: "/scenario-walkthrough/",
-      scenarioLabel: "Bring BOF a scenario"
+      scenarioLabel: "Request a BOF assessment"
     },
     aggregators: {
       kicker: "Aggregators",
@@ -63,7 +63,7 @@
       demoHref: "/private-fleet-offer/",
       demoLabel: "Open private fleet path",
       scenarioHref: "/scenario-walkthrough/",
-      scenarioLabel: "Book a working session"
+      scenarioLabel: "Request a BOF assessment"
     },
     government: {
       kicker: "Government Entities",
@@ -83,7 +83,7 @@
       demoHref: "/government/",
       demoLabel: "Review government path",
       scenarioHref: "/scenario-walkthrough/",
-      scenarioLabel: "Bring BOF a scenario"
+      scenarioLabel: "Request a BOF assessment"
     },
     vault: {
       kicker: "The Vault",
