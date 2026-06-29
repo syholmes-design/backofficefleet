@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Command Center | BackOfficeFleet</title>
   <meta name="description" content="Owner command center for TMS-imported loads, BOF readiness checks, documents, drivers, carriers, and next actions.">
-  <link rel="stylesheet" href="/assets/css/styles.css?v=1.48">
+  <link rel="stylesheet" href="/assets/css/styles.css?v=1.49">
 </head>
 <body>
   <header class="site-header">
@@ -92,9 +92,9 @@
   </header>
   <main>
     <section class="section page-hero">
-      <div class="reveal"><p class="eyebrow">Command center</p><h1>The owner sees which TMS imports can release, which are blocked, and who owns the fix.</h1><p>This is the first operating view after a TMS load enters BOF: dispatch readiness, document health, driver availability, carrier packet status, risk, and next action in one place. <a class="proof-link" href="/operations-record/#bof-1842">TMS-LD-10482</a> is close, but BOF shows what still needs review and who clears it.</p><div class="actions"><a class="button primary" href="/dispatch/">Review dispatch consequence &rarr;</a><a class="button secondary" href="/executive-demo/">Start Executive Demo</a><a class="button secondary" href="/operational-intelligence/">Operational Intelligence</a><a class="button secondary" href="/integrations/partner-tms/">Back to partner workflow</a></div></div>
+      <div class="reveal"><p class="eyebrow">Command center</p><h1>The owner sees which TMS imports can release, which are blocked, and who owns the fix.</h1><p>This is the first operating view after a TMS load enters BOF: dispatch readiness, load packet readiness, driver availability, carrier packet status, equipment readiness, risk, and next action in one place. <a class="proof-link" href="/operations-record/#bof-1842">TMS-LD-10482</a> is close, but BOF shows what still needs review and who clears it.</p><div class="actions"><a class="button primary" href="/dispatch/">Review dispatch consequence &rarr;</a><a class="button secondary" href="/executive-demo/">Start Executive Demo</a><a class="button secondary" href="/operational-intelligence/">Operational Intelligence</a><a class="button secondary" href="/integrations/partner-tms/">Back to partner workflow</a></div></div>
       <div class="visual-stage reveal" aria-label="BOF command-center illustration">
-        <img class="scene-illustration" src="/assets/images/animations/heroes/hero-dashboard-command.webp" data-static-src="/assets/images/illustrations/command-center-illustration.webp" alt="Fleet operations team reviewing dashboard, route status, document readiness, and truck availability">
+        <img class="scene-illustration" src="/assets/images/animations/heroes/hero-dashboard-command.webp" data-static-src="/assets/images/illustrations/command-center-illustration.webp" alt="Fleet operations team reviewing dashboard, route status, load packet readiness, and truck availability">
         <div class="scene-label"><span>Owner view</span><strong>Next action visible</strong></div>
       </div>
     </section>
@@ -102,7 +102,7 @@
       <div class="proof-grid">
         <article class="proof-card reveal"><h3>Imported load</h3><p>TMS supplies the load, lane, assigned driver, carrier, stops, and current TMS status for <a class="proof-link" href="/operations-record/#bof-1842">TMS-LD-10482</a>.</p></article>
         <article class="proof-card reveal"><h3>BOF-owned records</h3><p><a class="proof-link" href="/operations-record/#drv-2048">Driver file</a>, <a class="proof-link" href="/operations-record/#car-118">carrier packet</a>, <a class="proof-link" href="/operations-record/#insurance-118">insurance</a>, and <a class="proof-link" href="/operations-record/#rate-confirmation-1842">rate confirmation</a> support the BOF release decision.</p></article>
-        <article class="proof-card reveal"><h3>Waiting record</h3><p><a class="proof-link" href="/operations-record/#bol-review-1842">BOL image review</a> is one document input inside the BOF-RR-10482 readiness decision.</p></article>
+        <article class="proof-card reveal"><h3>Load packet readiness</h3><p><a class="proof-link" href="/operations-record/#bol-review-1842">BOL image review</a>, rate confirmation, appointment details, and the dispatch release note are checked as the load packet, not as a generic document folder.</p></article>
         <article class="proof-card reveal"><h3>Owner</h3><p>S. Turner owns the document review, so the load does not sit in a vague dashboard state.</p></article>
         <article class="proof-card reveal"><h3>Next action</h3><p><a class="proof-link" href="/operations-record/#dispatch-release-1842">Choose Ready, Conditional, or Hold</a> for <a class="proof-link" href="/operations-record/#bof-1842">TMS-LD-10482</a> after BOF reviews the readiness packet.</p></article>
       </div>
@@ -127,7 +127,7 @@
         </ul>
       </div>
       <div class="proof-grid">
-        <article class="proof-card reveal"><h3>Release impact in view</h3><p>BOL, POD plan, insurance, driver file, and carrier packet status are tied to the trip before release, so the owner sees what still affects dispatch confidence.</p><span class="route-chip warning">Review</span></article>
+        <article class="proof-card reveal"><h3>Release impact in view</h3><p>BOL, POD plan, insurance, driver file, carrier packet, route/HOS, cargo proof, and equipment readiness are tied to the trip before release, so the owner sees what still affects dispatch confidence.</p><span class="route-chip warning">Review</span></article>
         <article class="proof-card reveal"><h3>Financial detail stays focused</h3><p>The first view shows release consequence and owner action without pulling the team into accounting detail before it matters.</p><span class="route-chip danger">Later review</span></article>
       </div>
     </section>
@@ -226,9 +226,8 @@
   </main>
   <section class="cta-band"><div class="cta-inner"><div><p class="eyebrow">Next record</p><h2>Show the dispatch decision behind the command center.</h2><p>Your team should see what changes a load from ready to watch, review, or hold before anyone trusts the release.</p></div><a class="button light" href="/dispatch/">Open dispatch &rarr;</a></div></section>
   <footer class="site-footer"><div class="footer-inner"><strong>BackOfficeFleet</strong><span>Owner command center.</span><a href="/trust-governance/">Trust &amp; Governance</a></div></footer>
-  <script src="/assets/js/site.js?v=1.46"></script>
+  <script src="/assets/js/site.js?v=1.49"></script>
 </body>
 </html>
-
 
 

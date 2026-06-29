@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Load Readiness | BackOfficeFleet</title>
   <meta name="description" content="BOF load readiness view showing one TMS imported load from driver, carrier, and document review through release decision and next action.">
-  <link rel="stylesheet" href="/assets/css/styles.css?v=1.48">
+  <link rel="stylesheet" href="/assets/css/styles.css?v=1.49">
 </head>
 <body>
   <header class="site-header">
@@ -92,7 +92,7 @@
   </header>
   <main>
     <section class="section page-hero">
-      <div class="reveal"><p class="eyebrow">Load readiness</p><h1>One TMS import moves from BOF readiness review to release decision.</h1><p><a class="proof-link" href="/operations-record/#bof-1842">TMS-LD-10482</a> ties driver status, carrier packet status, document readiness, lane review, risk, and next action to the same load. It is nearly ready, but still held to a clear BOF release standard before dispatch moves it.</p><div class="actions"><a class="button primary" href="/demo/tms-release-review/">Try release review &rarr;</a><a class="button secondary" href="/documents/">Back to documents</a></div></div>
+      <div class="reveal"><p class="eyebrow">Load readiness</p><h1>One TMS import moves from BOF readiness review to release decision.</h1><p><a class="proof-link" href="/operations-record/#bof-1842">TMS-LD-10482</a> ties driver status, carrier packet status, load packet readiness, equipment readiness, lane review, risk, and next action to the same load. It is nearly ready, but still held to a clear BOF release standard before dispatch moves it.</p><div class="actions"><a class="button primary" href="/demo/tms-release-review/">Try release review &rarr;</a><a class="button secondary" href="/documents/">Back to documents</a></div></div>
       <div class="visual-stage reveal" aria-label="BOF load-readiness operations illustration">
         <img class="scene-illustration" src="/assets/images/animations/heroes/hero-fleet-flow.webp" data-static-src="/assets/images/illustrations/fleet-flow-illustration.webp" alt="Isometric fleet terminal workflow showing a truck load moving from readiness through document review to release">
         <div class="proof-strip"><span>Ready</span><span>Records</span><span>Release</span></div>
@@ -207,7 +207,7 @@
             <tr><td>Commercial terms</td><td><span class="status ready">Ready</span></td><td><a class="proof-link" href="/operations-record/#rate-confirmation-1842">Rate confirmation</a></td><td>Lane and appointment details match the load packet.</td></tr>
             <tr><td>Driver readiness</td><td><span class="status ready">Ready</span></td><td><a class="proof-link" href="/operations-record/#drv-2048">Driver file</a> and <a class="proof-link" href="/operations-record/#medical-card-2048">medical card</a></td><td>Driver is eligible for this assignment.</td></tr>
             <tr><td>Carrier packet</td><td><span class="status ready">Ready</span></td><td><a class="proof-link" href="/operations-record/#car-118">Carrier packet</a> and <a class="proof-link" href="/operations-record/#insurance-118">insurance certificate</a></td><td>Carrier does not block the release decision.</td></tr>
-            <tr><td>Document readiness</td><td><span class="status review">Review</span></td><td><a class="proof-link" href="/operations-record/#bol-review-1842">Bill of lading image</a></td><td>Final release waits on image confirmation.</td></tr>
+            <tr><td>Load packet readiness</td><td><span class="status review">Review</span></td><td><a class="proof-link" href="/operations-record/#bol-review-1842">Bill of lading image</a></td><td>Final release waits on image confirmation.</td></tr>
             <tr><td>Release decision</td><td><span class="status review">Pending</span></td><td><a class="proof-link" href="/operations-record/#dispatch-release-1842">Dispatch release note</a></td><td>Approve packet after BOL image clears, or hold for corrected image.</td></tr>
           </tbody>
         </table>
@@ -309,7 +309,6 @@
   </main>
   <section class="cta-band"><div class="cta-inner"><div><p class="eyebrow">Finish strong</p><h2>End with a focused BOF assessment.</h2><p>Your team should leave knowing exactly which operating problem BOF will examine first and which records support the next release decision.</p></div><a class="button light" href="/scenario-walkthrough/">Request a BOF Assessment &rarr;</a></div></section>
   <footer class="site-footer"><div class="footer-inner"><strong>BackOfficeFleet</strong><span>Load readiness.</span><a href="/trust-governance/">Trust &amp; Governance</a></div></footer>
-  <script src="/assets/js/site.js?v=1.46"></script>
+  <script src="/assets/js/site.js?v=1.49"></script>
 </body>
 </html>
-

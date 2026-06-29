@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Settlements Command Center | BackOfficeFleet</title>
   <meta name="description" content="BOF settlement readiness page for driver pay, deductions, reimbursements, packet completion, settlement holds, safety impact, and manager release review.">
-  <link rel="stylesheet" href="/assets/css/styles.css?v=1.48">
+  <link rel="stylesheet" href="/assets/css/styles.css?v=1.49">
 </head>
 <body>
   <header class="site-header">
@@ -121,7 +121,7 @@
       <div class="section-head reveal">
         <p class="eyebrow">Settlement queue</p>
         <h2>Every pay row carries the reason it can release, wait, or stay on hold.</h2>
-        <p>BOF connects pay totals to the document packet and the operational consequence. That keeps finance from approving a driver settlement when the proof trail still belongs with dispatch, safety, or the document desk.</p>
+        <p>BOF connects pay totals to the closeout packet and the operational consequence. That keeps finance from approving a driver settlement when POD quality review, accessorial proof, claim review, or defect review still belongs with dispatch, safety, or the document desk.</p>
       </div>
       <div class="table-wrap reveal">
         <table class="small-table">
@@ -134,6 +134,26 @@
         </table>
       </div>
     </section>
+    <section class="section">
+      <div class="section-head reveal">
+        <p class="eyebrow">End readiness review</p>
+        <h2>Settlement release waits for the closeout gates, not just delivery status.</h2>
+        <p>The load does not close just because it delivered. BOF keeps the proof, claim, defect, billing, settlement, archive, and next-load readiness answers visible before finance clears the packet.</p>
+      </div>
+      <div class="table-wrap reveal">
+        <table class="small-table">
+          <thead><tr><th>Closeout gate</th><th>Evidence</th><th>Settlement consequence</th></tr></thead>
+          <tbody>
+            <tr><td>POD quality review</td><td>Signature, timestamp, receiver name, BOL match</td><td>Billing waits if the POD does not prove the delivery event clearly.</td></tr>
+            <tr><td>Post-trip defect review</td><td>Driver defect report, post-trip DVIR if defect exists, maintenance notes, equipment photos</td><td>Next load is blocked if a safety defect remains unresolved.</td></tr>
+            <tr><td>Accessorial proof</td><td>Lumper, detention, layover, washout, tolls</td><td>Accessorial pay waits until support is attached and reviewed.</td></tr>
+            <tr><td>Claim review</td><td>Seal mismatch, cargo damage, facility damage, incident evidence</td><td>Settlement stays in review until claim exposure is documented or cleared.</td></tr>
+            <tr><td>Billing/factoring packet</td><td>Invoice, rate confirmation, signed POD, lumper/detention proof, claim clearance</td><td>Billing waits until POD, accessorial, claim, and settlement records clear.</td></tr>
+            <tr><td>Next-load readiness</td><td>Driver availability, equipment status, unresolved defects, open exceptions</td><td>Driver/equipment cannot be reassigned until closeout exceptions clear.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
 
     <section class="section split">
       <div class="paper reveal">
@@ -142,14 +162,14 @@
           <div class="field"><span>Driver</span><strong><a class="proof-link" href="/operations-record/#drv-2048">M. Alvarez &middot; DRV-2048</a></strong></div>
           <div class="field"><span>Pay period</span><strong>Week ending Jun 12, 2026</strong></div>
           <div class="field"><span>Gross-to-net</span><strong>$3,250 - $488 = $2,762</strong></div>
-          <div class="field"><span>Required proof</span><strong><a class="proof-link" href="/operations-record/#bol-review-1842">BOL image</a>, POD, rate confirmation</strong></div>
+          <div class="field"><span>Required proof</span><strong><a class="proof-link" href="/operations-record/#bol-review-1842">BOL image</a>, POD quality review, rate confirmation</strong></div>
           <div class="field"><span>Safety impact</span><strong>No safety blocker</strong></div>
           <div class="field"><span>Release owner</span><strong>Finance after document review</strong></div>
         </div>
       </div>
       <div class="proof-grid">
-        <article class="proof-card reveal"><h3>Why it can release</h3><p>The driver file is current, the settlement packet is complete enough for finance review, and the remaining BOL check has a named owner.</p><a class="route-chip" href="/operations-record/#dispatch-release-1842">Open release note</a></article>
-        <article class="proof-card reveal"><h3>What finance sees</h3><p>Gross pay, deductions, reimbursements, packet status, approval owner, and remaining document gate stay together instead of spreading across inboxes.</p></article>
+        <article class="proof-card reveal"><h3>Why it can release</h3><p>The driver file is current, the settlement packet is complete enough for finance review, and the remaining BOL/POD quality check has a named owner.</p><a class="route-chip" href="/operations-record/#dispatch-release-1842">Open release note</a></article>
+        <article class="proof-card reveal"><h3>What finance sees</h3><p>Gross pay, deductions, reimbursements, packet status, approval owner, billing/factoring packet, and closeout gate stay together instead of spreading across inboxes.</p></article>
       </div>
     </section>
 
@@ -162,7 +182,7 @@
       <div class="doc-list">
         <article class="doc reveal"><span class="icon">A</span><div><h3><a class="proof-link" href="/operations-record/#bol-review-1907">BOF-1907 BOL image review</a></h3><p class="doc-owner">Hold type: document proof &middot; Amount held: $2,635</p><p>Finance waits until the pickup image is readable and the packet owner confirms the release note.</p></div><span class="status review">Review</span></article>
         <article class="doc reveal"><span class="icon">B</span><div><h3><a class="proof-link" href="/operations-record/#medical-card-3301">BOF-1931 credential hold</a></h3><p class="doc-owner">Hold type: safety credential &middot; Amount held: $2,869</p><p>Driver pay release is tied to the same medical-card update that keeps the load from moving.</p></div><span class="status blocked">Hold</span></article>
-        <article class="doc reveal"><span class="icon">C</span><div><h3><a class="proof-link" href="/operations-record/#bol-review-1842">Post-trip proof packet</a></h3><p class="doc-owner">Hold type: delivery proof &middot; Amount held: $0 after review</p><p>POD, receiver signature, dock photo, and empty cargo proof are attached before the settlement clears.</p></div><span class="status ready">Cleared</span></article>
+        <article class="doc reveal"><span class="icon">C</span><div><h3><a class="proof-link" href="/operations-record/#bol-review-1842">Post-trip proof packet</a></h3><p class="doc-owner">Hold type: delivery proof &middot; Amount held: $0 after review</p><p>POD quality review, receiver signature, dock photo, empty cargo proof, and no-defect confirmation are attached before the settlement clears.</p></div><span class="status ready">Cleared</span></article>
       </div>
     </section>
 
@@ -181,6 +201,6 @@
   </main>
   <section class="cta-band"><div class="cta-inner"><div><p class="eyebrow">Next step</p><h2>Bring one held settlement into a BOF assessment.</h2><p>Start with a pay question, missing proof packet, safety hold, claim reserve, or driver file issue. BOF will map the release path and owner.</p></div><a class="button light" href="/scenario-walkthrough/">Request a BOF Assessment &rarr;</a></div></section>
   <footer class="site-footer"><div class="footer-inner"><strong>BackOfficeFleet</strong><span>Settlement readiness.</span><a href="/trust-governance/">Trust &amp; Governance</a></div></footer>
-  <script src="/assets/js/site.js?v=1.46"></script>
+  <script src="/assets/js/site.js?v=1.49"></script>
 </body>
 </html>

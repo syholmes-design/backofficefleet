@@ -1720,15 +1720,15 @@
         body: "The TMS-LD-10482 packet connects the imported TMS load, BOF-RR-10482 release file, driver match, carrier packet, documents, release decision, owner, next action, audit trail, and simulated handoff in one working record."
       },
       bol: {
-        title: "Imported Document Gate",
+        title: "Imported Load Packet Gate",
         id: "BOF-RR-10482-DOCS",
         owner: "S. Turner",
         status: "Review",
         statusClass: "review",
-        state: "Partner documents under BOF review",
+        state: "Partner load packet under BOF review",
         consequence: "Controls whether BOF marks TMS-LD-10482 Ready, Conditional, or Hold.",
-        heading: "Document readiness fields",
-        body: "BOF reviews the imported load documents: pickup instructions, BOL image, seal photo, delivery proof state, claim evidence state, and lane match before choosing a release outcome."
+        heading: "Load packet readiness fields",
+        body: "BOF reviews the imported load packet: pickup instructions, BOL image, seal photo, delivery proof state, claim evidence state, and lane match before choosing a release outcome."
       },
       pretrip: {
         title: "Pre-Trip Packet",
@@ -2232,7 +2232,7 @@
         status: "Watch",
         statusClass: "watch",
         state: "Post-delivery backhaul options are being reviewed near the BOF-1907 Kansas City delivery area.",
-        consequence: "The fleet can reduce deadhead only if pickup distance, home-lane direction, dry-van equipment, timing, and document readiness fit.",
+        consequence: "The fleet can reduce deadhead only if pickup distance, home-lane direction, dry-van equipment, timing, and load packet readiness fit.",
         heading: "Backhaul decision fields",
         body: "This board keeps nearby return-load options tied to the delivered BOF-1907 context instead of showing a random load board. Each option shows pickup distance from delivery, return or home-lane fit, equipment fit, pickup window, and the next dispatch action."
       },
@@ -3421,7 +3421,7 @@
       setText("drawerOrigin", load.origin);
       setText("drawerDestination", load.destination);
       setHtml("drawerPriority", '<span class="priority ' + escapeHtml(load.priorityClass || "medium") + '"><i></i>' + escapeHtml(load.priorityLabel || "Medium") + "</span>");
-      setText("drawerPriorityReason", load.priorityReason || "Priority is tied to dispatch risk, document readiness, and owner follow-up.");
+      setText("drawerPriorityReason", load.priorityReason || "Priority is tied to dispatch risk, load packet readiness, and owner follow-up.");
       setText("drawerOwner", load.owner);
       setButton("controlButton", load.controllingLabel, load.doc);
       setButton("drawerDriverButton", load.driverLabel || "DRV-001", load.driverRecord || "driver");
@@ -3931,5 +3931,4 @@
     setInspectorOpen(true);
   }
 })();
-
 

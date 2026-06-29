@@ -137,11 +137,11 @@
     { name: "Quoted", status: "Complete", detail: "Temporary quote prepared with mileage, fuel, accessorials, demo pricing assumptions, and proof requirements.", owner: "BOF quote review" },
     { name: "Approved", status: "Complete", detail: "Customer approval creates a pending load request for BOF dispatch review.", owner: "Customer and BOF" },
     { name: "Assigned", status: "Complete", detail: "Driver, tractor, trailer, and readiness checks are attached.", owner: "Dispatch review" },
-    { name: "Picked Up", status: "Watch", detail: "Pickup waits on loaded cargo photo, seal record, and equipment inspection.", owner: "Dispatch review" },
+    { name: "Picked Up", status: "Watch", detail: "Pickup waits on loaded cargo photo, seal record, securement confirmation, and equipment exception capture.", owner: "Dispatch review" },
     { name: "In Transit", status: "Watch", detail: "Route watch, HOS, temperature/fuel context, and exceptions stay visible.", owner: "BOF operations" },
-    { name: "Delivered", status: "Pending", detail: "POD, signed BOL, receiver, timestamp, dock photo, and empty trailer proof are required.", owner: "Driver and document review" },
-    { name: "Documents Complete", status: "Pending", detail: "Rate confirmation, invoice, signed BOL, POD, cargo/seal proof, empty trailer photo, and lumper receipt when used are complete.", owner: "Document review" },
-    { name: "Settlement Complete", status: "Pending", detail: "Invoice, POD, lumper receipt when used, settlement release, and factoring packet are reviewed.", owner: "Billing review" }
+    { name: "Delivered", status: "Pending", detail: "POD quality review, signed BOL, receiver, timestamp, dock photo, and empty trailer proof are required.", owner: "Driver and closeout review" },
+    { name: "Load Packet Complete", status: "Pending", detail: "Rate confirmation, invoice, signed BOL, POD quality review, cargo/seal proof, empty trailer photo, and lumper receipt when used are complete.", owner: "Load packet review" },
+    { name: "Settlement Complete", status: "Pending", detail: "Invoice, POD, lumper receipt when used, settlement release, billing/factoring packet, and next-load readiness are reviewed.", owner: "Billing review" }
   ];
 
   function money(amount) {
@@ -279,7 +279,7 @@
       ["Draft rate confirmation", portal.rateId],
       ["Draft invoice", portal.invoiceId],
       ["Seal number", portal.sealId],
-      ["Document readiness", documentReadiness().status]
+      ["Load packet readiness", documentReadiness().status]
     ];
     setText("shipmentId", portal.shipmentId);
     setText("loadId", portal.loadId);
@@ -407,7 +407,7 @@
       },
       factoring: {
         watermark: "Factor",
-        title: "Factoring Packet Preview",
+        title: "Billing/Factoring Packet Preview",
         fields: [
           ["Shipment", portal.shipmentId],
           ["Invoice", portal.invoiceId],
@@ -443,12 +443,12 @@
           '<section class="bol-party-grid">' +
             '<article><h4>Shipper</h4>' + field("Facility", portal.pickupFacility) + field("Address", portal.pickupAddress) + field("Pickup window", portal.pickupWindow) + field("Pickup instructions", portal.pickupNotes) + '</article>' +
             '<article><h4>Consignee</h4>' + field("Facility", portal.deliveryFacility) + field("Address", portal.deliveryAddress) + field("Delivery window", portal.deliveryWindow) + field("Delivery instructions", portal.deliveryNotes) + '</article>' +
-            '<article><h4>Carrier / BOF review</h4>' + field("Driver", dispatchState.driver || "Assignment needed") + field("Tractor / trailer", (dispatchState.tractor || "Assignment needed") + " / " + (dispatchState.trailer || "Assignment needed")) + field("Equipment", portal.equipment) + field("Document readiness", documentReadiness().status) + '</article>' +
+            '<article><h4>Carrier / BOF review</h4>' + field("Driver", dispatchState.driver || "Assignment needed") + field("Tractor / trailer", (dispatchState.tractor || "Assignment needed") + " / " + (dispatchState.trailer || "Assignment needed")) + field("Equipment", portal.equipment) + field("Load packet readiness", documentReadiness().status) + '</article>' +
           '</section>' +
           '<section class="bol-commodity-section"><h4>Commodity</h4><table><thead><tr><th>Description</th><th>Weight</th><th>Pallets</th><th>Dimensions</th><th>Temp</th></tr></thead><tbody><tr><td>' + escapeHtml(portal.commodity) + '</td><td>' + escapeHtml(portal.weight.toLocaleString("en-US")) + ' lb</td><td>' + escapeHtml(portal.pallets) + '</td><td>' + escapeHtml(portal.dimensions) + '</td><td>' + escapeHtml(portal.tempRequirement) + '</td></tr></tbody></table></section>' +
           '<section class="bol-proof-grid">' +
             '<article class="bol-photo-placeholder"><img src="/assets/images/documents/load-proof/pretrip-10482-loaded-cargo.webp" alt="Cargo photo record for BOL review"><span>Cargo photo record attached</span></article>' +
-            '<article class="bol-readiness"><h4>BOF document readiness</h4><div>' + documentReadiness().items.map(function (item) { return '<span><strong>' + escapeHtml(item[0]) + '</strong><em>' + escapeHtml(item[1]) + '</em></span>'; }).join("") + '</div></article>' +
+            '<article class="bol-readiness"><h4>BOF load packet readiness</h4><div>' + documentReadiness().items.map(function (item) { return '<span><strong>' + escapeHtml(item[0]) + '</strong><em>' + escapeHtml(item[1]) + '</em></span>'; }).join("") + '</div></article>' +
             '<article class="bol-checklist"><h4>Required pickup proof</h4><div>' + ["Driver arrival record", "Seal pickup photo", "Loaded cargo photo", "Equipment inspection", "Shipper signoff", "Temperature check when reefer"].map(function (item) { return '<span>' + escapeHtml(item) + '</span>'; }).join("") + '</div></article>' +
           '</section>' +
           '<section class="bol-instructions">' + field("Special instructions", portal.deliveryNotes + " " + portal.accessorials) + '</section>' +
@@ -472,9 +472,9 @@
       ["Bill of lading", "Prepared", "Pickup and delivery proof"],
       ["Cargo photo", "Attached", "Pre-trip release"],
       ["Seal record", portal.sealId, "Pickup, delivery, claim"],
-      ["POD / signed BOL", "Required post-trip", "Settlement closeout"],
+      ["POD quality review / signed BOL", "Required post-trip", "Settlement closeout"],
       ["Dock and empty trailer photo", "Required post-trip", "Claims defense"],
-      ["Factoring packet", "Built after POD", "Invoice, rate con, BOL, POD, lumper, settlement support"]
+      ["Billing/factoring packet", "Built after POD", "Invoice, rate con, BOL, POD, lumper, claim clearance, settlement support"]
     ];
     setHtml("proofRegistry", proof.map(function (item) {
       return '<div class="proof-item"><strong>' + escapeHtml(item[0]) + '<em>' + escapeHtml(item[1]) + '</em></strong><span>' + escapeHtml(item[2]) + '</span></div>';
@@ -548,10 +548,11 @@
       ["Pre-trip", "Rate con, BOL, seal, equipment check, and loaded cargo photo"],
       ["Pickup proof", "Arrival, seal pickup photo, cargo photo, and pickup notes"],
       ["In-route monitoring", "Status, appointment risk, temperature, and exception watch"],
-      ["Delivery proof / POD", "Signed BOL, POD, receiver, dock photo, empty trailer photo"],
+      ["Delivery proof / POD quality review", "Signed BOL, POD, receiver, dock photo, empty trailer photo"],
       ["Claims workflow", "Opened only if proof, condition, shortage, or timing exception exists"],
-      ["Settlement", "Invoice, proof, lumper receipt, and settlement review"],
-      ["Factoring packet", "Rate con, invoice, signed BOL/POD, proof, settlement support"]
+      ["Settlement", "Invoice, proof, lumper receipt, claim clearance, and settlement review"],
+      ["Billing/factoring packet", "Rate con, invoice, signed BOL/POD, proof, claim clearance, settlement support"],
+      ["Next-load readiness", "Driver availability, equipment status, unresolved defects, and open exceptions"]
     ];
     setHtml("lifecycleGrid", items.map(function (item, index) {
       return '<article class="lifecycle-card"><span>' + String(index + 1).padStart(2, "0") + '</span><strong>' + escapeHtml(item[0]) + '</strong><p>' + escapeHtml(item[1]) + '</p></article>';

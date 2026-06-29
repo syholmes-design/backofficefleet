@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Dispatch Board | BackOfficeFleet</title>
   <meta name="description" content="BOF dispatch board showing TMS imported load movement, release records, blockers, owners, and next actions.">
-  <link rel="stylesheet" href="/assets/css/styles.css?v=1.48">
+  <link rel="stylesheet" href="/assets/css/styles.css?v=1.49">
 </head>
 <body>
   <header class="site-header">
@@ -102,9 +102,23 @@
     <section class="section">
       <div class="proof-grid">
         <article class="proof-card reveal"><h3>Can move after review</h3><p><a class="proof-link" href="/operations-record/#bof-1842">TMS-LD-10482</a> has a ready driver, ready carrier, current insurance, and attached rate confirmation.</p></article>
-        <article class="proof-card reveal"><h3>Must wait on</h3><p><a class="proof-link" href="/operations-record/#bol-review-1842">BOL image confirmation</a> before dispatch commits the Dallas to Memphis lane.</p></article>
+        <article class="proof-card reveal"><h3>Must wait on</h3><p><a class="proof-link" href="/operations-record/#bol-review-1842">BOL image confirmation</a> plus cargo, equipment, facility, and route/HOS checks before dispatch commits the Dallas to Memphis lane.</p></article>
         <article class="proof-card reveal"><h3>Record owner</h3><p>S. Turner owns the final document check and release decision.</p></article>
         <article class="proof-card reveal"><h3>Dispatch action</h3><p><a class="proof-link" href="/operations-record/#dispatch-release-1842">Approve packet</a> when the image clears, or keep <a class="proof-link" href="/operations-record/#bof-1842">TMS-LD-10482</a> in review.</p></article>
+      </div>
+    </section>
+    <section class="section">
+      <div class="section-head reveal"><p class="eyebrow">Start readiness gates</p><h2>Dispatch release depends on more than the BOL image.</h2><p>BOF keeps load packet readiness separate from equipment readiness, driver readiness, and route/HOS readiness so the release decision explains the actual consequence.</p></div>
+      <div class="table-wrap reveal">
+        <table>
+          <thead><tr><th>Gate</th><th>Release evidence</th><th>Dispatch consequence</th></tr></thead>
+          <tbody>
+            <tr><td>Load packet readiness</td><td>BOL, rate confirmation, appointment detail, dispatch release note</td><td>Release stays in review until the commercial and load packet records match the lane.</td></tr>
+            <tr><td>Equipment readiness</td><td>Pre-trip equipment photo set, last DVIR review, open defect clearance, trailer suitability</td><td>Release held until tire, light, coupling, trailer ID, and visible defect checks clear.</td></tr>
+            <tr><td>Cargo readiness</td><td>Cargo condition photo, seal photo, securement photo, BOL match</td><td>Release remains in review until cargo condition, securement, seal, and BOL match are confirmed.</td></tr>
+            <tr><td>Route/HOS readiness</td><td>Available hours, ETA risk, weather, parking, restrictions</td><td>Load moves to watch if appointment timing cannot be met within available HOS.</td></tr>
+          </tbody>
+        </table>
       </div>
     </section>
     <section class="section">
@@ -151,7 +165,7 @@
             <div class="field"><span>Lane</span><strong>Dallas, TX to Memphis, TN</strong></div>
             <div class="field"><span>Release state</span><strong>Review pending document confirmation</strong></div>
             <div class="field"><span>Cleared records</span><strong><a class="proof-link" href="/operations-record/#drv-2048">Driver</a>, <a class="proof-link" href="/operations-record/#car-118">carrier</a>, insurance, and rate confirmation</strong></div>
-            <div class="field"><span>Waiting on</span><strong><a class="proof-link" href="/operations-record/#bol-review-1842">BOL image confirmation</a></strong></div>
+            <div class="field"><span>Waiting on</span><strong><a class="proof-link" href="/operations-record/#bol-review-1842">Load packet and BOL image confirmation</a></strong></div>
             <div class="field"><span>Owner</span><strong>S. Turner &middot; dispatch review</strong></div>
             <div class="field"><span>Dispatch action</span><strong>Release only after BOL evidence clears</strong></div>
           </div>
@@ -220,7 +234,7 @@
     <section class="section">
       <div class="timeline">
         <article class="timeline-card reveal"><span class="step-kicker">Lifecycle 01</span><h3>Load enters board</h3><p><a class="proof-link" href="/operations-record/#bof-1842">TMS-LD-10482</a> appears with driver, carrier, lane, pickup time, owner, and document requirements already attached.</p></article>
-        <article class="timeline-card reveal"><span class="step-kicker">Lifecycle 02</span><h3>Records are checked</h3><p>Driver readiness, carrier packet, BOL photo, insurance, and release packet status are compared before dispatch commits.</p></article>
+        <article class="timeline-card reveal"><span class="step-kicker">Lifecycle 02</span><h3>Records are checked</h3><p>Driver readiness, carrier packet, load packet readiness, equipment readiness, cargo readiness, route/HOS risk, and insurance are compared before dispatch commits.</p></article>
         <article class="timeline-card reveal"><span class="step-kicker">Lifecycle 03</span><h3>Owner action is named</h3><p>S. Turner owns the BOL confirmation, so the dispatcher knows who clears the final step.</p></article>
         <article class="timeline-card reveal"><span class="step-kicker">Lifecycle 04</span><h3>Release with confidence</h3><p>Once the packet is approved, the load moves from review to allowed with a visible record trail.</p></article>
       </div>
@@ -249,8 +263,7 @@
   </main>
   <section class="cta-band"><div class="cta-inner"><div><p class="eyebrow">Next record</p><h2>Connect dispatch decisions to documents.</h2><p>Your team should see the paperwork behind each release state.</p></div><a class="button light" href="/documents/">Open documents &rarr;</a></div></section>
   <footer class="site-footer"><div class="footer-inner"><strong>BackOfficeFleet</strong><span>Dispatch consequence.</span></div></footer>
-  <script src="/assets/js/site.js?v=1.46"></script>
+  <script src="/assets/js/site.js?v=1.49"></script>
 </body>
 </html>
-
 

@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Operational Intelligence | BackOfficeFleet</title>
   <meta name="description" content="BOF Operational Intelligence demonstrates in-route visibility, monitoring, exception management, and operational awareness using demo scenario records.">
-  <link rel="stylesheet" href="/assets/css/styles.css?v=1.48">
+  <link rel="stylesheet" href="/assets/css/styles.css?v=1.49">
   <style>
     .oi-hero { background: linear-gradient(135deg, rgba(12,95,67,0.98), rgba(37,111,148,0.94) 54%, rgba(20,33,31,0.98)); color: #fff; overflow: hidden; position: relative; }
     .oi-hero::after { background-image: linear-gradient(rgba(255,255,255,0.08) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.08) 1px, transparent 1px); background-size: 42px 42px; content: ""; inset: 0; pointer-events: none; position: absolute; }
@@ -264,6 +264,22 @@
         <article class="oi-flow-step"><span>04</span><strong>Documentation</strong><p>The resolution supports delivery proof, claims, or settlement packet readiness.</p></article>
       </div>
     </section>
+    <section class="section" id="middle-readiness-gates">
+      <div class="section-head reveal"><p class="eyebrow">Middle readiness review</p><h2>Active-load monitoring keeps proof, exceptions, and consequence together.</h2><p>BOF does not wait until delivery to reconstruct the trip. It watches pickup proof, securement, route/HOS, equipment, facilities, accessorials, and claim signals while the load is active.</p></div>
+      <div class="table-wrap reveal">
+        <table>
+          <thead><tr><th>Middle gate</th><th>Evidence</th><th>Operating consequence</th></tr></thead>
+          <tbody>
+            <tr><td>Pickup proof</td><td>BOL image, cargo condition, seal photo, loaded trailer photo</td><td>Trip remains in review until pickup proof supports the operating record.</td></tr>
+            <tr><td>Securement confirmation</td><td>Cargo securement, straps, chains, tarps, Freight Brace if applicable</td><td>Securement gaps move the load to watch or review before delivery proof is trusted.</td></tr>
+            <tr><td>Route/HOS watch</td><td>Available hours, ETA risk, weather, traffic, parking</td><td>Load moves to watch if appointment timing cannot be met within available HOS.</td></tr>
+            <tr><td>Equipment watch</td><td>Tire issue, warning light, roadside inspection, maintenance exception</td><td>Equipment exception capture keeps the trip open until safety or maintenance review clears.</td></tr>
+            <tr><td>Accessorial capture</td><td>Lumper, detention, layover, scale ticket, tolls, washout</td><td>Billing and settlement support stay visible while the event is fresh.</td></tr>
+            <tr><td>Claim watch</td><td>Seal mismatch, shortage, damage, rejected freight, temperature issue</td><td>Claim signals trigger review before the load closes or bills.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
 
     <section class="section" id="multi-carrier-trip-intelligence">
       <div class="section-head reveal"><p class="eyebrow">Multi-Carrier Trip Intelligence</p><h2>Aggregators can monitor operating risk across participating carriers.</h2><p>For aggregators, the issue is not simply finding trucks. The issue is knowing which participating carriers and assets are actually ready, compliant, documented, and operating safely.</p></div>
@@ -272,28 +288,28 @@
         <article class="oi-alert reveal"><span class="status blocked">Fuel</span><div><h3>Carrier B: fuel anomaly</h3><p>Out-of-route fuel activity remains open until trip notes, odometer evidence, and manager review are attached.</p></div></article>
         <article class="oi-alert reveal"><span class="status review">Seal</span><div><h3>Carrier C: seal verification issue</h3><p>Seal mismatch requires photo evidence, receiver note, and cargo condition documentation before clean closeout.</p></div></article>
         <article class="oi-alert reveal"><span class="status review">Claims</span><div><h3>Carrier D: claim documentation pending</h3><p>Damage report, photos, witness details, and claim packet status remain visible for follow-up.</p></div></article>
-        <article class="oi-alert reveal"><span class="status ready">Backhaul</span><div><h3>Carrier E: backhaul-ready after delivery</h3><p>Driver availability, asset availability, and document readiness are clear for the next operational review.</p></div></article>
+        <article class="oi-alert reveal"><span class="status ready">Next-load</span><div><h3>Carrier E: next-load ready after delivery</h3><p>Driver availability, asset availability, and load packet readiness are clear for the next operational review.</p></div></article>
       </div>
       <div class="oi-exception-flow reveal" aria-label="Aggregator operational visibility workflow">
         <article class="oi-flow-step"><span>01</span><strong>Carrier Signal</strong><p>A participating carrier record surfaces weather, fuel, seal, claim, or backhaul status.</p></article>
-        <article class="oi-flow-step"><span>02</span><strong>Readiness Review</strong><p>BOF checks whether the driver, asset, documents, and claim evidence support the next action.</p></article>
+        <article class="oi-flow-step"><span>02</span><strong>Readiness Review</strong><p>BOF checks whether the driver, asset, load packet, equipment, and claim evidence support the next action.</p></article>
         <article class="oi-flow-step"><span>03</span><strong>Network Visibility</strong><p>The aggregator sees risk and readiness without taking transportation responsibility.</p></article>
-        <article class="oi-flow-step"><span>04</span><strong>Administrative Follow-Up</strong><p>Documentation, claims, settlement, or backhaul readiness moves to the right queue.</p></article>
+        <article class="oi-flow-step"><span>04</span><strong>Administrative Follow-Up</strong><p>Proof, claims, settlement, or next-load readiness moves to the right queue.</p></article>
       </div>
       <div class="oi-note reveal">Review multi-carrier operational visibility with <a class="proof-link" href="/aggregator-command-center/">Aggregator Command Center</a>, <a class="proof-link" href="/capacity-intelligence/#aggregator-capacity-view">Aggregator Capacity View</a>, and <a class="proof-link" href="/executive-demo/#aggregator-demo-path">Aggregator / Carrier Network Demo Path</a>.</div>
     </section>
 
     <section class="section" id="trip-lifecycle">
-      <div class="section-head reveal"><p class="eyebrow">Trip lifecycle</p><h2>Operational Intelligence bridges demand, readiness, delivery, documentation, and settlement.</h2><p>The lifecycle connects this module back to Customer Portal, Capacity Intelligence, Carrier Readiness, Documents, Settlements, and the Dashboard.</p></div>
+      <div class="section-head reveal"><p class="eyebrow">Trip lifecycle</p><h2>Operational Intelligence bridges demand, start readiness, middle watch, and end closeout.</h2><p>The lifecycle connects this module back to Customer Portal, Capacity Intelligence, Carrier Readiness, Documents, Settlements, and the Dashboard.</p></div>
       <div class="oi-lifecycle reveal" aria-label="BOF trip lifecycle">
         <article class="oi-flow-step"><span>01</span><strong>Pre-Trip</strong><p><a class="proof-link" href="/customer-portal/">Customer demand</a> and appointment context are visible.</p></article>
         <article class="oi-flow-step"><span>02</span><strong>Driver Ready</strong><p>Driver readiness and compliance signals support trip review.</p></article>
         <article class="oi-flow-step"><span>03</span><strong>Asset Ready</strong><p><a class="proof-link" href="/capacity-intelligence/">Capacity Intelligence</a> shows equipment readiness.</p></article>
         <article class="oi-flow-step"><span>04</span><strong>In Route</strong><p>Telematics, driver, and verification events become operating signals.</p></article>
-        <article class="oi-flow-step"><span>05</span><strong>Monitoring</strong><p>Exceptions, ETA, dwell, fuel, safety, and documents are watched.</p></article>
-        <article class="oi-flow-step"><span>06</span><strong>Delivery</strong><p>Dock, seal, POD, and customer confirmation support closeout.</p></article>
-        <article class="oi-flow-step"><span>07</span><strong>Documentation</strong><p><a class="proof-link" href="/documents/">Documents</a> connect proof to the operating record.</p></article>
-        <article class="oi-flow-step"><span>08</span><strong>Settlement</strong><p><a class="proof-link" href="/settlements/">Settlements</a> can review proof and exceptions without rebuilding the trip.</p></article>
+        <article class="oi-flow-step"><span>05</span><strong>Middle Watch</strong><p>Pickup proof, route/HOS, equipment watch, accessorials, claims, and securement stay visible.</p></article>
+        <article class="oi-flow-step"><span>06</span><strong>POD Quality Review</strong><p>Dock, seal, POD, receiver, timestamp, and BOL match support closeout.</p></article>
+        <article class="oi-flow-step"><span>07</span><strong>Billing/Factoring Packet</strong><p><a class="proof-link" href="/documents/">Documents</a> connect invoice, rate confirmation, POD, accessorial proof, and claim clearance.</p></article>
+        <article class="oi-flow-step"><span>08</span><strong>Next-Load Readiness</strong><p><a class="proof-link" href="/settlements/">Settlements</a> can review proof, defects, driver availability, and equipment availability without rebuilding the trip.</p></article>
       </div>
     </section>
 
@@ -304,13 +320,13 @@
         <article class="oi-insight reveal"><span class="status ready">Utilization</span><h3>Midwest reefer fleet operating above target utilization.</h3><p>Capacity Intelligence and in-route visibility show strong use without hiding readiness risk.</p></article>
         <article class="oi-insight reveal"><span class="status ready">Fuel</span><h3>Fuel efficiency improved 6% week over week.</h3><p>MPG and idle indicators improved across monitored trips.</p></article>
         <article class="oi-insight reveal"><span class="status review">Safety</span><h3>Two drivers require safety coaching review.</h3><p>Following distance and camera review events need owner follow-up.</p></article>
-        <article class="oi-insight reveal"><span class="status ready">Documentation</span><h3>Documentation readiness exceeds 95%.</h3><p>BOL, POD, seal, and settlement packet readiness remain strong across closed trips.</p></article>
+        <article class="oi-insight reveal"><span class="status ready">Load packet</span><h3>Load packet readiness exceeds 95%.</h3><p>BOL, POD, seal, billing/factoring packet, and settlement packet readiness remain strong across closed trips.</p></article>
       </div>
       <div class="oi-note reveal">BOF converts operational data into actionable readiness and operational intelligence. BOF provides visibility across fleets, carriers, drivers, assets, and operational workflows. BOF integrates information from telematics, RFID, driver systems, documentation systems, and operational workflows while staying focused on administrative readiness and executive visibility.</div>
     </section>
   </main>
   <section class="cta-band"><div class="cta-inner"><div><p class="eyebrow">Operational story</p><h2>Use Operational Intelligence to answer what happened during the trip.</h2><p>Move from customer demand, to readiness, to in-route monitoring, to documentation, to settlement without dispatch, freight brokerage, freight matching, or transportation arrangement claims.</p></div><a class="button light" href="/executive-demo/">Back to Executive Demo &rarr;</a></div></section>
   <footer class="site-footer"><div class="footer-inner"><strong>BackOfficeFleet</strong><span>Operational intelligence and readiness visibility.</span><a href="/trust-governance/">Trust &amp; Governance</a></div></footer>
-  <script src="/assets/js/site.js?v=1.46"></script>
+  <script src="/assets/js/site.js?v=1.49"></script>
 </body>
 </html>
