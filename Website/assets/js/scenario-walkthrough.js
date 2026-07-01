@@ -80,8 +80,16 @@
     if (
       preferredPath.indexOf("business") >= 0 ||
       categories.indexOf("payroll") >= 0 ||
+      categories.indexOf("recruiting") >= 0 ||
+      categories.indexOf("benefits") >= 0 ||
+      categories.indexOf("training") >= 0 ||
+      categories.indexOf("accounting") >= 0 ||
+      categories.indexOf("bookkeeping") >= 0 ||
+      categories.indexOf("ap / ar") >= 0 ||
       categories.indexOf("insurance") >= 0 ||
-      categories.indexOf("factoring") >= 0
+      categories.indexOf("factoring") >= 0 ||
+      categories.indexOf("excise") >= 0 ||
+      categories.indexOf("cash-flow") >= 0
     ) {
       return "business";
     }
@@ -122,6 +130,8 @@
       "Assessment focus: " + (categories.length ? categories.join(", ") : "Not selected"),
       "Assessment description: " + (field("scenarioDescription") || "Not provided"),
       "Current process: " + (field("currentProcess") || "Not provided"),
+      "HR Tier review: " + (field("hrTierProcess") || "Not provided"),
+      "Finance Tier review: " + (field("financeTierProcess") || "Not provided"),
       "Urgency: " + (field("urgency") || "Not provided"),
       "Preferred demo path: " + (field("preferredDemoPath") || "Not provided"),
       "Recommended BOF demo path: " + getPathLabel(pathKey),
@@ -144,6 +154,8 @@
       scenarioCategory: checkedValues("scenarioCategory"),
       scenarioDescription: field("scenarioDescription"),
       currentProcess: field("currentProcess"),
+      hrTierProcess: field("hrTierProcess"),
+      financeTierProcess: field("financeTierProcess"),
       urgency: field("urgency"),
       preferredDemoPath: field("preferredDemoPath"),
       recommendedDemoPath: getPathLabel(pathKey),
@@ -168,6 +180,8 @@
       '<div class="scenario-summary-row"><span>Assessment focus</span><strong>' + escapeHtml(categories.length ? categories.join(", ") : "Not selected") + "</strong></div>",
       '<div class="scenario-summary-row scenario-summary-wide"><span>Assessment description</span><strong>' + escapeHtml(field("scenarioDescription") || "Not provided") + "</strong></div>",
       '<div class="scenario-summary-row scenario-summary-wide"><span>Current process</span><strong>' + escapeHtml(field("currentProcess") || "Not provided") + "</strong></div>",
+      '<div class="scenario-summary-row scenario-summary-wide"><span>HR Tier review</span><strong>' + escapeHtml(field("hrTierProcess") || "Not provided") + "</strong></div>",
+      '<div class="scenario-summary-row scenario-summary-wide"><span>Finance Tier review</span><strong>' + escapeHtml(field("financeTierProcess") || "Not provided") + "</strong></div>",
       '<div class="scenario-summary-row"><span>Urgency</span><strong>' + escapeHtml(field("urgency") || "Not provided") + "</strong></div>",
       '<div class="scenario-summary-row"><span>Preferred demo path</span><strong>' + escapeHtml(field("preferredDemoPath") || "Not provided") + "</strong></div>",
       '<div class="scenario-summary-row"><span>Recommended BOF demo path</span><strong>' + escapeHtml(getPathLabel(pathKey)) + "</strong></div>"

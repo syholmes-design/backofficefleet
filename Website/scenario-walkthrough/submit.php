@@ -91,6 +91,8 @@ function scenario_summary(array $data, array $categories): string
         'Assessment focus: ' . (count($categories) ? implode(', ', $categories) : 'Not selected'),
         'Assessment description: ' . clean_text($data['scenarioDescription'] ?? '', 2200),
         'Current process: ' . clean_text($data['currentProcess'] ?? '', 2200),
+        'HR Tier review: ' . clean_text($data['hrTierProcess'] ?? '', 2200),
+        'Finance Tier review: ' . clean_text($data['financeTierProcess'] ?? '', 2200),
         'Urgency: ' . clean_text($data['urgency'] ?? '', 120),
         'Preferred demo path: ' . clean_text($data['preferredDemoPath'] ?? '', 120),
         'Recommended BOF demo path: ' . clean_text($data['recommendedDemoPath'] ?? '', 120),

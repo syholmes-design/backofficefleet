@@ -24,9 +24,10 @@
     .bo-kpi small { color: var(--muted); display: block; font-size: 0.76rem; line-height: 1.35; }
     .bo-demo-path { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 6px; }
     .bo-demo-path a { background: rgba(255,255,255,0.84); border: 1px solid rgba(20,33,31,0.14); border-radius: 8px; color: var(--green-dark); font-size: 0.78rem; font-weight: 950; padding: 9px 11px; text-transform: uppercase; }
-    .bo-grid-4, .bo-grid-3, .bo-insight-grid { display: grid; gap: 16px; }
+    .bo-grid-4, .bo-grid-3, .bo-insight-grid, .bo-tier-grid { display: grid; gap: 16px; }
     .bo-grid-4, .bo-insight-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
     .bo-grid-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .bo-tier-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
     .bo-card, .bo-score-card, .bo-insight { background: #fff; border: 1px solid var(--line); border-radius: 8px; box-shadow: var(--shadow-soft); padding: 18px; }
     .bo-card h3, .bo-score-card h3, .bo-insight h3 { font-size: 1.02rem; margin: 0 0 8px; }
     .bo-card p, .bo-score-card p, .bo-insight p { color: var(--muted); line-height: 1.52; margin: 0; }
@@ -47,8 +48,8 @@
     .bo-bar span { background: linear-gradient(90deg, var(--green), var(--blue)); border-radius: inherit; display: block; height: 100%; width: var(--score); }
     .bo-financial-grid { display: grid; gap: 16px; grid-template-columns: 1fr 1fr; }
     .bo-note { background: rgba(255,255,255,0.88); border: 1px solid rgba(20,33,31,0.1); border-radius: 8px; box-shadow: var(--shadow-soft); color: var(--muted); line-height: 1.6; padding: 18px; }
-    @media (max-width: 1180px) { .bo-hero-inner { grid-template-columns: 1fr; } .bo-kpi-grid, .bo-grid-4, .bo-grid-3, .bo-insight-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
-    @media (max-width: 720px) { .bo-hero-inner { min-height: auto; padding: 42px 16px; } .bo-kpi-grid, .bo-grid-4, .bo-grid-3, .bo-insight-grid, .bo-financial-grid { grid-template-columns: 1fr; } .bo-command-panel { padding: 12px; } .bo-command-top { align-items: flex-start; flex-direction: column; } .bo-demo-path { display: grid; grid-template-columns: 1fr; } .bo-demo-path a { text-align: center; } .bo-flow-step::after { display: none; } }
+    @media (max-width: 1180px) { .bo-hero-inner { grid-template-columns: 1fr; } .bo-kpi-grid, .bo-grid-4, .bo-grid-3, .bo-insight-grid, .bo-tier-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+    @media (max-width: 720px) { .bo-hero-inner { min-height: auto; padding: 42px 16px; } .bo-kpi-grid, .bo-grid-4, .bo-grid-3, .bo-insight-grid, .bo-financial-grid, .bo-tier-grid { grid-template-columns: 1fr; } .bo-command-panel { padding: 12px; } .bo-command-top { align-items: flex-start; flex-direction: column; } .bo-demo-path { display: grid; grid-template-columns: 1fr; } .bo-demo-path a { text-align: center; } .bo-flow-step::after { display: none; } }
   </style>
 </head>
 <body>
@@ -138,11 +139,11 @@
     <section class="bo-hero" id="business-operations-command">
       <div class="bo-hero-inner">
         <div class="bo-hero-copy reveal">
-          <p class="eyebrow">Business Operations Center</p>
-          <h1>Run the company behind the fleet.</h1>
-          <p>Operational Intelligence shows what is happening in the transportation operation. Business Operations Center shows the administrative infrastructure behind the company that keeps payroll, HR, insurance, factoring readiness, settlements, and accounting coordination visible.</p>
-          <p>BOF provides administrative infrastructure for fleets and carrier networks. BOF helps coordinate payroll, HR, insurance administration, factoring readiness, settlement support, and accounting workflows using static demo records.</p>
-          <div class="actions"><a class="button primary" href="#payroll-hr">Review administration</a><a class="button secondary" href="#financial-visibility">View financial visibility</a></div>
+          <p class="eyebrow">Business Operations Command Center</p>
+          <h1>Run the HR and Finance office behind the operation.</h1>
+          <p>Business Operations is BOF's HR Tier and Finance Tier service layer for operating businesses. It supports the administrative business office behind fleets, carrier networks, field-service teams, and subcontractor operations.</p>
+          <p>Back Office Fleet's Business Operations layer supports recruiting, onboarding, benefits, training, records, accounting coordination, bookkeeping, payroll support, AP, AR, reporting, factoring, settlement support, excise tax review, and cash-flow visibility.</p>
+          <div class="actions"><a class="button primary" href="#business-operations-tiers">Review HR and Finance tiers</a><a class="button secondary" href="#operational-impact">View operational impact</a></div>
           <nav class="bo-demo-path" aria-label="Business Operations demo links">
             <a href="/executive-demo/">Executive Demo</a>
             <a href="/animated-demo-business/">Business Operations Demo</a>
@@ -170,8 +171,17 @@
       </div>
     </section>
 
+    <section class="section" id="business-operations-tiers">
+      <div class="section-head reveal"><p class="eyebrow">HR and Finance support for operating businesses</p><h2>Business Operations Command Center</h2><p>BOF separates the company office into two practical service tiers: HR Tier for workforce administration and Finance Tier for financial follow-through. The goal is to make the back office visible before missing records, training renewals, settlement exceptions, or cash-flow gaps create operating pressure.</p></div>
+      <div class="bo-tier-grid">
+        <article class="bo-card reveal"><span class="status review">HR Tier</span><h3>Workforce administration</h3><p>Recruiting, onboarding, employee and contractor records, benefits coordination, training and development, talent management, readiness workflows, and administrative compliance support stay in one review path.</p><ul><li>4 onboarding items pending</li><li>2 training renewals due</li><li>1 benefits enrollment incomplete</li><li>3 worker records need review</li></ul></article>
+        <article class="bo-card reveal"><span class="status review">Finance Tier</span><h3>Financial coordination</h3><p>Accounting coordination, bookkeeping support, payroll coordination, AP, AR, financial reporting, settlement support, factoring coordination, federal/state excise tax review, and cash-flow visibility stay connected to the operating record.</p><ul><li>6 invoices pending</li><li>3 factoring packets incomplete</li><li>2 settlement exceptions</li><li>1 excise tax review item flagged</li><li>4 receivables aging</li><li>2 payables due this week</li></ul></article>
+        <article class="bo-card reveal" id="operational-impact"><span class="status blocked">Operational Impact</span><h3>Back-office gaps affect daily work.</h3><p>HR and Finance are not abstract support functions. They control whether people, packets, payments, and records are ready when the operation needs them.</p><ul><li>Missing onboarding blocks driver readiness.</li><li>Incomplete POD delays invoicing.</li><li>Settlement exceptions affect payroll coordination.</li><li>Factoring packet gaps affect cash flow.</li><li>Training renewals affect assignment readiness.</li><li>Claims documentation affects receivables and customer follow-up.</li></ul></article>
+      </div>
+    </section>
+
     <section class="section" id="payroll-hr">
-      <div class="section-head reveal"><p class="eyebrow">Payroll &amp; HR Administration</p><h2>BOF keeps people, payroll, and administrative readiness visible.</h2><p>This view helps an operator see what needs payroll review, which hires are moving forward, where benefits enrollment stands, and whether employee or driver records are ready for the next administrative cycle.</p></div>
+      <div class="section-head reveal"><p class="eyebrow">HR Tier</p><h2>BOF keeps recruiting, onboarding, records, benefits, and training visible.</h2><p>This HR Tier view helps an operator see which hires are moving forward, where benefits enrollment stands, which worker records need review, and whether training or readiness workflows could block assignment readiness.</p></div>
       <div class="bo-grid-4">
         <article class="bo-card reveal"><span class="status ready">Payroll calendar</span><h3>June payroll cycle</h3><ul><li>Driver payroll lock: Jun 24</li><li>Office payroll review: Jun 25</li><li>Settlement import check: Jun 26</li><li>Manager approval: Jun 27</li></ul></article>
         <article class="bo-card reveal"><span class="status review">New hire pipeline</span><h3>14 records in process</h3><ul><li>Applications submitted: 14</li><li>Background review: 8</li><li>Documents pending: 5</li><li>Payroll setup ready: 6</li></ul></article>
@@ -192,7 +202,7 @@
     </section>
 
     <section class="section" id="driver-onboarding">
-      <div class="section-head reveal"><p class="eyebrow">Driver onboarding lifecycle</p><h2>Driver onboarding becomes a visible administrative path.</h2><p>The lifecycle connects recruiting, screening, document collection, qualification, payroll setup, benefits enrollment, and active driver status without creating a hiring backend.</p></div>
+      <div class="section-head reveal"><p class="eyebrow">HR Tier workflow</p><h2>Driver and worker onboarding becomes a visible administrative path.</h2><p>The lifecycle connects recruiting, screening, document collection, qualification, payroll setup, benefits enrollment, training readiness, and active worker status without making BOF the employer of record or a hiring backend.</p></div>
       <div class="bo-flow reveal" aria-label="Driver onboarding lifecycle">
         <article class="bo-flow-step"><span>01</span><strong>Recruit</strong><p>Candidate source and recruiter owner are visible.</p></article>
         <article class="bo-flow-step"><span>02</span><strong>Application</strong><p>Application status and missing fields are tracked.</p></article>
@@ -242,7 +252,7 @@
     </section>
 
     <section class="section" id="factoring-readiness">
-      <div class="section-head reveal"><p class="eyebrow">Factoring readiness</p><h2>BOF helps coordinate the documents required for funding review.</h2><p>BOF helps organize POD, invoice, packet, submission, and funding status so teams can see what is ready. BOF is not a bank, lender, factoring company, or funding decision-maker.</p></div>
+      <div class="section-head reveal"><p class="eyebrow">Finance Tier</p><h2>BOF helps coordinate the documents required for funding review.</h2><p>The Finance Tier keeps factoring packet readiness, invoice status, receivable follow-up, and settlement support connected to the work that created the payment record. BOF is not a bank, lender, factoring company, or funding decision-maker.</p></div>
       <div class="bo-factoring-flow reveal" aria-label="Factoring readiness stages">
         <article class="bo-flow-step"><span>01</span><strong>POD Received</strong><p>Delivery proof is attached and readable.</p></article>
         <article class="bo-flow-step"><span>02</span><strong>Invoice Generated</strong><p>Invoice detail matches the settlement record.</p></article>
@@ -258,7 +268,7 @@
     </section>
 
     <section class="section" id="accounting-coordination">
-      <div class="section-head reveal"><p class="eyebrow">Accounting coordination</p><h2>Accounting figures become operating context, not a separate mystery.</h2><p>These figures are static demo records for executive visibility. BOF is not an accounting firm or payroll provider of record.</p></div>
+      <div class="section-head reveal"><p class="eyebrow">Finance Tier</p><h2>Accounting and bookkeeping support become operating context, not a separate mystery.</h2><p>These figures are demo records for executive visibility across accounting coordination, bookkeeping support, payroll coordination, AP, AR, reporting, settlement support, and excise tax review. BOF is not an accounting firm, tax advisor, or payroll provider of record.</p></div>
       <div class="table-wrap reveal">
         <table>
           <thead><tr><th>Category</th><th>Current period</th><th>Status</th><th>Owner</th><th>Administrative note</th></tr></thead>
@@ -266,6 +276,8 @@
             <tr><td>Revenue summary</td><td>$1.84M</td><td><span class="status ready">Reviewed</span></td><td>Finance coordinator</td><td>Revenue view reconciled to shipment closeout records.</td></tr>
             <tr><td>Settlement summary</td><td>$612K</td><td><span class="status review">Review</span></td><td>Settlement desk</td><td>Three driver settlements need document confirmation.</td></tr>
             <tr><td>Open receivables</td><td>$438K</td><td><span class="status review">Watch</span></td><td>AR owner</td><td>Invoices over 30 days require follow-up notes.</td></tr>
+            <tr><td>Accounts payable</td><td>$86K</td><td><span class="status review">Due this week</span></td><td>AP owner</td><td>Two vendor payables need supporting approval records.</td></tr>
+            <tr><td>Excise tax review</td><td>1 item</td><td><span class="status review">Flagged</span></td><td>Finance coordinator</td><td>Federal/state excise tax support item needs outside advisor review.</td></tr>
             <tr><td>Operating expenses</td><td>$967K</td><td><span class="status ready">Current</span></td><td>Admin lead</td><td>Insurance, fuel, payroll, and vendor expense classes visible.</td></tr>
             <tr><td>Driver settlements</td><td>$284K</td><td><span class="status ready">Ready</span></td><td>Payroll desk</td><td>Settlement inputs are ready for payroll review.</td></tr>
           </tbody>
@@ -283,11 +295,11 @@
       </div>
       <div class="bo-financial-grid">
         <article class="bo-score-card reveal"><span class="status ready">Administrative readiness</span><h3>91 / 100</h3><p>Payroll, HR, insurance, settlement support, and factoring packet work are mostly ready for executive review.</p><div class="bo-score-row"><div class="bo-score-label"><span>Business readiness</span><strong>91%</strong></div><div class="bo-bar"><span style="--score:91%"></span></div></div></article>
-        <article class="bo-note reveal"><strong>BOF business infrastructure story</strong><br>BOF provides administrative infrastructure for fleets and carrier networks. BOF helps coordinate payroll, HR, insurance administration, factoring readiness, settlement support, and accounting workflows. BOF does not act as an accounting firm, insurance carrier, bank, factoring company, payroll provider of record, motor carrier, freight broker, dispatcher, or freight marketplace in this demo workflow.</article>
+        <article class="bo-note reveal"><strong>BOF business infrastructure story</strong><br>Back Office Fleet's Business Operations layer supports the HR and Finance work behind the operation: recruiting, onboarding, benefits, training, records, accounting coordination, bookkeeping, payroll support, AP, AR, reporting, factoring, settlement support, excise tax review, and cash-flow visibility. BOF does not act as an accounting firm, tax advisor, insurance carrier, bank, factoring company, payroll provider of record, motor carrier, freight broker, dispatcher, or freight marketplace in this demo workflow.</article>
       </div>
     </section>
   </main>
-  <section class="cta-band"><div class="cta-inner"><div><p class="eyebrow">Company operations</p><h2>Use Business Operations Center to answer how the company behind the fleet is running.</h2><p>Move from operational visibility into payroll, HR, insurance, factoring readiness, settlement support, and accounting coordination without adding backend systems or regulated provider functions.</p></div><a class="button light" href="/operational-intelligence/">Back to Operational Intelligence &rarr;</a></div></section>
+  <section class="cta-band"><div class="cta-inner"><div><p class="eyebrow">Company operations</p><h2>Use Business Operations Center to review the HR and Finance office behind the fleet.</h2><p>Move from operational visibility into recruiting, onboarding, benefits, training, records, bookkeeping support, payroll coordination, AP, AR, factoring readiness, settlement support, excise tax review, and cash-flow visibility without adding backend systems or regulated provider functions.</p></div><a class="button light" href="/scenario-walkthrough/">Request a BOF Assessment &rarr;</a></div></section>
   <footer class="site-footer"><div class="footer-inner"><strong>BackOfficeFleet</strong><span>Business operations infrastructure for fleets and carrier networks.</span><a href="/trust-governance/">Trust &amp; Governance</a></div></footer>
   <script src="/assets/js/site.js?v=1.49"></script>
 </body>
