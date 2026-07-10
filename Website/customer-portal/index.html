@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Customer Portal | BackOfficeFleet</title>
+  <meta name="description" content="Customer portal for shipment requests, quote review, active shipment tracking, documents, and billing review with BackOfficeFleet.">
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="/assets/css/styles.css?v=1.40">
+  <link rel="stylesheet" href="/assets/css/customer-portal.css?v=2.7">
+</head>
+<body class="customer-portal-body" data-portal-page="hub">
+  <main class="customer-portal-shell" data-customer-portal>
+    <aside class="portal-rail" aria-label="Customer Portal sections">
+      <a class="portal-brand" href="/" aria-label="BackOfficeFleet home"><img src="/assets/images/logo/boflogo-original.png" alt="BackOfficeFleet"></a>
+      <nav class="portal-nav" aria-label="Customer Portal navigation">
+        <a class="is-active" href="/customer-portal/"><span>01</span>Portal Home</a>
+        <a href="/customer-portal/load-intake/"><span>02</span>Load Intake</a>
+        <a href="/customer-portal/quotes/"><span>03</span>Quotes</a>
+        <a href="/customer-portal/shipments/"><span>04</span>Active Shipments</a>
+        <a href="/customer-portal/documents/"><span>05</span>Documents</a>
+        <a href="/customer-portal/tracking/"><span>06</span>Tracking</a>
+        <a href="/customer-portal/billing/"><span>07</span>Billing</a>
+      </nav>
+      <div class="portal-rail-card">
+        <span>Current shipment</span>
+        <strong data-portal-text="shipmentId">SHP-86240-DAL-MEM</strong>
+        <p data-portal-text="nextAction">Temporary quote, dispatch review, assignment, documents, proof, settlement, and factoring stay on one load record.</p>
+      </div>
+    </aside>
+    <section class="portal-workspace">
+      <header class="portal-topbar">
+        <div>
+          <span class="portal-kicker">Customer Portal</span>
+          <h1>Request shipments, review quotes, track active freight, and inspect shipment documents.</h1>
+        </div>
+        <div class="portal-topbar-actions">
+          <a class="portal-link-button" href="/customer-portal/load-intake/">Load Intake</a>
+          <a class="portal-link-button" href="/interactive-demo/">Command Center</a>
+        </div>
+      </header>
+
+      <section class="portal-panel portal-hub-hero">
+        <div>
+          <span class="portal-kicker">Customer Load Center</span>
+          <h2>One customer-facing workspace for intake through settlement and factoring support.</h2>
+          <p>Start with a load intake request, review the configurable temporary quote, approve the load for dispatch review, follow assignment, inspect the shipment packet, and see what proof controls delivery, billing, and settlement.</p>
+        </div>
+        <div class="portal-summary-card">
+          <span>Portal status</span>
+          <strong>4 open actions</strong>
+          <p>Quote, assignment, documents, and billing are tied to the same shipment record.</p>
+        </div>
+      </section>
+
+      <section class="portal-card-grid" aria-label="Primary Customer Portal actions">
+        <a class="portal-action-card" href="/customer-portal/load-intake/">
+          <span>01</span>
+          <h2>Load Intake</h2>
+          <p>Enter customer, contact, pickup, delivery, commodity, weight, dimensions, pallets, equipment, temperature, flags, stops, accessorials, and cargo photo details.</p>
+          <strong>Open intake</strong>
+        </a>
+        <a class="portal-action-card" href="/customer-portal/quotes/">
+          <span>02</span>
+          <h2>Review Quotes</h2>
+          <p>Review mileage, base rate, fuel, equipment, accessorials, premium factors, discount, margin estimate, and temporary total before BOF release review.</p>
+          <strong>Open quotes</strong>
+        </a>
+        <a class="portal-action-card" href="/customer-portal/tracking/">
+          <span>03</span>
+          <h2>Track Shipments</h2>
+          <p>Follow submitted, quoted, approved, assigned, picked up, in transit, delivered, and settlement complete stages.</p>
+          <strong>Open tracking</strong>
+        </a>
+        <a class="portal-action-card" href="/customer-portal/documents/">
+          <span>04</span>
+          <h2>Shipment Documents</h2>
+          <p>Inspect BOL, rate confirmation, invoice, seal record, cargo record, POD-ready proof, and closeout requirements.</p>
+          <strong>Open documents</strong>
+        </a>
+      </section>
+
+      <section class="portal-dashboard-grid">
+        <article class="portal-panel">
+          <div class="portal-panel-head"><div><span class="portal-kicker">Temporary quote</span><h2 data-portal-text="quoteTotal">Calculating</h2></div><span class="portal-status review">Pending dispatch review</span></div>
+          <div class="quote-lines" data-portal-render="quoteLines"></div>
+          <a class="portal-inline-link" href="/customer-portal/quotes/">Review quote details</a>
+        </article>
+        <article class="portal-panel">
+          <div class="portal-panel-head"><div><span class="portal-kicker">Active shipment</span><h2 data-portal-text="loadId">BOF-LD-86240</h2></div><span class="portal-status review">Pending Dispatch Review</span></div>
+          <dl class="summary-dl">
+            <div><dt>Lane</dt><dd data-portal-text="lane">Dallas, TX to Memphis, TN</dd></div>
+            <div><dt>Driver / equipment</dt><dd>John Carter - TR-4812 / RF-2207</dd></div>
+            <div><dt>Next action</dt><dd>Clear assignment, compliance, equipment, and pre-trip packet gates before pickup.</dd></div>
+          </dl>
+          <a class="portal-inline-link" href="/customer-portal/shipments/">Open active shipments</a>
+        </article>
+        <article class="portal-panel">
+          <div class="portal-panel-head"><div><span class="portal-kicker">Document packet</span><h2>7 records</h2></div><span class="portal-status review">Proof review</span></div>
+          <div class="portal-mini-list">
+            <span>Rate confirmation prepared</span>
+            <span>BOL prepared</span>
+            <span>Seal and cargo record attached</span>
+            <span>POD and empty trailer proof required after delivery</span>
+          </div>
+          <a class="portal-inline-link" href="/customer-portal/documents/">Inspect documents</a>
+        </article>
+        <article class="portal-panel">
+          <div class="portal-panel-head"><div><span class="portal-kicker">Billing status</span><h2>Invoice preview</h2></div><span class="portal-status watch">Waits on POD</span></div>
+          <p class="portal-note">Billing review is tied to signed BOL, POD, dock photo, lumper receipt when used, and settlement closeout.</p>
+          <a class="portal-inline-link" href="/customer-portal/billing/">Open billing</a>
+        </article>
+      </section>
+    </section>
+  </main>
+  <script src="/assets/js/customer-portal.js?v=2.7"></script>
+</body>
+</html>

@@ -1,0 +1,196 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Load Readiness | BackOfficeFleet</title>
+  <meta name="description" content="BOF load readiness view showing one TMS imported load from driver, carrier, and document review through release decision and next action.">
+  <link rel="stylesheet" href="/assets/css/styles.css?v=1.40">
+</head>
+<body>
+  <header class="site-header">
+    <a class="brand" href="/" aria-label="BackOfficeFleet home"><img src="/assets/images/logo/boflogo-original.png" alt="BackOfficeFleet"></a>
+    <button class="nav-toggle" type="button" data-nav-toggle aria-expanded="false" aria-label="Toggle navigation">&#9776;</button>
+    <nav class="site-nav" data-nav aria-label="Main navigation">
+      <div class="nav-menu" data-nav-menu>
+        <button class="nav-menu-toggle" type="button" data-nav-menu-toggle aria-expanded="false" aria-haspopup="true">Services</button>
+        <div class="nav-dropdown" aria-label="Services">
+          <a href="/fleet/">Fleet Back Office</a>
+          <a href="/business-operations/">HR Tier</a>
+          <a href="/business-operations/">Finance Tier</a>
+          <a href="/document-readiness-engine/">BOF Vault</a>
+          <a href="/customer-portal/">Customer Portal</a>
+          <a href="/business-operations/">Business Operations</a>
+        </div>
+      </div>
+      <div class="nav-menu" data-nav-menu>
+        <button class="nav-menu-toggle" type="button" data-nav-menu-toggle aria-expanded="false" aria-haspopup="true">Workflows</button>
+        <div class="nav-dropdown" aria-label="Workflows">
+          <a href="/drivers/">Driver Documents</a>
+          <a href="/dispatch/">Dispatch Support</a>
+          <a href="/settlements/">Settlements</a>
+          <a href="/documents/">PODs &amp; Proof</a>
+          <a href="/operations-record/">Claims &amp; Exceptions</a>
+          <a href="/settlements/">Factoring Packets</a>
+          <a href="/document-readiness-engine/">Document Readiness</a>
+        </div>
+      </div>
+      <div class="nav-menu" data-nav-menu>
+        <button class="nav-menu-toggle" type="button" data-nav-menu-toggle aria-expanded="false" aria-haspopup="true">Who We Serve</button>
+        <div class="nav-dropdown" aria-label="Who We Serve">
+          <a href="/fleet/">Trucking Fleets</a>
+          <a href="/private-fleets/">Private Fleets</a>
+          <a href="/government/">Government Fleets</a>
+          <a href="/aggregator-outreach/">Aggregators</a>
+          <a href="/business-operations/">Field Service / Business Operations</a>
+        </div>
+      </div>
+    </nav>
+    <a class="header-cta" href="/scenario-walkthrough/">Take Fleet Assessment</a>
+  </header>
+  <main>
+    <section class="section page-hero">
+      <div class="reveal"><p class="eyebrow">Load readiness</p><h1>One TMS import moves from BOF readiness review to release decision.</h1><p><a class="proof-link" href="/operations-record/#bof-1842">TMS-LD-10482</a> ties driver status, carrier packet status, document readiness, lane review, risk, and next action to the same load. It is nearly ready, but still held to a clear BOF release standard before dispatch moves it.</p><div class="actions"><a class="button primary" href="/demo/tms-release-review/">Try release review &rarr;</a><a class="button secondary" href="/documents/">Back to documents</a></div></div>
+      <div class="visual-stage reveal" aria-label="BOF load-readiness operations illustration">
+        <img class="scene-illustration" src="/assets/images/animations/heroes/hero-fleet-flow.webp" data-static-src="/assets/images/illustrations/fleet-flow-illustration.webp" alt="Isometric fleet terminal workflow showing a truck load moving from readiness through document review to release">
+        <div class="proof-strip"><span>Ready</span><span>Records</span><span>Release</span></div>
+      </div>
+    </section>
+    <section class="section">
+      <div class="proof-grid">
+        <article class="proof-card reveal"><h3>Load state</h3><p><a class="proof-link" href="/operations-record/#bof-1842">TMS-LD-10482</a> is close to release, but still in review until the <a class="proof-link" href="/operations-record/#bol-review-1842">BOL image</a> clears.</p></article>
+        <article class="proof-card reveal"><h3>Readiness support</h3><p><a class="proof-link" href="/operations-record/#drv-2048">Driver</a>, <a class="proof-link" href="/operations-record/#car-118">carrier</a>, <a class="proof-link" href="/operations-record/#insurance-118">insurance</a>, and <a class="proof-link" href="/operations-record/#rate-confirmation-1842">rate confirmation</a> are ready.</p></article>
+        <article class="proof-card reveal"><h3>Owner</h3><p>S. Turner owns the final review and has one clear action instead of a scattered follow-up list.</p></article>
+        <article class="proof-card reveal"><h3>Release result</h3><p><a class="proof-link" href="/operations-record/#dispatch-release-1842">The dispatch decision</a> shows whether the load can move or remains held for document review.</p></article>
+      </div>
+    </section>
+    <section class="section">
+      <div class="section-head reveal"><p class="eyebrow">Primary load packet</p><h2><a class="proof-link" href="/operations-record/#bof-1842">TMS-LD-10482</a> carries the complete TMS-to-BOF release picture.</h2><p>Your team can follow one imported load without asking where the supporting record lives. This packet keeps the lane, driver, carrier, required documents, release gate, owner, and next action in one readable view.</p></div>
+      <div class="paper reveal">
+        <div class="document-status-line">
+          <span class="status review">Release review</span>
+          <span>Load detail packet</span>
+          <span>Updated Jun 5, 2026 15:48 CT</span>
+        </div>
+        <h3><a class="proof-link" href="/operations-record/#bof-1842">TMS-LD-10482 Load Detail</a> &middot; Dallas to Memphis</h3>
+        <div class="paper-grid">
+          <div class="field"><span>Pickup appointment</span><strong>Jun 9, 2026 &middot; 08:30 CT</strong></div>
+          <div class="field"><span>Delivery window</span><strong>Jun 10, 2026 &middot; 13:00-16:00 CT</strong></div>
+          <div class="field"><span>Driver assignment</span><strong><a class="proof-link" href="/operations-record/#drv-2048">M. Alvarez &middot; DRV-2048</a></strong></div>
+          <div class="field"><span>Carrier assignment</span><strong><a class="proof-link" href="/operations-record/#car-118">Northline Freight &middot; CAR-118</a></strong></div>
+          <div class="field"><span>Release gate</span><strong><a class="proof-link" href="/operations-record/#bol-review-1842">BOL image confirmation</a></strong></div>
+          <div class="field"><span>Action owner</span><strong>S. Turner &middot; dispatch review</strong></div>
+        </div>
+        <table class="small-table">
+          <thead><tr><th>Record area</th><th>Current answer</th><th>Document</th><th>Dispatch consequence</th></tr></thead>
+          <tbody>
+            <tr><td>Commercial terms</td><td><span class="status ready">Ready</span></td><td><a class="proof-link" href="/operations-record/#rate-confirmation-1842">Rate confirmation</a></td><td>Lane and appointment details match the load packet.</td></tr>
+            <tr><td>Driver readiness</td><td><span class="status ready">Ready</span></td><td><a class="proof-link" href="/operations-record/#drv-2048">Driver file</a> and <a class="proof-link" href="/operations-record/#medical-card-2048">medical card</a></td><td>Driver is eligible for this assignment.</td></tr>
+            <tr><td>Carrier packet</td><td><span class="status ready">Ready</span></td><td><a class="proof-link" href="/operations-record/#car-118">Carrier packet</a> and <a class="proof-link" href="/operations-record/#insurance-118">insurance certificate</a></td><td>Carrier does not block the release decision.</td></tr>
+            <tr><td>Document readiness</td><td><span class="status review">Review</span></td><td><a class="proof-link" href="/operations-record/#bol-review-1842">Bill of lading image</a></td><td>Final release waits on image confirmation.</td></tr>
+            <tr><td>Release decision</td><td><span class="status review">Pending</span></td><td><a class="proof-link" href="/operations-record/#dispatch-release-1842">Dispatch release note</a></td><td>Approve packet after BOL image clears, or hold for corrected image.</td></tr>
+          </tbody>
+        </table>
+        <div class="paper-note">The load detail packet prevents a near-ready load from becoming a guessing exercise. BOF shows exactly which records already support dispatch and which single item still controls the release decision.</div>
+        <div class="signature-row"><div class="signature">Dispatch review</div><div class="signature">Operations lead</div><div class="stamp">Review</div></div>
+      </div>
+    </section>
+    <section class="section">
+      <div class="section-head reveal"><p class="eyebrow">Operating sequence</p><h2>The load view shows consequence, not just status.</h2><p>This is the compressed view of the same scenario: which load moves, which load waits, which record changes the decision, and who owns the final release action.</p></div>
+      <div class="card-grid">
+        <article class="card reveal"><span class="icon">1</span><h3>Driver ready</h3><p>M. Alvarez has a current <a class="proof-link" href="/operations-record/#drv-2048">DQF</a>, <a class="proof-link" href="/operations-record/#medical-card-2048">medical card</a>, MVR review, and safety status that support <a class="proof-link" href="/operations-record/#bof-1842">TMS-LD-10482</a>.</p></article>
+        <article class="card reveal"><span class="icon">2</span><h3>Lane reviewed</h3><p>Dallas to Memphis is ready for release once S. Turner confirms the <a class="proof-link" href="/operations-record/#bol-review-1842">BOL image</a>.</p></article>
+        <article class="card reveal"><span class="icon">3</span><h3>Records organized</h3><p>Driver, carrier, BOL, <a class="proof-link" href="/operations-record/#rate-confirmation-1842">rate confirmation</a>, <a class="proof-link" href="/operations-record/#insurance-118">insurance</a>, and release status stay tied to <a class="proof-link" href="/operations-record/#bof-1842">TMS-LD-10482</a>.</p></article>
+      </div>
+    </section>
+    <section class="section">
+      <div class="table-wrap reveal">
+        <table>
+          <thead><tr><th>Lane</th><th>Driver</th><th>Readiness</th><th>Next Action</th><th>Status</th></tr></thead>
+          <tbody>
+            <tr><td><a class="proof-link" href="/operations-record/#bof-1842">TMS-LD-10482 &middot; Dallas, TX &rarr; Memphis, TN</a></td><td><a class="proof-link" href="/operations-record/#drv-2048">M. Alvarez</a></td><td>Driver and carrier ready; BOL confirmation pending</td><td><a class="table-action" href="/operations-record/#dispatch-release-1842">Approve release packet</a></td><td><span class="status review">Review</span></td></tr>
+            <tr><td><a class="proof-link" href="/operations-record/#bof-1907">BOF-1907 &middot; Tulsa, OK &rarr; Kansas City, MO</a></td><td><a class="proof-link" href="/operations-record/#driver-1187">J. Carter</a></td><td>BOL photo review</td><td><a class="table-action" href="/operations-record/#bol-review-1907">Confirm bill of lading</a></td><td><span class="status watch">Watch</span></td></tr>
+            <tr><td><a class="proof-link" href="/operations-record/#bof-1931">BOF-1931 &middot; Little Rock, AR &rarr; St. Louis, MO</a></td><td><a class="proof-link" href="/operations-record/#driver-3301">T. Brooks</a></td><td>Credential hold</td><td><a class="table-action" href="/operations-record/#medical-card-3301">Update medical card</a></td><td><span class="status blocked">Hold</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+    <section class="section">
+      <div class="section-head reveal"><p class="eyebrow">Watch and hold readiness</p><h2>The load view also explains why work waits.</h2><p>BOF separates a fixable watch item from a true dispatch hold. Each load keeps the driver, carrier, controlling record, owner, consequence, and next action connected.</p></div>
+      <div class="paper-stack">
+        <div class="paper reveal">
+          <div class="document-status-line">
+            <span class="status watch">Watch</span>
+            <span>Load readiness packet</span>
+            <span>Open Jun 5, 2026 11:18 CT</span>
+          </div>
+          <h3><a class="proof-link" href="/operations-record/#bof-1907">Watch Load Readiness &middot; BOF-1907</a></h3>
+          <div class="paper-grid">
+            <div class="field"><span>Lane</span><strong>Tulsa, OK to Kansas City, MO</strong></div>
+            <div class="field"><span>Driver</span><strong><a class="proof-link" href="/operations-record/#driver-1187">J. Carter &middot; DRV-1187</a></strong></div>
+            <div class="field"><span>Carrier</span><strong><a class="proof-link" href="/operations-record/#carrier-207">Blue River Logistics &middot; CAR-207</a></strong></div>
+            <div class="field"><span>Controlling records</span><strong><a class="proof-link" href="/operations-record/#bol-review-1907">BOL photo details</a> and <a class="proof-link" href="/operations-record/#carrier-207">carrier renewal evidence</a></strong></div>
+            <div class="field"><span>Owner</span><strong>Dispatcher and packet owner</strong></div>
+            <div class="field"><span>Dispatch consequence</span><strong><a class="proof-link" href="/operations-record/#dispatch-release-1907">Watch before assignment</a></strong></div>
+          </div>
+          <h4>Readiness checks</h4>
+          <div class="paper-grid">
+            <div class="field"><span>Driver eligibility</span><strong><a class="proof-link" href="/operations-record/#driver-1187">Ready for Tulsa to Kansas City</a></strong></div>
+            <div class="field"><span>BOL detail</span><strong><a class="proof-link" href="/operations-record/#bol-review-1907">Consignee and timestamp need confirmation</a></strong></div>
+            <div class="field"><span>Carrier packet</span><strong><a class="proof-link" href="/operations-record/#carrier-207">Renewal evidence needs owner confirmation</a></strong></div>
+            <div class="field"><span>Next action</span><strong>Clear two narrow checks before assignment</strong></div>
+          </div>
+          <div class="paper-note"><a class="proof-link" href="/operations-record/#bof-1907">BOF-1907</a> stays visible as a watch item because the load may move after document and carrier evidence clear. It is not treated like a hard hold.</div>
+          <div class="signature-row"><div class="signature">Dispatcher</div><div class="signature">Packet owner</div><div class="stamp">Watch</div></div>
+        </div>
+        <div class="paper reveal">
+          <div class="document-status-line">
+            <span class="status blocked">Hold</span>
+            <span>Load readiness hold</span>
+            <span>Prepared Jun 5, 2026 16:05 CT</span>
+          </div>
+          <h3><a class="proof-link" href="/operations-record/#bof-1931">Held Load Readiness &middot; BOF-1931</a></h3>
+          <div class="paper-grid">
+            <div class="field"><span>Lane</span><strong>Little Rock, AR to St. Louis, MO</strong></div>
+            <div class="field"><span>Driver</span><strong><a class="proof-link" href="/operations-record/#driver-3301">T. Brooks &middot; DRV-3301</a></strong></div>
+            <div class="field"><span>Carrier</span><strong><a class="proof-link" href="/operations-record/#carrier-309">Delta Yard Services &middot; CAR-309</a></strong></div>
+            <div class="field"><span>Controlling record</span><strong><a class="proof-link" href="/operations-record/#medical-card-3301">Medical certificate update missing</a></strong></div>
+            <div class="field"><span>Owner</span><strong>Safety lead</strong></div>
+            <div class="field"><span>Dispatch consequence</span><strong><a class="proof-link" href="/operations-record/#hold-resolution-1931">Do not assign until credential clears</a></strong></div>
+          </div>
+          <h4>Hold checks</h4>
+          <div class="small-table">
+            <table>
+              <thead><tr><th>Check</th><th>Status</th><th>Owner</th><th>Load consequence</th></tr></thead>
+              <tbody>
+                <tr><td>Driver credential requested</td><td><span class="status ready">Sent</span></td><td>Safety lead</td><td>Driver knows the record required.</td></tr>
+                <tr><td>Updated medical card attached</td><td><span class="status blocked">Pending</span></td><td>Driver / safety lead</td><td>Load remains held.</td></tr>
+                <tr><td>Safety review completed</td><td><span class="status blocked">Pending</span></td><td>Safety lead</td><td>Dispatch assignment blocked.</td></tr>
+                <tr><td>Release gate updated</td><td><span class="status blocked">Pending</span></td><td>Operations lead</td><td>Load stays out of assignment.</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="paper-note"><a class="proof-link" href="/operations-record/#bof-1931">BOF-1931</a> shows the difference between available capacity and release-ready work. Carrier context is attached, but the driver credential controls the hold.</div>
+          <div class="signature-row"><div class="signature">Safety lead</div><div class="signature">Operations lead</div><div class="stamp">Hold</div></div>
+        </div>
+      </div>
+    </section>
+    <section class="section scenario-grid">
+      <div class="demo-panel reveal">
+        <p class="eyebrow">Fleet consequence</p>
+        <h2><a class="proof-link" href="/operations-record/#bof-1842">TMS-LD-10482</a> is not blocked by safety or carrier readiness.</h2>
+        <p>The remaining decision is narrow and visible: approve the <a class="proof-link" href="/operations-record/#bol-review-1842">BOL image</a>, then release the trip packet. Your team can see how a complex back-office process becomes one controlled action.</p>
+      </div>
+      <div class="proof-grid">
+        <article class="proof-card reveal"><h3>Ready records</h3><p><a class="proof-link" href="/operations-record/#drv-2048">Driver DQF</a>, <a class="proof-link" href="/operations-record/#car-118">carrier packet</a>, <a class="proof-link" href="/operations-record/#insurance-118">insurance certificate</a>, <a class="proof-link" href="/operations-record/#rate-confirmation-1842">rate confirmation</a>, and safety status are current.</p></article>
+        <article class="proof-card reveal"><h3>Remaining action</h3><p>S. Turner reviews the <a class="proof-link" href="/operations-record/#bol-review-1842">BOL photo</a> and moves the load from review to release with a visible record trail.</p></article>
+      </div>
+    </section>
+  </main>
+  <section class="cta-band"><div class="cta-inner"><div><p class="eyebrow">Finish strong</p><h2>End with a focused BOF assessment.</h2><p>Your team should leave knowing exactly which operating problem BOF will examine first and which records support the next release decision.</p></div><a class="button light" href="/scenario-walkthrough/">Take the BOF Fleet Assessment &rarr;</a></div></section>
+  <footer class="site-footer"><div class="footer-inner"><strong>BackOfficeFleet</strong><span>Load readiness.</span><a href="/trust-governance/">Trust &amp; Governance</a></div></footer>
+  <script src="/assets/js/site.js?v=1.38"></script>
+</body>
+</html>
+
+

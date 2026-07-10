@@ -1,0 +1,482 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Settlements Command Center | BackOfficeFleet</title>
+  <meta name="description" content="BOF settlement workflow support for trucking settlement documents, driver pay calculations, contractor settlement statements, POD billing delays, factoring packet readiness, and cash-flow visibility.">
+  <link rel="stylesheet" href="/assets/css/styles.css?v=20260709-phase2">
+</head>
+<body class="visual-refresh">
+  <header class="site-header">
+    <a class="brand" href="/" aria-label="BackOfficeFleet home"><img src="/assets/images/logo/boflogo-original.png" alt="BackOfficeFleet"></a>
+    <button class="nav-toggle" type="button" data-nav-toggle aria-expanded="false" aria-label="Toggle navigation">&#9776;</button>
+    <nav class="site-nav" data-nav aria-label="Main navigation">
+      <div class="nav-menu" data-nav-menu>
+        <button class="nav-menu-toggle" type="button" data-nav-menu-toggle aria-expanded="false" aria-haspopup="true">Who We Serve</button>
+        <div class="nav-dropdown" aria-label="Who We Serve">
+          <a href="/fleet/">Fleet Owners</a>
+          <a href="/private-fleets/">Private Fleets</a>
+          <a href="/government/">Government Fleets</a>
+          <a href="/aggregator-outreach/">Aggregators</a>
+        </div>
+      </div>
+      <div class="nav-menu" data-nav-menu>
+        <button class="nav-menu-toggle" type="button" data-nav-menu-toggle aria-expanded="false" aria-haspopup="true">Drivers</button>
+        <div class="nav-dropdown" aria-label="Drivers">
+          <a href="/drivers/#driver-profiles">Driver Profiles</a>
+          <a href="/drivers/#driver-documents">Driver Documents &amp; DQF</a>
+          <a href="/drivers/#driver-roster">Driver Roster</a>
+          <a href="/drivers/#credential-review">Driver Credential Review</a>
+          <a href="/drivers/#driver-readiness-demo">Driver Photos / Profiles / Readiness Demo</a>
+        </div>
+      </div>
+      <div class="nav-menu" data-nav-menu>
+        <button class="nav-menu-toggle" type="button" data-nav-menu-toggle aria-expanded="false" aria-haspopup="true">Dispatch &amp; Operations</button>
+        <div class="nav-dropdown" aria-label="Dispatch and Operations">
+          <a href="/customer-portal/load-intake/">Customer Load Intake</a>
+          <a href="/dispatch/#dispatch-readiness">Dispatch Readiness</a>
+          <a href="/dispatch/#load-packets">Load Packets</a>
+          <a href="/dispatch/#pre-trip-release">Pre-Trip Release</a>
+          <a href="/dispatch/#route-lane-review">Route / Lane Review</a>
+          <a href="/dispatch/#equipment-readiness">Equipment Readiness</a>
+          <a href="/dispatch/#driver-assignment">Driver Assignment</a>
+        </div>
+      </div>
+      <div class="nav-menu" data-nav-menu>
+        <button class="nav-menu-toggle" type="button" data-nav-menu-toggle aria-expanded="false" aria-haspopup="true">Safety &amp; Compliance</button>
+        <div class="nav-dropdown" aria-label="Safety and Compliance">
+          <a href="/safety/#pre-trip-documents">Pre-Trip Documents</a>
+          <a href="/safety/#pre-trip-photos">Pre-Trip Photos</a>
+          <a href="/safety/#cargo-securement">Cargo Securement</a>
+          <a href="/safety/#driver-safety-review">Driver Safety Review</a>
+          <a href="/safety/#hos-eld-review">HOS / ELD Review Concepts</a>
+          <a href="/safety/#route-risk">Route Risk / Weather / Traffic</a>
+          <a href="/safety/#incident-review">Camera Events / Incident Review</a>
+          <a href="/safety/#claims-evidence">Claims Evidence</a>
+          <a href="/safety/#post-trip-review">Post-Trip Review</a>
+        </div>
+      </div>
+      <div class="nav-menu" data-nav-menu>
+        <button class="nav-menu-toggle" type="button" data-nav-menu-toggle aria-expanded="false" aria-haspopup="true">Settlements &amp; Billing</button>
+        <div class="nav-dropdown" aria-label="Settlements and Billing">
+          <a href="/settlements/#proof-packets">Proof Packets</a>
+          <a href="/settlements/#billing-packets">Billing Packets</a>
+          <a href="/settlements/#driver-settlement-verification">Driver Settlement Verification</a>
+          <a href="/settlements/#pod-lumper-rate">POD / Lumper / Rate Confirmation</a>
+          <a href="/settlements/#detention-accessorials">Detention / Accessorials</a>
+          <a href="/settlements/#deductions-fuel-advances">Deductions / Fuel Advances</a>
+          <a href="/settlements/#claims-holds">Claims Holds</a>
+          <a href="/settlements/#factoring-packet-support">Factoring Packet Support</a>
+          <a href="/settlements/#settlement-readiness-status">Settlement Readiness Status</a>
+        </div>
+      </div>
+      <div class="nav-menu" data-nav-menu>
+        <button class="nav-menu-toggle" type="button" data-nav-menu-toggle aria-expanded="false" aria-haspopup="true">Business Operations</button>
+        <div class="nav-dropdown" aria-label="Business Operations">
+          <a href="/business-operations/#hr-tier">HR Tier</a>
+          <a href="/business-operations/#driver-onboarding">Driver Onboarding</a>
+          <a href="/business-operations/#accounting-finance">Accounting &amp; Finance</a>
+          <a href="/business-operations/#payroll-administration">Payroll Administration</a>
+          <a href="/business-operations/#customer-billing">Customer Billing</a>
+          <a href="/business-operations/#accounts-receivable">Accounts Receivable</a>
+          <a href="/business-operations/#document-management">Document Management</a>
+          <a href="/business-operations/#operational-reporting">Operational Reporting</a>
+        </div>
+      </div>
+      <div class="nav-menu" data-nav-menu>
+        <button class="nav-menu-toggle" type="button" data-nav-menu-toggle aria-expanded="false" aria-haspopup="true">Policies &amp; Procedures</button>
+        <div class="nav-dropdown" aria-label="Policies and Procedures">
+          <a href="/policies-procedures/#driver-qualification-sop">Driver Qualification SOP</a>
+          <a href="/policies-procedures/#cargo-securement-procedure">Cargo Securement Procedure</a>
+          <a href="/policies-procedures/#hos-review-procedure">HOS Review Procedure</a>
+          <a href="/policies-procedures/#accident-reporting-procedure">Accident Reporting Procedure</a>
+          <a href="/policies-procedures/#claims-evidence-procedure">Claims Evidence Procedure</a>
+          <a href="/policies-procedures/#customer-billing-procedure">Customer Billing Procedure</a>
+          <a href="/policies-procedures/#settlement-approval-procedure">Settlement Approval Procedure</a>
+          <a href="/policies-procedures/#records-retention-policy">Records Retention Policy</a>
+          <a href="/policies-procedures/#information-security-policy">Information Security Policy</a>
+          <a href="/policies-procedures/#cybersecurity-procedure">Cybersecurity Procedure</a>
+          <a href="/policies-procedures/#business-continuity-procedure">Business Continuity Procedure</a>
+        </div>
+      </div>
+      <div class="nav-menu" data-nav-menu>
+        <button class="nav-menu-toggle" type="button" data-nav-menu-toggle aria-expanded="false" aria-haspopup="true">Company</button>
+        <div class="nav-dropdown" aria-label="Company">
+          <a href="/trust-governance/">About BOF</a>
+          <a href="/book-demo/">Contact</a>
+          <a href="/integrations/partner-tms/">Partner Program</a>
+        </div>
+      </div>
+    </nav>
+    <a class="header-cta" href="/scenario-walkthrough/">Take the BOF Fleet Assessment</a>
+  </header>
+  <section class="bof-workflow-band" aria-label="BOF operating workflow">
+    <div class="bof-workflow-inner">
+      <div class="bof-workflow-label"><span>BOF workflow</span><strong>Proof becomes settlement readiness</strong></div>
+      <div class="bof-workflow-steps">
+        <a class="bof-workflow-step is-complete" href="/drivers/">Drivers</a>
+        <a class="bof-workflow-step is-complete" href="/dispatch/">Dispatch &amp; Operations</a>
+        <a class="bof-workflow-step is-complete" href="/safety/">Safety &amp; Compliance</a>
+        <a class="bof-workflow-step is-current" href="/settlements/">Settlements &amp; Billing</a>
+        <a class="bof-workflow-step is-upcoming" href="/business-operations/">Business Operations</a>
+      </div>
+    </div>
+  </section>
+
+  <main class="settlements-page workflow-dashboard-page">
+    <section class="section page-hero settlements-hero">
+      <div class="reveal">
+        <p class="eyebrow">Settlements command center</p>
+        <h1>Driver pay, contractor settlements, packet readiness, and cash-flow blockers stay tied to one reviewable record.</h1>
+        <p>Driver pay, deductions, reimbursements, packet completion, safety holds, document exceptions, payroll coordination, contractor settlement records, and factoring packet status stay tied to the same operating record. Fleet owners can see why a settlement is ready, pending, under review, or held before finance releases money.</p>
+        <div class="actions">
+          <a class="button primary" href="#settlement-documents">Open settlement documents &rarr;</a>
+          <a class="button secondary" href="#pay-type-engine">Review settlement logic</a>
+        </div>
+      </div>
+      <aside class="visual-stage command-center-dashboard-stage settlements-dashboard-stage reveal" aria-label="BOF Settlements and Billing Command Center dashboard">
+        <img class="scene-illustration command-center-dashboard-image" src="/assets/images/dashboard-mockups/bof-settlements-command.webp" alt="Settlements and Billing Command Center dashboard showing proof packets, driver settlements, billing queues, accounts receivable, exception holds, and settlement readiness KPIs" fetchpriority="high" decoding="async" sizes="(max-width: 940px) 100vw, 760px">
+      </aside>
+    </section>
+
+    <section class="section bof-video-section" aria-labelledby="settlement-readiness-video-title">
+      <div class="bof-video-layout reveal">
+        <div class="bof-video-copy">
+          <p class="eyebrow">Settlement readiness video</p>
+          <h2 id="settlement-readiness-video-title">See How BOF Organizes Settlement Readiness</h2>
+          <p>Watch how BackOfficeFleet turns proof of delivery, billing documents, driver settlements, and operational records into one organized settlement workflow.</p>
+          <div class="actions"><a class="button primary" href="#settlement-documents">Open settlement documents</a></div>
+        </div>
+        <div class="bof-video-frame">
+          <video class="bof-video" controls preload="metadata" poster="/assets/images/video-posters/bof-settlements-readiness.jpg" aria-label="See how BOF organizes settlement readiness.">
+            <source src="/assets/videos/bof-settlements-readiness.mp4" type="video/mp4">
+            Your browser does not support the video tag.
+          </video>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="proof-packets">
+      <div class="section-head reveal">
+        <p class="eyebrow">Packet anatomy</p>
+        <h2>Settlement readiness depends on proof, billing support, driver review, and cash-flow context.</h2>
+        <p>Each packet item below is demo content. It shows what the record is, who usually provides it, why the fleet needs it, and what happens when it is missing before settlement or billing release.</p>
+      </div>
+      <div class="table-wrap reveal">
+        <table class="small-table">
+          <thead><tr><th>Packet item</th><th>What it is</th><th>Who provides it</th><th>Why it matters</th><th>If missing</th></tr></thead>
+          <tbody>
+            <tr><td>Proof Packet</td><td>POD, BOL, dock photos, seal/cargo proof, receiver notes, and closeout evidence.</td><td>Driver, dispatcher, customer, receiver, or packet owner.</td><td>Confirms the work was completed and supports invoice/settlement review.</td><td>Settlement and invoice readiness move to hold or review.</td></tr>
+            <tr id="billing-packets"><td>Billing Packet</td><td>Invoice support, rate confirmation, POD, accessorial approval, and customer billing notes.</td><td>Customer, dispatcher, billing owner, and document reviewer.</td><td>Shows why the invoice is ready and which records support charges.</td><td>Billing cannot confidently release; receivables follow-up may wait.</td></tr>
+            <tr id="driver-settlement-verification"><td>Driver Settlement Verification</td><td>Pay basis, miles, stop pay, bonus, reimbursement, deduction, and reviewer note.</td><td>Operations, payroll coordinator, contractor settlement owner, or finance reviewer.</td><td>Connects pay lines to trip records without pretending BOF is payroll.</td><td>Pay stays in review until the fleet's proper reviewer confirms support.</td></tr>
+            <tr id="pod-lumper-rate"><td>POD / Lumper / Rate Confirmation</td><td>Signed delivery proof, lumper receipt, and agreed commercial terms.</td><td>Driver, receiver, lumper provider, broker/customer, or packet owner.</td><td>Supports payment, reimbursement, and rate-backed billing.</td><td>Invoice, reimbursement, or factoring packet may remain incomplete.</td></tr>
+            <tr id="detention-accessorials"><td>Detention / Accessorials</td><td>Approved waiting time, extra stop, layover, toll, or other supported charge.</td><td>Dispatcher, customer, driver, or billing owner.</td><td>Shows why an extra charge or pay line belongs in the packet.</td><td>Accessorial pay or invoice lines remain under review.</td></tr>
+            <tr id="deductions-fuel-advances"><td>Deductions / Fuel Advances</td><td>Advance, equipment, damage, fuel, or other deduction support.</td><td>Finance, fleet owner, settlement owner, or contractor record owner.</td><td>Keeps deduction logic reviewable before money is released.</td><td>Settlement statement should not finalize without support.</td></tr>
+            <tr id="claims-holds"><td>Claims Holds</td><td>Claim flag, damage note, photo evidence, incident record, and owner review.</td><td>Safety, claims owner, driver, customer, or receiver.</td><td>Prevents payout or billing from ignoring unresolved risk.</td><td>Settlement, invoice, or factoring readiness may stay on hold.</td></tr>
+            <tr id="factoring-packet-support"><td>Factoring Packet Support</td><td>Invoice, rate confirmation, POD, packet completeness, and exception state.</td><td>Billing owner, finance reviewer, or factoring coordination owner.</td><td>Shows whether receivable support is ready for the fleet's factoring process.</td><td>Cash-flow visibility remains uncertain until packet gaps clear.</td></tr>
+            <tr id="settlement-readiness-status"><td>Settlement Readiness Status</td><td>Ready, review, missing, hold, or released status tied to owner and next action.</td><td>BOF workflow owner with fleet review.</td><td>Gives finance and operations the same reason for release or hold.</td><td>The team falls back to scattered messages and manual reconciliation.</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="evidence-grid">
+        <article class="evidence-card reveal">
+          <img src="/video-assets/settlements/screenshots/scene-02-settlement-gaps.png" alt="Illustrative settlement gaps storyboard screenshot" loading="lazy" decoding="async">
+          <h3>Example Proof Packet</h3>
+          <p>Demo evidence panel showing the records that make delivery and billing reviewable.</p>
+          <dl>
+            <div><dt>What it is</dt><dd>POD, BOL, dock photo, empty-cargo proof, seal/cargo notes</dd></div>
+            <div><dt>Who provides it</dt><dd>Driver, receiver, customer, dispatcher, or packet owner</dd></div>
+            <div><dt>If missing</dt><dd><em class="status hold">Hold</em> settlement, invoice, or factoring packet review</dd></div>
+          </dl>
+        </article>
+        <article class="evidence-card reveal">
+          <img src="/video-assets/settlements/screenshots/scene-04-driver-pay-deductions.png" alt="Illustrative driver pay and deductions storyboard screenshot" loading="lazy" decoding="async">
+          <h3>Sample Settlement Evidence Packet</h3>
+          <p>Sample packet anatomy for driver pay, reimbursement, deduction, and reviewer context.</p>
+          <dl>
+            <div><dt>What it is</dt><dd>Pay basis, miles or percentage, stop pay, lumper reimbursement, deduction support</dd></div>
+            <div><dt>Who provides it</dt><dd>Operations, payroll coordinator, finance reviewer, or contractor settlement owner</dd></div>
+            <div><dt>If missing</dt><dd><em class="status review">Review</em> until support documents and owner approval are visible</dd></div>
+          </dl>
+        </article>
+        <article class="evidence-card reveal">
+          <img src="/video-assets/settlements/screenshots/scene-05-billing-factoring-packet.png" alt="Illustrative billing and factoring packet storyboard screenshot" loading="lazy" decoding="async">
+          <h3>Example Billing Packet</h3>
+          <p>Demo packet for invoice support, rate confirmation, factoring readiness, and receivables visibility.</p>
+          <dl>
+            <div><dt>What it is</dt><dd>Invoice support, rate confirmation, POD, accessorial approval, billing note</dd></div>
+            <div><dt>Who provides it</dt><dd>Billing owner, dispatcher, customer, finance reviewer, or packet owner</dd></div>
+            <div><dt>If missing</dt><dd><em class="status blocked">Blocked</em> cash-flow visibility until packet gaps clear</dd></div>
+          </dl>
+        </article>
+      </div>
+    </section>
+
+    <section class="section" aria-labelledby="load-to-settlement-trace-title">
+      <div class="section-head reveal">
+        <p class="eyebrow">Load-to-Settlement Trace</p>
+        <h2 id="load-to-settlement-trace-title">A settlement packet starts with the load record, not a loose pay formula.</h2>
+        <p>BOF keeps the settlement trail connected to the assigned load, driver, invoice, POD status, receipt support, and factoring packet readiness. The packet can show why money is ready, under review, or held without pretending to run payroll or factoring.</p>
+      </div>
+      <div class="settlement-flow cash-flow reveal" aria-label="Load-to-settlement trace">
+        <span>Load assigned</span>
+        <span>Driver completes work</span>
+        <span>POD and receipts collected</span>
+        <span>Invoice prepared</span>
+        <span>Factoring packet checked</span>
+        <span>Settlement packet calculated</span>
+        <span>Payroll or contractor review</span>
+      </div>
+    </section>
+
+    <section class="section" aria-label="Settlement Command Center metrics">
+      <div class="section-head reveal">
+        <p class="eyebrow">Settlement command center</p>
+        <h2>Every settlement status explains the pay rule, packet condition, and operating blocker.</h2>
+        <p>BOF does not simply collect PODs. BOF connects trucking settlement documents, driver pay calculations, cents-per-mile pay, contractor settlement statements, POD billing delays, factoring packet readiness, post-trip paperwork, driver settlement holds, payroll coordination, receivables, and cash-flow visibility into one reviewable operating record.</p>
+      </div>
+      <div class="settlement-command-grid">
+        <article class="settlement-metric reveal"><span>Ready for payout</span><strong>8</strong><em class="status ready">Ready</em></article>
+        <article class="settlement-metric reveal"><span>Pending documents</span><strong>3</strong><em class="status missing">Missing</em></article>
+        <article class="settlement-metric reveal"><span>Safety holds</span><strong>2</strong><em class="status hold">Hold</em></article>
+        <article class="settlement-metric reveal"><span>Factoring packet incomplete</span><strong>4</strong><em class="status missing">Missing</em></article>
+        <article class="settlement-metric reveal"><span>Payroll review</span><strong>2</strong><em class="status review">Review</em></article>
+        <article class="settlement-metric reveal"><span>Contractor settlement review</span><strong>5</strong><em class="status review">Review</em></article>
+        <article class="settlement-metric reveal"><span>Pay calculation exceptions</span><strong>3</strong><em class="status hold">Hold</em></article>
+      </div>
+    </section>
+
+    <section class="section" id="pay-type-engine">
+      <div class="section-head reveal">
+        <p class="eyebrow">Pay Type Engine</p>
+        <h2>BOF can show the pay basis, formula, support documents, and exception state before release.</h2>
+        <p>The settlement view supports multiple driver and contractor pay structures without turning the static demo into live payroll processing. Each formula is demo data that shows how records, review, reimbursements, deductions, and packet readiness can be organized for the fleet team.</p>
+      </div>
+      <div class="pay-type-grid">
+        <article class="pay-type-card reveal"><span>Cents-per-mile pay</span><strong>2,140 miles &times; $0.62 = $1,326.80</strong><p>Uses loaded miles, rate, trip record, and payroll review status.</p></article>
+        <article class="pay-type-card reveal"><span>Percentage pay</span><strong>25% of $4,850 linehaul = $1,212.50</strong><p>Shows percentage of linehaul or invoice without implying final payroll advice.</p></article>
+        <article class="pay-type-card reveal"><span>Stop pay</span><strong>3 extra stops &times; $50 = $150.00</strong><p>Requires stop count and supporting trip notes.</p></article>
+        <article class="pay-type-card reveal"><span>Backhaul pay</span><strong>Backhaul incentive = $325.00</strong><p>Connects backhaul incentive to dispatch and settlement review.</p></article>
+        <article class="pay-type-card reveal"><span>Safety bonus</span><strong>Safety bonus eligible = $175.00</strong><p>Depends on safety status and reviewable record notes.</p></article>
+        <article class="pay-type-card reveal"><span>Detention / layover</span><strong>4 hours &times; $35 = $140.00</strong><p>Needs detention approval and customer billing support.</p></article>
+        <article class="pay-type-card reveal"><span>Reimbursements</span><strong>Lumper reimbursement = $240.00</strong><p>Requires receipt, packet match, and reimbursement review.</p></article>
+        <article class="pay-type-card reveal"><span>Deductions</span><strong>Advance deduction = -$150.00</strong><p>Keeps deduction note and approval trail visible.</p></article>
+        <article class="pay-type-card reveal"><span>Employee payroll coordination</span><strong>Payroll review linked to wage, bonus, and reimbursement support</strong><p>BOF organizes records for review; payroll decisions stay with the proper provider and fleet process.</p></article>
+        <article class="pay-type-card reveal"><span>Independent contractor settlement statement</span><strong>Settlement statement linked to W-9, invoice support, and deductions</strong><p>Contractor settlement records stay inspectable before release.</p></article>
+        <article class="pay-type-card reveal"><span>Settlement hold</span><strong>Missing POD = payout held for review</strong><p>Missing delivery proof keeps the settlement from appearing release-ready.</p></article>
+        <article class="pay-type-card reveal"><span>Factoring impact</span><strong>Incomplete packet = receivable not ready for factoring review</strong><p>Packet readiness connects settlement documents to receivables visibility.</p></article>
+      </div>
+    </section>
+
+    <section class="section" id="driver-pay-deductions">
+      <div class="section-head reveal">
+        <p class="eyebrow">Employee and contractor workflows</p>
+        <h2>One settlement screen can separate employee payroll coordination from independent contractor settlement review.</h2>
+        <p>BOF keeps the record logic visible while respecting the boundary between workflow support and professional payroll, tax, legal, accounting, banking, factoring, or classification decisions.</p>
+      </div>
+      <div class="settlement-comparison-grid">
+        <article class="settlement-workflow-card reveal">
+          <span class="status review">Employee</span>
+          <h3>Employee Payroll Coordination</h3>
+          <ul class="check-list">
+            <li>Payroll review</li>
+            <li>Wage, bonus, and reimbursement support</li>
+            <li>HR record connection</li>
+            <li>Training and safety status</li>
+            <li>Payroll exception review</li>
+            <li>Benefits and payroll coordination visibility, where applicable</li>
+          </ul>
+        </article>
+        <article class="settlement-workflow-card reveal">
+          <span class="status ready">Contractor</span>
+          <h3>Independent Contractor Settlement</h3>
+          <ul class="check-list">
+            <li>Settlement statement</li>
+            <li>W-9 / contractor document status</li>
+            <li>Invoice or settlement packet</li>
+            <li>Deductions and reimbursements</li>
+            <li>1099-style support records</li>
+            <li>Contractor settlement review</li>
+          </ul>
+        </article>
+      </div>
+      <aside class="settlement-boundary-card reveal">
+        <p><strong>Boundary:</strong> BOF supports settlement workflow coordination, records, visibility, packet readiness, and review. BOF does not replace payroll, tax, legal, accounting, banking, factoring, or employment-classification professionals.</p>
+      </aside>
+    </section>
+
+    <section class="section" id="settlement-documents">
+      <div class="section-head reveal">
+        <p class="eyebrow">Settlement documents</p>
+        <h2>Settlement Packet Preview</h2>
+        <p>These demo packets show how pay lines, settlement documents, missing proof, operational impact, and release status can live together instead of being scattered across spreadsheets, emails, paper folders, dispatch notes, and accounting follow-up.</p>
+      </div>
+      <div class="settlement-packet-grid">
+        <article class="settlement-packet-card reveal">
+          <div class="packet-head"><div><span>Settlement Packet ID</span><strong>SET-1907</strong></div><em class="status ready">Ready for payroll review</em></div>
+          <dl class="packet-meta">
+            <div><dt>Related Operating Record</dt><dd>BOF-1907</dd></div>
+            <div><dt>Driver</dt><dd>J. Carter</dd></div>
+            <div><dt>Driver ID</dt><dd>DRV-1187</dd></div>
+            <div><dt>Classification</dt><dd>Employee</dd></div>
+            <div><dt>Lane</dt><dd>Tulsa, OK &rarr; Kansas City, MO</dd></div>
+            <div><dt>Customer invoice</dt><dd>INV-8841</dd></div>
+            <div><dt>Rate confirmation</dt><dd>Complete</dd></div>
+            <div><dt>POD status</dt><dd>Complete</dd></div>
+            <div><dt>Lumper receipt</dt><dd>Complete</dd></div>
+            <div><dt>Factoring packet</dt><dd>Ready</dd></div>
+            <div><dt>Pay basis</dt><dd>Cents per mile + stop pay + safety bonus</dd></div>
+            <div><dt>Settlement status</dt><dd>Ready for payroll review</dd></div>
+          </dl>
+          <div class="packet-lines"><h3>Pay lines</h3><ul><li>2,140 miles &times; $0.62 = $1,326.80</li><li>2 stops &times; $50 = $100.00</li><li>Safety bonus = $175.00</li></ul></div>
+          <div class="packet-checklist"><h3>Documents</h3><ul><li>Rate confirmation: complete</li><li>POD: complete</li><li>Lumper receipt: complete</li><li>Safety review: clear</li><li>Payroll review: ready</li></ul></div>
+          <a class="route-chip" href="/operations-record/#bof-1907">View related operating record</a>
+          <p class="packet-impact">Operational impact: payroll review can proceed with supporting post-trip packet records attached.</p>
+        </article>
+
+        <article class="settlement-packet-card reveal">
+          <div class="packet-head"><div><span>Settlement Packet ID</span><strong>SET-1931</strong></div><em class="status hold">Hold</em></div>
+          <dl class="packet-meta">
+            <div><dt>Related Operating Record</dt><dd>BOF-1931</dd></div>
+            <div><dt>Driver</dt><dd>T. Brooks</dd></div>
+            <div><dt>Driver ID</dt><dd>DRV-3301</dd></div>
+            <div><dt>Classification</dt><dd>Independent Contractor</dd></div>
+            <div><dt>Lane</dt><dd>Little Rock, AR &rarr; St. Louis, MO</dd></div>
+            <div><dt>Customer invoice</dt><dd>INV-8917</dd></div>
+            <div><dt>Rate confirmation</dt><dd>Complete</dd></div>
+            <div><dt>POD status</dt><dd>Missing</dd></div>
+            <div><dt>Lumper receipt</dt><dd>Missing</dd></div>
+            <div><dt>Factoring packet</dt><dd>Incomplete</dd></div>
+            <div><dt>Pay basis</dt><dd>25% of linehaul + backhaul + reimbursement</dd></div>
+            <div><dt>Settlement status</dt><dd>Hold</dd></div>
+          </dl>
+          <div class="packet-lines"><h3>Pay lines</h3><ul><li>25% of $4,850 linehaul = $1,212.50</li><li>Backhaul incentive = $325.00</li><li>Lumper reimbursement = $240.00</li></ul></div>
+          <div class="packet-checklist missing"><h3>Missing</h3><ul><li>POD</li><li>Lumper receipt</li></ul></div>
+          <a class="route-chip" href="/operations-record/#bof-1931">View related operating record</a>
+          <p class="packet-impact">Operational impact: factoring packet incomplete and contractor settlement held until proof is attached.</p>
+        </article>
+
+        <article class="settlement-packet-card reveal">
+          <div class="packet-head"><div><span>Settlement Packet ID</span><strong>SET-2044</strong></div><em class="status review">Review</em></div>
+          <dl class="packet-meta">
+            <div><dt>Load ID</dt><dd>L-1178</dd></div>
+            <div><dt>Driver</dt><dd>M. Lopez</dd></div>
+            <div><dt>Driver ID</dt><dd>DRV-2044</dd></div>
+            <div><dt>Classification</dt><dd>Employee</dd></div>
+            <div><dt>Lane</dt><dd>Cleveland, OH &rarr; Nashville, TN</dd></div>
+            <div><dt>Customer invoice</dt><dd>INV-9026</dd></div>
+            <div><dt>Rate confirmation</dt><dd>Complete</dd></div>
+            <div><dt>POD status</dt><dd>Complete</dd></div>
+            <div><dt>Lumper receipt</dt><dd>Not required</dd></div>
+            <div><dt>Factoring packet</dt><dd>Review</dd></div>
+            <div><dt>Pay basis</dt><dd>Mileage + detention + reimbursement</dd></div>
+            <div><dt>Settlement status</dt><dd>Review</dd></div>
+          </dl>
+          <div class="packet-lines"><h3>Pay lines</h3><ul><li>1,680 miles &times; $0.64 = $1,075.20</li><li>Detention: 4 hours &times; $35 = $140.00</li><li>Toll reimbursement = $86.00</li></ul></div>
+          <div class="packet-checklist review"><h3>Issue</h3><ul><li>Detention approval pending</li><li>Customer billing note required</li></ul></div>
+          <span class="route-chip">Related load record: demo static preview</span>
+          <p class="packet-impact">Operational impact: payroll coordination waits for detention approval and billing note alignment.</p>
+        </article>
+
+        <article class="settlement-packet-card reveal">
+          <div class="packet-head"><div><span>Settlement Packet ID</span><strong>SET-2190</strong></div><em class="status ready">Ready for settlement review</em></div>
+          <dl class="packet-meta">
+            <div><dt>Load ID</dt><dd>L-1221</dd></div>
+            <div><dt>Driver</dt><dd>R. Johnson</dd></div>
+            <div><dt>Driver ID</dt><dd>DRV-2190</dd></div>
+            <div><dt>Classification</dt><dd>Independent Contractor</dd></div>
+            <div><dt>Lane</dt><dd>Dallas, TX &rarr; Kansas City, MO</dd></div>
+            <div><dt>Customer invoice</dt><dd>INV-9188</dd></div>
+            <div><dt>Rate confirmation</dt><dd>Complete</dd></div>
+            <div><dt>POD status</dt><dd>Complete</dd></div>
+            <div><dt>Lumper receipt</dt><dd>Complete</dd></div>
+            <div><dt>Factoring packet</dt><dd>Ready</dd></div>
+            <div><dt>Pay basis</dt><dd>Flat rate + stop pay + deduction</dd></div>
+            <div><dt>Settlement status</dt><dd>Ready for settlement review</dd></div>
+          </dl>
+          <div class="packet-lines"><h3>Pay lines</h3><ul><li>Flat rate = $1,450.00</li><li>3 extra stops &times; $50 = $150.00</li><li>Advance deduction = -$150.00</li></ul></div>
+          <div class="packet-checklist"><h3>Documents</h3><ul><li>Invoice support complete</li><li>W-9 on file</li><li>Deduction note attached</li><li>Post-trip packet complete</li></ul></div>
+          <span class="route-chip">Related load record: demo static preview</span>
+          <p class="packet-impact">Operational impact: contractor settlement review can proceed with deduction support visible.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-head reveal">
+        <p class="eyebrow">Settlement holds and exceptions</p>
+        <h2>Held money should show the reason, owner, and downstream cash-flow impact.</h2>
+        <p>A driver settlement hold is not useful if it only says "hold." BOF shows whether the issue is document readiness, safety review, payroll exception, contractor paperwork, claim evidence, detention approval, or a deduction note.</p>
+      </div>
+      <div class="settlement-flow reveal" aria-label="Missing POD settlement hold flow">
+        <span>Missing POD</span>
+        <span>Settlement hold</span>
+        <span>Factoring packet incomplete</span>
+        <span>Receivable not ready</span>
+        <span>Cash-flow impact</span>
+      </div>
+      <div class="exception-grid">
+        <article class="exception-card reveal"><span class="status missing">Missing</span><h3>Missing lumper receipt</h3><p>Reimbursement waits until receipt support is attached.</p></article>
+        <article class="exception-card reveal"><span class="status hold">Hold</span><h3>Unresolved safety hold</h3><p>Settlement review stays tied to safety status and release decision.</p></article>
+        <article class="exception-card reveal"><span class="status review">Review</span><h3>Claim evidence incomplete</h3><p>Possible claim exposure stays visible before payout or invoice release.</p></article>
+        <article class="exception-card reveal"><span class="status review">Review</span><h3>Payroll exception</h3><p>Payroll coordination requires a named reviewer and supporting record.</p></article>
+        <article class="exception-card reveal"><span class="status missing">Missing</span><h3>Contractor document missing</h3><p>W-9, invoice support, or settlement packet detail must be resolved.</p></article>
+        <article class="exception-card reveal"><span class="status review">Review</span><h3>Detention approval pending</h3><p>Customer billing note and approval are required before pay release.</p></article>
+        <article class="exception-card reveal"><span class="status missing">Missing</span><h3>Deduction note missing</h3><p>Advance, damage, or equipment deduction needs reviewable support.</p></article>
+        <article class="exception-card reveal"><span class="status hold">Hold</span><h3>Classification review needed</h3><p>Employee or contractor handling must be reviewed by the proper professional process.</p></article>
+      </div>
+      <div class="status-key reveal">
+        <span><em class="status ready">Ready</em> support is complete enough for review</span>
+        <span><em class="status missing">Pending</em> document or approval still missing</span>
+        <span><em class="status hold">Held</em> payout blocked by an unresolved issue</span>
+        <span><em class="status review">Under review</em> owner must confirm the record</span>
+        <span><em class="status paid">Paid</em> released after review</span>
+      </div>
+      <div class="exception-grid settlement-hold-grid">
+        <article class="exception-card reveal" id="pod-lumper-receipts"><span class="status hold">Hold</span><h3>Missing POD</h3><p>Missing POD &rarr; invoice not ready &rarr; factoring packet incomplete &rarr; settlement held.</p></article>
+        <article class="exception-card reveal"><span class="status review">Review</span><h3>Missing lumper receipt</h3><p>Missing lumper receipt &rarr; reimbursement not verified &rarr; settlement review.</p></article>
+        <article class="exception-card reveal"><span class="status review">Review</span><h3>Safety hold</h3><p>Safety hold &rarr; safety bonus paused &rarr; payroll review.</p></article>
+        <article class="exception-card reveal"><span class="status review">Review</span><h3>Detention approval pending</h3><p>Detention approval pending &rarr; billing note required &rarr; pay line under review.</p></article>
+        <article class="exception-card reveal"><span class="status hold">Hold</span><h3>Contractor document missing</h3><p>Contractor document missing &rarr; settlement statement held.</p></article>
+      </div>
+    </section>
+
+    <section class="section" id="factoring-cash-flow">
+      <div class="section-head reveal">
+        <p class="eyebrow">Factoring and cash-flow visibility</p>
+        <h2>Settlement documents also explain invoice readiness and receivables follow-through.</h2>
+        <p>When a post-trip packet is incomplete, the issue can affect payroll coordination, contractor settlement statements, invoice readiness, factoring packet readiness, receivables visibility, payment timing, and billing follow-through. BOF keeps those connections visible.</p>
+      </div>
+      <div class="settlement-flow cash-flow reveal" aria-label="Factoring packet readiness flow">
+        <span>Post-trip packet complete</span>
+        <span>Invoice ready</span>
+        <span>Factoring packet ready</span>
+        <span>Receivable visibility</span>
+        <span>Cash-flow follow-through</span>
+      </div>
+      <div class="proof-grid">
+        <article class="proof-card reveal" id="claims-evidence"><h3>Packet readiness</h3><p>Rate confirmation, signed POD, lumper or detention proof, claim clearance, invoice support, and settlement notes appear as one packet condition.</p></article>
+        <article class="proof-card reveal"><h3>Receivables view</h3><p>Fleet leaders can see whether billing, factoring coordination, or cash-flow follow-through is waiting on the same record that holds settlement review.</p></article>
+        <article class="proof-card reveal"><h3>Careful role language</h3><p>BOF supports factoring coordination, packet readiness, receivables visibility, and cash-flow follow-through. BOF is not the factoring company, lender, bank, or accounting firm.</p></article>
+      </div>
+    </section>
+  </main>
+
+  <section class="cta-band">
+    <div class="cta-inner">
+      <div>
+        <p class="eyebrow">Next step</p>
+        <h2>Bring one held settlement into a BOF assessment.</h2>
+        <p>Start with a pay question, missing POD, post-trip packet, safety hold, contractor document, reimbursement, deduction, or factoring packet issue. BOF will map the settlement record, owner, exception, and release path.</p>
+      </div>
+      <div class="actions">
+        <a class="button light" href="/scenario-walkthrough/">Take the BOF Fleet Assessment &rarr;</a>
+        <a class="button secondary" href="/founding-fleet/">Review Priority Fleet Program</a>
+      </div>
+    </div>
+  </section>
+  <footer class="site-footer"><div class="footer-inner"><strong>BackOfficeFleet</strong><span>Settlement workflow support.</span><a href="/trust-governance/">Trust &amp; Governance</a></div></footer>
+  <script src="/assets/js/site.js?v=1.49"></script>
+</body>
+</html>

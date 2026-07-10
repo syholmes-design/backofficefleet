@@ -1,0 +1,8 @@
+interface:
+  display_name: "Runtime Resource Steward"
+  short_description: "Clean up BOF preview and snapshot leftovers"
+  brand_color: "#2563EB"
+  default_prompt: "Use $runtime-resource-steward to audit and clean up leftover BOF preview, snapshot, and browser automation processes."
+
+policy:
+  allow_implicit_invocation: true

@@ -1,0 +1,1040 @@
+﻿[
+    {
+        "driver":  "DRV-001",
+        "documentType":  "cdl",
+        "manifestPath":  "/documents/drivers/DRV-001/cdlnew-001.png",
+        "expectedFileName":  "cdlnew-001.png"
+    },
+    {
+        "driver":  "DRV-001",
+        "documentType":  "medicalCard",
+        "manifestPath":  "/documents/drivers/DRV-001/john-carter-mcsa-5876-signed2.pdf",
+        "expectedFileName":  "john-carter-mcsa-5876-signed2.pdf"
+    },
+    {
+        "driver":  "DRV-001",
+        "documentType":  "mvr",
+        "manifestPath":  "/documents/drivers/DRV-001/mvr-card-drv-001.html",
+        "expectedFileName":  "mvr-card-drv-001.html"
+    },
+    {
+        "driver":  "DRV-001",
+        "documentType":  "w9",
+        "manifestPath":  "/documents/drivers/DRV-001/w9-drv-001.pdf",
+        "expectedFileName":  "w9-drv-001.pdf"
+    },
+    {
+        "driver":  "DRV-001",
+        "documentType":  "i9",
+        "manifestPath":  "/documents/drivers/DRV-001/i9-drv-001.pdf",
+        "expectedFileName":  "i9-drv-001.pdf"
+    },
+    {
+        "driver":  "DRV-001",
+        "documentType":  "emergencyContact",
+        "manifestPath":  "/documents/drivers/DRV-001/ec-card-drv-001.html",
+        "expectedFileName":  "ec-card-drv-001.html"
+    },
+    {
+        "driver":  "DRV-001",
+        "documentType":  "bankInformation",
+        "manifestPath":  "/documents/drivers/DRV-001/bank-card-DRV-001-John_Carter.html",
+        "expectedFileName":  "bank-card-DRV-001-John_Carter.html"
+    },
+    {
+        "driver":  "DRV-001",
+        "documentType":  "fmcsaCompliance",
+        "manifestPath":  "/documents/drivers/DRV-001/fmcsa-compliance.html",
+        "expectedFileName":  "fmcsa-compliance.html"
+    },
+    {
+        "driver":  "DRV-001",
+        "documentType":  "insuranceCard",
+        "manifestPath":  "/documents/drivers/DRV-001/icard-drv-001.png",
+        "expectedFileName":  "icard-drv-001.png"
+    },
+    {
+        "driver":  "DRV-001",
+        "documentType":  "dqfComplianceSummary",
+        "manifestPath":  "/documents/drivers/DRV-001/dqf-compliance-summary-drv-001.pdf",
+        "expectedFileName":  "dqf-compliance-summary-drv-001.pdf"
+    },
+    {
+        "driver":  "DRV-001",
+        "documentType":  "employee_handbook_acknowledgment",
+        "manifestPath":  "/generated/drivers/DRV-001/hr-payroll/employee-handbook-acknowledgment.html",
+        "expectedFileName":  "employee-handbook-acknowledgment.html"
+    },
+    {
+        "driver":  "DRV-001",
+        "documentType":  "benefits_enrollment",
+        "manifestPath":  "/generated/drivers/DRV-001/hr-payroll/benefits-enrollment.html",
+        "expectedFileName":  "benefits-enrollment.html"
+    },
+    {
+        "driver":  "DRV-001",
+        "documentType":  "life_insurance_beneficiary_election",
+        "manifestPath":  "/generated/drivers/DRV-001/hr-payroll/life-insurance-beneficiary-election.html",
+        "expectedFileName":  "life-insurance-beneficiary-election.html"
+    },
+    {
+        "driver":  "DRV-001",
+        "documentType":  "flexible_spending_account_election",
+        "manifestPath":  "/generated/drivers/DRV-001/hr-payroll/flexible-spending-account-election.html",
+        "expectedFileName":  "flexible-spending-account-election.html"
+    },
+    {
+        "driver":  "DRV-002",
+        "documentType":  "cdl",
+        "manifestPath":  "/documents/drivers/DRV-002/cdlnew-002.png",
+        "expectedFileName":  "cdlnew-002.png"
+    },
+    {
+        "driver":  "DRV-002",
+        "documentType":  "medicalCard",
+        "manifestPath":  "/documents/drivers/DRV-002/medical-card-drv-002.png",
+        "expectedFileName":  "medical-card-drv-002.png"
+    },
+    {
+        "driver":  "DRV-002",
+        "documentType":  "mvr",
+        "manifestPath":  "/documents/drivers/DRV-002/mvr-card-drv-002.html",
+        "expectedFileName":  "mvr-card-drv-002.html"
+    },
+    {
+        "driver":  "DRV-002",
+        "documentType":  "w9",
+        "manifestPath":  "/documents/drivers/DRV-002/w9-drv-002.pdf",
+        "expectedFileName":  "w9-drv-002.pdf"
+    },
+    {
+        "driver":  "DRV-002",
+        "documentType":  "i9",
+        "manifestPath":  "/documents/drivers/DRV-002/i9-drv-002.pdf",
+        "expectedFileName":  "i9-drv-002.pdf"
+    },
+    {
+        "driver":  "DRV-002",
+        "documentType":  "emergencyContact",
+        "manifestPath":  "/documents/drivers/DRV-002/ec-card-drv-002.html",
+        "expectedFileName":  "ec-card-drv-002.html"
+    },
+    {
+        "driver":  "DRV-002",
+        "documentType":  "bankInformation",
+        "manifestPath":  "/documents/drivers/DRV-002/bank-card-DRV-002-Maria_Lopez.html",
+        "expectedFileName":  "bank-card-DRV-002-Maria_Lopez.html"
+    },
+    {
+        "driver":  "DRV-002",
+        "documentType":  "fmcsaCompliance",
+        "manifestPath":  "/documents/drivers/DRV-002/fmcsa-compliance.html",
+        "expectedFileName":  "fmcsa-compliance.html"
+    },
+    {
+        "driver":  "DRV-002",
+        "documentType":  "insuranceCard",
+        "manifestPath":  "/documents/drivers/DRV-002/icard-drv-002.png",
+        "expectedFileName":  "icard-drv-002.png"
+    },
+    {
+        "driver":  "DRV-002",
+        "documentType":  "dqfComplianceSummary",
+        "manifestPath":  "/documents/drivers/DRV-002/dqf-compliance-summary-drv-002.pdf",
+        "expectedFileName":  "dqf-compliance-summary-drv-002.pdf"
+    },
+    {
+        "driver":  "DRV-002",
+        "documentType":  "employee_handbook_acknowledgment",
+        "manifestPath":  "/generated/drivers/DRV-002/hr-payroll/employee-handbook-acknowledgment.html",
+        "expectedFileName":  "employee-handbook-acknowledgment.html"
+    },
+    {
+        "driver":  "DRV-002",
+        "documentType":  "benefits_enrollment",
+        "manifestPath":  "/generated/drivers/DRV-002/hr-payroll/benefits-enrollment.html",
+        "expectedFileName":  "benefits-enrollment.html"
+    },
+    {
+        "driver":  "DRV-002",
+        "documentType":  "life_insurance_beneficiary_election",
+        "manifestPath":  "/generated/drivers/DRV-002/hr-payroll/life-insurance-beneficiary-election.html",
+        "expectedFileName":  "life-insurance-beneficiary-election.html"
+    },
+    {
+        "driver":  "DRV-002",
+        "documentType":  "flexible_spending_account_election",
+        "manifestPath":  "/generated/drivers/DRV-002/hr-payroll/flexible-spending-account-election.html",
+        "expectedFileName":  "flexible-spending-account-election.html"
+    },
+    {
+        "driver":  "DRV-002",
+        "documentType":  "garnishment_withholding_summary",
+        "manifestPath":  "/generated/drivers/DRV-002/hr-payroll/garnishment-withholding-summary.html",
+        "expectedFileName":  "garnishment-withholding-summary.html"
+    },
+    {
+        "driver":  "DRV-003",
+        "documentType":  "cdl",
+        "manifestPath":  "/documents/drivers/DRV-003/cdlnew-003.png",
+        "expectedFileName":  "cdlnew-003.png"
+    },
+    {
+        "driver":  "DRV-003",
+        "documentType":  "medicalCard",
+        "manifestPath":  "/documents/drivers/DRV-003/medical-card-drv-003.png",
+        "expectedFileName":  "medical-card-drv-003.png"
+    },
+    {
+        "driver":  "DRV-003",
+        "documentType":  "mvr",
+        "manifestPath":  "/documents/drivers/DRV-003/mvr-card-drv-003.html",
+        "expectedFileName":  "mvr-card-drv-003.html"
+    },
+    {
+        "driver":  "DRV-003",
+        "documentType":  "w9",
+        "manifestPath":  "/documents/drivers/DRV-003/w9-drv-003.pdf",
+        "expectedFileName":  "w9-drv-003.pdf"
+    },
+    {
+        "driver":  "DRV-003",
+        "documentType":  "i9",
+        "manifestPath":  "/documents/drivers/DRV-003/i9-drv-003.pdf",
+        "expectedFileName":  "i9-drv-003.pdf"
+    },
+    {
+        "driver":  "DRV-003",
+        "documentType":  "emergencyContact",
+        "manifestPath":  "/documents/drivers/DRV-003/ec-card-drv-003.html",
+        "expectedFileName":  "ec-card-drv-003.html"
+    },
+    {
+        "driver":  "DRV-003",
+        "documentType":  "bankInformation",
+        "manifestPath":  "/documents/drivers/DRV-003/bank-card-DRV-003-Alex_Kim.html",
+        "expectedFileName":  "bank-card-DRV-003-Alex_Kim.html"
+    },
+    {
+        "driver":  "DRV-003",
+        "documentType":  "fmcsaCompliance",
+        "manifestPath":  "/documents/drivers/DRV-003/fmcsa-compliance.html",
+        "expectedFileName":  "fmcsa-compliance.html"
+    },
+    {
+        "driver":  "DRV-003",
+        "documentType":  "insuranceCard",
+        "manifestPath":  "/documents/drivers/DRV-003/icard-drv-003.png",
+        "expectedFileName":  "icard-drv-003.png"
+    },
+    {
+        "driver":  "DRV-003",
+        "documentType":  "dqfComplianceSummary",
+        "manifestPath":  "/documents/drivers/DRV-003/dqf-compliance-summary-drv-003.pdf",
+        "expectedFileName":  "dqf-compliance-summary-drv-003.pdf"
+    },
+    {
+        "driver":  "DRV-003",
+        "documentType":  "employee_handbook_acknowledgment",
+        "manifestPath":  "/generated/drivers/DRV-003/hr-payroll/employee-handbook-acknowledgment.html",
+        "expectedFileName":  "employee-handbook-acknowledgment.html"
+    },
+    {
+        "driver":  "DRV-003",
+        "documentType":  "benefits_enrollment",
+        "manifestPath":  "/generated/drivers/DRV-003/hr-payroll/benefits-enrollment.html",
+        "expectedFileName":  "benefits-enrollment.html"
+    },
+    {
+        "driver":  "DRV-003",
+        "documentType":  "life_insurance_beneficiary_election",
+        "manifestPath":  "/generated/drivers/DRV-003/hr-payroll/life-insurance-beneficiary-election.html",
+        "expectedFileName":  "life-insurance-beneficiary-election.html"
+    },
+    {
+        "driver":  "DRV-003",
+        "documentType":  "flexible_spending_account_election",
+        "manifestPath":  "/generated/drivers/DRV-003/hr-payroll/flexible-spending-account-election.html",
+        "expectedFileName":  "flexible-spending-account-election.html"
+    },
+    {
+        "driver":  "DRV-004",
+        "documentType":  "cdl",
+        "manifestPath":  "/documents/drivers/DRV-004/cdlnew-004.jpg",
+        "expectedFileName":  "cdlnew-004.jpg"
+    },
+    {
+        "driver":  "DRV-004",
+        "documentType":  "medicalCard",
+        "manifestPath":  "/documents/drivers/DRV-004/medical-card-drv-004.png",
+        "expectedFileName":  "medical-card-drv-004.png"
+    },
+    {
+        "driver":  "DRV-004",
+        "documentType":  "mvr",
+        "manifestPath":  "/documents/drivers/DRV-004/mvr-card-drv-004.html",
+        "expectedFileName":  "mvr-card-drv-004.html"
+    },
+    {
+        "driver":  "DRV-004",
+        "documentType":  "w9",
+        "manifestPath":  "/documents/drivers/DRV-004/w9-drv-004.pdf",
+        "expectedFileName":  "w9-drv-004.pdf"
+    },
+    {
+        "driver":  "DRV-004",
+        "documentType":  "i9",
+        "manifestPath":  "/documents/drivers/DRV-004/i9-drv-004.pdf",
+        "expectedFileName":  "i9-drv-004.pdf"
+    },
+    {
+        "driver":  "DRV-004",
+        "documentType":  "emergencyContact",
+        "manifestPath":  "/documents/drivers/DRV-004/ec-card-drv-004.html",
+        "expectedFileName":  "ec-card-drv-004.html"
+    },
+    {
+        "driver":  "DRV-004",
+        "documentType":  "bankInformation",
+        "manifestPath":  "/documents/drivers/DRV-004/bank-card-DRV-004-Priya_Patel.html",
+        "expectedFileName":  "bank-card-DRV-004-Priya_Patel.html"
+    },
+    {
+        "driver":  "DRV-004",
+        "documentType":  "fmcsaCompliance",
+        "manifestPath":  "/documents/drivers/DRV-004/fmcsa-compliance.html",
+        "expectedFileName":  "fmcsa-compliance.html"
+    },
+    {
+        "driver":  "DRV-004",
+        "documentType":  "insuranceCard",
+        "manifestPath":  "/documents/drivers/DRV-004/icard-drv-004.png",
+        "expectedFileName":  "icard-drv-004.png"
+    },
+    {
+        "driver":  "DRV-004",
+        "documentType":  "dqfComplianceSummary",
+        "manifestPath":  "/documents/drivers/DRV-004/dqf-compliance-summary-drv-004.pdf",
+        "expectedFileName":  "dqf-compliance-summary-drv-004.pdf"
+    },
+    {
+        "driver":  "DRV-004",
+        "documentType":  "employee_handbook_acknowledgment",
+        "manifestPath":  "/generated/drivers/DRV-004/hr-payroll/employee-handbook-acknowledgment.html",
+        "expectedFileName":  "employee-handbook-acknowledgment.html"
+    },
+    {
+        "driver":  "DRV-004",
+        "documentType":  "benefits_enrollment",
+        "manifestPath":  "/generated/drivers/DRV-004/hr-payroll/benefits-enrollment.html",
+        "expectedFileName":  "benefits-enrollment.html"
+    },
+    {
+        "driver":  "DRV-004",
+        "documentType":  "life_insurance_beneficiary_election",
+        "manifestPath":  "/generated/drivers/DRV-004/hr-payroll/life-insurance-beneficiary-election.html",
+        "expectedFileName":  "life-insurance-beneficiary-election.html"
+    },
+    {
+        "driver":  "DRV-004",
+        "documentType":  "flexible_spending_account_election",
+        "manifestPath":  "/generated/drivers/DRV-004/hr-payroll/flexible-spending-account-election.html",
+        "expectedFileName":  "flexible-spending-account-election.html"
+    },
+    {
+        "driver":  "DRV-005",
+        "documentType":  "cdl",
+        "manifestPath":  "/documents/drivers/DRV-005/cdlnew-005.jpg",
+        "expectedFileName":  "cdlnew-005.jpg"
+    },
+    {
+        "driver":  "DRV-005",
+        "documentType":  "medicalCard",
+        "manifestPath":  "/documents/drivers/DRV-005/medical-card-drv-005.png",
+        "expectedFileName":  "medical-card-drv-005.png"
+    },
+    {
+        "driver":  "DRV-005",
+        "documentType":  "mvr",
+        "manifestPath":  "/documents/drivers/DRV-005/mvr-card-drv-005.html",
+        "expectedFileName":  "mvr-card-drv-005.html"
+    },
+    {
+        "driver":  "DRV-005",
+        "documentType":  "w9",
+        "manifestPath":  "/documents/drivers/DRV-005/w9-drv-005.pdf",
+        "expectedFileName":  "w9-drv-005.pdf"
+    },
+    {
+        "driver":  "DRV-005",
+        "documentType":  "i9",
+        "manifestPath":  "/documents/drivers/DRV-005/i9-drv-005.pdf",
+        "expectedFileName":  "i9-drv-005.pdf"
+    },
+    {
+        "driver":  "DRV-005",
+        "documentType":  "emergencyContact",
+        "manifestPath":  "/documents/drivers/DRV-005/ec-card-drv-005.html",
+        "expectedFileName":  "ec-card-drv-005.html"
+    },
+    {
+        "driver":  "DRV-005",
+        "documentType":  "bankInformation",
+        "manifestPath":  "/documents/drivers/DRV-005/bank-card-DRV-005-Kenji_Tanaka.html",
+        "expectedFileName":  "bank-card-DRV-005-Kenji_Tanaka.html"
+    },
+    {
+        "driver":  "DRV-005",
+        "documentType":  "fmcsaCompliance",
+        "manifestPath":  "/documents/drivers/DRV-005/fmcsa-compliance.html",
+        "expectedFileName":  "fmcsa-compliance.html"
+    },
+    {
+        "driver":  "DRV-005",
+        "documentType":  "insuranceCard",
+        "manifestPath":  "/documents/drivers/DRV-005/icard-drv-005.png",
+        "expectedFileName":  "icard-drv-005.png"
+    },
+    {
+        "driver":  "DRV-005",
+        "documentType":  "dqfComplianceSummary",
+        "manifestPath":  "/documents/drivers/DRV-005/dqf-compliance-summary-drv-005.pdf",
+        "expectedFileName":  "dqf-compliance-summary-drv-005.pdf"
+    },
+    {
+        "driver":  "DRV-005",
+        "documentType":  "employee_handbook_acknowledgment",
+        "manifestPath":  "/generated/drivers/DRV-005/hr-payroll/employee-handbook-acknowledgment.html",
+        "expectedFileName":  "employee-handbook-acknowledgment.html"
+    },
+    {
+        "driver":  "DRV-005",
+        "documentType":  "benefits_enrollment",
+        "manifestPath":  "/generated/drivers/DRV-005/hr-payroll/benefits-enrollment.html",
+        "expectedFileName":  "benefits-enrollment.html"
+    },
+    {
+        "driver":  "DRV-005",
+        "documentType":  "life_insurance_beneficiary_election",
+        "manifestPath":  "/generated/drivers/DRV-005/hr-payroll/life-insurance-beneficiary-election.html",
+        "expectedFileName":  "life-insurance-beneficiary-election.html"
+    },
+    {
+        "driver":  "DRV-005",
+        "documentType":  "flexible_spending_account_election",
+        "manifestPath":  "/generated/drivers/DRV-005/hr-payroll/flexible-spending-account-election.html",
+        "expectedFileName":  "flexible-spending-account-election.html"
+    },
+    {
+        "driver":  "DRV-005",
+        "documentType":  "garnishment_withholding_summary",
+        "manifestPath":  "/generated/drivers/DRV-005/hr-payroll/garnishment-withholding-summary.html",
+        "expectedFileName":  "garnishment-withholding-summary.html"
+    },
+    {
+        "driver":  "DRV-006",
+        "documentType":  "cdl",
+        "manifestPath":  "/documents/drivers/DRV-006/cdlnew-006.jpg",
+        "expectedFileName":  "cdlnew-006.jpg"
+    },
+    {
+        "driver":  "DRV-006",
+        "documentType":  "medicalCard",
+        "manifestPath":  "/documents/drivers/DRV-006/medical-card-drv-006.png",
+        "expectedFileName":  "medical-card-drv-006.png"
+    },
+    {
+        "driver":  "DRV-006",
+        "documentType":  "mvr",
+        "manifestPath":  "/documents/drivers/DRV-006/mvr-card-drv-006.html",
+        "expectedFileName":  "mvr-card-drv-006.html"
+    },
+    {
+        "driver":  "DRV-006",
+        "documentType":  "w9",
+        "manifestPath":  "/documents/drivers/DRV-006/w9-drv-006.pdf",
+        "expectedFileName":  "w9-drv-006.pdf"
+    },
+    {
+        "driver":  "DRV-006",
+        "documentType":  "i9",
+        "manifestPath":  "/documents/drivers/DRV-006/i9-drv-006.pdf",
+        "expectedFileName":  "i9-drv-006.pdf"
+    },
+    {
+        "driver":  "DRV-006",
+        "documentType":  "emergencyContact",
+        "manifestPath":  "/documents/drivers/DRV-006/ec-card-drv-006.html",
+        "expectedFileName":  "ec-card-drv-006.html"
+    },
+    {
+        "driver":  "DRV-006",
+        "documentType":  "bankInformation",
+        "manifestPath":  "/documents/drivers/DRV-006/bank-card-DRV-006-Marcus_Chen.html",
+        "expectedFileName":  "bank-card-DRV-006-Marcus_Chen.html"
+    },
+    {
+        "driver":  "DRV-006",
+        "documentType":  "fmcsaCompliance",
+        "manifestPath":  "/documents/drivers/DRV-006/fmcsa-compliance.html",
+        "expectedFileName":  "fmcsa-compliance.html"
+    },
+    {
+        "driver":  "DRV-006",
+        "documentType":  "insuranceCard",
+        "manifestPath":  "/documents/drivers/DRV-006/icard-drv-006.png",
+        "expectedFileName":  "icard-drv-006.png"
+    },
+    {
+        "driver":  "DRV-006",
+        "documentType":  "dqfComplianceSummary",
+        "manifestPath":  "/documents/drivers/DRV-006/dqf-compliance-summary-drv-006.pdf",
+        "expectedFileName":  "dqf-compliance-summary-drv-006.pdf"
+    },
+    {
+        "driver":  "DRV-006",
+        "documentType":  "employee_handbook_acknowledgment",
+        "manifestPath":  "/generated/drivers/DRV-006/hr-payroll/employee-handbook-acknowledgment.html",
+        "expectedFileName":  "employee-handbook-acknowledgment.html"
+    },
+    {
+        "driver":  "DRV-006",
+        "documentType":  "benefits_enrollment",
+        "manifestPath":  "/generated/drivers/DRV-006/hr-payroll/benefits-enrollment.html",
+        "expectedFileName":  "benefits-enrollment.html"
+    },
+    {
+        "driver":  "DRV-006",
+        "documentType":  "life_insurance_beneficiary_election",
+        "manifestPath":  "/generated/drivers/DRV-006/hr-payroll/life-insurance-beneficiary-election.html",
+        "expectedFileName":  "life-insurance-beneficiary-election.html"
+    },
+    {
+        "driver":  "DRV-006",
+        "documentType":  "flexible_spending_account_election",
+        "manifestPath":  "/generated/drivers/DRV-006/hr-payroll/flexible-spending-account-election.html",
+        "expectedFileName":  "flexible-spending-account-election.html"
+    },
+    {
+        "driver":  "DRV-007",
+        "documentType":  "cdl",
+        "manifestPath":  "/documents/drivers/DRV-007/cdlnew-007.jpg",
+        "expectedFileName":  "cdlnew-007.jpg"
+    },
+    {
+        "driver":  "DRV-007",
+        "documentType":  "medicalCard",
+        "manifestPath":  "/documents/drivers/DRV-007/medical-card-drv-007.png",
+        "expectedFileName":  "medical-card-drv-007.png"
+    },
+    {
+        "driver":  "DRV-007",
+        "documentType":  "mvr",
+        "manifestPath":  "/documents/drivers/DRV-007/mvr-card-drv-007.html",
+        "expectedFileName":  "mvr-card-drv-007.html"
+    },
+    {
+        "driver":  "DRV-007",
+        "documentType":  "w9",
+        "manifestPath":  "/documents/drivers/DRV-007/w9-drv-007.pdf",
+        "expectedFileName":  "w9-drv-007.pdf"
+    },
+    {
+        "driver":  "DRV-007",
+        "documentType":  "i9",
+        "manifestPath":  "/documents/drivers/DRV-007/i9-drv-007.pdf",
+        "expectedFileName":  "i9-drv-007.pdf"
+    },
+    {
+        "driver":  "DRV-007",
+        "documentType":  "emergencyContact",
+        "manifestPath":  "/documents/drivers/DRV-007/ec-card-drv-007.html",
+        "expectedFileName":  "ec-card-drv-007.html"
+    },
+    {
+        "driver":  "DRV-007",
+        "documentType":  "bankInformation",
+        "manifestPath":  "/documents/drivers/DRV-007/bank-card-DRV-007-Sofia_Gomez.html",
+        "expectedFileName":  "bank-card-DRV-007-Sofia_Gomez.html"
+    },
+    {
+        "driver":  "DRV-007",
+        "documentType":  "fmcsaCompliance",
+        "manifestPath":  "/documents/drivers/DRV-007/fmcsa-compliance.html",
+        "expectedFileName":  "fmcsa-compliance.html"
+    },
+    {
+        "driver":  "DRV-007",
+        "documentType":  "insuranceCard",
+        "manifestPath":  "/documents/drivers/DRV-007/icard-drv-007.png",
+        "expectedFileName":  "icard-drv-007.png"
+    },
+    {
+        "driver":  "DRV-007",
+        "documentType":  "dqfComplianceSummary",
+        "manifestPath":  "/documents/drivers/DRV-007/dqf-compliance-summary-drv-007.pdf",
+        "expectedFileName":  "dqf-compliance-summary-drv-007.pdf"
+    },
+    {
+        "driver":  "DRV-007",
+        "documentType":  "employee_handbook_acknowledgment",
+        "manifestPath":  "/generated/drivers/DRV-007/hr-payroll/employee-handbook-acknowledgment.html",
+        "expectedFileName":  "employee-handbook-acknowledgment.html"
+    },
+    {
+        "driver":  "DRV-007",
+        "documentType":  "benefits_enrollment",
+        "manifestPath":  "/generated/drivers/DRV-007/hr-payroll/benefits-enrollment.html",
+        "expectedFileName":  "benefits-enrollment.html"
+    },
+    {
+        "driver":  "DRV-007",
+        "documentType":  "life_insurance_beneficiary_election",
+        "manifestPath":  "/generated/drivers/DRV-007/hr-payroll/life-insurance-beneficiary-election.html",
+        "expectedFileName":  "life-insurance-beneficiary-election.html"
+    },
+    {
+        "driver":  "DRV-007",
+        "documentType":  "flexible_spending_account_election",
+        "manifestPath":  "/generated/drivers/DRV-007/hr-payroll/flexible-spending-account-election.html",
+        "expectedFileName":  "flexible-spending-account-election.html"
+    },
+    {
+        "driver":  "DRV-007",
+        "documentType":  "garnishment_withholding_summary",
+        "manifestPath":  "/generated/drivers/DRV-007/hr-payroll/garnishment-withholding-summary.html",
+        "expectedFileName":  "garnishment-withholding-summary.html"
+    },
+    {
+        "driver":  "DRV-008",
+        "documentType":  "cdl",
+        "manifestPath":  "/documents/drivers/DRV-008/cdlnew-008.jpg",
+        "expectedFileName":  "cdlnew-008.jpg"
+    },
+    {
+        "driver":  "DRV-008",
+        "documentType":  "medicalCard",
+        "manifestPath":  "/documents/drivers/DRV-008/medical-card-drv-008.png",
+        "expectedFileName":  "medical-card-drv-008.png"
+    },
+    {
+        "driver":  "DRV-008",
+        "documentType":  "mvr",
+        "manifestPath":  "/documents/drivers/DRV-008/mvr-card-drv-008.html",
+        "expectedFileName":  "mvr-card-drv-008.html"
+    },
+    {
+        "driver":  "DRV-008",
+        "documentType":  "w9",
+        "manifestPath":  "/documents/drivers/DRV-008/w9-drv-008.pdf",
+        "expectedFileName":  "w9-drv-008.pdf"
+    },
+    {
+        "driver":  "DRV-008",
+        "documentType":  "i9",
+        "manifestPath":  "/documents/drivers/DRV-008/i9-drv-008.pdf",
+        "expectedFileName":  "i9-drv-008.pdf"
+    },
+    {
+        "driver":  "DRV-008",
+        "documentType":  "emergencyContact",
+        "manifestPath":  "/documents/drivers/DRV-008/ec-card-drv-008.html",
+        "expectedFileName":  "ec-card-drv-008.html"
+    },
+    {
+        "driver":  "DRV-008",
+        "documentType":  "bankInformation",
+        "manifestPath":  "/documents/drivers/DRV-008/bank-card-DRV-008-Liam_Smith.html",
+        "expectedFileName":  "bank-card-DRV-008-Liam_Smith.html"
+    },
+    {
+        "driver":  "DRV-008",
+        "documentType":  "fmcsaCompliance",
+        "manifestPath":  "/documents/drivers/DRV-008/fmcsa-compliance.html",
+        "expectedFileName":  "fmcsa-compliance.html"
+    },
+    {
+        "driver":  "DRV-008",
+        "documentType":  "insuranceCard",
+        "manifestPath":  "/documents/drivers/DRV-008/icard-drv-008.png",
+        "expectedFileName":  "icard-drv-008.png"
+    },
+    {
+        "driver":  "DRV-008",
+        "documentType":  "dqfComplianceSummary",
+        "manifestPath":  "/documents/drivers/DRV-008/dqf-compliance-summary-drv-008.pdf",
+        "expectedFileName":  "dqf-compliance-summary-drv-008.pdf"
+    },
+    {
+        "driver":  "DRV-008",
+        "documentType":  "employee_handbook_acknowledgment",
+        "manifestPath":  "/generated/drivers/DRV-008/hr-payroll/employee-handbook-acknowledgment.html",
+        "expectedFileName":  "employee-handbook-acknowledgment.html"
+    },
+    {
+        "driver":  "DRV-008",
+        "documentType":  "benefits_enrollment",
+        "manifestPath":  "/generated/drivers/DRV-008/hr-payroll/benefits-enrollment.html",
+        "expectedFileName":  "benefits-enrollment.html"
+    },
+    {
+        "driver":  "DRV-008",
+        "documentType":  "life_insurance_beneficiary_election",
+        "manifestPath":  "/generated/drivers/DRV-008/hr-payroll/life-insurance-beneficiary-election.html",
+        "expectedFileName":  "life-insurance-beneficiary-election.html"
+    },
+    {
+        "driver":  "DRV-008",
+        "documentType":  "flexible_spending_account_election",
+        "manifestPath":  "/generated/drivers/DRV-008/hr-payroll/flexible-spending-account-election.html",
+        "expectedFileName":  "flexible-spending-account-election.html"
+    },
+    {
+        "driver":  "DRV-009",
+        "documentType":  "cdl",
+        "manifestPath":  "/documents/drivers/DRV-009/cdlnew-009.jpg",
+        "expectedFileName":  "cdlnew-009.jpg"
+    },
+    {
+        "driver":  "DRV-009",
+        "documentType":  "medicalCard",
+        "manifestPath":  "/documents/drivers/DRV-009/medical-card-drv-009.png",
+        "expectedFileName":  "medical-card-drv-009.png"
+    },
+    {
+        "driver":  "DRV-009",
+        "documentType":  "mvr",
+        "manifestPath":  "/documents/drivers/DRV-009/mvr-card-drv-009.html",
+        "expectedFileName":  "mvr-card-drv-009.html"
+    },
+    {
+        "driver":  "DRV-009",
+        "documentType":  "w9",
+        "manifestPath":  "/documents/drivers/DRV-009/w9-drv-009.pdf",
+        "expectedFileName":  "w9-drv-009.pdf"
+    },
+    {
+        "driver":  "DRV-009",
+        "documentType":  "i9",
+        "manifestPath":  "/documents/drivers/DRV-009/i9-drv-009.pdf",
+        "expectedFileName":  "i9-drv-009.pdf"
+    },
+    {
+        "driver":  "DRV-009",
+        "documentType":  "emergencyContact",
+        "manifestPath":  "/documents/drivers/DRV-009/ec-card-drv-009.html",
+        "expectedFileName":  "ec-card-drv-009.html"
+    },
+    {
+        "driver":  "DRV-009",
+        "documentType":  "bankInformation",
+        "manifestPath":  "/documents/drivers/DRV-009/bank-card-DRV-009-Emma_Brown.html",
+        "expectedFileName":  "bank-card-DRV-009-Emma_Brown.html"
+    },
+    {
+        "driver":  "DRV-009",
+        "documentType":  "fmcsaCompliance",
+        "manifestPath":  "/documents/drivers/DRV-009/fmcsa-compliance.html",
+        "expectedFileName":  "fmcsa-compliance.html"
+    },
+    {
+        "driver":  "DRV-009",
+        "documentType":  "insuranceCard",
+        "manifestPath":  "/documents/drivers/DRV-009/icard-drv-009.png",
+        "expectedFileName":  "icard-drv-009.png"
+    },
+    {
+        "driver":  "DRV-009",
+        "documentType":  "dqfComplianceSummary",
+        "manifestPath":  "/documents/drivers/DRV-009/dqf-compliance-summary-drv-009.pdf",
+        "expectedFileName":  "dqf-compliance-summary-drv-009.pdf"
+    },
+    {
+        "driver":  "DRV-009",
+        "documentType":  "employee_handbook_acknowledgment",
+        "manifestPath":  "/generated/drivers/DRV-009/hr-payroll/employee-handbook-acknowledgment.html",
+        "expectedFileName":  "employee-handbook-acknowledgment.html"
+    },
+    {
+        "driver":  "DRV-009",
+        "documentType":  "benefits_enrollment",
+        "manifestPath":  "/generated/drivers/DRV-009/hr-payroll/benefits-enrollment.html",
+        "expectedFileName":  "benefits-enrollment.html"
+    },
+    {
+        "driver":  "DRV-009",
+        "documentType":  "life_insurance_beneficiary_election",
+        "manifestPath":  "/generated/drivers/DRV-009/hr-payroll/life-insurance-beneficiary-election.html",
+        "expectedFileName":  "life-insurance-beneficiary-election.html"
+    },
+    {
+        "driver":  "DRV-009",
+        "documentType":  "flexible_spending_account_election",
+        "manifestPath":  "/generated/drivers/DRV-009/hr-payroll/flexible-spending-account-election.html",
+        "expectedFileName":  "flexible-spending-account-election.html"
+    },
+    {
+        "driver":  "DRV-009",
+        "documentType":  "garnishment_withholding_summary",
+        "manifestPath":  "/generated/drivers/DRV-009/hr-payroll/garnishment-withholding-summary.html",
+        "expectedFileName":  "garnishment-withholding-summary.html"
+    },
+    {
+        "driver":  "DRV-010",
+        "documentType":  "cdl",
+        "manifestPath":  "/documents/drivers/DRV-010/cdlnew-010.jpg",
+        "expectedFileName":  "cdlnew-010.jpg"
+    },
+    {
+        "driver":  "DRV-010",
+        "documentType":  "medicalCard",
+        "manifestPath":  "/documents/drivers/DRV-010/medical-card-drv-010.png",
+        "expectedFileName":  "medical-card-drv-010.png"
+    },
+    {
+        "driver":  "DRV-010",
+        "documentType":  "mvr",
+        "manifestPath":  "/documents/drivers/DRV-010/mvr-card-drv-010.html",
+        "expectedFileName":  "mvr-card-drv-010.html"
+    },
+    {
+        "driver":  "DRV-010",
+        "documentType":  "w9",
+        "manifestPath":  "/documents/drivers/DRV-010/w9-drv-010.pdf",
+        "expectedFileName":  "w9-drv-010.pdf"
+    },
+    {
+        "driver":  "DRV-010",
+        "documentType":  "i9",
+        "manifestPath":  "/documents/drivers/DRV-010/i9-drv-010.pdf",
+        "expectedFileName":  "i9-drv-010.pdf"
+    },
+    {
+        "driver":  "DRV-010",
+        "documentType":  "emergencyContact",
+        "manifestPath":  "/documents/drivers/DRV-010/ec-card-drv-010.html",
+        "expectedFileName":  "ec-card-drv-010.html"
+    },
+    {
+        "driver":  "DRV-010",
+        "documentType":  "bankInformation",
+        "manifestPath":  "/documents/drivers/DRV-010/bank-card-DRV-010-Noah_Wilson.html",
+        "expectedFileName":  "bank-card-DRV-010-Noah_Wilson.html"
+    },
+    {
+        "driver":  "DRV-010",
+        "documentType":  "fmcsaCompliance",
+        "manifestPath":  "/documents/drivers/DRV-010/fmcsa-compliance.html",
+        "expectedFileName":  "fmcsa-compliance.html"
+    },
+    {
+        "driver":  "DRV-010",
+        "documentType":  "insuranceCard",
+        "manifestPath":  "/documents/drivers/DRV-010/icard-drv-010.png",
+        "expectedFileName":  "icard-drv-010.png"
+    },
+    {
+        "driver":  "DRV-010",
+        "documentType":  "dqfComplianceSummary",
+        "manifestPath":  "/documents/drivers/DRV-010/dqf-compliance-summary-drv-010.pdf",
+        "expectedFileName":  "dqf-compliance-summary-drv-010.pdf"
+    },
+    {
+        "driver":  "DRV-010",
+        "documentType":  "employee_handbook_acknowledgment",
+        "manifestPath":  "/generated/drivers/DRV-010/hr-payroll/employee-handbook-acknowledgment.html",
+        "expectedFileName":  "employee-handbook-acknowledgment.html"
+    },
+    {
+        "driver":  "DRV-010",
+        "documentType":  "benefits_enrollment",
+        "manifestPath":  "/generated/drivers/DRV-010/hr-payroll/benefits-enrollment.html",
+        "expectedFileName":  "benefits-enrollment.html"
+    },
+    {
+        "driver":  "DRV-010",
+        "documentType":  "life_insurance_beneficiary_election",
+        "manifestPath":  "/generated/drivers/DRV-010/hr-payroll/life-insurance-beneficiary-election.html",
+        "expectedFileName":  "life-insurance-beneficiary-election.html"
+    },
+    {
+        "driver":  "DRV-010",
+        "documentType":  "flexible_spending_account_election",
+        "manifestPath":  "/generated/drivers/DRV-010/hr-payroll/flexible-spending-account-election.html",
+        "expectedFileName":  "flexible-spending-account-election.html"
+    },
+    {
+        "driver":  "DRV-011",
+        "documentType":  "cdl",
+        "manifestPath":  "/documents/drivers/DRV-011/cdlnew-011.jpg",
+        "expectedFileName":  "cdlnew-011.jpg"
+    },
+    {
+        "driver":  "DRV-011",
+        "documentType":  "medicalCard",
+        "manifestPath":  "/documents/drivers/DRV-011/medical-card-drv-011.png",
+        "expectedFileName":  "medical-card-drv-011.png"
+    },
+    {
+        "driver":  "DRV-011",
+        "documentType":  "mvr",
+        "manifestPath":  "/documents/drivers/DRV-011/mvr-card-drv-011.html",
+        "expectedFileName":  "mvr-card-drv-011.html"
+    },
+    {
+        "driver":  "DRV-011",
+        "documentType":  "w9",
+        "manifestPath":  "/documents/drivers/DRV-011/w9-drv-011.pdf",
+        "expectedFileName":  "w9-drv-011.pdf"
+    },
+    {
+        "driver":  "DRV-011",
+        "documentType":  "i9",
+        "manifestPath":  "/documents/drivers/DRV-011/i9-drv-011.pdf",
+        "expectedFileName":  "i9-drv-011.pdf"
+    },
+    {
+        "driver":  "DRV-011",
+        "documentType":  "emergencyContact",
+        "manifestPath":  "/documents/drivers/DRV-011/ec-card-drv-011.html",
+        "expectedFileName":  "ec-card-drv-011.html"
+    },
+    {
+        "driver":  "DRV-011",
+        "documentType":  "bankInformation",
+        "manifestPath":  "/documents/drivers/DRV-011/bank-card-DRV-011-Olivia_Lee.html",
+        "expectedFileName":  "bank-card-DRV-011-Olivia_Lee.html"
+    },
+    {
+        "driver":  "DRV-011",
+        "documentType":  "fmcsaCompliance",
+        "manifestPath":  "/documents/drivers/DRV-011/fmcsa-compliance.html",
+        "expectedFileName":  "fmcsa-compliance.html"
+    },
+    {
+        "driver":  "DRV-011",
+        "documentType":  "insuranceCard",
+        "manifestPath":  "/documents/drivers/DRV-011/icard-drv-011.png",
+        "expectedFileName":  "icard-drv-011.png"
+    },
+    {
+        "driver":  "DRV-011",
+        "documentType":  "dqfComplianceSummary",
+        "manifestPath":  "/documents/drivers/DRV-011/dqf-compliance-summary-drv-011.pdf",
+        "expectedFileName":  "dqf-compliance-summary-drv-011.pdf"
+    },
+    {
+        "driver":  "DRV-011",
+        "documentType":  "employee_handbook_acknowledgment",
+        "manifestPath":  "/generated/drivers/DRV-011/hr-payroll/employee-handbook-acknowledgment.html",
+        "expectedFileName":  "employee-handbook-acknowledgment.html"
+    },
+    {
+        "driver":  "DRV-011",
+        "documentType":  "benefits_enrollment",
+        "manifestPath":  "/generated/drivers/DRV-011/hr-payroll/benefits-enrollment.html",
+        "expectedFileName":  "benefits-enrollment.html"
+    },
+    {
+        "driver":  "DRV-011",
+        "documentType":  "life_insurance_beneficiary_election",
+        "manifestPath":  "/generated/drivers/DRV-011/hr-payroll/life-insurance-beneficiary-election.html",
+        "expectedFileName":  "life-insurance-beneficiary-election.html"
+    },
+    {
+        "driver":  "DRV-011",
+        "documentType":  "flexible_spending_account_election",
+        "manifestPath":  "/generated/drivers/DRV-011/hr-payroll/flexible-spending-account-election.html",
+        "expectedFileName":  "flexible-spending-account-election.html"
+    },
+    {
+        "driver":  "DRV-011",
+        "documentType":  "garnishment_withholding_summary",
+        "manifestPath":  "/generated/drivers/DRV-011/hr-payroll/garnishment-withholding-summary.html",
+        "expectedFileName":  "garnishment-withholding-summary.html"
+    },
+    {
+        "driver":  "DRV-012",
+        "documentType":  "cdl",
+        "manifestPath":  "/documents/drivers/DRV-012/cdlnew-012.jpg",
+        "expectedFileName":  "cdlnew-012.jpg"
+    },
+    {
+        "driver":  "DRV-012",
+        "documentType":  "medicalCard",
+        "manifestPath":  "/documents/drivers/DRV-012/medical-card-drv-012.png",
+        "expectedFileName":  "medical-card-drv-012.png"
+    },
+    {
+        "driver":  "DRV-012",
+        "documentType":  "mvr",
+        "manifestPath":  "/documents/drivers/DRV-012/mvr-card-drv-012.html",
+        "expectedFileName":  "mvr-card-drv-012.html"
+    },
+    {
+        "driver":  "DRV-012",
+        "documentType":  "w9",
+        "manifestPath":  "/documents/drivers/DRV-012/w9-drv-012.pdf",
+        "expectedFileName":  "w9-drv-012.pdf"
+    },
+    {
+        "driver":  "DRV-012",
+        "documentType":  "i9",
+        "manifestPath":  "/documents/drivers/DRV-012/i9-drv-012.pdf",
+        "expectedFileName":  "i9-drv-012.pdf"
+    },
+    {
+        "driver":  "DRV-012",
+        "documentType":  "emergencyContact",
+        "manifestPath":  "/documents/drivers/DRV-012/ec-card-drv-012.html",
+        "expectedFileName":  "ec-card-drv-012.html"
+    },
+    {
+        "driver":  "DRV-012",
+        "documentType":  "bankInformation",
+        "manifestPath":  "/documents/drivers/DRV-012/bank-card-DRV-012-Robert_Johnson.html",
+        "expectedFileName":  "bank-card-DRV-012-Robert_Johnson.html"
+    },
+    {
+        "driver":  "DRV-012",
+        "documentType":  "fmcsaCompliance",
+        "manifestPath":  "/documents/drivers/DRV-012/fmcsa-compliance.html",
+        "expectedFileName":  "fmcsa-compliance.html"
+    },
+    {
+        "driver":  "DRV-012",
+        "documentType":  "insuranceCard",
+        "manifestPath":  "/documents/drivers/DRV-012/icard-drv-012.png",
+        "expectedFileName":  "icard-drv-012.png"
+    },
+    {
+        "driver":  "DRV-012",
+        "documentType":  "dqfComplianceSummary",
+        "manifestPath":  "/documents/drivers/DRV-012/dqf-compliance-summary-drv-012.pdf",
+        "expectedFileName":  "dqf-compliance-summary-drv-012.pdf"
+    },
+    {
+        "driver":  "DRV-012",
+        "documentType":  "employee_handbook_acknowledgment",
+        "manifestPath":  "/generated/drivers/DRV-012/hr-payroll/employee-handbook-acknowledgment.html",
+        "expectedFileName":  "employee-handbook-acknowledgment.html"
+    },
+    {
+        "driver":  "DRV-012",
+        "documentType":  "benefits_enrollment",
+        "manifestPath":  "/generated/drivers/DRV-012/hr-payroll/benefits-enrollment.html",
+        "expectedFileName":  "benefits-enrollment.html"
+    },
+    {
+        "driver":  "DRV-012",
+        "documentType":  "life_insurance_beneficiary_election",
+        "manifestPath":  "/generated/drivers/DRV-012/hr-payroll/life-insurance-beneficiary-election.html",
+        "expectedFileName":  "life-insurance-beneficiary-election.html"
+    },
+    {
+        "driver":  "DRV-012",
+        "documentType":  "flexible_spending_account_election",
+        "manifestPath":  "/generated/drivers/DRV-012/hr-payroll/flexible-spending-account-election.html",
+        "expectedFileName":  "flexible-spending-account-election.html"
+    }
+]

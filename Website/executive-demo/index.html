@@ -1,0 +1,210 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Executive Demo | BackOfficeFleet</title>
+  <meta name="description" content="A guided five-minute BOF executive demonstration connecting customer demand, capacity intelligence, carrier readiness, drivers, documents, safety, and settlement management.">
+  <link rel="stylesheet" href="/assets/css/styles.css?v=1.41">
+  <style>
+    .executive-hero { background: linear-gradient(135deg, rgba(246,248,244,0.98), rgba(232,241,236,0.96) 56%, rgba(251,243,231,0.96)); overflow: hidden; position: relative; }
+    .executive-hero::after { background-image: linear-gradient(rgba(20,33,31,0.06) 1px, transparent 1px), linear-gradient(90deg, rgba(20,33,31,0.06) 1px, transparent 1px); background-size: 42px 42px; content: ""; inset: 0; pointer-events: none; position: absolute; }
+    .executive-hero-inner { display: grid; gap: 34px; grid-template-columns: minmax(0, 0.92fr) minmax(360px, 1.08fr); margin: 0 auto; max-width: var(--max); min-height: 620px; padding: 70px 24px 56px; position: relative; z-index: 1; }
+    .executive-hero-copy { align-content: center; display: grid; gap: 18px; }
+    .executive-hero-copy h1 { font-size: clamp(2.5rem, 5vw, 4.75rem); line-height: 1.02; margin: 0; }
+    .executive-hero-copy > p { color: var(--muted); font-size: 1.1rem; line-height: 1.68; margin: 0; max-width: 720px; }
+    .executive-panel { align-self: center; background: rgba(255,255,255,0.94); border: 1px solid rgba(20,33,31,0.1); border-radius: 8px; box-shadow: var(--shadow); display: grid; gap: 14px; padding: 18px; }
+    .executive-panel-head { align-items: center; border-bottom: 1px solid rgba(20,33,31,0.1); display: flex; justify-content: space-between; padding-bottom: 12px; }
+    .executive-panel-head h2 { font-size: 1.1rem; margin: 0; }
+    .executive-panel-head span { color: var(--muted); font-size: 0.76rem; font-weight: 900; text-transform: uppercase; }
+    .executive-metric-grid { display: grid; gap: 10px; grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .executive-metric { background: linear-gradient(180deg, #fff, #f5f8f5); border: 1px solid rgba(20,33,31,0.1); border-radius: 8px; padding: 14px; }
+    .executive-metric span { color: var(--muted); display: block; font-size: 0.72rem; font-weight: 950; min-height: 31px; text-transform: uppercase; }
+    .executive-metric strong { color: var(--green-dark); display: block; font-size: 2rem; line-height: 1; margin: 8px 0 6px; }
+    .executive-metric small { color: var(--muted); display: block; font-size: 0.76rem; line-height: 1.35; }
+    .executive-path { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 6px; }
+    .executive-path a { background: rgba(255,255,255,0.78); border: 1px solid rgba(20,33,31,0.14); border-radius: 8px; color: var(--green-dark); font-size: 0.78rem; font-weight: 950; padding: 10px 12px; text-transform: uppercase; }
+    .demo-card-grid, .value-grid, .network-support-grid { display: grid; gap: 16px; grid-template-columns: repeat(4, minmax(0, 1fr)); }
+    .demo-card, .value-card, .network-support-card, .presenter-guide { background: #fff; border: 1px solid var(--line); border-radius: 8px; box-shadow: var(--shadow-soft); padding: 22px; }
+    .demo-card { display: grid; gap: 10px; min-height: 230px; }
+    .demo-card span, .value-card span, .network-support-card span { color: var(--green-dark); font-size: 0.78rem; font-weight: 950; text-transform: uppercase; }
+    .demo-card h3, .value-card h3, .network-support-card h3 { font-size: 1.06rem; margin: 0; }
+    .demo-card p, .value-card p, .network-support-card p, .presenter-guide p, .presenter-guide li { color: var(--muted); line-height: 1.55; margin: 0; }
+    .demo-card a { align-self: end; color: var(--green-dark); font-size: 0.84rem; font-weight: 950; margin-top: 6px; text-transform: uppercase; }
+    .workflow-track { display: grid; gap: 10px; grid-template-columns: repeat(10, minmax(118px, 1fr)); overflow-x: auto; padding-bottom: 4px; }
+    .workflow-step { background: #fff; border: 1px solid var(--line); border-radius: 8px; box-shadow: var(--shadow-soft); min-height: 132px; padding: 14px; position: relative; }
+    .workflow-step::after { color: var(--green-dark); content: "->"; font-size: 1.25rem; font-weight: 900; position: absolute; right: -14px; top: 47%; z-index: 2; }
+    .workflow-step:last-child::after { display: none; }
+    .workflow-step span { color: var(--green-dark); font-size: 0.72rem; font-weight: 950; text-transform: uppercase; }
+    .workflow-step strong { display: block; font-size: 0.96rem; line-height: 1.25; margin-top: 12px; }
+    .workflow-step p { color: var(--muted); font-size: 0.8rem; line-height: 1.45; margin: 8px 0 0; }
+    .network-support-grid { grid-template-columns: 0.95fr 1.05fr; }
+    .network-support-list { display: grid; gap: 10px; margin: 0; padding: 0; }
+    .network-support-list li { background: rgba(232,241,236,0.62); border: 1px solid rgba(20,33,31,0.08); border-radius: 8px; color: var(--ink); font-weight: 850; list-style: none; padding: 12px; }
+    .presenter-guide { border-color: rgba(22,143,98,0.32); }
+    .presenter-guide summary { color: var(--green-dark); cursor: pointer; font-size: 1.1rem; font-weight: 950; list-style: none; }
+    .presenter-guide summary::-webkit-details-marker { display: none; }
+    .presenter-grid { display: grid; gap: 14px; grid-template-columns: repeat(4, minmax(0, 1fr)); margin-top: 18px; }
+    .presenter-note { background: rgba(246,248,244,0.86); border: 1px solid rgba(20,33,31,0.08); border-radius: 8px; padding: 14px; }
+    .presenter-note h3 { font-size: 0.95rem; margin: 0 0 8px; }
+    .presenter-note ul, .presenter-note ol { display: grid; gap: 7px; margin: 0; padding-left: 18px; }
+    .demo-mode-label { display: inline-flex; margin-bottom: 10px; }
+    @media (max-width: 1180px) { .executive-hero-inner { grid-template-columns: 1fr; } .demo-card-grid, .value-grid, .executive-metric-grid, .presenter-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+    @media (max-width: 780px) { .executive-hero-inner { min-height: auto; padding: 46px 16px; } .demo-card-grid, .value-grid, .network-support-grid, .executive-metric-grid, .presenter-grid { grid-template-columns: 1fr; } .executive-panel { padding: 12px; } .executive-panel-head { align-items: flex-start; flex-direction: column; gap: 4px; } .executive-path { display: grid; grid-template-columns: 1fr; } .executive-path a { text-align: center; } .workflow-step::after { display: none; } }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <a class="brand" href="/" aria-label="BackOfficeFleet home"><img src="/assets/images/logo/boflogo-original.png" alt="BackOfficeFleet"></a>
+    <button class="nav-toggle" type="button" data-nav-toggle aria-expanded="false" aria-label="Toggle navigation">&#9776;</button>
+    <nav class="site-nav" data-nav aria-label="Main navigation">
+      <div class="nav-menu" data-nav-menu>
+        <button class="nav-menu-toggle" type="button" data-nav-menu-toggle aria-expanded="false" aria-haspopup="true">Services</button>
+        <div class="nav-dropdown" aria-label="Services">
+          <a href="/fleet/">Fleet Back Office</a>
+          <a href="/business-operations/">HR Tier</a>
+          <a href="/business-operations/">Finance Tier</a>
+          <a href="/document-readiness-engine/">BOF Vault</a>
+          <a href="/customer-portal/">Customer Portal</a>
+          <a href="/business-operations/">Business Operations</a>
+        </div>
+      </div>
+      <div class="nav-menu" data-nav-menu>
+        <button class="nav-menu-toggle" type="button" data-nav-menu-toggle aria-expanded="false" aria-haspopup="true">Workflows</button>
+        <div class="nav-dropdown" aria-label="Workflows">
+          <a href="/drivers/">Driver Documents</a>
+          <a href="/dispatch/">Dispatch Support</a>
+          <a href="/settlements/">Settlements</a>
+          <a href="/documents/">PODs &amp; Proof</a>
+          <a href="/operations-record/">Claims &amp; Exceptions</a>
+          <a href="/settlements/">Factoring Packets</a>
+          <a href="/document-readiness-engine/">Document Readiness</a>
+        </div>
+      </div>
+      <div class="nav-menu" data-nav-menu>
+        <button class="nav-menu-toggle" type="button" data-nav-menu-toggle aria-expanded="false" aria-haspopup="true">Who We Serve</button>
+        <div class="nav-dropdown" aria-label="Who We Serve">
+          <a href="/fleet/">Trucking Fleets</a>
+          <a href="/private-fleets/">Private Fleets</a>
+          <a href="/government/">Government Fleets</a>
+          <a href="/aggregator-outreach/">Aggregators</a>
+          <a href="/business-operations/">Field Service / Business Operations</a>
+        </div>
+      </div>
+    </nav>
+    <a class="header-cta" href="/scenario-walkthrough/">Take Fleet Assessment</a>
+  </header>
+
+  <main>
+    <section class="executive-hero" id="demo-start">
+      <div class="executive-hero-inner">
+        <div class="executive-hero-copy reveal">
+          <p class="eyebrow">Executive demo experience</p>
+          <h1>Operational Infrastructure for Fleets and Carrier Networks</h1>
+          <p>From customer demand to carrier readiness, documentation, compliance, and settlement management.</p>
+          <p>This five-minute guided path ties BOF modules into one operating story so prospects see how the platform reduces administrative burden, exposes readiness issues, and keeps proof close to every decision.</p>
+          <div class="actions"><a class="button primary" href="#demo-modules">Start guided tour</a><a class="button secondary" href="#presenter-guide">Presenter guide</a></div>
+          <nav class="executive-path" aria-label="Guided executive navigation">
+            <a href="/customer-portal/">Customer Portal</a>
+            <a href="/capacity-intelligence/">Capacity Intelligence</a>
+            <a href="/operational-intelligence/">Operational Intelligence</a>
+            <a href="/carrier-readiness/">Carrier Registry</a>
+            <a href="/carrier-readiness/">Carrier Readiness</a>
+            <a href="/interactive-demo/start/">Command Center</a>
+          </nav>
+        </div>
+        <aside class="executive-panel reveal" aria-label="Executive demo metrics">
+          <div class="executive-panel-head"><div><span>Executive metrics</span><h2>BOF operating layer snapshot</h2></div><span>Demo scenario</span></div>
+          <div class="executive-metric-grid">
+            <article class="executive-metric"><span>Trucks Supported</span><strong>190</strong><small>Across fleet and network views</small></article>
+            <article class="executive-metric"><span>Drivers Supported</span><strong>214</strong><small>Driver readiness records</small></article>
+            <article class="executive-metric"><span>Carrier Networks Supported</span><strong>5</strong><small>Network and aggregator records</small></article>
+            <article class="executive-metric"><span>Documentation Readiness</span><strong>92%</strong><small>Packets with evidence present</small></article>
+            <article class="executive-metric"><span>Safety Readiness</span><strong>91%</strong><small>Safety and qualification posture</small></article>
+            <article class="executive-metric"><span>Compliance Readiness</span><strong>89%</strong><small>Insurance, authority, and admin status</small></article>
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <section class="section" id="demo-modules">
+      <div class="section-head reveal"><p class="eyebrow">Five-minute demo path</p><h2>Nine stops make BOF feel like one operating platform.</h2><p>The route is designed for a fleet owner, carrier network operator, or aggregator evaluating whether BOF can bring order to demand, readiness, operating visibility, documents, compliance, and closeout work.</p></div>
+      <div class="demo-card-grid">
+        <article class="demo-card reveal"><span>01</span><h3>Customer Demand</h3><p>Shows how customer requests, quote review, shipment documents, and proof expectations enter BOF without turning the page into a sales portal.</p><a href="/customer-portal/">Open Customer Portal</a></article>
+        <article class="demo-card reveal"><span>02</span><h3>Capacity Intelligence</h3><p>Gives executives a readiness view across carriers, drivers, trucks, equipment, documentation, and network health.</p><a href="/capacity-intelligence/">Open Capacity Intelligence</a></article>
+        <article class="demo-card reveal"><span>03</span><h3>Operational Intelligence</h3><p>Shows how in-route signals, safety events, fuel indicators, RFID verification, and exceptions become executive visibility.</p><a href="/operational-intelligence/">Open Operational Intelligence</a></article>
+        <article class="demo-card reveal"><span>04</span><h3>Carrier Readiness</h3><p>Shows packet status, authority, insurance, network relationship, and operating consequence before deeper review.</p><a href="/carrier-readiness/">Open Carrier Readiness</a></article>
+        <article class="demo-card reveal"><span>05</span><h3>Driver Readiness</h3><p>Connects driver files, qualification dates, documents, and missing evidence to the readiness conversation.</p><a href="/drivers/">Open Drivers</a></article>
+        <article class="demo-card reveal"><span>06</span><h3>Documentation</h3><p>Proves BOF is not just a dashboard by keeping policies, document packets, proof records, and evidence close to the workflow.</p><a href="/documents/">Open Documents</a></article>
+        <article class="demo-card reveal"><span>07</span><h3>Safety</h3><p>Frames safety and compliance as operating controls that reduce confusion before work is cleared for review.</p><a href="/safety/">Open Safety</a></article>
+        <article class="demo-card reveal"><span>08</span><h3>Settlements</h3><p>Shows how closeout, proof, holds, and settlement readiness stay connected to the same operating record.</p><a href="/settlements/">Open Settlements</a></article>
+        <article class="demo-card reveal"><span>09</span><h3>Executive Command Center</h3><p>Brings the story back to the command layer where records, holds, documents, and next actions stay visible.</p><a href="/interactive-demo/start/">Open Command Center</a></article>
+      </div>
+    </section>
+
+    <section class="section" id="workflow-story">
+      <div class="section-head reveal"><p class="eyebrow">BOF workflow story</p><h2>One guided flow explains how the modules fit together.</h2><p>This is a presentation path, not dispatch, brokerage, freight matching, or transportation arrangement functionality.</p></div>
+      <div class="workflow-track reveal" aria-label="Static BOF executive workflow">
+        <article class="workflow-step"><span>01</span><strong>Customer Demand</strong><p>Request context enters the BOF review path.</p></article>
+        <article class="workflow-step"><span>02</span><strong>Quote Approval</strong><p>Customer-facing assumptions become visible.</p></article>
+        <article class="workflow-step"><span>03</span><strong>Capacity Intelligence</strong><p>Network readiness and availability are summarized.</p></article>
+        <article class="workflow-step"><span>04</span><strong>Operational Intelligence</strong><p>Trip, safety, fuel, RFID, and exception signals stay visible.</p></article>
+        <article class="workflow-step"><span>05</span><strong>Carrier Readiness</strong><p>Carrier packet and relationship status are checked.</p></article>
+        <article class="workflow-step"><span>06</span><strong>Driver Readiness</strong><p>Driver qualification and documents are visible.</p></article>
+        <article class="workflow-step"><span>07</span><strong>Documentation Ready</strong><p>Proof and packet evidence support review.</p></article>
+        <article class="workflow-step"><span>08</span><strong>Safety Verification</strong><p>Safety status reduces avoidable risk.</p></article>
+        <article class="workflow-step"><span>09</span><strong>Assignment Ready</strong><p>Records show whether administrative gates are clear.</p></article>
+        <article class="workflow-step"><span>10</span><strong>Settlement Ready</strong><p>Closeout evidence is ready to support payment review.</p></article>
+      </div>
+    </section>
+
+    <section class="section" id="what-bof-solves">
+      <div class="section-head reveal"><p class="eyebrow">What BOF solves</p><h2>BOF reduces administrative burden by making risk, proof, and ownership visible.</h2><p>Executives do not need another disconnected module tour. They need to see where BOF removes daily friction and turns scattered records into managed follow-through.</p></div>
+      <div class="value-grid">
+        <article class="value-card reveal"><span>Compliance Risk</span><h3>Required evidence stays in view.</h3><p>Insurance, authority, policy, and administrative checks are visible before the team depends on the record.</p></article>
+        <article class="value-card reveal"><span>Documentation Risk</span><h3>Proof is attached to the workflow.</h3><p>Documents stop living in separate inboxes and start supporting the operating decision.</p></article>
+        <article class="value-card reveal"><span>Settlement Risk</span><h3>Closeout waits on the right proof.</h3><p>POD, BOL, packet, hold, and settlement context stay connected so payment review is easier to defend.</p></article>
+        <article class="value-card reveal"><span>Driver Readiness</span><h3>Driver files become operating signals.</h3><p>Qualification, missing records, and expiration issues are visible before they become manager surprises.</p></article>
+        <article class="value-card reveal"><span>Carrier Readiness</span><h3>Carrier packets have consequence.</h3><p>BOF shows which carriers are ready, at risk, restricted, or waiting on packet follow-up.</p></article>
+        <article class="value-card reveal"><span>Operational Visibility</span><h3>Executives see what needs attention.</h3><p>Readiness, owner, blocker, document, and next action are easier to explain in one guided story.</p></article>
+      </div>
+    </section>
+
+    <section class="section" id="carrier-networks">
+      <div class="section-head reveal"><p class="eyebrow">Supporting Carrier Networks</p><h2>BOF supports multi-carrier operations without becoming a freight marketplace.</h2><p>The network layer helps operators see capacity readiness, documentation coverage, and compliance posture across participating carriers while private commercial relationship details remain protected.</p></div>
+      <div class="network-support-grid">
+        <article class="network-support-card reveal"><span>Network story</span><h3>Carrier network visibility with administrative guardrails.</h3><p>BOF gives a structured way to review multi-carrier capacity, packet readiness, documentation status, compliance oversight, and readiness management. The page intentionally avoids freight brokerage, freight placement, transportation arrangement, or motor carrier responsibility language.</p></article>
+        <article class="network-support-card reveal"><span>Operating capabilities</span><ul class="network-support-list"><li>Multi-carrier visibility across network records</li><li>Capacity intelligence by region, equipment, and readiness</li><li>Readiness management for carriers, drivers, and assets</li><li>Documentation management for packets and proof records</li><li>Compliance oversight without exposing private terms</li></ul></article>
+      </div>
+    </section>
+
+    <section class="section" id="guided-navigation">
+      <div class="section-head reveal"><p class="eyebrow">Guided navigation</p><h2>Use this order when a prospect wants the complete BOF story.</h2><p>The links open existing BOF modules. They do not create new operational functions; they make the existing work easier to present.</p></div>
+      <div class="proof-grid">
+        <article class="proof-card reveal"><h3>1. Customer Portal</h3><p>Start with demand, request context, quote review, shipment documents, and proof expectations.</p><a class="route-chip" href="/customer-portal/">Open Customer Portal</a></article>
+        <article class="proof-card reveal"><h3>2. Capacity Intelligence</h3><p>Move into executive visibility across network health, capacity readiness, and equipment coverage.</p><a class="route-chip" href="/capacity-intelligence/">Open Capacity Intelligence</a></article>
+        <article class="proof-card reveal"><h3>3. Operational Intelligence</h3><p>Show what happens during the trip: route status, safety events, fuel signals, verification evidence, and exceptions.</p><a class="route-chip" href="/operational-intelligence/">Open Operational Intelligence</a></article>
+        <article class="proof-card reveal"><h3>4. Carrier Registry</h3><p>Show network relationship, carrier status, insurance, authority, and packet ownership.</p><a class="route-chip" href="/carrier-readiness/">Open Carrier Registry</a></article>
+        <article class="proof-card reveal"><h3>5. Carrier Readiness</h3><p>Explain which packets are ready, at risk, held, or waiting on administrative follow-up.</p><a class="route-chip" href="/carrier-readiness/">Open Carrier Readiness</a></article>
+        <article class="proof-card reveal"><h3>6. Command Center</h3><p>End with the app-like control surface where records, documents, holds, and next actions come together.</p><a class="route-chip" href="/interactive-demo/start/">Open Command Center</a></article>
+      </div>
+    </section>
+
+    <section class="section" id="presenter-guide">
+      <details class="presenter-guide reveal">
+        <summary><span class="status review demo-mode-label">Demo mode</span> Presenter Guide</summary>
+        <div class="presenter-grid">
+          <article class="presenter-note"><h3>What to show first</h3><ul><li>Start on this page and explain the complete operating story.</li><li>Open Customer Portal to show demand context.</li><li>Move to Capacity Intelligence, then Operational Intelligence, for readiness and trip visibility.</li></ul></article>
+          <article class="presenter-note"><h3>What to explain</h3><ul><li>BOF reduces administrative burden by connecting proof, readiness, owner, and consequence.</li><li>Modules are separate surfaces but one operating narrative.</li><li>Network visibility is readiness management, not freight arrangement.</li></ul></article>
+          <article class="presenter-note"><h3>Suggested talking points</h3><ul><li>What is ready, what is at risk, and what needs follow-up?</li><li>Which records support the decision?</li><li>How does the team avoid rebuilding the file by hand?</li></ul></article>
+          <article class="presenter-note"><h3>Recommended demo order</h3><ol><li>Executive Demo</li><li>Customer Portal</li><li>Capacity Intelligence</li><li>Operational Intelligence</li><li>Carrier Registry</li><li>Command Center</li></ol></article>
+        </div>
+      </details>
+    </section>
+  </main>
+
+  <section class="cta-band"><div class="cta-inner"><div><p class="eyebrow">Unified BOF story</p><h2>Use the executive demo to connect the modules before opening the deeper records.</h2><p>The strongest sales path is not a feature list. It is a guided operating story from demand, to readiness, to documents, to risk, to settlement evidence.</p></div><a class="button light" href="/interactive-demo/start/">Open Command Center &rarr;</a></div></section>
+  <footer class="site-footer"><div class="footer-inner"><strong>BackOfficeFleet</strong><span>Executive demo experience.</span><a href="/trust-governance/">Trust &amp; Governance</a></div></footer>
+  <script src="/assets/js/site.js?v=1.38"></script>
+</body>
+</html>

@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Shipment Documents | Customer Portal | BackOfficeFleet</title>
+  <meta name="description" content="Inspect shipment documents, BOL, rate confirmation, invoice, seal record, cargo record, POD-ready proof, and proof registry.">
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="/assets/css/styles.css?v=1.40">
+  <link rel="stylesheet" href="/assets/css/customer-portal.css?v=2.7">
+</head>
+<body class="customer-portal-body" data-portal-page="documents">
+  <main class="customer-portal-shell" data-customer-portal>
+    <aside class="portal-rail"><a class="portal-brand" href="/"><img src="/assets/images/logo/boflogo-original.png" alt="BackOfficeFleet"></a><nav class="portal-nav"><a href="/customer-portal/"><span>01</span>Portal Home</a><a href="/customer-portal/load-intake/"><span>02</span>Load Intake</a><a href="/customer-portal/quotes/"><span>03</span>Quotes</a><a href="/customer-portal/shipments/"><span>04</span>Active Shipments</a><a class="is-active" href="/customer-portal/documents/"><span>05</span>Documents</a><a href="/customer-portal/tracking/"><span>06</span>Tracking</a><a href="/customer-portal/billing/"><span>07</span>Billing</a></nav><div class="portal-rail-card"><span>Documents</span><strong data-portal-text="documentReadiness">Shipment packet</strong><p>Open each document to inspect the fields, owners, and consequence.</p></div></aside>
+    <section class="portal-workspace">
+      <header class="portal-topbar"><div><span class="portal-kicker">Shipment Documents</span><h1>Inspect the BOL, rate confirmation, invoice, seal, cargo record, and POD-ready proof chain.</h1></div><div class="portal-topbar-actions"><a class="portal-link-button" href="/customer-portal/shipment-generator/">Shipment generator</a><a class="portal-link-button" href="/customer-portal/billing/">Billing</a></div></header>
+      <section class="portal-panel">
+        <div class="portal-panel-head"><div><span class="portal-kicker">Document viewer</span><h2 data-portal-text="documentTitle">Rate confirmation</h2></div><span class="portal-status review">Review</span></div>
+        <div class="packet-layout">
+          <div class="document-tabs" role="tablist"><button class="is-active" type="button" data-doc-tab="rate">Rate confirmation</button><button type="button" data-doc-tab="invoice">Invoice</button><button type="button" data-doc-tab="bol">Bill of lading</button><button type="button" data-doc-tab="seal">Seal &amp; cargo</button><button type="button" data-doc-tab="pod">POD-ready proof</button><button type="button" data-doc-tab="factoring">Factoring packet</button></div>
+          <article class="paper-document" data-watermark="Rate" data-portal-render="paperDocument"></article>
+          <aside class="proof-registry"><h3>Proof registry</h3><div data-portal-render="proofRegistry"></div></aside>
+        </div>
+      </section>
+      <section class="portal-panel"><div class="portal-panel-head"><div><span class="portal-kicker">Pre-trip shipment documentation</span><h2 data-portal-text="documentReadiness">Pre-trip packet pending</h2></div><span class="portal-status review">Readiness</span></div><div class="portal-checklist document-readiness-list" data-portal-render="documentReadinessList"></div></section>
+    </section>
+  </main>
+  <script src="/assets/js/customer-portal.js?v=2.7"></script>
+</body>
+</html>

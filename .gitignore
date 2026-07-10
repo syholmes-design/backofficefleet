@@ -1,0 +1,36 @@
+# OS / editor noise
+Thumbs.db
+Desktop.ini
+*.tmp
+*.bak
+~$*
+
+# Runtime secrets and credentials
+.env
+.env.*
+.codex/secrets/
+
+# Codex generated bloat / scratch output
+.codex/backups/
+.codex/reports/
+.codex/tmp/
+.codex/tmp-*
+.codex/tmp-screenshots/
+.codex/snapshots/
+.codex/exports/
+.codex/generated-assets/
+.codex/tmp_tax_images/
+.codex/chrome-driver-doc-audit-profile*/
+
+# Raw client/reference folders kept out of the active code history
+2nd Reference Folder/
+AscendTMS Backend Images/
+bof-web-Original/
+Chatgpt Instructions/
+Client Suggestions/
+New Documents/
+recordings/
+outputs/
+
+# Local shortcuts and non-deployable machine artifacts
+*.lnk

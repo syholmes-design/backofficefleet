@@ -1,0 +1,206 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Partner Workflow | BackOfficeFleet</title>
+  <meta name="description" content="A guided TMS partner workflow showing how BOF turns an imported load into a readiness-backed release decision.">
+  <link rel="stylesheet" href="/assets/css/styles.css?v=1.40">
+</head>
+<body>
+  <header class="site-header">
+    <a class="brand" href="/" aria-label="BackOfficeFleet home"><img src="/assets/images/logo/boflogo-original.png" alt="BackOfficeFleet"></a>
+    <button class="nav-toggle" type="button" data-nav-toggle aria-expanded="false" aria-label="Toggle navigation">&#9776;</button>
+    <nav class="site-nav" data-nav aria-label="Main navigation">
+      <div class="nav-menu" data-nav-menu>
+        <button class="nav-menu-toggle" type="button" data-nav-menu-toggle aria-expanded="false" aria-haspopup="true">Services</button>
+        <div class="nav-dropdown" aria-label="Services">
+          <a href="/fleet/">Fleet Back Office</a>
+          <a href="/business-operations/">HR Tier</a>
+          <a href="/business-operations/">Finance Tier</a>
+          <a href="/document-readiness-engine/">BOF Vault</a>
+          <a href="/customer-portal/">Customer Portal</a>
+          <a href="/business-operations/">Business Operations</a>
+        </div>
+      </div>
+      <div class="nav-menu" data-nav-menu>
+        <button class="nav-menu-toggle" type="button" data-nav-menu-toggle aria-expanded="false" aria-haspopup="true">Workflows</button>
+        <div class="nav-dropdown" aria-label="Workflows">
+          <a href="/drivers/">Driver Documents</a>
+          <a href="/dispatch/">Dispatch Support</a>
+          <a href="/settlements/">Settlements</a>
+          <a href="/documents/">PODs &amp; Proof</a>
+          <a href="/operations-record/">Claims &amp; Exceptions</a>
+          <a href="/settlements/">Factoring Packets</a>
+          <a href="/document-readiness-engine/">Document Readiness</a>
+        </div>
+      </div>
+      <div class="nav-menu" data-nav-menu>
+        <button class="nav-menu-toggle" type="button" data-nav-menu-toggle aria-expanded="false" aria-haspopup="true">Who We Serve</button>
+        <div class="nav-dropdown" aria-label="Who We Serve">
+          <a href="/fleet/">Trucking Fleets</a>
+          <a href="/private-fleets/">Private Fleets</a>
+          <a href="/government/">Government Fleets</a>
+          <a href="/aggregator-outreach/">Aggregators</a>
+          <a href="/business-operations/">Field Service / Business Operations</a>
+        </div>
+      </div>
+    </nav>
+    <a class="header-cta" href="/scenario-walkthrough/">Take Fleet Assessment</a>
+  </header>
+  <main>
+    <section class="section page-hero">
+      <div class="reveal">
+        <p class="eyebrow">TMS partner workflow</p>
+        <h1>Follow an imported TMS load into a BOF release decision.</h1>
+        <p>The partner workflow orients your team around TMS-LD-10482, a load that TMS manages while BOF checks driver compliance, carrier packet readiness, required documents, exception ownership, and the release decision.</p>
+        <div class="actions"><a class="button primary" href="/demo/tms-release-review/">View release readiness workflow &rarr;</a><a class="button secondary" href="/interactive-demo/start/">Try Release Review</a><a class="button secondary" href="/scenario-walkthrough/">Take Fleet Assessment</a></div>
+      </div>
+      <div class="visual-stage reveal" aria-label="BOF load release workflow illustration">
+        <img class="scene-illustration" src="/assets/images/animations/heroes/hero-demo-flow.webp" data-static-src="/assets/images/illustrations/fleet-flow-illustration.webp" alt="Isometric BOF fleet workflow showing driver readiness, document review, lane review, and load release">
+        <div class="proof-strip"><span>Owner</span><span>Docs</span><span>Load</span></div>
+      </div>
+    </section>
+    <section class="section">
+      <div class="section-head reveal">
+        <p class="eyebrow">Decision map</p>
+        <h2>Four partner imports show ready, hold, conditional release, and unmatched-driver review.</h2>
+        <p>The operating review starts with TMS-LD-10482, then compares additional TMS load states so your team can see how BOF separates TMS activity from readiness control.</p>
+      </div>
+      <div class="table-wrap reveal">
+        <table>
+          <thead><tr><th>Case</th><th>State</th><th>What it proves</th><th>Owner</th><th>Open record</th></tr></thead>
+          <tbody>
+            <tr><td><a class="proof-link" href="/demo/tms-release-review/">TMS-LD-10480</a></td><td><span class="status ready">Ready</span></td><td>Driver, carrier packet, and pre-trip documents clear BOF review.</td><td>Operations lead</td><td><a class="table-action" href="/demo/tms-release-review/">Ready decision</a></td></tr>
+            <tr><td><a class="proof-link" href="/demo/tms-release-review/">TMS-LD-10482</a></td><td><span class="status blocked">Hold</span></td><td>TMS shows the driver assigned, but BOF medical-card review blocks release.</td><td>Safety/Compliance</td><td><a class="table-action" href="/demo/tms-release-review/">Hold decision</a></td></tr>
+            <tr><td><a class="proof-link" href="/demo/tms-release-review/">TMS-LD-10483</a></td><td><span class="status watch">Condition</span></td><td>No legal blocker is active, but POD and lumper receipt follow-up remain visible.</td><td>Document desk</td><td><a class="table-action" href="/demo/tms-release-review/">Conditional release</a></td></tr>
+            <tr><td><a class="proof-link" href="/demo/tms-release-review/">TMS-LD-10484</a></td><td><span class="status blocked">Manual review</span></td><td>TMS lists a driver BOF does not recognize, so BOF creates an exception state.</td><td>Operations lead</td><td><a class="table-action" href="/demo/tms-release-review/">Driver match review</a></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+    <section class="section">
+      <div class="section-head reveal">
+        <p class="eyebrow">Sector lens</p>
+        <h2>The same release review can support for-hire, private, and government-contracting fleets.</h2>
+        <p>The demo stays centered on one TMS-connected release decision, but the operating logic also applies when a private fleet needs branch proof or a government contractor needs a cleaner audit packet.</p>
+      </div>
+      <div class="card-grid">
+        <article class="card reveal"><span class="icon">01</span><h3>For-hire carrier</h3><p>Driver readiness, carrier packet, document gate, and release decision stay attached before dispatch commits the load.</p><a class="route-chip" href="/interactive-demo/start/">Try release review</a></article>
+        <article class="card reveal"><span class="icon">02</span><h3>Private fleet</h3><p>Internal lanes, branch handoffs, driver files, and delivery proof can follow the same BOF readiness record.</p><a class="route-chip" href="/private-fleets/">View private fleet path</a></article>
+        <article class="card reveal"><span class="icon">03</span><h3>Government / contract fleet</h3><p>Higher-scrutiny work gets evidence packets, named owners, and audit notes without implying a live agency system.</p><a class="route-chip" href="/government/">View government path</a></article>
+      </div>
+    </section>
+    <section class="section">
+      <div class="section-head reveal">
+        <p class="eyebrow">Credibility proof</p>
+        <h2>The strongest parts of the demo are the artifacts a fleet owner can actually inspect.</h2>
+        <p>BOF should not depend on polished truck photography to feel credible. The workflow is stronger when the buyer can open driver packets, DQF reviews, settlement and compliance records, exception notes, and load workflows that explain the release decision.</p>
+      </div>
+      <div class="artifact-proof-grid">
+        <article class="artifact-proof-card artifact-photo-card reveal">
+          <img src="/assets/images/photos/dock-document-review.webp" alt="Driver and operations coordinator reviewing delivery paperwork at a loading dock">
+          <span class="status ready">Field review</span>
+          <h3>Records have to hold up at the dock, not only on a slide.</h3>
+          <p>BOF connects the driver, paperwork, dock context, and next action so the review feels like a live operating workflow.</p>
+        </article>
+        <article class="artifact-proof-card reveal">
+          <span class="status ready">Driver packet</span>
+          <h3>Driver files and DQF reviews</h3>
+          <p>Open complete driver records with photos, readiness score, document requests, generated safety forms, and clickable paperwork.</p>
+          <a class="route-chip" href="/interactive-demo/drivers/drv-001/">Inspect DRV-001</a>
+        </article>
+        <article class="artifact-proof-card reveal">
+          <span class="status watch">Settlement packet</span>
+          <h3>POD, photos, and post-trip proof</h3>
+          <p>Review POD state, GPS/location, receiver detail, dock photo, empty cargo proof, and settlement consequence.</p>
+          <a class="route-chip" href="/interactive-demo/documents/">Open document packet</a>
+        </article>
+        <article class="artifact-proof-card reveal">
+          <span class="status blocked">Compliance exception</span>
+          <h3>Hold reasons that explain the work</h3>
+          <p>See how a medical-card hold, rate-review issue, missing proof, or correction request becomes an owner, blocker, and next action.</p>
+          <a class="route-chip" href="/interactive-demo/alerts/">Open alert queue</a>
+        </article>
+        <article class="artifact-proof-card reveal">
+          <span class="status review">Load workflow</span>
+          <h3>From TMS import to BOF decision</h3>
+          <p>Trace the load through source-system import, BOF readiness review, release decision, and simulated handoff.</p>
+          <a class="route-chip" href="/interactive-demo/">Open Command Center</a>
+        </article>
+      </div>
+    </section>
+    <section class="section">
+      <div class="section-head reveal">
+        <p class="eyebrow">Operating review packet</p>
+        <h2>The partner workflow has a source system, BOF record, owner, consequence, and next action.</h2>
+        <p>BOF starts with one imported TMS load, then compares ready, hold, conditional release, and manual-review states. That gives your team enough detail to see how BOF separates work that can move from work that still needs follow-up.</p>
+      </div>
+      <div class="paper reveal">
+        <div class="document-status-line">
+          <span class="status review">Operating review</span>
+          <span>TMS partner import packet</span>
+          <span>Prepared Jun 7, 2026 07:45 CT</span>
+        </div>
+        <h3>Partner Release Review Packet &middot; <a class="proof-link" href="/demo/tms-release-review/">TMS-LD-10482 / BOF-RR-10482</a></h3>
+        <div class="paper-grid">
+          <div class="field"><span>Imported from</span><strong>TMS load assignment</strong></div>
+          <div class="field"><span>BOF release owner</span><strong>Safety/Compliance &middot; medical-card hold</strong></div>
+          <div class="field"><span>Record chain</span><strong>Rate confirmation, BOL, pickup instructions, BOF driver file, carrier packet</strong></div>
+          <div class="field"><span>Comparison cases</span><strong>Ready, conditional release, and unmatched-driver review</strong></div>
+        </div>
+        <table class="small-table">
+          <thead><tr><th>Review item</th><th>Record to inspect</th><th>Operating answer</th><th>Next action</th></tr></thead>
+          <tbody>
+            <tr><td>Partner import</td><td>TMS-LD-10482</td><td>TMS shows the load assigned and ready for TMS handling.</td><td>Bring the load into BOF review.</td></tr>
+            <tr><td>Driver match</td><td>DRV-6198 &middot; Caleb Price</td><td>Matched by email/phone, but BOF compliance controls eligibility.</td><td>Review medical-card expiration.</td></tr>
+            <tr><td>Document gate</td><td>Rate confirmation, BOL, pickup instructions</td><td>Pre-trip documents are present; compliance is the controlling blocker.</td><td>Keep documents attached to the hold decision.</td></tr>
+            <tr><td>Release decision</td><td>BOF-RR-10482</td><td>Hold - Action Required.</td><td>Update medical card record or assign alternate driver.</td></tr>
+            <tr><td>Simulated handoff</td><td>Prepared decision payload</td><td>BOF hold reason is shown as part of the demo review.</td><td>Use it to explain the release decision.</td></tr>
+          </tbody>
+        </table>
+        <div class="paper-note">The operating review is intentionally narrow at first: one imported load, one BOF driver match, one readiness blocker, and one decision payload. The point is to show how BOF turns TMS activity into a record-backed release decision.</div>
+        <div class="signature-row"><div class="signature">Operations lead</div><div class="signature">Dispatch review</div><div class="stamp">Review</div></div>
+      </div>
+    </section>
+    <section class="section">
+      <div class="section-head reveal"><p class="eyebrow">Operating path</p><h2>One load, six decisions your team can trust.</h2><p>Each step answers who uses it, what is blocked or cleared, which record supports it, who owns the next action, and what happens next. The result is a release decision your team can inspect instead of chase.</p></div>
+      <div class="timeline">
+        <article class="timeline-card reveal"><p class="eyebrow">01</p><h3>Begin with <a class="proof-link" href="/operations-record/#bof-1842">TMS-LD-10482</a></h3><p>Follow one load from owner triage through record-backed release, using the same driver, carrier, document packet, and owner throughout.</p><a class="button secondary" href="/walkthrough/">Review the path</a></article>
+        <article class="timeline-card reveal"><p class="eyebrow">02</p><h3>Open command center</h3><p>See ready loads, watch items, blocked work, owners, and the business impact behind each decision.</p><a class="button secondary" href="/dashboard/">View dashboard</a></article>
+        <article class="timeline-card reveal"><p class="eyebrow">03</p><h3>Check dispatch consequence</h3><p>See allowed, warning, review, and blocked decisions before the load moves so dispatch does not guess.</p><a class="button secondary" href="/dispatch/">View dispatch</a></article>
+        <article class="timeline-card reveal"><p class="eyebrow">04</p><h3>Review document control</h3><p>Use complete paperwork records with dates, IDs, reviewer status, signatures, and release-packet detail.</p><a class="button secondary" href="/operations-record/#bol-review-1842">Review BOL record</a></article>
+        <article class="timeline-card reveal"><p class="eyebrow">05</p><h3>Confirm driver and carrier status</h3><p>Connect driver, safety, and carrier packet status to the release decision so the blocker is specific.</p><a class="button secondary" href="/drivers/">View driver status</a></article>
+        <article class="timeline-card reveal"><p class="eyebrow">06</p><h3>Close with a BOF assessment</h3><p>After the demo, bring one real load, driver file, document packet, or release issue so BOF can map the record chain around it.</p><a class="button secondary" href="/scenario-walkthrough/">Take the BOF Fleet Assessment</a></article>
+      </div>
+    </section>
+    <section class="section">
+      <div class="section-head reveal"><p class="eyebrow">Governance support</p><h2>What governance supports this review?</h2><p>The first BOF review can stay focused on release decisions while still showing that AI assistance, driver/mobile records, and vendor access are governed by written controls.</p></div>
+      <div class="proof-grid">
+        <article class="proof-card reveal"><h3>AI-generated assistance</h3><p>AI Use &amp; Governance supports human-reviewed operating answers, not unchecked automated decisions.</p><a class="route-chip" href="/trust-governance/#policy-library">DAT-IT-008</a></article>
+        <article class="proof-card reveal"><h3>Driver, ELD, and mobile records</h3><p>Mobile Device &amp; ELD Security supports driver uploads, field records, and mobile document capture.</p><a class="route-chip" href="/trust-governance/#policy-library">DAT-IT-006</a></article>
+        <article class="proof-card reveal"><h3>Vendor system access</h3><p>Vendor &amp; Third-Party Access supports TMS, ELD, carrier, and connected back-office systems.</p><a class="route-chip" href="/trust-governance/#policy-library">DAT-IT-014</a></article>
+        <article class="proof-card reveal"><h3>TMS partner workflow</h3><p>See how BOF reviews an imported TMS load without replacing the TMS workflow.</p><a class="route-chip" href="/integrations/partner-tms/">View integration preview</a></article>
+        <article class="proof-card reveal"><h3>Data handling</h3><p>Classification and information-security controls explain how sensitive operating records are handled.</p><a class="route-chip warning" href="/trust-governance/">Governance summary</a></article>
+      </div>
+    </section>
+    <section class="section split">
+      <div class="reveal">
+        <p class="eyebrow">Hands-on layer</p>
+        <h2>After the walkthrough, try one release decision.</h2>
+        <p>The TMS partner workflow explains the operating model. The release scenario gives buyers a tighter hands-on path through <a class="proof-link" href="/operations-record/#bof-1842">TMS-LD-10482</a>: inspect BOF-RR-10482 records, choose Ready, Conditional, or Hold, and see how the dispatch consequence and simulated handoff change.</p>
+        <div class="actions"><a class="button primary" href="/interactive-demo/start/">Try Release Review &rarr;</a><a class="button secondary" href="/scenario-walkthrough/">Take Fleet Assessment</a></div>
+      </div>
+      <div class="proof-grid">
+        <article class="proof-card reveal"><h3>Walkthrough</h3><p>Use this path to understand the command center, role handoffs, records, and governance behind BOF.</p></article>
+        <article class="proof-card reveal"><h3>Try Demo</h3><p>Use the release scenario to make one decision and inspect the records that control the outcome.</p></article>
+      </div>
+    </section>
+  </main>
+  <section class="cta-band"><div class="cta-inner"><div><p class="eyebrow">Demo path</p><h2>One decision, with enough detail to judge BOF.</h2><p>BOF keeps the path centered on <a class="proof-link" href="/operations-record/#bof-1842">TMS-LD-10482</a> so the release packet, owner, blocker, and next action stay easy to follow before a buyer books a BOF assessment.</p></div><a class="button light" href="/scenario-walkthrough/">Take the BOF Fleet Assessment &rarr;</a></div></section>
+  <footer class="site-footer"><div class="footer-inner"><strong>BackOfficeFleet</strong><span>TMS partner operating review.</span></div></footer>
+  <script src="/assets/js/site.js?v=1.38"></script>
+</body>
+</html>
+
+

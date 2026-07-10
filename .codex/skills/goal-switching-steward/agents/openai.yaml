@@ -1,0 +1,4 @@
+interface:
+  display_name: "Goal Switching Steward"
+  short_description: "Keep BOF work tied to the right goal"
+  default_prompt: "Use $goal-switching-steward to decide whether this BOF task needs an active goal, checklist, or closeout update."

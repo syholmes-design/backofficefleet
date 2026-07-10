@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Quotes | Customer Portal | BackOfficeFleet</title>
+  <meta name="description" content="Review preliminary shipment quotes, mileage, fuel surcharge, accessorials, assumptions, and next actions.">
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="/assets/css/styles.css?v=1.40">
+  <link rel="stylesheet" href="/assets/css/customer-portal.css?v=2.7">
+</head>
+<body class="customer-portal-body" data-portal-page="quotes">
+  <main class="customer-portal-shell" data-customer-portal>
+    <aside class="portal-rail" aria-label="Customer Portal sections"><a class="portal-brand" href="/"><img src="/assets/images/logo/boflogo-original.png" alt="BackOfficeFleet"></a><nav class="portal-nav"><a href="/customer-portal/"><span>01</span>Portal Home</a><a href="/customer-portal/load-intake/"><span>02</span>Load Intake</a><a class="is-active" href="/customer-portal/quotes/"><span>03</span>Quotes</a><a href="/customer-portal/shipments/"><span>04</span>Active Shipments</a><a href="/customer-portal/documents/"><span>05</span>Documents</a><a href="/customer-portal/tracking/"><span>06</span>Tracking</a><a href="/customer-portal/billing/"><span>07</span>Billing</a></nav><div class="portal-rail-card"><span>Quote</span><strong data-portal-text="quoteTotal">Calculating</strong><p data-portal-text="quoteMessage">Temporary quote prepared. Approve it to submit a pending load request for BOF dispatch review.</p></div></aside>
+    <section class="portal-workspace">
+      <header class="portal-topbar"><div><span class="portal-kicker">Quote Review</span><h1>Review mileage, estimated cost, fuel surcharge, accessorials, and proof assumptions.</h1></div><div class="portal-topbar-actions"><a class="portal-link-button" href="/customer-portal/load-intake/">Edit request</a><a class="portal-link-button" href="/customer-portal/shipments/">Active shipments</a></div></header>
+      <div class="portal-grid">
+        <section class="portal-panel quote-panel">
+          <div class="portal-panel-head"><div><span class="portal-kicker">Preliminary quote</span><h2 data-portal-text="quoteTotal">Calculating</h2></div><span class="portal-status review" data-portal-text="quoteDecision">Customer review</span></div>
+          <div class="quote-lines" data-portal-render="quoteLines"></div>
+          <div class="portal-actions"><button class="primary" type="button" data-portal-action="approve-quote">Approve quote and submit load</button><button type="button" data-portal-action="request-quote-change">Request review</button><button type="button" data-portal-action="hold-quote">Save draft</button></div>
+          <p class="portal-note" data-portal-text="quoteMessage">This is configurable demo pricing. Final rate confirmation depends on lane, equipment, appointment, cargo, proof, and dispatch review.</p>
+        </section>
+        <aside class="portal-review-column">
+          <section class="portal-panel"><div class="portal-panel-head"><div><span class="portal-kicker">Quote assumptions</span><h2>What BOF reviews</h2></div><span class="portal-status watch">Assumptions</span></div><div class="portal-mini-list" data-portal-render="quoteAssumptions"></div></section>
+          <section class="portal-panel"><div class="portal-panel-head"><div><span class="portal-kicker">Next action</span><h2>Approval path</h2></div><span class="portal-status ready">Visible</span></div><p class="portal-note">Approval creates a pending load request in the BOF dispatch queue. Dispatch still clears driver, tractor, trailer, compliance, equipment, and pre-trip packet gates before pickup.</p></section>
+          <section class="portal-panel"><div class="portal-panel-head"><div><span class="portal-kicker">Dispatch gate</span><h2 data-portal-text="dispatchGateStatus">Dispatch-ready blocked</h2></div><span class="portal-status review">Gated</span></div><div class="portal-checklist" data-portal-render="dispatchGateList"></div></section>
+        </aside>
+      </div>
+    </section>
+  </main>
+  <script src="/assets/js/customer-portal.js?v=2.7"></script>
+</body>
+</html>

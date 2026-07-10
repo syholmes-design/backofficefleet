@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Assignment Center | Customer Portal | BackOfficeFleet</title>
+  <meta name="description" content="Review driver, tractor, trailer, and readiness checks attached to a customer shipment.">
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="/assets/css/styles.css?v=1.40">
+  <link rel="stylesheet" href="/assets/css/customer-portal.css?v=2.7">
+</head>
+<body class="customer-portal-body" data-portal-page="assignment">
+  <main class="customer-portal-shell" data-customer-portal>
+    <aside class="portal-rail"><a class="portal-brand" href="/"><img src="/assets/images/logo/boflogo-original.png" alt="BackOfficeFleet"></a><nav class="portal-nav"><a href="/customer-portal/"><span>01</span>Portal Home</a><a href="/customer-portal/load-intake/"><span>02</span>Load Intake</a><a href="/customer-portal/quotes/"><span>03</span>Quotes</a><a class="is-active" href="/customer-portal/shipments/"><span>04</span>Active Shipments</a><a href="/customer-portal/documents/"><span>05</span>Documents</a><a href="/customer-portal/tracking/"><span>06</span>Tracking</a><a href="/customer-portal/billing/"><span>07</span>Billing</a></nav><div class="portal-rail-card"><span>Assignment</span><strong>Driver, tractor, trailer</strong><p>Dispatcher choices and readiness checks are visible before pickup.</p></div></aside>
+    <section class="portal-workspace">
+      <header class="portal-topbar"><div><span class="portal-kicker">Assignment Center</span><h1>Assign the driver, tractor, and trailer, then confirm readiness before the load moves.</h1></div><div class="portal-topbar-actions"><a class="portal-link-button" href="/customer-portal/shipments/">Back to shipments</a><a class="portal-link-button" href="/customer-portal/documents/#bol">Open BOL packet</a><a class="portal-link-button" href="/customer-portal/tracking/">Tracking</a></div></header>
+      <div class="portal-grid">
+        <section class="portal-panel"><div class="portal-panel-head"><div><span class="portal-kicker">Assigned resources</span><h2>Driver, tractor, trailer</h2></div><span class="portal-status review" data-portal-text="dispatchGateStatus">Dispatch-ready blocked</span></div><div class="assignment-card"><img src="/assets/images/profiles/drivers/driver-ref-001.jpg" alt="Assigned driver John Carter"><div><span>Driver</span><strong>John Carter - DRV-001</strong><p>CDL, medical, MVR, DQF, and dispatch eligibility are current for this assignment.</p></div></div><div class="field-grid three assignment-selectors"><label><span>Driver</span><select data-dispatch-select="driver"><option>John Carter - DRV-001</option><option>Maria Alvarez - DRV-006</option><option value="">Assignment needed</option></select></label><label><span>Tractor</span><select data-dispatch-select="tractor"><option>TR-4812</option><option>TR-7741</option><option value="">Assignment needed</option></select></label><label><span>Trailer</span><select data-dispatch-select="trailer"><option>RF-2207</option><option>DV-6104</option><option value="">Assignment needed</option></select></label></div><dl class="summary-dl"><div><dt>Approved quote</dt><dd data-portal-text="quoteTotal">Calculating</dd></div><div><dt>Tractor</dt><dd>TR-4812 - reefer telemetry ready</dd></div><div><dt>Trailer</dt><dd>RF-2207 - pre-cool and seal record required</dd></div><div><dt>Owner</dt><dd>S. Turner, dispatch review</dd></div></dl></section>
+        <aside class="portal-review-column"><section class="portal-panel"><div class="portal-panel-head"><div><span class="portal-kicker">Readiness checks</span><h2>Compliance and equipment</h2></div><span class="portal-status ready">Simulated checks</span></div><div class="portal-checklist"><span>CDL/DQF ready</span><span>Medical card current</span><span>Equipment match confirmed</span><span>Reefer pre-cool required</span><span>Seal and cargo proof required</span><span>HOS readiness available for pickup window</span></div></section><section class="portal-panel"><div class="portal-panel-head"><div><span class="portal-kicker">Dispatch-ready gate</span><h2 data-portal-text="dispatchGateStatus">Dispatch-ready blocked</h2></div><span class="portal-status review">Required gates</span></div><div class="portal-checklist" data-portal-render="dispatchGateList"></div><p class="portal-note">BOF prevents pickup release until required load fields, quote approval, driver assignment, tractor/trailer assignment, compliance readiness, and the pre-trip packet are clear.</p></section><section class="portal-panel"><div class="portal-panel-head"><div><span class="portal-kicker">Release dependency</span><h2>Before pickup</h2></div><span class="portal-status watch">Watch</span></div><p class="portal-note">BOF confirms the rate confirmation, BOL, loaded cargo photo, seal record, and equipment inspection before the shipment moves from assigned to picked up.</p></section></aside>
+      </div>
+    </section>
+  </main>
+  <script src="/assets/js/customer-portal.js?v=2.7"></script>
+</body>
+</html>

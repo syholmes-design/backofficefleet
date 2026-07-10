@@ -1,0 +1,508 @@
+Build the AscendTMS Partner Integration Layer for BackOfficeFleet
+AscendTMS is now a confirmed partner path for BackOfficeFleet, so we need to build a Phase 1 integration that proves the operating workflow before we attempt a deeper API connection. The first goal is to show that AscendTMS manages the TMS/load workflow while BOF controls readiness, compliance, documents, exceptions, audit trail, and release decisions.
+Primary Objective
+Build a self-contained AscendTMS partner integration demo inside the existing BackOfficeFleet site/repo.
+This should not be a real API integration yet. It should be an API-ready architecture using mock AscendTMS data, clean adapter files, synthetic records, and UI screens that can later be connected to AscendTMS API credentials, CSV import, webhook events, or partner sandbox data.
+The implementation must preserve BOF’s existing driver database, document vault, compliance logic, driver records, and readiness rules. AscendTMS should be treated as the source system for load/TMS activity. BOF should remain the source system for driver compliance, document readiness, release decisions, audit records, exception management, and settlement hold logic.
+Product Positioning
+Use this operating model throughout the implementation:
+AscendTMS manages:
+Loads
+Dispatch board
+Load tenders
+Customer/carrier load details
+Load status
+Uploaded load documents
+TMS workflow
+Accounting/TMS handoff
+BOF manages:
+Driver compliance
+Driver document vault
+Carrier packet readiness
+Load release readiness
+Missing-document tracking
+Pre-trip/in-route/post-trip enforcement logic
+Exception ownership
+Settlement holds
+Claims packet support
+Audit trail
+Management decision record
+Core product message:
+“AscendTMS runs the load. BOF decides whether the load is ready, documented, compliant, and defensible.”
+Scope of Work
+Create a Phase 1 AscendTMS integration module with the following parts:
+Public-facing integration page
+Internal demo workflow page or section
+Mock AscendTMS load import
+BOF driver matching layer
+Readiness mapper
+Release decision engine
+Simulated sync-back to AscendTMS
+API-ready adapter structure
+Clear separation between AscendTMS data and BOF-owned records
+Build/lint validation
+Important Constraints
+Do not make real external API calls.
+Do not add real AscendTMS credentials.
+Do not hardcode secrets.
+Do not remove, replace, or flatten BOF’s existing driver database.
+Do not make AscendTMS the source of truth for BOF driver compliance.
+Do not rebuild a full TMS.
+Do not create a duplicate dispatch board unless it is narrowly limited to the integration demo.
+Do not use “demo data” language in customer-facing UI. Use language like “sample partner workflow,” “partner import,” “sample load,” or “integration preview.”
+Use synthetic data only.
+Keep the current slimmed-down BOF site style.
+Recommended Routes
+Add these routes if they do not already exist:
+/integrations/ascendtms
+/demo/ascendtms-release or /integrations/ascendtms/release-review
+If the project already has a better routing convention, follow the existing structure.
+Page 1: /integrations/ascendtms
+Build a public-facing partner integration page.
+The page should explain that BOF works beside AscendTMS, not instead of it.
+Required sections:
+Hero Section
+Headline:
+“AscendTMS + BOF: Load Execution With Back-Office Control”
+Subcopy:
+“AscendTMS manages the TMS workflow. BOF adds the readiness, compliance, document control, exception tracking, and audit layer needed before a load is released.”
+Primary CTA:
+“View Release Readiness Workflow”
+Secondary CTA:
+“See BOF Driver Records”
+Section: How the Integration Works
+Use a 3-step layout:
+Import the AscendTMS load
+Load number, customer, carrier, driver, stops, documents, and status are brought into BOF.
+Review BOF readiness
+BOF checks driver compliance, carrier packet status, required documents, exceptions, and release blockers.
+Return the decision
+BOF produces a release decision, next action, responsible party, and simulated sync-back message.
+Section: Clear Division of Responsibility
+Create a comparison table:
+AscendTMS owns:
+Load creation
+Load status
+Dispatch workflow
+Tendering
+Customer/carrier TMS records
+Uploaded load documents
+TMS/accounting handoff
+BOF owns:
+Driver compliance rules
+Driver document vault
+Carrier packet review
+Load readiness decision
+Exception queue
+Settlement hold reasons
+Claims packet support
+Audit trail
+Section: Why BOF Keeps Its Driver Database
+Explain that BOF’s driver records are not just contacts. They are dispatch eligibility and compliance records.
+List examples:
+CDL status
+Medical card status
+MVR status
+I-9/W-9 status
+Emergency contacts
+Bank/settlement setup
+Owner-operator packet
+Safety/training records
+Document expiration dates
+Dispatch-blocking reasons
+Section: Phase 1 to Phase 4 Roadmap
+Show the integration roadmap:
+Phase 1: Mock partner workflow
+Phase 2: CSV/spreadsheet import from AscendTMS
+Phase 3: One-way API or sandbox sync from AscendTMS into BOF
+Phase 4: Two-way sync where BOF writes release decisions, hold reasons, and exception status back to AscendTMS
+Page 2: Release Readiness Workflow
+Create a demo workflow page at either /demo/ascendtms-release or /integrations/ascendtms/release-review.
+This page should show one realistic imported load moving through BOF review.
+Required layout:
+Top Summary Card
+Show:
+Imported from AscendTMS
+Load number
+Customer
+Carrier
+Driver
+Pickup
+Delivery
+Equipment
+Current AscendTMS status
+BOF release status
+Example:
+Ascend Load ID: ASC-LD-10482
+BOF Release File: BOF-RR-10482
+Customer: Northstar Grocery Distribution
+Carrier: Delta Advanced Trucking, Inc.
+Driver: Maria Lopez
+Equipment: 53’ Dry Van
+Pickup: Columbus, OH
+Delivery: Minneapolis, MN
+AscendTMS Status: Tender Accepted
+BOF Status: Hold — Action Required
+Stepper or Workflow Timeline
+Use 5 steps:
+AscendTMS load imported
+Driver matched to BOF record
+Documents reviewed
+Compliance and carrier packet checked
+BOF release decision produced
+Imported AscendTMS Data Panel
+Show synthetic imported data:
+ascendLoadId
+loadNumber
+customerName
+carrierName
+assignedDriverName
+pickupLocation
+pickupDateTime
+deliveryLocation
+deliveryDateTime
+equipmentType
+commodity
+loadStatus
+rateConfirmationUploaded
+bolUploaded
+podUploaded
+lumperReceiptUploaded
+notes
+BOF Driver Match Panel
+Show the match result:
+Matched BOF Driver ID
+Match confidence
+Match method
+Whether manual review is required
+Include at least two example records in mock data:
+Matched driver
+Unmatched imported AscendTMS driver
+If unmatched:
+Show exception state:
+“Unmatched AscendTMS driver — BOF review required before release.”
+Driver Readiness Panel
+Use BOF driver records as the source of truth.
+Check:
+CDL valid
+Medical card valid
+MVR current
+Emergency contact complete
+W-9 or I-9 complete
+Bank/settlement setup complete
+Owner-operator packet if applicable
+Active safety hold
+Dispatch blocking status
+Output:
+Clear
+Warning
+Blocked
+Carrier Packet Panel
+Check:
+Authority/MC record present
+Insurance present
+W-9 present
+Contract/master agreement present
+Certificate of insurance current
+Carrier packet complete
+Any expired or missing documents
+Output:
+Clear
+Warning
+Blocked
+Load Document Panel
+Check:
+Rate confirmation
+BOL
+Pickup instructions
+POD
+Lumper receipt if applicable
+Seal photo if applicable
+Delivery proof if applicable
+Claim evidence if applicable
+Output:
+Complete
+Missing
+Not yet required
+Exception
+BOF Release Decision Panel
+Create one of three decisions:
+Ready to Release
+Release With Condition
+Hold — Action Required
+Each decision must include:
+Decision label
+Reason
+Blocking items
+Owner of fix
+Next action
+Timestamp
+Audit note
+Simulated sync-back status
+Example:
+Decision: Hold — Action Required
+Reason: Medical card expires before delivery window and POD workflow is incomplete.
+Owner: Safety/Compliance
+Next action: Update medical card record or assign alternate driver.
+Sync-back: Ready to send BOF hold reason to AscendTMS.
+Simulated Sync-Back Panel
+Show:
+What BOF would send back to AscendTMS later
+No real API call
+Payload preview using mock JSON
+Example fields:
+ascendLoadId
+bofReleaseStatus
+releaseDecision
+holdReason
+blockingItems
+nextAction
+reviewedBy
+reviewedAt
+Label this as:
+“Simulated partner sync — no live AscendTMS API call.”
+Data Architecture
+Create or update a clean integration folder.
+Suggested structure:
+lib/integrations/ascendtms/ascendTypes.ts
+lib/integrations/ascendtms/ascendMockData.ts
+lib/integrations/ascendtms/ascendAdapter.ts
+lib/integrations/ascendtms/readinessMapper.ts
+lib/integrations/ascendtms/driverMatcher.ts
+lib/integrations/ascendtms/releaseDecision.ts
+lib/integrations/ascendtms/syncBackMock.ts
+If the repo has an existing data/services convention, use that instead, but keep the separation clear.
+Required Type Definitions
+Create types similar to these, adjusted to the repo’s TypeScript style:
+export type AscendLoadStatus =
+| "created"
+| "tendered"
+| "tender_accepted"
+| "assigned"
+| "in_transit"
+| "delivered"
+| "closed"
+| "exception";
+export type AscendDocumentType =
+| "rate_confirmation"
+| "bol"
+| "pod"
+| "lumper_receipt"
+| "invoice"
+| "seal_photo"
+| "delivery_photo"
+| "other";
+export type AscendImportedLoad = {
+ascendLoadId: string;
+loadNumber: string;
+customerName: string;
+carrierName: string;
+assignedDriverName: string;
+assignedDriverEmail?: string;
+assignedDriverPhone?: string;
+pickupLocation: string;
+pickupDateTime: string;
+deliveryLocation: string;
+deliveryDateTime: string;
+equipmentType: string;
+commodity: string;
+loadStatus: AscendLoadStatus;
+documents: AscendImportedDocument[];
+notes?: string[];
+};
+export type AscendImportedDocument = {
+ascendDocumentId: string;
+type: AscendDocumentType;
+fileName: string;
+uploadedAt: string;
+status: "present" | "missing" | "needs_review";
+};
+export type BofDriverMatch = {
+matched: boolean;
+bofDriverId?: string;
+ascendDriverName: string;
+matchConfidence: "high" | "medium" | "low" | "none";
+matchMethod: "exact_name" | "email" | "phone" | "manual_required" | "none";
+requiresManualReview: boolean;
+};
+export type BofReadinessStatus = "clear" | "warning" | "blocked";
+export type BofReleaseDecision = {
+decision: "ready_to_release" | "release_with_condition" | "hold_action_required";
+label: string;
+status: BofReadinessStatus;
+reasons: string[];
+blockingItems: string[];
+ownerOfFix: string;
+nextAction: string;
+reviewedAt: string;
+simulatedSyncBackStatus: "not_ready" | "ready_to_send" | "sent_mock";
+};
+Mock Data Requirements
+Create at least 4 synthetic AscendTMS imported loads:
+Clean load — ready to release
+Driver compliance issue — hold
+Missing document issue — release with condition or hold
+Unmatched driver — manual review required
+Use realistic but synthetic data. Use Delta Advanced Trucking, Inc. as the sample carrier where appropriate.
+Do not use “555” phone numbers.
+Use 419 area code if sample telephone numbers are needed.
+Driver Matching Logic
+Create helper logic that attempts to match an imported AscendTMS driver to existing BOF driver records.
+Matching priority:
+BOF driver ID if already mapped
+Email
+Phone
+Exact normalized name
+Manual review required
+Rules:
+Never overwrite BOF driver data with AscendTMS data.
+If AscendTMS has a driver that BOF does not recognize, create an exception state.
+If the match is uncertain, require manual review.
+BOF compliance status must always come from BOF records, not imported AscendTMS fields.
+Readiness Mapper Logic
+Create mapper functions that convert AscendTMS import data plus BOF records into BOF readiness sections.
+Required functions:
+mapAscendLoadToBofReview(load: AscendImportedLoad): BofLoadReview
+matchAscendDriverToBofDriver(load: AscendImportedLoad): BofDriverMatch
+evaluateDriverReadiness(match: BofDriverMatch): DriverReadinessResult
+evaluateCarrierPacket(load: AscendImportedLoad): CarrierPacketResult
+evaluateLoadDocuments(load: AscendImportedLoad): LoadDocumentReadinessResult
+createReleaseDecision(review: BofLoadReview): BofReleaseDecision
+createMockSyncBackPayload(decision: BofReleaseDecision): object
+Adjust names as needed to match the project’s coding style.
+Release Decision Rules
+Use these basic rules:
+Ready to Release:
+Driver matched
+Driver compliance clear
+Carrier packet clear
+Required pre-trip documents present
+No active blocking exceptions
+Release With Condition:
+No legal/compliance blocker
+Minor document still pending but not yet required
+Example: POD not yet uploaded before delivery
+Next action is clear
+Owner is assigned
+Hold — Action Required:
+Driver unmatched
+Driver compliance blocked
+Expired CDL/medical/MVR
+Missing required pre-trip document
+Carrier packet blocked
+Insurance or authority missing/expired
+Critical exception unresolved
+UI Requirements
+Match the slimmed-down BOF design language:
+Clean cards
+Executive dashboard feel
+Clear readiness statuses
+Minimal clutter
+Plain-language explanations
+Strong distinction between “imported from AscendTMS” and “reviewed by BOF”
+Use status badges:
+Ready
+Warning
+Blocked
+Imported
+Needs Review
+Sync Ready
+Avoid excessive animation.
+Avoid creating a visually heavy fake TMS.
+Customer-Facing Copy Rules
+Use plain language.
+Do not describe BOF as replacing AscendTMS.
+Do not describe AscendTMS as subordinate to BOF.
+Use this language:
+“AscendTMS manages the load.”
+“BOF manages the release decision.”
+“BOF keeps the driver compliance record.”
+“BOF creates the audit trail.”
+“BOF sends the decision back when full integration is enabled.”
+Avoid this language:
+“BOF replaces your TMS.”
+“BOF owns all AscendTMS data.”
+“Live AscendTMS sync” unless it is actually live.
+“Demo data” in customer-facing UI.
+Future API-Ready Requirements
+Even though this is mock-only, design the adapter so a real API can be added later.
+The adapter should expose functions like:
+fetchAscendLoads()
+fetchAscendLoadById(ascendLoadId: string)
+fetchAscendDocumentsForLoad(ascendLoadId: string)
+sendBofReleaseDecisionToAscend(payload: BofSyncBackPayload)
+For now, these functions should return mock data only.
+Add comments explaining where real API logic would be added later.
+Do not add any API keys.
+Do not add .env variables unless the repo already has a clear convention and the variables are placeholders only.
+Suggested Components
+Create or reuse components such as:
+AscendIntegrationHero
+AscendWorkflowSteps
+AscendImportedLoadCard
+BofDriverMatchCard
+DriverReadinessCard
+CarrierPacketReadinessCard
+LoadDocumentReadinessCard
+ReleaseDecisionCard
+MockSyncBackCard
+IntegrationRoadmap
+Use existing BOF components where appropriate to avoid style drift.
+Navigation
+Add a link to the AscendTMS integration page from the appropriate site navigation or integrations section.
+If the current site does not have an integrations nav item, add a low-impact CTA from the homepage or relevant demo page:
+“See AscendTMS Partner Workflow”
+Do not overload the main navigation if the slimmed-down site is intentionally minimal.
+Driver Database Preservation
+Keep BOF driver records as the source of truth for:
+Compliance
+CDL
+Medical card
+MVR
+I-9/W-9
+Emergency contact
+Driver document vault
+Owner-operator packet
+Training/safety status
+Dispatch eligibility
+Settlement hold status
+Add optional external mapping fields only if compatible with current data structure:
+ascendDriverId
+ascendCarrierId
+ascendLoadId
+Do not require these fields for existing records.
+Do not migrate or overwrite existing driver records.
+Acceptance Criteria
+The implementation is complete when:
+/integrations/ascendtms loads without errors.
+The page clearly explains the AscendTMS + BOF relationship.
+The release workflow page loads without errors.
+At least 4 mock AscendTMS loads are available.
+The UI shows imported AscendTMS load data.
+The UI matches a driver to a BOF driver record.
+The UI shows an unmatched driver exception.
+BOF driver compliance remains BOF-owned.
+The UI produces Ready, Hold, and Release With Condition examples.
+Simulated sync-back payload is visible.
+No real external API call is made.
+No real API secrets are added.
+Existing BOF pages still build.
+Lint/build checks pass or any remaining issues are clearly documented.
+Build and Validation
+After implementation, run the project’s normal validation commands.
+Try these if available:
+npm run lint
+npm run build
+npm run typecheck
+If the repo uses different commands, inspect package.json and use the correct ones.
+Fix any TypeScript, lint, routing, or build errors caused by this implementation.
+Final Response Required From Codex
+When finished, provide:
+Summary of files changed
+Routes added
+Components added
+Mock data added
+Whether BOF driver records were preserved
+How the mock adapter can later be replaced with the real AscendTMS API
+Validation commands run
+Any errors or follow-up issues

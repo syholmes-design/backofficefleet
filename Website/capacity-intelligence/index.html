@@ -1,0 +1,265 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Capacity Intelligence | BackOfficeFleet</title>
+  <meta name="description" content="BOF Capacity Intelligence gives fleets, carrier networks, and small aggregators a readiness view of compliant, documented, and available capacity.">
+  <link rel="stylesheet" href="/assets/css/styles.css?v=1.41">
+  <style>
+    .ci-hero { background: linear-gradient(135deg, rgba(12,95,67,0.96), rgba(37,111,148,0.92) 56%, rgba(20,33,31,0.98)); color: #fff; overflow: hidden; position: relative; }
+    .ci-hero::after { background-image: linear-gradient(rgba(255,255,255,0.08) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.08) 1px, transparent 1px); background-size: 42px 42px; content: ""; inset: 0; pointer-events: none; position: absolute; }
+    .ci-hero-inner { display: grid; gap: 28px; grid-template-columns: minmax(0, 0.9fr) minmax(360px, 1.1fr); margin: 0 auto; max-width: var(--max); min-height: 620px; padding: 58px 24px 46px; position: relative; z-index: 1; }
+    .ci-hero-copy { align-content: center; display: grid; gap: 18px; }
+    .ci-hero-copy .eyebrow, .ci-hero-copy p { color: rgba(255,255,255,0.84); }
+    .ci-hero-copy h1 { color: #fff; font-size: clamp(2.5rem, 5vw, 4.8rem); line-height: 1.02; margin: 0; }
+    .ci-hero-copy > p { font-size: 1.08rem; line-height: 1.7; margin: 0; max-width: 720px; }
+    .ci-command-panel { align-self: center; background: rgba(255,255,255,0.94); border: 1px solid rgba(255,255,255,0.56); border-radius: 8px; box-shadow: 0 26px 70px rgba(0,0,0,0.22); color: var(--ink); display: grid; gap: 14px; padding: 18px; }
+    .ci-command-top { align-items: center; border-bottom: 1px solid rgba(20,33,31,0.1); display: flex; gap: 12px; justify-content: space-between; padding-bottom: 12px; }
+    .ci-command-top h2 { font-size: 1.08rem; margin: 0; }
+    .ci-command-top span { color: var(--muted); font-size: 0.78rem; font-weight: 900; text-transform: uppercase; }
+    .ci-kpi-grid { display: grid; gap: 10px; grid-template-columns: repeat(4, minmax(0, 1fr)); }
+    .ci-kpi { background: linear-gradient(180deg, #fff, #f4f8f5); border: 1px solid rgba(20,33,31,0.1); border-radius: 8px; min-height: 112px; padding: 13px; }
+    .ci-kpi span { color: var(--muted); display: block; font-size: 0.73rem; font-weight: 900; min-height: 32px; text-transform: uppercase; }
+    .ci-kpi strong { color: var(--green-dark); display: block; font-size: 1.86rem; line-height: 1; margin: 8px 0 6px; }
+    .ci-kpi small { color: var(--muted); display: block; font-size: 0.76rem; line-height: 1.35; }
+    .ci-demo-path { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 6px; }
+    .ci-demo-path a { background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.24); border-radius: 8px; color: #fff; font-size: 0.78rem; font-weight: 900; padding: 9px 11px; text-transform: uppercase; }
+    .ci-flow { display: grid; gap: 10px; grid-template-columns: repeat(8, minmax(112px, 1fr)); overflow-x: auto; padding-bottom: 2px; }
+    .ci-flow-step { background: #fff; border: 1px solid var(--line); border-radius: 8px; box-shadow: var(--shadow-soft); min-height: 132px; padding: 14px; position: relative; }
+    .ci-flow-step::after { color: var(--green-dark); content: "->"; font-size: 1.3rem; font-weight: 900; position: absolute; right: -14px; top: 47%; z-index: 2; }
+    .ci-flow-step:last-child::after { display: none; }
+    .ci-flow-step span { color: var(--green-dark); font-size: 0.72rem; font-weight: 950; text-transform: uppercase; }
+    .ci-flow-step strong { display: block; font-size: 0.98rem; line-height: 1.25; margin-top: 12px; }
+    .ci-flow-step p { color: var(--muted); font-size: 0.82rem; line-height: 1.45; margin: 8px 0 0; }
+    .ci-insight-grid, .ci-network-grid, .ci-growth-grid { display: grid; gap: 16px; grid-template-columns: repeat(4, minmax(0, 1fr)); }
+    .ci-insight { background: #fff; border: 1px solid var(--line); border-radius: 8px; box-shadow: var(--shadow-soft); padding: 18px; }
+    .ci-insight strong { display: block; font-size: 1rem; line-height: 1.35; margin: 10px 0 8px; }
+    .ci-insight p { color: var(--muted); line-height: 1.5; margin: 0; }
+    .ci-network-card, .ci-growth-card { background: #fff; border: 1px solid var(--line); border-radius: 8px; box-shadow: var(--shadow-soft); display: grid; gap: 12px; padding: 18px; }
+    .ci-network-card { grid-column: span 1; }
+    .ci-network-card h3, .ci-growth-card h3 { font-size: 1rem; margin: 0; }
+    .ci-score-row { display: grid; gap: 5px; }
+    .ci-score-label { align-items: center; color: var(--muted); display: flex; font-size: 0.78rem; font-weight: 850; justify-content: space-between; }
+    .ci-bar { background: #e6eee9; border-radius: 999px; height: 8px; overflow: hidden; }
+    .ci-bar span { background: linear-gradient(90deg, var(--green), var(--blue)); border-radius: inherit; display: block; height: 100%; width: var(--score); }
+    .ci-growth-card strong { color: var(--green-dark); display: block; font-size: 2rem; line-height: 1; }
+    .ci-trend { align-items: end; display: grid; gap: 5px; grid-template-columns: repeat(6, 1fr); height: 70px; }
+    .ci-trend span { background: linear-gradient(180deg, var(--teal), var(--green-dark)); border-radius: 5px 5px 0 0; display: block; height: var(--h); min-height: 12px; }
+    .ci-positioning-grid { display: grid; gap: 16px; grid-template-columns: 1fr 1fr; }
+    .ci-positioning-grid .paper { height: 100%; }
+    @media (max-width: 1180px) { .ci-kpi-grid, .ci-insight-grid, .ci-network-grid, .ci-growth-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } .ci-hero-inner { grid-template-columns: 1fr; } }
+    @media (max-width: 720px) { .ci-hero-inner { min-height: auto; padding: 42px 16px; } .ci-kpi-grid, .ci-insight-grid, .ci-network-grid, .ci-growth-grid, .ci-positioning-grid { grid-template-columns: 1fr; } .ci-command-panel { padding: 12px; } .ci-command-top { align-items: flex-start; flex-direction: column; } .ci-flow-step::after { display: none; } .ci-demo-path { display: grid; grid-template-columns: 1fr; } .ci-demo-path a { text-align: center; } }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <a class="brand" href="/" aria-label="BackOfficeFleet home"><img src="/assets/images/logo/boflogo-original.png" alt="BackOfficeFleet"></a>
+    <button class="nav-toggle" type="button" data-nav-toggle aria-expanded="false" aria-label="Toggle navigation">&#9776;</button>
+    <nav class="site-nav" data-nav aria-label="Main navigation">
+      <div class="nav-menu" data-nav-menu>
+        <button class="nav-menu-toggle" type="button" data-nav-menu-toggle aria-expanded="false" aria-haspopup="true">Services</button>
+        <div class="nav-dropdown" aria-label="Services">
+          <a href="/fleet/">Fleet Back Office</a>
+          <a href="/business-operations/">HR Tier</a>
+          <a href="/business-operations/">Finance Tier</a>
+          <a href="/document-readiness-engine/">BOF Vault</a>
+          <a href="/customer-portal/">Customer Portal</a>
+          <a href="/business-operations/">Business Operations</a>
+        </div>
+      </div>
+      <div class="nav-menu" data-nav-menu>
+        <button class="nav-menu-toggle" type="button" data-nav-menu-toggle aria-expanded="false" aria-haspopup="true">Workflows</button>
+        <div class="nav-dropdown" aria-label="Workflows">
+          <a href="/drivers/">Driver Documents</a>
+          <a href="/dispatch/">Dispatch Support</a>
+          <a href="/settlements/">Settlements</a>
+          <a href="/documents/">PODs &amp; Proof</a>
+          <a href="/operations-record/">Claims &amp; Exceptions</a>
+          <a href="/settlements/">Factoring Packets</a>
+          <a href="/document-readiness-engine/">Document Readiness</a>
+        </div>
+      </div>
+      <div class="nav-menu" data-nav-menu>
+        <button class="nav-menu-toggle" type="button" data-nav-menu-toggle aria-expanded="false" aria-haspopup="true">Who We Serve</button>
+        <div class="nav-dropdown" aria-label="Who We Serve">
+          <a href="/fleet/">Trucking Fleets</a>
+          <a href="/private-fleets/">Private Fleets</a>
+          <a href="/government/">Government Fleets</a>
+          <a href="/aggregator-outreach/">Aggregators</a>
+          <a href="/business-operations/">Field Service / Business Operations</a>
+        </div>
+      </div>
+    </nav>
+    <a class="header-cta" href="/scenario-walkthrough/">Take Fleet Assessment</a>
+  </header>
+  <main>
+    <section class="ci-hero" id="capacity-intelligence-command">
+      <div class="ci-hero-inner">
+        <div class="ci-hero-copy reveal">
+          <p class="eyebrow">Capacity Intelligence</p>
+          <h1>Capacity Intelligence Command Center</h1>
+          <p>Operational visibility across fleets, carriers, drivers, equipment, readiness, and capacity.</p>
+          <p>BOF provides operational infrastructure for fleets, carrier networks, small aggregators, and multi-carrier operations by showing where compliant, documented, and operationally ready capacity exists before an executive review moves forward.</p>
+          <div class="actions"><a class="button light" href="#network-health">View network health</a><a class="button secondary" href="#asset-intelligence">Inspect assets</a></div>
+          <nav class="ci-demo-path" aria-label="Executive demo path">
+            <a href="/interactive-demo/start/">Command Center</a>
+            <a href="/carrier-readiness/">Carrier Registry</a>
+            <a href="/carrier-readiness/">Carrier Readiness</a>
+            <a href="/capacity-intelligence/">Capacity Intelligence</a>
+            <a href="/operational-intelligence/">Operational Intelligence</a>
+            <a href="/customer-portal/">Customer Portal</a>
+          </nav>
+        </div>
+        <aside class="ci-command-panel reveal" aria-label="Capacity Intelligence executive KPI dashboard">
+          <div class="ci-command-top"><div><span>Executive overview</span><h2>Network readiness snapshot</h2></div><span>Demo data</span></div>
+          <div class="ci-kpi-grid">
+            <article class="ci-kpi"><span>Total carriers</span><strong>46</strong><small>5 networks represented</small></article>
+            <article class="ci-kpi"><span>Total trucks</span><strong>190</strong><small>Tractors and equipment units</small></article>
+            <article class="ci-kpi"><span>Active drivers</span><strong>214</strong><small>Driver records in readiness view</small></article>
+            <article class="ci-kpi"><span>Available capacity</span><strong>136</strong><small>Assets clear of major gates</small></article>
+            <article class="ci-kpi"><span>Compliance readiness</span><strong>89%</strong><small>Authority, insurance, admin status</small></article>
+            <article class="ci-kpi"><span>Safety readiness</span><strong>91%</strong><small>Safety and qualification posture</small></article>
+            <article class="ci-kpi"><span>Documentation readiness</span><strong>92%</strong><small>Packets with evidence present</small></article>
+            <article class="ci-kpi"><span>Network growth</span><strong>+14%</strong><small>Capacity trend this period</small></article>
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <section class="section" id="readiness-inventory">
+      <div class="section-head reveal"><p class="eyebrow">Readiness inventory</p><h2>The detailed capacity counts remain available beneath the executive view.</h2><p>The first read is intentionally simple, then the page keeps the operating detail a fleet owner or network operator will ask for next.</p></div>
+      <div class="capacity-kpi-grid">
+        <article class="metric reveal"><span>Available drivers</span><strong>154</strong><p>qualified drivers with active assignment availability</p></article>
+        <article class="metric reveal"><span>Available reefer capacity</span><strong>51</strong><p>temperature-controlled units with current readiness</p></article>
+        <article class="metric reveal"><span>Available dry van capacity</span><strong>66</strong><p>van capacity visible by network and region</p></article>
+        <article class="metric reveal"><span>Available flatbed capacity</span><strong>43</strong><p>flatbed capacity with documentation checks attached</p></article>
+        <article class="metric reveal"><span>At-risk carriers</span><strong>4</strong><p>carriers needing review before broader sharing</p></article>
+        <article class="metric reveal"><span>Restricted assets</span><strong>8</strong><p>assets held by safety, claims, document, or availability gates</p></article>
+      </div>
+    </section>
+
+    <section class="section" id="executive-insights">
+      <div class="section-head reveal"><p class="eyebrow">Executive insights</p><h2>Automated-style observations turn readiness data into an owner-level conversation.</h2><p>These demo insights summarize operating signals for visibility and administrative follow-up. They do not place freight, arrange transportation, negotiate terms, or dispatch work.</p></div>
+      <div class="ci-insight-grid">
+        <article class="ci-insight reveal"><span class="status ready">Capacity</span><strong>Midwest reefer capacity exceeds current demand projections.</strong><p>Reefer availability is strongest in the Midwest and Plains network view, with documentation confidence above 95%.</p></article>
+        <article class="ci-insight reveal"><span class="status review">Constraint</span><strong>Flatbed availability is constrained in the Southeast region.</strong><p>Southeast Dedicated Capacity Group has usable coverage, but compliance readiness needs review before broader sharing.</p></article>
+        <article class="ci-insight reveal"><span class="status review">Review</span><strong>Three carrier networks require compliance review.</strong><p>The flagged items are insurance renewal evidence, specialty packet verification, and affiliate carrier renewal confirmation.</p></article>
+        <article class="ci-insight reveal"><span class="status ready">Trend</span><strong>Documentation readiness improved 8% over the prior reporting period.</strong><p>More driver qualification files, insurance certificates, and equipment records are complete enough for executive review.</p></article>
+      </div>
+    </section>
+
+    <section class="section" id="capacity-flow">
+      <div class="section-head reveal"><p class="eyebrow">BOF capacity flow</p><h2>The page tells the whole readiness story without becoming dispatch software.</h2><p>This guided flow shows how BOF organizes demand context, operational review, carrier readiness, asset readiness, documentation, and settlement readiness inside one administrative visibility layer.</p></div>
+      <div class="ci-flow reveal" aria-label="Static BOF capacity flow visualization">
+        <article class="ci-flow-step"><span>01</span><strong>Customer Demand</strong><p>Request context enters the review conversation.</p></article>
+        <article class="ci-flow-step"><span>02</span><strong>Operational Review</strong><p>BOF checks what information is trustworthy.</p></article>
+        <article class="ci-flow-step"><span>03</span><strong>Capacity Intelligence</strong><p>Network capacity is summarized by readiness.</p></article>
+        <article class="ci-flow-step"><span>04</span><strong>Carrier Readiness</strong><p>Carrier packets and relationship posture are visible.</p></article>
+        <article class="ci-flow-step"><span>05</span><strong>Asset Readiness</strong><p>Trucks and equipment receive ready, at-risk, or restricted status.</p></article>
+        <article class="ci-flow-step"><span>06</span><strong>Assignment Ready</strong><p>Administrative status shows whether records support review.</p></article>
+        <article class="ci-flow-step"><span>07</span><strong>Documentation Ready</strong><p>Proof packets, certificates, and file evidence are complete.</p></article>
+        <article class="ci-flow-step"><span>08</span><strong>Settlement Ready</strong><p>Closeout records can be reviewed without rebuilding the file.</p></article>
+      </div>
+    </section>
+
+    <section class="section" id="network-health">
+      <div class="section-head reveal"><p class="eyebrow">Network health dashboard</p><h2>Five networks are scored like operating records, not like a load board.</h2><p>Scorecards make the readiness difference obvious: safety, compliance, documentation, driver readiness, and capacity readiness are visible before the team opens deeper registry detail.</p></div>
+      <div class="ci-network-grid">
+        <article class="ci-network-card reveal"><span class="status ready">Limited sharing</span><h3>Midwest Reefer Alliance</h3><div class="ci-score-row"><div class="ci-score-label"><span>Safety</span><strong>94</strong></div><div class="ci-bar"><span style="--score:94%"></span></div></div><div class="ci-score-row"><div class="ci-score-label"><span>Compliance</span><strong>92</strong></div><div class="ci-bar"><span style="--score:92%"></span></div></div><div class="ci-score-row"><div class="ci-score-label"><span>Documentation</span><strong>96</strong></div><div class="ci-bar"><span style="--score:96%"></span></div></div><div class="ci-score-row"><div class="ci-score-label"><span>Driver readiness</span><strong>93</strong></div><div class="ci-bar"><span style="--score:93%"></span></div></div><div class="ci-score-row"><div class="ci-score-label"><span>Capacity readiness</span><strong>93</strong></div><div class="ci-bar"><span style="--score:93%"></span></div></div></article>
+        <article class="ci-network-card reveal"><span class="status ready">Opted In</span><h3>Great Lakes Owner-Operator Network</h3><div class="ci-score-row"><div class="ci-score-label"><span>Safety</span><strong>91</strong></div><div class="ci-bar"><span style="--score:91%"></span></div></div><div class="ci-score-row"><div class="ci-score-label"><span>Compliance</span><strong>90</strong></div><div class="ci-bar"><span style="--score:90%"></span></div></div><div class="ci-score-row"><div class="ci-score-label"><span>Documentation</span><strong>88</strong></div><div class="ci-bar"><span style="--score:88%"></span></div></div><div class="ci-score-row"><div class="ci-score-label"><span>Driver readiness</span><strong>92</strong></div><div class="ci-bar"><span style="--score:92%"></span></div></div><div class="ci-score-row"><div class="ci-score-label"><span>Capacity readiness</span><strong>90</strong></div><div class="ci-bar"><span style="--score:90%"></span></div></div></article>
+        <article class="ci-network-card reveal"><span class="status review">Private</span><h3>Southeast Dedicated Capacity Group</h3><div class="ci-score-row"><div class="ci-score-label"><span>Safety</span><strong>89</strong></div><div class="ci-bar"><span style="--score:89%"></span></div></div><div class="ci-score-row"><div class="ci-score-label"><span>Compliance</span><strong>82</strong></div><div class="ci-bar"><span style="--score:82%"></span></div></div><div class="ci-score-row"><div class="ci-score-label"><span>Documentation</span><strong>86</strong></div><div class="ci-bar"><span style="--score:86%"></span></div></div><div class="ci-score-row"><div class="ci-score-label"><span>Driver readiness</span><strong>87</strong></div><div class="ci-bar"><span style="--score:87%"></span></div></div><div class="ci-score-row"><div class="ci-score-label"><span>Capacity readiness</span><strong>84</strong></div><div class="ci-bar"><span style="--score:84%"></span></div></div></article>
+        <article class="ci-network-card reveal"><span class="status ready">Limited sharing</span><h3>Ohio Valley Carrier Partners</h3><div class="ci-score-row"><div class="ci-score-label"><span>Safety</span><strong>92</strong></div><div class="ci-bar"><span style="--score:92%"></span></div></div><div class="ci-score-row"><div class="ci-score-label"><span>Compliance</span><strong>91</strong></div><div class="ci-bar"><span style="--score:91%"></span></div></div><div class="ci-score-row"><div class="ci-score-label"><span>Documentation</span><strong>89</strong></div><div class="ci-bar"><span style="--score:89%"></span></div></div><div class="ci-score-row"><div class="ci-score-label"><span>Driver readiness</span><strong>90</strong></div><div class="ci-bar"><span style="--score:90%"></span></div></div><div class="ci-score-row"><div class="ci-score-label"><span>Capacity readiness</span><strong>91</strong></div><div class="ci-bar"><span style="--score:91%"></span></div></div></article>
+        <article class="ci-network-card reveal"><span class="status ready">Opted In</span><h3>National Specialty Haul Network</h3><div class="ci-score-row"><div class="ci-score-label"><span>Safety</span><strong>88</strong></div><div class="ci-bar"><span style="--score:88%"></span></div></div><div class="ci-score-row"><div class="ci-score-label"><span>Compliance</span><strong>87</strong></div><div class="ci-bar"><span style="--score:87%"></span></div></div><div class="ci-score-row"><div class="ci-score-label"><span>Documentation</span><strong>92</strong></div><div class="ci-bar"><span style="--score:92%"></span></div></div><div class="ci-score-row"><div class="ci-score-label"><span>Driver readiness</span><strong>89</strong></div><div class="ci-bar"><span style="--score:89%"></span></div></div><div class="ci-score-row"><div class="ci-score-label"><span>Capacity readiness</span><strong>89</strong></div><div class="ci-bar"><span style="--score:89%"></span></div></div></article>
+      </div>
+    </section>
+
+    <section class="section" id="network-records">
+      <div class="section-head reveal">
+        <p class="eyebrow">Carrier network records</p>
+        <h2>Network and aggregator records stay visible without exposing private relationship detail.</h2>
+        <p>Each record summarizes operating capacity, regions, scoring, and sharing posture. BOF supports readiness, visibility, documentation, and administrative workflows while keeping private customer, commercial, and BOF relationship notes out of this view.</p>
+      </div>
+      <div class="table-wrap reveal">
+        <table>
+          <thead><tr><th>Network</th><th>Type</th><th>Participating carriers</th><th>Total trucks</th><th>Active drivers</th><th>Equipment mix</th><th>Primary regions</th><th>Safety</th><th>Compliance</th><th>Documentation</th><th>Capacity readiness</th><th>Sharing</th></tr></thead>
+          <tbody>
+            <tr><td>Midwest Reefer Alliance</td><td>Carrier network</td><td>8</td><td>42</td><td>48</td><td>28 reefer / 10 dry van / 4 flatbed</td><td>Midwest, Plains</td><td>94</td><td>92</td><td>96</td><td><span class="status ready">93</span></td><td><span class="status review">Limited</span></td></tr>
+            <tr><td>Great Lakes Owner-Operator Network</td><td>Carrier network</td><td>11</td><td>37</td><td>40</td><td>24 dry van / 8 reefer / 5 flatbed</td><td>Great Lakes, Upper Midwest</td><td>91</td><td>90</td><td>88</td><td><span class="status ready">90</span></td><td><span class="status ready">Opted In</span></td></tr>
+            <tr><td>Southeast Dedicated Capacity Group</td><td>Aggregator</td><td>6</td><td>26</td><td>30</td><td>12 flatbed / 10 dry van / 4 reefer</td><td>Southeast, Gulf</td><td>89</td><td>82</td><td>86</td><td><span class="status review">84</span></td><td><span class="status blocked">Private</span></td></tr>
+            <tr><td>Ohio Valley Carrier Partners</td><td>Carrier network</td><td>7</td><td>31</td><td>34</td><td>18 dry van / 7 reefer / 6 flatbed</td><td>Ohio Valley, Appalachia</td><td>92</td><td>91</td><td>89</td><td><span class="status ready">91</span></td><td><span class="status review">Limited</span></td></tr>
+            <tr><td>National Specialty Haul Network</td><td>Aggregator</td><td>14</td><td>54</td><td>62</td><td>20 flatbed / 14 dry van / 12 reefer / 8 specialty</td><td>National, Great Lakes</td><td>88</td><td>87</td><td>92</td><td><span class="status ready">89</span></td><td><span class="status ready">Opted In</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="section" id="asset-intelligence">
+      <div class="section-head reveal"><p class="eyebrow">Asset intelligence</p><h2>Top available assets show why capacity visibility is more than a truck count.</h2><p>Assets are shown with equipment type, region, readiness status, safety score, compliance score, and best operating use case for executive review.</p></div>
+      <div class="table-wrap reveal">
+        <table>
+          <thead><tr><th>Asset ID</th><th>Equipment type</th><th>Region</th><th>Readiness status</th><th>Safety score</th><th>Compliance score</th><th>Best use case</th></tr></thead>
+          <tbody>
+            <tr><td>AST-MRA-204</td><td>Reefer tractor/trailer</td><td>Midwest</td><td><span class="status ready">Ready</span></td><td>96</td><td>94</td><td>Retail grocery and temperature-sensitive replenishment</td></tr>
+            <tr><td>AST-GLO-118</td><td>Dry van</td><td>Great Lakes</td><td><span class="status ready">Ready</span></td><td>93</td><td>91</td><td>General freight and scheduled regional replenishment</td></tr>
+            <tr><td>AST-OVC-077</td><td>Dry van</td><td>Ohio Valley</td><td><span class="status ready">Ready</span></td><td>92</td><td>90</td><td>Regional replenishment with complete packet evidence</td></tr>
+            <tr><td>AST-NSH-341</td><td>Specialty flatbed</td><td>National</td><td><span class="status review">At Risk</span></td><td>88</td><td>86</td><td>Project freight after specialty packet review</td></tr>
+            <tr><td>AST-SDC-056</td><td>Flatbed</td><td>Southeast</td><td><span class="status review">At Risk</span></td><td>89</td><td>82</td><td>Construction materials after compliance review</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="section" id="network-growth">
+      <div class="section-head reveal"><p class="eyebrow">Carrier network growth</p><h2>Growth is framed as readiness capacity, not freight placement.</h2><p>The trend view helps prospects see how BOF can monitor network scale, driver coverage, documentation readiness, and constrained equipment categories over time.</p></div>
+      <div class="ci-growth-grid">
+        <article class="ci-growth-card reveal"><span class="status ready">Participating carriers</span><strong>46</strong><p>Carrier records participating across network and aggregator views.</p><div class="ci-trend"><span style="--h:38%"></span><span style="--h:44%"></span><span style="--h:50%"></span><span style="--h:57%"></span><span style="--h:63%"></span><span style="--h:72%"></span></div></article>
+        <article class="ci-growth-card reveal"><span class="status ready">Active trucks</span><strong>190</strong><p>Equipment count tracked with readiness and documentation status.</p><div class="ci-trend"><span style="--h:42%"></span><span style="--h:48%"></span><span style="--h:52%"></span><span style="--h:60%"></span><span style="--h:66%"></span><span style="--h:78%"></span></div></article>
+        <article class="ci-growth-card reveal"><span class="status ready">Active drivers</span><strong>214</strong><p>Driver readiness stays connected to available capacity.</p><div class="ci-trend"><span style="--h:46%"></span><span style="--h:53%"></span><span style="--h:58%"></span><span style="--h:61%"></span><span style="--h:70%"></span><span style="--h:82%"></span></div></article>
+        <article class="ci-growth-card reveal"><span class="status review">Capacity growth trend</span><strong>+14%</strong><p>Growth is useful only when readiness, compliance, and documentation keep pace.</p><div class="ci-trend"><span style="--h:34%"></span><span style="--h:39%"></span><span style="--h:47%"></span><span style="--h:55%"></span><span style="--h:62%"></span><span style="--h:76%"></span></div></article>
+      </div>
+    </section>
+
+    <section class="section" id="capacity-availability">
+      <div class="section-head reveal"><p class="eyebrow">Capacity availability</p><h2>Available capacity is grouped by region, equipment type, readiness, and best operating fit.</h2><p>This view is designed for administrative visibility and executive review, not freight matching or transportation responsibility.</p></div>
+      <div class="table-wrap reveal">
+        <table>
+          <thead><tr><th>Region</th><th>Equipment type</th><th>Available trucks</th><th>Available drivers</th><th>Average safety score</th><th>Compliance readiness</th><th>Sharing status</th><th>Best use case</th></tr></thead>
+          <tbody>
+            <tr><td>Midwest</td><td>Reefer</td><td>18 trucks</td><td>20 drivers</td><td>94</td><td><span class="status ready">Ready</span></td><td><span class="status review">Limited</span></td><td>Retail grocery</td></tr>
+            <tr><td>Great Lakes</td><td>Dry Van</td><td>24 trucks</td><td>27 drivers</td><td>91</td><td><span class="status ready">Ready</span></td><td><span class="status ready">Opted In</span></td><td>General freight</td></tr>
+            <tr><td>Southeast</td><td>Flatbed</td><td>11 trucks</td><td>13 drivers</td><td>89</td><td><span class="status review">At Risk</span></td><td><span class="status blocked">Private</span></td><td>Construction materials</td></tr>
+            <tr><td>Ohio Valley</td><td>Dry Van</td><td>16 trucks</td><td>18 drivers</td><td>92</td><td><span class="status ready">Ready</span></td><td><span class="status review">Limited</span></td><td>Regional replenishment</td></tr>
+            <tr><td>National</td><td>Specialty / Flatbed</td><td>20 trucks</td><td>24 drivers</td><td>88</td><td><span class="status review">At Risk</span></td><td><span class="status ready">Opted In</span></td><td>Specialized project freight</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="section" id="positioning">
+      <div class="ci-positioning-grid">
+        <div class="paper reveal">
+          <div class="document-status-line"><span class="status ready">Positioning</span><span>Capacity Intelligence</span><span>Administrative visibility</span></div>
+          <h3>What BOF provides</h3>
+          <div class="paper-grid">
+            <div class="field"><span>Infrastructure</span><strong>Operational infrastructure for fleets and carrier networks</strong></div>
+            <div class="field"><span>Readiness</span><strong>Readiness management across carriers, drivers, assets, and documentation</strong></div>
+            <div class="field"><span>Oversight</span><strong>Compliance oversight and documentation management for executive review</strong></div>
+            <div class="field"><span>Visibility</span><strong>Capacity visibility and carrier network visibility without exposing private terms</strong></div>
+          </div>
+        </div>
+        <div class="paper reveal">
+          <div class="document-status-line"><span class="status blocked">Boundary</span><span>Demo workflow</span><span>No freight arrangement</span></div>
+          <h3>Operating boundary</h3>
+          <p>BOF does not act as a broker, dispatcher, freight marketplace, or motor carrier in this demo workflow.</p>
+          <p>Capacity Intelligence is a readiness and visibility layer. It does not arrange freight, place freight, negotiate freight terms, dispatch loads, or take transportation responsibility.</p>
+          <div class="paper-note">The module extends the existing BOF system for traditional fleets, carrier networks, small aggregators, and multi-carrier operations while preserving the validated customer portal workflow.</div>
+        </div>
+      </div>
+    </section>
+  </main>
+  <section class="cta-band"><div class="cta-inner"><div><p class="eyebrow">Executive demo path</p><h2>Move from network visibility into trip-level operating intelligence.</h2><p>Use Capacity Intelligence for the owner-level readiness view, then open Operational Intelligence to show in-route signals, safety events, fuel indicators, verification evidence, and exceptions.</p></div><a class="button light" href="/operational-intelligence/">Open Operational Intelligence &rarr;</a></div></section>
+  <footer class="site-footer"><div class="footer-inner"><strong>BackOfficeFleet</strong><span>Capacity readiness for fleets and carrier networks.</span><a href="/trust-governance/">Trust &amp; Governance</a></div></footer>
+  <script src="/assets/js/site.js?v=1.38"></script>
+</body>
+</html>
