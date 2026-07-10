@@ -20,6 +20,23 @@
     });
   }
 
+  document.querySelectorAll("[data-nav-menu-toggle]").forEach(function (menuToggle) {
+    menuToggle.addEventListener("click", function () {
+      var menu = menuToggle.closest("[data-nav-menu]");
+      if (!menu) return;
+      var open = menu.getAttribute("data-open") === "true";
+      document.querySelectorAll("[data-nav-menu]").forEach(function (otherMenu) {
+        if (otherMenu !== menu) {
+          otherMenu.removeAttribute("data-open");
+          var otherToggle = otherMenu.querySelector("[data-nav-menu-toggle]");
+          if (otherToggle) otherToggle.setAttribute("aria-expanded", "false");
+        }
+      });
+      menu.setAttribute("data-open", String(!open));
+      menuToggle.setAttribute("aria-expanded", String(!open));
+    });
+  });
+
   var items = document.querySelectorAll(".reveal");
   items.forEach(function (item, index) {
     item.style.setProperty("--reveal-index", String(index % 7));
@@ -3842,7 +3859,6 @@
     setInspectorOpen(true);
   }
 })();
-
 
 
 

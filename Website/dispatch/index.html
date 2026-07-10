@@ -1,11 +1,11 @@
-﻿<!doctype html>
+<!doctype html>
 <html lang="en">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Dispatch Board | BackOfficeFleet</title>
   <meta name="description" content="BOF dispatch board showing TMS imported load movement, release records, blockers, owners, and next actions.">
-  <link rel="stylesheet" href="/assets/css/styles.css?v=20260710-premium-redesign">
+  <link rel="stylesheet" href="/assets/css/styles.css?v=20260710-redesign-deploy-1">
 </head>
 <body class="premium-site page-dispatch">
   <header class="site-header">
@@ -24,6 +24,7 @@
       <div class="nav-menu" data-nav-menu>
         <button class="nav-menu-toggle" type="button" data-nav-menu-toggle aria-expanded="false" aria-haspopup="true">Drivers</button>
         <div class="nav-dropdown" aria-label="Drivers">
+          <a href="/drivers/">Driver Command Center</a>
           <a href="/drivers/#driver-profiles">Driver Profiles</a>
           <a href="/drivers/#driver-documents">Driver Documents &amp; DQF</a>
           <a href="/drivers/#driver-roster">Driver Roster</a>
@@ -34,6 +35,7 @@
       <div class="nav-menu" data-nav-menu>
         <button class="nav-menu-toggle" type="button" data-nav-menu-toggle aria-expanded="false" aria-haspopup="true">Dispatch &amp; Operations</button>
         <div class="nav-dropdown" aria-label="Dispatch and Operations">
+          <a href="/dispatch/">Dispatch &amp; Operations Command Center</a>
           <a href="/customer-portal/load-intake/">Customer Load Intake</a>
           <a href="/dispatch/#dispatch-readiness">Dispatch Readiness</a>
           <a href="/dispatch/#load-packets">Load Packets</a>
@@ -46,6 +48,7 @@
       <div class="nav-menu" data-nav-menu>
         <button class="nav-menu-toggle" type="button" data-nav-menu-toggle aria-expanded="false" aria-haspopup="true">Safety &amp; Compliance</button>
         <div class="nav-dropdown" aria-label="Safety and Compliance">
+          <a href="/safety/">Safety &amp; Compliance Command Center</a>
           <a href="/safety/#pre-trip-documents">Pre-Trip Documents</a>
           <a href="/safety/#pre-trip-photos">Pre-Trip Photos</a>
           <a href="/safety/#cargo-securement">Cargo Securement</a>
@@ -60,6 +63,7 @@
       <div class="nav-menu" data-nav-menu>
         <button class="nav-menu-toggle" type="button" data-nav-menu-toggle aria-expanded="false" aria-haspopup="true">Settlements &amp; Billing</button>
         <div class="nav-dropdown" aria-label="Settlements and Billing">
+          <a href="/settlements/">Settlements &amp; Billing Command Center</a>
           <a href="/settlements/#proof-packets">Proof Packets</a>
           <a href="/settlements/#billing-packets">Billing Packets</a>
           <a href="/settlements/#driver-settlement-verification">Driver Settlement Verification</a>
@@ -74,19 +78,21 @@
       <div class="nav-menu" data-nav-menu>
         <button class="nav-menu-toggle" type="button" data-nav-menu-toggle aria-expanded="false" aria-haspopup="true">Business Operations</button>
         <div class="nav-dropdown" aria-label="Business Operations">
-          <a href="/business-operations/#hr-tier">HR Tier</a>
-          <a href="/business-operations/#driver-onboarding">Driver Onboarding</a>
-          <a href="/business-operations/#accounting-finance">Accounting &amp; Finance</a>
-          <a href="/business-operations/#payroll-administration">Payroll Administration</a>
-          <a href="/business-operations/#customer-billing">Customer Billing</a>
-          <a href="/business-operations/#accounts-receivable">Accounts Receivable</a>
-          <a href="/business-operations/#document-management">Document Management</a>
-          <a href="/business-operations/#operational-reporting">Operational Reporting</a>
+          <a href="/business-operations/">Business Operations Command Center</a>
+          <a href="/business-operations/hr-tier/">HR Tier</a>
+          <a href="/business-operations/driver-onboarding/">Driver Onboarding</a>
+          <a href="/business-operations/accounting-finance/">Accounting &amp; Finance</a>
+          <a href="/business-operations/payroll-administration/">Payroll Administration</a>
+          <a href="/business-operations/customer-billing/">Customer Billing</a>
+          <a href="/business-operations/accounts-receivable/">Accounts Receivable</a>
+          <a href="/business-operations/document-management/">Document Management</a>
+          <a href="/business-operations/operational-reporting/">Operational Reporting</a>
         </div>
       </div>
       <div class="nav-menu" data-nav-menu>
         <button class="nav-menu-toggle" type="button" data-nav-menu-toggle aria-expanded="false" aria-haspopup="true">Policies &amp; Procedures</button>
         <div class="nav-dropdown" aria-label="Policies and Procedures">
+          <a href="/policies-procedures/">Policies &amp; Procedures Command Center</a>
           <a href="/policies-procedures/#driver-qualification-sop">Driver Qualification SOP</a>
           <a href="/policies-procedures/#cargo-securement-procedure">Cargo Securement Procedure</a>
           <a href="/policies-procedures/#hos-review-procedure">HOS Review Procedure</a>
@@ -103,6 +109,7 @@
       <div class="nav-menu" data-nav-menu>
         <button class="nav-menu-toggle" type="button" data-nav-menu-toggle aria-expanded="false" aria-haspopup="true">Company</button>
         <div class="nav-dropdown" aria-label="Company">
+          <a href="/trust-governance/">Company / Trust Hub</a>
           <a href="/trust-governance/">About BOF</a>
           <a href="/book-demo/">Contact</a>
           <a href="/integrations/partner-tms/">Partner Program</a>
@@ -124,19 +131,43 @@
     </div>
   </section>
   <main class="workflow-dashboard-page">
-    <section class="section page-hero dashboard-hero-system product-stage console-primary-hero">
+    <section class="section page-hero dashboard-hero-system product-stage console-primary-hero executive-command-hero">
       <div class="visual-stage command-center-dashboard-stage command-center-frame reveal" aria-label="BOF Dispatch and Operations Command Center dashboard">
+        <a class="executive-visual-pill" href="/scenario-walkthrough/">Dispatch command hero</a>
         <div class="product-stage-header">
-          <span>Dispatch control</span>
-          <div class="product-console-heading"><p class="eyebrow">Dispatch consequence</p><h1>Release-control board</h1><p>Ready, watch, and hold decisions stay tied to the packet, assignment, equipment, and route review.</p></div>
+          <div class="product-console-heading"><p class="eyebrow">Dispatch command center</p><h1>Dispatch &amp; Operations Command Center</h1><p>BOF keeps load intake, readiness checks, route risk, driver assignment, equipment status, and release decisions connected.</p></div>
         </div>
-        <img class="scene-illustration command-center-dashboard-image" src="/assets/images/dashboard-mockups/bof-dispatch-operations-command.webp" alt="Dispatch and Operations Command Center dashboard showing load intake, dispatch readiness, document review, route alerts, driver assignment, equipment readiness, and exceptions" fetchpriority="high" decoding="async" sizes="(max-width: 940px) 100vw, 760px">
-        <div class="dashboard-module-grid">
-          <a class="floating-status-card metric-tile" href="#dispatch-readiness"><span class="status ready">Move</span><strong>Driver assigned</strong><p>Ready driver and carrier records attached.</p></a>
-          <a class="floating-status-card workflow-module" href="#load-packets"><span class="status review">Watch</span><strong>Load packet</strong><p>BOL image confirmation still controls release.</p></a>
-          <a class="floating-status-card evidence-module" href="#route-lane-review"><span class="status review">Route</span><strong>Weather / traffic review</strong><p>Timing and parking risks stay visible.</p></a>
-          <a class="floating-status-card checklist-row" href="#equipment-readiness"><span>Equipment</span><strong>Pre-trip release row</strong><p>Trailer ID, DVIR note, and proof image checks.</p></a>
-          <a class="embedded-cta-card" href="/operations-record/#dispatch-release-1842"><span>Release owner</span><strong>S. Turner clears the packet or keeps the hold</strong><p>Open release record.</p></a>
+        <div class="executive-command-flow" aria-label="Dispatch workflow">
+          <a class="command-flow-pill is-blue" href="#dispatch-readiness">Load Intake</a>
+          <a class="command-flow-pill is-green" href="#dispatch-readiness">Readiness Check</a>
+          <a class="command-flow-pill is-blue" href="#driver-assignment">Driver Assignment</a>
+          <a class="command-flow-pill is-gold" href="#load-packets">Document Engine</a>
+          <a class="command-flow-pill is-blue" href="#equipment-readiness">Active Load Queue</a>
+          <a class="command-flow-pill is-plain" href="#route-lane-review">Exceptions</a>
+        </div>
+        <div class="executive-dashboard-board">
+          <div class="executive-board-header">
+            <div><h2>Dispatch Manager Operating View</h2><p>Load intake, documents, drivers, routes, and release exceptions on one board.</p></div>
+            <div class="executive-status-row"><span class="executive-status is-ready">Ready 21</span><span class="executive-status is-risk">Needs review 8</span><span class="executive-status is-blocked">Blocked 4</span></div>
+          </div>
+          <div class="executive-metric-grid">
+            <article class="executive-metric-card"><div><span>Loads ready</span><strong>21</strong><p>can move</p></div><b class="metric-badge is-ready">LR</b></article>
+            <article class="executive-metric-card"><div><span>Packet review</span><strong>8</strong><p>needs document check</p></div><b class="metric-badge is-risk">PK</b></article>
+            <article class="executive-metric-card"><div><span>Driver assigned</span><strong>17</strong><p>records attached</p></div><b class="metric-badge is-blue">DA</b></article>
+            <article class="executive-metric-card"><div><span>Equipment ready</span><strong>14</strong><p>assets cleared</p></div><b class="metric-badge is-ready">EQ</b></article>
+            <article class="executive-metric-card"><div><span>Route watch</span><strong>3</strong><p>timing risks</p></div><b class="metric-badge is-risk">RT</b></article>
+            <article class="executive-metric-card is-dark"><div><span>Release holds</span><strong>4</strong><p>owner assigned</p></div></article>
+          </div>
+          <div class="command-readiness-flow"><strong>Dispatch Release Flow</strong><span>Intake</span><span>Driver</span><span>Packet</span><span>Equipment</span><span>Route</span><span>Release</span></div>
+          <div class="dashboard-module-grid command-module-grid">
+            <a class="floating-status-card metric-tile" href="#dispatch-readiness"><span class="module-icon is-ready">L</span><em>Load Intake</em><strong>Release Summary</strong><p>Customer, lane, appointment, rate, and owner context.</p><i class="module-progress three-green"></i></a>
+            <a class="floating-status-card workflow-module" href="#load-packets"><span class="module-icon is-risk">D</span><em>Documents</em><strong>Packet Review</strong><p>BOL image, rate confirmation, POD requirements, and missing proof.</p><i class="module-progress risk-mix"></i></a>
+            <a class="floating-status-card evidence-module" href="#driver-assignment"><span class="module-icon is-blue">A</span><em>Driver Assignment</em><strong>Assignment Gate</strong><p>Driver profile, DQF state, eligibility, and dispatch consequence.</p><i class="module-progress blue-mix"></i></a>
+            <a class="floating-status-card checklist-row" href="#equipment-readiness"><span class="module-icon is-ready">E</span><em>Equipment</em><strong>Readiness Check</strong><p>Truck, trailer, DVIR notes, trailer ID, and proof images.</p><i class="module-progress three-green"></i></a>
+            <a class="floating-status-card evidence-module" href="#route-lane-review"><span class="module-icon is-risk">R</span><em>Route</em><strong>Lane Risk Watch</strong><p>Weather, traffic, parking, restrictions, and appointment timing.</p><i class="module-progress risk-mix"></i></a>
+            <a class="floating-status-card workflow-module" href="/operations-record/#dispatch-release-1842"><span class="module-icon is-blue">O</span><em>Operations</em><strong>Release Record</strong><p>Move, watch, or hold status with owner and next action.</p><i class="module-progress blue-mix"></i></a>
+            <a class="embedded-cta-card executive-bottom-cta" href="/scenario-walkthrough/"><strong>Take the BOF Fleet Assessment</strong><span>Next Step</span></a>
+          </div>
         </div>
       </div>
     </section>
@@ -367,7 +398,7 @@
   </main>
   <section class="cta-band"><div class="cta-inner"><div><p class="eyebrow">Next record</p><h2>Connect dispatch decisions to documents.</h2><p>Your team should see the paperwork behind each release state.</p></div><a class="button light" href="/documents/">Open documents &rarr;</a></div></section>
   <footer class="site-footer"><div class="footer-inner"><strong>BackOfficeFleet</strong><span>Dispatch consequence.</span></div></footer>
-  <script src="/assets/js/site.js?v=1.49"></script>
+  <script src="/assets/js/site.js?v=1.50"></script>
 </body>
 </html>
 

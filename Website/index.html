@@ -1,11 +1,11 @@
-﻿<!doctype html>
+<!doctype html>
 <html lang="en">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>BackOfficeFleet | Trucking Back-Office Operating Layer</title>
   <meta name="description" content="BackOfficeFleet helps for-hire trucking fleets control driver records, documents, release decisions, exceptions, and back-office follow-up before dispatch moves.">
-  <link rel="stylesheet" href="/assets/css/styles.css?v=20260710-premium-redesign">
+  <link rel="stylesheet" href="/assets/css/styles.css?v=20260710-redesign-deploy-1">
 </head>
 <body class="visual-refresh premium-site page-home">
   <header class="site-header">
@@ -24,6 +24,7 @@
       <div class="nav-menu" data-nav-menu>
         <button class="nav-menu-toggle" type="button" data-nav-menu-toggle aria-expanded="false" aria-haspopup="true">Drivers</button>
         <div class="nav-dropdown" aria-label="Drivers">
+          <a href="/drivers/">Driver Command Center</a>
           <a href="/drivers/#driver-profiles">Driver Profiles</a>
           <a href="/drivers/#driver-documents">Driver Documents &amp; DQF</a>
           <a href="/drivers/#driver-roster">Driver Roster</a>
@@ -34,6 +35,7 @@
       <div class="nav-menu" data-nav-menu>
         <button class="nav-menu-toggle" type="button" data-nav-menu-toggle aria-expanded="false" aria-haspopup="true">Dispatch &amp; Operations</button>
         <div class="nav-dropdown" aria-label="Dispatch and Operations">
+          <a href="/dispatch/">Dispatch &amp; Operations Command Center</a>
           <a href="/customer-portal/load-intake/">Customer Load Intake</a>
           <a href="/dispatch/#dispatch-readiness">Dispatch Readiness</a>
           <a href="/dispatch/#load-packets">Load Packets</a>
@@ -46,6 +48,7 @@
       <div class="nav-menu" data-nav-menu>
         <button class="nav-menu-toggle" type="button" data-nav-menu-toggle aria-expanded="false" aria-haspopup="true">Safety &amp; Compliance</button>
         <div class="nav-dropdown" aria-label="Safety and Compliance">
+          <a href="/safety/">Safety &amp; Compliance Command Center</a>
           <a href="/safety/#pre-trip-documents">Pre-Trip Documents</a>
           <a href="/safety/#pre-trip-photos">Pre-Trip Photos</a>
           <a href="/safety/#cargo-securement">Cargo Securement</a>
@@ -60,6 +63,7 @@
       <div class="nav-menu" data-nav-menu>
         <button class="nav-menu-toggle" type="button" data-nav-menu-toggle aria-expanded="false" aria-haspopup="true">Settlements &amp; Billing</button>
         <div class="nav-dropdown" aria-label="Settlements and Billing">
+          <a href="/settlements/">Settlements &amp; Billing Command Center</a>
           <a href="/settlements/#proof-packets">Proof Packets</a>
           <a href="/settlements/#billing-packets">Billing Packets</a>
           <a href="/settlements/#driver-settlement-verification">Driver Settlement Verification</a>
@@ -74,19 +78,21 @@
       <div class="nav-menu" data-nav-menu>
         <button class="nav-menu-toggle" type="button" data-nav-menu-toggle aria-expanded="false" aria-haspopup="true">Business Operations</button>
         <div class="nav-dropdown" aria-label="Business Operations">
-          <a href="/business-operations/#hr-tier">HR Tier</a>
-          <a href="/business-operations/#driver-onboarding">Driver Onboarding</a>
-          <a href="/business-operations/#accounting-finance">Accounting &amp; Finance</a>
-          <a href="/business-operations/#payroll-administration">Payroll Administration</a>
-          <a href="/business-operations/#customer-billing">Customer Billing</a>
-          <a href="/business-operations/#accounts-receivable">Accounts Receivable</a>
-          <a href="/business-operations/#document-management">Document Management</a>
-          <a href="/business-operations/#operational-reporting">Operational Reporting</a>
+          <a href="/business-operations/">Business Operations Command Center</a>
+          <a href="/business-operations/hr-tier/">HR Tier</a>
+          <a href="/business-operations/driver-onboarding/">Driver Onboarding</a>
+          <a href="/business-operations/accounting-finance/">Accounting &amp; Finance</a>
+          <a href="/business-operations/payroll-administration/">Payroll Administration</a>
+          <a href="/business-operations/customer-billing/">Customer Billing</a>
+          <a href="/business-operations/accounts-receivable/">Accounts Receivable</a>
+          <a href="/business-operations/document-management/">Document Management</a>
+          <a href="/business-operations/operational-reporting/">Operational Reporting</a>
         </div>
       </div>
       <div class="nav-menu" data-nav-menu>
         <button class="nav-menu-toggle" type="button" data-nav-menu-toggle aria-expanded="false" aria-haspopup="true">Policies &amp; Procedures</button>
         <div class="nav-dropdown" aria-label="Policies and Procedures">
+          <a href="/policies-procedures/">Policies &amp; Procedures Command Center</a>
           <a href="/policies-procedures/#driver-qualification-sop">Driver Qualification SOP</a>
           <a href="/policies-procedures/#cargo-securement-procedure">Cargo Securement Procedure</a>
           <a href="/policies-procedures/#hos-review-procedure">HOS Review Procedure</a>
@@ -103,6 +109,7 @@
       <div class="nav-menu" data-nav-menu>
         <button class="nav-menu-toggle" type="button" data-nav-menu-toggle aria-expanded="false" aria-haspopup="true">Company</button>
         <div class="nav-dropdown" aria-label="Company">
+          <a href="/trust-governance/">Company / Trust Hub</a>
           <a href="/trust-governance/">About BOF</a>
           <a href="/book-demo/">Contact</a>
           <a href="/integrations/partner-tms/">Partner Program</a>
@@ -112,25 +119,49 @@
     <a class="header-cta" href="/scenario-walkthrough/">Take the BOF Fleet Assessment</a>
   </header>
   <main>
-    <section class="hero dashboard-hero-system product-stage console-primary-hero">
+    <section class="hero dashboard-hero-system product-stage console-primary-hero executive-command-hero">
       <div class="hero-inner dashboard-hero-grid">
         <div class="visual-stage hero-dashboard-stage command-center-dashboard-stage command-center-frame reveal" aria-label="BOF Command Center dashboard overview">
+          <a class="executive-visual-pill" href="/scenario-walkthrough/">Executive hero visual</a>
           <div class="product-stage-header">
-            <span>BOF command system</span>
             <div class="product-console-heading">
-              <p class="eyebrow">Managed back-office clarity for trucking fleets</p>
+              <p class="eyebrow">BOF command system</p>
               <h1>BOF Command Center</h1>
-              <p>One console shows readiness, blockers, owners, and the next action before dispatch commits the load.</p>
+              <p>One executive operating system for trucking back-office readiness. Drivers, dispatch, safety, and settlements stay visible before problems slow the fleet.</p>
             </div>
           </div>
-          <img class="hero-dashboard-image command-center-dashboard-image" src="/assets/images/dashboard-mockups/bof-home-command-center-light.webp" alt="BOF Command Center dashboard showing driver readiness, dispatch, safety, settlements, and business operations in one executive view" fetchpriority="high" decoding="async" sizes="(max-width: 940px) 100vw, 780px">
-          <div class="dashboard-module-grid" aria-label="BOF operating readiness modules">
-            <a class="floating-status-card metric-tile" href="/drivers/"><span class="status ready">Drivers</span><strong>Driver Readiness</strong><p>Credential and DQF review attached.</p></a>
-            <a class="floating-status-card workflow-module" href="/dispatch/"><span class="status review">Dispatch</span><strong>Dispatch Release</strong><p>BOL image and lane packet in review.</p></a>
-            <a class="floating-status-card evidence-module" href="/safety/"><span class="status ready">Safety</span><strong>Safety Evidence</strong><p>Trip notes, photos, and owner review connected.</p></a>
-            <a class="floating-status-card packet-module" href="/settlements/"><span class="status review">Packet</span><strong>Settlement Packet</strong><p>POD, receipts, and billing support tracked.</p></a>
-            <a class="floating-status-card workflow-module" href="/policies-procedures/"><span class="status ready">Policy</span><strong>Policy Control</strong><p>SOP ownership and review cadence visible.</p></a>
-            <a class="embedded-cta-card" href="/scenario-walkthrough/"><span>Owner Visibility</span><strong>Move, watch, or hold</strong><p>Assess the workflow and see where BOF fits.</p></a>
+          <div class="executive-command-flow" aria-label="BOF operating workflow">
+            <a class="command-flow-pill is-blue" href="/">Executive Command Center</a>
+            <a class="command-flow-pill is-green" href="/drivers/">Driver Readiness</a>
+            <a class="command-flow-pill is-blue" href="/dispatch/">Dispatch &amp; Operations</a>
+            <a class="command-flow-pill is-gold" href="/safety/">Safety &amp; Compliance</a>
+            <a class="command-flow-pill is-green" href="/settlements/">Settlements &amp; Billing</a>
+          </div>
+          <div class="executive-dashboard-board">
+            <div class="executive-board-header">
+              <div>
+                <h2>Executive Command Center</h2>
+                <p>Fleet readiness, risk, and billing status in one board.</p>
+              </div>
+              <div class="executive-status-row" aria-label="Executive dashboard status">
+                <span class="executive-status is-ready">Ready 84%</span>
+                <span class="executive-status is-risk">At risk 12</span>
+                <span class="executive-status is-blocked">Blocked 3</span>
+              </div>
+            </div>
+            <div class="executive-metric-grid" aria-label="BOF executive metrics">
+              <article class="executive-metric-card"><div><span>Fleet readiness</span><strong>84%</strong><p>Records ready</p></div><b class="metric-badge is-ready">OK</b></article>
+              <article class="executive-metric-card"><div><span>Active loads</span><strong>18</strong><p>Operations visible</p></div><b class="metric-badge is-blue">LD</b></article>
+              <article class="executive-metric-card"><div><span>Safety review</span><strong>12</strong><p>Items at risk</p></div><b class="metric-badge is-risk">!</b></article>
+              <article class="executive-metric-card"><div><span>Settlements</span><strong>9</strong><p>Packets moving</p></div><b class="metric-badge is-ready">$</b></article>
+            </div>
+            <div class="dashboard-module-grid command-module-grid" aria-label="BOF operating readiness modules">
+              <a class="floating-status-card metric-tile" href="/drivers/"><span class="module-icon is-ready">D</span><em>Driver readiness</em><strong>Driver Files</strong><p>DQF, CDL, MVR, medical cards.</p><i class="module-progress three-green"></i><b class="module-state is-ready">Ready</b></a>
+              <a class="floating-status-card workflow-module" href="/dispatch/"><span class="module-icon is-blue">L</span><em>Dispatch &amp; Operations</em><strong>Load Control</strong><p>Intake, POD, operating records.</p><i class="module-progress blue-mix"></i><b class="module-state is-blue">In Progress</b></a>
+              <a class="floating-status-card evidence-module" href="/safety/"><span class="module-icon is-risk">S</span><em>Safety &amp; Compliance</em><strong>Risk Monitor</strong><p>Pre-trip, cargo, claims.</p><i class="module-progress risk-mix"></i><b class="module-state is-risk">At Risk</b></a>
+              <a class="floating-status-card packet-module" href="/settlements/"><span class="module-icon is-ready">$</span><em>Settlements &amp; Billing</em><strong>Packet Readiness</strong><p>Proof, invoice, billing packet.</p><i class="module-progress three-green"></i><b class="module-state is-ready">Complete</b></a>
+              <a class="embedded-cta-card executive-bottom-cta" href="/scenario-walkthrough/"><strong>Take the BOF Fleet Assessment</strong><span>Next Step</span></a>
+            </div>
           </div>
         </div>
       </div>
