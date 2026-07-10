@@ -11937,6 +11937,15 @@ body.premium-site.page-business-operations .executive-command-hero .product-cons
   max-width: 820px;
 }
 
+body.premium-site.page-business-operations .business-ops-hero-tagline {
+  color: #071225;
+  font-size: clamp(2.2rem, 3.1vw, 3.8rem) !important;
+  font-weight: 950;
+  line-height: 0.98 !important;
+  margin: 8px 0 12px;
+  max-width: 900px !important;
+}
+
 body.premium-site.page-business-operations .executive-command-hero .product-console-heading p:not(.eyebrow) {
   max-width: 780px;
 }
@@ -11945,6 +11954,11 @@ body.premium-site.page-business-operations .executive-command-flow {
   align-self: start;
   height: auto;
   margin-top: 0;
+}
+
+body.premium-site.page-business-operations .business-ops-primary-links {
+  gap: clamp(10px, 1vw, 16px);
+  grid-template-columns: repeat(4, minmax(0, 1fr));
 }
 
 body.premium-site.page-business-operations .executive-dashboard-board {
@@ -11992,6 +12006,61 @@ body.premium-site.page-business-operations .command-module-grid {
   padding-bottom: 4px;
 }
 
+body.premium-site.page-business-operations .business-ops-console-summary {
+  display: grid;
+  gap: clamp(18px, 1.5vw, 26px);
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  min-width: 0;
+}
+
+body.premium-site.page-business-operations .business-ops-console-summary article {
+  align-content: start;
+  background: linear-gradient(145deg, rgba(255,255,255,0.94), rgba(245,250,255,0.86));
+  border: 1px solid rgba(203,216,230,0.95);
+  border-radius: 24px;
+  box-shadow: 0 18px 38px rgba(7,18,37,0.1);
+  display: grid;
+  gap: 12px;
+  grid-template-columns: 64px minmax(0, 1fr);
+  min-width: 0;
+  padding: clamp(22px, 1.8vw, 30px);
+}
+
+body.premium-site.page-business-operations .business-ops-console-summary em,
+body.premium-site.page-business-operations .business-ops-console-summary strong,
+body.premium-site.page-business-operations .business-ops-console-summary p {
+  grid-column: 2;
+}
+
+body.premium-site.page-business-operations .business-ops-console-summary em {
+  color: #526173;
+  font-size: 0.78rem;
+  font-style: normal;
+  font-weight: 950;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+body.premium-site.page-business-operations .business-ops-console-summary strong {
+  color: #071225;
+  font-size: clamp(1.15rem, 1.25vw, 1.45rem);
+  line-height: 1.08;
+}
+
+body.premium-site.page-business-operations .business-ops-console-summary p {
+  color: #526173;
+  font-size: 0.98rem;
+  line-height: 1.5;
+  margin: 0;
+}
+
+body.premium-site.page-business-operations .business-ops-console-summary .executive-bottom-cta {
+  grid-column: 1 / -1;
+  justify-self: center;
+  max-width: 680px;
+  width: min(680px, 100%);
+}
+
 body.premium-site.page-business-operations .executive-command-hero .floating-status-card {
   min-height: 178px;
   padding: clamp(22px, 1.75vw, 30px);
@@ -11999,6 +12068,175 @@ body.premium-site.page-business-operations .executive-command-hero .floating-sta
 
 body.premium-site.page-business-operations .executive-bottom-cta {
   margin-top: 4px;
+}
+
+body.premium-site.page-business-operations .business-ops-content-page {
+  display: grid;
+  gap: clamp(42px, 5vw, 86px);
+}
+
+body.premium-site.page-business-operations .business-ops-detail-hero {
+  grid-template-columns: minmax(0, 0.86fr) minmax(360px, 0.64fr);
+  min-height: 0 !important;
+  overflow: hidden;
+  padding-bottom: clamp(34px, 4vw, 58px) !important;
+  padding-top: clamp(34px, 4vw, 58px) !important;
+}
+
+body.premium-site.page-business-operations .business-ops-detail-hero .actions {
+  flex-wrap: wrap;
+}
+
+body.premium-site.page-business-operations .ops-brief-card {
+  align-self: stretch;
+  background: linear-gradient(145deg, rgba(255,255,255,0.92), rgba(235,247,255,0.8));
+  border: 1px solid rgba(186,205,225,0.92);
+  border-radius: 28px;
+  box-shadow: 0 28px 58px rgba(7,18,37,0.14);
+  display: grid;
+  gap: 18px;
+  min-width: 0;
+  padding: clamp(24px, 2.2vw, 36px);
+}
+
+body.premium-site.page-business-operations .ops-brief-card h2,
+body.premium-site.page-business-operations .ops-brief-card h3 {
+  color: #071225;
+  line-height: 1.05;
+  margin: 0;
+}
+
+body.premium-site.page-business-operations .ops-brief-card p {
+  color: #526173;
+  margin: 0;
+}
+
+body.premium-site.page-business-operations .ops-signal-grid,
+body.premium-site.page-business-operations .ops-detail-grid,
+body.premium-site.page-business-operations .ops-playbook-grid,
+body.premium-site.page-business-operations .ops-page-list {
+  display: grid;
+  gap: clamp(18px, 1.6vw, 28px);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+body.premium-site.page-business-operations .ops-signal,
+body.premium-site.page-business-operations .ops-detail-card,
+body.premium-site.page-business-operations .ops-playbook-card,
+body.premium-site.page-business-operations .ops-page-card {
+  background: rgba(255,255,255,0.9);
+  border: 1px solid rgba(203,216,230,0.95);
+  border-radius: 24px;
+  box-shadow: 0 18px 38px rgba(7,18,37,0.1);
+  min-width: 0;
+  padding: clamp(24px, 2vw, 34px);
+}
+
+body.premium-site.page-business-operations .ops-signal {
+  display: grid;
+  gap: 10px;
+}
+
+body.premium-site.page-business-operations .ops-signal span,
+body.premium-site.page-business-operations .ops-detail-card span,
+body.premium-site.page-business-operations .ops-playbook-card span,
+body.premium-site.page-business-operations .ops-page-card span {
+  color: #1674dc;
+  font-size: 0.76rem;
+  font-weight: 950;
+  text-transform: uppercase;
+}
+
+body.premium-site.page-business-operations .ops-signal strong {
+  color: #071225;
+  font-size: clamp(2rem, 3vw, 3.4rem);
+  line-height: 0.95;
+}
+
+body.premium-site.page-business-operations .ops-detail-card h3,
+body.premium-site.page-business-operations .ops-playbook-card h3,
+body.premium-site.page-business-operations .ops-page-card h3 {
+  color: #071225;
+  font-size: clamp(1.35rem, 1.5vw, 1.8rem);
+  line-height: 1.08;
+  margin: 8px 0 12px;
+}
+
+body.premium-site.page-business-operations .ops-detail-card p,
+body.premium-site.page-business-operations .ops-playbook-card p,
+body.premium-site.page-business-operations .ops-page-card p {
+  color: #526173;
+  line-height: 1.55;
+  margin: 0;
+}
+
+body.premium-site.page-business-operations .ops-detail-card ul,
+body.premium-site.page-business-operations .ops-playbook-card ul {
+  color: #3f4d5f;
+  display: grid;
+  gap: 8px;
+  margin: 16px 0 0;
+  padding-left: 18px;
+}
+
+body.premium-site.page-business-operations .ops-page-card {
+  align-content: start;
+  display: grid;
+  gap: 14px;
+}
+
+body.premium-site.page-business-operations .ops-page-card .route-chip {
+  justify-self: start;
+}
+
+body.premium-site.page-business-operations .ops-process {
+  background: rgba(255,255,255,0.86);
+  border: 1px solid rgba(203,216,230,0.95);
+  border-radius: 28px;
+  box-shadow: 0 20px 44px rgba(7,18,37,0.1);
+  display: grid;
+  gap: 0;
+  overflow: hidden;
+}
+
+body.premium-site.page-business-operations .ops-process-row {
+  align-items: start;
+  display: grid;
+  gap: 18px;
+  grid-template-columns: 120px minmax(0, 1fr) minmax(220px, 0.38fr);
+  padding: clamp(22px, 2vw, 30px);
+}
+
+body.premium-site.page-business-operations .ops-process-row + .ops-process-row {
+  border-top: 1px solid rgba(203,216,230,0.8);
+}
+
+body.premium-site.page-business-operations .ops-process-row b {
+  color: #12a86d;
+  font-size: 0.82rem;
+  text-transform: uppercase;
+}
+
+body.premium-site.page-business-operations .ops-process-row strong {
+  color: #071225;
+  display: block;
+  font-size: 1.15rem;
+  margin-bottom: 6px;
+}
+
+body.premium-site.page-business-operations .ops-process-row p,
+body.premium-site.page-business-operations .ops-process-row span {
+  color: #526173;
+  line-height: 1.45;
+  margin: 0;
+}
+
+body.premium-site.page-business-operations .ops-note {
+  background: #eefdf6;
+  border: 1px solid rgba(18,168,109,0.35);
+  border-radius: 22px;
+  color: #295243;
+  padding: clamp(20px, 1.6vw, 28px);
 }
 
 @media (max-width: 1500px) {
@@ -12026,6 +12264,10 @@ body.premium-site.page-business-operations .executive-bottom-cta {
 
   body.premium-site .executive-bottom-cta {
     grid-column: 1 / -1;
+  }
+
+  body.premium-site.page-business-operations .business-ops-primary-links {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
   }
 }
 
@@ -12070,6 +12312,19 @@ body.premium-site.page-business-operations .executive-bottom-cta {
     flex-basis: auto;
     justify-content: stretch;
     width: 100%;
+  }
+
+  body.premium-site.page-business-operations .business-ops-primary-links,
+  body.premium-site.page-business-operations .business-ops-console-summary,
+  body.premium-site.page-business-operations .business-ops-detail-hero {
+    grid-template-columns: 1fr;
+  }
+
+  body.premium-site.page-business-operations .ops-signal-grid,
+  body.premium-site.page-business-operations .ops-detail-grid,
+  body.premium-site.page-business-operations .ops-playbook-grid,
+  body.premium-site.page-business-operations .ops-page-list {
+    grid-template-columns: 1fr;
   }
 }
 
@@ -12137,6 +12392,14 @@ body.premium-site.page-business-operations .executive-bottom-cta {
     font-size: 0.64rem;
     padding: 10px 4px;
     width: auto;
+  }
+
+  body.premium-site.page-business-operations .business-ops-console-summary article {
+    grid-template-columns: 54px minmax(0, 1fr);
+  }
+
+  body.premium-site.page-business-operations .ops-process-row {
+    grid-template-columns: 1fr;
   }
 
   body.premium-site .executive-metric-card {
