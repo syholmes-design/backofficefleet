@@ -11092,151 +11092,164 @@ body.premium-site .dashboard-hero-system {
 
 body.premium-site .dashboard-hero-system .hero-inner,
 body.premium-site .dashboard-hero-grid {
-  align-items: center;
+  align-items: stretch;
 }
 
 body.premium-site .hero.dashboard-hero-system .hero-inner,
 body.premium-site .workflow-dashboard-page .page-hero.dashboard-hero-system,
 body.premium-site .policy-library-page .page-hero.dashboard-hero-system {
-  gap: clamp(18px, 2.8vw, 38px);
-  grid-template-columns: minmax(250px, 0.68fr) minmax(520px, 1.32fr);
-  max-width: min(1280px, calc(100vw - 64px));
-  min-height: clamp(560px, 72vh, 780px);
-  padding-bottom: clamp(42px, 5vw, 76px);
-  padding-top: clamp(42px, 5vw, 76px);
+  display: grid;
+  gap: 0;
+  grid-template-columns: 1fr;
+  max-width: min(1320px, calc(100vw - 64px));
+  min-height: auto;
+  padding-bottom: clamp(34px, 4.8vw, 72px);
+  padding-top: clamp(34px, 4.8vw, 72px);
 }
 
-body.premium-site .dashboard-hero-system .product-caption,
-body.premium-site .dashboard-hero-system > .product-caption.reveal,
-body.premium-site .dashboard-hero-system .hero-copy.product-caption {
-  align-self: center;
-  background: rgba(255, 255, 255, 0.58);
-  border: 1px solid rgba(255, 255, 255, 0.82);
-  border-radius: 20px;
-  box-shadow: 0 22px 54px rgba(10, 31, 55, 0.09);
-  max-width: 430px;
-  padding: clamp(18px, 2vw, 26px);
-}
-
-body.premium-site .dashboard-hero-system .product-caption h1,
-body.premium-site .dashboard-hero-system .hero-copy.product-caption h1,
-body.premium-site .workflow-dashboard-page .dashboard-hero-system h1,
-body.premium-site .policy-library-page .dashboard-hero-system h1 {
-  font-size: clamp(2.05rem, 3.2vw, 3.55rem);
-  line-height: 1.02;
-  max-width: 10ch;
-}
-
-body.premium-site.page-home .dashboard-hero-system .product-caption h1 {
-  max-width: 11ch;
-}
-
-body.premium-site .dashboard-hero-system .product-caption > p:not(.eyebrow) {
-  font-size: clamp(0.98rem, 0.95vw, 1.08rem);
-  line-height: 1.58;
-}
-
-body.premium-site .dashboard-hero-system .actions {
-  gap: 10px;
-  margin-top: 18px;
-}
-
-body.premium-site .dashboard-hero-system .button {
-  min-height: 42px;
-  padding: 11px 16px;
+body.premium-site .dashboard-hero-system.console-primary-hero .product-caption,
+body.premium-site .dashboard-hero-system.console-primary-hero > .product-caption.reveal,
+body.premium-site .dashboard-hero-system.console-primary-hero .hero-copy.product-caption {
+  display: none;
 }
 
 body.premium-site .dashboard-hero-system .command-center-frame,
 body.premium-site .page-hero.dashboard-hero-system > .command-center-frame.reveal {
   align-self: stretch;
   background:
-    linear-gradient(145deg, rgba(255,255,255,0.97), rgba(235,246,255,0.92)),
-    linear-gradient(rgba(10,31,55,0.045) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(10,31,55,0.045) 1px, transparent 1px);
-  background-size: auto, 32px 32px, 32px 32px;
+    linear-gradient(145deg, rgba(255,255,255,0.98), rgba(238,247,255,0.94)),
+    linear-gradient(rgba(10,31,55,0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(10,31,55,0.05) 1px, transparent 1px);
+  background-size: auto, 34px 34px, 34px 34px;
   border: 1px solid rgba(15, 37, 62, 0.14);
   border-radius: 28px;
-  box-shadow: 0 30px 86px rgba(10, 31, 55, 0.17);
-  aspect-ratio: auto;
+  box-shadow: 0 34px 92px rgba(10, 31, 55, 0.17);
   display: grid;
-  gap: clamp(10px, 1.2vw, 14px);
-  grid-template-rows: auto auto auto;
+  gap: clamp(12px, 1.5vw, 18px);
+  grid-template-rows: auto minmax(260px, auto) auto;
   justify-self: stretch;
   max-width: none;
-  min-height: clamp(500px, 60vh, 650px);
+  min-height: clamp(560px, 66vh, 760px);
   overflow: hidden;
-  width: 100%;
-  padding: clamp(14px, 1.8vw, 22px);
+  padding: clamp(16px, 2vw, 26px);
   transform: none;
+  width: 100%;
 }
 
 body.premium-site .product-stage-header {
-  align-items: center;
-  display: flex;
-  gap: 12px;
-  justify-content: space-between;
+  align-items: flex-start;
+  display: grid;
+  gap: clamp(12px, 2vw, 22px);
+  grid-template-columns: max-content minmax(0, 1fr);
   min-width: 0;
 }
 
-body.premium-site .product-stage-header span {
+body.premium-site .product-stage-header > span {
   background: rgba(31, 120, 255, 0.10);
-  border: 1px solid rgba(31, 120, 255, 0.18);
+  border: 1px solid rgba(31, 120, 255, 0.2);
   border-radius: 999px;
   color: var(--premium-blue-dark);
   font-size: 0.72rem;
   font-weight: 950;
   letter-spacing: 0.08em;
-  padding: 7px 11px;
+  line-height: 1;
+  padding: 9px 12px;
   text-transform: uppercase;
+  white-space: nowrap;
 }
 
-body.premium-site .product-stage-header strong {
-  color: #142337;
-  font-size: clamp(0.9rem, 1vw, 1.02rem);
-  text-align: right;
+body.premium-site .product-console-heading {
+  max-width: 880px;
+  min-width: 0;
+}
+
+body.premium-site .product-console-heading .eyebrow {
+  color: var(--premium-blue-dark);
+  margin-bottom: 7px;
+}
+
+body.premium-site .product-console-heading h1 {
+  color: var(--premium-navy);
+  font-size: clamp(2.2rem, 4.2vw, 5.25rem);
+  line-height: 0.96;
+  margin: 0;
+  max-width: 12ch;
+}
+
+body.premium-site .workflow-dashboard-page .product-console-heading h1,
+body.premium-site .policy-library-page .product-console-heading h1 {
+  font-size: clamp(2rem, 3.5vw, 4.25rem);
+  max-width: 13ch;
+}
+
+body.premium-site .product-console-heading p:not(.eyebrow) {
+  color: #435266;
+  font-size: clamp(0.98rem, 1.18vw, 1.18rem);
+  line-height: 1.55;
+  margin: 12px 0 0;
+  max-width: 64ch;
 }
 
 body.premium-site .dashboard-hero-system .command-center-dashboard-image,
 body.premium-site .dashboard-hero-system .hero-dashboard-image,
 body.premium-site .dashboard-hero-system .scene-illustration {
   align-self: center;
-  border-radius: 20px;
-  box-shadow: 0 20px 64px rgba(10, 31, 55, 0.15);
-  max-height: 315px;
+  border-radius: 22px;
+  box-shadow: 0 24px 68px rgba(10, 31, 55, 0.16);
+  height: min(39vh, 390px);
+  max-height: 410px;
+  min-height: 250px;
   object-fit: contain;
-  width: min(100%, 1040px);
+  width: 100%;
 }
 
 body.premium-site .dashboard-module-grid {
   display: grid;
-  gap: 9px;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
 }
 
 body.premium-site .floating-status-card,
 body.premium-site .embedded-cta-card {
-  background: rgba(255, 255, 255, 0.88);
-  border: 1px solid rgba(15, 37, 62, 0.11);
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(15, 37, 62, 0.12);
   border-radius: 16px;
   box-shadow: 0 14px 32px rgba(10,31,55,0.08);
+  color: inherit;
   min-width: 0;
-  padding: 12px;
+  padding: 13px;
+  text-decoration: none;
+  transition: border-color 160ms ease, box-shadow 160ms ease, transform 160ms ease;
+}
+
+body.premium-site .floating-status-card {
+  grid-column: span 2;
+}
+
+body.premium-site .floating-status-card:hover,
+body.premium-site .floating-status-card:focus-visible,
+body.premium-site .embedded-cta-card:hover,
+body.premium-site .embedded-cta-card:focus-visible {
+  border-color: rgba(31, 120, 255, 0.35);
+  box-shadow: 0 18px 38px rgba(10,31,55,0.12);
+  outline: 0;
+  transform: translateY(-2px);
 }
 
 body.premium-site .floating-status-card strong,
 body.premium-site .embedded-cta-card strong {
   color: var(--premium-navy);
   display: block;
-  font-size: clamp(0.86rem, 0.86vw, 0.96rem);
+  font-size: clamp(0.88rem, 0.92vw, 1rem);
   line-height: 1.18;
-  margin-top: 6px;
+  margin-top: 7px;
 }
 
 body.premium-site .floating-status-card p,
 body.premium-site .embedded-cta-card p {
   color: var(--premium-muted);
-  font-size: 0.76rem;
-  line-height: 1.36;
+  font-size: 0.78rem;
+  line-height: 1.38;
   margin: 6px 0 0;
 }
 
@@ -11254,20 +11267,13 @@ body.premium-site .embedded-cta-card {
   background: linear-gradient(135deg, #0b1b2f, #123d70);
   border-color: rgba(31, 120, 255, 0.28);
   color: #fff;
-  grid-column: span 2;
+  grid-column: span 4;
 }
 
 body.premium-site .embedded-cta-card span,
 body.premium-site .embedded-cta-card strong,
-body.premium-site .embedded-cta-card a {
+body.premium-site .embedded-cta-card p {
   color: #fff;
-}
-
-body.premium-site .embedded-cta-card a {
-  display: inline-flex;
-  font-weight: 950;
-  margin-top: 8px;
-  text-decoration: none;
 }
 
 body.premium-site .workflow-module { border-left: 4px solid rgba(31, 120, 255, 0.72); }
@@ -11278,13 +11284,12 @@ body.premium-site .checklist-row { border-left: 4px solid rgba(99, 102, 241, 0.7
 
 body.premium-site .policy-library-console .command-center-frame,
 body.premium-site .policy-library-console.floating-status-card {
-  border-radius: 14px;
+  border-radius: 18px;
 }
 
 body.premium-site .policy-console-grid .floating-status-card,
 body.premium-site .policy-console-grid .embedded-cta-card {
   background: rgba(255, 255, 255, 0.92);
-  border-radius: 12px;
 }
 
 body.premium-site .policy-console-grid .embedded-cta-card {
@@ -11299,34 +11304,25 @@ body.premium-site .dashboard-hero-system .command-center-frame .status {
   padding: 5px 9px;
 }
 
-
 @media (max-width: 1180px) {
   body.premium-site .hero.dashboard-hero-system .hero-inner,
   body.premium-site .workflow-dashboard-page .page-hero.dashboard-hero-system,
   body.premium-site .policy-library-page .page-hero.dashboard-hero-system {
-    grid-template-columns: 1fr;
     max-width: min(980px, calc(100vw - 32px));
-    min-height: auto;
-  }
-
-  body.premium-site .dashboard-hero-system .product-caption,
-  body.premium-site .dashboard-hero-system .hero-copy.product-caption {
-    max-width: none;
-  }
-
-  body.premium-site .dashboard-hero-system .product-caption h1,
-  body.premium-site .dashboard-hero-system .hero-copy.product-caption h1,
-  body.premium-site .workflow-dashboard-page .dashboard-hero-system h1,
-  body.premium-site .policy-library-page .dashboard-hero-system h1 {
-    max-width: 18ch;
   }
 
   body.premium-site .dashboard-hero-system .command-center-frame,
   body.premium-site .page-hero.dashboard-hero-system > .command-center-frame.reveal {
-    aspect-ratio: auto;
-    max-width: none;
-    min-height: 500px;
-    width: 100%;
+    min-height: auto;
+  }
+
+  body.premium-site .dashboard-module-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  body.premium-site .floating-status-card,
+  body.premium-site .embedded-cta-card {
+    grid-column: span 1;
   }
 }
 
@@ -11339,53 +11335,56 @@ body.premium-site .dashboard-hero-system .command-center-frame .status {
     padding-right: 16px;
   }
 
-  body.premium-site .dashboard-hero-system .product-caption h1,
-  body.premium-site .dashboard-hero-system .hero-copy.product-caption h1,
-  body.premium-site .workflow-dashboard-page .dashboard-hero-system h1,
-  body.premium-site .policy-library-page .dashboard-hero-system h1 {
-    font-size: clamp(2rem, 10vw, 2.85rem);
-    max-width: 14ch;
-  }
-
   body.premium-site .dashboard-hero-system .command-center-frame,
   body.premium-site .page-hero.dashboard-hero-system > .command-center-frame.reveal {
-    aspect-ratio: auto;
     border-radius: 20px;
-    min-height: auto;
-    overflow: hidden;
+    gap: 13px;
+    min-height: 620px;
+    padding: 14px;
     width: 100%;
+  }
+
+  body.premium-site .product-stage-header {
+    grid-template-columns: 1fr;
+  }
+
+  body.premium-site .product-stage-header > span {
+    justify-self: start;
+  }
+
+  body.premium-site .product-console-heading .eyebrow {
+    font-size: 0.72rem;
+    line-height: 1.25;
+    max-width: 100%;
+    overflow-wrap: anywhere;
+    white-space: normal;
+  }
+
+  body.premium-site .product-console-heading h1,
+  body.premium-site .workflow-dashboard-page .product-console-heading h1,
+  body.premium-site .policy-library-page .product-console-heading h1 {
+    font-size: clamp(2rem, 10vw, 2.8rem);
+    max-width: 12ch;
   }
 
   body.premium-site .dashboard-hero-system .command-center-dashboard-image,
   body.premium-site .dashboard-hero-system .hero-dashboard-image,
   body.premium-site .dashboard-hero-system .scene-illustration {
-    max-height: 220px;
+    height: auto;
+    max-height: 230px;
+    min-height: 150px;
   }
 
   body.premium-site .dashboard-module-grid {
     grid-template-columns: 1fr;
   }
-
-  body.premium-site .embedded-cta-card {
-    grid-column: auto;
-  }
-
-  body.premium-site .product-stage-header {
-    align-items: flex-start;
-    flex-direction: column;
-  }
-
-  body.premium-site .product-stage-header strong {
-    text-align: left;
-  }
 }
 
 @media (max-width: 420px) {
-  body.premium-site .dashboard-hero-system .product-caption h1,
-  body.premium-site .dashboard-hero-system .hero-copy.product-caption h1,
-  body.premium-site .workflow-dashboard-page .dashboard-hero-system h1,
-  body.premium-site .policy-library-page .dashboard-hero-system h1 {
-    font-size: clamp(1.8rem, 9vw, 2.36rem);
+  body.premium-site .product-console-heading h1,
+  body.premium-site .workflow-dashboard-page .product-console-heading h1,
+  body.premium-site .policy-library-page .product-console-heading h1 {
+    font-size: clamp(1.72rem, 9vw, 2.36rem);
   }
 
   body.premium-site .dashboard-hero-system .command-center-dashboard-image,

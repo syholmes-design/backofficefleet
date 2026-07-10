@@ -125,25 +125,19 @@
   </section>
 
   <main class="settlements-page workflow-dashboard-page">
-    <section class="section page-hero settlements-hero dashboard-hero-system product-stage">
-      <div class="reveal product-caption">
-        <p class="eyebrow">Settlements command center</p>
-        <h1>Settlement packet dashboard.</h1>
-        <p>Proof, billing, driver settlement, deductions, claims holds, and factoring packet support stay tied to one reviewable record.</p>
-        <div class="actions">
-          <a class="button primary" href="#settlement-documents">Open settlement documents &rarr;</a>
-          <a class="button secondary" href="#pay-type-engine">Review settlement logic</a>
-        </div>
-      </div>
+    <section class="section page-hero settlements-hero dashboard-hero-system product-stage console-primary-hero">
       <aside class="visual-stage command-center-dashboard-stage settlements-dashboard-stage command-center-frame reveal" aria-label="BOF Settlements and Billing Command Center dashboard">
-        <div class="product-stage-header"><span>Packet readiness</span><strong>Proof to payment review</strong></div>
+        <div class="product-stage-header">
+          <span>Packet readiness</span>
+          <div class="product-console-heading"><p class="eyebrow">Settlements command center</p><h1>Packet and payment console</h1><p>Proof, billing, settlement verification, deductions, claims holds, and factoring support stay reviewable.</p></div>
+        </div>
         <img class="scene-illustration command-center-dashboard-image" src="/assets/images/dashboard-mockups/bof-settlements-command.webp" alt="Settlements and Billing Command Center dashboard showing proof packets, driver settlements, billing queues, accounts receivable, exception holds, and settlement readiness KPIs" fetchpriority="high" decoding="async" sizes="(max-width: 940px) 100vw, 760px">
         <div class="dashboard-module-grid">
-          <article class="floating-status-card packet-module"><span class="status ready">POD</span><strong>Proof packet</strong><p>Delivery proof received and matched.</p></article>
-          <article class="floating-status-card packet-module"><span class="status review">Receipt</span><strong>Lumper pending</strong><p>Expense proof still needs review.</p></article>
-          <article class="floating-status-card metric-tile"><span class="status ready">Rate</span><strong>Rate confirmation</strong><p>Commercial terms aligned for billing.</p></article>
-          <article class="floating-status-card workflow-module"><span class="status blocked">Hold</span><strong>Claims / deductions</strong><p>Fuel advance and claim flags stay visible.</p></article>
-          <article class="embedded-cta-card"><span>Finance release</span><strong>Ready, pending, review, or held before money moves.</strong><a href="#settlement-documents">Open documents &rarr;</a></article>
+          <a class="floating-status-card packet-module" href="#settlement-documents"><span class="status ready">POD</span><strong>Proof packet</strong><p>Delivery proof received and matched.</p></a>
+          <a class="floating-status-card packet-module" href="#settlement-documents"><span class="status review">Billing</span><strong>Billing packet</strong><p>Receipts and charge support are checked.</p></a>
+          <a class="floating-status-card metric-tile" href="#pay-type-engine"><span class="status ready">Verify</span><strong>Settlement logic</strong><p>Driver pay and contractor terms align.</p></a>
+          <a class="floating-status-card workflow-module" href="#claims-holds"><span class="status blocked">Hold</span><strong>Claims / deductions</strong><p>Fuel advance and claim flags stay visible.</p></a>
+          <a class="embedded-cta-card" href="#settlement-documents"><span>Finance release</span><strong>Ready, pending, review, or held before money moves.</strong><p>Open settlement documents.</p></a>
         </div>
       </aside>
     </section>

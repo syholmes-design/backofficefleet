@@ -124,17 +124,19 @@
     </div>
   </section>
   <main class="workflow-dashboard-page">
-    <section class="section page-hero dashboard-hero-system product-stage">
-      <div class="reveal product-caption"><p class="eyebrow">Driver eligibility</p><h1>Driver readiness console.</h1><p>Credentials, DQF status, renewal risk, and HR handoff stay attached to the driver record so dispatch sees the assignment consequence.</p><div class="actions"><a class="button primary" href="/safety/">Review credential status &rarr;</a><a class="button secondary" href="/dispatch/">Back to dispatch</a></div></div>
+    <section class="section page-hero dashboard-hero-system product-stage console-primary-hero">
       <div class="visual-stage command-center-dashboard-stage command-center-frame reveal" aria-label="BOF Driver Command Center dashboard">
-        <div class="product-stage-header"><span>Driver console</span><strong>Roster, DQF, and assignment readiness</strong></div>
+        <div class="product-stage-header">
+          <span>Driver console</span>
+          <div class="product-console-heading"><p class="eyebrow">Driver eligibility</p><h1>Driver readiness console</h1><p>Roster, DQF, credentials, renewal risk, and HR handoff stay inside the operating record.</p></div>
+        </div>
         <img class="scene-illustration command-center-dashboard-image" src="/assets/images/dashboard-mockups/bof-driver-command-center.webp" alt="Driver Command Center dashboard showing driver profile, documents and DQF, BOF Vault intake, readiness, safety, operations, and driver KPIs" fetchpriority="high" decoding="async" sizes="(max-width: 940px) 100vw, 760px">
         <div class="dashboard-module-grid">
-          <article class="floating-status-card metric-tile"><span class="status ready">Ready</span><strong>M. Alvarez</strong><p>DQF 94 with assigned lane context.</p></article>
-          <article class="floating-status-card workflow-module"><span class="status review">Watch</span><strong>Renewal Risk</strong><p>Medical card and MVR dates stay visible.</p></article>
-          <article class="floating-status-card evidence-module"><span class="status blocked">Hold</span><strong>Missing DQF Item</strong><p>Dispatch consequence shown before release.</p></article>
-          <article class="floating-status-card checklist-row"><span>Checklist</span><strong>CDL / Med / MVR / Policy</strong><p>Driver document coverage becomes one readiness row.</p></article>
-          <article class="embedded-cta-card"><span>HR Handoff</span><strong>Onboarding context stays in Business Operations</strong><a href="/business-operations/#driver-onboarding">Open HR onboarding &rarr;</a></article>
+          <a class="floating-status-card metric-tile" href="#driver-profiles"><span class="status ready">Ready</span><strong>Driver roster cards</strong><p>Demo readiness cards show assignment status.</p></a>
+          <a class="floating-status-card workflow-module" href="#credential-review"><span class="status review">Watch</span><strong>Credential checklist</strong><p>CDL, medical, MVR, and DQF dates stay visible.</p></a>
+          <a class="floating-status-card evidence-module" href="#document-intake"><span class="status blocked">Hold</span><strong>Missing DQF item</strong><p>Document intake controls dispatch consequence.</p></a>
+          <a class="floating-status-card checklist-row" href="#driver-roster"><span>Checklist</span><strong>Roster readiness row</strong><p>Driver document coverage becomes reviewable.</p></a>
+          <a class="embedded-cta-card" href="/business-operations/#driver-onboarding"><span>HR Handoff</span><strong>Onboarding context stays in Business Operations</strong><p>Open HR onboarding.</p></a>
         </div>
       </div>
     </section>
