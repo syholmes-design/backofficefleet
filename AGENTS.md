@@ -20,6 +20,14 @@ Use `bof-web-Original` only as a reference for existing behavior, content, asset
 
 If there is any ambiguity about where to edit, stop and confirm before changing files. The default edit target for website work is always `Website`.
 
+## Owner Creative Build Mode
+
+This clean redesign repository is the owner's active creative build space. The user is the creative authority for BOF website look, feel, page experience, copy direction, and redesign decisions.
+
+When working in `C:\Users\syhol\BOF-public-site-redesign-clean`, Codex on HP is authorized to directly edit `Website`, run local preview, and perform local QA for owner-directed redesign work. Do not relay these local creative build changes to the webmaster by default.
+
+Relay or webmaster handling is still required for production deployment, live-site overwrite, FTP upload, push to a shared remote, credential/secret/account work, or changes outside this clean redesign repository.
+
 ## Website Backup Steward
 
 Use the project-local `website-backup-steward` skill when the user asks to back up the website, create a restore point, list backups, restore a backup, or protect the site before broad/risky edits. The active backup target is `Website`, and backups must stay outside the deployable site under `.codex/backups/website/`.
