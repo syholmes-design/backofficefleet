@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>BackOfficeFleet | Trucking Back-Office Operating Layer</title>
   <meta name="description" content="BackOfficeFleet helps for-hire trucking fleets control driver records, documents, release decisions, exceptions, and back-office follow-up before dispatch moves.">
-  <link rel="stylesheet" href="/assets/css/styles.css?v=20260710-redesign-deploy-1">
+  <link rel="stylesheet" href="/assets/css/styles.css?v=20260712-home-command-fix">
 </head>
 <body class="visual-refresh premium-site page-home">
   <header class="site-header">
@@ -32,49 +32,37 @@
     <a class="header-cta" href="/scenario-walkthrough/">Take the BOF Fleet Assessment</a>
   </header>
   <main>
-    <section class="hero dashboard-hero-system product-stage console-primary-hero executive-command-hero">
-      <div class="hero-inner dashboard-hero-grid">
-        <div class="visual-stage hero-dashboard-stage command-center-dashboard-stage command-center-frame reveal" aria-label="BOF Command Center dashboard overview">
-          <a class="executive-visual-pill" href="/scenario-walkthrough/">Executive hero visual</a>
-          <div class="product-stage-header">
-            <div class="product-console-heading">
-              <p class="eyebrow">BOF command system</p>
-              <h1>BOF Command Center</h1>
-              <p>One executive operating system for trucking back-office readiness. Drivers, dispatch, safety, and settlements stay visible before problems slow the fleet.</p>
-            </div>
+    <section class="hero home-command-hero">
+      <div class="hero-inner home-command-grid">
+        <div class="hero-copy reveal">
+          <p class="eyebrow">BOF Command Center</p>
+          <h1>Command the back office before the fleet slows down.</h1>
+          <p>BackOfficeFleet organizes driver readiness, dispatch release, safety review, settlement packets, and business-office follow-through into one operating layer with clear owners and next actions.</p>
+          <div class="actions">
+            <a class="button primary" href="/scenario-walkthrough/">Take the BOF Fleet Assessment</a>
+            <a class="button secondary" href="/business-operations/">Open Business Operations</a>
           </div>
-          <div class="executive-command-flow" aria-label="BOF operating workflow">
-            <a class="command-flow-pill is-blue" href="/">Executive Command Center</a>
-            <a class="command-flow-pill is-green" href="/drivers/">Driver Readiness</a>
-            <a class="command-flow-pill is-blue" href="/dispatch/">Dispatch &amp; Operations</a>
-            <a class="command-flow-pill is-gold" href="/safety/">Safety &amp; Compliance</a>
-            <a class="command-flow-pill is-green" href="/settlements/">Settlements &amp; Billing</a>
+        </div>
+
+        <aside class="home-command-panel reveal" aria-label="BOF command routes">
+          <div class="home-panel-top">
+            <span>Operating routes</span>
+            <strong>Ready 84%</strong>
           </div>
-          <div class="executive-dashboard-board">
-            <div class="executive-board-header">
-              <div>
-                <h2>Executive Command Center</h2>
-                <p>Fleet readiness, risk, and billing status in one board.</p>
-              </div>
-              <div class="executive-status-row" aria-label="Executive dashboard status">
-                <span class="executive-status is-ready">Ready 84%</span>
-                <span class="executive-status is-risk">At risk 12</span>
-                <span class="executive-status is-blocked">Blocked 3</span>
-              </div>
-            </div>
-            <div class="executive-metric-grid" aria-label="BOF executive metrics">
-              <article class="executive-metric-card"><div><span>Fleet readiness</span><strong>84%</strong><p>Records ready</p></div><b class="metric-badge is-ready">OK</b></article>
-              <article class="executive-metric-card"><div><span>Active loads</span><strong>18</strong><p>Operations visible</p></div><b class="metric-badge is-blue">LD</b></article>
-              <article class="executive-metric-card"><div><span>Safety review</span><strong>12</strong><p>Items at risk</p></div><b class="metric-badge is-risk">!</b></article>
-              <article class="executive-metric-card"><div><span>Settlements</span><strong>9</strong><p>Packets moving</p></div><b class="metric-badge is-ready">$</b></article>
-            </div>
-            <div class="dashboard-module-grid command-module-grid" aria-label="BOF operating readiness modules">
-              <a class="floating-status-card metric-tile" href="/drivers/"><span class="module-icon is-ready">D</span><em>Driver readiness</em><strong>Driver Files</strong><p>DQF, CDL, MVR, medical cards.</p><i class="module-progress three-green"></i><b class="module-state is-ready">Ready</b></a>
-              <a class="floating-status-card workflow-module" href="/dispatch/"><span class="module-icon is-blue">L</span><em>Dispatch &amp; Operations</em><strong>Load Control</strong><p>Intake, POD, operating records.</p><i class="module-progress blue-mix"></i><b class="module-state is-blue">In Progress</b></a>
-              <a class="floating-status-card evidence-module" href="/safety/"><span class="module-icon is-risk">S</span><em>Safety &amp; Compliance</em><strong>Risk Monitor</strong><p>Pre-trip, cargo, claims.</p><i class="module-progress risk-mix"></i><b class="module-state is-risk">At Risk</b></a>
-              <a class="floating-status-card packet-module" href="/settlements/"><span class="module-icon is-ready">$</span><em>Settlements &amp; Billing</em><strong>Packet Readiness</strong><p>Proof, invoice, billing packet.</p><i class="module-progress three-green"></i><b class="module-state is-ready">Complete</b></a>
-              <a class="embedded-cta-card executive-bottom-cta" href="/scenario-walkthrough/"><strong>Take the BOF Fleet Assessment</strong><span>Next Step</span></a>
-            </div>
+          <a class="home-route-card is-green" href="/drivers/"><span>01</span><strong>Drivers</strong><p>DQF, CDL, MVR, medical cards, onboarding, and assignment readiness.</p></a>
+          <a class="home-route-card is-blue" href="/dispatch/"><span>02</span><strong>Dispatch &amp; Operations</strong><p>Load intake, release control, POD, exception ownership, and operating records.</p></a>
+          <a class="home-route-card is-gold" href="/safety/"><span>03</span><strong>Safety &amp; Compliance</strong><p>Pre-trip, cargo, incident, claims, compliance review, and risk follow-up.</p></a>
+          <a class="home-route-card is-green" href="/settlements/"><span>04</span><strong>Settlements &amp; Billing</strong><p>Proof, invoice, deductions, billing packet, factoring, and payment readiness.</p></a>
+          <a class="home-route-card is-blue" href="/business-operations/"><span>05</span><strong>Business Operations</strong><p>HR, finance, payroll, billing, receivables, documents, and reporting.</p></a>
+          <a class="home-route-card is-plain" href="/policies-procedures/"><span>06</span><strong>Policies &amp; Procedures</strong><p>Operating references, document control, owner accountability, and review cadence.</p></a>
+        </aside>
+
+        <div class="home-console-preview reveal">
+          <img src="/assets/images/dashboard-mockups/bof-home-command-center-light.webp" alt="BOF command center dashboard preview">
+          <div class="home-console-actions">
+            <a href="/drivers/">Driver readiness</a>
+            <a href="/dispatch/">Release control</a>
+            <a href="/settlements/">Packet readiness</a>
           </div>
         </div>
       </div>
