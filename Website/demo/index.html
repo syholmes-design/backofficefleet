@@ -1,94 +1,35 @@
-<!doctype html>
+﻿<!doctype html>
 <html lang="en">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Partner Workflow | BackOfficeFleet</title>
   <meta name="description" content="A guided TMS partner workflow showing how BOF turns an imported load into a readiness-backed release decision.">
-  <link rel="stylesheet" href="/assets/css/styles.css?v=1.49">
+  <link rel="stylesheet" href="/assets/css/styles.css?v=1.40">
 </head>
 <body>
   <header class="site-header">
     <a class="brand" href="/" aria-label="BackOfficeFleet home"><img src="/assets/images/logo/boflogo-original.png" alt="BackOfficeFleet"></a>
     <button class="nav-toggle" type="button" data-nav-toggle aria-expanded="false" aria-label="Toggle navigation">&#9776;</button>
-    <nav class="site-nav" data-nav aria-label="Main navigation">
+        <nav class="site-nav" data-nav aria-label="Main navigation">
       <div class="nav-menu" data-nav-menu>
-        <button class="nav-menu-toggle" type="button" data-nav-menu-toggle aria-expanded="false" aria-haspopup="true">Platform</button>
-        <div class="nav-dropdown" aria-label="Platform">
-          <a href="/dashboard/">Command Center</a>
-          <a href="/operational-intelligence/">Operational Intelligence</a>
-          <a href="/capacity-intelligence/">Capacity Intelligence</a>
-          <a href="/business-operations/">Business Operations</a>
-          <a href="/customer-portal/">Customer Portal</a>
-          <a href="/scenario-walkthrough/">BOF Assessment</a>
-          <a href="/demo-paths/">Assessment Paths</a>
+        <button class="nav-menu-toggle" type="button" data-nav-menu-toggle aria-expanded="false" aria-haspopup="true">Who We Serve</button>
+        <div class="nav-dropdown" aria-label="Who We Serve">
+          <a href="/fleet/">Fleet Owners</a>
+          <a href="/private-fleets/">Private Fleets</a>
+          <a href="/government/">Government Fleets</a>
+          <a href="/aggregator-outreach/">Aggregators</a>
         </div>
       </div>
-      <div class="nav-menu" data-nav-menu>
-        <button class="nav-menu-toggle" type="button" data-nav-menu-toggle aria-expanded="false" aria-haspopup="true">Workflows</button>
-        <div class="nav-dropdown" aria-label="Workflows">
-          <a href="/customer-portal/load-intake/">Load Intake</a>
-          <a href="/customer-portal/quotes/">Quotes</a>
-          <a href="/customer-portal/shipments/">Shipments</a>
-          <a href="/customer-portal/assignment/">Assignment</a>
-          <a href="/documents/">Documents</a>
-          <a href="/interactive-demo/drivers/document-intake/">Document Intake</a>
-          <a href="/customer-portal/tracking/">Tracking</a>
-          <a href="/customer-portal/billing/">Billing</a>
-          <a href="/settlements/">Settlements</a>
-          <a href="/operations-record/">Claims &amp; Records</a>
-        </div>
-      </div>
-      <div class="nav-menu" data-nav-menu>
-        <button class="nav-menu-toggle" type="button" data-nav-menu-toggle aria-expanded="false" aria-haspopup="true">Drivers &amp; Compliance</button>
-        <div class="nav-dropdown" aria-label="Drivers and Compliance">
-          <a href="/drivers/">Drivers</a>
-          <a href="/interactive-demo/drivers/">Driver Vault Assessment</a>
-          <a href="/interactive-demo/drivers/document-intake/">Document Intake</a>
-          <a href="/carrier-readiness/">Carrier Readiness</a>
-          <a href="/documents/">Documents</a>
-          <a href="/safety/">Safety</a>
-          <a href="/safety-compliance/">Compliance Workflows</a>
-          <a href="/settlements/">Driver Settlements</a>
-        </div>
-      </div>
-      <div class="nav-menu" data-nav-menu>
-        <button class="nav-menu-toggle" type="button" data-nav-menu-toggle aria-expanded="false" aria-haspopup="true">Solutions</button>
-        <div class="nav-dropdown" aria-label="Solutions">
-          <a href="/fleet/">Fleet Operators</a>
-          <a href="/private-fleets/">Private Fleet Assessment</a>
-          <a href="/aggregator-command-center/">Aggregators</a>
-          <a href="/sectors/">Sectors</a>
-          <a href="/capacity-intelligence/">Backhaul &amp; Capacity Sharing</a>
-          <a href="/government/">Government Contractor Assessment</a>
-        </div>
-      </div>
-      <div class="nav-menu" data-nav-menu>
-        <button class="nav-menu-toggle" type="button" data-nav-menu-toggle aria-expanded="false" aria-haspopup="true">Demos</button>
-        <div class="nav-dropdown" aria-label="Demos">
-          <a href="/executive-demo/">Executive Demo</a>
-          <a href="/animated-demo/">Animated Demo</a>
-          <a href="/animated-demo-business/">Business Animated Demo</a>
-          <a href="/animated-demo-aggregator/">Aggregator Animated Demo</a>
-          <a href="/scenario-walkthrough/">BOF Assessment</a>
-          <a href="/demo-paths/">Assessment Paths</a>
-          <a href="/interactive-demo/start/">Try Demo</a>
-          <a href="/founding-fleet/apply/">Founding Member Application</a>
-        </div>
-      </div>
-      <div class="nav-menu" data-nav-menu>
-        <button class="nav-menu-toggle" type="button" data-nav-menu-toggle aria-expanded="false" aria-haspopup="true">Company / Contact</button>
-        <div class="nav-dropdown" aria-label="Company and Contact">
-          <a href="/">Homepage</a>
-          <a href="/solutions/">Solutions Overview</a>
-          <a href="/trust-governance/">Trust &amp; Governance</a>
-          <a href="/founding-fleet/">Founding Fleet</a>
-          <a href="/demo-paths/">Demo Paths</a>
-          <a href="/scenario-walkthrough/">BOF Assessment</a>
-        </div>
-      </div>
+      <a href="/drivers/">Drivers</a>
+      <a href="/dispatch/">Dispatch &amp; Operations</a>
+      <a href="/safety/">Safety &amp; Compliance</a>
+      <a href="/settlements/">Settlements &amp; Billing</a>
+      <a href="/business-operations/">Business Operations</a>
+      <a href="/policies-procedures/">Policies &amp; Procedures</a>
+      <a href="/trust-governance/">Company</a>
     </nav>
-    <a class="header-cta" href="/founding-fleet/apply/">Apply to Become a Founding Fleet Member</a>
+    <a class="header-cta" href="/scenario-walkthrough/">Take Fleet Assessment</a>
   </header>
   <main>
     <section class="section page-hero">
@@ -96,7 +37,7 @@
         <p class="eyebrow">TMS partner workflow</p>
         <h1>Follow an imported TMS load into a BOF release decision.</h1>
         <p>The partner workflow orients your team around TMS-LD-10482, a load that TMS manages while BOF checks driver compliance, carrier packet readiness, required documents, exception ownership, and the release decision.</p>
-        <div class="actions"><a class="button primary" href="/demo/tms-release-review/">View release readiness workflow &rarr;</a><a class="button secondary" href="/interactive-demo/start/">Try Release Review</a><a class="button secondary" href="/founding-fleet/apply/">Apply to Become a Founding Fleet Member</a></div>
+        <div class="actions"><a class="button primary" href="/demo/tms-release-review/">View release readiness workflow &rarr;</a><a class="button secondary" href="/interactive-demo/start/">Try Release Review</a><a class="button secondary" href="/scenario-walkthrough/">Take Fleet Assessment</a></div>
       </div>
       <div class="visual-stage reveal" aria-label="BOF load release workflow illustration">
         <img class="scene-illustration" src="/assets/images/animations/heroes/hero-demo-flow.webp" data-static-src="/assets/images/illustrations/fleet-flow-illustration.webp" alt="Isometric BOF fleet workflow showing driver readiness, document review, lane review, and load release">
@@ -213,7 +154,7 @@
         <article class="timeline-card reveal"><p class="eyebrow">03</p><h3>Check dispatch consequence</h3><p>See allowed, warning, review, and blocked decisions before the load moves so dispatch does not guess.</p><a class="button secondary" href="/dispatch/">View dispatch</a></article>
         <article class="timeline-card reveal"><p class="eyebrow">04</p><h3>Review document control</h3><p>Use complete paperwork records with dates, IDs, reviewer status, signatures, and release-packet detail.</p><a class="button secondary" href="/operations-record/#bol-review-1842">Review BOL record</a></article>
         <article class="timeline-card reveal"><p class="eyebrow">05</p><h3>Confirm driver and carrier status</h3><p>Connect driver, safety, and carrier packet status to the release decision so the blocker is specific.</p><a class="button secondary" href="/drivers/">View driver status</a></article>
-        <article class="timeline-card reveal"><p class="eyebrow">06</p><h3>Close with a BOF assessment</h3><p>After the demo, bring one real load, driver file, document packet, or release issue so BOF can map the record chain around it.</p><a class="button secondary" href="/scenario-walkthrough/">Request a BOF Assessment</a></article>
+        <article class="timeline-card reveal"><p class="eyebrow">06</p><h3>Close with a BOF assessment</h3><p>After the demo, bring one real load, driver file, document packet, or release issue so BOF can map the record chain around it.</p><a class="button secondary" href="/scenario-walkthrough/">Take the BOF Fleet Assessment</a></article>
       </div>
     </section>
     <section class="section">
@@ -231,7 +172,7 @@
         <p class="eyebrow">Hands-on layer</p>
         <h2>After the walkthrough, try one release decision.</h2>
         <p>The TMS partner workflow explains the operating model. The release scenario gives buyers a tighter hands-on path through <a class="proof-link" href="/operations-record/#bof-1842">TMS-LD-10482</a>: inspect BOF-RR-10482 records, choose Ready, Conditional, or Hold, and see how the dispatch consequence and simulated handoff change.</p>
-        <div class="actions"><a class="button primary" href="/interactive-demo/start/">Try Release Review &rarr;</a><a class="button secondary" href="/founding-fleet/apply/">Apply to Become a Founding Fleet Member</a></div>
+        <div class="actions"><a class="button primary" href="/interactive-demo/start/">Try Release Review &rarr;</a><a class="button secondary" href="/scenario-walkthrough/">Take Fleet Assessment</a></div>
       </div>
       <div class="proof-grid">
         <article class="proof-card reveal"><h3>Walkthrough</h3><p>Use this path to understand the command center, role handoffs, records, and governance behind BOF.</p></article>
@@ -239,9 +180,9 @@
       </div>
     </section>
   </main>
-  <section class="cta-band"><div class="cta-inner"><div><p class="eyebrow">Demo path</p><h2>One decision, with enough detail to judge BOF.</h2><p>BOF keeps the path centered on <a class="proof-link" href="/operations-record/#bof-1842">TMS-LD-10482</a> so the release packet, owner, blocker, and next action stay easy to follow before a buyer books a BOF assessment.</p></div><a class="button light" href="/scenario-walkthrough/">Request a BOF Assessment &rarr;</a></div></section>
+  <section class="cta-band"><div class="cta-inner"><div><p class="eyebrow">Demo path</p><h2>One decision, with enough detail to judge BOF.</h2><p>BOF keeps the path centered on <a class="proof-link" href="/operations-record/#bof-1842">TMS-LD-10482</a> so the release packet, owner, blocker, and next action stay easy to follow before a buyer books a BOF assessment.</p></div><a class="button light" href="/scenario-walkthrough/">Take the BOF Fleet Assessment &rarr;</a></div></section>
   <footer class="site-footer"><div class="footer-inner"><strong>BackOfficeFleet</strong><span>TMS partner operating review.</span></div></footer>
-  <script src="/assets/js/site.js?v=1.49"></script>
+  <script src="/assets/js/site.js?v=1.38"></script>
 </body>
 </html>
 

@@ -1,118 +1,171 @@
-<!doctype html>
+﻿<!doctype html>
 <html lang="en">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Driver Readiness | BackOfficeFleet</title>
   <meta name="description" content="BOF driver eligibility view for TMS imported loads with credentials, document health, safety status, dispatch eligibility, and next actions.">
-  <link rel="stylesheet" href="/assets/css/styles.css?v=1.49">
+  <link rel="stylesheet" href="/assets/css/styles.css?v=20260710-redesign-deploy-1">
 </head>
-<body>
+<body class="premium-site page-drivers">
   <header class="site-header">
     <a class="brand" href="/" aria-label="BackOfficeFleet home"><img src="/assets/images/logo/boflogo-original.png" alt="BackOfficeFleet"></a>
     <button class="nav-toggle" type="button" data-nav-toggle aria-expanded="false" aria-label="Toggle navigation">&#9776;</button>
-    <nav class="site-nav" data-nav aria-label="Main navigation">
+        <nav class="site-nav" data-nav aria-label="Main navigation">
       <div class="nav-menu" data-nav-menu>
-        <button class="nav-menu-toggle" type="button" data-nav-menu-toggle aria-expanded="false" aria-haspopup="true">Platform</button>
-        <div class="nav-dropdown" aria-label="Platform">
-          <a href="/dashboard/">Command Center</a>
-          <a href="/operational-intelligence/">Operational Intelligence</a>
-          <a href="/capacity-intelligence/">Capacity Intelligence</a>
-          <a href="/business-operations/">Business Operations</a>
-          <a href="/customer-portal/">Customer Portal</a>
-          <a href="/scenario-walkthrough/">BOF Assessment</a>
-          <a href="/demo-paths/">Assessment Paths</a>
+        <button class="nav-menu-toggle" type="button" data-nav-menu-toggle aria-expanded="false" aria-haspopup="true">Who We Serve</button>
+        <div class="nav-dropdown" aria-label="Who We Serve">
+          <a href="/fleet/">Fleet Owners</a>
+          <a href="/private-fleets/">Private Fleets</a>
+          <a href="/government/">Government Fleets</a>
+          <a href="/aggregator-outreach/">Aggregators</a>
         </div>
       </div>
-      <div class="nav-menu" data-nav-menu>
-        <button class="nav-menu-toggle" type="button" data-nav-menu-toggle aria-expanded="false" aria-haspopup="true">Workflows</button>
-        <div class="nav-dropdown" aria-label="Workflows">
-          <a href="/customer-portal/load-intake/">Load Intake</a>
-          <a href="/customer-portal/quotes/">Quotes</a>
-          <a href="/customer-portal/shipments/">Shipments</a>
-          <a href="/customer-portal/assignment/">Assignment</a>
-          <a href="/documents/">Documents</a>
-          <a href="/interactive-demo/drivers/document-intake/">Document Intake</a>
-          <a href="/customer-portal/tracking/">Tracking</a>
-          <a href="/customer-portal/billing/">Billing</a>
-          <a href="/settlements/">Settlements</a>
-          <a href="/operations-record/">Claims &amp; Records</a>
-        </div>
-      </div>
-      <div class="nav-menu" data-nav-menu>
-        <button class="nav-menu-toggle" type="button" data-nav-menu-toggle aria-expanded="false" aria-haspopup="true">Drivers &amp; Compliance</button>
-        <div class="nav-dropdown" aria-label="Drivers and Compliance">
-          <a href="/drivers/">Drivers</a>
-          <a href="/interactive-demo/drivers/">Driver Vault Assessment</a>
-          <a href="/interactive-demo/drivers/document-intake/">Document Intake</a>
-          <a href="/carrier-readiness/">Carrier Readiness</a>
-          <a href="/documents/">Documents</a>
-          <a href="/safety/">Safety</a>
-          <a href="/safety-compliance/">Compliance Workflows</a>
-          <a href="/settlements/">Driver Settlements</a>
-        </div>
-      </div>
-      <div class="nav-menu" data-nav-menu>
-        <button class="nav-menu-toggle" type="button" data-nav-menu-toggle aria-expanded="false" aria-haspopup="true">Solutions</button>
-        <div class="nav-dropdown" aria-label="Solutions">
-          <a href="/fleet/">Fleet Operators</a>
-          <a href="/private-fleets/">Private Fleet Assessment</a>
-          <a href="/aggregator-command-center/">Aggregators</a>
-          <a href="/sectors/">Sectors</a>
-          <a href="/capacity-intelligence/">Backhaul &amp; Capacity Sharing</a>
-          <a href="/government/">Government Contractor Assessment</a>
-        </div>
-      </div>
-      <div class="nav-menu" data-nav-menu>
-        <button class="nav-menu-toggle" type="button" data-nav-menu-toggle aria-expanded="false" aria-haspopup="true">Demos</button>
-        <div class="nav-dropdown" aria-label="Demos">
-          <a href="/executive-demo/">Executive Demo</a>
-          <a href="/animated-demo/">Animated Demo</a>
-          <a href="/animated-demo-business/">Business Animated Demo</a>
-          <a href="/animated-demo-aggregator/">Aggregator Animated Demo</a>
-          <a href="/scenario-walkthrough/">BOF Assessment</a>
-          <a href="/demo-paths/">Assessment Paths</a>
-          <a href="/interactive-demo/start/">Try Demo</a>
-          <a href="/founding-fleet/apply/">Founding Member Application</a>
-        </div>
-      </div>
-      <div class="nav-menu" data-nav-menu>
-        <button class="nav-menu-toggle" type="button" data-nav-menu-toggle aria-expanded="false" aria-haspopup="true">Company / Contact</button>
-        <div class="nav-dropdown" aria-label="Company and Contact">
-          <a href="/">Homepage</a>
-          <a href="/solutions/">Solutions Overview</a>
-          <a href="/trust-governance/">Trust &amp; Governance</a>
-          <a href="/founding-fleet/">Founding Fleet</a>
-          <a href="/demo-paths/">Demo Paths</a>
-          <a href="/scenario-walkthrough/">BOF Assessment</a>
-        </div>
-      </div>
+      <a href="/drivers/">Drivers</a>
+      <a href="/dispatch/">Dispatch &amp; Operations</a>
+      <a href="/safety/">Safety &amp; Compliance</a>
+      <a href="/settlements/">Settlements &amp; Billing</a>
+      <a href="/business-operations/">Business Operations</a>
+      <a href="/policies-procedures/">Policies &amp; Procedures</a>
+      <a href="/trust-governance/">Company</a>
     </nav>
-    <a class="header-cta" href="/founding-fleet/apply/">Apply to Become a Founding Fleet Member</a>
+    <a class="header-cta" href="/scenario-walkthrough/">Take the BOF Fleet Assessment</a>
   </header>
-  <main>
-    <section class="section page-hero">
-      <div class="reveal"><p class="eyebrow">Driver eligibility</p><h1>BOF driver records explain whether the TMS assignment can release.</h1><p>TMS can show the assigned driver. BOF keeps credentials, documents, safety flags, and next actions together so dispatch does not guess from separate spreadsheets. BOF shows why M. Alvarez can support <a class="proof-link" href="/operations-record/#bof-1842">TMS-LD-10482</a> while another driver remains on hold.</p><div class="actions"><a class="button primary" href="/safety/">Review credential status &rarr;</a><a class="button secondary" href="/dispatch/">Back to dispatch</a></div></div>
-      <div class="demo-panel reveal">
-        <p class="eyebrow">Driver profile</p>
-        <h2>M. Alvarez is ready for <a class="proof-link" href="/operations-record/#bof-1842">TMS-LD-10482</a>.</h2>
-        <ul class="mini-list">
-          <li><span>Driver ID</span><a class="proof-link" href="/operations-record/#drv-2048">DRV-2048</a></li>
-          <li><span>Credential file</span><a class="proof-link" href="/operations-record/#drv-2048">Current</a></li>
-          <li><span>Medical card</span><a class="proof-link" href="/operations-record/#medical-card-2048">Aug 18, 2026</a></li>
-          <li><span>Safety review</span><span class="status ready">Clear</span></li>
-          <li><span>Dispatch eligibility</span><span class="status ready">Release</span></li>
-        </ul>
+  <main class="workflow-dashboard-page">
+    <section class="section page-hero dashboard-hero-system product-stage console-primary-hero executive-command-hero">
+      <div class="visual-stage command-center-dashboard-stage command-center-frame reveal" aria-label="BOF Driver Command Center dashboard">
+        <a class="executive-visual-pill" href="/scenario-walkthrough/">Driver command hero</a>
+        <div class="product-stage-header">
+          <div class="product-console-heading"><p class="eyebrow">Driver command center</p><h1>Drivers</h1><p class="command-hero-tagline">Driver readiness starts the workflow.</p><p>BOF helps transform driver records into operational readiness. Driver profile, DQF status, BOF Vault intake, safety records, and assignments stay connected.</p></div>
+        </div>
+        <div class="executive-command-flow section-primary-links" aria-label="Driver readiness pages">
+          <a class="command-flow-pill is-green" href="#driver-profiles">Driver Profile</a>
+          <a class="command-flow-pill is-green" href="#credential-review">Documents &amp; DQF</a>
+          <a class="command-flow-pill is-gold" href="#document-intake">BOF Vault Intake</a>
+          <a class="command-flow-pill is-blue" href="#driver-roster">Readiness</a>
+          <a class="command-flow-pill is-green" href="/safety/">Safety</a>
+          <a class="command-flow-pill is-plain" href="/dispatch/">Operations</a>
+        </div>
+        <div class="executive-dashboard-board">
+          <div class="executive-board-header">
+            <div><h2>Driver Operating View</h2><p>Profile status, DQF records, intake reviews, safety signals, and assignment readiness in one board.</p></div>
+            <div class="executive-status-row"><span class="executive-status is-ready">Ready 38</span><span class="executive-status is-risk">Review 7</span><span class="executive-status is-blocked">Blocked 2</span></div>
+          </div>
+          <div class="executive-metric-grid">
+            <article class="executive-metric-card"><div><span>Drivers ready</span><strong>38</strong><p>eligible now</p></div><b class="metric-badge is-ready">DR</b></article>
+            <article class="executive-metric-card"><div><span>Pending reviews</span><strong>7</strong><p>queued checks</p></div><b class="metric-badge is-risk">RV</b></article>
+            <article class="executive-metric-card"><div><span>Expiring documents</span><strong>12</strong><p>upcoming dates</p></div><b class="metric-badge is-risk">EX</b></article>
+            <article class="executive-metric-card"><div><span>Training complete</span><strong>91%</strong><p>acknowledged</p></div><b class="metric-badge is-ready">TR</b></article>
+            <article class="executive-metric-card"><div><span>Assignments available</span><strong>24</strong><p>drivers open</p></div><b class="metric-badge is-blue">AS</b></article>
+            <article class="executive-metric-card is-dark"><div><span>Open exceptions</span><strong>2</strong><p>owner assigned</p></div></article>
+          </div>
+          <div class="command-readiness-flow"><strong>Driver Readiness Flow</strong><span>Profile</span><span>DQF</span><span>Vault</span><span>Review</span><span>Safety</span><span>Assignment</span></div>
+          <div class="dashboard-module-grid command-module-grid">
+            <a class="floating-status-card metric-tile" href="#driver-profiles"><span class="module-icon is-ready">P</span><em>Driver Profile</em><strong>Eligibility Summary</strong><p>Driver summary, assignment eligibility, and current status.</p><i class="module-progress three-green"></i></a>
+            <a class="floating-status-card workflow-module" href="#credential-review"><span class="module-icon is-risk">D</span><em>Docs &amp; DQF</em><strong>File Readiness</strong><p>CDL, medical card, MVR, DQF completion, and training acknowledgement.</p><i class="module-progress risk-mix"></i></a>
+            <a class="floating-status-card evidence-module" href="#document-intake"><span class="module-icon is-blue">V</span><em>Document Intake</em><strong>BOF Vault Queue</strong><p>Uploads, pending reviews, and recently received records.</p><i class="module-progress blue-mix"></i></a>
+            <a class="floating-status-card checklist-row" href="#driver-roster"><span class="module-icon is-ready">R</span><em>Readiness</em><strong>Decision Status</strong><p>Ready, needs review, blocked, or expiring soon.</p><i class="module-progress risk-mix"></i></a>
+            <a class="floating-status-card evidence-module" href="/safety/"><span class="module-icon is-blocked">S</span><em>Safety</em><strong>Safety Record</strong><p>Training, incident history, acknowledgements, and compliance review.</p><i class="module-progress risk-mix"></i></a>
+            <a class="floating-status-card workflow-module" href="/dispatch/"><span class="module-icon is-blue">O</span><em>Operations</em><strong>Assignment View</strong><p>Current assignment, upcoming load, availability, and recent activity.</p><i class="module-progress blue-mix"></i></a>
+            <a class="embedded-cta-card executive-bottom-cta" href="/scenario-walkthrough/"><strong>Take the BOF Fleet Assessment</strong><span>Next Step</span></a>
+          </div>
+        </div>
       </div>
     </section>
-    <section class="section">
-      <div class="doc-list">
-        <article class="doc reveal"><span class="icon">01</span><div><h3><a class="proof-link" href="/operations-record/#drv-2048">M. Alvarez</a></h3><p class="doc-owner"><a class="proof-link" href="/operations-record/#drv-2048">DRV-2048</a> &middot; assigned to <a class="proof-link" href="/operations-record/#bof-1842">TMS-LD-10482</a></p><p>CDL, MVR, <a class="proof-link" href="/operations-record/#medical-card-2048">medical card</a>, and acknowledgements are aligned for Dallas to Memphis.</p></div><span class="status ready">Ready</span></article>
-        <article class="doc reveal"><span class="icon">02</span><div><h3><a class="proof-link" href="/operations-record/#driver-1187">J. Carter</a></h3><p class="doc-owner"><a class="proof-link" href="/operations-record/#driver-1187">DRV-1187</a> &middot; <a class="proof-link" href="/operations-record/#bof-1907">BOF-1907</a> watch</p><p><a class="proof-link" href="/operations-record/#bol-review-1907">BOL photo review</a> is pending before the Kansas City release decision.</p></div><span class="status review">Watch</span></article>
-        <article class="doc reveal"><span class="icon">03</span><div><h3><a class="proof-link" href="/operations-record/#driver-3301">T. Brooks</a></h3><p class="doc-owner"><a class="proof-link" href="/operations-record/#driver-3301">DRV-3301</a> &middot; <a class="proof-link" href="/operations-record/#bof-1931">BOF-1931</a> hold</p><p><a class="proof-link" href="/operations-record/#medical-card-3301">Medical card update</a> must be attached before dispatch can assign the St. Louis lane.</p></div><span class="status blocked">Hold</span></article>
+
+    <section class="section" id="driver-profiles">
+      <div class="section-head reveal">
+        <p class="eyebrow">Illustrative driver profiles</p>
+        <h2>Driver profiles show readiness, assigned work, and the reason a record needs attention.</h2>
+        <p>These demo records are illustrative only. They show how BOF can present a driver profile without exposing real driver private data: readiness state, home base, assigned load, document status, DQF score, and next action stay visible for operations review.</p>
+      </div>
+      <div class="proof-grid">
+        <article class="proof-card reveal"><h3>M. Alvarez &middot; Dallas base</h3><p>Ready driver profile with CDL, medical card, MVR, policy acknowledgements, assigned load, and dispatch release note attached.</p><span class="route-chip">DQF 94 &middot; Ready</span></article>
+        <article class="proof-card reveal"><h3>J. Carter &middot; Tulsa base</h3><p>Watch profile: the driver is eligible, but the assigned load still needs BOL image confirmation and carrier renewal evidence.</p><span class="route-chip warning">DQF 88 &middot; Watch</span></article>
+        <article class="proof-card reveal"><h3>T. Brooks &middot; Little Rock base</h3><p>Hold profile: dispatch sees the controlling medical card update, the owner, and the release consequence before assignment.</p><span class="route-chip danger">DQF 71 &middot; Hold</span></article>
+        <article class="proof-card reveal"><h3>HR onboarding handoff</h3><p>Application, screening, payroll setup, benefits coordination, training, and active-worker setup belong in Business Operations / HR, while Drivers shows the readiness consequence.</p><a class="route-chip" href="/business-operations/driver-onboarding/">Open HR onboarding</a></article>
       </div>
     </section>
-    <section class="section">
+
+    <section class="section" id="document-intake">
+      <div class="section-head reveal">
+        <p class="eyebrow">Drivers + BOF Vault</p>
+        <h2>Driver documents become readiness signals before dispatch depends on them.</h2>
+        <p>BOF Vault belongs inside the driver workflow as the intake mechanism for CDL, medical card, MVR, DQF, policy acknowledgements, renewal-risk records, and HR handoff context. BOF then turns those documents into practical readiness signals for dispatch, safety, settlement, and business-office follow-through.</p>
+      </div>
+      <div class="proof-grid">
+        <article class="proof-card reveal"><h3>Driver Documents &amp; DQF</h3><p>Identity, license, medical, MVR, employment, policy, renewal, and qualification records stay connected to the driver file.</p><a class="route-chip" href="#driver-documents-video">Watch driver documents video</a></article>
+        <article class="proof-card reveal"><h3>Business Operations Handoff</h3><p>Application, screening, payroll setup, benefits coordination, training, and worker-record setup belong in Business Operations / HR. Drivers shows the readiness consequence for dispatch.</p><a class="route-chip" href="/business-operations/hr-tier/">See HR Tier context</a></article>
+        <article class="proof-card reveal"><h3>Credential Review &amp; Renewal Risk</h3><p>License, medical card, MVR, insurance proof, and acknowledgement dates appear as DQF and credential readiness signals before they block work.</p><a class="route-chip" href="#credential-review">Open credential review</a></article>
+      </div>
+    </section>
+
+    <section class="section bof-video-section" id="driver-documents-video" aria-labelledby="driver-documents-video-title">
+      <div class="bof-video-layout reveal">
+        <div class="bof-video-copy">
+          <p class="eyebrow">Driver documents video</p>
+          <h2 id="driver-documents-video-title">See how BOF keeps driver readiness reviewable.</h2>
+          <p>The driver documents video shows how BOF keeps driver records, DQF status, HR handoff notes, renewal risks, and review notes connected to the operating record instead of leaving them in loose folders.</p>
+        </div>
+        <div class="bof-video-frame">
+          <video class="bof-video" controls preload="metadata" poster="/assets/images/video-posters/bof-driver-vault.jpg" aria-label="BOF driver documents and readiness video">
+            <source src="/assets/videos/bof-driver-vault.mp4" type="video/mp4">
+            Your browser does not support the video tag.
+          </video>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="driver-roster">
+      <div class="section-head reveal">
+        <p class="eyebrow">Illustrative demo roster</p>
+        <h2>Driver roster cards make readiness, DQF status, and document coverage visible without exposing private records.</h2>
+        <p>These sample readiness cards use existing demo profile imagery and synthetic operating labels. They do not represent real customer drivers, license numbers, birth dates, home addresses, SSNs, or payroll account data.</p>
+      </div>
+      <div class="demo-roster-grid">
+        <article class="demo-driver-card reveal">
+          <img src="/assets/images/profiles/drivers/driver-ref-001.jpg" alt="Illustrative demo driver profile portrait for ready roster card" loading="lazy" decoding="async">
+          <div>
+            <h3>Demo Driver 01 &middot; M. Alvarez</h3>
+            <p>Assigned driver profile for a Dallas to Memphis release review.</p>
+            <div class="demo-driver-meta">
+              <div><span>Status</span><strong><em class="status ready">Ready</em></strong></div>
+              <div><span>Credential / DQF</span><strong>CDL, medical card, MVR, clearinghouse, and acknowledgements current</strong></div>
+              <div><span>Documents</span><strong>Driver qualification file, emergency contact, policy acknowledgements, protected W-9/I-9 status</strong></div>
+              <div><span>Dispatch consequence</span><strong>Eligible once load packet evidence clears</strong></div>
+            </div>
+          </div>
+        </article>
+        <article class="demo-driver-card reveal">
+          <img src="/assets/images/profiles/drivers/driver-ref-002.jpg" alt="Illustrative demo driver profile portrait for watch roster card" loading="lazy" decoding="async">
+          <div>
+            <h3>Demo Driver 02 &middot; J. Carter</h3>
+            <p>Watch profile where the driver can remain eligible while the load packet still needs attention.</p>
+            <div class="demo-driver-meta">
+              <div><span>Status</span><strong><em class="status review">Watch</em></strong></div>
+              <div><span>Credential / DQF</span><strong>DQF usable for planning; renewal evidence stays visible before final assignment</strong></div>
+              <div><span>Documents</span><strong>CDL, MVR, medical card, clearinghouse-style review, BOL proof follow-up</strong></div>
+              <div><span>Dispatch consequence</span><strong>Packet owner confirms BOL and carrier evidence before release</strong></div>
+            </div>
+          </div>
+        </article>
+        <article class="demo-driver-card reveal">
+          <img src="/assets/images/profiles/drivers/driver-ref-003.jpg" alt="Illustrative demo driver profile portrait for hold roster card" loading="lazy" decoding="async">
+          <div>
+            <h3>Demo Driver 03 &middot; T. Brooks</h3>
+            <p>Hold profile where one missing credential controls the dispatch decision.</p>
+            <div class="demo-driver-meta">
+              <div><span>Status</span><strong><em class="status blocked">Hold</em></strong></div>
+              <div><span>Credential / DQF</span><strong>Medical certificate update pending safety review</strong></div>
+              <div><span>Documents</span><strong>CDL, MVR, DQF checklist, policy acknowledgement, safety review note</strong></div>
+              <div><span>Dispatch consequence</span><strong>Do not assign until the credential record clears</strong></div>
+            </div>
+          </div>
+        </article>
+      </div>
+      <p class="demo-note reveal">Demo license images were reviewed but not placed here because public roster cards should not display full license numbers, dates of birth, or home-address style fields.</p>
+    </section>
+    <section class="section" id="driver-documents">
       <div class="section-head reveal"><p class="eyebrow">Fleet-owned driver files</p><h2>Each driver record has the paperwork a fleet owner expects to inspect.</h2><p>BOF separates the fleet&apos;s own driver qualification files from outside carrier packet records. A carrier can be attached to the load, but BOF does not pretend the fleet owner controls another company&apos;s employee file.</p></div>
       <div class="table-wrap reveal document-registry">
         <table>
@@ -127,13 +180,42 @@
           </tbody>
         </table>
       </div>
+      <div class="evidence-grid">
+        <article class="evidence-card reveal">
+          <h3>Demo Credential Panel</h3>
+          <p>Shows the credential categories BOF would organize for review without exposing the underlying sensitive fields.</p>
+          <dl>
+            <div><dt>Required</dt><dd>CDL, medical card, MVR, clearinghouse-style review, policy acknowledgements</dd></div>
+            <div><dt>Owner</dt><dd>Safety lead with operations visibility</dd></div>
+            <div><dt>Release effect</dt><dd>Ready, watch, or hold appears before dispatch assigns the lane</dd></div>
+          </dl>
+        </article>
+        <article class="evidence-card reveal">
+          <h3>Sample Readiness Card</h3>
+          <p>Converts document coverage into a plain-language decision for dispatch, safety, and settlements.</p>
+          <dl>
+            <div><dt>Ready</dt><dd>Credential file current and no safety blocker on the selected load</dd></div>
+            <div><dt>Watch</dt><dd>Driver usable for planning while a renewal or packet item remains visible</dd></div>
+            <div><dt>Hold</dt><dd>Credential update, DQF review, or safety owner action blocks assignment</dd></div>
+          </dl>
+        </article>
+        <article class="evidence-card reveal">
+          <h3>Safe Demo Data Rule</h3>
+          <p>Public examples use synthetic labels, initials, and status summaries instead of full private driver records.</p>
+          <dl>
+            <div><dt>Allowed</dt><dd>Demo driver labels, DQF state, document category, owner, and consequence</dd></div>
+            <div><dt>Not shown</dt><dd>Full license numbers, DOBs, SSNs, home addresses, bank details, or real customer files</dd></div>
+            <div><dt>Why it matters</dt><dd>The page demonstrates operating readiness without implying live customer data exposure</dd></div>
+          </dl>
+        </article>
+      </div>
       <div class="proof-grid">
         <article class="proof-card reveal"><h3>Ready example</h3><p>DRV-2048 shows a clear driver file: current license, medical card, MVR, employment file, safety acknowledgements, and dispatch eligibility.</p><span class="route-chip">High confidence</span></article>
         <article class="proof-card reveal"><h3>Watch example</h3><p>DRV-1187 shows that a driver can be eligible while the load stays on watch because a BOL photo or carrier renewal still needs review.</p><span class="route-chip warning">Medium priority</span></article>
         <article class="proof-card reveal"><h3>Hold example</h3><p>DRV-3301 shows a clear stop: the medical certificate update controls the lane until safety attaches and reviews the new record.</p><span class="route-chip danger">High priority</span></article>
       </div>
     </section>
-    <section class="section">
+    <section class="section" id="credential-review">
       <div class="section-head reveal"><p class="eyebrow">Driver readiness packets</p><h2>Every driver status explains the BOF release consequence.</h2><p>The driver view separates a TMS assignment that clears BOF review, a watch item tied to document review, and a credential hold that blocks dispatch. Each packet names the record, owner, and next action.</p></div>
       <div class="paper-stack">
         <div class="paper reveal">
@@ -244,11 +326,11 @@
         <article class="proof-card reveal"><h3>Remote access and communications</h3><p>Remote follow-up, driver messaging, and back-office communications stay tied to controlled access expectations.</p><a class="route-chip warning" href="/trust-governance/#policy-library">DAT-IT-009 / DAT-IT-010</a></article>
       </div>
     </section>
-    <section class="section website-photo-section">
+    <section class="section website-photo-section" id="driver-readiness-demo">
       <div class="section-head reveal">
         <p class="eyebrow">Driver record context</p>
         <h2>Driver readiness should look like a real file, not a placeholder profile.</h2>
-        <p>These photos reinforce the client’s driver-file standard: paperwork, safety review, document capture, and dispatch eligibility stay connected.</p>
+        <p>These photos reinforce the clientâ€™s driver-file standard: paperwork, safety review, document capture, and dispatch eligibility stay connected.</p>
       </div>
       <div class="website-photo-grid">
         <article class="website-photo-card reveal"><img loading="lazy" decoding="async" src="/assets/images/photos/site-pass/15-driver-file-working-session.webp" alt="Fleet owner, dispatcher, and back-office consultant reviewing load records"><div><h3>Driver file BOF assessment</h3><p>The first review starts with actual records and the blockers around them.</p></div></article>
@@ -260,7 +342,7 @@
   </main>
   <section class="cta-band"><div class="cta-inner"><div><p class="eyebrow">Next step</p><h2>Connect driver eligibility to safety and compliance.</h2><p>Dispatch can trust the assignment when the safety view explains which credentials clear <a class="proof-link" href="/operations-record/#bof-1842">TMS-LD-10482</a> and which missing record keeps <a class="proof-link" href="/operations-record/#bof-1931">BOF-1931</a> on hold.</p></div><a class="button light" href="/safety/">Open credential status &rarr;</a></div></section>
   <footer class="site-footer"><div class="footer-inner"><strong>BackOfficeFleet</strong><span>Driver eligibility.</span><a href="/trust-governance/">Trust &amp; Governance</a></div></footer>
-  <script src="/assets/js/site.js?v=1.49"></script>
+  <script src="/assets/js/site.js?v=1.50"></script>
 </body>
 </html>
 

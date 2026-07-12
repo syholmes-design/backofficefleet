@@ -1,11 +1,11 @@
-<!doctype html>
+﻿<!doctype html>
 <html lang="en">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Capacity Intelligence | BackOfficeFleet</title>
   <meta name="description" content="BOF Capacity Intelligence gives fleets, carrier networks, and small aggregators a readiness view of compliant, documented, and available capacity.">
-  <link rel="stylesheet" href="/assets/css/styles.css?v=1.49">
+  <link rel="stylesheet" href="/assets/css/styles.css?v=1.41">
   <style>
     .ci-hero { background: linear-gradient(135deg, rgba(12,95,67,0.96), rgba(37,111,148,0.92) 56%, rgba(20,33,31,0.98)); color: #fff; overflow: hidden; position: relative; }
     .ci-hero::after { background-image: linear-gradient(rgba(255,255,255,0.08) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.08) 1px, transparent 1px); background-size: 42px 42px; content: ""; inset: 0; pointer-events: none; position: absolute; }
@@ -56,84 +56,25 @@
   <header class="site-header">
     <a class="brand" href="/" aria-label="BackOfficeFleet home"><img src="/assets/images/logo/boflogo-original.png" alt="BackOfficeFleet"></a>
     <button class="nav-toggle" type="button" data-nav-toggle aria-expanded="false" aria-label="Toggle navigation">&#9776;</button>
-    <nav class="site-nav" data-nav aria-label="Main navigation">
+        <nav class="site-nav" data-nav aria-label="Main navigation">
       <div class="nav-menu" data-nav-menu>
-        <button class="nav-menu-toggle" type="button" data-nav-menu-toggle aria-expanded="false" aria-haspopup="true">Platform</button>
-        <div class="nav-dropdown" aria-label="Platform">
-          <a href="/dashboard/">Command Center</a>
-          <a href="/operational-intelligence/">Operational Intelligence</a>
-          <a href="/capacity-intelligence/">Capacity Intelligence</a>
-          <a href="/business-operations/">Business Operations</a>
-          <a href="/customer-portal/">Customer Portal</a>
-          <a href="/scenario-walkthrough/">BOF Assessment</a>
-          <a href="/demo-paths/">Assessment Paths</a>
+        <button class="nav-menu-toggle" type="button" data-nav-menu-toggle aria-expanded="false" aria-haspopup="true">Who We Serve</button>
+        <div class="nav-dropdown" aria-label="Who We Serve">
+          <a href="/fleet/">Fleet Owners</a>
+          <a href="/private-fleets/">Private Fleets</a>
+          <a href="/government/">Government Fleets</a>
+          <a href="/aggregator-outreach/">Aggregators</a>
         </div>
       </div>
-      <div class="nav-menu" data-nav-menu>
-        <button class="nav-menu-toggle" type="button" data-nav-menu-toggle aria-expanded="false" aria-haspopup="true">Workflows</button>
-        <div class="nav-dropdown" aria-label="Workflows">
-          <a href="/customer-portal/load-intake/">Load Intake</a>
-          <a href="/customer-portal/quotes/">Quotes</a>
-          <a href="/customer-portal/shipments/">Shipments</a>
-          <a href="/customer-portal/assignment/">Assignment</a>
-          <a href="/documents/">Documents</a>
-          <a href="/interactive-demo/drivers/document-intake/">Document Intake</a>
-          <a href="/customer-portal/tracking/">Tracking</a>
-          <a href="/customer-portal/billing/">Billing</a>
-          <a href="/settlements/">Settlements</a>
-          <a href="/operations-record/">Claims &amp; Records</a>
-        </div>
-      </div>
-      <div class="nav-menu" data-nav-menu>
-        <button class="nav-menu-toggle" type="button" data-nav-menu-toggle aria-expanded="false" aria-haspopup="true">Drivers &amp; Compliance</button>
-        <div class="nav-dropdown" aria-label="Drivers and Compliance">
-          <a href="/drivers/">Drivers</a>
-          <a href="/interactive-demo/drivers/">Driver Vault Assessment</a>
-          <a href="/interactive-demo/drivers/document-intake/">Document Intake</a>
-          <a href="/carrier-readiness/">Carrier Readiness</a>
-          <a href="/documents/">Documents</a>
-          <a href="/safety/">Safety</a>
-          <a href="/safety-compliance/">Compliance Workflows</a>
-          <a href="/settlements/">Driver Settlements</a>
-        </div>
-      </div>
-      <div class="nav-menu" data-nav-menu>
-        <button class="nav-menu-toggle" type="button" data-nav-menu-toggle aria-expanded="false" aria-haspopup="true">Solutions</button>
-        <div class="nav-dropdown" aria-label="Solutions">
-          <a href="/fleet/">Fleet Operators</a>
-          <a href="/private-fleets/">Private Fleet Assessment</a>
-          <a href="/aggregator-command-center/">Aggregators</a>
-          <a href="/sectors/">Sectors</a>
-          <a href="/capacity-intelligence/">Backhaul &amp; Capacity Sharing</a>
-          <a href="/government/">Government Contractor Assessment</a>
-        </div>
-      </div>
-      <div class="nav-menu" data-nav-menu>
-        <button class="nav-menu-toggle" type="button" data-nav-menu-toggle aria-expanded="false" aria-haspopup="true">Demos</button>
-        <div class="nav-dropdown" aria-label="Demos">
-          <a href="/executive-demo/">Executive Demo</a>
-          <a href="/animated-demo/">Animated Demo</a>
-          <a href="/animated-demo-business/">Business Animated Demo</a>
-          <a href="/animated-demo-aggregator/">Aggregator Animated Demo</a>
-          <a href="/scenario-walkthrough/">BOF Assessment</a>
-          <a href="/demo-paths/">Assessment Paths</a>
-          <a href="/interactive-demo/start/">Try Demo</a>
-          <a href="/founding-fleet/apply/">Founding Member Application</a>
-        </div>
-      </div>
-      <div class="nav-menu" data-nav-menu>
-        <button class="nav-menu-toggle" type="button" data-nav-menu-toggle aria-expanded="false" aria-haspopup="true">Company / Contact</button>
-        <div class="nav-dropdown" aria-label="Company and Contact">
-          <a href="/">Homepage</a>
-          <a href="/solutions/">Solutions Overview</a>
-          <a href="/trust-governance/">Trust &amp; Governance</a>
-          <a href="/founding-fleet/">Founding Fleet</a>
-          <a href="/demo-paths/">Demo Paths</a>
-          <a href="/scenario-walkthrough/">BOF Assessment</a>
-        </div>
-      </div>
+      <a href="/drivers/">Drivers</a>
+      <a href="/dispatch/">Dispatch &amp; Operations</a>
+      <a href="/safety/">Safety &amp; Compliance</a>
+      <a href="/settlements/">Settlements &amp; Billing</a>
+      <a href="/business-operations/">Business Operations</a>
+      <a href="/policies-procedures/">Policies &amp; Procedures</a>
+      <a href="/trust-governance/">Company</a>
     </nav>
-    <a class="header-cta" href="/founding-fleet/apply/">Apply to Become a Founding Fleet Member</a>
+    <a class="header-cta" href="/scenario-walkthrough/">Take Fleet Assessment</a>
   </header>
   <main>
     <section class="ci-hero" id="capacity-intelligence-command">
@@ -145,13 +86,11 @@
           <p>BOF provides operational infrastructure for fleets, carrier networks, small aggregators, and multi-carrier operations by showing where compliant, documented, and operationally ready capacity exists before an executive review moves forward.</p>
           <div class="actions"><a class="button light" href="#network-health">View network health</a><a class="button secondary" href="#asset-intelligence">Inspect assets</a></div>
           <nav class="ci-demo-path" aria-label="Executive demo path">
-            <a href="/aggregator-command-center/">Aggregator Command</a>
             <a href="/interactive-demo/start/">Command Center</a>
             <a href="/carrier-readiness/">Carrier Registry</a>
             <a href="/carrier-readiness/">Carrier Readiness</a>
             <a href="/capacity-intelligence/">Capacity Intelligence</a>
             <a href="/operational-intelligence/">Operational Intelligence</a>
-      <a href="/business-operations/">Business Operations</a>
             <a href="/customer-portal/">Customer Portal</a>
           </nav>
         </div>
@@ -238,37 +177,6 @@
       </div>
     </section>
 
-    <section class="section" id="aggregator-capacity-view">
-      <div class="section-head reveal"><p class="eyebrow">Aggregator Capacity View</p><h2>BOF helps aggregators understand readiness across participating networks.</h2><p>BOF helps aggregators understand capacity readiness without forcing every carrier into the same operating structure. The view shows which carriers, drivers, assets, and documents are ready while keeping private customer and BOF relationship details out of the operating display.</p></div>
-      <div class="capacity-kpi-grid">
-        <article class="metric reveal"><span>Network capacity by region</span><strong>5</strong><p>regions summarized by equipment, readiness, and sharing posture</p></article>
-        <article class="metric reveal"><span>Participating carriers</span><strong>46</strong><p>carrier records across network and aggregator views</p></article>
-        <article class="metric reveal"><span>Ready assets</span><strong>128</strong><p>assets with clear readiness, documentation, and availability signals</p></article>
-        <article class="metric reveal"><span>At-risk assets</span><strong>34</strong><p>assets needing safety, compliance, document, or claims review</p></article>
-        <article class="metric reveal"><span>Restricted assets</span><strong>8</strong><p>assets held until the operating record clears</p></article>
-        <article class="metric reveal"><span>Backhaul-ready assets</span><strong>42</strong><p>drivers and equipment available after delivery closeout</p></article>
-        <article class="metric reveal"><span>Carrier readiness score</span><strong>90%</strong><p>average carrier packet, authority, insurance, and operating posture</p></article>
-        <article class="metric reveal"><span>Documentation readiness score</span><strong>91%</strong><p>DQF, certificate, equipment, delivery, and settlement proof coverage</p></article>
-      </div>
-      <div class="table-wrap reveal">
-        <h3>Aggregator Network Readiness</h3>
-        <table>
-          <thead><tr><th>Network</th><th>Participating Carriers</th><th>Trucks</th><th>Ready Assets</th><th>At-Risk Assets</th><th>Backhaul Ready</th><th>Compliance Score</th><th>Sharing Status</th></tr></thead>
-          <tbody>
-            <tr><td>Midwest Reefer Alliance</td><td>8</td><td>42</td><td>33</td><td>7</td><td>14</td><td><span class="status ready">92</span></td><td><span class="status review">Limited</span></td></tr>
-            <tr><td>Great Lakes Owner-Operator Network</td><td>11</td><td>37</td><td>29</td><td>6</td><td>11</td><td><span class="status ready">90</span></td><td><span class="status ready">Opted In</span></td></tr>
-            <tr><td>Southeast Dedicated Capacity Group</td><td>6</td><td>26</td><td>17</td><td>7</td><td>5</td><td><span class="status review">82</span></td><td><span class="status blocked">Private</span></td></tr>
-            <tr><td>Ohio Valley Carrier Partners</td><td>7</td><td>31</td><td>24</td><td>5</td><td>8</td><td><span class="status ready">91</span></td><td><span class="status review">Limited</span></td></tr>
-            <tr><td>National Specialty Haul Network</td><td>14</td><td>54</td><td>25</td><td>9</td><td>4</td><td><span class="status ready">87</span></td><td><span class="status ready">Opted In</span></td></tr>
-          </tbody>
-        </table>
-      </div>
-      <div class="ci-insight-grid">
-        <article class="ci-insight reveal"><span class="status ready">Aggregator lens</span><strong>Readiness before commitments.</strong><p>BOF helps aggregators see operationally ready capacity before the network depends on a carrier, driver, asset, or document packet.</p><a class="route-chip" href="/aggregator-command-center/">Open Aggregator Command Center</a></article>
-        <article class="ci-insight reveal"><span class="status review">Network guardrail</span><strong>Visibility without overexposure.</strong><p>Capacity can be reviewed by region, equipment, and readiness while private relationship details remain outside the shared view.</p></article>
-      </div>
-    </section>
-
     <section class="section" id="asset-intelligence">
       <div class="section-head reveal"><p class="eyebrow">Asset intelligence</p><h2>Top available assets show why capacity visibility is more than a truck count.</h2><p>Assets are shown with equipment type, region, readiness status, safety score, compliance score, and best operating use case for executive review.</p></div>
       <div class="table-wrap reveal">
@@ -335,6 +243,6 @@
   </main>
   <section class="cta-band"><div class="cta-inner"><div><p class="eyebrow">Executive demo path</p><h2>Move from network visibility into trip-level operating intelligence.</h2><p>Use Capacity Intelligence for the owner-level readiness view, then open Operational Intelligence to show in-route signals, safety events, fuel indicators, verification evidence, and exceptions.</p></div><a class="button light" href="/operational-intelligence/">Open Operational Intelligence &rarr;</a></div></section>
   <footer class="site-footer"><div class="footer-inner"><strong>BackOfficeFleet</strong><span>Capacity readiness for fleets and carrier networks.</span><a href="/trust-governance/">Trust &amp; Governance</a></div></footer>
-  <script src="/assets/js/site.js?v=1.49"></script>
+  <script src="/assets/js/site.js?v=1.38"></script>
 </body>
 </html>
