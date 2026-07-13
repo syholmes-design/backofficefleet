@@ -4,10 +4,10 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>BackOfficeFleet | Trucking Back-Office Operating Layer</title>
-  <meta name="description" content="BackOfficeFleet helps for-hire trucking fleets control driver records, documents, release decisions, exceptions, and back-office follow-up before dispatch moves.">
-  <link rel="stylesheet" href="/assets/css/styles.css?v=20260712-home-command-fix">
+  <meta name="description" content="BackOfficeFleet helps trucking fleets control driver readiness, dispatch release, safety evidence, settlement proof, billing, and office follow-through before work slows down.">
+  <link rel="stylesheet" href="/assets/css/styles.css?v=20260713-home-recovery">
 </head>
-<body class="visual-refresh premium-site page-home">
+<body class="visual-refresh premium-site page-home page-home-recovered">
   <header class="site-header">
     <a class="brand" href="/" aria-label="BackOfficeFleet home"><img src="/assets/images/logo/boflogo-original.png" alt="BackOfficeFleet"></a>
     <button class="nav-toggle" type="button" data-nav-toggle aria-expanded="false" aria-label="Toggle navigation">&#9776;</button>
@@ -28,219 +28,225 @@
       <a href="/business-operations/">Business Operations</a>
       <a href="/policies-procedures/">Policies &amp; Procedures</a>
       <a href="/trust-governance/">Company</a>
+      <a class="nav-utility-link" href="/command-center/">Command Center</a>
     </nav>
     <a class="header-cta" href="/scenario-walkthrough/">Take the BOF Fleet Assessment</a>
   </header>
+
   <main>
-    <section class="hero home-command-hero">
-      <div class="hero-inner home-command-grid">
+    <section class="hero recovered-home-hero">
+      <div class="hero-inner recovered-hero-grid">
         <div class="hero-copy reveal">
-          <p class="eyebrow">BOF Command Center</p>
-          <h1>Command the back office before the fleet slows down.</h1>
-          <p>BackOfficeFleet organizes driver readiness, dispatch release, safety review, settlement packets, and business-office follow-through into one operating layer with clear owners and next actions.</p>
+          <p class="eyebrow">Back-office operating system for trucking</p>
+          <h1>Build the office layer that keeps freight moving.</h1>
+          <p>BackOfficeFleet gives fleet owners one operating structure for driver readiness, dispatch release, safety evidence, settlement proof, billing, and office follow-through.</p>
           <div class="actions">
             <a class="button primary" href="/scenario-walkthrough/">Take the BOF Fleet Assessment</a>
-            <a class="button secondary" href="/business-operations/">Open Business Operations</a>
+            <a class="button secondary" href="/command-center/">Open Command Center</a>
           </div>
         </div>
 
-        <aside class="home-command-panel reveal" aria-label="BOF command routes">
-          <div class="home-panel-top">
-            <span>Operating routes</span>
-            <strong>Ready 84%</strong>
+        <aside class="recovered-hero-card reveal" aria-label="BackOfficeFleet operating brief">
+          <img loading="eager" decoding="async" src="/assets/images/photos/fleet-office-record-review.webp" alt="Fleet owner and dispatcher reviewing operating records in a trucking office">
+          <div class="recovered-hero-brief">
+            <span>Priority review brief</span>
+            <strong>Records, owners, blockers, and next action in one operating view.</strong>
+            <p>Start with one real fleet problem, then let BOF map the workflow, documents, handoffs, and review path.</p>
           </div>
-          <a class="home-route-card is-green" href="/drivers/"><span>01</span><strong>Drivers</strong><p>DQF, CDL, MVR, medical cards, onboarding, and assignment readiness.</p></a>
-          <a class="home-route-card is-blue" href="/dispatch/"><span>02</span><strong>Dispatch &amp; Operations</strong><p>Load intake, release control, POD, exception ownership, and operating records.</p></a>
-          <a class="home-route-card is-gold" href="/safety/"><span>03</span><strong>Safety &amp; Compliance</strong><p>Pre-trip, cargo, incident, claims, compliance review, and risk follow-up.</p></a>
-          <a class="home-route-card is-green" href="/settlements/"><span>04</span><strong>Settlements &amp; Billing</strong><p>Proof, invoice, deductions, billing packet, factoring, and payment readiness.</p></a>
-          <a class="home-route-card is-blue" href="/business-operations/"><span>05</span><strong>Business Operations</strong><p>HR, finance, payroll, billing, receivables, documents, and reporting.</p></a>
-          <a class="home-route-card is-plain" href="/policies-procedures/"><span>06</span><strong>Policies &amp; Procedures</strong><p>Operating references, document control, owner accountability, and review cadence.</p></a>
         </aside>
+      </div>
+    </section>
 
-        <div class="home-console-preview reveal">
-          <img src="/assets/images/dashboard-mockups/bof-home-command-center-light.webp" alt="BOF command center dashboard preview">
-          <div class="home-console-actions">
-            <a href="/drivers/">Driver readiness</a>
-            <a href="/dispatch/">Release control</a>
-            <a href="/settlements/">Packet readiness</a>
+    <section class="section recovered-routes-section" id="what-bof-controls">
+      <div class="section-head reveal">
+        <p class="eyebrow">What BOF controls</p>
+        <h2>Every major operating area gets a record, status, owner, and route.</h2>
+        <p>These are not decorative dashboard tiles. Each route opens a real BOF page with the work that belongs to that operating area.</p>
+      </div>
+      <div class="operational-route-grid">
+        <a class="operational-route-card is-ready reveal" href="/drivers/">
+          <span class="route-marker">01</span>
+          <small>Driver Readiness</small>
+          <h3>Driver Files</h3>
+          <b>12 drivers · 2 records expiring soon</b>
+          <p>Qualification files, medical cards, MVR, onboarding, and assignment readiness.</p>
+          <span class="status-badge is-ready">Ready</span>
+          <strong class="route-action">Open Drivers</strong>
+        </a>
+        <a class="operational-route-card is-progress reveal" href="/dispatch/">
+          <span class="route-marker">02</span>
+          <small>Dispatch &amp; Operations</small>
+          <h3>Load Control</h3>
+          <b>24 active loads · 3 require review</b>
+          <p>Intake, assignment, pre-trip release, POD, exceptions, and operating records.</p>
+          <span class="status-badge is-progress">In Progress</span>
+          <strong class="route-action">Open Dispatch</strong>
+        </a>
+        <a class="operational-route-card is-risk reveal" href="/safety/">
+          <span class="route-marker">03</span>
+          <small>Safety &amp; Compliance</small>
+          <h3>Risk Monitor</h3>
+          <b>3 safety exceptions · 1 priority follow-up</b>
+          <p>Pre-trip evidence, HOS review, inspections, claims, and corrective actions.</p>
+          <span class="status-badge is-risk">At Risk</span>
+          <strong class="route-action">Open Safety</strong>
+        </a>
+        <a class="operational-route-card is-review reveal" href="/settlements/">
+          <span class="route-marker">04</span>
+          <small>Settlements &amp; Billing</small>
+          <h3>Revenue Readiness</h3>
+          <b>18 packets · 2 billing holds</b>
+          <p>Proof packets, invoices, deductions, accessorials, and payment readiness.</p>
+          <span class="status-badge is-review">Review</span>
+          <strong class="route-action">Open Settlements</strong>
+        </a>
+        <a class="operational-route-card is-progress reveal" href="/business-operations/">
+          <span class="route-marker">05</span>
+          <small>Business Operations</small>
+          <h3>Office Control</h3>
+          <b>5 assigned follow-ups</b>
+          <p>People operations, finance, vendor records, documents, and office exceptions.</p>
+          <span class="status-badge is-progress">In Progress</span>
+          <strong class="route-action">Open Business Operations</strong>
+        </a>
+        <a class="operational-route-card is-current reveal" href="/policies-procedures/">
+          <span class="route-marker">06</span>
+          <small>Policies &amp; Procedures</small>
+          <h3>Governance Library</h3>
+          <b>42 active controls · 4 reviews due</b>
+          <p>Policies, acknowledgments, workflow rules, version control, and audit evidence.</p>
+          <span class="status-badge is-current">Current</span>
+          <strong class="route-action">Open Policies</strong>
+        </a>
+      </div>
+    </section>
+
+    <section class="section split recovered-office-layer" id="why-office-layer-matters">
+      <div class="demo-panel reveal">
+        <p class="eyebrow">Why the office layer matters</p>
+        <h2>The load can move and the office can still be behind.</h2>
+        <p>Most back-office problems begin as small gaps: an expiring driver record, missing POD, billing hold, safety follow-up, or unclear owner. BOF keeps those gaps attached to the operating record before they become customer, compliance, cash-flow, or management problems.</p>
+      </div>
+      <div class="office-layer-list reveal">
+        <article><span>01</span><strong>Readiness before release</strong><p>Driver, document, safety, and packet status stay visible before dispatch commits work.</p></article>
+        <article><span>02</span><strong>Proof before payment delay</strong><p>BOL, POD, invoice, claim evidence, and billing status stay tied to the settlement path.</p></article>
+        <article><span>03</span><strong>Owner before drift</strong><p>Every blocked or review item needs a named owner and next action.</p></article>
+      </div>
+    </section>
+
+    <section class="section home-audience-section" id="who-bof-serves">
+      <div class="section-head reveal">
+        <p class="eyebrow">Who BOF Serves</p>
+        <h2>Built for fleets carrying real operational responsibility.</h2>
+        <p>BackOfficeFleet adapts the same readiness, evidence, workflow, and accountability controls to the needs of private operators and public-sector fleets.</p>
+      </div>
+      <div class="home-audience-grid">
+        <a class="home-audience-panel reveal" href="/private-fleets/" aria-label="Explore Private Fleet Operations">
+          <figure>
+            <img loading="lazy" decoding="async" src="/assets/images/photos/site-pass/14-private-fleet-proof-review.webp" alt="Warehouse private fleet supervisor reviewing delivery proof on a tablet">
+          </figure>
+          <div class="home-audience-copy">
+            <span>Private Fleets</span>
+            <h3>Private Fleets</h3>
+            <p>Connect drivers, dispatch, safety, billing, documents, and administrative controls across the fleet's daily operating workflow.</p>
+            <strong>Explore Private Fleet Operations</strong>
           </div>
+        </a>
+        <a class="home-audience-panel reveal" href="/government/" aria-label="Explore Government Fleet Readiness">
+          <figure>
+            <img loading="lazy" decoding="async" src="/assets/images/photos/site-pass/13-government-contract-record-review.webp" alt="Audit-ready fleet document folders and contract records being reviewed in an office">
+          </figure>
+          <div class="home-audience-copy">
+            <span>Government &amp; Public-Sector Fleets</span>
+            <h3>Government &amp; Public-Sector Fleets</h3>
+            <p>Maintain readiness, resource visibility, assigned responsibility, procurement records, and evidence for routine operations and emergency response.</p>
+            <strong>Explore Government Fleet Readiness</strong>
+          </div>
+        </a>
+      </div>
+    </section>
+
+    <section class="section command-teaser-section" id="command-center-introduction">
+      <div class="command-teaser reveal">
+        <div>
+          <p class="eyebrow">Command Center</p>
+          <h2>Open the executive view when you need to see what is ready, at risk, or blocked.</h2>
+          <p>The Command Center stays separate from the homepage. It summarizes cross-functional readiness and routes the owner into drivers, dispatch, safety, settlements, billing, and office records.</p>
+        </div>
+        <a class="button primary" href="/command-center/">Open Command Center</a>
+      </div>
+    </section>
+
+    <section class="section priority-fleet-section" id="priority-fleet-program">
+      <div class="priority-program-card reveal">
+        <div>
+          <p class="eyebrow">Priority Fleet Program</p>
+          <h2>Build the office system your fleet needs to grow without losing control.</h2>
+          <p>BackOfficeFleet works with selected fleets to evaluate operational gaps, organize critical records, connect workflows, and build a stronger back-office operating structure.</p>
+          <div class="actions">
+            <a class="button primary" href="/founding-fleet/apply/">Apply for the Priority Fleet Program</a>
+            <a class="button secondary" href="/scenario-walkthrough/">Take the BOF Fleet Assessment</a>
+          </div>
+        </div>
+        <div class="priority-benefit-grid" aria-label="Priority Fleet Program benefits">
+          <article><span>Assessment</span><strong>Operating assessment</strong></article>
+          <article><span>Review</span><strong>Workflow and document review</strong></article>
+          <article><span>Roadmap</span><strong>Tailored implementation roadmap</strong></article>
+          <article><span>Onboarding</span><strong>Priority onboarding support</strong></article>
         </div>
       </div>
     </section>
 
-    <section class="section">
-      <div class="metric-grid">
-        <article class="metric reveal"><span>Primary audience</span><strong>For-hire</strong><p>trucking fleets that need clearer back-office follow-through</p></article>
-        <article class="metric reveal"><span>Release states</span><strong>3</strong><p>ready, watch, and hold records with owners attached</p></article>
-        <article class="metric reveal"><span>Record checks</span><strong>8</strong><p>driver, carrier, documents, exceptions, settlement, claims, audit, and next action</p></article>
+    <section class="section fleet-intelligence-section" id="fleet-intelligence">
+      <div class="section-head reveal">
+        <p class="eyebrow">Fleet Intelligence</p>
+        <h2>Fleet Intelligence: Insights from the Enforcement Engine</h2>
+        <p>Read the operating philosophy behind BOF: enforcement, proof control, driver readiness, and back-office modernization for serious fleets.</p>
+      </div>
+      <div class="insight-card-grid">
+        <a class="insight-card reveal" href="/blog/enforcement-engine-trucking-back-office/">
+          <span>Fleet Intelligence</span>
+          <h3>Why Trucking Back Offices Need Enforcement, Not More Dashboards</h3>
+          <p>Dashboards show what happened. Enforcement engines stop operational drift before it becomes lost revenue, missing proof, or settlement disputes.</p>
+          <strong>Read article</strong>
+        </a>
+        <a class="insight-card reveal" href="/blog/proof-packets-settlements-cash-flow/">
+          <span>Fleet Profitability</span>
+          <h3>Why Proof Packets Control Settlement and Cash Flow</h3>
+          <p>BOLs, PODs, invoices, seal records, accessorials, and claim evidence are the controls that determine whether cash moves.</p>
+          <strong>Read article</strong>
+        </a>
+        <a class="insight-card reveal" href="/blog/driver-readiness-dispatch-failure/">
+          <span>Compliance Modernization</span>
+          <h3>How Driver Readiness Prevents Dispatch Failure</h3>
+          <p>A load is not ready if the driver is not ready. Dispatch eligibility depends on documents, safety, maintenance, and proof obligations.</p>
+          <strong>Read article</strong>
+        </a>
       </div>
     </section>
 
-    <section class="section" id="operating-lifecycle">
+    <section class="section proof-accountability-section" id="proof-accountability">
       <div class="section-head reveal">
-        <p class="eyebrow">Operating lifecycle</p>
-        <h2>BOF follows the trucking company workflow from driver readiness to business operations.</h2>
-        <p>The structure is simple: drivers become ready, documents become readiness signals, readiness supports dispatch, safety and compliance stay connected to the trip, proof supports settlement, and settlement records feed the business office.</p>
+        <p class="eyebrow">Proof and accountability</p>
+        <h2>BOF keeps the reason behind each decision visible.</h2>
+        <p>The point is not another dashboard. The point is a record-backed workflow that shows what can move, what needs review, what is blocked, and who owns the next action.</p>
       </div>
       <div class="proof-grid">
-        <article class="proof-card reveal"><h3>Drivers</h3><p>Driver files, DQF records, onboarding status, and expirations show whether a person can support the work.</p><a class="route-chip" href="/drivers/">Open Drivers</a></article>
-        <article class="proof-card reveal"><h3>Dispatch &amp; Operations</h3><p>Load intake, document readiness, release gates, exception notes, and operating records help dispatch know what can move.</p><a class="route-chip" href="/dispatch/">Open Dispatch</a></article>
-        <article class="proof-card reveal"><h3>Safety &amp; Compliance</h3><p>Pre-trip, in-route, post-trip, cargo securement, and compliance records stay connected to the operating decision.</p><a class="route-chip" href="/safety/">Open Safety</a></article>
-        <article class="proof-card reveal"><h3>Settlements &amp; Billing</h3><p>PODs, lumper receipts, delivery photos, claim evidence, and billing packets show why a record is ready, review, or held.</p><a class="route-chip" href="/settlements/">Open Settlements</a></article>
-        <article class="proof-card reveal"><h3>Business Operations</h3><p>HR, payroll administration, customer billing, receivables, documents, and reporting carry the trip record into the office.</p><a class="route-chip" href="/business-operations/">Open Business Operations</a></article>
-        <article class="proof-card reveal"><h3>Policies &amp; Procedures</h3><p>Policies and procedures give the operating team a central reference without promising legal, compliance, or cybersecurity outcomes.</p><a class="route-chip" href="/policies-procedures/">Open Policies</a></article>
+        <article class="proof-card reveal"><h3>Records</h3><p>Driver files, dispatch packets, safety reviews, billing proof, HR records, and policy acknowledgments stay attached to the work.</p></article>
+        <article class="proof-card reveal"><h3>Evidence</h3><p>PODs, BOLs, claims support, invoices, photos, notes, and review history stay connected to the operating consequence.</p></article>
+        <article class="proof-card reveal"><h3>Ownership</h3><p>Ready, review, and blocked states need owners, follow-up, and the next action instead of vague status labels.</p></article>
+        <article class="proof-card reveal"><h3>Readiness</h3><p>Fleet owners see where the office is strong, where work is exposed, and what BOF should help structure first.</p></article>
       </div>
     </section>
-
-    <section class="section split">
-      <div class="demo-panel reveal">
-        <p class="eyebrow">Artificial intelligence in BOF service delivery</p>
-        <h2>AI assistance helps BOF move the mundane review work out of the manager's hands.</h2>
-        <p>BOF can use artificial intelligence to support the first pass through documents, dates, missing fields, repeated blockers, and readiness signals. That helps BOF surface the likely issue faster so managers spend less time chasing paperwork and more time deciding what should happen next.</p>
-      </div>
-      <div class="proof-grid">
-        <article class="proof-card reveal"><h3>Quicker triage</h3><p>AI-assisted review can flag missing POD details, expired driver records, incomplete packets, and unusual hold reasons before the day gets crowded.</p></article>
-        <article class="proof-card reveal"><h3>BOF follow-through</h3><p>The service still depends on BOF ownership: assign the next action, keep the evidence visible, and make the release consequence clear.</p></article>
-        <article class="proof-card reveal"><h3>Human-verified decisions</h3><p>Artificial intelligence supports the review. It does not replace fleet policy, BOF review, or the manager-facing release decision.</p></article>
-        <article class="proof-card reveal"><h3>Less routine work</h3><p>Managers should not have to manually sort the same missing dates, unreadable documents, and follow-up reminders every day.</p></article>
-      </div>
-    </section>
-
-    <section class="section">
-      <div class="section-head reveal">
-        <p class="eyebrow">Operating proof</p>
-        <h2>BOF is easiest to understand when a fleet owner can see the records behind the decision.</h2>
-        <p>The value is not another truck photo or generic dashboard. BOF shows whether the driver is eligible, whether dispatch can trust the load, and whether the documents are complete enough to release, settle, or defend the work.</p>
-      </div>
-      <div class="operating-proof-showcase">
-        <article class="proof-motion-card reveal">
-          <img loading="lazy" decoding="async" src="/assets/images/animations/bof-readiness-flow.webp" alt="Animated BOF readiness flow showing import, driver review, document review, hold, and release status">
-          <div>
-            <span class="status ready">Animated readiness flow</span>
-            <h3>The release story now moves like an operating chain.</h3>
-            <p>The animated flow ties partner import, driver readiness, document review, audit trail, and release decision into one visible sequence.</p>
-          </div>
-        </article>
-        <article class="proof-photo-card reveal">
-          <img src="/assets/images/photos/fleet-office-record-review.webp" alt="Fleet owner and dispatcher reviewing load readiness records in a trucking office">
-          <div>
-            <span class="status ready">Fleet office review</span>
-            <h3>Real operating conversations start at the record desk.</h3>
-            <p>BOF should feel grounded in the daily review work: monitors, driver packets, load status, and the paper trail a fleet owner already expects the office to control.</p>
-          </div>
-        </article>
-        <article class="proof-visual-card reveal">
-          <div class="driver-face-strip" aria-label="Driver readiness records">
-            <img src="/assets/images/profiles/drivers/driver-ref-001.jpg" alt="John Carter driver record photo">
-            <img src="/assets/images/profiles/drivers/driver-ref-003.jpg" alt="Mara Chen driver record photo">
-            <img src="/assets/images/profiles/drivers/driver-ref-006.jpg" alt="Priya Patel driver record photo">
-          </div>
-          <span class="status ready">Driver readiness</span>
-          <h3>Drivers are ready before they move freight.</h3>
-          <p>Driver files show DQF score, CDL/license image, medical card, MVR review, requests, history, owners, and dispatch consequence.</p>
-          <a class="route-chip" href="/interactive-demo/drivers/">Open driver records</a>
-        </article>
-        <article class="proof-visual-card reveal">
-          <img class="proof-card-photo" src="/assets/images/photos/pod-bol-proof-packet.webp" alt="Driver and operations coordinator reviewing paperwork beside a trailer at a loading dock">
-          <div class="mini-dispatch-board" aria-label="Dispatch operations status board">
-            <div><strong>TMS-LD-10482</strong><span class="status review">Review</span></div>
-            <div><strong>BOF-1931</strong><span class="status blocked">Hold</span></div>
-            <div><strong>BOF-2064</strong><span class="status ready">Ready</span></div>
-          </div>
-          <span class="status review">Dispatch operations</span>
-          <h3>BOF manages operational execution.</h3>
-          <p>The Command Center connects load status, driver, carrier, document gate, priority, owner, next action, and release consequence.</p>
-          <a class="route-chip" href="/interactive-demo/dispatch/">Open dispatch board</a>
-        </article>
-        <article class="proof-visual-card reveal">
-          <img class="proof-card-photo" src="/assets/images/photos/pod-bol-proof-packet.webp" alt="Proof of delivery and bill of lading packet with dock photo evidence">
-          <div class="mini-document-stack" aria-label="Document and compliance records">
-            <span>BOL image review</span>
-            <span>DQF review</span>
-            <span>POD + photos</span>
-            <span>Settlement packet</span>
-          </div>
-          <span class="status watch">Documents &amp; compliance</span>
-          <h3>Every document is attached to a consequence.</h3>
-          <p>BOF surfaces the paperwork a fleet owner asks to inspect: driver packets, compliance exceptions, settlement holds, POD proof, and claim-ready evidence.</p>
-          <a class="route-chip" href="/documents/">Open document records</a>
-          <a class="route-chip warning" href="/settlements/">Open settlements</a>
-        </article>
-      </div>
-    </section>
-
-    <section class="section website-photo-section">
-      <div class="section-head reveal">
-        <p class="eyebrow">Operating photos</p>
-        <h2>BOF should feel like the back office, the dock, and the yard all connect.</h2>
-        <p>These scenes support the record-backed story without replacing the existing BOF illustrations: real offices, paperwork, dispatch desks, and field proof that fleet owners recognize.</p>
-      </div>
-      <div class="website-photo-grid">
-        <article class="website-photo-card reveal"><img loading="lazy" decoding="async" src="/assets/images/photos/site-pass/01-document-control-scan-station.webp" alt="Document control worker scanning reviewed trucking paperwork"><div><h3>Document control station</h3><p>Reviewed packets move from paper into an inspectable record chain.</p></div></article>
-        <article class="website-photo-card reveal"><img loading="lazy" decoding="async" src="/assets/images/photos/site-pass/02-after-hours-dispatch-desk.webp" alt="After-hours dispatch desk with monitors and document folders"><div><h3>After-hours command desk</h3><p>Status, radio, routes, and document folders stay visible after the first shift.</p></div></article>
-        <article class="website-photo-card reveal"><img loading="lazy" decoding="async" src="/assets/images/photos/site-pass/03-claims-support-packet.webp?v=2" alt="Claims support packet with dock photo printouts and paperwork"><div><h3>Claims packet support</h3><p>Photos, notes, and delivery proof stay tied to the next action.</p></div></article>
-        <article class="website-photo-card reveal"><img loading="lazy" decoding="async" src="/assets/images/photos/site-pass/04-fleet-owner-terminal-review.webp" alt="Fleet owner reviewing operations from an office with trucks outside"><div><h3>Owner operating view</h3><p>Owners need the same load, driver, and document answer the office uses.</p></div></article>
-        <article class="website-photo-card reveal"><img loading="lazy" decoding="async" src="/assets/images/photos/site-pass/05-driver-file-audit-tabletop.webp" alt="Driver file audit folders and compliance paperwork on a table"><div><h3>Driver file audit</h3><p>DQF records are organized around readiness, not just storage.</p></div></article>
-        <article class="website-photo-card reveal"><img loading="lazy" decoding="async" src="/assets/images/photos/site-pass/06-morning-dispatch-huddle.webp" alt="Morning dispatch huddle around load and driver paperwork"><div><h3>Morning dispatch huddle</h3><p>Dispatch starts cleaner when blockers and owners are named first.</p></div></article>
-      </div>
-    </section>
-
-    <section class="section split">
-      <div class="demo-panel reveal">
-        <p class="eyebrow">Operating layer</p>
-        <h2>BOF gives the owner a cleaner answer before dispatch trusts the work.</h2>
-        <p>Start with one load, driver file, carrier packet, document hold, POD issue, or release blocker. BOF organizes the record chain so the team sees what is cleared, what is still waiting, and who handles the next move.</p>
-        <div class="actions"><a class="button primary" href="/dispatch/">Open Dispatch &amp; Operations</a><a class="button secondary" href="/scenario-walkthrough/">Take the BOF Fleet Assessment</a></div>
-      </div>
-      <div class="proof-grid">
-        <article class="proof-card reveal"><h3>Record-backed decisions</h3><p>Driver, carrier, document, POD, exception, and audit records stay attached to the release decision.</p></article>
-        <article class="proof-card reveal"><h3>Managed follow-through</h3><p>BOF keeps the owner, blocker, consequence, and next action visible so back-office work does not depend on memory.</p></article>
-      </div>
-    </section>
-
-    <section class="section">
-      <div class="section-head reveal">
-        <p class="eyebrow">Who BOF serves</p>
-        <h2>BOF is built for teams that need back-office work tied to real operating records.</h2>
-        <p>Different fleets and operating businesses feel the pressure in different places. BOF keeps the focus on driver readiness, document control, settlement support, proof packets, administrative visibility, and the next action the team can trust.</p>
-      </div>
-      <div class="card-grid">
-        <article class="card reveal"><span class="icon">01</span><h3>Trucking Fleets</h3><p>Driver records, load intake, PODs, settlements, factoring packets, HR, and finance support.</p><a class="route-chip" href="/fleet/">Open trucking fleet services</a></article>
-        <article class="card reveal"><span class="icon">02</span><h3>Private Fleets</h3><p>Internal fleet readiness, driver documentation, operating records, and administrative visibility.</p><a class="route-chip" href="/private-fleets/">Open private fleet path</a></article>
-        <article class="card reveal"><span class="icon">03</span><h3>Government Fleets</h3><p>Driver and equipment records, document readiness, audit trails, and operating-policy visibility.</p><a class="route-chip" href="/government/">Open government fleet path</a></article>
-        <article class="card reveal"><span class="icon">04</span><h3>Aggregators</h3><p>Carrier readiness, document structure, operating-unit visibility, and network assessment.</p><a class="route-chip" href="/aggregator-outreach/">Open aggregator path</a></article>
-        <article class="card reveal"><span class="icon">05</span><h3>Business Operations</h3><p>HR and Finance support for operating businesses, including recruiting, onboarding, payroll coordination, AP, AR, reporting, factoring, and cash-flow visibility.</p><a class="route-chip" href="/business-operations/">Open business operations</a></article>
-      </div>
-    </section>
-
-    <section class="section split">
-      <div class="reveal">
-        <p class="eyebrow">What BOF proves</p>
-        <h2>Designed around the records a fleet owner actually asks to see.</h2>
-        <p>A fleet owner does not need another vague dashboard. They need to open a driver file, see the POD, inspect the packet, understand the priority, and know who is responsible for the next action.</p>
-        <ul class="check-list">
-          <li>Driver records show eligibility instead of just a name on a load</li>
-          <li>Documents stay readable, enlarged, and tied to release consequence</li>
-          <li>Priority labels explain high, medium, and low operating impact</li>
-        </ul>
-      </div>
-      <div class="proof-grid">
-        <article class="proof-card reveal"><h3>Exception ownership</h3><p>BOF names the owner, blocker, next action, and consequence when a partner import is not release-ready.</p></article>
-        <article class="proof-card reveal"><h3>Settlement hold context</h3><p>Bank setup, W-9/I-9 status, and release-sensitive holds stay attached so back-office follow-up survives dispatch.</p><a class="route-chip" href="/settlements/">Open settlements</a></article>
-        <article class="proof-card reveal"><h3>Claims packet support</h3><p>POD, lumper receipt, seal photo, delivery proof, and claim evidence can stay visible as post-trip readiness records.</p></article>
-        <article class="proof-card reveal"><h3>Audit-ready decision</h3><p>The document records show believable paperwork tied to <a class="proof-link" href="/operations-record/#bof-1842">BOF-RR-10482</a>, with the fields, owners, dates, and decision note a fleet team expects to review.</p></article>
-      </div>
-    </section>
-
   </main>
 
   <section class="cta-band">
     <div class="cta-inner">
-      <div><p class="eyebrow">Next step</p><h2>Ready to see whether BOF fits your fleet?</h2><p>BackOfficeFleet is selecting Priority Fleet Program customers for priority onboarding and implementation planning. You can apply directly or request a focused BOF assessment around one real operating workflow.</p></div>
-      <div class="actions"><a class="button light" href="/scenario-walkthrough/">Take the BOF Fleet Assessment</a><a class="button secondary" href="/founding-fleet/">Review Priority Fleet Program</a></div>
+      <div><p class="eyebrow">Next step</p><h2>Ready to see whether BOF fits your fleet?</h2><p>Start with one real operating issue: a driver file, dispatch release hold, safety follow-up, settlement delay, billing gap, document packet, or office bottleneck.</p></div>
+      <div class="actions"><a class="button light" href="/scenario-walkthrough/">Take the BOF Fleet Assessment</a><a class="button secondary" href="/founding-fleet/apply/">Apply for the Priority Fleet Program</a></div>
     </div>
   </section>
   <footer class="site-footer"><div class="footer-inner"><strong>BackOfficeFleet</strong><span>Managed back-office readiness for trucking fleets.</span><a href="/trust-governance/">Trust &amp; Governance</a></div></footer>
-  <script src="/assets/js/site.js?v=1.38"></script>
+  <script src="/assets/js/site.js?v=1.51"></script>
 </body>
 </html>
