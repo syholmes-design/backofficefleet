@@ -21660,3 +21660,152 @@ body.premium-site .site-nav > a.nav-utility-link {
     padding-right: 6px;
   }
 }
+
+/* Standalone Command Center page and compact module cards. */
+body.premium-site.page-command-center .command-center-landing {
+  padding-top: clamp(24px, 4vw, 54px);
+}
+
+body.premium-site.page-command-center .command-center-shell {
+  background:
+    linear-gradient(145deg, rgba(255,255,255,0.92), rgba(235,246,255,0.84)),
+    linear-gradient(rgba(31,120,255,0.055) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(31,120,255,0.055) 1px, transparent 1px);
+  background-size: auto, 48px 48px, 48px 48px;
+  border: 1px solid rgba(187, 205, 224, 0.92);
+  border-radius: 28px;
+  box-shadow: 0 34px 78px rgba(21, 45, 74, 0.14);
+  margin-inline: auto;
+  max-width: min(1440px, calc(100vw - 34px));
+  padding: clamp(20px, 3vw, 46px);
+}
+
+body.premium-site.page-command-center .command-center-hero-top {
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+  gap: 18px;
+  margin-bottom: clamp(28px, 4vw, 62px);
+}
+
+body.premium-site.page-command-center .command-center-hero-top img {
+  height: auto;
+  width: min(270px, 56vw);
+}
+
+body.premium-site.page-command-center .command-center-hero-copy {
+  max-width: 920px;
+}
+
+body.premium-site.page-command-center .command-center-hero-copy h1 {
+  color: #071225;
+  font-size: clamp(3rem, 6vw, 6rem);
+  letter-spacing: 0;
+  line-height: 0.98;
+  margin: 0 0 14px;
+}
+
+body.premium-site.page-command-center .command-center-hero-copy > p:not(.eyebrow) {
+  color: #526173;
+  font-size: clamp(1.06rem, 1.3vw, 1.35rem);
+  line-height: 1.5;
+  max-width: 930px;
+}
+
+body.premium-site.page-command-center .command-center-flow {
+  margin: clamp(22px, 3vw, 36px) 0;
+}
+
+body.premium-site.page-command-center .command-center-board {
+  background: rgba(255,255,255,0.72);
+  border-radius: 26px;
+  box-shadow: 0 30px 70px rgba(21,45,74,0.13);
+}
+
+body.premium-site.page-command-center .command-center-metrics {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+body.premium-site.page-command-center .command-center-modules {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+body.premium-site.page-command-center .command-center-modules .executive-bottom-cta {
+  grid-column: 2 / 4;
+  justify-self: stretch;
+}
+
+body.premium-site.page-command-center .command-priority-grid,
+body.premium-site.page-command-center .command-rhythm-section .proof-grid {
+  display: grid;
+  gap: clamp(16px, 1.8vw, 24px);
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+@media (max-width: 1040px) {
+  body.premium-site.page-command-center .command-center-metrics,
+  body.premium-site.page-command-center .command-center-modules,
+  body.premium-site.page-command-center .command-priority-grid,
+  body.premium-site.page-command-center .command-rhythm-section .proof-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  body.premium-site.page-command-center .command-center-modules .executive-bottom-cta {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (max-width: 640px) {
+  body.premium-site.page-command-center .command-center-shell {
+    border-radius: 20px;
+    max-width: calc(100vw - 22px);
+    padding: 16px;
+  }
+
+  body.premium-site.page-command-center .command-center-hero-top {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  body.premium-site.page-command-center .command-center-hero-copy h1 {
+    font-size: clamp(2.7rem, 15vw, 4rem);
+  }
+
+  body.premium-site.page-command-center .command-center-metrics,
+  body.premium-site.page-command-center .command-center-modules,
+  body.premium-site.page-command-center .command-priority-grid,
+  body.premium-site.page-command-center .command-rhythm-section .proof-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+body.premium-site.page-command-center .compact-command-modules { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+body.premium-site.page-command-center .compact-command-modules .operational-route-card {
+  border-radius: 18px;
+  grid-column: auto;
+  padding: 16px;
+}
+body.premium-site.page-command-center .compact-command-modules .operational-route-card p { font-size: 0.86rem; }
+
+@media (max-width: 1180px) {
+  body.premium-site.page-command-center .compact-command-modules { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media (max-width: 720px) {
+  body.premium-site.page-command-center .compact-command-modules { grid-template-columns: 1fr; }
+  body.premium-site.page-command-center .compact-command-modules .operational-route-card {
+    gap: 3px;
+    padding: 12px;
+  }
+  body.premium-site.page-command-center .compact-command-modules .operational-route-card b {
+    font-size: 0.8rem;
+    line-height: 1.14;
+  }
+  body.premium-site.page-command-center .compact-command-modules .operational-route-card p {
+    font-size: 0.8rem;
+    line-height: 1.23;
+  }
+  body.premium-site.page-command-center .compact-command-modules .route-action {
+    min-height: 20px;
+  }
+}
