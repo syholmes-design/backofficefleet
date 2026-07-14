@@ -1,17 +1,17 @@
-﻿<!doctype html>
+<!doctype html>
 <html lang="en">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Policies &amp; Procedures | BackOfficeFleet</title>
-  <meta name="description" content="BOF helps fleets organize operational policies, procedures, and governance records as a central operating reference.">
-  <link rel="stylesheet" href="/assets/css/styles.css?v=20260710-redesign-deploy-1">
+  <meta name="description" content="BOF helps fleets turn policies and procedures into assigned, acknowledged, versioned, and verifiable operating controls.">
+  <link rel="stylesheet" href="/assets/css/styles.css?v=20260713-governance-backoffice">
 </head>
-<body class="premium-site page-policies">
+<body class="premium-site page-policies governance-workstream-page">
   <header class="site-header">
     <a class="brand" href="/" aria-label="BackOfficeFleet home"><img src="/assets/images/logo/boflogo-original.png" alt="BackOfficeFleet"></a>
     <button class="nav-toggle" type="button" data-nav-toggle aria-expanded="false" aria-label="Toggle navigation">&#9776;</button>
-        <nav class="site-nav" data-nav aria-label="Main navigation">
+    <nav class="site-nav" data-nav aria-label="Main navigation">
       <div class="nav-menu" data-nav-menu>
         <button class="nav-menu-toggle" type="button" data-nav-menu-toggle aria-expanded="false" aria-haspopup="true">Who We Serve</button>
         <div class="nav-dropdown" aria-label="Who We Serve">
@@ -26,326 +26,116 @@
       <a href="/safety/">Safety &amp; Compliance</a>
       <a href="/settlements/">Settlements &amp; Billing</a>
       <a href="/business-operations/">Business Operations</a>
-      <a href="/policies-procedures/">Policies &amp; Procedures</a>
+      <a class="active" href="/policies-procedures/">Policies &amp; Procedures</a>
       <a href="/trust-governance/">Company</a>
       <a class="nav-utility-link" href="/command-center/">Command Center</a>
     </nav>
     <a class="header-cta" href="/scenario-walkthrough/">Take the BOF Fleet Assessment</a>
   </header>
-  <main class="policy-library-page">
-    <section class="section page-hero policy-hero dashboard-hero-system product-stage policy-library-console console-primary-hero executive-command-hero">
-      <div class="visual-stage command-center-dashboard-stage command-center-frame reveal" aria-label="BOF Business Operations Command Center dashboard">
-        <a class="executive-visual-pill" href="/scenario-walkthrough/">Policy command hero</a>
-        <div class="product-stage-header">
-          <div class="product-console-heading"><p class="eyebrow">Policies &amp; Procedures</p><h1>Policies &amp; Procedures</h1><p class="command-hero-tagline">Policies support every operating stage.</p><p>Policies, SOP owners, review cadence, records matrix, excerpts, and compliance-boundary language stay visible as an operating reference.</p></div>
-        </div>
-        <div class="executive-command-flow section-primary-links" aria-label="Policies and procedures pages">
-          <a class="command-flow-pill is-blue" href="#policy-control">Policy Library</a>
-          <a class="command-flow-pill is-green" href="#driver-qualification-sop">SOP Ownership</a>
-          <a class="command-flow-pill is-gold" href="#records-retention-policy">Records Matrix</a>
-          <a class="command-flow-pill is-blue" href="#information-security-policy">Security Boundary</a>
-          <a class="command-flow-pill is-plain" href="/trust-governance/">Governance</a>
-        </div>
-        <div class="executive-dashboard-board">
-          <div class="executive-board-header">
-            <div><h2>Document Control Operating View</h2><p>Procedure ownership, review dates, record groups, boundaries, and governance notes in one board.</p></div>
-            <div class="executive-status-row"><span class="executive-status is-ready">Current 18</span><span class="executive-status is-risk">Review 6</span><span class="executive-status is-blocked">Gaps 2</span></div>
-          </div>
-          <div class="executive-metric-grid">
-            <article class="executive-metric-card"><div><span>Current SOPs</span><strong>18</strong><p>active references</p></div><b class="metric-badge is-ready">SO</b></article>
-            <article class="executive-metric-card"><div><span>Quarterly reviews</span><strong>6</strong><p>coming due</p></div><b class="metric-badge is-risk">QR</b></article>
-            <article class="executive-metric-card"><div><span>Record groups</span><strong>11</strong><p>mapped types</p></div><b class="metric-badge is-blue">RG</b></article>
-            <article class="executive-metric-card"><div><span>Security notes</span><strong>5</strong><p>access boundaries</p></div><b class="metric-badge is-blue">SE</b></article>
-            <article class="executive-metric-card"><div><span>Owner updates</span><strong>4</strong><p>assigned rows</p></div><b class="metric-badge is-ready">OW</b></article>
-            <article class="executive-metric-card is-dark"><div><span>Open policy gaps</span><strong>2</strong><p>review owner assigned</p></div></article>
-          </div>
-          <div class="command-readiness-flow"><strong>Document Control Flow</strong><span>Library</span><span>Owner</span><span>Review</span><span>Records</span><span>Security</span><span>Governance</span></div>
-          <div class="dashboard-module-grid command-module-grid policy-console-grid">
-            <a class="floating-status-card policy-library-console" href="#policy-control"><span class="module-icon is-blue">L</span><em>Library</em><strong>Policy Control</strong><p>Owner, reviewer, status, and current revision attached.</p><i class="module-progress blue-mix"></i></a>
-            <a class="floating-status-card checklist-row" href="#driver-qualification-sop"><span class="module-icon is-ready">S</span><em>SOP</em><strong>Driver Qualification</strong><p>Procedure owner, evidence row, review date, and operating use.</p><i class="module-progress three-green"></i></a>
-            <a class="floating-status-card evidence-module" href="#records-retention-policy"><span class="module-icon is-risk">R</span><em>Matrix</em><strong>Records Retention</strong><p>Document type, storage location, and access boundary.</p><i class="module-progress risk-mix"></i></a>
-            <a class="floating-status-card packet-module" href="#information-security-policy"><span class="module-icon is-blue">I</span><em>Security</em><strong>Information Boundary</strong><p>Reference language for access, data handling, and review scope.</p><i class="module-progress blue-mix"></i></a>
-            <a class="floating-status-card evidence-module" href="#business-continuity-procedure"><span class="module-icon is-ready">B</span><em>Continuity</em><strong>Operating Backup</strong><p>Procedure continuity, backup owner, and recovery notes.</p><i class="module-progress three-green"></i></a>
-            <a class="floating-status-card workflow-module" href="/trust-governance/"><span class="module-icon is-blue">G</span><em>Governance</em><strong>Trust Boundary</strong><p>Policies support workflow visibility; counsel owns legal advice.</p><i class="module-progress blue-mix"></i></a>
-            <a class="embedded-cta-card executive-bottom-cta" href="/scenario-walkthrough/"><strong>Take the BOF Fleet Assessment</strong><span>Next Step</span></a>
-          </div>
+
+  <main>
+    <section class="section page-hero control-hero">
+      <div class="control-hero-copy reveal">
+        <p class="eyebrow">Operational governance</p>
+        <h1>Policies &amp; Procedures</h1>
+        <p class="hero-promise">Turn written rules into assigned, acknowledged, versioned, and verifiable operating controls.</p>
+        <div class="actions">
+          <a class="button primary" href="#policy-library">Open policy library</a>
+          <a class="button secondary" href="#governance-workflow">Review lifecycle</a>
         </div>
       </div>
+      <aside class="control-proof-card reveal" aria-label="Policy control proof">
+        <p class="eyebrow">Control file</p>
+        <h2>Rules have value when the fleet can prove version, owner, assignment, and acknowledgment.</h2>
+        <dl class="control-proof-list">
+          <div><dt>Current policies</dt><dd>18</dd></div>
+          <div><dt>Due for review</dt><dd>6</dd></div>
+          <div><dt>Acknowledgment gaps</dt><dd>3</dd></div>
+          <div><dt>Audit evidence</dt><dd>Current</dd></div>
+        </dl>
+      </aside>
     </section>
 
-    <section class="section" id="policy-control">
+    <nav class="section subject-nav reveal" aria-label="Policies and procedures subjects">
+      <a href="#policy-library">Policy Library</a>
+      <a href="#acknowledgments">Driver Acknowledgments</a>
+      <a href="#workflow-rules">Workflow Rules</a>
+      <a href="#version-control">Version Control</a>
+      <a href="#audit-evidence">Audit Evidence</a>
+    </nav>
+
+    <section class="section" id="policy-library">
       <div class="section-head reveal">
-        <p class="eyebrow">Document control library</p>
-        <h2>Policies are useful when ownership, evidence, and review dates stay attached.</h2>
-        <p>BOF can help standardize where operating references live, who owns each procedure, what records support it, and what should happen when a gap appears.</p>
+        <p class="eyebrow">Required policy workspace</p>
+        <h2>The policy library works like an operating control system, not a document shelf.</h2>
+        <p>Each row keeps the title, category, version, effective date, owner, acknowledgment state, review status, and a working route or section action. Long policy summaries stay out of the way until a reviewer needs them.</p>
+        <p>The goal is not to publish a wall of legal language. The page shows how BOF can make a written operating rule usable by dispatch, safety, billing, driver-file, and business-office owners at the moment a record needs review.</p>
       </div>
-      <div class="policy-control-grid">
-        <article class="policy-control-card reveal">
-          <span class="status ready">Controlled</span>
-          <h3>Document owner</h3>
-          <p>Each policy or procedure has a named operating owner, reviewer, workflow connection, and next review date.</p>
-        </article>
-        <article class="policy-control-card reveal">
-          <span class="status review">Review cadence</span>
-          <h3>Quarterly or event-based review</h3>
-          <p>Records can be flagged for scheduled review, incident-driven review, customer requirement changes, or operational handoff updates.</p>
-        </article>
-        <article class="policy-control-card reveal">
-          <span class="status watch">Evidence link</span>
-          <h3>Policy tied to proof</h3>
-          <p>Procedures point back to driver records, load packets, safety evidence, settlement packets, billing files, and business operations records.</p>
-        </article>
-        <article class="policy-control-card reveal">
-          <span class="status blocked">Gap visible</span>
-          <h3>Missing record consequence</h3>
-          <p>When an owner, approval, proof item, or retention note is missing, BOF can provide a place to track the gap for review.</p>
-        </article>
+      <div class="control-table-wrap reveal">
+        <table class="control-table policy-table">
+          <thead><tr><th>Policy</th><th>Category</th><th>Version</th><th>Effective</th><th>Owner</th><th>Acknowledgment</th><th>Review</th><th>Action</th></tr></thead>
+          <tbody>
+            <tr><td>Driver Qualification Policy</td><td>Drivers</td><td>v3.2</td><td>Jul 1, 2026</td><td>Driver file owner</td><td><span class="status-badge is-ready">Complete</span></td><td><span class="status-badge is-current">Current</span></td><td><a href="/drivers/">Open drivers</a></td></tr>
+            <tr><td>Pre-Trip Evidence Standard</td><td>Safety</td><td>v2.4</td><td>Jun 15, 2026</td><td>Safety lead</td><td><span class="status-badge is-review">Review</span></td><td><span class="status-badge is-review">Due</span></td><td><a href="/safety/">Open safety</a></td></tr>
+            <tr><td>HOS Escalation Procedure</td><td>Dispatch</td><td>v2.1</td><td>May 30, 2026</td><td>Dispatch manager</td><td><span class="status-badge is-progress">In Progress</span></td><td><span class="status-badge is-current">Current</span></td><td><a href="/dispatch/">Open dispatch</a></td></tr>
+            <tr><td>Cargo and Seal Verification</td><td>Claims</td><td>v1.8</td><td>May 20, 2026</td><td>Operations lead</td><td><span class="status-badge is-ready">Complete</span></td><td><span class="status-badge is-current">Current</span></td><td><a href="#workflow-rules">View rule</a></td></tr>
+            <tr><td>Claims and Incident Response</td><td>Safety</td><td>v2.0</td><td>Apr 28, 2026</td><td>Safety lead</td><td><span class="status-badge is-review">Review</span></td><td><span class="status-badge is-risk">At Risk</span></td><td><a href="/safety/">Open evidence</a></td></tr>
+            <tr><td>Billing Packet Requirements</td><td>Billing</td><td>v3.0</td><td>Jun 10, 2026</td><td>Billing owner</td><td><span class="status-badge is-ready">Complete</span></td><td><span class="status-badge is-current">Current</span></td><td><a href="/settlements/">Open billing</a></td></tr>
+            <tr><td>Document Retention Standard</td><td>Records</td><td>v1.6</td><td>Mar 31, 2026</td><td>Business operations</td><td><span class="status-badge is-progress">In Progress</span></td><td><span class="status-badge is-review">Due</span></td><td><a href="#version-control">View version</a></td></tr>
+            <tr><td>Access and Data Governance</td><td>Governance</td><td>v1.9</td><td>Jul 8, 2026</td><td>Governance owner</td><td><span class="status-badge is-ready">Complete</span></td><td><span class="status-badge is-current">Current</span></td><td><a href="/trust-governance/">Open trust</a></td></tr>
+          </tbody>
+        </table>
       </div>
     </section>
 
-    <section class="section policy-workflow-strip reveal" aria-label="BOF policy workflow coverage">
-      <span>Drivers</span>
-      <span>Dispatch &amp; Operations</span>
-      <span>Safety &amp; Compliance</span>
-      <span>Settlements &amp; Billing</span>
-      <span>Business Operations</span>
-    </section>
-
-    <section class="section" id="policy-document-library" aria-labelledby="sample-procedure-library-title">
+    <section class="section" id="governance-workflow">
       <div class="section-head reveal">
-        <p class="eyebrow">Sample SOP library</p>
-        <h2 id="sample-procedure-library-title">Procedure summaries show how the policy library connects to daily operating records.</h2>
-        <p>These excerpts are illustrative examples for public-site review. BOF can help organize policy references, owners, dates, records, and workflow connections, while fleets keep their own legal, safety, HR, accounting, and security review where required.</p>
+        <p class="eyebrow">Governance workflow</p>
+        <h2>A written rule becomes useful only after assignment, acknowledgment, and audit evidence are visible.</h2>
       </div>
-      <div class="policy-sop-grid">
-        <article class="policy-sop-card reveal" id="driver-qualification-sop">
-          <div class="policy-card-head"><span class="route-chip">Drivers</span><span class="status review">Review required</span></div>
-          <h3>Driver Qualification SOP</h3>
-          <dl class="policy-meta-grid">
-            <div><dt>Owner</dt><dd>Driver file owner</dd></div>
-            <div><dt>Cadence</dt><dd>Hire, annual review, credential change</dd></div>
-            <div><dt>Records</dt><dd>CDL, medical card, MVR, application, road test</dd></div>
-            <div><dt>Trigger</dt><dd>New driver, renewal, file gap, safety review</dd></div>
-          </dl>
-          <ol class="policy-step-list">
-            <li>Confirm required DQF records are present or flagged before dispatch assignment.</li>
-            <li>Route missing credentials to the driver record owner for follow-up.</li>
-            <li>Record reviewer notes when a file is not ready for release.</li>
-          </ol>
-          <p class="policy-excerpt"><strong>Sample excerpt:</strong> A driver file is marked ready only after the assigned reviewer can see required credential records or a documented exception requiring fleet review.</p>
-          <p class="policy-consequence">Missing-document consequence: dispatch readiness stays in review until the owner resolves or documents the gap.</p>
-        </article>
-
-        <article class="policy-sop-card reveal" id="cargo-securement-procedure">
-          <div class="policy-card-head"><span class="route-chip">Safety</span><span class="status ready">Procedure sample</span></div>
-          <h3>Cargo Securement Procedure</h3>
-          <dl class="policy-meta-grid">
-            <div><dt>Owner</dt><dd>Safety or operations lead</dd></div>
-            <div><dt>Cadence</dt><dd>Before release, after exception</dd></div>
-            <div><dt>Records</dt><dd>Load type, securement notes, seal/photo proof</dd></div>
-            <div><dt>Trigger</dt><dd>High-risk cargo, customer rule, claim concern</dd></div>
-          </dl>
-          <ol class="policy-step-list">
-            <li>Capture cargo type, securement expectation, and required photo or seal evidence.</li>
-            <li>Assign an owner when proof is missing or unclear.</li>
-            <li>Hold the exception note with the load packet for later claims review.</li>
-          </ol>
-          <p class="policy-excerpt"><strong>Sample excerpt:</strong> Pre-trip release should show the securement method, required proof, exception note, and owner responsible for resolving missing evidence.</p>
-          <p class="policy-consequence">Missing-document consequence: release can be marked review needed until the proof item or exception owner is visible.</p>
-        </article>
-
-        <article class="policy-sop-card reveal" id="hos-review-procedure">
-          <div class="policy-card-head"><span class="route-chip warning">HOS review</span><span class="status watch">Concept support</span></div>
-          <h3>HOS Review Procedure</h3>
-          <dl class="policy-meta-grid">
-            <div><dt>Owner</dt><dd>Dispatch or safety reviewer</dd></div>
-            <div><dt>Cadence</dt><dd>Before assignment, route delay, exception</dd></div>
-            <div><dt>Records</dt><dd>Route timing, available-hours note, delay reason</dd></div>
-            <div><dt>Trigger</dt><dd>Long haul, delay, relay, reviewer concern</dd></div>
-          </dl>
-          <ol class="policy-step-list">
-            <li>Review the fleet-supplied HOS or ELD-style information available to the team.</li>
-            <li>Document whether route timing or delay information needs human review.</li>
-            <li>Keep the reviewer action with the dispatch record.</li>
-          </ol>
-          <p class="policy-excerpt"><strong>Sample excerpt:</strong> BOF can support review of route timing and available-hours concerns when the fleet supplies the underlying information.</p>
-          <p class="policy-consequence">Missing-document consequence: the load record shows an unresolved review item rather than implying the timing issue was cleared.</p>
-        </article>
-
-        <article class="policy-sop-card reveal" id="accident-reporting-procedure">
-          <div class="policy-card-head"><span class="route-chip danger">Incident</span><span class="status blocked">Escalation path</span></div>
-          <h3>Accident Reporting Procedure</h3>
-          <dl class="policy-meta-grid">
-            <div><dt>Owner</dt><dd>Safety lead</dd></div>
-            <div><dt>Cadence</dt><dd>Incident event, claim review, closeout</dd></div>
-            <div><dt>Records</dt><dd>Driver report, location, photos, contacts</dd></div>
-            <div><dt>Trigger</dt><dd>Accident, roadside event, customer notice</dd></div>
-          </dl>
-          <ol class="policy-step-list">
-            <li>Open an incident record with time, location, driver report, and available photos.</li>
-            <li>Capture police, customer, insurer, and internal owner contact notes.</li>
-            <li>Flag related settlement, billing, or claims holds before closeout.</li>
-          </ol>
-          <p class="policy-excerpt"><strong>Sample excerpt:</strong> Accident reporting stays open until the safety owner confirms evidence, contacts, and downstream holds are visible.</p>
-          <p class="policy-consequence">Missing-document consequence: the record remains in exception status for safety-owner review.</p>
-        </article>
-
-        <article class="policy-sop-card reveal" id="claims-evidence-procedure">
-          <div class="policy-card-head"><span class="route-chip">Evidence</span><span class="status review">Packet check</span></div>
-          <h3>Claims Evidence Procedure</h3>
-          <dl class="policy-meta-grid">
-            <div><dt>Owner</dt><dd>Claims or billing owner</dd></div>
-            <div><dt>Cadence</dt><dd>Damage notice, shortage, claim hold</dd></div>
-            <div><dt>Records</dt><dd>POD, BOL, seal, dock, empty trailer, messages</dd></div>
-            <div><dt>Trigger</dt><dd>Customer dispute, carrier claim, billing hold</dd></div>
-          </dl>
-          <ol class="policy-step-list">
-            <li>Group proof items before billing or payout release.</li>
-            <li>Identify the missing evidence item and owner.</li>
-            <li>Keep customer communication and claim-owner notes together.</li>
-          </ol>
-          <p class="policy-excerpt"><strong>Sample excerpt:</strong> Claims evidence should show what happened, what proof exists, what is missing, and which owner is responsible for next review.</p>
-          <p class="policy-consequence">Missing-document consequence: billing, factoring, or settlement release can show a hold note tied to the claim.</p>
-        </article>
-
-        <article class="policy-sop-card reveal" id="customer-billing-procedure">
-          <div class="policy-card-head"><span class="route-chip">Billing</span><span class="status ready">Billing ready</span></div>
-          <h3>Customer Billing Procedure</h3>
-          <dl class="policy-meta-grid">
-            <div><dt>Owner</dt><dd>Billing owner</dd></div>
-            <div><dt>Cadence</dt><dd>Delivered load, accessorial request, invoice review</dd></div>
-            <div><dt>Records</dt><dd>Rate confirmation, POD, lumper, detention, invoice</dd></div>
-            <div><dt>Trigger</dt><dd>Delivery complete, customer exception, AR review</dd></div>
-          </dl>
-          <ol class="policy-step-list">
-            <li>Confirm the packet includes rate, proof, accessorial, and invoice support.</li>
-            <li>Route missing POD, lumper, or detention proof to the assigned owner.</li>
-            <li>Record whether the packet is billing ready or exception pending.</li>
-          </ol>
-          <p class="policy-excerpt"><strong>Sample excerpt:</strong> A billing packet is marked ready when the billing owner can see the records needed to explain the invoice.</p>
-          <p class="policy-consequence">Missing-document consequence: invoice readiness shows an exception until the missing proof is attached or documented.</p>
-        </article>
-
-        <article class="policy-sop-card reveal" id="settlement-approval-procedure">
-          <div class="policy-card-head"><span class="route-chip">Settlements</span><span class="status review">Approval review</span></div>
-          <h3>Settlement Approval Procedure</h3>
-          <dl class="policy-meta-grid">
-            <div><dt>Owner</dt><dd>Settlement reviewer</dd></div>
-            <div><dt>Cadence</dt><dd>Pay cycle, adjustment, claim hold</dd></div>
-            <div><dt>Records</dt><dd>Pay basis, reimbursements, deductions, holds</dd></div>
-            <div><dt>Trigger</dt><dd>Settlement run, driver dispute, billing exception</dd></div>
-          </dl>
-          <ol class="policy-step-list">
-            <li>Check pay basis, reimbursements, deductions, and contractor support.</li>
-            <li>Confirm whether safety holds or claims holds affect release.</li>
-            <li>Record approval, review needed, or blocked status before payout recommendation.</li>
-          </ol>
-          <p class="policy-excerpt"><strong>Sample excerpt:</strong> Settlement approval should explain both the payment inputs and the unresolved exceptions that affect release.</p>
-          <p class="policy-consequence">Missing-document consequence: the packet stays pending until the reviewer can see the support or the exception note.</p>
-        </article>
-
-        <article class="policy-sop-card reveal" id="records-retention-policy">
-          <div class="policy-card-head"><span class="route-chip">Records</span><span class="status ready">Library policy</span></div>
-          <h3>Records Retention Policy</h3>
-          <dl class="policy-meta-grid">
-            <div><dt>Owner</dt><dd>Business operations owner</dd></div>
-            <div><dt>Cadence</dt><dd>Quarterly, annual, customer or legal review</dd></div>
-            <div><dt>Records</dt><dd>Driver, dispatch, safety, billing, settlement, HR</dd></div>
-            <div><dt>Trigger</dt><dd>New record type, audit prep, retention question</dd></div>
-          </dl>
-          <ol class="policy-step-list">
-            <li>Assign each record group a location, owner, retention cue, and access boundary.</li>
-            <li>Flag stale or unclear retention notes for professional review.</li>
-            <li>Keep completion status visible to the business owner.</li>
-          </ol>
-          <p class="policy-excerpt"><strong>Sample excerpt:</strong> Retention references should help the fleet find records and identify owner review needs, not replace legal retention guidance.</p>
-          <p class="policy-consequence">Missing-document consequence: records without an owner or location remain incomplete in the library.</p>
-        </article>
-
-        <article class="policy-sop-card reveal" id="information-security-policy">
-          <div class="policy-card-head"><span class="route-chip">Security</span><span class="status watch">Access review</span></div>
-          <h3>Information Security Policy</h3>
-          <dl class="policy-meta-grid">
-            <div><dt>Owner</dt><dd>Business or security owner</dd></div>
-            <div><dt>Cadence</dt><dd>Quarterly, access change, incident review</dd></div>
-            <div><dt>Records</dt><dd>Access roles, sensitive files, financial records</dd></div>
-            <div><dt>Trigger</dt><dd>New user, role change, vendor change, concern</dd></div>
-          </dl>
-          <ol class="policy-step-list">
-            <li>Classify sensitive operating records and limit access to appropriate roles.</li>
-            <li>Record access-owner decisions and review dates.</li>
-            <li>Avoid exposing protected driver, financial, or private operating data in public examples.</li>
-          </ol>
-          <p class="policy-excerpt"><strong>Sample excerpt:</strong> Sensitive records should be handled through controlled roles, review notes, and owner-approved access paths.</p>
-          <p class="policy-consequence">Missing-document consequence: access questions stay flagged until the assigned owner reviews the record group.</p>
-        </article>
-
-        <article class="policy-sop-card reveal" id="cybersecurity-procedure">
-          <div class="policy-card-head"><span class="route-chip warning">Cybersecurity</span><span class="status review">Control reference</span></div>
-          <h3>Cybersecurity Procedure</h3>
-          <dl class="policy-meta-grid">
-            <div><dt>Owner</dt><dd>Security or technology owner</dd></div>
-            <div><dt>Cadence</dt><dd>Quarterly, incident, account change</dd></div>
-            <div><dt>Records</dt><dd>Password, MFA, remote access, device, vendor account</dd></div>
-            <div><dt>Trigger</dt><dd>New system, user offboarding, suspected event</dd></div>
-          </dl>
-          <ol class="policy-step-list">
-            <li>Track account, authentication, device, and remote-access procedure references.</li>
-            <li>Route suspected events to the assigned response owner.</li>
-            <li>Record vendor-account follow-up without implying prevention is guaranteed.</li>
-          </ol>
-          <p class="policy-excerpt"><strong>Sample excerpt:</strong> BOF can help organize cybersecurity procedure references and owner follow-up, while security professionals remain responsible for technical controls.</p>
-          <p class="policy-consequence">Missing-document consequence: unresolved access or incident notes remain open for owner review.</p>
-        </article>
-
-        <article class="policy-sop-card reveal" id="business-continuity-procedure">
-          <div class="policy-card-head"><span class="route-chip">Continuity</span><span class="status ready">Recovery reference</span></div>
-          <h3>Business Continuity Procedure</h3>
-          <dl class="policy-meta-grid">
-            <div><dt>Owner</dt><dd>Operations leader</dd></div>
-            <div><dt>Cadence</dt><dd>Annual, vendor change, disruption review</dd></div>
-            <div><dt>Records</dt><dd>Critical contacts, backup locations, manual steps</dd></div>
-            <div><dt>Trigger</dt><dd>System outage, weather event, staffing gap</dd></div>
-          </dl>
-          <ol class="policy-step-list">
-            <li>List critical operating owners, backup contacts, and recovery priorities.</li>
-            <li>Document manual-workaround notes for dispatch, billing, settlement, and records work.</li>
-            <li>Review continuity references after disruptions or major vendor changes.</li>
-          </ol>
-          <p class="policy-excerpt"><strong>Sample excerpt:</strong> Continuity procedures keep recovery ownership visible when normal back-office tools or staff coverage are interrupted.</p>
-          <p class="policy-consequence">Missing-document consequence: backup responsibility remains unclear until the operating owner updates the procedure.</p>
-        </article>
-      </div>
+      <ol class="lifecycle-strip reveal">
+        <li><span>1</span><strong>Drafted</strong><p>Owner creates or updates rule.</p></li>
+        <li><span>2</span><strong>Reviewed</strong><p>Functional lead checks operating fit.</p></li>
+        <li><span>3</span><strong>Approved</strong><p>Decision owner records approval.</p></li>
+        <li><span>4</span><strong>Published</strong><p>Current version replaces old copy.</p></li>
+        <li><span>5</span><strong>Assigned</strong><p>Workers or roles receive the rule.</p></li>
+        <li><span>6</span><strong>Acknowledged</strong><p>Completion state is tracked.</p></li>
+        <li><span>7</span><strong>Audited</strong><p>Evidence and exceptions are reviewed.</p></li>
+        <li><span>8</span><strong>Revised</strong><p>Updates return to the library.</p></li>
+      </ol>
     </section>
 
-    <section class="section" aria-labelledby="records-matrix-title">
+    <section class="section" id="acknowledgments">
       <div class="section-head reveal">
-        <p class="eyebrow">Retention and control examples</p>
-        <h2 id="records-matrix-title">The library keeps policy references connected to record groups.</h2>
-        <p>Retention examples should be reviewed against each fleet's legal, customer, insurance, and operating requirements. BOF provides a place to track and review the operating reference.</p>
+        <p class="eyebrow">Proof before explanation</p>
+        <h2>Policy control is shown through metadata, not long summaries.</h2>
+        <p>BOF can keep acknowledgment, version history, assigned responsibility, exception handling, and audit evidence beside the operating workflow that depends on the rule.</p>
+        <p>That matters because the person using the rule is often under time pressure. The driver-file owner, dispatcher, safety lead, or billing reviewer needs the current rule, the owner, and the action path before they need the full written procedure.</p>
       </div>
-      <div class="policy-records-matrix reveal" role="table" aria-label="Sample records retention matrix">
-        <div role="row"><strong role="columnheader">Record group</strong><strong role="columnheader">Owner</strong><strong role="columnheader">Review cue</strong><strong role="columnheader">Workflow handoff</strong></div>
-        <div role="row"><span role="cell">Driver qualification file</span><span role="cell">Driver file owner</span><span role="cell">Hire, annual review, credential renewal</span><span role="cell">Drivers -> Dispatch readiness</span></div>
-        <div role="row"><span role="cell">Load proof packet</span><span role="cell">Dispatch or billing owner</span><span role="cell">Delivery complete, missing POD, claim notice</span><span role="cell">Dispatch -> Settlements &amp; Billing</span></div>
-        <div role="row"><span role="cell">Safety event record</span><span role="cell">Safety lead</span><span role="cell">Incident, camera-event review, customer escalation</span><span role="cell">Safety -> Claims evidence</span></div>
-        <div role="row"><span role="cell">Business continuity file</span><span role="cell">Operations leader</span><span role="cell">Annual review, outage, vendor change</span><span role="cell">Business Operations -> Recovery owner</span></div>
+      <div class="supporting-grid">
+        <article class="support-card reveal"><span>Employee acknowledgment</span><strong>Driver Qualification Policy: Complete</strong><p>Assigned to driver file owners; acknowledgment state can be reviewed before a worker file is treated as ready.</p><a href="/drivers/">Open driver records</a></article>
+        <article class="support-card reveal" id="version-control"><span>Version history</span><strong>Billing Packet Requirements: v3.0</strong><p>The current version, prior version, effective date, and owner stay attached to billing packet review.</p><a href="/settlements/">Open billing records</a></article>
+        <article class="support-card reveal" id="audit-evidence"><span>Audit evidence</span><strong>Access and Data Governance: Current</strong><p>Approval notes, affected roles, and evidence links route to the Trust &amp; Governance page.</p><a href="/trust-governance/">Open governance</a></article>
+        <article class="support-card reveal"><span>Exception handling</span><strong>Pre-Trip Evidence Standard: Review</strong><p>If proof is missing, the policy row should point to the owner and operating record instead of implying the exception disappeared.</p><a href="/safety/">Open safety review</a></article>
       </div>
     </section>
 
-    <section class="section split policy-boundary-section">
-      <div class="paper policy-boundary-panel reveal">
-        <h3>Boundary language</h3>
-        <p>BOF helps organize, surface, and maintain visibility around policies and procedures. BOF does not provide legal advice, replace legal counsel, certify compliance, automatically satisfy FMCSA or DOT requirements, guarantee regulatory approval, eliminate liability, or guarantee protection from cybersecurity events.</p>
+    <section class="section" id="workflow-rules">
+      <div class="section-head reveal">
+        <p class="eyebrow">Operational consequence</p>
+        <h2>Procedure gaps should produce assigned work, not vague risk.</h2>
+        <p>When a policy is due, blocked, or missing acknowledgment, the next owner is clear. Driver readiness, dispatch release, safety review, settlement billing, and business operations can all show the rule that controls the decision.</p>
+        <p>This keeps policy management close to operating work. A driver-file policy can affect readiness, a billing-packet rule can affect invoice preparation, and an access-governance rule can affect who may update sensitive records. The library gives each consequence a path back to the page where the work is happening.</p>
       </div>
-      <div class="proof-grid">
-        <article class="proof-card reveal"><h3>Flag gaps</h3><p>Missing owner, stale date, unclear approval path, or unsupported record can become a review item.</p></article>
-        <article class="proof-card reveal"><h3>Support accountability</h3><p>Policies become part of the same operating record discipline as drivers, dispatch, safety, settlements, and business operations.</p></article>
+      <div class="compact-proof-grid">
+        <a class="proof-card reveal" href="/operations-record/"><h3>Evidence record</h3><p>Use operating records to show which rule affected a release, hold, or review decision.</p></a>
+        <a class="proof-card reveal" href="/business-operations/"><h3>Office owner</h3><p>Route overdue acknowledgment or version review back to the business owner responsible for follow-up.</p></a>
+        <a class="proof-card reveal" href="/trust-governance/"><h3>Governance trace</h3><p>Show the approval state, evidence link, and record owner when a policy change affects operating work.</p></a>
       </div>
     </section>
   </main>
 
-  <section class="cta-band"><div class="cta-inner"><div><p class="eyebrow">Next step</p><h2>Bring one policy or procedure gap into the assessment.</h2><p>BOF can map where the reference belongs, what record supports it, and who owns the next review.</p></div><a class="button light" href="/scenario-walkthrough/">Take the BOF Fleet Assessment &rarr;</a></div></section>
+  <section class="cta-band"><div class="cta-inner"><div><p class="eyebrow">Next step</p><h2>Bring one policy gap into a BOF assessment.</h2><p>BOF can map the rule, owner, version, acknowledgment state, exception, and evidence record that should control the operating decision.</p></div><a class="button light" href="/scenario-walkthrough/">Take the BOF Fleet Assessment</a></div></section>
   <footer class="site-footer"><div class="footer-inner"><strong>BackOfficeFleet</strong><span>Policies and procedures operating reference.</span><a href="/trust-governance/">Trust &amp; Governance</a></div></footer>
   <script src="/assets/js/site.js?v=1.50"></script>
 </body>

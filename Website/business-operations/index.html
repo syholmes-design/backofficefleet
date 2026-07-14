@@ -1,17 +1,17 @@
-﻿<!doctype html>
+<!doctype html>
 <html lang="en">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Business Operations Command Center | BackOfficeFleet</title>
-  <meta name="description" content="BOF Business Operations connects HR tier work, finance tier work, billing, payroll, receivables, document management, and reporting into one back-office operating view.">
-  <link rel="stylesheet" href="/assets/css/styles.css?v=20260710-businessops-depth">
+  <title>Business Operations | BackOfficeFleet</title>
+  <meta name="description" content="BOF Business Operations keeps people, financial administration, vendor records, and office follow-up connected to fleet activity.">
+  <link rel="stylesheet" href="/assets/css/styles.css?v=20260713-governance-backoffice">
 </head>
-<body class="premium-site page-business-operations">
+<body class="premium-site page-business-operations governance-workstream-page">
   <header class="site-header">
     <a class="brand" href="/" aria-label="BackOfficeFleet home"><img src="/assets/images/logo/boflogo-original.png" alt="BackOfficeFleet"></a>
     <button class="nav-toggle" type="button" data-nav-toggle aria-expanded="false" aria-label="Toggle navigation">&#9776;</button>
-        <nav class="site-nav" data-nav aria-label="Main navigation">
+    <nav class="site-nav" data-nav aria-label="Main navigation">
       <div class="nav-menu" data-nav-menu>
         <button class="nav-menu-toggle" type="button" data-nav-menu-toggle aria-expanded="false" aria-haspopup="true">Who We Serve</button>
         <div class="nav-dropdown" aria-label="Who We Serve">
@@ -25,54 +25,148 @@
       <a href="/dispatch/">Dispatch &amp; Operations</a>
       <a href="/safety/">Safety &amp; Compliance</a>
       <a href="/settlements/">Settlements &amp; Billing</a>
-      <a href="/business-operations/">Business Operations</a>
+      <a class="active" href="/business-operations/">Business Operations</a>
       <a href="/policies-procedures/">Policies &amp; Procedures</a>
       <a href="/trust-governance/">Company</a>
       <a class="nav-utility-link" href="/command-center/">Command Center</a>
     </nav>
     <a class="header-cta" href="/scenario-walkthrough/">Take the BOF Fleet Assessment</a>
   </header>
-  <main class="workflow-dashboard-page">
-    <section class="section page-hero dashboard-hero-system product-stage console-primary-hero executive-command-hero">
-      <div class="visual-stage command-center-dashboard-stage command-center-frame reveal" aria-label="BOF Business Operations Command Center dashboard">
-        <a class="executive-visual-pill" href="/scenario-walkthrough/">Office layer preview</a>
-        <div class="product-stage-header">
-          <div class="product-console-heading"><p class="eyebrow">Business operations command center</p><h1>Business Operations</h1><p class="business-ops-hero-tagline">Run the office layer behind the fleet.</p><p>BOF keeps HR tier work, finance tier work, customer billing, receivables, payroll support, records, and reporting tied to the same operating workflow.</p></div>
+
+  <main>
+    <section class="section page-hero control-hero" id="business-operations-top">
+      <div class="control-hero-copy reveal">
+        <p class="eyebrow">Back-office control</p>
+        <h1>Business Operations</h1>
+        <p class="hero-promise">Keep people, financial administration, vendor records, and office follow-up connected to fleet activity.</p>
+        <div class="actions">
+          <a class="button primary" href="#office-workspace">Open office workspace</a>
+          <a class="button secondary" href="/command-center/">View Command Center</a>
         </div>
-        <div class="executive-command-flow section-primary-links business-ops-primary-links" aria-label="Business operations pages">
-          <a class="command-flow-pill is-green" href="/business-operations/hr-tier/">HR Tier</a>
-          <a class="command-flow-pill is-green" href="/business-operations/driver-onboarding/">Driver Onboarding</a>
-          <a class="command-flow-pill is-blue" href="/business-operations/accounting-finance/">Finance</a>
-          <a class="command-flow-pill is-gold" href="/business-operations/payroll-administration/">Payroll</a>
-          <a class="command-flow-pill is-blue" href="/business-operations/customer-billing/">Billing</a>
-          <a class="command-flow-pill is-blue" href="/business-operations/accounts-receivable/">Receivables</a>
-          <a class="command-flow-pill is-gold" href="/business-operations/document-management/">Documents</a>
-          <a class="command-flow-pill is-green" href="/business-operations/operational-reporting/">Reporting</a>
+      </div>
+      <aside class="control-proof-card reveal" aria-label="Business operations operating proof">
+        <p class="eyebrow">Office layer</p>
+        <h2>Work that blocks execution is assigned before it becomes invisible.</h2>
+        <dl class="control-proof-list">
+          <div><dt>People records</dt><dd>42 tracked</dd></div>
+          <div><dt>Finance reviews</dt><dd>18 open</dd></div>
+          <div><dt>Vendor records</dt><dd>7 due</dd></div>
+          <div><dt>Office exceptions</dt><dd>5 assigned</dd></div>
+        </dl>
+      </aside>
+    </section>
+
+    <nav class="section subject-nav reveal" aria-label="Business Operations subjects">
+      <a href="#people-operations">People Operations</a>
+      <a href="#financial-administration">Financial Administration</a>
+      <a href="#vendor-records">Vendor Records</a>
+      <a href="#office-exceptions">Office Exceptions</a>
+      <a href="#reports-controls">Reports &amp; Controls</a>
+    </nav>
+
+    <section class="section" id="office-workspace">
+      <div class="section-head reveal">
+        <p class="eyebrow">Primary workspace</p>
+        <h2>The office work behind fleet execution belongs in one reviewable operating layer.</h2>
+        <p>Business Operations is not a second settlement page. It covers the administrative questions that affect readiness: worker files, payroll setup, AP review, receivables follow-up, vendor status, office blockers, and owner action.</p>
+        <p>The page is built for an office manager, controller, HR owner, or fleet leader who needs to know which internal item is slowing work down, who owns it, and whether the consequence is people readiness, vendor use, bookkeeping, customer follow-up, or leadership reporting.</p>
+      </div>
+      <div class="control-workspace reveal">
+        <div class="workspace-header">
+          <div>
+            <span>Business Operations Workspace</span>
+            <strong>Office follow-up by record, owner, due date, and consequence</strong>
+          </div>
+          <a class="button secondary" href="#office-exceptions">Review exception queue</a>
         </div>
-        <div class="executive-dashboard-board">
-          <div class="executive-board-header">
-            <div><h2>Office Work In Motion</h2><p>HR, finance, billing, document control, and reporting work in one reviewable operating layer.</p></div>
-            <div class="executive-status-row"><span class="executive-status is-ready">Ready 62%</span><span class="executive-status is-risk">Review 18</span><span class="executive-status is-blocked">Blocked 5</span></div>
-          </div>
-          <div class="executive-metric-grid">
-            <article class="executive-metric-card"><div><span>HR records</span><strong>42</strong><p>worker files tracked</p></div><b class="metric-badge is-ready">HR</b></article>
-            <article class="executive-metric-card"><div><span>Finance items</span><strong>18</strong><p>billing and AP review</p></div><b class="metric-badge is-blue">FN</b></article>
-            <article class="executive-metric-card"><div><span>Payroll support</span><strong>9</strong><p>items needing owner input</p></div><b class="metric-badge is-risk">PY</b></article>
-            <article class="executive-metric-card is-dark"><div><span>Office blockers</span><strong>5</strong><p>assigned follow-up</p></div><b class="metric-badge is-blocked">!</b></article>
-          </div>
-          <div class="business-ops-console-summary">
-            <article><span class="module-icon is-ready">P</span><em>People operations</em><strong>Worker records stay connected to assignment readiness.</strong><p>Recruiting, onboarding, benefits, training, policy acknowledgements, and owner follow-up stay visible as operating work.</p></article>
-            <article><span class="module-icon is-blue">F</span><em>Financial operations</em><strong>Money questions stay tied to proof, packet, and owner.</strong><p>Billing, receivables, AP review, payroll support, settlement context, and cash-flow signals are tracked beside the record that explains them.</p></article>
-            <article><span class="module-icon is-risk">R</span><em>Records and reporting</em><strong>Documents become reviewable operating evidence.</strong><p>Administrative records, customer packets, policy files, aging work, blocker ownership, and leadership reporting share the same status language.</p></article>
-            <a class="executive-bottom-cta" href="/scenario-walkthrough/"><strong>Take the BOF Fleet Assessment</strong><span>Next Step</span></a>
-          </div>
+        <div class="workspace-lanes">
+          <article id="people-operations">
+            <span class="status-badge is-ready">In Progress</span>
+            <h3>People Operations</h3>
+            <p>Worker onboarding, personnel files, payroll setup, benefits and tax documents, assigned follow-ups, and completion state stay connected to whether the fleet can put a person into work.</p>
+            <ul>
+              <li>Driver onboarding packet assigned to HR owner</li>
+              <li>Benefits and tax document completion visible</li>
+              <li>Training acknowledgment tied to worker file</li>
+            </ul>
+            <a href="/business-operations/hr-tier/">Open People Operations</a>
+          </article>
+          <article id="financial-administration">
+            <span class="status-badge is-review">Review</span>
+            <h3>Financial Administration</h3>
+            <p>Accounts payable, bookkeeping review, receivables follow-up, expense classification, vendor invoices, payroll coordination, and internal approvals are tracked without duplicating settlement packet work.</p>
+            <ul>
+              <li>Vendor invoice awaiting AP owner approval</li>
+              <li>Expense class review tied to department owner</li>
+              <li>Receivable follow-up linked to customer account</li>
+            </ul>
+            <a href="/business-operations/accounting-finance/">Open Finance Administration</a>
+          </article>
+          <article id="vendor-records">
+            <span class="status-badge is-risk">Due</span>
+            <h3>Vendor and Administrative Records</h3>
+            <p>Vendor agreements, insurance certificates, tax records, contract renewals, approved vendor status, and expiring records are visible before an office gap delays operations.</p>
+            <ul>
+              <li>Vendor W-9 and insurance certificate status</li>
+              <li>Contract renewal owner and due date</li>
+              <li>Approved vendor status for office use</li>
+            </ul>
+            <a href="#office-exceptions">Review vendor exceptions</a>
+          </article>
+          <article id="reports-controls">
+            <span class="status-badge is-current">Current</span>
+            <h3>Reports and Controls</h3>
+            <p>Leadership can see aging office work, overdue owners, unresolved approvals, and control gaps without searching through email or one-off spreadsheets.</p>
+            <ul>
+              <li>Exception aging by owner</li>
+              <li>Recurring control review list</li>
+              <li>Weekly office readiness report</li>
+            </ul>
+            <a href="/business-operations/operational-reporting/">Open Reports and Controls</a>
+          </article>
         </div>
       </div>
     </section>
+
+    <section class="section" id="office-exceptions">
+      <div class="section-head reveal">
+        <p class="eyebrow">Office exception queue</p>
+        <h2>Every issue needs an owner, due date, operational consequence, status, and action.</h2>
+        <p>The queue is intentionally compact. It shows the kind of follow-up that normally disappears between HR, accounting, vendors, and operations.</p>
+      </div>
+      <div class="control-table-wrap reveal">
+        <table class="control-table">
+          <thead><tr><th>Issue</th><th>Owner</th><th>Due</th><th>Consequence</th><th>Status</th><th>Action</th></tr></thead>
+          <tbody>
+            <tr><td>Missing vendor W-9</td><td>AP owner</td><td>Jul 18</td><td>Vendor payment cannot be approved</td><td><span class="status-badge is-review">Review</span></td><td><a href="#vendor-records">Open vendor record</a></td></tr>
+            <tr><td>Payroll setup unresolved</td><td>People ops</td><td>Jul 19</td><td>Worker cannot be released to payroll run</td><td><span class="status-badge is-risk">At Risk</span></td><td><a href="/business-operations/hr-tier/">Open worker file</a></td></tr>
+            <tr><td>Unapproved expense class</td><td>Finance lead</td><td>Jul 21</td><td>Bookkeeping review remains incomplete</td><td><span class="status-badge is-progress">In Progress</span></td><td><a href="/business-operations/accounting-finance/">Open finance review</a></td></tr>
+            <tr><td>Contract renewal due</td><td>Office manager</td><td>Jul 24</td><td>Vendor status moves to review</td><td><span class="status-badge is-review">Due</span></td><td><a href="#vendor-records">Open renewal</a></td></tr>
+            <tr><td>Employee onboarding incomplete</td><td>HR owner</td><td>Jul 25</td><td>Assignment readiness remains blocked</td><td><span class="status-badge is-blocked">Blocked</span></td><td><a href="/business-operations/driver-onboarding/">Open onboarding</a></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-head reveal">
+        <p class="eyebrow">Operating consequence</p>
+        <h2>Back-office control protects the fleet from preventable slowdowns.</h2>
+        <p>When people records, finance approvals, vendor documents, and office exceptions live beside operating work, owners can see what is ready, what is due, what is blocked, and what follow-up must happen next.</p>
+        <p>The practical value is less rework: fewer mystery holds, fewer unmanaged approvals, and fewer handoffs where the office knows there is a problem but operations cannot see the next responsible owner.</p>
+      </div>
+      <div class="supporting-grid">
+        <a class="support-card reveal" href="/business-operations/payroll-administration/"><span>Payroll</span><strong>Coordinate pay setup and owner review.</strong><p>Separate payroll support from settlements while keeping pay-impacting office work visible.</p></a>
+        <a class="support-card reveal" href="/business-operations/accounts-receivable/"><span>Receivables</span><strong>Follow up on aging customer balances.</strong><p>Connect AR questions to account owner, due date, and next action.</p></a>
+        <a class="support-card reveal" href="/business-operations/document-management/"><span>Records</span><strong>Keep administrative documents findable.</strong><p>Track office files, vendor packets, personnel records, and renewal cues.</p></a>
+        <a class="support-card reveal" href="/business-operations/customer-billing/"><span>Customer billing</span><strong>Keep billing questions separate from settlement release.</strong><p>Track invoice readiness, customer contacts, and office follow-up without turning finance administration into load settlement workflow.</p></a>
+      </div>
+    </section>
   </main>
+
   <section class="cta-band">
     <div class="cta-inner">
-      <div><p class="eyebrow">Next step</p><h2>Bring one office bottleneck into a BOF assessment.</h2><p>Start with one HR file, billing hold, payroll question, AR issue, document packet, or reporting gap so BOF can map the record, owner, blocker, and next action.</p></div>
+      <div><p class="eyebrow">Next step</p><h2>Bring one office bottleneck into a BOF assessment.</h2><p>Start with one worker file, AP issue, vendor record, receivable follow-up, or office exception so BOF can map the owner, consequence, and next action.</p></div>
       <div class="actions"><a class="button light" href="/scenario-walkthrough/">Take the BOF Fleet Assessment</a><a class="button secondary" href="/founding-fleet/">Review Priority Fleet Program</a></div>
     </div>
   </section>
