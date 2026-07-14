@@ -364,7 +364,7 @@
   function initWorkflow(root, data) {
     var selector = root.querySelector("[data-tms-load-selector]");
     if (selector) {
-      selector.innerHTML = data.loads.map(function (load, index) {
+      selector.innerHTML = '<div class="bof-data-loading"><strong>TMS Import Demo Dataset</strong><br><span>These records use separate demo driver IDs and are not the canonical public BOF roster.</span></div>' + data.loads.map(function (load, index) {
         return '<button type="button" data-tms-load="' + escapeHtml(load.tmsLoadId) + '" aria-pressed="' + (index === 0 ? "true" : "false") + '">' +
           '<span>' + escapeHtml(load.tmsLoadId) + '</span>' +
           '<strong>' + escapeHtml(load.customerName) + '</strong>' +
@@ -421,4 +421,3 @@
     });
   }
 })();
-

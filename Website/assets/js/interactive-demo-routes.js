@@ -331,6 +331,83 @@
     return window.location.pathname.replace(/\/index\.html$/, "/");
   }
 
+  var canonicalOperations = null;
+
+  function loadCanonicalOperations() {
+    if (!window.fetch) return Promise.resolve(null);
+    return fetch("/assets/data/bof-public-operations.json", { cache: "no-store" })
+      .then(function (response) {
+        if (!response.ok) throw new Error("Canonical operations unavailable");
+        return response.json();
+      })
+      .then(function (data) {
+        canonicalOperations = data;
+        return data;
+      })
+      .catch(function () {
+        canonicalOperations = null;
+        return null;
+      });
+  }
+
+  function canonicalById(listName, id) {
+    if (!canonicalOperations || !id) return null;
+    return (canonicalOperations[listName] || []).find(function (item) {
+      return item.id === id;
+    }) || null;
+  }
+
+  function canonicalDriverById(id) {
+    return canonicalById("drivers", id);
+  }
+
+  function canonicalLoadById(id) {
+    return canonicalById("loads", id);
+  }
+
+  function canonicalUnitById(id) {
+    return canonicalById("units", id);
+  }
+
+  function canonicalExceptionById(id) {
+    return canonicalById("exceptions", id);
+  }
+
+  function canonicalDriverAsset(driverId) {
+    if (!canonicalOperations || !canonicalOperations.assetMappings || !canonicalOperations.assetMappings.drivers) return null;
+    return canonicalOperations.assetMappings.drivers[driverId] || null;
+  }
+
+  function enrichDriver(driver) {
+    var canonical = canonicalDriverById(driver.id);
+    if (!canonical) return driver;
+    var asset = canonicalDriverAsset(canonical.id);
+    var load = canonical.activeLoadId ? canonicalLoadById(canonical.activeLoadId) : null;
+    var unit = canonical.unitId ? canonicalUnitById(canonical.unitId) : null;
+    var exception = canonical.activeExceptionId ? canonicalExceptionById(canonical.activeExceptionId) : null;
+    var enriched = {};
+    Object.keys(driver).forEach(function (key) {
+      enriched[key] = driver[key];
+    });
+    enriched.name = canonical.name || driver.name;
+    enriched.photo = (asset && asset.portrait) || canonical.portrait || driver.photo;
+    enriched.employmentType = canonical.employmentType || "Fleet driver";
+    enriched.assignmentState = canonical.assignmentState || (load ? "Assigned" : "Available");
+    enriched.readinessStatus = canonical.readinessStatus || driver.state;
+    enriched.state = canonical.readinessStatus || driver.state;
+    enriched.activeLoadId = canonical.activeLoadId || "";
+    enriched.load = canonical.activeLoadId || "No active load";
+    enriched.route = load ? (load.origin + " to " + load.destination) : "Available for assignment";
+    enriched.unitLabel = unit ? unit.label : "Available";
+    enriched.exception = exception ? exception.requiredAction : (canonical.primaryWarning || driver.exception);
+    enriched.summary = canonical.primaryWarning || driver.summary;
+    enriched.canonicalDriver = canonical;
+    enriched.canonicalLoad = load;
+    enriched.canonicalUnit = unit;
+    enriched.canonicalException = exception;
+    return enriched;
+  }
+
   function navHtml() {
     var path = currentPath();
     return navItems.map(function (item) {
@@ -373,7 +450,10 @@
   }
 
   function statusClass(state) {
-    return state === "Ready" ? "ready" : state === "Hold" ? "blocked" : "watch";
+    var value = String(state || "").toLowerCase();
+    if (value.indexOf("block") >= 0 || value.indexOf("hold") >= 0 || value.indexOf("held") >= 0) return "blocked";
+    if (value.indexOf("ready") >= 0 || value.indexOf("complete") >= 0 || value.indexOf("available") >= 0) return "ready";
+    return "watch";
   }
 
   function documentStatus(driver, index) {
@@ -385,9 +465,9 @@
     if (index === 16 && !driver.hasGarnishment) return "Not applicable";
     if (index === 16 && driver.hasGarnishment) return "Filed";
     if (index === 17 && driver.id === "DRV-003") return "Revised";
-    if (index === 22 && (driver.state === "Watch" || driver.state === "Hold")) return driver.state;
+    if (index === 22 && (driver.state === "Watch" || driver.state === "Hold" || driver.state === "At Risk" || driver.state === "Review" || driver.state === "Blocked")) return driver.state;
     if (index > 12 && index < 17) return "Filed";
-    if (driver.state === "Hold" && index < 5) return "Needs review";
+    if ((driver.state === "Hold" || driver.state === "Blocked") && index < 5) return "Needs review";
     return "Filed";
   }
 
@@ -500,15 +580,15 @@
   }
 
   function dqfScore(driver) {
-    if (driver.state === "Hold") return 68;
+    if (driver.state === "Hold" || driver.state === "Blocked") return 68;
     if (driver.id === "DRV-002") return 88;
     if (driver.id === "DRV-006" || driver.id === "DRV-009" || driver.id === "DRV-011") return 91;
-    if (driver.state === "Watch") return 91;
+    if (driver.state === "Watch" || driver.state === "At Risk" || driver.state === "Review") return 91;
     return 98;
   }
 
   function dqfCategoryRows(driver) {
-    var annualReview = driver.id === "DRV-006" ? "Due in 14 days" : driver.state === "Watch" ? "Watch" : "Complete";
+    var annualReview = driver.id === "DRV-006" ? "Due in 14 days" : (driver.state === "Watch" || driver.state === "At Risk" || driver.state === "Review") ? "Watch" : "Complete";
     var priorEmployer = driver.id === "DRV-002" ? "Reminder Sent" : driver.id === "DRV-003" ? "In Review" : "Complete";
     var medical = driver.id === "DRV-003" ? "Expired" : "Complete";
     var mvr = driver.id === "DRV-003" ? "Failed Review" : "Complete";
@@ -1284,7 +1364,7 @@
 
   function driverPhotoHtml(driver, className) {
     if (driver.photo) {
-      return '<span class="' + esc(className) + ' driver-photo-frame"><img class="driver-photo-image" src="' + esc(driver.photo) + '" alt="' + esc(driver.name) + ' profile photo"></span>';
+      return '<span class="' + esc(className) + ' driver-photo-frame"><img class="driver-photo-image" src="' + esc(driver.photo) + '" alt="' + esc(driver.name) + ' profile photo" loading="eager" onerror="this.hidden=true;this.nextElementSibling.hidden=false;"><b hidden>' + esc(driverInitials(driver)) + '</b></span>';
     }
     return '<span class="' + esc(className) + ' driver-photo-frame driver-initials-photo" role="img" aria-label="' + esc(driver.name) + ' profile initials">' + esc(driverInitials(driver)) + '</span>';
   }
@@ -1294,7 +1374,7 @@
   }
 
   function driversIndex() {
-    var cards = Object.keys(drivers).map(function (key) { return driverCardHtml(drivers[key]); }).join("");
+    var cards = Object.keys(drivers).map(function (key) { return driverCardHtml(enrichDriver(drivers[key])); }).join("");
     shell("Driver Records", "Drivers", [
       '<section class="driver-vault-intake-row" aria-label="BOF Vault document intake workbench">',
       '  <article class="route-record-card driver-vault-intake-card">',
@@ -1323,20 +1403,33 @@
     ].join(""), "Review simulated driver, carrier, proof, and onboarding documents as they move through intake, classification, exception review, and readiness profile generation.");
   }
 
+  function isPrimaryQualificationDoc(doc) {
+    var title = String(doc && doc[0] || "");
+    return /CDL|license|Medical|MCSA|MVR|FMCSA|Clearinghouse|W-9|I-9|application|Prior employer|Road test|annual review|qualification file/i.test(title);
+  }
+
+  function driverDocumentCardHtml(driver, doc, index) {
+    var status = documentStatus(driver, index);
+    var cls = documentStatusClass(status);
+    var href = "/interactive-demo/drivers/" + esc(driver.id.toLowerCase()) + "/?doc=" + index;
+    return '<a class="driver-doc-card" href="' + href + '" data-driver-doc="' + index + '" aria-pressed="false"><header><span>DOC-' + String(index + 1).padStart(2, "0") + '</span><strong>' + esc(doc[0]) + '</strong><em class="mini-status ' + cls + '">' + esc(status) + '</em></header><p>' + esc(doc[1]) + '</p><dl><div><dt>Owner</dt><dd>' + esc(doc[2]) + '</dd></div><div><dt>Evidence</dt><dd>' + esc(doc[3]) + '</dd></div><div><dt>Next action</dt><dd>' + esc(documentNextAction(driver, doc, index, status)) + '</dd></div></dl></a>';
+  }
+
   function driverPage() {
-    var driver = drivers[driverSlugFromPath()] || drivers["drv-001"];
+    var driver = enrichDriver(drivers[driverSlugFromPath()] || drivers["drv-001"]);
     var initialDocIndex = currentDriverDocIndex();
-    var docs = driverDocs.map(function (doc, index) {
-      var status = documentStatus(driver, index);
-      var cls = documentStatusClass(status);
-      var href = "/interactive-demo/drivers/" + esc(driver.id.toLowerCase()) + "/?doc=" + index + "#driver-document-viewer";
-      return '<a class="driver-doc-card" href="' + href + '" data-driver-doc="' + index + '" aria-pressed="false"><header><span>DOC-' + String(index + 1).padStart(2, "0") + '</span><strong>' + esc(doc[0]) + '</strong><em class="mini-status ' + cls + '">' + esc(status) + '</em></header><p>' + esc(doc[1]) + '</p><dl><div><dt>Owner</dt><dd>' + esc(doc[2]) + '</dd></div><div><dt>Evidence</dt><dd>' + esc(doc[3]) + '</dd></div><div><dt>Next action</dt><dd>' + esc(documentNextAction(driver, doc, index, status)) + '</dd></div></dl></a>';
-    }).join("");
+    var primaryDocs = [];
+    var supportingDocs = [];
+    driverDocs.forEach(function (doc, index) {
+      var card = driverDocumentCardHtml(driver, doc, index);
+      if (isPrimaryQualificationDoc(doc)) primaryDocs.push(card);
+      else supportingDocs.push(card);
+    });
     shell(driver.id + " Driver File", "Driver record", [
-      '<section class="driver-record-hero">',
+      '<section class="driver-record-hero canonical-driver-hero">',
       '  ' + driverPhotoHtml(driver, "driver-record-photo"),
-      '  <div><span class="mini-status ' + statusClass(driver.state) + '">' + esc(driver.state) + '</span><h2>' + esc(driver.name) + '</h2><p>' + esc(driver.summary) + '</p></div>',
-      '  <dl><div><dt>Load</dt><dd>' + esc(driver.load) + '</dd></div><div><dt>Route</dt><dd>' + esc(driver.route) + '</dd></div><div><dt>Owner</dt><dd>' + esc(driver.owner) + '</dd></div><div><dt>DQF readiness</dt><dd>' + dqfScore(driver) + '%</dd></div><div><dt>Priority reason</dt><dd>' + esc(driver.exception) + '</dd></div></dl>',
+      '  <div class="driver-profile-copy"><span class="mini-status ' + statusClass(driver.readinessStatus || driver.state) + '">' + esc(driver.readinessStatus || driver.state) + '</span><h2>' + esc(driver.name) + '</h2><p>' + esc(driver.id) + ' / ' + esc(driver.employmentType || "Fleet driver") + '</p><p>' + esc(driver.summary) + '</p><div class="driver-profile-actions"><a href="/drivers/">Return to Drivers</a><a href="/interactive-demo/drivers/">Open demo roster</a></div></div>',
+      '  <dl class="driver-profile-meta"><div><dt>Current assignment</dt><dd>' + esc(driver.load || "No active load") + '</dd></div><div><dt>Route</dt><dd>' + esc(driver.route) + '</dd></div><div><dt>Unit / availability</dt><dd>' + esc(driver.unitLabel || "Available") + '</dd></div><div><dt>Assignment state</dt><dd>' + esc(driver.assignmentState || "Available") + '</dd></div><div><dt>DQF readiness</dt><dd>' + dqfScore(driver) + '%</dd></div><div><dt>Required action</dt><dd>' + esc(driver.exception) + '</dd></div></dl>',
       '</section>',
       driverRosterInfoHtml(driver),
       dqfWorkflowHtml(driver),
@@ -1344,7 +1437,8 @@
       '  <div class="driver-document-toolbar"><span>Open Document</span><h2 data-driver-doc-title>Driver license image</h2><p data-driver-doc-meta>' + esc(driver.id) + '</p></div>',
       '  <div data-driver-document-paper></div>',
       '</section>',
-      '<section class="driver-doc-grid" aria-label="' + esc(driver.id) + ' documents">' + docs + '</section>'
+      '<section class="driver-document-group" aria-label="' + esc(driver.id) + ' primary qualification documents"><div class="driver-document-group-heading"><span>Primary Qualification Documents</span><h2>Core eligibility and safety file</h2><p>CDL, medical, MVR, clearinghouse, application, annual review, and owner-operator setup where applicable.</p></div><div class="driver-doc-grid">' + primaryDocs.join("") + '</div></section>',
+      '<section class="driver-document-group" aria-label="' + esc(driver.id) + ' secondary and supporting documents"><div class="driver-document-group-heading"><span>Secondary and Supporting Documents</span><h2>HR, payroll, assignment, and operating evidence</h2><p>Employment records, settlement setup, safety acknowledgements, insurance, emergency contacts, and dispatch context.</p></div><div class="driver-doc-grid">' + supportingDocs.join("") + '</div></section>'
     ].join(""), "Review this driver's photo, roster fields, DQF score, active requests, generated forms, document history, and clickable paperwork that controls dispatch eligibility.");
     bindDriverDocuments(driver);
     renderDriverDocument(driver, initialDocIndex);
@@ -1471,7 +1565,7 @@
     var content = {
       "/interactive-demo/load-queue/": ["Load Queue", "Queue", loadTableHtml(), "Compare every release-review load by priority, status, lane, driver, carrier, and controlling item so the owner can see what moves, what waits, and why."],
       "/interactive-demo/dispatch/": ["Dispatch Board", "Dispatch", dispatchBoardHtml(), "See the dispatch consequence for the selected load across import, pre-trip, document gate, in-transit context, and post-trip proof requirements."],
-      "/interactive-demo/safety/": ["Safety & Compliance", "Safety", '<section class="route-grid">' + Object.keys(drivers).map(function (key) { return driverCardHtml(drivers[key]); }).join("") + '</section>', "Review driver safety and compliance readiness by DQF score, medical/MVR state, watch items, holds, and assignment consequence."],
+      "/interactive-demo/safety/": ["Safety & Compliance", "Safety", '<section class="route-grid">' + Object.keys(drivers).map(function (key) { return driverCardHtml(enrichDriver(drivers[key])); }).join("") + '</section>', "Review driver safety and compliance readiness by DQF score, medical/MVR state, watch items, holds, and assignment consequence."],
       "/interactive-demo/settlements/": ["Settlements", "Settlements", settlementsHtml(), "Review load revenue, driver pay methods, payroll deductions, settlement holds, and proof requirements without exposing real private payroll data."],
       "/interactive-demo/reports/": ["Reports", "Reports", reportsHtml(), "Summarize the operating consequences behind ready, conditional, watch, hold, settlement, claim, and expansion-review decisions."],
       "/interactive-demo/alerts/": ["Alerts", "Alerts", '<section class="route-grid"><article class="route-record-card"><h2>Import document review</h2><p>TMS-LD-10482 waits on BOF-RR-10482 readiness review.</p></article><article class="route-record-card"><h2>Credential hold</h2><p>DRV-003 medical-card hold blocks BOF-1931.</p><a href="/interactive-demo/drivers/drv-003/">Open driver page</a></article><article class="route-record-card"><h2>Renewal watch</h2><p>DRV-006 renewal evidence controls BOF-2258 planning.</p><a href="/interactive-demo/drivers/drv-006/">Open driver page</a></article></section>', "Open the active alert queue and jump directly to the driver, document, credential, or release record that explains the blocker."],
@@ -1481,18 +1575,26 @@
     shell(content[0], content[1], content[2], content[3]);
   }
 
-  var slug = driverSlugFromPath();
-  if (currentPath() === "/interactive-demo/drivers/document-intake/") {
-    documentIntakePage();
-  } else if (slug) {
-    driverPage();
-  } else if (currentPath() === "/interactive-demo/drivers/") {
-    driversIndex();
-  } else if (currentPath() === "/interactive-demo/documents/") {
-    documentsPage();
-  } else if (currentPath() === "/interactive-demo/carriers/") {
-    carrierPage();
+  function renderCurrentRoute() {
+    var slug = driverSlugFromPath();
+    if (currentPath() === "/interactive-demo/drivers/document-intake/") {
+      documentIntakePage();
+    } else if (slug) {
+      driverPage();
+    } else if (currentPath() === "/interactive-demo/drivers/") {
+      driversIndex();
+    } else if (currentPath() === "/interactive-demo/documents/") {
+      documentsPage();
+    } else if (currentPath() === "/interactive-demo/carriers/") {
+      carrierPage();
+    } else {
+      genericPage(currentPath());
+    }
+  }
+
+  if (currentPath().indexOf("/interactive-demo/drivers/") === 0 || currentPath() === "/interactive-demo/safety/") {
+    loadCanonicalOperations().then(renderCurrentRoute);
   } else {
-    genericPage(currentPath());
+    renderCurrentRoute();
   }
 })();
