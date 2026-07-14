@@ -22465,7 +22465,588 @@ body.premium-site.governance-workstream-page .trust-control-grid {
   }
 
   body.premium-site.governance-workstream-page .control-table th,
-  body.premium-site.governance-workstream-page .control-table td {
+body.premium-site.governance-workstream-page .control-table td {
     padding: 12px 10px;
+  }
+}
+
+/* Drivers roster operating page */
+.driver-roster-page .site-header {
+  max-width: min(1760px, calc(100% - 32px));
+}
+
+.driver-roster-main {
+  overflow-x: clip;
+}
+
+.driver-roster-page {
+  overflow-x: hidden;
+}
+
+.driver-roster-page,
+.driver-roster-page *,
+.driver-roster-page *::before,
+.driver-roster-page *::after {
+  box-sizing: border-box;
+}
+
+.driver-roster-page .section {
+  box-sizing: border-box;
+  max-width: min(var(--max), 100%);
+}
+
+.driver-roster-page .section > *,
+.driver-hero-copy,
+.driver-card-title,
+.driver-record-list,
+.driver-video-panel,
+.driver-record-panel {
+  min-width: 0;
+}
+
+.driver-hero {
+  display: grid;
+  grid-template-columns: minmax(0, 0.92fr) minmax(360px, 0.72fr);
+  gap: clamp(24px, 4vw, 54px);
+  align-items: stretch;
+  padding-top: clamp(34px, 5vw, 70px);
+  padding-bottom: clamp(12px, 2vw, 24px);
+}
+
+.driver-hero-copy {
+  align-self: center;
+}
+
+.driver-hero .hero-promise {
+  max-width: 780px;
+  margin: 0 0 12px;
+  color: #0a1728;
+  font-size: clamp(1.52rem, 3vw, 3.1rem);
+  font-weight: 900;
+  line-height: 0.98;
+  letter-spacing: 0;
+  overflow-wrap: break-word;
+}
+
+.driver-hero p:not(.eyebrow):not(.hero-promise) {
+  max-width: 760px;
+  color: #48586b;
+  font-size: clamp(1rem, 1.25vw, 1.22rem);
+  line-height: 1.58;
+  overflow-wrap: break-word;
+}
+
+.driver-hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 24px;
+}
+
+.driver-hero-photo {
+  position: relative;
+  min-height: 312px;
+  height: 312px;
+  margin: 0;
+  overflow: hidden;
+  border: 1px solid rgba(111, 145, 178, 0.34);
+  border-radius: 8px;
+  background: #f8fbff;
+  box-shadow: 0 28px 72px rgba(39, 57, 79, 0.17);
+}
+
+.driver-hero-photo img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.driver-hero-photo figcaption {
+  position: absolute;
+  right: 18px;
+  bottom: 18px;
+  left: 18px;
+  padding: 12px 14px;
+  border: 1px solid rgba(255, 255, 255, 0.65);
+  border-radius: 8px;
+  background: rgba(9, 23, 42, 0.82);
+  color: #fff;
+  font-size: 0.9rem;
+  line-height: 1.35;
+  box-shadow: 0 14px 36px rgba(9, 23, 42, 0.25);
+}
+
+.driver-roster-shell {
+  padding-top: clamp(18px, 2.8vw, 34px);
+  padding-bottom: clamp(30px, 4.6vw, 62px);
+}
+
+.driver-roster-toolbar {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(280px, 0.48fr);
+  gap: 20px;
+  align-items: end;
+  margin-bottom: 12px;
+}
+
+.driver-roster-toolbar h2 {
+  max-width: 980px;
+  margin-bottom: 6px;
+  color: #0a1728;
+  font-size: clamp(1.45rem, 2.1vw, 2.05rem);
+  line-height: 1.06;
+  letter-spacing: 0;
+}
+
+.driver-roster-toolbar p:not(.eyebrow) {
+  max-width: 760px;
+  margin-bottom: 0;
+  color: #58677a;
+}
+
+.driver-filter-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: flex-end;
+}
+
+.driver-filter {
+  min-height: 40px;
+  padding: 0 14px;
+  border: 1px solid rgba(111, 145, 178, 0.36);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.82);
+  color: #314258;
+  font-weight: 900;
+  cursor: pointer;
+  transition: border-color 0.18s ease, background 0.18s ease, color 0.18s ease;
+}
+
+.driver-filter:hover,
+.driver-filter.is-active {
+  border-color: rgba(26, 121, 255, 0.75);
+  background: #1a79ff;
+  color: #fff;
+}
+
+.driver-roster-summary {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.driver-roster-summary span {
+  min-width: 0;
+  padding: 10px 12px;
+  border: 1px solid rgba(111, 145, 178, 0.28);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.88);
+  color: #526175;
+  font-size: 0.78rem;
+  font-weight: 900;
+  text-transform: uppercase;
+  box-shadow: 0 12px 32px rgba(39, 57, 79, 0.07);
+}
+
+.driver-roster-summary strong {
+  display: block;
+  margin-bottom: 2px;
+  color: #0a1728;
+  font-size: 1.18rem;
+  line-height: 1;
+}
+
+.driver-roster-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.driver-roster-card,
+.driver-loading-card {
+  position: relative;
+  min-width: 0;
+  overflow: hidden;
+  border: 1px solid rgba(111, 145, 178, 0.28);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.92);
+  box-shadow: 0 18px 48px rgba(39, 57, 79, 0.1);
+}
+
+.driver-roster-card {
+  padding: 16px;
+  border-top: 4px solid #21b97a;
+}
+
+.driver-status-review,
+.driver-status-at-risk {
+  border-top-color: #f1aa1f;
+}
+
+.driver-status-blocked {
+  border-top-color: #e45757;
+}
+
+.driver-card-top {
+  display: grid;
+  grid-template-columns: 72px minmax(0, 1fr) auto;
+  gap: 12px;
+  align-items: center;
+}
+
+.driver-photo-link,
+.driver-photo-link img {
+  display: block;
+  width: 72px;
+  height: 72px;
+  border-radius: 8px;
+}
+
+.driver-photo-link {
+  overflow: hidden;
+  border: 1px solid rgba(111, 145, 178, 0.3);
+  background: #eef6ff;
+}
+
+.driver-photo-link img {
+  object-fit: cover;
+}
+
+.driver-card-title {
+  min-width: 0;
+}
+
+.driver-card-title span,
+.driver-record-list dt {
+  color: #637184;
+  font-size: 0.72rem;
+  font-weight: 900;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.driver-card-title h3 {
+  margin: 2px 0;
+  color: #0a1728;
+  font-size: 1.12rem;
+  line-height: 1.12;
+  letter-spacing: 0;
+}
+
+.driver-card-title p {
+  margin: 0;
+  color: #596879;
+  font-size: 0.92rem;
+}
+
+.driver-status-pill {
+  justify-self: end;
+  padding: 8px 10px;
+  border: 1px solid rgba(33, 185, 122, 0.45);
+  border-radius: 999px;
+  background: #ecfff6;
+  color: #087a4e;
+  font-size: 0.74rem;
+  line-height: 1;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.driver-status-review .driver-status-pill,
+.driver-status-at-risk .driver-status-pill {
+  border-color: rgba(241, 170, 31, 0.5);
+  background: #fff8e8;
+  color: #a26300;
+}
+
+.driver-status-blocked .driver-status-pill {
+  border-color: rgba(228, 87, 87, 0.5);
+  background: #fff0f0;
+  color: #b42323;
+}
+
+.driver-doc-strip {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+  margin: 14px 0;
+}
+
+.driver-doc-strip a,
+.driver-doc-strip span {
+  min-width: 0;
+  padding: 9px 10px;
+  border: 1px solid rgba(111, 145, 178, 0.22);
+  border-radius: 8px;
+  background: linear-gradient(135deg, rgba(238, 247, 255, 0.9), rgba(248, 255, 251, 0.9));
+  color: #284159;
+  font-size: 0.74rem;
+  font-weight: 900;
+  line-height: 1.2;
+  text-decoration: none;
+  overflow-wrap: anywhere;
+}
+
+.driver-record-list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  margin: 0;
+}
+
+.driver-record-list div {
+  min-width: 0;
+  padding: 10px;
+  border: 1px solid rgba(111, 145, 178, 0.2);
+  border-radius: 8px;
+  background: rgba(248, 251, 255, 0.78);
+}
+
+.driver-record-list dt,
+.driver-record-list dd {
+  margin: 0;
+}
+
+.driver-record-list dd {
+  margin-top: 4px;
+  color: #1f2f44;
+  font-size: 0.82rem;
+  line-height: 1.32;
+}
+
+.driver-record-list a {
+  color: #0b69df;
+  font-weight: 900;
+  text-decoration: none;
+}
+
+.driver-record-list a:hover,
+.driver-card-actions a:hover,
+.driver-record-links a:hover {
+  text-decoration: underline;
+}
+
+.driver-warning {
+  min-height: 42px;
+  margin: 12px 0 0;
+  color: #4b5b70;
+  font-size: 0.84rem;
+  line-height: 1.42;
+}
+
+.driver-card-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.driver-card-actions a {
+  flex: 1 1 auto;
+  min-width: 88px;
+  padding: 9px 10px;
+  border: 1px solid rgba(26, 121, 255, 0.3);
+  border-radius: 999px;
+  background: #fff;
+  color: #0b69df;
+  font-size: 0.78rem;
+  font-weight: 900;
+  text-align: center;
+  text-decoration: none;
+}
+
+.driver-initials {
+  position: absolute;
+  right: -18px;
+  bottom: -22px;
+  color: rgba(10, 23, 40, 0.04);
+  font-size: 5rem;
+  font-weight: 900;
+  line-height: 1;
+  pointer-events: none;
+}
+
+.driver-loading-card {
+  grid-column: 1 / -1;
+  padding: 24px;
+  color: #48586b;
+  font-weight: 900;
+}
+
+.driver-loading-card.is-error {
+  color: #b42323;
+}
+
+.driver-operations-split {
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(320px, 0.55fr);
+  gap: clamp(20px, 3vw, 36px);
+  align-items: stretch;
+  padding-top: clamp(24px, 4vw, 48px);
+}
+
+.driver-video-panel,
+.driver-record-panel {
+  min-width: 0;
+  border: 1px solid rgba(111, 145, 178, 0.28);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.9);
+  box-shadow: 0 18px 48px rgba(39, 57, 79, 0.1);
+}
+
+.driver-video-panel {
+  padding: clamp(18px, 3vw, 28px);
+}
+
+.driver-video-panel h2,
+.driver-record-panel h2 {
+  margin-bottom: 10px;
+  color: #0a1728;
+  font-size: clamp(1.5rem, 2.2vw, 2.25rem);
+  line-height: 1.06;
+  letter-spacing: 0;
+}
+
+.driver-video-panel p:not(.eyebrow),
+.driver-record-panel p:not(.eyebrow) {
+  color: #536276;
+  line-height: 1.55;
+}
+
+.driver-video-panel video {
+  display: block;
+  width: 100%;
+  margin-top: 18px;
+  border: 1px solid rgba(111, 145, 178, 0.34);
+  border-radius: 8px;
+  background: #071426;
+  box-shadow: 0 18px 40px rgba(9, 23, 42, 0.18);
+}
+
+.driver-record-panel {
+  padding: clamp(18px, 3vw, 28px);
+}
+
+.driver-record-links {
+  display: grid;
+  gap: 10px;
+  margin-top: 18px;
+}
+
+.driver-record-links a {
+  padding: 12px 14px;
+  border: 1px solid rgba(111, 145, 178, 0.24);
+  border-radius: 8px;
+  background: linear-gradient(135deg, rgba(238, 247, 255, 0.86), rgba(250, 255, 252, 0.9));
+  color: #0b355f;
+  font-weight: 900;
+  text-decoration: none;
+}
+
+.driver-next-band .button.secondary {
+  border-color: rgba(190, 213, 238, 0.75);
+  color: #dcecff;
+}
+
+@media (max-width: 1180px) {
+  .driver-hero,
+  .driver-operations-split {
+    grid-template-columns: 1fr;
+  }
+
+  .driver-hero-photo,
+  .driver-hero-photo img {
+    min-height: 300px;
+  }
+
+  .driver-roster-toolbar {
+    grid-template-columns: 1fr;
+  }
+
+  .driver-filter-group {
+    justify-content: flex-start;
+  }
+
+  .driver-roster-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .driver-roster-summary {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 720px) {
+  .driver-roster-page .site-header {
+    max-width: 100%;
+  }
+
+  .driver-hero,
+  .driver-roster-shell,
+  .driver-operations-split {
+    width: 100vw;
+    max-width: 100vw;
+    padding-right: 18px;
+    padding-left: 18px;
+  }
+
+  .driver-hero-copy,
+  .driver-hero-photo,
+  .driver-roster-toolbar,
+  .driver-roster-summary,
+  .driver-roster-grid,
+  .driver-video-panel,
+  .driver-record-panel {
+    width: 100%;
+    max-width: calc(100vw - 36px);
+  }
+
+  .driver-hero .hero-promise {
+    font-size: clamp(1.42rem, 9vw, 2.2rem);
+  }
+
+  .driver-hero-actions,
+  .driver-card-actions,
+  .driver-next-band .actions {
+    flex-direction: column;
+  }
+
+  .driver-hero-actions .button,
+  .driver-card-actions a,
+  .driver-next-band .button {
+    width: 100%;
+  }
+
+  .driver-roster-summary {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .driver-roster-grid,
+  .driver-doc-strip,
+  .driver-record-list {
+    grid-template-columns: 1fr;
+  }
+
+  .driver-card-top {
+    grid-template-columns: 64px minmax(0, 1fr);
+  }
+
+  .driver-photo-link,
+  .driver-photo-link img {
+    width: 64px;
+    height: 64px;
+  }
+
+  .driver-status-pill {
+    grid-column: 1 / -1;
+    justify-self: start;
+  }
+
+  .driver-hero-photo,
+  .driver-hero-photo img {
+    min-height: 240px;
   }
 }

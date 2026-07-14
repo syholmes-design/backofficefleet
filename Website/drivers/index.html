@@ -3,15 +3,15 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Driver Readiness | BackOfficeFleet</title>
-  <meta name="description" content="BOF driver eligibility view for TMS imported loads with credentials, document health, safety status, dispatch eligibility, and next actions.">
-  <link rel="stylesheet" href="/assets/css/styles.css?v=20260710-redesign-deploy-1">
+  <title>Driver Roster &amp; Readiness | BackOfficeFleet</title>
+  <meta name="description" content="BOF driver roster showing driver photos, documents, pay status, load readiness, HOS and safety concerns from the canonical operations dataset.">
+  <link rel="stylesheet" href="/assets/css/styles.css?v=20260714-driver-roster">
 </head>
-<body class="premium-site page-drivers bof-canonical-data-page">
+<body class="premium-site page-drivers driver-roster-page">
   <header class="site-header">
     <a class="brand" href="/" aria-label="BackOfficeFleet home"><img src="/assets/images/logo/boflogo-original.png" alt="BackOfficeFleet"></a>
     <button class="nav-toggle" type="button" data-nav-toggle aria-expanded="false" aria-label="Toggle navigation">&#9776;</button>
-        <nav class="site-nav" data-nav aria-label="Main navigation">
+    <nav class="site-nav" data-nav aria-label="Main navigation">
       <div class="nav-menu" data-nav-menu>
         <button class="nav-menu-toggle" type="button" data-nav-menu-toggle aria-expanded="false" aria-haspopup="true">Who We Serve</button>
         <div class="nav-dropdown" aria-label="Who We Serve">
@@ -21,7 +21,7 @@
           <a href="/aggregator-outreach/">Aggregators</a>
         </div>
       </div>
-      <a href="/drivers/">Drivers</a>
+      <a class="active" href="/drivers/">Drivers</a>
       <a href="/dispatch/">Dispatch &amp; Operations</a>
       <a href="/safety/">Safety &amp; Compliance</a>
       <a href="/settlements/">Settlements &amp; Billing</a>
@@ -30,36 +30,101 @@
       <a href="/trust-governance/">Company</a>
       <a class="nav-utility-link" href="/command-center/">Command Center</a>
     </nav>
-    <a class="header-cta" href="/scenario-walkthrough/">Take the BOF Fleet Assessment</a>
+    <a class="header-cta" href="/command-center/">Command Center</a>
   </header>
-  <main>
-    <section class="section page-hero">
-      <div class="reveal">
+
+  <main class="driver-roster-main">
+    <section class="section driver-hero" id="drivers-top">
+      <div class="driver-hero-copy reveal">
         <p class="eyebrow">Driver readiness control</p>
         <h1>Drivers</h1>
-        <p>Driver readiness starts the workflow. The roster below renders the public demo driver records from the shared BOF operations dataset: identity, employment type, assignment state, documents, exceptions, and profile actions.</p>
-        <div class="actions">
-          <a class="button primary" href="#canonical-driver-roster">Open canonical roster &rarr;</a>
-          <a class="button secondary" href="/operations-record/#canonical-operations-record">View joined records</a>
+        <p class="hero-promise">Start with the people who can actually move the work.</p>
+        <p>BOF keeps the driver roster connected to documents, assignment status, load readiness, pay context, HOS watch items, safety blockers, and the same canonical records used by Dispatch, Safety, Settlements, and the Operations Record.</p>
+        <div class="driver-hero-actions">
+          <a class="button primary" href="#driver-roster">Open 12-driver roster</a>
+          <a class="button secondary" href="#driver-video">Watch driver video</a>
+          <a class="button secondary" href="/operations-record/">View joined records</a>
         </div>
       </div>
-      <div class="demo-panel reveal">
-        <p class="eyebrow">Canonical driver file</p>
-        <h2>One roster feeds driver profiles, assignments, documents, and operating evidence.</h2>
-        <ul class="mini-list">
-          <li><span>Roster</span><a class="proof-link" href="#canonical-driver-roster">All 12 drivers</a></li>
-          <li><span>Profiles</span><a class="proof-link" href="/interactive-demo/drivers/drv-001/">Open ready profile</a></li>
-          <li><span>At risk</span><a class="proof-link" href="/interactive-demo/drivers/drv-002/">Open at-risk profile</a></li>
-          <li><span>Blocked</span><a class="proof-link" href="/interactive-demo/drivers/drv-003/">Open blocked profile</a></li>
-        </ul>
+      <figure class="driver-hero-photo reveal">
+        <img src="/assets/images/photos/site-pass/15-driver-file-working-session.webp" alt="Fleet office team reviewing driver file paperwork with a truck visible outside">
+        <figcaption>Driver files, assignments, and follow-up need to move as one operating record.</figcaption>
+      </figure>
+    </section>
+
+    <section class="section driver-roster-shell" id="driver-roster" aria-labelledby="driver-roster-heading">
+      <div class="driver-roster-toolbar reveal">
+        <div>
+          <p class="eyebrow">Canonical driver roster</p>
+          <h2 id="driver-roster-heading">12 driver records with documents, pay, load readiness, HOS, and safety context.</h2>
+          <p>Use the filters to see which drivers are ready, which need review, and which record is blocking assignment.</p>
+        </div>
+        <div class="driver-filter-group" aria-label="Driver roster filters">
+          <button class="driver-filter is-active" type="button" data-driver-filter="all">All</button>
+          <button class="driver-filter" type="button" data-driver-filter="Ready">Ready</button>
+          <button class="driver-filter" type="button" data-driver-filter="Review">Review</button>
+          <button class="driver-filter" type="button" data-driver-filter="At Risk">At Risk</button>
+          <button class="driver-filter" type="button" data-driver-filter="Blocked">Blocked</button>
+        </div>
+      </div>
+
+      <div class="driver-roster-summary reveal" data-driver-summary aria-live="polite">
+        <span>Loading roster status...</span>
+      </div>
+
+      <div class="driver-roster-grid reveal" data-driver-roster aria-live="polite">
+        <article class="driver-loading-card">Loading canonical driver records...</article>
       </div>
     </section>
 
-    <section class="section bof-canonical-section" id="canonical-driver-roster" data-bof-operations-view="drivers" aria-live="polite"></section>
+    <section class="section driver-operations-split" id="driver-video">
+      <div class="driver-video-panel reveal">
+        <p class="eyebrow">Driver video</p>
+        <h2>Driver documents should feed readiness, not sit in a folder.</h2>
+        <p>The driver video shows how BOF turns intake, DQF evidence, safety review, and follow-up into an operating surface the office can actually use.</p>
+        <video controls preload="metadata" poster="/assets/images/video-posters/bof-driver-vault.jpg">
+          <source src="/assets/videos/bof-driver-vault.mp4" type="video/mp4">
+          Your browser does not support the video tag.
+        </video>
+      </div>
+
+      <aside class="driver-record-panel reveal">
+        <p class="eyebrow">Record continuity</p>
+        <h2>The roster is connected to the rest of the site.</h2>
+        <div class="driver-record-links">
+          <a href="/dispatch/">Dispatch release view</a>
+          <a href="/safety/">Safety consequence view</a>
+          <a href="/settlements/">Settlement readiness view</a>
+          <a href="/operations-record/">Joined operations record</a>
+          <a href="/business-operations/driver-onboarding/">Driver onboarding</a>
+          <a href="/interactive-demo/drivers/document-intake/">Document intake</a>
+        </div>
+      </aside>
+    </section>
   </main>
-  <section class="cta-band"><div class="cta-inner"><div><p class="eyebrow">Next step</p><h2>Connect driver eligibility to dispatch.</h2><p>Use one driver file to see which records clear assignment and which item blocks the next load.</p></div><a class="button light" href="/scenario-walkthrough/">Take the BOF Fleet Assessment &rarr;</a></div></section>
-  <footer class="site-footer"><div class="footer-inner"><strong>BackOfficeFleet</strong><span>Driver eligibility.</span><a href="/trust-governance/">Trust &amp; Governance</a></div></footer>
-  <script src="/assets/js/bof-public-operations.js?v=1.0"></script>
+
+  <section class="cta-band driver-next-band">
+    <div class="cta-inner">
+      <div>
+        <p class="eyebrow">Driver operating layer</p>
+        <h2>Keep the roster tied to the next load, not just the personnel file.</h2>
+        <p>Open a driver profile, the active operating record, or the related dispatch and safety view from the roster itself.</p>
+      </div>
+      <div class="actions">
+        <a class="button light" href="#driver-roster">Back to roster</a>
+        <a class="button secondary" href="/command-center/">Command Center</a>
+      </div>
+    </div>
+  </section>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <strong>BackOfficeFleet</strong>
+      <span>Driver readiness.</span>
+      <a href="/trust-governance/">Trust &amp; Governance</a>
+    </div>
+  </footer>
+  <script src="/assets/js/driver-roster.js?v=20260714-driver-roster"></script>
   <script src="/assets/js/site.js?v=1.50"></script>
 </body>
 </html>
