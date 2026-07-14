@@ -22117,3 +22117,24 @@ body.premium-site.page-command-center .compact-command-modules .operational-rout
     height: 60px;
   }
 }
+
+@media (min-width: 1181px) and (max-width: 1500px) {
+  .bof-canonical-data-page .site-header {
+    gap: 8px;
+    grid-template-columns: minmax(132px, auto) minmax(0, 1fr);
+  }
+
+  .bof-canonical-data-page .site-nav {
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    min-width: 0;
+    row-gap: 3px;
+  }
+
+  .bof-canonical-data-page .nav-menu-toggle,
+  .bof-canonical-data-page .site-nav > a {
+    font-size: 0.72rem;
+    min-height: 34px;
+    padding: 8px 5px;
+  }
+}
