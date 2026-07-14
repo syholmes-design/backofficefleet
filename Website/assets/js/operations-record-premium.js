@@ -1,0 +1,195 @@
+(function () {
+  var DATA_URL = "/assets/data/bof-public-operations.json";
+  var recordMount = document.querySelector("[data-operations-records]");
+  var summaryMount = document.querySelector("[data-operations-summary]");
+  var tableMount = document.querySelector("[data-operations-table]");
+  var filters = Array.prototype.slice.call(document.querySelectorAll("[data-operations-filter]"));
+  var state = { data: null, filter: "all" };
+
+  if (!recordMount || !summaryMount || !tableMount) return;
+
+  function esc(value) {
+    return String(value === null || value === undefined ? "" : value)
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#039;");
+  }
+
+  function byId(items) {
+    return (items || []).reduce(function (map, item) {
+      if (item && item.id) map[item.id] = item;
+      return map;
+    }, {});
+  }
+
+  function firstBy(items, key, value) {
+    return (items || []).find(function (item) { return item && item[key] === value; }) || null;
+  }
+
+  function statusClass(status) {
+    return "operations-status-" + String(status || "none").toLowerCase().replace(/\s+/g, "-");
+  }
+
+  function statusLabel(label, status) {
+    return '<span class="operations-status-pill ' + statusClass(status) + '"><b>' + esc(label) + '</b>' + esc(status || "None") + '</span>';
+  }
+
+  function releaseTone(load) {
+    if (load.dispatchStatus === "Blocked" || load.safetyStatus === "Blocked") return "blocked";
+    if (load.dispatchStatus === "At Risk" || load.dispatchStatus === "Review" || load.proofStatus === "Review") return "review";
+    return "ready";
+  }
+
+  function releaseLabel(load) {
+    var tone = releaseTone(load);
+    if (tone === "blocked") return "Hold";
+    if (tone === "review") return "Review";
+    return "Release";
+  }
+
+  function lookups(data) {
+    return {
+      drivers: byId(data.drivers),
+      units: byId(data.units),
+      proofRecords: byId(data.proofRecords),
+      settlementRecords: byId(data.settlementRecords),
+      exceptions: byId(data.exceptions)
+    };
+  }
+
+  function renderSummary(data) {
+    var loads = data.loads || [];
+    var exceptions = data.exceptions || [];
+    var ready = loads.filter(function (load) { return releaseTone(load) === "ready"; }).length;
+    var review = loads.filter(function (load) { return releaseTone(load) === "review"; }).length;
+    var blocked = loads.filter(function (load) { return releaseTone(load) === "blocked"; }).length;
+    summaryMount.innerHTML = [
+      ["Shared loads", loads.length],
+      ["Ready to release", ready],
+      ["Need review", review],
+      ["Blocked", blocked],
+      ["Exceptions", exceptions.length]
+    ].map(function (item) {
+      return '<span><strong>' + esc(item[1]) + '</strong>' + esc(item[0]) + '</span>';
+    }).join("");
+  }
+
+  function renderCard(load, maps) {
+    var driver = maps.drivers[load.driverId];
+    var unit = maps.units[load.unitId];
+    var proof = maps.proofRecords[load.proofRecordId];
+    var settlement = maps.settlementRecords[load.settlementRecordId];
+    var exception = load.exceptionIds && load.exceptionIds.length ? maps.exceptions[load.exceptionIds[0]] : null;
+    var tone = releaseTone(load);
+    var exceptionText = exception ? exception.id + " / " + exception.assignedOwner : "No active exception";
+    var proofText = proof ? proof.id + " / " + proof.status : "No proof packet";
+    var settlementText = settlement ? settlement.id + " / " + settlement.status : "No settlement";
+    var driverRoute = driver ? driver.profileRoute : "/drivers/";
+    var driverPortrait = driver ? driver.portrait : "/assets/images/logo/boflogo-original.png";
+    var driverName = driver ? driver.name : load.driverId;
+
+    return [
+      '<article class="operations-record-card is-' + tone + '" id="' + esc(load.id.toLowerCase()) + '">',
+      '  <div class="operations-record-top">',
+      '    <div>',
+      '      <p class="eyebrow">' + esc(load.id) + ' / ' + esc(load.label) + '</p>',
+      '      <h3>' + esc(load.origin) + ' to ' + esc(load.destination) + '</h3>',
+      '      <p>' + esc(load.releaseDecision) + '</p>',
+      '    </div>',
+      '    <strong class="operations-release-badge">' + esc(releaseLabel(load)) + '</strong>',
+      '  </div>',
+      '  <div class="operations-driver-strip">',
+      '    <a href="' + esc(driverRoute) + '"><img src="' + esc(driverPortrait) + '" alt="' + esc(driverName) + ' driver portrait" loading="lazy" decoding="async"></a>',
+      '    <div><span>Driver</span><strong>' + esc(load.driverId) + ' / ' + esc(driverName) + '</strong><small>' + esc(unit ? unit.label : "No active unit") + '</small></div>',
+      '  </div>',
+      '  <div class="operations-status-grid">',
+      '    ' + statusLabel("Dispatch", load.dispatchStatus),
+      '    ' + statusLabel("Safety", load.safetyStatus),
+      '    ' + statusLabel("Proof", load.proofStatus),
+      '    ' + statusLabel("Settlement", load.settlementStatus),
+      '  </div>',
+      '  <dl class="operations-record-meta">',
+      '    <div><dt>Proof packet</dt><dd>' + esc(proofText) + '</dd></div>',
+      '    <div><dt>Settlement</dt><dd>' + esc(settlementText) + '</dd></div>',
+      '    <div><dt>Exception owner</dt><dd>' + esc(exceptionText) + '</dd></div>',
+      '  </dl>',
+      '  <div class="operations-record-actions">',
+      '    <a href="/operations-record/#' + esc(load.id.toLowerCase()) + '">Open record</a>',
+      '    <a href="' + esc(driverRoute) + '">Driver file</a>',
+      '    <a href="/settlements/#canonical-settlement-records">Settlement context</a>',
+      '  </div>',
+      '</article>'
+    ].join("");
+  }
+
+  function renderTable(data, maps) {
+    var rows = (data.loads || []).map(function (load) {
+      var driver = maps.drivers[load.driverId];
+      var exception = load.exceptionIds && load.exceptionIds.length ? load.exceptionIds.join(", ") : "None";
+      return [
+        load.id,
+        driver ? driver.name : load.driverId,
+        load.dispatchStatus,
+        load.safetyStatus,
+        load.proofStatus,
+        load.settlementStatus,
+        exception,
+        releaseLabel(load)
+      ];
+    });
+    tableMount.innerHTML = [
+      '<table class="operations-alignment-table">',
+      '<thead><tr><th>Load</th><th>Driver</th><th>Dispatch</th><th>Safety</th><th>Proof</th><th>Settlement</th><th>Exception</th><th>Decision</th></tr></thead>',
+      '<tbody>',
+      rows.map(function (row) {
+        return '<tr>' + row.map(function (cell, index) {
+          var linked = index === 0 ? '<a href="#' + esc(String(cell).toLowerCase()) + '">' + esc(cell) + '</a>' : esc(cell);
+          return '<td>' + linked + '</td>';
+        }).join("") + '</tr>';
+      }).join(""),
+      '</tbody></table>'
+    ].join("");
+  }
+
+  function render() {
+    var data = state.data;
+    var maps = lookups(data);
+    var loads = data.loads || [];
+    var visible = state.filter === "all" ? loads : loads.filter(function (load) {
+      if (state.filter === "Ready") return releaseTone(load) === "ready";
+      if (state.filter === "Blocked") return releaseTone(load) === "blocked";
+      if (state.filter === "Review") return load.dispatchStatus === "Review" || load.proofStatus === "Review";
+      if (state.filter === "At Risk") return load.dispatchStatus === "At Risk";
+      return true;
+    });
+    renderSummary(data);
+    recordMount.innerHTML = visible.length
+      ? visible.map(function (load) { return renderCard(load, maps); }).join("")
+      : '<article class="operations-loading-card">No records match this filter.</article>';
+    renderTable(data, maps);
+  }
+
+  filters.forEach(function (button) {
+    button.addEventListener("click", function () {
+      state.filter = button.getAttribute("data-operations-filter") || "all";
+      filters.forEach(function (item) { item.classList.toggle("is-active", item === button); });
+      render();
+    });
+  });
+
+  fetch(DATA_URL, { credentials: "same-origin" })
+    .then(function (response) {
+      if (!response.ok) throw new Error("Unable to load canonical operations records.");
+      return response.json();
+    })
+    .then(function (data) {
+      state.data = data;
+      render();
+    })
+    .catch(function (error) {
+      summaryMount.innerHTML = '<span><strong>Offline</strong>Records unavailable</span>';
+      recordMount.innerHTML = '<article class="operations-loading-card is-error">' + esc(error.message) + '</article>';
+    });
+})();

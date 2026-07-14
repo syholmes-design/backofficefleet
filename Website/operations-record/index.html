@@ -4,10 +4,10 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Operations Record | BackOfficeFleet</title>
-  <meta name="description" content="BOF aligned operations record showing shared driver, dispatch, safety, proof, and settlement status for public demo records.">
-  <link rel="stylesheet" href="/assets/css/styles.css?v=1.40">
+  <meta name="description" content="BOF shared operations record showing aligned driver, dispatch, safety, proof, exception, and settlement context from one canonical public dataset.">
+  <link rel="stylesheet" href="/assets/css/styles.css?v=20260714-operations-premium">
 </head>
-<body class="bof-canonical-data-page">
+<body class="premium-site operations-record-premium-page">
   <header class="site-header">
     <a class="brand" href="/" aria-label="BackOfficeFleet home"><img src="/assets/images/logo/boflogo-original.png" alt="BackOfficeFleet"></a>
     <button class="nav-toggle" type="button" data-nav-toggle aria-expanded="false" aria-label="Toggle navigation">&#9776;</button>
@@ -30,36 +30,90 @@
       <a href="/trust-governance/">Company</a>
       <a class="nav-utility-link" href="/command-center/">Command Center</a>
     </nav>
-    <a class="header-cta" href="/scenario-walkthrough/">Take the BOF Fleet Assessment</a>
+    <a class="header-cta" href="/command-center/">Command Center</a>
   </header>
 
   <main>
-    <section class="section page-hero">
-      <div class="reveal">
+    <section class="section operations-premium-hero" id="operations-record-top">
+      <div class="operations-hero-copy reveal">
         <p class="eyebrow">Operations record</p>
-        <h1>One shared record supports dispatch, safety, proof, and settlement decisions.</h1>
-        <p>This public record uses the same demo storyline shown across Drivers, Dispatch &amp; Operations, Safety &amp; Compliance, and Settlements &amp; Billing. Each link resolves to the driver, load, proof item, owner, and downstream consequence behind the status.</p>
-        <div class="actions"><a class="button primary" href="#canonical-operations-record">Open alignment table &rarr;</a><a class="button secondary" href="/interactive-demo/drivers/drv-004/">Open sample driver profile</a></div>
+        <h1>One shared operating record for every decision.</h1>
+        <p>Drivers, dispatch, safety, proof, exceptions, and settlements should not read like separate pages. BOF ties each load to the driver, unit, release decision, active blocker, and downstream payment consequence.</p>
+        <div class="operations-hero-actions">
+          <a class="button primary" href="#shared-records">Review shared records</a>
+          <a class="button secondary" href="/drivers/">Open driver roster</a>
+        </div>
       </div>
-      <div class="demo-panel reveal">
+
+      <aside class="operations-index-card reveal" aria-label="Operations record index">
         <p class="eyebrow">Record index</p>
-        <h2>Shared operating records load below.</h2>
-        <p>The canonical data layer renders the driver, load, proof, settlement, and exception details in the joined record view.</p>
-        <ul class="mini-list">
-          <li><span>Driver records</span><a class="proof-link" href="/drivers/">Open Drivers</a></li>
-          <li><span>Dispatch records</span><a class="proof-link" href="/dispatch/">Open Dispatch</a></li>
-          <li><span>Safety records</span><a class="proof-link" href="/safety/">Open Safety</a></li>
-          <li><span>Settlement records</span><a class="proof-link" href="/settlements/">Open Settlements</a></li>
-        </ul>
+        <h2>Every page should resolve to the same operating facts.</h2>
+        <div class="operations-index-links">
+          <a href="/drivers/"><span>Driver records</span><strong>Roster, file, assignment</strong></a>
+          <a href="/dispatch/"><span>Dispatch records</span><strong>Release, unit, load status</strong></a>
+          <a href="/safety/"><span>Safety records</span><strong>Qualification, hold, consequence</strong></a>
+          <a href="/settlements/"><span>Settlement records</span><strong>Proof, billing, pay context</strong></a>
+        </div>
+      </aside>
+    </section>
+
+    <section class="section operations-record-workspace" id="shared-records">
+      <div class="operations-workspace-head reveal">
+        <div>
+          <p class="eyebrow">Shared record workspace</p>
+          <h2>Five canonical load records, one cross-module view.</h2>
+          <p>Each card below is rendered from the public operations dataset and shows the status language carried across the Drivers, Dispatch, Safety, Settlements, and Operations Record pages.</p>
+        </div>
+        <div class="operations-filter-group" aria-label="Operations record filters">
+          <button class="operations-filter is-active" type="button" data-operations-filter="all">All</button>
+          <button class="operations-filter" type="button" data-operations-filter="Ready">Ready</button>
+          <button class="operations-filter" type="button" data-operations-filter="Review">Review</button>
+          <button class="operations-filter" type="button" data-operations-filter="At Risk">At Risk</button>
+          <button class="operations-filter" type="button" data-operations-filter="Blocked">Blocked</button>
+        </div>
+      </div>
+
+      <div class="operations-record-summary reveal" data-operations-summary aria-live="polite">
+        <span>Loading shared record summary...</span>
+      </div>
+
+      <div class="operations-record-grid reveal" data-operations-records aria-live="polite">
+        <article class="operations-loading-card">Loading canonical operations records...</article>
       </div>
     </section>
 
-    <section class="section bof-canonical-section" id="canonical-operations-record" data-bof-operations-view="operations-record" aria-live="polite"></section>
+    <section class="section operations-alignment-panel" id="alignment-table">
+      <div class="operations-alignment-copy reveal">
+        <p class="eyebrow">Alignment table</p>
+        <h2>The same record should answer the same question everywhere.</h2>
+        <p>This compact table shows the relationship between driver readiness, dispatch release, proof, settlement status, and exception ownership without forcing the user through oversized data cards.</p>
+      </div>
+      <div class="operations-table-wrap reveal" data-operations-table aria-live="polite"></div>
+    </section>
   </main>
 
-  <section class="cta-band"><div class="cta-inner"><div><p class="eyebrow">Record reviewed</p><h2>Continue through the aligned operating pages.</h2><p>The same driver, load, proof, and settlement facts now carry through the public module story.</p></div><a class="button light" href="/dispatch/">Continue to Dispatch &amp; Operations &rarr;</a></div></section>
-  <footer class="site-footer"><div class="footer-inner"><strong>BackOfficeFleet</strong><span>Operations record.</span><a href="/trust-governance/">Trust &amp; Governance</a></div></footer>
-  <script src="/assets/js/bof-public-operations.js?v=1.0"></script>
-  <script src="/assets/js/site.js?v=1.38"></script>
+  <section class="cta-band operations-next-band">
+    <div class="cta-inner">
+      <div>
+        <p class="eyebrow">Next operating view</p>
+        <h2>Use this as the design standard for cleaner module pages.</h2>
+        <p>Smaller hero type, clearer cards, tighter spacing, and record-first content can carry across the rest of the public site.</p>
+      </div>
+      <div class="actions">
+        <a class="button light" href="/dispatch/">Dispatch view</a>
+        <a class="button secondary" href="/drivers/">Driver roster</a>
+      </div>
+    </div>
+  </section>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <strong>BackOfficeFleet</strong>
+      <span>Operations record.</span>
+      <a href="/trust-governance/">Trust &amp; Governance</a>
+    </div>
+  </footer>
+  <script src="/assets/js/operations-record-premium.js?v=20260714-operations-premium"></script>
+  <script src="/assets/js/site.js?v=1.50"></script>
 </body>
 </html>
