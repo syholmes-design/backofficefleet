@@ -24476,6 +24476,38 @@ body.premium-site.driver-roster-page .driver-roster-shell {
   line-height: 1.36;
 }
 
+.freight-brace-proof,
+.operations-securement-proof {
+  min-width: 0;
+  margin: 14px 0 0;
+  overflow: hidden;
+  border: 1px solid rgba(111, 145, 178, 0.22);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.88);
+}
+
+.freight-brace-proof img,
+.operations-securement-proof img {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+}
+
+.freight-brace-proof figcaption,
+.operations-securement-proof figcaption {
+  padding: 10px 12px;
+  color: #44566a;
+  font-size: 0.82rem;
+  font-weight: 800;
+  line-height: 1.35;
+}
+
+.operations-securement-proof {
+  margin: 0 12px 12px;
+}
+
 .operations-record-actions {
   display: flex;
   flex-wrap: wrap;

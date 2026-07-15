@@ -317,6 +317,13 @@
         caption: "Loaded cargo proof: palletized freight staged before departure."
       };
     }
+    if (type === "freight_brace_securement_photo") {
+      return {
+        src: "/assets/images/partners/freight-brace/freight-brace-trailer-photo.jpeg",
+        alt: "Freight Brace securement device installed in trailer before release",
+        caption: "Freight Brace securement proof: brace placement is documented before release and retained for safety, claims, and settlement review."
+      };
+    }
     if (type === "seal_photo") {
       return {
         src: "/assets/images/photos/site-pass/17-dock-seal-photo-review.webp",
