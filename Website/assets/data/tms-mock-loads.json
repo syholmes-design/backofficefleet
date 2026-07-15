@@ -100,6 +100,12 @@
         { "tmsDocumentId": "TMS-DOC-8111", "type": "bol", "label": "BOL", "fileName": "ATL-88410-bol.pdf", "uploadedAt": "2026-06-09 14:22 ET", "status": "present", "requiredBeforeRelease": true },
         { "tmsDocumentId": "TMS-DOC-8112", "type": "pickup_instructions", "label": "Pickup instructions", "fileName": "ATL-88410-pickup.pdf", "uploadedAt": "2026-06-09 14:25 ET", "status": "present", "requiredBeforeRelease": true },
         { "tmsDocumentId": "TMS-DOC-8113", "type": "seal_photo", "label": "Seal photo", "fileName": "ATL-88410-seal-photo.jpg", "uploadedAt": "2026-06-09 14:31 ET", "status": "present", "requiredBeforeRelease": true },
+        { "tmsDocumentId": "TMS-DOC-8116", "type": "loaded_cargo_photo", "label": "Loaded cargo photo", "fileName": "ATL-88410-loaded-cargo.jpg", "uploadedAt": "2026-06-09 14:33 ET", "status": "present", "requiredBeforeRelease": true },
+        { "tmsDocumentId": "TMS-DOC-8117", "type": "equipment_inspection", "label": "Equipment inspection", "fileName": "ATL-88410-equipment-inspection.pdf", "uploadedAt": "2026-06-09 14:35 ET", "status": "present", "requiredBeforeRelease": true },
+        { "tmsDocumentId": "TMS-DOC-8118", "type": "tire_inspection_photos", "label": "Tire inspection photos", "fileName": "ATL-88410-tire-photos.zip", "uploadedAt": "2026-06-09 14:36 ET", "status": "present", "requiredBeforeRelease": true },
+        { "tmsDocumentId": "TMS-DOC-8119", "type": "cargo_insurance", "label": "Cargo insurance certificate", "fileName": "ATL-88410-cargo-insurance.pdf", "uploadedAt": "2026-06-09 14:38 ET", "status": "present", "requiredBeforeRelease": true },
+        { "tmsDocumentId": "TMS-DOC-8120", "type": "factoring_notice", "label": "Factoring notice / NOA", "fileName": "ATL-88410-factoring-noa.pdf", "uploadedAt": "2026-06-09 14:40 ET", "status": "present", "requiredBeforeRelease": false },
+        { "tmsDocumentId": "TMS-DOC-8121", "type": "draft_invoice", "label": "Draft invoice", "fileName": "ATL-88410-draft-invoice.pdf", "uploadedAt": "2026-06-09 14:42 ET", "status": "present", "requiredBeforeRelease": false },
         { "tmsDocumentId": "TMS-DOC-8114", "type": "pod", "label": "POD", "fileName": "", "uploadedAt": "", "status": "not_yet_required", "requiredBeforeRelease": false },
         { "tmsDocumentId": "TMS-DOC-8115", "type": "claim_evidence", "label": "Claim evidence", "fileName": "", "uploadedAt": "", "status": "not_yet_required", "requiredBeforeRelease": false }
       ]
@@ -126,6 +132,12 @@
         { "tmsDocumentId": "TMS-DOC-8241", "type": "bol", "label": "BOL", "fileName": "CLV-10482-bol.pdf", "uploadedAt": "2026-06-11 10:12 ET", "status": "present", "requiredBeforeRelease": true },
         { "tmsDocumentId": "TMS-DOC-8242", "type": "pickup_instructions", "label": "Pickup instructions", "fileName": "CLV-10482-pickup.pdf", "uploadedAt": "2026-06-11 10:15 ET", "status": "present", "requiredBeforeRelease": true },
         { "tmsDocumentId": "TMS-DOC-8243", "type": "seal_photo", "label": "Seal photo", "fileName": "CLV-10482-seal-photo.jpg", "uploadedAt": "2026-06-11 10:18 ET", "status": "present", "requiredBeforeRelease": true },
+        { "tmsDocumentId": "TMS-DOC-8245", "type": "loaded_cargo_photo", "label": "Loaded cargo photo", "fileName": "CLV-10482-loaded-cargo.jpg", "uploadedAt": "2026-06-11 10:20 ET", "status": "present", "requiredBeforeRelease": true },
+        { "tmsDocumentId": "TMS-DOC-8246", "type": "equipment_inspection", "label": "Equipment inspection", "fileName": "CLV-10482-equipment-inspection.pdf", "uploadedAt": "2026-06-11 10:22 ET", "status": "present", "requiredBeforeRelease": true },
+        { "tmsDocumentId": "TMS-DOC-8247", "type": "tire_inspection_photos", "label": "Tire inspection photos", "fileName": "CLV-10482-tire-photos.zip", "uploadedAt": "2026-06-11 10:23 ET", "status": "present", "requiredBeforeRelease": true },
+        { "tmsDocumentId": "TMS-DOC-8248", "type": "cargo_insurance", "label": "Cargo insurance certificate", "fileName": "CLV-10482-cargo-insurance.pdf", "uploadedAt": "2026-06-11 10:25 ET", "status": "present", "requiredBeforeRelease": true },
+        { "tmsDocumentId": "TMS-DOC-8249", "type": "factoring_notice", "label": "Factoring notice / NOA", "fileName": "CLV-10482-factoring-noa.pdf", "uploadedAt": "2026-06-11 10:27 ET", "status": "present", "requiredBeforeRelease": false },
+        { "tmsDocumentId": "TMS-DOC-8250", "type": "draft_invoice", "label": "Draft invoice", "fileName": "CLV-10482-draft-invoice.pdf", "uploadedAt": "2026-06-11 10:29 ET", "status": "present", "requiredBeforeRelease": false },
         { "tmsDocumentId": "TMS-DOC-8244", "type": "delivery_proof", "label": "Delivery proof", "fileName": "", "uploadedAt": "", "status": "not_yet_required", "requiredBeforeRelease": false }
       ]
     },
@@ -151,6 +163,13 @@
         { "tmsDocumentId": "TMS-DOC-8321", "type": "bol", "label": "BOL", "fileName": "DAY-4483-bol.pdf", "uploadedAt": "2026-06-13 12:08 ET", "status": "present", "requiredBeforeRelease": true },
         { "tmsDocumentId": "TMS-DOC-8322", "type": "pickup_instructions", "label": "Pickup instructions", "fileName": "DAY-4483-pickup.pdf", "uploadedAt": "2026-06-13 12:12 ET", "status": "present", "requiredBeforeRelease": true },
         { "tmsDocumentId": "TMS-DOC-8325", "type": "seal_photo", "label": "Seal photo", "fileName": "DAY-4483-seal-photo.jpg", "uploadedAt": "2026-06-13 12:18 ET", "status": "present", "requiredBeforeRelease": true },
+        { "tmsDocumentId": "TMS-DOC-8328", "type": "loaded_cargo_photo", "label": "Loaded cargo photo", "fileName": "DAY-4483-loaded-cargo.jpg", "uploadedAt": "2026-06-13 12:20 ET", "status": "present", "requiredBeforeRelease": true },
+        { "tmsDocumentId": "TMS-DOC-8329", "type": "equipment_inspection", "label": "Equipment inspection", "fileName": "DAY-4483-equipment-inspection.pdf", "uploadedAt": "2026-06-13 12:22 ET", "status": "present", "requiredBeforeRelease": true },
+        { "tmsDocumentId": "TMS-DOC-8330", "type": "tire_inspection_photos", "label": "Tire inspection photos", "fileName": "DAY-4483-tire-photos.zip", "uploadedAt": "2026-06-13 12:23 ET", "status": "present", "requiredBeforeRelease": true },
+        { "tmsDocumentId": "TMS-DOC-8331", "type": "reefer_temperature_check", "label": "Reefer pre-cool / temperature check", "fileName": "DAY-4483-reefer-temp-log.pdf", "uploadedAt": "2026-06-13 12:25 ET", "status": "present", "requiredBeforeRelease": true },
+        { "tmsDocumentId": "TMS-DOC-8332", "type": "cargo_insurance", "label": "Cargo insurance certificate", "fileName": "DAY-4483-cargo-insurance.pdf", "uploadedAt": "2026-06-13 12:27 ET", "status": "present", "requiredBeforeRelease": true },
+        { "tmsDocumentId": "TMS-DOC-8333", "type": "factoring_notice", "label": "Factoring notice / NOA", "fileName": "DAY-4483-factoring-noa.pdf", "uploadedAt": "2026-06-13 12:29 ET", "status": "present", "requiredBeforeRelease": false },
+        { "tmsDocumentId": "TMS-DOC-8334", "type": "draft_invoice", "label": "Draft invoice", "fileName": "DAY-4483-draft-invoice.pdf", "uploadedAt": "2026-06-13 12:31 ET", "status": "present", "requiredBeforeRelease": false },
         { "tmsDocumentId": "TMS-DOC-8323", "type": "pod", "label": "POD", "fileName": "", "uploadedAt": "", "status": "not_yet_required", "requiredBeforeRelease": false, "requiredFollowUp": true },
         { "tmsDocumentId": "TMS-DOC-8324", "type": "lumper_receipt", "label": "Lumper receipt", "fileName": "", "uploadedAt": "", "status": "not_yet_required", "requiredBeforeRelease": false, "requiredFollowUp": true },
         { "tmsDocumentId": "TMS-DOC-8326", "type": "delivery_proof", "label": "Delivery proof", "fileName": "", "uploadedAt": "", "status": "not_yet_required", "requiredBeforeRelease": false, "requiredFollowUp": true },
@@ -179,9 +198,14 @@
         { "tmsDocumentId": "TMS-DOC-8401", "type": "bol", "label": "BOL", "fileName": "TOL-2184-bol.pdf", "uploadedAt": "2026-06-14 09:02 ET", "status": "present", "requiredBeforeRelease": true },
         { "tmsDocumentId": "TMS-DOC-8402", "type": "pickup_instructions", "label": "Pickup instructions", "fileName": "TOL-2184-pickup.pdf", "uploadedAt": "2026-06-14 09:10 ET", "status": "present", "requiredBeforeRelease": true },
         { "tmsDocumentId": "TMS-DOC-8403", "type": "seal_photo", "label": "Seal photo", "fileName": "", "uploadedAt": "", "status": "needs_review", "requiredBeforeRelease": false, "requiredFollowUp": true },
+        { "tmsDocumentId": "TMS-DOC-8405", "type": "loaded_cargo_photo", "label": "Loaded cargo photo", "fileName": "", "uploadedAt": "", "status": "needs_review", "requiredBeforeRelease": true },
+        { "tmsDocumentId": "TMS-DOC-8406", "type": "equipment_inspection", "label": "Equipment inspection", "fileName": "TOL-2184-equipment-inspection.pdf", "uploadedAt": "2026-06-14 09:14 ET", "status": "present", "requiredBeforeRelease": true },
+        { "tmsDocumentId": "TMS-DOC-8407", "type": "tire_inspection_photos", "label": "Tire inspection photos", "fileName": "", "uploadedAt": "", "status": "needs_review", "requiredBeforeRelease": true },
+        { "tmsDocumentId": "TMS-DOC-8408", "type": "cargo_insurance", "label": "Cargo insurance certificate", "fileName": "TOL-2184-cargo-insurance.pdf", "uploadedAt": "2026-06-14 09:16 ET", "status": "present", "requiredBeforeRelease": true },
+        { "tmsDocumentId": "TMS-DOC-8409", "type": "factoring_notice", "label": "Factoring notice / NOA", "fileName": "", "uploadedAt": "", "status": "needs_review", "requiredBeforeRelease": false, "requiredFollowUp": true },
+        { "tmsDocumentId": "TMS-DOC-8410", "type": "draft_invoice", "label": "Draft invoice", "fileName": "TOL-2184-draft-invoice.pdf", "uploadedAt": "2026-06-14 09:18 ET", "status": "present", "requiredBeforeRelease": false },
         { "tmsDocumentId": "TMS-DOC-8404", "type": "claim_evidence", "label": "Claim evidence", "fileName": "", "uploadedAt": "", "status": "not_yet_required", "requiredBeforeRelease": false }
       ]
     }
   ]
 }
-

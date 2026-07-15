@@ -6,7 +6,7 @@
     if (!dataPromise) {
       // Simulation boundary: keep this as local static JSON. The TMS
       // workflow is a demo surface, not a planned live API/sync integration.
-      dataPromise = fetch(DATA_URL).then(function (response) {
+      dataPromise = fetch(DATA_URL, { cache: "no-store" }).then(function (response) {
         if (!response.ok) throw new Error("TMS partner workflow unavailable");
         return response.json();
       });
@@ -184,7 +184,7 @@
         state = doc.requiredFollowUp ? "watch" : "ready";
         label = "Not Yet Required";
       }
-      return [doc.label, label, state, doc.fileName || "Pending later workflow"];
+      return [doc.label, label, state, doc.fileName || "Pending later workflow", doc];
     });
     var blocked = items.some(function (item) { return item[2] === "blocked"; });
     var warning = items.some(function (item) { return item[2] === "watch"; });
@@ -250,6 +250,30 @@
     };
   }
 
+  function createClearanceRoute(review) {
+    var decision = review.releaseDecision;
+    var steps = [
+      ["Confirm shipper tender", "Verify customer, lane, pickup/delivery windows, commodity, equipment, and rate context for " + review.load.tmsLoadId + "."],
+      ["Review driver and carrier gates", review.driverReadiness.title + " " + review.carrierPacket.title],
+      ["Inspect pre-trip packet", "Rate confirmation, BOL, pickup instructions, seal, cargo photo, equipment/tire inspection, insurance, factoring/NOA, and draft invoice stay attached to the release file."]
+    ];
+
+    if (decision.status === "blocked") {
+      steps.push(["Clear blocker", decision.blockingItems.length ? decision.blockingItems.join("; ") : decision.nextAction]);
+      steps.push(["Re-run BOF release review", "Only create the simulated handoff after the blocked item returns to a releaseable state."]);
+      return steps;
+    }
+
+    if (decision.status === "warning") {
+      steps.push(["Assign follow-up owner", decision.blockingItems.length ? decision.blockingItems.join("; ") : "Keep post-release proof visible."]);
+      steps.push(["Release with condition", "Dispatch may move the load while POD, delivery proof, lumper, claim, or settlement packet follow-up stays attached."]);
+      return steps;
+    }
+
+    steps.push(["Release-ready answer", "No pre-trip blocker is shown; dispatch can use the BOF release decision in the simulated handoff."]);
+    return steps;
+  }
+
   function mapTmsLoadToBofReview(load, data) {
     var match = matchTmsDriverToBofDriver(load, data);
     var review = {
@@ -281,6 +305,90 @@
   function renderItems(items) {
     return items.map(function (item) {
       return '<li><span>' + escapeHtml(item[0]) + '</span><strong>' + escapeHtml(item[1]) + '</strong><em class="status ' + statusClass(item[2]) + '">' + escapeHtml(item[2] === "ready" ? "Ready" : item[2] === "blocked" ? "Blocked" : "Warning") + '</em>' + (item[3] ? '<small>' + escapeHtml(item[3]) + '</small>' : "") + '</li>';
+    }).join("");
+  }
+
+  function packetImageFor(doc) {
+    var type = doc.type || "";
+    if (type === "loaded_cargo_photo") {
+      return {
+        src: "/assets/images/documents/load-proof/pretrip-10482-loaded-cargo.webp",
+        alt: "Loaded cargo photo evidence inside trailer before departure",
+        caption: "Loaded cargo proof: palletized freight staged before departure."
+      };
+    }
+    if (type === "seal_photo") {
+      return {
+        src: "/assets/images/photos/site-pass/17-dock-seal-photo-review.webp",
+        alt: "Seal photo review at loading dock",
+        caption: "Seal and dock review: seal evidence stays tied to the load packet."
+      };
+    }
+    if (type === "equipment_inspection" || type === "tire_inspection_photos" || type === "reefer_temperature_check") {
+      return {
+        src: "/assets/images/photos/site-pass/24-pretrip-driver-clipboard.webp",
+        alt: "Driver reviewing pre-trip inspection checklist",
+        caption: "Inspection evidence: equipment, tires, lights, doors, ELD/mobile, and reefer checks are reviewed before release."
+      };
+    }
+    if (type === "pod" || type === "delivery_proof") {
+      return {
+        src: "/assets/images/photos/pod-bol-proof-packet.webp",
+        alt: "POD and BOL proof packet review",
+        caption: "Post-trip proof: POD, signed BOL, receiver, dock, and closeout evidence remain visible."
+      };
+    }
+    if (type === "claim_evidence") {
+      return {
+        src: "/assets/images/documents/load-proof/pod-1907-dock-photo.webp",
+        alt: "Dock photo evidence for claim or delivery proof review",
+        caption: "Claim standby: dock, seal, cargo, and delivery photos support exception review."
+      };
+    }
+    return null;
+  }
+
+  function packetReleaseEffect(doc) {
+    if (doc.requiredBeforeRelease && doc.status === "present") return "Supports release before dispatch commits the lane.";
+    if (doc.requiredBeforeRelease) return "Must clear before release.";
+    if (doc.requiredFollowUp) return "Does not block pre-trip release, but remains assigned for post-trip closeout.";
+    return "Attached to the packet for billing, factoring, claims, or later review context.";
+  }
+
+  function renderPacketItems(items) {
+    return items.map(function (item) {
+      var doc = item[4] || {};
+      var image = packetImageFor(doc);
+      var stateLabel = item[2] === "ready" ? "Ready" : item[2] === "blocked" ? "Blocked" : "Warning";
+      var fileName = item[3] || "Pending later workflow";
+      return [
+        '<li class="tms-packet-row">',
+        '  <details>',
+        '    <summary>',
+        '      <span>' + escapeHtml(item[0]) + '</span>',
+        '      <strong>' + escapeHtml(item[1]) + '</strong>',
+        '      <em class="status ' + statusClass(item[2]) + '">' + escapeHtml(stateLabel) + '</em>',
+        '      <small>' + escapeHtml(fileName) + '</small>',
+        '      <b>Details</b>',
+        '    </summary>',
+        '    <div class="tms-packet-detail">',
+        '      <dl>',
+        '        <div><dt>Packet record</dt><dd>' + escapeHtml(doc.tmsDocumentId || item[0]) + '</dd></div>',
+        '        <div><dt>Required before release</dt><dd>' + escapeHtml(doc.requiredBeforeRelease ? "Yes" : "No") + '</dd></div>',
+        '        <div><dt>Uploaded</dt><dd>' + escapeHtml(doc.uploadedAt || "Pending later workflow") + '</dd></div>',
+        '        <div><dt>Release effect</dt><dd>' + escapeHtml(packetReleaseEffect(doc)) + '</dd></div>',
+        '      </dl>',
+        image ? '      <figure><img src="' + escapeHtml(image.src) + '" alt="' + escapeHtml(image.alt) + '"><figcaption>' + escapeHtml(image.caption) + '</figcaption></figure>' : '',
+        '    </div>',
+        '  </details>',
+        '</li>'
+      ].join("");
+    }).join("");
+  }
+
+  function renderClearanceRoute(steps) {
+    return steps.map(function (step, index) {
+      return '<li><span>' + String(index + 1).padStart(2, "0") + '</span><div><strong>' + escapeHtml(step[0]) + '</strong><p>' + escapeHtml(step[1]) + '</p></div></li>';
     }).join("");
   }
 
@@ -346,7 +454,7 @@
     setText(root, "carrierPacketTitle", review.carrierPacket.title);
     setHtml(root, "carrierPacket", renderItems(review.carrierPacket.items));
     setText(root, "loadDocumentTitle", review.loadDocuments.title);
-    setHtml(root, "loadDocuments", renderItems(review.loadDocuments.items));
+    setHtml(root, "loadDocuments", renderPacketItems(review.loadDocuments.items));
 
     setText(root, "decisionLabel", decision.label);
     setText(root, "decisionReason", decision.reasons.join(" "));
@@ -357,6 +465,7 @@
     setHtml(root, "decisionBlockingItems", decision.blockingItems.length ? decision.blockingItems.map(function (item) {
       return "<li>" + escapeHtml(item) + "</li>";
     }).join("") : "<li>No blocking items.</li>");
+    setHtml(root, "decisionClearanceRoute", renderClearanceRoute(createClearanceRoute(review)));
     setText(root, "handoffStatus", formatStatus(decision.simulatedHandoffStatus));
     setText(root, "handoffPayload", JSON.stringify(handoffPayload, null, 2));
   }

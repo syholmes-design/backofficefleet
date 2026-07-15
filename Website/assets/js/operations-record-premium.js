@@ -49,6 +49,35 @@
     return "Release";
   }
 
+  function safetyRecordForLoad(data, load) {
+    return firstBy(data.safetyRecords || [], "loadId", load.id);
+  }
+
+  function derivedCapacity(driver, load) {
+    var number = driver ? Number(String(driver.id || "").replace(/\D/g, "")) || 1 : 1;
+    var tone = releaseTone(load);
+    if (tone === "blocked") return { score: 24, hos: "0h 00m", readyAgain: "After credential clearance", eld: "Synced, assignment locked", equipment: "Do not release" };
+    if (tone === "review") return { score: 68 + (number % 8), hos: (3 + number % 3) + "h 40m", readyAgain: "After owner review", eld: "Current with release note", equipment: "Assigned, verify gate" };
+    return { score: 90 + (number % 5), hos: (6 + number % 4) + "h 30m", readyAgain: "Ready now", eld: "Current", equipment: "Assigned unit ready" };
+  }
+
+  function clearanceSteps(load, driver, proof, settlement, safety, exception, capacity) {
+    return [
+      ["Dispatch decision", load.releaseDecision],
+      ["Driver capability", (driver ? driver.name + " has " : "Driver has ") + capacity.hos + " HOS available before the next required break/reset; clearance timing: " + capacity.readyAgain + "."],
+      ["Safety checkpoint", safety ? safety.dispatchConsequence : "No special safety checkpoint is attached."],
+      ["Proof packet", proof ? proof.id + " is " + proof.status + "; POD is " + proof.pod + "." : "No proof packet is attached."],
+      ["Settlement release", settlement ? settlement.billingStatus + ": " + settlement.billingHold : "No settlement checkpoint is attached."],
+      ["Owner action", exception ? exception.assignedOwner + " must " + String(exception.requiredAction || "clear the assigned exception").toLowerCase() : "No exception owner is required."]
+    ];
+  }
+
+  function renderClearanceSteps(steps) {
+    return '<ol class="operations-clearance-route">' + steps.map(function (step, index) {
+      return '<li><span>' + esc(index + 1) + '</span><div><strong>' + esc(step[0]) + '</strong><p>' + esc(step[1]) + '</p></div></li>';
+    }).join("") + '</ol>';
+  }
+
   function lookups(data) {
     return {
       drivers: byId(data.drivers),
@@ -86,6 +115,8 @@
     var exceptionText = exception ? exception.id + " / " + exception.assignedOwner : "No active exception";
     var proofText = proof ? proof.id + " / " + proof.status : "No proof packet";
     var settlementText = settlement ? settlement.id + " / " + settlement.status : "No settlement";
+    var safety = state.data ? safetyRecordForLoad(state.data, load) : null;
+    var capacity = derivedCapacity(driver, load);
     var driverRoute = driver ? driver.profileRoute : "/drivers/";
     var driverPortrait = driver ? driver.portrait : "/assets/images/logo/boflogo-original.png";
     var driverName = driver ? driver.name : load.driverId;
@@ -114,7 +145,15 @@
       '    <div><dt>Proof packet</dt><dd>' + esc(proofText) + '</dd></div>',
       '    <div><dt>Settlement</dt><dd>' + esc(settlementText) + '</dd></div>',
       '    <div><dt>Exception owner</dt><dd>' + esc(exceptionText) + '</dd></div>',
+      '    <div><dt>Capability</dt><dd>' + esc(capacity.score) + ' score / ' + esc(capacity.hos) + '</dd></div>',
+      '    <div><dt>HOS available / ELD</dt><dd>' + esc(capacity.hos) + ' / ' + esc(capacity.eld) + '</dd></div>',
+      '    <div><dt>Ready again</dt><dd>' + esc(capacity.readyAgain) + '</dd></div>',
+      '    <div><dt>Equipment gate</dt><dd>' + esc(capacity.equipment) + '</dd></div>',
       '  </dl>',
+      '  <details class="operations-clearance-details">',
+      '    <summary>Open reason and clearance path</summary>',
+      '    ' + renderClearanceSteps(clearanceSteps(load, driver, proof, settlement, safety, exception, capacity)),
+      '  </details>',
       '  <div class="operations-record-actions">',
       '    <a href="/operations-record/#' + esc(load.id.toLowerCase()) + '">Open record</a>',
       '    <a href="' + esc(driverRoute) + '">Driver file</a>',

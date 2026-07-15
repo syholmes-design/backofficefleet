@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Safety Command Center | BackOfficeFleet</title>
   <meta name="description" content="BOF safety command page for driver risk, dispatch blocks, credential status, evidence packets, settlement held items, claims exposure, and coaching actions.">
-  <link rel="stylesheet" href="/assets/css/styles.css?v=20260710-redesign-deploy-1">
+  <link rel="stylesheet" href="/assets/css/styles.css?v=20260714-safety-program">
 </head>
 <body class="premium-site page-safety bof-canonical-data-page">
   <header class="site-header">
@@ -55,12 +55,52 @@
       </div>
     </section>
 
+    <section class="section safety-program-section" id="safety-operating-program">
+      <div class="section-head reveal">
+        <p class="eyebrow">Safety operating program</p>
+        <h2>Safety should explain what happened, what it affects, and what clears the driver or load.</h2>
+        <p>This demo program treats safety as an operating control layer. It does not promise legal compliance; it shows how a fleet can keep qualification records, telematics events, pre-trip evidence, incident response, and corrective action connected to dispatch and settlement decisions.</p>
+      </div>
+      <div class="proof-grid safety-program-grid">
+        <article class="proof-card reveal">
+          <h3>Driver qualification gate</h3>
+          <p>CDL, medical card, MVR review, training acknowledgement, policy acknowledgement, and annual review status decide whether a driver can be presented for active work.</p>
+          <a class="route-chip" href="/drivers/">Open driver readiness</a>
+        </article>
+        <article class="proof-card reveal">
+          <h3>Pre-trip and equipment evidence</h3>
+          <p>Pre-trip inspection, tire/equipment photos, cargo securement notes, seal photos, and unit assignment context support the release decision before the load moves.</p>
+          <a class="route-chip" href="/demo/tms-release-review/">Open pre-trip packet</a>
+        </article>
+        <article class="proof-card reveal">
+          <h3>Telematics event review</h3>
+          <p>Speeding, harsh braking, following distance, seat belt, mobile distraction, route deviation, and HOS alerts become review items with owner, consequence, and coaching status.</p>
+          <a class="route-chip" href="#canonical-safety-records">Review safety queue</a>
+        </article>
+        <article class="proof-card reveal">
+          <h3>Incident and claim response</h3>
+          <p>Crash notice, cargo claim, roadside inspection, customer complaint, photo evidence, statement intake, and insurance notification stay tied to the affected driver and load.</p>
+          <a class="route-chip" href="/operations-record/">Open joined record</a>
+        </article>
+        <article class="proof-card reveal">
+          <h3>Coaching and corrective action</h3>
+          <p>Owner review, driver coaching, retraining, warning acknowledgement, out-of-service hold, or return-to-duty condition is recorded before the status changes.</p>
+          <a class="route-chip" href="/policies-procedures/">Open policy library</a>
+        </article>
+        <article class="proof-card reveal">
+          <h3>Return-to-dispatch clearance</h3>
+          <p>The safety queue should answer whether dispatch may release the driver or load now, release with a condition, or hold until the named clearance action is complete.</p>
+          <a class="route-chip" href="/dispatch/">Compare dispatch release</a>
+        </article>
+      </div>
+    </section>
+
     <section class="section bof-canonical-section" id="canonical-safety-records" data-bof-operations-view="safety" aria-live="polite"></section>
 
   </main>
   <section class="cta-band"><div class="cta-inner"><div><p class="eyebrow">Next step</p><h2>Turn one safety blocker into a clear operating decision.</h2><p>Bring a credential issue, driver event, safety form gap, dispatch block, or settlement held item into a BOF assessment.</p></div><a class="button light" href="/scenario-walkthrough/">Take the BOF Fleet Assessment &rarr;</a></div></section>
   <footer class="site-footer"><div class="footer-inner"><strong>BackOfficeFleet</strong><span>Safety command center.</span><a href="/trust-governance/">Trust &amp; Governance</a></div></footer>
-  <script src="/assets/js/bof-public-operations.js?v=1.0"></script>
+  <script src="/assets/js/bof-public-operations.js?v=20260714-safety-score-label"></script>
   <script src="/assets/js/site.js?v=1.50"></script>
 </body>
 </html>

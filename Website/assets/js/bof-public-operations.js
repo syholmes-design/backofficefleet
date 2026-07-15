@@ -180,7 +180,410 @@
     return card;
   }
 
+  function loadStatusBucket(load) {
+    if (load.dispatchStatus === "Blocked" || load.safetyStatus === "Blocked") return "Blocked";
+    if (load.dispatchStatus === "At Risk" || load.proofStatus === "At Risk") return "At Risk";
+    if (load.dispatchStatus === "Review" || load.proofStatus === "Review" || load.settlementStatus === "In Progress") return "Review";
+    return "Ready";
+  }
+
+  function loadFlagReason(load, driver, proof, settlement, exceptions) {
+    var bucket = loadStatusBucket(load);
+    if (bucket === "Ready") return "Ready: shipper tender, driver, equipment, proof, and settlement signals support normal release.";
+    if (exceptions.length) {
+      return bucket + ": " + exceptions.map(function (ex) {
+        return ex.title + ". Required action: " + String(ex.requiredAction || "clear the assigned exception").replace(/^./, function (letter) { return letter.toLowerCase(); });
+      }).join(" ");
+    }
+    if (load.dispatchStatus !== "Ready") return bucket + ": dispatch status is " + load.dispatchStatus + " because " + load.releaseDecision;
+    if (driver && driver.readinessStatus !== "Ready") return bucket + ": driver record is " + driver.readinessStatus + " and must clear before release.";
+    if (proof && proof.status !== "Complete") return bucket + ": proof packet is " + proof.status + " and controls the release path.";
+    if (settlement && settlement.status !== "Complete") return bucket + ": settlement status is " + settlement.status + " and needs owner review.";
+    return bucket + ": owner review is required before release.";
+  }
+
+  function loadClearanceSteps(load, driver, proof, settlement, exceptions, capacity) {
+    var bucket = loadStatusBucket(load);
+    if (bucket === "Ready") {
+      return [
+        ["Confirm tender", "Verify shipper lane, pickup window, consignee notes, and rate context."],
+        ["Stage driver and unit", "Driver has " + capacity.hos + " HOS available before the next required break/reset, and equipment is ready for normal dispatch staging."],
+        ["Release and monitor", "Move the load through pre-trip, in-transit proof capture, and settlement handoff."]
+      ];
+    }
+    if (bucket === "Blocked") {
+      return [
+        ["Hold release", "Do not assign or release this load while the blocking record remains open."],
+        ["Clear driver gate", driver ? driver.name + " must clear: " + driver.primaryWarning : "Assigned driver must clear before dispatch."],
+        ["Resolve exception", exceptions.length ? exceptions.map(function (ex) { return ex.requiredAction; }).join(" ") : load.releaseDecision],
+        ["Re-run release check", "Only reopen dispatch release after HOS, ELD, equipment, proof, and safety status return to a releaseable state."]
+      ];
+    }
+    if (bucket === "At Risk") {
+      return [
+        ["Keep planning visible", "Dispatch may plan the load, but should not promise final release until the flagged item is cleared."],
+        ["Clear proof or renewal evidence", exceptions.length ? exceptions.map(function (ex) { return ex.requiredAction; }).join(" ") : load.releaseDecision],
+        ["Confirm HOS and equipment", "Driver shows " + capacity.hos + " HOS available before the next required break/reset; verify ELD and assigned equipment before final release."],
+        ["Owner release note", "Attach the owner decision to the joined record before dispatch commits the lane."]
+      ];
+    }
+    return [
+      ["Review tender match", "Confirm shipper tender, rate note, pickup window, and consignee instructions."],
+      ["Match operating records", "Compare driver readiness, HOS availability, ELD state, unit assignment, proof packet, and settlement signal."],
+      ["Clear review action", exceptions.length ? exceptions.map(function (ex) { return ex.requiredAction; }).join(" ") : load.releaseDecision],
+      ["Release or hold", "Update the status to Ready, At Risk, or Blocked so dispatch sees the current decision."]
+    ];
+  }
+
+  function clearanceRouteList(steps) {
+    var list = el("ol", "dispatch-clearance-route");
+    steps.forEach(function (step, index) {
+      var item = el("li", "");
+      item.appendChild(el("span", "", String(index + 1).padStart(2, "0")));
+      var body = el("div", "");
+      body.appendChild(el("strong", "", step[0]));
+      body.appendChild(el("p", "", step[1]));
+      item.appendChild(body);
+      list.appendChild(item);
+    });
+    return list;
+  }
+
+  function derivedDriverCapacity(driver, load) {
+    var number = driver ? Number(String(driver.id || "").replace(/\D/g, "")) || 1 : 1;
+    var bucket = loadStatusBucket(load);
+    if (bucket === "Blocked") {
+      return {
+        score: "24",
+        hos: "0h 00m",
+        readyAgain: "After credential clearance",
+        eld: "Synced, assignment locked",
+        equipment: "Held unit; do not release"
+      };
+    }
+    if (bucket === "At Risk") {
+      return {
+        score: "68",
+        hos: (4 + number % 2) + "h " + (number % 2 ? "45m" : "20m"),
+        readyAgain: "After owner review",
+        eld: "Current, needs release check",
+        equipment: "Assigned unit under review"
+      };
+    }
+    if (bucket === "Review") {
+      return {
+        score: "76",
+        hos: (3 + number % 4) + "h 20m",
+        readyAgain: "After paperwork match",
+        eld: "Current with planning note",
+        equipment: "Assigned; confirm document gate"
+      };
+    }
+    return {
+      score: String(88 + number % 7),
+      hos: (6 + number % 4) + "h 30m",
+      readyAgain: "Ready now",
+      eld: "Current",
+      equipment: "Assigned unit ready"
+    };
+  }
+
+  function dispatchIntakeSummary(data) {
+    var loads = data.loads || [];
+    var stats = [
+      ["Loads", loads.length],
+      ["Ready", loads.filter(function (load) { return loadStatusBucket(load) === "Ready"; }).length],
+      ["Review", loads.filter(function (load) { return loadStatusBucket(load) === "Review"; }).length],
+      ["At Risk", loads.filter(function (load) { return loadStatusBucket(load) === "At Risk"; }).length],
+      ["Blocked", loads.filter(function (load) { return loadStatusBucket(load) === "Blocked"; }).length]
+    ];
+    var wrap = el("div", "dispatch-intake-summary");
+    stats.forEach(function (item) {
+      var card = el("span", "");
+      card.appendChild(el("strong", "", item[1]));
+      card.appendChild(el("em", "", item[0]));
+      wrap.appendChild(card);
+    });
+    return wrap;
+  }
+
+  function dispatchIntakeCard(data, load) {
+    var driver = data.lookup.drivers[load.driverId];
+    var unit = data.lookup.units[load.unitId];
+    var proof = data.lookup.proofRecords[load.proofRecordId];
+    var settlement = data.lookup.settlementRecords[load.settlementRecordId];
+    var exceptions = (load.exceptionIds || []).map(function (id) { return data.lookup.exceptions[id]; }).filter(Boolean);
+    var capacity = derivedDriverCapacity(driver, load);
+    var bucket = loadStatusBucket(load);
+    var recordHref = "/operations-record/#" + load.id.toLowerCase();
+    var card = document.createElement("details");
+    card.className = "dispatch-intake-card dispatch-intake-" + bucket.toLowerCase().replace(/\s+/g, "-");
+    card.setAttribute("data-dispatch-status", bucket);
+    card.id = "dispatch-" + load.id.toLowerCase();
+
+    var summary = document.createElement("summary");
+    summary.className = "dispatch-intake-row";
+    var title = el("span", "dispatch-load-title");
+    title.appendChild(el("b", "", load.id + " / " + load.label));
+    title.appendChild(el("strong", "", load.origin + " to " + load.destination));
+    title.appendChild(el("em", "", "Shipper tender intake"));
+    summary.appendChild(title);
+    summary.appendChild(statusPill(bucket));
+    [
+      ["Driver", driver ? driver.name : load.driverId],
+      ["HOS available", capacity.hos],
+      ["Equipment", unit ? unit.label : "No unit"],
+      ["Release", load.releaseDecision]
+    ].forEach(function (item) {
+      var metric = el("span", "dispatch-intake-metric");
+      metric.appendChild(el("b", "", item[1]));
+      metric.appendChild(el("em", "", item[0]));
+      summary.appendChild(metric);
+    });
+    summary.appendChild(el("span", "dispatch-expand-cue", "Details"));
+    card.appendChild(summary);
+
+    var detail = el("div", "dispatch-intake-detail");
+    var clearance = el("article", "dispatch-clearance-panel");
+    clearance.appendChild(el("p", "eyebrow", "Why this load is " + bucket.toLowerCase()));
+    clearance.appendChild(el("h3", "", load.releaseDecision));
+    clearance.appendChild(el("p", "", loadFlagReason(load, driver, proof, settlement, exceptions)));
+    clearance.appendChild(clearanceRouteList(loadClearanceSteps(load, driver, proof, settlement, exceptions, capacity)));
+    detail.appendChild(clearance);
+
+    var grid = el("dl", "dispatch-intake-grid");
+    [
+      ["Shipper intake", "Tender, lane, requested release, consignee, rate note, and document gate"],
+      ["Driver readiness", driver ? driver.readinessStatus + " / capability " + capacity.score : "Driver pending"],
+      ["HOS available / ELD", capacity.hos + " / " + capacity.eld],
+      ["Ready again", capacity.readyAgain],
+      ["Equipment access", capacity.equipment],
+      ["Proof packet", proof ? proof.id + " / " + proof.status : "No proof record"],
+      ["Settlement signal", settlement ? settlement.id + " / " + settlement.status : "No settlement record"],
+      ["Exception owner action", exceptions.length ? exceptions.map(function (ex) { return ex.id + ": " + ex.requiredAction; }).join(" ") : "None"]
+    ].forEach(function (item) {
+      var pair = el("div");
+      pair.appendChild(el("dt", "", item[0]));
+      pair.appendChild(el("dd", "", item[1]));
+      grid.appendChild(pair);
+    });
+    detail.appendChild(grid);
+
+    var actions = el("div", "dispatch-intake-actions");
+    actions.appendChild(link(recordHref, "Open joined record", "button secondary"));
+    if (driver) actions.appendChild(link(driver.profileRoute || "/drivers/", "Open driver file", "button secondary"));
+    actions.appendChild(link("/settlements/#canonical-settlement-records", "Settlement context", "button secondary"));
+    detail.appendChild(actions);
+    card.appendChild(detail);
+    return card;
+  }
+
+  function renderDispatchIntakeView(mount, data) {
+    mount.appendChild(sectionHead("Shipper load intake queue", "Each tender starts as a load record, then expands into driver readiness, HOS available time, equipment, proof, and settlement consequences.", "Filter the shipper intake queue first. Open a load only when dispatch needs the deeper release path."));
+    var controls = el("div", "dispatch-intake-controls");
+    ["All", "Ready", "Review", "At Risk", "Blocked"].forEach(function (filter, index) {
+      var button = el("button", "driver-filter" + (index === 0 ? " is-active" : ""), filter);
+      button.type = "button";
+      button.setAttribute("data-dispatch-intake-filter", filter);
+      controls.appendChild(button);
+    });
+    mount.appendChild(controls);
+    mount.appendChild(dispatchIntakeSummary(data));
+    var queue = el("div", "dispatch-intake-queue");
+    mount.appendChild(queue);
+
+    function draw(filter) {
+      queue.textContent = "";
+      (data.loads || []).filter(function (load) {
+        return filter === "All" || loadStatusBucket(load) === filter;
+      }).forEach(function (load) {
+        queue.appendChild(dispatchIntakeCard(data, load));
+      });
+    }
+
+    controls.addEventListener("click", function (event) {
+      var button = event.target.closest("[data-dispatch-intake-filter]");
+      if (!button) return;
+      Array.prototype.slice.call(controls.querySelectorAll("[data-dispatch-intake-filter]")).forEach(function (item) {
+        item.classList.toggle("is-active", item === button);
+      });
+      draw(button.getAttribute("data-dispatch-intake-filter"));
+    });
+    draw("All");
+    mount.appendChild(dispatchTable(data));
+  }
+
+  function safetyRecordForLoad(data, load) {
+    return (data.safetyRecords || []).filter(function (record) {
+      return record.loadId === load.id;
+    })[0] || null;
+  }
+
+  function scoreFromStatus(status, fallback) {
+    var value = text(status).toLowerCase();
+    if (value === "ready" || value === "complete") return fallback || 92;
+    if (value === "review" || value === "in progress" || value === "at risk") return fallback || 68;
+    if (value === "blocked" || value === "held") return fallback || 28;
+    return fallback || 74;
+  }
+
+  function scoreBadge(label, score, status) {
+    var badge = el("span", "ops-score-badge ops-score " + statusClass(status).replace("status", "").trim());
+    badge.appendChild(el("strong", "", score));
+    badge.appendChild(el("em", "", label));
+    return badge;
+  }
+
+  function gateLabel(status) {
+    var value = text(status).toLowerCase();
+    if (value === "ready" || value === "complete") return "Clear";
+    if (value === "blocked" || value === "held") return "Hold";
+    if (value === "at risk") return "At Risk";
+    return "Review";
+  }
+
+  function operatingSummary(data, mode) {
+    var loads = data.loads || [];
+    var blocked = loads.filter(function (load) { return loadStatusBucket(load) === "Blocked"; }).length;
+    var review = loads.filter(function (load) { return ["Review", "At Risk"].indexOf(loadStatusBucket(load)) >= 0; }).length;
+    var ready = loads.filter(function (load) { return loadStatusBucket(load) === "Ready"; }).length;
+    var extra;
+    if (mode === "safety") extra = ["Safety holds", (data.safetyRecords || []).filter(function (record) { return record.status !== "Ready"; }).length];
+    else if (mode === "settlements") extra = ["Packet holds", (data.settlementRecords || []).filter(function (record) { return record.status !== "Complete"; }).length];
+    else extra = ["Owners", (data.exceptions || []).length];
+    var stats = [["Ready", ready], ["Review", review], ["Blocked", blocked], extra];
+    var wrap = el("div", "dispatch-intake-summary operating-summary");
+    stats.forEach(function (item) {
+      var card = el("span", "");
+      card.appendChild(el("strong", "", item[1]));
+      card.appendChild(el("em", "", item[0]));
+      wrap.appendChild(card);
+    });
+    return wrap;
+  }
+
+  function moduleClearanceSteps(mode, load, driver, proof, settlement, safety, exceptions, capacity) {
+    if (mode === "safety") {
+      return [
+        ["Identify safety gate", safety ? safety.qualificationConsequence : "No linked safety exception is open for this load."],
+        ["Confirm driver and HOS available", (driver ? driver.name + " / " : "") + capacity.hos + " available before the next required break/reset; ELD state: " + capacity.eld + "."],
+        ["Close required evidence", safety ? safety.correctiveAction : "Maintain normal pre-trip, credential, and incident evidence."],
+        ["Release consequence", safety ? safety.dispatchConsequence : "Proceed through normal dispatch staging."]
+      ];
+    }
+    if (mode === "settlements") {
+      return [
+        ["Confirm proof packet", proof ? proof.id + " is " + proof.status + " with POD " + text(proof.pod) + "." : "No proof packet attached."],
+        ["Resolve billing hold", settlement ? settlement.billingHold : "No settlement hold is currently attached."],
+        ["Validate pay route", "Rate confirmation, POD, accessorial approval, and factoring/payment notes must match before packet release."],
+        ["Release for billing", settlement && settlement.status === "Complete" ? "Packet is ready for billing review." : "Owner clears the hold, then settlement can move to billing."]
+      ];
+    }
+    return loadClearanceSteps(load, driver, proof, settlement, exceptions, capacity).concat([
+      ["Safety checkpoint", safety ? safety.dispatchConsequence : "No special safety checkpoint is attached."],
+      ["Payment checkpoint", settlement ? settlement.billingStatus + ": " + settlement.billingHold : "No settlement checkpoint is attached."]
+    ]);
+  }
+
+  function operatingCard(data, load, mode) {
+    var driver = data.lookup.drivers[load.driverId];
+    var unit = data.lookup.units[load.unitId];
+    var proof = data.lookup.proofRecords[load.proofRecordId];
+    var settlement = data.lookup.settlementRecords[load.settlementRecordId];
+    var safety = safetyRecordForLoad(data, load);
+    var exceptions = (load.exceptionIds || []).map(function (id) { return data.lookup.exceptions[id]; }).filter(Boolean);
+    var capacity = derivedDriverCapacity(driver, load);
+    var bucket = mode === "safety" ? (safety ? safety.status : load.safetyStatus) :
+      mode === "settlements" ? (settlement ? settlement.status : load.settlementStatus) :
+      loadStatusBucket(load);
+    var score = mode === "safety" ? scoreFromStatus(bucket, safety && safety.status === "Ready" ? 94 : null) :
+      mode === "settlements" ? scoreFromStatus(bucket, settlement && settlement.status === "Complete" ? 91 : null) :
+      scoreFromStatus(loadStatusBucket(load));
+    var card = document.createElement("details");
+    card.className = "dispatch-intake-card operating-clearance-card operating-" + mode;
+    card.setAttribute("data-operating-status", bucket);
+    card.id = mode + "-" + load.id.toLowerCase();
+
+    var summary = document.createElement("summary");
+    summary.className = "dispatch-intake-row operating-clearance-row";
+    var title = el("span", "dispatch-load-title");
+    title.appendChild(el("b", "", load.id + " / " + load.origin + " to " + load.destination));
+    title.appendChild(el("strong", "", mode === "safety" ? "Safety and HOS availability" : mode === "settlements" ? "Packet-to-pay readiness" : "Joined operating record"));
+    title.appendChild(el("em", "", driver ? driver.name + " / " + (unit ? unit.label : "No unit") : "Driver pending"));
+    summary.appendChild(title);
+    summary.appendChild(statusPill(bucket));
+    summary.appendChild(scoreBadge(mode === "settlements" ? "pay score" : mode === "safety" ? "safety gate" : "release gate", mode === "settlements" ? score : gateLabel(bucket), bucket));
+    [
+      ["HOS available", capacity.hos],
+      ["Equipment", capacity.equipment],
+      ["Owner", exceptions.length ? exceptions[0].assignedOwner : "Module owner"]
+    ].forEach(function (item) {
+      var metric = el("span", "dispatch-intake-metric");
+      metric.appendChild(el("b", "", item[1]));
+      metric.appendChild(el("em", "", item[0]));
+      summary.appendChild(metric);
+    });
+    summary.appendChild(el("span", "dispatch-expand-cue", "Open"));
+    card.appendChild(summary);
+
+    var detail = el("div", "dispatch-intake-detail operating-clearance-detail");
+    var clearance = el("article", "dispatch-clearance-panel");
+    clearance.appendChild(el("p", "eyebrow", mode === "settlements" ? "Settlement clearance route" : mode === "safety" ? "Safety clearance route" : "Joined clearance route"));
+    clearance.appendChild(el("h3", "", mode === "settlements" ? (settlement ? settlement.billingHold : "Packet ready for normal billing review.") : mode === "safety" ? (safety ? safety.qualificationConsequence : load.releaseDecision) : load.releaseDecision));
+    clearance.appendChild(el("p", "", loadFlagReason(load, driver, proof, settlement, exceptions)));
+    clearance.appendChild(clearanceRouteList(moduleClearanceSteps(mode, load, driver, proof, settlement, safety, exceptions, capacity)));
+    detail.appendChild(clearance);
+
+    var grid = el("dl", "dispatch-intake-grid operating-field-grid");
+    [
+      ["Driver / capability", driver ? driver.name + " / " + capacity.score : "Driver pending"],
+      ["HOS available / ready again", capacity.hos + " / " + capacity.readyAgain],
+      ["ELD / equipment", capacity.eld + " / " + capacity.equipment],
+      ["Safety gate", gateLabel(safety ? safety.status : load.safetyStatus) + " / " + (safety ? safety.preTripState + " pre-trip / " + safety.hosState + " HOS" : load.safetyStatus)],
+      ["Proof evidence", proof ? proof.id + " / POD " + text(proof.pod) + " / receipts " + text(proof.receipts) : "No proof record"],
+      ["Settlement state", settlement ? settlement.id + " / " + settlement.billingStatus : load.settlementStatus],
+      ["Exception reason", exceptions.length ? exceptions.map(function (ex) { return ex.title + ": " + ex.requiredAction; }).join(" ") : "No active exception"],
+      ["Joined record", "Dispatch, safety, proof, settlement, and exception status resolve to " + load.id + "."]
+    ].forEach(function (item) {
+      var pair = el("div");
+      pair.appendChild(el("dt", "", item[0]));
+      pair.appendChild(el("dd", "", item[1]));
+      grid.appendChild(pair);
+    });
+    detail.appendChild(grid);
+
+    var actions = el("div", "dispatch-intake-actions");
+    actions.appendChild(link("/operations-record/#" + load.id.toLowerCase(), "Open joined record", "button secondary"));
+    if (driver) actions.appendChild(link(driver.profileRoute || "/drivers/", "Open driver file", "button secondary"));
+    actions.appendChild(link(mode === "settlements" ? "/settlements/#canonical-settlement-records" : "/safety/#canonical-safety-records", mode === "settlements" ? "Settlement view" : "Safety view", "button secondary"));
+    detail.appendChild(actions);
+    card.appendChild(detail);
+    return card;
+  }
+
+  function renderOperatingModuleView(mount, data, mode) {
+    var isSafety = mode === "safety";
+    mount.appendChild(sectionHead(isSafety ? "Safety clearance queue" : "Settlement clearance queue",
+      isSafety ? "Explain every safety review before dispatch treats it as releasable." : "Show why a packet is held, what proof clears it, and when it can move to billing.",
+      isSafety ? "Each row carries safety status, HOS available time, ELD context, equipment consequence, owner action, and a clearance route." : "Each row carries proof, POD, accessorial, factoring/payment, hold reason, owner action, and a release route."));
+    mount.appendChild(operatingSummary(data, mode));
+    var queue = el("div", "dispatch-intake-queue operating-clearance-queue");
+    (data.loads || []).forEach(function (load) {
+      queue.appendChild(operatingCard(data, load, mode));
+    });
+    mount.appendChild(queue);
+    mount.appendChild(isSafety ? safetyTable(data) : settlementTable(data));
+  }
+
   function renderLoadView(mount, data, mode) {
+    if (mode === "dispatch") {
+      renderDispatchIntakeView(mount, data);
+      return;
+    }
+    if (mode === "safety" || mode === "settlements") {
+      renderOperatingModuleView(mount, data, mode);
+      return;
+    }
     var title = mode === "dispatch" ? "Canonical dispatch release cases" : mode === "safety" ? "Canonical safety consequences" : "Canonical settlement readiness";
     var body = mode === "dispatch" ? "Dispatch reads assigned driver, unit, release state, proof packet, and exception from the shared data source." :
       mode === "safety" ? "Safety reads driver qualification, load consequence, evidence, corrective action, and dispatch impact from the same records." :
@@ -249,11 +652,50 @@
   }
 
   function renderOperationsRecord(mount, data) {
-    mount.appendChild(sectionHead("Joined operations record", "The end-to-end view is rendered from the canonical dataset.", "Choose any core load anchor or scan the table below."));
-    var grid = el("div", "bof-data-grid");
-    data.loads.forEach(function (load) { grid.appendChild(loadCard(data, load)); });
-    mount.appendChild(grid);
+    mount.appendChild(sectionHead("Joined operations record", "One record now explains dispatch, safety, proof, settlement, and exception consequences.", "Open a case to see the reason, owner, clearance route, driver capacity, proof packet, settlement state, and the connected module links."));
+    mount.appendChild(operatingSummary(data, "operations-record"));
+    var queue = el("div", "dispatch-intake-queue operating-clearance-queue joined-record-queue");
+    data.loads.forEach(function (load) { queue.appendChild(operatingCard(data, load, "operations-record")); });
+    mount.appendChild(queue);
     mount.appendChild(alignmentTable(data));
+  }
+
+  function renderCommandCenterView(mount, data) {
+    var readyDrivers = (data.drivers || []).filter(function (driver) { return driver.readinessStatus === "Ready"; }).length;
+    var readyLoads = (data.loads || []).filter(function (load) { return loadStatusBucket(load) === "Ready"; }).length;
+    var reviewLoads = (data.loads || []).filter(function (load) { return ["Review", "At Risk"].indexOf(loadStatusBucket(load)) >= 0; }).length;
+    var blockedLoads = (data.loads || []).filter(function (load) { return loadStatusBucket(load) === "Blocked"; }).length;
+    var packetHolds = (data.settlementRecords || []).filter(function (record) { return record.status !== "Complete"; }).length;
+    var ownerActions = (data.exceptions || []).length;
+    mount.appendChild(sectionHead("Live operating layer", "The Command Center shows what can move, what is waiting, and who owns the next clearance step.", "These cards render from the same canonical demo records used by Drivers, Dispatch, Safety, Settlements, and Operations Record."));
+
+    var metrics = el("div", "executive-metric-grid command-center-metrics command-live-metrics");
+    [
+      ["Ready drivers", readyDrivers, "available or release-ready", "DR"],
+      ["Loads can move", readyLoads, "ready for normal workflow", "LD"],
+      ["Review queue", reviewLoads, "needs owner decision", "!"],
+      ["Packet holds", packetHolds, "billing or proof hold", "$"],
+      ["Blocked records", blockedLoads, "do not release", "BL"],
+      ["Owner actions", ownerActions, "named follow-ups", "OA"]
+    ].forEach(function (item) {
+      var card = el("article", "executive-metric-card");
+      var copy = el("div");
+      copy.appendChild(el("span", "", item[0]));
+      copy.appendChild(el("strong", "", item[1]));
+      copy.appendChild(el("p", "", item[2]));
+      card.appendChild(copy);
+      card.appendChild(el("b", "metric-badge is-blue", item[3]));
+      metrics.appendChild(card);
+    });
+    mount.appendChild(metrics);
+
+    var queue = el("div", "dispatch-intake-queue operating-clearance-queue command-action-queue");
+    (data.loads || []).filter(function (load) {
+      return loadStatusBucket(load) !== "Ready";
+    }).forEach(function (load) {
+      queue.appendChild(operatingCard(data, load, "operations-record"));
+    });
+    mount.appendChild(queue);
   }
 
   function alignmentTable(data) {
@@ -282,6 +724,7 @@
     if (mode === "drivers") renderDrivers(mount, data);
     else if (mode === "dispatch" || mode === "safety" || mode === "settlements") renderLoadView(mount, data, mode);
     else if (mode === "operations-record") renderOperationsRecord(mount, data);
+    else if (mode === "command-center") renderCommandCenterView(mount, data);
     else mount.appendChild(el("p", "bof-data-error", "Unknown BOF operations view."));
   }
 

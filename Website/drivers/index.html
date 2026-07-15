@@ -4,8 +4,8 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Driver Roster &amp; Readiness | BackOfficeFleet</title>
-  <meta name="description" content="BOF driver roster showing driver photos, documents, pay status, load readiness, HOS and safety concerns from the canonical operations dataset.">
-  <link rel="stylesheet" href="/assets/css/styles.css?v=20260714-driver-roster">
+  <meta name="description" content="BOF compact driver roster showing readiness, HOS available time, ELD state, equipment access, safety context, and clearance paths from the canonical operations dataset.">
+  <link rel="stylesheet" href="/assets/css/styles.css?v=20260714-driver-capability-tight">
 </head>
 <body class="premium-site page-drivers driver-roster-page">
   <header class="site-header">
@@ -38,8 +38,8 @@
       <div class="driver-hero-copy reveal">
         <p class="eyebrow">Driver readiness control</p>
         <h1>Drivers</h1>
-        <p class="hero-promise">Start with the people who can actually move the work.</p>
-        <p>BOF keeps the driver roster connected to documents, assignment status, load readiness, pay context, HOS watch items, safety blockers, and the same canonical records used by Dispatch, Safety, Settlements, and the Operations Record.</p>
+        <p class="hero-promise">Start with who can work, who cannot, and what clears them.</p>
+        <p>BOF keeps the driver roster connected to documents, assignment status, HOS available time, ELD state, equipment access, safety context, pay readiness, and the clearance action needed before a driver can be released to active duty.</p>
         <div class="driver-hero-actions">
           <a class="button primary" href="#driver-roster">Open 12-driver roster</a>
           <a class="button secondary" href="#driver-video">Watch driver video</a>
@@ -56,8 +56,8 @@
       <div class="driver-roster-toolbar reveal">
         <div>
           <p class="eyebrow">Canonical driver roster</p>
-          <h2 id="driver-roster-heading">12 driver records with documents, pay, load readiness, HOS, and safety context.</h2>
-          <p>Use the filters to see which drivers are ready, which need review, and which record is blocking assignment.</p>
+          <h2 id="driver-roster-heading">12 compact driver records with capability, HOS available time, equipment, and clearance action.</h2>
+          <p>Filter by readiness, scan the one-line roster, then open a driver to see the full clearance path and operating context.</p>
         </div>
         <div class="driver-filter-group" aria-label="Driver roster filters">
           <button class="driver-filter is-active" type="button" data-driver-filter="all">All</button>
@@ -124,7 +124,7 @@
       <a href="/trust-governance/">Trust &amp; Governance</a>
     </div>
   </footer>
-  <script src="/assets/js/driver-roster.js?v=20260714-driver-roster"></script>
+  <script src="/assets/js/driver-roster.js?v=20260714-driver-capability"></script>
   <script src="/assets/js/site.js?v=1.50"></script>
 </body>
 </html>
