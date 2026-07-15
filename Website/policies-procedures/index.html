@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Policies &amp; Procedures | BackOfficeFleet</title>
   <meta name="description" content="BOF helps fleets turn policies and procedures into assigned, acknowledged, versioned, and verifiable operating controls.">
-  <link rel="stylesheet" href="/assets/css/styles.css?v=20260713-governance-backoffice">
+  <link rel="stylesheet" href="/assets/css/styles.css?v=20260715-policy-docs">
 </head>
 <body class="premium-site page-policies governance-workstream-page">
   <header class="site-header">
@@ -41,7 +41,7 @@
         <p class="hero-promise">Turn written rules into assigned, acknowledged, versioned, and verifiable operating controls.</p>
         <div class="actions">
           <a class="button primary" href="#policy-library">Open policy library</a>
-          <a class="button secondary" href="#governance-workflow">Review lifecycle</a>
+          <a class="button secondary" href="#policy-documents">Open actual policies</a>
         </div>
       </div>
       <aside class="control-proof-card reveal" aria-label="Policy control proof">
@@ -58,6 +58,7 @@
 
     <nav class="section subject-nav reveal" aria-label="Policies and procedures subjects">
       <a href="#policy-library">Policy Library</a>
+      <a href="#policy-documents">Policy Documents</a>
       <a href="#acknowledgments">Driver Acknowledgments</a>
       <a href="#workflow-rules">Workflow Rules</a>
       <a href="#version-control">Version Control</a>
@@ -67,24 +68,153 @@
     <section class="section" id="policy-library">
       <div class="section-head reveal">
         <p class="eyebrow">Required policy workspace</p>
-        <h2>The policy library works like an operating control system, not a document shelf.</h2>
-        <p>Each row keeps the title, category, version, effective date, owner, acknowledgment state, review status, and a working route or section action. Long policy summaries stay out of the way until a reviewer needs them.</p>
-        <p>The goal is not to publish a wall of legal language. The page shows how BOF can make a written operating rule usable by dispatch, safety, billing, driver-file, and business-office owners at the moment a record needs review.</p>
+        <h2>Open the rule, owner, version, evidence, and operating consequence from one row.</h2>
+        <p>Each action below opens a policy document on this page. The library can still connect to Drivers, Dispatch, Safety, Settlements, and Governance, but the policy itself now appears first.</p>
       </div>
       <div class="control-table-wrap reveal">
         <table class="control-table policy-table">
           <thead><tr><th>Policy</th><th>Category</th><th>Version</th><th>Effective</th><th>Owner</th><th>Acknowledgment</th><th>Review</th><th>Action</th></tr></thead>
           <tbody>
-            <tr><td>Driver Qualification Policy</td><td>Drivers</td><td>v3.2</td><td>Jul 1, 2026</td><td>Driver file owner</td><td><span class="status-badge is-ready">Complete</span></td><td><span class="status-badge is-current">Current</span></td><td><a href="/drivers/">Open drivers</a></td></tr>
-            <tr><td>Pre-Trip Evidence Standard</td><td>Safety</td><td>v2.4</td><td>Jun 15, 2026</td><td>Safety lead</td><td><span class="status-badge is-review">Review</span></td><td><span class="status-badge is-review">Due</span></td><td><a href="/safety/">Open safety</a></td></tr>
-            <tr><td>HOS Escalation Procedure</td><td>Dispatch</td><td>v2.1</td><td>May 30, 2026</td><td>Dispatch manager</td><td><span class="status-badge is-progress">In Progress</span></td><td><span class="status-badge is-current">Current</span></td><td><a href="/dispatch/">Open dispatch</a></td></tr>
-            <tr><td>Cargo and Seal Verification</td><td>Claims</td><td>v1.8</td><td>May 20, 2026</td><td>Operations lead</td><td><span class="status-badge is-ready">Complete</span></td><td><span class="status-badge is-current">Current</span></td><td><a href="#workflow-rules">View rule</a></td></tr>
-            <tr><td>Claims and Incident Response</td><td>Safety</td><td>v2.0</td><td>Apr 28, 2026</td><td>Safety lead</td><td><span class="status-badge is-review">Review</span></td><td><span class="status-badge is-risk">At Risk</span></td><td><a href="/safety/">Open evidence</a></td></tr>
-            <tr><td>Billing Packet Requirements</td><td>Billing</td><td>v3.0</td><td>Jun 10, 2026</td><td>Billing owner</td><td><span class="status-badge is-ready">Complete</span></td><td><span class="status-badge is-current">Current</span></td><td><a href="/settlements/">Open billing</a></td></tr>
-            <tr><td>Document Retention Standard</td><td>Records</td><td>v1.6</td><td>Mar 31, 2026</td><td>Business operations</td><td><span class="status-badge is-progress">In Progress</span></td><td><span class="status-badge is-review">Due</span></td><td><a href="#version-control">View version</a></td></tr>
-            <tr><td>Access and Data Governance</td><td>Governance</td><td>v1.9</td><td>Jul 8, 2026</td><td>Governance owner</td><td><span class="status-badge is-ready">Complete</span></td><td><span class="status-badge is-current">Current</span></td><td><a href="/trust-governance/">Open trust</a></td></tr>
+            <tr><td>Driver Qualification Policy</td><td>Drivers</td><td>v3.2</td><td>Jul 1, 2026</td><td>Driver file owner</td><td><span class="status-badge is-ready">Complete</span></td><td><span class="status-badge is-current">Current</span></td><td><a href="#policy-driver-qualification">Open policy</a></td></tr>
+            <tr><td>Pre-Trip Evidence Standard</td><td>Safety</td><td>v2.4</td><td>Jun 15, 2026</td><td>Safety lead</td><td><span class="status-badge is-review">Review</span></td><td><span class="status-badge is-review">Due</span></td><td><a href="#policy-pre-trip-evidence">Open policy</a></td></tr>
+            <tr><td>HOS Escalation Procedure</td><td>Dispatch</td><td>v2.1</td><td>May 30, 2026</td><td>Dispatch manager</td><td><span class="status-badge is-progress">In Progress</span></td><td><span class="status-badge is-current">Current</span></td><td><a href="#policy-hos-escalation">Open policy</a></td></tr>
+            <tr><td>Cargo and Seal Verification</td><td>Claims</td><td>v1.8</td><td>May 20, 2026</td><td>Operations lead</td><td><span class="status-badge is-ready">Complete</span></td><td><span class="status-badge is-current">Current</span></td><td><a href="#policy-cargo-seal">Open policy</a></td></tr>
+            <tr><td>Claims and Incident Response</td><td>Safety</td><td>v2.0</td><td>Apr 28, 2026</td><td>Safety lead</td><td><span class="status-badge is-review">Review</span></td><td><span class="status-badge is-risk">At Risk</span></td><td><a href="#policy-claims-incident">Open policy</a></td></tr>
+            <tr><td>Billing Packet Requirements</td><td>Billing</td><td>v3.0</td><td>Jun 10, 2026</td><td>Billing owner</td><td><span class="status-badge is-ready">Complete</span></td><td><span class="status-badge is-current">Current</span></td><td><a href="#policy-billing-packet">Open policy</a></td></tr>
+            <tr><td>Document Retention Standard</td><td>Records</td><td>v1.6</td><td>Mar 31, 2026</td><td>Business operations</td><td><span class="status-badge is-progress">In Progress</span></td><td><span class="status-badge is-review">Due</span></td><td><a href="#policy-document-retention">Open policy</a></td></tr>
+            <tr><td>Access and Data Governance</td><td>Governance</td><td>v1.9</td><td>Jul 8, 2026</td><td>Governance owner</td><td><span class="status-badge is-ready">Complete</span></td><td><span class="status-badge is-current">Current</span></td><td><a href="#policy-access-data">Open policy</a></td></tr>
           </tbody>
         </table>
+      </div>
+    </section>
+
+    <section class="section policy-document-section" id="policy-documents">
+      <div class="section-head reveal">
+        <p class="eyebrow">Actual policy documents</p>
+        <h2>The policy library now stops here and shows the controlling rule.</h2>
+        <p>These are practical operating policy sheets for the demo. They identify purpose, scope, owner, required evidence, decision rule, exception path, review cadence, and the connected operating record without sending the viewer in a circle.</p>
+        <p class="policy-disclaimer">Demo policy language only. A carrier should validate final procedures against its operations, contracts, insurance requirements, and applicable federal, state, customer, and internal compliance obligations.</p>
+      </div>
+      <div class="policy-document-stack">
+        <article class="policy-document reveal" id="policy-driver-qualification">
+          <header>
+            <span>Drivers / v3.2 / Effective Jul 1, 2026</span>
+            <h3>Driver Qualification Policy</h3>
+            <p>Purpose: prevent dispatch from treating a driver as available until the driver file, qualification evidence, and owner review support active assignment.</p>
+            <dl class="policy-meta"><div><dt>Owner</dt><dd>Driver file owner</dd></div><div><dt>Approver</dt><dd>Safety lead</dd></div><div><dt>Review cadence</dt><dd>Quarterly plus annual MVR cycle</dd></div><div><dt>Applies to</dt><dd>Company, contractor, and owner-operator drivers</dd></div></dl>
+          </header>
+          <div class="policy-document-grid">
+            <section><h4>Operating Standard</h4><p>A driver must not be marked ready unless license status, medical qualification, MVR review, application, DQF checklist, required acknowledgments, and assignment eligibility are current or formally cleared by the safety owner.</p></section>
+            <section><h4>Required Evidence</h4><ul><li>CDL or equivalent license record and current medical qualification status.</li><li>MVR pull/review note, annual review status, and reviewer name.</li><li>Driver application, DQF checklist, road test/CDL equivalency where applicable.</li><li>Safety, training, policy, and operating acknowledgments.</li></ul></section>
+            <section><h4>Exception Path</h4><p>Expired, missing, unreadable, disputed, or pending documents keep the driver under review or blocked. The clearance route must show missing item, owner, next action, due date, and ready-again condition.</p></section>
+          </div>
+          <footer class="policy-footer"><strong>Operating consequence</strong><span>Driver roster status, dispatch release, HOS readiness, and assignment eligibility must reflect the driver-file state.</span><em>Revision note: v3.2 adds ready-again condition and owner signoff requirement.</em></footer>
+        </article>
+
+        <article class="policy-document reveal" id="policy-pre-trip-evidence">
+          <header>
+            <span>Safety / v2.4 / Effective Jun 15, 2026</span>
+            <h3>Pre-Trip Evidence Standard</h3>
+            <p>Purpose: make dispatch release depend on visible evidence when equipment, cargo condition, tire condition, seal control, or securement proof affects the load.</p>
+            <dl class="policy-meta"><div><dt>Owner</dt><dd>Safety lead</dd></div><div><dt>Approver</dt><dd>Operations lead</dd></div><div><dt>Review cadence</dt><dd>Monthly exception review</dd></div><div><dt>Applies to</dt><dd>Loads requiring pre-trip or release proof</dd></div></dl>
+          </header>
+          <div class="policy-document-grid">
+            <section><h4>Operating Standard</h4><p>Dispatch may not treat the load as fully releasable until the pre-trip packet shows inspection status, unit readiness, required cargo/seal/securement proof, and any safety review state.</p></section>
+            <section><h4>Required Evidence</h4><ul><li>Pre-trip inspection state and defect/repair status if reported.</li><li>Tire, equipment, cargo, seal, and securement photos when required by lane, customer, claim risk, or safety owner.</li><li>Unit assignment, trailer number, and owner note for conditional evidence.</li><li>Customer or shipper-specific proof requirements.</li></ul></section>
+            <section><h4>Exception Path</h4><p>Missing proof creates review. A blocked state is used when evidence affects safety, claims, customer release, cargo security, or settlement readiness. The owner must record the correction or approved release condition.</p></section>
+          </div>
+          <footer class="policy-footer"><strong>Operating consequence</strong><span>Pre-trip status must flow into Dispatch, Safety, Operations Record, and Settlements before a load is treated as clean.</span><em>Revision note: v2.4 adds cargo securement photo and conditional release owner.</em></footer>
+        </article>
+
+        <article class="policy-document reveal" id="policy-hos-escalation">
+          <header>
+            <span>Dispatch / v2.1 / Effective May 30, 2026</span>
+            <h3>HOS Escalation Procedure</h3>
+            <p>Purpose: make HOS, ELD, and ready-again timing visible before dispatch commits a driver, releases a load, or delays a customer-facing movement.</p>
+            <dl class="policy-meta"><div><dt>Owner</dt><dd>Dispatch manager</dd></div><div><dt>Approver</dt><dd>Safety lead</dd></div><div><dt>Review cadence</dt><dd>Weekly exceptions</dd></div><div><dt>Applies to</dt><dd>Loads affected by drive-time limits or ELD status</dd></div></dl>
+          </header>
+          <div class="policy-document-grid">
+            <section><h4>Operating Standard</h4><p>Loads with insufficient available HOS for the plan must be held, reassigned, or conditionally staged only when the next legal-ready window and owner decision are visible.</p></section>
+            <section><h4>Required Evidence</h4><ul><li>Available HOS time and next ready-again timestamp or condition.</li><li>ELD sync status and last verified update.</li><li>Route impact, delivery risk, and customer communication owner.</li><li>Named dispatcher and safety reviewer when a release decision is conditional.</li></ul></section>
+            <section><h4>Exception Path</h4><p>When HOS blocks release, the record must show whether dispatch waits for reset, reassigns the driver, splits the work, cancels release, or holds pending safety approval.</p></section>
+          </div>
+          <footer class="policy-footer"><strong>Operating consequence</strong><span>Driver capability, release status, route plan, and customer update must match the HOS clearance state.</span><em>Revision note: v2.1 adds ready-again countdown and reassignment path.</em></footer>
+        </article>
+
+        <article class="policy-document reveal" id="policy-cargo-seal">
+          <header>
+            <span>Claims / v1.8 / Effective May 20, 2026</span>
+            <h3>Cargo and Seal Verification</h3>
+            <p>Purpose: preserve cargo, seal, and securement evidence before the fleet loses the ability to explain a shortage, damage claim, rejected delivery, or settlement dispute.</p>
+            <dl class="policy-meta"><div><dt>Owner</dt><dd>Operations lead</dd></div><div><dt>Approver</dt><dd>Claims owner</dd></div><div><dt>Review cadence</dt><dd>Per exception plus monthly trend</dd></div><div><dt>Applies to</dt><dd>Loads with cargo, seal, securement, or claims exposure</dd></div></dl>
+          </header>
+          <div class="policy-document-grid">
+            <section><h4>Operating Standard</h4><p>Loads requiring seal, cargo, or securement evidence must retain proof before release and at delivery when customer, claims, or billing review depends on that evidence.</p></section>
+            <section><h4>Required Evidence</h4><ul><li>Seal number, seal photo, or written exception if seal is not applicable.</li><li>Cargo condition and securement proof for bracing, restraint, blocking, or special handling.</li><li>Receiver exception note, shortage notation, or damage photo when condition changes.</li><li>Owner note tying proof to load, unit, driver, customer, and settlement packet.</li></ul></section>
+            <section><h4>Exception Path</h4><p>If seal or cargo proof is missing, the load enters review until operations records whether dispatch, claims, customer service, or settlement is affected and names the next follow-up owner.</p></section>
+          </div>
+          <footer class="policy-footer"><strong>Operating consequence</strong><span>Claims exposure and settlement readiness must show whether cargo/seal proof supports or blocks the operating decision.</span><em>Revision note: v1.8 adds securement proof and receiver exception linkage.</em></footer>
+        </article>
+
+        <article class="policy-document reveal" id="policy-claims-incident">
+          <header>
+            <span>Safety / v2.0 / Effective Apr 28, 2026</span>
+            <h3>Claims and Incident Response</h3>
+            <p>Purpose: create one record of incident facts, owner actions, evidence, dispatch impact, and settlement consequence before details scatter across calls and emails.</p>
+            <dl class="policy-meta"><div><dt>Owner</dt><dd>Safety lead</dd></div><div><dt>Approver</dt><dd>Operations lead</dd></div><div><dt>Review cadence</dt><dd>Per incident plus closeout review</dd></div><div><dt>Applies to</dt><dd>Accidents, inspections, cargo claims, and customer complaints</dd></div></dl>
+          </header>
+          <div class="policy-document-grid">
+            <section><h4>Operating Standard</h4><p>Incident records must capture what happened, affected load, driver, unit, photos, statements, customer notice, insurance notice when applicable, and the dispatch or settlement consequence.</p></section>
+            <section><h4>Required Evidence</h4><ul><li>Event summary, date/time, location, load, driver, unit, and customer.</li><li>Photos, statements, police/inspection notes, claim notice, or customer complaint record.</li><li>Corrective action, coaching, retraining, repair, or return-to-dispatch condition.</li><li>Billing, claim, or settlement hold status if money or proof is affected.</li></ul></section>
+            <section><h4>Exception Path</h4><p>A claim or incident remains under review until the safety owner records the clearance action, affected records, operating consequence, and whether dispatch or settlement remains held.</p></section>
+          </div>
+          <footer class="policy-footer"><strong>Operating consequence</strong><span>Incident status must be visible in Safety, Operations Record, and any affected settlement packet.</span><em>Revision note: v2.0 adds closeout evidence and settlement impact fields.</em></footer>
+        </article>
+
+        <article class="policy-document reveal" id="policy-billing-packet">
+          <header>
+            <span>Billing / v3.0 / Effective Jun 10, 2026</span>
+            <h3>Billing Packet Requirements</h3>
+            <p>Purpose: define the proof needed before revenue moves from delivery completion to invoice, factoring review, customer payment, or settlement support.</p>
+            <dl class="policy-meta"><div><dt>Owner</dt><dd>Billing owner</dd></div><div><dt>Approver</dt><dd>Finance lead</dd></div><div><dt>Review cadence</dt><dd>Monthly aging and deduction review</dd></div><div><dt>Applies to</dt><dd>Invoices, factoring packets, proof packets, and customer payment follow-up</dd></div></dl>
+          </header>
+          <div class="policy-document-grid">
+            <section><h4>Operating Standard</h4><p>A billing packet may be marked complete only when rate confirmation, invoice draft, signed BOL/POD, delivery proof, accessorial support, and exception notes are present or formally waived.</p></section>
+            <section><h4>Required Evidence</h4><ul><li>Rate confirmation, invoice draft, customer reference, and load identifier.</li><li>Signed BOL, POD, receiver evidence, and delivery exception notes.</li><li>Lumper, detention, TONU, accessorial, claim, or deduction support.</li><li>Factoring or payment-path requirements when applicable.</li></ul></section>
+            <section><h4>Exception Path</h4><p>Missing proof creates a billing hold with owner, amount affected when known, proof needed, next follow-up date, and whether driver pay or settlement is also affected.</p></section>
+          </div>
+          <footer class="policy-footer"><strong>Operating consequence</strong><span>Packet readiness must flow into Settlements, AR aging, customer follow-up, and finance visibility.</span><em>Revision note: v3.0 adds factoring/payment-path and deduction support fields.</em></footer>
+        </article>
+
+        <article class="policy-document reveal" id="policy-document-retention">
+          <header>
+            <span>Records / v1.6 / Effective Mar 31, 2026</span>
+            <h3>Document Retention Standard</h3>
+            <p>Purpose: make records usable by attaching each file to the operating decision it supports, rather than storing disconnected uploads.</p>
+            <dl class="policy-meta"><div><dt>Owner</dt><dd>Business operations</dd></div><div><dt>Approver</dt><dd>Governance owner</dd></div><div><dt>Review cadence</dt><dd>Semiannual sample audit</dd></div><div><dt>Applies to</dt><dd>Driver, dispatch, safety, billing, HR, governance, and proof records</dd></div></dl>
+          </header>
+          <div class="policy-document-grid">
+            <section><h4>Operating Standard</h4><p>Records must be retained with the operating item they support, including document type, version, owner, effective date, source, and relationship to driver, load, unit, customer, or settlement record.</p></section>
+            <section><h4>Required Evidence</h4><ul><li>Document type, source, upload/creation date, and record owner.</li><li>Review state, effective date, version, and superseded record link when applicable.</li><li>Connected driver, load, proof, safety, billing, HR, or governance record.</li><li>Retention exception note for missing, unreadable, stale, duplicate, or replaced files.</li></ul></section>
+            <section><h4>Exception Path</h4><p>Unreadable, duplicate, missing, or stale documents remain in review until business operations resolves the file, records a retention exception, or links a superseding record.</p></section>
+          </div>
+          <footer class="policy-footer"><strong>Operating consequence</strong><span>Record quality must affect readiness, billing, safety review, or governance state when the document controls work.</span><em>Revision note: v1.6 adds superseded-record and retention-exception handling.</em></footer>
+        </article>
+
+        <article class="policy-document reveal" id="policy-access-data">
+          <header>
+            <span>Governance / v1.9 / Effective Jul 8, 2026</span>
+            <h3>Access and Data Governance</h3>
+            <p>Purpose: protect sensitive operating records by tying role access, owner approval, and data changes to visible governance evidence.</p>
+            <dl class="policy-meta"><div><dt>Owner</dt><dd>Governance owner</dd></div><div><dt>Approver</dt><dd>Executive sponsor</dd></div><div><dt>Review cadence</dt><dd>Monthly access review plus offboarding event</dd></div><div><dt>Applies to</dt><dd>Users touching driver, payroll, safety, billing, customer, or governance records</dd></div></dl>
+          </header>
+          <div class="policy-document-grid">
+            <section><h4>Operating Standard</h4><p>Users should receive the minimum role access needed for their work. Sensitive driver, payroll, safety, billing, customer, and governance records require owner-aware access and visible change history.</p></section>
+            <section><h4>Required Evidence</h4><ul><li>User role, business reason, approving owner, and access start/change/removal date.</li><li>Role authority for create, view, edit, approve, export, and delete actions.</li><li>Audit note for sensitive record changes or exception access.</li><li>Offboarding or role-change confirmation when access should end.</li></ul></section>
+            <section><h4>Exception Path</h4><p>Access exceptions remain under governance review until the owner approves, limits, or removes access and records the operating reason, time limit, and affected records.</p></section>
+          </div>
+          <footer class="policy-footer"><strong>Operating consequence</strong><span>Role authority must determine who can alter readiness, safety, settlement, finance, and governance records.</span><em>Revision note: v1.9 adds offboarding confirmation and export/delete authority checks.</em></footer>
+        </article>
       </div>
     </section>
 
@@ -113,10 +243,10 @@
         <p>That matters because the person using the rule is often under time pressure. The driver-file owner, dispatcher, safety lead, or billing reviewer needs the current rule, the owner, and the action path before they need the full written procedure.</p>
       </div>
       <div class="supporting-grid">
-        <article class="support-card reveal"><span>Employee acknowledgment</span><strong>Driver Qualification Policy: Complete</strong><p>Assigned to driver file owners; acknowledgment state can be reviewed before a worker file is treated as ready.</p><a href="/drivers/">Open driver records</a></article>
-        <article class="support-card reveal" id="version-control"><span>Version history</span><strong>Billing Packet Requirements: v3.0</strong><p>The current version, prior version, effective date, and owner stay attached to billing packet review.</p><a href="/settlements/">Open billing records</a></article>
-        <article class="support-card reveal" id="audit-evidence"><span>Audit evidence</span><strong>Access and Data Governance: Current</strong><p>Approval notes, affected roles, and evidence links route to the Trust &amp; Governance page.</p><a href="/trust-governance/">Open governance</a></article>
-        <article class="support-card reveal"><span>Exception handling</span><strong>Pre-Trip Evidence Standard: Review</strong><p>If proof is missing, the policy row should point to the owner and operating record instead of implying the exception disappeared.</p><a href="/safety/">Open safety review</a></article>
+        <article class="support-card reveal"><span>Employee acknowledgment</span><strong>Driver Qualification Policy: Complete</strong><p>Assigned to driver file owners; acknowledgment state can be reviewed before a worker file is treated as ready.</p><a href="#policy-driver-qualification">Open policy</a></article>
+        <article class="support-card reveal" id="version-control"><span>Version history</span><strong>Billing Packet Requirements: v3.0</strong><p>The current version, prior version, effective date, and owner stay attached to billing packet review.</p><a href="#policy-billing-packet">Open policy</a></article>
+        <article class="support-card reveal" id="audit-evidence"><span>Audit evidence</span><strong>Access and Data Governance: Current</strong><p>Approval notes, affected roles, and evidence expectations stay visible with the controlling rule.</p><a href="#policy-access-data">Open policy</a></article>
+        <article class="support-card reveal"><span>Exception handling</span><strong>Pre-Trip Evidence Standard: Review</strong><p>If proof is missing, the policy row points to the owner, evidence requirement, and release consequence.</p><a href="#policy-pre-trip-evidence">Open policy</a></article>
       </div>
     </section>
 
