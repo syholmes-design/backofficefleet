@@ -31,6 +31,69 @@
       <div class="reveal"><p class="eyebrow">HR Tier / Recruiting &amp; Onboarding</p><h1>Move driver and staff candidates into readiness with fewer handoff gaps.</h1><p>Recruiting is not complete when an application arrives. BOF connects sourcing, screening, DQF handoff, safety acknowledgement, pay setup, training, and assignment release into a visible workflow.</p><div class="actions"><a class="button primary" href="/business-operations/hr-tier/">HR Tier</a><a class="button secondary" href="/business-operations/driver-onboarding/">Driver Onboarding</a></div></div>
       <aside class="ops-brief-card reveal"><p class="eyebrow">Readiness chain</p><h2>Candidate interest becomes operating value only when the file can support the assignment.</h2><p>Recruiting needs the same readiness language as dispatch: ready, review, blocked, owner, and next action.</p></aside>
     </section>
+    <section class="section" id="recruiting-pipeline">
+      <div class="section-head reveal">
+        <p class="eyebrow">Recruiting and onboarding pipeline</p>
+        <h2>Move candidates from interest to first-load readiness with every handoff visible.</h2>
+        <p>The pipeline shows the information a recruiter, HR owner, safety reviewer, and dispatcher need before a candidate becomes operational capacity.</p>
+      </div>
+      <div class="recruiting-pipeline-workspace reveal" data-recruiting-workspace>
+        <div class="recruiting-filter-bar" aria-label="Recruiting pipeline filters">
+          <button class="is-active" type="button" data-recruiting-filter="all"><strong>18</strong><span>All candidates</span></button>
+          <button type="button" data-recruiting-filter="Lead"><strong>4</strong><span>Lead</span></button>
+          <button type="button" data-recruiting-filter="Screening"><strong>5</strong><span>Screening</span></button>
+          <button type="button" data-recruiting-filter="DQF"><strong>3</strong><span>DQF handoff</span></button>
+          <button type="button" data-recruiting-filter="Onboarding"><strong>4</strong><span>Onboarding</span></button>
+          <button type="button" data-recruiting-filter="Blocked"><strong>2</strong><span>Blocked</span></button>
+        </div>
+
+        <div class="hr-work-grid">
+          <div class="hr-work-list" aria-live="polite">
+            <article class="hr-work-card" data-recruiting-status="Lead">
+              <div><span class="status-badge is-current">Lead</span><strong>RCR-118 / flatbed referral</strong><p>CDL-A, 3 years OTR, home base Tulsa, flatbed interest, available Aug 5.</p></div>
+              <button type="button" data-recruit-title="Lead: RCR-118" data-recruit-status-label="Lead / recruiter touch" data-recruit-body="The candidate has enough profile detail to begin screening, but BOF has not yet confirmed application completeness or operating fit." data-recruit-fields="Source: driver referral; endorsements: flatbed/tanker; home base: Tulsa; availability: Aug 5." data-recruit-route="Recruiter confirms application; collect CDL and medical card; schedule phone screen; move to screening if lane fit is confirmed.">Open lead</button>
+            </article>
+
+            <article class="hr-work-card" data-recruiting-status="Screening">
+              <div><span class="status-badge is-review">Screening</span><strong>RCR-121 / reefer applicant</strong><p>Application complete; MVR consent, prior-employment verification, and drug-screen routing pending.</p></div>
+              <button type="button" data-recruit-title="Screening: RCR-121" data-recruit-status-label="Screening review" data-recruit-body="The candidate is active, but safety and HR cannot rely on the file until consent, prior-employment review, and drug-screen routing are complete." data-recruit-fields="Source: paid ad; CDL-A reefer; home base Birmingham; availability: 10 days." data-recruit-route="Collect MVR consent; request prior-employment verification; route drug screen; assign HR owner; move to DQF handoff.">Open screening</button>
+            </article>
+
+            <article class="hr-work-card" data-recruiting-status="DQF">
+              <div><span class="status-badge is-review">DQF</span><strong>RCR-126 / regional dry van</strong><p>Recruiter cleared interview; DQF checklist needs medical, MVR, road test, and policy handoff.</p></div>
+              <button type="button" data-recruit-title="DQF handoff: RCR-126" data-recruit-status-label="DQF handoff" data-recruit-body="Recruiting has done its job, but the candidate is not assignment-ready until the driver qualification file can support operations." data-recruit-fields="Source: Indeed; endorsements: none; home base Little Rock; preferred lane: regional dry van." data-recruit-route="Attach medical card; complete MVR review; document road test; assign policy acknowledgments; release to onboarding.">Open DQF</button>
+            </article>
+
+            <article class="hr-work-card" data-recruiting-status="Onboarding">
+              <div><span class="status-badge is-risk">Onboarding</span><strong>RCR-130 / owner-operator</strong><p>Contractor packet, W-9, insurance certificate, pay setup, and first-load equipment check are in progress.</p></div>
+              <button type="button" data-recruit-title="Onboarding: RCR-130" data-recruit-status-label="Onboarding / at risk" data-recruit-body="The owner-operator is close, but assignment readiness depends on contractor packet, insurance, equipment access, and pay setup." data-recruit-fields="Source: fleet referral; unit: dry van; insurance expires in 21 days; availability: immediate." data-recruit-route="Complete contractor packet; verify insurance; confirm equipment access; finish settlement/pay setup; release first-load readiness.">Open onboarding</button>
+            </article>
+
+            <article class="hr-work-card" data-recruiting-status="Onboarding">
+              <div><span class="status-badge is-ready">First Load</span><strong>RCR-133 / first-load ready</strong><p>Driver file, payroll setup, training, policy acknowledgment, and dispatch release note are complete.</p></div>
+              <button type="button" data-recruit-title="First-load ready: RCR-133" data-recruit-status-label="Ready for first load" data-recruit-body="The candidate has become usable capacity. BOF keeps the first-load handoff connected to driver readiness and dispatch release." data-recruit-fields="Source: recruiter; CDL-A dry van; home base Nashville; HOS handoff complete." data-recruit-route="Add to driver roster; assign first load; monitor first-week training and supervisor follow-up.">Open ready file</button>
+            </article>
+
+            <article class="hr-work-card" data-recruiting-status="Blocked">
+              <div><span class="status-badge is-blocked">Blocked</span><strong>RCR-139 / incomplete onboarding</strong><p>Candidate cannot be released because drug screen result, policy acknowledgment, and pay setup are missing.</p></div>
+              <button type="button" data-recruit-title="Blocked onboarding: RCR-139" data-recruit-status-label="Blocked from assignment" data-recruit-body="The blocker is explicit. Dispatch should not plan on this candidate until HR and safety evidence clears." data-recruit-fields="Source: walk-in; CDL-A; home base Mobile; preferred lane Southeast." data-recruit-route="Receive drug-screen result; complete policy acknowledgment; finish pay setup; HR owner signs release; move to onboarding review or first-load ready.">Open blocker</button>
+            </article>
+          </div>
+
+          <aside class="hr-case-preview" aria-live="polite">
+            <p class="eyebrow">Candidate preview</p>
+            <h3 data-recruit-title>Lead: RCR-118</h3>
+            <span data-recruit-status-label>Lead / recruiter touch</span>
+            <p data-recruit-body>The candidate has enough profile detail to begin screening, but BOF has not yet confirmed application completeness or operating fit.</p>
+            <dl>
+              <div><dt>Candidate fields</dt><dd data-recruit-fields>Source: driver referral; endorsements: flatbed/tanker; home base: Tulsa; availability: Aug 5.</dd></div>
+              <div><dt>Clearance path</dt><dd data-recruit-route>Recruiter confirms application; collect CDL and medical card; schedule phone screen; move to screening if lane fit is confirmed.</dd></div>
+              <div><dt>BOF support lane</dt><dd>Track applicant source, collect documents, route DQF handoff, prepare payroll or contractor setup, and show when the candidate can support the first load.</dd></div>
+            </dl>
+          </aside>
+        </div>
+      </div>
+    </section>
     <section class="section"><div class="ops-process">
       <div class="ops-process-row"><b>Source</b><div><strong>Track where the applicant entered.</strong><p>Referral, ad source, recruiter, terminal, lane interest, experience profile, license class, and preferred communication path.</p></div><span>Candidate record</span></div>
       <div class="ops-process-row"><b>Screen</b><div><strong>Move missing items into an owner queue.</strong><p>Application gaps, prior employment questions, DQF handoff, MVR/medical card status, payroll setup, and training requirements.</p></div><span>Review queue</span></div>
@@ -39,5 +102,41 @@
   </main>
   <section class="cta-band"><div class="cta-inner"><div><p class="eyebrow">Related HR work</p><h2>Onboarding connects directly to compensation, safety, and dispatch readiness.</h2><p>Keep the handoff visible from first contact to first load.</p></div><div class="actions"><a class="button light" href="/business-operations/hr-tier/compensation-benefits/">Compensation &amp; Benefits</a><a class="button secondary" href="/drivers/">Driver Command Center</a></div></div></section>
   <footer class="site-footer"><div class="footer-inner"><strong>BackOfficeFleet</strong><span>Recruiting and onboarding support.</span><a href="/business-operations/">Business Operations</a></div></footer><script src="/assets/js/site.js?v=1.50"></script>
+  <script>
+    (function () {
+      var workspace = document.querySelector("[data-recruiting-workspace]");
+      if (!workspace) return;
+      var filters = Array.prototype.slice.call(workspace.querySelectorAll("[data-recruiting-filter]"));
+      var cards = Array.prototype.slice.call(workspace.querySelectorAll("[data-recruiting-status]"));
+      var buttons = Array.prototype.slice.call(workspace.querySelectorAll("button[data-recruit-title]"));
+      var title = workspace.querySelector("[data-recruit-title]:not(button)");
+      var status = workspace.querySelector("[data-recruit-status-label]:not(button)");
+      var body = workspace.querySelector("[data-recruit-body]:not(button)");
+      var fields = workspace.querySelector("[data-recruit-fields]");
+      var route = workspace.querySelector("[data-recruit-route]");
+
+      filters.forEach(function (filter) {
+        filter.addEventListener("click", function () {
+          var value = filter.dataset.recruitingFilter;
+          filters.forEach(function (item) { item.classList.remove("is-active"); });
+          filter.classList.add("is-active");
+          cards.forEach(function (card) {
+            var show = value === "all" || card.dataset.recruitingStatus === value;
+            card.hidden = !show;
+          });
+        });
+      });
+
+      buttons.forEach(function (button) {
+        button.addEventListener("click", function () {
+          title.textContent = button.dataset.recruitTitle || "";
+          status.textContent = button.dataset.recruitStatusLabel || "";
+          body.textContent = button.dataset.recruitBody || "";
+          fields.textContent = button.dataset.recruitFields || "";
+          route.textContent = button.dataset.recruitRoute || "";
+        });
+      });
+    }());
+  </script>
 </body>
 </html>

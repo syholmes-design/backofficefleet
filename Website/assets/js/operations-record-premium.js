@@ -36,6 +36,11 @@
     return '<span class="operations-status-pill ' + statusClass(status) + '"><b>' + esc(label) + '</b>' + esc(status || "None") + '</span>';
   }
 
+  function money(value) {
+    var number = Number(value || 0);
+    return "$" + number.toLocaleString(undefined, { maximumFractionDigits: number % 1 ? 2 : 0 });
+  }
+
   function releaseTone(load) {
     if (load.dispatchStatus === "Blocked" || load.safetyStatus === "Blocked") return "blocked";
     if (load.dispatchStatus === "At Risk" || load.dispatchStatus === "Review" || load.proofStatus === "Review") return "review";
@@ -85,8 +90,15 @@
       units: byId(data.units),
       proofRecords: byId(data.proofRecords),
       settlementRecords: byId(data.settlementRecords),
+      driverPayProfiles: byId(data.driverPayProfiles),
       exceptions: byId(data.exceptions)
     };
+  }
+
+  function payProfileForLoad(data, load) {
+    return (data.driverPayProfiles || []).filter(function (profile) {
+      return profile.loadId === load.id;
+    })[0] || null;
   }
 
   function renderSummary(data) {
@@ -111,6 +123,7 @@
     var unit = maps.units[load.unitId];
     var proof = maps.proofRecords[load.proofRecordId];
     var settlement = maps.settlementRecords[load.settlementRecordId];
+    var payProfile = state.data ? payProfileForLoad(state.data, load) : null;
     var exception = load.exceptionIds && load.exceptionIds.length ? maps.exceptions[load.exceptionIds[0]] : null;
     var tone = releaseTone(load);
     var exceptionText = exception ? exception.id + " / " + exception.assignedOwner : "No active exception";
@@ -147,6 +160,8 @@
       '    <div><dt>Settlement</dt><dd>' + esc(settlementText) + '</dd></div>',
       '    <div><dt>Exception owner</dt><dd>' + esc(exceptionText) + '</dd></div>',
       '    <div><dt>Capability</dt><dd>' + esc(capacity.score) + ' score / ' + esc(capacity.hos) + '</dd></div>',
+      '    <div><dt>Driver pay profile</dt><dd>' + esc(payProfile ? payProfile.workerClassification + " / " + payProfile.payMethod + " / " + payProfile.rateLabel : "No pay profile attached") + '</dd></div>',
+      '    <div><dt>Net after driver pay</dt><dd>' + esc(payProfile ? money(payProfile.estimatedNetRevenue) + " after " + money(payProfile.estimatedPay) + " driver pay" : "No finance bridge attached") + '</dd></div>',
       '    <div><dt>HOS available / ELD</dt><dd>' + esc(capacity.hos) + ' / ' + esc(capacity.eld) + '</dd></div>',
       '    <div><dt>Ready again</dt><dd>' + esc(capacity.readyAgain) + '</dd></div>',
       '    <div><dt>Equipment gate</dt><dd>' + esc(capacity.equipment) + '</dd></div>',
@@ -221,12 +236,12 @@
     });
   });
 
-  fetch(DATA_URL, { credentials: "same-origin" })
-    .then(function (response) {
-      if (!response.ok) throw new Error("Unable to load canonical operations records.");
-      return response.json();
-    })
+  (window.BOFDataLoader ? window.BOFDataLoader.load(DATA_URL) : fetch(DATA_URL, { credentials: "same-origin" }).then(function (response) {
+    if (!response.ok) throw new Error("Unable to load canonical operations records.");
+    return response.json();
+  }))
     .then(function (data) {
+      if (window.BOFDemoState && window.BOFDemoState.apply) data = window.BOFDemoState.apply(data);
       state.data = data;
       render();
     })

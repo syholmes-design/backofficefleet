@@ -46,7 +46,8 @@
       units: byId(data.units),
       exceptions: byId(data.exceptions),
       safety: byId(data.safetyRecords),
-      settlements: byId(data.settlementRecords)
+      settlements: byId(data.settlementRecords),
+      payProfiles: byId(data.driverPayProfiles)
     };
   }
 
@@ -71,7 +72,13 @@
     return "No active safety blocker in canonical roster.";
   }
 
-  function payText(settlement) {
+  function money(value) {
+    var number = Number(value || 0);
+    return "$" + number.toLocaleString(undefined, { maximumFractionDigits: number % 1 ? 2 : 0 });
+  }
+
+  function payText(settlement, payProfile) {
+    if (payProfile) return payProfile.payMethod + " / " + payProfile.rateLabel + " / " + money(payProfile.estimatedPay);
     if (!settlement) return "No active settlement";
     if (settlement.status === "Complete") return "Pay clear: settlement complete";
     if (settlement.status === "Held") return "Pay held: " + settlement.billingHold;
@@ -216,13 +223,18 @@
     var exception = driver.activeExceptionId ? lookups.exceptions[driver.activeExceptionId] : null;
     var safety = load ? firstBy(data.safetyRecords, "loadId", load.id) : firstBy(data.safetyRecords, "driverId", driver.id);
     var settlement = load ? firstBy(data.settlementRecords, "loadId", load.id) : null;
+    var payProfile = load ? firstBy(data.driverPayProfiles, "loadId", load.id) : firstBy(data.driverPayProfiles, "driverId", driver.id);
     var loadReadiness = load ? load.id + " / " + load.dispatchStatus : "No active load";
     var unitText = unit ? unit.label : "No active unit";
     var recordHref = load ? "/operations-record/#" + load.id.toLowerCase() : "/operations-record/#canonical-operations-record";
-    var payHref = settlement ? "/settlements/#canonical-settlement-records" : "/business-operations/payroll-administration/";
+    var payHref = payProfile ? "/business-operations/payroll-administration/#driver-pay-profile-workbench" : (settlement ? "/settlements/#canonical-settlement-records" : "/business-operations/payroll-administration/");
     var safetyHref = safety ? "/safety/#canonical-safety-records" : "/safety/";
     var clearance = clearancePath(driver, load, safety, exception, settlement);
     var capability = capabilityFor(driver, load, safety, exception, settlement, unit);
+    var docs = window.BOFDemoState && window.BOFDemoState.documentsForDriver
+      ? window.BOFDemoState.documentsForDriver(data, driver, payProfile)
+      : null;
+    var carrierName = docs && docs.carrier ? docs.carrier.name : "No carrier overlay";
 
     return [
       '<details class="driver-roster-card ' + statusClass(driver.readinessStatus) + '" data-driver-status="' + escapeHtml(driver.readinessStatus) + '">',
@@ -238,6 +250,7 @@
       '    <strong class="driver-status-pill">' + escapeHtml(driver.readinessStatus) + '</strong>',
       '    <span class="driver-scan-metric"><b>' + escapeHtml(capability.score) + '</b>' + escapeHtml(capability.scoreLabel) + '</span>',
       '    <span class="driver-scan-metric"><b>' + escapeHtml(capability.hosAvailable) + '</b>HOS available</span>',
+      '    <span class="driver-scan-metric"><b>' + escapeHtml(payProfile ? payProfile.rateLabel : "No active pay") + '</b>' + escapeHtml(payProfile ? payProfile.payMethod : "Pay setup") + '</span>',
       '    <span class="driver-scan-metric driver-scan-wide"><b>' + escapeHtml(capability.equipment) + '</b>' + escapeHtml(clearance.action) + '</span>',
       '    <span class="driver-expand-cue">Details</span>',
       '  </summary>',
@@ -264,17 +277,30 @@
       '      <div><dt>Endorsements</dt><dd>' + escapeHtml(capability.endorsements) + '</dd></div>',
       '      <div><dt>Lane fit</dt><dd>' + escapeHtml(capability.laneFit) + '</dd></div>',
       '      <div><dt>Safety context</dt><dd>' + escapeHtml(capability.safetyContext) + '</dd></div>',
+      '      <div><dt>Carrier rules</dt><dd>' + escapeHtml(carrierName) + '</dd></div>',
+      '      <div><dt>Document rule set</dt><dd>' + escapeHtml(docs ? docs.label : "Default driver document set") + '</dd></div>',
       '    </dl>',
+      payProfile ? [
+      '    <section class="driver-pay-panel" aria-label="Driver pay profile">',
+      '      <div><span>Pay profile</span><strong>' + escapeHtml(payProfile.workerClassification) + '</strong><p>' + escapeHtml(payProfile.payMethod) + ' at ' + escapeHtml(payProfile.rateLabel) + '</p></div>',
+      '      <dl>',
+      '        <div><dt>Calculation</dt><dd>' + escapeHtml(payProfile.calculationLabel) + '</dd></div>',
+      '        <div><dt>Estimated pay</dt><dd>' + escapeHtml(money(payProfile.estimatedPay)) + '</dd></div>',
+      '        <div><dt>Net after driver pay</dt><dd>' + escapeHtml(money(payProfile.estimatedNetRevenue)) + '</dd></div>',
+      '        <div><dt>Status</dt><dd>' + escapeHtml(payProfile.payStatus) + ': ' + escapeHtml(payProfile.reason) + '</dd></div>',
+      '      </dl>',
+      '    </section>'
+      ].join("") : '',
       '    <div class="driver-doc-strip" aria-label="Driver document counts">',
-      '    <a href="' + escapeHtml(driver.licenseImage) + '"><b>Primary</b>' + escapeHtml(driver.documentCounts.primary) + '/8</a>',
-      '    <span><b>Secondary</b>' + escapeHtml(driver.documentCounts.secondary) + '/8</span>',
-      '    <span><b>Evidence</b>' + escapeHtml(driver.documentCounts.operatingEvidence) + ' items</span>',
+      '    <a href="' + escapeHtml(driver.licenseImage) + '"><b>Required</b>' + escapeHtml(docs ? docs.completeCount : driver.documentCounts.primary) + '/' + escapeHtml(docs ? docs.required.length : 8) + '</a>',
+      '    <span><b>Review</b>' + escapeHtml(docs ? docs.reviewCount : 0) + ' items</span>',
+      '    <span><b>Carrier</b>' + escapeHtml(carrierName) + '</span>',
       '    </div>',
       '    <dl class="driver-record-list">',
       '    <div><dt>Assignment</dt><dd>' + escapeHtml(driver.assignmentState) + '</dd></div>',
       '    <div><dt>Load readiness</dt><dd><a href="' + escapeHtml(recordHref) + '">' + escapeHtml(loadReadiness) + '</a></dd></div>',
       '    <div><dt>Unit</dt><dd>' + escapeHtml(unitText) + '</dd></div>',
-      '    <div><dt>Pay</dt><dd><a href="' + escapeHtml(payHref) + '">' + escapeHtml(payText(settlement)) + '</a></dd></div>',
+      '    <div><dt>Pay</dt><dd><a href="' + escapeHtml(payHref) + '">' + escapeHtml(payText(settlement, payProfile)) + '</a></dd></div>',
       '    <div><dt>HOS availability note</dt><dd>' + escapeHtml(hosText(driver, load, safety, exception)) + '</dd></div>',
       '    <div><dt>Safety</dt><dd><a href="' + escapeHtml(safetyHref) + '">' + escapeHtml(safetyText(driver, safety, exception)) + '</a></dd></div>',
       '    </dl>',
@@ -312,12 +338,12 @@
     });
   });
 
-  fetch(DATA_URL, { credentials: "same-origin" })
-    .then(function (response) {
-      if (!response.ok) throw new Error("Unable to load driver dataset.");
-      return response.json();
-    })
+  (window.BOFDataLoader ? window.BOFDataLoader.load(DATA_URL) : fetch(DATA_URL, { credentials: "same-origin" }).then(function (response) {
+    if (!response.ok) throw new Error("Unable to load driver dataset.");
+    return response.json();
+  }))
     .then(function (data) {
+      if (window.BOFDemoState && window.BOFDemoState.apply) data = window.BOFDemoState.apply(data);
       state.data = data;
       renderRoster();
     })

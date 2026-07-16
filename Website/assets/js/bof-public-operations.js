@@ -32,6 +32,11 @@
     return el("span", statusClass(status), status);
   }
 
+  function money(value) {
+    var number = Number(value || 0);
+    return "$" + number.toLocaleString(undefined, { maximumFractionDigits: number % 1 ? 2 : 0 });
+  }
+
   function byId(list) {
     return (list || []).reduce(function (map, item) {
       map[item.id] = item;
@@ -62,9 +67,16 @@
       assignments: byId(data.assignments),
       exceptions: byId(data.exceptions),
       proofRecords: byId(data.proofRecords),
-      settlementRecords: byId(data.settlementRecords)
+      settlementRecords: byId(data.settlementRecords),
+      driverPayProfiles: byId(data.driverPayProfiles)
     };
     return data;
+  }
+
+  function payProfileForLoad(data, load) {
+    return (data.driverPayProfiles || []).filter(function (profile) {
+      return profile.loadId === load.id;
+    })[0] || null;
   }
 
   function driverCard(data, driver) {
@@ -490,6 +502,7 @@
     var unit = data.lookup.units[load.unitId];
     var proof = data.lookup.proofRecords[load.proofRecordId];
     var settlement = data.lookup.settlementRecords[load.settlementRecordId];
+    var payProfile = payProfileForLoad(data, load);
     var safety = safetyRecordForLoad(data, load);
     var exceptions = (load.exceptionIds || []).map(function (id) { return data.lookup.exceptions[id]; }).filter(Boolean);
     var capacity = derivedDriverCapacity(driver, load);
@@ -539,6 +552,8 @@
       ["Driver / capability", driver ? driver.name + " / " + capacity.score : "Driver pending"],
       ["HOS available / ready again", capacity.hos + " / " + capacity.readyAgain],
       ["ELD / equipment", capacity.eld + " / " + capacity.equipment],
+      ["Driver pay profile", payProfile ? payProfile.workerClassification + " / " + payProfile.payMethod + " / " + payProfile.rateLabel : "No pay profile attached"],
+      ["Net after driver pay", payProfile ? money(payProfile.estimatedNetRevenue) + " after " + money(payProfile.estimatedPay) + " estimated driver pay" : "No finance bridge attached"],
       ["Safety gate", gateLabel(safety ? safety.status : load.safetyStatus) + " / " + (safety ? safety.preTripState + " pre-trip / " + safety.hosState + " HOS" : load.safetyStatus)],
       ["Proof evidence", proof ? proof.id + " / POD " + text(proof.pod) + " / receipts " + text(proof.receipts) : "No proof record"],
       ["Settlement state", settlement ? settlement.id + " / " + settlement.billingStatus : load.settlementStatus],
@@ -642,12 +657,21 @@
   }
 
   function settlementTable(data) {
-    return table(["Settlement", "Load", "Driver", "Proof", "Billing", "Hold reason"], data.settlementRecords.filter(function (record) {
+    return table(["Settlement", "Load", "Driver", "Pay basis", "Net after driver pay", "Billing", "Hold reason"], data.settlementRecords.filter(function (record) {
       return ["BOF-2064", "BOF-1907", "BOF-1931"].indexOf(record.loadId) >= 0;
     }).map(function (record) {
       var driver = data.lookup.drivers[record.driverId];
-      var proof = data.lookup.proofRecords[record.proofRecordId];
-      return [record.id, record.loadId, driver.id + " / " + driver.name, proof.status, record.billingStatus, record.billingHold];
+      var load = data.lookup.loads[record.loadId];
+      var payProfile = load ? payProfileForLoad(data, load) : null;
+      return [
+        record.id,
+        record.loadId,
+        driver.id + " / " + driver.name,
+        payProfile ? payProfile.payMethod + " / " + payProfile.rateLabel : "No pay profile",
+        payProfile ? money(payProfile.estimatedNetRevenue) : "None",
+        record.billingStatus,
+        record.billingHold
+      ];
     }));
   }
 
@@ -736,13 +760,13 @@
       mount.setAttribute("aria-busy", "true");
       mount.appendChild(el("p", "bof-data-loading", "Loading canonical BOF operations data..."));
     });
-    fetch(DATA_URL, { cache: "no-store" })
-      .then(function (response) {
-        if (!response.ok) throw new Error("Unable to load " + DATA_URL);
-        return response.json();
-      })
-      .then(function (data) {
-        var errors = validate(data);
+    (window.BOFDataLoader ? window.BOFDataLoader.load(DATA_URL) : fetch(DATA_URL, { cache: "no-store" }).then(function (response) {
+      if (!response.ok) throw new Error("Unable to load " + DATA_URL);
+      return response.json();
+    }))
+    .then(function (data) {
+      if (window.BOFDemoState && window.BOFDemoState.apply) data = window.BOFDemoState.apply(data);
+      var errors = validate(data);
         if (errors.length) throw new Error(errors.join("; "));
         buildLookups(data);
         window.BOFPublicOperations = data;

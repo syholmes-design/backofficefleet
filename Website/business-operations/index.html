@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Business Operations | BackOfficeFleet</title>
-  <meta name="description" content="BOF Business Operations keeps people, financial administration, vendor records, and office follow-up connected to fleet activity.">
+  <meta name="description" content="BOF Business Operations keeps people, financial administration, vendor records, office follow-up, and BOF-supported back-office services connected to fleet activity.">
   <link rel="stylesheet" href="/assets/css/styles.css?v=20260713-governance-backoffice">
 </head>
 <body class="premium-site page-business-operations governance-workstream-page">
@@ -38,7 +38,7 @@
       <div class="control-hero-copy reveal">
         <p class="eyebrow">Back-office control</p>
         <h1>Business Operations</h1>
-        <p class="hero-promise">Keep people, financial administration, vendor records, and office follow-up connected to fleet activity.</p>
+        <p class="hero-promise">Keep people, financial administration, vendor records, office follow-up, and BOF-supported back-office services connected to fleet activity.</p>
         <div class="actions">
           <a class="button primary" href="#office-workspace">Open office workspace</a>
           <a class="button secondary" href="/command-center/">View Command Center</a>
@@ -46,7 +46,7 @@
       </div>
       <aside class="control-proof-card reveal" aria-label="Business operations operating proof">
         <p class="eyebrow">Office layer</p>
-        <h2>Work that blocks execution is assigned before it becomes invisible.</h2>
+        <h2>Work that blocks execution is assigned, visible, and supported before it becomes invisible.</h2>
         <dl class="control-proof-list">
           <div><dt>People records</dt><dd>42 tracked</dd></div>
           <div><dt>Finance reviews</dt><dd>18 open</dd></div>
@@ -67,9 +67,9 @@
     <section class="section" id="office-workspace">
       <div class="section-head reveal">
         <p class="eyebrow">Primary workspace</p>
-        <h2>The office work behind fleet execution belongs in one reviewable operating layer.</h2>
+        <h2>The office work behind fleet execution belongs in one reviewable operating layer and service path.</h2>
         <p>Business Operations is not a second settlement page. It covers the administrative questions that affect readiness: worker files, payroll setup, AP review, receivables follow-up, vendor status, office blockers, and owner action.</p>
-        <p>The page is built for an office manager, controller, HR owner, or fleet leader who needs to know which internal item is slowing work down, who owns it, and whether the consequence is people readiness, vendor use, bookkeeping, customer follow-up, or leadership reporting.</p>
+        <p>The page is built for an office manager, controller, HR owner, or fleet leader who needs to know which internal item is slowing work down, who owns it, what BOF-supported service work can help move it, and whether the consequence is people readiness, vendor use, bookkeeping, customer follow-up, or leadership reporting.</p>
       </div>
       <div class="control-workspace reveal">
         <div class="workspace-header">
@@ -83,7 +83,7 @@
           <article id="people-operations">
             <span class="status-badge is-ready">In Progress</span>
             <h3>People Operations</h3>
-            <p>Worker onboarding, personnel files, payroll setup, benefits and tax documents, assigned follow-ups, and completion state stay connected to whether the fleet can put a person into work.</p>
+            <p>Worker onboarding, personnel files, payroll setup, benefits and tax documents, assigned follow-ups, and completion state stay connected to whether the fleet can put a person into work. BOF can organize the record and support the administrative follow-through.</p>
             <ul>
               <li>Driver onboarding packet assigned to HR owner</li>
               <li>Benefits and tax document completion visible</li>
@@ -94,7 +94,7 @@
           <article id="financial-administration">
             <span class="status-badge is-review">Review</span>
             <h3>Financial Administration</h3>
-            <p>Accounts payable, bookkeeping review, receivables follow-up, expense classification, vendor invoices, payroll coordination, and internal approvals are tracked without duplicating settlement packet work.</p>
+            <p>Accounts payable, bookkeeping review, receivables follow-up, expense classification, vendor invoices, payroll coordination, and internal approvals are tracked without duplicating settlement packet work. BOF can support the coordination and evidence-gathering that keeps the finance question moving.</p>
             <ul>
               <li>Vendor invoice awaiting AP owner approval</li>
               <li>Expense class review tied to department owner</li>
@@ -131,20 +131,99 @@
     <section class="section" id="office-exceptions">
       <div class="section-head reveal">
         <p class="eyebrow">Office exception queue</p>
-        <h2>Every issue needs an owner, due date, operational consequence, status, and action.</h2>
-        <p>The queue is intentionally compact. It shows the kind of follow-up that normally disappears between HR, accounting, vendors, and operations.</p>
+        <h2>Every issue needs a reason, owner, due date, operational consequence, and clearance path.</h2>
+        <p>The queue is intentionally compact. Filter the office work, then open the reason and the route that clears review, at-risk, due, or blocked status.</p>
       </div>
-      <div class="control-table-wrap reveal">
-        <table class="control-table">
-          <thead><tr><th>Issue</th><th>Owner</th><th>Due</th><th>Consequence</th><th>Status</th><th>Action</th></tr></thead>
-          <tbody>
-            <tr><td>Missing vendor W-9</td><td>AP owner</td><td>Jul 18</td><td>Vendor payment cannot be approved</td><td><span class="status-badge is-review">Review</span></td><td><a href="#vendor-records">Open vendor record</a></td></tr>
-            <tr><td>Payroll setup unresolved</td><td>People ops</td><td>Jul 19</td><td>Worker cannot be released to payroll run</td><td><span class="status-badge is-risk">At Risk</span></td><td><a href="/business-operations/hr-tier/">Open worker file</a></td></tr>
-            <tr><td>Unapproved expense class</td><td>Finance lead</td><td>Jul 21</td><td>Bookkeeping review remains incomplete</td><td><span class="status-badge is-progress">In Progress</span></td><td><a href="/business-operations/accounting-finance/">Open finance review</a></td></tr>
-            <tr><td>Contract renewal due</td><td>Office manager</td><td>Jul 24</td><td>Vendor status moves to review</td><td><span class="status-badge is-review">Due</span></td><td><a href="#vendor-records">Open renewal</a></td></tr>
-            <tr><td>Employee onboarding incomplete</td><td>HR owner</td><td>Jul 25</td><td>Assignment readiness remains blocked</td><td><span class="status-badge is-blocked">Blocked</span></td><td><a href="/business-operations/driver-onboarding/">Open onboarding</a></td></tr>
-          </tbody>
-        </table>
+      <div class="office-active-workspace reveal" data-office-exception-workspace>
+        <div class="office-filter-bar" aria-label="Office exception filters">
+          <button class="is-active" type="button" data-office-filter="all"><strong>5</strong><span>All items</span></button>
+          <button type="button" data-office-filter="Review"><strong>1</strong><span>Review</span></button>
+          <button type="button" data-office-filter="At Risk"><strong>1</strong><span>At risk</span></button>
+          <button type="button" data-office-filter="Due"><strong>1</strong><span>Due</span></button>
+          <button type="button" data-office-filter="Blocked"><strong>1</strong><span>Blocked</span></button>
+        </div>
+
+        <div class="office-exception-list" aria-live="polite">
+          <article class="office-exception-card" data-office-status="Review">
+            <div class="office-exception-row">
+              <span class="status-badge is-review">Review</span>
+              <div><strong>Missing vendor W-9</strong><p>AP owner &middot; due Jul 18 &middot; vendor payment cannot be approved</p></div>
+              <a href="#vendor-records">Open vendor record</a>
+            </div>
+            <div class="office-clearance-panel">
+              <p><b>Why this is under review:</b> The vendor packet is usable for operations, but payment release requires a current W-9 and payee confirmation.</p>
+              <ol>
+                <li><span>1</span><strong>Request W-9 from vendor.</strong><p>BOF support or AP owner sends the packet request and attaches the response.</p></li>
+                <li><span>2</span><strong>Confirm payee and tax record.</strong><p>AP owner verifies name, EIN, remit address, and approved vendor status.</p></li>
+                <li><span>3</span><strong>Clear payment hold.</strong><p>Finance lead marks vendor approved and releases the bill for normal AP review.</p></li>
+              </ol>
+            </div>
+          </article>
+
+          <article class="office-exception-card" data-office-status="At Risk">
+            <div class="office-exception-row">
+              <span class="status-badge is-risk">At Risk</span>
+              <div><strong>Payroll setup unresolved</strong><p>People ops &middot; due Jul 19 &middot; worker cannot be released to payroll run</p></div>
+              <a href="/business-operations/hr-tier/">Open worker file</a>
+            </div>
+            <div class="office-clearance-panel">
+              <p><b>Why this is at risk:</b> Worker onboarding is substantially complete, but payroll setup lacks the final pay basis and direct-deposit confirmation.</p>
+              <ol>
+                <li><span>1</span><strong>Confirm pay basis and start date.</strong><p>HR owner validates employee or contractor setup against assignment readiness.</p></li>
+                <li><span>2</span><strong>Attach payroll support record.</strong><p>BOF support indexes the setup note, tax form status, and direct-deposit confirmation.</p></li>
+                <li><span>3</span><strong>Release to payroll queue.</strong><p>Payroll owner confirms the worker can enter the next pay run.</p></li>
+              </ol>
+            </div>
+          </article>
+
+          <article class="office-exception-card" data-office-status="In Progress">
+            <div class="office-exception-row">
+              <span class="status-badge is-progress">In Progress</span>
+              <div><strong>Unapproved expense class</strong><p>Finance lead &middot; due Jul 21 &middot; bookkeeping review remains incomplete</p></div>
+              <a href="/business-operations/accounting-finance/">Open finance review</a>
+            </div>
+            <div class="office-clearance-panel">
+              <p><b>Why this is in progress:</b> The receipt is attached, but the expense class and operating purpose need owner approval before bookkeeping closes the item.</p>
+              <ol>
+                <li><span>1</span><strong>Match receipt to operating record.</strong><p>Connect the charge to vendor, unit, load, department, or office owner.</p></li>
+                <li><span>2</span><strong>Approve classification.</strong><p>Finance lead selects repair, fuel, toll, office, reimbursement, or exception category.</p></li>
+                <li><span>3</span><strong>Close bookkeeping review.</strong><p>Record moves from owner review to ready for posting.</p></li>
+              </ol>
+            </div>
+          </article>
+
+          <article class="office-exception-card" data-office-status="Due">
+            <div class="office-exception-row">
+              <span class="status-badge is-review">Due</span>
+              <div><strong>Contract renewal due</strong><p>Office manager &middot; due Jul 24 &middot; vendor status moves to review</p></div>
+              <a href="#vendor-records">Open renewal</a>
+            </div>
+            <div class="office-clearance-panel">
+              <p><b>Why this is due:</b> The vendor is still usable, but the renewal window is open and the office needs approval before the record ages into review.</p>
+              <ol>
+                <li><span>1</span><strong>Confirm current contract terms.</strong><p>Office manager reviews expiration date, scope, rates, and renewal owner.</p></li>
+                <li><span>2</span><strong>Attach renewal evidence.</strong><p>BOF support attaches contract note, approval email, or updated vendor document.</p></li>
+                <li><span>3</span><strong>Update vendor status.</strong><p>Record returns to current or moves to review with a named blocker.</p></li>
+              </ol>
+            </div>
+          </article>
+
+          <article class="office-exception-card" data-office-status="Blocked">
+            <div class="office-exception-row">
+              <span class="status-badge is-blocked">Blocked</span>
+              <div><strong>Employee onboarding incomplete</strong><p>HR owner &middot; due Jul 25 &middot; assignment readiness remains blocked</p></div>
+              <a href="/business-operations/driver-onboarding/">Open onboarding</a>
+            </div>
+            <div class="office-clearance-panel">
+              <p><b>Why this is blocked:</b> The person cannot be released into active work because required identity, tax, policy, and training acknowledgments are incomplete.</p>
+              <ol>
+                <li><span>1</span><strong>Collect missing onboarding items.</strong><p>HR owner or BOF support requests identity, tax, policy, and training acknowledgments.</p></li>
+                <li><span>2</span><strong>Confirm policy and training status.</strong><p>People ops validates required acknowledgments and any manager review notes.</p></li>
+                <li><span>3</span><strong>Release assignment readiness.</strong><p>Status moves from blocked to review or ready after HR owner signoff.</p></li>
+              </ol>
+            </div>
+          </article>
+        </div>
       </div>
     </section>
 
@@ -152,7 +231,7 @@
       <div class="section-head reveal">
         <p class="eyebrow">Operating consequence</p>
         <h2>Back-office control protects the fleet from preventable slowdowns.</h2>
-        <p>When people records, finance approvals, vendor documents, and office exceptions live beside operating work, owners can see what is ready, what is due, what is blocked, and what follow-up must happen next.</p>
+        <p>When people records, finance approvals, vendor documents, and office exceptions live beside operating work, owners can see what is ready, what is due, what is blocked, what BOF can support, and what follow-up must happen next.</p>
         <p>The practical value is less rework: fewer mystery holds, fewer unmanaged approvals, and fewer handoffs where the office knows there is a problem but operations cannot see the next responsible owner.</p>
       </div>
       <div class="supporting-grid">
@@ -172,5 +251,24 @@
   </section>
   <footer class="site-footer"><div class="footer-inner"><strong>BackOfficeFleet</strong><span>Business Operations command center.</span><a href="/trust-governance/">Trust &amp; Governance</a></div></footer>
   <script src="/assets/js/site.js?v=1.50"></script>
+  <script>
+    (function () {
+      var workspace = document.querySelector("[data-office-exception-workspace]");
+      if (!workspace) return;
+      var filters = Array.prototype.slice.call(workspace.querySelectorAll("[data-office-filter]"));
+      var cards = Array.prototype.slice.call(workspace.querySelectorAll("[data-office-status]"));
+      filters.forEach(function (filter) {
+        filter.addEventListener("click", function () {
+          var value = filter.dataset.officeFilter;
+          filters.forEach(function (item) { item.classList.remove("is-active"); });
+          filter.classList.add("is-active");
+          cards.forEach(function (card) {
+            var show = value === "all" || card.dataset.officeStatus === value;
+            card.hidden = !show;
+          });
+        });
+      });
+    }());
+  </script>
 </body>
 </html>

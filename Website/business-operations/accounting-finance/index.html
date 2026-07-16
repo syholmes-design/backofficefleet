@@ -28,8 +28,8 @@
     </nav><a class="header-cta" href="/scenario-walkthrough/">Take the BOF Fleet Assessment</a></header>
   <main class="workflow-dashboard-page business-ops-content-page">
     <section class="section page-hero business-ops-detail-hero">
-      <div class="reveal"><p class="eyebrow">Business Operations / Accounting &amp; Finance</p><h1>Give finance the operating record behind the number.</h1><p>In trucking, finance questions rarely live inside accounting software alone. They sit inside a load packet, settlement hold, missing POD, customer approval, vendor bill, reimbursement, factoring packet, or owner decision. BOF keeps that context visible.</p><div class="actions"><a class="button primary" href="/business-operations/">Business Operations</a><a class="button secondary" href="/settlements/">Settlements &amp; Billing</a></div></div>
-      <aside class="ops-brief-card reveal"><p class="eyebrow">Finance manager lens</p><h2>Finance needs source context, not another disconnected report.</h2><p>BOF supports visibility and coordination. It does not replace accounting, banking, lending, tax, factoring, payroll, or professional financial judgment.</p><div class="ops-signal-grid"><div class="ops-signal"><span>Review items</span><strong>18</strong><p>billing, AP, AR, and settlement context</p></div><div class="ops-signal"><span>Blocked</span><strong>5</strong><p>owner or document follow-up</p></div></div></aside>
+      <div class="reveal"><p class="eyebrow">Business Operations / Accounting &amp; Finance</p><h1>Give finance the operating record behind the number.</h1><p>In trucking, finance questions rarely live inside accounting software alone. They sit inside a load packet, settlement hold, missing POD, customer approval, vendor bill, reimbursement, factoring packet, or owner decision. BOF keeps that context visible and can support the administrative finance work needed to move it.</p><div class="actions"><a class="button primary" href="/business-operations/">Business Operations</a><a class="button secondary" href="/settlements/">Settlements &amp; Billing</a></div></div>
+      <aside class="ops-brief-card reveal"><p class="eyebrow">Finance manager lens</p><h2>Finance needs source context and service capacity, not another disconnected report.</h2><p>BOF supports visibility, coordination, packet review, AP/AR follow-up, and owner routing. It does not replace accounting, banking, lending, tax, factoring, payroll, or professional financial judgment.</p><div class="ops-signal-grid"><div class="ops-signal"><span>Review items</span><strong>18</strong><p>billing, AP, AR, and settlement context</p></div><div class="ops-signal"><span>Blocked</span><strong>5</strong><p>owner or document follow-up</p></div></div></aside>
     </section>
     <section class="section">
       <div class="section-head reveal"><p class="eyebrow">Finance detail pages</p><h2>Separate the work by the question the office is trying to answer.</h2><p>These pages go deeper into vendor control and cash-flow visibility while keeping billing, AR, and settlement context connected.</p></div>
@@ -38,22 +38,106 @@
         <article class="ops-page-card reveal"><span>Cash-flow review</span><h3>See what is ready, held, aging, disputed, or missing support.</h3><p>Connect receivables, settlements, billing packets, factoring context, and owner follow-up in one reviewable operating view.</p><a class="route-chip" href="/business-operations/accounting-finance/cash-flow-review/">Open Cash-Flow Review</a></article>
       </div>
     </section>
+    <section class="section" id="finance-live-workspace">
+      <div class="section-head reveal"><p class="eyebrow">Live finance workspace</p><h2>Click the finance status, then inspect the packet reason and clearance route.</h2><p>The demo now shows how BOF turns review and blocked finance work into a specific record, missing proof, owner, and next action.</p></div>
+      <div class="finance-live-workspace reveal" data-finance-workspace>
+        <div class="finance-filter-bar" aria-label="Finance workspace filters">
+          <button class="is-active" type="button" data-finance-filter="all"><strong>18</strong><span>Review items</span></button>
+          <button type="button" data-finance-filter="Blocked"><strong>5</strong><span>Blocked</span></button>
+          <button type="button" data-finance-filter="Ready"><strong>7</strong><span>Ready to invoice</span></button>
+          <button type="button" data-finance-filter="Aging"><strong>6</strong><span>Aging / dispute</span></button>
+        </div>
+
+        <div class="finance-work-grid">
+          <div class="finance-work-list" aria-live="polite">
+            <article class="finance-work-card" data-finance-status="Ready">
+              <div><span class="status-badge is-ready">Ready</span><strong>BOF-2064 / Birmingham to Nashville</strong><p>POD, signed BOL, rate confirmation, invoice draft, and settlement note are complete.</p></div>
+              <button type="button" data-packet-title="Ready packet: BOF-2064" data-packet-status="Ready to invoice" data-packet-body="All proof is attached. Billing owner can invoice, settlement support can close packet, and AR can track normal aging." data-packet-missing="None" data-packet-route="Release invoice draft; attach final invoice number; move to normal AR follow-up.">View packet</button>
+            </article>
+            <article class="finance-work-card" data-finance-status="Blocked">
+              <div><span class="status-badge is-blocked">Blocked</span><strong>BOF-1931 / Little Rock to St. Louis</strong><p>Invoice and settlement are held because receiver POD and medical-clearance evidence are missing.</p></div>
+              <button type="button" data-packet-title="Blocked packet: BOF-1931" data-packet-status="Blocked" data-packet-body="The finance record cannot move because proof and safety clearance are incomplete. The blocker is not a vague finance issue; it is a named operating record gap." data-packet-missing="Receiver POD, safety clearance note, invoice release approval" data-packet-route="Confirm POD; clear safety hold; attach approval note; release invoice and settlement packet.">View packet</button>
+            </article>
+            <article class="finance-work-card" data-finance-status="Blocked">
+              <div><span class="status-badge is-blocked">Blocked</span><strong>AP-1187 / Tire repair vendor bill</strong><p>Vendor bill is held because the unit number and repair authorization do not match the operating record.</p></div>
+              <button type="button" data-packet-title="Blocked AP review: AP-1187" data-packet-status="Blocked" data-packet-body="AP should not pay until the vendor bill is tied to the right truck, repair approval, and owner note." data-packet-missing="Unit match, approval owner, repair authorization" data-packet-route="Match unit; attach approval note; confirm vendor invoice; route to AP owner for pay decision.">View packet</button>
+            </article>
+            <article class="finance-work-card" data-finance-status="Aging">
+              <div><span class="status-badge is-review">Aging</span><strong>AR-2258 / Customer dispute</strong><p>Receivable is aging because detention approval and customer reference are not attached.</p></div>
+              <button type="button" data-packet-title="Aging AR item: AR-2258" data-packet-status="Aging / dispute" data-packet-body="The invoice is not just old; it is waiting on customer-facing support that explains the charge." data-packet-missing="Detention approval, customer reference, last-touch note" data-packet-route="Attach detention approval; update customer reference; assign next-touch date; escalate if no response.">View packet</button>
+            </article>
+            <article class="finance-work-card" data-finance-status="Ready">
+              <div><span class="status-badge is-ready">Ready</span><strong>SET-1907 / Driver settlement</strong><p>Settlement packet has proof, rate, driver pay basis, reimbursement note, and exception review complete.</p></div>
+              <button type="button" data-packet-title="Ready settlement: SET-1907" data-packet-status="Ready" data-packet-body="The settlement can move because pay-impacting proof and owner review are complete." data-packet-missing="None" data-packet-route="Queue for settlement run; attach final payment reference; close driver pay support record.">View packet</button>
+            </article>
+          </div>
+
+          <aside class="finance-packet-preview" aria-live="polite">
+            <p class="eyebrow">Packet preview</p>
+            <h3 data-packet-title>Ready packet: BOF-2064</h3>
+            <span data-packet-status>Ready to invoice</span>
+            <p data-packet-body>All proof is attached. Billing owner can invoice, settlement support can close packet, and AR can track normal aging.</p>
+            <dl>
+              <div><dt>Missing / reason</dt><dd data-packet-missing>None</dd></div>
+              <div><dt>Clearance path</dt><dd data-packet-route>Release invoice draft; attach final invoice number; move to normal AR follow-up.</dd></div>
+            </dl>
+          </aside>
+        </div>
+      </div>
+    </section>
     <section class="section">
-      <div class="section-head reveal"><p class="eyebrow">Finance operating substance</p><h2>A trucking finance page has to show why the money is moving, waiting, or blocked.</h2><p>From an experienced fleet finance manager perspective, numbers are only useful when the office can see the load, packet, customer, vendor, owner, and document trail behind them.</p></div>
+      <div class="section-head reveal"><p class="eyebrow">Finance operating substance</p><h2>A trucking finance page has to show why the money is moving, waiting, or blocked.</h2><p>From an experienced fleet finance manager perspective, numbers are only useful when the office can see the load, packet, customer, vendor, owner, document trail, and BOF-supported follow-up path behind them.</p></div>
       <div class="ops-playbook-grid">
-        <article class="ops-playbook-card reveal"><span>Billing readiness</span><h3>Do not let receivables inherit a weak packet.</h3><p>Invoice readiness depends on POD, rate confirmation, detention notes, accessorial approval, claim status, customer reference, and whether the billing owner has what they need.</p><ul><li>Packet complete or held</li><li>Customer proof attached</li><li>Claim or dispute flag</li><li>Invoice release owner</li></ul></article>
+        <article class="ops-playbook-card reveal"><span>Billing readiness</span><h3>Do not let receivables inherit a weak packet.</h3><p>Invoice readiness depends on POD, rate confirmation, detention notes, accessorial approval, claim status, customer reference, and whether the billing owner or BOF-supported review path has what it needs.</p><ul><li>Packet complete or held</li><li>Customer proof attached</li><li>Claim or dispute flag</li><li>Invoice release owner</li></ul></article>
         <article class="ops-playbook-card reveal"><span>Receivable visibility</span><h3>Make aging explainable before escalation.</h3><p>Open AR is grouped by customer, invoice, age, packet condition, dispute reason, factoring support, last touch, next touch, and owner.</p><ul><li>Normal aging</li><li>Missing proof</li><li>Customer dispute</li><li>Factoring packet context</li></ul></article>
         <article class="ops-playbook-card reveal"><span>AP and vendor review</span><h3>Keep vendor bills tied to operating approval.</h3><p>Repair invoices, fuel or toll questions, lumper receipts, reimbursements, equipment charges, and contractor documents stay connected to approval status and supporting records.</p><ul><li>Vendor bill context</li><li>Approval owner</li><li>Support document</li><li>Dispute or pay status</li></ul></article>
-        <article class="ops-playbook-card reveal"><span>Cash-flow control</span><h3>Separate what is ready from what is waiting on the office.</h3><p>Cash-flow review connects held invoices, settlement blockers, receivable aging, customer disputes, AP pressure, and missing documents into an owner-based follow-up view.</p><ul><li>Ready to move</li><li>Blocked by document</li><li>Blocked by owner</li><li>Leadership review needed</li></ul></article>
+        <article class="ops-playbook-card reveal"><span>Cash-flow control</span><h3>Separate what is ready from what is waiting on the office.</h3><p>Cash-flow review connects held invoices, settlement blockers, receivable aging, customer disputes, AP pressure, missing documents, and BOF-supported follow-up into an owner-based view.</p><ul><li>Ready to move</li><li>Blocked by document</li><li>Blocked by owner</li><li>Leadership review needed</li></ul></article>
       </div>
     </section>
     <section class="section"><div class="ops-process">
       <div class="ops-process-row"><b>Capture</b><div><strong>Tie the finance question to a source record.</strong><p>Load, packet, invoice, vendor bill, settlement, driver, customer, document, or approval note is linked before follow-up begins.</p></div><span>Record context</span></div>
       <div class="ops-process-row"><b>Classify</b><div><strong>Separate AP, AR, billing, settlement, and cash-flow signals.</strong><p>The office can see whether an item is missing proof, waiting on a customer, pending owner review, disputed, or ready to move.</p></div><span>Ready, review, blocked</span></div>
-      <div class="ops-process-row"><b>Resolve</b><div><strong>Assign the next action to the right owner.</strong><p>Finance, dispatch, safety, settlement support, customer billing, or leadership can own the next step without losing the record trail.</p></div><span>Owner and due date</span></div>
+      <div class="ops-process-row"><b>Resolve</b><div><strong>Assign the next action to the right owner or BOF support lane.</strong><p>Finance, dispatch, safety, settlement support, customer billing, leadership, or BOF-supported service follow-up can own the next step without losing the record trail.</p></div><span>Owner and due date</span></div>
     </div></section>
+    <section class="section pay-profile-workbench" id="driver-pay-finance-bridge" data-bof-pay-profiles="finance" aria-live="polite"></section>
   </main>
   <section class="cta-band"><div class="cta-inner"><div><p class="eyebrow">Next step</p><h2>Start with one held invoice, vendor question, or cash-flow blind spot.</h2><p>BOF maps the record, reason, owner, and next action so the finance conversation can move.</p></div><div class="actions"><a class="button light" href="/scenario-walkthrough/">Take the BOF Fleet Assessment</a><a class="button secondary" href="/business-operations/">Back to Business Operations</a></div></div></section>
-  <footer class="site-footer"><div class="footer-inner"><strong>BackOfficeFleet</strong><span>Accounting and finance support.</span><a href="/business-operations/">Business Operations</a></div></footer><script src="/assets/js/site.js?v=1.50"></script>
+  <footer class="site-footer"><div class="footer-inner"><strong>BackOfficeFleet</strong><span>Accounting and finance support.</span><a href="/business-operations/">Business Operations</a></div></footer><script src="/assets/js/bof-supabase-config.js?v=20260715-supabase"></script><script src="/assets/js/bof-data-loader.js?v=20260715-supabase"></script><script src="/assets/js/bof-demo-state.js?v=20260715-admin"></script><script src="/assets/js/bof-driver-pay-profiles.js?v=20260715-supabase"></script><script src="/assets/js/site.js?v=1.50"></script>
+  <script>
+    (function () {
+      var workspace = document.querySelector("[data-finance-workspace]");
+      if (!workspace) return;
+      var filters = Array.prototype.slice.call(workspace.querySelectorAll("[data-finance-filter]"));
+      var cards = Array.prototype.slice.call(workspace.querySelectorAll("[data-finance-status]"));
+      var packetButtons = Array.prototype.slice.call(workspace.querySelectorAll("button[data-packet-title]"));
+      var title = workspace.querySelector("[data-packet-title]:not(button)");
+      var status = workspace.querySelector("[data-packet-status]:not(button)");
+      var body = workspace.querySelector("[data-packet-body]:not(button)");
+      var missing = workspace.querySelector("[data-packet-missing]");
+      var route = workspace.querySelector("[data-packet-route]");
+
+      filters.forEach(function (filter) {
+        filter.addEventListener("click", function () {
+          var value = filter.dataset.financeFilter;
+          filters.forEach(function (item) { item.classList.remove("is-active"); });
+          filter.classList.add("is-active");
+          cards.forEach(function (card) {
+            var show = value === "all" || card.dataset.financeStatus === value;
+            card.hidden = !show;
+          });
+        });
+      });
+
+      packetButtons.forEach(function (button) {
+        button.addEventListener("click", function () {
+          title.textContent = button.dataset.packetTitle || "";
+          status.textContent = button.dataset.packetStatus || "";
+          body.textContent = button.dataset.packetBody || "";
+          missing.textContent = button.dataset.packetMissing || "";
+          route.textContent = button.dataset.packetRoute || "";
+        });
+      });
+    }());
+  </script>
 </body>
 </html>

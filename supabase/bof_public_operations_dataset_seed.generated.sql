@@ -1,4 +1,5 @@
-{
+﻿insert into public.bof_public_operations_dataset (id, payload)
+values ('current', '{
   "metadata": {
     "schemaVersion": "1.0.0",
     "updated": "2026-07-13",
@@ -339,7 +340,7 @@
       "name": "Aggregator Partner A",
       "type": "Aggregator carrier network",
       "policySet": "Aggregator carrier qualification rules",
-      "notes": "Driver can move only when the linked carrier's packet, insurance, authority, and lane rules are satisfied."
+      "notes": "Driver can move only when the linked carrier''s packet, insurance, authority, and lane rules are satisfied."
     },
     {
       "id": "CARR-GOV",
@@ -379,7 +380,7 @@
   "qualificationDocuments": [
     { "id": "QUAL-DRV-001-CDL", "driverId": "DRV-001", "type": "CDL", "category": "Primary qualification", "status": "Complete", "effectiveDate": "2026-06-02", "expirationDate": "2028-08-14", "verifiedDate": "2026-06-05", "source": "Interactive demo profile", "publicPreviewRoute": "/interactive-demo/drivers/drv-001/", "assetPath": "/assets/images/documents/drivers/licenses/license-drv-001.png", "redactionStatus": "fictional_redacted", "exceptionId": null },
     { "id": "QUAL-DRV-002-CDL", "driverId": "DRV-002", "type": "CDL", "category": "Primary qualification", "status": "Complete", "effectiveDate": "2026-06-02", "expirationDate": "2027-10-31", "verifiedDate": "2026-06-05", "source": "Interactive demo profile", "publicPreviewRoute": "/interactive-demo/drivers/drv-002/", "assetPath": "/assets/images/documents/drivers/licenses/license-drv-002.png", "redactionStatus": "fictional_redacted", "exceptionId": "EX-1907-POD" },
-    { "id": "QUAL-DRV-003-MED", "driverId": "DRV-003", "type": "Medical Examiner's Certificate", "category": "Primary qualification", "status": "Blocked", "effectiveDate": null, "expirationDate": null, "verifiedDate": null, "source": "Interactive demo hold path", "publicPreviewRoute": "/interactive-demo/drivers/drv-003/", "assetPath": "/assets/images/documents/drivers/licenses/license-drv-003.png", "redactionStatus": "fictional_redacted", "exceptionId": "EX-1931-MED" },
+    { "id": "QUAL-DRV-003-MED", "driverId": "DRV-003", "type": "Medical Examiner''s Certificate", "category": "Primary qualification", "status": "Blocked", "effectiveDate": null, "expirationDate": null, "verifiedDate": null, "source": "Interactive demo hold path", "publicPreviewRoute": "/interactive-demo/drivers/drv-003/", "assetPath": "/assets/images/documents/drivers/licenses/license-drv-003.png", "redactionStatus": "fictional_redacted", "exceptionId": "EX-1931-MED" },
     { "id": "QUAL-DRV-004-CDL", "driverId": "DRV-004", "type": "CDL", "category": "Primary qualification", "status": "Complete", "effectiveDate": "2026-06-02", "expirationDate": "2027-09-30", "verifiedDate": "2026-06-05", "source": "Interactive demo profile", "publicPreviewRoute": "/interactive-demo/drivers/drv-004/", "assetPath": "/assets/images/documents/drivers/licenses/license-drv-004.png", "redactionStatus": "fictional_redacted", "exceptionId": null },
     { "id": "QUAL-DRV-005-CDL", "driverId": "DRV-005", "type": "CDL", "category": "Primary qualification", "status": "Complete", "effectiveDate": "2026-06-02", "expirationDate": "2027-12-31", "verifiedDate": "2026-06-05", "source": "Interactive demo profile", "publicPreviewRoute": "/interactive-demo/drivers/drv-005/", "assetPath": "/assets/images/documents/drivers/licenses/license-drv-005.png", "redactionStatus": "fictional_redacted", "exceptionId": "EX-2175-RATE" },
     { "id": "QUAL-DRV-006-RENEWAL", "driverId": "DRV-006", "type": "Annual Review", "category": "Primary qualification", "status": "Review", "effectiveDate": "2026-06-02", "expirationDate": "2026-06-08", "verifiedDate": null, "source": "Interactive demo renewal path", "publicPreviewRoute": "/interactive-demo/drivers/drv-006/", "assetPath": "/assets/images/documents/drivers/licenses/license-drv-006.png", "redactionStatus": "fictional_redacted", "exceptionId": "EX-2258-RENEWAL" },
@@ -650,3 +651,7 @@
     }
   }
 }
+'::jsonb)
+on conflict (id) do update
+set payload = excluded.payload,
+    updated_at = now();

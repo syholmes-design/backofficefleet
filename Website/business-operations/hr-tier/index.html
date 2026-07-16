@@ -36,13 +36,13 @@
       <div class="reveal">
         <p class="eyebrow">Business Operations / HR Tier</p>
         <h1>Run trucking HR as an operating control center.</h1>
-        <p>BOF treats HR as a readiness function, not a loose folder of people records. Recruiting, onboarding, employee relations, training, compensation support, benefits coordination, and owner follow-up stay connected to the work a fleet is trying to release.</p>
+        <p>BOF treats HR as a readiness function and service lane, not a loose folder of people records. Recruiting, onboarding, employee relations, training, compensation support, benefits coordination, and owner follow-up stay connected to the work a fleet is trying to release.</p>
         <div class="actions"><a class="button primary" href="/business-operations/">Business Operations</a><a class="button secondary" href="/business-operations/driver-onboarding/">Driver Onboarding</a></div>
       </div>
       <aside class="ops-brief-card reveal">
         <p class="eyebrow">HR operating lens</p>
         <h2>People records must answer one question: can this worker safely and reliably support the fleet?</h2>
-        <p>From a large-carrier HR perspective, the office needs fast visibility into eligibility, conduct, training, pay-impacting events, leave or benefits questions, and who owns the next follow-up.</p>
+        <p>From a large-carrier HR perspective, the office needs fast visibility into eligibility, conduct, training, pay-impacting events, leave or benefits questions, who owns the next follow-up, and where BOF support can help close the administrative loop.</p>
         <div class="ops-signal-grid">
           <div class="ops-signal"><span>Worker files</span><strong>42</strong><p>active records tracked</p></div>
           <div class="ops-signal"><span>Needs review</span><strong>7</strong><p>owner action pending</p></div>
@@ -62,16 +62,78 @@
         <article class="ops-page-card reveal"><span>Talent management</span><h3>Make training, readiness, retention, and leadership follow-up visible in one place.</h3><p>Track required training, coaching plans, advancement readiness, performance signals, and retention-sensitive blockers.</p><a class="route-chip" href="/business-operations/hr-tier/talent-management/">Open Talent Management</a></article>
       </div>
     </section>
+    <section class="section" id="hr-live-workspace">
+      <div class="section-head reveal">
+        <p class="eyebrow">Live HR workspace</p>
+        <h2>Click the HR status, then inspect why the worker record is ready, under review, at risk, or blocked.</h2>
+        <p>BOF should not leave HR issues as vague people problems. Each record below names the operating consequence, the owner, and the BOF-supported clearance path.</p>
+      </div>
+      <div class="hr-live-workspace reveal" data-hr-workspace>
+        <div class="hr-filter-bar" aria-label="HR workspace filters">
+          <button class="is-active" type="button" data-hr-filter="all"><strong>42</strong><span>Worker files</span></button>
+          <button type="button" data-hr-filter="Ready"><strong>31</strong><span>Ready</span></button>
+          <button type="button" data-hr-filter="Review"><strong>7</strong><span>Needs review</span></button>
+          <button type="button" data-hr-filter="At Risk"><strong>3</strong><span>At risk</span></button>
+          <button type="button" data-hr-filter="Blocked"><strong>1</strong><span>Blocked</span></button>
+        </div>
+
+        <div class="hr-work-grid">
+          <div class="hr-work-list" aria-live="polite">
+            <article class="hr-work-card" data-hr-status="Ready">
+              <div><span class="status-badge is-ready">Ready</span><strong>DRV-004 / Daniel Kim</strong><p>DQF, medical card, policy acknowledgment, training, pay setup, and HOS handoff are complete.</p></div>
+              <button type="button" data-hr-title="Ready worker file: Daniel Kim" data-hr-status-label="Ready for assignment" data-hr-body="The people record supports active duty. HR, safety, payroll setup, and dispatch handoff all show current enough for assignment review." data-hr-reason="No HR blocker. Normal monitoring only." data-hr-route="Keep renewal reminders active; monitor medical card, MVR, training, and policy acknowledgment dates.">Open file</button>
+            </article>
+
+            <article class="hr-work-card" data-hr-status="Review">
+              <div><span class="status-badge is-review">Review</span><strong>DRV-002 / Carlos Martinez</strong><p>Medical card renewal is uploaded, but HR needs DQF handoff confirmation before active assignment.</p></div>
+              <button type="button" data-hr-title="Review worker file: Carlos Martinez" data-hr-status-label="Needs HR review" data-hr-body="The worker may be close to ready, but the DQF handoff is not complete enough for operations to rely on the file." data-hr-reason="Medical card renewal and DQF update need HR owner confirmation." data-hr-route="Confirm renewal document; update DQF checklist; attach HR owner note; release to safety/dispatch readiness review.">Open file</button>
+            </article>
+
+            <article class="hr-work-card" data-hr-status="Review">
+              <div><span class="status-badge is-review">Review</span><strong>NEW-118 / applicant onboarding</strong><p>Application and background screen are complete; payroll setup and training assignment still need routing.</p></div>
+              <button type="button" data-hr-title="Review onboarding: NEW-118" data-hr-status-label="Onboarding review" data-hr-body="Recruiting has moved the applicant forward, but HR and payroll service work still determines whether the person can become assignment-ready." data-hr-reason="Payroll profile, training plan, and assignment release owner are not complete." data-hr-route="Create payroll setup task; assign training; confirm lane fit; route to driver onboarding page for final release.">Open file</button>
+            </article>
+
+            <article class="hr-work-card" data-hr-status="At Risk">
+              <div><span class="status-badge is-risk">At Risk</span><strong>DRV-006 / Priya Patel</strong><p>Benefits question and reimbursement issue are unresolved before the next pay cycle.</p></div>
+              <button type="button" data-hr-title="At-risk support file: Priya Patel" data-hr-status-label="At risk before pay cycle" data-hr-body="This is not a dispatch blocker yet, but it is a retention and pay-friction risk if the question is not routed before payroll closes." data-hr-reason="Benefits enrollment question and reimbursement receipt need responsible-party follow-up." data-hr-route="Route benefits question; attach reimbursement proof; assign payroll support owner; confirm worker communication note.">Open file</button>
+            </article>
+
+            <article class="hr-work-card" data-hr-status="At Risk">
+              <div><span class="status-badge is-risk">At Risk</span><strong>DRV-007 / Frank Miller</strong><p>Coaching note and safety refresher are due after repeated exception patterns.</p></div>
+              <button type="button" data-hr-title="At-risk employee relations: Frank Miller" data-hr-status-label="Coaching follow-up due" data-hr-body="The driver is not blocked, but repeated exceptions create a management follow-up issue that HR should not leave in a supervisor's memory." data-hr-reason="Safety refresher and coaching acknowledgment are due." data-hr-route="Assign coaching owner; attach policy reference; schedule refresher; capture acknowledgment and next review date.">Open file</button>
+            </article>
+
+            <article class="hr-work-card" data-hr-status="Blocked">
+              <div><span class="status-badge is-blocked">Blocked</span><strong>DRV-003 / Mara Chen</strong><p>Worker cannot be assigned because policy acknowledgment and training completion are missing.</p></div>
+              <button type="button" data-hr-title="Blocked worker file: Mara Chen" data-hr-status-label="Blocked from active duty" data-hr-body="Operations should not guess why the person is unavailable. The blocker is explicit: required HR acknowledgments and training evidence are incomplete." data-hr-reason="Policy acknowledgment, training completion, and HR owner release note are missing." data-hr-route="Send acknowledgment packet; complete required training; attach evidence; HR owner signs release; move from blocked to review or ready.">Open file</button>
+            </article>
+          </div>
+
+          <aside class="hr-case-preview" aria-live="polite">
+            <p class="eyebrow">HR case preview</p>
+            <h3 data-hr-title>Ready worker file: Daniel Kim</h3>
+            <span data-hr-status-label>Ready for assignment</span>
+            <p data-hr-body>The people record supports active duty. HR, safety, payroll setup, and dispatch handoff all show current enough for assignment review.</p>
+            <dl>
+              <div><dt>Reason / blocker</dt><dd data-hr-reason>No HR blocker. Normal monitoring only.</dd></div>
+              <div><dt>Clearance path</dt><dd data-hr-route>Keep renewal reminders active; monitor medical card, MVR, training, and policy acknowledgment dates.</dd></div>
+              <div><dt>BOF support lane</dt><dd>Collect missing evidence, route the owner task, attach the record, and keep the operating consequence visible.</dd></div>
+            </dl>
+          </aside>
+        </div>
+      </div>
+    </section>
     <section class="section">
       <div class="section-head reveal">
         <p class="eyebrow">HR operating substance</p>
         <h2>A trucking HR page has to answer more than whether a form exists.</h2>
-        <p>Viewed through a senior trucking HR lens, the useful question is whether the people record supports safe assignment, fair follow-up, pay clarity, retention, and manager accountability.</p>
+        <p>Viewed through a senior trucking HR lens, the useful question is whether the people record supports safe assignment, fair follow-up, pay clarity, retention, manager accountability, and a practical service path for the work the fleet does not have time to chase.</p>
       </div>
       <div class="ops-playbook-grid">
         <article class="ops-playbook-card reveal"><span>Employee relations control</span><h3>Document the issue without losing the operating consequence.</h3><p>Conduct, attendance, communication, customer complaints, return-to-work context, coaching notes, and policy acknowledgement issues are grouped with owner, due date, and escalation status.</p><ul><li>Manager coaching owner</li><li>Safety or dispatch impact</li><li>Policy reference and acknowledgement</li><li>Retention sensitivity</li></ul></article>
         <article class="ops-playbook-card reveal"><span>Recruiting pipeline control</span><h3>Keep candidate movement tied to assignment demand.</h3><p>Recruiting source, lane fit, terminal need, screening status, DQF handoff, missing documents, and first-assignment readiness are visible before operations counts on a driver.</p><ul><li>Application completeness</li><li>Credential handoff</li><li>Training requirement</li><li>Assignment release owner</li></ul></article>
-        <article class="ops-playbook-card reveal"><span>Compensation and benefits support</span><h3>Give workers a clean support path for pay and benefit questions.</h3><p>Pay questions, deductions, reimbursements, benefit enrollment, leave context, contractor packet issues, and responsible-party follow-up stay organized without making BOF the payroll, tax, legal, or benefit authority.</p><ul><li>Pay-impacting record</li><li>Benefit or leave follow-up</li><li>Responsible-party routing</li><li>Resolution status</li></ul></article>
+        <article class="ops-playbook-card reveal"><span>Compensation and benefits support</span><h3>Give workers a clean support path for pay and benefit questions.</h3><p>Pay questions, deductions, reimbursements, benefit enrollment, leave context, contractor packet issues, and responsible-party follow-up stay organized. BOF can support intake, routing, documentation, and follow-up without replacing payroll, tax, legal, or benefits authority.</p><ul><li>Pay-impacting record</li><li>Benefit or leave follow-up</li><li>Responsible-party routing</li><li>Resolution status</li></ul></article>
         <article class="ops-playbook-card reveal"><span>Talent and retention rhythm</span><h3>Turn training, coaching, and friction into visible management work.</h3><p>Training gaps, repeated exceptions, equipment friction, route fit, supervisor follow-up, advancement readiness, and retention risk can be reviewed before the best people quietly leave.</p><ul><li>Training completion</li><li>Coaching follow-up</li><li>Advancement readiness</li><li>Retention blocker</li></ul></article>
       </div>
     </section>
@@ -83,12 +145,48 @@
       <div class="ops-process">
         <div class="ops-process-row"><b>Intake</b><div><strong>Capture the people issue in operational language.</strong><p>Candidate, driver, contractor, employee, manager, department, route, terminal, document, or pay item is tied to a specific concern.</p></div><span>Source record plus owner</span></div>
         <div class="ops-process-row"><b>Review</b><div><strong>Decide what the fleet needs before work moves.</strong><p>HR sees whether the matter affects dispatch eligibility, safety review, payroll support, benefits follow-up, policy acknowledgement, or leadership escalation.</p></div><span>Ready, review, blocked</span></div>
-        <div class="ops-process-row"><b>Follow-up</b><div><strong>Close the loop with a named owner.</strong><p>The next action is assigned to HR, safety, dispatch, finance, a manager, or leadership so office work does not sit invisible.</p></div><span>Action plus due date</span></div>
+        <div class="ops-process-row"><b>Follow-up</b><div><strong>Close the loop with a named owner and support path.</strong><p>The next action is assigned to HR, safety, dispatch, finance, a manager, leadership, or BOF-supported service follow-through so office work does not sit invisible.</p></div><span>Action plus due date</span></div>
       </div>
     </section>
   </main>
   <section class="cta-band"><div class="cta-inner"><div><p class="eyebrow">Next step</p><h2>Start with the HR file that keeps creating follow-up.</h2><p>BOF can map the person record, missing item, operating consequence, and owner path before it becomes another spreadsheet chase.</p></div><div class="actions"><a class="button light" href="/scenario-walkthrough/">Take the BOF Fleet Assessment</a><a class="button secondary" href="/business-operations/">Back to Business Operations</a></div></div></section>
   <footer class="site-footer"><div class="footer-inner"><strong>BackOfficeFleet</strong><span>Business Operations HR Tier.</span><a href="/business-operations/">Business Operations</a></div></footer>
   <script src="/assets/js/site.js?v=1.50"></script>
+  <script>
+    (function () {
+      var workspace = document.querySelector("[data-hr-workspace]");
+      if (!workspace) return;
+      var filters = Array.prototype.slice.call(workspace.querySelectorAll("[data-hr-filter]"));
+      var cards = Array.prototype.slice.call(workspace.querySelectorAll("[data-hr-status]"));
+      var caseButtons = Array.prototype.slice.call(workspace.querySelectorAll("button[data-hr-title]"));
+      var title = workspace.querySelector("[data-hr-title]:not(button)");
+      var status = workspace.querySelector("[data-hr-status-label]:not(button)");
+      var body = workspace.querySelector("[data-hr-body]:not(button)");
+      var reason = workspace.querySelector("[data-hr-reason]");
+      var route = workspace.querySelector("[data-hr-route]");
+
+      filters.forEach(function (filter) {
+        filter.addEventListener("click", function () {
+          var value = filter.dataset.hrFilter;
+          filters.forEach(function (item) { item.classList.remove("is-active"); });
+          filter.classList.add("is-active");
+          cards.forEach(function (card) {
+            var show = value === "all" || card.dataset.hrStatus === value;
+            card.hidden = !show;
+          });
+        });
+      });
+
+      caseButtons.forEach(function (button) {
+        button.addEventListener("click", function () {
+          title.textContent = button.dataset.hrTitle || "";
+          status.textContent = button.dataset.hrStatusLabel || "";
+          body.textContent = button.dataset.hrBody || "";
+          reason.textContent = button.dataset.hrReason || "";
+          route.textContent = button.dataset.hrRoute || "";
+        });
+      });
+    }());
+  </script>
 </body>
 </html>
