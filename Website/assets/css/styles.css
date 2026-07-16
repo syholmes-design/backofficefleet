@@ -19734,6 +19734,66 @@ body.premium-site.page-policies .policy-document-stack {
   max-width: min(1280px, calc(100vw - 32px));
 }
 
+body.premium-site.page-policies .policy-pdf-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: clamp(16px, 2vw, 22px);
+  margin: 0 auto;
+  max-width: min(1280px, calc(100vw - 32px));
+}
+
+body.premium-site.page-policies .policy-pdf-card {
+  display: grid;
+  gap: 12px;
+  min-width: 0;
+  padding: clamp(18px, 2.2vw, 28px);
+  border: 1px solid rgba(203,216,230,0.9);
+  border-top: 4px solid #1f78ff;
+  border-radius: 20px;
+  background:
+    linear-gradient(135deg, rgba(255,255,255,0.96), rgba(239,247,255,0.86)),
+    linear-gradient(rgba(31,120,255,0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(31,120,255,0.035) 1px, transparent 1px);
+  background-size: auto, 34px 34px, 34px 34px;
+  box-shadow: 0 18px 42px rgba(7,18,37,0.07);
+  scroll-margin-top: 110px;
+}
+
+body.premium-site.page-policies .policy-pdf-card span {
+  color: #1f78ff;
+  font-size: 0.72rem;
+  font-weight: 950;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+body.premium-site.page-policies .policy-pdf-card h3 {
+  margin: 0;
+  color: #071225;
+  font-size: clamp(1.25rem, 2vw, 1.75rem);
+  line-height: 1.05;
+}
+
+body.premium-site.page-policies .policy-pdf-card p {
+  margin: 0;
+  color: #526173;
+  line-height: 1.55;
+}
+
+body.premium-site.page-policies .policy-pdf-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+  margin-top: 4px;
+}
+
+body.premium-site.page-policies .policy-pdf-actions .button {
+  min-height: 40px;
+  padding: 10px 15px;
+  font-size: 0.82rem;
+}
+
 body.premium-site.page-policies .policy-document {
   background: rgba(255, 255, 255, 0.94);
   border: 1px solid rgba(187, 205, 224, 0.92);
@@ -19880,6 +19940,10 @@ body.premium-site.page-policies .policy-footer em {
   }
 
   body.premium-site.page-policies .policy-document-grid {
+    grid-template-columns: 1fr;
+  }
+
+  body.premium-site.page-policies .policy-pdf-grid {
     grid-template-columns: 1fr;
   }
 }
