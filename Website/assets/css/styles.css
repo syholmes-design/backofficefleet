@@ -26140,6 +26140,70 @@ body.premium-site.driver-roster-page .driver-roster-shell {
   border-top: 4px solid #1f78ff;
 }
 
+.pay-roster-summary {
+  display: grid;
+  grid-template-columns: 1.1fr repeat(3, minmax(92px, 0.6fr)) 1.4fr;
+  gap: 10px;
+}
+
+.pay-roster-summary div {
+  min-width: 0;
+  padding: 14px 16px;
+  border: 1px solid rgba(203,216,230,0.82);
+  border-radius: 16px;
+  background: rgba(255,255,255,0.88);
+  box-shadow: 0 12px 28px rgba(7,18,37,0.05);
+}
+
+.pay-roster-summary span {
+  display: block;
+  color: #607086;
+  font-size: 0.68rem;
+  font-weight: 950;
+  letter-spacing: 0.045em;
+  text-transform: uppercase;
+}
+
+.pay-roster-summary strong {
+  display: block;
+  margin-top: 4px;
+  color: #071225;
+  font-size: clamp(1.25rem, 2vw, 2rem);
+  line-height: 1;
+}
+
+.pay-roster-card {
+  gap: 16px;
+}
+
+.pay-roster-strip {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.pay-roster-strip span {
+  min-width: 0;
+  padding: 10px 11px;
+  border: 1px solid rgba(203,216,230,0.78);
+  border-radius: 13px;
+  background: rgba(247,250,255,0.78);
+  color: #314154;
+  font-size: 0.76rem;
+  font-weight: 850;
+  line-height: 1.28;
+}
+
+.pay-roster-strip b {
+  display: block;
+  margin-bottom: 3px;
+  color: #607086;
+  font-size: 0.62rem;
+  font-weight: 950;
+  letter-spacing: 0.045em;
+  text-transform: uppercase;
+}
+
 .pay-status-ready { border-top-color: #18b772; }
 .pay-status-review,
 .pay-status-at-risk { border-top-color: #f0a202; }
@@ -26200,6 +26264,63 @@ body.premium-site.driver-roster-page .driver-roster-shell {
   border: 1px solid rgba(203,216,230,0.82);
   border-radius: 16px;
   background: rgba(247,250,255,0.88);
+}
+
+.pay-admin-disclosure {
+  overflow: hidden;
+  border: 1px solid rgba(203,216,230,0.82);
+  border-radius: 16px;
+  background: rgba(255,255,255,0.72);
+}
+
+.pay-admin-disclosure summary {
+  display: flex;
+  gap: 14px;
+  justify-content: space-between;
+  align-items: center;
+  padding: 13px 15px;
+  cursor: pointer;
+  list-style: none;
+}
+
+.pay-admin-disclosure summary::-webkit-details-marker {
+  display: none;
+}
+
+.pay-admin-disclosure summary::after {
+  content: "+";
+  display: grid;
+  flex: 0 0 auto;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border: 1px solid rgba(31,120,255,0.28);
+  border-radius: 999px;
+  background: #eef6ff;
+  color: #0f66d0;
+  font-size: 1rem;
+  font-weight: 950;
+}
+
+.pay-admin-disclosure[open] summary::after {
+  content: "-";
+}
+
+.pay-admin-disclosure summary span {
+  color: #071225;
+  font-weight: 950;
+}
+
+.pay-admin-disclosure summary small {
+  color: #607086;
+  font-weight: 750;
+  line-height: 1.35;
+}
+
+.pay-admin-panel {
+  display: grid;
+  gap: 12px;
+  padding: 0 14px 14px;
 }
 
 .pay-admin-form label {
@@ -26432,6 +26553,11 @@ body.premium-site.driver-roster-page .driver-roster-shell {
     grid-template-columns: 1fr;
   }
 
+  .pay-roster-summary,
+  .pay-roster-strip {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
   .pay-admin-form {
     grid-template-columns: 1fr;
   }
@@ -26470,5 +26596,19 @@ body.premium-site.driver-roster-page .driver-roster-shell {
   .pay-doc-panel ul,
   .pay-doc-stats {
     grid-template-columns: 1fr;
+  }
+
+  .pay-roster-summary,
+  .pay-roster-strip {
+    grid-template-columns: 1fr;
+  }
+
+  .pay-admin-disclosure summary {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .pay-admin-disclosure summary::after {
+    align-self: flex-end;
   }
 }

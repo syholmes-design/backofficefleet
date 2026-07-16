@@ -108,18 +108,28 @@
   function profileCard(profile, maps) {
     var driver = maps.drivers[profile.driverId] || {};
     var load = profile.loadId ? maps.loads[profile.loadId] : null;
+    var docs = window.BOFDemoState && window.BOFDemoState.documentsForDriver
+      ? window.BOFDemoState.documentsForDriver(maps.rawData, driver, profile)
+      : { label: "Driver document set", completeCount: 0, reviewCount: 0 };
+    var carrier = window.BOFDemoState && window.BOFDemoState.carrierForDriver ? window.BOFDemoState.carrierForDriver(maps.rawData, driver) : null;
+    var routeLabel = load ? load.origin + " to " + load.destination : "No active load assigned";
+    var reviewLabel = Number(docs.reviewCount || 0) ? docs.reviewCount + " doc review" : "docs ready";
     return [
-      '<article class="pay-profile-card ' + statusClass(profile.payStatus) + '">',
+      '<article class="pay-profile-card pay-roster-card ' + statusClass(profile.payStatus) + '">',
       '  <div class="pay-profile-top">',
       '    <div>',
       '      <p class="eyebrow">' + esc(profile.id) + ' / ' + esc(profile.workerClassification) + '</p>',
       '      <h3>' + esc(driver.name || profile.driverId) + '</h3>',
-      '      <p>' + esc(load ? load.origin + " to " + load.destination : "No active load assigned") + '</p>',
+      '      <p>' + esc(routeLabel) + '</p>',
       '    </div>',
       '    <strong>' + esc(profile.payStatus) + '</strong>',
       '  </div>',
-      '  <div class="pay-check-grid">' + setupChecks(profile) + '</div>',
-      adminControls(profile, maps, driver),
+      '  <div class="pay-roster-strip">',
+      '    <span><b>Classification</b>' + esc(profile.workerClassification) + '</span>',
+      '    <span><b>Carrier rules</b>' + esc(carrier ? carrier.name : "No carrier overlay") + '</span>',
+      '    <span><b>Document set</b>' + esc(docs.label) + '</span>',
+      '    <span><b>Review</b>' + esc(reviewLabel) + '</span>',
+      '  </div>',
       '  <dl class="pay-profile-metrics">',
       '    <div><dt>Pay basis</dt><dd>' + esc(profile.payMethod) + '</dd></div>',
       '    <div><dt>Rate</dt><dd>' + esc(profile.rateLabel) + '</dd></div>',
@@ -128,13 +138,37 @@
       '    <div><dt>Gross revenue</dt><dd>' + esc(money(profile.grossRevenue)) + '</dd></div>',
       '    <div><dt>Net after driver pay</dt><dd>' + esc(money(profile.estimatedNetRevenue)) + '</dd></div>',
       '  </dl>',
+      '  <div class="pay-check-grid">' + setupChecks(profile) + '</div>',
       '  <div class="pay-clearance-box">',
       '    <span>Why ' + esc(profile.payStatus.toLowerCase()) + '</span>',
       '    <p>' + esc(profile.reason) + '</p>',
       '    <ol>' + (profile.clearancePath || []).map(function (step) { return '<li>' + esc(step) + '</li>'; }).join("") + '</ol>',
       '  </div>',
+      '  <details class="pay-admin-disclosure">',
+      '    <summary><span>Edit pay profile</span><small>Classification, carrier rules, pay method, rate, and status</small></summary>',
+      '    <div class="pay-admin-panel">',
+      adminControls(profile, maps, driver),
       documentPanel(profile, maps, driver),
+      '    </div>',
+      '  </details>',
       '</article>'
+    ].join("");
+  }
+
+  function renderPayrollSummary(profiles) {
+    var total = profiles.length;
+    var ready = profiles.filter(function (profile) { return String(profile.payStatus).toLowerCase() === "ready"; }).length;
+    var review = profiles.filter(function (profile) { return /review|risk/i.test(profile.payStatus); }).length;
+    var blocked = profiles.filter(function (profile) { return String(profile.payStatus).toLowerCase() === "blocked"; }).length;
+    var net = profiles.reduce(function (sum, profile) { return sum + Number(profile.estimatedNetRevenue || 0); }, 0);
+    return [
+      '<div class="pay-roster-summary" aria-label="Payroll roster summary">',
+      '  <div><span>Total profiles</span><strong>' + esc(total) + '</strong></div>',
+      '  <div><span>Ready</span><strong>' + esc(ready) + '</strong></div>',
+      '  <div><span>Review</span><strong>' + esc(review) + '</strong></div>',
+      '  <div><span>Blocked</span><strong>' + esc(blocked) + '</strong></div>',
+      '  <div><span>Net after driver pay</span><strong>' + esc(money(net)) + '</strong></div>',
+      '</div>'
     ].join("");
   }
 
@@ -144,6 +178,7 @@
       '  <div><p class="eyebrow">Driver pay profile workbench</p><h2>Choose how the driver is paid, then let the record carry through payroll, settlement, and finance.</h2><p>These baked-in demo records show employee, independent-contractor, and owner-operator pay logic tied to the same canonical driver and load records used elsewhere.</p></div>',
       '  <div class="pay-admin-actions"><a class="button secondary" href="/settlements/#canonical-settlement-records">Open settlement impact</a><button type="button" data-reset-demo-overrides>Reset local edits</button></div>',
       '</div>',
+      renderPayrollSummary(profiles),
       '<div class="pay-profile-grid">' + profiles.map(function (profile) { return profileCard(profile, maps); }).join("") + '</div>'
     ].join("");
   }
