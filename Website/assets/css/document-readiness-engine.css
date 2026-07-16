@@ -29,6 +29,77 @@
   position: relative;
 }
 
+.vault-legacy-hero {
+  background:
+    linear-gradient(90deg, rgba(5,13,24,0.88), rgba(5,13,24,0.24) 48%, rgba(5,13,24,0.08)),
+    linear-gradient(135deg, rgba(9,98,75,0.98), rgba(20,33,31,0.96));
+  grid-template-columns: minmax(0, 0.84fr) minmax(420px, 1.16fr);
+  min-height: clamp(560px, 63vw, 760px);
+  padding: clamp(28px, 4vw, 48px);
+}
+
+.vault-legacy-hero .readiness-hero-copy {
+  background: rgba(5,13,24,0.38);
+  border: 1px solid rgba(255,255,255,0.16);
+  border-radius: 8px;
+  padding: clamp(18px, 2.5vw, 28px);
+}
+
+.vault-hero-visual {
+  align-self: stretch;
+  border-radius: 8px;
+  box-shadow: 0 32px 80px rgba(0,0,0,0.34);
+  display: grid;
+  margin: 0;
+  min-height: 430px;
+  overflow: hidden;
+  position: relative;
+}
+
+.vault-hero-visual img {
+  height: 100%;
+  object-fit: cover;
+  object-position: 72% center;
+  width: 100%;
+}
+
+.vault-hero-visual figcaption {
+  background: rgba(255,255,255,0.94);
+  border: 1px solid rgba(255,255,255,0.46);
+  border-radius: 8px;
+  bottom: 22px;
+  box-shadow: 0 20px 48px rgba(0,0,0,0.18);
+  color: var(--ink);
+  display: grid;
+  gap: 8px;
+  max-width: 360px;
+  padding: 16px;
+  position: absolute;
+  right: 22px;
+}
+
+.vault-hero-visual figcaption span {
+  color: var(--green-dark);
+  font-size: 0.72rem;
+  font-weight: 950;
+  text-transform: uppercase;
+}
+
+.vault-hero-visual figcaption strong {
+  font-size: 1.1rem;
+  line-height: 1.22;
+}
+
+.vault-hero-visual figcaption p {
+  color: var(--muted);
+  line-height: 1.52;
+  margin: 0;
+}
+
+.vault-legacy-hero h1 {
+  font-size: clamp(2.7rem, 5vw, 4.8rem);
+}
+
 .readiness-hero::after {
   background-image:
     linear-gradient(rgba(255,255,255,0.09) 1px, transparent 1px),
@@ -461,6 +532,10 @@
     grid-template-columns: 1fr;
   }
 
+  .vault-legacy-hero {
+    min-height: auto;
+  }
+
   .readiness-flow,
   .readiness-securement-showcase,
   .readiness-securement-flow,
@@ -506,6 +581,22 @@
   .readiness-actions a {
     justify-content: center;
     text-align: center;
+  }
+
+  .vault-legacy-hero {
+    padding: 20px 14px;
+  }
+
+  .vault-hero-visual {
+    min-height: 360px;
+  }
+
+  .vault-hero-visual figcaption {
+    bottom: auto;
+    left: 12px;
+    max-width: none;
+    right: 12px;
+    top: 12px;
   }
 }
 

@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Operational Intelligence | BackOfficeFleet</title>
   <meta name="description" content="BOF Operational Intelligence demonstrates in-route visibility, monitoring, exception management, and operational awareness using demo scenario records.">
-  <link rel="stylesheet" href="/assets/css/styles.css?v=20260716-mvp-admin">
+  <link rel="stylesheet" href="/assets/css/styles.css?v=20260716-legacy-hero-fuel">
   <style>
     .oi-hero { background: linear-gradient(135deg, rgba(12,95,67,0.98), rgba(37,111,148,0.94) 54%, rgba(20,33,31,0.98)); color: #fff; overflow: hidden; position: relative; }
     .oi-hero::after { background-image: linear-gradient(rgba(255,255,255,0.08) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.08) 1px, transparent 1px); background-size: 42px 42px; content: ""; inset: 0; pointer-events: none; position: absolute; }
@@ -53,8 +53,27 @@
     .oi-alert h3 { font-size: 0.98rem; margin: 0; }
     .oi-alert p { color: var(--muted); line-height: 1.45; margin: 0; }
     .oi-note { background: rgba(255,255,255,0.86); border: 1px solid rgba(20,33,31,0.1); border-radius: 8px; box-shadow: var(--shadow-soft); color: var(--muted); line-height: 1.6; padding: 18px; }
+    .oi-route-fuel-planner { align-items: stretch; display: grid; gap: 18px; grid-template-columns: minmax(0, 1.05fr) minmax(320px, 0.95fr); }
+    .oi-route-map-card, .oi-fuel-board { background: #fff; border: 1px solid var(--line); border-radius: 8px; box-shadow: var(--shadow-soft); padding: 18px; }
+    .oi-route-map-card { display: grid; gap: 16px; overflow: hidden; }
+    .oi-route-map-card svg { background: linear-gradient(135deg, #f8fbff, #eef8f1); border: 1px solid rgba(20,33,31,0.08); border-radius: 8px; min-height: 260px; width: 100%; }
+    .oi-route-path { fill: none; stroke: #1f78ff; stroke-dasharray: 10 12; stroke-linecap: round; stroke-width: 5; }
+    .oi-route-stop { fill: #16a36b; stroke: #fff; stroke-width: 4; }
+    .oi-route-stop.review { fill: #f2a60d; }
+    .oi-route-stop.blocked { fill: #e2514f; }
+    .oi-route-caption { display: grid; gap: 8px; grid-template-columns: repeat(4, minmax(0, 1fr)); }
+    .oi-route-caption div { background: rgba(232,241,236,0.7); border: 1px solid rgba(20,33,31,0.08); border-radius: 8px; padding: 10px; }
+    .oi-route-caption span, .oi-fuel-option span { color: var(--muted); display: block; font-size: 0.7rem; font-weight: 950; text-transform: uppercase; }
+    .oi-route-caption strong { display: block; font-size: 1rem; margin-top: 4px; }
+    .oi-fuel-board { display: grid; gap: 12px; }
+    .oi-fuel-option { align-items: center; background: linear-gradient(180deg, #fff, #f6faf8); border: 1px solid rgba(20,33,31,0.1); border-radius: 8px; display: grid; gap: 12px; grid-template-columns: 1fr auto; padding: 13px; }
+    .oi-fuel-option strong { display: block; font-size: 1.02rem; margin-top: 4px; }
+    .oi-fuel-option em { color: var(--green-dark); font-style: normal; font-weight: 950; }
+    .oi-fuel-option small { color: var(--muted); display: block; line-height: 1.4; margin-top: 3px; }
+    .oi-api-note { background: rgba(31,120,255,0.08); border: 1px solid rgba(31,120,255,0.18); border-radius: 8px; color: var(--muted); line-height: 1.55; padding: 13px; }
     @media (max-width: 1180px) { .oi-hero-inner { grid-template-columns: 1fr; } .oi-kpi-grid, .oi-grid-5, .oi-grid-4, .oi-grid-3, .oi-insight-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
-    @media (max-width: 720px) { .oi-hero-inner { min-height: auto; padding: 42px 16px; } .oi-kpi-grid, .oi-grid-5, .oi-grid-4, .oi-grid-3, .oi-insight-grid { grid-template-columns: 1fr; } .oi-command-panel { padding: 12px; } .oi-command-top { align-items: flex-start; flex-direction: column; } .oi-demo-path { display: grid; grid-template-columns: 1fr; } .oi-demo-path a { text-align: center; } .oi-flow-step::after { display: none; } }
+    @media (max-width: 1180px) { .oi-route-fuel-planner { grid-template-columns: 1fr; } }
+    @media (max-width: 720px) { .oi-hero-inner { min-height: auto; padding: 42px 16px; } .oi-kpi-grid, .oi-grid-5, .oi-grid-4, .oi-grid-3, .oi-insight-grid, .oi-route-caption { grid-template-columns: 1fr; } .oi-command-panel { padding: 12px; } .oi-command-top { align-items: flex-start; flex-direction: column; } .oi-demo-path { display: grid; grid-template-columns: 1fr; } .oi-demo-path a { text-align: center; } .oi-flow-step::after { display: none; } .oi-fuel-option { grid-template-columns: 1fr; } }
   </style>
 </head>
 <body>
@@ -167,6 +186,42 @@
         <article class="oi-card reveal"><h3>Fuel purchases</h3><ul><li>$18,420 monitored this week</li><li>42 fuel stops matched to trips</li><li>3 purchases need review</li></ul></article>
         <article class="oi-card reveal"><h3>Idle time</h3><ul><li>Average idle: 41 min / trip</li><li>Target: 35 min / trip</li><li>Two high-idle assets flagged</li></ul></article>
         <article class="oi-card reveal"><h3>Fuel exceptions</h3><ul><li>Fuel anomaly: BOF-LD-1931</li><li>Out-of-route purchase: 1</li><li>Missing odometer check: 2</li></ul></article>
+      </div>
+    </section>
+
+    <section class="section" id="route-fuel-planning">
+      <div class="section-head reveal"><p class="eyebrow">Route + fuel planning concept</p><h2>Carry the old route-map idea forward as a BOF trip intelligence layer.</h2><p>This demo view shows how BOF can connect route context, HOS availability, diesel stop options, fuel variance, and clearance ownership before a trip turns into a settlement or service problem.</p></div>
+      <div class="oi-route-fuel-planner">
+        <article class="oi-route-map-card reveal">
+          <h3>Tulsa, OK to Kansas City, MO</h3>
+          <svg viewBox="0 0 720 320" role="img" aria-label="Demo route map with fuel, HOS, weather, and delivery checkpoints">
+            <defs>
+              <linearGradient id="routeBg" x1="0" x2="1">
+                <stop offset="0" stop-color="#e8f7f1"/>
+                <stop offset="1" stop-color="#edf5ff"/>
+              </linearGradient>
+            </defs>
+            <rect width="720" height="320" fill="url(#routeBg)"/>
+            <path class="oi-route-path" d="M70 244 C140 196 178 202 240 150 C304 96 376 126 436 82 C500 36 578 72 650 42"/>
+            <circle class="oi-route-stop" cx="70" cy="244" r="14"/><text x="40" y="284" font-size="18" font-weight="800" fill="#0a1f37">Tulsa</text>
+            <circle class="oi-route-stop review" cx="240" cy="150" r="14"/><text x="200" y="136" font-size="14" font-weight="800" fill="#7a4405">Fuel option</text>
+            <circle class="oi-route-stop" cx="436" cy="82" r="14"/><text x="402" y="70" font-size="14" font-weight="800" fill="#08734f">HOS clear</text>
+            <circle class="oi-route-stop blocked" cx="650" cy="42" r="14"/><text x="560" y="30" font-size="14" font-weight="800" fill="#8e211b">Dock risk</text>
+          </svg>
+          <div class="oi-route-caption">
+            <div><span>HOS fit</span><strong>4h 20m available</strong></div>
+            <div><span>ETA confidence</span><strong>Medium</strong></div>
+            <div><span>Fuel variance</span><strong>$84 saveable</strong></div>
+            <div><span>Clearance owner</span><strong>Dispatch desk</strong></div>
+          </div>
+        </article>
+        <aside class="oi-fuel-board reveal">
+          <h3>Nearby lower-cost diesel options</h3>
+          <article class="oi-fuel-option"><div><span>Best planned stop</span><strong>Joplin truck stop</strong><small>2.1 miles off route; trailer parking available; inside HOS plan.</small></div><em>$3.62/gal</em></article>
+          <article class="oi-fuel-option"><div><span>Lowest nearby price</span><strong>Miami service plaza</strong><small>7.8 miles off route; lower price but adds route variance review.</small></div><em>$3.55/gal</em></article>
+          <article class="oi-fuel-option"><div><span>Policy-safe fallback</span><strong>Emporia network stop</strong><small>On route; approved vendor; lower savings but clean exception profile.</small></div><em>$3.71/gal</em></article>
+          <div class="oi-api-note"><strong>API path:</strong> this can later connect to a fuel-price provider plus route services. Until then, BOF can demo the operating logic: planned stop, price spread, route deviation, HOS fit, owner, and exception path.</div>
+        </aside>
       </div>
     </section>
 
