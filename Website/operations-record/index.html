@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Operations Record | BackOfficeFleet</title>
   <meta name="description" content="BOF shared operations record showing aligned driver, dispatch, safety, proof, exception, and settlement context from one canonical public dataset.">
-  <link rel="stylesheet" href="/assets/css/styles.css?v=20260716-mvp-admin">
+  <link rel="stylesheet" href="/assets/css/styles.css?v=20260716-unified-clearance">
 </head>
 <body class="premium-site operations-record-premium-page">
   <header class="site-header">
@@ -43,6 +43,11 @@
           <a class="button primary" href="#shared-records">Review shared records</a>
           <a class="button secondary" href="/drivers/">Open driver roster</a>
         </div>
+        <div class="page-clearance-proof operations-clearance-proof" aria-label="Operations record proof">
+          <span><b>Record</b> The same load powers driver, dispatch, safety, proof, settlement, and exception views.</span>
+          <span><b>Reason</b> Blocked and review labels are explained by the joined record, not by page context alone.</span>
+          <span><b>Clearance</b> Each case opens the action path that moves the record back toward release or payment.</span>
+        </div>
       </div>
 
       <aside class="operations-index-card reveal" aria-label="Operations record index">
@@ -64,16 +69,9 @@
           <h2>Five canonical load records, one cross-module view.</h2>
           <p>Each card below is rendered from the public operations dataset and shows the status language carried across the Drivers, Dispatch, Safety, Settlements, and Operations Record pages.</p>
         </div>
-        <div class="operations-filter-group" aria-label="Operations record filters">
-          <button class="operations-filter is-active" type="button" data-operations-filter="all">All</button>
-          <button class="operations-filter" type="button" data-operations-filter="Ready">Ready</button>
-          <button class="operations-filter" type="button" data-operations-filter="Review">Review</button>
-          <button class="operations-filter" type="button" data-operations-filter="At Risk">At Risk</button>
-          <button class="operations-filter" type="button" data-operations-filter="Blocked">Blocked</button>
-        </div>
       </div>
 
-      <div class="operations-record-summary reveal" data-operations-summary aria-live="polite">
+      <div class="operations-record-summary reveal" data-operations-summary aria-live="polite" aria-label="Operations record filters and summary">
         <span>Loading shared record summary...</span>
       </div>
 

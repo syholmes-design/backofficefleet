@@ -3,7 +3,6 @@
   var recordMount = document.querySelector("[data-operations-records]");
   var summaryMount = document.querySelector("[data-operations-summary]");
   var tableMount = document.querySelector("[data-operations-table]");
-  var filters = Array.prototype.slice.call(document.querySelectorAll("[data-operations-filter]"));
   var state = { data: null, filter: "all" };
 
   if (!recordMount || !summaryMount || !tableMount) return;
@@ -66,13 +65,78 @@
     return { score: 90 + (number % 5), hos: (6 + number % 4) + "h 30m", readyAgain: "Ready now", eld: "Current", equipment: "Assigned unit ready" };
   }
 
+  function exceptionCategory(exception) {
+    return String(exception && exception.category || "").toLowerCase();
+  }
+
+  function isCargoOrSecurementException(exception) {
+    var category = exceptionCategory(exception);
+    var title = String(exception && exception.title || "").toLowerCase();
+    return /cargo|seal|securement|claim/.test(category + " " + title);
+  }
+
+  function evidenceContext(load, driver, proof, settlement, safety, exception, capacity) {
+    if (exceptionCategory(exception).indexOf("qualification") >= 0 || String(exception && exception.relatedRecordId || "").indexOf("QUAL-") === 0) {
+      return {
+        label: "Credential evidence",
+        value: exception.relatedRecordId + " / " + (exception.requiredAction || "Qualification review required."),
+        stepTitle: "Driver qualification",
+        stepBody: (driver ? driver.name + " is blocked because " : "Driver is blocked because ") + (exception.requiredAction || "qualification evidence must be corrected before assignment."),
+        image: "",
+        caption: ""
+      };
+    }
+
+    if (isCargoOrSecurementException(exception)) {
+      return {
+        label: "Securement proof",
+        value: "Cargo and seal evidence attached to the joined record.",
+        stepTitle: "Cargo securement",
+        stepBody: "Cargo, seal, and securement proof must be confirmed before release.",
+        image: "/assets/images/partners/freight-brace/freight-brace-trailer-photo.jpeg",
+        caption: "Securement evidence stays attached only when cargo, seal, claims, or securement is the actual operating issue."
+      };
+    }
+
+    if (proof && proof.assetPaths && proof.assetPaths.length) {
+      return {
+        label: "Proof evidence",
+        value: proof.id + " / " + proof.status + " / POD " + proof.pod,
+        stepTitle: "Proof packet",
+        stepBody: proof.id + " is " + proof.status + "; confirm POD, signed BOL, receiver evidence, and any required photos before release.",
+        image: proof.assetPaths[0],
+        caption: "This proof image is shown because the record is controlled by proof packet evidence."
+      };
+    }
+
+    if (proof && proof.status !== "Complete") {
+      return {
+        label: "Proof evidence",
+        value: proof.id + " / " + proof.status,
+        stepTitle: "Proof packet",
+        stepBody: proof.id + " is " + proof.status + "; no unrelated cargo photo is shown because the controlling issue is not securement.",
+        image: "",
+        caption: ""
+      };
+    }
+
+    return {
+      label: "Evidence",
+      value: "No active evidence blocker.",
+      stepTitle: "Evidence check",
+      stepBody: "No separate evidence blocker controls this record.",
+      image: "",
+      caption: ""
+    };
+  }
+
   function clearanceSteps(load, driver, proof, settlement, safety, exception, capacity) {
+    var evidence = evidenceContext(load, driver, proof, settlement, safety, exception, capacity);
     return [
       ["Dispatch decision", load.releaseDecision],
       ["Driver capability", (driver ? driver.name + " has " : "Driver has ") + capacity.hos + " HOS available before the next required break/reset; clearance timing: " + capacity.readyAgain + "."],
       ["Safety checkpoint", safety ? safety.dispatchConsequence : "No special safety checkpoint is attached."],
-      ["Cargo securement", "Freight Brace securement proof is retained with the joined operating record before release."],
-      ["Proof packet", proof ? proof.id + " is " + proof.status + "; POD is " + proof.pod + "." : "No proof packet is attached."],
+      [evidence.stepTitle, evidence.stepBody],
       ["Settlement release", settlement ? settlement.billingStatus + ": " + settlement.billingHold : "No settlement checkpoint is attached."],
       ["Owner action", exception ? exception.assignedOwner + " must " + String(exception.requiredAction || "clear the assigned exception").toLowerCase() : "No exception owner is required."]
     ];
@@ -105,16 +169,19 @@
     var loads = data.loads || [];
     var exceptions = data.exceptions || [];
     var ready = loads.filter(function (load) { return releaseTone(load) === "ready"; }).length;
-    var review = loads.filter(function (load) { return releaseTone(load) === "review"; }).length;
+    var atRisk = loads.filter(function (load) { return load.dispatchStatus === "At Risk"; }).length;
+    var review = loads.filter(function (load) { return (load.dispatchStatus === "Review" || load.proofStatus === "Review") && load.dispatchStatus !== "At Risk"; }).length;
     var blocked = loads.filter(function (load) { return releaseTone(load) === "blocked"; }).length;
     summaryMount.innerHTML = [
-      ["Shared loads", loads.length],
-      ["Ready to release", ready],
-      ["Need review", review],
-      ["Blocked", blocked],
-      ["Exceptions", exceptions.length]
+      ["Shared loads", loads.length, "all", true],
+      ["Ready to release", ready, "Ready", true],
+      ["Need review", review, "Review", true],
+      ["At risk", atRisk, "At Risk", true],
+      ["Blocked", blocked, "Blocked", true],
+      ["Exceptions", exceptions.length, "exceptions", false]
     ].map(function (item) {
-      return '<span><strong>' + esc(item[1]) + '</strong>' + esc(item[0]) + '</span>';
+      if (!item[3]) return '<span class="operations-summary-tile is-static"><strong>' + esc(item[1]) + '</strong>' + esc(item[0]) + '</span>';
+      return '<button class="operations-summary-tile' + (state.filter === item[2] ? ' is-active' : '') + '" type="button" data-operations-filter="' + esc(item[2]) + '" aria-pressed="' + (state.filter === item[2] ? 'true' : 'false') + '"><strong>' + esc(item[1]) + '</strong>' + esc(item[0]) + '</button>';
     }).join("");
   }
 
@@ -131,6 +198,7 @@
     var settlementText = settlement ? settlement.id + " / " + settlement.status : "No settlement";
     var safety = state.data ? safetyRecordForLoad(state.data, load) : null;
     var capacity = derivedCapacity(driver, load);
+    var evidence = evidenceContext(load, driver, proof, settlement, safety, exception, capacity);
     var driverRoute = driver ? driver.profileRoute : "/drivers/";
     var driverPortrait = driver ? driver.portrait : "/assets/images/logo/boflogo-original.png";
     var driverName = driver ? driver.name : load.driverId;
@@ -165,12 +233,12 @@
       '    <div><dt>HOS available / ELD</dt><dd>' + esc(capacity.hos) + ' / ' + esc(capacity.eld) + '</dd></div>',
       '    <div><dt>Ready again</dt><dd>' + esc(capacity.readyAgain) + '</dd></div>',
       '    <div><dt>Equipment gate</dt><dd>' + esc(capacity.equipment) + '</dd></div>',
-      '    <div><dt>Securement proof</dt><dd>Freight Brace photo attached</dd></div>',
+      '    <div><dt>' + esc(evidence.label) + '</dt><dd>' + esc(evidence.value) + '</dd></div>',
       '  </dl>',
       '  <details class="operations-clearance-details">',
       '    <summary>Open reason and clearance path</summary>',
       '    ' + renderClearanceSteps(clearanceSteps(load, driver, proof, settlement, safety, exception, capacity)),
-      '    <figure class="operations-securement-proof"><img src="/assets/images/partners/freight-brace/freight-brace-trailer-photo.jpeg" alt="Freight Brace cargo securement proof inside trailer" loading="lazy" decoding="async"><figcaption>Freight Brace securement evidence stays attached to the joined load record for safety, claims, and settlement review.</figcaption></figure>',
+      evidence.image ? '    <figure class="operations-securement-proof"><img src="' + esc(evidence.image) + '" alt="' + esc(evidence.label) + '" loading="lazy" decoding="async"><figcaption>' + esc(evidence.caption) + '</figcaption></figure>' : '',
       '  </details>',
       '  <div class="operations-record-actions">',
       '    <a href="/operations-record/#' + esc(load.id.toLowerCase()) + '">Open record</a>',
@@ -228,12 +296,11 @@
     renderTable(data, maps);
   }
 
-  filters.forEach(function (button) {
-    button.addEventListener("click", function () {
+  summaryMount.addEventListener("click", function (event) {
+    var button = event.target.closest("[data-operations-filter]");
+    if (!button || !summaryMount.contains(button)) return;
       state.filter = button.getAttribute("data-operations-filter") || "all";
-      filters.forEach(function (item) { item.classList.toggle("is-active", item === button); });
       render();
-    });
   });
 
   (window.BOFDataLoader ? window.BOFDataLoader.load(DATA_URL) : fetch(DATA_URL, { credentials: "same-origin" }).then(function (response) {

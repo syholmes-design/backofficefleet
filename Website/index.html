@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>BackOfficeFleet | Trucking Back-Office Operating Layer</title>
   <meta name="description" content="BackOfficeFleet helps trucking fleets control driver readiness, dispatch release, safety evidence, settlement proof, billing, and office follow-through before work slows down.">
-  <link rel="stylesheet" href="/assets/css/styles.css?v=20260716-mvp-admin">
+  <link rel="stylesheet" href="/assets/css/styles.css?v=20260716-home-driver-premium">
 </head>
 <body class="visual-refresh premium-site page-home page-home-recovered page-home-command">
   <header class="site-header">
@@ -44,6 +44,11 @@
           <a class="button secondary" href="#what-bof-controls">Explore operating areas</a>
           <a class="button secondary" href="#priority-fleet-program">Priority Fleet Program</a>
         </div>
+        <div class="home-command-proof" aria-label="BOF operating promise">
+          <span><b>Record</b> Driver, load, proof, policy, and office owner stay joined.</span>
+          <span><b>Reason</b> Review and blocked work must explain the operating cause.</span>
+          <span><b>Clearance</b> Every hold needs a named route back to release.</span>
+        </div>
       </div>
 
       <aside class="home-command-console reveal" aria-label="BOF command center preview">
@@ -63,24 +68,40 @@
           <a href="/settlements/">Settlements</a>
           <a href="/business-operations/">Office</a>
         </div>
-        <div class="home-console-work">
+        <div class="home-console-work" aria-label="Example operating records">
           <article>
             <span class="is-ready">Ready</span>
             <strong>DRV-004 cleared for Nashville release.</strong>
-            <p>DQF, HOS, unit, and proof packet are aligned.</p>
+            <p><b>Why:</b> DQF, HOS, assigned unit, and proof packet are aligned.</p>
+            <a href="/drivers/">Open driver record</a>
           </article>
           <article>
             <span class="is-review">Review</span>
             <strong>TR-2258 needs POD renewal evidence.</strong>
-            <p>Owner and clearance route stay attached to the load.</p>
+            <p><b>To clear:</b> Confirm POD, receiver evidence, and renewal support before billing.</p>
+            <a href="/settlements/#canonical-settlement-records">Open settlement queue</a>
           </article>
           <article>
             <span class="is-blocked">Blocked</span>
             <strong>Medical-card hold prevents assignment.</strong>
-            <p>Safety owner must clear before dispatch release.</p>
+            <p><b>Owner:</b> Safety lead must clear the credential record before dispatch release.</p>
+            <a href="/safety/#canonical-safety-records">Open safety gate</a>
           </article>
         </div>
       </aside>
+    </section>
+
+    <section class="home-clearance-board" aria-labelledby="home-clearance-title">
+      <div class="home-clearance-copy reveal">
+        <p class="eyebrow">Operating control</p>
+        <h2 id="home-clearance-title">Stop showing a status without the reason behind it.</h2>
+        <p>The homepage should establish the product rule for the whole demo: every ready, review, blocked, held, or at-risk state must carry the record, the reason, the owner, and the clearance action.</p>
+      </div>
+      <div class="home-clearance-list reveal" aria-label="Sample clearance records">
+        <a href="/drivers/#driver-roster"><span>Driver</span><strong>Mara Chen blocked</strong><em>Credential record clears after corrected medical-card evidence and MVR review.</em></a>
+        <a href="/dispatch/#canonical-dispatch-records"><span>Dispatch</span><strong>BOF-1907 at risk</strong><em>POD and renewal evidence must be confirmed before release.</em></a>
+        <a href="/settlements/#canonical-settlement-records"><span>Settlement</span><strong>SET-1907 held</strong><em>Billing packet cannot move until proof packet evidence is complete.</em></a>
+      </div>
     </section>
 
     <section class="home-operating-system" id="what-bof-controls">

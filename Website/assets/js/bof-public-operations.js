@@ -300,18 +300,22 @@
     };
   }
 
-  function dispatchIntakeSummary(data) {
+  function dispatchIntakeSummary(data, activeFilter) {
     var loads = data.loads || [];
     var stats = [
-      ["Loads", loads.length],
-      ["Ready", loads.filter(function (load) { return loadStatusBucket(load) === "Ready"; }).length],
-      ["Review", loads.filter(function (load) { return loadStatusBucket(load) === "Review"; }).length],
-      ["At Risk", loads.filter(function (load) { return loadStatusBucket(load) === "At Risk"; }).length],
-      ["Blocked", loads.filter(function (load) { return loadStatusBucket(load) === "Blocked"; }).length]
+      ["Loads", loads.length, "All"],
+      ["Ready", loads.filter(function (load) { return loadStatusBucket(load) === "Ready"; }).length, "Ready"],
+      ["Review", loads.filter(function (load) { return loadStatusBucket(load) === "Review"; }).length, "Review"],
+      ["At Risk", loads.filter(function (load) { return loadStatusBucket(load) === "At Risk"; }).length, "At Risk"],
+      ["Blocked", loads.filter(function (load) { return loadStatusBucket(load) === "Blocked"; }).length, "Blocked"]
     ];
     var wrap = el("div", "dispatch-intake-summary");
+    wrap.setAttribute("aria-label", "Dispatch intake filters and summary");
     stats.forEach(function (item) {
-      var card = el("span", "");
+      var card = el("button", "dispatch-summary-tile" + (activeFilter === item[2] ? " is-active" : ""));
+      card.type = "button";
+      card.setAttribute("data-dispatch-intake-filter", item[2]);
+      card.setAttribute("aria-pressed", activeFilter === item[2] ? "true" : "false");
       card.appendChild(el("strong", "", item[1]));
       card.appendChild(el("em", "", item[0]));
       wrap.appendChild(card);
@@ -392,33 +396,28 @@
 
   function renderDispatchIntakeView(mount, data) {
     mount.appendChild(sectionHead("Shipper load intake queue", "Each tender starts as a load record, then expands into driver readiness, HOS available time, equipment, proof, and settlement consequences.", "Filter the shipper intake queue first. Open a load only when dispatch needs the deeper release path."));
-    var controls = el("div", "dispatch-intake-controls");
-    ["All", "Ready", "Review", "At Risk", "Blocked"].forEach(function (filter, index) {
-      var button = el("button", "driver-filter" + (index === 0 ? " is-active" : ""), filter);
-      button.type = "button";
-      button.setAttribute("data-dispatch-intake-filter", filter);
-      controls.appendChild(button);
-    });
-    mount.appendChild(controls);
-    mount.appendChild(dispatchIntakeSummary(data));
+    var activeFilter = "All";
+    var summary = dispatchIntakeSummary(data, activeFilter);
+    mount.appendChild(summary);
     var queue = el("div", "dispatch-intake-queue");
     mount.appendChild(queue);
 
     function draw(filter) {
+      activeFilter = filter || "All";
+      var nextSummary = dispatchIntakeSummary(data, activeFilter);
+      summary.replaceWith(nextSummary);
+      summary = nextSummary;
       queue.textContent = "";
       (data.loads || []).filter(function (load) {
-        return filter === "All" || loadStatusBucket(load) === filter;
+        return activeFilter === "All" || loadStatusBucket(load) === activeFilter;
       }).forEach(function (load) {
         queue.appendChild(dispatchIntakeCard(data, load));
       });
     }
 
-    controls.addEventListener("click", function (event) {
+    mount.addEventListener("click", function (event) {
       var button = event.target.closest("[data-dispatch-intake-filter]");
       if (!button) return;
-      Array.prototype.slice.call(controls.querySelectorAll("[data-dispatch-intake-filter]")).forEach(function (item) {
-        item.classList.toggle("is-active", item === button);
-      });
       draw(button.getAttribute("data-dispatch-intake-filter"));
     });
     draw("All");
@@ -439,11 +438,55 @@
     return fallback || 74;
   }
 
-  function scoreBadge(label, score, status) {
+  function scoreBadge(label, score, status, reason) {
     var badge = el("span", "ops-score-badge ops-score " + statusClass(status).replace("status", "").trim());
     badge.appendChild(el("strong", "", score));
     badge.appendChild(el("em", "", label));
+    if (reason) badge.appendChild(el("small", "", reason));
     return badge;
+  }
+
+  function settlementScoreContext(load, driver, proof, settlement, safety, exceptions, score) {
+    if (exceptions && exceptions.length) {
+      return {
+        label: score <= 35 ? "Blocked by exception" : "Review exception",
+        reason: exceptions.map(function (ex) { return ex.title; }).join("; "),
+        drivers: exceptions.map(function (ex) { return ex.requiredAction; }).join(" ")
+      };
+    }
+    if (settlement && settlement.status === "Held") {
+      return {
+        label: "Held by settlement",
+        reason: settlement.billingHold,
+        drivers: "Settlement cannot release until the hold reason is cleared."
+      };
+    }
+    if (proof && proof.status !== "Complete") {
+      return {
+        label: "Proof controls pay",
+        reason: proof.id + " is " + proof.status + "; POD is " + text(proof.pod) + ".",
+        drivers: "Complete POD, signed BOL, receipt, receiver, photo, or accessorial evidence as required."
+      };
+    }
+    if (safety && safety.status !== "Ready") {
+      return {
+        label: "Safety hold affects pay",
+        reason: safety.qualificationConsequence,
+        drivers: safety.correctiveAction
+      };
+    }
+    if (settlement && settlement.status === "Complete") {
+      return {
+        label: "Ready to bill",
+        reason: "Packet and payment path are ready for normal billing review.",
+        drivers: "No active score reducer shown."
+      };
+    }
+    return {
+      label: "Needs owner review",
+      reason: "One or more packet-to-pay signals need confirmation.",
+      drivers: "Open the row to review the clearance route."
+    };
   }
 
   function gateLabel(status) {
@@ -454,7 +497,15 @@
     return "Review";
   }
 
-  function operatingSummary(data, mode) {
+  function settlementStatusBucket(settlement) {
+    var status = text(settlement && settlement.status);
+    if (status === "Complete") return "Complete";
+    if (status === "Held") return "Held";
+    if (status === "In Progress") return "In Progress";
+    return status || "Review";
+  }
+
+  function operatingSummary(data, mode, activeFilter) {
     var loads = data.loads || [];
     var blocked = loads.filter(function (load) { return loadStatusBucket(load) === "Blocked"; }).length;
     var review = loads.filter(function (load) { return ["Review", "At Risk"].indexOf(loadStatusBucket(load)) >= 0; }).length;
@@ -463,10 +514,35 @@
     if (mode === "safety") extra = ["Safety holds", (data.safetyRecords || []).filter(function (record) { return record.status !== "Ready"; }).length];
     else if (mode === "settlements") extra = ["Packet holds", (data.settlementRecords || []).filter(function (record) { return record.status !== "Complete"; }).length];
     else extra = ["Owners", (data.exceptions || []).length];
-    var stats = [["Ready", ready], ["Review", review], ["Blocked", blocked], extra];
-    var wrap = el("div", "dispatch-intake-summary operating-summary");
+    var stats = mode === "settlements"
+      ? [
+          ["All packets", (data.settlementRecords || []).length, "All", true],
+          ["Complete", (data.settlementRecords || []).filter(function (record) { return settlementStatusBucket(record) === "Complete"; }).length, "Complete", true],
+          ["In progress", (data.settlementRecords || []).filter(function (record) { return settlementStatusBucket(record) === "In Progress"; }).length, "In Progress", true],
+          ["Held", (data.settlementRecords || []).filter(function (record) { return settlementStatusBucket(record) === "Held"; }).length, "Held", true],
+          ["Exceptions", loads.filter(function (load) { return (load.exceptionIds || []).length > 0; }).length, "Exceptions", true]
+        ]
+      : mode === "safety"
+      ? [
+          ["All safety", loads.length, "All", true],
+          ["Ready", (data.safetyRecords || []).filter(function (record) { return record.status === "Ready"; }).length, "Ready", true],
+          ["Review", (data.safetyRecords || []).filter(function (record) { return record.status === "Review" || record.status === "At Risk"; }).length, "Review", true],
+          ["Blocked", (data.safetyRecords || []).filter(function (record) { return record.status === "Blocked" || record.status === "Held"; }).length, "Blocked", true],
+          ["Exceptions", loads.filter(function (load) { return (load.exceptionIds || []).length > 0; }).length, "Exceptions", true]
+        ]
+      : [["Ready", ready], ["Review", review], ["Blocked", blocked], extra];
+    var wrap = el("div", "dispatch-intake-summary operating-summary" + (mode === "settlements" ? " settlement-summary-filter" : "") + (mode === "safety" ? " safety-summary-filter" : ""));
     stats.forEach(function (item) {
-      var card = el("span", "");
+      var interactive = (mode === "settlements" || mode === "safety") && item[3];
+      var card = interactive
+        ? el("button", "settlement-summary-tile operating-summary-tile" + ((activeFilter || "All") === item[2] ? " is-active" : ""))
+        : el("span", mode === "settlements" ? "settlement-summary-tile is-static" : "");
+      if (interactive) {
+        card.type = "button";
+        card.setAttribute("data-settlement-filter", item[2]);
+        card.setAttribute("data-operating-filter", item[2]);
+        card.setAttribute("aria-pressed", (activeFilter || "All") === item[2] ? "true" : "false");
+      }
       card.appendChild(el("strong", "", item[1]));
       card.appendChild(el("em", "", item[0]));
       wrap.appendChild(card);
@@ -512,6 +588,7 @@
     var score = mode === "safety" ? scoreFromStatus(bucket, safety && safety.status === "Ready" ? 94 : null) :
       mode === "settlements" ? scoreFromStatus(bucket, settlement && settlement.status === "Complete" ? 91 : null) :
       scoreFromStatus(loadStatusBucket(load));
+    var scoreContext = mode === "settlements" ? settlementScoreContext(load, driver, proof, settlement, safety, exceptions, score) : null;
     var card = document.createElement("details");
     card.className = "dispatch-intake-card operating-clearance-card operating-" + mode;
     card.setAttribute("data-operating-status", bucket);
@@ -525,7 +602,7 @@
     title.appendChild(el("em", "", driver ? driver.name + " / " + (unit ? unit.label : "No unit") : "Driver pending"));
     summary.appendChild(title);
     summary.appendChild(statusPill(bucket));
-    summary.appendChild(scoreBadge(mode === "settlements" ? "pay score" : mode === "safety" ? "safety gate" : "release gate", mode === "settlements" ? score : gateLabel(bucket), bucket));
+    summary.appendChild(scoreBadge(mode === "settlements" ? (scoreContext ? scoreContext.label : "pay score") : mode === "safety" ? "safety gate" : "release gate", mode === "settlements" ? score + "/100" : gateLabel(bucket), bucket, scoreContext ? scoreContext.reason : ""));
     [
       ["HOS available", capacity.hos],
       ["Equipment", capacity.equipment],
@@ -557,9 +634,10 @@
       ["Safety gate", gateLabel(safety ? safety.status : load.safetyStatus) + " / " + (safety ? safety.preTripState + " pre-trip / " + safety.hosState + " HOS" : load.safetyStatus)],
       ["Proof evidence", proof ? proof.id + " / POD " + text(proof.pod) + " / receipts " + text(proof.receipts) : "No proof record"],
       ["Settlement state", settlement ? settlement.id + " / " + settlement.billingStatus : load.settlementStatus],
+      mode === "settlements" ? ["Score reason", scoreContext ? score + "/100 - " + scoreContext.label + ": " + scoreContext.drivers : "No score reason available"] : null,
       ["Exception reason", exceptions.length ? exceptions.map(function (ex) { return ex.title + ": " + ex.requiredAction; }).join(" ") : "No active exception"],
       ["Joined record", "Dispatch, safety, proof, settlement, and exception status resolve to " + load.id + "."]
-    ].forEach(function (item) {
+    ].filter(Boolean).forEach(function (item) {
       var pair = el("div");
       pair.appendChild(el("dt", "", item[0]));
       pair.appendChild(el("dd", "", item[1]));
@@ -581,12 +659,47 @@
     mount.appendChild(sectionHead(isSafety ? "Safety clearance queue" : "Settlement clearance queue",
       isSafety ? "Explain every safety review before dispatch treats it as releasable." : "Show why a packet is held, what proof clears it, and when it can move to billing.",
       isSafety ? "Each row carries safety status, HOS available time, ELD context, equipment consequence, owner action, and a clearance route." : "Each row carries proof, POD, accessorial, factoring/payment, hold reason, owner action, and a release route."));
-    mount.appendChild(operatingSummary(data, mode));
+    var activeFilter = "All";
+    var summary = operatingSummary(data, mode, activeFilter);
+    mount.appendChild(summary);
     var queue = el("div", "dispatch-intake-queue operating-clearance-queue");
-    (data.loads || []).forEach(function (load) {
-      queue.appendChild(operatingCard(data, load, mode));
-    });
     mount.appendChild(queue);
+
+    function draw(filter) {
+      activeFilter = filter || "All";
+      if (mode === "settlements" || mode === "safety") {
+        var nextSummary = operatingSummary(data, mode, activeFilter);
+        summary.replaceWith(nextSummary);
+        summary = nextSummary;
+      }
+      queue.textContent = "";
+      (data.loads || []).filter(function (load) {
+        if ((mode !== "settlements" && mode !== "safety") || activeFilter === "All") return true;
+        if (activeFilter === "Exceptions") return (load.exceptionIds || []).length > 0;
+        if (mode === "safety") {
+          var safetyRecord = safetyRecordForLoad(data, load);
+          var safetyStatus = safetyRecord ? safetyRecord.status : load.safetyStatus;
+          if (activeFilter === "Review") return safetyStatus === "Review" || safetyStatus === "At Risk";
+          if (activeFilter === "Blocked") return safetyStatus === "Blocked" || safetyStatus === "Held";
+          return safetyStatus === activeFilter;
+        }
+        var settlement = data.lookup.settlementRecords[load.settlementRecordId];
+        return settlementStatusBucket(settlement) === activeFilter;
+      }).forEach(function (load) {
+        queue.appendChild(operatingCard(data, load, mode));
+      });
+      if (!queue.children.length) queue.appendChild(el("article", "operations-loading-card", "No " + (mode === "safety" ? "safety" : "settlement") + " records match this filter."));
+    }
+
+    if (mode === "settlements" || mode === "safety") {
+      mount.addEventListener("click", function (event) {
+        var button = event.target.closest("[data-operating-filter]");
+        if (!button || !mount.contains(button)) return;
+        draw(button.getAttribute("data-operating-filter"));
+      });
+    }
+
+    draw("All");
     mount.appendChild(isSafety ? safetyTable(data) : settlementTable(data));
   }
 

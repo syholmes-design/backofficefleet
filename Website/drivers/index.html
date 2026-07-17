@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Driver Roster &amp; Readiness | BackOfficeFleet</title>
   <meta name="description" content="BOF compact driver roster showing readiness, HOS available time, ELD state, equipment access, safety context, and clearance paths from the canonical operations dataset.">
-  <link rel="stylesheet" href="/assets/css/styles.css?v=20260716-drivers-command-hero">
+  <link rel="stylesheet" href="/assets/css/styles.css?v=20260716-driver-premium-roster">
 </head>
 <body class="premium-site page-drivers driver-roster-page">
   <header class="site-header">
@@ -45,6 +45,11 @@
           <a class="button secondary" href="#driver-video">Watch driver video</a>
           <a class="button secondary" href="/operations-record/">View joined records</a>
         </div>
+        <div class="driver-hero-proof" aria-label="Driver command center proof points">
+          <span><b>Capability</b> Score, HOS, ELD, equipment, lane fit, and carrier rules.</span>
+          <span><b>Reason</b> Review or blocked drivers explain the exact operating issue.</span>
+          <span><b>Clearance</b> Open the driver to see owner, consequence, and fix path.</span>
+        </div>
       </div>
       <figure class="driver-hero-photo driver-rig-hero reveal">
         <img src="/assets/images/legacy-heroes/drivers-emma-brown-hero.png" alt="Professional driver standing in front of a tractor">
@@ -59,16 +64,13 @@
           <h2 id="driver-roster-heading">12 compact driver records with capability, HOS available time, equipment, and clearance action.</h2>
           <p>Filter by readiness, scan the one-line roster, then open a driver to see the full clearance path and operating context.</p>
         </div>
-        <div class="driver-filter-group" aria-label="Driver roster filters">
-          <button class="driver-filter is-active" type="button" data-driver-filter="all">All</button>
-          <button class="driver-filter" type="button" data-driver-filter="Ready">Ready</button>
-          <button class="driver-filter" type="button" data-driver-filter="Review">Review</button>
-          <button class="driver-filter" type="button" data-driver-filter="At Risk">At Risk</button>
-          <button class="driver-filter" type="button" data-driver-filter="Blocked">Blocked</button>
-        </div>
+        <aside class="driver-roster-guidance" aria-label="Driver roster interaction guide">
+          <strong>How to read it</strong>
+          <p>Use the top row as live filters. Open a driver only when you need the reason, owner, documents, pay profile, carrier rules, and clearance path.</p>
+        </aside>
       </div>
 
-      <div class="driver-roster-summary reveal" data-driver-summary aria-live="polite">
+      <div class="driver-roster-summary reveal" data-driver-summary aria-live="polite" aria-label="Driver roster filters and summary">
         <span>Loading roster status...</span>
       </div>
 

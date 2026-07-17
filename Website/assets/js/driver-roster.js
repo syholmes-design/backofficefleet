@@ -2,7 +2,6 @@
   var DATA_URL = "/assets/data/bof-public-operations.json";
   var rosterMount = document.querySelector("[data-driver-roster]");
   var summaryMount = document.querySelector("[data-driver-summary]");
-  var filters = Array.prototype.slice.call(document.querySelectorAll("[data-driver-filter]"));
   var state = {
     data: null,
     filter: "all"
@@ -205,15 +204,20 @@
     var exceptions = drivers.filter(function (driver) { return driver.activeExceptionId; }).length;
     var readyNow = drivers.filter(function (driver) { return driver.readinessStatus === "Ready" && !driver.activeExceptionId; }).length;
     summaryMount.innerHTML = [
-      ["Roster", drivers.length],
-      ["Ready now", readyNow],
-      ["Review", counts.Review || 0],
-      ["At Risk", counts["At Risk"] || 0],
-      ["Blocked", counts.Blocked || 0],
-      ["Active loads", activeLoads],
-      ["Exceptions", exceptions]
+      ["Roster", drivers.length, "all", true],
+      ["Ready now", readyNow, "Ready", true],
+      ["Review", counts.Review || 0, "Review", true],
+      ["At Risk", counts["At Risk"] || 0, "At Risk", true],
+      ["Blocked", counts.Blocked || 0, "Blocked", true],
+      ["Active loads", activeLoads, "loads", true],
+      ["Exceptions", exceptions, "exceptions", true]
     ].map(function (item) {
-      return "<span><strong>" + escapeHtml(item[1]) + "</strong>" + escapeHtml(item[0]) + "</span>";
+      var label = item[0];
+      var value = item[1];
+      var filter = item[2];
+      var enabled = item[3];
+      if (!enabled) return '<span class="driver-summary-tile is-static"><strong>' + escapeHtml(value) + '</strong>' + escapeHtml(label) + '</span>';
+      return '<button class="driver-summary-tile' + (state.filter === filter ? ' is-active' : '') + '" type="button" data-driver-filter="' + escapeHtml(filter) + '" aria-pressed="' + (state.filter === filter ? 'true' : 'false') + '"><strong>' + escapeHtml(value) + '</strong>' + escapeHtml(label) + '</button>';
     }).join("");
   }
 
@@ -320,6 +324,8 @@
     var lookups = lookupSets(data);
     var drivers = data.drivers || [];
     var visible = state.filter === "all" ? drivers : drivers.filter(function (driver) {
+      if (state.filter === "loads") return Boolean(driver.activeLoadId);
+      if (state.filter === "exceptions") return Boolean(driver.activeExceptionId);
       return driver.readinessStatus === state.filter;
     });
     renderSummary(drivers);
@@ -328,14 +334,11 @@
       : '<article class="driver-loading-card">No drivers match this filter.</article>';
   }
 
-  filters.forEach(function (button) {
-    button.addEventListener("click", function () {
+  summaryMount.addEventListener("click", function (event) {
+    var button = event.target.closest("[data-driver-filter]");
+    if (!button || !summaryMount.contains(button)) return;
       state.filter = button.getAttribute("data-driver-filter") || "all";
-      filters.forEach(function (filterButton) {
-        filterButton.classList.toggle("is-active", filterButton === button);
-      });
       renderRoster();
-    });
   });
 
   (window.BOFDataLoader ? window.BOFDataLoader.load(DATA_URL) : fetch(DATA_URL, { credentials: "same-origin" }).then(function (response) {

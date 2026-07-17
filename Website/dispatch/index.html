@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Dispatch Load Intake | BackOfficeFleet</title>
   <meta name="description" content="BOF dispatch load intake queue showing shipper tender status, driver readiness, HOS available time, ELD state, equipment access, proof status, settlement status, and release actions.">
-  <link rel="stylesheet" href="/assets/css/styles.css?v=20260716-photo-proof">
+  <link rel="stylesheet" href="/assets/css/styles.css?v=20260716-unified-clearance">
 </head>
 <body class="premium-site page-dispatch bof-canonical-data-page">
   <header class="site-header">
@@ -41,6 +41,11 @@
         <div class="actions">
           <a class="button primary" href="#canonical-dispatch-records">Open intake queue &rarr;</a>
           <a class="button secondary" href="/operations-record/#canonical-operations-record">View joined record</a>
+        </div>
+        <div class="page-clearance-proof" aria-label="Dispatch operating proof">
+          <span><b>Record</b> Shipper tender, driver, unit, route, proof, and settlement context stay joined.</span>
+          <span><b>Reason</b> Delayed, at-risk, or blocked loads explain the release issue.</span>
+          <span><b>Clearance</b> Each intake row opens the owner action required before release.</span>
         </div>
       </div>
       <div class="demo-panel reveal">

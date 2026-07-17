@@ -5,9 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Settlements Command Center | BackOfficeFleet</title>
   <meta name="description" content="BOF settlement workflow support for trucking settlement documents, driver pay calculations, contractor settlement statements, POD billing delays, factoring packet readiness, and cash-flow visibility.">
-  <link rel="stylesheet" href="/assets/css/styles.css?v=20260716-photo-proof">
+  <link rel="stylesheet" href="/assets/css/styles.css?v=20260716-settlement-premium-pilot">
 </head>
-<body class="premium-site page-settlements bof-canonical-data-page">
+<body class="premium-site page-settlements bof-canonical-data-page settlements-premium-pilot">
   <header class="site-header">
     <a class="brand" href="/" aria-label="BackOfficeFleet home"><img src="/assets/images/logo/boflogo-original.png" alt="BackOfficeFleet"></a>
     <button class="nav-toggle" type="button" data-nav-toggle aria-expanded="false" aria-label="Toggle navigation">&#9776;</button>
@@ -34,37 +34,39 @@
   </header>
   <main class="settlements-page">
     <section class="section page-hero settlements-hero">
-      <div class="reveal">
+      <div class="reveal settlements-hero-copy">
         <p class="eyebrow">Revenue readiness control</p>
-        <h1>Settlements &amp; Billing</h1>
-        <p>Settlement records below are rendered from the canonical operations dataset. Proof state, POD or receipt state, billing readiness, payment consequence, and exception context stay connected to the same load and driver records.</p>
+        <h1>Settlements Command Center</h1>
+        <p class="hero-promise">Show the packet, the hold reason, the owner, and the clearance path before cash gets stuck.</p>
+        <p>Settlement records below are rendered from the canonical operations dataset. Proof state, POD or receipt state, billing readiness, payment consequence, driver pay basis, and exception context stay connected to the same load and driver records.</p>
         <div class="actions">
           <a class="button primary" href="#canonical-settlement-records">Open settlement records &rarr;</a>
           <a class="button secondary" href="/operations-record/#canonical-operations-record">View joined record</a>
         </div>
       </div>
-      <div class="demo-panel reveal">
-        <p class="eyebrow">Proof to payment</p>
-        <h2>The public view keeps proof, billing, hold reason, and owner follow-up together.</h2>
-        <ul class="mini-list">
-          <li><span>Proof context</span><a class="proof-link" href="/dispatch/">Open Dispatch</a></li>
-          <li><span>Safety context</span><a class="proof-link" href="/safety/">Open Safety</a></li>
-          <li><span>Driver context</span><a class="proof-link" href="/drivers/">Open Drivers</a></li>
-          <li><span>Joined trace</span><a class="proof-link" href="/operations-record/#canonical-operations-record">Open Operations Record</a></li>
-        </ul>
+      <div class="settlement-command-card reveal">
+        <figure>
+          <img src="/assets/images/photos/site-pass/16-settlement-hold-desk.webp" alt="Settlement hold desk with documents and payment review work" loading="eager" decoding="async">
+          <figcaption>Held packets should explain the exact proof, pay, billing, or owner action that clears release.</figcaption>
+        </figure>
+        <div class="settlement-command-metrics" aria-label="Settlement operating signals">
+          <span><strong>5</strong> packets</span>
+          <span><strong>3</strong> review</span>
+          <span><strong>1</strong> held</span>
+        </div>
       </div>
     </section>
 
-    <section class="section">
-      <div class="section-head reveal">
+    <section class="section settlement-proof-band">
+      <div class="settlement-proof-intro reveal">
         <p class="eyebrow">Proof to cash</p>
-        <h2>Settlement readiness gets more credible when the viewer can see the paperwork and hold desk.</h2>
-        <p>BOF should connect delivery proof, billing packet readiness, driver pay basis, accessorial support, and the owner path needed to release money.</p>
+        <h2>Every held dollar needs a record, reason, owner, and next action.</h2>
+        <p>BOF connects delivery proof, billing packet readiness, driver pay basis, accessorial support, factoring/payment path, and the owner path needed to release money.</p>
       </div>
-      <div class="website-photo-grid">
-        <article class="website-photo-card reveal"><img loading="lazy" decoding="async" src="/assets/images/photos/site-pass/16-settlement-hold-desk.webp" alt="Settlement hold desk with payment and document review work"><div><h3>Settlement hold desk</h3><p>Held packets need a visible reason, owner, document gap, and clearance route.</p></div></article>
-        <article class="website-photo-card reveal"><img loading="lazy" decoding="async" src="/assets/images/photos/site-pass/28-pod-bol-tabletop-review.webp" alt="POD and bill of lading tabletop review before billing"><div><h3>POD and BOL review</h3><p>Payment confidence starts with signed proof, receiver evidence, accessorial notes, and release status.</p></div></article>
-        <article class="website-photo-card reveal"><img loading="lazy" decoding="async" src="/assets/images/photos/site-pass/25-carrier-packet-desk.webp" alt="Carrier packet and billing documents prepared for settlement review"><div><h3>Carrier packet desk</h3><p>Contractor documents, factoring route, rate basis, and settlement calculation stay attached.</p></div></article>
+      <div class="settlement-proof-grid">
+        <article class="settlement-proof-card reveal"><img loading="lazy" decoding="async" src="/assets/images/photos/site-pass/28-pod-bol-tabletop-review.webp" alt="POD and bill of lading tabletop review before billing"><div><span>01</span><h3>Proof controls release.</h3><p>Signed POD, BOL, receiver evidence, photos, receipts, and accessorial notes decide whether billing can move.</p></div></article>
+        <article class="settlement-proof-card reveal"><img loading="lazy" decoding="async" src="/assets/images/photos/site-pass/25-carrier-packet-desk.webp" alt="Carrier packet and billing documents prepared for settlement review"><div><span>02</span><h3>Pay basis stays visible.</h3><p>Employee, contractor, owner-operator, percentage, mileage, hourly, or fixed-rate logic follows the load record.</p></div></article>
+        <article class="settlement-proof-card reveal"><img loading="lazy" decoding="async" src="/assets/images/photos/site-pass/19-owner-exception-report-review.webp" alt="Owner reviewing exception report and settlement follow-up"><div><span>03</span><h3>Owner action clears cash.</h3><p>The hold does not end with a status. It ends with a named owner and a practical clearance route.</p></div></article>
       </div>
     </section>
 
