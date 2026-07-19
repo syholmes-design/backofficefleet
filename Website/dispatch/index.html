@@ -5,9 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Dispatch Load Intake | BackOfficeFleet</title>
   <meta name="description" content="BOF dispatch load intake queue showing shipper tender status, driver readiness, HOS available time, ELD state, equipment access, proof status, settlement status, and release actions.">
-  <link rel="stylesheet" href="/assets/css/styles.css?v=20260716-unified-clearance">
+  <link rel="stylesheet" href="/assets/css/styles.css?v=20260719-dispatch-hero">
 </head>
-<body class="premium-site page-dispatch bof-canonical-data-page">
+<body class="premium-site page-dispatch bof-canonical-data-page dispatch-hero-redesign-page">
   <header class="site-header">
     <a class="brand" href="/" aria-label="BackOfficeFleet home"><img src="/assets/images/logo/boflogo-original.png" alt="BackOfficeFleet"></a>
     <button class="nav-toggle" type="button" data-nav-toggle aria-expanded="false" aria-label="Toggle navigation">&#9776;</button>
@@ -33,30 +33,21 @@
     <a class="header-cta" href="/scenario-walkthrough/">Take the BOF Fleet Assessment</a>
   </header>
   <main>
-    <section class="section page-hero">
-      <div class="reveal">
-        <p class="eyebrow">Shipper load intake control</p>
-        <h1>Dispatch &amp; Operations</h1>
-        <p>Every shipper tender below is rendered from the canonical operations dataset. The intake queue ties load release, assigned driver, HOS available time, ELD state, equipment access, proof status, settlement state, and exception ownership to the same record used by the other public modules.</p>
+    <section class="section page-hero dispatch-operations-hero">
+      <div class="reveal dispatch-operations-hero-copy">
+        <p class="eyebrow">Dispatch operations</p>
+        <h1>Dispatch Operations Control</h1>
+        <p class="hero-promise">Real-time visibility across load intake, driver readiness, and release decisions &mdash; all unified in one record.</p>
         <div class="actions">
-          <a class="button primary" href="#canonical-dispatch-records">Open intake queue &rarr;</a>
+          <a class="button primary" href="#canonical-dispatch-records">Open Dispatch Queue &rarr;</a>
           <a class="button secondary" href="/operations-record/#canonical-operations-record">View joined record</a>
         </div>
         <div class="page-clearance-proof" aria-label="Dispatch operating proof">
-          <span><b>Record</b> Shipper tender, driver, unit, route, proof, and settlement context stay joined.</span>
-          <span><b>Reason</b> Delayed, at-risk, or blocked loads explain the release issue.</span>
-          <span><b>Clearance</b> Each intake row opens the owner action required before release.</span>
+          <span><b>145</b> Active loads</span>
+          <span><b>96%</b> On-time delivery</span>
+          <span><b>9</b> At risk</span>
+          <span><b>24</b> Blocked</span>
         </div>
-      </div>
-      <div class="demo-panel reveal">
-        <p class="eyebrow">Release record flow</p>
-        <h2>Load intake from shippers stays the focal point; driver, safety, proof, and settlement signals explain the release decision.</h2>
-        <ul class="mini-list">
-          <li><span>Ready case</span><a class="proof-link" href="/operations-record/#bof-2064">BOF-2064</a></li>
-          <li><span>At risk case</span><a class="proof-link" href="/operations-record/#bof-1907">BOF-1907</a></li>
-          <li><span>Blocked case</span><a class="proof-link" href="/operations-record/#bof-1931">BOF-1931</a></li>
-          <li><span>Profiles</span><a class="proof-link" href="/drivers/">Open Drivers</a></li>
-        </ul>
       </div>
     </section>
     <section class="section">

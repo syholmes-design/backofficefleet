@@ -5,9 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Safety Command Center | BackOfficeFleet</title>
   <meta name="description" content="BOF safety command page for driver risk, dispatch blocks, credential status, evidence packets, settlement held items, claims exposure, and coaching actions.">
-  <link rel="stylesheet" href="/assets/css/styles.css?v=20260716-unified-clearance">
+  <link rel="stylesheet" href="/assets/css/styles.css?v=20260719-safety-natural">
 </head>
-<body class="premium-site page-safety bof-canonical-data-page">
+<body class="premium-site page-safety bof-canonical-data-page safety-hero-redesign-page">
   <header class="site-header">
     <a class="brand" href="/" aria-label="BackOfficeFleet home"><img src="/assets/images/logo/boflogo-original.png" alt="BackOfficeFleet"></a>
     <button class="nav-toggle" type="button" data-nav-toggle aria-expanded="false" aria-label="Toggle navigation">&#9776;</button>
@@ -33,11 +33,11 @@
     <a class="header-cta" href="/scenario-walkthrough/">Take the BOF Fleet Assessment</a>
   </header>
   <main>
-    <section class="section page-hero">
-      <div class="reveal">
+    <section class="section page-hero safety-photo-hero">
+      <div class="reveal safety-photo-hero-copy">
         <p class="eyebrow">Safety readiness control</p>
-        <h1>Safety &amp; Compliance</h1>
-        <p>Safety status below is rendered from the canonical operations dataset, so driver qualification, load consequence, corrective action, exception ownership, and dispatch impact stay aligned with Dispatch and Settlements.</p>
+        <h1>Safety Readiness Control</h1>
+        <p class="hero-promise">Field inspection, qualification, and corrective-action evidence tied directly to every load and driver record.</p>
         <div class="actions">
           <a class="button primary" href="#canonical-safety-records">Open safety records &rarr;</a>
           <a class="button secondary" href="/dispatch/">Compare dispatch impact</a>
@@ -48,17 +48,9 @@
           <span><b>Clearance</b> Owner action explains what returns the driver or load to release.</span>
         </div>
       </div>
-      <div class="demo-panel reveal">
-        <p class="eyebrow">Safety consequence</p>
-        <h2>The page shows the safety view of the same driver and load facts.</h2>
-        <ul class="mini-list">
-          <li><span>Driver context</span><a class="proof-link" href="/drivers/">Open Drivers</a></li>
-          <li><span>Release context</span><a class="proof-link" href="/dispatch/">Open Dispatch</a></li>
-          <li><span>Joined trace</span><a class="proof-link" href="/operations-record/#canonical-operations-record">Open Operations Record</a></li>
-          <li><span>Settlement impact</span><a class="proof-link" href="/settlements/">Open Settlements</a></li>
-        </ul>
-      </div>
     </section>
+
+    <section class="section bof-canonical-section" id="canonical-safety-records" data-bof-operations-view="safety" aria-live="polite"></section>
 
     <section class="section safety-program-section" id="safety-operating-program">
       <div class="section-head reveal">
@@ -103,8 +95,6 @@
         </article>
       </div>
     </section>
-
-    <section class="section bof-canonical-section" id="canonical-safety-records" data-bof-operations-view="safety" aria-live="polite"></section>
 
   </main>
   <section class="cta-band"><div class="cta-inner"><div><p class="eyebrow">Next step</p><h2>Turn one safety blocker into a clear operating decision.</h2><p>Bring a credential issue, driver event, safety form gap, dispatch block, or settlement held item into a BOF assessment.</p></div><a class="button light" href="/scenario-walkthrough/">Take the BOF Fleet Assessment &rarr;</a></div></section>

@@ -5,9 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Policies &amp; Procedures | BackOfficeFleet</title>
   <meta name="description" content="BOF helps fleets turn policies and procedures into assigned, acknowledged, versioned, and verifiable operating controls.">
-  <link rel="stylesheet" href="/assets/css/styles.css?v=20260716-unified-clearance">
+  <link rel="stylesheet" href="/assets/css/styles.css?v=20260719-policy-governance">
 </head>
-<body class="premium-site page-policies governance-workstream-page">
+<body class="premium-site page-policies governance-workstream-page policy-governance-redesign-page">
   <header class="site-header">
     <a class="brand" href="/" aria-label="BackOfficeFleet home"><img src="/assets/images/logo/boflogo-original.png" alt="BackOfficeFleet"></a>
     <button class="nav-toggle" type="button" data-nav-toggle aria-expanded="false" aria-label="Toggle navigation">&#9776;</button>
@@ -34,63 +34,65 @@
   </header>
 
   <main>
-    <section class="section page-hero control-hero">
-      <div class="control-hero-copy reveal">
-        <p class="eyebrow">Operational governance</p>
+    <section class="policy-governance-hero" id="policy-library">
+      <div class="policy-governance-hero-copy reveal">
+        <p class="eyebrow">Operational Governance</p>
         <h1>Policies &amp; Procedures</h1>
         <p class="hero-promise">Turn written rules into assigned, acknowledged, versioned, and verifiable operating controls.</p>
         <div class="actions">
-          <a class="button primary" href="#policy-library">Open policy library</a>
-          <a class="button secondary" href="#policy-documents">Open policy PDFs</a>
-        </div>
-        <div class="page-clearance-proof" aria-label="Policy operating proof">
-          <span><b>Record</b> Policy, version, owner, acknowledgment, evidence, and exception path stay together.</span>
-          <span><b>Reason</b> Due or review status explains the rule gap, not just the category.</span>
-          <span><b>Clearance</b> Open the actual PDF, assign the owner, and close the acknowledgment or version gap.</span>
+          <a class="button primary" href="#control-file">Open Policy Library &rarr;</a>
+          <a class="button secondary" href="#policy-documents">Open Policy PDFs</a>
         </div>
       </div>
-      <aside class="control-proof-card reveal" aria-label="Policy control proof">
-        <p class="eyebrow">Control file</p>
-        <h2>Rules have value when the fleet can prove version, owner, assignment, and acknowledgment.</h2>
-        <dl class="control-proof-list">
-          <div><dt>Policy PDFs</dt><dd>21</dd></div>
-          <div><dt>Due for review</dt><dd>6</dd></div>
-          <div><dt>Acknowledgment gaps</dt><dd>3</dd></div>
-          <div><dt>Audit evidence</dt><dd>Current</dd></div>
-        </dl>
-      </aside>
+      <div class="policy-book-hotspots" aria-label="Policy manual metadata">
+        <button class="policy-book-hotspot hotspot-hr" type="button" aria-label="HR Handbook metadata">
+          <span><strong>HR Handbook</strong>Last Updated: Jun 2026<br>Owner: HR Lead<br>Acknowledged: 97%</span>
+        </button>
+        <button class="policy-book-hotspot hotspot-accounting" type="button" aria-label="Accounting Manual metadata">
+          <span><strong>Accounting Manual</strong>Last Updated: Jun 2026<br>Owner: Controller<br>Acknowledged: 96%</span>
+        </button>
+        <button class="policy-book-hotspot hotspot-operations" type="button" aria-label="Operations Manual metadata">
+          <span><strong>Operations Manual</strong>Last Updated: Jul 2026<br>Owner: Operations Lead<br>Acknowledged: 94%</span>
+        </button>
+        <button class="policy-book-hotspot hotspot-compliance" type="button" aria-label="Compliance Policy Book metadata">
+          <span><strong>Compliance Policy Book</strong>Last Updated: Jul 2026<br>Owner: Compliance Team<br>Acknowledged: 98%</span>
+        </button>
+      </div>
+    </section>
+
+    <section class="policy-governance-intro">
+      <div class="policy-intro-copy reveal">
+        <p class="eyebrow">Governed Workstream</p>
+        <h2>Operational Governance ensures every rule has version, owner, acknowledgment, and evidence.</h2>
+        <p>The page now opens the controlling policy first, then shows the proof record that the rule was followed. No circular story. No vague risk. One rule, one owner, one clearance path.</p>
+        <div class="actions">
+          <a class="button primary" href="#control-file">Open Policy Library</a>
+          <a class="button secondary" href="#policy-documents">Open Policy PDFs</a>
+        </div>
+      </div>
+      <div class="policy-proof-rail reveal" aria-label="Governance proof controls">
+        <article><span>01</span><strong>Version</strong><p>Current rule and prior copy stay attached.</p></article>
+        <article><span>02</span><strong>Owner</strong><p>Named review owner and due date are visible.</p></article>
+        <article><span>03</span><strong>Evidence</strong><p>Operating proof links back to the rule.</p></article>
+        <article><span>04</span><strong>Clearance</strong><p>Exception path closes the gap.</p></article>
+      </div>
     </section>
 
     <nav class="section subject-nav reveal" aria-label="Policies and procedures subjects">
-      <a href="#policy-library">Policy Library</a>
+      <a href="#control-file">Control File</a>
       <a href="#policy-documents">Policy PDFs</a>
-      <a href="#acknowledgments">Driver Acknowledgments</a>
-      <a href="#workflow-rules">Workflow Rules</a>
-      <a href="#version-control">Version Control</a>
-      <a href="#audit-evidence">Audit Evidence</a>
+      <a href="#governance-workflow">Workflow</a>
+      <a href="#policy-evidence">Evidence</a>
     </nav>
 
-    <section class="section">
+    <section class="section policy-control-file-section" id="control-file">
       <div class="section-head reveal">
-        <p class="eyebrow">Policy evidence in the workstream</p>
-        <h2>The policy page should show the rule and the proof that the rule was actually followed.</h2>
-        <p>These scenes reinforce the point: policies matter when the current version, affected record, acknowledgment, evidence, and exception path are tied to the work people are doing.</p>
-      </div>
-      <div class="website-photo-grid">
-        <article class="website-photo-card reveal"><img loading="lazy" decoding="async" src="/assets/images/photos/site-pass/18-file-binder-scan-station.webp" alt="Policy binder and file scanning station for record control"><div><h3>Versioned control file</h3><p>The current policy, prior version, owner, and affected operating records should be inspectable.</p></div></article>
-        <article class="website-photo-card reveal"><img loading="lazy" decoding="async" src="/assets/images/photos/site-pass/26-safety-meeting-record-review.webp" alt="Safety meeting and policy acknowledgment records under review"><div><h3>Acknowledgment proof</h3><p>Drivers and office users need visible acknowledgment, training, and exception status.</p></div></article>
-        <article class="website-photo-card reveal"><img loading="lazy" decoding="async" src="/assets/images/photos/site-pass/17-dock-seal-photo-review.webp" alt="Dock seal photo review tied to cargo and seal verification policy"><div><h3>Rule in operation</h3><p>Cargo, seal, POD, photo, and incident evidence should point back to the controlling rule.</p></div></article>
-      </div>
-    </section>
-
-    <section class="section" id="policy-library">
-      <div class="section-head reveal">
-        <p class="eyebrow">Required policy workspace</p>
+        <p class="eyebrow">Control File</p>
         <h2>Open the rule, owner, version, evidence, and operating consequence from one row.</h2>
-        <p>Each action below opens the actual policy PDF. The library can still connect to Drivers, Dispatch, Safety, Settlements, and Governance, but the controlling document now appears first.</p>
+        <p>Each action opens the actual policy PDF. Hover through the control file to see the operating record behind the rule: version state, owner, acknowledgment, review status, and exception path.</p>
       </div>
       <div class="control-table-wrap reveal">
-        <table class="control-table policy-table">
+        <table class="control-table policy-table policy-control-table">
           <thead><tr><th>Policy</th><th>Category</th><th>Version</th><th>Effective</th><th>Owner</th><th>Acknowledgment</th><th>Review</th><th>Action</th></tr></thead>
           <tbody>
             <tr><td>Driver Qualification Policy</td><td>Drivers</td><td>v3.2</td><td>Jul 1, 2026</td><td>Driver file owner</td><td><span class="status-badge is-ready">Complete</span></td><td><span class="status-badge is-current">Current</span></td><td><a href="/assets/documents/policies/bof-pol-001-driver-qualification-policy.pdf" target="_blank" rel="noopener">Open PDF</a></td></tr>
@@ -122,8 +124,8 @@
     <section class="section policy-document-section" id="policy-documents">
       <div class="section-head reveal">
         <p class="eyebrow">Actual policy documents</p>
-        <h2>The policy library now stops here and shows the controlling rule.</h2>
-        <p>These are practical operating policy sheets for the demo. They identify purpose, scope, owner, required evidence, decision rule, exception path, review cadence, and the connected operating record without sending the viewer in a circle.</p>
+        <h2>The library opens the controlling rule instead of redirecting to another story page.</h2>
+        <p>Each document identifies purpose, scope, owner, required evidence, decision rule, exception path, review cadence, and the connected operating record.</p>
         <p class="policy-disclaimer">Demo policy language only. A carrier should validate final procedures against its operations, contracts, insurance requirements, and applicable federal, state, customer, and internal compliance obligations.</p>
       </div>
       <div class="policy-pdf-grid">
@@ -156,44 +158,47 @@
         <p class="eyebrow">Governance workflow</p>
         <h2>A written rule becomes useful only after assignment, acknowledgment, and audit evidence are visible.</h2>
       </div>
-      <ol class="lifecycle-strip reveal">
-        <li><span>1</span><strong>Drafted</strong><p>Owner creates or updates rule.</p></li>
-        <li><span>2</span><strong>Reviewed</strong><p>Functional lead checks operating fit.</p></li>
-        <li><span>3</span><strong>Approved</strong><p>Decision owner records approval.</p></li>
-        <li><span>4</span><strong>Published</strong><p>Current version replaces old copy.</p></li>
-        <li><span>5</span><strong>Assigned</strong><p>Workers or roles receive the rule.</p></li>
-        <li><span>6</span><strong>Acknowledged</strong><p>Completion state is tracked.</p></li>
-        <li><span>7</span><strong>Audited</strong><p>Evidence and exceptions are reviewed.</p></li>
-        <li><span>8</span><strong>Revised</strong><p>Updates return to the library.</p></li>
-      </ol>
-    </section>
-
-    <section class="section" id="acknowledgments">
-      <div class="section-head reveal">
-        <p class="eyebrow">Proof before explanation</p>
-        <h2>Policy control is shown through metadata, not long summaries.</h2>
-        <p>BOF can keep acknowledgment, version history, assigned responsibility, exception handling, and audit evidence beside the operating workflow that depends on the rule.</p>
-        <p>That matters because the person using the rule is often under time pressure. The driver-file owner, dispatcher, safety lead, or billing reviewer needs the current rule, the owner, and the action path before they need the full written procedure.</p>
+      <div class="policy-workflow-metrics reveal" aria-label="Governance workflow metrics">
+        <article><span>Policy PDFs</span><strong>21</strong><p>Current operating documents</p></article>
+        <article><span>Due for Review</span><strong>6</strong><p>Named owner follow-up</p></article>
+        <article><span>Acknowledgment Gaps</span><strong>3</strong><p>Worker or role assignment</p></article>
+        <article><span>Audit Evidence</span><strong>Current</strong><p>Verified proof trail</p></article>
       </div>
-      <div class="supporting-grid">
-        <article class="support-card reveal"><span>Employee acknowledgment</span><strong>Driver Qualification Policy: Complete</strong><p>Assigned to driver file owners; acknowledgment state can be reviewed before a worker file is treated as ready.</p><a href="/assets/documents/policies/bof-pol-001-driver-qualification-policy.pdf" target="_blank" rel="noopener">Open policy</a></article>
-        <article class="support-card reveal" id="version-control"><span>Version history</span><strong>Billing Packet Requirements: v3.0</strong><p>The current version, prior version, effective date, and owner stay attached to billing packet review.</p><a href="/assets/documents/policies/bof-pol-006-billing-packet-requirements.pdf" target="_blank" rel="noopener">Open policy</a></article>
-        <article class="support-card reveal" id="audit-evidence"><span>Audit evidence</span><strong>Access and Data Governance: Current</strong><p>Approval notes, affected roles, and evidence expectations stay visible with the controlling rule.</p><a href="/assets/documents/policies/bof-pol-008-access-and-data-governance.pdf" target="_blank" rel="noopener">Open policy</a></article>
-        <article class="support-card reveal"><span>Exception handling</span><strong>Pre-Trip Evidence Standard: Review</strong><p>If proof is missing, the policy row points to the owner, evidence requirement, and release consequence.</p><a href="/assets/documents/policies/bof-pol-002-pre-trip-evidence-standard.pdf" target="_blank" rel="noopener">Open policy</a></article>
+      <div class="policy-workflow-flow reveal" aria-label="Policy workflow">
+        <article data-tip="The controlling PDF is the source of truth, not a summary card."><span>PDF</span><strong>Policy PDFs</strong><p>Published rule and current version.</p></article>
+        <article data-tip="The assigned user or role acknowledges the version that applies to the work."><span>ACK</span><strong>Acknowledgment</strong><p>Completion state tied to worker or role.</p></article>
+        <article data-tip="Evidence proves the policy was followed on the operating record."><span>EV</span><strong>Audit Evidence</strong><p>Document, note, photo, approval, or timestamp.</p></article>
+        <article data-tip="The page shows who clears the gap and what must happen next."><span>CLR</span><strong>Clearance Path</strong><p>Owner, due date, reason, and release consequence.</p></article>
       </div>
     </section>
 
-    <section class="section" id="workflow-rules">
+    <section class="section policy-evidence-integration" id="policy-evidence">
       <div class="section-head reveal">
-        <p class="eyebrow">Operational consequence</p>
-        <h2>Procedure gaps should produce assigned work, not vague risk.</h2>
-        <p>When a policy is due, blocked, or missing acknowledgment, the next owner is clear. Driver readiness, dispatch release, safety review, settlement billing, and business operations can all show the rule that controls the decision.</p>
-        <p>This keeps policy management close to operating work. A driver-file policy can affect readiness, a billing-packet rule can affect invoice preparation, and an access-governance rule can affect who may update sensitive records. The library gives each consequence a path back to the page where the work is happening.</p>
+        <p class="eyebrow">Policy Evidence in the Workstream</p>
+        <h2>Show the rule beside the proof that the rule was followed.</h2>
+        <p>This is the final operating view: controlling document, evidence record, acknowledgment state, owner, and clearance path in one place.</p>
       </div>
-      <div class="compact-proof-grid">
-        <a class="proof-card reveal" href="/operations-record/"><h3>Evidence record</h3><p>Use operating records to show which rule affected a release, hold, or review decision.</p></a>
-        <a class="proof-card reveal" href="/business-operations/"><h3>Office owner</h3><p>Route overdue acknowledgment or version review back to the business owner responsible for follow-up.</p></a>
-        <a class="proof-card reveal" href="/trust-governance/"><h3>Governance trace</h3><p>Show the approval state, evidence link, and record owner when a policy change affects operating work.</p></a>
+      <div class="policy-evidence-pair reveal">
+        <article class="policy-record-card">
+          <span class="policy-card-label">Policy Record</span>
+          <h3>Pre-Trip Evidence Standard</h3>
+          <dl>
+            <div><dt>Version</dt><dd>v2.4</dd></div>
+            <div><dt>Owner</dt><dd>Safety lead</dd></div>
+            <div><dt>Status</dt><dd><span class="status-badge is-review">Review</span></dd></div>
+            <div><dt>Exception path</dt><dd>Missing cargo or equipment proof blocks release until evidence is attached.</dd></div>
+          </dl>
+        </article>
+        <article class="policy-record-card evidence-record-card">
+          <span class="policy-card-label">Evidence Record</span>
+          <h3>Load BOF-1907 / Securement proof</h3>
+          <dl>
+            <div><dt>Acknowledgment</dt><dd><span class="policy-verified-badge">Verified</span></dd></div>
+            <div><dt>Proof</dt><dd>Pre-trip photos, tire inspection, seal confirmation, cargo securement.</dd></div>
+            <div><dt>Owner</dt><dd>Dispatcher / packet owner</dd></div>
+            <div><dt>Clearance</dt><dd>Attach corrected proof, confirm release rule, reopen settlement packet.</dd></div>
+          </dl>
+        </article>
       </div>
     </section>
   </main>
