@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Settlements Command Center | BackOfficeFleet</title>
   <meta name="description" content="BOF settlement workflow support for trucking settlement documents, driver pay calculations, packet-to-pay readiness, POD billing delays, factoring packet readiness, and cash-flow visibility.">
-  <link rel="stylesheet" href="/assets/css/styles.css?v=20260720-dark-enterprise-header">
+  <link rel="stylesheet" href="/assets/css/styles.css?v=20260720-enterprise-header-v2">
 </head>
 <body class="premium-site page-settlements settlements-premium-pilot government-redesign-page settlement-command-redesign-page">
   <header class="site-header">
@@ -30,7 +30,7 @@
       <a href="/trust-governance/">Company</a>
       <a class="nav-utility-link" href="/command-center/">Command Center</a>
     </nav>
-    <a class="header-cta" href="/scenario-walkthrough/">Take the BOF Fleet Assessment</a>
+    <a class="header-cta" href="/dashboard/">Sign In</a>
   </header>
 
   <main class="settlements-page">
@@ -52,60 +52,13 @@
 
     <section class="section bof-canonical-section" id="canonical-settlement-records" data-bof-operations-view="settlements" aria-live="polite"></section>
 
-    <section class="gov-workspace-section">
-      <div class="gov-section-head reveal">
-        <p class="eyebrow">Packet-to-pay command</p>
-        <h2>The live record above should answer why cash is ready, under review, held, or blocked.</h2>
-        <p>Use the settlement records to scan packet status, proof condition, driver pay basis, exception cause, and clearance action in one place.</p>
+    <section class="section public-demo-embed-section" id="settlements-workbench">
+      <div class="section-head reveal">
+        <p class="eyebrow">Interactive settlement subset</p>
+        <h2>Work the settlement queue without leaving the settlements page.</h2>
+        <p>This embedded view keeps revenue, driver pay, deductions, proof holds, owner, and clearance path on the same public page. The full-screen demo remains available for a deeper walkthrough.</p>
       </div>
-      <div class="gov-workspace-grid settlement-command-workspace">
-        <article class="gov-workspace-card is-ready reveal">
-          <span>Ready</span>
-          <h3>Proof and pay aligned</h3>
-          <p>Packet, POD, BOL, driver pay basis, and billing owner are ready for release.</p>
-          <a href="#canonical-settlement-records">Filter ready records</a>
-        </article>
-        <article class="gov-workspace-card is-review reveal">
-          <span>Review</span>
-          <h3>Owner action required</h3>
-          <p>Receipt, accessorial, renewal, or pay classification question needs an owner decision.</p>
-          <a href="#canonical-settlement-records">Review exceptions</a>
-        </article>
-        <article class="gov-workspace-card is-held reveal">
-          <span>Held</span>
-          <h3>Clearance path visible</h3>
-          <p>The record explains the hold reason, required proof, owner, and release consequence.</p>
-          <a href="#canonical-settlement-records">Open held records</a>
-        </article>
-      </div>
-    </section>
-
-    <section class="gov-section">
-      <div class="gov-value-row">
-        <article class="gov-value-card reveal">
-          <span>Operating model</span>
-          <h3>Command</h3>
-          <p>Unified settlement control across billing, driver pay, and proof-of-delivery.</p>
-        </article>
-        <article class="gov-value-card reveal">
-          <span>BOF record</span>
-          <h3>Connected</h3>
-          <p>Each packet links readiness, proof, pay basis, and exception context to the same load record.</p>
-        </article>
-        <article class="gov-value-card reveal">
-          <span>Review style</span>
-          <h3>Human-led</h3>
-          <p>AI-assisted triage supports faster release decisions while keeping every review auditable.</p>
-        </article>
-      </div>
-    </section>
-
-    <section class="gov-problem-section">
-      <div class="gov-problem-copy reveal">
-        <p class="eyebrow">Revenue readiness</p>
-        <h2>When settlements stall, revenue readiness breaks.</h2>
-        <p>Dispatch and billing systems were not built for audit-grade packet visibility. BOF connects proof, pay, and billing readiness so finance and operations can clear holds before cash gets stuck.</p>
-      </div>
+      <div data-demo-embed-route="/interactive-demo/settlements/" aria-live="polite"></div>
     </section>
 
     <section class="gov-section">
@@ -142,13 +95,6 @@
       </div>
     </section>
 
-    <section class="gov-footer-section">
-      <div class="reveal">
-        <p class="eyebrow">Revenue control</p>
-        <h2>Where revenue readiness meets operational control.</h2>
-      </div>
-      <a class="gov-btn-primary" href="/book-demo/">Book a Demo</a>
-    </section>
   </main>
 
   <footer class="site-footer"><div class="footer-inner"><strong>BackOfficeFleet</strong><span>Settlement workflow support.</span><a href="/trust-governance/">Trust &amp; Governance</a></div></footer>
@@ -156,6 +102,7 @@
   <script src="/assets/js/bof-data-loader.js?v=20260715-supabase"></script>
   <script src="/assets/js/bof-demo-state.js?v=20260715-admin"></script>
   <script src="/assets/js/bof-public-operations.js?v=20260715-supabase"></script>
-  <script src="/assets/js/site.js?v=1.60"></script>
+  <script src="/assets/js/interactive-demo-routes.js?v=1.50"></script>
+  <script src="/assets/js/site.js?v=1.61"></script>
 </body>
 </html>

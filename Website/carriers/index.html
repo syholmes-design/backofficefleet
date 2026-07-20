@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Carrier Registry | BackOfficeFleet</title>
   <meta name="description" content="BOF carrier registry for authority, insurance, W-9, agreement, payment setup, lane eligibility, equipment readiness, blocked reasons, owners, and clearance paths.">
-  <link rel="stylesheet" href="/assets/css/styles.css?v=20260720-dark-enterprise-header">
+  <link rel="stylesheet" href="/assets/css/styles.css?v=20260720-enterprise-header-v2">
 </head>
 <body class="premium-site">
   <header class="site-header">
@@ -30,7 +30,7 @@
       <a href="/trust-governance/">Company</a>
       <a class="nav-utility-link" href="/command-center/">Command Center</a>
     </nav>
-    <a class="header-cta" href="/scenario-walkthrough/">Take Fleet Assessment</a>
+    <a class="header-cta" href="/dashboard/">Sign In</a>
   </header>
 
   <main>
@@ -104,9 +104,18 @@
         <a href="/operations-record/">Joined operating record</a>
       </div>
     </section>
+
+    <section class="section public-demo-embed-section" id="carrier-registry-workbench">
+      <div class="section-head reveal">
+        <p class="eyebrow">Interactive carrier subset</p>
+        <h2>Open carrier packet readiness inside the registry page.</h2>
+        <p>The embedded registry shows authority, insurance, agreement, W-9, contacts, lane confirmation, exception escalation, and carrier-specific readiness without treating outside carrier files as employee records.</p>
+      </div>
+      <div data-demo-embed-route="/interactive-demo/carriers/" aria-live="polite"></div>
+    </section>
   </main>
-  <section class="cta-band"><div class="cta-inner"><div><p class="eyebrow">Next step</p><h2>Bring one carrier packet into a BOF readiness review.</h2><p>Map the authority, insurance, tax, agreement, equipment, customer, owner, and clearance path before the carrier becomes usable capacity.</p></div><a class="button light" href="/scenario-walkthrough/">Take Fleet Assessment</a></div></section>
   <footer class="site-footer"><div class="footer-inner"><strong>BackOfficeFleet</strong><span>Carrier registry.</span><a href="/trust-governance/">Trust &amp; Governance</a></div></footer>
-  <script src="/assets/js/site.js?v=1.60"></script>
+  <script src="/assets/js/interactive-demo-routes.js?v=1.50"></script>
+  <script src="/assets/js/site.js?v=1.61"></script>
 </body>
 </html>

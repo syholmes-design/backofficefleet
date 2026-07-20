@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Driver Roster &amp; Readiness | BackOfficeFleet</title>
   <meta name="description" content="BOF compact driver roster showing readiness, HOS available time, ELD state, equipment access, safety context, and clearance paths from the canonical operations dataset.">
-  <link rel="stylesheet" href="/assets/css/styles.css?v=20260720-dark-enterprise-header">
+  <link rel="stylesheet" href="/assets/css/styles.css?v=20260720-enterprise-header-v2">
 </head>
 <body class="premium-site page-drivers driver-roster-page">
   <header class="site-header">
@@ -30,7 +30,7 @@
       <a href="/trust-governance/">Company</a>
       <a class="nav-utility-link" href="/command-center/">Command Center</a>
     </nav>
-    <a class="header-cta" href="/command-center/">Command Center</a>
+    <a class="header-cta" href="/dashboard/">Sign In</a>
   </header>
 
   <main class="driver-roster-main">
@@ -103,21 +103,16 @@
         </div>
       </aside>
     </section>
-  </main>
 
-  <section class="cta-band driver-next-band">
-    <div class="cta-inner">
-      <div>
-        <p class="eyebrow">Driver operating layer</p>
-        <h2>Keep the roster tied to the next load, not just the personnel file.</h2>
-        <p>Open a driver profile, the active operating record, or the related dispatch and safety view from the roster itself.</p>
+    <section class="section public-demo-embed-section" id="driver-record-workbench">
+      <div class="section-head reveal">
+        <p class="eyebrow">Interactive driver subset</p>
+        <h2>Open driver records from the same page as the public roster.</h2>
+        <p>The embedded driver view shows driver photos, readiness state, active assignment, DQF score, document packet, and clearance context without sending the visitor into a separate section first.</p>
       </div>
-      <div class="actions">
-        <a class="button light" href="#driver-roster">Back to roster</a>
-        <a class="button secondary" href="/command-center/">Command Center</a>
-      </div>
-    </div>
-  </section>
+      <div data-demo-embed-route="/interactive-demo/drivers/" aria-live="polite"></div>
+    </section>
+  </main>
 
   <footer class="site-footer">
     <div class="footer-inner">
@@ -130,6 +125,7 @@
   <script src="/assets/js/bof-data-loader.js?v=20260715-supabase"></script>
   <script src="/assets/js/bof-demo-state.js?v=20260715-admin"></script>
   <script src="/assets/js/driver-roster.js?v=20260715-supabase"></script>
-  <script src="/assets/js/site.js?v=1.60"></script>
+  <script src="/assets/js/interactive-demo-routes.js?v=1.50"></script>
+  <script src="/assets/js/site.js?v=1.61"></script>
 </body>
 </html>

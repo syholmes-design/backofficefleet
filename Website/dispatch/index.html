@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Dispatch Load Intake | BackOfficeFleet</title>
   <meta name="description" content="BOF dispatch load intake queue showing shipper tender status, driver readiness, HOS available time, ELD state, equipment access, proof status, settlement status, and release actions.">
-  <link rel="stylesheet" href="/assets/css/styles.css?v=20260720-dark-enterprise-header">
+  <link rel="stylesheet" href="/assets/css/styles.css?v=20260720-enterprise-header-v2">
 </head>
 <body class="premium-site page-dispatch bof-canonical-data-page dispatch-hero-redesign-page">
   <header class="site-header">
@@ -30,7 +30,7 @@
       <a href="/trust-governance/">Company</a>
       <a class="nav-utility-link" href="/command-center/">Command Center</a>
     </nav>
-    <a class="header-cta" href="/scenario-walkthrough/">Take the BOF Fleet Assessment</a>
+    <a class="header-cta" href="/dashboard/">Sign In</a>
   </header>
   <main>
     <section class="section page-hero dispatch-operations-hero">
@@ -90,6 +90,15 @@
 
     <section class="section bof-canonical-section" id="canonical-dispatch-records" data-bof-operations-view="dispatch" aria-live="polite"></section>
 
+    <section class="section public-demo-embed-section" id="dispatch-workbench">
+      <div class="section-head reveal">
+        <p class="eyebrow">Interactive dispatch subset</p>
+        <h2>Open the dispatch board from inside the dispatch overview.</h2>
+        <p>The embedded board shows load intake consequence, driver and carrier readiness, document gate, route context, post-trip proof, and the exact release condition behind a load.</p>
+      </div>
+      <div data-demo-embed-route="/interactive-demo/dispatch/" aria-live="polite"></div>
+    </section>
+
     <section class="section">
       <div class="section-head reveal">
         <p class="eyebrow">Dispatch proof in motion</p>
@@ -103,12 +112,12 @@
       </div>
     </section>
   </main>
-  <section class="cta-band"><div class="cta-inner"><div><p class="eyebrow">Next record</p><h2>Connect dispatch decisions to documents.</h2><p>Your team should see the paperwork behind each release state.</p></div><a class="button light" href="/documents/">Open documents &rarr;</a></div></section>
   <footer class="site-footer"><div class="footer-inner"><strong>BackOfficeFleet</strong><span>Dispatch consequence.</span></div></footer>
   <script src="/assets/js/bof-supabase-config.js?v=20260715-supabase"></script>
   <script src="/assets/js/bof-data-loader.js?v=20260715-supabase"></script>
   <script src="/assets/js/bof-demo-state.js?v=20260715-admin"></script>
   <script src="/assets/js/bof-public-operations.js?v=20260715-supabase"></script>
-  <script src="/assets/js/site.js?v=1.60"></script>
+  <script src="/assets/js/interactive-demo-routes.js?v=1.50"></script>
+  <script src="/assets/js/site.js?v=1.61"></script>
 </body>
 </html>

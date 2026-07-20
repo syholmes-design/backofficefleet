@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Document Control | BackOfficeFleet</title>
   <meta name="description" content="BOF document control for TMS imported loads, release packets, driver records, carrier packet status, and review-ready transportation paperwork.">
-  <link rel="stylesheet" href="/assets/css/styles.css?v=20260720-dark-enterprise-header">
+  <link rel="stylesheet" href="/assets/css/styles.css?v=20260720-enterprise-header-v2">
 </head>
 <body>
   <header class="site-header">
@@ -29,7 +29,7 @@
       <a href="/policies-procedures/">Policies &amp; Procedures</a>
       <a href="/trust-governance/">Company</a>
     </nav>
-    <a class="header-cta" href="/scenario-walkthrough/">Take Fleet Assessment</a>
+    <a class="header-cta" href="/dashboard/">Sign In</a>
   </header>
   <main>
     <section class="section page-hero">
@@ -271,9 +271,18 @@
         <article class="website-photo-card reveal"><img loading="lazy" decoding="async" src="/assets/images/photos/site-pass/14-private-fleet-proof-review.webp" alt="Warehouse fleet supervisor checking delivery proof on a tablet"><div><h3>Warehouse proof review</h3><p>Private fleet proof still needs owner, status, and consequence.</p></div></article>
       </div>
     </section>
+
+    <section class="section public-demo-embed-section" id="document-packet-workbench">
+      <div class="section-head reveal">
+        <p class="eyebrow">Interactive document subset</p>
+        <h2>Inspect the proof packet directly from the Documents page.</h2>
+        <p>This embedded cabinet opens the same load document packet, POD evidence, photo proof, claim standby items, owners, and release consequences that support the joined operating record.</p>
+      </div>
+      <div data-demo-embed-route="/interactive-demo/documents/" aria-live="polite"></div>
+    </section>
   </main>
-  <section class="cta-band"><div class="cta-inner"><div><p class="eyebrow">Next step</p><h2>Connect document readiness to load readiness.</h2><p>Documents should explain release decisions, not sit in a disconnected vault. Continue to see how <a class="proof-link" href="/operations-record/#bof-1842">TMS-LD-10482</a> moves once the remaining record is reviewed and the simulated handoff is prepared.</p></div><a class="button light" href="/fleet/">Continue &rarr;</a></div></section>
   <footer class="site-footer"><div class="footer-inner"><strong>BackOfficeFleet</strong><span>Document control.</span></div></footer>
-  <script src="/assets/js/site.js?v=1.60"></script>
+  <script src="/assets/js/interactive-demo-routes.js?v=1.50"></script>
+  <script src="/assets/js/site.js?v=1.61"></script>
 </body>
 </html>

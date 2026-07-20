@@ -18,6 +18,8 @@
     link.href = href;
     link.className = className;
     link.innerHTML = iconSvg + "<span>" + label + "</span>";
+    link.setAttribute("aria-label", label);
+    link.setAttribute("title", label);
     return link;
   }
 
@@ -34,7 +36,7 @@
         "/interactive-demo/drivers/document-intake/",
         "nav-icon-link nav-vault-link",
         "BOF Vault",
-        '<svg aria-hidden="true" viewBox="0 0 24 24"><path d="M7 10V8a5 5 0 0 1 10 0v2"/><rect x="5" y="10" width="14" height="10" rx="2"/><path d="M12 14v2"/></svg>'
+        '<svg aria-hidden="true" viewBox="0 0 24 24"><path d="M7 10V8a5 5 0 0 1 10 0v2"/><rect x="5" y="10" width="14" height="10" rx="2"/><path d="M12 14v2.5"/><path d="M9 20h6"/></svg>'
       ));
     }
 
@@ -43,8 +45,25 @@
         "/documents/",
         "nav-icon-link nav-documents-link",
         "Documents",
-        '<svg aria-hidden="true" viewBox="0 0 24 24"><path d="M7 3h7l4 4v14H7z"/><path d="M14 3v5h5"/><path d="M9 13h6"/><path d="M9 17h6"/></svg>'
+        '<svg aria-hidden="true" viewBox="0 0 24 24"><path d="M7 3h7l4 4v14H7z"/><path d="M14 3v5h5"/><path d="M9.5 12.5h5"/><path d="M9.5 16h6"/><path d="M9.5 19h4"/></svg>'
       ));
+    }
+
+    if (!nav.querySelector(".nav-assessment-menu")) {
+      var assessmentMenu = document.createElement("div");
+      assessmentMenu.className = "nav-menu nav-assessment-menu";
+      assessmentMenu.setAttribute("data-nav-menu", "");
+      assessmentMenu.innerHTML = [
+        '<button class="nav-menu-toggle" type="button" data-nav-menu-toggle aria-expanded="false" aria-haspopup="true">BOF Assessment</button>',
+        '<div class="nav-dropdown" aria-label="BOF Assessment">',
+        '  <a href="/scenario-walkthrough/?assessment=fleet-owner">Fleet Owner Assessment</a>',
+        '  <a href="/scenario-walkthrough/?assessment=private-fleet">Private Fleet Assessment</a>',
+        '  <a href="/scenario-walkthrough/?assessment=government">Government Fleet Assessment</a>',
+        '  <a href="/scenario-walkthrough/?assessment=aggregator">Aggregator Assessment</a>',
+        '</div>'
+      ].join("");
+      var vaultLink = nav.querySelector(".nav-vault-link");
+      nav.insertBefore(assessmentMenu, vaultLink || nav.lastChild);
     }
 
     if (!nav.querySelector(".nav-mobile-signin")) {
@@ -172,6 +191,28 @@
       }
     }
   }
+
+  document.querySelectorAll(".public-demo-embed-section").forEach(function (section) {
+    var mount = section.querySelector("[data-demo-embed-route]");
+    var head = section.querySelector(".section-head");
+    if (!mount || !head || section.querySelector("[data-demo-toggle]")) return;
+    section.classList.add("is-collapsed");
+    mount.hidden = true;
+    var button = document.createElement("button");
+    button.type = "button";
+    button.className = "button secondary public-demo-toggle";
+    button.setAttribute("data-demo-toggle", "");
+    button.setAttribute("aria-expanded", "false");
+    button.textContent = "Open interactive workspace";
+    head.appendChild(button);
+    button.addEventListener("click", function () {
+      var open = button.getAttribute("aria-expanded") === "true";
+      button.setAttribute("aria-expanded", String(!open));
+      button.textContent = open ? "Open interactive workspace" : "Close interactive workspace";
+      mount.hidden = open;
+      section.classList.toggle("is-collapsed", open);
+    });
+  });
 
   var items = document.querySelectorAll(".reveal");
   items.forEach(function (item, index) {

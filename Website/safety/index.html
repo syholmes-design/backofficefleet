@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Safety Command Center | BackOfficeFleet</title>
   <meta name="description" content="BOF safety command page for driver risk, dispatch blocks, credential status, evidence packets, settlement held items, claims exposure, and coaching actions.">
-  <link rel="stylesheet" href="/assets/css/styles.css?v=20260720-dark-enterprise-header">
+  <link rel="stylesheet" href="/assets/css/styles.css?v=20260720-enterprise-header-v2">
 </head>
 <body class="premium-site page-safety bof-canonical-data-page safety-hero-redesign-page">
   <header class="site-header">
@@ -30,7 +30,7 @@
       <a href="/trust-governance/">Company</a>
       <a class="nav-utility-link" href="/command-center/">Command Center</a>
     </nav>
-    <a class="header-cta" href="/scenario-walkthrough/">Take the BOF Fleet Assessment</a>
+    <a class="header-cta" href="/dashboard/">Sign In</a>
   </header>
   <main>
     <section class="section page-hero safety-photo-hero">
@@ -51,6 +51,15 @@
     </section>
 
     <section class="section bof-canonical-section" id="canonical-safety-records" data-bof-operations-view="safety" aria-live="polite"></section>
+
+    <section class="section public-demo-embed-section" id="safety-workbench">
+      <div class="section-head reveal">
+        <p class="eyebrow">Interactive safety subset</p>
+        <h2>Review driver safety records inside the safety page.</h2>
+        <p>This embedded view keeps DQF readiness, medical and MVR status, holds, assignment consequence, and owner action visible without making the visitor jump to a separate demo route.</p>
+      </div>
+      <div data-demo-embed-route="/interactive-demo/safety/" aria-live="polite"></div>
+    </section>
 
     <section class="section safety-program-section" id="safety-operating-program">
       <div class="section-head reveal">
@@ -102,6 +111,7 @@
   <script src="/assets/js/bof-data-loader.js?v=20260715-supabase"></script>
   <script src="/assets/js/bof-demo-state.js?v=20260715-admin"></script>
   <script src="/assets/js/bof-public-operations.js?v=20260715-supabase"></script>
-  <script src="/assets/js/site.js?v=1.60"></script>
+  <script src="/assets/js/interactive-demo-routes.js?v=1.50"></script>
+  <script src="/assets/js/site.js?v=1.61"></script>
 </body>
 </html>

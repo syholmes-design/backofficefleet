@@ -1,6 +1,10 @@
 (function () {
-  var mount = document.querySelector("[data-demo-route-page]");
-  if (!mount) return;
+  var routeMount = document.querySelector("[data-demo-route-page]");
+  var embedMounts = Array.prototype.slice.call(document.querySelectorAll("[data-demo-embed-route]"));
+  if (!routeMount && !embedMounts.length) return;
+  var mount = routeMount || embedMounts[0];
+  var forcedPath = "";
+  var embeddedMode = false;
 
   var navItems = [
     ["Command Center", "/interactive-demo/", "app-icon-home"],
@@ -328,7 +332,17 @@
   }
 
   function currentPath() {
-    return window.location.pathname.replace(/\/index\.html$/, "/");
+    return (forcedPath || window.location.pathname).replace(/\/index\.html$/, "/");
+  }
+
+  function normalizeDemoRoute(route) {
+    var normalized = String(route || "").trim();
+    if (!normalized) return "";
+    if (normalized.charAt(0) !== "/") normalized = "/" + normalized;
+    if (normalized.indexOf("?") !== -1) normalized = normalized.split("?")[0];
+    if (normalized.indexOf("#") !== -1) normalized = normalized.split("#")[0];
+    if (!/\/$/.test(normalized)) normalized += "/";
+    return normalized;
   }
 
   var canonicalOperations = null;
@@ -1250,6 +1264,25 @@
 
   function shell(title, eyebrow, body, description) {
     var pageDescription = description || "Inspect the selected BOF workspace, operating records, owner, blocker, consequence, and next action without leaving the product shell.";
+    if (embeddedMode) {
+      mount.innerHTML = [
+        appIconSprite(),
+        '<section class="embedded-demo-workbench product-demo-body" aria-label="' + esc(title) + ' interactive workbench">',
+        '  <div class="embedded-demo-frame">',
+        '    <header class="embedded-demo-header">',
+        '      <span>' + esc(eyebrow) + ' interactive subset</span>',
+        '      <h2>' + esc(title) + '</h2>',
+        '      <p>' + esc(pageDescription) + '</p>',
+        '    </header>',
+        '    <div class="embedded-demo-main">',
+        body,
+        '    </div>',
+        '    <footer class="embedded-demo-footer"><a href="' + esc(currentPath()) + '">Open full-screen demo &rarr;</a></footer>',
+        '  </div>',
+        '</section>'
+      ].join("");
+      return;
+    }
     mount.innerHTML = [
       appIconSprite(),
       '<section class="route-app-shell route-beveled-shell">',
@@ -1592,9 +1625,29 @@
     }
   }
 
-  if (currentPath().indexOf("/interactive-demo/drivers/") === 0 || currentPath() === "/interactive-demo/safety/") {
-    loadCanonicalOperations().then(renderCurrentRoute);
-  } else {
-    renderCurrentRoute();
+  function routeNeedsCanonical(route) {
+    return route.indexOf("/interactive-demo/drivers/") === 0 || route === "/interactive-demo/safety/";
   }
+
+  function renderRouteMount(target, route, embedded) {
+    var normalizedRoute = normalizeDemoRoute(route);
+    function renderNow() {
+      mount = target;
+      forcedPath = normalizedRoute;
+      embeddedMode = Boolean(embedded);
+      renderCurrentRoute();
+      forcedPath = "";
+      embeddedMode = false;
+    }
+    if (routeNeedsCanonical(normalizedRoute || currentPath())) {
+      loadCanonicalOperations().then(renderNow);
+    } else {
+      renderNow();
+    }
+  }
+
+  if (routeMount) renderRouteMount(routeMount, "", false);
+  embedMounts.forEach(function (target) {
+    renderRouteMount(target, target.getAttribute("data-demo-embed-route"), true);
+  });
 })();
