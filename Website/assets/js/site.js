@@ -11,6 +11,78 @@
 
   var toggle = document.querySelector("[data-nav-toggle]");
   var nav = document.querySelector("[data-nav]");
+  var header = document.querySelector(".site-header");
+
+  function createIconLink(href, className, label, iconSvg) {
+    var link = document.createElement("a");
+    link.href = href;
+    link.className = className;
+    link.innerHTML = iconSvg + "<span>" + label + "</span>";
+    return link;
+  }
+
+  function enhanceEnterpriseHeader() {
+    if (!header || !nav || header.getAttribute("data-enterprise-header") === "true") return;
+    header.setAttribute("data-enterprise-header", "true");
+
+    nav.querySelectorAll(".nav-utility-link").forEach(function (link) {
+      link.remove();
+    });
+
+    if (!nav.querySelector(".nav-vault-link")) {
+      nav.appendChild(createIconLink(
+        "/interactive-demo/drivers/document-intake/",
+        "nav-icon-link nav-vault-link",
+        "BOF Vault",
+        '<svg aria-hidden="true" viewBox="0 0 24 24"><path d="M7 10V8a5 5 0 0 1 10 0v2"/><rect x="5" y="10" width="14" height="10" rx="2"/><path d="M12 14v2"/></svg>'
+      ));
+    }
+
+    if (!nav.querySelector(".nav-documents-link")) {
+      nav.appendChild(createIconLink(
+        "/documents/",
+        "nav-icon-link nav-documents-link",
+        "Documents",
+        '<svg aria-hidden="true" viewBox="0 0 24 24"><path d="M7 3h7l4 4v14H7z"/><path d="M14 3v5h5"/><path d="M9 13h6"/><path d="M9 17h6"/></svg>'
+      ));
+    }
+
+    if (!nav.querySelector(".nav-mobile-signin")) {
+      var mobileSignIn = document.createElement("a");
+      mobileSignIn.href = "/dashboard/";
+      mobileSignIn.className = "nav-mobile-signin";
+      mobileSignIn.textContent = "Sign In";
+      nav.insertBefore(mobileSignIn, nav.firstChild);
+    }
+
+    var cta = header.querySelector(".header-cta");
+    if (cta) {
+      cta.href = "/dashboard/";
+      cta.textContent = "Sign In";
+      cta.setAttribute("aria-label", "Sign in to BackOfficeFleet");
+    }
+
+    if (!header.querySelector(".header-contact-icon")) {
+      var contact = createIconLink(
+        "mailto:info@backofficefleet.com",
+        "header-contact-icon",
+        "Contact BackOfficeFleet",
+        '<svg aria-hidden="true" viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.8 19.8 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.12 4.2 2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.12.9.32 1.77.6 2.61a2 2 0 0 1-.45 2.11L8 9.7a16 16 0 0 0 6.3 6.3l1.26-1.26a2 2 0 0 1 2.11-.45c.84.28 1.71.48 2.61.6A2 2 0 0 1 22 16.92z"/></svg>'
+      );
+      contact.setAttribute("aria-label", "Contact BackOfficeFleet");
+      header.appendChild(contact);
+    }
+  }
+
+  enhanceEnterpriseHeader();
+
+  if (header) {
+    function setHeaderScrollState() {
+      header.classList.toggle("is-scrolled", window.scrollY > 8);
+    }
+    setHeaderScrollState();
+    window.addEventListener("scroll", setHeaderScrollState, { passive: true });
+  }
 
   if (toggle && nav) {
     toggle.addEventListener("click", function () {
@@ -3931,4 +4003,3 @@
     setInspectorOpen(true);
   }
 })();
-

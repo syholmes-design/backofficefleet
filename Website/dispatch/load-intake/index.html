@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Dispatch Load Intake Workbench | BackOfficeFleet</title>
+  <meta name="description" content="Dispatch load intake workbench connecting shipper tender, customer load form, driver readiness, HOS, equipment, proof, settlement, and clearance path.">
+  <link rel="stylesheet" href="/assets/css/styles.css?v=20260720-dark-enterprise-header">
+</head>
+<body class="premium-site page-dispatch bof-canonical-data-page dispatch-hero-redesign-page dispatch-intake-workbench-page">
+  <header class="site-header">
+    <a class="brand" href="/" aria-label="BackOfficeFleet home"><img src="/assets/images/logo/boflogo-original.png" alt="BackOfficeFleet"></a>
+    <button class="nav-toggle" type="button" data-nav-toggle aria-expanded="false" aria-label="Toggle navigation">&#9776;</button>
+    <nav class="site-nav" data-nav aria-label="Main navigation">
+      <div class="nav-menu" data-nav-menu>
+        <button class="nav-menu-toggle" type="button" data-nav-menu-toggle aria-expanded="false" aria-haspopup="true">Who We Serve</button>
+        <div class="nav-dropdown" aria-label="Who We Serve">
+          <a href="/fleet/">Fleet Owners</a>
+          <a href="/private-fleets/">Private Fleets</a>
+          <a href="/government/">Government Fleets</a>
+          <a href="/aggregator-outreach/">Aggregators</a>
+        </div>
+      </div>
+      <a href="/drivers/">Drivers</a>
+      <a class="active" href="/dispatch/">Dispatch &amp; Operations</a>
+      <a href="/safety/">Safety &amp; Compliance</a>
+      <a href="/settlements/">Settlements &amp; Billing</a>
+      <a href="/business-operations/">Business Operations</a>
+      <a href="/policies-procedures/">Policies &amp; Procedures</a>
+      <a href="/trust-governance/">Company</a>
+      <a class="nav-utility-link" href="/command-center/">Command Center</a>
+    </nav>
+    <a class="header-cta" href="/scenario-walkthrough/">Take the BOF Fleet Assessment</a>
+  </header>
+
+  <main>
+    <section class="section page-hero dispatch-intake-workbench-hero">
+      <div class="reveal">
+        <p class="eyebrow">Dispatch / Load Intake</p>
+        <h1>Shipper load intake becomes the release record.</h1>
+        <p class="hero-promise">The customer request, quote review, driver fit, HOS available time, equipment access, proof packet, settlement signal, and clearance route stay tied to one dispatch record.</p>
+        <div class="actions">
+          <a class="button primary" href="/customer-portal/load-intake/">Open Customer Load Intake Form &rarr;</a>
+          <a class="button secondary" href="/customer-portal/shipment-generator/">Open Generated Packet</a>
+          <a class="button secondary" href="/dispatch/">Back to Dispatch</a>
+        </div>
+        <div class="page-clearance-proof" aria-label="Dispatch intake proof">
+          <span><b>Form</b> Customer, lane, freight, proof, terms</span>
+          <span><b>Queue</b> Ready, review, at risk, blocked</span>
+          <span><b>Clearance</b> Reason, owner, next action</span>
+        </div>
+      </div>
+      <div class="demo-panel reveal">
+        <p class="eyebrow">Why this matters</p>
+        <h2>The load request should not become a dispatch promise until the clearance gates are visible.</h2>
+        <ul class="mini-list">
+          <li><span>Customer form</span><a class="proof-link" href="/customer-portal/load-intake/">Open intake</a></li>
+          <li><span>Quote review</span><a class="proof-link" href="/customer-portal/quotes/">Open quote</a></li>
+          <li><span>Packet documents</span><a class="proof-link" href="/customer-portal/shipment-generator/">Open packet</a></li>
+          <li><span>Joined record</span><a class="proof-link" href="/operations-record/">Open record</a></li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="section dispatch-intake-launch">
+      <div class="section-head reveal">
+        <p class="eyebrow">Intake to release</p>
+        <h2>The form feeds the queue; the queue explains whether dispatch can release the load.</h2>
+        <p>Use the customer-facing form for the input story, then use the queue below to show the operating consequence: ready, review, at risk, blocked, owner action, and clearance path.</p>
+      </div>
+      <div class="dispatch-intake-launch-grid">
+        <a class="dispatch-intake-launch-card reveal" href="/customer-portal/load-intake/"><span>01</span><h3>Customer input</h3><p>Customer, lane, commodity, equipment, timing, proof requirements, and cargo photo are captured.</p><strong>Open form &rarr;</strong></a>
+        <a class="dispatch-intake-launch-card reveal" href="#canonical-dispatch-records"><span>02</span><h3>Dispatch review</h3><p>Driver readiness, HOS, ELD, unit, proof, settlement, and exception status become reviewable.</p><strong>Open queue &rarr;</strong></a>
+        <a class="dispatch-intake-launch-card reveal" href="/customer-portal/shipment-generator/"><span>03</span><h3>Packet output</h3><p>Draft BOL, rate confirmation, invoice, seal record, and proof requirements are generated.</p><strong>Open packet &rarr;</strong></a>
+      </div>
+    </section>
+
+    <section class="section bof-canonical-section" id="canonical-dispatch-records" data-bof-operations-view="dispatch" aria-live="polite"></section>
+  </main>
+
+  <footer class="site-footer"><div class="footer-inner"><strong>BackOfficeFleet</strong><span>Dispatch load intake workbench.</span><a href="/dispatch/">Dispatch</a></div></footer>
+  <script src="/assets/js/bof-supabase-config.js?v=20260715-supabase"></script>
+  <script src="/assets/js/bof-data-loader.js?v=20260715-supabase"></script>
+  <script src="/assets/js/bof-demo-state.js?v=20260715-admin"></script>
+  <script src="/assets/js/bof-public-operations.js?v=20260715-supabase"></script>
+  <script src="/assets/js/site.js?v=1.60"></script>
+</body>
+</html>

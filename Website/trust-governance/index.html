@@ -5,9 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Trust &amp; Governance | BackOfficeFleet</title>
   <meta name="description" content="BOF Trust and Governance shows control, accountability, record ownership, audit history, and evidence traceability for fleet back-office workflows.">
-  <link rel="stylesheet" href="/assets/css/styles.css?v=20260716-mvp-admin">
+  <link rel="stylesheet" href="/assets/css/styles.css?v=20260720-dark-enterprise-header">
 </head>
-<body class="premium-site page-company governance-workstream-page">
+<body class="premium-site page-company trust-governance-redesign-page">
   <header class="site-header">
     <a class="brand" href="/" aria-label="BackOfficeFleet home"><img src="/assets/images/logo/boflogo-original.png" alt="BackOfficeFleet"></a>
     <button class="nav-toggle" type="button" data-nav-toggle aria-expanded="false" aria-label="Toggle navigation">&#9776;</button>
@@ -34,91 +34,93 @@
   </header>
 
   <main>
-    <section class="section page-hero control-hero">
-      <div class="control-hero-copy reveal">
+    <section class="trust-hero" id="audit-history">
+      <div class="trust-hero-copy reveal">
         <p class="eyebrow">Control, accountability, and proof</p>
         <h1>Trust &amp; Governance</h1>
-        <p class="hero-promise">Know who changed a record, why a decision was made, and what evidence supports it.</p>
+        <p>Know who changed a record, why the decision was made, and what evidence supports it.</p>
         <div class="actions">
-          <a class="button primary" href="#audit-history">Open audit history</a>
-          <a class="button secondary" href="/operations-record/">View evidence records</a>
+          <a class="button primary" href="#audit-panel">Open Audit History &rarr;</a>
+          <a class="button secondary" href="/operations-record/">View Evidence Records</a>
         </div>
       </div>
-      <aside class="control-proof-card reveal" aria-label="Trust and governance proof">
-        <p class="eyebrow">Governance view</p>
-        <h2>Control means the record explains ownership, reason, approval, and evidence.</h2>
-        <dl class="control-proof-list">
-          <div><dt>Access roles</dt><dd>Current</dd></div>
-          <div><dt>Open approvals</dt><dd>4</dd></div>
-          <div><dt>Evidence links</dt><dd>Traceable</dd></div>
-          <div><dt>Exceptions</dt><dd>Assigned</dd></div>
-        </dl>
-      </aside>
     </section>
 
     <nav class="section subject-nav reveal" aria-label="Trust and governance subjects">
-      <a href="#access-controls">Access Controls</a>
-      <a href="#audit-history">Audit History</a>
-      <a href="#data-governance">Data Governance</a>
-      <a href="#exception-ownership">Exception Ownership</a>
-      <a href="#evidence-records">Evidence Records</a>
+      <a href="#trust-architecture">Trust Architecture</a>
+      <a href="#governance-stack">Governance Stack</a>
+      <a href="#audit-panel">Audit History</a>
+      <a href="#access-matrix">Access Matrix</a>
     </nav>
 
-    <section class="section" id="audit-history">
-      <div class="section-head reveal">
-        <p class="eyebrow">Required governance workspace</p>
-        <h2>A believable audit view shows the person, action, record, reason, approval state, and evidence link.</h2>
-        <p>The examples below use valid public BOF demo records. They avoid certification, encryption, legal compliance, or security-result claims that are not supported by repository evidence.</p>
-        <p>The purpose is practical accountability. A fleet leader should be able to ask who touched the record, what changed, why the change mattered, and where the supporting evidence can be reviewed.</p>
+    <section class="trust-dark-section" id="trust-architecture">
+      <div class="trust-section-head reveal">
+        <p class="eyebrow">The Trust Architecture</p>
+        <h2>Every operating decision needs integrity, traceability, accountability, and evidence.</h2>
       </div>
-      <div class="control-table-wrap reveal">
-        <table class="control-table">
-          <thead><tr><th>User or role</th><th>Action</th><th>Affected record</th><th>Date and time</th><th>Reason</th><th>Approval</th><th>Evidence</th></tr></thead>
+      <div class="trust-pillar-grid">
+        <article class="trust-pillar reveal"><span>01</span><h3>Integrity</h3><p>Every change carries a timestamp, reason, and approver.</p></article>
+        <article class="trust-pillar reveal"><span>02</span><h3>Traceability</h3><p>Every decision leaves a path linking evidence, approval, and outcome.</p></article>
+        <article class="trust-pillar reveal"><span>03</span><h3>Accountability</h3><p>Every record has an owner with authority to approve, reject, or route the next action.</p></article>
+        <article class="trust-pillar reveal"><span>04</span><h3>Evidence Binding</h3><p>Proof attaches directly to the operating record and stays visible with the record.</p></article>
+        <article class="trust-pillar reveal"><span>05</span><h3>Retention Control</h3><p>Records remain reviewable until cleared, retained, replaced, or resolved.</p></article>
+        <article class="trust-pillar reveal"><span>06</span><h3>Access Governance</h3><p>Visibility is scoped by role, record, assignment, and business need.</p></article>
+      </div>
+    </section>
+
+    <section class="section trust-stack-section" id="governance-stack">
+      <div class="section-head reveal">
+        <p class="eyebrow">Governance Architecture</p>
+        <h2>BOF keeps the governance layer close to the operating record.</h2>
+        <p>Dispatch, safety, settlement, policy, HR, and accounting records are easier to trust when the page shows the role, approval state, evidence link, and retention cue beside the work.</p>
+      </div>
+      <div class="trust-stack reveal" aria-label="Governance stack">
+        <article><span>Role-Based Access Layer</span><p>Role scope, owner authority, and visible action boundary.</p></article>
+        <article><span>Approval Workflow Layer</span><p>Approve, reject, return, hold, or route the next review.</p></article>
+        <article><span>Audit Trail Layer</span><p>Changed by, changed when, reason, affected record, and review state.</p></article>
+        <article><span>Evidence Binding Layer</span><p>Documents, images, approvals, policy acknowledgments, and notes tied to the record.</p></article>
+        <article><span>Retention Layer</span><p>Record status remains visible until the review, replacement, or resolution is complete.</p></article>
+      </div>
+    </section>
+
+    <section class="section" id="audit-panel">
+      <div class="section-head reveal">
+        <p class="eyebrow">Governed Operations</p>
+        <h2>Audit history, evidence records, and policy control belong in the same operating view.</h2>
+      </div>
+      <div class="trust-data-cards">
+        <article class="trust-data-card reveal"><h3>Audit History</h3><p>See every change with the reason, timestamp, affected record, and approval chain.</p><a href="/operations-record/">Open audit trace &rarr;</a></article>
+        <article class="trust-data-card reveal"><h3>Evidence Records</h3><p>Proof stays tied to the operating record across driver, dispatch, safety, settlement, and policy work.</p><a href="/operations-record/">View evidence &rarr;</a></article>
+        <article class="trust-data-card reveal"><h3>Policy Control</h3><p>Version, review, acknowledgment, exception, and approval state remain visible beside the rule.</p><a href="/policies-procedures/">Open policies &rarr;</a></article>
+      </div>
+    </section>
+
+    <section class="section trust-access-section" id="access-matrix">
+      <div class="section-head reveal">
+        <p class="eyebrow">Role-Based Access Matrix</p>
+        <h2>Different teams need different authority over the same record.</h2>
+      </div>
+      <div class="trust-access-table-wrap reveal">
+        <table class="trust-access-table">
+          <thead><tr><th>Capability</th><th>Dispatch</th><th>Safety</th><th>Settlements</th><th>HR</th><th>Accounting</th></tr></thead>
           <tbody>
-            <tr><td>Driver file owner</td><td>Verified document</td><td>DRV-002 Carlos Martinez</td><td>Jul 13, 2026 09:12</td><td>POD evidence needed review</td><td><span class="status-badge is-review">Review</span></td><td><a href="/interactive-demo/drivers/drv-002/">Open driver file</a></td></tr>
-            <tr><td>Dispatch manager</td><td>Held release</td><td>BOF-1907</td><td>Jul 13, 2026 10:20</td><td>Proof packet not complete</td><td><span class="status-badge is-risk">Held</span></td><td><a href="/operations-record/">Open operating record</a></td></tr>
-            <tr><td>Safety lead</td><td>Blocked assignment</td><td>DRV-003 / BOF-1931</td><td>Jul 13, 2026 11:05</td><td>Medical-card correction and MVR review</td><td><span class="status-badge is-blocked">Blocked</span></td><td><a href="/interactive-demo/drivers/drv-003/">Open evidence</a></td></tr>
-            <tr><td>Settlement reviewer</td><td>Marked hold</td><td>BOF-2175</td><td>Jul 13, 2026 13:40</td><td>Rate confirmation match review</td><td><span class="status-badge is-progress">In Progress</span></td><td><a href="/settlements/">Open settlement view</a></td></tr>
-            <tr><td>Policy owner</td><td>Approved revision</td><td>Billing Packet Requirements v3.0</td><td>Jul 13, 2026 14:15</td><td>Billing packet rule updated</td><td><span class="status-badge is-ready">Complete</span></td><td><a href="/policies-procedures/">Open policy</a></td></tr>
-            <tr><td>Business operations</td><td>Corrected record owner</td><td>BOF-2258</td><td>Jul 13, 2026 15:25</td><td>Renewal evidence owner changed</td><td><span class="status-badge is-current">Current</span></td><td><a href="/operations-record/">Open trace</a></td></tr>
+            <tr><td>View records</td><td>Yes</td><td>Yes</td><td>Yes</td><td>Yes</td><td>Yes</td></tr>
+            <tr><td>Approve changes</td><td>Release</td><td>Safety gate</td><td>Payment hold</td><td>Worker file</td><td>Invoice/AP</td></tr>
+            <tr><td>See evidence</td><td>Load proof</td><td>Inspection proof</td><td>Packet proof</td><td>Personnel proof</td><td>Finance proof</td></tr>
+            <tr><td>Retention cues</td><td>Route record</td><td>Incident record</td><td>Packet record</td><td>Worker record</td><td>Financial record</td></tr>
           </tbody>
         </table>
       </div>
     </section>
 
-    <section class="section" id="access-controls">
-      <div class="section-head reveal">
-        <p class="eyebrow">Trust controls</p>
-        <h2>Governance is practical: role, owner, history, retention cue, exception, approval, and evidence.</h2>
-      </div>
-      <div class="supporting-grid trust-control-grid">
-        <article class="support-card reveal"><span>Role-based access</span><strong>People see the records their work requires.</strong><p>Examples show access by role and owner without claiming a specific certification or technical standard.</p></article>
-        <article class="support-card reveal"><span>Record ownership</span><strong>Every operational record needs an accountable owner.</strong><p>Driver documents, dispatch releases, safety exceptions, and finance records can each identify who must act next.</p></article>
-        <article class="support-card reveal"><span>Change history</span><strong>Changes carry time, reason, and affected record.</strong><p>The audit table shows what changed and why, so the next reviewer does not rely on memory.</p></article>
-        <article class="support-card reveal"><span>Document retention</span><strong>Retention cues stay visible for owner review.</strong><p>BOF can organize retention references while fleets keep professional review where required.</p></article>
-        <article class="support-card reveal" id="exception-ownership"><span>Exception assignment</span><strong>Held and blocked records show owner follow-up.</strong><p>Exceptions are useful when the status, owner, due date, and consequence are visible.</p></article>
-        <article class="support-card reveal" id="evidence-records"><span>Evidence traceability</span><strong>Proof links back to the operating surface.</strong><p>Evidence actions route to driver profiles, operations records, safety, settlements, or policies.</p></article>
-        <article class="support-card reveal"><span>Approval records</span><strong>Approvals explain the decision boundary.</strong><p>A release, hold, correction, or policy update should show whether approval is complete, current, in progress, or still under review.</p></article>
-      </div>
-    </section>
-
-    <section class="section" id="data-governance">
-      <div class="section-head reveal">
-        <p class="eyebrow">Data governance</p>
-        <h2>Trust pages should support the operating story without overpromising security or compliance outcomes.</h2>
-        <p>The public page should show control discipline: who owns data, what record changed, which decision was made, and where proof lives. Sensitive technical controls, legal advice, and customer-specific obligations belong in controlled review, not in unsupported public claims.</p>
-        <p>That keeps the page credible. It gives buyers a way to inspect accountability while leaving sensitive technical detail, contracts, and customer-specific control requirements for the proper review setting.</p>
-      </div>
-      <div class="compact-proof-grid">
-        <a class="proof-card reveal" href="/operations-record/"><h3>Evidence records</h3><p>Use the operations record to see how driver, dispatch, safety, proof, and settlement facts join together.</p></a>
-        <a class="proof-card reveal" href="/policies-procedures/"><h3>Policy control</h3><p>Use the policy library to see version, owner, acknowledgment, review status, and audit evidence.</p></a>
-        <a class="proof-card reveal" href="/business-operations/"><h3>Office control</h3><p>Use Business Operations to see owner follow-up for people, finance, vendor, and office exceptions.</p></a>
-      </div>
+    <section class="trust-executive-message">
+      <p class="eyebrow">Executive Standard</p>
+      <h2>Governance is the operating truth behind every record.</h2>
+      <p>BOF keeps every change connected to a reason, owner, timestamp, approval state, and evidence link.</p>
     </section>
   </main>
 
-  <section class="cta-band"><div class="cta-inner"><div><p class="eyebrow">Governed operations</p><h2>Bring one record-change question into the assessment.</h2><p>BOF can map who changed the record, why the decision was made, what approval state applies, and what evidence supports the next action.</p></div><a class="button light" href="/scenario-walkthrough/">Take the BOF Fleet Assessment</a></div></section>
-  <footer class="site-footer"><div class="footer-inner"><strong>BackOfficeFleet</strong><span>Trust and governance.</span><a href="/policies-procedures/">Policies &amp; Procedures</a></div></footer>
-  <script src="/assets/js/site.js?v=1.50"></script>
+  <footer class="site-footer trust-footer"><div class="footer-inner"><strong>BackOfficeFleet</strong><span>Trust &amp; Governance</span><a href="/policies-procedures/">Policies &amp; Procedures</a></div></footer>
+  <script src="/assets/js/site.js?v=1.60"></script>
 </body>
 </html>

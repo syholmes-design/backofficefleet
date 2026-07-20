@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Document Control | BackOfficeFleet</title>
   <meta name="description" content="BOF document control for TMS imported loads, release packets, driver records, carrier packet status, and review-ready transportation paperwork.">
-  <link rel="stylesheet" href="/assets/css/styles.css?v=20260716-mvp-admin">
+  <link rel="stylesheet" href="/assets/css/styles.css?v=20260720-dark-enterprise-header">
 </head>
 <body>
   <header class="site-header">
@@ -33,13 +33,63 @@
   </header>
   <main>
     <section class="section page-hero">
-      <div class="reveal"><p class="eyebrow">Document control</p><h1>BOF turns TMS load documents into release evidence.</h1><p>BOF keeps imported and BOF-owned paperwork readable and tied to the decision: status, dates, reviewer fields, signatures, and the load each record affects. <a class="proof-link" href="/operations-record/#bof-1842">TMS-LD-10482</a> shows how a trip release packet, driver file, carrier packet, BOL review, and future delivery proof support one dispatch decision.</p><div class="actions"><a class="button primary" href="/fleet/">Continue to load readiness &rarr;</a><a class="button secondary" href="/integrations/partner-tms/">Back to partner workflow</a></div></div>
+      <div class="reveal"><p class="eyebrow">Document control</p><h1>BOF turns TMS load documents into release evidence.</h1><p>BOF keeps imported and BOF-owned paperwork readable and tied to the decision: status, dates, reviewer fields, signatures, and the load each record affects. <a class="proof-link" href="/operations-record/#bof-1842">TMS-LD-10482</a> shows how a trip release packet, driver file, carrier packet, BOL review, and future delivery proof support one dispatch decision.</p><div class="actions"><a class="button primary" href="#operations-file-cabinet">Open operations file cabinet &rarr;</a><a class="button secondary" href="/interactive-demo/drivers/document-intake/">Open BOF Vault Intake</a><a class="button secondary" href="/carriers/">Open Carrier Registry</a><a class="button secondary" href="/operations-record/#bof-1842">Open joined record</a></div></div>
       <div class="visual-stage reveal" aria-label="BOF document-control illustration">
         <img class="scene-illustration" src="/assets/images/animations/heroes/hero-documents-control.webp" data-static-src="/assets/images/illustrations/document-control-illustration.webp" alt="Operations team reviewing organized fleet document folders, record status, and approval panels">
         <div class="scene-label"><span>Document records</span><strong>Readable detail</strong></div>
         <div class="proof-strip"><span>Docs</span><span>Status</span><span>Owner</span></div>
       </div>
     </section>
+
+    <section class="section operations-file-cabinet-section" id="operations-file-cabinet">
+      <div class="section-head reveal">
+        <p class="eyebrow">Operations file cabinet</p>
+        <h2>Document control has to cover the whole fleet office, not only one load packet.</h2>
+        <p>The strongest BOF document story combines the current joined-record model with a practical file cabinet: driver files, load documents, insurance, claims, contracts, finance, HR, training, and policies all stay organized by purpose, owner, consequence, and clearance path.</p>
+      </div>
+      <div class="file-cabinet-grid">
+        <a class="file-cabinet-card reveal" href="/drivers/"><span>DQF</span><h3>Driver Qualification Files</h3><p>Application, CDL, MVR, medical card, prior employment, policy acknowledgments, and active-duty readiness.</p><strong>Open driver records &rarr;</strong></a>
+        <a class="file-cabinet-card reveal" href="/business-operations/hr-tier/"><span>DRV+</span><h3>Secondary Driver Documents</h3><p>Training, onboarding, payroll setup, benefits, contractor classification, reimbursement, and leave or work-status records.</p><strong>Open HR records &rarr;</strong></a>
+        <a class="file-cabinet-card reveal" href="/interactive-demo/drivers/document-intake/"><span>VAULT</span><h3>BOF Vault Intake Workbench</h3><p>Document batch intake, classification, driver and carrier matching, readiness rules, exception routing, and onboarding profile creation.</p><strong>Open BOF Vault &rarr;</strong></a>
+        <a class="file-cabinet-card reveal" href="/carriers/"><span>CAR</span><h3>Carrier Registry</h3><p>Authority, insurance, W-9, agreement, ACH/payment setup, lane rules, equipment fit, and carrier clearance paths.</p><strong>Open carrier registry &rarr;</strong></a>
+        <a class="file-cabinet-card reveal" href="/dispatch/load-intake/"><span>LOAD</span><h3>Dispatch &amp; Load Operations</h3><p>Load intake, rate confirmation, BOL, pickup/delivery instructions, release notes, and shipper proof requirements.</p><strong>Open load workbench &rarr;</strong></a>
+        <a class="file-cabinet-card reveal" href="/safety/"><span>SAFE</span><h3>Safety / Claims / Insurance</h3><p>Insurance evidence, pre-trip proof, cargo photos, claim notice, incident record, corrective action, and safety clearance.</p><strong>Open safety records &rarr;</strong></a>
+        <a class="file-cabinet-card reveal" href="/assets/documents/file-cabinet/sample-master-services-agreement.pdf" target="_blank" rel="noopener"><span>LEGAL</span><h3>Contracts / Customer / Legal</h3><p>Sample master services agreement, customer terms, insurance notices, release authority, and contract-support documents.</p><strong>Open sample agreement &rarr;</strong></a>
+        <a class="file-cabinet-card reveal" href="/policies-procedures/#policy-documents"><span>SOP</span><h3>Policies &amp; SOPs</h3><p>Current BOF policy PDFs, operating procedures, version owner, effective date, review state, and evidence link.</p><strong>Open policy PDFs &rarr;</strong></a>
+        <a class="file-cabinet-card reveal" href="/settlements/"><span>FIN</span><h3>Finance / Settlements / Back Office</h3><p>Billing packets, invoice support, AR aging, AP approval, factoring context, pay calculations, and settlement holds.</p><strong>Open settlements &rarr;</strong></a>
+        <a class="file-cabinet-card reveal" href="/business-operations/hr-tier/talent-management/"><span>TRN</span><h3>Training &amp; Knowledge Base</h3><p>Role training, policy acknowledgment, coaching notes, renewal reminders, and proof that the rule was actually received.</p><strong>Open training records &rarr;</strong></a>
+        <a class="file-cabinet-card reveal" href="/business-operations/hr-tier/recruiting-onboarding/"><span>HR</span><h3>HR / Talent / Performance</h3><p>Recruiting pipeline, onboarding, employee relations, compensation, benefits, development, and operating follow-up.</p><strong>Open recruiting pipeline &rarr;</strong></a>
+      </div>
+    </section>
+
+    <section class="section featured-artifacts-section" id="featured-artifacts">
+      <div class="section-head reveal">
+        <p class="eyebrow">Featured sample artifacts</p>
+        <h2>Bring forward the old demo's strongest proof: actual documents a fleet office would recognize.</h2>
+        <p>These sample artifacts are now local to the current BOF site. They add breadth to the file cabinet while the current page keeps the newer BOF discipline: every document should connect to a record, owner, status, and operating consequence.</p>
+      </div>
+      <div class="featured-artifact-grid">
+        <article class="featured-artifact-card reveal">
+          <span>Contract sample</span>
+          <h3>Master Services Agreement</h3>
+          <p>Shows how contract/customer/legal records can live beside load, insurance, proof, and release decisions.</p>
+          <a class="button secondary" href="/assets/documents/file-cabinet/sample-master-services-agreement.pdf" target="_blank" rel="noopener">Open PDF</a>
+        </article>
+        <article class="featured-artifact-card reveal">
+          <span>Insurance sample</span>
+          <h3>Insurance Notice Letter</h3>
+          <p>Shows how insurance notice, claim context, owner follow-up, and customer communication can be retained as evidence.</p>
+          <a class="button secondary" href="/assets/documents/file-cabinet/sample-insurance-notice-letter.html" target="_blank" rel="noopener">Open notice</a>
+        </article>
+        <article class="featured-artifact-card reveal">
+          <span>Claims SOP sample</span>
+          <h3>Claims, Proof Packet &amp; Insurance Escalation SOP</h3>
+          <p>Shows the bridge between a written operating rule, proof packet requirements, claims escalation, and settlement impact.</p>
+          <a class="button secondary" href="/assets/documents/file-cabinet/sample-claims-proof-packet-insurance-escalation-sop.pdf" target="_blank" rel="noopener">Open SOP</a>
+        </article>
+      </div>
+    </section>
+
     <section class="section">
       <div class="proof-grid">
         <article class="proof-card reveal"><h3>Imported packet</h3><p><a class="proof-link" href="/operations-record/#bof-1842">TMS-LD-10482</a> collects the TMS load, driver, carrier, pickup instructions, rate confirmation, BOL review, and owner action.</p></article>
@@ -224,8 +274,6 @@
   </main>
   <section class="cta-band"><div class="cta-inner"><div><p class="eyebrow">Next step</p><h2>Connect document readiness to load readiness.</h2><p>Documents should explain release decisions, not sit in a disconnected vault. Continue to see how <a class="proof-link" href="/operations-record/#bof-1842">TMS-LD-10482</a> moves once the remaining record is reviewed and the simulated handoff is prepared.</p></div><a class="button light" href="/fleet/">Continue &rarr;</a></div></section>
   <footer class="site-footer"><div class="footer-inner"><strong>BackOfficeFleet</strong><span>Document control.</span></div></footer>
-  <script src="/assets/js/site.js?v=1.38"></script>
+  <script src="/assets/js/site.js?v=1.60"></script>
 </body>
 </html>
-
-

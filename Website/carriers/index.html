@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Carrier Registry | BackOfficeFleet</title>
+  <meta name="description" content="BOF carrier registry for authority, insurance, W-9, agreement, payment setup, lane eligibility, equipment readiness, blocked reasons, owners, and clearance paths.">
+  <link rel="stylesheet" href="/assets/css/styles.css?v=20260720-dark-enterprise-header">
+</head>
+<body class="premium-site">
+  <header class="site-header">
+    <a class="brand" href="/" aria-label="BackOfficeFleet home"><img src="/assets/images/logo/boflogo-original.png" alt="BackOfficeFleet"></a>
+    <button class="nav-toggle" type="button" data-nav-toggle aria-expanded="false" aria-label="Toggle navigation">&#9776;</button>
+    <nav class="site-nav" data-nav aria-label="Main navigation">
+      <div class="nav-menu" data-nav-menu>
+        <button class="nav-menu-toggle" type="button" data-nav-menu-toggle aria-expanded="false" aria-haspopup="true">Who We Serve</button>
+        <div class="nav-dropdown" aria-label="Who We Serve">
+          <a href="/fleet/">Fleet Owners</a>
+          <a href="/private-fleets/">Private Fleets</a>
+          <a href="/government/">Government Fleets</a>
+          <a href="/aggregator-outreach/">Aggregators</a>
+        </div>
+      </div>
+      <a href="/drivers/">Drivers</a>
+      <a href="/dispatch/">Dispatch &amp; Operations</a>
+      <a href="/safety/">Safety &amp; Compliance</a>
+      <a href="/settlements/">Settlements &amp; Billing</a>
+      <a href="/business-operations/">Business Operations</a>
+      <a href="/policies-procedures/">Policies &amp; Procedures</a>
+      <a href="/trust-governance/">Company</a>
+      <a class="nav-utility-link" href="/command-center/">Command Center</a>
+    </nav>
+    <a class="header-cta" href="/scenario-walkthrough/">Take Fleet Assessment</a>
+  </header>
+
+  <main>
+    <section class="section page-hero">
+      <div class="reveal">
+        <p class="eyebrow">Carrier registry</p>
+        <h1>Know which carrier can be used, why, and what must clear before release.</h1>
+        <p>A carrier registry should not be a static vendor list. BOF keeps authority, insurance, W-9, agreement, ACH/payment setup, lane eligibility, equipment fit, customer approval, and packet exceptions tied to the operating record that depends on the carrier.</p>
+        <div class="actions">
+          <a class="button primary" href="#carrier-registry-table">Open registry &rarr;</a>
+          <a class="button secondary" href="/carrier-readiness/">Open readiness view</a>
+          <a class="button secondary" href="/interactive-demo/drivers/document-intake/">Open BOF Vault Intake</a>
+        </div>
+      </div>
+      <div class="visual-stage reveal" aria-label="Carrier registry preview">
+        <div class="scene-label"><span>Registry controls</span><strong>Authority, packet, owner</strong></div>
+        <div class="proof-strip"><span>DOT / MC</span><span>Insurance</span><span>Clearance</span></div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="metric-grid">
+        <article class="metric reveal"><span>Registry carriers</span><strong>12</strong><p>participating carrier records with relationship and operating context</p></article>
+        <article class="metric reveal"><span>Ready now</span><strong>7</strong><p>authority, insurance, agreement, lane, and packet gates clear</p></article>
+        <article class="metric reveal"><span>Review / blocked</span><strong>5</strong><p>records with a named owner, reason, due date, and clearance path</p></article>
+      </div>
+    </section>
+
+    <section class="section" id="carrier-registry-table">
+      <div class="section-head reveal">
+        <p class="eyebrow">Registry workbench</p>
+        <h2>The carrier record should explain eligibility before a load depends on it.</h2>
+        <p>Each row shows the carrier’s operating use, relationship, packet state, score context, and the action that clears review or blocked status.</p>
+      </div>
+      <div class="table-wrap reveal">
+        <table>
+          <thead>
+            <tr><th>Carrier</th><th>Relationship</th><th>Authority</th><th>Insurance</th><th>Tax / pay setup</th><th>Lane / equipment</th><th>Status</th><th>Reason and clearance path</th><th>Owner</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Northline Freight<br><a class="proof-link" href="/operations-record/#car-118">CAR-118</a></td><td>Midwest Reefer Alliance</td><td>Active DOT / MC</td><td>Current auto and cargo</td><td>W-9 and ACH verified</td><td>Dry van / reefer eligible</td><td><span class="status ready">Ready</span></td><td>Eligible for TMS-LD-10482 release review.</td><td>Carrier ops</td></tr>
+            <tr><td>Blue River Logistics<br><a class="proof-link" href="/operations-record/#carrier-207">CAR-207</a></td><td>Ohio Valley Carrier Partners</td><td>Active</td><td>Renewal evidence pending</td><td>W-9 current, ACH on file</td><td>Dry van eligible</td><td><span class="status watch">Review</span></td><td>Confirm renewal certificate date and sender before BOF-1907 assignment.</td><td>Packet owner</td></tr>
+            <tr><td>Delta Yard Services<br><a class="proof-link" href="/operations-record/#carrier-309">CAR-309</a></td><td>Direct carrier</td><td>Assignment hold</td><td>Current</td><td>Payment setup protected</td><td>Yard support only</td><td><span class="status blocked">Blocked</span></td><td>Do not release while DRV-003 credential record is blocked.</td><td>Operations lead</td></tr>
+            <tr><td>Prairie Line Transport<br>CAR-422</td><td>Aggregator Partner A</td><td>Active</td><td>Current, cargo limit review</td><td>W-9 received, ACH review</td><td>Flatbed eligible</td><td><span class="status review">At Risk</span></td><td>Customer approval and cargo-limit confirmation required before high-value load assignment.</td><td>Carrier desk</td></tr>
+            <tr><td>Harbor Road Carriers<br>CAR-515</td><td>Direct carrier</td><td>Active</td><td>Current</td><td>W-9 and remittance current</td><td>Regional dry van</td><td><span class="status ready">Ready</span></td><td>Ready with seal photo, BOL, POD, and lumper receipt rules attached.</td><td>Dispatch owner</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="proof-grid">
+        <article class="proof-card reveal"><h3>Registry rules</h3><p>Carrier eligibility should include DOT/MC authority, insurance limits, cargo coverage, W-9, agreement, ACH/payment setup, customer approval, and lane or equipment rules.</p></article>
+        <article class="proof-card reveal"><h3>Reason before release</h3><p>A review or blocked carrier should say exactly what failed: expired certificate, missing agreement, customer approval gap, low coverage, driver credential issue, or equipment mismatch.</p></article>
+        <article class="proof-card reveal"><h3>Clearance path</h3><p>Every exception needs an owner, due date, required proof, affected load, and release consequence so dispatch does not guess.</p></article>
+        <article class="proof-card reveal"><h3>Protected data</h3><p>Tax IDs, bank details, commercial terms, and private notes stay protected while the operational readiness answer remains visible.</p></article>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-head reveal">
+        <p class="eyebrow">Where the registry connects</p>
+        <h2>Carrier records should feed dispatch, aggregator, documents, and settlements.</h2>
+      </div>
+      <div class="module-row">
+        <a href="/dispatch/">Dispatch release</a>
+        <a href="/dispatch/load-intake/">Load intake workbench</a>
+        <a href="/documents/">Documents file cabinet</a>
+        <a href="/settlements/">Settlement readiness</a>
+        <a href="/aggregator-command-center/">Aggregator command</a>
+        <a href="/operations-record/">Joined operating record</a>
+      </div>
+    </section>
+  </main>
+  <section class="cta-band"><div class="cta-inner"><div><p class="eyebrow">Next step</p><h2>Bring one carrier packet into a BOF readiness review.</h2><p>Map the authority, insurance, tax, agreement, equipment, customer, owner, and clearance path before the carrier becomes usable capacity.</p></div><a class="button light" href="/scenario-walkthrough/">Take Fleet Assessment</a></div></section>
+  <footer class="site-footer"><div class="footer-inner"><strong>BackOfficeFleet</strong><span>Carrier registry.</span><a href="/trust-governance/">Trust &amp; Governance</a></div></footer>
+  <script src="/assets/js/site.js?v=1.60"></script>
+</body>
+</html>

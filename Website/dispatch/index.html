@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Dispatch Load Intake | BackOfficeFleet</title>
   <meta name="description" content="BOF dispatch load intake queue showing shipper tender status, driver readiness, HOS available time, ELD state, equipment access, proof status, settlement status, and release actions.">
-  <link rel="stylesheet" href="/assets/css/styles.css?v=20260719-dispatch-hero">
+  <link rel="stylesheet" href="/assets/css/styles.css?v=20260720-dark-enterprise-header">
 </head>
 <body class="premium-site page-dispatch bof-canonical-data-page dispatch-hero-redesign-page">
   <header class="site-header">
@@ -39,7 +39,10 @@
         <h1>Dispatch Operations Control</h1>
         <p class="hero-promise">Real-time visibility across load intake, driver readiness, and release decisions &mdash; all unified in one record.</p>
         <div class="actions">
-          <a class="button primary" href="#canonical-dispatch-records">Open Dispatch Queue &rarr;</a>
+          <a class="button primary" href="/customer-portal/load-intake/">Open Load Intake Form &rarr;</a>
+          <a class="button secondary" href="/dispatch/load-intake/">Review Intake Workbench</a>
+          <a class="button secondary" href="/carriers/">Open Carrier Registry</a>
+          <a class="button secondary" href="#canonical-dispatch-records">Open Dispatch Queue</a>
           <a class="button secondary" href="/operations-record/#canonical-operations-record">View joined record</a>
         </div>
         <div class="page-clearance-proof" aria-label="Dispatch operating proof">
@@ -50,6 +53,43 @@
         </div>
       </div>
     </section>
+
+    <section class="section dispatch-intake-launch">
+      <div class="section-head reveal">
+        <p class="eyebrow">Load intake command path</p>
+        <h2>Shipper intake stays connected to dispatch release, driver readiness, proof, and settlement impact.</h2>
+        <p>The form is still part of the demo. A customer load request creates the operating record; dispatch then clears driver, HOS, equipment, documents, proof, and release status before the load can move.</p>
+      </div>
+      <div class="dispatch-intake-launch-grid">
+        <a class="dispatch-intake-launch-card reveal" href="/customer-portal/load-intake/">
+          <span>01</span>
+          <h3>Customer load intake form</h3>
+          <p>Capture customer, lane, pickup, delivery, commodity, equipment, proof requirements, quote assumptions, and cargo photo.</p>
+          <strong>Open form &rarr;</strong>
+        </a>
+        <a class="dispatch-intake-launch-card reveal" href="/dispatch/load-intake/">
+          <span>02</span>
+          <h3>Dispatch intake workbench</h3>
+          <p>Review the intake queue with driver readiness, HOS available time, equipment access, proof status, and clearance path.</p>
+          <strong>Open workbench &rarr;</strong>
+        </a>
+        <a class="dispatch-intake-launch-card reveal" href="/customer-portal/shipment-generator/">
+          <span>03</span>
+          <h3>Generated pre-trip packet</h3>
+          <p>Show the shipment IDs, draft BOL, rate confirmation, invoice, seal number, cargo proof, and document readiness.</p>
+          <strong>Open packet &rarr;</strong>
+        </a>
+        <a class="dispatch-intake-launch-card reveal" href="/carriers/">
+          <span>04</span>
+          <h3>Carrier registry gate</h3>
+          <p>Confirm authority, insurance, W-9, agreement, payment setup, lane eligibility, equipment fit, owner, and clearance path.</p>
+          <strong>Open registry &rarr;</strong>
+        </a>
+      </div>
+    </section>
+
+    <section class="section bof-canonical-section" id="canonical-dispatch-records" data-bof-operations-view="dispatch" aria-live="polite"></section>
+
     <section class="section">
       <div class="section-head reveal">
         <p class="eyebrow">Dispatch proof in motion</p>
@@ -62,7 +102,6 @@
         <article class="website-photo-card reveal"><img loading="lazy" decoding="async" src="/assets/images/photos/site-pass/30-route-board-tablet-review.webp" alt="Route board and tablet review for dispatch planning"><div><h3>Route review</h3><p>HOS available time, ready-again timing, route context, and fuel planning can become dispatch facts.</p></div></article>
       </div>
     </section>
-    <section class="section bof-canonical-section" id="canonical-dispatch-records" data-bof-operations-view="dispatch" aria-live="polite"></section>
   </main>
   <section class="cta-band"><div class="cta-inner"><div><p class="eyebrow">Next record</p><h2>Connect dispatch decisions to documents.</h2><p>Your team should see the paperwork behind each release state.</p></div><a class="button light" href="/documents/">Open documents &rarr;</a></div></section>
   <footer class="site-footer"><div class="footer-inner"><strong>BackOfficeFleet</strong><span>Dispatch consequence.</span></div></footer>
@@ -70,6 +109,6 @@
   <script src="/assets/js/bof-data-loader.js?v=20260715-supabase"></script>
   <script src="/assets/js/bof-demo-state.js?v=20260715-admin"></script>
   <script src="/assets/js/bof-public-operations.js?v=20260715-supabase"></script>
-  <script src="/assets/js/site.js?v=1.50"></script>
+  <script src="/assets/js/site.js?v=1.60"></script>
 </body>
 </html>

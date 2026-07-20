@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>BackOfficeFleet | Trucking Back-Office Operating Layer</title>
   <meta name="description" content="BackOfficeFleet helps trucking fleets control driver readiness, dispatch release, safety evidence, settlement proof, billing, and office follow-through before work slows down.">
-  <link rel="stylesheet" href="/assets/css/styles.css?v=20260716-home-driver-premium">
+  <link rel="stylesheet" href="/assets/css/styles.css?v=20260720-home-hero-face">
 </head>
 <body class="visual-refresh premium-site page-home page-home-recovered page-home-command">
   <header class="site-header">
@@ -51,44 +51,6 @@
         </div>
       </div>
 
-      <aside class="home-command-console reveal" aria-label="BOF command center preview">
-        <div class="home-console-topline">
-          <span>BOF Command Center</span>
-          <strong>Live operating layer</strong>
-        </div>
-        <div class="home-console-metrics" aria-label="Operating status">
-          <span><b>84%</b><em>ready</em></span>
-          <span><b>12</b><em>review</em></span>
-          <span><b>3</b><em>blocked</em></span>
-        </div>
-        <div class="home-console-flow" aria-label="Connected workflow">
-          <a href="/drivers/">Drivers</a>
-          <a href="/dispatch/">Dispatch</a>
-          <a href="/safety/">Safety</a>
-          <a href="/settlements/">Settlements</a>
-          <a href="/business-operations/">Office</a>
-        </div>
-        <div class="home-console-work" aria-label="Example operating records">
-          <article>
-            <span class="is-ready">Ready</span>
-            <strong>DRV-004 cleared for Nashville release.</strong>
-            <p><b>Why:</b> DQF, HOS, assigned unit, and proof packet are aligned.</p>
-            <a href="/drivers/">Open driver record</a>
-          </article>
-          <article>
-            <span class="is-review">Review</span>
-            <strong>TR-2258 needs POD renewal evidence.</strong>
-            <p><b>To clear:</b> Confirm POD, receiver evidence, and renewal support before billing.</p>
-            <a href="/settlements/#canonical-settlement-records">Open settlement queue</a>
-          </article>
-          <article>
-            <span class="is-blocked">Blocked</span>
-            <strong>Medical-card hold prevents assignment.</strong>
-            <p><b>Owner:</b> Safety lead must clear the credential record before dispatch release.</p>
-            <a href="/safety/#canonical-safety-records">Open safety gate</a>
-          </article>
-        </div>
-      </aside>
     </section>
 
     <section class="home-clearance-board" aria-labelledby="home-clearance-title">
@@ -132,6 +94,64 @@
           </dl>
           <a class="button primary" href="/drivers/" data-command-route>Open page</a>
         </article>
+      </div>
+    </section>
+
+    <section class="section constituency-perspective-section" id="constituency-workbenches">
+      <div class="section-head reveal">
+        <p class="eyebrow">Constituency workbenches</p>
+        <h2>Each user gets their own front door, then lands in the same operating record.</h2>
+        <p>Shippers, dispatchers, brokers, fleet owners, aggregators, drivers, and governed fleets should not be forced through one generic story. BOF can show each audience the work they care about first, then connect it to the joined record that controls release, proof, settlement, and follow-up.</p>
+      </div>
+      <div class="constituency-grid">
+        <a class="constituency-card reveal" href="/customer-portal/load-intake/">
+          <span>Shippers</span>
+          <h3>Load intake and quote review</h3>
+          <p>Customer, lane, freight, proof expectations, accessorial notes, and quote assumptions start the record cleanly.</p>
+          <strong>Open shipper intake &rarr;</strong>
+        </a>
+        <a class="constituency-card reveal" href="/interactive-demo/drivers/document-intake/">
+          <span>BOF Vault</span>
+          <h3>Document intake and classification</h3>
+          <p>Receive document batches, classify files, match driver and carrier records, apply readiness rules, and route exceptions to review.</p>
+          <strong>Open BOF Vault intake &rarr;</strong>
+        </a>
+        <a class="constituency-card reveal" href="/carriers/">
+          <span>Carrier registry</span>
+          <h3>Carrier packet and readiness control</h3>
+          <p>Authority, insurance, W-9, agreement, ACH setup, lane eligibility, equipment fit, and clearance path stay tied to operating use.</p>
+          <strong>Open carrier registry &rarr;</strong>
+        </a>
+        <a class="constituency-card reveal" href="/dispatch/load-intake/">
+          <span>Dispatch / Brokers</span>
+          <h3>Release queue and clearance path</h3>
+          <p>Load intake, driver readiness, HOS, equipment gate, proof packet, settlement status, and owner action stay visible.</p>
+          <strong>Open dispatch workbench &rarr;</strong>
+        </a>
+        <a class="constituency-card reveal" href="/command-center/">
+          <span>Fleet owners</span>
+          <h3>Executive command view</h3>
+          <p>Readiness, risk, blockers, revenue holds, policy gaps, and office follow-up roll up without hiding the record behind the status.</p>
+          <strong>Open command center &rarr;</strong>
+        </a>
+        <a class="constituency-card reveal" href="/aggregator-command-center/">
+          <span>Aggregators</span>
+          <h3>Network readiness and partner visibility</h3>
+          <p>Carrier, driver, asset, document, claims, settlement, and onboarding pressure can be reviewed across a supported network.</p>
+          <strong>Open aggregator view &rarr;</strong>
+        </a>
+        <a class="constituency-card reveal" href="/drivers/">
+          <span>Drivers</span>
+          <h3>Driver readiness and active-duty clearance</h3>
+          <p>Documents, HOS, equipment access, safety state, pay profile, and the exact clearance route stay attached to the driver record.</p>
+          <strong>Open driver roster &rarr;</strong>
+        </a>
+        <a class="constituency-card reveal" href="/operations-record/">
+          <span>Joined record</span>
+          <h3>One truth across every perspective</h3>
+          <p>Dispatch, safety, proof, settlement, HR, finance, policy, and governance context resolve back to the same operating facts.</p>
+          <strong>Open joined record &rarr;</strong>
+        </a>
       </div>
     </section>
 
@@ -225,7 +245,7 @@
     </div>
   </section>
   <footer class="site-footer"><div class="footer-inner"><strong>BackOfficeFleet</strong><span>Managed back-office readiness for trucking fleets.</span><a href="/trust-governance/">Trust &amp; Governance</a></div></footer>
-  <script src="/assets/js/site.js?v=1.51"></script>
+  <script src="/assets/js/site.js?v=1.60"></script>
   <script>
     (function () {
       var workspace = document.querySelector("[data-home-command]");
