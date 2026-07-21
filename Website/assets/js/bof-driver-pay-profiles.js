@@ -176,7 +176,7 @@
     mount.innerHTML = [
       '<div class="pay-workspace-head">',
       '  <div><p class="eyebrow">Driver pay profile workbench</p><h2>Choose how the driver is paid, then let the record carry through payroll, settlement, and finance.</h2><p>These baked-in demo records show employee, independent-contractor, and owner-operator pay logic tied to the same canonical driver and load records used elsewhere.</p></div>',
-      '  <div class="pay-admin-actions"><a class="button secondary" href="/settlements/#canonical-settlement-records">Open settlement impact</a><button type="button" data-reset-demo-overrides>Reset local edits</button></div>',
+      '  <div class="pay-admin-actions"><a class="button secondary" href="/command-center/issue/?case=driver-payroll-hr-review">Open payroll clearance</a><button type="button" data-reset-demo-overrides>Reset local edits</button></div>',
       '</div>',
       renderPayrollSummary(profiles),
       '<div class="pay-profile-grid">' + profiles.map(function (profile) { return profileCard(profile, maps); }).join("") + '</div>'

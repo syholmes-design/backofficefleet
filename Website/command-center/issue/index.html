@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Command Center Issue Record | BackOfficeFleet</title>
+  <meta name="description" content="A BOF Command Center issue record showing the reason, owner, consequence, and clearance path for a specific operating blocker.">
+  <link rel="stylesheet" href="/assets/css/styles.css?v=20260720-enterprise-header-v2">
+</head>
+<body class="visual-refresh premium-site page-command-center command-center-old-port command-issue-record-page">
+  <header class="site-header">
+    <a class="brand" href="/" aria-label="BackOfficeFleet home"><img src="/assets/images/logo/boflogo-original.png" alt="BackOfficeFleet"></a>
+    <button class="nav-toggle" type="button" data-nav-toggle aria-expanded="false" aria-label="Toggle navigation">&#9776;</button>
+    <nav class="site-nav" data-nav aria-label="Main navigation">
+      <div class="nav-menu" data-nav-menu>
+        <button class="nav-menu-toggle" type="button" data-nav-menu-toggle aria-expanded="false" aria-haspopup="true">Who We Serve</button>
+        <div class="nav-dropdown" aria-label="Who We Serve">
+          <a href="/fleet/">Fleet Owners</a>
+          <a href="/private-fleets/">Private Fleets</a>
+          <a href="/government/">Government Fleets</a>
+          <a href="/aggregator-outreach/">Aggregators</a>
+        </div>
+      </div>
+      <a href="/drivers/">Drivers</a>
+      <a href="/dispatch/">Dispatch &amp; Operations</a>
+      <a href="/safety/">Safety &amp; Compliance</a>
+      <a href="/settlements/">Settlements &amp; Billing</a>
+      <a href="/business-operations/">Business Operations</a>
+      <a href="/policies-procedures/">Policies &amp; Procedures</a>
+      <a href="/trust-governance/">Company</a>
+      <a class="nav-utility-link active" href="/command-center/" aria-current="page">Command Center</a>
+    </nav>
+    <a class="header-cta" href="/dashboard/">Sign In</a>
+  </header>
+
+  <main class="command-issue-record">
+    <section class="command-issue-hero">
+      <div class="old-command-shell command-issue-grid">
+        <div>
+          <p class="old-command-kicker" data-field="module">Command Center Issue</p>
+          <h1 data-field="title">Operating issue record</h1>
+          <p data-field="summary">This record explains the reason, owner, business impact, and clearance path for the selected Command Center item.</p>
+          <div class="command-issue-actions">
+            <a href="/command-center/">Back to Command Center</a>
+            <a href="/operations-record/">Open joined operating record</a>
+          </div>
+        </div>
+        <aside class="command-issue-status-card">
+          <span data-field="status">Review</span>
+          <strong data-field="owner">Owner assigned</strong>
+          <p data-field="due">Due before release</p>
+        </aside>
+      </div>
+    </section>
+
+    <section class="old-command-section">
+      <div class="old-command-shell command-issue-workspace">
+        <article class="command-issue-panel">
+          <span>Why it is flagged</span>
+          <h2 data-field="whyTitle">The record needs owner review.</h2>
+          <p data-field="why">The blocker must be resolved before the record can move forward.</p>
+        </article>
+        <article class="command-issue-panel">
+          <span>Affected record</span>
+          <h2 data-field="affected">Driver, load, carrier, or packet record</h2>
+          <p data-field="impact">The issue affects dispatch, proof, settlement, safety, or customer release.</p>
+        </article>
+        <article class="command-issue-panel command-issue-clearance">
+          <span>Clearance path</span>
+          <h2>What clears it</h2>
+          <ol data-field="clearance"></ol>
+        </article>
+        <article class="command-issue-panel command-issue-context">
+          <span>Related workspaces</span>
+          <h2>Open the supporting record</h2>
+          <div data-field="links" class="command-issue-link-grid"></div>
+        </article>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <span>BackOfficeFleet</span>
+    <span>Command Center issue record.</span>
+    <a href="/trust-governance/">Trust &amp; Governance</a>
+  </footer>
+
+  <script>
+    const cases = {
+      "tms-10482-release-review": ["Owner Triage", "TMS-LD-10482 release decision", "Review", "Operations lead", "Before dispatch release", "The imported TMS load looks close to release, but BOF keeps the driver, carrier, document, and proof gates visible before the team trusts the dispatch decision.", "Release decision needs proof confirmation.", "TMS-LD-10482 / Dallas to Memphis", "The load can move only if BOL image review, carrier readiness, driver readiness, and rate confirmation stay aligned.", ["Confirm BOL image and rate confirmation.", "Verify driver and carrier readiness are not blocking.", "Record the release decision and owner sign-off."], [["Open dispatch queue", "/dispatch/#canonical-dispatch-records"], ["Open proof cabinet", "/documents/#operations-file-cabinet"], ["Open operations record", "/operations-record/"]]],
+      "bol-10482-image-review": ["Document Gate", "BOL image confirmation controls release", "Review", "Document owner", "Before release", "The dispatcher should not treat the lane as clean until the BOL image and load details match the operating record.", "BOL image needs confirmation.", "BOL-10482 / TMS-LD-10482", "Dispatch can proceed after the document owner confirms the BOL image supports the load, lane, and customer packet.", ["Compare BOL image to lane and load details.", "Attach corrected image or approval note.", "Reopen dispatch release after confirmation."], [["Open document cabinet", "/documents/#operations-file-cabinet"], ["Open dispatch context", "/dispatch/#canonical-dispatch-records"], ["Open operations record", "/operations-record/"]]],
+      "drv-3301-medical-update": ["Safety Gate", "DRV-3301 medical-card update blocks assignment", "Blocked", "Safety lead", "Before driver assignment", "The driver cannot be presented as dispatch-ready until the medical card record is corrected and safety clears the qualification file.", "Credential record blocks dispatch.", "DRV-3301 / Medical card update", "Assignment should remain blocked so dispatch does not build a lane around a driver who is not cleared.", ["Upload corrected medical-card evidence.", "Complete MVR and qualification review.", "Record safety sign-off before assignment."], [["Open driver roster", "/drivers/#driver-roster"], ["Open safety records", "/safety/#canonical-safety-records"], ["Open operations record", "/operations-record/"]]],
+      "carrier-207-renewal-watch": ["Carrier Gate", "CAR-207 renewal watch controls packet readiness", "Review", "Carrier operations", "Before assignment", "The carrier packet can support release only after renewal evidence, insurance status, and authority notes remain current in the same record.", "Carrier renewal evidence needs review.", "CAR-207 / Renewal watch", "A dispatch release can become exposed if the carrier packet is treated as ready while renewal evidence is stale.", ["Confirm renewal document dates.", "Attach insurance or authority evidence.", "Clear the carrier gate before assignment."], [["Open carrier registry", "/carriers/"], ["Open documents", "/documents/#operations-file-cabinet"], ["Open command center", "/command-center/"]]],
+      "proof-gap-dock-sheet": ["DispatchHub", "Proof gap: dock sheet blocked", "Blocked", "Dispatcher / packet owner", "Due before departure", "ETA is holding because the pre-load dock sheet is missing from the load packet.", "Proof gap prevents dispatch release.", "Load BOF-1907 / Carlos Martinez / TR-2048", "Dispatch cannot release the load and settlement will inherit a weak packet if proof is not attached.", ["Attach dock sheet or receiver note.", "Confirm BOL and POD evidence match the load.", "Record owner sign-off before dispatch release."], [["Open dispatch queue", "/dispatch/#dispatch-workbench"], ["Open proof cabinet", "/documents/#operations-file-cabinet"], ["Open joined record", "/operations-record/"]]],
+      "claim-evidence-review": ["ClaimsNexus", "Safety claim evidence needs manager review", "Review", "Safety lead", "Due today", "HOS events, driver statement, cargo-damage photo, and claim packet must align.", "Claim packet is incomplete.", "Claim EX-2175 / Frank Miller / Mobile to Atlanta", "Safety, claims, settlement, and customer communication remain open until the evidence record is complete.", ["Upload driver statement.", "Attach cargo photo and roadside inspection notes.", "Manager reviews claim packet and records corrective action."], [["Open safety record", "/safety/#safety-workbench"], ["Open policy library", "/policies-procedures/#policy-documents"], ["Open joined record", "/operations-record/"]]],
+      "fuel-exception-approval": ["DispatchBoard", "Fuel exception needs manager approval", "Review", "Finance manager", "Before settlement release", "Driver settlement release and billing cash path are delayed until fuel exception approval clears.", "Fuel exception lacks approval.", "Settlement SET-2258 / Priya Patel / TR-2258", "Net revenue and driver pay cannot finalize until the exception owner approves or rejects the charge.", ["Confirm fuel receipt and route context.", "Manager approves exception or assigns correction.", "Release settlement packet after approval is attached."], [["Open settlement records", "/settlements/#canonical-settlement-records"], ["Open finance context", "/business-operations/accounting-finance/"], ["Open joined record", "/operations-record/"]]],
+      "i40-reroute-risk": ["Route Intervention", "I-40 storm cell and traffic backup", "At Risk", "Dispatch manager", "Before next check call", "Weather and congestion are reducing HOS reserve before the driver reaches the service window.", "Route is at risk before failure.", "Load L004 / I-40 corridor / dry van route", "Service failure risk rises unless dispatch reroutes and updates settlement proof expectations.", ["Validate current HOS reserve.", "Confirm alternate route and ETA.", "Attach reroute note to dispatch and settlement records."], [["Open dispatch queue", "/dispatch/#dispatch-workbench"], ["Open driver context", "/drivers/#driver-roster"], ["Open joined record", "/operations-record/"]]],
+      "low-mvr-carrier": ["Carrier Gate", "Low MVR carrier assignment blocked", "Blocked", "Carrier manager", "Before assignment", "Carrier risk escalates before a driver assignment can proceed.", "Carrier qualification gate is not clear.", "Carrier CAR-001 / Blue Ridge Overland", "Dispatch assignment stays blocked until carrier qualification evidence clears.", ["Review MVR exception.", "Attach manager approval or reject carrier assignment.", "Record carrier gate decision before release."], [["Open carrier registry", "/carriers/"], ["Open safety context", "/safety/"], ["Open joined record", "/operations-record/"]]],
+      "insurance-renewal-blue-ridge": ["Carrier Gate", "Blue Ridge Overland insurance renewal warning", "Review", "Insurance owner", "Before load release", "Renewal documentation must be attached before the load can move.", "Insurance evidence is not current.", "Carrier CAR-001 / Blue Ridge Overland / L011", "Carrier can support current work only if renewal documentation stays attached to the record.", ["Upload renewal certificate.", "Confirm effective dates and covered units.", "Clear carrier gate before dispatch release."], [["Open carrier registry", "/carriers/"], ["Open documents", "/documents/#operations-file-cabinet"], ["Open dispatch context", "/dispatch/"]]],
+      "compliance-review-southern-cross": ["Carrier Gate", "Southern Cross Freight compliance review", "Review", "Compliance owner", "Before release", "Safety and qualification records need manager review before assignment proceeds.", "Compliance reason requires approval.", "Carrier Southern Cross Freight / active assignment", "Dispatch can proceed only after compliance signs off on the qualification record.", ["Review qualification exception.", "Attach approval note or correction.", "Reopen dispatch release after compliance clears."], [["Open safety record", "/safety/"], ["Open policy library", "/policies-procedures/"], ["Open joined record", "/operations-record/"]]],
+      "finance-packet-pacific-line": ["Finance Gate", "Pacific Line finance packet held", "Held", "Settlement owner", "Next billing cycle", "Rate, accessorials, POD, and billing release must align.", "Finance packet is incomplete.", "Pacific Line / settlement packet / POD review", "Cash movement slows until proof and payment records reconcile.", ["Confirm rate and accessorial support.", "Attach POD and invoice evidence.", "Release packet to settlement queue."], [["Open settlements", "/settlements/"], ["Open documents", "/documents/"], ["Open finance context", "/business-operations/accounting-finance/"]]],
+      "deadhead-dallas-backhaul": ["Reload Intelligence", "Dallas backhaul opportunity", "Ready", "Dispatch planner", "Review before arrival", "Backhaul opportunity sits near the affected lane.", "Opportunity needs route validation.", "Dallas lane / available backhaul / driver HOS check", "The fleet can reduce deadhead if driver readiness and settlement proof stay aligned.", ["Confirm driver HOS and equipment fit.", "Validate pickup window.", "Attach reload plan to joined record."], [["Open dispatch", "/dispatch/"], ["Open drivers", "/drivers/"], ["Open joined record", "/operations-record/"]]],
+      "blocked-reload-iron-mule": ["Reload Intelligence", "Iron Mule blocked reload assessment", "Blocked", "Safety lead", "Before assignment", "Risk rule prevents assignment until safety clears.", "Reload cannot be assigned.", "Iron Mule / reload candidate / safety exception", "A new load should not be assigned while safety qualification is unresolved.", ["Review safety exception.", "Record corrective action.", "Clear driver and carrier gate before reload assignment."], [["Open safety", "/safety/"], ["Open drivers", "/drivers/"], ["Open dispatch", "/dispatch/"]]],
+      "revenue-event-southern-cross": ["Reload Intelligence", "Southern Cross Freight revenue event escalation", "At Risk", "Settlement owner", "Before invoice release", "Settlement and billing impact rises if POD arrives late.", "POD timing threatens cash movement.", "Southern Cross Freight / POD deadline / settlement packet", "Revenue readiness depends on timely proof, invoice, and settlement release.", ["Confirm POD arrival.", "Update invoice and factoring packet.", "Record owner decision if proof is late."], [["Open settlements", "/settlements/"], ["Open documents", "/documents/"], ["Open joined record", "/operations-record/"]]],
+      "finance-hold-prairie-line": ["Reload Intelligence", "Prairie Line finance hold", "Held", "Finance owner", "Before reload release", "Proof and payment records need reconciliation before new release.", "Finance hold affects reload release.", "Prairie Line / payment hold / reload candidate", "A new reload should not proceed until the prior financial hold has an owner and disposition.", ["Reconcile proof and payment records.", "Assign finance owner.", "Clear or condition reload release."], [["Open finance", "/business-operations/accounting-finance/"], ["Open settlements", "/settlements/"], ["Open joined record", "/operations-record/"]]],
+      "l004-proof-driver-confirmation": ["Activity Feed", "L004 proof packet and driver confirmation", "Review", "Packet owner", "Before settlement review", "Carrier settlement cannot release until POD evidence is reconciled.", "Driver confirmation and proof do not match.", "Load L004 / driver confirmation / POD record", "The packet remains in review until proof, driver confirmation, and settlement release agree.", ["Compare driver confirmation to POD.", "Attach corrected proof.", "Release settlement review."], [["Open settlements", "/settlements/"], ["Open documents", "/documents/"], ["Open joined record", "/operations-record/"]]],
+      "l011-finance-release": ["Activity Feed", "L011 finance release and customer packet", "Review", "Billing owner", "Before customer invoice", "Invoice cannot move until customer document set is complete.", "Customer packet is incomplete.", "Load L011 / customer packet / invoice release", "Billing is delayed until required customer documents are attached.", ["Attach missing customer document.", "Confirm invoice requirements.", "Release finance queue."], [["Open documents", "/documents/"], ["Open finance", "/business-operations/accounting-finance/"], ["Open settlements", "/settlements/"]]],
+      "car001-renewal-assignment": ["Activity Feed", "CAR-001 renewal assignment blocked", "Blocked", "Carrier manager", "Before dispatch", "Carrier compliance and insurance renewal require owner review.", "Renewal evidence blocks assignment.", "CAR-001 / Blue Ridge Overland / L011", "Carrier assignment is blocked until insurance and compliance records are current.", ["Attach renewal evidence.", "Confirm carrier status.", "Clear carrier assignment gate."], [["Open carriers", "/carriers/"], ["Open documents", "/documents/"], ["Open dispatch", "/dispatch/"]]],
+      "reload-confirmation": ["Activity Feed", "Reload confirmation review", "Review", "Operations manager", "Before reload dispatch", "Reload plan must be tied to active HOS and equipment status.", "Reload lacks operating confirmation.", "Reload plan / HOS reserve / equipment fit", "The next commercial move should not advance without driver and equipment readiness.", ["Confirm HOS availability.", "Validate equipment match.", "Attach reload confirmation note."], [["Open dispatch", "/dispatch/"], ["Open drivers", "/drivers/"], ["Open operations record", "/operations-record/"]]],
+      "safety-claim-evidence": ["Activity Feed", "Safety claim evidence needs manager review", "Review", "Safety manager", "Today", "Crash notice, cargo photo, driver statement, and corrective action must resolve before the record clears.", "Claim evidence is not complete.", "Claim packet / driver statement / corrective action", "Safety, settlement, and customer response remain open until evidence is complete.", ["Attach crash notice and cargo photos.", "Record driver statement.", "Manager approves corrective action."], [["Open safety", "/safety/"], ["Open policies", "/policies-procedures/"], ["Open joined record", "/operations-record/"]]],
+      "customer-billing-owner-review": ["Activity Feed", "Customer billing records need owner review", "Review", "Finance owner", "Next billing cycle", "AR, settlement hold, and follow-up owner must stay connected.", "Billing owner review is open.", "Customer account / AR queue / settlement hold", "Cash follow-up will fragment unless the owner and next action stay attached.", ["Confirm AR reason.", "Assign finance owner.", "Attach settlement hold disposition."], [["Open finance", "/business-operations/accounting-finance/"], ["Open settlements", "/settlements/"], ["Open command center", "/command-center/"]]],
+      "factoring-ready": ["Finance Summary", "Factoring packets ready", "Ready", "Settlement desk", "Ready for review", "Nine factoring packets are ready for finance review.", "Packets are ready to submit.", "Factoring queue / ready packets", "Finance can move the packets because proof and settlement records are aligned.", ["Confirm packet completeness.", "Submit to finance or factoring queue.", "Record release timestamp."], [["Open settlements", "/settlements/"], ["Open documents", "/documents/"], ["Open finance", "/business-operations/accounting-finance/"]]],
+      "missing-proof-clear": ["Finance Summary", "Missing POD / BOL check", "Clear", "Document owner", "Current", "No critical proof gaps remain after the latest document pass.", "Proof queue is currently clear.", "Document proof queue / POD and BOL", "This proves the control tower can show when a risk is cleared, not only when it is blocked.", ["Maintain proof watch.", "Keep latest POD and BOL attached.", "Escalate if a new proof gap appears."], [["Open documents", "/documents/"], ["Open settlements", "/settlements/"], ["Open joined record", "/operations-record/"]]],
+      "held-packets": ["Finance Summary", "Held settlement packets", "Held", "Settlement owner", "Next review cycle", "Packets need POD, renewal evidence, rate confirmation, or owner approval.", "Held packets need clearance reasons.", "Settlement queue / four held packets", "Cash is delayed until each held packet shows reason, owner, and clearance path.", ["Sort by hold reason.", "Attach missing proof or approval.", "Release packet after owner sign-off."], [["Open settlements", "/settlements/"], ["Open documents", "/documents/"], ["Open finance", "/business-operations/accounting-finance/"]]],
+      "settlement-impact": ["Impact Analysis", "Settlement impact", "Review", "Settlement desk", "Before pay cycle", "Four records have payment delays or packet holds.", "Settlement impact needs owner follow-up.", "Settlement impact queue", "Delayed payment creates driver pay, factoring, and cash-flow risk.", ["Identify held packet reason.", "Assign owner and due date.", "Clear payment release condition."], [["Open settlements", "/settlements/"], ["Open finance", "/business-operations/accounting-finance/"]]],
+      "compliance-impact": ["Impact Analysis", "Compliance impact", "Review", "Compliance owner", "Before release", "Three records involve policy, qualification, or audit exceptions.", "Compliance exceptions affect release.", "Compliance impact queue", "Operational release should be conditional until policy or qualification evidence clears.", ["Open controlling policy.", "Attach acknowledgment or approval.", "Clear compliance exception."], [["Open policies", "/policies-procedures/"], ["Open safety", "/safety/"]]],
+      "insurance-impact": ["Impact Analysis", "Insurance impact", "Review", "Insurance owner", "Before assignment", "Two records involve claims, incidents, or renewal evidence.", "Insurance evidence is under review.", "Insurance impact queue", "Carrier or driver assignment can be restricted until the insurance record is current.", ["Review claim or COI evidence.", "Confirm effective dates.", "Attach approval before assignment."], [["Open safety", "/safety/"], ["Open documents", "/documents/"]]],
+      "owner-action": ["Impact Analysis", "Owner action", "Review", "Operations lead", "Open", "Five named follow-ups have due dates.", "Owner follow-up is required.", "Owner action queue", "The Command Center should show who owns the next action, not just the risk label.", ["Assign named owner.", "Set due date.", "Close after proof is attached."], [["Open business operations", "/business-operations/"], ["Open command center", "/command-center/"]]],
+      "pre-trip-asset-defect": ["Critical Risk", "Pre-trip asset defect blocks dispatch", "Blocked", "Safety lead", "Due today", "The assigned unit cannot be released until the defect is repaired, owner sign-off is recorded, and ELD sync proof is attached.", "Asset defect blocks dispatch.", "DRV-003 / TR-1931 / DRY VAN TRL-088-04", "Dispatch is blocked and settlement release is held until safety clears.", ["Repair or document the defect.", "Attach owner sign-off.", "Sync ELD proof and reopen dispatch release."], [["Open safety gate", "/safety/"], ["Open driver context", "/drivers/"], ["Open joined record", "/operations-record/"]]],
+      "pod-renewal-evidence": ["Prioritized Risk", "POD renewal evidence needs review", "Review", "Dispatcher / packet owner", "Next review cycle", "The packet can move only after corrected POD, receiver evidence, and renewal support are attached to the same load record.", "POD renewal evidence is incomplete.", "BOF-1907 / Carlos Martinez / TR-2048", "Billing will inherit a weak packet unless the proof gap clears first.", ["Confirm POD.", "Attach receiver evidence.", "Add renewal support and release packet."], [["Open settlement queue", "/settlements/"], ["Open proof cabinet", "/documents/"], ["Open joined record", "/operations-record/"]]],
+      "rate-confirmation-review": ["Prioritized Risk", "Rate confirmation match review", "Review", "Document desk", "Before final dispatch release", "The rate confirmation must match the lane, accessorial notes, and customer packet before the load can be treated as clean.", "Rate confirmation controls release.", "BOF-2175 / Frank Miller / Mobile to Atlanta", "Dispatch may continue with caution, but billing and settlement should not finalize until the rate evidence matches the operating record.", ["Compare rate confirmation to lane and customer terms.", "Attach accessorial support or correction note.", "Release dispatch and settlement review after the document desk signs off."], [["Open dispatch context", "/dispatch/"], ["Open proof cabinet", "/documents/"], ["Open settlement context", "/settlements/"]]],
+      "renewal-evidence-review": ["Prioritized Risk", "Renewal evidence review", "Review", "Safety desk", "Before assignment commitment", "Renewal evidence must be collected and tied to the driver qualification review before assignment is committed.", "Renewal evidence affects assignment planning.", "BOF-2258 / Priya Patel / Shreveport to Jackson", "The driver may remain visible to dispatch, but assignment should stay conditional until the renewal record is updated.", ["Collect renewal evidence.", "Update qualification review.", "Record assignment decision and reopen dispatch planning."], [["Open safety context", "/safety/"], ["Open driver context", "/drivers/"], ["Open joined record", "/operations-record/"]]],
+      "driver-payroll-hr-review": ["People Operations", "Payroll and HR packet visibility review", "Review", "HR / payroll owner", "Before driver presentation", "The worker file is not blocked by safety, but payroll setup, withholding, benefits, or HR packet visibility needs owner review before the driver is presented as fully ready.", "HR/payroll setup needs owner review.", "Driver roster / administrative review", "A driver can look operationally ready while still creating payroll, onboarding, or worker-classification risk if the people record is incomplete.", ["Confirm worker classification and pay method.", "Review withholding, benefits, and onboarding packet.", "Attach HR/payroll owner sign-off before presentation."], [["Open HR tier", "/business-operations/hr-tier/"], ["Open payroll administration", "/business-operations/payroll-administration/"], ["Open driver roster", "/drivers/"]]],
+      "carrier-renewal-evidence": ["Prioritized Risk", "Carrier renewal evidence needs manager review", "Review", "Manager review", "Before release", "Carrier assignment remains visible but controlled until renewal documents, insurance status, and dispatch impact are reconciled.", "Carrier renewal evidence is not fully reconciled.", "CAR-001 / Blue Ridge Overland / L011", "Carrier can support current work only if renewal documentation stays attached.", ["Attach renewal documents.", "Confirm insurance status.", "Record manager approval before dispatch release."], [["Open carrier registry", "/carriers/"], ["Open documents", "/documents/"], ["Open dispatch context", "/dispatch/"]]]
+    };
+
+    const fallback = cases["proof-gap-dock-sheet"];
+    const params = new URLSearchParams(window.location.search);
+    const selected = cases[params.get("case")] || fallback;
+    const [module, title, status, owner, due, summary, whyTitle, affected, impact, clearance, links] = selected;
+
+    document.querySelector('[data-field="module"]').textContent = module;
+    document.querySelector('[data-field="title"]').textContent = title;
+    document.querySelector('[data-field="summary"]').textContent = summary;
+    document.querySelector('[data-field="status"]').textContent = status;
+    document.querySelector('[data-field="owner"]').textContent = owner;
+    document.querySelector('[data-field="due"]').textContent = due;
+    document.querySelector('[data-field="whyTitle"]').textContent = whyTitle;
+    document.querySelector('[data-field="why"]').textContent = summary;
+    document.querySelector('[data-field="affected"]').textContent = affected;
+    document.querySelector('[data-field="impact"]').textContent = impact;
+
+    const clearanceList = document.querySelector('[data-field="clearance"]');
+    clearanceList.innerHTML = clearance.map((item) => `<li>${item}</li>`).join("");
+
+    const linkGrid = document.querySelector('[data-field="links"]');
+    linkGrid.innerHTML = links.map(([label, href]) => `<a href="${href}">${label}</a>`).join("");
+  </script>
+  <script src="/assets/js/main.js?v=20260720-enterprise-header-v2"></script>
+</body>
+</html>

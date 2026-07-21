@@ -35,6 +35,17 @@
     return '<span class="operations-status-pill ' + statusClass(status) + '"><b>' + esc(label) + '</b>' + esc(status || "None") + '</span>';
   }
 
+  function commandIssueHref(load, exception) {
+    var loadId = String(load && load.id || "");
+    var exceptionId = String(exception && exception.id || "");
+    if (loadId === "BOF-1907" || exceptionId === "EX-1907-POD") return "/command-center/issue/?case=pod-renewal-evidence";
+    if (loadId === "BOF-1931" || exceptionId === "EX-1931-MED") return "/command-center/issue/?case=pre-trip-asset-defect";
+    if (loadId === "BOF-2175" || exceptionId === "EX-2175-RATE") return "/command-center/issue/?case=rate-confirmation-review";
+    if (loadId === "BOF-2258" || exceptionId === "EX-2258-RENEWAL") return "/command-center/issue/?case=renewal-evidence-review";
+    if (loadId === "BOF-2064") return "/operations-record/#bof-2064";
+    return loadId ? "/operations-record/#" + loadId.toLowerCase() : "/command-center/issue/?case=owner-action";
+  }
+
   function money(value) {
     var number = Number(value || 0);
     return "$" + number.toLocaleString(undefined, { maximumFractionDigits: number % 1 ? 2 : 0 });
@@ -51,6 +62,61 @@
     if (tone === "blocked") return "Hold";
     if (tone === "review") return "Review";
     return "Release";
+  }
+
+  function recordPriority(load) {
+    if (releaseTone(load) === "blocked") return 0;
+    if (load.dispatchStatus === "At Risk" || load.proofStatus === "At Risk") return 1;
+    if (load.dispatchStatus === "Review" || load.proofStatus === "Review" || load.settlementStatus === "In Progress") return 2;
+    return 3;
+  }
+
+  function priorityContext(load, maps) {
+    var driver = maps.drivers[load.driverId];
+    var exception = load.exceptionIds && load.exceptionIds.length ? maps.exceptions[load.exceptionIds[0]] : null;
+    var label = releaseLabel(load);
+    if (label === "Hold") {
+      return "Priority record shown first: " + load.id + " is blocked because " + (exception ? exception.title + " is open. " + exception.assignedOwner + " owns the clearance path." : "a dispatch or safety gate is locked.") + " The load should not be assigned until the record clears.";
+    }
+    if (label === "Review") {
+      return "Priority record shown first: " + load.id + " needs review before release. The card shows the reason, owner, and clearance route before the alignment table.";
+    }
+    return "Priority record shown first: " + load.id + " is ready because the driver" + (driver ? " " + driver.name : "") + ", unit, proof, safety, and settlement records are aligned.";
+  }
+
+  function visibleReason(load, driver, proof, settlement, safety, exception) {
+    if (exception) {
+      return (exception.title || "Open exception") + ": " + (exception.requiredAction || "owner action is required before release.");
+    }
+    if (load.dispatchStatus === "Blocked" || load.safetyStatus === "Blocked") {
+      return "Blocked because dispatch or safety has locked release until the controlling record is corrected.";
+    }
+    if (load.dispatchStatus === "At Risk") {
+      return "At risk because the load can still move, but dispatch needs an owner decision before commitment.";
+    }
+    if (load.dispatchStatus === "Review" || load.proofStatus === "Review") {
+      return "Under review because the release packet still needs proof, document, or owner confirmation.";
+    }
+    if (settlement && settlement.status !== "Complete") {
+      return "Settlement is not complete; billing and pay context should stay visible until the packet clears.";
+    }
+    return "Ready because driver, dispatch, proof, safety, and settlement records are aligned.";
+  }
+
+  function visibleClearance(load, proof, settlement, safety, exception, capacity) {
+    if (exception) {
+      return (exception.assignedOwner || "Assigned owner") + " must " + String(exception.requiredAction || "clear the assigned exception").toLowerCase() + ".";
+    }
+    if (load.dispatchStatus === "At Risk" || load.dispatchStatus === "Review" || load.proofStatus === "Review") {
+      return "Confirm the open proof or owner review, then reopen the release decision.";
+    }
+    if (load.dispatchStatus === "Blocked" || load.safetyStatus === "Blocked") {
+      return "Correct the blocking safety or dispatch record, attach proof, then unlock assignment.";
+    }
+    if (settlement && settlement.status !== "Complete") {
+      return "Clear the settlement hold reason, then move the packet toward billing.";
+    }
+    return "No clearance action required; HOS available is " + capacity.hos + ".";
   }
 
   function safetyRecordForLoad(data, load) {
@@ -223,6 +289,10 @@
       '    ' + statusLabel("Proof", load.proofStatus),
       '    ' + statusLabel("Settlement", load.settlementStatus),
       '  </div>',
+      '  <div class="operations-reason-strip">',
+      '    <section><span>Why this is ' + esc(releaseLabel(load).toLowerCase()) + '</span><p>' + esc(visibleReason(load, driver, proof, settlement, safety, exception)) + '</p></section>',
+      '    <section><span>Clearance route</span><p>' + esc(visibleClearance(load, proof, settlement, safety, exception, capacity)) + '</p></section>',
+      '  </div>',
       '  <dl class="operations-record-meta">',
       '    <div><dt>Proof packet</dt><dd>' + esc(proofText) + '</dd></div>',
       '    <div><dt>Settlement</dt><dd>' + esc(settlementText) + '</dd></div>',
@@ -241,9 +311,9 @@
       evidence.image ? '    <figure class="operations-securement-proof"><img src="' + esc(evidence.image) + '" alt="' + esc(evidence.label) + '" loading="lazy" decoding="async"><figcaption>' + esc(evidence.caption) + '</figcaption></figure>' : '',
       '  </details>',
       '  <div class="operations-record-actions">',
-      '    <a href="/operations-record/#' + esc(load.id.toLowerCase()) + '">Open record</a>',
+      '    <a href="' + esc(commandIssueHref(load, exception)) + '">' + (tone === "ready" ? "Open record" : "Open issue record") + '</a>',
       '    <a href="' + esc(driverRoute) + '">Driver file</a>',
-      '    <a href="/settlements/#canonical-settlement-records">Settlement context</a>',
+      '    <a href="/operations-record/#' + esc(load.id.toLowerCase()) + '">Joined context</a>',
       '  </div>',
       '</article>'
     ].join("");
@@ -288,10 +358,12 @@
       if (state.filter === "Review") return load.dispatchStatus === "Review" || load.proofStatus === "Review";
       if (state.filter === "At Risk") return load.dispatchStatus === "At Risk";
       return true;
+    }).sort(function (a, b) {
+      return recordPriority(a) - recordPriority(b);
     });
     renderSummary(data);
     recordMount.innerHTML = visible.length
-      ? visible.map(function (load) { return renderCard(load, maps); }).join("")
+      ? '<article class="operations-priority-note">' + esc(priorityContext(visible[0], maps)) + '</article>' + visible.map(function (load) { return renderCard(load, maps); }).join("")
       : '<article class="operations-loading-card">No records match this filter.</article>';
     renderTable(data, maps);
   }

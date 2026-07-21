@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Fleet Savings Outlook | BackOfficeFleet</title>
+  <meta name="description" content="Directional private fleet savings model across compliance, proof, dispatch, settlements, and administrative efficiency.">
+  <link rel="stylesheet" href="/assets/css/styles.css?v=20260720-enterprise-header-v2">
+</head>
+<body class="premium-site private-fleet-enterprise-page fleet-savings-page">
+  <header class="site-header">
+    <a class="brand" href="/" aria-label="BackOfficeFleet home"><img src="/assets/images/logo/boflogo-original.png" alt="BackOfficeFleet"></a>
+    <button class="nav-toggle" type="button" data-nav-toggle aria-expanded="false" aria-label="Toggle navigation">&#9776;</button>
+    <nav class="site-nav" data-nav aria-label="Main navigation">
+      <div class="nav-menu" data-nav-menu>
+        <button class="nav-menu-toggle" type="button" data-nav-menu-toggle aria-expanded="false" aria-haspopup="true">Who We Serve</button>
+        <div class="nav-dropdown" aria-label="Who We Serve">
+          <a href="/fleet/">Fleet Owners</a>
+          <a href="/private-fleets/">Private Fleets</a>
+          <a href="/government/">Government Fleets</a>
+          <a href="/aggregator-outreach/">Aggregators</a>
+        </div>
+      </div>
+      <a href="/drivers/">Drivers</a>
+      <a href="/dispatch/">Dispatch &amp; Operations</a>
+      <a href="/safety/">Safety &amp; Compliance</a>
+      <a href="/settlements/">Settlements &amp; Billing</a>
+      <a href="/business-operations/">Business Operations</a>
+      <a href="/policies-procedures/">Policies &amp; Procedures</a>
+      <a href="/trust-governance/">Company</a>
+    </nav>
+    <a class="header-cta" href="/dashboard/">Sign In</a>
+  </header>
+
+  <main class="pf-section">
+    <div class="pf-container">
+      <section class="pf-savings-hero reveal">
+        <p class="eyebrow">Fleet economics / directional model</p>
+        <h1>Fleet Savings Outlook</h1>
+        <p>Translate operational pain into the same savings categories BOF uses in the demo command center: compliance posture, proof gaps, dispatch coordination, settlement drag, and administrative efficiency. Results are illustrative, not a guarantee.</p>
+      </section>
+
+      <section class="pf-calculator" data-fleet-savings>
+        <form class="pf-calculator-panel reveal" aria-label="Fleet savings inputs">
+          <h2>Fleet profile</h2>
+          <label for="calc-pu">Power units</label>
+          <p>Tractors or active linehaul assets.</p>
+          <input id="calc-pu" name="powerUnits" type="number" min="1" value="45">
+
+          <label for="calc-ml">Linehaul loads per month</label>
+          <input id="calc-ml" name="monthlyLoads" type="number" min="1" value="320">
+
+          <label for="calc-ar">Average revenue per load</label>
+          <input id="calc-ar" name="averageRevenue" type="number" min="200" step="50" value="2200">
+
+          <label for="calc-cp">Credential and compliance document pain</label>
+          <select id="calc-cp" name="credentialPain">
+            <option value="low">Low - mostly under control</option>
+            <option value="moderate" selected>Moderate - recurring exceptions</option>
+            <option value="high">High - frequent fire drills</option>
+            <option value="severe">Severe - revenue or audit at risk</option>
+          </select>
+
+          <label for="calc-pp">Proof / POD / photo / seal / GPS pain</label>
+          <select id="calc-pp" name="proofPain">
+            <option value="low">Low - mostly under control</option>
+            <option value="moderate">Moderate - recurring exceptions</option>
+            <option value="high" selected>High - frequent fire drills</option>
+            <option value="severe">Severe - revenue or audit at risk</option>
+          </select>
+
+          <label for="calc-ds">Dispatch, settlement, and admin coordination pain</label>
+          <select id="calc-ds" name="dispatchPain">
+            <option value="low">Low - mostly under control</option>
+            <option value="moderate" selected>Moderate - recurring exceptions</option>
+            <option value="high">High - frequent fire drills</option>
+            <option value="severe">Severe - revenue or audit at risk</option>
+          </select>
+
+          <label for="calc-fte">FTE involved in manual chase work</label>
+          <p>Dispatch coordinators, safety admins, settlement analysts, and branch support. Fractional FTE is fine.</p>
+          <input id="calc-fte" name="manualFte" type="number" min="0" step="0.25" value="4">
+
+          <button class="button primary" type="submit">Run model</button>
+        </form>
+
+        <aside class="pf-calculator-panel pf-results reveal" aria-live="polite">
+          <h2>Strategic output</h2>
+          <div class="pf-result-total"><span>Directional annual opportunity</span><strong data-result-total>$246,400</strong></div>
+          <div class="pf-result-grid">
+            <article><span>Revenue at risk</span><strong data-result-revenue>$84,500</strong><p>Proof, POD, chargeback, and payment-delay exposure.</p></article>
+            <article><span>Admin efficiency</span><strong data-result-admin>$112,000</strong><p>Manual dispatch, compliance, settlement, and branch chase work.</p></article>
+            <article><span>Compliance posture</span><strong data-result-compliance>$31,900</strong><p>Credential, audit, policy, and readiness exception pressure.</p></article>
+            <article><span>Settlement drag</span><strong data-result-settlement>$18,000</strong><p>Held packets, deduction questions, and owner follow-up.</p></article>
+          </div>
+          <p class="pf-result-note">This model is directional. A BOF assessment should validate actual loads, revenue, staffing, branch variance, proof gaps, and settlement holds before treating any number as a business case.</p>
+          <div class="pf-actions">
+            <a class="button secondary" href="/private-fleets/">Back to Private Fleets</a>
+            <a class="button primary" href="/book-demo/">Book Private Fleet Session</a>
+          </div>
+        </aside>
+      </section>
+    </div>
+  </main>
+
+  <footer class="site-footer"><div class="footer-inner"><strong>BackOfficeFleet</strong><span>Private fleet savings outlook.</span><a href="/private-fleets/">Private Fleets</a></div></footer>
+  <script src="/assets/js/site.js?v=1.61"></script>
+  <script>
+    (function () {
+      var root = document.querySelector("[data-fleet-savings]");
+      if (!root) return;
+      var form = root.querySelector("form");
+      var pain = { low: 0.45, moderate: 1, high: 1.65, severe: 2.35 };
+      var dollars = new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 });
+      function value(id) { return Number(root.querySelector(id).value || 0); }
+      function painValue(id) { return pain[root.querySelector(id).value] || 1; }
+      function update() {
+        var pu = value("#calc-pu");
+        var loads = value("#calc-ml");
+        var avg = value("#calc-ar");
+        var fte = value("#calc-fte");
+        var credential = painValue("#calc-cp");
+        var proof = painValue("#calc-pp");
+        var dispatch = painValue("#calc-ds");
+        var monthlyRevenue = loads * avg;
+        var revenue = monthlyRevenue * 12 * 0.0065 * proof;
+        var admin = fte * 70000 * 0.32 * dispatch;
+        var compliance = pu * 640 * credential;
+        var settlement = loads * 12 * 18 * ((proof + dispatch) / 2);
+        var total = revenue + admin + compliance + settlement;
+        root.querySelector("[data-result-total]").textContent = dollars.format(total);
+        root.querySelector("[data-result-revenue]").textContent = dollars.format(revenue);
+        root.querySelector("[data-result-admin]").textContent = dollars.format(admin);
+        root.querySelector("[data-result-compliance]").textContent = dollars.format(compliance);
+        root.querySelector("[data-result-settlement]").textContent = dollars.format(settlement);
+      }
+      form.addEventListener("submit", function (event) { event.preventDefault(); update(); });
+      Array.prototype.forEach.call(form.querySelectorAll("input, select"), function (field) {
+        field.addEventListener("input", update);
+        field.addEventListener("change", update);
+      });
+      update();
+    }());
+  </script>
+</body>
+</html>

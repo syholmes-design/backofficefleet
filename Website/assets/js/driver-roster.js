@@ -30,6 +30,27 @@
     return "driver-status-" + normalized;
   }
 
+  function driverPriority(driver) {
+    var status = String(driver && driver.readinessStatus || "");
+    if (status === "Blocked") return 0;
+    if (status === "At Risk") return 1;
+    if (status === "Review") return 2;
+    if (driver && driver.activeExceptionId) return 3;
+    return 4;
+  }
+
+  function commandIssueHref(load, exception, driver) {
+    var loadId = String(load && load.id || "");
+    var exceptionId = String(exception && exception.id || "");
+    if (loadId === "BOF-1907" || exceptionId === "EX-1907-POD") return "/command-center/issue/?case=pod-renewal-evidence";
+    if (loadId === "BOF-1931" || exceptionId === "EX-1931-MED") return "/command-center/issue/?case=pre-trip-asset-defect";
+    if (loadId === "BOF-2175" || exceptionId === "EX-2175-RATE") return "/command-center/issue/?case=rate-confirmation-review";
+    if (loadId === "BOF-2258" || exceptionId === "EX-2258-RENEWAL") return "/command-center/issue/?case=renewal-evidence-review";
+    if (driver && /payroll|withholding|hr/i.test(driver.primaryWarning || "")) return "/command-center/issue/?case=driver-payroll-hr-review";
+    if (loadId === "BOF-2064") return "/operations-record/#bof-2064";
+    return loadId ? "/operations-record/#" + loadId.toLowerCase() : "/command-center/issue/?case=owner-action";
+  }
+
   function driverInitials(name) {
     return String(name || "")
       .split(/\s+/)
@@ -129,11 +150,11 @@
 
   function actionHrefFor(moduleName, driver, load, safety, exception, settlement) {
     var moduleKey = String(moduleName || "").toLowerCase();
-    if (moduleKey.indexOf("safety") !== -1 || safety) return "/safety/#canonical-safety-records";
-    if (moduleKey.indexOf("settlement") !== -1 || settlement) return "/settlements/#canonical-settlement-records";
-    if (moduleKey.indexOf("dispatch") !== -1 || load) return load ? "/operations-record/#" + load.id.toLowerCase() : "/dispatch/";
-    if (moduleKey.indexOf("payroll") !== -1 || moduleKey.indexOf("hr") !== -1) return "/business-operations/hr-tier/";
-    if (exception && exception.relatedRecordId) return "/operations-record/#" + String(exception.relatedLoadId || "").toLowerCase();
+    if (moduleKey.indexOf("safety") !== -1 || safety) return commandIssueHref(load, exception, driver);
+    if (moduleKey.indexOf("settlement") !== -1 || settlement) return commandIssueHref(load, exception, driver);
+    if (moduleKey.indexOf("dispatch") !== -1 || load) return commandIssueHref(load, exception, driver);
+    if (moduleKey.indexOf("payroll") !== -1 || moduleKey.indexOf("hr") !== -1) return "/command-center/issue/?case=driver-payroll-hr-review";
+    if (exception && exception.relatedRecordId) return commandIssueHref(load, exception, driver);
     return driver.profileRoute || "/drivers/";
   }
 
@@ -175,7 +196,7 @@
       path.heading = status === "At Risk" ? "At risk until reviewed" : "Under review";
       path.owner = isPayroll ? "HR / payroll owner" : (safety ? "Safety desk" : "Driver qualification owner");
       path.action = isPayroll ? "Open payroll clearance" : (safety ? "Open safety review" : "Open qualification review");
-      path.href = isPayroll ? "/business-operations/hr-tier/" : actionHrefFor("Safety", driver, load, safety, exception, settlement);
+      path.href = isPayroll ? "/command-center/issue/?case=driver-payroll-hr-review" : actionHrefFor("Safety", driver, load, safety, exception, settlement);
       path.consequence = load ? load.releaseDecision : "Assignment should wait for the named owner to clear the review.";
       path.detailAction = safety && safety.correctiveAction !== "None" ? safety.correctiveAction : (isPayroll ? "Verify HR and payroll packet before presentation." : "Review qualification record before release.");
       return path;
@@ -185,7 +206,7 @@
       path.heading = "Driver ready; load needs review";
       path.owner = "Dispatch / packet owner";
       path.action = "Open joined load record";
-      path.href = "/operations-record/#" + load.id.toLowerCase();
+      path.href = commandIssueHref(load, exception, driver);
       path.reason = load.releaseDecision;
       path.consequence = "Driver file is not the blocker; the load record controls release.";
       path.detailAction = "Resolve the load record before final dispatch release.";
@@ -256,6 +277,10 @@
       '    <span class="driver-scan-metric"><b>' + escapeHtml(capability.hosAvailable) + '</b>HOS available</span>',
       '    <span class="driver-scan-metric"><b>' + escapeHtml(payProfile ? payProfile.rateLabel : "No active pay") + '</b>' + escapeHtml(payProfile ? payProfile.payMethod : "Pay setup") + '</span>',
       '    <span class="driver-scan-metric driver-scan-wide"><b>' + escapeHtml(capability.equipment) + '</b>' + escapeHtml(clearance.action) + '</span>',
+      '    <span class="driver-summary-reason-strip">',
+      '      <span><b>Why</b>' + escapeHtml(clearance.reason) + '</span>',
+      '      <span><b>Clearance</b>' + escapeHtml(clearance.detailAction || clearance.action) + '</span>',
+      '    </span>',
       '    <span class="driver-expand-cue">Details</span>',
       '  </summary>',
       '  <div class="driver-card-detail">',
@@ -327,6 +352,8 @@
       if (state.filter === "loads") return Boolean(driver.activeLoadId);
       if (state.filter === "exceptions") return Boolean(driver.activeExceptionId);
       return driver.readinessStatus === state.filter;
+    }).sort(function (a, b) {
+      return driverPriority(a) - driverPriority(b);
     });
     renderSummary(drivers);
     rosterMount.innerHTML = visible.length

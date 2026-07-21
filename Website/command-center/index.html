@@ -4,10 +4,10 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>BOF Command Center | BackOfficeFleet</title>
-  <meta name="description" content="BOF Command Center gives trucking fleet owners one operating view for driver readiness, dispatch release control, safety review, settlements, billing, business operations, and policy follow-through.">
+  <meta name="description" content="BOF Command Center gives fleet teams a live control-tower view of driver blockers, dispatch release, safety exposure, proof packets, settlement holds, and owner clearance paths.">
   <link rel="stylesheet" href="/assets/css/styles.css?v=20260720-enterprise-header-v2">
 </head>
-<body class="visual-refresh premium-site page-command-center">
+<body class="visual-refresh premium-site page-command-center command-center-old-port">
   <header class="site-header">
     <a class="brand" href="/" aria-label="BackOfficeFleet home"><img src="/assets/images/logo/boflogo-original.png" alt="BackOfficeFleet"></a>
     <button class="nav-toggle" type="button" data-nav-toggle aria-expanded="false" aria-label="Toggle navigation">&#9776;</button>
@@ -33,134 +33,266 @@
     <a class="header-cta" href="/dashboard/">Sign In</a>
   </header>
 
-  <main class="workflow-dashboard-page command-center-page">
-    <section class="section page-hero dashboard-hero-system command-center-landing">
-      <div class="command-center-shell reveal" aria-label="BOF Command Center executive operating view">
-        <div class="command-center-hero-top">
-          <p class="eyebrow">Executive operating view</p>
-          <a class="executive-visual-pill" href="/scenario-walkthrough/">Assess one bottleneck</a>
-        </div>
-
-        <div class="command-center-hero-copy">
-          <h1>BOF Command Center</h1>
-          <p>One operating surface for the records, owners, blockers, and release decisions that decide whether trucking back-office work is ready, at risk, or blocked.</p>
-          <div class="page-clearance-proof command-center-proof" aria-label="Command Center operating proof">
-            <span><b>Record</b> Every metric resolves to a driver, load, proof packet, office item, or policy control.</span>
-            <span><b>Reason</b> Review and blocked counts name the issue instead of hiding behind totals.</span>
-            <span><b>Clearance</b> Leadership can open the page that owns the next action.</span>
+  <main class="old-command-page">
+    <section class="old-command-hero" aria-labelledby="old-command-title">
+      <div class="old-command-hero-bg" aria-hidden="true"></div>
+      <div class="old-command-shell">
+        <div class="old-command-hero-grid">
+          <div class="old-command-copy reveal">
+            <p class="old-command-kicker">Fleet Operations Action Board</p>
+            <h1 id="old-command-title">Fleet Operations Control Tower</h1>
+            <p>One operating view for load exceptions, driver blockers, settlement holds, safety risk, claims exposure, and owner actions across the BOF public demo.</p>
+            <nav class="old-command-tabs" aria-label="Command Center demo routes">
+              <a href="/dashboard/">Demo dashboard</a>
+              <a class="is-active" href="/command-center/">Command center</a>
+              <a href="/dispatch/">Dispatch</a>
+              <a href="/drivers/">Drivers</a>
+              <a href="/carriers/">Carriers</a>
+              <a href="/documents/">Documents</a>
+              <a href="/settlements/">Settlements</a>
+              <a href="/safety/">Safety</a>
+              <a href="/document-readiness-engine/">BOF Vault</a>
+            </nav>
           </div>
+          <aside class="old-command-alerts reveal" aria-label="Critical command totals">
+            <article><span>Critical risks</span><strong>4</strong><p>workstreams need owner action</p></article>
+            <article><span>Dispatch blockers</span><strong>3</strong><p>release paths are locked</p></article>
+          </aside>
         </div>
 
-        <div class="executive-command-flow command-center-flow" aria-label="BOF Command Center workflow">
-          <a class="command-flow-pill is-blue" href="/command-center/">Executive View</a>
-          <a class="command-flow-pill is-green" href="/drivers/">Driver Readiness</a>
-          <a class="command-flow-pill is-blue" href="/dispatch/">Dispatch Release</a>
-          <a class="command-flow-pill is-gold" href="/safety/">Safety Review</a>
-          <a class="command-flow-pill is-green" href="/settlements/">Payment Readiness</a>
+        <div class="old-command-control-grid" aria-label="Command control modules">
+          <a class="old-command-control-card is-danger reveal" href="/command-center/issue/?case=proof-gap-dock-sheet">
+            <span>DispatchHub</span>
+            <b>Proof gap: dock sheet blocked</b>
+            <p>ETA is holding. Pre-load before departure until the line item is cleared.</p>
+            <em>Open dispatch queue</em>
+          </a>
+          <a class="old-command-control-card is-danger reveal" href="/command-center/issue/?case=claim-evidence-review">
+            <span>ClaimsNexus</span>
+            <b>Safety claim evidence needs manager review</b>
+            <p>HOS events, driver statement, cargo-damage photo, and claim packet must align.</p>
+            <em>Open claim evidence workspace</em>
+          </a>
+          <a class="old-command-control-card is-danger reveal" href="/command-center/issue/?case=fuel-exception-approval">
+            <span>DispatchBoard</span>
+            <b>Fuel exception needs manager approval</b>
+            <p>Driver settlement release and billing cash path are delayed until approval clears.</p>
+            <em>Open settlement packet</em>
+          </a>
         </div>
+      </div>
+    </section>
 
-        <div class="executive-dashboard-board command-center-board">
-          <div class="executive-board-header">
-            <div>
-              <h2>Executive Operating Summary</h2>
-              <p>Fleet readiness, risk, billing, and office follow-up in one reviewable board.</p>
+    <section class="old-command-section old-command-route-intervention">
+      <div class="old-command-shell">
+        <div class="old-command-section-head reveal">
+          <p class="old-command-kicker">Route intervention before failure</p>
+          <h2>I-40 storm cell and traffic backup - reroute before service failure.</h2>
+          <p>Control Tower flags a weather and congestion packet ahead of a driver HOS exposure. Dispatch can reroute, update settlement proof expectations, and preserve service before the truck is late.</p>
+        </div>
+        <div class="old-command-intervention-grid">
+          <article class="old-command-reroute-card reveal">
+            <h3>Action recommended</h3>
+            <p>Open dispatch module, validate HOS reserve, confirm alternate route, then attach the reroute note to the joined record.</p>
+            <div class="old-command-actions">
+              <a href="/command-center/issue/?case=i40-reroute-risk">Open issue record</a>
+              <a href="/operations-record/">Open joined context</a>
             </div>
-            <div class="executive-status-row">
-              <span class="executive-status is-ready">Ready 84%</span>
-              <span class="executive-status is-risk">Review 12</span>
-              <span class="executive-status is-blocked">Blocked 3</span>
+          </article>
+          <div class="old-command-small-metrics reveal" aria-label="Route intervention metrics">
+            <article><span>Total open risks</span><strong>5</strong></article>
+            <article><span>Critical risks</span><strong>4</strong></article>
+            <article><span>Dispatch blocking</span><strong>3</strong></article>
+            <article><span>Manager action</span><strong>5</strong></article>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="old-command-section">
+      <div class="old-command-shell">
+        <div class="old-command-section-head reveal">
+          <p class="old-command-kicker">Carrier Dispatch Gatekeeping</p>
+          <h2>BOF can condition carrier assignment gates before dispatch clears the record.</h2>
+          <p>A carrier, driver, load, proof, policy, and insurance gate should be visible before a release decision is treated as clean.</p>
+        </div>
+        <div class="old-command-blocker-grid">
+          <a class="old-command-blocker is-red reveal" href="/command-center/issue/?case=low-mvr-carrier"><span>Blocked carrier</span><strong>Low MVR</strong><p>Carrier risk escalates before a driver assignment proceeds.</p></a>
+          <a class="old-command-blocker is-gold reveal" href="/command-center/issue/?case=insurance-renewal-blue-ridge"><span>Insurance renewal warning</span><strong>Blue Ridge Overland</strong><p>Renewal documentation must be attached before the load can move.</p></a>
+          <a class="old-command-blocker is-blue reveal" href="/command-center/issue/?case=compliance-review-southern-cross"><span>Review compliance reason</span><strong>Southern Cross Freight</strong><p>Safety and qualification record needs manager review.</p></a>
+          <a class="old-command-blocker is-purple reveal" href="/command-center/issue/?case=finance-packet-pacific-line"><span>Finance packet held</span><strong>Pacific Line</strong><p>Rate, accessorials, POD, and billing release must align.</p></a>
+        </div>
+      </div>
+    </section>
+
+    <section class="old-command-section old-command-reload">
+      <div class="old-command-shell">
+        <div class="old-command-section-head reveal">
+          <p class="old-command-kicker">Reload Intelligence</p>
+          <h2>Reroute decisions should account for reload opportunity, proof risk, and settlement impact.</h2>
+          <p>The old demo was strong because it showed the next commercial consequence, not only the current exception. This port keeps that same operating idea.</p>
+        </div>
+        <div class="old-command-blocker-grid">
+          <a class="old-command-blocker is-green reveal" href="/command-center/issue/?case=deadhead-dallas-backhaul"><span>Deadhead reduction opportunity</span><strong>Dallas advanced trucking</strong><p>Backhaul opportunity sits near the affected lane.</p></a>
+          <a class="old-command-blocker is-red reveal" href="/command-center/issue/?case=blocked-reload-iron-mule"><span>Blocked reload assessment</span><strong>Iron Mule</strong><p>Risk rule prevents assignment until safety clears.</p></a>
+          <a class="old-command-blocker is-gold reveal" href="/command-center/issue/?case=revenue-event-southern-cross"><span>Revenue event escalation</span><strong>Southern Cross Freight</strong><p>Settlement and billing impact rises if POD arrives late.</p></a>
+          <a class="old-command-blocker is-gold reveal" href="/command-center/issue/?case=finance-hold-prairie-line"><span>Finance hold affecting reload release</span><strong>Prairie Line</strong><p>Proof and payment records need reconciliation before new release.</p></a>
+        </div>
+      </div>
+    </section>
+
+    <section class="old-command-section">
+      <div class="old-command-shell">
+        <div class="old-command-section-head reveal">
+          <p class="old-command-kicker">Operational activity feed</p>
+          <h2>Every activity item should resolve to a driver, load, document, owner, and next action.</h2>
+        </div>
+        <div class="old-command-feed">
+          <a class="old-command-feed-card reveal" href="/command-center/issue/?case=l004-proof-driver-confirmation"><span>Dispatch late</span><strong>L004 proof packet and driver confirmation</strong><p>Carrier settlement cannot release until POD evidence is reconciled.</p><em>Open issue record</em></a>
+          <a class="old-command-feed-card reveal" href="/command-center/issue/?case=l011-finance-release"><span>Dispatch late</span><strong>L011 finance release and customer packet</strong><p>Invoice cannot move until customer document set is complete.</p><em>Open issue record</em></a>
+          <a class="old-command-feed-card reveal" href="/command-center/issue/?case=car001-renewal-assignment"><span>Carrier compliance</span><strong>CAR-001 renewal assignment blocked</strong><p>Carrier compliance and insurance renewal require owner review.</p><em>Open issue record</em></a>
+          <a class="old-command-feed-card reveal" href="/command-center/issue/?case=reload-confirmation"><span>Operations manager</span><strong>Reload confirmation review</strong><p>Reload plan must be tied to active HOS and equipment status.</p><em>Open issue record</em></a>
+          <a class="old-command-feed-card reveal" href="/command-center/issue/?case=safety-claim-evidence"><span>Claims / safety</span><strong>Safety claim evidence needs manager review</strong><p>Crash notice, cargo photo, driver statement, and corrective action must resolve before the record clears.</p><em>Open issue record</em></a>
+          <a class="old-command-feed-card reveal" href="/command-center/issue/?case=customer-billing-owner-review"><span>Finance</span><strong>Customer billing records need owner review</strong><p>AR, settlement hold, and follow-up owner must stay connected.</p><em>Open issue record</em></a>
+        </div>
+      </div>
+    </section>
+
+    <section class="old-command-section old-command-finance">
+      <div class="old-command-shell">
+        <div class="old-command-section-head reveal">
+          <p class="old-command-kicker">Finance Summary - Factoring Packets</p>
+          <h2>Packet-to-cash status should be visible before the settlement desk starts chasing paper.</h2>
+          <p>The old Command Center made finance feel operational. This version keeps that: ready packets, missing proof, held packets, and the document set that controls cash movement.</p>
+        </div>
+        <div class="old-command-finance-grid">
+          <a class="old-command-finance-card is-green reveal" href="/command-center/issue/?case=factoring-ready">
+            <span>Ready to submit</span>
+            <strong>9</strong>
+            <p>Factoring packets ready for finance review.</p>
+          </a>
+          <a class="old-command-finance-card is-red reveal" href="/command-center/issue/?case=missing-proof-clear">
+            <span>Missing POD / BOL</span>
+            <strong>0</strong>
+            <p>No critical proof gaps after the latest document pass.</p>
+          </a>
+          <a class="old-command-finance-card is-gold reveal" href="/command-center/issue/?case=held-packets">
+            <span>Held due to issues</span>
+            <strong>4</strong>
+            <p>Packets need POD, renewal evidence, rate confirmation, or owner approval.</p>
+          </a>
+        </div>
+        <p class="old-command-proof-note reveal">Factoring packets include invoice, rate confirmation, BOL, POD, seal verification, accessorial support, and settlement release notes.</p>
+      </div>
+    </section>
+
+    <section class="old-command-section old-command-impact">
+      <div class="old-command-shell">
+        <div class="old-command-section-head reveal">
+          <p class="old-command-kicker">Impact analysis</p>
+          <h2>Every risk should show business consequence, not just a red label.</h2>
+        </div>
+        <div class="old-command-impact-grid">
+          <a class="old-command-impact-card reveal" href="/command-center/issue/?case=settlement-impact"><span>Settlement impact</span><strong>4</strong><p>Payment delays and packet holds.</p></a>
+          <a class="old-command-impact-card reveal" href="/command-center/issue/?case=compliance-impact"><span>Compliance impact</span><strong>3</strong><p>Policy, qualification, or audit exceptions.</p></a>
+          <a class="old-command-impact-card reveal" href="/command-center/issue/?case=insurance-impact"><span>Insurance impact</span><strong>2</strong><p>Claims, incidents, or renewal evidence.</p></a>
+          <a class="old-command-impact-card reveal" href="/command-center/issue/?case=owner-action"><span>Owner action</span><strong>5</strong><p>Named follow-ups with due dates.</p></a>
+        </div>
+      </div>
+    </section>
+
+    <section class="old-command-section old-command-risks">
+      <div class="old-command-shell">
+        <div class="old-command-section-head reveal">
+          <p class="old-command-kicker">Risks needing attention</p>
+          <h2>Prioritized risk cards should explain what is blocked, why it matters, and what clears it.</h2>
+        </div>
+        <div class="old-command-risk-list">
+          <article class="old-command-risk-card is-red reveal">
+            <div class="old-command-risk-top">
+              <span>Critical</span><span>Dispatch: Blocked</span><span>Settlement: Hold</span><span>Manager action required</span>
             </div>
-          </div>
+            <h3>Pre-trip asset defect blocks dispatch.</h3>
+            <p>The assigned unit cannot be released until the defect is repaired, owner sign-off is recorded, and ELD sync proof is attached.</p>
+            <div class="old-command-risk-details">
+              <div><strong>Affected entities</strong><p>DRV-003 / TR-1931 / DRY VAN TRL-088-04</p></div>
+              <div><strong>Business impact</strong><p>Dispatch is blocked and settlement release is held until safety clears.</p></div>
+              <div><strong>Action details</strong><p>Owner: Safety lead. Due: today.</p></div>
+            </div>
+            <div class="old-command-risk-actions">
+              <a href="/command-center/issue/?case=pre-trip-asset-defect">Open issue record</a>
+              <a href="/drivers/">Open driver context</a>
+              <a href="/operations-record/">Open joined context</a>
+            </div>
+          </article>
 
-          <div class="executive-metric-grid command-center-metrics" aria-label="Executive metrics">
-            <article class="executive-metric-card"><div><span>Fleet readiness</span><strong>84%</strong><p>records ready for release</p></div><b class="metric-badge is-ready">OK</b></article>
-            <article class="executive-metric-card"><div><span>Active loads</span><strong>18</strong><p>operations visible</p></div><b class="metric-badge is-blue">LD</b></article>
-            <article class="executive-metric-card"><div><span>Safety review</span><strong>12</strong><p>items needing owner action</p></div><b class="metric-badge is-risk">!</b></article>
-            <article class="executive-metric-card"><div><span>Settlement packets</span><strong>9</strong><p>proof packets moving</p></div><b class="metric-badge is-ready">$</b></article>
-          </div>
+          <article class="old-command-risk-card is-gold reveal">
+            <div class="old-command-risk-top">
+              <span>Review</span><span>Dispatch: At risk</span><span>Settlement: Hold</span><span>Document owner assigned</span>
+            </div>
+            <h3>POD renewal evidence needs review.</h3>
+            <p>The packet can move only after corrected POD, receiver evidence, and renewal support are attached to the same load record.</p>
+            <div class="old-command-risk-details">
+              <div><strong>Affected entities</strong><p>BOF-1907 / Carlos Martinez / TR-2048</p></div>
+              <div><strong>Business impact</strong><p>Billing will inherit a weak packet unless the proof gap clears first.</p></div>
+              <div><strong>Action details</strong><p>Owner: Dispatcher / packet owner. Due: next review cycle.</p></div>
+            </div>
+            <div class="old-command-risk-actions">
+              <a href="/command-center/issue/?case=pod-renewal-evidence">Open issue record</a>
+              <a href="/documents/">Open proof context</a>
+              <a href="/operations-record/">Open joined context</a>
+            </div>
+          </article>
 
-          <div class="dashboard-module-grid command-module-grid command-center-modules compact-command-modules" aria-label="Command Center module routes">
-            <a class="operational-route-card is-ready" href="/drivers/"><span class="route-marker">01</span><small>Driver Readiness</small><h3>Driver Files</h3><b>12 drivers &middot; 2 expirations</b><p>DQF, CDL, medical cards, onboarding, assignment eligibility, and owner follow-up.</p><span class="status-badge is-ready">Ready</span><strong class="route-action">Open Drivers</strong></a>
-            <a class="operational-route-card is-progress" href="/dispatch/"><span class="route-marker">02</span><small>Dispatch &amp; Operations</small><h3>Load Control</h3><b>24 loads &middot; 3 reviews</b><p>Intake, assignment, release gates, POD, exceptions, and operating records.</p><span class="status-badge is-progress">In Progress</span><strong class="route-action">Open Dispatch</strong></a>
-            <a class="operational-route-card is-risk" href="/safety/"><span class="route-marker">03</span><small>Safety &amp; Compliance</small><h3>Risk Monitor</h3><b>3 exceptions &middot; 1 priority</b><p>Pre-trip evidence, inspections, incidents, claims, and corrective-action ownership.</p><span class="status-badge is-risk">At Risk</span><strong class="route-action">Open Safety</strong></a>
-            <a class="operational-route-card is-review" href="/settlements/"><span class="route-marker">04</span><small>Settlements &amp; Billing</small><h3>Revenue Readiness</h3><b>18 packets &middot; 2 holds</b><p>POD, invoice, accessorials, deductions, receivables, and payment readiness.</p><span class="status-badge is-review">Review</span><strong class="route-action">Open Settlements</strong></a>
-            <a class="operational-route-card is-progress" href="/business-operations/"><span class="route-marker">05</span><small>Business Operations</small><h3>Office Follow-Up</h3><b>14 items &middot; 5 owners</b><p>HR, finance, payroll support, billing, AR, document control, and reporting.</p><span class="status-badge is-progress">Review</span><strong class="route-action">Open Operations</strong></a>
-            <a class="operational-route-card is-current" href="/policies-procedures/"><span class="route-marker">06</span><small>Policies &amp; Procedures</small><h3>Control Library</h3><b>6 policies &middot; 2 updates</b><p>Reference procedures, acknowledgments, review cadence, and operating context.</p><span class="status-badge is-current">Current</span><strong class="route-action">Open Policies</strong></a>
-          </div>
+          <article class="old-command-risk-card is-blue reveal">
+            <div class="old-command-risk-top">
+              <span>Review</span><span>Carrier gate</span><span>Insurance warning</span><span>Manager action required</span>
+            </div>
+            <h3>Carrier renewal evidence needs manager review.</h3>
+            <p>Carrier assignment remains visible but controlled until renewal documents, insurance status, and dispatch impact are reconciled.</p>
+            <div class="old-command-risk-details">
+              <div><strong>Affected entities</strong><p>CAR-001 / Blue Ridge Overland / L011</p></div>
+              <div><strong>Business impact</strong><p>Carrier can support current work only if renewal documentation stays attached.</p></div>
+              <div><strong>Action details</strong><p>Owner: Manager review. Due: before release.</p></div>
+            </div>
+            <div class="old-command-risk-actions">
+              <a href="/command-center/issue/?case=carrier-renewal-evidence">Open issue record</a>
+              <a href="/carriers/">Open carrier context</a>
+              <a href="/dispatch/">Open dispatch context</a>
+            </div>
+          </article>
         </div>
       </div>
     </section>
 
-    <section class="section command-live-section bof-canonical-section" id="command-live-operating-layer" data-bof-operations-view="command-center" aria-live="polite"></section>
-
-    <section class="section command-rhythm-section" id="operating-rhythm">
-      <div class="section-head reveal">
-        <p class="eyebrow">Operating rhythm</p>
-        <h2>Use the board to run the day, not just inspect it.</h2>
-        <p>The Command Center is designed for quick leadership review: what can move now, what needs owner action, and what will slow payment or reporting if the office does not close the loop.</p>
-      </div>
-      <div class="proof-grid">
-        <article class="proof-card reveal"><h3>Morning release review</h3><p>Confirm driver eligibility, load readiness, safety risk, and document gates before dispatch treats the day as clean.</p><a class="route-chip" href="/dispatch/">Open dispatch release</a></article>
-        <article class="proof-card reveal"><h3>Midday blocker check</h3><p>Escalate missing proof, credential holds, claim evidence, billing questions, and owner follow-up while the team can still act.</p><a class="route-chip" href="/operations-record/">Open record view</a></article>
-        <article class="proof-card reveal"><h3>End-of-day proof close</h3><p>Move PODs, invoices, accessorial notes, safety follow-up, payroll context, and reporting exceptions toward the correct office owner.</p><a class="route-chip" href="/settlements/">Open settlements</a></article>
+    <section class="old-command-section old-command-live">
+      <div class="old-command-shell">
+        <section class="command-live-section bof-canonical-section command-center-workbench" id="command-live-operating-layer" data-bof-operations-view="command-center" aria-live="polite"></section>
       </div>
     </section>
 
-    <section class="section command-priority-section" id="priority-view">
-      <div class="section-head reveal">
-        <p class="eyebrow">Priority and blocker view</p>
-        <h2>Leadership sees what needs a decision before the team loses time.</h2>
-        <p>BOF separates clean work from review work and blocked work, then ties every exception to a route, owner, next action, and operating consequence.</p>
-      </div>
-      <div class="command-priority-grid">
-        <article class="proof-card reveal"><h3>Ready to release</h3><p>Driver, load, safety, and proof records are complete enough for the next operating step.</p><a class="route-chip" href="/dispatch/">Review release control</a></article>
-        <article class="proof-card reveal"><h3>Needs review</h3><p>Expiring credentials, missing proof, claim evidence, billing questions, or HR follow-up need owner attention.</p><a class="route-chip" href="/operations-record/">Review records</a></article>
-        <article class="proof-card reveal"><h3>Blocked</h3><p>A named blocker prevents release, settlement, billing, reporting, or management follow-through until resolved.</p><a class="route-chip" href="/scenario-walkthrough/">Map a blocker</a></article>
-      </div>
-    </section>
-
-    <section class="section split command-record-section" id="records-workflow">
-      <div class="demo-panel reveal">
-        <p class="eyebrow">Cross-functional workflow</p>
-        <h2>Command Center ties the fleet record to the office record.</h2>
-        <p>A driver file can affect dispatch. Dispatch proof can affect settlement. Settlement holds can affect billing and cash flow. BOF keeps those signals connected so the office does not chase the same issue through separate folders, texts, and spreadsheets.</p>
-        <div class="actions"><a class="button primary" href="/operations-record/">Open record example</a><a class="button secondary" href="/documents/">Review document controls</a></div>
-      </div>
-      <div class="proof-grid">
-        <article class="proof-card reveal"><h3>Evidence before motion</h3><p>Records show whether the team has the driver, document, release, safety, or packet proof needed for the next step.</p></article>
-        <article class="proof-card reveal"><h3>Owner before drift</h3><p>Every review item carries a responsible owner and next action so accountability does not disappear between departments.</p></article>
-      </div>
-    </section>
-
-    <section class="section priority-fleet-section command-program-section" id="priority-fleet-program">
-      <div class="priority-program-card reveal">
-        <div>
-          <p class="eyebrow">Priority Fleet Program</p>
-          <h2>Use the Command Center to scope the pain points BOF should relieve first.</h2>
-          <p>Priority Fleet Program customers start with a focused readiness assessment. BOF reviews records, blockers, owners, handoffs, and reporting gaps, then scopes the implementation path around the work that matters most.</p>
-          <div class="actions"><a class="button primary" href="/founding-fleet/apply/">Apply for Priority Fleet</a><a class="button secondary" href="/scenario-walkthrough/">Take the assessment</a></div>
+    <section class="old-command-section old-command-summary">
+      <div class="old-command-shell">
+        <div class="old-command-section-head reveal">
+          <p class="old-command-kicker">Risk summary by module</p>
+          <h2>Open module summaries without leaving the control tower.</h2>
         </div>
-        <div class="priority-benefit-grid" aria-label="Priority Fleet Program areas">
-          <article><span>Readiness</span><strong>Driver and document readiness review</strong></article>
-          <article><span>Release</span><strong>Dispatch and exception ownership map</strong></article>
-          <article><span>Proof</span><strong>Settlement and billing packet control</strong></article>
-          <article><span>Office</span><strong>HR, finance, reporting, and owner follow-through</strong></article>
+        <div class="old-command-module-summary">
+          <a href="/command-center/issue/?case=pre-trip-asset-defect"><span>Driver / Safety</span><strong>3</strong><p>Open qualification and HOS exceptions.</p></a>
+          <a href="/command-center/issue/?case=i40-reroute-risk"><span>Dispatch / HOS</span><strong>2</strong><p>Release blockers and routing risk.</p></a>
+          <a href="/command-center/issue/?case=held-packets"><span>Settlement</span><strong>3</strong><p>Packet, POD, billing, and pay holds.</p></a>
+          <a href="/command-center/issue/?case=proof-gap-dock-sheet"><span>Documents</span><strong>2</strong><p>Evidence gaps and policy documents.</p></a>
+          <a href="/command-center/issue/?case=owner-action"><span>Office</span><strong>1</strong><p>Owner action and follow-up drift.</p></a>
         </div>
       </div>
     </section>
   </main>
 
-  <section class="cta-band">
-    <div class="cta-inner">
-      <div><p class="eyebrow">Next step</p><h2>Bring one fleet bottleneck into the Command Center.</h2><p>Start with a driver file, release hold, safety item, settlement delay, billing issue, HR gap, or finance follow-up problem BOF can map into a reviewable operating record.</p></div>
-      <div class="actions"><a class="button light" href="/scenario-walkthrough/">Take the BOF Fleet Assessment</a><a class="button secondary" href="/founding-fleet/apply/">Apply for Priority Fleet</a></div>
-    </div>
-  </section>
   <footer class="site-footer"><div class="footer-inner"><strong>BackOfficeFleet</strong><span>BOF Command Center.</span><a href="/trust-governance/">Trust &amp; Governance</a></div></footer>
   <script src="/assets/js/site.js?v=1.61"></script>
   <script src="/assets/js/bof-supabase-config.js?v=20260715-supabase"></script>
   <script src="/assets/js/bof-data-loader.js?v=20260715-supabase"></script>
   <script src="/assets/js/bof-demo-state.js?v=20260715-admin"></script>
-  <script src="/assets/js/bof-public-operations.js?v=20260715-supabase"></script>
+  <script src="/assets/js/bof-public-operations.js?v=20260715-command-center-old-port"></script>
 </body>
 </html>
