@@ -24,8 +24,13 @@
   }
 
   function enhanceEnterpriseHeader() {
-    if (!header || !nav || header.getAttribute("data-enterprise-header") === "true") return;
+    if (!header || !nav) return;
     header.setAttribute("data-enterprise-header", "true");
+
+    nav.querySelectorAll(".nav-dropdown a").forEach(function (link) {
+      var href = (link.getAttribute("href") || "").replace(/\/+$/, "/");
+      if (href === "/fleet/") link.remove();
+    });
 
     nav.querySelectorAll(".nav-utility-link").forEach(function (link) {
       link.remove();
@@ -33,7 +38,7 @@
 
     if (!nav.querySelector(".nav-vault-link")) {
       nav.appendChild(createIconLink(
-        "/interactive-demo/drivers/document-intake/",
+        "/bof-vault/",
         "nav-icon-link nav-vault-link",
         "BOF Vault",
         '<svg aria-hidden="true" viewBox="0 0 24 24"><path d="M7 10V8a5 5 0 0 1 10 0v2"/><rect x="5" y="10" width="14" height="10" rx="2"/><path d="M12 14v2.5"/><path d="M9 20h6"/></svg>'

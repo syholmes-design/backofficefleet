@@ -33119,9 +33119,9 @@ body.private-fleet-enterprise-page {
   z-index: -2;
   background-image: url("/assets/images/legacy-heroes/private-fleets-hero-new.png");
   background-size: cover;
-  background-position: center 42%;
+  background-position: 58% center;
   transform: scale(1.02);
-  filter: saturate(1.04) contrast(1.02);
+  filter: saturate(1.08) contrast(1.05) brightness(1.06);
 }
 
 .private-fleet-enterprise-page .pf-hero-overlay {
@@ -33129,8 +33129,8 @@ body.private-fleet-enterprise-page {
   inset: 0;
   z-index: -1;
   background:
-    linear-gradient(90deg, rgba(5, 11, 24, 0.9) 0%, rgba(7, 20, 39, 0.78) 42%, rgba(7, 20, 39, 0.2) 72%, rgba(7, 20, 39, 0.42) 100%),
-    linear-gradient(180deg, rgba(5, 11, 24, 0.2), rgba(5, 11, 24, 0.7));
+    linear-gradient(90deg, rgba(5, 11, 24, 0.82) 0%, rgba(7, 20, 39, 0.66) 42%, rgba(7, 20, 39, 0.1) 72%, rgba(7, 20, 39, 0.28) 100%),
+    linear-gradient(180deg, rgba(5, 11, 24, 0.08), rgba(5, 11, 24, 0.54));
 }
 
 .private-fleet-enterprise-page .pf-hero-content {
