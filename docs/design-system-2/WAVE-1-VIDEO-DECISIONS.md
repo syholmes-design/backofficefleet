@@ -1,5 +1,15 @@
 # BOF Design System 2.0 Wave 1 Video Decisions
 
+## Modern-System Correction - July 27, 2026
+
+- Public page headings were updated so the video sections read as polished `SEE BOF IN ACTION` sections, not owner-review placeholders.
+- Drivers heading changed to `See the Driver Vault in Action`.
+- Dispatch heading changed to `See Customer Load Intake in Action`.
+- Settlements heading changed to `See Settlement Readiness in Action`.
+- The video files, posters, and native controls were not changed.
+- Captions/transcripts remain a follow-up item; none were found during this pass.
+- Legacy logo or intro/outro treatment may still exist inside retained video files and should be reviewed in a later video production pass.
+
 ## Drivers
 
 - File: `/assets/videos/bof-driver-vault.mp4`

@@ -1,5 +1,14 @@
 # BOF Design System 2.0 Wave 1 Content Claims Review
 
+## Modern-System Correction - July 27, 2026
+
+- Removed visible internal language from the four Wave 1 pages, including `retained for review`, `owner review`, `demo controls should`, and `Synthetic data shown for public demo review`.
+- Replaced Dispatch internal wording with `Proof and Exceptions Stay With the Load`.
+- Replaced video review labels with customer-facing `See the Driver Vault in Action`, `See Customer Load Intake in Action`, and `See Settlement Readiness in Action`.
+- Updated proof-panel labels to product language: Driver Record, Operations Overview, Compliance Readiness, and Finance Readiness.
+- Search confirmed no visible references to local paths, localhost, TODO/FIXME, passwords, tokens, or the removed review phrases in the four Wave 1 pages or shared Wave 1 CSS.
+- Conservative limiting statements remain intentional: Safety says BOF does not guarantee compliance; Settlements says BOF does not guarantee payment timing.
+
 ## Review Scope
 
 Routes reviewed:

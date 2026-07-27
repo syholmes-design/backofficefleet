@@ -1,5 +1,19 @@
 # BOF Design System 2.0 Wave 1 Implementation Report
 
+## Modern-System Correction - July 27, 2026
+
+- Follow-up commit: `3b9a3135` (`Apply modern DS2 visual system across Wave 1 pages`).
+- Scope: `/drivers/`, `/dispatch/`, `/safety/`, `/settlements/`, and `Website/assets/css/bof-design-system-2-wave-1.css`.
+- Correction goal: bring all four Wave 1 pages into the owner-approved modern DS2 direction instead of leaving them as isolated CSS tweaks.
+- Hero system: reduced oversized H1s, restored image-led composition, added restrained glass copy panels, compact proof panels, and localized gradients.
+- Proof-panel identities: Driver Record, Operations Overview, Compliance Readiness, and Finance Readiness.
+- Spacing system: tightened hero-to-content transition, card gaps, card padding, workflow bands, and KPI panels.
+- Content system: removed visible internal review wording and replaced it with customer-facing product language.
+- Dispatch workflow now follows Intake, Assign, Readiness, Track, Exceptions, Proof, Review, Release.
+- Screenshot package: `docs/design-system-2/screenshots/wave-1-modern-system-review/`.
+- Correction report: `docs/design-system-2/WAVE-1-MODERN-SYSTEM-CORRECTION-REPORT.md`.
+- Validation: JS syntax checks passed, public operations validator passed with 12 drivers, 5 loads, 4 exceptions, 0 warnings, and 0 errors; 24 viewport checks found 0 horizontal overflow.
+
 ## Summary
 
 - Worktree: `C:\Users\syhol\BOF-design-system-2-wave-1`
