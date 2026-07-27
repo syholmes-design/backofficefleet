@@ -51,44 +51,73 @@
         </div>
       </section>
 
-      <section class="wave1-proof-rail" aria-label="Driver record proof summary">
+      <section class="wave1-proof-rail wave1-proof-rail--attached" aria-label="Driver record proof summary">
         <div class="wave1-proof-rail__inner">
-          <div class="wave1-proof-rail__label">
-            <p class="bof-ds2-eyebrow">Driver Record</p>
-            <span>Illustrative demo data</span>
+          <div class="wave1-proof-rail__identity">
+            <span class="wave1-proof-rail__icon" aria-hidden="true">
+              <svg width="34" height="34" viewBox="0 0 24 24" fill="none">
+                <path d="M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8Z" stroke="currentColor" stroke-width="1.8"/>
+                <path d="M4 21a8 8 0 0 1 16 0" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+              </svg>
+            </span>
+            <div class="wave1-proof-rail__label">
+              <p class="bof-ds2-eyebrow">Driver Record</p>
+              <span>One view for readiness, loads, documents, settlements, and messages.</span>
+            </div>
           </div>
           <div class="wave1-proof-rail__metrics">
-            <div class="wave1-proof-rail__metric"><strong>12</strong><span>Driver Records</span></div>
-            <div class="wave1-proof-rail__metric"><strong>7</strong><span>Release-Ready</span></div>
-            <div class="wave1-proof-rail__metric"><strong>4</strong><span>Need Action</span></div>
+            <div class="wave1-proof-rail__metric"><strong>12</strong><span>Driver Records</span><small>Active</small></div>
+            <div class="wave1-proof-rail__metric"><strong>7</strong><span>Release-Ready</span><small>Ready to roll</small></div>
+            <div class="wave1-proof-rail__metric"><strong>4</strong><span>Need Action</span><small>Requires review</small></div>
           </div>
+          <p class="wave1-proof-rail__disclosure">Illustrative demo data. No live driver records are shown.</p>
         </div>
       </section>
 
-      <section class="wave1-section wave1-section--tight" aria-labelledby="driver-benefits-heading">
-        <p class="bof-ds2-eyebrow">Driver Experience</p>
-        <h2 id="driver-benefits-heading">The driver portal keeps the record and the next step in the same place.</h2>
-        <p class="wave1-section__intro">Drivers do not need another disconnected checklist. BOF shows what is ready, what needs attention, who owns the next action, and how the issue clears.</p>
-        <div class="wave1-benefit-grid">
-          <article class="wave1-card">
-            <span class="wave1-card__icon">01</span>
+      <section class="wave1-capability-section" aria-labelledby="driver-benefits-heading">
+        <h2 id="driver-benefits-heading" class="wave1-visually-hidden">Driver portal capabilities</h2>
+        <div class="wave1-benefit-grid wave1-benefit-grid--reference">
+          <article class="wave1-card wave1-card--capability">
+            <span class="wave1-card__icon" aria-hidden="true">
+              <svg width="34" height="34" viewBox="0 0 24 24" fill="none">
+                <path d="M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8Z" stroke="currentColor" stroke-width="1.8"/>
+                <path d="M4 21a8 8 0 0 1 16 0" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+              </svg>
+            </span>
             <h3>Driver Onboarding</h3>
             <p>Collect driver profile, tax, policy, credential, and acknowledgment records in one intake path.</p>
+            <span class="wave1-card__arrow" aria-hidden="true">-&gt;</span>
           </article>
-          <article class="wave1-card">
-            <span class="wave1-card__icon">02</span>
+          <article class="wave1-card wave1-card--capability">
+            <span class="wave1-card__icon" aria-hidden="true">
+              <svg width="34" height="34" viewBox="0 0 24 24" fill="none">
+                <path d="M12 3 5 6v5c0 4.2 2.7 7.6 7 10 4.3-2.4 7-5.8 7-10V6l-7-3Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+              </svg>
+            </span>
             <h3>Compliance &amp; Documents</h3>
             <p>Surface CDL, medical card, MVR, HOS, and training items before they become release blockers.</p>
+            <span class="wave1-card__arrow" aria-hidden="true">-&gt;</span>
           </article>
-          <article class="wave1-card">
-            <span class="wave1-card__icon">03</span>
+          <article class="wave1-card wave1-card--capability">
+            <span class="wave1-card__icon" aria-hidden="true">
+              <svg width="34" height="34" viewBox="0 0 24 24" fill="none">
+                <path d="M12 3v18M17 7.5c0-1.7-1.8-3-4.2-3H10c-2.2 0-4 1.4-4 3.2s1.8 3.2 4 3.2h4c2.2 0 4 1.4 4 3.2s-1.8 3.2-4 3.2h-3c-2.3 0-4-1.2-4-3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+              </svg>
+            </span>
             <h3>Settlements &amp; Payments</h3>
             <p>Show settlement packet status, proof needs, deductions, advances, and estimated driver pay context.</p>
+            <span class="wave1-card__arrow" aria-hidden="true">-&gt;</span>
           </article>
-          <article class="wave1-card">
-            <span class="wave1-card__icon">04</span>
+          <article class="wave1-card wave1-card--capability">
+            <span class="wave1-card__icon" aria-hidden="true">
+              <svg width="34" height="34" viewBox="0 0 24 24" fill="none">
+                <path d="M4 5h16v10H8l-4 4V5Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+                <path d="M8 9h8M8 12h5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+              </svg>
+            </span>
             <h3>Driver Communication</h3>
-            <p>Keep support requests tied to the driver, load, owner, and clearance path instead of buried in messages.</p>
+            <p>Messages and support in one connected thread.</p>
+            <span class="wave1-card__arrow" aria-hidden="true">-&gt;</span>
           </article>
         </div>
       </section>
@@ -96,8 +125,8 @@
       <section class="wave1-section" id="driver-portal-preview" aria-labelledby="driver-portal-heading">
         <p class="bof-ds2-eyebrow">Driver Portal Preview</p>
         <h2 id="driver-portal-heading">A focused driver workspace for work, readiness, documents, and pay context.</h2>
-        <div class="wave1-preview">
-          <div>
+        <div class="wave1-product-preview">
+          <div class="wave1-product-preview__copy">
             <p class="wave1-section__intro">The portal view is intentionally practical: the active load, upcoming work, missing documents, compliance status, settlement history, and driver messages stay connected to the same operating record.</p>
             <div class="wave1-proof-grid" aria-label="Driver portal capabilities">
               <div class="wave1-proof"><b>Active load</b><span>Pickup window, assigned unit, proof requirements, and release status.</span></div>
@@ -106,7 +135,7 @@
               <div class="wave1-proof"><b>Messages</b><span>Driver questions routed to the record owner with context attached.</span></div>
             </div>
           </div>
-          <div class="wave1-portal-frame" aria-label="Illustrative driver portal interface">
+          <div class="wave1-portal-frame wave1-portal-frame--large" aria-label="Illustrative driver portal interface">
             <div class="wave1-frame-header">
               <strong>Driver Portal</strong>
               <span class="wave1-disclosure">Demo environment</span>
@@ -140,6 +169,21 @@
               </div>
             </div>
           </div>
+          <aside class="wave1-mobile-preview" aria-label="Illustrative mobile driver portal preview">
+            <div class="wave1-mobile-preview__top">Driver Portal</div>
+            <div class="wave1-mobile-preview__card">
+              <b>Next Action</b>
+              <span>Upload appointment proof</span>
+            </div>
+            <div class="wave1-mobile-preview__card wave1-mobile-preview__card--ready">
+              <b>Load BOF-2064</b>
+              <span>Ready for release</span>
+            </div>
+            <div class="wave1-mobile-preview__card">
+              <b>Settlement</b>
+              <span>Packet status visible</span>
+            </div>
+          </aside>
         </div>
       </section>
 
@@ -231,15 +275,21 @@
         </div>
       </section>
 
-      <section class="wave1-close" aria-labelledby="driver-close-heading">
-        <div class="wave1-close__card">
+      <section class="wave1-close wave1-close--dark" aria-labelledby="driver-close-heading">
+        <div class="wave1-close__card wave1-close__card--dark">
+          <span class="wave1-close__mark" aria-hidden="true">
+            <svg width="58" height="58" viewBox="0 0 64 64" fill="none">
+              <path d="M31 12v40M43 12v40M18 52l9-40M46 52l-9-40" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+              <path d="M28 20h8M26 32h12M24 44h16" stroke="currentColor" stroke-width="2" stroke-linecap="round" opacity=".35"/>
+            </svg>
+          </span>
           <div>
-            <p class="bof-ds2-eyebrow">Driver Confidence</p>
-            <h2 id="driver-close-heading">Drive with confidence. BOF handles the back office.</h2>
-            <p>Give drivers a clear view of readiness, assignments, documents, settlements, and next actions without overpromising live integrations or support coverage.</p>
+            <h2 id="driver-close-heading">We Handle the Back Office.<br>You Focus on the Road.</h2>
+            <p>Less paperwork. Clearer settlements. Better visibility. More time focused on driving.</p>
           </div>
           <div class="bof-ds2-actions">
-            <a class="bof-ds2-button bof-ds2-button--primary" href="/book-demo/">Book a Demo</a>
+            <a class="bof-ds2-button bof-ds2-button--primary" href="#driver-portal-preview">Explore the Driver Portal</a>
+            <a class="wave1-text-link" href="/book-demo/">Request a Demo</a>
           </div>
         </div>
       </section>
