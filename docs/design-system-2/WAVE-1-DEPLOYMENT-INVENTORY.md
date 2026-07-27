@@ -10,6 +10,7 @@ Nothing was pushed, merged, uploaded, or deployed.
 
 ### Shared Assets
 
+- `Website/assets/css/bof-design-system-2-components.css`
 - `Website/assets/css/bof-design-system-2-wave-1.css`
 - `Website/assets/js/bof-design-system-2-preview.js`
 
@@ -25,12 +26,12 @@ Nothing was pushed, merged, uploaded, or deployed.
 - `Website/assets/brand/bof-design-system-2/svg/header-lockup.svg`
 - `Website/assets/brand/bof-design-system-2/favicon/favicon.ico`
 
-### Existing Referenced Hero Images
+### New Referenced Hero Images
 
-- `Website/assets/images/legacy-heroes/drivers-emma-brown-hero.png`
-- `Website/assets/images/dispatch/dispatch-operations-control-hero.png`
-- `Website/assets/images/safety/safety-readiness-hero.png`
-- `Website/assets/images/settlements/settlements-command-hero.png`
+- `Website/assets/images/design-system-2/wave-1/ds2-drivers-hero-modern.webp`
+- `Website/assets/images/design-system-2/wave-1/ds2-dispatch-hero-modern.webp`
+- `Website/assets/images/design-system-2/wave-1/ds2-safety-hero-modern.webp`
+- `Website/assets/images/design-system-2/wave-1/ds2-settlements-hero-modern.webp`
 
 ### Existing Referenced Videos and Posters
 
@@ -55,6 +56,7 @@ Nothing was pushed, merged, uploaded, or deployed.
 
 - `docs/design-system-2/screenshots/wave-1-owner-review/`
 - `docs/design-system-2/screenshots/freight-brace-wave-1-review/`
+- `docs/design-system-2/screenshots/wave-1-hero-composition-rebuild/`
 
 ## Pre-Deployment Checks Completed Locally
 
@@ -65,6 +67,8 @@ Nothing was pushed, merged, uploaded, or deployed.
 - Responsive overflow checks passed.
 - Keyboard menu behavior passed.
 - No secrets, local Windows paths, localhost links, or broken-character artifacts found in the changed public files.
+- The four Wave 1 pages no longer reference the prior baked-text hero image candidates.
+- DevTools-controlled 390 px mobile screenshots confirmed no horizontal overflow.
 
 ## Deployment Notes
 

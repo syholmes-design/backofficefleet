@@ -76,6 +76,8 @@ The section treats Freight Brace as supporting settlement evidence, not as the p
 
 ## Responsive Results
 
+The July 27 hero composition rebuild retained the Freight Brace sections and revalidated the affected Wave 1 routes after the new hero assets and header sizing were applied.
+
 Checked `/dispatch/`, `/safety/`, `/drivers/`, and `/settlements/` at:
 
 - 1440 px
@@ -129,6 +131,7 @@ Screenshot review package:
 - No separate approved Freight Brace logo, video, diagram, or product specification document was found locally.
 - Further Freight Brace confirmation would be required before using formal partnership language, performance statistics, regulatory claims, supported cargo-type claims, capacity claims, or installation-time claims.
 - Screenshot and overflow checks used Microsoft Edge headless and the DevTools protocol because Playwright and Playwright Core are not installed in this worktree.
+- The latest hero rebuild screenshot package is `docs/design-system-2/screenshots/wave-1-hero-composition-rebuild/`.
 
 ## Readiness Recommendation
 

@@ -1,0 +1,163 @@
+{
+  "capture_package": "wave-1-hero-composition-rebuild",
+  "generated_at": "2026-07-27T17:20:18.801Z",
+  "capture_method": "Microsoft Edge headless CLI and DevTools Protocol; mobile captures force 390px CSS viewport",
+  "local_base_url": "http://127.0.0.1:8292/",
+  "screenshots": [
+    {
+      "file": "capability-card-row.png",
+      "bytes": 981960,
+      "updated": "2026-07-27T16:55:02.612Z"
+    },
+    {
+      "file": "dispatch-dashboard.png",
+      "bytes": 1586534,
+      "updated": "2026-07-27T16:54:59.291Z"
+    },
+    {
+      "file": "dispatch-freight-brace.png",
+      "bytes": 1086784,
+      "updated": "2026-07-27T16:49:57.703Z"
+    },
+    {
+      "file": "dispatch-full-page.png",
+      "bytes": 2202587,
+      "updated": "2026-07-27T16:49:46.678Z"
+    },
+    {
+      "file": "dispatch-hero-1366.png",
+      "bytes": 794278,
+      "updated": "2026-07-27T16:49:42.266Z"
+    },
+    {
+      "file": "dispatch-hero-1440.png",
+      "bytes": 988703,
+      "updated": "2026-07-27T16:54:44.452Z"
+    },
+    {
+      "file": "dispatch-mobile.png",
+      "bytes": 154670,
+      "updated": "2026-07-27T17:18:38.882Z"
+    },
+    {
+      "file": "dispatch-tablet.png",
+      "bytes": 464562,
+      "updated": "2026-07-27T16:49:49.554Z"
+    },
+    {
+      "file": "drivers-freight-brace.png",
+      "bytes": 930454,
+      "updated": "2026-07-27T16:49:35.771Z"
+    },
+    {
+      "file": "drivers-full-page.png",
+      "bytes": 1898926,
+      "updated": "2026-07-27T16:49:29.571Z"
+    },
+    {
+      "file": "drivers-hero-1366.png",
+      "bytes": 713701,
+      "updated": "2026-07-27T16:49:26.759Z"
+    },
+    {
+      "file": "drivers-hero-1440.png",
+      "bytes": 853979,
+      "updated": "2026-07-27T16:54:41.958Z"
+    },
+    {
+      "file": "drivers-mobile.png",
+      "bytes": 143124,
+      "updated": "2026-07-27T17:18:37.424Z"
+    },
+    {
+      "file": "drivers-tablet.png",
+      "bytes": 432508,
+      "updated": "2026-07-27T16:49:31.436Z"
+    },
+    {
+      "file": "footer-desktop.png",
+      "bytes": 857125,
+      "updated": "2026-07-27T16:50:52.831Z"
+    },
+    {
+      "file": "header-1366.png",
+      "bytes": 241223,
+      "updated": "2026-07-27T16:54:52.050Z"
+    },
+    {
+      "file": "header-1440.png",
+      "bytes": 253502,
+      "updated": "2026-07-27T16:54:55.031Z"
+    },
+    {
+      "file": "header-mobile.png",
+      "bytes": 53885,
+      "updated": "2026-07-27T16:59:03.414Z"
+    },
+    {
+      "file": "safety-freight-brace.png",
+      "bytes": 1125153,
+      "updated": "2026-07-27T16:50:13.585Z"
+    },
+    {
+      "file": "safety-full-page.png",
+      "bytes": 2117882,
+      "updated": "2026-07-27T16:50:06.704Z"
+    },
+    {
+      "file": "safety-hero-1366.png",
+      "bytes": 840155,
+      "updated": "2026-07-27T16:50:02.908Z"
+    },
+    {
+      "file": "safety-hero-1440.png",
+      "bytes": 1031428,
+      "updated": "2026-07-27T16:54:46.604Z"
+    },
+    {
+      "file": "safety-mobile.png",
+      "bytes": 172877,
+      "updated": "2026-07-27T17:18:40.384Z"
+    },
+    {
+      "file": "safety-tablet.png",
+      "bytes": 467962,
+      "updated": "2026-07-27T16:50:08.971Z"
+    },
+    {
+      "file": "settlements-freight-brace.png",
+      "bytes": 1003514,
+      "updated": "2026-07-27T16:50:39.576Z"
+    },
+    {
+      "file": "settlements-full-page.png",
+      "bytes": 2050512,
+      "updated": "2026-07-27T16:50:27.447Z"
+    },
+    {
+      "file": "settlements-hero-1366.png",
+      "bytes": 775181,
+      "updated": "2026-07-27T16:50:21.144Z"
+    },
+    {
+      "file": "settlements-hero-1440.png",
+      "bytes": 949900,
+      "updated": "2026-07-27T16:54:49.245Z"
+    },
+    {
+      "file": "settlements-mobile.png",
+      "bytes": 139430,
+      "updated": "2026-07-27T17:18:41.889Z"
+    },
+    {
+      "file": "settlements-tablet.png",
+      "bytes": 431734,
+      "updated": "2026-07-27T16:50:32.061Z"
+    },
+    {
+      "file": "video-section.png",
+      "bytes": 1171600,
+      "updated": "2026-07-27T16:55:06.433Z"
+    }
+  ]
+}

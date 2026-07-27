@@ -1,5 +1,20 @@
 # BOF Design System 2.0 Wave 1 Implementation Report
 
+## Hero Composition Rebuild - July 27, 2026
+
+- Follow-up scope: rebuilt the Drivers, Dispatch, Safety, and Settlements hero compositions with clean text-free DS2 assets.
+- New hero assets:
+  - `Website/assets/images/design-system-2/wave-1/ds2-drivers-hero-modern.webp`
+  - `Website/assets/images/design-system-2/wave-1/ds2-dispatch-hero-modern.webp`
+  - `Website/assets/images/design-system-2/wave-1/ds2-safety-hero-modern.webp`
+  - `Website/assets/images/design-system-2/wave-1/ds2-settlements-hero-modern.webp`
+- Header fit: enlarged the BOF logo modestly while tightening nav spacing and raising the collapse breakpoint to avoid desktop overlap.
+- Hero structure: retained buyer-facing copy in HTML instead of baked into images; each page now uses an image-led hero, glass copy panel, and proof panel.
+- Mobile fix: true 390 px DevTools captures confirmed no horizontal overflow on all four Wave 1 pages.
+- Screenshot package: `docs/design-system-2/screenshots/wave-1-hero-composition-rebuild/`.
+- Rebuild report: `docs/design-system-2/WAVE-1-HERO-COMPOSITION-REBUILD-REPORT.md`.
+- Scratch cleanup: old diagnostic folders under `wave-1-rendered-hero-repair` were moved out of the repo working tree.
+
 ## Freight Brace Integration - July 27, 2026
 
 - Follow-up scope: added Freight Brace as a featured cargo-securement solution across `/dispatch/`, `/safety/`, `/drivers/`, and `/settlements/`.
@@ -57,10 +72,10 @@
 
 ## Hero Decisions
 
-- Drivers: retained `/assets/images/legacy-heroes/drivers-emma-brown-hero.png`.
-- Dispatch: retained command-center direction with `/assets/images/dispatch/dispatch-operations-control-hero.png`.
-- Safety: retained safety photo direction with `/assets/images/safety/safety-readiness-hero.png`.
-- Settlements: retained the Settlements Command Center image `/assets/images/settlements/settlements-command-hero.png`.
+- Drivers: uses `/assets/images/design-system-2/wave-1/ds2-drivers-hero-modern.webp`.
+- Dispatch: uses `/assets/images/design-system-2/wave-1/ds2-dispatch-hero-modern.webp`.
+- Safety: uses `/assets/images/design-system-2/wave-1/ds2-safety-hero-modern.webp`.
+- Settlements: uses `/assets/images/design-system-2/wave-1/ds2-settlements-hero-modern.webp`.
 
 ## Portal Preview Approach
 

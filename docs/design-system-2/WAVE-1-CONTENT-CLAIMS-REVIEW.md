@@ -1,5 +1,12 @@
 # BOF Design System 2.0 Wave 1 Content Claims Review
 
+## Hero Composition Rebuild - July 27, 2026
+
+- Replaced baked-text hero-image dependencies with clean image assets and HTML-rendered copy on Drivers, Dispatch, Safety, and Settlements.
+- Confirmed the four changed public pages and shared Wave 1 CSS do not contain visible local paths, localhost URLs, passwords, tokens, TrustAllCerts references, stale `old demo` language, or baked-review labels.
+- Replaced the only visible `owner review` wording found in the changed pages with buyer-facing safety-review language.
+- Freight Brace remains positioned as cargo-securement proof and operating evidence, not as a compliance guarantee.
+
 ## Modern-System Correction - July 27, 2026
 
 - Removed visible internal language from the four Wave 1 pages, including `retained for review`, `owner review`, `demo controls should`, and `Synthetic data shown for public demo review`.
