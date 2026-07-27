@@ -116,6 +116,14 @@ body.bof-ds2-wave1 {
   margin-top: 1.5rem;
 }
 
+.wave1-hero--subject-clear .wave1-hero__inner {
+  grid-template-columns: minmax(0, 4.3fr) minmax(0, 5.7fr);
+}
+
+.wave1-hero--subject-clear .wave1-hero__copy {
+  grid-column: 1;
+}
+
 .wave1-hero__panel,
 .wave1-glass-panel {
   min-width: 0;
@@ -194,6 +202,72 @@ body.bof-ds2-wave1 {
   color: rgba(255, 255, 255, 0.82);
   font-size: 0.76rem;
   font-weight: 850;
+  text-transform: uppercase;
+}
+
+.wave1-proof-rail {
+  position: relative;
+  z-index: 4;
+  margin: 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.24);
+  border-bottom: 1px solid rgba(10, 35, 66, 0.1);
+  background:
+    linear-gradient(90deg, rgba(5, 20, 40, 0.96), rgba(10, 35, 66, 0.92) 48%, rgba(0, 120, 212, 0.14)),
+    #0a1224;
+  box-shadow: 0 20px 42px rgba(10, 35, 66, 0.12);
+  color: #ffffff;
+}
+
+.wave1-proof-rail__inner {
+  display: grid;
+  grid-template-columns: minmax(180px, 0.8fr) minmax(0, 2.2fr);
+  gap: clamp(16px, 2.4vw, 28px);
+  align-items: center;
+  max-width: 1320px;
+  margin: 0 auto;
+  padding: clamp(18px, 2.5vw, 28px) var(--bof-ds2-gutter);
+}
+
+.wave1-proof-rail__label .bof-ds2-eyebrow {
+  margin: 0 0 0.32rem;
+  color: #62f5e4;
+}
+
+.wave1-proof-rail__label span {
+  display: block;
+  color: rgba(255, 255, 255, 0.72);
+  font-size: 0.92rem;
+}
+
+.wave1-proof-rail__metrics {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.wave1-proof-rail__metric {
+  min-width: 0;
+  padding: 15px 18px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.075);
+}
+
+.wave1-proof-rail__metric strong {
+  display: block;
+  color: #ffffff;
+  font-family: var(--bof-ds2-font-display);
+  font-size: clamp(1.55rem, 2vw, 2rem);
+  line-height: 1;
+}
+
+.wave1-proof-rail__metric span {
+  display: block;
+  margin-top: 0.45rem;
+  color: rgba(255, 255, 255, 0.78);
+  font-size: 0.76rem;
+  font-weight: 850;
+  letter-spacing: 0.05em;
   text-transform: uppercase;
 }
 
@@ -704,9 +778,28 @@ body.bof-ds2-wave1 {
     min-height: auto;
   }
 
+  .wave1-hero--subject-clear {
+    min-height: 920px;
+    background:
+      var(--wave1-hero-mobile-overlay, linear-gradient(180deg, rgba(5, 20, 40, 0.04) 0%, rgba(5, 20, 40, 0.16) 42%, rgba(5, 20, 40, 0.78) 82%, rgba(5, 20, 40, 0.98) 100%)),
+      var(--wave1-hero-image, linear-gradient(135deg, #0a1224, #0a2342)),
+      linear-gradient(180deg, #071426, #05070d);
+    background-position: var(--wave1-hero-mobile-position, center top), var(--wave1-hero-mobile-position, center top), center;
+    background-size: var(--wave1-hero-mobile-size, auto 580px), var(--wave1-hero-mobile-size, auto 580px), auto;
+    background-repeat: no-repeat;
+  }
+
   .wave1-hero__inner {
     padding-top: 58px;
     padding-bottom: 58px;
+  }
+
+  .wave1-hero--subject-clear .wave1-hero__inner {
+    grid-template-columns: minmax(0, 1fr);
+    min-height: 920px;
+    align-items: end;
+    padding-top: 540px;
+    padding-bottom: 44px;
   }
 
   .wave1-hero__copy,
@@ -735,6 +828,16 @@ body.bof-ds2-wave1 {
     background-repeat: no-repeat;
   }
 
+  .wave1-hero--subject-clear {
+    background:
+      var(--wave1-hero-mobile-overlay, linear-gradient(180deg, rgba(5, 20, 40, 0.04) 0%, rgba(5, 20, 40, 0.16) 42%, rgba(5, 20, 40, 0.78) 82%, rgba(5, 20, 40, 0.98) 100%)),
+      var(--wave1-hero-image, linear-gradient(135deg, #0a1224, #0a2342)),
+      linear-gradient(180deg, #071426, #05070d);
+    background-position: var(--wave1-hero-mobile-position, center top), var(--wave1-hero-mobile-position, center top), center;
+    background-size: var(--wave1-hero-mobile-size, auto 540px), var(--wave1-hero-mobile-size, auto 540px), auto;
+    background-repeat: no-repeat;
+  }
+
   .wave1-hero__inner,
   .wave1-section,
   .wave1-close {
@@ -748,6 +851,12 @@ body.bof-ds2-wave1 {
     width: 100%;
     max-width: 100%;
     overflow: hidden;
+  }
+
+  .wave1-hero--subject-clear .wave1-hero__inner {
+    justify-content: flex-end;
+    padding-top: 500px;
+    padding-bottom: 34px;
   }
 
   .wave1-hero__copy,
@@ -795,9 +904,14 @@ body.bof-ds2-wave1 {
   .wave1-benefit-grid,
   .wave1-module-grid,
   .wave1-kpi-grid,
+  .wave1-proof-rail__inner,
   .wave1-stat-row,
   .wave1-proof-grid,
   .wave1-step-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .wave1-proof-rail__metrics {
     grid-template-columns: 1fr;
   }
 
