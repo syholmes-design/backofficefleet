@@ -1,0 +1,52 @@
+:root {
+  color-scheme: light;
+  --bof-ds2-navy-950: #05070d;
+  --bof-ds2-navy-900: #0a1224;
+  --bof-ds2-navy-800: #0a2342;
+  --bof-ds2-blue-600: #0078d4;
+  --bof-ds2-blue-500: #1f7cff;
+  --bof-ds2-teal-500: #22c7b8;
+  --bof-ds2-gold-500: #ffb300;
+  --bof-ds2-brown-600: #8a4f08;
+  --bof-ds2-charcoal-800: #2e2e2e;
+  --bof-ds2-slate-700: #334155;
+  --bof-ds2-slate-500: #64748b;
+  --bof-ds2-slate-200: #dbe5ef;
+  --bof-ds2-slate-100: #edf4fb;
+  --bof-ds2-surface: #ffffff;
+  --bof-ds2-surface-soft: #f6f9fc;
+  --bof-ds2-success: #10a56f;
+  --bof-ds2-warning: #b77900;
+  --bof-ds2-danger: #d64545;
+  --bof-ds2-info: #0b68d8;
+  --bof-ds2-font-sans: "Inter", "Segoe UI", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  --bof-ds2-font-display: "Inter", "Segoe UI", system-ui, sans-serif;
+  --bof-ds2-text: #071526;
+  --bof-ds2-text-muted: #516178;
+  --bof-ds2-text-inverse: #ffffff;
+  --bof-ds2-radius-xs: 6px;
+  --bof-ds2-radius-sm: 8px;
+  --bof-ds2-radius-md: 12px;
+  --bof-ds2-radius-lg: 18px;
+  --bof-ds2-radius-xl: 24px;
+  --bof-ds2-shadow-sm: 0 8px 22px rgba(10, 18, 36, 0.08);
+  --bof-ds2-shadow-md: 0 18px 48px rgba(10, 18, 36, 0.14);
+  --bof-ds2-shadow-dark: 0 24px 70px rgba(0, 0, 0, 0.38);
+  --bof-ds2-border: 1px solid rgba(10, 35, 66, 0.14);
+  --bof-ds2-border-strong: 1px solid rgba(10, 35, 66, 0.24);
+  --bof-ds2-max: 1180px;
+  --bof-ds2-gutter: clamp(18px, 4vw, 56px);
+  --bof-ds2-section: clamp(56px, 8vw, 104px);
+  --bof-ds2-h1: clamp(2.5rem, 6vw, 5.1rem);
+  --bof-ds2-h2: clamp(2rem, 4vw, 3.25rem);
+  --bof-ds2-h3: clamp(1.3rem, 2vw, 1.7rem);
+  --bof-ds2-body: clamp(1rem, 1vw, 1.1rem);
+  --bof-ds2-small: 0.86rem;
+  --bof-ds2-focus: 0 0 0 3px rgba(255, 179, 0, 0.36);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    scroll-behavior: auto;
+  }
+}

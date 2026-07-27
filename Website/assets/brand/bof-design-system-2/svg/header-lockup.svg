@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 150" role="img" aria-labelledby="title desc">
+  <title id="title">BackOfficeFleet header logo</title>
+  <desc id="desc">Three-road BOF mark with BackOfficeFleet wordmark for the enterprise header.</desc>
+  <g transform="translate(16 18) scale(.36)">
+    <path d="M6 185 C72 48 178 15 282 7 C170 50 111 106 66 205 Z" fill="#ffffff"/>
+    <path d="M86 205 C130 94 196 37 296 8 C229 58 186 126 158 220 Z" fill="#dcecff"/>
+    <path d="M178 220 C205 126 245 58 308 12 C276 93 259 156 247 220 Z" fill="#8a4f08"/>
+    <path d="M132 196 C170 101 221 47 290 15" fill="none" stroke="#06183a" stroke-width="10" stroke-linecap="round" stroke-dasharray="18 22"/>
+    <path d="M0 246 L160 236 L152 250 L0 260 Z" fill="#dcecff" opacity=".7"/>
+    <path d="M16 278 L145 266 L136 280 L16 292 Z" fill="#dcecff" opacity=".48"/>
+    <path d="M34 308 L124 294 L114 308 L34 320 Z" fill="#dcecff" opacity=".32"/>
+  </g>
+  <text x="140" y="92" fill="#ffffff" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="50" font-weight="850" letter-spacing="-1">BackOffice</text>
+  <text x="414" y="92" fill="#22c7b8" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="50" font-weight="900" letter-spacing="-1">Fleet</text>
+</svg>
