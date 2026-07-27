@@ -1,0 +1,75 @@
+{
+  "created_at": "2026-07-27T15:42:20Z",
+  "worktree": "C:\\Users\\syhol\\BOF-design-system-2-wave-1",
+  "branch": "codex/design-system-2-wave-1",
+  "baseline_commit": "a98fca1a9230f759ce1c24addbfe124dba76fa47",
+  "local_server": "http://127.0.0.1:8291",
+  "capture_method": "Microsoft Edge headless screenshots with a fresh user-data-dir, cache disabled, no Playwright install",
+  "notes": [
+    "Screenshots were recaptured from the current Wave 1 worktree after the controlling CSS and page-level hero framing changes.",
+    "Dispatch full-page screenshot uses a 1440x3000 viewport as a no-dependency full-page visual proof.",
+    "Safety and Settlements source bitmaps include faint baked-in legacy text; final CSS masks and focal positions suppress it without replacing the approved assets."
+  ],
+  "captures": [
+    {
+      "file": "dispatch-hero-1440.png",
+      "route": "/dispatch/?repair-final=1",
+      "viewport": "1440x1000"
+    },
+    {
+      "file": "dispatch-hero-1366.png",
+      "route": "/dispatch/?repair-final=1",
+      "viewport": "1366x768"
+    },
+    {
+      "file": "dispatch-full-page.png",
+      "route": "/dispatch/?repair-final=1",
+      "viewport": "1440x3000"
+    },
+    {
+      "file": "drivers-hero-1440.png",
+      "route": "/drivers/?repair-final=1",
+      "viewport": "1440x1000"
+    },
+    {
+      "file": "safety-hero-1440.png",
+      "route": "/safety/?repair-final=3",
+      "viewport": "1440x1000"
+    },
+    {
+      "file": "settlements-hero-1440.png",
+      "route": "/settlements/?repair-final=3",
+      "viewport": "1440x1000"
+    },
+    {
+      "file": "header-1440.png",
+      "route": "/dispatch/?repair-final=1",
+      "viewport": "1440x260"
+    },
+    {
+      "file": "header-1366.png",
+      "route": "/dispatch/?repair-final=1",
+      "viewport": "1366x260"
+    },
+    {
+      "file": "dispatch-mobile.png",
+      "route": "/dispatch/?repair-final=1",
+      "viewport": "390x844"
+    },
+    {
+      "file": "drivers-mobile.png",
+      "route": "/drivers/?repair-final=1",
+      "viewport": "390x844"
+    },
+    {
+      "file": "safety-mobile.png",
+      "route": "/safety/?repair-final=2",
+      "viewport": "390x844"
+    },
+    {
+      "file": "settlements-mobile.png",
+      "route": "/settlements/?repair-final=2",
+      "viewport": "390x844"
+    }
+  ]
+}
