@@ -45,9 +45,16 @@ Nothing was pushed, merged, uploaded, or deployed.
 
 - `Website/assets/images/partners/freight-brace/freight-brace-trailer-photo.jpeg`
 
+### Freight Brace Review Documentation
+
+- `docs/design-system-2/FREIGHT-BRACE-ASSET-INVENTORY.md`
+- `docs/design-system-2/FREIGHT-BRACE-CONTENT-CLAIMS-REVIEW.md`
+- `docs/design-system-2/FREIGHT-BRACE-WAVE-1-INTEGRATION-REPORT.md`
+
 ## Screenshot Review Package
 
 - `docs/design-system-2/screenshots/wave-1-owner-review/`
+- `docs/design-system-2/screenshots/freight-brace-wave-1-review/`
 
 ## Pre-Deployment Checks Completed Locally
 
