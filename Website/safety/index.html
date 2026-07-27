@@ -3,114 +3,212 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Safety Command Center | BackOfficeFleet</title>
-  <meta name="description" content="BOF safety command page for driver risk, dispatch blocks, credential status, evidence packets, settlement held items, claims exposure, and coaching actions.">
-  <link rel="stylesheet" href="/assets/css/styles.css?v=20260721-enterprise-header-fit5">
+  <title>Compliance Without Blind Spots | BackOfficeFleet Safety</title>
+  <meta name="description" content="BackOfficeFleet helps surface credentials, expirations, incidents, inspections, policies, and corrective actions before they become operating blockers.">
+  <link rel="icon" href="/assets/brand/bof-design-system-2/favicon/favicon.ico">
+  <link rel="stylesheet" href="/assets/css/bof-design-system-2-wave-1.css">
 </head>
-<body class="premium-site page-safety bof-canonical-data-page safety-hero-redesign-page">
-  <header class="site-header">
-    <a class="brand" href="/" aria-label="BackOfficeFleet home"><img src="/assets/images/logo/boflogo-original.png" alt="BackOfficeFleet"></a>
-    <button class="nav-toggle" type="button" data-nav-toggle aria-expanded="false" aria-label="Toggle navigation">&#9776;</button>
-        <nav class="site-nav" data-nav aria-label="Main navigation">
-      <div class="nav-menu" data-nav-menu>
-        <button class="nav-menu-toggle" type="button" data-nav-menu-toggle aria-expanded="false" aria-haspopup="true">Who We Serve</button>
-        <div class="nav-dropdown" aria-label="Who We Serve">
-          <a href="/private-fleets/">Private Fleets</a>
-          <a href="/government/">Government Fleets</a>
-          <a href="/aggregator-outreach/">Aggregators</a>
+<body class="bof-ds2-wave1">
+  <div class="bof-ds2-shell">
+    <header class="bof-ds2-header" data-menu-open="false">
+      <div class="bof-ds2-header__inner">
+        <a class="bof-ds2-brand" href="/" aria-label="BackOfficeFleet home">
+          <img src="/assets/brand/bof-design-system-2/svg/header-lockup.svg" alt="BackOfficeFleet">
+        </a>
+        <nav class="bof-ds2-nav" aria-label="Primary navigation">
+          <a href="/private-fleets/">Who We Serve</a>
+          <a href="/drivers/">Drivers</a>
+          <a href="/dispatch/">Dispatch &amp; Operations</a>
+          <a href="/safety/" aria-current="page">Safety &amp; Compliance</a>
+          <a href="/settlements/">Settlements &amp; Billing</a>
+          <a href="/business-operations/">Business Operations</a>
+          <a href="/policies-procedures/">Policies &amp; Procedures</a>
+          <a href="/trust-governance/">Company</a>
+        </nav>
+        <div class="bof-ds2-header__actions">
+          <a class="bof-ds2-button bof-ds2-button--gold-outline" href="/book-demo/">Book a Demo</a>
         </div>
+        <button class="bof-ds2-menu-button" type="button" data-bof-ds2-menu aria-expanded="false" aria-label="Open navigation">
+          <svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none">
+            <path d="M4 7h16M4 12h16M4 17h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+        </button>
       </div>
-      <a href="/drivers/">Drivers</a>
-      <a href="/dispatch/">Dispatch &amp; Operations</a>
-      <a href="/safety/">Safety &amp; Compliance</a>
-      <a href="/settlements/">Settlements &amp; Billing</a>
-      <a href="/business-operations/">Business Operations</a>
-      <a href="/policies-procedures/">Policies &amp; Procedures</a>
-      <a href="/trust-governance/">Company</a>
-      <a class="nav-utility-link" href="/command-center/">Command Center</a>
-    </nav>
-    <a class="header-cta" href="/dashboard/">Sign In</a>
-  </header>
-  <main>
-    <section class="section page-hero safety-photo-hero">
-      <div class="reveal safety-photo-hero-copy">
-        <p class="eyebrow">Safety readiness control</p>
-        <h1>Safety Readiness Control</h1>
-        <p class="hero-promise">Field inspection, qualification, and corrective-action evidence tied directly to every load and driver record.</p>
-        <div class="actions">
-          <a class="button primary" href="#canonical-safety-records">Open safety records &rarr;</a>
-          <a class="button secondary" href="/dispatch/">Compare dispatch impact</a>
+    </header>
+
+    <main>
+      <section class="wave1-hero" style="--wave1-hero-image: url('/assets/images/safety/safety-readiness-hero.png');">
+        <div class="wave1-hero__inner">
+          <div class="wave1-hero__copy">
+            <p class="bof-ds2-eyebrow">Safety &amp; Compliance</p>
+            <h1>Compliance Without Blind Spots</h1>
+            <p>Track credentials, expirations, incidents, inspections, policies, and corrective actions before they become operating blockers.</p>
+            <div class="bof-ds2-actions">
+              <a class="bof-ds2-button bof-ds2-button--primary" href="#safety-portal-preview">Review Safety Portal</a>
+              <a class="bof-ds2-button" href="#safety-workflow">Explore Safety Workflow</a>
+            </div>
+          </div>
+          <aside class="wave1-hero__panel" aria-label="Safety readiness summary">
+            <p class="bof-ds2-eyebrow">Risk Visibility</p>
+            <h2>Safety states show cause, clearance path, and dispatch impact.</h2>
+            <div class="wave1-kpi-grid">
+              <div class="wave1-kpi"><strong>5</strong><span>Safety items</span></div>
+              <div class="wave1-kpi"><strong>2</strong><span>Credential reviews</span></div>
+              <div class="wave1-kpi"><strong>1</strong><span>Hard block</span></div>
+            </div>
+            <p class="wave1-sr-note">Illustrative demo data. BOF supports oversight; it does not guarantee compliance.</p>
+          </aside>
         </div>
-        <div class="page-clearance-proof" aria-label="Safety operating proof">
-          <span><b>Record</b> Qualification, telematics, pre-trip, incident, and corrective-action facts stay tied to the load.</span>
-          <span><b>Reason</b> Review or blocked safety status names the gate that limits dispatch.</span>
-          <span><b>Clearance</b> Owner action explains what returns the driver or load to release.</span>
+      </section>
+
+      <section class="wave1-section wave1-section--tight" aria-labelledby="safety-benefits-heading">
+        <p class="bof-ds2-eyebrow">Safety Controls</p>
+        <h2 id="safety-benefits-heading">Compliance oversight works better when every exception links to evidence and action.</h2>
+        <p class="wave1-section__intro">Safety records should not stop at a red label. BOF shows why a driver or load is under review, what proof is missing, and what clears the decision.</p>
+        <div class="wave1-benefit-grid">
+          <article class="wave1-card">
+            <span class="wave1-card__icon">01</span>
+            <h3>Credential Readiness</h3>
+            <p>CDL, medical certification, MVR review, policy acknowledgments, and training records stay visible.</p>
+          </article>
+          <article class="wave1-card">
+            <span class="wave1-card__icon">02</span>
+            <h3>Expiration Monitoring</h3>
+            <p>Expiring medical cards, insurance evidence, permits, and equipment records are surfaced before release.</p>
+          </article>
+          <article class="wave1-card">
+            <span class="wave1-card__icon">03</span>
+            <h3>Incident Visibility</h3>
+            <p>Incidents, claims, roadside notes, telematics flags, and corrective actions carry owner and status.</p>
+          </article>
+          <article class="wave1-card">
+            <span class="wave1-card__icon">04</span>
+            <h3>Audit Evidence</h3>
+            <p>Evidence, notes, approvals, timestamps, and policy references stay attached to the operating decision.</p>
+          </article>
         </div>
-      </div>
-    </section>
+      </section>
 
-    <section class="section bof-canonical-section" id="canonical-safety-records" data-bof-operations-view="safety" aria-live="polite"></section>
+      <section class="wave1-section" id="safety-portal-preview" aria-labelledby="safety-preview-heading">
+        <p class="bof-ds2-eyebrow">Safety Portal Preview</p>
+        <h2 id="safety-preview-heading">The safety queue should explain the operating consequence.</h2>
+        <div class="wave1-preview">
+          <div>
+            <p class="wave1-section__intro">The preview connects qualification, inspections, incidents, HOS, telematics inputs, corrective action, and policy acknowledgment to dispatch and settlement decisions.</p>
+            <div class="wave1-proof-grid">
+              <div class="wave1-proof"><b>Driver gate</b><span>Credential readiness determines whether a driver can be assigned.</span></div>
+              <div class="wave1-proof"><b>Load gate</b><span>Pre-trip proof and incident status affect release decisions.</span></div>
+              <div class="wave1-proof"><b>Owner gate</b><span>Safety lead, dispatcher, or packet owner must complete the next action.</span></div>
+              <div class="wave1-proof"><b>Evidence gate</b><span>Photos, notes, MVR review, and policy acknowledgment remain attached.</span></div>
+            </div>
+          </div>
+          <div class="wave1-portal-frame" aria-label="Illustrative safety portal interface">
+            <div class="wave1-frame-header">
+              <strong>Safety &amp; Compliance Portal</strong>
+              <span class="wave1-disclosure">Demo environment</span>
+            </div>
+            <div class="wave1-record-list">
+              <article class="wave1-record-card">
+                <div>
+                  <h3>DRV-003 - credential hold</h3>
+                  <p>Medical-card correction and MVR review must clear before assignment release.</p>
+                </div>
+                <span class="wave1-status wave1-status--blocked">Blocked</span>
+              </article>
+              <article class="wave1-record-card">
+                <div>
+                  <h3>DRV-009 - appointment proof</h3>
+                  <p>Medical card remains valid, but appointment proof is overdue and needs safety owner review.</p>
+                </div>
+                <span class="wave1-status wave1-status--review">Review</span>
+              </article>
+              <article class="wave1-record-card">
+                <div>
+                  <h3>BOF-2064 - ready gate</h3>
+                  <p>Driver qualification, assigned unit, proof packet, and HOS status are ready for release.</p>
+                </div>
+                <span class="wave1-status wave1-status--ready">Ready</span>
+              </article>
+            </div>
+          </div>
+        </div>
+      </section>
 
-    <section class="section public-demo-embed-section" id="safety-workbench">
-      <div class="section-head reveal">
-        <p class="eyebrow">Interactive safety subset</p>
-        <h2>Review driver safety records inside the safety page.</h2>
-        <p>This embedded view keeps DQF readiness, medical and MVR status, holds, assignment consequence, and owner action visible without making the visitor jump to a separate demo route.</p>
-      </div>
-      <div data-demo-embed-route="/interactive-demo/safety/" aria-live="polite"></div>
-    </section>
+      <section class="wave1-dark-band" id="safety-workflow" aria-labelledby="safety-workflow-heading">
+        <div class="wave1-dark-band__inner">
+          <p class="bof-ds2-eyebrow">Inspection and Incident Workflow</p>
+          <h2 id="safety-workflow-heading">Safety follow-up belongs inside the operating record, not in a detached report.</h2>
+          <p>BOF can support compliance oversight by surfacing risk signals and preserving the evidence trail. It should not be represented as legal advice, automated regulatory compliance, or a replacement for qualified safety judgment.</p>
+          <div class="wave1-step-grid">
+            <div class="wave1-step"><b>1</b><span>Credential intake</span></div>
+            <div class="wave1-step"><b>2</b><span>Expiration review</span></div>
+            <div class="wave1-step"><b>3</b><span>Inspection proof</span></div>
+            <div class="wave1-step"><b>4</b><span>Telematics signal</span></div>
+            <div class="wave1-step"><b>5</b><span>Incident record</span></div>
+            <div class="wave1-step"><b>6</b><span>Corrective action</span></div>
+            <div class="wave1-step"><b>7</b><span>Dispatch clearance</span></div>
+          </div>
+        </div>
+      </section>
 
-    <section class="section safety-program-section" id="safety-operating-program">
-      <div class="section-head reveal">
-        <p class="eyebrow">Safety operating program</p>
-        <h2>Safety should explain what happened, what it affects, and what clears the driver or load.</h2>
-        <p>This demo program treats safety as an operating control layer. It does not promise legal compliance; it shows how a fleet can keep qualification records, telematics events, pre-trip evidence, incident response, and corrective action connected to dispatch and settlement decisions.</p>
-      </div>
-      <div class="proof-grid safety-program-grid">
-        <article class="proof-card reveal">
-          <h3>Driver qualification gate</h3>
-          <p>CDL, medical card, MVR review, training acknowledgement, policy acknowledgement, and annual review status decide whether a driver can be presented for active work.</p>
-          <a class="route-chip" href="/drivers/">Open driver readiness</a>
-        </article>
-        <article class="proof-card reveal freight-brace-proof-card">
-          <h3>Pre-trip and equipment evidence</h3>
-          <p>Pre-trip inspection, tire/equipment photos, cargo securement notes, seal photos, and unit assignment context support the release decision before the load moves.</p>
-          <figure class="freight-brace-proof">
-            <img src="/assets/images/partners/freight-brace/freight-brace-trailer-photo.jpeg" alt="Freight Brace cargo securement proof inside a trailer" loading="lazy" decoding="async">
-            <figcaption>Freight Brace securement proof can be retained with the load packet before dispatch release.</figcaption>
+      <section class="wave1-section" aria-labelledby="safety-detail-heading">
+        <p class="bof-ds2-eyebrow">Evidence and Policy Control</p>
+        <h2 id="safety-detail-heading">The page shows what happened, what it affects, and what clears the driver or load.</h2>
+        <div class="wave1-module-grid">
+          <article class="wave1-card">
+            <h3>HOS and telematics inputs</h3>
+            <p>HOS availability, ELD sync state, harsh braking, speed, following distance, and seat belt indicators can inform review status when available.</p>
+          </article>
+          <article class="wave1-card">
+            <h3>Corrective action</h3>
+            <p>Driver coaching, owner review, retraining, proof upload, and return-to-dispatch status stay linked to the safety queue.</p>
+          </article>
+          <article class="wave1-card">
+            <h3>Policy acknowledgment and training</h3>
+            <p>Safety policies, training acknowledgments, and version history remain visible beside the record they control.</p>
+          </article>
+          <article class="wave1-card">
+            <h3>Pre-trip and equipment evidence</h3>
+            <p>Photos, cargo securement, tire checks, seal evidence, and unit assignment context can support dispatch release review.</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="wave1-section" aria-labelledby="safety-proof-heading">
+        <p class="bof-ds2-eyebrow">Safety Evidence Example</p>
+        <h2 id="safety-proof-heading">Freight securement proof belongs where it explains the load, not where it distracts from a driver hold.</h2>
+        <div class="wave1-video-card">
+          <div>
+            <h3>Proof tied to the correct record</h3>
+            <p>Freight Brace imagery can support pre-trip and cargo securement evidence when the issue is cargo proof. It should not appear on unrelated driver credential holds.</p>
+          </div>
+          <figure class="wave1-video-frame">
+            <img src="/assets/images/partners/freight-brace/freight-brace-trailer-photo.jpeg" alt="Freight securement equipment inside a trailer" style="display:block;width:100%;height:auto;aspect-ratio:16/9;object-fit:cover;">
           </figure>
-          <a class="route-chip" href="/demo/tms-release-review/">Open pre-trip packet</a>
-        </article>
-        <article class="proof-card reveal">
-          <h3>Telematics event review</h3>
-          <p>Speeding, harsh braking, following distance, seat belt, mobile distraction, route deviation, and HOS alerts become review items with owner, consequence, and coaching status.</p>
-          <a class="route-chip" href="#canonical-safety-records">Review safety queue</a>
-        </article>
-        <article class="proof-card reveal">
-          <h3>Incident and claim response</h3>
-          <p>Crash notice, cargo claim, roadside inspection, customer complaint, photo evidence, statement intake, and insurance notification stay tied to the affected driver and load.</p>
-          <a class="route-chip" href="/operations-record/">Open joined record</a>
-        </article>
-        <article class="proof-card reveal">
-          <h3>Coaching and corrective action</h3>
-          <p>Owner review, driver coaching, retraining, warning acknowledgement, out-of-service hold, or return-to-duty condition is recorded before the status changes.</p>
-          <a class="route-chip" href="/policies-procedures/">Open policy library</a>
-        </article>
-        <article class="proof-card reveal">
-          <h3>Return-to-dispatch clearance</h3>
-          <p>The safety queue should answer whether dispatch may release the driver or load now, release with a condition, or hold until the named clearance action is complete.</p>
-          <a class="route-chip" href="/dispatch/">Compare dispatch release</a>
-        </article>
-      </div>
-    </section>
+        </div>
+      </section>
 
-  </main>
-  <footer class="site-footer"><div class="footer-inner"><strong>BackOfficeFleet</strong><span>Safety command center.</span><a href="/trust-governance/">Trust &amp; Governance</a></div></footer>
-  <script src="/assets/js/bof-supabase-config.js?v=20260715-supabase"></script>
-  <script src="/assets/js/bof-data-loader.js?v=20260715-supabase"></script>
-  <script src="/assets/js/bof-demo-state.js?v=20260715-admin"></script>
-  <script src="/assets/js/bof-public-operations.js?v=20260715-supabase"></script>
-  <script src="/assets/js/interactive-demo-routes.js?v=20260721-enterprise-header-fit5"></script>
-  <script src="/assets/js/site.js?v=20260721-enterprise-header-fit5"></script>
+      <section class="wave1-close" aria-labelledby="safety-close-heading">
+        <div class="wave1-close__card">
+          <div>
+            <p class="bof-ds2-eyebrow">Compliance Oversight</p>
+            <h2 id="safety-close-heading">Surface safety risks before they slow the fleet.</h2>
+            <p>Keep credentials, incidents, inspections, corrective action, and evidence tied to dispatch and settlement consequences.</p>
+          </div>
+          <div class="bof-ds2-actions">
+            <a class="bof-ds2-button bof-ds2-button--primary" href="/book-demo/">Book a Demo</a>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="bof-ds2-footer">
+      <div class="bof-ds2-footer__inner">
+        <img src="/assets/brand/bof-design-system-2/svg/header-lockup.svg" alt="BackOfficeFleet">
+        <p>Safety and compliance preview. Illustrative demo data only.</p>
+      </div>
+    </footer>
+  </div>
+  <script src="/assets/js/bof-design-system-2-preview.js"></script>
 </body>
 </html>

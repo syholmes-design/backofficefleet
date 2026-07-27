@@ -3,105 +3,213 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Settlements Command Center | BackOfficeFleet</title>
-  <meta name="description" content="BOF settlement workflow support for trucking settlement documents, driver pay calculations, packet-to-pay readiness, POD billing delays, factoring packet readiness, and cash-flow visibility.">
-  <link rel="stylesheet" href="/assets/css/styles.css?v=20260721-enterprise-header-fit5">
+  <title>Revenue Readiness for Every Settlement | BackOfficeFleet</title>
+  <meta name="description" content="BackOfficeFleet shows every packet, hold reason, exception, and clearance path before payment is delayed.">
+  <link rel="icon" href="/assets/brand/bof-design-system-2/favicon/favicon.ico">
+  <link rel="stylesheet" href="/assets/css/bof-design-system-2-wave-1.css">
 </head>
-<body class="premium-site page-settlements settlements-premium-pilot government-redesign-page settlement-command-redesign-page">
-  <header class="site-header">
-    <a class="brand" href="/" aria-label="BackOfficeFleet home"><img src="/assets/images/logo/boflogo-original.png" alt="BackOfficeFleet"></a>
-    <button class="nav-toggle" type="button" data-nav-toggle aria-expanded="false" aria-label="Toggle navigation">&#9776;</button>
-    <nav class="site-nav" data-nav aria-label="Main navigation">
-      <div class="nav-menu" data-nav-menu>
-        <button class="nav-menu-toggle" type="button" data-nav-menu-toggle aria-expanded="false" aria-haspopup="true">Who We Serve</button>
-        <div class="nav-dropdown" aria-label="Who We Serve">
-          <a href="/private-fleets/">Private Fleets</a>
-          <a href="/government/">Government Fleets</a>
-          <a href="/aggregator-outreach/">Aggregators</a>
+<body class="bof-ds2-wave1">
+  <div class="bof-ds2-shell">
+    <header class="bof-ds2-header" data-menu-open="false">
+      <div class="bof-ds2-header__inner">
+        <a class="bof-ds2-brand" href="/" aria-label="BackOfficeFleet home">
+          <img src="/assets/brand/bof-design-system-2/svg/header-lockup.svg" alt="BackOfficeFleet">
+        </a>
+        <nav class="bof-ds2-nav" aria-label="Primary navigation">
+          <a href="/private-fleets/">Who We Serve</a>
+          <a href="/drivers/">Drivers</a>
+          <a href="/dispatch/">Dispatch &amp; Operations</a>
+          <a href="/safety/">Safety &amp; Compliance</a>
+          <a href="/settlements/" aria-current="page">Settlements &amp; Billing</a>
+          <a href="/business-operations/">Business Operations</a>
+          <a href="/policies-procedures/">Policies &amp; Procedures</a>
+          <a href="/trust-governance/">Company</a>
+        </nav>
+        <div class="bof-ds2-header__actions">
+          <a class="bof-ds2-button bof-ds2-button--gold-outline" href="/book-demo/">Book a Demo</a>
         </div>
+        <button class="bof-ds2-menu-button" type="button" data-bof-ds2-menu aria-expanded="false" aria-label="Open navigation">
+          <svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none">
+            <path d="M4 7h16M4 12h16M4 17h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+        </button>
       </div>
-      <a href="/drivers/">Drivers</a>
-      <a href="/dispatch/">Dispatch &amp; Operations</a>
-      <a href="/safety/">Safety &amp; Compliance</a>
-      <a href="/settlements/">Settlements &amp; Billing</a>
-      <a href="/business-operations/">Business Operations</a>
-      <a href="/policies-procedures/">Policies &amp; Procedures</a>
-      <a href="/trust-governance/">Company</a>
-      <a class="nav-utility-link" href="/command-center/">Command Center</a>
-    </nav>
-    <a class="header-cta" href="/dashboard/">Sign In</a>
-  </header>
+    </header>
 
-  <main class="settlements-page">
-    <section class="gov-hero-section" aria-label="Settlements command center hero">
-      <div class="gov-hero-content reveal">
-        <p class="eyebrow">Settlements Command Center</p>
-        <h1>Revenue readiness oversight for settlements command.</h1>
-        <p>See every packet, hold reason, and clearance path before cash gets stuck.</p>
-        <div class="gov-actions">
-          <a class="gov-btn-primary" href="#canonical-settlement-records">Open Settlement Records &rarr;</a>
-          <a class="gov-btn-outline" href="/operations-record/#canonical-operations-record">View Joined Record</a>
+    <main>
+      <section class="wave1-hero" style="--wave1-hero-image: url('/assets/images/settlements/settlements-command-hero.png');">
+        <div class="wave1-hero__inner">
+          <div class="wave1-hero__copy">
+            <p class="bof-ds2-eyebrow">Settlements Command Center</p>
+            <h1>Revenue Readiness for Every Settlement</h1>
+            <p>See every packet, hold reason, exception, and clearance path before payment is delayed.</p>
+            <div class="bof-ds2-actions">
+              <a class="bof-ds2-button bof-ds2-button--primary" href="#settlement-process">See How Settlements Work</a>
+              <a class="bof-ds2-button" href="#finance-readiness">Explore Finance Readiness</a>
+            </div>
+          </div>
+          <aside class="wave1-hero__panel" aria-label="Settlement readiness summary">
+            <p class="bof-ds2-eyebrow">Packet-to-pay readiness</p>
+            <h2>Proof, pay basis, billing status, and hold reason stay connected.</h2>
+            <div class="wave1-kpi-grid">
+              <div class="wave1-kpi"><strong>9</strong><span>Ready packets</span></div>
+              <div class="wave1-kpi"><strong>4</strong><span>Held items</span></div>
+              <div class="wave1-kpi"><strong>$13.3k</strong><span>Exposure</span></div>
+            </div>
+            <p class="wave1-sr-note">Synthetic data shown for public demo review.</p>
+          </aside>
         </div>
+      </section>
+
+      <section class="wave1-section wave1-section--tight" aria-labelledby="settlement-benefits-heading">
+        <p class="bof-ds2-eyebrow">Settlement Controls</p>
+        <h2 id="settlement-benefits-heading">Settlement readiness starts before the packet reaches the desk.</h2>
+        <div class="wave1-benefit-grid">
+          <article class="wave1-card">
+            <span class="wave1-card__icon">01</span>
+            <h3>Accurate by Design</h3>
+            <p>Line haul, fuel surcharge, accessorials, advances, tolls, and deductions stay traceable.</p>
+          </article>
+          <article class="wave1-card">
+            <span class="wave1-card__icon">02</span>
+            <h3>Proof Visibility</h3>
+            <p>BOL, POD, receiver evidence, lumper receipts, and renewal evidence are visible before release.</p>
+          </article>
+          <article class="wave1-card">
+            <span class="wave1-card__icon">03</span>
+            <h3>Exception Control</h3>
+            <p>Held packets show why the item is held, who owns it, and what clears it.</p>
+          </article>
+          <article class="wave1-card">
+            <span class="wave1-card__icon">04</span>
+            <h3>Audit Ready</h3>
+            <p>Review notes, owner decisions, timestamps, and supporting evidence stay attached to the record.</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="wave1-dark-band" id="settlement-process" aria-labelledby="settlement-process-heading">
+        <div class="wave1-dark-band__inner">
+          <p class="bof-ds2-eyebrow">Smarter Settlement Process</p>
+          <h2 id="settlement-process-heading">Every payment question should resolve to packet status, proof, owner, and clearance path.</h2>
+          <p>BOF does not guarantee payment timing. It gives operations and finance a shared way to see what is ready, what is held, and what proof is still needed.</p>
+          <div class="wave1-step-grid">
+            <div class="wave1-step"><b>1</b><span>Load completion</span></div>
+            <div class="wave1-step"><b>2</b><span>Proof capture</span></div>
+            <div class="wave1-step"><b>3</b><span>Packet review</span></div>
+            <div class="wave1-step"><b>4</b><span>Exception resolution</span></div>
+            <div class="wave1-step"><b>5</b><span>Settlement generation</span></div>
+            <div class="wave1-step"><b>6</b><span>Driver visibility</span></div>
+            <div class="wave1-step"><b>7</b><span>Payment readiness</span></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="wave1-section" id="finance-readiness" aria-labelledby="finance-preview-heading">
+        <p class="bof-ds2-eyebrow">Finance Readiness Dashboard</p>
+        <h2 id="finance-preview-heading">Finance and operations see the same hold reason before cash gets stuck.</h2>
+        <div class="wave1-dashboard-grid">
+          <article class="wave1-dashboard-frame">
+            <div class="wave1-frame-header">
+              <strong>Packet Health</strong>
+              <span class="wave1-disclosure">Illustrative operating view</span>
+            </div>
+            <div class="wave1-record-list">
+              <div class="wave1-stat-row">
+                <div class="wave1-stat"><strong>9</strong><span>Ready to bill</span></div>
+                <div class="wave1-stat"><strong>4</strong><span>Held</span></div>
+                <div class="wave1-stat"><strong>2</strong><span>Proof gaps</span></div>
+              </div>
+              <div class="wave1-chart" role="img" aria-label="Illustrative settlement readiness trend"></div>
+            </div>
+          </article>
+          <article class="wave1-portal-frame">
+            <div class="wave1-frame-header">
+              <strong>Settlement BOF-1907</strong>
+              <span class="wave1-disclosure">Demo environment</span>
+            </div>
+            <div class="wave1-record-list">
+              <article class="wave1-record-card">
+                <div>
+                  <h3>Packet-to-pay readiness</h3>
+                  <p>POD and renewal evidence review must clear before payment readiness moves forward.</p>
+                </div>
+                <span class="wave1-status wave1-status--review">Held</span>
+              </article>
+              <div class="wave1-proof-grid">
+                <div class="wave1-proof"><b>Line haul</b><span>$3,450.00</span></div>
+                <div class="wave1-proof"><b>Fuel surcharge</b><span>$310.00</span></div>
+                <div class="wave1-proof"><b>Accessorials</b><span>$175.00 detention support</span></div>
+                <div class="wave1-proof"><b>Deductions</b><span>$42.00 toll review</span></div>
+                <div class="wave1-proof"><b>Gross total</b><span>$3,935.00 synthetic example</span></div>
+                <div class="wave1-proof"><b>Net context</b><span>Driver pay profile and packet hold shown together.</span></div>
+              </div>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section class="wave1-section" aria-labelledby="settlement-proof-heading">
+        <p class="bof-ds2-eyebrow">Proof Packet and Hold Reason</p>
+        <h2 id="settlement-proof-heading">Held does not mean vague. It means a named proof gap needs a named owner.</h2>
+        <div class="wave1-module-grid">
+          <article class="wave1-card">
+            <h3>Proof packet</h3>
+            <p>POD, BOL, invoice, receiver evidence, photos, lumper receipt, renewal evidence, and notes are grouped before release.</p>
+          </article>
+          <article class="wave1-card">
+            <h3>Hold reason</h3>
+            <p>At-risk or held packets explain the missing document, conflicting value, or approval that is preventing movement.</p>
+          </article>
+          <article class="wave1-card">
+            <h3>Driver transparency</h3>
+            <p>Drivers see the settlement context they need without exposing private finance work beyond their record.</p>
+          </article>
+          <article class="wave1-card">
+            <h3>Fleet transparency</h3>
+            <p>Fleet owners and managers see aging packets, owners, and status without waiting for a disconnected spreadsheet.</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="wave1-section" aria-labelledby="settlements-video-heading">
+        <p class="bof-ds2-eyebrow">See BOF in Action</p>
+        <h2 id="settlements-video-heading">Settlement readiness video retained for review.</h2>
+        <div class="wave1-video-card">
+          <div>
+            <h3>Packet readiness and finance visibility</h3>
+            <p>The existing local settlements video remains useful for illustrating packet-to-pay visibility. Later review should check legacy branding in the thumbnail or intro.</p>
+          </div>
+          <div class="wave1-video-frame">
+            <video controls preload="metadata" poster="/assets/images/video-posters/bof-settlements-readiness.jpg">
+              <source src="/assets/videos/bof-settlements-readiness.mp4" type="video/mp4">
+              Your browser does not support the video tag.
+            </video>
+          </div>
+        </div>
+      </section>
+
+      <section class="wave1-close" aria-labelledby="settlement-close-heading">
+        <div class="wave1-close__card">
+          <div>
+            <p class="bof-ds2-eyebrow">Revenue Readiness</p>
+            <h2 id="settlement-close-heading">Stronger settlements. Stronger partnerships.</h2>
+            <p>Keep proof, pay basis, hold reason, owner action, and driver visibility in one settlement-ready workflow.</p>
+          </div>
+          <div class="bof-ds2-actions">
+            <a class="bof-ds2-button bof-ds2-button--primary" href="/book-demo/">Book a Demo</a>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="bof-ds2-footer">
+      <div class="bof-ds2-footer__inner">
+        <img src="/assets/brand/bof-design-system-2/svg/header-lockup.svg" alt="BackOfficeFleet">
+        <p>Settlements and billing preview. Synthetic data only.</p>
       </div>
-    </section>
-
-    <section class="gov-context-strip">
-      <p>Built for finance and operations teams managing packet-to-pay readiness, proof, and billing clearance across every load and driver record.</p>
-    </section>
-
-    <section class="section bof-canonical-section" id="canonical-settlement-records" data-bof-operations-view="settlements" aria-live="polite"></section>
-
-    <section class="section public-demo-embed-section" id="settlements-workbench">
-      <div class="section-head reveal">
-        <p class="eyebrow">Interactive settlement subset</p>
-        <h2>Work the settlement queue without leaving the settlements page.</h2>
-        <p>This embedded view keeps revenue, driver pay, deductions, proof holds, owner, and clearance path on the same public page. The full-screen demo remains available for a deeper walkthrough.</p>
-      </div>
-      <div data-demo-embed-route="/interactive-demo/settlements/" aria-live="polite"></div>
-    </section>
-
-    <section class="gov-section">
-      <div class="gov-section-head reveal">
-        <p class="eyebrow">Settlement operating paths</p>
-        <h2>Open the card that matches the settlement question the office needs answered.</h2>
-        <p>Each card opens a secondary page with the proof, pay basis, exception owner, clearance route, and audit detail behind the settlement workflow.</p>
-      </div>
-      <div class="gov-pillar-grid">
-        <a class="gov-pillar-card reveal" href="/settlements/single-record-accountability/">
-          <span>01</span>
-          <h3>Single record accountability</h3>
-          <p>Settlement, proof, billing, and pay basis in one record.</p>
-          <b>Open accountability page</b>
-        </a>
-        <a class="gov-pillar-card reveal" href="/settlements/exception-visibility/">
-          <span>02</span>
-          <h3>Exception visibility</h3>
-          <p>Every hold shows the reason, owner, and clearance path.</p>
-          <b>Open exceptions page</b>
-        </a>
-        <a class="gov-pillar-card reveal" href="/settlements/finance-operations-alignment/">
-          <span>03</span>
-          <h3>Finance-operations alignment</h3>
-          <p>Shared readiness view between dispatch, billing, and safety.</p>
-          <b>Open alignment page</b>
-        </a>
-        <a class="gov-pillar-card reveal" href="/settlements/audit-trail/">
-          <span>04</span>
-          <h3>Audit trail</h3>
-          <p>Managers see what was cleared, not just what was missed.</p>
-          <b>Open audit page</b>
-        </a>
-      </div>
-    </section>
-
-  </main>
-
-  <footer class="site-footer"><div class="footer-inner"><strong>BackOfficeFleet</strong><span>Settlement workflow support.</span><a href="/trust-governance/">Trust &amp; Governance</a></div></footer>
-  <script src="/assets/js/bof-supabase-config.js?v=20260715-supabase"></script>
-  <script src="/assets/js/bof-data-loader.js?v=20260715-supabase"></script>
-  <script src="/assets/js/bof-demo-state.js?v=20260715-admin"></script>
-  <script src="/assets/js/bof-public-operations.js?v=20260715-supabase"></script>
-  <script src="/assets/js/interactive-demo-routes.js?v=20260721-enterprise-header-fit5"></script>
-  <script src="/assets/js/site.js?v=20260721-enterprise-header-fit5"></script>
+    </footer>
+  </div>
+  <script src="/assets/js/bof-design-system-2-preview.js"></script>
 </body>
 </html>
