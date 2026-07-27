@@ -51,16 +51,26 @@
         </div>
       </section>
 
-      <section class="wave1-proof-rail" aria-label="Dispatch operating summary">
-        <div class="wave1-proof-rail__copy">
-          <p class="bof-ds2-eyebrow">Operations Overview</p>
-          <h2>Every load shows status, blocker, owner, and release consequence.</h2>
-          <p>Illustrative demo data shown for public operating context.</p>
-        </div>
-        <div class="wave1-kpi-grid">
-          <div class="wave1-kpi"><strong>145</strong><span>Active loads</span></div>
-          <div class="wave1-kpi"><strong>9</strong><span>At risk</span></div>
-          <div class="wave1-kpi"><strong>24</strong><span>Blocked</span></div>
+      <section class="wave1-proof-rail wave1-proof-rail--attached" aria-label="Dispatch operating summary">
+        <div class="wave1-proof-rail__inner">
+          <div class="wave1-proof-rail__identity">
+            <span class="wave1-proof-rail__icon" aria-hidden="true">
+              <svg width="34" height="34" viewBox="0 0 24 24" fill="none">
+                <path d="M4 18V6l6 3 4-3 6 3v12l-6-3-4 3-6-3Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+                <path d="M10 9v12M14 6v12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+              </svg>
+            </span>
+            <div class="wave1-proof-rail__label">
+              <p class="bof-ds2-eyebrow">Operations Overview</p>
+              <span>Every load shows status, blocker, owner, and release consequence.</span>
+            </div>
+          </div>
+          <div class="wave1-proof-rail__metrics">
+            <div class="wave1-proof-rail__metric"><strong>145</strong><span>Active Loads</span><small>Visible in queue</small></div>
+            <div class="wave1-proof-rail__metric"><strong>9</strong><span>At Risk</span><small>Needs review</small></div>
+            <div class="wave1-proof-rail__metric"><strong>24</strong><span>Blocked</span><small>Release held</small></div>
+          </div>
+          <p class="wave1-proof-rail__disclosure">Illustrative demo data shown for public operating context.</p>
         </div>
       </section>
 
