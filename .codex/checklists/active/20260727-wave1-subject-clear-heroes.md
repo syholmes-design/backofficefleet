@@ -1,0 +1,13 @@
+# Wave 1 Subject-Clear Heroes
+
+Source: `C:\Users\syhol\.codex\attachments\cece8336-df1d-49be-b833-ed7a09d557ad\pasted-text.txt`
+
+| ID | Requirement | Status | Evidence | Notes |
+|---|---|---|---|---|
+| W1-HERO-001 | Verify branch, HEAD, clean status, assets, current hero positions, panel placement, and protected constraints before edits. | complete | `git status --short --branch` clean on `codex/design-system-2-wave-1`; HEAD `a7862820c5b836e96d2e5a9c44eb229b3be5bd4a`; current hero assets and positions inventoried from Wave 1 HTML. | Bridge dry run timed out; RustDesk running/startup verified. |
+| W1-HERO-002 | Correct and visually prove the Drivers hero first, using the approved woman/dark tractor image, one message panel, and metrics moved below the hero. | complete | Local commit `980d358a` plus cache-free desktop/tablet/mobile screenshots. | Drivers passed before touching Dispatch/Safety/Settlements. |
+| W1-HERO-003 | After Drivers passes, apply subject-aware hero composition and proof rails to Dispatch, Safety, and Settlements. | complete | Local commit `aa3b7754`; cache-free desktop/tablet/mobile screenshots show visible subjects and no overflow. | Freight Brace sections preserved. |
+| W1-HERO-004 | Make the true portal/dashboard preview prominent after the hero/proof rail/capability cards, instead of treating four feature cards as the dashboard. | complete | Local commit `81aef0ee`; section-order proof captured for all four pages. | Required sequence now satisfied on Drivers, Dispatch, Safety, and Settlements. |
+| W1-HERO-005 | Capture cache-free screenshots for all required viewports, annotated subject-zone images, proof-rail example, dashboard/portal preview examples, and header checks. | complete | Screenshot package under `docs/design-system-2/screenshots/wave-1-subject-clear-hero-review/`. | Drivers, Dispatch, Safety, and Settlements captured at 1440, 1366, 1280, 1024, 768, and 390 plus annotated and component evidence. |
+| W1-HERO-006 | Run syntax/canonical/route/overflow checks and manually inspect screenshots for subject visibility. | complete | `node --check Website/assets/js/site.js`; `node Website/tools/validate-bof-public-operations.js`; route checks for `/`, `/drivers/`, `/dispatch/`, `/safety/`, `/settlements/`; manual screenshot review. | No unsupported claim matches; no horizontal overflow in captured viewports. |
+| W1-HERO-007 | Create the subject-clear hero report and commit the four bounded local commits with exact requested messages. | complete | Four local commits completed: `980d358a`, `aa3b7754`, `81aef0ee`, and the QA/report commit. | No push, merge, deploy, upload, Supabase, or protected worktree changes. |
