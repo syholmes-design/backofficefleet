@@ -6,16 +6,28 @@
     return;
   }
 
-  menuButton.addEventListener("click", () => {
+  function setMenuOpen(isOpen) {
+    header.setAttribute("data-menu-open", String(isOpen));
+    menuButton.setAttribute("aria-expanded", String(isOpen));
+  }
+
+  function toggleMenu() {
     const isOpen = header.getAttribute("data-menu-open") === "true";
-    header.setAttribute("data-menu-open", String(!isOpen));
-    menuButton.setAttribute("aria-expanded", String(!isOpen));
+    setMenuOpen(!isOpen);
+  }
+
+  menuButton.addEventListener("click", toggleMenu);
+
+  menuButton.addEventListener("keydown", (event) => {
+    if (event.key === "Enter" || event.key === " ") {
+      event.preventDefault();
+      toggleMenu();
+    }
   });
 
   document.addEventListener("keydown", (event) => {
     if (event.key === "Escape" && header.getAttribute("data-menu-open") === "true") {
-      header.setAttribute("data-menu-open", "false");
-      menuButton.setAttribute("aria-expanded", "false");
+      setMenuOpen(false);
       menuButton.focus();
     }
   });

@@ -3,128 +3,220 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Driver Roster &amp; Readiness | BackOfficeFleet</title>
-  <meta name="description" content="BOF compact driver roster showing readiness, HOS available time, ELD state, equipment access, safety context, and clearance paths from the canonical operations dataset.">
-  <link rel="stylesheet" href="/assets/css/styles.css?v=20260721-enterprise-header-fit5">
+  <title>Drivers Powered for Success | BackOfficeFleet</title>
+  <meta name="description" content="BackOfficeFleet gives drivers one place to manage readiness, documents, loads, settlements, and support.">
+  <link rel="icon" href="/assets/brand/bof-design-system-2/favicon/favicon.ico">
+  <link rel="stylesheet" href="/assets/css/bof-design-system-2-wave-1.css">
 </head>
-<body class="premium-site page-drivers driver-roster-page">
-  <header class="site-header">
-    <a class="brand" href="/" aria-label="BackOfficeFleet home"><img src="/assets/images/logo/boflogo-original.png" alt="BackOfficeFleet"></a>
-    <button class="nav-toggle" type="button" data-nav-toggle aria-expanded="false" aria-label="Toggle navigation">&#9776;</button>
-    <nav class="site-nav" data-nav aria-label="Main navigation">
-      <div class="nav-menu" data-nav-menu>
-        <button class="nav-menu-toggle" type="button" data-nav-menu-toggle aria-expanded="false" aria-haspopup="true">Who We Serve</button>
-        <div class="nav-dropdown" aria-label="Who We Serve">
-          <a href="/private-fleets/">Private Fleets</a>
-          <a href="/government/">Government Fleets</a>
-          <a href="/aggregator-outreach/">Aggregators</a>
+<body class="bof-ds2-wave1">
+  <div class="bof-ds2-shell">
+    <header class="bof-ds2-header" data-menu-open="false">
+      <div class="bof-ds2-header__inner">
+        <a class="bof-ds2-brand" href="/" aria-label="BackOfficeFleet home">
+          <img src="/assets/brand/bof-design-system-2/svg/header-lockup.svg" alt="BackOfficeFleet">
+        </a>
+        <nav class="bof-ds2-nav" aria-label="Primary navigation">
+          <a href="/private-fleets/">Who We Serve</a>
+          <a href="/drivers/" aria-current="page">Drivers</a>
+          <a href="/dispatch/">Dispatch &amp; Operations</a>
+          <a href="/safety/">Safety &amp; Compliance</a>
+          <a href="/settlements/">Settlements &amp; Billing</a>
+          <a href="/business-operations/">Business Operations</a>
+          <a href="/policies-procedures/">Policies &amp; Procedures</a>
+          <a href="/trust-governance/">Company</a>
+        </nav>
+        <div class="bof-ds2-header__actions">
+          <a class="bof-ds2-button bof-ds2-button--gold-outline" href="/book-demo/">Book a Demo</a>
         </div>
+        <button class="bof-ds2-menu-button" type="button" data-bof-ds2-menu aria-expanded="false" aria-label="Open navigation">
+          <svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none">
+            <path d="M4 7h16M4 12h16M4 17h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+        </button>
       </div>
-      <a class="active" href="/drivers/">Drivers</a>
-      <a href="/dispatch/">Dispatch &amp; Operations</a>
-      <a href="/safety/">Safety &amp; Compliance</a>
-      <a href="/settlements/">Settlements &amp; Billing</a>
-      <a href="/business-operations/">Business Operations</a>
-      <a href="/policies-procedures/">Policies &amp; Procedures</a>
-      <a href="/trust-governance/">Company</a>
-      <a class="nav-utility-link" href="/command-center/">Command Center</a>
-    </nav>
-    <a class="header-cta" href="/dashboard/">Sign In</a>
-  </header>
+    </header>
 
-  <main class="driver-roster-main">
-    <section class="section driver-hero" id="drivers-top">
-      <div class="driver-hero-copy reveal">
-        <p class="eyebrow">Driver operations</p>
-        <h1>Drivers Command Center</h1>
-        <p class="hero-promise">Track driver readiness, documents, acknowledgments, eligibility, and fix paths from one source-of-truth view.</p>
-        <p>Every review item should explain what changed, why it matters, and what action resolves it.</p>
-        <div class="driver-hero-actions">
-          <a class="button primary" href="#driver-roster">Open 12-driver roster</a>
-          <a class="button secondary" href="#driver-video">Watch driver video</a>
-          <a class="button secondary" href="/operations-record/">View joined records</a>
+    <main>
+      <section class="wave1-hero" style="--wave1-hero-image: url('/assets/images/legacy-heroes/drivers-emma-brown-hero.png');">
+        <div class="wave1-hero__inner">
+          <div class="wave1-hero__copy">
+            <p class="bof-ds2-eyebrow">Driver Operations</p>
+            <h1>Drivers Powered for Success</h1>
+            <p>Centralize onboarding, compliance, documents, settlements, and support so every driver stays road-ready and informed.</p>
+            <div class="bof-ds2-actions">
+              <a class="bof-ds2-button bof-ds2-button--primary" href="#driver-portal-preview">Explore the Driver Portal</a>
+              <a class="bof-ds2-button" href="#driver-support-workflow">See How BOF Supports Drivers</a>
+            </div>
+          </div>
+          <aside class="wave1-hero__panel" aria-label="Driver readiness summary">
+            <p class="bof-ds2-eyebrow">Driver Record</p>
+            <h2>One view for readiness, loads, documents, settlements, and messages.</h2>
+            <div class="wave1-kpi-grid" aria-label="Illustrative driver metrics">
+              <div class="wave1-kpi"><strong>12</strong><span>Driver records</span></div>
+              <div class="wave1-kpi"><strong>7</strong><span>Release-ready</span></div>
+              <div class="wave1-kpi"><strong>4</strong><span>Need action</span></div>
+            </div>
+            <p class="wave1-sr-note">Illustrative demo data. No live driver records are shown.</p>
+          </aside>
         </div>
-        <div class="driver-hero-proof" aria-label="Driver command center proof points">
-          <span><b>Capability</b> Score, HOS, ELD, equipment, lane fit, and carrier rules.</span>
-          <span><b>Reason</b> Review or blocked drivers explain the exact operating issue.</span>
-          <span><b>Clearance</b> Open the driver to see owner, consequence, and fix path.</span>
+      </section>
+
+      <section class="wave1-section wave1-section--tight" aria-labelledby="driver-benefits-heading">
+        <p class="bof-ds2-eyebrow">Driver Experience</p>
+        <h2 id="driver-benefits-heading">The driver portal keeps the record and the next step in the same place.</h2>
+        <p class="wave1-section__intro">Drivers do not need another disconnected checklist. BOF shows what is ready, what needs attention, who owns the next action, and how the issue clears.</p>
+        <div class="wave1-benefit-grid">
+          <article class="wave1-card">
+            <span class="wave1-card__icon">01</span>
+            <h3>Faster Onboarding</h3>
+            <p>Collect driver profile, tax, policy, credential, and acknowledgment records in one intake path.</p>
+          </article>
+          <article class="wave1-card">
+            <span class="wave1-card__icon">02</span>
+            <h3>Stay Compliant</h3>
+            <p>Surface CDL, medical card, MVR, HOS, and training items before they become release blockers.</p>
+          </article>
+          <article class="wave1-card">
+            <span class="wave1-card__icon">03</span>
+            <h3>Settlement Visibility</h3>
+            <p>Show settlement packet status, proof needs, deductions, advances, and estimated driver pay context.</p>
+          </article>
+          <article class="wave1-card">
+            <span class="wave1-card__icon">04</span>
+            <h3>Driver Support</h3>
+            <p>Keep support requests tied to the driver, load, owner, and clearance path instead of buried in messages.</p>
+          </article>
         </div>
-      </div>
-      <figure class="driver-hero-photo driver-rig-hero reveal">
-        <img src="/assets/images/legacy-heroes/drivers-emma-brown-hero.png" alt="Professional driver standing in front of a tractor">
-        <figcaption>A driver record should show why readiness, documents, HOS, equipment access, and clearance action belong in one view.</figcaption>
-      </figure>
-    </section>
+      </section>
 
-    <section class="section driver-roster-shell" id="driver-roster" aria-labelledby="driver-roster-heading">
-      <div class="driver-roster-toolbar reveal">
-        <div>
-          <p class="eyebrow">Canonical driver roster</p>
-          <h2 id="driver-roster-heading">12 compact driver records with capability, HOS available time, equipment, and clearance action.</h2>
-          <p>Filter by readiness, scan the one-line roster, then open a driver to see the full clearance path and operating context.</p>
+      <section class="wave1-section" id="driver-portal-preview" aria-labelledby="driver-portal-heading">
+        <p class="bof-ds2-eyebrow">Driver Portal Preview</p>
+        <h2 id="driver-portal-heading">A focused driver workspace for work, readiness, documents, and pay context.</h2>
+        <div class="wave1-preview">
+          <div>
+            <p class="wave1-section__intro">The portal view is intentionally practical: the active load, upcoming work, missing documents, compliance status, settlement history, and driver messages stay connected to the same operating record.</p>
+            <div class="wave1-proof-grid" aria-label="Driver portal capabilities">
+              <div class="wave1-proof"><b>Active load</b><span>Pickup window, assigned unit, proof requirements, and release status.</span></div>
+              <div class="wave1-proof"><b>Documents</b><span>Credential, policy, tax, and equipment records with review state.</span></div>
+              <div class="wave1-proof"><b>Settlements</b><span>Packet status, deductions, advances, and settlement visibility.</span></div>
+              <div class="wave1-proof"><b>Messages</b><span>Driver questions routed to the record owner with context attached.</span></div>
+            </div>
+          </div>
+          <div class="wave1-portal-frame" aria-label="Illustrative driver portal interface">
+            <div class="wave1-frame-header">
+              <strong>Driver Portal</strong>
+              <span class="wave1-disclosure">Demo environment</span>
+            </div>
+            <div class="wave1-record-list">
+              <article class="wave1-record-card">
+                <div>
+                  <h3>Load BOF-2064 - Birmingham to Nashville</h3>
+                  <p>Assigned unit ready. Driver has 6h 30m HOS available and proof packet checklist is clear.</p>
+                </div>
+                <span class="wave1-status wave1-status--ready">Ready</span>
+              </article>
+              <article class="wave1-record-card">
+                <div>
+                  <h3>Document review - medical renewal</h3>
+                  <p>Appointment proof is overdue by 6 days. Safety owner must verify before the next release.</p>
+                </div>
+                <span class="wave1-status wave1-status--review">Review</span>
+              </article>
+              <article class="wave1-record-card">
+                <div>
+                  <h3>Settlement packet - BOF-1907</h3>
+                  <p>POD and renewal evidence are waiting for confirmation before settlement packet release.</p>
+                </div>
+                <span class="wave1-status wave1-status--blocked">Hold</span>
+              </article>
+              <div class="wave1-stat-row">
+                <div class="wave1-stat"><strong>3</strong><span>Upcoming loads</span></div>
+                <div class="wave1-stat"><strong>2</strong><span>Open docs</span></div>
+                <div class="wave1-stat"><strong>1</strong><span>Support item</span></div>
+              </div>
+            </div>
+          </div>
         </div>
-        <aside class="driver-roster-guidance" aria-label="Driver roster interaction guide">
-          <strong>How to read it</strong>
-          <p>Use the top row as live filters. Open a driver only when you need the reason, owner, documents, pay profile, carrier rules, and clearance path.</p>
-        </aside>
-      </div>
+      </section>
 
-      <div class="driver-roster-summary reveal" data-driver-summary aria-live="polite" aria-label="Driver roster filters and summary">
-        <span>Loading roster status...</span>
-      </div>
-
-      <div class="driver-roster-grid reveal" data-driver-roster aria-live="polite">
-        <article class="driver-loading-card">Loading canonical driver records...</article>
-      </div>
-    </section>
-
-    <section class="section driver-operations-split" id="driver-video">
-      <div class="driver-video-panel reveal">
-        <p class="eyebrow">Driver video</p>
-        <h2>Driver documents should feed readiness, not sit in a folder.</h2>
-        <p>The driver video shows how BOF turns intake, DQF evidence, safety review, and follow-up into an operating surface the office can actually use.</p>
-        <video controls preload="metadata" poster="/assets/images/video-posters/bof-driver-vault.jpg">
-          <source src="/assets/videos/bof-driver-vault.mp4" type="video/mp4">
-          Your browser does not support the video tag.
-        </video>
-      </div>
-
-      <aside class="driver-record-panel reveal">
-        <p class="eyebrow">Record continuity</p>
-        <h2>The roster is connected to the rest of the site.</h2>
-        <div class="driver-record-links">
-          <a href="/dispatch/">Dispatch release view</a>
-          <a href="/safety/">Safety consequence view</a>
-          <a href="/settlements/">Settlement readiness view</a>
-          <a href="/operations-record/">Joined operations record</a>
-          <a href="/business-operations/driver-onboarding/">Driver onboarding</a>
-          <a href="/interactive-demo/drivers/document-intake/">Document intake</a>
+      <section class="wave1-dark-band" aria-labelledby="driver-workflow-heading">
+        <div class="wave1-dark-band__inner">
+          <p class="bof-ds2-eyebrow">Readiness and Support Workflow</p>
+          <h2 id="driver-workflow-heading">Every driver issue should show reason, owner, consequence, and clearance.</h2>
+          <p>BOF turns driver readiness into an operating record. A driver can see why a file is under review, what record is missing, who owns the review, and whether it affects assignment, dispatch release, or settlement.</p>
+          <div class="wave1-step-grid">
+            <div class="wave1-step"><b>1</b><span>Profile intake</span></div>
+            <div class="wave1-step"><b>2</b><span>Credential review</span></div>
+            <div class="wave1-step"><b>3</b><span>Policy acknowledgment</span></div>
+            <div class="wave1-step"><b>4</b><span>Load assignment</span></div>
+            <div class="wave1-step"><b>5</b><span>Proof capture</span></div>
+            <div class="wave1-step"><b>6</b><span>Settlement visibility</span></div>
+            <div class="wave1-step"><b>7</b><span>Support follow-up</span></div>
+          </div>
         </div>
-      </aside>
-    </section>
+      </section>
 
-    <section class="section public-demo-embed-section" id="driver-record-workbench">
-      <div class="section-head reveal">
-        <p class="eyebrow">Interactive driver subset</p>
-        <h2>Open driver records from the same page as the public roster.</h2>
-        <p>The embedded driver view shows driver photos, readiness state, active assignment, DQF score, document packet, and clearance context without sending the visitor into a separate section first.</p>
+      <section class="wave1-section" id="driver-support-workflow" aria-labelledby="driver-action-heading">
+        <p class="bof-ds2-eyebrow">Operating Detail</p>
+        <h2 id="driver-action-heading">Ready, review, and hold states resolve to a concrete driver action.</h2>
+        <div class="wave1-module-grid">
+          <article class="wave1-card">
+            <h3>Readiness and document visibility</h3>
+            <p>Credential, tax, policy, training, equipment, and medical records show the driver what is current and what needs attention.</p>
+          </article>
+          <article class="wave1-card">
+            <h3>Load and settlement visibility</h3>
+            <p>Active work, upcoming work, POD, BOL, packet review, deductions, and driver pay context stay tied to the same load record.</p>
+          </article>
+          <article class="wave1-card">
+            <h3>Communication workflow</h3>
+            <p>Driver questions resolve to a responsible owner, related record, due date, and status rather than a detached message thread.</p>
+          </article>
+          <article class="wave1-card">
+            <h3>Clearance path</h3>
+            <p>When a driver is watched, under review, or blocked, BOF explains why and what must happen before the driver can be released.</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="wave1-section" aria-labelledby="driver-video-heading">
+        <p class="bof-ds2-eyebrow">See BOF in Action</p>
+        <h2 id="driver-video-heading">Driver Vault video retained for owner review.</h2>
+        <div class="wave1-video-card">
+          <div>
+            <h3>Driver readiness and document control</h3>
+            <p>The existing local video remains useful for showing the driver document experience. Later branding review should confirm whether the thumbnail or intro needs the DS2 logo package.</p>
+          </div>
+          <div class="wave1-video-frame">
+            <video controls preload="metadata" poster="/assets/images/video-posters/bof-driver-vault.jpg">
+              <source src="/assets/videos/bof-driver-vault.mp4" type="video/mp4">
+              Your browser does not support the video tag.
+            </video>
+          </div>
+        </div>
+      </section>
+
+      <section class="wave1-close" aria-labelledby="driver-close-heading">
+        <div class="wave1-close__card">
+          <div>
+            <p class="bof-ds2-eyebrow">Driver Confidence</p>
+            <h2 id="driver-close-heading">Drive with confidence. BOF handles the back office.</h2>
+            <p>Give drivers a clear view of readiness, assignments, documents, settlements, and next actions without overpromising live integrations or support coverage.</p>
+          </div>
+          <div class="bof-ds2-actions">
+            <a class="bof-ds2-button bof-ds2-button--primary" href="/book-demo/">Book a Demo</a>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="bof-ds2-footer">
+      <div class="bof-ds2-footer__inner">
+        <img src="/assets/brand/bof-design-system-2/svg/header-lockup.svg" alt="BackOfficeFleet">
+        <p>Driver operations and readiness preview. Illustrative demo data only.</p>
       </div>
-      <div data-demo-embed-route="/interactive-demo/drivers/" aria-live="polite"></div>
-    </section>
-  </main>
-
-  <footer class="site-footer">
-    <div class="footer-inner">
-      <strong>BackOfficeFleet</strong>
-      <span>Driver readiness.</span>
-      <a href="/trust-governance/">Trust &amp; Governance</a>
-    </div>
-  </footer>
-  <script src="/assets/js/bof-supabase-config.js?v=20260715-supabase"></script>
-  <script src="/assets/js/bof-data-loader.js?v=20260715-supabase"></script>
-  <script src="/assets/js/bof-demo-state.js?v=20260715-admin"></script>
-  <script src="/assets/js/driver-roster.js?v=20260715-supabase"></script>
-  <script src="/assets/js/interactive-demo-routes.js?v=20260721-enterprise-header-fit5"></script>
-  <script src="/assets/js/site.js?v=20260721-enterprise-header-fit5"></script>
+    </footer>
+  </div>
+  <script src="/assets/js/bof-design-system-2-preview.js"></script>
 </body>
 </html>

@@ -3,120 +3,211 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Dispatch Load Intake | BackOfficeFleet</title>
-  <meta name="description" content="BOF dispatch load intake queue showing shipper tender status, driver readiness, HOS available time, ELD state, equipment access, proof status, settlement status, and release actions.">
-  <link rel="stylesheet" href="/assets/css/styles.css?v=20260721-enterprise-header-fit5">
+  <title>Operational Control in Real Time | BackOfficeFleet Dispatch</title>
+  <meta name="description" content="BackOfficeFleet connects load intake, driver readiness, exceptions, proof, and release decisions in one joined operating record.">
+  <link rel="icon" href="/assets/brand/bof-design-system-2/favicon/favicon.ico">
+  <link rel="stylesheet" href="/assets/css/bof-design-system-2-wave-1.css">
 </head>
-<body class="premium-site page-dispatch bof-canonical-data-page dispatch-hero-redesign-page">
-  <header class="site-header">
-    <a class="brand" href="/" aria-label="BackOfficeFleet home"><img src="/assets/images/logo/boflogo-original.png" alt="BackOfficeFleet"></a>
-    <button class="nav-toggle" type="button" data-nav-toggle aria-expanded="false" aria-label="Toggle navigation">&#9776;</button>
-        <nav class="site-nav" data-nav aria-label="Main navigation">
-      <div class="nav-menu" data-nav-menu>
-        <button class="nav-menu-toggle" type="button" data-nav-menu-toggle aria-expanded="false" aria-haspopup="true">Who We Serve</button>
-        <div class="nav-dropdown" aria-label="Who We Serve">
-          <a href="/private-fleets/">Private Fleets</a>
-          <a href="/government/">Government Fleets</a>
-          <a href="/aggregator-outreach/">Aggregators</a>
+<body class="bof-ds2-wave1">
+  <div class="bof-ds2-shell">
+    <header class="bof-ds2-header" data-menu-open="false">
+      <div class="bof-ds2-header__inner">
+        <a class="bof-ds2-brand" href="/" aria-label="BackOfficeFleet home">
+          <img src="/assets/brand/bof-design-system-2/svg/header-lockup.svg" alt="BackOfficeFleet">
+        </a>
+        <nav class="bof-ds2-nav" aria-label="Primary navigation">
+          <a href="/private-fleets/">Who We Serve</a>
+          <a href="/drivers/">Drivers</a>
+          <a href="/dispatch/" aria-current="page">Dispatch &amp; Operations</a>
+          <a href="/safety/">Safety &amp; Compliance</a>
+          <a href="/settlements/">Settlements &amp; Billing</a>
+          <a href="/business-operations/">Business Operations</a>
+          <a href="/policies-procedures/">Policies &amp; Procedures</a>
+          <a href="/trust-governance/">Company</a>
+        </nav>
+        <div class="bof-ds2-header__actions">
+          <a class="bof-ds2-button bof-ds2-button--gold-outline" href="/book-demo/">Book a Demo</a>
         </div>
+        <button class="bof-ds2-menu-button" type="button" data-bof-ds2-menu aria-expanded="false" aria-label="Open navigation">
+          <svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none">
+            <path d="M4 7h16M4 12h16M4 17h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+        </button>
       </div>
-      <a href="/drivers/">Drivers</a>
-      <a href="/dispatch/">Dispatch &amp; Operations</a>
-      <a href="/safety/">Safety &amp; Compliance</a>
-      <a href="/settlements/">Settlements &amp; Billing</a>
-      <a href="/business-operations/">Business Operations</a>
-      <a href="/policies-procedures/">Policies &amp; Procedures</a>
-      <a href="/trust-governance/">Company</a>
-      <a class="nav-utility-link" href="/command-center/">Command Center</a>
-    </nav>
-    <a class="header-cta" href="/dashboard/">Sign In</a>
-  </header>
-  <main>
-    <section class="section page-hero dispatch-operations-hero">
-      <div class="reveal dispatch-operations-hero-copy">
-        <p class="eyebrow">Dispatch operations</p>
-        <h1>Dispatch Operations Control</h1>
-        <p class="hero-promise">Real-time visibility across load intake, driver readiness, and release decisions &mdash; all unified in one record.</p>
-        <div class="actions">
-          <a class="button primary" href="/customer-portal/load-intake/">Open Load Intake Form &rarr;</a>
-          <a class="button secondary" href="/dispatch/load-intake/">Review Intake Workbench</a>
-          <a class="button secondary" href="/carriers/">Open Carrier Registry</a>
-          <a class="button secondary" href="#canonical-dispatch-records">Open Dispatch Queue</a>
-          <a class="button secondary" href="/operations-record/#canonical-operations-record">View joined record</a>
+    </header>
+
+    <main>
+      <section class="wave1-hero" style="--wave1-hero-image: url('/assets/images/dispatch/dispatch-operations-control-hero.png');">
+        <div class="wave1-hero__inner">
+          <div class="wave1-hero__copy">
+            <p class="bof-ds2-eyebrow">Dispatch &amp; Operations</p>
+            <h1>Operational Control in Real Time</h1>
+            <p>See load intake, driver readiness, exceptions, proof, and release decisions in one joined operating record.</p>
+            <div class="bof-ds2-actions">
+              <a class="bof-ds2-button bof-ds2-button--primary" href="#dispatch-dashboard-preview">See Dispatch in Action</a>
+              <a class="bof-ds2-button" href="#dispatch-workflow">Explore the Operations Workflow</a>
+            </div>
+          </div>
+          <aside class="wave1-hero__panel" aria-label="Dispatch operating summary">
+            <p class="bof-ds2-eyebrow">Illustrative operating view</p>
+            <h2>Every load shows status, blocker, owner, and release consequence.</h2>
+            <div class="wave1-kpi-grid">
+              <div class="wave1-kpi"><strong>145</strong><span>Active loads</span></div>
+              <div class="wave1-kpi"><strong>9</strong><span>At risk</span></div>
+              <div class="wave1-kpi"><strong>24</strong><span>Blocked</span></div>
+            </div>
+            <p class="wave1-sr-note">Numbers are synthetic and shown for public demo context.</p>
+          </aside>
         </div>
-        <div class="page-clearance-proof" aria-label="Dispatch operating proof">
-          <span><b>145</b> Active loads</span>
-          <span><b>96%</b> On-time delivery</span>
-          <span><b>9</b> At risk</span>
-          <span><b>24</b> Blocked</span>
+      </section>
+
+      <section class="wave1-section wave1-section--tight" aria-labelledby="dispatch-benefits-heading">
+        <p class="bof-ds2-eyebrow">Operating Benefits</p>
+        <h2 id="dispatch-benefits-heading">Dispatch decisions improve when load facts, driver readiness, proof, and exceptions stay joined.</h2>
+        <div class="wave1-benefit-grid">
+          <article class="wave1-card">
+            <span class="wave1-card__icon">01</span>
+            <h3>Joined Load Record</h3>
+            <p>Load, driver, unit, documents, proof, owner, and status are carried in one operating view.</p>
+          </article>
+          <article class="wave1-card">
+            <span class="wave1-card__icon">02</span>
+            <h3>Driver Readiness</h3>
+            <p>Assignment decisions see credentials, HOS availability, equipment gate, and carrier rules before release.</p>
+          </article>
+          <article class="wave1-card">
+            <span class="wave1-card__icon">03</span>
+            <h3>Exception Visibility</h3>
+            <p>At-risk or blocked loads explain the cause, owner, due date, and business consequence.</p>
+          </article>
+          <article class="wave1-card">
+            <span class="wave1-card__icon">04</span>
+            <h3>Release Control</h3>
+            <p>Dispatch can see what must clear before a load moves, bills, or reaches settlement readiness.</p>
+          </article>
         </div>
-      </div>
-    </section>
+      </section>
 
-    <section class="section dispatch-intake-launch">
-      <div class="section-head reveal">
-        <p class="eyebrow">Load intake command path</p>
-        <h2>Shipper intake stays connected to dispatch release, driver readiness, proof, and settlement impact.</h2>
-        <p>The form is still part of the demo. A customer load request creates the operating record; dispatch then clears driver, HOS, equipment, documents, proof, and release status before the load can move.</p>
-      </div>
-      <div class="dispatch-intake-launch-grid">
-        <a class="dispatch-intake-launch-card reveal" href="/customer-portal/load-intake/">
-          <span>01</span>
-          <h3>Customer load intake form</h3>
-          <p>Capture customer, lane, pickup, delivery, commodity, equipment, proof requirements, quote assumptions, and cargo photo.</p>
-          <strong>Open form &rarr;</strong>
-        </a>
-        <a class="dispatch-intake-launch-card reveal" href="/dispatch/load-intake/">
-          <span>02</span>
-          <h3>Dispatch intake workbench</h3>
-          <p>Review the intake queue with driver readiness, HOS available time, equipment access, proof status, and clearance path.</p>
-          <strong>Open workbench &rarr;</strong>
-        </a>
-        <a class="dispatch-intake-launch-card reveal" href="/customer-portal/shipment-generator/">
-          <span>03</span>
-          <h3>Generated pre-trip packet</h3>
-          <p>Show the shipment IDs, draft BOL, rate confirmation, invoice, seal number, cargo proof, and document readiness.</p>
-          <strong>Open packet &rarr;</strong>
-        </a>
-        <a class="dispatch-intake-launch-card reveal" href="/carriers/">
-          <span>04</span>
-          <h3>Carrier registry gate</h3>
-          <p>Confirm authority, insurance, W-9, agreement, payment setup, lane eligibility, equipment fit, owner, and clearance path.</p>
-          <strong>Open registry &rarr;</strong>
-        </a>
-      </div>
-    </section>
+      <section class="wave1-dark-band" id="dispatch-workflow" aria-labelledby="dispatch-workflow-heading">
+        <div class="wave1-dark-band__inner">
+          <p class="bof-ds2-eyebrow">Dispatch Workflow</p>
+          <h2 id="dispatch-workflow-heading">The load should move through a visible release path, not a chain of disconnected messages.</h2>
+          <p>BOF separates public product story from demo actions: the hero explains the system, while the preview below shows illustrative controls for intake, assignment, readiness, exception review, proof, and release.</p>
+          <div class="wave1-step-grid">
+            <div class="wave1-step"><b>1</b><span>Load intake</span></div>
+            <div class="wave1-step"><b>2</b><span>Assignment</span></div>
+            <div class="wave1-step"><b>3</b><span>Readiness check</span></div>
+            <div class="wave1-step"><b>4</b><span>In-route monitor</span></div>
+            <div class="wave1-step"><b>5</b><span>Exception review</span></div>
+            <div class="wave1-step"><b>6</b><span>Delivery proof</span></div>
+            <div class="wave1-step"><b>7</b><span>Release decision</span></div>
+          </div>
+        </div>
+      </section>
 
-    <section class="section bof-canonical-section" id="canonical-dispatch-records" data-bof-operations-view="dispatch" aria-live="polite"></section>
+      <section class="wave1-section" id="dispatch-dashboard-preview" aria-labelledby="dispatch-preview-heading">
+        <p class="bof-ds2-eyebrow">Dispatch Dashboard Preview</p>
+        <h2 id="dispatch-preview-heading">A command view for active loads, blockers, and release paths.</h2>
+        <div class="wave1-dashboard-grid">
+          <article class="wave1-dashboard-frame">
+            <div class="wave1-frame-header">
+              <strong>Load Queue</strong>
+              <span class="wave1-disclosure">Illustrative operating view</span>
+            </div>
+            <div class="wave1-record-list">
+              <div class="wave1-stat-row">
+                <div class="wave1-stat"><strong>5</strong><span>Loads shown</span></div>
+                <div class="wave1-stat"><strong>3</strong><span>Need action</span></div>
+                <div class="wave1-stat"><strong>1</strong><span>Ready</span></div>
+              </div>
+              <div class="wave1-chart" role="img" aria-label="Illustrative route and load-status trend"></div>
+            </div>
+          </article>
+          <article class="wave1-portal-frame">
+            <div class="wave1-frame-header">
+              <strong>Selected Load - BOF-1907</strong>
+              <span class="wave1-disclosure">Demo action view</span>
+            </div>
+            <div class="wave1-record-list">
+              <article class="wave1-record-card">
+                <div>
+                  <h3>Tulsa, OK to Kansas City, MO</h3>
+                  <p>POD and renewal evidence review requires dispatcher confirmation before billing release.</p>
+                </div>
+                <span class="wave1-status wave1-status--review">At Risk</span>
+              </article>
+              <div class="wave1-proof-grid">
+                <div class="wave1-proof"><b>Reason</b><span>Receiver evidence and renewal support are not aligned to the packet.</span></div>
+                <div class="wave1-proof"><b>Owner</b><span>Dispatcher / packet owner</span></div>
+                <div class="wave1-proof"><b>Clearance</b><span>Confirm POD, signed BOL, receiver evidence, and renewal evidence.</span></div>
+                <div class="wave1-proof"><b>Consequence</b><span>Settlement packet remains held until proof clears.</span></div>
+              </div>
+            </div>
+          </article>
+        </div>
+      </section>
 
-    <section class="section public-demo-embed-section" id="dispatch-workbench">
-      <div class="section-head reveal">
-        <p class="eyebrow">Interactive dispatch subset</p>
-        <h2>Open the dispatch board from inside the dispatch overview.</h2>
-        <p>The embedded board shows load intake consequence, driver and carrier readiness, document gate, route context, post-trip proof, and the exact release condition behind a load.</p>
-      </div>
-      <div data-demo-embed-route="/interactive-demo/dispatch/" aria-live="polite"></div>
-    </section>
+      <section class="wave1-section" aria-labelledby="dispatch-proof-heading">
+        <p class="bof-ds2-eyebrow">Proof and Exception Management</p>
+        <h2 id="dispatch-proof-heading">Demo controls should open record evidence, not unrelated header pages.</h2>
+        <div class="wave1-module-grid">
+          <article class="wave1-card">
+            <h3>Load intake workbench</h3>
+            <p>Capture shipper, lane, equipment, proof requirements, customer instructions, carrier constraints, and review owner before dispatch release.</p>
+          </article>
+          <article class="wave1-card">
+            <h3>Proof packet</h3>
+            <p>BOL, POD, receiver evidence, seal photo, cargo securement, lumper receipt, and delivery notes stay attached to the load record.</p>
+          </article>
+          <article class="wave1-card">
+            <h3>Exception route</h3>
+            <p>Blocked, delayed, at-risk, and under-review loads show the cause and the exact route back to release.</p>
+          </article>
+          <article class="wave1-card">
+            <h3>Joined record</h3>
+            <p>Dispatch, safety, proof, settlement, and driver readiness all read from the same synthetic demo record.</p>
+          </article>
+        </div>
+      </section>
 
-    <section class="section">
-      <div class="section-head reveal">
-        <p class="eyebrow">Dispatch proof in motion</p>
-        <h2>Load intake should feel tied to the desk, the driver, and the route before release.</h2>
-        <p>These proof scenes show the work BOF is organizing: shipper requests, dispatch desk review, pre-trip handoff, route packet control, and the evidence that explains why a load is ready, delayed, at risk, or blocked.</p>
+      <section class="wave1-section" aria-labelledby="dispatch-video-heading">
+        <p class="bof-ds2-eyebrow">See BOF in Action</p>
+        <h2 id="dispatch-video-heading">Load intake video retained for review.</h2>
+        <div class="wave1-video-card">
+          <div>
+            <h3>Customer portal load intake</h3>
+            <p>The existing local intake video can support this page as long as it remains clearly framed as a demo preview and not a live integration claim.</p>
+          </div>
+          <div class="wave1-video-frame">
+            <video controls preload="metadata" poster="/assets/images/video-posters/bof-customer-portal-load-intake.jpg">
+              <source src="/assets/videos/bof-customer-portal-load-intake.mp4" type="video/mp4">
+              Your browser does not support the video tag.
+            </video>
+          </div>
+        </div>
+      </section>
+
+      <section class="wave1-close" aria-labelledby="dispatch-close-heading">
+        <div class="wave1-close__card">
+          <div>
+            <p class="bof-ds2-eyebrow">Dispatch Readiness</p>
+            <h2 id="dispatch-close-heading">Turn every dispatch exception into a clear operating decision.</h2>
+            <p>The public page now points prospects toward the product behavior: what is blocked, why it matters, who owns it, and what clears it.</p>
+          </div>
+          <div class="bof-ds2-actions">
+            <a class="bof-ds2-button bof-ds2-button--primary" href="/book-demo/">Book a Demo</a>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="bof-ds2-footer">
+      <div class="bof-ds2-footer__inner">
+        <img src="/assets/brand/bof-design-system-2/svg/header-lockup.svg" alt="BackOfficeFleet">
+        <p>Dispatch and operations preview. Illustrative demo data only.</p>
       </div>
-      <div class="website-photo-grid">
-        <article class="website-photo-card reveal"><img loading="lazy" decoding="async" src="/assets/images/photos/site-pass/29-dispatch-load-board-office.webp" alt="Dispatch office with load board monitors and paperwork"><div><h3>Load board office</h3><p>New tenders need release status, driver fit, equipment fit, and next action visible together.</p></div></article>
-        <article class="website-photo-card reveal"><img loading="lazy" decoding="async" src="/assets/images/photos/site-pass/24-pretrip-driver-clipboard.webp" alt="Driver pre-trip clipboard and route packet before dispatch"><div><h3>Pre-trip handoff</h3><p>Rate confirmation, BOL draft, insurance, cargo photos, and equipment evidence move with the record.</p></div></article>
-        <article class="website-photo-card reveal"><img loading="lazy" decoding="async" src="/assets/images/photos/site-pass/30-route-board-tablet-review.webp" alt="Route board and tablet review for dispatch planning"><div><h3>Route review</h3><p>HOS available time, ready-again timing, route context, and fuel planning can become dispatch facts.</p></div></article>
-      </div>
-    </section>
-  </main>
-  <footer class="site-footer"><div class="footer-inner"><strong>BackOfficeFleet</strong><span>Dispatch consequence.</span></div></footer>
-  <script src="/assets/js/bof-supabase-config.js?v=20260715-supabase"></script>
-  <script src="/assets/js/bof-data-loader.js?v=20260715-supabase"></script>
-  <script src="/assets/js/bof-demo-state.js?v=20260715-admin"></script>
-  <script src="/assets/js/bof-public-operations.js?v=20260715-supabase"></script>
-  <script src="/assets/js/interactive-demo-routes.js?v=20260721-enterprise-header-fit5"></script>
-  <script src="/assets/js/site.js?v=20260721-enterprise-header-fit5"></script>
+    </footer>
+  </div>
+  <script src="/assets/js/bof-design-system-2-preview.js"></script>
 </body>
 </html>
