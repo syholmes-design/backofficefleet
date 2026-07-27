@@ -37,7 +37,7 @@
     </header>
 
     <main>
-      <section class="wave1-hero" style="--wave1-hero-image: url('/assets/images/dispatch/dispatch-operations-control-hero.png');">
+      <section class="wave1-hero" style="--wave1-hero-image: url('/assets/images/dispatch/dispatch-operations-control-hero.png'); --wave1-hero-position: center; --wave1-hero-mobile-position: 56% top;">
         <div class="wave1-hero__inner">
           <div class="wave1-hero__copy">
             <p class="bof-ds2-eyebrow">Dispatch &amp; Operations</p>
@@ -45,11 +45,11 @@
             <p>See load intake, driver readiness, exceptions, proof, and release decisions in one joined operating record.</p>
             <div class="bof-ds2-actions">
               <a class="bof-ds2-button bof-ds2-button--primary" href="#dispatch-dashboard-preview">See Dispatch in Action</a>
-              <a class="bof-ds2-button" href="#dispatch-workflow">Explore the Operations Workflow</a>
+              <a class="bof-ds2-button" href="#dispatch-workflow">Explore the Workflow</a>
             </div>
           </div>
           <aside class="wave1-hero__panel" aria-label="Dispatch operating summary">
-            <p class="bof-ds2-eyebrow">Illustrative operating view</p>
+            <p class="bof-ds2-eyebrow">Operations Overview</p>
             <h2>Every load shows status, blocker, owner, and release consequence.</h2>
             <div class="wave1-kpi-grid">
               <div class="wave1-kpi"><strong>145</strong><span>Active loads</span></div>
@@ -67,7 +67,7 @@
         <div class="wave1-benefit-grid">
           <article class="wave1-card">
             <span class="wave1-card__icon">01</span>
-            <h3>Joined Load Record</h3>
+            <h3>Load Facts</h3>
             <p>Load, driver, unit, documents, proof, owner, and status are carried in one operating view.</p>
           </article>
           <article class="wave1-card">
@@ -77,8 +77,8 @@
           </article>
           <article class="wave1-card">
             <span class="wave1-card__icon">03</span>
-            <h3>Exception Visibility</h3>
-            <p>At-risk or blocked loads explain the cause, owner, due date, and business consequence.</p>
+            <h3>Proof &amp; Exceptions</h3>
+            <p>Proof gaps, at-risk loads, and blocked records explain the cause, owner, due date, and consequence.</p>
           </article>
           <article class="wave1-card">
             <span class="wave1-card__icon">04</span>
@@ -92,15 +92,16 @@
         <div class="wave1-dark-band__inner">
           <p class="bof-ds2-eyebrow">Dispatch Workflow</p>
           <h2 id="dispatch-workflow-heading">The load should move through a visible release path, not a chain of disconnected messages.</h2>
-          <p>BOF separates public product story from demo actions: the hero explains the system, while the preview below shows illustrative controls for intake, assignment, readiness, exception review, proof, and release.</p>
+          <p>Dispatch works best when every load moves through one visible path: intake, assignment, readiness, tracking, exceptions, proof, review, and release.</p>
           <div class="wave1-step-grid">
-            <div class="wave1-step"><b>1</b><span>Load intake</span></div>
-            <div class="wave1-step"><b>2</b><span>Assignment</span></div>
-            <div class="wave1-step"><b>3</b><span>Readiness check</span></div>
-            <div class="wave1-step"><b>4</b><span>In-route monitor</span></div>
-            <div class="wave1-step"><b>5</b><span>Exception review</span></div>
-            <div class="wave1-step"><b>6</b><span>Delivery proof</span></div>
-            <div class="wave1-step"><b>7</b><span>Release decision</span></div>
+            <div class="wave1-step"><b>1</b><span>Intake</span></div>
+            <div class="wave1-step"><b>2</b><span>Assign</span></div>
+            <div class="wave1-step"><b>3</b><span>Readiness</span></div>
+            <div class="wave1-step"><b>4</b><span>Track</span></div>
+            <div class="wave1-step"><b>5</b><span>Exceptions</span></div>
+            <div class="wave1-step"><b>6</b><span>Proof</span></div>
+            <div class="wave1-step"><b>7</b><span>Review</span></div>
+            <div class="wave1-step"><b>8</b><span>Release</span></div>
           </div>
         </div>
       </section>
@@ -149,7 +150,7 @@
 
       <section class="wave1-section" aria-labelledby="dispatch-proof-heading">
         <p class="bof-ds2-eyebrow">Proof and Exception Management</p>
-        <h2 id="dispatch-proof-heading">Demo controls should open record evidence, not unrelated header pages.</h2>
+        <h2 id="dispatch-proof-heading">Proof and Exceptions Stay With the Load</h2>
         <div class="wave1-module-grid">
           <article class="wave1-card">
             <h3>Load intake workbench</h3>
@@ -172,11 +173,11 @@
 
       <section class="wave1-section" aria-labelledby="dispatch-video-heading">
         <p class="bof-ds2-eyebrow">See BOF in Action</p>
-        <h2 id="dispatch-video-heading">Load intake video retained for review.</h2>
+        <h2 id="dispatch-video-heading">See Customer Load Intake in Action</h2>
         <div class="wave1-video-card">
           <div>
             <h3>Customer portal load intake</h3>
-            <p>The existing local intake video can support this page as long as it remains clearly framed as a demo preview and not a live integration claim.</p>
+            <p>The customer load-intake preview shows how load facts, proof needs, and release context can enter the same operating workflow.</p>
           </div>
           <div class="wave1-video-frame">
             <video controls preload="metadata" poster="/assets/images/video-posters/bof-customer-portal-load-intake.jpg">
