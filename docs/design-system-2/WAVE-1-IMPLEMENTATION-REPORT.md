@@ -1,5 +1,16 @@
 # BOF Design System 2.0 Wave 1 Implementation Report
 
+## Approved Composition Reconciliation - July 27, 2026
+
+- Follow-up scope: reconciled `/drivers/`, `/dispatch/`, `/safety/`, and `/settlements/` against the owner-approved Drivers reference composition.
+- Reference benchmark: `codex-clipboard-630bcab6-1f51-4c68-bfda-ace41b132274.png` at 1122 x 1402.
+- Drivers update: rebuilt the page around a single glass hero panel, attached proof rail, four large capability cards, larger portal/dashboard preview, and dark support CTA.
+- Proof rail update: carried the same proof-first hierarchy across Dispatch, Safety, and Settlements with route-specific record labels and metrics.
+- Dashboard hierarchy: moved each route toward visible product proof earlier in the page, with less isolated summary-card behavior.
+- Screenshot package: `docs/design-system-2/screenshots/wave-1-approved-composition-reconciliation/`.
+- Reconciliation report: `docs/design-system-2/WAVE-1-APPROVED-COMPOSITION-RECONCILIATION-REPORT.md`.
+- Validation: JS syntax checks passed; public operations validator passed with 12 drivers, 5 loads, 4 exceptions, 0 warnings, and 0 errors.
+
 ## Hero Composition Rebuild - July 27, 2026
 
 - Follow-up scope: rebuilt the Drivers, Dispatch, Safety, and Settlements hero compositions with clean text-free DS2 assets.
