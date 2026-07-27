@@ -544,6 +544,91 @@ body.bof-ds2-wave1 {
   height: auto;
 }
 
+.wave1-feature {
+  display: grid;
+  grid-template-columns: minmax(280px, 0.46fr) minmax(0, 0.54fr);
+  gap: clamp(20px, 4vw, 40px);
+  align-items: stretch;
+  margin-top: clamp(24px, 4vw, 42px);
+}
+
+.wave1-feature--reverse {
+  grid-template-columns: minmax(0, 0.58fr) minmax(280px, 0.42fr);
+}
+
+.wave1-feature__media,
+.wave1-feature__content {
+  min-width: 0;
+  border: var(--bof-ds2-border);
+  border-radius: var(--bof-ds2-radius-xl);
+  background: #ffffff;
+  box-shadow: var(--bof-ds2-shadow-md);
+  overflow: hidden;
+}
+
+.wave1-feature__media {
+  display: grid;
+  align-content: start;
+}
+
+.wave1-feature__media img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  object-position: center;
+}
+
+.wave1-feature__media figcaption {
+  margin: 0;
+  padding: 14px 16px 16px;
+  color: var(--bof-ds2-text-muted);
+  font-size: 0.9rem;
+  line-height: 1.45;
+}
+
+.wave1-feature__content {
+  padding: clamp(18px, 3vw, 28px);
+}
+
+.wave1-feature__content h3 {
+  margin: 0.85rem 0 0;
+  color: var(--bof-ds2-navy-950);
+  font-family: var(--bof-ds2-font-display);
+  font-size: clamp(1.45rem, 2.3vw, 2.05rem);
+  line-height: 1.06;
+}
+
+.wave1-feature-label {
+  display: inline-flex;
+  align-items: center;
+  min-height: 32px;
+  padding: 0.34rem 0.78rem;
+  border: 1px solid rgba(255, 179, 0, 0.55);
+  border-radius: 999px;
+  background: rgba(255, 179, 0, 0.12);
+  color: var(--bof-ds2-brown-600);
+  font-size: 0.72rem;
+  font-weight: 950;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.wave1-step-grid--compact {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.wave1-step-grid--compact .wave1-step {
+  border-color: rgba(10, 35, 66, 0.12);
+  background: rgba(247, 251, 255, 0.94);
+}
+
+.wave1-step-grid--compact .wave1-step span {
+  color: var(--bof-ds2-navy-950);
+}
+
 .wave1-close {
   max-width: var(--bof-ds2-max);
   margin: 0 auto;
@@ -592,6 +677,8 @@ body.bof-ds2-wave1 {
   .wave1-preview,
   .wave1-dashboard-grid,
   .wave1-video-card,
+  .wave1-feature,
+  .wave1-feature--reverse,
   .wave1-close__card {
     grid-template-columns: 1fr;
   }
@@ -642,6 +729,10 @@ body.bof-ds2-wave1 {
   .wave1-proof-grid,
   .wave1-step-grid {
     grid-template-columns: 1fr;
+  }
+
+  .wave1-feature__media img {
+    aspect-ratio: 16 / 10;
   }
 
   .wave1-record-card {
