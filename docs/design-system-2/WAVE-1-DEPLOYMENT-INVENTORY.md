@@ -57,6 +57,11 @@ Nothing was pushed, merged, uploaded, or deployed.
 - `docs/design-system-2/screenshots/wave-1-owner-review/`
 - `docs/design-system-2/screenshots/freight-brace-wave-1-review/`
 - `docs/design-system-2/screenshots/wave-1-hero-composition-rebuild/`
+- `docs/design-system-2/screenshots/wave-1-dashboard-prominence-review/`
+
+## Dashboard Prominence Review Documentation
+
+- `docs/design-system-2/WAVE-1-DASHBOARD-PROMINENCE-REPORT.md`
 
 ## Pre-Deployment Checks Completed Locally
 
@@ -69,6 +74,8 @@ Nothing was pushed, merged, uploaded, or deployed.
 - No secrets, local Windows paths, localhost links, or broken-character artifacts found in the changed public files.
 - The four Wave 1 pages no longer reference the prior baked-text hero image candidates.
 - DevTools-controlled 390 px mobile screenshots confirmed no horizontal overflow.
+- Dashboard prominence screenshots confirmed no horizontal overflow at 1440, 1366, 768, and 390 pixels for `/drivers/`, `/dispatch/`, `/safety/`, and `/settlements/`.
+- Targeted Microsoft Edge checks confirmed no horizontal overflow at 1280 and 1024 pixels for `/drivers/`, `/dispatch/`, `/safety/`, and `/settlements/`.
 
 ## Deployment Notes
 

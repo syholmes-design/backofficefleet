@@ -1,5 +1,13 @@
 # BOF Design System 2.0 Wave 1 Content Claims Review
 
+## Dashboard Prominence Follow-Up - July 28, 2026
+
+- Enlarged dashboard and portal previews on Drivers, Dispatch, Safety, and Settlements without adding production integration, guarantee, payment, compliance, or live-data claims.
+- Driver Portal CTA was corrected to stay on the current page section rather than linking to a missing `/driver-portal/` route.
+- Dispatch, Safety, and Settlements previews continue to frame status through reason, owner, clearance, and consequence rather than isolated labels.
+- Search confirmed no local paths, localhost URLs, passwords, tokens, or secret-like strings in the changed Wave 1 pages or shared CSS.
+- Guarantee-language scan returned only protective disclaimers, including `does not guarantee compliance`, `does not guarantee payment timing`, and Freight Brace non-guarantee language.
+
 ## Hero Composition Rebuild - July 27, 2026
 
 - Replaced baked-text hero-image dependencies with clean image assets and HTML-rendered copy on Drivers, Dispatch, Safety, and Settlements.

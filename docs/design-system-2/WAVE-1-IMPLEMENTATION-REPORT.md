@@ -1,5 +1,17 @@
 # BOF Design System 2.0 Wave 1 Implementation Report
 
+## Dashboard Prominence Follow-Up - July 28, 2026
+
+- Follow-up scope: enlarged the portal and dashboard preview sections on `/drivers/`, `/dispatch/`, `/safety/`, and `/settlements/`.
+- Drivers update: the Driver Portal preview now reads as a primary product surface with release state, HOS, open documents, support items, an active load record, and supporting record cards.
+- Dispatch update: the Load Queue and Selected Load panels now show load status, blocker, reason, owner, clearance, and consequence in a larger command-view layout.
+- Safety update: the Safety & Compliance Portal preview now surfaces hard block, review items, expiring documents, evidence tasks, and gate logic in a more readable operating view.
+- Settlements update: the Packet Health and Settlement Record previews now show finance readiness, hold reason, owner, clearance path, release status, and packet-to-pay fields in a larger layout.
+- Dashboard width: captured desktop dashboard sections now measure about 1208 px at 1440 viewport and about 1211 px at 1366 viewport.
+- Screenshot package: `docs/design-system-2/screenshots/wave-1-dashboard-prominence-review/`.
+- Prominence report: `docs/design-system-2/WAVE-1-DASHBOARD-PROMINENCE-REPORT.md`.
+- Validation: JS syntax checks passed; public operations validator passed with 12 drivers, 5 loads, 4 exceptions, 0 warnings, and 0 errors.
+
 ## Approved Composition Reconciliation - July 27, 2026
 
 - Follow-up scope: reconciled `/drivers/`, `/dispatch/`, `/safety/`, and `/settlements/` against the owner-approved Drivers reference composition.
