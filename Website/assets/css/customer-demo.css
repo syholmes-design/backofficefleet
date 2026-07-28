@@ -87,12 +87,10 @@ summary:focus-visible {
 }
 
 .portal-sidebar-brand img {
-  width: 162px;
+  width: 172px;
   height: auto;
   display: block;
-  background: #fff;
-  border-radius: 6px;
-  padding: 6px 9px;
+  border-radius: 4px;
 }
 
 .portal-sidebar-brand strong {
@@ -227,8 +225,191 @@ summary:focus-visible {
   justify-content: space-between;
   gap: 16px;
   padding: 13px 16px;
-  margin-bottom: 14px;
+  margin-bottom: 12px;
   align-items: flex-start;
+}
+
+.demo-product-header {
+  margin-bottom: 14px;
+}
+
+.demo-product-header__frame {
+  position: relative;
+  min-height: 204px;
+  overflow: hidden;
+  display: grid;
+  grid-template-columns: minmax(300px, 0.9fr) minmax(430px, 1fr) minmax(154px, 0.3fr);
+  grid-template-areas:
+    "content context status"
+    "content actions status";
+  gap: 14px;
+  padding: 20px;
+  border: 1px solid rgba(160, 180, 202, 0.36);
+  border-radius: 8px;
+  color: #fff;
+  background: #081826;
+  box-shadow: var(--cd-shadow);
+}
+
+.demo-product-header__background,
+.demo-product-header__overlay {
+  position: absolute;
+  inset: 0;
+}
+
+.demo-product-header__background {
+  background-image: var(--demo-product-bg);
+  background-size: cover;
+  background-position: var(--demo-product-position, 70% center);
+  transform: scale(1.01);
+}
+
+.demo-product-header__overlay {
+  background:
+    linear-gradient(90deg, rgba(3, 13, 25, 0.96) 0%, rgba(5, 22, 38, 0.84) 38%, rgba(5, 22, 38, 0.45) 68%, rgba(5, 22, 38, 0.18) 100%),
+    linear-gradient(0deg, rgba(5, 14, 26, 0.56), rgba(5, 14, 26, 0.08));
+}
+
+.demo-product-header__content,
+.demo-product-header__context,
+.demo-product-header__actions,
+.demo-product-header__status {
+  position: relative;
+  z-index: 1;
+}
+
+.demo-product-header__content {
+  grid-area: content;
+  align-self: center;
+  max-width: 620px;
+}
+
+.demo-product-header__eyebrow {
+  display: inline-flex;
+  margin-bottom: 8px;
+  color: #62eee2;
+  font-size: 0.75rem;
+  line-height: 1;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.demo-product-header__content h1 {
+  margin: 0;
+  font-size: 2rem;
+  line-height: 1.04;
+}
+
+.demo-product-header__content p {
+  max-width: 48ch;
+  margin: 8px 0 0;
+  color: #d7e7f5;
+  line-height: 1.45;
+}
+
+.demo-product-header__context {
+  grid-area: context;
+  align-self: end;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.demo-product-header__context div,
+.demo-product-header__status {
+  border: 1px solid rgba(213, 228, 242, 0.2);
+  border-radius: 8px;
+  background: rgba(5, 18, 32, 0.62);
+  backdrop-filter: blur(8px);
+}
+
+.demo-product-header__context div {
+  padding: 9px 10px;
+}
+
+.demo-product-header__context dt {
+  margin: 0 0 4px;
+  color: #9cb5cf;
+  font-size: 0.68rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.demo-product-header__context dd {
+  margin: 0;
+  color: #fff;
+  font-weight: 800;
+  overflow-wrap: anywhere;
+}
+
+.demo-product-header__actions {
+  grid-area: actions;
+  align-self: start;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.demo-product-header__button,
+.demo-product-header__link {
+  min-height: 38px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 13px;
+  border: 1px solid rgba(255, 255, 255, 0.26);
+  border-radius: 8px;
+  color: #fff;
+  background: rgba(255, 255, 255, 0.08);
+  font-weight: 800;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.demo-product-header__button {
+  border-color: #38b7ae;
+  background: #0d4f82;
+}
+
+.demo-product-header__link--quiet {
+  color: #d7e7f5;
+}
+
+.demo-product-header__button:hover,
+.demo-product-header__link:hover,
+.demo-product-header__button:focus-visible,
+.demo-product-header__link:focus-visible {
+  border-color: #d7a11e;
+}
+
+.demo-product-header__status {
+  grid-area: status;
+  align-self: stretch;
+  min-width: 150px;
+  display: grid;
+  align-content: center;
+  gap: 4px;
+  padding: 14px;
+}
+
+.demo-product-header__status span {
+  color: #62eee2;
+  font-size: 2.25rem;
+  line-height: 1;
+  font-weight: 900;
+}
+
+.demo-product-header__status strong {
+  line-height: 1.12;
+}
+
+.demo-product-header__status em {
+  color: #b9c9d9;
+  font-size: 0.78rem;
+  line-height: 1.25;
+  font-style: normal;
 }
 
 .portal-demo-disclosure {
@@ -860,6 +1041,13 @@ summary:focus-visible {
 }
 
 @media (max-width: 1360px) {
+  .demo-product-header__frame {
+    grid-template-columns: minmax(260px, 1fr) minmax(280px, 0.95fr);
+    grid-template-areas:
+      "content status"
+      "context actions";
+  }
+
   .portal-kpi-row {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
@@ -911,6 +1099,26 @@ summary:focus-visible {
   .portal-stage {
     padding: 16px;
   }
+
+  .demo-product-header__frame {
+    min-height: 220px;
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      "content"
+      "context"
+      "actions"
+      "status";
+  }
+
+  .demo-product-header__status {
+    min-width: 0;
+    grid-template-columns: auto 1fr;
+    align-items: center;
+  }
+
+  .demo-product-header__status em {
+    grid-column: 2;
+  }
 }
 
 @media (max-width: 900px) {
@@ -957,6 +1165,14 @@ summary:focus-visible {
     bottom: 12px;
     width: auto;
   }
+
+  .demo-product-header__content h1 {
+    font-size: 1.75rem;
+  }
+
+  .demo-product-header__context {
+    grid-template-columns: 1fr;
+  }
 }
 
 @media (max-width: 680px) {
@@ -966,6 +1182,40 @@ summary:focus-visible {
 
   .portal-topbar {
     padding: 14px;
+  }
+
+  .demo-product-header__frame {
+    min-height: 0;
+    padding: 16px;
+    gap: 12px;
+  }
+
+  .demo-product-header__overlay {
+    background:
+      linear-gradient(90deg, rgba(3, 13, 25, 0.98) 0%, rgba(5, 22, 38, 0.9) 56%, rgba(5, 22, 38, 0.68) 100%),
+      linear-gradient(0deg, rgba(5, 14, 26, 0.72), rgba(5, 14, 26, 0.1));
+  }
+
+  .demo-product-header__background {
+    background-position: 72% center;
+  }
+
+  .demo-product-header__content h1 {
+    font-size: 1.42rem;
+  }
+
+  .demo-product-header__content p {
+    font-size: 0.94rem;
+  }
+
+  .demo-product-header__actions {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+
+  .demo-product-header__button,
+  .demo-product-header__link {
+    width: 100%;
   }
 
   .portal-title-block h1 {

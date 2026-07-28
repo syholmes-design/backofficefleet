@@ -24,6 +24,7 @@
     { id: "safety", label: "Safety & Compliance", icon: "safety" },
     { id: "maintenance", label: "Maintenance & Equipment", icon: "maintenance" },
     { id: "finance", label: "Finance Readiness", icon: "finance" },
+    { id: "business-operations", label: "Business Operations", icon: "operations" },
     { id: "vault", label: "BOF Vault", icon: "documents" },
     { id: "policy", label: "Policy Governance", icon: "documents" }
   ];
@@ -35,6 +36,9 @@
     document: "vault",
     "document-control": "vault",
     "bof-vault": "vault",
+    business: "business-operations",
+    operations: "business-operations",
+    "business-operations": "business-operations",
     policies: "policy",
     "policies-procedures": "policy",
     "policy-governance": "policy"
@@ -47,6 +51,7 @@
     maintenance: "/business-operations/fleet-maintenance/",
     customer: "/customer-portal/",
     finance: "/settlements/",
+    "business-operations": "/business-operations/",
     vault: "/bof-vault/",
     policy: "/policies-procedures/"
   };
@@ -58,6 +63,7 @@
     maintenance: "Fleet Maintenance",
     customer: "Customer Portal",
     finance: "Settlements & Billing",
+    "business-operations": "Business Operations",
     vault: "BOF Vault",
     policy: "Policies & Procedures"
   };
@@ -370,16 +376,6 @@
     return "$" + Number(value || 0).toLocaleString("en-US");
   }
 
-  function metricCard(title, value, line, iconName) {
-    return [
-      '<article class="portal-kpi-card">',
-      '<div class="portal-kpi-head">' + icon(iconName) + "<span>" + escapeHtml(title) + "</span></div>",
-      "<strong>" + escapeHtml(value) + "</strong>",
-      "<p>" + escapeHtml(line) + "</p>",
-      "</article>"
-    ].join("");
-  }
-
   function viewTitleMap() {
     return {
       manager: {
@@ -406,6 +402,10 @@
         title: "Financing Readiness",
         subtitle: "Invoice quality, proof completion, and receivable readiness indicators."
       },
+      "business-operations": {
+        title: "Business Operations",
+        subtitle: "Administrative control center for workforce, payroll, vendors, records, and executive oversight."
+      },
       vault: {
         title: "BOF Vault",
         subtitle: "Document requests, upload workflow, readiness, renewal, and controlled access."
@@ -426,6 +426,7 @@
       maintenance: "BOF MAINTENANCE PORTAL",
       customer: "BOF CUSTOMER PORTAL",
       finance: "BOF FINANCE PORTAL",
+      "business-operations": "BOF BUSINESS OPERATIONS",
       vault: "BOF VAULT",
       policy: "BOF POLICY GOVERNANCE"
     };
@@ -443,47 +444,280 @@
   function renderHeader(records) {
     var map = viewTitleMap()[state.activeView] || viewTitleMap().manager;
     var identity = portalIdentityMap()[state.activeView] || portalIdentityMap().manager;
+    var headerConfig = portalHeaderConfig()[state.activeView] || portalHeaderConfig().manager;
     setText("portalIdentity", identity);
     setText("portalTitle", map.title);
     setText("portalSubtitle", map.subtitle);
     setText("headerScenario", records.load.id + " / " + records.load.customer);
-    setText("headerPersona", personaLabel(state.selectedPersona));
+    setText("headerPersona", headerConfig.persona || personaLabel(state.activeView));
     setText("headerStep", workflowSteps[state.selectedStepIndex]);
     document.title = "BOF Customer Demo | " + map.title;
     syncReturnLinks();
   }
 
-  function renderKpis() {
-    setHtml("kpiRow", [
-      metricCard("Active Loads", String(state.data.loads.length), "5 loads in active review", "operations"),
-      metricCard("Loads Needing Attention", String(loadsNeedingAttention()), "4 unresolved release blockers", "dispatch"),
-      metricCard("Ready for Settlement", String(settlementReadyCount()), "Packets clear for closeout", "finance"),
-      metricCard("Safety Exceptions", String(openSafetyExceptions()), "Open compliance actions", "safety"),
-      metricCard("Maintenance Issues", String(maintenanceIssues()), "Units with service risk", "maintenance"),
-      metricCard("Estimated Weekly Revenue", money(weeklyRevenue()), "Revenue in the active mix", "reports")
-    ].join(""));
+  function portalHeaderConfig() {
+    var base = "/assets/images/design-system-2/customer-demo-secondary-headers/";
+    return {
+      manager: {
+        background: base + "manager-portal-bg-clean.png",
+        position: "70% center",
+        title: "Manager Portal",
+        description: "Command workspace for active loads, blockers, readiness, and release paths.",
+        persona: "Manager",
+        productLabel: "View Dispatch & Operations",
+        productRoute: "/dispatch/",
+        statusLabel: "Loads requiring attention",
+        statusValue: String(loadsNeedingAttention()),
+        statusDetail: "Release blockers"
+      },
+      driver: {
+        background: base + "driver-portal-bg-clean.png",
+        position: "72% center",
+        title: "Driver Portal",
+        description: "Readiness, assignments, credentials, and document actions.",
+        persona: "Driver",
+        productLabel: "View Driver Management",
+        productRoute: "/drivers/",
+        statusLabel: "Current assignment",
+        statusValue: recordsAssignmentCount("driver"),
+        statusDetail: "Load ready"
+      },
+      safety: {
+        background: base + "safety-compliance-bg-clean.png",
+        position: "72% center",
+        title: "Safety & Compliance",
+        description: "Credential holds, inspections, incidents, exceptions, and corrective actions.",
+        persona: "Safety Manager",
+        productLabel: "View Safety & Compliance",
+        productRoute: "/safety/",
+        statusLabel: "Open exceptions",
+        statusValue: String(openSafetyExceptions()),
+        statusDetail: "Compliance actions"
+      },
+      finance: {
+        background: base + "finance-readiness-bg-clean.png",
+        position: "70% center",
+        title: "Finance Readiness",
+        description: "Settlement readiness, proof validation, billing controls, and financial exceptions.",
+        persona: "Finance Analyst",
+        productLabel: "View Settlements & Billing",
+        productRoute: "/settlements/",
+        statusLabel: "Settlements on hold",
+        statusValue: String(settlementHoldCount()),
+        statusDetail: "Proof or billing exceptions"
+      },
+      "business-operations": {
+        background: base + "business-operations-bg-clean.png",
+        position: "68% center",
+        title: "Business Operations",
+        description: "Administrative control center for workforce, payroll, vendors, records, and executive oversight.",
+        persona: "Operations Lead",
+        productLabel: "View Business Operations",
+        productRoute: "/business-operations/",
+        statusLabel: "Admin actions open",
+        statusValue: String(loadsNeedingAttention() + openSafetyExceptions()),
+        statusDetail: "Records, vendors, payroll"
+      },
+      vault: {
+        background: base + "bof-vault-bg-clean.png",
+        position: "68% center",
+        title: "BOF Vault",
+        description: "Secure document requests, uploads, readiness, renewal, and controlled access.",
+        persona: "Vault Administrator",
+        productLabel: "View BOF Vault",
+        productRoute: "/bof-vault/",
+        secondaryLabel: "See Document Intake in Action",
+        secondaryRoute: "/customer-demo/?portal=vault&view=document-intake",
+        statusLabel: "Documents awaiting review",
+        statusValue: String(pendingProofCount()),
+        statusDetail: "Requests open"
+      },
+      policy: {
+        background: base + "policy-governance-bg-clean.png",
+        position: "70% center",
+        title: "Policy Governance",
+        description: "Policies, procedures, versions, acknowledgments, training, and audit history.",
+        persona: "Compliance Officer",
+        productLabel: "View Policies & Procedures",
+        productRoute: "/policies-procedures/",
+        statusLabel: "Acknowledgments due",
+        statusValue: "4",
+        statusDetail: "Training assignments open"
+      },
+      maintenance: {
+        background: base + "business-operations-bg-clean.png",
+        position: "68% center",
+        title: "Maintenance & Equipment",
+        description: "Unit readiness, service risk, repair status, and equipment follow-through.",
+        persona: "Maintenance Lead",
+        productLabel: "View Business Operations",
+        productRoute: "/business-operations/",
+        statusLabel: "Maintenance issues",
+        statusValue: String(maintenanceIssues()),
+        statusDetail: "Service risks"
+      },
+      customer: {
+        background: base + "manager-portal-bg-clean.png",
+        position: "70% center",
+        title: "Customer Portal",
+        description: "Shipment visibility, proof expectations, billing posture, and delivery status.",
+        persona: "Customer Success",
+        productLabel: "View BackOfficeFleet",
+        productRoute: "/",
+        statusLabel: "Customer-visible loads",
+        statusValue: String(state.data.loads.length),
+        statusDetail: "Tracked updates"
+      }
+    };
+  }
+
+  function renderProductHeader(records) {
+    var map = viewTitleMap()[state.activeView] || viewTitleMap().manager;
+    var config = portalHeaderConfig()[state.activeView] || portalHeaderConfig().manager;
+    var step = workflowSteps[state.selectedStepIndex];
+    var secondaryLink = config.secondaryRoute ? '<a class="demo-product-header__link" href="' + escapeHtml(config.secondaryRoute) + '">' + escapeHtml(config.secondaryLabel) + "</a>" : "";
+    var style = "--demo-product-bg: url('" + escapeHtml(config.background) + "'); --demo-product-position: " + escapeHtml(config.position) + ";";
+    return [
+      '<div class="demo-product-header__frame" data-portal="' + escapeHtml(state.activeView) + '" style="' + style + '">',
+      '<div class="demo-product-header__background" aria-hidden="true"></div>',
+      '<div class="demo-product-header__overlay" aria-hidden="true"></div>',
+      '<div class="demo-product-header__content">',
+      '<span class="demo-product-header__eyebrow">Interactive Demo</span>',
+      '<h1>' + escapeHtml(config.title || map.title) + '</h1>',
+      '<p>' + escapeHtml(config.description || map.subtitle) + '</p>',
+      '</div>',
+      '<dl class="demo-product-header__context">',
+      '<div><dt>Scenario</dt><dd>' + escapeHtml(records.load.id) + '</dd></div>',
+      '<div><dt>Persona</dt><dd>' + escapeHtml(config.persona) + '</dd></div>',
+      '<div><dt>Step</dt><dd>' + escapeHtml(step) + '</dd></div>',
+      '</dl>',
+      '<div class="demo-product-header__actions">',
+      '<button class="demo-product-header__button" type="button" data-demo-action="open-controls">Start Guided Demo</button>',
+      '<a class="demo-product-header__link" href="' + escapeHtml(config.productRoute) + '">' + escapeHtml(config.productLabel) + '</a>',
+      secondaryLink,
+      '<a class="demo-product-header__link demo-product-header__link--quiet" href="/">Back to BOF</a>',
+      '</div>',
+      '<div class="demo-product-header__status" aria-label="' + escapeHtml(config.statusLabel) + '">',
+      '<span>' + escapeHtml(config.statusValue) + '</span>',
+      '<strong>' + escapeHtml(config.statusLabel) + '</strong>',
+      '<em>' + escapeHtml(config.statusDetail) + '</em>',
+      '</div>',
+      '</div>'
+    ].join("");
+  }
+
+  function renderPortalContext(records) {
+    var panels = {
+      manager: {
+        eyebrow: "Operational queue",
+        title: "Manager focus",
+        fields: [
+          ["Loads needing attention", loadsNeedingAttention()],
+          ["Active exceptions", state.data.exceptions.length],
+          ["Release blockers", records.meta.requiredAction],
+          ["Selected scenario", records.load.id]
+        ]
+      },
+      driver: {
+        eyebrow: "Driver workspace",
+        title: "Current assignment",
+        fields: [
+          ["Driver", records.driver ? records.driver.name : "No driver"],
+          ["Readiness", records.driver ? records.driver.readinessStatus : "Unknown"],
+          ["Assignment", records.driver ? records.driver.assignmentState : "Unknown"],
+          ["Next action", records.meta.requiredAction]
+        ]
+      },
+      safety: {
+        eyebrow: "Compliance queue",
+        title: "Safety focus",
+        fields: [
+          ["Open exceptions", openSafetyExceptions()],
+          ["Driver holds", countDriversByStatus("Blocked")],
+          ["Selected driver", records.driver ? records.driver.name : "No driver"],
+          ["Corrective action", records.safety ? records.safety.correctiveAction : records.meta.requiredAction]
+        ]
+      },
+      finance: {
+        eyebrow: "Settlement desk",
+        title: "Finance focus",
+        fields: [
+          ["Settlements on hold", settlementHoldCount()],
+          ["Readiness score", financingScore(records)],
+          ["Billing posture", records.meta.billingReadiness],
+          ["Financial effect", records.meta.financialEffect]
+        ]
+      },
+      "business-operations": {
+        eyebrow: "Administrative control",
+        title: "Business operations focus",
+        fields: [
+          ["Workforce actions", String(countDriversByStatus("Review") + countDriversByStatus("At Risk") + countDriversByStatus("Blocked"))],
+          ["Vendor and unit issues", maintenanceIssues()],
+          ["Records requiring review", loadsNeedingAttention()],
+          ["Executive oversight", records.meta.urgencyReason]
+        ]
+      },
+      vault: {
+        eyebrow: "Document control",
+        title: "Vault focus",
+        fields: [
+          ["Documents awaiting review", pendingProofCount()],
+          ["Open request", records.meta.issueType],
+          ["Renewal or request", records.meta.requiredAction],
+          ["Access posture", "Controlled demo data"]
+        ]
+      },
+      policy: {
+        eyebrow: "Policy governance",
+        title: "Policy focus",
+        fields: [
+          ["Acknowledgments due", "4"],
+          ["Revisions in review", "2"],
+          ["Training assignments", "Micro-training assigned"],
+          ["Audit posture", "Version and acknowledgment history retained"]
+        ]
+      },
+      maintenance: {
+        eyebrow: "Equipment readiness",
+        title: "Maintenance focus",
+        fields: [
+          ["Maintenance issues", maintenanceIssues()],
+          ["Unit", records.unit ? records.unit.label : "No unit assigned"],
+          ["Repair status", records.unit ? records.unit.notes : "No repair note"],
+          ["Dispatch effect", records.meta.dispatchRestriction]
+        ]
+      },
+      customer: {
+        eyebrow: "Customer visibility",
+        title: "Customer focus",
+        fields: [
+          ["Customer", records.load.customer],
+          ["Shipment", records.meta.shipmentRef],
+          ["Visible status", records.meta.customerStatus],
+          ["Billing readiness", records.meta.billingReadiness]
+        ]
+      }
+    };
+    var panel = panels[state.activeView] || panels.manager;
+    return [
+      '<div class="portal-selected-load-summary">',
+      '<div><p class="portal-eyebrow">' + escapeHtml(panel.eyebrow) + '</p><h2>' + escapeHtml(panel.title) + '</h2></div>',
+      '<div class="portal-badge-row">' + badge(records.load.dispatchStatus) + badge(records.meta.proofReadiness) + badge(records.meta.urgency) + "</div>",
+      '<div class="portal-selected-load-grid">',
+      panel.fields.map(function (item) {
+        return field(item[0], item[1]);
+      }).join(""),
+      "</div></div>",
+      '<div class="portal-button-row">',
+      '<button class="portal-inline-button" type="button" data-demo-action="open-detail">Open selected record</button>',
+      '<button class="portal-inline-button" type="button" data-demo-action="open-controls">Change scenario</button>',
+      "</div>"
+    ].join("");
   }
 
   function renderSelectedLoad(records) {
-    setHtml("selectedLoad", [
-      '<div class="portal-selected-load-summary">',
-      '<div><p class="portal-eyebrow">Selected load</p><h2>' + escapeHtml(records.load.id + " / " + records.load.customer) + '</h2></div>',
-      '<div class="portal-badge-row">' + badge(records.load.dispatchStatus) + badge(records.meta.proofReadiness) + badge(records.meta.urgency) + "</div>",
-      '<div class="portal-selected-load-grid">',
-      field("Lane", records.load.origin + " to " + records.load.destination),
-      field("Driver", records.driver ? records.driver.name : "Assignment pending"),
-      field("Issue", records.meta.issueType),
-      field("Proof readiness", records.meta.proofReadiness),
-      field("Urgency", records.meta.age + " / " + records.meta.urgency),
-      field("Billing readiness", records.meta.billingReadiness),
-      field("Financial effect", records.meta.effect),
-      field("Current step", workflowSteps[state.selectedStepIndex]),
-      "</div></div>",
-      '<div class="portal-button-row">',
-      '<button class="portal-inline-button" type="button" data-demo-action="open-detail">Open selected load detail</button>',
-      '<button class="portal-inline-button" type="button" data-demo-action="open-controls">Change scenario</button>',
-      "</div>"
-    ].join(""));
+    setHtml("selectedLoad", renderPortalContext(records));
   }
 
   function field(label, value) {
@@ -496,6 +730,7 @@
     if (state.activeView === "maintenance") return setHtml("mainView", renderMaintenanceView(records));
     if (state.activeView === "customer") return setHtml("mainView", renderCustomerView(records));
     if (state.activeView === "finance") return setHtml("mainView", renderFinanceView(records));
+    if (state.activeView === "business-operations") return setHtml("mainView", renderBusinessOperationsView(records));
     if (state.activeView === "vault") return setHtml("mainView", renderVaultView(records));
     if (state.activeView === "policy") return setHtml("mainView", renderPolicyView(records));
     setHtml("mainView", renderManagerView(records));
@@ -842,6 +1077,38 @@
     ].join("");
   }
 
+  function renderBusinessOperationsView(records) {
+    return [
+      '<div class="portal-view-grid">',
+      simpleCard("Business Operations Control Center", "Administrative oversight", detailGrid([
+        ["Workforce posture", String(countDriversByStatus("Review") + countDriversByStatus("At Risk") + countDriversByStatus("Blocked")) + " personnel records need review"],
+        ["Payroll readiness", records.payProfile ? records.payProfile.payStatus : "Pay profile review"],
+        ["Vendor and equipment", String(maintenanceIssues()) + " unit or vendor follow-ups"],
+        ["Records governance", String(loadsNeedingAttention()) + " operating records need owner attention"],
+        ["Executive view", records.meta.urgencyReason]
+      ])),
+      '<div class="portal-row-grid portal-row-three">',
+      simpleCard("Workforce Administration", "People records", statList([
+        ["Driver records on hold", countDriversByStatus("Blocked")],
+        ["Driver records in review", String(countDriversByStatus("Review") + countDriversByStatus("At Risk"))],
+        ["Ready driver files", countDriversByStatus("Ready")]
+      ])),
+      simpleCard("Payroll and Vendor Follow-Up", "Administrative actions", statList([
+        ["Settlement posture", records.settlement ? records.settlement.status : records.meta.billingReadiness],
+        ["Pay profile", records.payProfile ? records.payProfile.payStatus : "Review needed"],
+        ["Vendor/equipment issues", maintenanceIssues()]
+      ])),
+      simpleCard("Executive Oversight", "Control record", statList([
+        ["Selected record", records.load.id],
+        ["Owner action", records.meta.requiredAction],
+        ["Cross-team effect", records.meta.financialEffect]
+      ])),
+      "</div>",
+      collapsibleCard("Administrative Activity", "Recent control events", activityList(records), false),
+      "</div>"
+    ].join("");
+  }
+
   function renderVaultView(records) {
     return [
       '<div class="portal-view-grid">',
@@ -952,6 +1219,32 @@
     }).length;
   }
 
+  function recordsAssignmentCount() {
+    return String(state.data.loads.filter(function (item) {
+      return item.driverId;
+    }).length > 0 ? 1 : 0);
+  }
+
+  function settlementHoldCount() {
+    return state.data.loads.filter(function (item) {
+      var meta = scenarioMeta[item.id] || {};
+      var text = String((meta.billingReadiness || "") + " " + (meta.financialEffect || "") + " " + (meta.effect || "")).toLowerCase();
+      return text.indexOf("hold") >= 0 || text.indexOf("pending") >= 0 || text.indexOf("incomplete") >= 0;
+    }).length;
+  }
+
+  function pendingProofCount() {
+    var total = 0;
+    state.data.loads.forEach(function (item) {
+      var proofItems = (scenarioMeta[item.id] || {}).proofItems || {};
+      Object.keys(proofItems).forEach(function (key) {
+        var value = String(proofItems[key] || "").toLowerCase();
+        if (value.indexOf("pending") >= 0 || value.indexOf("missing") >= 0) total += 1;
+      });
+    });
+    return total;
+  }
+
   function settlementReadyCount() {
     return state.data.settlementRecords.filter(function (item) {
       return item.status === "Complete";
@@ -1016,6 +1309,7 @@
   function personaLabel(id) {
     if (id === "vault") return "BOF Vault";
     if (id === "policy") return "Policy Governance";
+    if (id === "business-operations") return "Operations Lead";
     for (var i = 0; i < personaGroups.length; i += 1) {
       for (var j = 0; j < personaGroups[i].items.length; j += 1) {
         if (personaGroups[i].items[j].id === id) return personaGroups[i].items[j].label;
@@ -1099,6 +1393,7 @@
     if (id === "safety") return 5;
     if (id === "customer") return 7;
     if (id === "finance") return 8;
+    if (id === "business-operations") return 9;
     if (id === "vault") return 4;
     if (id === "policy") return 6;
     return 9;
@@ -1339,7 +1634,7 @@
     var records = selectedRecords();
     renderSidebar();
     renderHeader(records);
-    renderKpis();
+    setHtml("productHeader", renderProductHeader(records));
     renderSelectedLoad(records);
     renderMain(records);
     renderDrawer(records);
