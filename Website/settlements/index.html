@@ -101,11 +101,11 @@
         </div>
       </section>
 
-      <section class="wave1-section" id="finance-readiness" aria-labelledby="finance-preview-heading">
+      <section class="wave1-section wave1-section--dashboard-prominent" id="finance-readiness" aria-labelledby="finance-preview-heading">
         <p class="bof-ds2-eyebrow">Finance Readiness Dashboard</p>
         <h2 id="finance-preview-heading">Finance and operations see the same hold reason before cash gets stuck.</h2>
-        <div class="wave1-dashboard-grid">
-          <article class="wave1-dashboard-frame">
+        <div class="wave1-dashboard-grid wave1-dashboard-grid--finance">
+          <article class="wave1-dashboard-frame wave1-dashboard-frame--showcase">
             <div class="wave1-frame-header">
               <strong>Packet Health</strong>
               <span class="wave1-disclosure">Illustrative operating view</span>
@@ -117,22 +117,27 @@
                 <div class="wave1-stat"><strong>2</strong><span>Proof gaps</span></div>
               </div>
               <div class="wave1-chart" role="img" aria-label="Illustrative settlement readiness trend"></div>
+              <div class="wave1-queue-list" aria-label="Illustrative settlement packet queue">
+                <div class="wave1-queue-item"><b>BOF-1907</b><span>POD and renewal evidence review</span><em>Held</em></div>
+                <div class="wave1-queue-item"><b>BOF-2175</b><span>Rate confirmation match review</span><em>Review</em></div>
+                <div class="wave1-queue-item"><b>BOF-2064</b><span>Packet and payment path ready</span><em>Ready</em></div>
+              </div>
             </div>
           </article>
-          <article class="wave1-portal-frame">
+          <article class="wave1-portal-frame wave1-portal-frame--showcase">
             <div class="wave1-frame-header">
               <strong>Settlement BOF-1907</strong>
               <span class="wave1-disclosure">Demo environment</span>
             </div>
             <div class="wave1-record-list">
-              <article class="wave1-record-card">
+              <article class="wave1-record-card wave1-record-card--featured">
                 <div>
                   <h3>Packet-to-pay readiness</h3>
                   <p>POD and renewal evidence review must clear before payment readiness moves forward.</p>
                 </div>
                 <span class="wave1-status wave1-status--review">Held</span>
               </article>
-              <div class="wave1-proof-grid">
+              <div class="wave1-proof-grid wave1-money-grid">
                 <div class="wave1-proof"><b>Line haul</b><span>$3,450.00</span></div>
                 <div class="wave1-proof"><b>Fuel surcharge</b><span>$310.00</span></div>
                 <div class="wave1-proof"><b>Accessorials</b><span>$175.00 detention support</span></div>
@@ -140,6 +145,13 @@
                 <div class="wave1-proof"><b>Gross total</b><span>$3,935.00 synthetic example</span></div>
                 <div class="wave1-proof"><b>Net context</b><span>Driver pay profile and packet hold shown together.</span></div>
               </div>
+              <div class="wave1-proof-grid wave1-proof-grid--dense">
+                <div class="wave1-proof"><b>Hold reason</b><span>Receiver evidence and renewal support must match the packet.</span></div>
+                <div class="wave1-proof"><b>Owner</b><span>Dispatcher / packet owner</span></div>
+                <div class="wave1-proof"><b>Clearance path</b><span>Confirm POD, signed BOL, receiver evidence, and renewal evidence.</span></div>
+                <div class="wave1-proof"><b>Release status</b><span>Payment readiness waits until the proof record clears.</span></div>
+              </div>
+              <a class="bof-ds2-button bof-ds2-button--primary" href="/settlements/">Explore Finance Readiness</a>
             </div>
           </article>
         </div>
