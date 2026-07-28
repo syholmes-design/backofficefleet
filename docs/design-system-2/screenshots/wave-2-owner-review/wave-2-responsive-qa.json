@@ -1,0 +1,215 @@
+[
+  {
+    "route": "documents",
+    "viewport": "1440x1000",
+    "overflow": 0,
+    "headerPresent": true,
+    "heroPresent": true,
+    "proofPresent": true,
+    "capabilityCards": 4,
+    "mobileTableCards": false,
+    "smallTargets": []
+  },
+  {
+    "route": "policies",
+    "viewport": "1440x1000",
+    "overflow": 0,
+    "headerPresent": true,
+    "heroPresent": true,
+    "proofPresent": true,
+    "capabilityCards": 4,
+    "mobileTableCards": false,
+    "smallTargets": []
+  },
+  {
+    "route": "bof-vault",
+    "viewport": "1440x1000",
+    "overflow": 0,
+    "headerPresent": true,
+    "heroPresent": true,
+    "proofPresent": true,
+    "capabilityCards": 4,
+    "mobileTableCards": false,
+    "smallTargets": []
+  },
+  {
+    "route": "documents",
+    "viewport": "1366x768",
+    "overflow": 0,
+    "headerPresent": true,
+    "heroPresent": true,
+    "proofPresent": true,
+    "capabilityCards": 4,
+    "mobileTableCards": false,
+    "smallTargets": []
+  },
+  {
+    "route": "policies",
+    "viewport": "1366x768",
+    "overflow": 0,
+    "headerPresent": true,
+    "heroPresent": true,
+    "proofPresent": true,
+    "capabilityCards": 4,
+    "mobileTableCards": false,
+    "smallTargets": []
+  },
+  {
+    "route": "bof-vault",
+    "viewport": "1366x768",
+    "overflow": 0,
+    "headerPresent": true,
+    "heroPresent": true,
+    "proofPresent": true,
+    "capabilityCards": 4,
+    "mobileTableCards": false,
+    "smallTargets": []
+  },
+  {
+    "route": "documents",
+    "viewport": "1280x800",
+    "overflow": 0,
+    "headerPresent": true,
+    "heroPresent": true,
+    "proofPresent": true,
+    "capabilityCards": 4,
+    "mobileTableCards": false,
+    "smallTargets": []
+  },
+  {
+    "route": "policies",
+    "viewport": "1280x800",
+    "overflow": 0,
+    "headerPresent": true,
+    "heroPresent": true,
+    "proofPresent": true,
+    "capabilityCards": 4,
+    "mobileTableCards": false,
+    "smallTargets": []
+  },
+  {
+    "route": "bof-vault",
+    "viewport": "1280x800",
+    "overflow": 0,
+    "headerPresent": true,
+    "heroPresent": true,
+    "proofPresent": true,
+    "capabilityCards": 4,
+    "mobileTableCards": false,
+    "smallTargets": []
+  },
+  {
+    "route": "documents",
+    "viewport": "1024x768",
+    "overflow": 0,
+    "headerPresent": true,
+    "heroPresent": true,
+    "proofPresent": true,
+    "capabilityCards": 4,
+    "mobileTableCards": false,
+    "smallTargets": []
+  },
+  {
+    "route": "policies",
+    "viewport": "1024x768",
+    "overflow": 0,
+    "headerPresent": true,
+    "heroPresent": true,
+    "proofPresent": true,
+    "capabilityCards": 4,
+    "mobileTableCards": false,
+    "smallTargets": []
+  },
+  {
+    "route": "bof-vault",
+    "viewport": "1024x768",
+    "overflow": 0,
+    "headerPresent": true,
+    "heroPresent": true,
+    "proofPresent": true,
+    "capabilityCards": 4,
+    "mobileTableCards": false,
+    "smallTargets": []
+  },
+  {
+    "route": "documents",
+    "viewport": "768x1024",
+    "overflow": 0,
+    "headerPresent": true,
+    "heroPresent": true,
+    "proofPresent": true,
+    "capabilityCards": 4,
+    "mobileTableCards": false,
+    "smallTargets": []
+  },
+  {
+    "route": "policies",
+    "viewport": "768x1024",
+    "overflow": 0,
+    "headerPresent": true,
+    "heroPresent": true,
+    "proofPresent": true,
+    "capabilityCards": 4,
+    "mobileTableCards": false,
+    "smallTargets": []
+  },
+  {
+    "route": "bof-vault",
+    "viewport": "768x1024",
+    "overflow": 0,
+    "headerPresent": true,
+    "heroPresent": true,
+    "proofPresent": true,
+    "capabilityCards": 4,
+    "mobileTableCards": false,
+    "smallTargets": []
+  },
+  {
+    "route": "documents",
+    "viewport": "390x844",
+    "overflow": 0,
+    "headerPresent": true,
+    "heroPresent": true,
+    "proofPresent": true,
+    "capabilityCards": 4,
+    "mobileTableCards": true,
+    "smallTargets": []
+  },
+  {
+    "route": "policies",
+    "viewport": "390x844",
+    "overflow": 0,
+    "headerPresent": true,
+    "heroPresent": true,
+    "proofPresent": true,
+    "capabilityCards": 4,
+    "mobileTableCards": true,
+    "smallTargets": []
+  },
+  {
+    "route": "bof-vault",
+    "viewport": "390x844",
+    "overflow": 0,
+    "headerPresent": true,
+    "heroPresent": true,
+    "proofPresent": true,
+    "capabilityCards": 4,
+    "mobileTableCards": true,
+    "smallTargets": []
+  },
+  {
+    "route": "documents",
+    "drawerEscapeClosed": true,
+    "focusReturnedTo": "REVIEW DOCUMENT"
+  },
+  {
+    "route": "policies",
+    "drawerEscapeClosed": true,
+    "focusReturnedTo": "REVIEW REVISION"
+  },
+  {
+    "route": "bof-vault",
+    "drawerEscapeClosed": true,
+    "focusReturnedTo": "SUBMIT RENEWAL"
+  }
+]
