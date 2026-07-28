@@ -3,140 +3,222 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Policies &amp; Procedures | BackOfficeFleet</title>
-  <meta name="description" content="BOF helps fleets turn policies and procedures into assigned, acknowledged, versioned, and verifiable operating controls.">
-  <link rel="stylesheet" href="/assets/css/styles.css?v=20260721-enterprise-header-fit5">
+  <title>Controlled, Auditable, Always Current. | BackOfficeFleet</title>
+  <meta name="description" content="BOF policy governance keeps policies, procedures, acknowledgments, training, revisions, and evidence tied to the people and operations they govern.">
+  <link rel="icon" href="/assets/brand/bof-design-system-2/favicon/favicon.ico">
+  <link rel="stylesheet" href="/assets/css/bof-design-system-2-wave-1.css">
 </head>
-<body class="premium-site page-policies governance-workstream-page policy-governance-redesign-page">
-  <header class="site-header">
-    <a class="brand" href="/" aria-label="BackOfficeFleet home"><img src="/assets/images/logo/boflogo-original.png" alt="BackOfficeFleet"></a>
-    <button class="nav-toggle" type="button" data-nav-toggle aria-expanded="false" aria-label="Toggle navigation">&#9776;</button>
-    <nav class="site-nav" data-nav aria-label="Main navigation">
-      <div class="nav-menu" data-nav-menu>
-        <button class="nav-menu-toggle" type="button" data-nav-menu-toggle aria-expanded="false" aria-haspopup="true">Who We Serve</button>
-        <div class="nav-dropdown" aria-label="Who We Serve">
-          <a href="/private-fleets/">Private Fleets</a>
-          <a href="/government/">Government Fleets</a>
-          <a href="/aggregator-outreach/">Aggregators</a>
+<body class="bof-ds2-wave1 bof-ds2-wave2 page-wave2-policies">
+  <div class="bof-ds2-shell">
+    <header class="bof-ds2-header" data-menu-open="false">
+      <div class="bof-ds2-header__inner">
+        <a class="bof-ds2-brand" href="/" aria-label="BackOfficeFleet home">
+          <img src="/assets/brand/bof-design-system-2/svg/header-lockup.svg" alt="BackOfficeFleet">
+        </a>
+        <nav class="bof-ds2-nav" aria-label="Primary navigation">
+          <a href="/private-fleets/">Who We Serve</a>
+          <a href="/drivers/">Drivers</a>
+          <a href="/dispatch/">Dispatch &amp; Operations</a>
+          <a href="/safety/">Safety &amp; Compliance</a>
+          <a href="/settlements/">Settlements &amp; Billing</a>
+          <a href="/business-operations/">Business Operations</a>
+          <a href="/policies-procedures/" aria-current="page">Policies &amp; Procedures</a>
+          <a href="/trust-governance/">Company</a>
+        </nav>
+        <div class="bof-ds2-header__actions">
+          <a class="bof-ds2-button bof-ds2-button--gold-outline" href="/book-demo/">Book a Demo</a>
         </div>
-      </div>
-      <a href="/drivers/">Drivers</a>
-      <a href="/dispatch/">Dispatch &amp; Operations</a>
-      <a href="/safety/">Safety &amp; Compliance</a>
-      <a href="/settlements/">Settlements &amp; Billing</a>
-      <a href="/business-operations/">Business Operations</a>
-      <a class="active" href="/policies-procedures/">Policies &amp; Procedures</a>
-      <a href="/trust-governance/">Company</a>
-      <a class="nav-utility-link" href="/command-center/">Command Center</a>
-    </nav>
-    <a class="header-cta" href="/dashboard/">Sign In</a>
-  </header>
-
-  <main>
-    <section class="policy-governance-hero" id="policy-library">
-      <div class="policy-governance-hero-copy reveal">
-        <p class="eyebrow">Operational Governance</p>
-        <h1>Policies &amp; Procedures</h1>
-        <p class="hero-promise">Turn written rules into assigned, acknowledged, versioned, and verifiable operating controls.</p>
-      </div>
-      <div class="policy-book-hotspots" aria-label="Policy manual metadata">
-        <button class="policy-book-hotspot hotspot-hr" type="button" aria-label="HR Handbook metadata">
-          <span><strong>HR Handbook</strong>Last Updated: Jun 2026<br>Owner: HR Lead<br>Acknowledged: 97%</span>
-        </button>
-        <button class="policy-book-hotspot hotspot-accounting" type="button" aria-label="Accounting Manual metadata">
-          <span><strong>Accounting Manual</strong>Last Updated: Jun 2026<br>Owner: Controller<br>Acknowledged: 96%</span>
-        </button>
-        <button class="policy-book-hotspot hotspot-operations" type="button" aria-label="Operations Manual metadata">
-          <span><strong>Operations Manual</strong>Last Updated: Jul 2026<br>Owner: Operations Lead<br>Acknowledged: 94%</span>
-        </button>
-        <button class="policy-book-hotspot hotspot-compliance" type="button" aria-label="Compliance Policy Book metadata">
-          <span><strong>Compliance Policy Book</strong>Last Updated: Jul 2026<br>Owner: Compliance Team<br>Acknowledged: 98%</span>
+        <button class="bof-ds2-menu-button" type="button" data-bof-ds2-menu aria-expanded="false" aria-label="Open navigation">
+          <svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none">
+            <path d="M4 7h16M4 12h16M4 17h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          </svg>
         </button>
       </div>
-    </section>
+    </header>
 
-    <section class="section policy-control-file-section" id="control-file">
-      <div class="section-head reveal">
-        <p class="eyebrow">Control File</p>
-        <h2>Open the rule, owner, version, evidence, and operating consequence from one row.</h2>
-        <p>Each action opens the actual policy PDF. Hover through the control file to see the operating record behind the rule: version state, owner, acknowledgment, review status, and exception path.</p>
-      </div>
-      <div class="control-table-wrap reveal">
-        <table class="control-table policy-table policy-control-table">
-          <thead><tr><th>Policy</th><th>Category</th><th>Version</th><th>Effective</th><th>Owner</th><th>Acknowledgment</th><th>Review</th><th>Action</th></tr></thead>
-          <tbody>
-            <tr><td>Driver Qualification Policy</td><td>Drivers</td><td>v3.2</td><td>Jul 1, 2026</td><td>Driver file owner</td><td><span class="status-badge is-ready">Complete</span></td><td><span class="status-badge is-current">Current</span></td><td><a href="/assets/documents/policies/bof-pol-001-driver-qualification-policy.pdf" target="_blank" rel="noopener">Open PDF</a></td></tr>
-            <tr><td>Pre-Trip Evidence Standard</td><td>Safety</td><td>v2.4</td><td>Jun 15, 2026</td><td>Safety lead</td><td><span class="status-badge is-review">Review</span></td><td><span class="status-badge is-review">Due</span></td><td><a href="/assets/documents/policies/bof-pol-002-pre-trip-evidence-standard.pdf" target="_blank" rel="noopener">Open PDF</a></td></tr>
-            <tr><td>HOS Escalation Procedure</td><td>Dispatch</td><td>v2.1</td><td>May 30, 2026</td><td>Dispatch manager</td><td><span class="status-badge is-progress">In Progress</span></td><td><span class="status-badge is-current">Current</span></td><td><a href="/assets/documents/policies/bof-pol-003-hos-escalation-procedure.pdf" target="_blank" rel="noopener">Open PDF</a></td></tr>
-            <tr><td>Cargo and Seal Verification</td><td>Claims</td><td>v1.8</td><td>May 20, 2026</td><td>Operations lead</td><td><span class="status-badge is-ready">Complete</span></td><td><span class="status-badge is-current">Current</span></td><td><a href="/assets/documents/policies/bof-pol-004-cargo-and-seal-verification.pdf" target="_blank" rel="noopener">Open PDF</a></td></tr>
-            <tr><td>Claims and Incident Response</td><td>Safety</td><td>v2.0</td><td>Apr 28, 2026</td><td>Safety lead</td><td><span class="status-badge is-review">Review</span></td><td><span class="status-badge is-risk">At Risk</span></td><td><a href="/assets/documents/policies/bof-pol-005-claims-and-incident-response.pdf" target="_blank" rel="noopener">Open PDF</a></td></tr>
-            <tr><td>Billing Packet Requirements</td><td>Billing</td><td>v3.0</td><td>Jun 10, 2026</td><td>Billing owner</td><td><span class="status-badge is-ready">Complete</span></td><td><span class="status-badge is-current">Current</span></td><td><a href="/assets/documents/policies/bof-pol-006-billing-packet-requirements.pdf" target="_blank" rel="noopener">Open PDF</a></td></tr>
-            <tr><td>Driver Pay and Settlement Calculation Policy</td><td>Payroll &amp; Settlements</td><td>v1.0</td><td>Jul 16, 2026</td><td>Payroll administration owner</td><td><span class="status-badge is-ready">Complete</span></td><td><span class="status-badge is-current">Current</span></td><td><a href="/assets/documents/policies/bof-pol-009-driver-pay-and-settlement-calculation-policy.pdf" target="_blank" rel="noopener">Open PDF</a></td></tr>
-            <tr><td>Payroll Exception and Reimbursement Review Procedure</td><td>Payroll Support</td><td>v1.0</td><td>Jul 16, 2026</td><td>Payroll support owner</td><td><span class="status-badge is-ready">Complete</span></td><td><span class="status-badge is-current">Current</span></td><td><a href="/assets/documents/policies/bof-pol-010-payroll-exception-and-reimbursement-review-procedure.pdf" target="_blank" rel="noopener">Open PDF</a></td></tr>
-            <tr><td>Accounts Receivable and Aging Follow-Up Procedure</td><td>Accounts Receivable</td><td>v1.0</td><td>Jul 16, 2026</td><td>Accounts receivable owner</td><td><span class="status-badge is-ready">Complete</span></td><td><span class="status-badge is-current">Current</span></td><td><a href="/assets/documents/policies/bof-pol-011-accounts-receivable-and-aging-follow-up-procedure.pdf" target="_blank" rel="noopener">Open PDF</a></td></tr>
-            <tr><td>Vendor Bill and AP Approval Policy</td><td>Accounts Payable</td><td>v1.0</td><td>Jul 16, 2026</td><td>AP and vendor control owner</td><td><span class="status-badge is-ready">Complete</span></td><td><span class="status-badge is-current">Current</span></td><td><a href="/assets/documents/policies/bof-pol-012-vendor-bill-and-ap-approval-policy.pdf" target="_blank" rel="noopener">Open PDF</a></td></tr>
-            <tr><td>Cash-Flow Review and Owner Escalation Procedure</td><td>Cash-Flow Control</td><td>v1.0</td><td>Jul 16, 2026</td><td>Finance review owner</td><td><span class="status-badge is-ready">Complete</span></td><td><span class="status-badge is-current">Current</span></td><td><a href="/assets/documents/policies/bof-pol-013-cash-flow-review-and-owner-escalation-procedure.pdf" target="_blank" rel="noopener">Open PDF</a></td></tr>
-            <tr><td>Factoring Packet and Payment-Path Standard</td><td>Factoring &amp; Payment Path</td><td>v1.0</td><td>Jul 16, 2026</td><td>Billing and factoring packet owner</td><td><span class="status-badge is-ready">Complete</span></td><td><span class="status-badge is-current">Current</span></td><td><a href="/assets/documents/policies/bof-pol-014-factoring-packet-and-payment-path-standard.pdf" target="_blank" rel="noopener">Open PDF</a></td></tr>
-            <tr><td>Driver Recruiting and Applicant Pipeline Policy</td><td>HR / Recruiting</td><td>v1.0</td><td>Jul 16, 2026</td><td>Recruiting owner</td><td><span class="status-badge is-ready">Complete</span></td><td><span class="status-badge is-current">Current</span></td><td><a href="/assets/documents/policies/bof-pol-015-driver-recruiting-and-applicant-pipeline-policy.pdf" target="_blank" rel="noopener">Open PDF</a></td></tr>
-            <tr><td>Driver Onboarding and First-Load Release Procedure</td><td>HR / Onboarding</td><td>v1.0</td><td>Jul 16, 2026</td><td>Onboarding owner</td><td><span class="status-badge is-ready">Complete</span></td><td><span class="status-badge is-current">Current</span></td><td><a href="/assets/documents/policies/bof-pol-016-driver-onboarding-and-first-load-release-procedure.pdf" target="_blank" rel="noopener">Open PDF</a></td></tr>
-            <tr><td>Employee Relations and Corrective Action Procedure</td><td>HR / Employee Relations</td><td>v1.0</td><td>Jul 16, 2026</td><td>Employee relations owner</td><td><span class="status-badge is-ready">Complete</span></td><td><span class="status-badge is-current">Current</span></td><td><a href="/assets/documents/policies/bof-pol-017-employee-relations-and-corrective-action-procedure.pdf" target="_blank" rel="noopener">Open PDF</a></td></tr>
-            <tr><td>Compensation and Benefits Coordination Policy</td><td>HR / Compensation &amp; Benefits</td><td>v1.0</td><td>Jul 16, 2026</td><td>Compensation and benefits owner</td><td><span class="status-badge is-ready">Complete</span></td><td><span class="status-badge is-current">Current</span></td><td><a href="/assets/documents/policies/bof-pol-018-compensation-and-benefits-coordination-policy.pdf" target="_blank" rel="noopener">Open PDF</a></td></tr>
-            <tr><td>Training Development and Policy Acknowledgment Standard</td><td>HR / Training</td><td>v1.0</td><td>Jul 16, 2026</td><td>Training owner</td><td><span class="status-badge is-ready">Complete</span></td><td><span class="status-badge is-current">Current</span></td><td><a href="/assets/documents/policies/bof-pol-019-training-development-and-policy-acknowledgment-standard.pdf" target="_blank" rel="noopener">Open PDF</a></td></tr>
-            <tr><td>Leave Return-to-Duty and Work Status Review Procedure</td><td>HR / Work Status</td><td>v1.0</td><td>Jul 16, 2026</td><td>Work status owner</td><td><span class="status-badge is-ready">Complete</span></td><td><span class="status-badge is-current">Current</span></td><td><a href="/assets/documents/policies/bof-pol-020-leave-return-to-duty-and-work-status-review-procedure.pdf" target="_blank" rel="noopener">Open PDF</a></td></tr>
-            <tr><td>Worker Classification and Contractor Documentation Policy</td><td>HR / Contractor Documentation</td><td>v1.0</td><td>Jul 16, 2026</td><td>Worker documentation owner</td><td><span class="status-badge is-ready">Complete</span></td><td><span class="status-badge is-current">Current</span></td><td><a href="/assets/documents/policies/bof-pol-021-worker-classification-and-contractor-documentation-policy.pdf" target="_blank" rel="noopener">Open PDF</a></td></tr>
-            <tr><td>Document Retention Standard</td><td>Records</td><td>v1.6</td><td>Mar 31, 2026</td><td>Business operations</td><td><span class="status-badge is-progress">In Progress</span></td><td><span class="status-badge is-review">Due</span></td><td><a href="/assets/documents/policies/bof-pol-007-document-retention-standard.pdf" target="_blank" rel="noopener">Open PDF</a></td></tr>
-            <tr><td>Access and Data Governance</td><td>Governance</td><td>v1.9</td><td>Jul 8, 2026</td><td>Governance owner</td><td><span class="status-badge is-ready">Complete</span></td><td><span class="status-badge is-current">Current</span></td><td><a href="/assets/documents/policies/bof-pol-008-access-and-data-governance.pdf" target="_blank" rel="noopener">Open PDF</a></td></tr>
-          </tbody>
-        </table>
-      </div>
-    </section>
+    <main>
+      <section class="wave1-hero wave2-hero wave1-hero--subject-clear" aria-label="Safety leader reviewing operational governance records in a fleet control setting" style="--wave1-hero-image: url('/assets/images/design-system-2/wave-1/ds2-safety-hero-clean.png'); --wave1-hero-position: center; --wave1-hero-mobile-position: 70% top;">
+        <div class="wave1-hero__inner">
+          <div class="wave1-hero__copy">
+            <p class="bof-ds2-eyebrow">Policy Governance</p>
+            <h1>Controlled, Auditable, Always Current.</h1>
+            <p>Keep policies, procedures, acknowledgments, training, revisions, and evidence tied to the people and operations they govern.</p>
+            <div class="bof-ds2-actions">
+              <a class="bof-ds2-button bof-ds2-button--primary" href="#policy-portal-preview">Explore Policy Governance</a>
+              <a class="bof-ds2-button" href="#policy-workflow">See the Acknowledgment Workflow</a>
+            </div>
+          </div>
+        </div>
+      </section>
 
-    <section class="section policy-document-section" id="policy-documents">
-      <div class="section-head reveal">
-        <p class="eyebrow">Actual policy documents</p>
-        <h2>The library opens the controlling rule instead of redirecting to another story page.</h2>
-        <p>Each document identifies purpose, scope, owner, required evidence, decision rule, exception path, review cadence, and the connected operating record.</p>
-        <p class="policy-disclaimer">Demo policy language only. A carrier should validate final procedures against its operations, contracts, insurance requirements, and applicable federal, state, customer, and internal compliance obligations.</p>
-      </div>
-      <div class="policy-pdf-grid">
-        <article class="policy-pdf-card reveal" id="policy-driver-qualification"><span>BOF-POL-001 / Drivers</span><h3>Driver Qualification Policy</h3><p>Complete 44-page driver qualification policy for file readiness, assignment eligibility, owner review, acknowledgments, exceptions, and operating consequences.</p><div class="policy-pdf-actions"><a class="button primary" href="/assets/documents/policies/bof-pol-001-driver-qualification-policy.pdf" target="_blank" rel="noopener">Open PDF</a><a class="button secondary" href="/assets/documents/policies/bof-pol-001-driver-qualification-policy.pdf" download>Download</a></div></article>
-        <article class="policy-pdf-card reveal" id="policy-pre-trip-evidence"><span>BOF-POL-002 / Safety</span><h3>Pre-Trip Evidence Standard</h3><p>Complete 44-page standard for pre-trip evidence, release proof, equipment condition, cargo photos, seal control, securement, and exception routing.</p><div class="policy-pdf-actions"><a class="button primary" href="/assets/documents/policies/bof-pol-002-pre-trip-evidence-standard.pdf" target="_blank" rel="noopener">Open PDF</a><a class="button secondary" href="/assets/documents/policies/bof-pol-002-pre-trip-evidence-standard.pdf" download>Download</a></div></article>
-        <article class="policy-pdf-card reveal" id="policy-hos-escalation"><span>BOF-POL-003 / Dispatch</span><h3>HOS Escalation Procedure</h3><p>Complete 43-page procedure for HOS availability, ELD status, ready-again timing, dispatch escalation, reassignment, and customer-impact routing.</p><div class="policy-pdf-actions"><a class="button primary" href="/assets/documents/policies/bof-pol-003-hos-escalation-procedure.pdf" target="_blank" rel="noopener">Open PDF</a><a class="button secondary" href="/assets/documents/policies/bof-pol-003-hos-escalation-procedure.pdf" download>Download</a></div></article>
-        <article class="policy-pdf-card reveal" id="policy-cargo-seal"><span>BOF-POL-004 / Cargo &amp; Claims</span><h3>Cargo and Seal Verification</h3><p>Complete 44-page verification policy for seal numbers, cargo condition, securement evidence, receiver exceptions, claim exposure, and settlement impact.</p><div class="policy-pdf-actions"><a class="button primary" href="/assets/documents/policies/bof-pol-004-cargo-and-seal-verification.pdf" target="_blank" rel="noopener">Open PDF</a><a class="button secondary" href="/assets/documents/policies/bof-pol-004-cargo-and-seal-verification.pdf" download>Download</a></div></article>
-        <article class="policy-pdf-card reveal" id="policy-claims-incident"><span>BOF-POL-005 / Safety</span><h3>Claims and Incident Response</h3><p>Complete 37-page response policy for incidents, evidence intake, claim notes, corrective action, dispatch consequence, and settlement hold visibility.</p><div class="policy-pdf-actions"><a class="button primary" href="/assets/documents/policies/bof-pol-005-claims-and-incident-response.pdf" target="_blank" rel="noopener">Open PDF</a><a class="button secondary" href="/assets/documents/policies/bof-pol-005-claims-and-incident-response.pdf" download>Download</a></div></article>
-        <article class="policy-pdf-card reveal" id="policy-billing-packet"><span>BOF-POL-006 / Billing</span><h3>Billing Packet Requirements</h3><p>Complete 38-page billing packet policy for rate confirmations, POD/BOL, invoice proof, accessorial support, factoring context, and payment-path holds.</p><div class="policy-pdf-actions"><a class="button primary" href="/assets/documents/policies/bof-pol-006-billing-packet-requirements.pdf" target="_blank" rel="noopener">Open PDF</a><a class="button secondary" href="/assets/documents/policies/bof-pol-006-billing-packet-requirements.pdf" download>Download</a></div></article>
-        <article class="policy-pdf-card reveal" id="policy-driver-pay-settlement"><span>BOF-POL-009 / Payroll &amp; Settlements</span><h3>Driver Pay and Settlement Calculation Policy</h3><p>Complete 25-page blended policy for employee, contractor, and owner-operator pay logic, carrier rule overlays, settlement calculation support, owner approval, and net-after-driver-pay visibility.</p><div class="policy-pdf-actions"><a class="button primary" href="/assets/documents/policies/bof-pol-009-driver-pay-and-settlement-calculation-policy.pdf" target="_blank" rel="noopener">Open PDF</a><a class="button secondary" href="/assets/documents/policies/bof-pol-009-driver-pay-and-settlement-calculation-policy.pdf" download>Download</a></div></article>
-        <article class="policy-pdf-card reveal" id="policy-payroll-exception"><span>BOF-POL-010 / Payroll Support</span><h3>Payroll Exception and Reimbursement Review Procedure</h3><p>Complete 25-page blended procedure for detention, stop pay, reimbursements, deductions, benefit deductions, correction requests, pay holds, cutoff timing, and worker communication records.</p><div class="policy-pdf-actions"><a class="button primary" href="/assets/documents/policies/bof-pol-010-payroll-exception-and-reimbursement-review-procedure.pdf" target="_blank" rel="noopener">Open PDF</a><a class="button secondary" href="/assets/documents/policies/bof-pol-010-payroll-exception-and-reimbursement-review-procedure.pdf" download>Download</a></div></article>
-        <article class="policy-pdf-card reveal" id="policy-ar-aging"><span>BOF-POL-011 / Accounts Receivable</span><h3>Accounts Receivable and Aging Follow-Up Procedure</h3><p>Complete 25-page blended procedure for invoice aging, customer disputes, missing POD/proof, factoring context, last-touch/next-touch follow-up, and owner escalation.</p><div class="policy-pdf-actions"><a class="button primary" href="/assets/documents/policies/bof-pol-011-accounts-receivable-and-aging-follow-up-procedure.pdf" target="_blank" rel="noopener">Open PDF</a><a class="button secondary" href="/assets/documents/policies/bof-pol-011-accounts-receivable-and-aging-follow-up-procedure.pdf" download>Download</a></div></article>
-        <article class="policy-pdf-card reveal" id="policy-ap-approval"><span>BOF-POL-012 / Accounts Payable</span><h3>Vendor Bill and AP Approval Policy</h3><p>Complete 25-page blended AP control policy for vendor bills, receipts, work orders, recurring vendors, repair/fuel/toll/insurance costs, approval thresholds, disputes, and payment status.</p><div class="policy-pdf-actions"><a class="button primary" href="/assets/documents/policies/bof-pol-012-vendor-bill-and-ap-approval-policy.pdf" target="_blank" rel="noopener">Open PDF</a><a class="button secondary" href="/assets/documents/policies/bof-pol-012-vendor-bill-and-ap-approval-policy.pdf" download>Download</a></div></article>
-        <article class="policy-pdf-card reveal" id="policy-cash-flow-escalation"><span>BOF-POL-013 / Cash-Flow Control</span><h3>Cash-Flow Review and Owner Escalation Procedure</h3><p>Complete 25-page blended procedure for blocked dollars, ready-to-release dollars, AP pressure, AR aging, payroll exceptions, held settlements, factoring status, and executive escalation.</p><div class="policy-pdf-actions"><a class="button primary" href="/assets/documents/policies/bof-pol-013-cash-flow-review-and-owner-escalation-procedure.pdf" target="_blank" rel="noopener">Open PDF</a><a class="button secondary" href="/assets/documents/policies/bof-pol-013-cash-flow-review-and-owner-escalation-procedure.pdf" download>Download</a></div></article>
-        <article class="policy-pdf-card reveal" id="policy-factoring-payment-path"><span>BOF-POL-014 / Factoring &amp; Payment Path</span><h3>Factoring Packet and Payment-Path Standard</h3><p>Complete 25-page blended standard for factoring packets, customer portals, direct billing, broker payment paths, packet rejection reasons, proof requirements, and settlement impact.</p><div class="policy-pdf-actions"><a class="button primary" href="/assets/documents/policies/bof-pol-014-factoring-packet-and-payment-path-standard.pdf" target="_blank" rel="noopener">Open PDF</a><a class="button secondary" href="/assets/documents/policies/bof-pol-014-factoring-packet-and-payment-path-standard.pdf" download>Download</a></div></article>
-        <article class="policy-pdf-card reveal" id="policy-driver-recruiting"><span>BOF-POL-015 / HR Recruiting</span><h3>Driver Recruiting and Applicant Pipeline Policy</h3><p>Complete 25-page blended policy for candidate intake, recruiting source, screening status, communications, DQF handoff, onboarding routing, and hiring-decision boundaries.</p><div class="policy-pdf-actions"><a class="button primary" href="/assets/documents/policies/bof-pol-015-driver-recruiting-and-applicant-pipeline-policy.pdf" target="_blank" rel="noopener">Open PDF</a><a class="button secondary" href="/assets/documents/policies/bof-pol-015-driver-recruiting-and-applicant-pipeline-policy.pdf" download>Download</a></div></article>
-        <article class="policy-pdf-card reveal" id="policy-driver-onboarding"><span>BOF-POL-016 / HR Onboarding</span><h3>Driver Onboarding and First-Load Release Procedure</h3><p>Complete 25-page blended procedure for first-load readiness, DQF handoff, training, payroll setup, safety acknowledgment, equipment needs, and dispatch release.</p><div class="policy-pdf-actions"><a class="button primary" href="/assets/documents/policies/bof-pol-016-driver-onboarding-and-first-load-release-procedure.pdf" target="_blank" rel="noopener">Open PDF</a><a class="button secondary" href="/assets/documents/policies/bof-pol-016-driver-onboarding-and-first-load-release-procedure.pdf" download>Download</a></div></article>
-        <article class="policy-pdf-card reveal" id="policy-employee-relations"><span>BOF-POL-017 / HR Employee Relations</span><h3>Employee Relations and Corrective Action Procedure</h3><p>Complete 25-page blended procedure for employee relations intake, coaching, complaints, corrective action, manager follow-up, confidentiality boundaries, and operating impact.</p><div class="policy-pdf-actions"><a class="button primary" href="/assets/documents/policies/bof-pol-017-employee-relations-and-corrective-action-procedure.pdf" target="_blank" rel="noopener">Open PDF</a><a class="button secondary" href="/assets/documents/policies/bof-pol-017-employee-relations-and-corrective-action-procedure.pdf" download>Download</a></div></article>
-        <article class="policy-pdf-card reveal" id="policy-comp-benefits"><span>BOF-POL-018 / HR Compensation &amp; Benefits</span><h3>Compensation and Benefits Coordination Policy</h3><p>Complete 25-page blended policy for compensation support, benefits coordination, deductions, reimbursement handoff, payroll interface, and professional-decision boundaries.</p><div class="policy-pdf-actions"><a class="button primary" href="/assets/documents/policies/bof-pol-018-compensation-and-benefits-coordination-policy.pdf" target="_blank" rel="noopener">Open PDF</a><a class="button secondary" href="/assets/documents/policies/bof-pol-018-compensation-and-benefits-coordination-policy.pdf" download>Download</a></div></article>
-        <article class="policy-pdf-card reveal" id="policy-training-ack"><span>BOF-POL-019 / HR Training</span><h3>Training Development and Policy Acknowledgment Standard</h3><p>Complete 25-page blended standard for role-based training, policy acknowledgment, coaching records, renewal reminders, safety learning, and audit evidence.</p><div class="policy-pdf-actions"><a class="button primary" href="/assets/documents/policies/bof-pol-019-training-development-and-policy-acknowledgment-standard.pdf" target="_blank" rel="noopener">Open PDF</a><a class="button secondary" href="/assets/documents/policies/bof-pol-019-training-development-and-policy-acknowledgment-standard.pdf" download>Download</a></div></article>
-        <article class="policy-pdf-card reveal" id="policy-leave-work-status"><span>BOF-POL-020 / HR Work Status</span><h3>Leave Return-to-Duty and Work Status Review Procedure</h3><p>Complete 25-page blended procedure for leave status, return-to-duty review, restricted duty, availability, payroll impact, and dispatch readiness boundaries.</p><div class="policy-pdf-actions"><a class="button primary" href="/assets/documents/policies/bof-pol-020-leave-return-to-duty-and-work-status-review-procedure.pdf" target="_blank" rel="noopener">Open PDF</a><a class="button secondary" href="/assets/documents/policies/bof-pol-020-leave-return-to-duty-and-work-status-review-procedure.pdf" download>Download</a></div></article>
-        <article class="policy-pdf-card reveal" id="policy-worker-classification"><span>BOF-POL-021 / HR Contractor Documentation</span><h3>Worker Classification and Contractor Documentation Policy</h3><p>Complete 25-page blended policy for employee, contractor, owner-operator, carrier-linked, and aggregator-linked documentation, pay setup, and classification-review routing.</p><div class="policy-pdf-actions"><a class="button primary" href="/assets/documents/policies/bof-pol-021-worker-classification-and-contractor-documentation-policy.pdf" target="_blank" rel="noopener">Open PDF</a><a class="button secondary" href="/assets/documents/policies/bof-pol-021-worker-classification-and-contractor-documentation-policy.pdf" download>Download</a></div></article>
-        <article class="policy-pdf-card reveal" id="policy-document-retention"><span>BOF-POL-007 / Records</span><h3>Document Retention Standard</h3><p>Complete 37-page retention standard for document type, version, source, owner, superseded records, evidence quality, and retention exceptions.</p><div class="policy-pdf-actions"><a class="button primary" href="/assets/documents/policies/bof-pol-007-document-retention-standard.pdf" target="_blank" rel="noopener">Open PDF</a><a class="button secondary" href="/assets/documents/policies/bof-pol-007-document-retention-standard.pdf" download>Download</a></div></article>
-        <article class="policy-pdf-card reveal" id="policy-access-data"><span>BOF-POL-008 / Governance</span><h3>Access and Data Governance</h3><p>Complete 41-page governance policy for role access, data authority, approvals, offboarding, sensitive record control, and audit traceability.</p><div class="policy-pdf-actions"><a class="button primary" href="/assets/documents/policies/bof-pol-008-access-and-data-governance.pdf" target="_blank" rel="noopener">Open PDF</a><a class="button secondary" href="/assets/documents/policies/bof-pol-008-access-and-data-governance.pdf" download>Download</a></div></article>
-        <article class="policy-pdf-card reveal" id="policy-driver-qualification-20260721"><span>BOF-POL-001 / Drivers</span><h3>Driver Qualification Policy</h3><p>Updated trucking policy document for driver qualification, file readiness, dispatch eligibility, recurring review, and qualification evidence control.</p><div class="policy-pdf-actions"><a class="button primary" href="/assets/documents/policies/bof-pol-001-driver-qualification-policy-20260721.pdf" target="_blank" rel="noopener">Open PDF</a><a class="button secondary" href="/assets/documents/policies/bof-pol-001-driver-qualification-policy-20260721.pdf" download>Download</a></div></article>
-        <article class="policy-pdf-card reveal" id="policy-pre-trip-evidence-20260721"><span>BOF-POL-002 / Safety</span><h3>Pre-Trip Evidence Standard</h3><p>Updated trucking policy document for pre-trip proof, equipment evidence, securement support, exception routing, and release documentation.</p><div class="policy-pdf-actions"><a class="button primary" href="/assets/documents/policies/bof-pol-002-pre-trip-evidence-standard-20260721.pdf" target="_blank" rel="noopener">Open PDF</a><a class="button secondary" href="/assets/documents/policies/bof-pol-002-pre-trip-evidence-standard-20260721.pdf" download>Download</a></div></article>
-        <article class="policy-pdf-card reveal" id="policy-hos-escalation-20260721"><span>BOF-POL-003 / Dispatch</span><h3>HOS Escalation Procedure</h3><p>Updated trucking procedure for HOS availability, ELD review, ready-again timing, dispatcher escalation, reassignment, and customer impact.</p><div class="policy-pdf-actions"><a class="button primary" href="/assets/documents/policies/bof-pol-003-hos-escalation-procedure-20260721.pdf" target="_blank" rel="noopener">Open PDF</a><a class="button secondary" href="/assets/documents/policies/bof-pol-003-hos-escalation-procedure-20260721.pdf" download>Download</a></div></article>
-        <article class="policy-pdf-card reveal" id="policy-cargo-seal-20260721"><span>BOF-POL-004 / Cargo &amp; Claims</span><h3>Cargo and Seal Verification</h3><p>Updated trucking policy document for seal verification, cargo condition, securement evidence, receiver exceptions, and claim exposure.</p><div class="policy-pdf-actions"><a class="button primary" href="/assets/documents/policies/bof-pol-004-cargo-and-seal-verification-20260721.pdf" target="_blank" rel="noopener">Open PDF</a><a class="button secondary" href="/assets/documents/policies/bof-pol-004-cargo-and-seal-verification-20260721.pdf" download>Download</a></div></article>
-        <article class="policy-pdf-card reveal" id="policy-claims-incident-20260721"><span>BOF-POL-005 / Safety</span><h3>Claims and Incident Response</h3><p>Updated trucking response policy for crash notice, cargo claim intake, evidence preservation, corrective action, and settlement impact.</p><div class="policy-pdf-actions"><a class="button primary" href="/assets/documents/policies/bof-pol-005-claims-and-incident-response-20260721.pdf" target="_blank" rel="noopener">Open PDF</a><a class="button secondary" href="/assets/documents/policies/bof-pol-005-claims-and-incident-response-20260721.pdf" download>Download</a></div></article>
-        <article class="policy-pdf-card reveal" id="policy-billing-packet-20260721"><span>BOF-POL-006 / Billing</span><h3>Billing Packet Requirements</h3><p>Updated trucking policy document for packet assembly, rate confirmation, POD/BOL, accessorial support, factoring context, and release readiness.</p><div class="policy-pdf-actions"><a class="button primary" href="/assets/documents/policies/bof-pol-006-billing-packet-requirements-20260721.pdf" target="_blank" rel="noopener">Open PDF</a><a class="button secondary" href="/assets/documents/policies/bof-pol-006-billing-packet-requirements-20260721.pdf" download>Download</a></div></article>
-        <article class="policy-pdf-card reveal" id="policy-document-retention-20260721"><span>BOF-POL-007 / Records</span><h3>Document Retention Standard</h3><p>Updated trucking retention standard for source documents, operating evidence, superseded records, owner responsibility, and audit traceability.</p><div class="policy-pdf-actions"><a class="button primary" href="/assets/documents/policies/bof-pol-007-document-retention-standard-20260721.pdf" target="_blank" rel="noopener">Open PDF</a><a class="button secondary" href="/assets/documents/policies/bof-pol-007-document-retention-standard-20260721.pdf" download>Download</a></div></article>
-        <article class="policy-pdf-card reveal" id="policy-access-data-20260721"><span>BOF-POL-008 / Governance</span><h3>Access and Data Governance</h3><p>Updated governance policy for access roles, data authority, sensitive records, approval evidence, offboarding, and audit control.</p><div class="policy-pdf-actions"><a class="button primary" href="/assets/documents/policies/bof-pol-008-access-and-data-governance-20260721.pdf" target="_blank" rel="noopener">Open PDF</a><a class="button secondary" href="/assets/documents/policies/bof-pol-008-access-and-data-governance-20260721.pdf" download>Download</a></div></article>
-        <article class="policy-pdf-card reveal" id="policy-fleet-maintenance-20260721"><span>BOF-POL-022 / Maintenance</span><h3>Fleet Maintenance and Asset Management</h3><p>New trucking policy document for preventive maintenance, DOT annual inspection tracking, DVIR defects, repairs, tires, and unit lifecycle control.</p><div class="policy-pdf-actions"><a class="button primary" href="/assets/documents/policies/bof-pol-022-fleet-maintenance-and-asset-management-20260721.pdf" target="_blank" rel="noopener">Open PDF</a><a class="button secondary" href="/assets/documents/policies/bof-pol-022-fleet-maintenance-and-asset-management-20260721.pdf" download>Download</a></div></article>
-        <article class="policy-pdf-card reveal" id="policy-safety-sms-20260721"><span>BOF-POL-023 / Safety SMS</span><h3>Safety Management and SMS Compliance</h3><p>New trucking policy document for SMS monitoring, roadside inspection handling, DataQ review, corrective action, and safety evidence control.</p><div class="policy-pdf-actions"><a class="button primary" href="/assets/documents/policies/bof-pol-023-safety-management-and-sms-compliance-20260721.pdf" target="_blank" rel="noopener">Open PDF</a><a class="button secondary" href="/assets/documents/policies/bof-pol-023-safety-management-and-sms-compliance-20260721.pdf" download>Download</a></div></article>
-        <article class="policy-pdf-card reveal" id="policy-insurance-coi-20260721"><span>BOF-POL-024 / Insurance</span><h3>Insurance Management and COI Control</h3><p>New trucking policy document for policy renewals, COI requests, BMC filings, coverage requirements, claims routing, and evidence control.</p><div class="policy-pdf-actions"><a class="button primary" href="/assets/documents/policies/bof-pol-024-insurance-management-and-coi-control-20260721.pdf" target="_blank" rel="noopener">Open PDF</a><a class="button secondary" href="/assets/documents/policies/bof-pol-024-insurance-management-and-coi-control-20260721.pdf" download>Download</a></div></article>
-      </div>
-    </section>
+      <section class="wave1-proof-rail wave1-proof-rail--attached" aria-label="Policy governance proof summary">
+        <div class="wave1-proof-rail__inner">
+          <div class="wave1-proof-rail__identity">
+            <span class="wave1-proof-rail__icon" aria-hidden="true">
+              <svg width="34" height="34" viewBox="0 0 24 24" fill="none">
+                <path d="M6 4h12v16H6z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+                <path d="M9 8h6M9 12h6M9 16h4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+              </svg>
+            </span>
+            <div class="wave1-proof-rail__label">
+              <p class="bof-ds2-eyebrow">Policy Governance</p>
+              <span>Current version, audience, acknowledgment, training, exception, and evidence stay together.</span>
+            </div>
+          </div>
+          <div class="wave1-proof-rail__metrics">
+            <div class="wave1-proof-rail__metric"><strong>18</strong><span>Active Policies</span><small>Controlled library</small></div>
+            <div class="wave1-proof-rail__metric"><strong>4</strong><span>Awaiting Acknowledgment</span><small>Owner assigned</small></div>
+            <div class="wave1-proof-rail__metric"><strong>2</strong><span>Revisions in Review</span><small>Approval pending</small></div>
+          </div>
+          <p class="wave1-proof-rail__disclosure">Illustrative demo data.</p>
+        </div>
+      </section>
 
-  </main>
+      <section class="wave1-capability-section" aria-labelledby="policy-capability-heading">
+        <h2 id="policy-capability-heading" class="wave1-visually-hidden">Policy governance capabilities</h2>
+        <div class="wave1-benefit-grid wave1-benefit-grid--reference">
+          <article class="wave1-card wave1-card--capability"><span class="wave1-card__icon">01</span><h3>Controlled Library</h3><p>Keep approved policies and procedures grouped by audience, owner, effective date, training requirement, and next review date.</p><span class="wave1-card__arrow" aria-hidden="true">-&gt;</span></article>
+          <article class="wave1-card wave1-card--capability"><span class="wave1-card__icon">02</span><h3>Version Governance</h3><p>Separate draft, current approved, superseded, revision-in-review, and archived versions without erasing history.</p><span class="wave1-card__arrow" aria-hidden="true">-&gt;</span></article>
+          <article class="wave1-card wave1-card--capability"><span class="wave1-card__icon">03</span><h3>Acknowledgments &amp; Training</h3><p>Show assigned audiences, pending acknowledgments, training required, corrective action, and follow-up status.</p><span class="wave1-card__arrow" aria-hidden="true">-&gt;</span></article>
+          <article class="wave1-card wave1-card--capability"><span class="wave1-card__icon">04</span><h3>Audit Evidence</h3><p>Preserve approvals, publication notes, acknowledgments, training evidence, exceptions, and archive history.</p><span class="wave1-card__arrow" aria-hidden="true">-&gt;</span></article>
+        </div>
+      </section>
 
-  <footer class="site-footer"><div class="footer-inner"><strong>BackOfficeFleet</strong><span>Policies and procedures operating reference.</span><a href="/trust-governance/">Trust &amp; Governance</a></div></footer>
-  <script src="/assets/js/site.js?v=20260721-enterprise-header-fit5"></script>
+      <section class="wave1-section wave1-section--dashboard-prominent wave2-portal-section" id="policy-portal-preview" aria-labelledby="policy-preview-heading">
+        <p class="bof-ds2-eyebrow">Policy Governance Portal</p>
+        <div class="wave1-section-heading-row">
+          <h2 id="policy-preview-heading">A controlled policy dashboard for versions, acknowledgments, training, exceptions, and review owners.</h2>
+          <a class="bof-ds2-button bof-ds2-button--primary" href="#policy-portal-preview">Explore Policy Governance</a>
+        </div>
+        <p class="wave1-section__intro">BOF supports policy governance and compliance oversight by preserving evidence of acknowledgment and review. It does not provide legal advice or replace professional compliance judgment.</p>
+        <div class="wave2-portal-frame" aria-label="Illustrative policy governance dashboard">
+          <div class="wave1-frame-header">
+            <strong>Policy Governance Portal</strong>
+            <span class="wave1-disclosure">Illustrative demo data</span>
+          </div>
+          <div class="wave2-table-wrap" role="region" aria-label="Policy governance records">
+            <table class="wave2-record-table">
+              <thead><tr><th>Policy title</th><th>Owner</th><th>Version</th><th>Effective</th><th>Audience</th><th>Acknowledgment</th><th>Training</th><th>Exception</th><th>Next review</th><th>Approval</th><th>Action</th></tr></thead>
+              <tbody>
+                <tr><td data-label="Policy title">Driver Qualification Policy</td><td data-label="Owner">Safety lead</td><td data-label="Version">v3.2 current</td><td data-label="Effective">Jul 1, 2026</td><td data-label="Audience">Drivers / safety</td><td data-label="Acknowledgment"><span class="wave1-status wave1-status--ready">Complete</span></td><td data-label="Training">Required annually</td><td data-label="Exception">None open</td><td data-label="Next review">Oct 1, 2026</td><td data-label="Approval">Approved</td><td data-label="Action"><button class="wave1-action-button" type="button" data-wave1-action data-action-title="Open Policy" data-action-body="The current approved version remains available with owner, effective date, acknowledgment evidence, and training requirement." data-action-meta="Policy: Driver Qualification Policy|State: current approved version|Evidence retained: approval note and acknowledgment log." data-action-label="Open documents" data-action-href="/assets/documents/policies/bof-pol-001-driver-qualification-policy.pdf">Open Policy</button></td></tr>
+                <tr><td data-label="Policy title">Pre-Trip Evidence Standard</td><td data-label="Owner">Operations lead</td><td data-label="Version">v2.5 draft</td><td data-label="Effective">Pending</td><td data-label="Audience">Drivers / dispatch</td><td data-label="Acknowledgment"><span class="wave1-status wave1-status--review">Pending</span></td><td data-label="Training">Required at publish</td><td data-label="Exception">2 open</td><td data-label="Next review">Aug 15, 2026</td><td data-label="Approval">Revision in review</td><td data-label="Action"><button class="wave1-action-button wave1-action-button--primary" type="button" data-wave1-action data-action-title="Review Revision" data-action-body="The draft can be reviewed without replacing the current approved version. BOF preserves the review notes and approval path." data-action-meta="Policy: Pre-Trip Evidence Standard|State: draft revision|Next action: review revision, resolve exceptions, approve or return." data-action-label="Open review workflow" data-action-href="#policy-workflow">Review Revision</button></td></tr>
+                <tr><td data-label="Policy title">Billing Packet Requirements</td><td data-label="Owner">Billing owner</td><td data-label="Version">v3.0 current</td><td data-label="Effective">Jun 10, 2026</td><td data-label="Audience">Billing / dispatch</td><td data-label="Acknowledgment"><span class="wave1-status wave1-status--review">4 pending</span></td><td data-label="Training">Micro-training assigned</td><td data-label="Exception">1 corrective action</td><td data-label="Next review">Sep 10, 2026</td><td data-label="Approval">Approved</td><td data-label="Action"><button class="wave1-action-button" type="button" data-wave1-action data-action-title="Request Acknowledgment" data-action-body="Pending acknowledgments can be requested from the assigned audience and preserved as evidence when completed." data-action-meta="Policy: Billing Packet Requirements|Pending acknowledgments: 4|Next action: request acknowledgment and monitor training status." data-action-label="Open acknowledgment workflow" data-action-href="#acknowledgment-training">Request Acknowledgment</button></td></tr>
+                <tr><td data-label="Policy title">Access and Data Governance</td><td data-label="Owner">Governance owner</td><td data-label="Version">v1.9 superseded</td><td data-label="Effective">Jul 8, 2026</td><td data-label="Audience">Managers</td><td data-label="Acknowledgment"><span class="wave1-status wave1-status--ready">Archived evidence</span></td><td data-label="Training">Completed</td><td data-label="Exception">Closed</td><td data-label="Next review">Archived</td><td data-label="Approval">Superseded</td><td data-label="Action"><button class="wave1-action-button" type="button" data-wave1-action data-action-title="Archive Version" data-action-body="The superseded version remains preserved with its acknowledgment history and archive note. Historical policy evidence is not physically deleted." data-action-meta="Policy: Access and Data Governance v1.9|State: superseded|Evidence retained: archive note, approval history, acknowledgments." data-action-label="Open audit section" data-action-href="#policy-audit">Archive Version</button></td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="wave2-action-strip" aria-label="Policy record actions">
+            <button class="wave1-action-button" type="button" data-wave1-action data-action-title="View Training Status" data-action-body="Training status shows assigned audience, completion evidence, exceptions, corrective action owner, and next review date." data-action-meta="Action: View training status|Scope: illustrative policy record|Evidence retained: completion and exception notes." data-action-label="Open training workflow" data-action-href="#acknowledgment-training">View Training Status</button>
+            <button class="wave1-action-button" type="button" data-wave1-action data-action-title="Assign Corrective Action" data-action-body="Corrective action is assigned when an acknowledgment, training, or policy exception needs owner follow-up." data-action-meta="Action: Assign corrective action|Consequence: exception remains visible until closed|Evidence retained: owner, due date, resolution note." data-action-label="Open exceptions section" data-action-href="#exceptions-corrective-action">Assign Corrective Action</button>
+            <button class="wave1-action-button" type="button" data-wave1-action data-action-title="View Audit History" data-action-body="Audit history preserves draft, review, approval, publish, assignment, acknowledgment, training, revision, and archive events." data-action-meta="Action: View audit history|Scope: policy governance support|Evidence retained: complete governance trail." data-action-label="Open audit section" data-action-href="#policy-audit">View Audit History</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="wave1-section wave2-split-section" id="controlled-library" aria-labelledby="library-heading">
+        <div>
+          <p class="bof-ds2-eyebrow">Controlled Policy Library</p>
+          <h2 id="library-heading">The current approved version should be obvious, but history should remain inspectable.</h2>
+          <p class="wave1-section__intro">A controlled library separates draft, approved, pending acknowledgment, training required, corrective action, superseded, and archived states with plain-language consequences.</p>
+        </div>
+        <div class="wave2-mini-ledger">
+          <div><strong>Current approved version</strong><span>The version governing the assigned audience now.</span></div>
+          <div><strong>Superseded version</strong><span>Historical evidence preserved after a newer approval.</span></div>
+          <div><strong>Draft</strong><span>Not published; review and approval still pending.</span></div>
+          <div><strong>Archived policy</strong><span>No longer current, but retained for audit history.</span></div>
+        </div>
+      </section>
+
+      <section class="wave1-dark-band" id="policy-workflow" aria-labelledby="policy-workflow-heading">
+        <div class="wave1-dark-band__inner">
+          <p class="bof-ds2-eyebrow">Policy Workflow</p>
+          <h2 id="policy-workflow-heading">Draft -> Review -> Approve -> Publish -> Assign -> Acknowledge -> Train -> Monitor -> Revise -> Archive</h2>
+          <p>Each step preserves the owner, state, evidence, and next action so a written policy becomes an auditable operating control.</p>
+          <div class="wave1-step-grid">
+            <div class="wave1-step"><b>1</b><span>Draft</span></div>
+            <div class="wave1-step"><b>2</b><span>Review</span></div>
+            <div class="wave1-step"><b>3</b><span>Approve</span></div>
+            <div class="wave1-step"><b>4</b><span>Publish</span></div>
+            <div class="wave1-step"><b>5</b><span>Assign</span></div>
+            <div class="wave1-step"><b>6</b><span>Acknowledge</span></div>
+            <div class="wave1-step"><b>7</b><span>Train</span></div>
+            <div class="wave1-step"><b>8</b><span>Monitor</span></div>
+            <div class="wave1-step"><b>9</b><span>Revise</span></div>
+            <div class="wave1-step"><b>10</b><span>Archive</span></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="wave1-section" id="acknowledgment-training" aria-labelledby="ack-heading">
+        <p class="bof-ds2-eyebrow">Acknowledgment and Training Workflow</p>
+        <h2 id="ack-heading">Acknowledgment evidence matters most when someone asks who received the rule.</h2>
+        <div class="wave1-module-grid">
+          <article class="wave1-card"><h3>Pending acknowledgment</h3><p>The assigned person or group still needs to acknowledge the current approved version.</p></article>
+          <article class="wave1-card"><h3>Training required</h3><p>The policy has a linked training requirement, owner, due date, and completion evidence.</p></article>
+          <article class="wave1-card"><h3>Corrective action</h3><p>An exception routes to a named owner and remains visible until the resolution note is preserved.</p></article>
+          <article class="wave1-card"><h3>Approval status</h3><p>Draft and revision records remain separate from the current approved operating rule.</p></article>
+        </div>
+      </section>
+
+      <section class="wave1-section wave2-split-section" id="exceptions-corrective-action" aria-labelledby="exceptions-heading">
+        <div>
+          <p class="bof-ds2-eyebrow">Exceptions and Corrective Action</p>
+          <h2 id="exceptions-heading">Exceptions should name the policy, person, owner, deadline, consequence, and resolution path.</h2>
+          <p class="wave1-section__intro">BOF supports compliance oversight by keeping the policy record, acknowledgment gap, training requirement, corrective action, and retained evidence together for review.</p>
+        </div>
+        <div class="wave2-audit-list">
+          <span>Exception opened: billing packet acknowledgment overdue</span>
+          <span>Owner assigned: billing supervisor</span>
+          <span>Corrective action: complete packet training</span>
+          <span>Consequence: packet release requires owner review</span>
+          <span>Resolution evidence: acknowledgment and training note</span>
+        </div>
+      </section>
+
+      <section class="wave1-section wave2-split-section" id="policy-audit" aria-labelledby="policy-audit-heading">
+        <div>
+          <p class="bof-ds2-eyebrow">Audit and Evidence</p>
+          <h2 id="policy-audit-heading">Policy history should be preserved, not overwritten.</h2>
+          <p class="wave1-section__intro">Approval notes, audience assignments, acknowledgments, training completions, exceptions, corrective actions, revisions, and archive events remain visible as historical evidence.</p>
+        </div>
+        <div class="wave2-mini-ledger">
+          <div><strong>Reviewed</strong><span>Revision reviewed by operations lead.</span></div>
+          <div><strong>Approved</strong><span>Current version approved for publication.</span></div>
+          <div><strong>Acknowledged</strong><span>Assigned audience completed acknowledgment.</span></div>
+          <div><strong>Archived</strong><span>Superseded version retained for audit history.</span></div>
+        </div>
+      </section>
+
+      <section class="wave1-section" aria-labelledby="policies-video-heading">
+        <p class="bof-ds2-eyebrow">See BOF in Action</p>
+        <h2 id="policies-video-heading">See Policy Evidence in the Operating Record</h2>
+        <div class="wave1-video-card">
+          <div><h3>Retained adjacent walkthrough</h3><p>No policy-specific video was found in the approved Wave 1 base. This pass retains no autoplay media on the policy page and documents a future opportunity for a policy acknowledgment walkthrough.</p><p class="wave2-caption-note">No audio plays automatically.</p></div>
+          <div class="wave2-video-placeholder" role="img" aria-label="Illustrative policy workflow placeholder"><strong>Policy walkthrough deferred</strong><span>Future video can show draft, acknowledgment, training, revision, and archive states.</span></div>
+        </div>
+      </section>
+
+      <section class="wave1-close" aria-labelledby="policies-close-heading">
+        <div class="wave1-close__card">
+          <div>
+            <p class="bof-ds2-eyebrow">Policy Governance</p>
+            <h2 id="policies-close-heading">Turn policy documents into controlled operating evidence.</h2>
+            <p>BOF helps teams see the version, audience, acknowledgment state, training need, exception path, and audit history behind each rule.</p>
+          </div>
+          <div class="bof-ds2-actions">
+            <a class="bof-ds2-button bof-ds2-button--primary" href="#policy-portal-preview">Explore Policy Governance</a>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="bof-ds2-footer">
+      <div class="bof-ds2-footer__inner">
+        <img src="/assets/brand/bof-design-system-2/svg/header-lockup.svg" alt="BackOfficeFleet">
+        <p>Policy governance preview. Illustrative demo data only.</p>
+      </div>
+    </footer>
+  </div>
+  <script src="/assets/js/bof-design-system-2-preview.js"></script>
 </body>
 </html>
