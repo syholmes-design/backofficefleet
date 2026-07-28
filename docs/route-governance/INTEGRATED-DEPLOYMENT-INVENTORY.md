@@ -18,12 +18,10 @@ No deployment, push, merge, upload, FTP action, or Supabase change was performed
 - `Website/assets/js/customer-demo-app.js`
 - `Website/robots.txt`
 - `Website/sitemap.xml`
-- `Website/assets/images/design-system-2/wave-2/ds2-policies-governance-hero-labeled.png`
+- `Website/assets/images/design-system-2/wave-2/ds2-policies-governance-hero-clean.png`
 
 ## Tooling And Documentation
 
-- `tools/design-system-2/create_policies_hero_labels.py`
-- `docs/design-system-2/POLICIES-HERO-LABEL-SPECIFICATION.md`
 - `docs/design-system-2/WAVE-2-ROUTE-DEMO-INTEGRATION-REPORT.md`
 - `docs/route-governance/INTEGRATED-ROUTE-GOVERNANCE-REPORT.md`
 - `docs/route-governance/INTEGRATED-DEMO-DESIGN-REPORT.md`
@@ -39,4 +37,3 @@ Contains the requested Policies, BOF Vault, unified demo, public transition, and
 ## Deployment Recommendation
 
 Owner review first. If approved, deploy as one integrated static-site update. Do not activate permanent redirects for `/interactive-demo/*` until legacy parity is fully confirmed.
-

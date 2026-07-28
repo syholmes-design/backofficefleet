@@ -24,14 +24,14 @@ The implementation also adds Business Operations to the demo route at `/customer
 
 The unified customer demo now opens with page identity instead of generic KPI cards, while still keeping the first dashboard section visible near the fold. The owner-approved reference intent is preserved: BOF Vault reads as secure document archive, Policy Governance reads as controlled manuals/governance, and Business Operations reads as an administrative control center without borrowing public-page hero art.
 
-The public Policies & Procedures hero uses the clean `ds2-policies-governance-hero-clean.png` asset with live HTML/CSS book-spine labels over the visible manuals. The prior labeled derivative remains in the worktree history/assets, but it is not used as the public hero because the current overlay approach keeps the source image clean while allowing owner-directed policy names to remain editable.
+The public Policies & Procedures hero uses the clean, unlabeled `ds2-policies-governance-hero-clean.png` asset. A later owner review found that the book-name HTML overlays appeared misaligned and too flat, so all hero overlay markup, CSS, generated-image tooling, and obsolete label documentation were removed. Policy names are represented as real interface content in the policy-governance dashboard below the hero instead of being placed over the books.
 
 ## Recommendations
 
 - Use the saved screenshot set for owner review before any deployment decision.
-- Keep future portal backgrounds text-free; add any labels as HTML only when the perspective and accessibility can be maintained.
+- Keep future portal backgrounds text-free unless a production-quality, perspective-aware treatment is explicitly approved.
 - Keep the Business Operations compact-header asset scoped to the demo unless the owner explicitly approves a public hero replacement later.
-- Keep the public Policies labels as perspective-aware HTML/CSS overlays rather than raster text baked into the photograph.
+- Keep policy names in real page content below the Policies hero rather than on the book image.
 
 ## Appendix
 
@@ -47,6 +47,7 @@ Screenshots and QA evidence:
 
 - `docs/design-system-2/screenshots/customer-demo-secondary-header-review/`
 - `docs/design-system-2/screenshots/customer-demo-secondary-header-review/qa-summary.json`
+- `docs/design-system-2/screenshots/policies-hero-cleanup-review/`
 
 Validation commands completed:
 

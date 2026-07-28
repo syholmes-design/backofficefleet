@@ -16,14 +16,13 @@ The corrected Wave 2 public pages remain the authority for Documents, Policies &
 
 The unified hidden demo shell now lives at `/customer-demo/`, uses a DS2-aligned product UI, and supports deterministic portal states for manager, driver, customer, safety, maintenance, finance, BOF Vault, and Policy Governance.
 
-## Policies Hero Labels
+## Policies Hero Treatment
 
 - Clean source preserved: `Website/assets/images/design-system-2/wave-2/ds2-policies-governance-hero-clean.png`
-- Derived labeled asset: `Website/assets/images/design-system-2/wave-2/ds2-policies-governance-hero-labeled.png`
-- Script: `tools/design-system-2/create_policies_hero_labels.py`
-- Labels used: Safety & Compliance Manual, Driver Qualification Policy, Hours-of-Service Procedures, Cargo Securement Policy
-- Result: restrained low-contrast spine labels, not baked hero text.
-- Mobile result: labels remain visible in the existing mobile crop and do not overlap the live message panel.
+- Public hero production background: `Website/assets/images/design-system-2/wave-2/ds2-policies-governance-hero-clean.png`
+- Result: clean dark-blue controlled manuals with no book-spine labels or baked interface text.
+- Policy names are represented as real page content in the dashboard below the hero.
+- Mobile result: clean crop remains coherent without overlay labels.
 
 ## Conflict Review
 
@@ -66,4 +65,3 @@ Screenshot directory:
 ## Deployment Recommendation
 
 Do not deploy automatically. Owner should review screenshots and reports first. Legacy `/interactive-demo/*` routes should remain available, noindex, nofollow, and excluded from the sitemap until all unique legacy behavior is migrated or owner-approved redirect mappings are activated.
-

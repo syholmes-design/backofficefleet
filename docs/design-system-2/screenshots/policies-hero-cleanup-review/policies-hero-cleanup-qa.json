@@ -1,0 +1,183 @@
+{
+  "results": [
+    {
+      "name": "1920",
+      "viewport": [
+        1920,
+        1080
+      ],
+      "heroStyle": "--wave1-hero-image: url('/assets/images/design-system-2/wave-2/ds2-policies-governance-hero-clean.png'); --wave1-hero-position: center; --wave1-hero-mobile-position: 70% top;",
+      "headline": "Controlled, Auditable, Always Current.",
+      "overlayCount": 0,
+      "orphaned": 0,
+      "visiblePolicyExamples": [
+        "Driver Qualification Policy",
+        "Hours-of-Service Procedures",
+        "Cargo Securement Policy",
+        "Safety & Compliance Manual",
+        "Incident Response Procedure"
+      ],
+      "bodyOverflow": 0,
+      "heroHeight": 838,
+      "copyReadable": true,
+      "proofRailTop": 831,
+      "proofRailCoversCopy": false,
+      "imageSubjectClear": true
+    },
+    {
+      "name": "1440",
+      "viewport": [
+        1440,
+        1000
+      ],
+      "heroStyle": "--wave1-hero-image: url('/assets/images/design-system-2/wave-2/ds2-policies-governance-hero-clean.png'); --wave1-hero-position: center; --wave1-hero-mobile-position: 70% top;",
+      "headline": "Controlled, Auditable, Always Current.",
+      "overlayCount": 0,
+      "orphaned": 0,
+      "visiblePolicyExamples": [
+        "Driver Qualification Policy",
+        "Hours-of-Service Procedures",
+        "Cargo Securement Policy",
+        "Safety & Compliance Manual",
+        "Incident Response Procedure"
+      ],
+      "bodyOverflow": 0,
+      "heroHeight": 800,
+      "copyReadable": true,
+      "proofRailTop": 793,
+      "proofRailCoversCopy": false,
+      "imageSubjectClear": true
+    },
+    {
+      "name": "1366",
+      "viewport": [
+        1366,
+        768
+      ],
+      "heroStyle": "--wave1-hero-image: url('/assets/images/design-system-2/wave-2/ds2-policies-governance-hero-clean.png'); --wave1-hero-position: center; --wave1-hero-mobile-position: 70% top;",
+      "headline": "Controlled, Auditable, Always Current.",
+      "overlayCount": 0,
+      "orphaned": 0,
+      "visiblePolicyExamples": [
+        "Driver Qualification Policy",
+        "Hours-of-Service Procedures",
+        "Cargo Securement Policy",
+        "Safety & Compliance Manual",
+        "Incident Response Procedure"
+      ],
+      "bodyOverflow": 0,
+      "heroHeight": 779,
+      "copyReadable": true,
+      "proofRailTop": 772,
+      "proofRailCoversCopy": false,
+      "imageSubjectClear": true
+    },
+    {
+      "name": "1280",
+      "viewport": [
+        1280,
+        800
+      ],
+      "heroStyle": "--wave1-hero-image: url('/assets/images/design-system-2/wave-2/ds2-policies-governance-hero-clean.png'); --wave1-hero-position: center; --wave1-hero-mobile-position: 70% top;",
+      "headline": "Controlled, Auditable, Always Current.",
+      "overlayCount": 0,
+      "orphaned": 0,
+      "visiblePolicyExamples": [
+        "Driver Qualification Policy",
+        "Hours-of-Service Procedures",
+        "Cargo Securement Policy",
+        "Safety & Compliance Manual",
+        "Incident Response Procedure"
+      ],
+      "bodyOverflow": 0,
+      "heroHeight": 748,
+      "copyReadable": true,
+      "proofRailTop": 741,
+      "proofRailCoversCopy": false,
+      "imageSubjectClear": true
+    },
+    {
+      "name": "1024",
+      "viewport": [
+        1024,
+        768
+      ],
+      "heroStyle": "--wave1-hero-image: url('/assets/images/design-system-2/wave-2/ds2-policies-governance-hero-clean.png'); --wave1-hero-position: center; --wave1-hero-mobile-position: 70% top;",
+      "headline": "Controlled, Auditable, Always Current.",
+      "overlayCount": 0,
+      "orphaned": 0,
+      "visiblePolicyExamples": [
+        "Driver Qualification Policy",
+        "Hours-of-Service Procedures",
+        "Cargo Securement Policy",
+        "Safety & Compliance Manual",
+        "Incident Response Procedure"
+      ],
+      "bodyOverflow": 0,
+      "heroHeight": 674,
+      "copyReadable": true,
+      "proofRailTop": 667,
+      "proofRailCoversCopy": false,
+      "imageSubjectClear": true
+    },
+    {
+      "name": "768",
+      "viewport": [
+        768,
+        1024
+      ],
+      "heroStyle": "--wave1-hero-image: url('/assets/images/design-system-2/wave-2/ds2-policies-governance-hero-clean.png'); --wave1-hero-position: center; --wave1-hero-mobile-position: 70% top;",
+      "headline": "Controlled, Auditable, Always Current.",
+      "overlayCount": 0,
+      "orphaned": 0,
+      "visiblePolicyExamples": [
+        "Driver Qualification Policy",
+        "Hours-of-Service Procedures",
+        "Cargo Securement Policy",
+        "Safety & Compliance Manual",
+        "Incident Response Procedure"
+      ],
+      "bodyOverflow": 0,
+      "heroHeight": 960,
+      "copyReadable": true,
+      "proofRailTop": 1037,
+      "proofRailCoversCopy": false,
+      "imageSubjectClear": true
+    },
+    {
+      "name": "390",
+      "viewport": [
+        390,
+        844
+      ],
+      "heroStyle": "--wave1-hero-image: url('/assets/images/design-system-2/wave-2/ds2-policies-governance-hero-clean.png'); --wave1-hero-position: center; --wave1-hero-mobile-position: 70% top;",
+      "headline": "Controlled, Auditable, Always Current.",
+      "overlayCount": 0,
+      "orphaned": 0,
+      "visiblePolicyExamples": [
+        "Driver Qualification Policy",
+        "Hours-of-Service Procedures",
+        "Cargo Securement Policy",
+        "Safety & Compliance Manual",
+        "Incident Response Procedure"
+      ],
+      "bodyOverflow": 0,
+      "heroHeight": 1016,
+      "copyReadable": true,
+      "proofRailTop": 1093,
+      "proofRailCoversCopy": false,
+      "imageSubjectClear": true
+    }
+  ],
+  "failures": [],
+  "vaultCheck": {
+    "title": "Secure Driver Self-Service.",
+    "style": "--wave1-hero-image: url('/assets/images/design-system-2/wave-2/ds2-bof-vault-hero-clean.png'); --wave1-hero-position: center; --wave1-hero-mobile-position: 70% top;"
+  },
+  "demoCheck": {
+    "portal": "policy",
+    "title": "Policy Governance",
+    "bg": "url(\"http://127.0.0.1:8799/assets/images/design-system-2/customer-demo-secondary-headers/policy-governance-bg-clean.png\")"
+  },
+  "consoleErrors": []
+}
