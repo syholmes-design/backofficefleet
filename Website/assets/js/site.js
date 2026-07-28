@@ -30,6 +30,16 @@
     nav.querySelectorAll(".nav-dropdown a").forEach(function (link) {
       var href = (link.getAttribute("href") || "").replace(/\/+$/, "/");
       if (href === "/fleet/") link.remove();
+      if (href === "/aggregator-outreach/" || href === "/aggregator-partner-offer/") {
+        link.href = "/aggregators/";
+        link.textContent = "Aggregators";
+      }
+    });
+
+    nav.querySelectorAll('a[href="/trust-governance/"]').forEach(function (link) {
+      if ((link.textContent || "").trim().toLowerCase() === "company") {
+        link.href = "/company/";
+      }
     });
 
     nav.querySelectorAll(".nav-utility-link").forEach(function (link) {
@@ -61,10 +71,11 @@
       assessmentMenu.innerHTML = [
         '<button class="nav-menu-toggle" type="button" data-nav-menu-toggle aria-expanded="false" aria-haspopup="true">BOF Assessment</button>',
         '<div class="nav-dropdown" aria-label="BOF Assessment">',
-        '  <a href="/scenario-walkthrough/?assessment=fleet-owner">Fleet Owner Assessment</a>',
-        '  <a href="/scenario-walkthrough/?assessment=private-fleet">Private Fleet Assessment</a>',
-        '  <a href="/scenario-walkthrough/?assessment=government">Government Fleet Assessment</a>',
-        '  <a href="/scenario-walkthrough/?assessment=aggregator">Aggregator Assessment</a>',
+        '  <a href="/assessment/">Fleet Readiness Assessment</a>',
+        '  <a href="/assessment/?type=private-fleet">Private Fleet Assessment</a>',
+        '  <a href="/assessment/?type=for-hire-fleet">For-Hire Fleet Assessment</a>',
+        '  <a href="/assessment/?type=government">Government Fleet Assessment</a>',
+        '  <a href="/assessment/?type=aggregator">Aggregator Assessment</a>',
         '</div>'
       ].join("");
       var vaultLink = nav.querySelector(".nav-vault-link");
@@ -73,22 +84,22 @@
 
     if (!nav.querySelector(".nav-mobile-signin")) {
       var mobileSignIn = document.createElement("a");
-      mobileSignIn.href = "/dashboard/";
+      mobileSignIn.href = "/book-a-demo/";
       mobileSignIn.className = "nav-mobile-signin";
-      mobileSignIn.textContent = "Sign In";
+      mobileSignIn.textContent = "Request a Demo";
       nav.insertBefore(mobileSignIn, nav.firstChild);
     }
 
     var cta = header.querySelector(".header-cta");
     if (cta) {
-      cta.href = "/dashboard/";
-      cta.textContent = "Sign In";
-      cta.setAttribute("aria-label", "Sign in to BackOfficeFleet");
+      cta.href = "/book-a-demo/";
+      cta.textContent = "Request a Demo";
+      cta.setAttribute("aria-label", "Request a BackOfficeFleet demo");
     }
 
     if (!header.querySelector(".header-contact-icon")) {
       var contact = createIconLink(
-        "mailto:info@backofficefleet.com",
+        "/contact/",
         "header-contact-icon",
         "Contact BackOfficeFleet",
         '<svg aria-hidden="true" viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.8 19.8 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.12 4.2 2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.12.9.32 1.77.6 2.61a2 2 0 0 1-.45 2.11L8 9.7a16 16 0 0 0 6.3 6.3l1.26-1.26a2 2 0 0 1 2.11-.45c.84.28 1.71.48 2.61.6A2 2 0 0 1 22 16.92z"/></svg>'
@@ -99,6 +110,24 @@
   }
 
   enhanceEnterpriseHeader();
+
+  function enhancePublicFooter() {
+    var footer = document.querySelector(".site-footer");
+    if (!footer || document.querySelector("[data-interactive-demo]")) return;
+    footer.innerHTML = [
+      '<div class="footer-inner wave4-footer-inner">',
+      '  <div class="wave4-footer-brand"><strong>BackOfficeFleet</strong><span>Operational readiness, documentation, governance, and execution support for fleets.</span></div>',
+      '  <nav class="wave4-footer-links" aria-label="Footer navigation">',
+      '    <div><span>Audiences</span><a href="/who-we-serve/">Who We Serve</a><a href="/private-fleets/">Private Fleets</a><a href="/for-hire-fleets/">For-Hire Fleets</a><a href="/aggregators/">Aggregators</a><a href="/government/">Government</a></div>',
+      '    <div><span>Products</span><a href="/drivers/">Drivers</a><a href="/dispatch/">Dispatch &amp; Operations</a><a href="/safety/">Safety &amp; Compliance</a><a href="/settlements/">Settlements &amp; Billing</a><a href="/business-operations/">Business Operations</a><a href="/documents/">Documents</a><a href="/bof-vault/">BOF Vault</a><a href="/policies-procedures/">Policies &amp; Procedures</a></div>',
+      '    <div><span>Solutions</span><a href="/assessment/">Assessment</a><a href="/load-readiness/">Load Readiness</a><a href="/network-readiness/">Network Readiness</a><a href="/fleet-preparedness/">Fleet Preparedness</a><a href="/priority-fleet-program/">Priority Fleet Program</a><a href="/resources/">Resources</a></div>',
+      '    <div><span>Company</span><a href="/company/">Company</a><a href="/contact/">Contact</a><a href="/book-a-demo/">Request a Demo</a></div>',
+      '  </nav>',
+      '</div>'
+    ].join("");
+  }
+
+  enhancePublicFooter();
 
   if (header) {
     function setHeaderScrollState() {
@@ -393,6 +422,29 @@
       window.location.replace("/interactive-demo/");
     }, 6800);
   }
+
+  document.querySelectorAll("[data-wave4-form]").forEach(function (form) {
+    var status = form.querySelector("[data-form-status]");
+    var formName = form.getAttribute("data-form-name") || "Request";
+
+    function setFormStatus(message, isError) {
+      if (!status) return;
+      status.textContent = message;
+      status.classList.add("is-visible");
+      status.classList.toggle("is-error", Boolean(isError));
+    }
+
+    form.addEventListener("submit", function (event) {
+      event.preventDefault();
+      if (!form.checkValidity()) {
+        form.reportValidity();
+        setFormStatus("Please complete the required fields before BOF can review this " + formName.toLowerCase() + ".", true);
+        return;
+      }
+
+      setFormStatus(formName + " validated for review. Secure submission wiring is pending, so no data was transmitted from this page.", false);
+    });
+  });
 
   var interactiveDemo = document.querySelector("[data-interactive-demo]");
   if (interactiveDemo) {
