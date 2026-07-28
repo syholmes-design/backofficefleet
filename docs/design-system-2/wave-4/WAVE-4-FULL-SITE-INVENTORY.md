@@ -1,0 +1,71 @@
+# Wave 4 Full-Site Inventory
+
+Base commit: `bc766b3b16df9c843467ad41457fea52f766695b`
+Worktree: `C:\Users\syhol\BOF-design-system-2-wave-4`
+Branch: `codex/design-system-2-wave-4`
+
+## Inventory Summary
+
+Phase 1 was completed before public-site content edits. The active deployable surface is `Website`. No RustDesk, FTP bridge, Supabase, backend, deployment, upload, push, or merge action was used during inventory.
+
+The site is a static HTML/CSS/vanilla JavaScript site with no `.openai/hosting.json`. `Website/.htaccess` currently applies noindex headers to `/customer-demo/` and `/interactive-demo/`, and disables aggressive HTML caching. `Website/robots.txt` excludes `/customer-demo/` and `/interactive-demo/`. `Website/sitemap.xml` currently lists the core public DS2 pages and excludes hidden demo routes and assessment query states.
+
+## Primary Route Inventory
+
+| URL | Local file | Purpose | Current status | Design wave | Indexing | Sitemap | Nav/footer | CTA destinations | Legacy aliases | Deployment disposition |
+|---|---|---|---|---|---|---|---|---|---|---|
+| `/` | `Website/index.html` | Homepage and operating model | Refine | Waves 1-3 | Indexable | Present | Present, needs final reconciliation | Command Center, operating areas, Priority Fleet, assessment | None | Deploy after QA |
+| `/who-we-serve/` | `Website/who-we-serve/index.html` | Audience overview | Refine | Wave 3 | Indexable | Present | Present | Audience pages, assessment, demo | None | Deploy after QA |
+| `/aggregators/` | `Website/aggregators/index.html` | Aggregator audience page | Refine | Wave 3 | Indexable | Present | Present | Aggregator assessment, readiness section | `/aggregator-outreach/`, `/aggregator-partner-offer/` | Deploy after QA |
+| `/private-fleets/` | `Website/private-fleets/index.html` | Private fleet audience page | Refine | Wave 3 | Indexable | Present | Present | Private fleet assessment, Priority Fleet | `/private-fleet-offer/` | Deploy after QA |
+| `/for-hire-fleets/` | `Website/for-hire-fleets/index.html` | For-hire fleet audience page | Refine | Wave 3 | Indexable | Present | Present | For-hire assessment, load readiness, Priority Fleet | `/fleet/`, `/fleet-operator-offer/` | Deploy after QA |
+| `/government/` | `Website/government/index.html` | Government and preparedness audience page | Refine | Wave 3 | Indexable | Present | Present | Government assessment, policies | Government nested support pages | Deploy after QA |
+| `/drivers/` | `Website/drivers/index.html` | Driver portal/support page | Refine | Wave 1/2 | Indexable | Present | Present | Driver demo, assessment | None | Deploy after QA |
+| `/dispatch/` | `Website/dispatch/index.html` | Dispatch and operations page | Refine lightly | Wave 1/2 | Indexable | Present | Present | Demo/supporting pages | `/dispatch/load-intake/` nested | Deploy after QA |
+| `/safety/` | `Website/safety/index.html` | Safety and compliance page | Refine lightly | Wave 1/2 | Indexable | Present | Present | Demo/supporting pages | `/safety-compliance/` | Deploy after QA |
+| `/settlements/` | `Website/settlements/index.html` | Settlements and billing page | Refine lightly | Wave 1/2 | Indexable | Present | Present | Settlement proof/demo links | Nested settlement support routes | Deploy after QA |
+| `/business-operations/` | `Website/business-operations/index.html` | Business Operations product page | Refine lightly | Wave 2 | Indexable | Present | Present | Demo and detail routes | Many nested BO routes | Deploy after QA |
+| `/documents/` | `Website/documents/index.html` | Documents product page | Refine lightly | Wave 1/2 | Indexable | Present | Present | BOF Vault/demo links | `/document-readiness-engine/` | Deploy after QA |
+| `/policies-procedures/` | `Website/policies-procedures/index.html` | Policy Governance page | Refine lightly | Wave 2 | Indexable | Present | Present | Policy demo/assessment | None | Deploy after QA |
+| `/bof-vault/` | `Website/bof-vault/index.html` | BOF Vault page | Refine lightly | Wave 2 | Indexable | Present | Present | Vault demo/documents | None | Deploy after QA |
+| `/assessment/` | `Website/assessment/index.html` | Fleet readiness assessment | Preserve and QA | Wave 3 | Indexable; query states canonicalize to `/assessment/` | Present | Present | Results CTA, Priority Fleet | `/scenario-walkthrough/` older assessment-like path | Deploy after QA |
+| `/priority-fleet-program/` | `Website/priority-fleet-program/index.html` | Public Priority Fleet Program | Refine | Wave 3 | Indexable | Present | Supporting nav/footer only | Assessment, demo/contact | None | Deploy after QA |
+| `/company/` | Missing | Company page | Create | Wave 4 | Should be indexable | Add | Add | Contact/demo/assessment | `/about/`, `/trust-governance/` | Create and deploy after QA |
+| `/contact/` | Missing | Contact page and inquiry routing | Create | Wave 4 | Should be indexable | Add | Add | Contact form, assessment, demo | Mailto paths on legacy demo page | Create and deploy after QA |
+| `/book-a-demo/` | Missing | Guided review/demo request page | Create | Wave 4 | Should be indexable | Add | Add | Demo request form | `/book-demo/` | Create and deploy after QA |
+| `/load-readiness/` | Missing | Load lifecycle solution page | Create | Wave 4 | Should be indexable | Add | Footer/supporting nav | Dispatch, Documents, Settlements, For-Hire Fleets, demo | `/fleet/` | Create and deploy after QA |
+| `/network-readiness/` | Missing | Aggregator/network readiness solution page | Create | Wave 4 | Should be indexable | Add | Footer/supporting nav | Aggregators, assessment, demo | `/carrier-readiness/`, aggregator offer routes | Create and deploy after QA |
+| `/fleet-preparedness/` | Missing | Government/public preparedness solution page | Create | Wave 4 | Should be indexable | Add | Footer/supporting nav | Government, assessment, policies | Government support routes | Create and deploy after QA |
+| `/resources/` | Missing | Public resource hub | Create or alias to blog/resources | Wave 4 | Should be indexable if created | Add if created | Footer | Blog, assessment, contact | `/blog/` related | Create or document redirect |
+| `/about/` | Missing | Company alias | Redirect candidate | Legacy | Should redirect or canonicalize | Do not add if redirected | Footer optional | `/company/` | `/company/` | 302/301 candidate after verification |
+| `/demo/` | `Website/demo/index.html` | Older TMS partner review | Legacy/support | Legacy | Review for noindex or redirect | Not present | Not global | TMS review links | `/book-demo/`, `/interactive-demo/` | Keep or redirect candidate after QA |
+
+## Legacy And Support Route Groups
+
+| Group | Routes found | Status | Recommendation |
+|---|---:|---|---|
+| Business Operations detail routes | 31 | Substantial nested content exists, with some older header/footer patterns and some old Supabase demo scripts on nested pages | Keep as support content; remove public Supabase script references where encountered in final cleanup; do not expose hidden/backend behavior |
+| Customer portal/demo routes | 9 plus `/customer-demo/` | Hidden/demo support | Keep excluded from sitemap; keep robots and X-Robots noindex controls |
+| Interactive demo routes | 20 | Hidden product demo | Keep excluded from sitemap; preserve noindex headers |
+| Blog routes | 4 | Public resources | Consider `/resources/` hub that links to blog articles and readiness pages |
+| Founding Fleet routes | 5 | Dedicated funnel | Keep out of global nav per project guidance; do not make global story |
+| Government support routes | 4 | Public support detail | Keep linked from Government/Fleet Preparedness where relevant |
+| Private fleet support routes | 4 | Public support detail | Keep linked from Private Fleets where relevant |
+| Settlement support routes | 4 | Public support detail | Keep linked from Settlements where relevant |
+| Integrations/TMS routes | 4 | Legacy demo/support | Keep out of sitemap unless verified as public; avoid implying live integration |
+| Offer/outreach routes | 5 | Older funnel variants | Redirect candidates to current audience or solution pages after link QA |
+
+## Full Discovered Route Set
+
+`/`, `/aggregator-command-center/`, `/aggregator-outreach/`, `/aggregator-partner-offer/`, `/aggregators/`, `/animated-demo/`, `/animated-demo-aggregator/`, `/animated-demo-business/`, `/assessment/`, `/blog/`, `/blog/driver-readiness-dispatch-failure/`, `/blog/enforcement-engine-trucking-back-office/`, `/blog/proof-packets-settlements-cash-flow/`, `/bof-vault/`, `/book-demo/`, `/business-operations/`, `/business-operations/accounting/`, `/business-operations/accounting-finance/`, `/business-operations/accounting-finance/ap-vendor-control/`, `/business-operations/accounting-finance/cash-flow-review/`, `/business-operations/accounts-receivable/`, `/business-operations/accounts-receivable/aging-dispute-control/`, `/business-operations/cash-flow/`, `/business-operations/customer-billing/`, `/business-operations/customer-billing/billing-packet-control/`, `/business-operations/document-management/`, `/business-operations/document-management/records-control/`, `/business-operations/driver-onboarding/`, `/business-operations/driver-onboarding/assignment-readiness/`, `/business-operations/erp/`, `/business-operations/excise-taxes/`, `/business-operations/fleet-maintenance/`, `/business-operations/fuel-management/`, `/business-operations/hr-tier/`, `/business-operations/hr-tier/compensation-benefits/`, `/business-operations/hr-tier/employee-relations/`, `/business-operations/hr-tier/recruiting-onboarding/`, `/business-operations/hr-tier/talent-management/`, `/business-operations/human-resources/`, `/business-operations/insurance/`, `/business-operations/legal-contracts/`, `/business-operations/operating-authority/`, `/business-operations/operational-reporting/`, `/business-operations/operational-reporting/owner-queue-reporting/`, `/business-operations/owner-operator/`, `/business-operations/payroll/`, `/business-operations/payroll-administration/`, `/business-operations/payroll-administration/pay-exception-control/`, `/business-operations/safety-sms/`, `/business-operations/technology/`, `/capacity-intelligence/`, `/carrier-readiness/`, `/carriers/`, `/command-center/`, `/command-center/issue/`, `/customer-demo/`, `/customer-portal/`, `/customer-portal/assignment/`, `/customer-portal/billing/`, `/customer-portal/documents/`, `/customer-portal/load-intake/`, `/customer-portal/quotes/`, `/customer-portal/request-shipment/`, `/customer-portal/shipment-generator/`, `/customer-portal/shipments/`, `/customer-portal/tracking/`, `/dashboard/`, `/demo/`, `/demo/tms-release-review/`, `/demo-paths/`, `/design-system-2-preview/`, `/dispatch/`, `/dispatch/load-intake/`, `/document-readiness-engine/`, `/documents/`, `/drivers/`, `/executive-demo/`, `/fleet/`, `/fleet-operator-offer/`, `/fleet-savings/`, `/for-hire-fleets/`, `/founding-fleet/`, `/founding-fleet/apply/`, `/founding-fleet/pricing/`, `/founding-fleet/trial/`, `/founding-fleets/`, `/government/`, `/government/audit-trail/`, `/government/contractor-alignment/`, `/government/evidence-packets/`, `/government/single-record-accountability/`, `/integrations/ascendtms/`, `/integrations/ascendtms/release-review/`, `/integrations/partner-tms/`, `/integrations/tms-workflow/`, `/integrations/tms-workflow/release-review/`, `/interactive-demo/`, `/interactive-demo/alerts/`, `/interactive-demo/carriers/`, `/interactive-demo/dispatch/`, `/interactive-demo/documents/`, `/interactive-demo/drivers/`, `/interactive-demo/drivers/document-intake/`, `/interactive-demo/drivers/drv-001/`, `/interactive-demo/drivers/drv-002/`, `/interactive-demo/drivers/drv-003/`, `/interactive-demo/drivers/drv-004/`, `/interactive-demo/drivers/drv-005/`, `/interactive-demo/drivers/drv-006/`, `/interactive-demo/drivers/drv-007/`, `/interactive-demo/drivers/drv-008/`, `/interactive-demo/drivers/drv-009/`, `/interactive-demo/drivers/drv-010/`, `/interactive-demo/drivers/drv-011/`, `/interactive-demo/drivers/drv-012/`, `/interactive-demo/loading/`, `/interactive-demo/load-queue/`, `/interactive-demo/reports/`, `/interactive-demo/safety/`, `/interactive-demo/settings/`, `/interactive-demo/settlements/`, `/interactive-demo/start/`, `/narration-export/`, `/operational-intelligence/`, `/operations-record/`, `/policies-procedures/`, `/priority-fleet-program/`, `/private-fleet-offer/`, `/private-fleets/`, `/private-fleets/audit-visibility/`, `/private-fleets/branch-alignment/`, `/private-fleets/evidence-packets/`, `/private-fleets/unified-record-control/`, `/safety/`, `/safety-compliance/`, `/scenario-walkthrough/`, `/sectors/`, `/settlements/`, `/settlements/audit-trail/`, `/settlements/exception-visibility/`, `/settlements/finance-operations-alignment/`, `/settlements/single-record-accountability/`, `/solutions/`, `/trust-governance/`, `/walkthrough/`, `/who-we-serve/`.
+
+## Inventory Findings To Resolve In Wave 4
+
+- `/company/`, `/contact/`, `/book-a-demo/`, `/load-readiness/`, `/network-readiness/`, `/fleet-preparedness/`, and `/resources/` are missing and should be created.
+- `/book-demo/` is an older mailto-driven page and should become a redirect or compatibility alias once `/book-a-demo/` is verified.
+- Header links still include older `Company` destination patterns on some pages (`/trust-governance/`) and older `Aggregators` dropdown links (`/aggregator-outreach/`).
+- `site.js` injects an assessment dropdown that points to `/scenario-walkthrough/` query states instead of the Wave 3 `/assessment/` experience.
+- Header utility behavior currently favors sign-in/dashboard and a mailto contact icon. Wave 4 should shift public conversion toward `/book-a-demo/` and `/contact/`.
+- Some nested Business Operations pages include old Supabase demo script references. These are frontend demo references and must be removed from public pages touched in Wave 4; backend files must remain untouched.
+- Sitemap lacks Wave 4 routes and should continue excluding hidden demos, investor/internal routes, and assessment query states.
+- Redirect candidates should be documented first and implemented only where replacement pages are created and verified.
