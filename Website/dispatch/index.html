@@ -103,7 +103,10 @@
 
       <section class="wave1-section wave1-section--dashboard-prominent" id="dispatch-dashboard-preview" aria-labelledby="dispatch-preview-heading">
         <p class="bof-ds2-eyebrow">Dispatch Dashboard Preview</p>
-        <h2 id="dispatch-preview-heading">A command view for active loads, blockers, and release paths.</h2>
+        <div class="wave1-section-heading-row">
+          <h2 id="dispatch-preview-heading">A command view for active loads, blockers, and release paths.</h2>
+          <a class="bof-ds2-button bof-ds2-button--primary" href="/command-center/">View the Manager Portal Demo</a>
+        </div>
         <div class="wave1-dashboard-grid wave1-dashboard-grid--command">
           <article class="wave1-dashboard-frame wave1-dashboard-frame--showcase">
             <div class="wave1-frame-header">
@@ -118,9 +121,9 @@
               </div>
               <div class="wave1-chart" role="img" aria-label="Illustrative route and load-status trend"></div>
               <div class="wave1-queue-list" aria-label="Illustrative active-load queue">
-                <div class="wave1-queue-item"><b>BOF-1907</b><span>POD review before billing release</span><em>At Risk</em></div>
-                <div class="wave1-queue-item"><b>BOF-1931</b><span>Credential record blocks assignment</span><em>Blocked</em></div>
-                <div class="wave1-queue-item"><b>BOF-2064</b><span>Driver, unit, and packet ready</span><em>Ready</em></div>
+                <div class="wave1-queue-item"><b>BOF-1907</b><span>POD review before billing release</span><em>At Risk</em><button class="wave1-action-button" type="button" data-wave1-action data-action-title="Review Load Blocker" data-action-body="Load BOF-1907 is at risk because POD and renewal evidence are not yet aligned to the proof packet. Dispatch should review the blocker before billing release." data-action-meta="Record: BOF-1907 / Tulsa to Kansas City|Owner: Dispatcher / packet owner|Clearance: confirm POD, signed BOL, receiver evidence, and renewal support." data-action-label="Open joined record" data-action-href="/operations-record/#shared-records">Review</button></div>
+                <div class="wave1-queue-item"><b>BOF-1931</b><span>Credential record blocks assignment</span><em>Blocked</em><button class="wave1-action-button" type="button" data-wave1-action data-action-title="View Assignment Block" data-action-body="Load BOF-1931 cannot be assigned because the linked driver credential record is blocked. Dispatch sees the release consequence without sending the user to an unrelated header page." data-action-meta="Record: BOF-1931 / Little Rock to St. Louis|Owner: Safety lead|Clearance: upload corrected medical-card evidence and complete MVR review." data-action-label="Open reason path" data-action-href="/operations-record/#shared-records">View Load</button></div>
+                <div class="wave1-queue-item"><b>BOF-2064</b><span>Driver, unit, and packet ready</span><em>Ready</em><a class="wave1-action-link" href="/operations-record/#shared-records">Open Load</a></div>
               </div>
             </div>
           </article>
@@ -134,6 +137,11 @@
                 <div>
                   <h3>Tulsa, OK to Kansas City, MO</h3>
                   <p>POD and renewal evidence review requires dispatcher confirmation before billing release.</p>
+                  <div class="wave1-action-row">
+                    <button class="wave1-action-button wave1-action-button--primary" type="button" data-wave1-action data-action-title="Review Blocker" data-action-body="The load is at risk because receiver evidence and renewal support are not aligned to the settlement proof packet. This demo action explains what dispatch must clear; it does not change release status." data-action-meta="Affected record: BOF-1907 / PROOF-1907|Business impact: settlement release remains held.|Clearance path: confirm POD, signed BOL, receiver evidence, and renewal support." data-action-label="Open proof cabinet" data-action-href="/documents/#operations-file-cabinet">Review Blocker</button>
+                    <a class="wave1-action-link" href="/operations-record/#shared-records">Open Joined Record</a>
+                    <button class="wave1-action-button" type="button" data-wave1-action data-action-title="View Proof Packet" data-action-body="The proof packet preview keeps BOL, POD, receiver evidence, renewal support, and settlement consequence together for the selected load." data-action-meta="Packet: PROOF-1907|Missing or review items: POD confirmation and renewal support|Owner: Dispatcher / packet owner." data-action-label="Open documents" data-action-href="/documents/#operations-file-cabinet">View Proof Packet</button>
+                  </div>
                 </div>
                 <span class="wave1-status wave1-status--review">At Risk</span>
               </article>
@@ -145,7 +153,6 @@
                 <div class="wave1-proof"><b>Clearance</b><span>Confirm POD, signed BOL, receiver evidence, and renewal evidence.</span></div>
                 <div class="wave1-proof"><b>Consequence</b><span>Settlement packet remains held until proof clears.</span></div>
               </div>
-              <a class="bof-ds2-button bof-ds2-button--primary" href="/command-center/">View the Manager Portal Demo</a>
             </div>
           </article>
         </div>

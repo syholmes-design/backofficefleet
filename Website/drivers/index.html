@@ -124,7 +124,10 @@
 
       <section class="wave1-section wave1-section--dashboard-prominent" id="driver-portal-preview" aria-labelledby="driver-portal-heading">
         <p class="bof-ds2-eyebrow">Driver Portal Preview</p>
-        <h2 id="driver-portal-heading">A focused driver workspace for work, readiness, documents, and pay context.</h2>
+        <div class="wave1-section-heading-row">
+          <h2 id="driver-portal-heading">A focused driver workspace for work, readiness, documents, and pay context.</h2>
+          <a class="bof-ds2-button bof-ds2-button--primary" href="#driver-portal-preview">Explore the Driver Portal</a>
+        </div>
         <p class="wave1-section__intro">The portal view is intentionally practical: the active load, upcoming work, missing documents, compliance status, settlement history, and driver messages stay connected to the same operating record.</p>
         <div class="wave1-product-preview wave1-product-preview--prominent">
           <div class="wave1-portal-frame wave1-portal-frame--large wave1-portal-frame--showcase" aria-label="Illustrative driver portal interface">
@@ -143,6 +146,10 @@
                 <div>
                   <h3>Load BOF-2064 - Birmingham to Nashville</h3>
                   <p>Assigned unit ready. Driver has 6h 30m HOS available and proof packet checklist is clear.</p>
+                  <div class="wave1-action-row">
+                    <a class="wave1-action-link wave1-action-link--primary" href="/operations-record/#shared-records">Open Load</a>
+                    <button class="wave1-action-button" type="button" data-wave1-action data-action-title="View Load Requirements" data-action-body="Load BOF-2064 is ready for release. The demo view keeps the assigned unit, proof packet, HOS, and route requirements tied to the same operating record." data-action-meta="Record: BOF-2064 / Birmingham to Nashville|State: Ready|Next action: Confirm release requirements before dispatch." data-action-label="Open joined record" data-action-href="/operations-record/#shared-records">View Requirements</button>
+                  </div>
                 </div>
                 <span class="wave1-status wave1-status--ready">Ready</span>
               </article>
@@ -151,6 +158,9 @@
                   <div>
                     <h3>Document review - medical renewal</h3>
                     <p>Appointment proof is overdue by 6 days. Safety owner must verify before the next release.</p>
+                    <div class="wave1-action-row">
+                      <button class="wave1-action-button wave1-action-button--primary" type="button" data-wave1-action data-action-title="Upload Document" data-action-body="Demo action: this would open the document intake path for appointment proof. No file is uploaded and no record is changed in this static preview." data-action-meta="Record: DRV-009 appointment proof|Why it matters: Safety owner needs evidence before the next release.|Clearance: attach appointment proof and route to safety review." data-action-label="Open documents" data-action-href="/documents/#operations-file-cabinet">Upload Document</button>
+                    </div>
                   </div>
                   <span class="wave1-status wave1-status--review">Review</span>
                 </article>
@@ -158,6 +168,9 @@
                   <div>
                     <h3>Settlement packet - BOF-1907</h3>
                     <p>POD and renewal evidence are waiting for confirmation before settlement packet release.</p>
+                    <div class="wave1-action-row">
+                      <button class="wave1-action-button wave1-action-button--primary" type="button" data-wave1-action data-action-title="View Settlement Hold" data-action-body="The settlement packet is held because proof and renewal evidence still need confirmation. This demo action shows the hold reason and clearance path before payment readiness moves forward." data-action-meta="Record: SET-1907|Owner: Dispatcher / packet owner|Clearance: confirm POD, receiver evidence, and renewal support." data-action-label="Open settlements" data-action-href="/settlements/#finance-readiness">View Settlement</button>
+                    </div>
                   </div>
                   <span class="wave1-status wave1-status--blocked">Hold</span>
                 </article>
@@ -175,6 +188,9 @@
             <div class="wave1-mobile-preview__card">
               <b>Next Action</b>
               <span>Upload appointment proof</span>
+              <div class="wave1-action-row">
+                <button class="wave1-action-button wave1-action-button--primary" type="button" data-wave1-action data-action-title="Complete Next Action" data-action-body="Demo action: the driver would add appointment proof, then the safety owner would review it before the next release. This preview does not save or upload a file." data-action-meta="Record: DRV-009|Action type: illustrative document workflow|Result shown: proof requirement ready for review." data-action-label="Open document view" data-action-href="/documents/#operations-file-cabinet">Complete Next Action</button>
+              </div>
             </div>
             <div class="wave1-mobile-preview__card wave1-mobile-preview__card--ready">
               <b>Load BOF-2064</b>
@@ -184,7 +200,7 @@
               <b>Settlement</b>
               <span>Packet status visible</span>
             </div>
-                <a class="bof-ds2-button bof-ds2-button--primary" href="#driver-portal-preview">Explore the Driver Portal</a>
+            <button class="wave1-action-button" type="button" data-wave1-action data-action-title="Open Messages" data-action-body="Demo action: driver support questions stay attached to the active driver and load record. This is an illustrative message view, not production live chat." data-action-meta="Record: DRV-004 / BOF-2064|Owner: Driver support|Next action: view the support item with load context attached." data-action-label="Open driver context" data-action-href="/drivers/#driver-portal-preview">Open Messages</button>
           </aside>
         </div>
       </section>
