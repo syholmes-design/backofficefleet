@@ -124,6 +124,10 @@ body.bof-ds2-wave1 {
   grid-column: 1;
 }
 
+.wave1-hero--subject-clear::before {
+  content: none;
+}
+
 .wave1-hero__panel,
 .wave1-glass-panel {
   min-width: 0;
@@ -979,14 +983,27 @@ body.bof-ds2-wave1 {
   }
 
   .wave1-hero--subject-clear {
-    min-height: 920px;
+    display: grid;
+    grid-template-rows: auto auto;
+    min-height: auto;
+    background: linear-gradient(180deg, #071426 0%, #05070d 100%);
+  }
+
+  .wave1-hero--subject-clear::before {
+    content: "";
+    display: block;
+    grid-row: 1;
+    min-height: clamp(460px, 62vw, 560px);
     background:
-      var(--wave1-hero-mobile-overlay, linear-gradient(180deg, rgba(5, 20, 40, 0.04) 0%, rgba(5, 20, 40, 0.16) 42%, rgba(5, 20, 40, 0.78) 82%, rgba(5, 20, 40, 0.98) 100%)),
-      var(--wave1-hero-image, linear-gradient(135deg, #0a1224, #0a2342)),
-      linear-gradient(180deg, #071426, #05070d);
-    background-position: var(--wave1-hero-mobile-position, center top), var(--wave1-hero-mobile-position, center top), center;
-    background-size: var(--wave1-hero-mobile-size, auto 580px), var(--wave1-hero-mobile-size, auto 580px), auto;
+      var(--wave1-hero-mobile-overlay, linear-gradient(180deg, rgba(5, 20, 40, 0.02) 0%, rgba(5, 20, 40, 0.04) 46%, rgba(5, 20, 40, 0.36) 82%, rgba(5, 7, 13, 0.76) 100%)),
+      var(--wave1-hero-image, linear-gradient(135deg, #0a1224, #0a2342));
+    background-position: var(--wave1-hero-mobile-position, center top);
+    background-size: var(--wave1-hero-mobile-size, cover);
     background-repeat: no-repeat;
+  }
+
+  .wave1-hero--subject-clear::after {
+    content: none;
   }
 
   .wave1-hero__inner {
@@ -995,16 +1012,22 @@ body.bof-ds2-wave1 {
   }
 
   .wave1-hero--subject-clear .wave1-hero__inner {
+    grid-row: 2;
     grid-template-columns: minmax(0, 1fr);
-    min-height: 920px;
+    min-height: auto;
     align-items: end;
-    padding-top: 540px;
+    align-self: end;
+    width: 100%;
+    padding-top: 0;
     padding-bottom: 44px;
   }
 
   .wave1-hero__copy,
   .wave1-hero__panel {
     grid-column: auto;
+    width: min(100%, 560px);
+    max-width: calc(100vw - 40px);
+    margin-inline: auto;
   }
 
   .wave1-hero__panel {
@@ -1019,7 +1042,7 @@ body.bof-ds2-wave1 {
 
   .wave1-proof-rail {
     width: min(calc(100% - 32px), 760px);
-    margin-top: -58px;
+    margin-top: 0;
   }
 
   .wave1-proof-rail__inner {
@@ -1052,13 +1075,13 @@ body.bof-ds2-wave1 {
   }
 
   .wave1-hero--subject-clear {
-    background:
-      var(--wave1-hero-mobile-overlay, linear-gradient(180deg, rgba(5, 20, 40, 0.04) 0%, rgba(5, 20, 40, 0.16) 42%, rgba(5, 20, 40, 0.78) 82%, rgba(5, 20, 40, 0.98) 100%)),
-      var(--wave1-hero-image, linear-gradient(135deg, #0a1224, #0a2342)),
-      linear-gradient(180deg, #071426, #05070d);
-    background-position: var(--wave1-hero-mobile-position, center top), var(--wave1-hero-mobile-position, center top), center;
-    background-size: var(--wave1-hero-mobile-size, auto 540px), var(--wave1-hero-mobile-size, auto 540px), auto;
-    background-repeat: no-repeat;
+    background: linear-gradient(180deg, #071426 0%, #05070d 100%);
+  }
+
+  .wave1-hero--subject-clear::before {
+    min-height: clamp(390px, 106vw, 480px);
+    background-position: var(--wave1-hero-mobile-position, center top);
+    background-size: var(--wave1-hero-mobile-size, cover);
   }
 
   .wave1-hero__inner,
@@ -1078,7 +1101,7 @@ body.bof-ds2-wave1 {
 
   .wave1-hero--subject-clear .wave1-hero__inner {
     justify-content: flex-end;
-    padding-top: 500px;
+    padding-top: 0;
     padding-bottom: 34px;
   }
 
@@ -1096,8 +1119,11 @@ body.bof-ds2-wave1 {
 
   .wave1-hero__copy,
   .wave1-hero__panel {
-    width: 100%;
-    max-width: 100%;
+    align-self: center;
+    flex: 0 1 auto;
+    width: min(300px, 100%);
+    max-width: min(300px, 100%);
+    margin-inline: auto;
   }
 
   .wave1-hero__copy {
@@ -1136,7 +1162,7 @@ body.bof-ds2-wave1 {
 
   .wave1-proof-rail {
     width: min(calc(100% - 28px), 440px);
-    margin-top: -40px;
+    margin-top: 0;
   }
 
   .wave1-proof-rail__identity {
@@ -1186,6 +1212,22 @@ body.bof-ds2-wave1 {
   .wave1-close__mark {
     width: 74px;
     height: 74px;
+  }
+}
+
+@media (max-width: 420px) {
+  .wave1-hero__copy,
+  .wave1-hero__panel {
+    width: min(300px, calc(100% - 72px));
+    max-width: min(300px, calc(100% - 72px));
+  }
+
+  .wave1-hero__copy {
+    padding: 24px 22px;
+  }
+
+  .wave1-hero__copy h1 {
+    font-size: clamp(1.86rem, 8.8vw, 2.16rem);
   }
 }
 
