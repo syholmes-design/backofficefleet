@@ -101,11 +101,11 @@
         </div>
       </section>
 
-      <section class="wave1-section" id="dispatch-dashboard-preview" aria-labelledby="dispatch-preview-heading">
+      <section class="wave1-section wave1-section--dashboard-prominent" id="dispatch-dashboard-preview" aria-labelledby="dispatch-preview-heading">
         <p class="bof-ds2-eyebrow">Dispatch Dashboard Preview</p>
         <h2 id="dispatch-preview-heading">A command view for active loads, blockers, and release paths.</h2>
-        <div class="wave1-dashboard-grid">
-          <article class="wave1-dashboard-frame">
+        <div class="wave1-dashboard-grid wave1-dashboard-grid--command">
+          <article class="wave1-dashboard-frame wave1-dashboard-frame--showcase">
             <div class="wave1-frame-header">
               <strong>Load Queue</strong>
               <span class="wave1-disclosure">Illustrative operating view</span>
@@ -117,27 +117,35 @@
                 <div class="wave1-stat"><strong>1</strong><span>Ready</span></div>
               </div>
               <div class="wave1-chart" role="img" aria-label="Illustrative route and load-status trend"></div>
+              <div class="wave1-queue-list" aria-label="Illustrative active-load queue">
+                <div class="wave1-queue-item"><b>BOF-1907</b><span>POD review before billing release</span><em>At Risk</em></div>
+                <div class="wave1-queue-item"><b>BOF-1931</b><span>Credential record blocks assignment</span><em>Blocked</em></div>
+                <div class="wave1-queue-item"><b>BOF-2064</b><span>Driver, unit, and packet ready</span><em>Ready</em></div>
+              </div>
             </div>
           </article>
-          <article class="wave1-portal-frame">
+          <article class="wave1-portal-frame wave1-portal-frame--showcase">
             <div class="wave1-frame-header">
               <strong>Selected Load - BOF-1907</strong>
               <span class="wave1-disclosure">Demo action view</span>
             </div>
             <div class="wave1-record-list">
-              <article class="wave1-record-card">
+              <article class="wave1-record-card wave1-record-card--featured">
                 <div>
                   <h3>Tulsa, OK to Kansas City, MO</h3>
                   <p>POD and renewal evidence review requires dispatcher confirmation before billing release.</p>
                 </div>
                 <span class="wave1-status wave1-status--review">At Risk</span>
               </article>
-              <div class="wave1-proof-grid">
+              <div class="wave1-proof-grid wave1-proof-grid--dense">
+                <div class="wave1-proof"><b>Status</b><span>Review before release.</span></div>
+                <div class="wave1-proof"><b>Blocker</b><span>POD and renewal evidence not aligned.</span></div>
                 <div class="wave1-proof"><b>Reason</b><span>Receiver evidence and renewal support are not aligned to the packet.</span></div>
                 <div class="wave1-proof"><b>Owner</b><span>Dispatcher / packet owner</span></div>
                 <div class="wave1-proof"><b>Clearance</b><span>Confirm POD, signed BOL, receiver evidence, and renewal evidence.</span></div>
                 <div class="wave1-proof"><b>Consequence</b><span>Settlement packet remains held until proof clears.</span></div>
               </div>
+              <a class="bof-ds2-button bof-ds2-button--primary" href="/command-center/">View the Manager Portal Demo</a>
             </div>
           </article>
         </div>

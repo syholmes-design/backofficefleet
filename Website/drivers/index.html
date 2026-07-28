@@ -122,55 +122,56 @@
         </div>
       </section>
 
-      <section class="wave1-section" id="driver-portal-preview" aria-labelledby="driver-portal-heading">
+      <section class="wave1-section wave1-section--dashboard-prominent" id="driver-portal-preview" aria-labelledby="driver-portal-heading">
         <p class="bof-ds2-eyebrow">Driver Portal Preview</p>
         <h2 id="driver-portal-heading">A focused driver workspace for work, readiness, documents, and pay context.</h2>
-        <div class="wave1-product-preview">
-          <div class="wave1-product-preview__copy">
-            <p class="wave1-section__intro">The portal view is intentionally practical: the active load, upcoming work, missing documents, compliance status, settlement history, and driver messages stay connected to the same operating record.</p>
-            <div class="wave1-proof-grid" aria-label="Driver portal capabilities">
-              <div class="wave1-proof"><b>Active load</b><span>Pickup window, assigned unit, proof requirements, and release status.</span></div>
-              <div class="wave1-proof"><b>Documents</b><span>Credential, policy, tax, and equipment records with review state.</span></div>
-              <div class="wave1-proof"><b>Settlements</b><span>Packet status, deductions, advances, and settlement visibility.</span></div>
-              <div class="wave1-proof"><b>Messages</b><span>Driver questions routed to the record owner with context attached.</span></div>
-            </div>
-          </div>
-          <div class="wave1-portal-frame wave1-portal-frame--large" aria-label="Illustrative driver portal interface">
+        <p class="wave1-section__intro">The portal view is intentionally practical: the active load, upcoming work, missing documents, compliance status, settlement history, and driver messages stay connected to the same operating record.</p>
+        <div class="wave1-product-preview wave1-product-preview--prominent">
+          <div class="wave1-portal-frame wave1-portal-frame--large wave1-portal-frame--showcase" aria-label="Illustrative driver portal interface">
             <div class="wave1-frame-header">
               <strong>Driver Portal</strong>
               <span class="wave1-disclosure">Demo environment</span>
             </div>
             <div class="wave1-record-list">
-              <article class="wave1-record-card">
+              <div class="wave1-stat-row wave1-stat-row--four">
+                <div class="wave1-stat"><strong>Ready</strong><span>Release state</span></div>
+                <div class="wave1-stat"><strong>6h 30m</strong><span>HOS available</span></div>
+                <div class="wave1-stat"><strong>2</strong><span>Open docs</span></div>
+                <div class="wave1-stat"><strong>1</strong><span>Support item</span></div>
+              </div>
+              <article class="wave1-record-card wave1-record-card--featured">
                 <div>
                   <h3>Load BOF-2064 - Birmingham to Nashville</h3>
                   <p>Assigned unit ready. Driver has 6h 30m HOS available and proof packet checklist is clear.</p>
                 </div>
                 <span class="wave1-status wave1-status--ready">Ready</span>
               </article>
-              <article class="wave1-record-card">
-                <div>
-                  <h3>Document review - medical renewal</h3>
-                  <p>Appointment proof is overdue by 6 days. Safety owner must verify before the next release.</p>
-                </div>
-                <span class="wave1-status wave1-status--review">Review</span>
-              </article>
-              <article class="wave1-record-card">
-                <div>
-                  <h3>Settlement packet - BOF-1907</h3>
-                  <p>POD and renewal evidence are waiting for confirmation before settlement packet release.</p>
-                </div>
-                <span class="wave1-status wave1-status--blocked">Hold</span>
-              </article>
-              <div class="wave1-stat-row">
-                <div class="wave1-stat"><strong>3</strong><span>Upcoming loads</span></div>
-                <div class="wave1-stat"><strong>2</strong><span>Open docs</span></div>
-                <div class="wave1-stat"><strong>1</strong><span>Support item</span></div>
+              <div class="wave1-portal-columns">
+                <article class="wave1-record-card">
+                  <div>
+                    <h3>Document review - medical renewal</h3>
+                    <p>Appointment proof is overdue by 6 days. Safety owner must verify before the next release.</p>
+                  </div>
+                  <span class="wave1-status wave1-status--review">Review</span>
+                </article>
+                <article class="wave1-record-card">
+                  <div>
+                    <h3>Settlement packet - BOF-1907</h3>
+                    <p>POD and renewal evidence are waiting for confirmation before settlement packet release.</p>
+                  </div>
+                  <span class="wave1-status wave1-status--blocked">Hold</span>
+                </article>
+              </div>
+              <div class="wave1-proof-grid" aria-label="Driver portal capabilities">
+                <div class="wave1-proof"><b>Active load</b><span>Pickup window, assigned unit, proof requirements, and release status.</span></div>
+                <div class="wave1-proof"><b>Documents</b><span>Credential, policy, tax, and equipment records with review state.</span></div>
+                <div class="wave1-proof"><b>Settlements</b><span>Packet status, deductions, advances, and settlement visibility.</span></div>
+                <div class="wave1-proof"><b>Messages</b><span>Driver questions routed to the record owner with context attached.</span></div>
               </div>
             </div>
           </div>
-          <aside class="wave1-mobile-preview" aria-label="Illustrative mobile driver portal preview">
-            <div class="wave1-mobile-preview__top">Driver Portal</div>
+          <aside class="wave1-mobile-preview wave1-mobile-preview--prominent" aria-label="Illustrative mobile driver portal preview">
+            <div class="wave1-mobile-preview__top">Driver Portal Mobile</div>
             <div class="wave1-mobile-preview__card">
               <b>Next Action</b>
               <span>Upload appointment proof</span>
@@ -183,6 +184,7 @@
               <b>Settlement</b>
               <span>Packet status visible</span>
             </div>
+                <a class="bof-ds2-button bof-ds2-button--primary" href="#driver-portal-preview">Explore the Driver Portal</a>
           </aside>
         </div>
       </section>
