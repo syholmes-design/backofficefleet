@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>BOF Customer Demo | Manager Portal</title>
+  <meta name="description" content="BOF manager portal demo showing how illustrative fleet loads move through dispatch, proof, billing readiness, financing readiness, and executive review.">
+  <meta name="robots" content="noindex,nofollow">
+  <link rel="icon" href="/assets/brand/bof-design-system-2/favicon/favicon.ico">
+  <link rel="stylesheet" href="/assets/css/customer-demo.css?v=20260728-wave2-integration1">
+</head>
+<body class="customer-demo-page">
+  <div class="portal-app" data-customer-demo-app>
+    <aside class="portal-sidebar" data-sidebar>
+      <div class="portal-sidebar-brand">
+        <img src="/assets/brand/bof-design-system-2/svg/header-lockup.svg" alt="BackOfficeFleet">
+        <div>
+          <p class="portal-sidebar-label">BackOfficeFleet</p>
+          <strong>Unified Demo</strong>
+        </div>
+      </div>
+      <button class="portal-sidebar-close" type="button" data-demo-action="toggle-sidebar">Close</button>
+      <nav class="portal-sidebar-nav" id="portal-sidebar-nav" aria-label="Portal sections" data-demo-render="sidebarNav"></nav>
+      <div class="portal-sidebar-foot">
+        <span>Demo Environment</span>
+        <div class="portal-return-links" aria-label="Demo return links">
+          <a href="/">Back to BackOfficeFleet</a>
+          <a href="/drivers/" data-demo-text="publicReturnLink">View corresponding product page</a>
+        </div>
+      </div>
+    </aside>
+
+    <div class="portal-overlay" hidden data-demo-action="close-overlay"></div>
+
+    <div class="portal-stage">
+      <header class="portal-topbar">
+        <div class="portal-topbar-main">
+          <button class="portal-menu-button" type="button" data-demo-action="toggle-sidebar" aria-controls="portal-sidebar-nav" aria-expanded="false">Menu</button>
+          <div class="portal-title-block">
+            <span class="portal-demo-disclosure">Demo Environment</span>
+            <p class="portal-eyebrow" data-demo-text="portalIdentity">BOF MANAGER PORTAL</p>
+            <h1 data-demo-text="portalTitle">Executive Overview</h1>
+            <p class="portal-subtitle" data-demo-text="portalSubtitle">Daily operating view for loads, readiness, proof, and financial posture.</p>
+          </div>
+        </div>
+        <div class="portal-topbar-meta">
+          <div class="portal-meta-chip">
+            <span>Selected scenario</span>
+            <strong data-demo-text="headerScenario">BOF-1907</strong>
+          </div>
+          <div class="portal-meta-chip">
+            <span>Active persona</span>
+            <strong data-demo-text="headerPersona">Manager</strong>
+          </div>
+          <div class="portal-meta-chip">
+            <span>Current step</span>
+            <strong data-demo-text="headerStep">Executive Review</strong>
+          </div>
+          <button class="portal-topbar-button portal-topbar-button-primary" type="button" data-demo-action="open-controls">Guided Demo</button>
+          <a class="portal-topbar-button" href="/" data-demo-text="publicReturnLink">View corresponding product page</a>
+          <a class="portal-topbar-button" href="/">Back to BackOfficeFleet</a>
+          <button class="portal-topbar-button" type="button" data-demo-action="reset-demo">Reset Demo</button>
+        </div>
+      </header>
+
+      <section class="portal-kpi-row" aria-label="Executive metrics" data-demo-render="kpiRow"></section>
+
+      <section class="portal-selected-load" data-demo-render="selectedLoad"></section>
+
+      <main class="portal-main" data-demo-render="mainView"></main>
+
+      <footer class="portal-footer">
+        <p>Interactive product demonstration using illustrative data. Production security, persistence, integrations, and customer-specific configuration are completed during implementation.</p>
+        <p><a href="/">Back to BackOfficeFleet</a> <span aria-hidden="true">/</span> <a href="/drivers/" data-demo-text="publicReturnLink">View corresponding product page</a></p>
+      </footer>
+    </div>
+
+    <aside class="portal-drawer" hidden data-drawer>
+      <div class="portal-drawer-head">
+        <div>
+          <p class="portal-eyebrow" data-demo-text="drawerEyebrow">Guided Demo</p>
+          <h2 data-demo-text="drawerTitle">Guided Demo Controls</h2>
+        </div>
+        <button class="portal-drawer-close" type="button" data-demo-action="close-drawer">Close</button>
+      </div>
+      <div class="portal-drawer-body" data-demo-render="drawerBody"></div>
+    </aside>
+  </div>
+  <script src="/assets/js/customer-demo-app.js?v=20260728-wave2-integration1"></script>
+</body>
+</html>
