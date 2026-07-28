@@ -52,12 +52,17 @@ Nothing was pushed, merged, uploaded, or deployed.
 - `docs/design-system-2/FREIGHT-BRACE-CONTENT-CLAIMS-REVIEW.md`
 - `docs/design-system-2/FREIGHT-BRACE-WAVE-1-INTEGRATION-REPORT.md`
 
+### Dashboard Actionability Review Documentation
+
+- `docs/design-system-2/WAVE-1-DASHBOARD-ACTIONABILITY-REPORT.md`
+
 ## Screenshot Review Package
 
 - `docs/design-system-2/screenshots/wave-1-owner-review/`
 - `docs/design-system-2/screenshots/freight-brace-wave-1-review/`
 - `docs/design-system-2/screenshots/wave-1-hero-composition-rebuild/`
 - `docs/design-system-2/screenshots/wave-1-dashboard-prominence-review/`
+- `docs/design-system-2/screenshots/wave-1-dashboard-actionability-review/`
 
 ## Dashboard Prominence Review Documentation
 
@@ -76,6 +81,7 @@ Nothing was pushed, merged, uploaded, or deployed.
 - DevTools-controlled 390 px mobile screenshots confirmed no horizontal overflow.
 - Dashboard prominence screenshots confirmed no horizontal overflow at 1440, 1366, 768, and 390 pixels for `/drivers/`, `/dispatch/`, `/safety/`, and `/settlements/`.
 - Targeted Microsoft Edge checks confirmed no horizontal overflow at 1280 and 1024 pixels for `/drivers/`, `/dispatch/`, `/safety/`, and `/settlements/`.
+- Dashboard actionability checks confirmed section CTAs, record-level actions, drawer Escape/focus-return behavior, Enter/Space activation, 44 px mobile action targets, and 0 horizontal overflow at 1440, 1366, 1280, 1024, 768, and 390 pixels for `/drivers/`, `/dispatch/`, `/safety/`, and `/settlements/`.
 
 ## Deployment Notes
 

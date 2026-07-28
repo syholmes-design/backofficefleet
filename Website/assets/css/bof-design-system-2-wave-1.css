@@ -823,7 +823,7 @@ body.bof-ds2-wave1 {
 }
 
 .wave1-queue-item b {
-  color: var(--bof-ds2-blue-700);
+  color: var(--bof-ds2-blue-600);
   font-size: 0.9rem;
 }
 
@@ -884,20 +884,20 @@ body.bof-ds2-wave1 {
 .wave1-action-button {
   border: 1px solid rgba(31, 124, 255, 0.34);
   background: #ffffff;
-  color: var(--bof-ds2-blue-700);
+  color: var(--bof-ds2-blue-600);
   cursor: pointer;
 }
 
 .wave1-action-link {
   border: 1px solid transparent;
   background: transparent;
-  color: var(--bof-ds2-blue-700);
+  color: var(--bof-ds2-blue-600);
 }
 
 .wave1-action-button--primary,
 .wave1-action-link--primary {
   border-color: transparent;
-  background: linear-gradient(135deg, var(--bof-ds2-blue-500), var(--bof-ds2-blue-700));
+  background: linear-gradient(135deg, var(--bof-ds2-blue-500), var(--bof-ds2-blue-600));
   color: #ffffff;
   box-shadow: 0 12px 24px rgba(31, 124, 255, 0.18);
 }

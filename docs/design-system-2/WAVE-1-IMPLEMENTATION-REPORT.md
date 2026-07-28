@@ -1,5 +1,18 @@
 # BOF Design System 2.0 Wave 1 Implementation Report
 
+## Dashboard Actionability Follow-Up - July 28, 2026
+
+- Follow-up scope: added compact section-level and record-level product actions to the approved dashboard previews on `/drivers/`, `/dispatch/`, `/safety/`, and `/settlements/`.
+- Shared action system: added DS2 compact action buttons, action links, and an accessible route-local drawer for illustrative workflows that explain blocker, owner, consequence, and clearance path without creating persistence.
+- Drivers update: the Driver Portal preview now includes `Explore the Driver Portal`, `Open Load`, `View Requirements`, `Upload Document`, `View Settlement`, `Complete Next Action`, and `Open Messages`.
+- Dispatch update: the Load Queue and Selected Load previews now include `View the Manager Portal Demo`, queue-level `Review` / `View Load` / `Open Load` actions, plus selected-load `Review Blocker`, `Open Joined Record`, and `View Proof Packet`.
+- Safety update: the Safety Portal preview now includes `Explore the Safety Portal`, credential-hold `Review Blocker`, `Open MVR`, `Upload Medical Card`, appointment-proof `Review Evidence`, and ready-gate `Open Driver Record`.
+- Settlements update: the Finance Readiness preview now includes `Explore Finance Readiness`, held-packet `Review Hold`, review-packet `Review`, ready-packet `View Breakdown`, and settlement-record `Open Settlement` / `View Proof Packet`.
+- State accuracy: held settlement packets do not show `Approve for Billing`; driver messaging is labeled as an illustrative support workflow rather than production live chat.
+- Screenshot package: `docs/design-system-2/screenshots/wave-1-dashboard-actionability-review/`.
+- Actionability report: `docs/design-system-2/WAVE-1-DASHBOARD-ACTIONABILITY-REPORT.md`.
+- Validation: JS syntax checks passed; public operations validator passed with 12 drivers, 5 loads, 4 exceptions, 0 warnings, and 0 errors; local browser checks found 0 horizontal overflow across 1440, 1366, 1280, 1024, 768, and 390 px widths.
+
 ## Dashboard Prominence Follow-Up - July 28, 2026
 
 - Follow-up scope: enlarged the portal and dashboard preview sections on `/drivers/`, `/dispatch/`, `/safety/`, and `/settlements/`.
