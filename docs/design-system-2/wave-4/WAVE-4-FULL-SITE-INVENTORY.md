@@ -61,11 +61,10 @@ The site is a static HTML/CSS/vanilla JavaScript site with no `.openai/hosting.j
 
 ## Inventory Findings To Resolve In Wave 4
 
-- `/company/`, `/contact/`, `/book-a-demo/`, `/load-readiness/`, `/network-readiness/`, `/fleet-preparedness/`, and `/resources/` are missing and should be created.
-- `/book-demo/` is an older mailto-driven page and should become a redirect or compatibility alias once `/book-a-demo/` is verified.
+- Resolved: `/company/`, `/contact/`, `/book-a-demo/`, `/load-readiness/`, `/network-readiness/`, `/fleet-preparedness/`, and `/resources/` were created in Wave 4.
+- Resolved: `/book-demo/` is now a noindex compatibility page pointing to `/book-a-demo/`.
 - Header links still include older `Company` destination patterns on some pages (`/trust-governance/`) and older `Aggregators` dropdown links (`/aggregator-outreach/`).
-- `site.js` injects an assessment dropdown that points to `/scenario-walkthrough/` query states instead of the Wave 3 `/assessment/` experience.
-- Header utility behavior currently favors sign-in/dashboard and a mailto contact icon. Wave 4 should shift public conversion toward `/book-a-demo/` and `/contact/`.
+- Resolved at runtime through `site.js`: Company links target `/company/`, older aggregator dropdown links target `/aggregators/`, the assessment dropdown targets `/assessment/`, public header CTA targets `/book-a-demo/`, and contact icon targets `/contact/`.
 - Some nested Business Operations pages include old Supabase demo script references. These are frontend demo references and must be removed from public pages touched in Wave 4; backend files must remain untouched.
-- Sitemap lacks Wave 4 routes and should continue excluding hidden demos, investor/internal routes, and assessment query states.
+- Resolved: sitemap includes Wave 4 public routes and continues excluding hidden demos, investor/internal routes, and assessment query states.
 - Redirect candidates should be documented first and implemented only where replacement pages are created and verified.

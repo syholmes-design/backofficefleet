@@ -37085,11 +37085,21 @@ body.premium-site .site-header[data-enterprise-header="true"] .nav-mobile-signin
 
 .site-footer .wave4-footer-inner {
   align-items: start;
+  background: #07101f;
+  color: #fff;
   display: grid;
   gap: 28px;
   grid-template-columns: minmax(220px, 0.8fr) minmax(0, 1.5fr);
-  max-width: var(--max);
-  padding: 34px 24px;
+  max-width: none;
+  padding: 34px max(24px, calc((100vw - var(--max)) / 2));
+  width: 100%;
+}
+
+body .site-footer:has(.wave4-footer-inner) {
+  background: #07101f;
+  border-top: 1px solid rgba(255, 179, 0, 0.28);
+  color: #fff;
+  padding: 0;
 }
 
 .wave4-footer-brand {
@@ -37123,7 +37133,9 @@ body.premium-site .site-header[data-enterprise-header="true"] .nav-mobile-signin
 
 .wave4-footer-links a {
   color: rgba(255, 255, 255, 0.82);
+  display: inline-flex;
   line-height: 1.25;
+  min-height: 34px;
 }
 
 .wave4-footer-links a:hover,

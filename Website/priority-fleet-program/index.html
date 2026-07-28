@@ -9,20 +9,30 @@
   <meta property="og:url" content="https://backofficefleet.com/priority-fleet-program/">
   <meta property="og:title" content="Priority Fleet Program | BackOfficeFleet">
   <meta property="og:description" content="A public program for qualified fleet operators ready to collaborate on readiness, workflow configuration, and implementation planning.">
-  <link rel="stylesheet" href="/assets/css/styles.css?v=20260728-wave4-owner-review1">
+  <link rel="stylesheet" href="/assets/css/styles.css?v=20260728-wave4-owner-review3">
 </head>
-<body class="bof-wave3 page-wave3-priority-fleet">
-  <header class="wave3-header">
-    <a class="wave3-brand" href="/" aria-label="BackOfficeFleet home"><img src="/assets/brand/bof-design-system-2/svg/header-lockup.svg" alt="BackOfficeFleet"></a>
-    <nav class="wave3-nav" aria-label="Primary navigation">
-      <a href="/who-we-serve/">Who We Serve</a>
-      <a href="/aggregators/">Aggregators</a>
-      <a href="/private-fleets/">Private Fleets</a>
-      <a href="/for-hire-fleets/">For-Hire Fleets</a>
-      <a href="/government/">Government</a>
-      <a href="/assessment/">Assessment</a>
+<body class="bof-wave3 premium-site page-wave3-priority-fleet">
+  <header class="site-header">
+    <a class="brand" href="/" aria-label="BackOfficeFleet home"><img src="/assets/images/logo/boflogo-original.png" alt="BackOfficeFleet"></a>
+    <button class="nav-toggle" type="button" data-nav-toggle aria-expanded="false" aria-label="Toggle navigation">&#9776;</button>
+    <nav class="site-nav" data-nav aria-label="Main navigation">
+      <div class="nav-menu" data-nav-menu>
+        <button class="nav-menu-toggle" type="button" data-nav-menu-toggle aria-expanded="false" aria-haspopup="true">Who We Serve</button>
+        <div class="nav-dropdown" aria-label="Who We Serve">
+          <a href="/private-fleets/">Private Fleets</a>
+          <a href="/government/">Government Fleets</a>
+          <a href="/aggregators/">Aggregators</a>
+        </div>
+      </div>
+      <a href="/drivers/">Drivers</a>
+      <a href="/dispatch/">Dispatch &amp; Operations</a>
+      <a href="/safety/">Safety &amp; Compliance</a>
+      <a href="/settlements/">Settlements &amp; Billing</a>
+      <a href="/business-operations/">Business Operations</a>
+      <a href="/policies-procedures/">Policies &amp; Procedures</a>
+      <a href="/company/">Company</a>
     </nav>
-    <a class="wave3-header__cta" href="/assessment/">Start Assessment</a>
+    <a class="header-cta" href="/book-a-demo/">Request a Demo</a>
   </header>
 
   <main>
@@ -104,12 +114,26 @@
         <p class="wave3-eyebrow">Apply or schedule a review</p>
         <h2 id="program-apply-heading">Start with the readiness assessment, then request Priority Fleet consideration.</h2>
         <p>Use the assessment to surface your current gaps. BOF can then review whether Priority Fleet consideration is a fit for your operating model and implementation readiness.</p>
-        <div class="wave3-actions"><a class="wave3-button wave3-button--primary" href="/assessment/?type=private-fleet">Start Private Fleet Assessment</a><a class="wave3-button wave3-button--secondary" href="/assessment/?type=for-hire-fleet">Start For-Hire Fleet Assessment</a><a class="wave3-button wave3-button--secondary" href="/book-demo/">Schedule a Readiness Review</a></div>
+        <form class="wave4-form" data-wave4-form data-form-name="Priority Fleet consideration request" novalidate>
+          <div class="wave4-form-grid">
+            <label>Full name <input name="name" autocomplete="name" required></label>
+            <label>Organization <input name="organization" autocomplete="organization" required></label>
+            <label>Work email <input name="email" type="email" autocomplete="email" required></label>
+            <label>Fleet type <select name="fleet_type" required><option value="">Choose one</option><option>Private fleet</option><option>For-hire fleet</option><option>Aggregator or network</option><option>Government or public fleet</option><option>Other</option></select></label>
+          </div>
+          <label>Which operating gap should BOF review first?
+            <textarea name="message" rows="5" required></textarea>
+          </label>
+          <p class="wave4-form-note">Submission wiring is pending secure backend approval. This button validates the request for review and does not transmit data.</p>
+          <button class="button primary" type="submit">Review Priority Fleet Request</button>
+          <div class="wave4-form-status" data-form-status role="status" aria-live="polite"></div>
+        </form>
+        <div class="wave3-actions"><a class="wave3-button wave3-button--primary" href="/assessment/?type=private-fleet">Start Private Fleet Assessment</a><a class="wave3-button wave3-button--secondary" href="/assessment/?type=for-hire-fleet">Start For-Hire Fleet Assessment</a><a class="wave3-button wave3-button--secondary" href="/book-a-demo/">Request a Readiness Review</a></div>
       </div>
     </section>
   </main>
 
-  <footer class="wave3-footer"><strong>BackOfficeFleet</strong><span>Priority Fleet consideration is subject to fit and BOF approval.</span><a href="/trust-governance/">Trust &amp; Governance</a></footer>
-  <script src="/assets/js/site.js?v=20260728-wave4-owner-review1"></script>
+  <footer class="site-footer"><div class="footer-inner"><strong>BackOfficeFleet</strong><span>Priority Fleet consideration is subject to fit and BOF approval.</span><a href="/company/">Company</a></div></footer>
+  <script src="/assets/js/site.js?v=20260728-wave4-owner-review3"></script>
 </body>
 </html>
