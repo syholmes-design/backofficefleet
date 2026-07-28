@@ -3,21 +3,20 @@
 ## Source And Output
 
 - Canonical clean source: `Website/assets/images/design-system-2/wave-2/ds2-policies-governance-hero-clean.png`
-- Derived production asset: `Website/assets/images/design-system-2/wave-2/ds2-policies-governance-hero-labeled.png`
-- Reproducible script: `tools/design-system-2/create_policies_hero_labels.py`
-- Image dimensions: `1763 x 892`
-- Output file size: `1,590,016 bytes`
+- Live implementation: HTML in `Website/policies-procedures/index.html`
+- Live styling: CSS in `Website/assets/css/bof-design-system-2-wave-1.css`
 
-The clean source asset remains preserved and is not edited destructively.
+The clean source asset remains preserved and is not edited destructively. The previous derived labeled image remains in the repository history/assets for reference, but the live public Policies hero uses editable HTML/CSS overlay labels instead of baked raster text.
 
 ## Labels Used
 
-| Label | Coordinates | Rotation | Font size | Treatment |
-| --- | ---: | ---: | ---: | --- |
-| Safety & Compliance Manual | `(930, 354)` | `1.0deg` | `28px` | Segoe UI Bold, low-contrast silver-blue, soft embossed shadow/highlight |
-| Driver Qualification Policy | `(875, 488)` | `1.0deg` | `29px` | Segoe UI Bold, low-contrast silver-blue, soft embossed shadow/highlight |
-| Hours-of-Service Procedures | `(815, 607)` | `1.0deg` | `29px` | Segoe UI Bold, low-contrast silver-blue, soft embossed shadow/highlight |
-| Cargo Securement Policy | `(805, 724)` | `1.0deg` | `29px` | Segoe UI Bold, low-contrast silver-blue, soft embossed shadow/highlight |
+| Label | CSS selector | Treatment |
+| --- | --- | --- |
+| HR Manual | `.policy-hero-spine-label--hr` | Low-contrast silver-blue, perspective/skew transform, soft shadow |
+| Accounting Policies | `.policy-hero-spine-label--accounting` | Low-contrast silver-blue, perspective/skew transform, soft shadow |
+| Safety & Compliance | `.policy-hero-spine-label--safety` | Low-contrast silver-blue, perspective/skew transform, soft shadow |
+| Business Operations | `.policy-hero-spine-label--business` | Low-contrast silver-blue, perspective/skew transform, soft shadow |
+| IT Governance | `.policy-hero-spine-label--it` | Low-contrast silver-blue, perspective/skew transform, soft shadow |
 
 ## Visual Rules
 
@@ -25,10 +24,9 @@ The clean source asset remains preserved and is not edited destructively.
 - No label is placed on the open notebook.
 - No main hero headline, BOF logo, navigation, button, or dashboard element is baked into the image.
 - The label color is intentionally restrained so the live HTML hero headline remains the primary text.
-- The slight rotation follows the spine perspective without introducing artificial glow.
-- The live Policies page references the derived labeled asset.
+- The perspective/skew transform follows the spine direction without introducing artificial glow.
+- The live Policies page references the clean hero image and renders labels as an overlay.
 
 ## Mobile Treatment
 
-The labeled asset uses the existing Wave 2 mobile crop position: `70% top`. If owner review finds the labels too subtle or too cropped on narrow screens, the preserved clean source can be reintroduced for mobile through a dedicated mobile-image CSS variable or media-query override.
-
+The label overlay is hidden below the 920px breakpoint. The mobile hero keeps the existing Wave 2 mobile crop position: `70% top`, avoiding cropped or floating labels on narrow screens.

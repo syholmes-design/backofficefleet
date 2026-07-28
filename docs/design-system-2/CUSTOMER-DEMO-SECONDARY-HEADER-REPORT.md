@@ -24,14 +24,14 @@ The implementation also adds Business Operations to the demo route at `/customer
 
 The unified customer demo now opens with page identity instead of generic KPI cards, while still keeping the first dashboard section visible near the fold. The owner-approved reference intent is preserved: BOF Vault reads as secure document archive, Policy Governance reads as controlled manuals/governance, and Business Operations reads as an administrative control center without borrowing public-page hero art.
 
-The public Policies & Procedures hero was returned to the clean text-free `ds2-policies-governance-hero-clean.png` asset. The prior labeled derivative remains in the worktree history/assets, but it is not used as the public hero because the text-free clean image is safer and more faithful to the current instruction set.
+The public Policies & Procedures hero uses the clean `ds2-policies-governance-hero-clean.png` asset with live HTML/CSS book-spine labels over the visible manuals. The prior labeled derivative remains in the worktree history/assets, but it is not used as the public hero because the current overlay approach keeps the source image clean while allowing owner-directed policy names to remain editable.
 
 ## Recommendations
 
 - Use the saved screenshot set for owner review before any deployment decision.
 - Keep future portal backgrounds text-free; add any labels as HTML only when the perspective and accessibility can be maintained.
 - Keep the Business Operations compact-header asset scoped to the demo unless the owner explicitly approves a public hero replacement later.
-- If the public hero system is revisited, evaluate Policies labels as perspective-aware overlays rather than raster text baked into the photograph.
+- Keep the public Policies labels as perspective-aware HTML/CSS overlays rather than raster text baked into the photograph.
 
 ## Appendix
 

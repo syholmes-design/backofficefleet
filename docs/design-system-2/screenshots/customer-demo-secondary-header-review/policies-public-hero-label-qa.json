@@ -1,0 +1,33 @@
+{
+  "desktop": {
+    "labels": [
+      {
+        "text": "HR Manual",
+        "display": "block"
+      },
+      {
+        "text": "Accounting Policies",
+        "display": "block"
+      },
+      {
+        "text": "Safety & Compliance",
+        "display": "block"
+      },
+      {
+        "text": "Business Operations",
+        "display": "block"
+      },
+      {
+        "text": "IT Governance",
+        "display": "block"
+      }
+    ],
+    "hasPolicyDemoLink": true,
+    "overflow": 0
+  },
+  "mobile": {
+    "labelContainerDisplay": "none",
+    "overflow": 0
+  },
+  "consoleErrors": []
+}

@@ -33,7 +33,7 @@ Production destination:
 - The seven backgrounds are used only as clean background photography.
 - No flattened screenshot or stacked reference sheet was sliced into production.
 - All visible interface copy is rendered as HTML/CSS by the customer demo app.
-- Policy Governance book spines remain text-free in production.
+- Policy Governance secondary-header backgrounds remain text-free; the public Policies hero adds owner-requested book-spine names as live HTML/CSS overlay text.
 - BOF Vault uses the clean vault/archive background and keeps access-control language in HTML.
 - Business Operations uses the new compact demo background only; the public Business Operations hero remains unchanged.
 
