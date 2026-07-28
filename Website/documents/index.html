@@ -3,285 +3,213 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Document Control | BackOfficeFleet</title>
-  <meta name="description" content="BOF document control for TMS imported loads, release packets, driver records, carrier packet status, and review-ready transportation paperwork.">
-  <link rel="stylesheet" href="/assets/css/styles.css?v=20260721-enterprise-header-fit5">
+  <title>Every Document. Visible and Controlled. | BackOfficeFleet</title>
+  <meta name="description" content="BOF document control brings intake, classification, review, expiration, version history, access, and release into one accountable operating record.">
+  <link rel="icon" href="/assets/brand/bof-design-system-2/favicon/favicon.ico">
+  <link rel="stylesheet" href="/assets/css/bof-design-system-2-wave-1.css">
 </head>
-<body>
-  <header class="site-header">
-    <a class="brand" href="/" aria-label="BackOfficeFleet home"><img src="/assets/images/logo/boflogo-original.png" alt="BackOfficeFleet"></a>
-    <button class="nav-toggle" type="button" data-nav-toggle aria-expanded="false" aria-label="Toggle navigation">&#9776;</button>
-        <nav class="site-nav" data-nav aria-label="Main navigation">
-      <div class="nav-menu" data-nav-menu>
-        <button class="nav-menu-toggle" type="button" data-nav-menu-toggle aria-expanded="false" aria-haspopup="true">Who We Serve</button>
-        <div class="nav-dropdown" aria-label="Who We Serve">
-          <a href="/private-fleets/">Private Fleets</a>
-          <a href="/government/">Government Fleets</a>
-          <a href="/aggregator-outreach/">Aggregators</a>
+<body class="bof-ds2-wave1 bof-ds2-wave2 page-wave2-documents">
+  <div class="bof-ds2-shell">
+    <header class="bof-ds2-header" data-menu-open="false">
+      <div class="bof-ds2-header__inner">
+        <a class="bof-ds2-brand" href="/" aria-label="BackOfficeFleet home">
+          <img src="/assets/brand/bof-design-system-2/svg/header-lockup.svg" alt="BackOfficeFleet">
+        </a>
+        <nav class="bof-ds2-nav" aria-label="Primary navigation">
+          <a href="/private-fleets/">Who We Serve</a>
+          <a href="/drivers/">Drivers</a>
+          <a href="/dispatch/">Dispatch &amp; Operations</a>
+          <a href="/safety/">Safety &amp; Compliance</a>
+          <a href="/settlements/">Settlements &amp; Billing</a>
+          <a href="/business-operations/">Business Operations</a>
+          <a href="/policies-procedures/">Policies &amp; Procedures</a>
+          <a href="/trust-governance/">Company</a>
+        </nav>
+        <div class="bof-ds2-header__actions">
+          <a class="bof-ds2-button bof-ds2-button--gold-outline" href="/book-demo/">Book a Demo</a>
         </div>
+        <button class="bof-ds2-menu-button" type="button" data-bof-ds2-menu aria-expanded="false" aria-label="Open navigation">
+          <svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none">
+            <path d="M4 7h16M4 12h16M4 17h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+        </button>
       </div>
-      <a href="/drivers/">Drivers</a>
-      <a href="/dispatch/">Dispatch &amp; Operations</a>
-      <a href="/safety/">Safety &amp; Compliance</a>
-      <a href="/settlements/">Settlements &amp; Billing</a>
-      <a href="/business-operations/">Business Operations</a>
-      <a href="/policies-procedures/">Policies &amp; Procedures</a>
-      <a href="/trust-governance/">Company</a>
-    </nav>
-    <a class="header-cta" href="/dashboard/">Sign In</a>
-  </header>
-  <main>
-    <section class="section page-hero">
-      <div class="reveal"><p class="eyebrow">Document control</p><h1>BOF turns TMS load documents into release evidence.</h1><p>BOF keeps imported and BOF-owned paperwork readable and tied to the decision: status, dates, reviewer fields, signatures, and the load each record affects. <a class="proof-link" href="/command-center/issue/?case=tms-10482-release-review">TMS-LD-10482</a> shows how a trip release packet, driver file, carrier packet, BOL review, and future delivery proof support one dispatch decision.</p><div class="actions"><a class="button primary" href="#operations-file-cabinet">Open operations file cabinet &rarr;</a><a class="button secondary" href="/interactive-demo/drivers/document-intake/">Open BOF Vault Intake</a><a class="button secondary" href="/carriers/">Open Carrier Registry</a><a class="button secondary" href="/command-center/issue/?case=tms-10482-release-review">Open release issue</a></div></div>
-      <div class="visual-stage reveal" aria-label="BOF document-control illustration">
-        <img class="scene-illustration" src="/assets/images/animations/heroes/hero-documents-control.webp" data-static-src="/assets/images/illustrations/document-control-illustration.webp" alt="Operations team reviewing organized fleet document folders, record status, and approval panels">
-        <div class="scene-label"><span>Document records</span><strong>Readable detail</strong></div>
-        <div class="proof-strip"><span>Docs</span><span>Status</span><span>Owner</span></div>
-      </div>
-    </section>
+    </header>
 
-    <section class="section operations-file-cabinet-section" id="operations-file-cabinet">
-      <div class="section-head reveal">
-        <p class="eyebrow">Operations file cabinet</p>
-        <h2>Document control has to cover the whole fleet office, not only one load packet.</h2>
-        <p>The strongest BOF document story combines the current joined-record model with a practical file cabinet: driver files, load documents, insurance, claims, contracts, finance, HR, training, and policies all stay organized by purpose, owner, consequence, and clearance path.</p>
-      </div>
-      <div class="file-cabinet-grid">
-        <a class="file-cabinet-card reveal" href="/drivers/"><span>DQF</span><h3>Driver Qualification Files</h3><p>Application, CDL, MVR, medical card, prior employment, policy acknowledgments, and active-duty readiness.</p><strong>Open driver records &rarr;</strong></a>
-        <a class="file-cabinet-card reveal" href="/business-operations/hr-tier/"><span>DRV+</span><h3>Secondary Driver Documents</h3><p>Training, onboarding, payroll setup, benefits, contractor classification, reimbursement, and leave or work-status records.</p><strong>Open HR records &rarr;</strong></a>
-        <a class="file-cabinet-card reveal" href="/interactive-demo/drivers/document-intake/"><span>VAULT</span><h3>BOF Vault Intake Workbench</h3><p>Document batch intake, classification, driver and carrier matching, readiness rules, exception routing, and onboarding profile creation.</p><strong>Open BOF Vault &rarr;</strong></a>
-        <a class="file-cabinet-card reveal" href="/carriers/"><span>CAR</span><h3>Carrier Registry</h3><p>Authority, insurance, W-9, agreement, ACH/payment setup, lane rules, equipment fit, and carrier clearance paths.</p><strong>Open carrier registry &rarr;</strong></a>
-        <a class="file-cabinet-card reveal" href="/dispatch/load-intake/"><span>LOAD</span><h3>Dispatch &amp; Load Operations</h3><p>Load intake, rate confirmation, BOL, pickup/delivery instructions, release notes, and shipper proof requirements.</p><strong>Open load workbench &rarr;</strong></a>
-        <a class="file-cabinet-card reveal" href="/safety/"><span>SAFE</span><h3>Safety / Claims / Insurance</h3><p>Insurance evidence, pre-trip proof, cargo photos, claim notice, incident record, corrective action, and safety clearance.</p><strong>Open safety records &rarr;</strong></a>
-        <a class="file-cabinet-card reveal" href="/assets/documents/file-cabinet/sample-master-services-agreement.pdf" target="_blank" rel="noopener"><span>LEGAL</span><h3>Contracts / Customer / Legal</h3><p>Sample master services agreement, customer terms, insurance notices, release authority, and contract-support documents.</p><strong>Open sample agreement &rarr;</strong></a>
-        <a class="file-cabinet-card reveal" href="/policies-procedures/#policy-documents"><span>SOP</span><h3>Policies &amp; SOPs</h3><p>Current BOF policy PDFs, operating procedures, version owner, effective date, review state, and evidence link.</p><strong>Open policy PDFs &rarr;</strong></a>
-        <a class="file-cabinet-card reveal" href="/settlements/"><span>FIN</span><h3>Finance / Settlements / Back Office</h3><p>Billing packets, invoice support, AR aging, AP approval, factoring context, pay calculations, and settlement holds.</p><strong>Open settlements &rarr;</strong></a>
-        <a class="file-cabinet-card reveal" href="/business-operations/hr-tier/talent-management/"><span>TRN</span><h3>Training &amp; Knowledge Base</h3><p>Role training, policy acknowledgment, coaching notes, renewal reminders, and proof that the rule was actually received.</p><strong>Open training records &rarr;</strong></a>
-        <a class="file-cabinet-card reveal" href="/business-operations/hr-tier/recruiting-onboarding/"><span>HR</span><h3>HR / Talent / Performance</h3><p>Recruiting pipeline, onboarding, employee relations, compensation, benefits, development, and operating follow-up.</p><strong>Open recruiting pipeline &rarr;</strong></a>
-      </div>
-    </section>
+    <main>
+      <section class="wave1-hero wave2-hero wave1-hero--subject-clear" aria-label="Fleet operations staff reviewing document records in an operational freight environment" style="--wave1-hero-image: url('/assets/images/animations/heroes/hero-documents-control.webp'); --wave1-hero-position: center; --wave1-hero-mobile-position: 72% top;">
+        <div class="wave1-hero__inner">
+          <div class="wave1-hero__copy">
+            <p class="bof-ds2-eyebrow">Document Control</p>
+            <h1>Every Document. Visible and Controlled.</h1>
+            <p>Bring intake, classification, review, expiration, version history, access, and release into one accountable record.</p>
+            <div class="bof-ds2-actions">
+              <a class="bof-ds2-button bof-ds2-button--primary" href="#documents-portal-preview">Explore Document Control</a>
+              <a class="bof-ds2-button" href="#document-workflow">See the Document Workflow</a>
+            </div>
+          </div>
+        </div>
+      </section>
 
-    <section class="section featured-artifacts-section" id="featured-artifacts">
-      <div class="section-head reveal">
-        <p class="eyebrow">Featured sample artifacts</p>
-        <h2>Bring forward the old demo's strongest proof: actual documents a fleet office would recognize.</h2>
-        <p>These sample artifacts are now local to the current BOF site. They add breadth to the file cabinet while the current page keeps the newer BOF discipline: every document should connect to a record, owner, status, and operating consequence.</p>
-      </div>
-      <div class="featured-artifact-grid">
-        <article class="featured-artifact-card reveal">
-          <span>Contract sample</span>
-          <h3>Master Services Agreement</h3>
-          <p>Shows how contract/customer/legal records can live beside load, insurance, proof, and release decisions.</p>
-          <a class="button secondary" href="/assets/documents/file-cabinet/sample-master-services-agreement.pdf" target="_blank" rel="noopener">Open PDF</a>
-        </article>
-        <article class="featured-artifact-card reveal">
-          <span>Insurance sample</span>
-          <h3>Insurance Notice Letter</h3>
-          <p>Shows how insurance notice, claim context, owner follow-up, and customer communication can be retained as evidence.</p>
-          <a class="button secondary" href="/assets/documents/file-cabinet/sample-insurance-notice-letter.html" target="_blank" rel="noopener">Open notice</a>
-        </article>
-        <article class="featured-artifact-card reveal">
-          <span>Claims SOP sample</span>
-          <h3>Claims, Proof Packet &amp; Insurance Escalation SOP</h3>
-          <p>Shows the bridge between a written operating rule, proof packet requirements, claims escalation, and settlement impact.</p>
-          <a class="button secondary" href="/assets/documents/file-cabinet/sample-claims-proof-packet-insurance-escalation-sop.pdf" target="_blank" rel="noopener">Open SOP</a>
-        </article>
-      </div>
-    </section>
+      <section class="wave1-proof-rail wave1-proof-rail--attached" aria-label="Document control proof summary">
+        <div class="wave1-proof-rail__inner">
+          <div class="wave1-proof-rail__identity">
+            <span class="wave1-proof-rail__icon" aria-hidden="true">
+              <svg width="34" height="34" viewBox="0 0 24 24" fill="none">
+                <path d="M7 3h7l4 4v14H7z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+                <path d="M14 3v5h5M9 12h6M9 16h6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+              </svg>
+            </span>
+            <div class="wave1-proof-rail__label">
+              <p class="bof-ds2-eyebrow">Document Control</p>
+              <span>Every file shows type, owner, state, evidence, and next action.</span>
+            </div>
+          </div>
+          <div class="wave1-proof-rail__metrics">
+            <div class="wave1-proof-rail__metric"><strong>42</strong><span>Active Documents</span><small>Visible records</small></div>
+            <div class="wave1-proof-rail__metric"><strong>7</strong><span>Need Review</span><small>Owner assigned</small></div>
+            <div class="wave1-proof-rail__metric"><strong>5</strong><span>Expiring Soon</span><small>Renewal watch</small></div>
+          </div>
+          <p class="wave1-proof-rail__disclosure">Illustrative demo data.</p>
+        </div>
+      </section>
 
-    <section class="section">
-      <div class="proof-grid">
-        <article class="proof-card reveal"><h3>Imported packet</h3><p><a class="proof-link" href="/operations-record/#bof-1842">TMS-LD-10482</a> collects the TMS load, driver, carrier, pickup instructions, rate confirmation, BOL review, and owner action.</p></article>
-        <article class="proof-card reveal"><h3>Ready records</h3><p><a class="proof-link" href="/operations-record/#rate-confirmation-1842">Rate confirmation</a>, <a class="proof-link" href="/operations-record/#medical-card-2048">driver medical status</a>, and <a class="proof-link" href="/operations-record/#insurance-118">carrier insurance</a> are current.</p></article>
-        <article class="proof-card reveal"><h3>Record to confirm</h3><p><a class="proof-link" href="/operations-record/#bol-review-1842">BOL-10482-IMG-02</a> needs S. Turner&apos;s confirmation before the release packet moves.</p></article>
-        <article class="proof-card reveal"><h3>Document consequence</h3><p><a class="proof-link" href="/operations-record/#dispatch-release-1842">The release note</a> explains whether <a class="proof-link" href="/operations-record/#bof-1842">TMS-LD-10482</a> can move or must stay in review.</p></article>
-      </div>
-    </section>
-    <section class="section">
-      <div class="section-head reveal"><p class="eyebrow">Document view</p><h2>The right records stay connected to the TMS release decision.</h2><p>Document control stays focused: what TMS provides, what BOF must review, which load it affects, who owns the next action, and what appears in the simulated handoff.</p></div>
-      <div class="doc-list">
-        <article class="doc reveal"><span class="icon">&#10003;</span><div><h3><a class="proof-link" href="/operations-record/#drv-2048">Driver qualification file</a></h3><p class="doc-owner">M. Alvarez &middot; <a class="proof-link" href="/operations-record/#drv-2048">DRV-2048</a></p><p>Application, CDL, MVR, prior employment, medical card, and policy acknowledgements are aligned for <a class="proof-link" href="/operations-record/#bof-1842">TMS-LD-10482</a>.</p></div><span class="status ready">Ready</span></article>
-        <article class="doc reveal"><span class="icon">!</span><div><h3><a class="proof-link" href="/operations-record/#bof-1842">Trip release packet</a></h3><p class="doc-owner">Load <a class="proof-link" href="/operations-record/#bof-1842">TMS-LD-10482</a></p><p>Rate confirmation is attached; BOL image is pending S. Turner&apos;s review before release.</p></div><span class="status review">Needs review</span></article>
-        <article class="doc reveal"><span class="icon">&#9201;</span><div><h3><a class="proof-link" href="/operations-record/#insurance-118">Carrier insurance certificate</a></h3><p class="doc-owner">Northline Freight &middot; <a class="proof-link" href="/operations-record/#car-118">CAR-118</a></p><p>Auto liability and cargo coverage are current; certificate holder is confirmed for release review.</p></div><span class="status ready">Ready</span></article>
-        <article class="doc reveal"><span class="icon">B</span><div><h3><a class="proof-link" href="/operations-record/#bol-review-1907">BOL photo review</a></h3><p class="doc-owner"><a class="proof-link" href="/operations-record/#bof-1907">BOF-1907</a></p><p>Photo is attached but still needs dispatcher confirmation before the watch status clears for the Kansas City lane.</p></div><span class="status watch">Watch</span></article>
-      </div>
-    </section>
-    <section class="section">
-      <div class="paper-stack">
-        <div class="paper reveal">
-          <h3><a class="proof-link" href="/operations-record/#bof-1842">Trip Release Packet &middot; TMS-LD-10482</a></h3>
-          <div class="paper-grid">
-            <div class="field"><span>Lane</span><strong>Dallas, TX to Memphis, TN</strong></div>
-            <div class="field"><span>Driver</span><strong>M. Alvarez &middot; <a class="proof-link" href="/operations-record/#drv-2048">DRV-2048</a></strong></div>
-            <div class="field"><span>Carrier</span><strong>Northline Freight &middot; <a class="proof-link" href="/operations-record/#car-118">CAR-118</a></strong></div>
-            <div class="field"><span>Pickup</span><strong>Jun 9, 2026 &middot; 08:30 CT</strong></div>
-            <div class="field"><span>Release status</span><strong>Review pending BOF-RR-10482 readiness decision</strong></div>
-            <div class="field"><span>Owner</span><strong>Dispatch review &middot; S. Turner</strong></div>
-          </div>
-          <h4>Required release checklist</h4>
-          <div class="paper-grid">
-            <div class="field"><span>Rate confirmation</span><strong><a class="proof-link" href="/operations-record/#rate-confirmation-1842">Attached &middot; RC-10482-DAL-MEM</a></strong></div>
-            <div class="field"><span>Bill of lading</span><strong><a class="proof-link" href="/operations-record/#bol-review-1842">Image received &middot; needs review</a></strong></div>
-            <div class="field"><span>Driver file</span><strong><a class="proof-link" href="/operations-record/#medical-card-2048">Current DQF &middot; medical card valid</a></strong></div>
-            <div class="field"><span>Carrier packet</span><strong><a class="proof-link" href="/operations-record/#insurance-118">Authority and insurance current</a></strong></div>
-          </div>
-          <div class="paper-note">Sensitive tax, banking, accounting, and claims details stay protected during the first review; the release decision still shows the records a fleet team needs.</div>
-          <div class="signature-row"><div class="signature">Dispatcher signature</div><div class="signature">Operations approval</div><div class="stamp">Review</div></div>
+      <section class="wave1-capability-section" aria-labelledby="document-capability-heading">
+        <h2 id="document-capability-heading" class="wave1-visually-hidden">Document control capabilities</h2>
+        <div class="wave1-benefit-grid wave1-benefit-grid--reference">
+          <article class="wave1-card wave1-card--capability"><span class="wave1-card__icon">01</span><h3>Structured Intake</h3><p>Receive CDL, medical certificate, MVR, insurance, W-9, I-9, BOL, POD, lumper receipt, rate confirmation, invoice, and inspection evidence with the source and reason intact.</p><span class="wave1-card__arrow" aria-hidden="true">-&gt;</span></article>
+          <article class="wave1-card wave1-card--capability"><span class="wave1-card__icon">02</span><h3>Classification &amp; Ownership</h3><p>Classify each file by document type, driver or record owner, workflow affected, access level, and reviewer responsibility.</p><span class="wave1-card__arrow" aria-hidden="true">-&gt;</span></article>
+          <article class="wave1-card wave1-card--capability"><span class="wave1-card__icon">03</span><h3>Version &amp; Expiration Control</h3><p>Track current, superseded, expiring, rejected, and ready-for-release versions without deleting historical evidence.</p><span class="wave1-card__arrow" aria-hidden="true">-&gt;</span></article>
+          <article class="wave1-card wave1-card--capability"><span class="wave1-card__icon">04</span><h3>Review &amp; Release</h3><p>Keep review, approval, rejection, release, exception notes, and audit history tied to the same operating record.</p><span class="wave1-card__arrow" aria-hidden="true">-&gt;</span></article>
         </div>
-        <div class="paper reveal">
-          <h3><a class="proof-link" href="/operations-record/#drv-2048">Driver Qualification File Summary &middot; DRV-2048</a></h3>
-          <div class="paper-grid">
-            <div class="field"><span>Driver</span><strong>M. Alvarez</strong></div>
-            <div class="field"><span>CDL class</span><strong>Class A &middot; TX &middot; current</strong></div>
-            <div class="field"><span>Medical card</span><strong><a class="proof-link" href="/operations-record/#medical-card-2048">Valid through Aug 18, 2026</a></strong></div>
-            <div class="field"><span>MVR review</span><strong>Reviewed Jun 2, 2026 by safety lead</strong></div>
-            <div class="field"><span>Policy acknowledgements</span><strong>Safety, ELD, drug and alcohol policy on file</strong></div>
-            <div class="field"><span>Dispatch eligibility</span><strong>Eligible for <a class="proof-link" href="/operations-record/#bof-1842">TMS-LD-10482</a></strong></div>
-          </div>
-          <div class="signature-row"><div class="signature">Safety reviewer</div><div class="signature">Driver acknowledgement</div><div class="stamp">Ready</div></div>
+      </section>
+
+      <section class="wave1-section wave1-section--dashboard-prominent wave2-portal-section" id="documents-portal-preview" aria-labelledby="documents-preview-heading">
+        <p class="bof-ds2-eyebrow">Document Control Portal</p>
+        <div class="wave1-section-heading-row">
+          <h2 id="documents-preview-heading">A readable control room for uploads, review states, versions, access, and release actions.</h2>
+          <a class="bof-ds2-button bof-ds2-button--primary" href="#documents-portal-preview">Explore Document Control</a>
         </div>
-        <div class="paper reveal">
-          <h3><a class="proof-link" href="/operations-record/#car-118">Carrier Packet Release Summary &middot; CAR-118</a></h3>
-          <div class="paper-grid">
-            <div class="field"><span>Carrier</span><strong>Northline Freight</strong></div>
-            <div class="field"><span>Authority</span><strong>Active &middot; verified Jun 5, 2026</strong></div>
-            <div class="field"><span>Auto liability</span><strong><a class="proof-link" href="/operations-record/#insurance-118">Current &middot; certificate on file</a></strong></div>
-            <div class="field"><span>Cargo coverage</span><strong><a class="proof-link" href="/operations-record/#insurance-118">Current &middot; certificate on file</a></strong></div>
-            <div class="field"><span>W-9 / agreement</span><strong><a class="proof-link" href="/operations-record/#carrier-agreement-118">Present &middot; sensitive fields masked</a></strong></div>
-            <div class="field"><span>Dispatch impact</span><strong>Eligible for <a class="proof-link" href="/operations-record/#bof-1842">TMS-LD-10482</a> release review</strong></div>
+        <p class="wave1-section__intro">The portal contains the dashboard: synthetic document records, status labels with text, reviewer ownership, expiration dates, access level, next action, and record-level controls.</p>
+        <div class="wave2-portal-frame" aria-label="Illustrative document control dashboard">
+          <div class="wave1-frame-header">
+            <strong>Document Control Portal</strong>
+            <span class="wave1-disclosure">Demo environment</span>
           </div>
-          <div class="signature-row"><div class="signature">Carrier ops review</div><div class="signature">Release packet review</div><div class="stamp">Ready</div></div>
-        </div>
-      </div>
-    </section>
-    <section class="section">
-      <div class="section-head reveal"><p class="eyebrow">Watch and hold packets</p><h2>The document view also shows why some work waits.</h2><p>A serious back-office review should not only show the clean case. BOF keeps the watch item and the hold item readable too, so dispatch can see the exact record that changes the decision.</p></div>
-      <div class="paper-stack">
-        <div class="paper reveal">
-          <div class="document-status-line">
-            <span class="status watch">Watch</span>
-            <span>Document review packet</span>
-            <span>Open Jun 5, 2026 11:10 CT</span>
+          <div class="wave1-stat-row wave1-stat-row--four">
+            <div class="wave1-stat"><strong>42</strong><span>Recent uploads</span></div>
+            <div class="wave1-stat"><strong>7</strong><span>Need review</span></div>
+            <div class="wave1-stat"><strong>5</strong><span>Expiring soon</span></div>
+            <div class="wave1-stat"><strong>3</strong><span>Ready for release</span></div>
           </div>
-          <h3><a class="proof-link" href="/operations-record/#bof-1907">Watch Packet &middot; BOF-1907</a></h3>
-          <div class="paper-grid">
-            <div class="field"><span>Lane</span><strong>Tulsa, OK to Kansas City, MO</strong></div>
-            <div class="field"><span>Driver</span><strong><a class="proof-link" href="/operations-record/#driver-1187">J. Carter &middot; DRV-1187</a></strong></div>
-            <div class="field"><span>Carrier</span><strong><a class="proof-link" href="/operations-record/#carrier-207">Blue River Logistics &middot; CAR-207</a></strong></div>
-            <div class="field"><span>Controlling item</span><strong><a class="proof-link" href="/operations-record/#bol-review-1907">BOL photo details pending confirmation</a></strong></div>
-            <div class="field"><span>Packet owner</span><strong>Dispatcher and carrier packet owner</strong></div>
-            <div class="field"><span>Dispatch consequence</span><strong>May move after photo details and renewal evidence clear</strong></div>
-          </div>
-          <h4>Watch packet checks</h4>
-          <div class="paper-grid">
-            <div class="field"><span>Driver file</span><strong><a class="proof-link" href="/operations-record/#driver-1187">Ready for assignment</a></strong></div>
-            <div class="field"><span>BOL image</span><strong><a class="proof-link" href="/operations-record/#bol-review-1907">Consignee and timestamp need review</a></strong></div>
-            <div class="field"><span>Carrier renewal</span><strong><a class="proof-link" href="/operations-record/#carrier-207">Evidence pending owner confirmation</a></strong></div>
-            <div class="field"><span>Release note</span><strong><a class="proof-link" href="/operations-record/#dispatch-release-1907">Watch decision prepared</a></strong></div>
-          </div>
-          <div class="paper-note"><a class="proof-link" href="/operations-record/#bof-1907">BOF-1907</a> is not treated like a hard stop. The document packet names the two narrow checks that keep it on watch, then gives dispatch a clear owner and next action.</div>
-          <div class="signature-row"><div class="signature">Dispatcher confirmation</div><div class="signature">Carrier packet owner</div><div class="stamp">Watch</div></div>
-        </div>
-        <div class="paper reveal">
-          <div class="document-status-line">
-            <span class="status blocked">Hold</span>
-            <span>Credential hold packet</span>
-            <span>Prepared Jun 5, 2026 16:05 CT</span>
-          </div>
-          <h3><a class="proof-link" href="/operations-record/#bof-1931">Hold Packet &middot; BOF-1931</a></h3>
-          <div class="paper-grid">
-            <div class="field"><span>Lane</span><strong>Little Rock, AR to St. Louis, MO</strong></div>
-            <div class="field"><span>Driver</span><strong><a class="proof-link" href="/operations-record/#driver-3301">T. Brooks &middot; DRV-3301</a></strong></div>
-            <div class="field"><span>Carrier</span><strong><a class="proof-link" href="/operations-record/#carrier-309">Delta Yard Services &middot; CAR-309</a></strong></div>
-            <div class="field"><span>Controlling item</span><strong><a class="proof-link" href="/operations-record/#medical-card-3301">Updated medical certificate not attached</a></strong></div>
-            <div class="field"><span>Record owner</span><strong>Safety lead</strong></div>
-            <div class="field"><span>Dispatch consequence</span><strong>Do not assign until the credential record clears</strong></div>
-          </div>
-          <h4>Hold resolution checks</h4>
-          <div class="small-table">
-            <table>
-              <thead><tr><th>Required item</th><th>Status</th><th>Owner</th><th>What changes</th></tr></thead>
+          <div class="wave2-table-wrap" role="region" aria-label="Recent document uploads">
+            <table class="wave2-record-table">
+              <thead><tr><th>Recent upload</th><th>Type</th><th>Owner</th><th>Classification</th><th>Status</th><th>Expiration</th><th>Version</th><th>Reviewer</th><th>Access</th><th>Next action</th></tr></thead>
               <tbody>
-                <tr><td>Updated medical card requested</td><td><span class="status ready">Sent</span></td><td>Safety lead</td><td>Driver knows the record needed.</td></tr>
-                <tr><td>Credential attached</td><td><span class="status blocked">Pending</span></td><td>Driver / safety lead</td><td>Load remains held.</td></tr>
-                <tr><td>Safety review completed</td><td><span class="status blocked">Pending</span></td><td>Safety lead</td><td>Dispatch gate cannot clear.</td></tr>
-                <tr><td>Release gate updated</td><td><span class="status blocked">Pending</span></td><td>Operations lead</td><td><a class="proof-link" href="/operations-record/#bof-1931">BOF-1931</a> stays out of assignment until cleared.</td></tr>
+                <tr><td data-label="Recent upload">CDL-DRV-2048</td><td data-label="Type">CDL</td><td data-label="Owner">M. Alvarez</td><td data-label="Classification">Driver qualification</td><td data-label="Status"><span class="wave1-status wave1-status--ready">Reviewed</span></td><td data-label="Expiration">Nov 12, 2026</td><td data-label="Version">v2</td><td data-label="Reviewer">Safety lead</td><td data-label="Access">Safety / dispatch</td><td data-label="Next action"><button class="wave1-action-button" type="button" data-wave1-action data-action-title="Open Version History" data-action-body="The CDL record keeps the reviewed file, superseded version, reviewer note, access level, and release consequence together. This illustrative action does not verify a government credential." data-action-meta="Record: CDL-DRV-2048|State: reviewed|Evidence retained: upload source, reviewer note, superseded file, access log." data-action-label="Open driver record" data-action-href="/drivers/#driver-portal-preview">Open Version History</button></td></tr>
+                <tr><td data-label="Recent upload">MED-DRV-3301</td><td data-label="Type">Medical certificate</td><td data-label="Owner">T. Brooks</td><td data-label="Classification">Safety credential</td><td data-label="Status"><span class="wave1-status wave1-status--review">Needs review</span></td><td data-label="Expiration">Aug 18, 2026</td><td data-label="Version">v1</td><td data-label="Reviewer">S. Patel</td><td data-label="Access">Safety only</td><td data-label="Next action"><button class="wave1-action-button wave1-action-button--primary" type="button" data-wave1-action data-action-title="Review Document" data-action-body="Safety reviews the medical certificate before the driver record can support release. The state is illustrative and requires a named reviewer." data-action-meta="Record: MED-DRV-3301|Consequence: assignment stays held until reviewed|Next action: review file, resolve issue, then approve or reject." data-action-label="Open safety context" data-action-href="/safety/#safety-portal-preview">Review Document</button></td></tr>
+                <tr><td data-label="Recent upload">RC-10482-DAL-MEM</td><td data-label="Type">Rate confirmation</td><td data-label="Owner">TMS-LD-10482</td><td data-label="Classification">Load proof</td><td data-label="Status"><span class="wave1-status wave1-status--ready">Classified</span></td><td data-label="Expiration">Not applicable</td><td data-label="Version">v1</td><td data-label="Reviewer">Dispatch owner</td><td data-label="Access">Operations</td><td data-label="Next action"><button class="wave1-action-button" type="button" data-wave1-action data-action-title="Release Document" data-action-body="The classified rate confirmation is ready to be included in the release packet because the illustrative record supports that state." data-action-meta="Record: RC-10482-DAL-MEM|State: classified|Evidence retained: source, load link, reviewer note, release packet entry." data-action-label="Open dispatch record" data-action-href="/dispatch/#dispatch-dashboard-preview">Release</button></td></tr>
+                <tr><td data-label="Recent upload">POD-1907-KC</td><td data-label="Type">POD</td><td data-label="Owner">BOF-1907</td><td data-label="Classification">Settlement proof</td><td data-label="Status"><span class="wave1-status wave1-status--blocked">Issue open</span></td><td data-label="Expiration">Not applicable</td><td data-label="Version">v3</td><td data-label="Reviewer">Billing owner</td><td data-label="Access">Billing / operations</td><td data-label="Next action"><button class="wave1-action-button" type="button" data-wave1-action data-action-title="Reject and Request Renewal" data-action-body="The POD image needs corrected receiver detail before the billing packet can be released. BOF preserves the rejected version and the request trail." data-action-meta="Record: POD-1907-KC|Consequence: billing packet remains held|Evidence retained: rejected file, reason, owner, request note." data-action-label="Open settlements" data-action-href="/settlements/#finance-readiness">Reject</button></td></tr>
               </tbody>
             </table>
           </div>
-          <div class="paper-note">The hold packet makes the stop defensible: it shows the exact credential, the owner, the required record, and the dispatch consequence without relying on a vague red status.</div>
-          <div class="signature-row"><div class="signature">Safety lead</div><div class="signature">Operations lead</div><div class="stamp">Hold</div></div>
+          <div class="wave2-action-strip" aria-label="Document record actions">
+            <button class="wave1-action-button" type="button" data-wave1-action data-action-title="Classify" data-action-body="Classification assigns the document type, owner, access level, linked record, and review path. This does not automatically verify the document." data-action-meta="Action: Classify|Evidence retained: source, classification, owner, timestamp." data-action-label="Open document workflow" data-action-href="#document-workflow">Classify</button>
+            <button class="wave1-action-button" type="button" data-wave1-action data-action-title="Request Renewal" data-action-body="Renewal requests identify the expiring item, owner, due date, and operating consequence before the record blocks work." data-action-meta="Action: Request renewal|Example: medical certificate expiring soon|Next action: owner receives renewal task." data-action-label="Open renewal section" data-action-href="#versioning-expiration">Request Renewal</button>
+            <button class="wave1-action-button" type="button" data-wave1-action data-action-title="View Audit Trail" data-action-body="The audit trail preserves intake source, review notes, approvals, rejections, access events, release state, and superseded versions." data-action-meta="Action: View audit trail|Scope: illustrative document record|No live private records are shown." data-action-label="Open audit section" data-action-href="#access-audit">View Audit Trail</button>
+          </div>
         </div>
-      </div>
-    </section>
-    <section class="section" id="pod-photo-evidence">
-      <div class="section-head reveal"><p class="eyebrow">POD and photo evidence</p><h2>Delivery proof should be large enough to inspect, not just listed as attached.</h2><p>The client specifically called out POD detail: location, delivery proof, loading dock context, and the empty cargo area after delivery. BOF presents those fields as operating evidence tied to settlement, claims, and release follow-up.</p></div>
-      <div class="document-evidence-grid">
-        <article class="document-evidence-card reveal">
-          <span class="status watch">POD watch</span>
-          <h3><a class="proof-link" href="/operations-record/#bol-review-1907">POD-1907 delivery proof</a></h3>
-          <div class="evidence-preview" aria-label="Large POD delivery proof preview">
-            <strong>Proof of Delivery</strong>
-            <span>Receiver: Kansas City Grocery Dock 4</span>
-            <span>Delivered: Jun 6, 2026 14:42 CT</span>
-            <span>GPS: 39.1051, -94.5781</span>
-            <span>Signature: R. Bennett</span>
-          </div>
-          <div class="paper-grid">
-            <div class="field"><span>Required photos</span><strong>Dock photo, seal photo, empty cargo photo</strong></div>
-            <div class="field"><span>Current issue</span><strong>Receiver and timestamp need dispatcher confirmation</strong></div>
-            <div class="field"><span>Settlement effect</span><strong>Watch until POD details are confirmed</strong></div>
-            <div class="field"><span>Owner</span><strong>M. Ruiz</strong></div>
-          </div>
-        </article>
-        <article class="document-evidence-card reveal">
-          <span class="status ready">Image proof</span>
-          <h3>Dock and cargo photo packet</h3>
-          <img class="document-proof-photo" src="/assets/images/photos/pod-bol-proof-packet.webp" alt="Proof of delivery and bill of lading packet with dock photo evidence">
-          <div class="photo-proof-grid">
-            <div><span>Loading dock</span><strong>Dock 4 image attached</strong></div>
-            <div><span>Seal photo</span><strong>Seal visible and matched</strong></div>
-            <div><span>Empty cargo area</span><strong>Post-delivery photo required</strong></div>
-            <div><span>Claim evidence</span><strong>Open only if exception appears</strong></div>
-          </div>
-          <p class="paper-note">These are representative proof panels for the buyer review. The important part is the operating shape: each image has a purpose, owner, consequence, and next action.</p>
-        </article>
-      </div>
-    </section>
-    <section class="section">
-      <div class="section-head reveal"><p class="eyebrow">Company governance layer</p><h2>Operational documents are backed by written controls.</h2><p>The document view stays focused on release packets, driver files, BOL review, and carrier evidence. The governance layer explains the written controls behind AI assistance, mobile uploads, vendor access, and continuity.</p></div>
-      <div class="feature-grid">
-        <article class="card reveal"><span class="icon">AI</span><h3>AI Use &amp; Governance</h3><p>Supports AI-assisted review while keeping release decisions human-verified.</p><a class="route-chip" href="/trust-governance/#policy-library">DAT-IT-008</a></article>
-        <article class="card reveal"><span class="icon">ELD</span><h3>ELD &amp; Mobile Security</h3><p>Supports driver uploads, mobile capture, ELD-related records, and field document handling.</p><a class="route-chip" href="/trust-governance/#policy-library">DAT-IT-006</a></article>
-        <article class="card reveal"><span class="icon">VA</span><h3>Vendor Access</h3><p>Supports TMS, ELD, carrier packet, and third-party system access review.</p><a class="route-chip" href="/trust-governance/#policy-library">DAT-IT-014</a></article>
-        <article class="card reveal"><span class="icon">IR</span><h3>Incident Response &amp; Continuity</h3><p>Summarizes how sensitive response and continuity records are handled during due diligence.</p><a class="route-chip warning" href="/trust-governance/">Security review</a></article>
-      </div>
-    </section>
-    <section class="section website-photo-section">
-      <div class="section-head reveal">
-        <p class="eyebrow">Document photo proof</p>
-        <h2>Document control looks stronger when the paperwork feels handled.</h2>
-        <p>These supporting images show document requests, scanning, exception packets, and field proof as part of the same operating record.</p>
-      </div>
-      <div class="website-photo-grid">
-        <article class="website-photo-card reveal"><img loading="lazy" decoding="async" src="/assets/images/photos/site-pass/11-paperwork-scanner-station.webp" alt="Fleet office scanner station with BOL and POD pages"><div><h3>Scanner station</h3><p>Paper documents are captured before they become another follow-up chase.</p></div></article>
-        <article class="website-photo-card reveal"><img loading="lazy" decoding="async" src="/assets/images/photos/site-pass/12-document-request-workflow.webp" alt="Document request workflow with folders, phone, and checklist"><div><h3>Document requests</h3><p>Requests, reminders, received status, and approval should be visible.</p></div></article>
-        <article class="website-photo-card reveal"><img loading="lazy" decoding="async" src="/assets/images/photos/site-pass/13-government-contract-record-review.webp" alt="Audit-ready trip folders in an office"><div><h3>Audit-ready folders</h3><p>Higher-scrutiny work needs clean packet ownership and review history.</p></div></article>
-        <article class="website-photo-card reveal"><img loading="lazy" decoding="async" src="/assets/images/photos/site-pass/14-private-fleet-proof-review.webp" alt="Warehouse fleet supervisor checking delivery proof on a tablet"><div><h3>Warehouse proof review</h3><p>Private fleet proof still needs owner, status, and consequence.</p></div></article>
-      </div>
-    </section>
+      </section>
 
-    <section class="section public-demo-embed-section" id="document-packet-workbench">
-      <div class="section-head reveal">
-        <p class="eyebrow">Interactive document subset</p>
-        <h2>Inspect the proof packet directly from the Documents page.</h2>
-        <p>This embedded cabinet opens the same load document packet, POD evidence, photo proof, claim standby items, owners, and release consequences that support the joined operating record.</p>
+      <section class="wave1-dark-band" id="document-workflow" aria-labelledby="document-workflow-heading">
+        <div class="wave1-dark-band__inner">
+          <p class="bof-ds2-eyebrow">Document Workflow</p>
+          <h2 id="document-workflow-heading">Intake -> Classify -> Link to Record -> Review -> Resolve Exception -> Approve or Reject -> Release -> Preserve Audit History</h2>
+          <p>Every stage names the owner, state, consequence, next action, and retained evidence so a file becomes operating proof instead of a loose attachment.</p>
+          <div class="wave2-workflow-grid">
+            <article><b>Intake</b><span>Owner: source coordinator. State: received. Consequence: file enters review queue. Next action: validate file readability. Evidence retained: source, timestamp, document name.</span></article>
+            <article><b>Classify</b><span>Owner: document controller. State: typed. Consequence: CDL, MVR, insurance, W-9, BOL, POD, lumper receipt, invoice, or inspection evidence routes correctly. Next action: link to record. Evidence retained: classification note.</span></article>
+            <article><b>Review</b><span>Owner: safety, dispatch, billing, HR, or policy owner. State: reviewed or issue open. Consequence: release, renewal, exception, or rejection path appears. Next action: approve, reject, or resolve. Evidence retained: reviewer note.</span></article>
+            <article><b>Release</b><span>Owner: operating record owner. State: approved or ready for release when supported. Consequence: packet can move forward. Next action: preserve audit history. Evidence retained: release note and version trail.</span></article>
+          </div>
+        </div>
+      </section>
+
+      <section class="wave1-section wave2-split-section" id="versioning-expiration" aria-labelledby="version-heading">
+        <div>
+          <p class="bof-ds2-eyebrow">Versioning and Expiration</p>
+          <h2 id="version-heading">Current, superseded, expiring, and rejected documents need different handling.</h2>
+          <p class="wave1-section__intro">BOF keeps old versions as historical evidence while the current approved version controls the operating record. Expiration watches route renewal requests before credentials, insurance, or policy evidence become blockers.</p>
+        </div>
+        <div class="wave2-mini-ledger">
+          <div><strong>Current approved</strong><span>CDL-DRV-2048 v2 controls assignment review.</span></div>
+          <div><strong>Superseded</strong><span>CDL-DRV-2048 v1 remains preserved in history.</span></div>
+          <div><strong>Expiring soon</strong><span>MED-DRV-3301 routes renewal request to safety.</span></div>
+          <div><strong>Rejected</strong><span>POD-1907-KC v2 retained with rejection reason.</span></div>
+        </div>
+      </section>
+
+      <section class="wave1-section" aria-labelledby="review-release-heading">
+        <p class="bof-ds2-eyebrow">Review, Approval, Rejection, and Release</p>
+        <h2 id="review-release-heading">A review state should explain what changed and what happens next.</h2>
+        <div class="wave1-module-grid">
+          <article class="wave1-card"><h3>Reviewed</h3><p>The file was inspected by the named owner, and the note explains what the review supports.</p></article>
+          <article class="wave1-card"><h3>Approved</h3><p>The illustrative record supports the approval state and can advance to the packet or controlled library.</p></article>
+          <article class="wave1-card"><h3>Rejected</h3><p>The record preserves the rejected file, reason, request, owner, and consequence instead of hiding the failed attempt.</p></article>
+          <article class="wave1-card"><h3>Ready for Release</h3><p>The document can be included in the release packet only when the shown record state supports it.</p></article>
+        </div>
+      </section>
+
+      <section class="wave1-section wave2-split-section" id="access-audit" aria-labelledby="access-heading">
+        <div>
+          <p class="bof-ds2-eyebrow">Access Control and Audit Trail</p>
+          <h2 id="access-heading">Sensitive evidence stays useful without becoming public.</h2>
+          <p class="wave1-section__intro">The public page shows synthetic examples only. Access level, reviewer role, audit events, and retained evidence are visible so a fleet can see how document control is designed to support private, accountable workflows.</p>
+        </div>
+        <div class="wave2-audit-list">
+          <span>Source logged: driver upload</span>
+          <span>Classification changed: medical certificate</span>
+          <span>Reviewer note added: safety lead</span>
+          <span>Action recorded: request renewal</span>
+          <span>Access level retained: safety only</span>
+        </div>
+      </section>
+
+      <section class="wave1-section" aria-labelledby="documents-video-heading">
+        <p class="bof-ds2-eyebrow">See BOF in Action</p>
+        <h2 id="documents-video-heading">See Driver Vault Intake in Action</h2>
+        <div class="wave1-video-card">
+          <div><h3>Document intake and readiness context</h3><p>Retained for this pass. The existing Driver Vault video supports document intake and readiness framing; the video decision report notes that it should be rechecked later for legacy logo or outdated claim risk.</p><p class="wave2-caption-note">Captions or transcript support should accompany production video publishing.</p></div>
+          <div class="wave1-video-frame">
+            <video controls preload="metadata" poster="/assets/images/video-posters/bof-driver-vault.jpg">
+              <source src="/assets/videos/bof-driver-vault.mp4" type="video/mp4">
+              Your browser does not support the video tag.
+            </video>
+          </div>
+        </div>
+      </section>
+
+      <section class="wave1-close" aria-labelledby="documents-close-heading">
+        <div class="wave1-close__card">
+          <div>
+            <p class="bof-ds2-eyebrow">Document Control</p>
+            <h2 id="documents-close-heading">Make every file explain its status, owner, consequence, and next action.</h2>
+            <p>BOF turns operational evidence into a controlled record that can be reviewed, renewed, released, and preserved.</p>
+          </div>
+          <div class="bof-ds2-actions">
+            <a class="bof-ds2-button bof-ds2-button--primary" href="#documents-portal-preview">Explore Document Control</a>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="bof-ds2-footer">
+      <div class="bof-ds2-footer__inner">
+        <img src="/assets/brand/bof-design-system-2/svg/header-lockup.svg" alt="BackOfficeFleet">
+        <p>Document control preview. Illustrative demo data only.</p>
       </div>
-      <div data-demo-embed-route="/interactive-demo/documents/" aria-live="polite"></div>
-    </section>
-  </main>
-  <footer class="site-footer"><div class="footer-inner"><strong>BackOfficeFleet</strong><span>Document control.</span></div></footer>
-  <script src="/assets/js/interactive-demo-routes.js?v=20260721-enterprise-header-fit5"></script>
-  <script src="/assets/js/site.js?v=20260721-enterprise-header-fit5"></script>
+    </footer>
+  </div>
+  <script src="/assets/js/bof-design-system-2-preview.js"></script>
 </body>
 </html>
