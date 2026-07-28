@@ -366,17 +366,21 @@ body.bof-ds2-wave1 {
 .wave1-section-heading-row {
   display: flex;
   align-items: end;
-  justify-content: space-between;
-  gap: 20px;
+  justify-content: flex-start;
+  gap: clamp(14px, 2vw, 28px);
+  flex-wrap: wrap;
 }
 
 .wave1-section-heading-row h2 {
+  flex: 0 1 760px;
+  max-width: 760px;
   margin-bottom: 0;
 }
 
 .wave1-section-heading-row .bof-ds2-button {
   min-height: 44px;
   flex: 0 0 auto;
+  margin-bottom: 0.2rem;
 }
 
 .wave1-benefit-grid {
@@ -937,6 +941,18 @@ body.bof-ds2-wave1 {
   background-size: 100% 34px, 52px 100%, auto;
   position: relative;
   overflow: hidden;
+}
+
+.wave1-chart::before {
+  content: attr(data-chart-label);
+  position: absolute;
+  left: 18px;
+  top: 16px;
+  color: rgba(10, 35, 66, 0.68);
+  font-size: 0.68rem;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
 }
 
 .wave1-chart::after {
