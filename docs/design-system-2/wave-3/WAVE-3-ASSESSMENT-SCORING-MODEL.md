@@ -44,6 +44,10 @@ Section cards are informational and do not claim regulatory status.
 
 The engine selects the first three unanswered, `Not in place`, or `Unsure` answers as top operational gaps. If none exist, it selects up to three `Partially in place` answers.
 
+## Strongest Area
+
+Owner correction added a strongest-area callout. The engine sorts section scores and displays the highest scoring section as the strongest preliminary area.
+
 ## Recommended Modules
 
 Each audience carries an audience-specific module list:
@@ -53,6 +57,10 @@ Each audience carries an audience-specific module list:
 - For-Hire Fleet: Dispatch & Operations, Documents, Settlements & Billing, BOF Vault
 - Government: Policy Governance, BOF Vault, Business Operations, Safety & Compliance
 - Driver: Drivers, BOF Vault, Documents, Safety & Compliance
+
+## Conversion Logic
+
+Results now include a non-persistent detailed-roadmap CTA. Private Fleet, For-Hire Fleet, and Aggregator results may also show Priority Fleet consideration with a link to `/priority-fleet-program/`. No form data is submitted or persisted.
 
 ## Disclaimer
 

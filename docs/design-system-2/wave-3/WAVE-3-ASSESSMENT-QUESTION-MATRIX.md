@@ -26,7 +26,7 @@ Result categories:
 - Exception control
 - Integration priority
 
-Topics covered: network roster visibility, accountability owners, network-level reporting, authority and insurance review, driver and asset readiness, subcontractor records, usable capacity, customer constraints, proof standards, cross-carrier document access, exception escalation, audit history.
+Topics covered: network roster visibility, carrier onboarding, consolidated reporting, authority and insurance verification, driver and asset readiness, subcontractor or operating-unit records, usable capacity, partner controls, customer constraints, proof standards, administrative exceptions, audit history.
 
 ## Private Fleet
 
@@ -47,7 +47,7 @@ Result categories:
 - Administrative control
 - Executive visibility
 
-Topics covered: driver credentials, onboarding, assignment readiness, service failures, facility/customer commitments, dispatch handoffs, maintenance readiness, inspection proof, safety exceptions, payroll exceptions, vendor records, executive reporting.
+Topics covered: driver credentials, HR onboarding, assignment readiness, service failures, facility/customer commitments, dispatch handoffs, maintenance readiness, inspection proof, insurance records, payroll exceptions, accounting controls, vendor records, internal approvals, executive reporting.
 
 ## For-Hire Fleet
 
@@ -68,7 +68,7 @@ Result categories:
 - Claims exposure
 - Settlement control
 
-Topics covered: rate confirmations, customer update requirements, load history, dispatch assignment, delivery exceptions, driver readiness, BOL/POD capture, detention and lumper proof, claims evidence, factoring/billing packets, settlement holds, driver pay traceability.
+Topics covered: rate confirmations, customer documentation, customer update requirements, load history, dispatch assignment, delivery exceptions, driver readiness, BOL/POD capture, detention and lumper proof, claims-related financial records, factoring/billing packets, settlement holds, accounting exceptions, driver pay traceability.
 
 ## Government Fleet or Agency
 
@@ -89,7 +89,7 @@ Result categories:
 - Policy governance
 - Auditability
 
-Topics covered: asset inventory, equipment readiness, operator credentials, vendor and procurement records, grant documentation, procurement blockers, emergency resources, mutual aid, incident documentation, policy versions, public-record readiness, continuity planning.
+Topics covered: asset inventory, equipment readiness, operator credentials, procurement records, vendor readiness, budget controls, purchase approvals, grant documentation, emergency resources, mutual aid, incident documentation, policy approvals, public-record readiness, audit trails, continuity planning.
 
 ## Individual Driver
 

@@ -14,6 +14,7 @@
 - `Website/for-hire-fleets/index.html`
 - `Website/government/index.html`
 - `Website/assessment/index.html`
+- `Website/priority-fleet-program/index.html`
 - `Website/assets/js/wave3-assessment.js`
 - `Website/assets/css/styles.css`
 - `Website/sitemap.xml`
@@ -28,6 +29,10 @@
 - `docs/design-system-2/wave-3/WAVE-3-ASSESSMENT-SCORING-MODEL.md`
 - `docs/design-system-2/wave-3/WAVE-3-DEPLOYMENT-INVENTORY.md`
 - `docs/design-system-2/wave-3/WAVE-3-ROLLBACK-PLAN.md`
+- `docs/design-system-2/wave-3/WAVE-3-OWNER-CORRECTION-REPORT.md`
+- `docs/design-system-2/wave-3/ASSESSMENT-CONVERSION-STRATEGY.md`
+- `docs/design-system-2/wave-3/PRIORITY-FLEET-PUBLIC-PROGRAM-SPEC.md`
+- `docs/design-system-2/wave-3/SUPPORTING-SOLUTION-PAGE-PLAN.md`
 
 ## Owner Review Screenshots
 
@@ -36,6 +41,12 @@ Directory:
 `docs/design-system-2/screenshots/wave-3-owner-review/`
 
 Screenshot count: 28 PNG files.
+
+Owner-correction screenshot directory:
+
+`docs/design-system-2/screenshots/wave-3-owner-correction-review/`
+
+Screenshot count: 29 PNG files.
 
 ## Sitemap Changes
 
@@ -47,6 +58,7 @@ Canonical public entries added or confirmed:
 - `https://backofficefleet.com/for-hire-fleets/`
 - `https://backofficefleet.com/government/`
 - `https://backofficefleet.com/assessment/`
+- `https://backofficefleet.com/priority-fleet-program/`
 
 No query-string assessment states or hidden customer-demo routes were added to the sitemap.
 
@@ -66,9 +78,10 @@ These were documented but not implemented:
 1. Deploy CSS and image-referenced static assets already present in the approved base.
 2. Deploy new/rebuilt public HTML pages.
 3. Deploy `wave3-assessment.js`.
-4. Deploy `sitemap.xml`.
-5. Add only owner-approved redirects.
-6. Run production smoke tests for primary routes, deep links, Back/Forward, reload, and sitemap.
+4. Deploy `/priority-fleet-program/`.
+5. Deploy `sitemap.xml`.
+6. Add only owner-approved redirects.
+7. Run production smoke tests for primary routes, deep links, Back/Forward, reload, Priority Fleet links, and sitemap.
 
 ## Non-Actions
 

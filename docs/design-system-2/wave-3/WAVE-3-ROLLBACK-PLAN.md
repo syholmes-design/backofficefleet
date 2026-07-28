@@ -34,12 +34,17 @@ If Wave 3 is deployed after owner approval and then must be rolled back:
    - `/aggregators/`
    - `/for-hire-fleets/`
    - `/assessment/`
+   - `/priority-fleet-program/`
 4. Remove `Website/assets/js/wave3-assessment.js` from the deployed static package.
 5. Restore the previous `Website/assets/css/styles.css` if no other approved changes depend on the Wave 3 CSS block.
 6. Restore the previous `Website/sitemap.xml`.
 7. Remove any Wave 3 redirect rules that were added during deployment.
 8. Clear CDN/cache layers if used by the approved deployment workflow.
 9. Smoke-test the restored public routes and sitemap.
+
+## Owner Correction Rollback
+
+If only the owner-correction layer is rejected after Wave 3 itself is accepted, revert the owner-correction commit(s) after `26d867aaf2083d6135760cf0e04609eaf7fa05c5`, restore the prior Wave 3 assessment copy/selector/progress behavior, remove `/priority-fleet-program/`, and restore the prior sitemap and asset-version references.
 
 ## Redirect Rollback
 

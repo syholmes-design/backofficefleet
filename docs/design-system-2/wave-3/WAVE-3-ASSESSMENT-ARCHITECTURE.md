@@ -25,10 +25,11 @@ The canonical URL remains `https://backofficefleet.com/assessment/`.
 
 ## Runtime Model
 
-The page renders an empty assessment root in HTML and loads a reusable JavaScript engine. The engine owns:
+The page renders a value proposition plus an empty assessment root in HTML and loads a reusable JavaScript engine. The engine owns:
 
 - audience selection
 - selected state from the `type` query parameter
+- five photographic audience cards
 - question rendering
 - progress rendering
 - previous/next navigation
@@ -37,8 +38,21 @@ The page renders an empty assessment root in HTML and loads a reusable JavaScrip
 - restart action
 - return-to-audience links
 - browser Back and Forward behavior
+- focus movement to the selected assessment heading
 
 No separate HTML pages were created for each audience assessment.
+
+## Owner Correction Behavior
+
+The five photographic cards are always visible on `/assessment/`. Selecting a card updates the URL, applies a selected visual state, and renders the selected assessment directly beneath the card grid. The duplicated in-question audience tab row was removed.
+
+The progress system uses one component:
+
+- assessment title
+- `Question X of 12`
+- section name and section count
+- percent complete
+- one accessible progress bar
 
 ## State Management
 

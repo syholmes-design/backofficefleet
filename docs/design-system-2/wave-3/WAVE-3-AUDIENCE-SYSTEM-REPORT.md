@@ -86,6 +86,14 @@ The directory contains 28 requested PNGs covering desktop, mobile, audience card
 - Legacy aliases such as `/private-fleet/`, `/government-fleets/`, `/driver-assessment/`, and `/fleet-assessment/` were audited, but no redirects were implemented in Wave 3 because the task called for audit-first route documentation and did not authorize server routing changes.
 - Several legacy support routes remain preserved for existing content continuity and should be redirected or reconciled during deployment planning.
 
+## Owner Correction Addendum
+
+- `/who-we-serve/` hero now uses visitor-facing readiness language instead of leading with "five paths."
+- Audience hero CTAs now lead to the matching assessment state.
+- Government no longer uses Policy Governance as the hero secondary CTA; Policy Governance is linked from a lower supporting section.
+- Priority Fleet Program now has a public route at `/priority-fleet-program/` and restrained visibility on homepage, Who We Serve, Private Fleet, For-Hire Fleet, and relevant assessment results.
+- Load Readiness is treated as a supporting solution concept and currently points to `/for-hire-fleets/#load-readiness` until a full Wave 4 page is approved.
+
 ## Deployment Recommendation
 
 Deploy Wave 3 only after owner review confirms the audience definitions, page language, screenshots, and assessment result language. Recommended deployment order:
