@@ -3,82 +3,226 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>BOF Vault | BackOfficeFleet</title>
-  <meta name="description" content="BOF Vault turns driver, carrier, equipment, customer, and proof documents into readiness signals, exception queues, and operating records.">
-  <link rel="icon" href="/assets/images/logo/boflogo-original.png">
-  <link rel="stylesheet" href="/assets/css/styles.css?v=20260721-enterprise-header-fit5">
-  <link rel="stylesheet" href="/assets/css/document-readiness-engine.css?v=1.3">
+  <title>Secure Driver Self-Service. | BOF Vault</title>
+  <meta name="description" content="BOF Vault gives drivers and authorized fleet staff one place to upload documents, track readiness, respond to requests, and see what must happen next.">
+  <link rel="icon" href="/assets/brand/bof-design-system-2/favicon/favicon.ico">
+  <link rel="stylesheet" href="/assets/css/bof-design-system-2-wave-1.css">
 </head>
-<body class="vault-legacy-page">
-  <header class="site-header">
-    <a class="brand" href="/" aria-label="BackOfficeFleet home"><img src="/assets/images/logo/boflogo-original.png" alt="BackOfficeFleet"></a>
-    <button class="nav-toggle" type="button" data-nav-toggle aria-expanded="false" aria-label="Toggle navigation">&#9776;</button>
-    <nav class="site-nav" data-nav aria-label="Main navigation">
-      <div class="nav-menu" data-nav-menu>
-        <button class="nav-menu-toggle" type="button" data-nav-menu-toggle aria-expanded="false" aria-haspopup="true">Who We Serve</button>
-        <div class="nav-dropdown" aria-label="Who We Serve">
-          <a href="/private-fleets/">Private Fleets</a>
-          <a href="/government/">Government Fleets</a>
-          <a href="/aggregator-outreach/">Aggregators</a>
+<body class="bof-ds2-wave1 bof-ds2-wave2 page-wave2-vault">
+  <div class="bof-ds2-shell">
+    <header class="bof-ds2-header" data-menu-open="false">
+      <div class="bof-ds2-header__inner">
+        <a class="bof-ds2-brand" href="/" aria-label="BackOfficeFleet home">
+          <img src="/assets/brand/bof-design-system-2/svg/header-lockup.svg" alt="BackOfficeFleet">
+        </a>
+        <nav class="bof-ds2-nav" aria-label="Primary navigation">
+          <a href="/private-fleets/">Who We Serve</a>
+          <a href="/drivers/">Drivers</a>
+          <a href="/dispatch/">Dispatch &amp; Operations</a>
+          <a href="/safety/">Safety &amp; Compliance</a>
+          <a href="/settlements/">Settlements &amp; Billing</a>
+          <a href="/business-operations/">Business Operations</a>
+          <a href="/policies-procedures/">Policies &amp; Procedures</a>
+          <a href="/trust-governance/">Company</a>
+        </nav>
+        <div class="bof-ds2-header__actions">
+          <a class="bof-ds2-button bof-ds2-button--gold-outline" href="/book-demo/">Book a Demo</a>
         </div>
+        <button class="bof-ds2-menu-button" type="button" data-bof-ds2-menu aria-expanded="false" aria-label="Open navigation">
+          <svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none">
+            <path d="M4 7h16M4 12h16M4 17h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+        </button>
       </div>
-      <a href="/drivers/">Drivers</a>
-      <a href="/dispatch/">Dispatch &amp; Operations</a>
-      <a href="/safety/">Safety &amp; Compliance</a>
-      <a href="/settlements/">Settlements &amp; Billing</a>
-      <a href="/business-operations/">Business Operations</a>
-      <a href="/policies-procedures/">Policies &amp; Procedures</a>
-      <a href="/trust-governance/">Company</a>
-    </nav>
-    <a class="header-cta" href="/dashboard/">Sign In</a>
-  </header>
+    </header>
 
-  <main class="readiness-page">
-    <div class="readiness-shell">
-      <section class="readiness-hero vault-legacy-hero bof-vault-entry-hero" aria-label="BOF Vault document readiness">
-        <div class="readiness-hero-copy reveal">
-          <p class="eyebrow">BOF Vault</p>
-          <h1>Turn document intake into readiness decisions.</h1>
-          <p>BOF Vault is the driver-facing and operations-facing document layer. It receives files, classifies them, applies readiness rules, shows what is missing or blocked, and routes the next owner action before dispatch or settlement gets stuck.</p>
-          <div class="readiness-actions">
-            <a class="button light" href="/interactive-demo/drivers/document-intake/">Open BOF Vault Intake Workbench</a>
-            <a class="button secondary" href="/document-readiness-engine/">See the readiness engine</a>
+    <main>
+      <section class="wave1-hero wave2-hero wave1-hero--subject-clear" aria-label="Driver standing fully visible beside a truck while using a document self-service workflow" style="--wave1-hero-image: url('/assets/images/design-system-2/wave-1/ds2-drivers-hero-clean.png'); --wave1-hero-position: center; --wave1-hero-mobile-position: 76% top;">
+        <div class="wave1-hero__inner">
+          <div class="wave1-hero__copy">
+            <p class="bof-ds2-eyebrow">BOF Vault</p>
+            <h1>Secure Driver Self-Service.</h1>
+            <p>Give drivers and authorized fleet staff one place to upload documents, track readiness, respond to requests, and see what must happen next.</p>
+            <div class="bof-ds2-actions">
+              <a class="bof-ds2-button bof-ds2-button--primary" href="#vault-portal-preview">Explore BOF Vault</a>
+              <a class="bof-ds2-button" href="#vault-intake-workflow">See Document Intake in Action</a>
+            </div>
           </div>
         </div>
-        <figure class="vault-hero-visual reveal">
-          <img src="/assets/images/legacy-heroes/bof-vault-hero2.png" alt="BOF Vault document storage and readiness system">
-          <figcaption>
-            <span>Document control</span>
-            <strong>Storage is only useful when it produces a release answer.</strong>
-            <p>The Vault connects documents to driver eligibility, carrier packets, equipment proof, customer requirements, billing packets, and the clearance path.</p>
-          </figcaption>
-        </figure>
       </section>
 
-      <section class="readiness-section">
-        <p class="eyebrow">What the Vault controls</p>
-        <h2>Every document should answer whether the work can move.</h2>
-        <div class="readiness-card-grid">
-          <article class="readiness-card"><span>Intake</span><h3>Collect the file once.</h3><p>Receive uploads from drivers, dispatch, carriers, customers, or office staff without losing the operating context.</p></article>
-          <article class="readiness-card"><span>Classify</span><h3>Attach it to the right record.</h3><p>Identify whether the document belongs to a driver file, carrier packet, equipment record, load proof, claim, or billing packet.</p></article>
-          <article class="readiness-card"><span>Decide</span><h3>Show the blocker and clearance path.</h3><p>Mark the item ready, review, missing, expired, blocked, or cleared with a named owner and next action.</p></article>
+      <section class="wave1-proof-rail wave1-proof-rail--attached" aria-label="BOF Vault proof summary">
+        <div class="wave1-proof-rail__inner">
+          <div class="wave1-proof-rail__identity">
+            <span class="wave1-proof-rail__icon" aria-hidden="true">
+              <svg width="34" height="34" viewBox="0 0 24 24" fill="none">
+                <path d="M7 10V8a5 5 0 0 1 10 0v2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+                <rect x="5" y="10" width="14" height="10" rx="2" stroke="currentColor" stroke-width="1.8"/>
+                <path d="M12 14v2.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+              </svg>
+            </span>
+            <div class="wave1-proof-rail__label">
+              <p class="bof-ds2-eyebrow">BOF Vault</p>
+              <span>Driver self-service with readiness, document requests, review state, and support context.</span>
+            </div>
+          </div>
+          <div class="wave1-proof-rail__metrics">
+            <div class="wave1-proof-rail__metric"><strong>12</strong><span>Driver Profiles</span><small>Illustrative roster</small></div>
+            <div class="wave1-proof-rail__metric"><strong>7</strong><span>Release-Ready</span><small>Ready state shown</small></div>
+            <div class="wave1-proof-rail__metric"><strong>5</strong><span>Need Action</span><small>Driver or owner task</small></div>
+          </div>
+          <p class="wave1-proof-rail__disclosure">Illustrative demo data. No live driver records are shown.</p>
         </div>
       </section>
 
-      <section class="readiness-section">
-        <p class="eyebrow">Related workspaces</p>
-        <h2>Open the document work where it naturally belongs.</h2>
-        <div class="readiness-route-grid">
-          <a href="/documents/">Documents<small>Public file cabinet, proof packets, policy PDFs, and document examples.</small></a>
-          <a href="/interactive-demo/drivers/document-intake/">BOF Vault Intake Workbench<small>Classify files, apply rules, and route exceptions inside the demo.</small></a>
-          <a href="/operations-record/">Operations Record<small>See the same document status carried into driver, dispatch, safety, proof, and settlement decisions.</small></a>
-          <a href="/policies-procedures/#policy-documents">Policy PDFs<small>Open the governing documents that define the records and proof standards.</small></a>
+      <section class="wave1-capability-section" aria-labelledby="vault-capability-heading">
+        <h2 id="vault-capability-heading" class="wave1-visually-hidden">BOF Vault capabilities</h2>
+        <div class="wave1-benefit-grid wave1-benefit-grid--reference">
+          <article class="wave1-card wave1-card--capability"><span class="wave1-card__icon">01</span><h3>Upload Documents</h3><p>Designed to support private storage and planned secure upload workflows for driver and fleet document intake.</p><span class="wave1-card__arrow" aria-hidden="true">-&gt;</span></article>
+          <article class="wave1-card wave1-card--capability"><span class="wave1-card__icon">02</span><h3>Track Readiness</h3><p>Show readiness state, required documents, missing items, expiring items, upload state, and review state in one profile.</p><span class="wave1-card__arrow" aria-hidden="true">-&gt;</span></article>
+          <article class="wave1-card wave1-card--capability"><span class="wave1-card__icon">03</span><h3>Respond to Requests</h3><p>Drivers can see document requests, renewal needs, issue notes, support items, and the next action expected.</p><span class="wave1-card__arrow" aria-hidden="true">-&gt;</span></article>
+          <article class="wave1-card wave1-card--capability"><span class="wave1-card__icon">04</span><h3>Preserve Proof</h3><p>Illustrative document-review states preserve upload source, classification, reviewer note, version history, and audit trail.</p><span class="wave1-card__arrow" aria-hidden="true">-&gt;</span></article>
         </div>
       </section>
-    </div>
-  </main>
 
-  <footer class="site-footer"><div class="footer-inner"><strong>BackOfficeFleet</strong><span>BOF Vault document readiness.</span><a href="/trust-governance/">Trust &amp; Governance</a></div></footer>
-  <script src="/assets/js/site.js?v=20260721-enterprise-header-fit5"></script>
+      <section class="wave1-section wave1-section--dashboard-prominent wave2-portal-section" id="vault-portal-preview" aria-labelledby="vault-preview-heading">
+        <p class="bof-ds2-eyebrow">BOF Vault Portal</p>
+        <div class="wave1-section-heading-row">
+          <h2 id="vault-preview-heading">A driver-facing dashboard for readiness, uploads, renewals, requests, and support items.</h2>
+          <a class="bof-ds2-button bof-ds2-button--primary" href="#vault-portal-preview">Explore BOF Vault</a>
+        </div>
+        <p class="wave1-section__intro">The current public page is an illustrative product experience. It shows a planned secure review path only; no files are submitted or stored from this page.</p>
+        <div class="wave2-portal-frame wave2-portal-frame--vault" aria-label="Illustrative BOF Vault dashboard">
+          <div class="wave1-frame-header">
+            <strong>Driver Vault</strong>
+            <span class="wave1-disclosure">Planned secure workflow / demo data</span>
+          </div>
+          <div class="wave2-vault-grid">
+            <aside class="wave2-profile-card">
+              <span class="wave1-status wave1-status--review">Needs action</span>
+              <h3>Mara Chen</h3>
+              <p>Driver profile DRV-003. Medical certificate renewal and MVR review must clear before the next release.</p>
+              <div class="wave1-proof-grid">
+                <div class="wave1-proof"><b>Readiness</b><span>Review</span></div>
+                <div class="wave1-proof"><b>Required docs</b><span>CDL, medical, MVR, I-9, W-9, policy acknowledgment.</span></div>
+                <div class="wave1-proof"><b>Support item</b><span>Renewal question open.</span></div>
+              </div>
+            </aside>
+            <div class="wave2-table-wrap" role="region" aria-label="Driver document requests">
+              <table class="wave2-record-table">
+                <thead><tr><th>Document</th><th>Upload state</th><th>Review state</th><th>Renewal request</th><th>Messages</th><th>Next action</th></tr></thead>
+                <tbody>
+                  <tr><td data-label="Document">CDL</td><td data-label="Upload state">Uploaded Jul 3</td><td data-label="Review state"><span class="wave1-status wave1-status--ready">Approved</span></td><td data-label="Renewal request">None</td><td data-label="Messages">No open item</td><td data-label="Next action"><button class="wave1-action-button" type="button" data-wave1-action data-action-title="Open Document" data-action-body="The CDL is shown as approved in this illustrative profile. This does not claim government verification." data-action-meta="Record: DRV-003 CDL|State: approved for demo|Evidence retained: upload source, reviewer note, version history." data-action-label="Open documents" data-action-href="/documents/#documents-portal-preview">Open Document</button></td></tr>
+                  <tr><td data-label="Document">Medical certificate</td><td data-label="Upload state">Missing replacement</td><td data-label="Review state"><span class="wave1-status wave1-status--blocked">Issue open</span></td><td data-label="Renewal request">Requested Jul 20</td><td data-label="Messages">Support item VAULT-118</td><td data-label="Next action"><button class="wave1-action-button wave1-action-button--primary" type="button" data-wave1-action data-action-title="Submit Renewal" data-action-body="The driver can respond to the renewal request in the illustrative workflow. No file is uploaded or stored from this public page." data-action-meta="Record: MED-DRV-003|Next action: submit renewal document|Consequence: safety review remains open until reviewed." data-action-label="Open intake workflow" data-action-href="#vault-intake-workflow">Submit Renewal</button></td></tr>
+                  <tr><td data-label="Document">MVR review</td><td data-label="Upload state">Not driver-uploaded</td><td data-label="Review state"><span class="wave1-status wave1-status--review">Under review</span></td><td data-label="Renewal request">Safety owner</td><td data-label="Messages">Review note open</td><td data-label="Next action"><button class="wave1-action-button" type="button" data-wave1-action data-action-title="Review Request" data-action-body="The driver can view what is requested and who owns the review. BOF does not claim a production MVR integration here." data-action-meta="Record: MVR-DRV-003|Owner: safety lead|Next action: view request and wait for safety review." data-action-label="Open support context" data-action-href="#request-response">Review Request</button></td></tr>
+                  <tr><td data-label="Document">Policy acknowledgment</td><td data-label="Upload state">Completed</td><td data-label="Review state"><span class="wave1-status wave1-status--ready">Reviewed</span></td><td data-label="Renewal request">Next annual review</td><td data-label="Messages">No open item</td><td data-label="Next action"><button class="wave1-action-button" type="button" data-wave1-action data-action-title="View Version History" data-action-body="Acknowledgment evidence stays linked to the policy version and driver profile." data-action-meta="Record: ACK-DRV-003|State: reviewed|Evidence retained: policy version, acknowledgment date, reviewer note." data-action-label="Open policies" data-action-href="/policies-procedures/#policy-portal-preview">View Version History</button></td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <div class="wave2-action-strip" aria-label="BOF Vault record actions">
+            <button class="wave1-action-button" type="button" data-wave1-action data-action-title="Upload Document" data-action-body="This public preview demonstrates the planned upload path. It does not upload, scan, store, or verify a file." data-action-meta="Action: Upload document|Scope: illustrative only|Result: shows document-review state." data-action-label="Open intake workflow" data-action-href="#vault-intake-workflow">Upload Document</button>
+            <button class="wave1-action-button" type="button" data-wave1-action data-action-title="Replace Document" data-action-body="Replacement keeps the prior version in history and routes the new file to classification and review." data-action-meta="Action: Replace document|Evidence retained: old version, new upload source, request note." data-action-label="Open renewal workflow" data-action-href="#readiness-renewal">Replace Document</button>
+            <button class="wave1-action-button" type="button" data-wave1-action data-action-title="Open Messages" data-action-body="Messages are shown as support items attached to the document request, not as a real-time chat feature." data-action-meta="Action: Open messages|Support item: VAULT-118|Next action: review request context." data-action-label="Open request workflow" data-action-href="#request-response">Open Messages</button>
+            <button class="wave1-action-button" type="button" data-wave1-action data-action-title="Complete Next Action" data-action-body="The next action changes only after upload, classification, review, and owner approval in the illustrative state." data-action-meta="Action: Complete next action|Consequence: review state remains visible|No persistent record is changed." data-action-label="Open intake workflow" data-action-href="#vault-intake-workflow">Complete Next Action</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="wave1-dark-band" id="vault-intake-workflow" aria-labelledby="vault-intake-heading">
+        <div class="wave1-dark-band__inner">
+          <p class="bof-ds2-eyebrow">BOF Vault Intake Workflow</p>
+          <h2 id="vault-intake-heading">Request -> Upload -> Validate File -> Classify -> Review -> Resolve Issue -> Approve -> Release -> Monitor Expiration</h2>
+          <p>The current public page is an illustrative product experience. It shows the intended document-review state, owner routing, and evidence trail without submitting or storing files.</p>
+          <div class="wave1-step-grid">
+            <div class="wave1-step"><b>1</b><span>Request</span></div>
+            <div class="wave1-step"><b>2</b><span>Upload</span></div>
+            <div class="wave1-step"><b>3</b><span>Validate file</span></div>
+            <div class="wave1-step"><b>4</b><span>Classify</span></div>
+            <div class="wave1-step"><b>5</b><span>Review</span></div>
+            <div class="wave1-step"><b>6</b><span>Resolve issue</span></div>
+            <div class="wave1-step"><b>7</b><span>Approve</span></div>
+            <div class="wave1-step"><b>8</b><span>Release</span></div>
+            <div class="wave1-step"><b>9</b><span>Monitor expiration</span></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="wave1-section wave2-split-section" id="readiness-renewal" aria-labelledby="renewal-heading">
+        <div>
+          <p class="bof-ds2-eyebrow">Readiness and Renewal Workflow</p>
+          <h2 id="renewal-heading">Drivers need to know what is missing, what is expiring, and what happens next.</h2>
+          <p class="wave1-section__intro">BOF Vault presents required documents, missing items, expiring items, upload state, review state, renewal request, next action, and support context in one driver profile.</p>
+        </div>
+        <div class="wave2-mini-ledger">
+          <div><strong>Missing item</strong><span>Medical certificate replacement not attached.</span></div>
+          <div><strong>Expiring item</strong><span>Credential enters renewal watch before dispatch impact.</span></div>
+          <div><strong>Review state</strong><span>Safety owner reviews the submitted file.</span></div>
+          <div><strong>Next action</strong><span>Driver submits renewal; owner approves or requests correction.</span></div>
+        </div>
+      </section>
+
+      <section class="wave1-section" id="request-response" aria-labelledby="request-heading">
+        <p class="bof-ds2-eyebrow">Document Request and Response</p>
+        <h2 id="request-heading">A request should be specific enough for the driver to act without guessing.</h2>
+        <div class="wave1-module-grid">
+          <article class="wave1-card"><h3>Review Request</h3><p>Driver sees the requested document, owner, reason, due date, and consequence before responding.</p></article>
+          <article class="wave1-card"><h3>Submit Renewal</h3><p>The renewal submission routes to classification and review before any approved state appears.</p></article>
+          <article class="wave1-card"><h3>Open Messages</h3><p>Support context stays attached to the request as an item, not a real-time chat claim.</p></article>
+          <article class="wave1-card"><h3>Open Document</h3><p>The driver or authorized staff can inspect the illustrative document state and version history.</p></article>
+        </div>
+      </section>
+
+      <section class="wave1-section wave2-split-section" id="vault-access-audit" aria-labelledby="vault-audit-heading">
+        <div>
+          <p class="bof-ds2-eyebrow">Access, Privacy, and Audit</p>
+          <h2 id="vault-audit-heading">Driver self-service needs careful access language.</h2>
+          <p class="wave1-section__intro">This public page uses synthetic data only. BOF Vault is designed to support private storage, role-aware access, request history, version history, reviewer notes, and audit events when implemented in a secure production environment.</p>
+        </div>
+        <div class="wave2-audit-list">
+          <span>Request created: medical renewal</span>
+          <span>Driver response: upload planned</span>
+          <span>Classification: safety credential</span>
+          <span>Review owner: safety lead</span>
+          <span>Audit event: access level retained</span>
+        </div>
+      </section>
+
+      <section class="wave1-section" aria-labelledby="vault-video-heading">
+        <p class="bof-ds2-eyebrow">See BOF in Action</p>
+        <h2 id="vault-video-heading">See Driver Vault in Action</h2>
+        <div class="wave1-video-card">
+          <div><h3>Driver readiness and document control</h3><p>Retained unchanged for this Wave 2 pass. The video supports the driver Vault story; the video decision report records follow-up review for legacy logo or outdated claim risk.</p><p class="wave2-caption-note">Captions or transcript support should accompany production video publishing.</p></div>
+          <div class="wave1-video-frame">
+            <video controls preload="metadata" poster="/assets/images/video-posters/bof-driver-vault.jpg">
+              <source src="/assets/videos/bof-driver-vault.mp4" type="video/mp4">
+              Your browser does not support the video tag.
+            </video>
+          </div>
+        </div>
+      </section>
+
+      <section class="wave1-close wave1-close--dark" aria-labelledby="vault-close-heading">
+        <div class="wave1-close__card wave1-close__card--dark">
+          <div>
+            <p class="bof-ds2-eyebrow">BOF Vault</p>
+            <h2 id="vault-close-heading">Give drivers a clearer path from request to reviewed evidence.</h2>
+            <p>The Vault page now centers driver self-service: upload path, readiness state, renewal response, support item, version history, and audit trail.</p>
+          </div>
+          <div class="bof-ds2-actions">
+            <a class="bof-ds2-button bof-ds2-button--primary" href="#vault-portal-preview">Explore BOF Vault</a>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="bof-ds2-footer">
+      <div class="bof-ds2-footer__inner">
+        <img src="/assets/brand/bof-design-system-2/svg/header-lockup.svg" alt="BackOfficeFleet">
+        <p>BOF Vault preview. Illustrative demo data only.</p>
+      </div>
+    </footer>
+  </div>
+  <script src="/assets/js/bof-design-system-2-preview.js"></script>
 </body>
 </html>
