@@ -104,7 +104,10 @@
 
       <section class="wave1-section wave1-section--dashboard-prominent" id="safety-portal-preview" aria-labelledby="safety-preview-heading">
         <p class="bof-ds2-eyebrow">Safety Portal Preview</p>
-        <h2 id="safety-preview-heading">The safety queue should explain the operating consequence.</h2>
+        <div class="wave1-section-heading-row">
+          <h2 id="safety-preview-heading">The safety queue should explain the operating consequence.</h2>
+          <a class="bof-ds2-button bof-ds2-button--primary" href="#safety-portal-preview">Explore the Safety Portal</a>
+        </div>
         <p class="wave1-section__intro">The preview connects qualification, inspections, incidents, HOS, telematics inputs, corrective action, and policy acknowledgment to dispatch and settlement decisions.</p>
         <div class="wave1-preview wave1-preview--safety">
           <div class="wave1-portal-frame wave1-portal-frame--showcase" aria-label="Illustrative safety portal interface">
@@ -123,6 +126,11 @@
                 <div>
                   <h3>DRV-003 - credential hold</h3>
                   <p>Medical-card correction and MVR review must clear before assignment release.</p>
+                  <div class="wave1-action-row">
+                    <button class="wave1-action-button wave1-action-button--primary" type="button" data-wave1-action data-action-title="Review Credential Blocker" data-action-body="DRV-003 is hard-blocked because medical-card correction and MVR review are not complete. The dispatcher should not assign the driver until the safety owner clears the credential record." data-action-meta="Driver: DRV-003 / Mara Chen|Owner: Safety lead|Clearance: upload corrected medical-card evidence and complete MVR review." data-action-label="Open driver record" data-action-href="/drivers/#driver-portal-preview">Review Blocker</button>
+                    <button class="wave1-action-button" type="button" data-wave1-action data-action-title="Open MVR Review" data-action-body="The MVR review is part of the same credential hold. This demo action shows the review requirement without claiming a production motor-vehicle-record integration." data-action-meta="Record: QUAL-DRV-003-MVR|State: review required|Next action: safety owner completes MVR review." data-action-label="Open documents" data-action-href="/documents/#operations-file-cabinet">Open MVR</button>
+                    <button class="wave1-action-button" type="button" data-wave1-action data-action-title="Upload Medical Card" data-action-body="Demo action: this would open the document intake path for corrected medical-card evidence. No file is uploaded and no record is changed in this static preview." data-action-meta="Record: QUAL-DRV-003-MED|Action type: illustrative upload workflow|Clearance: corrected medical-card evidence is reviewed by safety." data-action-label="Open documents" data-action-href="/documents/#operations-file-cabinet">Upload Medical Card</button>
+                  </div>
                 </div>
                 <span class="wave1-status wave1-status--blocked">Blocked</span>
               </article>
@@ -130,6 +138,9 @@
                 <div>
                   <h3>DRV-009 - appointment proof</h3>
                   <p>Medical card remains valid, but appointment proof is overdue and needs safety owner verification.</p>
+                  <div class="wave1-action-row">
+                    <button class="wave1-action-button wave1-action-button--primary" type="button" data-wave1-action data-action-title="Review Appointment Evidence" data-action-body="DRV-009 is not medically expired, but appointment proof is overdue. The action keeps the nuance visible so the record does not read like a generic safety failure." data-action-meta="Driver: DRV-009 / Emma Brown|Reason: appointment proof overdue by 6 days|Clearance: attach appointment proof and route to safety owner review." data-action-label="Open documents" data-action-href="/documents/#operations-file-cabinet">Review Evidence</button>
+                  </div>
                 </div>
                 <span class="wave1-status wave1-status--review">Review</span>
               </article>
@@ -137,10 +148,13 @@
                 <div>
                   <h3>BOF-2064 - ready gate</h3>
                   <p>Driver qualification, assigned unit, proof packet, and HOS status are ready for release.</p>
+                  <div class="wave1-action-row">
+                    <a class="wave1-action-link wave1-action-link--primary" href="/drivers/#driver-portal-preview">Open Driver Record</a>
+                    <button class="wave1-action-button" type="button" data-wave1-action data-action-title="View Ready Evidence" data-action-body="The ready gate stays tied to driver qualification, assigned unit, HOS availability, and proof packet status. This demo action shows why the record is ready rather than relying on a green label alone." data-action-meta="Record: BOF-2064 / DRV-004|State: Ready|Evidence: driver qualification, proof packet, assigned unit, and HOS available." data-action-label="Open joined record" data-action-href="/operations-record/#shared-records">View Evidence</button>
+                  </div>
                 </div>
                 <span class="wave1-status wave1-status--ready">Ready</span>
               </article>
-              <a class="bof-ds2-button bof-ds2-button--primary" href="/safety/">Explore the Safety Portal</a>
             </div>
           </div>
           <aside class="wave1-proof-grid wave1-proof-grid--stacked" aria-label="Safety portal operating gates">

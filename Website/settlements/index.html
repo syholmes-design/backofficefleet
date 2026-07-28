@@ -103,7 +103,10 @@
 
       <section class="wave1-section wave1-section--dashboard-prominent" id="finance-readiness" aria-labelledby="finance-preview-heading">
         <p class="bof-ds2-eyebrow">Finance Readiness Dashboard</p>
-        <h2 id="finance-preview-heading">Finance and operations see the same hold reason before cash gets stuck.</h2>
+        <div class="wave1-section-heading-row">
+          <h2 id="finance-preview-heading">Finance and operations see the same hold reason before cash gets stuck.</h2>
+          <a class="bof-ds2-button bof-ds2-button--primary" href="#finance-readiness">Explore Finance Readiness</a>
+        </div>
         <div class="wave1-dashboard-grid wave1-dashboard-grid--finance">
           <article class="wave1-dashboard-frame wave1-dashboard-frame--showcase">
             <div class="wave1-frame-header">
@@ -118,9 +121,9 @@
               </div>
               <div class="wave1-chart" role="img" aria-label="Illustrative settlement readiness trend"></div>
               <div class="wave1-queue-list" aria-label="Illustrative settlement packet queue">
-                <div class="wave1-queue-item"><b>BOF-1907</b><span>POD and renewal evidence review</span><em>Held</em></div>
-                <div class="wave1-queue-item"><b>BOF-2175</b><span>Rate confirmation match review</span><em>Review</em></div>
-                <div class="wave1-queue-item"><b>BOF-2064</b><span>Packet and payment path ready</span><em>Ready</em></div>
+                <div class="wave1-queue-item"><b>BOF-1907</b><span>POD and renewal evidence review</span><em>Held</em><button class="wave1-action-button" type="button" data-wave1-action data-action-title="Review Held Packet" data-action-body="Settlement BOF-1907 is held because receiver evidence and renewal support still need to match the proof packet. This action opens the reason and clearance route; it does not approve billing." data-action-meta="Settlement: SET-1907|Owner: Dispatcher / packet owner|Clearance: confirm POD, signed BOL, receiver evidence, and renewal evidence." data-action-label="Open proof cabinet" data-action-href="/documents/#operations-file-cabinet">Review Hold</button></div>
+                <div class="wave1-queue-item"><b>BOF-2175</b><span>Rate confirmation match review</span><em>Review</em><button class="wave1-action-button" type="button" data-wave1-action data-action-title="Review Rate Match" data-action-body="BOF-2175 needs rate confirmation review before settlement can move forward. The page shows the reason, owner, and clearance path rather than a vague review label." data-action-meta="Settlement: SET-2175|Owner: Document desk|Clearance: confirm route pay and accessory support." data-action-label="Open settlement context" data-action-href="/operations-record/#shared-records">Review</button></div>
+                <div class="wave1-queue-item"><b>BOF-2064</b><span>Packet and payment path ready</span><em>Ready</em><button class="wave1-action-button" type="button" data-wave1-action data-action-title="View Ready Breakdown" data-action-body="BOF-2064 is ready because packet proof, pay basis, billing status, and driver visibility are aligned. This preview explains why it is ready before the office acts." data-action-meta="Settlement: SET-2064|State: ready to bill|Evidence: packet and payment path clear." data-action-label="Open joined record" data-action-href="/operations-record/#shared-records">View Breakdown</button></div>
               </div>
             </div>
           </article>
@@ -134,6 +137,11 @@
                 <div>
                   <h3>Packet-to-pay readiness</h3>
                   <p>POD and renewal evidence review must clear before payment readiness moves forward.</p>
+                  <div class="wave1-action-row">
+                    <button class="wave1-action-button wave1-action-button--primary" type="button" data-wave1-action data-action-title="Review Settlement Hold" data-action-body="The settlement is held because the proof packet still needs POD and renewal evidence review. This keeps the finance decision tied to the operating reason and clearance path." data-action-meta="Affected record: BOF-1907 / SET-1907|Business impact: payment readiness delayed.|Clearance path: confirm POD, signed BOL, receiver evidence, and renewal evidence." data-action-label="Open proof cabinet" data-action-href="/documents/#operations-file-cabinet">Review Hold</button>
+                    <a class="wave1-action-link" href="/operations-record/#shared-records">Open Settlement</a>
+                    <button class="wave1-action-button" type="button" data-wave1-action data-action-title="View Proof Packet" data-action-body="The proof packet preview keeps POD, BOL, receiver evidence, renewal support, and finance consequence attached to the settlement record." data-action-meta="Packet: PROOF-1907|Missing or review items: POD confirmation and renewal evidence|Owner: Dispatcher / packet owner." data-action-label="Open documents" data-action-href="/documents/#operations-file-cabinet">View Proof Packet</button>
+                  </div>
                 </div>
                 <span class="wave1-status wave1-status--review">Held</span>
               </article>
@@ -151,7 +159,6 @@
                 <div class="wave1-proof"><b>Clearance path</b><span>Confirm POD, signed BOL, receiver evidence, and renewal evidence.</span></div>
                 <div class="wave1-proof"><b>Release status</b><span>Payment readiness waits until the proof record clears.</span></div>
               </div>
-              <a class="bof-ds2-button bof-ds2-button--primary" href="/settlements/">Explore Finance Readiness</a>
             </div>
           </article>
         </div>
