@@ -1,0 +1,280 @@
+{
+  "qaCount": 49,
+  "qaFailures": [],
+  "publicChecks": [
+    {
+      "name": "public-driver-to-demo",
+      "url": "/drivers/",
+      "href": "/customer-demo/?portal=driver",
+      "text": "Explore the Driver Portal Demo",
+      "pass": true,
+      "info": {
+        "h1": "Drivers Powered for Success",
+        "hasHref": true,
+        "hasTextHref": true,
+        "demoLinks": [
+          {
+            "text": "Explore the Driver Portal Demo",
+            "href": "/customer-demo/?portal=driver"
+          },
+          {
+            "text": "Explore the Driver Portal Demo",
+            "href": "/customer-demo/?portal=driver"
+          },
+          {
+            "text": "Explore the Driver Portal Demo",
+            "href": "/customer-demo/?portal=driver"
+          }
+        ],
+        "heroStyle": "--wave1-hero-image: url('/assets/images/design-system-2/wave-1/ds2-drivers-hero-clean.png'); --wave1-hero-position: center; --wave1-hero-mobile-position: 76% top;",
+        "heroClass": "wave1-hero wave1-hero--drivers wave1-hero--subject-clear",
+        "bodyOverflow": 0
+      }
+    },
+    {
+      "name": "public-dispatch-to-demo",
+      "url": "/dispatch/",
+      "href": "/customer-demo/?portal=manager",
+      "text": "View the Manager Portal Demo",
+      "pass": true,
+      "info": {
+        "h1": "Operational Control in Real Time",
+        "hasHref": true,
+        "hasTextHref": true,
+        "demoLinks": [
+          {
+            "text": "View the Manager Portal Demo",
+            "href": "/customer-demo/?portal=manager"
+          },
+          {
+            "text": "View the Manager Portal Demo",
+            "href": "/customer-demo/?portal=manager"
+          }
+        ],
+        "heroStyle": "--wave1-hero-image: url('/assets/images/design-system-2/wave-1/ds2-dispatch-hero-clean.png'); --wave1-hero-position: center; --wave1-hero-mobile-position: 82% top;",
+        "heroClass": "wave1-hero wave1-hero--dispatch wave1-hero--subject-clear",
+        "bodyOverflow": 0
+      }
+    },
+    {
+      "name": "public-settlements-to-demo",
+      "url": "/settlements/",
+      "href": "/customer-demo/?portal=finance",
+      "text": "Explore Finance Readiness Demo",
+      "pass": true,
+      "info": {
+        "h1": "Revenue Readiness for Every Settlement",
+        "hasHref": true,
+        "hasTextHref": true,
+        "demoLinks": [
+          {
+            "text": "Explore Finance Readiness Demo",
+            "href": "/customer-demo/?portal=finance"
+          },
+          {
+            "text": "Explore Finance Readiness Demo",
+            "href": "/customer-demo/?portal=finance"
+          }
+        ],
+        "heroStyle": "--wave1-hero-image: url('/assets/images/design-system-2/wave-1/ds2-settlements-hero-clean.png'); --wave1-hero-position: center; --wave1-hero-mobile-position: 84% top;",
+        "heroClass": "wave1-hero wave1-hero--settlements wave1-hero--subject-clear",
+        "bodyOverflow": 0
+      }
+    },
+    {
+      "name": "public-safety-to-demo",
+      "url": "/safety/",
+      "href": "/customer-demo/?portal=safety",
+      "text": "Explore the Safety Portal Demo",
+      "pass": true,
+      "info": {
+        "h1": "Compliance Without Blind Spots",
+        "hasHref": true,
+        "hasTextHref": true,
+        "demoLinks": [
+          {
+            "text": "Explore the Safety Portal Demo",
+            "href": "/customer-demo/?portal=safety"
+          },
+          {
+            "text": "Explore the Safety Portal Demo",
+            "href": "/customer-demo/?portal=safety"
+          }
+        ],
+        "heroStyle": "--wave1-hero-image: url('/assets/images/design-system-2/wave-1/ds2-safety-hero-clean.png'); --wave1-hero-position: center; --wave1-hero-mobile-position: 70% top;",
+        "heroClass": "wave1-hero wave1-hero--safety wave1-hero--subject-clear",
+        "bodyOverflow": 0
+      }
+    },
+    {
+      "name": "public-vault-to-demo",
+      "url": "/bof-vault/",
+      "href": "/customer-demo/?portal=vault",
+      "text": "Explore BOF Vault",
+      "pass": true,
+      "info": {
+        "h1": "Secure Driver Self-Service.",
+        "hasHref": true,
+        "hasTextHref": true,
+        "demoLinks": [
+          {
+            "text": "Explore BOF Vault",
+            "href": "/customer-demo/?portal=vault"
+          },
+          {
+            "text": "See Document Intake in Action",
+            "href": "/customer-demo/?portal=vault&view=document-intake"
+          },
+          {
+            "text": "Explore BOF Vault",
+            "href": "/customer-demo/?portal=vault"
+          },
+          {
+            "text": "Explore BOF Vault",
+            "href": "/customer-demo/?portal=vault"
+          }
+        ],
+        "heroStyle": "--wave1-hero-image: url('/assets/images/design-system-2/wave-2/ds2-bof-vault-hero-clean.png'); --wave1-hero-position: center; --wave1-hero-mobile-position: 70% top;",
+        "heroClass": "wave1-hero wave2-hero wave1-hero--subject-clear",
+        "bodyOverflow": 0
+      }
+    },
+    {
+      "name": "public-policies-to-demo",
+      "url": "/policies-procedures/",
+      "href": "/customer-demo/?portal=policy",
+      "text": "Explore Policy Governance",
+      "pass": true,
+      "info": {
+        "h1": "Controlled, Auditable, Always Current.",
+        "hasHref": true,
+        "hasTextHref": true,
+        "demoLinks": [
+          {
+            "text": "Explore Policy Governance",
+            "href": "/customer-demo/?portal=policy"
+          },
+          {
+            "text": "Explore Policy Governance",
+            "href": "/customer-demo/?portal=policy"
+          },
+          {
+            "text": "Explore Policy Governance",
+            "href": "/customer-demo/?portal=policy"
+          }
+        ],
+        "heroStyle": "--wave1-hero-image: url('/assets/images/design-system-2/wave-2/ds2-policies-governance-hero-clean.png'); --wave1-hero-position: center; --wave1-hero-mobile-position: 70% top;",
+        "heroClass": "wave1-hero wave2-hero wave1-hero--subject-clear",
+        "bodyOverflow": 0
+      }
+    },
+    {
+      "name": "public-business-operations-to-demo",
+      "url": "/business-operations/",
+      "href": "/customer-demo/?portal=business-operations",
+      "text": "Open Business Operations Demo",
+      "pass": true,
+      "info": {
+        "h1": "Business Operations",
+        "hasHref": true,
+        "hasTextHref": true,
+        "demoLinks": [
+          {
+            "text": "Open Business Operations Demo",
+            "href": "/customer-demo/?portal=business-operations"
+          }
+        ],
+        "heroStyle": "",
+        "heroClass": "ops-admin-hero",
+        "bodyOverflow": 0
+      }
+    }
+  ],
+  "policyHero": {
+    "h1": "Controlled, Auditable, Always Current.",
+    "style": "--wave1-hero-image: url('/assets/images/design-system-2/wave-2/ds2-policies-governance-hero-clean.png'); --wave1-hero-position: center; --wave1-hero-mobile-position: 70% top;",
+    "usesClean": true,
+    "usesLabeled": false
+  },
+  "history": {
+    "beforeUrl": "http://127.0.0.1:8799/customer-demo/?portal=business-operations",
+    "afterClickUrl": "http://127.0.0.1:8799/business-operations/",
+    "afterBackUrl": "http://127.0.0.1:8799/customer-demo/?portal=business-operations",
+    "afterForwardUrl": "http://127.0.0.1:8799/business-operations/"
+  },
+  "assetChecks": [
+    {
+      "file": "manager-portal-bg-clean.png",
+      "status": 200,
+      "contentType": "image/png"
+    },
+    {
+      "file": "driver-portal-bg-clean.png",
+      "status": 200,
+      "contentType": "image/png"
+    },
+    {
+      "file": "finance-readiness-bg-clean.png",
+      "status": 200,
+      "contentType": "image/png"
+    },
+    {
+      "file": "safety-compliance-bg-clean.png",
+      "status": 200,
+      "contentType": "image/png"
+    },
+    {
+      "file": "bof-vault-bg-clean.png",
+      "status": 200,
+      "contentType": "image/png"
+    },
+    {
+      "file": "policy-governance-bg-clean.png",
+      "status": 200,
+      "contentType": "image/png"
+    },
+    {
+      "file": "business-operations-bg-clean.png",
+      "status": 200,
+      "contentType": "image/png"
+    },
+    {
+      "file": "backofficefleet-logo-approved.png",
+      "status": 200,
+      "contentType": "image/png"
+    }
+  ],
+  "consoleErrors": [],
+  "screenshots": [
+    "C:\\Users\\syhol\\BOF-wave-2-route-demo-integration\\docs\\design-system-2\\screenshots\\customer-demo-secondary-header-review\\manager-secondary-header-desktop.png",
+    "C:\\Users\\syhol\\BOF-wave-2-route-demo-integration\\docs\\design-system-2\\screenshots\\customer-demo-secondary-header-review\\manager-first-dashboard-section-desktop.png",
+    "C:\\Users\\syhol\\BOF-wave-2-route-demo-integration\\docs\\design-system-2\\screenshots\\customer-demo-secondary-header-review\\manager-secondary-header-mobile.png",
+    "C:\\Users\\syhol\\BOF-wave-2-route-demo-integration\\docs\\design-system-2\\screenshots\\customer-demo-secondary-header-review\\driver-secondary-header-desktop.png",
+    "C:\\Users\\syhol\\BOF-wave-2-route-demo-integration\\docs\\design-system-2\\screenshots\\customer-demo-secondary-header-review\\driver-first-dashboard-section-desktop.png",
+    "C:\\Users\\syhol\\BOF-wave-2-route-demo-integration\\docs\\design-system-2\\screenshots\\customer-demo-secondary-header-review\\driver-secondary-header-mobile.png",
+    "C:\\Users\\syhol\\BOF-wave-2-route-demo-integration\\docs\\design-system-2\\screenshots\\customer-demo-secondary-header-review\\finance-secondary-header-desktop.png",
+    "C:\\Users\\syhol\\BOF-wave-2-route-demo-integration\\docs\\design-system-2\\screenshots\\customer-demo-secondary-header-review\\finance-first-dashboard-section-desktop.png",
+    "C:\\Users\\syhol\\BOF-wave-2-route-demo-integration\\docs\\design-system-2\\screenshots\\customer-demo-secondary-header-review\\finance-secondary-header-mobile.png",
+    "C:\\Users\\syhol\\BOF-wave-2-route-demo-integration\\docs\\design-system-2\\screenshots\\customer-demo-secondary-header-review\\safety-secondary-header-desktop.png",
+    "C:\\Users\\syhol\\BOF-wave-2-route-demo-integration\\docs\\design-system-2\\screenshots\\customer-demo-secondary-header-review\\safety-first-dashboard-section-desktop.png",
+    "C:\\Users\\syhol\\BOF-wave-2-route-demo-integration\\docs\\design-system-2\\screenshots\\customer-demo-secondary-header-review\\safety-secondary-header-mobile.png",
+    "C:\\Users\\syhol\\BOF-wave-2-route-demo-integration\\docs\\design-system-2\\screenshots\\customer-demo-secondary-header-review\\vault-secondary-header-desktop.png",
+    "C:\\Users\\syhol\\BOF-wave-2-route-demo-integration\\docs\\design-system-2\\screenshots\\customer-demo-secondary-header-review\\vault-first-dashboard-section-desktop.png",
+    "C:\\Users\\syhol\\BOF-wave-2-route-demo-integration\\docs\\design-system-2\\screenshots\\customer-demo-secondary-header-review\\vault-secondary-header-mobile.png",
+    "C:\\Users\\syhol\\BOF-wave-2-route-demo-integration\\docs\\design-system-2\\screenshots\\customer-demo-secondary-header-review\\policy-secondary-header-desktop.png",
+    "C:\\Users\\syhol\\BOF-wave-2-route-demo-integration\\docs\\design-system-2\\screenshots\\customer-demo-secondary-header-review\\policy-first-dashboard-section-desktop.png",
+    "C:\\Users\\syhol\\BOF-wave-2-route-demo-integration\\docs\\design-system-2\\screenshots\\customer-demo-secondary-header-review\\policy-secondary-header-mobile.png",
+    "C:\\Users\\syhol\\BOF-wave-2-route-demo-integration\\docs\\design-system-2\\screenshots\\customer-demo-secondary-header-review\\business-operations-secondary-header-desktop.png",
+    "C:\\Users\\syhol\\BOF-wave-2-route-demo-integration\\docs\\design-system-2\\screenshots\\customer-demo-secondary-header-review\\business-operations-first-dashboard-section-desktop.png",
+    "C:\\Users\\syhol\\BOF-wave-2-route-demo-integration\\docs\\design-system-2\\screenshots\\customer-demo-secondary-header-review\\business-operations-secondary-header-mobile.png",
+    "C:\\Users\\syhol\\BOF-wave-2-route-demo-integration\\docs\\design-system-2\\screenshots\\customer-demo-secondary-header-review\\unified-sidebar-with-approved-logo.png",
+    "C:\\Users\\syhol\\BOF-wave-2-route-demo-integration\\docs\\design-system-2\\screenshots\\customer-demo-secondary-header-review\\public-driver-to-demo.png",
+    "C:\\Users\\syhol\\BOF-wave-2-route-demo-integration\\docs\\design-system-2\\screenshots\\customer-demo-secondary-header-review\\public-dispatch-to-demo.png",
+    "C:\\Users\\syhol\\BOF-wave-2-route-demo-integration\\docs\\design-system-2\\screenshots\\customer-demo-secondary-header-review\\public-settlements-to-demo.png",
+    "C:\\Users\\syhol\\BOF-wave-2-route-demo-integration\\docs\\design-system-2\\screenshots\\customer-demo-secondary-header-review\\public-safety-to-demo.png",
+    "C:\\Users\\syhol\\BOF-wave-2-route-demo-integration\\docs\\design-system-2\\screenshots\\customer-demo-secondary-header-review\\public-vault-to-demo.png",
+    "C:\\Users\\syhol\\BOF-wave-2-route-demo-integration\\docs\\design-system-2\\screenshots\\customer-demo-secondary-header-review\\public-policies-to-demo.png",
+    "C:\\Users\\syhol\\BOF-wave-2-route-demo-integration\\docs\\design-system-2\\screenshots\\customer-demo-secondary-header-review\\public-business-operations-to-demo.png",
+    "C:\\Users\\syhol\\BOF-wave-2-route-demo-integration\\docs\\design-system-2\\screenshots\\customer-demo-secondary-header-review\\policies-public-hero-final.png"
+  ]
+}
