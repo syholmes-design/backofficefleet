@@ -83,6 +83,7 @@ main > * {
   align-items: center;
   display: inline-flex;
   flex-shrink: 0;
+  min-height: 44px;
 }
 .brand img {
   display: block;
@@ -5476,7 +5477,7 @@ td { font-weight: 750; }
 
 .site-footer { border-top: 1px solid var(--line); color: var(--muted); padding: 30px 24px; }
 .footer-inner { align-items: center; display: flex; justify-content: space-between; margin: 0 auto; max-width: var(--max); }
-.site-footer a { color: var(--green-dark); font-weight: 900; }
+.site-footer a { align-items: center; color: var(--green-dark); display: inline-flex; font-weight: 900; min-height: 40px; }
 
 .reveal {
   opacity: 0;
@@ -8761,6 +8762,7 @@ main > * {
   align-items: center;
   display: inline-flex;
   flex-shrink: 0;
+  min-height: 44px;
 }
 .brand img {
   display: block;
@@ -14556,7 +14558,7 @@ td { font-weight: 750; }
 
 .site-footer { border-top: 1px solid var(--line); color: var(--muted); padding: 30px 24px; }
 .footer-inner { align-items: center; display: flex; justify-content: space-between; margin: 0 auto; max-width: var(--max); }
-.site-footer a { color: var(--green-dark); font-weight: 900; }
+.site-footer a { align-items: center; color: var(--green-dark); display: inline-flex; font-weight: 900; min-height: 40px; }
 
 .reveal {
   opacity: 0;
@@ -24915,6 +24917,9 @@ body.premium-site.business-ops-admin-page .business-operations-final-cta .action
 body.bof-wave3 {
   background: #f4f9fb;
   color: #071225;
+  --wave3-teal-on-dark: #72eedd;
+  --wave3-teal-on-light: #006f6a;
+  --wave3-teal-soft: rgba(0, 111, 106, 0.12);
 }
 
 body.bof-wave3,
@@ -24977,7 +24982,7 @@ body.bof-wave3 *::after {
 
 .wave3-nav a[aria-current="page"],
 .wave3-nav a:hover {
-  color: #72eedd;
+  color: var(--wave3-teal-on-dark);
 }
 
 .wave3-header__cta {
@@ -25017,12 +25022,26 @@ body.bof-wave3 *::after {
 }
 
 .wave3-eyebrow {
-  color: #72eedd;
+  color: var(--wave3-teal-on-dark);
   font-size: 0.82rem;
   font-weight: 950;
   letter-spacing: 0.14em;
   margin: 0 0 16px;
   text-transform: uppercase;
+}
+
+.wave3-section .wave3-eyebrow,
+.wave3-final-cta .wave3-eyebrow,
+.wave3-question-card .wave3-eyebrow,
+.wave3-assessment-ready .wave3-eyebrow,
+.wave3-assessment-intro .wave3-eyebrow,
+.wave3-conversion-panel .wave3-eyebrow {
+  color: var(--wave3-teal-on-light);
+}
+
+.wave3-section--dark .wave3-eyebrow,
+.wave3-hero .wave3-eyebrow {
+  color: var(--wave3-teal-on-dark);
 }
 
 .wave3-hero h1 {
@@ -25048,6 +25067,35 @@ body.bof-wave3 *::after {
   flex-wrap: wrap;
   gap: 12px;
   margin-top: 28px;
+}
+
+.wave3-value-strip,
+.wave3-proof-strip {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 24px;
+  max-width: 840px;
+}
+
+.wave3-value-strip span,
+.wave3-proof-strip span {
+  align-items: center;
+  background: rgba(5, 12, 26, 0.72);
+  border: 1px solid rgba(114, 238, 221, 0.28);
+  border-radius: 999px;
+  color: #fff;
+  display: inline-flex;
+  font-size: 0.9rem;
+  font-weight: 900;
+  min-height: 38px;
+  padding: 9px 12px;
+}
+
+.wave3-proof-strip span {
+  background: rgba(255, 255, 255, 0.94);
+  border-color: rgba(255, 179, 0, 0.45);
+  color: #071225;
 }
 
 .wave3-button {
@@ -25127,6 +25175,12 @@ body.bof-wave3 *::after {
   grid-template-columns: repeat(5, minmax(0, 1fr));
 }
 
+.wave3-assessment-card-grid {
+  display: grid;
+  gap: clamp(16px, 1.5vw, 22px);
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+}
+
 .wave3-audience-card,
 .wave3-proof-card,
 .wave3-profile-card,
@@ -25138,6 +25192,36 @@ body.bof-wave3 *::after {
   box-shadow: 0 18px 46px rgba(21, 45, 74, 0.1);
   min-width: 0;
   overflow: hidden;
+}
+
+.wave3-assessment-card {
+  cursor: pointer;
+  display: grid;
+  min-height: 100%;
+  position: relative;
+  transition: border-color 180ms ease, box-shadow 180ms ease, transform 180ms ease;
+}
+
+.wave3-assessment-card:hover,
+.wave3-assessment-card:focus-visible {
+  border-color: rgba(0, 111, 106, 0.48);
+  box-shadow: 0 24px 62px rgba(21, 45, 74, 0.16);
+  outline: none;
+  transform: translateY(-3px);
+}
+
+.wave3-assessment-card.is-selected {
+  border-color: #ffb300;
+  box-shadow: 0 0 0 3px rgba(255, 179, 0, 0.18), 0 24px 62px rgba(21, 45, 74, 0.16);
+}
+
+.wave3-assessment-card__media img {
+  aspect-ratio: 16 / 10;
+  display: block;
+  height: auto;
+  object-fit: cover;
+  object-position: center;
+  width: 100%;
 }
 
 .wave3-audience-card {
@@ -25168,7 +25252,7 @@ body.bof-wave3 *::after {
 .wave3-proof-card span,
 .wave3-result-card span,
 .wave3-assessment-card span {
-  color: #087d78;
+  color: var(--wave3-teal-on-light);
   font-size: 0.78rem;
   font-weight: 950;
   letter-spacing: 0.1em;
@@ -25219,6 +25303,32 @@ body.bof-wave3 *::after {
   min-height: 42px;
   padding: 9px 12px;
   text-decoration: none;
+}
+
+.wave3-assessment-card.is-selected .wave3-card-actions button {
+  background: #071225;
+  border-color: #071225;
+  color: var(--wave3-teal-on-dark);
+}
+
+.wave3-selected-badge {
+  align-items: center;
+  background: #071225;
+  border-radius: 999px;
+  color: var(--wave3-teal-on-dark);
+  display: inline-flex;
+  font-size: 0.78rem;
+  font-weight: 950;
+  gap: 6px;
+  min-height: 34px;
+  padding: 7px 10px;
+  position: absolute;
+  right: 12px;
+  top: 12px;
+}
+
+.wave3-selected-badge::before {
+  content: "✓";
 }
 
 .wave3-profile-layout {
@@ -25301,6 +25411,37 @@ body.bof-wave3 *::after {
   justify-content: center;
 }
 
+.wave3-priority-banner {
+  background: linear-gradient(135deg, #071225, #0d343e);
+  color: #fff;
+}
+
+.wave3-priority-banner__inner {
+  border: 1px solid rgba(114, 238, 221, 0.22);
+  border-radius: 8px;
+  box-shadow: 0 24px 68px rgba(5, 12, 26, 0.24);
+  margin: 0 auto;
+  max-width: 1120px;
+  padding: clamp(28px, 4vw, 54px);
+}
+
+.wave3-priority-banner h2 {
+  color: #fff;
+  font-size: clamp(2rem, 3.4vw, 4rem);
+  line-height: 1.02;
+  margin: 0;
+}
+
+.wave3-priority-banner p:not(.wave3-eyebrow) {
+  color: rgba(255, 255, 255, 0.84);
+  line-height: 1.62;
+  max-width: 860px;
+}
+
+.wave3-program-stages {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
 .wave3-footer {
   background: #050c1a;
   color: rgba(255, 255, 255, 0.72);
@@ -25313,7 +25454,7 @@ body.bof-wave3 *::after {
 
 .wave3-footer a {
   align-items: center;
-  color: #72eedd;
+  color: var(--wave3-teal-on-dark);
   display: inline-flex;
   font-weight: 900;
   min-height: 40px;
@@ -25323,6 +25464,36 @@ body.bof-wave3 *::after {
 .wave3-assessment-shell {
   display: grid;
   gap: clamp(22px, 3vw, 36px);
+  margin-top: clamp(28px, 4vw, 54px);
+}
+
+.wave3-assessment-ready,
+.wave3-assessment-intro {
+  background: #fff;
+  border: 1px solid rgba(184, 203, 216, 0.96);
+  border-radius: 8px;
+  box-shadow: 0 18px 46px rgba(21, 45, 74, 0.1);
+  margin-top: clamp(24px, 3vw, 42px);
+  padding: clamp(22px, 3vw, 38px);
+}
+
+.wave3-assessment-ready h3,
+.wave3-assessment-intro h3,
+.wave3-question-card h3 {
+  color: #071225;
+  font-size: clamp(1.65rem, 2.6vw, 3.1rem);
+  letter-spacing: 0;
+  line-height: 1.02;
+  margin: 0;
+}
+
+.wave3-assessment-ready p,
+.wave3-assessment-intro p {
+  color: #40516a;
+  font-size: 1.04rem;
+  line-height: 1.58;
+  margin: 0;
+  max-width: 880px;
 }
 
 .wave3-assessment-toolbar {
@@ -25367,12 +25538,34 @@ body.bof-wave3 *::after {
   grid-template-columns: minmax(0, 1fr) minmax(300px, 0.34fr);
 }
 
+.wave3-assessment-stage--single {
+  grid-template-columns: 1fr;
+}
+
 .wave3-progress {
   background: #fff;
   border: 1px solid rgba(184, 203, 216, 0.96);
   border-radius: 8px;
   box-shadow: 0 18px 46px rgba(21, 45, 74, 0.1);
   padding: 18px;
+}
+
+.wave3-progress__copy {
+  align-items: baseline;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 14px;
+}
+
+.wave3-progress__copy strong {
+  color: #071225;
+  font-size: 1.02rem;
+}
+
+.wave3-progress__copy span {
+  color: #40516a;
+  font-size: 0.94rem;
+  font-weight: 850;
 }
 
 .wave3-progress-bar {
@@ -25384,7 +25577,7 @@ body.bof-wave3 *::after {
 }
 
 .wave3-progress-bar span {
-  background: linear-gradient(90deg, #1878ff, #72eedd);
+  background: linear-gradient(90deg, #1878ff, var(--wave3-teal-on-light));
   display: block;
   height: 100%;
   transition: width 160ms ease;
@@ -25398,6 +25591,12 @@ body.bof-wave3 *::after {
   display: grid;
   gap: 18px;
   padding: clamp(22px, 3vw, 38px);
+}
+
+.wave3-question-card--review,
+.wave3-question-card--result {
+  max-width: 1220px;
+  width: 100%;
 }
 
 .wave3-question-card fieldset {
@@ -25435,9 +25634,22 @@ body.bof-wave3 *::after {
 }
 
 .wave3-option-list input {
-  accent-color: #087d78;
+  accent-color: var(--wave3-teal-on-light);
   min-height: 18px;
   min-width: 18px;
+}
+
+.wave3-question-actions {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  justify-content: flex-end;
+  margin-top: 6px;
+}
+
+.wave3-question-actions .wave3-button--primary {
+  min-width: 180px;
 }
 
 .wave3-review-list {
@@ -25462,6 +25674,54 @@ body.bof-wave3 *::after {
   display: grid;
   gap: 16px;
   grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.wave3-result-highlight,
+.wave3-conversion-panel {
+  background: linear-gradient(135deg, #f7fbff, #eefaf8);
+  border: 1px solid rgba(0, 111, 106, 0.22);
+  border-radius: 8px;
+  display: grid;
+  gap: 8px;
+  padding: clamp(18px, 2.4vw, 28px);
+}
+
+.wave3-result-highlight span {
+  color: var(--wave3-teal-on-light);
+  font-size: 0.78rem;
+  font-weight: 950;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.wave3-result-highlight strong {
+  color: #071225;
+  font-size: clamp(1.4rem, 2vw, 2.2rem);
+  line-height: 1.08;
+}
+
+.wave3-module-list span {
+  align-items: center;
+  background: rgba(0, 111, 106, 0.1);
+  border: 1px solid rgba(0, 111, 106, 0.22);
+  border-radius: 999px;
+  color: var(--wave3-teal-on-light);
+  display: inline-flex;
+  font-size: 0.9rem;
+  font-weight: 950;
+  min-height: 38px;
+  padding: 8px 12px;
+}
+
+.wave3-form-note {
+  background: #fff8e7;
+  border: 1px solid rgba(255, 179, 0, 0.36);
+  border-radius: 8px;
+  color: #5d4600;
+  font-size: 0.94rem;
+  line-height: 1.5;
+  margin: 4px 0 0;
+  padding: 12px 14px;
 }
 
 .wave3-disclaimer {
@@ -25507,6 +25767,10 @@ body.bof-wave3 select:focus-visible {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
+  .wave3-assessment-card-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
   .wave3-profile-layout,
   .wave3-assessment-stage {
     grid-template-columns: 1fr;
@@ -25536,6 +25800,7 @@ body.bof-wave3 select:focus-visible {
   }
 
   .wave3-card-grid,
+  .wave3-assessment-card-grid,
   .wave3-results-grid {
     grid-template-columns: 1fr;
   }
@@ -25554,6 +25819,15 @@ body.bof-wave3 select:focus-visible {
   .wave3-assessment-tabs {
     display: grid;
     grid-template-columns: 1fr;
+    width: 100%;
+  }
+
+  .wave3-question-actions {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .wave3-question-actions .wave3-button {
     width: 100%;
   }
 }
