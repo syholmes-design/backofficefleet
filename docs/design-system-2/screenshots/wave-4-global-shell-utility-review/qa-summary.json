@@ -1,0 +1,16 @@
+{
+  "date": "2026-07-28",
+  "branch": "codex/design-system-2-wave-4",
+  "startingHead": "f283cdbf474221145aa8dfaa166ea562606a4c18",
+  "routesChecked": 21,
+  "viewports": ["desktop", "tablet", "mobile"],
+  "checks": [
+    "canonical public header present",
+    "approved BOF logo rendered",
+    "phone icon/control absent",
+    "legal footer links present",
+    "no horizontal overflow",
+    "Load Readiness utility panel updates"
+  ],
+  "failures": []
+}

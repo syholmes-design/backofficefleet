@@ -9,122 +9,82 @@
     });
   }
 
+  function shouldUsePublicShell() {
+    return !document.querySelector("[data-interactive-demo]") &&
+      !document.querySelector(".portal-topbar") &&
+      !document.body.classList.contains("portal-page");
+  }
+
+  function canonicalHeaderHtml() {
+    return [
+      '<header class="site-header" data-enterprise-header="true">',
+      '  <a class="brand" href="/" aria-label="BackOfficeFleet home"><img src="/assets/images/logo/boflogo-original.png" alt="BackOfficeFleet"></a>',
+      '  <button class="nav-toggle" type="button" data-nav-toggle aria-expanded="false" aria-label="Toggle navigation">&#9776;</button>',
+      '  <nav class="site-nav" data-nav aria-label="Main navigation">',
+      '    <div class="nav-menu" data-nav-menu>',
+      '      <button class="nav-menu-toggle" type="button" data-nav-menu-toggle aria-expanded="false" aria-haspopup="true">Who We Serve</button>',
+      '      <div class="nav-dropdown" aria-label="Who We Serve">',
+      '        <a href="/who-we-serve/">Who We Serve Overview</a>',
+      '        <a href="/private-fleets/">Private Fleets</a>',
+      '        <a href="/for-hire-fleets/">For-Hire Fleets</a>',
+      '        <a href="/aggregators/">Aggregators</a>',
+      '        <a href="/government/">Government Fleets</a>',
+      '        <a href="/drivers/">Individual Drivers</a>',
+      '      </div>',
+      '    </div>',
+      '    <a href="/drivers/">Drivers</a>',
+      '    <a href="/dispatch/">Dispatch &amp; Operations</a>',
+      '    <a href="/safety/">Safety &amp; Compliance</a>',
+      '    <a href="/settlements/">Settlements &amp; Billing</a>',
+      '    <a href="/business-operations/">Business Operations</a>',
+      '    <a href="/policies-procedures/">Policies &amp; Procedures</a>',
+      '    <a href="/company/">Company</a>',
+      '    <a class="nav-mobile-signin" href="/book-a-demo/">Request a Demo</a>',
+      '  </nav>',
+      '  <a class="header-cta" href="/book-a-demo/" aria-label="Request a BackOfficeFleet demo">Request a Demo</a>',
+      '</header>'
+    ].join("");
+  }
+
+  function canonicalFooterHtml() {
+    return [
+      '<footer class="site-footer" data-enterprise-footer="true">',
+      '  <div class="footer-inner wave4-footer-inner">',
+      '    <div class="wave4-footer-brand"><strong>BackOfficeFleet</strong><span>Operational readiness, documentation, governance, and execution support for fleets.</span><p>BackOfficeFleet provides operational-readiness, workflow, documentation, and governance tools. It does not provide legal, tax, accounting, insurance, regulatory, or compliance certification.</p></div>',
+      '    <nav class="wave4-footer-links" aria-label="Footer navigation">',
+      '      <div><span>Company</span><a href="/company/">Company</a><a href="/about/">About BOF</a><a href="/contact/">Contact</a><a href="/priority-fleet-program/">Priority Fleet Program</a></div>',
+      '      <div><span>Audiences</span><a href="/who-we-serve/">Who We Serve</a><a href="/private-fleets/">Private Fleets</a><a href="/for-hire-fleets/">For-Hire Fleets</a><a href="/aggregators/">Aggregators</a><a href="/government/">Government Fleets</a></div>',
+      '      <div><span>Products</span><a href="/drivers/">Drivers</a><a href="/dispatch/">Dispatch &amp; Operations</a><a href="/safety/">Safety &amp; Compliance</a><a href="/settlements/">Settlements &amp; Billing</a><a href="/business-operations/">Business Operations</a><a href="/documents/">Documents</a><a href="/bof-vault/">BOF Vault</a><a href="/policies-procedures/">Policies &amp; Procedures</a></div>',
+      '      <div><span>Solutions</span><a href="/assessment/">Fleet Readiness Assessment</a><a href="/load-readiness/">Load Readiness</a><a href="/network-readiness/">Network Readiness</a><a href="/fleet-preparedness/">Fleet Preparedness</a><a href="/resources/">Resources</a></div>',
+      '      <div><span>Get Started</span><a href="/book-a-demo/">Request a Demo</a><a href="/contact/">Contact BOF</a><a href="/customer-demo/">Customer Demo</a></div>',
+      '      <div><span>Legal</span><a href="/privacy/">Privacy Policy</a><a href="/terms/">Terms of Use</a><a href="/accessibility/">Accessibility</a></div>',
+      '    </nav>',
+      '    <p class="wave4-footer-legal">&copy; 2026 BackOfficeFleet. All rights reserved.</p>',
+      '  </div>',
+      '</footer>'
+    ].join("");
+  }
+
+  function installPublicShell() {
+    var existingHeader;
+    var existingFooter;
+    if (!shouldUsePublicShell()) return;
+    existingHeader = document.querySelector(".site-header, .wave3-header, .bof-ds2-header");
+    if (existingHeader) existingHeader.outerHTML = canonicalHeaderHtml();
+    existingFooter = document.querySelector(".site-footer, .wave3-footer, .bof-ds2-footer");
+    if (existingFooter) existingFooter.outerHTML = canonicalFooterHtml();
+  }
+
+  installPublicShell();
+
   var toggle = document.querySelector("[data-nav-toggle]");
   var nav = document.querySelector("[data-nav]");
   var header = document.querySelector(".site-header");
 
-  function createIconLink(href, className, label, iconSvg) {
-    var link = document.createElement("a");
-    link.href = href;
-    link.className = className;
-    link.innerHTML = iconSvg + "<span>" + label + "</span>";
-    link.setAttribute("aria-label", label);
-    link.setAttribute("title", label);
-    return link;
-  }
-
-  function enhanceEnterpriseHeader() {
-    if (!header || !nav) return;
-    header.setAttribute("data-enterprise-header", "true");
-
-    nav.querySelectorAll(".nav-dropdown a").forEach(function (link) {
-      var href = (link.getAttribute("href") || "").replace(/\/+$/, "/");
-      if (href === "/fleet/") link.remove();
-      if (href === "/aggregator-outreach/" || href === "/aggregator-partner-offer/") {
-        link.href = "/aggregators/";
-        link.textContent = "Aggregators";
-      }
-    });
-
-    nav.querySelectorAll('a[href="/trust-governance/"]').forEach(function (link) {
-      if ((link.textContent || "").trim().toLowerCase() === "company") {
-        link.href = "/company/";
-      }
-    });
-
-    nav.querySelectorAll(".nav-utility-link").forEach(function (link) {
-      link.remove();
-    });
-
-    if (!nav.querySelector(".nav-vault-link")) {
-      nav.appendChild(createIconLink(
-        "/bof-vault/",
-        "nav-icon-link nav-vault-link",
-        "BOF Vault",
-        '<svg aria-hidden="true" viewBox="0 0 24 24"><path d="M7 10V8a5 5 0 0 1 10 0v2"/><rect x="5" y="10" width="14" height="10" rx="2"/><path d="M12 14v2.5"/><path d="M9 20h6"/></svg>'
-      ));
-    }
-
-    if (!nav.querySelector(".nav-documents-link")) {
-      nav.appendChild(createIconLink(
-        "/documents/",
-        "nav-icon-link nav-documents-link",
-        "Documents",
-        '<svg aria-hidden="true" viewBox="0 0 24 24"><path d="M7 3h7l4 4v14H7z"/><path d="M14 3v5h5"/><path d="M9.5 12.5h5"/><path d="M9.5 16h6"/><path d="M9.5 19h4"/></svg>'
-      ));
-    }
-
-    if (!nav.querySelector(".nav-assessment-menu")) {
-      var assessmentMenu = document.createElement("div");
-      assessmentMenu.className = "nav-menu nav-assessment-menu";
-      assessmentMenu.setAttribute("data-nav-menu", "");
-      assessmentMenu.innerHTML = [
-        '<button class="nav-menu-toggle" type="button" data-nav-menu-toggle aria-expanded="false" aria-haspopup="true">BOF Assessment</button>',
-        '<div class="nav-dropdown" aria-label="BOF Assessment">',
-        '  <a href="/assessment/">Fleet Readiness Assessment</a>',
-        '  <a href="/assessment/?type=private-fleet">Private Fleet Assessment</a>',
-        '  <a href="/assessment/?type=for-hire-fleet">For-Hire Fleet Assessment</a>',
-        '  <a href="/assessment/?type=government">Government Fleet Assessment</a>',
-        '  <a href="/assessment/?type=aggregator">Aggregator Assessment</a>',
-        '</div>'
-      ].join("");
-      var vaultLink = nav.querySelector(".nav-vault-link");
-      nav.insertBefore(assessmentMenu, vaultLink || nav.lastChild);
-    }
-
-    if (!nav.querySelector(".nav-mobile-signin")) {
-      var mobileSignIn = document.createElement("a");
-      mobileSignIn.href = "/book-a-demo/";
-      mobileSignIn.className = "nav-mobile-signin";
-      mobileSignIn.textContent = "Request a Demo";
-      nav.insertBefore(mobileSignIn, nav.firstChild);
-    }
-
-    var cta = header.querySelector(".header-cta");
-    if (cta) {
-      cta.href = "/book-a-demo/";
-      cta.textContent = "Request a Demo";
-      cta.setAttribute("aria-label", "Request a BackOfficeFleet demo");
-    }
-
-    if (!header.querySelector(".header-contact-icon")) {
-      var contact = createIconLink(
-        "/contact/",
-        "header-contact-icon",
-        "Contact BackOfficeFleet",
-        '<svg aria-hidden="true" viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.8 19.8 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.12 4.2 2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.12.9.32 1.77.6 2.61a2 2 0 0 1-.45 2.11L8 9.7a16 16 0 0 0 6.3 6.3l1.26-1.26a2 2 0 0 1 2.11-.45c.84.28 1.71.48 2.61.6A2 2 0 0 1 22 16.92z"/></svg>'
-      );
-      contact.setAttribute("aria-label", "Contact BackOfficeFleet");
-      header.appendChild(contact);
-    }
-  }
-
-  enhanceEnterpriseHeader();
-
   function enhancePublicFooter() {
     var footer = document.querySelector(".site-footer");
-    if (!footer || document.querySelector("[data-interactive-demo]")) return;
-    footer.innerHTML = [
-      '<div class="footer-inner wave4-footer-inner">',
-      '  <div class="wave4-footer-brand"><strong>BackOfficeFleet</strong><span>Operational readiness, documentation, governance, and execution support for fleets.</span></div>',
-      '  <nav class="wave4-footer-links" aria-label="Footer navigation">',
-      '    <div><span>Audiences</span><a href="/who-we-serve/">Who We Serve</a><a href="/private-fleets/">Private Fleets</a><a href="/for-hire-fleets/">For-Hire Fleets</a><a href="/aggregators/">Aggregators</a><a href="/government/">Government</a></div>',
-      '    <div><span>Products</span><a href="/drivers/">Drivers</a><a href="/dispatch/">Dispatch &amp; Operations</a><a href="/safety/">Safety &amp; Compliance</a><a href="/settlements/">Settlements &amp; Billing</a><a href="/business-operations/">Business Operations</a><a href="/documents/">Documents</a><a href="/bof-vault/">BOF Vault</a><a href="/policies-procedures/">Policies &amp; Procedures</a></div>',
-      '    <div><span>Solutions</span><a href="/assessment/">Assessment</a><a href="/load-readiness/">Load Readiness</a><a href="/network-readiness/">Network Readiness</a><a href="/fleet-preparedness/">Fleet Preparedness</a><a href="/priority-fleet-program/">Priority Fleet Program</a><a href="/resources/">Resources</a></div>',
-      '    <div><span>Company</span><a href="/company/">Company</a><a href="/contact/">Contact</a><a href="/book-a-demo/">Request a Demo</a></div>',
-      '  </nav>',
-      '</div>'
-    ].join("");
+    if (!footer || footer.getAttribute("data-enterprise-footer") === "true" || document.querySelector("[data-interactive-demo]")) return;
+    footer.outerHTML = canonicalFooterHtml();
   }
 
   enhancePublicFooter();
@@ -245,6 +205,38 @@
       button.textContent = open ? "Open interactive workspace" : "Close interactive workspace";
       mount.hidden = open;
       section.classList.toggle("is-collapsed", open);
+    });
+  });
+
+  document.querySelectorAll("[data-utility-panel]").forEach(function (panel) {
+    var title = panel.querySelector("[data-utility-title]");
+    var body = panel.querySelector("[data-utility-body]");
+    var meta = panel.querySelector("[data-utility-meta]");
+    var buttons = Array.prototype.slice.call(document.querySelectorAll("[data-utility-action]"));
+    if (!title || !body || !meta || !buttons.length) return;
+
+    function setPanel(button) {
+      var metaRows = (button.getAttribute("data-action-meta") || "")
+        .split("|")
+        .filter(Boolean)
+        .map(function (item) {
+          var parts = item.split(":");
+          var key = (parts.shift() || "Detail").trim();
+          var value = parts.join(":").trim();
+          return "<div><dt>" + key + "</dt><dd>" + value + "</dd></div>";
+        })
+        .join("");
+      title.textContent = button.getAttribute("data-action-title") || "Selected action";
+      body.textContent = button.getAttribute("data-action-body") || "Review the selected readiness action.";
+      meta.innerHTML = metaRows || "<div><dt>Status</dt><dd>Illustrative demo data</dd></div>";
+      buttons.forEach(function (item) { item.removeAttribute("aria-current"); });
+      button.setAttribute("aria-current", "true");
+    }
+
+    buttons.forEach(function (button) {
+      button.addEventListener("click", function () {
+        setPanel(button);
+      });
     });
   });
 

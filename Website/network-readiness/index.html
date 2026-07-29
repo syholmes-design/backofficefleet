@@ -1,4 +1,4 @@
-<!doctype html>
+﻿<!doctype html>
 <html lang="en">
 <head>
   <meta charset="utf-8">
@@ -9,7 +9,7 @@
   <meta property="og:title" content="Network Readiness | BackOfficeFleet">
   <meta property="og:description" content="Review carrier onboarding, driver and equipment readiness, proof standards, subcontractor controls, and cross-carrier exceptions.">
   <meta property="og:url" content="https://backofficefleet.com/network-readiness/">
-  <link rel="stylesheet" href="/assets/css/styles.css?v=20260728-wave4-owner-review3">
+  <link rel="stylesheet" href="/assets/css/styles.css?v=20260728-wave4-global-shell">
 </head>
 <body class="premium-site wave4-page solution-page">
   <header class="site-header">
@@ -23,6 +23,21 @@
     <section class="wave4-hero wave4-hero--network">
       <div class="wave4-hero-copy reveal"><p class="eyebrow">Network Readiness</p><h1>See which carriers, drivers, assets, and proof standards are actually ready.</h1><p>BOF supports aggregator and multi-entity visibility by organizing onboarding status, evidence standards, exceptions, and reporting across a network. BOF does not present itself as a dispatcher or broker.</p><div class="actions"><a class="button primary" href="/assessment/?type=aggregator">Start Aggregator Assessment</a><a class="button secondary" href="/aggregators/">View Aggregator Page</a></div></div>
       <aside class="wave4-brief-card reveal"><span>Network rule</span><h2>Available capacity is not always usable capacity.</h2><p>The network needs authority, insurance, driver readiness, equipment fit, proof rules, and exception ownership before commitments are trusted.</p></aside>
+    </section>
+
+    <section class="section utility-section" aria-labelledby="network-roster-heading">
+      <div class="section-head reveal"><p class="eyebrow">Network readiness roster</p><h2 id="network-roster-heading">Review which operating units can actually support the next commitment.</h2></div>
+      <div class="utility-table-wrap reveal" role="region" aria-label="Carrier and operating-unit readiness roster">
+        <table class="utility-table">
+          <thead><tr><th>Carrier or unit</th><th>Authority</th><th>Insurance</th><th>Driver readiness</th><th>Equipment readiness</th><th>Proof standard</th><th>Exception</th><th>Action</th></tr></thead>
+          <tbody>
+            <tr><td data-label="Carrier or unit">Riverbend Logistics</td><td data-label="Authority"><span class="utility-pill ready">Ready</span></td><td data-label="Insurance">COI current</td><td data-label="Driver readiness">8 ready / 1 review</td><td data-label="Equipment readiness">Dry van ready</td><td data-label="Proof standard">BOL + POD + seal photo</td><td data-label="Exception">One driver medical review</td><td data-label="Action"><a href="/drivers/">View drivers</a></td></tr>
+            <tr><td data-label="Carrier or unit">Northline Dedicated</td><td data-label="Authority"><span class="utility-pill ready">Ready</span></td><td data-label="Insurance">Renewal watch</td><td data-label="Driver readiness">5 ready</td><td data-label="Equipment readiness">Reefer check due</td><td data-label="Proof standard">Temperature log required</td><td data-label="Exception">Insurance renewal in 18 days</td><td data-label="Action"><a href="/documents/">Open records</a></td></tr>
+            <tr><td data-label="Carrier or unit">Metro Public Works Pool</td><td data-label="Authority"><span class="utility-pill attention">Review</span></td><td data-label="Insurance">Agency packet pending</td><td data-label="Driver readiness">12 ready / 3 training</td><td data-label="Equipment readiness">Storm assets staged</td><td data-label="Proof standard">Incident log + asset photo</td><td data-label="Exception">Training acknowledgments pending</td><td data-label="Action"><a href="/policies-procedures/">Review policies</a></td></tr>
+            <tr><td data-label="Carrier or unit">Ozark Partner Carrier</td><td data-label="Authority"><span class="utility-pill ready">Ready</span></td><td data-label="Insurance">COI current</td><td data-label="Driver readiness">4 ready / 2 missing docs</td><td data-label="Equipment readiness">Flatbed ready</td><td data-label="Proof standard">Securement photos required</td><td data-label="Exception">Two DQF items missing</td><td data-label="Action"><a href="/bof-vault/">Open Vault</a></td></tr>
+          </tbody>
+        </table>
+      </div>
     </section>
 
     <section class="section wave4-section">
@@ -48,6 +63,6 @@
   </main>
 
   <footer class="site-footer"><div class="footer-inner"><strong>BackOfficeFleet</strong><span>Readiness visibility across carrier networks and operating entities.</span><a href="/contact/">Contact</a></div></footer>
-  <script src="/assets/js/site.js?v=20260728-wave4-owner-review3"></script>
+  <script src="/assets/js/site.js?v=20260728-wave4-global-shell"></script>
 </body>
 </html>

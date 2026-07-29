@@ -4,14 +4,14 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Load Readiness | BackOfficeFleet</title>
-  <meta name="description" content="See how BackOfficeFleet helps control a load from intake through pre-trip, in-route exceptions, delivery proof, billing readiness, and settlement release.">
+  <meta name="description" content="Inspect a synthetic BOF pre-trip readiness packet with required documents, owners, blockers, clearance actions, proof, billing, settlement, and audit controls.">
   <link rel="canonical" href="https://backofficefleet.com/load-readiness/">
   <meta property="og:title" content="Load Readiness | BackOfficeFleet">
-  <meta property="og:description" content="Control the records, proof, owners, and release decisions behind each load lifecycle.">
+  <meta property="og:description" content="A practical pre-trip packet for load release, proof, billing readiness, settlement release, claims, and audit history.">
   <meta property="og:url" content="https://backofficefleet.com/load-readiness/">
-  <link rel="stylesheet" href="/assets/css/styles.css?v=20260728-wave4-owner-review3">
+  <link rel="stylesheet" href="/assets/css/styles.css?v=20260728-wave4-global-shell">
 </head>
-<body class="premium-site wave4-page solution-page">
+<body class="premium-site wave4-page solution-page utility-first-page">
   <header class="site-header">
     <a class="brand" href="/" aria-label="BackOfficeFleet home"><img src="/assets/images/logo/boflogo-original.png" alt="BackOfficeFleet"></a>
     <button class="nav-toggle" type="button" data-nav-toggle aria-expanded="false" aria-label="Toggle navigation">&#9776;</button>
@@ -23,54 +23,76 @@
   </header>
 
   <main>
-    <section class="wave4-hero wave4-hero--load">
+    <section class="wave4-hero wave4-hero--load utility-hero" data-utility-panel>
       <div class="wave4-hero-copy reveal">
-        <p class="eyebrow">Load Readiness</p>
-        <h1>Control the load from intake through proof, billing, and settlement.</h1>
-        <p>BOF does not need to act as the dispatcher to make the load easier to govern. It organizes the readiness gates, documents, exceptions, owners, and proof packet that determine whether the work can move cleanly.</p>
-        <div class="actions"><a class="button primary" href="/assessment/?type=for-hire-fleet">Start the For-Hire Assessment</a><a class="button secondary" href="/book-a-demo/">Request a Load Review</a></div>
+        <p class="eyebrow">Pre-Trip Readiness Packet</p>
+        <h1>Load BOF-1907 cannot release until the packet clears.</h1>
+        <p>Route: Tulsa, OK to Kansas City, MO. Driver: Carlos Martinez. Tractor: TRK-104. Trailer: TRL-228. Scheduled departure: 6:30 AM.</p>
+        <div class="utility-status-strip" aria-label="Load readiness summary">
+          <span><strong>Hold</strong> release status</span>
+          <span><strong>2</strong> items must clear</span>
+          <span><strong>10</strong> packet requirements</span>
+        </div>
+        <div class="actions">
+          <button class="button primary" type="button" data-utility-action data-action-title="Release Review" data-action-body="BOF-1907 remains on hold because the medical card renewal and POD photo standard need owner review. Release can be approved only after those attention items clear." data-action-meta="Load: BOF-1907|Status: Hold|Owner: Dispatch manager|No production record changed.">Review Release Decision</button>
+          <a class="button secondary" href="/dispatch/">Open Dispatch Context</a>
+        </div>
       </div>
-      <aside class="wave4-brief-card reveal"><span>Lifecycle</span><h2>Pre-trip -> In-route -> Delivery/POD -> Post-delivery</h2><p>Each stage keeps the record, required proof, owner, exception, and next action visible.</p></aside>
+      <aside class="utility-drawer reveal" id="utility-detail-panel" aria-live="polite">
+        <span>Selected Action</span>
+        <h2 data-utility-title>Release Review</h2>
+        <p data-utility-body>Choose a packet action to inspect the owner, issue, clearance path, and operating consequence.</p>
+        <dl data-utility-meta>
+          <div><dt>Load</dt><dd>BOF-1907</dd></div>
+          <div><dt>State</dt><dd>Hold</dd></div>
+          <div><dt>Data</dt><dd>Illustrative demo data</dd></div>
+        </dl>
+      </aside>
+    </section>
+
+    <section class="section utility-section" aria-labelledby="packet-heading">
+      <div class="section-head reveal">
+        <p class="eyebrow">Readiness packet</p>
+        <h2 id="packet-heading">Every row explains the requirement, status, issue, owner, and clearance action.</h2>
+      </div>
+      <div class="utility-table-wrap reveal" role="region" aria-label="Pre-trip readiness packet table">
+        <table class="utility-table">
+          <thead><tr><th>Requirement</th><th>Status</th><th>Issue</th><th>Owner</th><th>Clearance Action</th></tr></thead>
+          <tbody>
+            <tr><td data-label="Requirement">Rate confirmation</td><td data-label="Status"><span class="utility-pill ready">Ready</span></td><td data-label="Issue">Signed customer rate stored.</td><td data-label="Owner">Dispatch coordinator</td><td data-label="Clearance Action"><button type="button" data-utility-action data-action-title="Open Rate Confirmation" data-action-body="The signed rate confirmation is attached to BOF-1907 and can travel with the billing packet." data-action-meta="Document: RC-1907|State: Ready|Owner: Dispatch coordinator">Open Document</button></td></tr>
+            <tr><td data-label="Requirement">BOL template and pickup instructions</td><td data-label="Status"><span class="utility-pill ready">Ready</span></td><td data-label="Issue">Pickup notes and shipper contact are complete.</td><td data-label="Owner">Load planner</td><td data-label="Clearance Action"><button type="button" data-utility-action data-action-title="View Pickup Instructions" data-action-body="Pickup address, appointment window, commodity notes, seal rule, and BOL expectation are visible before dispatch release." data-action-meta="Stop: Tulsa pickup|Window: 8:00 AM|State: Ready">View Instructions</button></td></tr>
+            <tr><td data-label="Requirement">Driver assignment</td><td data-label="Status"><span class="utility-pill ready">Ready</span></td><td data-label="Issue">Carlos Martinez is assigned with route fit confirmed.</td><td data-label="Owner">Dispatch manager</td><td data-label="Clearance Action"><button type="button" data-utility-action data-action-title="View Driver Context" data-action-body="Driver assignment is ready. BOF still keeps credential and policy checks separate so a ready assignment does not hide a document issue." data-action-meta="Driver: Carlos Martinez|Record: DRV-411|State: Ready">View Driver</button></td></tr>
+            <tr><td data-label="Requirement">Medical card renewal</td><td data-label="Status"><span class="utility-pill attention">Attention</span></td><td data-label="Issue">Renewal image is uploaded, but safety review is not complete.</td><td data-label="Owner">Safety lead</td><td data-label="Clearance Action"><button type="button" data-utility-action data-action-title="Review Medical Renewal" data-action-body="Safety must review the renewal image before the load can release. The packet stays on hold until the owner records a review outcome." data-action-meta="Document: MED-DRV-411|State: Attention|Owner: Safety lead">Review Credential</button></td></tr>
+            <tr><td data-label="Requirement">Tractor availability</td><td data-label="Status"><span class="utility-pill ready">Ready</span></td><td data-label="Issue">TRK-104 inspection and maintenance release are current.</td><td data-label="Owner">Maintenance coordinator</td><td data-label="Clearance Action"><button type="button" data-utility-action data-action-title="Open Tractor Record" data-action-body="TRK-104 is available for the route with current inspection and no open maintenance hold in this synthetic packet." data-action-meta="Asset: TRK-104|State: Ready|Owner: Maintenance coordinator">Open Asset</button></td></tr>
+            <tr><td data-label="Requirement">Trailer availability</td><td data-label="Status"><span class="utility-pill ready">Ready</span></td><td data-label="Issue">TRL-228 is empty, inspected, and matched to load type.</td><td data-label="Owner">Yard lead</td><td data-label="Clearance Action"><button type="button" data-utility-action data-action-title="Open Trailer Record" data-action-body="TRL-228 is ready for assignment. Trailer fit, location, and inspection status are retained with the load packet." data-action-meta="Asset: TRL-228|State: Ready|Owner: Yard lead">Open Trailer</button></td></tr>
+            <tr><td data-label="Requirement">Insurance and authority</td><td data-label="Status"><span class="utility-pill ready">Ready</span></td><td data-label="Issue">Operating authority and insurance record are current.</td><td data-label="Owner">Compliance owner</td><td data-label="Clearance Action"><button type="button" data-utility-action data-action-title="View Authority Proof" data-action-body="Authority and insurance are current for this illustrative packet. BOF does not certify regulatory compliance from the public page." data-action-meta="Record: AUTH-2026|State: Ready|Owner: Compliance owner">View Proof</button></td></tr>
+            <tr><td data-label="Requirement">Customer proof standard</td><td data-label="Status"><span class="utility-pill attention">Attention</span></td><td data-label="Issue">Receiver requires dock photo plus signed POD; driver packet shows POD only.</td><td data-label="Owner">Billing owner</td><td data-label="Clearance Action"><button type="button" data-utility-action data-action-title="Update POD Photo Standard" data-action-body="Billing must add the dock-photo requirement to the driver packet before release so billing and settlement do not chase proof after delivery." data-action-meta="Proof: POD plus dock photo|State: Attention|Owner: Billing owner">Update Evidence Rule</button></td></tr>
+            <tr><td data-label="Requirement">Policy acknowledgments</td><td data-label="Status"><span class="utility-pill ready">Ready</span></td><td data-label="Issue">Cargo securement and customer-site rules acknowledged.</td><td data-label="Owner">Policy owner</td><td data-label="Clearance Action"><button type="button" data-utility-action data-action-title="View Acknowledgments" data-action-body="Required policy acknowledgments are current and retained with version, audience, and completion evidence." data-action-meta="Policies: Cargo securement, customer-site rules|State: Ready|Owner: Policy owner">View Evidence</button></td></tr>
+            <tr><td data-label="Requirement">Settlement setup</td><td data-label="Status"><span class="utility-pill ready">Ready</span></td><td data-label="Issue">Pay basis, accessorial rule, and hold reason path are set.</td><td data-label="Owner">Settlement owner</td><td data-label="Clearance Action"><button type="button" data-utility-action data-action-title="Open Settlement Context" data-action-body="Settlement rules are ready before dispatch release: pay basis, accessorial handling, proof requirements, and hold reason path." data-action-meta="Settlement: BOF-1907|State: Ready|Owner: Settlement owner">Open Settlement</button></td></tr>
+          </tbody>
+        </table>
+      </div>
     </section>
 
     <section class="section wave4-section">
-      <div class="section-head reveal"><p class="eyebrow">Lifecycle overview</p><h2>One load, four control stages.</h2></div>
+      <div class="section-head reveal"><p class="eyebrow">After release</p><h2>The same record follows in-route, delivery, billing, settlement, claims, and audit work.</h2></div>
       <div class="wave4-process">
-        <article class="reveal"><b>01</b><h3>Pre-trip</h3><p>Customer/load intake, driver and equipment assignment, readiness review, and required proof standards are set before release.</p></article>
-        <article class="reveal"><b>02</b><h3>In-route</h3><p>Exceptions, detention, seal issues, appointment changes, and document gaps are assigned while the load is active.</p></article>
-        <article class="reveal"><b>03</b><h3>Delivery/POD</h3><p>POD, receiver notes, photos, signatures, and delivery exception evidence are tied to the load record.</p></article>
-        <article class="reveal"><b>04</b><h3>Post-delivery</h3><p>Proof packet assembly, billing readiness, settlement release, claims, and exception follow-up move from the same record.</p></article>
-      </div>
-    </section>
-
-    <section class="section wave4-section">
-      <div class="wave4-feature-row">
-        <div class="reveal"><p class="eyebrow">Proof assets</p><h2>The load is not complete until the proof is inspectable.</h2><p>BOF keeps the proof list concrete so billing, settlement, and claims do not depend on memory or scattered messages.</p></div>
-        <div class="wave4-proof-list reveal"><span>BOL</span><span>POD</span><span>Seal photos</span><span>Lumper receipt</span><span>Detention proof</span><span>Delivery exception evidence</span></div>
-      </div>
-    </section>
-
-    <section class="section wave4-section">
-      <div class="section-head reveal"><p class="eyebrow">Load control flow</p><h2>Where BOF helps the record stay usable.</h2></div>
-      <div class="wave4-timeline">
-        <article class="reveal"><span>Customer/load intake</span><p>Capture lane, appointment, commodity, proof expectations, rate context, accessorial risk, and customer requirements.</p></article>
-        <article class="reveal"><span>Driver and equipment assignment</span><p>Connect assignment to driver readiness, unit availability, HOS pressure, equipment fit, and special handling notes.</p></article>
-        <article class="reveal"><span>Pre-trip readiness</span><p>Review documents, dispatch release conditions, safety notes, and owner signoff before the load moves.</p></article>
-        <article class="reveal"><span>In-route exception handling</span><p>Record delay, detention, seal, damage, customer change, or missing-proof issues with owner and consequence.</p></article>
-        <article class="reveal"><span>Delivery and POD</span><p>Attach POD, receiver name, timestamps, dock/cargo photos, exception notes, and required follow-up.</p></article>
-        <article class="reveal"><span>Proof packet assembly</span><p>Group BOL, POD, receipts, photos, claim notes, and accessorial support into a usable billing packet.</p></article>
-        <article class="reveal"><span>Billing readiness</span><p>Confirm invoice support, customer proof rules, claim impact, and missing item owner.</p></article>
-        <article class="reveal"><span>Settlement release</span><p>Make pay-affecting proof, deductions, reimbursements, holds, and approvals visible before release.</p></article>
+        <article class="reveal"><b>01</b><h3>In-route</h3><p>Delay, detention, seal, customer change, or missing-proof issues keep owner and consequence visible.</p></article>
+        <article class="reveal"><b>02</b><h3>Delivery/POD</h3><p>Signed POD, receiver name, dock photo, timestamp, and exception notes attach to the load record.</p></article>
+        <article class="reveal"><b>03</b><h3>Billing</h3><p>Invoice support, accessorial evidence, missing proof, and customer proof rules are reviewed together.</p></article>
+        <article class="reveal"><b>04</b><h3>Settlement</h3><p>Pay-affecting proof, deductions, reimbursements, holds, and approvals remain tied to the same packet.</p></article>
+        <article class="reveal"><b>05</b><h3>Claims</h3><p>Damage notes, photos, customer messages, and retained proof support review without breaking the record.</p></article>
+        <article class="reveal"><b>06</b><h3>Audit</h3><p>The decision path preserves what was ready, what was held, who cleared it, and which evidence supported release.</p></article>
       </div>
     </section>
 
     <section class="wave4-cta-band">
-      <div><p class="eyebrow">Related BOF areas</p><h2>Load readiness connects dispatch, documents, settlements, and for-hire operations.</h2></div>
-      <div class="actions"><a class="button primary" href="/dispatch/">Dispatch</a><a class="button secondary" href="/documents/">Documents</a><a class="button secondary" href="/settlements/">Settlements</a><a class="button secondary" href="/for-hire-fleets/">For-Hire Fleets</a></div>
+      <div><p class="eyebrow">Related BOF areas</p><h2>Load readiness depends on dispatch, documents, settlements, safety, and policy governance.</h2></div>
+      <div class="actions"><a class="button primary" href="/dispatch/">Dispatch</a><a class="button secondary" href="/documents/">Documents</a><a class="button secondary" href="/settlements/">Settlements</a><a class="button secondary" href="/policies-procedures/">Policies</a></div>
     </section>
   </main>
 
-  <footer class="site-footer"><div class="footer-inner"><strong>BackOfficeFleet</strong><span>Load readiness from intake through settlement release.</span><a href="/book-a-demo/">Request a Demo</a></div></footer>
-  <script src="/assets/js/site.js?v=20260728-wave4-owner-review3"></script>
+  <footer class="site-footer"><div class="footer-inner"><strong>BackOfficeFleet</strong><span>Load readiness from pre-trip clearance through audit history.</span><a href="/book-a-demo/">Request a Demo</a></div></footer>
+  <script src="/assets/js/site.js?v=20260728-wave4-global-shell"></script>
 </body>
 </html>
