@@ -4,7 +4,14 @@
 
 Public intake is a separate bounded context from MG3 operating data, customer portals, driver document intake, authenticated records, financial data, and protected government records.
 
-Suggested table: `public_intakes`
+Implemented schema: `intake`
+
+Implemented tables:
+
+- `intake.public_intakes`
+- `intake.intake_events`
+- `intake.intake_notes`
+- `intake.intake_assignments`
 
 ## Enums
 
@@ -28,15 +35,15 @@ Suggested table: `public_intakes`
 - `not_ready`
 - `closed`
 
-`routing_category`
+`assigned_queue`
 
-- `GENERAL`
-- `DEMO`
-- `PRIORITY_FLEET`
-- `ASSESSMENT`
-- `GOVERNMENT`
-- `AGGREGATOR`
-- `DRIVER`
+- `general`
+- `demo`
+- `priority_fleet`
+- `assessment`
+- `government`
+- `aggregator`
+- `driver`
 
 `preferred_contact_method`
 
@@ -48,11 +55,10 @@ Suggested table: `public_intakes`
 
 - `private_fleet`
 - `for_hire_fleet`
-- `aggregator_network`
-- `government_public_fleet`
-- `driver_or_document_operation`
+- `government_fleet`
+- `carrier_network`
+- `owner_operator`
 - `other`
-- `unknown`
 
 ## Core Fields
 
@@ -64,12 +70,11 @@ Suggested table: `public_intakes`
 | `status` | enum | yes | default `new` | Internal workflow |
 | `source_page` | text | yes | path only, max 180 | No full URL with personal data |
 | `source_campaign` | text | no | max 120, allowlisted query keys only | Never store arbitrary query string |
-| `routing_category` | enum | yes | listed values only | Derived server-side |
-| `assigned_queue` | text | yes | enum-like controlled values | Internal queue label |
-| `priority` | smallint | yes | 1-4 | 1 high, 4 low |
+| `assigned_queue` | enum | yes | listed values only | Derived server-side |
+| `priority` | enum | yes | normal/elevated/urgent | Public users cannot set directly |
 | `first_name` | text | yes | 1-80 | Server trims and strips control chars |
-| `last_name` | text | no | max 80 | Split from full name only when provided |
-| `email` | citext/text | yes | max 254, valid email | Normalize to lowercase for matching |
+| `last_name` | text | yes | max 80 | Required by current shared frontend |
+| `email` | text | yes | max 254, valid email | Normalize to lowercase for matching |
 | `phone` | text | no | max 40, E.164 when possible | Do not require |
 | `preferred_contact_method` | enum | yes | default `email` | |
 | `organization_name` | text | yes for non-driver | max 160 | Driver inquiries may use `Individual driver` |
@@ -77,10 +82,10 @@ Suggested table: `public_intakes`
 | `job_title` | text | no | max 120 | |
 | `audience_type` | text enum | no | aggregator/private/for-hire/government/driver/unknown | Derived from page and selected fields |
 | `fleet_type` | enum | no | listed values only | |
-| `fleet_size` | text enum | no | `1-5`, `6-25`, `26-100`, `101-500`, `500+`, `unknown` | Avoid unrestricted text |
-| `operating_regions` | jsonb | no | array of strings, max 12 values | Allowlisted region labels or short freeform with length cap |
-| `request_summary` | text | yes | max 2000 | Reject HTML/script patterns server-side |
-| `requested_next_step` | text enum | yes | `respond`, `demo`, `roadmap`, `priority_review`, `preparedness_review`, `network_review`, `vault_review` | |
+| `fleet_size_range` | text | no | max 40 | Avoid unrestricted long text |
+| `operating_regions` | text[] | no | max 12 values, max 60 chars each | Short freeform region labels |
+| `request_summary` | text | yes | max 1500 | Reject HTML/script patterns server-side |
+| `requested_next_step` | enum | yes | listed requested-next-step values | |
 | `assessment_type` | text enum | no | same audience enum | Summary only |
 | `assessment_readiness_band` | text enum | no | controlled bands from assessment | |
 | `assessment_section_scores` | jsonb | no | max 8 sections, integer 0-100 | No individual answers |
@@ -88,11 +93,11 @@ Suggested table: `public_intakes`
 | `assessment_recommended_modules` | jsonb | no | max 8 strings, allowlisted module labels | |
 | `privacy_acknowledged_at` | timestamptz | yes | server timestamp when user checks required acknowledgment | Not preselected |
 | `submitted_at` | timestamptz | yes | server timestamp | |
-| `assigned_to` | text | no | internal user ID or email alias, not public | |
+| `assigned_to` | uuid | no | internal user id, not public | |
 | `last_contacted_at` | timestamptz | no | internal | |
 | `closed_at` | timestamptz | no | required when status closed | |
-| `internal_notes` | jsonb | no | internal note objects with author/time/body | Restricted internal access |
-| `follow_up_history` | jsonb | no | event array | Restricted internal access |
+| `internal_notes` | separate table | no | `intake.intake_notes` | Restricted internal access |
+| `follow_up_history` | separate table | no | `intake.intake_events` | Restricted internal access |
 | `metadata` | jsonb | no | strict schema | Browser, viewport, safe campaign, validation version |
 
 ## Indexes
@@ -100,8 +105,8 @@ Suggested table: `public_intakes`
 - `submitted_at`
 - `status, assigned_queue`
 - `submission_type, submitted_at`
-- `routing_category, status`
-- normalized email hash for internal matching
+- `assigned_queue`
+- normalized email for internal matching
 - organization domain for internal matching
 
 ## Retention Treatment

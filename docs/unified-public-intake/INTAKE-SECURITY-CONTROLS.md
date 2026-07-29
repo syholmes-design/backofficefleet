@@ -2,12 +2,13 @@
 
 ## Current Controls
 
-- Backend submission is disabled; no request is transmitted.
+- Backend submission remains disabled unless a function endpoint is explicitly configured in the frontend.
 - Public forms include required field validation, email type validation, field length limits, privacy acknowledgment, and a honeypot.
 - Markup/script-like input is rejected before the disabled adapter state is shown.
 - No personal data is placed in URLs.
 - Public intake copy excludes document uploads, CDL and medical-card data, authenticated portal records, production chat, payments, financial information, and protected government records.
 - Assessment context is only added after the visitor clicks the detailed roadmap request.
+- The Edge Function source includes origin checks, service-role-only insert behavior, duplicate suppression, lightweight rate limiting, optional Turnstile verification, and safe error responses.
 
 ## Backend Controls Required Before Launch
 
