@@ -1,0 +1,58 @@
+{
+  "base": "http://127.0.0.1:64636",
+  "generatedAt": "2026-07-29T03:22:56.599Z",
+  "routeCount": 42,
+  "viewportCount": 7,
+  "checks": 294,
+  "mediaChecks": [
+    {
+      "url": "/assets/videos/bof-driver-vault.mp4",
+      "status": 206
+    },
+    {
+      "url": "/assets/videos/bof-customer-portal-load-intake.mp4",
+      "status": 206
+    },
+    {
+      "url": "/assets/videos/bof-settlements-readiness.mp4",
+      "status": 206
+    }
+  ],
+  "failureCount": 0,
+  "failures": [],
+  "screenshots": [
+    "aggregators-logo.png",
+    "application-sidebar-logo.png",
+    "assessment-logo.png",
+    "bof-vault-logo.png",
+    "book-demo-logo-mobile.png",
+    "business-operations-logo.png",
+    "canonical-header-logo-desktop.png",
+    "canonical-header-logo-mobile.png",
+    "canonical-header-logo-tablet.png",
+    "company-logo.png",
+    "contact-logo-mobile.png",
+    "customer-demo-logo-desktop.png",
+    "customer-demo-logo-mobile.png",
+    "dispatch-logo.png",
+    "documents-logo.png",
+    "drivers-logo.png",
+    "fleet-preparedness-logo.png",
+    "for-hire-fleets-logo.png",
+    "government-logo.png",
+    "homepage-logo-desktop.png",
+    "homepage-logo-mobile.png",
+    "interactive-demo-logo.png",
+    "internal-review-logo.png",
+    "investor-presentation-logo.png",
+    "legal-page-logo-mobile.png",
+    "load-readiness-logo.png",
+    "network-readiness-logo.png",
+    "policies-logo.png",
+    "priority-fleet-logo.png",
+    "private-fleets-logo.png",
+    "safety-logo.png",
+    "settlements-logo.png",
+    "who-we-serve-logo.png"
+  ]
+}

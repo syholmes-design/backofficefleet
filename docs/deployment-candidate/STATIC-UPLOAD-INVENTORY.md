@@ -12,7 +12,7 @@ Summary:
 - Public/compatibility/hidden HTML files: 79
 - CSS files: 13
 - JavaScript files: 5
-- Image/brand files: 137
+- Image/brand files: 137, including canonical DS2 SVG logo assets and excluding obsolete production logo dependencies from the correction upload.
 - Video/media files directly included: 3
 - sitemap.xml, robots.txt, and .htaccess are included and should be applied late in the runbook.
 
@@ -53,6 +53,14 @@ Included route families:
 - Website/sitemap.xml -> /sitemap.xml
 - Website/robots.txt -> /robots.txt
 - Website/.htaccess -> /.htaccess
+
+Canonical logo assets:
+- Website/assets/brand/bof-design-system-2/svg/header-lockup.svg -> /assets/brand/bof-design-system-2/svg/header-lockup.svg
+- Website/assets/brand/bof-design-system-2/svg/primary-horizontal-light.svg -> /assets/brand/bof-design-system-2/svg/primary-horizontal-light.svg
+
+Obsolete logo upload handling:
+- Do not upload /assets/images/logo/boflogo-original.png for this correction unless rollback explicitly requires it.
+- Do not upload /assets/images/design-system-2/customer-demo-secondary-headers/backofficefleet-logo-approved.png for this correction unless rollback explicitly requires it.
 
 Explicit exclusions are listed in docs/deployment-candidate/STATIC-UPLOAD-EXCLUSIONS.txt. Backend development files, internal review files, source docs, local screenshots, source reports, and environment files must not be uploaded.
 

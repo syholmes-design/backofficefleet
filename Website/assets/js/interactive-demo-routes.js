@@ -1288,7 +1288,7 @@
       '<section class="route-app-shell route-beveled-shell">',
       '  <div class="beveled-app-frame shell-frame">',
       '    <aside class="beveled-sidebar shell-rail" aria-label="BOF app sections">',
-      '      <div class="beveled-brand"><img src="/assets/images/logo/boflogo-original.png" alt="BackOfficeFleet"></div>',
+      '      <div class="beveled-brand"><img src="/assets/brand/bof-design-system-2/svg/header-lockup.svg" alt="BackOfficeFleet"></div>',
       '      <a class="beveled-menu-button route-back-button" href="/interactive-demo/" aria-label="Back to Command Center"><svg><use href="#app-icon-menu"></use></svg></a>',
       '      <nav class="beveled-rail" aria-label="Control Center sections">' + navHtml() + '</nav>',
       '      <div class="beveled-version"><span>Version 2.7.14</span><strong>All systems operational</strong></div>',

@@ -36,3 +36,7 @@ Rollback triggers:
 Form emergency disable:
 - Remove any window.BOFPublicIntakeConfig endpoint or data-intake-endpoint attribute if added later.
 - Re-upload Website/assets/js/public-intake.js from this candidate.
+
+Logo rollback:
+- Restore Website/assets/css/styles.css, Website/assets/js/site.js, and affected route HTML from the pre-upload live backup if the DS2 logo correction causes header layout issues.
+- Re-upload the prior live /assets/images/logo/boflogo-original.png only as part of an approved rollback, not as part of this correction upload.

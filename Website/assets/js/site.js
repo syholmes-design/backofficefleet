@@ -18,7 +18,7 @@
   function canonicalHeaderHtml() {
     return [
       '<header class="site-header" data-enterprise-header="true">',
-      '  <a class="brand" href="/" aria-label="BackOfficeFleet home"><img src="/assets/images/logo/boflogo-original.png" alt="BackOfficeFleet"></a>',
+      '  <a class="brand" href="/" aria-label="BackOfficeFleet home"><img src="/assets/brand/bof-design-system-2/svg/header-lockup.svg" alt="BackOfficeFleet" width="760" height="150"></a>',
       '  <button class="nav-toggle" type="button" data-nav-toggle aria-expanded="false" aria-label="Toggle navigation">&#9776;</button>',
       '  <nav class="site-nav" data-nav aria-label="Main navigation">',
       '    <div class="nav-menu" data-nav-menu>',

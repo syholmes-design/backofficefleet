@@ -49,3 +49,5 @@ QA evidence: docs/deployment-candidate/qa-results.json ($(@{generatedAt=2026-07-
 | /fleet/ | Website/fleet/index.html | compatibility indexable until redirect approved | no | https://backofficefleet.com/fleet/ | canonical public shell | disabled: none | retain | Legacy fleet/load-readiness compatibility |
 
 Hidden or excluded source routes remain versioned but are not part of the public navigation or sitemap. Legacy prototype routes with submission PHP or older offer funnels are excluded from the static upload unless a separate owner approval promotes them.
+
+Logo correction note: public routes use the shared site.js enterprise header renderer with /assets/brand/bof-design-system-2/svg/header-lockup.svg. /private-investor-plan/ remains a distinct hidden investor shell and uses /assets/brand/bof-design-system-2/svg/primary-horizontal-light.svg for its light topbar.

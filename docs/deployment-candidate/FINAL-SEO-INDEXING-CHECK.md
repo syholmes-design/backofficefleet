@@ -13,6 +13,7 @@ Results:
 - Internal intake review is source noindex and excluded from static upload.
 - Internal review routes are excluded from sitemap and upload inventory. /private-investor-plan/ is included for hidden direct access only and is excluded from sitemap/public links.
 - Canonical URLs use https://backofficefleet.com/ public paths.
+- Logo correction does not add /private-investor-plan/ or hidden application routes to sitemap.xml or public navigation.
 - Local QA found no localhost, file://, Windows path, dead header phone control, stale /book-demo/ internal links, or browser overflow failures in the 266-check pass.
 
 Limit:

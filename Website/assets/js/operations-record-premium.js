@@ -266,7 +266,7 @@
     var capacity = derivedCapacity(driver, load);
     var evidence = evidenceContext(load, driver, proof, settlement, safety, exception, capacity);
     var driverRoute = driver ? driver.profileRoute : "/drivers/";
-    var driverPortrait = driver ? driver.portrait : "/assets/images/logo/boflogo-original.png";
+    var driverPortrait = driver ? driver.portrait : "/assets/brand/bof-design-system-2/svg/primary-horizontal-light.svg";
     var driverName = driver ? driver.name : load.driverId;
 
     return [
