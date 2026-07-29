@@ -24586,8 +24586,7 @@ body.premium-site.business-ops-admin-page .business-operations-hero__areas {
 }
 
 body.premium-site.business-ops-admin-page .business-operations-hero__areas article {
-  backdrop-filter: blur(14px);
-  background: linear-gradient(180deg, rgba(7,18,37,0.78), rgba(7,18,37,0.54));
+  background: linear-gradient(180deg, rgba(7,18,37,0.68), rgba(7,18,37,0.44));
   border: 1px solid rgba(114,238,221,0.24);
   border-radius: 8px;
   box-shadow: 0 18px 42px rgba(0,0,0,0.2);
@@ -24638,10 +24637,10 @@ body.premium-site.business-ops-admin-page .business-operations-proof-rail__inner
   box-shadow: 0 24px 66px rgba(5,18,37,0.28);
   color: #fff;
   display: grid;
-  gap: clamp(22px, 3vw, 42px);
-  grid-template-columns: minmax(260px, 1fr) minmax(420px, 1.35fr) auto;
-  min-height: 154px;
-  padding: clamp(22px, 2.6vw, 34px);
+  gap: clamp(20px, 2.6vw, 36px);
+  grid-template-columns: minmax(260px, 1fr) minmax(390px, 1.25fr) auto;
+  min-height: 146px;
+  padding: clamp(20px, 2.4vw, 30px);
 }
 
 body.premium-site.business-ops-admin-page .business-operations-proof-rail__identity {
@@ -24670,20 +24669,20 @@ body.premium-site.business-ops-admin-page .business-operations-proof-rail__ident
 
 body.premium-site.business-ops-admin-page .business-operations-proof-rail__metrics {
   display: grid;
-  gap: 16px;
+  gap: clamp(18px, 1.8vw, 24px);
   grid-template-columns: repeat(3, minmax(0, 1fr));
 }
 
 body.premium-site.business-ops-admin-page .business-operations-proof-rail__metrics div {
   border-left: 1px solid rgba(255,255,255,0.18);
   min-width: 0;
-  padding-left: 24px;
+  padding-left: clamp(18px, 1.6vw, 22px);
 }
 
 body.premium-site.business-ops-admin-page .business-operations-proof-rail__metrics strong {
   color: #72eedd;
   display: block;
-  font-size: clamp(2.35rem, 3.4vw, 3.6rem);
+  font-size: clamp(1.95rem, 2.8vw, 3rem);
   line-height: 0.95;
 }
 
@@ -24694,7 +24693,7 @@ body.premium-site.business-ops-admin-page .business-operations-proof-rail__metri
   font-weight: 950;
   letter-spacing: 0.04em;
   line-height: 1.25;
-  margin-top: 8px;
+  margin-top: 6px;
   text-transform: uppercase;
 }
 
@@ -25847,6 +25846,10 @@ body.bof-wave3 select:focus-visible {
     grid-template-columns: 1fr;
   }
 
+  body.premium-site.business-ops-admin-page .business-operations-proof-rail {
+    margin-top: -48px;
+  }
+
   body.premium-site.business-ops-admin-page .business-operations-proof-rail__disclosure {
     border-left: 0;
     padding-left: 0;
@@ -25921,7 +25924,7 @@ body.bof-wave3 select:focus-visible {
   body.premium-site.business-ops-admin-page .business-operations-proof-rail {
     margin-left: 18px;
     margin-right: 18px;
-    margin-top: -96px;
+    margin-top: -24px;
   }
 
   body.premium-site.business-ops-admin-page .business-operations-proof-rail__inner,

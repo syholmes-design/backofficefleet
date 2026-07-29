@@ -1,0 +1,50 @@
+[
+  {
+    "profile": "desktop",
+    "file": "C:\\Users\\syhol\\BOF-public-site-deployment-candidate\\docs\\deployment-candidate\\screenshots\\business-operations-owner-review\\desktop.png",
+    "checks": {
+      "headerLogo": "/assets/brand/bof-design-system-2/svg/header-lockup-light.svg",
+      "tileBlur": "none",
+      "metricSize": "40.32px",
+      "hasScheduleDemo": false,
+      "hasExploreBusinessOperations": false,
+      "hasWorkforceOverview": false,
+      "hasPayrollSummary": false,
+      "horizontalOverflow": false
+    },
+    "consoleMessages": [],
+    "failedRequests": []
+  },
+  {
+    "profile": "tablet",
+    "file": "C:\\Users\\syhol\\BOF-public-site-deployment-candidate\\docs\\deployment-candidate\\screenshots\\business-operations-owner-review\\tablet.png",
+    "checks": {
+      "headerLogo": "/assets/brand/bof-design-system-2/svg/header-lockup-light.svg",
+      "tileBlur": "none",
+      "metricSize": "31.2px",
+      "hasScheduleDemo": false,
+      "hasExploreBusinessOperations": false,
+      "hasWorkforceOverview": false,
+      "hasPayrollSummary": false,
+      "horizontalOverflow": false
+    },
+    "consoleMessages": [],
+    "failedRequests": []
+  },
+  {
+    "profile": "mobile",
+    "file": "C:\\Users\\syhol\\BOF-public-site-deployment-candidate\\docs\\deployment-candidate\\screenshots\\business-operations-owner-review\\mobile.png",
+    "checks": {
+      "headerLogo": "/assets/brand/bof-design-system-2/svg/header-lockup-light.svg",
+      "tileBlur": "none",
+      "metricSize": "31.2px",
+      "hasScheduleDemo": false,
+      "hasExploreBusinessOperations": false,
+      "hasWorkforceOverview": false,
+      "hasPayrollSummary": false,
+      "horizontalOverflow": false
+    },
+    "consoleMessages": [],
+    "failedRequests": []
+  }
+]

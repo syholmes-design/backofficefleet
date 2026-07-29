@@ -1,0 +1,620 @@
+{
+  "generatedAt": "2026-07-29T14:26:27.273Z",
+  "baseUrl": "https://backofficefleet.com",
+  "sources": [
+    {
+      "src": "/",
+      "count": 80,
+      "internal": 80
+    },
+    {
+      "src": "/drivers/",
+      "count": 109,
+      "internal": 109
+    },
+    {
+      "src": "/dispatch/",
+      "count": 56,
+      "internal": 56
+    },
+    {
+      "src": "/safety/",
+      "count": 55,
+      "internal": 55
+    },
+    {
+      "src": "/settlements/",
+      "count": 55,
+      "internal": 55
+    },
+    {
+      "src": "/business-operations/",
+      "count": 80,
+      "internal": 80
+    },
+    {
+      "src": "/government/",
+      "count": 56,
+      "internal": 56
+    },
+    {
+      "src": "/policies-procedures/",
+      "count": 54,
+      "internal": 54
+    },
+    {
+      "src": "/workflows/",
+      "count": 77,
+      "internal": 77
+    },
+    {
+      "src": "/customer-demo/",
+      "count": 8,
+      "internal": 8
+    }
+  ],
+  "linkCount": 80,
+  "brokenLinks": [],
+  "linkResults": [
+    {
+      "href": "https://backofficefleet.com/",
+      "method": "HEAD",
+      "status": 200,
+      "ok": true,
+      "error": null
+    },
+    {
+      "href": "https://backofficefleet.com/about/",
+      "method": "HEAD",
+      "status": 200,
+      "ok": true,
+      "error": null
+    },
+    {
+      "href": "https://backofficefleet.com/accessibility/",
+      "method": "HEAD",
+      "status": 200,
+      "ok": true,
+      "error": null
+    },
+    {
+      "href": "https://backofficefleet.com/aggregator-command-center/",
+      "method": "HEAD",
+      "status": 200,
+      "ok": true,
+      "error": null
+    },
+    {
+      "href": "https://backofficefleet.com/aggregators/",
+      "method": "HEAD",
+      "status": 200,
+      "ok": true,
+      "error": null
+    },
+    {
+      "href": "https://backofficefleet.com/assessment/",
+      "method": "HEAD",
+      "status": 200,
+      "ok": true,
+      "error": null
+    },
+    {
+      "href": "https://backofficefleet.com/blog/driver-readiness-dispatch-failure/",
+      "method": "HEAD",
+      "status": 200,
+      "ok": true,
+      "error": null
+    },
+    {
+      "href": "https://backofficefleet.com/blog/enforcement-engine-trucking-back-office/",
+      "method": "HEAD",
+      "status": 200,
+      "ok": true,
+      "error": null
+    },
+    {
+      "href": "https://backofficefleet.com/blog/proof-packets-settlements-cash-flow/",
+      "method": "HEAD",
+      "status": 200,
+      "ok": true,
+      "error": null
+    },
+    {
+      "href": "https://backofficefleet.com/bof-vault/",
+      "method": "HEAD",
+      "status": 200,
+      "ok": true,
+      "error": null
+    },
+    {
+      "href": "https://backofficefleet.com/book-a-demo/",
+      "method": "HEAD",
+      "status": 200,
+      "ok": true,
+      "error": null
+    },
+    {
+      "href": "https://backofficefleet.com/business-operations/",
+      "method": "HEAD",
+      "status": 200,
+      "ok": true,
+      "error": null
+    },
+    {
+      "href": "https://backofficefleet.com/business-operations/accounting/",
+      "method": "HEAD",
+      "status": 200,
+      "ok": true,
+      "error": null
+    },
+    {
+      "href": "https://backofficefleet.com/business-operations/cash-flow/",
+      "method": "HEAD",
+      "status": 200,
+      "ok": true,
+      "error": null
+    },
+    {
+      "href": "https://backofficefleet.com/business-operations/customer-billing/billing-packet-control/",
+      "method": "HEAD",
+      "status": 200,
+      "ok": true,
+      "error": null
+    },
+    {
+      "href": "https://backofficefleet.com/business-operations/erp/",
+      "method": "HEAD",
+      "status": 200,
+      "ok": true,
+      "error": null
+    },
+    {
+      "href": "https://backofficefleet.com/business-operations/excise-taxes/",
+      "method": "HEAD",
+      "status": 200,
+      "ok": true,
+      "error": null
+    },
+    {
+      "href": "https://backofficefleet.com/business-operations/fleet-maintenance/",
+      "method": "HEAD",
+      "status": 200,
+      "ok": true,
+      "error": null
+    },
+    {
+      "href": "https://backofficefleet.com/business-operations/fuel-management/",
+      "method": "HEAD",
+      "status": 200,
+      "ok": true,
+      "error": null
+    },
+    {
+      "href": "https://backofficefleet.com/business-operations/human-resources/",
+      "method": "HEAD",
+      "status": 200,
+      "ok": true,
+      "error": null
+    },
+    {
+      "href": "https://backofficefleet.com/business-operations/insurance/",
+      "method": "HEAD",
+      "status": 200,
+      "ok": true,
+      "error": null
+    },
+    {
+      "href": "https://backofficefleet.com/business-operations/legal-contracts/",
+      "method": "HEAD",
+      "status": 200,
+      "ok": true,
+      "error": null
+    },
+    {
+      "href": "https://backofficefleet.com/business-operations/operating-authority/",
+      "method": "HEAD",
+      "status": 200,
+      "ok": true,
+      "error": null
+    },
+    {
+      "href": "https://backofficefleet.com/business-operations/operational-reporting/",
+      "method": "HEAD",
+      "status": 200,
+      "ok": true,
+      "error": null
+    },
+    {
+      "href": "https://backofficefleet.com/business-operations/owner-operator/",
+      "method": "HEAD",
+      "status": 200,
+      "ok": true,
+      "error": null
+    },
+    {
+      "href": "https://backofficefleet.com/business-operations/payroll/",
+      "method": "HEAD",
+      "status": 200,
+      "ok": true,
+      "error": null
+    },
+    {
+      "href": "https://backofficefleet.com/business-operations/safety-sms/",
+      "method": "HEAD",
+      "status": 200,
+      "ok": true,
+      "error": null
+    },
+    {
+      "href": "https://backofficefleet.com/business-operations/technology/",
+      "method": "HEAD",
+      "status": 200,
+      "ok": true,
+      "error": null
+    },
+    {
+      "href": "https://backofficefleet.com/carriers/",
+      "method": "HEAD",
+      "status": 200,
+      "ok": true,
+      "error": null
+    },
+    {
+      "href": "https://backofficefleet.com/command-center/",
+      "method": "HEAD",
+      "status": 200,
+      "ok": true,
+      "error": null
+    },
+    {
+      "href": "https://backofficefleet.com/company/",
+      "method": "HEAD",
+      "status": 200,
+      "ok": true,
+      "error": null
+    },
+    {
+      "href": "https://backofficefleet.com/contact/",
+      "method": "HEAD",
+      "status": 200,
+      "ok": true,
+      "error": null
+    },
+    {
+      "href": "https://backofficefleet.com/customer-demo/",
+      "method": "HEAD",
+      "status": 200,
+      "ok": true,
+      "error": null
+    },
+    {
+      "href": "https://backofficefleet.com/customer-demo/?portal=business-operations",
+      "method": "HEAD",
+      "status": 200,
+      "ok": true,
+      "error": null
+    },
+    {
+      "href": "https://backofficefleet.com/customer-demo/?portal=driver",
+      "method": "HEAD",
+      "status": 200,
+      "ok": true,
+      "error": null
+    },
+    {
+      "href": "https://backofficefleet.com/customer-demo/?portal=driver&tour=guided",
+      "method": "HEAD",
+      "status": 200,
+      "ok": true,
+      "error": null
+    },
+    {
+      "href": "https://backofficefleet.com/customer-demo/?portal=finance",
+      "method": "HEAD",
+      "status": 200,
+      "ok": true,
+      "error": null
+    },
+    {
+      "href": "https://backofficefleet.com/customer-demo/?portal=manager",
+      "method": "HEAD",
+      "status": 200,
+      "ok": true,
+      "error": null
+    },
+    {
+      "href": "https://backofficefleet.com/customer-demo/?portal=policy",
+      "method": "HEAD",
+      "status": 200,
+      "ok": true,
+      "error": null
+    },
+    {
+      "href": "https://backofficefleet.com/customer-demo/?portal=safety",
+      "method": "HEAD",
+      "status": 200,
+      "ok": true,
+      "error": null
+    },
+    {
+      "href": "https://backofficefleet.com/customer-portal/load-intake/",
+      "method": "HEAD",
+      "status": 200,
+      "ok": true,
+      "error": null
+    },
+    {
+      "href": "https://backofficefleet.com/dispatch/",
+      "method": "HEAD",
+      "status": 200,
+      "ok": true,
+      "error": null
+    },
+    {
+      "href": "https://backofficefleet.com/dispatch/load-intake/",
+      "method": "HEAD",
+      "status": 200,
+      "ok": true,
+      "error": null
+    },
+    {
+      "href": "https://backofficefleet.com/document-readiness-engine/",
+      "method": "HEAD",
+      "status": 200,
+      "ok": true,
+      "error": null
+    },
+    {
+      "href": "https://backofficefleet.com/documents/",
+      "method": "HEAD",
+      "status": 200,
+      "ok": true,
+      "error": null
+    },
+    {
+      "href": "https://backofficefleet.com/drivers/",
+      "method": "HEAD",
+      "status": 200,
+      "ok": true,
+      "error": null
+    },
+    {
+      "href": "https://backofficefleet.com/drivers/communication/",
+      "method": "HEAD",
+      "status": 200,
+      "ok": true,
+      "error": null
+    },
+    {
+      "href": "https://backofficefleet.com/drivers/compliance-documents/",
+      "method": "HEAD",
+      "status": 200,
+      "ok": true,
+      "error": null
+    },
+    {
+      "href": "https://backofficefleet.com/drivers/onboarding/",
+      "method": "HEAD",
+      "status": 200,
+      "ok": true,
+      "error": null
+    },
+    {
+      "href": "https://backofficefleet.com/drivers/settlements-payments/",
+      "method": "HEAD",
+      "status": 200,
+      "ok": true,
+      "error": null
+    },
+    {
+      "href": "https://backofficefleet.com/fleet-preparedness/",
+      "method": "HEAD",
+      "status": 200,
+      "ok": true,
+      "error": null
+    },
+    {
+      "href": "https://backofficefleet.com/for-hire-fleets/",
+      "method": "HEAD",
+      "status": 200,
+      "ok": true,
+      "error": null
+    },
+    {
+      "href": "https://backofficefleet.com/government/",
+      "method": "HEAD",
+      "status": 200,
+      "ok": true,
+      "error": null
+    },
+    {
+      "href": "https://backofficefleet.com/government/audit-trail/",
+      "method": "HEAD",
+      "status": 200,
+      "ok": true,
+      "error": null
+    },
+    {
+      "href": "https://backofficefleet.com/government/contractor-alignment/",
+      "method": "HEAD",
+      "status": 200,
+      "ok": true,
+      "error": null
+    },
+    {
+      "href": "https://backofficefleet.com/government/evidence-packets/",
+      "method": "HEAD",
+      "status": 200,
+      "ok": true,
+      "error": null
+    },
+    {
+      "href": "https://backofficefleet.com/interactive-demo/drivers/document-intake/",
+      "method": "HEAD",
+      "status": 200,
+      "ok": true,
+      "error": null
+    },
+    {
+      "href": "https://backofficefleet.com/load-readiness/",
+      "method": "HEAD",
+      "status": 200,
+      "ok": true,
+      "error": null
+    },
+    {
+      "href": "https://backofficefleet.com/network-readiness/",
+      "method": "HEAD",
+      "status": 200,
+      "ok": true,
+      "error": null
+    },
+    {
+      "href": "https://backofficefleet.com/operations-record/",
+      "method": "HEAD",
+      "status": 200,
+      "ok": true,
+      "error": null
+    },
+    {
+      "href": "https://backofficefleet.com/policies-procedures/",
+      "method": "HEAD",
+      "status": 200,
+      "ok": true,
+      "error": null
+    },
+    {
+      "href": "https://backofficefleet.com/priority-fleet-program/",
+      "method": "HEAD",
+      "status": 200,
+      "ok": true,
+      "error": null
+    },
+    {
+      "href": "https://backofficefleet.com/privacy/",
+      "method": "HEAD",
+      "status": 200,
+      "ok": true,
+      "error": null
+    },
+    {
+      "href": "https://backofficefleet.com/private-fleets/",
+      "method": "HEAD",
+      "status": 200,
+      "ok": true,
+      "error": null
+    },
+    {
+      "href": "https://backofficefleet.com/resources/",
+      "method": "HEAD",
+      "status": 200,
+      "ok": true,
+      "error": null
+    },
+    {
+      "href": "https://backofficefleet.com/safety/",
+      "method": "HEAD",
+      "status": 200,
+      "ok": true,
+      "error": null
+    },
+    {
+      "href": "https://backofficefleet.com/scenario-walkthrough/",
+      "method": "HEAD",
+      "status": 200,
+      "ok": true,
+      "error": null
+    },
+    {
+      "href": "https://backofficefleet.com/settlements/",
+      "method": "HEAD",
+      "status": 200,
+      "ok": true,
+      "error": null
+    },
+    {
+      "href": "https://backofficefleet.com/terms/",
+      "method": "HEAD",
+      "status": 200,
+      "ok": true,
+      "error": null
+    },
+    {
+      "href": "https://backofficefleet.com/who-we-serve/",
+      "method": "HEAD",
+      "status": 200,
+      "ok": true,
+      "error": null
+    },
+    {
+      "href": "https://backofficefleet.com/workflows/",
+      "method": "HEAD",
+      "status": 200,
+      "ok": true,
+      "error": null
+    },
+    {
+      "href": "https://backofficefleet.com/workflows/bills-of-lading/",
+      "method": "HEAD",
+      "status": 200,
+      "ok": true,
+      "error": null
+    },
+    {
+      "href": "https://backofficefleet.com/workflows/claims-documentation/",
+      "method": "HEAD",
+      "status": 200,
+      "ok": true,
+      "error": null
+    },
+    {
+      "href": "https://backofficefleet.com/workflows/customer-communication/",
+      "method": "HEAD",
+      "status": 200,
+      "ok": true,
+      "error": null
+    },
+    {
+      "href": "https://backofficefleet.com/workflows/detention-workflow/",
+      "method": "HEAD",
+      "status": 200,
+      "ok": true,
+      "error": null
+    },
+    {
+      "href": "https://backofficefleet.com/workflows/dispatch-assignment/",
+      "method": "HEAD",
+      "status": 200,
+      "ok": true,
+      "error": null
+    },
+    {
+      "href": "https://backofficefleet.com/workflows/factoring-packet-preparation/",
+      "method": "HEAD",
+      "status": 200,
+      "ok": true,
+      "error": null
+    },
+    {
+      "href": "https://backofficefleet.com/workflows/lumper-workflow/",
+      "method": "HEAD",
+      "status": 200,
+      "ok": true,
+      "error": null
+    },
+    {
+      "href": "https://backofficefleet.com/workflows/proof-of-delivery/",
+      "method": "HEAD",
+      "status": 200,
+      "ok": true,
+      "error": null
+    },
+    {
+      "href": "https://backofficefleet.com/workflows/rate-confirmations/",
+      "method": "HEAD",
+      "status": 200,
+      "ok": true,
+      "error": null
+    }
+  ]
+}
