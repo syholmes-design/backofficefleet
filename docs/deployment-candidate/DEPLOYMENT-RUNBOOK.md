@@ -1,0 +1,29 @@
+﻿# Deployment Runbook
+
+Candidate commit: CANDIDATE_COMMIT_PENDING
+
+Do not execute this runbook from this pass. Required controlled sequence:
+
+1. Confirm final candidate commit.
+2. Confirm clean Git status.
+3. Stop local test server.
+4. Back up current live files listed in STATIC-UPLOAD-FILE-LIST.txt, plus existing sitemap.xml, robots.txt, and .htaccess if present.
+5. Verify FTP certificate and exact destination document root.
+6. Upload low-risk static assets first.
+7. Upload CSS and JavaScript.
+8. Upload new route directories.
+9. Upload modified public pages.
+10. Upload legal pages.
+11. Upload sitemap.xml and robots.txt.
+12. Apply approved .htaccess last.
+13. Purge or bypass cache where available.
+14. Run live smoke tests for all public routes in FINAL-ROUTE-INVENTORY.md.
+15. Verify hidden routes and noindex headers.
+16. Verify forms remain disabled and show no fake success.
+17. Record deployment result, timestamps, and hashes.
+18. Roll back immediately if launch blockers occur.
+
+Smoke tests after upload:
+- Homepage, all sitemap routes, /book-a-demo/, /contact/, /assessment/, /priority-fleet-program/, /customer-demo/, /customer-demo/?portal=business-operations, /privacy/, /terms/, /accessibility/.
+- Verify /sitemap.xml and /robots.txt return 200.
+- Verify /customer-demo/ and /interactive-demo/ receive noindex handling.

@@ -1,0 +1,132 @@
+﻿{
+    "generatedAt":  "2026-07-28T21:52:03.0445602-04:00",
+    "method":  "Read-only HTTPS Invoke-WebRequest, no upload",
+    "results":  [
+                    {
+                        "url":  "https://backofficefleet.com/",
+                        "status":  200,
+                        "length":  18464,
+                        "sha256":  "aedcb5d716d33ea8bc755a9b958f77f8cf0074f197d5ac8efb4ecda8a6ffd93b",
+                        "title":  "BackOfficeFleet | Trucking Back-Office Operating Layer",
+                        "xRobots":  "",
+                        "location":  ""
+                    },
+                    {
+                        "url":  "https://backofficefleet.com/sitemap.xml",
+                        "status":  404,
+                        "length":  0,
+                        "sha256":  "",
+                        "title":  "The remote server returned an error: (404) Not Found.",
+                        "xRobots":  "",
+                        "location":  ""
+                    },
+                    {
+                        "url":  "https://backofficefleet.com/robots.txt",
+                        "status":  404,
+                        "length":  0,
+                        "sha256":  "",
+                        "title":  "The remote server returned an error: (404) Not Found.",
+                        "xRobots":  "",
+                        "location":  ""
+                    },
+                    {
+                        "url":  "https://backofficefleet.com/.htaccess",
+                        "status":  403,
+                        "length":  0,
+                        "sha256":  "",
+                        "title":  "The remote server returned an error: (403) Forbidden.",
+                        "xRobots":  "",
+                        "location":  ""
+                    },
+                    {
+                        "url":  "https://backofficefleet.com/drivers/",
+                        "status":  200,
+                        "length":  7430,
+                        "sha256":  "8c653743c344bc92ea4cc8d695085ef885be2ad3df762bdecfcdf2368ae71d9b",
+                        "title":  "Driver Roster \u0026amp; Readiness | BackOfficeFleet",
+                        "xRobots":  "",
+                        "location":  ""
+                    },
+                    {
+                        "url":  "https://backofficefleet.com/dispatch/",
+                        "status":  200,
+                        "length":  8201,
+                        "sha256":  "428a2877139841ba33ac989949aee9eedcdabb2c1a427907baed7bcfaee255e4",
+                        "title":  "Dispatch Load Intake | BackOfficeFleet",
+                        "xRobots":  "",
+                        "location":  ""
+                    },
+                    {
+                        "url":  "https://backofficefleet.com/safety/",
+                        "status":  200,
+                        "length":  7764,
+                        "sha256":  "972481cc21ea81f625091a59bfdcc80592ab9b9a49c3d5db4b42465fc15075a2",
+                        "title":  "Safety Command Center | BackOfficeFleet",
+                        "xRobots":  "",
+                        "location":  ""
+                    },
+                    {
+                        "url":  "https://backofficefleet.com/settlements/",
+                        "status":  200,
+                        "length":  5964,
+                        "sha256":  "d46b28fc320b4e8d223d38d94ab7e227e9216bc517a41345af74fcc528269ee9",
+                        "title":  "Settlements Command Center | BackOfficeFleet",
+                        "xRobots":  "",
+                        "location":  ""
+                    },
+                    {
+                        "url":  "https://backofficefleet.com/business-operations/",
+                        "status":  200,
+                        "length":  13924,
+                        "sha256":  "4804079aa8c7ddba900574d68cf27e5da4033eb5ac12ef88754674b285540e91",
+                        "title":  "Business Operations | BackOfficeFleet",
+                        "xRobots":  "",
+                        "location":  ""
+                    },
+                    {
+                        "url":  "https://backofficefleet.com/policies-procedures/",
+                        "status":  200,
+                        "length":  35893,
+                        "sha256":  "c84bd4c7dc42b1e25e6261d8b705c9386af67e19d065ecc240cd114882d1725d",
+                        "title":  "Policies \u0026amp; Procedures | BackOfficeFleet",
+                        "xRobots":  "",
+                        "location":  ""
+                    },
+                    {
+                        "url":  "https://backofficefleet.com/bof-vault/",
+                        "status":  200,
+                        "length":  5529,
+                        "sha256":  "fdd9339d612444c87809a0667fd54fe5169980a436ca0db3b4bcf33d3ad4c3d3",
+                        "title":  "BOF Vault | BackOfficeFleet",
+                        "xRobots":  "",
+                        "location":  ""
+                    },
+                    {
+                        "url":  "https://backofficefleet.com/customer-demo/",
+                        "status":  200,
+                        "length":  3954,
+                        "sha256":  "7d9eb59595f9575548f4ad9267388b29a4c58d7e838a3063c4f25e9af866f71d",
+                        "title":  "BOF Customer Demo | Manager Portal",
+                        "xRobots":  "",
+                        "location":  ""
+                    },
+                    {
+                        "url":  "https://backofficefleet.com/interactive-demo/",
+                        "status":  200,
+                        "length":  55105,
+                        "sha256":  "67aab19d07739868f579c296a8a53d18cea3ce1988a2465c43d5e537c00daa79",
+                        "title":  "Try Partner TMS Release Review | BackOfficeFleet",
+                        "xRobots":  "",
+                        "location":  ""
+                    },
+                    {
+                        "url":  "https://backofficefleet.com/internal-intake-review/",
+                        "status":  404,
+                        "length":  0,
+                        "sha256":  "",
+                        "title":  "The remote server returned an error: (404) Not Found.",
+                        "xRobots":  "",
+                        "location":  ""
+                    }
+                ]
+}

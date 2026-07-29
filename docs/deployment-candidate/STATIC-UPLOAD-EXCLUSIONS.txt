@@ -1,0 +1,33 @@
+﻿.git/
+.openai/
+docs/
+supabase/
+node_modules/
+Website/tools/
+Website/reports/
+Website/internal-intake-review/
+Website/blog/
+Website/customer-portal/
+Website/demo/
+Website/demo-paths/
+Website/animated-demo*/
+Website/interactive-demo/ (retain versioned; upload only if owner explicitly elects hidden demo publication with noindex header)
+Website/aggregator-command-center/
+Website/aggregator-outreach/
+Website/aggregator-partner-offer/
+Website/fleet-operator-offer/
+Website/founding-fleet*/
+Website/scenario-walkthrough/
+Website/walkthrough/
+Website/dashboard/
+Website/command-center/
+Website/BOF-Remastered/
+Website/video-assets/ source-only material unless directly referenced by approved pages
+Website/assets/audio/
+Website/assets/documents/private-or-sensitive uploads (none approved)
+*.env
+*.local
+*.log
+*.tmp
+browser profiles
+screenshots outside docs/deployment-candidate/screenshots/owner-review/

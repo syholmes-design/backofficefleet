@@ -1,4 +1,4 @@
-﻿[
+[
     {
         "title":  "Acceptable Use Policy",
         "policyNumber":  "DAT-IT-001",
@@ -15,7 +15,7 @@
         "access":  "Controlled preview",
         "availability":  "Summary visible publicly; full policy available upon request",
         "previewType":  "Summary only",
-        "requestPath":  "/book-demo/",
+        "requestPath":  "/book-a-demo/",
         "summary":  "Sets expected use of company systems, records, devices, and account access."
     },
     {
@@ -34,7 +34,7 @@
         "access":  "Restricted",
         "availability":  "Available in authorized BOF customer workspace",
         "previewType":  "Restricted preview",
-        "requestPath":  "/book-demo/",
+        "requestPath":  "/book-a-demo/",
         "summary":  "Defines the security controls that support protected operations and system access."
     },
     {
@@ -53,7 +53,7 @@
         "access":  "Controlled preview",
         "availability":  "Summary visible publicly; full policy available upon request",
         "previewType":  "Summary only",
-        "requestPath":  "/book-demo/",
+        "requestPath":  "/book-a-demo/",
         "summary":  "Provides the umbrella controls for protecting company, driver, customer, and operating information."
     },
     {
@@ -72,7 +72,7 @@
         "access":  "Summary only",
         "availability":  "Full policy available upon request during authorized review",
         "previewType":  "Summary only",
-        "requestPath":  "/book-demo/",
+        "requestPath":  "/book-a-demo/",
         "summary":  "Defines how operational, driver, customer, and vendor data should be classified before handling."
     },
     {
@@ -91,7 +91,7 @@
         "access":  "Restricted",
         "availability":  "Available in authorized BOF customer workspace",
         "previewType":  "Restricted preview",
-        "requestPath":  "/book-demo/",
+        "requestPath":  "/book-a-demo/",
         "summary":  "Details protection requirements for classified data and is reviewed in controlled settings."
     },
     {
@@ -110,7 +110,7 @@
         "access":  "Controlled preview",
         "availability":  "Summary visible publicly; full policy available upon request",
         "previewType":  "Summary only",
-        "requestPath":  "/book-demo/",
+        "requestPath":  "/book-a-demo/",
         "summary":  "Controls mobile devices, ELD-connected workflows, driver uploads, and field record handling."
     },
     {
@@ -129,7 +129,7 @@
         "access":  "Summary only",
         "availability":  "Full policy available upon request during authorized review",
         "previewType":  "Summary only",
-        "requestPath":  "/book-demo/",
+        "requestPath":  "/book-a-demo/",
         "summary":  "Defines authentication requirements for protected company systems and user accounts."
     },
     {
@@ -148,7 +148,7 @@
         "access":  "Controlled preview",
         "availability":  "Summary visible publicly; full policy available upon request",
         "previewType":  "Summary only",
-        "requestPath":  "/book-demo/",
+        "requestPath":  "/book-a-demo/",
         "summary":  "Defines how AI-assisted work is governed, reviewed, and kept under human operating control."
     },
     {
@@ -167,7 +167,7 @@
         "access":  "Summary only",
         "availability":  "Full policy available upon request during authorized review",
         "previewType":  "Summary only",
-        "requestPath":  "/book-demo/",
+        "requestPath":  "/book-a-demo/",
         "summary":  "Controls remote access to company systems and back-office support environments."
     },
     {
@@ -186,7 +186,7 @@
         "access":  "Summary only",
         "availability":  "Full policy available upon request during authorized review",
         "previewType":  "Summary only",
-        "requestPath":  "/book-demo/",
+        "requestPath":  "/book-a-demo/",
         "summary":  "Supports controlled communications around records, follow-up, and operational decisions."
     },
     {
@@ -205,7 +205,7 @@
         "access":  "Summary only",
         "availability":  "Full policy available upon request during authorized review",
         "previewType":  "Summary only",
-        "requestPath":  "/book-demo/",
+        "requestPath":  "/book-a-demo/",
         "summary":  "Controls software changes and installation practices that affect operating systems and integrations."
     },
     {
@@ -224,7 +224,7 @@
         "access":  "Restricted",
         "availability":  "Available in authorized BOF customer workspace",
         "previewType":  "Restricted preview",
-        "requestPath":  "/book-demo/",
+        "requestPath":  "/book-a-demo/",
         "summary":  "Defines how security incidents are handled and is reviewed during controlled due diligence."
     },
     {
@@ -243,7 +243,7 @@
         "access":  "Restricted",
         "availability":  "Available in authorized BOF customer workspace",
         "previewType":  "Restricted preview",
-        "requestPath":  "/book-demo/",
+        "requestPath":  "/book-a-demo/",
         "summary":  "Documents continuity and recovery planning and is summarized publicly for buyer review."
     },
     {
@@ -262,7 +262,7 @@
         "access":  "Controlled preview",
         "availability":  "Summary visible publicly; full policy available upon request",
         "previewType":  "Summary only",
-        "requestPath":  "/book-demo/",
+        "requestPath":  "/book-a-demo/",
         "summary":  "Defines how third-party access, vendors, and integrations are reviewed before they are trusted."
     }
 ]

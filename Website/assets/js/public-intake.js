@@ -257,7 +257,7 @@
         '<label>What should BOF understand first? <textarea name="request_summary" rows="6" maxlength="1500" required></textarea></label>',
         '<label class="public-intake-checkbox"><input type="checkbox" name="privacy_acknowledgment" value="acknowledged" required> I understand this public intake is not a secure document-upload, CDL, medical-card, authenticated portal, payment, production chat, or protected-record channel.</label>',
         '<label class="public-intake-honeypot" aria-hidden="true">Leave this field blank <input name="website" tabindex="-1" autocomplete="off"></label>',
-        '<p class="wave4-form-note" data-public-intake-note>Current status: ' + (backendEndpoint({ getAttribute: function () { return mount.getAttribute("data-intake-endpoint"); } }) || (window.BOFPublicIntakeConfig && window.BOFPublicIntakeConfig.endpoint) ? 'secure backend submission is configured for this page. BOF receives the request only after the server stores it and returns a reference.' : 'front-end intake is ready, but secure backend submission is not configured. The form can validate a request for review; no data is transmitted to BOF from this page.') + '</p>',
+        '<p class="wave4-form-note" data-public-intake-note>Current status: ' + (backendEndpoint({ getAttribute: function () { return mount.getAttribute("data-intake-endpoint"); } }) || (window.BOFPublicIntakeConfig && window.BOFPublicIntakeConfig.endpoint) ? 'secure backend submission is configured for this page. BOF receives the request only after the server stores it and returns a reference.' : 'online submission is being finalized. This form validates locally only; your information has not been transmitted to BOF.') + '</p>',
         '<button class="button primary" type="submit">' + (backendEndpoint({ getAttribute: function () { return mount.getAttribute("data-intake-endpoint"); } }) || (window.BOFPublicIntakeConfig && window.BOFPublicIntakeConfig.endpoint) ? 'Submit Intake Request' : 'Review Intake Request') + '</button>',
         '<div class="wave4-form-status" data-public-intake-status role="status" aria-live="polite" tabindex="-1"></div>',
       "</form>"
@@ -347,7 +347,7 @@
       return {
         ok: false,
         disabled: true,
-        message: "Online submission is not configured yet. No data was transmitted. Backend configuration is required before BOF can receive this request online."
+        message: "Online submission is being finalized. Your information has not been transmitted. Please keep your details here for now and use an approved BOF contact path when available."
       };
     }
     var response;

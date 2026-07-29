@@ -1,4 +1,4 @@
-﻿(function () {
+(function () {
   var reducedMotion = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   document.documentElement.classList.add("js-motion");
 
@@ -368,7 +368,7 @@
           var access = doc.access || "Summary only";
           var availability = doc.availability || "Available upon request";
           var previewType = doc.previewType || "Summary only";
-          var requestPath = doc.requestPath || "/book-demo/";
+          var requestPath = doc.requestPath || "/book-a-demo/";
           var statusClass = access === "Restricted" ? "watch" : "ready";
           var action = '<div class="governance-actions">' +
             '<span class="route-chip">' + previewType + '</span>' +
