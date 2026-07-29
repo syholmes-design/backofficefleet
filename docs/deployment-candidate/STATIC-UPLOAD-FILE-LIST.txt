@@ -25,6 +25,7 @@ assets\css\document-readiness-engine.css	/assets/css/document-readiness-engine.c
 assets\css\fleet-operator-offer.css	/assets/css/fleet-operator-offer.css	overwrite-or-add	public static candidate file	pre-upload live backup + git 79df9841d1c081ec191b96228c3db7861d82d69f
 assets\css\homepage-audience.css	/assets/css/homepage-audience.css	overwrite-or-add	public static candidate file	pre-upload live backup + git 79df9841d1c081ec191b96228c3db7861d82d69f
 assets\css\styles.css	/assets/css/styles.css	overwrite-or-add	public static candidate file	pre-upload live backup + git 79df9841d1c081ec191b96228c3db7861d82d69f
+assets\css\private-investor-plan.css	/assets/css/private-investor-plan.css	overwrite-or-add	hidden investor presentation CSS; page-level gate styles removed	pre-upload live backup + source e1008048dbea221f10cdf196afb039a26d70385e + candidate git
 assets\css\vault-document-intake.css	/assets/css/vault-document-intake.css	overwrite-or-add	public static candidate file	pre-upload live backup + git 79df9841d1c081ec191b96228c3db7861d82d69f
 assets\data\aggregator-demo-path.json	/assets/data/aggregator-demo-path.json	overwrite-or-add	public static candidate file	pre-upload live backup + git 79df9841d1c081ec191b96228c3db7861d82d69f
 assets\data\bof-public-operations.json	/assets/data/bof-public-operations.json	overwrite-or-add	public static candidate file	pre-upload live backup + git 79df9841d1c081ec191b96228c3db7861d82d69f
@@ -193,6 +194,7 @@ assets\images\video-posters\bof-settlements-readiness.jpg	/assets/images/video-p
 assets\js\customer-demo-app.js	/assets/js/customer-demo-app.js	overwrite-or-add	public static candidate file	pre-upload live backup + git 79df9841d1c081ec191b96228c3db7861d82d69f
 assets\js\public-intake.js	/assets/js/public-intake.js	overwrite-or-add	public static candidate file	pre-upload live backup + git 79df9841d1c081ec191b96228c3db7861d82d69f
 assets\js\site.js	/assets/js/site.js	overwrite-or-add	public static candidate file	pre-upload live backup + git 79df9841d1c081ec191b96228c3db7861d82d69f
+assets\js\private-investor-plan.js	/assets/js/private-investor-plan.js	overwrite-or-add	investor print helper only; no auth/passcode/sessionStorage state	pre-upload live backup + source e1008048dbea221f10cdf196afb039a26d70385e + candidate git
 assets\js\wave3-assessment.js	/assets/js/wave3-assessment.js	overwrite-or-add	public static candidate file	pre-upload live backup + git 79df9841d1c081ec191b96228c3db7861d82d69f
 assets\videos\bof-customer-portal-load-intake.mp4	/assets/videos/bof-customer-portal-load-intake.mp4	overwrite-or-add	public static candidate file	pre-upload live backup + git 79df9841d1c081ec191b96228c3db7861d82d69f
 assets\videos\bof-driver-vault.mp4	/assets/videos/bof-driver-vault.mp4	overwrite-or-add	public static candidate file	pre-upload live backup + git 79df9841d1c081ec191b96228c3db7861d82d69f
@@ -255,6 +257,7 @@ load-readiness\index.html	/load-readiness/index.html	overwrite-or-add	public sta
 network-readiness\index.html	/network-readiness/index.html	overwrite-or-add	public static candidate file	pre-upload live backup + git 79df9841d1c081ec191b96228c3db7861d82d69f
 policies-procedures\index.html	/policies-procedures/index.html	overwrite-or-add	public static candidate file	pre-upload live backup + git 79df9841d1c081ec191b96228c3db7861d82d69f
 priority-fleet-program\index.html	/priority-fleet-program/index.html	overwrite-or-add	public static candidate file	pre-upload live backup + git 79df9841d1c081ec191b96228c3db7861d82d69f
+private-investor-plan\index.html	/private-investor-plan/index.html	overwrite-or-add	hidden noindex investor presentation; page-level gate removed; not linked or sitemaped	pre-upload live backup + source e1008048dbea221f10cdf196afb039a26d70385e + candidate git
 privacy\index.html	/privacy/index.html	overwrite-or-add	public static candidate file	pre-upload live backup + git 79df9841d1c081ec191b96228c3db7861d82d69f
 private-fleets\audit-visibility\index.html	/private-fleets/audit-visibility/index.html	overwrite-or-add	public static candidate file	pre-upload live backup + git 79df9841d1c081ec191b96228c3db7861d82d69f
 private-fleets\branch-alignment\index.html	/private-fleets/branch-alignment/index.html	overwrite-or-add	public static candidate file	pre-upload live backup + git 79df9841d1c081ec191b96228c3db7861d82d69f

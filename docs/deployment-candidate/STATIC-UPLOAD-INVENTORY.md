@@ -8,10 +8,10 @@ Candidate commit: 996a6c9d24421b4509622307312939b606241ec6 (implementation commi
 This inventory does not mean upload the repository. Upload only the path-level files listed in docs/deployment-candidate/STATIC-UPLOAD-FILE-LIST.txt.
 
 Summary:
-- Exact upload file count: 274
-- Public/compatibility HTML files: 78
-- CSS files: 12
-- JavaScript files: 4
+- Exact upload file count: 277
+- Public/compatibility/hidden HTML files: 79
+- CSS files: 13
+- JavaScript files: 5
 - Image/brand files: 137
 - Video/media files directly included: 3
 - sitemap.xml, robots.txt, and .htaccess are included and should be applied late in the runbook.
@@ -46,6 +46,7 @@ Included route families:
 - Website/terms/ -> /terms/
 - Website/accessibility/ -> /accessibility/
 - Website/customer-demo/ -> /customer-demo/
+- Website/private-investor-plan/ -> /private-investor-plan/ (hidden, noindex/nofollow/noarchive, unlinked, page-level gate removed)
 - Website/safety-compliance/ -> /safety-compliance/
 - Website/fleet/ -> /fleet/
 - Website/index.html -> /
@@ -56,3 +57,5 @@ Included route families:
 Explicit exclusions are listed in docs/deployment-candidate/STATIC-UPLOAD-EXCLUSIONS.txt. Backend development files, internal review files, source docs, local screenshots, source reports, and environment files must not be uploaded.
 
 Rollback source for every upload item: pre-upload live backup first; local Git source commit 79df9841d1c081ec191b96228c3db7861d82d69f second.
+
+Investor presentation rollback source: pre-upload live backup first; approved restoration source commit e1008048dbea221f10cdf196afb039a26d70385e second. The candidate intentionally removes the page-level JavaScript/sessionStorage gate while preserving noindex metadata and route-level X-Robots handling.

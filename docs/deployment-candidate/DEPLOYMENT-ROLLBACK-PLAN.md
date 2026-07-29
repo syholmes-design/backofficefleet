@@ -19,11 +19,17 @@ Restoration order:
 7. Clear cache or bypass cache.
 8. Run live smoke tests.
 
+Investor presentation rollback:
+- Restore live /private-investor-plan/index.html, /assets/css/private-investor-plan.css, and /assets/js/private-investor-plan.js from the pre-upload live backup if the hidden investor route has an issue.
+- If the live backup is unavailable, use restoration source commit e1008048dbea221f10cdf196afb039a26d70385e as the preserved source for the prior gated local-preview version.
+- If the route must be withdrawn, remove only the uploaded /private-investor-plan/ route files and the investor-specific X-Robots lines after explicit owner approval.
+
 Rollback triggers:
 - Any primary route returns 4xx/5xx.
 - Header/footer/logo disappears on public routes.
 - Public forms imply successful delivery or transmit to an unapproved endpoint.
 - Hidden routes become indexed or publicly linked.
+- /private-investor-plan/ asks for a removed client-side passcode, exposes hidden navigation links, or loses noindex/nofollow/noarchive protection.
 - Legal pages fail.
 - Significant mobile overflow or unusable mobile menu appears.
 

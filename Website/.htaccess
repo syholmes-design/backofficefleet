@@ -1,6 +1,8 @@
 <IfModule mod_headers.c>
   SetEnvIf Request_URI "^/(customer-demo|interactive-demo)(/|$)" bof_hidden_demo_route=1
   Header set X-Robots-Tag "noindex, nofollow" env=bof_hidden_demo_route
+  SetEnvIf Request_URI "^/private-investor-plan(/|$)" bof_private_investor_route=1
+  Header set X-Robots-Tag "noindex, nofollow, noarchive" env=bof_private_investor_route
 
   <FilesMatch "\.(html?|htm)$">
     Header set Cache-Control "no-cache, no-store, must-revalidate"

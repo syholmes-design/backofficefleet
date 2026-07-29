@@ -44,6 +44,7 @@ QA evidence: docs/deployment-candidate/qa-results.json ($(@{generatedAt=2026-07-
 | /customer-demo/?portal=vault | Website/customer-demo/index.html | hidden/noindex by .htaccess | no | https://backofficefleet.com/customer-demo/ | approved app shell | demo only | retain hidden | BOF Vault portal state |
 | /customer-demo/?portal=policy | Website/customer-demo/index.html | hidden/noindex by .htaccess | no | https://backofficefleet.com/customer-demo/ | approved app shell | demo only | retain hidden | Policy portal state |
 | /customer-demo/?portal=business-operations | Website/customer-demo/index.html | hidden/noindex by .htaccess | no | https://backofficefleet.com/customer-demo/ | approved app shell | demo only | retain hidden | Business Operations portal state |
+| /private-investor-plan/ | Website/private-investor-plan/index.html | noindex, nofollow, noarchive meta plus route-level X-Robots-Tag | no | none; hidden direct URL only | investor-specific private shell | gate removed; print helper only | upload hidden | Private investor presentation renders immediately by direct URL |
 | /safety-compliance/ | Website/safety-compliance/index.html | compatibility indexable until redirect approved | no | https://backofficefleet.com/safety-compliance/ | canonical public shell | disabled: none | retain | Legacy safety compatibility |
 | /fleet/ | Website/fleet/index.html | compatibility indexable until redirect approved | no | https://backofficefleet.com/fleet/ | canonical public shell | disabled: none | retain | Legacy fleet/load-readiness compatibility |
 

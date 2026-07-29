@@ -15,7 +15,7 @@ Do not execute this runbook from this pass. Required controlled sequence:
 9. Upload modified public pages.
 10. Upload legal pages.
 11. Upload sitemap.xml and robots.txt.
-12. Apply approved .htaccess last.
+12. Apply approved .htaccess last, including route-level X-Robots-Tag for /private-investor-plan/.
 13. Purge or bypass cache where available.
 14. Run live smoke tests for all public routes in FINAL-ROUTE-INVENTORY.md.
 15. Verify hidden routes and noindex headers.
@@ -27,3 +27,5 @@ Smoke tests after upload:
 - Homepage, all sitemap routes, /book-a-demo/, /contact/, /assessment/, /priority-fleet-program/, /customer-demo/, /customer-demo/?portal=business-operations, /privacy/, /terms/, /accessibility/.
 - Verify /sitemap.xml and /robots.txt return 200.
 - Verify /customer-demo/ and /interactive-demo/ receive noindex handling.
+- Verify /private-investor-plan/ loads by direct URL with no passcode form, no gate overlay, no auth sessionStorage key, approved BOF logo visible, meta robots noindex/nofollow/noarchive, and X-Robots-Tag noindex/nofollow/noarchive after .htaccess is live.
+- Verify /private-investor-plan/ is absent from public header/footer navigation, homepage/company/resources/assessment/priority cards, and sitemap.xml.

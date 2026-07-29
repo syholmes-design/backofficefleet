@@ -13,6 +13,7 @@ Included workstreams:
 - Load Readiness, Network Readiness, Fleet Preparedness.
 - Five-path assessment and Priority Fleet Program.
 - Unified customer-demo route states, including Business Operations.
+- Hidden private investor presentation at /private-investor-plan/ for direct owner-approved access review.
 - Unified public-intake frontend with backend-disabled visitor copy.
 - Supabase schema/function source retained in repo, excluded from static upload.
 
@@ -21,6 +22,7 @@ Reconciliation changes in this candidate:
 - Updated disabled intake language to: online submission is being finalized; information has not been transmitted.
 - Updated Privacy copy to match the disabled intake state.
 - Added live policy book-spine labels: HR Manual, Accounting Policies, Safety & Compliance, IT Governance. Business Operations is not shown on the policy books.
+- Added the approved investor presentation route from C:\Users\syhol\BOF-investor-portal-restoration at e1008048dbea221f10cdf196afb039a26d70385e, removed page-level JavaScript/sessionStorage gate logic, preserved noindex/nofollow/noarchive, and kept it out of public navigation and sitemap.xml.
 
 QA result:
 - Browser route QA: 266 checks across 38 routes and 7 viewports; failures: 0.
@@ -28,6 +30,7 @@ QA result:
 - Public forms: local validation preserved; no endpoint configured; no fake success.
 - Static validator: Website/tools/validate-public-intake-backend.js passed.
 - JS syntax: public-intake.js and site.js passed node --check.
+- Investor access review screenshots: docs/deployment-candidate/screenshots/investor-access-review/.
 
 Deployment documents:
 - FINAL-ROUTE-INVENTORY.md
@@ -43,4 +46,5 @@ Deployment documents:
 Unresolved blockers:
 - No code blocker remains for the static/public candidate.
 - A live pre-upload backup is still required before any controlled deployment.
+- Investor route access should be restored by direct URL only; no hosting password reset or client-side password recovery is part of this candidate.
 - Remote Supabase is not configured; forms must remain disabled until a separate backend approval and deployment occurs.
