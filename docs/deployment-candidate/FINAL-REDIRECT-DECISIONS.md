@@ -1,6 +1,6 @@
-﻿# Final Redirect Decisions
+# Final Redirect Decisions
 
-Candidate commit: CANDIDATE_COMMIT_PENDING
+Candidate commit: 996a6c9d24421b4509622307312939b606241ec6 (implementation commit; ending documentation HEAD reported in final response)
 
 Approved now:
 - /book-demo/ remains a noindex compatibility page with canonical /book-a-demo/ and meta refresh. Internal links now point to /book-a-demo/.

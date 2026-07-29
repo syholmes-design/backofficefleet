@@ -1,11 +1,11 @@
-﻿# BOF Public Site Deployment Candidate Report
+# BOF Public Site Deployment Candidate Report
 
 Status: BOF PUBLIC SITE DEPLOYMENT CANDIDATE - READY FOR CONTROLLED DEPLOYMENT
 
 Worktree: C:\Users\syhol\BOF-public-site-deployment-candidate
 Branch: codex/public-site-deployment-candidate
 Source commit: 79df9841d1c081ec191b96228c3db7861d82d69f
-Candidate commit: CANDIDATE_COMMIT_PENDING
+Candidate commit: 996a6c9d24421b4509622307312939b606241ec6 (implementation commit; ending documentation HEAD reported in final response)
 
 Included workstreams:
 - Waves 0-4 public-site routes and approved global shell.

@@ -1,6 +1,6 @@
-﻿# Deployment Rollback Plan
+# Deployment Rollback Plan
 
-Candidate commit: CANDIDATE_COMMIT_PENDING
+Candidate commit: 996a6c9d24421b4509622307312939b606241ec6 (implementation commit; ending documentation HEAD reported in final response)
 
 Rollback is method-identified but not ready until a live backup is created.
 

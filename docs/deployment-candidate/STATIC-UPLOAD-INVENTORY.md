@@ -3,7 +3,7 @@
 Upload root: Website/
 Destination root: https://backofficefleet.com/ document root
 Source commit: 79df9841d1c081ec191b96228c3db7861d82d69f
-Candidate commit: CANDIDATE_COMMIT_PENDING
+Candidate commit: 996a6c9d24421b4509622307312939b606241ec6 (implementation commit; ending documentation HEAD reported in final response)
 
 This inventory does not mean upload the repository. Upload only the path-level files listed in docs/deployment-candidate/STATIC-UPLOAD-FILE-LIST.txt.
 

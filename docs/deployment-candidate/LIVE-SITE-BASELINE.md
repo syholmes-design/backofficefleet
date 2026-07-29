@@ -1,8 +1,8 @@
-﻿# Live Site Baseline
+# Live Site Baseline
 
 Generated: 2026-07-28T21:52:03.0445602-04:00
 Method: Read-only HTTPS Invoke-WebRequest, no upload
-Candidate commit: CANDIDATE_COMMIT_PENDING
+Candidate commit: 996a6c9d24421b4509622307312939b606241ec6 (implementation commit; ending documentation HEAD reported in final response)
 
 No upload was performed. Baseline was read-only HTTPS.
 

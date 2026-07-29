@@ -1,9 +1,9 @@
-﻿# Final Route Inventory
+# Final Route Inventory
 
 Worktree: C:\Users\syhol\BOF-public-site-deployment-candidate
 Branch: codex/public-site-deployment-candidate
 Source commit: 79df9841d1c081ec191b96228c3db7861d82d69f
-Candidate commit: CANDIDATE_COMMIT_PENDING
+Candidate commit: 996a6c9d24421b4509622307312939b606241ec6 (implementation commit; ending documentation HEAD reported in final response)
 QA evidence: docs/deployment-candidate/qa-results.json ($(@{generatedAt=2026-07-29T01:51:22.124Z; base=http://127.0.0.1:8771; checks=266; routeCount=38; viewportCount=7; failureCount=0; failures=System.Object[]; routes=System.Object[]; screenshots=System.Object[]}.checks) checks, $(@{generatedAt=2026-07-29T01:51:22.124Z; base=http://127.0.0.1:8771; checks=266; routeCount=38; viewportCount=7; failureCount=0; failures=System.Object[]; routes=System.Object[]; screenshots=System.Object[]}.failureCount) failures)
 
 | Route | Source file | Indexing | Sitemap | Canonical | Header/footer shell | Form status | Disposition | Expected behavior |

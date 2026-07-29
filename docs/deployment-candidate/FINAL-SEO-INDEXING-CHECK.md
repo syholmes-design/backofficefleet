@@ -1,6 +1,6 @@
-﻿# Final SEO And Indexing Check
+# Final SEO And Indexing Check
 
-Candidate commit: CANDIDATE_COMMIT_PENDING
+Candidate commit: 996a6c9d24421b4509622307312939b606241ec6 (implementation commit; ending documentation HEAD reported in final response)
 QA evidence: docs/deployment-candidate/qa-results.json
 
 Results:
