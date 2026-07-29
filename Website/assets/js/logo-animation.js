@@ -1,27 +1,7 @@
 (function () {
   "use strict";
 
-  var LOGO_SRC = "/assets/brand/bof-design-system-2/svg/header-lockup.svg";
-  var HOME_KEY = "bofLogoAnimationPlayed";
-  var DEMO_KEY = "bofCustomerDemoLogoAnimationPlayed";
   var reducedMotion = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-
-  function storageGet(key) {
-    try {
-      return window.sessionStorage.getItem(key);
-    } catch (error) {
-      return null;
-    }
-  }
-
-  function storageSet(key, value) {
-    try {
-      window.sessionStorage.setItem(key, value);
-    } catch (error) {
-      return false;
-    }
-    return true;
-  }
 
   function isHomeRoute() {
     var path = window.location.pathname || "/";
@@ -31,11 +11,6 @@
   function isCustomerDemoRoute() {
     var path = window.location.pathname || "";
     return path === "/customer-demo/" || path === "/customer-demo/index.html";
-  }
-
-  function shouldPlay(key) {
-    if (reducedMotion) return false;
-    return storageGet(key) !== "true";
   }
 
   function truckSvg(className, begin, duration, path) {
@@ -70,12 +45,12 @@
     ].join("");
   }
 
-  function enhanceLogo(container, key) {
+  function enhanceLogo(container) {
     var image;
     var wrapper;
 
-    if (!container || !shouldPlay(key)) return;
-    image = container.querySelector('img[src="' + LOGO_SRC + '"], img[src$="header-lockup.svg"]');
+    if (!container || reducedMotion) return;
+    image = container.querySelector('img[src*="header-lockup"][src$=".svg"]');
     if (!image || image.closest(".bof-logo-motion")) return;
 
     wrapper = document.createElement("span");
@@ -84,7 +59,6 @@
     image.parentNode.insertBefore(wrapper, image);
     wrapper.appendChild(image);
     wrapper.insertAdjacentHTML("beforeend", motionOverlayHtml());
-    storageSet(key, "true");
 
     window.requestAnimationFrame(function () {
       wrapper.classList.add("is-logo-motion-playing");
@@ -97,8 +71,8 @@
   }
 
   function init() {
-    if (isHomeRoute()) enhanceLogo(document.querySelector(".site-header .brand"), HOME_KEY);
-    if (isCustomerDemoRoute()) enhanceLogo(document.querySelector(".portal-sidebar-brand"), DEMO_KEY);
+    if (isHomeRoute()) enhanceLogo(document.querySelector(".site-header .brand"));
+    if (isCustomerDemoRoute()) enhanceLogo(document.querySelector(".portal-sidebar-brand"));
   }
 
   if (document.readyState === "loading") {

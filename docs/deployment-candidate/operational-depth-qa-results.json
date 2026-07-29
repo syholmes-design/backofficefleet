@@ -1,0 +1,647 @@
+{
+  "generatedAt": "2026-07-29T13:42:13.537Z",
+  "baseUrl": "http://127.0.0.1:4173",
+  "pages": [
+    "/",
+    "/drivers/#driver-roster",
+    "/dispatch/",
+    "/safety/",
+    "/settlements/",
+    "/business-operations/#business-operations-control-board",
+    "/policies-procedures/",
+    "/government/#government-control-board",
+    "/workflows/#operational-document-packets",
+    "/customer-demo/"
+  ],
+  "viewports": [
+    {
+      "name": "desktop",
+      "width": 1440,
+      "height": 1000,
+      "screenshot": true
+    },
+    {
+      "name": "tablet",
+      "width": 820,
+      "height": 1180,
+      "screenshot": false
+    },
+    {
+      "name": "mobile",
+      "width": 390,
+      "height": 844,
+      "screenshot": true
+    }
+  ],
+  "results": [
+    {
+      "page": "home",
+      "url": "/",
+      "viewport": "desktop",
+      "status": 200,
+      "title": "BackOfficeFleet | Trucking Back-Office Operating Layer",
+      "h1": "Run the office layer behind every load.",
+      "linkCount": 80,
+      "missingSelectors": [],
+      "imagesMissingAlt": 0,
+      "overflow": {
+        "clientWidth": 1440,
+        "scrollWidth": 1440,
+        "hasHorizontalOverflow": false
+      },
+      "consoleErrors": [],
+      "pageErrors": [],
+      "networkFailures": [],
+      "screenshot": "C:\\Users\\syhol\\BOF-public-site-deployment-candidate\\docs\\deployment-candidate\\screenshots\\operational-depth-qa\\home-desktop.png"
+    },
+    {
+      "page": "drivers",
+      "url": "/drivers/#driver-roster",
+      "viewport": "desktop",
+      "status": 200,
+      "title": "Drivers Powered for Success | BackOfficeFleet",
+      "h1": "Drivers Powered for Success",
+      "linkCount": 109,
+      "missingSelectors": [],
+      "imagesMissingAlt": 0,
+      "overflow": {
+        "clientWidth": 1440,
+        "scrollWidth": 1440,
+        "hasHorizontalOverflow": false
+      },
+      "consoleErrors": [],
+      "pageErrors": [],
+      "networkFailures": [],
+      "screenshot": "C:\\Users\\syhol\\BOF-public-site-deployment-candidate\\docs\\deployment-candidate\\screenshots\\operational-depth-qa\\drivers-desktop.png"
+    },
+    {
+      "page": "dispatch",
+      "url": "/dispatch/",
+      "viewport": "desktop",
+      "status": 200,
+      "title": "Operational Control in Real Time | BackOfficeFleet Dispatch",
+      "h1": "Operational Control in Real Time",
+      "linkCount": 56,
+      "missingSelectors": [],
+      "imagesMissingAlt": 0,
+      "overflow": {
+        "clientWidth": 1440,
+        "scrollWidth": 1440,
+        "hasHorizontalOverflow": false
+      },
+      "consoleErrors": [],
+      "pageErrors": [],
+      "networkFailures": [],
+      "screenshot": "C:\\Users\\syhol\\BOF-public-site-deployment-candidate\\docs\\deployment-candidate\\screenshots\\operational-depth-qa\\dispatch-desktop.png"
+    },
+    {
+      "page": "safety",
+      "url": "/safety/",
+      "viewport": "desktop",
+      "status": 200,
+      "title": "Compliance Without Blind Spots | BackOfficeFleet Safety",
+      "h1": "Compliance Without Blind Spots",
+      "linkCount": 55,
+      "missingSelectors": [],
+      "imagesMissingAlt": 0,
+      "overflow": {
+        "clientWidth": 1440,
+        "scrollWidth": 1440,
+        "hasHorizontalOverflow": false
+      },
+      "consoleErrors": [],
+      "pageErrors": [],
+      "networkFailures": [],
+      "screenshot": "C:\\Users\\syhol\\BOF-public-site-deployment-candidate\\docs\\deployment-candidate\\screenshots\\operational-depth-qa\\safety-desktop.png"
+    },
+    {
+      "page": "settlements",
+      "url": "/settlements/",
+      "viewport": "desktop",
+      "status": 200,
+      "title": "Revenue Readiness for Every Settlement | BackOfficeFleet",
+      "h1": "Revenue Readiness for Every Settlement",
+      "linkCount": 55,
+      "missingSelectors": [],
+      "imagesMissingAlt": 0,
+      "overflow": {
+        "clientWidth": 1440,
+        "scrollWidth": 1440,
+        "hasHorizontalOverflow": false
+      },
+      "consoleErrors": [],
+      "pageErrors": [],
+      "networkFailures": [],
+      "screenshot": "C:\\Users\\syhol\\BOF-public-site-deployment-candidate\\docs\\deployment-candidate\\screenshots\\operational-depth-qa\\settlements-desktop.png"
+    },
+    {
+      "page": "business-operations",
+      "url": "/business-operations/#business-operations-control-board",
+      "viewport": "desktop",
+      "status": 200,
+      "title": "Business Operations | BackOfficeFleet",
+      "h1": "Business Operations",
+      "linkCount": 80,
+      "missingSelectors": [],
+      "imagesMissingAlt": 0,
+      "overflow": {
+        "clientWidth": 1440,
+        "scrollWidth": 1440,
+        "hasHorizontalOverflow": false
+      },
+      "consoleErrors": [],
+      "pageErrors": [],
+      "networkFailures": [],
+      "screenshot": "C:\\Users\\syhol\\BOF-public-site-deployment-candidate\\docs\\deployment-candidate\\screenshots\\operational-depth-qa\\business-operations-desktop.png"
+    },
+    {
+      "page": "policies-procedures",
+      "url": "/policies-procedures/",
+      "viewport": "desktop",
+      "status": 200,
+      "title": "Controlled, Auditable, Always Current. | BackOfficeFleet",
+      "h1": "Controlled, Auditable, Always Current.",
+      "linkCount": 54,
+      "missingSelectors": [],
+      "imagesMissingAlt": 0,
+      "overflow": {
+        "clientWidth": 1440,
+        "scrollWidth": 1440,
+        "hasHorizontalOverflow": false
+      },
+      "consoleErrors": [],
+      "pageErrors": [],
+      "networkFailures": [],
+      "screenshot": "C:\\Users\\syhol\\BOF-public-site-deployment-candidate\\docs\\deployment-candidate\\screenshots\\operational-depth-qa\\policies-procedures-desktop.png"
+    },
+    {
+      "page": "government",
+      "url": "/government/#government-control-board",
+      "viewport": "desktop",
+      "status": 200,
+      "title": "Government Fleet or Agency | BackOfficeFleet",
+      "h1": "Preparedness, policy, and public-record discipline in one view.",
+      "linkCount": 56,
+      "missingSelectors": [],
+      "imagesMissingAlt": 0,
+      "overflow": {
+        "clientWidth": 1440,
+        "scrollWidth": 1440,
+        "hasHorizontalOverflow": false
+      },
+      "consoleErrors": [],
+      "pageErrors": [],
+      "networkFailures": [],
+      "screenshot": "C:\\Users\\syhol\\BOF-public-site-deployment-candidate\\docs\\deployment-candidate\\screenshots\\operational-depth-qa\\government-desktop.png"
+    },
+    {
+      "page": "workflows",
+      "url": "/workflows/#operational-document-packets",
+      "viewport": "desktop",
+      "status": 200,
+      "title": "Workflow Map | BackOfficeFleet",
+      "h1": "One operating path from request to payment.",
+      "linkCount": 77,
+      "missingSelectors": [],
+      "imagesMissingAlt": 0,
+      "overflow": {
+        "clientWidth": 1440,
+        "scrollWidth": 1440,
+        "hasHorizontalOverflow": false
+      },
+      "consoleErrors": [],
+      "pageErrors": [],
+      "networkFailures": [],
+      "screenshot": "C:\\Users\\syhol\\BOF-public-site-deployment-candidate\\docs\\deployment-candidate\\screenshots\\operational-depth-qa\\workflows-desktop.png"
+    },
+    {
+      "page": "customer-demo",
+      "url": "/customer-demo/",
+      "viewport": "desktop",
+      "status": 200,
+      "title": "BOF Customer Demo | Manager Portal",
+      "h1": "Manager Portal",
+      "linkCount": 8,
+      "missingSelectors": [],
+      "imagesMissingAlt": 0,
+      "overflow": {
+        "clientWidth": 1440,
+        "scrollWidth": 1440,
+        "hasHorizontalOverflow": false
+      },
+      "consoleErrors": [],
+      "pageErrors": [],
+      "networkFailures": [],
+      "screenshot": "C:\\Users\\syhol\\BOF-public-site-deployment-candidate\\docs\\deployment-candidate\\screenshots\\operational-depth-qa\\customer-demo-desktop.png"
+    },
+    {
+      "page": "home",
+      "url": "/",
+      "viewport": "tablet",
+      "status": 200,
+      "title": "BackOfficeFleet | Trucking Back-Office Operating Layer",
+      "h1": "Run the office layer behind every load.",
+      "linkCount": 80,
+      "missingSelectors": [],
+      "imagesMissingAlt": 0,
+      "overflow": {
+        "clientWidth": 820,
+        "scrollWidth": 820,
+        "hasHorizontalOverflow": false
+      },
+      "consoleErrors": [],
+      "pageErrors": [],
+      "networkFailures": [],
+      "screenshot": null
+    },
+    {
+      "page": "drivers",
+      "url": "/drivers/#driver-roster",
+      "viewport": "tablet",
+      "status": 200,
+      "title": "Drivers Powered for Success | BackOfficeFleet",
+      "h1": "Drivers Powered for Success",
+      "linkCount": 109,
+      "missingSelectors": [],
+      "imagesMissingAlt": 0,
+      "overflow": {
+        "clientWidth": 820,
+        "scrollWidth": 820,
+        "hasHorizontalOverflow": false
+      },
+      "consoleErrors": [],
+      "pageErrors": [],
+      "networkFailures": [],
+      "screenshot": null
+    },
+    {
+      "page": "dispatch",
+      "url": "/dispatch/",
+      "viewport": "tablet",
+      "status": 200,
+      "title": "Operational Control in Real Time | BackOfficeFleet Dispatch",
+      "h1": "Operational Control in Real Time",
+      "linkCount": 56,
+      "missingSelectors": [],
+      "imagesMissingAlt": 0,
+      "overflow": {
+        "clientWidth": 820,
+        "scrollWidth": 820,
+        "hasHorizontalOverflow": false
+      },
+      "consoleErrors": [],
+      "pageErrors": [],
+      "networkFailures": [],
+      "screenshot": null
+    },
+    {
+      "page": "safety",
+      "url": "/safety/",
+      "viewport": "tablet",
+      "status": 200,
+      "title": "Compliance Without Blind Spots | BackOfficeFleet Safety",
+      "h1": "Compliance Without Blind Spots",
+      "linkCount": 55,
+      "missingSelectors": [],
+      "imagesMissingAlt": 0,
+      "overflow": {
+        "clientWidth": 820,
+        "scrollWidth": 820,
+        "hasHorizontalOverflow": false
+      },
+      "consoleErrors": [],
+      "pageErrors": [],
+      "networkFailures": [],
+      "screenshot": null
+    },
+    {
+      "page": "settlements",
+      "url": "/settlements/",
+      "viewport": "tablet",
+      "status": 200,
+      "title": "Revenue Readiness for Every Settlement | BackOfficeFleet",
+      "h1": "Revenue Readiness for Every Settlement",
+      "linkCount": 55,
+      "missingSelectors": [],
+      "imagesMissingAlt": 0,
+      "overflow": {
+        "clientWidth": 820,
+        "scrollWidth": 820,
+        "hasHorizontalOverflow": false
+      },
+      "consoleErrors": [],
+      "pageErrors": [],
+      "networkFailures": [],
+      "screenshot": null
+    },
+    {
+      "page": "business-operations",
+      "url": "/business-operations/#business-operations-control-board",
+      "viewport": "tablet",
+      "status": 200,
+      "title": "Business Operations | BackOfficeFleet",
+      "h1": "Business Operations",
+      "linkCount": 80,
+      "missingSelectors": [],
+      "imagesMissingAlt": 0,
+      "overflow": {
+        "clientWidth": 820,
+        "scrollWidth": 820,
+        "hasHorizontalOverflow": false
+      },
+      "consoleErrors": [],
+      "pageErrors": [],
+      "networkFailures": [],
+      "screenshot": null
+    },
+    {
+      "page": "policies-procedures",
+      "url": "/policies-procedures/",
+      "viewport": "tablet",
+      "status": 200,
+      "title": "Controlled, Auditable, Always Current. | BackOfficeFleet",
+      "h1": "Controlled, Auditable, Always Current.",
+      "linkCount": 54,
+      "missingSelectors": [],
+      "imagesMissingAlt": 0,
+      "overflow": {
+        "clientWidth": 820,
+        "scrollWidth": 820,
+        "hasHorizontalOverflow": false
+      },
+      "consoleErrors": [],
+      "pageErrors": [],
+      "networkFailures": [],
+      "screenshot": null
+    },
+    {
+      "page": "government",
+      "url": "/government/#government-control-board",
+      "viewport": "tablet",
+      "status": 200,
+      "title": "Government Fleet or Agency | BackOfficeFleet",
+      "h1": "Preparedness, policy, and public-record discipline in one view.",
+      "linkCount": 56,
+      "missingSelectors": [],
+      "imagesMissingAlt": 0,
+      "overflow": {
+        "clientWidth": 820,
+        "scrollWidth": 820,
+        "hasHorizontalOverflow": false
+      },
+      "consoleErrors": [],
+      "pageErrors": [],
+      "networkFailures": [],
+      "screenshot": null
+    },
+    {
+      "page": "workflows",
+      "url": "/workflows/#operational-document-packets",
+      "viewport": "tablet",
+      "status": 200,
+      "title": "Workflow Map | BackOfficeFleet",
+      "h1": "One operating path from request to payment.",
+      "linkCount": 77,
+      "missingSelectors": [],
+      "imagesMissingAlt": 0,
+      "overflow": {
+        "clientWidth": 820,
+        "scrollWidth": 820,
+        "hasHorizontalOverflow": false
+      },
+      "consoleErrors": [],
+      "pageErrors": [],
+      "networkFailures": [],
+      "screenshot": null
+    },
+    {
+      "page": "customer-demo",
+      "url": "/customer-demo/",
+      "viewport": "tablet",
+      "status": 200,
+      "title": "BOF Customer Demo | Manager Portal",
+      "h1": "Manager Portal",
+      "linkCount": 8,
+      "missingSelectors": [],
+      "imagesMissingAlt": 0,
+      "overflow": {
+        "clientWidth": 820,
+        "scrollWidth": 820,
+        "hasHorizontalOverflow": false
+      },
+      "consoleErrors": [],
+      "pageErrors": [],
+      "networkFailures": [],
+      "screenshot": null
+    },
+    {
+      "page": "home",
+      "url": "/",
+      "viewport": "mobile",
+      "status": 200,
+      "title": "BackOfficeFleet | Trucking Back-Office Operating Layer",
+      "h1": "Run the office layer behind every load.",
+      "linkCount": 80,
+      "missingSelectors": [],
+      "imagesMissingAlt": 0,
+      "overflow": {
+        "clientWidth": 390,
+        "scrollWidth": 390,
+        "hasHorizontalOverflow": false
+      },
+      "consoleErrors": [],
+      "pageErrors": [],
+      "networkFailures": [],
+      "screenshot": "C:\\Users\\syhol\\BOF-public-site-deployment-candidate\\docs\\deployment-candidate\\screenshots\\operational-depth-qa\\home-mobile.png"
+    },
+    {
+      "page": "drivers",
+      "url": "/drivers/#driver-roster",
+      "viewport": "mobile",
+      "status": 200,
+      "title": "Drivers Powered for Success | BackOfficeFleet",
+      "h1": "Drivers Powered for Success",
+      "linkCount": 109,
+      "missingSelectors": [],
+      "imagesMissingAlt": 0,
+      "overflow": {
+        "clientWidth": 390,
+        "scrollWidth": 390,
+        "hasHorizontalOverflow": false
+      },
+      "consoleErrors": [],
+      "pageErrors": [],
+      "networkFailures": [],
+      "screenshot": "C:\\Users\\syhol\\BOF-public-site-deployment-candidate\\docs\\deployment-candidate\\screenshots\\operational-depth-qa\\drivers-mobile.png"
+    },
+    {
+      "page": "dispatch",
+      "url": "/dispatch/",
+      "viewport": "mobile",
+      "status": 200,
+      "title": "Operational Control in Real Time | BackOfficeFleet Dispatch",
+      "h1": "Operational Control in Real Time",
+      "linkCount": 56,
+      "missingSelectors": [],
+      "imagesMissingAlt": 0,
+      "overflow": {
+        "clientWidth": 390,
+        "scrollWidth": 390,
+        "hasHorizontalOverflow": false
+      },
+      "consoleErrors": [],
+      "pageErrors": [],
+      "networkFailures": [],
+      "screenshot": "C:\\Users\\syhol\\BOF-public-site-deployment-candidate\\docs\\deployment-candidate\\screenshots\\operational-depth-qa\\dispatch-mobile.png"
+    },
+    {
+      "page": "safety",
+      "url": "/safety/",
+      "viewport": "mobile",
+      "status": 200,
+      "title": "Compliance Without Blind Spots | BackOfficeFleet Safety",
+      "h1": "Compliance Without Blind Spots",
+      "linkCount": 55,
+      "missingSelectors": [],
+      "imagesMissingAlt": 0,
+      "overflow": {
+        "clientWidth": 390,
+        "scrollWidth": 390,
+        "hasHorizontalOverflow": false
+      },
+      "consoleErrors": [],
+      "pageErrors": [],
+      "networkFailures": [],
+      "screenshot": "C:\\Users\\syhol\\BOF-public-site-deployment-candidate\\docs\\deployment-candidate\\screenshots\\operational-depth-qa\\safety-mobile.png"
+    },
+    {
+      "page": "settlements",
+      "url": "/settlements/",
+      "viewport": "mobile",
+      "status": 200,
+      "title": "Revenue Readiness for Every Settlement | BackOfficeFleet",
+      "h1": "Revenue Readiness for Every Settlement",
+      "linkCount": 55,
+      "missingSelectors": [],
+      "imagesMissingAlt": 0,
+      "overflow": {
+        "clientWidth": 390,
+        "scrollWidth": 390,
+        "hasHorizontalOverflow": false
+      },
+      "consoleErrors": [],
+      "pageErrors": [],
+      "networkFailures": [],
+      "screenshot": "C:\\Users\\syhol\\BOF-public-site-deployment-candidate\\docs\\deployment-candidate\\screenshots\\operational-depth-qa\\settlements-mobile.png"
+    },
+    {
+      "page": "business-operations",
+      "url": "/business-operations/#business-operations-control-board",
+      "viewport": "mobile",
+      "status": 200,
+      "title": "Business Operations | BackOfficeFleet",
+      "h1": "Business Operations",
+      "linkCount": 80,
+      "missingSelectors": [],
+      "imagesMissingAlt": 0,
+      "overflow": {
+        "clientWidth": 390,
+        "scrollWidth": 390,
+        "hasHorizontalOverflow": false
+      },
+      "consoleErrors": [],
+      "pageErrors": [],
+      "networkFailures": [],
+      "screenshot": "C:\\Users\\syhol\\BOF-public-site-deployment-candidate\\docs\\deployment-candidate\\screenshots\\operational-depth-qa\\business-operations-mobile.png"
+    },
+    {
+      "page": "policies-procedures",
+      "url": "/policies-procedures/",
+      "viewport": "mobile",
+      "status": 200,
+      "title": "Controlled, Auditable, Always Current. | BackOfficeFleet",
+      "h1": "Controlled, Auditable, Always Current.",
+      "linkCount": 54,
+      "missingSelectors": [],
+      "imagesMissingAlt": 0,
+      "overflow": {
+        "clientWidth": 390,
+        "scrollWidth": 390,
+        "hasHorizontalOverflow": false
+      },
+      "consoleErrors": [],
+      "pageErrors": [],
+      "networkFailures": [],
+      "screenshot": "C:\\Users\\syhol\\BOF-public-site-deployment-candidate\\docs\\deployment-candidate\\screenshots\\operational-depth-qa\\policies-procedures-mobile.png"
+    },
+    {
+      "page": "government",
+      "url": "/government/#government-control-board",
+      "viewport": "mobile",
+      "status": 200,
+      "title": "Government Fleet or Agency | BackOfficeFleet",
+      "h1": "Preparedness, policy, and public-record discipline in one view.",
+      "linkCount": 56,
+      "missingSelectors": [],
+      "imagesMissingAlt": 0,
+      "overflow": {
+        "clientWidth": 390,
+        "scrollWidth": 390,
+        "hasHorizontalOverflow": false
+      },
+      "consoleErrors": [],
+      "pageErrors": [],
+      "networkFailures": [],
+      "screenshot": "C:\\Users\\syhol\\BOF-public-site-deployment-candidate\\docs\\deployment-candidate\\screenshots\\operational-depth-qa\\government-mobile.png"
+    },
+    {
+      "page": "workflows",
+      "url": "/workflows/#operational-document-packets",
+      "viewport": "mobile",
+      "status": 200,
+      "title": "Workflow Map | BackOfficeFleet",
+      "h1": "One operating path from request to payment.",
+      "linkCount": 77,
+      "missingSelectors": [],
+      "imagesMissingAlt": 0,
+      "overflow": {
+        "clientWidth": 390,
+        "scrollWidth": 390,
+        "hasHorizontalOverflow": false
+      },
+      "consoleErrors": [],
+      "pageErrors": [],
+      "networkFailures": [],
+      "screenshot": "C:\\Users\\syhol\\BOF-public-site-deployment-candidate\\docs\\deployment-candidate\\screenshots\\operational-depth-qa\\workflows-mobile.png"
+    },
+    {
+      "page": "customer-demo",
+      "url": "/customer-demo/",
+      "viewport": "mobile",
+      "status": 200,
+      "title": "BOF Customer Demo | Manager Portal",
+      "h1": "Manager Portal",
+      "linkCount": 8,
+      "missingSelectors": [],
+      "imagesMissingAlt": 0,
+      "overflow": {
+        "clientWidth": 390,
+        "scrollWidth": 390,
+        "hasHorizontalOverflow": false
+      },
+      "consoleErrors": [],
+      "pageErrors": [],
+      "networkFailures": [],
+      "screenshot": "C:\\Users\\syhol\\BOF-public-site-deployment-candidate\\docs\\deployment-candidate\\screenshots\\operational-depth-qa\\customer-demo-mobile.png"
+    }
+  ],
+  "totals": {
+    "checks": 30,
+    "consoleErrors": 0,
+    "pageErrors": 0,
+    "networkFailures": 0,
+    "horizontalOverflow": [],
+    "missingSelectors": [],
+    "imagesMissingAlt": []
+  }
+}

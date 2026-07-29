@@ -6,7 +6,7 @@
   <title>Business Operations | BackOfficeFleet</title>
   <meta name="description" content="Business Operations connects workforce, finance, payroll, accounting, treasury, vendors, records, and executive oversight for fleet administration.">
   <link rel="canonical" href="https://backofficefleet.com/business-operations/">
-  <link rel="stylesheet" href="/assets/css/styles.css?v=20260728-wave4-global-shell">
+  <link rel="stylesheet" href="/assets/css/styles.css?v=20260729-operational-depth">
 </head>
 <body class="premium-site page-business-operations business-ops-admin-page">
   <header class="site-header">
@@ -158,6 +158,51 @@
       </div>
     </section>
 
+    <section class="business-operations-section operational-board-section" id="business-operations-control-board" aria-labelledby="business-operations-control-board-heading">
+      <div class="section-head reveal">
+        <p class="eyebrow">Administrative control board</p>
+        <h2 id="business-operations-control-board-heading">Payroll, AR, AP, fuel, maintenance, and cash flow are worked from one operating queue.</h2>
+        <p>Each row shows the record, owner, current state, and downstream consequence so the back office can prioritize the work that will affect drivers, customers, vendors, or cash.</p>
+      </div>
+      <div class="operational-board-grid reveal" aria-label="Business operations control board">
+        <article class="operational-board-card">
+          <span>Payroll exception</span>
+          <h3>SET-1907 held for POD and renewal evidence</h3>
+          <dl><div><dt>Owner</dt><dd>Payroll desk</dd></div><div><dt>Driver</dt><dd>Carlos Martinez / DRV-002</dd></div><div><dt>Consequence</dt><dd>Settlement release waits on proof packet</dd></div></dl>
+          <a href="/drivers/settlements-payments/">Open settlement queue</a>
+        </article>
+        <article class="operational-board-card">
+          <span>AR billing readiness</span>
+          <h3>TMS-LD-10482 rate, BOL, and POD packet tracked</h3>
+          <dl><div><dt>Owner</dt><dd>Billing desk</dd></div><div><dt>Customer load</dt><dd>Dallas, TX to Memphis, TN</dd></div><div><dt>Consequence</dt><dd>Invoice can release after BOF-RR-10482 decision</dd></div></dl>
+          <a href="/business-operations/customer-billing/billing-packet-control/">Open billing packet</a>
+        </article>
+        <article class="operational-board-card">
+          <span>AP vendor review</span>
+          <h3>CAR-204 renewal evidence attached to watch rows</h3>
+          <dl><div><dt>Owner</dt><dd>Vendor desk</dd></div><div><dt>Records</dt><dd>BOF-1907 and BOF-2175</dd></div><div><dt>Consequence</dt><dd>Carrier coverage remains visible before commitment</dd></div></dl>
+          <a href="/operations-record/#shared-records">Open joined record</a>
+        </article>
+        <article class="operational-board-card">
+          <span>Fuel and maintenance</span>
+          <h3>BOF-2064 ready row has unit, route, HOS, and proof status</h3>
+          <dl><div><dt>Owner</dt><dd>Dispatch desk</dd></div><div><dt>Equipment</dt><dd>T-206 / TRL-118-09</dd></div><div><dt>Consequence</dt><dd>Normal staging, no release blocker</dd></div></dl>
+          <a href="/load-readiness/">Open pre-trip readiness</a>
+        </article>
+        <article class="operational-board-card operational-board-card--wide">
+          <span>Cash flow watch</span>
+          <h3>Packet completeness drives invoice, factoring, settlement, and payment timing.</h3>
+          <div class="operational-metric-row">
+            <div><strong>3</strong><small>billing packets ready</small></div>
+            <div><strong>2</strong><small>proof packets in review</small></div>
+            <div><strong>1</strong><small>settlement hold</small></div>
+            <div><strong>13 wk</strong><small>cash forecast view</small></div>
+          </div>
+          <a href="/workflows/factoring-packet-preparation/">Open factoring packet path</a>
+        </article>
+      </div>
+    </section>
+
     <section class="business-operations-section business-operations-workflows" aria-labelledby="business-operations-workflow-heading">
       <div class="business-operations-section__head reveal">
         <p class="eyebrow">Connected workflows</p>
@@ -294,6 +339,21 @@
       </div>
     </section>
 
+    <section class="section workflow-related-section" aria-labelledby="business-related-heading">
+      <div class="section-head reveal">
+        <p class="eyebrow">Related Workflows</p>
+        <h2 id="business-related-heading">Business operations keeps payroll, vendors, billing, records, and executive follow-up connected to live work.</h2>
+      </div>
+      <div class="workflow-link-grid workflow-link-grid--wide">
+        <a class="workflow-link-card reveal" href="/drivers/onboarding/"><span>Workforce</span><strong>Open driver onboarding</strong></a>
+        <a class="workflow-link-card reveal" href="/drivers/settlements-payments/"><span>Payroll</span><strong>Open settlement visibility</strong></a>
+        <a class="workflow-link-card reveal" href="/business-operations/legal-contracts/"><span>Vendors</span><strong>Open contract controls</strong></a>
+        <a class="workflow-link-card reveal" href="/document-readiness-engine/"><span>Records</span><strong>Open document readiness</strong></a>
+        <a class="workflow-link-card reveal" href="/business-operations/customer-billing/billing-packet-control/"><span>Billing</span><strong>Open billing packet</strong></a>
+        <a class="workflow-link-card reveal" href="/operations-record/"><span>Executive Oversight</span><strong>Open joined record</strong></a>
+      </div>
+    </section>
+
     <section class="business-operations-final-cta" aria-labelledby="business-operations-final-heading">
       <div class="business-operations-final-cta__inner reveal">
         <p class="eyebrow">Business Operations demo</p>
@@ -301,7 +361,7 @@
         <p>The unified customer demo opens directly to Business Operations and returns to this public product page through the approved View Business Operations link.</p>
         <div class="actions">
           <a class="button primary" href="/customer-demo/?portal=business-operations">Explore the Business Operations Workspace</a>
-          <a class="button secondary" href="/scenario-walkthrough/">Schedule a Demo</a>
+          <a class="button secondary" href="/workflows/">View Workflow Map</a>
         </div>
       </div>
     </section>
@@ -309,6 +369,6 @@
   </main>
 
   <footer class="site-footer"><div class="footer-inner"><strong>BackOfficeFleet</strong><span>Business Operations command center.</span><a href="/trust-governance/">Trust &amp; Governance</a></div></footer>
-  <script src="/assets/js/site.js?v=20260728-wave4-global-shell"></script>
+  <script src="/assets/js/site.js?v=20260729-platform-connectivity"></script>
 </body>
 </html>

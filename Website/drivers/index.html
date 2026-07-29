@@ -10,7 +10,7 @@
   <meta property="og:title" content="Drivers Powered for Success | BackOfficeFleet">
   <meta property="og:description" content="BackOfficeFleet gives drivers one place to manage readiness, documents, loads, settlements, and support.">
   <link rel="icon" href="/assets/brand/bof-design-system-2/favicon/favicon.ico">
-  <link rel="stylesheet" href="/assets/css/styles.css?v=20260728-wave4-global-shell">
+  <link rel="stylesheet" href="/assets/css/styles.css?v=20260729-operational-depth">
   <link rel="stylesheet" href="/assets/css/bof-design-system-2-wave-1.css">
 </head>
 <body class="bof-ds2-wave1">
@@ -27,7 +27,7 @@
           <a href="/safety/">Safety &amp; Compliance</a>
           <a href="/settlements/">Settlements &amp; Billing</a>
           <a href="/business-operations/">Business Operations</a>
-          <a href="/assessment/">Assessment</a>
+          <a href="/workflows/">Workflow Map</a>
           <a href="/policies-procedures/">Policies &amp; Procedures</a>
           <a href="/trust-governance/">Company</a>
         </nav>
@@ -50,8 +50,8 @@
             <h1>Drivers Powered for Success</h1>
             <p>Centralize onboarding, compliance, documents, settlements, and support so every driver stays road-ready and informed.</p>
             <div class="bof-ds2-actions">
-              <a class="bof-ds2-button bof-ds2-button--primary" href="/customer-demo/?portal=driver">Explore the Driver Portal Demo</a>
-              <a class="bof-ds2-button" href="/assessment/?type=driver">Start a Driver Readiness Check</a>
+              <a class="bof-ds2-button bof-ds2-button--primary" href="/customer-demo/?portal=driver&amp;tour=guided">Open Driver Portal Walkthrough</a>
+              <a class="bof-ds2-button" href="/drivers/onboarding/">Explore Driver Workflow</a>
               <a class="bof-ds2-button" href="#driver-support-workflow">See How BOF Supports Drivers</a>
             </div>
           </div>
@@ -84,7 +84,7 @@
       <section class="wave1-capability-section" aria-labelledby="driver-benefits-heading">
         <h2 id="driver-benefits-heading" class="wave1-visually-hidden">Driver portal capabilities</h2>
         <div class="wave1-benefit-grid wave1-benefit-grid--reference">
-          <article class="wave1-card wave1-card--capability">
+          <a class="wave1-card wave1-card--capability" href="/drivers/onboarding/">
             <span class="wave1-card__icon" aria-hidden="true">
               <svg width="34" height="34" viewBox="0 0 24 24" fill="none">
                 <path d="M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8Z" stroke="currentColor" stroke-width="1.8"/>
@@ -94,8 +94,8 @@
             <h3>Driver Onboarding</h3>
             <p>Collect driver profile, tax, policy, credential, and acknowledgment records in one intake path.</p>
             <span class="wave1-card__arrow" aria-hidden="true">-&gt;</span>
-          </article>
-          <article class="wave1-card wave1-card--capability">
+          </a>
+          <a class="wave1-card wave1-card--capability" href="/drivers/compliance-documents/">
             <span class="wave1-card__icon" aria-hidden="true">
               <svg width="34" height="34" viewBox="0 0 24 24" fill="none">
                 <path d="M12 3 5 6v5c0 4.2 2.7 7.6 7 10 4.3-2.4 7-5.8 7-10V6l-7-3Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
@@ -104,8 +104,8 @@
             <h3>Compliance &amp; Documents</h3>
             <p>Surface CDL, medical card, MVR, HOS, and training items before they become release blockers.</p>
             <span class="wave1-card__arrow" aria-hidden="true">-&gt;</span>
-          </article>
-          <article class="wave1-card wave1-card--capability">
+          </a>
+          <a class="wave1-card wave1-card--capability" href="/drivers/settlements-payments/">
             <span class="wave1-card__icon" aria-hidden="true">
               <svg width="34" height="34" viewBox="0 0 24 24" fill="none">
                 <path d="M12 3v18M17 7.5c0-1.7-1.8-3-4.2-3H10c-2.2 0-4 1.4-4 3.2s1.8 3.2 4 3.2h4c2.2 0 4 1.4 4 3.2s-1.8 3.2-4 3.2h-3c-2.3 0-4-1.2-4-3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
@@ -114,8 +114,8 @@
             <h3>Settlements &amp; Payments</h3>
             <p>Show settlement packet status, proof needs, deductions, advances, and estimated driver pay context.</p>
             <span class="wave1-card__arrow" aria-hidden="true">-&gt;</span>
-          </article>
-          <article class="wave1-card wave1-card--capability">
+          </a>
+          <a class="wave1-card wave1-card--capability" href="/drivers/communication/">
             <span class="wave1-card__icon" aria-hidden="true">
               <svg width="34" height="34" viewBox="0 0 24 24" fill="none">
                 <path d="M4 5h16v10H8l-4 4V5Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
@@ -125,6 +125,229 @@
             <h3>Driver Communication</h3>
             <p>Messages and support in one connected thread.</p>
             <span class="wave1-card__arrow" aria-hidden="true">-&gt;</span>
+          </a>
+        </div>
+      </section>
+
+      <section class="wave1-section driver-roster-section" id="driver-roster" aria-labelledby="driver-roster-heading">
+        <p class="bof-ds2-eyebrow">Driver Roster</p>
+        <div class="wave1-section-heading-row">
+          <h2 id="driver-roster-heading">Driver readiness, assignments, and credential risk in one operating queue.</h2>
+          <a class="bof-ds2-button bof-ds2-button--primary" href="/customer-demo/?portal=driver">Open Driver Workspace</a>
+        </div>
+        <p class="wave1-section__intro">This roster uses the existing BOF demo records that already drive the dispatch and document review examples. Each driver connects to an assigned load, credential status, proof packet, and next operational action.</p>
+
+        <div class="driver-roster-grid" aria-label="Illustrative driver roster">
+          <article class="driver-roster-card driver-roster-card--ready" id="roster-john-carter">
+            <a class="driver-roster-card__top" href="#driver-profile-john-carter">
+              <img src="/assets/images/profiles/drivers/driver-ref-001.jpg" alt="John Carter driver profile photo">
+              <span><strong>John Carter</strong><small>DRV-001 - Ready</small></span>
+            </a>
+            <div class="driver-roster-card__meta">
+              <span>Truck <b>T-184</b></span>
+              <span>Trailer <b>TRL-118-07</b></span>
+              <span>Load <b>TMS-LD-10482</b></span>
+              <span>Docs <b>9/9 ready</b></span>
+            </div>
+            <div class="credential-chip-row" aria-label="John Carter credential status">
+              <span class="credential-chip is-ready">CDL current</span>
+              <span class="credential-chip is-ready">Medical 12/31/2026</span>
+              <span class="credential-chip is-ready">MVR clear</span>
+              <span class="credential-chip is-ready">Drug test current</span>
+              <span class="credential-chip is-neutral">Hazmat N/A</span>
+            </div>
+            <a class="driver-profile-link" href="#driver-profile-john-carter">Open rich profile</a>
+          </article>
+
+          <article class="driver-roster-card driver-roster-card--watch" id="roster-carlos-martinez">
+            <a class="driver-roster-card__top" href="#driver-profile-carlos-martinez">
+              <img src="/assets/images/profiles/drivers/driver-ref-002.jpg" alt="Carlos Martinez driver profile photo">
+              <span><strong>Carlos Martinez</strong><small>DRV-002 - Watch</small></span>
+            </a>
+            <div class="driver-roster-card__meta">
+              <span>Truck <b>T-190</b></span>
+              <span>Trailer <b>TRL-204-02</b></span>
+              <span>Load <b>BOF-1907</b></span>
+              <span>Docs <b>8/9 review</b></span>
+            </div>
+            <div class="credential-chip-row" aria-label="Carlos Martinez credential status">
+              <span class="credential-chip is-ready">CDL current</span>
+              <span class="credential-chip is-watch">Medical renewal watch</span>
+              <span class="credential-chip is-ready">MVR clear</span>
+              <span class="credential-chip is-ready">Drug test current</span>
+              <span class="credential-chip is-neutral">Hazmat N/A</span>
+            </div>
+            <a class="driver-profile-link" href="#driver-profile-carlos-martinez">Open rich profile</a>
+          </article>
+
+          <article class="driver-roster-card driver-roster-card--blocked" id="roster-mara-chen">
+            <a class="driver-roster-card__top" href="#driver-profile-mara-chen">
+              <img src="/assets/images/profiles/drivers/driver-ref-003.jpg" alt="Mara Chen driver profile photo">
+              <span><strong>Mara Chen</strong><small>DRV-003 - Hold</small></span>
+            </a>
+            <div class="driver-roster-card__meta">
+              <span>Truck <b>T-211</b></span>
+              <span>Trailer <b>Unassigned</b></span>
+              <span>Load <b>BOF-1931</b></span>
+              <span>Docs <b>6/9 blocked</b></span>
+            </div>
+            <div class="credential-chip-row" aria-label="Mara Chen credential status">
+              <span class="credential-chip is-ready">CDL current</span>
+              <span class="credential-chip is-blocked">Medical hold</span>
+              <span class="credential-chip is-watch">MVR review</span>
+              <span class="credential-chip is-ready">Drug test current</span>
+              <span class="credential-chip is-neutral">Hazmat N/A</span>
+            </div>
+            <a class="driver-profile-link" href="#driver-profile-mara-chen">Open rich profile</a>
+          </article>
+
+          <article class="driver-roster-card driver-roster-card--ready" id="roster-daniel-kim">
+            <a class="driver-roster-card__top" href="#driver-profile-daniel-kim">
+              <img src="/assets/images/profiles/drivers/driver-ref-004.jpg" alt="Daniel Kim driver profile photo">
+              <span><strong>Daniel Kim</strong><small>DRV-004 - Ready reserve</small></span>
+            </a>
+            <div class="driver-roster-card__meta">
+              <span>Truck <b>T-206</b></span>
+              <span>Trailer <b>TRL-118-09</b></span>
+              <span>Load <b>BOF-2064</b></span>
+              <span>Docs <b>9/9 ready</b></span>
+            </div>
+            <div class="credential-chip-row" aria-label="Daniel Kim credential status">
+              <span class="credential-chip is-ready">CDL current</span>
+              <span class="credential-chip is-ready">Medical current</span>
+              <span class="credential-chip is-ready">MVR clear</span>
+              <span class="credential-chip is-ready">Drug test current</span>
+              <span class="credential-chip is-neutral">Hazmat N/A</span>
+            </div>
+            <a class="driver-profile-link" href="#driver-profile-daniel-kim">Open rich profile</a>
+          </article>
+
+          <article class="driver-roster-card driver-roster-card--review" id="roster-frank-miller">
+            <a class="driver-roster-card__top" href="#driver-profile-frank-miller">
+              <img src="/assets/images/profiles/drivers/driver-ref-005.jpg" alt="Frank Miller driver profile photo">
+              <span><strong>Frank Miller</strong><small>DRV-005 - Rate review</small></span>
+            </a>
+            <div class="driver-roster-card__meta">
+              <span>Truck <b>T-217</b></span>
+              <span>Trailer <b>TRL-204-04</b></span>
+              <span>Load <b>BOF-2175</b></span>
+              <span>Docs <b>8/9 review</b></span>
+            </div>
+            <div class="credential-chip-row" aria-label="Frank Miller credential status">
+              <span class="credential-chip is-ready">CDL current</span>
+              <span class="credential-chip is-ready">Medical current</span>
+              <span class="credential-chip is-ready">MVR clear</span>
+              <span class="credential-chip is-ready">Drug test current</span>
+              <span class="credential-chip is-ready">Hazmat current</span>
+            </div>
+            <a class="driver-profile-link" href="#driver-profile-frank-miller">Open rich profile</a>
+          </article>
+
+          <article class="driver-roster-card driver-roster-card--watch" id="roster-priya-patel">
+            <a class="driver-roster-card__top" href="#driver-profile-priya-patel">
+              <img src="/assets/images/profiles/drivers/driver-ref-006.jpg" alt="Priya Patel driver profile photo">
+              <span><strong>Priya Patel</strong><small>DRV-006 - Expiration watch</small></span>
+            </a>
+            <div class="driver-roster-card__meta">
+              <span>Truck <b>T-225</b></span>
+              <span>Trailer <b>TRL-118-11</b></span>
+              <span>Load <b>BOF-2258</b></span>
+              <span>Docs <b>7/9 watch</b></span>
+            </div>
+            <div class="credential-chip-row" aria-label="Priya Patel credential status">
+              <span class="credential-chip is-watch">CDL renewal due</span>
+              <span class="credential-chip is-ready">Medical current</span>
+              <span class="credential-chip is-ready">MVR clear</span>
+              <span class="credential-chip is-ready">Drug test current</span>
+              <span class="credential-chip is-neutral">Hazmat N/A</span>
+            </div>
+            <a class="driver-profile-link" href="#driver-profile-priya-patel">Open rich profile</a>
+          </article>
+        </div>
+
+        <div class="driver-profile-stack" aria-label="Rich driver profiles">
+          <article class="driver-profile-panel" id="driver-profile-john-carter">
+            <div class="driver-profile-panel__identity">
+              <img src="/assets/images/profiles/drivers/driver-ref-001.jpg" alt="John Carter profile photo">
+              <div><span class="wave1-status wave1-status--ready">Ready</span><h3>John Carter / DRV-001</h3><p>Assigned to TMS-LD-10482 / BOF-RR-10482, Dallas to Memphis, with driver, carrier, trailer, and document packet aligned.</p></div>
+            </div>
+            <div class="driver-profile-panel__grid">
+              <div><span>Current load</span><strong>TMS-LD-10482</strong><small>Dispatch owner S. Turner</small></div>
+              <div><span>Equipment</span><strong>T-184 / TRL-118-07</strong><small>Dry van ready</small></div>
+              <div><span>Readiness</span><strong>9 of 9 records</strong><small>No dispatch hold</small></div>
+              <div><span>Next action</span><strong>Release decision</strong><small>Review BOF-RR-10482</small></div>
+            </div>
+            <div class="driver-workflow-chain"><a href="/drivers/#driver-roster">Driver</a><a href="/operations-record/#shared-records">Current Load</a><a href="/workflows/dispatch-assignment/">Dispatch Assignment</a><a href="/workflows/rate-confirmations/">Rate Confirmation</a><a href="/load-readiness/">Pre-trip Packet</a><a href="/workflows/bills-of-lading/">BOL</a><a href="/workflows/proof-of-delivery/">POD</a><a href="/business-operations/customer-billing/billing-packet-control/">Billing Packet</a><a href="/drivers/settlements-payments/">Settlement</a></div>
+          </article>
+
+          <article class="driver-profile-panel" id="driver-profile-carlos-martinez">
+            <div class="driver-profile-panel__identity">
+              <img src="/assets/images/profiles/drivers/driver-ref-002.jpg" alt="Carlos Martinez profile photo">
+              <div><span class="wave1-status wave1-status--review">Watch</span><h3>Carlos Martinez / DRV-002</h3><p>Eligible for planning on BOF-1907, but POD confirmation and carrier renewal evidence must clear before final commitment.</p></div>
+            </div>
+            <div class="driver-profile-panel__grid">
+              <div><span>Current load</span><strong>BOF-1907</strong><small>Tulsa to Kansas City</small></div>
+              <div><span>Equipment</span><strong>T-190 / TRL-204-02</strong><small>Staged with watch note</small></div>
+              <div><span>Readiness</span><strong>8 of 9 records</strong><small>Medical renewal watch</small></div>
+              <div><span>Next action</span><strong>POD follow-up</strong><small>Clear SET-1907 hold</small></div>
+            </div>
+            <div class="driver-workflow-chain"><a href="/drivers/#driver-roster">Driver</a><a href="/operations-record/#shared-records">Current Load</a><a href="/workflows/dispatch-assignment/">Assignment</a><a href="/workflows/bills-of-lading/">BOL</a><a href="/workflows/proof-of-delivery/">POD</a><a href="/settlements/#finance-readiness">Settlement Hold</a></div>
+          </article>
+
+          <article class="driver-profile-panel" id="driver-profile-mara-chen">
+            <div class="driver-profile-panel__identity">
+              <img src="/assets/images/profiles/drivers/driver-ref-003.jpg" alt="Mara Chen profile photo">
+              <div><span class="wave1-status wave1-status--blocked">Hold</span><h3>Mara Chen / DRV-003</h3><p>Medical-card hold blocks dispatch eligibility for BOF-1931 until the safety desk clears the corrected credential record.</p></div>
+            </div>
+            <div class="driver-profile-panel__grid">
+              <div><span>Current load</span><strong>BOF-1931</strong><small>Little Rock to St. Louis</small></div>
+              <div><span>Equipment</span><strong>T-211</strong><small>Trailer held unassigned</small></div>
+              <div><span>Readiness</span><strong>6 of 9 records</strong><small>Medical card and MVR review</small></div>
+              <div><span>Next action</span><strong>Safety clearance</strong><small>Credential owner required</small></div>
+            </div>
+            <div class="driver-workflow-chain"><a href="/drivers/compliance-documents/">Credential File</a><a href="/safety/#safety-portal-preview">Safety Queue</a><a href="/workflows/dispatch-assignment/">Assignment Hold</a><a href="/operations-record/#shared-records">Exception Record</a></div>
+          </article>
+
+          <article class="driver-profile-panel" id="driver-profile-daniel-kim">
+            <div class="driver-profile-panel__identity">
+              <img src="/assets/images/profiles/drivers/driver-ref-004.jpg" alt="Daniel Kim profile photo">
+              <div><span class="wave1-status wave1-status--ready">Ready</span><h3>Daniel Kim / DRV-004</h3><p>Reserve coverage for BOF-2064 with current credentials, clean release status, and 6h 30m available in the driver portal preview.</p></div>
+            </div>
+            <div class="driver-profile-panel__grid">
+              <div><span>Current load</span><strong>BOF-2064</strong><small>Birmingham to Nashville</small></div>
+              <div><span>Equipment</span><strong>T-206 / TRL-118-09</strong><small>Ready row staged</small></div>
+              <div><span>Readiness</span><strong>9 of 9 records</strong><small>No open blocker</small></div>
+              <div><span>Next action</span><strong>Confirm release</strong><small>Dispatch staging note</small></div>
+            </div>
+            <div class="driver-workflow-chain"><a href="/drivers/#driver-portal-preview">Driver Portal</a><a href="/operations-record/#shared-records">Current Load</a><a href="/workflows/dispatch-assignment/">Assignment</a><a href="/load-readiness/">Pre-trip Packet</a><a href="/workflows/proof-of-delivery/">Proof Path</a></div>
+          </article>
+
+          <article class="driver-profile-panel" id="driver-profile-frank-miller">
+            <div class="driver-profile-panel__identity">
+              <img src="/assets/images/profiles/drivers/driver-ref-005.jpg" alt="Frank Miller profile photo">
+              <div><span class="wave1-status wave1-status--review">Review</span><h3>Frank Miller / DRV-005</h3><p>Team-driver coverage is eligible, but BOF-2175 stays in review until the rate confirmation matches lane, carrier, and dates.</p></div>
+            </div>
+            <div class="driver-profile-panel__grid">
+              <div><span>Current load</span><strong>BOF-2175</strong><small>Mobile to Atlanta</small></div>
+              <div><span>Equipment</span><strong>T-217 / TRL-204-04</strong><small>Team-driver lane</small></div>
+              <div><span>Readiness</span><strong>8 of 9 records</strong><small>Rate match review</small></div>
+              <div><span>Next action</span><strong>Document desk</strong><small>Confirm RC-2175</small></div>
+            </div>
+            <div class="driver-workflow-chain"><a href="/workflows/rate-confirmations/">Rate Confirmation</a><a href="/workflows/dispatch-assignment/">Assignment</a><a href="/business-operations/customer-billing/billing-packet-control/">Billing Packet</a><a href="/drivers/settlements-payments/">Driver Pay</a></div>
+          </article>
+
+          <article class="driver-profile-panel" id="driver-profile-priya-patel">
+            <div class="driver-profile-panel__identity">
+              <img src="/assets/images/profiles/drivers/driver-ref-006.jpg" alt="Priya Patel profile photo">
+              <div><span class="wave1-status wave1-status--review">Watch</span><h3>Priya Patel / DRV-006</h3><p>BOF-2258 can stay in planning, but renewal evidence must be visible before dispatch commits the assignment.</p></div>
+            </div>
+            <div class="driver-profile-panel__grid">
+              <div><span>Current load</span><strong>BOF-2258</strong><small>Shreveport to Jackson</small></div>
+              <div><span>Equipment</span><strong>T-225 / TRL-118-11</strong><small>Planning row only</small></div>
+              <div><span>Readiness</span><strong>7 of 9 records</strong><small>CDL renewal watch</small></div>
+              <div><span>Next action</span><strong>Upload renewal evidence</strong><small>Target 06/08/2026</small></div>
+            </div>
+            <div class="driver-workflow-chain"><a href="/drivers/compliance-documents/">Credential File</a><a href="/safety/#safety-portal-preview">Safety Queue</a><a href="/workflows/dispatch-assignment/">Assignment Watch</a><a href="/documents/#operations-file-cabinet">Document Intake</a></div>
           </article>
         </div>
       </section>
@@ -307,6 +530,21 @@
         <div class="public-intake-card" data-public-intake data-intake-type="driver_inquiry" data-source-page="/drivers/"></div>
       </section>
 
+      <section class="wave1-section workflow-related-section" aria-labelledby="driver-related-heading">
+        <p class="bof-ds2-eyebrow">Related Workflows</p>
+        <h2 id="driver-related-heading">Driver work stays connected to dispatch, proof, safety, settlement, and communication.</h2>
+        <div class="workflow-link-grid">
+          <a class="workflow-link-card" href="/drivers/onboarding/"><span>Driver Onboarding</span><strong>Open intake path</strong></a>
+          <a class="workflow-link-card" href="/drivers/compliance-documents/"><span>Compliance &amp; Documents</span><strong>Open compliance path</strong></a>
+          <a class="workflow-link-card" href="/dispatch/load-intake/"><span>Dispatch Assignment</span><strong>Open release queue</strong></a>
+          <a class="workflow-link-card" href="/document-readiness-engine/"><span>Document Readiness</span><strong>Open readiness engine</strong></a>
+          <a class="workflow-link-card" href="/load-readiness/"><span>Pretrip Readiness</span><strong>Open pretrip control</strong></a>
+          <a class="workflow-link-card" href="/workflows/proof-of-delivery/"><span>Proof Collection</span><strong>Open proof workflow</strong></a>
+          <a class="workflow-link-card" href="/drivers/settlements-payments/"><span>Settlements</span><strong>Open pay workflow</strong></a>
+          <a class="workflow-link-card" href="/drivers/communication/"><span>Communications</span><strong>Open support thread</strong></a>
+        </div>
+      </section>
+
       <section class="wave1-close wave1-close--dark" aria-labelledby="driver-close-heading">
         <div class="wave1-close__card wave1-close__card--dark">
           <span class="wave1-close__mark" aria-hidden="true">
@@ -320,8 +558,8 @@
             <p>Less paperwork. Clearer settlements. Better visibility. More time focused on driving.</p>
           </div>
           <div class="bof-ds2-actions">
-            <a class="bof-ds2-button bof-ds2-button--primary" href="/customer-demo/?portal=driver">Explore the Driver Portal Demo</a>
-            <a class="bof-ds2-button" href="/assessment/?type=driver">Start a Driver Readiness Check</a>
+            <a class="bof-ds2-button bof-ds2-button--primary" href="/customer-demo/?portal=driver&amp;tour=guided">Open Driver Portal Walkthrough</a>
+            <a class="bof-ds2-button" href="/drivers/compliance-documents/">Open Compliance Workflow</a>
             <a class="wave1-text-link" href="/book-a-demo/">Request a Demo</a>
           </div>
         </div>
@@ -335,8 +573,8 @@
       </div>
     </footer>
   </div>
-  <script src="/assets/js/site.js?v=20260728-wave4-global-shell"></script>
+  <script src="/assets/js/site.js?v=20260729-platform-connectivity"></script>
   <script src="/assets/js/public-intake.js?v=20260729-unified-intake"></script>
-  <script src="/assets/js/bof-design-system-2-preview.js"></script>
+  <script src="/assets/js/bof-design-system-2-preview.js?v=20260729-platform-connectivity"></script>
 </body>
 </html>

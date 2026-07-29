@@ -18,7 +18,7 @@
   function canonicalHeaderHtml() {
     return [
       '<header class="site-header" data-enterprise-header="true">',
-      '  <a class="brand" href="/" aria-label="BackOfficeFleet home"><img src="/assets/brand/bof-design-system-2/svg/header-lockup.svg" alt="BackOfficeFleet" width="760" height="150"></a>',
+      '  <a class="brand" href="/" aria-label="BackOfficeFleet home"><img src="/assets/brand/bof-design-system-2/svg/header-lockup-light.svg" alt="BackOfficeFleet" width="760" height="150"></a>',
       '  <button class="nav-toggle" type="button" data-nav-toggle aria-expanded="false" aria-label="Toggle navigation">&#9776;</button>',
       '  <nav class="site-nav" data-nav aria-label="Main navigation">',
       '    <div class="nav-menu" data-nav-menu>',
@@ -164,19 +164,61 @@
       });
     });
 
+    function directNavLinks() {
+      return Array.prototype.slice.call(nav.children).filter(function (item) {
+        return item.tagName === "A" && item.getAttribute("href");
+      });
+    }
+
+    function findLinkByPath(links, path) {
+      var active = null;
+      links.forEach(function (link) {
+        var linkPath = normalizePath(new URL(link.getAttribute("href"), window.location.href).pathname);
+        if (!active && linkPath === path) active = link;
+      });
+      return active;
+    }
+
+    function primaryNavPath(path) {
+      var majorPaths = [
+        "/drivers/",
+        "/dispatch/",
+        "/safety/",
+        "/settlements/",
+        "/business-operations/",
+        "/policies-procedures/"
+      ];
+      var i;
+      if (path === "/company/" || path === "/about/" || path === "/contact/" || path === "/trust-governance/" || path === "/priority-fleet-program/") return "/company/";
+      for (i = 0; i < majorPaths.length; i += 1) {
+        if (path.indexOf(majorPaths[i]) === 0) return majorPaths[i];
+      }
+      return "";
+    }
+
     var currentPath = normalizePath(window.location.pathname);
-    var exactActiveLink = null;
+    var topLevelLinks = directNavLinks();
+    var exactActiveLink = findLinkByPath(topLevelLinks, currentPath);
     var prefixActiveLink = null;
-    nav.querySelectorAll('a[href^="/"]').forEach(function (link) {
+    var activePrimaryPath = primaryNavPath(currentPath);
+    if (!exactActiveLink && activePrimaryPath) exactActiveLink = findLinkByPath(topLevelLinks, activePrimaryPath);
+    topLevelLinks.forEach(function (link) {
       var linkPath = normalizePath(new URL(link.getAttribute("href"), window.location.href).pathname);
-      if (!exactActiveLink && currentPath === linkPath) exactActiveLink = link;
       if (!prefixActiveLink && linkPath !== "/" && currentPath.indexOf(linkPath) === 0) prefixActiveLink = link;
     });
+    if (!exactActiveLink && !prefixActiveLink) {
+      nav.querySelectorAll('a[href^="/"]').forEach(function (link) {
+        var linkPath = normalizePath(new URL(link.getAttribute("href"), window.location.href).pathname);
+        if (!exactActiveLink && currentPath === linkPath) exactActiveLink = link;
+        if (!prefixActiveLink && linkPath !== "/" && currentPath.indexOf(linkPath) === 0) prefixActiveLink = link;
+      });
+    }
 
     var activeLink = exactActiveLink || prefixActiveLink;
     if (activeLink) {
       var parentMenu;
       activeLink.classList.add("active");
+      activeLink.setAttribute("aria-current", "page");
       parentMenu = activeLink.closest("[data-nav-menu]");
       if (parentMenu) {
         parentMenu.setAttribute("data-active", "true");
