@@ -30,4 +30,11 @@
 
 ## Backend Files
 
-No backend files were modified. No Supabase migrations were created or applied. `PUBLIC-INTAKE-SCHEMA-PROPOSAL.sql` is documentation only.
+- `supabase/config.toml`
+- `supabase/migrations/202607290001_public_intake_schema.sql`
+- `supabase/functions/submit-public-intake/index.ts`
+- `supabase/functions/submit-public-intake/.env.example`
+- `supabase/functions/submit-public-intake/README.md`
+- `scripts/cleanup-public-intake-test-records.sql`
+
+No remote migration was applied and no function was deployed.

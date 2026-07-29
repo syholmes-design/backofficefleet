@@ -11,4 +11,12 @@
 
 ## Backend Rollback
 
-No backend rollback is required for this worktree because no backend files, Supabase configuration, migrations, environment variables, or deployments were modified.
+No remote backend rollback is required for this worktree because no remote migration, function deployment, or secret update was applied.
+
+If the migration is later applied to a development project and must be rolled back before production use:
+
+1. Disable the frontend endpoint configuration.
+2. Stop accepting public intake traffic.
+3. Export or delete test-only records as approved.
+4. Drop the `intake` schema in the development project only after confirming no production records exist.
+5. Remove the deployed function and function secrets from the development project.

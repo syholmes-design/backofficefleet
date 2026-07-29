@@ -12,12 +12,12 @@
   <main class="public-intake-review-shell">
     <p class="eyebrow">Internal prototype</p>
     <h1>Unified Public Intake Review</h1>
-    <p>This noindex page uses synthetic rows only. It is not connected to Supabase, email, CRM, chat, document storage, or production submissions.</p>
+    <p>This noindex page uses synthetic rows only. It is not connected to Supabase, email, CRM, chat, document storage, or production submissions. Real intake records require authenticated BOF reviewer or admin roles before this page can show live data.</p>
 
     <section class="public-intake-review-grid" aria-label="Prototype queue metrics">
-      <article class="public-intake-review-card"><span>Backend status</span><strong>Disabled</strong><p>Front-end forms validate only; no public request is transmitted.</p></article>
+      <article class="public-intake-review-card"><span>Backend status</span><strong>Configuration required</strong><p>Frontend can call the Edge Function only after the approved endpoint and secrets are configured.</p></article>
       <article class="public-intake-review-card"><span>Submission types</span><strong>7</strong><p>Contact, demo, Priority Fleet, assessment roadmap, government, aggregator, driver/Vault.</p></article>
-      <article class="public-intake-review-card"><span>Protected channels</span><strong>Excluded</strong><p>No CDL, medical-card, payment, portal, chat, document, or protected-record intake.</p></article>
+      <article class="public-intake-review-card"><span>Live review access</span><strong>Auth required</strong><p>No real intake data appears until BOF Supabase Auth roles and RLS review are approved.</p></article>
     </section>
 
     <section class="public-intake-review-table" aria-label="Synthetic intake queue">

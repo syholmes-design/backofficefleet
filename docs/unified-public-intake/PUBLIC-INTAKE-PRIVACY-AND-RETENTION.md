@@ -2,7 +2,7 @@
 
 ## Current State
 
-The front-end validates public-intake fields and shows a backend-required message. No public intake is sent to BOF from this worktree.
+The front-end validates public-intake fields and shows a backend-required message unless an approved Edge Function endpoint is configured. No public intake was sent to BOF from this worktree during implementation.
 
 ## Session Draft Behavior
 
@@ -17,6 +17,10 @@ Before enabling a backend, BOF should approve:
 - Whether assessment summaries have a different retention period.
 - Whether spam/rejected records are retained or immediately purged.
 - How visitor access, deletion, or correction requests are handled.
+
+## Backend Collection When Enabled
+
+When the Edge Function is deployed and configured, BOF will collect business contact information, organization/fleet profile, inquiry type, request summary, privacy acknowledgment time, source page, limited campaign/referrer context, assessment summary only when requested, and technical anti-abuse metadata such as a normalized request fingerprint.
 
 ## Privacy Copy Updated
 
