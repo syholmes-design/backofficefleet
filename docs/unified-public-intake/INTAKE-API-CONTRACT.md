@@ -1,10 +1,14 @@
 # Public Intake API Contract Proposal
 
-Status: proposal only. No endpoint was created in this worktree.
+Status: local implementation created. Remote deployment is not applied.
 
 ## Endpoint
 
-`POST /api/public-intake`
+Supabase Edge Function: `submit-public-intake`
+
+Expected browser endpoint after deployment:
+
+`https://<project-ref>.functions.supabase.co/submit-public-intake`
 
 ## Request Body
 
@@ -32,4 +36,4 @@ Status: proposal only. No endpoint was created in this worktree.
 - `429 rate_limited`: abuse or rate limit triggered.
 - `503 unavailable`: backend temporarily unavailable.
 
-The current front-end does not call this contract because backend approval, deployment target, environment variables, and storage policies are not present.
+The front-end calls this contract only when `window.BOFPublicIntakeConfig.endpoint` or `data-intake-endpoint` is configured. With no endpoint, the form remains disabled and does not transmit.

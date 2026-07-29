@@ -1,7 +1,6 @@
 (function () {
   "use strict";
 
-  var BACKEND_ENABLED = false;
   var STORAGE_KEY = "bofPublicIntakeDraft";
   var sensitivePattern = /<\s*script|javascript:|<\/?[a-z][\s\S]*>/i;
 
@@ -70,6 +69,26 @@
     } catch (error) {
       return null;
     }
+  }
+
+  function backendEndpoint(form) {
+    var config = window.BOFPublicIntakeConfig || {};
+    return form.getAttribute("data-intake-endpoint") || config.endpoint || "";
+  }
+
+  function backendEnabled(form) {
+    return !!backendEndpoint(form);
+  }
+
+  function sourceCampaign() {
+    var params = new URLSearchParams(window.location.search);
+    var allowed = ["utm_source", "utm_medium", "utm_campaign", "utm_content"];
+    var parts = [];
+    allowed.forEach(function (key) {
+      var value = params.get(key);
+      if (value) parts.push(key + "=" + value.slice(0, 80));
+    });
+    return parts.join("&");
   }
 
   function loadDraft() {
@@ -238,9 +257,9 @@
         '<label>What should BOF understand first? <textarea name="request_summary" rows="6" maxlength="1500" required></textarea></label>',
         '<label class="public-intake-checkbox"><input type="checkbox" name="privacy_acknowledgment" value="acknowledged" required> I understand this public intake is not a secure document-upload, CDL, medical-card, authenticated portal, payment, production chat, or protected-record channel.</label>',
         '<label class="public-intake-honeypot" aria-hidden="true">Leave this field blank <input name="website" tabindex="-1" autocomplete="off"></label>',
-        '<p class="wave4-form-note">Current status: front-end intake is ready, but secure backend submission is disabled. The form can validate a request for review; no data is transmitted to BOF from this page.</p>',
-        '<button class="button primary" type="submit">Review Intake Request</button>',
-        '<div class="wave4-form-status" data-public-intake-status role="status" aria-live="polite"></div>',
+        '<p class="wave4-form-note" data-public-intake-note>Current status: ' + (backendEndpoint({ getAttribute: function () { return mount.getAttribute("data-intake-endpoint"); } }) || (window.BOFPublicIntakeConfig && window.BOFPublicIntakeConfig.endpoint) ? 'secure backend submission is configured for this page. BOF receives the request only after the server stores it and returns a reference.' : 'front-end intake is ready, but secure backend submission is not configured. The form can validate a request for review; no data is transmitted to BOF from this page.') + '</p>',
+        '<button class="button primary" type="submit">' + (backendEndpoint({ getAttribute: function () { return mount.getAttribute("data-intake-endpoint"); } }) || (window.BOFPublicIntakeConfig && window.BOFPublicIntakeConfig.endpoint) ? 'Submit Intake Request' : 'Review Intake Request') + '</button>',
+        '<div class="wave4-form-status" data-public-intake-status role="status" aria-live="polite" tabindex="-1"></div>',
       "</form>"
     ].join("");
     mount._bofAssessmentContext = context;
@@ -283,8 +302,11 @@
     return {
       intake_id: "draft-" + Date.now(),
       intake_type: form.getAttribute("data-intake-type"),
+      submission_type: form.getAttribute("data-intake-type"),
       source_page: form.getAttribute("data-source-page"),
-      status: BACKEND_ENABLED ? "ready_to_submit" : "backend_disabled",
+      source_referrer: document.referrer || "",
+      source_campaign: sourceCampaign(),
+      status: backendEnabled(form) ? "ready_to_submit" : "backend_disabled",
       started_at: new Date(Number(form.getAttribute("data-started-at"))).toISOString(),
       reviewed_at: new Date().toISOString(),
       contact: {
@@ -303,11 +325,59 @@
         operating_regions: values.operating_regions
       },
       request: values,
-      assessment_context: mount && mount._bofAssessmentContext ? mount._bofAssessmentContext : null
+      assessment_context: mount && mount._bofAssessmentContext ? mount._bofAssessmentContext : null,
+      metadata: {
+        test_submission: /^localhost$|^127\.0\.0\.1$/.test(window.location.hostname),
+        viewport: window.innerWidth + "x" + window.innerHeight
+      }
     };
   }
 
-  function handleSubmit(event) {
+  function submitLabel(form, pending) {
+    var button = form.querySelector('button[type="submit"]');
+    if (!button) return;
+    if (!button.getAttribute("data-ready-label")) button.setAttribute("data-ready-label", button.textContent);
+    button.textContent = pending ? "Submitting..." : button.getAttribute("data-ready-label");
+    button.disabled = !!pending;
+  }
+
+  async function submitToBackend(form, record) {
+    var endpoint = backendEndpoint(form);
+    if (!endpoint) {
+      return {
+        ok: false,
+        disabled: true,
+        message: "Online submission is not configured yet. No data was transmitted. Backend configuration is required before BOF can receive this request online."
+      };
+    }
+    var response;
+    try {
+      response = await fetch(endpoint, {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify(record),
+        credentials: "omit"
+      });
+    } catch (error) {
+      return { ok: false, error: "service_unavailable", message: "Public intake is temporarily unavailable. Please try again later." };
+    }
+    var payload = {};
+    try {
+      payload = await response.json();
+    } catch (error) {
+      payload = {};
+    }
+    if (!response.ok || !payload.ok) {
+      return {
+        ok: false,
+        error: payload.error || "service_unavailable",
+        message: payload.message || "Public intake could not be submitted. Please review the fields and try again."
+      };
+    }
+    return payload;
+  }
+
+  async function handleSubmit(event) {
     var form = event.target.closest("[data-public-intake-form]");
     if (!form) return;
     event.preventDefault();
@@ -332,10 +402,16 @@
     }
     saveDraft(values);
     form._bofPublicIntakeRecord = buildRecord(form, values);
-    if (!BACKEND_ENABLED) {
-      setStatus(form, "Online submission is not enabled yet. No data was transmitted. Backend integration is required before BOF can receive this request online.", true);
+    submitLabel(form, true);
+    setStatus(form, backendEnabled(form) ? "Submitting public intake request..." : "Validating request locally...", false);
+    var result = await submitToBackend(form, form._bofPublicIntakeRecord);
+    submitLabel(form, false);
+    if (!result.ok) {
+      setStatus(form, result.message, true);
       return;
     }
+    form.reset();
+    setStatus(form, "Your request was received. Reference: " + result.reference + ".", false);
   }
 
   function renderAll() {
@@ -348,6 +424,6 @@
   window.BOFPublicIntake = {
     renderAll: renderAll,
     buildRecord: buildRecord,
-    backendEnabled: BACKEND_ENABLED
+    backendEnabled: backendEnabled
   };
 })();

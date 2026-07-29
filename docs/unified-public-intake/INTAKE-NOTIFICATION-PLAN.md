@@ -1,6 +1,6 @@
 # Public Intake Notification Plan
 
-Status: proposed only.
+Status: adapter prepared but no provider active.
 
 ## Routing
 
@@ -19,6 +19,7 @@ Status: proposed only.
 - Include intake type, source page, organization, requested next step, and reviewer link.
 - Redact or summarize request details if notification goes to email.
 - Add retry handling and dead-letter review for notification failures.
+- If no provider is configured, the Edge Function stores the intake and records `notification_unconfigured`.
 
 ## Visitor Confirmation
 
