@@ -24,6 +24,7 @@ Reconciliation changes in this candidate:
 - Added live policy book-spine labels: HR Manual, Accounting Policies, Safety & Compliance, IT Governance. Business Operations is not shown on the policy books.
 - Added the approved investor presentation route from C:\Users\syhol\BOF-investor-portal-restoration at e1008048dbea221f10cdf196afb039a26d70385e, removed page-level JavaScript/sessionStorage gate logic, preserved noindex/nofollow/noarchive, and kept it out of public navigation and sitemap.xml.
 - Enforced the approved DS2 road-mark logo across the shared public shell, customer demo application shell, investor presentation, and route source logo references.
+- Added an optional one-time BOF logo truck-path animation for the homepage and customer demo only; the canonical static logo remains the fallback and the animation must be retested after final static logo sizing correction.
 
 QA result:
 - Browser route QA: 266 checks across 38 routes and 7 viewports; failures: 0.
@@ -34,6 +35,7 @@ QA result:
 - Investor access review screenshots: docs/deployment-candidate/screenshots/investor-access-review/.
 - Logo consistency review screenshots: docs/deployment-candidate/screenshots/logo-consistency-review/.
 - Logo QA: 294 requested route/viewport checks plus 79 upload-inventory route checks; failures: 0.
+- Logo animation review screenshots: docs/deployment-candidate/screenshots/logo-animation-review/.
 
 Deployment documents:
 - FINAL-ROUTE-INVENTORY.md

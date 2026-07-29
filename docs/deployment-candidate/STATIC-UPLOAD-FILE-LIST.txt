@@ -26,6 +26,7 @@ assets\css\customer-portal.css	/assets/css/customer-portal.css	overwrite-or-add	
 assets\css\document-readiness-engine.css	/assets/css/document-readiness-engine.css	overwrite-or-add	public static candidate file	pre-upload live backup + git 79df9841d1c081ec191b96228c3db7861d82d69f
 assets\css\fleet-operator-offer.css	/assets/css/fleet-operator-offer.css	overwrite-or-add	public static candidate file	pre-upload live backup + git 79df9841d1c081ec191b96228c3db7861d82d69f
 assets\css\homepage-audience.css	/assets/css/homepage-audience.css	overwrite-or-add	public static candidate file	pre-upload live backup + git 79df9841d1c081ec191b96228c3db7861d82d69f
+assets\css\logo-animation.css	/assets/css/logo-animation.css	overwrite-or-add	optional homepage/customer-demo BOF logo truck-path animation wrapper; static logo fallback preserved	pre-upload live backup + logo-animation candidate pass
 assets\css\styles.css	/assets/css/styles.css	overwrite-or-add	public static candidate file	pre-upload live backup + git 79df9841d1c081ec191b96228c3db7861d82d69f
 assets\css\private-investor-plan.css	/assets/css/private-investor-plan.css	overwrite-or-add	hidden investor presentation CSS; page-level gate styles removed	pre-upload live backup + source e1008048dbea221f10cdf196afb039a26d70385e + candidate git
 assets\css\vault-document-intake.css	/assets/css/vault-document-intake.css	overwrite-or-add	public static candidate file	pre-upload live backup + git 79df9841d1c081ec191b96228c3db7861d82d69f
@@ -192,6 +193,7 @@ assets\images\video-posters\bof-customer-portal-load-intake.jpg	/assets/images/v
 assets\images\video-posters\bof-driver-vault.jpg	/assets/images/video-posters/bof-driver-vault.jpg	overwrite-or-add	public static candidate file	pre-upload live backup + git 79df9841d1c081ec191b96228c3db7861d82d69f
 assets\images\video-posters\bof-settlements-readiness.jpg	/assets/images/video-posters/bof-settlements-readiness.jpg	overwrite-or-add	public static candidate file	pre-upload live backup + git 79df9841d1c081ec191b96228c3db7861d82d69f
 assets\js\customer-demo-app.js	/assets/js/customer-demo-app.js	overwrite-or-add	public static candidate file	pre-upload live backup + git 79df9841d1c081ec191b96228c3db7861d82d69f
+assets\js\logo-animation.js	/assets/js/logo-animation.js	overwrite-or-add	optional homepage/customer-demo BOF logo truck-path animation wrapper; harmless sessionStorage flags only	pre-upload live backup + logo-animation candidate pass
 assets\js\public-intake.js	/assets/js/public-intake.js	overwrite-or-add	public static candidate file	pre-upload live backup + git 79df9841d1c081ec191b96228c3db7861d82d69f
 assets\js\site.js	/assets/js/site.js	overwrite-or-add	public static candidate file	pre-upload live backup + git 79df9841d1c081ec191b96228c3db7861d82d69f
 assets\js\private-investor-plan.js	/assets/js/private-investor-plan.js	overwrite-or-add	investor print helper only; no auth/passcode/sessionStorage state	pre-upload live backup + source e1008048dbea221f10cdf196afb039a26d70385e + candidate git

@@ -40,3 +40,7 @@ Form emergency disable:
 Logo rollback:
 - Restore Website/assets/css/styles.css, Website/assets/js/site.js, and affected route HTML from the pre-upload live backup if the DS2 logo correction causes header layout issues.
 - Re-upload the prior live /assets/images/logo/boflogo-original.png only as part of an approved rollback, not as part of this correction upload.
+
+Logo animation rollback:
+- Remove the logo-animation stylesheet/script references from Website/index.html and Website/customer-demo/index.html if the optional animation causes a launch issue.
+- Remove /assets/css/logo-animation.css and /assets/js/logo-animation.js from the upload set during rollback; the canonical static SVG logo remains unchanged.

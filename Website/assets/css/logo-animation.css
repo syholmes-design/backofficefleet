@@ -1,0 +1,80 @@
+.bof-logo-motion {
+  display: inline-grid;
+  max-width: 100%;
+  position: relative;
+  vertical-align: middle;
+}
+
+.bof-logo-motion > img,
+.bof-logo-motion__overlay {
+  grid-area: 1 / 1;
+}
+
+.bof-logo-motion > img {
+  position: relative;
+  z-index: 1;
+}
+
+.bof-logo-motion__overlay {
+  display: block;
+  height: auto;
+  max-width: 100%;
+  opacity: 0;
+  overflow: visible;
+  pointer-events: none;
+  position: relative;
+  width: 100%;
+  z-index: 2;
+}
+
+.bof-logo-motion.is-logo-motion-playing .bof-logo-motion__overlay {
+  opacity: 1;
+}
+
+.bof-logo-motion__truck {
+  opacity: 0;
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+.bof-logo-motion__truck--navy {
+  color: #06183a;
+}
+
+.bof-logo-motion__truck--teal {
+  color: #22c7b8;
+}
+
+.bof-logo-motion__truck--gold {
+  color: #b77412;
+}
+
+.bof-logo-motion__route-glow {
+  opacity: 0;
+}
+
+.bof-logo-motion.is-logo-motion-playing .bof-logo-motion__route-glow {
+  animation: bof-logo-route-glow 5.6s ease-out both;
+}
+
+@keyframes bof-logo-route-glow {
+  0%,
+  12% {
+    opacity: 0;
+  }
+  22%,
+  76% {
+    opacity: 0.34;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bof-logo-motion__overlay,
+  .bof-logo-motion__route-glow {
+    animation: none !important;
+    display: none !important;
+  }
+}

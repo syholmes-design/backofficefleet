@@ -10,7 +10,7 @@ Do not execute this runbook from this pass. Required controlled sequence:
 4. Back up current live files listed in STATIC-UPLOAD-FILE-LIST.txt, plus existing sitemap.xml, robots.txt, and .htaccess if present.
 5. Verify FTP certificate and exact destination document root.
 6. Upload low-risk static assets first.
-7. Upload CSS and JavaScript, including the logo-corrected shared shell files.
+7. Upload CSS and JavaScript, including the logo-corrected shared shell files and optional logo-animation assets.
 8. Upload new route directories.
 9. Upload modified public pages.
 10. Upload legal pages.
@@ -31,4 +31,5 @@ Smoke tests after upload:
 - Verify /private-investor-plan/ is absent from public header/footer navigation, homepage/company/resources/assessment/priority cards, and sitemap.xml.
 - Verify the public header logo source is /assets/brand/bof-design-system-2/svg/header-lockup.svg and no public page visually renders a CSS-generated BF monogram.
 - Verify /customer-demo/ uses the same approved DS2 header-lockup logo treatment in its application sidebar.
+- Verify the optional logo animation appears only on first homepage/customer-demo open, stores only harmless sessionStorage flags, and is disabled for reduced-motion users.
 - Do not upload obsolete logo files for this correction unless an approved rollback is being performed.

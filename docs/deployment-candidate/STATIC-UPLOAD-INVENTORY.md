@@ -8,10 +8,10 @@ Candidate commit: 996a6c9d24421b4509622307312939b606241ec6 (implementation commi
 This inventory does not mean upload the repository. Upload only the path-level files listed in docs/deployment-candidate/STATIC-UPLOAD-FILE-LIST.txt.
 
 Summary:
-- Exact upload file count: 277
+- Exact upload file count: 279
 - Public/compatibility/hidden HTML files: 79
-- CSS files: 13
-- JavaScript files: 5
+- CSS files: 14
+- JavaScript files: 6
 - Image/brand files: 137, including canonical DS2 SVG logo assets and excluding obsolete production logo dependencies from the correction upload.
 - Video/media files directly included: 3
 - sitemap.xml, robots.txt, and .htaccess are included and should be applied late in the runbook.
@@ -57,6 +57,11 @@ Included route families:
 Canonical logo assets:
 - Website/assets/brand/bof-design-system-2/svg/header-lockup.svg -> /assets/brand/bof-design-system-2/svg/header-lockup.svg
 - Website/assets/brand/bof-design-system-2/svg/primary-horizontal-light.svg -> /assets/brand/bof-design-system-2/svg/primary-horizontal-light.svg
+
+Optional logo animation assets:
+- Website/assets/css/logo-animation.css -> /assets/css/logo-animation.css
+- Website/assets/js/logo-animation.js -> /assets/js/logo-animation.js
+- Loaded only by Website/index.html and Website/customer-demo/index.html; the canonical static SVG remains the real logo/fallback.
 
 Obsolete logo upload handling:
 - Do not upload /assets/images/logo/boflogo-original.png for this correction unless rollback explicitly requires it.
