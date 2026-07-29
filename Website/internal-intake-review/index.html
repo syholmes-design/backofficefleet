@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex,nofollow">
+  <title>Internal Intake Review Prototype | BackOfficeFleet</title>
+  <meta name="description" content="Noindex static prototype for reviewing the proposed BOF public intake workflow.">
+  <link rel="stylesheet" href="/assets/css/styles.css?v=20260728-wave4-global-shell">
+</head>
+<body class="premium-site wave4-page public-intake-review-page">
+  <main class="public-intake-review-shell">
+    <p class="eyebrow">Internal prototype</p>
+    <h1>Unified Public Intake Review</h1>
+    <p>This noindex page uses synthetic rows only. It is not connected to Supabase, email, CRM, chat, document storage, or production submissions.</p>
+
+    <section class="public-intake-review-grid" aria-label="Prototype queue metrics">
+      <article class="public-intake-review-card"><span>Backend status</span><strong>Disabled</strong><p>Front-end forms validate only; no public request is transmitted.</p></article>
+      <article class="public-intake-review-card"><span>Submission types</span><strong>7</strong><p>Contact, demo, Priority Fleet, assessment roadmap, government, aggregator, driver/Vault.</p></article>
+      <article class="public-intake-review-card"><span>Protected channels</span><strong>Excluded</strong><p>No CDL, medical-card, payment, portal, chat, document, or protected-record intake.</p></article>
+    </section>
+
+    <section class="public-intake-review-table" aria-label="Synthetic intake queue">
+      <table>
+        <thead>
+          <tr>
+            <th>Route</th>
+            <th>Type</th>
+            <th>Routing owner</th>
+            <th>Status</th>
+            <th>Reviewer note</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>/contact/</td><td>Contact inquiry</td><td>BOF business review</td><td><span class="public-intake-status-pill">Backend required</span></td><td>General inquiry triage after secure endpoint approval.</td></tr>
+          <tr><td>/book-a-demo/</td><td>Demo request</td><td>Demo owner</td><td><span class="public-intake-status-pill">Backend required</span></td><td>Needs notification and dedupe rules before launch.</td></tr>
+          <tr><td>/priority-fleet-program/</td><td>Priority Fleet</td><td>Program review</td><td><span class="public-intake-status-pill">Backend required</span></td><td>Fit review only; no acceptance language.</td></tr>
+          <tr><td>/assessment/</td><td>Assessment roadmap</td><td>Readiness review</td><td><span class="public-intake-status-pill">Backend required</span></td><td>Assessment summary included as structured context.</td></tr>
+          <tr><td>/government/</td><td>Government inquiry</td><td>Preparedness review</td><td><span class="public-intake-status-pill">Backend required</span></td><td>Public-record and procurement language remains non-sensitive.</td></tr>
+          <tr><td>/aggregators/</td><td>Aggregator inquiry</td><td>Network readiness</td><td><span class="public-intake-status-pill">Backend required</span></td><td>Carrier network details only, no document exchange.</td></tr>
+          <tr><td>/drivers/ and /bof-vault/</td><td>Driver or Vault inquiry</td><td>Support routing</td><td><span class="public-intake-status-pill">Backend required</span></td><td>Explicitly excludes protected driver records and uploads.</td></tr>
+        </tbody>
+      </table>
+    </section>
+  </main>
+</body>
+</html>

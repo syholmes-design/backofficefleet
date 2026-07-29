@@ -56,39 +56,12 @@
 
     <section class="section wave4-form-section" id="demo-request-form" aria-labelledby="demo-form-title">
       <div class="section-head reveal"><p class="eyebrow">Demo request form</p><h2 id="demo-form-title">Prepare a guided BOF review request.</h2><p>Do not submit sensitive documents or protected records through this public form.</p></div>
-      <form class="wave4-form reveal" data-wave4-form data-form-name="Demo request" novalidate>
-        <div class="wave4-form-grid">
-          <label>Full name <input name="name" autocomplete="name" required></label>
-          <label>Organization <input name="organization" autocomplete="organization" required></label>
-          <label>Work email <input name="email" type="email" autocomplete="email" required></label>
-          <label>Fleet or network type <select name="fleet_type" required><option value="">Choose one</option><option>Private fleet</option><option>For-hire fleet</option><option>Aggregator or carrier network</option><option>Government or public fleet</option><option>Driver or document operation</option><option>Other</option></select></label>
-        </div>
-        <fieldset>
-          <legend>Area of interest</legend>
-          <div class="wave4-option-grid">
-            <label><input type="checkbox" name="interest" value="Driver readiness"> Driver readiness</label>
-            <label><input type="checkbox" name="interest" value="Dispatch and operations"> Dispatch and operations</label>
-            <label><input type="checkbox" name="interest" value="Safety and compliance"> Safety and compliance</label>
-            <label><input type="checkbox" name="interest" value="Settlements and billing"> Settlements and billing</label>
-            <label><input type="checkbox" name="interest" value="Business operations"> Business operations</label>
-            <label><input type="checkbox" name="interest" value="BOF Vault"> BOF Vault</label>
-            <label><input type="checkbox" name="interest" value="Policy governance"> Policy governance</label>
-            <label><input type="checkbox" name="interest" value="Aggregator network readiness"> Aggregator network readiness</label>
-            <label><input type="checkbox" name="interest" value="Government fleet preparedness"> Government fleet preparedness</label>
-            <label><input type="checkbox" name="interest" value="Priority Fleet Program"> Priority Fleet Program</label>
-          </div>
-        </fieldset>
-        <label>What should the demo focus on?
-          <textarea name="message" rows="6" required></textarea>
-        </label>
-        <p class="wave4-form-note">Submission wiring is pending secure backend approval. This button validates the request for review and does not transmit data. See the <a href="/privacy/">Privacy Policy</a>.</p>
-        <button class="button primary" type="submit">Review Demo Request</button>
-        <div class="wave4-form-status" data-form-status role="status" aria-live="polite"></div>
-      </form>
+      <div class="public-intake-card" data-public-intake data-intake-type="demo_request" data-source-page="/book-a-demo/"></div>
     </section>
   </main>
 
   <footer class="site-footer"><div class="footer-inner"><strong>BackOfficeFleet</strong><span>Guided review requests for fleet readiness and operating control.</span><a href="/contact/">Contact</a></div></footer>
   <script src="/assets/js/site.js?v=20260728-wave4-global-shell"></script>
+  <script src="/assets/js/public-intake.js?v=20260729-unified-intake"></script>
 </body>
 </html>

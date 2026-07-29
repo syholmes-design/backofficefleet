@@ -380,6 +380,22 @@
     return { pct: pct, band: band, gaps: gaps, sections: sectionScores, strongest: strongest };
   }
 
+  function assessmentContext(type, result) {
+    var audience = audiences[type];
+    return {
+      type: type,
+      audience: audience.title,
+      band: result.band,
+      pct: result.pct,
+      strongest: result.strongest,
+      gaps: result.gaps.map(function (gap) {
+        return { section: gap.section, text: gap.text };
+      }),
+      sections: result.sections,
+      modules: audience.modules
+    };
+  }
+
   function priorityFleetCta(type) {
     return ["private-fleet", "for-hire-fleet", "aggregator"].indexOf(type) !== -1;
   }
@@ -406,14 +422,15 @@
           '<div class="wave3-conversion-panel">',
             '<p class="wave3-eyebrow">Next step</p>',
             '<h3>Get your detailed BOF readiness roadmap.</h3>',
-            '<p>Use this preliminary result to request a working review with BOF. Online report delivery is not connected on this page, and no information is sent from this form.</p>',
+            '<p>Use this preliminary result to request a working review with BOF. Secure online report delivery is not connected yet, and no information is transmitted unless approved backend wiring is implemented.</p>',
             '<div class="wave3-actions">',
               '<button class="wave3-button wave3-button--primary" type="button" data-roadmap-request>Send Me My Detailed Readiness Report</button>',
               '<a class="wave3-button wave3-button--secondary" href="' + audience.route + '">' + escapeHtml(audience.cta) + '</a>',
               (priorityFleetCta(state.type) ? '<a class="wave3-button wave3-button--secondary" href="/priority-fleet-program/">Apply for Priority Fleet Consideration</a>' : ''),
               (audience.secondaryCta ? '<a class="wave3-button wave3-button--secondary" href="' + audience.secondaryCta.href + '">' + escapeHtml(audience.secondaryCta.label) + '</a>' : ''),
             '</div>',
-            '<p class="wave3-form-note" data-roadmap-note tabindex="-1" hidden>Detailed roadmap requests are handled through a BOF readiness review. This page does not transmit personal data.</p>',
+            '<p class="wave3-form-note" data-roadmap-note tabindex="-1" hidden>Complete the public intake below to validate the roadmap request locally. Backend integration is required before BOF can receive it online.</p>',
+            '<div data-roadmap-intake-target hidden></div>',
           '</div>',
           '<p class="wave3-disclaimer">This assessment is an operational readiness tool and is not legal, regulatory, tax, accounting, insurance, or compliance certification.</p>',
           '<div class="wave3-question-actions"><button class="wave3-button wave3-button--secondary" type="button" data-reset-audience>Restart Assessment</button></div>',
@@ -497,10 +514,20 @@
     }
     if (event.target.closest("[data-roadmap-request]")) {
       var note = root.querySelector("[data-roadmap-note]");
+      var target = root.querySelector("[data-roadmap-intake-target]");
+      var result = calculate(state.type);
+      var context = assessmentContext(state.type, result);
       if (note) {
         note.hidden = false;
-        note.focus && note.focus();
       }
+      if (target && !target.innerHTML) {
+        target.hidden = false;
+        target.innerHTML = '<div class="public-intake-card" data-public-intake data-intake-type="assessment_roadmap" data-source-page="/assessment/" data-audience-type="' + escapeHtml(audiences[state.type].title) + '" data-assessment-context="' + escapeHtml(JSON.stringify(context)) + '"></div>';
+        if (window.BOFPublicIntake && window.BOFPublicIntake.renderAll) window.BOFPublicIntake.renderAll();
+      } else if (target) {
+        target.hidden = false;
+      }
+      if (note) note.focus && note.focus();
     }
   });
 

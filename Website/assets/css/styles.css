@@ -37012,6 +37012,212 @@ body.premium-site .site-header[data-enterprise-header="true"] .nav-mobile-signin
   border-color: rgba(180, 68, 59, 0.22);
 }
 
+.public-intake-card {
+  display: block;
+  margin: 0 auto;
+  max-width: 1040px;
+  width: 100%;
+}
+
+.public-intake-form {
+  background: rgba(255, 255, 255, 0.96);
+}
+
+.public-intake-head {
+  display: grid;
+  gap: 8px;
+}
+
+.public-intake-head h2 {
+  color: var(--ink);
+  font-size: clamp(1.7rem, 3vw, 2.65rem);
+  line-height: 1.08;
+  margin: 0;
+}
+
+.public-intake-head p:not(.public-intake-kicker),
+.public-intake-summary p,
+.public-intake-warning {
+  color: #4f605b;
+  line-height: 1.58;
+  margin: 0;
+}
+
+.public-intake-kicker {
+  color: var(--wave3-teal-on-light, #087c75);
+  font-size: 0.78rem;
+  font-weight: 900;
+  letter-spacing: 0.1em;
+  margin: 0;
+  text-transform: uppercase;
+}
+
+.public-intake-summary {
+  background: #eef7f5;
+  border: 1px solid rgba(8, 124, 117, 0.18);
+  border-radius: 8px;
+  display: grid;
+  gap: 12px;
+  padding: 18px;
+}
+
+.public-intake-summary-grid {
+  display: grid;
+  gap: 10px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.public-intake-summary-grid span {
+  background: #ffffff;
+  border: 1px solid rgba(20, 33, 31, 0.1);
+  border-radius: 8px;
+  color: #53645f;
+  display: grid;
+  gap: 4px;
+  padding: 12px;
+}
+
+.public-intake-summary-grid strong {
+  color: #08231f;
+}
+
+.public-intake-option-grid label,
+.public-intake-checkbox {
+  font-weight: 800;
+}
+
+.public-intake-checkbox {
+  align-items: flex-start;
+  background: #f7faf5;
+  border: 1px solid rgba(20, 33, 31, 0.11);
+  border-radius: 8px;
+  color: #223631;
+  display: flex;
+  gap: 10px;
+  line-height: 1.5;
+  padding: 14px;
+}
+
+.public-intake-checkbox input {
+  margin-top: 4px;
+  min-height: 0;
+  width: auto;
+}
+
+.public-intake-warning {
+  background: #fff4f1;
+  border: 1px solid rgba(180, 68, 59, 0.2);
+  border-radius: 8px;
+  color: #6e2e27;
+  padding: 14px 16px;
+}
+
+.public-intake-honeypot {
+  height: 1px;
+  left: -10000px;
+  overflow: hidden;
+  position: absolute;
+  top: auto;
+  width: 1px;
+}
+
+.wave3-final-cta .public-intake-form,
+.wave1-section .public-intake-form,
+.wave1-close .public-intake-form {
+  margin-top: 20px;
+  text-align: left;
+}
+
+.wave3-final-cta .public-intake-head h2,
+.wave1-section .public-intake-head h2,
+.wave1-close .public-intake-head h2 {
+  color: #07101f;
+}
+
+.wave3-final-cta .public-intake-head p,
+.wave1-close .public-intake-head p {
+  color: #4f605b;
+}
+
+.public-intake-review-page {
+  background: #f2f6f4;
+}
+
+.public-intake-review-shell {
+  margin: 0 auto;
+  max-width: 1180px;
+  padding: 74px 24px;
+}
+
+.public-intake-review-grid {
+  display: grid;
+  gap: 18px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  margin: 28px 0;
+}
+
+.public-intake-review-card {
+  background: #ffffff;
+  border: 1px solid rgba(20, 33, 31, 0.12);
+  border-radius: 8px;
+  box-shadow: var(--shadow-soft);
+  padding: 22px;
+}
+
+.public-intake-review-card span {
+  color: #087c75;
+  display: block;
+  font-size: 0.78rem;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  margin-bottom: 8px;
+  text-transform: uppercase;
+}
+
+.public-intake-review-table {
+  background: #ffffff;
+  border: 1px solid rgba(20, 33, 31, 0.12);
+  border-radius: 8px;
+  box-shadow: var(--shadow-soft);
+  overflow-x: auto;
+}
+
+.public-intake-review-table table {
+  border-collapse: collapse;
+  min-width: 860px;
+  width: 100%;
+}
+
+.public-intake-review-table th,
+.public-intake-review-table td {
+  border-bottom: 1px solid rgba(20, 33, 31, 0.08);
+  padding: 14px 16px;
+  text-align: left;
+}
+
+.public-intake-review-table th {
+  background: #07101f;
+  color: #ffffff;
+  font-size: 0.74rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.public-intake-review-table td {
+  color: #334541;
+}
+
+.public-intake-status-pill {
+  background: #fff4f1;
+  border-radius: 999px;
+  color: #7c332a;
+  display: inline-flex;
+  font-size: 0.75rem;
+  font-weight: 900;
+  padding: 7px 10px;
+  text-transform: uppercase;
+}
+
 .site-footer .wave4-footer-inner {
   align-items: start;
   background: #07101f;
@@ -37305,6 +37511,8 @@ body .site-footer:has(.wave4-footer-inner) {
   .wave4-timeline,
   .wave4-form-grid,
   .wave4-option-grid,
+  .public-intake-summary-grid,
+  .public-intake-review-grid,
   .wave4-footer-links {
     grid-template-columns: 1fr;
   }

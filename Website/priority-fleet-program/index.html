@@ -114,20 +114,7 @@
         <p class="wave3-eyebrow">Apply or schedule a review</p>
         <h2 id="program-apply-heading">Start with the readiness assessment, then request Priority Fleet consideration.</h2>
         <p>Use the assessment to surface your current gaps. BOF can then review whether Priority Fleet consideration is a fit for your operating model and implementation readiness.</p>
-        <form class="wave4-form" data-wave4-form data-form-name="Priority Fleet consideration request" novalidate>
-          <div class="wave4-form-grid">
-            <label>Full name <input name="name" autocomplete="name" required></label>
-            <label>Organization <input name="organization" autocomplete="organization" required></label>
-            <label>Work email <input name="email" type="email" autocomplete="email" required></label>
-            <label>Fleet type <select name="fleet_type" required><option value="">Choose one</option><option>Private fleet</option><option>For-hire fleet</option><option>Aggregator or network</option><option>Government or public fleet</option><option>Other</option></select></label>
-          </div>
-          <label>Which operating gap should BOF review first?
-            <textarea name="message" rows="5" required></textarea>
-          </label>
-          <p class="wave4-form-note">Submission wiring is pending secure backend approval. This button validates the request for review and does not transmit data. See the <a href="/privacy/">Privacy Policy</a>.</p>
-          <button class="button primary" type="submit">Review Priority Fleet Request</button>
-          <div class="wave4-form-status" data-form-status role="status" aria-live="polite"></div>
-        </form>
+        <div class="public-intake-card" data-public-intake data-intake-type="priority_fleet" data-source-page="/priority-fleet-program/"></div>
         <div class="wave3-actions"><a class="wave3-button wave3-button--primary" href="/assessment/?type=private-fleet">Start Private Fleet Assessment</a><a class="wave3-button wave3-button--secondary" href="/assessment/?type=for-hire-fleet">Start For-Hire Fleet Assessment</a><a class="wave3-button wave3-button--secondary" href="/book-a-demo/">Request a Readiness Review</a></div>
       </div>
     </section>
@@ -135,5 +122,6 @@
 
   <footer class="site-footer"><div class="footer-inner"><strong>BackOfficeFleet</strong><span>Priority Fleet consideration is subject to fit and BOF approval.</span><a href="/company/">Company</a></div></footer>
   <script src="/assets/js/site.js?v=20260728-wave4-global-shell"></script>
+  <script src="/assets/js/public-intake.js?v=20260729-unified-intake"></script>
 </body>
 </html>

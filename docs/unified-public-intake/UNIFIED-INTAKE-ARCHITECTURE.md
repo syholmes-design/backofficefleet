@@ -8,9 +8,10 @@ This implementation prepares a shared front-end public intake system and a disab
 
 - `Website/assets/js/public-intake.js` renders configuration-driven public intake forms.
 - Shared field logic covers contact, organization, fleet profile, audience, request details, preferred contact method, privacy acknowledgment, validation, and submission feedback.
-- Page-specific configurations preserve route context.
+- Page-specific configurations preserve route context for `/contact/`, `/book-a-demo/`, `/priority-fleet-program/`, `/assessment/`, `/government/`, `/aggregators/`, `/drivers/`, and `/bof-vault/`.
 - Personal information is not placed in URL parameters.
 - Assessment integration passes only summary context after the visitor opts into follow-up.
+- Browser session storage may retain basic contact, organization, and fleet context on the same device to reduce repeated entry during the same browser session.
 
 ## Adapter
 
@@ -21,3 +22,7 @@ Future adapter contract: `POST /api/public-intake`
 ## Backend Recommendation
 
 Preferred future backend: a server-side endpoint that performs validation, rate limiting, spam checks, RLS-protected insert, internal notification, and safe visitor confirmation. Supabase can be considered only after target project, environment, schema isolation, and RLS are approved.
+
+## Exclusions
+
+Public intake must remain separate from secure document upload, CDL or medical-card collection, authenticated portal records, production chat, payments or financial information, and protected government records. BOF Vault or operating records require an approved secure environment before collecting, storing, or reviewing private or regulated data.

@@ -47,36 +47,12 @@
         <h2 id="contact-form-title">Prepare a BOF inquiry.</h2>
         <p>Do not include sensitive documents, credentials, private driver data, account numbers, or protected records in this public form.</p>
       </div>
-      <form class="wave4-form reveal" data-wave4-form data-form-name="Contact inquiry" novalidate>
-        <div class="wave4-form-grid">
-          <label>Full name <input name="name" autocomplete="name" required></label>
-          <label>Organization <input name="organization" autocomplete="organization" required></label>
-          <label>Work email <input name="email" type="email" autocomplete="email" required></label>
-          <label>Phone <input name="phone" type="tel" autocomplete="tel"></label>
-        </div>
-        <fieldset>
-          <legend>Inquiry type</legend>
-          <div class="wave4-option-grid">
-            <label><input type="radio" name="interest" value="Fleet assessment" required> Fleet assessment</label>
-            <label><input type="radio" name="interest" value="Demo request"> Demo request</label>
-            <label><input type="radio" name="interest" value="Priority Fleet Program"> Priority Fleet Program</label>
-            <label><input type="radio" name="interest" value="Aggregator or network inquiry"> Aggregator or network inquiry</label>
-            <label><input type="radio" name="interest" value="Government or preparedness inquiry"> Government or preparedness inquiry</label>
-            <label><input type="radio" name="interest" value="Driver or BOF Vault inquiry"> Driver or BOF Vault inquiry</label>
-            <label><input type="radio" name="interest" value="General business inquiry"> General business inquiry</label>
-          </div>
-        </fieldset>
-        <label>What should BOF understand first?
-          <textarea name="message" rows="6" required></textarea>
-        </label>
-        <p class="wave4-form-note">Submission wiring is pending secure backend approval. This button validates the request for review and does not transmit data. See the <a href="/privacy/">Privacy Policy</a>.</p>
-        <button class="button primary" type="submit">Review Inquiry</button>
-        <div class="wave4-form-status" data-form-status role="status" aria-live="polite"></div>
-      </form>
+      <div class="public-intake-card" data-public-intake data-intake-type="contact" data-source-page="/contact/"></div>
     </section>
   </main>
 
   <footer class="site-footer"><div class="footer-inner"><strong>BackOfficeFleet</strong><span>Contact paths for readiness, demo, Priority Fleet, network, government, vault, and business inquiries.</span><a href="/book-a-demo/">Request a Demo</a></div></footer>
   <script src="/assets/js/site.js?v=20260728-wave4-global-shell"></script>
+  <script src="/assets/js/public-intake.js?v=20260729-unified-intake"></script>
 </body>
 </html>
