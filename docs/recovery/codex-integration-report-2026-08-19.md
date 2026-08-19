@@ -153,6 +153,8 @@ Recovered static asset verification (HTTP 200) confirmed representative dependen
 1. `dfbcb9a3` — `recover: integrate Codex operations workspace runtime`
 2. `90e2d7de` — `recover: integrate Codex driver workspace and portal runtime`
 3. `26ab47b2` — `recover: integrate Codex investor portal and branding surfaces`
+4. `ec41979a` — `recover: integrate recovered static BOF surfaces routing`
+5. `820779ed` — `recover: document Codex checkpoint recovery integration`
 
 ## 9) Safety confirmations
 
