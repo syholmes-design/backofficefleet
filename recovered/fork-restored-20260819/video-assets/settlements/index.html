@@ -1,0 +1,69 @@
+﻿<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>BOF Settlements Explainer Storyboard</title>
+  <meta name="description" content="Local-only BackOfficeFleet settlement readiness storyboard assets for screenshots, screen recordings, and video production.">
+  <link rel="stylesheet" href="settlements-storyboard.css">
+  <script src="../../assets/js/fork-path.js?v=1.0"></script>
+</head>
+<body>
+  <main class="storyboard-shell" data-storyboard>
+    <header class="storyboard-hero">
+      <div class="brand-lockup">
+        <img src="../../assets/images/logo/boflogo-original.png" alt="BackOfficeFleet">
+        <span>Settlement Readiness Explainer</span>
+      </div>
+      <div class="hero-grid">
+        <section class="hero-copy">
+          <p class="eyebrow">60-75 second video storyboard</p>
+          <h1>Settlement readiness, driver pay clarity, billing packets, and factoring packet support.</h1>
+          <p>These local-only scenes are built for clean screenshots, screen recordings, or Pictory visuals. BOF is presented as organizing, checking, preparing, showing, and flagging settlement readiness.</p>
+        </section>
+        <aside class="load-brief" aria-label="Sample load">
+          <div class="load-brief-top">
+            <span class="status-pill review">Settlement Review</span>
+            <strong>Load ID: BOF-L008</strong>
+          </div>
+          <dl>
+            <div><dt>Status</dt><dd>Delivered / Settlement Review</dd></div>
+            <div><dt>Issue</dt><dd>POD received, lumper receipt pending</dd></div>
+            <div><dt>Next Step</dt><dd>Hold billing packet until receipt is attached</dd></div>
+          </dl>
+        </aside>
+      </div>
+    </header>
+
+    <section class="scene-nav" aria-label="Scene list">
+      <span>Scene deck</span>
+      <div data-scene-tabs></div>
+    </section>
+
+    <section class="storyboard-scenes" data-scenes aria-live="polite"></section>
+  </main>
+
+  <template id="scene-card-template">
+    <article class="scene-card" data-scene-card>
+      <div class="scene-frame">
+        <img class="scene-logo" src="../../assets/images/logo/boflogo-original.png" alt="BackOfficeFleet">
+        <div class="scene-meta">
+          <span class="scene-number" data-scene-number></span>
+          <span class="runtime-chip">Video frame</span>
+        </div>
+        <div class="scene-layout">
+          <section class="scene-copy">
+            <p class="eyebrow" data-scene-kicker></p>
+            <h2 data-scene-title></h2>
+            <p class="screen-text" data-scene-text></p>
+            <p class="scene-message" data-scene-message></p>
+          </section>
+          <section class="scene-visual" data-scene-visual></section>
+        </div>
+      </div>
+    </article>
+  </template>
+
+  <script src="settlements-storyboard.js"></script>
+</body>
+</html>

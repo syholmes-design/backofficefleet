@@ -8,6 +8,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { IconDispatch, IconLoadProof, IconShield } from "@/components/marketing/MarketingHomeIcons";
 import { getBofData } from "@/lib/load-bof-data";
+import { BOF_RUNTIME_LINKS } from "@/lib/marketing-runtime-links";
 
 function formatHomepageCurrency(value: number) {
   return new Intl.NumberFormat("en-US", {
@@ -35,10 +36,10 @@ function getHeroMetrics() {
     openMoneyRows.reduce((sum, row) => sum + Number(row.amount ?? 0), 0);
 
   return [
-    { label: "Drivers at Risk", value: String(driversAtRisk), href: "/drivers" },
-    { label: "Loads at Risk", value: String(loadsAtRisk), href: "/dispatch" },
-    { label: "Claims Exposure", value: formatHomepageCurrency(claimsExposure), href: "/safety" },
-    { label: "Money at Risk", value: formatHomepageCurrency(totalAtRisk), href: "/command-center" },
+    { label: "Drivers at Risk", value: String(driversAtRisk), href: BOF_RUNTIME_LINKS.dashboard },
+    { label: "Loads at Risk", value: String(loadsAtRisk), href: BOF_RUNTIME_LINKS.dispatch },
+    { label: "Claims Exposure", value: formatHomepageCurrency(claimsExposure), href: BOF_RUNTIME_LINKS.commandCenter },
+    { label: "Money at Risk", value: formatHomepageCurrency(totalAtRisk), href: BOF_RUNTIME_LINKS.commandCenter },
   ] as const;
 }
 
@@ -101,32 +102,32 @@ const PORTALS = [
   {
     title: "Manager Portal",
     body: "Command center for dispatch, compliance, settlements, exceptions, and cash flow.",
-    href: "/portals/manager",
+    href: BOF_RUNTIME_LINKS.commandCenter,
     icon: <IconDispatch />,
   },
   {
     title: "Driver Portal",
     body: "Assignments, documents, readiness, settlements, and communication in one enforced workflow.",
-    href: "/portals/driver",
+    href: BOF_RUNTIME_LINKS.portalsDriver,
     icon: <IconShield />,
   },
   {
     title: "Customer Portal",
     body: "Shipment visibility, proof, exceptions, and invoice readiness.",
-    href: "/portals/customer",
+    href: BOF_RUNTIME_LINKS.dashboard,
     icon: <IconLoadProof />,
   },
 ] as const;
 
 const DEMO_CARDS = [
-  { label: "Demo Dashboard", href: "/dashboard" },
-  { label: "Command Center", href: "/command-center" },
-  { label: "Dispatch Proof Workflow", href: "/dispatch" },
-  { label: "Settlements & Factoring", href: "/settlements" },
-  { label: "Safety & Claims", href: "/safety" },
-  { label: "Driver Readiness", href: "/drivers" },
-  { label: "Company Operations Vault", href: "/documents" },
-  { label: "Maintenance", href: "/maintenance" },
+  { label: "Demo Dashboard", href: BOF_RUNTIME_LINKS.dashboard },
+  { label: "Command Center", href: BOF_RUNTIME_LINKS.commandCenter },
+  { label: "Dispatch Proof Workflow", href: BOF_RUNTIME_LINKS.dispatch },
+  { label: "Pre-Trip", href: BOF_RUNTIME_LINKS.pretrip },
+  { label: "Driver Vault", href: BOF_RUNTIME_LINKS.vault },
+  { label: "Driver Readiness", href: BOF_RUNTIME_LINKS.dashboard },
+  { label: "Runtime Entry", href: BOF_RUNTIME_LINKS.dashboard },
+  { label: "Operations Workspace", href: BOF_RUNTIME_LINKS.commandCenter },
 ] as const;
 
 const COMMAND_CENTER_SIGNALS = [
@@ -189,9 +190,9 @@ export default function MarketingHomeAccountable() {
               <Link href={FOUNDING_FLEET_HREF} className="bof-mkt-btn-enterprise bof-mkt-btn-enterprise-primary">
                 Apply to Become a Founding Fleet
               </Link>
-              <Link href="/dashboard" className="bof-mkt-btn-enterprise bof-mkt-btn-enterprise-secondary">
+              <a href={BOF_RUNTIME_LINKS.dashboard} className="bof-mkt-btn-enterprise bof-mkt-btn-enterprise-secondary">
                 Explore the Demo
-              </Link>
+              </a>
             </div>
           </div>
 
@@ -340,12 +341,12 @@ export default function MarketingHomeAccountable() {
           </div>
           <div className="bof-home-capability-grid">
             {PORTALS.map((portal) => (
-              <Link key={portal.title} href={portal.href} className="bof-home-capability-card">
+              <a key={portal.title} href={portal.href} className="bof-home-capability-card">
                 <span className="bof-home-capability-card__icon">{portal.icon}</span>
                 <h3>{portal.title}</h3>
                 <p>{portal.body}</p>
                 <strong>Open portal &rarr;</strong>
-              </Link>
+              </a>
             ))}
           </div>
         </div>
@@ -361,9 +362,9 @@ export default function MarketingHomeAccountable() {
                 Centralized SOPs, HR records, payroll procedures, compliance controls, safety documentation,
                 audit-ready records, AI governance, and vendor controls.
               </p>
-              <Link href="/documents" className="mt-8 inline-flex bof-mkt-btn-enterprise bof-mkt-btn-enterprise-primary">
-                Open Document Vault
-              </Link>
+              <a href={BOF_RUNTIME_LINKS.vault} className="mt-8 inline-flex bof-mkt-btn-enterprise bof-mkt-btn-enterprise-primary">
+                Open Driver Vault Runtime
+              </a>
             </div>
             <div className="grid gap-3 sm:grid-cols-2">
               {["Policies & SOPs", "HR records", "Payroll procedures", "Compliance controls", "Safety documentation", "Audit-ready records", "AI governance", "Vendor controls"].map((item) => (
@@ -385,9 +386,9 @@ export default function MarketingHomeAccountable() {
               Load-level profitability, billing blockers, factoring visibility, settlement timing, cash-flow
               forecasting, and asset/debt allocation. Every dollar accounted for. Every exception enforced.
             </p>
-            <Link href="/settlements" className="mt-8 inline-flex bof-mkt-btn-enterprise bof-mkt-btn-enterprise-primary">
-              View Settlements & Factoring
-            </Link>
+            <a href={BOF_RUNTIME_LINKS.commandCenter} className="mt-8 inline-flex bof-mkt-btn-enterprise bof-mkt-btn-enterprise-primary">
+              View Operational Queue
+            </a>
           </div>
           <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-xl">
             {[
@@ -414,17 +415,17 @@ export default function MarketingHomeAccountable() {
               A real-time priority queue shows the operating risks that need ownership before they become lost money,
               customer escalations, or compliance exposure.
             </p>
-            <Link href="/command-center" className="mt-8 inline-flex bof-mkt-btn-enterprise bof-mkt-btn-enterprise-primary">
+            <a href={BOF_RUNTIME_LINKS.commandCenter} className="mt-8 inline-flex bof-mkt-btn-enterprise bof-mkt-btn-enterprise-primary">
               Open Command Center
-            </Link>
+            </a>
           </div>
           <div className="rounded-3xl border border-white/10 bg-white/5 p-6 shadow-2xl">
             <div className="grid gap-4 sm:grid-cols-2">
               {COMMAND_CENTER_SIGNALS.map((signal, index) => (
-                <Link key={signal} href="/command-center" className="rounded-2xl border border-white/10 bg-slate-950/70 p-5 transition hover:-translate-y-0.5 hover:border-cyan-300/60 hover:bg-cyan-300/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-300">
+                <a key={signal} href={BOF_RUNTIME_LINKS.commandCenter} className="rounded-2xl border border-white/10 bg-slate-950/70 p-5 transition hover:-translate-y-0.5 hover:border-cyan-300/60 hover:bg-cyan-300/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-300">
                   <span className="text-xs font-bold uppercase tracking-wide text-cyan-200">Signal {index + 1}</span>
                   <p className="mt-2 text-xl font-black text-white">{signal}</p>
-                </Link>
+                </a>
               ))}
             </div>
           </div>
@@ -443,11 +444,11 @@ export default function MarketingHomeAccountable() {
           </div>
           <div className="bof-home-capability-grid">
             {DEMO_CARDS.map((card) => (
-              <Link key={card.href} href={card.href} className="bof-home-capability-card">
+              <a key={card.href} href={card.href} className="bof-home-capability-card">
                 <h3>{card.label}</h3>
                 <p>Open the live BOF workflow for this part of the operating system.</p>
                 <strong>Explore &rarr;</strong>
-              </Link>
+              </a>
             ))}
           </div>
         </div>
@@ -490,9 +491,9 @@ export default function MarketingHomeAccountable() {
             <Link href={FOUNDING_FLEET_HREF} className="bof-mkt-btn-enterprise bof-mkt-btn-enterprise-primary">
               Apply to Become a Founding Fleet
             </Link>
-            <Link href="/dashboard" className="bof-mkt-btn-enterprise bof-mkt-btn-enterprise-secondary">
+            <a href={BOF_RUNTIME_LINKS.dashboard} className="bof-mkt-btn-enterprise bof-mkt-btn-enterprise-secondary">
               Explore the Demo
-            </Link>
+            </a>
           </div>
         </div>
       </section>

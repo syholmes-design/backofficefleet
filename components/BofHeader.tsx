@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { BookDemoLink } from "@/components/BookDemoLink";
@@ -9,14 +9,11 @@ import { DemoWalkthroughRibbon } from "@/components/DemoWalkthroughRibbon";
 import { getSectorLinks } from "@/lib/site-links";
 
 const productNav = [
-  { href: "/dashboard", label: "Dashboard" },
-  { href: "/command-center", label: "Command Center" },
-  { href: "/drivers", label: "Drivers" },
-  { href: "/documents", label: "Documents" },
-  { href: "/settlements", label: "Settlements" },
-  { href: "/safety", label: "Safety" },
   { href: "/dispatch", label: "Dispatch" },
-  { href: "/portals", label: "Portals" },
+  { href: "/loads", label: "Loads" },
+  { href: "/drivers", label: "Drivers" },
+  { href: "/documents", label: "Documents / Vault" },
+  { href: "/portals/driver", label: "Driver Portal" },
 ];
 
 // Portals navigation - currently unused but preserved for potential future use
@@ -162,19 +159,33 @@ export function BofHeader() {
     "/fleet-savings",
   ]);
   const marketingOnlyHeader = marketingOnlyPaths.has(pathname);
-  const isActiveProductNav = (href: string) =>
-    mounted && (pathname === href || pathname.startsWith(`${href}/`));
+  const isActiveProductNav = (href: string) => {
+    if (!mounted) {
+      return false;
+    }
+
+    if (href === "/dispatch") {
+      return (
+        pathname === "/dispatch" ||
+        pathname.startsWith("/dispatch/") ||
+        pathname.startsWith("/pretrip/") ||
+        pathname.startsWith("/trip-release/")
+      );
+    }
+
+    return pathname === href || pathname.startsWith(`${href}/`);
+  };
 
   if (!marketingOnlyHeader) {
     return (
       <header className="bof-product-header sticky top-0 z-40 w-full border-b border-slate-800 bg-slate-950 backdrop-blur-sm shadow-sm">
         <div className="mx-auto flex max-w-[1600px] flex-col items-start gap-3 px-4 py-3 sm:px-8 lg:flex-row lg:items-center lg:justify-between lg:gap-6 lg:px-12 xl:px-16">
-          <Link href="/dashboard" className="inline-flex shrink-0 items-center text-slate-100 no-underline">
+          <Link href="/dispatch" className="inline-flex shrink-0 items-center text-slate-100 no-underline">
             <BofLogo variant="dark" size="demoLarge" priority />
           </Link>
           <nav
             className="bof-product-nav flex w-full min-w-0 flex-nowrap items-center gap-2 overflow-x-auto pb-1 text-sm lg:flex-1 lg:flex-wrap lg:gap-3 lg:pb-0"
-            aria-label="Product demo"
+            aria-label="Authenticated application"
           >
             {productNav.map((item) => {
               const selected = isActiveProductNav(item.href);
@@ -218,7 +229,7 @@ export function BofHeader() {
               </Link>
             ))}
             <Link href="/bof-vault">BOF Vault</Link>
-            <Link href="/dashboard" className="bof-global-header-nav-link">Product Demo</Link>
+            <Link href="/dispatch" className="bof-global-header-nav-link">Application</Link>
             <Link href="/portals" className="bof-global-header-nav-link">Portals</Link>
             <Link href="/book-assessment?source=header-marketing">Fleet Assessment</Link>
           </div>

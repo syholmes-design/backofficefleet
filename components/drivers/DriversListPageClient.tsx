@@ -3,5 +3,5 @@
 import { DriversRosterTable } from "./DriversRosterTable";
 
 export function DriversListPageClient() {
-  return <DriversRosterTable />;
+  return <DriversRosterTable operationalSummaries={[]} hasFleetContext={false} />;
 }

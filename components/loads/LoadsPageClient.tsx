@@ -1,212 +1,246 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo, useState } from "react";
-import { LoadsDispatchTable } from "@/components/LoadsDispatchTable";
-import { useBofDemoData } from "@/lib/bof-demo-data-context";
-import { OPS_COPY } from "@/lib/ops-copy";
-import { buildDispatchLoadsFromBofData } from "@/lib/dispatch-dashboard-seed";
-import { getDispatchCommandSummary } from "@/lib/dispatch/dispatch-command-metrics";
-import { DispatchRouteMapClient } from "@/components/dispatch/DispatchRouteMapClient";
-import { DispatchAttentionQueue } from "@/components/dispatch/DispatchAttentionQueue";
-import { DemoPageExplainerById } from "@/components/demo/DemoPageExplainerById";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
-export function LoadsPageClient() {
-  const { data, resetDemoRiskOverrides } = useBofDemoData();
-  const [selectedLoadId, setSelectedLoadId] = useState<string | undefined>();
-  const mapLoads = useMemo(() => buildDispatchLoadsFromBofData(data), [data]);
-  const totals = useMemo(() => {
-    const all = data.loads.length;
-    const pending = data.loads.filter((l) => l.status === "Pending").length;
-    const inMotion = data.loads.filter((l) => l.status === "En Route").length;
-    const complete = data.loads.filter((l) => l.status === "Delivered").length;
-    return { all, pending, inMotion, complete };
-  }, [data.loads]);
-  const dispatchFleet = useMemo(() => getDispatchCommandSummary(data), [data]);
+import { loadStatusChipClass } from "@/components/dispatch/dispatch-ui";
+import {
+  ApiError,
+  formatEnumLabel,
+  formatShortDateTime,
+  getErrorMessage,
+  requestJson,
+  type DispatchAssignmentRecord,
+  type DispatchLoadRecord,
+} from "@/lib/dispatch-workflow-ui";
+
+type Props = {
+  fleetId: string | null;
+};
+
+export function LoadsPageClient({ fleetId }: Props) {
+  const [loads, setLoads] = useState<DispatchLoadRecord[]>([]);
+  const [assignmentMap, setAssignmentMap] = useState<Record<string, DispatchAssignmentRecord | null>>({});
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const fetchLoads = useCallback(async () => {
+    if (!fleetId) {
+      setLoads([]);
+      setAssignmentMap({});
+      setError(null);
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const nextLoads = await requestJson<DispatchLoadRecord[]>(`/api/dispatch/fleet/${fleetId}/loads`);
+      setLoads(nextLoads);
+      setError(null);
+    } catch (nextError) {
+      setLoads([]);
+      setAssignmentMap({});
+      setError(getErrorMessage(nextError));
+    } finally {
+      setLoading(false);
+    }
+  }, [fleetId]);
+
+  const fetchAssignments = useCallback(async (nextLoads: DispatchLoadRecord[]) => {
+    if (nextLoads.length === 0) {
+      setAssignmentMap({});
+      return;
+    }
+
+    try {
+      const entries = await Promise.all(
+        nextLoads.map(async (load) => {
+          try {
+            const assignment = await requestJson<DispatchAssignmentRecord | null>(
+              `/api/dispatch/load/${load.id}/assignment`,
+            );
+            return [load.id, assignment] as const;
+          } catch (nextError) {
+            if (nextError instanceof ApiError && nextError.status === 404) {
+              return [load.id, null] as const;
+            }
+            throw nextError;
+          }
+        }),
+      );
+
+      setAssignmentMap(Object.fromEntries(entries));
+    } catch (nextError) {
+      setError(getErrorMessage(nextError));
+    }
+  }, []);
+
+  useEffect(() => {
+    void fetchLoads();
+  }, [fetchLoads]);
+
+  useEffect(() => {
+    void fetchAssignments(loads);
+  }, [loads, fetchAssignments]);
+
+  const metrics = useMemo(() => {
+    const assigned = loads.filter((load) => Boolean(assignmentMap[load.id])).length;
+    const delivered = loads.filter((load) => load.status === "DELIVERED").length;
+    const planned = loads.filter((load) => load.status === "PLANNED").length;
+    return {
+      total: loads.length,
+      assigned,
+      planned,
+      delivered,
+      needsAssignment: loads.length - assigned,
+    };
+  }, [assignmentMap, loads]);
 
   return (
     <div className="bof-page">
-      <h1 className="bof-title">Load lifecycle control</h1>
-      <p className="bof-lead">
-        Each load shows the operating trail from assignment to proof to settlement confidence. {OPS_COPY.loadsLead}
-      </p>
-      <DemoPageExplainerById pageId="loads" />
-      <section className="bof-oper-metrics" aria-label="Dispatch summary">
-        <div className="bof-oper-metric">
-          <span className="bof-oper-metric-label">Total loads</span>
-          <strong className="bof-oper-metric-value">{totals.all}</strong>
-        </div>
-        <div className="bof-oper-metric">
-          <span className="bof-oper-metric-label">Pending</span>
-          <strong className="bof-oper-metric-value">{totals.pending}</strong>
-        </div>
-        <div className="bof-oper-metric">
-          <span className="bof-oper-metric-label">En route</span>
-          <strong className="bof-oper-metric-value">{totals.inMotion}</strong>
-        </div>
-        <div className="bof-oper-metric">
-          <span className="bof-oper-metric-label">Delivered</span>
-          <strong className="bof-oper-metric-value">{totals.complete}</strong>
-        </div>
-        <div className="bof-oper-metric">
-          <span className="bof-oper-metric-label">Active loads</span>
-          <strong className="bof-oper-metric-value">{dispatchFleet.activeLoads}</strong>
-        </div>
-        <div className="bof-oper-metric">
-          <span className="bof-oper-metric-label">Loads at risk</span>
-          <strong className="bof-oper-metric-value">{dispatchFleet.loadsAtRisk}</strong>
-        </div>
-        <div className="bof-oper-metric">
-          <span className="bof-oper-metric-label">Blocked driver on load</span>
-          <strong className="bof-oper-metric-value">{dispatchFleet.loadsWithDispatchBlockedDriver}</strong>
-        </div>
-        <div className="bof-oper-metric">
-          <span className="bof-oper-metric-label">Proof gaps</span>
-          <strong className="bof-oper-metric-value">{dispatchFleet.missingOrWeakProofLoads}</strong>
-        </div>
-      </section>
+      <header className="bof-oper-hero">
+        <p className="bof-kicker">Dispatch loads</p>
+        <h1 className="bof-title">Authoritative load roster</h1>
+        <p className="bof-lead">
+          This roster uses the validated dispatch load records for the current fleet. Open a load file to continue the
+          assignment, readiness, pre-trip, and release workflow from the canonical operating core.
+        </p>
+      </header>
 
-      <section className="bof-oper-panel" aria-label="Load document readiness">
-        <div className="bof-cc-panel-head">
-          <h2 className="bof-h2">Load Document Readiness</h2>
-          <p className="bof-cc-panel-sub">BOF tracks paperwork and proof needed to release, monitor, deliver, bill, and settle every load</p>
+      {!fleetId ? (
+        <div className="rounded-xl border border-amber-700/40 bg-amber-950/20 p-6 text-sm text-amber-50">
+          No accessible fleet context is available for this session.
         </div>
-        <div className="bof-cc-table-wrap">
-          <table className="bof-cc-table">
-            <thead>
-              <tr>
-                <th scope="col">Packet complete</th>
-                <th scope="col">Missing required proof</th>
-                <th scope="col">Settlement ready</th>
-                <th scope="col">Total loads</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>
-                  <strong className="bof-cc-metric-value">{dispatchFleet.proofCompleteLoads}</strong>
-                </td>
-                <td>
-                  <strong className="bof-cc-metric-value">{dispatchFleet.missingOrWeakProofLoads}</strong>
-                </td>
-                <td>
-                  <strong className="bof-cc-metric-value">{dispatchFleet.settlementOrClaimHolds}</strong>
-                </td>
-                <td>
-                  <strong className="bof-cc-metric-value">{totals.all}</strong>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-        <div style={{ marginTop: "0.75rem" }}>
-          <Link href="/documents" className="bof-cc-action-btn" style={{ marginRight: "0.5rem" }}>
-            View document workspace
-          </Link>
-          <Link href="/documents/vault" className="bof-cc-action-btn">
-            Open load vault workspace
-          </Link>
-        </div>
-      </section>
+      ) : null}
 
-      {/* RFID & Proof Section */}
-      <section className="bof-oper-panel" aria-labelledby="rfid-proof-heading">
-        <div className="bof-cc-panel-head">
-          <h2 id="rfid-proof-heading" className="bof-h2">RFID & Proof</h2>
-          <p className="bof-cc-panel-sub">RFID-backed proof and fuel/equipment monitoring help reduce loss, fraud, dispute risk, and operational uncertainty</p>
-        </div>
-        
-        <div className="bof-cc-story-grid">
-          <div className="bof-cc-story-card">
-            <h3 className="bof-cc-story-title">RFID-Backed Chain of Custody</h3>
-            <p className="bof-cc-story-text">
-              RFID tags provide automated proof of custody throughout the delivery journey. From pickup to drop-off, every scan creates an auditable record of asset movement, reducing disputes and improving accountability.
-            </p>
-          </div>
-          
-          <div className="bof-cc-story-card">
-            <h3 className="bof-cc-story-title">Fuel & Tank Monitoring</h3>
-            <p className="bof-cc-story-text">
-              Fuel theft and misuse can represent a meaningful leakage point for fleets. BOF&apos;s RFID and fuel-monitoring workflows help reduce that risk by tying fuel, asset, driver, and route events to an auditable operating record.
-            </p>
-          </div>
-          
-          <div className="bof-cc-story-card">
-            <h3 className="bof-cc-story-title">Fraud and Leakage Reduction</h3>
-            <p className="bof-cc-story-text">
-              Some fleet operators estimate fuel leakage/theft exposure can reach double-digit percentages without controls. RFID monitoring provides the visibility needed to prevent unauthorized fuel usage and equipment misuse.
-            </p>
-          </div>
-        </div>
-        
-        <div className="bof-cc-benefits">
-          <h4 className="bof-cc-section-subtitle">Key Benefits</h4>
-          <div className="bof-cc-benefit-grid">
-            <div className="bof-cc-benefit-item">
-              <span className="bof-cc-benefit-icon">✓</span>
-              <span className="bof-cc-benefit-text">Customer Proof and Dispute Defense</span>
+      {fleetId ? (
+        <>
+          {error ? (
+            <div className="rounded-xl border border-rose-700/40 bg-rose-950/20 p-6 text-sm text-rose-100">
+              {error}
             </div>
-            <div className="bof-cc-benefit-item">
-              <span className="bof-cc-benefit-icon">✓</span>
-              <span className="bof-cc-benefit-text">Faster Settlement Release</span>
-            </div>
-            <div className="bof-cc-benefit-item">
-              <span className="bof-cc-benefit-icon">✓</span>
-              <span className="bof-cc-benefit-text">Better Audit Trail</span>
-            </div>
-            <div className="bof-cc-benefit-item">
-              <span className="bof-cc-benefit-icon">✓</span>
-              <span className="bof-cc-benefit-text">Reduced Fuel Theft Risk</span>
-            </div>
-            <div className="bof-cc-benefit-item">
-              <span className="bof-cc-benefit-icon">✓</span>
-              <span className="bof-cc-benefit-text">Equipment Location Verification</span>
-            </div>
-          </div>
-        </div>
-      </section>
+          ) : null}
 
-      <DispatchAttentionQueue variant="light" limit={6} className="bof-oper-panel bof-oper-panel-tight" />
+          <section className="bof-oper-metrics" aria-label="Fleet load summary">
+            <div className="bof-oper-metric">
+              <span className="bof-oper-metric-label">Total loads</span>
+              <strong className="bof-oper-metric-value">{metrics.total}</strong>
+            </div>
+            <div className="bof-oper-metric">
+              <span className="bof-oper-metric-label">Assigned</span>
+              <strong className="bof-oper-metric-value">{metrics.assigned}</strong>
+            </div>
+            <div className="bof-oper-metric">
+              <span className="bof-oper-metric-label">Needs assignment</span>
+              <strong className="bof-oper-metric-value">{metrics.needsAssignment}</strong>
+            </div>
+            <div className="bof-oper-metric">
+              <span className="bof-oper-metric-label">Planned</span>
+              <strong className="bof-oper-metric-value">{metrics.planned}</strong>
+            </div>
+            <div className="bof-oper-metric">
+              <span className="bof-oper-metric-label">Delivered</span>
+              <strong className="bof-oper-metric-value">{metrics.delivered}</strong>
+            </div>
+          </section>
 
-      <section className="bof-oper-panel bof-oper-panel-tight" aria-label="Dispatch table">
-        <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: 8 }}>
-          <button
-            type="button"
-            className="bof-link-secondary"
-            onClick={resetDemoRiskOverrides}
-            style={{ fontSize: 12 }}
-          >
-            Reset demo risk overrides
-          </button>
-        </div>
-        <div className="grid gap-4 lg:grid-cols-[1.2fr_1fr]">
-          <LoadsDispatchTable
-            data={data}
-            selectedLoadId={selectedLoadId}
-            onSelectLoad={setSelectedLoadId}
-          />
-          <DispatchRouteMapClient
-            loads={mapLoads}
-            selectedLoadId={selectedLoadId}
-            onSelectLoad={setSelectedLoadId}
-            mode="all"
-          />
-        </div>
-      </section>
+          <section className="bof-oper-panel" aria-label="Load roster">
+            <div className="bof-cc-panel-head">
+              <div>
+                <h2 className="bof-h2">Current fleet loads</h2>
+                <p className="bof-cc-panel-sub">
+                  Backend-authoritative load identity, lane, status, and assignment state for the active fleet.
+                </p>
+              </div>
+              <div className="flex flex-wrap gap-2">
+                <Link href="/dispatch" className="bof-cc-action-btn bof-cc-action-btn-primary">
+                  Open dispatch
+                </Link>
+                <Link href="/dispatch/intake" className="bof-cc-action-btn">
+                  Open load intake
+                </Link>
+              </div>
+            </div>
 
-      <p className="bof-muted bof-small">
-        <Link href="/dashboard" className="bof-link-secondary">
-          ← Back to dashboard
-        </Link>
-        {" · "}
-        <Link href="/dispatch" className="bof-link-secondary">
-          Dispatch board
-        </Link>
-        {" · "}
-        <Link href="/command-center" className="bof-link-secondary">
-          Command Center
-        </Link>
-      </p>
+            {loading ? <div className="bof-loading">Loading authoritative loads...</div> : null}
+
+            {!loading && loads.length === 0 && !error ? (
+              <div className="rounded-lg border border-slate-800 bg-slate-950/60 p-6 text-sm text-slate-300">
+                No persisted loads are available for this fleet yet.
+              </div>
+            ) : null}
+
+            {loads.length > 0 ? (
+              <div className="bof-cc-table-wrap">
+                <table className="bof-cc-table">
+                  <thead>
+                    <tr>
+                      <th scope="col">Load</th>
+                      <th scope="col">Customer</th>
+                      <th scope="col">Lane</th>
+                      <th scope="col">Status</th>
+                      <th scope="col">Assignment</th>
+                      <th scope="col">Updated</th>
+                      <th scope="col">Workflow</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {loads.map((load) => {
+                      const assignment = assignmentMap[load.id];
+                      return (
+                        <tr key={load.id}>
+                          <td>
+                            <Link href={`/loads/${load.id}`} className="bof-driver-link">
+                              <code className="bof-code">{load.id}</code>
+                            </Link>
+                          </td>
+                          <td>{load.customerName}</td>
+                          <td>
+                            {load.origin} to {load.destination}
+                          </td>
+                          <td>
+                            <span
+                              className={`rounded-full px-3 py-1 text-xs font-semibold ${loadStatusChipClass(load.status)}`}
+                            >
+                              {formatEnumLabel(load.status)}
+                            </span>
+                          </td>
+                          <td>
+                            <span
+                              className={[
+                                "rounded-full border px-3 py-1 text-xs font-semibold",
+                                assignment
+                                  ? "border-teal-700/50 bg-teal-950/40 text-teal-100"
+                                  : "border-amber-700/50 bg-amber-950/30 text-amber-100",
+                              ].join(" ")}
+                            >
+                              {assignment ? "Assigned" : "Unassigned"}
+                            </span>
+                          </td>
+                          <td>{formatShortDateTime(load.updatedAt)}</td>
+                          <td>
+                            <div className="flex flex-wrap gap-2">
+                              <Link href={`/loads/${load.id}`} className="bof-link-secondary">
+                                Open file
+                              </Link>
+                              <Link href={`/pretrip/${load.id}`} className="bof-link-secondary">
+                                Pre-trip
+                              </Link>
+                              <Link href={`/trip-release/${load.id}`} className="bof-link-secondary">
+                                Release
+                              </Link>
+                            </div>
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
+            ) : null}
+          </section>
+        </>
+      ) : null}
     </div>
   );
 }

@@ -13,19 +13,25 @@ export function orderedStatusGroups(): LoadStatus[] {
   return STATUS_ORDER;
 }
 
-export function loadStatusChipClass(status: LoadStatus): string {
+export function loadStatusChipClass(status: LoadStatus | string): string {
   switch (status) {
     case "Exception":
+    case "EXCEPTION":
       return "border border-red-700/60 bg-red-950/60 text-red-100";
     case "Delivered":
+    case "DELIVERED":
       return "border border-emerald-700/50 bg-emerald-950/50 text-emerald-100";
     case "In Transit":
+    case "IN_TRANSIT":
       return "border border-amber-600/50 bg-amber-950/45 text-amber-100";
     case "Dispatched":
+    case "DISPATCHED":
       return "border border-teal-600/50 bg-teal-950/50 text-teal-100";
     case "Assigned":
+    case "ASSIGNED":
       return "border border-slate-600 bg-slate-800/80 text-slate-100";
     case "Planned":
+    case "PLANNED":
     default:
       return "border border-slate-600 bg-slate-900/80 text-slate-200";
   }

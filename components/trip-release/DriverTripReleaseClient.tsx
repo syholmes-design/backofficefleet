@@ -1,38 +1,24 @@
 "use client";
 
-import { useCallback, useMemo, useState } from "react";
 import Link from "next/link";
-import { useBofDemoData } from "@/lib/bof-demo-data-context";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { PackageCheck, ShieldCheck, Truck, UserRoundCheck } from "lucide-react";
+import { DispatchReleaseHistory } from "./DispatchReleaseHistory";
 import {
-  buildTripReleaseEvaluation,
-  tripReleaseCanRelease,
-  type TripReleaseEvaluation,
-} from "@/lib/trip-release";
-import { buildLoadArtifactPacket } from "@/lib/load-artifact-registry";
-import { RouteSupportWidget } from "@/components/route-support/RouteSupportWidget";
-import { DieselRouteInsightWidget } from "@/components/fuel/DieselRouteInsightWidget";
-import { getLoadProofItems, getLoadProofSummary } from "@/lib/load-proof";
-import { BofAdvantageCard, BofAdvantageStrip } from "@/components/bof-advantage/BofAdvantageCard";
-import { LoadPacketControlPanel } from "@/components/load-artifacts/LoadPacketControlPanel";
-
-function fmtDt(iso: string) {
-  try {
-    return new Date(iso).toLocaleString(undefined, {
-      dateStyle: "medium",
-      timeStyle: "short",
-    });
-  } catch {
-    return iso;
-  }
-}
-
-function packetReadinessLabel(ev: TripReleaseEvaluation): string {
-  const o = ev.load_packet_status;
-  if (o === "Ready") return "Ready";
-  if (o === "Missing") return "Missing required items";
-  if (o === "Incomplete") return "Incomplete";
-  return o;
-}
+  ApiError,
+  fetchLoadWorkflowSnapshot,
+  formatDateTime,
+  formatEnumLabel,
+  formatShortDateTime,
+  getErrorMessage,
+  getJsonStringArray,
+  getReleaseReasonSource,
+  requestJson,
+  statusTone,
+  type DispatchLoadRecord,
+  type DispatchLoadWorkflowSnapshot,
+  type DispatchReleaseRecord,
+} from "@/lib/dispatch-workflow-ui";
 
 function Chip({ children, tone }: { children: React.ReactNode; tone: "ok" | "warn" | "bad" | "muted" }) {
   const cls =
@@ -47,454 +33,370 @@ function Chip({ children, tone }: { children: React.ReactNode; tone: "ok" | "war
 }
 
 export function DriverTripReleaseClient({ loadId }: { loadId: string }) {
-  const { data } = useBofDemoData();
-  const [savedFlash, setSavedFlash] = useState<string | null>(null);
-  const [releasedFlash, setReleasedFlash] = useState<string | null>(null);
+  const [load, setLoad] = useState<DispatchLoadRecord | null>(null);
+  const [workflow, setWorkflow] = useState<DispatchLoadWorkflowSnapshot | null>(null);
+  const [history, setHistory] = useState<DispatchReleaseRecord[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [evaluating, setEvaluating] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [flash, setFlash] = useState<string | null>(null);
 
-  const ev = useMemo(() => buildTripReleaseEvaluation(data, loadId), [data, loadId]);
+  const refreshReleaseState = useCallback(async () => {
+    setLoading(true);
+    try {
+      const [nextLoad, nextWorkflow, nextHistory] = await Promise.all([
+        requestJson<DispatchLoadRecord>(`/api/dispatch/load/${loadId}`),
+        fetchLoadWorkflowSnapshot(loadId),
+        requestJson<DispatchReleaseRecord[]>(`/api/dispatch/release/${loadId}/history`),
+      ]);
+      setLoad(nextLoad);
+      setWorkflow(nextWorkflow);
+      setHistory(nextHistory);
+      setError(null);
+    } catch (nextError) {
+      setLoad(null);
+      setWorkflow(null);
+      setHistory([]);
+      setError(getErrorMessage(nextError));
+    } finally {
+      setLoading(false);
+    }
+  }, [loadId]);
 
-  const proofSummary = useMemo(() => {
-    if (!data.loads.some((l) => l.id === loadId)) return null;
-    return getLoadProofSummary(getLoadProofItems(data, loadId));
-  }, [data, loadId]);
+  useEffect(() => {
+    void refreshReleaseState();
+  }, [refreshReleaseState]);
 
-  const artifactPacket = useMemo(() => buildLoadArtifactPacket(data, loadId), [data, loadId]);
+  const latestRelease = workflow?.latestRelease ?? history[0] ?? null;
+  const latestReasonCodes = getJsonStringArray(latestRelease?.reasonCodes);
+  const bannerTone =
+    latestRelease?.disposition === "RELEASED"
+      ? "cleared"
+      : latestRelease?.disposition === "CONDITIONALLY_RELEASED"
+        ? "risk"
+        : latestRelease?.disposition === "HOLD"
+          ? "risk"
+          : "blocked";
 
-  const onSaveProgress = useCallback(() => {
-    setSavedFlash("Trip release saved as in progress.");
-    setReleasedFlash(null);
-    window.setTimeout(() => setSavedFlash(null), 4000);
-  }, []);
+  async function handleEvaluateRelease() {
+    setEvaluating(true);
+    setFlash(null);
+    setError(null);
 
-  const onRelease = useCallback(() => {
-    if (!ev || !tripReleaseCanRelease(ev)) return;
-    setReleasedFlash("Trip release recorded and ready for dispatch handoff.");
-    setSavedFlash(null);
-    window.setTimeout(() => setReleasedFlash(null), 5000);
-  }, [ev]);
+    try {
+      const response = await fetch(`/api/dispatch/release/${loadId}`, {
+        method: "POST",
+        headers: { Accept: "application/json" },
+        cache: "no-store",
+      });
+      const text = await response.text();
+      const body = text ? (JSON.parse(text) as DispatchReleaseRecord | { error?: string }) : null;
 
-  if (!ev) {
-    return (
-      <div className="bof-page trip-release-page">
-        <p className="bof-muted">
-          Load <code className="bof-code">{loadId}</code> not found.
-        </p>
-        <Link href="/loads" className="bof-link-secondary">
-          Back to loads
-        </Link>
-      </div>
-    );
+      if (!response.ok && response.status !== 409) {
+        const message =
+          body && typeof body === "object" && "error" in body && typeof body.error === "string"
+            ? body.error
+            : response.statusText;
+        throw new ApiError(message || "Request failed", response.status, body);
+      }
+
+      await refreshReleaseState();
+
+      const disposition =
+        body && typeof body === "object" && "disposition" in body && typeof body.disposition === "string"
+          ? body.disposition
+          : "RELEASED";
+      setFlash(
+        response.status === 409
+          ? `Release evaluation returned ${disposition}. Backend hold/block reasons are shown below.`
+          : `Release evaluation returned ${disposition}.`,
+      );
+    } catch (nextError) {
+      setError(getErrorMessage(nextError));
+    } finally {
+      setEvaluating(false);
+    }
   }
 
-  const canRelease = tripReleaseCanRelease(ev);
-  const artifactByKey = new Map((artifactPacket?.artifacts ?? []).map((artifact) => [artifact.key, artifact]));
-  const hrefPretripReport = artifactByKey.get("cargo_photo")?.actionUrl ?? `/pretrip/${loadId}#artifact-cargo_photo`;
-  const hrefBol = artifactByKey.get("bol")?.actionUrl ?? `/trip-release/${loadId}#artifact-bol`;
-  const hrefRate = artifactByKey.get("rate_confirmation")?.actionUrl ?? `/trip-release/${loadId}#artifact-rate_confirmation`;
-  const hrefPodReq = artifactByKey.get("pod")?.actionUrl ?? `/trip-release/${loadId}#artifact-pod`;
-  const hrefPacket = `/shipper-portal/${loadId}`;
+  const blockersAndHolds = useMemo(() => {
+    if (!latestRelease) {
+      return [];
+    }
 
-  const bannerTone =
-    ev.trip_release_status === "Cleared"
-      ? "cleared"
-      : ev.trip_release_status === "At Risk"
-        ? "risk"
-        : "blocked";
-
-  const blockers = ev.checks.filter((c) => c.severity === "blocking");
-  const warns = ev.checks.filter((c) => c.severity === "warning");
+    return latestReasonCodes.map((reasonCode) => ({
+      reasonCode,
+      source: getReleaseReasonSource(reasonCode),
+      summary: latestRelease.summary,
+    }));
+  }, [latestReasonCodes, latestRelease]);
 
   return (
     <div className="bof-page trip-release-page">
       <nav className="bof-breadcrumb" aria-label="Breadcrumb">
         <Link href="/loads">Loads</Link>
         <span aria-hidden> / </span>
-        <span>Trip release - {ev.load_number}</span>
+        <span>Trip release - {load?.id ?? loadId}</span>
       </nav>
 
       <header className="trip-release-header">
         <div>
           <h1 className="bof-title bof-title-tight">
-            Driver release proof - Load <span className="trip-release-teal">{ev.load_number}</span>{" "}
-            <code className="bof-code">{ev.load_id}</code>
+            Dispatch release - <span className="trip-release-teal">{load?.customerName ?? "Loading load"}</span>{" "}
+            <code className="bof-code">{load?.id ?? loadId}</code>
           </h1>
           <p className="bof-muted bof-small">
-            This is the driver-facing payoff: BOF turns the manager load file into a clear go / no-go release
-            packet with route context, proof requirements, equipment status, and required acknowledgments.
+            Release is now evaluated, stored, and displayed from authoritative backend dispatch records.
           </p>
         </div>
       </header>
 
+      {error ? (
+        <div className="trip-release-banner trip-release-banner--blocked">
+          <p className="trip-release-banner-status">{error}</p>
+        </div>
+      ) : null}
+
       <div className={`trip-release-banner trip-release-banner--${bannerTone}`}>
         <div className="trip-release-banner-row">
           <div>
-            <p className="trip-release-banner-label">Trip release status</p>
-            <p className="trip-release-banner-status">{ev.trip_release_status}</p>
-            {ev.primary_block_reason && (
-              <p className="trip-release-banner-reason">{ev.primary_block_reason}</p>
-            )}
+            <p className="trip-release-banner-label">Dispatch release</p>
+            <p className="trip-release-banner-status">
+              {latestRelease ? formatEnumLabel(latestRelease.disposition) : "Not evaluated"}
+            </p>
+            <p className="trip-release-banner-reason">
+              {latestRelease?.summary ?? "Request a release evaluation once assignment, readiness, and pre-trip are in place."}
+            </p>
           </div>
           <div className="trip-release-banner-counts">
             <span>
-              <strong>{ev.blocking_count}</strong> blocking
+              <strong>{latestReasonCodes.length}</strong> reason code{latestReasonCodes.length === 1 ? "" : "s"}
             </span>
             <span>
-              <strong>{ev.warning_count}</strong> warnings
+              <strong>{history.length}</strong> historical release{history.length === 1 ? "" : "s"}
             </span>
           </div>
         </div>
         <p className="trip-release-banner-hint">
-          Release Trip is enabled only when there are <strong>zero blocking items</strong>. Warnings stay visible
-          so dispatch can decide with the facts instead of sending a driver into a paper chase.
+          CONDITIONALLY_RELEASED means the backend authorized a conditional operational release. HOLD means the load is
+          not released.
         </p>
       </div>
 
-      {savedFlash && <p className="trip-release-flash trip-release-flash-info">{savedFlash}</p>}
-      {releasedFlash && <p className="trip-release-flash trip-release-flash-ok">{releasedFlash}</p>}
+      {flash ? <p className="trip-release-flash trip-release-flash-info">{flash}</p> : null}
+      {loading ? <p className="trip-release-flash trip-release-flash-info">Loading release workflow...</p> : null}
 
       <div className="trip-release-layout">
         <div className="trip-release-main">
-          <RouteSupportWidget loadId={loadId} variant="full" />
-
-          <DieselRouteInsightWidget loadId={loadId} variant="full" />
-
-          {proofSummary && (
-            <BofAdvantageStrip>
-              <BofAdvantageCard
-                eyebrow="BOF Advantage"
-                title="Credentials & departure proof"
-                subtitle={ev.driver_dispatch_eligibility}
-                value={`${proofSummary.completeCount}/${proofSummary.applicableCount} proof lines complete (${proofSummary.completionPct}%)`}
-                delta={
-                  proofSummary.blockingCount === 0
-                    ? "Required proof path clear of payment blockers"
-                    : `${proofSummary.blockingCount} line(s) still block pay until resolved`
-                }
-                explanation="Counts come from the load proof stack, dispatch assignment, driver credentials, and packet-release gates."
-                tone={proofSummary.blockingCount > 0 ? "caution" : "positive"}
-              />
-            </BofAdvantageStrip>
-          )}
-
           <section className="trip-release-card" aria-labelledby="tr-overview">
             <h2 id="tr-overview" className="trip-release-card-title">
-              What the driver can trust
+              Current load context
             </h2>
             <table className="trip-release-table">
               <tbody>
                 <tr>
-                  <th scope="row">Driver</th>
-                  <td>
-                    {ev.driver_name} <code className="bof-code">{ev.driver_id}</code>
-                  </td>
-                </tr>
-                <tr>
-                  <th scope="row">Dispatch control</th>
-                  <td>{ev.dispatch_ref}</td>
-                </tr>
-                <tr>
-                  <th scope="row">Load</th>
-                  <td>
-                    <code className="bof-code">{ev.load_id}</code> - PRO {ev.load_number}
-                  </td>
-                </tr>
-                <tr>
-                  <th scope="row">Tractor</th>
-                  <td>{ev.tractor_unit}</td>
-                </tr>
-                <tr>
-                  <th scope="row">Trailer</th>
-                  <td>{ev.trailer_unit}</td>
+                  <th scope="row">Customer</th>
+                  <td>{load?.customerName ?? "—"}</td>
                 </tr>
                 <tr>
                   <th scope="row">Origin</th>
-                  <td>{ev.origin}</td>
+                  <td>{load?.origin ?? "—"}</td>
                 </tr>
                 <tr>
                   <th scope="row">Destination</th>
-                  <td>{ev.destination}</td>
+                  <td>{load?.destination ?? "—"}</td>
                 </tr>
                 <tr>
                   <th scope="row">Pickup</th>
-                  <td>{fmtDt(ev.pickup_datetime)}</td>
+                  <td>{formatDateTime(load?.pickupWindowStart)}</td>
                 </tr>
                 <tr>
                   <th scope="row">Delivery</th>
-                  <td>{fmtDt(ev.delivery_datetime)}</td>
+                  <td>{formatDateTime(load?.deliveryWindowStart)}</td>
                 </tr>
               </tbody>
             </table>
           </section>
 
-          <section className="trip-release-card" aria-labelledby="tr-shipper">
-            <h2 id="tr-shipper" className="trip-release-card-title">
-              Load / shipper packet
+          <section className="trip-release-card" aria-labelledby="tr-hierarchy">
+            <h2 id="tr-hierarchy" className="trip-release-card-title">
+              Decision hierarchy
             </h2>
-            <table className="trip-release-table">
-              <tbody>
-                <tr>
-                  <th scope="row">Shipper</th>
-                  <td>{ev.shipper_name}</td>
-                </tr>
-                <tr>
-                  <th scope="row">Facility / window</th>
-                  <td>{ev.facility_appointment}</td>
-                </tr>
-                <tr>
-                  <th scope="row">Commodity</th>
-                  <td>{ev.commodity}</td>
-                </tr>
-                <tr>
-                  <th scope="row">Weight / pallets</th>
-                  <td>{ev.weight_pallets}</td>
-                </tr>
-                <tr>
-                  <th scope="row">Equipment</th>
-                  <td>{ev.equipment_type}</td>
-                </tr>
-                <tr>
-                  <th scope="row">Temperature</th>
-                  <td>{ev.temperature_requirement}</td>
-                </tr>
-                <tr>
-                  <th scope="row">Seal required</th>
-                  <td>{ev.seal_required ? "Yes" : "Not indicated"}</td>
-                </tr>
-                <tr>
-                  <th scope="row">Photo requirements</th>
-                  <td>{ev.photo_requirements_summary}</td>
-                </tr>
-                <tr>
-                  <th scope="row">BOL / dock instructions</th>
-                  <td>{ev.bol_instructions}</td>
-                </tr>
-                <tr>
-                  <th scope="row">POD</th>
-                  <td>{ev.pod_requirements_summary}</td>
-                </tr>
-                <tr>
-                  <th scope="row">Accessorial / lumper</th>
-                  <td>{ev.accessorial_lumper_summary}</td>
-                </tr>
-                <tr>
-                  <th scope="row">Load packet readiness</th>
-                  <td>
-                    <Chip tone={ev.load_packet_missing_count === 0 && ev.load_packet_status === "Ready" ? "ok" : "warn"}>
-                      {packetReadinessLabel(ev)}
-                    </Chip>{" "}
-                    <span className="bof-muted bof-small">
-                      ({ev.load_packet_missing_count} missing line
-                      {ev.load_packet_missing_count === 1 ? "" : "s"} on packet rules)
-                    </span>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-            <div className="trip-release-actions">
-              <a href={hrefPacket}>Open load packet</a>
-              <a href={hrefBol} target="_blank" rel="noreferrer">
-                Open BOL
-              </a>
-              <a href={hrefRate} target="_blank" rel="noreferrer">
-                Open rate confirmation
-              </a>
-              <a href={hrefPodReq}>Open POD requirements</a>
+            <div className="grid gap-3 md:grid-cols-2">
+              <div className="rounded-lg border border-slate-800 bg-slate-950/55 p-4">
+                <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Driver readiness</p>
+                <div className="mt-2 flex items-center gap-2">
+                  <UserRoundCheck className="h-4 w-4 text-teal-300" aria-hidden />
+                  <Chip tone={workflow?.readiness?.status === "READY" ? "ok" : workflow?.readiness?.status === "CONDITIONAL" ? "warn" : "bad"}>
+                    {workflow?.readiness?.status ?? "NOT_READY"}
+                  </Chip>
+                </div>
+                <p className="mt-2 text-sm text-slate-300">
+                  {workflow?.readiness?.summary ?? workflow?.readinessError ?? "Readiness not currently available."}
+                </p>
+              </div>
+
+              <div className="rounded-lg border border-slate-800 bg-slate-950/55 p-4">
+                <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Assignment / equipment</p>
+                <div className="mt-2 flex items-center gap-2">
+                  <Truck className="h-4 w-4 text-teal-300" aria-hidden />
+                  <Chip tone={workflow?.assignment ? "ok" : "bad"}>
+                    {workflow?.assignment?.status ?? "UNASSIGNED"}
+                  </Chip>
+                </div>
+                <p className="mt-2 text-sm text-slate-300">
+                  {workflow?.assignment
+                    ? `${workflow.assignment.driver?.firstName ?? workflow.assignment.driverId} · ${workflow.assignment.tractorEquipment?.unitNumber ?? workflow.assignment.tractorEquipmentId}${workflow.assignment.trailerEquipment ? ` · trailer ${workflow.assignment.trailerEquipment.unitNumber}` : ""}`
+                    : "No active assignment exists for this load."}
+                </p>
+              </div>
+
+              <div className="rounded-lg border border-slate-800 bg-slate-950/55 p-4">
+                <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Pre-trip</p>
+                <div className="mt-2 flex items-center gap-2">
+                  <ShieldCheck className="h-4 w-4 text-teal-300" aria-hidden />
+                  <Chip
+                    tone={
+                      workflow?.preTrip?.status === "COMPLETED"
+                        ? "ok"
+                        : workflow?.preTrip?.status === "OPEN"
+                          ? "warn"
+                          : "bad"
+                    }
+                  >
+                    {workflow?.preTrip?.status ?? "NOT_STARTED"}
+                  </Chip>
+                </div>
+                <p className="mt-2 text-sm text-slate-300">
+                  {workflow?.preTrip
+                    ? `${workflow.preTrip.items.length} checklist items · ${workflow.preTrip.defects.length} defects`
+                    : workflow?.assignment
+                      ? "No pre-trip has been started for the active assignment."
+                      : "Assignment is required before pre-trip can start."}
+                </p>
+              </div>
+
+              <div className="rounded-lg border border-slate-800 bg-slate-950/55 p-4">
+                <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Dispatch release</p>
+                <div className="mt-2 flex items-center gap-2">
+                  <PackageCheck className="h-4 w-4 text-teal-300" aria-hidden />
+                  <span className={`rounded-full border px-3 py-1 text-xs font-bold ${statusTone(latestRelease?.disposition ?? "HOLD", "release")}`}>
+                    {latestRelease?.disposition ?? "HOLD"}
+                  </span>
+                </div>
+                <p className="mt-2 text-sm text-slate-300">
+                  {latestRelease?.summary ?? "No stored release decision yet."}
+                </p>
+              </div>
             </div>
           </section>
 
-          <LoadPacketControlPanel
-            packet={artifactPacket}
-            mode="release"
-            loadId={ev.load_id}
-            driverName={ev.driver_name}
-            dispatcherName={ev.dispatch_ref}
-          />
-
-          <section className="trip-release-card" aria-labelledby="tr-driver">
-            <h2 id="tr-driver" className="trip-release-card-title">
-              Driver qualification
+          <section className="trip-release-card" aria-labelledby="tr-release">
+            <h2 id="tr-release" className="trip-release-card-title">
+              Latest release decision
             </h2>
             <table className="trip-release-table">
               <tbody>
                 <tr>
-                  <th scope="row">CDL</th>
-                  <td>{ev.cdl_status_label}</td>
-                </tr>
-                <tr>
-                  <th scope="row">Med card</th>
-                  <td>{ev.med_status_label}</td>
-                </tr>
-                <tr>
-                  <th scope="row">MVR</th>
-                  <td>{ev.mvr_status_label}</td>
-                </tr>
-                <tr>
-                  <th scope="row">Endorsements (CDL row)</th>
-                  <td>{ev.endorsements_display}</td>
-                </tr>
-                <tr>
-                  <th scope="row">TWIC</th>
-                  <td>{ev.twic_display}</td>
-                </tr>
-                <tr>
-                  <th scope="row">HazMat</th>
-                  <td>{ev.hazmat_display}</td>
-                </tr>
-                <tr>
-                  <th scope="row">Dispatch eligibility</th>
-                  <td>{ev.driver_dispatch_eligibility}</td>
-                </tr>
-              </tbody>
-            </table>
-            <div className="trip-release-actions">
-              <Link href={`/drivers/${ev.driver_id}/vault`}>Open driver credentials</Link>
-            </div>
-          </section>
-
-          <section className="trip-release-card" aria-labelledby="tr-asset">
-            <h2 id="tr-asset" className="trip-release-card-title">
-              Tractor / trailer readiness
-            </h2>
-            <table className="trip-release-table">
-              <tbody>
-                <tr>
-                  <th scope="row">Tractor status</th>
-                  <td>{ev.tractor_status}</td>
-                </tr>
-                <tr>
-                  <th scope="row">Trailer status</th>
-                  <td>{ev.trailer_status}</td>
-                </tr>
-                <tr>
-                  <th scope="row">Tractor inspection / MAR</th>
-                  <td>{ev.tractor_inspection_display}</td>
-                </tr>
-                <tr>
-                  <th scope="row">Trailer inspection</th>
-                  <td>{ev.trailer_inspection_display}</td>
-                </tr>
-                <tr>
-                  <th scope="row">Trailer type</th>
-                  <td>{ev.trailer_type_display}</td>
-                </tr>
-                <tr>
-                  <th scope="row">Seal chain</th>
-                  <td>{ev.trailer_seal_display}</td>
+                  <th scope="row">Disposition</th>
+                  <td>{latestRelease ? formatEnumLabel(latestRelease.disposition) : "Not evaluated"}</td>
                 </tr>
                 <tr>
                   <th scope="row">Summary</th>
-                  <td>{ev.asset_readiness_summary}</td>
-                </tr>
-              </tbody>
-            </table>
-          </section>
-
-          <section className="trip-release-card" aria-labelledby="tr-pretrip">
-            <h2 id="tr-pretrip" className="trip-release-card-title">
-              Pre-trip inspection &amp; proof
-            </h2>
-            <p className="trip-release-card-lead">{ev.checklist_summary}</p>
-            <table className="trip-release-table">
-              <tbody>
-                <tr>
-                  <th scope="row">Pre-trip phase</th>
-                  <td>
-                    <Chip
-                      tone={
-                        ev.pretrip_phase === "Complete"
-                          ? "ok"
-                          : ev.pretrip_phase === "Exception Review Needed"
-                            ? "bad"
-                            : "warn"
-                      }
-                    >
-                      {ev.pretrip_phase}
-                    </Chip>
-                  </td>
+                  <td>{latestRelease?.summary ?? "—"}</td>
                 </tr>
                 <tr>
-                  <th scope="row">Cargo photos (proof line)</th>
-                  <td>{ev.cargo_photo_status}</td>
+                  <th scope="row">Reason codes</th>
+                  <td>{latestReasonCodes.length > 0 ? latestReasonCodes.join(", ") : "None"}</td>
                 </tr>
                 <tr>
-                  <th scope="row">Pickup photo (packet URL)</th>
-                  <td>{ev.pickup_photo_status}</td>
+                  <th scope="row">Evaluated</th>
+                  <td>{latestRelease ? formatShortDateTime(latestRelease.evaluatedAt) : "—"}</td>
                 </tr>
                 <tr>
-                  <th scope="row">Seal photos (proof lines)</th>
-                  <td>{ev.seal_photo_status}</td>
+                  <th scope="row">Evaluator</th>
+                  <td>{latestRelease?.evaluatedByUserId ?? "System"}</td>
                 </tr>
                 <tr>
-                  <th scope="row">Seal numbers</th>
-                  <td>{ev.seal_number_display}</td>
-                </tr>
-                <tr>
-                  <th scope="row">Exception flag</th>
-                  <td>{ev.pretrip_exception_flag ? "Yes" : "No"}</td>
-                </tr>
-                <tr>
-                  <th scope="row">Notes</th>
-                  <td>{ev.pretrip_notes}</td>
+                  <th scope="row">Policy version</th>
+                  <td>{latestRelease?.policyVersion ?? "—"}</td>
                 </tr>
               </tbody>
             </table>
             <div className="trip-release-actions">
-              <a href={hrefPretripReport} target="_blank" rel="noreferrer">
-                Open pre-trip cargo proof
-              </a>
-              <Link href={`/pretrip/${loadId}`}>Pre-trip tablet</Link>
-              <Link href="#load-artifact-packet-heading">Review release artifacts</Link>
+              <Link href={`/pretrip/${loadId}`}>Open pre-trip tablet</Link>
               <Link href={`/loads/${loadId}`}>Open manager load file</Link>
             </div>
+          </section>
+
+          <section className="trip-release-card" aria-labelledby="tr-history">
+            <h2 id="tr-history" className="trip-release-card-title">
+              Release history
+            </h2>
+            <DispatchReleaseHistory releases={history} latestReleaseId={latestRelease?.id ?? null} />
           </section>
         </div>
 
         <aside className="trip-release-side" aria-labelledby="tr-panel">
           <h2 id="tr-panel" className="trip-release-card-title">
-            Blockers &amp; warnings
+            Blockers &amp; holds
           </h2>
-          {blockers.length === 0 && warns.length === 0 ? (
-            <p className="bof-muted bof-small">No checklist items on this evaluation.</p>
+          {blockersAndHolds.length === 0 ? (
+            <p className="bof-muted bof-small">No current blocker or hold reason codes are recorded.</p>
           ) : (
-            <>
-              {blockers.length > 0 && (
-                <div className="trip-release-panel-block">
-                  <h3 className="trip-release-panel-sub">Blocking</h3>
-                  <ul className="trip-release-checklist">
-                    {blockers.map((c) => (
-                      <li key={c.check_id} className="trip-release-check-item trip-release-check-item--block">
-                        <span className="trip-release-check-cat">{c.category}</span>
-                        <p>{c.message}</p>
-                        {c.fixHref && (
-                          <a href={c.fixHref} className="trip-release-fix">
-                            {c.fixLabel ?? "Fix now"}
-                          </a>
-                        )}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              )}
-              {warns.length > 0 && (
-                <div className="trip-release-panel-block">
-                  <h3 className="trip-release-panel-sub">Warnings</h3>
-                  <ul className="trip-release-checklist">
-                    {warns.map((c) => (
-                      <li key={c.check_id} className="trip-release-check-item trip-release-check-item--warn">
-                        <span className="trip-release-check-cat">{c.category}</span>
-                        <p>{c.message}</p>
-                        {c.fixHref && (
-                          <a href={c.fixHref} className="trip-release-fix">
-                            {c.fixLabel ?? "Review"}
-                          </a>
-                        )}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              )}
-            </>
+            <div className="trip-release-panel-block">
+              <h3 className="trip-release-panel-sub">
+                {latestRelease?.disposition === "HOLD" ? "Hold reasons" : "Blocking reasons"}
+              </h3>
+              <ul className="trip-release-checklist">
+                {blockersAndHolds.map((entry) => (
+                  <li
+                    key={entry.reasonCode}
+                    className={`trip-release-check-item ${
+                      latestRelease?.disposition === "HOLD"
+                        ? "trip-release-check-item--warn"
+                        : "trip-release-check-item--block"
+                    }`}
+                  >
+                    <span className="trip-release-check-cat">{entry.source}</span>
+                    <p>{entry.reasonCode}</p>
+                    <p className="bof-muted bof-small">{entry.summary}</p>
+                  </li>
+                ))}
+              </ul>
+            </div>
           )}
+
+          {workflow?.readiness ? (
+            <div className="trip-release-panel-block">
+              <h3 className="trip-release-panel-sub">Readiness reasons</h3>
+              <ul className="trip-release-checklist">
+                {(getJsonStringArray(workflow.readiness.reasonCodes).length > 0
+                  ? getJsonStringArray(workflow.readiness.reasonCodes)
+                  : ["No readiness reason codes"]).map((reasonCode) => (
+                  <li key={reasonCode} className="trip-release-check-item trip-release-check-item--warn">
+                    <span className="trip-release-check-cat">Driver</span>
+                    <p>{reasonCode}</p>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ) : null}
+
+          {workflow?.preTrip?.defects && workflow.preTrip.defects.length > 0 ? (
+            <div className="trip-release-panel-block">
+              <h3 className="trip-release-panel-sub">Pre-trip defects</h3>
+              <ul className="trip-release-checklist">
+                {workflow.preTrip.defects.map((defect) => (
+                  <li key={defect.id} className="trip-release-check-item trip-release-check-item--warn">
+                    <span className="trip-release-check-cat">Pre-Trip</span>
+                    <p>
+                      {defect.itemCode} · {defect.description}
+                    </p>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ) : null}
         </aside>
       </div>
 
@@ -502,35 +404,24 @@ export function DriverTripReleaseClient({ loadId }: { loadId: string }) {
         <button
           type="button"
           className="trip-release-btn trip-release-btn-primary"
-          disabled={!canRelease}
-          title={!canRelease ? "Resolve all blocking items to enable release" : undefined}
-          onClick={onRelease}
+          disabled={evaluating}
+          onClick={() => void handleEvaluateRelease()}
         >
-          Release trip
-        </button>
-        <button type="button" className="trip-release-btn trip-release-btn-secondary" onClick={onSaveProgress}>
-          Save as in progress
+          Request release evaluation
         </button>
         <Link href="/dispatch" className="trip-release-btn trip-release-btn-secondary">
           Open dispatch packet
         </Link>
-        {!canRelease && (
+        {latestRelease ? (
           <p className="trip-release-footer-note">
-            Driver cannot pull off until blocking count is zero. Address items in the panel above or via linked
-            workflows.
+            Latest result: {latestRelease.disposition} at {formatShortDateTime(latestRelease.evaluatedAt)}.
+          </p>
+        ) : (
+          <p className="trip-release-footer-note">
+            Release disposition is not calculated locally. Use the button above to request the backend evaluation.
           </p>
         )}
       </footer>
-
-      <p className="bof-muted bof-small" style={{ marginTop: "1rem" }}>
-        <Link href={`/loads/${loadId}`} className="bof-link-secondary">
-          Load detail
-        </Link>
-        {" - "}
-        <Link href={`/shipper-portal/${loadId}`} className="bof-link-secondary">
-          Shipper portal
-        </Link>
-      </p>
     </div>
   );
 }

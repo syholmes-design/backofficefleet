@@ -4,7 +4,8 @@ import React, { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { ChevronDown, Menu, X } from "lucide-react";
-import { BofLogo } from "@/components/BofLogo";
+import { MarketingBrandMark } from "@/components/marketing/MarketingBrandMark";
+import { BOF_RUNTIME_LINKS } from "@/lib/marketing-runtime-links";
 
 export function MarketingNavigation() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -39,7 +40,7 @@ export function MarketingNavigation() {
           {/* Logo */}
           <div className="flex items-center">
             <Link href="/" className="flex items-center">
-              <BofLogo variant="light" size="demoLarge" className="mr-3" />
+              <MarketingBrandMark />
             </Link>
           </div>
 
@@ -120,8 +121,8 @@ export function MarketingNavigation() {
               {isDemoDropdownOpen && (
                 <div className="absolute left-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-50">
                   <div className="py-1">
-                    <Link
-                      href="/command-center"
+                    <a
+                      href={BOF_RUNTIME_LINKS.commandCenter}
                       className={`block px-4 py-2 text-sm transition-colors ${
                         isActive("/command-center")
                           ? "bg-blue-50 text-blue-600"
@@ -130,9 +131,9 @@ export function MarketingNavigation() {
                       onClick={() => setIsDemoDropdownOpen(false)}
                     >
                       Command Center
-                    </Link>
-                    <Link
-                      href="/dispatch"
+                    </a>
+                    <a
+                      href={BOF_RUNTIME_LINKS.dispatch}
                       className={`block px-4 py-2 text-sm transition-colors ${
                         isActive("/dispatch")
                           ? "bg-blue-50 text-blue-600"
@@ -141,35 +142,85 @@ export function MarketingNavigation() {
                       onClick={() => setIsDemoDropdownOpen(false)}
                     >
                       Dispatch
-                    </Link>
-                    <Link
-                      href="/settlements"
+                    </a>
+                    <a
+                      href={BOF_RUNTIME_LINKS.vault}
                       className={`block px-4 py-2 text-sm transition-colors ${
-                        isActive("/settlements")
+                        isActive("/documents/vault")
                           ? "bg-blue-50 text-blue-600"
                           : "text-gray-700 hover:bg-gray-100"
                       }`}
                       onClick={() => setIsDemoDropdownOpen(false)}
                     >
-                      Settlements
-                    </Link>
-                    <Link
-                      href="/safety"
+                      Driver Vault
+                    </a>
+                    <a
+                      href={BOF_RUNTIME_LINKS.pretrip}
                       className={`block px-4 py-2 text-sm transition-colors ${
-                        isActive("/safety")
+                        isActive("/pretrip")
                           ? "bg-blue-50 text-blue-600"
                           : "text-gray-700 hover:bg-gray-100"
                       }`}
                       onClick={() => setIsDemoDropdownOpen(false)}
                     >
-                      Safety
-                    </Link>
+                      Pre-Trip
+                    </a>
                   </div>
                 </div>
               )}
             </div>
 
             {/* CTA Links */}
+            <Link
+              href="/product"
+              className={`px-3 py-2 text-sm font-medium transition-colors ${
+                isActive("/product")
+                  ? "text-blue-600"
+                  : "text-gray-700 hover:text-blue-600"
+              }`}
+            >
+              Product
+            </Link>
+            <Link
+              href="/driver-experience"
+              className={`px-3 py-2 text-sm font-medium transition-colors ${
+                isActive("/driver-experience")
+                  ? "text-blue-600"
+                  : "text-gray-700 hover:text-blue-600"
+              }`}
+            >
+              Driver Experience
+            </Link>
+            <Link
+              href="/fleet-operations"
+              className={`px-3 py-2 text-sm font-medium transition-colors ${
+                isActive("/fleet-operations")
+                  ? "text-blue-600"
+                  : "text-gray-700 hover:text-blue-600"
+              }`}
+            >
+              Fleet Operations
+            </Link>
+            <Link
+              href="/investors"
+              className={`px-3 py-2 text-sm font-medium transition-colors ${
+                isActive("/investors")
+                  ? "text-blue-600"
+                  : "text-gray-700 hover:text-blue-600"
+              }`}
+            >
+              Investors
+            </Link>
+            <Link
+              href="/contact"
+              className={`px-3 py-2 text-sm font-medium transition-colors ${
+                isActive("/contact")
+                  ? "text-blue-600"
+                  : "text-gray-700 hover:text-blue-600"
+              }`}
+            >
+              Contact
+            </Link>
             <Link
               href="/assessment"
               className={`px-3 py-2 text-sm font-medium transition-colors ${
@@ -264,8 +315,8 @@ export function MarketingNavigation() {
                 <div className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">
                   Demo Preview
                 </div>
-                <Link
-                  href="/command-center"
+                <a
+                  href={BOF_RUNTIME_LINKS.commandCenter}
                   className={`block px-3 py-2 rounded-md text-sm font-medium transition-colors ${
                     isActive("/command-center")
                       ? "bg-blue-50 text-blue-600"
@@ -274,9 +325,9 @@ export function MarketingNavigation() {
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
                   Command Center
-                </Link>
-                <Link
-                  href="/dispatch"
+                </a>
+                <a
+                  href={BOF_RUNTIME_LINKS.dispatch}
                   className={`block px-3 py-2 rounded-md text-sm font-medium transition-colors ${
                     isActive("/dispatch")
                       ? "bg-blue-50 text-blue-600"
@@ -285,33 +336,88 @@ export function MarketingNavigation() {
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
                   Dispatch
-                </Link>
-                <Link
-                  href="/settlements"
+                </a>
+                <a
+                  href={BOF_RUNTIME_LINKS.vault}
                   className={`block px-3 py-2 rounded-md text-sm font-medium transition-colors ${
-                    isActive("/settlements")
+                    isActive("/documents/vault")
                       ? "bg-blue-50 text-blue-600"
                       : "text-gray-700 hover:bg-gray-100"
                   }`}
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
-                  Settlements
-                </Link>
-                <Link
-                  href="/safety"
+                  Driver Vault
+                </a>
+                <a
+                  href={BOF_RUNTIME_LINKS.pretrip}
                   className={`block px-3 py-2 rounded-md text-sm font-medium transition-colors ${
-                    isActive("/safety")
+                    isActive("/pretrip")
                       ? "bg-blue-50 text-blue-600"
                       : "text-gray-700 hover:bg-gray-100"
                   }`}
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
-                  Safety
-                </Link>
+                  Pre-Trip
+                </a>
               </div>
 
               {/* Mobile CTA Links */}
               <div className="px-4 py-2 space-y-2">
+                <Link
+                  href="/product"
+                  className={`block px-3 py-2 rounded-md text-sm font-medium transition-colors ${
+                    isActive("/product")
+                      ? "bg-blue-50 text-blue-600"
+                      : "text-gray-700 hover:bg-gray-100"
+                  }`}
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  Product
+                </Link>
+                <Link
+                  href="/driver-experience"
+                  className={`block px-3 py-2 rounded-md text-sm font-medium transition-colors ${
+                    isActive("/driver-experience")
+                      ? "bg-blue-50 text-blue-600"
+                      : "text-gray-700 hover:bg-gray-100"
+                  }`}
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  Driver Experience
+                </Link>
+                <Link
+                  href="/fleet-operations"
+                  className={`block px-3 py-2 rounded-md text-sm font-medium transition-colors ${
+                    isActive("/fleet-operations")
+                      ? "bg-blue-50 text-blue-600"
+                      : "text-gray-700 hover:bg-gray-100"
+                  }`}
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  Fleet Operations
+                </Link>
+                <Link
+                  href="/investors"
+                  className={`block px-3 py-2 rounded-md text-sm font-medium transition-colors ${
+                    isActive("/investors")
+                      ? "bg-blue-50 text-blue-600"
+                      : "text-gray-700 hover:bg-gray-100"
+                  }`}
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  Investors
+                </Link>
+                <Link
+                  href="/contact"
+                  className={`block px-3 py-2 rounded-md text-sm font-medium transition-colors ${
+                    isActive("/contact")
+                      ? "bg-blue-50 text-blue-600"
+                      : "text-gray-700 hover:bg-gray-100"
+                  }`}
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  Contact
+                </Link>
                 <Link
                   href="/assessment"
                   className={`block px-3 py-2 rounded-md text-sm font-medium transition-colors ${

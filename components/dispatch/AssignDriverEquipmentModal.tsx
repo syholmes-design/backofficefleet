@@ -1,136 +1,232 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { AlertOctagon, X } from "lucide-react";
-import { useDispatchDashboardStore } from "@/lib/stores/dispatch-dashboard-store";
-import { useBofDemoData } from "@/lib/bof-demo-data-context";
-import { getDriverDispatchEligibility } from "@/lib/driver-dispatch-eligibility";
-import { getOrderedDocumentsForDriver } from "@/lib/driver-queries";
-import type { BofData } from "@/lib/load-bof-data";
-import type { Tractor, Trailer } from "@/types/dispatch";
+import { AlertOctagon, LoaderCircle, X } from "lucide-react";
 import {
-  DriverHubReviewLink,
-  DriverVaultReviewLink,
-  ProofGapReviewLinks,
-} from "@/components/review/ReviewDeepLinks";
+  driverDisplayName,
+  fetchAssignmentDetailsForLoad,
+  formatEnumLabel,
+  getErrorMessage,
+  requestJson,
+  statusTone,
+  type DispatchAssignmentRecord,
+  type DispatchDriverOption,
+  type DispatchEquipmentRecord,
+  type DispatchLoadRecord,
+} from "@/lib/dispatch-workflow-ui";
+import type { DriverOperationalSummary } from "@/lib/services/driverOperationalReadModelService";
 
 type Props = {
   open: boolean;
   loadId: string | null;
+  fleetId: string | null;
+  drivers: DispatchDriverOption[];
+  driverOperationalSummaries: DriverOperationalSummary[];
   onClose: () => void;
+  onSaved: () => Promise<void>;
 };
 
-function driverDocumentAssignmentSummary(data: BofData, driverId: string) {
-  const docs = getOrderedDocumentsForDriver(data, driverId);
-  const verified = docs.filter((d) => d.status.toUpperCase() === "VALID").length;
-  let latestTs = 0;
-  for (const d of docs) {
-    for (const raw of [d.issueDate, d.cdlIssueDate]) {
-      if (typeof raw !== "string" || !raw.trim()) continue;
-      const t = Date.parse(raw);
-      if (!Number.isNaN(t) && t >= latestTs) latestTs = t;
-    }
+function driverOperationalBadge(summary: DriverOperationalSummary | undefined) {
+  if (!summary?.readiness) {
+    return {
+      readinessClass: "border-slate-700 bg-slate-900/70 text-slate-300",
+      readinessText: "Readiness not evaluated",
+      qualificationText: summary?.qualification
+        ? `Qualification ${formatEnumLabel(summary.qualification.qualificationStatus)}`
+        : "Qualification not evaluated",
+    };
   }
-  const lastReviewed =
-    latestTs > 0
-      ? new Date(latestTs).toLocaleDateString(undefined, { dateStyle: "medium" })
-      : null;
-  return { verifiedCount: verified, coreDocTotal: docs.length, lastReviewed };
+
+  return {
+    readinessClass: statusTone(summary.readiness.readinessStatus, "readiness"),
+    readinessText: `Readiness ${formatEnumLabel(summary.readiness.readinessStatus)}`,
+    qualificationText: summary.qualification
+      ? `Qualification ${formatEnumLabel(summary.qualification.qualificationStatus)}`
+      : "Qualification not evaluated",
+  };
 }
 
-function mergeSelectable<T extends { status: string }>(
-  available: T[],
-  currentId: string | null,
-  list: T[],
-  idKey: keyof T
-): T[] {
-  const cur =
-    currentId != null
-      ? (list.find((x) => x[idKey] === currentId) ?? null)
-      : null;
-  const ids = new Set(available.map((x) => String(x[idKey])));
-  if (cur && !ids.has(String(cur[idKey]))) {
-    return [cur, ...available];
-  }
-  return available;
-}
-
-export function AssignDriverEquipmentModal({ open, loadId, onClose }: Props) {
-  const { data } = useBofDemoData();
-  const loads = useDispatchDashboardStore((s) => s.loads);
-  const drivers = useDispatchDashboardStore((s) => s.drivers);
-  const tractorsAll = useDispatchDashboardStore((s) => s.tractors);
-  const trailersAll = useDispatchDashboardStore((s) => s.trailers);
-  const assignDriverEquipment = useDispatchDashboardStore(
-    (s) => s.assignDriverEquipment
-  );
-
-  const load = useMemo(
-    () => (loadId ? loads.find((l) => l.load_id === loadId) ?? null : null),
-    [loads, loadId]
-  );
-
+export function AssignDriverEquipmentModal({
+  open,
+  loadId,
+  fleetId,
+  drivers,
+  driverOperationalSummaries,
+  onClose,
+  onSaved,
+}: Props) {
+  const [load, setLoad] = useState<DispatchLoadRecord | null>(null);
+  const [equipment, setEquipment] = useState<DispatchEquipmentRecord[]>([]);
+  const [assignment, setAssignment] = useState<DispatchAssignmentRecord | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [saving, setSaving] = useState(false);
   const [driverId, setDriverId] = useState("");
   const [tractorId, setTractorId] = useState("");
   const [trailerId, setTrailerId] = useState("");
+  const [error, setError] = useState<string | null>(null);
+  const [message, setMessage] = useState<string | null>(null);
 
   useEffect(() => {
-    if (!load) return;
-    setDriverId(load.driver_id ?? "");
-    setTractorId(load.tractor_id ?? "");
-    setTrailerId(load.trailer_id ?? "");
-  }, [load]);
+    if (!open || !loadId || !fleetId) {
+      return;
+    }
 
-  const activeDrivers = drivers.filter((d) => d.status === "Active");
+    const currentLoadId = loadId;
+    const currentFleetId = fleetId;
+    let cancelled = false;
 
-  const tractorsSelectable = useMemo(() => {
-    const avail = tractorsAll.filter((t) => t.status === "Available");
-    return mergeSelectable(avail, load?.tractor_id ?? null, tractorsAll, "tractor_id");
-  }, [tractorsAll, load?.tractor_id]);
+    async function run() {
+      setLoading(true);
+      setError(null);
+      setMessage(null);
 
-  const trailersSelectable = useMemo(() => {
-    const avail = trailersAll.filter((t) => t.status === "Available");
-    return mergeSelectable(avail, load?.trailer_id ?? null, trailersAll, "trailer_id");
-  }, [trailersAll, load?.trailer_id]);
+      try {
+        const [nextLoad, nextEquipment, nextAssignment] = await Promise.all([
+          requestJson<DispatchLoadRecord>(`/api/dispatch/load/${currentLoadId}`),
+          requestJson<DispatchEquipmentRecord[]>(`/api/dispatch/fleet/${currentFleetId}/equipment`),
+          fetchAssignmentDetailsForLoad(currentLoadId),
+        ]);
 
-  const selectedDriver = drivers.find((d) => d.driver_id === driverId);
-  const selectedEligibility = selectedDriver
-    ? getDriverDispatchEligibility(data, selectedDriver.driver_id)
-    : null;
-  const dispatchBlocked = selectedEligibility?.status === "blocked";
-  const canSave =
-    Boolean(driverId) && Boolean(tractorId) && !dispatchBlocked;
+        if (cancelled) {
+          return;
+        }
 
-  if (!open || !loadId) return null;
+        setLoad(nextLoad);
+        setEquipment(nextEquipment);
+        setAssignment(nextAssignment);
+        setDriverId(nextAssignment?.driverId ?? "");
+        setTractorId(nextAssignment?.tractorEquipmentId ?? "");
+        setTrailerId(nextAssignment?.trailerEquipmentId ?? "");
+      } catch (nextError) {
+        if (!cancelled) {
+          setError(getErrorMessage(nextError));
+        }
+      } finally {
+        if (!cancelled) {
+          setLoading(false);
+        }
+      }
+    }
+
+    void run();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [fleetId, loadId, open]);
+
+  const tractors = useMemo(
+    () => equipment.filter((item) => item.equipmentType === "TRACTOR"),
+    [equipment],
+  );
+  const driverSummaryMap = useMemo(
+    () => new Map(driverOperationalSummaries.map((summary) => [summary.driverId, summary])),
+    [driverOperationalSummaries],
+  );
+  const trailers = useMemo(
+    () => equipment.filter((item) => item.equipmentType === "TRAILER"),
+    [equipment],
+  );
+
+  const canSave = Boolean(driverId) && Boolean(tractorId) && !saving;
+
+  async function refreshAssignmentState() {
+    if (!loadId) {
+      return;
+    }
+
+    const nextAssignment = await fetchAssignmentDetailsForLoad(loadId);
+    setAssignment(nextAssignment);
+    setDriverId(nextAssignment?.driverId ?? "");
+    setTractorId(nextAssignment?.tractorEquipmentId ?? "");
+    setTrailerId(nextAssignment?.trailerEquipmentId ?? "");
+  }
+
+  async function handleSave() {
+    if (!loadId || !canSave) {
+      return;
+    }
+
+    setSaving(true);
+    setError(null);
+    setMessage(null);
+
+    try {
+      await requestJson<DispatchAssignmentRecord>("/api/dispatch/assignment", {
+        method: "POST",
+        body: JSON.stringify({
+          loadId,
+          driverId,
+          tractorId,
+          trailerId: trailerId || null,
+        }),
+      });
+
+      await refreshAssignmentState();
+      await onSaved();
+      setMessage("Assignment saved from authoritative dispatch APIs.");
+      onClose();
+    } catch (nextError) {
+      setError(getErrorMessage(nextError));
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  async function handleUnassign() {
+    if (!assignment?.id) {
+      return;
+    }
+
+    setSaving(true);
+    setError(null);
+    setMessage(null);
+
+    try {
+      await requestJson<DispatchAssignmentRecord>(`/api/dispatch/assignment/${assignment.id}/unassign`, {
+        method: "POST",
+        body: JSON.stringify({ status: "SUPERSEDED" }),
+      });
+
+      setAssignment(null);
+      setDriverId("");
+      setTractorId("");
+      setTrailerId("");
+      await onSaved();
+      setMessage("Active assignment was unassigned.");
+    } catch (nextError) {
+      setError(getErrorMessage(nextError));
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  if (!open || !loadId) {
+    return null;
+  }
 
   return (
     <div
       className="fixed inset-0 z-[110] flex items-center justify-center bg-black/60 p-4"
       role="presentation"
-      onClick={(e) => {
-        if (e.target === e.currentTarget) onClose();
+      onClick={(event) => {
+        if (event.target === event.currentTarget) onClose();
       }}
     >
       <div
-        className="flex max-h-[90vh] w-full max-w-4xl flex-col overflow-hidden rounded-lg border border-slate-800 bg-slate-950 shadow-2xl"
+        className="flex max-h-[90vh] w-full max-w-5xl flex-col overflow-hidden rounded-lg border border-slate-800 bg-slate-950 shadow-2xl"
         role="dialog"
         aria-modal="true"
         aria-labelledby="assign-modal-title"
       >
         <header className="flex items-center justify-between border-b border-slate-800 px-4 py-3">
           <div>
-            <h2
-              id="assign-modal-title"
-              className="text-base font-semibold text-white"
-            >
+            <h2 id="assign-modal-title" className="text-base font-semibold text-white">
               Assign driver &amp; equipment
             </h2>
-            {load && (
-              <p className="text-xs text-slate-500">
-                Load{" "}
-                <span className="font-mono text-teal-400">{load.load_id}</span>
-              </p>
-            )}
+            <p className="text-xs text-slate-500">
+              Load <span className="font-mono text-teal-400">{load?.id ?? loadId}</span>
+            </p>
           </div>
           <button
             type="button"
@@ -142,119 +238,86 @@ export function AssignDriverEquipmentModal({ open, loadId, onClose }: Props) {
           </button>
         </header>
 
-        {!load ? (
-          <p className="p-6 text-sm text-slate-400">Load not found.</p>
+        {loading ? (
+          <div className="flex min-h-[280px] items-center justify-center gap-3 text-sm text-slate-400">
+            <LoaderCircle className="h-5 w-5 animate-spin" />
+            Loading authoritative dispatch state...
+          </div>
         ) : (
           <>
-            {selectedDriver && dispatchBlocked && (
-              <div className="mx-4 mt-4 flex gap-2 rounded border border-red-800 bg-red-950/50 p-3 text-sm text-red-100">
+            {error ? (
+              <div className="mx-4 mt-4 flex gap-2 rounded border border-rose-800 bg-rose-950/50 p-3 text-sm text-rose-100">
                 <AlertOctagon className="h-5 w-5 shrink-0" aria-hidden />
                 <div>
-                  <p className="font-semibold">Assignment blocked</p>
-                  <p className="mt-1 text-xs text-red-200/90">
-                    Driver {selectedDriver.name} is blocked for dispatch:{" "}
-                    <strong>{selectedEligibility?.hardBlockers[0] ?? "Resolve hard blocker"}</strong>.
-                  </p>
+                  <p className="font-semibold">Operational issue</p>
+                  <p className="mt-1 text-xs text-rose-100/90">{error}</p>
                 </div>
               </div>
-            )}
+            ) : null}
+            {message ? (
+              <div className="mx-4 mt-4 rounded border border-emerald-700/50 bg-emerald-950/40 p-3 text-sm text-emerald-100">
+                {message}
+              </div>
+            ) : null}
+
+            {assignment ? (
+              <div className="mx-4 mt-4 rounded border border-cyan-700/40 bg-cyan-950/20 p-3 text-sm text-cyan-100">
+                Active assignment is currently attached to this load. Unassign it before creating a replacement if the
+                backend reports a conflict.
+              </div>
+            ) : null}
 
             <div className="grid min-h-0 flex-1 gap-0 overflow-hidden md:grid-cols-3">
-              <Panel title="Drivers (Active)">
-                {activeDrivers.map((d) => {
-                  const eligibility = getDriverDispatchEligibility(data, d.driver_id);
-                  const invalid = eligibility.status === "blocked";
-                  const sel = d.driver_id === driverId;
-                  const docSum = driverDocumentAssignmentSummary(data, d.driver_id);
+              <Panel title="Drivers">
+                {drivers.map((driver) => {
+                  const selected = driver.id === driverId;
+                  const status = driverOperationalBadge(driverSummaryMap.get(driver.id));
                   return (
-                    <div
-                      key={d.driver_id}
+                    <button
+                      key={driver.id}
+                      type="button"
+                      onClick={() => setDriverId(driver.id)}
                       className={[
-                        "rounded border px-2 py-2 text-left text-xs transition-colors",
-                        invalid
-                          ? "cursor-not-allowed border-slate-800 bg-slate-950/60 text-slate-600"
-                          : sel
-                            ? "border-teal-500 bg-teal-950/40 text-teal-50"
-                            : "border-slate-800 bg-slate-900/60 text-slate-200 hover:border-slate-600",
+                        "w-full rounded border px-2 py-2 text-left text-xs",
+                        selected
+                          ? "border-teal-500 bg-teal-950/40 text-teal-50"
+                          : "border-slate-800 bg-slate-900/60 text-slate-200 hover:border-slate-600",
                       ].join(" ")}
                     >
-                      <button
-                        type="button"
-                        disabled={invalid}
-                        onClick={() => setDriverId(d.driver_id)}
-                        className="w-full text-left disabled:cursor-not-allowed"
-                      >
-                        <div className="font-medium">{d.name}</div>
-                        <div className="font-mono text-[10px] text-slate-500">
-                          {d.driver_id}
-                        </div>
-                        <div className="mt-1 text-[10px] uppercase text-slate-500">
-                          Dispatch:{" "}
-                          {eligibility.status === "ready"
-                            ? "READY"
-                            : eligibility.status === "needs_review"
-                              ? "NEEDS REVIEW"
-                              : "BLOCKED"}
-                        </div>
-                        {eligibility.status !== "ready" ? (
-                          <div className="mt-1 text-[10px] text-slate-400">
-                            {eligibility.status === "blocked"
-                              ? eligibility.hardBlockers[0]
-                              : eligibility.softWarnings[0]}
-                          </div>
-                        ) : null}
-                        <div className="mt-1 text-[10px] uppercase text-slate-500">
-                          Compliance: {d.compliance_status}
-                        </div>
-                        <div className="mt-1 text-[10px] text-slate-500">
-                          Core docs verified: {docSum.verifiedCount}/{docSum.coreDocTotal}
-                          {docSum.lastReviewed ? (
-                            <span className="text-slate-600">
-                              {" "}
-                              · Last doc activity {docSum.lastReviewed}
-                            </span>
-                          ) : null}
-                        </div>
-                      </button>
-                      {!invalid && eligibility.status !== "ready" ? (
-                        <div className="mt-2 flex flex-wrap gap-x-2 gap-y-1 border-t border-slate-800/80 pt-2">
-                          <DriverHubReviewLink
-                            driverId={d.driver_id}
-                            className="text-[10px] font-semibold text-teal-300 hover:text-teal-200"
-                          />
-                          <DriverVaultReviewLink
-                            driverId={d.driver_id}
-                            className="text-[10px] font-semibold text-slate-400 hover:text-slate-200"
-                          />
-                        </div>
-                      ) : null}
-                    </div>
+                      <div className="font-medium">{driverDisplayName(driver)}</div>
+                      <div className="font-mono text-[10px] text-slate-500">{driver.id}</div>
+                      <div className="mt-1 text-[10px] uppercase text-slate-500">{driver.status}</div>
+                      <div className={`mt-2 inline-flex rounded-full border px-2 py-0.5 text-[10px] ${status.readinessClass}`}>
+                        {status.readinessText}
+                      </div>
+                      <div className="mt-1 text-[10px] text-slate-400">{status.qualificationText}</div>
+                    </button>
                   );
                 })}
               </Panel>
+
               <Panel title="Tractors">
-                {tractorsSelectable.map((t: Tractor) => (
+                {tractors.map((tractor) => (
                   <button
-                    key={t.tractor_id}
+                    key={tractor.id}
                     type="button"
-                    onClick={() => setTractorId(t.tractor_id)}
+                    onClick={() => setTractorId(tractor.id)}
                     className={[
                       "w-full rounded border px-2 py-2 text-left text-xs",
-                      tractorId === t.tractor_id
+                      tractorId === tractor.id
                         ? "border-teal-500 bg-teal-950/40 text-teal-50"
                         : "border-slate-800 bg-slate-900/60 text-slate-200 hover:border-slate-600",
                     ].join(" ")}
                   >
-                    <div className="font-medium">{t.unit_number}</div>
-                    <div className="font-mono text-[10px] text-slate-500">
-                      {t.tractor_id}
-                    </div>
-                    <div className="mt-0.5 text-[10px] uppercase text-slate-500">
-                      {t.status}
+                    <div className="font-medium">{tractor.unitNumber}</div>
+                    <div className="font-mono text-[10px] text-slate-500">{tractor.id}</div>
+                    <div className={`mt-1 inline-flex rounded-full border px-2 py-0.5 text-[10px] uppercase ${statusTone(tractor.status, "equipment")}`}>
+                      {formatEnumLabel(tractor.status)}
                     </div>
                   </button>
                 ))}
               </Panel>
+
               <Panel title="Trailers">
                 <button
                   type="button"
@@ -268,24 +331,22 @@ export function AssignDriverEquipmentModal({ open, loadId, onClose }: Props) {
                 >
                   No trailer
                 </button>
-                {trailersSelectable.map((tr: Trailer) => (
+                {trailers.map((trailer) => (
                   <button
-                    key={tr.trailer_id}
+                    key={trailer.id}
                     type="button"
-                    onClick={() => setTrailerId(tr.trailer_id)}
+                    onClick={() => setTrailerId(trailer.id)}
                     className={[
                       "w-full rounded border px-2 py-2 text-left text-xs",
-                      trailerId === tr.trailer_id
+                      trailerId === trailer.id
                         ? "border-teal-500 bg-teal-950/40 text-teal-50"
                         : "border-slate-800 bg-slate-900/60 text-slate-200 hover:border-slate-600",
                     ].join(" ")}
                   >
-                    <div className="font-medium">{tr.unit_number}</div>
-                    <div className="font-mono text-[10px] text-slate-500">
-                      {tr.trailer_id}
-                    </div>
-                    <div className="mt-0.5 text-[10px] uppercase text-slate-500">
-                      {tr.status}
+                    <div className="font-medium">{trailer.unitNumber}</div>
+                    <div className="font-mono text-[10px] text-slate-500">{trailer.id}</div>
+                    <div className={`mt-1 inline-flex rounded-full border px-2 py-0.5 text-[10px] uppercase ${statusTone(trailer.status, "equipment")}`}>
+                      {formatEnumLabel(trailer.status)}
                     </div>
                   </button>
                 ))}
@@ -295,14 +356,20 @@ export function AssignDriverEquipmentModal({ open, loadId, onClose }: Props) {
             <footer className="flex flex-wrap items-center justify-end gap-2 border-t border-slate-800 px-4 py-3">
               <div className="mr-auto max-w-md space-y-1">
                 <p className="text-[11px] text-slate-500">
-                  Driver and tractor are required. Trailer is optional.
+                  Driver and tractor are required. Trailer is optional. Any assignment conflict is returned inline from
+                  the backend.
                 </p>
-                <ProofGapReviewLinks
-                  driverId={driverId || load.driver_id}
-                  loadId={load.load_id}
-                  className="flex flex-wrap gap-x-2 gap-y-1"
-                />
               </div>
+              {assignment ? (
+                <button
+                  type="button"
+                  onClick={() => void handleUnassign()}
+                  disabled={saving}
+                  className="rounded border border-amber-700 bg-amber-950/30 px-3 py-1.5 text-sm text-amber-100 hover:bg-amber-900/40 disabled:opacity-40"
+                >
+                  Unassign current
+                </button>
+              ) : null}
               <button
                 type="button"
                 onClick={onClose}
@@ -313,19 +380,7 @@ export function AssignDriverEquipmentModal({ open, loadId, onClose }: Props) {
               <button
                 type="button"
                 disabled={!canSave}
-                onClick={() => {
-                  const ok = assignDriverEquipment({
-                    load_id: load.load_id,
-                    driver_id: driverId,
-                    tractor_id: tractorId,
-                    trailer_id: trailerId || null,
-                  });
-                  if (!ok) {
-                    window.alert(
-                      "Assignment rejected — driver is blocked for dispatch or required equipment is missing."
-                    );
-                  }
-                }}
+                onClick={() => void handleSave()}
                 className="rounded border border-teal-600 bg-teal-800/40 px-3 py-1.5 text-sm font-medium text-teal-50 hover:bg-teal-800/60 disabled:cursor-not-allowed disabled:opacity-40"
               >
                 Save assignment

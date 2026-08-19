@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1" name="viewport"/>
+<title>Shipment Documents | Customer Portal | BackOfficeFleet</title>
+<meta content="Inspect shipment documents, BOL, rate confirmation, invoice, seal record, cargo record, POD-ready proof, and proof registry." name="description"/>
+<link href="data:," rel="icon"/>
+<link href="../../assets/css/styles.css?v=20260803.2" rel="stylesheet"/>
+<link href="../../assets/css/customer-portal.css?v=20260802.1" rel="stylesheet"/>
+<script src="../../assets/js/fork-path-v2.js?v=2.0"></script>
+<link href="../../assets/css/cinematic-site.css?v=20260803.4" rel="stylesheet"/>
+
+<link rel="canonical" href="https://www.backofficefleet.com/fork/customer-portal/documents/"/>
+<meta property="og:title" content="Shipment Documents | Customer Portal | BackOfficeFleet"/>
+<meta property="og:description" content="Inspect shipment documents, BOL, rate confirmation, invoice, seal record, cargo record, POD-ready proof, and proof registry."/>
+<meta property="og:image" content="https://www.backofficefleet.com/fork/assets/images/cinematic/customer-portal--documents-desktop.webp"/>
+<meta property="og:type" content="website"/>
+</head>
+<body class="customer-portal-body cinematic-site cinematic-portal" data-cinematic-route="/customer-portal/documents/" data-portal-page="documents">
+<main class="customer-portal-shell" data-customer-portal="">
+<aside class="portal-rail"><a class="portal-brand" href="../../"><img alt="BackOfficeFleet" src="../../assets/images/logo/boflogo-dark-background-transparent.png"/></a><button aria-controls="customer-portal-navigation" aria-expanded="false" class="portal-nav-toggle" type="button"><span aria-hidden="true" class="portal-nav-toggle__icon"></span><span>Menu</span></button><nav class="portal-nav" id="customer-portal-navigation"><a href="../../customer-portal/"><span>01</span>Portal Home</a><a href="../../customer-portal/load-intake/"><span>02</span>Load Intake</a><a href="../../customer-portal/quotes/"><span>03</span>Quotes</a><a href="../../customer-portal/shipments/"><span>04</span>Active Shipments</a><a class="is-active" href="../../customer-portal/documents/"><span>05</span>Documents</a><a href="../../customer-portal/tracking/"><span>06</span>Tracking</a><a href="../../customer-portal/billing/"><span>07</span>Billing</a></nav><div class="portal-rail-card"><span>Documents</span><strong data-portal-text="documentReadiness">Shipment packet</strong><p>Open each document to inspect the fields, owners, and consequence.</p></div></aside>
+<section class="portal-workspace">
+<section aria-label="Shipment documents" class="cinematic-portal-scene">
+<picture>
+<source media="(max-width: 680px)" srcset="../../assets/images/cinematic/customer-portal--documents-mobile.webp"/>
+<img alt="Shipment documents in a working freight environment" decoding="async" fetchpriority="high" height="788" src="../../assets/images/cinematic/customer-portal--documents-desktop.webp" width="1400"/>
+</picture>
+<div class="cinematic-portal-scene__copy">
+<span class="cinematic-hero__eyebrow">Shipment documents</span>
+<strong>Find the proof attached to the freight.</strong>
+<p>Organize customer-visible paperwork by shipment, document type, readiness state, and review context.</p>
+<a class="cinematic-hero__cta" href="../billing/">Continue in the portal &rarr;</a>
+</div>
+
+</section>
+<header class="portal-topbar"><div><span class="portal-kicker">Shipment Documents</span><h1>Inspect the BOL, rate confirmation, invoice, seal, cargo record, and POD-ready proof chain.</h1></div><div class="portal-topbar-actions"><a class="portal-link-button" href="../../customer-portal/shipment-generator/">Shipment generator</a><a class="portal-link-button" href="../../customer-portal/billing/">Billing</a></div></header>
+<span aria-hidden="true" id="bol"></span>
+<section class="portal-panel">
+<div class="portal-panel-head"><div><span class="portal-kicker">Document viewer</span><h2 data-portal-text="documentTitle">Rate confirmation</h2></div><span class="portal-status review">Review</span></div>
+<div class="packet-layout">
+<div class="document-tabs" role="tablist"><button class="is-active" data-doc-tab="rate" type="button">Rate confirmation</button><button data-doc-tab="invoice" type="button">Invoice</button><button data-doc-tab="bol" type="button">Bill of lading</button><button data-doc-tab="seal" type="button">Seal &amp; cargo</button><button data-doc-tab="pod" type="button">POD-ready proof</button><button data-doc-tab="factoring" type="button">Factoring packet</button></div>
+<article class="paper-document" data-portal-render="paperDocument" data-watermark="Rate"></article>
+<aside class="proof-registry"><h3>Proof registry</h3><div data-portal-render="proofRegistry"></div></aside>
+</div>
+</section>
+<section class="portal-panel"><div class="portal-panel-head"><div><span class="portal-kicker">Pre-trip shipment documentation</span><h2 data-portal-text="documentReadiness">Pre-trip packet pending</h2></div><span class="portal-status review">Readiness</span></div><div class="portal-checklist document-readiness-list" data-portal-render="documentReadinessList"></div></section>
+</section>
+</main>
+<script src="../../assets/js/customer-portal.js?v=2.9"></script>
+<script src="../../assets/js/portal-nav.js?v=3.3"></script>
+</body>
+</html>

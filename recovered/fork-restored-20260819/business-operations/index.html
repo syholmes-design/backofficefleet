@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1" name="viewport"/>
+<title>Business Operations Center | BackOfficeFleet</title>
+<meta content="BOF Business Operations Center shows administrative infrastructure for payroll, HR, insurance, factoring readiness, accounting coordination, and executive financial visibility." name="description"/>
+<link href="../assets/css/styles.css?v=20260803.2" rel="stylesheet"/>
+<style>
+    .bo-hero { background: linear-gradient(135deg, rgba(246,248,244,0.98), rgba(232,241,236,0.96) 55%, rgba(251,243,231,0.96)); overflow: hidden; position: relative; }
+    .bo-hero::after { background-image: linear-gradient(rgba(20,33,31,0.06) 1px, transparent 1px), linear-gradient(90deg, rgba(20,33,31,0.06) 1px, transparent 1px); background-size: 42px 42px; content: ""; inset: 0; pointer-events: none; position: absolute; }
+    .bo-hero-inner { display: grid; gap: 32px; grid-template-columns: minmax(0, 0.92fr) minmax(360px, 1.08fr); margin: 0 auto; max-width: var(--max); min-height: 650px; padding: 66px 24px 54px; position: relative; z-index: 1; }
+    .bo-hero-copy { align-content: center; display: grid; gap: 18px; }
+    .bo-hero-copy h1 { font-size: clamp(2.45rem, 5vw, 4.8rem); line-height: 1.02; margin: 0; }
+    .bo-hero-copy > p { color: var(--muted); font-size: 1.08rem; line-height: 1.68; margin: 0; max-width: 720px; }
+    .bo-command-panel { align-self: center; background: rgba(255,255,255,0.94); border: 1px solid rgba(20,33,31,0.1); border-radius: 8px; box-shadow: var(--shadow); display: grid; gap: 14px; padding: 18px; }
+    .bo-command-top { align-items: center; border-bottom: 1px solid rgba(20,33,31,0.1); display: flex; gap: 12px; justify-content: space-between; padding-bottom: 12px; }
+    .bo-command-top h2 { font-size: 1.08rem; margin: 0; }
+    .bo-command-top span { color: var(--muted); font-size: 0.78rem; font-weight: 900; text-transform: uppercase; }
+    .bo-kpi-grid { display: grid; gap: 10px; grid-template-columns: repeat(4, minmax(0, 1fr)); }
+    .bo-kpi { background: linear-gradient(180deg, #fff, #f5f8f5); border: 1px solid rgba(20,33,31,0.1); border-radius: 8px; min-height: 112px; padding: 13px; }
+    .bo-kpi span { color: var(--muted); display: block; font-size: 0.73rem; font-weight: 900; min-height: 32px; text-transform: uppercase; }
+    .bo-kpi strong { color: var(--green-dark); display: block; font-size: 1.84rem; line-height: 1; margin: 8px 0 6px; }
+    .bo-kpi small { color: var(--muted); display: block; font-size: 0.76rem; line-height: 1.35; }
+    .bo-demo-path { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 6px; }
+    .bo-demo-path a { background: rgba(255,255,255,0.84); border: 1px solid rgba(20,33,31,0.14); border-radius: 8px; color: var(--green-dark); font-size: 0.78rem; font-weight: 950; padding: 9px 11px; text-transform: uppercase; }
+    .bo-grid-4, .bo-grid-3, .bo-insight-grid, .bo-tier-grid { display: grid; gap: 16px; }
+    .bo-grid-4, .bo-insight-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+    .bo-grid-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .bo-tier-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .bo-card, .bo-score-card, .bo-insight { background: #fff; border: 1px solid var(--line); border-radius: 8px; box-shadow: var(--shadow-soft); padding: 18px; }
+    .bo-card h3, .bo-score-card h3, .bo-insight h3 { font-size: 1.02rem; margin: 0 0 8px; }
+    .bo-card p, .bo-score-card p, .bo-insight p { color: var(--muted); line-height: 1.52; margin: 0; }
+    .bo-card ul { display: grid; gap: 7px; list-style: none; margin: 12px 0 0; padding: 0; }
+    .bo-card li { background: rgba(232,241,236,0.62); border: 1px solid rgba(20,33,31,0.08); border-radius: 8px; color: var(--ink); font-size: 0.86rem; font-weight: 800; padding: 9px 10px; }
+    .bo-flow, .bo-factoring-flow { display: grid; gap: 10px; overflow-x: auto; padding-bottom: 2px; }
+    .bo-flow { grid-template-columns: repeat(8, minmax(132px, 1fr)); }
+    .bo-factoring-flow { grid-template-columns: repeat(5, minmax(150px, 1fr)); }
+    .bo-flow-step { background: #fff; border: 1px solid var(--line); border-radius: 8px; box-shadow: var(--shadow-soft); min-height: 126px; padding: 14px; position: relative; }
+    .bo-flow-step::after { color: var(--green-dark); content: "->"; font-size: 1.2rem; font-weight: 900; position: absolute; right: -14px; top: 45%; z-index: 2; }
+    .bo-flow-step:last-child::after { display: none; }
+    .bo-flow-step span { color: var(--green-dark); font-size: 0.72rem; font-weight: 950; text-transform: uppercase; }
+    .bo-flow-step strong { display: block; font-size: 0.96rem; line-height: 1.25; margin-top: 10px; }
+    .bo-flow-step p { color: var(--muted); font-size: 0.8rem; line-height: 1.42; margin: 8px 0 0; }
+    .bo-score-row { display: grid; gap: 5px; margin-top: 10px; }
+    .bo-score-label { align-items: center; color: var(--muted); display: flex; font-size: 0.78rem; font-weight: 850; justify-content: space-between; }
+    .bo-bar { background: #e6eee9; border-radius: 999px; height: 8px; overflow: hidden; }
+    .bo-bar span { background: linear-gradient(90deg, var(--green), var(--blue)); border-radius: inherit; display: block; height: 100%; width: var(--score); }
+    .bo-financial-grid { display: grid; gap: 16px; grid-template-columns: 1fr 1fr; }
+    .bo-note { background: rgba(255,255,255,0.88); border: 1px solid rgba(20,33,31,0.1); border-radius: 8px; box-shadow: var(--shadow-soft); color: var(--muted); line-height: 1.6; padding: 18px; }
+    @media (max-width: 1180px) { .bo-hero-inner { grid-template-columns: 1fr; } .bo-kpi-grid, .bo-grid-4, .bo-grid-3, .bo-insight-grid, .bo-tier-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+    @media (max-width: 720px) { .bo-hero-inner { min-height: auto; padding: 42px 16px; } .bo-kpi-grid, .bo-grid-4, .bo-grid-3, .bo-insight-grid, .bo-financial-grid, .bo-tier-grid { grid-template-columns: 1fr; } .bo-command-panel { padding: 12px; } .bo-command-top { align-items: flex-start; flex-direction: column; } .bo-demo-path { display: grid; grid-template-columns: 1fr; } .bo-demo-path a { text-align: center; } .bo-flow-step::after { display: none; } }
+  </style>
+<script src="../assets/js/fork-path-v2.js?v=2.0"></script>
+<link href="../assets/css/cinematic-site.css?v=20260803.4" rel="stylesheet"/>
+<link rel="canonical" href="https://www.backofficefleet.com/fork/business-operations/"/>
+<meta property="og:title" content="Business Operations Center | BackOfficeFleet"/>
+<meta property="og:description" content="BOF Business Operations Center shows administrative infrastructure for payroll, HR, insurance, factoring readiness, accounting coordination, and executive financial visibility."/>
+<meta property="og:image" content="https://www.backofficefleet.com/fork/assets/images/logo/boflogo-dark-background-transparent.png"/>
+<meta property="og:type" content="website"/>
+</head>
+<body class="cinematic-site cinematic-narrative" data-cinematic-route="/business-operations/">
+<header class="site-header cinematic-direct-header"><a aria-label="BackOfficeFleet home" class="brand" href="../"><img alt="BackOfficeFleet" src="../assets/images/logo/boflogo-dark-background-transparent.png" width="216" height="44"/></a><button aria-controls="cinematic-primary-navigation" aria-expanded="false" class="cinematic-nav-toggle" type="button"><span aria-hidden="true" class="cinematic-nav-toggle__icon"></span><span>Menu</span></button><nav aria-label="Main navigation" class="cinematic-direct-nav" id="cinematic-primary-navigation"><a href="../solutions/">Solutions</a><a href="../sectors/">Who We Serve</a><a href="./">Business Operations</a><a href="../operational-intelligence/">Intelligence &amp; Trust</a><a href="../founding-fleet/">Founding Fleet</a></nav><a class="header-cta" href="../book-demo/">Book a working session</a></header>
+<section aria-label="BOF operating workflow" class="bof-workflow-band">
+<div class="bof-workflow-inner">
+<div class="bof-workflow-label"><span>BOF workflow</span><strong>The office closes the loop</strong></div>
+<div class="bof-workflow-steps">
+<a class="bof-workflow-step is-complete" href="../drivers/">Drivers</a>
+<a class="bof-workflow-step is-complete" href="../dispatch/">Dispatch &amp; Operations</a>
+<a class="bof-workflow-step is-complete" href="../safety/">Safety &amp; Compliance</a>
+<a class="bof-workflow-step is-complete" href="../settlements/">Settlements &amp; Billing</a>
+<a class="bof-workflow-step is-current" href="../business-operations/">Business Operations</a>
+</div>
+</div>
+</section>
+<main>
+<section aria-labelledby="cinematic-title" class="cinematic-hero cinematic-hero--narrative">
+<picture class="cinematic-hero__media">
+<source media="(max-width: 680px)" srcset="../assets/images/cinematic/business-operations-worktable-mobile-v2-png.webp"/>
+<img alt="Operations manager organizing business-office records beside the service yard" decoding="async" fetchpriority="high" height="864" src="../assets/images/cinematic/business-operations-worktable-desktop-v2-png.webp" width="1536"/>
+</picture>
+<div aria-hidden="true" class="cinematic-hero__veil"></div>
+<div class="cinematic-hero__content">
+<p class="cinematic-hero__eyebrow">Back-office command</p>
+<h1 id="cinematic-title">Run the business behind the fleet with the same discipline as the road.</h1>
+<p class="cinematic-hero__summary">Give onboarding, payroll, billing, receivables, documents, and reporting a clear owner, status, and next action.</p>
+<div class="cinematic-hero__actions"><a class="cinematic-hero__cta" href="../book-demo/">Request a working session &rarr;</a></div>
+<div aria-label="Operational proof" class="cinematic-hero__proof" role="list"><span role="listitem">Named readiness state</span><span role="listitem">Evidence tied to the record</span><span role="listitem">Clear owner and next action</span></div>
+</div>
+</section>
+<section class="bo-hero" id="business-operations-command">
+<div class="bo-hero-inner">
+<div class="bo-hero-copy reveal">
+<p class="eyebrow">Business Operations Command Center</p>
+<h2>Run the HR and Finance office behind the operation.</h2>
+<p>Business Operations is BOF's HR Tier and Finance Tier service layer for operating businesses. It supports the administrative business office behind fleets, carrier networks, field-service teams, and subcontractor operations.</p>
+<p>BackOfficeFleet's Business Operations layer supports driver onboarding administration, records control, accounting coordination, billing and AR visibility, pay-exception support, owner-queue reporting, factoring-packet readiness, and settlement follow-through within clearly qualified service boundaries.</p>
+<div class="actions"><a class="button primary" href="driver-onboarding/assignment-readiness/">Review HR and Finance tiers</a><a class="button secondary" href="operational-reporting/owner-queue-reporting/">View operational impact</a></div>
+<nav aria-label="Business Operations workflow links" class="bo-demo-path">
+<a href="../settlements/">Settlements</a>
+<a href="../policies-procedures/">Policies &amp; Procedures</a>
+<a href="../aggregator-command-center/">Aggregator Command</a>
+<a href="../capacity-intelligence/">Capacity Intelligence</a>
+<a href="../operational-intelligence/">Operational Intelligence</a>
+<a href="../carrier-readiness/">Carrier Readiness</a>
+<a href="../scenario-walkthrough/">BOF Fleet Assessment</a>
+<a href="../dashboard/">Dashboard</a>
+</nav>
+</div>
+<aside aria-label="BOF Business Operations Command Center dashboard" class="visual-stage command-center-dashboard-stage reveal">
+<img alt="Fleet office desk prepared for records, dispatch coordination, and follow-up" class="scene-illustration command-center-dashboard-image" decoding="async" fetchpriority="high" sizes="(max-width: 1180px) 100vw, 760px" src="../assets/images/photos/site-pass/21-fleet-office-record-clerk.webp" width="1681" height="935"/>
+</aside>
+</div>
+</section>
+<section class="section" id="human-resources">
+<div class="section-head reveal">
+<p class="eyebrow">Business office lifecycle</p>
+<h2>Dispatch, safety, and settlement records feed HR and Finance work.</h2>
+<p>Business Operations is where the operating record becomes back-office follow-through: HR readiness, payroll administration, customer billing, accounts receivable, document management, and reporting. BOF helps organize the work without acting as a payroll provider, accounting firm, tax advisor, lender, bank, factoring company, or legal authority.</p>
+</div>
+<div class="proof-grid">
+<article class="proof-card reveal" id="hr-tier"><h3>HR Tier</h3><p>Human resources, onboarding, training, benefits coordination, worker records, and driver readiness stay visible as operating work.</p></article>
+<article class="proof-card reveal" id="accounting-finance"><h3>Accounting &amp; Finance</h3><p>Billing, payables, receivables, payroll coordination, settlement support, and reporting use the same record context.</p></article>
+<article class="proof-card reveal" id="finance-tier"><h3>Finance Tier</h3><p>Finance follow-through connects invoices, settlement packets, factoring packet support, cash-flow visibility, and review status.</p></article>
+<article class="proof-card reveal" id="payroll-administration"><h3>Payroll Administration</h3><p>BOF organizes payroll inputs and settlement support for review; pay decisions remain with the fleet and proper provider.</p></article>
+<article class="proof-card reveal" id="customer-billing"><h3>Customer Billing</h3><p>PODs, lumper receipts, delivery proof, accessorials, and claim notes support cleaner billing packet review.</p></article>
+<article class="proof-card reveal" id="accounts-receivable"><h3>Accounts Receivable</h3><p>Open receivables stay connected to invoice readiness, proof packet status, customer follow-up, and unresolved holds.</p></article>
+<article class="proof-card reveal" id="document-management"><h3>Document Management</h3><p>Driver, dispatch, safety, settlement, billing, and policy records stay organized as a business reference.</p></article>
+<article class="proof-card reveal" id="operational-reporting"><h3>Operational Reporting</h3><p>Leadership can see where work is ready, under review, blocked, completed, or waiting on an owner.</p></article>
+</div>
+</section>
+<section class="section" id="focused-workflows">
+<div class="section-head reveal">
+<p class="eyebrow">Focused workflow routes</p>
+<h2>Move from the business office overview to the question that needs an answer.</h2>
+<p>These focused views keep the command center readable while showing how BOF connects operating proof to billing, assignment, pay, and owner follow-through.</p>
+</div>
+<div class="proof-grid">
+<article class="proof-card reveal"><span class="status review">Billing &amp; AR</span><h3>Make every invoice explainable.</h3><p>Connect POD, BOL, accessorial proof, invoice readiness, dispute reason, aging, and follow-up owner.</p><a class="route-chip" href="customer-billing/billing-ar-control/">Open Billing &amp; AR Control</a></article>
+<article class="proof-card reveal"><span class="status ready">Assignment readiness</span><h3>Release drivers when the file supports the work.</h3><p>Separate paperwork received from ready for assignment, with visible blockers and a named safety or operations owner.</p><a class="route-chip" href="driver-onboarding/assignment-readiness/">Open Assignment Readiness</a></article>
+<article class="proof-card reveal"><span class="status review">Pay exceptions</span><h3>Turn settlement questions into support records.</h3><p>Keep rate, receipt, approval, deduction, and next-action context together before payroll coordination.</p><a class="route-chip" href="payroll-administration/pay-exception-control/">Open Pay Exception Control</a></article>
+<article class="proof-card reveal"><span class="status blocked">Owner queue</span><h3>Make every blocker belong to someone.</h3><p>Group open work by owner, age, consequence, reason, and next action so leadership can see what moves next.</p><a class="route-chip" href="operational-reporting/owner-queue-reporting/">Open Owner Queue Reporting</a></article>
+</div>
+</section>
+<!-- BOF-GAP-HUB-START -->
+<section class="section gap-related gap-route-index" aria-labelledby="business-operations-route-index"><div class="section-head reveal"><p class="eyebrow">Six durable service areas</p><h2 id="business-operations-route-index">Open the office process that needs clearer control.</h2><p>Each route connects inputs, review, exception, owner, output, consequence, and service boundary. Thin or unsupported service claims are deliberately excluded.</p></div><div class="gap-related-grid"><article class="gap-related-card reveal"><h3>Accounting &amp; Finance Coordination</h3><p>Vendor records, operating matches, supporting documents, approval context, and accountable accounting follow-through.</p><a href="/business-operations/accounting-finance/">Open route &rarr;</a></article>
+<article class="gap-related-card reveal"><h3>Billing &amp; AR Control</h3><p>Packet readiness, aging context, dispute ownership, evidence, and qualified cash-flow visibility.</p><a href="/business-operations/customer-billing/billing-ar-control/">Open route &rarr;</a></article>
+<article class="gap-related-card reveal"><h3>Onboarding Readiness</h3><p>Driver records, requests, review states, owners, and the consequence for the next assignment.</p><a href="/business-operations/driver-onboarding/assignment-readiness/">Open route &rarr;</a></article>
+<article class="gap-related-card reveal"><h3>Pay Exception Control</h3><p>Pay inputs, support, disputed lines, escalation, responsible owner, and administrative next action.</p><a href="/business-operations/payroll-administration/pay-exception-control/">Open route &rarr;</a></article>
+<article class="gap-related-card reveal"><h3>Document &amp; Records Control</h3><p>Intake, naming, version, missing-field review, requests, approvals, and responsible use boundaries.</p><a href="/business-operations/document-records-control/">Open route &rarr;</a></article>
+<article class="gap-related-card reveal"><h3>Owner Queue Reporting</h3><p>Decision-ready status, exception aging, accountable owners, cadence, and unresolved next actions.</p><a href="/business-operations/operational-reporting/owner-queue-reporting/">Open route &rarr;</a></article></div></section>
+<!-- BOF-GAP-HUB-END -->
+</main>
+<section class="cta-band"><div class="cta-inner"><div><p class="eyebrow">Company operations</p><h2>Use Business Operations Center to review the HR and Finance office behind the fleet.</h2><p>Move from operating evidence into onboarding readiness, records control, accounting coordination, billing and AR visibility, pay-exception support, owner queues, factoring-packet readiness, and settlement follow-through without implying regulated provider authority.</p></div><a class="button light" href="../book-demo/">Book a business operations review &rarr;</a></div></section>
+<footer class="site-footer"><div class="footer-inner"><strong>BackOfficeFleet</strong><span>Business operations infrastructure for fleets and carrier networks.</span><a href="../trust-governance/">Trust &amp; Governance</a></div></footer>
+<script src="../assets/js/site.js?v=20260803.2"></script>
+<script src="../assets/js/cinematic-nav.js?v=3.4"></script>
+</body>
+</html>
+
+
+
+
+

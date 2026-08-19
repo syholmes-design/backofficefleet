@@ -3,8 +3,14 @@
 import { DriversRosterTable } from "@/components/drivers/DriversRosterTable";
 import { ComplianceDashboardV4 } from "@/components/compliance-v4/ComplianceDashboardV4";
 import { DemoPageExplainerById } from "@/components/demo/DemoPageExplainerById";
+import type { DriverOperationalSummary } from "@/lib/services/driverOperationalReadModelService";
 
-export function DriversCommandCenterV4() {
+type Props = {
+  operationalSummaries: DriverOperationalSummary[];
+  hasFleetContext: boolean;
+};
+
+export function DriversCommandCenterV4({ operationalSummaries, hasFleetContext }: Props) {
   return (
     <div className="space-y-6">
       <header className="rounded-lg border border-slate-800 bg-slate-950/70 p-5">
@@ -29,7 +35,7 @@ export function DriversCommandCenterV4() {
             Complete driver management with dispatch eligibility, document readiness, and compliance status
           </p>
         </div>
-        <DriversRosterTable />
+        <DriversRosterTable operationalSummaries={operationalSummaries} hasFleetContext={hasFleetContext} />
       </section>
 
       {/* Compliance Action Queue Section */}

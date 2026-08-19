@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1" name="viewport"/>
+<title>Quotes | Customer Portal | BackOfficeFleet</title>
+<meta content="Review preliminary shipment quotes, mileage, fuel surcharge, accessorials, assumptions, and next actions." name="description"/>
+<link href="data:," rel="icon"/>
+<link href="../../assets/css/styles.css?v=20260803.2" rel="stylesheet"/>
+<link href="../../assets/css/customer-portal.css?v=20260802.1" rel="stylesheet"/>
+<script src="../../assets/js/fork-path-v2.js?v=2.0"></script>
+<link href="../../assets/css/cinematic-site.css?v=20260803.4" rel="stylesheet"/>
+
+<link rel="canonical" href="https://www.backofficefleet.com/fork/customer-portal/quotes/"/>
+<meta property="og:title" content="Quotes | Customer Portal | BackOfficeFleet"/>
+<meta property="og:description" content="Review preliminary shipment quotes, mileage, fuel surcharge, accessorials, assumptions, and next actions."/>
+<meta property="og:image" content="https://www.backofficefleet.com/fork/assets/images/cinematic/customer-portal--quotes-desktop.webp"/>
+<meta property="og:type" content="website"/>
+</head>
+<body class="customer-portal-body cinematic-site cinematic-portal" data-cinematic-route="/customer-portal/quotes/" data-portal-page="quotes">
+<main class="customer-portal-shell" data-customer-portal="">
+<aside aria-label="Customer Portal sections" class="portal-rail"><a class="portal-brand" href="../../"><img alt="BackOfficeFleet" src="../../assets/images/logo/boflogo-dark-background-transparent.png"/></a><button aria-controls="customer-portal-navigation" aria-expanded="false" class="portal-nav-toggle" type="button"><span aria-hidden="true" class="portal-nav-toggle__icon"></span><span>Menu</span></button><nav class="portal-nav" id="customer-portal-navigation"><a href="../../customer-portal/"><span>01</span>Portal Home</a><a href="../../customer-portal/load-intake/"><span>02</span>Load Intake</a><a class="is-active" href="../../customer-portal/quotes/"><span>03</span>Quotes</a><a href="../../customer-portal/shipments/"><span>04</span>Active Shipments</a><a href="../../customer-portal/documents/"><span>05</span>Documents</a><a href="../../customer-portal/tracking/"><span>06</span>Tracking</a><a href="../../customer-portal/billing/"><span>07</span>Billing</a></nav><div class="portal-rail-card"><span>Quote</span><strong data-portal-text="quoteTotal">Calculating</strong><p data-portal-text="quoteMessage">Temporary demo quote prepared. Simulate approval to create a browser-local pending request for review.</p></div></aside>
+<section class="portal-workspace">
+<section aria-label="Quote review" class="cinematic-portal-scene">
+<picture>
+<source media="(max-width: 680px)" srcset="../../assets/images/cinematic/customer-portal--quotes-mobile.webp"/>
+<img alt="Quote review in a working freight environment" decoding="async" fetchpriority="high" height="788" src="../../assets/images/cinematic/customer-portal--quotes-desktop.webp" width="1400"/>
+</picture>
+<div class="cinematic-portal-scene__copy">
+<span class="cinematic-hero__eyebrow">Quote review</span>
+<strong>Make the temporary quote understandable before approval.</strong>
+<p>Show mileage, rate components, equipment, accessorials, assumptions, and approval state without presenting estimates as final charges.</p>
+<a class="cinematic-hero__cta" href="../assignment/">Continue in the portal &rarr;</a>
+</div>
+
+</section>
+<header class="portal-topbar"><div><span class="portal-kicker">Quote Review</span><h1>Review mileage, estimated cost, fuel surcharge, accessorials, and proof assumptions.</h1></div><div class="portal-topbar-actions"><a class="portal-link-button" href="../../customer-portal/load-intake/">Edit request</a><a class="portal-link-button" href="../../customer-portal/shipments/">Active shipments</a></div></header>
+<div class="portal-grid">
+<section class="portal-panel quote-panel">
+<div class="portal-panel-head"><div><span class="portal-kicker">Preliminary quote</span><h2 data-portal-text="quoteTotal">Calculating</h2></div><span class="portal-status review" data-portal-text="quoteDecision">Customer review</span></div>
+<div class="quote-lines" data-portal-render="quoteLines"></div>
+<div class="portal-actions"><button class="primary" data-portal-action="approve-quote" type="button">Simulate quote approval</button><button data-portal-action="request-quote-change" type="button">Simulate review request</button><button data-portal-action="hold-quote" type="button">Save demo draft</button></div>
+<p class="portal-note" data-portal-text="quoteMessage">This is configurable demo pricing. Final rate confirmation depends on lane, equipment, appointment, cargo, proof, and dispatch review.</p>
+</section>
+<aside class="portal-review-column">
+<section class="portal-panel"><div class="portal-panel-head"><div><span class="portal-kicker">Quote assumptions</span><h2>What BOF reviews</h2></div><span class="portal-status watch">Assumptions</span></div><div class="portal-mini-list" data-portal-render="quoteAssumptions"></div></section>
+<section class="portal-panel"><div class="portal-panel-head"><div><span class="portal-kicker">Next action</span><h2>Approval path</h2></div><span class="portal-status ready">Simulated</span></div><p class="portal-note">The simulation prepares a pending load request in this browser. It does not submit data to BOF. The example dispatch path still shows driver, tractor, trailer, compliance, equipment, and pre-trip packet gates before pickup.</p></section>
+<section class="portal-panel"><div class="portal-panel-head"><div><span class="portal-kicker">Dispatch gate</span><h2 data-portal-text="dispatchGateStatus">Dispatch-ready blocked</h2></div><span class="portal-status review">Gated</span></div><div class="portal-checklist" data-portal-render="dispatchGateList"></div></section>
+</aside>
+</div>
+</section>
+</main>
+<script src="../../assets/js/customer-portal.js?v=2.9"></script>
+<script src="../../assets/js/portal-nav.js?v=3.3"></script>
+</body>
+</html>

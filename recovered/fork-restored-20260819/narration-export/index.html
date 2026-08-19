@@ -1,0 +1,290 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Narration Export Packages | BackOfficeFleet</title>
+  <meta name="description" content="BOF narration export packages for professional voice production across the Operations Lifecycle and Business Operations animated demo tracks.">
+  <link rel="stylesheet" href="../assets/css/styles.css?v=20260803.2">
+  <style>
+    .ne-page { background: linear-gradient(135deg, rgba(247,250,247,0.98), rgba(232,241,236,0.96) 55%, rgba(251,243,231,0.96)); overflow: hidden; }
+    .ne-hero { display: grid; gap: 26px; grid-template-columns: minmax(0, 0.95fr) minmax(360px, 1.05fr); margin: 0 auto; max-width: var(--max); padding: 62px 24px 42px; }
+    .ne-hero h1 { font-size: clamp(2.7rem, 5.6vw, 5.7rem); line-height: 0.98; margin: 0; max-width: 860px; }
+    .ne-hero p { color: var(--muted); font-size: 1.05rem; line-height: 1.66; margin: 0; max-width: 760px; }
+    .ne-actions, .ne-link-row, .ne-card-actions { align-items: center; display: flex; flex-wrap: wrap; gap: 10px; }
+    .ne-button { background: #fff; border: 1px solid rgba(20,33,31,0.13); border-radius: 8px; color: var(--green-dark); cursor: pointer; font-family: inherit; font-size: 0.82rem; font-weight: 950; padding: 10px 12px; text-transform: uppercase; }
+    .ne-button.primary { background: var(--green); border-color: var(--green); color: #fff; }
+    .ne-panel, .ne-card, .ne-scene, .ne-copy-block { background: rgba(255,255,255,0.94); border: 1px solid rgba(20,33,31,0.1); border-radius: 8px; box-shadow: var(--shadow-soft); }
+    .ne-panel { align-self: center; display: grid; gap: 14px; padding: 18px; }
+    .ne-kpis { display: grid; gap: 10px; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .ne-kpi { background: linear-gradient(180deg, #fff, #f7faf8); border: 1px solid rgba(20,33,31,0.1); border-radius: 8px; min-height: 112px; padding: 14px; }
+    .ne-kpi span { color: var(--muted); display: block; font-size: 0.72rem; font-weight: 950; text-transform: uppercase; }
+    .ne-kpi strong { color: var(--green-dark); display: block; font-size: 2rem; margin-top: 10px; }
+    .ne-kpi small { color: var(--muted); display: block; font-size: 0.78rem; line-height: 1.45; }
+    .ne-track { display: grid; gap: 18px; }
+    .ne-track-head { align-items: end; display: grid; gap: 18px; grid-template-columns: minmax(0, 1fr) auto; }
+    .ne-track-head h2 { font-size: clamp(2.1rem, 4vw, 4rem); line-height: 1; margin: 0; }
+    .ne-track-head p { color: var(--muted); line-height: 1.6; margin: 8px 0 0; max-width: 840px; }
+    .ne-scene-grid { display: grid; gap: 14px; grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .ne-scene { display: grid; gap: 12px; padding: 16px; }
+    .ne-scene h3 { font-size: 1.02rem; margin: 0; }
+    .ne-meta { display: grid; gap: 7px; }
+    .ne-meta-row { align-items: baseline; border-bottom: 1px solid rgba(20,33,31,0.08); display: flex; gap: 10px; justify-content: space-between; padding-bottom: 7px; }
+    .ne-meta-row span { color: var(--muted); font-size: 0.72rem; font-weight: 950; text-transform: uppercase; }
+    .ne-meta-row strong { color: var(--ink); font-size: 0.84rem; text-align: right; }
+    .ne-script { background: #f8faf8; border: 1px solid rgba(20,33,31,0.1); border-radius: 8px; color: var(--ink); line-height: 1.56; margin: 0; padding: 12px; }
+    .ne-transition { color: var(--muted); font-size: 0.88rem; line-height: 1.48; margin: 0; }
+    .ne-copy-block { display: grid; gap: 12px; padding: 18px; }
+    .ne-copy-block pre { background: #0d2f29; border-radius: 8px; color: #fff; font-size: 0.82rem; line-height: 1.5; margin: 0; max-height: 320px; overflow: auto; padding: 14px; white-space: pre-wrap; }
+    .ne-card-grid { display: grid; gap: 16px; grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .ne-card { padding: 18px; }
+    .ne-card h3 { font-size: 1.05rem; margin: 0 0 8px; }
+    .ne-card ul { color: var(--muted); display: grid; gap: 7px; line-height: 1.46; margin: 0; padding-left: 18px; }
+    .ne-status { color: var(--green-dark); font-weight: 900; min-height: 24px; }
+    .ne-note { color: var(--muted); font-size: 0.92rem; line-height: 1.58; margin: 0; }
+    @media (max-width: 1180px) { .ne-hero, .ne-track-head { grid-template-columns: 1fr; } .ne-scene-grid, .ne-card-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+    @media (max-width: 720px) { .ne-hero { padding: 42px 16px 30px; } .ne-kpis, .ne-scene-grid, .ne-card-grid { grid-template-columns: 1fr; } .ne-actions, .ne-link-row, .ne-card-actions { display: grid; grid-template-columns: 1fr; } .ne-button, .ne-actions .button, .ne-link-row a { text-align: center; width: 100%; } .ne-meta-row { align-items: flex-start; flex-direction: column; } .ne-meta-row strong { text-align: left; } }
+  </style>
+  <script src="../assets/js/fork-path.js?v=1.0"></script>
+</head>
+<body>
+  <header class="site-header">
+    <a class="brand" href="../" aria-label="BackOfficeFleet home"><img src="../assets/images/logo/boflogo-original.png" alt="BackOfficeFleet"></a>
+    <button class="nav-toggle" type="button" data-nav-toggle aria-expanded="false" aria-label="Toggle navigation">&#9776;</button>
+    <nav class="site-nav" data-nav aria-label="Main navigation">
+      <div class="nav-menu" data-nav-menu>
+        <button class="nav-menu-toggle" type="button" data-nav-menu-toggle aria-expanded="false" aria-haspopup="true">Platform</button>
+        <div class="nav-dropdown" aria-label="Platform">
+          <a href="../dashboard/">Command Center</a>
+          <a href="../operational-intelligence/">Operational Intelligence</a>
+          <a href="../capacity-intelligence/">Capacity Intelligence</a>
+          <a href="../business-operations/">Business Operations</a>
+          <a href="../customer-portal/">Customer Portal</a>
+          <a href="../scenario-walkthrough/">BOF Assessment</a>
+          <a href="../demo-paths/">Assessment Paths</a>
+        </div>
+      </div>
+      <div class="nav-menu" data-nav-menu>
+        <button class="nav-menu-toggle" type="button" data-nav-menu-toggle aria-expanded="false" aria-haspopup="true">Workflows</button>
+        <div class="nav-dropdown" aria-label="Workflows">
+          <a href="../customer-portal/load-intake/">Load Intake</a>
+          <a href="../customer-portal/quotes/">Quotes</a>
+          <a href="../customer-portal/shipments/">Shipments</a>
+          <a href="../customer-portal/assignment/">Assignment</a>
+          <a href="../documents/">Documents</a>
+          <a href="../interactive-demo/drivers/document-intake/">Document Intake</a>
+          <a href="../customer-portal/tracking/">Tracking</a>
+          <a href="../customer-portal/billing/">Billing</a>
+          <a href="../settlements/">Settlements</a>
+          <a href="../operations-record/">Claims &amp; Records</a>
+        </div>
+      </div>
+      <div class="nav-menu" data-nav-menu>
+        <button class="nav-menu-toggle" type="button" data-nav-menu-toggle aria-expanded="false" aria-haspopup="true">Drivers &amp; Compliance</button>
+        <div class="nav-dropdown" aria-label="Drivers and Compliance">
+          <a href="../drivers/">Drivers</a>
+          <a href="../interactive-demo/drivers/">Driver Vault Assessment</a>
+          <a href="../interactive-demo/drivers/document-intake/">Document Intake</a>
+          <a href="../carrier-readiness/">Carrier Readiness</a>
+          <a href="../documents/">Documents</a>
+          <a href="../safety/">Safety</a>
+          <a href="../safety-compliance/">Compliance Workflows</a>
+          <a href="../settlements/">Driver Settlements</a>
+        </div>
+      </div>
+      <div class="nav-menu" data-nav-menu>
+        <button class="nav-menu-toggle" type="button" data-nav-menu-toggle aria-expanded="false" aria-haspopup="true">Solutions</button>
+        <div class="nav-dropdown" aria-label="Solutions">
+          <a href="../fleet/">Fleet Operators</a>
+          <a href="../private-fleets/">Private Fleet Assessment</a>
+          <a href="../aggregator-command-center/">Aggregators</a>
+          <a href="../sectors/">Sectors</a>
+          <a href="../capacity-intelligence/">Backhaul &amp; Capacity Sharing</a>
+          <a href="../government/">Government Contractor Assessment</a>
+        </div>
+      </div>
+      <div class="nav-menu" data-nav-menu>
+        <button class="nav-menu-toggle" type="button" data-nav-menu-toggle aria-expanded="false" aria-haspopup="true">Company / Contact</button>
+        <div class="nav-dropdown" aria-label="Company and Contact">
+          <a href="../">Homepage</a>
+          <a href="../solutions/">Solutions Overview</a>
+          <a href="../trust-governance/">Trust &amp; Governance</a>
+          <a href="../founding-fleet/">Priority Fleet Program</a>
+          <a href="../demo-paths/">Demo Paths</a>
+          <a href="../scenario-walkthrough/">BOF Assessment</a>
+        </div>
+      </div>
+    </nav>
+    <a class="header-cta" href="../founding-fleet/apply/">Request Priority Fleet Review</a>
+  </header>
+
+  <main class="ne-page" data-narration-export>
+    <section class="ne-hero">
+      <div class="reveal">
+        <p class="eyebrow">Voice production package</p>
+        <h1>BOF Narration Export Packages</h1>
+        <p>Production-ready narration scripts for the BOF animated demos. These packages are prepared for professional voice generation or voice talent review, with scene-level timing, filenames, transition notes, and copy-ready text blocks.</p>
+        <div class="ne-actions">
+          <button class="ne-button primary" type="button" data-copy-track="a">Copy Track A</button>
+          <button class="ne-button primary" type="button" data-copy-track="b">Copy Track B</button>
+          <button class="ne-button" type="button" data-copy-all>Copy Full Package</button>
+          <button class="ne-button" type="button" data-download-all>Download Plain Text Package</button>
+        </div>
+        <p class="ne-status" data-copy-status aria-live="polite"></p>
+        <nav class="ne-link-row" aria-label="Narration package links">
+          <a class="button secondary" href="../animated-demo/">Review Track A</a>
+          <a class="button secondary" href="../animated-demo-business/">Review Track B</a>
+          <a class="button secondary" href="#voice-direction">Voice Direction</a>
+        </nav>
+      </div>
+      <aside class="ne-panel reveal" aria-label="Narration export summary">
+        <div class="ne-kpis">
+          <article class="ne-kpi"><span>Track A scenes</span><strong>9</strong><small>Operations Lifecycle narration segments</small></article>
+          <article class="ne-kpi"><span>Track A runtime</span><strong>2:13</strong><small>335 words at 150 WPM</small></article>
+          <article class="ne-kpi"><span>Track B scenes</span><strong>9</strong><small>Business Operations narration segments</small></article>
+          <article class="ne-kpi"><span>Track B runtime</span><strong>1:57</strong><small>294 words at 150 WPM</small></article>
+        </div>
+        <p class="ne-note">No audio is generated here. No browser speech synthesis, external voice service, backend process, or customer portal workflow is added.</p>
+      </aside>
+    </section>
+
+    <section class="section ne-track" id="track-a" data-track="a">
+      <div class="ne-track-head reveal">
+        <div>
+          <p class="eyebrow">Track A export package</p>
+          <h2>BOF Operations Lifecycle</h2>
+          <p data-track-summary>9 scenes. 335 words. Estimated voice runtime: 2:13 at 150 words per minute. Suggested production use: experienced transportation executive, confident, practical, clear, and calm.</p>
+        </div>
+        <div class="ne-card-actions">
+          <button class="ne-button primary" type="button" data-copy-track="a">Copy Track A</button>
+          <button class="ne-button" type="button" data-download-track="a">Download Track A Text</button>
+        </div>
+      </div>
+
+      <div class="ne-scene-grid">
+        <article class="ne-scene reveal" data-scene-card data-scene-number="01">
+          <h3>Scene 1: Customer Demand</h3>
+          <div class="ne-meta"><div class="ne-meta-row"><span>Filename</span><strong data-audio-filename>track-a-scene-01-customer-demand.mp3</strong></div><div class="ne-meta-row"><span>Pace</span><strong data-speaking-pace>Measured, confident, clear</strong></div><div class="ne-meta-row"><span>Estimated duration</span><strong data-estimated-duration>0 sec</strong></div><div class="ne-meta-row"><span>Word count</span><strong data-word-count>0 words</strong></div><div class="ne-meta-row"><span>Sync metadata</span><strong data-sync-metadata>start 00:00, pause 1.0 sec</strong></div></div>
+          <p class="ne-script" data-voiceover-script>Customer demand starts the BOF operating record. BOF captures the shipment request, quote context, approval status, and proof expectations so the team can see the work before it turns into a back-office chase.</p>
+          <p class="ne-transition" data-transition-notes>Transition from customer request intake into readiness review. Keep the ending phrase grounded and practical.</p>
+          <button class="ne-button" type="button" data-copy-scene>Copy Current Scene</button>
+        </article>
+        <article class="ne-scene reveal" data-scene-card data-scene-number="02">
+          <h3>Scene 2: Pre-Trip Readiness</h3>
+          <div class="ne-meta"><div class="ne-meta-row"><span>Filename</span><strong data-audio-filename>track-a-scene-02-pretrip-readiness.mp3</strong></div><div class="ne-meta-row"><span>Pace</span><strong data-speaking-pace>Firm, practical, readiness-focused</strong></div><div class="ne-meta-row"><span>Estimated duration</span><strong data-estimated-duration>0 sec</strong></div><div class="ne-meta-row"><span>Word count</span><strong data-word-count>0 words</strong></div><div class="ne-meta-row"><span>Sync metadata</span><strong data-sync-metadata>start 00:13, pause 1.0 sec</strong></div></div>
+          <p class="ne-script" data-voiceover-script>BOF verifies the driver, asset, documents, insurance, and readiness before the trip begins. The team sees what is ready, what is at risk, and what must stay blocked until someone clears the record.</p>
+          <p class="ne-transition" data-transition-notes>Move from demand to blocked/ready status. Stress prevention before commitment.</p>
+          <button class="ne-button" type="button" data-copy-scene>Copy Current Scene</button>
+        </article>
+        <article class="ne-scene reveal" data-scene-card data-scene-number="03">
+          <h3>Scene 3: Capacity Intelligence</h3>
+          <div class="ne-meta"><div class="ne-meta-row"><span>Filename</span><strong data-audio-filename>track-a-scene-03-capacity-intelligence.mp3</strong></div><div class="ne-meta-row"><span>Pace</span><strong data-speaking-pace>Executive, network-aware</strong></div><div class="ne-meta-row"><span>Estimated duration</span><strong data-estimated-duration>0 sec</strong></div><div class="ne-meta-row"><span>Word count</span><strong data-word-count>0 words</strong></div><div class="ne-meta-row"><span>Sync metadata</span><strong data-sync-metadata>start 00:26, pause 1.0 sec</strong></div></div>
+          <p class="ne-script" data-voiceover-script>BOF shows which carriers, assets, drivers, and equipment records are operationally ready. Network operators can see available capacity by readiness, region, and equipment type without turning BOF into freight matching or brokerage.</p>
+          <p class="ne-transition" data-transition-notes>Lift from single trip readiness into network visibility. Keep the brokerage boundary clear.</p>
+          <button class="ne-button" type="button" data-copy-scene>Copy Current Scene</button>
+        </article>
+        <article class="ne-scene reveal" data-scene-card data-scene-number="04">
+          <h3>Scene 4: Operational Intelligence</h3>
+          <div class="ne-meta"><div class="ne-meta-row"><span>Filename</span><strong data-audio-filename>track-a-scene-04-operational-intelligence.mp3</strong></div><div class="ne-meta-row"><span>Pace</span><strong data-speaking-pace>Calm, in-motion, attentive</strong></div><div class="ne-meta-row"><span>Estimated duration</span><strong data-estimated-duration>0 sec</strong></div><div class="ne-meta-row"><span>Word count</span><strong data-word-count>0 words</strong></div><div class="ne-meta-row"><span>Sync metadata</span><strong data-sync-metadata>start 00:39, pause 1.0 sec</strong></div></div>
+          <p class="ne-script" data-voiceover-script>BOF keeps route status, fuel variance, weather, traffic, safety events, RFID checkpoints, and ETA confidence in view. The team can see trip signals while the operation is still moving, not after the issue becomes a surprise.</p>
+          <p class="ne-transition" data-transition-notes>Shift into trip lifecycle signals. Let the final clause land as the value point.</p>
+          <button class="ne-button" type="button" data-copy-scene>Copy Current Scene</button>
+        </article>
+        <article class="ne-scene reveal" data-scene-card data-scene-number="05">
+          <h3>Scene 5: Exception Management</h3>
+          <div class="ne-meta"><div class="ne-meta-row"><span>Filename</span><strong data-audio-filename>track-a-scene-05-exception-management.mp3</strong></div><div class="ne-meta-row"><span>Pace</span><strong data-speaking-pace>Controlled, problem-solving</strong></div><div class="ne-meta-row"><span>Estimated duration</span><strong data-estimated-duration>0 sec</strong></div><div class="ne-meta-row"><span>Word count</span><strong data-word-count>0 words</strong></div><div class="ne-meta-row"><span>Sync metadata</span><strong data-sync-metadata>start 00:53, pause 1.0 sec</strong></div></div>
+          <p class="ne-script" data-voiceover-script>BOF turns delays, fuel anomalies, safety alerts, and documentation exceptions into visible follow-up. The team investigates the issue, assigns ownership, and moves the record toward resolution instead of letting the problem sit in email or memory.</p>
+          <p class="ne-transition" data-transition-notes>Frame exceptions as managed work, not panic. Transition into proof and closeout.</p>
+          <button class="ne-button" type="button" data-copy-scene>Copy Current Scene</button>
+        </article>
+        <article class="ne-scene reveal" data-scene-card data-scene-number="06">
+          <h3>Scene 6: Delivery &amp; Proof</h3>
+          <div class="ne-meta"><div class="ne-meta-row"><span>Filename</span><strong data-audio-filename>track-a-scene-06-delivery-proof.mp3</strong></div><div class="ne-meta-row"><span>Pace</span><strong data-speaking-pace>Evidence-focused, precise</strong></div><div class="ne-meta-row"><span>Estimated duration</span><strong data-estimated-duration>0 sec</strong></div><div class="ne-meta-row"><span>Word count</span><strong data-word-count>0 words</strong></div><div class="ne-meta-row"><span>Sync metadata</span><strong data-sync-metadata>start 01:07, pause 1.0 sec</strong></div></div>
+          <p class="ne-script" data-voiceover-script>BOF builds the delivery record before closeout begins. The team captures the POD, delivery photos, seal verification, customer confirmation, lumper receipts, detention records, and supporting delivery documentation so settlement, invoicing, claims, and post-trip processing start with the facts.</p>
+          <p class="ne-transition" data-transition-notes>List evidence steadily. Keep a clean pause before moving to claims response.</p>
+          <button class="ne-button" type="button" data-copy-scene>Copy Current Scene</button>
+        </article>
+        <article class="ne-scene reveal" data-scene-card data-scene-number="07">
+          <h3>Scene 7: Claims &amp; Incident Response</h3>
+          <div class="ne-meta"><div class="ne-meta-row"><span>Filename</span><strong data-audio-filename>track-a-scene-07-claims-incident-response.mp3</strong></div><div class="ne-meta-row"><span>Pace</span><strong data-speaking-pace>Calm, serious, evidence-preserving</strong></div><div class="ne-meta-row"><span>Estimated duration</span><strong data-estimated-duration>0 sec</strong></div><div class="ne-meta-row"><span>Word count</span><strong data-word-count>0 words</strong></div><div class="ne-meta-row"><span>Sync metadata</span><strong data-sync-metadata>start 01:22, pause 1.2 sec</strong></div></div>
+          <p class="ne-script" data-voiceover-script>BOF helps the team capture the facts quickly, preserve the evidence, and support a complete response. Accident events, cargo claims, seal breaches, theft events, damage reports, safety incidents, photos, videos, witness information, police-report details, cargo condition evidence, insurance notifications, claim packets, investigative records, and operational reports stay organized around the incident.</p>
+          <p class="ne-transition" data-transition-notes>Use a steadier pace for the longer evidence list. Transition from incident record into settlement and next-assignment readiness.</p>
+          <button class="ne-button" type="button" data-copy-scene>Copy Current Scene</button>
+        </article>
+        <article class="ne-scene reveal" data-scene-card data-scene-number="08">
+          <h3>Scene 8: Settlement &amp; Backhaul Readiness</h3>
+          <div class="ne-meta"><div class="ne-meta-row"><span>Filename</span><strong data-audio-filename>track-a-scene-08-settlement-backhaul-readiness.mp3</strong></div><div class="ne-meta-row"><span>Pace</span><strong data-speaking-pace>Closeout-focused, forward-looking</strong></div><div class="ne-meta-row"><span>Estimated duration</span><strong data-estimated-duration>0 sec</strong></div><div class="ne-meta-row"><span>Word count</span><strong data-word-count>0 words</strong></div><div class="ne-meta-row"><span>Sync metadata</span><strong data-sync-metadata>start 01:42, pause 1.0 sec</strong></div></div>
+          <p class="ne-script" data-voiceover-script>BOF organizes the settlement packet, factoring packet, supporting documents, and driver settlement inputs after delivery. The team also checks backhaul readiness: driver availability, asset availability, and document readiness for the next assignment before the next operational commitment.</p>
+          <p class="ne-transition" data-transition-notes>Connect post-trip closeout to the next trip. Keep the tone practical, not salesy.</p>
+          <button class="ne-button" type="button" data-copy-scene>Copy Current Scene</button>
+        </article>
+        <article class="ne-scene reveal" data-scene-card data-scene-number="09">
+          <h3>Scene 9: Executive Visibility</h3>
+          <div class="ne-meta"><div class="ne-meta-row"><span>Filename</span><strong data-audio-filename>track-a-scene-09-executive-visibility.mp3</strong></div><div class="ne-meta-row"><span>Pace</span><strong data-speaking-pace>Executive, confident close</strong></div><div class="ne-meta-row"><span>Estimated duration</span><strong data-estimated-duration>0 sec</strong></div><div class="ne-meta-row"><span>Word count</span><strong data-word-count>0 words</strong></div><div class="ne-meta-row"><span>Sync metadata</span><strong data-sync-metadata>start 01:57, pause 1.5 sec</strong></div></div>
+          <p class="ne-script" data-voiceover-script>BOF gives leadership one operating story across demand, readiness, capacity, trip visibility, exceptions, delivery proof, claims response, settlement readiness, backhaul readiness, and business operations. Executives can see where work stands, what is blocked, and where the team needs follow-through.</p>
+          <p class="ne-transition" data-transition-notes>Close the track with executive confidence. Leave room before a visual end slate or CTA.</p>
+          <button class="ne-button" type="button" data-copy-scene>Copy Current Scene</button>
+        </article>
+      </div>
+    </section>
+
+    <section class="section ne-track" id="track-b" data-track="b">
+      <div class="ne-track-head reveal">
+        <div>
+          <p class="eyebrow">Track B export package</p>
+          <h2>BOF Business Operations</h2>
+          <p data-track-summary>9 scenes. 294 words. Estimated voice runtime: 1:57 at 150 words per minute. Suggested production use: CEO/CFO style, strategic, professional, and trustworthy.</p>
+        </div>
+        <div class="ne-card-actions">
+          <button class="ne-button primary" type="button" data-copy-track="b">Copy Track B</button>
+          <button class="ne-button" type="button" data-download-track="b">Download Track B Text</button>
+        </div>
+      </div>
+
+      <div class="ne-scene-grid">
+        <article class="ne-scene reveal" data-scene-card data-scene-number="01"><h3>Scene 1: Administrative Burden</h3><div class="ne-meta"><div class="ne-meta-row"><span>Filename</span><strong data-audio-filename>track-b-scene-01-administrative-burden.mp3</strong></div><div class="ne-meta-row"><span>Pace</span><strong data-speaking-pace>Strategic, grounded</strong></div><div class="ne-meta-row"><span>Estimated duration</span><strong data-estimated-duration>0 sec</strong></div><div class="ne-meta-row"><span>Word count</span><strong data-word-count>0 words</strong></div><div class="ne-meta-row"><span>Sync metadata</span><strong data-sync-metadata>start 00:00, pause 1.0 sec</strong></div></div><p class="ne-script" data-voiceover-script>Growing fleets often discover that administrative complexity grows faster than truck count. Payroll, benefits, driver files, insurance renewals, settlement packets, and claims all compete for attention. BOF gives ownership a single operating view of what needs review, what is ready, and what still needs follow-up.</p><p class="ne-transition" data-transition-notes>Open with executive pressure. Move from burden to onboarding structure.</p><button class="ne-button" type="button" data-copy-scene>Copy Current Scene</button></article>
+        <article class="ne-scene reveal" data-scene-card data-scene-number="02"><h3>Scene 2: Recruiting &amp; Driver Onboarding</h3><div class="ne-meta"><div class="ne-meta-row"><span>Filename</span><strong data-audio-filename>track-b-scene-02-recruiting-driver-onboarding.mp3</strong></div><div class="ne-meta-row"><span>Pace</span><strong data-speaking-pace>Organized, supportive</strong></div><div class="ne-meta-row"><span>Estimated duration</span><strong data-estimated-duration>0 sec</strong></div><div class="ne-meta-row"><span>Word count</span><strong data-word-count>0 words</strong></div><div class="ne-meta-row"><span>Sync metadata</span><strong data-sync-metadata>start 00:18, pause 1.0 sec</strong></div></div><p class="ne-script" data-voiceover-script>BOF helps support onboarding from recruitment through activation. The fleet can see where each driver sits, which documents are missing, whether payroll setup is ready, and what has to be resolved before the driver becomes active.</p><p class="ne-transition" data-transition-notes>Show the path from recruiting to active driver without implying hiring automation.</p><button class="ne-button" type="button" data-copy-scene>Copy Current Scene</button></article>
+        <article class="ne-scene reveal" data-scene-card data-scene-number="03"><h3>Scene 3: Payroll &amp; HR Administration</h3><div class="ne-meta"><div class="ne-meta-row"><span>Filename</span><strong data-audio-filename>track-b-scene-03-payroll-hr-administration.mp3</strong></div><div class="ne-meta-row"><span>Pace</span><strong data-speaking-pace>Clear, administrative, steady</strong></div><div class="ne-meta-row"><span>Estimated duration</span><strong data-estimated-duration>0 sec</strong></div><div class="ne-meta-row"><span>Word count</span><strong data-word-count>0 words</strong></div><div class="ne-meta-row"><span>Sync metadata</span><strong data-sync-metadata>start 00:32, pause 1.0 sec</strong></div></div><p class="ne-script" data-voiceover-script>BOF helps organize payroll and employee administration workflows. The owner can see payroll calendar deadlines, active employee records, benefits enrollment, and payroll readiness before the next cycle locks.</p><p class="ne-transition" data-transition-notes>Link people records to payroll readiness. Keep the tone operational.</p><button class="ne-button" type="button" data-copy-scene>Copy Current Scene</button></article>
+        <article class="ne-scene reveal" data-scene-card data-scene-number="04"><h3>Scene 4: Insurance &amp; Risk Administration</h3><div class="ne-meta"><div class="ne-meta-row"><span>Filename</span><strong data-audio-filename>track-b-scene-04-insurance-risk-administration.mp3</strong></div><div class="ne-meta-row"><span>Pace</span><strong data-speaking-pace>Trustworthy, risk-aware</strong></div><div class="ne-meta-row"><span>Estimated duration</span><strong data-estimated-duration>0 sec</strong></div><div class="ne-meta-row"><span>Word count</span><strong data-word-count>0 words</strong></div><div class="ne-meta-row"><span>Sync metadata</span><strong data-sync-metadata>start 00:43, pause 1.0 sec</strong></div></div><p class="ne-script" data-voiceover-script>Insurance administration remains visible throughout the organization. BOF helps the fleet track policies, renewal alerts, certificates, and claims monitoring so important risk records stay in front of the right people.</p><p class="ne-transition" data-transition-notes>Stress visibility, not insurance services. Move naturally into claims response.</p><button class="ne-button" type="button" data-copy-scene>Copy Current Scene</button></article>
+        <article class="ne-scene reveal" data-scene-card data-scene-number="05"><h3>Scene 5: Claims &amp; Risk Response</h3><div class="ne-meta"><div class="ne-meta-row"><span>Filename</span><strong data-audio-filename>track-b-scene-05-claims-risk-response.mp3</strong></div><div class="ne-meta-row"><span>Pace</span><strong data-speaking-pace>Calm, careful, accountable</strong></div><div class="ne-meta-row"><span>Estimated duration</span><strong data-estimated-duration>0 sec</strong></div><div class="ne-meta-row"><span>Word count</span><strong data-word-count>0 words</strong></div><div class="ne-meta-row"><span>Sync metadata</span><strong data-sync-metadata>start 00:55, pause 1.0 sec</strong></div></div><p class="ne-script" data-voiceover-script>BOF helps organize claim documentation and operational records. When a claim or incident appears, the fleet can capture the record, group the evidence, assign follow-up, and keep the response visible until the file is ready for review.</p><p class="ne-transition" data-transition-notes>Keep claim response factual. Transition from evidence records into funding packet readiness.</p><button class="ne-button" type="button" data-copy-scene>Copy Current Scene</button></article>
+        <article class="ne-scene reveal" data-scene-card data-scene-number="06"><h3>Scene 6: Factoring Readiness</h3><div class="ne-meta"><div class="ne-meta-row"><span>Filename</span><strong data-audio-filename>track-b-scene-06-factoring-readiness.mp3</strong></div><div class="ne-meta-row"><span>Pace</span><strong data-speaking-pace>Precise, document-focused</strong></div><div class="ne-meta-row"><span>Estimated duration</span><strong data-estimated-duration>0 sec</strong></div><div class="ne-meta-row"><span>Word count</span><strong data-word-count>0 words</strong></div><div class="ne-meta-row"><span>Sync metadata</span><strong data-sync-metadata>start 01:10, pause 1.0 sec</strong></div></div><p class="ne-script" data-voiceover-script>BOF helps prepare the documentation required for funding workflows. The team can see whether the POD arrived, the invoice was generated, the packet is complete, and the funding submission is ready for review.</p><p class="ne-transition" data-transition-notes>Maintain the boundary: document coordination, not banking or factoring services.</p><button class="ne-button" type="button" data-copy-scene>Copy Current Scene</button></article>
+        <article class="ne-scene reveal" data-scene-card data-scene-number="07"><h3>Scene 7: Accounting Coordination</h3><div class="ne-meta"><div class="ne-meta-row"><span>Filename</span><strong data-audio-filename>track-b-scene-07-accounting-coordination.mp3</strong></div><div class="ne-meta-row"><span>Pace</span><strong data-speaking-pace>Professional, finance-aware</strong></div><div class="ne-meta-row"><span>Estimated duration</span><strong data-estimated-duration>0 sec</strong></div><div class="ne-meta-row"><span>Word count</span><strong data-word-count>0 words</strong></div><div class="ne-meta-row"><span>Sync metadata</span><strong data-sync-metadata>start 01:23, pause 1.0 sec</strong></div></div><p class="ne-script" data-voiceover-script>BOF helps organize financial and operational information. Revenue, expenses, receivables, settlements, and administrative readiness sit together so the fleet can prepare cleaner handoffs for accounting review.</p><p class="ne-transition" data-transition-notes>Sound finance-literate without implying accounting services. Move into executive visibility.</p><button class="ne-button" type="button" data-copy-scene>Copy Current Scene</button></article>
+        <article class="ne-scene reveal" data-scene-card data-scene-number="08"><h3>Scene 8: Executive Financial Visibility</h3><div class="ne-meta"><div class="ne-meta-row"><span>Filename</span><strong data-audio-filename>track-b-scene-08-executive-financial-visibility.mp3</strong></div><div class="ne-meta-row"><span>Pace</span><strong data-speaking-pace>Strategic, executive</strong></div><div class="ne-meta-row"><span>Estimated duration</span><strong data-estimated-duration>0 sec</strong></div><div class="ne-meta-row"><span>Word count</span><strong data-word-count>0 words</strong></div><div class="ne-meta-row"><span>Sync metadata</span><strong data-sync-metadata>start 01:33, pause 1.0 sec</strong></div></div><p class="ne-script" data-voiceover-script>Executives gain visibility across operational and administrative workflows. Monthly revenue, cash flow, settlement exposure, receivables, and growth indicators can be reviewed alongside the records that explain them.</p><p class="ne-transition" data-transition-notes>Elevate to leadership view. Set up final infrastructure statement.</p><button class="ne-button" type="button" data-copy-scene>Copy Current Scene</button></article>
+        <article class="ne-scene reveal" data-scene-card data-scene-number="09"><h3>Scene 9: Business Infrastructure</h3><div class="ne-meta"><div class="ne-meta-row"><span>Filename</span><strong data-audio-filename>track-b-scene-09-business-infrastructure.mp3</strong></div><div class="ne-meta-row"><span>Pace</span><strong data-speaking-pace>Confident executive close</strong></div><div class="ne-meta-row"><span>Estimated duration</span><strong data-estimated-duration>0 sec</strong></div><div class="ne-meta-row"><span>Word count</span><strong data-word-count>0 words</strong></div><div class="ne-meta-row"><span>Sync metadata</span><strong data-sync-metadata>start 01:44, pause 1.5 sec</strong></div></div><p class="ne-script" data-voiceover-script>BOF provides administrative infrastructure behind fleets and carrier networks. Operations, payroll, HR, insurance, factoring readiness, and accounting coordination connect into executive visibility so the business behind the fleet is easier to run.</p><p class="ne-transition" data-transition-notes>Close with the core Track B answer: BOF helps run the company behind the fleet.</p><button class="ne-button" type="button" data-copy-scene>Copy Current Scene</button></article>
+      </div>
+    </section>
+
+    <section class="section" id="voice-direction">
+      <div class="section-head reveal"><p class="eyebrow">Voice direction</p><h2>Production guidance for voice generation or talent.</h2><p>Use these profiles when creating professional narration through a voice service or a human voiceover session.</p></div>
+      <div class="ne-card-grid">
+        <article class="ne-card reveal"><h3>Operations Narrator</h3><ul><li>Experienced transportation executive</li><li>Confident and practical</li><li>Clear, calm delivery</li><li>Best for Track A and transportation lifecycle scenes</li></ul></article>
+        <article class="ne-card reveal"><h3>Business Operations Narrator</h3><ul><li>CEO/CFO style</li><li>Strategic and professional</li><li>Trustworthy, finance-aware tone</li><li>Best for Track B and business infrastructure scenes</li></ul></article>
+        <article class="ne-card reveal"><h3>Aggregator Narrator</h3><ul><li>Network strategist</li><li>Capacity-focused</li><li>Operationally sophisticated</li><li>Best for carrier network and aggregator adaptations</li></ul></article>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-head reveal"><p class="eyebrow">Export formats</p><h2>Copy-ready and plain-text export options.</h2><p>Use the buttons above to copy full tracks, copy the full package, copy individual scene segments, or download a plain-text package from the browser.</p></div>
+      <div class="ne-card-grid">
+        <article class="ne-copy-block reveal"><h3>Track A full-track export</h3><pre>BOF Operations Lifecycle
+Total scenes: 9
+Total words: 335
+Estimated runtime: 2:13
+Voice: experienced transportation executive, confident, practical, clear, calm.</pre></article>
+        <article class="ne-copy-block reveal"><h3>Track B full-track export</h3><pre>BOF Business Operations
+Total scenes: 9
+Total words: 294
+Estimated runtime: 1:57
+Voice: CEO/CFO style, strategic, professional, trustworthy.</pre></article>
+        <article class="ne-copy-block reveal"><h3>Synchronization planning</h3><pre>Recommended scene pause: 1.0 second after most scenes.
+Longer evidence scenes: allow 1.2 seconds after claims or incident narration.
+End slate: allow 1.5 seconds before CTA or replay prompt.
+Future audio sync should use scene start plus estimated narration duration.</pre></article>
+      </div>
+    </section>
+  </main>
+
+  <script src="../assets/js/site.js?v=20260803.2"></script>
+  <script src="../assets/js/narration-export.js?v=1.0"></script>
+</body>
+</html>

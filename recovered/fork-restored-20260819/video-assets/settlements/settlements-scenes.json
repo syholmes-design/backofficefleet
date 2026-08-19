@@ -1,0 +1,67 @@
+{
+  "package": "BackOfficeFleet settlements explainer storyboard",
+  "durationTarget": "60-75 seconds",
+  "sampleLoad": {
+    "loadId": "BOF-L008",
+    "status": "Delivered / Settlement Review",
+    "issue": "POD received, lumper receipt pending",
+    "nextStep": "Hold billing packet until receipt is attached"
+  },
+  "constraints": [
+    "BOF does not guarantee faster payment.",
+    "BOF is not presented as a factoring company.",
+    "BOF is not presented as directly paying drivers.",
+    "BOF does not claim every issue is automatically solved.",
+    "BOF organizes, checks, prepares, shows, supports, and flags settlement readiness."
+  ],
+  "scenes": [
+    {
+      "title": "Delivery Is Not the End",
+      "text": "Delivery is not the end of the load.",
+      "visual": "delivery",
+      "message": "The freight may be delivered, but the money process may still be incomplete."
+    },
+    {
+      "title": "Settlement Gaps",
+      "text": "Delivered does not always mean settlement-ready.",
+      "visual": "gaps",
+      "message": "Missing documents and unclear pay items can delay billing and create disputes."
+    },
+    {
+      "title": "BOF Settlement Readiness",
+      "text": "BOF checks the load before money moves.",
+      "visual": "checklist",
+      "message": "BOF organizes settlement readiness around the load."
+    },
+    {
+      "title": "Driver Pay and Deductions",
+      "text": "Clear pay. Clear deductions. Fewer disputes.",
+      "visual": "pay",
+      "message": "Drivers and fleet owners can see how the settlement is calculated."
+    },
+    {
+      "title": "Billing and Factoring Packet",
+      "text": "Faster packets. Faster payment.",
+      "visual": "packet",
+      "message": "BOF helps prepare the documents needed to support billing and factoring."
+    },
+    {
+      "title": "Exception Control",
+      "text": "Know what is ready. Know what is blocked.",
+      "visual": "status",
+      "message": "The fleet can see which loads can move forward and which need attention."
+    },
+    {
+      "title": "Cash Flow Visibility",
+      "text": "Protect cash flow after every load.",
+      "visual": "cashflow",
+      "message": "Settlement control means fewer delays, fewer disputes, cleaner records, and better visibility."
+    },
+    {
+      "title": "BOF Fleet Assessment",
+      "text": "Take the BOF Fleet Assessment",
+      "visual": "assessment",
+      "message": "BOF helps fleets find where their settlement process may be leaking money."
+    }
+  ]
+}

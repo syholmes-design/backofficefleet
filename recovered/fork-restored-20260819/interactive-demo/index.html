@@ -1,0 +1,615 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Try Partner TMS Release Review | BackOfficeFleet</title>
+  <meta name="description" content="Enter a BOF control-center session for Partner TMS import TMS-LD-10482, inspect BOF-RR-10482, open records, and make the release decision.">
+  <link rel="stylesheet" href="../assets/css/styles.css?v=20260803.2">
+  <link rel="stylesheet" href="../assets/css/interactive-demo-contrast.css?v=1.0">
+  <script src="../assets/js/fork-path.js?v=1.0"></script>
+</head>
+<body class="product-demo-body">
+  <svg class="app-svg-sprite" aria-hidden="true" focusable="false">
+    <symbol id="app-icon-menu" viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></symbol>
+    <symbol id="app-icon-home" viewBox="0 0 24 24"><path d="m3 11 9-8 9 8v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></symbol>
+    <symbol id="app-icon-list" viewBox="0 0 24 24"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></symbol>
+    <symbol id="app-icon-calendar" viewBox="0 0 24 24"><path d="M7 3v4M17 3v4M4 9h18M5 5h17v17H5z"/></symbol>
+    <symbol id="app-icon-user" viewBox="0 0 24 24"><path d="M20 21a8 8 0 0 0-16 0M12 13a5 5 0 1 0 0-10 5 5 0 0 0 0 10z"/></symbol>
+    <symbol id="app-icon-truck" viewBox="0 0 24 24"><path d="M3 7h11v10H3zM14 10h4l3 3v4h-7zM7 20a2 2 0 1 0 0-4 2 2 0 0 0 0 4zM18 20a2 2 0 1 0 0-4 2 2 0 0 0 0 4z"/></symbol>
+    <symbol id="app-icon-doc" viewBox="0 0 24 24"><path d="M6 3h9l4 4v18H6zM14 3v6h5M9 13h6M9 17h6"/></symbol>
+    <symbol id="app-icon-shield" viewBox="0 0 24 24"><path d="M12 22s8-4 8-11V5l-8-3-8 3v6c0 7 8 11 8 11z"/></symbol>
+    <symbol id="app-icon-report" viewBox="0 0 24 24"><path d="M5 3h14v18H5zM8 8h8M8 12h8M8 16h5"/></symbol>
+    <symbol id="app-icon-bell" viewBox="0 0 24 24"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4"/></symbol>
+    <symbol id="app-icon-settings" viewBox="0 0 24 24"><path d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/><path d="M19.4 15a1.8 1.8 0 0 0 .36 1.98l.04.04-2.12 2.12-.04-.04a1.8 1.8 0 0 0-1.98-.36 1.8 1.8 0 0 0-1.1 1.66V21h-3v-.06a1.8 1.8 0 0 0-1.1-1.66 1.8 1.8 0 0 0-1.98.36l-.04.04-2.12-2.12.04-.04A1.8 1.8 0 0 0 4.6 15a1.8 1.8 0 0 0-1.66-1.1H3v-3h.06A1.8 1.8 0 0 0 4.6 9a1.8 1.8 0 0 0-.36-1.98l-.04-.04 2.12-2.12.04.04A1.8 1.8 0 0 0 8.34 5.26 1.8 1.8 0 0 0 9.44 3.6V3h3v.06a1.8 1.8 0 0 0 1.1 1.66 1.8 1.8 0 0 0 1.98-.36l.04-.04 2.12 2.12-.04.04A1.8 1.8 0 0 0 19.4 9c.24.69.9 1.1 1.66 1.1H21v3h-.06A1.8 1.8 0 0 0 19.4 15z"/></symbol>
+    <symbol id="app-icon-filter" viewBox="0 0 24 24"><path d="M4 5h16l-6 7v5l-4 2v-7z"/></symbol>
+    <symbol id="app-icon-search" viewBox="0 0 24 24"><path d="m21 21-4.3-4.3M11 18a7 7 0 1 1 0-14 7 7 0 0 1 0 14z"/></symbol>
+    <symbol id="app-icon-refresh" viewBox="0 0 24 24"><path d="M20 6v6h-6M4 18v-6h6M18.5 9A7 7 0 0 0 6 7.5M5.5 15A7 7 0 0 0 18 16.5"/></symbol>
+    <symbol id="app-icon-more" viewBox="0 0 24 24"><path d="M5 12h.01M12 12h.01M19 12h.01"/></symbol>
+    <symbol id="app-icon-check" viewBox="0 0 24 24"><path d="m5 12 5 5L20 7"/></symbol>
+    <symbol id="app-icon-x" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></symbol>
+    <symbol id="app-icon-expand" viewBox="0 0 24 24"><path d="M8 3H3v5M16 3h5v5M3 16v5h5M21 16v5h-5M3 8l6-6M21 8l-6-6M3 16l6 6M21 16l-6 6"/></symbol>
+    <symbol id="app-icon-download" viewBox="0 0 24 24"><path d="M12 3v12M7 10l5 5 5-5M5 21h14"/></symbol>
+    <symbol id="app-icon-print" viewBox="0 0 24 24"><path d="M7 9V3h10v6M7 17H5a2 2 0 0 1-2-2v-4h18v4a2 2 0 0 1-2 2h-2M7 14h10v7H7z"/></symbol>
+    <symbol id="app-icon-help" viewBox="0 0 24 24"><path d="M9.2 9a4 4 0 1 1 6.3 3.2c-1.3.9-2 1.5-2 3.3M12 20h.01"/></symbol>
+    <symbol id="app-icon-chevron-down" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></symbol>
+    <symbol id="app-icon-chevron-up" viewBox="0 0 24 24"><path d="m6 15 6-6 6 6"/></symbol>
+    <symbol id="app-icon-chevron-left" viewBox="0 0 24 24"><path d="m15 18-6-6 6-6"/></symbol>
+    <symbol id="app-icon-chevron-right" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></symbol>
+  </svg>
+
+  <main class="control-demo-main" data-interactive-demo data-app-state="app" data-demo-state="review" data-selected-load="tms-ld-10482" data-active-doc="bol">
+    <section class="bof-app-shell app-shell beveled-console-shell" data-shell-region="app-shell" id="control-center" aria-label="BOF Control Center">
+      <div class="beveled-app-frame shell-frame" data-shell-region="shell-frame">
+        <aside class="beveled-sidebar shell-rail" data-shell-region="shell-rail" aria-label="BOF app sections">
+          <div class="beveled-brand">
+            <img src="../assets/images/logo/boflogo-original.png" alt="BackOfficeFleet">
+          </div>
+          <button class="beveled-menu-button" type="button" data-record-open="session" aria-label="Open session notes"><svg><use href="#app-icon-menu"></use></svg></button>
+          <nav class="beveled-rail" aria-label="Control Center sections">
+            <a class="is-active" href="../interactive-demo/" aria-current="page"><svg><use href="#app-icon-home"></use></svg><span>Command Center</span></a>
+            <a href="../interactive-demo/load-queue/"><svg><use href="#app-icon-list"></use></svg><span>Load Queue</span></a>
+            <a href="../interactive-demo/dispatch/"><svg><use href="#app-icon-calendar"></use></svg><span>Dispatch Board</span></a>
+            <a href="../interactive-demo/drivers/"><svg><use href="#app-icon-user"></use></svg><span>Drivers</span></a>
+            <a href="../interactive-demo/carriers/"><svg><use href="#app-icon-truck"></use></svg><span>Carriers</span></a>
+            <a href="../interactive-demo/documents/"><svg><use href="#app-icon-doc"></use></svg><span>Documents</span></a>
+            <a href="../interactive-demo/safety/"><svg><use href="#app-icon-shield"></use></svg><span>Safety &amp; Compliance</span></a>
+            <a href="../interactive-demo/settlements/"><svg><use href="#app-icon-report"></use></svg><span>Settlements</span></a>
+            <a href="../interactive-demo/reports/"><svg><use href="#app-icon-report"></use></svg><span>Reports</span></a>
+            <a href="../interactive-demo/alerts/"><svg><use href="#app-icon-bell"></use></svg><span>Alerts</span><b>4</b></a>
+            <a href="../interactive-demo/settings/"><svg><use href="#app-icon-settings"></use></svg><span>Settings</span></a>
+          </nav>
+          <div class="beveled-version"><span>Version 2.7.14</span><strong>All systems operational</strong></div>
+        </aside>
+
+        <div class="beveled-main" data-shell-region="workspace-view">
+          <header class="beveled-topbar shell-topbar" data-shell-region="shell-topbar">
+            <div class="fleet-context">
+              <span>Fleet</span>
+              <button type="button" data-record-open="fleet">Delta Advanced Trucking <svg aria-hidden="true"><use href="#app-icon-chevron-down"></use></svg></button>
+            </div>
+            <div class="queue-counters" aria-label="Release queue counters">
+              <button class="is-active" type="button" data-queue-filter="all">Queue <strong>6</strong></button>
+              <button type="button" data-queue-filter="review">Review <strong data-app-target="counterReview">2</strong></button>
+              <button type="button" data-queue-filter="watch">Watch <strong>2</strong></button>
+              <button type="button" data-queue-filter="blocked">Hold <strong data-app-target="counterHold">1</strong></button>
+              <button type="button" data-queue-filter="ready">Ready <strong data-app-target="counterReleased">1</strong></button>
+              <button type="button" data-queue-filter="overdue">Overdue <strong>1</strong></button>
+            </div>
+            <div class="topbar-actions" aria-label="Session tools">
+              <span>Role</span>
+              <button class="role-chip" type="button" data-record-open="user">Operations Lead</button>
+              <a class="site-exit-link" href="../"><svg aria-hidden="true"><use href="#app-icon-home"></use></svg><span>Website</span></a>
+              <button class="icon-button has-badge" type="button" data-panel-toggle="alerts-menu" aria-label="Open alerts"><svg><use href="#app-icon-bell"></use></svg><b>4</b></button>
+              <div class="app-popover alert-popover" data-app-popover="alerts-menu" hidden>
+                <button type="button" data-record-open="bol"><span>Import document review</span><strong>TMS-LD-10482 waits on BOF-RR-10482 readiness review.</strong></button>
+                <button type="button" data-record-open="credential1931"><span>Credential hold</span><strong>DRV-003 medical-card hold blocks BOF-1931.</strong></button>
+                <button type="button" data-record-open="comparison2175"><span>Rate review</span><strong>BOF-2175 needs the rate confirmation matched before release.</strong></button>
+                <button type="button" data-record-open="driver006"><span>Renewal watch</span><strong>DRV-006 renewal evidence controls BOF-2258 planning.</strong></button>
+                <button type="button" data-app-view="alerts" data-view-label="Alerts"><span>Open alerts view</span><strong>Review the full alert queue inside the workspace.</strong></button>
+              </div>
+              <button class="icon-button" type="button" data-record-open="help" aria-label="Open help"><svg><use href="#app-icon-help"></use></svg></button>
+              <button class="avatar-button profile-avatar" type="button" data-record-open="user" aria-label="Open S. Turner profile"><img src="../assets/images/profiles/optimized/operations-lead-png.webp" alt=""></button>
+            </div>
+          </header>
+
+          <div class="beveled-workspace">
+            <section class="queue-pane" data-shell-region="command-bar" aria-labelledby="queue-title">
+              <div class="queue-title-row">
+                <h2 id="queue-title">Load Queue</h2>
+                <div class="queue-tools" aria-label="Queue tools">
+                  <button class="select-button" type="button" data-panel-toggle="queue-menu">All Queues <svg aria-hidden="true"><use href="#app-icon-chevron-down"></use></svg></button>
+                  <button class="tool-button" type="button" data-panel-toggle="filters"><svg><use href="#app-icon-filter"></use></svg>Filters</button>
+                  <label class="search-box"><svg><use href="#app-icon-search"></use></svg><input type="search" value="" placeholder="Search loads, drivers, carriers..." aria-label="Search loads, drivers, carriers" data-queue-search></label>
+                  <button class="icon-button" type="button" data-queue-clear aria-label="Clear queue search"><svg><use href="#app-icon-x"></use></svg></button>
+                  <span class="auto-refresh"><i></i>Auto Refresh</span>
+                  <button class="icon-button" type="button" data-toolbar-action="refresh" aria-label="Refresh queue"><svg><use href="#app-icon-refresh"></use></svg></button>
+                  <button class="tool-button inspector-toggle" type="button" data-panel-toggle="selected-pane" aria-expanded="true">Selected load</button>
+                  <button class="icon-button" type="button" data-panel-toggle="more-menu" aria-label="More queue options"><svg><use href="#app-icon-more"></use></svg></button>
+                  <div class="app-popover" data-app-popover="queue-menu" hidden>
+                    <button type="button" data-queue-filter="all">All release queues</button>
+                    <button type="button" data-queue-filter="review">Review queue</button>
+                    <button type="button" data-queue-filter="watch">Watch queue</button>
+                    <button type="button" data-queue-filter="blocked">Hold queue</button>
+                    <button type="button" data-queue-filter="ready">Ready queue</button>
+                    <button type="button" data-queue-filter="overdue">Overdue queue</button>
+                  </div>
+                  <div class="app-popover" data-app-popover="filters" hidden>
+                    <button type="button" data-queue-filter="review">Needs document review</button>
+                    <button type="button" data-queue-filter="watch">Watch records</button>
+                    <button type="button" data-queue-filter="blocked">Blocked records</button>
+                  </div>
+                  <div class="app-popover" data-app-popover="more-menu" hidden>
+                    <button type="button" data-record-open="audit">Open audit view</button>
+                    <button type="button" data-record-open="session">Session notes</button>
+                    <button type="button" data-demo-action="reset-session">Restart session</button>
+                  </div>
+                </div>
+              </div>
+              <div class="queue-table-wrap">
+                <table class="beveled-load-table">
+                  <thead>
+                    <tr>
+                      <th><input type="checkbox" aria-label="Select all visible loads" data-select-all></th>
+                      <th>Load ID</th>
+                      <th>Priority</th>
+                      <th>Status</th>
+                      <th>Origin</th>
+                      <th>Destination</th>
+                      <th>Driver</th>
+                      <th>Carrier</th>
+                      <th>Est. Pickup</th>
+                      <th>Next Action</th>
+                      <th>Age</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr class="is-selected" data-load-row-display="tms-ld-10482">
+                      <td><input type="checkbox" checked aria-label="TMS-LD-10482 selected" data-select-row="tms-ld-10482"></td>
+                      <td><button type="button" data-load-row="tms-ld-10482" aria-pressed="true">TMS-LD-10482</button></td>
+                      <td><span class="priority high"><i></i>High</span></td>
+                      <td><button class="status review status-button" type="button" data-record-open="decision" data-app-target="queueStatus">Review</button></td>
+                      <td>Dallas, TX</td>
+                      <td>Memphis, TN</td>
+                      <td><button class="person-cell" type="button" data-record-open="driver"><span class="profile-avatar small"><img src="../assets/images/profiles/drivers/driver-ref-001-natural.jpg" alt=""></span><span>DRV-001</span></button></td>
+                      <td><button type="button" data-record-open="carrier">CAR-118</button></td>
+                      <td>06/06/2026</td>
+                      <td data-app-target="queueNextAction">Review import</td>
+                      <td>1h 12m</td>
+                    </tr>
+                    <tr data-load-row-display="bof-1907">
+                      <td><input type="checkbox" aria-label="Select BOF-1907" data-select-row="bof-1907"></td>
+                      <td><button type="button" data-load-row="bof-1907" aria-pressed="false">BOF-1907</button></td>
+                      <td><span class="priority medium"><i></i>Medium</span></td>
+                      <td><button class="status watch status-button" type="button" data-record-open="comparison1907">Watch</button></td>
+                      <td>Tulsa, OK</td>
+                      <td>Kansas City, MO</td>
+                      <td><button class="person-cell" type="button" data-record-open="driver002"><span class="profile-avatar small"><img src="../assets/images/profiles/drivers/driver-ref-002-natural.jpg" alt=""></span><span>DRV-002</span></button></td>
+                      <td><button type="button" data-record-open="carrier204">CAR-204</button></td>
+                      <td>06/07/2026</td>
+                      <td><button type="button" data-record-open="pod1907">Track POD</button></td>
+                      <td>3h 47m</td>
+                    </tr>
+                    <tr data-load-row-display="bof-1931">
+                      <td><input type="checkbox" aria-label="Select BOF-1931" data-select-row="bof-1931"></td>
+                      <td><button type="button" data-load-row="bof-1931" aria-pressed="false">BOF-1931</button></td>
+                      <td><span class="priority high"><i></i>High</span></td>
+                      <td><button class="status blocked status-button" type="button" data-record-open="comparison1931">Hold</button></td>
+                      <td>Little Rock, AR</td>
+                      <td>St. Louis, MO</td>
+                      <td><button class="person-cell" type="button" data-record-open="driver003"><span class="profile-avatar small"><img src="../assets/images/profiles/drivers/driver-ref-003-natural.jpg" alt=""></span><span>DRV-003</span></button></td>
+                      <td><button type="button" data-record-open="carrier088">CAR-088</button></td>
+                      <td>06/05/2026</td>
+                      <td><button type="button" data-record-open="credential1931">Credential hold</button></td>
+                      <td>5h 31m</td>
+                    </tr>
+                    <tr data-load-row-display="bof-2064">
+                      <td><input type="checkbox" aria-label="Select BOF-2064" data-select-row="bof-2064"></td>
+                      <td><button type="button" data-load-row="bof-2064" aria-pressed="false">BOF-2064</button></td>
+                      <td><span class="priority low"><i></i>Low</span></td>
+                      <td><button class="status ready status-button" type="button" data-record-open="comparison2064">Ready</button></td>
+                      <td>Birmingham, AL</td>
+                      <td>Nashville, TN</td>
+                      <td><button class="person-cell" type="button" data-record-open="driver004"><span class="profile-avatar small"><img src="../assets/images/profiles/drivers/driver-ref-004.jpg" alt=""></span><span>DRV-004</span></button></td>
+                      <td><button type="button" data-record-open="carrier">CAR-118</button></td>
+                      <td>06/06/2026</td>
+                      <td><button type="button" data-record-open="comparison2064">Stage dispatch</button></td>
+                      <td>22m</td>
+                    </tr>
+                    <tr data-load-row-display="bof-2175">
+                      <td><input type="checkbox" aria-label="Select BOF-2175" data-select-row="bof-2175"></td>
+                      <td><button type="button" data-load-row="bof-2175" aria-pressed="false">BOF-2175</button></td>
+                      <td><span class="priority medium"><i></i>Medium</span></td>
+                      <td><button class="status review status-button" type="button" data-record-open="comparison2175">Review</button></td>
+                      <td>Mobile, AL</td>
+                      <td>Atlanta, GA</td>
+                      <td><button class="person-cell" type="button" data-record-open="driver005"><span class="profile-avatar small"><img src="../assets/images/profiles/drivers/driver-ref-005.jpg" alt=""></span><span>DRV-005</span></button></td>
+                      <td><button type="button" data-record-open="carrier204">CAR-204</button></td>
+                      <td>06/07/2026</td>
+                      <td><button type="button" data-record-open="comparison2175">Check rate</button></td>
+                      <td>2h 04m</td>
+                    </tr>
+                    <tr data-load-row-display="bof-2258">
+                      <td><input type="checkbox" aria-label="Select BOF-2258" data-select-row="bof-2258"></td>
+                      <td><button type="button" data-load-row="bof-2258" aria-pressed="false">BOF-2258</button></td>
+                      <td><span class="priority medium"><i></i>Medium</span></td>
+                      <td><button class="status watch status-button" type="button" data-record-open="comparison2258">Watch</button></td>
+                      <td>Shreveport, LA</td>
+                      <td>Jackson, MS</td>
+                      <td><button class="person-cell" type="button" data-record-open="driver006"><span class="profile-avatar small"><img src="../assets/images/profiles/drivers/driver-ref-006-natural.jpg" alt=""></span><span>DRV-006</span></button></td>
+                      <td><button type="button" data-record-open="carrier">CAR-118</button></td>
+                      <td>06/08/2026</td>
+                      <td><button type="button" data-record-open="driver006">Renewal watch</button></td>
+                      <td>1h 38m</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <div class="table-footer">
+                <span data-app-target="tableInfo">Showing 6 of 6 entries | 1 selected</span>
+                <div class="page-size-control"><button type="button" data-toolbar-action="previous-page" aria-label="Previous page"><svg><use href="#app-icon-chevron-left"></use></svg></button><strong>1</strong><button type="button" data-toolbar-action="next-page" aria-label="Next page"><svg><use href="#app-icon-chevron-right"></use></svg></button><button type="button" data-panel-toggle="page-size"><span data-app-target="pageSizeLabel">25 / page</span></button><div class="app-popover app-popover-up" data-app-popover="page-size" hidden><button type="button" data-toolbar-action="page-size-10">10 / page</button><button type="button" data-toolbar-action="page-size-25">25 / page</button><button type="button" data-toolbar-action="page-size-50">50 / page</button></div></div>
+              </div>
+            </section>
+
+            <section class="partner-tms-source-pane" data-shell-region="source-system" aria-labelledby="partner-tms-source-title">
+              <header class="source-system-header">
+                <div>
+                  <span class="source-system-badge">Partner TMS</span>
+                  <h2 id="partner-tms-source-title">Source Load Board</h2>
+                  <p>Imported load activity, documents, stops, status log, and accounting handoff before BOF makes the readiness decision.</p>
+                </div>
+                <div class="source-system-actions" aria-label="Partner TMS source filters">
+                  <button class="is-active" type="button" data-tms-filter="active" aria-pressed="true">Active</button>
+                  <button type="button" data-tms-filter="planning" aria-pressed="false">Planning</button>
+                  <button type="button" data-tms-filter="accounting" aria-pressed="false">Ready for accounting</button>
+                  <button type="button" data-tms-filter="all" aria-pressed="false">All</button>
+                </div>
+              </header>
+              <div class="source-system-toolbar">
+                <label class="source-search-box"><svg><use href="#app-icon-search"></use></svg><input type="search" placeholder="Search Partner TMS load, customer, carrier, location, driver..." aria-label="Search Partner TMS source loads" data-tms-search></label>
+                <button type="button" data-tms-clear>Clear</button>
+                <button type="button" data-tms-record="sourceLog">Load log</button>
+                <button type="button" data-tms-record="sourceDocs">Documents</button>
+              </div>
+              <div class="source-system-grid">
+                <div class="source-load-table-wrap">
+                  <table class="source-load-table" aria-label="Partner TMS imported loads">
+                    <thead>
+                      <tr><th>Load</th><th>Status</th><th>Customer</th><th>Carrier</th><th>Driver</th><th>Pickup</th><th>Delivery</th><th>Docs</th><th>Accounting</th></tr>
+                    </thead>
+                    <tbody data-app-target="tmsRows">
+                      <tr><td colspan="9">Loading Partner TMS source loads.</td></tr>
+                    </tbody>
+                  </table>
+                </div>
+                <aside class="source-load-detail" aria-label="Selected Partner TMS load detail">
+                  <div class="source-detail-title">
+                    <span data-app-target="tmsDetailStatus">Tender accepted</span>
+                    <h3 data-app-target="tmsDetailTitle">TMS-LD-10482 / CLV-10482</h3>
+                    <p data-app-target="tmsDetailSummary">Partner TMS source record selected for BOF readiness review.</p>
+                  </div>
+                  <dl class="source-detail-grid">
+                    <div><dt>Customer</dt><dd data-app-target="tmsCustomer">Northstar Grocery Distribution</dd></div>
+                    <div><dt>Equipment</dt><dd data-app-target="tmsEquipment">53 ft Dry Van</dd></div>
+                    <div><dt>Commodity</dt><dd data-app-target="tmsCommodity">Retail replenishment</dd></div>
+                    <div><dt>BOF file</dt><dd><button type="button" data-record-open="load" data-app-target="tmsBofFile">BOF-RR-10482</button></dd></div>
+                  </dl>
+                  <div class="source-split-list">
+                    <section>
+                      <h4>Stops</h4>
+                      <div data-app-target="tmsStops"></div>
+                    </section>
+                    <section>
+                      <h4>Imported documents</h4>
+                      <div data-app-target="tmsDocs"></div>
+                    </section>
+                  </div>
+                  <section class="source-log-panel">
+                    <h4>Status log</h4>
+                    <ul data-app-target="tmsLog"></ul>
+                  </section>
+                </aside>
+              </div>
+            </section>
+
+            <section class="workspace-pane" data-shell-region="workspace-detail" aria-labelledby="workspace-title">
+              <div class="workspace-heading">
+                <span data-app-target="workspaceEyebrow">Command Center</span>
+                <h2 id="workspace-title" data-app-target="workspaceTitle">Release desk operating view</h2>
+                <p data-app-target="workspaceSummary">Review TMS-LD-10482 against imported load data, BOF driver match, carrier packet, document control, dispatch consequence, audit activity, and the five supporting queue rows.</p>
+              </div>
+              <div class="workspace-metrics" aria-label="Workspace signals">
+                <button type="button" data-workspace-action="primary"><strong data-app-target="workspaceMetricOne">1</strong><span data-app-target="workspaceMetricOneLabel">active release decision</span></button>
+                <button type="button" data-workspace-action="secondary" data-workspace-open="documentsView"><strong data-app-target="workspaceMetricTwo">9</strong><span data-app-target="workspaceMetricTwoLabel">document signals</span></button>
+                <button type="button" data-workspace-action="tertiary" data-workspace-open="alerts"><strong data-app-target="workspaceMetricThree">4</strong><span data-app-target="workspaceMetricThreeLabel">active alerts</span></button>
+              </div>
+              <section class="role-lens-panel" aria-label="Guided role paths">
+                <div>
+                  <span>Role lens</span>
+                  <h3 data-app-target="roleLensTitle">Fleet owner view</h3>
+                  <p data-app-target="roleLensBody">Shows the release decision, blocker consequence, owner next action, and what changes for dispatch and settlement.</p>
+                </div>
+                <div class="role-lens-actions">
+                  <button class="is-active" type="button" data-role-lens="owner" aria-pressed="true">Owner</button>
+                  <button type="button" data-role-lens="dispatch" aria-pressed="false">Dispatch</button>
+                  <button type="button" data-role-lens="safety" aria-pressed="false">Safety</button>
+                  <button type="button" data-role-lens="carrier" aria-pressed="false">Carrier</button>
+                  <button type="button" data-role-lens="settlement" aria-pressed="false">Settlement</button>
+                </div>
+                <dl>
+                  <div><dt>Open next</dt><dd><button type="button" data-role-lens-open data-record-open="release">Release Decision</button></dd></div>
+                  <div><dt>Proof focus</dt><dd data-app-target="roleLensProof">Decision, consequence, audit trail, and handoff note</dd></div>
+                </dl>
+              </section>
+              <ul class="workspace-list" data-app-target="workspaceItems">
+                <li><button type="button" data-record-open="bol"><span>BOF-RR-10482-DOCS</span><strong>Review pickup instructions, BOL, seal photo, delivery proof state, and claim evidence state.</strong></button></li>
+                <li><button type="button" data-record-open="comparison2175"><span>BOF-2175 rate review</span><strong>Document desk must match the rate before release.</strong></button></li>
+                <li><button type="button" data-record-open="driver006"><span>DRV-006 renewal watch</span><strong>Safety desk keeps renewal evidence visible before commitment.</strong></button></li>
+                <li><button type="button" data-record-open="audit"><span>AUD-QUEUE-SESSION</span><strong>Queue, alert, document, and release activity stays inspectable.</strong></button></li>
+              </ul>
+              <div class="workspace-table-wrap">
+                <table class="workspace-table" aria-label="Workspace detail table">
+                  <thead>
+                    <tr><th data-app-target="workspaceHeadOne">Record</th><th data-app-target="workspaceHeadTwo">Operating detail</th><th data-app-target="workspaceHeadThree">Action</th></tr>
+                  </thead>
+                  <tbody data-app-target="workspaceRows">
+                    <tr><td>BOF-RR-10482</td><td>Readiness packet for the imported TMS load.</td><td><button type="button" data-workspace-open="bol">Open</button></td></tr>
+                    <tr><td>REL-10482-DECISION</td><td>Decision note changes with the selected release outcome.</td><td><button type="button" data-workspace-open="release">Open</button></td></tr>
+                    <tr><td>AUD-QUEUE-SESSION</td><td>Queue, alert, document, and release activity.</td><td><button type="button" data-workspace-open="audit">Open</button></td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </section>
+
+            <aside class="selected-pane record-inspector" data-shell-region="record-inspector" aria-labelledby="drawer-title">
+              <div class="selected-heading">
+                <span>Selected Load</span>
+                <h2 id="drawer-title" data-app-target="drawerTitle">TMS-LD-10482</h2>
+                <button type="button" data-panel-toggle="selected-pane" aria-label="Close selected load panel"><svg><use href="#app-icon-x"></use></svg></button>
+              </div>
+              <dl class="selected-details">
+                <div><dt>Status</dt><dd><button class="status review status-button" type="button" data-record-open="decision" data-app-target="drawerStatus">Review</button></dd></div>
+                <div><dt>Owner</dt><dd data-app-target="drawerOwner">S. Turner</dd></div>
+                <div><dt>Readiness File</dt><dd><button class="inline-record-button" type="button" data-record-open="control" data-app-target="controlButton">BOF-RR-10482</button></dd></div>
+                <div><dt>Driver</dt><dd><button class="inline-record-button" type="button" data-record-open="driver" data-app-target="drawerDriverButton">DRV-001</button></dd></div>
+                <div><dt>Carrier</dt><dd><button class="inline-record-button" type="button" data-record-open="carrier" data-app-target="drawerCarrierButton">CAR-118</button></dd></div>
+                <div><dt>Est. Pickup</dt><dd>06/06/2026 08:00</dd></div>
+                <div><dt>Origin</dt><dd data-app-target="drawerOrigin">Dallas, TX</dd></div>
+                <div><dt>Destination</dt><dd data-app-target="drawerDestination">Memphis, TN</dd></div>
+                <div><dt>Priority</dt><dd data-app-target="drawerPriority"><span class="priority high"><i></i>High</span></dd></div>
+                <div><dt>Priority reason</dt><dd data-app-target="drawerPriorityReason">High because this release decision controls today's dispatch window and customer handoff.</dd></div>
+              </dl>
+              <div class="selected-block">
+                <h3>Dispatch Consequence</h3>
+                <p data-app-target="drawerConsequence">BOF readiness review is open for the imported TMS load.</p>
+              </div>
+              <div class="selected-block">
+                <h3>Next Action</h3>
+                <p data-app-target="drawerNext">Review driver match, documents, carrier packet, and choose a release outcome.</p>
+                <span data-app-target="drawerTarget">Target: Today 12:00 PM</span>
+              </div>
+              <div class="selected-block people-block">
+                <h3>People On This Record</h3>
+                <button type="button" data-record-open="user"><span class="profile-avatar small"><img src="../assets/images/profiles/optimized/operations-lead-png.webp" alt=""></span><span>S. Turner</span><em>Operations lead</em></button>
+                <button type="button" data-record-open="driver" data-person-record="driver"><span class="profile-avatar small"><img src="../assets/images/profiles/drivers/driver-ref-001-natural.jpg" alt=""></span><span data-app-target="peopleDriverName">John Carter</span><em data-app-target="peopleDriverRole">Driver</em></button>
+                <button type="button" data-record-open="carrier-contact" data-person-record="carrier"><span class="profile-avatar small"><img src="../assets/images/profiles/optimized/carrier-ops-png.webp" alt=""></span><span data-app-target="peopleCarrierName">RoadPro Desk</span><em data-app-target="peopleCarrierRole">Carrier ops</em></button>
+              </div>
+            </aside>
+
+            <section class="document-pane document-viewer" data-shell-region="document-viewer" aria-labelledby="doc-title">
+              <div class="doc-tabbar" role="tablist" aria-label="TMS-LD-10482 records">
+                <button class="is-active" type="button" role="tab" aria-selected="true" data-doc-tab="bol"><svg><use href="#app-icon-doc"></use></svg>Documents</button>
+                <button type="button" role="tab" aria-selected="false" data-doc-tab="driver"><svg><use href="#app-icon-user"></use></svg>Driver File</button>
+                <button type="button" role="tab" aria-selected="false" data-doc-tab="carrier"><svg><use href="#app-icon-doc"></use></svg>Carrier Packet</button>
+                <button type="button" role="tab" aria-selected="false" data-doc-tab="insurance"><svg><use href="#app-icon-shield"></use></svg>Insurance</button>
+                <button type="button" role="tab" aria-selected="false" data-doc-tab="rate"><svg><use href="#app-icon-doc"></use></svg>Rate Confirmation</button>
+                <button type="button" role="tab" aria-selected="false" data-doc-tab="agreement"><svg><use href="#app-icon-doc"></use></svg>Agreement</button>
+                <button type="button" role="tab" aria-selected="false" data-doc-tab="release"><svg><use href="#app-icon-doc"></use></svg>Release Note</button>
+              </div>
+              <div class="document-workbench">
+                <aside class="document-list" aria-label="Select document">
+                  <button class="doc-list-toggle" type="button" data-record-open="activeDoc">Select Document <svg aria-hidden="true"><use href="#app-icon-chevron-up"></use></svg></button>
+                  <button class="is-active" type="button" data-doc-tab="bol"><span>Imported Documents</span><strong>BOF-RR-10482-DOCS</strong></button>
+                  <button type="button" data-doc-tab="pretrip"><span>Pre-Trip Packet</span><strong>PRETRIP-10482</strong></button>
+                  <button type="button" data-doc-tab="transit"><span>In-Transit Packet</span><strong>TRANSIT-10482</strong></button>
+                  <button type="button" data-doc-tab="pod1907"><span>POD Follow-Up</span><strong>POD-1907</strong></button>
+                  <button type="button" data-doc-tab="posttrip"><span>Post-Trip Packet</span><strong>POSTTRIP-1907</strong></button>
+                  <button type="button" data-doc-tab="signedbol1907"><span>Signed BOL</span><strong>BOL-1907-SIGNED</strong></button>
+                  <button type="button" data-doc-tab="dockphoto1907"><span>Dock Photo</span><strong>POD-1907-DOCK</strong></button>
+                  <button type="button" data-doc-tab="emptyphoto1907"><span>Empty Trailer</span><strong>POD-1907-EMPTY</strong></button>
+                  <button type="button" data-doc-tab="rate"><span>Rate Confirmation</span><strong>RC-10482</strong></button>
+                  <button type="button" data-doc-tab="driver"><span>Driver File Summary</span><strong>DRV-001</strong></button>
+                  <button type="button" data-doc-tab="carrier"><span>Carrier Packet</span><strong>CAR-118</strong></button>
+                  <button type="button" data-doc-tab="insurance"><span>Insurance Record</span><strong>INS-CAR-118</strong></button>
+                  <button type="button" data-doc-tab="agreement"><span>Broker-Carrier Agreement</span><strong>AGR-CAR-118</strong></button>
+                  <button type="button" data-doc-tab="release"><span>Release Decision</span><strong>REL-10482-DECISION</strong></button>
+                </aside>
+                <article class="document-canvas" aria-live="polite">
+                  <div class="paper-sheet">
+                    <header class="paper-header">
+                      <div>
+                        <strong>DELTA ADVANCED TRUCKING</strong>
+                        <span>Fleet workspace region: Dallas, TX</span>
+                        <span>Operating credentials verified in carrier packet</span>
+                        <span>Complete synthetic identifiers visible for buyer review</span>
+                      </div>
+                      <div>
+                        <h2 data-app-target="docTitle">Bill of Lading Review</h2>
+                        <span>Date: 06/06/2026</span>
+                      </div>
+                      <div class="paper-number">
+                        <span data-app-target="docMetaLabel">Record No.</span>
+                        <strong data-app-target="docMeta">BOF-RR-10482-DOCS</strong>
+                      </div>
+                    </header>
+                    <section class="paper-party-grid">
+                      <div><b data-app-target="docPartyOneLabel">SHIPPER</b><p data-app-target="docPartyOneName">Nexus Components, Inc.</p><span data-app-target="docPartyOneLineOne">500 Industrial Blvd.</span><span data-app-target="docPartyOneLineTwo">Dallas, TX 75201</span></div>
+                      <div><b data-app-target="docPartyTwoLabel">CONSIGNEE</b><p data-app-target="docPartyTwoName">Memphis Distribution Yard</p><span data-app-target="docPartyTwoLineOne">Riverfront Logistics Park</span><span data-app-target="docPartyTwoLineTwo">Memphis, TN 38118</span></div>
+                    </section>
+                    <section class="paper-detail-grid">
+                      <div><span data-app-target="docFieldOneLabel">Imported load</span><strong data-app-target="docFieldOne">TMS-LD-10482 / BOF-RR-10482</strong></div>
+                      <div><span data-app-target="docFieldTwoLabel">Required review</span><strong data-app-target="docFieldTwo">Pickup instructions, BOL, seal photo, delivery proof, and claim evidence state</strong></div>
+                      <div><span data-app-target="docFieldThreeLabel">Record state</span><strong data-app-target="docFieldThree">BOF readiness review</strong></div>
+                      <div><span data-app-target="docFieldFourLabel">Consequence</span><strong data-app-target="docFieldFour">Controls release outcome.</strong></div>
+                    </section>
+                    <section class="paper-ledger" aria-label="Document line items">
+                      <table>
+                        <thead><tr><th data-app-target="docLedgerHeadOne">Item</th><th data-app-target="docLedgerHeadTwo">Detail</th><th data-app-target="docLedgerHeadThree">Status</th></tr></thead>
+                        <tbody data-app-target="docLedgerRows">
+                          <tr><td>TMS import</td><td>TMS-LD-10482 accepted into BOF-RR-10482</td><td>Imported</td></tr>
+                          <tr><td>Signed BOL image</td><td>BOL-10482-IMG-02 received 06/05/2026 09:24</td><td>Review</td></tr>
+                          <tr><td>Reviewer</td><td>S. Turner</td><td>Open</td></tr>
+                        </tbody>
+                      </table>
+                    </section>
+                    <section class="paper-note-row">
+                      <span class="status review" data-app-target="docStatus">Review</span>
+                      <strong data-app-target="docHeading">Partner Import Document Gate</strong>
+                      <span data-app-target="docOwner">Owner: S. Turner</span>
+                    </section>
+                    <p class="paper-note" data-app-target="docNote">This document gate shows the imported TMS paperwork and BOF-owned review state. The BOL remains important, but the release decision comes from the full BOF readiness packet.</p>
+                    <section class="paper-artifact-panel" data-app-target="docArtifactPanel" aria-label="Document artifact preview"></section>
+                    <section class="paper-proof-strip" data-app-target="docProofGrid" aria-label="Document proof evidence"></section>
+                    <footer class="paper-signature"><span data-app-target="docSignatureLabel">Shipper Signature / Date</span><em data-app-target="docSignatureName">J. Ramirez</em><span data-app-target="docSignatureDate">06/05/2026 09:15</span></footer>
+                    <section class="paper-history" aria-label="Document review history">
+                      <h3>Document History</h3>
+                      <ul data-app-target="docHistoryRows">
+                        <li><button type="button" data-record-open="load"><span>06/05/2026 09:12</span><strong>S. Turner</strong><em>TMS import opened.</em></button></li>
+                        <li><button type="button" data-record-open="release"><span>06/06/2026 09:10</span><strong>S. Turner</strong><em>BOF readiness review opened.</em></button></li>
+                      </ul>
+                    </section>
+                  </div>
+                </article>
+                <aside class="viewer-controls" aria-label="Document viewer controls">
+                  <button type="button" data-viewer-action="expand" aria-label="Expand document"><svg><use href="#app-icon-expand"></use></svg></button>
+                  <button type="button" data-viewer-action="download" aria-label="Download document record"><svg><use href="#app-icon-download"></use></svg></button>
+                  <button type="button" data-viewer-action="print" aria-label="Print document record"><svg><use href="#app-icon-print"></use></svg></button>
+                  <button type="button" data-viewer-action="reset-zoom" data-app-target="zoomLabel">100%</button>
+                  <button type="button" data-viewer-action="zoom-in" aria-label="Zoom in">+</button>
+                  <button type="button" data-viewer-action="zoom-out" aria-label="Zoom out">-</button>
+                  <button type="button" data-viewer-action="page">1 / 1</button>
+                </aside>
+              </div>
+            </section>
+
+            <aside class="action-pane action-rail" data-shell-region="action-rail" aria-labelledby="release-title">
+              <section class="actions-card">
+                <h2 id="release-title">Actions</h2>
+                <div class="action-grid" role="group" aria-label="Choose TMS-LD-10482 release outcome">
+                <button class="action-approve" type="button" data-demo-action="approve"><svg><use href="#app-icon-check"></use></svg>Ready to Release</button>
+                  <button class="action-reject" type="button" data-demo-action="reject"><svg><use href="#app-icon-x"></use></svg>Hold - Action Required</button>
+                  <button class="action-secondary" type="button" data-demo-action="early"><svg><use href="#app-icon-doc"></use></svg>Release With Condition</button>
+                  <button class="action-secondary" type="button" data-demo-action="reset"><svg><use href="#app-icon-refresh"></use></svg>Reset</button>
+                </div>
+                <div class="decision-note-card">
+                  <span class="status review" data-app-target="releaseStatus">Review</span>
+                  <strong data-app-target="decisionHeadline">Partner import review is open.</strong>
+                  <p data-app-target="releaseSummary">BOF is reviewing the TMS import against driver match, carrier packet, load documents, and exception ownership.</p>
+                  <button type="button" data-record-open="decision" data-app-target="decisionButton">Open readiness packet</button>
+                </div>
+                <section class="guided-review-card" aria-label="Guided release review path">
+                  <h3>Review Path</h3>
+                  <ol>
+                    <li><button type="button" data-record-open="load"><span>1</span><strong>Import</strong><em>Confirm load, route, priority, owner, and release file.</em></button></li>
+                    <li><button type="button" data-record-open="driver"><span>2</span><strong>Driver</strong><em>Inspect DRV-001 file, eligibility, documents, and assignment fit.</em></button></li>
+                    <li><button type="button" data-record-open="carrier"><span>3</span><strong>Carrier</strong><em>Open CAR-118 packet, insurance, agreement, W-9, and contact.</em></button></li>
+                    <li><button type="button" data-record-open="bol"><span>4</span><strong>Documents</strong><em>Review BOL, pickup instructions, seal photo, POD state, and claim folder.</em></button></li>
+                    <li><button type="button" data-record-open="release"><span>5</span><strong>Decision</strong><em>Choose Ready, Hold, or Conditional and keep the handoff attached.</em></button></li>
+                  </ol>
+                </section>
+                <section class="source-map-card" aria-label="Source records behind the review">
+                  <h3>Source Records</h3>
+                  <dl>
+                    <div><dt>Load</dt><dd><button type="button" data-record-open="load">TMS-LD-10482</button></dd></div>
+                    <div><dt>Readiness</dt><dd><button type="button" data-record-open="bol">BOF-RR-10482</button></dd></div>
+                    <div><dt>Driver</dt><dd><button type="button" data-record-open="driver">DRV-001</button></dd></div>
+                    <div><dt>Carrier</dt><dd><button type="button" data-record-open="carrier">CAR-118</button></dd></div>
+                    <div><dt>Handoff</dt><dd><button type="button" data-record-open="release">REL-10482</button></dd></div>
+                  </dl>
+                </section>
+                <section class="session-trail-card" aria-label="Current review trail">
+                  <h3>Current Review Trail</h3>
+                  <ol data-app-target="sessionTrailRows">
+                    <li><button type="button" data-record-open="load"><span>Open</span><strong>TMS-LD-10482 selected</strong><em>Import, driver, carrier, documents, and release decision are in scope.</em></button></li>
+                    <li><button type="button" data-record-open="bol"><span>Gate</span><strong>BOF-RR-10482 opened</strong><em>Document gate controls the release outcome.</em></button></li>
+                    <li><button type="button" data-record-open="release"><span>Next</span><strong>Decision pending</strong><em>Choose Ready, Hold, or Conditional after review.</em></button></li>
+                  </ol>
+                </section>
+              </section>
+            </aside>
+
+            <section class="packet-pane in-app-record-viewer" data-shell-region="in-app-record-viewer" aria-live="polite" aria-labelledby="record-viewer-title">
+              <div class="packet-column release-summary">
+                <h2>Release Packet - <span data-app-target="packetLoadId">TMS-LD-10482</span></h2>
+                <span class="packet-status ready">Complete</span>
+                <dl>
+                  <div><dt>Load ID</dt><dd data-app-target="packetLoadId">TMS-LD-10482</dd></div>
+                  <div><dt>Driver</dt><dd><button type="button" data-record-open="driver" data-app-target="packetDriverButton">DRV-001</button></dd></div>
+                  <div><dt>Carrier</dt><dd><button type="button" data-record-open="carrier" data-app-target="packetCarrierButton">CAR-118</button></dd></div>
+                  <div><dt>Route</dt><dd data-app-target="packetRoute">Dallas, TX to Memphis, TN</dd></div>
+                  <div><dt>Est. Pickup</dt><dd>06/06/2026 08:00</dd></div>
+                  <div><dt>Est. Delivery</dt><dd>06/06/2026 18:00</dd></div>
+                </dl>
+              </div>
+              <div class="packet-column readiness-summary">
+                <h2>Readiness Checklist</h2>
+                <dl>
+                  <div><dt>Driver File</dt><dd><span class="mini-status ready">Complete</span></dd></div>
+                  <div><dt>Carrier Packet</dt><dd><span class="mini-status ready">Complete</span></dd></div>
+                  <div><dt>Insurance</dt><dd><span class="mini-status ready">Complete</span></dd></div>
+                  <div><dt>Rate Confirmation</dt><dd><span class="mini-status ready">Complete</span></dd></div>
+                  <div><dt>Broker-Carrier Agreement</dt><dd><span class="mini-status ready">Complete</span></dd></div>
+                  <div><dt>Document Gate</dt><dd><span class="mini-status review" data-app-target="packetBolStatus">Docs under review</span></dd></div>
+                </dl>
+              </div>
+              <div class="packet-column decision-summary">
+                <h2 id="record-viewer-title" data-app-target="recordTitle">Release Decision</h2>
+                <dl>
+                  <div><dt>Record ID</dt><dd data-app-target="recordId">REL-10482-DECISION</dd></div>
+                  <div><dt>Status</dt><dd><span class="mini-status review" data-app-target="recordStatus">Review</span></dd></div>
+                  <div><dt>Decision</dt><dd><span class="mini-status review" data-app-target="packetDecision">Pending</span></dd></div>
+                  <div><dt>Decision By</dt><dd data-app-target="recordOwner">S. Turner</dd></div>
+                  <div><dt>Decision Date</dt><dd data-app-target="packetDecisionDate">-</dd></div>
+                  <div><dt>Handoff State</dt><dd data-app-target="recordState">Awaiting BOF readiness decision</dd></div>
+                  <div><dt>Release Note</dt><dd><button type="button" data-record-open="release">REL-10482-DECISION</button></dd></div>
+                </dl>
+                <strong data-app-target="recordHeading">Release note fields</strong>
+                <p data-app-target="recordConsequence">Dispatch cannot act until BOF records Ready, Conditional, or Hold.</p>
+                <p data-app-target="recordBody">The TMS-LD-10482 packet connects the imported TMS load, BOF-RR-10482 release file, driver match, carrier packet, documents, release decision, owner, next action, audit trail, and simulated handoff in one working record.</p>
+                <div class="handoff-preview-card">
+                  <h3>Handoff Preview</h3>
+                  <dl>
+                    <div><dt>Dispatch sees</dt><dd data-app-target="handoffDispatch">Release waits on BOF readiness review.</dd></div>
+                    <div><dt>Customer note</dt><dd data-app-target="handoffCustomer">Decision pending; release packet under review.</dd></div>
+                    <div><dt>Carrier follow-up</dt><dd data-app-target="handoffCarrier">Carrier packet is ready; no carrier blocker active.</dd></div>
+                    <div><dt>Settlement / claims</dt><dd data-app-target="handoffSettlement">POD, GPS, receiver signature, dock photo, and empty cargo proof remain tracked after delivery.</dd></div>
+                  </dl>
+                </div>
+                <div class="record-proof-block">
+                  <h3>Inspectable Record Items</h3>
+                  <div class="record-checklist" data-app-target="recordChecklist">
+                    <div><span>Driver file</span><strong>Ready</strong><em>CDL, medical card, MVR, application, and acknowledgements are filed.</em></div>
+                    <div><span>Document packet</span><strong>Review</strong><em>BOL image, pickup instructions, seal photo, and delivery proof state are attached.</em></div>
+                  </div>
+                </div>
+                <div class="record-proof-block">
+                  <h3>Record Detail</h3>
+                  <dl data-app-target="recordDetailRows">
+                    <div><dt>Readiness packet</dt><dd>BOF-RR-10482</dd></div>
+                    <div><dt>Next action</dt><dd>Finish BOF readiness review.</dd></div>
+                    <div><dt>Dispatch result</dt><dd>Release waits on BOF decision.</dd></div>
+                  </dl>
+                </div>
+                <div class="record-proof-block">
+                  <h3>Activity Lines</h3>
+                  <ul class="record-activity-list" data-app-target="recordActivityRows">
+                    <li><span>06/05/2026 09:12</span><strong>S. Turner</strong><em>TMS import opened.</em></li>
+                    <li><span>06/06/2026 09:10</span><strong>S. Turner</strong><em>BOF readiness review opened.</em></li>
+                  </ul>
+                </div>
+              </div>
+              <div class="packet-column audit-summary">
+                <h2>Audit Trail (Recent)</h2>
+                <ul data-app-target="auditTrail">
+                  <li><button type="button" data-record-open="load"><span>06/05/2026 09:12</span><strong>S. Turner</strong><em>TMS import opened</em></button></li>
+                  <li><button type="button" data-record-open="driver"><span>06/05/2026 09:13</span><strong>Safety desk</strong><em>Driver matched to DRV-001</em></button></li>
+                  <li><button type="button" data-record-open="carrier"><span>06/05/2026 09:18</span><strong>S. Turner</strong><em>Carrier packet verified</em></button></li>
+                  <li><button type="button" data-record-open="rate"><span>06/05/2026 09:21</span><strong>S. Turner</strong><em>Rate confirmation verified</em></button></li>
+                  <li><button type="button" data-record-open="bol"><span>06/05/2026 09:24</span><strong>S. Turner</strong><em>Import document packet reviewed</em></button></li>
+                </ul>
+                <button type="button" data-record-open="audit">View full audit trail</button>
+              </div>
+            </section>
+          </div>
+        </div>
+      </div>
+    </section>
+            <button class="app-toast" type="button" data-app-target="utilityMessage" data-record-open="load" aria-live="polite">TMS-LD-10482 partner import is ready for BOF review.</button>
+  </main>
+  <script src="../assets/js/site.js?v=20260803.2"></script>
+</body>
+</html>
+
+
+
+
