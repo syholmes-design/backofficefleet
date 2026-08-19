@@ -18,6 +18,11 @@ export const metadata: Metadata = {
   },
   description:
     "Compliance and operations command center for trucking - dispatch, proof, settlements, and revenue protection.",
+  icons: {
+    icon: "/assets/images/logo/boflogo-dark-background-transparent.png",
+    shortcut: "/assets/images/logo/boflogo-dark-background-transparent.png",
+    apple: "/assets/images/logo/boflogo-dark-background-transparent.png",
+  },
 };
 
 export default function RootLayout({

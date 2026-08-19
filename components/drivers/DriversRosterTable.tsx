@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { useState, useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { DriverAvatar } from "@/components/DriverAvatar";
 import { useBofDemoData } from "@/lib/bof-demo-data-context";
 import { driverPhotoPath } from "@/lib/driver-photo";
@@ -393,6 +393,10 @@ export function DriversRosterTable({ operationalSummaries, hasFleetContext }: Pr
   const [driverStatusFilter, setDriverStatusFilter] = useState<DriverStatusFilter>("all");
   const [credentialWindowDays, setCredentialWindowDays] = useState<90 | 60 | 30>(90);
   const [searchText, setSearchText] = useState("");
+  const [hydrated, setHydrated] = useState(false);
+  useEffect(() => {
+    setHydrated(true);
+  }, []);
   const operationalSummaryMap = useMemo(
     () => new Map(operationalSummaries.map((summary) => [summary.driverId, summary])),
     [operationalSummaries],
@@ -717,7 +721,7 @@ export function DriversRosterTable({ operationalSummaries, hasFleetContext }: Pr
                             {row.readinessSummary.fixAction.label}
                           </Link>
                         )}
-                        <Link href={row.actionIssues.length > 0 ? row.actionIssues[0].primaryActionHref : `/portals/driver/${row.driverId}`} className="bof-driver-roster-action" style={{
+                        <Link href={hydrated && row.actionIssues.length > 0 ? row.actionIssues[0].primaryActionHref : `/portals/driver/${row.driverId}`} className="bof-driver-roster-action" style={{
                           padding: '0.375rem 0.75rem',
                           backgroundColor: '#F3F4F6',
                           color: '#374151',
@@ -797,7 +801,7 @@ export function DriversRosterTable({ operationalSummaries, hasFleetContext }: Pr
                       {row.readinessSummary.fixAction.label}
                     </Link>
                   )}
-                  <Link href={row.actionIssues.length > 0 ? row.actionIssues[0].primaryActionHref : `/portals/driver/${row.driverId}`} className="bof-driver-roster-action" style={{
+                  <Link href={hydrated && row.actionIssues.length > 0 ? row.actionIssues[0].primaryActionHref : `/portals/driver/${row.driverId}`} className="bof-driver-roster-action" style={{
                     padding: '0.55rem 0.85rem',
                     backgroundColor: '#F8FAFC',
                     color: '#334155',

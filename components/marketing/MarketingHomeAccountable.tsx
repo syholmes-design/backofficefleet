@@ -222,7 +222,7 @@ export default function MarketingHomeAccountable() {
           <span>Explore the demo</span>
           <div>
             {DEMO_CARDS.slice(0, 6).map((link) => (
-              <Link key={link.href} href={link.href}>
+              <Link key={`${link.label}-${link.href}`} href={link.href}>
                 {link.label}
               </Link>
             ))}
@@ -444,7 +444,7 @@ export default function MarketingHomeAccountable() {
           </div>
           <div className="bof-home-capability-grid">
             {DEMO_CARDS.map((card) => (
-              <a key={card.href} href={card.href} className="bof-home-capability-card">
+              <a key={`${card.label}-${card.href}`} href={card.href} className="bof-home-capability-card">
                 <h3>{card.label}</h3>
                 <p>Open the live BOF workflow for this part of the operating system.</p>
                 <strong>Explore &rarr;</strong>
