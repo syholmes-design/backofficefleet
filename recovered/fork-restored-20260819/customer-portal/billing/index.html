@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1" name="viewport"/>
+<title>Billing | Customer Portal | BackOfficeFleet</title>
+<meta content="Review invoice preview, billing lines, payment terms, POD requirements, lumper receipt dependency, and settlement status." name="description"/>
+<link href="data:," rel="icon"/>
+<link href="../../assets/css/styles.css?v=20260803.2" rel="stylesheet"/>
+<link href="../../assets/css/customer-portal.css?v=20260802.1" rel="stylesheet"/>
+<script src="../../assets/js/fork-path-v2.js?v=2.0"></script>
+<link href="../../assets/css/cinematic-site.css?v=20260803.4" rel="stylesheet"/>
+
+<link rel="canonical" href="https://www.backofficefleet.com/fork/customer-portal/billing/"/>
+<meta property="og:title" content="Billing | Customer Portal | BackOfficeFleet"/>
+<meta property="og:description" content="Review invoice preview, billing lines, payment terms, POD requirements, lumper receipt dependency, and settlement status."/>
+<meta property="og:image" content="https://www.backofficefleet.com/fork/assets/images/cinematic/customer-portal--billing-desktop.webp"/>
+<meta property="og:type" content="website"/>
+</head>
+<body class="customer-portal-body cinematic-site cinematic-portal" data-cinematic-route="/customer-portal/billing/" data-portal-page="billing">
+<main class="customer-portal-shell" data-customer-portal="">
+<aside class="portal-rail"><a class="portal-brand" href="../../"><img alt="BackOfficeFleet" src="../../assets/images/logo/boflogo-dark-background-transparent.png"/></a><button aria-controls="customer-portal-navigation" aria-expanded="false" class="portal-nav-toggle" type="button"><span aria-hidden="true" class="portal-nav-toggle__icon"></span><span>Menu</span></button><nav class="portal-nav" id="customer-portal-navigation"><a href="../../customer-portal/"><span>01</span>Portal Home</a><a href="../../customer-portal/load-intake/"><span>02</span>Load Intake</a><a href="../../customer-portal/quotes/"><span>03</span>Quotes</a><a href="../../customer-portal/shipments/"><span>04</span>Active Shipments</a><a href="../../customer-portal/documents/"><span>05</span>Documents</a><a href="../../customer-portal/tracking/"><span>06</span>Tracking</a><a class="is-active" href="../../customer-portal/billing/"><span>07</span>Billing</a></nav><div class="portal-rail-card"><span>Billing</span><strong data-portal-text="invoiceId">INV-86240-PVF</strong><p>Invoice and factoring packet wait on POD and post-trip proof before settlement closeout.</p></div></aside>
+<section class="portal-workspace">
+<section aria-label="Billing visibility" class="cinematic-portal-scene">
+<picture>
+<source media="(max-width: 680px)" srcset="../../assets/images/cinematic/customer-portal--billing-mobile.webp"/>
+<img alt="Billing visibility in a working freight environment" decoding="async" fetchpriority="high" height="788" src="../../assets/images/cinematic/customer-portal--billing-desktop.webp" width="1400"/>
+</picture>
+<div class="cinematic-portal-scene__copy">
+<span class="cinematic-hero__eyebrow">Billing visibility</span>
+<strong>Connect the invoice to the shipment proof behind it.</strong>
+<p>Review billing status, supporting documents, open questions, and settlement context without losing the load record.</p>
+<a class="cinematic-hero__cta" href="../">Continue in the portal &rarr;</a>
+</div>
+
+</section>
+<header class="portal-topbar"><div><span class="portal-kicker">Billing</span><h1>Review invoice preview, payment terms, shipment proof, and settlement dependencies.</h1></div><div class="portal-topbar-actions"><a class="portal-link-button" href="../../customer-portal/documents/">Documents</a><a class="portal-link-button" href="../../customer-portal/tracking/">Tracking</a></div></header>
+<div class="portal-grid">
+<section class="portal-panel"><div class="portal-panel-head"><div><span class="portal-kicker">Invoice preview</span><h2 data-portal-text="invoiceId">INV-86240-PVF</h2></div><span class="portal-status watch">Waits on POD</span></div><div class="quote-lines" data-portal-render="billingLines"></div><p class="portal-note">No payment is collected here. Billing review stays tied to POD quality review, signed BOL, lumper receipt when used, claim clearance, and settlement release.</p></section>
+<aside class="portal-review-column"><section class="portal-panel"><div class="portal-panel-head"><div><span class="portal-kicker">Billing/factoring packet</span><h2>Required support</h2></div><span class="portal-status review">Proof needed</span></div><div class="portal-mini-list"><span>Invoice preview</span><span>Rate confirmation</span><span>Signed BOL and POD quality review</span><span>Lumper receipt if used</span><span>Dock and empty trailer proof</span><span>Settlement and claim clearance</span><span>Next-load readiness note</span></div></section><section class="portal-panel"><div class="portal-panel-head"><div><span class="portal-kicker">Billing/factoring packet</span><h2>Built after POD</h2></div><span class="portal-status watch">Waits on proof</span></div><p class="portal-note">BOF keeps the rate confirmation, invoice, signed BOL/POD, lumper support, proof photos, claim clearance, and settlement notes together so billing and factoring review do not become a separate chase.</p></section><section class="portal-panel"><div class="portal-panel-head"><div><span class="portal-kicker">Next-load readiness</span><h2>Closeout first</h2></div><span class="portal-status ready">On file</span></div><p class="portal-note">Driver and equipment should not be treated as available again until delivery proof, defect review, claim review, settlement, billing, and archive are complete.</p></section></aside>
+</div>
+</section>
+</main>
+<script src="../../assets/js/customer-portal.js?v=2.9"></script>
+<script src="../../assets/js/portal-nav.js?v=3.3"></script>
+</body>
+</html>

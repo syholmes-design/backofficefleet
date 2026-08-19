@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1" name="viewport"/>
+<title>Shipment Generator | Customer Portal | BackOfficeFleet</title>
+<meta content="Generate shipment numbers, load numbers, BOL, rate confirmation, invoice, seal number, and cargo record for review." name="description"/>
+<link href="data:," rel="icon"/>
+<link href="../../assets/css/styles.css?v=20260803.2" rel="stylesheet"/>
+<link href="../../assets/css/customer-portal.css?v=20260802.1" rel="stylesheet"/>
+<script src="../../assets/js/fork-path-v2.js?v=2.0"></script>
+<link href="../../assets/css/cinematic-site.css?v=20260803.4" rel="stylesheet"/>
+
+<link rel="canonical" href="https://www.backofficefleet.com/fork/customer-portal/shipment-generator/"/>
+<meta property="og:title" content="Shipment Generator | Customer Portal | BackOfficeFleet"/>
+<meta property="og:description" content="Generate shipment numbers, load numbers, BOL, rate confirmation, invoice, seal number, and cargo record for review."/>
+<meta property="og:image" content="https://www.backofficefleet.com/fork/assets/images/cinematic/customer-portal--shipment-generator-desktop.webp"/>
+<meta property="og:type" content="website"/>
+</head>
+<body class="customer-portal-body cinematic-site cinematic-portal" data-cinematic-route="/customer-portal/shipment-generator/" data-portal-page="generator">
+<main class="customer-portal-shell" data-customer-portal="">
+<aside class="portal-rail"><a class="portal-brand" href="../../"><img alt="BackOfficeFleet" src="../../assets/images/logo/boflogo-dark-background-transparent.png"/></a><button aria-controls="customer-portal-navigation" aria-expanded="false" class="portal-nav-toggle" type="button"><span aria-hidden="true" class="portal-nav-toggle__icon"></span><span>Menu</span></button><nav class="portal-nav" id="customer-portal-navigation"><a href="../../customer-portal/"><span>01</span>Portal Home</a><a href="../../customer-portal/load-intake/"><span>02</span>Load Intake</a><a href="../../customer-portal/quotes/"><span>03</span>Quotes</a><a href="../../customer-portal/shipments/"><span>04</span>Active Shipments</a><a class="is-active" href="../../customer-portal/documents/"><span>05</span>Documents</a><a href="../../customer-portal/tracking/"><span>06</span>Tracking</a><a href="../../customer-portal/billing/"><span>07</span>Billing</a></nav><div class="portal-rail-card"><span>Generator</span><strong data-portal-text="documentReadiness">Shipment packet</strong><p>Generated identifiers remain consistent across the portal.</p></div></aside>
+<section class="portal-workspace">
+<section aria-label="Shipment builder" class="cinematic-portal-scene">
+<picture>
+<source media="(max-width: 680px)" srcset="../../assets/images/cinematic/customer-portal--shipment-generator-mobile.webp"/>
+<img alt="Shipment builder in a working freight environment" decoding="async" fetchpriority="high" height="788" src="../../assets/images/cinematic/customer-portal--shipment-generator-desktop.webp" width="1400"/>
+</picture>
+<div class="cinematic-portal-scene__copy">
+<span class="cinematic-hero__eyebrow">Shipment builder</span>
+<strong>Turn accepted context into a coherent shipment record.</strong>
+<p>Carry approved request details into a simulated operational record with explicit review points and no hidden automation claims.</p>
+<a class="cinematic-hero__cta" href="../shipments/">Continue in the portal &rarr;</a>
+</div>
+
+</section>
+<header class="portal-topbar"><div><span class="portal-kicker">Shipment Generator</span><h1>Generate the shipment record, BOL, rate confirmation, invoice, seal, and cargo proof record.</h1></div><div class="portal-topbar-actions"><a class="portal-link-button" href="../../customer-portal/documents/">Shipment documents</a><button data-portal-action="refresh-generator" type="button">Refresh packet view</button></div></header>
+<section class="portal-dashboard-grid">
+<article class="portal-panel"><div class="portal-panel-head"><div><span class="portal-kicker">Identifiers</span><h2>Generated shipment set</h2></div><span class="portal-status ready">Consistent</span></div><dl class="summary-dl" data-portal-render="idSummary"></dl></article>
+<article class="portal-panel"><div class="portal-panel-head"><div><span class="portal-kicker">Generated outputs</span><h2>Packet records</h2></div><span class="portal-status ready">Prepared</span></div><div class="portal-mini-list"><span>Load ID</span><span>Shipment number</span><span>Draft bill of lading</span><span>Draft rate confirmation</span><span>Draft invoice</span><span>Seal number</span><span>Cargo photo record</span><span>Pickup / delivery instructions</span></div></article>
+</section>
+<section class="portal-panel"><div class="portal-panel-head"><div><span class="portal-kicker">Readiness status</span><h2 data-portal-text="documentReadiness">Pre-trip packet pending</h2></div><span class="portal-status review">Pre-trip packet</span></div><div class="portal-checklist document-readiness-list" data-portal-render="documentReadinessList"></div></section>
+<section class="portal-panel"><div class="portal-panel-head"><div><span class="portal-kicker">Document preview</span><h2>Rate confirmation</h2></div><span class="portal-status review">Review</span></div><article class="paper-document" data-portal-render="paperDocument" data-watermark="Rate"></article></section>
+</section>
+</main>
+<script src="../../assets/js/customer-portal.js?v=2.9"></script>
+<script src="../../assets/js/portal-nav.js?v=3.3"></script>
+</body>
+</html>

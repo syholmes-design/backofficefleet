@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1" name="viewport"/>
+<title>Dispatch Board | BackOfficeFleet</title>
+<meta content="BOF dispatch board showing TMS imported load movement, release records, blockers, owners, and next actions." name="description"/>
+<link href="../assets/css/styles.css?v=20260803.2" rel="stylesheet"/>
+<script src="../assets/js/fork-path-v2.js?v=2.0"></script>
+<link href="../assets/css/cinematic-site.css?v=20260803.4" rel="stylesheet"/>
+<link rel="canonical" href="https://www.backofficefleet.com/fork/dispatch/"/>
+<meta property="og:title" content="Dispatch Board | BackOfficeFleet"/>
+<meta property="og:description" content="BOF dispatch board showing TMS imported load movement, release records, blockers, owners, and next actions."/>
+<meta property="og:image" content="https://www.backofficefleet.com/fork/assets/images/logo/boflogo-dark-background-transparent.png"/>
+<meta property="og:type" content="website"/>
+</head>
+<body class="cinematic-site cinematic-narrative" data-cinematic-route="/dispatch/">
+<header class="site-header cinematic-direct-header"><a aria-label="BackOfficeFleet home" class="brand" href="../"><img alt="BackOfficeFleet" src="../assets/images/logo/boflogo-dark-background-transparent.png" width="216" height="44"/></a><button aria-controls="cinematic-primary-navigation" aria-expanded="false" class="cinematic-nav-toggle" type="button"><span aria-hidden="true" class="cinematic-nav-toggle__icon"></span><span>Menu</span></button><nav aria-label="Main navigation" class="cinematic-direct-nav" id="cinematic-primary-navigation"><a href="../solutions/">Solutions</a><a href="../sectors/">Who We Serve</a><a href="../business-operations/">Business Operations</a><a href="../operational-intelligence/">Intelligence &amp; Trust</a><a href="../founding-fleet/">Founding Fleet</a></nav><a class="header-cta" href="../book-demo/">Book a working session</a></header>
+<section aria-label="BOF operating workflow" class="bof-workflow-band">
+<div class="bof-workflow-inner">
+<div class="bof-workflow-label"><span>BOF workflow</span><strong>Dispatch uses the records</strong></div>
+<div class="bof-workflow-steps">
+<a class="bof-workflow-step is-complete" href="../drivers/">Drivers</a>
+<a class="bof-workflow-step is-current" href="../dispatch/">Dispatch &amp; Operations</a>
+<a class="bof-workflow-step is-upcoming" href="../safety/">Safety &amp; Compliance</a>
+<a class="bof-workflow-step is-upcoming" href="../settlements/">Settlements &amp; Billing</a>
+<a class="bof-workflow-step is-upcoming" href="../business-operations/">Business Operations</a>
+</div>
+</div>
+</section>
+<main class="workflow-dashboard-page">
+<section aria-labelledby="cinematic-title" class="cinematic-hero cinematic-hero--narrative">
+<picture class="cinematic-hero__media">
+<source media="(max-width: 680px)" srcset="../assets/images/cinematic/dispatch-release-desk-mobile-v2-png.webp"/>
+<img alt="Dispatch coordinator preparing a release decision beside a rain-lit fleet yard" decoding="async" fetchpriority="high" height="864" src="../assets/images/cinematic/dispatch-release-desk-desktop-v2-png.webp" width="1536"/>
+</picture>
+<div aria-hidden="true" class="cinematic-hero__veil"></div>
+<div class="cinematic-hero__content">
+<p class="cinematic-hero__eyebrow">Dispatch control</p>
+<h1 id="cinematic-title">Release the load with evidence, not optimism.</h1>
+<p class="cinematic-hero__summary">Put the driver, equipment, route, documents, and open exceptions in one pre-trip decision view.</p>
+<div class="cinematic-hero__actions"><a class="cinematic-hero__cta" href="../book-demo/">Request a working session &rarr;</a></div>
+<div aria-label="Operational proof" class="cinematic-hero__proof" role="list"><span role="listitem">Named readiness state</span><span role="listitem">Evidence tied to the record</span><span role="listitem">Clear owner and next action</span></div>
+</div>
+</section>
+<section class="section" id="dispatch-readiness">
+<div class="proof-grid">
+<article class="proof-card reveal"><h3>Can move after review</h3><p><a class="proof-link" href="../operations-record/release-readiness-1842/">TMS-LD-10482</a> has a ready driver, ready carrier, current insurance, and attached rate confirmation.</p></article>
+<article class="proof-card reveal"><h3>Must wait on</h3><p><a class="proof-link" href="../operations-record/release-readiness-1842/">BOL image confirmation</a> plus cargo, equipment, facility, and route/HOS checks before dispatch commits the Dallas to Memphis lane.</p></article>
+<article class="proof-card reveal"><h3>Record owner</h3><p>S. Turner owns the final document check and release decision.</p></article>
+<article class="proof-card reveal"><h3>Dispatch action</h3><p><a class="proof-link" href="../operations-record/release-readiness-1842/">Approve packet</a> when the image clears, or keep <a class="proof-link" href="../operations-record/release-readiness-1842/">TMS-LD-10482</a> in review.</p></article>
+</div>
+</section>
+<section class="section" id="load-packets">
+<div class="section-head reveal"><p class="eyebrow">Start readiness gates</p><h2>Dispatch release depends on more than the BOL image.</h2><p>BOF keeps load packet readiness separate from equipment readiness, driver readiness, and route/HOS readiness so the release decision explains the actual consequence.</p></div>
+<div class="table-wrap reveal">
+<table>
+<thead><tr><th>Gate</th><th>Release evidence</th><th>Dispatch consequence</th></tr></thead>
+<tbody>
+<tr><td>Load packet readiness</td><td>BOL, rate confirmation, appointment detail, dispatch release note</td><td>Release stays in review until the commercial and load packet records match the lane.</td></tr>
+<tr><td>Equipment readiness</td><td>Pre-trip equipment photo set, last DVIR review, open defect clearance, trailer suitability</td><td>Release held until tire, light, coupling, trailer ID, and visible defect checks clear.</td></tr>
+<tr><td>Cargo readiness</td><td>Cargo condition photo, seal photo, securement photo, BOL match</td><td>Release remains in review until cargo condition, securement, seal, and BOL match are confirmed.</td></tr>
+<tr><td>Route/HOS readiness</td><td>Available hours, ETA risk, weather, parking, restrictions</td><td>Load moves to watch if appointment timing cannot be met within available HOS.</td></tr>
+</tbody>
+</table>
+</div>
+<div class="evidence-grid">
+<article class="evidence-card reveal">
+<h3>Example Proof Packet &middot; Ready to Release</h3>
+<p>Illustrative demo packet for a lane where the customer request, driver, equipment, commercial terms, and pre-trip evidence line up.</p>
+<dl>
+<div><dt>Customer intake</dt><dd>Pickup window, destination, appointment contact, cargo requirements</dd></div>
+<div><dt>Load packet</dt><dd>Rate confirmation, BOL, pickup instructions, dispatch release note</dd></div>
+<div><dt>Proof requirements</dt><dd>Seal photo, cargo condition photo, pre-trip equipment proof</dd></div>
+<div><dt>Decision</dt><dd><em class="status ready">Ready</em> after packet owner confirms final release</dd></div>
+</dl>
+</article>
+<article class="evidence-card reveal">
+<h3>Example Proof Packet &middot; At Risk</h3>
+<p>Sample readiness card for a load that can be planned but should not be treated as clean until the watch items clear.</p>
+<dl>
+<div><dt>Driver assignment</dt><dd>Driver eligible, but load packet still needs readable BOL detail</dd></div>
+<div><dt>Route / lane risk</dt><dd>Weather watch, traffic delay, appointment timing, parking review</dd></div>
+<div><dt>Equipment readiness</dt><dd>Trailer ID and DVIR note visible for owner confirmation</dd></div>
+<div><dt>Decision</dt><dd><em class="status review">Watch</em> until dispatch owner clears the open items</dd></div>
+</dl>
+</article>
+<article class="evidence-card reveal">
+<h3>Example Proof Packet &middot; Blocked</h3>
+<p>Sample release blocker panel showing why dispatch should not commit the move just because a load exists in the TMS.</p>
+<dl>
+<div><dt>Controlling blocker</dt><dd>Credential hold, missing BOL, rejected proof image, or unresolved equipment defect</dd></div>
+<div><dt>Cargo / seal proof</dt><dd>Required photo or seal requirement not yet attached to the packet</dd></div>
+<div><dt>Owner</dt><dd>Named dispatcher, safety lead, or packet owner must resolve the blocker</dd></div>
+<div><dt>Decision</dt><dd><em class="status blocked">Blocked</em> until the controlling evidence clears</dd></div>
+</dl>
+</article>
+</div>
+</section>
+<section aria-labelledby="dispatch-operating-checklist-title" class="section">
+<div class="section-head reveal">
+<p class="eyebrow">Dispatch operating checklist</p>
+<h2 id="dispatch-operating-checklist-title">Every release decision shows what clears the load and what blocks the move.</h2>
+<p>BOF turns customer load intake into a reviewable operating record: load packet, driver assignment, equipment readiness, route/lane review, traffic or weather exception review, and pre-trip release status stay together before dispatch commits the lane.</p>
+</div>
+<div class="proof-grid">
+<article class="proof-card reveal" id="pre-trip-release"><h3>Pre-Trip Release</h3><p>Dispatcher confirms driver eligibility, equipment readiness, cargo proof requirements, appointment detail, and release owner before the move is treated as ready.</p><span class="route-chip">Ready / Watch / Hold</span></article>
+<article class="proof-card reveal" id="route-lane-review"><h3>Route / Lane Review</h3><p>Lane notes can include route restriction, appointment risk, available hours, weather watch, traffic delay, parking, and customer timing review.</p><span class="route-chip warning">Exception review</span></article>
+<article class="proof-card reveal" id="equipment-readiness"><h3>Equipment Readiness</h3><p>Truck, trailer, DVIR notes, visible defects, trailer ID, load suitability, and photo proof can stay connected to the release decision.</p><span class="route-chip">Equipment gate</span></article>
+<article class="proof-card reveal" id="driver-assignment"><h3>Driver Assignment</h3><p>Driver profile, DQF status, medical card, credential holds, safety notes, and dispatch consequence travel with the assigned load.</p><span class="route-chip">Driver gate</span></article>
+</div>
+</section>
+<section class="section">
+<div class="section-head reveal"><p class="eyebrow">Release decisions</p><h2>Dispatch sees allowed, warning, review, and blocked in plain language.</h2><p>BOF keeps the dispatch answer visible in one pass: what can move, what must wait, which record is missing, and who owns the next step.</p></div>
+<div class="gate-grid">
+<article class="proof-card reveal"><h3>Allowed</h3><p>Driver file, carrier packet, insurance, and trip packet are complete enough for dispatch to release with confidence.</p><span class="route-chip">Release</span></article>
+<article class="proof-card reveal"><h3>Warning</h3><p>Load can move, but a renewal, document item, or owner note needs attention before it becomes a blocker.</p><span class="route-chip warning">Watch</span></article>
+<article class="proof-card reveal"><h3>Review</h3><p>Dispatcher, safety lead, or document owner must confirm the record before release. <a class="proof-link" href="../operations-record/release-readiness-1842/">TMS-LD-10482</a> lives here until BOL evidence clears.</p><span class="route-chip warning">Manager check</span></article>
+<article class="proof-card reveal"><h3>Blocked</h3><p>Missing credential, packet hold, or safety item prevents assignment and gives the owner a named action.</p><span class="route-chip danger">Do not move</span></article>
+</div>
+</section>
+<section class="section">
+<div class="section-head reveal"><p class="eyebrow">Governance basis</p><h2>Dispatch proof is supported by document-handling controls.</h2><p>BOL image review, mobile capture, and release records are treated as controlled operating evidence before dispatch trusts the lane.</p></div>
+<div class="gate-grid">
+<article class="proof-card reveal"><h3>Data classified</h3><p>BOL images and release packets are handled according to classification expectations.</p><a class="route-chip" href="../policies-procedures/">DAT-IT-004</a></article>
+<article class="proof-card reveal"><h3>ELD/mobile controlled</h3><p>Driver uploads and mobile records are supported by device and ELD security controls.</p><a class="route-chip" href="../policies-procedures/">DAT-IT-006</a></article>
+<article class="proof-card reveal"><h3>Review trail required</h3><p>Release decisions name the reviewer, owner, record, and dispatch consequence.</p><a class="route-chip" href="../operations-record/release-readiness-1842/">Release note</a></article>
+<article class="proof-card reveal"><h3>Security governed</h3><p>Security and access expectations sit behind the operating records without cluttering the dispatch board.</p><a class="route-chip warning" href="../trust-governance/">Trust layer</a></article>
+</div>
+</section>
+<section class="section">
+<div class="table-wrap reveal">
+<table>
+<thead><tr><th>Load</th><th>Lane</th><th>Gate</th><th>Record</th><th>Carrier</th><th>Owner</th><th>Next action</th></tr></thead>
+<tbody>
+<tr><td><a class="proof-link" href="../operations-record/release-readiness-1842/">TMS-LD-10482</a></td><td>Dallas, TX ? Memphis, TN</td><td><span class="status review">Review</span></td><td><a class="proof-link" href="../operations-record/release-readiness-1842/">BOL photo and release packet final check</a></td><td><a class="proof-link" href="../operations-record/release-readiness-1842/">Northline Freight</a></td><td>S. Turner</td><td><a class="table-action" href="../operations-record/release-readiness-1842/">Approve packet</a></td></tr>
+<tr><td><a class="proof-link" href="../operations-record/delivery-proof-1907/">BOF-1907</a></td><td>Tulsa, OK ? Kansas City, MO</td><td><span class="status watch">Watch</span></td><td><a class="proof-link" href="../operations-record/delivery-proof-1907/">BOL photo pending review</a></td><td><a class="proof-link" href="../operations-record/delivery-proof-1907/">Blue River Logistics</a></td><td>Dispatcher</td><td><a class="table-action" href="../operations-record/delivery-proof-1907/">Confirm BOL photo</a></td></tr>
+<tr><td><a class="proof-link" href="../operations-record/compliance-hold-1931/">BOF-1931</a></td><td>Little Rock, AR ? St. Louis, MO</td><td><span class="status blocked">Blocked</span></td><td><a class="proof-link" href="../operations-record/compliance-hold-1931/">Medical card expires soon</a></td><td><a class="proof-link" href="../operations-record/compliance-hold-1931/">Delta Yard Services</a></td><td>Safety lead</td><td><a class="table-action" href="../operations-record/compliance-hold-1931/">Update driver file</a></td></tr>
+</tbody>
+</table>
+</div>
+</section>
+</main>
+<section class="cta-band"><div class="cta-inner"><div><p class="eyebrow">Next record</p><h2>Connect dispatch decisions to documents.</h2><p>Your team should see the paperwork behind each release state.</p></div><a class="button light" href="../documents/">Open documents &rarr;</a></div></section>
+<footer class="site-footer"><div class="footer-inner"><strong>BackOfficeFleet</strong><span>Dispatch consequence.</span></div></footer>
+<script src="../assets/js/site.js?v=20260803.2"></script>
+<script src="../assets/js/cinematic-nav.js?v=3.4"></script>
+</body>
+</html>
+
+
+

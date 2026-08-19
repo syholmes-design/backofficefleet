@@ -1,0 +1,187 @@
+{
+  "bofDrivers": [
+    {
+      "bofDriverId": "DRV-7042",
+      "name": "Maria Lopez",
+      "email": "maria.lopez@deltaadvanced.example",
+      "phone": "BOF driver channel ext. 1806",
+      "cdlValid": true,
+      "medicalCardValid": true,
+      "medicalCardExpires": "2026-12-14",
+      "mvrCurrent": true,
+      "emergencyContactComplete": true,
+      "taxSetupComplete": true,
+      "bankSettlementComplete": true,
+      "ownerOperatorPacketComplete": true,
+      "safetyTrainingCurrent": true,
+      "activeSafetyHold": false,
+      "dispatchBlockReason": ""
+    },
+    {
+      "bofDriverId": "DRV-6198",
+      "name": "Caleb Price",
+      "email": "caleb.price@deltaadvanced.example",
+      "phone": "BOF driver channel ext. 9034",
+      "cdlValid": true,
+      "medicalCardValid": false,
+      "medicalCardExpires": "2026-06-08",
+      "mvrCurrent": true,
+      "emergencyContactComplete": true,
+      "taxSetupComplete": true,
+      "bankSettlementComplete": true,
+      "ownerOperatorPacketComplete": true,
+      "safetyTrainingCurrent": true,
+      "activeSafetyHold": true,
+      "dispatchBlockReason": "Medical card expires before the delivery window closes."
+    },
+    {
+      "bofDriverId": "DRV-8317",
+      "name": "Jamila Reed",
+      "email": "jamila.reed@deltaadvanced.example",
+      "phone": "BOF driver channel ext. 7216",
+      "cdlValid": true,
+      "medicalCardValid": true,
+      "medicalCardExpires": "2027-01-20",
+      "mvrCurrent": true,
+      "emergencyContactComplete": true,
+      "taxSetupComplete": true,
+      "bankSettlementComplete": true,
+      "ownerOperatorPacketComplete": true,
+      "safetyTrainingCurrent": true,
+      "activeSafetyHold": false,
+      "dispatchBlockReason": ""
+    }
+  ],
+  "carrierPackets": [
+    {
+      "carrierName": "Delta Advanced Trucking, Inc.",
+      "authorityPresent": true,
+      "mcRecordPresent": true,
+      "insurancePresent": true,
+      "insuranceCurrent": true,
+      "w9Present": true,
+      "agreementPresent": true,
+      "packetComplete": true,
+      "owner": "Carrier operations"
+    },
+    {
+      "carrierName": "Riverbend Regional Freight",
+      "authorityPresent": true,
+      "mcRecordPresent": true,
+      "insurancePresent": true,
+      "insuranceCurrent": true,
+      "w9Present": true,
+      "agreementPresent": true,
+      "packetComplete": true,
+      "owner": "Carrier operations"
+    }
+  ],
+  "loads": [
+    {
+      "ascendLoadId": "ASC-LD-10480",
+      "bofReleaseFile": "BOF-RR-10480",
+      "loadNumber": "ATL-88410",
+      "customerName": "Northstar Grocery Distribution",
+      "carrierName": "Delta Advanced Trucking, Inc.",
+      "assignedDriverName": "Maria Lopez",
+      "assignedDriverEmail": "maria.lopez@deltaadvanced.example",
+      "assignedDriverPhone": "BOF driver channel ext. 1806",
+      "mappedBofDriverId": "DRV-7042",
+      "pickupLocation": "Columbus, OH",
+      "pickupDateTime": "2026-06-10 08:30 ET",
+      "deliveryLocation": "Minneapolis, MN",
+      "deliveryDateTime": "2026-06-11 16:00 CT",
+      "equipmentType": "53 ft Dry Van",
+      "commodity": "Packaged grocery freight",
+      "loadStatus": "tender_accepted",
+      "notes": ["Tender accepted in TMS.", "BOF release review found no active blockers."],
+      "documents": [
+        { "ascendDocumentId": "ASC-DOC-8110", "type": "rate_confirmation", "label": "Rate confirmation", "fileName": "ATL-88410-rate-confirmation.pdf", "uploadedAt": "2026-06-09 14:16 ET", "status": "present", "requiredBeforeRelease": true },
+        { "ascendDocumentId": "ASC-DOC-8111", "type": "bol", "label": "BOL", "fileName": "ATL-88410-bol.pdf", "uploadedAt": "2026-06-09 14:22 ET", "status": "present", "requiredBeforeRelease": true },
+        { "ascendDocumentId": "ASC-DOC-8112", "type": "pickup_instructions", "label": "Pickup instructions", "fileName": "ATL-88410-pickup.pdf", "uploadedAt": "2026-06-09 14:25 ET", "status": "present", "requiredBeforeRelease": true },
+        { "ascendDocumentId": "ASC-DOC-8113", "type": "seal_photo", "label": "Seal photo", "fileName": "ATL-88410-seal-photo.jpg", "uploadedAt": "2026-06-09 14:31 ET", "status": "present", "requiredBeforeRelease": true },
+        { "ascendDocumentId": "ASC-DOC-8114", "type": "pod", "label": "POD", "fileName": "", "uploadedAt": "", "status": "not_yet_required", "requiredBeforeRelease": false },
+        { "ascendDocumentId": "ASC-DOC-8115", "type": "claim_evidence", "label": "Claim evidence", "fileName": "", "uploadedAt": "", "status": "not_yet_required", "requiredBeforeRelease": false }
+      ]
+    },
+    {
+      "ascendLoadId": "ASC-LD-10482",
+      "bofReleaseFile": "BOF-RR-10482",
+      "loadNumber": "CLV-10482",
+      "customerName": "Northstar Grocery Distribution",
+      "carrierName": "Delta Advanced Trucking, Inc.",
+      "assignedDriverName": "Caleb Price",
+      "assignedDriverEmail": "caleb.price@deltaadvanced.example",
+      "assignedDriverPhone": "BOF driver channel ext. 9034",
+      "pickupLocation": "Cleveland, OH",
+      "pickupDateTime": "2026-06-12 09:00 ET",
+      "deliveryLocation": "Madison, WI",
+      "deliveryDateTime": "2026-06-13 15:30 CT",
+      "equipmentType": "53 ft Dry Van",
+      "commodity": "Retail replenishment",
+      "loadStatus": "assigned",
+      "notes": ["TMS shows the driver assigned.", "BOF medical-card review blocks release."],
+      "documents": [
+        { "ascendDocumentId": "ASC-DOC-8240", "type": "rate_confirmation", "label": "Rate confirmation", "fileName": "CLV-10482-rate-confirmation.pdf", "uploadedAt": "2026-06-11 10:05 ET", "status": "present", "requiredBeforeRelease": true },
+        { "ascendDocumentId": "ASC-DOC-8241", "type": "bol", "label": "BOL", "fileName": "CLV-10482-bol.pdf", "uploadedAt": "2026-06-11 10:12 ET", "status": "present", "requiredBeforeRelease": true },
+        { "ascendDocumentId": "ASC-DOC-8242", "type": "pickup_instructions", "label": "Pickup instructions", "fileName": "CLV-10482-pickup.pdf", "uploadedAt": "2026-06-11 10:15 ET", "status": "present", "requiredBeforeRelease": true },
+        { "ascendDocumentId": "ASC-DOC-8243", "type": "seal_photo", "label": "Seal photo", "fileName": "CLV-10482-seal-photo.jpg", "uploadedAt": "2026-06-11 10:18 ET", "status": "present", "requiredBeforeRelease": true },
+        { "ascendDocumentId": "ASC-DOC-8244", "type": "delivery_proof", "label": "Delivery proof", "fileName": "", "uploadedAt": "", "status": "not_yet_required", "requiredBeforeRelease": false }
+      ]
+    },
+    {
+      "ascendLoadId": "ASC-LD-10483",
+      "bofReleaseFile": "BOF-RR-10483",
+      "loadNumber": "DAY-4483",
+      "customerName": "Market Square Foods",
+      "carrierName": "Riverbend Regional Freight",
+      "assignedDriverName": "Jamila Reed",
+      "assignedDriverEmail": "jamila.reed@deltaadvanced.example",
+      "assignedDriverPhone": "BOF driver channel ext. 7216",
+      "pickupLocation": "Dayton, OH",
+      "pickupDateTime": "2026-06-14 07:45 ET",
+      "deliveryLocation": "Louisville, KY",
+      "deliveryDateTime": "2026-06-14 18:15 ET",
+      "equipmentType": "Reefer",
+      "commodity": "Temperature-controlled packaged foods",
+      "loadStatus": "tender_accepted",
+      "notes": ["TMS has the pre-trip documents needed to release.", "POD and lumper receipt are not yet required but must remain visible."],
+      "documents": [
+        { "ascendDocumentId": "ASC-DOC-8320", "type": "rate_confirmation", "label": "Rate confirmation", "fileName": "DAY-4483-rate-confirmation.pdf", "uploadedAt": "2026-06-13 12:04 ET", "status": "present", "requiredBeforeRelease": true },
+        { "ascendDocumentId": "ASC-DOC-8321", "type": "bol", "label": "BOL", "fileName": "DAY-4483-bol.pdf", "uploadedAt": "2026-06-13 12:08 ET", "status": "present", "requiredBeforeRelease": true },
+        { "ascendDocumentId": "ASC-DOC-8322", "type": "pickup_instructions", "label": "Pickup instructions", "fileName": "DAY-4483-pickup.pdf", "uploadedAt": "2026-06-13 12:12 ET", "status": "present", "requiredBeforeRelease": true },
+        { "ascendDocumentId": "ASC-DOC-8325", "type": "seal_photo", "label": "Seal photo", "fileName": "DAY-4483-seal-photo.jpg", "uploadedAt": "2026-06-13 12:18 ET", "status": "present", "requiredBeforeRelease": true },
+        { "ascendDocumentId": "ASC-DOC-8323", "type": "pod", "label": "POD", "fileName": "", "uploadedAt": "", "status": "not_yet_required", "requiredBeforeRelease": false, "requiredFollowUp": true },
+        { "ascendDocumentId": "ASC-DOC-8324", "type": "lumper_receipt", "label": "Lumper receipt", "fileName": "", "uploadedAt": "", "status": "not_yet_required", "requiredBeforeRelease": false, "requiredFollowUp": true },
+        { "ascendDocumentId": "ASC-DOC-8326", "type": "delivery_proof", "label": "Delivery proof", "fileName": "", "uploadedAt": "", "status": "not_yet_required", "requiredBeforeRelease": false, "requiredFollowUp": true },
+        { "ascendDocumentId": "ASC-DOC-8327", "type": "claim_evidence", "label": "Claim evidence", "fileName": "", "uploadedAt": "", "status": "not_yet_required", "requiredBeforeRelease": false }
+      ]
+    },
+    {
+      "ascendLoadId": "ASC-LD-10484",
+      "bofReleaseFile": "BOF-RR-10484",
+      "loadNumber": "TOL-2184",
+      "customerName": "Great Lakes Home Supply",
+      "carrierName": "Delta Advanced Trucking, Inc.",
+      "assignedDriverName": "Tomas Vega",
+      "assignedDriverEmail": "t.vega.transport@example",
+      "assignedDriverPhone": "BOF review channel ext. 6722",
+      "pickupLocation": "Toledo, OH",
+      "pickupDateTime": "2026-06-15 10:00 ET",
+      "deliveryLocation": "Grand Rapids, MI",
+      "deliveryDateTime": "2026-06-15 19:00 ET",
+      "equipmentType": "53 ft Dry Van",
+      "commodity": "Home improvement freight",
+      "loadStatus": "tendered",
+      "notes": ["TMS lists a driver BOF does not recognize.", "BOF requires manual review before release."],
+      "documents": [
+        { "ascendDocumentId": "ASC-DOC-8400", "type": "rate_confirmation", "label": "Rate confirmation", "fileName": "TOL-2184-rate-confirmation.pdf", "uploadedAt": "2026-06-14 08:50 ET", "status": "present", "requiredBeforeRelease": true },
+        { "ascendDocumentId": "ASC-DOC-8401", "type": "bol", "label": "BOL", "fileName": "TOL-2184-bol.pdf", "uploadedAt": "2026-06-14 09:02 ET", "status": "present", "requiredBeforeRelease": true },
+        { "ascendDocumentId": "ASC-DOC-8402", "type": "pickup_instructions", "label": "Pickup instructions", "fileName": "TOL-2184-pickup.pdf", "uploadedAt": "2026-06-14 09:10 ET", "status": "present", "requiredBeforeRelease": true },
+        { "ascendDocumentId": "ASC-DOC-8403", "type": "seal_photo", "label": "Seal photo", "fileName": "", "uploadedAt": "", "status": "needs_review", "requiredBeforeRelease": false, "requiredFollowUp": true },
+        { "ascendDocumentId": "ASC-DOC-8404", "type": "claim_evidence", "label": "Claim evidence", "fileName": "", "uploadedAt": "", "status": "not_yet_required", "requiredBeforeRelease": false }
+      ]
+    }
+  ]
+}
+

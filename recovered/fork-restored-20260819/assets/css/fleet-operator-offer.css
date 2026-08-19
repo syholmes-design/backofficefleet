@@ -1,0 +1,46 @@
+.fleet-offer .partner-hero {
+  background: linear-gradient(135deg, rgba(12,78,68,0.98), rgba(30,112,110,0.94) 48%, rgba(30,87,132,0.94));
+}
+
+.fleet-offer .partner-hero h1 {
+  max-width: 1020px;
+}
+
+.fleet-offer .partner-hero-card {
+  border-color: rgba(255,255,255,0.62);
+}
+
+.fleet-demo-links {
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+}
+
+.fleet-offer .partner-cta {
+  align-items: start;
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.fleet-offer .partner-cta > div:first-child {
+  max-width: 860px;
+}
+
+.fleet-offer .partner-actions {
+  justify-content: flex-start;
+  max-width: 980px;
+}
+
+.fleet-offer .partner-actions .button {
+  text-align: center;
+  white-space: normal;
+}
+
+@media (max-width: 1180px) {
+  .fleet-demo-links {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 720px) {
+  .fleet-demo-links {
+    grid-template-columns: 1fr;
+  }
+}

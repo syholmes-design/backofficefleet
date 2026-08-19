@@ -1,0 +1,7 @@
+.product-demo-body .action-approve {
+  background: linear-gradient(#087443, #055c34);
+}
+
+.product-demo-body .action-reject {
+  background: linear-gradient(#b42318, #8f1d14);
+}

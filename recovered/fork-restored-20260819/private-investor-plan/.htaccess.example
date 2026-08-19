@@ -1,0 +1,13 @@
+# Apache Basic Auth template for the BOF private investor plan.
+# Copy this file to `.htaccess` only during hosting configuration.
+# Do not commit real usernames, passwords, password hashes, or generated password files.
+#
+# Replace ACCOUNT_USERNAME with the actual hosting account path shown by cPanel.
+# The AuthUserFile must point to a password file outside the public web root.
+# Recommended setup: use cPanel Directory Privacy or the `htpasswd` utility to
+# generate credentials, then verify the final server path in the hosting panel.
+
+AuthType Basic
+AuthName "Private BOF Investor Plan"
+AuthUserFile /home/ACCOUNT_USERNAME/.htpasswds/private-investor-plan/passwd
+Require valid-user

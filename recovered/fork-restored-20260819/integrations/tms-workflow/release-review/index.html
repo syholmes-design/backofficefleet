@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1" name="viewport"/>
+<title>TMS Release Readiness Workflow | BackOfficeFleet</title>
+<meta content="Review imported TMS loads through BOF driver matching, readiness checks, release decisions, and a simulated partner handoff." name="description"/>
+<link href="../../../assets/css/styles.css?v=20260803.2" rel="stylesheet"/>
+<script src="../../../assets/js/fork-path-v2.js?v=2.0"></script>
+<link href="../../../assets/css/cinematic-site.css?v=20260803.4" rel="stylesheet"/>
+<link rel="canonical" href="https://www.backofficefleet.com/fork/integrations/tms-workflow/release-review/"/>
+<meta property="og:title" content="TMS Release Readiness Workflow | BackOfficeFleet"/>
+<meta property="og:description" content="Review imported TMS loads through BOF driver matching, readiness checks, release decisions, and a simulated partner handoff."/>
+<meta property="og:image" content="https://www.backofficefleet.com/fork/assets/images/logo/boflogo-dark-background-transparent.png"/>
+<meta property="og:type" content="website"/>
+</head>
+<body class="cinematic-site cinematic-integration" data-cinematic-route="/integrations/tms-workflow/release-review/">
+<header class="site-header cinematic-direct-header"><a aria-label="BackOfficeFleet home" class="brand" href="../../../"><img alt="BackOfficeFleet" src="../../../assets/images/logo/boflogo-dark-background-transparent.png" width="216" height="44"/></a><button aria-controls="cinematic-primary-navigation" aria-expanded="false" class="cinematic-nav-toggle" type="button"><span aria-hidden="true" class="cinematic-nav-toggle__icon"></span><span>Menu</span></button><nav aria-label="Main navigation" class="cinematic-direct-nav" id="cinematic-primary-navigation"><a href="../../../solutions/">Solutions</a><a href="../../../sectors/">Who We Serve</a><a href="../../../business-operations/">Business Operations</a><a href="../../../operational-intelligence/">Intelligence &amp; Trust</a><a href="../../../founding-fleet/">Founding Fleet</a></nav><a class="header-cta" href="../../../book-demo/">Book a working session</a></header>
+<main data-tms-workflow="">
+<section aria-labelledby="cinematic-title" class="cinematic-hero cinematic-hero--integration">
+<picture class="cinematic-hero__media">
+<source media="(max-width: 680px)" srcset="../../../assets/images/cinematic/integrations--tms-workflow--release-review-mobile.webp"/>
+<img alt="Release decision surface in a working fleet environment" decoding="async" fetchpriority="high" height="788" src="../../../assets/images/cinematic/integrations--tms-workflow--release-review-desktop.webp" width="1400"/>
+</picture>
+<div aria-hidden="true" class="cinematic-hero__veil"></div>
+<div class="cinematic-hero__content">
+<p class="cinematic-hero__eyebrow">Release decision surface</p>
+<h1 id="cinematic-title">Make every hold and clearance traceable.</h1>
+<p class="cinematic-hero__summary">Connect the simulated source load, required evidence, reviewer notes, ownership, and release state in one bounded workflow.</p>
+<div class="cinematic-hero__actions"><a class="cinematic-hero__cta" href="../../../interactive-demo/start/">Follow the simulated workflow &rarr;</a></div>
+<div aria-label="Operational proof" class="cinematic-hero__proof" role="list"><span role="listitem">Synthetic source records</span><span role="listitem">Static review workflow</span><span role="listitem">No live sync implied</span></div>
+</div>
+</section>
+<section class="section">
+<div class="section-head reveal">
+<p class="eyebrow">Sample partner imports</p>
+<h2>Switch between ready, hold, conditional release, and unmatched-driver scenarios.</h2>
+</div>
+<div aria-label="TMS import records" class="tms-load-selector reveal" data-tms-load-selector=""></div>
+<div data-tms-target="workflowError"></div>
+</section>
+<section class="section">
+<div aria-label="Release readiness steps" class="workflow-steps reveal">
+<span>TMS load imported</span>
+<span>Driver matched to BOF record</span>
+<span>Documents reviewed</span>
+<span>Compliance and carrier packet checked</span>
+<span>BOF release decision produced</span>
+</div>
+<div class="tms-review-grid">
+<article class="review-card reveal">
+<span class="route-chip">Imported</span>
+<h3>TMS Data</h3>
+<div class="paper-grid" data-tms-target="importedData"></div>
+</article>
+<article class="review-card reveal">
+<span class="route-chip warning">BOF Match</span>
+<h3>Driver Match</h3>
+<div class="paper-grid" data-tms-target="driverMatch"></div>
+</article>
+</div>
+</section>
+<section class="section">
+<div class="section-head reveal">
+<p class="eyebrow">BOF readiness review</p>
+<h2>BOF keeps the compliance and release decision records.</h2>
+</div>
+<div class="readiness-grid">
+<article class="review-card reveal">
+<h3>Driver Readiness</h3>
+<p data-tms-target="driverReadinessTitle">Loading driver readiness.</p>
+<ul class="readiness-list" data-tms-target="driverReadiness"></ul>
+</article>
+<article class="review-card reveal">
+<h3>Carrier Packet</h3>
+<p data-tms-target="carrierPacketTitle">Loading carrier packet.</p>
+<ul class="readiness-list" data-tms-target="carrierPacket"></ul>
+</article>
+<article class="review-card reveal">
+<h3>Load Documents</h3>
+<p data-tms-target="loadDocumentTitle">Loading load documents.</p>
+<ul class="readiness-list" data-tms-target="loadDocuments"></ul>
+</article>
+</div>
+</section>
+<section class="section split">
+<article class="decision-panel reveal">
+<span class="route-chip">BOF release decision</span>
+<h2 data-tms-target="decisionLabel">Loading decision</h2>
+<p data-tms-target="decisionReason">BOF is preparing the release decision.</p>
+<div class="paper-grid">
+<div class="field"><span>Owner of fix</span><strong data-tms-target="decisionOwner">-</strong></div>
+<div class="field"><span>Reviewed at</span><strong data-tms-target="decisionTimestamp">-</strong></div>
+<div class="field"><span>Next action</span><strong data-tms-target="decisionNext">-</strong></div>
+<div class="field"><span>Audit note</span><strong data-tms-target="decisionAudit">-</strong></div>
+</div>
+<h3>Blocking or watch items</h3>
+<ul class="check-list compact-list" data-tms-target="decisionBlockingItems"><li>Loading items.</li></ul>
+</article>
+<article class="handoff-panel reveal">
+<span class="route-chip warning">Simulated handoff</span>
+<h2>Prepared for the demo handoff.</h2>
+<p>This panel shows the simulated Phase 1 handoff: BOF explains the decision, blocker, owner, next action, and audit note while TMS remains the load workflow.</p>
+<div class="field"><span>Handoff status</span><strong data-tms-target="handoffStatus">-</strong></div>
+<pre data-tms-target="handoffPayload">{}</pre>
+</article>
+</section>
+</main>
+<section class="cta-band"><div class="cta-inner"><div><p class="eyebrow">Partner workflow</p><h2>TMS manages the load. BOF manages the release decision.</h2><p>The workflow keeps both systems in their lane while showing the audit-ready decision BOF adds before release.</p></div><a class="button light" href="../../../integrations/partner-tms/">Back to overview &rarr;</a></div></section>
+<footer class="site-footer"><div class="footer-inner"><strong>BackOfficeFleet</strong><span>TMS release readiness workflow.</span><a href="../../../trust-governance/">Trust &amp; Governance</a></div></footer>
+<script src="../../../assets/js/site.js?v=20260803.2"></script>
+<script src="../../../assets/js/partner-tms.js?v=1.11"></script>
+<script src="../../../assets/js/cinematic-nav.js?v=3.4"></script>
+</body>
+</html>
+
+
+

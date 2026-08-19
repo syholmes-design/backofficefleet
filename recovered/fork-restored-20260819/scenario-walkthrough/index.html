@@ -1,0 +1,376 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>BOF Fleet Assessment | BackOfficeFleet</title>
+  <meta name="description" content="Take the BOF Fleet Assessment for driver records, document workflows, load intake, POD process, settlements, factoring readiness, operating policies, HR workflows, finance workflows, and automation.">
+  <link rel="stylesheet" href="../assets/css/styles.css?v=20260803.2">
+  <style>
+    .assessment-hero { background: linear-gradient(135deg, rgba(5,92,72,0.96), rgba(31,103,143,0.92)); color: #fff; overflow: hidden; position: relative; }
+    .assessment-hero::after { background-image: linear-gradient(rgba(255,255,255,0.08) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.08) 1px, transparent 1px); background-size: 42px 42px; content: ""; inset: 0; pointer-events: none; position: absolute; }
+    .assessment-hero-inner { display: grid; gap: 28px; grid-template-columns: minmax(0, 1fr) minmax(310px, 0.58fr); margin: 0 auto; max-width: var(--max); padding: 72px 24px 56px; position: relative; z-index: 1; }
+    .assessment-hero h1 { color: #fff; font-size: clamp(2.7rem, 6vw, 5.15rem); line-height: 1; margin: 0; }
+    .assessment-hero p { color: rgba(255,255,255,0.9); font-size: 1.05rem; line-height: 1.65; margin: 0; max-width: 780px; }
+    .assessment-hero .eyebrow { color: rgba(255,255,255,0.78); }
+    .assessment-brief { align-self: center; background: rgba(255,255,255,0.96); border: 1px solid rgba(255,255,255,0.5); border-radius: 8px; box-shadow: 0 24px 70px rgba(0,0,0,0.22); color: var(--ink); padding: 24px; }
+    .assessment-brief p { color: var(--muted); font-size: 0.96rem; }
+    .assessment-progress { background: #fff; border: 1px solid var(--line); border-radius: 8px; box-shadow: var(--shadow-soft); display: grid; gap: 10px; margin: 0 0 18px; padding: 16px; position: sticky; top: 84px; z-index: 4; }
+    .assessment-progress-top { align-items: center; display: flex; flex-wrap: wrap; gap: 10px; justify-content: space-between; }
+    .assessment-progress strong { color: var(--green-dark); font-size: 1.15rem; }
+    .assessment-progress span { color: var(--muted); font-size: 0.88rem; font-weight: 850; }
+    .assessment-progress-bar { background: #e4eee9; border-radius: 999px; height: 10px; overflow: hidden; }
+    .assessment-progress-bar span { background: linear-gradient(90deg, var(--green), var(--blue)); border-radius: inherit; display: block; height: 100%; transition: width 0.2s ease; width: 0%; }
+    .assessment-layout { align-items: start; display: grid; gap: 22px; grid-template-columns: minmax(0, 1fr) minmax(320px, 0.42fr); }
+    .assessment-form-card, .assessment-summary-card { background: #fff; border: 1px solid var(--line); border-radius: 8px; box-shadow: var(--shadow-soft); padding: 22px; }
+    .assessment-form-grid { display: grid; gap: 16px; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .assessment-section { border-top: 1px solid rgba(20,33,31,0.12); display: grid; gap: 16px; grid-column: 1 / -1; padding-top: 20px; }
+    .assessment-section:first-of-type { border-top: 0; padding-top: 0; }
+    .assessment-section h3 { font-size: 1.15rem; margin: 0; }
+    .assessment-section > p { color: var(--muted); margin: 0; }
+    .assessment-field { display: grid; gap: 7px; min-width: 0; }
+    .assessment-wide { grid-column: 1 / -1; }
+    .assessment-field label, .assessment-label { color: var(--muted); font-size: 0.74rem; font-weight: 950; letter-spacing: 0.04em; text-transform: uppercase; }
+    .assessment-field input, .assessment-field select, .assessment-field textarea { background: #f8fbf8; border: 1px solid rgba(20,33,31,0.16); border-radius: 8px; box-sizing: border-box; color: var(--ink); min-height: 46px; padding: 11px 12px; width: 100%; }
+    .assessment-field textarea { min-height: 118px; resize: vertical; }
+    .assessment-field input:focus, .assessment-field select:focus, .assessment-field textarea:focus { border-color: var(--green); box-shadow: 0 0 0 3px rgba(18,151,110,0.14); outline: none; }
+    .assessment-choice-grid { display: grid; gap: 8px; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .assessment-choice { align-items: center; background: #f8fbf8; border: 1px solid rgba(20,33,31,0.12); border-radius: 8px; display: flex; gap: 9px; min-height: 42px; padding: 9px 10px; }
+    .assessment-choice input { accent-color: var(--green); flex: 0 0 auto; min-height: auto; padding: 0; width: auto; }
+    .assessment-choice span { color: var(--ink); font-size: 0.88rem; font-weight: 800; line-height: 1.25; overflow-wrap: anywhere; }
+    .assessment-honeypot { border: 0; clip: rect(0 0 0 0); clip-path: inset(50%); height: 1px; margin: -1px; overflow: hidden; padding: 0; position: absolute; white-space: nowrap; width: 1px; }
+    .assessment-summary-card { position: sticky; top: 190px; }
+    .assessment-summary-grid { display: grid; gap: 10px; margin-top: 14px; }
+    .assessment-summary-row { background: #f8fbf8; border: 1px solid rgba(20,33,31,0.1); border-radius: 8px; padding: 12px; }
+    .assessment-summary-row span { color: var(--muted); display: block; font-size: 0.7rem; font-weight: 950; letter-spacing: 0.04em; text-transform: uppercase; }
+    .assessment-summary-row strong { display: block; font-size: 0.92rem; line-height: 1.38; margin-top: 5px; overflow-wrap: anywhere; }
+    .assessment-status { color: var(--muted); font-size: 0.9rem; font-weight: 800; line-height: 1.45; min-height: 24px; }
+    .assessment-status[data-status-type="success"] { color: var(--green-dark); }
+    .assessment-status[data-status-type="warning"] { color: #9a5a00; }
+    .assessment-status[data-status-type="error"] { color: #8e211b; }
+    .assessment-helper { background: #eef7f3; border: 1px solid rgba(18,151,110,0.18); border-radius: 8px; color: var(--green-dark); font-size: 0.92rem; font-weight: 800; line-height: 1.45; padding: 12px; }
+    .assessment-optional[hidden] { display: none; }
+    @media (max-width: 980px) { .assessment-hero-inner, .assessment-layout { grid-template-columns: 1fr; } .assessment-summary-card, .assessment-progress { position: static; } }
+    @media (max-width: 680px) { .assessment-hero-inner { padding: 48px 16px 40px; } .assessment-form-grid, .assessment-choice-grid { grid-template-columns: 1fr; } .assessment-form-card, .assessment-summary-card { padding: 16px; } .assessment-progress-top { align-items: flex-start; flex-direction: column; } }
+  </style>
+  <script src="../assets/js/fork-path.js?v=1.0"></script>
+</head>
+<body>
+  <header class="site-header">
+    <a class="brand" href="../" aria-label="BackOfficeFleet home"><img src="../assets/images/logo/boflogo-original.png" alt="BackOfficeFleet"></a>
+    <button class="nav-toggle" type="button" data-nav-toggle aria-expanded="false" aria-label="Toggle navigation">&#9776;</button>
+    <nav class="site-nav" data-nav aria-label="Main navigation">
+      <div class="nav-menu" data-nav-menu>
+        <button class="nav-menu-toggle" type="button" data-nav-menu-toggle aria-expanded="false" aria-haspopup="true">Platform</button>
+        <div class="nav-dropdown" aria-label="Platform">
+          <a href="../dashboard/">Command Center</a>
+          <a href="../operational-intelligence/">Operational Intelligence</a>
+          <a href="../capacity-intelligence/">Capacity Intelligence</a>
+          <a href="../business-operations/">Business Operations</a>
+          <a href="../customer-portal/">Customer Portal</a>
+          <a href="../scenario-walkthrough/">BOF Assessment</a>
+          <a href="../demo-paths/">Assessment Paths</a>
+        </div>
+      </div>
+      <div class="nav-menu" data-nav-menu>
+        <button class="nav-menu-toggle" type="button" data-nav-menu-toggle aria-expanded="false" aria-haspopup="true">Workflows</button>
+        <div class="nav-dropdown" aria-label="Workflows">
+          <a href="../customer-portal/load-intake/">Load Intake</a>
+          <a href="../customer-portal/quotes/">Quotes</a>
+          <a href="../customer-portal/shipments/">Shipments</a>
+          <a href="../customer-portal/assignment/">Assignment</a>
+          <a href="../documents/">Documents</a>
+          <a href="../interactive-demo/drivers/document-intake/">Document Intake</a>
+          <a href="../customer-portal/tracking/">Tracking</a>
+          <a href="../customer-portal/billing/">Billing</a>
+          <a href="../settlements/">Settlements</a>
+          <a href="../operations-record/">Claims &amp; Records</a>
+        </div>
+      </div>
+      <div class="nav-menu" data-nav-menu>
+        <button class="nav-menu-toggle" type="button" data-nav-menu-toggle aria-expanded="false" aria-haspopup="true">Drivers &amp; Compliance</button>
+        <div class="nav-dropdown" aria-label="Drivers and Compliance">
+          <a href="../drivers/">Drivers</a>
+          <a href="../interactive-demo/drivers/">Driver Vault Assessment</a>
+          <a href="../interactive-demo/drivers/document-intake/">Document Intake</a>
+          <a href="../carrier-readiness/">Carrier Readiness</a>
+          <a href="../documents/">Documents</a>
+          <a href="../safety/">Safety</a>
+          <a href="../safety-compliance/">Compliance Workflows</a>
+          <a href="../settlements/">Driver Settlements</a>
+        </div>
+      </div>
+      <div class="nav-menu" data-nav-menu>
+        <button class="nav-menu-toggle" type="button" data-nav-menu-toggle aria-expanded="false" aria-haspopup="true">Solutions</button>
+        <div class="nav-dropdown" aria-label="Solutions">
+          <a href="../fleet/">Fleet Operators</a>
+          <a href="../private-fleets/">Private Fleet Assessment</a>
+          <a href="../aggregator-command-center/">Aggregators</a>
+          <a href="../sectors/">Sectors</a>
+          <a href="../capacity-intelligence/">Backhaul &amp; Capacity Sharing</a>
+          <a href="../government/">Government Contractor Assessment</a>
+        </div>
+      </div>
+      <div class="nav-menu" data-nav-menu>
+        <button class="nav-menu-toggle" type="button" data-nav-menu-toggle aria-expanded="false" aria-haspopup="true">Company / Contact</button>
+        <div class="nav-dropdown" aria-label="Company and Contact">
+          <a href="../">Homepage</a>
+          <a href="../solutions/">Solutions Overview</a>
+          <a href="../trust-governance/">Trust &amp; Governance</a>
+          <a href="../founding-fleet/">Priority Fleet Program</a>
+          <a href="../demo-paths/">Demo Paths</a>
+          <a href="../scenario-walkthrough/">BOF Assessment</a>
+        </div>
+      </div>
+    </nav>
+    <a class="header-cta" href="../scenario-walkthrough/">Take Fleet Assessment</a>
+  </header>
+
+  <main data-assessment-intake>
+    <section class="assessment-hero">
+      <div class="assessment-hero-inner">
+        <div class="reveal">
+          <p class="eyebrow">BOF Fleet Assessment</p>
+          <h1>BOF Fleet Assessment</h1>
+          <p>A guided review of your fleet's driver records, document workflows, load intake, POD process, settlements, factoring readiness, operating policies, HR workflows, finance workflows, and automation.</p>
+          <p>Fleet owners do not need to bring BOF a specific problem. The assessment helps identify where the back office is creating delays, missing documents, settlement holds, cash-flow issues, or owner-level administrative pressure.</p>
+          <div class="actions"><a class="button light" href="#fleet-assessment-form">Take the BOF Fleet Assessment</a></div>
+        </div>
+        <aside class="assessment-brief reveal">
+          <p class="eyebrow">Guided back-office review</p>
+          <h2>BOF reviews the operating gaps before recommending a path.</h2>
+          <p>The form creates a structured summary for BOF. It does not create an account, quote final pricing, or replace professional payroll, legal, accounting, banking, factoring, insurance, or HR advice.</p>
+          <div class="assessment-helper">Optional HR and Finance sections can be included or skipped. Skipping them will not block submission.</div>
+        </aside>
+      </div>
+    </section>
+
+    <section class="section" id="fleet-assessment-form">
+      <div class="section-head reveal">
+        <p class="eyebrow">Assessment questionnaire</p>
+        <h2>Answer what you know. BOF will use the gaps as part of the review.</h2>
+        <p>The progress tracker updates as the questionnaire is completed and adjusts when optional HR or Finance review sections are skipped.</p>
+      </div>
+
+      <div class="assessment-progress" aria-live="polite">
+        <div class="assessment-progress-top">
+          <strong data-assessment-percent>Assessment Progress: 0%</strong>
+          <span data-assessment-section-label>Section 1 of 9: Fleet Profile</span>
+        </div>
+        <div class="assessment-progress-bar" aria-hidden="true"><span data-assessment-progress-bar></span></div>
+      </div>
+
+      <div class="assessment-layout">
+        <form class="assessment-form-card reveal" data-assessment-form action="../scenario-walkthrough/submit.php" method="post" novalidate>
+          <div class="assessment-form-grid">
+            <div class="assessment-honeypot" aria-hidden="true">
+              <label for="assessment-website">Website</label>
+              <input id="assessment-website" name="website" type="text" tabindex="-1" autocomplete="off">
+              <input name="startedAt" type="hidden" data-started-at value="">
+            </div>
+
+            <section class="assessment-section" data-assessment-section data-section-title="Fleet Profile">
+              <h3>1. Fleet Profile</h3>
+              <div class="assessment-field"><label for="assessment-company">Company name *</label><input id="assessment-company" name="company" type="text" autocomplete="organization"></div>
+              <div class="assessment-field"><label for="assessment-name">Contact name *</label><input id="assessment-name" name="name" type="text" autocomplete="name"></div>
+              <div class="assessment-field"><label for="assessment-email">Email *</label><input id="assessment-email" name="email" type="email" autocomplete="email"></div>
+              <div class="assessment-field"><label for="assessment-phone">Phone</label><input id="assessment-phone" name="phone" type="tel" autocomplete="tel"></div>
+              <div class="assessment-field"><label for="assessment-trucks">Number of trucks</label><input id="assessment-trucks" name="trucks" type="number" min="0" inputmode="numeric"></div>
+              <div class="assessment-field"><label for="assessment-drivers">Number of drivers</label><input id="assessment-drivers" name="drivers" type="number" min="0" inputmode="numeric"></div>
+              <div class="assessment-field"><label for="assessment-contractors">Owner-operators / contractors</label><input id="assessment-contractors" name="ownerOperators" type="number" min="0" inputmode="numeric"></div>
+              <div class="assessment-field"><label for="assessment-freight-type">Freight type</label><input id="assessment-freight-type" name="freightType" placeholder="Dry van, reefer, flatbed, intermodal..."></div>
+              <div class="assessment-field assessment-wide"><label for="assessment-regions">Operating states or regions</label><input id="assessment-regions" name="operatingRegions" placeholder="Example: Southeast, TX/OK/AR, GA-FL-AL"></div>
+              <div class="assessment-field assessment-wide"><label for="assessment-systems">Current systems used</label><textarea id="assessment-systems" name="currentSystems" placeholder="TMS, ELD, payroll, accounting, factoring, document storage, shared drives, spreadsheets, portals, or other systems."></textarea></div>
+            </section>
+
+            <section class="assessment-section" data-assessment-section data-section-title="Driver Records and Readiness">
+              <h3>2. Driver Records and Readiness</h3>
+              <div class="assessment-field"><label for="assessment-cdl">Are CDL records stored electronically?</label><select id="assessment-cdl" name="cdlElectronic"><option value="">Select</option><option>Yes</option><option>No</option><option>Partially</option><option>Not sure</option></select></div>
+              <div class="assessment-field"><label for="assessment-medical">Are medical cards tracked electronically?</label><select id="assessment-medical" name="medicalCardsTracked"><option value="">Select</option><option>Yes</option><option>No</option><option>Partially</option><option>Not sure</option></select></div>
+              <div class="assessment-field"><label for="assessment-dqf">Are DQF files centralized?</label><select id="assessment-dqf" name="dqfCentralized"><option value="">Select</option><option>Yes</option><option>No</option><option>Partially</option><option>Not sure</option></select></div>
+              <div class="assessment-field"><label for="assessment-mvr">Are MVR renewals tracked?</label><select id="assessment-mvr" name="mvrRenewalsTracked"><option value="">Select</option><option>Yes</option><option>No</option><option>Partially</option><option>Not sure</option></select></div>
+              <div class="assessment-field"><label for="assessment-worker-records">Are W-9/I-9 or contractor records centralized?</label><select id="assessment-worker-records" name="workerRecordsCentralized"><option value="">Select</option><option>Yes</option><option>No</option><option>Partially</option><option>Not sure</option></select></div>
+              <div class="assessment-field"><label for="assessment-training">Are training records tracked?</label><select id="assessment-training" name="trainingRecordsTracked"><option value="">Select</option><option>Yes</option><option>No</option><option>Partially</option><option>Not sure</option></select></div>
+              <div class="assessment-field"><label for="assessment-expirations">Are document expirations automatically flagged?</label><select id="assessment-expirations" name="documentExpirationsFlagged"><option value="">Select</option><option>Yes</option><option>No</option><option>Some reminders only</option><option>Not sure</option></select></div>
+              <div class="assessment-field assessment-wide"><label for="assessment-driver-delays">What currently causes the most driver readiness delays?</label><textarea id="assessment-driver-delays" name="driverReadinessDelays"></textarea></div>
+            </section>
+
+            <section class="assessment-section" data-assessment-section data-section-title="Document Systems">
+              <h3>3. Document Systems</h3>
+              <div class="assessment-field assessment-wide">
+                <span class="assessment-label">Where are documents stored?</span>
+                <div class="assessment-choice-grid">
+                  <label class="assessment-choice"><input type="checkbox" name="documentStorage" value="Paper files"><span>Paper files</span></label>
+                  <label class="assessment-choice"><input type="checkbox" name="documentStorage" value="Email"><span>Email</span></label>
+                  <label class="assessment-choice"><input type="checkbox" name="documentStorage" value="Shared drive"><span>Shared drive</span></label>
+                  <label class="assessment-choice"><input type="checkbox" name="documentStorage" value="TMS"><span>TMS</span></label>
+                  <label class="assessment-choice"><input type="checkbox" name="documentStorage" value="Google Drive/OneDrive"><span>Google Drive/OneDrive</span></label>
+                  <label class="assessment-choice"><input type="checkbox" name="documentStorage" value="Spreadsheet"><span>Spreadsheet</span></label>
+                  <label class="assessment-choice"><input type="checkbox" name="documentStorage" value="Other"><span>Other</span></label>
+                </div>
+              </div>
+              <div class="assessment-field"><label for="assessment-doc-links">Are documents tied to drivers, loads, and customers?</label><select id="assessment-doc-links" name="documentsTiedToRecords"><option value="">Select</option><option>Yes</option><option>No</option><option>Partially</option><option>Not sure</option></select></div>
+              <div class="assessment-field"><label for="assessment-doc-versions">Are document versions controlled?</label><select id="assessment-doc-versions" name="documentVersionsControlled"><option value="">Select</option><option>Yes</option><option>No</option><option>Partially</option><option>Not sure</option></select></div>
+              <div class="assessment-field"><label for="assessment-doc-search">Are required records searchable?</label><select id="assessment-doc-search" name="requiredRecordsSearchable"><option value="">Select</option><option>Yes</option><option>No</option><option>Partially</option><option>Not sure</option></select></div>
+              <div class="assessment-field"><label for="assessment-doc-flags">Are expired/missing documents flagged automatically?</label><select id="assessment-doc-flags" name="expiredMissingDocsFlagged"><option value="">Select</option><option>Yes</option><option>No</option><option>Some reminders only</option><option>Not sure</option></select></div>
+            </section>
+
+            <section class="assessment-section" data-assessment-section data-section-title="Load Intake and Dispatch Support">
+              <h3>4. Load Intake and Dispatch Support</h3>
+              <div class="assessment-field"><label for="assessment-loads-received">How are loads received?</label><input id="assessment-loads-received" name="loadsReceived" placeholder="Email, portal, phone, TMS tender, spreadsheet..."></div>
+              <div class="assessment-field"><label for="assessment-load-portal">Is load intake structured through a form or portal?</label><select id="assessment-load-portal" name="loadIntakeStructured"><option value="">Select</option><option>Yes</option><option>No</option><option>Partially</option><option>Not sure</option></select></div>
+              <div class="assessment-field"><label for="assessment-rate-confirmation">Are rate confirmations stored with the load?</label><select id="assessment-rate-confirmation" name="rateConfirmationsStored"><option value="">Select</option><option>Yes</option><option>No</option><option>Partially</option><option>Not sure</option></select></div>
+              <div class="assessment-field"><label for="assessment-load-instructions">Are load instructions centralized?</label><select id="assessment-load-instructions" name="loadInstructionsCentralized"><option value="">Select</option><option>Yes</option><option>No</option><option>Partially</option><option>Not sure</option></select></div>
+              <div class="assessment-field"><label for="assessment-photos">Are required pickup/delivery photos tracked?</label><select id="assessment-photos" name="pickupDeliveryPhotosTracked"><option value="">Select</option><option>Yes</option><option>No</option><option>Partially</option><option>Not sure</option></select></div>
+              <div class="assessment-field"><label for="assessment-dispatch-exceptions">Are dispatch exceptions documented?</label><select id="assessment-dispatch-exceptions" name="dispatchExceptionsDocumented"><option value="">Select</option><option>Yes</option><option>No</option><option>Partially</option><option>Not sure</option></select></div>
+              <div class="assessment-field"><label for="assessment-customer-updates">Are customer updates manual or automated?</label><select id="assessment-customer-updates" name="customerUpdates"><option value="">Select</option><option>Mostly manual</option><option>Mostly automated</option><option>Mixed</option><option>Not sure</option></select></div>
+            </section>
+
+            <section class="assessment-section" data-assessment-section data-section-title="POD, Proof, and Claims">
+              <h3>5. POD, Proof, and Claims</h3>
+              <div class="assessment-field"><label for="assessment-pods-captured">How are PODs captured?</label><input id="assessment-pods-captured" name="podsCaptured" placeholder="Driver app, email, scan, text photo, TMS upload..."></div>
+              <div class="assessment-field"><label for="assessment-pods-tied">Are PODs tied to the load record?</label><select id="assessment-pods-tied" name="podsTiedToLoad"><option value="">Select</option><option>Yes</option><option>No</option><option>Partially</option><option>Not sure</option></select></div>
+              <div class="assessment-field"><label for="assessment-cargo-photos">Are cargo photos captured?</label><select id="assessment-cargo-photos" name="cargoPhotosCaptured"><option value="">Select</option><option>Yes</option><option>No</option><option>Sometimes</option><option>Not sure</option></select></div>
+              <div class="assessment-field"><label for="assessment-seal-photos">Are seal photos captured?</label><select id="assessment-seal-photos" name="sealPhotosCaptured"><option value="">Select</option><option>Yes</option><option>No</option><option>Sometimes</option><option>Not sure</option></select></div>
+              <div class="assessment-field"><label for="assessment-lumper">Are lumper receipts captured?</label><select id="assessment-lumper" name="lumperReceiptsCaptured"><option value="">Select</option><option>Yes</option><option>No</option><option>Sometimes</option><option>Not applicable</option></select></div>
+              <div class="assessment-field"><label for="assessment-claims">Are claim evidence packets created?</label><select id="assessment-claims" name="claimEvidencePacketsCreated"><option value="">Select</option><option>Yes</option><option>No</option><option>Only when requested</option><option>Not sure</option></select></div>
+              <div class="assessment-field"><label for="assessment-missing-pods">Are missing PODs blocking billing or settlement?</label><select id="assessment-missing-pods" name="missingPodsBlockBillingSettlement"><option value="">Select</option><option>Yes</option><option>No</option><option>Sometimes</option><option>Not sure</option></select></div>
+            </section>
+
+            <section class="assessment-section" data-assessment-section data-section-title="Settlements and Pay Types">
+              <h3>6. Settlements and Pay Types</h3>
+              <div class="assessment-field assessment-wide">
+                <span class="assessment-label">Which pay types do you use?</span>
+                <div class="assessment-choice-grid">
+                  <label class="assessment-choice"><input type="checkbox" name="payTypes" value="Cents per mile"><span>Cents per mile</span></label>
+                  <label class="assessment-choice"><input type="checkbox" name="payTypes" value="Percentage of linehaul"><span>Percentage of linehaul</span></label>
+                  <label class="assessment-choice"><input type="checkbox" name="payTypes" value="Flat rate"><span>Flat rate</span></label>
+                  <label class="assessment-choice"><input type="checkbox" name="payTypes" value="Stop pay"><span>Stop pay</span></label>
+                  <label class="assessment-choice"><input type="checkbox" name="payTypes" value="Backhaul pay"><span>Backhaul pay</span></label>
+                  <label class="assessment-choice"><input type="checkbox" name="payTypes" value="Safety bonus"><span>Safety bonus</span></label>
+                  <label class="assessment-choice"><input type="checkbox" name="payTypes" value="Detention / layover"><span>Detention / layover</span></label>
+                  <label class="assessment-choice"><input type="checkbox" name="payTypes" value="Reimbursements"><span>Reimbursements</span></label>
+                  <label class="assessment-choice"><input type="checkbox" name="payTypes" value="Deductions"><span>Deductions</span></label>
+                </div>
+              </div>
+              <div class="assessment-field"><label for="assessment-settlements-loads">Are settlements tied to load records?</label><select id="assessment-settlements-loads" name="settlementsTiedToLoads"><option value="">Select</option><option>Yes</option><option>No</option><option>Partially</option><option>Not sure</option></select></div>
+              <div class="assessment-field"><label for="assessment-settlement-holds">Are settlement holds tracked?</label><select id="assessment-settlement-holds" name="settlementHoldsTracked"><option value="">Select</option><option>Yes</option><option>No</option><option>Partially</option><option>Not sure</option></select></div>
+              <div class="assessment-field"><label for="assessment-docs-delay-pay">Are missing documents delaying driver pay?</label><select id="assessment-docs-delay-pay" name="missingDocsDelayPay"><option value="">Select</option><option>Yes</option><option>No</option><option>Sometimes</option><option>Not sure</option></select></div>
+              <div class="assessment-field"><label for="assessment-pay-workflows">Are employee payroll coordination and contractor settlement workflows handled differently?</label><select id="assessment-pay-workflows" name="employeeContractorWorkflowsDifferent"><option value="">Select</option><option>Yes</option><option>No</option><option>Partially</option><option>Not sure</option></select></div>
+            </section>
+
+            <section class="assessment-section" data-assessment-section data-section-title="Factoring and Cash Flow">
+              <h3>7. Factoring and Cash Flow</h3>
+              <div class="assessment-field"><label for="assessment-factoring">Do you use factoring?</label><select id="assessment-factoring" name="usesFactoring"><option value="">Select</option><option>Yes</option><option>No</option><option>Sometimes</option><option>Considering it</option></select></div>
+              <div class="assessment-field"><label for="assessment-factoring-owner">Who prepares factoring packets?</label><input id="assessment-factoring-owner" name="factoringPacketOwner"></div>
+              <div class="assessment-field"><label for="assessment-factoring-check">Are PODs, invoices, rate confirmations, and receipts checked before submission?</label><select id="assessment-factoring-check" name="factoringPacketsChecked"><option value="">Select</option><option>Yes</option><option>No</option><option>Partially</option><option>Not sure</option></select></div>
+              <div class="assessment-field"><label for="assessment-incomplete-packets">Are incomplete packets tracked?</label><select id="assessment-incomplete-packets" name="incompletePacketsTracked"><option value="">Select</option><option>Yes</option><option>No</option><option>Partially</option><option>Not sure</option></select></div>
+              <div class="assessment-field"><label for="assessment-receivables">Are receivables tracked?</label><select id="assessment-receivables" name="receivablesTracked"><option value="">Select</option><option>Yes</option><option>No</option><option>Partially</option><option>Not sure</option></select></div>
+              <div class="assessment-field"><label for="assessment-cash-flow">Do you have cash-flow visibility?</label><select id="assessment-cash-flow" name="cashFlowVisibility"><option value="">Select</option><option>Yes</option><option>No</option><option>Limited</option><option>Not sure</option></select></div>
+              <div class="assessment-field assessment-wide"><label for="assessment-funding-delays">What causes the most funding delays?</label><textarea id="assessment-funding-delays" name="fundingDelays"></textarea></div>
+            </section>
+
+            <section class="assessment-section" data-assessment-section data-section-title="Policies, Procedures, and Automation">
+              <h3>8. Policies, Procedures, and Automation</h3>
+              <div class="assessment-field"><label for="assessment-payroll-policies">Do you have written payroll policies?</label><select id="assessment-payroll-policies" name="writtenPayrollPolicies"><option value="">Select</option><option>Yes</option><option>No</option><option>Outdated</option><option>Not sure</option></select></div>
+              <div class="assessment-field"><label for="assessment-accounting-procedures">Do you have written accounting/bookkeeping procedures?</label><select id="assessment-accounting-procedures" name="writtenAccountingProcedures"><option value="">Select</option><option>Yes</option><option>No</option><option>Outdated</option><option>Not sure</option></select></div>
+              <div class="assessment-field"><label for="assessment-operating-procedures">Do you have written operating procedures?</label><select id="assessment-operating-procedures" name="writtenOperatingProcedures"><option value="">Select</option><option>Yes</option><option>No</option><option>Outdated</option><option>Not sure</option></select></div>
+              <div class="assessment-field"><label for="assessment-hr-policies">Do you have written HR policies?</label><select id="assessment-hr-policies" name="writtenHrPolicies"><option value="">Select</option><option>Yes</option><option>No</option><option>Outdated</option><option>Not sure</option></select></div>
+              <div class="assessment-field"><label for="assessment-policy-date">When were these policies last updated?</label><input id="assessment-policy-date" name="policiesLastUpdated"></div>
+              <div class="assessment-field"><label for="assessment-workflows-automated">Are workflows automated?</label><select id="assessment-workflows-automated" name="workflowsAutomated"><option value="">Select</option><option>Yes</option><option>No</option><option>Some workflows</option><option>Not sure</option></select></div>
+              <div class="assessment-field"><label for="assessment-reminders">Are reminders and exceptions generated automatically?</label><select id="assessment-reminders" name="remindersAutomated"><option value="">Select</option><option>Yes</option><option>No</option><option>Some reminders only</option><option>Not sure</option></select></div>
+              <div class="assessment-field"><label for="assessment-compliance-reviewer">Who reviews policy compliance?</label><input id="assessment-compliance-reviewer" name="policyComplianceReviewer"></div>
+            </section>
+
+            <section class="assessment-section" data-assessment-section data-section-title="Optional HR Tier Review">
+              <h3>9. Optional HR Tier Review</h3>
+              <div class="assessment-field assessment-wide">
+                <span class="assessment-label">HR Tier Review choice</span>
+                <div class="assessment-choice-grid">
+                  <label class="assessment-choice"><input type="radio" name="hrTierChoice" value="Include HR Tier Review" checked><span>Include HR Tier Review</span></label>
+                  <label class="assessment-choice"><input type="radio" name="hrTierChoice" value="Skip HR Tier Review"><span>Skip HR Tier Review</span></label>
+                </div>
+              </div>
+              <div class="assessment-optional assessment-form-grid assessment-wide" data-optional-section="hr">
+                <div class="assessment-field"><label for="assessment-recruiting">How do you recruit drivers/workers?</label><input id="assessment-recruiting" name="hrRecruiting"></div>
+                <div class="assessment-field"><label for="assessment-onboarding">How do you onboard new workers?</label><input id="assessment-onboarding" name="hrOnboarding"></div>
+                <div class="assessment-field"><label for="assessment-hr-records">Are employee/contractor records centralized?</label><select id="assessment-hr-records" name="hrRecordsCentralized"><option value="">Select</option><option>Yes</option><option>No</option><option>Partially</option><option>Not sure</option></select></div>
+                <div class="assessment-field"><label for="assessment-benefits">Are benefits tracked internally or externally?</label><select id="assessment-benefits" name="benefitsTracking"><option value="">Select</option><option>Internally</option><option>Externally</option><option>Both</option><option>Not applicable</option><option>Not sure</option></select></div>
+                <div class="assessment-field"><label for="assessment-training-development">How are training and development tracked?</label><input id="assessment-training-development" name="trainingDevelopmentTracking"></div>
+                <div class="assessment-field"><label for="assessment-renewals">How are readiness and renewal requirements monitored?</label><input id="assessment-renewals" name="readinessRenewalMonitoring"></div>
+                <div class="assessment-field assessment-wide"><label for="assessment-hr-pressure">What HR tasks create the most owner-level pressure?</label><textarea id="assessment-hr-pressure" name="hrOwnerPressure"></textarea></div>
+              </div>
+            </section>
+
+            <section class="assessment-section" data-assessment-section data-section-title="Optional Finance Tier Review">
+              <h3>10. Optional Finance Tier Review</h3>
+              <div class="assessment-field assessment-wide">
+                <span class="assessment-label">Finance Tier Review choice</span>
+                <div class="assessment-choice-grid">
+                  <label class="assessment-choice"><input type="radio" name="financeTierChoice" value="Include Finance Tier Review" checked><span>Include Finance Tier Review</span></label>
+                  <label class="assessment-choice"><input type="radio" name="financeTierChoice" value="Skip Finance Tier Review"><span>Skip Finance Tier Review</span></label>
+                </div>
+              </div>
+              <div class="assessment-optional assessment-form-grid assessment-wide" data-optional-section="finance">
+                <div class="assessment-field"><label for="assessment-bookkeeping">Who handles bookkeeping?</label><input id="assessment-bookkeeping" name="bookkeepingOwner"></div>
+                <div class="assessment-field"><label for="assessment-accounting">Who handles accounting?</label><input id="assessment-accounting" name="accountingOwner"></div>
+                <div class="assessment-field"><label for="assessment-ap-ar">Are AP and AR tracked electronically?</label><select id="assessment-ap-ar" name="apArTrackedElectronically"><option value="">Select</option><option>Yes</option><option>No</option><option>Partially</option><option>Not sure</option></select></div>
+                <div class="assessment-field"><label for="assessment-payroll-settlements">Are payroll and settlements documented?</label><select id="assessment-payroll-settlements" name="payrollSettlementsDocumented"><option value="">Select</option><option>Yes</option><option>No</option><option>Partially</option><option>Not sure</option></select></div>
+                <div class="assessment-field"><label for="assessment-finance-factoring">Do you use factoring?</label><select id="assessment-finance-factoring" name="financeUsesFactoring"><option value="">Select</option><option>Yes</option><option>No</option><option>Sometimes</option><option>Considering it</option></select></div>
+                <div class="assessment-field"><label for="assessment-excise">Are federal/state excise tax review items tracked?</label><select id="assessment-excise" name="exciseTaxItemsTracked"><option value="">Select</option><option>Yes</option><option>No</option><option>Some items</option><option>Not sure</option></select></div>
+                <div class="assessment-field"><label for="assessment-cash-reporting">Do you have cash-flow reporting?</label><select id="assessment-cash-reporting" name="cashFlowReporting"><option value="">Select</option><option>Yes</option><option>No</option><option>Limited</option><option>Not sure</option></select></div>
+                <div class="assessment-field assessment-wide"><label for="assessment-finance-pressure">What finance tasks create the most owner-level pressure?</label><textarea id="assessment-finance-pressure" name="financeOwnerPressure"></textarea></div>
+              </div>
+            </section>
+
+            <section class="assessment-section" data-assessment-section data-section-title="Final Review / Submit">
+              <h3>11. Final Review / Submit</h3>
+              <div class="assessment-field assessment-wide"><label for="assessment-biggest-problem">Biggest current back-office problem *</label><textarea id="assessment-biggest-problem" name="biggestProblem" placeholder="What is creating the most pressure for ownership, dispatch, safety, billing, settlements, HR, finance, or customer follow-up?"></textarea></div>
+              <div class="assessment-field"><label for="assessment-admin-hours">Estimated monthly admin hours spent by owner/manager</label><input id="assessment-admin-hours" name="monthlyAdminHours" type="number" min="0" inputmode="numeric"></div>
+              <div class="assessment-field assessment-wide">
+                <span class="assessment-label">Areas where BOF help is most desired</span>
+                <div class="assessment-choice-grid">
+                  <label class="assessment-choice"><input type="checkbox" name="desiredBofHelp" value="Driver records"><span>Driver records</span></label>
+                  <label class="assessment-choice"><input type="checkbox" name="desiredBofHelp" value="Documents and PODs"><span>Documents and PODs</span></label>
+                  <label class="assessment-choice"><input type="checkbox" name="desiredBofHelp" value="Load intake"><span>Load intake</span></label>
+                  <label class="assessment-choice"><input type="checkbox" name="desiredBofHelp" value="Settlements"><span>Settlements</span></label>
+                  <label class="assessment-choice"><input type="checkbox" name="desiredBofHelp" value="Factoring readiness"><span>Factoring readiness</span></label>
+                  <label class="assessment-choice"><input type="checkbox" name="desiredBofHelp" value="Policies and automation"><span>Policies and automation</span></label>
+                  <label class="assessment-choice"><input type="checkbox" name="desiredBofHelp" value="HR workflows"><span>HR workflows</span></label>
+                  <label class="assessment-choice"><input type="checkbox" name="desiredBofHelp" value="Finance workflows"><span>Finance workflows</span></label>
+                </div>
+              </div>
+              <div class="assessment-field assessment-wide">
+                <label class="assessment-choice"><input type="checkbox" name="permissionToContact" value="Yes, BOF may contact me about this assessment"><span>Permission to contact: BOF may contact me about this assessment.</span></label>
+              </div>
+            </section>
+          </div>
+        </form>
+
+        <aside class="assessment-summary-card reveal">
+          <p class="eyebrow">Assessment summary</p>
+          <h2>Review before sending.</h2>
+          <p class="assessment-helper">The summary updates as you answer. It is advisory intake only, not guaranteed pricing, final scope, or a promise of implementation timing.</p>
+          <div class="assessment-summary-grid" data-assessment-summary></div>
+          <div class="actions">
+            <button class="button secondary" type="button" data-copy-summary>Copy Assessment Summary</button>
+            <button class="button secondary" type="button" data-clear-assessment>Clear Form</button>
+            <button class="button primary" type="button" data-send-assessment>Submit BOF Fleet Assessment</button>
+          </div>
+          <p class="assessment-status" data-assessment-status aria-live="polite"></p>
+        </aside>
+      </div>
+    </section>
+  </main>
+
+  <section class="cta-band">
+    <div class="cta-inner">
+      <div><p class="eyebrow">Next step</p><h2>Use the assessment to find the first operating gap BOF should review.</h2><p>BOF will review the submitted driver records, document workflows, load intake, POD process, settlements, factoring readiness, operating policies, automation, and selected HR/Finance sections.</p></div>
+      <a class="button light" href="../scenario-walkthrough/">Take the BOF Fleet Assessment</a>
+    </div>
+  </section>
+  <footer class="site-footer"><div class="footer-inner"><strong>BackOfficeFleet</strong><span>Operational infrastructure for fleets, carrier networks, and aggregators.</span><a href="../trust-governance/">Trust &amp; Governance</a></div></footer>
+  <script src="../assets/js/site.js?v=20260803.2"></script>
+  <script src="../assets/js/scenario-walkthrough.js?v=1.2"></script>
+</body>
+</html>

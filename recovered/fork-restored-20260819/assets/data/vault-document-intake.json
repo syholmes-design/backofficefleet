@@ -1,0 +1,583 @@
+{
+  "updated": "2026-06-26",
+  "title": "BOF Vault Intake Workbench",
+  "disclaimer": "This workbench is a simulated intake review surface. BOF classifies, flags, routes, and records review outcomes; human review resolves uncertain or high-risk exceptions.",
+  "pipelineStages": [
+    {
+      "id": "received",
+      "label": "Upload received",
+      "description": "Files arrive from drivers, fleet staff, partner carriers, email exports, or a structured intake bundle."
+    },
+    {
+      "id": "ocr",
+      "label": "OCR / file read",
+      "description": "BOF reads filenames, pages, visible fields, issue dates, expiration dates, and record identifiers."
+    },
+    {
+      "id": "classified",
+      "label": "Document type classified",
+      "description": "Files are classified as CDL, medical card, MVR, insurance certificate, POD, settlement support, proof, or review-needed."
+    },
+    {
+      "id": "matched",
+      "label": "Driver matched",
+      "description": "Documents are matched to a driver, carrier, equipment record, customer, or operating profile."
+    },
+    {
+      "id": "rules",
+      "label": "Rules applied",
+      "description": "Driver, carrier, customer, equipment, proof, and contract-specific rules determine readiness impact."
+    },
+    {
+      "id": "exceptions",
+      "label": "Exceptions generated",
+      "description": "Missing, expired, mismatched, duplicate, low-confidence, or conflicting records are routed to review."
+    },
+    {
+      "id": "review",
+      "label": "Human review queue",
+      "description": "Reviewers accept, request replacement, mark blocked, or assign uncertain items to the right owner."
+    },
+    {
+      "id": "profiles",
+      "label": "Readiness profile built",
+      "description": "BOF updates driver onboarding profiles, carrier readiness, proof packets, and audit history."
+    }
+  ],
+  "presets": [
+    {
+      "id": "single-driver",
+      "label": "Single Driver Onboarding",
+      "summary": "A new driver submits a CDL, medical card, application packet, and onboarding documents for first review.",
+      "batchId": "BVI-24018",
+      "source": "Driver mobile upload plus fleet admin email",
+      "receivedFiles": 24,
+      "drivers": 4,
+      "carriers": 1,
+      "autoClassified": 18,
+      "reviewItems": 6,
+      "readyProfiles": 2,
+      "blockedProfiles": 1,
+      "documents": [
+        {
+          "id": "doc-101",
+          "fileName": "john_carter_cdl_front_2026.jpg",
+          "documentType": "CDL image",
+          "owner": "John Carter",
+          "driverId": "DRV-001",
+          "carrier": "BackOfficeFleet Demo Fleet",
+          "confidence": 97,
+          "status": "Ready",
+          "ruleImpact": "Driver identity and CDL class confirmed for onboarding profile.",
+          "reviewReason": "High-confidence match.",
+          "requiredAction": "Attach to driver qualification file.",
+          "extracted": {
+            "name": "John Carter",
+            "expires": "2028-08-14",
+            "issuer": "OH BMV",
+            "record": "CDL class A"
+          }
+        },
+        {
+          "id": "doc-102",
+          "fileName": "john_carter_medical_card_page_1.pdf",
+          "documentType": "Medical card",
+          "owner": "John Carter",
+          "driverId": "DRV-001",
+          "carrier": "BackOfficeFleet Demo Fleet",
+          "confidence": 92,
+          "status": "Needs Review",
+          "ruleImpact": "Medical certification is usable only after reviewer verifies the provider signature.",
+          "reviewReason": "Signature area is faint on the scan.",
+          "requiredAction": "Review signature and expiration date.",
+          "extracted": {
+            "name": "John Carter",
+            "expires": "2026-10-31",
+            "issuer": "DOT medical examiner",
+            "record": "Medical examiner certificate"
+          }
+        },
+        {
+          "id": "doc-103",
+          "fileName": "onboarding_packet_missing_w9.pdf",
+          "documentType": "Onboarding packet",
+          "owner": "John Carter",
+          "driverId": "DRV-001",
+          "carrier": "BackOfficeFleet Demo Fleet",
+          "confidence": 88,
+          "status": "Missing",
+          "ruleImpact": "Payroll setup cannot be marked complete until missing W-9 page is returned.",
+          "reviewReason": "Packet is missing required tax setup page.",
+          "requiredAction": "Request replacement packet or missing W-9 page.",
+          "extracted": {
+            "name": "John Carter",
+            "expires": "Not applicable",
+            "issuer": "Fleet HR",
+            "record": "Incomplete onboarding packet"
+          }
+        }
+      ],
+      "exceptions": [
+        {
+          "id": "ex-101",
+          "type": "Missing required page",
+          "severity": "Blocked",
+          "item": "onboarding_packet_missing_w9.pdf",
+          "owner": "Fleet onboarding",
+          "impact": "Payroll setup remains blocked until the W-9 page is returned."
+        },
+        {
+          "id": "ex-102",
+          "type": "Low-confidence signature",
+          "severity": "Needs Review",
+          "item": "john_carter_medical_card_page_1.pdf",
+          "owner": "Safety review",
+          "impact": "Medical card is held for human review before readiness updates."
+        }
+      ],
+      "profiles": [
+        {
+          "id": "drv-001",
+          "name": "John Carter",
+          "status": "Needs Review",
+          "readiness": 82,
+          "packet": "DQF starter profile generated",
+          "nextAction": "Verify medical-card signature and request missing W-9 page."
+        },
+        {
+          "id": "drv-004",
+          "name": "Darius Hill",
+          "status": "Ready",
+          "readiness": 96,
+          "packet": "Onboarding profile generated",
+          "nextAction": "Attach profile to fleet readiness queue."
+        }
+      ],
+      "audit": [
+        "Batch BVI-24018 staged from driver onboarding intake.",
+        "18 files classified without review.",
+        "6 files routed to human review."
+      ]
+    },
+    {
+      "id": "founding-fleet",
+      "label": "Fleet Back-Office Bundle",
+      "summary": "A fleet uploads driver files, insurance certificates, settlement support, proof records, and onboarding packets.",
+      "batchId": "BVI-24041",
+      "source": "Fleet shared drive export and BOF intake mailbox",
+      "receivedFiles": 137,
+      "drivers": 42,
+      "carriers": 3,
+      "autoClassified": 104,
+      "reviewItems": 33,
+      "readyProfiles": 26,
+      "blockedProfiles": 5,
+      "documents": [
+        {
+          "id": "doc-201",
+          "fileName": "lopez_med_card_2026.pdf",
+          "documentType": "Medical card",
+          "owner": "Elena Lopez",
+          "driverId": "DRV-006",
+          "carrier": "BackOfficeFleet Demo Fleet",
+          "confidence": 95,
+          "status": "Ready",
+          "ruleImpact": "Medical card updates driver readiness and removes the expiring-document watch.",
+          "reviewReason": "Issuer, expiration, and driver match are clear.",
+          "requiredAction": "Accept and update DQF profile.",
+          "extracted": {
+            "name": "Elena Lopez",
+            "expires": "2026-12-19",
+            "issuer": "DOT medical examiner",
+            "record": "Medical examiner certificate"
+          }
+        },
+        {
+          "id": "doc-202",
+          "fileName": "johnson_cdl_scan_blurry.jpg",
+          "documentType": "CDL image",
+          "owner": "Marcus Reed",
+          "driverId": "DRV-007",
+          "carrier": "BackOfficeFleet Demo Fleet",
+          "confidence": 61,
+          "status": "Needs Review",
+          "ruleImpact": "CDL proof remains review-needed until the blurry scan is replaced.",
+          "reviewReason": "License number and expiration are partially unreadable.",
+          "requiredAction": "Request replacement scan.",
+          "extracted": {
+            "name": "Marcus Reed",
+            "expires": "Unreadable",
+            "issuer": "State licensing record",
+            "record": "CDL image needs replacement"
+          }
+        },
+        {
+          "id": "doc-203",
+          "fileName": "chen_insurance_cert.pdf",
+          "documentType": "Insurance certificate",
+          "owner": "Great Lakes Owner-Operator Network",
+          "driverId": "Carrier packet",
+          "carrier": "GL Owner-Operator Network",
+          "confidence": 94,
+          "status": "Eligible with Conditions",
+          "ruleImpact": "Carrier insurance is usable for review, but customer-specific certificate holder wording needs confirmation.",
+          "reviewReason": "Certificate holder text differs from the customer packet requirement.",
+          "requiredAction": "Assign certificate wording to carrier packet reviewer.",
+          "extracted": {
+            "name": "GL Owner-Operator Network",
+            "expires": "2027-01-01",
+            "issuer": "Regional Mutual",
+            "record": "Auto liability and cargo insurance"
+          }
+        },
+        {
+          "id": "doc-204",
+          "fileName": "pod_boF-2258_warehouse_signed.pdf",
+          "documentType": "POD",
+          "owner": "Noah Wilson",
+          "driverId": "DRV-008",
+          "carrier": "BackOfficeFleet Demo Fleet",
+          "confidence": 90,
+          "status": "Ready",
+          "ruleImpact": "POD can be attached to settlement and customer proof packet.",
+          "reviewReason": "Signed delivery record matched to load and driver.",
+          "requiredAction": "Attach to proof packet.",
+          "extracted": {
+            "name": "Noah Wilson",
+            "expires": "Not applicable",
+            "issuer": "Receiver",
+            "record": "Signed proof of delivery"
+          }
+        }
+      ],
+      "exceptions": [
+        {
+          "id": "ex-201",
+          "type": "Low-confidence document",
+          "severity": "Needs Review",
+          "item": "johnson_cdl_scan_blurry.jpg",
+          "owner": "Driver document review",
+          "impact": "Driver profile remains review-needed until replacement is uploaded."
+        },
+        {
+          "id": "ex-202",
+          "type": "Customer wording mismatch",
+          "severity": "Eligible with Conditions",
+          "item": "chen_insurance_cert.pdf",
+          "owner": "Carrier packet review",
+          "impact": "Carrier packet can stay visible, but customer-specific wording must be confirmed."
+        },
+        {
+          "id": "ex-203",
+          "type": "Duplicate proof candidate",
+          "severity": "Needs Review",
+          "item": "pod_boF-2258_warehouse_signed.pdf",
+          "owner": "Settlement support",
+          "impact": "Reviewer confirms which proof record should control the settlement packet."
+        }
+      ],
+      "profiles": [
+        {
+          "id": "drv-006",
+          "name": "Elena Lopez",
+          "status": "Ready",
+          "readiness": 94,
+          "packet": "DQF profile refreshed",
+          "nextAction": "Move from watch to ready after medical card acceptance."
+        },
+        {
+          "id": "drv-007",
+          "name": "Marcus Reed",
+          "status": "Needs Review",
+          "readiness": 71,
+          "packet": "Driver profile generated with CDL exception",
+          "nextAction": "Request cleaner CDL image."
+        },
+        {
+          "id": "carrier-gl",
+          "name": "Great Lakes Owner-Operator Network",
+          "status": "Eligible with Conditions",
+          "readiness": 86,
+          "packet": "Carrier packet profile generated",
+          "nextAction": "Confirm insurance certificate holder wording."
+        }
+      ],
+      "audit": [
+        "Batch BVI-24041 received from fleet document export.",
+        "104 files classified and matched to driver or carrier records.",
+        "33 files moved to review because the system could not safely resolve them automatically."
+      ]
+    },
+    {
+      "id": "aggregator-network",
+      "label": "Aggregator Network Intake",
+      "summary": "A carrier network submits mixed carrier packets, driver files, insurance records, proof photos, and customer-specific rules.",
+      "batchId": "BVI-24077",
+      "source": "Aggregator partner intake bundle",
+      "receivedFiles": 482,
+      "drivers": 119,
+      "carriers": 18,
+      "autoClassified": 362,
+      "reviewItems": 120,
+      "readyProfiles": 61,
+      "blockedProfiles": 17,
+      "documents": [
+        {
+          "id": "doc-301",
+          "fileName": "mra_carrier_packet_starline.pdf",
+          "documentType": "Carrier packet",
+          "owner": "Starline Freight LLC",
+          "driverId": "Carrier packet",
+          "carrier": "Midwest Reefer Alliance",
+          "confidence": 93,
+          "status": "Ready",
+          "ruleImpact": "Carrier packet meets Midwest Reefer Alliance onboarding rules.",
+          "reviewReason": "Authority, W-9, insurance, and contact sheet matched.",
+          "requiredAction": "Accept carrier packet and update network readiness.",
+          "extracted": {
+            "name": "Starline Freight LLC",
+            "expires": "2026-12-31",
+            "issuer": "Carrier packet",
+            "record": "Carrier onboarding bundle"
+          }
+        },
+        {
+          "id": "doc-302",
+          "fileName": "freightbrace_photo_set_missing_seal_10482.zip",
+          "documentType": "Cargo securement proof",
+          "owner": "Northern Line Transport",
+          "driverId": "DRV-NLT-044",
+          "carrier": "Midwest Reefer Alliance",
+          "confidence": 84,
+          "status": "Needs Review",
+          "ruleImpact": "Securement proof can be attached only after missing seal image is resolved.",
+          "reviewReason": "Photo set contains cargo brace images but no matching seal photo.",
+          "requiredAction": "Request missing seal photo or reviewer note.",
+          "extracted": {
+            "name": "Northern Line Transport",
+            "expires": "Not applicable",
+            "issuer": "Driver photo bundle",
+            "record": "Cargo securement proof"
+          }
+        },
+        {
+          "id": "doc-303",
+          "fileName": "carrier_renewal_cert_expired.pdf",
+          "documentType": "Insurance certificate",
+          "owner": "Buckeye Regional Carriers",
+          "driverId": "Carrier packet",
+          "carrier": "Ohio Valley Carrier Partners",
+          "confidence": 98,
+          "status": "Blocked",
+          "ruleImpact": "Carrier packet remains blocked until current insurance certificate is received.",
+          "reviewReason": "Expiration date is in the past.",
+          "requiredAction": "Request current certificate from carrier.",
+          "extracted": {
+            "name": "Buckeye Regional Carriers",
+            "expires": "2025-11-30",
+            "issuer": "Regional Mutual",
+            "record": "Expired insurance certificate"
+          }
+        },
+        {
+          "id": "doc-304",
+          "fileName": "customer_grocery_pod_lumper_receipt.pdf",
+          "documentType": "POD + lumper receipt",
+          "owner": "Sofia Ramirez",
+          "driverId": "DRV-MRA-032",
+          "carrier": "Midwest Reefer Alliance",
+          "confidence": 91,
+          "status": "Ready",
+          "ruleImpact": "Proof packet can support settlement, invoicing, and post-trip review.",
+          "reviewReason": "Signed POD and lumper receipt matched to the same customer record.",
+          "requiredAction": "Attach to proof packet.",
+          "extracted": {
+            "name": "Sofia Ramirez",
+            "expires": "Not applicable",
+            "issuer": "Receiver and lumper provider",
+            "record": "Delivery proof bundle"
+          }
+        }
+      ],
+      "exceptions": [
+        {
+          "id": "ex-301",
+          "type": "Expired policy",
+          "severity": "Blocked",
+          "item": "carrier_renewal_cert_expired.pdf",
+          "owner": "Carrier packet review",
+          "impact": "Carrier remains blocked for customer readiness until current certificate is provided."
+        },
+        {
+          "id": "ex-302",
+          "type": "Missing proof rule",
+          "severity": "Needs Review",
+          "item": "freightbrace_photo_set_missing_seal_10482.zip",
+          "owner": "Proof packet review",
+          "impact": "Securement proof needs a reviewer note or missing seal photo before packet completion."
+        },
+        {
+          "id": "ex-303",
+          "type": "Duplicate driver name",
+          "severity": "Needs Review",
+          "item": "mixed_driver_packet_113.pdf",
+          "owner": "Network onboarding",
+          "impact": "Two carriers submitted similar driver names; reviewer chooses the correct affiliation."
+        }
+      ],
+      "profiles": [
+        {
+          "id": "car-mra",
+          "name": "Midwest Reefer Alliance",
+          "status": "Ready",
+          "readiness": 91,
+          "packet": "Network readiness profile generated",
+          "nextAction": "Continue review of securement proof exceptions."
+        },
+        {
+          "id": "car-ovcp",
+          "name": "Ohio Valley Carrier Partners",
+          "status": "Blocked",
+          "readiness": 64,
+          "packet": "Carrier readiness profile blocked",
+          "nextAction": "Request current insurance certificate."
+        },
+        {
+          "id": "drv-mra-032",
+          "name": "Sofia Ramirez",
+          "status": "Ready",
+          "readiness": 93,
+          "packet": "Driver proof profile updated",
+          "nextAction": "Attach POD and lumper receipt to settlement support."
+        }
+      ],
+      "audit": [
+        "Batch BVI-24077 received from aggregator partner intake bundle.",
+        "Carrier, driver, proof, and customer rule records classified separately.",
+        "Expired policy and missing proof exceptions routed to human review."
+      ]
+    },
+    {
+      "id": "messy-bulk",
+      "label": "Messy Bulk Cleanup",
+      "summary": "A mixed folder contains duplicates, wrong-driver files, expired certificates, unclear images, and proof records with missing pages.",
+      "batchId": "BVI-24102",
+      "source": "Unstructured email attachment bundle",
+      "receivedFiles": 214,
+      "drivers": 63,
+      "carriers": 7,
+      "autoClassified": 128,
+      "reviewItems": 86,
+      "readyProfiles": 22,
+      "blockedProfiles": 14,
+      "documents": [
+        {
+          "id": "doc-401",
+          "fileName": "scan_000231_driver_unknown.pdf",
+          "documentType": "Unmatched driver document",
+          "owner": "Unknown driver",
+          "driverId": "Unmatched",
+          "carrier": "Mixed source",
+          "confidence": 45,
+          "status": "Needs Review",
+          "ruleImpact": "Document cannot update any readiness profile until ownership is confirmed.",
+          "reviewReason": "Name is cropped and driver ID is missing.",
+          "requiredAction": "Assign to reviewer for owner match.",
+          "extracted": {
+            "name": "Unreadable",
+            "expires": "Unreadable",
+            "issuer": "Unknown",
+            "record": "Unmatched scanned document"
+          }
+        },
+        {
+          "id": "doc-402",
+          "fileName": "expired_mvr_may_2025.pdf",
+          "documentType": "MVR",
+          "owner": "Tyrell Brooks",
+          "driverId": "DRV-011",
+          "carrier": "BackOfficeFleet Demo Fleet",
+          "confidence": 96,
+          "status": "Blocked",
+          "ruleImpact": "Driver readiness remains blocked until current MVR is received.",
+          "reviewReason": "MVR date is outside the accepted review window.",
+          "requiredAction": "Request current MVR.",
+          "extracted": {
+            "name": "Tyrell Brooks",
+            "expires": "2025-05-31",
+            "issuer": "State record",
+            "record": "Expired motor vehicle report"
+          }
+        },
+        {
+          "id": "doc-403",
+          "fileName": "duplicate_med_card_elena_v2.pdf",
+          "documentType": "Medical card duplicate",
+          "owner": "Elena Lopez",
+          "driverId": "DRV-006",
+          "carrier": "BackOfficeFleet Demo Fleet",
+          "confidence": 99,
+          "status": "Duplicate",
+          "ruleImpact": "Reviewer confirms whether the newer file should supersede the current medical card.",
+          "reviewReason": "Duplicate file is newer than the existing record.",
+          "requiredAction": "Compare and select controlling record.",
+          "extracted": {
+            "name": "Elena Lopez",
+            "expires": "2026-12-19",
+            "issuer": "DOT medical examiner",
+            "record": "Duplicate medical card"
+          }
+        }
+      ],
+      "exceptions": [
+        {
+          "id": "ex-401",
+          "type": "Unmatched owner",
+          "severity": "Needs Review",
+          "item": "scan_000231_driver_unknown.pdf",
+          "owner": "Document intake review",
+          "impact": "No readiness profile is updated until ownership is confirmed."
+        },
+        {
+          "id": "ex-402",
+          "type": "Expired MVR",
+          "severity": "Blocked",
+          "item": "expired_mvr_may_2025.pdf",
+          "owner": "Safety review",
+          "impact": "Driver is blocked from ready status until current MVR arrives."
+        },
+        {
+          "id": "ex-403",
+          "type": "Duplicate controlling record",
+          "severity": "Needs Review",
+          "item": "duplicate_med_card_elena_v2.pdf",
+          "owner": "Driver document review",
+          "impact": "Reviewer chooses which record controls the DQF profile."
+        }
+      ],
+      "profiles": [
+        {
+          "id": "drv-011",
+          "name": "Tyrell Brooks",
+          "status": "Blocked",
+          "readiness": 58,
+          "packet": "Driver readiness profile blocked",
+          "nextAction": "Request current MVR."
+        },
+        {
+          "id": "drv-006",
+          "name": "Elena Lopez",
+          "status": "Needs Review",
+          "readiness": 90,
+          "packet": "Duplicate document review profile",
+          "nextAction": "Select controlling medical card record."
+        }
+      ],
+      "audit": [
+        "Batch BVI-24102 staged from unstructured email attachments.",
+        "Unmatched, expired, and duplicate files routed to review.",
+        "No uncertain document automatically updated readiness."
+      ]
+    }
+  ]
+}

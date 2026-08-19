@@ -1,0 +1,54 @@
+{
+  "title": "BOF Aggregator Outreach Demo Path",
+  "openingPitch60Seconds": "BOF helps organizations that already work with multiple fleets give those fleets a practical operating layer for readiness, documents, compliance follow-through, settlements support, customer intake, proof collection, and back-office workflow. Instead of building a custom platform from scratch, the aggregator can use BOF to support its fleet network and convert selected fleets into structured BOF customers through a pilot program.",
+  "demoPath5Minutes": [
+    {
+      "step": 1,
+      "title": "Aggregator roster-rule story",
+      "route": "/animated-demo-aggregator/",
+      "talkTrack": "Show how BOF separates available carriers from usable capacity by checking carrier, driver, equipment, customer, contract, and proof requirements."
+    },
+    {
+      "step": 2,
+      "title": "Aggregator command center",
+      "route": "/aggregator-command-center/",
+      "talkTrack": "Show network-level visibility across readiness, onboarding, claims, settlement holds, documents, and backhaul readiness."
+    },
+    {
+      "step": 3,
+      "title": "Driver roster and records",
+      "route": "/interactive-demo/drivers/",
+      "talkTrack": "Show driver-level readiness, qualification status, document packets, and record-specific follow-up."
+    },
+    {
+      "step": 4,
+      "title": "Document intake workbench",
+      "route": "/interactive-demo/drivers/document-intake/",
+      "talkTrack": "Show how new driver, carrier, load, and settlement-support documents enter the BOF review workflow."
+    },
+    {
+      "step": 5,
+      "title": "Request an Aggregator Assessment",
+      "route": "/scenario-walkthrough/",
+      "talkTrack": "Ask the prospect to request an Aggregator Assessment around one real network workflow so BOF can prepare a focused review."
+    }
+  ],
+  "pilot10FleetDescription": "Use a 10-fleet pilot when the aggregator already has a mature network and wants a broader readiness review across multiple carrier profiles, driver records, document packets, proof requirements, claims exposure, and settlement-support needs.",
+  "pilot5FleetFallback": "Use a 5-fleet readiness pilot when the group needs a smaller first proof point. Select five fleets or participating carriers with real document, readiness, proof, claims, or settlement-support friction and map the BOF workflow around those records.",
+  "safeLanguageNotes": [
+    "BOF supports fleet readiness.",
+    "BOF coordinates back-office workflow.",
+    "BOF tracks document and proof requirements.",
+    "BOF helps fleets prepare cleaner operating records.",
+    "BOF supports customer intake and follow-through.",
+    "BOF provides an operating layer for aggregator networks."
+  ],
+  "avoidedPhrases": [
+    "BOF dispatches loads",
+    "BOF brokers freight",
+    "BOF arranges transportation",
+    "BOF controls carrier operations",
+    "BOF guarantees capacity",
+    "BOF replaces the carrier"
+  ]
+}
