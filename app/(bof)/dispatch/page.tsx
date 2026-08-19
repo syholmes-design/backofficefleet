@@ -7,14 +7,44 @@
  * Edit this file only for route-level layout/wiring.
  */
 import { Suspense } from "react";
+import { auth } from "@/auth";
 import { DispatchShell } from "@/components/dispatch/DispatchShell";
+import { prisma } from "@/lib/prisma";
+import { resolveContext } from "@/lib/services/contextResolver";
+import {
+  listDriverOperationalSummaries,
+  type DriverOperationalSummary,
+} from "@/lib/services/driverOperationalReadModelService";
+import { getPrimaryFleetId, type SessionWithMemberships } from "@/lib/session-fleet";
 
 export const metadata = {
   title: "Dispatch | BOF",
   description: "Dispatch board, assignments, exceptions, and settlement readiness",
 };
 
-export default function DispatchPage() {
+export default async function DispatchPage() {
+  const session = (await auth()) as SessionWithMemberships;
+  const context = await resolveContext(session?.user ?? null);
+  const fleetId =
+    context.employmentContexts[0]?.fleetId ??
+    getPrimaryFleetId(session);
+  const driverOperationalSummaries: DriverOperationalSummary[] =
+    session?.user?.id && fleetId ? await listDriverOperationalSummaries(session.user, fleetId) : [];
+  const drivers = fleetId
+    ? await prisma.driver.findMany({
+        where: { fleetId },
+        orderBy: [{ status: "asc" }, { firstName: "asc" }, { lastName: "asc" }],
+        select: {
+          id: true,
+          fleetId: true,
+          firstName: true,
+          lastName: true,
+          email: true,
+          status: true,
+        },
+      })
+    : [];
+
   return (
     <div className="bof-page bof-dispatch-page-wrap">
       <Suspense
@@ -24,7 +54,7 @@ export default function DispatchPage() {
           </div>
         }
       >
-        <DispatchShell />
+        <DispatchShell fleetId={fleetId} drivers={drivers} driverOperationalSummaries={driverOperationalSummaries} />
       </Suspense>
     </div>
   );

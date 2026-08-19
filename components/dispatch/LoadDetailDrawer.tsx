@@ -1,23 +1,25 @@
 "use client";
 
-import type { Load } from "@/types/dispatch";
 import { LoadDetailContent } from "./LoadDetailContent";
+import type { DispatchLoadRecord } from "@/lib/dispatch-workflow-ui";
 
 type Props = {
-  load: Load | null;
+  load: DispatchLoadRecord | null;
   open: boolean;
   onClose: () => void;
+  onOpenAssignModal?: (loadId: string) => void;
+  refreshKey?: number;
 };
 
-export function LoadDetailDrawer({ load, open, onClose }: Props) {
+export function LoadDetailDrawer({ load, open, onClose, onOpenAssignModal, refreshKey = 0 }: Props) {
   if (!open || !load) return null;
 
   return (
     <div
       className="fixed inset-0 z-[100] flex justify-end bg-black/50 backdrop-blur-[1px]"
       role="presentation"
-      onClick={(e) => {
-        if (e.target === e.currentTarget) onClose();
+      onClick={(event) => {
+        if (event.target === event.currentTarget) onClose();
       }}
     >
       <aside
@@ -27,9 +29,14 @@ export function LoadDetailDrawer({ load, open, onClose }: Props) {
         aria-labelledby="dispatch-load-drawer-title"
       >
         <div id="dispatch-load-drawer-title" className="sr-only">
-          Load detail {load.load_id}
+          Load detail {load.id}
         </div>
-        <LoadDetailContent load={load} onClose={onClose} />
+        <LoadDetailContent
+          load={load}
+          onClose={onClose}
+          onOpenAssignModal={onOpenAssignModal}
+          refreshKey={refreshKey}
+        />
       </aside>
     </div>
   );

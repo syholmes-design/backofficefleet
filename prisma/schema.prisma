@@ -1,0 +1,1269 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum FleetStatus {
+  ACTIVE
+  ARCHIVED
+}
+
+enum UserStatus {
+  ACTIVE
+  INACTIVE
+  SUSPENDED
+}
+
+enum MembershipStatus {
+  ACTIVE
+  INVITED
+  INACTIVE
+}
+
+enum AggregatorStatus {
+  ACTIVE
+  ARCHIVED
+}
+
+enum CarrierGroupStatus {
+  ACTIVE
+  ARCHIVED
+}
+
+enum DriverStatus {
+  ACTIVE
+  INACTIVE
+  SUSPENDED
+  ARCHIVED
+}
+
+enum DriverIntakeSource {
+  EMAIL
+  PORTAL
+  MOBILE
+  UPLOAD
+  API
+  MANUAL
+}
+
+enum DriverIntakeChannel {
+  WEB
+  MOBILE
+  API
+  UPLOAD
+  INTERNAL_ADMIN
+}
+
+enum DriverIntakeStageType {
+  NEW
+  IDENTITY_REVIEW
+  DOCUMENT_COLLECTION
+  QUALIFICATION_REVIEW
+  COMPLIANCE_REVIEW
+  READY_FOR_APPROVAL
+  APPROVED
+  REJECTED
+}
+
+enum DriverIntakeStatus {
+  DRAFT
+  SUBMITTED
+  IN_REVIEW
+  NEEDS_ATTENTION
+  READY_FOR_APPROVAL
+  APPROVED
+  REJECTED
+  ARCHIVED
+}
+
+enum DriverDocumentType {
+  DRIVER_LICENSE
+  MEDICAL
+  DRUG_TEST
+  WORK_HISTORY
+  ACCIDENT_HISTORY
+  VIOLATION_HISTORY
+  IDENTITY_SUPPORTING
+  OTHER
+}
+
+enum DriverDocumentStatus {
+  RECEIVED
+  PENDING_VERIFICATION
+  VERIFIED
+  CERTIFIED
+  REJECTED
+  EXPIRED
+}
+
+enum VerificationStatus {
+  RECEIVED
+  PENDING_VERIFICATION
+  VERIFIED
+  CERTIFIED
+  REJECTED
+}
+
+enum RequirementStatus {
+  REQUIRED
+  PENDING
+  SATISFIED
+  REJECTED
+  EXPIRED
+  EXCEPTION
+}
+
+enum QualificationStatus {
+  ACTIVE
+  PENDING
+  REVIEW_REQUIRED
+  EXPIRED
+  REJECTED
+}
+
+enum QualificationDisposition {
+  QUALIFIED
+  CONDITIONALLY_QUALIFIED
+  NOT_QUALIFIED
+  PENDING_REVIEW
+}
+
+enum DriverReadinessState {
+  READY
+  CONDITIONAL
+  NOT_READY
+}
+
+enum EmployerDocumentMaterializationStorageMode {
+  COPY
+  REFERENCE
+}
+
+enum LoadStatus {
+  PLANNED
+  ASSIGNED
+  DISPATCHED
+  IN_TRANSIT
+  DELIVERED
+  EXCEPTION
+}
+
+enum EquipmentType {
+  TRACTOR
+  TRAILER
+}
+
+enum EquipmentStatus {
+  AVAILABLE
+  UNAVAILABLE
+  OUT_OF_SERVICE
+}
+
+enum DispatchAssignmentStatus {
+  ACTIVE
+  SUPERSEDED
+  COMPLETED
+  CANCELLED
+}
+
+enum PreTripStatus {
+  OPEN
+  COMPLETED
+  BLOCKED
+  VOIDED
+}
+
+enum PreTripItemStatus {
+  PENDING
+  PASS
+  WARNING
+  FAIL
+  NOT_APPLICABLE
+}
+
+enum PreTripDefectSeverity {
+  WARNING
+  BLOCKING
+}
+
+enum DispatchReleaseDisposition {
+  RELEASED
+  CONDITIONALLY_RELEASED
+  HOLD
+  BLOCKED
+}
+
+enum ConditionCategory {
+  MECHANICAL
+  ELECTRICAL
+  STRUCTURAL
+  SAFETY
+  CARGO
+  SECUREMENT
+  COSMETIC
+  DOCUMENTATION
+  OTHER
+}
+
+enum ConditionSeverity {
+  MINOR
+  MODERATE
+  CRITICAL
+  BLOCKING
+}
+
+enum ConditionImpact {
+  COSMETIC_ONLY
+  SAFETY_RISK
+  LOAD_RISK
+  DELAY_RISK
+  REGULATORY_RISK
+  CUSTOMER_RISK
+}
+
+enum ConditionObservationSource {
+  DRIVER
+  MAINTENANCE
+  SAFETY
+  DISPATCH
+  SYSTEM
+  TELEMATICS
+  AI_ASSISTED
+  OTHER
+}
+
+enum ConditionVerificationState {
+  UNVERIFIED
+  CONFIRMED
+  VERIFIED
+}
+
+enum ConditionLifecycleState {
+  IDENTIFIED
+  CONFIRMED
+  CHANGED
+  REPAIR_REPORTED
+  AWAITING_VERIFICATION
+  RESOLVED
+  REOPENED
+}
+
+enum ConditionEventType {
+  IDENTIFIED
+  CONFIRMED
+  CHANGED
+  REPAIR_REPORTED
+  AWAITING_VERIFICATION
+  RESOLUTION_VERIFIED
+  REOPENED
+}
+
+enum ConditionResolutionAuthority {
+  DRIVER
+  FLEET_MAINTENANCE
+  THIRD_PARTY_SHOP
+  SAFETY
+  DISPATCH
+  OTHER_AUTHORIZED_ACTOR
+}
+
+enum ConditionEvidenceCompleteness {
+  NONE
+  PARTIAL
+  COMPLETE
+  INSUFFICIENT
+}
+
+enum ConditionEvidenceKind {
+  PHOTO
+  VIDEO
+  DOCUMENT
+  SYSTEM_VALUE
+  NOTE
+}
+
+enum AuditAction {
+  CREATED
+  UPDATED
+  DELETED
+  LOGIN
+  LOGOUT
+  ROLE_ASSIGNED
+  ROLE_REMOVED
+  ACCESS_GRANTED
+  ACCESS_DENIED
+  VIEWED
+  IMPORTED
+  EXPORTED
+}
+
+model Fleet {
+  id              String            @id @default(cuid())
+  slug            String            @unique
+  name            String
+  carrierGroupId  String
+  status          FleetStatus       @default(ACTIVE)
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+  carrierGroup    CarrierGroup      @relation(fields: [carrierGroupId], references: [id], onDelete: Restrict)
+  memberships     FleetMembership[]
+  drivers         Driver[]
+  driverIntakes   DriverIntake[]
+  driverDocuments DriverDocument[]
+  documentAuthorizations DocumentAuthorization[]
+  employerDocumentMaterializations EmployerDocumentMaterialization[]
+  auditEvents     AuditEvent[]
+  aggregatorFleets AggregatorFleet[]
+  qualificationSnapshots DriverQualificationSnapshot[]
+  readinessScores DriverReadinessScore[]
+  driverClaimTokens DriverClaimToken[]
+  loads           Load[]
+  equipment       Equipment[]
+  dispatchAssignments DispatchAssignment[]
+  preTripHeaders  PreTripHeader[]
+  dispatchReleases DispatchRelease[]
+  conditionThreads ConditionThread[] @relation("ConditionThreadFleet")
+  conditionEvents  ConditionEvent[] @relation("ConditionEventFleet")
+  operationalEvidence OperationalEvidence[] @relation("OperationalEvidenceFleet")
+
+  @@index([status])
+  @@index([carrierGroupId, status])
+}
+
+model User {
+  id                      String                     @id @default(cuid())
+  email                   String                     @unique
+  name                    String?
+  passwordHash            String?
+  image                   String?
+  status                  UserStatus                 @default(ACTIVE)
+  createdAt               DateTime                   @default(now())
+  updatedAt               DateTime                   @updatedAt
+  memberships             FleetMembership[]
+  aggregatorMemberships   AggregatorMembership[]
+  accounts                Account[]
+  sessions                Session[]
+  auditEvents             AuditEvent[]
+  driverIntakesCreated    DriverIntake[]             @relation("DriverIntakeCreatedBy")
+  driverIntakesApproved   DriverIntake[]             @relation("DriverIntakeApprovedBy")
+  driverIntakesRejected   DriverIntake[]             @relation("DriverIntakeRejectedBy")
+  driverIntakesCertified  DriverIntake[]             @relation("DriverIntakeCertifiedBy")
+  driverIntakeStagesChanged DriverIntakeStage[]      @relation("DriverIntakeStageChangedBy")
+  driverDocumentsUploaded DriverDocument[]           @relation("DriverDocumentUploadedBy")
+  driverDocumentsVerified DriverDocument[]           @relation("DriverDocumentVerifiedBy")
+  driverDocumentsCertified DriverDocument[]          @relation("DriverDocumentCertifiedBy")
+  documentAuthorizationsCreated DocumentAuthorization[] @relation("DocumentAuthorizationAuthorizedBy")
+  documentAuthorizationsRevoked DocumentAuthorization[] @relation("DocumentAuthorizationRevokedBy")
+  employerDocumentMaterializations EmployerDocumentMaterialization[] @relation("EmployerDocumentMaterializedBy")
+  verificationSources     VerificationSource[]       @relation("VerificationSourceVerifiedBy")
+  qualificationSnapshots  DriverQualificationSnapshot[] @relation("DriverQualificationSnapshotEvaluatedBy")
+  readinessScores         DriverReadinessScore[]      @relation("DriverReadinessScoreEvaluatedBy")
+  dispatchAssignmentsAssigned DispatchAssignment[]    @relation("DispatchAssignmentAssignedBy")
+  dispatchAssignmentsUnassigned DispatchAssignment[]  @relation("DispatchAssignmentUnassignedBy")
+  completedPreTrips       PreTripHeader[]            @relation("PreTripHeaderCompletedBy")
+  dispatchReleasesEvaluated DispatchRelease[]        @relation("DispatchReleaseEvaluatedBy")
+  driver                  Driver?
+  driverClaimTokensCreated DriverClaimToken[]        @relation("DriverClaimTokenCreatedBy")
+  conditionThreadsCreated  ConditionThread[]        @relation("ConditionThreadCreatedByUser")
+  conditionEventsRecorded  ConditionEvent[]         @relation("ConditionEventRecordedByUser")
+  operationalEvidenceCaptured OperationalEvidence[]  @relation("OperationalEvidenceCapturedByUser")
+
+  @@index([status])
+}
+
+model Role {
+  id                   String               @id @default(cuid())
+  code                 String               @unique
+  name                 String
+  description          String?
+  createdAt            DateTime             @default(now())
+  updatedAt            DateTime             @updatedAt
+  memberships          FleetMembership[]
+  aggregatorMemberships AggregatorMembership[]
+}
+
+model Aggregator {
+  id              String            @id @default(cuid())
+  name            String
+  status          AggregatorStatus  @default(ACTIVE)
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+  carrierGroups   CarrierGroup[]
+  memberships     AggregatorMembership[]
+  aggregatorFleets AggregatorFleet[]
+
+  @@index([status])
+}
+
+model CarrierGroup {
+  id          String          @id @default(cuid())
+  aggregatorId String
+  name        String
+  status      CarrierGroupStatus @default(ACTIVE)
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
+  aggregator  Aggregator      @relation(fields: [aggregatorId], references: [id], onDelete: Restrict)
+  fleets      Fleet[]
+
+  @@unique([aggregatorId, name])
+  @@index([aggregatorId, status])
+}
+
+model AggregatorFleet {
+  id          String           @id @default(cuid())
+  aggregatorId String
+  fleetId     String
+  status      MembershipStatus @default(ACTIVE)
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+  aggregator  Aggregator       @relation(fields: [aggregatorId], references: [id], onDelete: Cascade)
+  fleet       Fleet            @relation(fields: [fleetId], references: [id], onDelete: Cascade)
+
+  @@unique([aggregatorId, fleetId])
+  @@index([aggregatorId, status])
+  @@index([fleetId, status])
+}
+
+model AggregatorMembership {
+  id          String           @id @default(cuid())
+  userId      String
+  aggregatorId String
+  roleId      String
+  status      MembershipStatus @default(ACTIVE)
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+  user        User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  aggregator  Aggregator       @relation(fields: [aggregatorId], references: [id], onDelete: Cascade)
+  role        Role             @relation(fields: [roleId], references: [id], onDelete: Restrict)
+
+  @@unique([userId, aggregatorId])
+  @@index([aggregatorId, status])
+  @@index([userId, status])
+}
+
+model FleetMembership {
+  id        String           @id @default(cuid())
+  userId    String
+  fleetId   String
+  roleId    String
+  status    MembershipStatus @default(ACTIVE)
+  createdAt DateTime         @default(now())
+  updatedAt DateTime         @updatedAt
+  user      User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  fleet     Fleet            @relation(fields: [fleetId], references: [id], onDelete: Cascade)
+  role      Role             @relation(fields: [roleId], references: [id], onDelete: Restrict)
+
+  @@unique([fleetId, userId])
+  @@index([fleetId, status])
+  @@index([userId, status])
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@index([userId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+model DriverClaimToken {
+  id              String   @id @default(cuid())
+  driverId        String
+  fleetId         String
+  tokenHash       String   @unique
+  expiresAt       DateTime
+  createdByUserId String
+  claimedAt       DateTime?
+  revokedAt       DateTime?
+  createdAt       DateTime @default(now())
+  driver          Driver   @relation(fields: [driverId], references: [id], onDelete: Restrict)
+  fleet           Fleet    @relation(fields: [fleetId], references: [id], onDelete: Restrict)
+  createdByUser   User     @relation("DriverClaimTokenCreatedBy", fields: [createdByUserId], references: [id], onDelete: Restrict)
+
+  @@index([driverId])
+  @@index([fleetId])
+  @@index([createdByUserId])
+  @@index([expiresAt])
+}
+
+model Driver {
+  id                     String                     @id @default(cuid())
+  userId                 String?                    @unique
+  fleetId                String
+  firstName              String
+  lastName               String
+  email                  String
+  phone                  String?
+  dob                    DateTime?
+  ssnLast4               String?
+  homeTerminalId         String?
+  status                 DriverStatus               @default(ACTIVE)
+  createdAt              DateTime                   @default(now())
+  updatedAt              DateTime                   @updatedAt
+  user                   User?                      @relation(fields: [userId], references: [id], onDelete: SetNull)
+  fleet                  Fleet                      @relation(fields: [fleetId], references: [id], onDelete: Restrict)
+  claimTokens            DriverClaimToken[]
+  driverIntakes          DriverIntake[]
+  driverDocuments        DriverDocument[]
+  documentAuthorizations  DocumentAuthorization[]
+  employerDocumentMaterializations EmployerDocumentMaterialization[]
+  licenses               DriverLicense[]
+  endorsements           DriverEndorsement[]
+  medicalQualifications  MedicalQualification[]
+  drugTests              DrugTestRecord[]
+  workHistory            WorkHistory[]
+  accidentHistory        AccidentHistory[]
+  violationHistory       ViolationHistory[]
+  qualificationSnapshots DriverQualificationSnapshot[]
+  readinessScores        DriverReadinessScore[]
+  dispatchAssignments    DispatchAssignment[]
+  dispatchReleases       DispatchRelease[]
+  conditionThreadsCreated ConditionThread[]        @relation("ConditionThreadCreatedByDriver")
+  conditionEventsRecorded ConditionEvent[]         @relation("ConditionEventRecordedByDriver")
+  operationalEvidenceCaptured OperationalEvidence[] @relation("OperationalEvidenceCapturedByDriver")
+
+  @@index([fleetId, status])
+  @@index([email])
+  @@index([phone])
+}
+
+model DriverIntake {
+  id                          String                 @id @default(cuid())
+  driverId                    String
+  fleetId                     String
+  createdByUserId             String
+  intakeSource                DriverIntakeSource     @default(PORTAL)
+  intakeChannel               DriverIntakeChannel    @default(WEB)
+  stage                       DriverIntakeStageType  @default(NEW)
+  status                      DriverIntakeStatus     @default(DRAFT)
+  submittedAt                 DateTime?
+  approvedAt                  DateTime?
+  approvedByUserId            String?
+  rejectedAt                  DateTime?
+  rejectedByUserId            String?
+  isComplianceCertified       Boolean                @default(false)
+  complianceCertifiedAt        DateTime?
+  complianceCertifiedByUserId String?
+  complianceCertificationNotes String?
+  notes                       String?
+  createdAt                   DateTime               @default(now())
+  updatedAt                   DateTime               @updatedAt
+  driver                      Driver                 @relation(fields: [driverId], references: [id], onDelete: Restrict)
+  fleet                       Fleet                  @relation(fields: [fleetId], references: [id], onDelete: Restrict)
+  createdByUser               User                   @relation("DriverIntakeCreatedBy", fields: [createdByUserId], references: [id], onDelete: Restrict)
+  approvedByUser              User?                  @relation("DriverIntakeApprovedBy", fields: [approvedByUserId], references: [id], onDelete: Restrict)
+  rejectedByUser              User?                  @relation("DriverIntakeRejectedBy", fields: [rejectedByUserId], references: [id], onDelete: Restrict)
+  complianceCertifiedByUser   User?                  @relation("DriverIntakeCertifiedBy", fields: [complianceCertifiedByUserId], references: [id], onDelete: Restrict)
+  stageHistory                DriverIntakeStage[]
+  documents                  DriverDocument[]
+  requirements               DriverIntakeRequirement[]
+  licenses                   DriverLicense[] @relation("DriverIntakeLicense")
+  endorsements               DriverEndorsement[] @relation("DriverIntakeEndorsement")
+  medicalQualifications      MedicalQualification[] @relation("DriverIntakeMedicalQualification")
+  drugTests                  DrugTestRecord[] @relation("DriverIntakeDrugTest")
+  workHistory                WorkHistory[] @relation("DriverIntakeWorkHistory")
+  accidentHistory            AccidentHistory[] @relation("DriverIntakeAccidentHistory")
+  violationHistory           ViolationHistory[] @relation("DriverIntakeViolationHistory")
+  qualificationSnapshots      DriverQualificationSnapshot[]
+  readinessScores             DriverReadinessScore[]
+
+  @@index([fleetId, status])
+  @@index([driverId, status])
+  @@index([createdAt])
+}
+
+model DriverIntakeStage {
+  id              String               @id @default(cuid())
+  driverIntakeId  String
+  stage           DriverIntakeStageType
+  status          DriverIntakeStatus?
+  changedByUserId String?
+  notes           String?
+  createdAt       DateTime             @default(now())
+  driverIntake    DriverIntake         @relation(fields: [driverIntakeId], references: [id], onDelete: Cascade)
+  changedByUser   User?                @relation("DriverIntakeStageChangedBy", fields: [changedByUserId], references: [id], onDelete: Restrict)
+
+  @@index([driverIntakeId, createdAt])
+}
+
+model DriverDocument {
+  id                        String                 @id @default(cuid())
+  sourceDocumentId          String                 @default(cuid())
+  versionNumber             Int                    @default(1)
+  previousVersionId         String?
+  supersededAt              DateTime?
+  supersededByDocumentId     String?
+  driverId                  String
+  driverIntakeId            String
+  fleetId                   String
+  type                      DriverDocumentType
+  status                    DriverDocumentStatus   @default(RECEIVED)
+  storageKey                String
+  originalFileName          String
+  mimeType                  String?
+  checksum                  String?
+  uploadedByUserId          String
+  uploadedAt                DateTime               @default(now())
+  verifiedByUserId          String?
+  verifiedAt                DateTime?
+  verifiedFromSourceAt      DateTime?
+  certifiedAt               DateTime?
+  certifiedByUserId         String?
+  verificationExpiresAt     DateTime?
+  nextVerificationDueAt     DateTime?
+  verificationQuality       String?
+  createdAt                 DateTime               @default(now())
+  updatedAt                 DateTime               @updatedAt
+  driver                    Driver                 @relation(fields: [driverId], references: [id], onDelete: Restrict)
+  driverIntake              DriverIntake           @relation(fields: [driverIntakeId], references: [id], onDelete: Restrict)
+  fleet                     Fleet                  @relation(fields: [fleetId], references: [id], onDelete: Restrict)
+  previousVersion           DriverDocument?        @relation("DriverDocumentPreviousVersion", fields: [previousVersionId], references: [id], onDelete: Restrict)
+  nextVersion               DriverDocument?        @relation("DriverDocumentPreviousVersion")
+  supersededByDocument      DriverDocument?        @relation("DriverDocumentSupersededBy", fields: [supersededByDocumentId], references: [id], onDelete: Restrict)
+  supersedesDocument        DriverDocument?        @relation("DriverDocumentSupersededBy")
+  uploadedByUser            User                   @relation("DriverDocumentUploadedBy", fields: [uploadedByUserId], references: [id], onDelete: Restrict)
+  verifiedByUser            User?                  @relation("DriverDocumentVerifiedBy", fields: [verifiedByUserId], references: [id], onDelete: Restrict)
+  certifiedByUser           User?                  @relation("DriverDocumentCertifiedBy", fields: [certifiedByUserId], references: [id], onDelete: Restrict)
+  documentAuthorizations    DocumentAuthorization[] @relation("DocumentAuthorizationVersion")
+  employerDocumentMaterializations EmployerDocumentMaterialization[] @relation("DriverDocumentMaterializationVersion")
+  verificationSources       VerificationSource[]   @relation("VerificationSourceDriverDocument")
+  requirementsSatisfied     DriverIntakeRequirement[] @relation("RequirementSatisfiedByDocument")
+
+  @@unique([sourceDocumentId, versionNumber])
+  @@unique([previousVersionId])
+  @@unique([supersededByDocumentId])
+  @@index([sourceDocumentId])
+  @@index([previousVersionId])
+  @@index([supersededByDocumentId])
+  @@index([driverId, type, status])
+  @@index([fleetId, type])
+  @@index([verifiedByUserId])
+}
+
+model DocumentAuthorization {
+  id                  String      @id @default(cuid())
+  sourceDocumentId    String
+  sourceVersionNumber Int
+  driverId            String
+  fleetId             String
+  authorizedByUserId  String
+  authorizedAt        DateTime    @default(now())
+  revokedAt           DateTime?
+  revokedByUserId     String?
+  createdAt           DateTime    @default(now())
+  sourceDocument      DriverDocument @relation("DocumentAuthorizationVersion", fields: [sourceDocumentId, sourceVersionNumber], references: [sourceDocumentId, versionNumber], onDelete: Restrict)
+  driver              Driver      @relation(fields: [driverId], references: [id], onDelete: Restrict)
+  fleet               Fleet       @relation(fields: [fleetId], references: [id], onDelete: Restrict)
+  authorizedByUser    User        @relation("DocumentAuthorizationAuthorizedBy", fields: [authorizedByUserId], references: [id], onDelete: Restrict)
+  revokedByUser       User?       @relation("DocumentAuthorizationRevokedBy", fields: [revokedByUserId], references: [id], onDelete: Restrict)
+  materializations    EmployerDocumentMaterialization[]
+
+  @@index([sourceDocumentId, sourceVersionNumber])
+  @@index([sourceDocumentId, fleetId, sourceVersionNumber])
+  @@index([driverId])
+  @@index([fleetId])
+  @@index([authorizedByUserId])
+  @@index([authorizedAt])
+  @@index([revokedAt])
+}
+
+model EmployerDocumentMaterialization {
+  id                    String      @id @default(cuid())
+  authorizationId       String      @unique
+  sourceDocumentId      String
+  sourceVersionNumber   Int
+  driverId              String
+  fleetId               String
+  materializedByUserId  String
+  materializedAt        DateTime    @default(now())
+  storageMode           EmployerDocumentMaterializationStorageMode
+  sourceStorageKey      String
+  employerStorageKey    String?
+  originalFileName      String
+  mimeType              String?
+  checksum              String?
+  standardizedEntityType String?
+  standardizedEntityId   String?
+  createdAt             DateTime    @default(now())
+  authorization         DocumentAuthorization @relation(fields: [authorizationId], references: [id], onDelete: Restrict)
+  sourceDocument        DriverDocument @relation("DriverDocumentMaterializationVersion", fields: [sourceDocumentId, sourceVersionNumber], references: [sourceDocumentId, versionNumber], onDelete: Restrict)
+  driver                Driver      @relation(fields: [driverId], references: [id], onDelete: Restrict)
+  fleet                 Fleet       @relation(fields: [fleetId], references: [id], onDelete: Restrict)
+  materializedByUser    User        @relation("EmployerDocumentMaterializedBy", fields: [materializedByUserId], references: [id], onDelete: Restrict)
+
+  @@index([authorizationId])
+  @@index([sourceDocumentId, sourceVersionNumber])
+  @@index([driverId, fleetId])
+  @@index([materializedAt])
+  @@index([materializedByUserId])
+}
+
+model DriverIntakeRequirement {
+  id                  String            @id @default(cuid())
+  driverIntakeId      String
+  requirementType     String
+  label               String
+  isRequired          Boolean           @default(true)
+  status              RequirementStatus @default(PENDING)
+  dueDate             DateTime?
+  expiresAt           DateTime?
+  satisfiedByDocumentId String?
+  exceptionReason     String?
+  createdAt           DateTime          @default(now())
+  updatedAt           DateTime          @updatedAt
+  driverIntake        DriverIntake      @relation(fields: [driverIntakeId], references: [id], onDelete: Cascade)
+  satisfiedByDocument  DriverDocument?   @relation("RequirementSatisfiedByDocument", fields: [satisfiedByDocumentId], references: [id], onDelete: Restrict)
+  verificationSources  VerificationSource[] @relation("VerificationSourceDriverIntakeRequirement")
+
+  @@unique([driverIntakeId, requirementType])
+  @@index([driverIntakeId, status])
+}
+
+model DriverLicense {
+  id               String             @id @default(cuid())
+  driverId         String
+  driverIntakeId   String?
+  licenseNumber    String
+  state            String
+  licenseClass     String?
+  expirationDate   DateTime?
+  status           QualificationStatus @default(PENDING)
+  verificationStatus VerificationStatus? @default(PENDING_VERIFICATION)
+  createdAt        DateTime           @default(now())
+  updatedAt        DateTime           @updatedAt
+  driver           Driver             @relation(fields: [driverId], references: [id], onDelete: Restrict)
+  driverIntake     DriverIntake?      @relation("DriverIntakeLicense", fields: [driverIntakeId], references: [id], onDelete: Restrict)
+  verificationSources VerificationSource[] @relation("VerificationSourceDriverLicense")
+
+  @@index([driverId, expirationDate])
+  @@index([driverId, status])
+}
+
+model DriverEndorsement {
+  id               String             @id @default(cuid())
+  driverId         String
+  driverIntakeId   String?
+  code             String
+  expirationDate   DateTime?
+  status           QualificationStatus @default(ACTIVE)
+  verificationStatus VerificationStatus? @default(PENDING_VERIFICATION)
+  createdAt        DateTime           @default(now())
+  updatedAt        DateTime           @updatedAt
+  driver           Driver             @relation(fields: [driverId], references: [id], onDelete: Restrict)
+  driverIntake     DriverIntake?      @relation("DriverIntakeEndorsement", fields: [driverIntakeId], references: [id], onDelete: Restrict)
+
+  @@index([driverId, expirationDate])
+  @@index([driverId, status])
+}
+
+model MedicalQualification {
+  id               String             @id @default(cuid())
+  driverId         String
+  driverIntakeId   String?
+  provider         String?
+  expirationDate   DateTime?
+  status           QualificationStatus @default(PENDING)
+  verificationStatus VerificationStatus? @default(PENDING_VERIFICATION)
+  createdAt        DateTime           @default(now())
+  updatedAt        DateTime           @updatedAt
+  driver           Driver             @relation(fields: [driverId], references: [id], onDelete: Restrict)
+  driverIntake     DriverIntake?      @relation("DriverIntakeMedicalQualification", fields: [driverIntakeId], references: [id], onDelete: Restrict)
+  verificationSources VerificationSource[] @relation("VerificationSourceMedicalQualification")
+
+  @@index([driverId, expirationDate])
+  @@index([driverId, status])
+}
+
+model DrugTestRecord {
+  id               String             @id @default(cuid())
+  driverId         String
+  driverIntakeId   String?
+  provider         String?
+  testDate         DateTime?
+  result           String?
+  expirationDate   DateTime?
+  status           QualificationStatus @default(PENDING)
+  verificationStatus VerificationStatus? @default(PENDING_VERIFICATION)
+  createdAt        DateTime           @default(now())
+  updatedAt        DateTime           @updatedAt
+  driver           Driver             @relation(fields: [driverId], references: [id], onDelete: Restrict)
+  driverIntake     DriverIntake?      @relation("DriverIntakeDrugTest", fields: [driverIntakeId], references: [id], onDelete: Restrict)
+  verificationSources VerificationSource[] @relation("VerificationSourceDrugTestRecord")
+
+  @@index([driverId, testDate])
+  @@index([driverId, status])
+}
+
+model WorkHistory {
+  id             String             @id @default(cuid())
+  driverId       String
+  driverIntakeId String?
+  employerName   String
+  startDate      DateTime?
+  endDate        DateTime?
+  status         QualificationStatus @default(ACTIVE)
+  createdAt      DateTime           @default(now())
+  updatedAt      DateTime           @updatedAt
+  driver         Driver             @relation(fields: [driverId], references: [id], onDelete: Restrict)
+  driverIntake   DriverIntake?      @relation("DriverIntakeWorkHistory", fields: [driverIntakeId], references: [id], onDelete: Restrict)
+
+  @@index([driverId, status])
+}
+
+model AccidentHistory {
+  id             String             @id @default(cuid())
+  driverId       String
+  driverIntakeId String?
+  accidentDate    DateTime
+  severity       String?
+  status         QualificationStatus @default(ACTIVE)
+  createdAt      DateTime           @default(now())
+  updatedAt      DateTime           @updatedAt
+  driver         Driver             @relation(fields: [driverId], references: [id], onDelete: Restrict)
+  driverIntake   DriverIntake?      @relation("DriverIntakeAccidentHistory", fields: [driverIntakeId], references: [id], onDelete: Restrict)
+
+  @@index([driverId, accidentDate])
+}
+
+model ViolationHistory {
+  id             String             @id @default(cuid())
+  driverId       String
+  driverIntakeId String?
+  violationDate  DateTime
+  category       String?
+  status         QualificationStatus @default(ACTIVE)
+  createdAt      DateTime           @default(now())
+  updatedAt      DateTime           @updatedAt
+  driver         Driver             @relation(fields: [driverId], references: [id], onDelete: Restrict)
+  driverIntake   DriverIntake?      @relation("DriverIntakeViolationHistory", fields: [driverIntakeId], references: [id], onDelete: Restrict)
+
+  @@index([driverId, violationDate])
+}
+
+model DriverQualificationSnapshot {
+  id                String            @id @default(cuid())
+  driverId          String
+  driverIntakeId    String?
+  fleetId           String
+  evaluatedAt       DateTime          @default(now())
+  evaluatedByUserId String?
+  status            QualificationDisposition @default(PENDING_REVIEW)
+  score             Int?
+  policyVersion     String
+  summary           String?
+  reasonCodes       Json?
+  createdAt         DateTime          @default(now())
+  updatedAt         DateTime          @updatedAt
+  driver            Driver            @relation(fields: [driverId], references: [id], onDelete: Restrict)
+  driverIntake      DriverIntake?     @relation(fields: [driverIntakeId], references: [id], onDelete: Restrict)
+  fleet             Fleet             @relation(fields: [fleetId], references: [id], onDelete: Restrict)
+  evaluatedByUser   User?             @relation("DriverQualificationSnapshotEvaluatedBy", fields: [evaluatedByUserId], references: [id], onDelete: Restrict)
+
+  @@index([driverId, evaluatedAt])
+  @@index([fleetId, evaluatedAt])
+}
+
+model DriverReadinessScore {
+  id                String            @id @default(cuid())
+  driverId          String
+  driverIntakeId    String?
+  fleetId           String
+  evaluatedAt       DateTime          @default(now())
+  evaluatedByUserId String?
+  status            DriverReadinessState @default(NOT_READY)
+  score             Int?
+  policyVersion     String
+  summary           String?
+  reasonCodes       Json?
+  createdAt         DateTime          @default(now())
+  updatedAt         DateTime          @updatedAt
+  driver            Driver            @relation(fields: [driverId], references: [id], onDelete: Restrict)
+  driverIntake      DriverIntake?     @relation(fields: [driverIntakeId], references: [id], onDelete: Restrict)
+  fleet             Fleet             @relation(fields: [fleetId], references: [id], onDelete: Restrict)
+  evaluatedByUser   User?             @relation("DriverReadinessScoreEvaluatedBy", fields: [evaluatedByUserId], references: [id], onDelete: Restrict)
+  dispatchReleases  DispatchRelease[]
+
+  @@index([driverId, evaluatedAt])
+  @@index([fleetId, status])
+}
+
+model Load {
+  id                     String      @id @default(cuid())
+  fleetId                String
+  customerName           String
+  origin                 String
+  destination            String
+  pickupWindowStart      DateTime?
+  pickupWindowEnd        DateTime?
+  deliveryWindowStart    DateTime?
+  deliveryWindowEnd      DateTime?
+  referenceNumber        String?
+  secondaryReferenceNumber String?
+  status                 LoadStatus
+  createdAt              DateTime    @default(now())
+  updatedAt              DateTime    @updatedAt
+  fleet                  Fleet       @relation(fields: [fleetId], references: [id], onDelete: Restrict)
+  dispatchAssignments    DispatchAssignment[]
+  dispatchReleases       DispatchRelease[]
+  conditionEvents        ConditionEvent[]         @relation("ConditionEventLoad")
+  operationalEvidence    OperationalEvidence[]    @relation("OperationalEvidenceLoad")
+
+  @@index([fleetId, status])
+  @@index([fleetId, pickupWindowStart])
+  @@index([fleetId, deliveryWindowStart])
+}
+
+model Equipment {
+  id                     String      @id @default(cuid())
+  fleetId                String
+  equipmentType          EquipmentType
+  unitNumber             String
+  vin                    String?
+  status                 EquipmentStatus
+  createdAt              DateTime    @default(now())
+  updatedAt              DateTime    @updatedAt
+  fleet                  Fleet       @relation(fields: [fleetId], references: [id], onDelete: Restrict)
+  tractorAssignments     DispatchAssignment[] @relation("DispatchAssignmentTractorEquipment")
+  trailerAssignments     DispatchAssignment[] @relation("DispatchAssignmentTrailerEquipment")
+  tractorDispatchReleases DispatchRelease[] @relation("DispatchReleaseTractorEquipment")
+  trailerDispatchReleases DispatchRelease[] @relation("DispatchReleaseTrailerEquipment")
+  conditionThreads       ConditionThread[]     @relation("ConditionThreadEquipment")
+  conditionEvents        ConditionEvent[]       @relation("ConditionEventEquipment")
+  operationalEvidence    OperationalEvidence[]  @relation("OperationalEvidenceEquipment")
+
+  @@unique([fleetId, unitNumber])
+  @@index([fleetId, equipmentType, status])
+}
+
+model DispatchAssignment {
+  id                     String                   @id @default(cuid())
+  fleetId                String
+  loadId                 String
+  driverId               String
+  tractorEquipmentId     String
+  trailerEquipmentId     String?
+  status                 DispatchAssignmentStatus
+  assignedAt             DateTime                 @default(now())
+  assignedByUserId       String?
+  unassignedAt           DateTime?
+  unassignedByUserId     String?
+  createdAt              DateTime                 @default(now())
+  updatedAt              DateTime                 @updatedAt
+  fleet                  Fleet                    @relation(fields: [fleetId], references: [id], onDelete: Restrict)
+  load                   Load                     @relation(fields: [loadId], references: [id], onDelete: Restrict)
+  driver                 Driver                   @relation(fields: [driverId], references: [id], onDelete: Restrict)
+  tractorEquipment       Equipment                @relation("DispatchAssignmentTractorEquipment", fields: [tractorEquipmentId], references: [id], onDelete: Restrict)
+  trailerEquipment       Equipment?               @relation("DispatchAssignmentTrailerEquipment", fields: [trailerEquipmentId], references: [id], onDelete: Restrict)
+  assignedByUser         User?                    @relation("DispatchAssignmentAssignedBy", fields: [assignedByUserId], references: [id], onDelete: Restrict)
+  unassignedByUser       User?                    @relation("DispatchAssignmentUnassignedBy", fields: [unassignedByUserId], references: [id], onDelete: Restrict)
+  preTripHeaders         PreTripHeader[]
+  dispatchReleases       DispatchRelease[]
+  conditionEvents        ConditionEvent[]         @relation("ConditionEventDispatchAssignment")
+  operationalEvidence    OperationalEvidence[]    @relation("OperationalEvidenceDispatchAssignment")
+
+  @@index([fleetId, status])
+  @@index([loadId, assignedAt])
+  @@index([driverId, assignedAt])
+  @@index([tractorEquipmentId, assignedAt])
+  @@index([trailerEquipmentId, assignedAt])
+}
+
+model PreTripHeader {
+  id                     String         @id @default(cuid())
+  fleetId                String
+  assignmentId           String
+  status                 PreTripStatus
+  completedAt            DateTime?
+  completedByUserId      String?
+  createdAt              DateTime       @default(now())
+  updatedAt              DateTime       @updatedAt
+  fleet                  Fleet          @relation(fields: [fleetId], references: [id], onDelete: Restrict)
+  assignment             DispatchAssignment @relation(fields: [assignmentId], references: [id], onDelete: Restrict)
+  completedByUser        User?          @relation("PreTripHeaderCompletedBy", fields: [completedByUserId], references: [id], onDelete: Restrict)
+  items                  PreTripItem[]
+  defects                PreTripDefect[]
+  dispatchReleases       DispatchRelease[]
+  conditionEvents        ConditionEvent[]         @relation("ConditionEventPreTripHeader")
+  operationalEvidence    OperationalEvidence[]    @relation("OperationalEvidencePreTripHeader")
+}
+
+model PreTripItem {
+  id                     String           @id @default(cuid())
+  preTripHeaderId        String
+  sectionCode            String
+  itemCode               String
+  isCritical             Boolean
+  status                 PreTripItemStatus
+  notes                  String?
+  createdAt              DateTime         @default(now())
+  updatedAt              DateTime         @updatedAt
+  preTripHeader          PreTripHeader    @relation(fields: [preTripHeaderId], references: [id], onDelete: Cascade)
+  defects                PreTripDefect[]
+  conditionEvents        ConditionEvent[]         @relation("ConditionEventPreTripItem")
+  operationalEvidence    OperationalEvidence[]    @relation("OperationalEvidencePreTripItem")
+
+  @@unique([preTripHeaderId, itemCode])
+}
+
+model PreTripDefect {
+  id                     String                @id @default(cuid())
+  preTripHeaderId        String
+  preTripItemId          String?
+  itemCode               String
+  severity               PreTripDefectSeverity
+  description            String
+  requiresRepair         Boolean
+  createdAt              DateTime              @default(now())
+  updatedAt              DateTime              @updatedAt
+  preTripHeader          PreTripHeader         @relation(fields: [preTripHeaderId], references: [id], onDelete: Cascade)
+  preTripItem            PreTripItem?          @relation(fields: [preTripItemId], references: [id], onDelete: SetNull)
+}
+
+model DispatchRelease {
+  id                     String                     @id @default(cuid())
+  fleetId                String
+  loadId                 String
+  assignmentId           String
+  driverId               String
+  tractorEquipmentId     String
+  trailerEquipmentId     String?
+  preTripHeaderId        String?
+  driverReadinessScoreId String
+  disposition            DispatchReleaseDisposition
+  reasonCodes            Json
+  summary                String
+  policyVersion          String
+  evaluatedAt            DateTime                   @default(now())
+  evaluatedByUserId      String?
+  createdAt              DateTime                   @default(now())
+  fleet                  Fleet                      @relation(fields: [fleetId], references: [id], onDelete: Restrict)
+  load                   Load                       @relation(fields: [loadId], references: [id], onDelete: Restrict)
+  assignment             DispatchAssignment         @relation(fields: [assignmentId], references: [id], onDelete: Restrict)
+  driver                 Driver                     @relation(fields: [driverId], references: [id], onDelete: Restrict)
+  tractorEquipment       Equipment                  @relation("DispatchReleaseTractorEquipment", fields: [tractorEquipmentId], references: [id], onDelete: Restrict)
+  trailerEquipment       Equipment?                 @relation("DispatchReleaseTrailerEquipment", fields: [trailerEquipmentId], references: [id], onDelete: Restrict)
+  preTripHeader          PreTripHeader?             @relation(fields: [preTripHeaderId], references: [id], onDelete: Restrict)
+  driverReadinessScore   DriverReadinessScore       @relation(fields: [driverReadinessScoreId], references: [id], onDelete: Restrict)
+  evaluatedByUser        User?                      @relation("DispatchReleaseEvaluatedBy", fields: [evaluatedByUserId], references: [id], onDelete: Restrict)
+
+  @@index([assignmentId, evaluatedAt])
+  @@index([loadId, evaluatedAt])
+  @@index([fleetId, evaluatedAt])
+  @@index([driverReadinessScoreId])
+}
+
+model ConditionThread {
+  id                  String                      @id @default(cuid())
+  fleetId             String
+  equipmentId         String
+  title               String
+  category            ConditionCategory
+  severity            ConditionSeverity
+  impact              ConditionImpact?
+  observationSource   ConditionObservationSource
+  lifecycleState      ConditionLifecycleState
+  verificationState   ConditionVerificationState   @default(UNVERIFIED)
+  evidenceCompleteness ConditionEvidenceCompleteness @default(NONE)
+  firstIdentifiedAt   DateTime                    @default(now())
+  lastConfirmedAt     DateTime?
+  repairReportedAt    DateTime?
+  resolutionVerifiedAt DateTime?
+  reopenedAt          DateTime?
+  createdByUserId     String
+  createdByDriverId   String?
+  notes               String?
+  createdAt           DateTime                    @default(now())
+  updatedAt           DateTime                    @updatedAt
+  fleet               Fleet                       @relation("ConditionThreadFleet", fields: [fleetId], references: [id], onDelete: Restrict)
+  equipment           Equipment                   @relation("ConditionThreadEquipment", fields: [equipmentId], references: [id], onDelete: Restrict)
+  createdByUser       User                        @relation("ConditionThreadCreatedByUser", fields: [createdByUserId], references: [id], onDelete: Restrict)
+  createdByDriver     Driver?                     @relation("ConditionThreadCreatedByDriver", fields: [createdByDriverId], references: [id], onDelete: Restrict)
+  events              ConditionEvent[]            @relation("ConditionThreadEvents")
+  evidences           OperationalEvidence[]       @relation("ConditionThreadEvidences")
+
+  @@index([fleetId, equipmentId, lifecycleState])
+  @@index([fleetId, firstIdentifiedAt])
+  @@index([equipmentId, lifecycleState])
+  @@index([createdByUserId])
+  @@index([createdByDriverId])
+}
+
+model ConditionEvent {
+  id                    String                      @id @default(cuid())
+  conditionThreadId     String
+  fleetId               String
+  equipmentId           String
+  loadId                String?
+  dispatchAssignmentId   String?
+  preTripHeaderId       String?
+  preTripItemId         String?
+  eventType             ConditionEventType
+  observationSource     ConditionObservationSource
+  verificationState     ConditionVerificationState
+  resolutionAuthority   ConditionResolutionAuthority?
+  statusBefore          ConditionLifecycleState?
+  statusAfter           ConditionLifecycleState
+  verificationBefore    ConditionVerificationState?
+  verificationAfter     ConditionVerificationState
+  categoryBefore        ConditionCategory?
+  categoryAfter         ConditionCategory?
+  severityBefore        ConditionSeverity?
+  severityAfter         ConditionSeverity?
+  impactBefore          ConditionImpact?
+  impactAfter           ConditionImpact?
+  notes                 String?
+  observedAt            DateTime                    @default(now())
+  recordedByUserId      String
+  recordedByDriverId    String?
+  createdAt             DateTime                    @default(now())
+  updatedAt             DateTime                    @updatedAt
+  conditionThread       ConditionThread             @relation("ConditionThreadEvents", fields: [conditionThreadId], references: [id], onDelete: Restrict)
+  fleet                 Fleet                       @relation("ConditionEventFleet", fields: [fleetId], references: [id], onDelete: Restrict)
+  equipment             Equipment                   @relation("ConditionEventEquipment", fields: [equipmentId], references: [id], onDelete: Restrict)
+  load                  Load?                       @relation("ConditionEventLoad", fields: [loadId], references: [id], onDelete: Restrict)
+  dispatchAssignment    DispatchAssignment?         @relation("ConditionEventDispatchAssignment", fields: [dispatchAssignmentId], references: [id], onDelete: Restrict)
+  preTripHeader         PreTripHeader?              @relation("ConditionEventPreTripHeader", fields: [preTripHeaderId], references: [id], onDelete: Restrict)
+  preTripItem           PreTripItem?                @relation("ConditionEventPreTripItem", fields: [preTripItemId], references: [id], onDelete: Restrict)
+  recordedByUser        User                        @relation("ConditionEventRecordedByUser", fields: [recordedByUserId], references: [id], onDelete: Restrict)
+  recordedByDriver      Driver?                     @relation("ConditionEventRecordedByDriver", fields: [recordedByDriverId], references: [id], onDelete: Restrict)
+  evidences             OperationalEvidence[]       @relation("ConditionEventEvidences")
+
+  @@index([conditionThreadId, observedAt])
+  @@index([fleetId, observedAt])
+  @@index([equipmentId, observedAt])
+  @@index([loadId, observedAt])
+  @@index([dispatchAssignmentId, observedAt])
+  @@index([preTripHeaderId, observedAt])
+  @@index([preTripItemId, observedAt])
+  @@index([recordedByUserId])
+  @@index([recordedByDriverId])
+}
+
+model OperationalEvidence {
+  id                  String                      @id @default(cuid())
+  fleetId             String
+  equipmentId         String?
+  loadId              String?
+  dispatchAssignmentId String?
+  preTripHeaderId     String?
+  preTripItemId       String?
+  conditionThreadId   String?
+  conditionEventId    String?
+  evidenceKind        ConditionEvidenceKind
+  observationSource   ConditionObservationSource
+  observationValue    Json?
+  provenance          Json?
+  storageKey          String
+  originalFileName    String
+  mimeType            String?
+  checksum            String?
+  capturedAt          DateTime                    @default(now())
+  capturedByUserId    String
+  capturedByDriverId  String?
+  notes               String?
+  createdAt           DateTime                    @default(now())
+  updatedAt           DateTime                    @updatedAt
+  fleet               Fleet                       @relation("OperationalEvidenceFleet", fields: [fleetId], references: [id], onDelete: Restrict)
+  equipment           Equipment?                  @relation("OperationalEvidenceEquipment", fields: [equipmentId], references: [id], onDelete: Restrict)
+  load                Load?                       @relation("OperationalEvidenceLoad", fields: [loadId], references: [id], onDelete: Restrict)
+  dispatchAssignment  DispatchAssignment?         @relation("OperationalEvidenceDispatchAssignment", fields: [dispatchAssignmentId], references: [id], onDelete: Restrict)
+  preTripHeader       PreTripHeader?              @relation("OperationalEvidencePreTripHeader", fields: [preTripHeaderId], references: [id], onDelete: Restrict)
+  preTripItem         PreTripItem?                @relation("OperationalEvidencePreTripItem", fields: [preTripItemId], references: [id], onDelete: Restrict)
+  conditionThread     ConditionThread?            @relation("ConditionThreadEvidences", fields: [conditionThreadId], references: [id], onDelete: Restrict)
+  conditionEvent      ConditionEvent?             @relation("ConditionEventEvidences", fields: [conditionEventId], references: [id], onDelete: Restrict)
+  capturedByUser      User                        @relation("OperationalEvidenceCapturedByUser", fields: [capturedByUserId], references: [id], onDelete: Restrict)
+  capturedByDriver    Driver?                     @relation("OperationalEvidenceCapturedByDriver", fields: [capturedByDriverId], references: [id], onDelete: Restrict)
+
+  @@index([fleetId, capturedAt])
+  @@index([equipmentId, capturedAt])
+  @@index([loadId, capturedAt])
+  @@index([dispatchAssignmentId, capturedAt])
+  @@index([preTripHeaderId, capturedAt])
+  @@index([preTripItemId, capturedAt])
+  @@index([conditionThreadId, capturedAt])
+  @@index([conditionEventId, capturedAt])
+  @@index([capturedByUserId])
+  @@index([capturedByDriverId])
+}
+
+model VerificationSource {
+  id                     String              @id @default(cuid())
+  driverDocumentId       String?
+  driverLicenseId        String?
+  medicalQualificationId String?
+  drugTestRecordId       String?
+  driverIntakeRequirementId String?
+  providerName           String
+  providerType           String?
+  verificationMethod     String
+  verificationStatus     VerificationStatus  @default(PENDING_VERIFICATION)
+  isCertifiedProvider    Boolean             @default(false)
+  certificationLevel     String?
+  verifiedAt             DateTime?
+  verifiedByUserId       String?
+  notes                  String?
+  createdAt              DateTime            @default(now())
+  driverDocument         DriverDocument?     @relation("VerificationSourceDriverDocument", fields: [driverDocumentId], references: [id], onDelete: Restrict)
+  driverLicense          DriverLicense?      @relation("VerificationSourceDriverLicense", fields: [driverLicenseId], references: [id], onDelete: Restrict)
+  medicalQualification   MedicalQualification? @relation("VerificationSourceMedicalQualification", fields: [medicalQualificationId], references: [id], onDelete: Restrict)
+  drugTestRecord         DrugTestRecord?     @relation("VerificationSourceDrugTestRecord", fields: [drugTestRecordId], references: [id], onDelete: Restrict)
+  driverIntakeRequirement DriverIntakeRequirement? @relation("VerificationSourceDriverIntakeRequirement", fields: [driverIntakeRequirementId], references: [id], onDelete: Restrict)
+  verifiedByUser         User?               @relation("VerificationSourceVerifiedBy", fields: [verifiedByUserId], references: [id], onDelete: Restrict)
+
+  @@index([driverDocumentId])
+  @@index([driverLicenseId])
+  @@index([medicalQualificationId])
+  @@index([drugTestRecordId])
+  @@index([driverIntakeRequirementId])
+}
+
+model AuditEvent {
+  id         String      @id @default(cuid())
+  actorId    String?
+  actorEmail String?
+  tenantId   String?
+  action     AuditAction
+  entityType String
+  entityId   String?
+  details    Json?
+  metadata   Json?
+  createdAt  DateTime    @default(now())
+  actor      User?       @relation(fields: [actorId], references: [id], onDelete: SetNull)
+  tenant     Fleet?      @relation(fields: [tenantId], references: [id], onDelete: SetNull)
+
+  @@index([tenantId, createdAt])
+  @@index([actorId, createdAt])
+  @@index([entityType, entityId])
+}
