@@ -650,6 +650,166 @@ body {
   line-height: 0;
 }
 
+.bof-mkt-brand {
+  align-items: flex-start;
+  display: inline-flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  text-decoration: none;
+}
+
+.bof-mkt-brand__tag {
+  color: #0f766e;
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.bof-mkt-logo-motion {
+  display: inline-grid;
+  max-width: 100%;
+  position: relative;
+}
+
+.bof-mkt-logo-motion__base,
+.bof-mkt-logo-motion__overlay {
+  grid-area: 1 / 1;
+}
+
+.bof-mkt-logo-motion__overlay {
+  height: auto;
+  inset: 0;
+  opacity: 0;
+  pointer-events: none;
+  position: absolute;
+  width: 100%;
+}
+
+.bof-mkt-logo-motion__roads path {
+  fill: #dcecff;
+  opacity: 0;
+}
+
+.bof-mkt-logo-motion__truck {
+  opacity: 0;
+}
+
+.bof-mkt-logo-motion__truck--navy {
+  fill: #06183a;
+}
+
+.bof-mkt-logo-motion__truck--teal {
+  fill: #22c7b8;
+}
+
+.bof-mkt-logo-motion__truck--gold {
+  fill: #b77412;
+}
+
+.bof-mkt-logo-motion.is-playing .bof-mkt-logo-motion__overlay {
+  animation: bofMktLogoOverlay 4.2s ease both;
+  opacity: 1;
+}
+
+.bof-mkt-logo-motion.is-playing .bof-mkt-logo-motion__roads path {
+  animation: bofMktRoadSweep 4.2s ease both;
+}
+
+.bof-mkt-logo-motion.is-playing .bof-mkt-logo-motion__truck--navy {
+  animation: bofMktTruckNavy 4.2s ease both;
+}
+
+.bof-mkt-logo-motion.is-playing .bof-mkt-logo-motion__truck--teal {
+  animation: bofMktTruckTeal 4.2s ease both;
+}
+
+.bof-mkt-logo-motion.is-playing .bof-mkt-logo-motion__truck--gold {
+  animation: bofMktTruckGold 4.2s ease both;
+}
+
+@keyframes bofMktLogoOverlay {
+  0%,
+  86% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes bofMktRoadSweep {
+  0%,
+  12% {
+    opacity: 0;
+  }
+  18%,
+  70% {
+    opacity: 0.45;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes bofMktTruckNavy {
+  0%,
+  10% {
+    opacity: 0;
+    transform: translate(0, 2px);
+  }
+  20%,
+  56% {
+    opacity: 1;
+    transform: translate(8px, -1px);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(18px, -2px);
+  }
+}
+
+@keyframes bofMktTruckTeal {
+  0%,
+  18% {
+    opacity: 0;
+    transform: translate(0, 2px);
+  }
+  28%,
+  62% {
+    opacity: 1;
+    transform: translate(10px, -1px);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(20px, -2px);
+  }
+}
+
+@keyframes bofMktTruckGold {
+  0%,
+  24% {
+    opacity: 0;
+    transform: translate(0, 1px);
+  }
+  34%,
+  68% {
+    opacity: 1;
+    transform: translate(12px, -1px);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(22px, -2px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bof-mkt-logo-motion__overlay {
+    display: none !important;
+  }
+}
+
 .bof-header {
   display: flex;
   align-items: center;

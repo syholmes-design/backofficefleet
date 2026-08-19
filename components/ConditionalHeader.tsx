@@ -8,7 +8,14 @@ export function ConditionalHeader() {
   
   // Don't show header on marketing routes
   const isMarketingRoute = pathname === '/' || 
+    pathname.startsWith('/product') ||
+    pathname.startsWith('/driver-experience') ||
+    pathname.startsWith('/fleet-operations') ||
+    pathname.startsWith('/investors') ||
+    pathname.startsWith('/contact') ||
     pathname.startsWith('/apply') ||
+    pathname.startsWith('/founding-fleet') ||
+    pathname.startsWith('/blog') ||
     pathname.startsWith('/bof-vault') ||
     pathname.startsWith('/book-assessment') ||
     pathname.startsWith('/fleet-savings') ||
