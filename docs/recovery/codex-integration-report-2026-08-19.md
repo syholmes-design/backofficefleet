@@ -155,6 +155,7 @@ Recovered static asset verification (HTTP 200) confirmed representative dependen
 3. `26ab47b2` — `recover: integrate Codex investor portal and branding surfaces`
 4. `ec41979a` — `recover: integrate recovered static BOF surfaces routing`
 5. `820779ed` — `recover: document Codex checkpoint recovery integration`
+6. `a37fd5bd` — `recover: finalize Codex integration report details`
 
 ## 9) Safety confirmations
 
