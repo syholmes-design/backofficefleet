@@ -1,171 +1,279 @@
-import { Metadata } from 'next';
-import { getDriverPortalProfiles } from '@/lib/demo-portals';
-import { getPendingAcknowledgments } from '@/lib/driver-acknowledgment-details';
-import Link from 'next/link';
+import { auth } from "@/auth";
+import { DriverVaultDocumentOperationsClient } from "@/components/driver-vault/DriverVaultDocumentOperationsClient";
+import { DRIVER_VAULT_DOCUMENT_TYPES, driverVaultDocumentTypeLabel } from "@/lib/driver-vault-document-types";
+import { getAuthenticatedDriver } from "@/lib/services/authenticatedDriverService";
+import { reconcileEmployerDriverRecord } from "@/lib/services/employerDriverRecordService";
+import { resolveContext } from "@/lib/services/contextResolver";
+import { getDriverOperationalSummary, type DriverOperationalSummary } from "@/lib/services/driverOperationalReadModelService";
+import { getAuthenticatedDriverVaultStatus } from "@/lib/services/driverDocumentVersioningService";
 
-export const metadata: Metadata = {
-  title: 'Driver Portal',
-  description:
-    'A controlled workspace for company drivers and owner-operators to view documents, assignments, proof requirements, settlements, and acknowledgments.',
-};
+function statusTone(status: string) {
+  switch (status) {
+    case "CERTIFIED":
+    case "VERIFIED":
+      return "bg-emerald-100 text-emerald-800";
+    case "PENDING_VERIFICATION":
+    case "RECEIVED":
+      return "bg-amber-100 text-amber-800";
+    case "EXPIRED":
+    case "REJECTED":
+      return "bg-red-100 text-red-800";
+    default:
+      return "bg-slate-100 text-slate-700";
+  }
+}
 
-export default function DriverPortalPage() {
-  const driverProfiles = getDriverPortalProfiles();
+function formatDate(value: Date | null) {
+  return value ? value.toLocaleDateString() : "—";
+}
+
+function readinessLabel(summary: DriverOperationalSummary | null) {
+  if (!summary?.readiness) {
+    return "Not yet evaluated";
+  }
+
+  return summary.readiness.readinessStatus.replace(/_/g, " ");
+}
+
+export default async function DriverPortalPage() {
+  const session = await auth();
+
+  if (!session?.user?.id) {
+    return (
+      <div className="min-h-screen bg-gray-50">
+        <div className="mx-auto max-w-4xl px-4 py-16 sm:px-6 lg:px-8">
+          <div className="rounded-lg border border-gray-200 bg-white p-8 shadow-sm">
+            <h1 className="text-3xl font-bold text-gray-900">My BOF Vault</h1>
+            <p className="mt-3 text-gray-600">Sign in to view your driver vault.</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  const driverAccess = await getAuthenticatedDriver(session.user);
+
+  if (driverAccess.status !== "LINKED") {
+    if (driverAccess.status === "UNLINKED") {
+      return (
+        <div className="min-h-screen bg-gray-50">
+          <div className="mx-auto max-w-4xl px-4 py-16 sm:px-6 lg:px-8">
+            <div className="rounded-lg border border-amber-200 bg-amber-50 p-8 shadow-sm">
+              <h1 className="text-3xl font-bold text-gray-900">My BOF Vault</h1>
+              <p className="mt-3 text-gray-700">
+                Your BOF driver identity is not linked yet. Complete the existing driver claim process to unlock your vault.
+              </p>
+              <div className="mt-6 text-sm text-gray-600">Status: UNLINKED</div>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    return (
+      <div className="min-h-screen bg-gray-50">
+        <div className="mx-auto max-w-4xl px-4 py-16 sm:px-6 lg:px-8">
+          <div className="rounded-lg border border-gray-200 bg-white p-8 shadow-sm">
+            <h1 className="text-3xl font-bold text-gray-900">My BOF Vault</h1>
+            <p className="mt-3 text-gray-600">Sign in to view your driver vault.</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  const [summary, vaultStatus, reconciliation, context] = await Promise.all([
+    getDriverOperationalSummary(session.user, driverAccess.driver.id, { selfOnly: true }),
+    getAuthenticatedDriverVaultStatus(session.user),
+    reconcileEmployerDriverRecord({
+      sessionUser: session.user,
+      driverId: driverAccess.driver.id,
+      fleetId: driverAccess.driver.fleetId,
+    }),
+    resolveContext(session.user),
+  ]);
+
+  const documents = vaultStatus.documents;
+  const missingDocuments = documents.filter((document) => document.status !== "VERIFIED" && document.status !== "CERTIFIED");
+  const missingDocumentTypes = DRIVER_VAULT_DOCUMENT_TYPES.filter(
+    (item) => !documents.some((document) => document.type === item.value),
+  ).map((item) => ({ type: item.value, label: item.label }));
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <div className="max-w-7xl mx-auto px-4 py-12 sm:px-6 lg:px-8">
-        {/* Header */}
-        <div className="text-center mb-12">
-          <h1 className="text-4xl font-bold text-gray-900 mb-4">
-            Driver Portal
-          </h1>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            A controlled workspace for company drivers and owner-operators to view documents, assignments, proof requirements, settlements, and acknowledgments.
+      <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
+        <div className="mb-10">
+          <p className="text-sm font-semibold uppercase tracking-wide text-slate-500">Driver Vault</p>
+          <h1 className="mt-2 text-4xl font-bold text-gray-900">My BOF Vault</h1>
+          <p className="mt-3 max-w-3xl text-gray-600">
+            Authenticated driver access for documents, readiness, and qualification records.
           </p>
         </div>
 
-        {/* Driver Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
-          {driverProfiles.map((driver) => (
-            <div
-              key={driver.driverId}
-              className="bg-white rounded-lg shadow-lg border border-gray-200 p-6 hover:shadow-xl transition-shadow duration-300"
-            >
-              {/* Driver Info */}
-              <div className="mb-6">
-                <div className="flex items-center justify-between mb-2">
-                  <h3 className="text-lg font-bold text-gray-900">
-                    {driver.name}
-                  </h3>
-                  <span className="text-sm text-gray-500">
-                    {driver.driverId}
-                  </span>
-                </div>
-                <div className="text-sm text-gray-600 mb-1">
-                  Worker Type:{' '}
-                  <span className="font-semibold">{driver.workerType}</span>
-                </div>
-                <div className="text-sm text-gray-600">
-                  Status:{' '}
-                  <span
-                    className={`font-semibold ${
-                      driver.readinessStatus === 'Ready'
-                        ? 'text-green-600'
-                        : 'text-yellow-600'
-                    }`}
-                  >
-                    {driver.readinessStatus}
-                  </span>
-                </div>
-              </div>
-
-              {/* Current Assignment */}
-              {driver.currentLoadId && (
-                <div className="mb-4 p-3 bg-blue-50 rounded border border-blue-200">
-                  <div className="text-sm font-medium text-blue-900 mb-1">
-                    Current Assignment
-                  </div>
-                  <div className="text-sm text-blue-700">
-                    Load {driver.currentLoadId} - {driver.currentLoadStatus}
-                  </div>
-                </div>
-              )}
-
-              {/* Status Summary */}
-              <div className="space-y-2 text-sm">
-                <div className="flex justify-between">
-                  <span className="text-gray-600">Documents:</span>
-                  <span
-                    className={`font-medium ${
-                      driver.documentStatusSummary.includes('expiring')
-                        ? 'text-yellow-600'
-                        : driver.documentStatusSummary.includes('missing')
-                          ? 'text-red-600'
-                          : 'text-green-600'
-                    }`}
-                  >
-                    {driver.documentStatusSummary}
-                  </span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-600">Settlements:</span>
-                  <span className="font-medium text-gray-900">
-                    {driver.settlementStatusSummary}
-                  </span>
-                </div>
-                {driver.pendingAcknowledgments > 0 && (
-                  <div className="flex justify-between">
-                    <span className="text-gray-600">Pending:</span>
-                    <div className="group relative">
-                      <span className="font-medium text-orange-600 cursor-help">
-                        {driver.pendingAcknowledgments} acknowledgments
-                      </span>
-                      {/* Hover tooltip */}
-                      <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-2 bg-gray-900 text-white text-xs rounded-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 whitespace-nowrap z-10">
-                        <div className="font-medium mb-1">Pending Acknowledgments:</div>
-                        {(() => {
-                          const pendingAcks = getPendingAcknowledgments(driver.driverId);
-                          return pendingAcks.map((ack) => (
-                            <div key={ack.type} className="text-gray-300">
-                              • {ack.type}
-                            </div>
-                          ));
-                        })()}
-                        <div className="absolute top-full left-1/2 transform -translate-x-1/2 -mt-1">
-                          <div className="border-4 border-transparent border-t-gray-900"></div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                )}
-              </div>
-
-              {/* CTA */}
-              <Link
-                href={`/portals/driver/${driver.driverId}`}
-                className="inline-flex items-center justify-center w-full bg-teal-600 hover:bg-teal-700 text-white font-semibold py-3 px-4 rounded-lg transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500"
-              >
-                Open Driver Portal
-                <svg
-                  className="ml-2 w-4 h-4"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M13 7l5 5m0 0l-5-5m5 5V7m0 0a3 3 0 00-6h3a3 3 0 006 0v8a3 3 0 00-6zm0 0a9 9 0 11-18 0 9 9 0 0118 0"
-                  />
-                </svg>
-              </Link>
+        <div className="grid gap-6 lg:grid-cols-3">
+          <section className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
+            <div className="text-sm font-medium text-gray-500">Driver identity</div>
+            <div className="mt-2 text-2xl font-semibold text-gray-900">
+              {driverAccess.driver.firstName} {driverAccess.driver.lastName}
             </div>
-          ))}
+            <div className="mt-2 text-sm text-gray-600">{driverAccess.driver.fleet?.name ?? "Fleet unavailable"}</div>
+            <div className="mt-4 text-sm text-gray-600">
+              Readiness: <span className="font-semibold text-gray-900">{readinessLabel(summary)}</span>
+            </div>
+            <div className="text-sm text-gray-600">
+              Qualification:{" "}
+              <span className="font-semibold text-gray-900">
+                {summary.qualification?.qualificationStatus.replace(/_/g, " ") ?? "Not yet evaluated"}
+              </span>
+            </div>
+            <div className="mt-4 text-xs uppercase tracking-wide text-gray-500">Contexts</div>
+            <div className="mt-2 space-y-2 text-sm text-gray-700">
+              <div>
+                Personal: <span className="font-semibold text-gray-900">{context.personal ? "Available" : "Unavailable"}</span>
+              </div>
+              <div>
+                Employment:{" "}
+                <span className="font-semibold text-gray-900">
+                  {context.employmentContexts.length > 0 ? context.employmentContexts.map((item) => item.fleetId).join(", ") : "None"}
+                </span>
+              </div>
+            </div>
+          </section>
+
+          <section className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
+            <div className="text-sm font-medium text-gray-500">Readiness</div>
+            <div className="mt-2 text-2xl font-semibold text-gray-900">{readinessLabel(summary)}</div>
+            <p className="mt-3 text-sm text-gray-600">
+              {summary.readiness?.summary ?? "Readiness has not yet been evaluated for this driver."}
+            </p>
+          </section>
+
+          <section className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
+            <div className="text-sm font-medium text-gray-500">Exceptions / Missing Documents</div>
+            <div className="mt-2 text-2xl font-semibold text-gray-900">{missingDocuments.length}</div>
+            <p className="mt-3 text-sm text-gray-600">
+              {missingDocuments.length > 0
+                ? "Documents needing attention are listed below."
+                : "No missing or non-verified documents are currently flagged."}
+            </p>
+          </section>
         </div>
 
-        {/* Navigation */}
-        <div className="text-center">
-          <Link
-            href="/portals"
-            className="inline-flex items-center text-teal-600 hover:text-teal-700 font-medium"
-          >
-            <svg
-              className="w-4 h-4 mr-2"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M15 19l-7-7 7 7"
-              />
-            </svg>
-            Back to Portals
-          </Link>
+        <DriverVaultDocumentOperationsClient
+          documents={documents.map((document) => ({
+            id: document.id,
+            type: document.type,
+            typeLabel: driverVaultDocumentTypeLabel(document.type),
+            status: document.status,
+            originalFileName: document.originalFileName,
+            uploadedAt: document.uploadedAt,
+            verifiedAt: document.verifiedAt,
+            verificationExpiresAt: document.verificationExpiresAt,
+            nextVerificationDueAt: document.nextVerificationDueAt,
+            downloadUrl: `/api/driver/vault/documents/${document.id}/download`,
+          }))}
+          missingDocumentTypes={missingDocumentTypes}
+        />
+
+        <section className="mt-8 rounded-lg border border-gray-200 bg-white shadow-sm">
+          <div className="border-b border-gray-200 px-6 py-4">
+            <h2 className="text-xl font-semibold text-gray-900">Employer record reconciliation</h2>
+            <p className="mt-1 text-sm text-gray-600">
+              Your personal Vault stays separate from retained employer evidence.
+            </p>
+          </div>
+          <div className="divide-y divide-gray-200">
+            {reconciliation.threads.length === 0 ? (
+              <div className="px-6 py-10 text-sm text-gray-500">No employer materializations have been recorded yet.</div>
+            ) : (
+              reconciliation.threads.map((thread) => (
+                <div key={thread.sourceDocumentId} className="px-6 py-4">
+                  <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+                    <div>
+                      <div className="text-sm font-semibold text-gray-900">{thread.documentTypeLabel}</div>
+                      <div className="text-xs text-gray-500">
+                        Personal version {thread.currentPersonalVersionNumber} · current fleet {reconciliation.fleet.name}
+                      </div>
+                    </div>
+                    <div className="text-xs text-gray-500">
+                      {thread.currentEmployerMaterialization
+                        ? `Employer retained version ${thread.currentEmployerMaterialization.sourceVersionNumber} on ${formatDate(
+                            new Date(thread.currentEmployerMaterialization.materializedAt),
+                          )}`
+                        : "No employer materialization yet."}
+                    </div>
+                  </div>
+                  <div className="mt-2 text-sm text-gray-600">
+                    {thread.hasPersonalVersionAheadOfEmployer
+                      ? "A newer personal version exists and remains private until separately authorized."
+                      : thread.currentEmployerMaterialization
+                        ? "Employer evidence is aligned to the last authorized version."
+                        : "No employer evidence has been materialized for this document yet."}
+                  </div>
+                </div>
+              ))
+            )}
+          </div>
+        </section>
+
+        <section className="mt-8 rounded-lg border border-gray-200 bg-white shadow-sm">
+          <div className="border-b border-gray-200 px-6 py-4">
+            <h2 className="text-xl font-semibold text-gray-900">Qualification Documents</h2>
+          </div>
+          <div className="divide-y divide-gray-200">
+            {documents.length === 0 ? (
+              <div className="px-6 py-10 text-sm text-gray-500">No driver documents are on file yet.</div>
+            ) : (
+              documents.map((document) => (
+                <div key={document.id} className="flex flex-col gap-3 px-6 py-4 sm:flex-row sm:items-center sm:justify-between">
+                  <div>
+                    <div className="text-sm font-semibold text-gray-900">{document.type}</div>
+                    <div className="text-sm text-gray-600">{document.originalFileName}</div>
+                    <div className="mt-1 text-xs text-gray-500">Uploaded {formatDate(new Date(document.uploadedAt))}</div>
+                  </div>
+                  <div className="flex flex-wrap gap-2 text-xs">
+                    <span className={`rounded-full px-3 py-1 font-medium ${statusTone(document.status)}`}>
+                      {document.status.replace(/_/g, " ")}
+                    </span>
+                    {document.verifiedAt ? (
+                      <span className="rounded-full bg-slate-100 px-3 py-1 font-medium text-slate-700">
+                        Verified {formatDate(new Date(document.verifiedAt))}
+                      </span>
+                    ) : null}
+                    {document.verificationExpiresAt ? (
+                      <span className="rounded-full bg-slate-100 px-3 py-1 font-medium text-slate-700">
+                        Expires {formatDate(new Date(document.verificationExpiresAt))}
+                      </span>
+                    ) : null}
+                    {document.nextVerificationDueAt ? (
+                      <span className="rounded-full bg-slate-100 px-3 py-1 font-medium text-slate-700">
+                        Due {formatDate(new Date(document.nextVerificationDueAt))}
+                      </span>
+                    ) : null}
+                  </div>
+                </div>
+              ))
+            )}
+          </div>
+        </section>
+
+        {missingDocuments.length > 0 ? (
+          <section className="mt-8 rounded-lg border border-gray-200 bg-white shadow-sm">
+            <div className="border-b border-gray-200 px-6 py-4">
+              <h2 className="text-xl font-semibold text-gray-900">Attention Needed</h2>
+            </div>
+            <div className="divide-y divide-gray-200">
+              {missingDocuments.map((document) => (
+                <div key={document.id} className="px-6 py-4 text-sm text-gray-700">
+                  {document.type} is currently <span className="font-semibold">{document.status.replace(/_/g, " ")}</span>.
+                </div>
+              ))}
+            </div>
+          </section>
+        ) : null}
+
+        <div className="mt-8 text-sm text-gray-500">
+          Driver claim status: LINKED
         </div>
       </div>
     </div>
