@@ -11,7 +11,12 @@ if (!process.env.DATABASE_URL) {
 }
 
 const connectionString = process.env.DATABASE_URL;
-const adapter = connectionString ? new PrismaPg({ connectionString }) : undefined;
+// If DATABASE_URL points to SQLite file (demo mode), use a dummy PostgreSQL URL for adapter
+const adapterConnectionString = connectionString?.startsWith("file:")
+  ? "postgres://localhost/bof-demo-build"
+  : (connectionString || "postgres://localhost/bof-demo");
+
+const adapter = new PrismaPg({ connectionString: adapterConnectionString });
 
 export const prisma =
   globalForPrisma.prisma ??
