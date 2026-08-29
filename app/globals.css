@@ -8753,7 +8753,7 @@ a.bof-mkt-cc-mock-kpi:focus-visible {
 @media (min-width: 960px) {
   .bof-home-hero__content {
     grid-template-columns: minmax(0, 1.2fr) minmax(280px, 0.48fr);
-    align-items: end;
+    align-items: center;
   }
 
   .bof-home-hero__panel {

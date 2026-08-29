@@ -13,6 +13,7 @@ import { RuntimeLoadDetailFallback } from "@/components/loads/RuntimeLoadDetailF
 import { getLoadById } from "@/lib/services/loadService";
 import { type DispatchLoadRecord } from "@/lib/dispatch-workflow-ui";
 import { type SessionWithMemberships } from "@/lib/session-fleet";
+import { normalizeCanonicalLoadId } from "@/lib/canonical-load-stories";
 
 type Props = { params: Promise<{ id: string }> };
 
@@ -29,14 +30,16 @@ function serializeLoad(load: Awaited<ReturnType<typeof getLoadById>>): DispatchL
 }
 
 export async function generateMetadata({ params }: Props) {
-  const { id } = await params;
+  const { id: rawId } = await params;
+  const id = normalizeCanonicalLoadId(rawId);
   return {
     title: `Load ${id} | BOF`,
   };
 }
 
 export default async function LoadDetailPage({ params }: Props) {
-  const { id } = await params;
+  const { id: rawId } = await params;
+  const id = normalizeCanonicalLoadId(rawId);
   const session = (await auth()) as SessionWithMemberships;
 
   if (!session?.user?.id) {

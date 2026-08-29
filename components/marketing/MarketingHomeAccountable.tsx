@@ -26,7 +26,7 @@ export default function MarketingHomeAccountable() {
       <section id="hero" className="bof-home-hero" aria-labelledby="bof-mkt-hero-heading">
         <Image src="/approved/bofhero.png" alt="Professional truck driver operating on the road at sunrise" fill priority sizes="100vw" className="bof-home-hero__image" />
         <div className="bof-home-hero__overlay" aria-hidden />
-        <div className="bof-mkt-container bof-home-hero__content -translate-y-8 md:-translate-y-14">
+        <div className="bof-mkt-container bof-home-hero__content">
           <div className="bof-home-hero__copy">
             <p className="bof-home-eyebrow">Back-office operations for growing trucking companies</p>
             <h1 id="bof-mkt-hero-heading">The Operating System Behind Your Fleet.</h1>

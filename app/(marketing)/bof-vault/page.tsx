@@ -35,7 +35,7 @@ export default function BofVaultPage() {
         <div className="bof-mkt-container relative flex min-h-[30rem] items-center py-12 md:min-h-[38rem] md:py-20">
           <div className="max-w-xl pr-6 lg:max-w-[38rem] lg:pr-10">
             <p className="text-sm font-black uppercase tracking-[0.24em] text-teal-300">BOF VAULT</p>
-            <h1 className="mt-5 max-w-[14ch] text-4xl font-black uppercase leading-[0.96] tracking-tight text-white md:text-6xl lg:text-7xl">YOUR PROFESSIONAL RECORD.<br className="hidden md:block" />WHEREVER YOUR CAREER TAKES YOU.</h1>
+            <h1 className="mt-5 max-w-[14ch] text-3xl font-black uppercase leading-[0.96] tracking-tight text-white md:text-5xl lg:text-[3.375rem]">YOUR PROFESSIONAL RECORD.<br className="hidden md:block" />WHEREVER YOUR CAREER TAKES YOU.</h1>
             <p className="mt-6 max-w-[34rem] text-base leading-7 text-slate-100 md:text-xl md:leading-8">BOF Vault is the driver&apos;s personal, portable professional record. Keep credentials and supporting documents organized, current, and ready to share with the next employer without rebuilding the file each time you move.</p>
             <div className="mt-8"><Link href="/assessment/bof-vault" className="bof-mkt-btn-enterprise bof-mkt-btn-enterprise-primary">TAKE THE BOF VAULT ASSESSMENT</Link></div>
           </div>

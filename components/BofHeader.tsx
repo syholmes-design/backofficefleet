@@ -45,7 +45,7 @@ export function BofHeader() {
   const pathname = usePathname();
   const [mounted, setMounted] = useState(false);
   useEffect(() => setMounted(true), []);
-  const marketingOnlyHeader = ["/", "/for-hire-carriers", "/private-fleets", "/government", "/company", "/aggregators", "/qa", "/bof-vault", "/business-operations", "/fleet-savings", "/book-assessment", "/apply", "/investors", "/blog", "/contact", "/product", "/driver-experience", "/fleet-operations", "/founding-fleet", "/what-we-do/people-hr", "/what-we-do/finance", "/what-we-do/operations-compliance", "/what-we-do/procurement-savings"].some((route) => pathname === route || pathname.startsWith(`${route}/`));
+  const marketingOnlyHeader = ["/", "/for-hire-carriers", "/private-fleets", "/government", "/company", "/aggregators", "/qa", "/bof-vault", "/how-bof-works", "/recruiting", "/careers", "/business-operations", "/fleet-savings", "/book-assessment", "/apply", "/investors", "/blog", "/contact", "/product", "/driver-experience", "/fleet-operations", "/founding-fleet", "/what-we-do", "/what-we-do/people-hr", "/what-we-do/finance", "/what-we-do/operations-compliance", "/what-we-do/procurement-savings"].some((route) => pathname === route || pathname.startsWith(`${route}/`));
   const isActiveProductNav = (href: string) => {
     if (!mounted) return false;
     if (href === "/dispatch") return pathname === "/dispatch" || pathname.startsWith("/dispatch/") || pathname.startsWith("/pretrip/") || pathname.startsWith("/trip-release/");
@@ -82,6 +82,8 @@ export function BofHeader() {
                 {serviceGroups.map((group) => <div key={group.title}><Link href={group.href}><p>{group.title}</p></Link>{group.items.map((item) => <span key={item}>{item}</span>)}</div>)}
               </div>
             </MarketingMenu>
+            <Link href="/how-bof-works">HOW BOF WORKS</Link>
+            <Link href="/recruiting">RECRUITING</Link>
             <Link href="/bof-vault">BOF VAULT</Link>
             <Link href="/business-operations">BUSINESS OPERATIONS</Link>
             <Link href="/documents">DOCUMENTS</Link>

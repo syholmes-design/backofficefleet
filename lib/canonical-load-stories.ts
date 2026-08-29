@@ -83,9 +83,35 @@ const LOAD_STORIES: Record<string, CanonicalLoadStory> = {
 
 export function normalizeCanonicalLoadId(loadId: string): string {
   const raw = String(loadId ?? "").trim().toUpperCase();
+  if (!raw) return "";
+
+  // Check 501-512 aliases (e.g. L-501, L501, 501, #501)
+  const match500 = raw.match(/^(?:L-?|#?)?(50[1-9]|51[0-2])$/);
+  if (match500) {
+    const num = parseInt(match500[1], 10) - 500;
+    return `L${String(num).padStart(3, "0")}`;
+  }
+
+  // Check L001-L012 or 1-12 or L1-L12 or L-001..L-012
+  const matchCanonical = raw.match(/^(?:L-?|#?)?0*([1-9]|1[0-2])$/);
+  if (matchCanonical) {
+    const num = parseInt(matchCanonical[1], 10);
+    return `L${String(num).padStart(3, "0")}`;
+  }
+
+  // Fallback extraction
   const digits = raw.match(/\d+/)?.[0] ?? "";
-  if (!digits) return raw;
-  return `L${digits.padStart(3, "0")}`;
+  if (digits) {
+    const num = parseInt(digits, 10);
+    if (num >= 501 && num <= 512) {
+      return `L${String(num - 500).padStart(3, "0")}`;
+    }
+    if (num >= 1 && num <= 12) {
+      return `L${String(num).padStart(3, "0")}`;
+    }
+  }
+
+  return raw;
 }
 
 export function getCanonicalLoadStory(loadId: string): CanonicalLoadStory | null {

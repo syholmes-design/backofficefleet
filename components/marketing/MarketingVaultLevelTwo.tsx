@@ -63,7 +63,7 @@ export function MarketingVaultLevelTwo({ config }: { config: VaultLevelTwoConfig
         <div className="bof-mkt-container relative flex min-h-[26rem] items-end py-14 md:min-h-[34rem] md:py-20">
           <div className="max-w-4xl">
             <p className="text-sm font-black uppercase tracking-[0.22em] text-teal-300">BOF VAULT / {config.domain} / LEVEL 2 DOMAIN</p>
-            <h1 className="mt-4 text-4xl font-black uppercase leading-[1.02] tracking-tight text-white md:text-7xl">{config.title}</h1>
+            <h1 className="mt-4 text-3xl font-black uppercase leading-[1.02] tracking-tight text-white sm:text-4xl md:text-5xl lg:text-[3.375rem]">{config.title}</h1>
             <p className="mt-6 max-w-3xl text-lg leading-8 text-slate-100 md:text-2xl">{config.description}</p>
             <div className="mt-7 flex flex-wrap gap-4">
               <Link href="/assessment/bof-vault" className="bof-mkt-btn-enterprise bof-mkt-btn-enterprise-primary">Take the BOF Vault assessment</Link>

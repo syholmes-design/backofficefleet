@@ -5,15 +5,17 @@ import { useBofDemoData } from "@/lib/bof-demo-data-context";
 import { buildPretripTabletModel } from "@/lib/pretrip-tablet";
 import { getLoadProofItems } from "@/lib/load-proof";
 import { DemoBackButton } from "@/components/navigation/DemoBackButton";
+import { getCanonicalLoadStory, normalizeCanonicalLoadId } from "@/lib/canonical-load-stories";
 
 export function RuntimeLoadDetailFallback({ loadId }: { loadId: string }) {
   const { data } = useBofDemoData();
-  const rawLoad = data.loads.find((l) => l.id === loadId);
+  const canonicalId = normalizeCanonicalLoadId(loadId);
+  const rawLoad = data.loads.find((l) => l.id === canonicalId || l.id === loadId || l.number === loadId);
 
   if (!rawLoad) {
     return (
       <div className="bof-page bg-slate-50 text-slate-900 min-h-screen p-6">
-        <h1 className="text-2xl font-bold text-slate-950">Load not found</h1>
+        <h1 className="text-2xl font-bold text-slate-950">Load not found ({loadId})</h1>
         <p className="mt-2 text-sm text-slate-600">This load is not present in seeded data or the current demo session.</p>
         <p className="mt-4">
           <Link href="/loads" className="inline-flex rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-800 hover:bg-slate-50">
@@ -24,8 +26,16 @@ export function RuntimeLoadDetailFallback({ loadId }: { loadId: string }) {
     );
   }
 
+  const canonicalStory = getCanonicalLoadStory(rawLoad.id);
   const pretripModel = buildPretripTabletModel(data, rawLoad.id);
   const proofItems = getLoadProofItems(data, rawLoad.id);
+
+  const driver = data.drivers.find((d) => d.id === rawLoad.driverId);
+  const driverName = driver?.name || pretripModel?.driverName || rawLoad.driverId;
+
+  const settlement = data.settlements.find(
+    (s) => (s as { loadId?: string }).loadId === rawLoad.id || s.driverId === rawLoad.driverId
+  );
 
   const load = rawLoad as typeof rawLoad & {
     customerName?: string;
@@ -41,7 +51,34 @@ export function RuntimeLoadDetailFallback({ loadId }: { loadId: string }) {
     settlementHoldReason?: string;
     lumperAmount?: number;
     fuelSurcharge?: number;
+    linehaulRate?: number;
+    workOrderId?: string;
+    dispatcherName?: string;
+    invoiceNumber?: string;
   };
+
+  const isL009 = rawLoad.id === "L009";
+  const isL001 = rawLoad.id === "L001";
+  const isL007 = rawLoad.id === "L007";
+  const isL010 = rawLoad.id === "L010";
+
+  // Dispatch Release Gate State
+  const isBlocked = pretripModel?.overall === "BLOCKED" || isL009;
+  const dispatchGateState = isBlocked
+    ? "HARD BLOCK"
+    : load.settlementHold || isL001 || isL007 || isL010
+      ? "REVIEW REQUIRED"
+      : "RELEASED / READY";
+
+  const dispatchGateReason = isL009
+    ? "Pre-trip inspection failed: WO-003 Drive tire sidewall damage on Asset T-111"
+    : isL001
+      ? "Delivery seal mismatch requires manager signoff (SEAL-83921 vs SEAL-83920)"
+      : isL007
+        ? "QR lumper authorization and Zelle payment closeout pending"
+        : isL010
+          ? "HOS coaching acknowledgment pending (EVT-001)"
+          : "Pre-trip inspection and document readiness verified";
 
   return (
     <div className="bof-page bg-slate-50 text-slate-900 min-h-screen py-8 px-4 sm:px-6 lg:px-8">
@@ -54,7 +91,7 @@ export function RuntimeLoadDetailFallback({ loadId }: { loadId: string }) {
           Loads / Dispatch
         </Link>
         <span className="text-slate-400">/</span>
-        <span className="font-bold text-slate-950">Load {load.number || load.id}</span>
+        <span className="font-bold text-slate-950">Load {load.id} (Ref: {load.number || "501"})</span>
       </nav>
 
       {/* Hero Header */}
@@ -68,15 +105,22 @@ export function RuntimeLoadDetailFallback({ loadId }: { loadId: string }) {
                 load.status === "En Route" ? "border-sky-300 bg-sky-100 text-sky-800" :
                 "border-amber-300 bg-amber-100 text-amber-800"
               }`}>
-                {load.status}
+                Status: {load.status}
               </span>
-              {pretripModel ? (
-                <span className={`inline-flex rounded-full border px-3 py-1 text-xs font-bold uppercase tracking-wider ${
-                  pretripModel.overall === "READY" ? "border-emerald-300 bg-emerald-100 text-emerald-800" : "border-rose-300 bg-rose-100 text-rose-800"
-                }`}>
-                  Pre-trip: {pretripModel.overall}
-                </span>
-              ) : null}
+
+              <span className={`inline-flex rounded-full border px-3 py-1 text-xs font-bold uppercase tracking-wider ${
+                !isBlocked ? "border-emerald-300 bg-emerald-100 text-emerald-800" : "border-rose-300 bg-rose-100 text-rose-800"
+              }`}>
+                Pre-Trip: {isBlocked ? "BLOCKED" : "READY"}
+              </span>
+
+              <span className={`inline-flex rounded-full border px-3 py-1 text-xs font-bold uppercase tracking-wider ${
+                dispatchGateState === "RELEASED / READY" ? "border-emerald-300 bg-emerald-100 text-emerald-800" :
+                dispatchGateState === "REVIEW REQUIRED" ? "border-amber-300 bg-amber-100 text-amber-800" :
+                "border-rose-300 bg-rose-100 text-rose-800"
+              }`}>
+                Gate: {dispatchGateState}
+              </span>
             </div>
 
             <p className="mt-2 text-lg font-semibold text-slate-800">
@@ -88,6 +132,7 @@ export function RuntimeLoadDetailFallback({ loadId }: { loadId: string }) {
               {load.brokerName ? <span>Broker: <strong className="text-slate-950">{load.brokerName}</strong></span> : null}
               {load.commodity ? <span>Commodity: <strong className="text-slate-950">{load.commodity}</strong></span> : null}
               {load.weight ? <span>Weight: <strong className="text-slate-950">{load.weight.toLocaleString()} lbs</strong></span> : null}
+              <span>Revenue: <strong className="text-emerald-700 font-bold">${load.revenue?.toLocaleString()}</strong></span>
             </div>
           </div>
 
@@ -104,54 +149,139 @@ export function RuntimeLoadDetailFallback({ loadId }: { loadId: string }) {
             >
               Trip release
             </Link>
+            <Link
+              href={`/dispatch?loadId=${load.id}`}
+              className="inline-flex items-center justify-center rounded-lg border border-sky-300 bg-sky-50 px-4 py-2 text-sm font-bold text-sky-900 transition hover:bg-sky-100"
+            >
+              Dispatch board
+            </Link>
           </div>
         </div>
 
-        {/* Assignments Bar */}
+        {/* Assignments & Reference Bar */}
         <div className="mt-6 grid gap-4 border-t border-slate-100 pt-6 md:grid-cols-4">
           <div className="rounded-xl border border-slate-200 bg-slate-50 p-4">
             <span className="text-xs font-bold uppercase tracking-wider text-slate-500">Assigned Driver</span>
             <p className="mt-1 text-base font-bold text-slate-950">
-              {pretripModel?.driverName || load.driverId}
+              {driverName} ({load.driverId})
             </p>
             <Link href={`/drivers/${load.driverId}`} className="mt-1 inline-block text-xs font-semibold text-teal-800 hover:underline">
-              View driver profile ({load.driverId}) →
+              View driver profile →
             </Link>
           </div>
 
           <div className="rounded-xl border border-slate-200 bg-slate-50 p-4">
-            <span className="text-xs font-bold uppercase tracking-wider text-slate-500">Assigned Power Unit</span>
+            <span className="text-xs font-bold uppercase tracking-wider text-slate-500">Power Unit &amp; Trailer</span>
             <p className="mt-1 text-base font-bold text-slate-950">
-              {pretripModel?.assetId || load.assetId || "T-102"}
+              Truck: {load.assetId || "T-102"} · {load.trailerNumber || "TRL-2854"}
             </p>
-            <Link href={`/maintenance/${pretripModel?.assetId || load.assetId || "T-102"}`} className="mt-1 inline-block text-xs font-semibold text-teal-800 hover:underline">
-              View truck status →
+            <Link href={`/maintenance/${load.assetId || "T-102"}`} className="mt-1 inline-block text-xs font-semibold text-teal-800 hover:underline">
+              View maintenance status →
             </Link>
           </div>
 
           <div className="rounded-xl border border-slate-200 bg-slate-50 p-4">
-            <span className="text-xs font-bold uppercase tracking-wider text-slate-500">Trailer & Seals</span>
-            <p className="mt-1 text-base font-bold text-slate-950">
-              {load.trailerNumber || "TRL-2854"}
+            <span className="text-xs font-bold uppercase tracking-wider text-slate-500">Dispatch &amp; Seals</span>
+            <p className="mt-1 text-xs text-slate-800 font-semibold">
+              Dispatcher: {load.dispatcherName || "Tina Brooks"}
             </p>
             <p className="mt-1 text-xs text-slate-600">
               Pickup Seal: <strong className="font-mono text-slate-900">{load.pickupSeal || "SEAL-83921"}</strong>
             </p>
+            <p className="text-xs text-slate-600">
+              Delivery Seal: <strong className="font-mono text-slate-900">{load.deliverySeal || "SEAL-83920"}</strong>
+            </p>
           </div>
 
           <div className="rounded-xl border border-slate-200 bg-slate-50 p-4">
-            <span className="text-xs font-bold uppercase tracking-wider text-slate-500">Reference Numbers</span>
+            <span className="text-xs font-bold uppercase tracking-wider text-slate-500">Document References</span>
             <p className="mt-1 text-xs font-mono font-medium text-slate-900">
               Rate Con: {load.rateConfirmationNumber || "RC-501-204"}
             </p>
             <p className="text-xs font-mono font-medium text-slate-900">
               BOL: {load.bolNumber || "BOL-501-9935"}
             </p>
+            <p className="text-xs font-mono font-medium text-slate-900">
+              Invoice: {load.invoiceNumber || `INV-${load.id}`}
+            </p>
           </div>
         </div>
       </section>
 
-      {/* Pre-Trip Report Summary Section */}
+      {/* Operational Dispatch Gate & Exceptions Section */}
+      <section className="mt-6 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+        <div className="flex items-center justify-between gap-4 border-b border-slate-100 pb-4 mb-4">
+          <div>
+            <h2 className="text-xl font-bold text-slate-950">Dispatch Release Gate &amp; Operational Controls</h2>
+            <p className="text-sm text-slate-600">Gate condition evaluating pre-trip readiness, driver credentials, vehicle safety, and required proof.</p>
+          </div>
+          <span className={`inline-flex rounded-full border px-3 py-1 text-xs font-bold uppercase tracking-wider ${
+            dispatchGateState === "RELEASED / READY" ? "border-emerald-300 bg-emerald-100 text-emerald-800" :
+            dispatchGateState === "REVIEW REQUIRED" ? "border-amber-300 bg-amber-100 text-amber-800" :
+            "border-rose-300 bg-rose-100 text-rose-800"
+          }`}>
+            {dispatchGateState}
+          </span>
+        </div>
+
+        <div className={`rounded-xl border p-4 mb-4 ${
+          dispatchGateState === "RELEASED / READY" ? "border-emerald-200 bg-emerald-50 text-emerald-900" :
+          dispatchGateState === "REVIEW REQUIRED" ? "border-amber-200 bg-amber-50 text-amber-900" :
+          "border-rose-200 bg-rose-50 text-rose-900"
+        }`}>
+          <p className="text-sm font-bold">Gate Condition Summary:</p>
+          <p className="mt-1 text-xs font-medium">{dispatchGateReason}</p>
+        </div>
+
+        {/* Linked Operational Records */}
+        <div className="grid gap-4 md:grid-cols-3">
+          <div className="rounded-xl border border-slate-200 bg-slate-50 p-4">
+            <span className="text-xs font-bold uppercase tracking-wider text-slate-500">Linked Maintenance</span>
+            <p className="mt-1 text-sm font-bold text-slate-950">
+              {isL009 ? "WO-003: Drive Tire Sidewall Defect" : isL001 ? "WO-001: Seal Door Inspection" : isL010 ? "WO-002: ELD Diagnostic" : "No active work orders"}
+            </p>
+            <p className="mt-1 text-xs text-slate-600">
+              {isL009 ? "Asset T-111 / TRL-2170 · Out of Service" : "Asset " + (load.assetId || "T-102")}
+            </p>
+            <Link href={isL009 ? "/maintenance/work-orders/WO-003" : `/maintenance/${load.assetId || "T-102"}`} className="mt-2 inline-block text-xs font-semibold text-teal-800 hover:underline">
+              Open work order →
+            </Link>
+          </div>
+
+          <div className="rounded-xl border border-slate-200 bg-slate-50 p-4">
+            <span className="text-xs font-bold uppercase tracking-wider text-slate-500">Linked Safety Events</span>
+            <p className="mt-1 text-sm font-bold text-slate-950">
+              {canonicalStory?.safetyEventId ? `${canonicalStory.safetyEventId}: ${canonicalStory.primaryIssue}` : isL010 ? "EVT-001: HOS Violation / Fatigue Alert" : "No active safety incidents"}
+            </p>
+            {canonicalStory?.claimId ? (
+              <p className="mt-1 text-xs font-semibold text-rose-700">
+                Claim: {canonicalStory.claimId} (${canonicalStory.claimAmount?.toLocaleString()})
+              </p>
+            ) : null}
+            <Link href={`/drivers/${load.driverId}#safety-events`} className="mt-2 inline-block text-xs font-semibold text-teal-800 hover:underline">
+              View driver safety log →
+            </Link>
+          </div>
+
+          <div className="rounded-xl border border-slate-200 bg-slate-50 p-4">
+            <span className="text-xs font-bold uppercase tracking-wider text-slate-500">Settlement &amp; Payroll Closeout</span>
+            <p className="mt-1 text-sm font-bold text-slate-950">
+              {load.settlementHold ? "⚠️ SETTLEMENT HOLD ACTIVE" : "RELEASED FOR SETTLEMENT"}
+            </p>
+            <p className="mt-1 text-xs text-slate-600">
+              {load.settlementHoldReason || (load.settlementHold ? "Pending manager review" : "Proof bundle complete")}
+            </p>
+            <p className="mt-1 text-xs font-semibold text-slate-800">
+              Driver Pay: ${settlement ? settlement.netPay.toLocaleString() : "560"} Net
+            </p>
+            <Link href={`/drivers/${load.driverId}/settlements`} className="mt-2 inline-block text-xs font-semibold text-teal-800 hover:underline">
+              View settlement file →
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* Pre-Trip Report Inspection Summary Section */}
       {pretripModel ? (
         <section className="mt-6 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
           <div className="flex items-center justify-between gap-4 mb-4 border-b border-slate-100 pb-4">
@@ -208,7 +338,7 @@ export function RuntimeLoadDetailFallback({ loadId }: { loadId: string }) {
 
       {/* Proof & Evidence Artifacts Section */}
       <section className="mt-6 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-        <h2 className="text-xl font-bold text-slate-950 mb-4">Operational Proof & Evidence Items</h2>
+        <h2 className="text-xl font-bold text-slate-950 mb-4">Operational Proof &amp; Evidence Items</h2>
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
           {proofItems.map((p) => (
             <div key={p.type} className="rounded-xl border border-slate-200 bg-slate-50 p-4">

@@ -23,8 +23,8 @@ export default function AggregatorsPage() {
   return (
     <main className="bof-home-redesign bg-slate-50 text-slate-950">
       <section className="relative overflow-hidden bg-slate-950 text-white">
-        <Image src="/assets/images/recovered/aggregator-partner-offer-desktop.webp" alt="Aggregator partner and fleet operations team reviewing a bounded operating program" fill priority sizes="100vw" className="object-cover opacity-45" />
-        <div className="absolute inset-0 bg-slate-950/70" aria-hidden />
+        <Image src="/assets/images/recovered/aggregator-partner-offer-desktop.webp" alt="Aggregator partner and fleet operations team reviewing a bounded operating program" fill priority sizes="100vw" className="object-cover opacity-85" />
+        <div className="absolute inset-0 bg-gradient-to-r from-slate-950/85 via-slate-950/45 to-slate-950/20" aria-hidden />
         <div className="bof-mkt-container relative z-10 grid min-h-[560px] items-center gap-8 py-20 lg:grid-cols-[0.85fr_1.15fr]">
           <div>
             <p className="bof-home-eyebrow">For aggregator and carrier networks</p>
