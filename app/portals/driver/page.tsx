@@ -1,6 +1,8 @@
 import { auth } from "@/auth";
 import Link from "next/link";
 import { DriverVaultDocumentOperationsClient } from "@/components/driver-vault/DriverVaultDocumentOperationsClient";
+
+export const dynamic = "force-dynamic";
 import { DRIVER_VAULT_DOCUMENT_TYPES, driverVaultDocumentTypeLabel } from "@/lib/driver-vault-document-types";
 import { getAuthenticatedDriver } from "@/lib/services/authenticatedDriverService";
 import { reconcileEmployerDriverRecord } from "@/lib/services/employerDriverRecordService";

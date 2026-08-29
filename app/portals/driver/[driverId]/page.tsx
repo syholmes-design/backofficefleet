@@ -2,6 +2,8 @@ import { notFound, redirect } from "next/navigation";
 import { auth } from "@/auth";
 import { getAuthenticatedDriver } from "@/lib/services/authenticatedDriverService";
 
+export const dynamic = "force-dynamic";
+
 type Props = {
   params: Promise<{ driverId: string }>;
 };
