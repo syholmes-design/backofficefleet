@@ -131,40 +131,40 @@ export default function AggregatorsPage() {
               </div>
             </div>
 
-            <div className="rounded-3xl border border-slate-200 bg-slate-950 p-5 text-white shadow-sm">
-              <p className="text-xs font-semibold uppercase tracking-[0.18em] text-teal-300">Network snapshot</p>
-              <h3 className="mt-2 text-xl font-bold text-white">Carrier readiness at a glance</h3>
+            <div className="rounded-3xl border border-slate-200 bg-white p-6 text-slate-950 shadow-sm">
+              <p className="text-xs font-bold uppercase tracking-[0.18em] text-teal-800">Network snapshot</p>
+              <h3 className="mt-2 text-xl font-bold text-slate-950">Carrier readiness at a glance</h3>
               <div className="mt-5 space-y-3">
                 {carriers.slice(0, 4).map((carrier) => {
                   const gate = getCarrierDispatchGate(carrier);
                   return (
-                    <div key={carrier.id} className="rounded-2xl border border-slate-700 bg-slate-900/80 p-3">
+                    <div key={carrier.id} className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
                       <div className="flex items-center justify-between gap-3">
                         <div>
-                          <p className="text-sm font-semibold text-white">{carrier.dba}</p>
-                          <p className="text-xs text-slate-400">{carrier.homeTerminal}</p>
+                          <p className="text-sm font-bold text-slate-950">{carrier.dba}</p>
+                          <p className="text-xs text-slate-600">{carrier.homeTerminal}</p>
                         </div>
-                        <span className={`inline-flex rounded-full border px-2 py-1 text-[10px] font-bold uppercase tracking-[0.18em] ${
-                          gate.tone === "ready" ? "border-emerald-400/40 bg-emerald-400/10 text-emerald-200" :
-                          gate.tone === "watch" ? "border-amber-400/40 bg-amber-400/10 text-amber-200" :
-                          gate.tone === "blocked" ? "border-red-400/40 bg-red-400/10 text-red-200" :
-                          "border-sky-400/40 bg-sky-400/10 text-sky-200"
+                        <span className={`inline-flex rounded-full border px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.18em] ${
+                          gate.tone === "ready" ? "border-emerald-300 bg-emerald-100 text-emerald-800" :
+                          gate.tone === "watch" ? "border-amber-300 bg-amber-100 text-amber-800" :
+                          gate.tone === "blocked" ? "border-red-300 bg-red-100 text-red-800" :
+                          "border-sky-300 bg-sky-100 text-sky-800"
                         }`}>
                           {carrier.readinessStatus}
                         </span>
                       </div>
                       <div className="mt-3 grid grid-cols-3 gap-2 text-center text-xs">
-                        <div className="rounded-lg border border-slate-700 bg-slate-950/70 p-2">
-                          <div className="text-slate-400">Packet</div>
-                          <div className="mt-1 font-bold text-white">{gate.packetPercent}%</div>
+                        <div className="rounded-lg border border-slate-200 bg-white p-2 shadow-xs">
+                          <div className="text-slate-500 font-semibold">Packet</div>
+                          <div className="mt-1 font-bold text-slate-950">{gate.packetPercent}%</div>
                         </div>
-                        <div className="rounded-lg border border-slate-700 bg-slate-950/70 p-2">
-                          <div className="text-slate-400">Gate</div>
-                          <div className="mt-1 font-bold text-white">{gate.indicator}</div>
+                        <div className="rounded-lg border border-slate-200 bg-white p-2 shadow-xs">
+                          <div className="text-slate-500 font-semibold">Gate</div>
+                          <div className="mt-1 font-bold text-slate-950">{gate.indicator}</div>
                         </div>
-                        <div className="rounded-lg border border-slate-700 bg-slate-950/70 p-2">
-                          <div className="text-slate-400">Owner</div>
-                          <div className="mt-1 font-bold text-white">{carrier.managerOwner}</div>
+                        <div className="rounded-lg border border-slate-200 bg-white p-2 shadow-xs">
+                          <div className="text-slate-500 font-semibold">Owner</div>
+                          <div className="mt-1 font-bold text-slate-950">{carrier.managerOwner}</div>
                         </div>
                       </div>
                     </div>

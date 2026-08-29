@@ -1,14 +1,14 @@
 "use client";
 
+import React, { Fragment, useCallback, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
-import { useCallback, useEffect, useMemo, useState } from "react";
 
 import { loadStatusChipClass } from "@/components/dispatch/dispatch-ui";
 import { useBofDemoData } from "@/lib/bof-demo-data-context";
+import { buildPretripTabletModel } from "@/lib/pretrip-tablet";
 import {
   ApiError,
   formatEnumLabel,
-  formatShortDateTime,
   getErrorMessage,
   requestJson,
   type DispatchAssignmentRecord,
@@ -25,6 +25,7 @@ export function LoadsPageClient({ fleetId }: Props) {
   const [assignmentMap, setAssignmentMap] = useState<Record<string, DispatchAssignmentRecord | null>>({});
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [expandedLoadId, setExpandedLoadId] = useState<string | null>(null);
 
   const demoLoads = useMemo<DispatchLoadRecord[]>(() => {
     return (demoData.loads as Array<Record<string, unknown>>).map((load) => {
@@ -198,63 +199,179 @@ export function LoadsPageClient({ fleetId }: Props) {
             <table className="bof-cc-table">
               <thead>
                 <tr>
-                  <th scope="col">Load</th>
-                  <th scope="col">Customer</th>
-                  <th scope="col">Lane</th>
-                  <th scope="col">Status</th>
-                  <th scope="col">Assignment</th>
-                  <th scope="col">Updated</th>
-                  <th scope="col">Workflow</th>
+                  <th scope="col">Load & Ref</th>
+                  <th scope="col">Customer & Route</th>
+                  <th scope="col">Assigned Driver & Truck</th>
+                  <th scope="col">Pre-Trip Inspection</th>
+                  <th scope="col">Status & Holds</th>
+                  <th scope="col">Workflow Actions</th>
                 </tr>
               </thead>
               <tbody>
                 {rosterLoads.map((load) => {
-                  const assignment = assignmentMap[load.id];
+                  const pretripModel = buildPretripTabletModel(demoData, load.id);
+                  const fullLoadRecord = demoData.loads.find((l) => l.id === load.id) as Record<string, unknown> | undefined;
+                  const isExpanded = expandedLoadId === load.id;
+
+                  const driverId = (typeof fullLoadRecord?.driverId === "string" && fullLoadRecord.driverId) || "DRV-001";
+                  const assetId = pretripModel?.assetId || (typeof fullLoadRecord?.assetId === "string" && fullLoadRecord.assetId) || "T-102";
+                  const trailerNumber = (typeof fullLoadRecord?.trailerNumber === "string" && fullLoadRecord.trailerNumber) || "TRL-2854";
+                  const customerName = load.customerName || (typeof fullLoadRecord?.customerName === "string" && fullLoadRecord.customerName) || "Peachtree Foods";
+                  const commodity = (typeof fullLoadRecord?.commodity === "string" && fullLoadRecord.commodity) || "";
+                  const weight = typeof fullLoadRecord?.weight === "number" ? fullLoadRecord.weight : null;
+                  const settlementHold = Boolean(fullLoadRecord?.settlementHold);
+                  const settlementHoldReason = typeof fullLoadRecord?.settlementHoldReason === "string" ? fullLoadRecord.settlementHoldReason : "";
+
                   return (
-                    <tr key={load.id}>
-                      <td>
-                        <Link href={`/loads/${load.id}`} className="bof-driver-link">
-                          <code className="bof-code">{load.id}</code>
-                        </Link>
-                      </td>
-                      <td>{load.customerName}</td>
-                      <td>
-                        {load.origin} to {load.destination}
-                      </td>
-                      <td>
-                        <span
-                          className={`rounded-full px-3 py-1 text-xs font-semibold ${loadStatusChipClass(load.status)}`}
-                        >
-                          {formatEnumLabel(load.status)}
-                        </span>
-                      </td>
-                      <td>
-                        <span
-                          className={[
-                            "rounded-full border px-3 py-1 text-xs font-semibold",
-                            assignment
-                              ? "border-teal-700/50 bg-teal-950/40 text-teal-100"
-                              : "border-amber-700/50 bg-amber-950/30 text-amber-100",
-                          ].join(" ")}
-                        >
-                          {assignment ? "Assigned" : "Unassigned"}
-                        </span>
-                      </td>
-                      <td>{formatShortDateTime(load.updatedAt)}</td>
-                      <td>
-                        <div className="flex flex-wrap gap-2">
-                          <Link href={`/loads/${load.id}`} className="bof-link-secondary">
-                            Open file
-                          </Link>
-                          <Link href={`/pretrip/${load.id}`} className="bof-link-secondary">
-                            Pre-trip
-                          </Link>
-                          <Link href={`/trip-release/${load.id}`} className="bof-link-secondary">
-                            Release
-                          </Link>
-                        </div>
-                      </td>
-                    </tr>
+                    <Fragment key={load.id}>
+                      <tr className="align-top">
+                        <td>
+                          <div>
+                            <Link href={`/loads/${load.id}`} className="bof-driver-link">
+                              <code className="bof-code font-bold">{load.id}</code>
+                            </Link>
+                            <div className="mt-1 text-[11px] font-mono text-slate-400">
+                              Ref: {load.referenceNumber || `501-${load.id}`}
+                            </div>
+                          </div>
+                        </td>
+
+                        <td>
+                          <div>
+                            <strong className="text-sm text-slate-100">{customerName}</strong>
+                            <p className="mt-0.5 text-xs text-slate-300">
+                              {load.origin} → {load.destination}
+                            </p>
+                            {commodity ? (
+                              <p className="mt-1 text-[11px] text-slate-400">
+                                {commodity} {weight ? `(${weight.toLocaleString()} lbs)` : ""}
+                              </p>
+                            ) : null}
+                          </div>
+                        </td>
+
+                        <td>
+                          <div>
+                            <p className="text-xs font-semibold text-slate-100">
+                              <Link href={`/drivers/${driverId}`} className="hover:text-teal-200 hover:underline">
+                                {pretripModel?.driverName || driverId} ({driverId})
+                              </Link>
+                            </p>
+                            <p className="mt-1 text-xs text-slate-300">
+                              Truck:{" "}
+                              <Link href={`/maintenance/${assetId}`} className="font-mono text-teal-300 hover:underline">
+                                {assetId}
+                              </Link>{" "}
+                              · Trailer: <span className="font-mono text-slate-300">{trailerNumber}</span>
+                            </p>
+                          </div>
+                        </td>
+
+                        <td>
+                          <div>
+                            {pretripModel ? (
+                              <div className="flex items-center gap-2">
+                                <span
+                                  className={`rounded-full border px-2.5 py-0.5 text-xs font-bold uppercase tracking-wider ${
+                                    pretripModel.overall === "READY"
+                                      ? "border-emerald-500/40 bg-emerald-500/10 text-emerald-300"
+                                      : "border-rose-500/40 bg-rose-500/10 text-rose-300"
+                                  }`}
+                                >
+                                  {pretripModel.overall}
+                                </span>
+                                <button
+                                  type="button"
+                                  onClick={() => setExpandedLoadId(isExpanded ? null : load.id)}
+                                  className="text-xs text-teal-300 underline hover:text-teal-100"
+                                >
+                                  {isExpanded ? "Hide pre-trip" : "View pre-trip"}
+                                </button>
+                              </div>
+                            ) : (
+                              <span className="text-xs text-slate-500">Not initialized</span>
+                            )}
+                            {pretripModel && pretripModel.blockReasons.length > 0 ? (
+                              <p className="mt-1.5 text-[11px] font-medium text-rose-300">
+                                {pretripModel.blockReasons[0]}
+                              </p>
+                            ) : null}
+                          </div>
+                        </td>
+
+                        <td>
+                          <div className="space-y-1.5">
+                            <span className={`inline-block rounded-full px-2.5 py-0.5 text-xs font-semibold ${loadStatusChipClass(load.status)}`}>
+                              {formatEnumLabel(load.status)}
+                            </span>
+                            {settlementHold ? (
+                              <p className="text-[11px] font-medium text-rose-300" title={settlementHoldReason}>
+                                ⚠️ Settlement Hold
+                              </p>
+                            ) : null}
+                          </div>
+                        </td>
+
+                        <td>
+                          <div className="flex flex-wrap gap-1.5">
+                            <Link href={`/pretrip/${load.id}`} className="bof-link-secondary">
+                              Pre-trip report
+                            </Link>
+                            <Link href={`/loads/${load.id}`} className="bof-link-secondary">
+                              Open file
+                            </Link>
+                            <Link href={`/trip-release/${load.id}`} className="bof-link-secondary">
+                              Trip release
+                            </Link>
+                          </div>
+                        </td>
+                      </tr>
+
+                      {/* Expandable Pre-trip Report Summary Drawer */}
+                      {isExpanded && pretripModel ? (
+                        <tr className="bg-slate-900/60">
+                          <td colSpan={6} className="p-4 border-t border-b border-teal-900/40">
+                            <div className="rounded-xl border border-slate-800 bg-slate-950 p-4">
+                              <div className="flex items-center justify-between gap-4 mb-3 border-b border-slate-800 pb-3">
+                                <div>
+                                  <h3 className="text-sm font-bold text-white">Pre-Trip Report Inspection Details for Load {load.id}</h3>
+                                  <p className="text-xs text-slate-400">Driver {pretripModel.driverName} ({pretripModel.driverId}) · Truck {pretripModel.assetId}</p>
+                                </div>
+                                <span className={`rounded-full border px-2.5 py-0.5 text-xs font-bold ${
+                                  pretripModel.overall === "READY" ? "border-emerald-500/40 bg-emerald-500/10 text-emerald-300" : "border-rose-500/40 bg-rose-500/10 text-rose-300"
+                                }`}>
+                                  Overall: {pretripModel.overall}
+                                </span>
+                              </div>
+
+                              {pretripModel.blockReasons.length > 0 ? (
+                                <div className="mb-3 rounded-lg border border-rose-900/50 bg-rose-950/30 p-2.5 text-xs text-rose-200">
+                                  <strong>Inspection Block Reasons: </strong> {pretripModel.blockReasons.join(" · ")}
+                                </div>
+                              ) : null}
+
+                              <div className="grid gap-3 md:grid-cols-3">
+                                {pretripModel.sections.map((sec) => (
+                                  <div key={sec.id} className="rounded-lg border border-slate-800 bg-slate-900/80 p-3 text-xs">
+                                    <span className="font-bold text-teal-300">{sec.letter}. {sec.title}</span>
+                                    <ul className="mt-2 space-y-1 text-slate-300">
+                                      {sec.lines.map((l) => (
+                                        <li key={l.id} className="flex items-center justify-between">
+                                          <span>{l.label}:</span>
+                                          <span className={`font-semibold ${l.status === 'OK' ? 'text-emerald-400' : l.status === 'Warning' ? 'text-amber-400' : 'text-rose-400'}`}>
+                                            {l.status}
+                                          </span>
+                                        </li>
+                                      ))}
+                                    </ul>
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+                          </td>
+                        </tr>
+                      ) : null}
+                    </Fragment>
                   );
                 })}
               </tbody>

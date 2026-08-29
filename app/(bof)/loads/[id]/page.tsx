@@ -9,6 +9,7 @@
 import Link from "next/link";
 import { auth } from "@/auth";
 import { LoadDetailContent } from "@/components/dispatch/LoadDetailContent";
+import { RuntimeLoadDetailFallback } from "@/components/loads/RuntimeLoadDetailFallback";
 import { getLoadById } from "@/lib/services/loadService";
 import { type DispatchLoadRecord } from "@/lib/dispatch-workflow-ui";
 import { type SessionWithMemberships } from "@/lib/session-fleet";
@@ -39,13 +40,7 @@ export default async function LoadDetailPage({ params }: Props) {
   const session = (await auth()) as SessionWithMemberships;
 
   if (!session?.user?.id) {
-    return (
-      <div className="bof-page">
-        <div className="rounded-xl border border-amber-700/40 bg-amber-950/20 p-6 text-sm text-amber-50">
-          Session expired. Sign in again to review the dispatch load file.
-        </div>
-      </div>
-    );
+    return <RuntimeLoadDetailFallback loadId={id} />;
   }
 
   try {
@@ -64,19 +59,7 @@ export default async function LoadDetailPage({ params }: Props) {
         </div>
       </div>
     );
-  } catch (error) {
-    const message = error instanceof Error ? error.message : "Unable to load dispatch file.";
-    return (
-      <div className="bof-page">
-        <nav className="bof-breadcrumb" aria-label="Breadcrumb">
-          <Link href="/dispatch">Dispatch</Link>
-          <span aria-hidden> / </span>
-          <span>Load {id}</span>
-        </nav>
-        <div className="mt-4 rounded-xl border border-rose-700/40 bg-rose-950/20 p-6 text-sm text-rose-100">
-          {message}
-        </div>
-      </div>
-    );
+  } catch {
+    return <RuntimeLoadDetailFallback loadId={id} />;
   }
 }

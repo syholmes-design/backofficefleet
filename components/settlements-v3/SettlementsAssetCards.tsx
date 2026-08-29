@@ -222,9 +222,9 @@ export function SettlementsAssetCards({ loadId, settlementWeek }: SettlementsAss
 
   if (assets.length === 0) {
     return (
-      <div className="rounded-xl border border-slate-800 bg-slate-900/50 p-6 backdrop-blur-sm">
+      <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
         <div className="text-center">
-          <p className="text-slate-400">No settlement assets available</p>
+          <p className="text-slate-600 font-medium">No settlement assets available</p>
         </div>
       </div>
     );
@@ -232,8 +232,8 @@ export function SettlementsAssetCards({ loadId, settlementWeek }: SettlementsAss
 
   return (
     <div className="space-y-6">
-      <div className="rounded-xl border border-slate-800 bg-slate-900/50 p-6 backdrop-blur-sm">
-        <h3 className="mb-6 text-lg font-semibold text-white">Settlement Documents</h3>
+      <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
+        <h3 className="mb-6 text-xl font-bold text-slate-950">Settlement Documents</h3>
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
           {assets.map((asset) => (
             <AssetCard key={`${asset.relatedEntity?.id}-${asset.title}`} {...asset} />
