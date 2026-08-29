@@ -12,6 +12,8 @@ import {
   listDriverOperationalSummaries,
   type DriverOperationalSummary,
 } from "@/lib/services/driverOperationalReadModelService";
+import { listDriverRequirementsForFleet } from "@/lib/services/requirementService";
+import type { DriverReviewRequirement } from "@/lib/driver-review-explanation";
 import { getPrimaryFleetId, type SessionWithMemberships } from "@/lib/session-fleet";
 
 export const metadata = {
@@ -23,10 +25,24 @@ export default async function DriversIndexPage() {
   const session = (await auth()) as SessionWithMemberships;
   const fleetId = getPrimaryFleetId(session);
   let operationalSummaries: DriverOperationalSummary[] = [];
+  let driverRequirements: DriverReviewRequirement[] = [];
 
   if (session?.user?.id && fleetId) {
     operationalSummaries = await listDriverOperationalSummaries(session.user, fleetId);
+    driverRequirements = (
+      await Promise.all(
+        operationalSummaries.map((summary) =>
+          listDriverRequirementsForFleet(session.user, summary.driverId, fleetId),
+        ),
+      )
+    ).flat();
   }
 
-  return <DriversCommandCenterV4 operationalSummaries={operationalSummaries} hasFleetContext={Boolean(fleetId)} />;
+  return (
+    <DriversCommandCenterV4
+      operationalSummaries={operationalSummaries}
+      driverRequirements={driverRequirements}
+      hasFleetContext={Boolean(fleetId)}
+    />
+  );
 }

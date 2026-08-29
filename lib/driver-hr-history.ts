@@ -41,7 +41,7 @@ const DRIVER_SPECIFIC_HISTORY: Record<string, DriverHrHistoryRecord[]> = {
         "Pickup seal SEAL-83921 and delivery seal SEAL-83920 do not match. HR file carries the incident until dispatch and claims finish proof review.",
       status: "Open",
       impact: "Settlement",
-      href: "/shipper-portal/L001",
+      href: "/loads/L001",
     },
   ],
   "DRV-007": [
@@ -54,7 +54,7 @@ const DRIVER_SPECIFIC_HISTORY: Record<string, DriverHrHistoryRecord[]> = {
         "Driver is not responsible for chasing paper. BOF is waiting on dock-side QR authorization, empty-trailer proof, and Zelle payment confirmation before settlement closeout.",
       status: "Open",
       impact: "Settlement",
-      href: "/shipper-portal/L007#lumper-workflow",
+      href: "/loads/L007#lumper-workflow",
     },
   ],
   "DRV-010": [

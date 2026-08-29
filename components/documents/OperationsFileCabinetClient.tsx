@@ -15,6 +15,7 @@ import {
   type OperationsFileCabinetStatus,
 } from "@/lib/operations-file-cabinet";
 import { DemoPageExplainerById } from "@/components/demo/DemoPageExplainerById";
+import type { CanonicalDocumentRecord } from "@/lib/verified-document-index";
 
 type QuickFilter =
   | "all"
@@ -25,7 +26,12 @@ type QuickFilter =
   | "training"
   | "finance";
 
-export function OperationsFileCabinetClient() {
+type Props = {
+  canonicalIndex?: CanonicalDocumentRecord[];
+  featuredDocuments?: CanonicalDocumentRecord[];
+};
+
+export function OperationsFileCabinetClient({ featuredDocuments }: Props) {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<OperationsFileCabinetCategory | "all">("all");
   const [selectedType, setSelectedType] = useState<OperationsFileCabinetType | "all">("all");
@@ -132,9 +138,10 @@ export function OperationsFileCabinetClient() {
       }));
   };
 
-  // Featured items - curated list of high-value documents with actual links only
+  // Featured items use the server-verified index when available.
   const featuredItems = useMemo(() => {
-    return allItems.filter(item => 
+    if (featuredDocuments) return featuredDocuments;
+    return allItems.filter(item =>
       item.status !== "coming_soon" && 
       item.status !== "needs_review" &&
       item.href && 
@@ -162,7 +169,7 @@ export function OperationsFileCabinetClient() {
         "hr-termination-checklist"
       ].includes(item.id)
     );
-  }, [allItems]);
+  }, [allItems, featuredDocuments]);
 
   const filteredItems = useMemo(() => {
     const quickFilterCategories = getCabinetsForQuickFilter(quickFilter);
@@ -258,7 +265,11 @@ export function OperationsFileCabinetClient() {
     }
   }
 
-  function getItemCta(item: OperationsFileCabinetItem): string {
+  function getItemCta(item: Pick<OperationsFileCabinetItem, "id" | "sourceAuthenticity" | "status" | "type"> & {
+    section?: OperationsFileCabinetItem["section"];
+    isCompletedSample?: boolean;
+    isBlankTemplate?: boolean;
+  }): string {
     if (item.id === "claims-insurance-notice") {
       return "Open insurance notice";
     }
@@ -316,7 +327,7 @@ export function OperationsFileCabinetClient() {
     }
   }
 
-  function getSourceChip(item: OperationsFileCabinetItem): { text: string; color: string } {
+  function getSourceChip(item: Pick<OperationsFileCabinetItem, "sourceAuthenticity" | "href" | "status" | "isBlankTemplate">): { text: string; color: string } {
     if (item.sourceAuthenticity === "generated_from_template") {
       return { text: "Generated document", color: "#22c55e" };
     } else if (item.sourceAuthenticity === "official_template") {

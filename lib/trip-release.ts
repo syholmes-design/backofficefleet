@@ -394,7 +394,7 @@ export function buildTripReleaseEvaluation(data: BofData, loadId: string): TripR
       "load_packet",
       dispatchLoad.insurance_claim_needed ? "blocking" : "warning",
       docReport.overallDetail,
-      { href: `/shipper-portal/${loadId}`, label: "Shipper / packet view" }
+      { href: `/loads/${loadId}`, label: "Load record" }
     );
   } else if (docReport.missingRequired.length > 0 && pendingTrip) {
     push(
@@ -404,7 +404,7 @@ export function buildTripReleaseEvaluation(data: BofData, loadId: string): TripR
       "load_packet",
       "warning",
       `Packet incomplete: ${docReport.missingRequired.join(", ")}.`,
-      { href: `/shipper-portal/${loadId}`, label: "Review packet" }
+      { href: `/loads/${loadId}`, label: "Review packet" }
     );
   }
 

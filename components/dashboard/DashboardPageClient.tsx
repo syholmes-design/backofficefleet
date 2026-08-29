@@ -2,14 +2,13 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { DemoPageExplainerById } from "@/components/demo/DemoPageExplainerById";
 
 // Helper array for action card configuration with distinct images and proper cropping
 const ACTION_CARDS = [
   {
-    title: "Command Center",
+    title: "Operational Overview",
     subtitle: "Operations & exceptions",
-    href: "/command-center",
+    href: "/dashboard",
     cta: "Open",
     imageSrc: "/generated/marketing/dispatch-command-center-hero.png",
     imagePosition: "center 40%",
@@ -72,49 +71,10 @@ const ACTION_CARDS = [
 ];
 
 const HERO_CTA_LINKS = [
-  { label: "Open Command Center", href: "/command-center", primary: true },
+  { label: "Open Dashboard", href: "/dashboard", primary: true },
   { label: "Review Driver Readiness", href: "/drivers" },
   { label: "View Settlements", href: "/settlements" },
   { label: "Explore Dispatch Proof", href: "/dispatch" },
-];
-
-const HERO_KPI_LINKS = [
-  {
-    label: "Loads Ready",
-    value: "24",
-    href: "/dispatch",
-    helper: "Dispatch-ready loads with route, proof, and driver checks.",
-  },
-  {
-    label: "Needs Action",
-    value: "8",
-    href: "/command-center",
-    helper: "Open operational risks across dispatch, safety, settlement, and compliance.",
-  },
-  {
-    label: "Documents Ready",
-    value: "15",
-    href: "/documents",
-    helper: "Driver, load, finance, and company-operation documents available.",
-  },
-  {
-    label: "Settlement Blockers",
-    value: "6",
-    href: "/settlements",
-    helper: "Holds tied to proof, safety, claims, or compliance gaps.",
-  },
-  {
-    label: "Proof Complete",
-    value: "43",
-    href: "/dispatch",
-    helper: "BOL, POD, RFID, seal, cargo, and delivery proof records.",
-  },
-  {
-    label: "Dispatch Readiness",
-    value: "82%",
-    href: "/dispatch",
-    helper: "Loads that pass readiness, route, compliance, and proof checks.",
-  },
 ];
 
 export function DashboardPageClient() {
@@ -259,96 +219,6 @@ export function DashboardPageClient() {
             </div>
           </div>
 
-          <div
-            style={{
-              display: "grid",
-              gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))",
-              gap: "1rem",
-              width: "100%",
-              maxWidth: "1120px",
-              marginTop: "2.25rem",
-            }}
-          >
-            {HERO_KPI_LINKS.map((card) => (
-              <Link
-                key={card.label}
-                href={card.href}
-                className="bof-dashboard-hero-kpi"
-                aria-label={`${card.label}: ${card.helper}`}
-                style={{
-                  display: "block",
-                  minHeight: "150px",
-                  padding: "1.25rem",
-                  color: "white",
-                  textAlign: "left",
-                  textDecoration: "none",
-                  borderRadius: "14px",
-                  border: "1px solid rgba(255, 255, 255, 0.14)",
-                  backgroundColor: "rgba(2, 6, 23, 0.72)",
-                  boxShadow: "0 20px 40px rgba(0, 0, 0, 0.28)",
-                  backdropFilter: "blur(14px)",
-                  cursor: "pointer",
-                  transition: "all 0.2s ease",
-                }}
-              >
-                <div
-                  style={{
-                    display: "flex",
-                    alignItems: "flex-start",
-                    justifyContent: "space-between",
-                    gap: "1rem",
-                  }}
-                >
-                  <div>
-                    <div
-                      style={{
-                        color: "rgba(226, 232, 240, 0.88)",
-                        fontSize: "0.95rem",
-                        fontWeight: 700,
-                      }}
-                    >
-                      {card.label}
-                    </div>
-                    <div
-                      style={{
-                        color: "#ffffff",
-                        fontSize: "2.4rem",
-                        fontWeight: 800,
-                        letterSpacing: "0",
-                        lineHeight: 1.1,
-                        marginTop: "0.55rem",
-                      }}
-                    >
-                      {card.value}
-                    </div>
-                  </div>
-                  <span
-                    style={{
-                      border: "1px solid rgba(45, 212, 191, 0.32)",
-                      borderRadius: "999px",
-                      color: "#ccfbf1",
-                      backgroundColor: "rgba(20, 184, 166, 0.12)",
-                      fontSize: "0.78rem",
-                      fontWeight: 700,
-                      padding: "0.35rem 0.65rem",
-                    }}
-                  >
-                    Open
-                  </span>
-                </div>
-                <p
-                  style={{
-                    color: "rgba(203, 213, 225, 0.9)",
-                    fontSize: "0.92rem",
-                    lineHeight: 1.55,
-                    margin: "1rem 0 0",
-                  }}
-                >
-                  {card.helper}
-                </p>
-              </Link>
-            ))}
-          </div>
         </div>
         <style jsx>{`
           .bof-dashboard-hero-cta:hover {
@@ -357,196 +227,11 @@ export function DashboardPageClient() {
             background-color: rgba(20, 184, 166, 0.82) !important;
           }
 
-          .bof-dashboard-hero-cta:focus-visible,
-          .bof-dashboard-hero-kpi:focus-visible {
+          .bof-dashboard-hero-cta:focus-visible {
             outline: 3px solid rgba(153, 246, 228, 0.95);
             outline-offset: 3px;
           }
-
-          .bof-dashboard-hero-kpi:hover {
-            transform: translateY(-4px);
-            border-color: rgba(153, 246, 228, 0.68) !important;
-            background-color: rgba(15, 23, 42, 0.88) !important;
-          }
         `}</style>
-      </section>
-
-      <div style={{ maxWidth: "1200px", margin: "0 auto", padding: "0 2rem 1rem" }}>
-        <DemoPageExplainerById pageId="dashboard" />
-      </div>
-
-      {/* Fleet Operations Manager Card */}
-      <section
-        className="bof-dashboard-section"
-        style={{
-          maxWidth: "1200px",
-          margin: "0 auto",
-          padding: "2rem 2rem 4rem",
-        }}
-        aria-label="Fleet Operations Manager"
-      >
-        <Link
-          className="bof-dashboard-manager-card"
-          href="/command-center"
-          style={{
-            display: "block",
-            textDecoration: "none",
-            color: "inherit",
-            borderRadius: "16px",
-            overflow: "hidden",
-            backgroundColor: "rgba(255, 255, 255, 0.05)",
-            border: "1px solid rgba(255, 255, 255, 0.1)",
-            backdropFilter: "blur(10px)",
-            transition: "all 0.3s ease",
-            cursor: "pointer",
-          }}
-        >
-          <div
-            className="bof-dashboard-manager-card__grid"
-            style={{
-              display: "grid",
-              gap: "2rem",
-              minHeight: "200px",
-            }}
-          >
-            {/* Manager visual from dispatch-command-center-hero.png */}
-            <div
-              className="bof-dashboard-manager-card__image"
-              style={{
-                position: "relative",
-                overflow: "hidden",
-                borderRadius: "12px",
-              }}
-            >
-              <Image
-                src="/generated/marketing/dispatch-command-center-hero.png"
-                alt="Fleet Operations Manager reviewing dispatch and compliance data"
-                fill
-                style={{
-                  objectFit: "cover",
-                  objectPosition: "center 30%",
-                }}
-              />
-            </div>
-
-            {/* Manager content */}
-            <div
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                justifyContent: "center",
-                padding: "clamp(1rem, 4vw, 2rem)",
-              }}
-            >
-              <h2
-                style={{
-                  fontSize: "1.8rem",
-                  fontWeight: "600",
-                  color: "#ffffff",
-                  margin: "0 0 1rem 0",
-                }}
-              >
-                Fleet Operations Manager
-              </h2>
-              <p
-                style={{
-                  fontSize: "1.1rem",
-                  lineHeight: "1.6",
-                  color: "rgba(255, 255, 255, 0.9)",
-                  margin: "0 0 1.5rem 0",
-                }}
-              >
-                Reviewing driver readiness, dispatch exceptions, document holds, safety events, and settlement issues before today&apos;s loads move.
-              </p>
-
-              {/* Status chips */}
-              <div
-                className="bof-dashboard-action-card__media"
-                style={{
-                  display: "flex",
-                  flexWrap: "wrap",
-                  gap: "0.75rem",
-                  marginBottom: "1.5rem",
-                }}
-              >
-                <span
-                  style={{
-                    display: "inline-flex",
-                    alignItems: "center",
-                    padding: "0.25rem 0.75rem",
-                    backgroundColor: "rgba(34, 197, 94, 0.2)",
-                    border: "1px solid rgba(34, 197, 94, 0.3)",
-                    borderRadius: "20px",
-                    fontSize: "0.85rem",
-                    color: "#22c55e",
-                    fontWeight: "500",
-                  }}
-                >
-                  Driver readiness
-                </span>
-                <span
-                  style={{
-                    display: "inline-flex",
-                    alignItems: "center",
-                    padding: "0.25rem 0.75rem",
-                    backgroundColor: "rgba(251, 146, 60, 0.2)",
-                    border: "1px solid rgba(251, 146, 60, 0.3)",
-                    borderRadius: "20px",
-                    fontSize: "0.85rem",
-                    color: "#fb923c",
-                    fontWeight: "500",
-                  }}
-                >
-                  Dispatch exceptions
-                </span>
-                <span
-                  style={{
-                    display: "inline-flex",
-                    alignItems: "center",
-                    padding: "0.25rem 0.75rem",
-                    backgroundColor: "rgba(239, 68, 68, 0.2)",
-                    border: "1px solid rgba(239, 68, 68, 0.3)",
-                    borderRadius: "20px",
-                    fontSize: "0.85rem",
-                    color: "#ef4444",
-                    fontWeight: "500",
-                  }}
-                >
-                  Document holds
-                </span>
-                <span
-                  style={{
-                    display: "inline-flex",
-                    alignItems: "center",
-                    padding: "0.25rem 0.75rem",
-                    backgroundColor: "rgba(168, 85, 247, 0.2)",
-                    border: "1px solid rgba(168, 85, 247, 0.3)",
-                    borderRadius: "20px",
-                    fontSize: "0.85rem",
-                    color: "#a855f7",
-                    fontWeight: "500",
-                  }}
-                >
-                  Settlement review
-                </span>
-              </div>
-
-              {/* CTA */}
-              <div
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: "0.5rem",
-                  color: "#14b8a6",
-                  fontWeight: "600",
-                  fontSize: "1rem",
-                }}
-              >
-                Open Command Center
-              </div>
-            </div>
-          </div>
-        </Link>
       </section>
 
       {/* Premium action card grid with cropped thumbnails */}

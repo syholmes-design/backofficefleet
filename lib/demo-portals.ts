@@ -3,6 +3,7 @@ import { getBofData } from '@/lib/load-bof-data';
 import { getDriverReadinessSummary } from '@/lib/driver-readiness-ui';
 import { getDriverDocumentStatus } from '@/lib/driver-document-status';
 import { getAcknowledgmentSummary } from '@/lib/driver-acknowledgment-status';
+import { buildLoadPacketRegistry } from '@/lib/load-artifact-registry';
 
 export interface PortalCard {
   id: string;
@@ -206,8 +207,35 @@ export function getDriverPortalProfile(driverId: string): DriverPortalProfile | 
   return generateDriverPortalProfiles().find((profile: DriverPortalProfile) => profile.driverId === driverId);
 }
 
-export function getCustomerPortalProfile(): CustomerPortalProfile {
-  return DEMO_CUSTOMER_PROFILE;
+export function getCustomerPortalProfile(data: BofData): CustomerPortalProfile {
+  const visibleLoads = getCustomerVisibleLoads(data);
+  const deliveredLoads = visibleLoads.filter((load) => load.status === 'Delivered');
+  const weekStart = new Date();
+  weekStart.setDate(weekStart.getDate() - 7);
+  const deliveredThisWeek = deliveredLoads.filter((load) => {
+    const deliveryDate = data.loads.find((source) => source.id === load.loadId)?.deliveryAt;
+    return typeof deliveryDate === 'string' && new Date(deliveryDate) >= weekStart;
+  }).length;
+  const documentsAvailable = data.loads.reduce((count, load) => {
+    const packet = buildLoadPacketRegistry(data, load.id);
+    return count + (packet?.packetItemsByKey
+      ? Object.values(packet.packetItemsByKey).filter((item) => item.status !== 'not_applicable' && Boolean(item.actionUrl)).length
+      : 0);
+  }, 0);
+  const exceptionsClaims = data.loads.filter((load) =>
+    load.dispatchExceptionFlag || load.sealStatus === 'Mismatch' || (data.loadRelationshipSpine?.[load.id]?.claimIds.length ?? 0) > 0,
+  ).length;
+  const invoicesReady = visibleLoads.filter((load) => load.invoiceStatus === 'Ready').length;
+
+  return {
+    customerId: DEMO_CUSTOMER_PROFILE.customerId,
+    customerName: DEMO_CUSTOMER_PROFILE.customerName,
+    activeLoads: visibleLoads.filter((load) => load.status !== 'Delivered').length,
+    deliveredThisWeek,
+    documentsAvailable,
+    exceptionsClaims,
+    invoicesReady,
+  };
 }
 
 export function getPortalVisibility(role: string): PortalVisibility | undefined {
@@ -240,11 +268,16 @@ export function getManagerInsights(data: BofData) {
   ).length;
 
   // Cash flow and audit readiness metrics for Phase 7C
-  const billingBlockers = data.loads.filter(load => 
-    load.status === 'Delivered' && load.podStatus !== 'Complete'
+  const billingBlockers = data.loads.filter(load =>
+    load.status === 'Delivered' && !/verified|complete/i.test(String(load.podStatus ?? ''))
   ).length;
-
-  const auditReadinessScore = 85; // Demo score - would be calculated from actual data
+  const auditableDocuments = data.documents.filter((document) => document.status);
+  const auditReadyDocuments = auditableDocuments.filter((document) =>
+    !/missing|expired|pending|review/i.test(String(document.status)),
+  ).length;
+  const auditReadinessScore = auditableDocuments.length > 0
+    ? Math.round((auditReadyDocuments / auditableDocuments.length) * 100)
+    : null;
 
   return {
     criticalAlerts,
@@ -268,6 +301,6 @@ export function getCustomerVisibleLoads(data: BofData) {
     deliveredDate: load.status === 'Delivered' ? 'Delivered' : 'N/A',
     carrierStatus: 'BOF Fleet',
     proofStatus: load.podStatus,
-    invoiceStatus: 'Ready' // Demo status
+    invoiceStatus: /verified|complete/i.test(String(load.podStatus ?? '')) ? 'Ready' : 'Not available'
   }));
 }

@@ -1,6 +1,8 @@
-import type { BofData } from "@/lib/load-bof-data";
+import type { BofData, LoadRelationshipSpine } from "@/lib/load-bof-data";
 import { emergencyContactDrivers } from "@/lib/emergency-contacts/drivers";
 import { getCanonicalLoadEvidence } from "@/lib/canonical-load-evidence";
+import { getCanonicalLoadStory } from "@/lib/canonical-load-stories";
+import { getGeneratedLoadDocUrl } from "@/lib/load-doc-manifest";
 
 const CORE_DOC_TYPES = ["CDL", "Medical Card", "MVR", "I-9", "FMCSA", "W-9", "Bank Info"] as const;
 const FALLBACK_EXPIRED_DATE = "2027-04-24";
@@ -388,18 +390,51 @@ function reconcileCoreDocuments(data: BofData, workbook: WorkbookSnapshot | null
 }
 
 function buildSettlementLoadLinks(data: BofData): Record<string, string> {
-  const byDriver = new Map<string, string[]>();
-  for (const load of data.loads) {
-    const list = byDriver.get(load.driverId) ?? [];
-    list.push(load.id);
-    byDriver.set(load.driverId, list);
-  }
   const out: Record<string, string> = {};
   for (const settlement of data.settlements) {
-    const candidate = byDriver.get(settlement.driverId)?.[0];
-    if (candidate) out[settlement.settlementId] = candidate;
+    const loadId = (settlement as typeof settlement & { loadId?: string }).loadId?.trim();
+    if (settlement.settlementId && loadId) out[settlement.settlementId] = loadId;
   }
   return out;
+}
+
+function buildLoadRelationshipSpine(data: BofData): Record<string, LoadRelationshipSpine> {
+  const settlementByLoadId = new Map<string, string>();
+  for (const settlement of data.settlements) {
+    const loadId = (settlement as typeof settlement & { loadId?: string }).loadId?.trim();
+    if (loadId && settlement.settlementId) settlementByLoadId.set(loadId, settlement.settlementId);
+  }
+
+  return Object.fromEntries(data.loads.map((load) => {
+    const story = getCanonicalLoadStory(load.id);
+    const evidence = data.loadEvidenceRecords?.[load.id] ?? [];
+    const documentReferences = [
+      getGeneratedLoadDocUrl(load.id, "rateConfirmation"),
+      getGeneratedLoadDocUrl(load.id, "bol"),
+      getGeneratedLoadDocUrl(load.id, "pod"),
+    ].filter((reference): reference is string => Boolean(reference));
+
+    const spine: LoadRelationshipSpine = {
+      loadId: load.id,
+      driverId: load.driverId || story?.driverId,
+      assetId: load.assetId || story?.assetId,
+      trailerId: load.trailerNumber || story?.trailerId,
+      safetyEventIds: story?.safetyEventId ? [story.safetyEventId] : [],
+      workOrderIds: [load.workOrderId, story?.maintenanceWorkOrderId].filter(
+        (id, index, ids): id is string => Boolean(id) && ids.indexOf(id) === index,
+      ),
+      rfidEventIds: story?.rfidEventId ? [story.rfidEventId] : [],
+      claimIds: story?.claimId ? [story.claimId] : [],
+      evidenceRecordIds: [],
+      evidenceReferences: evidence.map((item) => item.url || item.fileName).filter(
+        (reference): reference is string => Boolean(reference),
+      ),
+      documentReferences,
+      settlementId: settlementByLoadId.get(load.id),
+    };
+
+    return [load.id, spine];
+  }));
 }
 
 /** Canonical BOF source-of-truth reconciliation for dashboard, drivers, compliance, dispatch, and settlements. */
@@ -414,6 +449,7 @@ export function reconcileBofSourceOfTruth(seed: BofData): BofData {
   next.documents = reconcileCoreDocuments(next, workbook) as BofData["documents"];
   next.settlementLoadLinks = buildSettlementLoadLinks(next);
   next.loadEvidenceRecords = getCanonicalLoadEvidence(next);
+  next.loadRelationshipSpine = buildLoadRelationshipSpine(next);
 
   return next;
 }

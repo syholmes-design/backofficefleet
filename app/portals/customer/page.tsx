@@ -11,8 +11,17 @@ export const metadata: Metadata = {
 
 export default function CustomerPortalPage() {
   const data = getBofData();
-  const customerProfile = getCustomerPortalProfile();
+  const customerProfile = getCustomerPortalProfile(data);
   const visibleLoads = getCustomerVisibleLoads(data);
+  const customerAttentionLoads = visibleLoads.filter((load) => {
+    const source = data.loads.find((item) => item.id === load.loadId);
+    return Boolean(
+      source?.dispatchExceptionFlag ||
+      source?.sealStatus === 'Mismatch' ||
+      (data.loadRelationshipSpine?.[load.loadId]?.claimIds.length ?? 0) > 0 ||
+      !/verified|complete/i.test(String(source?.podStatus ?? '')),
+    );
+  });
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -37,47 +46,47 @@ export default function CustomerPortalPage() {
 
         {/* Summary Cards */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-12">
-          <div className="bg-white rounded-lg shadow-lg border border-gray-200 p-6">
+          <Link href="#active-shipments" className="bg-white rounded-lg shadow-lg border border-gray-200 p-6 hover:border-teal-400">
             <div className="text-3xl font-bold text-blue-600 mb-2">
               {customerProfile.activeLoads}
             </div>
             <div className="text-sm text-gray-600">Active Loads</div>
-          </div>
+          </Link>
 
-          <div className="bg-white rounded-lg shadow-lg border border-gray-200 p-6">
+          <Link href="#delivery-proof" className="bg-white rounded-lg shadow-lg border border-gray-200 p-6 hover:border-teal-400">
             <div className="text-3xl font-bold text-green-600 mb-2">
               {customerProfile.deliveredThisWeek}
             </div>
             <div className="text-sm text-gray-600">Delivered This Week</div>
-          </div>
+          </Link>
 
-          <div className="bg-white rounded-lg shadow-lg border border-gray-200 p-6">
+          <Link href="#delivery-proof" className="bg-white rounded-lg shadow-lg border border-gray-200 p-6 hover:border-teal-400">
             <div className="text-3xl font-bold text-purple-600 mb-2">
               {customerProfile.documentsAvailable}
             </div>
             <div className="text-sm text-gray-600">Documents Available</div>
-          </div>
+          </Link>
 
-          <div className="bg-white rounded-lg shadow-lg border border-gray-200 p-6">
+          <Link href="#customer-attention" className="bg-white rounded-lg shadow-lg border border-gray-200 p-6 hover:border-teal-400">
             <div className="text-3xl font-bold text-orange-600 mb-2">
               {customerProfile.exceptionsClaims}
             </div>
             <div className="text-sm text-gray-600">Exceptions / Claims</div>
-          </div>
+          </Link>
 
-          <div className="bg-white rounded-lg shadow-lg border border-gray-200 p-6">
+          <Link href="#invoice-status" className="bg-white rounded-lg shadow-lg border border-gray-200 p-6 hover:border-teal-400">
             <div className="text-3xl font-bold text-teal-600 mb-2">
               {customerProfile.invoicesReady}
             </div>
             <div className="text-sm text-gray-600">Invoices Ready</div>
-          </div>
+          </Link>
         </div>
 
         {/* Main Content */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
           
           {/* Active Shipments */}
-          <div className="bg-white rounded-lg shadow-lg border border-gray-200 p-6">
+          <div id="active-shipments" className="bg-white rounded-lg shadow-lg border border-gray-200 p-6 scroll-mt-24">
             <h2 className="text-lg font-bold text-gray-900 mb-4 flex items-center">
               <svg className="w-5 h-5 mr-2 text-teal-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002 2V7a2 2 0 00-2-2h-2M9 5a2 2 0 012-2v2a2 2 0 002 2h2a2 2 0 002-2V7a2 2 0 00-2-2z" />
@@ -87,7 +96,7 @@ export default function CustomerPortalPage() {
             
             <div className="space-y-4">
               {visibleLoads.slice(0, 6).map((load) => (
-                <div key={load.loadId} className="border border-gray-200 rounded-lg p-4">
+                <Link href={`/loads/${load.loadId}`} key={load.loadId} className="block border border-gray-200 rounded-lg p-4 hover:border-teal-400">
                   <div className="flex justify-between items-start mb-3">
                     <div>
                       <div className="font-medium text-gray-900">{load.loadId}</div>
@@ -126,13 +135,13 @@ export default function CustomerPortalPage() {
                       </span>
                     </div>
                   </div>
-                </div>
+                </Link>
               ))}
             </div>
           </div>
 
           {/* Delivery Proof */}
-          <div className="bg-white rounded-lg shadow-lg border border-gray-200 p-6">
+          <div id="delivery-proof" className="bg-white rounded-lg shadow-lg border border-gray-200 p-6 scroll-mt-24">
             <h2 className="text-lg font-bold text-gray-900 mb-4 flex items-center">
               <svg className="w-5 h-5 mr-2 text-teal-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0M12 15V7m0 0a3 3 0 00-6h3a3 3 0 006 0v8a3 3 0 00-6zm0 0a9 9 0 11-18 0 9 9 0 0118 0" />
@@ -183,7 +192,7 @@ export default function CustomerPortalPage() {
           </div>
 
           {/* Exceptions and Claims */}
-          <div className="bg-white rounded-lg shadow-lg border border-gray-200 p-6">
+          <div id="customer-attention" className="bg-white rounded-lg shadow-lg border border-gray-200 p-6 scroll-mt-24">
             <h2 className="text-lg font-bold text-gray-900 mb-4 flex items-center">
               <svg className="w-5 h-5 mr-2 text-teal-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 0a9 9 0 11-18 0 9 9 0 0118 0m0 0a9 9 0 11-18 0 9 9 0 0118 0" />
@@ -192,13 +201,13 @@ export default function CustomerPortalPage() {
             </h2>
             
             <div className="space-y-4">
-              {visibleLoads.slice(0, 3).map((load) => (
+              {customerAttentionLoads.slice(0, 3).map((load) => (
                 <div key={load.loadId} className="border border-red-200 rounded-lg p-4 bg-red-50">
                   <div className="flex justify-between items-start mb-3">
                     <div>
                       <div className="font-medium text-red-900">{load.loadId}</div>
                       <div className="text-sm text-red-700">
-                        Seal Mismatch
+                        Shipment requires attention
                       </div>
                     </div>
                     <div className="text-sm text-gray-600">
@@ -206,15 +215,21 @@ export default function CustomerPortalPage() {
                     </div>
                   </div>
                   <div className="text-sm text-gray-600">
-                    Requires seal verification
+                    BOF is reviewing shipment proof or operating status. Customer action required: No.
                   </div>
+                  <Link href={`/loads/${load.loadId}`} className="mt-3 inline-flex text-sm font-medium text-teal-700 hover:text-teal-900">
+                    View shipment status and proof →
+                  </Link>
                 </div>
               ))}
+              {customerAttentionLoads.length === 0 ? (
+                <p className="text-sm text-gray-600">No customer-visible shipment issues are currently flagged.</p>
+              ) : null}
             </div>
           </div>
 
           {/* Invoice / Receivables Status */}
-          <div className="bg-white rounded-lg shadow-lg border border-gray-200 p-6">
+          <div id="invoice-status" className="bg-white rounded-lg shadow-lg border border-gray-200 p-6 scroll-mt-24">
             <h2 className="text-lg font-bold text-gray-900 mb-4 flex items-center">
               <svg className="w-5 h-5 mr-2 text-teal-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2-2v10a2 2 0 002 2h10a2 2 0 002-2V9a2 2 0 00-2-2zm-3 6h-6m0 0v6m0 0a3 3 0 00-3 3h6a3 3 0 003-3z" />
@@ -241,21 +256,21 @@ export default function CustomerPortalPage() {
                     </div>
               </div>
               
-              <div className="border border-gray-200 rounded-lg p-4">
+                <div className="border border-gray-200 rounded-lg p-4">
                     <div className="flex justify-between items-center mb-3">
                           <div>
-                                <div className="font-medium text-gray-900">Factored</div>
-                                <div className="text-sm text-gray-600">Advanced to customer</div>
+                      <div className="font-medium text-gray-900">Submitted</div>
+                      <div className="text-sm text-gray-600">Invoice packet submitted for customer review</div>
                           </div>
                           <div className="text-right">
                                 <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                                      Active
+                                      Submitted
                                 </span>
                           </div>
                     </div>
                     
                     <div className="text-sm text-gray-600">
-                          {customerProfile.invoicesReady} invoices factored and available
+                          {customerProfile.invoicesReady} invoice packets submitted or ready for review
                     </div>
               </div>
               
@@ -288,6 +303,16 @@ export default function CustomerPortalPage() {
           <p className="text-blue-800">
             Customers see only shipments, documents, proof, and billing status BOF exposes to them. Internal payroll, driver HR, compliance, and back-office controls remain restricted to manager portal.
           </p>
+        </div>
+
+        <div className="mb-8 flex flex-col items-center justify-between gap-4 rounded-lg border border-teal-200 bg-teal-50 p-6 text-center sm:flex-row sm:text-left">
+          <div>
+            <h3 className="text-lg font-bold text-teal-900">Need help with a shipment, invoice, or proof packet?</h3>
+            <p className="mt-1 text-sm text-teal-800">Contact BOF Support for customer questions and requested follow-up.</p>
+          </div>
+          <a href="mailto:support@backofficefleet.com" className="inline-flex items-center rounded-lg bg-teal-700 px-4 py-2 text-sm font-semibold text-white hover:bg-teal-800">
+            Contact BOF Support
+          </a>
         </div>
 
         {/* Navigation */}

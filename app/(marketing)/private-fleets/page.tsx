@@ -304,6 +304,70 @@ export default function PrivateFleetsPage() {
         />
       </MarketingSection>
 
+      <MarketingSection variant="light" ariaLabelledBy="bof-mkt-private-model-heading">
+        <div className="bof-mkt-container">
+          <MarketingSectionHeader
+            titleId="bof-mkt-private-model-heading"
+            title="Why captive fleets need a different operating layer"
+            lead="A private fleet is usually more fragmented than it looks. Different branches, different compliance routines, and different proof habits create a real leadership problem even when the fleet is internal."
+          />
+          <div className="mt-10 grid gap-6 md:grid-cols-2 xl:grid-cols-4">
+            {[
+              ["Branch governance", "Each yard or site has its own operational rhythm. BOF gives those sites a single standard without eliminating internal autonomy."],
+              ["Maintenance & readiness", "Maintenance, driver qualification, and dispatch cannot be treated as separate records when the fleet is moving people or product every day."],
+              ["Proof across departments", "The same delivery, assignment, or service event is often tracked in multiple places. BOF creates one legitimate record of what happened."],
+              ["Executive confidence", "Leadership needs a clear answer on who owns the action, where the exception sits, and what is still unresolved."],
+            ].map(([title, body]) => (
+              <div key={title} className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+                <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">Internal control</p>
+                <h3 className="mt-3 text-xl font-semibold text-slate-950">{title}</h3>
+                <p className="mt-3 text-sm leading-6 text-slate-600">{body}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </MarketingSection>
+
+      <MarketingSection variant="white" ariaLabelledBy="bof-mkt-private-owners-heading">
+        <div className="bof-mkt-container">
+          <MarketingSectionHeader
+            titleId="bof-mkt-private-owners-heading"
+            title="The real accountability problem is cross-functional"
+            lead="Private fleets fail when administrative ownership is diffuse. BOF creates the shared system that tells the right people which exception is theirs and what decision needs to happen next."
+          />
+          <div className="mt-8 grid gap-5 md:grid-cols-2 xl:grid-cols-5">
+            {[
+              ["Fleet manager", "Owns standards, controls, and branch follow-through across the fleet."],
+              ["Transportation manager", "Balances dispatch pressure, service reliability, and readiness across facilities."],
+              ["Maintenance", "Tracks asset condition and downtime in the same accountability loop as dispatch decisions."],
+              ["Finance", "Needs clean proof and allocation records before it can decide where the risk starts and ends."],
+              ["Executive team", "Needs a trusted operational narrative tied to service continuity, cost, and governance."],
+            ].map(([role, body]) => (
+              <div key={role} className="rounded-2xl border border-slate-200 bg-slate-50 p-5">
+                <h3 className="text-base font-semibold text-slate-950">{role}</h3>
+                <p className="mt-2 text-sm leading-6 text-slate-600">{body}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </MarketingSection>
+
+      <MarketingSection variant="ink" ariaLabelledBy="bof-mkt-private-governance-heading">
+        <div className="bof-mkt-container">
+          <MarketingSectionHeader
+            titleId="bof-mkt-private-governance-heading"
+            title="Governance turns scattered operational data into a decision layer"
+            lead="BOF does not eliminate the internal operations team. It gives the organization one record of what is ready, what is blocked, and what action is now required."
+          />
+          <div className="mt-8 rounded-3xl border border-white/15 bg-slate-900/60 p-8 text-slate-100">
+            <p className="text-sm uppercase tracking-[0.18em] text-teal-300">Operational outcome</p>
+            <p className="mt-4 max-w-3xl text-2xl font-semibold leading-8">
+              The fleet can hold to one standard for readiness, one evidence trail for proof, and one severity-ranked queue for the issues that require leadership attention.
+            </p>
+          </div>
+        </div>
+      </MarketingSection>
+
       <MarketingCtaPanel
         id="bof-mkt-private-final-cta"
         title="Bring the same enforcement rigor to your internal fleet"

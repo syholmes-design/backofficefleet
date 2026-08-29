@@ -533,7 +533,7 @@ function syntheticPacketItems(data: BofData, loadId: string): LoadPacketItem[] {
       kind: "signature",
       visibility: CUSTOMER_OPS,
       signatureRequiredBy: ["customer"],
-      canonicalUrl: `/shipper-portal/${loadId}`,
+      canonicalUrl: `/loads/${loadId}`,
     }),
   ];
 }

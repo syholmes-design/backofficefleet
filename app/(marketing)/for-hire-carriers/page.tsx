@@ -295,6 +295,70 @@ export default function ForHireCarriersPage() {
         />
       </MarketingSection>
 
+      <MarketingSection variant="light" ariaLabelledBy="bof-mkt-forhire-model-heading">
+        <div className="bof-mkt-container">
+          <MarketingSectionHeader
+            titleId="bof-mkt-forhire-model-heading"
+            title="The operating model behind a carrier-controlled workday"
+            lead="A for-hire carrier is not just moving freight. It is managing a single operating record across dispatch, proof, safety, settlement, and customer expectations."
+          />
+          <div className="mt-10 grid gap-6 md:grid-cols-2 xl:grid-cols-4">
+            {[
+              ["Dispatch & lane control", "The load starts with a driver, an asset, a service commitment, and a proof path. BOF makes that chain visible before the move begins."],
+              ["Proof & service quality", "Lawyers, shippers, and finance all care about the same evidence—POD, seal integrity, damage photos, accessorial records, and timing."],
+              ["Claims & settlements", "When exceptions appear, finance and operations need the same record for reconciliation, hold review, and customer-ready explanation."],
+              ["Governance & accountability", "Leadership sees severity, owner, and action status instead of a diffuse collection of spreadsheets, inboxes, and phone calls."],
+            ].map(([title, body]) => (
+              <div key={title} className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+                <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">Carrier control</p>
+                <h3 className="mt-3 text-xl font-semibold text-slate-950">{title}</h3>
+                <p className="mt-3 text-sm leading-6 text-slate-600">{body}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </MarketingSection>
+
+      <MarketingSection variant="white" ariaLabelledBy="bof-mkt-forhire-roles-heading">
+        <div className="bof-mkt-container">
+          <MarketingSectionHeader
+            titleId="bof-mkt-forhire-roles-heading"
+            title="Who owns the decision"
+            lead="In a for-hire model, the problem is rarely one missing file. It is fragmented accountability across the lane, the supplier, the driver, the safety team, and finance."
+          />
+          <div className="mt-8 grid gap-5 md:grid-cols-2 xl:grid-cols-5">
+            {[
+              ["Operations", "Chooses the move and the asset, but needs proof and readiness signals before dispatch is truly controlled."],
+              ["Safety", "Controls compliance exposure and needs a single, defensible record around qualification and exceptions."],
+              ["Drivers", "Need a clear service standard and proof flow so they are not carrying responsibility through informal channels."],
+              ["Finance", "Needs the same sealed, timed evidence the carrier will defend during settlement or invoice review."],
+              ["Leadership", "Needs a severity-ranked operating story instead of a collection of working notes and hold queues."],
+            ].map(([role, body]) => (
+              <div key={role} className="rounded-2xl border border-slate-200 bg-slate-50 p-5">
+                <h3 className="text-base font-semibold text-slate-950">{role}</h3>
+                <p className="mt-2 text-sm leading-6 text-slate-600">{body}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </MarketingSection>
+
+      <MarketingSection variant="ink" ariaLabelledBy="bof-mkt-forhire-decision-heading">
+        <div className="bof-mkt-container">
+          <MarketingSectionHeader
+            titleId="bof-mkt-forhire-decision-heading"
+            title="The decision layer is the real value"
+            lead="BOF does not replace the carrier’s operations team. It gives them a defensible control layer for dispatch decisions, proof completion, compliance enforcement, and settlement accountability."
+          />
+          <div className="mt-8 rounded-3xl border border-white/15 bg-slate-900/60 p-8 text-slate-100">
+            <p className="text-sm uppercase tracking-[0.18em] text-teal-300">Decision outcome</p>
+            <p className="mt-4 max-w-3xl text-2xl font-semibold leading-8">
+              Every load moves with one shared operating record: the driver, the asset, the proof, the exception, and the financial consequence are all connected.
+            </p>
+          </div>
+        </div>
+      </MarketingSection>
+
       <MarketingCtaPanel
         id="bof-mkt-forhire-final-cta"
         title="See the carrier-grade BOF command center on your data"

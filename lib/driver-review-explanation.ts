@@ -1,4 +1,5 @@
 import type { BofData } from "@/lib/load-bof-data";
+import { ADVANCE_COMPLIANCE_POLICIES } from "@/lib/advance-compliance-rule";
 import {
   hasIndependentInvestigation,
   reconcileCredentialIncident,
@@ -46,6 +47,43 @@ export type DriverReviewIssue = {
   proposedSolution?: string;
   severityLabel?: "blocked" | "needs_review" | "watch";
 };
+
+export type DriverReviewRequirement = {
+  id: string;
+  driverId: string;
+  requirementType: string;
+  label: string;
+  dueDate?: Date | string | null;
+  actionStatus?: string | null;
+  requiredAction?: string | null;
+  resolutionStatus?: string | null;
+};
+
+export function buildRequirementReviewIssue(
+  requirement: DriverReviewRequirement,
+  now = new Date(),
+): DriverReviewIssue | null {
+  const due = requirement.dueDate ? new Date(requirement.dueDate) : null;
+  const dueNow = Boolean(due && !Number.isNaN(due.getTime()) && due <= now);
+  const actionable = requirement.actionStatus === "ACTION_REQUIRED" || dueNow;
+  if (!actionable || requirement.resolutionStatus === "RESOLVED") return null;
+
+  const action = requirement.requiredAction ?? "Complete the requirement and provide evidence for verification.";
+  return {
+    id: `requirement:${requirement.id}`,
+    severity: "warning",
+    category: "credentials",
+    title: `${requirement.label} Required`,
+    detail: due
+      ? `${requirement.label} is due for action and requires completion evidence before the driver can be fully cleared.`
+      : `${requirement.label} requires action and completion evidence before the driver can be fully cleared.`,
+    whyItMatters: "An unresolved requirement may affect qualification or readiness under the existing domain rules.",
+    recommendedFix: action,
+    actionHref: `/drivers/${requirement.driverId}/vault`,
+    actionLabel: action,
+    canResolveInDemo: false,
+  };
+}
 
 export type DriverReviewGuidance = {
   headline: string;
@@ -134,7 +172,7 @@ function isActiveMoneyAtRisk(row: BofData["moneyAtRisk"][number]): boolean {
 
 function normalizeLoadHref(loadId: string | undefined, fallbackDriverId: string): string {
   if (!loadId) return `/drivers/${fallbackDriverId}/settlements`;
-  return `/shipper-portal/${loadId}`;
+  return `/loads/${loadId}`;
 }
 
 function moneyAtRiskIssue(row: BofData["moneyAtRisk"][number], driverId: string): DriverReviewIssue {
@@ -554,7 +592,11 @@ function inferDocumentType(i: DriverReviewIssue): string | undefined {
 /**
  * Canonical driver review narrative for roster / drawer — keyed by driverId only.
  */
-export function getDriverReviewExplanation(data: BofData, driverId: string): DriverReviewExplanation {
+export function getDriverReviewExplanation(
+  data: BofData,
+  driverId: string,
+  requirements: DriverReviewRequirement[] = [],
+): DriverReviewExplanation {
   const driver = data.drivers.find((d) => d.id === driverId);
   const driverName = driver?.name ?? driverId;
   const resolved = resolvedReviewIds(data, driverId);
@@ -757,6 +799,12 @@ export function getDriverReviewExplanation(data: BofData, driverId: string): Dri
     );
   }
 
+  for (const requirement of requirements) {
+    if (requirement.driverId !== driverId) continue;
+    const issue = buildRequirementReviewIssue(requirement);
+    if (issue) pushUnique(issues, issue, resolved);
+  }
+
   const credSlots: Array<{
     key: "cdl" | "medicalCard" | "mvr" | "fmcsa";
     label: string;
@@ -788,6 +836,29 @@ export function getDriverReviewExplanation(data: BofData, driverId: string): Dri
           actionHref: `/drivers/${driverId}/safety`,
           actionLabel: "Open safety expirations",
           canResolveInDemo: false,
+        },
+        resolved
+      );
+      continue;
+    }
+    const requirementType = key === "medicalCard" ? "MEDICAL" : key === "cdl" ? "DRIVER_LICENSE" : null;
+    if (requirementType && rec.status === "expiring_soon") {
+      const policy = ADVANCE_COMPLIANCE_POLICIES[requirementType];
+      pushUnique(
+        issues,
+        {
+          id: `credential:${key}_renewal_action_required`,
+          severity: "warning",
+          category: "credentials",
+          title: `${label} Renewal Action Required`,
+          detail:
+            `${label} is approaching its configured expiration window and the required renewal action has not been affirmed.`,
+          whyItMatters:
+            `The current ${label} remains valid, but BOF requires an advance renewal action to protect future qualification and dispatch continuity.`,
+          recommendedFix: policy.requiredAction,
+          actionHref: `/drivers/${driverId}/vault`,
+          actionLabel: requirementType === "MEDICAL" ? "Affirm appointment" : policy.requiredAction,
+          canResolveInDemo: true,
         },
         resolved
       );

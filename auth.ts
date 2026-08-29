@@ -5,7 +5,13 @@ import { compare } from "bcryptjs";
 
 import { prisma } from "@/lib/prisma";
 
+const authSecret =
+  process.env.AUTH_SECRET ??
+  process.env.AUTH_AUTH_SECRET ??
+  process.env.NEXTAUTH_SECRET;
+
 export const { handlers, auth, signIn, signOut } = NextAuth({
+  secret: authSecret,
   adapter: PrismaAdapter(prisma),
   session: {
     strategy: "jwt",

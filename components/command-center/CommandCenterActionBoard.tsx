@@ -29,7 +29,7 @@ export function CommandCenterActionBoard({ issues, backhaulAlert }: CommandCente
       case 'revenue':
         return '/settlements';
       default:
-        return '/command-center';
+        return '/dashboard';
     }
   };
 

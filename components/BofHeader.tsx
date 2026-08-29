@@ -3,207 +3,62 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { BookDemoLink } from "@/components/BookDemoLink";
 import { BofLogo } from "@/components/BofLogo";
 import { DemoWalkthroughRibbon } from "@/components/DemoWalkthroughRibbon";
-import { getSectorLinks } from "@/lib/site-links";
 
 const productNav = [
   { href: "/dispatch", label: "Dispatch" },
   { href: "/loads", label: "Loads" },
   { href: "/drivers", label: "Drivers" },
-  { href: "/documents", label: "Documents / Vault" },
-  { href: "/portals/driver", label: "Driver Portal" },
-];
+  { href: "/documents", label: "Documents" },
+  { href: "/operational-chat", label: "Conversations" },
+  { href: "/rf-actions", label: "RF Actions" },
+] as const;
 
-// Portals navigation - currently unused but preserved for potential future use
-/*
-const portalsNav = [
-  {
-    href: "/portals/manager",
-    label: "Owner Portal",
-    description: "Executive visibility, operations control, settlements, compliance, and accountability."
-  },
-  {
-    href: "/portals/customer",
-    label: "Customer Portal", 
-    description: "Shipment visibility, proof of delivery, load documents, and service accountability."
-  },
-  {
-    href: "/portals/driver",
-    label: "Driver Portal",
-    description: "Assignments, documents, settlement visibility, and readiness."
-  }
-];
-*/
+const sectorLinks = [
+  ["For-Hire Carriers", "/for-hire-carriers"],
+  ["Private Fleets", "/private-fleets"],
+  ["Aggregators", "/aggregators"],
+  ["Government", "/government"],
+] as const;
 
-// PortalsDropdown component - currently unused but preserved for potential future use
-/*
-function PortalsDropdown() {
-  const [isOpen, setIsOpen] = useState(false);
-  const pathname = usePathname();
-  const isPortalsActive = pathname.startsWith('/portals');
-  const dropdownRef = useRef<HTMLDivElement>(null);
-  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+const serviceGroups = [
+  { title: "People & HR", items: ["Recruiting", "Onboarding", "Driver Records", "Performance Management", "Training & Development", "Benefits Administration"], href: "/what-we-do/people-hr" },
+  { title: "Finance", items: ["Payroll", "Cash Management", "Excise Taxes", "Invoicing", "Factoring", "Financial Administration"], href: "/what-we-do/finance" },
+  { title: "Operations & Compliance", items: ["Driver Qualification", "Credentials", "Safety", "Compliance", "Maintenance Administration", "Settlements", "Exception Management"], href: "/what-we-do/operations-compliance" },
+  { title: "Procurement & Savings", items: ["Fuel Discounts", "Supply Chain", "Discount Pricing", "Vendor Programs", "Purchasing", "Cost Management"], href: "/what-we-do/procurement-savings" },
+] as const;
 
-  const openDropdown = () => {
-    if (timeoutRef.current) {
-      clearTimeout(timeoutRef.current);
-      timeoutRef.current = null;
-    }
-    setIsOpen(true);
-  };
-
-  const closeDropdown = () => {
-    timeoutRef.current = setTimeout(() => {
-      setIsOpen(false);
-    }, 150);
-  };
-
-  useEffect(() => {
-    function handleClickOutside(event: MouseEvent) {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
-        setIsOpen(false);
-      }
-    }
-
-    function handleEscape(event: KeyboardEvent) {
-      if (event.key === 'Escape') {
-        setIsOpen(false);
-      }
-    }
-
-    if (isOpen) {
-      document.addEventListener('mousedown', handleClickOutside);
-      document.addEventListener('keydown', handleEscape);
-    }
-
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-      document.removeEventListener('keydown', handleEscape);
-      if (timeoutRef.current) {
-        clearTimeout(timeoutRef.current);
-      }
-    };
-  }, [isOpen]);
-
+function MarketingMenu({ label, children }: { label: string; children: React.ReactNode }) {
+  const [open, setOpen] = useState(false);
   return (
-    <div className="relative" ref={dropdownRef}>
-      <button
-        onClick={() => setIsOpen(!isOpen)}
-        onMouseEnter={openDropdown}
-        onMouseLeave={closeDropdown}
-        className={[
-          "rounded-lg border px-4 py-2 font-medium transition-all duration-200 flex items-center gap-2 text-sm whitespace-nowrap",
-          isPortalsActive
-            ? "border-teal-600/50 bg-teal-900/40 text-teal-50 shadow-sm"
-            : "border-transparent bg-transparent text-slate-300 hover:border-slate-600 hover:bg-slate-800/50 hover:text-white hover:shadow-sm"
-        ].join(" ")}
-        aria-expanded={isOpen}
-        aria-haspopup="true"
-      >
-        Portals
-        <svg
-          className={`w-4 h-4 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`}
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-        >
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-        </svg>
+    <div className="bof-global-header-menu">
+      <button type="button" className="bof-global-header-menu-trigger" aria-expanded={open} onClick={() => setOpen((current) => !current)}>
+        {label} <span aria-hidden>{open ? "↑" : "↓"}</span>
       </button>
-
-      {isOpen && (
-        <div 
-          className="absolute top-full left-0 mt-1 w-80 bg-slate-900 border border-slate-700 rounded-lg shadow-lg"
-          style={{ zIndex: 9999 }}
-          onMouseEnter={openDropdown}
-          onMouseLeave={closeDropdown}
-        >
-          <div className="py-2">
-            {portalsNav.map((portal) => (
-              <Link
-                key={portal.href}
-                href={portal.href}
-                className="block px-4 py-3 hover:bg-slate-800 transition-colors duration-200 group"
-                onClick={() => setIsOpen(false)}
-              >
-                <div className="font-medium text-white mb-1 group-hover:text-teal-400 transition-colors duration-200">
-                  {portal.label}
-                </div>
-                <div className="text-sm text-slate-400 leading-relaxed group-hover:text-slate-300 transition-colors duration-200">
-                  {portal.description}
-                </div>
-              </Link>
-            ))}
-          </div>
-        </div>
-      )}
+      {open ? <div className="bof-global-header-mega-menu">{children}</div> : null}
     </div>
   );
 }
-*/
 
 export function BofHeader() {
   const pathname = usePathname();
   const [mounted, setMounted] = useState(false);
   useEffect(() => setMounted(true), []);
-  const marketingOnlyPaths = new Set([
-    "/",
-    "/for-hire-carriers",
-    "/private-fleets",
-    "/government",
-    "/bof-vault",
-    "/book-assessment",
-    "/apply",
-    "/fleet-savings",
-  ]);
-  const marketingOnlyHeader = marketingOnlyPaths.has(pathname);
+  const marketingOnlyHeader = ["/", "/for-hire-carriers", "/private-fleets", "/government", "/company", "/aggregators", "/qa", "/bof-vault", "/business-operations", "/fleet-savings", "/book-assessment", "/apply", "/investors", "/blog", "/contact", "/product", "/driver-experience", "/fleet-operations", "/founding-fleet", "/what-we-do/people-hr", "/what-we-do/finance", "/what-we-do/operations-compliance", "/what-we-do/procurement-savings"].some((route) => pathname === route || pathname.startsWith(`${route}/`));
   const isActiveProductNav = (href: string) => {
-    if (!mounted) {
-      return false;
-    }
-
-    if (href === "/dispatch") {
-      return (
-        pathname === "/dispatch" ||
-        pathname.startsWith("/dispatch/") ||
-        pathname.startsWith("/pretrip/") ||
-        pathname.startsWith("/trip-release/")
-      );
-    }
-
+    if (!mounted) return false;
+    if (href === "/dispatch") return pathname === "/dispatch" || pathname.startsWith("/dispatch/") || pathname.startsWith("/pretrip/") || pathname.startsWith("/trip-release/");
     return pathname === href || pathname.startsWith(`${href}/`);
   };
 
   if (!marketingOnlyHeader) {
     return (
-      <header className="bof-product-header sticky top-0 z-40 w-full border-b border-slate-800 bg-slate-950 backdrop-blur-sm shadow-sm">
+      <header className="bof-product-header sticky top-0 z-40 w-full border-b border-slate-800 bg-slate-950 shadow-sm">
         <div className="mx-auto flex max-w-[1600px] flex-col items-start gap-3 px-4 py-3 sm:px-8 lg:flex-row lg:items-center lg:justify-between lg:gap-6 lg:px-12 xl:px-16">
-          <Link href="/dispatch" className="inline-flex shrink-0 items-center text-slate-100 no-underline">
-            <BofLogo variant="dark" size="demoLarge" priority />
-          </Link>
-          <nav
-            className="bof-product-nav flex w-full min-w-0 flex-nowrap items-center gap-2 overflow-x-auto pb-1 text-sm lg:flex-1 lg:flex-wrap lg:gap-3 lg:pb-0"
-            aria-label="Authenticated application"
-          >
-            {productNav.map((item) => {
-              const selected = isActiveProductNav(item.href);
-              return (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  className={[
-                    "shrink-0 rounded-lg border px-4 py-2 font-medium no-underline transition-all duration-200",
-                    selected
-                      ? "border-teal-600/50 bg-teal-900/40 text-teal-50 shadow-sm"
-                      : "border-transparent bg-transparent text-slate-300 hover:border-slate-600 hover:bg-slate-800/50 hover:text-white hover:shadow-sm",
-                  ].join(" ")}
-                >
-                  {item.label}
-                </Link>
-              );
-            })}
+          <Link href="/dispatch" className="inline-flex shrink-0 items-center text-slate-100 no-underline"><BofLogo variant="dark" size="demoLarge" priority /></Link>
+          <nav className="bof-product-nav flex w-full min-w-0 flex-nowrap items-center gap-2 overflow-x-auto pb-1 text-sm lg:flex-1 lg:flex-wrap lg:gap-3 lg:pb-0" aria-label="Authenticated application">
+            {productNav.map((item) => <Link key={item.href} href={item.href} className={["shrink-0 rounded-lg border px-4 py-2 font-medium no-underline transition-all duration-200", isActiveProductNav(item.href) ? "border-teal-600/50 bg-teal-900/40 text-teal-50 shadow-sm" : "border-transparent bg-transparent text-slate-300 hover:border-slate-600 hover:bg-slate-800/50 hover:text-white"].join(" ")}>{item.label}</Link>)}
           </nav>
         </div>
         <DemoWalkthroughRibbon />
@@ -214,33 +69,28 @@ export function BofHeader() {
   return (
     <header className="bof-global-header">
       <div className="bof-global-header-inner">
-        <Link href="/" className="bof-global-header-logo">
-          <BofLogo variant="light" size="demoLarge" priority className="bof-global-header-logo-enhanced" />
-        </Link>
-
-        <nav
-          className="bof-global-header-nav"
-          aria-label="Main"
-        >
-          <div className="bof-global-header-nav-group" aria-label="Solutions">
-            {getSectorLinks().map((item) => (
-              <Link key={item.href} href={item.href}>
-                {item.label}
-              </Link>
-            ))}
-            <Link href="/bof-vault">BOF Vault</Link>
-            <Link href="/dispatch" className="bof-global-header-nav-link">Application</Link>
-            <Link href="/portals" className="bof-global-header-nav-link">Portals</Link>
-            <Link href="/book-assessment?source=header-marketing">Fleet Assessment</Link>
+        <Link href="/" className="bof-global-header-logo"><BofLogo variant="light" size="demoLarge" priority className="bof-global-header-logo-enhanced" /></Link>
+        <nav className="bof-global-header-nav" aria-label="Main">
+          <div className="bof-global-header-nav-group" aria-label="Primary site navigation">
+            <MarketingMenu label="SECTORS">
+              <div className="bof-global-header-menu-grid bof-global-header-menu-grid--sectors">
+                {sectorLinks.map(([label, href]) => <Link key={label} href={href}><strong>{label}</strong><span>Explore BOF for {label.toLowerCase()}.</span></Link>)}
+              </div>
+            </MarketingMenu>
+            <MarketingMenu label="WHAT WE DO">
+              <div className="bof-global-header-menu-grid">
+                {serviceGroups.map((group) => <div key={group.title}><Link href={group.href}><p>{group.title}</p></Link>{group.items.map((item) => <span key={item}>{item}</span>)}</div>)}
+              </div>
+            </MarketingMenu>
+            <Link href="/bof-vault">BOF VAULT</Link>
+            <Link href="/business-operations">BUSINESS OPERATIONS</Link>
+            <Link href="/documents">DOCUMENTS</Link>
+            <Link href="/qa">Q&amp;A</Link>
+            <Link href="/blog">INSIGHTS</Link>
+            <Link href="/company">WHO ARE WE?</Link>
+            <Link href="/book-assessment?source=header-marketing">ASSESSMENT</Link>
           </div>
-          <div className="bof-global-header-ctas">
-            <Link href="/apply" className="bof-global-header-cta bof-global-header-cta--primary">
-              Become a Founding Member
-            </Link>
-            <BookDemoLink className="bof-global-header-cta bof-global-header-cta--secondary">
-              Book a Demo
-            </BookDemoLink>
-          </div>
+          <div className="bof-global-header-ctas"><Link href="/dashboard" className="bof-global-header-cta bof-global-header-cta--primary">SEE BOF IN ACTION</Link></div>
         </nav>
       </div>
     </header>

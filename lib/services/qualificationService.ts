@@ -220,6 +220,23 @@ export function evaluateQualification(inputs: QualificationInputs): Qualificatio
   }
 
   for (const medical of inputs.medicalQualifications) {
+    const replacementDocument = getLatestDocument(
+      inputs.documents.filter(
+        (document) =>
+          document.driverId === inputs.driver.id &&
+          document.driverIntakeId === intake.id &&
+          document.fleetId === intake.fleetId &&
+          document.type === "MEDICAL" &&
+          document.status === "VERIFIED",
+      ),
+    );
+    if (
+      replacementDocument &&
+      new Date(replacementDocument.uploadedAt).getTime() >= new Date(medical.updatedAt).getTime() &&
+      !isExpired(replacementDocument.verificationExpiresAt)
+    ) {
+      continue;
+    }
     if (medical.status === "REJECTED") {
       add("LICENSE_INVALID");
       continue;

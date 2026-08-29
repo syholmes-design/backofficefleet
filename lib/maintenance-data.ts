@@ -10,6 +10,7 @@ import {
   createCanonicalV2Assets,
 } from "./dispatch-dashboard-seed";
 import type { Load } from "@/types/dispatch";
+import { evaluateEquipmentOperationalState, getCanonicalEquipmentRecord } from "./canonical-equipment-spine";
 
 export type MoneyAtRiskRow = NonNullable<BofData["moneyAtRisk"]>[number];
 
@@ -36,6 +37,10 @@ export type MaintenanceAssetSummary = {
   mar_rows: MoneyAtRiskRow[];
   /** Loads where this asset is referenced */
   associated_loads: BofData["loads"][number][];
+  availability: "AVAILABLE" | "UNAVAILABLE" | "PENDING_LIVE_RECONCILIATION";
+  assignability: "ASSIGNABLE" | "NOT_ASSIGNABLE" | "ASSIGNABILITY_NOT_ESTABLISHED";
+  dispatchability: "DISPATCHABLE" | "NOT_DISPATCHABLE" | "DISPATCHABILITY_NOT_ESTABLISHED";
+  operational_reasons: string[];
 };
 
 export type MaintenanceKpis = {
@@ -162,56 +167,40 @@ function inspectionPlaceholder(): { status: string; exp: string } {
   };
 }
 
-function computeReadiness(
-  kind: AssetKind,
-  fleetStatus: string,
-  mars: MoneyAtRiskRow[]
-): { readiness: EquipmentReadiness; reason: string } {
-  if (fleetStatus === "Unavailable") {
-    return {
-      readiness: "Out of Service",
-      reason: "Fleet seed marks this unit Unavailable — blocked from dispatch.",
-    };
-  }
-  const blockedMar = mars.find(isBlockedMar);
-  if (blockedMar) {
-    return {
-      readiness: "Blocked",
-      reason: `Open MAR ${blockedMar.id} (${blockedMar.status}): ${blockedMar.rootCause ?? blockedMar.category}.`,
-    };
-  }
-  const maintRisk = mars.find((m) => isMaintenanceMar(m) && (isAtRiskMar(m) || isOpenMar(m)));
-  if (maintRisk) {
-    return {
-      readiness: "At Risk",
-      reason: `Maintenance exposure on ${maintRisk.id}: ${maintRisk.rootCause ?? maintRisk.category}.`,
-    };
-  }
-  const anyOpen = mars.some((m) => isOpenMar(m) && !isMaintenanceMar(m));
-  if (anyOpen) {
-    return {
-      readiness: "At Risk",
-      reason: "Open money-at-risk row on this asset — review before assigning critical freight.",
-    };
-  }
-  return { readiness: "Ready", reason: "No blocking MAR and unit is available/in service." };
-}
-
-
 function buildCanonicalAssetSummary(data: BofData, asset: {asset_id: string; unit_number: string; kind: "Equipment"}): MaintenanceAssetSummary {
+  const canonical = getCanonicalEquipmentRecord(data, asset.asset_id, [], "DEMO");
+  const operational = canonical
+    ? evaluateEquipmentOperationalState(canonical)
+    : { availability: "PENDING_LIVE_RECONCILIATION" as const, assignability: "ASSIGNABILITY_NOT_ESTABLISHED" as const, readiness: "READINESS_NOT_ESTABLISHED" as const, dispatchability: "DISPATCHABILITY_NOT_ESTABLISHED" as const, reasons: ["Canonical Equipment record unavailable"] };
   const mars = marsForAsset(data, asset.asset_id);
+  const blockedMar = mars.find(isBlockedMar);
+  const operationalWithMaintenance = canonical
+    ? evaluateEquipmentOperationalState(canonical, blockedMar
+      ? { maintenanceBlock: `Open MAR ${blockedMar.id} (${blockedMar.status}): ${blockedMar.rootCause ?? blockedMar.category}.` }
+      : undefined)
+    : operational;
   const associatedLoads = [
     ...loadsUsingTractor(data, asset.asset_id),
     ...loadsUsingTrailer(data, asset.asset_id)
   ];
-  const { readiness, reason } = computeReadiness("Equipment", "Available", mars);
+  const fleetStatus = String(canonical?.operationalStatus.value ?? "PENDING_LIVE_RECONCILIATION");
+  const readiness = operationalWithMaintenance.readiness === "READY"
+    ? "Ready"
+    : operationalWithMaintenance.readiness === "READINESS_NOT_ESTABLISHED"
+      ? "At Risk"
+      : fleetStatus === "Unavailable"
+        ? "Out of Service"
+        : blockedMar
+          ? "Blocked"
+          : "At Risk";
+  const reason = operationalWithMaintenance.reasons.join(" ") || "Operational state permits dispatch.";
   const insp = inspectionPlaceholder();
   const pm = pmLabelsForAsset(mars);
   return {
     asset_id: asset.asset_id,
     kind: "Equipment",
     unit_number: asset.unit_number,
-    fleet_status: "Available",
+    fleet_status: fleetStatus,
     readiness,
     readiness_reason: reason,
     pm_status_label: pm.status,
@@ -219,10 +208,14 @@ function buildCanonicalAssetSummary(data: BofData, asset: {asset_id: string; uni
     inspection_status_label: insp.status,
     inspection_expiration_display: insp.exp,
     open_mar_count: mars.filter((m) => isOpenMar(m) || isAtRiskMar(m)).length,
-    oos: false,
+    oos: canonical?.outOfService.value === true,
     current_terminal: "Not in BOF fleet JSON",
     mar_rows: mars,
     associated_loads: associatedLoads,
+    availability: operationalWithMaintenance.availability,
+    assignability: operationalWithMaintenance.assignability,
+    dispatchability: operationalWithMaintenance.dispatchability,
+    operational_reasons: operationalWithMaintenance.reasons,
   };
 }
 

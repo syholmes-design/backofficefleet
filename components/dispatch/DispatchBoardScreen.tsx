@@ -36,6 +36,19 @@ type Props = {
   onOpenAssign: (loadId: string) => void;
   onRefresh: () => Promise<void>;
   refreshKey: number;
+  demoMode?: boolean;
+  relationshipSpine: Record<string, {
+    driverId?: string;
+    assetId?: string;
+    trailerId?: string;
+    safetyEventIds: string[];
+    workOrderIds: string[];
+    rfidEventIds: string[];
+    claimIds: string[];
+    evidenceRecordIds: string[];
+    evidenceReferences: string[];
+    documentReferences: string[];
+  }>;
 };
 
 function MetricCard({
@@ -148,6 +161,8 @@ export function DispatchBoardScreen({
   onOpenAssign,
   onRefresh,
   refreshKey,
+  demoMode = false,
+  relationshipSpine,
 }: Props) {
   const selectedLoad = useMemo(
     () => loads.find((load) => load.id === selectedLoadId) ?? loads[0] ?? null,
@@ -159,6 +174,13 @@ export function DispatchBoardScreen({
   const [workflowError, setWorkflowError] = useState<string | null>(null);
 
   useEffect(() => {
+    if (demoMode) {
+      setWorkflow(null);
+      setWorkflowError(null);
+      setWorkflowLoading(false);
+      return;
+    }
+
     if (!selectedLoad) {
       setWorkflow(null);
       setWorkflowError(null);
@@ -192,7 +214,7 @@ export function DispatchBoardScreen({
     return () => {
       cancelled = true;
     };
-  }, [refreshKey, selectedLoad]);
+  }, [demoMode, refreshKey, selectedLoad]);
 
   const assignedCount = useMemo(
     () => Object.values(assignmentMap).filter((assignment) => assignment?.status === "ACTIVE").length,
@@ -222,6 +244,7 @@ export function DispatchBoardScreen({
 
   const readinessReasons = getJsonStringArray(workflow?.readiness?.reasonCodes).join(", ");
   const latestReleaseReasons = getJsonStringArray(workflow?.latestRelease?.reasonCodes);
+  const selectedRelationship = selectedLoad ? relationshipSpine[selectedLoad.id] : undefined;
 
   return (
     <div className="mx-auto flex max-w-7xl flex-col gap-6 px-6 py-6 lg:px-8">
@@ -230,28 +253,28 @@ export function DispatchBoardScreen({
           icon={Truck}
           label="Loads on board"
           value={loads.length}
-          detail="Backend load list from the current fleet."
+          detail={demoMode ? "Canonical BOF demo load source." : "Backend load list from the current fleet."}
           tone="ready"
         />
         <MetricCard
           icon={UserRoundCheck}
           label="Active assignments"
           value={assignedCount}
-          detail="Current active assignments from authoritative dispatch records."
+          detail={demoMode ? "Assignment records are not available in the demo source." : "Current active assignments from authoritative dispatch records."}
           tone={assignedCount > 0 ? "info" : "warning"}
         />
         <MetricCard
           icon={PackageCheck}
           label="Delivered"
           value={deliveredCount}
-          detail="Delivered loads based on backend load status."
+          detail={demoMode ? "Based on canonical load status." : "Delivered loads based on backend load status."}
           tone="ready"
         />
         <MetricCard
           icon={AlertTriangle}
           label="Needs attention"
           value={blockedCount}
-          detail={`${plannedCount} loads are still planned or missing active assignments.`}
+          detail={`${plannedCount} loads are planned or missing assignment data.`}
           tone={blockedCount > 0 ? "warning" : "ready"}
         />
       </section>
@@ -334,12 +357,16 @@ export function DispatchBoardScreen({
                   detail={
                     workflow?.assignment
                       ? `${workflow.assignment.driver?.firstName ?? workflow.assignment.driverId} · ${workflow.assignment.tractorEquipment?.unitNumber ?? workflow.assignment.tractorEquipmentId}`
-                      : "No active assignment"
+                      : demoMode
+                        ? `${selectedRelationship?.driverId ?? "Driver not available"} · Truck ${selectedRelationship?.assetId ?? "not available"}`
+                        : "No active assignment"
                   }
                   meta={
                     workflow?.assignment?.trailerEquipment
                       ? `Trailer ${workflow.assignment.trailerEquipment.unitNumber}`
-                      : "Trailer optional"
+                      : demoMode
+                        ? `Trailer ${selectedRelationship?.trailerId ?? "Not available"}`
+                        : "Trailer optional"
                   }
                 />
                 <WorkflowCard
@@ -353,6 +380,42 @@ export function DispatchBoardScreen({
                   }
                 />
               </div>
+
+              {demoMode ? (
+                <div className="mt-5 rounded-lg border border-cyan-800/50 bg-cyan-950/20 p-4">
+                  <p className="text-xs font-bold uppercase tracking-wide text-cyan-300">Canonical relationship spine</p>
+                  <div className="mt-3 grid gap-3 text-sm text-slate-200 sm:grid-cols-2 lg:grid-cols-3">
+                    <p>Driver: <strong>{selectedRelationship?.driverId ?? "Not available"}</strong></p>
+                    <p>Truck: <strong>{selectedRelationship?.assetId ?? "Not available"}</strong></p>
+                    <p>Trailer: <strong>{selectedRelationship?.trailerId ?? "Not available"}</strong></p>
+                    <p>Safety events: <strong>{selectedRelationship?.safetyEventIds.length ?? 0}</strong></p>
+                    <p>Evidence records: <strong>{selectedRelationship?.evidenceRecordIds.length ?? 0}</strong></p>
+                    <p>Documents: <strong>{selectedRelationship?.documentReferences.length ?? 0}</strong></p>
+                    <p>Work orders: <strong>{selectedRelationship?.workOrderIds.length ?? 0}</strong></p>
+                    <p>RFID events: <strong>{selectedRelationship?.rfidEventIds.length ?? 0}</strong></p>
+                    <p>Claims: <strong>{selectedRelationship?.claimIds.length ?? 0}</strong></p>
+                  </div>
+                  <p className="mt-3 text-xs text-slate-400">
+                    Readiness, exception, and release decisions remain on their existing BOF workflow pages; no demo assignment or release record is synthesized here.
+                  </p>
+                  <div className="mt-4 flex flex-wrap gap-2">
+                    {selectedRelationship?.driverId ? (
+                      <Link
+                        href={`/drivers/${selectedRelationship.driverId}/safety`}
+                        className="rounded border border-cyan-700/50 px-3 py-1.5 text-xs font-semibold text-cyan-100 hover:bg-cyan-900/30"
+                      >
+                        Open driver safety
+                      </Link>
+                    ) : null}
+                    <Link
+                      href={`/dispatch?view=exceptions&loadId=${selectedLoad.id}`}
+                      className="rounded border border-amber-700/50 px-3 py-1.5 text-xs font-semibold text-amber-100 hover:bg-amber-900/30"
+                    >
+                      Review exceptions
+                    </Link>
+                  </div>
+                </div>
+              ) : null}
 
               {latestReleaseReasons.length > 0 ? (
                 <div className="mt-5 rounded-lg border border-amber-700/45 bg-amber-950/25 p-4">
@@ -416,7 +479,9 @@ export function DispatchBoardScreen({
             </button>
           </div>
           <p className="mt-2 text-sm leading-6 text-slate-300">
-            Loads, statuses, and assignment presence now come from backend records instead of demo row synthesis.
+            {demoMode
+              ? "Canonical BOF load rows are shown here as the dispatch control view; backend assignment state is displayed when an authorized fleet context exists."
+              : "Loads, statuses, and assignment presence now come from backend records."}
           </p>
           {loadsError ? (
             <div className="mt-5 rounded-lg border border-rose-700/50 bg-rose-950/30 p-4 text-sm text-rose-100">

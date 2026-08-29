@@ -110,6 +110,12 @@ export function LoadDetailContent({ load, onClose, onOpenAssignModal, refreshKey
           <p className="text-sm text-slate-400">{load.customerName}</p>
         </div>
         <div className="flex items-center gap-2">
+          <Link
+            href={`/operational-chat?fleetId=${encodeURIComponent(load.fleetId)}&recordType=LOAD&recordId=${encodeURIComponent(load.id)}`}
+            className="rounded border border-teal-600/70 px-2 py-1 text-xs font-semibold text-teal-100 hover:bg-teal-900/40"
+          >
+            Conversation
+          </Link>
           <span className={`rounded-full px-3 py-1 text-xs font-bold ${loadStatusChipClass(load.status)}`}>
             {formatEnumLabel(load.status)}
           </span>

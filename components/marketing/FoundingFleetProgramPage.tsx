@@ -34,7 +34,7 @@ const INCLUDED = [
   {
     title: "Enforcement Engine",
     body: "Readiness gates, proof requirements, owners, and action queues that stop operational drift.",
-    href: "/command-center",
+    href: "/rf-actions",
     icon: <IconShield />,
   },
   {
@@ -50,9 +50,9 @@ const INCLUDED = [
     icon: <IconDispatch />,
   },
   {
-    title: "Command Center",
+    title: "Exception Queue",
     body: "The real-time priority queue for drivers, loads, claims, compliance, and cash exposure.",
-    href: "/command-center",
+    href: "/rf-actions",
     icon: <IconDispatch />,
   },
 ] as const;

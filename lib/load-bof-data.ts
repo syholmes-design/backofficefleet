@@ -36,6 +36,21 @@ export type DriverCredentialOverrideRow = {
   updatedBy: "demo-editor";
 };
 
+export type LoadRelationshipSpine = {
+  loadId: string;
+  driverId?: string;
+  assetId?: string;
+  trailerId?: string;
+  safetyEventIds: string[];
+  workOrderIds: string[];
+  rfidEventIds: string[];
+  claimIds: string[];
+  evidenceRecordIds: string[];
+  evidenceReferences: string[];
+  documentReferences: string[];
+  settlementId?: string;
+};
+
 export type BofData = typeof raw & {
   driverDispatchBlockerOverrides?: Record<string, DriverDispatchBlockerOverrideRow>;
   driverReviewOverrides?: Record<string, DriverReviewOverrideRow>;
@@ -46,6 +61,8 @@ export type BofData = typeof raw & {
   settlementLoadLinks?: Record<string, string>;
   /** Canonical load evidence rows keyed by load id. */
   loadEvidenceRecords?: Record<string, BofLoadEvidence[]>;
+  /** Explicit/derived relationship spine keyed by the existing canonical load ID. */
+  loadRelationshipSpine?: Record<string, LoadRelationshipSpine>;
 };
 
 let reconciledSeed: BofData | null = null;

@@ -147,8 +147,8 @@ function attentionTargetIds(item: CommandCenterItem): string {
 function mapCommandItemToOwnerAttention(
   item: CommandCenterItem
 ): ExecutiveDashboardOwnerItem {
-  let actionHref = "/command-center";
-  let actionLabel = "Open Command Center";
+  let actionHref = "/dashboard";
+  let actionLabel = "Open Dashboard";
 
   if (item.driverId && item.bucket === "Compliance") {
     actionHref = `/drivers/${item.driverId}/vault`;

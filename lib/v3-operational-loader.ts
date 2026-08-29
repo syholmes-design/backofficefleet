@@ -828,13 +828,13 @@ function parseComplianceActionQueue(data: string[][]): ComplianceActionQueue[] {
     let complianceArea = String(obj['Compliance Area'] || '');
 
     if (driverId === 'DRV-001') {
-      fixLink = '/shipper-portal/L001';
+      fixLink = '/loads/L001';
       complianceArea = 'Dispatch Proof';
       documentType = 'Seal Exception Packet';
       issueType = 'Seal mismatch review required';
       requiredFix = 'Review pickup seal, delivery seal, BOL, POD, and RFID proof before releasing the hold';
     } else if (driverId === 'DRV-007') {
-      fixLink = '/shipper-portal/L007#lumper-workflow';
+      fixLink = '/loads/L007#lumper-workflow';
       complianceArea = 'Settlement Proof';
       documentType = 'QR Lumper Closeout';
       issueType = 'QR lumper authorization and Zelle payment closeout pending';
@@ -958,7 +958,7 @@ function normalizeLegacyLoadPath(value: string): string {
   const match = trimmed.match(/L-(\d{3})/i);
   if (!match) return trimmed;
   const canonicalLoadId = normalizeDemoLoadId(`L-${match[1]}`);
-  if (/^\/dispatch\//i.test(trimmed) || /\/proof\b/i.test(trimmed)) return `/shipper-portal/${canonicalLoadId}`;
+  if (/^\/dispatch\//i.test(trimmed) || /\/proof\b/i.test(trimmed)) return `/loads/${canonicalLoadId}`;
   return trimmed.replace(match[0], canonicalLoadId);
 }
 

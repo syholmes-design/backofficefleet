@@ -18,7 +18,7 @@ const SAFE_HREF_PREFIXES = [
   "/settlements",
   "/safety",
   "/money-at-risk",
-  "/command-center",
+  "/dashboard",
   "/documents",
   "/rf-actions",
   "#",

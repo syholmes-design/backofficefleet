@@ -1,11 +1,14 @@
 import { createAuditRecord } from "@/lib/audit";
+import { ADVANCE_COMPLIANCE_POLICIES, getConfiguredAdvanceWindowDays, evaluateAdvanceComplianceTrigger, evaluateComplianceTrigger } from "@/lib/advance-compliance-rule";
 import { prisma } from "@/lib/prisma";
 import {
   createRequirement,
   getRequirementById,
   getRequirementsForIntake,
+  getRequirementsForDriver,
   updateRequirement,
 } from "@/lib/repositories/requirementRepository";
+import type { DriverReviewRequirement } from "@/lib/driver-review-explanation";
 import { authorizedFleetAccess, logUnauthorizedAttempt, type SessionUserLike } from "@/lib/services/intakeService";
 
 const VALID_REQUIREMENT_TYPES = [
@@ -68,6 +71,9 @@ export async function evaluateIntakeRequirements(intakeId: string) {
         include: { satisfiedByDocument: true },
       },
       documents: true,
+      licenses: true,
+      medicalQualifications: true,
+      drugTests: true,
       driver: true,
     },
   });
@@ -76,8 +82,30 @@ export async function evaluateIntakeRequirements(intakeId: string) {
     return [];
   }
 
+  let requirements = intake.requirements;
+  const requirementSources = Object.values(ADVANCE_COMPLIANCE_POLICIES)
+    .filter((policy) => policy.authoritativeCollection)
+    .map((policy) => ({
+      requirementType: policy.requirementType,
+      label: policy.requirementLabel,
+      hasDate: (intake[policy.authoritativeCollection!] as Array<{ expirationDate: Date | null }>).some((record) => record.expirationDate),
+    }));
+  for (const source of requirementSources) {
+    if (source.hasDate && !requirements.some((requirement) => requirement.requirementType === source.requirementType)) {
+      const created = await createRequirement({
+        driverIntakeId: intake.id,
+        requirementType: source.requirementType,
+        label: source.label,
+        isRequired: true,
+        requiredAction: ADVANCE_COMPLIANCE_POLICIES[source.requirementType].requiredAction,
+        status: "REQUIRED",
+      });
+      requirements = [...requirements, created];
+    }
+  }
+
   const required = await Promise.all(
-    intake.requirements.map(async (requirement) => {
+    requirements.map(async (requirement) => {
       const requirementType = requirement.requirementType;
       const matching = intake.documents
         .filter(
@@ -90,8 +118,28 @@ export async function evaluateIntakeRequirements(intakeId: string) {
 
       const latestDocument = matching[0] ?? null;
       let derivedStatus: string = "REQUIRED";
+      const policy = ADVANCE_COMPLIANCE_POLICIES[requirementType];
+      const sourceRows = policy?.authoritativeCollection
+        ? (intake[policy.authoritativeCollection] as Array<{ driverId: string; expirationDate: Date | null; status: string; verificationStatus: string | null; updatedAt: Date }>)
+            .filter((record) => record.driverId === intake.driverId)
+        : [];
+      const sourceEvidence = [...sourceRows].sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime())[0] ?? null;
+      const authoritativeExpiration = sourceEvidence?.expirationDate ?? null;
+      const expiresAt = authoritativeExpiration ?? latestDocument?.verificationExpiresAt ?? requirement.expiresAt ?? null;
+      const requirementAdvanceWindow = requirement.advanceWindowDays ?? getConfiguredAdvanceWindowDays(requirementType, null);
+
+      const sourceSatisfied = Boolean(
+        sourceEvidence &&
+        sourceEvidence.status !== "REJECTED" &&
+        sourceEvidence.verificationStatus !== "PENDING_VERIFICATION" &&
+        sourceEvidence.expirationDate &&
+        new Date(sourceEvidence.expirationDate).getTime() >= Date.now(),
+      );
+
       if (requirement.exceptionReason && requirement.exceptionReason.trim().length > 0) {
         derivedStatus = "EXCEPTION";
+      } else if (!latestDocument && sourceSatisfied) {
+        derivedStatus = "SATISFIED";
       } else if (!latestDocument) {
         derivedStatus = "REQUIRED";
       } else if (latestDocument.status === "REJECTED") {
@@ -108,10 +156,74 @@ export async function evaluateIntakeRequirements(intakeId: string) {
         derivedStatus = "EXPIRED";
       }
 
+      const triggerPolicy = policy
+        ? { ...policy, defaultAdvanceWindowDays: requirementAdvanceWindow }
+        : null;
+      const triggerEvaluation = triggerPolicy
+        ? evaluateComplianceTrigger(triggerPolicy, { expirationDate: expiresAt, dueDate: requirement.dueDate }, new Date())
+        : evaluateAdvanceComplianceTrigger(requirementType, expiresAt, requirementAdvanceWindow, new Date());
+      const evaluatedTriggerDate = "triggerAt" in triggerEvaluation ? triggerEvaluation.triggerAt : triggerEvaluation.triggerDate;
+
+      const replacementVerified = Boolean(
+        latestDocument?.status === "VERIFIED" &&
+        requirement.affirmationStatus === "AFFIRMED" &&
+        requirement.affirmationTimestamp &&
+        new Date(latestDocument.uploadedAt).getTime() >= new Date(requirement.affirmationTimestamp).getTime(),
+      );
+      const isResolved = replacementVerified && derivedStatus === "SATISFIED";
+      const nextActionStatus = isResolved
+        ? "RESOLVED"
+        : latestDocument &&
+            (latestDocument.status === "PENDING_VERIFICATION" || latestDocument.status === "RECEIVED") &&
+            requirement.affirmationStatus === "AFFIRMED"
+          ? "DOCUMENT_SUBMITTED"
+        : triggerEvaluation.isTriggered && derivedStatus !== "EXPIRED" && derivedStatus !== "REJECTED" && requirement.affirmationStatus !== "AFFIRMED"
+          ? "ACTION_REQUIRED"
+          : requirement.actionStatus ?? null;
+
       const saved = await updateRequirement(requirement.id, {
         status: derivedStatus as never,
+        advanceWindowDays: requirementAdvanceWindow,
+        triggerDate: evaluatedTriggerDate,
+        requiredAction: triggerEvaluation.requiredAction,
+        actionStatus: nextActionStatus,
+        verificationStatus: isResolved
+          ? "VERIFIED"
+          : latestDocument?.status === "PENDING_VERIFICATION" || latestDocument?.status === "RECEIVED"
+            ? "PENDING_VERIFICATION"
+            : requirement.verificationStatus,
+        verificationTimestamp: isResolved ? (requirement.verificationTimestamp ?? new Date()) : requirement.verificationTimestamp,
+        resolutionStatus: isResolved ? "RESOLVED" : requirement.resolutionStatus,
+        resolvedAt: isResolved ? (requirement.resolvedAt ?? new Date()) : requirement.resolvedAt,
+        resolutionNotes: isResolved ? `Verified replacement evidence linked to the ${requirement.label} obligation.` : requirement.resolutionNotes,
         satisfiedByDocumentId: latestDocument && (latestDocument.status === "VERIFIED" || latestDocument.status === "PENDING_VERIFICATION") ? latestDocument.id : (requirement.satisfiedByDocumentId ?? null),
       });
+
+      if (isResolved && requirement.resolutionStatus !== "RESOLVED") {
+        await createAuditRecord({
+          actorId: null,
+          actorEmail: null,
+          tenantId: intake.fleetId,
+          action: "UPDATED",
+          entityType: "DriverIntakeRequirement",
+          entityId: requirement.id,
+          details: { event: "requirement.resolved", driverId: intake.driverId, requirementType, satisfiedByDocumentId: latestDocument?.id },
+          metadata: { source: "requirement-evaluator" },
+        });
+      }
+
+      if (triggerEvaluation.isTriggered && requirement.actionStatus !== "ACTION_REQUIRED" && !isResolved) {
+        await createAuditRecord({
+          actorId: null,
+          actorEmail: null,
+          tenantId: intake.fleetId,
+          action: "UPDATED",
+          entityType: "DriverIntakeRequirement",
+          entityId: requirement.id,
+          details: { event: "requirement.advance_triggered", driverId: intake.driverId, requirementType, triggerDate: evaluatedTriggerDate?.toISOString(), advanceWindowDays: requirementAdvanceWindow },
+          metadata: { source: "requirement-evaluator" },
+        });
+      }
 
       return saved;
     }),
@@ -129,6 +241,8 @@ export async function createDriverRequirementRecord(input: {
     isRequired?: boolean;
     dueDate?: string | null;
     expiresAt?: string | null;
+    advanceWindowDays?: number | null;
+    requiredAction?: string | null;
     exceptionReason?: string | null;
   };
 }) {
@@ -159,6 +273,8 @@ export async function createDriverRequirementRecord(input: {
     throw Object.assign(new Error("label is required"), { statusCode: 422 });
   }
 
+  const advanceWindowDays = typeof input.payload.advanceWindowDays === "number" ? input.payload.advanceWindowDays : null;
+  const requiredAction = input.payload.requiredAction ?? null;
   const requirement = await createRequirement({
     driverIntakeId: intake.id,
     requirementType,
@@ -166,6 +282,10 @@ export async function createDriverRequirementRecord(input: {
     isRequired: input.payload.isRequired ?? true,
     dueDate: input.payload.dueDate ? new Date(input.payload.dueDate) : null,
     expiresAt: input.payload.expiresAt ? new Date(input.payload.expiresAt) : null,
+    advanceWindowDays,
+    triggerDate: null,
+    requiredAction,
+    actionStatus: null,
     exceptionReason: input.payload.exceptionReason ?? null,
     status: "REQUIRED",
   });
@@ -184,6 +304,60 @@ export async function createDriverRequirementRecord(input: {
   });
 
   return requirement;
+}
+
+export async function affirmRequirementAction(input: {
+  sessionUser: SessionUserLike | null | undefined;
+  requirementId: string;
+}) {
+  if (!input.sessionUser?.id) {
+    throw Object.assign(new Error("Unauthorized"), { statusCode: 401 });
+  }
+
+  const accessResult = await getAuthorizedRequirement(input.sessionUser, input.requirementId);
+  if (!accessResult.requirement) throw Object.assign(new Error("Requirement not found"), { statusCode: 404 });
+  if (!accessResult.allowed) throw Object.assign(new Error("Forbidden"), { statusCode: 403 });
+  const requirement = accessResult.requirement;
+  const intake = requirement.driverIntake;
+
+  const affirmedAt = new Date();
+  const updated = await updateRequirement(requirement.id, {
+    affirmationStatus: "AFFIRMED",
+    affirmationTimestamp: affirmedAt,
+    affirmedBy: input.sessionUser.id,
+    actionStatus: requirement.requirementType === "MEDICAL" ? "AWAITING_MEDICAL_CARD" : "AWAITING_EVIDENCE",
+    resolutionStatus: "OPEN",
+  });
+
+  await createAuditRecord({
+    actorId: input.sessionUser.id,
+    actorEmail: input.sessionUser.email ?? null,
+    tenantId: intake.fleetId,
+    action: "UPDATED",
+    entityType: "DriverIntakeRequirement",
+    entityId: requirement.id,
+    details: { event: "requirement.action_affirmed", driverId: intake.driverId, requirementType: requirement.requirementType, affirmationTimestamp: affirmedAt.toISOString() },
+    metadata: { source: "requirement-action-api" },
+  });
+
+  return updated;
+}
+
+export async function affirmMedicalRenewalAppointment(input: {
+  sessionUser: SessionUserLike | null | undefined;
+  driverId: string;
+}) {
+  if (!input.sessionUser?.id) {
+    throw Object.assign(new Error("Unauthorized"), { statusCode: 401 });
+  }
+  const intake = await prisma.driverIntake.findFirst({
+    where: { driverId: input.driverId },
+    include: { requirements: true },
+    orderBy: { createdAt: "desc" },
+  });
+  const requirement = intake?.requirements.find((item) => item.requirementType === "MEDICAL");
+  if (!requirement) throw Object.assign(new Error("Medical requirement not found"), { statusCode: 404 });
+  return affirmRequirementAction({ sessionUser: input.sessionUser, requirementId: requirement.id });
 }
 
 export async function listDriverRequirementsForIntake(user: SessionUserLike | null | undefined, intakeId: string) {
@@ -209,6 +383,33 @@ export async function listDriverRequirementsForIntake(user: SessionUserLike | nu
   return records;
 }
 
+export async function listDriverRequirementsForFleet(
+  user: SessionUserLike | null | undefined,
+  driverId: string,
+  fleetId: string,
+): Promise<DriverReviewRequirement[]> {
+  if (!user?.id) {
+    throw Object.assign(new Error("Unauthorized"), { statusCode: 401 });
+  }
+
+  const access = await authorizedFleetAccess(user, fleetId);
+  if (!access.allowed) {
+    throw Object.assign(new Error("Forbidden"), { statusCode: 403 });
+  }
+
+  const rows = await getRequirementsForDriver(driverId, fleetId);
+  return rows.map((row) => ({
+    id: row.id,
+    driverId: row.driverIntake.driverId,
+    requirementType: row.requirementType,
+    label: row.label,
+    dueDate: row.dueDate?.toISOString() ?? null,
+    actionStatus: row.actionStatus,
+    requiredAction: row.requiredAction,
+    resolutionStatus: row.resolutionStatus,
+  }));
+}
+
 export async function updateDriverRequirementRecord(input: {
   sessionUser: SessionUserLike | null | undefined;
   requirementId: string;
@@ -217,6 +418,8 @@ export async function updateDriverRequirementRecord(input: {
     isRequired?: boolean;
     dueDate?: string | null;
     expiresAt?: string | null;
+    advanceWindowDays?: number | null;
+    requiredAction?: string | null;
     exceptionReason?: string | null;
   };
 }) {
@@ -233,7 +436,7 @@ export async function updateDriverRequirementRecord(input: {
     throw Object.assign(new Error("Forbidden"), { statusCode: 403 });
   }
 
-  const allowedFields = ["label", "isRequired", "dueDate", "expiresAt", "exceptionReason"];
+  const allowedFields = ["label", "isRequired", "dueDate", "expiresAt", "advanceWindowDays", "requiredAction", "exceptionReason"];
   const invalidKeys = Object.keys(input.payload).filter((key) => !allowedFields.includes(key));
   if (invalidKeys.length > 0) {
     throw Object.assign(new Error(`Invalid fields: ${invalidKeys.join(", ")}`), { statusCode: 422 });
@@ -244,7 +447,10 @@ export async function updateDriverRequirementRecord(input: {
     isRequired: input.payload.isRequired,
     dueDate: input.payload.dueDate !== undefined ? (input.payload.dueDate ? new Date(input.payload.dueDate) : null) : undefined,
     expiresAt: input.payload.expiresAt !== undefined ? (input.payload.expiresAt ? new Date(input.payload.expiresAt) : null) : undefined,
+    advanceWindowDays: input.payload.advanceWindowDays,
+    requiredAction: input.payload.requiredAction,
     exceptionReason: input.payload.exceptionReason,
+    triggerDate: input.payload.expiresAt ? new Date(input.payload.expiresAt) : requirement.triggerDate,
   });
 
   await evaluateIntakeRequirements(requirement.driverIntakeId);

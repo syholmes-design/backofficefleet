@@ -85,9 +85,9 @@ export const BOF_PAGE_REGISTRY: Record<string, BofPageRegistryItem> = {
     primaryComponent: "DashboardPage",
   },
   commandCenter: {
-    label: "Command Center",
+    label: "Legacy Command Center",
     url: "/command-center",
-    type: "DEMO",
+    type: "LEGACY",
     routeFile: "app/(bof)/command-center/page.tsx",
     primaryComponent: "CommandCenterPage",
   },

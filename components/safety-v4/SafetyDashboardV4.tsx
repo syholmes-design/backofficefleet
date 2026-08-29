@@ -17,8 +17,7 @@ import {
   Ban,
   Camera,
   ClipboardCheck,
-  FileWarning,
-  Siren
+  FileWarning
 } from "lucide-react";
 import { getV3OperationalData, isV3DataAvailable } from "@/lib/v3-operational-loader";
 import { formatDisplayDate } from "@/lib/date-utils";
@@ -328,39 +327,53 @@ export function SafetyDashboardV4() {
           alt=""
           fill
           priority
-          className="object-cover opacity-45"
+          className="object-cover opacity-65"
           sizes="100vw"
         />
-        <div className="absolute inset-0 bg-gradient-to-r from-slate-950 via-slate-950/92 to-slate-950/35" />
+        <div className="absolute inset-0 bg-gradient-to-r from-slate-950 via-slate-950/80 to-slate-950/60" />
         <div className="relative mx-auto max-w-7xl px-6 py-10">
           <div className="grid gap-8 lg:grid-cols-[1.1fr_0.9fr] lg:items-end">
             <div>
-              <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-blue-400/30 bg-blue-500/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.16em] text-blue-200">
-                <Siren className="h-3.5 w-3.5" />
-                Live Safety Desk
+              <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-cyan-400/40 bg-cyan-500/15 px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.16em] text-cyan-200">
+                <Truck className="h-3.5 w-3.5" />
+                En-Route Monitoring Active
               </div>
               <h1 className="flex items-center gap-3 text-4xl font-bold text-white">
-                <Shield className="h-9 w-9 text-blue-300" />
-                Safety risk and claims control
+                <Shield className="h-9 w-9 text-cyan-300" />
+                Safety Command Center
               </h1>
-              <p className="mt-3 max-w-2xl text-base leading-7 text-slate-300">
-                See which safety events block dispatch, hold settlements, create claim exposure, or need proof before the fleet keeps moving.
+              <p className="mt-3 max-w-2xl text-base leading-7 text-slate-200">
+                BOF watches every truck in motion. HOS compliance, location tracking, speed monitoring, and en-route safety events — unified to block dispatch holds, settle claims, and control risk before the load reaches delivery.
               </p>
+              <div className="mt-4 grid gap-2 text-sm">
+                <div className="flex items-center gap-2">
+                  <div className="h-2 w-2 rounded-full bg-emerald-400" />
+                  <span className="text-slate-300">HOS / Location / Speed context shown in the demo snapshot</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="h-2 w-2 rounded-full bg-amber-400" />
+                  <span className="text-slate-300">Safety events trigger automatic exception review</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="h-2 w-2 rounded-full bg-red-400" />
+                  <span className="text-slate-300">Dispatch holds until proof and coaching are complete</span>
+                </div>
+              </div>
             </div>
             <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 lg:justify-self-end">
-              <div className="rounded-lg border border-slate-700/80 bg-slate-950/75 p-4">
+              <div className="rounded-lg border border-slate-700/90 bg-slate-900/60 backdrop-blur-sm p-4 hover:border-cyan-600/50 hover:bg-slate-900/80 transition-all">
                 <div className="text-2xl font-bold text-red-300">{safetyStats.openEvents}</div>
                 <div className="mt-1 text-xs text-slate-400">Open Events</div>
               </div>
-              <div className="rounded-lg border border-slate-700/80 bg-slate-950/75 p-4">
+              <div className="rounded-lg border border-slate-700/90 bg-slate-900/60 backdrop-blur-sm p-4 hover:border-orange-600/50 hover:bg-slate-900/80 transition-all">
                 <div className="text-2xl font-bold text-orange-300">{safetyStats.criticalEvents}</div>
                 <div className="mt-1 text-xs text-slate-400">Critical Events</div>
               </div>
-              <div className="rounded-lg border border-slate-700/80 bg-slate-950/75 p-4">
+              <div className="rounded-lg border border-slate-700/90 bg-slate-900/60 backdrop-blur-sm p-4 hover:border-yellow-600/50 hover:bg-slate-900/80 transition-all">
                 <div className="text-2xl font-bold text-yellow-300">{safetyStats.dispatchBlocks}</div>
                 <div className="mt-1 text-xs text-slate-400">Dispatch Blocks</div>
               </div>
-              <div className="rounded-lg border border-slate-700/80 bg-slate-950/75 p-4">
+              <div className="rounded-lg border border-slate-700/90 bg-slate-900/60 backdrop-blur-sm p-4 hover:border-emerald-600/50 hover:bg-slate-900/80 transition-all">
                 <div className="text-2xl font-bold text-emerald-300">{Math.round(safetyStats.avgSafetyScore)}</div>
                 <div className="mt-1 text-xs text-slate-400">Avg Score</div>
               </div>
@@ -421,9 +434,85 @@ export function SafetyDashboardV4() {
           </div>
         </div>
 
+        {/* HOS / EN-ROUTE MONITORING SECTION */}
+        <div className="mt-8 rounded-xl border border-cyan-900/40 bg-gradient-to-br from-slate-900/60 via-cyan-950/30 to-slate-900/50 p-6">
+          <div className="mb-5 flex items-center gap-3">
+            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-cyan-500/20">
+              <Truck className="h-5 w-5 text-cyan-400" />
+            </div>
+            <div>
+                <h3 className="text-lg font-semibold text-white">HOS & En-Route Monitoring</h3>
+              <p className="text-xs text-slate-400 mt-1">Illustrative monitoring snapshot for the BOF demo; not live telemetry</p>
+            </div>
+              <Link href="/safety/training" className="ml-auto rounded border border-cyan-700/50 px-3 py-2 text-xs font-semibold text-cyan-100 hover:bg-cyan-900/30">
+                Training &amp; coaching
+              </Link>
+          </div>
+
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
+            {/* HOS Status */}
+            <div className="rounded-lg border border-slate-800 bg-slate-900/40 p-4">
+              <div className="flex items-start justify-between mb-3">
+                <div>
+                  <p className="text-xs font-semibold text-slate-400 uppercase">HOS Remaining</p>
+                  <p className="text-lg font-bold text-white mt-1">7h 45m</p>
+                </div>
+                <div className="h-3 w-3 rounded-full bg-emerald-500 animate-pulse" />
+              </div>
+              <div className="relative h-2 w-full rounded-full bg-slate-800 overflow-hidden">
+                <div className="h-full w-3/4 bg-gradient-to-r from-emerald-600 to-emerald-400" />
+              </div>
+              <p className="text-[11px] text-slate-500 mt-2">87% of 11-hour shift available</p>
+            </div>
+
+            {/* Location & Distance */}
+            <div className="rounded-lg border border-slate-800 bg-slate-900/40 p-4">
+              <div className="flex items-start justify-between mb-3">
+                <div>
+                  <p className="text-xs font-semibold text-slate-400 uppercase">Current Location</p>
+                  <p className="text-base font-bold text-white mt-1">I-75 North</p>
+                </div>
+                <div className="h-3 w-3 rounded-full bg-cyan-500 animate-pulse" />
+              </div>
+              <p className="text-sm text-slate-300">~312 miles from destination</p>
+              <p className="text-[11px] text-slate-500 mt-2">Estimated arrival: 16:45 UTC</p>
+            </div>
+
+            {/* Speed & Route */}
+            <div className="rounded-lg border border-slate-800 bg-slate-900/40 p-4">
+              <div className="flex items-start justify-between mb-3">
+                <div>
+                  <p className="text-xs font-semibold text-slate-400 uppercase">Current Speed</p>
+                  <p className="text-lg font-bold text-white mt-1">58 mph</p>
+                </div>
+                <div className="h-3 w-3 rounded-full bg-blue-500 animate-pulse" />
+              </div>
+              <p className="text-sm text-slate-300">Within posted limits</p>
+              <p className="text-[11px] text-slate-500 mt-2">Lane: Center &nbsp;• &nbsp;Clear road ahead</p>
+            </div>
+
+            {/* Connection & Telematics */}
+            <div className="rounded-lg border border-slate-800 bg-slate-900/40 p-4">
+              <div className="flex items-start justify-between mb-3">
+                <div>
+                  <p className="text-xs font-semibold text-slate-400 uppercase">Telematics</p>
+                  <p className="text-sm font-semibold text-emerald-400 mt-1">Connected (demo)</p>
+                </div>
+                <div className="h-3 w-3 rounded-full bg-teal-500 animate-pulse" />
+              </div>
+              <p className="text-sm text-slate-300">Signal: Strong (4G/LTE)</p>
+              <p className="text-[11px] text-slate-500 mt-2">Last check: 45 seconds ago</p>
+            </div>
+          </div>
+
+          <div className="mt-4 rounded-lg border border-slate-800/50 bg-slate-900/30 px-4 py-3 text-xs text-slate-400">
+            <p><strong>Demo monitoring status:</strong> The snapshot illustrates how BOF presents HOS, route, speed, and telematics context alongside {safetyStats.totalDrivers} active-driver safety records. These values are presentation-only until an authoritative telemetry source is connected; hardened Safety data remains the source for safety events and exception review.</p>
+          </div>
+        </div>
+
         {/* Safety Operations Watchlist */}
         {watchlistMetrics.length > 0 && (
-          <div className="mt-6">
+          <div className="mt-8">
             <h3 className="text-lg font-semibold text-white mb-4">Safety Operations Watchlist</h3>
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-5">
               {watchlistMetrics.map((metric) => {
@@ -597,6 +686,117 @@ export function SafetyDashboardV4() {
           </div>
         </div>
       )}
+
+      {/* Cargo Securement & Pre-Trip Safety Integration */}
+      <div className="max-w-7xl mx-auto px-6 pb-6">
+        <div className="rounded-xl border border-amber-900/40 bg-gradient-to-br from-slate-900/50 via-amber-950/25 to-slate-900/50 p-6">
+          <div className="mb-6 flex items-start justify-between gap-4">
+            <div className="flex items-start gap-4">
+              <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-amber-600/20">
+                <Shield className="h-6 w-6 text-amber-400" />
+              </div>
+              <div>
+                <h3 className="text-lg font-semibold text-white">Cargo Securement & Pre-Trip Proof</h3>
+                <p className="text-sm text-slate-400 mt-1">
+                  BOF captures cargo securement verification, photo evidence, driver acknowledgment, and exception notes as part of pre-trip dispatch readiness.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+            {/* Securement Photos */}
+            <div className="rounded-lg border border-slate-800 bg-slate-950/40 p-4">
+              <div className="flex items-center gap-2 mb-3">
+                <div className="h-2 w-2 rounded-full bg-amber-500" />
+                <p className="font-medium text-white">Securement Photo Evidence</p>
+              </div>
+              <p className="text-sm text-slate-300 mb-3">
+                Driver captures cargo, seal, or securement-device photos before departure — especially for cargo protection products like FreightBrace.
+              </p>
+              <div className="text-xs text-slate-500">
+                ✓ Provides clear proof of cargo condition and securement status
+              </div>
+            </div>
+
+            {/* Driver Acknowledgment */}
+            <div className="rounded-lg border border-slate-800 bg-slate-950/40 p-4">
+              <div className="flex items-center gap-2 mb-3">
+                <div className="h-2 w-2 rounded-full bg-blue-500" />
+                <p className="font-medium text-white">Driver Acknowledgment</p>
+              </div>
+              <p className="text-sm text-slate-300 mb-3">
+                BOF records the acknowledgment, timestamp, and record owner. This binds the driver to the securement verification before dispatch.
+              </p>
+              <div className="text-xs text-slate-500">
+                ✓ Creates audit trail and accountability for cargo verification
+              </div>
+            </div>
+
+            {/* Exception Routing */}
+            <div className="rounded-lg border border-slate-800 bg-slate-950/40 p-4">
+              <div className="flex items-center gap-2 mb-3">
+                <div className="h-2 w-2 rounded-full bg-red-500" />
+                <p className="font-medium text-white">Exception Flagging</p>
+              </div>
+              <p className="text-sm text-slate-300 mb-3">
+                Missing or unclear securement proof is automatically routed to manager review before the load record is treated as dispatch-ready.
+              </p>
+              <div className="text-xs text-slate-500">
+                ✓ Blocks dispatch until all cargo securement proof is complete
+              </div>
+            </div>
+
+            {/* Proof Packet */}
+            <div className="rounded-lg border border-slate-800 bg-slate-950/40 p-4">
+              <div className="flex items-center gap-2 mb-3">
+                <div className="h-2 w-2 rounded-full bg-emerald-500" />
+                <p className="font-medium text-white">Proof Packet Attachment</p>
+              </div>
+              <p className="text-sm text-slate-300 mb-3">
+                Securement evidence is attached to the load, customer delivery, or claims-support record for downstream reference.
+              </p>
+              <div className="text-xs text-slate-500">
+                ✓ Maintains full evidence chain for claims and liability review
+              </div>
+            </div>
+
+            {/* Claims Support */}
+            <div className="rounded-lg border border-slate-800 bg-slate-950/40 p-4">
+              <div className="flex items-center gap-2 mb-3">
+                <div className="h-2 w-2 rounded-full bg-purple-500" />
+                <p className="font-medium text-white">Claims Support</p>
+              </div>
+              <p className="text-sm text-slate-300 mb-3">
+                Damage or exception review has clearer proof, notes, photos, and timing evidence — reducing dispute risk and accelerating claims resolution.
+              </p>
+              <div className="text-xs text-slate-500">
+                ✓ Lowers cargo claim exposure and settlement hold duration
+              </div>
+            </div>
+
+            {/* Pre-Trip Integration */}
+            <div className="rounded-lg border border-slate-800 bg-slate-950/40 p-4">
+              <div className="flex items-center gap-2 mb-3">
+                <div className="h-2 w-2 rounded-full bg-cyan-500" />
+                <p className="font-medium text-white">Pre-Trip Integration</p>
+              </div>
+              <p className="text-sm text-slate-300 mb-3">
+                Cargo securement verification is wired into the pre-trip compliance checklist so dispatch cannot proceed until securement is verified and acknowledged.
+              </p>
+              <div className="text-xs text-slate-500">
+                ✓ Links Safety, Pre-Trip, and Dispatch readiness gates
+              </div>
+            </div>
+          </div>
+
+          <div className="mt-6 rounded-lg border border-amber-800/50 bg-amber-950/20 px-4 py-3">
+              <p className="text-sm text-amber-200">
+              <strong>Cargo securement is a Safety gate:</strong> Incomplete or unclear securement proof moves through Safety condition → review → exception → supervisor or owner decision → release, conditional release, hold, or block. The exception may also impact settlement if the cargo reaches delivery with unverified or disputed securement status.
+            </p>
+          </div>
+        </div>
+      </div>
 
       {/* Recent Safety Events */}
       {recentEvents.length > 0 && (

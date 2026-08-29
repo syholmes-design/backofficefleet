@@ -11,6 +11,25 @@ export const metadata: Metadata = {
 export default function ManagerPortalPage() {
   const data = getBofData();
   const insights = getManagerInsights(data);
+  const activeLoads = data.loads.filter((load) => load.status !== 'Delivered');
+  const deliveredLoads = data.loads.filter((load) => load.status === 'Delivered');
+  const proofCompleteLoads = data.loads.filter((load) => /verified|complete/i.test(String(load.podStatus ?? '')));
+  const openSafetyIssues = data.complianceIncidents.filter((incident) => !/closed|resolved/i.test(String(incident.status ?? ''))).length;
+  const activeDrivers = data.drivers.length;
+  const ownerAttention = [
+    ...data.loads
+      .filter((load) => load.dispatchExceptionFlag || load.sealStatus === 'Mismatch')
+      .slice(0, 4)
+      .map((load) => ({ severity: 'High', title: `Load ${load.id} needs proof review`, detail: `${load.origin} → ${load.destination}`, href: `/loads/${load.id}`, label: 'Review load' })),
+    ...data.documents
+      .filter((document) => /expired|expiring|missing/i.test(String(document.status ?? '')))
+      .slice(0, 3)
+      .map((document) => ({ severity: 'Medium', title: `${document.type} needs review`, detail: document.driverId ?? 'Driver document', href: document.driverId ? `/drivers/${document.driverId}/vault` : '/documents', label: 'Open record' })),
+    ...data.settlements
+      .filter((settlement) => /pending review|disputed|hold/i.test(String(settlement.status ?? '')))
+      .slice(0, 3)
+      .map((settlement) => ({ severity: 'Medium', title: `Settlement ${settlement.settlementId} needs review`, detail: settlement.driverId ?? 'Driver settlement', href: settlement.driverId ? `/drivers/${settlement.driverId}/settlements` : '/settlements', label: 'Review settlement' })),
+  ];
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -58,6 +77,56 @@ export default function ManagerPortalPage() {
           </div>
         </div>
 
+        <div className="grid grid-cols-1 lg:grid-cols-[1.2fr_0.8fr] gap-8 mb-8">
+          <section className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm" aria-labelledby="fleet-health-heading">
+            <div className="flex items-end justify-between gap-4 mb-5">
+              <div>
+                <p className="text-sm font-semibold uppercase tracking-wide text-slate-500">Fleet Health</p>
+                <h2 id="fleet-health-heading" className="text-2xl font-bold text-gray-900">The operating record at a glance</h2>
+              </div>
+              <Link href="/dashboard" className="text-sm font-semibold text-teal-700 hover:text-teal-900">Open dashboard →</Link>
+            </div>
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+              {[
+                ['Active loads', activeLoads.length, '/dispatch'],
+                ['Delivered loads', deliveredLoads.length, '/loads'],
+                ['Proof complete', proofCompleteLoads.length, '/dispatch'],
+                ['Open safety issues', openSafetyIssues, '/safety'],
+                ['Active drivers', activeDrivers, '/drivers'],
+                ['Maintenance exposure', data.moneyAtRisk.filter((row) => /maintenance|repair|tire|asset/i.test(`${row.category} ${row.rootCause}`)).length, '/maintenance'],
+              ].map(([label, value, href]) => (
+                <Link key={String(label)} href={String(href)} className="rounded border border-slate-200 bg-slate-50 p-4 hover:border-teal-400">
+                  <div className="text-2xl font-bold text-slate-900">{value}</div>
+                  <div className="mt-1 text-sm text-slate-600">{label}</div>
+                </Link>
+              ))}
+            </div>
+          </section>
+
+          <section className="bg-slate-950 border border-slate-800 rounded-lg p-6 text-white" aria-labelledby="owner-queue-heading">
+            <div className="flex items-end justify-between gap-4 mb-5">
+              <div>
+                <p className="text-sm font-semibold uppercase tracking-wide text-cyan-300">Owner Attention</p>
+                <h2 id="owner-queue-heading" className="text-2xl font-bold">What needs a decision</h2>
+              </div>
+              <span className="text-sm text-slate-400">{ownerAttention.length} items</span>
+            </div>
+            <div className="space-y-3">
+              {ownerAttention.length === 0 ? <p className="text-sm text-slate-400">No canonical attention items are currently surfaced.</p> : null}
+              {ownerAttention.slice(0, 6).map((item) => (
+                <Link key={`${item.severity}-${item.title}`} href={item.href} className="block rounded border border-slate-800 bg-slate-900 p-3 hover:border-cyan-500">
+                  <div className="flex items-center justify-between gap-3">
+                    <span className={`text-xs font-bold uppercase ${item.severity === 'High' ? 'text-rose-300' : 'text-amber-300'}`}>{item.severity}</span>
+                    <span className="text-xs font-semibold text-cyan-300">{item.label} →</span>
+                  </div>
+                  <p className="mt-1 text-sm font-semibold text-white">{item.title}</p>
+                  <p className="mt-1 text-xs text-slate-400">{item.detail}</p>
+                </Link>
+              ))}
+            </div>
+          </section>
+        </div>
+
         {/* Cash Flow and Audit Readiness Section */}
         <div className="bg-blue-50 border border-blue-200 rounded-lg p-6 mb-8">
           <h2 className="text-lg font-bold text-blue-900 mb-4">
@@ -76,7 +145,9 @@ export default function ManagerPortalPage() {
               </Link>
             </div>
             <div className="bg-white rounded p-4 border border-blue-200">
-              <div className="text-2xl font-bold text-green-600">{insights.auditReadinessScore || 85}%</div>
+              <div className="text-2xl font-bold text-green-600">
+                {insights.auditReadinessScore == null ? "Not available" : `${insights.auditReadinessScore}%`}
+              </div>
               <div className="text-sm text-gray-600">Audit Readiness Score</div>
               <p className="text-xs text-gray-500 mt-2">Fuel, mileage, proof, invoice, settlement, and asset records are monitored for period-close and audit support.</p>
               <div className="mt-3 p-2 bg-purple-50 rounded border border-purple-200">
@@ -106,7 +177,7 @@ export default function ManagerPortalPage() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
           {/* Command Center */}
           <Link
-            href="/command-center"
+            href="/dashboard"
             className="bg-white rounded-lg shadow-lg border border-gray-200 p-6 hover:shadow-xl transition-shadow duration-300 group"
           >
             <div className="w-12 h-12 bg-teal-100 rounded-lg flex items-center justify-center mb-4 group-hover:bg-teal-200 transition-colors">
@@ -114,8 +185,8 @@ export default function ManagerPortalPage() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0M12 15V7m0 0a3 3 0 00-6h3a3 3 0 006 0v8a3 3 0 00-6zm0 0a9 9 0 11-18 0 9 9 0 0118 0" />
               </svg>
             </div>
-            <h3 className="text-lg font-bold text-gray-900 mb-2">Command Center</h3>
-            <p className="text-gray-600">Central operations control and dispatch oversight</p>
+            <h3 className="text-lg font-bold text-gray-900 mb-2">Operational Overview</h3>
+            <p className="text-gray-600">Canonical operating dashboard for dispatch, financial, and fleet visibility</p>
           </Link>
 
           {/* Dashboard */}

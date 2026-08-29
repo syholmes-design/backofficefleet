@@ -1,4 +1,5 @@
 import { auth } from "@/auth";
+import Link from "next/link";
 import { DriverVaultDocumentOperationsClient } from "@/components/driver-vault/DriverVaultDocumentOperationsClient";
 import { DRIVER_VAULT_DOCUMENT_TYPES, driverVaultDocumentTypeLabel } from "@/lib/driver-vault-document-types";
 import { getAuthenticatedDriver } from "@/lib/services/authenticatedDriverService";
@@ -158,6 +159,33 @@ export default async function DriverPortalPage() {
             </p>
           </section>
         </div>
+
+        <section className="mt-8 rounded-lg border border-gray-200 bg-white p-6 shadow-sm" aria-labelledby="driver-execution-heading">
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+            <div>
+              <p className="text-sm font-medium text-gray-500">Driver execution</p>
+              <h2 id="driver-execution-heading" className="mt-1 text-2xl font-semibold text-gray-900">Your BOF operating workspaces</h2>
+              <p className="mt-2 text-sm text-gray-600">
+                These links use your authenticated driver identity. Assignment and release details appear only where the authorized operational record is available.
+              </p>
+            </div>
+            <div className="text-sm font-semibold text-slate-500">Current assignment: Not available in this read model</div>
+          </div>
+          <div className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
+            {[
+              ["My dispatch", `/drivers/${driverAccess.driver.id}/dispatch`, "Assignment and dispatch context"],
+              ["Pre-trip / release", "/dispatch", "Open the current dispatch workflow"],
+              ["My Safety", `/drivers/${driverAccess.driver.id}/safety`, "Safety events and coaching"],
+              ["Training & coaching", "/safety/training", "BOF modules and event-linked recommendations"],
+              ["My settlements", `/drivers/${driverAccess.driver.id}/settlements`, "Pay, holds, and settlement records"],
+            ].map(([label, href, description]) => (
+              <Link key={href} href={href} className="rounded-lg border border-slate-200 bg-slate-50 p-4 transition hover:border-teal-400 hover:bg-teal-50">
+                <span className="text-sm font-semibold text-slate-900">{label}</span>
+                <span className="mt-2 block text-xs leading-5 text-slate-600">{description}</span>
+              </Link>
+            ))}
+          </div>
+        </section>
 
         <DriverVaultDocumentOperationsClient
           documents={documents.map((document) => ({

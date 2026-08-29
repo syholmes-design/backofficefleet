@@ -83,6 +83,7 @@ export function MaintenancePmInspectionClient() {
               <th>PM status</th>
               <th>Inspection type</th>
               <th>Inspection exp.</th>
+              <th>Availability / assignment</th>
               <th>Readiness</th>
             </tr>
           </thead>
@@ -99,6 +100,7 @@ export function MaintenancePmInspectionClient() {
                 <td>{s.pm_status_label}</td>
                 <td className="maint-cell-muted">DVIR / periodic (not modeled)</td>
                 <td className="maint-cell-muted">{s.inspection_expiration_display}</td>
+                <td className="maint-cell-muted">{s.availability} / {s.assignability}</td>
                 <td>
                   <Badge r={s.readiness} />
                 </td>

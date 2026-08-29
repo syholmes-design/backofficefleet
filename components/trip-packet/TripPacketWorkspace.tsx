@@ -471,7 +471,7 @@ export function TripPacketWorkspace() {
               <Link href={`/trip-release/${model.load.loadId}`} className="rounded-md border border-slate-700 px-3 py-2 text-center text-sm font-bold text-slate-200 hover:border-teal-400 hover:text-teal-100">
                 Trip release
               </Link>
-              <Link href={`/shipper-portal/${model.load.loadId}`} className="rounded-md border border-slate-700 px-3 py-2 text-center text-sm font-bold text-slate-200 hover:border-teal-400 hover:text-teal-100">
+              <Link href={`/loads/${model.load.loadId}`} className="rounded-md border border-slate-700 px-3 py-2 text-center text-sm font-bold text-slate-200 hover:border-teal-400 hover:text-teal-100">
                 Customer view
               </Link>
             </div>

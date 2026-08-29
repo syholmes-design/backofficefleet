@@ -61,7 +61,7 @@ export function DispatchAttentionQueue({
           </h2>
         </div>
         <Link
-          href="/command-center"
+          href="/rf-actions"
           className={
             variant === "dark"
               ? "text-[11px] font-semibold text-teal-300 hover:text-teal-200"

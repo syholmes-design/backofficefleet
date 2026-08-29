@@ -107,7 +107,7 @@ function linksForLoad(data: BofData, loadId: string): EngineDocumentLinks {
     settlements: "/settlements",
     moneyAtRisk: "/money-at-risk",
     rfActions: "/rf-actions",
-    commandCenter: "/command-center",
+    commandCenter: "/dashboard",
   };
 }
 
@@ -118,7 +118,7 @@ function linksForDriver(driverId: string): EngineDocumentLinks {
     settlements: "/settlements",
     moneyAtRisk: "/money-at-risk",
     rfActions: "/rf-actions",
-    commandCenter: "/command-center",
+    commandCenter: "/dashboard",
   };
 }
 
@@ -838,7 +838,7 @@ export function generateExceptionDocument(
       moneyAtRisk: "/money-at-risk",
       settlements: "/settlements",
       rfActions: "/rf-actions",
-      commandCenter: "/command-center",
+      commandCenter: "/dashboard",
       pretrip: mar.loadId ? `/pretrip/${mar.loadId}` : undefined,
       documentVault: "/documents",
     },

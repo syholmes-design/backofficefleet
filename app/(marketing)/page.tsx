@@ -9,9 +9,9 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "BackOfficeFleet – Enforcement Engine for Trucking Operations",
+  title: "BackOfficeFleet – The Operating System Behind Your Fleet",
   description:
-    "BackOfficeFleet is an enforcement-driven operating system for trucking back-office operations. Join the Founding Fleet Program and help shape the future of dispatch, compliance, proof, settlements, finance, and driver readiness.",
+    "BackOfficeFleet becomes the back office behind growing trucking companies while owners keep control of their fleet and dispatch.",
 };
 
 export { default } from "@/components/marketing/MarketingHomeAccountable";

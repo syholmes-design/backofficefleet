@@ -99,7 +99,7 @@ function buildActions(data: BofData, item: EnrichedCommandCenterItem, issueType:
     secondary[0] ??
     (item.driverId
       ? { label: "Open driver issue", href: `/drivers/${item.driverId}` }
-      : { label: "Open command issue", href: "/command-center" });
+      : { label: "Open dashboard", href: "/dashboard" });
 
   const dedup = secondary.filter(
     (a, idx) => secondary.findIndex((x) => x.label === a.label && x.href === a.href) === idx

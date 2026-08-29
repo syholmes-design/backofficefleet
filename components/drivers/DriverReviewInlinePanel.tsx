@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { DriverAvatar } from "@/components/DriverAvatar";
 import { driverPhotoPath } from "@/lib/driver-photo";
 import type { DriverReviewExplanation } from "@/lib/driver-review-explanation";
@@ -13,6 +14,8 @@ export function DriverReviewInlinePanel({
   driverId: string;
   driverName: string;
 }) {
+  const [affirming, setAffirming] = useState(false);
+  const [message, setMessage] = useState<string | null>(null);
   const statusLabel = explanation.severity || "needs_review";
   const statusColor = 
     explanation.severity === "blocked" ? "bof-status-bof-status--blocked" :
@@ -103,6 +106,30 @@ export function DriverReviewInlinePanel({
             >
               Open driver vault
             </a>
+            {explanation.issues.some((issue) => issue.id === "credential:medical_renewal_action_required" && !issue.resolved) && (
+              <button
+                type="button"
+                className="bof-driver-review-inline-btn bof-driver-review-inline-btn--primary"
+                disabled={affirming}
+                onClick={async () => {
+                  setAffirming(true);
+                  setMessage(null);
+                  try {
+                    const response = await fetch(`/api/drivers/${driverId}/medical-renewal/affirm`, { method: "POST" });
+                    const body = await response.json() as { error?: string };
+                    if (!response.ok) throw new Error(body.error ?? "Unable to affirm appointment");
+                    setMessage("Appointment affirmed and recorded.");
+                  } catch (error) {
+                    setMessage(error instanceof Error ? error.message : "Unable to affirm appointment");
+                  } finally {
+                    setAffirming(false);
+                  }
+                }}
+              >
+                {affirming ? "Recording..." : "Affirm appointment"}
+              </button>
+            )}
+            {message ? <span className="bof-driver-review-inline-text">{message}</span> : null}
           </div>
         </div>
       </div>

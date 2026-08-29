@@ -67,9 +67,9 @@ function getRiskStory(risk: OperationalRiskQueue) {
       headline: "Seal exception needs manager closeout",
       urgency: "Blocks settlement release until pickup seal, delivery seal, POD, BOL, and RFID scans are reviewed.",
       primaryLabel: "Open seal exception packet",
-      primaryHref: `/shipper-portal/${loadId}`,
+      primaryHref: `/loads/${loadId}`,
       actions: [
-        { label: "Open seal exception packet", href: `/shipper-portal/${loadId}`, tone: "danger" },
+        { label: "Open seal exception packet", href: `/loads/${loadId}`, tone: "danger" },
         { label: "Review load record", href: `/loads/${loadId}` },
         { label: "Driver HR note", href: `/drivers/${risk.driverId}/hr` },
         { label: "Money at risk", href: "/money-at-risk", tone: "warning" },
@@ -112,11 +112,11 @@ function getRiskStory(risk: OperationalRiskQueue) {
       headline: "Lumper QR closeout needs review",
       urgency: "The driver is not chasing paper. BOF needs dock-side QR authorization, empty-trailer proof, and Zelle payment confirmation tied to the load before settlement closes.",
       primaryLabel: "Open QR lumper workflow",
-      primaryHref: `/shipper-portal/${loadId}#lumper-workflow`,
+      primaryHref: `/loads/${loadId}#lumper-workflow`,
       actions: [
-        { label: "Open QR lumper workflow", href: `/shipper-portal/${loadId}#lumper-workflow`, tone: "warning" },
+        { label: "Open QR lumper workflow", href: `/loads/${loadId}#lumper-workflow`, tone: "warning" },
         { label: "Review settlement closeout", href: "/settlements", tone: "warning" },
-        { label: "Open load packet", href: `/shipper-portal/${loadId}` },
+        { label: "Open load packet", href: `/loads/${loadId}` },
         { label: "Driver HR note", href: `/drivers/${risk.driverId}/hr` },
       ] satisfies RiskAction[],
     };

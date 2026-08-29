@@ -89,6 +89,16 @@ export function MaintenanceAssetDetailClient({ assetId }: { assetId: string }) {
           <Badge r={summary.readiness} />
           <span className="maint-readiness-reason">{summary.readiness_reason}</span>
         </p>
+        <dl className="maint-dl" style={{ marginTop: "0.75rem" }}>
+          <dt>Availability</dt>
+          <dd>{summary.availability}</dd>
+          <dt>Assignability</dt>
+          <dd>{summary.assignability}</dd>
+          <dt>Dispatchability</dt>
+          <dd>{summary.dispatchability}</dd>
+          <dt>Why not dispatchable?</dt>
+          <dd>{summary.operational_reasons.join(" ") || "No recorded blocker."}</dd>
+        </dl>
       </section>
 
       <div className="maint-detail-grid">

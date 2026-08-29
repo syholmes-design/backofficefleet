@@ -1,5 +1,5 @@
 import type { BofData } from "@/lib/load-bof-data";
-import { getDriverReviewExplanation } from "@/lib/driver-review-explanation";
+import { getDriverReviewExplanation, type DriverReviewRequirement } from "@/lib/driver-review-explanation";
 
 export type DriverActionIssue = {
   driverId: string;
@@ -17,11 +17,15 @@ export type DriverActionIssue = {
  * This function consolidates issues from documents, settlements, compliance, safety, and dispatch
  * to provide a unified view of what needs attention for each driver.
  */
-export function getDriverActionIssues(driverId: string, data: BofData): DriverActionIssue[] {
+export function getDriverActionIssues(
+  driverId: string,
+  data: BofData,
+  requirements: DriverReviewRequirement[] = [],
+): DriverActionIssue[] {
   const issues: DriverActionIssue[] = [];
   
   // Get canonical driver review explanation
-  const review = getDriverReviewExplanation(data, driverId);
+  const review = getDriverReviewExplanation(data, driverId, requirements);
   const openIssues = review.issues.filter(issue => !issue.resolved);
   
   // Convert canonical issues to DriverActionIssue format

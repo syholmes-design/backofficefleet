@@ -28,7 +28,7 @@ export const FLEET_INTELLIGENCE_ARTICLES: FleetIntelligenceArticle[] = [
     category: "Enforcement Philosophy",
     date: "May 22, 2026",
     relatedLinks: [
-      { label: "Open Command Center", href: "/command-center" },
+      { label: "Open Operational Overview", href: "/dashboard" },
       { label: "Explore Dispatch Proof Workflow", href: "/dispatch" },
     ],
     sections: [
@@ -101,7 +101,7 @@ export const FLEET_INTELLIGENCE_ARTICLES: FleetIntelligenceArticle[] = [
     date: "May 22, 2026",
     relatedLinks: [
       { label: "Review Driver Readiness", href: "/drivers" },
-      { label: "Open Command Center", href: "/command-center" },
+      { label: "Open Operational Overview", href: "/dashboard" },
     ],
     sections: [
       {

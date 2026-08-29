@@ -13,17 +13,17 @@ const TIERS: readonly Tier[] = [
   {
     tierLabel: "Tier 1",
     title: "BOF Core Operations",
-    subtitle: "Run the daily fleet back office with one command center.",
+    subtitle: "Run the daily fleet back office from a single operational overview.",
     bullets: [
       "Dispatch readiness and driver assignment support",
       "Compliance document tracking",
       "Load proof, BOL, POD, invoice, and photo evidence",
       "Settlement hold visibility",
       "Claims, RFID, and exception workflows",
-      "Command Center alerts and operating scorecards",
+      "Operational dashboard alerts and scorecards",
     ],
     ctaLabel: "Explore Core Operations",
-    href: "/command-center",
+    href: "/dashboard",
   },
   {
     tierLabel: "Tier 2",

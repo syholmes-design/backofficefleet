@@ -40,6 +40,6 @@ export function getDispatchAttentionItems(
       ? `/loads/${item.loadId}`
       : item.driverId
         ? `/drivers/${item.driverId}`
-        : "/command-center",
+        : "/dashboard",
   }));
 }

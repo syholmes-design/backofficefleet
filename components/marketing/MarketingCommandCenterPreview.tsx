@@ -16,7 +16,7 @@ const DEFAULT_ROWS: readonly CcMockRow[] = [
     meta: "Seal exception / HOS coaching",
     val: "2",
     valClass: "bof-mkt-cc-mock-kpi-val--risk",
-    href: "/command-center",
+    href: "/rf-actions",
   },
   {
     label: "Dispatch / RFID",
@@ -24,7 +24,7 @@ const DEFAULT_ROWS: readonly CcMockRow[] = [
     meta: "L001 proof packet needs closeout",
     val: "L001",
     valClass: "bof-mkt-cc-mock-kpi-val--warn",
-    href: "/shipper-portal/L001",
+    href: "/loads/L001",
   },
   {
     label: "Settlement",
@@ -32,7 +32,7 @@ const DEFAULT_ROWS: readonly CcMockRow[] = [
     meta: "L007 dock proof / Zelle confirmation",
     val: "$180",
     valClass: "bof-mkt-cc-mock-kpi-val--warn",
-    href: "/shipper-portal/L007#lumper-workflow",
+    href: "/settlements",
   },
   {
     label: "Safety",
@@ -59,8 +59,8 @@ export function MarketingCommandCenterPreview({
   headingId = "bof-mkt-cc-heading",
   title = "What Needs Attention Right Now",
   lead = "BOF gives operations leaders a real-time command center for compliance, proof, settlements, and financial risk.",
-  demoHref = "/command-center",
-  demoLabel = "Explore the control tower in the demo ->",
+  demoHref = "/dashboard",
+  demoLabel = "Explore the operational overview ->",
 }: {
   rows?: readonly CcMockRow[];
   /** For `aria-labelledby` on the wrapping section. */

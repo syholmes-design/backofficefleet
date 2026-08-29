@@ -1,322 +1,78 @@
-/**
- * BOF Route Owner:
- * URL: /bof-vault
- * Type: MARKETING
- * Primary component: BofVaultPage
- * Route map: docs/BOF_ROUTE_MAP.md
- * Edit this file only for route-level layout/wiring.
- */
-import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
-import {
-  MarketingCalculatorShell,
-  MarketingCommandCenterPreview,
-  type CcMockRow,
-  MarketingCtaPanel,
-  MarketingFormShell,
-  MarketingFunnelEntryRow,
-  MarketingBofVaultHero,
-  MarketingIconCardGrid,
-  MarketingProcessSteps,
-  MarketingSection,
-  MarketingSectionHeader,
-  MarketingStatBand,
-  MarketingTrustStrip,
-} from "@/components/marketing";
-import type { MarketingIconCardItem } from "@/components/marketing/MarketingIconCardGrid";
-import {
-  IconAuditReadiness,
-  IconCredentialStack,
-  IconDispatchHook,
-  IconFleetVerifier,
-  IconUploadOnce,
-  IconVaultLock,
-  IconVerifyCheck,
-  IconVersionFork,
-} from "@/components/marketing/MarketingVaultIcons";
+import type { Metadata } from "next";
+import { MarketingSection, MarketingSectionHeader } from "@/components/marketing";
 
 export const metadata: Metadata = {
   title: "BOF Vault | BackOfficeFleet",
-  description:
-    "Drivers upload once. Fleets verify instantly. Compliance stays current.",
+  description: "A driver-centered, portable professional document and credential record.",
 };
 
-const HERO_TRUST = [
-  "Driver-controlled document storage",
-  "Organized by credential and requirement",
-  "Readiness checks before the next job depends on it",
-  "Clear view of missing, expired, or review-needed items",
-] as const;
-
-const VAULT_CC_ROWS: readonly CcMockRow[] = [
-  {
-    label: "Vault queue",
-    title: "Documents awaiting verification",
-    meta: "CDL · Med card · MVR variance",
-    val: "18",
-    valClass: "",
-  },
-  {
-    label: "Credential drift",
-    title: "Version conflicts",
-    meta: "Superseded uploads · policy mismatch",
-    val: "5",
-    valClass: "bof-mkt-cc-mock-kpi-val--warn",
-  },
-  {
-    label: "Dispatch hooks",
-    title: "Loads blocked on proof",
-    meta: "Vault status → readiness gate",
-    val: "7",
-    valClass: "",
-  },
-  {
-    label: "Settlement bridge",
-    title: "Holds tied to missing proof",
-    meta: "Linkage to money-at-risk narratives",
-    val: "$31K",
-    valClass: "",
-  },
-  {
-    label: "Security posture",
-    title: "PII exposure watch",
-    meta: "Access trails · controlled distribution",
-    val: "Low",
-    valClass: "",
-  },
-];
-
-const PRESSURE_ITEMS: MarketingIconCardItem[] = [
-  {
-    title: "Drivers re-upload the same credential everywhere",
-    description:
-      "Every broker, yard, and internal system asks for another copy—version drift becomes inevitable and auditors see chaos.",
-    icon: <IconUploadOnce />,
-  },
-  {
-    title: "Verification happens in email threads, not systems",
-    description:
-      "Fleet teams bless files without structured checks against dispatch rules, settlement holds, or compliance windows.",
-    icon: <IconVerifyCheck />,
-  },
-  {
-    title: "No authoritative record when disputes ignite",
-    description:
-      "Finance and legal reconstruct proof from attachments instead of opening a single, time-stamped chain of custody.",
-    icon: <IconVersionFork />,
-  },
-  {
-    title: "Security theater instead of controlled access",
-    description:
-      "Sensitive files live in shared drives with loose permissions—far from the enterprise posture elite fleets expect.",
-    icon: <IconVaultLock />,
-  },
-];
-
-const CONTROL_ITEMS: MarketingIconCardItem[] = [
-  {
-    title: "Credential stack with versioning",
-    description:
-      "Drivers upload once; BOF Vault tracks status, superseded files, and who verified each artifact against fleet policy.",
-    icon: <IconCredentialStack />,
-  },
-  {
-    title: "Fleet verification against real rules",
-    description:
-      "Pair vault status with dispatch, settlement, and compliance engines so approvals mean the same thing in every department.",
-    icon: <IconFleetVerifier />,
-  },
-  {
-    title: "Operational hooks—not a passive archive",
-    description:
-      "Vault health feeds the command center, driver readiness, and settlement intelligence without duplicate data entry.",
-    icon: <IconDispatchHook />,
-  },
-  {
-    title: "Audit readiness by construction",
-    description:
-      "Evidence packets stay structured for regulators, customers, and internal audit—mirroring the BOF operations document vault.",
-    icon: <IconAuditReadiness />,
-  },
-];
-
-const PROCESS_STEPS = [
-  {
-    title: "Ingest",
-    description:
-      "Centralize uploads with clear ownership, classification, and retention aligned to your risk committee’s standards.",
-  },
-  {
-    title: "Verify",
-    description:
-      "Apply fleet-defined checks, dual control where required, and automatic alignment to dispatch readiness rules.",
-  },
-  {
-    title: "Govern",
-    description:
-      "Surface drift, expirations, and exceptions in the same severity language operations and finance already use.",
-  },
-  {
-    title: "Integrate",
-    description:
-      "Push verified truth into BOF command center workflows—settlements, audits, and partner-facing attestations stay synchronized.",
-  },
+const levelTwoDomains = [
+  ["Documents & Credentials", "The driver&apos;s CDL, medical documentation, MVR, certifications, training records, qualification evidence, employment documentation, and supporting professional credentials."],
+  ["Verification & Evidence", "The evidence and review context that help an authorized verifier understand what a document represents and whether further attention is required."],
+  ["Qualification Status", "The current administrative picture of what documentation is available, current, incomplete, pending review, or not ready to share."],
+  ["Sharing & Employer Transfer", "The controlled handoff by which a driver provides appropriate documentation to an employer without surrendering ownership of the portable record."],
+  ["Renewal & Maintenance", "The ongoing work of monitoring dates, replacing records, maintaining current versions, and keeping the professional file useful."],
+  ["Record History & Continuity", "The connected history of documents, status changes, reviews, replacements, and employer transitions around the driver."],
+  ["Identity & Access", "The relationship between the driver, the professional record, and authorized access to appropriate documentation."],
+  ["Exceptions & Resolution", "The visible path for missing, incomplete, expired, questionable, or disputed information and the follow-up needed to resolve it."],
 ] as const;
 
 export default function BofVaultPage() {
   return (
-    <>
-      <MarketingBofVaultHero
-        layout="imageFirst"
-        titleId="bof-mkt-vault-hero-heading"
-        sectionAriaLabelledBy="bof-mkt-vault-hero-heading"
-        eyebrow="BOF Vault · Driver readiness"
-        title={<>Your Personal Driver Document Vault</>}
-        belowHeroHeadline="Upload once. Access anywhere. Stay ready."
-        subtitle="BOF Vault gives you one secure place to upload, organize, and maintain your driving credentials—so expired, missing, or incomplete documents never slow down your next opportunity."
-        support="Create your personal vault. BOF analyzes your documents, flags expirations, and keeps your Driver Qualification File ready for carriers, recruiters, or compliance reviews."
-        trustItems={HERO_TRUST}
-        trustAriaLabel="BOF Vault capability highlights"
-        imageSrc="/assets/images/BofVaultHero2.png"
-        imageAlt="Driver-controlled BOF Vault document storage and readiness system"
-        ctas={
-          <>
-            <Link
-              href="/assessment/bof-vault"
-              className="bof-mkt-btn-enterprise bof-mkt-btn-enterprise-primary"
-            >
-              Create My Driver Vault
-            </Link>
-            <Link href="/dashboard" className="bof-mkt-btn-enterprise bof-mkt-btn-enterprise-secondary">
-              See The Demo
-            </Link>
-          </>
-        }
-      />
-
-      <MarketingSection variant="light" ariaLabelledBy="bof-mkt-vault-stats-heading">
-        <div className="bof-mkt-container">
-          <MarketingSectionHeader
-            titleId="bof-mkt-vault-stats-heading"
-            aside={<span className="bof-mkt-badge-neutral">Illustrative posture model</span>}
-            title="Enterprise-grade credential posture"
-            lead="These markers mirror how BOF narrates document health inside the demo—swap them for your fleet’s verified KPIs when ready."
-          />
-          <MarketingStatBand
-            stats={[
-              {
-                label: "Single source",
-                value: "1",
-                hint: "One driver file of record feeding operational systems.",
-              },
-              {
-                label: "Verification SLA",
-                value: "< 24h",
-                hint: "Target posture when fleet teams clear high-volume queues daily.",
-              },
-              {
-                label: "Version integrity",
-                value: "100%",
-                hint: "Superseded artifacts remain traceable for audit replay.",
-              },
-              {
-                label: "Security tier",
-                value: "Zero-trust",
-                hint: "Controlled access paths aligned to enterprise procurement standards.",
-              },
-            ]}
-          />
-        </div>
-      </MarketingSection>
-
-      <MarketingSection variant="white" id="pressure" ariaLabelledBy="bof-mkt-vault-pressure-heading">
-        <div className="bof-mkt-container">
-          <MarketingSectionHeader
-            titleId="bof-mkt-vault-pressure-heading"
-            title="Where credential programs break first"
-            lead="BOF Vault exists because scattered files quietly cap how elite your enforcement can feel—internally and in front of customers."
-          />
-          <MarketingIconCardGrid items={PRESSURE_ITEMS} variant="pain" />
-        </div>
-      </MarketingSection>
-
-      <MarketingSection variant="light" ariaLabelledBy="bof-mkt-vault-control-heading">
-        <div className="bof-mkt-container">
-          <MarketingSectionHeader
-            titleId="bof-mkt-vault-control-heading"
-            title="What BOF Vault delivers inside the ecosystem"
-            lead="Premium, secure, operationally credible—Vault is the document spine that makes the command center believable."
-          />
-          <MarketingIconCardGrid items={CONTROL_ITEMS} variant="feature" />
-        </div>
-      </MarketingSection>
-
-      <MarketingSection variant="white" ariaLabelledBy="bof-mkt-vault-funnel-heading">
-        <div className="bof-mkt-container">
-          <MarketingSectionHeader
-            titleId="bof-mkt-vault-funnel-heading"
-            title="Assessment & savings outlook"
-            lead="Run the same live calculator and assessment as the rest of BOF marketing—then qualify for a strategy conversation when you are ready to talk integrations."
-          />
-          <div className="bof-mkt-split-2-col">
-            <MarketingCalculatorShell
-              title="Credential economics outlook"
-              badge="Live"
-              body="Directional savings narrative for high-assurance fleets: compliance variance, proof friction, and admin recovery—grounded in the shared BOF savings engine."
-            />
-            <MarketingFormShell
-              title="Vault readiness intake"
-              lead="Use the structured assessment to capture verifier workflows, integration targets, and urgency alongside fleet scale."
-            />
-          </div>
-          <div className="bof-mkt-funnel-marketing-entry">
-            <MarketingFunnelEntryRow />
-          </div>
-        </div>
-      </MarketingSection>
-
-      <MarketingSection variant="ink" ariaLabelledBy="bof-mkt-vault-process-heading">
-        <div className="bof-mkt-container">
-          <MarketingSectionHeader
-            titleId="bof-mkt-vault-process-heading"
-            title="How vault programs roll out with BOF"
-            lead="Security, operations, and compliance stay in lockstep—mirroring the same disciplined cadence as private fleet and government deployments."
-          />
-          <MarketingProcessSteps steps={PROCESS_STEPS} />
-          <MarketingTrustStrip
-            label="Trusted by teams who care about"
-            items={[
-              "SOC-style governance",
-              "Settlement-ready proof",
-              "Partner audits",
-              "Regulated cargo programs",
-            ]}
-          />
-        </div>
-      </MarketingSection>
-
-      <MarketingSection variant="alt" className="bof-mkt-cc" ariaLabelledBy="bof-mkt-vault-cc-heading">
-        <MarketingCommandCenterPreview
-          headingId="bof-mkt-vault-cc-heading"
-          rows={VAULT_CC_ROWS}
-          title="How vault health surfaces inside the command center"
-          lead="The same premium BOF command view—now narrating credential queues, dispatch blocks, and settlement pressure tied back to vault truth."
-          demoLabel="Open the demo command center →"
+    <main className="bof-mkt-root">
+      <section className="relative isolate overflow-hidden bg-slate-950 text-white">
+        <Image
+          src="/assets/images/bofvault.png"
+          alt="BOF Vault driver-centered professional record and bank vault background"
+          fill
+          priority
+          sizes="100vw"
+          className="absolute inset-0 -z-20 h-full w-full object-cover object-right"
         />
+        <div className="absolute inset-0 -z-10 bg-gradient-to-r from-slate-950 via-slate-950/75 to-slate-950/20" />
+        <div className="bof-mkt-container relative flex min-h-[30rem] items-center py-12 md:min-h-[38rem] md:py-20">
+          <div className="max-w-xl pr-6 lg:max-w-[38rem] lg:pr-10">
+            <p className="text-sm font-black uppercase tracking-[0.24em] text-teal-300">BOF VAULT</p>
+            <h1 className="mt-5 max-w-[14ch] text-4xl font-black uppercase leading-[0.96] tracking-tight text-white md:text-6xl lg:text-7xl">YOUR PROFESSIONAL RECORD.<br className="hidden md:block" />WHEREVER YOUR CAREER TAKES YOU.</h1>
+            <p className="mt-6 max-w-[34rem] text-base leading-7 text-slate-100 md:text-xl md:leading-8">BOF Vault is the driver&apos;s personal, portable professional record. Keep credentials and supporting documents organized, current, and ready to share with the next employer without rebuilding the file each time you move.</p>
+            <div className="mt-8"><Link href="/assessment/bof-vault" className="bof-mkt-btn-enterprise bof-mkt-btn-enterprise-primary">TAKE THE BOF VAULT ASSESSMENT</Link></div>
+          </div>
+        </div>
+      </section>
+
+      <MarketingSection variant="white" ariaLabelledBy="vault-driver-heading">
+        <div className="bof-mkt-container grid gap-10 lg:grid-cols-[.82fr_1.18fr] lg:items-start"><MarketingSectionHeader titleId="vault-driver-heading" title="The Vault belongs to the driver" lead="BOF Vault is a driver-centered, driver-owned, portable professional document and credential record." /><div className="space-y-6 text-lg leading-8 text-slate-700"><p>The driver should have a personal professional record that remains useful regardless of which employer, fleet, or operating environment comes next. The CDL, medical card, MVR, training records, certifications, qualification evidence, employment-related documentation, identity documentation where appropriate, and other professional credentials should not need to be rebuilt from scattered copies each time a career transition occurs.</p><p>BOF provides administrative support around that record. The driver transfers or uploads documents, BOF organizes them, and review or verification can be recorded where applicable. Missing, expired, incomplete, or questionable documentation can become visible so the driver knows what requires attention before sharing the record.</p><p>The core relationship is driver → BOF Vault → verified professional record → employer. The driver remains the center of the model, while the employer receives appropriate documentation for its own qualification and hiring process.</p></div></div>
       </MarketingSection>
 
-      <MarketingCtaPanel
-        id="bof-mkt-vault-final-cta"
-        title="Make credentials as defensible as your operations"
-        lead="Book a vault + command center assessment. We map upload chaos, verifier gaps, and integration debt—then show how BOF ties it together."
-      >
-        <Link href="/assessment/bof-vault" className="bof-mkt-btn-enterprise bof-mkt-btn-enterprise-primary">
-          Create My Driver Vault
-        </Link>
-        <Link href="/drivers" className="bof-mkt-btn-enterprise bof-mkt-btn-enterprise-secondary">
-          See The Demo
-        </Link>
-      </MarketingCtaPanel>
-    </>
+      <MarketingSection variant="light" ariaLabelledBy="vault-distinction-heading">
+        <div className="bof-mkt-container grid gap-10 lg:grid-cols-[1fr_1fr] lg:items-start"><div><p className="text-sm font-black uppercase tracking-[0.22em] text-teal-700">Product distinction</p><h2 id="vault-distinction-heading" className="mt-4 text-4xl font-black leading-tight text-slate-950 md:text-5xl">BOF Vault is not the Operations File Cabinet</h2></div><div className="grid gap-5 md:grid-cols-2"><article className="border border-slate-200 bg-white p-6"><p className="text-xs font-black uppercase tracking-[0.18em] text-slate-500">Operations File Cabinet</p><h3 className="mt-3 text-2xl font-black text-slate-950">The organization&apos;s administrative record</h3><p className="mt-4 text-base leading-7 text-slate-700">The File Cabinet organizes records generated by the company&apos;s operation: employees, drivers, assets, loads, work, maintenance, safety, settlements, incidents, exceptions, agreements, and operational documentation.</p></article><article className="border border-teal-700 bg-teal-950 p-6 text-white"><p className="text-xs font-black uppercase tracking-[0.18em] text-teal-300">BOF Vault</p><h3 className="mt-3 text-2xl font-black">The driver&apos;s portable professional record</h3><p className="mt-4 text-base leading-7 text-teal-50">The Vault organizes the driver&apos;s credentials, qualification evidence, certifications, medical documentation, training evidence, professional records, verification status, expiration information, and document history.</p></article></div></div>
+      </MarketingSection>
+
+      <MarketingSection variant="white" ariaLabelledBy="vault-burden-heading">
+        <div className="bof-mkt-container"><MarketingSectionHeader titleId="vault-burden-heading" title="One record, maintained over time" lead="The driver should not have to reconstruct a professional file for every employer or qualification request." /><div className="grid gap-5 md:grid-cols-3"><article className="border border-slate-200 bg-white p-6"><h3 className="text-2xl font-black text-slate-950">Organize</h3><p className="mt-4 text-base leading-7 text-slate-700">Keep the CDL, medical documentation, MVR, certifications, training records, and supporting credentials together in a consistent professional record.</p></article><article className="border border-slate-200 bg-white p-6"><h3 className="text-2xl font-black text-slate-950">Maintain</h3><p className="mt-4 text-base leading-7 text-slate-700">Make missing, expired, incomplete, or questionable documentation visible so the driver knows what requires attention.</p></article><article className="border border-slate-200 bg-white p-6"><h3 className="text-2xl font-black text-slate-950">Share</h3><p className="mt-4 text-base leading-7 text-slate-700">Provide appropriate documentation to a prospective employer for its own qualification process while the driver keeps the portable record.</p></article></div></div>
+      </MarketingSection>
+
+      <MarketingSection variant="white" ariaLabelledBy="vault-transfer-heading">
+        <div className="bof-mkt-container grid gap-10 lg:grid-cols-[.9fr_1.1fr] lg:items-start"><div><p className="text-sm font-black uppercase tracking-[0.22em] text-teal-700">Employer transfer</p><h2 id="vault-transfer-heading" className="mt-4 text-4xl font-black leading-tight text-slate-950 md:text-5xl">The record can move with the driver</h2></div><div className="space-y-6 text-lg leading-8 text-slate-700"><p>A driver should be able to provide appropriate Vault documentation to a prospective or current employer. The employer can receive the information necessary for its own qualification and hiring process without the driver starting from an empty file.</p><p>The Vault does not replace the employer&apos;s legal or regulatory responsibilities. It does not make the employer&apos;s decisions, and it does not independently certify compliance. It makes the driver&apos;s documentation more organized, accessible, reviewable, and portable so the employer can apply its own process to a clearer record.</p><p>The relationship is driver → Vault → review / verification → prospective employer → employer qualification process. The employer receives appropriate evidence; the driver retains a professional record that remains useful after the employment relationship changes.</p></div></div>
+      </MarketingSection>
+
+      <MarketingSection variant="ink" ariaLabelledBy="vault-exceptions-heading">
+        <div className="bof-mkt-container grid gap-10 lg:grid-cols-[.85fr_1.15fr] lg:items-start"><div><p className="text-sm font-black uppercase tracking-[0.22em] text-teal-300">Review, status, and resolution</p><h2 id="vault-exceptions-heading" className="mt-4 text-4xl font-black leading-tight text-white md:text-5xl">A missing document should become a visible next step</h2><p className="mt-5 text-lg leading-8 text-slate-300">The Vault gives uncertainty an administrative path instead of leaving the driver to discover it during the next hiring or qualification request.</p></div><div className="space-y-6 border-l-2 border-amber-400 pl-6 text-lg leading-8 text-white"><p>When information is missing, incomplete, expired, questionable, or changed, BOF can surface the condition and preserve the relationship from <strong>exception</strong> to <strong>owner</strong> to <strong>action</strong> to <strong>follow-up</strong> to <strong>resolution</strong>.</p><p>Reviewers and authorized verifiers can record appropriate outcomes. The driver can then understand what is current, what requires replacement or renewal, and what may be shared for a prospective employer&apos;s process.</p><p className="border-t border-white/15 pt-6 text-slate-300">The result is administrative support around the driver&apos;s record, not ownership of the driver&apos;s identity and not a claim that BOF is the regulator.</p></div></div>
+      </MarketingSection>
+
+      <MarketingSection variant="light" ariaLabelledBy="vault-continuity-heading">
+        <div className="bof-mkt-container grid gap-10 lg:grid-cols-[.8fr_1.2fr] lg:items-start"><MarketingSectionHeader titleId="vault-continuity-heading" title="Portability is the point of continuity" lead="A document is more valuable when the driver does not lose its professional context at the moment employment changes." /><div className="space-y-6 text-lg leading-8 text-slate-700"><p>The driver&apos;s employer may change. The fleet may change. The next qualification process may involve a different reviewer and different administrative requirements. The driver&apos;s BOF Vault record remains associated with the driver, preserving the available documents, review context, current status, renewal information, and history around those records.</p><p>That is different from retaining a file in an employer&apos;s Operations File Cabinet. The File Cabinet preserves the organization&apos;s operating records. BOF Vault preserves the driver&apos;s portable professional documentation so the record can continue to support the driver&apos;s career.</p><p>Continuity does not mean every document should be shared everywhere. It means the driver has a maintained source from which appropriate documentation can be provided with context and control.</p></div></div>
+      </MarketingSection>
+
+      <MarketingSection variant="white" ariaLabelledBy="vault-domains-heading">
+        <div className="bof-mkt-container"><MarketingSectionHeader titleId="vault-domains-heading" title="The future BOF Vault Level 2 domains" lead="These driver-centered domains describe the future architecture. They are presented as concepts only; no Level 2 routes or Level 3 routes are created here." /><div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">{levelTwoDomains.map(([title, description], index) => { const href = title === "Documents & Credentials" ? "/bof-vault/records-documentation" : title === "Verification & Evidence" ? "/bof-vault/verification-evidence" : title === "Record History & Continuity" ? "/bof-vault/continuity-history" : title === "Exceptions & Resolution" ? "/bof-vault/exceptions-disputes" : title === "Identity & Access" ? "/bof-vault/identity-access" : title === "Qualification Status" ? "/bof-vault/administrative-actions" : undefined; const content = <><p className="text-sm font-black tracking-[0.18em] text-teal-700">0{index + 1}</p><h3 className="mt-3 text-2xl font-black text-slate-950">{title}</h3><p className="mt-4 text-base leading-7 text-slate-700">{description}</p><p className="mt-5 text-xs font-black uppercase tracking-[0.16em] text-slate-500">Future Level 2 concept</p></>; return href ? <Link key={title} href={href} className="block border border-slate-200 bg-slate-50 p-6">{content}</Link> : <article key={title} className="border border-slate-200 bg-slate-50 p-6">{content}</article>; })}</div></div>
+      </MarketingSection>
+
+      <MarketingSection variant="ink" ariaLabelledBy="vault-final-heading">
+        <div className="bof-mkt-container grid gap-10 lg:grid-cols-[.9fr_1.1fr] lg:items-end"><div><p className="text-sm font-black uppercase tracking-[0.22em] text-teal-300">BOF Vault operating layer</p><h2 id="vault-final-heading" className="mt-4 text-4xl font-black leading-tight text-white md:text-5xl">A professional record that stays with the person</h2></div><div className="space-y-6 text-lg leading-8 text-slate-200"><p>BOF Vault connects <strong className="text-white">driver</strong> to <strong className="text-white">document</strong>, document to <strong className="text-white">evidence</strong>, evidence to <strong className="text-white">review</strong>, review to <strong className="text-white">status</strong>, status to <strong className="text-white">renewal</strong>, and the maintained record to appropriate <strong className="text-white">employer sharing</strong>.</p><p>It is not the company&apos;s Operations File Cabinet, an ERP, HR system, payroll system, accounting system, specialized fleet system, or regulatory system. It is the administrative support layer for a driver-owned professional record: organized, reviewable, maintainable, and portable.</p><div className="border-t border-white/15 pt-6"><Link href="/assessment/bof-vault" className="bof-mkt-btn-enterprise bof-mkt-btn-enterprise-primary">TAKE THE BOF VAULT ASSESSMENT</Link></div></div></div>
+      </MarketingSection>
+    </main>
   );
 }

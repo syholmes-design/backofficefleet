@@ -111,6 +111,23 @@ export function DriverVaultDqfPageClient({ driverId }: Props) {
   }, [driverId, firstSelectable]);
 
   const [expandedIssueKey, setExpandedIssueKey] = useState<string | null>(null);
+  const [affirmingAppointment, setAffirmingAppointment] = useState(false);
+  const [affirmationMessage, setAffirmationMessage] = useState<string | null>(null);
+
+  async function affirmAppointment() {
+    setAffirmingAppointment(true);
+    setAffirmationMessage(null);
+    try {
+      const response = await fetch(`/api/drivers/${driverId}/medical-renewal/affirm`, { method: "POST" });
+      const body = await response.json() as { error?: string };
+      if (!response.ok) throw new Error(body.error ?? "Unable to affirm appointment");
+      setAffirmationMessage("Appointment affirmed and recorded.");
+    } catch (error) {
+      setAffirmationMessage(error instanceof Error ? error.message : "Unable to affirm appointment");
+    } finally {
+      setAffirmingAppointment(false);
+    }
+  }
 
   const effectiveCanonical = selected ?? firstSelectable;
 
@@ -294,6 +311,14 @@ function getDocumentReviewExplanation(row: DriverDqfDocumentRow): {
             </div>
           )}
           <p className="bof-dqf-vault-next">{summary.nextRecommendedAction}</p>
+          {summary.documents.some((row) => row.canonicalType === "medical_card" && row.status === "expiring_soon") ? (
+            <div className="mb-4 flex flex-wrap items-center gap-3">
+              <button type="button" className="bof-dqf-vault-btn" onClick={affirmAppointment} disabled={affirmingAppointment}>
+                {affirmingAppointment ? "Recording..." : "Affirm medical appointment"}
+              </button>
+              {affirmationMessage ? <span className="text-sm text-slate-700">{affirmationMessage}</span> : null}
+            </div>
+          ) : null}
           <div className="bof-dqf-vault-quick">
             <Link href={`/drivers/${driverId}/profile`} className="bof-dqf-vault-btn">
               Open profile

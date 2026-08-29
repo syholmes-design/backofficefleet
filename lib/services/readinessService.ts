@@ -291,9 +291,15 @@ export function evaluateReadiness(inputs: ReadinessInputs): ReadinessEvaluation 
   if (requiredOperationalTypes.includes("MEDICAL")) {
     const latestMedical = getLatestMedicalQualification(inputs.medicalQualifications);
     const latestMedicalDocument = getLatestDocumentForType(inputs.documents, "MEDICAL");
+    const hasNewerVerifiedMedicalDocument = Boolean(
+      latestMedicalDocument?.status === "VERIFIED" &&
+      latestMedical &&
+      new Date(latestMedicalDocument.uploadedAt).getTime() >= new Date(latestMedical.updatedAt).getTime() &&
+      !isExpired(latestMedicalDocument.verificationExpiresAt),
+    );
 
     if (
-      (latestMedical && (latestMedical.status === "EXPIRED" || isExpired(latestMedical.expirationDate))) ||
+      (!hasNewerVerifiedMedicalDocument && latestMedical && (latestMedical.status === "EXPIRED" || isExpired(latestMedical.expirationDate))) ||
       (latestMedicalDocument &&
         (latestMedicalDocument.status === "EXPIRED" || isExpired(latestMedicalDocument.verificationExpiresAt)))
     ) {

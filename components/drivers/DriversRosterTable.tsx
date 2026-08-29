@@ -6,7 +6,7 @@ import { useState, useMemo } from "react";
 import { DriverAvatar } from "@/components/DriverAvatar";
 import { useBofDemoData } from "@/lib/bof-demo-data-context";
 import { driverPhotoPath } from "@/lib/driver-photo";
-import { getDriverReviewExplanation, type DriverReviewExplanation, type DriverReviewIssueCategory } from "@/lib/driver-review-explanation";
+import { getDriverReviewExplanation, type DriverReviewExplanation, type DriverReviewIssueCategory, type DriverReviewRequirement } from "@/lib/driver-review-explanation";
 import { getDriverTableRowModel } from "@/lib/drivers/driver-table-row-model";
 import {
   driverHasCredentialExpiringWithin,
@@ -36,7 +36,7 @@ type DriverRow = {
   email?: string;
   phone?: string;
   avatar: string;
-  status: "Active" | "Review" | "Blocked";
+  status: "Active" | "Review" | "Blocked" | "Evaluation unavailable";
   eligibilityStatus: "ready" | "needs_review" | "blocked";
   dispatchEligibility: string;
   compliance: string;
@@ -73,6 +73,7 @@ type DriverRow = {
 
 type Props = {
   operationalSummaries: DriverOperationalSummary[];
+  driverRequirements: DriverReviewRequirement[];
   hasFleetContext: boolean;
 };
 
@@ -84,56 +85,11 @@ function formatEnumLabel(value: string) {
     .join(" ");
 }
 
-function buildAuthoritativeReviewExplanation(summary: DriverOperationalSummary): DriverReviewExplanation {
-  const readinessReason =
-    summary.readiness?.summary ??
-    (summary.readinessEvaluationState === "NOT_EVALUATED"
-      ? "Readiness has not yet been evaluated."
-      : "Readiness summary unavailable.");
-  const qualificationReason =
-    summary.qualification?.summary ??
-    (summary.qualificationEvaluationState === "NOT_EVALUATED"
-      ? "Qualification has not yet been evaluated."
-      : "Qualification summary unavailable.");
-
-  return {
-    driverId: summary.driverId,
-    driverName: summary.driverName,
-    entityType: "driver",
-    entityId: summary.driverId,
-    entityLabel: summary.driverName,
-    status: summary.readiness?.readinessStatus === "NOT_READY" ? "blocked" : "needs_review",
-    reviewStatus: summary.readiness?.readinessStatus === "NOT_READY" ? "blocked" : "needs_review",
-    summary: readinessReason,
-    issues: [],
-    documentsColumnLabel: qualificationReason,
-    complianceColumnLabel: readinessReason,
-    primaryAction: { label: "Open driver portal", href: `/portals/driver/${summary.driverId}` },
-    recommendedNextStepText: "Open the driver portal to review the latest authoritative qualification and readiness.",
-    primaryGuidance: {
-      headline: "Review authoritative operational status",
-      plainEnglishReason: readinessReason,
-      operationalImpact: qualificationReason,
-      proposedSolution: "Use the driver portal to view the authoritative operational summary without recalculating status.",
-      severity: summary.readiness?.readinessStatus === "NOT_READY" ? "blocked" : "needs_review",
-      primaryActionLabel: "Open driver portal",
-      primaryActionHref: `/portals/driver/${summary.driverId}`,
-    },
-    severity: summary.readiness?.readinessStatus === "NOT_READY" ? "blocked" : "needs_review",
-    headline: summary.readiness?.readinessStatus === "NOT_READY" ? "Driver is not ready" : "Driver review required",
-    reason: readinessReason,
-    impact: qualificationReason,
-    recommendedFix: "Use the authoritative operational summary; this view does not evaluate or modify driver status.",
-    issueType: "document",
-    actions: [{ label: "Open driver portal", href: `/portals/driver/${summary.driverId}` }],
-  };
-}
-
 function mapOperationalStatus(summary: DriverOperationalSummary | undefined, hasFleetContext: boolean) {
   if (!hasFleetContext) {
     return {
       status: "needs_review" as const,
-      label: "Review" as const,
+      label: "Evaluation unavailable" as const,
       primaryReason: "Authoritative qualification and readiness require fleet sign-in.",
       businessImpact: "No authenticated fleet context is available for this session.",
       qualificationLine: "Qualification: unavailable until authenticated fleet access is present.",
@@ -302,7 +258,7 @@ function DriversHero() {
             Every review item should explain what changed, why it matters, and what action resolves it.
           </p>
           <div className="bof-drivers-hero-actions" style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
-            <Link href="/documents" className="bof-drivers-hero-action" style={{
+                <Link href="/documents/vault" className="bof-drivers-hero-action" style={{
               padding: '0.75rem 1.5rem',
               backgroundColor: 'rgba(255, 255, 255, 0.95)',
               color: '#0BA5A4',
@@ -388,8 +344,8 @@ function DriversHero() {
   );
 }
 
-export function DriversRosterTable({ operationalSummaries, hasFleetContext }: Props) {
-  const { data } = useBofDemoData();
+export function DriversRosterTable({ operationalSummaries, driverRequirements, hasFleetContext }: Props) {
+  const { data, hydrated } = useBofDemoData();
   const [driverStatusFilter, setDriverStatusFilter] = useState<DriverStatusFilter>("all");
   const [credentialWindowDays, setCredentialWindowDays] = useState<90 | 60 | 30>(90);
   const [searchText, setSearchText] = useState("");
@@ -404,7 +360,11 @@ export function DriversRosterTable({ operationalSummaries, hasFleetContext }: Pr
       if (hasFleetContext && operationalSummaries.length > 0) {
         return operationalSummaries.map((summary) => {
           const authoritativeStatus = mapOperationalStatus(summary, hasFleetContext);
-          const reviewExplanation = buildAuthoritativeReviewExplanation(summary);
+          const reviewExplanation = getDriverReviewExplanation(
+            data,
+            summary.driverId,
+            driverRequirements.filter((requirement) => requirement.driverId === summary.driverId),
+          );
 
           return {
             driverId: summary.driverId,
@@ -441,7 +401,11 @@ export function DriversRosterTable({ operationalSummaries, hasFleetContext }: Pr
                 href: `/portals/driver/${summary.driverId}`,
               },
             },
-            actionIssues: [],
+            actionIssues: getDriverActionIssues(
+              summary.driverId,
+              data,
+              driverRequirements.filter((requirement) => requirement.driverId === summary.driverId),
+            ),
             qualificationLine: authoritativeStatus.qualificationLine,
             authoritativeSource: authoritativeStatus.source,
           };
@@ -450,7 +414,11 @@ export function DriversRosterTable({ operationalSummaries, hasFleetContext }: Pr
 
       return data.drivers.map((driver) => {
         const m = getDriverTableRowModel(data, driver.id);
-        const reviewExplanation = getDriverReviewExplanation(data, driver.id);
+        const reviewExplanation = getDriverReviewExplanation(
+          data,
+          driver.id,
+          driverRequirements.filter((requirement) => requirement.driverId === driver.id),
+        );
         const openIssues = m.issues.filter((i) => !i.resolved);
         const complianceFocusOrder: DriverReviewIssueCategory[] = [
           "dispatch",
@@ -462,7 +430,11 @@ export function DriversRosterTable({ operationalSummaries, hasFleetContext }: Pr
           openIssues.some((i) => i.category === c)
         );
         const workerType = getDriverWorkerType(driver.id, data);
-        const actionIssues = getDriverActionIssues(driver.id, data);
+        const actionIssues = getDriverActionIssues(
+          driver.id,
+          data,
+          driverRequirements.filter((requirement) => requirement.driverId === driver.id),
+        );
         const authoritativeStatus = mapOperationalStatus(operationalSummaryMap.get(driver.id), hasFleetContext);
         
         return {
@@ -502,7 +474,7 @@ export function DriversRosterTable({ operationalSummaries, hasFleetContext }: Pr
         };
       });
     },
-    [data, hasFleetContext, operationalSummaries, operationalSummaryMap]
+    [data, driverRequirements, hasFleetContext, operationalSummaries, operationalSummaryMap]
   );
 
   const filteredDriverRows = useMemo(() => {
@@ -546,6 +518,14 @@ export function DriversRosterTable({ operationalSummaries, hasFleetContext }: Pr
         (row.email ?? "").toLowerCase().includes(query)
     );
   }, [credentialWindowDays, data, driverRows, driverStatusFilter, searchText]);
+
+  const visibleDriverRows = hydrated ? filteredDriverRows : [];
+  const evaluatedAttentionCount = driverRows.filter(
+    (row) => row.authoritativeSource !== "unavailable" && row.eligibilityStatus !== "ready",
+  ).length;
+  const evaluationUnavailableCount = driverRows.filter(
+    (row) => row.authoritativeSource === "unavailable",
+  ).length;
 
   return (
     <div className="bof-page bof-cc-page">
@@ -605,7 +585,12 @@ export function DriversRosterTable({ operationalSummaries, hasFleetContext }: Pr
 
       <section id="primary-driver-table" className="bof-cc-panel" aria-label="Driver document center">
         <div className="bof-cc-panel-head">
-          <h2 className="bof-h2">Drivers needing attention ({filteredDriverRows.length} of {driverRows.length})</h2>
+          <h2 className="bof-h2">Drivers needing attention ({evaluatedAttentionCount})</h2>
+          {evaluationUnavailableCount > 0 ? (
+            <p className="bof-cc-panel-sub">
+              {evaluationUnavailableCount} driver{evaluationUnavailableCount === 1 ? "" : "s"} could not be evaluated because authenticated fleet readiness data is unavailable.
+            </p>
+          ) : null}
         </div>
         {/* Horizontal Driver Roster Table */}
         <div className="bof-driver-roster-table" style={{ paddingBottom: "6rem" }}>
@@ -632,7 +617,7 @@ export function DriversRosterTable({ operationalSummaries, hasFleetContext }: Pr
               </tr>
             </thead>
             <tbody>
-              {filteredDriverRows.map((row) => (
+              {visibleDriverRows.map((row) => (
                 <tr key={row.driverId} style={{
                   borderBottom: '1px solid #F1F5F9',
                   transition: 'background-color 0.2s ease'
@@ -669,7 +654,7 @@ export function DriversRosterTable({ operationalSummaries, hasFleetContext }: Pr
                       <div>
                         <div style={{ 
                           fontWeight: '600', 
-                          color: row.readinessSummary.status === 'blocked' ? '#DC2626' : '#D97706',
+                          color: row.readinessSummary.status === 'blocked' ? '#991B1B' : '#92400E',
                           marginBottom: '0.25rem',
                           fontSize: '0.875rem'
                         }}>
@@ -706,7 +691,7 @@ export function DriversRosterTable({ operationalSummaries, hasFleetContext }: Pr
                         {row.readinessSummary.fixAction?.href && row.authoritativeSource === 'available' && (
                           <Link href={row.readinessSummary.fixAction.href} className="bof-driver-roster-action" style={{
                             padding: '0.375rem 0.75rem',
-                            backgroundColor: row.readinessSummary.status === 'blocked' ? '#DC2626' : '#D97706',
+                            backgroundColor: row.readinessSummary.status === 'blocked' ? '#B91C1C' : '#B45309',
                             color: 'white',
                             textDecoration: 'none',
                             borderRadius: '6px',
@@ -751,7 +736,7 @@ export function DriversRosterTable({ operationalSummaries, hasFleetContext }: Pr
           </table>
         </div>
         <div className="bof-driver-roster-mobile-cards" aria-label="Driver attention cards">
-          {filteredDriverRows.map((row) => (
+          {visibleDriverRows.map((row) => (
             <article className="bof-driver-roster-card" key={`${row.driverId}-mobile`}>
               <div className="bof-driver-roster-card__header">
                 <div className="bof-driver-roster-card__identity">
@@ -787,7 +772,7 @@ export function DriversRosterTable({ operationalSummaries, hasFleetContext }: Pr
                   {row.readinessSummary.fixAction?.href && row.authoritativeSource === 'available' && (
                     <Link href={row.readinessSummary.fixAction.href} className="bof-driver-roster-action" style={{
                       padding: '0.55rem 0.85rem',
-                      backgroundColor: row.readinessSummary.status === 'blocked' ? '#DC2626' : '#D97706',
+                      backgroundColor: row.readinessSummary.status === 'blocked' ? '#B91C1C' : '#B45309',
                       color: 'white',
                       textDecoration: 'none',
                       borderRadius: '6px',
@@ -844,6 +829,8 @@ function StatusChip({ label, onClick, driverId }: { label: string; onClick?: () 
         return "Review required";
       case "Review":
         return "Needs attention";
+      case "Evaluation unavailable":
+        return "Evaluation unavailable";
       case "Pending Review":
         return "Pending review";
       case "Attention Required":

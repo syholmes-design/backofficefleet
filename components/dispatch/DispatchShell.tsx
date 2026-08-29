@@ -13,6 +13,7 @@ import { RfidProofChainV4 } from "@/components/rfid-v4/RfidProofChainV4";
 import { RouteIntelligenceV4 } from "@/components/route-intelligence-v4/RouteIntelligenceV4";
 import { DispatchAssetCards } from "@/components/dispatch/DispatchAssetCards";
 import { DemoPageExplainerById } from "@/components/demo/DemoPageExplainerById";
+import { useBofDemoData } from "@/lib/bof-demo-data-context";
 import {
   ApiError,
   type DispatchAssignmentRecord,
@@ -39,6 +40,7 @@ function currentView(rawView: string | null): DispatchView {
 }
 
 export function DispatchShell({ fleetId, drivers, driverOperationalSummaries }: Props) {
+  const { data: demoData } = useBofDemoData();
   const searchParams = useSearchParams();
   const loadIdParam = searchParams.get("loadId");
   const driverIdParam = searchParams.get("driverId");
@@ -55,11 +57,33 @@ export function DispatchShell({ fleetId, drivers, driverOperationalSummaries }: 
   const [assignPick, setAssignPick] = useState("");
   const [refreshKey, setRefreshKey] = useState(0);
 
+  const demoLoads = useMemo<DispatchLoadRecord[]>(
+    () =>
+      (demoData.loads as Array<Record<string, unknown>>).map((load) => ({
+        id: String(load.id ?? ""),
+        fleetId: "demo-fleet",
+        customerName: String(load.customerName ?? "Not available"),
+        origin: String(load.origin ?? "Not available"),
+        destination: String(load.destination ?? "Not available"),
+        pickupWindowStart: typeof load.pickupAt === "string" ? load.pickupAt : null,
+        pickupWindowEnd: typeof load.pickupAt === "string" ? load.pickupAt : null,
+        deliveryWindowStart: typeof load.deliveryAt === "string" ? load.deliveryAt : null,
+        deliveryWindowEnd: typeof load.deliveryAt === "string" ? load.deliveryAt : null,
+        referenceNumber: typeof load.referenceNumber === "string" ? load.referenceNumber : null,
+        secondaryReferenceNumber: null,
+        status: String(load.status ?? "Planned"),
+        createdAt: typeof load.pickupAt === "string" ? load.pickupAt : "",
+        updatedAt: typeof load.deliveryAt === "string" ? load.deliveryAt : typeof load.pickupAt === "string" ? load.pickupAt : "",
+      })),
+    [demoData.loads],
+  );
+  const displayFleetId = fleetId ?? "demo-fleet";
+
   const fetchLoads = useCallback(async () => {
     if (!fleetId) {
-      setLoads([]);
-      setLoadsError("No accessible fleet was found for this session.");
-      return [] as DispatchLoadRecord[];
+      setLoads(demoLoads);
+      setLoadsError(null);
+      return demoLoads;
     }
 
     setLoadsLoading(true);
@@ -74,9 +98,14 @@ export function DispatchShell({ fleetId, drivers, driverOperationalSummaries }: 
     } finally {
       setLoadsLoading(false);
     }
-  }, [fleetId]);
+  }, [demoLoads, fleetId]);
 
   const fetchAssignmentMap = useCallback(async (nextLoads: DispatchLoadRecord[]) => {
+    if (!fleetId) {
+      setAssignmentMap({});
+      return;
+    }
+
     if (nextLoads.length === 0) {
       setAssignmentMap({});
       return;
@@ -103,7 +132,7 @@ export function DispatchShell({ fleetId, drivers, driverOperationalSummaries }: 
     } catch (error) {
       setLoadsError(getErrorMessage(error));
     }
-  }, []);
+  }, [fleetId]);
 
   useEffect(() => {
     void fetchLoads();
@@ -172,18 +201,9 @@ export function DispatchShell({ fleetId, drivers, driverOperationalSummaries }: 
           <DemoPageExplainerById pageId="dispatch" />
         </div>
 
-        {!fleetId ? (
-          <div className="flex flex-1 items-center justify-center p-6">
-            <div className="max-w-xl rounded-xl border border-amber-700/40 bg-amber-950/20 p-6 text-sm text-amber-50">
-              No accessible fleet context is available for this session. Sign in with an active fleet membership to use
-              dispatch.
-            </div>
-          </div>
-        ) : null}
-
-        {fleetId && view === "board" ? (
+        {view === "board" ? (
           <DispatchBoardScreen
-            fleetId={fleetId}
+            fleetId={displayFleetId}
             loads={loads}
             loadsLoading={loadsLoading}
             loadsError={loadsError}
@@ -194,6 +214,8 @@ export function DispatchShell({ fleetId, drivers, driverOperationalSummaries }: 
             onOpenAssign={openAssignModal}
             onRefresh={refreshBoard}
             refreshKey={refreshKey}
+            demoMode={!fleetId}
+            relationshipSpine={demoData.loadRelationshipSpine ?? {}}
           />
         ) : null}
 
