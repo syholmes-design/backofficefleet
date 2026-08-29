@@ -1,5 +1,3 @@
-import { access } from "node:fs/promises";
-import path from "node:path";
 import {
   getOperationsFileCabinetItems,
   type OperationsFileCabinetItem,
@@ -58,7 +56,7 @@ function isAppRoute(href: string): boolean {
   return href.startsWith("/documents/") || href.startsWith("/drivers/") || href.startsWith("/dispatch/") || href.startsWith("/portals/");
 }
 
-async function classifyHref(href: string | undefined, item: OperationsFileCabinetItem): Promise<VerifiedDocumentKind> {
+function classifyHref(href: string | undefined, item: OperationsFileCabinetItem): VerifiedDocumentKind {
   if (item.status === "coming_soon") return "coming_soon";
   if (item.status === "needs_review") return "needs_review";
   if (!href) return "missing";
@@ -66,13 +64,7 @@ async function classifyHref(href: string | undefined, item: OperationsFileCabine
   if (isAppRoute(href)) return "app_route";
   if (!href.startsWith("/")) return "missing";
 
-  const absolutePath = path.join(process.cwd(), "public", href.replace(/^\//, ""));
-  try {
-    await access(absolutePath);
-    return path.extname(absolutePath).toLowerCase() === ".pdf" ? "pdf" : "generated_html";
-  } catch {
-    return "missing";
-  }
+  return href.toLowerCase().endsWith(".pdf") ? "pdf" : "generated_html";
 }
 
 function previewMode(kind: VerifiedDocumentKind): CanonicalDocumentRecord["previewMode"] {
@@ -106,9 +98,7 @@ function toRecord(item: OperationsFileCabinetItem, kind: VerifiedDocumentKind, c
 }
 
 export async function buildVerifiedDocumentIndex(): Promise<CanonicalDocumentRecord[]> {
-  return Promise.all(
-    getOperationsFileCabinetItems().map(async (item) => toRecord(item, await classifyHref(item.href, item)))
-  );
+  return getOperationsFileCabinetItems().map((item) => toRecord(item, classifyHref(item.href, item)));
 }
 
 export async function buildFeaturedDocumentIndex(): Promise<CanonicalDocumentRecord[]> {
@@ -131,7 +121,7 @@ export async function buildFeaturedDocumentIndex(): Promise<CanonicalDocumentRec
       documentOwner: "employer",
       employerName: "Delta Advanced Trucking, Inc.",
     };
-    const kind = await classifyHref(href, { ...base, href, status: "available" });
+    const kind = classifyHref(href, { ...base, href, status: "available" });
     records.push(toRecord({
       ...base,
       id,
