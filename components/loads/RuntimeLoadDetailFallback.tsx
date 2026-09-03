@@ -3,20 +3,29 @@
 import Link from "next/link";
 import { useBofDemoData } from "@/lib/bof-demo-data-context";
 import { buildPretripTabletModel } from "@/lib/pretrip-tablet";
+import { getCanonicalDispatchLoadState } from "@/lib/dispatch/canonical-dispatch-operating-state";
+import { getDriverOperatingIssuePaths } from "@/lib/driver-operating-issue-path";
+import { DriverOperatingIssuePathList } from "@/components/drivers/DriverOperatingIssuePathList";
+import { LoadProcessIntelligencePanel } from "@/components/loads/LoadProcessIntelligencePanel";
 import { getLoadProofItems } from "@/lib/load-proof";
+import { getCanonicalLoadEvidenceForLoad } from "@/lib/canonical-load-evidence";
+import { allMaintenanceAssetIds } from "@/lib/maintenance-data";
 import { DemoBackButton } from "@/components/navigation/DemoBackButton";
 import { getCanonicalLoadStory, normalizeCanonicalLoadId } from "@/lib/canonical-load-stories";
 
 export function RuntimeLoadDetailFallback({ loadId }: { loadId: string }) {
   const { data } = useBofDemoData();
-  const canonicalId = normalizeCanonicalLoadId(loadId);
+  const canonicalId = /^PI-TEST-/i.test(loadId) ? loadId : normalizeCanonicalLoadId(loadId);
   const rawLoad = data.loads.find((l) => l.id === canonicalId || l.id === loadId || l.number === loadId);
 
   if (!rawLoad) {
     return (
       <div className="bof-page bg-slate-50 text-slate-900 min-h-screen p-6">
-        <h1 className="text-2xl font-bold text-slate-950">Load not found ({loadId})</h1>
-        <p className="mt-2 text-sm text-slate-600">This load is not present in seeded data or the current demo session.</p>
+        <h1 className="text-2xl font-bold text-slate-950">Load {loadId}</h1>
+        <p className="mt-2 text-sm text-slate-600">
+          This identifier is not in demo seed data. Process intelligence below uses persisted operating events only.
+        </p>
+        <LoadProcessIntelligencePanel loadId={loadId} />
         <p className="mt-4">
           <Link href="/loads" className="inline-flex rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-800 hover:bg-slate-50">
             Back to loads
@@ -29,6 +38,7 @@ export function RuntimeLoadDetailFallback({ loadId }: { loadId: string }) {
   const canonicalStory = getCanonicalLoadStory(rawLoad.id);
   const pretripModel = buildPretripTabletModel(data, rawLoad.id);
   const proofItems = getLoadProofItems(data, rawLoad.id);
+  const evidenceAssets = getCanonicalLoadEvidenceForLoad(data, rawLoad.id);
 
   const driver = data.drivers.find((d) => d.id === rawLoad.driverId);
   const driverName = driver?.name || pretripModel?.driverName || rawLoad.driverId;
@@ -57,31 +67,22 @@ export function RuntimeLoadDetailFallback({ loadId }: { loadId: string }) {
     invoiceNumber?: string;
   };
 
-  const isL009 = rawLoad.id === "L009";
-  const isL001 = rawLoad.id === "L001";
-  const isL007 = rawLoad.id === "L007";
-  const isL010 = rawLoad.id === "L010";
-
-  // Dispatch Release Gate State
-  const isBlocked = pretripModel?.overall === "BLOCKED" || isL009;
-  const dispatchGateState = isBlocked
-    ? "HARD BLOCK"
-    : load.settlementHold || isL001 || isL007 || isL010
-      ? "REVIEW REQUIRED"
-      : "RELEASED / READY";
-
-  const dispatchGateReason = isL009
-    ? "Pre-trip inspection failed: WO-003 Drive tire sidewall damage on Asset T-111"
-    : isL001
-      ? "Delivery seal mismatch requires manager signoff (SEAL-83921 vs SEAL-83920)"
-      : isL007
-        ? "QR lumper authorization and Zelle payment closeout pending"
-        : isL010
-          ? "HOS coaching acknowledgment pending (EVT-001)"
-          : "Pre-trip inspection and document readiness verified";
+  const operating = getCanonicalDispatchLoadState(data, rawLoad.id);
+  const isBlocked = operating?.pretripOverall === "BLOCKED" || operating?.releaseDisposition === "HOLD";
+  const dispatchGateState =
+    operating?.releaseDisposition === "HOLD"
+      ? "HARD BLOCK"
+      : operating?.releaseDisposition === "REVIEW"
+        ? "REVIEW REQUIRED"
+        : "RELEASED / READY";
+  const dispatchGateReason = operating?.releaseSummary ?? "Canonical operating state is not available for this load.";
+  const maintenanceBlocker = operating?.blockers.find((row) => row.source === "maintenance");
+  const conversationHref = `/operational-chat?recordType=LOAD&recordId=${encodeURIComponent(rawLoad.id)}`;
+  const exceptionHref = `/dispatch?view=exceptions&loadId=${encodeURIComponent(rawLoad.id)}`;
+  const maintenanceHref = load.assetId && allMaintenanceAssetIds().includes(load.assetId) ? `/maintenance/${load.assetId}` : "/maintenance";
 
   return (
-    <div className="bof-page bg-slate-50 text-slate-900 min-h-screen py-8 px-4 sm:px-6 lg:px-8">
+    <div className="bof-page bg-slate-50 text-slate-900 min-h-screen overflow-x-hidden py-8 px-4 sm:px-6 lg:px-8">
       <div className="mb-4">
         <DemoBackButton fallbackHref="/loads" />
       </div>
@@ -155,6 +156,20 @@ export function RuntimeLoadDetailFallback({ loadId }: { loadId: string }) {
             >
               Dispatch board
             </Link>
+            <Link
+              href={conversationHref}
+              className="inline-flex items-center justify-center rounded-lg border border-teal-300 bg-white px-4 py-2 text-sm font-bold text-teal-900 transition hover:bg-teal-50"
+            >
+              Conversations
+            </Link>
+            {operating?.needsAttention ? (
+              <Link
+                href={exceptionHref}
+                className="inline-flex items-center justify-center rounded-lg border border-amber-300 bg-amber-50 px-4 py-2 text-sm font-bold text-amber-950 transition hover:bg-amber-100"
+              >
+                Review exception
+              </Link>
+            ) : null}
           </div>
         </div>
 
@@ -175,7 +190,7 @@ export function RuntimeLoadDetailFallback({ loadId }: { loadId: string }) {
             <p className="mt-1 text-base font-bold text-slate-950">
               Truck: {load.assetId || "T-102"} · {load.trailerNumber || "TRL-2854"}
             </p>
-            <Link href={`/maintenance/${load.assetId || "T-102"}`} className="mt-1 inline-block text-xs font-semibold text-teal-800 hover:underline">
+            <Link href={maintenanceHref} className="mt-1 inline-block text-xs font-semibold text-teal-800 hover:underline">
               View maintenance status →
             </Link>
           </div>
@@ -208,6 +223,8 @@ export function RuntimeLoadDetailFallback({ loadId }: { loadId: string }) {
         </div>
       </section>
 
+      <LoadProcessIntelligencePanel loadId={load.id} />
+
       {/* Operational Dispatch Gate & Exceptions Section */}
       <section className="mt-6 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
         <div className="flex items-center justify-between gap-4 border-b border-slate-100 pb-4 mb-4">
@@ -233,25 +250,38 @@ export function RuntimeLoadDetailFallback({ loadId }: { loadId: string }) {
           <p className="mt-1 text-xs font-medium">{dispatchGateReason}</p>
         </div>
 
+        {load.driverId ? (
+          <div className="mb-4 rounded-xl border border-slate-200 bg-slate-50 p-4">
+            <DriverOperatingIssuePathList
+              issues={getDriverOperatingIssuePaths(data, load.driverId)}
+              compact
+              heading="Assigned driver document path"
+            />
+            <p className="mt-2 text-xs text-slate-500">
+              Driver qualification issues come from existing DQF and eligibility helpers. Load HOLD/REVIEW above is the canonical dispatch operating state and is not replaced.
+            </p>
+          </div>
+        ) : null}
+
         {/* Linked Operational Records */}
         <div className="grid gap-4 md:grid-cols-3">
           <div className="rounded-xl border border-slate-200 bg-slate-50 p-4">
             <span className="text-xs font-bold uppercase tracking-wider text-slate-500">Linked Maintenance</span>
             <p className="mt-1 text-sm font-bold text-slate-950">
-              {isL009 ? "WO-003: Drive Tire Sidewall Defect" : isL001 ? "WO-001: Seal Door Inspection" : isL010 ? "WO-002: ELD Diagnostic" : "No active work orders"}
+              {maintenanceBlocker?.label ?? "No canonical maintenance blocker"}
             </p>
             <p className="mt-1 text-xs text-slate-600">
-              {isL009 ? "Asset T-111 / TRL-2170 · Out of Service" : "Asset " + (load.assetId || "T-102")}
+              {maintenanceBlocker?.detail ?? `Asset ${load.assetId ?? "unassigned"}`}
             </p>
-            <Link href={isL009 ? "/maintenance/work-orders/WO-003" : `/maintenance/${load.assetId || "T-102"}`} className="mt-2 inline-block text-xs font-semibold text-teal-800 hover:underline">
-              Open work order →
+            <Link href={maintenanceHref} className="mt-2 inline-block text-xs font-semibold text-teal-800 hover:underline">
+              Open asset maintenance →
             </Link>
           </div>
 
           <div className="rounded-xl border border-slate-200 bg-slate-50 p-4">
             <span className="text-xs font-bold uppercase tracking-wider text-slate-500">Linked Safety Events</span>
             <p className="mt-1 text-sm font-bold text-slate-950">
-              {canonicalStory?.safetyEventId ? `${canonicalStory.safetyEventId}: ${canonicalStory.primaryIssue}` : isL010 ? "EVT-001: HOS Violation / Fatigue Alert" : "No active safety incidents"}
+              {canonicalStory?.safetyEventId ? `${canonicalStory.safetyEventId}: ${canonicalStory.primaryIssue}` : "No active safety incidents"}
             </p>
             {canonicalStory?.claimId ? (
               <p className="mt-1 text-xs font-semibold text-rose-700">
@@ -354,6 +384,45 @@ export function RuntimeLoadDetailFallback({ loadId }: { loadId: string }) {
               ) : null}
             </div>
           ))}
+        </div>
+      </section>
+
+      {/* Evidence assets resolved from the canonical load evidence manifest */}
+      <section className="mt-6 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+        <h2 className="text-xl font-bold text-slate-950">Evidence Assets</h2>
+        <p className="mt-1 text-sm text-slate-600">
+          Load {load.id} · resolved from the canonical evidence manifest. Assets belong to this load only.
+        </p>
+        <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+          {evidenceAssets.map((asset) => {
+            const viewable = Boolean(asset.url) && (asset.status === "available" || asset.status === "placeholder");
+            return (
+              <div key={asset.evidenceType} className="rounded-xl border border-slate-200 bg-slate-50 p-4">
+                <span className="text-xs font-bold uppercase tracking-wider text-slate-500">{asset.title}</span>
+                <p className="mt-1 text-sm font-bold text-slate-950">
+                  {asset.status === "available"
+                    ? "Available"
+                    : asset.status === "placeholder"
+                      ? "Available (demo render)"
+                      : asset.status === "not_required"
+                        ? "Not required for this load"
+                        : "EVIDENCE ASSET NOT AVAILABLE"}
+                </p>
+                {asset.reason ? <p className="mt-1 text-xs text-slate-600">{asset.reason}</p> : null}
+                {viewable ? (
+                  <>
+                    <p className="mt-1 break-all text-[11px] text-slate-500">{asset.fileName}</p>
+                    <a
+                      href={asset.url}
+                      className="mt-3 inline-block text-xs font-semibold text-teal-800 hover:underline"
+                    >
+                      View evidence →
+                    </a>
+                  </>
+                ) : null}
+              </div>
+            );
+          })}
         </div>
       </section>
     </div>

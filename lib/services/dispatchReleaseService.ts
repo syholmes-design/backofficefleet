@@ -11,6 +11,8 @@ import {
 
 import { createAuditRecord } from "@/lib/audit";
 import { prisma } from "@/lib/prisma";
+import { recordLoadReadinessEvaluatedEvent, recordReleaseDecisionEvent } from "@/lib/process-intelligence/operating-event-service";
+import { getOperatingProcessStore } from "@/lib/process-intelligence/runtime-store";
 import { authorizedFleetAccess, type SessionUserLike } from "@/lib/services/intakeService";
 
 export const DISPATCH_RELEASE_POLICY_VERSION = "bof-step11-dispatch-v1" as const;
@@ -464,6 +466,26 @@ export async function writeDispatchRelease(
       policyVersion: evaluation.policyVersion,
     },
     metadata: { source: "dispatch-release-service" },
+  });
+
+  await recordLoadReadinessEvaluatedEvent(getOperatingProcessStore(), sessionUser, {
+    fleetId: inputs.assignment.fleetId,
+    loadId: inputs.load.id,
+    sourceRecordType: "DispatchRelease",
+    sourceRecordId: release.id,
+    status: evaluation.disposition,
+    reason: evaluation.summary,
+    owner: actorId,
+    eventTimestamp: release.evaluatedAt,
+  });
+  await recordReleaseDecisionEvent(getOperatingProcessStore(), sessionUser, {
+    fleetId: inputs.assignment.fleetId,
+    loadId: inputs.load.id,
+    releaseId: release.id,
+    disposition: evaluation.disposition,
+    reason: evaluation.summary,
+    owner: actorId,
+    eventTimestamp: release.evaluatedAt,
   });
 
   return release;

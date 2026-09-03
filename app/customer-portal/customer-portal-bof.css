@@ -1,0 +1,133 @@
+/* Current BOF branding overlay for the recovered Customer Portal workspace. */
+.customer-portal-body {
+  background: #f4f7f8;
+  min-height: 100vh;
+}
+
+.customer-portal-shell {
+  min-height: 100vh;
+}
+
+.portal-brand {
+  display: inline-flex;
+  align-items: center;
+  min-height: 52px;
+}
+
+.portal-brand .bof-logo-wrap {
+  max-width: 180px;
+}
+
+.portal-honest-banner {
+  background: #eef6ff;
+  border: 1px solid #c5d8ee;
+  border-radius: 14px;
+  color: #1e3a5f;
+  line-height: 1.5;
+  margin: 0 0 18px;
+  padding: 14px 16px;
+}
+
+.portal-honest-banner strong {
+  display: block;
+  font-size: 0.78rem;
+  letter-spacing: 0.08em;
+  margin-bottom: 4px;
+  text-transform: uppercase;
+}
+
+.portal-kind-grid {
+  display: grid;
+  gap: 10px;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  margin-bottom: 16px;
+}
+
+.portal-kind-grid article {
+  background: #fff;
+  border: 1px solid #d7e1e6;
+  border-radius: 12px;
+  padding: 12px 14px;
+}
+
+.portal-kind-grid span {
+  color: #0b6aa2;
+  display: block;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.portal-kind-grid p {
+  color: #334155;
+  font-size: 0.86rem;
+  margin: 6px 0 0;
+}
+
+.portal-status-split {
+  display: grid;
+  gap: 10px;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  margin-bottom: 16px;
+}
+
+.portal-status-split article {
+  background: #fff;
+  border: 1px solid #d7e1e6;
+  border-radius: 12px;
+  padding: 12px 14px;
+}
+
+.portal-status-split h3 {
+  font-size: 0.95rem;
+  margin: 0;
+}
+
+.portal-status-split p {
+  color: #475569;
+  font-size: 0.84rem;
+  margin: 6px 0 0;
+}
+
+@media (max-width: 1100px) {
+  .portal-kind-grid,
+  .portal-status-split {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 768px) {
+  .customer-portal-shell {
+    overflow-x: hidden;
+  }
+
+  .portal-workspace {
+    min-width: 0;
+    padding-bottom: 32px;
+  }
+
+  .portal-kind-grid,
+  .portal-status-split,
+  .portal-card-grid,
+  .portal-dashboard-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .portal-nav-ready .portal-rail.is-menu-open .portal-nav {
+    max-height: 55vh;
+    overflow-y: auto;
+  }
+}
+
+@media (max-width: 390px) {
+  .portal-topbar h1 {
+    font-size: 1.35rem;
+  }
+
+  .field-grid.four,
+  .field-grid.three,
+  .field-grid.two {
+    grid-template-columns: 1fr;
+  }
+}

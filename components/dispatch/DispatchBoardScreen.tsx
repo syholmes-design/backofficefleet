@@ -7,10 +7,13 @@ import {
   ClipboardCheck,
   PackageCheck,
   ShieldCheck,
-  Truck,
-  UserRoundCheck,
 } from "lucide-react";
 import { loadStatusChipClass } from "./dispatch-ui";
+import { DispatchTriageBoard } from "./DispatchTriageBoard";
+import { DispatchOperatingTimeline } from "./DispatchOperatingTimeline";
+import { DispatchAssetCards } from "@/components/dispatch/DispatchAssetCards";
+import { RfidProofChainV4 } from "@/components/rfid-v4/RfidProofChainV4";
+import { RouteIntelligenceV4 } from "@/components/route-intelligence-v4/RouteIntelligenceV4";
 import {
   fetchLoadWorkflowSnapshot,
   formatDateTime,
@@ -23,6 +26,14 @@ import {
   type DispatchLoadRecord,
   type DispatchLoadWorkflowSnapshot,
 } from "@/lib/dispatch-workflow-ui";
+import { buildPretripTabletModel } from "@/lib/pretrip-tablet";
+import { useBofDemoData } from "@/lib/bof-demo-data-context";
+import { OpsModuleMasthead } from "@/components/ops-visual/OpsModuleMasthead";
+import { OpsWorkflowRail } from "@/components/ops-visual/OpsWorkflowRail";
+import {
+  getCanonicalDispatchBoardKpis,
+  getCanonicalDispatchLoadState,
+} from "@/lib/dispatch/canonical-dispatch-operating-state";
 
 type Props = {
   fleetId: string;
@@ -50,42 +61,6 @@ type Props = {
     documentReferences: string[];
   }>;
 };
-
-function MetricCard({
-  label,
-  value,
-  detail,
-  tone,
-  icon: Icon,
-}: {
-  label: string;
-  value: string | number;
-  detail: string;
-  tone: "ready" | "warning" | "blocked" | "info";
-  icon: typeof Truck;
-}) {
-  const toneClass =
-    tone === "ready"
-      ? "border-emerald-700/50 bg-emerald-950/35 text-emerald-200"
-      : tone === "warning"
-        ? "border-amber-700/50 bg-amber-950/35 text-amber-200"
-        : tone === "blocked"
-          ? "border-rose-700/55 bg-rose-950/40 text-rose-200"
-          : "border-cyan-700/45 bg-cyan-950/30 text-cyan-100";
-
-  return (
-    <div className={`rounded-lg border p-4 ${toneClass}`}>
-      <div className="flex items-start justify-between gap-3">
-        <div>
-          <p className="text-xs font-semibold uppercase tracking-wide opacity-75">{label}</p>
-          <p className="mt-2 text-3xl font-bold text-white">{value}</p>
-        </div>
-        <Icon className="h-5 w-5 opacity-80" aria-hidden />
-      </div>
-      <p className="mt-3 text-sm leading-5 opacity-85">{detail}</p>
-    </div>
-  );
-}
 
 function WorkflowCard({
   title,
@@ -164,14 +139,43 @@ export function DispatchBoardScreen({
   demoMode = false,
   relationshipSpine,
 }: Props) {
+  const { data: bofData } = useBofDemoData();
+
+  const displayLoads = useMemo(() => {
+    if (!demoMode) return loads;
+    if (loads.length > 0) return loads;
+    return bofData.loads.map((load) => ({
+      id: load.id,
+      fleetId: "demo-fleet",
+      customerName: String((load as { customerName?: string }).customerName ?? "Not available"),
+      origin: String(load.origin ?? "Not available"),
+      destination: String(load.destination ?? "Not available"),
+      pickupWindowStart: typeof load.pickupAt === "string" ? load.pickupAt : null,
+      pickupWindowEnd: typeof load.pickupAt === "string" ? load.pickupAt : null,
+      deliveryWindowStart: typeof load.deliveryAt === "string" ? load.deliveryAt : null,
+      deliveryWindowEnd: typeof load.deliveryAt === "string" ? load.deliveryAt : null,
+      referenceNumber: typeof (load as { referenceNumber?: string }).referenceNumber === "string" ? (load as { referenceNumber?: string }).referenceNumber ?? null : null,
+      secondaryReferenceNumber: null,
+      status: String(load.status ?? "Pending"),
+      createdAt: typeof load.pickupAt === "string" ? load.pickupAt : "",
+      updatedAt: typeof load.deliveryAt === "string" ? load.deliveryAt : typeof load.pickupAt === "string" ? load.pickupAt : "",
+    }));
+  }, [bofData.loads, demoMode, loads]);
+
   const selectedLoad = useMemo(
-    () => loads.find((load) => load.id === selectedLoadId) ?? loads[0] ?? null,
-    [loads, selectedLoadId],
+    () => displayLoads.find((load) => load.id === selectedLoadId) ?? displayLoads[0] ?? null,
+    [displayLoads, selectedLoadId],
   );
+
+  const selectedPretripTablet = useMemo(() => {
+    if (!selectedLoad) return null;
+    return buildPretripTabletModel(bofData, selectedLoad.id);
+  }, [bofData, selectedLoad]);
 
   const [workflow, setWorkflow] = useState<DispatchLoadWorkflowSnapshot | null>(null);
   const [workflowLoading, setWorkflowLoading] = useState(false);
   const [workflowError, setWorkflowError] = useState<string | null>(null);
+  const [timelineLoadId, setTimelineLoadId] = useState<string | null>(null);
 
   useEffect(() => {
     if (demoMode) {
@@ -216,68 +220,104 @@ export function DispatchBoardScreen({
     };
   }, [demoMode, refreshKey, selectedLoad]);
 
-  const assignedCount = useMemo(
-    () => Object.values(assignmentMap).filter((assignment) => assignment?.status === "ACTIVE").length,
-    [assignmentMap],
+  const canonicalKpis = useMemo(
+    () => (demoMode ? getCanonicalDispatchBoardKpis(bofData) : null),
+    [bofData, demoMode],
   );
 
-  const deliveredCount = useMemo(
-    () => loads.filter((load) => load.status === "DELIVERED").length,
-    [loads],
+  const selectedOperating = useMemo(
+    () => (demoMode && selectedLoad ? getCanonicalDispatchLoadState(bofData, selectedLoad.id) : null),
+    [bofData, demoMode, selectedLoad],
   );
 
-  const plannedCount = useMemo(
-    () => loads.filter((load) => load.status === "PLANNED").length,
-    [loads],
-  );
+  const assignedCount = useMemo(() => {
+    if (canonicalKpis) return canonicalKpis.activeAssignments;
+    return Object.values(assignmentMap).filter((assignment) => assignment?.status === "ACTIVE").length;
+  }, [assignmentMap, canonicalKpis]);
 
-  const blockedCount = useMemo(
-    () =>
-      loads.filter((load) => {
-        const assignment = assignmentMap[load.id];
-        return !assignment || load.status === "EXCEPTION";
-      }).length,
-    [assignmentMap, loads],
-  );
+  const deliveredCount = useMemo(() => {
+    if (canonicalKpis) return canonicalKpis.delivered;
+    return loads.filter((load) => String(load.status).toUpperCase() === "DELIVERED").length;
+  }, [canonicalKpis, loads]);
 
-  const filteredRows = loads;
+  const blockedCount = useMemo(() => {
+    if (canonicalKpis) return canonicalKpis.needsAttention;
+    return loads.filter((load) => {
+      const assignment = assignmentMap[load.id];
+      return !assignment || String(load.status).toUpperCase() === "EXCEPTION";
+    }).length;
+  }, [assignmentMap, canonicalKpis, loads]);
+
+  const filteredRows = displayLoads;
 
   const readinessReasons = getJsonStringArray(workflow?.readiness?.reasonCodes).join(", ");
   const latestReleaseReasons = getJsonStringArray(workflow?.latestRelease?.reasonCodes);
   const selectedRelationship = selectedLoad ? relationshipSpine[selectedLoad.id] : undefined;
 
   return (
-    <div className="mx-auto flex max-w-7xl flex-col gap-6 px-6 py-6 lg:px-8">
-      <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-        <MetricCard
-          icon={Truck}
-          label="Loads on board"
-          value={loads.length}
-          detail={demoMode ? "Canonical BOF demo load source." : "Backend load list from the current fleet."}
-          tone="ready"
-        />
-        <MetricCard
-          icon={UserRoundCheck}
-          label="Active assignments"
-          value={assignedCount}
-          detail={demoMode ? "Assignment records are not available in the demo source." : "Current active assignments from authoritative dispatch records."}
-          tone={assignedCount > 0 ? "info" : "warning"}
-        />
-        <MetricCard
-          icon={PackageCheck}
-          label="Delivered"
-          value={deliveredCount}
-          detail={demoMode ? "Based on canonical load status." : "Delivered loads based on backend load status."}
-          tone="ready"
-        />
-        <MetricCard
-          icon={AlertTriangle}
-          label="Needs attention"
-          value={blockedCount}
-          detail={`${plannedCount} loads are planned or missing assignment data.`}
-          tone={blockedCount > 0 ? "warning" : "ready"}
-        />
-      </section>
+    <div className="mx-auto flex max-w-7xl flex-col gap-6 px-4 py-6 sm:px-6 lg:px-8">
+      <OpsModuleMasthead
+        eyebrow="Dispatch triage"
+        title="CRITICAL · MAJOR · MINOR"
+        description="Operational urgency is separate from load readiness. Canonical gates still decide whether a load can move; this board ranks how serious the open issue is."
+        imageSrc="/generated/marketing/dispatch-command-center-hero-photo.png"
+        imageAlt="Dispatch command workspace"
+        imagePosition="center right"
+        chips={
+          demoMode && canonicalKpis
+            ? [
+                { label: "Loads on Board", value: canonicalKpis.loadsOnBoard, hint: "Canonical demo loads", href: "#dispatch-board" },
+                { label: "Active Assignments", value: canonicalKpis.activeAssignments, hint: "Canonical driver assignment", href: "#dispatch-board" },
+                { label: "Delivered", value: canonicalKpis.delivered, hint: "Canonical status", href: "#dispatch-board" },
+                { label: "Needs Attention", value: canonicalKpis.needsAttention, hint: "Open operating blockers", href: "#dispatch-triage" },
+              ]
+            : [
+                { label: "Loads on Board", value: loads.length, hint: "Current fleet list", href: "#dispatch-board" },
+                { label: "Active Assignments", value: assignedCount, href: "#dispatch-board" },
+                { label: "Delivered", value: deliveredCount, href: "#dispatch-board" },
+                { label: "Needs Attention", value: blockedCount, href: "#dispatch-triage" },
+              ]
+        }
+      />
+      <DispatchTriageBoard demoMode={demoMode} onSelectLoad={onSelectLoad} onOpenAssign={onOpenAssign} />
+      <OpsWorkflowRail
+        headingId="bof-dispatch-operating-flow"
+        eyebrow="Dispatch sequence"
+        title="Assignment, readiness, proof, and attention on one board"
+        description="Canonical load identity stays in place. The sequence below uses the same operating counts as the board — not a second data source."
+        steps={[
+          {
+            step: "Loads",
+            title: "On the board",
+            detail: demoMode ? "Canonical BOF demo load source." : "Current fleet load list.",
+            value: canonicalKpis ? canonicalKpis.loadsOnBoard : loads.length,
+            tone: "ready",
+          },
+          {
+            step: "Assigned",
+            title: "Driver and equipment",
+            detail: demoMode ? "Canonical driver assignment on the load record." : "Active assignment records.",
+            value: assignedCount,
+            tone: assignedCount > 0 ? "neutral" : "warning",
+          },
+          {
+            step: "Delivered",
+            title: "Completed movement",
+            detail: demoMode ? "Based on canonical load status." : "Delivered loads from backend status.",
+            value: deliveredCount,
+            tone: "ready",
+          },
+          {
+            step: "Attention",
+            title: "Operating blockers",
+            detail: demoMode
+              ? "Unassigned, pre-trip hold, seal/proof exception, or settlement hold."
+              : "Loads without an active assignment or in exception.",
+            value: blockedCount,
+            tone: blockedCount > 0 ? "blocked" : "ready",
+          },
+        ]}
+      />
 
       <section className="grid gap-5 xl:grid-cols-[0.92fr_1.08fr]">
         <div className="rounded-xl border border-slate-800 bg-slate-900/45 p-5">
@@ -312,12 +352,18 @@ export function DispatchBoardScreen({
                 <div className="rounded-lg border border-slate-800 bg-slate-950/65 p-4">
                   <p className="text-xs font-bold uppercase tracking-wide text-slate-500">Assignment status</p>
                   <p className="mt-2 text-lg font-bold text-white">
-                    {assignmentMap[selectedLoad.id]?.status === "ACTIVE" ? "Assigned" : "Unassigned"}
+                    {assignmentMap[selectedLoad.id]?.status === "ACTIVE"
+                      ? "Assigned"
+                      : selectedOperating?.assigned
+                        ? "Assigned"
+                        : "Unassigned"}
                   </p>
                   <p className="text-sm text-slate-400">
                     {assignmentMap[selectedLoad.id]?.assignedAt
                       ? `Assigned ${formatShortDateTime(assignmentMap[selectedLoad.id]?.assignedAt)}`
-                      : "No active assignment for this load."}
+                      : selectedOperating?.driverName
+                        ? `Assigned to ${selectedOperating.driverName}`
+                        : "No active assignment for this load."}
                   </p>
                 </div>
               </div>
@@ -325,83 +371,160 @@ export function DispatchBoardScreen({
               <div className="mt-5 grid gap-3 lg:grid-cols-2">
                 <WorkflowCard
                   title="Driver Readiness"
-                  status={workflow?.readiness?.status ?? "NOT_READY"}
-                  detail={workflow?.readiness?.summary ?? workflow?.readinessError ?? "Readiness not available yet."}
+                  status={
+                    workflow?.readiness?.status ??
+                    (demoMode
+                      ? selectedPretripTablet?.overall === "READY"
+                        ? "READY"
+                        : "NOT_READY"
+                      : "NOT_READY")
+                  }
+                  detail={
+                    workflow?.readiness?.summary ??
+                    workflow?.readinessError ??
+                    (demoMode
+                      ? selectedPretripTablet?.overall === "READY"
+                        ? `Driver ${selectedPretripTablet.driverName} meets all BOF compliance, CDL, medical, and HOS rules.`
+                        : `Readiness held: ${selectedPretripTablet?.blockReasons.join("; ") || "Missing driver credentials or open compliance incident."}`
+                      : "Readiness not available yet.")
+                  }
                   meta={
                     workflow?.readiness
                       ? `Reasons: ${readinessReasons || "None"} · Evaluated ${formatShortDateTime(workflow.readiness.evaluatedAt)}`
-                      : undefined
+                      : demoMode
+                        ? `Evaluated from canonical driver ${selectedPretripTablet?.driverId ?? selectedRelationship?.driverId ?? "N/A"} record`
+                        : undefined
                   }
                 />
                 <WorkflowCard
                   title="Pre-Trip"
-                  status={workflow?.preTrip?.status ?? "NOT_STARTED"}
+                  status={
+                    workflow?.preTrip?.status ??
+                    (demoMode
+                      ? selectedPretripTablet?.overall === "READY"
+                        ? "PASSED"
+                        : selectedPretripTablet?.blockReasons.some((r) => /maintenance|defect|tire/i.test(r))
+                          ? "BLOCKED"
+                          : "IN_PROGRESS"
+                      : "NOT_STARTED")
+                  }
                   detail={
                     workflow?.preTrip
                       ? `${workflow.preTrip.items.length} checklist items, ${workflow.preTrip.defects.length} recorded defects`
-                      : workflow?.assignment
-                        ? "Pre-trip not started."
-                        : "Assign driver and equipment before pre-trip."
+                      : demoMode
+                        ? selectedPretripTablet?.overall === "READY"
+                          ? `Pre-trip complete: 6 inspection sections verified (A–F) for truck ${selectedPretripTablet.assetId}.`
+                          : `Pre-trip inspect status: ${selectedPretripTablet?.blockReasons.join(", ") || "Inspection in progress."}`
+                        : workflow?.assignment
+                          ? "Pre-trip not started."
+                          : "Assign driver and equipment before pre-trip."
                   }
                   meta={
                     workflow?.preTrip?.completedAt
                       ? `Completed ${formatShortDateTime(workflow.preTrip.completedAt)}`
                       : workflow?.preTrip?.status === "BLOCKED"
                         ? "Blocking defect is currently holding completion."
-                        : undefined
+                        : demoMode
+                          ? `Truck ${selectedPretripTablet?.assetId ?? selectedRelationship?.assetId ?? "N/A"}`
+                          : undefined
                   }
                 />
                 <WorkflowCard
                   title="Assignment / Equipment"
-                  status={workflow?.assignment?.status ?? "UNASSIGNED"}
+                  status={
+                    workflow?.assignment?.status ??
+                    (selectedOperating?.assigned ? "ACTIVE" : "UNASSIGNED")
+                  }
                   detail={
                     workflow?.assignment
                       ? `${workflow.assignment.driver?.firstName ?? workflow.assignment.driverId} · ${workflow.assignment.tractorEquipment?.unitNumber ?? workflow.assignment.tractorEquipmentId}`
-                      : demoMode
-                        ? `${selectedRelationship?.driverId ?? "Driver not available"} · Truck ${selectedRelationship?.assetId ?? "not available"}`
+                      : selectedOperating
+                        ? `${selectedOperating.driverName ?? selectedOperating.driverId ?? "Driver not available"} · Truck ${selectedOperating.assetId ?? "not available"}`
                         : "No active assignment"
                   }
                   meta={
                     workflow?.assignment?.trailerEquipment
                       ? `Trailer ${workflow.assignment.trailerEquipment.unitNumber}`
-                      : demoMode
-                        ? `Trailer ${selectedRelationship?.trailerId ?? "Not available"}`
+                      : selectedOperating?.trailerId
+                        ? `Trailer ${selectedOperating.trailerId}`
                         : "Trailer optional"
                   }
                 />
                 <WorkflowCard
                   title="Dispatch Release"
-                  status={workflow?.latestRelease?.disposition ?? "HOLD"}
-                  detail={workflow?.latestRelease?.summary ?? "No release has been evaluated for the active assignment."}
+                  status={
+                    workflow?.latestRelease?.disposition ??
+                    selectedOperating?.releaseDisposition ??
+                    "HOLD"
+                  }
+                  detail={
+                    workflow?.latestRelease?.summary ??
+                    selectedOperating?.releaseSummary ??
+                    "No release has been evaluated for the active assignment."
+                  }
                   meta={
                     workflow?.latestRelease
                       ? `Policy ${workflow.latestRelease.policyVersion} · ${formatShortDateTime(workflow.latestRelease.evaluatedAt)}`
-                      : "Use the release page to request an authoritative evaluation."
+                      : selectedOperating
+                        ? "Canonical load, pre-trip, seal, and settlement fields"
+                        : "Use the release page to request an authoritative evaluation."
                   }
                 />
               </div>
+
+              {demoMode && selectedOperating ? (
+                <div className="mt-5 rounded-lg border border-amber-800/45 bg-amber-950/20 p-4">
+                  <p className="text-xs font-bold uppercase tracking-wide text-amber-300">Exceptions, proof, and settlement</p>
+                  <div className="mt-3 grid gap-3 text-sm text-slate-200 sm:grid-cols-2">
+                    <p>Owner: <strong>{selectedOperating.exceptionOwner}</strong></p>
+                    <p>Next action: <strong>{selectedOperating.nextAction}</strong></p>
+                    <p>Proof: <strong>{selectedOperating.proofLabel}</strong></p>
+                    <p>
+                      Settlement:{" "}
+                      <strong>
+                        {selectedOperating.settlementHold
+                          ? selectedOperating.settlementHoldReason || "Hold active"
+                          : "No settlement hold"}
+                      </strong>
+                    </p>
+                    <p>Release: <strong>{selectedOperating.releaseDisposition}</strong></p>
+                    <p>Consequence: <strong>{selectedOperating.releaseConsequence}</strong></p>
+                  </div>
+                  {selectedOperating.blockers.length > 0 ? (
+                    <ul className="mt-3 space-y-2 text-sm text-amber-50/90">
+                      {selectedOperating.blockers.map((blocker) => (
+                        <li key={blocker.id}>
+                          <p>- {blocker.label}</p>
+                          <p className="text-[11px] text-amber-100/70">
+                            Owner {blocker.owner} · Next {blocker.nextAction}
+                          </p>
+                        </li>
+                      ))}
+                    </ul>
+                  ) : (
+                    <p className="mt-3 text-sm text-slate-400">No unexplained attention item on this load.</p>
+                  )}
+                </div>
+              ) : null}
 
               {demoMode ? (
                 <div className="mt-5 rounded-lg border border-cyan-800/50 bg-cyan-950/20 p-4">
                   <p className="text-xs font-bold uppercase tracking-wide text-cyan-300">Canonical relationship spine</p>
                   <div className="mt-3 grid gap-3 text-sm text-slate-200 sm:grid-cols-2 lg:grid-cols-3">
-                    <p>Driver: <strong>{selectedRelationship?.driverId ?? "Not available"}</strong></p>
-                    <p>Truck: <strong>{selectedRelationship?.assetId ?? "Not available"}</strong></p>
-                    <p>Trailer: <strong>{selectedRelationship?.trailerId ?? "Not available"}</strong></p>
+                    <p>Driver: <strong>{selectedOperating?.driverId ?? selectedRelationship?.driverId ?? "Not available"}</strong></p>
+                    <p>Truck: <strong>{selectedOperating?.assetId ?? selectedRelationship?.assetId ?? "Not available"}</strong></p>
+                    <p>Trailer: <strong>{selectedOperating?.trailerId ?? selectedRelationship?.trailerId ?? "Not available"}</strong></p>
                     <p>Safety events: <strong>{selectedRelationship?.safetyEventIds.length ?? 0}</strong></p>
-                    <p>Evidence records: <strong>{selectedRelationship?.evidenceRecordIds.length ?? 0}</strong></p>
+                    <p>Evidence records: <strong>{selectedRelationship?.evidenceReferences.length ?? selectedRelationship?.evidenceRecordIds.length ?? 0}</strong></p>
                     <p>Documents: <strong>{selectedRelationship?.documentReferences.length ?? 0}</strong></p>
                     <p>Work orders: <strong>{selectedRelationship?.workOrderIds.length ?? 0}</strong></p>
                     <p>RFID events: <strong>{selectedRelationship?.rfidEventIds.length ?? 0}</strong></p>
                     <p>Claims: <strong>{selectedRelationship?.claimIds.length ?? 0}</strong></p>
                   </div>
-                  <p className="mt-3 text-xs text-slate-400">
-                    Readiness, exception, and release decisions remain on their existing BOF workflow pages; no demo assignment or release record is synthesized here.
-                  </p>
                   <div className="mt-4 flex flex-wrap gap-2">
-                    {selectedRelationship?.driverId ? (
+                    {selectedOperating?.driverId ? (
                       <Link
-                        href={`/drivers/${selectedRelationship.driverId}/safety`}
+                        href={`/drivers/${selectedOperating.driverId}/safety`}
                         className="rounded border border-cyan-700/50 px-3 py-1.5 text-xs font-semibold text-cyan-100 hover:bg-cyan-900/30"
                       >
                         Open driver safety
@@ -412,6 +535,12 @@ export function DispatchBoardScreen({
                       className="rounded border border-amber-700/50 px-3 py-1.5 text-xs font-semibold text-amber-100 hover:bg-amber-900/30"
                     >
                       Review exceptions
+                    </Link>
+                    <Link
+                      href={`/dispatch?view=settlement&loadId=${selectedLoad.id}`}
+                      className="rounded border border-teal-700/50 px-3 py-1.5 text-xs font-semibold text-teal-100 hover:bg-teal-900/30"
+                    >
+                      Settlement readiness
                     </Link>
                   </div>
                 </div>
@@ -457,6 +586,13 @@ export function DispatchBoardScreen({
                 >
                   Change assignment
                 </button>
+                <button
+                  type="button"
+                  onClick={() => setTimelineLoadId(selectedLoad.id)}
+                  className="inline-flex min-h-11 items-center justify-center rounded-md border border-slate-700 px-4 py-2 text-sm font-bold text-slate-200 hover:bg-slate-900"
+                >
+                  View Timeline
+                </button>
               </div>
             </>
           ) : (
@@ -464,11 +600,11 @@ export function DispatchBoardScreen({
           )}
         </div>
 
-        <div className="rounded-xl border border-slate-800 bg-slate-900/45 p-5">
+        <div id="dispatch-board" className="rounded-xl border border-slate-800 bg-slate-900/45 p-5">
           <div className="flex items-center justify-between gap-4">
             <div>
-              <p className="text-xs font-bold uppercase tracking-[0.2em] text-teal-300">Backend dispatch board</p>
-              <h2 className="mt-2 text-2xl font-bold text-white">Authoritative load rows</h2>
+          <p className="text-xs font-bold uppercase tracking-[0.2em] text-teal-300">Dispatch board</p>
+          <h2 className="mt-2 text-2xl font-bold text-white">Operating load rows</h2>
             </div>
             <button
               type="button"
@@ -480,7 +616,7 @@ export function DispatchBoardScreen({
           </div>
           <p className="mt-2 text-sm leading-6 text-slate-300">
             {demoMode
-              ? "Canonical BOF load rows are shown here as the dispatch control view; backend assignment state is displayed when an authorized fleet context exists."
+              ? "Rows use the same canonical load, driver, equipment, and exception fields as the Load File."
               : "Loads, statuses, and assignment presence now come from backend records."}
           </p>
           {loadsError ? (
@@ -509,6 +645,8 @@ export function DispatchBoardScreen({
             ) : (
               filteredRows.map((load) => {
                 const assignment = assignmentMap[load.id];
+                const operating = demoMode ? getCanonicalDispatchLoadState(bofData, load.id) : null;
+                const isAssigned = assignment?.status === "ACTIVE" || Boolean(operating?.assigned);
                 const active = load.id === selectedLoad?.id;
 
                 return (
@@ -517,12 +655,24 @@ export function DispatchBoardScreen({
                     className={`rounded-xl border p-4 transition ${
                       active ? "border-teal-500/65 bg-teal-950/20" : "border-slate-800 bg-slate-950/60 hover:border-slate-700"
                     }`}
+                    onClick={() => onSelectLoad(load.id)}
+                    onKeyDown={(event) => {
+                      if (event.key === "Enter" || event.key === " ") {
+                        event.preventDefault();
+                        onSelectLoad(load.id);
+                      }
+                    }}
+                    role="button"
+                    tabIndex={0}
                   >
                     <div className="flex flex-wrap items-start justify-between gap-4">
                       <div>
                         <button
                           type="button"
-                          onClick={() => onSelectLoad(load.id)}
+                          onClick={(event) => {
+                            event.stopPropagation();
+                            onSelectLoad(load.id);
+                          }}
                           className="text-left text-lg font-black text-white hover:text-teal-100"
                         >
                           {load.id}
@@ -531,6 +681,11 @@ export function DispatchBoardScreen({
                         <p className="mt-1 text-xs text-slate-500">
                           {load.origin} to {load.destination}
                         </p>
+                        {operating?.driverName ? (
+                          <p className="mt-2 text-xs text-slate-400">
+                            {operating.driverName} · {operating.assetId ?? "No truck"} · {operating.trailerId ?? "No trailer"}
+                          </p>
+                        ) : null}
                       </div>
                       <div className="flex flex-wrap gap-2">
                         <span className={`rounded-full px-3 py-1 text-xs font-bold ${loadStatusChipClass(load.status)}`}>
@@ -538,13 +693,18 @@ export function DispatchBoardScreen({
                         </span>
                         <span
                           className={`rounded-full border px-3 py-1 text-xs font-bold ${
-                            assignment?.status === "ACTIVE"
+                            isAssigned
                               ? "border-cyan-700/50 bg-cyan-950/30 text-cyan-100"
                               : "border-slate-700 bg-slate-900/70 text-slate-200"
                           }`}
                         >
-                          {assignment?.status === "ACTIVE" ? "Assigned" : "Unassigned"}
+                          {isAssigned ? "Assigned" : "Unassigned"}
                         </span>
+                        {operating?.needsAttention ? (
+                          <span className="rounded-full border border-amber-700/50 bg-amber-950/30 px-3 py-1 text-xs font-bold text-amber-100">
+                            Attention
+                          </span>
+                        ) : null}
                       </div>
                     </div>
 
@@ -566,14 +726,20 @@ export function DispatchBoardScreen({
                     <div className="mt-4 flex flex-wrap gap-2">
                       <button
                         type="button"
-                        onClick={() => onOpenLoad(load.id)}
+                        onClick={(event) => {
+                          event.stopPropagation();
+                          onOpenLoad(load.id);
+                        }}
                         className="rounded border border-slate-700 px-3 py-1.5 text-xs font-medium text-slate-200 hover:bg-slate-900"
                       >
-                        Open detail
+                        Open load file
                       </button>
                       <button
                         type="button"
-                        onClick={() => onOpenAssign(load.id)}
+                        onClick={(event) => {
+                          event.stopPropagation();
+                          onOpenAssign(load.id);
+                        }}
                         className="rounded border border-teal-600 px-3 py-1.5 text-xs font-medium text-teal-100 hover:bg-teal-900/30"
                       >
                         Assign
@@ -590,6 +756,16 @@ export function DispatchBoardScreen({
                       >
                         Release
                       </Link>
+                      <button
+                        type="button"
+                        onClick={(event) => {
+                          event.stopPropagation();
+                          setTimelineLoadId(load.id);
+                        }}
+                        className="rounded border border-slate-700 px-3 py-1.5 text-xs font-medium text-slate-200 hover:bg-slate-900"
+                      >
+                        View Timeline
+                      </button>
                     </div>
                   </article>
                 );
@@ -599,13 +775,26 @@ export function DispatchBoardScreen({
         </div>
       </section>
 
-      {selectedLoad ? <CommandWorkspaceLinks loadId={selectedLoad.id} /> : null}
+      {selectedLoad ? (
+        <section className="space-y-5">
+          <RouteIntelligenceV4 loadId={selectedLoad.id} />
+          <DispatchAssetCards loadId={selectedLoad.id} />
+          <RfidProofChainV4 loadId={selectedLoad.id} showAllEvents={false} maxEvents={5} />
+          <CommandWorkspaceLinks loadId={selectedLoad.id} />
+        </section>
+      ) : null}
 
       {workflowLoading && selectedLoad ? (
         <div className="rounded-xl border border-slate-800 bg-slate-900/45 p-4 text-sm text-slate-400">
           Loading workflow state for {selectedLoad.id}...
         </div>
       ) : null}
+
+      <DispatchOperatingTimeline
+        loadId={timelineLoadId ?? ""}
+        open={Boolean(timelineLoadId)}
+        onClose={() => setTimelineLoadId(null)}
+      />
     </div>
   );
 }

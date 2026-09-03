@@ -1,0 +1,155 @@
+.bof-team-briefing {
+  background: #f7fafc;
+  color: #0f172a;
+}
+
+.bof-team-briefing__inner {
+  margin: 0 auto;
+  max-width: 1080px;
+  padding: 48px 24px 80px;
+}
+
+.bof-team-briefing__hero h1,
+.bof-brief-slide h2 {
+  letter-spacing: -0.03em;
+  margin: 0;
+  text-align: left;
+}
+
+.bof-team-briefing__hero h1 {
+  color: #0b3a62;
+  font-size: clamp(2.1rem, 4vw, 3.4rem);
+  font-weight: 800;
+}
+
+.bof-team-briefing__lede {
+  color: #334155;
+  font-size: 1.15rem;
+  line-height: 1.6;
+  margin: 16px 0 0;
+  max-width: 46rem;
+}
+
+.bof-brief-callouts {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  margin-top: 28px;
+}
+
+.bof-brief-callouts span {
+  background: #fff;
+  border: 1px solid #d6e4f0;
+  border-left: 4px solid #0b6aa2;
+  border-radius: 10px;
+  color: #0b3a62;
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  padding: 12px 14px;
+  text-transform: uppercase;
+}
+
+.bof-brief-slide {
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 18px;
+  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.04);
+  margin-top: 28px;
+  padding: 32px 32px 28px;
+}
+
+.bof-brief-slide__index {
+  color: #0b6aa2;
+  display: block;
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  margin-bottom: 10px;
+  text-transform: uppercase;
+}
+
+.bof-brief-slide h2 {
+  color: #0b3a62;
+  font-size: clamp(1.45rem, 2.4vw, 2rem);
+}
+
+.bof-brief-slide p {
+  color: #334155;
+  font-size: 1.02rem;
+  line-height: 1.65;
+  margin: 12px 0 0;
+}
+
+.bof-brief-flow {
+  display: grid;
+  gap: 10px;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  margin-top: 20px;
+}
+
+.bof-brief-flow div,
+.bof-brief-compare article,
+.bof-brief-links a {
+  background: #f8fbff;
+  border: 1px solid #dbe7f2;
+  border-radius: 12px;
+  padding: 14px 16px;
+}
+
+.bof-brief-flow strong,
+.bof-brief-compare h3 {
+  color: #0b3a62;
+  display: block;
+  font-size: 0.92rem;
+}
+
+.bof-brief-flow span,
+.bof-brief-compare p,
+.bof-brief-links a span {
+  color: #475569;
+  display: block;
+  font-size: 0.88rem;
+  margin-top: 6px;
+}
+
+.bof-brief-compare {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: 1fr 1fr;
+  margin-top: 20px;
+}
+
+.bof-brief-links {
+  display: grid;
+  gap: 10px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  margin-top: 20px;
+}
+
+.bof-brief-links a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.bof-brief-links a:hover {
+  border-color: #0b6aa2;
+}
+
+.bof-brief-note {
+  background: #eef6ff;
+  border-radius: 12px;
+  color: #1e3a5f;
+  font-size: 0.92rem;
+  margin-top: 22px;
+  padding: 14px 16px;
+}
+
+@media (max-width: 800px) {
+  .bof-brief-callouts,
+  .bof-brief-flow,
+  .bof-brief-compare,
+  .bof-brief-links {
+    grid-template-columns: 1fr;
+  }
+}

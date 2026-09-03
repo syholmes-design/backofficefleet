@@ -17,6 +17,11 @@ import { normalizeCanonicalLoadId } from "@/lib/canonical-load-stories";
 
 type Props = { params: Promise<{ id: string }> };
 
+function resolveLoadPageId(rawId: string) {
+  if (/^PI-TEST-/i.test(rawId.trim())) return rawId.trim();
+  return normalizeCanonicalLoadId(rawId);
+}
+
 function serializeLoad(load: Awaited<ReturnType<typeof getLoadById>>): DispatchLoadRecord {
   return {
     ...load,
@@ -31,7 +36,7 @@ function serializeLoad(load: Awaited<ReturnType<typeof getLoadById>>): DispatchL
 
 export async function generateMetadata({ params }: Props) {
   const { id: rawId } = await params;
-  const id = normalizeCanonicalLoadId(rawId);
+  const id = resolveLoadPageId(rawId);
   return {
     title: `Load ${id} | BOF`,
   };
@@ -39,7 +44,7 @@ export async function generateMetadata({ params }: Props) {
 
 export default async function LoadDetailPage({ params }: Props) {
   const { id: rawId } = await params;
-  const id = normalizeCanonicalLoadId(rawId);
+  const id = resolveLoadPageId(rawId);
   const session = (await auth()) as SessionWithMemberships;
 
   if (!session?.user?.id) {

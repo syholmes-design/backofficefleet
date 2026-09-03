@@ -3,13 +3,15 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
+    "postinstall": "prisma generate",
     "dev": "next dev",
-    "build": "node scripts/clear-next-cache.mjs && next build",
+    "build": "node scripts/clear-next-cache.mjs && next build && node scripts/ensure-next-chunk-aliases.mjs",
     "start": "next start",
     "lint": "npm run lint:eslint",
     "lint:next": "next lint",
     "lint:eslint": "eslint app components lib next.config.ts --max-warnings=0",
     "typecheck": "tsc -p tsconfig.typecheck.json --noEmit",
+    "provision:demo-user": "npx --yes tsx scripts/provision-demo-user.ts",
     "codex:bootstrap": "node scripts/codex-bootstrap.mjs",
     "codex:registry-sync": "node scripts/agent-registry-sync.mjs",
     "codex:before-demo": "node scripts/codex-before-demo.mjs",
@@ -54,6 +56,8 @@
     "validate:driver-blockers": "node scripts/validate-driver-blockers.mjs",
     "validate:driver-document-packets": "node scripts/validate-driver-document-packets.mjs",
     "validate:driver-dqf-readiness": "node scripts/validate-driver-dqf-readiness.mjs",
+    "validate:process-intelligence-foundation": "npx --yes tsx scripts/test-process-intelligence-foundation.ts",
+    "validate:load-to-cash-foundation": "npx --yes tsx scripts/test-load-to-cash-foundation.ts",
     "generate:driver-dqf-summaries": "node scripts/generate-driver-dqf-summaries.mjs",
     "validate:driver-dqf-summaries": "node scripts/validate-driver-dqf-summaries.mjs",
     "validate:safety-credential-mapping": "node scripts/validate-safety-credential-mapping.mjs",
@@ -66,7 +70,8 @@
     "generate:driver-docs": "node scripts/generate-driver-docs.mjs && node scripts/patch-medical-card-html-demo.mjs && npm run validate:driver-medical-status",
     "deploy:full": "npm run generate:driver-docs && git add . && (git commit -m \"Auto deploy: regenerate docs + sync\" || node -e \"process.exit(0)\") && git push && npx --yes vercel --prod",
     "demo:reset": "node scripts/reset-demo.mjs",
-    "demo:reset:deploy": "npm run demo:reset && git add . && (git commit -m \"Demo reset\" || node -e \"process.exit(0)\") && git push && npx --yes vercel --prod"
+    "demo:reset:deploy": "npm run demo:reset && git add . && (git commit -m \"Demo reset\" || node -e \"process.exit(0)\") && git push && npx --yes vercel --prod",
+    "build:second-gen-loads": "node scripts/build-second-generation-loads.mjs"
   },
   "dependencies": {
     "@auth/prisma-adapter": "^2.11.3",

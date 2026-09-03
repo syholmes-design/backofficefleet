@@ -34,6 +34,13 @@ export default function CustomerPortalPage() {
           <p className="text-xl text-gray-600 max-w-3xl mx-auto">
             Controlled visibility into shipments, proof documents, exceptions, claims, and invoice readiness.
           </p>
+          <p className="mt-4 max-w-3xl mx-auto rounded-lg border border-teal-200 bg-teal-50 p-4 text-sm text-teal-950">
+            This page remains the thinner demo-load visibility portal. The richer customer workspace (intake, quote, assignment, BOL packet, tracking, billing) is at{" "}
+            <Link href="/customer-portal" className="font-semibold underline">
+              /customer-portal
+            </Link>
+            . This page is not deleted.
+          </p>
           <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-8 max-w-md mx-auto">
             <div className="text-lg font-bold text-blue-900 mb-2">
               {customerProfile.customerName}

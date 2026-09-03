@@ -409,6 +409,374 @@ enum TrainingCertificationOutcome {
   REQUIRES_REVIEW
 }
 
+enum RecordLifecycleClass {
+  LIVE
+  HISTORICAL
+}
+
+enum RecordOriginKind {
+  BOF_CREATED
+  USER_CREATED
+  IMPORTED
+  EXTERNAL_SYSTEM
+  SYSTEM_GENERATED
+}
+
+enum RecordVerificationClass {
+  VERIFIED
+  UNVERIFIED
+}
+
+enum RecordDerivationKind {
+  SOURCE
+  DERIVED
+}
+
+enum OriginValidationStatus {
+  PENDING
+  PASSED
+  FAILED
+}
+
+enum OperatingProcessStage {
+  LOAD_INTAKE
+  CANONICAL_LOAD
+  DISPATCH
+  DRIVER_EQUIPMENT
+  DOCUMENTS
+  PRE_TRIP_EVIDENCE
+  READINESS
+  RELEASE
+  DELIVERY_PROOF
+  SETTLEMENT
+  INVOICE_CASH
+}
+
+enum OperatingProcessEventType {
+  LOAD_INTAKE_RECORDED
+  CANONICAL_LOAD_RECORDED
+  DISPATCH_ASSIGNED
+  DRIVER_LINKED
+  EQUIPMENT_LINKED
+  DOCUMENT_ATTACHED
+  PRETRIP_RECORDED
+  EVIDENCE_CAPTURED
+  READINESS_EVALUATED
+  RELEASE_EVALUATED
+  DELIVERY_PROOF_RECORDED
+  SETTLEMENT_RECORDED
+  INVOICE_RECORDED
+  EXCEPTION_OPENED
+  CORRECTIVE_ACTION_RECORDED
+  EXCEPTION_VERIFIED
+  DELIVERED
+  DELIVERY_EXCEPTION
+  POD_RECEIVED
+  POD_VERIFIED
+  SETTLEMENT_CREATED
+  SETTLEMENT_HELD
+  SETTLEMENT_REVIEWED
+  SETTLEMENT_APPROVED
+  SETTLEMENT_PAID
+  SETTLEMENT_CLOSED
+  INVOICE_CREATED
+  INVOICE_SUBMITTED
+  INVOICE_EXCEPTION
+  INVOICE_APPROVED
+  INVOICE_PAID
+  INVOICE_CLOSED
+  PAYMENT_RECORDED
+}
+
+enum OperatingActorType {
+  USER
+  DRIVER
+  BOF_OPERATIONS
+  SYSTEM
+  EXTERNAL
+}
+
+enum OperatingOwnerTeam {
+  BOF_OPERATIONS
+  COMPLIANCE
+  DISPATCH
+  FINANCE
+  HR
+  SAFETY
+  CUSTOMER_SUCCESS
+  FLEET_PERSONNEL
+}
+
+enum OperatingExceptionStatus {
+  OPEN
+  IN_PROGRESS
+  RESOLVED
+  VERIFIED
+}
+
+enum OperatingActionStatus {
+  ASSIGNED
+  IN_PROGRESS
+  COMPLETED
+  VERIFIED
+}
+
+enum IngestionSourceFormat {
+  CSV
+  EXCEL
+  JSON
+  API
+  STRUCTURED
+  DOCUMENT_METADATA
+}
+
+enum IngestionRecordStatus {
+  RECEIVED
+  MAPPED
+  NORMALIZED
+  VALIDATED
+  REJECTED
+  CANONICALIZED
+  EVENT_RECORDED
+}
+
+enum LoadDeliveryStatus {
+  DELIVERED
+  DELIVERY_EXCEPTION
+  UNDELIVERED
+}
+
+enum LoadProofType {
+  POD
+  BOL
+  PHOTO
+  GEOLOCATION
+  SIGNATURE
+  OTHER
+}
+
+enum LoadProofStatus {
+  RECEIVED
+  VERIFIED
+  REJECTED
+  MISSING
+  EXCEPTION
+}
+
+enum SettlementRecordStatus {
+  DRAFT
+  CREATED
+  HELD
+  REVIEWED
+  APPROVED
+  PAID
+  CLOSED
+  EXCEPTION
+}
+
+enum InvoiceRecordStatus {
+  DRAFT
+  CREATED
+  SUBMITTED
+  EXCEPTION
+  APPROVED
+  PAID
+  CLOSED
+}
+
+enum InvoicePaymentStatus {
+  RECORDED
+  APPLIED
+  FAILED
+}
+
+enum RecruitingV2CandidateStage {
+  APPLICANT
+  QUALIFICATION
+  INTERVIEW
+  DOCUMENT_REVIEW
+  COMPLIANCE
+  OFFER
+  ONBOARDING
+  DRIVER_ACTIVATION_READY
+  ACTIVATED
+}
+
+enum RecruitingV2WorkflowStatus {
+  READY
+  PENDING
+  BLOCKED
+  NOT_PROVIDED
+  NOT_APPLICABLE
+  UNDER_REVIEW
+  COMPLETE
+}
+
+enum RecruitingV2InterviewStatus {
+  NOT_SCHEDULED
+  SCHEDULED
+  COMPLETED
+  NEEDS_FOLLOW_UP
+  CANCELLED
+}
+
+enum RecruitingV2Recommendation {
+  ADVANCE
+  HOLD_FOR_REVIEW
+  DO_NOT_ADVANCE
+  PENDING
+}
+
+enum RecruitingV2DocumentType {
+  CDL
+  MVR
+  MEDICAL
+  CLEARINGHOUSE
+  I9
+  W9
+  ROAD_TEST
+  EMPLOYMENT_VERIFICATION
+}
+
+enum RecruitingV2DocumentStatus {
+  RECEIVED
+  PENDING_REVIEW
+  VERIFIED
+  REJECTED
+}
+
+enum RecruitingV2GateState {
+  OPEN
+  BLOCKED
+  SATISFIED
+}
+
+enum RecruitingV2ActivationStatus {
+  PENDING
+  READY
+  ACTIVE
+}
+
+model Position {
+  id           String      @id @default(cuid())
+  positionCode String      @unique
+  title        String
+  homeTerminal String
+  freightType  String
+  primaryLanes String
+  compensation String
+  description  String
+  status       String      @default("OPEN")
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+  candidates   Candidate[]
+  interviews   Interview[]
+
+  @@index([status])
+  @@index([homeTerminal])
+}
+
+model Candidate {
+  id                    String                     @id @default(cuid())
+  candidateCode         String                     @unique
+  fullName              String
+  email                 String
+  phone                 String
+  homeLocation          String
+  cdlClass              String
+  cdlState              String
+  cdlNumberMasked       String
+  applicationStatus     RecruitingV2WorkflowStatus @default(PENDING)
+  qualificationStatus   RecruitingV2WorkflowStatus @default(PENDING)
+  documentReviewStatus  RecruitingV2WorkflowStatus @default(PENDING)
+  complianceStatus      RecruitingV2WorkflowStatus @default(PENDING)
+  offerStatus           RecruitingV2WorkflowStatus @default(NOT_PROVIDED)
+  onboardingStatus      RecruitingV2WorkflowStatus @default(PENDING)
+  activationStage       RecruitingV2CandidateStage @default(APPLICANT)
+  activationStatus      RecruitingV2ActivationStatus @default(PENDING)
+  applicationSummary    Json
+  qualificationSummary  Json
+  documentRequirements  Json
+  complianceSummary     Json
+  offerSummary          Json?
+  onboardingSummary     Json
+  auditTrail            Json
+  positionId            String
+  position              Position                   @relation(fields: [positionId], references: [id], onDelete: Restrict)
+  interviews            Interview[]
+  documentRecords       DocumentRecord[]
+  complianceGates       ComplianceGate[]
+  createdAt             DateTime                   @default(now())
+  updatedAt             DateTime                   @updatedAt
+
+  @@index([candidateCode])
+  @@index([positionId])
+  @@index([activationStage])
+}
+
+model Interview {
+  id             String                      @id @default(cuid())
+  interviewCode  String                      @unique
+  candidateId    String
+  positionId     String
+  scheduledFor   DateTime?
+  interviewType  String
+  location       String
+  status         RecruitingV2InterviewStatus @default(NOT_SCHEDULED)
+  score          Int?
+  recommendation RecruitingV2Recommendation  @default(PENDING)
+  interviewers   Json
+  categoryScores Json
+  notes          String?
+  auditTrail     Json
+  candidate      Candidate                   @relation(fields: [candidateId], references: [id], onDelete: Cascade)
+  position       Position                    @relation(fields: [positionId], references: [id], onDelete: Restrict)
+  createdAt      DateTime                    @default(now())
+  updatedAt      DateTime                    @updatedAt
+
+  @@index([candidateId])
+  @@index([positionId])
+  @@index([status])
+}
+
+model DocumentRecord {
+  id                String                     @id @default(cuid())
+  documentCode      String                     @unique
+  candidateId       String
+  documentType      RecruitingV2DocumentType
+  status            RecruitingV2DocumentStatus
+  expirationDate    DateTime?
+  uploadedBy        String?
+  verifiedBy        String?
+  verificationNotes String?
+  metadata          Json?
+  candidate         Candidate                  @relation(fields: [candidateId], references: [id], onDelete: Cascade)
+  createdAt         DateTime                   @default(now())
+  updatedAt         DateTime                   @updatedAt
+
+  @@index([candidateId])
+  @@index([documentType])
+  @@index([status])
+  @@index([updatedAt])
+}
+
+model ComplianceGate {
+  id             String                   @id @default(cuid())
+  candidateId    String
+  documentType   RecruitingV2DocumentType
+  state          RecruitingV2GateState
+  reason         String
+  requiredAction String
+  candidate      Candidate                @relation(fields: [candidateId], references: [id], onDelete: Cascade)
+  createdAt      DateTime                 @default(now())
+  updatedAt      DateTime                 @updatedAt
+
+  @@unique([candidateId, documentType])
+  @@index([candidateId])
+  @@index([documentType])
+  @@index([state])
+}
+
 model Fleet {
   id                               String                            @id @default(cuid())
   slug                             String                            @unique
@@ -446,6 +814,16 @@ model Fleet {
   regulatoryApplicabilities        RegulatoryApplicability[]
   trainingAssignments              TrainingAssignment[]
   trainingCertifications           TrainingCertification[]
+  operatingProcessEvents           OperatingProcessEvent[]
+  operatingExceptions              OperatingException[]
+  operatingCorrectiveActions       OperatingCorrectiveAction[]
+  ingestionBatches                 IngestionBatch[]
+  ingestionRecords                 IngestionRecord[]
+  loadDeliveries                   LoadDelivery[]
+  loadProofsOfDelivery             LoadProofOfDelivery[]
+  settlements                      Settlement[]
+  invoices                         Invoice[]
+  invoicePayments                  InvoicePayment[]
 
   @@index([status])
   @@index([carrierGroupId, status])
@@ -683,6 +1061,7 @@ model Driver {
   regulatoryApplicabilities        RegulatoryApplicability[]
   trainingAssignments              TrainingAssignment[]
   trainingCertifications           TrainingCertification[]
+  settlements                      Settlement[]
 
   @@index([fleetId, status])
   @@index([email])
@@ -1077,17 +1456,35 @@ model Load {
   referenceNumber          String?
   secondaryReferenceNumber String?
   status                   LoadStatus
-  createdAt                DateTime              @default(now())
-  updatedAt                DateTime              @updatedAt
-  fleet                    Fleet                 @relation(fields: [fleetId], references: [id], onDelete: Restrict)
+  lifecycleClass           RecordLifecycleClass     @default(LIVE)
+  originKind               RecordOriginKind         @default(BOF_CREATED)
+  verificationClass        RecordVerificationClass  @default(UNVERIFIED)
+  derivationKind           RecordDerivationKind     @default(SOURCE)
+  sourceSystem             String?
+  sourceRecordId           String?
+  importedAt               DateTime?
+  originValidationStatus   OriginValidationStatus?
+  createdAt                DateTime                 @default(now())
+  updatedAt                DateTime                 @updatedAt
+  fleet                    Fleet                    @relation(fields: [fleetId], references: [id], onDelete: Restrict)
   dispatchAssignments      DispatchAssignment[]
   dispatchReleases         DispatchRelease[]
-  conditionEvents          ConditionEvent[]      @relation("ConditionEventLoad")
-  operationalEvidence      OperationalEvidence[] @relation("OperationalEvidenceLoad")
+  conditionEvents          ConditionEvent[]         @relation("ConditionEventLoad")
+  operationalEvidence      OperationalEvidence[]    @relation("OperationalEvidenceLoad")
+  operatingProcessEvents   OperatingProcessEvent[]
+  operatingExceptions      OperatingException[]
+  operatingCorrectiveActions OperatingCorrectiveAction[]
+  ingestionRecords         IngestionRecord[]
+  deliveries               LoadDelivery[]
+  proofsOfDelivery         LoadProofOfDelivery[]
+  settlements              Settlement[]
+  invoices                 Invoice[]
+  invoicePayments          InvoicePayment[]
 
   @@index([fleetId, status])
   @@index([fleetId, pickupWindowStart])
   @@index([fleetId, deliveryWindowStart])
+  @@index([fleetId, sourceSystem, sourceRecordId])
 }
 
 model Equipment {
@@ -1411,6 +1808,306 @@ model AuditEvent {
   @@index([tenantId, createdAt])
   @@index([actorId, createdAt])
   @@index([entityType, entityId])
+}
+
+model OperatingProcessEvent {
+  id                   String                    @id @default(cuid())
+  fleetId              String
+  loadId               String?
+  entityType           String
+  entityId             String
+  eventType            OperatingProcessEventType
+  processStage         OperatingProcessStage
+  eventTimestamp       DateTime
+  recordedAt           DateTime                  @default(now())
+  actorId              String?
+  actorType            OperatingActorType
+  originKind           RecordOriginKind
+  lifecycleClass       RecordLifecycleClass      @default(LIVE)
+  verificationClass    RecordVerificationClass   @default(UNVERIFIED)
+  sourceSystem         String?
+  sourceRecordId       String?
+  priorState           String?
+  resultingState       String?
+  evidenceIds          Json?
+  documentIds          Json?
+  exceptionId          String?
+  decisionType         String?
+  decisionResult       String?
+  decisionReason       String?
+  decisionOwner        String?
+  operationalConsequence String?
+  financialConsequence   String?
+  serviceConsequence     String?
+  actionId             String?
+  resolutionStatus     String?
+  resolutionTimestamp  DateTime?
+  verificationActor    String?
+  verificationEvidence String?
+  relatedRecordType    String?
+  relatedRecordId      String?
+  createdAt            DateTime                  @default(now())
+  fleet                Fleet                     @relation(fields: [fleetId], references: [id], onDelete: Restrict)
+  load                 Load?                     @relation(fields: [loadId], references: [id], onDelete: Restrict)
+  exception            OperatingException?       @relation(fields: [exceptionId], references: [id], onDelete: SetNull)
+  action               OperatingCorrectiveAction? @relation(fields: [actionId], references: [id], onDelete: SetNull)
+
+  @@index([fleetId, eventTimestamp])
+  @@index([fleetId, loadId, eventTimestamp])
+  @@index([fleetId, entityType, entityId])
+  @@index([relatedRecordType, relatedRecordId])
+}
+
+model OperatingException {
+  id              String                   @id @default(cuid())
+  fleetId         String
+  loadId          String?
+  entityType      String
+  entityId        String
+  processStage    OperatingProcessStage
+  exceptionType   String
+  deviation       String
+  consequence     String
+  severity        String
+  ownerTeam       OperatingOwnerTeam
+  ownerUserId     String?
+  dueAt           DateTime?
+  status          OperatingExceptionStatus @default(OPEN)
+  recurrenceCount Int                      @default(1)
+  createdAt       DateTime                 @default(now())
+  updatedAt       DateTime                 @updatedAt
+  fleet           Fleet                    @relation(fields: [fleetId], references: [id], onDelete: Restrict)
+  load            Load?                    @relation(fields: [loadId], references: [id], onDelete: Restrict)
+  events          OperatingProcessEvent[]
+  actions         OperatingCorrectiveAction[]
+
+  @@index([fleetId, status])
+  @@index([fleetId, loadId, status])
+  @@index([fleetId, exceptionType])
+}
+
+model OperatingCorrectiveAction {
+  id                  String                @id @default(cuid())
+  fleetId             String
+  exceptionId         String
+  loadId              String?
+  actionType          String
+  assignedOwnerTeam   OperatingOwnerTeam
+  assignedOwnerUserId String?
+  status              OperatingActionStatus @default(ASSIGNED)
+  completedAt         DateTime?
+  verifiedAt          DateTime?
+  verificationActor   String?
+  verificationEvidence String?
+  outcome             String?
+  createdAt           DateTime              @default(now())
+  updatedAt           DateTime              @updatedAt
+  fleet               Fleet                 @relation(fields: [fleetId], references: [id], onDelete: Restrict)
+  exception           OperatingException    @relation(fields: [exceptionId], references: [id], onDelete: Restrict)
+  load                Load?                 @relation(fields: [loadId], references: [id], onDelete: Restrict)
+  events              OperatingProcessEvent[]
+
+  @@index([fleetId, status])
+  @@index([exceptionId, status])
+  @@index([fleetId, loadId])
+}
+
+model IngestionBatch {
+  id           String               @id @default(cuid())
+  fleetId      String
+  sourceSystem String
+  sourceFormat IngestionSourceFormat
+  status       IngestionRecordStatus @default(RECEIVED)
+  receivedAt   DateTime              @default(now())
+  createdAt    DateTime              @default(now())
+  fleet        Fleet                 @relation(fields: [fleetId], references: [id], onDelete: Restrict)
+  records      IngestionRecord[]
+
+  @@index([fleetId, receivedAt])
+}
+
+model IngestionRecord {
+  id                   String                 @id @default(cuid())
+  batchId              String
+  fleetId              String
+  sourceRecordId       String
+  idempotencyKey       String
+  sourcePayload        Json
+  mappedPayload        Json?
+  normalizedPayload    Json?
+  validationStatus     OriginValidationStatus @default(PENDING)
+  validationMessage    String?
+  status               IngestionRecordStatus  @default(RECEIVED)
+  canonicalEntityType  String?
+  canonicalEntityId    String?
+  loadId               String?
+  operatingEventId     String?
+  createdAt            DateTime               @default(now())
+  updatedAt            DateTime               @updatedAt
+  batch                IngestionBatch         @relation(fields: [batchId], references: [id], onDelete: Restrict)
+  fleet                Fleet                  @relation(fields: [fleetId], references: [id], onDelete: Restrict)
+  load                 Load?                  @relation(fields: [loadId], references: [id], onDelete: Restrict)
+
+  @@unique([fleetId, idempotencyKey])
+  @@index([batchId])
+  @@index([fleetId, sourceRecordId])
+}
+
+model LoadDelivery {
+  id                     String                 @id @default(cuid())
+  fleetId                String
+  loadId                 String
+  status                 LoadDeliveryStatus
+  deliveredAt            DateTime?
+  deliveryLocation       String?
+  exceptionStatus        String?
+  lifecycleClass         RecordLifecycleClass   @default(LIVE)
+  originKind             RecordOriginKind       @default(BOF_CREATED)
+  verificationClass      RecordVerificationClass @default(UNVERIFIED)
+  derivationKind         RecordDerivationKind   @default(SOURCE)
+  sourceSystem           String?
+  sourceRecordId         String?
+  importedAt             DateTime?
+  originValidationStatus OriginValidationStatus?
+  idempotencyKey         String
+  createdAt              DateTime               @default(now())
+  updatedAt              DateTime               @updatedAt
+  fleet                  Fleet                  @relation(fields: [fleetId], references: [id], onDelete: Restrict)
+  load                   Load                   @relation(fields: [loadId], references: [id], onDelete: Restrict)
+  proofs                 LoadProofOfDelivery[]
+
+  @@unique([fleetId, idempotencyKey])
+  @@index([fleetId, loadId])
+  @@index([fleetId, sourceSystem, sourceRecordId])
+}
+
+model LoadProofOfDelivery {
+  id                     String                 @id @default(cuid())
+  fleetId                String
+  loadId                 String
+  deliveryId             String?
+  proofType              LoadProofType
+  status                 LoadProofStatus        @default(RECEIVED)
+  evidenceId             String?
+  documentId             String?
+  verifiedBy             String?
+  verifiedAt             DateTime?
+  exceptionStatus        String?
+  lifecycleClass         RecordLifecycleClass   @default(LIVE)
+  originKind             RecordOriginKind       @default(BOF_CREATED)
+  verificationClass      RecordVerificationClass @default(UNVERIFIED)
+  derivationKind         RecordDerivationKind   @default(SOURCE)
+  sourceSystem           String?
+  sourceRecordId         String?
+  importedAt             DateTime?
+  originValidationStatus OriginValidationStatus?
+  idempotencyKey         String
+  createdAt              DateTime               @default(now())
+  updatedAt              DateTime               @updatedAt
+  fleet                  Fleet                  @relation(fields: [fleetId], references: [id], onDelete: Restrict)
+  load                   Load                   @relation(fields: [loadId], references: [id], onDelete: Restrict)
+  delivery               LoadDelivery?          @relation(fields: [deliveryId], references: [id], onDelete: Restrict)
+
+  @@unique([fleetId, idempotencyKey])
+  @@index([fleetId, loadId])
+  @@index([deliveryId])
+  @@index([fleetId, sourceSystem, sourceRecordId])
+}
+
+model Settlement {
+  id                     String                 @id @default(cuid())
+  fleetId                String
+  loadId                 String
+  driverId               String?
+  settlementDate         DateTime
+  payBasis               String?
+  grossAmount            Decimal                @db.Decimal(12, 2)
+  deductions             Decimal                @db.Decimal(12, 2) @default(0)
+  reimbursements         Decimal                @db.Decimal(12, 2) @default(0)
+  advances               Decimal                @db.Decimal(12, 2) @default(0)
+  netAmount              Decimal                @db.Decimal(12, 2)
+  status                 SettlementRecordStatus @default(CREATED)
+  holdReason             String?
+  lifecycleClass         RecordLifecycleClass   @default(LIVE)
+  originKind             RecordOriginKind       @default(BOF_CREATED)
+  verificationClass      RecordVerificationClass @default(UNVERIFIED)
+  derivationKind         RecordDerivationKind   @default(SOURCE)
+  sourceSystem           String?
+  sourceRecordId         String?
+  importedAt             DateTime?
+  originValidationStatus OriginValidationStatus?
+  idempotencyKey         String
+  createdAt              DateTime               @default(now())
+  updatedAt              DateTime               @updatedAt
+  fleet                  Fleet                  @relation(fields: [fleetId], references: [id], onDelete: Restrict)
+  load                   Load                   @relation(fields: [loadId], references: [id], onDelete: Restrict)
+  driver                 Driver?                @relation(fields: [driverId], references: [id], onDelete: Restrict)
+
+  @@unique([fleetId, idempotencyKey])
+  @@index([fleetId, loadId])
+  @@index([driverId])
+  @@index([fleetId, sourceSystem, sourceRecordId])
+}
+
+model Invoice {
+  id                     String                 @id @default(cuid())
+  fleetId                String
+  loadId                 String
+  customerId             String?
+  invoiceDate            DateTime
+  amount                 Decimal                @db.Decimal(12, 2)
+  status                 InvoiceRecordStatus    @default(CREATED)
+  submittedAt            DateTime?
+  paidAt                 DateTime?
+  terms                  String?
+  lifecycleClass         RecordLifecycleClass   @default(LIVE)
+  originKind             RecordOriginKind       @default(BOF_CREATED)
+  verificationClass      RecordVerificationClass @default(UNVERIFIED)
+  derivationKind         RecordDerivationKind   @default(SOURCE)
+  sourceSystem           String?
+  sourceRecordId         String?
+  importedAt             DateTime?
+  originValidationStatus OriginValidationStatus?
+  idempotencyKey         String
+  createdAt              DateTime               @default(now())
+  updatedAt              DateTime               @updatedAt
+  fleet                  Fleet                  @relation(fields: [fleetId], references: [id], onDelete: Restrict)
+  load                   Load                   @relation(fields: [loadId], references: [id], onDelete: Restrict)
+  payments               InvoicePayment[]
+
+  @@unique([fleetId, idempotencyKey])
+  @@index([fleetId, loadId])
+  @@index([fleetId, customerId])
+  @@index([fleetId, sourceSystem, sourceRecordId])
+}
+
+model InvoicePayment {
+  id                     String                 @id @default(cuid())
+  fleetId                String
+  loadId                 String
+  invoiceId              String
+  amount                 Decimal                @db.Decimal(12, 2)
+  paidAt                 DateTime
+  status                 InvoicePaymentStatus   @default(RECORDED)
+  lifecycleClass         RecordLifecycleClass   @default(LIVE)
+  originKind             RecordOriginKind       @default(BOF_CREATED)
+  verificationClass      RecordVerificationClass @default(UNVERIFIED)
+  derivationKind         RecordDerivationKind   @default(SOURCE)
+  sourceSystem           String?
+  sourceRecordId         String?
+  importedAt             DateTime?
+  originValidationStatus OriginValidationStatus?
+  idempotencyKey         String
+  createdAt              DateTime               @default(now())
+  updatedAt              DateTime               @updatedAt
+  fleet                  Fleet                  @relation(fields: [fleetId], references: [id], onDelete: Restrict)
+  load                   Load                   @relation(fields: [loadId], references: [id], onDelete: Restrict)
+  invoice                Invoice                @relation(fields: [invoiceId], references: [id], onDelete: Restrict)
+
+  @@unique([fleetId, idempotencyKey])
+  @@index([fleetId, loadId])
+  @@index([invoiceId])
+  @@index([fleetId, sourceSystem, sourceRecordId])
 }
 
 model OperationalChatThread {

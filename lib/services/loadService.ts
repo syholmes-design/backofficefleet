@@ -2,6 +2,8 @@ import { LoadStatus, type Prisma } from "@prisma/client";
 
 import { createAuditRecord } from "@/lib/audit";
 import { prisma } from "@/lib/prisma";
+import { recordCanonicalLoadEvent, recordLoadIntakeEvent } from "@/lib/process-intelligence/operating-event-service";
+import { getOperatingProcessStore } from "@/lib/process-intelligence/runtime-store";
 import { authorizedFleetAccess, type SessionUserLike } from "@/lib/services/intakeService";
 
 const MUTABLE_LOAD_FIELDS = new Set([
@@ -31,6 +33,13 @@ export type CreateLoadPayload = {
   referenceNumber?: string | null;
   secondaryReferenceNumber?: string | null;
   status: LoadStatus;
+  lifecycleClass?: "LIVE" | "HISTORICAL";
+  originKind?: "BOF_CREATED" | "USER_CREATED" | "IMPORTED" | "EXTERNAL_SYSTEM" | "SYSTEM_GENERATED";
+  verificationClass?: "VERIFIED" | "UNVERIFIED";
+  sourceSystem?: string | null;
+  sourceRecordId?: string | null;
+  importedAt?: LoadDateInput;
+  originValidationStatus?: "PENDING" | "PASSED" | "FAILED" | null;
 };
 
 export type UpdateLoadPayload = Partial<Omit<CreateLoadPayload, "fleetId">>;
@@ -202,9 +211,42 @@ export async function createLoad(sessionUser: SessionUserLike | null | undefined
       ? payload.secondaryReferenceNumber.trim()
       : null,
     status: ensureValidLoadStatus(payload.status),
+    lifecycleClass: payload.lifecycleClass ?? "LIVE",
+    originKind: payload.originKind ?? "BOF_CREATED",
+    verificationClass: payload.verificationClass ?? "UNVERIFIED",
+    sourceSystem: payload.sourceSystem?.trim() ? payload.sourceSystem.trim() : null,
+    sourceRecordId: payload.sourceRecordId?.trim() ? payload.sourceRecordId.trim() : null,
+    importedAt: parseOptionalDate(payload.importedAt, "importedAt") ?? null,
+    originValidationStatus: payload.originValidationStatus ?? null,
   };
 
-  return prisma.load.create({ data });
+  const created = await prisma.load.create({ data });
+  const store = getOperatingProcessStore();
+  const lineage = {
+    lifecycleClass: created.lifecycleClass,
+    originKind: created.originKind,
+    verificationClass: created.verificationClass,
+    derivationKind: created.derivationKind,
+    sourceSystem: created.sourceSystem,
+    sourceRecordId: created.sourceRecordId,
+    importedAt: created.importedAt,
+    originValidationStatus: created.originValidationStatus,
+  };
+  await recordLoadIntakeEvent(store, sessionUser, {
+    id: created.id,
+    fleetId: created.fleetId,
+    status: created.status,
+    createdAt: created.createdAt,
+    lineage,
+  });
+  await recordCanonicalLoadEvent(store, sessionUser, {
+    id: created.id,
+    fleetId: created.fleetId,
+    status: created.status,
+    createdAt: created.createdAt,
+    lineage,
+  });
+  return created;
 }
 
 export async function updateLoad(

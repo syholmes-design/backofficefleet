@@ -2,6 +2,8 @@ import { PreTripDefectSeverity, PreTripItemStatus, PreTripStatus, Prisma } from 
 
 import { createAuditRecord } from "@/lib/audit";
 import { prisma } from "@/lib/prisma";
+import { recordOperatingProcessEvent } from "@/lib/process-intelligence/operating-event-service";
+import { getOperatingProcessStore } from "@/lib/process-intelligence/runtime-store";
 import { authorizedFleetAccess, type SessionUserLike } from "@/lib/services/intakeService";
 
 const OPEN_PRETRIP_CONSTRAINTS = new Map([
@@ -431,7 +433,7 @@ export async function completePreTrip(sessionUser: SessionUserLike | null | unde
     });
   }
 
-  return prisma.preTripHeader.update({
+  const completed = await prisma.preTripHeader.update({
     where: { id: header.id },
     data: {
       status: "COMPLETED",
@@ -444,6 +446,22 @@ export async function completePreTrip(sessionUser: SessionUserLike | null | unde
       defects: { orderBy: [{ createdAt: "asc" }, { itemCode: "asc" }] },
     },
   });
+  await recordOperatingProcessEvent(getOperatingProcessStore(), sessionUser, {
+    fleetId: completed.fleetId,
+    loadId: completed.assignment.loadId,
+    entityType: "PreTripHeader",
+    entityId: completed.id,
+    eventType: "PRETRIP_RECORDED",
+    processStage: "PRE_TRIP_EVIDENCE",
+    eventTimestamp: completed.completedAt ?? new Date(),
+    actorId,
+    actorType: "USER",
+    resultingState: completed.status,
+    relatedRecordType: "PreTripHeader",
+    relatedRecordId: completed.id,
+    lineage: { sourceSystem: "BOF", sourceRecordId: completed.id },
+  });
+  return completed;
 }
 
 export async function getPreTripForAssignment(

@@ -4,6 +4,7 @@ import React, { Fragment, useCallback, useEffect, useMemo, useState } from "reac
 import Link from "next/link";
 
 import { loadStatusChipClass } from "@/components/dispatch/dispatch-ui";
+import { LoadProcessDiscoveryPanel } from "@/components/loads/LoadProcessDiscoveryPanel";
 import { useBofDemoData } from "@/lib/bof-demo-data-context";
 import { buildPretripTabletModel } from "@/lib/pretrip-tablet";
 import {
@@ -167,6 +168,8 @@ export function LoadsPageClient({ fleetId }: Props) {
           <strong className="bof-oper-metric-value">{metrics.delivered}</strong>
         </div>
       </section>
+
+      <LoadProcessDiscoveryPanel />
 
       <section className="bof-oper-panel" aria-label="Load roster">
         <div className="bof-cc-panel-head">

@@ -1,6 +1,7 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  serverExternalPackages: ["@prisma/adapter-pg", "@prisma/client"],
   async rewrites() {
     return {
       /** Run after `public/` so real files (e.g. driver `.html`) are served; API fills missing `.svg`. */

@@ -1,6 +1,8 @@
 import { DriverReadinessState, Prisma, QualificationDisposition } from "@prisma/client";
 
 import { prisma } from "@/lib/prisma";
+import { recordReadinessDecisionEvent } from "@/lib/process-intelligence/operating-event-service";
+import { getOperatingProcessStore } from "@/lib/process-intelligence/runtime-store";
 import { authorizedFleetAccess, type SessionUserLike } from "@/lib/services/intakeService";
 import { getLatestQualificationSnapshot } from "@/lib/services/qualificationService";
 
@@ -368,7 +370,7 @@ export async function writeReadinessScore(
   fleetId: string,
   evaluation: ReadinessEvaluation,
 ) {
-  return prisma.driverReadinessScore.create({
+  const created = await prisma.driverReadinessScore.create({
     data: {
       driverId,
       driverIntakeId: intakeId,
@@ -381,6 +383,22 @@ export async function writeReadinessScore(
       policyVersion: evaluation.policyVersion,
     },
   });
+  const activeAssignment = await prisma.dispatchAssignment.findFirst({
+    where: { driverId, fleetId, status: "ACTIVE" },
+    select: { loadId: true },
+    orderBy: [{ assignedAt: "desc" }, { createdAt: "desc" }],
+  });
+  await recordReadinessDecisionEvent(getOperatingProcessStore(), sessionUser, {
+    fleetId,
+    loadId: activeAssignment?.loadId ?? null,
+    driverId,
+    readinessScoreId: created.id,
+    status: evaluation.status,
+    reason: evaluation.summary,
+    owner: sessionUser?.id ?? null,
+    eventTimestamp: created.evaluatedAt,
+  });
+  return created;
 }
 
 export async function getLatestReadinessScore(

@@ -1,5 +1,8 @@
 import type { BofData } from "@/lib/load-bof-data";
-import { buildCommandCenterItems } from "@/lib/executive-layer";
+import {
+  listCanonicalDispatchAttentionStates,
+  type CanonicalDispatchLoadState,
+} from "@/lib/dispatch/canonical-dispatch-operating-state";
 
 const SEVERITY_ORDER: Record<"critical" | "high" | "medium", number> = {
   critical: 0,
@@ -13,33 +16,45 @@ export type DispatchAttentionRow = {
   title: string;
   detail: string;
   severity: "critical" | "high" | "medium";
+  owner: string;
   nextAction: string;
+  releaseConsequence: string;
   href: string;
+  loadId: string;
 };
 
+function severityForState(state: CanonicalDispatchLoadState): DispatchAttentionRow["severity"] {
+  if (state.releaseDisposition === "HOLD") return "critical";
+  if (state.releaseDisposition === "REVIEW") return "high";
+  return "medium";
+}
+
 /**
- * Command Center–style attention preview for dispatch / loads workflows.
- * Uses the same canonical queue as Command Center (`buildCommandCenterItems`).
+ * Dispatch attention queue — same canonical blockers as getCanonicalDispatchLoadState.
+ * Titles always use canonical L00x identity, never workbook load numbers (501 / 015).
  */
 export function getDispatchAttentionItems(
   data: BofData,
-  limit = 8
+  limit?: number
 ): DispatchAttentionRow[] {
-  const items = buildCommandCenterItems(data);
-  const sorted = [...items].sort(
-    (a, b) => SEVERITY_ORDER[a.severity] - SEVERITY_ORDER[b.severity]
-  );
-  return sorted.slice(0, limit).map((item) => ({
-    id: item.id,
-    bucket: item.bucket,
-    title: item.title,
-    detail: item.detail,
-    severity: item.severity,
-    nextAction: item.nextAction,
-    href: item.loadId
-      ? `/loads/${item.loadId}`
-      : item.driverId
-        ? `/drivers/${item.driverId}`
-        : "/dashboard",
+  const sorted = [...listCanonicalDispatchAttentionStates(data)].sort((a, b) => {
+    const bySev = SEVERITY_ORDER[severityForState(a)] - SEVERITY_ORDER[severityForState(b)];
+    if (bySev !== 0) return bySev;
+    return a.loadId.localeCompare(b.loadId);
+  });
+
+  const rows = sorted.map((state) => ({
+    id: `attention-${state.loadId}`,
+    loadId: state.loadId,
+    bucket: "Dispatch / operating gates",
+    title: `${state.loadId} — ${state.releaseDisposition}`,
+    detail: state.attentionReasons.join(" · "),
+    severity: severityForState(state),
+    owner: state.exceptionOwner,
+    nextAction: state.nextAction,
+    releaseConsequence: state.releaseConsequence,
+    href: `/dispatch?loadId=${encodeURIComponent(state.loadId)}`,
   }));
+
+  return typeof limit === "number" ? rows.slice(0, limit) : rows;
 }

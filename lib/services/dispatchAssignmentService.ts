@@ -2,6 +2,8 @@ import { DispatchAssignmentStatus, EquipmentType, Prisma } from "@prisma/client"
 
 import { createAuditRecord } from "@/lib/audit";
 import { prisma } from "@/lib/prisma";
+import { recordOperatingProcessEvent } from "@/lib/process-intelligence/operating-event-service";
+import { getOperatingProcessStore } from "@/lib/process-intelligence/runtime-store";
 import { authorizedFleetAccess, type SessionUserLike } from "@/lib/services/intakeService";
 
 export type AssignmentClosureStatus = Extract<DispatchAssignmentStatus, "SUPERSEDED" | "CANCELLED">;
@@ -94,7 +96,7 @@ export async function createAssignment(
   const actorId = sessionUser!.id;
 
   try {
-    return await prisma.$transaction(async (tx) => {
+    const assignment = await prisma.$transaction(async (tx) => {
       const load = await tx.load.findUnique({ where: { id: loadId } });
       if (!load) {
         throw Object.assign(new Error("Load not found"), { statusCode: 404 });
@@ -192,6 +194,71 @@ export async function createAssignment(
         },
       });
     });
+    const store = getOperatingProcessStore();
+    const assignmentLineage = { sourceSystem: "BOF" as const, sourceRecordId: assignment.id };
+    await recordOperatingProcessEvent(store, sessionUser, {
+      fleetId: assignment.fleetId,
+      loadId: assignment.loadId,
+      entityType: "DispatchAssignment",
+      entityId: assignment.id,
+      eventType: "DISPATCH_ASSIGNED",
+      processStage: "DISPATCH",
+      eventTimestamp: assignment.assignedAt,
+      actorId: actorId,
+      actorType: "USER",
+      resultingState: assignment.status,
+      relatedRecordType: "DispatchAssignment",
+      relatedRecordId: assignment.id,
+      lineage: assignmentLineage,
+    });
+    await recordOperatingProcessEvent(store, sessionUser, {
+      fleetId: assignment.fleetId,
+      loadId: assignment.loadId,
+      entityType: "Driver",
+      entityId: assignment.driverId,
+      eventType: "DRIVER_LINKED",
+      processStage: "DRIVER_EQUIPMENT",
+      eventTimestamp: assignment.assignedAt,
+      actorId: actorId,
+      actorType: "USER",
+      resultingState: assignment.driverId,
+      relatedRecordType: "DispatchAssignment",
+      relatedRecordId: assignment.id,
+      lineage: assignmentLineage,
+    });
+    await recordOperatingProcessEvent(store, sessionUser, {
+      fleetId: assignment.fleetId,
+      loadId: assignment.loadId,
+      entityType: "Equipment",
+      entityId: assignment.tractorEquipmentId,
+      eventType: "EQUIPMENT_LINKED",
+      processStage: "DRIVER_EQUIPMENT",
+      eventTimestamp: assignment.assignedAt,
+      actorId: actorId,
+      actorType: "USER",
+      resultingState: assignment.tractorEquipmentId,
+      relatedRecordType: "DispatchAssignment",
+      relatedRecordId: assignment.id,
+      lineage: assignmentLineage,
+    });
+    if (assignment.trailerEquipmentId) {
+      await recordOperatingProcessEvent(store, sessionUser, {
+        fleetId: assignment.fleetId,
+        loadId: assignment.loadId,
+        entityType: "Equipment",
+        entityId: assignment.trailerEquipmentId,
+        eventType: "EQUIPMENT_LINKED",
+        processStage: "DRIVER_EQUIPMENT",
+        eventTimestamp: assignment.assignedAt,
+        actorId: actorId,
+        actorType: "USER",
+        resultingState: assignment.trailerEquipmentId,
+        relatedRecordType: "DispatchAssignment",
+        relatedRecordId: assignment.id,
+        lineage: { sourceSystem: "BOF", sourceRecordId: assignment.trailerEquipmentId },
+      });
+    }
+    return assignment;
   } catch (error) {
     const constraintMessage = isKnownUniqueConstraintError(error, ACTIVE_ASSIGNMENT_CONSTRAINTS);
     if (constraintMessage) {
