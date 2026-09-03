@@ -311,12 +311,11 @@ export function RecruitingV2DocumentApiPanel({ candidateId }: Props) {
                   </div>
 
                   <div className="mt-4 flex min-w-0 flex-wrap gap-2">
-                    {gate.templateHref ? (
-                      <Link href={gate.templateHref} target="_blank" rel="noopener noreferrer" className="rounded-md border border-slate-700 px-3 py-2 text-xs font-black text-slate-200 hover:bg-slate-800">View Template</Link>
-                    ) : null}
                     {candidateDocumentHref ? (
                       <Link href={candidateDocumentHref} className="rounded-md border border-teal-700 px-3 py-2 text-xs font-black text-teal-100 hover:bg-teal-950">Open Candidate Document</Link>
-                    ) : null}
+                    ) : (
+                      <span className="rounded-md border border-rose-700 bg-rose-950/40 px-3 py-2 text-xs font-black text-rose-100">DOCUMENT REQUIRED · MISSING</span>
+                    )}
                     {record?.artifact?.attached && record.artifact.viewUrl ? (
                       <>
                         <Link href={record.artifact.viewUrl} target="_blank" rel="noopener noreferrer" className="rounded-md border border-emerald-700 px-3 py-2 text-xs font-black text-emerald-100 hover:bg-emerald-950">View Document</Link>
@@ -325,6 +324,9 @@ export function RecruitingV2DocumentApiPanel({ candidateId }: Props) {
                     ) : (
                       <span className="rounded-md border border-slate-700 bg-slate-950 px-3 py-2 text-xs font-black text-slate-300">No file attached</span>
                     )}
+                    {gate.templateHref ? (
+                      <Link href={gate.templateHref} target="_blank" rel="noopener noreferrer" className="rounded-md border border-slate-700 px-3 py-2 text-xs font-black text-slate-200 hover:bg-slate-800">TEMPLATE — Generic BOF Template</Link>
+                    ) : null}
                   </div>
 
                   {record ? (

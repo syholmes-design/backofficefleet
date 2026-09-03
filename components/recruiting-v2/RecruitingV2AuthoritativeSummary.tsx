@@ -65,11 +65,11 @@ export function RecruitingV2AuthoritativeSummary({ candidateId }: Props) {
     };
   }, [candidateId]);
 
-  if (error) return <p className="text-sm text-amber-100">{error}</p>;
-  if (!summary) return <p className="text-sm text-slate-400">Loading API-backed candidate state...</p>;
+  if (error) return <p className="text-[16px] leading-6 text-amber-100">{error}</p>;
+  if (!summary) return <p className="text-[16px] leading-6 text-slate-400">Loading API-backed candidate state...</p>;
 
   return (
-    <div className="grid gap-2 text-sm text-slate-200">
+    <div className="grid gap-2 text-[16px] leading-6 text-slate-200">
       <p><strong className="text-slate-500">Documents:</strong> {summary.documents}</p>
       <p><strong className="text-slate-500">Qualification:</strong> {summary.qualification}</p>
       <p><strong className="text-slate-500">Offer:</strong> {summary.offer}</p>

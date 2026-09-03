@@ -6,6 +6,7 @@ import { RecruitingV2InterviewApiPanel } from "@/components/recruiting-v2/Recrui
 import { RecruitingV2OnboardingApiPanel } from "@/components/recruiting-v2/RecruitingV2OnboardingApiPanel";
 import { RecruitingV2OfferApiPanel } from "@/components/recruiting-v2/RecruitingV2OfferApiPanel";
 import { RecruitingV2QualificationApiPanel } from "@/components/recruiting-v2/RecruitingV2QualificationApiPanel";
+import { RecruitingV2WorkflowRows } from "@/components/recruiting-v2/RecruitingV2WorkflowRows";
 import {
   RECRUITING_V2_WORKSPACES,
   getRecruitingV2Candidate,
@@ -47,96 +48,6 @@ function workspaceTitle(workspace: RecruitingV2WorkspaceKey) {
   return `${RECRUITING_V2_WORKSPACES.find((item) => item.key === workspace)?.label ?? workspace} Workspace`;
 }
 
-function currentDecision(candidate: RecruitingV2Candidate, workspace: RecruitingV2WorkspaceKey) {
-  if (workspace === "offer") {
-    return "Offer decision loads from the Recruiting V2 API";
-  }
-  if (workspace === "onboarding") {
-    return "Onboarding decision loads from the Recruiting V2 API";
-  }
-  if (workspace === "activation") {
-    return "Activation readiness loads from the Recruiting V2 API";
-  }
-  if (workspace === "interview") {
-    return "Interview records load from the Recruiting V2 API";
-  }
-  if (workspace === "documents") {
-    return "Document gate state loads from the Recruiting V2 API";
-  }
-  if (workspace === "qualification") {
-    return "Qualification decision loads from the Recruiting V2 API";
-  }
-  const rows = relevantRequirements(candidate, workspace);
-  return rows.every((row) => row.status === "READY" || row.status === "COMPLETE")
-    ? "Requirements are ready for next review"
-    : "Requirements remain open";
-}
-
-function nextAction(candidate: RecruitingV2Candidate, workspace: RecruitingV2WorkspaceKey) {
-  if (workspace === "offer") return "Review the API-backed offer decision and qualification prerequisite.";
-  if (workspace === "interview") return "Review the latest API-backed interview record or schedule an interview if none exists.";
-  if (workspace === "documents") return "Review the API-backed document gate summary and register missing document metadata.";
-  if (workspace === "qualification") return "Review the API-backed candidate qualification decision and resolve the top blocking or pending item.";
-  if (workspace === "onboarding") return "Review the API-backed onboarding decision and activation readiness summary.";
-  if (workspace === "activation") return "Review the API-backed activation readiness result and Paylocity preview payload.";
-  return relevantRequirements(candidate, workspace).find((row) => row.status === "PENDING" || row.status === "NOT_PROVIDED" || row.status === "BLOCKED")?.nextAction ?? "Advance to the next workflow step.";
-}
-
-function relevantRequirements(candidate: RecruitingV2Candidate, workspace: RecruitingV2WorkspaceKey) {
-  if (workspace === "documents") return candidate.requirements;
-  if (workspace === "qualification") return candidate.requirements.filter((row) => ["application", "qualification", "medical", "mvr", "fmcsa"].includes(row.workspace));
-  if (["application", "fmcsa", "medical", "mvr", "i9", "w9", "onboarding"].includes(workspace)) {
-    return candidate.requirements.filter((row) => row.workspace === workspace || (workspace === "application" && row.id === "app"));
-  }
-  return candidate.requirements.filter((row) => ["app", "cdl", "medical", "mvr", "fmcsa", "w9"].includes(row.id));
-}
-
-function RequirementRows({ candidate, workspace }: { candidate: RecruitingV2Candidate; workspace: RecruitingV2WorkspaceKey }) {
-  const rows = relevantRequirements(candidate, workspace);
-  return (
-    <div className="grid gap-3">
-      {rows.map((row) => {
-        const isApplication = row.id === "app";
-        const candidateHref = isApplication
-          ? `/recruiting-v2/candidates/${candidate.id}/application`
-          : `/recruiting-v2/candidates/${candidate.id}/documents`;
-        return (
-        <article key={row.id} className="min-w-0 overflow-hidden rounded-xl border border-slate-800 bg-slate-900/70 p-4">
-          <div className="grid gap-3 lg:grid-cols-[1fr_1fr_1fr]">
-            <div className="min-w-0">
-              <p className="text-[10px] font-black uppercase tracking-[0.18em] text-slate-500">Generic template</p>
-              <h3 className="mt-1 break-words font-bold text-white">{row.templateLabel}</h3>
-              {row.templateHref ? (
-                <Link href={row.templateHref} target="_blank" rel="noopener noreferrer" className="mt-2 inline-flex rounded-md border border-slate-700 px-3 py-2 text-xs font-black text-slate-200 hover:bg-slate-800">
-                  View Template
-                </Link>
-              ) : (
-                <span className="mt-2 inline-flex rounded-md border border-amber-700 bg-amber-950/30 px-3 py-2 text-xs font-black text-amber-100">Template not configured</span>
-              )}
-            </div>
-            <div className="min-w-0">
-              <p className="text-[10px] font-black uppercase tracking-[0.18em] text-slate-500">Candidate workspace</p>
-              <h3 className="mt-1 font-bold text-white">{candidate.name} · {candidate.id}</h3>
-              <p className="mt-1 break-words text-sm text-slate-300">{row.candidateRecord}</p>
-              <span className={`mt-2 inline-flex rounded-full border px-3 py-1 text-xs font-black ${statusClass(row.status)}`}>{formatStatus(row.status)}</span>
-              <Link href={candidateHref} className="mt-2 inline-flex rounded-md border border-teal-700 px-3 py-2 text-xs font-black text-teal-100 hover:bg-teal-950">
-                {isApplication ? "Open Candidate Application" : "Open Candidate Document"}
-              </Link>
-            </div>
-            <div className="min-w-0">
-              <p className="text-[10px] font-black uppercase tracking-[0.18em] text-slate-500">Review / decision</p>
-              <p className="mt-1 break-words text-sm text-slate-200"><strong>Review:</strong> {row.reviewState}</p>
-              <p className="mt-1 break-words text-sm text-slate-200"><strong>Decision:</strong> {row.decision}</p>
-              <p className="mt-1 break-words text-sm text-slate-300"><strong>Next:</strong> {row.nextAction}</p>
-            </div>
-          </div>
-        </article>
-        );
-      })}
-    </div>
-  );
-}
-
 function CandidateActions({ candidate, activeWorkspace }: { candidate: RecruitingV2Candidate; activeWorkspace?: RecruitingV2WorkspaceKey }) {
   return (
     <div className="flex flex-wrap gap-2">
@@ -162,10 +73,8 @@ function CandidateCard({ candidate }: { candidate: RecruitingV2Candidate }) {
         </div>
         <span className={`rounded-full border px-3 py-1 text-xs font-black ${statusClass(candidate.qualificationStatus)}`}>{formatStatus(candidate.activationStage)}</span>
       </div>
-      <div className="mt-4 grid gap-2 text-xs text-slate-300 sm:grid-cols-3">
-        <span>Application: <strong className="text-white">{formatStatus(candidate.applicationStatus)}</strong></span>
-        <span>Compliance: <strong className="text-white">{formatStatus(candidate.complianceStatus)}</strong></span>
-        <span>Offer: <strong className="text-white">{formatStatus(candidate.offerStatus)}</strong></span>
+      <div className="mt-4">
+        <RecruitingV2AuthoritativeSummary candidateId={candidate.id} />
       </div>
       <div className="mt-4 flex flex-wrap items-center gap-2">
         <Link href={`/recruiting-v2/candidates/${candidate.id}`} className="rounded-md border border-slate-700 px-3 py-2 text-xs font-black text-slate-100 hover:bg-slate-800">Open Candidate</Link>
@@ -210,8 +119,7 @@ export function RecruitingV2App({ candidateId, workspace }: Props) {
               <div className="mt-4 grid gap-3 md:grid-cols-2">
                 <div className="rounded-lg border border-slate-800 bg-slate-900/70 p-3"><p className="text-[10px] font-bold uppercase tracking-wider text-slate-500">Operational Question</p><p className="mt-1 text-sm text-slate-100">Can this candidate move from {formatStatus(candidate.activationStage).toLowerCase()} through {workspaceTitle(workspace).toLowerCase()} without hiding missing requirements?</p></div>
                 <div className="rounded-lg border border-slate-800 bg-slate-900/70 p-3"><p className="text-[10px] font-bold uppercase tracking-wider text-slate-500">Operational Briefing</p><p className="mt-1 text-sm text-slate-100">Review candidate-specific records and generic templates separately. Do not treat a template as evidence.</p></div>
-                <div className="rounded-lg border border-amber-800/70 bg-amber-950/20 p-3"><p className="text-[10px] font-bold uppercase tracking-wider text-amber-300">Current Decision</p><p className="mt-1 text-sm font-bold text-amber-50">{currentDecision(candidate, workspace)}</p></div>
-                <div className="rounded-lg border border-teal-800/70 bg-teal-950/20 p-3"><p className="text-[10px] font-bold uppercase tracking-wider text-teal-300">Next Required Action</p><p className="mt-1 text-sm font-bold text-teal-50">{nextAction(candidate, workspace)}</p></div>
+                <div className="rounded-lg border border-amber-800/70 bg-amber-950/20 p-3 md:col-span-2"><p className="text-[11px] font-bold uppercase tracking-wider text-amber-300">Authoritative API state</p><div className="mt-2"><RecruitingV2AuthoritativeSummary candidateId={candidate.id} /></div></div>
               </div>
             </section>
 
@@ -241,16 +149,15 @@ export function RecruitingV2App({ candidateId, workspace }: Props) {
 
           {workspace === "onboarding" ? <RecruitingV2OnboardingApiPanel candidateId={candidate.id} /> : null}
 
-          {workspace !== "documents" && workspace !== "qualification" && workspace !== "offer" && workspace !== "activation" && workspace !== "onboarding" ? <section className="mt-5 rounded-xl border border-slate-800 bg-slate-950 p-4">
+          <section className="mt-5 rounded-xl border border-slate-800 bg-slate-950 p-4">
             <div className="flex flex-wrap items-center justify-between gap-3">
               <div>
-                <p className="text-[10px] font-black uppercase tracking-[0.18em] text-teal-300">Operational record viewer</p>
-                <h2 className="mt-1 text-xl font-black text-white">Template → candidate workspace → review → decision</h2>
+                <p className="text-[11px] font-bold uppercase tracking-[0.16em] text-teal-300">Candidate workflow records</p>
+                <h2 className="mt-1 text-[22px] font-bold text-white">Template, requirement, document record, actual document, verification, gate</h2>
               </div>
-              <span className="rounded-full border border-slate-700 px-3 py-1 text-xs font-black text-slate-200">{relevantRequirements(candidate, workspace).length} requirement rows</span>
             </div>
-            <div className="mt-4"><RequirementRows candidate={candidate} workspace={workspace} /></div>
-          </section> : null}
+            <div className="mt-4"><RecruitingV2WorkflowRows candidateId={candidate.id} /></div>
+          </section>
 
           <section className="mt-5 grid gap-4 lg:grid-cols-3">
             <div className="min-w-0 rounded-xl border border-slate-800 bg-slate-950 p-4"><p className="text-[10px] font-black uppercase tracking-[0.18em] text-slate-500">Business impact</p><p className="mt-3 text-sm text-slate-200">Candidate progression remains gated by visible document, compliance, offer, and onboarding state from the Recruiting V2 APIs.</p></div>
@@ -272,11 +179,19 @@ export function RecruitingV2App({ candidateId, workspace }: Props) {
             <CandidateActions candidate={candidate} />
           </div>
           <div className="mt-5 grid gap-4 lg:grid-cols-3">
-            <div className="rounded-xl border border-slate-800 bg-slate-950 p-4"><p className="text-[10px] font-black uppercase tracking-[0.18em] text-slate-500">Application</p><p className="mt-2 text-2xl font-black text-white">{candidate.applicationSummary.completeness}%</p><p className="mt-2 text-sm text-slate-300">{candidate.applicationSummary.employmentHistory}</p><Link href={`/recruiting-v2/candidates/${candidate.id}/application`} className="mt-3 inline-flex text-sm font-black text-teal-200">Open Candidate Application →</Link></div>
-            <div className="rounded-xl border border-slate-800 bg-slate-950 p-4"><p className="text-[10px] font-black uppercase tracking-[0.18em] text-slate-500">Current decision</p><p className="mt-2 text-lg font-black text-white">{currentDecision(candidate, "qualification")}</p><p className="mt-2 text-sm text-slate-300">{nextAction(candidate, "qualification")}</p></div>
-            <div className="rounded-xl border border-slate-800 bg-slate-950 p-4"><p className="text-[10px] font-black uppercase tracking-[0.18em] text-slate-500">Driver activation gate</p><p className="mt-2 text-lg font-black text-white">{formatStatus(candidate.activationStage)}</p><p className="mt-2 text-sm text-slate-300">Driver record is not created by this workspace; activation remains gated.</p></div>
+            <div className="rounded-xl border border-slate-800 bg-slate-950 p-4"><p className="text-[11px] font-bold uppercase tracking-[0.16em] text-slate-500">Application</p><p className="mt-2 text-[22px] font-bold text-white">{formatStatus(candidate.applicationStatus)}</p><p className="mt-2 text-[16px] leading-6 text-slate-300">{candidate.applicationSummary.employmentHistory}</p><Link href={`/recruiting-v2/candidates/${candidate.id}/application`} className="mt-3 inline-flex text-[16px] font-semibold text-teal-200">Open Candidate Application →</Link></div>
+            <div className="rounded-xl border border-slate-800 bg-slate-950 p-4"><p className="text-[11px] font-bold uppercase tracking-[0.16em] text-slate-500">Current decision</p><div className="mt-2"><RecruitingV2AuthoritativeSummary candidateId={candidate.id} /></div></div>
+            <div className="rounded-xl border border-slate-800 bg-slate-950 p-4"><p className="text-[11px] font-bold uppercase tracking-[0.16em] text-slate-500">Driver activation</p><p className="mt-2 text-[22px] font-bold text-white">{formatStatus(candidate.activationStage)}</p><p className="mt-2 text-[16px] leading-6 text-slate-300">This workspace does not create a driver record. Activation status loads from the Recruiting V2 API in the current-decision panel.</p></div>
           </div>
-          <section className="mt-5 rounded-xl border border-slate-800 bg-slate-950 p-4"><h2 className="text-xl font-black text-white">Workspace tabs</h2><div className="mt-3 flex flex-wrap gap-2">{RECRUITING_V2_WORKSPACES.map((item) => <Link key={item.key} href={`/recruiting-v2/candidates/${candidate.id}/${item.key}`} className="rounded-md border border-slate-700 px-3 py-2 text-xs font-black text-slate-100 hover:bg-slate-800">{item.label}</Link>)}</div></section>
+          <section className="mt-5 rounded-xl border border-slate-800 bg-slate-950 p-4">
+            <h2 className="text-[22px] font-bold text-white">Workspace tabs</h2>
+            <div className="mt-3 flex flex-wrap gap-2">{RECRUITING_V2_WORKSPACES.map((item) => <Link key={item.key} href={`/recruiting-v2/candidates/${candidate.id}/${item.key}`} className="rounded-md border border-slate-700 px-3 py-2 text-[16px] font-semibold text-slate-100 hover:bg-slate-800">{item.label}</Link>)}</div>
+          </section>
+          <section className="mt-5 rounded-xl border border-slate-800 bg-slate-950 p-4">
+            <p className="text-[11px] font-bold uppercase tracking-[0.16em] text-teal-300">Candidate workflow records</p>
+            <h2 className="mt-1 text-[22px] font-bold text-white">Template, requirement, document record, actual document, verification, gate</h2>
+            <div className="mt-4"><RecruitingV2WorkflowRows candidateId={candidate.id} /></div>
+          </section>
         </section>
       </main>
     );

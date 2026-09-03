@@ -91,7 +91,7 @@ export function RecruitingV2DocumentViewer({ candidateId, documentCode }: Props)
           <p className="mt-2 text-sm text-slate-300">{payload.gate.reason}</p>
 
           <div className="mt-4 flex flex-wrap gap-2">
-            {payload.gate.templateHref ? <Link href={payload.gate.templateHref} target="_blank" rel="noopener noreferrer" className="rounded-md border border-slate-700 px-3 py-2 text-xs font-black text-slate-200">View Template</Link> : null}
+            {payload.gate.templateHref ? <Link href={payload.gate.templateHref} target="_blank" rel="noopener noreferrer" className="rounded-md border border-slate-700 px-3 py-2 text-xs font-black text-slate-200">TEMPLATE — Generic BOF Template</Link> : null}
             <Link href={`/recruiting-v2/candidates/${candidateId}/documents`} className="rounded-md border border-teal-700 px-3 py-2 text-xs font-black text-teal-100">Back to Documents</Link>
             {artifact?.attached && artifact.downloadUrl ? <Link href={artifact.downloadUrl} className="rounded-md border border-emerald-700 px-3 py-2 text-xs font-black text-emerald-100">Download Document</Link> : null}
           </div>
