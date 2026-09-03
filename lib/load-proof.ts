@@ -363,6 +363,40 @@ export function getLoadProofItems(data: BofData, loadId: string): LoadProofItem[
   return attachDemoEvidenceFileUrls(data, loadId, withOverrides);
 }
 
+function loadProofRecordKey(proofStatus: string | undefined): string {
+  return String(proofStatus ?? "").trim().toLowerCase();
+}
+
+function loadProofRecordIsClear(proofStatus: string | undefined): boolean {
+  const key = loadProofRecordKey(proofStatus);
+  return key === "complete" || key === "verified" || key === "present";
+}
+
+function loadProofRecordIsDisputed(proofStatus: string | undefined): boolean {
+  return loadProofRecordKey(proofStatus) === "disputed";
+}
+
+const OPERATING_PROOF_TYPES = new Set(["Rate Confirmation", "BOL", "Signed BOL"]);
+
+export function getDerivedLoadProofItems(data: BofData, loadId: string): LoadProofItem[] {
+  return getLoadProofItems(data, loadId);
+}
+
+export function getCanonicalOperatingProofStatus(
+  data: BofData,
+  loadId: string,
+  type: string
+): LoadProofStatus | null {
+  const load = loadRecord(data, loadId);
+  if (!load) return null;
+  const derived = getDerivedLoadProofItems(data, loadId).find((item) => item.type === type);
+  if (OPERATING_PROOF_TYPES.has(type)) {
+    if (loadProofRecordIsClear(load.proofStatus)) return "Complete";
+    if (loadProofRecordIsDisputed(load.proofStatus)) return "Disputed";
+  }
+  return derived?.status ?? null;
+}
+
 /** When generated demo evidence exists on disk, surface URLs and mark line items Present. */
 function attachDemoEvidenceFileUrls(data: BofData, loadId: string, items: LoadProofItem[]): LoadProofItem[] {
   const evidence = new Map<BofLoadEvidence["evidenceType"], BofLoadEvidence>(
