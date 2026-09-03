@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { RecruitingV2ActivationApiPanel } from "@/components/recruiting-v2/RecruitingV2ActivationApiPanel";
+import { RecruitingV2AuthoritativeSummary } from "@/components/recruiting-v2/RecruitingV2AuthoritativeSummary";
 import { RecruitingV2DocumentApiPanel } from "@/components/recruiting-v2/RecruitingV2DocumentApiPanel";
 import { RecruitingV2InterviewApiPanel } from "@/components/recruiting-v2/RecruitingV2InterviewApiPanel";
 import { RecruitingV2OnboardingApiPanel } from "@/components/recruiting-v2/RecruitingV2OnboardingApiPanel";
@@ -22,9 +23,10 @@ type Props = {
 };
 
 const actionWorkspaces = [
-  { label: "Qualification", workspace: "qualification" as const },
-  { label: "Documents", workspace: "documents" as const },
+  { label: "Application", workspace: "application" as const },
   { label: "Interview", workspace: "interview" as const },
+  { label: "Documents", workspace: "documents" as const },
+  { label: "Qualification", workspace: "qualification" as const },
   { label: "Offer", workspace: "offer" as const },
   { label: "Onboarding", workspace: "onboarding" as const },
   { label: "Activation", workspace: "activation" as const },
@@ -93,35 +95,44 @@ function RequirementRows({ candidate, workspace }: { candidate: RecruitingV2Cand
   const rows = relevantRequirements(candidate, workspace);
   return (
     <div className="grid gap-3">
-      {rows.map((row) => (
-        <article key={row.id} className="rounded-xl border border-slate-800 bg-slate-900/70 p-4">
+      {rows.map((row) => {
+        const isApplication = row.id === "app";
+        const candidateHref = isApplication
+          ? `/recruiting-v2/candidates/${candidate.id}/application`
+          : `/recruiting-v2/candidates/${candidate.id}/documents`;
+        return (
+        <article key={row.id} className="min-w-0 overflow-hidden rounded-xl border border-slate-800 bg-slate-900/70 p-4">
           <div className="grid gap-3 lg:grid-cols-[1fr_1fr_1fr]">
-            <div>
+            <div className="min-w-0">
               <p className="text-[10px] font-black uppercase tracking-[0.18em] text-slate-500">Generic template</p>
-              <h3 className="mt-1 font-bold text-white">{row.templateLabel}</h3>
+              <h3 className="mt-1 break-words font-bold text-white">{row.templateLabel}</h3>
               {row.templateHref ? (
-                <Link href={row.templateHref} target="_blank" rel="noopener noreferrer" className="mt-2 inline-flex rounded-md border border-slate-700 px-3 py-2 text-xs font-black text-teal-200 hover:bg-slate-800">
-                  Open Template
+                <Link href={row.templateHref} target="_blank" rel="noopener noreferrer" className="mt-2 inline-flex rounded-md border border-slate-700 px-3 py-2 text-xs font-black text-slate-200 hover:bg-slate-800">
+                  View Template
                 </Link>
               ) : (
                 <span className="mt-2 inline-flex rounded-md border border-amber-700 bg-amber-950/30 px-3 py-2 text-xs font-black text-amber-100">Template not configured</span>
               )}
             </div>
-            <div>
+            <div className="min-w-0">
               <p className="text-[10px] font-black uppercase tracking-[0.18em] text-slate-500">Candidate workspace</p>
               <h3 className="mt-1 font-bold text-white">{candidate.name} · {candidate.id}</h3>
-              <p className="mt-1 text-sm text-slate-300">{row.candidateRecord}</p>
+              <p className="mt-1 break-words text-sm text-slate-300">{row.candidateRecord}</p>
               <span className={`mt-2 inline-flex rounded-full border px-3 py-1 text-xs font-black ${statusClass(row.status)}`}>{formatStatus(row.status)}</span>
+              <Link href={candidateHref} className="mt-2 inline-flex rounded-md border border-teal-700 px-3 py-2 text-xs font-black text-teal-100 hover:bg-teal-950">
+                {isApplication ? "Open Candidate Application" : "Open Candidate Document"}
+              </Link>
             </div>
-            <div>
+            <div className="min-w-0">
               <p className="text-[10px] font-black uppercase tracking-[0.18em] text-slate-500">Review / decision</p>
-              <p className="mt-1 text-sm text-slate-200"><strong>Review:</strong> {row.reviewState}</p>
-              <p className="mt-1 text-sm text-slate-200"><strong>Decision:</strong> {row.decision}</p>
-              <p className="mt-1 text-sm text-slate-300"><strong>Next:</strong> {row.nextAction}</p>
+              <p className="mt-1 break-words text-sm text-slate-200"><strong>Review:</strong> {row.reviewState}</p>
+              <p className="mt-1 break-words text-sm text-slate-200"><strong>Decision:</strong> {row.decision}</p>
+              <p className="mt-1 break-words text-sm text-slate-300"><strong>Next:</strong> {row.nextAction}</p>
             </div>
           </div>
         </article>
-      ))}
+        );
+      })}
     </div>
   );
 }
@@ -170,7 +181,7 @@ export function RecruitingV2App({ candidateId, workspace }: Props) {
 
   if (candidate && workspace) {
     return (
-      <main className="bof-recruiting-v2-shell min-h-screen bg-slate-950 px-4 py-6 text-slate-100 sm:px-6 lg:px-8">
+      <main className="bof-recruiting-v2-shell min-h-screen overflow-x-hidden bg-slate-950 px-4 py-6 text-slate-100 sm:px-6 lg:px-8">
         <nav className="bof-breadcrumb mb-5" aria-label="Breadcrumb">
           <Link href="/recruiting-v2">Recruiting V2</Link>
           <span aria-hidden> / </span>
@@ -204,15 +215,16 @@ export function RecruitingV2App({ candidateId, workspace }: Props) {
               </div>
             </section>
 
-            <aside className="rounded-xl border border-slate-800 bg-slate-950 p-4">
+            <aside className="min-w-0 rounded-xl border border-slate-800 bg-slate-950 p-4">
               <p className="text-[10px] font-black uppercase tracking-[0.18em] text-teal-300">Operational summary</p>
               <h2 className="mt-1 text-xl font-black text-white">{candidate.name}</h2>
               <div className="mt-4 grid gap-2 text-sm text-slate-200">
                 <p><strong className="text-slate-500">Candidate ID:</strong> {candidate.id}</p>
                 <p><strong className="text-slate-500">Position:</strong> {candidate.positionCode}</p>
                 <p><strong className="text-slate-500">CDL:</strong> {candidate.cdlClass} {candidate.cdlState} · {candidate.cdlNumberMasked}</p>
-                <p><strong className="text-slate-500">Application:</strong> {candidate.applicationSummary.completeness}% complete</p>
-                <p><strong className="text-slate-500">Activation:</strong> {formatStatus(candidate.activationStage)}</p>
+              </div>
+              <div className="mt-4">
+                <RecruitingV2AuthoritativeSummary candidateId={candidate.id} />
               </div>
             </aside>
           </div>
@@ -241,9 +253,9 @@ export function RecruitingV2App({ candidateId, workspace }: Props) {
           </section> : null}
 
           <section className="mt-5 grid gap-4 lg:grid-cols-3">
-            <div className="rounded-xl border border-slate-800 bg-slate-950 p-4"><p className="text-[10px] font-black uppercase tracking-[0.18em] text-slate-500">Business impact</p><p className="mt-3 text-sm text-slate-200">Candidate progression remains gated by visible document, compliance, offer, and onboarding state.</p></div>
-            <div className="rounded-xl border border-slate-800 bg-slate-950 p-4"><p className="text-[10px] font-black uppercase tracking-[0.18em] text-slate-500">Operational queues</p><ul className="mt-3 list-disc space-y-1 pl-5 text-sm text-slate-200">{candidate.onboarding.openIssues.map((issue) => <li key={issue}>{issue}</li>)}</ul></div>
-            <div className="rounded-xl border border-slate-800 bg-slate-950 p-4"><p className="text-[10px] font-black uppercase tracking-[0.18em] text-slate-500">Audit trail</p><ul className="mt-3 list-disc space-y-1 pl-5 text-sm text-slate-200">{candidate.auditTrail.map((item) => <li key={item}>{item}</li>)}</ul></div>
+            <div className="min-w-0 rounded-xl border border-slate-800 bg-slate-950 p-4"><p className="text-[10px] font-black uppercase tracking-[0.18em] text-slate-500">Business impact</p><p className="mt-3 text-sm text-slate-200">Candidate progression remains gated by visible document, compliance, offer, and onboarding state from the Recruiting V2 APIs.</p></div>
+            <div className="min-w-0 rounded-xl border border-slate-800 bg-slate-950 p-4"><p className="text-[10px] font-black uppercase tracking-[0.18em] text-slate-500">API-backed queues</p><div className="mt-3"><RecruitingV2AuthoritativeSummary candidateId={candidate.id} /></div></div>
+            <div className="min-w-0 rounded-xl border border-slate-800 bg-slate-950 p-4"><p className="text-[10px] font-black uppercase tracking-[0.18em] text-slate-500">Audit trail</p><ul className="mt-3 list-disc space-y-1 pl-5 text-sm text-slate-200">{candidate.auditTrail.map((item) => <li key={item}>{item}</li>)}</ul></div>
           </section>
         </section>
       </main>
@@ -252,7 +264,7 @@ export function RecruitingV2App({ candidateId, workspace }: Props) {
 
   if (candidate) {
     return (
-      <main className="bof-recruiting-v2-shell min-h-screen bg-slate-950 px-4 py-6 text-slate-100 sm:px-6 lg:px-8">
+      <main className="bof-recruiting-v2-shell min-h-screen overflow-x-hidden bg-slate-950 px-4 py-6 text-slate-100 sm:px-6 lg:px-8">
         <nav className="bof-breadcrumb mb-5" aria-label="Breadcrumb"><Link href="/recruiting-v2">Recruiting V2</Link><span aria-hidden> / </span><span>{candidate.name}</span></nav>
         <section className="rounded-2xl border border-slate-800 bg-slate-900/70 p-5 md:p-7">
           <div className="flex flex-wrap items-start justify-between gap-4 border-b border-slate-800 pb-5">
@@ -260,7 +272,7 @@ export function RecruitingV2App({ candidateId, workspace }: Props) {
             <CandidateActions candidate={candidate} />
           </div>
           <div className="mt-5 grid gap-4 lg:grid-cols-3">
-            <div className="rounded-xl border border-slate-800 bg-slate-950 p-4"><p className="text-[10px] font-black uppercase tracking-[0.18em] text-slate-500">Application</p><p className="mt-2 text-2xl font-black text-white">{candidate.applicationSummary.completeness}%</p><p className="mt-2 text-sm text-slate-300">{candidate.applicationSummary.employmentHistory}</p><Link href={`/recruiting-v2/candidates/${candidate.id}/application`} className="mt-3 inline-flex text-sm font-black text-teal-200">Open Application Workspace →</Link></div>
+            <div className="rounded-xl border border-slate-800 bg-slate-950 p-4"><p className="text-[10px] font-black uppercase tracking-[0.18em] text-slate-500">Application</p><p className="mt-2 text-2xl font-black text-white">{candidate.applicationSummary.completeness}%</p><p className="mt-2 text-sm text-slate-300">{candidate.applicationSummary.employmentHistory}</p><Link href={`/recruiting-v2/candidates/${candidate.id}/application`} className="mt-3 inline-flex text-sm font-black text-teal-200">Open Candidate Application →</Link></div>
             <div className="rounded-xl border border-slate-800 bg-slate-950 p-4"><p className="text-[10px] font-black uppercase tracking-[0.18em] text-slate-500">Current decision</p><p className="mt-2 text-lg font-black text-white">{currentDecision(candidate, "qualification")}</p><p className="mt-2 text-sm text-slate-300">{nextAction(candidate, "qualification")}</p></div>
             <div className="rounded-xl border border-slate-800 bg-slate-950 p-4"><p className="text-[10px] font-black uppercase tracking-[0.18em] text-slate-500">Driver activation gate</p><p className="mt-2 text-lg font-black text-white">{formatStatus(candidate.activationStage)}</p><p className="mt-2 text-sm text-slate-300">Driver record is not created by this workspace; activation remains gated.</p></div>
           </div>
@@ -271,7 +283,7 @@ export function RecruitingV2App({ candidateId, workspace }: Props) {
   }
 
   return (
-    <main className="bof-recruiting-v2-shell min-h-screen bg-slate-950 px-4 py-6 text-slate-100 sm:px-6 lg:px-8">
+    <main className="bof-recruiting-v2-shell min-h-screen overflow-x-hidden bg-slate-950 px-4 py-6 text-slate-100 sm:px-6 lg:px-8">
       <section className="rounded-2xl border border-teal-900/70 bg-slate-900/75 p-5 shadow-2xl md:p-7">
         <p className="text-xs font-black uppercase tracking-[0.24em] text-teal-300">Isolated development namespace</p>
         <h1 className="mt-2 text-3xl font-black tracking-tight text-white md:text-5xl">BOF Recruiting V2</h1>

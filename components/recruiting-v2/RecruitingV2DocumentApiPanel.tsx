@@ -8,6 +8,18 @@ type DocumentStatus = "RECEIVED" | "PENDING_REVIEW" | "VERIFIED" | "REJECTED";
 type GateState = "OPEN" | "BLOCKED" | "SATISFIED";
 type ExpirationStatus = "VALID" | "EXPIRING_SOON" | "EXPIRED" | "NOT_PROVIDED";
 
+type ArtifactSummary = {
+  attached: boolean;
+  storage: string | null;
+  fileName: string | null;
+  mimeType: string | null;
+  sizeBytes: number | null;
+  uploadedAt: string | null;
+  synthetic: boolean;
+  viewUrl: string | null;
+  downloadUrl: string | null;
+};
+
 type ApiDocumentRecord = {
   id: string;
   documentCode: string;
@@ -18,6 +30,7 @@ type ApiDocumentRecord = {
   verifiedBy: string | null;
   verificationNotes: string | null;
   metadata: unknown;
+  artifact?: ArtifactSummary;
   createdAt: string;
   updatedAt: string;
 };
@@ -57,14 +70,12 @@ const documentTypes: Array<{ value: DocumentType; label: string }> = [
   { value: "EMPLOYMENT_VERIFICATION", label: "Employment Verification" },
 ];
 
-const documentStatuses: DocumentStatus[] = ["RECEIVED", "PENDING_REVIEW", "VERIFIED", "REJECTED"];
-
 function formatStatus(value: string) {
   return value.replace(/_/g, " ");
 }
 
 function formatDate(value: string | null) {
-  return value ? new Date(value).toLocaleDateString("en-US", { timeZone: "UTC" }) : "Not yet provided";
+  return value ? new Date(value).toLocaleDateString("en-US", { timeZone: "UTC" }) : "Not provided";
 }
 
 function gateClass(state: GateState) {
@@ -80,8 +91,31 @@ function expirationClass(status: ExpirationStatus) {
   return "border-slate-700 bg-slate-950 text-slate-300";
 }
 
-function safeText(value: string | null | undefined) {
-  return value && value.trim() ? value : "Not yet provided";
+function documentStatusLabel(status: DocumentStatus | "NOT_PROVIDED") {
+  if (status === "NOT_PROVIDED") return "MISSING";
+  if (status === "PENDING_REVIEW") return "UNDER REVIEW";
+  return formatStatus(status);
+}
+
+function requirementStatus(gate: ApiGate) {
+  if (!gate.latestDocument) return "DOCUMENT REQUIRED";
+  return "REQUIRED";
+}
+
+function fileStatus(gate: ApiGate) {
+  if (!gate.latestDocument) return "No file attached";
+  if (gate.latestDocument.artifact?.attached) {
+    return gate.latestDocument.artifact.synthetic ? "Actual document attached (synthetic demonstration file)" : "Actual document attached";
+  }
+  return "No file attached";
+}
+
+function nextActionLabel(gate: ApiGate) {
+  if (!gate.latestDocument) return "Collect candidate document";
+  if (gate.documentStatus === "VERIFIED" && gate.gateState === "SATISFIED") return "No document action required";
+  if (gate.documentStatus === "REJECTED") return "Upload a corrected candidate document and re-verify";
+  if (gate.documentStatus === "PENDING_REVIEW" || gate.documentStatus === "RECEIVED") return "Review and verify or reject";
+  return gate.requiredAction;
 }
 
 export function RecruitingV2DocumentApiPanel({ candidateId }: Props) {
@@ -89,12 +123,10 @@ export function RecruitingV2DocumentApiPanel({ candidateId }: Props) {
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
   const [documentType, setDocumentType] = useState<DocumentType>("CDL");
-  const [status, setStatus] = useState<DocumentStatus>("RECEIVED");
-  const [expirationDate, setExpirationDate] = useState("");
-  const [uploadedBy, setUploadedBy] = useState("BOF Recruiting V2 Demo User");
-  const [verifiedBy, setVerifiedBy] = useState("");
+  const [uploadedBy, setUploadedBy] = useState("BOF Recruiting Coordinator (synthetic)");
+  const [verifiedBy, setVerifiedBy] = useState("BOF Compliance Reviewer (synthetic)");
   const [verificationNotes, setVerificationNotes] = useState("");
-  const [metadata, setMetadata] = useState('{"demoRecord":true,"source":"Recruiting V2 metadata registration"}');
+  const [files, setFiles] = useState<Record<string, File | null>>({});
 
   const loadDocuments = useCallback(async () => {
     setError(null);
@@ -116,19 +148,14 @@ export function RecruitingV2DocumentApiPanel({ candidateId }: Props) {
     setBusy(true);
     setError(null);
     try {
-      let parsedMetadata: unknown = null;
-      if (metadata.trim()) parsedMetadata = JSON.parse(metadata);
       const response = await fetch(`/api/recruiting-v2/documents/${encodeURIComponent(candidateId)}`, {
         method: "POST",
         headers: { "Content-Type": "application/json", Accept: "application/json" },
         body: JSON.stringify({
           documentType,
-          status,
-          expirationDate: expirationDate || null,
+          status: "RECEIVED",
           uploadedBy,
-          verifiedBy,
-          verificationNotes,
-          metadata: parsedMetadata,
+          metadata: { source: "recruiting-v2-candidate-upload" },
         }),
       });
       const body = await response.json();
@@ -141,121 +168,190 @@ export function RecruitingV2DocumentApiPanel({ candidateId }: Props) {
     }
   }
 
+  async function uploadFile(documentCode: string) {
+    const file = files[documentCode];
+    if (!file) {
+      setError("Select a PDF, JPG, JPEG, or PNG file before uploading.");
+      return;
+    }
+    setBusy(true);
+    setError(null);
+    try {
+      const form = new FormData();
+      form.append("file", file);
+      form.append("uploadedBy", uploadedBy);
+      const response = await fetch(`/api/recruiting-v2/documents/${encodeURIComponent(candidateId)}/${encodeURIComponent(documentCode)}/file`, {
+        method: "POST",
+        body: form,
+      });
+      const body = await response.json();
+      if (!response.ok) throw new Error(body?.error ?? "Unable to upload document");
+      await loadDocuments();
+    } catch (nextError) {
+      setError(nextError instanceof Error ? nextError.message : "Unable to upload document");
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function reviewDocument(documentCode: string, action: "REVIEW" | "VERIFY" | "REJECT") {
+    setBusy(true);
+    setError(null);
+    try {
+      const response = await fetch(`/api/recruiting-v2/documents/${encodeURIComponent(candidateId)}/${encodeURIComponent(documentCode)}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json", Accept: "application/json" },
+        body: JSON.stringify({ action, verifiedBy, verificationNotes }),
+      });
+      const body = await response.json();
+      if (!response.ok) throw new Error(body?.error ?? "Unable to update document review");
+      await loadDocuments();
+    } catch (nextError) {
+      setError(nextError instanceof Error ? nextError.message : "Unable to update document review");
+    } finally {
+      setBusy(false);
+    }
+  }
+
   const blockedGate = payload?.gates.find((gate) => gate.gateState === "BLOCKED");
   const openGate = payload?.gates.find((gate) => gate.gateState === "OPEN");
   const priorityGate = blockedGate ?? openGate ?? payload?.gates[0] ?? null;
 
   return (
-    <section className="mt-5 rounded-xl border border-teal-800/70 bg-slate-950 p-4">
+    <section className="mt-5 min-w-0 overflow-x-hidden rounded-xl border border-teal-800/70 bg-slate-950 p-4">
       <div className="flex flex-wrap items-start justify-between gap-3">
-        <div>
+        <div className="min-w-0">
           <p className="text-[10px] font-black uppercase tracking-[0.18em] text-teal-300">API-backed candidate document workflow</p>
           <h2 className="mt-1 text-xl font-black text-white">Document Workspace</h2>
-          <p className="mt-1 text-sm text-slate-300">Candidate-specific metadata records. Templates are labeled separately and are not candidate documents.</p>
+          <p className="mt-1 break-words text-sm text-slate-300">Template ≠ required document ≠ candidate record ≠ actual file ≠ verification ≠ compliance gate.</p>
         </div>
-        <span className="rounded-md border border-slate-700 bg-slate-900 px-3 py-2 text-xs font-black text-slate-200">No binary upload API</span>
       </div>
 
       {error ? <p className="mt-3 rounded-md border border-amber-700 bg-amber-950/30 px-3 py-2 text-sm text-amber-100">{error}</p> : null}
       {!payload && !error ? <p className="mt-3 text-sm text-slate-400">Loading document gates...</p> : null}
 
       {payload ? (
-        <div className="mt-4">
-          <div className="grid gap-3 lg:grid-cols-[1fr_1fr_1fr]">
-            <div className="rounded-lg border border-slate-800 bg-slate-900/70 p-3">
+        <div className="mt-4 min-w-0">
+          <div className="grid gap-3 lg:grid-cols-3">
+            <div className="min-w-0 rounded-lg border border-slate-800 bg-slate-900/70 p-3">
               <p className="text-[10px] font-bold uppercase tracking-wider text-slate-500">Candidate</p>
-              <p className="mt-1 text-sm font-black text-white">{payload.candidate.fullName}</p>
-              <p className="mt-1 text-sm text-slate-300">{payload.candidate.candidateId} · {payload.candidate.homeLocation}</p>
+              <p className="mt-1 break-words text-sm font-black text-white">{payload.candidate.fullName}</p>
+              <p className="mt-1 break-words text-sm text-slate-300">{payload.candidate.candidateId} · {payload.candidate.homeLocation}</p>
             </div>
-            <div className="rounded-lg border border-amber-800/70 bg-amber-950/20 p-3">
+            <div className="min-w-0 rounded-lg border border-amber-800/70 bg-amber-950/20 p-3">
               <p className="text-[10px] font-bold uppercase tracking-wider text-amber-300">Current Decision</p>
               <p className="mt-1 text-sm font-black text-amber-50">{payload.summary.currentDecision}</p>
               <p className="mt-2 text-xs text-amber-100">{payload.summary.satisfied} satisfied · {payload.summary.open} open · {payload.summary.blocked} blocked</p>
             </div>
-            <div className="rounded-lg border border-teal-800/70 bg-teal-950/20 p-3">
+            <div className="min-w-0 rounded-lg border border-teal-800/70 bg-teal-950/20 p-3">
               <p className="text-[10px] font-bold uppercase tracking-wider text-teal-300">Next Required Action</p>
               <p className="mt-1 text-sm font-black text-teal-50">{payload.summary.nextRequiredAction}</p>
               <p className="mt-2 text-xs text-teal-100">Priority: {priorityGate ? priorityGate.label : "Document review"}</p>
             </div>
           </div>
 
-          <div className="mt-4 rounded-xl border border-slate-800 bg-slate-900/70 p-4">
-            <p className="text-[10px] font-black uppercase tracking-[0.18em] text-slate-500">Workflow</p>
-            <div className="mt-3 grid gap-2 text-xs font-bold uppercase tracking-wider text-slate-200 sm:grid-cols-2 lg:grid-cols-7">
-              {["Required Document", "Template / Instruction", "Candidate Record", "Review", "Verification", "Compliance Gate", "Next Action"].map((step) => (
+          <div className="mt-4 overflow-x-auto rounded-xl border border-slate-800 bg-slate-900/70 p-4">
+            <p className="text-[10px] font-black uppercase tracking-[0.18em] text-slate-500">Documents workflow</p>
+            <div className="mt-3 grid min-w-[18rem] gap-2 text-xs font-bold uppercase tracking-wider text-slate-200 sm:grid-cols-2 lg:grid-cols-6">
+              {["Requirement", "Candidate Record", "Actual Document", "Review", "Gate Result", "Qualification"].map((step) => (
                 <span key={step} className="rounded-md border border-slate-800 bg-slate-950 px-3 py-2">{step}</span>
               ))}
             </div>
           </div>
 
           <div className="mt-4 rounded-xl border border-slate-800 bg-slate-900/70 p-4">
-            <p className="text-[10px] font-black uppercase tracking-[0.18em] text-teal-300">Create Document Record</p>
-            <div className="mt-3 grid gap-3 lg:grid-cols-4">
+            <p className="text-[10px] font-black uppercase tracking-[0.18em] text-teal-300">Register missing document record</p>
+            <p className="mt-2 text-sm text-slate-300">Creates metadata only. Upload a file on the candidate document card after the record exists.</p>
+            <div className="mt-3 grid gap-3 lg:grid-cols-2">
               <label className="grid gap-1 text-xs font-bold text-slate-300">Document Type<select value={documentType} onChange={(event) => setDocumentType(event.target.value as DocumentType)} className="rounded-md border border-slate-700 bg-slate-950 px-3 py-2 text-sm text-white">{documentTypes.map((item) => <option key={item.value} value={item.value}>{item.label}</option>)}</select></label>
-              <label className="grid gap-1 text-xs font-bold text-slate-300">Status<select value={status} onChange={(event) => setStatus(event.target.value as DocumentStatus)} className="rounded-md border border-slate-700 bg-slate-950 px-3 py-2 text-sm text-white">{documentStatuses.map((item) => <option key={item} value={item}>{formatStatus(item)}</option>)}</select></label>
-              <label className="grid gap-1 text-xs font-bold text-slate-300">Expiration Date<input value={expirationDate} onChange={(event) => setExpirationDate(event.target.value)} type="date" className="rounded-md border border-slate-700 bg-slate-950 px-3 py-2 text-sm text-white" /></label>
-              <label className="grid gap-1 text-xs font-bold text-slate-300">Uploaded / Registered By<input value={uploadedBy} onChange={(event) => setUploadedBy(event.target.value)} className="rounded-md border border-slate-700 bg-slate-950 px-3 py-2 text-sm text-white" /></label>
+              <label className="grid gap-1 text-xs font-bold text-slate-300">Registered By<input value={uploadedBy} onChange={(event) => setUploadedBy(event.target.value)} className="rounded-md border border-slate-700 bg-slate-950 px-3 py-2 text-sm text-white" /></label>
             </div>
-            <div className="mt-3 grid gap-3 lg:grid-cols-3">
-              <label className="grid gap-1 text-xs font-bold text-slate-300">Verified By<input value={verifiedBy} onChange={(event) => setVerifiedBy(event.target.value)} className="rounded-md border border-slate-700 bg-slate-950 px-3 py-2 text-sm text-white" /></label>
-              <label className="grid gap-1 text-xs font-bold text-slate-300 lg:col-span-2">Verification Notes<input value={verificationNotes} onChange={(event) => setVerificationNotes(event.target.value)} className="rounded-md border border-slate-700 bg-slate-950 px-3 py-2 text-sm text-white" /></label>
+            <div className="mt-3 grid gap-3 lg:grid-cols-2">
+              <label className="grid gap-1 text-xs font-bold text-slate-300">Verified By (synthetic reviewer identity)<input value={verifiedBy} onChange={(event) => setVerifiedBy(event.target.value)} className="rounded-md border border-slate-700 bg-slate-950 px-3 py-2 text-sm text-white" /></label>
+              <label className="grid gap-1 text-xs font-bold text-slate-300">Verification Notes<input value={verificationNotes} onChange={(event) => setVerificationNotes(event.target.value)} className="rounded-md border border-slate-700 bg-slate-950 px-3 py-2 text-sm text-white" /></label>
             </div>
-            <label className="mt-3 grid gap-1 text-xs font-bold text-slate-300">Metadata JSON<textarea value={metadata} onChange={(event) => setMetadata(event.target.value)} rows={3} className="rounded-md border border-slate-700 bg-slate-950 px-3 py-2 text-sm text-white" /></label>
-            <div className="mt-3 flex flex-wrap items-center gap-2">
-              <button type="button" onClick={() => void createDocumentRecord()} disabled={busy} className="rounded-md border border-teal-600 bg-teal-950/50 px-3 py-2 text-xs font-black text-teal-100 hover:bg-teal-900/60 disabled:opacity-50">{busy ? "Creating..." : "Create Document Record"}</button>
-              <span className="rounded-md border border-slate-700 bg-slate-950 px-3 py-2 text-xs font-black text-slate-300">Replace File not implemented by API</span>
-              <span className="rounded-md border border-slate-700 bg-slate-950 px-3 py-2 text-xs font-black text-slate-300">Download not implemented by API</span>
-              <span className="rounded-md border border-slate-700 bg-slate-950 px-3 py-2 text-xs font-black text-slate-300">Approve / Reject not implemented by API</span>
-              <span className="rounded-md border border-slate-700 bg-slate-950 px-3 py-2 text-xs font-black text-slate-300">Delete not implemented by API</span>
-            </div>
+            <button type="button" onClick={() => void createDocumentRecord()} disabled={busy} className="mt-3 rounded-md border border-teal-600 bg-teal-950/50 px-3 py-2 text-xs font-black text-teal-100 hover:bg-teal-900/60 disabled:opacity-50">{busy ? "Working..." : "Create Document Record"}</button>
           </div>
 
           <div className="mt-4 grid gap-3">
-            {payload.gates.map((gate) => (
-              <article key={gate.documentType} className="rounded-xl border border-slate-800 bg-slate-900/70 p-4">
-                <div className="grid gap-4 xl:grid-cols-[0.9fr_1fr_1fr_1fr]">
-                  <div>
-                    <p className="text-[10px] font-black uppercase tracking-[0.18em] text-slate-500">Required document</p>
-                    <h3 className="mt-1 text-lg font-black text-white">{gate.label}</h3>
-                    <span className={`mt-2 inline-flex rounded-full border px-3 py-1 text-xs font-black ${gateClass(gate.gateState)}`}>Gate: {gate.gateState}</span>
+            {payload.gates.map((gate) => {
+              const record = gate.latestDocument;
+              const candidateDocumentHref = record
+                ? `/recruiting-v2/candidates/${payload.candidate.candidateId}/documents/${encodeURIComponent(record.documentCode)}`
+                : null;
+              return (
+                <article key={gate.documentType} className="min-w-0 overflow-hidden rounded-xl border border-slate-800 bg-slate-900/70 p-4">
+                  <div className="grid gap-4 xl:grid-cols-2">
+                    <div className="min-w-0">
+                      <p className="text-[10px] font-black uppercase tracking-[0.18em] text-slate-500">Document type</p>
+                      <h3 className="mt-1 break-words text-lg font-black text-white">{gate.label}</h3>
+                      <p className="mt-2 text-sm text-slate-200"><strong className="text-slate-500">Requirement status:</strong> {requirementStatus(gate)}</p>
+                      <p className="mt-1 text-sm text-slate-200"><strong className="text-slate-500">Document status:</strong> {documentStatusLabel(gate.documentStatus)}</p>
+                      <p className="mt-1 text-sm text-slate-200"><strong className="text-slate-500">Actual file status:</strong> {fileStatus(gate)}</p>
+                      <p className="mt-1 text-sm text-slate-200"><strong className="text-slate-500">Expiration date:</strong> {formatDate(record?.expirationDate ?? null)}</p>
+                      <p className="mt-1 text-sm text-slate-200"><strong className="text-slate-500">Expiration status:</strong> {formatStatus(gate.expirationStatus)}</p>
+                      <span className={`mt-2 inline-flex rounded-full border px-3 py-1 text-xs font-black ${gateClass(gate.gateState)}`}>Gate: {gate.gateState}</span>
+                      <span className={`ml-2 inline-flex rounded-full border px-3 py-1 text-xs font-black ${expirationClass(gate.expirationStatus)}`}>{formatStatus(gate.expirationStatus)}</span>
+                    </div>
+                    <div className="min-w-0">
+                      <p className="text-[10px] font-black uppercase tracking-[0.18em] text-slate-500">Record / verification / next action</p>
+                      {record ? (
+                        <>
+                          <p className="mt-1 break-all text-sm font-bold text-white">{record.documentCode}</p>
+                          <p className="mt-1 text-sm text-slate-200"><strong className="text-slate-500">Verified by:</strong> {record.verifiedBy?.trim() || "Not yet provided"}</p>
+                          <p className="mt-1 break-words text-sm text-slate-200"><strong className="text-slate-500">Verification notes:</strong> {record.verificationNotes?.trim() || "Not yet provided"}</p>
+                          <p className="mt-1 text-sm text-slate-200"><strong className="text-slate-500">Next action:</strong> {nextActionLabel(gate)}</p>
+                        </>
+                      ) : (
+                        <p className="mt-1 text-sm font-black text-rose-100">DOCUMENT REQUIRED · MISSING</p>
+                      )}
+                      <p className="mt-2 break-words text-sm text-slate-300">{gate.reason}</p>
+                      {gate.expirationWarning ? <p className="mt-1 text-sm text-amber-100">{gate.expirationWarning}</p> : null}
+                    </div>
                   </div>
-                  <div>
-                    <p className="text-[10px] font-black uppercase tracking-[0.18em] text-slate-500">Template / collection instruction</p>
-                    <p className="mt-1 text-sm font-bold text-white">{gate.templateLabel}</p>
-                    <p className="mt-1 text-sm text-slate-300">{gate.collectionInstruction}</p>
-                    {gate.templateHref ? <Link href={gate.templateHref} target="_blank" rel="noopener noreferrer" className="mt-2 inline-flex rounded-md border border-slate-700 px-3 py-2 text-xs font-black text-teal-200 hover:bg-slate-800">Open Template <span className="ml-2 text-slate-500">TEMPLATE</span></Link> : <span className="mt-2 inline-flex rounded-md border border-amber-700 bg-amber-950/30 px-3 py-2 text-xs font-black text-amber-100">Template not configured</span>}
-                  </div>
-                  <div>
-                    <p className="text-[10px] font-black uppercase tracking-[0.18em] text-slate-500">Candidate document record</p>
-                    {gate.latestDocument ? (
-                      <div className="mt-1 text-sm text-slate-200">
-                        <p className="font-bold text-white">{gate.latestDocument.documentCode}</p>
-                        <p>Latest Status: {formatStatus(gate.documentStatus)}</p>
-                        <p>Expiration: {formatDate(gate.latestDocument.expirationDate)}</p>
-                        <p>Owner: {safeText(gate.latestDocument.uploadedBy)}</p>
-                        <Link href={`/api/recruiting-v2/documents/${payload.candidate.candidateId}/${gate.latestDocument.documentCode}`} target="_blank" rel="noopener noreferrer" className="mt-2 inline-flex text-xs font-black text-teal-200">GET single document</Link>
-                      </div>
+
+                  <div className="mt-4 flex min-w-0 flex-wrap gap-2">
+                    {gate.templateHref ? (
+                      <Link href={gate.templateHref} target="_blank" rel="noopener noreferrer" className="rounded-md border border-slate-700 px-3 py-2 text-xs font-black text-slate-200 hover:bg-slate-800">View Template</Link>
+                    ) : null}
+                    {candidateDocumentHref ? (
+                      <Link href={candidateDocumentHref} className="rounded-md border border-teal-700 px-3 py-2 text-xs font-black text-teal-100 hover:bg-teal-950">Open Candidate Document</Link>
+                    ) : null}
+                    {record?.artifact?.attached && record.artifact.viewUrl ? (
+                      <>
+                        <Link href={record.artifact.viewUrl} target="_blank" rel="noopener noreferrer" className="rounded-md border border-emerald-700 px-3 py-2 text-xs font-black text-emerald-100 hover:bg-emerald-950">View Document</Link>
+                        <Link href={record.artifact.downloadUrl ?? record.artifact.viewUrl} className="rounded-md border border-emerald-700 px-3 py-2 text-xs font-black text-emerald-100 hover:bg-emerald-950">Download Document</Link>
+                      </>
                     ) : (
-                      <p className="mt-1 text-sm font-black text-rose-100">NOT PROVIDED</p>
+                      <span className="rounded-md border border-slate-700 bg-slate-950 px-3 py-2 text-xs font-black text-slate-300">No file attached</span>
                     )}
                   </div>
-                  <div>
-                    <p className="text-[10px] font-black uppercase tracking-[0.18em] text-slate-500">Review / verification / gate</p>
-                    <p className="mt-1 text-sm text-slate-200">Verification: {safeText(gate.latestDocument?.verifiedBy)}</p>
-                    <p className="mt-1 text-sm text-slate-200">Notes: {safeText(gate.latestDocument?.verificationNotes)}</p>
-                    <span className={`mt-2 inline-flex rounded-full border px-3 py-1 text-xs font-black ${expirationClass(gate.expirationStatus)}`}>{formatStatus(gate.expirationStatus)}</span>
-                    <p className="mt-2 text-sm text-slate-300"><strong className="text-slate-500">Problem:</strong> {gate.reason}</p>
-                    <p className="mt-1 text-sm text-slate-300"><strong className="text-slate-500">Required Action:</strong> {gate.requiredAction}</p>
-                    {gate.expirationWarning ? <p className="mt-1 text-sm text-amber-100">{gate.expirationWarning}</p> : null}
-                  </div>
-                </div>
-              </article>
-            ))}
-          </div>
 
-          <div className="mt-4 rounded-xl border border-slate-800 bg-slate-900/70 p-4">
-            <p className="text-[10px] font-black uppercase tracking-[0.18em] text-slate-500">Qualification connection</p>
-            <p className="mt-2 text-sm text-slate-300">This document gate result is the document-level source for future Qualification V2 consumption. It does not create Driver records, Driver Vault records, or a second document repository.</p>
+                  {record ? (
+                    <div className="mt-4 grid gap-3 lg:grid-cols-[1fr_auto]">
+                      <label className="grid min-w-0 gap-1 text-xs font-bold text-slate-300">
+                        Select file (PDF, JPG, JPEG, PNG · max 2 MB)
+                        <input
+                          type="file"
+                          accept="application/pdf,image/png,image/jpeg,.pdf,.png,.jpg,.jpeg"
+                          onChange={(event) => setFiles((current) => ({ ...current, [record.documentCode]: event.target.files?.[0] ?? null }))}
+                          className="min-w-0 rounded-md border border-slate-700 bg-slate-950 px-3 py-2 text-sm text-white"
+                        />
+                      </label>
+                      <button type="button" onClick={() => void uploadFile(record.documentCode)} disabled={busy} className="self-end rounded-md border border-teal-600 bg-teal-950/50 px-3 py-2 text-xs font-black text-teal-100 hover:bg-teal-900/60 disabled:opacity-50">Upload</button>
+                    </div>
+                  ) : null}
+
+                  {record ? (
+                    <div className="mt-3 flex flex-wrap gap-2">
+                      <button type="button" onClick={() => void reviewDocument(record.documentCode, "REVIEW")} disabled={busy} className="rounded-md border border-slate-600 px-3 py-2 text-xs font-black text-slate-100 hover:bg-slate-800 disabled:opacity-50">Review</button>
+                      <button type="button" onClick={() => void reviewDocument(record.documentCode, "VERIFY")} disabled={busy} className="rounded-md border border-emerald-600 px-3 py-2 text-xs font-black text-emerald-100 hover:bg-emerald-950 disabled:opacity-50">Verify</button>
+                      <button type="button" onClick={() => void reviewDocument(record.documentCode, "REJECT")} disabled={busy} className="rounded-md border border-rose-600 px-3 py-2 text-xs font-black text-rose-100 hover:bg-rose-950 disabled:opacity-50">Reject</button>
+                    </div>
+                  ) : null}
+                </article>
+              );
+            })}
           </div>
         </div>
       ) : null}

@@ -6,6 +6,7 @@ import {
   evaluateRecruitingV2DocumentGates,
   type RecruitingV2DocumentGateEvaluation,
 } from "@/lib/recruiting-v2/document-gate-engine";
+import { serializeRecruitingV2DocumentRecord } from "@/lib/recruiting-v2/serialize-document-record";
 
 type RouteContext = { params: Promise<{ candidateId: string }> };
 
@@ -33,36 +34,6 @@ function parseExpirationDate(value: unknown): Date | null | "INVALID" {
   if (!raw) return "INVALID";
   const parsed = new Date(raw);
   return Number.isNaN(parsed.getTime()) ? "INVALID" : parsed;
-}
-
-function serializeDocumentRecord(record: {
-  id: string;
-  documentCode: string;
-  candidateId: string;
-  documentType: RecruitingV2DocumentType;
-  status: RecruitingV2DocumentStatus;
-  expirationDate: Date | null;
-  uploadedBy: string | null;
-  verifiedBy: string | null;
-  verificationNotes: string | null;
-  metadata: Prisma.JsonValue | null;
-  createdAt: Date;
-  updatedAt: Date;
-}) {
-  return {
-    id: record.id,
-    documentCode: record.documentCode,
-    candidateId: record.candidateId,
-    documentType: record.documentType,
-    status: record.status,
-    expirationDate: record.expirationDate?.toISOString() ?? null,
-    uploadedBy: record.uploadedBy,
-    verifiedBy: record.verifiedBy,
-    verificationNotes: record.verificationNotes,
-    metadata: record.metadata,
-    createdAt: record.createdAt.toISOString(),
-    updatedAt: record.updatedAt.toISOString(),
-  };
 }
 
 async function findCandidate(candidateId: string) {
@@ -113,7 +84,9 @@ export async function GET(_request: NextRequest, context: RouteContext) {
     return NextResponse.json({ error: "Candidate not found" }, { status: 404 });
   }
 
-  const documentRecords = candidate.documentRecords.map(serializeDocumentRecord);
+  const documentRecords = candidate.documentRecords.map((record) =>
+    serializeRecruitingV2DocumentRecord(record, candidate.candidateCode),
+  );
   const gates = evaluateRecruitingV2DocumentGates(documentRecords);
 
   return NextResponse.json({
@@ -177,7 +150,10 @@ export async function POST(request: NextRequest, context: RouteContext) {
     },
   });
 
-  const records = [serializeDocumentRecord(document), ...candidate.documentRecords.map(serializeDocumentRecord)];
+  const records = [
+    serializeRecruitingV2DocumentRecord(document, candidate.candidateCode),
+    ...candidate.documentRecords.map((record) => serializeRecruitingV2DocumentRecord(record, candidate.candidateCode)),
+  ];
   const gates = evaluateRecruitingV2DocumentGates(records);
   await syncComplianceGates(candidate.id, gates);
   const gate = gates.find((item) => item.documentType === document.documentType) ?? null;
@@ -186,7 +162,7 @@ export async function POST(request: NextRequest, context: RouteContext) {
     {
       operation: "Create Document Record",
       candidate: candidatePayload(candidate),
-      documentRecord: serializeDocumentRecord(document),
+      documentRecord: serializeRecruitingV2DocumentRecord(document, candidate.candidateCode),
       gate,
     },
     { status: 201 },
