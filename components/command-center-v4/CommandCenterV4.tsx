@@ -24,6 +24,8 @@ import { formatDisplayDate } from "@/lib/date-utils";
 import type { OperationalRiskQueue, V3OperationalData } from "@/lib/v3-operational-types";
 import { L008_CANONICAL_STORY, L009_CANONICAL_STORY, L011_CANONICAL_STORY } from "@/lib/canonical-load-stories";
 import { DemoPageExplainerById } from "@/components/demo/DemoPageExplainerById";
+import { buildSettlementCommandCenterSummary, type SettlementCommandCenterSummary } from "@/lib/settlement/settlement-operating-display";
+import { SettlementCommandCenterIntelligence } from "@/components/settlement/SettlementCommandCenterIntelligence";
 
 type RiskAction = {
   label: string;
@@ -251,6 +253,7 @@ function withCanonicalFlagshipRisks(data: V3OperationalData): OperationalRiskQue
 
 export function CommandCenterV4() {
   const [operationalRisks, setOperationalRisks] = useState<OperationalRiskQueue[]>([]);
+  const [settlementSummary, setSettlementSummary] = useState<SettlementCommandCenterSummary>(() => buildSettlementCommandCenterSummary(null));
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [, setUsingFallback] = useState(false);
@@ -275,6 +278,7 @@ export function CommandCenterV4() {
         const v3Data = await getV3OperationalData();
         
         setOperationalRisks(withCanonicalFlagshipRisks(v3Data));
+        setSettlementSummary(buildSettlementCommandCenterSummary(v3Data));
         
         console.log(`✅ Loaded ${v3Data.operationalRiskQueue.length} Operational Risks from V4 workbook`);
       } else {
@@ -294,6 +298,7 @@ export function CommandCenterV4() {
     console.warn('🔄 Using fallback operational risk data - V4 workbook not available');
     setUsingFallback(true);
     setOperationalRisks([]);
+    setSettlementSummary(buildSettlementCommandCenterSummary(null));
   };
 
   // Calculate risk statistics
@@ -523,6 +528,7 @@ export function CommandCenterV4() {
 
       {/* Risk KPI Cards */}
       <div className="max-w-7xl mx-auto px-6 py-6">
+        <SettlementCommandCenterIntelligence summary={settlementSummary} />
         {actionStories.length > 0 && (
           <div className="mb-6 grid grid-cols-1 gap-4 lg:grid-cols-3">
             {actionStories.map(({ risk, story }) => (
@@ -657,8 +663,8 @@ export function CommandCenterV4() {
                 <span className="text-slate-400 text-sm">Ready to Submit</span>
                 <div className="w-2 h-2 bg-green-400 rounded-full"></div>
               </div>
-              <div className="text-xl font-bold text-green-400">9</div>
-              <div className="text-xs text-slate-500 mt-1">{L011_CANONICAL_STORY.loadId} factoring packet ready for finance review</div>
+              <div className="text-xl font-bold text-green-400">Unavailable</div>
+              <div className="text-xs text-slate-500 mt-1">No authoritative factoring-packet count exists. Factoring is not settlement and is not driver payment.</div>
             </Link>
             <Link
               href="/documents"
@@ -668,8 +674,8 @@ export function CommandCenterV4() {
                 <span className="text-slate-400 text-sm">Missing POD/BOL</span>
                 <div className="w-2 h-2 bg-red-400 rounded-full"></div>
               </div>
-              <div className="text-xl font-bold text-red-400">0</div>
-              <div className="text-xs text-slate-500 mt-1">No critical proof gaps</div>
+              <div className="text-xl font-bold text-red-400">Unavailable</div>
+              <div className="text-xs text-slate-500 mt-1">Fleet-wide missing POD/BOL is not counted here. Open a Load File proof section.</div>
             </Link>
             <Link
               href="/settlements"
@@ -679,8 +685,10 @@ export function CommandCenterV4() {
                 <span className="text-slate-400 text-sm">Held Due to Issues</span>
                 <div className="w-2 h-2 bg-yellow-400 rounded-full"></div>
               </div>
-              <div className="text-xl font-bold text-yellow-400">{riskStats.settlementImpactingRisks}</div>
-              <div className="text-xs text-slate-500 mt-1">L001, L007, and L010 require action</div>
+              <div className="text-xl font-bold text-yellow-400" aria-label={`Open settlement hold rows ${settlementSummary.openHolds ?? "unavailable"}`}>
+                {settlementSummary.available && settlementSummary.openHolds !== null ? settlementSummary.openHolds : "Unavailable"}
+              </div>
+              <div className="text-xs text-slate-500 mt-1">Workbook Settlement Holds rows that are not resolved/closed/released. Not a factoring KPI.</div>
             </Link>
           </div>
           <div className="mt-4 text-xs text-slate-500">
@@ -698,10 +706,12 @@ export function CommandCenterV4() {
               <span className="text-slate-400 text-sm">Settlement Impact</span>
               <DollarSign className="w-4 h-4 text-orange-400" />
             </div>
-            <div className="text-2xl font-bold text-white">
-              {riskStats.settlementImpactingRisks}
+            <div className="text-2xl font-bold text-white" aria-label="Settlement impact unavailable">
+              Unavailable
             </div>
-            <div className="text-xs text-slate-500 mt-1">Payment delays/holds</div>
+            <div className="text-xs text-slate-500 mt-1">
+              Operational-risk story text is not an authoritative settlement hold count. Open workbook Settlement Holds on /settlements.
+            </div>
           </div>
 
           <div className="bg-slate-900/50 backdrop-blur-sm border border-slate-800 rounded-xl p-6">
