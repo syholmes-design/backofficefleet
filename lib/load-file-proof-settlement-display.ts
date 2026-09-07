@@ -498,3 +498,35 @@ export function existingSettlementWorkflowHref(args: {
   const query = params.toString();
   return query ? `/settlements?${query}` : "/settlements";
 }
+
+/**
+ * ADR-009-003: operator /settlements identity is driver-week payroll (STL-* may be settlementId).
+ * loadId is hold highlighting only. Prisma Settlement.id (cuid) is not a /settlements navigation key.
+ */
+export function resolveExistingSettlementWorkflowTarget(args: {
+  settlements: Array<{ settlement_id: string; driver_id: string; settlement_hold?: boolean }>;
+  lines: Array<{ settlement_id: string; load_id?: string | null }>;
+  driverId?: string | null;
+  loadId?: string | null;
+  payrollSettlementId?: string | null;
+}): { settlementId: string | null; highlightLoadId: string | null } {
+  const payrollId = args.payrollSettlementId?.trim() || "";
+  const driverId = args.driverId?.trim() || "";
+  const loadId = args.loadId?.trim() || "";
+  if (payrollId && isDemoPayrollSettlementId(payrollId)) {
+    const match = args.settlements.find((row) => row.settlement_id === payrollId);
+    return { settlementId: match?.settlement_id ?? null, highlightLoadId: loadId || null };
+  }
+  if (driverId && loadId) {
+    const line = args.lines.find(
+      (row) => row.load_id === loadId && args.settlements.some((s) => s.settlement_id === row.settlement_id && s.driver_id === driverId),
+    );
+    if (line) return { settlementId: line.settlement_id, highlightLoadId: loadId };
+  }
+  if (driverId) {
+    const held = args.settlements.find((row) => row.driver_id === driverId && row.settlement_hold);
+    const any = held ?? args.settlements.find((row) => row.driver_id === driverId);
+    return { settlementId: any?.settlement_id ?? null, highlightLoadId: loadId || null };
+  }
+  return { settlementId: null, highlightLoadId: loadId || null };
+}

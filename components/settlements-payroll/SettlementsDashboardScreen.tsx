@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import { ChevronDown, ChevronUp, Filter } from "lucide-react";
 import { useBofDemoData } from "@/lib/bof-demo-data-context";
 import {
@@ -15,6 +16,7 @@ import {
   settlementRowDisplayChipClass,
 } from "./settlements-payroll-ui";
 import { getPayrollMonthlyTrend } from "@/lib/demo-trends";
+import { resolveExistingSettlementWorkflowTarget } from "@/lib/load-file-proof-settlement-display";
 import {
   getSettlementPeriods,
   getSettlementRowsForPeriod,
@@ -57,10 +59,18 @@ function statusChipClassForDisplay(label: string) {
 
 export function SettlementsDashboardScreen() {
   const { data } = useBofDemoData();
+  const searchParams = useSearchParams();
   const settlements = useSettlementsPayrollStore((s) => s.settlements);
   const lines = useSettlementsPayrollStore((s) => s.lines);
   const openDrawer = useSettlementsPayrollStore((s) => s.openDrawer);
   const generatedDocs = useSettlementsPayrollStore((s) => s.generatedDocsBySettlementId);
+  const highlighted = resolveExistingSettlementWorkflowTarget({
+    settlements,
+    lines,
+    driverId: searchParams.get("driverId"),
+    loadId: searchParams.get("loadId"),
+    payrollSettlementId: searchParams.get("settlementId"),
+  });
 
   const [advancedOpen, setAdvancedOpen] = useState(false);
   const [dateFrom, setDateFrom] = useState("");
@@ -71,6 +81,11 @@ export function SettlementsDashboardScreen() {
   const [selectedPeriodId, setSelectedPeriodId] = useState("current-2026-04-01");
   const [accentFilter, setAccentFilter] = useState<AccentFilter>(null);
   const [detailCard, setDetailCard] = useState<null | "hold" | "draft" | "ready" | "safety" | "backhaul">(null);
+
+  useEffect(() => {
+    const driverId = searchParams.get("driverId")?.trim();
+    if (driverId) setDriverIdFilter(driverId);
+  }, [searchParams]);
 
   const kpis = useMemo(
     () => ({
@@ -637,7 +652,10 @@ export function SettlementsDashboardScreen() {
                     className={[
                       "border-b border-slate-800/80 text-[15px] leading-relaxed",
                       onHold ? "bg-amber-950/15" : "hover:bg-slate-900/60",
+                      highlighted.settlementId === s.settlementId ? "ring-2 ring-inset ring-teal-400/70 bg-teal-950/25" : "",
                     ].join(" ")}
+                    data-highlighted-settlement={highlighted.settlementId === s.settlementId ? "true" : undefined}
+                    data-highlighted-load={highlighted.highlightLoadId && lineLoadIds.includes(highlighted.highlightLoadId) ? highlighted.highlightLoadId : undefined}
                   >
                     <td className="px-4 py-3">
                       <div className="font-semibold text-white">{s.driverName}</div>

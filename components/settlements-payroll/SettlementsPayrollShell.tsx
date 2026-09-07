@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { BOF_SETTLEMENTS_PROFILE_DASHBOARD_HTML } from "@/lib/bof-demo-profile-dashboards";
 import { useSettlementsPayrollStore } from "@/lib/stores/settlements-payroll-store";
+import { resolveExistingSettlementWorkflowTarget } from "@/lib/load-file-proof-settlement-display";
 import type { SettlementsPayrollNavId } from "@/types/settlements-payroll";
 import { SettlementsDashboardScreen } from "./SettlementsDashboardScreen";
 import { ExportPayrollScreen } from "./ExportPayrollScreen";
@@ -21,11 +22,19 @@ export function SettlementsPayrollShell() {
   const drawerSettlementId = useSettlementsPayrollStore((s) => s.drawerSettlementId);
   const closeDrawer = useSettlementsPayrollStore((s) => s.closeDrawer);
   const openDrawer = useSettlementsPayrollStore((s) => s.openDrawer);
+  const settlements = useSettlementsPayrollStore((s) => s.settlements);
+  const lines = useSettlementsPayrollStore((s) => s.lines);
 
   useEffect(() => {
-    const settlementId = searchParams.get("settlementId");
-    if (settlementId) openDrawer(settlementId);
-  }, [searchParams, openDrawer]);
+    const target = resolveExistingSettlementWorkflowTarget({
+      settlements,
+      lines,
+      driverId: searchParams.get("driverId"),
+      loadId: searchParams.get("loadId"),
+      payrollSettlementId: searchParams.get("settlementId"),
+    });
+    if (target.settlementId) openDrawer(target.settlementId);
+  }, [searchParams, openDrawer, settlements, lines]);
 
   useEffect(() => {
     const tab = searchParams.get("tab");
