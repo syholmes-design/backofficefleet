@@ -45,7 +45,13 @@ export function BofHeader() {
   const pathname = usePathname();
   const [mounted, setMounted] = useState(false);
   useEffect(() => setMounted(true), []);
-  if (pathname.startsWith("/customer-portal")) return null;
+  if (
+    pathname.startsWith("/customer-portal") ||
+    pathname === "/customers" ||
+    pathname.startsWith("/portals/customer")
+  ) {
+    return null;
+  }
   const marketingOnlyHeader = ["/", "/for-hire-carriers", "/private-fleets", "/government", "/company", "/aggregators", "/qa", "/bof-vault", "/how-bof-works", "/team-briefing", "/recruiting", "/careers", "/business-operations", "/fleet-savings", "/book-assessment", "/assessment", "/apply", "/investors", "/blog", "/contact", "/product", "/driver-experience", "/fleet-operations", "/founding-fleet", "/what-we-do", "/what-we-do/people-hr", "/what-we-do/finance", "/what-we-do/operations-compliance", "/what-we-do/procurement-savings"].some((route) => pathname === route || pathname.startsWith(`${route}/`));
   const isActiveProductNav = (href: string) => {
     if (!mounted) return false;

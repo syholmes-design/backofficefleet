@@ -34,6 +34,7 @@ assert(named, "Existing demo data must include a recorded customerName");
   assert(fact, "A: recorded customerName fact missing");
   assert(fact!.fact.includes(String(named!.customerName).trim()), "A: must copy recorded customerName");
   assert(rec, "A: shipment recommendation missing");
+  assert(rec!.href.startsWith("/portals/customer"), "A: shipment recommendation must stay on the customer portal");
   assert(view.guidance.every((row) => row.executable === false), "A: recommendations must be non-executable");
   assert(!/assign (driver|unit|truck|equipment)/i.test(view.guidance.map((row) => row.recommendedAction).join(" ")), "A: must not assign");
   assert(!/release load/i.test(view.guidance.map((row) => row.recommendedAction).join(" ")), "A: must not release");

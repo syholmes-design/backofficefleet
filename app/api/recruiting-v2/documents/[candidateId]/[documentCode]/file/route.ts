@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { recruitingV2UnauthorizedResponse } from "@/lib/recruiting-v2/require-operator-session";
 import type { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import {
@@ -97,6 +98,8 @@ export async function GET(request: NextRequest, context: RouteContext) {
 }
 
 export async function POST(request: NextRequest, context: RouteContext) {
+  const unauthorized = await recruitingV2UnauthorizedResponse();
+  if (unauthorized) return unauthorized;
   const { candidateId, documentCode } = await context.params;
   const { candidate, documentRecord } = await loadScopedDocument(candidateId, documentCode);
 

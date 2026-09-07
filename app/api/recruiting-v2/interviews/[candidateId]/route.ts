@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { recruitingV2UnauthorizedResponse } from "@/lib/recruiting-v2/require-operator-session";
 import { prisma } from "@/lib/prisma";
 
 type RouteContext = { params: Promise<{ candidateId: string }> };
@@ -136,6 +137,8 @@ export async function GET(_request: NextRequest, context: RouteContext) {
 }
 
 export async function POST(request: NextRequest, context: RouteContext) {
+  const unauthorized = await recruitingV2UnauthorizedResponse();
+  if (unauthorized) return unauthorized;
   const { candidateId } = await context.params;
   const candidate = await findCandidate(candidateId);
 

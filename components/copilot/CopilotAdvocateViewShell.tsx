@@ -58,7 +58,9 @@ export function CopilotAdvocateViewShell({
         <p className={bodyClass}>
           {access.reason === "AUTH_PENDING"
             ? "Checking existing BOF access. Protected Copilot information is not shown yet."
-            : "Copilot Advocate information is not available for this role."}
+            : access.reason === "AUTH_REQUIRED"
+              ? "Copilot Advocate information is not shown without an existing BOF operator session."
+              : "Copilot Advocate information is not available for this role."}
         </p>
       ) : (
         <>

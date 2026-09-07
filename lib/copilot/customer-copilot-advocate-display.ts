@@ -250,7 +250,7 @@ export function buildCustomerCopilotAdvocateView(args: {
         "Open the existing customer-visible shipment/proof path. Copilot does not release the load or change assignment.",
       recommendedAction: "View shipment status and proof",
       workflow: "Customer-visible shipment",
-      href: `/loads/${encodeURIComponent(load.id)}`,
+      href: `${CUSTOMER_PORTAL_HREF}#shipment-${encodeURIComponent(load.id)}`,
       owner: "Customer",
       derivedPriority: priority,
       priorityNote: "COPILOT DERIVED RECOMMENDATION — not a Customer priority field.",

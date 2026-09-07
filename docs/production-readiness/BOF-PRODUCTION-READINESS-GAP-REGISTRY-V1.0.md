@@ -16,6 +16,12 @@ Certification statuses used here: `VERIFIED` (independently confirmed against BO
 - No secrets were invented or written to `.env.local`.
 - Demo JSON UI remains available. Durable auth/PI fail closed with 503 JSON until the operator supplies real env values.
 
+### Prompt 010B closeout (auth / visibility)
+
+- Copilot no longer uses `DEMO_SHELL_OPEN` for empty sessions (`AUTH_REQUIRED`).
+- recruiting-v2 Prisma mutations require existing `auth()`.
+- Customer portal shipment links stay on `/portals/customer`; unauthenticated `/loads/:id` no longer renders operator pay/fallback.
+
 ---
 
 ## GAP-009-001 — Auth.js MissingSecret / AUTH_SECRET fail-open
@@ -69,21 +75,21 @@ Certification statuses used here: `VERIFIED` (independently confirmed against BO
 | Field | Value |
 |---|---|
 | AREA | Authentication and Authorization |
-| OBSERVED BEHAVIOR | No `middleware.ts`. `(bof)` layout seeds `BofDemoDataShell`. After session 500, Copilot sets `sessionResolved: true` with null user → `DEMO_SHELL_OPEN`, `allowed: true`. Browser Command Center / Maintenance / Customer Copilot show that note and full Copilot facts. Header region is labeled “Authenticated application”. |
-| AUTHORITATIVE EXPECTED BEHAVIOR | Production operator Copilot and operating pages should use existing `auth()` + `lib/authorization.ts` roles. Demo-open shell is documented for the current demo product, not a production gate. |
-| EVIDENCE | `lib/copilot/copilot-advocate-access.ts` 42–48. `use-copilot-advocate-session.ts` 20–24. Browser CC text: “No session memberships are present…”. Glob: 0 middleware files. |
+| OBSERVED BEHAVIOR | Unauthenticated Copilot: `resolveCopilotAdvocateAccess(null)` returns `allowed: false`, `AUTH_REQUIRED`. Command Center shows that note and does not list L001 Copilot facts. Operator `(bof)` demo pages still render from JSON. No new middleware file was added. |
+| AUTHORITATIVE EXPECTED BEHAVIOR | Production operator Copilot uses existing `auth()` + `lib/authorization.ts` roles. Unauthenticated visitors must not inherit Copilot facts. |
+| EVIDENCE | `lib/copilot/copilot-advocate-access.ts`. tsx: null→AUTH_REQUIRED; DISPATCH membership→ROLE_OK; DRIVER→ROLE_REQUIRED. Browser CC 2026-09-07: Copilot facts not shown. |
 | EVIDENCE QUALITY | HIGH |
-| SOURCE OF TRUTH | Copilot access helper + App Router (no middleware) + runtime UI |
+| SOURCE OF TRUTH | Copilot access helper + runtime UI |
 | AFFECTED ROLE(S) | Unauthenticated visitors; intended operators |
-| AFFECTED WORKFLOW(S) | All `(bof)` operating surfaces and Copilot Advocate |
-| PRODUCTION IMPACT | Anyone who can reach the host sees operator Copilot and demo operating data. |
+| AFFECTED WORKFLOW(S) | Copilot Advocate on operating surfaces |
+| PRODUCTION IMPACT | Unauthenticated hosts no longer expose Copilot operator facts. Live ROLE_OK still requires operator-supplied AUTH_SECRET (010A). |
 | SEVERITY | BLOCKER |
 | ROOT-CAUSE CLASSIFICATION | authorization gap |
 | EXISTING BOF COMPONENT | `auth()`, `lib/authorization.ts`, `resolveCopilotAdvocateAccess` |
-| RECOMMENDED REMEDIATION | Wire existing NextAuth + role helpers onto operator routes/APIs. Do not create a new authorization engine. See ADR-009-002. |
+| RECOMMENDED REMEDIATION | Operator supplies AUTH_SECRET and signs in with an operator membership. Do not create a new authorization engine. |
 | DEPENDENCIES | GAP-009-001 |
-| VALIDATION REQUIRED | Unauthenticated operator Copilot denied or clearly demo-host-only; authenticated ROLE_OK still works |
-| CERTIFICATION STATUS | VERIFIED |
+| VALIDATION REQUIRED | Unauthenticated operator Copilot denied; ROLE_OK still returns allowed for DISPATCH-class memberships. |
+| CERTIFICATION STATUS | VALIDATED |
 
 ---
 
@@ -92,21 +98,21 @@ Certification statuses used here: `VERIFIED` (independently confirmed against BO
 | Field | Value |
 |---|---|
 | AREA | Authorization / Unauthorized mutation exposure |
-| OBSERVED BEHAVIOR | `app/api/recruiting-v2/**` route handlers (example: `onboarding/[candidateId]/route.ts` POST) call `prisma.candidate.update` with no `auth()` import or session check. |
-| AUTHORITATIVE EXPECTED BEHAVIOR | Durable Prisma writes require `auth()` + fleet/role checks, matching dispatch load/assignment routes. |
-| EVIDENCE | Grep of `app/api/recruiting-v2` for `await auth(` / `@/auth`: 0 matches. POST body updates onboarding at lines 213–266 of onboarding route. |
+| OBSERVED BEHAVIOR | recruiting-v2 POST/PATCH handlers call `recruitingV2UnauthorizedResponse()` (existing `auth()`). Unauthenticated POST `/api/recruiting-v2/onboarding/CAND-001` and `/offer/CAND-001` return **401** `{ error: "Unauthorized" }`. |
+| AUTHORITATIVE EXPECTED BEHAVIOR | Durable Prisma writes require `auth()`, matching dispatch assignment routes. |
+| EVIDENCE | Seven mutation routes import `lib/recruiting-v2/require-operator-session.ts`. curl 401 2026-09-07. |
 | EVIDENCE QUALITY | HIGH |
-| SOURCE OF TRUTH | Route source vs `app/api/dispatch/load/route.ts` auth pattern |
+| SOURCE OF TRUTH | Route source vs dispatch `auth()` pattern + runtime |
 | AFFECTED ROLE(S) | Any HTTP client; recruiting operators |
-| AFFECTED WORKFLOW(S) | Recruiting v2 onboarding/offer/documents/activation |
-| PRODUCTION IMPACT | Unauthenticated callers can mutate candidate records if the API is reachable. |
+| AFFECTED WORKFLOW(S) | Recruiting v2 onboarding/offer/documents/activation/interviews |
+| PRODUCTION IMPACT | Unauthenticated callers cannot mutate candidate records. Authenticated writes still need DATABASE_URL (010A). |
 | SEVERITY | BLOCKER |
 | ROOT-CAUSE CLASSIFICATION | authorization gap |
-| EXISTING BOF COMPONENT | NextAuth `auth()`; Prisma recruiting models; existing dispatch `auth()` pattern |
-| RECOMMENDED REMEDIATION | Add the existing session/fleet gate to recruiting-v2 mutations. Do not add a new permission engine. |
+| EXISTING BOF COMPONENT | NextAuth `auth()`; existing dispatch 401 pattern |
+| RECOMMENDED REMEDIATION | Operator session + DATABASE_URL for successful writes. Do not add a new permission engine. |
 | DEPENDENCIES | GAP-009-001, GAP-009-002 |
-| VALIDATION REQUIRED | POST without session → 401; with operator session → existing business rules |
-| CERTIFICATION STATUS | VERIFIED |
+| VALIDATION REQUIRED | POST without session → 401 |
+| CERTIFICATION STATUS | VALIDATED |
 
 ---
 
@@ -138,21 +144,21 @@ Certification statuses used here: `VERIFIED` (independently confirmed against BO
 | Field | Value |
 |---|---|
 | AREA | Customer / Authorization / Routing |
-| OBSERVED BEHAVIOR | `/portals/customer` (and `/customers` re-export) uses `Link href={`/loads/${load.loadId}`}`. Browser confirms `a[href="/loads/L001"]`. Unauthenticated `/loads/L001` renders `RuntimeLoadDetailFallback` with driver name, T-102, dispatcher, seals, settlement hold, **Driver Pay $1,091.36 Net**, dispatch/pre-trip/trip-release links. `/portals/customer` still shows the operator header (Dispatch/Loads/Drivers). Copy on the same page says payroll/HR remain restricted. |
-| AUTHORITATIVE EXPECTED BEHAVIOR | `lib/demo-portals.ts` `PORTAL_VISIBILITY.customer.restrictedSections` includes `dispatch-operations`, `settlements`, `driver-hr`, `driver-payroll`. |
-| EVIDENCE | `app/portals/customer/page.tsx` 112, 233. `app/(bof)/loads/[id]/page.tsx` 50–51. Browser `/loads/L001` snapshot. `BofHeader.tsx` hides header only for `/customer-portal`. |
+| OBSERVED BEHAVIOR | Customer shipment cards use `#shipment-{id}` on `/portals/customer`. Operator header is hidden on `/portals/customer` and `/customers`. Unauthenticated `/loads/L001` shows an operator-session required message without driver pay or RuntimeLoadDetailFallback. Packet links remain `/generated/loads/...` and `/evidence/loads/...` (documents, not the operator load file). |
+| AUTHORITATIVE EXPECTED BEHAVIOR | `PORTAL_VISIBILITY.customer.restrictedSections` includes `dispatch-operations`, `settlements`, `driver-hr`, `driver-payroll`. |
+| EVIDENCE | Browser 2026-09-07: no Dispatch nav on customer portal; hrefs `#shipment-L001`; `/loads/L001` gated. Customer Copilot rec href `/portals/customer#shipment-...`. Validator pass. |
 | EVIDENCE QUALITY | HIGH |
 | SOURCE OF TRUTH | PORTAL_VISIBILITY + customer page + load detail page |
 | AFFECTED ROLE(S) | Customer portal users |
 | AFFECTED WORKFLOW(S) | Customer shipment visibility |
-| PRODUCTION IMPACT | Customer-visible navigation exposes operator internals and driver pay. |
+| PRODUCTION IMPACT | Customer navigation no longer opens the operator load file or driver pay. |
 | SEVERITY | BLOCKER |
 | ROOT-CAUSE CLASSIFICATION | authorization gap / workflow gap |
-| EXISTING BOF COMPONENT | `/portals/customer`, packet visibility, `PORTAL_VISIBILITY.customer`; customer-only workspace at `/customer-portal` |
-| RECOMMENDED REMEDIATION | Point customer links at customer-visible proof/status surfaces. Keep `/loads/:id` operator-only via existing auth. Do not duplicate a customer portal. |
-| DEPENDENCIES | GAP-009-016 (clicks may not navigate); GAP-009-003 |
-| VALIDATION REQUIRED | Customer shipment CTA never lands on operator load file; pay/dispatch controls not visible |
-| CERTIFICATION STATUS | VERIFIED |
+| EXISTING BOF COMPONENT | `/portals/customer`, `PORTAL_VISIBILITY.customer`, existing `auth()` on `/loads/:id` |
+| RECOMMENDED REMEDIATION | Keep customer-visible paths on the customer portal. Operator load file remains session-gated. |
+| DEPENDENCIES | GAP-009-016 (hash clicks may still not navigate); GAP-009-003 |
+| VALIDATION REQUIRED | Customer shipment CTA never lands on operator load file; unauth `/loads/:id` does not show pay/dispatch controls |
+| CERTIFICATION STATUS | VALIDATED |
 
 ---
 

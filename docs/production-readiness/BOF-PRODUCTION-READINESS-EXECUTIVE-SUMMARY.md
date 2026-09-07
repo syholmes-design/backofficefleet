@@ -8,6 +8,8 @@
 
 **010A (2026-09-07):** GAP-009-001 and GAP-009-002 **VALIDATED** fail-closed. No secrets invented. Session 503 `AUTH_SECRET_REQUIRED`. PI 503 `DATABASE_URL_REQUIRED`. Demo Command Center still loads from existing JSON/workbook.
 
+**010B (2026-09-07):** GAP-009-003, GAP-009-004, GAP-009-006 **VALIDATED**. Copilot `AUTH_REQUIRED` without session. recruiting-v2 mutations 401. Customer portal isolated from operator `/loads/:id`. Prompt 011 is **not** authorized by this document.
+
 Controlling inputs for Prompts 010–013: this summary + `docs/production-readiness/BOF-PRODUCTION-READINESS-GAP-REGISTRY-V1.0.md`. Downstream prompts must not invent scope.
 
 ---

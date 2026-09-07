@@ -48,7 +48,16 @@ export default async function LoadDetailPage({ params }: Props) {
   const session = (await auth()) as SessionWithMemberships;
 
   if (!session?.user?.id) {
-    return <RuntimeLoadDetailFallback loadId={id} />;
+    return (
+      <div className="bof-page">
+        <h1 className="text-2xl font-semibold text-slate-100">Operator load file</h1>
+        <p className="mt-3 max-w-xl text-sm text-slate-300">
+          Load {id} is an operator workflow. An existing BOF operator session is required. Customer-visible
+          shipment status remains on /portals/customer. This page does not render driver pay, dispatch
+          controls, or demo fallback identities without authentication.
+        </p>
+      </div>
+    );
   }
 
   try {

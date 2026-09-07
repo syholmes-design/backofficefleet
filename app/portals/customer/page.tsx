@@ -109,7 +109,7 @@ export default function CustomerPortalPage() {
             
             <div className="space-y-4">
               {visibleLoads.slice(0, 6).map((load) => (
-                <Link href={`/loads/${load.loadId}`} key={load.loadId} className="block border border-gray-200 rounded-lg p-4 hover:border-teal-400">
+                <Link href={`#shipment-${load.loadId}`} id={`shipment-${load.loadId}`} key={load.loadId} className="block border border-gray-200 rounded-lg p-4 hover:border-teal-400 scroll-mt-24">
                   <div className="flex justify-between items-start mb-3">
                     <div>
                       <div className="font-medium text-gray-900">{load.loadId}</div>
@@ -230,7 +230,7 @@ export default function CustomerPortalPage() {
                   <div className="text-sm text-gray-600">
                     BOF is reviewing shipment proof or operating status. Customer action required: No.
                   </div>
-                  <Link href={`/loads/${load.loadId}`} className="mt-3 inline-flex text-sm font-medium text-teal-700 hover:text-teal-900">
+                  <Link href={`#shipment-${load.loadId}`} className="mt-3 inline-flex text-sm font-medium text-teal-700 hover:text-teal-900">
                     View shipment status and proof →
                   </Link>
                 </div>

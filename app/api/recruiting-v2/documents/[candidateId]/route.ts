@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { recruitingV2UnauthorizedResponse } from "@/lib/recruiting-v2/require-operator-session";
 import type { Prisma, RecruitingV2DocumentStatus, RecruitingV2DocumentType } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import {
@@ -105,6 +106,8 @@ export async function GET(_request: NextRequest, context: RouteContext) {
 }
 
 export async function POST(request: NextRequest, context: RouteContext) {
+  const unauthorized = await recruitingV2UnauthorizedResponse();
+  if (unauthorized) return unauthorized;
   const { candidateId } = await context.params;
   const candidate = await findCandidate(candidateId);
 

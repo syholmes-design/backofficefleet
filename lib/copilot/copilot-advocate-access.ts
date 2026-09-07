@@ -17,6 +17,7 @@ export const COPILOT_OPERATOR_ROLE_CODES = [
 
 export type CopilotAccessReason =
   | "AUTH_PENDING"
+  | "AUTH_REQUIRED"
   | "DEMO_SHELL_OPEN"
   | "ROLE_OK"
   | "ROLE_REQUIRED";
@@ -42,9 +43,9 @@ export function resolveCopilotAdvocateAccess(
   const memberships = getMemberships(user);
   if (!user || memberships.length === 0) {
     return {
-      allowed: true,
-      reason: "DEMO_SHELL_OPEN",
-      note: "No session memberships are present. Copilot inherits the existing (bof) demo shell, which does not require auth(). This is not a new login wall.",
+      allowed: false,
+      reason: "AUTH_REQUIRED",
+      note: "Existing BOF operator session is required. Copilot does not inherit an unauthenticated demo shell.",
     };
   }
 

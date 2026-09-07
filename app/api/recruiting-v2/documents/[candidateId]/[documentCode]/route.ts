@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { recruitingV2UnauthorizedResponse } from "@/lib/recruiting-v2/require-operator-session";
 import type { RecruitingV2DocumentStatus } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import { evaluateRecruitingV2DocumentGate, evaluateRecruitingV2DocumentGates } from "@/lib/recruiting-v2/document-gate-engine";
@@ -95,6 +96,8 @@ export async function GET(_request: NextRequest, context: RouteContext) {
 }
 
 export async function PATCH(request: NextRequest, context: RouteContext) {
+  const unauthorized = await recruitingV2UnauthorizedResponse();
+  if (unauthorized) return unauthorized;
   const { candidateId, documentCode } = await context.params;
   const candidate = await prisma.candidate.findUnique({
     where: { candidateCode: candidateId },
