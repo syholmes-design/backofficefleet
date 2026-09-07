@@ -1,6 +1,10 @@
 import type { BofData } from "@/lib/load-bof-data";
 import { buildPretripTabletModel } from "@/lib/pretrip-tablet";
 import {
+  equipmentConflictsWithCanonicalAssignment,
+  getMaintenanceAssetSummary,
+} from "@/lib/maintenance-data";
+import {
   getCanonicalOperatingProofStatus,
   getDerivedLoadProofItems,
   getLoadProofSummary,
@@ -216,6 +220,20 @@ export function getCanonicalDispatchLoadState(data: BofData, loadId: string): Ca
       source: "load",
       impact: "REVIEW",
     });
+  }
+
+  const assignedAssetId = load.assetId || spine?.assetId || pretrip?.assetId;
+  if (assignedAssetId) {
+    const equipment = getMaintenanceAssetSummary(data, assignedAssetId);
+    if (equipment && equipmentConflictsWithCanonicalAssignment(equipment)) {
+      pushBlocker({
+        id: "equipment-not-dispatchable",
+        label: `${equipment.asset_id} ${equipment.readiness}`,
+        detail: equipment.readiness_reason || `${equipment.asset_id} is not dispatchable on the maintenance asset summary.`,
+        source: "maintenance",
+        impact: "HOLD",
+      });
+    }
   }
 
   if (pretrip) {

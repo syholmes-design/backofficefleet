@@ -7,6 +7,7 @@ import type { BofData } from "@/lib/load-bof-data";
 import { getCanonicalDispatchLoadState } from "@/lib/dispatch/canonical-dispatch-operating-state";
 import { existingSettlementWorkflowHref } from "@/lib/load-file-proof-settlement-display";
 import {
+  equipmentConflictsWithCanonicalAssignment,
   getMaintenanceAssetSummary,
   listMaintenanceAssetSummaries,
   type MaintenanceAssetSummary,
@@ -38,7 +39,7 @@ function piHref(loadId: string): string {
 }
 
 function derivedPriority(summary: MaintenanceAssetSummary): CopilotPriorityBand {
-  if (summary.readiness === "Out of Service" || summary.readiness === "Blocked" || summary.oos) {
+  if (equipmentConflictsWithCanonicalAssignment(summary)) {
     return "hold_or_block";
   }
   if (summary.readiness === "At Risk") return "review";
@@ -210,7 +211,7 @@ export function buildEquipmentCopilotAdvocateView(args: {
         fact: `${asset.asset_id} is on canonical load ${assignedState.loadId}; releaseDisposition=${assignedState.releaseDisposition}.`,
         ...classifyCopilotCause({}),
       });
-      if (asset.readiness === "Out of Service" || asset.readiness === "Blocked" || asset.oos) {
+      if (equipmentConflictsWithCanonicalAssignment(asset)) {
         conflicts.push({
           id: `conflict-assign-oos-${asset.asset_id}`,
           claimClass: "AUTHORITATIVE_FACT",

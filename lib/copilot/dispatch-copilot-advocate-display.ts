@@ -11,7 +11,7 @@ import {
   type CanonicalDispatchLoadState,
 } from "@/lib/dispatch/canonical-dispatch-operating-state";
 import { getDriverDispatchEligibility } from "@/lib/driver-dispatch-eligibility";
-import { listMaintenanceAssetSummaries } from "@/lib/maintenance-data";
+import { equipmentConflictsWithCanonicalAssignment, listMaintenanceAssetSummaries } from "@/lib/maintenance-data";
 import type { V3OperationalData } from "@/lib/v3-operational-types";
 import {
   classifyCopilotCause,
@@ -274,7 +274,7 @@ export function buildDispatchCopilotAdvocateView(args: {
           fact: `Equipment ${asset.asset_id} readiness ${asset.readiness}${asset.oos ? " / OOS" : ""}.`,
           ...classifyCopilotCause({ recordedCauseText: asset.readiness_reason }),
         });
-        if (asset.readiness === "Blocked" || asset.oos) {
+        if (equipmentConflictsWithCanonicalAssignment(asset)) {
           conflicts.push({
             id: `conflict-assign-eq-${load.loadId}`,
             claimClass: "AUTHORITATIVE_FACT",

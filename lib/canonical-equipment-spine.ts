@@ -61,7 +61,18 @@ export type EquipmentOperationalInputs = {
   maintenanceBlock?: string;
 };
 
+/**
+ * ADR-009-001 (existing BOF classification — not a new source of truth):
+ * - V2 unit numbers are AUTHORITATIVE identity.
+ * - V3/V4 workbook fields are REFERENCE.
+ * - DEMO operationalStatus / outOfService are DEMO_ONLY operating flags for this worktree.
+ * - Prisma LIVE remains PENDING / UNKNOWN until equipment rows exist. Do not fill LIVE from DEMO.
+ */
 export type EquipmentAuthorityMode = "DEMO" | "LIVE";
+
+export function isCanonicalOutOfServiceFlag(value: string | number | boolean | null | undefined): boolean {
+  return value === true || value === "true";
+}
 
 const pendingPrisma = (field: string): EquipmentSourceValue => ({
   value: null,
@@ -82,6 +93,10 @@ function demo(value: string | null): EquipmentSourceValue {
 }
 
 function demoStatus(value: string | null): EquipmentSourceValue {
+  return { value, source: "DEMO", provenance: "DEMO_ONLY" };
+}
+
+function demoFlag(value: boolean): EquipmentSourceValue {
   return { value, source: "DEMO", provenance: "DEMO_ONLY" };
 }
 
@@ -141,7 +156,7 @@ export function buildCanonicalEquipmentSpine(
             provenance: "UNKNOWN",
           },
       outOfService: mode === "DEMO"
-        ? demoStatus(generatedStatusById.get(canonicalAssetId) === "Unavailable" ? "true" : "false")
+        ? demoFlag(generatedStatusById.get(canonicalAssetId) === "Unavailable")
         : pendingPrisma("outOfService"),
       unresolvedConflicts: conflicts,
     };
@@ -165,7 +180,9 @@ export function evaluateEquipmentOperationalState(
 
   if (availability === "PENDING_LIVE_RECONCILIATION") reasons.push("Durable Equipment status pending live reconciliation");
   if (sourceStatus === "unavailable") reasons.push("Canonical source marks equipment unavailable");
-  if (preTrip?.outOfService || record.outOfService.value === true) reasons.push("Equipment is out of service");
+  if (preTrip?.outOfService || isCanonicalOutOfServiceFlag(record.outOfService.value)) {
+    reasons.push("Equipment is out of service");
+  }
   if (preTrip?.blockingDefect) reasons.push("Pre-trip has a blocking defect");
   if (preTrip?.status && preTrip.status !== "COMPLETED") reasons.push("Pre-trip is incomplete");
   if (preTrip?.maintenanceBlock) reasons.push(preTrip.maintenanceBlock);
@@ -179,6 +196,7 @@ export function evaluateEquipmentOperationalState(
 
   const blocked = availability === "UNAVAILABLE"
     || preTrip?.outOfService === true
+    || isCanonicalOutOfServiceFlag(record.outOfService.value)
     || preTrip?.blockingDefect === true
     || Boolean(preTrip?.maintenanceBlock);
   const readiness = blocked

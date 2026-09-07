@@ -10,7 +10,11 @@ import {
   createCanonicalV2Assets,
 } from "./dispatch-dashboard-seed";
 import type { Load } from "@/types/dispatch";
-import { evaluateEquipmentOperationalState, getCanonicalEquipmentRecord } from "./canonical-equipment-spine";
+import {
+  evaluateEquipmentOperationalState,
+  getCanonicalEquipmentRecord,
+  isCanonicalOutOfServiceFlag,
+} from "./canonical-equipment-spine";
 
 export type MoneyAtRiskRow = NonNullable<BofData["moneyAtRisk"]>[number];
 
@@ -208,7 +212,8 @@ function buildCanonicalAssetSummary(data: BofData, asset: {asset_id: string; uni
     inspection_status_label: insp.status,
     inspection_expiration_display: insp.exp,
     open_mar_count: mars.filter((m) => isOpenMar(m) || isAtRiskMar(m)).length,
-    oos: canonical?.outOfService.value === true,
+    oos: isCanonicalOutOfServiceFlag(canonical?.outOfService.value)
+      || operationalWithMaintenance.availability === "UNAVAILABLE",
     current_terminal: "Not in BOF fleet JSON",
     mar_rows: mars,
     associated_loads: associatedLoads,
@@ -230,6 +235,17 @@ export function getMaintenanceAssetSummary(
   assetId: string
 ): MaintenanceAssetSummary | null {
   return listMaintenanceAssetSummaries(data).find((a) => a.asset_id === assetId) ?? null;
+}
+
+/** Shared assignment-conflict predicate for Equipment / Dispatch / Load File Copilot. */
+export function equipmentConflictsWithCanonicalAssignment(summary: MaintenanceAssetSummary): boolean {
+  return (
+    summary.oos
+    || summary.readiness === "Out of Service"
+    || summary.readiness === "Blocked"
+    || summary.dispatchability === "NOT_DISPATCHABLE"
+    || summary.assignability === "NOT_ASSIGNABLE"
+  );
 }
 
 export function allMaintenanceAssetIds(): string[] {
