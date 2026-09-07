@@ -26,6 +26,7 @@ import { L008_CANONICAL_STORY, L009_CANONICAL_STORY } from "@/lib/canonical-load
 import { DemoPageExplainerById } from "@/components/demo/DemoPageExplainerById";
 import { buildSettlementCommandCenterSummary, type SettlementCommandCenterSummary } from "@/lib/settlement/settlement-operating-display";
 import { SettlementCommandCenterIntelligence } from "@/components/settlement/SettlementCommandCenterIntelligence";
+import { CopilotAdvocateConsolidationPanel } from "@/components/copilot/CopilotAdvocateConsolidationPanel";
 
 type RiskAction = {
   label: string;
@@ -452,10 +453,15 @@ export function CommandCenterV4() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-slate-950 flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto mb-4"></div>
-          <p className="text-slate-400">Loading operational risk data...</p>
+      <div className="min-h-screen bg-slate-950">
+        <div className="max-w-7xl mx-auto px-6 pt-6">
+          <CopilotAdvocateConsolidationPanel variant="compact" tone="command" />
+        </div>
+        <div className="flex items-center justify-center py-16">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto mb-4"></div>
+            <p className="text-slate-400">Loading operational risk data...</p>
+          </div>
         </div>
       </div>
     );
@@ -463,11 +469,16 @@ export function CommandCenterV4() {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-slate-950 flex items-center justify-center">
-        <div className="text-center">
-          <AlertTriangle className="w-12 h-12 text-red-400 mx-auto mb-4" />
-          <p className="text-red-400 font-medium mb-2">Failed to load operational risk data</p>
-          <p className="text-slate-400 text-sm">{error}</p>
+      <div className="min-h-screen bg-slate-950">
+        <div className="max-w-7xl mx-auto px-6 pt-6">
+          <CopilotAdvocateConsolidationPanel variant="compact" tone="command" />
+        </div>
+        <div className="flex items-center justify-center py-16">
+          <div className="text-center">
+            <AlertTriangle className="w-12 h-12 text-red-400 mx-auto mb-4" />
+            <p className="text-red-400 font-medium mb-2">Failed to load operational risk data</p>
+            <p className="text-slate-400 text-sm">{error}</p>
+          </div>
         </div>
       </div>
     );
@@ -523,6 +534,7 @@ export function CommandCenterV4() {
       </div>
 
       <div className="max-w-7xl mx-auto px-6 pt-4">
+        <CopilotAdvocateConsolidationPanel variant="compact" tone="command" />
         <DemoPageExplainerById pageId="command-center" />
       </div>
 
