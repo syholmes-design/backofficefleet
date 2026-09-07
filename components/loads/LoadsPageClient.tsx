@@ -5,6 +5,7 @@ import Link from "next/link";
 
 import { loadStatusChipClass } from "@/components/dispatch/dispatch-ui";
 import { LoadProcessDiscoveryPanel } from "@/components/loads/LoadProcessDiscoveryPanel";
+import { DispatchCopilotAdvocatePanel } from "@/components/copilot/DispatchCopilotAdvocatePanel";
 import { useBofDemoData } from "@/lib/bof-demo-data-context";
 import { buildPretripTabletModel } from "@/lib/pretrip-tablet";
 import {
@@ -139,6 +140,7 @@ export function LoadsPageClient({ fleetId }: Props) {
           assignment, readiness, pre-trip, and release workflow from the canonical operating core.
         </p>
       </header>
+      <DispatchCopilotAdvocatePanel variant="compact" tone="ops" />
 
       {error ? (
         <div className="rounded-xl border border-rose-700/40 bg-rose-950/20 p-6 text-sm text-rose-100">
