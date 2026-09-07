@@ -4,7 +4,6 @@ import { useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { BofLogo } from "@/components/BofLogo";
-import { CustomerCopilotAdvocatePanel } from "@/components/copilot/CustomerCopilotAdvocatePanel";
 
 const NAV = [
   { href: "/customer-portal", label: "Portal Home", n: "01" },
@@ -84,7 +83,11 @@ export function CustomerPortalShell({
           </div>
         </aside>
         <section className="portal-workspace">
-          <CustomerCopilotAdvocatePanel variant="compact" tone="command" />
+          <p className="portal-honest-banner">
+            <strong>REFERENCE / DEMO walkthrough.</strong> Prairie View Foods / BOF-LD-86240 is a synthetic browser
+            shipment. It is not the customer-visible BOF load identity. Production customer status stays on
+            /portals/customer and does not expose operator dispatch, maintenance, or payroll authority.
+          </p>
           {children}
         </section>
       </main>

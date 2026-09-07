@@ -52,7 +52,8 @@ export default function CustomerPortalPage() {
               {customerProfile.customerName}
             </div>
             <div className="text-sm text-blue-600">
-              Demo Customer Portal
+            Demo Customer Portal — Apex / BOF JSON customer-visible loads (DEMO_CUSTOMER_PROFILE). This is not the
+            Prairie View / BOF-LD-86240 walkthrough at /customer-portal.
             </div>
           </div>
         </div>
