@@ -12,6 +12,7 @@ import { getCanonicalLoadEvidenceForLoad } from "@/lib/canonical-load-evidence";
 import { allMaintenanceAssetIds } from "@/lib/maintenance-data";
 import { DemoBackButton } from "@/components/navigation/DemoBackButton";
 import { getCanonicalLoadStory, normalizeCanonicalLoadId } from "@/lib/canonical-load-stories";
+import { LoadFileCopilotAdvocatePanel } from "@/components/copilot/LoadFileCopilotAdvocatePanel";
 
 export function RuntimeLoadDetailFallback({ loadId }: { loadId: string }) {
   const { data } = useBofDemoData();
@@ -25,6 +26,9 @@ export function RuntimeLoadDetailFallback({ loadId }: { loadId: string }) {
         <p className="mt-2 text-sm text-slate-600">
           This identifier is not in demo seed data. Process intelligence below uses persisted operating events only.
         </p>
+        <div className="mt-4">
+          <LoadFileCopilotAdvocatePanel loadId={loadId} variant="full" tone="ops" />
+        </div>
         <LoadProcessIntelligencePanel loadId={loadId} />
         <p className="mt-4">
           <Link href="/loads" className="inline-flex rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-800 hover:bg-slate-50">
@@ -94,6 +98,10 @@ export function RuntimeLoadDetailFallback({ loadId }: { loadId: string }) {
         <span className="text-slate-400">/</span>
         <span className="font-bold text-slate-950">Load {load.id} (Ref: {load.number || "501"})</span>
       </nav>
+
+      <div className="mb-6">
+        <LoadFileCopilotAdvocatePanel loadId={load.id} variant="full" tone="ops" />
+      </div>
 
       {/* Hero Header */}
       <section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm md:p-8">

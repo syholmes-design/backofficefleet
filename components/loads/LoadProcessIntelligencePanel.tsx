@@ -57,14 +57,14 @@ export function LoadProcessIntelligencePanel({ loadId }: { loadId: string }) {
     };
   }, [loadId]);
 
-  if (error) return <p className="mt-6 rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm font-semibold text-amber-900">{error}</p>;
-  if (!payload) return <p className="mt-6 rounded-xl border border-slate-200 bg-white p-4 text-sm text-slate-600">Loading load process intelligence...</p>;
+  if (error) return <p id="process-intelligence" className="mt-6 rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm font-semibold text-amber-900">{error}</p>;
+  if (!payload) return <p id="process-intelligence" className="mt-6 rounded-xl border border-slate-200 bg-white p-4 text-sm text-slate-600">Loading load process intelligence...</p>;
 
   const firstDeviation = payload.conformance.deviations[0];
   const hasActualHistory = payload.historyStatus === "ACTUAL_EVENT_HISTORY_AVAILABLE";
 
   return (
-    <section className="mt-6 overflow-x-hidden rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:p-6">
+    <section id="process-intelligence" className="mt-6 overflow-x-hidden rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:p-6">
       <div className="flex flex-col gap-4 border-b border-slate-100 pb-4 lg:flex-row lg:items-start lg:justify-between">
         <div className="min-w-0">
           <p className="text-xs font-black uppercase tracking-[0.18em] text-teal-700">Process intelligence</p>

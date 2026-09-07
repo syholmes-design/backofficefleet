@@ -16,6 +16,7 @@ import {
   type DispatchLoadRecord,
   type DispatchLoadWorkflowSnapshot,
 } from "@/lib/dispatch-workflow-ui";
+import { LoadFileCopilotAdvocatePanel } from "@/components/copilot/LoadFileCopilotAdvocatePanel";
 
 type Props = {
   load: DispatchLoadRecord;
@@ -130,6 +131,10 @@ export function LoadDetailContent({ load, onClose, onOpenAssignModal, refreshKey
           ) : null}
         </div>
       </header>
+
+      <div className="shrink-0 border-b border-slate-800 px-5 py-3">
+        <LoadFileCopilotAdvocatePanel loadId={load.id} variant={onClose ? "compact" : "full"} tone="command" />
+      </div>
 
       <div className="shrink-0 border-b border-slate-800 px-5 pt-3">
         <nav className="flex gap-1 overflow-x-auto pb-2" aria-label="Load detail sections">
