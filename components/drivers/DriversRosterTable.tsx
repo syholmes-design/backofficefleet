@@ -435,7 +435,20 @@ export function DriversRosterTable({ operationalSummaries, driverRequirements, h
           data,
           driverRequirements.filter((requirement) => requirement.driverId === driver.id),
         );
-        const authoritativeStatus = mapOperationalStatus(operationalSummaryMap.get(driver.id), hasFleetContext);
+        const prismaStatus = mapOperationalStatus(operationalSummaryMap.get(driver.id), hasFleetContext);
+        const demoDerived = !hasFleetContext;
+        const statusLabel = demoDerived ? m.statusLabel : prismaStatus.label;
+        const eligibilityStatus = demoDerived ? m.status : prismaStatus.status;
+        const source = demoDerived ? ("not_evaluated" as const) : prismaStatus.source;
+        const primaryReason = demoDerived
+          ? `${m.primaryReviewReason || m.dispatchEligibilityLabel} (DEMO / DERIVED from getDriverDispatchEligibility — not Prisma fleet readiness)`
+          : prismaStatus.primaryReason;
+        const businessImpact = demoDerived
+          ? "Prisma fleet readiness is unavailable without sign-in. This row copies existing BOF JSON eligibility."
+          : prismaStatus.businessImpact;
+        const qualificationLine = demoDerived
+          ? `DEMO eligibility: ${m.dispatchEligibilityLabel}`
+          : prismaStatus.qualificationLine;
         
         return {
           driverId: m.driverId,
@@ -443,8 +456,8 @@ export function DriversRosterTable({ operationalSummaries, driverRequirements, h
           email: driver.email,
           phone: driver.phone,
           avatar: driverPhotoPath(driver.id),
-          status: authoritativeStatus.label,
-          eligibilityStatus: authoritativeStatus.status,
+          status: statusLabel,
+          eligibilityStatus,
           dispatchEligibility: m.dispatchEligibilityLabel,
           compliance: m.complianceLabel,
           safety: m.safetyLabel,
@@ -462,15 +475,15 @@ export function DriversRosterTable({ operationalSummaries, driverRequirements, h
           reviewExplanation,
           workerType,
           readinessSummary: {
-            status: authoritativeStatus.status,
-            primaryReason: authoritativeStatus.primaryReason,
-            businessImpact: authoritativeStatus.businessImpact,
-            requiredFix: authoritativeStatus.businessImpact,
+            status: eligibilityStatus,
+            primaryReason,
+            businessImpact,
+            requiredFix: businessImpact,
             ownerTeam: "Operations Team",
           },
           actionIssues,
-          qualificationLine: authoritativeStatus.qualificationLine,
-          authoritativeSource: authoritativeStatus.source,
+          qualificationLine,
+          authoritativeSource: source,
         };
       });
     },
@@ -586,7 +599,12 @@ export function DriversRosterTable({ operationalSummaries, driverRequirements, h
       <section id="primary-driver-table" className="bof-cc-panel" aria-label="Driver document center">
         <div className="bof-cc-panel-head">
           <h2 className="bof-h2">Drivers needing attention ({evaluatedAttentionCount})</h2>
-          {evaluationUnavailableCount > 0 ? (
+          {!hasFleetContext ? (
+            <p className="bof-cc-panel-sub">
+              Prisma fleet readiness is unavailable. Roster status is DEMO / DERIVED from existing BOF JSON eligibility
+              (getDriverDispatchEligibility). It is not live Prisma qualification.
+            </p>
+          ) : evaluationUnavailableCount > 0 ? (
             <p className="bof-cc-panel-sub">
               {evaluationUnavailableCount} driver{evaluationUnavailableCount === 1 ? "" : "s"} could not be evaluated because authenticated fleet readiness data is unavailable.
             </p>
