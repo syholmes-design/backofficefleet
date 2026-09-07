@@ -1,4 +1,6 @@
 import type { Metadata } from "next";
+import { BofDemoDataShell } from "@/components/BofDemoDataShell";
+import { getBofData } from "@/lib/load-bof-data";
 import "./customer-portal.css";
 import "./customer-portal-bof.css";
 
@@ -10,5 +12,6 @@ export const metadata: Metadata = {
 };
 
 export default function CustomerPortalLayout({ children }: { children: React.ReactNode }) {
-  return children;
+  const seed = getBofData();
+  return <BofDemoDataShell seed={seed}>{children}</BofDemoDataShell>;
 }

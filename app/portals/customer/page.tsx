@@ -3,6 +3,8 @@ import { getBofData } from '@/lib/load-bof-data';
 import { getCustomerPortalProfile, getCustomerVisibleLoads } from '@/lib/demo-portals';
 import { buildLoadPacketRegistry } from '@/lib/load-artifact-registry';
 import Link from 'next/link';
+import { BofDemoDataShell } from '@/components/BofDemoDataShell';
+import { CustomerCopilotAdvocatePanel } from '@/components/copilot/CustomerCopilotAdvocatePanel';
 
 export const metadata: Metadata = {
   title: 'Customer Portal',
@@ -24,8 +26,12 @@ export default function CustomerPortalPage() {
   });
 
   return (
+    <BofDemoDataShell seed={data}>
     <div className="min-h-screen bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 py-12 sm:px-6 lg:px-8">
+        <div className="mb-8">
+          <CustomerCopilotAdvocatePanel variant="full" tone="command" />
+        </div>
         {/* Header */}
         <div className="text-center mb-12">
           <h1 className="text-4xl font-bold text-gray-900 mb-4">
@@ -336,5 +342,6 @@ export default function CustomerPortalPage() {
         </div>
       </div>
     </div>
+    </BofDemoDataShell>
   );
 }

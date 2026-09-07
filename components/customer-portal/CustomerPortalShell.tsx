@@ -4,6 +4,7 @@ import { useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { BofLogo } from "@/components/BofLogo";
+import { CustomerCopilotAdvocatePanel } from "@/components/copilot/CustomerCopilotAdvocatePanel";
 
 const NAV = [
   { href: "/customer-portal", label: "Portal Home", n: "01" },
@@ -82,7 +83,10 @@ export function CustomerPortalShell({
             <p {...(railNoteAttr ? { "data-portal-text": railNoteAttr } : {})}>{railNote}</p>
           </div>
         </aside>
-        <section className="portal-workspace">{children}</section>
+        <section className="portal-workspace">
+          <CustomerCopilotAdvocatePanel variant="compact" tone="command" />
+          {children}
+        </section>
       </main>
     </div>
   );
