@@ -3,6 +3,7 @@
 import { useMemo } from "react";
 import Link from "next/link";
 import { useBofDemoData } from "@/lib/bof-demo-data-context";
+import { EquipmentCopilotAdvocatePanel } from "@/components/copilot/EquipmentCopilotAdvocatePanel";
 import {
   dispatchImpactForAsset,
   getMaintenanceAssetSummary,
@@ -59,14 +60,18 @@ export function MaintenanceAssetDetailClient({ assetId }: { assetId: string }) {
 
   if (!summary) {
     return (
-      <p className="bof-muted">
-        Asset <code className="bof-code">{assetId}</code> not found in the maintenance catalog.
-      </p>
+      <>
+        <EquipmentCopilotAdvocatePanel assetId={assetId} variant="full" tone="ops" />
+        <p className="bof-muted">
+          Asset <code className="bof-code">{assetId}</code> not found in the maintenance catalog.
+        </p>
+      </>
     );
   }
 
   return (
     <>
+      <EquipmentCopilotAdvocatePanel assetId={assetId} variant="full" tone="ops" />
       <header className="maint-detail-header">
         <div>
           <h2 className="bof-title bof-title-tight">

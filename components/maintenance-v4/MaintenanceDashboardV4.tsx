@@ -14,6 +14,7 @@ import {
   FileText
 } from "lucide-react";
 import { getV3OperationalData, isV3DataAvailable } from "@/lib/v3-operational-loader";
+import { EquipmentCopilotAdvocatePanel } from "@/components/copilot/EquipmentCopilotAdvocatePanel";
 import { formatDisplayDate } from "@/lib/date-utils";
 import type { Asset, MaintenanceWorkOrder } from "@/lib/v3-operational-types";
 
@@ -192,10 +193,15 @@ export function MaintenanceDashboardV4() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-slate-950 flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto mb-4"></div>
-          <p className="text-slate-400">Loading V4 maintenance data...</p>
+      <div className="min-h-screen bg-slate-950">
+        <div className="px-6 pt-6">
+          <EquipmentCopilotAdvocatePanel variant="compact" tone="ops" />
+        </div>
+        <div className="flex items-center justify-center py-16">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto mb-4"></div>
+            <p className="text-slate-400">Loading V4 maintenance data...</p>
+          </div>
         </div>
       </div>
     );
@@ -203,11 +209,16 @@ export function MaintenanceDashboardV4() {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-slate-950 flex items-center justify-center">
-        <div className="text-center">
-          <AlertTriangle className="w-12 h-12 text-red-400 mx-auto mb-4" />
-          <p className="text-red-400 font-medium mb-2">Failed to load maintenance data</p>
-          <p className="text-slate-400 text-sm">{error}</p>
+      <div className="min-h-screen bg-slate-950">
+        <div className="px-6 pt-6">
+          <EquipmentCopilotAdvocatePanel variant="compact" tone="ops" />
+        </div>
+        <div className="flex items-center justify-center py-16">
+          <div className="text-center">
+            <AlertTriangle className="w-12 h-12 text-red-400 mx-auto mb-4" />
+            <p className="text-red-400 font-medium mb-2">Failed to load maintenance data</p>
+            <p className="text-slate-400 text-sm">{error}</p>
+          </div>
         </div>
       </div>
     );
@@ -215,6 +226,9 @@ export function MaintenanceDashboardV4() {
 
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100">
+      <div className="px-6 pt-6">
+        <EquipmentCopilotAdvocatePanel variant="compact" tone="ops" />
+      </div>
       {/* Fallback Warning Banner */}
       {usingFallback && (
         <div className="bg-yellow-500/10 border-b border-yellow-500/30 backdrop-blur-sm">
