@@ -5,7 +5,7 @@
 **Prompt:** 009 — Discovery & Gap Registry  
 **Predecessor HEAD:** `d8702ccefcf96adf1408fabccf1e3236eba71098`  
 **Worktree:** `bof-orchestrator-copilot-sequential-2026-09`  
-**Status of this registry:** Prompt 009 diagnosis preserved. Prompt 010A updated GAP-009-001 and GAP-009-002 to VALIDATED (fail-closed). Other gaps remain as diagnosed unless a later certified prompt updates them.  
+**Status of this registry:** Prompt 009 diagnosis preserved. Prompt 010A/010B remain VALIDATED. Prompt 011 updated GAP-009-007, 008, 010, 012, 013, 024, 028, 030, and 032. Other gaps remain as diagnosed unless a later certified prompt updates them.  
 **Not:** a BOF runtime subsystem, database table, API, service, certification registry, or state machine.
 
 Certification statuses used here: `VERIFIED` (independently confirmed against BOF sources). `VALIDATED` means the authorized remediation was verified against the stated validation requirement. Prompt 009 did not remediate.
@@ -21,6 +21,13 @@ Certification statuses used here: `VERIFIED` (independently confirmed against BO
 - Copilot no longer uses `DEMO_SHELL_OPEN` for empty sessions (`AUTH_REQUIRED`).
 - recruiting-v2 Prisma mutations require existing `auth()`.
 - Customer portal shipment links stay on `/portals/customer`; unauthenticated `/loads/:id` no longer renders operator pay/fallback.
+
+### Prompt 011 closeout (data authority / cross-domain)
+
+- ADR-009-001 resolved from existing spine provenance, not a fourth SOT: operator DEMO readiness/CC dispatch-hold KPIs use BOF JSON + `listMaintenanceAssetSummaries` / `getCanonicalDispatchLoadState`. V3/V4 workbook remains REFERENCE. Prisma LIVE equipment remains PENDING/UNKNOWN (GAP-009-028 fail-closed).
+- ADR-009-003 resolved from `existingSettlementWorkflowHref`: operator `/settlements` identity is driver-week payroll (`STL-*` may be `settlementId`). `loadId` is highlighting only. Prisma `Settlement.id` cuid is not a `/settlements` nav key.
+- T-102 DEMO `oos` is boolean true. L001 canonical state carries a maintenance HOLD. Copilot Equipment/Dispatch/Load File share `equipmentConflictsWithCanonicalAssignment`.
+- Prisma non-pending LIVE equipment rows remain unavailable in this worktree (no operator DATABASE_URL / equipment facts invented).
 
 ---
 
@@ -181,7 +188,7 @@ Certification statuses used here: `VERIFIED` (independently confirmed against BO
 | RECOMMENDED REMEDIATION | Do not create a new SOT engine. Operator must choose which existing source is production AUTHORITATIVE, then wire V4 surfaces to it or label workbook REFERENCE/DEMO. |
 | DEPENDENCIES | GAP-009-008, GAP-009-030, ADR-009-001 |
 | VALIDATION REQUIRED | CC KPIs match the chosen AUTHORITATIVE load/equipment records for L001/T-102 |
-| CERTIFICATION STATUS | VERIFIED |
+| CERTIFICATION STATUS | VALIDATED — CC hero/KPI dispatch holds and attention counts use `getCanonicalDispatchLoadState` / equipment spine. Workbook risk counts remain labeled REFERENCE. L001 HOLD with T-102 maintenance blocker; T-102 oos=true. |
 
 ---
 
@@ -204,7 +211,7 @@ Certification statuses used here: `VERIFIED` (independently confirmed against BO
 | RECOMMENDED REMEDIATION | Align boolean `oos` with DEMO string flags OR align Copilot predicates to `assignability`/`dispatchability`. Do not add an equipment engine. |
 | DEPENDENCIES | GAP-009-007, ADR-009-001 |
 | VALIDATION REQUIRED | Same T-102 conflict on Equipment, Dispatch, Load File Copilots; load-file maintenance line matches summary |
-| CERTIFICATION STATUS | VERIFIED |
+| CERTIFICATION STATUS | VALIDATED — DEMO `outOfService` is boolean true; `listMaintenanceAssetSummaries.oos` is true for T-102; Copilot predicates share `equipmentConflictsWithCanonicalAssignment`. LIVE path remains pending (028). |
 
 ---
 
@@ -250,7 +257,7 @@ Certification statuses used here: `VERIFIED` (independently confirmed against BO
 | RECOMMENDED REMEDIATION | Join using one existing safety authority; do not create a safety engine. See ADR-009-001. |
 | DEPENDENCIES | GAP-009-007 |
 | VALIDATION REQUIRED | A real dispatchBlock event appears on Dispatch Copilot and matches Safety queue |
-| CERTIFICATION STATUS | VERIFIED |
+| CERTIFICATION STATUS | VALIDATED — Safety header and watchlist Dispatch Blocks both use `Safety_Events.dispatchBlock` count (2: EVT-001, EVT-010). Workbook KPI sheet value 5 remains REFERENCE, not operating. Dispatch Copilot still copies those events. Workbook events were not promoted into canonical dispatch HOLD. |
 
 ---
 
@@ -296,7 +303,7 @@ Certification statuses used here: `VERIFIED` (independently confirmed against BO
 | RECOMMENDED REMEDIATION | After session works, prefer Prisma live summaries; in demo-open mode label DEMO eligibility or hide conflicting Copilot as operator-only. |
 | DEPENDENCIES | GAP-009-001, GAP-009-003 |
 | VALIDATION REQUIRED | With fleet session, evaluation count > 0; without session, no conflicting READY/BLOCKED from a second engine unless labeled |
-| CERTIFICATION STATUS | VERIFIED |
+| CERTIFICATION STATUS | VALIDATED — unauthenticated roster copies `getDriverDispatchEligibility` / `getDriverTableRowModel` as DEMO/DERIVED. Prisma summaries remain AUTHORITATIVE when fleet session exists. Demo eligibility is not promoted to live Prisma. |
 
 ---
 
@@ -319,7 +326,7 @@ Certification statuses used here: `VERIFIED` (independently confirmed against BO
 | RECOMMENDED REMEDIATION | Do not create a settlement engine. Decide the production settlement key and wire query params to the existing drawer/highlight. |
 | DEPENDENCIES | GAP-009-014 |
 | VALIDATION REQUIRED | Copilot settlement link opens or highlights the AUTHORITATIVE row for DRV-001/L001 |
-| CERTIFICATION STATUS | VERIFIED |
+| CERTIFICATION STATUS | VALIDATED — ADR-009-003: `/settlements` is payroll shell. `?driverId=DRV-001&loadId=L001` resolves STL-001, opens the drawer, and highlights the row. Prisma cuid is not a nav key. Durable Prisma settlement close remains 014/015 (out of 011). |
 
 ---
 
@@ -572,7 +579,7 @@ Certification statuses used here: `VERIFIED` (independently confirmed against BO
 | RECOMMENDED REMEDIATION | Copy assignability/dispatchability onto the existing load maintenance line. |
 | DEPENDENCIES | GAP-009-008 |
 | VALIDATION REQUIRED | L001 shows T-102 not dispatchable when summary says so |
-| CERTIFICATION STATUS | VERIFIED |
+| CERTIFICATION STATUS | VALIDATED — `getCanonicalDispatchLoadState(L001)` now includes maintenance HOLD `T-102 Out of Service`. Unauthenticated `/loads/L001` remains session-gated (010B); authenticated fallback and Copilot consume that state. |
 
 ---
 
@@ -664,7 +671,7 @@ Certification statuses used here: `VERIFIED` (independently confirmed against BO
 | RECOMMENDED REMEDIATION | Complete existing LIVE reconciliation; do not add a second equipment SOT. |
 | DEPENDENCIES | GAP-009-002, GAP-009-007 |
 | VALIDATION REQUIRED | LIVE mode T-102 (or real unit) has non-pending availability from Prisma |
-| CERTIFICATION STATUS | VERIFIED |
+| CERTIFICATION STATUS | VALIDATED (fail-closed PENDING) — LIVE spine still returns `UNRESOLVED_PENDING_LIVE_RECONCILIATION` / `outOfService` MISSING. Prisma equipment facts were not invented. DEMO Unavailable is not used as LIVE authority. Non-pending Prisma availability remains unavailable in this worktree. |
 
 ---
 
@@ -710,7 +717,7 @@ Certification statuses used here: `VERIFIED` (independently confirmed against BO
 | RECOMMENDED REMEDIATION | Map existing column names; do not add a workbook engine. Subject to ADR-009-001. |
 | DEPENDENCIES | GAP-009-007 |
 | VALIDATION REQUIRED | Parsed T-102 status matches the sheet’s Status Indicator / Service Status |
-| CERTIFICATION STATUS | VERIFIED |
+| CERTIFICATION STATUS | VALIDATED — `parseAssets` reads Status Indicator / Service Status / Assigned Driver ID (T-102 workbook OK/OK / DRV-001). Maintenance V4 Ready/OOS KPIs use `listMaintenanceAssetSummaries`, not workbook OK as operating Ready. |
 
 ---
 
@@ -756,7 +763,7 @@ Certification statuses used here: `VERIFIED` (independently confirmed against BO
 | RECOMMENDED REMEDIATION | Keep `/customer-portal` labeled REFERENCE/DEMO; production customer URL one tree. |
 | DEPENDENCIES | GAP-009-006, GAP-009-021 |
 | VALIDATION REQUIRED | Production customer host has one identity set |
-| CERTIFICATION STATUS | VERIFIED |
+| CERTIFICATION STATUS | VALIDATED — `/portals/customer` is Apex / DEMO_CUSTOMER_PROFILE. `/customer-portal` is labeled REFERENCE/DEMO Prairie View walkthrough and no longer mounts Customer Copilot against L00x. |
 
 ---
 
@@ -764,9 +771,9 @@ Certification statuses used here: `VERIFIED` (independently confirmed against BO
 
 | ID | Decision | Triggering gaps |
 |---|---|---|
-| ADR-009-001 | Which existing source is production AUTHORITATIVE for equipment/readiness/Command Center: V4 workbook, BOF JSON/`listMaintenanceAssetSummaries`, or Prisma LIVE spine? | 007, 008, 010, 028, 030 |
+| ADR-009-001 | **Resolved (existing BOF classification).** Operator DEMO equipment/readiness/Command Center dispatch-hold KPIs: BOF JSON + `listMaintenanceAssetSummaries` / `getCanonicalDispatchLoadState`. V3/V4 workbook: REFERENCE. Prisma LIVE equipment: PENDING/UNKNOWN until real equipment rows exist — do not fill from DEMO. No fourth SOT. | 007, 008, 010, 028, 030 |
 | ADR-009-002 | Production host posture: remain demo-open `(bof)` shell, or require existing NextAuth + `lib/authorization` on operator/customer surfaces? Not a new auth product. | 001, 003, 004, 006 |
-| ADR-009-003 | Production settlement identity: load `settlementHold`, payroll `STL-*`, or Prisma `Settlement.id`? | 013, 014, 015 |
+| ADR-009-003 | **Resolved (existing href contract).** Operator `/settlements` identity is driver-week payroll. `STL-*` may be `settlementId`. `loadId` is highlighting only. Prisma `Settlement.id` cuid is not a `/settlements` nav key. Durable Prisma money remains out of 011 (014/015). | 013, 014, 015 |
 | ADR-009-004 | Observability: stay with console/UI banners, or an approved existing vendor? **Do not create a BOF observability platform in 010–013.** | 019 |
 
 No new orchestration, workflow, SOT, authorization, domain, observability, or security platform is authorized by this registry.
@@ -784,3 +791,11 @@ No new orchestration, workflow, SOT, authorization, domain, observability, or se
 | **Total** | **32** | |
 
 SPECULATIVE entries: 0 (Copilot signals independently re-verified before VERIFIED).
+
+### Remaining open after Prompt 011 (by certification status)
+
+VALIDATED this program: 001, 002, 003, 004, 006, 007, 008, 010, 012, 013, 024, 028, 030, 032.
+
+Still VERIFIED (not 011-remediated): 005, 009, 011, 014, 015, 016, 017, 018, 019, 020, 021, 022, 023, 025, 026, 027, 029, 031.
+
+Open BLOCKER gaps: 0. Remaining HIGH: 005, 014, 015, 016, 018, 020 (6). Remaining MEDIUM: 009, 011, 017, 019, 021, 023, 025, 026, 029 (9).
