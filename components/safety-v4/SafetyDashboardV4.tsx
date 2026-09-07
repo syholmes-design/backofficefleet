@@ -215,8 +215,13 @@ export function SafetyDashboardV4() {
     return [
       {
         label: "Dispatch Blocks",
-        value: metricValue("Dispatch Blocks", safetyStats.dispatchBlocks),
-        detail: "Events holding release until coaching or proof is complete",
+        value: safetyStats.dispatchBlocks,
+        detail: (() => {
+          const sheet = safetyKpiSource.find((kpi) => kpi.kpiName === "Dispatch Blocks")?.kpiValue;
+          return sheet != null && sheet !== safetyStats.dispatchBlocks
+            ? `Safety_Events.dispatchBlock count. Workbook KPI sheet REFERENCE: ${sheet} (not used for this count)`
+            : "Events holding release until coaching or proof is complete";
+        })(),
         icon: Ban,
         tone: "text-red-300",
       },
