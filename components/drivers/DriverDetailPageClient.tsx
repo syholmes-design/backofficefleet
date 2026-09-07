@@ -38,6 +38,7 @@ import {
   deriveDocStatusFromExpiration,
 } from "@/lib/driver-operational-edit";
 import { DemoBackButton } from "@/components/navigation/DemoBackButton";
+import { DriverCopilotAdvocatePanel } from "@/components/copilot/DriverCopilotAdvocatePanel";
 import { getDriverDispatchEligibility } from "@/lib/driver-dispatch-eligibility";
 import { getDriverOperationalProfile } from "@/lib/driver-operational-profile";
 import {
@@ -329,6 +330,9 @@ export function DriverDetailPageClient({ driverId }: { driverId: string }) {
   if (!driver) {
     return (
       <div className="bof-page">
+        <div className="mb-4">
+          <DriverCopilotAdvocatePanel driverId={driverId} variant="full" tone="ops" />
+        </div>
         <p className="bof-muted">Driver not found.</p>
         <Link href="/drivers" className="bof-link-secondary">
           Back to drivers
@@ -391,6 +395,9 @@ export function DriverDetailPageClient({ driverId }: { driverId: string }) {
 
   return (
     <div className="bof-page bof-driver-hub">
+      <div className="mb-4">
+        <DriverCopilotAdvocatePanel driverId={driver.id} variant="full" tone="ops" />
+      </div>
       <header className="bof-driver-profile-toolbar">
         <DemoBackButton fallbackHref="/drivers" />
         <div className="bof-driver-profile-toolbar-row">

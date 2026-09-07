@@ -3,6 +3,7 @@
 import { DriversRosterTable } from "@/components/drivers/DriversRosterTable";
 import { ComplianceDashboardV4 } from "@/components/compliance-v4/ComplianceDashboardV4";
 import { DemoPageExplainerById } from "@/components/demo/DemoPageExplainerById";
+import { DriverCopilotAdvocatePanel } from "@/components/copilot/DriverCopilotAdvocatePanel";
 import type { DriverOperationalSummary } from "@/lib/services/driverOperationalReadModelService";
 import type { DriverReviewRequirement } from "@/lib/driver-review-explanation";
 
@@ -26,6 +27,7 @@ export function DriversCommandCenterV4({ operationalSummaries, driverRequirement
           <DemoPageExplainerById pageId="drivers" />
         </div>
       </header>
+      <DriverCopilotAdvocatePanel variant="compact" tone="ops" />
 
       {/* Driver Roster Section */}
       <section>
