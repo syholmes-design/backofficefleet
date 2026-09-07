@@ -13,6 +13,7 @@ import { RfidProofChainV4 } from "@/components/rfid-v4/RfidProofChainV4";
 import { RouteIntelligenceV4 } from "@/components/route-intelligence-v4/RouteIntelligenceV4";
 import { DispatchAssetCards } from "@/components/dispatch/DispatchAssetCards";
 import { DemoPageExplainerById } from "@/components/demo/DemoPageExplainerById";
+import { DispatchCopilotAdvocatePanel } from "@/components/copilot/DispatchCopilotAdvocatePanel";
 import { useBofDemoData } from "@/lib/bof-demo-data-context";
 import {
   ApiError,
@@ -199,6 +200,9 @@ export function DispatchShell({ fleetId, drivers, driverOperationalSummaries }: 
       <div className="flex min-h-0 min-w-0 flex-1 flex-col">
         <div className="px-4 pt-3">
           <DemoPageExplainerById pageId="dispatch" />
+        </div>
+        <div className="px-4">
+          <DispatchCopilotAdvocatePanel />
         </div>
 
         {view === "board" ? (

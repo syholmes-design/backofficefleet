@@ -22,7 +22,7 @@ import {
 import { getV3OperationalData, isV3DataAvailable } from "@/lib/v3-operational-loader";
 import { formatDisplayDate } from "@/lib/date-utils";
 import type { OperationalRiskQueue, V3OperationalData } from "@/lib/v3-operational-types";
-import { L008_CANONICAL_STORY, L009_CANONICAL_STORY, L011_CANONICAL_STORY } from "@/lib/canonical-load-stories";
+import { L008_CANONICAL_STORY, L009_CANONICAL_STORY } from "@/lib/canonical-load-stories";
 import { DemoPageExplainerById } from "@/components/demo/DemoPageExplainerById";
 import { buildSettlementCommandCenterSummary, type SettlementCommandCenterSummary } from "@/lib/settlement/settlement-operating-display";
 import { SettlementCommandCenterIntelligence } from "@/components/settlement/SettlementCommandCenterIntelligence";
