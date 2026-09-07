@@ -765,8 +765,8 @@ function parseAssets(data: string[][]): Asset[] {
       year: Number(obj['Year']) || 0,
       vin: String(obj['VIN'] || ''),
       licensePlate: String(obj['License Plate'] || ''),
-      status: String(obj['Status'] || ''),
-      currentDriverId: String(obj['Current Driver ID'] || ''),
+      status: workbookCell(obj, 'Status', 'Status Indicator', 'Service Status'),
+      currentDriverId: workbookCell(obj, 'Current Driver ID', 'Assigned Driver ID'),
       currentLocation: String(obj['Current Location'] || ''),
       mileage: Number(obj['Mileage']) || 0,
       lastMaintenanceDate: String(obj['Last Maintenance Date'] || ''),
@@ -774,7 +774,7 @@ function parseAssets(data: string[][]): Asset[] {
       dotInspectionDue: String(obj['DOT Inspection Due'] || ''),
       insuranceExpiry: String(obj['Insurance Expiry'] || ''),
       registrationExpiry: String(obj['Registration Expiry'] || ''),
-      readinessStatus: String(obj['Readiness Status'] || ''),
+      readinessStatus: workbookCell(obj, 'Readiness Status', 'Status Indicator', 'Service Status'),
       managerActionRequired: Boolean(obj['Manager Action Required']),
     };
   });
@@ -1131,6 +1131,14 @@ function parseOperationalRiskQueue(data: string[][]): OperationalRiskQueue[] {
 function parseBoolean(value: unknown): boolean {
   const normalized = String(value ?? '').trim().toLowerCase();
   return normalized === 'yes' || normalized === 'true' || normalized === '1' || normalized === 'complete';
+}
+
+function workbookCell(obj: Record<string, unknown>, ...headers: string[]): string {
+  for (const header of headers) {
+    const value = obj[header];
+    if (value != null && String(value).trim() !== "") return String(value);
+  }
+  return "";
 }
 
 /**

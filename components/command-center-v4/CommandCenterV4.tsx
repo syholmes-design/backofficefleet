@@ -27,6 +27,9 @@ import { DemoPageExplainerById } from "@/components/demo/DemoPageExplainerById";
 import { buildSettlementCommandCenterSummary, type SettlementCommandCenterSummary } from "@/lib/settlement/settlement-operating-display";
 import { SettlementCommandCenterIntelligence } from "@/components/settlement/SettlementCommandCenterIntelligence";
 import { CopilotAdvocateConsolidationPanel } from "@/components/copilot/CopilotAdvocateConsolidationPanel";
+import { useBofDemoData } from "@/lib/bof-demo-data-context";
+import { getCanonicalDispatchLoadState } from "@/lib/dispatch/canonical-dispatch-operating-state";
+import { listMaintenanceAssetSummaries } from "@/lib/maintenance-data";
 
 type RiskAction = {
   label: string;
@@ -253,12 +256,31 @@ function withCanonicalFlagshipRisks(data: V3OperationalData): OperationalRiskQue
 }
 
 export function CommandCenterV4() {
+  const { data } = useBofDemoData();
   const [operationalRisks, setOperationalRisks] = useState<OperationalRiskQueue[]>([]);
   const [settlementSummary, setSettlementSummary] = useState<SettlementCommandCenterSummary>(() => buildSettlementCommandCenterSummary(null));
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [, setUsingFallback] = useState(false);
   const [selectedModule, setSelectedModule] = useState<string>('all');
+
+  const canonicalObservation = useMemo(() => {
+    const states = data.loads
+      .map((load) => getCanonicalDispatchLoadState(data, load.id))
+      .filter((row): row is NonNullable<typeof row> => Boolean(row));
+    const summaries = listMaintenanceAssetSummaries(data);
+    const l001 = states.find((row) => row.loadId === "L001");
+    const t102 = summaries.find((row) => row.asset_id === "T-102");
+    return {
+      holdCount: states.filter((row) => row.releaseDisposition === "HOLD").length,
+      needsAttention: states.filter((row) => row.needsAttention).length,
+      oosCount: summaries.filter((row) => row.oos).length,
+      l001Disposition: l001?.releaseDisposition ?? "UNAVAILABLE",
+      l001Maintenance: l001?.blockers.some((row) => row.source === "maintenance") ?? false,
+      t102Oos: Boolean(t102?.oos),
+      t102Readiness: t102?.readiness ?? "UNAVAILABLE",
+    };
+  }, [data]);
 
   // Load V4 workbook data
   // Workbook loaders are local async routines; keep this as a one-time bootstrap.
@@ -512,21 +534,31 @@ export function CommandCenterV4() {
                 safety risk, claims exposure, and the manager actions needed to keep Delta
                 Advanced Trucking moving.
               </p>
+              <p className="mt-3 max-w-2xl rounded-lg border border-cyan-400/25 bg-slate-950/70 px-3 py-2 text-xs leading-5 text-cyan-100">
+                Operating AUTHORITATIVE counts below are BOF JSON / canonical dispatch / equipment spine.
+                Workbook risk rows remain visible as REFERENCE and are not the Command Center dispatch-block source.
+                L001 release {canonicalObservation.l001Disposition}
+                {canonicalObservation.l001Maintenance ? " with a maintenance blocker" : ""}.
+                T-102 {canonicalObservation.t102Readiness}
+                {canonicalObservation.t102Oos ? " / oos=true" : " / oos=false"}.
+              </p>
             </div>
             <div className="grid grid-cols-2 gap-3 sm:min-w-[280px]">
               <Link
-                href={criticalRisk ? getRiskStory(criticalRisk).primaryHref : "/money-at-risk"}
+                href="/loads/L001"
                 className="rounded-xl border border-red-400/25 bg-slate-950/70 p-4 text-right shadow-lg shadow-slate-950/30 transition hover:-translate-y-0.5 hover:border-red-300/60 hover:bg-red-950/40 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-300"
               >
-                <div className="text-2xl font-bold text-red-300">{riskStats.criticalRisks}</div>
-                <div className="text-xs font-medium uppercase tracking-wide text-slate-400">Critical risks</div>
+                <div className="text-2xl font-bold text-red-300">{canonicalObservation.needsAttention}</div>
+                <div className="text-xs font-medium uppercase tracking-wide text-slate-400">Canonical loads needing attention</div>
+                <div className="mt-1 text-[11px] text-slate-500">Workbook REFERENCE critical rows: {riskStats.criticalRisks}</div>
               </Link>
               <Link
-                href={dispatchBlockRisk ? getRiskStory(dispatchBlockRisk).primaryHref : "/dispatch"}
+                href="/dispatch"
                 className="rounded-xl border border-orange-400/25 bg-slate-950/70 p-4 text-right shadow-lg shadow-slate-950/30 transition hover:-translate-y-0.5 hover:border-orange-300/60 hover:bg-orange-950/40 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange-300"
               >
-                <div className="text-2xl font-bold text-orange-300">{riskStats.dispatchBlockingRisks}</div>
-                <div className="text-xs font-medium uppercase tracking-wide text-slate-400">Dispatch blocks</div>
+                <div className="text-2xl font-bold text-orange-300">{canonicalObservation.holdCount}</div>
+                <div className="text-xs font-medium uppercase tracking-wide text-slate-400">Canonical dispatch holds</div>
+                <div className="mt-1 text-[11px] text-slate-500">Workbook REFERENCE dispatch-block rows: {riskStats.dispatchBlockingRisks}</div>
               </Link>
             </div>
           </div>
@@ -623,9 +655,9 @@ export function CommandCenterV4() {
               <AlertOctagon className="w-4 h-4 text-red-400" />
             </div>
             <div className="text-2xl font-bold text-white">
-              {riskStats.criticalRisks}
+              {canonicalObservation.needsAttention}
             </div>
-            <div className="text-xs text-slate-500 mt-1">Immediate attention required</div>
+            <div className="text-xs text-slate-500 mt-1">Canonical loads needing attention. Workbook REFERENCE: {riskStats.criticalRisks} critical rows.</div>
           </Link>
 
           <Link
@@ -637,9 +669,9 @@ export function CommandCenterV4() {
               <Truck className="w-4 h-4 text-red-400" />
             </div>
             <div className="text-2xl font-bold text-white">
-              {riskStats.dispatchBlockingRisks}
+              {canonicalObservation.holdCount}
             </div>
-            <div className="text-xs text-slate-500 mt-1">Operations blocked</div>
+            <div className="text-xs text-slate-500 mt-1">Canonical HOLD loads. OOS units {canonicalObservation.oosCount}. Workbook REFERENCE: {riskStats.dispatchBlockingRisks} blocked rows.</div>
           </Link>
 
           <Link

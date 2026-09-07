@@ -17,13 +17,20 @@ import { getV3OperationalData, isV3DataAvailable } from "@/lib/v3-operational-lo
 import { EquipmentCopilotAdvocatePanel } from "@/components/copilot/EquipmentCopilotAdvocatePanel";
 import { formatDisplayDate } from "@/lib/date-utils";
 import type { Asset, MaintenanceWorkOrder } from "@/lib/v3-operational-types";
+import { useBofDemoData } from "@/lib/bof-demo-data-context";
+import { computeMaintenanceKpis, listMaintenanceAssetSummaries } from "@/lib/maintenance-data";
 
 export function MaintenanceDashboardV4() {
+  const { data } = useBofDemoData();
   const [assets, setAssets] = useState<Asset[]>([]);
   const [workOrders, setWorkOrders] = useState<MaintenanceWorkOrder[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [usingFallback, setUsingFallback] = useState(false);
+
+  const canonicalSummaries = useMemo(() => listMaintenanceAssetSummaries(data), [data]);
+  const canonicalKpis = useMemo(() => computeMaintenanceKpis(data, canonicalSummaries), [data, canonicalSummaries]);
+  const t102 = canonicalSummaries.find((row) => row.asset_id === "T-102");
 
   // Load V4 workbook data
   // Workbook loaders are local async routines; keep this as a one-time bootstrap.
@@ -69,50 +76,31 @@ export function MaintenanceDashboardV4() {
 
   // Calculate maintenance statistics
   const maintenanceStats = useMemo(() => {
-    const totalAssets = assets.length;
-    const readyAssets = assets.filter(a => a.readinessStatus === "Ready").length;
-    const atRiskAssets = assets.filter(a => a.readinessStatus === "At Risk").length;
-    const blockedAssets = assets.filter(a => a.readinessStatus === "Blocked").length;
-    const oosAssets = assets.filter(a => a.readinessStatus === "OOS").length;
-    
     const openWorkOrders = workOrders.filter(wo => wo.repairStatus === "Open" || wo.repairStatus === "In Progress").length;
     const dispatchBlockingWorkOrders = workOrders.filter(wo => wo.dispatchBlock).length;
     const dotImpactingWorkOrders = workOrders.filter(wo => wo.dotImpact).length;
     const managerActionRequired = workOrders.filter(wo => wo.managerActionRequired).length;
-    
-    const pmDueSoon = assets.filter(a => {
-      if (!a.nextPmDue) return false;
-      const pmDate = new Date(a.nextPmDue);
-      const twoWeeksFromNow = new Date();
-      twoWeeksFromNow.setDate(twoWeeksFromNow.getDate() + 14);
-      return pmDate <= twoWeeksFromNow && pmDate >= new Date();
-    }).length;
-    
-    const pmOverdue = assets.filter(a => {
-      if (!a.nextPmDue) return false;
-      const pmDate = new Date(a.nextPmDue);
-      return pmDate < new Date();
-    }).length;
-    
     const estimatedCost = workOrders.reduce((sum, wo) => sum + wo.estimatedCost, 0);
     const actualCost = workOrders.reduce((sum, wo) => sum + wo.actualCost, 0);
-    
+
     return {
-      totalAssets,
-      readyAssets,
-      atRiskAssets,
-      blockedAssets,
-      oosAssets,
+      totalAssets: canonicalSummaries.length,
+      readyAssets: canonicalKpis.units_ready,
+      atRiskAssets: canonicalSummaries.filter((row) => row.readiness === "At Risk").length,
+      blockedAssets: canonicalSummaries.filter((row) => row.readiness === "Blocked").length,
+      oosAssets: canonicalKpis.oos_units,
+      workbookReadyRows: assets.filter((a) => /ready|ok/i.test(a.readinessStatus)).length,
+      workbookOosRows: assets.filter((a) => /oos|out of service/i.test(a.readinessStatus)).length,
       openWorkOrders,
       dispatchBlockingWorkOrders,
       dotImpactingWorkOrders,
       managerActionRequired,
-      pmDueSoon,
-      pmOverdue,
+      pmDueSoon: canonicalKpis.pm_due_soon,
+      pmOverdue: canonicalKpis.pm_overdue,
       estimatedCost,
       actualCost,
     };
-  }, [assets, workOrders]);
+  }, [assets, workOrders, canonicalSummaries, canonicalKpis]);
 
   // Get work orders needing attention
   const workOrdersNeedingAttention = useMemo(() => {
@@ -256,17 +244,18 @@ export function MaintenanceDashboardV4() {
                 Maintenance Command Center (V4)
               </h1>
               <p className="text-slate-400 mt-2">
-                Fleet asset management, work orders, and maintenance operations from V4 operational workbook
+                Operating readiness uses listMaintenanceAssetSummaries / equipment spine (DEMO). Workbook work orders stay REFERENCE.
+                {t102 ? ` T-102 ${t102.readiness}${t102.oos ? " / oos=true" : " / oos=false"}.` : ""}
               </p>
             </div>
             <div className="flex items-center gap-4">
               <div className="text-right">
-                <div className="text-orange-400 font-medium">{maintenanceStats.dispatchBlockingWorkOrders}</div>
-                <div className="text-slate-400 text-xs">Dispatch Blocking</div>
+                <div className="text-red-400 font-medium">{maintenanceStats.oosAssets}</div>
+                <div className="text-slate-400 text-xs">Canonical OOS{maintenanceStats.workbookOosRows ? ` · workbook REFERENCE OOS/OK rows ${maintenanceStats.workbookOosRows}` : ""}</div>
               </div>
               <div className="text-right">
-                <div className="text-red-400 font-medium">{maintenanceStats.dotImpactingWorkOrders}</div>
-                <div className="text-slate-400 text-xs">DOT Impacting</div>
+                <div className="text-orange-400 font-medium">{maintenanceStats.dispatchBlockingWorkOrders}</div>
+                <div className="text-slate-400 text-xs">Workbook WOs (REFERENCE)</div>
               </div>
             </div>
           </div>
@@ -284,7 +273,7 @@ export function MaintenanceDashboardV4() {
             <div className="text-2xl font-bold text-white">
               {maintenanceStats.readyAssets}
             </div>
-            <div className="text-xs text-slate-500 mt-1">of {maintenanceStats.totalAssets} total assets</div>
+            <div className="text-xs text-slate-500 mt-1">of {maintenanceStats.totalAssets} canonical assets. Workbook REFERENCE ready/OK rows: {maintenanceStats.workbookReadyRows}</div>
           </div>
 
           <div className="bg-slate-900/50 backdrop-blur-sm border border-slate-800 rounded-xl p-6">
@@ -462,7 +451,10 @@ export function MaintenanceDashboardV4() {
           <div className="bg-slate-900/50 backdrop-blur-sm border border-slate-800 rounded-xl p-6">
             <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
               <Truck className="w-5 h-5 text-blue-400" />
-              Asset Readiness Summary
+              Asset Readiness Summary (workbook REFERENCE)
+              <span className="ml-2 text-xs font-normal text-slate-500">
+                Operating OOS/Ready counts above use the equipment spine. This table still shows parsed workbook rows, including T-102 Status Indicator when present.
+              </span>
             </h3>
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
