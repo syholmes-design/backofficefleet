@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { getLoadProcessDiscovery, type BofLoadProcessDeviationType } from "@/lib/load-process-intelligence";
+import { isDatabaseUrlNotConfiguredError, prismaUnavailablePayload } from "@/lib/prisma";
 
 const ALLOWED_FILTERS = new Set([
   "dateFrom",
@@ -54,18 +55,25 @@ export async function GET(request: Request) {
     return NextResponse.json({ error: "deviationType is invalid" }, { status: 422 });
   }
 
-  const result = await getLoadProcessDiscovery({
-    dateFrom: dateFrom instanceof Date ? dateFrom : undefined,
-    dateTo: dateTo instanceof Date ? dateTo : undefined,
-    customer: url.searchParams.get("customer") ?? undefined,
-    driver: url.searchParams.get("driver") ?? undefined,
-    equipment: url.searchParams.get("equipment") ?? undefined,
-    lane: url.searchParams.get("lane") ?? undefined,
-    loadStatus: url.searchParams.get("loadStatus") ?? undefined,
-    variant: url.searchParams.get("variant") ?? undefined,
-    conformance: url.searchParams.get("conformance") ?? undefined,
-    deviationType: deviationType as BofLoadProcessDeviationType | undefined,
-  });
+  try {
+    const result = await getLoadProcessDiscovery({
+      dateFrom: dateFrom instanceof Date ? dateFrom : undefined,
+      dateTo: dateTo instanceof Date ? dateTo : undefined,
+      customer: url.searchParams.get("customer") ?? undefined,
+      driver: url.searchParams.get("driver") ?? undefined,
+      equipment: url.searchParams.get("equipment") ?? undefined,
+      lane: url.searchParams.get("lane") ?? undefined,
+      loadStatus: url.searchParams.get("loadStatus") ?? undefined,
+      variant: url.searchParams.get("variant") ?? undefined,
+      conformance: url.searchParams.get("conformance") ?? undefined,
+      deviationType: deviationType as BofLoadProcessDeviationType | undefined,
+    });
 
-  return NextResponse.json(result);
+    return NextResponse.json(result);
+  } catch (error) {
+    if (isDatabaseUrlNotConfiguredError(error)) {
+      return NextResponse.json(prismaUnavailablePayload(), { status: 503 });
+    }
+    throw error;
+  }
 }

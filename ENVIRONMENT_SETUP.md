@@ -2,6 +2,24 @@
 
 ## Required Environment Variables
 
+Durable authentication and Prisma paths **fail closed** when these are missing. Do not invent or commit secret values. Copy the names into `.env.local` and supply operator-owned values.
+
+```bash
+# Required for Auth.js session and credentials (do not commit)
+AUTH_SECRET=
+
+# Existing aliases accepted by auth.ts if AUTH_SECRET is unset
+# AUTH_AUTH_SECRET=
+# NEXTAUTH_SECRET=
+
+# Required for durable Prisma / Process Intelligence (PostgreSQL URL only; do not commit)
+DATABASE_URL=
+```
+
+- Missing `AUTH_SECRET` (and aliases): `/api/auth/session` returns **503** `{ code: "AUTH_SECRET_REQUIRED" }`. Auth.js is not started with a placeholder secret.
+- Missing `DATABASE_URL`, or a `file:` SQLite URL: Prisma does **not** fall back to `postgres://localhost/bof-demo`. Process Intelligence returns **503** `{ code: "DATABASE_URL_REQUIRED" }`.
+- Demo JSON UI may still render; durable writes and PI stay unavailable until real values are provided.
+
 ### Mapbox Configuration (Required for Dispatch Route Map)
 
 The Dispatch route map requires a Mapbox public token to display interactive route visualizations.
@@ -53,7 +71,9 @@ MAPBOX_TOKEN=pk.eyJ1Ijoic3lob2xtZXMiLCJhIjoiY2xvY2F0aW9uIiwidSI6ImV4YW1wbGUifQ.e
 - **Purpose**: Local development environment variables
 - **Status**: Do NOT commit to version control
 - **Location**: Project root
-- **Required**: `NEXT_PUBLIC_MAPBOX_TOKEN`
+- **Required for maps**: `NEXT_PUBLIC_MAPBOX_TOKEN`
+- **Required for Auth.js**: `AUTH_SECRET` (or `NEXTAUTH_SECRET` / `AUTH_AUTH_SECRET`)
+- **Required for Prisma / PI**: `DATABASE_URL`
 
 ### .env.example (Template)
 - **Purpose**: Example environment variables for reference
@@ -94,7 +114,9 @@ If the map still shows fallback mode:
 
 1. Go to Project Settings → Environment Variables
 2. Add `NEXT_PUBLIC_MAPBOX_TOKEN` with your public token value
-3. Redeploy the application
+3. Add `AUTH_SECRET` (operator-generated, never a placeholder from this repo)
+4. Add `DATABASE_URL` for the production PostgreSQL instance
+5. Redeploy the application
 
 ### Other Platforms
 

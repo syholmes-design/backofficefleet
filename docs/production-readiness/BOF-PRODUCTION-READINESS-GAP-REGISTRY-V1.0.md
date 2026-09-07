@@ -5,10 +5,16 @@
 **Prompt:** 009 — Discovery & Gap Registry  
 **Predecessor HEAD:** `d8702ccefcf96adf1408fabccf1e3236eba71098`  
 **Worktree:** `bof-orchestrator-copilot-sequential-2026-09`  
-**Status of this registry:** VERIFIED diagnosis (not production certification)  
+**Status of this registry:** Prompt 009 diagnosis preserved. Prompt 010A updated GAP-009-001 and GAP-009-002 to VALIDATED (fail-closed). Other gaps remain as diagnosed unless a later certified prompt updates them.  
 **Not:** a BOF runtime subsystem, database table, API, service, certification registry, or state machine.
 
-Certification statuses used here: `VERIFIED` (independently confirmed against BOF sources). No gap is marked `REMEDIATED` or `VALIDATED`; Prompt 009 did not remediate.
+Certification statuses used here: `VERIFIED` (independently confirmed against BOF sources). `VALIDATED` means the authorized remediation was verified against the stated validation requirement. Prompt 009 did not remediate.
+
+### Prompt 010A closeout (environment fail-closed)
+
+- Closeout commit will record fail-closed `AUTH_SECRET` and `DATABASE_URL` on existing NextAuth + Prisma.
+- No secrets were invented or written to `.env.local`.
+- Demo JSON UI remains available. Durable auth/PI fail closed with 503 JSON until the operator supplies real env values.
 
 ---
 
@@ -17,21 +23,21 @@ Certification statuses used here: `VERIFIED` (independently confirmed against BO
 | Field | Value |
 |---|---|
 | AREA | Secrets and Environment / Authentication |
-| OBSERVED BEHAVIOR | `GET /api/auth/session` returns HTTP 500. Dev log: `[auth][error] MissingSecret: Please define a secret`. `auth.ts` passes `AUTH_SECRET ?? AUTH_AUTH_SECRET ?? NEXTAUTH_SECRET` with no fail-closed check. Orchestrator worktree has no `.env.local`. Process env has none of those keys. |
-| AUTHORITATIVE EXPECTED BEHAVIOR | Auth.js requires a defined `secret` (https://errors.authjs.dev#missingsecret). Production auth must not start with an undefined secret. |
-| EVIDENCE | Runtime: Next 3010 log lines for `/api/auth/session` 500 + MissingSecret. Code: `auth.ts` 8–14. `curl` session body: `There was a problem with the server configuration.` |
+| OBSERVED BEHAVIOR | Unconfigured worktree: `GET /api/auth/session` returns HTTP **503** `{ error: "AUTH_SECRET is not configured", code: "AUTH_SECRET_REQUIRED" }`. `auth.ts` does not construct NextAuth without a trimmed `AUTH_SECRET` / `AUTH_AUTH_SECRET` / `NEXTAUTH_SECRET`. Auth.js `MissingSecret` no longer appears in the 3010 log for `/api/auth/session`. Keys documented in `ENVIRONMENT_SETUP.md` and `.env.example` (names only). |
+| AUTHORITATIVE EXPECTED BEHAVIOR | Auth.js requires a defined `secret`. Production auth must fail closed without inventing a placeholder secret. Configured hosts return 200 session JSON. |
+| EVIDENCE | Runtime 2026-09-07 after 010A: curl session 503 AUTH_SECRET_REQUIRED. Code: `auth.ts` `getConfiguredAuthSecret` + fail-closed handlers. `ENVIRONMENT_SETUP.md` required vars. 3010 log: `GET /api/auth/session 503`; no MissingSecret. |
 | EVIDENCE QUALITY | HIGH |
-| SOURCE OF TRUTH | Auth.js runtime + `auth.ts` |
+| SOURCE OF TRUTH | Auth.js + `auth.ts` + runtime |
 | AFFECTED ROLE(S) | All signed-in operators; any durable Prisma API that calls `auth()` |
 | AFFECTED WORKFLOW(S) | Session, fleet-gated drivers evaluation, Prisma load detail, dispatch assignment/release APIs |
-| PRODUCTION IMPACT | Authentication cannot be established. Durable APIs cannot authorize a user. Session-dependent evaluation stays unavailable. |
+| PRODUCTION IMPACT | Authentication cannot be established until the operator supplies AUTH_SECRET. Fail-open MissingSecret 500 is removed. |
 | SEVERITY | BLOCKER |
 | ROOT-CAUSE CLASSIFICATION | environment issue / configuration defect |
-| EXISTING BOF COMPONENT | `auth.ts` NextAuth (`secret` option); `ENVIRONMENT_SETUP.md` (does not currently require AUTH_SECRET) |
-| RECOMMENDED REMEDIATION | Require `AUTH_SECRET` (or documented alias) fail-closed in existing NextAuth config. Document the key. Do not invent a new auth platform. |
-| DEPENDENCIES | GAP-009-002 (Prisma also needs a real DATABASE_URL for adapter) |
-| VALIDATION REQUIRED | `/api/auth/session` 200 with empty or valid session JSON; no MissingSecret in logs |
-| CERTIFICATION STATUS | VERIFIED |
+| EXISTING BOF COMPONENT | `auth.ts` NextAuth (`secret` option); `ENVIRONMENT_SETUP.md` |
+| RECOMMENDED REMEDIATION | Operator supplies AUTH_SECRET in `.env.local` / host env. Do not invent a new auth platform. |
+| DEPENDENCIES | GAP-009-002 (Prisma also needs a real DATABASE_URL for adapter / memberships) |
+| VALIDATION REQUIRED | Unconfigured: `/api/auth/session` 503 `AUTH_SECRET_REQUIRED`, no MissingSecret. Configured: 200 session JSON. |
+| CERTIFICATION STATUS | VALIDATED (fail-closed). Operator secret still required for a live session. |
 
 ---
 
@@ -40,21 +46,21 @@ Certification statuses used here: `VERIFIED` (independently confirmed against BO
 | Field | Value |
 |---|---|
 | AREA | Secrets and Environment / Runtime / Process Intelligence |
-| OBSERVED BEHAVIOR | `lib/prisma.ts` falls back to `postgres://localhost/bof-demo` when `DATABASE_URL` is unset. `GET /api/load-process-intelligence/discovery` and `/L001` return HTTP 500: `SASL: SCRAM-SERVER-FIRST-MESSAGE: client password must be a string`. |
-| AUTHORITATIVE EXPECTED BEHAVIOR | Durable Prisma paths must use an explicit, valid `DATABASE_URL`. Missing URL must not be converted into a silent localhost connection. |
-| EVIDENCE | `lib/prisma.ts` 9–16. Dev log stack at `lib/load-process-intelligence.ts:450`. curl 500 on both PI routes. |
+| OBSERVED BEHAVIOR | Unconfigured worktree: Prisma no longer substitutes `postgres://localhost/bof-demo`. `GET /api/load-process-intelligence/discovery` and `/L001` return HTTP **503** `{ error: "DATABASE_URL is not configured", code: "DATABASE_URL_REQUIRED" }`. No SASL password 500. `file:` DATABASE_URL is treated as unconfigured for the Postgres adapter. |
+| AUTHORITATIVE EXPECTED BEHAVIOR | Durable Prisma paths must use an explicit PostgreSQL `DATABASE_URL`. Missing URL must not become a silent localhost connection. |
+| EVIDENCE | Runtime 2026-09-07 after 010A: curl PI 503 DATABASE_URL_REQUIRED. Code: `lib/prisma.ts` fail-closed client; PI routes catch `DATABASE_URL_REQUIRED`. 3010 log has no SASL after the catch fix. |
 | EVIDENCE QUALITY | HIGH |
 | SOURCE OF TRUTH | Prisma client + PI API runtime |
 | AFFECTED ROLE(S) | Operators using PI; any Prisma-backed workflow |
 | AFFECTED WORKFLOW(S) | Process Intelligence discovery/per-load; recruiting-v2 writes; auth adapter |
-| PRODUCTION IMPACT | Process Intelligence is inoperable. Durable writes/reads fail. Demo UI still renders from JSON. |
+| PRODUCTION IMPACT | Durable Prisma/PI stay unavailable until DATABASE_URL is supplied. Fail-open localhost/SASL is removed. Demo JSON UI still renders. |
 | SEVERITY | BLOCKER |
 | ROOT-CAUSE CLASSIFICATION | environment issue / configuration defect |
 | EXISTING BOF COMPONENT | `lib/prisma.ts`; `prisma/schema.prisma`; PI routes |
-| RECOMMENDED REMEDIATION | Fail closed when `DATABASE_URL` is missing/invalid. Do not create a new data store. Map PI errors to a controlled JSON error instead of 500 after env is valid. |
-| DEPENDENCIES | GAP-009-018 |
-| VALIDATION REQUIRED | `npx prisma validate` (already pass); PI discovery returns 200 or controlled 4xx, not SASL 500 |
-| CERTIFICATION STATUS | VERIFIED |
+| RECOMMENDED REMEDIATION | Operator supplies PostgreSQL `DATABASE_URL`. Do not create a new data store. |
+| DEPENDENCIES | GAP-009-018 (empty event history when DB is configured) |
+| VALIDATION REQUIRED | Unconfigured: PI discovery/per-load 503 `DATABASE_URL_REQUIRED`, not SASL 500. `npx prisma validate` remains pass. |
+| CERTIFICATION STATUS | VALIDATED (fail-closed). Operator DATABASE_URL still required for durable PI cases. |
 
 ---
 

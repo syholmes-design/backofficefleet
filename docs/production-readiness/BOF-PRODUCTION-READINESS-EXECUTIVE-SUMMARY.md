@@ -6,6 +6,8 @@
 **Diagnosis date:** 2026-09-07  
 **009 meaning:** Diagnosis complete. **Not** production ready.
 
+**010A (2026-09-07):** GAP-009-001 and GAP-009-002 **VALIDATED** fail-closed. No secrets invented. Session 503 `AUTH_SECRET_REQUIRED`. PI 503 `DATABASE_URL_REQUIRED`. Demo Command Center still loads from existing JSON/workbook.
+
 Controlling inputs for Prompts 010–013: this summary + `docs/production-readiness/BOF-PRODUCTION-READINESS-GAP-REGISTRY-V1.0.md`. Downstream prompts must not invent scope.
 
 ---
