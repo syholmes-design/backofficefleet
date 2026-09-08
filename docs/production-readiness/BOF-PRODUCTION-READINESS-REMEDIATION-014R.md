@@ -231,17 +231,13 @@ No row is **REMEDIATED**.
 
 ## 11. Git
 
-Recorded after the closeout commit that adds this file.
-
 | Field | Value |
 |---|---|
 | Branch | `orchestrator/copilot-sequential-2026-09` |
+| Closeout commit | `2cb9e91b7102a5b2c5b904fd34647aebf166db2f` |
 | Predecessor HEAD | `14e81300305e577f6ccc4e808f6797817617236a` |
-| Files intended | `docs/production-readiness/BOF-PRODUCTION-READINESS-REMEDIATION-014R.md` only |
-| Working tree at report authoring | Clean except this new report |
+| Files | `docs/production-readiness/BOF-PRODUCTION-READINESS-REMEDIATION-014R.md` |
 | Protected worktree | Not modified (**GAP-009-031** remains independently dirty) |
-
-Commit hash to be filled in the handoff line after commit.
 
 ---
 
