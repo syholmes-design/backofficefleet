@@ -1,7 +1,7 @@
 "use client";
 
-import Link from "next/link";
 import { useMemo, useState } from "react";
+import { ExistingDocumentNavAnchor } from "@/components/ExistingDocumentNavAnchor";
 import { useBofDemoData } from "@/lib/bof-demo-data-context";
 import { getGeneratedLoadDocEntry } from "@/lib/load-doc-manifest";
 import { getLoadEvidenceUrl } from "@/lib/load-documents";
@@ -96,9 +96,9 @@ function TriageCard({
       </p>
       <p className="mt-2 text-xs font-semibold text-teal-200">Next: {card.nextAction}</p>
       <div className="mt-3 flex flex-wrap gap-2">
-        <Link href={card.nextActionHref} className="inline-flex min-h-10 items-center rounded border border-teal-600 px-2.5 py-1.5 text-xs font-bold text-teal-100 hover:bg-teal-950/50">
+        <ExistingDocumentNavAnchor href={card.nextActionHref} className="inline-flex min-h-10 items-center rounded border border-teal-600 px-2.5 py-1.5 text-xs font-bold text-teal-100 hover:bg-teal-950/50">
           {card.nextActionLabel}
-        </Link>
+        </ExistingDocumentNavAnchor>
         {card.nextActionLabel.includes("Assign") && onOpenAssign ? (
           <button
             type="button"
@@ -115,13 +115,13 @@ function TriageCard({
         >
           View Timeline
         </button>
-        <Link href={`/trip-release/${encodeURIComponent(card.loadId)}`} className="inline-flex min-h-10 items-center rounded border border-slate-600 px-2.5 py-1.5 text-xs font-bold text-slate-100 hover:bg-slate-900">
+        <ExistingDocumentNavAnchor href={`/trip-release/${encodeURIComponent(card.loadId)}`} className="inline-flex min-h-10 items-center rounded border border-slate-600 px-2.5 py-1.5 text-xs font-bold text-slate-100 hover:bg-slate-900">
           Review release gate
-        </Link>
+        </ExistingDocumentNavAnchor>
         {role === "manager" && card.requiresManagerReview ? (
-          <span className="inline-flex min-h-10 items-center rounded border border-amber-700/60 px-2.5 py-1.5 text-xs font-bold text-amber-100">
-            Override not implemented
-          </span>
+          <p className="w-full text-xs text-amber-200">
+            No separate override API exists. Use Review release gate for the existing hold/release workflow.
+          </p>
         ) : null}
       </div>
       {role === "manager" && card.escalationReason ? (
