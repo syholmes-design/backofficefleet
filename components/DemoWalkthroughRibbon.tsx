@@ -1,6 +1,6 @@
 "use client";
 
-import Link from "next/link";
+import { ExistingDocumentNavAnchor } from "@/components/ExistingDocumentNavAnchor";
 import { usePathname } from "next/navigation";
 
 type DemoStep = {
@@ -116,18 +116,18 @@ export function DemoWalkthroughRibbon() {
           <span className="mr-2 inline-flex rounded border border-cyan-400/25 bg-cyan-400/10 px-2 py-1 text-xs font-semibold uppercase tracking-wide text-cyan-100">
             Owner demo path
           </span>
-          <Link href={activeStep.href} className="font-semibold text-white underline-offset-4 hover:underline">
+          <ExistingDocumentNavAnchor href={activeStep.href} className="font-semibold text-white underline-offset-4 hover:underline">
             {activeStep.label}
-          </Link>
+          </ExistingDocumentNavAnchor>
           <span className="mx-2 text-slate-600">/</span>
           <span className="text-slate-300">{activeStep.proof}</span>
         </div>
-        <Link
+        <ExistingDocumentNavAnchor
           href={activeStep.nextHref}
           className="inline-flex shrink-0 items-center justify-center rounded border border-teal-400/40 bg-teal-400/10 px-3 py-2 text-xs font-semibold uppercase tracking-wide text-teal-100 transition hover:border-teal-300 hover:bg-teal-400/20"
         >
           Next: {activeStep.nextLabel}
-        </Link>
+        </ExistingDocumentNavAnchor>
       </div>
     </div>
   );

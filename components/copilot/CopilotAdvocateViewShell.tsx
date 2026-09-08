@@ -1,6 +1,6 @@
 "use client";
 
-import Link from "next/link";
+import { ExistingDocumentNavAnchor } from "@/components/ExistingDocumentNavAnchor";
 import type { CopilotAccessDecision } from "@/lib/copilot/copilot-advocate-access";
 import type { CopilotAdvocateView, CopilotClaimClass } from "@/lib/copilot/copilot-shared";
 
@@ -116,9 +116,9 @@ export function CopilotAdvocateViewShell({
                       <p className="mt-1">Owner: {row.owner}</p>
                       {row.href ? (
                         <p className="mt-1">
-                          <Link className={ctaClass} href={row.href}>
+                          <ExistingDocumentNavAnchor className={ctaClass} href={row.href}>
                             {row.resolutionLabel}
-                          </Link>
+                          </ExistingDocumentNavAnchor>
                           {" "}
                           <span className={command ? "text-xs text-slate-500" : undefined}>(navigation only)</span>
                         </p>
@@ -151,9 +151,9 @@ export function CopilotAdvocateViewShell({
                     <p className="mt-1"><strong>Interpretation:</strong> {row.interpretation}</p>
                     <p className="mt-1">
                       <strong>Recommended action:</strong>{" "}
-                      <Link className={ctaClass} href={row.href}>
+                      <ExistingDocumentNavAnchor className={ctaClass} href={row.href}>
                         {row.recommendedAction}
-                      </Link>
+                      </ExistingDocumentNavAnchor>
                       {" "}
                       <span className={command ? "text-xs text-slate-500" : undefined}>(navigation, not execution)</span>
                     </p>
@@ -168,9 +168,9 @@ export function CopilotAdvocateViewShell({
 
           {compact ? (
             <p className={`mt-3 ${textClass}`}>
-              <Link className={ctaClass} href={compactHref}>
+              <ExistingDocumentNavAnchor className={ctaClass} href={compactHref}>
                 {compactLabel}
-              </Link>
+              </ExistingDocumentNavAnchor>
             </p>
           ) : (
             <>

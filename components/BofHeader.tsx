@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { BofLogo } from "@/components/BofLogo";
 import { DemoWalkthroughRibbon } from "@/components/DemoWalkthroughRibbon";
+import { ExistingDocumentNavAnchor } from "@/components/ExistingDocumentNavAnchor";
 
 const productNav = [
   { href: "/dispatch", label: "Dispatch" },
@@ -63,9 +64,17 @@ export function BofHeader() {
     return (
       <header className="bof-product-header sticky top-0 z-40 w-full border-b border-slate-800 bg-slate-950 shadow-sm">
         <div className="mx-auto flex max-w-[1600px] flex-col items-start gap-3 px-4 py-3 sm:px-8 lg:flex-row lg:items-center lg:justify-between lg:gap-6 lg:px-12 xl:px-16">
-          <Link href="/dispatch" className="inline-flex shrink-0 items-center text-slate-100 no-underline"><BofLogo variant="dark" size="demoLarge" priority /></Link>
+          <ExistingDocumentNavAnchor href="/dispatch" className="inline-flex shrink-0 items-center text-slate-100 no-underline"><BofLogo variant="dark" size="demoLarge" priority /></ExistingDocumentNavAnchor>
           <nav className="bof-product-nav flex w-full min-w-0 flex-nowrap items-center gap-2 overflow-x-auto pb-1 text-sm lg:flex-1 lg:flex-wrap lg:gap-3 lg:pb-0" aria-label="Authenticated application">
-            {productNav.map((item) => <Link key={item.href} href={item.href} className={["shrink-0 rounded-lg border px-4 py-2 font-medium no-underline transition-all duration-200", isActiveProductNav(item.href) ? "border-teal-600/50 bg-teal-900/40 text-teal-50 shadow-sm" : "border-transparent bg-transparent text-slate-300 hover:border-slate-600 hover:bg-slate-800/50 hover:text-white"].join(" ")}>{item.label}</Link>)}
+            {productNav.map((item) => (
+              <ExistingDocumentNavAnchor
+                key={item.href}
+                href={item.href}
+                className={["shrink-0 rounded-lg border px-4 py-2 font-medium no-underline transition-all duration-200", isActiveProductNav(item.href) ? "border-teal-600/50 bg-teal-900/40 text-teal-50 shadow-sm" : "border-transparent bg-transparent text-slate-300 hover:border-slate-600 hover:bg-slate-800/50 hover:text-white"].join(" ")}
+              >
+                {item.label}
+              </ExistingDocumentNavAnchor>
+            ))}
           </nav>
         </div>
         <DemoWalkthroughRibbon />

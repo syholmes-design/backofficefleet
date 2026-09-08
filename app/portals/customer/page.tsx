@@ -3,6 +3,7 @@ import { getBofData } from '@/lib/load-bof-data';
 import { getCustomerPortalProfile, getCustomerVisibleLoads } from '@/lib/demo-portals';
 import { buildLoadPacketRegistry } from '@/lib/load-artifact-registry';
 import Link from 'next/link';
+import { ExistingDocumentNavAnchor } from '@/components/ExistingDocumentNavAnchor';
 import { BofDemoDataShell } from '@/components/BofDemoDataShell';
 import { CustomerCopilotAdvocatePanel } from '@/components/copilot/CustomerCopilotAdvocatePanel';
 
@@ -60,40 +61,40 @@ export default function CustomerPortalPage() {
 
         {/* Summary Cards */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-12">
-          <Link href="#active-shipments" className="bg-white rounded-lg shadow-lg border border-gray-200 p-6 hover:border-teal-400">
+          <ExistingDocumentNavAnchor href="#active-shipments" className="bg-white rounded-lg shadow-lg border border-gray-200 p-6 hover:border-teal-400">
             <div className="text-3xl font-bold text-blue-600 mb-2">
               {customerProfile.activeLoads}
             </div>
             <div className="text-sm text-gray-600">Active Loads</div>
-          </Link>
+          </ExistingDocumentNavAnchor>
 
-          <Link href="#delivery-proof" className="bg-white rounded-lg shadow-lg border border-gray-200 p-6 hover:border-teal-400">
+          <ExistingDocumentNavAnchor href="#delivery-proof" className="bg-white rounded-lg shadow-lg border border-gray-200 p-6 hover:border-teal-400">
             <div className="text-3xl font-bold text-green-600 mb-2">
               {customerProfile.deliveredThisWeek}
             </div>
             <div className="text-sm text-gray-600">Delivered This Week</div>
-          </Link>
+          </ExistingDocumentNavAnchor>
 
-          <Link href="#delivery-proof" className="bg-white rounded-lg shadow-lg border border-gray-200 p-6 hover:border-teal-400">
+          <ExistingDocumentNavAnchor href="#delivery-proof" className="bg-white rounded-lg shadow-lg border border-gray-200 p-6 hover:border-teal-400">
             <div className="text-3xl font-bold text-purple-600 mb-2">
               {customerProfile.documentsAvailable}
             </div>
             <div className="text-sm text-gray-600">Documents Available</div>
-          </Link>
+          </ExistingDocumentNavAnchor>
 
-          <Link href="#customer-attention" className="bg-white rounded-lg shadow-lg border border-gray-200 p-6 hover:border-teal-400">
+          <ExistingDocumentNavAnchor href="#customer-attention" className="bg-white rounded-lg shadow-lg border border-gray-200 p-6 hover:border-teal-400">
             <div className="text-3xl font-bold text-orange-600 mb-2">
               {customerProfile.exceptionsClaims}
             </div>
             <div className="text-sm text-gray-600">Exceptions / Claims</div>
-          </Link>
+          </ExistingDocumentNavAnchor>
 
-          <Link href="#invoice-status" className="bg-white rounded-lg shadow-lg border border-gray-200 p-6 hover:border-teal-400">
+          <ExistingDocumentNavAnchor href="#invoice-status" className="bg-white rounded-lg shadow-lg border border-gray-200 p-6 hover:border-teal-400">
             <div className="text-3xl font-bold text-teal-600 mb-2">
               {customerProfile.invoicesReady}
             </div>
             <div className="text-sm text-gray-600">Invoices Ready</div>
-          </Link>
+          </ExistingDocumentNavAnchor>
         </div>
 
         {/* Main Content */}
@@ -110,7 +111,7 @@ export default function CustomerPortalPage() {
             
             <div className="space-y-4">
               {visibleLoads.slice(0, 6).map((load) => (
-                <Link href={`#shipment-${load.loadId}`} id={`shipment-${load.loadId}`} key={load.loadId} className="block border border-gray-200 rounded-lg p-4 hover:border-teal-400 scroll-mt-24">
+                <ExistingDocumentNavAnchor href={`#shipment-${load.loadId}`} id={`shipment-${load.loadId}`} key={load.loadId} className="block border border-gray-200 rounded-lg p-4 hover:border-teal-400 scroll-mt-24">
                   <div className="flex justify-between items-start mb-3">
                     <div>
                       <div className="font-medium text-gray-900">{load.loadId}</div>
@@ -149,7 +150,7 @@ export default function CustomerPortalPage() {
                       </span>
                     </div>
                   </div>
-                </Link>
+                </ExistingDocumentNavAnchor>
               ))}
             </div>
           </div>
@@ -231,9 +232,9 @@ export default function CustomerPortalPage() {
                   <div className="text-sm text-gray-600">
                     BOF is reviewing shipment proof or operating status. Customer action required: No.
                   </div>
-                  <Link href={`#shipment-${load.loadId}`} className="mt-3 inline-flex text-sm font-medium text-teal-700 hover:text-teal-900">
+                  <ExistingDocumentNavAnchor href={`#shipment-${load.loadId}`} className="mt-3 inline-flex text-sm font-medium text-teal-700 hover:text-teal-900">
                     View shipment status and proof →
-                  </Link>
+                  </ExistingDocumentNavAnchor>
                 </div>
               ))}
               {customerAttentionLoads.length === 0 ? (
