@@ -47,9 +47,10 @@ function proofSignalLabel(
   return "At risk";
 }
 
-function settlementDocLabel(kind: "summary" | "hold" | "insurance"): string {
+function settlementDocLabel(kind: "summary" | "hold" | "insurance" | "invoice"): string {
   if (kind === "summary") return "settlement summary";
   if (kind === "hold") return "hold letter";
+  if (kind === "invoice") return "invoice document";
   return "insurance notice";
 }
 
@@ -77,7 +78,7 @@ export function SettlementDetailDrawer({ settlementId, open, onClose }: Props) {
   const markSettlementReviewedDemo = useSettlementsPayrollStore(
     (s) => s.markSettlementReviewedDemo
   );
-  const [docBusy, setDocBusy] = useState<"summary" | "hold" | "insurance" | null>(null);
+  const [docBusy, setDocBusy] = useState<"summary" | "hold" | "insurance" | "invoice" | null>(null);
   const [docNotice, setDocNotice] = useState<string | null>(null);
   const [showAdvancedPacket, setShowAdvancedPacket] = useState(false);
 
@@ -213,6 +214,43 @@ export function SettlementDetailDrawer({ settlementId, open, onClose }: Props) {
     } catch (err) {
       setDocNotice(
         `Could not generate settlement doc: ${
+          err instanceof Error ? err.message : "Unknown error"
+        }`
+      );
+    } finally {
+      setDocBusy(null);
+    }
+  }
+
+  async function generateInvoiceDoc(target: NonNullable<typeof settlement>) {
+    const loadId = uniqueLoadIds[0];
+    if (!loadId) {
+      setDocNotice("No linked load on this driver-week settlement; invoice document was not invented.");
+      return;
+    }
+    setDocBusy("invoice");
+    setDocNotice(null);
+    try {
+      const res = await fetch("/api/generate/invoice", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ loadId }),
+      });
+      const data = (await res.json()) as
+        | { ok: true; generatedUrl: string; publicUrl?: string }
+        | { ok: false; error?: string };
+      if (!res.ok || !data.ok) {
+        throw new Error((data as { error?: string }).error || "Invoice generation failed");
+      }
+      const url = data.publicUrl || data.generatedUrl;
+      setGeneratedDocument(target.settlement_id, "invoice", url);
+      setDocNotice(
+        `Generated invoice document for ${loadId}. This is the existing generate API, not a Prisma InvoicePayment. Payment remains UNSUPPORTED in this worktree.`
+      );
+      window.open(url, "_blank", "noopener,noreferrer");
+    } catch (err) {
+      setDocNotice(
+        `Could not generate invoice document: ${
           err instanceof Error ? err.message : "Unknown error"
         }`
       );
@@ -698,6 +736,30 @@ export function SettlementDetailDrawer({ settlementId, open, onClose }: Props) {
             </section>
           )}
 
+          <section className="rounded-lg border border-slate-800 bg-slate-900/35 p-3">
+            <h3 className="text-sm font-semibold text-slate-200">Cash closure path</h3>
+            <p className="mt-1 text-xs text-slate-400">
+              Existing BOF path from this driver-week settlement: generate invoice document
+              (`POST /api/generate/invoice`) and open factoring packets already listed above.
+              Prisma <span className="font-mono">recordLoadInvoice</span> /{" "}
+              <span className="font-mono">recordLoadPayment</span> have no operator mutation
+              route. DATABASE_URL remains fail-closed (GAP-009-002). Payment is UNSUPPORTED.
+              No payment, invoice posting, or factoring engine was invented.
+            </p>
+            {docs?.invoiceUrl ? (
+              <p className="mt-2 text-xs">
+                <a
+                  href={docs.invoiceUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="bof-link-secondary"
+                >
+                  Open generated invoice document
+                </a>
+              </p>
+            ) : null}
+          </section>
+
           <BofWorkflowFormShortcuts
             context="settlement"
             entityId={settlement.settlement_id}
@@ -788,6 +850,14 @@ export function SettlementDetailDrawer({ settlementId, open, onClose }: Props) {
             >
               {docBusy === "insurance" ? "Generating..." : "Generate insurance notice"}
             </button>
+            <button
+              type="button"
+              disabled={docBusy !== null || uniqueLoadIds.length === 0}
+              onClick={() => void generateInvoiceDoc(settlement)}
+              className="rounded border border-blue-700 bg-blue-950/35 px-3 py-1.5 text-xs font-medium text-blue-100 hover:bg-blue-900/45 disabled:opacity-50"
+            >
+              {docBusy === "invoice" ? "Generating..." : "Generate invoice document"}
+            </button>
           </div>
           {(docNotice || docs) && (
             <div className="mt-2 rounded border border-slate-800 bg-slate-900/60 px-3 py-2 text-xs text-slate-300">
@@ -811,6 +881,16 @@ export function SettlementDetailDrawer({ settlementId, open, onClose }: Props) {
                     className="bof-link-secondary"
                   >
                     Open hold letter
+                  </a>
+                )}
+                {docs?.invoiceUrl && (
+                  <a
+                    href={docs.invoiceUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="bof-link-secondary"
+                  >
+                    Open invoice document
                   </a>
                 )}
                 {docs?.insuranceUrl && (
