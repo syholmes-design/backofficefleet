@@ -5,7 +5,7 @@
 **Prompt:** 009 — Discovery & Gap Registry  
 **Predecessor HEAD:** `d8702ccefcf96adf1408fabccf1e3236eba71098`  
 **Worktree:** `bof-orchestrator-copilot-sequential-2026-09`  
-**Status of this registry:** Prompt 009 diagnosis preserved. Prompt 010A/010B remain VALIDATED. Prompt 011 remains closed. Prompt 012 remains closed. Prompt 013 updated remaining runtime/security/deployment/experience gaps listed in the Prompt 013 closeout. Other gaps remain as diagnosed unless a later certified prompt updates them.  
+**Status of this registry:** Prompt 009 diagnosis preserved. Prompt 010A/010B remain VALIDATED. Prompts 011–013 remain closed. Prompt 014 recorded a binary production-readiness **BLOCKED** determination. Remediation program 009–013 is not reopened by that determination.  
 **Not:** a BOF runtime subsystem, database table, API, service, certification registry, or state machine.
 
 Certification statuses used here: `VERIFIED` (independently confirmed against BOF sources). `VALIDATED` means the authorized remediation was verified against the stated validation requirement. Prompt 009 did not remediate.
@@ -43,6 +43,15 @@ Certification statuses used here: `VERIFIED` (independently confirmed against BO
 - ADR-009-001 and ADR-009-003 are unchanged. No new engines, SOT, security platform, observability platform, or deployment pipeline.
 - Observability stays console + existing JSON errors (ADR-009-004: do not create a platform).
 
+### Prompt 014 closeout (end-to-end certification)
+
+- Audit only. No product-code remediation.
+- Binary result: **BOF PRODUCTION READINESS BLOCKED**.
+- Evidence: `docs/production-readiness/BOF-PRODUCTION-READINESS-CERTIFICATION-014.md`.
+- Blocking conditions: production AUTH_SECRET / DATABASE_URL absent on this host; required ten E2E scenarios could not be executed as real mutations without fabricating users, events, LIVE equipment, proof, or payment; payment remains UNSUPPORTED; operator UI remains DEMO JSON without Prisma LIVE.
+- GAP-009-031 remains VERIFIED REFERENCE. 009-013 VALIDATED statuses were not reopened.
+
+---
 
 ---
 
@@ -807,10 +816,10 @@ No new orchestration, workflow, SOT, authorization, domain, observability, or se
 
 SPECULATIVE entries: 0 (Copilot signals independently re-verified before VERIFIED).
 
-### Remaining open after Prompt 013 (by certification status)
+### Remaining open after Prompt 014 (by certification status)
 
-VALIDATED this program: 001, 002, 003, 004, 005, 006, 007, 008, 009, 010, 011, 012, 013, 014, 015, 016, 017, 018, 019, 020, 021, 022, 023, 024, 025, 026, 027, 028, 029, 030, 032.
+VALIDATED this program (009–013 remediations): 001, 002, 003, 004, 005, 006, 007, 008, 009, 010, 011, 012, 013, 014, 015, 016, 017, 018, 019, 020, 021, 022, 023, 024, 025, 026, 027, 028, 029, 030, 032.
 
-Still VERIFIED (not 013-closed): 031 (protected product worktree dirty — cannot modify).
+Still VERIFIED: 031 (protected product worktree dirty — cannot modify).
 
-Open BLOCKER gaps: 0. Remaining HIGH: 0. Remaining MEDIUM: 0. GAP-009-031 remains REFERENCE hygiene.
+Prompt 014 production-readiness determination: **BLOCKED** (see certification-014 record). Open BLOCKER gaps in this registry: 0. Remaining HIGH: 0. The BLOCKED result is a certification-host / E2E-scenario failure, not a silent reopen of VALIDATED HIGH/BLOCKER remediations.
