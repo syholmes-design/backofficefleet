@@ -5,7 +5,7 @@
 **Prompt:** 009 — Discovery & Gap Registry  
 **Predecessor HEAD:** `d8702ccefcf96adf1408fabccf1e3236eba71098`  
 **Worktree:** `bof-orchestrator-copilot-sequential-2026-09`  
-**Status of this registry:** Prompt 009 diagnosis preserved. Prompt 010A/010B remain VALIDATED. Prompt 011 updated GAP-009-007, 008, 010, 012, 013, 024, 028, 030, and 032. Other gaps remain as diagnosed unless a later certified prompt updates them.  
+**Status of this registry:** Prompt 009 diagnosis preserved. Prompt 010A/010B remain VALIDATED. Prompt 011 remains closed. Prompt 012 updated GAP-009-014, 015, 016, and 026. Other gaps remain as diagnosed unless a later certified prompt updates them.  
 **Not:** a BOF runtime subsystem, database table, API, service, certification registry, or state machine.
 
 Certification statuses used here: `VERIFIED` (independently confirmed against BOF sources). `VALIDATED` means the authorized remediation was verified against the stated validation requirement. Prompt 009 did not remediate.
@@ -28,6 +28,12 @@ Certification statuses used here: `VERIFIED` (independently confirmed against BO
 - ADR-009-003 resolved from `existingSettlementWorkflowHref`: operator `/settlements` identity is driver-week payroll (`STL-*` may be `settlementId`). `loadId` is highlighting only. Prisma `Settlement.id` cuid is not a `/settlements` nav key.
 - T-102 DEMO `oos` is boolean true. L001 canonical state carries a maintenance HOLD. Copilot Equipment/Dispatch/Load File share `equipmentConflictsWithCanonicalAssignment`.
 - Prisma non-pending LIVE equipment rows remain unavailable in this worktree (no operator DATABASE_URL / equipment facts invented).
+
+### Prompt 012 closeout (workflow closure)
+
+- ADR-009-003 settlement identity is unchanged: `/settlements` is driver-week payroll; `STL-*` may be `settlementId`; `loadId` is highlighting only.
+- ADR-009-004: Prisma `recordLoadInvoice` / `recordLoadPayment` have no operator mutation route. DATABASE_URL remains fail-closed. Cash closure uses existing `POST /api/generate/invoice` plus existing factoring operating documents. Payment stays UNSUPPORTED. No payment engine was invented.
+- GAP-009-014/015/016/026 were the only 012 targets. 005/018/020 remain for Prompt 013.
 
 ---
 
@@ -335,7 +341,7 @@ Certification statuses used here: `VERIFIED` (independently confirmed against BO
 | Field | Value |
 |---|---|
 | AREA | Workflow Closure / Proof → Settlement |
-| OBSERVED BEHAVIOR | “Apply documentation hold” uses Zustand `setSettlementHold`. Load-to-cash has record/verify proof, not reject. Load File Copilot does not release holds. |
+| OBSERVED BEHAVIOR | After 012: Apply documentation hold also calls existing payroll `placeHoldFromLoadProof` (STL-* via `resolveExistingSettlementWorkflowTarget`) and persists only hold overlays. The packet panel is mounted on dispatch load detail Documents. Prisma Settlement holds remain disconnected (capability DEMO). |
 | AUTHORITATIVE EXPECTED BEHAVIOR | Operating-chain proof rejection must create a durable hold the settlement UI reads. |
 | EVIDENCE | `DocumentationReadinessPanel.tsx` 215–236. `load-to-cash-service.ts` record/verify only. capability-matrix settlements DEMO vs Prisma. |
 | EVIDENCE QUALITY | MEDIUM (code path; not a live Prisma write test in this prompt) |
@@ -348,8 +354,8 @@ Certification statuses used here: `VERIFIED` (independently confirmed against BO
 | EXISTING BOF COMPONENT | `recordLoadSettlement` / load-to-cash; payroll hold actions |
 | RECOMMENDED REMEDIATION | Connect existing hold write to existing payroll/Prisma hold fields. No new workflow engine. |
 | DEPENDENCIES | GAP-009-013, GAP-009-002 |
-| VALIDATION REQUIRED | Rejected proof creates a hold visible on `/settlements` after reload |
-| CERTIFICATION STATUS | VERIFIED |
+| VALIDATION REQUIRED | Documentation hold applies to the matching STL-* payroll row and remains after reload. Prisma cash/settlement writers are not used. |
+| CERTIFICATION STATUS | VALIDATED (DEMO payroll overlay + existing identity). Prisma Settlement hold remains PENDING until DATABASE_URL/session. |
 
 ---
 
@@ -358,7 +364,7 @@ Certification statuses used here: `VERIFIED` (independently confirmed against BO
 | Field | Value |
 |---|---|
 | AREA | Workflow Closure / Settlement → cash |
-| OBSERVED BEHAVIOR | No `/invoices` operator page. Settlement operating display: payment UNSUPPORTED; invoice/factoring REFERENCE_DEMO; read-only. `recordLoadInvoice` / `recordLoadPayment` exist in lib. UI uses generate APIs and walkthrough billing. |
+| OBSERVED BEHAVIOR | After 012: settlement drawer exposes existing `POST /api/generate/invoice` and existing factoring operating docs. Payment remains UNSUPPORTED. `recordLoadInvoice`/`recordLoadPayment` still have no operator route (ADR-009-004). |
 | AUTHORITATIVE EXPECTED BEHAVIOR | Canonical chain ends at invoice/payment/factoring using existing cash services if production requires closure. |
 | EVIDENCE | `lib/settlement/settlement-operating-display.ts` 454–467. capability-matrix 96–112. Route glob: no invoices page. `/customer-portal` billing: “No payment is collected here.” |
 | EVIDENCE QUALITY | HIGH |
@@ -371,8 +377,8 @@ Certification statuses used here: `VERIFIED` (independently confirmed against BO
 | EXISTING BOF COMPONENT | `load-to-cash-service.ts`; generate invoice API; customer billing walkthrough |
 | RECOMMENDED REMEDIATION | Wire existing cash writers to existing settlement/customer billing surfaces. Do not create a payments platform. |
 | DEPENDENCIES | GAP-009-013, GAP-009-014 |
-| VALIDATION REQUIRED | One load can show invoice recorded and payment recorded from existing APIs/UI |
-| CERTIFICATION STATUS | VERIFIED |
+| VALIDATION REQUIRED | Operator can generate an invoice document from the driver-week settlement drawer; factoring packets remain reachable; payment is fail-closed UNSUPPORTED without a fabricated cash posting. |
+| CERTIFICATION STATUS | VALIDATED (document + factoring packet path). Payment posting is ARCHITECTURE DECISION REQUIRED / fail-closed. |
 
 ---
 
@@ -381,7 +387,7 @@ Certification statuses used here: `VERIFIED` (independently confirmed against BO
 | Field | Value |
 |---|---|
 | AREA | Application and Routing / UX |
-| OBSERVED BEHAVIOR | Header Dispatch `href="/dispatch"` from `/maintenance/T-102`: click left the URL unchanged. Customer L001 card `href="/loads/L001"`: click left URL `/portals/customer`. Direct URL navigation works. |
+| OBSERVED BEHAVIOR | After 012: product nav, demo ribbon, Copilot CTAs, and customer hash cards use `ExistingDocumentNavAnchor` (`window.location.assign`) because App Router client clicks were swallowed. Customer cards stay on `/portals/customer#shipment-*`. |
 | AUTHORITATIVE EXPECTED BEHAVIOR | Next `Link` must change route. |
 | EVIDENCE | Browser lock session 2026-09-07: click Dispatch (focused, URL still T-102); click L001 card (URL still customer portal); CDP href confirmed `/dispatch` and `/loads/L001`. |
 | EVIDENCE QUALITY | HIGH |
@@ -394,8 +400,8 @@ Certification statuses used here: `VERIFIED` (independently confirmed against BO
 | EXISTING BOF COMPONENT | `BofHeader`, Next `Link` |
 | RECOMMENDED REMEDIATION | Diagnose App Router / header intercept; fix existing links. Do not add a router engine. |
 | DEPENDENCIES | GAP-009-006 (leak still exists via URL even if click fails) |
-| VALIDATION REQUIRED | Header Dispatch and customer shipment links change `location.pathname` |
-| CERTIFICATION STATUS | VERIFIED |
+| VALIDATION REQUIRED | Header Dispatch click from `/maintenance/T-102` changes URL to `/dispatch`. Customer L001 card changes hash to `#shipment-L001` without opening operator `/loads/L001`. |
+| CERTIFICATION STATUS | VALIDATED |
 
 ---
 
@@ -611,7 +617,7 @@ Certification statuses used here: `VERIFIED` (independently confirmed against BO
 | Field | Value |
 |---|---|
 | AREA | Workflow Closure / Dispatch |
-| OBSERVED BEHAVIOR | `DispatchTriageBoard.tsx` line 123: “Override not implemented”. |
+| OBSERVED BEHAVIOR | After 012: the fake override control is removed. Manager review copy points at the existing Review release gate (`/trip-release/:loadId`). No override API exists. |
 | AUTHORITATIVE EXPECTED BEHAVIOR | Either an existing override workflow or the control must not appear as an action. |
 | EVIDENCE | Source line 121–124. |
 | EVIDENCE QUALITY | HIGH |
@@ -625,7 +631,7 @@ Certification statuses used here: `VERIFIED` (independently confirmed against BO
 | RECOMMENDED REMEDIATION | Remove or wire to existing release/hold APIs. No new override engine. |
 | DEPENDENCIES | GAP-009-014 |
 | VALIDATION REQUIRED | Control absent or completes an existing API |
-| CERTIFICATION STATUS | VERIFIED |
+| CERTIFICATION STATUS | VALIDATED |
 
 ---
 
@@ -792,10 +798,10 @@ No new orchestration, workflow, SOT, authorization, domain, observability, or se
 
 SPECULATIVE entries: 0 (Copilot signals independently re-verified before VERIFIED).
 
-### Remaining open after Prompt 011 (by certification status)
+### Remaining open after Prompt 012 (by certification status)
 
-VALIDATED this program: 001, 002, 003, 004, 006, 007, 008, 010, 012, 013, 024, 028, 030, 032.
+VALIDATED this program: 001, 002, 003, 004, 006, 007, 008, 010, 012, 013, 014, 015, 016, 024, 026, 028, 030, 032.
 
-Still VERIFIED (not 011-remediated): 005, 009, 011, 014, 015, 016, 017, 018, 019, 020, 021, 022, 023, 025, 026, 027, 029, 031.
+Still VERIFIED (not 012-remediated): 005, 009, 011, 017, 018, 019, 020, 021, 022, 023, 025, 027, 029, 031.
 
-Open BLOCKER gaps: 0. Remaining HIGH: 005, 014, 015, 016, 018, 020 (6). Remaining MEDIUM: 009, 011, 017, 019, 021, 023, 025, 026, 029 (9).
+Open BLOCKER gaps: 0. Remaining HIGH: 005, 018, 020 (3). Remaining MEDIUM: 009, 011, 017, 019, 021, 023, 025, 029 (8). Prompt 012 workflow-closure HIGHs 014/015/016 are VALIDATED. GAP-009-026 MEDIUM is VALIDATED.
