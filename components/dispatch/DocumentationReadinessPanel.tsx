@@ -1,6 +1,7 @@
 "use client";
 
 import { Fragment, useMemo, useState } from "react";
+import { ExistingDocumentNavAnchor } from "@/components/ExistingDocumentNavAnchor";
 import {
   AlertTriangle,
   ClipboardCheck,
@@ -16,6 +17,8 @@ import {
   overallPacketBadgeClass,
 } from "@/lib/documentation-readiness";
 import { useDispatchDashboardStore } from "@/lib/stores/dispatch-dashboard-store";
+import { useSettlementsPayrollStore } from "@/lib/stores/settlements-payroll-store";
+import { existingSettlementWorkflowHref } from "@/lib/load-file-proof-settlement-display";
 import { useBofDemoData } from "@/lib/bof-demo-data-context";
 import {
   buildTripDocumentPacket,
@@ -127,7 +130,11 @@ export function DocumentationReadinessPanel({ load }: Props) {
   const setSettlementHold = useDispatchDashboardStore(
     (s) => s.setSettlementHold
   );
+  const placeHoldFromLoadProof = useSettlementsPayrollStore(
+    (s) => s.placeHoldFromLoadProof
+  );
   const [notice, setNotice] = useState<string | null>(null);
+  const [payrollHoldHref, setPayrollHoldHref] = useState<string | null>(null);
   const [referenceOpen, setReferenceOpen] = useState(false);
 
   const showClaimZone = load.exception_flag || load.insurance_claim_needed;
@@ -208,7 +215,14 @@ export function DocumentationReadinessPanel({ load }: Props) {
 
       {notice && (
         <div className="mb-3 rounded border border-teal-800/50 bg-teal-950/25 px-3 py-2 text-xs text-teal-100">
-          {notice}
+          <p>{notice}</p>
+          {payrollHoldHref ? (
+            <p className="mt-1">
+              <ExistingDocumentNavAnchor href={payrollHoldHref} className="font-medium text-teal-200 underline">
+                Open driver-week payroll settlement
+              </ExistingDocumentNavAnchor>
+            </p>
+          ) : null}
         </div>
       )}
 
@@ -222,13 +236,28 @@ export function DocumentationReadinessPanel({ load }: Props) {
           {!load.settlement_hold && (
             <button
               type="button"
-              onClick={() =>
-                setSettlementHold(
+              onClick={() => {
+                const reason =
+                  report.suggestedSettlementHoldReason ||
+                  "Documentation packet does not meet settlement release criteria";
+                setSettlementHold(load.load_id, true, reason);
+                const payrollId = placeHoldFromLoadProof(
                   load.load_id,
-                  true,
-                  report.suggestedSettlementHoldReason
-                )
-              }
+                  load.driver_id,
+                  reason
+                );
+                const href = existingSettlementWorkflowHref({
+                  driverId: load.driver_id,
+                  loadId: load.load_id,
+                  payrollSettlementId: payrollId,
+                });
+                setPayrollHoldHref(href);
+                setNotice(
+                  payrollId
+                    ? `DEMO payroll hold applied on ${payrollId}. Load ${load.load_id} is highlighting only. Prisma Settlement.cuid is not used.`
+                    : `Dispatch hold applied on ${load.load_id}. No matching driver-week STL-* row was found; payroll was not invented.`
+                );
+              }}
               className="shrink-0 rounded border border-amber-700 bg-amber-950/40 px-2 py-1 text-[11px] font-medium text-amber-50 hover:bg-amber-900/50"
             >
               Apply documentation hold

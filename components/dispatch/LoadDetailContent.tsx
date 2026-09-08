@@ -17,6 +17,10 @@ import {
   type DispatchLoadWorkflowSnapshot,
 } from "@/lib/dispatch-workflow-ui";
 import { LoadFileCopilotAdvocatePanel } from "@/components/copilot/LoadFileCopilotAdvocatePanel";
+import { useDispatchDashboardStore } from "@/lib/stores/dispatch-dashboard-store";
+import { existingSettlementWorkflowHref } from "@/lib/load-file-proof-settlement-display";
+import { DocumentationReadinessPanel } from "./DocumentationReadinessPanel";
+import { ExistingDocumentNavAnchor } from "@/components/ExistingDocumentNavAnchor";
 
 type Props = {
   load: DispatchLoadRecord;
@@ -68,6 +72,9 @@ export function LoadDetailContent({ load, onClose, onOpenAssignModal, refreshKey
   const [workflow, setWorkflow] = useState<DispatchLoadWorkflowSnapshot | null>(null);
   const [workflowLoading, setWorkflowLoading] = useState(false);
   const [workflowError, setWorkflowError] = useState<string | null>(null);
+  const boardLoad = useDispatchDashboardStore((s) =>
+    s.loads.find((row) => row.load_id === load.id) ?? null
+  );
 
   useEffect(() => {
     let cancelled = false;
@@ -305,6 +312,15 @@ export function LoadDetailContent({ load, onClose, onOpenAssignModal, refreshKey
               The dispatch integration keeps the existing BOF document ecosystem intact while the dispatch workflow now
               reads backend load, assignment, readiness, pre-trip, and release state from validated APIs.
             </p>
+            {boardLoad ? (
+              <div className="mt-4">
+                <DocumentationReadinessPanel load={boardLoad} />
+              </div>
+            ) : (
+              <p className="mt-3 text-sm text-slate-400">
+                No DEMO dispatch packet is mapped to {load.id}. Documentation hold was not invented.
+              </p>
+            )}
           </section>
         ) : null}
 
@@ -337,8 +353,18 @@ export function LoadDetailContent({ load, onClose, onOpenAssignModal, refreshKey
             </h3>
             <p className="text-sm text-slate-300">
               This Step 12 integration preserves the existing settlement surfaces. Dispatch release history and pre-trip
-              evidence are now available from authoritative backend workflow records.
+              evidence are now available from authoritative backend workflow records. Driver-week payroll remains at
+              /settlements (STL-* identity). loadId is highlighting only.
             </p>
+            <ExistingDocumentNavAnchor
+              href={existingSettlementWorkflowHref({
+                driverId: boardLoad?.driver_id,
+                loadId: load.id,
+              })}
+              className="mt-3 inline-flex rounded border border-teal-700 px-3 py-1.5 text-xs font-medium text-teal-100 hover:bg-teal-950/40"
+            >
+              Open driver-week payroll
+            </ExistingDocumentNavAnchor>
             {workflow?.latestRelease ? (
               <div className="mt-4 rounded border border-slate-800 bg-slate-950/40 p-3 text-sm text-slate-200">
                 Latest release: {workflow.latestRelease.disposition} · {formatShortDateTime(workflow.latestRelease.evaluatedAt)}

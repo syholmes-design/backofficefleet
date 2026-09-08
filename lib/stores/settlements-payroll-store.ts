@@ -1,7 +1,9 @@
 "use client";
 
 import { create } from "zustand";
+import { persist } from "zustand/middleware";
 import { getBofData } from "@/lib/load-bof-data";
+import { resolveExistingSettlementWorkflowTarget } from "@/lib/load-file-proof-settlement-display";
 import {
   bootstrapPayrollFromBof,
   recomputeSettlementTotals,
@@ -12,6 +14,11 @@ import type {
   SettlementStatus,
   Load,
 } from "@/types/settlements-payroll";
+
+type HoldOverride = {
+  settlement_hold: boolean;
+  settlement_hold_reason: string | null;
+};
 
 function initialState() {
   const data = getBofData();
@@ -27,27 +34,39 @@ function recalcSettlements(
   return settlements.map((s) => recomputeSettlementTotals(s, lines));
 }
 
+function withHoldOverrides(
+  settlements: Settlement[],
+  overrides: Record<string, HoldOverride>
+): Settlement[] {
+  return settlements.map((s) => {
+    const override = overrides[s.settlement_id];
+    return override ? { ...s, ...override } : s;
+  });
+}
+
 type Store = {
   settlements: Settlement[];
   lines: SettlementLine[];
   loads: Load[];
   generatedDocsBySettlementId: Record<
     string,
-    { summaryUrl?: string; holdUrl?: string; insuranceUrl?: string }
+    { summaryUrl?: string; holdUrl?: string; insuranceUrl?: string; invoiceUrl?: string }
   >;
   exportBatchSeq: number;
   drawerSettlementId: string | null;
+  holdOverrides: Record<string, HoldOverride>;
 
   openDrawer: (settlement_id: string) => void;
   closeDrawer: () => void;
 
   markReadyForExport: (settlement_id: string) => string | null;
   placeHold: (settlement_id: string, reason?: string) => void;
+  placeHoldFromLoadProof: (loadId: string, driverId?: string | null, reason?: string) => string | null;
   clearHold: (settlement_id: string) => void;
   addLine: (settlement_id: string) => void;
   setGeneratedDocument: (
     settlement_id: string,
-    kind: "summary" | "hold" | "insurance",
+    kind: "summary" | "hold" | "insurance" | "invoice",
     url: string
   ) => void;
   exportSelectedToPayroll: (settlement_ids: string[]) => string;
@@ -55,10 +74,13 @@ type Store = {
   markSettlementReviewedDemo: (settlement_id: string) => void;
 };
 
-export const useSettlementsPayrollStore = create<Store>((set, get) => ({
+export const useSettlementsPayrollStore = create<Store>()(
+  persist(
+    (set, get) => ({
   ...initialState(),
   generatedDocsBySettlementId: {},
   drawerSettlementId: null,
+  holdOverrides: {},
 
   openDrawer: (settlement_id) => set({ drawerSettlementId: settlement_id }),
 
@@ -82,28 +104,61 @@ export const useSettlementsPayrollStore = create<Store>((set, get) => ({
     return null;
   },
 
-  placeHold: (settlement_id, reason) =>
-    set((st) => ({
-      settlements: st.settlements.map((x) =>
-        x.settlement_id === settlement_id
-          ? {
-              ...x,
-              settlement_hold: true,
-              settlement_hold_reason:
-                reason?.trim() || "Manual settlement hold (payroll review)",
-            }
-          : x
-      ),
-    })),
+      placeHold: (settlement_id, reason) =>
+        set((st) => {
+          const settlement_hold_reason =
+            reason?.trim() || "Manual settlement hold (payroll review)";
+          const holdOverrides = {
+            ...st.holdOverrides,
+            [settlement_id]: { settlement_hold: true, settlement_hold_reason },
+          };
+          return {
+            holdOverrides,
+            settlements: withHoldOverrides(
+              st.settlements.map((x) =>
+                x.settlement_id === settlement_id
+                  ? { ...x, settlement_hold: true, settlement_hold_reason }
+                  : x
+              ),
+              holdOverrides
+            ),
+          };
+        }),
 
-  clearHold: (settlement_id) =>
-    set((st) => ({
-      settlements: st.settlements.map((x) =>
-        x.settlement_id === settlement_id
-          ? { ...x, settlement_hold: false, settlement_hold_reason: null }
-          : x
-      ),
-    })),
+      placeHoldFromLoadProof: (loadId, driverId, reason) => {
+        const { settlements, lines } = get();
+        const target = resolveExistingSettlementWorkflowTarget({
+          settlements,
+          lines,
+          driverId,
+          loadId,
+        });
+        if (!target.settlementId) return null;
+        get().placeHold(
+          target.settlementId,
+          reason?.trim() || `Documentation hold from load ${loadId}`
+        );
+        return target.settlementId;
+      },
+
+      clearHold: (settlement_id) =>
+        set((st) => {
+          const holdOverrides = {
+            ...st.holdOverrides,
+            [settlement_id]: { settlement_hold: false, settlement_hold_reason: null },
+          };
+          return {
+            holdOverrides,
+            settlements: withHoldOverrides(
+              st.settlements.map((x) =>
+                x.settlement_id === settlement_id
+                  ? { ...x, settlement_hold: false, settlement_hold_reason: null }
+                  : x
+              ),
+              holdOverrides
+            ),
+          };
+        }),
 
   addLine: (settlement_id) => {
     const amtStr = window.prompt("Line amount (positive number):", "100");
@@ -145,12 +200,14 @@ export const useSettlementsPayrollStore = create<Store>((set, get) => ({
   setGeneratedDocument: (settlement_id, kind, url) =>
     set((st) => {
       const prev = st.generatedDocsBySettlementId[settlement_id] ?? {};
-      const next =
-        kind === "summary"
-          ? { ...prev, summaryUrl: url }
-          : kind === "hold"
-            ? { ...prev, holdUrl: url }
-            : { ...prev, insuranceUrl: url };
+          const next =
+            kind === "summary"
+              ? { ...prev, summaryUrl: url }
+              : kind === "hold"
+                ? { ...prev, holdUrl: url }
+                : kind === "invoice"
+                  ? { ...prev, invoiceUrl: url }
+                  : { ...prev, insuranceUrl: url };
       return {
         generatedDocsBySettlementId: {
           ...st.generatedDocsBySettlementId,
@@ -177,23 +234,49 @@ export const useSettlementsPayrollStore = create<Store>((set, get) => ({
     return batch;
   },
 
-  markSettlementReviewedDemo: (settlement_id) =>
-    set((st) => ({
-      settlements: st.settlements.map((x) =>
-        x.settlement_id === settlement_id
-          ? {
-              ...x,
-              settlement_hold: false,
-              settlement_hold_reason: null,
-              status:
-                x.status === "Exported"
-                  ? x.status
-                  : ("Draft" as SettlementStatus),
-            }
-          : x
-      ),
-    })),
-}));
+      markSettlementReviewedDemo: (settlement_id) =>
+        set((st) => {
+          const holdOverrides = {
+            ...st.holdOverrides,
+            [settlement_id]: { settlement_hold: false, settlement_hold_reason: null },
+          };
+          return {
+            holdOverrides,
+            settlements: withHoldOverrides(
+              st.settlements.map((x) =>
+                x.settlement_id === settlement_id
+                  ? {
+                      ...x,
+                      settlement_hold: false,
+                      settlement_hold_reason: null,
+                      status:
+                        x.status === "Exported"
+                          ? x.status
+                          : ("Draft" as SettlementStatus),
+                    }
+                  : x
+              ),
+              holdOverrides
+            ),
+          };
+        }),
+    }),
+    {
+      name: "bof-settlements-payroll-hold-overrides",
+      partialize: (state) => ({ holdOverrides: state.holdOverrides }),
+      merge: (persisted, current) => {
+        const holdOverrides =
+          (persisted as { holdOverrides?: Record<string, HoldOverride> } | undefined)
+            ?.holdOverrides ?? {};
+        return {
+          ...current,
+          holdOverrides,
+          settlements: withHoldOverrides(current.settlements, holdOverrides),
+        };
+      },
+    }
+  )
+);
 
 export function countByStatus(
   settlements: Settlement[],
