@@ -220,10 +220,10 @@ export function LoadsPageClient({ fleetId }: Props) {
                   const fullLoadRecord = demoData.loads.find((l) => l.id === load.id) as Record<string, unknown> | undefined;
                   const isExpanded = expandedLoadId === load.id;
 
-                  const driverId = (typeof fullLoadRecord?.driverId === "string" && fullLoadRecord.driverId) || "DRV-001";
-                  const assetId = pretripModel?.assetId || (typeof fullLoadRecord?.assetId === "string" && fullLoadRecord.assetId) || "T-102";
-                  const trailerNumber = (typeof fullLoadRecord?.trailerNumber === "string" && fullLoadRecord.trailerNumber) || "TRL-2854";
-                  const customerName = load.customerName || (typeof fullLoadRecord?.customerName === "string" && fullLoadRecord.customerName) || "Peachtree Foods";
+                  const driverId = typeof fullLoadRecord?.driverId === "string" && fullLoadRecord.driverId ? fullLoadRecord.driverId : "";
+                  const assetId = pretripModel?.assetId || (typeof fullLoadRecord?.assetId === "string" && fullLoadRecord.assetId) || "";
+                  const trailerNumber = (typeof fullLoadRecord?.trailerNumber === "string" && fullLoadRecord.trailerNumber) || "";
+                  const customerName = load.customerName || (typeof fullLoadRecord?.customerName === "string" && fullLoadRecord.customerName) || "Unavailable";
                   const commodity = (typeof fullLoadRecord?.commodity === "string" && fullLoadRecord.commodity) || "";
                   const weight = typeof fullLoadRecord?.weight === "number" ? fullLoadRecord.weight : null;
                   const settlementHold = Boolean(fullLoadRecord?.settlementHold);
@@ -238,7 +238,7 @@ export function LoadsPageClient({ fleetId }: Props) {
                               <code className="bof-code font-bold">{load.id}</code>
                             </Link>
                             <div className="mt-1 text-[11px] font-mono text-slate-400">
-                              Ref: {load.referenceNumber || `501-${load.id}`}
+                              Ref: {load.referenceNumber || "Unavailable"}
                             </div>
                           </div>
                         </td>
@@ -260,16 +260,24 @@ export function LoadsPageClient({ fleetId }: Props) {
                         <td>
                           <div>
                             <p className="text-xs font-semibold text-slate-100">
+                              {driverId ? (
                               <Link href={`/drivers/${driverId}`} className="hover:text-teal-200 hover:underline">
                                 {pretripModel?.driverName || driverId} ({driverId})
                               </Link>
+                              ) : (
+                                <span>Driver unavailable</span>
+                              )}
                             </p>
                             <p className="mt-1 text-xs text-slate-300">
                               Truck:{" "}
+                              {assetId ? (
                               <Link href={`/maintenance/${assetId}`} className="font-mono text-teal-300 hover:underline">
                                 {assetId}
-                              </Link>{" "}
-                              · Trailer: <span className="font-mono text-slate-300">{trailerNumber}</span>
+                              </Link>
+                              ) : (
+                                <span className="font-mono text-slate-400">Unavailable</span>
+                              )}{" "}
+                              · Trailer: <span className="font-mono text-slate-300">{trailerNumber || "Unavailable"}</span>
                             </p>
                           </div>
                         </td>

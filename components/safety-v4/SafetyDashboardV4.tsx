@@ -446,8 +446,8 @@ export function SafetyDashboardV4() {
               <Truck className="h-5 w-5 text-cyan-400" />
             </div>
             <div>
-                <h3 className="text-lg font-semibold text-white">HOS & En-Route Monitoring</h3>
-              <p className="text-xs text-slate-400 mt-1">Illustrative monitoring snapshot for the BOF demo; not live telemetry</p>
+                <h3 className="text-lg font-semibold text-white">HOS &amp; En-Route Monitoring (REFERENCE / DEMO)</h3>
+              <p className="text-xs text-amber-200 mt-1">Not live telemetry. Values below are a presentation snapshot only.</p>
             </div>
               <Link href="/safety/training" className="ml-auto rounded border border-cyan-700/50 px-3 py-2 text-xs font-semibold text-cyan-100 hover:bg-cyan-900/30">
                 Training &amp; coaching
@@ -459,10 +459,10 @@ export function SafetyDashboardV4() {
             <div className="rounded-lg border border-slate-800 bg-slate-900/40 p-4">
               <div className="flex items-start justify-between mb-3">
                 <div>
-                  <p className="text-xs font-semibold text-slate-400 uppercase">HOS Remaining</p>
+                  <p className="text-xs font-semibold text-amber-200 uppercase">HOS Remaining (DEMO)</p>
                   <p className="text-lg font-bold text-white mt-1">7h 45m</p>
                 </div>
-                <div className="h-3 w-3 rounded-full bg-emerald-500 animate-pulse" />
+                <span className="rounded border border-amber-700/60 px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wide text-amber-200">DEMO</span>
               </div>
               <div className="relative h-2 w-full rounded-full bg-slate-800 overflow-hidden">
                 <div className="h-full w-3/4 bg-gradient-to-r from-emerald-600 to-emerald-400" />
@@ -474,10 +474,10 @@ export function SafetyDashboardV4() {
             <div className="rounded-lg border border-slate-800 bg-slate-900/40 p-4">
               <div className="flex items-start justify-between mb-3">
                 <div>
-                  <p className="text-xs font-semibold text-slate-400 uppercase">Current Location</p>
+                  <p className="text-xs font-semibold text-amber-200 uppercase">Current Location (DEMO)</p>
                   <p className="text-base font-bold text-white mt-1">I-75 North</p>
                 </div>
-                <div className="h-3 w-3 rounded-full bg-cyan-500 animate-pulse" />
+                <span className="rounded border border-amber-700/60 px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wide text-amber-200">DEMO</span>
               </div>
               <p className="text-sm text-slate-300">~312 miles from destination</p>
               <p className="text-[11px] text-slate-500 mt-2">Estimated arrival: 16:45 UTC</p>
@@ -487,10 +487,10 @@ export function SafetyDashboardV4() {
             <div className="rounded-lg border border-slate-800 bg-slate-900/40 p-4">
               <div className="flex items-start justify-between mb-3">
                 <div>
-                  <p className="text-xs font-semibold text-slate-400 uppercase">Current Speed</p>
+                  <p className="text-xs font-semibold text-amber-200 uppercase">Current Speed (DEMO)</p>
                   <p className="text-lg font-bold text-white mt-1">58 mph</p>
                 </div>
-                <div className="h-3 w-3 rounded-full bg-blue-500 animate-pulse" />
+                <span className="rounded border border-amber-700/60 px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wide text-amber-200">DEMO</span>
               </div>
               <p className="text-sm text-slate-300">Within posted limits</p>
               <p className="text-[11px] text-slate-500 mt-2">Lane: Center &nbsp;• &nbsp;Clear road ahead</p>
@@ -500,13 +500,13 @@ export function SafetyDashboardV4() {
             <div className="rounded-lg border border-slate-800 bg-slate-900/40 p-4">
               <div className="flex items-start justify-between mb-3">
                 <div>
-                  <p className="text-xs font-semibold text-slate-400 uppercase">Telematics</p>
-                  <p className="text-sm font-semibold text-emerald-400 mt-1">Connected (demo)</p>
+                  <p className="text-xs font-semibold text-amber-200 uppercase">Telematics (DEMO)</p>
+                  <p className="text-sm font-semibold text-amber-200 mt-1">Not connected</p>
                 </div>
-                <div className="h-3 w-3 rounded-full bg-teal-500 animate-pulse" />
+                <span className="rounded border border-amber-700/60 px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wide text-amber-200">DEMO</span>
               </div>
               <p className="text-sm text-slate-300">Signal: Strong (4G/LTE)</p>
-              <p className="text-[11px] text-slate-500 mt-2">Last check: 45 seconds ago</p>
+              <p className="text-[11px] text-slate-500 mt-2">Last check: not a live poll</p>
             </div>
           </div>
 

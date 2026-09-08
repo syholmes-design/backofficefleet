@@ -10,6 +10,7 @@ import {
   isHighSeverityMar,
   isMaintenanceMar,
   listMaintenanceCostRows,
+  maintenanceEquipmentClassLabel,
   repairLikeMarsForAsset,
 } from "@/lib/maintenance-data";
 
@@ -79,7 +80,7 @@ export function MaintenanceAssetDetailClient({ assetId }: { assetId: string }) {
             <code className="bof-code">{summary.asset_id}</code>
           </h2>
           <p className="bof-muted bof-small">
-            {summary.kind === "tractor" ? "Tractor" : "Trailer"} · {summary.fleet_status} ·{" "}
+            {maintenanceEquipmentClassLabel(summary.asset_id, summary.kind)} · {summary.fleet_status} ·{" "}
             {summary.current_terminal}
           </p>
         </div>

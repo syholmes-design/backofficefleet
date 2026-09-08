@@ -15,12 +15,22 @@ import {
   getCanonicalEquipmentRecord,
   isCanonicalOutOfServiceFlag,
 } from "./canonical-equipment-spine";
+import { equipmentMappings } from "./canonical-id-mappings";
 
 export type MoneyAtRiskRow = NonNullable<BofData["moneyAtRisk"]>[number];
 
 export type EquipmentReadiness = "Ready" | "At Risk" | "Blocked" | "Out of Service";
 
 export type AssetKind = "tractor" | "trailer" | "Equipment";
+
+export function maintenanceEquipmentClassLabel(assetId: string, kind: AssetKind): string {
+  if (kind === "tractor") return "Tractor";
+  if (kind === "trailer") return "Trailer";
+  const notes = equipmentMappings.get(assetId)?.notes ?? "";
+  if (/tractor/i.test(notes)) return "Tractor";
+  if (/trailer/i.test(notes)) return "Trailer";
+  return "Equipment";
+}
 
 export type MaintenanceAssetSummary = {
   asset_id: string;
@@ -453,7 +463,7 @@ export function listRepairIssueRows(
         issue_id: m.id,
         asset_id: aid,
         unit_number: s?.unit_number ?? aid,
-        kind: s?.kind ?? "tractor",
+        kind: s?.kind ?? "Equipment",
         description: m.rootCause ?? m.category ?? "—",
         severity: isHighSeverityMar(m) ? "HIGH" : isBlockedMar(m) ? "HIGH" : "MEDIUM",
         status: m.status ?? "—",

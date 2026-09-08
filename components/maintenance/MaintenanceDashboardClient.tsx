@@ -7,6 +7,7 @@ import {
   buildAttentionItems,
   computeMaintenanceKpis,
   listMaintenanceAssetSummaries,
+  maintenanceEquipmentClassLabel,
 } from "@/lib/maintenance-data";
 import { BofAdvantageCard, BofAdvantageStrip } from "@/components/bof-advantage/BofAdvantageCard";
 
@@ -114,7 +115,7 @@ export function MaintenanceDashboardClient() {
                         {s.unit_number}
                       </Link>
                     </td>
-                    <td>{s.kind === "tractor" ? "Tractor" : "Trailer"}</td>
+                    <td>{maintenanceEquipmentClassLabel(s.asset_id, s.kind)}</td>
                     <td>{s.fleet_status}</td>
                     <td>
                       <ReadinessBadge r={s.readiness} />

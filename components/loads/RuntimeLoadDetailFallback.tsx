@@ -96,7 +96,7 @@ export function RuntimeLoadDetailFallback({ loadId }: { loadId: string }) {
           Loads / Dispatch
         </Link>
         <span className="text-slate-400">/</span>
-        <span className="font-bold text-slate-950">Load {load.id} (Ref: {load.number || "501"})</span>
+        <span className="font-bold text-slate-950">Load {load.id}{load.number ? ` (Ref: ${load.number})` : ""}</span>
       </nav>
 
       <div className="mb-6">
@@ -137,7 +137,7 @@ export function RuntimeLoadDetailFallback({ loadId }: { loadId: string }) {
             </p>
 
             <div className="mt-3 flex flex-wrap items-center gap-4 text-sm text-slate-600">
-              <span>Customer: <strong className="text-slate-950">{load.customerName || "Peachtree Foods"}</strong></span>
+              <span>Customer: <strong className="text-slate-950">{load.customerName || "Unavailable"}</strong></span>
               {load.brokerName ? <span>Broker: <strong className="text-slate-950">{load.brokerName}</strong></span> : null}
               {load.commodity ? <span>Commodity: <strong className="text-slate-950">{load.commodity}</strong></span> : null}
               {load.weight ? <span>Weight: <strong className="text-slate-950">{load.weight.toLocaleString()} lbs</strong></span> : null}
@@ -186,17 +186,21 @@ export function RuntimeLoadDetailFallback({ loadId }: { loadId: string }) {
           <div className="rounded-xl border border-slate-200 bg-slate-50 p-4">
             <span className="text-xs font-bold uppercase tracking-wider text-slate-500">Assigned Driver</span>
             <p className="mt-1 text-base font-bold text-slate-950">
-              {driverName} ({load.driverId})
+              {driverName || "Unavailable"}{load.driverId ? ` (${load.driverId})` : ""}
             </p>
+            {load.driverId ? (
             <Link href={`/drivers/${load.driverId}`} className="mt-1 inline-block text-xs font-semibold text-teal-800 hover:underline">
               View driver profile →
             </Link>
+            ) : (
+              <p className="mt-1 text-xs text-slate-500">Driver identity unavailable</p>
+            )}
           </div>
 
           <div className="rounded-xl border border-slate-200 bg-slate-50 p-4">
             <span className="text-xs font-bold uppercase tracking-wider text-slate-500">Power Unit &amp; Trailer</span>
             <p className="mt-1 text-base font-bold text-slate-950">
-              Truck: {load.assetId || "T-102"} · {load.trailerNumber || "TRL-2854"}
+              Truck: {load.assetId || "Unavailable"} · {load.trailerNumber || "Unavailable"}
             </p>
             <Link href={maintenanceHref} className="mt-1 inline-block text-xs font-semibold text-teal-800 hover:underline">
               View maintenance status →
@@ -206,26 +210,26 @@ export function RuntimeLoadDetailFallback({ loadId }: { loadId: string }) {
           <div className="rounded-xl border border-slate-200 bg-slate-50 p-4">
             <span className="text-xs font-bold uppercase tracking-wider text-slate-500">Dispatch &amp; Seals</span>
             <p className="mt-1 text-xs text-slate-800 font-semibold">
-              Dispatcher: {load.dispatcherName || "Tina Brooks"}
+              Dispatcher: {load.dispatcherName || "Unavailable"}
             </p>
             <p className="mt-1 text-xs text-slate-600">
-              Pickup Seal: <strong className="font-mono text-slate-900">{load.pickupSeal || "SEAL-83921"}</strong>
+              Pickup Seal: <strong className="font-mono text-slate-900">{load.pickupSeal || "Unavailable"}</strong>
             </p>
             <p className="text-xs text-slate-600">
-              Delivery Seal: <strong className="font-mono text-slate-900">{load.deliverySeal || "SEAL-83920"}</strong>
+              Delivery Seal: <strong className="font-mono text-slate-900">{load.deliverySeal || "Unavailable"}</strong>
             </p>
           </div>
 
           <div className="rounded-xl border border-slate-200 bg-slate-50 p-4">
             <span className="text-xs font-bold uppercase tracking-wider text-slate-500">Document References</span>
             <p className="mt-1 text-xs font-mono font-medium text-slate-900">
-              Rate Con: {load.rateConfirmationNumber || "RC-501-204"}
+              Rate Con: {load.rateConfirmationNumber || "Unavailable"}
             </p>
             <p className="text-xs font-mono font-medium text-slate-900">
-              BOL: {load.bolNumber || "BOL-501-9935"}
+              BOL: {load.bolNumber || "Unavailable"}
             </p>
             <p className="text-xs font-mono font-medium text-slate-900">
-              Invoice: {load.invoiceNumber || `INV-${load.id}`}
+              Invoice: {load.invoiceNumber || "Unavailable"}
             </p>
           </div>
         </div>

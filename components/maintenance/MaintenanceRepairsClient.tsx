@@ -3,7 +3,7 @@
 import { useMemo, useState } from "react";
 import Link from "next/link";
 import { useBofDemoData } from "@/lib/bof-demo-data-context";
-import { listMaintenanceAssetSummaries, listRepairIssueRows } from "@/lib/maintenance-data";
+import { listMaintenanceAssetSummaries, listRepairIssueRows, maintenanceEquipmentClassLabel } from "@/lib/maintenance-data";
 
 export function MaintenanceRepairsClient() {
   const { data } = useBofDemoData();
@@ -82,7 +82,7 @@ export function MaintenanceRepairsClient() {
                       {r.unit_number}
                     </Link>
                   </td>
-                  <td>{r.kind === "tractor" ? "Tractor" : "Trailer"}</td>
+                  <td>{maintenanceEquipmentClassLabel(r.asset_id, r.kind)}</td>
                   <td>{r.description}</td>
                   <td>{r.severity}</td>
                   <td>{r.status}</td>

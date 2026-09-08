@@ -3,7 +3,7 @@
 import { useMemo, useState } from "react";
 import Link from "next/link";
 import { useBofDemoData } from "@/lib/bof-demo-data-context";
-import { listMaintenanceAssetSummaries } from "@/lib/maintenance-data";
+import { listMaintenanceAssetSummaries, maintenanceEquipmentClassLabel } from "@/lib/maintenance-data";
 
 function Badge({ r }: { r: string }) {
   const cls =
@@ -95,7 +95,7 @@ export function MaintenancePmInspectionClient() {
                     {s.unit_number}
                   </Link>
                 </td>
-                <td>{s.kind === "tractor" ? "Tractor" : "Trailer"}</td>
+                <td>{maintenanceEquipmentClassLabel(s.asset_id, s.kind)}</td>
                 <td className="maint-cell-muted">{s.pm_due_display}</td>
                 <td>{s.pm_status_label}</td>
                 <td className="maint-cell-muted">DVIR / periodic (not modeled)</td>
