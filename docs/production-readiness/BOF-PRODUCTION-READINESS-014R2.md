@@ -213,13 +213,12 @@ Passing lint/build is not a prerequisite substitute.
 |---|---|
 | Branch | `orchestrator/copilot-sequential-2026-09` |
 | Investigation start HEAD | `f7d755f59308122b71049e55e45a07671b027f54` |
+| Closeout commit | `61e61de88476a796f6536b8fbf795f0e5496388d` |
 | Files | `docs/production-readiness/BOF-PRODUCTION-READINESS-014R2.md` |
 |  | `docs/production-readiness/BOF-PRODUCTION-READINESS-014R2-DECISION-MATRIX.md` |
 | Product code | Unchanged |
 | Protected worktree | Unchanged |
 | Push | Not performed |
-
-Closeout commit hash recorded after commit.
 
 ---
 
