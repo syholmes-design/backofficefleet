@@ -11,6 +11,7 @@ import {
   getBodyString,
   resolveSettlement,
 } from "../_shared";
+import { operatorUnauthorizedResponse } from "@/lib/require-operator-session";
 
 const SETTLEMENT_KIND_MAP: Record<string, SettlementDocKind> = {
   summary: "Settlement Summary",
@@ -19,6 +20,8 @@ const SETTLEMENT_KIND_MAP: Record<string, SettlementDocKind> = {
 };
 
 export async function POST(req: Request) {
+  const unauthorized = await operatorUnauthorizedResponse();
+  if (unauthorized) return unauthorized;
   const type = "Settlement";
   let body: Record<string, unknown> = {};
   try {

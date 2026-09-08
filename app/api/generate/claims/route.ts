@@ -11,8 +11,11 @@ import {
   getBodyStringArray,
   resolveIncident,
 } from "../_shared";
+import { operatorUnauthorizedResponse } from "@/lib/require-operator-session";
 
 export async function POST(req: Request) {
+  const unauthorized = await operatorUnauthorizedResponse();
+  if (unauthorized) return unauthorized;
   const type = "Claims";
   let body: Record<string, unknown> = {};
   try {

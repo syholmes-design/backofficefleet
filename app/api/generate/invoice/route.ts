@@ -8,8 +8,11 @@ import {
   getBodyString,
   resolveLoad,
 } from "../_shared";
+import { operatorUnauthorizedResponse } from "@/lib/require-operator-session";
 
 export async function POST(req: Request) {
+  const unauthorized = await operatorUnauthorizedResponse();
+  if (unauthorized) return unauthorized;
   const type = "Invoice";
   let body: Record<string, unknown> = {};
   try {

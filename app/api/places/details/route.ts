@@ -1,11 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
 import { parseGooglePlaceDetailsResult } from "@/lib/google-places-address";
+import { operatorUnauthorizedResponse } from "@/lib/require-operator-session";
 
 /**
  * Server-side Google Place Details proxy for resolving autocomplete selections.
  * @see https://developers.google.com/maps/documentation/places/web-service/details
  */
 export async function POST(req: NextRequest) {
+  const unauthorized = await operatorUnauthorizedResponse();
+  if (unauthorized) return unauthorized;
   const key = process.env.GOOGLE_PLACES_API_KEY?.trim();
   if (!key) {
     return NextResponse.json({ ok: false, error: "Places API not configured" }, { status: 503 });

@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { LocalPdfProvider } from "@/lib/load-intake/extraction/local-pdf-provider";
+import { operatorUnauthorizedResponse } from "@/lib/require-operator-session";
 
 export const runtime = "nodejs";
 
@@ -7,6 +8,8 @@ const provider = new LocalPdfProvider();
 const configuredProvider = process.env.LOAD_INTAKE_EXTRACTION_PROVIDER || "local";
 
 export async function POST(req: Request) {
+  const unauthorized = await operatorUnauthorizedResponse();
+  if (unauthorized) return unauthorized;
   try {
     if (configuredProvider !== "local") {
       return NextResponse.json(

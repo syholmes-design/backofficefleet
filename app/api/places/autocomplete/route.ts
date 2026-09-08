@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { operatorUnauthorizedResponse } from "@/lib/require-operator-session";
 
 type AutocompletePrediction = {
   place_id: string;
@@ -10,6 +11,8 @@ type AutocompletePrediction = {
  * @see https://developers.google.com/maps/documentation/places/web-service/autocomplete
  */
 export async function POST(req: NextRequest) {
+  const unauthorized = await operatorUnauthorizedResponse();
+  if (unauthorized) return unauthorized;
   const key = process.env.GOOGLE_PLACES_API_KEY?.trim();
   if (!key) {
     return NextResponse.json({

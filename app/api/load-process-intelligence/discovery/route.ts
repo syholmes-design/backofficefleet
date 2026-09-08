@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { getLoadProcessDiscovery, type BofLoadProcessDeviationType } from "@/lib/load-process-intelligence";
 import { isDatabaseUrlNotConfiguredError, prismaUnavailablePayload } from "@/lib/prisma";
+import { operatorUnauthorizedResponse } from "@/lib/require-operator-session";
 
 const ALLOWED_FILTERS = new Set([
   "dateFrom",
@@ -35,6 +36,8 @@ function parseDate(value: string | null, field: string) {
 }
 
 export async function GET(request: Request) {
+  const unauthorized = await operatorUnauthorizedResponse();
+  if (unauthorized) return unauthorized;
   const url = new URL(request.url);
   const unsupported = [...url.searchParams.keys()].filter((key) => !ALLOWED_FILTERS.has(key));
   if (unsupported.length > 0) {
@@ -73,6 +76,13 @@ export async function GET(request: Request) {
   } catch (error) {
     if (isDatabaseUrlNotConfiguredError(error)) {
       return NextResponse.json(prismaUnavailablePayload(), { status: 503 });
+    }
+    const message = error instanceof Error ? error.message : "";
+    if (/SASL|password authentication|ECONNREFUSED|Can't reach database|PrismaClient/i.test(message)) {
+      return NextResponse.json(
+        { error: "Process intelligence store is unavailable", code: "PRISMA_UNAVAILABLE" },
+        { status: 503 },
+      );
     }
     throw error;
   }

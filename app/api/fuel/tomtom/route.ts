@@ -3,8 +3,11 @@ import { getBofData } from "@/lib/load-bof-data";
 import { buildTomTomDieselFeedForLoad, CACHE_SECONDS } from "@/lib/server/tomtom-fuel";
 import { getTomTomApiKey } from "@/lib/server/tomtom-env";
 import type { TomTomFuelFeedResponse } from "@/lib/tomtom-fuel-types";
+import { operatorUnauthorizedResponse } from "@/lib/require-operator-session";
 
 export async function GET(req: Request) {
+  const unauthorized = await operatorUnauthorizedResponse();
+  if (unauthorized) return unauthorized;
   const url = new URL(req.url);
   const loadId = url.searchParams.get("loadId")?.trim();
   if (!loadId) {
@@ -13,16 +16,9 @@ export async function GET(req: Request) {
 
   const key = getTomTomApiKey();
   if (!key) {
-    const envDebug = {
-      hasTomTom: !!process.env.TOMTOM_API_KEY,
-      hasTomTomMaps: !!process.env.TOMTOM_MAPS_API_KEY,
-      hasTT: !!process.env.TT_API_KEY,
-      nodeEnv: process.env.NODE_ENV,
-    };
-    
     const noKey: TomTomFuelFeedResponse = {
       live: false,
-      reason: `No TomTom key configured. Expected TOMTOM_API_KEY. Debug: ${JSON.stringify(envDebug)}`,
+      reason: "No TomTom key configured. Expected TOMTOM_API_KEY.",
       loadId,
       fuelPriceIds: [],
       routeContext: {

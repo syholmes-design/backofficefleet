@@ -182,13 +182,6 @@ export function DispatchRouteMap({
     loadV4Data();
   }, []);
 
-  useEffect(() => {
-    const tokenSource = process.env.NEXT_PUBLIC_MAPBOX_TOKEN ? 'NEXT_PUBLIC_MAPBOX_TOKEN' : 
-                       process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN ? 'NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN' : 
-                       'none';
-    console.log(`Mapbox token configured: ${Boolean(mapboxToken)} (source: ${tokenSource})`);
-  }, [mapboxToken]);
-
   const scopedLoads = useMemo(() => {
     if (mode === "selected" && selectedLoadId) {
       return loads.filter((l) => l.load_id === selectedLoadId);
