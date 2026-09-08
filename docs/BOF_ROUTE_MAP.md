@@ -28,6 +28,10 @@ Purpose: prevent edits from landing in stale or non-rendered files by mapping ea
 | `/command-center` | `app/(bof)/command-center/page.tsx` | `CommandCenterPage` -> `CommandCenterPageClient` | DEMO | `CommandCenterExecutiveHeader` | `useBofDemoData()` | ACTIVE_ROUTE | Core demo operations queue. |
 | `/loads` | `app/(bof)/loads/page.tsx` | `LoadsPage` -> `LoadsPageClient` | DISPATCH | None | `useBofDemoData()` | ACTIVE_ROUTE | Dispatch/loads operational list. |
 | `/dispatch` | `app/(bof)/dispatch/page.tsx` | `DispatchPage` -> `DispatchShell` | DISPATCH | None | `useBofDemoData()` + dispatch store | ACTIVE_ROUTE | Canonical dispatch board shell. |
+| `/dispatch-v2` | `app/(bof)/dispatch-v2/page.tsx` | `DispatchV2Page` | REFERENCE_DEMO | None | Preview board | ACTIVE_ROUTE | Not the canonical dispatch surface. |
+| `/settlements-v2` | `app/(bof)/settlements-v2/page.tsx` | `SettlementsV2Page` | REFERENCE_DEMO | None | Preview settlements | ACTIVE_ROUTE | Not the canonical payroll `/settlements` surface. |
+| `/portals/customer` | `app/portals/customer/page.tsx` | Customer portal page | DEMO | None | Apex DEMO_CUSTOMER_PROFILE | ACTIVE_ROUTE | Customer-visible Apex loads. `/customers` re-exports this page. |
+| `/customer-portal` | `app/customer-portal/page.tsx` | `CustomerPortalShell` | REFERENCE_DEMO | None | Prairie View walkthrough | ACTIVE_ROUTE | Simulated customer walkthrough; not Apex operator data. |
 | `/drivers` | `app/(bof)/drivers/page.tsx` | `DriversIndexPage` -> `DriversListPageClient` -> `DriversRosterTable` | DEMO | Drivers command header in `DriversRosterTable` | `useBofDemoData()` + canonical helpers | ACTIVE_ROUTE | Driver readiness command roster. |
 | `/documents` | `app/(bof)/documents/page.tsx` | `DocumentsPage` -> `DocumentsPageClient` | DRIVER_DOCS | None | `useBofDemoData()` + vault/doc helpers | ACTIVE_ROUTE | Fleet-wide document hub. |
 | `/documents/vault` | `app/(bof)/documents/vault/page.tsx` | `DriverVaultWorkspacePage` -> `DriverVaultWorkspaceClient` | DRIVER_DOCS | None | `useBofDemoData()` + vault workspace store | ACTIVE_ROUTE | Driver vault workspace route. |
@@ -49,6 +53,11 @@ All discovered routes are active Next.js routes unless marked legacy redirect.
 | `/command-center` | `app/(bof)/command-center/page.tsx` | `CommandCenterPage` | DEMO | ACTIVE_ROUTE |  |
 | `/dashboard` | `app/(bof)/dashboard/page.tsx` | `DashboardPage` | DEMO | ACTIVE_ROUTE |  |
 | `/dispatch` | `app/(bof)/dispatch/page.tsx` | `DispatchPage` | DISPATCH | ACTIVE_ROUTE |  |
+| `/dispatch-v2` | `app/(bof)/dispatch-v2/page.tsx` | `DispatchV2Page` | REFERENCE_DEMO | ACTIVE_ROUTE | Preview only. |
+| `/settlements-v2` | `app/(bof)/settlements-v2/page.tsx` | `SettlementsV2Page` | REFERENCE_DEMO | ACTIVE_ROUTE | Preview only. |
+| `/portals/customer` | `app/portals/customer/page.tsx` | Customer portal | DEMO | ACTIVE_ROUTE | Apex customer portal. |
+| `/customers` | `app/customers/page.tsx` | re-export of `/portals/customer` | DEMO | ACTIVE_ROUTE | Alias. |
+| `/customer-portal` | `app/customer-portal/page.tsx` | `CustomerPortalShell` | REFERENCE_DEMO | ACTIVE_ROUTE | Prairie View walkthrough. |
 | `/dispatch/intake` | `app/(bof)/dispatch/intake/page.tsx` | `DispatchIntakePage` | DISPATCH | ACTIVE_ROUTE |  |
 | `/documents` | `app/(bof)/documents/page.tsx` | `DocumentsPage` | DRIVER_DOCS | ACTIVE_ROUTE |  |
 | `/documents/compliance-flow` | `app/(bof)/documents/compliance-flow/page.tsx` | `ComplianceFlowPage` | DRIVER_DOCS | ACTIVE_ROUTE |  |

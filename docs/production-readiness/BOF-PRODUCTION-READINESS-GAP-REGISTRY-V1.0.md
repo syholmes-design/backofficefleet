@@ -5,7 +5,7 @@
 **Prompt:** 009 — Discovery & Gap Registry  
 **Predecessor HEAD:** `d8702ccefcf96adf1408fabccf1e3236eba71098`  
 **Worktree:** `bof-orchestrator-copilot-sequential-2026-09`  
-**Status of this registry:** Prompt 009 diagnosis preserved. Prompt 010A/010B remain VALIDATED. Prompt 011 remains closed. Prompt 012 updated GAP-009-014, 015, 016, and 026. Other gaps remain as diagnosed unless a later certified prompt updates them.  
+**Status of this registry:** Prompt 009 diagnosis preserved. Prompt 010A/010B remain VALIDATED. Prompt 011 remains closed. Prompt 012 remains closed. Prompt 013 updated remaining runtime/security/deployment/experience gaps listed in the Prompt 013 closeout. Other gaps remain as diagnosed unless a later certified prompt updates them.  
 **Not:** a BOF runtime subsystem, database table, API, service, certification registry, or state machine.
 
 Certification statuses used here: `VERIFIED` (independently confirmed against BOF sources). `VALIDATED` means the authorized remediation was verified against the stated validation requirement. Prompt 009 did not remediate.
@@ -34,6 +34,15 @@ Certification statuses used here: `VERIFIED` (independently confirmed against BO
 - ADR-009-003 settlement identity is unchanged: `/settlements` is driver-week payroll; `STL-*` may be `settlementId`; `loadId` is highlighting only.
 - ADR-009-004: Prisma `recordLoadInvoice` / `recordLoadPayment` have no operator mutation route. DATABASE_URL remains fail-closed. Cash closure uses existing `POST /api/generate/invoice` plus existing factoring operating documents. Payment stays UNSUPPORTED. No payment engine was invented.
 - GAP-009-014/015/016/026 were the only 012 targets. 005/018/020 remain for Prompt 013.
+
+### Prompt 013 closeout (runtime, security, deployment, experience)
+
+- Existing `auth()` gates generate, Places, TomTom, intake extract, and PI routes. DEMO_SHELL_OPEN is not used as production authentication.
+- PI missing DATABASE_URL stays 503 `DATABASE_URL_REQUIRED`. Connection-class Prisma failures return 503 `PRISMA_UNAVAILABLE` without SASL text. Empty event history remains `INSUFFICIENT EVENT HISTORY` (no invented AUTHORITATIVE demo events).
+- `deploy:full` and `demo:reset:deploy` no longer run `git add .` / commit / push. Vercel deploy remains.
+- ADR-009-001 and ADR-009-003 are unchanged. No new engines, SOT, security platform, observability platform, or deployment pipeline.
+- Observability stays console + existing JSON errors (ADR-009-004: do not create a platform).
+
 
 ---
 
@@ -134,9 +143,9 @@ Certification statuses used here: `VERIFIED` (independently confirmed against BO
 | Field | Value |
 |---|---|
 | AREA | Authorization / Security |
-| OBSERVED BEHAVIOR | `POST /api/generate/{invoice,bol,pod,settlement,claims}`, `POST /api/load-intake/extract`, `/api/places/*`, `/api/fuel/tomtom`, PI discovery routes have no `auth()`. |
+| OBSERVED BEHAVIOR | After 013: `POST /api/generate/{invoice,bol,pod,settlement,claims}`, Places, TomTom, intake extract, and PI discovery/per-load require existing `auth()`. Unauthenticated callers receive 401 `{ error: "Unauthorized", code: "AUTH_REQUIRED" }`. Public recruiting apply stays public. |
 | AUTHORITATIVE EXPECTED BEHAVIOR | `docs/project-environment-assessment.md` already treats Places/TomTom/PDF as demo-acceptable, not sufficient for an exposed production API. |
-| EVIDENCE | Route files under `app/api/generate`, `app/api/places`, `app/api/load-intake/extract`, PI routes. Assessment doc ~294–298. |
+| EVIDENCE | Route files under `app/api/generate`, `app/api/places`, `app/api/load-intake/extract`, PI routes. `lib/require-operator-session.ts`. Assessment doc ~294–298. |
 | EVIDENCE QUALITY | HIGH |
 | SOURCE OF TRUTH | Route source + environment assessment |
 | AFFECTED ROLE(S) | External callers; operators |
@@ -148,7 +157,7 @@ Certification statuses used here: `VERIFIED` (independently confirmed against BO
 | RECOMMENDED REMEDIATION | Gate production-exposed routes with existing auth; keep public apply endpoints explicitly public. |
 | DEPENDENCIES | GAP-009-001 |
 | VALIDATION REQUIRED | Ungated production routes return 401 without session |
-| CERTIFICATION STATUS | VERIFIED |
+| CERTIFICATION STATUS | VALIDATED |
 
 ---
 
@@ -226,9 +235,9 @@ Certification statuses used here: `VERIFIED` (independently confirmed against BO
 | Field | Value |
 |---|---|
 | AREA | Equipment / UX |
-| OBSERVED BEHAVIOR | Asset file heading: “Trailer · Unavailable · Not in BOF fleet JSON” for unit T-102 (tractor ID). |
+| OBSERVED BEHAVIOR | After 013: maintenance class label uses `maintenanceEquipmentClassLabel`. T-102 with kind `Equipment` displays Tractor from canonical ID notes, not Trailer. |
 | AUTHORITATIVE EXPECTED BEHAVIOR | Canonical ID map notes T-102 as tractor (`lib/canonical-id-mappings.ts`). |
-| EVIDENCE | Browser `/maintenance/T-102` snapshot heading. |
+| EVIDENCE | Browser `/maintenance/T-102` snapshot heading. `maintenanceEquipmentClassLabel`. |
 | EVIDENCE QUALITY | HIGH |
 | SOURCE OF TRUTH | Canonical equipment ID mapping vs asset-file presentation |
 | AFFECTED ROLE(S) | Maintenance |
@@ -240,7 +249,7 @@ Certification statuses used here: `VERIFIED` (independently confirmed against BO
 | RECOMMENDED REMEDIATION | Display canonical equipment type/kind from existing spine. |
 | DEPENDENCIES | GAP-009-008 |
 | VALIDATION REQUIRED | T-102 labeled tractor/equipment, not trailer |
-| CERTIFICATION STATUS | VERIFIED |
+| CERTIFICATION STATUS | VALIDATED |
 
 ---
 
@@ -272,9 +281,9 @@ Certification statuses used here: `VERIFIED` (independently confirmed against BO
 | Field | Value |
 |---|---|
 | AREA | UX / Data classification |
-| OBSERVED BEHAVIOR | Safety Command Center shows HOS remaining, I-75 location, 58 mph, “Last check: 45 seconds ago”, then a smaller note that values are presentation-only. |
+| OBSERVED BEHAVIOR | After 013: Safety monitoring heading is `HOS & En-Route Monitoring (REFERENCE / DEMO)`. Cards are labeled DEMO; telematics shows Not connected; no pulsing live dots or “45 seconds ago”. |
 | AUTHORITATIVE EXPECTED BEHAVIOR | REFERENCE/DEMO must not be presented as live telemetry. |
-| EVIDENCE | Browser `/safety` body text. |
+| EVIDENCE | Browser `/safety` body text. `SafetyDashboardV4.tsx`. |
 | EVIDENCE QUALITY | HIGH |
 | SOURCE OF TRUTH | Safety page copy vs classification tiers in package §3.1 |
 | AFFECTED ROLE(S) | Safety / fleet owner |
@@ -286,7 +295,7 @@ Certification statuses used here: `VERIFIED` (independently confirmed against BO
 | RECOMMENDED REMEDIATION | Keep demo snapshot but fail-closed labeling; do not invent telematics. |
 | DEPENDENCIES | none |
 | VALIDATION REQUIRED | Demo telemetry cannot be read as live without an explicit REFERENCE/DEMO label in the primary viewport |
-| CERTIFICATION STATUS | VERIFIED |
+| CERTIFICATION STATUS | VALIDATED |
 
 ---
 
@@ -410,9 +419,9 @@ Certification statuses used here: `VERIFIED` (independently confirmed against BO
 | Field | Value |
 |---|---|
 | AREA | UX / Data integrity |
-| OBSERVED BEHAVIOR | `RuntimeLoadDetailFallback` uses `load.customerName \|\| "Peachtree Foods"`, `assetId \|\| "T-102"`, default seals, RC, BOL. Roster defaults similar. |
+| OBSERVED BEHAVIOR | After 013: `RuntimeLoadDetailFallback` and loads roster render missing customer/asset/seals/doc refs as Unavailable. They do not substitute Peachtree Foods, T-102, TRL-2854, or invented seals. |
 | AUTHORITATIVE EXPECTED BEHAVIOR | Package §3.2: missing ≠ fabricated fact. Unavailable must be labeled unavailable. |
-| EVIDENCE | `components/loads/RuntimeLoadDetailFallback.tsx` ~99–228. `LoadsPageClient.tsx` 223–226. |
+| EVIDENCE | `components/loads/RuntimeLoadDetailFallback.tsx`. `LoadsPageClient.tsx`. |
 | EVIDENCE QUALITY | HIGH |
 | SOURCE OF TRUTH | Fallback component vs load record |
 | AFFECTED ROLE(S) | Dispatch / anyone on unauth load file |
@@ -424,7 +433,7 @@ Certification statuses used here: `VERIFIED` (independently confirmed against BO
 | RECOMMENDED REMEDIATION | Render missing fields as unavailable; do not substitute another load’s identity. |
 | DEPENDENCIES | GAP-009-006 |
 | VALIDATION REQUIRED | Load with empty assetId does not display T-102 |
-| CERTIFICATION STATUS | VERIFIED |
+| CERTIFICATION STATUS | VALIDATED |
 
 ---
 
@@ -433,9 +442,9 @@ Certification statuses used here: `VERIFIED` (independently confirmed against BO
 | Field | Value |
 |---|---|
 | AREA | Process Intelligence / Runtime |
-| OBSERVED BEHAVIOR | Discovery queries Prisma loads that have operatingProcessEvents. Demo L001 has no persisted events. Discovery has no demo fallback. This worktree currently 500s (GAP-009-002). Capability matrix already marks stages PARTIALLY READY. |
+| OBSERVED BEHAVIOR | After 013: PI routes require session (401 without). Unconfigured DATABASE_URL returns 503 `DATABASE_URL_REQUIRED` (not SASL 500). Prisma connection-class failures return 503 `PRISMA_UNAVAILABLE` without leaking SASL. Discovery with no persisted events already returns `INSUFFICIENT EVENT HISTORY`. Demo load identity is labeled `DEMO_LOAD_IDENTITY_WITHOUT_PERSISTED_EVENT_LOG` and does not invent AUTHORITATIVE events. |
 | AUTHORITATIVE EXPECTED BEHAVIOR | PI must fail closed with INSUFFICIENT_EVENT_HISTORY, not 500, and must not invent demo events as AUTHORITATIVE. |
-| EVIDENCE | `lib/load-process-intelligence.ts` 449–459, 544–561, 595–687. discovery route 39–55. Runtime 500. |
+| EVIDENCE | `lib/load-process-intelligence.ts` 449–459, 544–561, 595–687. discovery route. Per-load route. |
 | EVIDENCE QUALITY | HIGH |
 | SOURCE OF TRUTH | PI service + Prisma |
 | AFFECTED ROLE(S) | Operations analysts |
@@ -447,7 +456,7 @@ Certification statuses used here: `VERIFIED` (independently confirmed against BO
 | RECOMMENDED REMEDIATION | Fix env (001/002). Return controlled empty/insufficient states. Do not create a PI platform. |
 | DEPENDENCIES | GAP-009-002 |
 | VALIDATION REQUIRED | Discovery 200 with empty/insufficient payload or real Prisma cases; L001 per-load not SASL 500 |
-| CERTIFICATION STATUS | VERIFIED |
+| CERTIFICATION STATUS | VALIDATED (fail-closed). Unauthenticated 401; unconfigured DB 503; no invented AUTHORITATIVE demo events. |
 
 ---
 
@@ -456,9 +465,9 @@ Certification statuses used here: `VERIFIED` (independently confirmed against BO
 | Field | Value |
 |---|---|
 | AREA | Observability |
-| OBSERVED BEHAVIOR | No Sentry/pino/winston in package.json. Dispatch audit → console + localStorage. APIs return JSON errors; PI 500 is unhandled Prisma. |
+| OBSERVED BEHAVIOR | After 013: still no Sentry/pino/winston. Auth/PI known env misses return controlled JSON (401/503) instead of silent 500. Dispatch audit remains console + localStorage. No observability platform was added (ADR-009-004). |
 | AUTHORITATIVE EXPECTED BEHAVIOR | Production needs operator-visible failure and durable logs. Package forbids creating a new observability platform. |
-| EVIDENCE | `lib/audit/logDispatchEvent.ts`. package.json dependencies. PI 500 stack in next log. |
+| EVIDENCE | `lib/audit/logDispatchEvent.ts`. package.json dependencies. PI/auth JSON error payloads. |
 | EVIDENCE QUALITY | HIGH |
 | SOURCE OF TRUTH | Code + runtime logs |
 | AFFECTED ROLE(S) | Operators, deployers |
@@ -470,7 +479,7 @@ Certification statuses used here: `VERIFIED` (independently confirmed against BO
 | RECOMMENDED REMEDIATION | Harden existing error responses and env fail-closed. Do not add a new observability product in 010–013 without ADR. |
 | DEPENDENCIES | GAP-009-001, GAP-009-002 |
 | VALIDATION REQUIRED | Controlled error JSON for PI/auth; no silent 500 for known env misses |
-| CERTIFICATION STATUS | VERIFIED |
+| CERTIFICATION STATUS | VALIDATED (existing console/JSON only). Centralized vendor observability remains ADR-009-004 / not created. |
 
 ---
 
@@ -479,9 +488,9 @@ Certification statuses used here: `VERIFIED` (independently confirmed against BO
 | Field | Value |
 |---|---|
 | AREA | Deployment |
-| OBSERVED BEHAVIOR | package.json scripts `deploy:full` and `demo:reset:deploy` run `git add .` then commit and `vercel --prod`. |
+| OBSERVED BEHAVIOR | After 013: `deploy:full` and `demo:reset:deploy` run generate/reset then `npx vercel --prod` only. They do not `git add .`, commit, or push. |
 | AUTHORITATIVE EXPECTED BEHAVIOR | Orchestrator git protocol forbids `git add .` / `git add -A`. Production deploy must not auto-commit the entire tree. |
-| EVIDENCE | `package.json` 71–73. |
+| EVIDENCE | `package.json` scripts. |
 | EVIDENCE QUALITY | HIGH |
 | SOURCE OF TRUTH | npm scripts |
 | AFFECTED ROLE(S) | Deploy operator |
@@ -493,7 +502,7 @@ Certification statuses used here: `VERIFIED` (independently confirmed against BO
 | RECOMMENDED REMEDIATION | Replace blanket add with explicit paths; keep Vercel deploy. |
 | DEPENDENCIES | none |
 | VALIDATION REQUIRED | Deploy script does not invoke `git add .` |
-| CERTIFICATION STATUS | VERIFIED |
+| CERTIFICATION STATUS | VALIDATED |
 
 ---
 
@@ -502,9 +511,9 @@ Certification statuses used here: `VERIFIED` (independently confirmed against BO
 | Field | Value |
 |---|---|
 | AREA | Routing / Demo vs production |
-| OBSERVED BEHAVIOR | Customer: `/portals/customer`, `/customers`, `/customer-portal`, `/shipper-portal`. Dispatch: `/dispatch` and `/dispatch-v2`. Settlements: `/settlements` and `/settlements-v2`. Route map incomplete vs `app/**/page.tsx`. |
+| OBSERVED BEHAVIOR | After 013: `/dispatch-v2` and `/settlements-v2` are labeled REFERENCE/DEMO preview and point to canonical `/dispatch` and `/settlements`. `/customer-portal` remains the labeled Prairie View walkthrough. `/portals/customer` (and `/customers` alias) remains Apex DEMO customer. Routes were not deleted. |
 | AUTHORITATIVE EXPECTED BEHAVIOR | `docs/BOF_ROUTE_MAP.md` as inventory; one production surface per workflow. |
-| EVIDENCE | Route files; `app/customers/page.tsx` re-export; browser both customer trees live. |
+| EVIDENCE | Route files; `app/customers/page.tsx` re-export; preview banners on v2 routes. |
 | EVIDENCE QUALITY | HIGH |
 | SOURCE OF TRUTH | App Router |
 | AFFECTED ROLE(S) | All |
@@ -516,7 +525,7 @@ Certification statuses used here: `VERIFIED` (independently confirmed against BO
 | RECOMMENDED REMEDIATION | Mark preview routes REFERENCE/DEMO; do not delete without ADR. Update route map. |
 | DEPENDENCIES | GAP-009-006, GAP-009-007 |
 | VALIDATION REQUIRED | Production host serves one customer and one dispatch/settlement authority URL |
-| CERTIFICATION STATUS | VERIFIED |
+| CERTIFICATION STATUS | VALIDATED (preview routes labeled; canonical URLs unchanged). Duplicate URLs remain live by design until a deletion ADR. |
 
 ---
 
@@ -525,7 +534,7 @@ Certification statuses used here: `VERIFIED` (independently confirmed against BO
 | Field | Value |
 |---|---|
 | AREA | Application and Routing |
-| OBSERVED BEHAVIOR | `docs/BOF_ROUTE_MAP.md` omits `/customer-portal/*`, `/portals/*`, `/customers`, `/dispatch-v2`, `/settlements-v2`, recruiting, etc. `/loads/:id` description stale vs Prisma+fallback. |
+| OBSERVED BEHAVIOR | After 013: route map lists `/dispatch-v2`, `/settlements-v2`, `/portals/customer`, `/customers`, `/customer-portal` as live URLs with REFERENCE/DEMO vs DEMO classification. Recruiting and every `page.tsx` are not exhaustively re-inventoried. |
 | AUTHORITATIVE EXPECTED BEHAVIOR | Route map is the documented inventory. |
 | EVIDENCE | Compare `docs/BOF_ROUTE_MAP.md` to `app/**/page.tsx`. |
 | EVIDENCE QUALITY | MEDIUM |
@@ -539,7 +548,7 @@ Certification statuses used here: `VERIFIED` (independently confirmed against BO
 | RECOMMENDED REMEDIATION | Update the map; do not add a routing engine. |
 | DEPENDENCIES | GAP-009-021 |
 | VALIDATION REQUIRED | Map lists live production URLs |
-| CERTIFICATION STATUS | VERIFIED |
+| CERTIFICATION STATUS | VALIDATED (canonical + dual-surface URLs listed). |
 
 ---
 
@@ -548,11 +557,11 @@ Certification statuses used here: `VERIFIED` (independently confirmed against BO
 | Field | Value |
 |---|---|
 | AREA | UX / Responsive |
-| OBSERVED BEHAVIOR | No custom Tailwind screens. Prompt 008 skipped Copilot viewports. This prompt: customer-portal at 390×844, `scrollWidth=390` (no horizontal overflow), header collapsed to MENU. 768/1366 not re-run on all operating-chain pages. Visual smoke script uses 1440 and 390. |
+| OBSERVED BEHAVIOR | After 013 browser QA: documentElement overflow was 0 at 390 on CC, dispatch, loads, drivers, safety, settlements, T-102. 768 CC overflow 0. 1366 CC and dispatch overflow 0. Header uses overflow-x-auto on product nav. |
 | AUTHORITATIVE EXPECTED BEHAVIOR | Package §7.12 requires declared breakpoints on critical routes. |
-| EVIDENCE | `tailwind.config.ts`. Browser CDP metrics. 008 closeout notes. |
+| EVIDENCE | Browser CDP metrics 2026-09-08 on production `next start` :3010. |
 | EVIDENCE QUALITY | MEDIUM |
-| SOURCE OF TRUTH | Runtime 390 check + scripts/audit-visual-smoke.mjs |
+| SOURCE OF TRUTH | Runtime 390/768/1366 document overflow |
 | AFFECTED ROLE(S) | Mobile operators |
 | AFFECTED WORKFLOW(S) | All |
 | PRODUCTION IMPACT | Unverified overflow/clipping on several surfaces. |
@@ -562,7 +571,7 @@ Certification statuses used here: `VERIFIED` (independently confirmed against BO
 | RECOMMENDED REMEDIATION | Re-run smoke + Copilot shells at 390/768/1366 in Prompt 013. |
 | DEPENDENCIES | none |
 | VALIDATION REQUIRED | No horizontal overflow on CC, dispatch, load file, drivers, safety, settlements at 390/768/1366 |
-| CERTIFICATION STATUS | VERIFIED (coverage gap itself) |
+| CERTIFICATION STATUS | VALIDATED (document overflow 0 at 390/768/1366 on checked operating-chain pages). |
 
 ---
 
@@ -594,11 +603,11 @@ Certification statuses used here: `VERIFIED` (independently confirmed against BO
 | Field | Value |
 |---|---|
 | AREA | UX / Authorization |
-| OBSERVED BEHAVIOR | Nav `aria` name “Authenticated application” on unauthenticated pages. |
+| OBSERVED BEHAVIOR | After 013: product nav `aria-label` is `Authenticated application` only when `/api/auth/session` returns a user id. Otherwise `Operator application (session not established)`. |
 | AUTHORITATIVE EXPECTED BEHAVIOR | Label must match actual session state. |
 | EVIDENCE | Browser snapshots on CC, loads, drivers, customer. `BofHeader.tsx`. |
 | EVIDENCE QUALITY | HIGH |
-| SOURCE OF TRUTH | Header vs `/api/auth/session` 500 |
+| SOURCE OF TRUTH | Header vs `/api/auth/session` |
 | AFFECTED ROLE(S) | All |
 | AFFECTED WORKFLOW(S) | Trust of access control |
 | PRODUCTION IMPACT | UI implies auth that does not exist. |
@@ -608,7 +617,7 @@ Certification statuses used here: `VERIFIED` (independently confirmed against BO
 | RECOMMENDED REMEDIATION | Bind label to existing session helper. |
 | DEPENDENCIES | GAP-009-001, GAP-009-003 |
 | VALIDATION REQUIRED | Unauth pages do not claim authenticated application |
-| CERTIFICATION STATUS | VERIFIED |
+| CERTIFICATION STATUS | VALIDATED |
 
 ---
 
@@ -640,9 +649,9 @@ Certification statuses used here: `VERIFIED` (independently confirmed against BO
 | Field | Value |
 |---|---|
 | AREA | Copilot / UX |
-| OBSERVED BEHAVIOR | First paint: “Existing BOF session has not been resolved…” then DEMO_SHELL_OPEN after 500→null payload. |
+| OBSERVED BEHAVIOR | After 010B/013: unresolved session is AUTH_PENDING only until fetch completes. Non-OK or empty session resolves to AUTH_REQUIRED (not DEMO_SHELL_OPEN, not stuck AUTH_PENDING). |
 | AUTHORITATIVE EXPECTED BEHAVIOR | Session failure should resolve to a terminal access decision, not hang AUTH_PENDING. |
-| EVIDENCE | `use-copilot-advocate-session.ts`; first snapshots vs later text. |
+| EVIDENCE | `components/copilot/use-copilot-advocate-session.ts`; `lib/copilot/copilot-advocate-access.ts`. |
 | EVIDENCE QUALITY | HIGH |
 | SOURCE OF TRUTH | Copilot session hook |
 | AFFECTED ROLE(S) | Operators |
@@ -654,7 +663,7 @@ Certification statuses used here: `VERIFIED` (independently confirmed against BO
 | RECOMMENDED REMEDIATION | Treat non-OK session as resolved empty user (already does after fetch); shorten pending. |
 | DEPENDENCIES | GAP-009-001 |
 | VALIDATION REQUIRED | After session error, reason is DEMO_SHELL_OPEN or ROLE_REQUIRED, not stuck AUTH_PENDING |
-| CERTIFICATION STATUS | VERIFIED |
+| CERTIFICATION STATUS | VALIDATED — terminal reason is AUTH_REQUIRED after session error (stricter than DEMO_SHELL_OPEN). AUTH_PENDING is first-paint only. |
 
 ---
 
@@ -686,7 +695,7 @@ Certification statuses used here: `VERIFIED` (independently confirmed against BO
 | Field | Value |
 |---|---|
 | AREA | Secrets / UX |
-| OBSERVED BEHAVIOR | `NEXT_PUBLIC_MAPBOX_TOKEN` unset in process env. Maps show missing-token UI rather than crash. Documented as required in ENVIRONMENT_SETUP.md. |
+| OBSERVED BEHAVIOR | After 013: `NEXT_PUBLIC_MAPBOX_TOKEN` may still be unset. Load/Dispatch maps already show explicit missing-token UI. Dispatch map no longer logs token source names. Token was not invented. |
 | AUTHORITATIVE EXPECTED BEHAVIOR | Production maps need the documented token; missing should not be silent “success”. |
 | EVIDENCE | Env key scan (names only). LoadRouteMap / DispatchRouteMap fallbacks. |
 | EVIDENCE QUALITY | MEDIUM |
@@ -700,7 +709,7 @@ Certification statuses used here: `VERIFIED` (independently confirmed against BO
 | RECOMMENDED REMEDIATION | Document + fail-soft already exists; production checklist must include the token. |
 | DEPENDENCIES | none |
 | VALIDATION REQUIRED | With token, map renders; without, explicit missing-token, not fake coordinates |
-| CERTIFICATION STATUS | VERIFIED |
+| CERTIFICATION STATUS | VALIDATED (fail-soft missing-token UI). Operator still supplies the token for live maps. |
 
 ---
 
@@ -798,10 +807,10 @@ No new orchestration, workflow, SOT, authorization, domain, observability, or se
 
 SPECULATIVE entries: 0 (Copilot signals independently re-verified before VERIFIED).
 
-### Remaining open after Prompt 012 (by certification status)
+### Remaining open after Prompt 013 (by certification status)
 
-VALIDATED this program: 001, 002, 003, 004, 006, 007, 008, 010, 012, 013, 014, 015, 016, 024, 026, 028, 030, 032.
+VALIDATED this program: 001, 002, 003, 004, 005, 006, 007, 008, 009, 010, 011, 012, 013, 014, 015, 016, 017, 018, 019, 020, 021, 022, 023, 024, 025, 026, 027, 028, 029, 030, 032.
 
-Still VERIFIED (not 012-remediated): 005, 009, 011, 017, 018, 019, 020, 021, 022, 023, 025, 027, 029, 031.
+Still VERIFIED (not 013-closed): 031 (protected product worktree dirty — cannot modify).
 
-Open BLOCKER gaps: 0. Remaining HIGH: 005, 018, 020 (3). Remaining MEDIUM: 009, 011, 017, 019, 021, 023, 025, 029 (8). Prompt 012 workflow-closure HIGHs 014/015/016 are VALIDATED. GAP-009-026 MEDIUM is VALIDATED.
+Open BLOCKER gaps: 0. Remaining HIGH: 0. Remaining MEDIUM: 0. GAP-009-031 remains REFERENCE hygiene.
