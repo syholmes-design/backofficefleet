@@ -249,6 +249,7 @@ None of those may happen implicitly.
 - Did not push
 - Did not modify the protected product worktree
 - Temporary restore script deleted, not committed
+- Closeout commit: `c0365b5e1471de59d9eff9bb6dae462736e9bff5`
 
 ---
 
