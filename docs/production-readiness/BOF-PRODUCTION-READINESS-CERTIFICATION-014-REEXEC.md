@@ -191,4 +191,4 @@ This audit did **not**:
 
 ## 14. Git certification commit
 
-Recorded in the closeout commit that adds this file (hash filled after commit).
+Closeout commit: `15297b429d76c247c33317d4b51277c8574271e8` (`docs: Prompt 014 full re-execution BLOCKED`). This hash fill is a documentation-only follow-up.
