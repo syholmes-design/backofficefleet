@@ -130,7 +130,7 @@ If a future 014 CERTIFIED result is required while C2 remains, the product owner
 
 # Git
 
-Branch `orchestrator/prompt-015-gap-closure` from `88821891`. Closeout commit recorded after this file is committed.
+Branch `orchestrator/prompt-015-gap-closure` from `88821891`. Closeout commit: `fa8221eaba6eae57740da577014dfc0261359f16`.
 
 # Final Status
 
