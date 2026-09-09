@@ -14,5 +14,12 @@ export const metadata = {
 };
 
 export default function SettlementsWorkbookPage() {
-  return <SettlementsWorkbookGrid />;
+  return (
+    <>
+      <div className="border-b border-amber-500/40 bg-amber-950/90 px-4 py-3 text-sm text-amber-50">
+        WORKBOOK / NON-AUTHORITATIVE payroll grid. Not Prisma Settlement.status. LIVE holds: /settlements
+      </div>
+      <SettlementsWorkbookGrid />
+    </>
+  );
 }

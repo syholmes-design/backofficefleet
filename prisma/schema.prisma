@@ -1449,6 +1449,7 @@ model Load {
   customerName             String
   origin                   String
   destination              String
+  commodityClass           String?
   pickupWindowStart        DateTime?
   pickupWindowEnd          DateTime?
   deliveryWindowStart      DateTime?

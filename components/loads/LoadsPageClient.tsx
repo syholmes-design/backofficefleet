@@ -52,6 +52,7 @@ export function LoadsPageClient({ fleetId, sandbox = false }: Props) {
         deliveryWindowEnd: typeof inferredLoad.deliveryAt === "string" ? inferredLoad.deliveryAt : null,
         referenceNumber,
         secondaryReferenceNumber: null,
+        commodityClass: null,
         status: String(inferredLoad.status ?? "Planned"),
         createdAt: typeof inferredLoad.pickupAt === "string" ? inferredLoad.pickupAt : new Date().toISOString(),
         updatedAt: typeof inferredLoad.deliveryAt === "string" ? inferredLoad.deliveryAt : typeof inferredLoad.pickupAt === "string" ? inferredLoad.pickupAt : new Date().toISOString(),

@@ -18,6 +18,7 @@ const MUTABLE_LOAD_FIELDS = new Set([
   "referenceNumber",
   "secondaryReferenceNumber",
   "status",
+  "commodityClass",
 ] as const);
 
 type LoadDateInput = Date | string | null | undefined;
@@ -33,6 +34,7 @@ export type CreateLoadPayload = {
   deliveryWindowEnd?: LoadDateInput;
   referenceNumber?: string | null;
   secondaryReferenceNumber?: string | null;
+  commodityClass?: string | null;
   status: LoadStatus;
   lifecycleClass?: "LIVE" | "HISTORICAL";
   originKind?: "BOF_CREATED" | "USER_CREATED" | "IMPORTED" | "EXTERNAL_SYSTEM" | "SYSTEM_GENERATED";
@@ -168,6 +170,9 @@ function buildLoadUpdateData(payload: UpdateLoadPayload): Prisma.LoadUpdateInput
   if (payload.status !== undefined) {
     data.status = ensureValidLoadStatus(payload.status);
   }
+  if (payload.commodityClass !== undefined) {
+    data.commodityClass = payload.commodityClass?.trim() ? payload.commodityClass.trim() : null;
+  }
 
   return data;
 }
@@ -253,6 +258,7 @@ export async function createLoad(sessionUser: SessionUserLike | null | undefined
     sourceRecordId: payload.sourceRecordId?.trim() ? payload.sourceRecordId.trim() : null,
     importedAt: parseOptionalDate(payload.importedAt, "importedAt") ?? null,
     originValidationStatus: payload.originValidationStatus ?? null,
+    commodityClass: payload.commodityClass?.trim() ? payload.commodityClass.trim() : null,
   };
 
   const created = await prisma.load.create({ data });

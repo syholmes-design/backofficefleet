@@ -74,6 +74,7 @@ export function DispatchShell({ fleetId, drivers, driverOperationalSummaries, sa
         deliveryWindowEnd: typeof load.deliveryAt === "string" ? load.deliveryAt : null,
         referenceNumber: typeof load.referenceNumber === "string" ? load.referenceNumber : null,
         secondaryReferenceNumber: null,
+        commodityClass: null,
         status: String(load.status ?? "Planned"),
         createdAt: typeof load.pickupAt === "string" ? load.pickupAt : "",
         updatedAt: typeof load.deliveryAt === "string" ? load.deliveryAt : typeof load.pickupAt === "string" ? load.pickupAt : "",

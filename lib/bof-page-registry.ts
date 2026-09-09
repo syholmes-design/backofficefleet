@@ -119,6 +119,13 @@ export const BOF_PAGE_REGISTRY: Record<string, BofPageRegistryItem> = {
     routeFile: "app/(bof)/demo/drivers/page.tsx",
     primaryComponent: "DriversCommandCenterV4",
   },
+  demoSettlements: {
+    label: "DEMO Settlements payroll",
+    url: "/demo/settlements",
+    type: "DEMO",
+    routeFile: "app/(bof)/demo/settlements/page.tsx",
+    primaryComponent: "SettlementsPayrollShell",
+  },
   loads: {
     label: "Loads",
     url: "/loads",

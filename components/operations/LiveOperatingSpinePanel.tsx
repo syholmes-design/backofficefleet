@@ -12,6 +12,7 @@ export type LiveOperatingSpine = {
     customerName: string;
     origin: string;
     destination: string;
+    commodityClass?: string | null;
     status: string;
     referenceNumber: string | null;
     sourceRecordId?: string | null;

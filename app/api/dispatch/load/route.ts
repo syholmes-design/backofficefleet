@@ -94,6 +94,7 @@ export async function POST(request: NextRequest) {
       "referenceNumber",
       "secondaryReferenceNumber",
       "status",
+      "commodityClass",
     ]);
 
     const load = await createLoad(getSessionUser(session), {
@@ -108,6 +109,7 @@ export async function POST(request: NextRequest) {
       referenceNumber: getOptionalString(body, "referenceNumber") as string | null | undefined,
       secondaryReferenceNumber: getOptionalString(body, "secondaryReferenceNumber") as string | null | undefined,
       status: getRequiredString(body, "status") as CreateLoadPayload["status"],
+      commodityClass: getOptionalString(body, "commodityClass") as string | null | undefined,
     });
 
     return NextResponse.json(load);

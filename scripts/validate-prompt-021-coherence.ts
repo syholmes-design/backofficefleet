@@ -23,14 +23,25 @@ assert.doesNotMatch(read("app/(bof)/command-center/page.tsx"), /CommandCenterV4/
 assert.match(read("components/command-center/ProductionCommandCenter.tsx"), /useLiveOperatingSpine/);
 assert.doesNotMatch(read("components/command-center/ProductionCommandCenter.tsx"), /getV3OperationalData/);
 assert.match(read("prisma/schema.prisma"), /model Load \{/);
-assert.doesNotMatch(read("prisma/schema.prisma"), /commodity_class/);
+assert.match(read("prisma/schema.prisma"), /commodityClass/);
 assert.doesNotMatch(read("prisma/schema.prisma"), /safety_clearance_status/);
 assert.doesNotMatch(read("prisma/schema.prisma"), /dispatch_ref/);
 assert.match(read("prisma/schema.prisma"), /enum SettlementRecordStatus/);
 assert.match(read("components/settlements-payroll/SettlementsPayrollShell.tsx"), /useSettlementsPayrollStore/);
 assert.match(read("lib/stores/settlements-payroll-store.ts"), /getBofData/);
+assert.doesNotMatch(
+  read("components/settlements-payroll/SettlementsPayrollPageClient.tsx"),
+  /SettlementsPayrollShell/,
+);
+assert.match(read("app/(bof)/demo/settlements/page.tsx"), /SettlementsPayrollShell/);
 
-type FieldVerdict = "COHERENT" | "TRANSFORMED_EQUIVALENT" | "INCOMPLETE" | "CONFLICTING" | "UNKNOWN";
+type FieldVerdict =
+  | "COHERENT"
+  | "TRANSFORMED_EQUIVALENT"
+  | "INCOMPLETE"
+  | "CONFLICTING"
+  | "UNKNOWN"
+  | "UNSUPPORTED";
 type FieldRow = {
   field: string;
   liveRepresentation: string;
@@ -100,27 +111,27 @@ const fields: FieldRow[] = [
   },
   {
     field: "commodity_class",
-    liveRepresentation: "none",
-    verdict: "INCOMPLETE",
-    countsTowardPass: false,
+    liveRepresentation: "Load.commodityClass (nullable LIVE string; UOS name mapped)",
+    verdict: "TRANSFORMED_EQUIVALENT",
+    countsTowardPass: true,
     excluded: false,
-    notes: "No Prisma Load.commodity or commodity_class. Must not invent the field.",
+    notes: "LIVE Load model field. Existing rows remain NULL until an authorized write supplies a value. DEMO JSON commodity is not copied.",
   },
   {
     field: "settlement_status",
     liveRepresentation: "Settlement.status (CREATED/HELD/REVIEWED/APPROVED/PAID/CLOSED/EXCEPTION)",
-    verdict: "CONFLICTING",
-    countsTowardPass: false,
+    verdict: "TRANSFORMED_EQUIVALENT",
+    countsTowardPass: true,
     excluded: false,
-    notes: "LIVE hold enum is Prisma Settlement.status. Production /settlements still renders workbook payroll zustand status (Hold/review) beside the LIVE hold panel. Product Authority PENDING/INVOICED/DISPUTED are not this enum.",
+    notes: "Production /settlements lists Prisma HELD rows from operating-spine only. Workbook Hold/review moved to /demo/settlements and labeled /settlements/workbook.",
   },
   {
     field: "safety_clearance_status",
     liveRepresentation: "unassigned (019). No Prisma column.",
-    verdict: "INCOMPLETE",
+    verdict: "UNSUPPORTED",
     countsTowardPass: false,
     excluded: true,
-    excludeReason: "Prompt 021: validate implemented LIVE safety only; do not treat unsupported Safety mutation as a fail requiring implementation.",
+    excludeReason: "Unsupported LIVE Safety capability. Prompt 022 forbids implementing Safety mutation.",
     notes: "/safety remains DEMO/REFERENCE. Dispatch assignment does not read Safety workbook as LIVE clearance.",
   },
 ];
@@ -139,6 +150,7 @@ async function main() {
     demoKeyEquipment: await prisma.equipment.count({ where: { id: "T-102" } }),
     driverCount: await prisma.driver.count(),
     demoKeyDrivers: await prisma.driver.count({ where: { id: "DRV-001" } }),
+    loadsWithCommodityClass: await prisma.load.count({ where: { commodityClass: { not: null } } }),
   };
 
   const heldSettlements = await prisma.settlement.count({ where: { status: "HELD" } });
@@ -203,6 +215,7 @@ async function main() {
       loadCount: snapshot.loadCount,
       equipmentCount: snapshot.equipmentCount,
       driverCount: snapshot.driverCount,
+      loadsWithCommodityClass: snapshot.loadsWithCommodityClass,
       heldSettlements,
       sampleLoadId: sampleLoad?.id ?? null,
       sampleLoadStatus: sampleLoad?.status ?? null,

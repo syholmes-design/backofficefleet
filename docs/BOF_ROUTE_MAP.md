@@ -35,7 +35,7 @@ Purpose: prevent edits from landing in stale or non-rendered files by mapping ea
 | `/drivers` | `app/(bof)/drivers/page.tsx` | `DriversIndexPage` -> `DriversListPageClient` -> `DriversRosterTable` | DEMO | Drivers command header in `DriversRosterTable` | `useBofDemoData()` + canonical helpers | ACTIVE_ROUTE | Driver readiness command roster. |
 | `/documents` | `app/(bof)/documents/page.tsx` | `DocumentsPage` -> `DocumentsPageClient` | DRIVER_DOCS | None | `useBofDemoData()` + vault/doc helpers | ACTIVE_ROUTE | Fleet-wide document hub. |
 | `/documents/vault` | `app/(bof)/documents/vault/page.tsx` | `DriverVaultWorkspacePage` -> `DriverVaultWorkspaceClient` | DRIVER_DOCS | None | `useBofDemoData()` + vault workspace store | ACTIVE_ROUTE | Driver vault workspace route. |
-| `/settlements` | `app/(bof)/settlements/page.tsx` | `SettlementsPage` -> `SettlementsPayrollPageClient` | SETTLEMENTS | Settlements shell sections; no image hero asset | `useBofDemoData()` through client shells | ACTIVE_ROUTE | Payroll/settlement operations page. |
+| `/settlements` | `app/(bof)/settlements/page.tsx` | `SettlementsPage` -> `SettlementsPayrollPageClient` | SETTLEMENTS | LIVE spine HELD table | Prisma `Settlement.status` | ACTIVE_ROUTE | Workbook payroll isolated at `/demo/settlements` and `/settlements/workbook`. |
 | `/safety` | `app/(bof)/safety/page.tsx` | `SafetyPage` -> `SafetyShell` | DEMO | `SafetyCommandHero` (in safety dashboard screen) | `useBofDemoData()` + safety store | ACTIVE_ROUTE | Safety command center flow. |
 | `/load-requirements` | `app/(bof)/load-requirements/page.tsx` | `LoadRequirementsPage` redirect | LEGACY | N/A | N/A | ACTIVE_ROUTE | Deprecated alias redirecting to `/dispatch/intake`. |
 | `/rf-actions` | `app/(bof)/rf-actions/page.tsx` | `RfActionsPage` -> `RfActionsPageClient` | DEMO | None | `useBofDemoData()` + `buildRfActions` | ACTIVE_ROUTE | Still active route. |
@@ -103,7 +103,8 @@ All discovered routes are active Next.js routes unless marked legacy redirect.
 | `/private-fleets` | `app/(marketing)/private-fleets/page.tsx` | `PrivateFleetsPage` | MARKETING | ACTIVE_ROUTE |  |
 | `/rf-actions` | `app/(bof)/rf-actions/page.tsx` | `RfActionsPage` | DEMO | ACTIVE_ROUTE |  |
 | `/safety` | `app/(bof)/safety/page.tsx` | `SafetyPage` | DEMO | ACTIVE_ROUTE |  |
-| `/settlements` | `app/(bof)/settlements/page.tsx` | `SettlementsPage` | SETTLEMENTS | ACTIVE_ROUTE |  |
+| `/settlements` | `app/(bof)/settlements/page.tsx` | `SettlementsPage` | SETTLEMENTS | ACTIVE_ROUTE | LIVE Prisma holds. |
+| `/demo/settlements` | `app/(bof)/demo/settlements/page.tsx` | `SettlementsPayrollShell` | DEMO | ACTIVE_ROUTE | Workbook payroll Hold/review. |
 | `/settlements/workbook` | `app/(bof)/settlements/workbook/page.tsx` | `SettlementsWorkbookPage` | SETTLEMENTS | ACTIVE_ROUTE |  |
 | `/shipper-portal/:loadId` | `app/(bof)/shipper-portal/[loadId]/page.tsx` | `ShipperLoadPortalClient` route wrapper | DISPATCH | ACTIVE_ROUTE | Calls `getBofData()`. |
 | `/source-of-truth` | `app/(bof)/source-of-truth/page.tsx` | `SourceOfTruthPage` | DEMO | ACTIVE_ROUTE |  |

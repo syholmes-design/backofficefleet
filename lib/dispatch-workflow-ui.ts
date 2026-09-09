@@ -19,6 +19,7 @@ export type DispatchLoadRecord = {
   deliveryWindowEnd: string | null;
   referenceNumber: string | null;
   secondaryReferenceNumber: string | null;
+  commodityClass: string | null;
   status: string;
   createdAt: string;
   updatedAt: string;
