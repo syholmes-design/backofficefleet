@@ -8,6 +8,8 @@
  */
 import { CommandCenterV4 } from "@/components/command-center-v4/CommandCenterV4";
 
+export const dynamic = "force-dynamic";
+
 export const metadata = {
   title: "Command Center | BOF",
   description: "Executive action layer",

@@ -12,10 +12,12 @@ import { DispatchShell } from "@/components/dispatch/DispatchShell";
 import { prisma } from "@/lib/prisma";
 import { resolveContext } from "@/lib/services/contextResolver";
 import {
-  listDriverOperationalSummaries,
+  listAccessibleDriverOperationalSummaries,
   type DriverOperationalSummary,
 } from "@/lib/services/driverOperationalReadModelService";
 import { getPrimaryFleetId, type SessionWithMemberships } from "@/lib/session-fleet";
+
+export const dynamic = "force-dynamic";
 
 export const metadata = {
   title: "Dispatch | BOF",
@@ -29,7 +31,7 @@ export default async function DispatchPage() {
     context.employmentContexts[0]?.fleetId ??
     getPrimaryFleetId(session);
   const driverOperationalSummaries: DriverOperationalSummary[] =
-    session?.user?.id && fleetId ? await listDriverOperationalSummaries(session.user, fleetId) : [];
+    session?.user?.id ? await listAccessibleDriverOperationalSummaries(session.user) : [];
   const drivers = fleetId
     ? await prisma.driver.findMany({
         where: { fleetId },

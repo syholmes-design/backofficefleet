@@ -2,6 +2,8 @@ import { auth } from "@/auth";
 import { OperationalChatClient } from "@/components/operational-chat/OperationalChatClient";
 import { getAuthorizedOperatingRecord, type OperatingRecordType } from "@/lib/services/operatingRecordService";
 
+export const dynamic = "force-dynamic";
+
 export const metadata = {
   title: "Conversations | BOF",
   description: "Tenant-scoped operational conversations connected to the BOF operating record.",

@@ -5,6 +5,7 @@ import { prisma } from "@/lib/prisma";
 import { recordOperatingProcessEvent } from "@/lib/process-intelligence/operating-event-service";
 import { getOperatingProcessStore } from "@/lib/process-intelligence/runtime-store";
 import { authorizedFleetAccess, type SessionUserLike } from "@/lib/services/intakeService";
+import { findLoadByOperatorKey } from "@/lib/services/loadService";
 
 export type AssignmentClosureStatus = Extract<DispatchAssignmentStatus, "SUPERSEDED" | "CANCELLED">;
 
@@ -308,7 +309,7 @@ export async function getActiveAssignmentForLoad(
 ) {
   requireSessionUser(sessionUser);
 
-  const load = await prisma.load.findUnique({ where: { id: loadId } });
+  const load = await findLoadByOperatorKey(loadId);
   if (!load) {
     throw Object.assign(new Error("Load not found"), { statusCode: 404 });
   }

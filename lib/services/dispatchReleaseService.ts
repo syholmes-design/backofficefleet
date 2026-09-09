@@ -13,6 +13,7 @@ import { createAuditRecord } from "@/lib/audit";
 import { prisma } from "@/lib/prisma";
 import { recordLoadReadinessEvaluatedEvent, recordReleaseDecisionEvent } from "@/lib/process-intelligence/operating-event-service";
 import { getOperatingProcessStore } from "@/lib/process-intelligence/runtime-store";
+import { findLoadByOperatorKey } from "@/lib/services/loadService";
 import { authorizedFleetAccess, type SessionUserLike } from "@/lib/services/intakeService";
 
 export const DISPATCH_RELEASE_POLICY_VERSION = "bof-step11-dispatch-v1" as const;
@@ -146,7 +147,7 @@ async function getAuthorizedLoadWithAssignmentContext(
   sessionUser: SessionUserLike | null | undefined,
   loadId: string,
 ) {
-  const load = await prisma.load.findUnique({ where: { id: loadId } });
+  const load = await findLoadByOperatorKey(loadId);
   if (!load) {
     return { load: null, allowed: false, reason: "NOT_FOUND" as const };
   }

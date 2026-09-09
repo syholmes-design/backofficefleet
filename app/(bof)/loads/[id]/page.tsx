@@ -15,6 +15,8 @@ import { type DispatchLoadRecord } from "@/lib/dispatch-workflow-ui";
 import { type SessionWithMemberships } from "@/lib/session-fleet";
 import { normalizeCanonicalLoadId } from "@/lib/canonical-load-stories";
 
+export const dynamic = "force-dynamic";
+
 type Props = { params: Promise<{ id: string }> };
 
 function resolveLoadPageId(rawId: string) {

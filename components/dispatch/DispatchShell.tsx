@@ -14,6 +14,7 @@ import { RouteIntelligenceV4 } from "@/components/route-intelligence-v4/RouteInt
 import { DispatchAssetCards } from "@/components/dispatch/DispatchAssetCards";
 import { DemoPageExplainerById } from "@/components/demo/DemoPageExplainerById";
 import { DispatchCopilotAdvocatePanel } from "@/components/copilot/DispatchCopilotAdvocatePanel";
+import { LiveOperatingSpinePanel } from "@/components/operations/LiveOperatingSpinePanel";
 import { useBofDemoData } from "@/lib/bof-demo-data-context";
 import {
   ApiError,
@@ -89,10 +90,10 @@ export function DispatchShell({ fleetId, drivers, driverOperationalSummaries }: 
 
     setLoadsLoading(true);
     try {
-      const nextLoads = await requestJson<DispatchLoadRecord[]>(`/api/dispatch/fleet/${fleetId}/loads`);
-      setLoads(nextLoads);
+      const nextLoads = await requestJson<{ loads: DispatchLoadRecord[] }>("/api/dispatch/operating-spine");
+      setLoads(nextLoads.loads);
       setLoadsError(null);
-      return nextLoads;
+      return nextLoads.loads;
     } catch (error) {
       setLoadsError(getErrorMessage(error));
       return [] as DispatchLoadRecord[];
@@ -203,6 +204,9 @@ export function DispatchShell({ fleetId, drivers, driverOperationalSummaries }: 
         </div>
         <div className="px-4">
           <DispatchCopilotAdvocatePanel />
+        </div>
+        <div className="px-4 pb-3">
+          <LiveOperatingSpinePanel title="LIVE dispatch consumption" />
         </div>
 
         {view === "board" ? (

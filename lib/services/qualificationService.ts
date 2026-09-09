@@ -324,7 +324,7 @@ export function evaluateQualification(inputs: QualificationInputs): Qualificatio
 export async function writeQualificationSnapshot(
   sessionUser: SessionUserLike | null | undefined,
   driverId: string,
-  intakeId: string,
+  intakeId: string | null,
   fleetId: string,
   evaluation: QualificationEvaluation,
 ) {

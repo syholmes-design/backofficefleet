@@ -2,7 +2,7 @@ import { EquipmentStatus } from "@prisma/client";
 
 import { createAuditRecord } from "@/lib/audit";
 import { prisma } from "@/lib/prisma";
-import { authorizedFleetAccess, type SessionUserLike } from "@/lib/services/intakeService";
+import { authorizedFleetAccess, isServiceRole, type SessionUserLike } from "@/lib/services/intakeService";
 
 function requireSessionUser(sessionUser: SessionUserLike | null | undefined) {
   if (!sessionUser?.id) {
@@ -75,6 +75,26 @@ export async function listEquipmentForFleet(sessionUser: SessionUserLike | null 
 
   return prisma.equipment.findMany({
     where: { fleetId },
+    orderBy: [{ equipmentType: "asc" }, { unitNumber: "asc" }],
+  });
+}
+
+export async function listAccessibleEquipment(sessionUser: SessionUserLike | null | undefined) {
+  requireSessionUser(sessionUser);
+  const actor = sessionUser as SessionUserLike & { id: string };
+  if (isServiceRole(actor, ["BOF_OPERATIONS", "BOF_COMPLIANCE_REVIEW"])) {
+    return prisma.equipment.findMany({
+      orderBy: [{ updatedAt: "desc" }, { unitNumber: "asc" }],
+    });
+  }
+
+  const fleetIds = (actor.memberships ?? [])
+    .filter((membership) => membership.status !== "INACTIVE")
+    .map((membership) => membership.fleetId)
+    .filter(Boolean);
+  if (fleetIds.length === 0) return [];
+  return prisma.equipment.findMany({
+    where: { fleetId: { in: fleetIds } },
     orderBy: [{ equipmentType: "asc" }, { unitNumber: "asc" }],
   });
 }

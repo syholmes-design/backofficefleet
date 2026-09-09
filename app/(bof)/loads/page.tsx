@@ -10,6 +10,8 @@ import { auth } from "@/auth";
 import { LoadsPageClient } from "@/components/loads/LoadsPageClient";
 import { getPrimaryFleetId, type SessionWithMemberships } from "@/lib/session-fleet";
 
+export const dynamic = "force-dynamic";
+
 export const metadata = {
   title: "Loads / Dispatch | BOF",
   description: "Active and recent dispatch loads",

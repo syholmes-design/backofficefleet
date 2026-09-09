@@ -7,6 +7,7 @@ import { loadStatusChipClass } from "@/components/dispatch/dispatch-ui";
 import { LoadProcessDiscoveryPanel } from "@/components/loads/LoadProcessDiscoveryPanel";
 import { DispatchCopilotAdvocatePanel } from "@/components/copilot/DispatchCopilotAdvocatePanel";
 import { LoadFileCopilotAdvocatePanel } from "@/components/copilot/LoadFileCopilotAdvocatePanel";
+import { LiveOperatingSpinePanel } from "@/components/operations/LiveOperatingSpinePanel";
 import { useBofDemoData } from "@/lib/bof-demo-data-context";
 import { buildPretripTabletModel } from "@/lib/pretrip-tablet";
 import {
@@ -69,8 +70,8 @@ export function LoadsPageClient({ fleetId }: Props) {
 
     setLoading(true);
     try {
-      const nextLoads = await requestJson<DispatchLoadRecord[]>(`/api/dispatch/fleet/${fleetId}/loads`);
-      setLoads(nextLoads);
+      const nextLoads = await requestJson<{ loads: DispatchLoadRecord[] }>("/api/dispatch/operating-spine");
+      setLoads(nextLoads.loads);
       setError(null);
     } catch (nextError) {
       setLoads([]);
@@ -143,6 +144,9 @@ export function LoadsPageClient({ fleetId }: Props) {
       </header>
       <DispatchCopilotAdvocatePanel variant="compact" tone="ops" />
       <LoadFileCopilotAdvocatePanel variant="compact" tone="ops" />
+      <div className="mb-4">
+        <LiveOperatingSpinePanel title="LIVE load roster consumption" />
+      </div>
 
       {error ? (
         <div className="rounded-xl border border-rose-700/40 bg-rose-950/20 p-6 text-sm text-rose-100">

@@ -366,7 +366,7 @@ export function evaluateReadiness(inputs: ReadinessInputs): ReadinessEvaluation 
 export async function writeReadinessScore(
   sessionUser: SessionUserLike | null | undefined,
   driverId: string,
-  intakeId: string,
+  intakeId: string | null,
   fleetId: string,
   evaluation: ReadinessEvaluation,
 ) {

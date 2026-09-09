@@ -11,6 +11,8 @@ import { auth } from "@/auth";
 import { PretripTabletDashboard } from "@/components/PretripTabletDashboard";
 import { getPrimaryFleetId, type SessionWithMemberships } from "@/lib/session-fleet";
 
+export const dynamic = "force-dynamic";
+
 type Props = { params: Promise<{ loadId: string }> };
 
 export async function generateMetadata({ params }: Props) {

@@ -12,6 +12,7 @@ import {
   formatShortDateTime,
   getErrorMessage,
   getJsonStringArray,
+  requestJson,
   statusTone,
   type DispatchLoadRecord,
   type DispatchLoadWorkflowSnapshot,
@@ -21,6 +22,54 @@ import { useDispatchDashboardStore } from "@/lib/stores/dispatch-dashboard-store
 import { existingSettlementWorkflowHref } from "@/lib/load-file-proof-settlement-display";
 import { DocumentationReadinessPanel } from "./DocumentationReadinessPanel";
 import { ExistingDocumentNavAnchor } from "@/components/ExistingDocumentNavAnchor";
+
+function ProofRejectHoldForm({ loadId }: { loadId: string }) {
+  const [reason, setReason] = useState("Proof rejected by operator review");
+  const [busy, setBusy] = useState(false);
+  const [message, setMessage] = useState<string | null>(null);
+
+  return (
+    <form
+      className="mt-4 space-y-2 rounded border border-amber-500/30 bg-amber-950/20 p-3"
+      onSubmit={async (event) => {
+        event.preventDefault();
+        setBusy(true);
+        setMessage(null);
+        try {
+          await requestJson(`/api/dispatch/load/${loadId}/proof/reject`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ reason }),
+          });
+          setMessage("LIVE proof rejected and settlement held.");
+        } catch (error) {
+          setMessage(getErrorMessage(error));
+        } finally {
+          setBusy(false);
+        }
+      }}
+    >
+      <p className="text-xs font-semibold uppercase tracking-wide text-amber-200">LIVE proof → settlement hold</p>
+      <p className="text-[11px] text-slate-400">
+        Writes Prisma proof REJECTED and settlement HELD. DEMO L001 holds are not this record.
+      </p>
+      <textarea
+        className="w-full rounded border border-slate-700 bg-slate-950 px-2 py-1 text-xs text-slate-100"
+        value={reason}
+        onChange={(event) => setReason(event.target.value)}
+        rows={2}
+      />
+      <button
+        type="submit"
+        disabled={busy}
+        className="rounded border border-amber-400/50 px-3 py-1.5 text-xs text-amber-50 hover:bg-amber-900/40 disabled:opacity-50"
+      >
+        {busy ? "Saving…" : "Reject proof and hold settlement"}
+      </button>
+      {message ? <p className="text-xs text-slate-200">{message}</p> : null}
+    </form>
+  );
+}
 
 type Props = {
   load: DispatchLoadRecord;
@@ -299,6 +348,7 @@ export function LoadDetailContent({ load, onClose, onOpenAssignModal, refreshKey
                 Open release workflow
               </Link>
             </div>
+            <ProofRejectHoldForm loadId={load.id} />
           </section>
         ) : null}
 

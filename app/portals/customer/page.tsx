@@ -6,16 +6,36 @@ import Link from 'next/link';
 import { ExistingDocumentNavAnchor } from '@/components/ExistingDocumentNavAnchor';
 import { BofDemoDataShell } from '@/components/BofDemoDataShell';
 import { CustomerCopilotAdvocatePanel } from '@/components/copilot/CustomerCopilotAdvocatePanel';
+import { prisma } from '@/lib/prisma';
 
 export const metadata: Metadata = {
   title: 'Customer Portal',
   description: 'Controlled visibility into shipments, proof documents, exceptions, claims, and invoice readiness.',
 };
 
-export default function CustomerPortalPage() {
+export const dynamic = "force-dynamic";
+
+export default async function CustomerPortalPage() {
   const data = getBofData();
   const customerProfile = getCustomerPortalProfile(data);
   const visibleLoads = getCustomerVisibleLoads(data);
+  const demoLoadIds = visibleLoads.map((load) => load.loadId);
+  const liveOverlays = demoLoadIds.length
+    ? await prisma.load.findMany({
+        where: {
+          OR: [{ sourceRecordId: { in: demoLoadIds } }, { referenceNumber: { in: demoLoadIds } }],
+        },
+        select: {
+          id: true,
+          status: true,
+          sourceRecordId: true,
+          referenceNumber: true,
+          customerName: true,
+          updatedAt: true,
+        },
+        orderBy: { updatedAt: "desc" },
+      })
+    : [];
   const customerAttentionLoads = visibleLoads.filter((load) => {
     const source = data.loads.find((item) => item.id === load.loadId);
     return Boolean(
@@ -95,6 +115,26 @@ export default function CustomerPortalPage() {
             </div>
             <div className="text-sm text-gray-600">Invoices Ready</div>
           </ExistingDocumentNavAnchor>
+        </div>
+
+        <div className="mb-8 rounded-lg border border-emerald-200 bg-emerald-50 p-4 text-sm text-emerald-950">
+          <p className="font-semibold">LIVE customer-visible load status</p>
+          <p className="mt-1 text-xs leading-5">
+            DEMO shipment cards below stay DEMO_CUSTOMER_PROFILE. When a Prisma load shares sourceRecordId or
+            referenceNumber with those cards, that LIVE status is shown here instead of being mixed into DEMO Delivered / Invoice Ready.
+            Operator HOLD / T-102 OOS is operator DEMO state and is not copied onto the customer card.
+          </p>
+          {liveOverlays.length === 0 ? (
+            <p className="mt-2 text-xs">No LIVE Prisma loads currently match these customer shipment IDs.</p>
+          ) : (
+            <ul className="mt-2 space-y-1 text-xs">
+              {liveOverlays.map((load) => (
+                <li key={load.id}>
+                  {load.sourceRecordId || load.referenceNumber || load.id} · {load.status} · {load.customerName}
+                </li>
+              ))}
+            </ul>
+          )}
         </div>
 
         {/* Main Content */}

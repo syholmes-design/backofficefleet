@@ -218,9 +218,6 @@ const driverSummarySelect = Prisma.validator<Prisma.DriverSelect>()({
     },
   },
   readinessScores: {
-    where: {
-      driverIntakeId: { not: null },
-    },
     orderBy: [{ evaluatedAt: "desc" }, { createdAt: "desc" }],
     take: 1,
     select: {
@@ -308,5 +305,20 @@ export async function listDriverOperationalSummaries(
     select: driverSummarySelect,
   })) as DriverRow[];
 
+  return drivers.map(mapDriverOperationalSummary);
+}
+
+export async function listAccessibleDriverOperationalSummaries(
+  sessionUser: SessionUserLike | null | undefined,
+): Promise<DriverOperationalSummary[]> {
+  requireSessionUser(sessionUser);
+  const user = sessionUser as SessionUserLike;
+  const unrestricted = isServiceRole(user, [...SERVICE_ROLE_CODES]);
+  const accessibleFleetIds = unrestricted ? null : await getAccessibleFleetIds(user);
+  const drivers = (await prisma.driver.findMany({
+    where: unrestricted ? {} : { fleetId: { in: accessibleFleetIds ?? [] } },
+    orderBy: [{ firstName: "asc" }, { lastName: "asc" }, { id: "asc" }],
+    select: driverSummarySelect,
+  })) as DriverRow[];
   return drivers.map(mapDriverOperationalSummary);
 }

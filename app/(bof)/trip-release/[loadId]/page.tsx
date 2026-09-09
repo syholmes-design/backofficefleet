@@ -8,6 +8,8 @@
  */
 import { DriverTripReleaseClient } from "@/components/trip-release/DriverTripReleaseClient";
 
+export const dynamic = "force-dynamic";
+
 type Props = { params: Promise<{ loadId: string }> };
 
 export async function generateMetadata({ params }: Props) {

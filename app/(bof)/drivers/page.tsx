@@ -9,12 +9,14 @@
 import { auth } from "@/auth";
 import { DriversCommandCenterV4 } from "@/components/drivers-v4/DriversCommandCenterV4";
 import {
-  listDriverOperationalSummaries,
+  listAccessibleDriverOperationalSummaries,
   type DriverOperationalSummary,
 } from "@/lib/services/driverOperationalReadModelService";
 import { listDriverRequirementsForFleet } from "@/lib/services/requirementService";
 import type { DriverReviewRequirement } from "@/lib/driver-review-explanation";
 import { getPrimaryFleetId, type SessionWithMemberships } from "@/lib/session-fleet";
+
+export const dynamic = "force-dynamic";
 
 export const metadata = {
   title: "Drivers | BOF",
@@ -27,12 +29,12 @@ export default async function DriversIndexPage() {
   let operationalSummaries: DriverOperationalSummary[] = [];
   let driverRequirements: DriverReviewRequirement[] = [];
 
-  if (session?.user?.id && fleetId) {
-    operationalSummaries = await listDriverOperationalSummaries(session.user, fleetId);
+  if (session?.user?.id) {
+    operationalSummaries = await listAccessibleDriverOperationalSummaries(session.user);
     driverRequirements = (
       await Promise.all(
         operationalSummaries.map((summary) =>
-          listDriverRequirementsForFleet(session.user, summary.driverId, fleetId),
+          listDriverRequirementsForFleet(session.user, summary.driverId, summary.fleetId),
         ),
       )
     ).flat();

@@ -4,7 +4,7 @@ import { createAuditRecord } from "@/lib/audit";
 import { prisma } from "@/lib/prisma";
 import { recordCanonicalLoadEvent, recordLoadIntakeEvent } from "@/lib/process-intelligence/operating-event-service";
 import { getOperatingProcessStore } from "@/lib/process-intelligence/runtime-store";
-import { authorizedFleetAccess, type SessionUserLike } from "@/lib/services/intakeService";
+import { authorizedFleetAccess, isServiceRole, type SessionUserLike } from "@/lib/services/intakeService";
 
 const MUTABLE_LOAD_FIELDS = new Set([
   "customerName",
@@ -97,8 +97,21 @@ async function logUnauthorizedDispatchAccess(
   });
 }
 
+export async function findLoadByOperatorKey(loadId: string) {
+  const key = loadId.trim();
+  if (!key) return null;
+  const byId = await prisma.load.findUnique({ where: { id: key } });
+  if (byId) return byId;
+  return prisma.load.findFirst({
+    where: {
+      OR: [{ referenceNumber: key }, { sourceRecordId: key }],
+    },
+    orderBy: [{ updatedAt: "desc" }, { createdAt: "desc" }],
+  });
+}
+
 async function getAuthorizedLoadRecord(sessionUser: SessionUserLike | null | undefined, loadId: string) {
-  const load = await prisma.load.findUnique({ where: { id: loadId } });
+  const load = await findLoadByOperatorKey(loadId);
   if (!load) {
     return { load: null, allowed: false, reason: "NOT_FOUND" as const };
   }
@@ -184,6 +197,26 @@ export async function listLoadsForFleet(sessionUser: SessionUserLike | null | un
   return prisma.load.findMany({
     where: { fleetId },
     orderBy: [{ createdAt: "desc" }, { id: "desc" }],
+  });
+}
+
+export async function listAccessibleLoads(sessionUser: SessionUserLike | null | undefined) {
+  requireSessionUser(sessionUser);
+  const actor = sessionUser as SessionUserLike & { id: string };
+  if (isServiceRole(actor, ["BOF_OPERATIONS", "BOF_COMPLIANCE_REVIEW"])) {
+    return prisma.load.findMany({
+      orderBy: [{ updatedAt: "desc" }, { createdAt: "desc" }],
+    });
+  }
+
+  const fleetIds = (actor.memberships ?? [])
+    .filter((membership) => membership.status !== "INACTIVE")
+    .map((membership) => membership.fleetId)
+    .filter(Boolean);
+  if (fleetIds.length === 0) return [];
+  return prisma.load.findMany({
+    where: { fleetId: { in: fleetIds } },
+    orderBy: [{ updatedAt: "desc" }, { createdAt: "desc" }],
   });
 }
 

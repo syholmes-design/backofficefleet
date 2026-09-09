@@ -16,6 +16,7 @@ import { getDriverWorkerType, getDriverPolicyAcknowledgments, getDriverSettlemen
 import type { WorkerType } from "@/lib/driver-pay-settlement-methods";
 import { getDriverActionIssues, type DriverActionIssue } from "@/lib/driver-action-issues";
 import type { DriverOperationalSummary } from "@/lib/services/driverOperationalReadModelService";
+import { getErrorMessage, requestJson } from "@/lib/dispatch-workflow-ui";
 
 type DriverStatusFilter =
   | "all"
@@ -76,6 +77,47 @@ type Props = {
   driverRequirements: DriverReviewRequirement[];
   hasFleetContext: boolean;
 };
+
+function DriverEligibilityReviewControls({ driverId, enabled }: { driverId: string; enabled: boolean }) {
+  const [busy, setBusy] = useState(false);
+  const [message, setMessage] = useState<string | null>(null);
+  if (!enabled) return null;
+
+  async function submit(disposition: "ELIGIBLE" | "INELIGIBLE") {
+    setBusy(true);
+    setMessage(null);
+    try {
+      await requestJson(`/api/dispatch/driver/${driverId}/eligibility`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          disposition,
+          reason:
+            disposition === "ELIGIBLE"
+              ? "Operator authorized review: driver eligible for dispatch."
+              : "Operator authorized review: driver ineligible for dispatch.",
+        }),
+      });
+      setMessage(disposition === "ELIGIBLE" ? "LIVE eligibility set to eligible." : "LIVE eligibility set to ineligible.");
+    } catch (error) {
+      setMessage(getErrorMessage(error));
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  return (
+    <div className="mt-2 flex flex-wrap gap-2">
+      <button type="button" disabled={busy} onClick={() => void submit("INELIGIBLE")} className="rounded border border-rose-400/40 px-2 py-1 text-[11px] text-rose-100">
+        Mark ineligible
+      </button>
+      <button type="button" disabled={busy} onClick={() => void submit("ELIGIBLE")} className="rounded border border-emerald-400/40 px-2 py-1 text-[11px] text-emerald-100">
+        Mark eligible
+      </button>
+      {message ? <span className="text-[11px] text-slate-300">{message}</span> : null}
+    </div>
+  );
+}
 
 function formatEnumLabel(value: string) {
   return value
@@ -774,6 +816,7 @@ export function DriversRosterTable({ operationalSummaries, driverRequirements, h
                     <strong>{row.readinessSummary.primaryReason}</strong>
                     <span>{row.readinessSummary.businessImpact}</span>
                     {row.qualificationLine && <span>{row.qualificationLine}</span>}
+                    <DriverEligibilityReviewControls driverId={row.driverId} enabled={hasFleetContext && Boolean(operationalSummaries.find((summary) => summary.driverId === row.driverId))} />
                     {row.readinessSummary.dueDate && (
                       <div className="bof-driver-roster-card__meta">Due: {row.readinessSummary.dueDate}</div>
                     )}

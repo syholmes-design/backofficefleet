@@ -14,6 +14,8 @@ import { DriverCopilotAdvocatePanel } from "@/components/copilot/DriverCopilotAd
 import { getDriverByIdForSession } from "@/lib/services/driverService";
 import { type SessionWithMemberships } from "@/lib/session-fleet";
 
+export const dynamic = "force-dynamic";
+
 type Props = { params: Promise<{ id: string }> };
 
 export async function generateMetadata({ params }: Props) {
