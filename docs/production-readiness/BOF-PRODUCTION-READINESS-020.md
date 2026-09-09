@@ -4,7 +4,8 @@
 
 **Branch:** `orchestrator/prompt-020-demo-firewall`  
 **Date:** 2026-09-09  
-**Base:** `d9daabc902236b27ff62ecb3ba7e6e2d8ad225fb` (Prompt 019)
+**Base:** `d9daabc902236b27ff62ecb3ba7e6e2d8ad225fb` (Prompt 019)  
+**Closeout commit:** `de9100aabdbb393d7b58c8baa521d0791b36bdaa`
 
 ---
 
@@ -18,7 +19,7 @@ Path A remains binding. LIVE Prisma/API is production operational authority. DEM
 
 # 2. Current branch and commit
 
-Recorded at closeout in this file after commit. Working branch `orchestrator/prompt-020-demo-firewall`.
+Recorded at closeout: `de9100aabdbb393d7b58c8baa521d0791b36bdaa` on `orchestrator/prompt-020-demo-firewall`.
 
 ---
 
@@ -171,3 +172,7 @@ Prompt 020 is **implementation-complete** for DEMO firewall + production Command
 This is **not** UOS Certified and **not** Prompt 014 Production Ready.
 
 Protected product worktree `bof-web-e-c-foundation-20260823` was not modified. No remote push.
+
+# Git
+
+Branch `orchestrator/prompt-020-demo-firewall` from 019 HEAD `d9daabc9`. Implementation closeout: `de9100aabdbb393d7b58c8baa521d0791b36bdaa`.
