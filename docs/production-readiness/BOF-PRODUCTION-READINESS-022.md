@@ -23,7 +23,7 @@ from Prompt 021 HEAD `49fd665b337195801fbe8e3fb2d617f519484180`
 
 # 3. Commit(s)
 
-Recorded at closeout after commit.
+Recorded at closeout: `ca162337a8f0bdb197563100e41f253bac893074` on `orchestrator/prompt-022-coherence-remediation`.
 
 ---
 
@@ -171,3 +171,7 @@ Production CC/dispatch/loads/drivers remain LIVE-separated from DEMO. DEMO keys 
 **PASS.** Both Prompt 021 blockers remediable within scope. Coherence **100%** on the same 9-field denominator. No duplicate settlement engine. No LIVE commodity values invented.
 
 This is **not** UOS Certified and **not** Prompt 014 Production Ready. Phase 7 was not started.
+
+# Git
+
+Branch `orchestrator/prompt-022-coherence-remediation` from 021 HEAD `49fd665b`. Implementation: `ca162337a8f0bdb197563100e41f253bac893074`. No push.
