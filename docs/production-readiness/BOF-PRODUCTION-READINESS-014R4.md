@@ -14,15 +14,16 @@ No product-capability code was changed. Secrets were not invented, committed, or
 
 **PREREQUISITES BLOCKED**
 
-Workstream A (configuration consumed by the app) is complete on this certification host.
+Resume after operator-attested Credentials login (`bof-operations@dev.local`). Authentication and users were not modified. Prompt 014 was not started.
 
-Workstream B (a real signed-in operator session) is **not** complete: the database contains operator memberships and password hashes, but this assignment has **no operator-supplied login password** and must not fabricate one.
+| Workstream | Status |
+|---|---|
+| A Configuration | Complete (app consumes AUTH_SECRET / DATABASE_URL; `NEXTAUTH_URL=http://localhost:3010`) |
+| B Operator session | **Operator-attested** in the sign-in browser: session JSON with `user.id`, `bof-operations@dev.local`, `fleetSlug: bof-service`, `roleCode: BOF_OPERATIONS`. **Not reproduced** in Cursor-controlled tabs or cookie-less curl (`session` still `null`; CC nav “session not established”; invoice/PI **401**) |
+| C LIVE equipment PATCH | **Not executed.** Rows exist. Mutation needs the cookie this agent does not hold. DEMO T-102 not copied to LIVE |
+| D Viewports (prep, not 014 cert) | Command Center and Dispatch overflow **0** at **390 / 768 / 1366** in Cursor browser (unauthenticated) |
 
-Workstream C: LIVE Prisma `Equipment` rows **exist** and include mixed statuses. The existing PATCH mutation was **not** executed because it requires the missing session. DEMO T-102 was **not** copied into LIVE.
-
-Workstream D: browser MCP was unavailable; 390/768/1366 were **not** re-measured. This remains test-infrastructure preparation, not a UI rewrite.
-
-Full Prompt 014 must **not** start automatically.
+R3 product-scope decisions unchanged (Payment A2, Safety B2, DEMO C2).
 
 ---
 
@@ -52,7 +53,7 @@ Runtime: `npx next start -p 3010` Ready. Prisma/dotenv reported `injected env (2
 
 Fail-closed behavior for **missing** secrets was not removed. This host is no longer in the missing-secret state.
 
-Note: Auth.js `signinUrl` advertised `localhost:3000` while the certification listener is **3010**. That is an operator `NEXTAUTH_URL` alignment issue, not a reason to invent a new auth system.
+Note: `NEXTAUTH_URL` was later set to `http://localhost:3010` in gitignored `.env.local` (credentials callback no longer targets port 3000).
 
 ---
 
@@ -60,12 +61,10 @@ Note: Auth.js `signinUrl` advertised `localhost:3000` while the certification li
 
 | Field | Result |
 |---|---|
-| User | **Not signed in.** Database has 15 users, 12 with `passwordHash`. No email/password was supplied to this prompt. None invented. |
-| Role | Schema/memberships exist: 5 roles, 11 memberships, **7** ACTIVE memberships in operator role codes (BOF_OPERATIONS, DISPATCH, FLEET_*, etc.). Not bound to a live session. |
-| Session | Unauthenticated `null` session JSON. Credentials provider available. |
-| Authorization | Unauthenticated generate invoice **401** `AUTH_REQUIRED`; equipment PATCH **401** Unauthorized. Guards were **not** weakened. |
-
-**Blocked:** login/session establishment and protected mutation authorization as an authenticated operator.
+| User | Operator attestation: `bof-operations@dev.local` via existing `/api/auth/signin`. Cursor/curl: **no cookie** |
+| Role | Attested: `BOF_OPERATIONS` on `bof-service`. Matches seed membership |
+| Session | Attested authenticated JSON in the login browser. Agent `GET /api/auth/session` in Cursor tabs and curl: **`null`** |
+| Authorization | Agent-held clients still **401** on generate invoice and PI discovery. Guards not weakened. Protected recognition **not independently executed** here |
 
 ---
 
@@ -75,22 +74,20 @@ Note: Auth.js `signinUrl` advertised `localhost:3000` while the certification li
 |---|---|
 | Data source | Prisma `Equipment` via operator `DATABASE_URL` (LIVE path). Not BOF JSON T-102. |
 | Row/state | **161** rows: AVAILABLE 154, UNAVAILABLE 5, OUT_OF_SERVICE 2. Sufficient mix for a later Scenario E **if** authenticated. |
-| Mutation path | Existing `PATCH /api/dispatch/equipment/[equipmentId]/status` → `setEquipmentStatus`. Unauthenticated call **401**. **Not executed.** |
-| Downstream verification | **Not performed** (no authorized mutation). DEMO T-102 not relabeled LIVE. |
-
-Scenario E is **closer** (LIVE rows exist) but **not** genuinely testable until Workstream B completes.
+| Mutation path | Existing `PATCH /api/dispatch/equipment/[equipmentId]/status`. **Not executed** on resume (agent has no session cookie). |
+| Downstream verification | **Not performed.** DEMO T-102 not copied to LIVE. |
 
 ---
 
 # Browser Certification Environment
 
-| Width | 014-R4 |
-|---|---|
-| 390 | **Not measured** — `cursor-ide-browser` MCP did not re-register |
-| 768 | **Not measured** (same) |
-| 1366 | **Not re-measured** in R4 |
+| Width | Command Center | Dispatch |
+|---|---|---|
+| 390 | overflow 0 | overflow 0 |
+| 768 | overflow 0 | overflow 0 |
+| 1366 | overflow 0 | overflow 0 |
 
-Prior 014 1366 overflow 0 is **not** claimed as this assignment’s evidence. No UI change for MCP failure. Runtime `:3010` is up for a later 014 browser pass.
+Cursor browser CC still labeled **session not established**. This is **preparation**, not Prompt 014 certification.
 
 ---
 
@@ -113,10 +110,10 @@ Prior 014 1366 overflow 0 is **not** claimed as this assignment’s evidence. No
 | Prisma validate | PASS |
 | Runtime startup | PASS (`next start -p 3010` Ready) |
 | Production build | Not rebuilt in R4; serving existing production build |
-| Authentication | Secret **consumed**; unauthenticated session `null`; **no login** |
-| Authorization | Unauthenticated mutations 401; not bypassed |
-| Equipment | LIVE counts via Prisma; PATCH not authorized |
-| Browser | MCP unavailable |
+| Authentication | Operator-attested Credentials session in login browser. Agent curl/Cursor: `null` |
+| Authorization | Agent clients **401**; not bypassed |
+| Equipment | LIVE rows exist; PATCH not run |
+| Browser | CC/Dispatch overflow 0 at 390/768/1366 (unauthenticated Cursor browser) |
 
 ---
 
@@ -124,23 +121,22 @@ Prior 014 1366 overflow 0 is **not** claimed as this assignment’s evidence. No
 
 Authorized-prerequisite remainder:
 
-1. **Real operator login password/session** (B2) — users exist; credentials not available to this agent without fabrication.  
-2. **Authenticated LIVE equipment PATCH + downstream verify** (C) — rows exist; mutation blocked on session.  
-3. **390 / 768 / 1366 actual measurement** (D) — test infrastructure.  
+1. **Agent-held authenticated session** — operator login browser has the session; Cursor/curl do not. LIVE PATCH and protected APIs cannot be driven from this agent until the same cookie is present here.  
+2. **Authenticated LIVE equipment PATCH + downstream verify** — still not run.  
 
-Unchanged product-scope (R3; will still fail 014 CERTIFIED):
+Unchanged product-scope (R3):
 
-4. Payment A2 → Scenario G  
-5. Safety B2 → Scenario C  
-6. DEMO operator JSON C2 → 014 production-path rule  
+3. Payment A2 → Scenario G  
+4. Safety B2 → Scenario C  
+5. DEMO operator JSON C2 → 014 production-path rule  
 
 ---
 
 # Full Prompt 014 Readiness
 
-**Not ready.** Configuration is on this host and the app consumes it, but a legitimate operator session and viewport evidence are missing. Do not start Prompt 014 from R4.
+**Not ready for automatic Prompt 014.** Operator session is attested in the login browser; this agent cannot use that cookie for LIVE PATCH or protected APIs. Viewport prep on CC/Dispatch is done. Do not start Prompt 014 from R4.
 
-When an operator later signs in with a real account and browser tools work, a **full** 014 may run. Under A2/B2/C2 it should still end **BLOCKED** unless product later reverses those decisions.
+Under A2/B2/C2 a later full 014 should still end **BLOCKED** unless product reverses those decisions.
 
 ---
 
