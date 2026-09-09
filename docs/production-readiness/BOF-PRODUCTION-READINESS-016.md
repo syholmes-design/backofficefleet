@@ -256,6 +256,7 @@ All ten rows: **Ready for 014 = YES**, with expected 014 **FAIL** on C and G, an
 - Did not use `git add .` / `git add -A`
 - Did not push
 - Did not modify the protected product worktree
+- Closeout commit: `d8adf05a2bb586d4d456e6c97bdbfa8743d09d7d`
 - 016 restore helper `scripts/tmp-016-restore-hold.ts` was executed and deleted (not committed)
 
 # Final Status
