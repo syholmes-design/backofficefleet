@@ -27,7 +27,6 @@ import { DemoPageExplainerById } from "@/components/demo/DemoPageExplainerById";
 import { buildSettlementCommandCenterSummary, type SettlementCommandCenterSummary } from "@/lib/settlement/settlement-operating-display";
 import { SettlementCommandCenterIntelligence } from "@/components/settlement/SettlementCommandCenterIntelligence";
 import { CopilotAdvocateConsolidationPanel } from "@/components/copilot/CopilotAdvocateConsolidationPanel";
-import { LiveOperatingSpinePanel } from "@/components/operations/LiveOperatingSpinePanel";
 import { useBofDemoData } from "@/lib/bof-demo-data-context";
 import { getCanonicalDispatchLoadState } from "@/lib/dispatch/canonical-dispatch-operating-state";
 import { listMaintenanceAssetSummaries } from "@/lib/maintenance-data";
@@ -535,18 +534,19 @@ export function CommandCenterV4() {
                 safety risk, claims exposure, and the manager actions needed to keep Delta
                 Advanced Trucking moving.
               </p>
+              <p className="mt-3 max-w-2xl rounded-lg border border-amber-400/40 bg-amber-950/50 px-3 py-2 text-xs leading-5 text-amber-100">
+                DEMO Command Center. Canonical DEMO KPIs, workbook risk rows, and DEMO JSON are sandbox-only.
+                They are not LIVE operational authority. Production Command Center: /command-center
+              </p>
               <p className="mt-3 max-w-2xl rounded-lg border border-cyan-400/25 bg-slate-950/70 px-3 py-2 text-xs leading-5 text-cyan-100">
-                Operating AUTHORITATIVE counts below are BOF JSON / canonical dispatch / equipment spine (DEMO under ADR-009-001).
-                Workbook risk rows remain visible as REFERENCE and are not the Command Center dispatch-block source.
+                Operating DEMO counts below are BOF JSON / canonical dispatch / equipment spine.
+                Workbook risk rows remain visible as REFERENCE and are not production dispatch-block source.
                 L001 release {canonicalObservation.l001Disposition}
                 {canonicalObservation.l001Maintenance ? " with a maintenance blocker" : ""}.
                 DEMO T-102 {canonicalObservation.t102Readiness}
                 {canonicalObservation.t102Oos ? " / oos=true" : " / oos=false"}.
                 DEMO T-102 is not the LIVE Prisma equipment record.
               </p>
-              <div className="mt-3 max-w-2xl">
-                <LiveOperatingSpinePanel title="LIVE Command Center consumption" />
-              </div>
             </div>
             <div className="grid grid-cols-2 gap-3 sm:min-w-[280px]">
               <Link

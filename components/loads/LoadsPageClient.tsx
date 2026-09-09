@@ -21,9 +21,10 @@ import {
 
 type Props = {
   fleetId: string | null;
+  sandbox?: boolean;
 };
 
-export function LoadsPageClient({ fleetId }: Props) {
+export function LoadsPageClient({ fleetId, sandbox = false }: Props) {
   const { data: demoData } = useBofDemoData();
   const [loads, setLoads] = useState<DispatchLoadRecord[]>([]);
   const [assignmentMap, setAssignmentMap] = useState<Record<string, DispatchAssignmentRecord | null>>({});
@@ -58,13 +59,16 @@ export function LoadsPageClient({ fleetId }: Props) {
     });
   }, [demoData.loads]);
 
-  const rosterLoads = fleetId ? loads : demoLoads;
+  const rosterLoads = useMemo(
+    () => (sandbox && !fleetId ? demoLoads : fleetId ? loads : []),
+    [demoLoads, fleetId, loads, sandbox],
+  );
 
   const fetchLoads = useCallback(async () => {
     if (!fleetId) {
       setLoads([]);
       setAssignmentMap({});
-      setError(null);
+      setError(sandbox ? null : "Production loads require a LIVE fleet session. DEMO roster: /demo/loads");
       return;
     }
 
@@ -80,10 +84,10 @@ export function LoadsPageClient({ fleetId }: Props) {
     } finally {
       setLoading(false);
     }
-  }, [fleetId]);
+  }, [fleetId, sandbox]);
 
   const fetchAssignments = useCallback(async (nextLoads: DispatchLoadRecord[]) => {
-    if (nextLoads.length === 0) {
+    if (!fleetId || nextLoads.length === 0) {
       setAssignmentMap({});
       return;
     }
@@ -109,7 +113,7 @@ export function LoadsPageClient({ fleetId }: Props) {
     } catch (nextError) {
       setError(getErrorMessage(nextError));
     }
-  }, []);
+  }, [fleetId]);
 
   useEffect(() => {
     void fetchLoads();
@@ -138,8 +142,9 @@ export function LoadsPageClient({ fleetId }: Props) {
         <p className="bof-kicker">Dispatch loads</p>
         <h1 className="bof-title">Authoritative load roster</h1>
         <p className="bof-lead">
-          This roster uses the validated dispatch load records for the current fleet. Open a load file to continue the
-          assignment, readiness, pre-trip, and release workflow from the canonical operating core.
+          {sandbox
+            ? "DEMO load roster from BOF JSON. Not LIVE Prisma authority."
+            : "This roster uses LIVE dispatch load records for the current fleet. DEMO L001 rows are not used as production state."}
         </p>
       </header>
       <DispatchCopilotAdvocatePanel variant="compact" tone="ops" />
@@ -201,7 +206,7 @@ export function LoadsPageClient({ fleetId }: Props) {
 
         {!loading && rosterLoads.length === 0 && !error ? (
           <div className="rounded-lg border border-slate-800 bg-slate-950/60 p-6 text-sm text-slate-300">
-            No persisted loads are available for this fleet yet.
+            No persisted LIVE loads are available for this fleet yet. DEMO roster remains at /demo/loads.
           </div>
         ) : null}
 
@@ -220,18 +225,30 @@ export function LoadsPageClient({ fleetId }: Props) {
               </thead>
               <tbody>
                 {rosterLoads.map((load) => {
-                  const pretripModel = buildPretripTabletModel(demoData, load.id);
-                  const fullLoadRecord = demoData.loads.find((l) => l.id === load.id) as Record<string, unknown> | undefined;
+                  const assignment = assignmentMap[load.id];
+                  const pretripModel = sandbox ? buildPretripTabletModel(demoData, load.id) : null;
+                  const fullLoadRecord = sandbox
+                    ? (demoData.loads.find((l) => l.id === load.id) as Record<string, unknown> | undefined)
+                    : undefined;
                   const isExpanded = expandedLoadId === load.id;
 
-                  const driverId = typeof fullLoadRecord?.driverId === "string" && fullLoadRecord.driverId ? fullLoadRecord.driverId : "";
-                  const assetId = pretripModel?.assetId || (typeof fullLoadRecord?.assetId === "string" && fullLoadRecord.assetId) || "";
-                  const trailerNumber = (typeof fullLoadRecord?.trailerNumber === "string" && fullLoadRecord.trailerNumber) || "";
+                  const driverId =
+                    assignment?.driverId ||
+                    (typeof fullLoadRecord?.driverId === "string" && fullLoadRecord.driverId ? fullLoadRecord.driverId : "");
+                  const assetId =
+                    assignment?.tractorEquipmentId ||
+                    pretripModel?.assetId ||
+                    (typeof fullLoadRecord?.assetId === "string" && fullLoadRecord.assetId) ||
+                    "";
+                  const trailerNumber =
+                    assignment?.trailerEquipmentId ||
+                    (typeof fullLoadRecord?.trailerNumber === "string" && fullLoadRecord.trailerNumber) ||
+                    "";
                   const customerName = load.customerName || (typeof fullLoadRecord?.customerName === "string" && fullLoadRecord.customerName) || "Unavailable";
-                  const commodity = (typeof fullLoadRecord?.commodity === "string" && fullLoadRecord.commodity) || "";
-                  const weight = typeof fullLoadRecord?.weight === "number" ? fullLoadRecord.weight : null;
-                  const settlementHold = Boolean(fullLoadRecord?.settlementHold);
-                  const settlementHoldReason = typeof fullLoadRecord?.settlementHoldReason === "string" ? fullLoadRecord.settlementHoldReason : "";
+                  const commodity = sandbox && typeof fullLoadRecord?.commodity === "string" ? fullLoadRecord.commodity : "";
+                  const weight = sandbox && typeof fullLoadRecord?.weight === "number" ? fullLoadRecord.weight : null;
+                  const settlementHold = sandbox ? Boolean(fullLoadRecord?.settlementHold) : false;
+                  const settlementHoldReason = sandbox && typeof fullLoadRecord?.settlementHoldReason === "string" ? fullLoadRecord.settlementHoldReason : "";
 
                   return (
                     <Fragment key={load.id}>

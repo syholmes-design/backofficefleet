@@ -76,6 +76,7 @@ type Props = {
   operationalSummaries: DriverOperationalSummary[];
   driverRequirements: DriverReviewRequirement[];
   hasFleetContext: boolean;
+  sandbox?: boolean;
 };
 
 function DriverEligibilityReviewControls({ driverId, enabled }: { driverId: string; enabled: boolean }) {
@@ -386,7 +387,7 @@ function DriversHero() {
   );
 }
 
-export function DriversRosterTable({ operationalSummaries, driverRequirements, hasFleetContext }: Props) {
+export function DriversRosterTable({ operationalSummaries, driverRequirements, hasFleetContext, sandbox = false }: Props) {
   const { data, hydrated } = useBofDemoData();
   const [driverStatusFilter, setDriverStatusFilter] = useState<DriverStatusFilter>("all");
   const [credentialWindowDays, setCredentialWindowDays] = useState<90 | 60 | 30>(90);
@@ -402,11 +403,36 @@ export function DriversRosterTable({ operationalSummaries, driverRequirements, h
       if (hasFleetContext && operationalSummaries.length > 0) {
         return operationalSummaries.map((summary) => {
           const authoritativeStatus = mapOperationalStatus(summary, hasFleetContext);
-          const reviewExplanation = getDriverReviewExplanation(
-            data,
-            summary.driverId,
-            driverRequirements.filter((requirement) => requirement.driverId === summary.driverId),
-          );
+          const liveReview: DriverReviewExplanation = {
+            driverId: summary.driverId,
+            driverName: summary.driverName,
+            entityType: "driver",
+            entityId: summary.driverId,
+            entityLabel: summary.driverName,
+            status: authoritativeStatus.status,
+            reviewStatus: authoritativeStatus.status,
+            summary: summary.readiness?.summary ?? summary.qualification?.summary ?? "LIVE Prisma operational summary",
+            issues: [],
+            documentsColumnLabel: "LIVE",
+            complianceColumnLabel: "LIVE",
+            recommendedNextStepText: "Open the driver portal for the authoritative operational summary.",
+            primaryGuidance: {
+              headline: authoritativeStatus.primaryReason,
+              plainEnglishReason: authoritativeStatus.primaryReason,
+              operationalImpact: authoritativeStatus.businessImpact,
+              proposedSolution: "Open the driver portal for the authoritative operational summary.",
+              severity: authoritativeStatus.status === "ready" ? "watch" : authoritativeStatus.status,
+              primaryActionLabel: "Open driver portal",
+              primaryActionHref: `/portals/driver/${summary.driverId}`,
+            },
+            severity: authoritativeStatus.status === "blocked" ? "blocked" : authoritativeStatus.status === "needs_review" ? "needs_review" : "ready",
+            headline: authoritativeStatus.primaryReason,
+            reason: authoritativeStatus.primaryReason,
+            impact: authoritativeStatus.businessImpact,
+            recommendedFix: "Open the driver portal for the authoritative operational summary.",
+            issueType: "unknown",
+            actions: [],
+          };
 
           return {
             driverId: summary.driverId,
@@ -431,7 +457,7 @@ export function DriversRosterTable({ operationalSummaries, driverRequirements, h
             blockerHref: `/portals/driver/${summary.driverId}`,
             loadLinkId: null,
             primaryReviewReason: authoritativeStatus.primaryReason,
-            reviewExplanation,
+            reviewExplanation: liveReview,
             readinessSummary: {
               status: authoritativeStatus.status,
               primaryReason: authoritativeStatus.primaryReason,
@@ -443,15 +469,15 @@ export function DriversRosterTable({ operationalSummaries, driverRequirements, h
                 href: `/portals/driver/${summary.driverId}`,
               },
             },
-            actionIssues: getDriverActionIssues(
-              summary.driverId,
-              data,
-              driverRequirements.filter((requirement) => requirement.driverId === summary.driverId),
-            ),
+            actionIssues: [],
             qualificationLine: authoritativeStatus.qualificationLine,
             authoritativeSource: authoritativeStatus.source,
           };
         });
+      }
+
+      if (!sandbox) {
+        return [];
       }
 
       return data.drivers.map((driver) => {
@@ -529,7 +555,7 @@ export function DriversRosterTable({ operationalSummaries, driverRequirements, h
         };
       });
     },
-    [data, driverRequirements, hasFleetContext, operationalSummaries, operationalSummaryMap]
+    [data, driverRequirements, hasFleetContext, operationalSummaries, operationalSummaryMap, sandbox]
   );
 
   const filteredDriverRows = useMemo(() => {
@@ -641,10 +667,13 @@ export function DriversRosterTable({ operationalSummaries, driverRequirements, h
       <section id="primary-driver-table" className="bof-cc-panel" aria-label="Driver document center">
         <div className="bof-cc-panel-head">
           <h2 className="bof-h2">Drivers needing attention ({evaluatedAttentionCount})</h2>
-          {!hasFleetContext ? (
+          {!hasFleetContext && sandbox ? (
             <p className="bof-cc-panel-sub">
-              Prisma fleet readiness is unavailable. Roster status is DEMO / DERIVED from existing BOF JSON eligibility
-              (getDriverDispatchEligibility). It is not live Prisma qualification.
+              DEMO roster. Status is derived from BOF JSON eligibility, not Prisma.
+            </p>
+          ) : !hasFleetContext ? (
+            <p className="bof-cc-panel-sub">
+              Production driver roster requires a LIVE fleet session. DEMO roster: /demo/drivers
             </p>
           ) : evaluationUnavailableCount > 0 ? (
             <p className="bof-cc-panel-sub">

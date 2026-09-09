@@ -5,6 +5,7 @@ import { prisma } from "@/lib/prisma";
 import { recordCanonicalLoadEvent, recordLoadIntakeEvent } from "@/lib/process-intelligence/operating-event-service";
 import { getOperatingProcessStore } from "@/lib/process-intelligence/runtime-store";
 import { authorizedFleetAccess, isServiceRole, type SessionUserLike } from "@/lib/services/intakeService";
+import { rejectDemoOperationalKey } from "@/lib/uos/demo-operational-keys";
 
 const MUTABLE_LOAD_FIELDS = new Set([
   "customerName",
@@ -100,6 +101,7 @@ async function logUnauthorizedDispatchAccess(
 export async function findLoadByOperatorKey(loadId: string) {
   const key = loadId.trim();
   if (!key) return null;
+  rejectDemoOperationalKey(key, "loadId");
   const byId = await prisma.load.findUnique({ where: { id: key } });
   if (byId) return byId;
   return prisma.load.findFirst({

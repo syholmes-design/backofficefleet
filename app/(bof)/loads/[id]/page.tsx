@@ -14,6 +14,7 @@ import { getLoadById } from "@/lib/services/loadService";
 import { type DispatchLoadRecord } from "@/lib/dispatch-workflow-ui";
 import { type SessionWithMemberships } from "@/lib/session-fleet";
 import { normalizeCanonicalLoadId } from "@/lib/canonical-load-stories";
+import { DEMO_SOURCE_REJECTED, isDemoOperationalKey } from "@/lib/uos/demo-operational-keys";
 
 export const dynamic = "force-dynamic";
 
@@ -78,7 +79,23 @@ export default async function LoadDetailPage({ params }: Props) {
         </div>
       </div>
     );
-  } catch {
+  } catch (error) {
+    const message = error instanceof Error ? error.message : "";
+    if (isDemoOperationalKey(id) || message.includes(DEMO_SOURCE_REJECTED)) {
+      return (
+        <div className="bof-page">
+          <h1 className="text-2xl font-semibold text-amber-100">DEMO key isolated</h1>
+          <p className="mt-3 max-w-xl text-sm text-slate-300">
+            {id} is a DEMO operational identifier. It is not LIVE Prisma load authority and was not promoted
+            into production state. DEMO load presentation remains at{" "}
+            <Link className="text-amber-200 underline" href="/demo/loads">
+              /demo/loads
+            </Link>
+            .
+          </p>
+        </div>
+      );
+    }
     return <RuntimeLoadDetailFallback loadId={id} />;
   }
 }

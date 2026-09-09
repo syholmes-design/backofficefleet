@@ -25,9 +25,9 @@ Purpose: prevent edits from landing in stale or non-rendered files by mapping ea
 | `/fleet-savings` | `app/(marketing)/fleet-savings/page.tsx` | `FleetSavingsPage` + `FleetSavingsCalculatorClient` | MARKETING | No hero image | Funnel calculator client | ACTIVE_ROUTE | Standalone tool page. |
 | `/apply` | `app/(marketing)/apply/page.tsx` | `ApplyPage` + `FleetApplicationWizardClient` | MARKETING | No hero image | Funnel application client | ACTIVE_ROUTE | Standalone qualification page. |
 | `/dashboard` | `app/(bof)/dashboard/page.tsx` | `DashboardPage` -> `DashboardPageClient` | DEMO | In-component product preview (`DashboardHeroProductPreview`), no hero image asset | `useBofDemoData()` from `BofDemoDataShell` seed; no direct `getBofData()` in route | ACTIVE_ROUTE | Demo app dashboard; separate from marketing home route. |
-| `/command-center` | `app/(bof)/command-center/page.tsx` | `CommandCenterPage` -> `CommandCenterPageClient` | DEMO | `CommandCenterExecutiveHeader` | `useBofDemoData()` | ACTIVE_ROUTE | Core demo operations queue. |
-| `/loads` | `app/(bof)/loads/page.tsx` | `LoadsPage` -> `LoadsPageClient` | DISPATCH | None | `useBofDemoData()` | ACTIVE_ROUTE | Dispatch/loads operational list. |
-| `/dispatch` | `app/(bof)/dispatch/page.tsx` | `DispatchPage` -> `DispatchShell` | DISPATCH | None | `useBofDemoData()` + dispatch store | ACTIVE_ROUTE | Canonical dispatch board shell. |
+| `/command-center` | `app/(bof)/command-center/page.tsx` | `CommandCenterPage` -> `ProductionCommandCenter` | DISPATCH | `ProductionCommandCenter` | LIVE `GET /api/dispatch/operating-spine` | ACTIVE_ROUTE | Production Command Center is LIVE-only. |
+| `/loads` | `app/(bof)/loads/page.tsx` | `LoadsPage` -> `LoadsPageClient` | DISPATCH | None | LIVE operating-spine when fleet session exists | ACTIVE_ROUTE | DEMO roster isolated at `/demo/loads`. |
+| `/dispatch` | `app/(bof)/dispatch/page.tsx` | `DispatchPage` -> `DispatchShell` | DISPATCH | None | LIVE operating-spine + assignment APIs | ACTIVE_ROUTE | DEMO board isolated at `/demo/dispatch`. |
 | `/dispatch-v2` | `app/(bof)/dispatch-v2/page.tsx` | `DispatchV2Page` | REFERENCE_DEMO | None | Preview board | ACTIVE_ROUTE | Not the canonical dispatch surface. |
 | `/settlements-v2` | `app/(bof)/settlements-v2/page.tsx` | `SettlementsV2Page` | REFERENCE_DEMO | None | Preview settlements | ACTIVE_ROUTE | Not the canonical payroll `/settlements` surface. |
 | `/portals/customer` | `app/portals/customer/page.tsx` | Customer portal page | DEMO | None | Apex DEMO_CUSTOMER_PROFILE | ACTIVE_ROUTE | Customer-visible Apex loads. `/customers` re-exports this page. |
@@ -50,7 +50,11 @@ All discovered routes are active Next.js routes unless marked legacy redirect.
 | `/apply` | `app/(marketing)/apply/page.tsx` | `ApplyPage` | MARKETING | ACTIVE_ROUTE |  |
 | `/bof-vault` | `app/(marketing)/bof-vault/page.tsx` | `BofVaultPage` | MARKETING | ACTIVE_ROUTE |  |
 | `/book-assessment` | `app/(marketing)/book-assessment/page.tsx` | `BookAssessmentPage` | MARKETING | ACTIVE_ROUTE |  |
-| `/command-center` | `app/(bof)/command-center/page.tsx` | `CommandCenterPage` | DEMO | ACTIVE_ROUTE |  |
+| `/command-center` | `app/(bof)/command-center/page.tsx` | `CommandCenterPage` | DISPATCH | ACTIVE_ROUTE | LIVE production Command Center. |
+| `/demo/command-center` | `app/(bof)/demo/command-center/page.tsx` | `CommandCenterV4` | DEMO | ACTIVE_ROUTE | Preserved DEMO Command Center. |
+| `/demo/dispatch` | `app/(bof)/demo/dispatch/page.tsx` | `DispatchShell` sandbox | DEMO | ACTIVE_ROUTE | Preserved DEMO dispatch board. |
+| `/demo/loads` | `app/(bof)/demo/loads/page.tsx` | `LoadsPageClient` sandbox | DEMO | ACTIVE_ROUTE | Preserved DEMO load roster. |
+| `/demo/drivers` | `app/(bof)/demo/drivers/page.tsx` | `DriversCommandCenterV4` sandbox | DEMO | ACTIVE_ROUTE | Preserved DEMO driver roster. |
 | `/dashboard` | `app/(bof)/dashboard/page.tsx` | `DashboardPage` | DEMO | ACTIVE_ROUTE |  |
 | `/dispatch` | `app/(bof)/dispatch/page.tsx` | `DispatchPage` | DISPATCH | ACTIVE_ROUTE |  |
 | `/dispatch-v2` | `app/(bof)/dispatch-v2/page.tsx` | `DispatchV2Page` | REFERENCE_DEMO | ACTIVE_ROUTE | Preview only. |

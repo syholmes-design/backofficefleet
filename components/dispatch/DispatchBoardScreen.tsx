@@ -168,9 +168,9 @@ export function DispatchBoardScreen({
   );
 
   const selectedPretripTablet = useMemo(() => {
-    if (!selectedLoad) return null;
+    if (!demoMode || !selectedLoad) return null;
     return buildPretripTabletModel(bofData, selectedLoad.id);
-  }, [bofData, selectedLoad]);
+  }, [bofData, demoMode, selectedLoad]);
 
   const [workflow, setWorkflow] = useState<DispatchLoadWorkflowSnapshot | null>(null);
   const [workflowLoading, setWorkflowLoading] = useState(false);
@@ -775,11 +775,15 @@ export function DispatchBoardScreen({
         </div>
       </section>
 
-      {selectedLoad ? (
+      {selectedLoad && demoMode ? (
         <section className="space-y-5">
           <RouteIntelligenceV4 loadId={selectedLoad.id} />
           <DispatchAssetCards loadId={selectedLoad.id} />
           <RfidProofChainV4 loadId={selectedLoad.id} showAllEvents={false} maxEvents={5} />
+          <CommandWorkspaceLinks loadId={selectedLoad.id} />
+        </section>
+      ) : selectedLoad ? (
+        <section className="space-y-5">
           <CommandWorkspaceLinks loadId={selectedLoad.id} />
         </section>
       ) : null}

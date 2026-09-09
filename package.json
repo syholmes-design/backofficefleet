@@ -71,7 +71,9 @@
     "deploy:full": "npm run generate:driver-docs && npx --yes vercel --prod",
     "demo:reset": "node scripts/reset-demo.mjs",
     "demo:reset:deploy": "npm run demo:reset && npx --yes vercel --prod",
-    "build:second-gen-loads": "node scripts/build-second-generation-loads.mjs"
+    "build:second-gen-loads": "node scripts/build-second-generation-loads.mjs",
+    "validate:prompt-013-hardening": "npx --yes tsx scripts/validate-prompt-013-hardening.ts",
+    "validate:prompt-020-demo-firewall": "npx --yes tsx scripts/validate-prompt-020-demo-firewall.ts"
   },
   "dependencies": {
     "@auth/prisma-adapter": "^2.11.3",

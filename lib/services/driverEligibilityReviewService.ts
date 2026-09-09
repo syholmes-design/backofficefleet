@@ -8,6 +8,7 @@ import {
   writeQualificationSnapshot,
 } from "@/lib/services/qualificationService";
 import { READINESS_POLICY_VERSION } from "@/lib/services/readinessService";
+import { rejectDemoOperationalKey } from "@/lib/uos/demo-operational-keys";
 
 export type EligibilityReviewDisposition = "ELIGIBLE" | "INELIGIBLE";
 
@@ -24,6 +25,7 @@ export async function recordDriverEligibilityReview(
   reason: string,
 ) {
   requireSessionUser(sessionUser);
+  rejectDemoOperationalKey(driverId, "driverId");
   const actor = sessionUser as SessionUserLike & { id: string };
   const nextReason = reason.trim();
   if (!nextReason) {

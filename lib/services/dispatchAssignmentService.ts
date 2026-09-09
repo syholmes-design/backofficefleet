@@ -6,6 +6,7 @@ import { recordOperatingProcessEvent } from "@/lib/process-intelligence/operatin
 import { getOperatingProcessStore } from "@/lib/process-intelligence/runtime-store";
 import { authorizedFleetAccess, type SessionUserLike } from "@/lib/services/intakeService";
 import { findLoadByOperatorKey } from "@/lib/services/loadService";
+import { rejectDemoOperationalKey } from "@/lib/uos/demo-operational-keys";
 
 export type AssignmentClosureStatus = Extract<DispatchAssignmentStatus, "SUPERSEDED" | "CANCELLED">;
 
@@ -94,6 +95,10 @@ export async function createAssignment(
   trailerId?: string | null,
 ) {
   requireSessionUser(sessionUser);
+  rejectDemoOperationalKey(loadId, "loadId");
+  rejectDemoOperationalKey(driverId, "driverId");
+  rejectDemoOperationalKey(tractorId, "tractorId");
+  if (trailerId) rejectDemoOperationalKey(trailerId, "trailerId");
   const actorId = sessionUser!.id;
 
   try {

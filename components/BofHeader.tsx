@@ -8,6 +8,7 @@ import { DemoWalkthroughRibbon } from "@/components/DemoWalkthroughRibbon";
 import { ExistingDocumentNavAnchor } from "@/components/ExistingDocumentNavAnchor";
 
 const productNav = [
+  { href: "/command-center", label: "Command Center" },
   { href: "/dispatch", label: "Dispatch" },
   { href: "/loads", label: "Loads" },
   { href: "/drivers", label: "Drivers" },

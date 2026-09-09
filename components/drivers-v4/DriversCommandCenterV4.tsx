@@ -11,9 +11,10 @@ type Props = {
   operationalSummaries: DriverOperationalSummary[];
   driverRequirements: DriverReviewRequirement[];
   hasFleetContext: boolean;
+  sandbox?: boolean;
 };
 
-export function DriversCommandCenterV4({ operationalSummaries, driverRequirements, hasFleetContext }: Props) {
+export function DriversCommandCenterV4({ operationalSummaries, driverRequirements, hasFleetContext, sandbox = false }: Props) {
   return (
     <div className="space-y-6">
       <header className="rounded-lg border border-slate-800 bg-slate-950/70 p-5">
@@ -39,21 +40,30 @@ export function DriversCommandCenterV4({ operationalSummaries, driverRequirement
             Complete driver management with dispatch eligibility, document readiness, and compliance status
           </p>
         </div>
-        <DriversRosterTable operationalSummaries={operationalSummaries} driverRequirements={driverRequirements} hasFleetContext={hasFleetContext} />
+        <DriversRosterTable operationalSummaries={operationalSummaries} driverRequirements={driverRequirements} hasFleetContext={hasFleetContext} sandbox={sandbox} />
       </section>
 
-      {/* Compliance Action Queue Section */}
+      {sandbox ? (
       <section>
         <div className="mb-4">
           <h2 className="text-2xl font-bold text-white flex items-center gap-3">
             Compliance Actions & Document Review
           </h2>
           <p className="text-slate-400 mt-2">
-            Detailed compliance issues and required actions - no more vague &quot;Needs Review&quot; without explanation
+            DEMO / WORKBOOK compliance queue. Not LIVE operational authority.
           </p>
         </div>
         <ComplianceDashboardV4 />
       </section>
+      ) : (
+        <p className="rounded-lg border border-slate-800 bg-slate-950/60 p-4 text-sm text-slate-300">
+          Workbook compliance queue is isolated on{" "}
+          <a className="text-amber-200 underline" href="/demo/drivers">
+            /demo/drivers
+          </a>
+          . This production roster uses Prisma driver operational summaries only.
+        </p>
+      )}
     </div>
   );
 }

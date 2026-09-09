@@ -3,6 +3,7 @@ import { EquipmentStatus } from "@prisma/client";
 import { createAuditRecord } from "@/lib/audit";
 import { prisma } from "@/lib/prisma";
 import { authorizedFleetAccess, isServiceRole, type SessionUserLike } from "@/lib/services/intakeService";
+import { rejectDemoOperationalKey } from "@/lib/uos/demo-operational-keys";
 
 function requireSessionUser(sessionUser: SessionUserLike | null | undefined) {
   if (!sessionUser?.id) {
@@ -36,6 +37,7 @@ async function logUnauthorizedDispatchAccess(
 }
 
 async function getAuthorizedEquipmentRecord(sessionUser: SessionUserLike | null | undefined, equipmentId: string) {
+  rejectDemoOperationalKey(equipmentId, "equipmentId");
   const equipment = await prisma.equipment.findUnique({ where: { id: equipmentId } });
   if (!equipment) {
     return { equipment: null, allowed: false, reason: "NOT_FOUND" as const };

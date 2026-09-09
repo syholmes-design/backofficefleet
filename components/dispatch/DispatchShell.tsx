@@ -30,6 +30,7 @@ type Props = {
   fleetId: string | null;
   drivers: DispatchDriverOption[];
   driverOperationalSummaries: DriverOperationalSummary[];
+  sandbox?: boolean;
 };
 
 type DispatchView = "board" | "load-detail" | "assign" | "exceptions" | "settlement";
@@ -41,7 +42,7 @@ function currentView(rawView: string | null): DispatchView {
   return "board";
 }
 
-export function DispatchShell({ fleetId, drivers, driverOperationalSummaries }: Props) {
+export function DispatchShell({ fleetId, drivers, driverOperationalSummaries, sandbox = false }: Props) {
   const { data: demoData } = useBofDemoData();
   const searchParams = useSearchParams();
   const loadIdParam = searchParams.get("loadId");
@@ -79,13 +80,19 @@ export function DispatchShell({ fleetId, drivers, driverOperationalSummaries }: 
       })),
     [demoData.loads],
   );
-  const displayFleetId = fleetId ?? "demo-fleet";
+  const displayFleetId = fleetId ?? (sandbox ? "demo-fleet" : "");
 
   const fetchLoads = useCallback(async () => {
-    if (!fleetId) {
+    if (sandbox && !fleetId) {
       setLoads(demoLoads);
       setLoadsError(null);
       return demoLoads;
+    }
+
+    if (!fleetId) {
+      setLoads([]);
+      setLoadsError("Production dispatch requires a LIVE fleet session. DEMO board: /demo/dispatch");
+      return [] as DispatchLoadRecord[];
     }
 
     setLoadsLoading(true);
@@ -100,7 +107,7 @@ export function DispatchShell({ fleetId, drivers, driverOperationalSummaries }: 
     } finally {
       setLoadsLoading(false);
     }
-  }, [demoLoads, fleetId]);
+  }, [demoLoads, fleetId, sandbox]);
 
   const fetchAssignmentMap = useCallback(async (nextLoads: DispatchLoadRecord[]) => {
     if (!fleetId) {
@@ -222,8 +229,8 @@ export function DispatchShell({ fleetId, drivers, driverOperationalSummaries }: 
             onOpenAssign={openAssignModal}
             onRefresh={refreshBoard}
             refreshKey={refreshKey}
-            demoMode={!fleetId}
-            relationshipSpine={demoData.loadRelationshipSpine ?? {}}
+            demoMode={sandbox && !fleetId}
+            relationshipSpine={sandbox ? (demoData.loadRelationshipSpine ?? {}) : {}}
           />
         ) : null}
 
@@ -264,11 +271,13 @@ export function DispatchShell({ fleetId, drivers, driverOperationalSummaries }: 
                     <LoadDetailContent load={selectedLoad} onOpenAssignModal={openAssignModal} refreshKey={refreshKey} />
                 </div>
 
-                <RouteIntelligenceV4 loadId={selectedLoad.id} />
-
-                <DispatchAssetCards loadId={selectedLoad.id} />
-
-                <RfidProofChainV4 loadId={selectedLoad.id} showAllEvents={false} maxEvents={5} />
+                {sandbox ? (
+                  <>
+                    <RouteIntelligenceV4 loadId={selectedLoad.id} />
+                    <DispatchAssetCards loadId={selectedLoad.id} />
+                    <RfidProofChainV4 loadId={selectedLoad.id} showAllEvents={false} maxEvents={5} />
+                  </>
+                ) : null}
               </div>
             ) : null}
           </div>
@@ -312,8 +321,32 @@ export function DispatchShell({ fleetId, drivers, driverOperationalSummaries }: 
           </div>
         ) : null}
 
-        {view === "exceptions" && <ExceptionViewScreen />}
-        {view === "settlement" && <SettlementReadinessScreen />}
+        {view === "exceptions" ? (
+          sandbox ? (
+            <ExceptionViewScreen />
+          ) : (
+            <p className="p-5 text-sm text-amber-100">
+              Exception workbook view is DEMO-only. Open{" "}
+              <a className="underline" href="/demo/dispatch?view=exceptions">
+                /demo/dispatch?view=exceptions
+              </a>
+              . LIVE exceptions remain on the production board via Prisma load status.
+            </p>
+          )
+        ) : null}
+        {view === "settlement" ? (
+          sandbox ? (
+            <SettlementReadinessScreen />
+          ) : (
+            <p className="p-5 text-sm text-amber-100">
+              Settlement-readiness workbook is DEMO-only. Open{" "}
+              <a className="underline" href="/demo/dispatch?view=settlement">
+                /demo/dispatch?view=settlement
+              </a>
+              . LIVE holds are on the operating spine / settlements panel.
+            </p>
+          )
+        ) : null}
       </div>
 
       <LoadDetailDrawer

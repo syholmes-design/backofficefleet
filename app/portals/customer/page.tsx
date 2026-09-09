@@ -36,6 +36,11 @@ export default async function CustomerPortalPage() {
         orderBy: { updatedAt: "desc" },
       })
     : [];
+  const liveOverlayByDemoId = new Map<string, (typeof liveOverlays)[number]>();
+  for (const load of liveOverlays) {
+    if (load.sourceRecordId) liveOverlayByDemoId.set(load.sourceRecordId, load);
+    if (load.referenceNumber) liveOverlayByDemoId.set(load.referenceNumber, load);
+  }
   const customerAttentionLoads = visibleLoads.filter((load) => {
     const source = data.loads.find((item) => item.id === load.loadId);
     return Boolean(
@@ -150,7 +155,11 @@ export default async function CustomerPortalPage() {
             </h2>
             
             <div className="space-y-4">
-              {visibleLoads.slice(0, 6).map((load) => (
+              {visibleLoads.slice(0, 6).map((load) => {
+                const liveMatch = liveOverlayByDemoId.get(load.loadId);
+                const displayStatus = liveMatch ? liveMatch.status : load.status;
+                const statusIsLive = Boolean(liveMatch);
+                return (
                 <ExistingDocumentNavAnchor href={`#shipment-${load.loadId}`} id={`shipment-${load.loadId}`} key={load.loadId} className="block border border-gray-200 rounded-lg p-4 hover:border-teal-400 scroll-mt-24">
                   <div className="flex justify-between items-start mb-3">
                     <div>
@@ -159,11 +168,11 @@ export default async function CustomerPortalPage() {
                     </div>
                     <div className="text-right">
                       <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
-                        load.status === 'Delivered' ? 'bg-green-100 text-green-800' : 
-                        load.status === 'En Route' ? 'bg-blue-100 text-blue-800' : 
+                        /DELIVER/i.test(displayStatus) ? 'bg-green-100 text-green-800' : 
+                        /EN.?ROUTE|IN_TRANSIT/i.test(displayStatus) ? 'bg-blue-100 text-blue-800' : 
                         'bg-gray-100 text-gray-800'
                       }`}>
-                        {load.status}
+                        {statusIsLive ? `LIVE ${displayStatus}` : `DEMO ${displayStatus}`}
                       </span>
                     </div>
                   </div>
@@ -184,14 +193,15 @@ export default async function CustomerPortalPage() {
                     <div>
                       <span className="text-gray-600">Invoice:</span>
                       <span className={`font-medium ${
-                        load.invoiceStatus === 'Ready' ? 'text-green-600' : 'text-gray-600'
+                        statusIsLive ? "text-gray-600" : load.invoiceStatus === 'Ready' ? 'text-green-600' : 'text-gray-600'
                       }`}>
-                        {load.invoiceStatus}
+                        {statusIsLive ? "LIVE overlay governs status — DEMO invoice not used" : load.invoiceStatus}
                       </span>
                     </div>
                   </div>
                 </ExistingDocumentNavAnchor>
-              ))}
+                );
+              })}
             </div>
           </div>
 

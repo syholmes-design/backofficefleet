@@ -1,20 +1,19 @@
 /**
  * BOF Route Owner:
  * URL: /command-center
- * Type: DEMO
- * Primary component: CommandCenterPage
+ * Type: LIVE production Command Center
+ * Primary component: ProductionCommandCenter
  * Route map: docs/BOF_ROUTE_MAP.md
- * Edit this file only for route-level layout/wiring.
  */
-import { CommandCenterV4 } from "@/components/command-center-v4/CommandCenterV4";
+import { ProductionCommandCenter } from "@/components/command-center/ProductionCommandCenter";
 
 export const dynamic = "force-dynamic";
 
 export const metadata = {
   title: "Command Center | BOF",
-  description: "Executive action layer",
+  description: "LIVE production operating feeds",
 };
 
 export default function CommandCenterPage() {
-  return <CommandCenterV4 />;
+  return <ProductionCommandCenter />;
 }
