@@ -183,6 +183,7 @@ Until that owner act: **do not** rerun 014 V1.0 expecting a different binary res
 # Git
 
 - Branch `orchestrator/prompt-017-decision-gate` from `be5cbade`  
+- Closeout commit: `dc889d9ab122cd0d6d53e1185b2e45356453106a`  
 - No product code changes  
 - Protected worktree not modified  
 - Prompt 014 text not modified  
