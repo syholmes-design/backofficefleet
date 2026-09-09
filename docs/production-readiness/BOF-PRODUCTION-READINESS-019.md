@@ -109,7 +109,7 @@ No product code changes. Typecheck/lint/build not re-run for docs-only work. Pri
 
 # Git
 
-Branch `orchestrator/prompt-019-authority-assignment` from 018 HEAD. Protected worktree not modified. No push.
+Branch `orchestrator/prompt-019-authority-assignment` from 018 HEAD. Closeout: `79af61385764eeec4d14e62cec92e7032e24ec16`. Protected worktree not modified. No push.
 
 # Final Status
 
