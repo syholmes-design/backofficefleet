@@ -74,7 +74,8 @@
     "build:second-gen-loads": "node scripts/build-second-generation-loads.mjs",
     "validate:prompt-013-hardening": "npx --yes tsx scripts/validate-prompt-013-hardening.ts",
     "validate:prompt-020-demo-firewall": "npx --yes tsx scripts/validate-prompt-020-demo-firewall.ts",
-    "validate:prompt-021-coherence": "npx --yes tsx scripts/validate-prompt-021-coherence.ts"
+    "validate:prompt-021-coherence": "npx --yes tsx scripts/validate-prompt-021-coherence.ts",
+    "test:secure-pickup": "npx --yes tsx scripts/run-secure-pickup-cert.ts"
   },
   "dependencies": {
     "@auth/prisma-adapter": "^2.11.3",

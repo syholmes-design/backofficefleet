@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import test from "node:test";
 
 import { prisma } from "@/lib/prisma";
+import { assertTestDatabaseTarget } from "@/lib/test/assertTestDatabaseTarget";
 import {
   cancelPickupAuthorization,
   getPickupAuthorization,
@@ -58,6 +59,7 @@ async function cleanup(ids: {
 }
 
 test("local persistence: pickup authorization issue, release, stop, expiry, reuse, tenant, and audit", async () => {
+  assertTestDatabaseTarget(process.env.DATABASE_URL);
   const fleetA = await prisma.fleet.findFirst({ where: { name: "Fleet A" } });
   const fleetB = await prisma.fleet.findFirst({ where: { name: "Fleet B" } });
   assert.ok(fleetA && fleetB);
