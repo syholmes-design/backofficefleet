@@ -12,6 +12,7 @@ export function ProductionCommandCenter() {
     const loads = spine?.loads ?? [];
     const equipment = spine?.equipment ?? [];
     const holds = spine?.heldSettlements ?? [];
+    const pickups = spine?.pickupAuthorizations ?? [];
     const delivered = loads.filter((load) => String(load.status).toUpperCase() === "DELIVERED").length;
     const oos = equipment.filter((unit) => /OOS|OUT_OF_SERVICE|UNAVAILABLE/i.test(unit.status)).length;
     return {
@@ -20,6 +21,9 @@ export function ProductionCommandCenter() {
       equipmentCount: equipment.length,
       oos,
       holdCount: holds.length,
+      pickupPending: pickups.filter((row) => row.status === "PENDING" || row.status === "AUTHORIZED").length,
+      pickupReleased: pickups.filter((row) => row.status === "RELEASED").length,
+      pickupStopped: pickups.filter((row) => row.status === "STOPPED").length,
       authority: spine?.authority ?? null,
     };
   }, [spine]);
@@ -77,6 +81,39 @@ export function ProductionCommandCenter() {
       <LiveOperatingSpinePanel title="LIVE Command Center consumption" live={live} />
 
       <section className="rounded-xl border border-slate-800 bg-slate-900/40 p-5">
+        <h2 className="text-lg font-bold text-white">Pickup authorization (LIVE)</h2>
+        <p className="mt-1 text-xs text-slate-400">
+          Separate dock gate after trip release. Status comes from the same operating-spine payload. Stored driver and
+          equipment records are not physical dock proof.
+        </p>
+        <div className="mt-4 grid gap-3 sm:grid-cols-3">
+          {[
+            { label: "Pending / authorized", value: kpis.pickupPending },
+            { label: "RELEASED", value: kpis.pickupReleased },
+            { label: "STOPPED", value: kpis.pickupStopped },
+          ].map((card) => (
+            <div key={card.label} className="rounded-lg border border-slate-800 bg-slate-950/60 p-3">
+              <p className="text-xs uppercase tracking-wide text-slate-500">{card.label}</p>
+              <p className="mt-1 text-2xl font-black text-white">{spine ? card.value : "—"}</p>
+            </div>
+          ))}
+        </div>
+        <ul className="mt-4 space-y-1 text-sm text-slate-300">
+          {(spine?.pickupAuthorizations ?? [])
+            .filter((row) => row.status === "STOPPED" || row.status === "RELEASED" || row.status === "PENDING" || row.status === "AUTHORIZED")
+            .slice(0, 8)
+            .map((row) => (
+              <li key={row.id}>
+                <Link className="text-teal-200 underline" href={`/dispatch/pickup?loadId=${row.loadId}`}>
+                  {row.status}
+                </Link>{" "}
+                {row.reason ? `— ${row.reason}` : null}
+              </li>
+            ))}
+        </ul>
+      </section>
+
+      <section className="rounded-xl border border-slate-800 bg-slate-900/40 p-5">
         <h2 className="text-lg font-bold text-white">Domain links (LIVE consumers)</h2>
         <ul className="mt-3 grid gap-2 text-sm text-teal-200 sm:grid-cols-2 lg:grid-cols-4">
           <li>
@@ -97,6 +134,11 @@ export function ProductionCommandCenter() {
           <li>
             <Link className="underline" href="/settlements">
               Settlements
+            </Link>
+          </li>
+          <li>
+            <Link className="underline" href="/dispatch/pickup">
+              Pickup authorization
             </Link>
           </li>
         </ul>

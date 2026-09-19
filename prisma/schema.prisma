@@ -230,6 +230,54 @@ enum DispatchReleaseDisposition {
   BLOCKED
 }
 
+enum PickupAuthorizationStatus {
+  PENDING
+  AUTHORIZED
+  RELEASED
+  STOPPED
+  EXPIRED
+  CANCELLED
+}
+
+enum PickupVerificationMethod {
+  TOKEN_PRESENTATION
+  MANUAL_OPERATOR
+  IDENTITY_PROVIDER
+  DL_VERIFICATION
+  PHOTO_MATCH
+  LIVENESS
+  VIN_SCAN
+  PLATE_OCR
+  QR_BARCODE
+  GPS_GEOFENCE
+  TELEMATICS
+  SHIPPER_DOCK
+}
+
+enum PickupVerificationResult {
+  MATCH
+  MISMATCH
+  AUTHORIZED
+  REJECTED
+  RELEASED
+  STOPPED
+}
+
+enum PickupStopReasonCode {
+  WRONG_DRIVER
+  WRONG_TRACTOR
+  WRONG_TRAILER
+  WRONG_LOAD
+  EXPIRED
+  REUSED
+  CANCELLED
+  NO_ACTIVE_ASSIGNMENT
+  NO_DRIVER_READINESS
+  NO_TRIP_RELEASE
+  TOKEN_INVALID
+  ASSIGNMENT_DRIFT
+}
+
 enum ConditionCategory {
   MECHANICAL
   ELECTRICAL
@@ -497,6 +545,10 @@ enum OperatingProcessEventType {
   EVIDENCE_CAPTURED
   READINESS_EVALUATED
   RELEASE_EVALUATED
+  PICKUP_AUTHORIZATION_CREATED
+  PICKUP_VERIFICATION_RECORDED
+  PICKUP_RELEASED
+  PICKUP_STOPPED
   DELIVERY_PROOF_RECORDED
   SETTLEMENT_RECORDED
   INVOICE_RECORDED
@@ -836,6 +888,8 @@ model Fleet {
   dispatchAssignments              DispatchAssignment[]
   preTripHeaders                   PreTripHeader[]
   dispatchReleases                 DispatchRelease[]
+  pickupAuthorizations             PickupAuthorization[]
+  pickupVerificationAttempts       PickupVerificationAttempt[]
   conditionThreads                 ConditionThread[]                 @relation("ConditionThreadFleet")
   conditionEvents                  ConditionEvent[]                  @relation("ConditionEventFleet")
   operationalEvidence              OperationalEvidence[]             @relation("OperationalEvidenceFleet")
@@ -896,6 +950,9 @@ model User {
   dispatchAssignmentsUnassigned       DispatchAssignment[]              @relation("DispatchAssignmentUnassignedBy")
   completedPreTrips                   PreTripHeader[]                   @relation("PreTripHeaderCompletedBy")
   dispatchReleasesEvaluated           DispatchRelease[]                 @relation("DispatchReleaseEvaluatedBy")
+  pickupAuthorizationsCreated         PickupAuthorization[]             @relation("PickupAuthorizationCreatedBy")
+  pickupAuthorizationsCancelled       PickupAuthorization[]             @relation("PickupAuthorizationCancelledBy")
+  pickupVerificationAttempts          PickupVerificationAttempt[]       @relation("PickupVerificationAttemptActor")
   driver                              Driver?
   driverClaimTokensCreated            DriverClaimToken[]                @relation("DriverClaimTokenCreatedBy")
   conditionThreadsCreated             ConditionThread[]                 @relation("ConditionThreadCreatedByUser")
@@ -1093,6 +1150,7 @@ model Driver {
   readinessScores                  DriverReadinessScore[]
   dispatchAssignments              DispatchAssignment[]
   dispatchReleases                 DispatchRelease[]
+  pickupAuthorizations             PickupAuthorization[]
   conditionThreadsCreated          ConditionThread[]                 @relation("ConditionThreadCreatedByDriver")
   conditionEventsRecorded          ConditionEvent[]                  @relation("ConditionEventRecordedByDriver")
   operationalEvidenceCaptured      OperationalEvidence[]             @relation("OperationalEvidenceCapturedByDriver")
@@ -1476,6 +1534,7 @@ model DriverReadinessScore {
   fleet             Fleet                @relation(fields: [fleetId], references: [id], onDelete: Restrict)
   evaluatedByUser   User?                @relation("DriverReadinessScoreEvaluatedBy", fields: [evaluatedByUserId], references: [id], onDelete: Restrict)
   dispatchReleases  DispatchRelease[]
+  pickupAuthorizations PickupAuthorization[]
 
   @@index([driverId, evaluatedAt])
   @@index([fleetId, status])
@@ -1508,6 +1567,7 @@ model Load {
   fleet                    Fleet                    @relation(fields: [fleetId], references: [id], onDelete: Restrict)
   dispatchAssignments      DispatchAssignment[]
   dispatchReleases         DispatchRelease[]
+  pickupAuthorizations     PickupAuthorization[]
   conditionEvents          ConditionEvent[]         @relation("ConditionEventLoad")
   operationalEvidence      OperationalEvidence[]    @relation("OperationalEvidenceLoad")
   operatingProcessEvents   OperatingProcessEvent[]
@@ -1540,6 +1600,8 @@ model Equipment {
   trailerAssignments      DispatchAssignment[]  @relation("DispatchAssignmentTrailerEquipment")
   tractorDispatchReleases DispatchRelease[]     @relation("DispatchReleaseTractorEquipment")
   trailerDispatchReleases DispatchRelease[]     @relation("DispatchReleaseTrailerEquipment")
+  tractorPickupAuthorizations PickupAuthorization[] @relation("PickupAuthorizationTractorEquipment")
+  trailerPickupAuthorizations PickupAuthorization[] @relation("PickupAuthorizationTrailerEquipment")
   conditionThreads        ConditionThread[]     @relation("ConditionThreadEquipment")
   conditionEvents         ConditionEvent[]      @relation("ConditionEventEquipment")
   operationalEvidence     OperationalEvidence[] @relation("OperationalEvidenceEquipment")
@@ -1571,6 +1633,7 @@ model DispatchAssignment {
   unassignedByUser    User?                    @relation("DispatchAssignmentUnassignedBy", fields: [unassignedByUserId], references: [id], onDelete: Restrict)
   preTripHeaders      PreTripHeader[]
   dispatchReleases    DispatchRelease[]
+  pickupAuthorizations PickupAuthorization[]
   conditionEvents     ConditionEvent[]         @relation("ConditionEventDispatchAssignment")
   operationalEvidence OperationalEvidence[]    @relation("OperationalEvidenceDispatchAssignment")
 
@@ -1658,11 +1721,83 @@ model DispatchRelease {
   preTripHeader          PreTripHeader?             @relation(fields: [preTripHeaderId], references: [id], onDelete: Restrict)
   driverReadinessScore   DriverReadinessScore       @relation(fields: [driverReadinessScoreId], references: [id], onDelete: Restrict)
   evaluatedByUser        User?                      @relation("DispatchReleaseEvaluatedBy", fields: [evaluatedByUserId], references: [id], onDelete: Restrict)
+  pickupAuthorizations   PickupAuthorization[]
 
   @@index([assignmentId, evaluatedAt])
   @@index([loadId, evaluatedAt])
   @@index([fleetId, evaluatedAt])
   @@index([driverReadinessScoreId])
+}
+
+model PickupAuthorization {
+  id                      String                     @id @default(cuid())
+  fleetId                 String
+  loadId                  String
+  assignmentId            String
+  driverId                String
+  tractorEquipmentId      String
+  trailerEquipmentId      String?
+  dispatchReleaseId       String
+  driverReadinessScoreId  String
+  status                  PickupAuthorizationStatus
+  tokenHash               String                     @unique
+  pickupWindowStart       DateTime?
+  pickupWindowEnd         DateTime?
+  expiresAt               DateTime
+  releasedAt              DateTime?
+  stoppedAt               DateTime?
+  cancelledAt             DateTime?
+  reason                  String?
+  reasonCodes             Json?
+  policyVersion           String
+  physicalIdentityClass   RecordVerificationClass    @default(UNVERIFIED)
+  physicalEquipmentClass  RecordVerificationClass    @default(UNVERIFIED)
+  createdByUserId         String
+  cancelledByUserId       String?
+  createdAt               DateTime                   @default(now())
+  updatedAt               DateTime                   @updatedAt
+  fleet                   Fleet                      @relation(fields: [fleetId], references: [id], onDelete: Restrict)
+  load                    Load                       @relation(fields: [loadId], references: [id], onDelete: Restrict)
+  assignment              DispatchAssignment         @relation(fields: [assignmentId], references: [id], onDelete: Restrict)
+  driver                  Driver                     @relation(fields: [driverId], references: [id], onDelete: Restrict)
+  tractorEquipment        Equipment                  @relation("PickupAuthorizationTractorEquipment", fields: [tractorEquipmentId], references: [id], onDelete: Restrict)
+  trailerEquipment        Equipment?                 @relation("PickupAuthorizationTrailerEquipment", fields: [trailerEquipmentId], references: [id], onDelete: Restrict)
+  dispatchRelease         DispatchRelease            @relation(fields: [dispatchReleaseId], references: [id], onDelete: Restrict)
+  driverReadinessScore    DriverReadinessScore       @relation(fields: [driverReadinessScoreId], references: [id], onDelete: Restrict)
+  createdByUser           User                       @relation("PickupAuthorizationCreatedBy", fields: [createdByUserId], references: [id], onDelete: Restrict)
+  cancelledByUser         User?                      @relation("PickupAuthorizationCancelledBy", fields: [cancelledByUserId], references: [id], onDelete: Restrict)
+  verificationAttempts    PickupVerificationAttempt[]
+
+  @@index([fleetId, status, createdAt])
+  @@index([loadId, createdAt])
+  @@index([assignmentId, createdAt])
+  @@index([driverId, createdAt])
+  @@index([expiresAt, status])
+}
+
+model PickupVerificationAttempt {
+  id                           String                    @id @default(cuid())
+  pickupAuthorizationId        String
+  fleetId                      String
+  method                       PickupVerificationMethod
+  result                       PickupVerificationResult
+  presentedTokenValid          Boolean
+  presentedDriverId            String?
+  presentedTractorEquipmentId  String?
+  presentedTrailerEquipmentId  String?
+  presentedLoadId              String?
+  presentedAuthorizationId     String?
+  reason                       String
+  reasonCodes                  Json
+  physicalVerificationPerformed Boolean                  @default(false)
+  actorUserId                  String?
+  createdAt                    DateTime                  @default(now())
+  authorization                PickupAuthorization       @relation(fields: [pickupAuthorizationId], references: [id], onDelete: Restrict)
+  fleet                        Fleet                     @relation(fields: [fleetId], references: [id], onDelete: Restrict)
+  actorUser                    User?                     @relation("PickupVerificationAttemptActor", fields: [actorUserId], references: [id], onDelete: Restrict)
+
+  @@index([pickupAuthorizationId, createdAt])
+  @@index([fleetId, createdAt])
 }
 
 model ConditionThread {

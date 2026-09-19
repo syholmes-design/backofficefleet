@@ -33,6 +33,18 @@ export type LiveOperatingSpine = {
     holdReason: string | null;
     updatedAt: string;
   }>;
+  pickupAuthorizations?: Array<{
+    id: string;
+    loadId: string;
+    fleetId: string;
+    driverId: string;
+    status: string;
+    reason: string | null;
+    expiresAt: string;
+    releasedAt: string | null;
+    stoppedAt: string | null;
+    updatedAt: string;
+  }>;
 };
 
 export type LiveOperatingSpineState = {
@@ -100,7 +112,7 @@ export function LiveOperatingSpinePanel({
       {loading ? <p className="mt-3 text-xs text-slate-400">Loading LIVE records…</p> : null}
       {error ? <p className="mt-3 text-xs text-amber-200">{error}</p> : null}
       {spine ? (
-        <div className="mt-3 grid gap-3 md:grid-cols-3">
+        <div className="mt-3 grid gap-3 md:grid-cols-3 lg:grid-cols-4">
           <div>
             <p className="text-xs font-semibold text-slate-400">LIVE equipment ({spine.equipment.length})</p>
             <ul className="mt-1 space-y-1 text-xs">
@@ -141,6 +153,22 @@ export function LiveOperatingSpinePanel({
                 </li>
               ))}
               {spine.heldSettlements.length === 0 ? <li>No LIVE settlement holds.</li> : null}
+            </ul>
+          </div>
+          <div>
+            <p className="text-xs font-semibold text-slate-400">
+              Pickup authorization ({spine.pickupAuthorizations?.length ?? 0})
+            </p>
+            <ul className="mt-1 space-y-1 text-xs">
+              {(spine.pickupAuthorizations ?? []).slice(0, 8).map((row) => (
+                <li key={row.id}>
+                  <Link className="underline decoration-emerald-500/50" href={`/dispatch/pickup?loadId=${row.loadId}`}>
+                    {row.status}
+                  </Link>{" "}
+                  · {row.reason || row.loadId.slice(0, 8)}
+                </li>
+              ))}
+              {(spine.pickupAuthorizations ?? []).length === 0 ? <li>No pickup authorizations in this operator scope.</li> : null}
             </ul>
           </div>
         </div>

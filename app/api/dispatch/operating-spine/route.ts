@@ -1,6 +1,7 @@
 import { auth } from "@/auth";
 import { listAccessibleEquipment } from "@/lib/services/equipmentService";
 import { listAccessibleLoads } from "@/lib/services/loadService";
+import { listPickupAuthorizationsForSpine } from "@/lib/services/pickupAuthorizationService";
 import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
 
@@ -11,9 +12,10 @@ export async function GET() {
   }
 
   try {
-    const [loads, equipment] = await Promise.all([
+    const [loads, equipment, pickupAuthorizations] = await Promise.all([
       listAccessibleLoads(session.user),
       listAccessibleEquipment(session.user),
+      listPickupAuthorizationsForSpine(session.user),
     ]);
     const loadIds = loads.map((load) => load.id);
     const heldSettlements =
@@ -38,6 +40,7 @@ export async function GET() {
       loads,
       equipment,
       heldSettlements,
+      pickupAuthorizations,
     });
   } catch (error) {
     const statusCode =

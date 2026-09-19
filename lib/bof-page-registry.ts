@@ -140,6 +140,13 @@ export const BOF_PAGE_REGISTRY: Record<string, BofPageRegistryItem> = {
     routeFile: "app/(bof)/dispatch/page.tsx",
     primaryComponent: "DispatchPage",
   },
+  dispatchPickup: {
+    label: "Pickup authorization",
+    url: "/dispatch/pickup",
+    type: "DISPATCH",
+    routeFile: "app/(bof)/dispatch/pickup/page.tsx",
+    primaryComponent: "PickupAuthorizationClient",
+  },
   drivers: {
     label: "Drivers",
     url: "/drivers",
