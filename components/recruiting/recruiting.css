@@ -1,0 +1,139 @@
+.bof-recruiting {
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 1.5rem 1.25rem 3rem;
+  color: #e2e8f0;
+  scroll-padding-top: 7rem;
+}
+
+.bof-recruiting h1,
+.bof-recruiting h2 {
+  color: #f8fafc;
+}
+
+.bof-recruiting-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  align-items: flex-start;
+  margin-bottom: 1.25rem;
+}
+
+.bof-recruiting-lede {
+  color: #94a3b8;
+  max-width: 46rem;
+}
+
+.bof-recruiting-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.bof-recruiting input,
+.bof-recruiting select,
+.bof-recruiting textarea {
+  width: 100%;
+  background: #0f172a;
+  border: 1px solid #334155;
+  color: #e2e8f0;
+  border-radius: 0.5rem;
+  padding: 0.55rem 0.7rem;
+}
+
+.bof-recruiting textarea {
+  min-height: 5.5rem;
+}
+
+.bof-recruiting-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+
+.bof-recruiting-table th,
+.bof-recruiting-table td {
+  text-align: left;
+  padding: 0.65rem 0.5rem;
+  border-bottom: 1px solid #1e293b;
+}
+
+.bof-recruiting-status {
+  display: inline-block;
+  border-radius: 999px;
+  padding: 0.15rem 0.55rem;
+  font-size: 0.75rem;
+  background: #1e293b;
+}
+
+.bof-recruiting-section {
+  border: 1px solid #1e293b;
+  border-radius: 0.85rem;
+  padding: 1rem 1.1rem 1.15rem;
+  margin-bottom: 1rem;
+  background: #0b1220;
+}
+
+.bof-recruiting-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 0.85rem 1rem;
+}
+
+.bof-recruiting-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  margin: 1rem 0;
+  position: sticky;
+  top: 5.75rem;
+  z-index: 30;
+  background: #020617;
+  padding: 0.55rem 0 0.7rem;
+}
+
+.bof-recruiting-actions button,
+.bof-recruiting-create,
+.bof-recruiting a.button {
+  background: #0f766e;
+  color: white;
+  border: 0;
+  border-radius: 0.5rem;
+  padding: 0.5rem 0.9rem;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-block;
+}
+
+.bof-recruiting-actions button[disabled] {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.bof-recruiting-error {
+  color: #fca5a5;
+  margin: 0.5rem 0;
+}
+
+.bof-recruiting-note {
+  color: #94a3b8;
+  font-size: 0.9rem;
+}
+
+.bof-recruiting label {
+  display: block;
+  font-size: 0.8rem;
+  color: #cbd5e1;
+  margin-bottom: 0.35rem;
+}
+
+.bof-recruiting-check {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+.bof-recruiting-check input {
+  width: auto;
+}

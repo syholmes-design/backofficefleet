@@ -1,11 +1,27 @@
-import type { Metadata } from "next";
-import { RecruitingPageClient } from "@/components/recruiting/RecruitingPageClient";
+/**
+ * BOF Route Owner:
+ * URL: /recruiting
+ * Type: LIVE
+ * Primary component: RequisitionListClient
+ * Related: /recruiting/workspace (RecruitingPageClient), /recruiting-v2
+ */
+import { auth } from "@/auth";
+import { redirect } from "next/navigation";
+import { RequisitionListClient } from "@/components/recruiting/RequisitionListClient";
+import { listRequisitionsForUser } from "@/lib/services/requisitionService";
 
-export const metadata: Metadata = {
-  title: "Recruiting & Onboarding | BOF",
-  description: "BOF workforce recruitment, job builder, candidate qualification, onboarding, and driver activation.",
+export const dynamic = "force-dynamic";
+
+export const metadata = {
+  title: "Recruiting | BOF",
+  description: "Fleet workforce requisitions that authorize recruiting before a Driver record exists",
 };
 
-export default function RecruitingPage() {
-  return <RecruitingPageClient />;
+export default async function RecruitingPage() {
+  const session = await auth();
+  if (!session?.user?.id) {
+    redirect("/api/auth/signin?callbackUrl=/recruiting");
+  }
+  const rows = await listRequisitionsForUser(session.user);
+  return <RequisitionListClient initialRows={JSON.parse(JSON.stringify(rows))} />;
 }

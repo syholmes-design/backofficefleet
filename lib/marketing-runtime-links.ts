@@ -5,6 +5,6 @@ export const BOF_RUNTIME_LINKS = {
   dispatch: `${BOF_RUNTIME_BASE_URL}/dispatch`,
   pretrip: `${BOF_RUNTIME_BASE_URL}/pretrip`,
   vault: `${BOF_RUNTIME_BASE_URL}/documents/vault`,
-  commandCenter: `${BOF_RUNTIME_BASE_URL}/dashboard`,
+  commandCenter: `${BOF_RUNTIME_BASE_URL}/command-center`,
   portalsDriver: `${BOF_RUNTIME_BASE_URL}/portals/driver`,
 } as const;

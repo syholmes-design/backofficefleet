@@ -35,38 +35,50 @@ export type LiveOperatingSpine = {
   }>;
 };
 
-export function useLiveOperatingSpine() {
+export type LiveOperatingSpineState = {
+  spine: LiveOperatingSpine | null;
+  error: string | null;
+  loading: boolean;
+  refresh: () => Promise<void>;
+};
+
+export function useLiveOperatingSpine(options?: { enabled?: boolean }): LiveOperatingSpineState {
+  const enabled = options?.enabled !== false;
   const [spine, setSpine] = useState<LiveOperatingSpine | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(enabled);
 
   const refresh = useCallback(async () => {
+    if (!enabled) return;
     setLoading(true);
     try {
       const next = await requestJson<LiveOperatingSpine>("/api/dispatch/operating-spine");
       setSpine(next);
       setError(null);
     } catch (nextError) {
-      setSpine(null);
       setError(getErrorMessage(nextError));
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [enabled]);
 
   useEffect(() => {
+    if (!enabled) return;
     void refresh();
-  }, [refresh]);
+  }, [enabled, refresh]);
 
   return { spine, error, loading, refresh };
 }
 
 export function LiveOperatingSpinePanel({
   title = "LIVE operational spine",
+  live,
 }: {
   title?: string;
+  live?: LiveOperatingSpineState;
 }) {
-  const { spine, error, loading, refresh } = useLiveOperatingSpine();
+  const local = useLiveOperatingSpine({ enabled: live == null });
+  const { spine, error, loading, refresh } = live ?? local;
 
   return (
     <section className="rounded-lg border border-emerald-400/30 bg-slate-950/80 p-4 text-sm text-emerald-50">

@@ -30,7 +30,7 @@ export default function HowBofWorksPage() {
           <p className="mt-3 text-lg leading-relaxed text-slate-200">
             BOF is not a collection of disconnected software modules. BOF follows the complete lifecycle of a fleet operation.
             From defining a driver opening and qualifying candidates through pre-trip inspections, dispatch release, proof verification, and payroll settlement,
-            information flows continuously without manual re-entry.
+            BOF provides an operating environment that connects the relevant systems, people, evidence, and decisions.
           </p>
 
           <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
@@ -70,7 +70,7 @@ export default function HowBofWorksPage() {
                   WORKFORCE NEED
                 </h2>
               </div>
-              <Link href="/recruiting" className="bof-mkt-btn-enterprise bof-mkt-btn-enterprise-primary">
+              <Link href="/business-operations/driver-onboarding" className="bof-mkt-btn-enterprise bof-mkt-btn-enterprise-primary">
                 OPEN RECRUITING &rarr;
               </Link>
             </div>
@@ -90,7 +90,7 @@ export default function HowBofWorksPage() {
                   RECRUIT
                 </h2>
               </div>
-              <Link href="/recruiting" className="bof-mkt-btn-enterprise bof-mkt-btn-enterprise-secondary">
+              <Link href="/business-operations/driver-onboarding" className="bof-mkt-btn-enterprise bof-mkt-btn-enterprise-secondary">
                 VIEW PIPELINE &rarr;
               </Link>
             </div>
@@ -110,7 +110,7 @@ export default function HowBofWorksPage() {
                   JOB DESCRIPTION &amp; POSTING PACKAGE
                 </h2>
               </div>
-              <Link href="/recruiting" className="bof-mkt-btn-enterprise bof-mkt-btn-enterprise-secondary">
+              <Link href="/business-operations/driver-onboarding" className="bof-mkt-btn-enterprise bof-mkt-btn-enterprise-secondary">
                 CREATE POSITION &rarr;
               </Link>
             </div>
@@ -130,7 +130,7 @@ export default function HowBofWorksPage() {
                   APPLICANT SCREENING
                 </h2>
               </div>
-              <Link href="/recruiting" className="bof-mkt-btn-enterprise bof-mkt-btn-enterprise-secondary">
+              <Link href="/business-operations/driver-onboarding" className="bof-mkt-btn-enterprise bof-mkt-btn-enterprise-secondary">
                 SCREEN CANDIDATES &rarr;
               </Link>
             </div>
@@ -150,7 +150,7 @@ export default function HowBofWorksPage() {
                   DRIVER QUALIFICATION REVIEW
                 </h2>
               </div>
-              <Link href="/recruiting" className="bof-mkt-btn-enterprise bof-mkt-btn-enterprise-secondary">
+              <Link href="/business-operations/driver-onboarding" className="bof-mkt-btn-enterprise bof-mkt-btn-enterprise-secondary">
                 QUALIFY DRIVER &rarr;
               </Link>
             </div>
@@ -170,7 +170,7 @@ export default function HowBofWorksPage() {
                   ONBOARDING &amp; CHECKLIST
                 </h2>
               </div>
-              <Link href="/recruiting" className="bof-mkt-btn-enterprise bof-mkt-btn-enterprise-secondary">
+              <Link href="/business-operations/driver-onboarding" className="bof-mkt-btn-enterprise bof-mkt-btn-enterprise-secondary">
                 ONBOARD DRIVER &rarr;
               </Link>
             </div>
@@ -190,7 +190,7 @@ export default function HowBofWorksPage() {
                   DRIVER ACTIVATION &amp; BOF VAULT HANDOFF
                 </h2>
               </div>
-              <Link href="/recruiting" className="bof-mkt-btn-enterprise bof-mkt-btn-enterprise-primary">
+              <Link href="/business-operations/driver-onboarding" className="bof-mkt-btn-enterprise bof-mkt-btn-enterprise-primary">
                 ACTIVATE DRIVER &rarr;
               </Link>
             </div>
@@ -255,7 +255,7 @@ export default function HowBofWorksPage() {
               </Link>
             </div>
             <p className="mt-4 text-base leading-7 text-slate-700 dark:text-slate-300">
-              BOF evaluates driver credentials (CDL, medical card, MVR, Clearinghouse), equipment maintenance status, required customer documents, and load requirements before the trip begins.
+              BOF surfaces driver credentials (CDL, medical card, MVR, Clearinghouse), equipment maintenance status, required customer documents, and load requirements before the trip begins.
             </p>
           </article>
 
@@ -275,7 +275,7 @@ export default function HowBofWorksPage() {
               </Link>
             </div>
             <p className="mt-4 text-base leading-7 text-slate-700 dark:text-slate-300">
-              Pre-Trip turns inspection results into an operational release decision. Drivers complete pre-trip checklists on mobile/tablet devices with timestamped photo evidence. Defects automatically lock release.
+              Pre-Trip turns inspection results into an operational release decision. Drivers complete pre-trip checklists on mobile/tablet devices with timestamped photo evidence, while defects are surfaced for review before release.
             </p>
           </article>
 
@@ -295,7 +295,7 @@ export default function HowBofWorksPage() {
               </Link>
             </div>
             <p className="mt-4 text-base leading-7 text-slate-700 dark:text-slate-300">
-              BOF determines whether the load can be released, requires review, or must remain blocked. Dispatchers operate with full readiness visibility, preventing illegal or unready releases.
+              BOF connects readiness signals to the release workflow so dispatchers can see whether a load is ready, requires review, or should remain blocked before movement.
             </p>
           </article>
 
@@ -310,8 +310,8 @@ export default function HowBofWorksPage() {
                   IN-TRANSIT TRACKING
                 </h2>
               </div>
-              <Link href="/operational-chat" className="bof-mkt-btn-enterprise bof-mkt-btn-enterprise-secondary">
-                FOLLOW THE TRIP &rarr;
+              <Link href="/loads/L001" className="bof-mkt-btn-enterprise bof-mkt-btn-enterprise-secondary">
+                FOLLOW THE LOAD &rarr;
               </Link>
             </div>
             <p className="mt-4 text-base leading-7 text-slate-700 dark:text-slate-300">
@@ -355,7 +355,7 @@ export default function HowBofWorksPage() {
               </Link>
             </div>
             <p className="mt-4 text-base leading-7 text-slate-700 dark:text-slate-300">
-              BOF organizes the evidence required to close the operational record and support factoring or direct customer billing. Complete proof bundles release settlement holds automatically.
+              BOF organizes the evidence required to close the operational record and support factoring or direct customer billing. Complete proof bundles give finance and operations a clearer basis for settlement review.
             </p>
           </article>
 
@@ -375,7 +375,7 @@ export default function HowBofWorksPage() {
               </Link>
             </div>
             <p className="mt-4 text-base leading-7 text-slate-700 dark:text-slate-300">
-              BOF carries the operational outcome into settlement without losing the connection to the original load. Driver compensation, fuel reimbursements, deductions, and gross margins calculate instantly.
+              BOF carries the operational outcome into settlement without losing the connection to the original load. Driver compensation, fuel reimbursements, deductions, and margin review remain connected to the operating record.
             </p>
           </article>
         </section>
@@ -387,8 +387,16 @@ export default function HowBofWorksPage() {
           <p className="mx-auto mt-4 max-w-3xl text-base leading-8 text-slate-300 md:text-lg">
             BOF connects the entire lifecycle — from workforce need and recruiting through dispatch, delivery, proof, and settlement.
           </p>
-          <div className="mt-8">
-            <Link href="/recruiting" className="inline-flex bof-mkt-btn-enterprise bof-mkt-btn-enterprise-primary">
+          <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
+            <Link href="/book-assessment" className="inline-flex bof-mkt-btn-enterprise bof-mkt-btn-enterprise-primary">
+              Request a BOF Assessment
+            </Link>
+            <Link href="/command-center" className="inline-flex bof-mkt-btn-enterprise bof-mkt-btn-enterprise-secondary">
+              See BOF in Action
+            </Link>
+          </div>
+          <div className="mt-4">
+            <Link href="/business-operations/driver-onboarding" className="inline-flex bof-mkt-btn-enterprise bof-mkt-btn-enterprise-primary">
               START WITH RECRUITING &rarr;
             </Link>
           </div>

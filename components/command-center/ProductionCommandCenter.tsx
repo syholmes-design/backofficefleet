@@ -5,7 +5,8 @@ import { useMemo } from "react";
 import { LiveOperatingSpinePanel, useLiveOperatingSpine } from "@/components/operations/LiveOperatingSpinePanel";
 
 export function ProductionCommandCenter() {
-  const { spine, error, loading, refresh } = useLiveOperatingSpine();
+  const live = useLiveOperatingSpine();
+  const { spine, error, loading, refresh } = live;
 
   const kpis = useMemo(() => {
     const loads = spine?.loads ?? [];
@@ -47,7 +48,7 @@ export function ProductionCommandCenter() {
         </button>
       </header>
 
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5" aria-busy={loading}>
         {[
           { label: "LIVE loads", value: kpis.loadCount, hint: "Prisma Load rows in operator scope" },
           { label: "Delivered", value: kpis.delivered, hint: "Load.status DELIVERED" },
@@ -57,7 +58,7 @@ export function ProductionCommandCenter() {
         ].map((card) => (
           <div key={card.label} className="rounded-xl border border-slate-800 bg-slate-900/60 p-4">
             <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">{card.label}</p>
-            <p className="mt-2 text-3xl font-black text-white">{loading ? "—" : card.value}</p>
+            <p className="mt-2 text-3xl font-black text-white">{spine ? card.value : "—"}</p>
             <p className="mt-1 text-xs text-slate-400">{card.hint}</p>
           </div>
         ))}
@@ -73,7 +74,7 @@ export function ProductionCommandCenter() {
         </p>
       ) : null}
 
-      <LiveOperatingSpinePanel title="LIVE Command Center consumption" />
+      <LiveOperatingSpinePanel title="LIVE Command Center consumption" live={live} />
 
       <section className="rounded-xl border border-slate-800 bg-slate-900/40 p-5">
         <h2 className="text-lg font-bold text-white">Domain links (LIVE consumers)</h2>

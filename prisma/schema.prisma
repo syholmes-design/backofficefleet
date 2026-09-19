@@ -79,6 +79,40 @@ enum DriverIntakeStatus {
   ARCHIVED
 }
 
+enum RequisitionStatus {
+  DRAFT
+  SUBMITTED
+  UNDER_REVIEW
+  APPROVED
+  ON_HOLD
+  CANCELLED
+  FILLED
+}
+
+enum RequisitionRecruitingPipelineState {
+  NOT_OPEN
+  READY_FOR_RECRUITING
+}
+
+enum RequisitionApprovalRole {
+  REQUESTING_MANAGER
+  FLEET_SAFETY_DIRECTOR
+  FLEET_OWNER_GM
+  BOF_ACCOUNT_MANAGER
+  BOF_HR_REVIEW
+}
+
+enum RequisitionApprovalDecision {
+  PENDING
+  APPROVED
+  NOT_APPROVED
+}
+
+enum RequisitionSignatureCaptureKind {
+  FORM_FIELD
+  NOT_CAPTURED
+}
+
 enum DriverDocumentType {
   DRIVER_LICENSE
   MEDICAL
@@ -824,6 +858,7 @@ model Fleet {
   settlements                      Settlement[]
   invoices                         Invoice[]
   invoicePayments                  InvoicePayment[]
+  requisitions                     Requisition[]
 
   @@index([status])
   @@index([carrierGroupId, status])
@@ -875,6 +910,9 @@ model User {
   regulatoryApplicabilitiesDetermined RegulatoryApplicability[]         @relation("RegulatoryApplicabilityDeterminedBy")
   trainingAssignmentsAssigned         TrainingAssignment[]              @relation("TrainingAssignmentAssignedBy")
   trainingCertificationsIssued        TrainingCertification[]           @relation("TrainingCertificationIssuedBy")
+  requisitionsCreated                 Requisition[]                     @relation("RequisitionCreatedBy")
+  requisitionsRequested               Requisition[]                     @relation("RequisitionRequestingManager")
+  requisitionApprovals                RequisitionApproval[]             @relation("RequisitionApprovalReviewer")
 
   @@index([status])
 }
@@ -1790,6 +1828,128 @@ model VerificationSource {
   @@index([medicalQualificationId])
   @@index([drugTestRecordId])
   @@index([driverIntakeRequirementId])
+}
+
+model Requisition {
+  id        String @id @default(cuid())
+  fleetId   String
+  publicNumber String
+
+  status                   RequisitionStatus                   @default(DRAFT)
+  recruitingPipelineState  RequisitionRecruitingPipelineState  @default(NOT_OPEN)
+  statusBeforeHold         RequisitionStatus?
+
+  createdByUserId          String
+  requestingManagerUserId  String?
+
+  dateSubmitted            DateTime?
+  targetStartDate          DateTime?
+  numberOfPositions        Int       @default(1)
+  requestingCarrierName    String?
+  usdot                    String?
+  mcNumber                 String?
+  terminalDomicile         String?
+  statesOfOperation        String?
+
+  requestingManagerName    String?
+  department               String?
+  supervisor               String?
+
+  positionClassification   String?
+  employmentClassification String?
+  flsaClassification       String?
+  urgency                  String?
+  positionTitle            String?
+  reportingStructure       String?
+
+  workLocation             String?
+  homeTimePattern          String?
+  routeLane                String?
+  borderCrossings          Boolean?
+  typicalNightsAway        String?
+  equipmentType            String?
+  soloTeamOperation        String?
+
+  cdlClass                 String?
+  endorsements             String?
+  experienceRequirements   String?
+  minimumAge               Int?
+  mvrSafetyRequirements    String?
+  pspRequired              Boolean?
+  clearinghouseRequired    Boolean?
+  medicalRequired          Boolean?
+  drugTestingRequired      Boolean?
+  backgroundCheckRequired  Boolean?
+  tsaRequired              Boolean?
+
+  compensationStructure    String?
+  payRange                 String?
+  accessorialPay           String?
+  signOnBonus              String?
+  performanceBonus         String?
+  benefits                 String?
+
+  positionSummary          String?
+  essentialFunctions       String?
+  physicalRequirements     String?
+  schedule                 String?
+  hosCycle                 String?
+
+  recruitingInstructions   String?
+  sourcingChannels         String?
+  screeningRequirements    String?
+  applicationRouting       String?
+  targetFillMetrics        String?
+
+  budgetStatus             String?
+  headcount                String?
+  financialJustification   String?
+  estimatedRecruitingCost  String?
+
+  exceptions               String?
+  bofHrUse                 String?
+
+  submittedAt              DateTime?
+  reviewedAt               DateTime?
+  approvedAt               DateTime?
+  heldAt                   DateTime?
+  cancelledAt              DateTime?
+  filledAt                 DateTime?
+  recruitingOpenedAt       DateTime?
+
+  createdAt                DateTime @default(now())
+  updatedAt                DateTime @updatedAt
+
+  fleet                    Fleet    @relation(fields: [fleetId], references: [id], onDelete: Restrict)
+  createdBy                User     @relation("RequisitionCreatedBy", fields: [createdByUserId], references: [id], onDelete: Restrict)
+  requestingManager        User?    @relation("RequisitionRequestingManager", fields: [requestingManagerUserId], references: [id], onDelete: SetNull)
+  approvals                RequisitionApproval[]
+
+  @@unique([fleetId, publicNumber])
+  @@index([fleetId, status])
+  @@index([fleetId, createdAt])
+  @@index([status, recruitingPipelineState])
+}
+
+model RequisitionApproval {
+  id                   String                          @id @default(cuid())
+  requisitionId        String
+  approvalRole         RequisitionApprovalRole
+  decision             RequisitionApprovalDecision     @default(PENDING)
+  reviewerUserId       String?
+  reviewerName         String?
+  notes                String?
+  signatureName        String?
+  signatureCaptureKind RequisitionSignatureCaptureKind @default(NOT_CAPTURED)
+  decidedAt            DateTime?
+  createdAt            DateTime                        @default(now())
+  updatedAt            DateTime                        @updatedAt
+
+  requisition          Requisition                     @relation(fields: [requisitionId], references: [id], onDelete: Cascade)
+  reviewer             User?                           @relation("RequisitionApprovalReviewer", fields: [reviewerUserId], references: [id], onDelete: SetNull)
+
+  @@unique([requisitionId, approvalRole])
+  @@index([requisitionId, decision])
 }
 
 model AuditEvent {
