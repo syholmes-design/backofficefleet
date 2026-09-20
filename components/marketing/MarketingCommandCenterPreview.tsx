@@ -61,6 +61,7 @@ export function MarketingCommandCenterPreview({
   lead = "BOF gives operations leaders a real-time command center for compliance, proof, settlements, and financial risk.",
   demoHref = "/dashboard",
   demoLabel = "Explore the operational overview ->",
+  statusBadge = "Demo snapshot",
 }: {
   rows?: readonly CcMockRow[];
   /** For `aria-labelledby` on the wrapping section. */
@@ -69,6 +70,7 @@ export function MarketingCommandCenterPreview({
   lead?: string;
   demoHref?: string;
   demoLabel?: string;
+  statusBadge?: string;
 }) {
   return (
     <div className="bof-mkt-container">
@@ -95,7 +97,7 @@ export function MarketingCommandCenterPreview({
                 </div>
                 <span className="bof-mkt-cc-mock-title">BOF Control Tower</span>
               </div>
-              <span className="bof-mkt-cc-mock-live">Live priority</span>
+              <span className="bof-mkt-cc-mock-live">{statusBadge}</span>
             </div>
             <div className="bof-mkt-cc-mock-body">
               {rows.map((row) => {
@@ -129,8 +131,9 @@ export function MarketingCommandCenterPreview({
                 );
               })}
               <p className="bof-mkt-cc-mock-foot">
-                Clickable demo paths mirror the live Control Tower: owners, proof, route response,
-                payment holds, and next actions.
+                Illustrative preview only — not LIVE BOF operational data or live fleet counts.
+                Clickable demo paths show how owners, proof, route response, payment holds, and next
+                actions appear in the Command Center.
               </p>
             </div>
           </div>
